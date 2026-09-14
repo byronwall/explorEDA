@@ -9,6 +9,10 @@ import { GridBackground } from "./GridBackground";
 
 import React from "react";
 
+type BottomRightHandleProps = React.HTMLAttributes<HTMLDivElement> & {
+  handleAxis?: string;
+};
+
 interface ChartGridLayoutProps {
   children: ReactNode;
   charts: ChartSettings[];
@@ -118,27 +122,31 @@ const SouthEastArrow = () => {
   );
 };
 
-export const BottomRightHandle = React.forwardRef<HTMLDivElement>(
-  (props, ref) => {
-    return (
-      <div
-        style={{
-          width: "20px",
-          height: "20px",
-          position: "absolute",
-          bottom: 0,
-          right: 0,
-          padding: 0,
-          cursor: "se-resize",
-        }}
-        className="handle-se"
-        ref={ref}
-        aria-hidden="true"
-        {...props}
-      >
-        {" "}
-        <SouthEastArrow />{" "}
-      </div>
-    );
-  }
-);
+export const BottomRightHandle = React.forwardRef<
+  HTMLDivElement,
+  BottomRightHandleProps
+>((props, ref) => {
+  const domProps = { ...props };
+  delete domProps.handleAxis;
+
+  return (
+    <div
+      style={{
+        width: "20px",
+        height: "20px",
+        position: "absolute",
+        bottom: 0,
+        right: 0,
+        padding: 0,
+        cursor: "se-resize",
+      }}
+      className="handle-se"
+      ref={ref}
+      aria-hidden="true"
+      {...domProps}
+    >
+      {" "}
+      <SouthEastArrow />{" "}
+    </div>
+  );
+});
