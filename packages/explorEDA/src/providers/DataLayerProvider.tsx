@@ -12,16 +12,38 @@ import { ChartSettings, datum } from "@/types/ChartTypes";
 import { ColorScaleType } from "@/types/ColorScaleTypes";
 import {
   GridSettings,
+  SavedChartSettings,
   SerializedColorScale,
   ViewMetadata,
 } from "@/types/SavedDataTypes";
 import { SavedDataStructure } from "@/types/SavedDataStructure";
 import { saveProject } from "@/utils/localStorage";
-import { createContext, useContext, useRef } from "react";
+import { createContext, useContext, useEffect, useRef } from "react";
 import { createStore, useStore } from "zustand";
+import * as THREE from "three";
 
 type DatumObject = { [key: string]: datum };
 export type { DatumObject };
+
+function toRuntimeChart(chart: SavedChartSettings): ChartSettings {
+  if (chart.type !== "3d-scatter") {
+    return chart as ChartSettings;
+  }
+
+  return {
+    ...chart,
+    cameraPosition: new THREE.Vector3(
+      chart.cameraPosition.x,
+      chart.cameraPosition.y,
+      chart.cameraPosition.z
+    ),
+    cameraTarget: new THREE.Vector3(
+      chart.cameraTarget.x,
+      chart.cameraTarget.y,
+      chart.cameraTarget.z
+    ),
+  } as ChartSettings;
+}
 
 // Props and State interfaces
 interface DataLayerProps<T extends DatumObject> {
@@ -128,9 +150,9 @@ function getDataAndCrossfilterWrapper<T extends DatumObject>(
 
   return {
     data: dataWithIds,
-    emptyColumn: data.reduce(
+    emptyColumn: dataWithIds.reduce(
       (acc, row) => {
-        acc[row.__ID as IdType] = undefined;
+        acc[row.__ID] = undefined;
         return acc;
       },
       {} as Record<IdType, datum>
@@ -212,7 +234,7 @@ const getInitialStoreState = <T extends DatumObject>(
       crossfilterWrapper,
       calculationManager: ogCalculationManager,
       calculations: newCalculations,
-      charts: savedData.charts,
+      charts: savedData.charts.map(toRuntimeChart),
       colorScales: restoredColorScales,
       gridSettings: savedData.gridSettings,
       columnCache: {},
@@ -273,6 +295,10 @@ const createDataLayerStore = <T extends DatumObject>(
         calculationManager: newCalculationManager,
       } = getDataAndCrossfilterWrapper(rawData, get().getColumnData);
 
+      if (!newData || !newCrossfilter || !newCalculationManager) {
+        throw new Error("Failed to reset data layer");
+      }
+
       // Create default summary chart
       const definition = getChartDefinition("summary");
 
@@ -282,6 +308,7 @@ const createDataLayerStore = <T extends DatumObject>(
         w: 4,
         h: 6,
       });
+      newCrossfilter.addChart(summaryChart);
 
       // Reset everything to initial state
       set({
@@ -292,7 +319,7 @@ const createDataLayerStore = <T extends DatumObject>(
         calculations: [],
         charts: [summaryChart],
         colorScales: [],
-        liveItems: {},
+        liveItems: newCrossfilter.getAllData(),
         columnCache: {},
         calcColumnCache: {},
         nonce: 0,
@@ -425,7 +452,9 @@ const createDataLayerStore = <T extends DatumObject>(
 
     getColumnNames() {
       const { data, calculations } = get();
-      const baseColumns = Object.keys(data[0] || {});
+      const baseColumns = Object.keys(data[0] || {}).filter(
+        (field) => field !== "__ID"
+      );
 
       const calcFields = calculations.map((calc) => calc.resultColumnName);
 
@@ -558,28 +587,23 @@ const createDataLayerStore = <T extends DatumObject>(
         crossfilterWrapper.addChart(chart);
       });
 
-      // Load calculations if they exist
-      if (view.calculations) {
-        // Clear existing calculations
-        calculationManager?.getCalculations().forEach((calc) => {
-          calculationManager.removeCalculation(calc.resultColumnName);
-        });
-
-        // Add new calculations
-        const newCalculations: CalculationDefinition[] = [];
-        view.calculations.forEach(async (calc) => {
-          if (calculationManager) {
-            try {
-              await calculationManager.addCalculation(calc);
-              newCalculations.push(calc);
-            } catch (error) {
-              console.error("Error adding calculation:", error);
-            }
-          }
-        });
-
-        set({ calculations: newCalculations });
+      // Clear existing calculations before loading the view.
+      for (const calc of calculationManager.getCalculations()) {
+        calculationManager.removeCalculation(calc.resultColumnName);
       }
+
+      // Add new calculations
+      const newCalculations: CalculationDefinition[] = [];
+      for (const calc of view.calculations ?? []) {
+        try {
+          calculationManager.addCalculation(calc);
+          newCalculations.push(calc);
+        } catch (error) {
+          console.error("Error adding calculation:", error);
+        }
+      }
+
+      set({ calculations: newCalculations, calcColumnCache: {} });
 
       set({ liveItems: crossfilterWrapper.getAllData() });
     },
@@ -616,21 +640,22 @@ const createDataLayerStore = <T extends DatumObject>(
         throw new Error("Calculation manager not initialized");
       }
 
-      calculationManager.removeCalculation(resultColumnName);
+      const affectedColumns = calculationManager.removeCalculation(
+        resultColumnName
+      );
 
-      set((state) => ({
-        calculations: state.calculations.filter(
-          (calc) => calc.resultColumnName !== resultColumnName
-        ),
-      }));
-
-      // Remove from column cache
       set((state) => {
-        const newColumnCache = { ...state.columnCache };
-        if (resultColumnName in newColumnCache) {
-          delete newColumnCache[resultColumnName];
+        const newCalcColumnCache = { ...state.calcColumnCache };
+        for (const columnName of affectedColumns) {
+          delete newCalcColumnCache[columnName];
         }
-        return { columnCache: newColumnCache };
+        return {
+          calculations: state.calculations.filter(
+            (calc) => calc.resultColumnName !== resultColumnName
+          ),
+          calcColumnCache: newCalcColumnCache,
+          nonce: state.nonce + 1,
+        };
       });
     },
 
@@ -687,22 +712,25 @@ const createDataLayerStore = <T extends DatumObject>(
       // Clear existing charts
       crossfilterWrapper.removeAllCharts();
 
-      savedData.charts.forEach((chart) => {
+      const charts = savedData.charts.map(toRuntimeChart);
+      charts.forEach((chart) => {
         crossfilterWrapper.addChart(chart);
       });
 
       // Restore calculations
+      for (const calc of calculationManager.getCalculations()) {
+        calculationManager.removeCalculation(calc.resultColumnName);
+      }
+
       const newCalculations: CalculationDefinition[] = [];
-      savedData.calculations.forEach(async (calc) => {
-        if (calculationManager) {
-          try {
-            await calculationManager.addCalculation(calc);
-            newCalculations.push(calc);
-          } catch (error) {
-            console.error("Error restoring calculation:", error);
-          }
+      for (const calc of savedData.calculations) {
+        try {
+          calculationManager.addCalculation(calc);
+          newCalculations.push(calc);
+        } catch (error) {
+          console.error("Error restoring calculation:", error);
         }
-      });
+      }
 
       // Restore color scales with proper Map objects
       const restoredColorScales: ColorScaleType[] = savedData.colorScales.map(
@@ -719,9 +747,11 @@ const createDataLayerStore = <T extends DatumObject>(
 
       set((state) => ({
         gridSettings: savedData.gridSettings,
-        charts: savedData.charts,
+        charts,
         calculations: newCalculations,
         colorScales: restoredColorScales,
+        columnCache: {},
+        calcColumnCache: {},
         liveItems: crossfilterWrapper.getAllData(),
         nonce: state.nonce + 1,
       }));
@@ -760,10 +790,33 @@ export function DataLayerProvider<T extends DatumObject>({
   ...props
 }: DataLayerProviderProps<T>) {
   const storeRef = useRef<DataLayerStore<T> | null>(null);
+  const propsRef = useRef(props);
   if (!storeRef.current) {
     storeRef.current = createDataLayerStore<T>(props);
-    // Initialize with saved data if provided
   }
+
+  useEffect(() => {
+    const store = storeRef.current!;
+    const previousProps = propsRef.current;
+    const dataChanged = previousProps.data !== props.data;
+    const savedDataChanged = previousProps.savedData !== props.savedData;
+
+    if (dataChanged) {
+      store.getState().setData(props.data ?? []);
+      if (props.savedData) {
+        store.getState().restoreFromStructure(props.savedData);
+      }
+    } else if (savedDataChanged) {
+      if (props.savedData) {
+        store.getState().restoreFromStructure(props.savedData);
+      } else {
+        store.getState().setData(store.getState().data);
+      }
+    }
+
+    propsRef.current = props;
+  }, [props.data, props.savedData]);
+
   return (
     <DataLayerContext.Provider value={storeRef.current}>
       {children}
