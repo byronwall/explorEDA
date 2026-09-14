@@ -640,9 +640,8 @@ const createDataLayerStore = <T extends DatumObject>(
         throw new Error("Calculation manager not initialized");
       }
 
-      const affectedColumns = calculationManager.removeCalculation(
-        resultColumnName
-      );
+      const affectedColumns =
+        calculationManager.removeCalculation(resultColumnName);
 
       set((state) => {
         const newCalcColumnCache = { ...state.calcColumnCache };
@@ -791,6 +790,8 @@ export function DataLayerProvider<T extends DatumObject>({
 }: DataLayerProviderProps<T>) {
   const storeRef = useRef<DataLayerStore<T> | null>(null);
   const propsRef = useRef(props);
+  const nextData = props.data;
+  const nextSavedData = props.savedData;
   if (!storeRef.current) {
     storeRef.current = createDataLayerStore<T>(props);
   }
@@ -798,24 +799,24 @@ export function DataLayerProvider<T extends DatumObject>({
   useEffect(() => {
     const store = storeRef.current!;
     const previousProps = propsRef.current;
-    const dataChanged = previousProps.data !== props.data;
-    const savedDataChanged = previousProps.savedData !== props.savedData;
+    const dataChanged = previousProps.data !== nextData;
+    const savedDataChanged = previousProps.savedData !== nextSavedData;
 
     if (dataChanged) {
-      store.getState().setData(props.data ?? []);
-      if (props.savedData) {
-        store.getState().restoreFromStructure(props.savedData);
+      store.getState().setData(nextData ?? []);
+      if (nextSavedData) {
+        store.getState().restoreFromStructure(nextSavedData);
       }
     } else if (savedDataChanged) {
-      if (props.savedData) {
-        store.getState().restoreFromStructure(props.savedData);
+      if (nextSavedData) {
+        store.getState().restoreFromStructure(nextSavedData);
       } else {
         store.getState().setData(store.getState().data);
       }
     }
 
-    propsRef.current = props;
-  }, [props.data, props.savedData]);
+    propsRef.current = { data: nextData, savedData: nextSavedData };
+  }, [nextData, nextSavedData]);
 
   return (
     <DataLayerContext.Provider value={storeRef.current}>
