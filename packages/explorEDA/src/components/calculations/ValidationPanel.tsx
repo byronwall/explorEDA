@@ -42,7 +42,7 @@ export function ValidationPanel({ expression, errors }: ValidationPanelProps) {
               {error.location && (
                 <pre className="mt-2 text-sm bg-muted p-2 rounded overflow-auto">
                   {expression.expression.slice(0, error.location.start)}
-                  <span className="bg-red-500/20 px-1">
+                  <span className="bg-destructive/10 px-1">
                     {expression.expression.slice(
                       error.location.start,
                       error.location.end
