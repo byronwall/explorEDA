@@ -49,14 +49,29 @@ export function calculateColumnStatistics(
     }
 
     const sorted = [...numericValues].sort((a, b) => a - b);
-    const min = sorted[0];
-    const max = sorted[sorted.length - 1];
+    const min = sorted.at(0);
+    const max = sorted.at(-1);
+    if (min === undefined || max === undefined) {
+      return {
+        dataType,
+        totalCount,
+        uniqueCount,
+        nullCount,
+      };
+    }
     const sum = numericValues.reduce((a, b) => a + b, 0);
     const mean = sum / numericValues.length;
-    const median =
-      sorted.length % 2 === 0
-        ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
-        : sorted[Math.floor(sorted.length / 2)];
+    const lower = sorted[Math.floor((sorted.length - 1) / 2)];
+    const upper = sorted[Math.floor(sorted.length / 2)];
+    if (lower === undefined || upper === undefined) {
+      return {
+        dataType,
+        totalCount,
+        uniqueCount,
+        nullCount,
+      };
+    }
+    const median = (lower + upper) / 2;
     const squaredDiffs = numericValues.map((v) => Math.pow(v - mean, 2));
     const variance =
       squaredDiffs.reduce((a, b) => a + b, 0) / numericValues.length;

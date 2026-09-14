@@ -20,7 +20,7 @@ export function TabContainer({
 }: TabContainerProps) {
   return (
     <Tabs
-      defaultValue={activeTab || tabs[0].value}
+      defaultValue={activeTab || tabs[0]?.value}
       onValueChange={onTabChange}
       className="w-full"
     >

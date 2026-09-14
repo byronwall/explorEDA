@@ -5,6 +5,7 @@ import {
   NumericalColorScale,
   UseColorScalesReturn,
 } from "@/types/ColorScaleTypes";
+import type { datum } from "@/types/ChartTypes";
 import {
   interpolateCool,
   interpolateInferno,
@@ -16,6 +17,7 @@ import {
   schemeSet3,
 } from "d3-scale-chromatic";
 import { scaleOrdinal, scaleSequential } from "d3-scale";
+import type { ScaleOrdinal, ScaleSequential } from "d3-scale";
 
 import { useCallback, useMemo } from "react";
 
@@ -42,7 +44,10 @@ export function useColorScales(): UseColorScalesReturn {
 
   // Memoized d3 scale objects
   const d3Scales = useMemo(() => {
-    const scales = new Map();
+    const scales = new Map<
+      string,
+      ScaleSequential<string> | ScaleOrdinal<string, string>
+    >();
 
     colorScales.forEach((scale) => {
       if (scale.type === "numerical") {
@@ -76,7 +81,7 @@ export function useColorScales(): UseColorScalesReturn {
   const getColorForValue = useCallback(
     (
       scaleId: string | undefined,
-      value: string | number,
+      value: datum,
       defaultColor: string = "#000000"
     ): string => {
       if (!scaleId) {
@@ -96,7 +101,10 @@ export function useColorScales(): UseColorScalesReturn {
       }
 
       try {
-        return d3Scale(value);
+        if (scale.type === "numerical") {
+          return (d3Scale as ScaleSequential<string>)(Number(value));
+        }
+        return (d3Scale as ScaleOrdinal<string, string>)(String(value));
       } catch (error) {
         console.error("Error getting color for value", {
           scaleId,
@@ -132,10 +140,13 @@ export function useColorScales(): UseColorScalesReturn {
     name: string,
     values: string[]
   ): ColorScaleType => {
-    const defaultPalette = DEFAULT_CATEGORICAL_PALETTES[0].colors;
+    const defaultPalette = DEFAULT_CATEGORICAL_PALETTES[0]?.colors ?? [];
     const mapping = new Map<string, string>();
     values.forEach((value, i) => {
-      mapping.set(value, defaultPalette[i % defaultPalette.length]);
+      mapping.set(
+        value,
+        defaultPalette[i % defaultPalette.length] ?? "#000000"
+      );
     });
 
     const scale: Omit<CategoricalColorScale, "id"> = {
@@ -148,7 +159,10 @@ export function useColorScales(): UseColorScalesReturn {
   };
 
   const getD3Scale = (scaleId: string) => {
-    return d3Scales.get(scaleId);
+    return (
+      d3Scales.get(scaleId) ??
+      scaleSequential(interpolateViridis).domain([0, 1])
+    );
   };
 
   const getOrCreateScaleForField = (field: string, name?: string): string => {

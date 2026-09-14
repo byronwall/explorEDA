@@ -40,7 +40,8 @@ export function reduceDataPoints(
 
   // If all x values are the same, return just one point
   if (xExtent.min === xExtent.max) {
-    return [{ ...data[0], type: "start" as const }];
+    const firstPoint = data[0];
+    return firstPoint ? [{ ...firstPoint, type: "start" as const }] : [];
   }
 
   const buckets: ReducedDataPoint[][] = Array(validBuckets)
@@ -55,7 +56,7 @@ export function reduceDataPoints(
       ),
       validBuckets - 1
     );
-    buckets[bucketIndex].push({ ...point, type: "start" });
+    buckets[bucketIndex]?.push({ ...point, type: "start" });
   });
 
   // Process each bucket to find min, max, and start points
@@ -66,17 +67,21 @@ export function reduceDataPoints(
     }
 
     // Always include the first point as start
-    result.push({ ...bucket[0], type: "start" });
+    const firstPoint = bucket[0];
+    if (!firstPoint) {
+      return;
+    }
+    result.push({ ...firstPoint, type: "start" });
 
     if (bucket.length > 1) {
       const minPoint = bucket.reduce((min, p) => (p.y < min.y ? p : min));
       const maxPoint = bucket.reduce((max, p) => (p.y > max.y ? p : max));
 
       // Only add min/max if they're different from the start point
-      if (minPoint !== bucket[0]) {
+      if (minPoint !== firstPoint) {
         result.push({ ...minPoint, type: "min" });
       }
-      if (maxPoint !== bucket[0] && maxPoint !== minPoint) {
+      if (maxPoint !== firstPoint && maxPoint !== minPoint) {
         result.push({ ...maxPoint, type: "max" });
       }
     }
