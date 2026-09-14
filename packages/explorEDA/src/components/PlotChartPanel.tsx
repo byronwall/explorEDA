@@ -53,7 +53,9 @@ export function PlotChartPanel({
   const dataFields = getChartFields(settings);
 
   const handleViewData = () => {
-    if (dataFields.length === 0) return;
+    if (dataFields.length === 0) {
+      return;
+    }
     const dataTable = dataTableDefinition.createDefaultSettings({
       ...settings.layout,
       y: settings.layout.y + settings.layout.h,
