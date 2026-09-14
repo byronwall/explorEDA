@@ -56,6 +56,13 @@ vi.mock("@/providers/DataLayerProvider", () => ({
   useDataLayer: (selector: (state: unknown) => unknown) => mockUseDataLayer(selector),
 }));
 
+const renderBody = (settings: DataTableSettings) =>
+  render(
+    <table>
+      <DataTableBody settings={settings} />
+    </table>
+  );
+
 describe("DataTableBody", () => {
   beforeEach(() => {
     mockUseDataLayer.mockImplementation((selector: (state: unknown) => unknown) => {
@@ -70,7 +77,7 @@ describe("DataTableBody", () => {
   });
 
   it("renders all rows when no filters are applied", () => {
-    render(<DataTableBody settings={mockSettings} />);
+    renderBody(mockSettings);
 
     expect(screen.getByText("John")).toBeInTheDocument();
     expect(screen.getByText("Jane")).toBeInTheDocument();
@@ -83,7 +90,7 @@ describe("DataTableBody", () => {
       globalSearch: "John",
     };
 
-    render(<DataTableBody settings={settingsWithSearch} />);
+    renderBody(settingsWithSearch);
 
     expect(screen.getByText("John")).toBeInTheDocument();
     expect(screen.queryByText("Jane")).not.toBeInTheDocument();
@@ -98,7 +105,7 @@ describe("DataTableBody", () => {
       ],
     };
 
-    render(<DataTableBody settings={settingsWithFilter} />);
+    renderBody(settingsWithFilter);
 
     expect(screen.getByText("John")).toBeInTheDocument();
     expect(screen.queryByText("Jane")).not.toBeInTheDocument();
@@ -112,7 +119,7 @@ describe("DataTableBody", () => {
       sortDirection: "desc" as const,
     };
 
-    render(<DataTableBody settings={settingsWithSort} />);
+    renderBody(settingsWithSort);
 
     const rows = screen.getAllByRole("row");
     expect(rows[0]).toHaveTextContent("35"); // First row should be Bob (age 35)
@@ -127,7 +134,7 @@ describe("DataTableBody", () => {
       currentPage: 2,
     };
 
-    render(<DataTableBody settings={settingsWithPagination} />);
+    renderBody(settingsWithPagination);
 
     expect(screen.getByText("Bob")).toBeInTheDocument();
     expect(screen.queryByText("John")).not.toBeInTheDocument();
@@ -135,7 +142,7 @@ describe("DataTableBody", () => {
   });
 
   it("respects column widths", () => {
-    render(<DataTableBody settings={mockSettings} />);
+    renderBody(mockSettings);
 
     const cells = screen.getAllByRole("cell");
     expect(cells[0]).toHaveStyle({ width: "200px" });
@@ -151,14 +158,14 @@ describe("DataTableBody", () => {
       ],
     };
 
-    render(<DataTableBody settings={settingsWithStableIds} />);
+    renderBody(settingsWithStableIds);
 
     expect(screen.getByText("John")).toBeInTheDocument();
     expect(screen.getByText("30")).toBeInTheDocument();
   });
 
   it("shows an empty state when no rows match", () => {
-    render(<DataTableBody settings={{ ...mockSettings, globalSearch: "missing" }} />);
+    renderBody({ ...mockSettings, globalSearch: "missing" });
 
     expect(screen.getByText("No rows match the current filters.")).toBeInTheDocument();
   });

@@ -56,6 +56,13 @@ vi.mock("@/providers/DataLayerProvider", () => ({
   useDataLayer: (selector: (state: unknown) => unknown) => mockUseDataLayer(selector),
 }));
 
+const renderHeader = (settings: DataTableSettings) =>
+  render(
+    <table>
+      <DataTableHeader settings={settings} />
+    </table>
+  );
+
 describe("DataTableHeader", () => {
   beforeEach(() => {
     mockUseDataLayer.mockImplementation((selector: (state: unknown) => unknown) => {
@@ -73,7 +80,7 @@ describe("DataTableHeader", () => {
   });
 
   it("renders column headers", () => {
-    render(<DataTableHeader settings={mockSettings} />);
+    renderHeader(mockSettings);
 
     expect(screen.getByText("name")).toBeInTheDocument();
     expect(screen.getByText("age")).toBeInTheDocument();
@@ -88,7 +95,7 @@ describe("DataTableHeader", () => {
       return null;
     });
 
-    render(<DataTableHeader settings={mockSettings} />);
+    renderHeader(mockSettings);
 
     const nameHeader = screen.getByText("name");
     fireEvent.click(nameHeader);
@@ -117,7 +124,7 @@ describe("DataTableHeader", () => {
       sortDirection: "asc" as const,
     };
 
-    render(<DataTableHeader settings={settingsWithSort} />);
+    renderHeader(settingsWithSort);
 
     const nameHeader = screen.getByText("name");
     fireEvent.click(nameHeader);
@@ -136,7 +143,7 @@ describe("DataTableHeader", () => {
       return null;
     });
 
-    render(<DataTableHeader settings={mockSettings} />);
+    renderHeader(mockSettings);
     fireEvent.click(screen.getByRole("button", { name: "Filter name" }));
 
     expect(updateChart).not.toHaveBeenCalled();
@@ -152,7 +159,7 @@ describe("DataTableHeader", () => {
       return null;
     });
 
-    render(<DataTableHeader settings={mockSettings} />);
+    renderHeader(mockSettings);
 
     const resizeHandle = screen.getAllByRole("separator")[0]!;
     fireEvent.mouseDown(resizeHandle, { clientX: 0 });
@@ -181,7 +188,7 @@ describe("DataTableHeader", () => {
       return null;
     });
 
-    render(<DataTableHeader settings={mockSettings} />);
+    renderHeader(mockSettings);
 
     const resizeHandle = screen.getAllByRole("separator")[0]!;
     fireEvent.mouseDown(resizeHandle, { clientX: 0 });
