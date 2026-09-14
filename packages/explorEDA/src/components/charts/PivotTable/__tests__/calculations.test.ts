@@ -1,6 +1,14 @@
-import { describe, expect, it } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { beforeAll, describe, expect, it } from "vitest";
+import { registerAllCharts } from "@/charts/registerAllCharts";
+import { ChartRenderer } from "@/components/charts/ChartRenderer";
+import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
+import { SavedDataStructure } from "@/types/SavedDataStructure";
+import { createElement } from "react";
 import { calculatePivotData } from "../utils/calculations";
 import { pivotTableDefinition, PivotTableSettings } from "../definition";
+
+beforeAll(() => registerAllCharts());
 
 const settings = (overrides: Partial<PivotTableSettings>) =>
   ({
@@ -75,5 +83,59 @@ describe("pivotTableDefinition.validateSettings", () => {
         })
       )
     ).toBe(true);
+  });
+});
+
+function SavedPivotProbe() {
+  const chart = useDataLayer((state) => state.charts[0]);
+
+  return chart
+    ? createElement(ChartRenderer, { settings: chart, width: 400, height: 300 })
+    : null;
+}
+
+describe("PivotTable rendering", () => {
+  it("shows a recoverable message for a saved field missing from the dataset", () => {
+    const chart = pivotTableDefinition.createDefaultSettings({
+      x: 0,
+      y: 0,
+      w: 4,
+      h: 4,
+    });
+    chart.rowFields = ["missing"];
+    chart.valueFields = [{ field: "amount", aggregation: "sum" }];
+
+    const savedData = {
+      charts: [chart],
+      calculations: [],
+      gridSettings: {
+        columnCount: 12,
+        rowHeight: 100,
+        containerPadding: 10,
+        showBackgroundMarkers: true,
+      },
+      metadata: {
+        name: "Test",
+        version: 1,
+        createdAt: "2025-01-01T00:00:00.000Z",
+        modifiedAt: "2025-01-01T00:00:00.000Z",
+      },
+      colorScales: [],
+    } satisfies SavedDataStructure;
+
+    render(
+      createElement(
+        DataLayerProvider,
+        { data: [{ group: "A", amount: 3 }], savedData },
+        createElement(SavedPivotProbe)
+      )
+    );
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "The current data does not include: missing"
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Update this chart's settings"
+    );
   });
 });
