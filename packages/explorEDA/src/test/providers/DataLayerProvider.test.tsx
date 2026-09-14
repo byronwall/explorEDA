@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeAll, describe, expect, it } from "vitest";
-import { getChartDefinition, registerAllCharts } from "../../charts/registry";
+import { getChartDefinition } from "../../charts/registry";
+import { registerAllCharts } from "../../charts/registerAllCharts";
 import { parseExpression } from "../../lib/calculations/parser/semantics";
 import {
   DataLayerProvider,

@@ -1,5 +1,5 @@
 import { ChartDefinition } from "@/types/ChartTypes";
-import { DEFAULT_3D_SCATTER_SETTINGS } from "@/utils/defaultSettings";
+import { DEFAULT_3D_SCATTER_SETTINGS } from "./defaultSettings";
 import { Box } from "lucide-react";
 
 import { ThreeDScatterChart } from "./ThreeDScatterChart";

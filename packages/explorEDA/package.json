@@ -17,6 +17,7 @@
     "test": "vitest run",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
+    "verify:lean": "node scripts/verify-lean-bundle.mjs",
     "prettier": "prettier --write ./src",
     "eslint": "eslint . --max-warnings=0"
   },
@@ -29,6 +30,16 @@
       "types": "./dist/ExplorEda.d.ts",
       "require": "./dist/ExplorEda.cjs",
       "import": "./dist/ExplorEda.js"
+    },
+    "./core": {
+      "types": "./dist/core.d.ts",
+      "require": "./dist/core.cjs",
+      "import": "./dist/core.js"
+    },
+    "./charts/*": {
+      "types": "./dist/charts/*.d.ts",
+      "require": "./dist/charts/*.cjs",
+      "import": "./dist/charts/*.js"
     },
     "./dist/ExplorEda.css": "./dist/ExplorEda.css"
   },

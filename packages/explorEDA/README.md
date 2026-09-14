@@ -15,6 +15,17 @@ const savedData: SavedDataStructure | undefined = undefined;
 The package entry point exports `ExplorEda` and the `SavedDataStructure` type.
 The CSS file is available at `exploreda/dist/ExplorEda.css`.
 
+For a smaller custom integration, import the registry and only the charts you
+need. Registration is explicit, so unused charts and their dependencies stay
+out of the consumer bundle.
+
+```tsx
+import { chartRegistry } from "exploreda/core";
+import { barChartDefinition } from "exploreda/charts/bar";
+
+chartRegistry.register(barChartDefinition);
+```
+
 `data` supplies the rows. `savedData` optionally restores chart, calculation,
 grid, metadata, and color-scale state. Pass new references when either value
 changes; in-place mutations are not observed.

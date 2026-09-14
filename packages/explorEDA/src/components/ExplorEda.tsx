@@ -2,7 +2,7 @@ import type { DatumObject } from "@/providers/DataLayerProvider";
 import { DataLayerProvider } from "@/providers/DataLayerProvider";
 import { SavedDataStructure } from "@/types/SavedDataStructure";
 import { PlotManager } from "./PlotManager";
-import { registerAllCharts } from "@/charts/registry";
+import { registerAllCharts } from "@/charts/registerAllCharts";
 import { Toaster } from "./ui/sonner";
 import { GlobalAlertDialog } from "./GlobalAlertDialog";
 

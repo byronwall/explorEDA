@@ -1,5 +1,4 @@
 import { getChartDefinition } from "@/charts/registry";
-import { ThreeDScatterSettings } from "@/components/charts/ThreeDScatter/types";
 import {
   AxisSettings,
   BaseChartSettings,
@@ -8,7 +7,6 @@ import {
   RowChartSettings,
   WrapFacetSettings,
 } from "@/types/ChartTypes";
-import { Vector3 } from "three";
 import { Filter } from "@/types/FilterTypes";
 import { DataTableSettings } from "@/components/charts/DataTable/definition";
 import { PivotTableSettings } from "@/components/charts/PivotTable/definition";
@@ -76,25 +74,6 @@ export const DEFAULT_SCATTER_SETTINGS: Omit<ScatterPlotSettings, "id"> = {
   xField: "",
   yField: "",
   filters: [],
-};
-
-export const DEFAULT_3D_SCATTER_SETTINGS: Omit<ThreeDScatterSettings, "id"> = {
-  ...DEFAULT_CHART_SETTINGS,
-  type: "3d-scatter",
-  xField: "",
-  yField: "",
-  zField: "",
-  colorField: undefined,
-  sizeField: undefined,
-  cameraPosition: new Vector3(10, 10, 10),
-  cameraTarget: new Vector3(0, 0, 0),
-  pointSize: 0.1,
-  pointOpacity: 0.8,
-  showGrid: true,
-  showAxes: true,
-  xAxis: { ...DEFAULT_AXIS_SETTINGS, zoomLevel: 1 },
-  yAxis: { ...DEFAULT_AXIS_SETTINGS, zoomLevel: 1 },
-  zAxis: { ...DEFAULT_AXIS_SETTINGS, zoomLevel: 1 },
 };
 
 export const DEFAULT_SUMMARY_SETTINGS: Omit<SummaryTableSettings, "id"> = {

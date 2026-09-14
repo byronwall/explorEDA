@@ -20,7 +20,6 @@ import { SavedDataStructure } from "@/types/SavedDataStructure";
 import { saveProject } from "@/utils/localStorage";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { createStore, useStore } from "zustand";
-import * as THREE from "three";
 import {
   IdType,
   initializeData,
@@ -31,6 +30,14 @@ type DatumObject = { [key: string]: datum };
 export type { DatumObject };
 export type { IdType } from "./lib/dataLayerState";
 
+const toVector3 = ({ x, y, z }: { x: number; y: number; z: number }) => ({
+  x,
+  y,
+  z,
+  toArray: () => [x, y, z],
+  clone: () => toVector3({ x, y, z }),
+});
+
 function toRuntimeChart(chart: SavedChartSettings): ChartSettings {
   if (chart.type !== "3d-scatter") {
     return chart as ChartSettings;
@@ -38,16 +45,8 @@ function toRuntimeChart(chart: SavedChartSettings): ChartSettings {
 
   return {
     ...chart,
-    cameraPosition: new THREE.Vector3(
-      chart.cameraPosition.x,
-      chart.cameraPosition.y,
-      chart.cameraPosition.z
-    ),
-    cameraTarget: new THREE.Vector3(
-      chart.cameraTarget.x,
-      chart.cameraTarget.y,
-      chart.cameraTarget.z
-    ),
+    cameraPosition: toVector3(chart.cameraPosition),
+    cameraTarget: toVector3(chart.cameraTarget),
   } as ChartSettings;
 }
 
