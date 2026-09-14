@@ -4,12 +4,17 @@ import { ExampleData, examples } from "@/demos/examples";
 import { parseCsvData } from "./csvParser";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { CsvUpload } from "./CsvUpload";
 import { ExampleSelector } from "./ExampleSelector";
-import { ExplorEda } from "exploreda";
+
+const ExplorEda = lazy(() =>
+  import("exploreda").then(({ ExplorEda: Workspace }) => ({
+    default: Workspace,
+  }))
+);
 
 export type DatumObject = {
   [key: string]: string | number | boolean | undefined;
@@ -176,11 +181,22 @@ export function LandingPage() {
               exit={{ opacity: 0, y: -20 }}
               className="w-full max-w-[1200px] mx-auto"
             >
-              {isCsvMode ? (
-                <ExplorEda data={csvData} savedData={undefined} />
-              ) : (
-                <ExplorEda data={exampleData} savedData={example?.savedData} />
-              )}
+              <Suspense
+                fallback={
+                  <div role="status" aria-live="polite">
+                    Loading workspace…
+                  </div>
+                }
+              >
+                {isCsvMode ? (
+                  <ExplorEda data={csvData} savedData={undefined} />
+                ) : (
+                  <ExplorEda
+                    data={exampleData}
+                    savedData={example?.savedData}
+                  />
+                )}
+              </Suspense>
             </motion.div>
           )}
         </AnimatePresence>
