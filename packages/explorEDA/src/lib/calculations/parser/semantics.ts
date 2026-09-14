@@ -151,11 +151,15 @@ semantics.addOperation<ParsedExpression>("eval", {
   PowerExpr(expr: Node): ParsedExpression {
     return expr.eval();
   },
-  TernaryExpr(...nodes: Node[]): ParsedExpression {
-    const [condition, , trueBranch, , falseBranch] = nodes;
-    if (!condition || !trueBranch || !falseBranch) {
-      throw new Error("Invalid ternary expression");
-    }
+  TernaryExpr(
+    condition: Node,
+    _q: Node,
+    trueBranch: Node,
+    _c: Node,
+    falseBranch: Node
+  ): ParsedExpression {
+    void _q;
+    void _c;
     return {
       type: "ternary",
       condition: condition.eval(),
@@ -165,11 +169,17 @@ semantics.addOperation<ParsedExpression>("eval", {
       name: `${condition.sourceString} ? ${trueBranch.sourceString} : ${falseBranch.sourceString}`,
     };
   },
-  IfExpr(...nodes: Node[]): ParsedExpression {
-    const [, condition, , trueBranch, , falseBranch] = nodes;
-    if (!condition || !trueBranch || !falseBranch) {
-      throw new Error("Invalid if expression");
-    }
+  IfExpr(
+    _if: Node,
+    condition: Node,
+    _then: Node,
+    trueBranch: Node,
+    _else: Node,
+    falseBranch: Node
+  ): ParsedExpression {
+    void _if;
+    void _then;
+    void _else;
     return {
       type: "ternary",
       condition: condition.eval(),
@@ -187,50 +197,63 @@ semantics.addOperation<ParsedExpression>("eval", {
       operand: expr.eval(),
     };
   },
-  FunctionCall(...nodes: Node[]): ParsedExpression {
-    const [name, , args] = nodes;
-    if (!name || !args) {
-      throw new Error("Invalid function call");
-    }
+  FunctionCall(
+    name: Node,
+    _open: Node,
+    args: Node,
+    _close: Node
+  ): ParsedExpression {
+    void _open;
+    void _close;
     return {
       type: "function",
       name: name.sourceString,
       arguments: args.asIteration().children.map((arg: Node) => arg.eval()),
     };
   },
-  ParenTerm(...nodes: Node[]): ParsedExpression {
-    return nodes[1]!.eval();
+  ParenTerm(_open: Node, expr: Node, _close: Node): ParsedExpression {
+    void _open;
+    void _close;
+    return expr.eval();
   },
-  number(): ParsedExpression {
+  number(digits: Node, _dot: Node, decimals: Node): ParsedExpression {
+    void digits;
+    void _dot;
+    void decimals;
     return {
       type: "literal",
       value: parseFloat(this.sourceString),
       expression: this.sourceString,
     };
   },
-  string(...nodes: Node[]): ParsedExpression {
-    const chars = nodes[1]!;
+  string(_open: Node, chars: Node, _close: Node): ParsedExpression {
+    void _open;
+    void _close;
     return {
       type: "literal",
       value: chars.sourceString.replace(/\\(.)/g, "$1"),
       expression: chars.sourceString,
     };
   },
-  boolean(): ParsedExpression {
+  boolean(_value: Node): ParsedExpression {
+    void _value;
     return {
       type: "literal",
       value: this.sourceString === "true",
       expression: this.sourceString,
     };
   },
-  null(): ParsedExpression {
+  null(_value: Node): ParsedExpression {
+    void _value;
     return {
       type: "literal",
       value: null,
       expression: "null",
     };
   },
-  identifier(): ParsedExpression {
+  identifier(first: Node, rest: Node): ParsedExpression {
+    void first;
+    void rest;
     return {
       type: "identifier",
       name: this.sourceString,
