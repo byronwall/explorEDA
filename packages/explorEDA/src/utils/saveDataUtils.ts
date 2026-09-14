@@ -10,20 +10,6 @@ export async function saveToClipboard(data: SavedDataStructure): Promise<void> {
   }
 }
 
-export async function loadFromClipboard(): Promise<SavedDataStructure | null> {
-  try {
-    const text = await navigator.clipboard.readText();
-    const data = JSON.parse(text);
-    if (validateSavedData(data)) {
-      return migrateDataVersion(data);
-    }
-    return null;
-  } catch (error) {
-    console.error("Error loading from clipboard:", error);
-    return null;
-  }
-}
-
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }

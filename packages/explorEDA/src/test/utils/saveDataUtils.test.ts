@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   saveToClipboard,
-  loadFromClipboard,
   validateSavedData,
   migrateDataVersion,
 } from "@/utils/saveDataUtils";
@@ -137,39 +136,6 @@ describe("saveDataUtils", () => {
       await expect(saveToClipboard(mockValidData)).rejects.toThrow(
         "Failed to save data to clipboard"
       );
-    });
-  });
-
-  describe("loadFromClipboard", () => {
-    beforeEach(() => {
-      // Mock clipboard API
-      Object.assign(navigator, {
-        clipboard: {
-          readText: vi.fn(),
-        },
-      });
-    });
-
-    it("should return parsed data when clipboard contains valid JSON", async () => {
-      (navigator.clipboard.readText as any).mockResolvedValue(
-        JSON.stringify(mockValidData)
-      );
-      const result = await loadFromClipboard();
-      expect(result).toEqual(mockValidData);
-    });
-
-    it("should return null when clipboard contains invalid JSON", async () => {
-      (navigator.clipboard.readText as any).mockResolvedValue("invalid json");
-      const result = await loadFromClipboard();
-      expect(result).toBeNull();
-    });
-
-    it("should return null when clipboard contains invalid data structure", async () => {
-      (navigator.clipboard.readText as any).mockResolvedValue(
-        JSON.stringify({ invalid: "data" })
-      );
-      const result = await loadFromClipboard();
-      expect(result).toBeNull();
     });
   });
 
