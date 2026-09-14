@@ -1,5 +1,5 @@
 import { demoSettings } from "@/demos/lorenz";
-import { SavedDataStructure } from "@/types/SavedDataTypes";
+import { SavedDataStructure } from "exploreda";
 import { BarChart3, Gamepad2, Globe, LucideIcon, Palette } from "lucide-react";
 import { boxPlotSettings } from "./boxPlotSettings";
 import { categoricalChartSettings } from "./categoricalChartSettings";
