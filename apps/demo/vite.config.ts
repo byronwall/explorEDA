@@ -24,7 +24,21 @@ export default defineConfig({
           ) {
             return "react";
           }
-          if (id.includes("/node_modules/three/")) return "three";
+          if (id.includes("/node_modules/three/")) {
+            return "three";
+          }
+          if (id.includes("/node_modules/@dnd-kit/")) {
+            return "dnd-kit";
+          }
+          if (id.includes("/node_modules/crossfilter2/")) {
+            return "crossfilter";
+          }
+          if (id.includes("/node_modules/ohm-js/")) {
+            return "ohm";
+          }
+          if (id.includes("/node_modules/d3-")) {
+            return "d3";
+          }
           if (
             id.includes("/node_modules/@tiptap/") ||
             id.includes("/node_modules/prosemirror-")
