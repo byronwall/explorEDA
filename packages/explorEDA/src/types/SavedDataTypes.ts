@@ -43,5 +43,5 @@ export type SerializedThreeDScatterSettings = Omit<
 };
 
 export type SavedChartSettings =
-  | ChartSettings
+  | Exclude<ChartSettings, ThreeDScatterSettings>
   | SerializedThreeDScatterSettings;

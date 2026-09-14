@@ -9,16 +9,61 @@ import { boxPlotDefinition } from "@/components/charts/BoxPlot/definition";
 import { colorLegendDefinition } from "@/components/charts/ColorLegend/definition";
 import { lineChartDefinition } from "@/components/charts/LineChart/definition";
 import {
-  BaseChartSettings,
   ChartDefinition,
   ChartSettings,
+  ChartType,
+  ChartSettingsPanelProps,
+  BaseChartProps,
 } from "@/types/ChartTypes";
 import { rowChartDefinition } from "../components/charts/RowChart/definition";
+import { createElement } from "react";
 
-type ChartType = string;
+function isSettingsForType<T extends ChartSettings>(
+  settings: ChartSettings,
+  type: T["type"]
+): settings is T {
+  return settings.type === type;
+}
+
+function registerable<T extends ChartSettings>(
+  definition: ChartDefinition<T>
+): ChartDefinition<ChartSettings> {
+  const component = (props: BaseChartProps<ChartSettings>) => {
+    if (!isSettingsForType<T>(props.settings, definition.type)) {
+      return null;
+    }
+    return createElement(definition.component, {
+      ...props,
+      settings: props.settings,
+    });
+  };
+  const settingsPanel = (props: ChartSettingsPanelProps<ChartSettings>) => {
+    if (!isSettingsForType<T>(props.settings, definition.type)) {
+      return null;
+    }
+    return createElement(definition.settingsPanel, {
+      ...props,
+      settings: props.settings,
+    });
+  };
+
+  return {
+    ...definition,
+    component,
+    settingsPanel,
+    createDefaultSettings: definition.createDefaultSettings,
+    validateSettings: (settings) =>
+      isSettingsForType<T>(settings, definition.type) &&
+      definition.validateSettings(settings),
+    getFilterFunction: (settings, fieldGetter) =>
+      isSettingsForType<T>(settings, definition.type)
+        ? definition.getFilterFunction(settings, fieldGetter)
+        : () => false,
+  };
+}
 
 export interface ChartRegistry {
-  register<TSettings extends BaseChartSettings>(
+  register<TSettings extends ChartSettings>(
     definition: ChartDefinition<TSettings>
   ): void;
   get(type: ChartType): ChartDefinition<ChartSettings> | undefined;
@@ -29,17 +74,14 @@ export interface ChartRegistry {
 export class ChartRegistryImpl implements ChartRegistry {
   private definitions = new Map<ChartType, ChartDefinition<ChartSettings>>();
 
-  register<TSettings extends BaseChartSettings>(
+  register<TSettings extends ChartSettings>(
     definition: ChartDefinition<TSettings>
   ): void {
     if (this.definitions.has(definition.type)) {
       console.error(`Chart type ${definition.type} is already registered`);
       return;
     }
-    this.definitions.set(
-      definition.type,
-      definition as unknown as ChartDefinition<ChartSettings>
-    );
+    this.definitions.set(definition.type, registerable(definition));
   }
 
   get(type: ChartType): ChartDefinition<ChartSettings> | undefined {
@@ -59,7 +101,7 @@ export class ChartRegistryImpl implements ChartRegistry {
 export const chartRegistry = new ChartRegistryImpl();
 
 // Helper functions
-export function registerChart<TSettings extends BaseChartSettings>(
+export function registerChart<TSettings extends ChartSettings>(
   definition: ChartDefinition<TSettings>
 ): void {
   chartRegistry.register(definition);

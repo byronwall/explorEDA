@@ -9,8 +9,8 @@ import { ScatterPlotSettings } from "@/components/charts/ScatterPlot/definition"
 import { SummaryTableSettings } from "@/components/charts/SummaryTable/definition";
 import { ThreeDScatterSettings } from "@/components/charts/ThreeDScatter/types";
 import { BoxPlotSettings } from "@/components/charts/BoxPlot/definition";
-import { LucideIcon } from "lucide-react";
 import { LineChartSettings } from "@/components/charts/LineChart/definition";
+import type { ColorLegendSettings } from "@/components/charts/ColorLegend/definition";
 
 export interface ChartLayout {
   x: number;
@@ -94,7 +94,11 @@ export type ChartSettings =
   | DataTableSettings
   | MarkdownSettings
   | BoxPlotSettings
-  | LineChartSettings;
+  | LineChartSettings
+  | ColorLegendSettings;
+
+export type ChartType = ChartSettings["type"];
+export type ScatterChartSettings = ScatterPlotSettings;
 
 export interface ChartSettingsPanelProps<
   TSettings extends BaseChartSettings = BaseChartSettings,
@@ -117,7 +121,7 @@ export interface ChartDefinition<
   TSettings extends BaseChartSettings = BaseChartSettings,
 > {
   // Metadata
-  type: string;
+  type: TSettings["type"];
   name: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;

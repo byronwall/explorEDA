@@ -24,6 +24,37 @@ describe("saveDataUtils", () => {
     },
     colorScales: [],
   };
+  const valid3dChart = {
+    id: "chart",
+    type: "3d-scatter",
+    title: "3D",
+    field: "x",
+    layout: { x: 0, y: 0, w: 1, h: 1 },
+    facet: {
+      enabled: false,
+      type: "wrap",
+      rowVariable: "",
+      columnCount: 2,
+    },
+    xAxis: { zoomLevel: 1 },
+    yAxis: { zoomLevel: 1 },
+    zAxis: { zoomLevel: 1 },
+    margin: { top: 20, right: 20, bottom: 20, left: 20 },
+    filters: [],
+    xAxisLabel: "",
+    yAxisLabel: "",
+    xGridLines: 5,
+    yGridLines: 5,
+    xField: "x",
+    yField: "y",
+    zField: "z",
+    pointSize: 5,
+    pointOpacity: 0.8,
+    showGrid: true,
+    showAxes: true,
+    cameraPosition: { x: 1, y: 2, z: 3 },
+    cameraTarget: { x: 0, y: 0, z: 0 },
+  };
 
   describe("validateSavedData", () => {
     it("should return true for valid data", () => {
@@ -90,23 +121,34 @@ describe("saveDataUtils", () => {
       ).toBe(false);
     });
 
-    it("accepts serialized 3D camera vectors", () => {
+    it("rejects unsupported chart types", () => {
+      expect(
+        validateSavedData({
+          ...mockValidData,
+          charts: [{ ...valid3dChart, type: "unknown" }],
+        })
+      ).toBe(false);
+    });
+
+    it("rejects malformed nested chart settings", () => {
       expect(
         validateSavedData({
           ...mockValidData,
           charts: [
             {
-              id: "chart",
-              type: "3d-scatter",
-              title: "3D",
-              field: "x",
-              layout: { x: 0, y: 0, w: 1, h: 1 },
-              facet: { enabled: false, type: "wrap" },
-              filters: [],
-              cameraPosition: { x: 1, y: 2, z: 3 },
-              cameraTarget: { x: 0, y: 0, z: 0 },
+              ...valid3dChart,
+              cameraPosition: { x: "bad", y: 2, z: 3 },
             },
           ],
+        })
+      ).toBe(false);
+    });
+
+    it("accepts serialized 3D camera vectors", () => {
+      expect(
+        validateSavedData({
+          ...mockValidData,
+          charts: [valid3dChart],
         })
       ).toBe(true);
     });
