@@ -9,6 +9,11 @@ export async function parseCsvData(
       header: true,
       skipEmptyLines: true,
       complete: (results: Papa.ParseResult<DatumObject>) => {
+        const firstError = results.errors[0];
+        if (firstError) {
+          reject(new Error(firstError.message));
+          return;
+        }
         resolve(results.data);
       },
       dynamicTyping: true,
@@ -24,7 +29,7 @@ export async function parseCsvData(
         });
       }
     } catch (error) {
-      reject(error);
+      reject(error instanceof Error ? error : new Error("Failed to parse CSV file"));
     }
   });
 }

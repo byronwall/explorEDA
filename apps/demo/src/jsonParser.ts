@@ -1,26 +1,30 @@
 import { DatumObject } from "./LandingPage";
 
-function flattenObject(obj: any, prefix = ""): DatumObject {
+function flattenObject(obj: Record<string, unknown>, prefix = ""): DatumObject {
   return Object.keys(obj).reduce((acc: DatumObject, key: string) => {
     const value = obj[key];
     const newKey = prefix ? `${prefix}.${key}` : key;
 
     if (Array.isArray(value)) {
-      // Handle arrays - only process up to 3 items if they are objects
-      value.slice(0, 3).forEach((item, index) => {
+      value.forEach((item, index) => {
         if (typeof item === "object" && item !== null) {
-          const arrayFlattened = flattenObject(item, `${newKey}[${index}]`);
+          const arrayFlattened = flattenObject(
+            item as Record<string, unknown>,
+            `${newKey}[${index}]`
+          );
           Object.assign(acc, arrayFlattened);
         } else {
-          acc[`${newKey}[${index}]`] = item;
+          acc[`${newKey}[${index}]`] =
+            item === null ? undefined : (item as string | number | boolean);
         }
       });
     } else if (typeof value === "object" && value !== null) {
       // Handle nested objects
-      Object.assign(acc, flattenObject(value, newKey));
+      Object.assign(acc, flattenObject(value as Record<string, unknown>, newKey));
     } else {
       // Handle primitive values
-      acc[newKey] = value;
+      acc[newKey] =
+        value === null ? undefined : (value as string | number | boolean);
     }
 
     return acc;
@@ -35,7 +39,21 @@ export async function parseJsonData(file: File): Promise<DatumObject[]> {
       try {
         const jsonData = JSON.parse(event.target?.result as string);
 
-        // Handle both array and single object inputs
+        if (
+          !(
+            (Array.isArray(jsonData) &&
+              jsonData.every(
+                (item) =>
+                  typeof item === "object" && item !== null && !Array.isArray(item)
+              )) ||
+            (typeof jsonData === "object" &&
+              jsonData !== null &&
+              !Array.isArray(jsonData))
+          )
+        ) {
+          throw new Error("JSON must contain an object or an array of objects");
+        }
+
         const dataArray = Array.isArray(jsonData) ? jsonData : [jsonData];
 
         // Convert each object to flattened format
@@ -43,7 +61,9 @@ export async function parseJsonData(file: File): Promise<DatumObject[]> {
 
         resolve(flattenedData);
       } catch (error) {
-        reject(new Error("Failed to parse JSON file"));
+        reject(
+          error instanceof Error ? error : new Error("Failed to parse JSON file")
+        );
       }
     };
 
