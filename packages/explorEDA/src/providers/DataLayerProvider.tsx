@@ -477,9 +477,7 @@ const createDataLayerStore = <T extends DatumObject>(
           return calcColumnCache[field] as Record<string, datum>;
         }
 
-        // Otherwise, calculate the column data
-        // TODO: Implement calculation in the manager for whole column
-        // needs to account for dependencies
+        // Calculate the column and its dependencies.
         const resultMap = calculationManager.executeCalculation(calculation);
 
         // convert to Record<IdType, datum>
