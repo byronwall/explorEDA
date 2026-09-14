@@ -6,6 +6,7 @@ import {
   FilterX,
   GripVertical,
   Settings2,
+  Table2,
   X,
 } from "lucide-react";
 import { ChartRenderer } from "./charts/ChartRenderer";
@@ -15,7 +16,8 @@ import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { useAlertStore } from "@/stores/alertStore";
 import { useId } from "react";
-import { getChartSummary } from "./charts/chartAccessibility";
+import { getChartFields, getChartSummary } from "./charts/chartAccessibility";
+import { dataTableDefinition } from "./charts/DataTable/definition";
 
 interface PlotChartPanelProps {
   settings: ChartSettings;
@@ -33,6 +35,7 @@ export function PlotChartPanel({
   height,
 }: PlotChartPanelProps) {
   const clearFilter = useDataLayer((state) => state.clearFilter);
+  const addChart = useDataLayer((state) => state.addChart);
   const showAlert = useAlertStore((state) => state.showAlert);
   const titleId = useId();
   const descriptionId = useId();
@@ -44,6 +47,24 @@ export function PlotChartPanel({
     "markdown",
     "color-legend",
   ].includes(settings.type);
+  const isTableLike = ["data-table", "pivot", "summary"].includes(
+    settings.type
+  );
+  const dataFields = getChartFields(settings);
+
+  const handleViewData = () => {
+    if (dataFields.length === 0) return;
+    const dataTable = dataTableDefinition.createDefaultSettings({
+      ...settings.layout,
+      y: settings.layout.y + settings.layout.h,
+    });
+    dataTable.title = `${settings.title} data`;
+    dataTable.columns = dataFields.map((field) => ({ id: field, field }));
+    dataTable.filters = settings.filters.filter((filter) =>
+      dataFields.includes(filter.field)
+    );
+    addChart(dataTable);
+  };
 
   const handleDelete = async () => {
     const confirmed = await showAlert(
@@ -91,6 +112,17 @@ export function PlotChartPanel({
           >
             <Copy className="h-4 w-4" />
           </Button>
+          {!isTableLike && dataFields.length > 0 && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleViewData}
+              aria-label={`View data for ${settings.title}`}
+              title="View chart data"
+            >
+              <Table2 className="h-4 w-4" />
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="icon"
