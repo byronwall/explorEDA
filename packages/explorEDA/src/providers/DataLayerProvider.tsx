@@ -8,7 +8,7 @@ import {
   CalculationDefinition,
   CalculationManager,
 } from "@/lib/calculations/CalculationState";
-import { ChartSettings, datum } from "@/types/ChartTypes";
+import { ChartLayout, ChartSettings, datum } from "@/types/ChartTypes";
 import { ColorScaleType } from "@/types/ColorScaleTypes";
 import {
   GridSettings,
@@ -75,6 +75,7 @@ interface DataLayerState<T extends DatumObject> extends DataLayerProps<T> {
   removeChart: (chart: ChartSettings) => void;
   removeAllCharts: () => void;
   updateChart: (id: string, settings: Partial<ChartSettings>) => void;
+  updateChartLayouts: (layouts: Record<string, ChartLayout>) => void;
 
   // Color scale state
   colorScales: ColorScaleType[];
@@ -380,6 +381,15 @@ const createDataLayerStore = <T extends DatumObject>(
           chart.id === id ? updatedChart : chart
         ),
         liveItems: crossfilterWrapper.getAllData(),
+      }));
+    },
+
+    updateChartLayouts: (layouts) => {
+      set((state) => ({
+        charts: state.charts.map((chart) => {
+          const layout = layouts[chart.id];
+          return layout ? { ...chart, layout } : chart;
+        }),
       }));
     },
 

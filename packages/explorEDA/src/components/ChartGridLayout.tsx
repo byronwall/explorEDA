@@ -12,17 +12,16 @@ import React from "react";
 interface ChartGridLayoutProps {
   children: ReactNode;
   charts: ChartSettings[];
-  onLayoutChange: (layout: Layout[]) => void;
   containerWidth: number;
 }
 
 export function ChartGridLayout({
   children,
   charts,
-  onLayoutChange,
   containerWidth,
 }: ChartGridLayoutProps) {
   const gridSettings = useDataLayer((s) => s.gridSettings);
+  const updateChartLayouts = useDataLayer((s) => s.updateChartLayouts);
   const isNarrow = containerWidth > 0 && containerWidth < 640;
 
   const layout: Layout[] = charts.map((chart, index) => ({
@@ -36,6 +35,14 @@ export function ChartGridLayout({
     ...layout.map((chart) => (chart.y + chart.h) * gridSettings.rowHeight),
     400 // minimum height
   );
+
+  const handleLayoutChange = (newLayout: Layout[]) => {
+    updateChartLayouts(
+      Object.fromEntries(
+        newLayout.map(({ i, x, y, w, h }) => [i, { x, y, w, h }])
+      )
+    );
+  };
 
   return (
     <div className="relative w-full">
@@ -55,7 +62,7 @@ export function ChartGridLayout({
           gridSettings.containerPadding,
           gridSettings.containerPadding,
         ]}
-        onLayoutChange={isNarrow ? undefined : onLayoutChange}
+        onLayoutChange={isNarrow ? undefined : handleLayoutChange}
         draggableHandle=".drag-handle"
         isDraggable={!isNarrow}
         isResizable={!isNarrow}

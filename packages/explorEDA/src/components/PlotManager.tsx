@@ -16,7 +16,6 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import type { Layout } from "react-grid-layout";
 import { toast } from "sonner";
 import { ChartGridLayout } from "./ChartGridLayout";
 import { PlotChartPanel } from "./PlotChartPanel";
@@ -64,7 +63,6 @@ const gridToPixels = (
 
 export function PlotManager() {
   const charts = useDataLayer((state) => state.charts);
-  const updateChart = useDataLayer((state) => state.updateChart);
   const addChart = useDataLayer((state) => state.addChart);
   const removeChart = useDataLayer((state) => state.removeChart);
   const removeAllCharts = useDataLayer((state) => state.removeAllCharts);
@@ -96,22 +94,6 @@ export function PlotManager() {
     observer.observe(containerRef.current);
     return () => observer.disconnect();
   }, []);
-
-  const handleLayoutChange = (newLayout: Layout[]) => {
-    charts.forEach((chart) => {
-      const updatedLayout = newLayout.find((l) => l.i === chart.id);
-      if (updatedLayout) {
-        updateChart(chart.id, {
-          layout: {
-            x: updatedLayout.x,
-            y: updatedLayout.y,
-            w: updatedLayout.w,
-            h: updatedLayout.h,
-          },
-        });
-      }
-    });
-  };
 
   const chartGridSettings = {
     ...gridSettings,
@@ -260,11 +242,7 @@ export function PlotManager() {
 
       <Tabs value={activeTab} className="w-full">
         <TabsContent value="charts" className="mt-0">
-          <ChartGridLayout
-            charts={charts}
-            onLayoutChange={handleLayoutChange}
-            containerWidth={containerWidth}
-          >
+          <ChartGridLayout charts={charts} containerWidth={containerWidth}>
             {charts.map((chart) => {
               if (!chart.layout) {
                 return null;
