@@ -1,7 +1,13 @@
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { FacetAxisProvider } from "@/providers/FacetAxisProvider";
 import { ChartSettings } from "@/types/ChartTypes";
-import { Copy, FilterX, GripVertical, Settings2, X } from "lucide-react";
+import {
+  Copy,
+  FilterX,
+  GripVertical,
+  Settings2,
+  X,
+} from "lucide-react";
 import { ChartRenderer } from "./charts/ChartRenderer";
 import { FacetContainer } from "./charts/FacetRelated/FacetContainer";
 import { ChartSettingsContent } from "./ChartSettingsContent";
@@ -9,6 +15,7 @@ import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { useAlertStore } from "@/stores/alertStore";
 import { useId } from "react";
+import { getChartSummary } from "./charts/chartAccessibility";
 
 interface PlotChartPanelProps {
   settings: ChartSettings;
@@ -28,6 +35,15 @@ export function PlotChartPanel({
   const clearFilter = useDataLayer((state) => state.clearFilter);
   const showAlert = useAlertStore((state) => state.showAlert);
   const titleId = useId();
+  const descriptionId = useId();
+  const chartSummary = getChartSummary(settings);
+  const isGraphical = ![
+    "data-table",
+    "pivot",
+    "summary",
+    "markdown",
+    "color-legend",
+  ].includes(settings.type);
 
   const handleDelete = async () => {
     const confirmed = await showAlert(
@@ -49,6 +65,7 @@ export function PlotChartPanel({
       style={{ width: widthWithPadding, height: heightWithPadding }}
       role="region"
       aria-labelledby={titleId}
+      aria-describedby={descriptionId}
     >
       <div className="flex min-h-9 items-center justify-between gap-1 select-none px-2 py-1">
         <div className="drag-handle flex min-w-0 flex-1 cursor-move items-center gap-2">
@@ -109,7 +126,13 @@ export function PlotChartPanel({
           </Button>
         </div>
       </div>
-      <div className="min-h-0 flex-1">
+      <p id={descriptionId} className="sr-only">
+        {chartSummary}
+      </p>
+      <div
+        className="min-h-0 flex-1"
+        aria-hidden={isGraphical ? true : undefined}
+      >
         <FacetAxisProvider>
           {settings.facet?.enabled ? (
             <FacetContainer

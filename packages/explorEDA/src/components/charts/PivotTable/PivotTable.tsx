@@ -10,6 +10,7 @@ import { useGetLiveIds } from "../useGetLiveData";
 import { PivotCell, PivotHeader, PivotRow, CellKey } from "./types";
 import { applyFilter } from "@/hooks/applyFilter";
 import { PivotTableSettings } from "./definition";
+import { getChartSummary } from "../chartAccessibility";
 
 type PivotTableProps = BaseChartProps & {
   settings: PivotTableSettings;
@@ -190,6 +191,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
     >
       <div className="overflow-auto flex-1">
         <table className="w-full border-collapse relative">
+          <caption className="sr-only">{getChartSummary(settings)}</caption>
           <thead className="sticky top-0 bg-background z-40">
             {/* First row: Row field headers and column field headers */}
             <tr>

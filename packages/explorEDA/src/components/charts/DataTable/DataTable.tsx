@@ -4,6 +4,7 @@ import { DataTableHeader } from "./DataTableHeader";
 import { DataTablePagination } from "./DataTablePagination";
 import { DataTableToolbar } from "./DataTableToolbar";
 import { DataTableSettings } from "./definition";
+import { getChartSummary } from "../chartAccessibility";
 
 interface DataTableProps extends BaseChartProps {
   settings: DataTableSettings;
@@ -21,7 +22,7 @@ export function DataTable({ settings, height }: DataTableProps) {
           className="w-full border-collapse"
           aria-label={settings.title || "Data table"}
         >
-          <caption className="sr-only">{settings.title || "Data table"}</caption>
+          <caption className="sr-only">{getChartSummary(settings)}</caption>
           <DataTableHeader settings={settings} />
           <DataTableBody settings={settings} />
         </table>

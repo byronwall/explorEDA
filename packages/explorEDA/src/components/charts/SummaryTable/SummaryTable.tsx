@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { DataType } from "../../SummaryTable/utils/dataTypeDetection";
 import { CompactSummaryTable } from "../../SummaryTable/components/CompactSummaryTable";
 import { BaseChartProps } from "@/types/ChartTypes";
+import type { SummaryTableSettings } from "./definition";
 
 interface ColumnSummary {
   name: string;
@@ -104,7 +105,10 @@ const exportToCSV = (summaries: ColumnSummary[]) => {
   toast.success("Summary table exported to CSV");
 };
 
-export function SummaryTable({ height }: BaseChartProps) {
+export function SummaryTable({
+  height,
+  settings,
+}: BaseChartProps<SummaryTableSettings>) {
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
   const [sortConfig, setSortConfig] = useState<SortConfig>({
@@ -380,6 +384,7 @@ export function SummaryTable({ height }: BaseChartProps) {
         data={sortedSummaries}
         onSort={handleSort}
         totalRows={totalRowCount()}
+        settings={settings}
       />
     </div>
   );

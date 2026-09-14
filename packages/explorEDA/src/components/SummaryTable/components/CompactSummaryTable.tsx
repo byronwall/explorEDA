@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/tooltip";
 import { ChartActions } from "./ChartActions";
 import { DataType } from "../utils/dataTypeDetection";
+import { getChartSummary } from "../../charts/chartAccessibility";
+import type { SummaryTableSettings } from "../../charts/SummaryTable/definition";
 
 interface ColumnSummary {
   name: string;
@@ -46,12 +48,14 @@ interface CompactSummaryTableProps {
   data: ColumnSummary[];
   onSort: (column: keyof ColumnSummary) => void;
   totalRows: number;
+  settings: SummaryTableSettings;
 }
 
 export function CompactSummaryTable({
   data,
   onSort,
   totalRows,
+  settings,
 }: CompactSummaryTableProps) {
   return (
     <div className="rounded-md border">
@@ -61,6 +65,7 @@ export function CompactSummaryTable({
         </span>
       </div>
       <Table>
+        <caption className="sr-only">{getChartSummary(settings)}</caption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-24"></TableHead>

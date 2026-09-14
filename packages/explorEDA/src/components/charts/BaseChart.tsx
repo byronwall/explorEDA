@@ -1,4 +1,4 @@
-import { ReactNode, useId, useRef } from "react";
+import { ReactNode, useRef } from "react";
 import { ScaleBand, ScaleLinear } from "d3-scale";
 import { XAxis, YAxis } from "./Axis/Axis";
 import { useBrush } from "@/hooks/useBrush";
@@ -36,18 +36,6 @@ export function BaseChart({
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
   const svgRef = useRef<SVGSVGElement>(null);
-  const chartId = useId();
-  const titleId = `${chartId}-title`;
-  const descriptionId = `${chartId}-description`;
-  const chartTitle = settings.title || "Chart";
-  const chartDescription = [
-    `Interactive ${settings.type} chart.`,
-    settings.xAxisLabel && `Horizontal axis: ${settings.xAxisLabel}.`,
-    settings.yAxisLabel && `Vertical axis: ${settings.yAxisLabel}.`,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
   const extent = useFilterExtent({
     settings,
     xScale,
@@ -75,9 +63,7 @@ export function BaseChart({
       ref={svgRef}
       width={width}
       height={height}
-      role="img"
-      aria-labelledby={titleId}
-      aria-describedby={descriptionId}
+      aria-hidden="true"
       className={cn("select-none", className)}
       style={{ cursor: brush.getCursor() }}
       onMouseDownCapture={brush.handleMouseDown}
@@ -85,8 +71,6 @@ export function BaseChart({
       onMouseUpCapture={brush.handleMouseUp}
       onMouseLeave={brush.handleMouseUp}
     >
-      <title id={titleId}>{chartTitle}</title>
-      <desc id={descriptionId}>{chartDescription}</desc>
       <g transform={`translate(${margin.left},${margin.top})`}>
         {/* Main content */}
         {children}
