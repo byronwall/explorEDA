@@ -127,6 +127,22 @@ describe("DataTableHeader", () => {
     });
   });
 
+  it("does not sort when opening a column filter", () => {
+    const updateChart = vi.fn();
+    mockUseDataLayer.mockImplementation((selector: (state: any) => any) => {
+      if (selector.toString().includes("updateChart")) {
+        return updateChart;
+      }
+      return null;
+    });
+
+    render(<DataTableHeader settings={mockSettings} />);
+    fireEvent.click(screen.getByRole("button", { name: "Filter name" }));
+
+    expect(updateChart).not.toHaveBeenCalled();
+    expect(screen.getByPlaceholderText("Filter name...")).toBeInTheDocument();
+  });
+
   it("handles column resizing", () => {
     const updateChart = vi.fn();
     mockUseDataLayer.mockImplementation((selector: (state: any) => any) => {
