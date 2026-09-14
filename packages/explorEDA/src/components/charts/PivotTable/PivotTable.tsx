@@ -170,7 +170,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
           className={cn(
             "border p-2",
             header.depth === 0 && "font-semibold",
-            isFiltered ? "bg-yellow-100" : "bg-muted/50"
+            isFiltered ? "bg-accent/50" : "bg-muted/50"
           )}
         >
           <div className="flex items-center gap-2">
@@ -271,7 +271,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
                       key={`${header.field}-${header.value}`}
                       className={cn(
                         "border p-2 text-left font-normal sticky",
-                        isFiltered ? "bg-yellow-100" : "bg-white",
+                        isFiltered ? "bg-accent/50" : "bg-background",
                         // Add z-index that decreases as we go right to ensure proper layering
                         `z-[${20 - i}]`
                       )}

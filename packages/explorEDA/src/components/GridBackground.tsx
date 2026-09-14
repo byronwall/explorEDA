@@ -31,7 +31,7 @@ export function GridBackground({
       }}
     >
       <div
-        className="absolute inset-0 border border-dashed border-gray-200"
+        className="absolute inset-0 border border-dashed border-border"
         style={{
           margin: settings.containerPadding,
         }}
@@ -40,7 +40,7 @@ export function GridBackground({
         {Array.from({ length: settings.columnCount - 1 }).map((_, i) => (
           <div
             key={i}
-            className="absolute top-0 bottom-0 border-l border-dashed border-gray-200"
+            className="absolute top-0 bottom-0 border-l border-dashed border-border"
             style={{
               left: (i + 1) * columnWidth,
             }}
@@ -53,7 +53,7 @@ export function GridBackground({
         }).map((_, i) => (
           <div
             key={i}
-            className="absolute left-0 right-0 border-t border-dashed border-gray-200"
+            className="absolute left-0 right-0 border-t border-dashed border-border"
             style={{
               top: (i + 1) * settings.rowHeight,
             }}

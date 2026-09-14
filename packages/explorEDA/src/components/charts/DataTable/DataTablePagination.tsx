@@ -53,7 +53,7 @@ export function DataTablePagination({ settings }: DataTablePaginationProps) {
   return (
     <div className="flex items-center justify-between px-2 py-4">
       <div className="flex items-center space-x-2">
-        <p className="text-sm text-gray-700">{filteredData.length} rows</p>
+        <p className="text-sm text-muted-foreground">{filteredData.length} rows</p>
       </div>
       <div className="flex items-center space-x-2">
         <Select
@@ -81,7 +81,7 @@ export function DataTablePagination({ settings }: DataTablePaginationProps) {
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-muted-foreground">
             Page {page} of {totalPages}
           </p>
           <Button

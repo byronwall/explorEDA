@@ -114,7 +114,7 @@ export function PivotTableSettingsPanel({
                 />
               </div>
               <button
-                className="p-2 hover:bg-gray-100 rounded"
+                className="p-2 hover:bg-accent rounded"
                 onClick={() => {
                   const newValueFields = settings.valueFields.filter(
                     (_, i) => i !== index
@@ -130,7 +130,7 @@ export function PivotTableSettingsPanel({
             </div>
           ))}
           <button
-            className="text-sm text-blue-600 hover:text-blue-800"
+            className="text-sm text-primary hover:text-primary/80"
             onClick={() => {
               const field = availableFields[0];
               if (!field) {

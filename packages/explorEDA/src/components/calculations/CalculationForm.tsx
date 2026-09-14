@@ -86,14 +86,14 @@ export function CalculationForm({
                 Validate
               </Button>
             </div>
-            {error && <p className="text-sm text-red-500">{error}</p>}
+            {error && <p className="text-sm text-destructive">{error}</p>}
             {statusMessage.text && (
               <p
                 className={`text-sm ${
                   statusMessage.type === "success"
                     ? "text-green-500"
                     : statusMessage.type === "error"
-                      ? "text-red-500"
+                      ? "text-destructive"
                       : ""
                 }`}
               >
