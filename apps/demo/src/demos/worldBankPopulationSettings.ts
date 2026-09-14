@@ -16,6 +16,8 @@ export const worldBankPopulationSettings: SavedDataStructure = {
       },
       xAxis: { scaleType: "linear", grid: false, min: 0, max: 100 },
       yAxis: { scaleType: "linear", grid: false, min: 0, max: 100 },
+      colorScaleId: undefined,
+      colorField: undefined,
       margin: { top: 20, right: 20, bottom: 20, left: 20 },
       filters: [],
       xAxisLabel: "",

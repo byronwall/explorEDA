@@ -1,4 +1,6 @@
-export const categoricalSmallSettings = {
+import { SavedDataStructure } from "exploreda";
+
+export const categoricalSmallSettings: SavedDataStructure = {
   charts: [
     {
       title: "Data Summary",
@@ -8,6 +10,8 @@ export const categoricalSmallSettings = {
       xAxis: { scaleType: "linear", grid: false, min: 0, max: 100 },
       yAxis: { scaleType: "linear", grid: false, min: 0, max: 100 },
       margin: { top: 20, right: 20, bottom: 20, left: 20 },
+      colorScaleId: undefined,
+      colorField: undefined,
       facet: {
         enabled: false,
         type: "wrap",
@@ -29,6 +33,8 @@ export const categoricalSmallSettings = {
       xAxis: { scaleType: "linear", grid: false, min: 0, max: 100 },
       yAxis: { scaleType: "linear", grid: false, min: 0, max: 100 },
       margin: { top: 20, right: 20, bottom: 20, left: 20 },
+      colorScaleId: undefined,
+      colorField: undefined,
       facet: {
         enabled: false,
         type: "wrap",
@@ -40,27 +46,22 @@ export const categoricalSmallSettings = {
       xGridLines: 5,
       yGridLines: 5,
       columns: [
-        { id: "Category", field: "Category", visible: true, width: 50 },
-        { id: "ID", field: "ID", visible: true, width: 50 },
+        { id: "Category", field: "Category", width: 50 },
+        { id: "ID", field: "ID", width: 50 },
         {
           id: "Subcategory",
           field: "Subcategory",
-          visible: true,
           width: 180,
         },
       ],
-      visibleColumns: [],
-      columnWidths: {},
       pageSize: 10,
       currentPage: 1,
-      sortConfig: [],
       filters: [],
-      groupBy: [],
-      expandedGroups: {},
-      selectedRows: {},
       id: "0ecad4f5-288f-48a3-8ae2-942d24780120",
       sortDirection: "asc",
       sortBy: "ID",
+      globalSearch: "",
+      tableHeight: 400,
     },
   ],
   calculations: [],
