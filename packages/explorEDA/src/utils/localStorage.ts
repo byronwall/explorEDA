@@ -18,7 +18,9 @@ export function loadProjects(): SavedProject[] {
     }
 
     return projects.filter((project): project is SavedProject => {
-      if (!project || typeof project !== "object") return false;
+      if (!project || typeof project !== "object") {
+        return false;
+      }
       const candidate = project as Record<string, unknown>;
       return (
         candidate.version === 1 &&
@@ -28,8 +30,7 @@ export function loadProjects(): SavedProject[] {
         Array.isArray(candidate.views)
       );
     });
-  } catch (error) {
-    console.error("Error loading projects:", error);
+  } catch {
     return [];
   }
 }

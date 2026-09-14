@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { BarChart, LineChart, ScatterChart, Table2 } from "lucide-react";
+import { BarChart, ScatterChart, Table2 } from "lucide-react";
 import { useCreateCharts } from "@/hooks/useCreateCharts";
 
 interface ChartActionsProps {

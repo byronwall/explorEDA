@@ -1,8 +1,7 @@
-import { BaseChartSettings, ChartDefinition, datum } from "@/types/ChartTypes";
+import { BaseChartSettings, ChartDefinition } from "@/types/ChartTypes";
 import { DEFAULT_CHART_SETTINGS } from "@/utils/defaultSettings";
 import { Info } from "lucide-react";
 
-import { IdType } from "@/providers/DataLayerProvider";
 import { SummaryTable } from "./SummaryTable";
 import { SummaryTableSettingsPanel } from "./SummaryTableSettingsPanel";
 
@@ -30,16 +29,13 @@ export const summaryTableDefinition: ChartDefinition<SummaryTableSettings> = {
     margin: { top: 20, right: 20, bottom: 20, left: 20 },
   }),
 
-  validateSettings: (settings) => {
+  validateSettings: () => {
     // Summary table is always valid as it shows basic statistics
     return true;
   },
 
-  getFilterFunction: (
-    settings: SummaryTableSettings,
-    fieldGetter: (name: string) => Record<IdType, datum>
-  ) => {
+  getFilterFunction: () => {
     // Summary table doesn't support filtering
-    return (d: IdType) => true;
+    return () => true;
   },
 };

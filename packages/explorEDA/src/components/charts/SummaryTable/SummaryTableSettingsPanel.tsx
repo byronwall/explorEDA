@@ -1,10 +1,4 @@
-import { ChartSettingsPanelProps } from "@/types/ChartTypes";
-import { SummaryTableSettings } from "./definition";
-
-export function SummaryTableSettingsPanel({
-  settings,
-  onSettingsChange,
-}: ChartSettingsPanelProps<SummaryTableSettings>) {
+export function SummaryTableSettingsPanel() {
   // Summary table has no additional settings beyond the base settings
   return null;
 }

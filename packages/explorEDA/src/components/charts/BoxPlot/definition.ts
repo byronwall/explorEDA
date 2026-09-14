@@ -1,6 +1,5 @@
 import { BaseChartSettings, ChartDefinition } from "@/types/ChartTypes";
 import { Filter } from "@/types/FilterTypes";
-import { Box } from "lucide-react";
 import { BoxPlot } from "./BoxPlot";
 import { BoxPlotSettingsPanel } from "./BoxPlotSettingsPanel";
 import { DEFAULT_CHART_SETTINGS } from "@/utils/defaultSettings";

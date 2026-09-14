@@ -4,8 +4,7 @@ export async function saveToClipboard(data: SavedDataStructure): Promise<void> {
   try {
     const jsonString = JSON.stringify(data);
     await navigator.clipboard.writeText(jsonString);
-  } catch (error) {
-    console.error("Error saving to clipboard:", error);
+  } catch {
     throw new Error("Failed to save data to clipboard");
   }
 }
@@ -19,7 +18,9 @@ function isFiniteNumber(value: unknown): value is number {
 }
 
 function isExpression(value: unknown): boolean {
-  if (!isRecord(value) || typeof value.type !== "string") return false;
+  if (!isRecord(value) || typeof value.type !== "string") {
+    return false;
+  }
   if (
     !Array.isArray(value.dependencies) ||
     !value.dependencies.every((dependency) => typeof dependency === "string")
@@ -71,8 +72,12 @@ function isExpression(value: unknown): boolean {
 }
 
 function isFilter(value: unknown): boolean {
-  if (!isRecord(value) || typeof value.type !== "string") return false;
-  if (typeof value.field !== "string") return false;
+  if (!isRecord(value) || typeof value.type !== "string") {
+    return false;
+  }
+  if (typeof value.field !== "string") {
+    return false;
+  }
   if (value.type === "value") {
     return Array.isArray(value.values) && value.values.every(isDatum);
   }
@@ -110,7 +115,9 @@ function isVector3(value: unknown): boolean {
 }
 
 function isAxis(value: unknown, zoomLevel = false): boolean {
-  if (!isRecord(value)) return false;
+  if (!isRecord(value)) {
+    return false;
+  }
   return (
     (value.title === undefined || typeof value.title === "string") &&
     (value.scaleType === undefined ||
@@ -123,7 +130,9 @@ function isAxis(value: unknown, zoomLevel = false): boolean {
 }
 
 function isFacet(value: unknown): boolean {
-  if (!isRecord(value) || typeof value.enabled !== "boolean") return false;
+  if (!isRecord(value) || typeof value.enabled !== "boolean") {
+    return false;
+  }
   if (value.type === "grid") {
     return (
       typeof value.rowVariable === "string" &&
@@ -174,7 +183,9 @@ function isStringArray(value: unknown): value is string[] {
 }
 
 function isSeriesSettings(value: unknown): boolean {
-  if (!isRecord(value)) return false;
+  if (!isRecord(value)) {
+    return false;
+  }
   return (
     typeof value.showPoints === "boolean" &&
     isFiniteNumber(value.pointSize) &&
@@ -188,8 +199,12 @@ function isSeriesSettings(value: unknown): boolean {
 }
 
 function isChart(value: unknown): boolean {
-  if (!isRecord(value)) return false;
-  if (!isBaseChart(value)) return false;
+  if (!isRecord(value)) {
+    return false;
+  }
+  if (!isBaseChart(value)) {
+    return false;
+  }
 
   switch (value.type) {
     case "row":
@@ -212,7 +227,9 @@ function isChart(value: unknown): boolean {
         typeof value.columnField === "string" &&
         Array.isArray(value.valueFields) &&
         value.valueFields.every((field) => {
-          if (!isRecord(field)) return false;
+          if (!isRecord(field)) {
+            return false;
+          }
           return (
             typeof field.field === "string" &&
             [
@@ -236,7 +253,9 @@ function isChart(value: unknown): boolean {
       return (
         Array.isArray(value.columns) &&
         value.columns.every((column) => {
-          if (!isRecord(column)) return false;
+          if (!isRecord(column)) {
+            return false;
+          }
           return (
             typeof column.id === "string" &&
             typeof column.field === "string" &&
@@ -321,7 +340,9 @@ function isChart(value: unknown): boolean {
 }
 
 function isColorScale(value: unknown): boolean {
-  if (!isRecord(value)) return false;
+  if (!isRecord(value)) {
+    return false;
+  }
   if (typeof value.id !== "string" || typeof value.name !== "string") {
     return false;
   }
@@ -405,8 +426,7 @@ export async function saveRawDataToClipboard(data: unknown): Promise<void> {
   try {
     const jsonString = JSON.stringify(data);
     await navigator.clipboard.writeText(jsonString);
-  } catch (error) {
-    console.error("Error saving raw data to clipboard:", error);
+  } catch {
     throw new Error("Failed to save raw data to clipboard");
   }
 }

@@ -112,8 +112,7 @@ export function PlotManager() {
       await saveToClipboard(savedData);
 
       toast("Configuration saved to clipboard");
-    } catch (error) {
-      console.error("Failed to copy to clipboard:", error);
+    } catch {
       toast.error("Failed to copy configuration to clipboard");
     }
   };
@@ -128,8 +127,7 @@ export function PlotManager() {
       await saveRawDataToClipboard(data);
 
       toast("Data saved to clipboard");
-    } catch (error) {
-      console.error("Failed to copy data to clipboard:", error);
+    } catch {
       toast.error("Failed to copy data to clipboard");
     }
   };
@@ -258,7 +256,9 @@ export function PlotManager() {
                     settings={chart}
                     onDelete={() => removeChart(chart)}
                     onDuplicate={() => {
-                      const { id, ...chartWithoutId } = chart;
+                      const chartWithoutId = Object.fromEntries(
+                        Object.entries(chart).filter(([key]) => key !== "id")
+                      ) as Omit<typeof chart, "id">;
                       addChart(chartWithoutId);
                     }}
                     width={size.width}

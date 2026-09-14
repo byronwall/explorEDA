@@ -62,10 +62,6 @@ export class CrossfilterWrapper<T> {
     // apply the filters to the dimension
     const dimension = foundChart?.dimension;
     if (!dimension) {
-      console.error("updateChartFilters: dimension not found", {
-        chart,
-        charts: this.charts,
-      });
       return;
     }
 

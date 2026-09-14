@@ -157,10 +157,6 @@ export class CalculationManager<T extends DatumObject> {
       if (result.success) {
         resultMap.set(row.__ID, result.value);
       } else {
-        console.error(
-          `Calculation error for ${calculation.resultColumnName}:`,
-          result.error
-        );
         resultMap.set(row.__ID, undefined);
       }
     }

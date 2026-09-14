@@ -1,5 +1,4 @@
 import { useGetColumnData } from "@/components/charts/useGetColumnData";
-import { Card } from "@/components/ui/card";
 import {
   Table,
   TableBody,

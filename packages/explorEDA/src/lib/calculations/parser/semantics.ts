@@ -151,13 +151,8 @@ semantics.addOperation<ParsedExpression>("eval", {
   PowerExpr(expr: Node): ParsedExpression {
     return expr.eval();
   },
-  TernaryExpr(
-    condition: Node,
-    _q: Node,
-    trueBranch: Node,
-    _c: Node,
-    falseBranch: Node
-  ): ParsedExpression {
+  TernaryExpr(...nodes: Node[]): ParsedExpression {
+    const [condition, , trueBranch, , falseBranch] = nodes;
     return {
       type: "ternary",
       condition: condition.eval(),
@@ -167,14 +162,8 @@ semantics.addOperation<ParsedExpression>("eval", {
       name: `${condition.sourceString} ? ${trueBranch.sourceString} : ${falseBranch.sourceString}`,
     };
   },
-  IfExpr(
-    _if: Node,
-    condition: Node,
-    _then: Node,
-    trueBranch: Node,
-    _else: Node,
-    falseBranch: Node
-  ): ParsedExpression {
+  IfExpr(...nodes: Node[]): ParsedExpression {
+    const [, condition, , trueBranch, , falseBranch] = nodes;
     return {
       type: "ternary",
       condition: condition.eval(),
@@ -192,50 +181,47 @@ semantics.addOperation<ParsedExpression>("eval", {
       operand: expr.eval(),
     };
   },
-  FunctionCall(
-    name: Node,
-    _open: Node,
-    args: Node,
-    _close: Node
-  ): ParsedExpression {
+  FunctionCall(...nodes: Node[]): ParsedExpression {
+    const [name, , args] = nodes;
     return {
       type: "function",
       name: name.sourceString,
       arguments: args.asIteration().children.map((arg: Node) => arg.eval()),
     };
   },
-  ParenTerm(_open: Node, expr: Node, _close: Node): ParsedExpression {
-    return expr.eval();
+  ParenTerm(...nodes: Node[]): ParsedExpression {
+    return nodes[1]!.eval();
   },
-  number(digits: Node, _dot: Node, decimals: Node): ParsedExpression {
+  number(): ParsedExpression {
     return {
       type: "literal",
       value: parseFloat(this.sourceString),
       expression: this.sourceString,
     };
   },
-  string(_open: Node, chars: Node, _close: Node): ParsedExpression {
+  string(...nodes: Node[]): ParsedExpression {
+    const chars = nodes[1]!;
     return {
       type: "literal",
       value: chars.sourceString.replace(/\\(.)/g, "$1"),
       expression: chars.sourceString,
     };
   },
-  boolean(_: Node): ParsedExpression {
+  boolean(): ParsedExpression {
     return {
       type: "literal",
       value: this.sourceString === "true",
       expression: this.sourceString,
     };
   },
-  null(_: Node): ParsedExpression {
+  null(): ParsedExpression {
     return {
       type: "literal",
       value: null,
       expression: "null",
     };
   },
-  identifier(first: Node, rest: Node): ParsedExpression {
+  identifier(): ParsedExpression {
     return {
       type: "identifier",
       name: this.sourceString,

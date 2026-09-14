@@ -15,7 +15,6 @@ export function ColorScale({
   getColorForValue,
 }: ColorScaleProps) {
   if (!scale?.palette) {
-    console.error("Missing palette for scale:", scale);
     return <div className="h-8 rounded-md bg-muted">Invalid color scale</div>;
   }
 

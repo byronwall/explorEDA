@@ -196,8 +196,6 @@ describe("DataLayerProvider Calculations", () => {
     await waitFor(() => {
       const resultData = screen.getByTestId("result-data-double").textContent;
 
-      console.log(resultData);
-
       expect(resultData).not.toBe("{}");
       expect(resultData).not.toBe("null");
     });

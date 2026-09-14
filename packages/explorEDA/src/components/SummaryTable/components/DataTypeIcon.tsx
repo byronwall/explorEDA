@@ -6,18 +6,15 @@ interface DataTypeIconProps {
 }
 
 export function DataTypeIcon({ type }: DataTypeIconProps) {
-  const iconMap: Record<
-    DataType | "unknown",
-    { icon: typeof Hash; label: string }
-  > = {
-    numeric: { icon: Hash, label: "Numeric" },
-    datetime: { icon: Calendar, label: "Date/Time" },
-    categorical: { icon: Type, label: "Categorical" },
-    boolean: { icon: ToggleLeft, label: "Boolean" },
-    unknown: { icon: HelpCircle, label: "Unknown" },
+  const iconMap: Record<DataType | "unknown", { icon: typeof Hash }> = {
+    numeric: { icon: Hash },
+    datetime: { icon: Calendar },
+    categorical: { icon: Type },
+    boolean: { icon: ToggleLeft },
+    unknown: { icon: HelpCircle },
   };
 
-  const { icon: Icon, label } = iconMap[type];
+  const { icon: Icon } = iconMap[type];
 
   return <Icon className="h-4 w-4" />;
 }

@@ -354,7 +354,6 @@ const createDataLayerStore = <T extends DatumObject>(
       const chart = get().charts.find((chart) => chart.id === id);
 
       if (!chart) {
-        console.error("updateChart: chart not found", { id });
         return;
       }
 
@@ -550,7 +549,6 @@ const createDataLayerStore = <T extends DatumObject>(
       const { charts, currentProject, calculations } = get();
 
       if (!currentProject) {
-        console.error("No project selected");
         return;
       }
 
@@ -600,8 +598,8 @@ const createDataLayerStore = <T extends DatumObject>(
         try {
           calculationManager.addCalculation(calc);
           newCalculations.push(calc);
-        } catch (error) {
-          console.error("Error adding calculation:", error);
+        } catch {
+          continue;
         }
       }
 
@@ -728,8 +726,8 @@ const createDataLayerStore = <T extends DatumObject>(
         try {
           calculationManager.addCalculation(calc);
           newCalculations.push(calc);
-        } catch (error) {
-          console.error("Error restoring calculation:", error);
+        } catch {
+          continue;
         }
       }
 

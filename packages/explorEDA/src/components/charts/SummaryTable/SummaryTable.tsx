@@ -215,7 +215,7 @@ export function SummaryTable({
       if (processingQueue.length === 1) {
         toast.success("Processing Complete");
       }
-    } catch (error) {
+    } catch {
       toast.error(`Error processing column ${columnName}`);
     } finally {
       setIsProcessing(false);

@@ -34,7 +34,6 @@ export function CalculationManager() {
   const removeCalculation = useDataLayer((state) => state.removeCalculation);
   const updateCalculation = useDataLayer((state) => state.updateCalculation);
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
-  const data = useDataLayer((state) => state.data);
 
   const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
   const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);

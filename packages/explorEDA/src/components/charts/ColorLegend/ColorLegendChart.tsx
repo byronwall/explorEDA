@@ -34,7 +34,6 @@ export function ColorLegendChart({
             const scale = colorScales.find((s) => s.id === scaleId);
 
             if (!scale) {
-              console.error("No scale found for field:", field);
               return null;
             }
 

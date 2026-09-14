@@ -96,7 +96,6 @@ export function useColorScales(): UseColorScalesReturn {
 
       const d3Scale = d3Scales.get(scaleId);
       if (!d3Scale) {
-        console.warn(`D3 scale for ${scaleId} not found`);
         return "#000000";
       }
 
@@ -105,12 +104,7 @@ export function useColorScales(): UseColorScalesReturn {
           return (d3Scale as ScaleSequential<string>)(Number(value));
         }
         return (d3Scale as ScaleOrdinal<string, string>)(String(value));
-      } catch (error) {
-        console.error("Error getting color for value", {
-          scaleId,
-          value,
-          error,
-        });
+      } catch {
         return "#000000";
       }
     },

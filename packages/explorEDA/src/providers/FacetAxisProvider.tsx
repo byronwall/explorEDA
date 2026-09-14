@@ -76,14 +76,6 @@ const createFacetAxisStore = () => {
         return null;
       }
       const firstLimitType = firstLimit.type;
-      const allSameType = limits.every(
-        (limit) => limit.type === firstLimitType
-      );
-
-      if (!allSameType) {
-        console.warn("Mixed axis types detected in facets. Using first type.");
-      }
-
       if (firstLimitType === "numerical") {
         // For numerical limits, find min and max across all charts
         const numericalLimits = limits.filter(

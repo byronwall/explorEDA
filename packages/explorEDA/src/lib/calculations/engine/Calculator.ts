@@ -28,9 +28,6 @@ export class Calculator {
         case "function":
           funcResult = this.evaluateFunction(expression as FunctionExpression);
           if (!funcResult.success) {
-            console.error(
-              `[Calculator.evaluate] Function evaluation failed: ${funcResult.error}`
-            );
             return funcResult;
           }
           result = funcResult.value;
@@ -56,11 +53,6 @@ export class Calculator {
         value: result,
       };
     } catch (error: unknown) {
-      console.error(
-        `[Calculator.evaluate] Error: ${
-          error instanceof Error ? error.message : String(error)
-        }`
-      );
       return {
         success: false,
         value: null,
@@ -120,9 +112,6 @@ export class Calculator {
     // Get the function implementation first
     const func = this.getFunction(expression.functionName);
     if (!func) {
-      console.error(
-        `[Calculator.evaluateFunction] Unknown function: ${expression.functionName}`
-      );
       return {
         success: false,
         value: null,
@@ -211,10 +200,6 @@ export class Calculator {
             }
 
             if (isNaN(evaluatedArgs[0].getTime())) {
-              console.error(
-                `[Calculator.evaluateFunction] Invalid date:`,
-                evaluatedArgs[0]
-              );
               return {
                 success: false,
                 value: null,
@@ -222,10 +207,6 @@ export class Calculator {
               };
             }
           } catch (error) {
-            console.error(
-              `[Calculator.evaluateFunction] Date conversion error:`,
-              error
-            );
             return {
               success: false,
               value: null,
@@ -244,7 +225,6 @@ export class Calculator {
         value: result,
       };
     } catch (error) {
-      console.error(`[Calculator.evaluateFunction] Error:`, error);
       return {
         success: false,
         value: null,
@@ -256,7 +236,6 @@ export class Calculator {
   }
 
   private getFunction(name: string): CalcFunction | undefined {
-    console.log(`[Calculator.getFunction] Looking up function: ${name}`);
     const functions: Record<string, CalcFunction> = {
       sum: (...values: number[]) => {
         return values.reduce((a, b) => Number(a) + Number(b), 0);
@@ -415,17 +394,11 @@ export class Calculator {
 
   // Date Processing Functions
   private formatDate(date: Date, format: string): string {
-    console.log(
-      `[Calculator.formatDate] Formatting date with format: ${format}`,
-      date
-    );
     try {
       const formatter = timeFormat(format);
       const result = formatter(date);
-      console.log(`[Calculator.formatDate] Result:`, result);
       return result;
     } catch (error) {
-      console.error(`[Calculator.formatDate] Error:`, error);
       throw new Error(
         `Error formatting date: ${
           error instanceof Error ? error.message : String(error)
@@ -485,7 +458,6 @@ export class Calculator {
       }
       return result;
     } catch (error) {
-      console.error(`[Calculator.extractDateComponent] Error:`, error);
       throw new Error(
         `Error extracting date component: ${
           error instanceof Error ? error.message : String(error)
