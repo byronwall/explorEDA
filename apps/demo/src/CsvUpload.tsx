@@ -15,6 +15,7 @@ interface CsvUploadProps {
 
 export function CsvUpload({ compact = false, onImport }: CsvUploadProps) {
   const [error, setError] = useState<string | null>(null);
+  const [failedFile, setFailedFile] = useState<File | null>(null);
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
@@ -27,6 +28,7 @@ export function CsvUpload({ compact = false, onImport }: CsvUploadProps) {
 
       try {
         setError(null);
+        setFailedFile(null);
         let data: DatumObject[];
         if (file.name.toLowerCase().endsWith(".csv")) {
           data = await parseCsvData(file);
@@ -39,6 +41,7 @@ export function CsvUpload({ compact = false, onImport }: CsvUploadProps) {
       } catch (error) {
         const message =
           error instanceof Error ? error.message : "Unknown error";
+        setFailedFile(file);
         setError(
           `Could not read ${file.name}: ${message}. Choose another CSV or JSON file.`
         );
@@ -91,9 +94,23 @@ export function CsvUpload({ compact = false, onImport }: CsvUploadProps) {
         Use a header row for CSV, or an object or array of objects for JSON.
       </p>
       {error && (
-        <p role="alert" className="mt-3 text-sm text-destructive">
-          {error}
-        </p>
+        <div role="alert" className="mt-3 text-sm text-destructive">
+          <p>{error}</p>
+          {failedFile && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="mt-2"
+              onClick={(event) => {
+                event.stopPropagation();
+                void onDrop([failedFile]);
+              }}
+            >
+              Try again
+            </Button>
+          )}
+        </div>
       )}
     </div>
   );
