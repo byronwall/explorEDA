@@ -24,6 +24,7 @@ export function GridBackground({
   return (
     <div
       className={cn("absolute inset-0 pointer-events-none", className)}
+      aria-hidden="true"
       style={{
         width,
         height,

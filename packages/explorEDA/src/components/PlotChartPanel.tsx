@@ -8,6 +8,7 @@ import { ChartSettingsContent } from "./ChartSettingsContent";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { useAlertStore } from "@/stores/alertStore";
+import { useId } from "react";
 
 interface PlotChartPanelProps {
   settings: ChartSettings;
@@ -26,6 +27,7 @@ export function PlotChartPanel({
 }: PlotChartPanelProps) {
   const clearFilter = useDataLayer((state) => state.clearFilter);
   const showAlert = useAlertStore((state) => state.showAlert);
+  const titleId = useId();
 
   const handleDelete = async () => {
     const confirmed = await showAlert(
@@ -43,31 +45,52 @@ export function PlotChartPanel({
 
   return (
     <div
-      className="bg-card border rounded-lg flex flex-col overflow-hidden m-1"
+      className="bg-card border rounded-lg m-1 flex min-w-0 flex-col overflow-hidden"
       style={{ width: widthWithPadding, height: heightWithPadding }}
+      role="region"
+      aria-labelledby={titleId}
     >
-      <div
-        className="flex items-center justify-between select-none px-2"
-        style={{ height: 24 }}
-      >
-        <div className="drag-handle cursor-move flex items-center gap-2">
-          <GripVertical className="h-4 w-4 text-muted-foreground" />
-          <h3 className="font-medium">{settings.title}</h3>
+      <div className="flex min-h-9 items-center justify-between gap-1 select-none px-2 py-1">
+        <div className="drag-handle flex min-w-0 flex-1 cursor-move items-center gap-2">
+          <GripVertical
+            className="h-4 w-4 shrink-0 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <h3
+            id={titleId}
+            className="min-w-0 truncate font-medium"
+            title={settings.title}
+          >
+            {settings.title}
+          </h3>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={onDuplicate}>
+        <div className="flex shrink-0 items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onDuplicate}
+            aria-label={`Duplicate ${settings.title}`}
+            title="Duplicate chart"
+          >
             <Copy className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => clearFilter(settings)}
+            aria-label={`Clear filters for ${settings.title}`}
+            title="Clear chart filters"
           >
             <FilterX className="h-4 w-4" />
           </Button>
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={`Configure ${settings.title}`}
+                title="Chart settings"
+              >
                 <Settings2 className="h-4 w-4" />
               </Button>
             </PopoverTrigger>
@@ -75,24 +98,30 @@ export function PlotChartPanel({
               <ChartSettingsContent settings={settings} />
             </PopoverContent>
           </Popover>
-          <Button variant="ghost" size="icon" onClick={handleDelete}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleDelete}
+            aria-label={`Delete ${settings.title}`}
+            title="Delete chart"
+          >
             <X className="h-4 w-4" />
           </Button>
         </div>
       </div>
-      <div className="flex-1">
+      <div className="min-h-0 flex-1">
         <FacetAxisProvider>
           {settings.facet?.enabled ? (
             <FacetContainer
               settings={settings}
               width={width - 32}
-              height={height - 36}
+              height={height - 48}
             />
           ) : (
             <ChartRenderer
               settings={settings}
               width={width - 32}
-              height={height - 36}
+              height={height - 48}
             />
           )}
         </FacetAxisProvider>
