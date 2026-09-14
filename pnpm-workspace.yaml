@@ -2,5 +2,8 @@ packages:
   - "apps/*"
   - "packages/*"
 
+allowBuilds:
+  esbuild: true
+
 patchedDependencies:
   use-custom-compare@1.4.0: packages/explorEDA/patches/use-custom-compare@1.4.0.patch

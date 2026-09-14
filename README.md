@@ -59,6 +59,8 @@ rows and then restores the saved state.
 
 ## Development
 
+Requires pnpm 11.9.0.
+
 ```sh
 pnpm install
 pnpm check
