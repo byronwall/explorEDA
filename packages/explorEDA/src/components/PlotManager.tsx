@@ -113,6 +113,12 @@ export function PlotManager() {
     });
   };
 
+  const chartGridSettings = {
+    ...gridSettings,
+    columnCount:
+      containerWidth > 0 && containerWidth < 640 ? 1 : gridSettings.columnCount,
+  };
+
   const copyChartsToClipboard = async () => {
     if (charts.length === 0) {
       toast("No charts to copy");
@@ -159,9 +165,9 @@ export function PlotManager() {
   };
 
   return (
-    <div className="w-full pb-40" ref={containerRef}>
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-2">
+    <div className="w-full min-w-0 overflow-x-clip pb-40" ref={containerRef}>
+      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
@@ -182,7 +188,7 @@ export function PlotManager() {
           </Tabs>
           <ChartCreationButtons />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {charts.length > 0 && activeTab === "charts" && (
             <>
               <Button
@@ -190,12 +196,18 @@ export function PlotManager() {
                 size="sm"
                 onClick={clearAllFilters}
                 title="Clear All Filters"
+                aria-label="Clear all filters"
               >
                 <FilterX className="h-4 w-4" />
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    title="More chart actions"
+                    aria-label="More chart actions"
+                  >
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -260,7 +272,7 @@ export function PlotManager() {
               const size = gridToPixels(
                 chart.layout,
                 containerWidth,
-                gridSettings
+                chartGridSettings
               );
               return (
                 <div key={chart.id}>

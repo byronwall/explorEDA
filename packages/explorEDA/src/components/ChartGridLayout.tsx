@@ -24,19 +24,19 @@ export function ChartGridLayout({
   containerWidth,
 }: ChartGridLayoutProps) {
   const gridSettings = useDataLayer((s) => s.gridSettings);
+  const isNarrow = containerWidth > 0 && containerWidth < 640;
 
-  // Calculate the total height based on the layout
-  const totalHeight = Math.max(
-    ...charts.map(
-      (chart) => (chart.layout.y + chart.layout.h) * gridSettings.rowHeight
-    ),
-    400 // minimum height
-  );
-
-  const layout: Layout[] = charts.map((chart) => ({
+  const layout: Layout[] = charts.map((chart, index) => ({
     ...chart.layout,
+    ...(isNarrow ? { x: 0, y: index, w: 1 } : {}),
     i: chart.id,
   }));
+
+  // Calculate the total height based on the rendered layout.
+  const totalHeight = Math.max(
+    ...layout.map((chart) => (chart.y + chart.h) * gridSettings.rowHeight),
+    400 // minimum height
+  );
 
   return (
     <div className="relative w-full">
@@ -48,16 +48,18 @@ export function ChartGridLayout({
       <GridLayout
         className="layout"
         layout={layout}
-        cols={gridSettings.columnCount}
+        cols={isNarrow ? 1 : gridSettings.columnCount}
         rowHeight={gridSettings.rowHeight}
-        width={containerWidth}
+        width={Math.max(containerWidth, 1)}
         margin={[0, 0]}
         containerPadding={[
           gridSettings.containerPadding,
           gridSettings.containerPadding,
         ]}
-        onLayoutChange={onLayoutChange}
+        onLayoutChange={isNarrow ? undefined : onLayoutChange}
         draggableHandle=".drag-handle"
+        isDraggable={!isNarrow}
+        isResizable={!isNarrow}
         style={{ position: "absolute", inset: 0 }}
         resizeHandle={<BottomRightHandle />}
       >
@@ -103,6 +105,7 @@ const SouthEastArrow = () => {
       version="1.1"
       viewBox={`0 0 ${size} ${size}`}
       xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
     >
       <path d={path} fill="currentColor" />
     </svg>
@@ -124,6 +127,7 @@ export const BottomRightHandle = React.forwardRef<HTMLDivElement>(
         }}
         className="handle-se"
         ref={ref}
+        aria-hidden="true"
         {...props}
       >
         {" "}
