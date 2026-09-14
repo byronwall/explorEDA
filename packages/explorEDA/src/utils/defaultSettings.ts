@@ -60,7 +60,6 @@ export const DEFAULT_PIVOT_SETTINGS: Omit<PivotTableSettings, "id"> = {
   rowFields: [],
   columnField: "",
   valueFields: [],
-  showTotals: { row: false, column: false, grand: false },
 };
 
 export const DEFAULT_ROW_SETTINGS: Omit<RowChartSettings, "id"> = {
