@@ -40,7 +40,6 @@ export const nbaStatsSettings: SavedDataStructure = {
       rowFields: ["Team"],
       columnField: "",
       valueFields: [{ field: "STL", aggregation: "max" }],
-      showTotals: { row: true, column: true, grand: true },
     },
     {
       title: "Scatter Plot",

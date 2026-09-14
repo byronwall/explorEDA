@@ -230,12 +230,7 @@ function isChart(value: unknown): boolean {
             ].includes(field.aggregation as string) &&
             (field.label === undefined || typeof field.label === "string")
           );
-        }) &&
-        (value.showTotals === undefined ||
-          (isRecord(value.showTotals) &&
-            typeof value.showTotals.row === "boolean" &&
-            typeof value.showTotals.column === "boolean" &&
-            typeof value.showTotals.grand === "boolean"))
+        })
       );
     case "data-table":
       return (

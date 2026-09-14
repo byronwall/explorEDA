@@ -50,7 +50,6 @@ export const categoricalChartSettings: SavedDataStructure = {
       rowFields: ["Category", "Subcategory"],
       columnField: "Rating",
       valueFields: [{ field: "Category", aggregation: "count" }],
-      showTotals: { row: false, column: false, grand: false },
       filters: [],
       id: "7a345418-85b6-42d7-a86d-018cefe74d6e",
     },

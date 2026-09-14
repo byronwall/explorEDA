@@ -60,7 +60,6 @@ export const fifaSettings: SavedDataStructure = {
       rowFields: ["nation", "position"],
       columnField: "",
       valueFields: [{ field: "", aggregation: "count" }],
-      showTotals: { row: true, column: true, grand: true },
     },
   ],
   calculations: [],
