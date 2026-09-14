@@ -58,11 +58,13 @@ export function LandingPage() {
 
   useEffect(() => {
     if (!exampleId) {
+      setIsLoading(false);
       return;
     }
 
     const selectedExample = examples.find((item) => item.id === exampleId);
     if (!selectedExample) {
+      setIsLoading(false);
       setLoadError("That example does not exist. Choose another example.");
       return;
     }

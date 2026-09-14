@@ -29,7 +29,9 @@ export async function parseCsvData(
         });
       }
     } catch (error) {
-      reject(error instanceof Error ? error : new Error("Failed to parse CSV file"));
+      reject(
+        error instanceof Error ? error : new Error("Failed to parse CSV file")
+      );
     }
   });
 }

@@ -4,7 +4,7 @@ import { parseJsonData } from "./jsonParser";
 
 describe("demo parsers", () => {
   it("rejects CSV rows with parse errors", async () => {
-    await expect(parseCsvData("name,score\n\"broken,1")).rejects.toThrow();
+    await expect(parseCsvData('name,score\n"broken,1')).rejects.toThrow();
   });
 
   it("keeps every JSON array item", async () => {

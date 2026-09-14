@@ -20,7 +20,10 @@ function flattenObject(obj: Record<string, unknown>, prefix = ""): DatumObject {
       });
     } else if (typeof value === "object" && value !== null) {
       // Handle nested objects
-      Object.assign(acc, flattenObject(value as Record<string, unknown>, newKey));
+      Object.assign(
+        acc,
+        flattenObject(value as Record<string, unknown>, newKey)
+      );
     } else {
       // Handle primitive values
       acc[newKey] =
@@ -44,7 +47,9 @@ export async function parseJsonData(file: File): Promise<DatumObject[]> {
             (Array.isArray(jsonData) &&
               jsonData.every(
                 (item) =>
-                  typeof item === "object" && item !== null && !Array.isArray(item)
+                  typeof item === "object" &&
+                  item !== null &&
+                  !Array.isArray(item)
               )) ||
             (typeof jsonData === "object" &&
               jsonData !== null &&
@@ -62,7 +67,9 @@ export async function parseJsonData(file: File): Promise<DatumObject[]> {
         resolve(flattenedData);
       } catch (error) {
         reject(
-          error instanceof Error ? error : new Error("Failed to parse JSON file")
+          error instanceof Error
+            ? error
+            : new Error("Failed to parse JSON file")
         );
       }
     };
