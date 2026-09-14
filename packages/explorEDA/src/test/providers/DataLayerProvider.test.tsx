@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
+import { registerAllCharts } from "../../charts/registry";
 import { parseExpression } from "../../lib/calculations/parser/semantics";
 import {
   DataLayerProvider,
@@ -51,6 +52,8 @@ function savedData(calculations: SavedDataStructure["calculations"] = []) {
 }
 
 describe("DataLayerProvider", () => {
+  beforeAll(() => registerAllCharts());
+
   it("exposes source columns without the internal row id", () => {
     render(
       <DataLayerProvider data={data}>
