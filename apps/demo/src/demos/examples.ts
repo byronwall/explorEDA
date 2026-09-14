@@ -1,6 +1,15 @@
 import { demoSettings } from "@/demos/lorenz";
 import { SavedDataStructure } from "exploreda";
-import { BarChart3, Gamepad2, Globe, LucideIcon, Palette } from "lucide-react";
+import {
+  BarChart,
+  Gamepad2,
+  Globe,
+  LineChart,
+  LucideIcon,
+  Palette,
+  ScatterChart,
+  Table2,
+} from "lucide-react";
 import { boxPlotSettings } from "./boxPlotSettings";
 import { categoricalChartSettings } from "./categoricalChartSettings";
 import { categoricalSmallSettings } from "./categoricalSmallSettings";
@@ -22,32 +31,32 @@ export interface ExampleData {
 export const examples: ExampleData[] = [
   {
     id: "lorenz-3d",
-    title: "Lorenz w/ 3D",
-    description: "Lorenz attractor in 3D",
-    icon: BarChart3,
+    title: "Lorenz attractor: coordinated 2D and 3D views",
+    description: "Brush one chart to filter every related view.",
+    icon: ScatterChart,
     data: "/explorEDA/lorenz_3d_small.csv",
     savedData: demoSettings,
   },
   {
     id: "box-plot",
     title: "Box Plot",
-    description: "Box Plot",
-    icon: BarChart3,
+    description: "Compare distributions and spot outliers.",
+    icon: BarChart,
     data: "/explorEDA/correlated_medium.csv",
     savedData: boxPlotSettings,
   },
   {
     id: "categorical-charts",
     title: "Pivot + Categorical Charts",
-    description: "Pivot + Categorical charts",
-    icon: BarChart3,
+    description: "Group categories, then compare their totals.",
+    icon: BarChart,
     data: "/explorEDA/categorical_medium.csv",
     savedData: categoricalChartSettings,
   },
   {
     id: "color-legend",
     title: "Color Legend",
-    description: "Color Legend",
+    description: "Use a shared color scale across categorical views.",
     icon: Palette,
     data: "/explorEDA/categorical_medium.csv",
     savedData: colorLegendSettings,
@@ -56,23 +65,23 @@ export const examples: ExampleData[] = [
   {
     id: "line-chart",
     title: "Line Chart",
-    description: "Line Chart",
-    icon: BarChart3,
+    description: "Follow trends across a numeric sequence.",
+    icon: LineChart,
     data: "/explorEDA/basic_numbers_medium.csv",
     savedData: lineChartSettings,
   },
   {
     id: "tables",
     title: "Summary Table + Data Table",
-    description: "Summary Table + Data Table",
-    icon: BarChart3,
+    description: "Inspect distributions and browse the source rows.",
+    icon: Table2,
     data: "/explorEDA/categorical_small.csv",
     savedData: categoricalSmallSettings,
   },
   {
     id: "fifa",
     title: "Fifa",
-    description: "EA SPORTS FC 24 FULL PLAYERS DATABASE AND STATS",
+    description: "Explore player ratings, roles, and nationalities.",
     icon: Gamepad2,
     data: "/explorEDA/all_fc_24_players.csv",
     savedData: fifaSettings,
@@ -80,7 +89,7 @@ export const examples: ExampleData[] = [
   {
     id: "world-bank-population",
     title: "World Bank Population",
-    description: "World Bank Population",
+    description: "Compare population trends across countries.",
     icon: Globe,
     data: "/explorEDA/world_bank_population.csv",
     savedData: worldBankPopulationSettings,
@@ -89,8 +98,8 @@ export const examples: ExampleData[] = [
   {
     id: "nba-stats",
     title: "NBA Stats",
-    description: "NBA Stats",
-    icon: BarChart3,
+    description: "Compare team and player performance metrics.",
+    icon: BarChart,
     data: "/explorEDA/nba_stats.csv",
     savedData: nbaStatsSettings,
   },

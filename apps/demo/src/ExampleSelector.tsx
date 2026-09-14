@@ -1,11 +1,5 @@
 import { examples } from "./demos/examples";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "./components/ui/card";
+import { CardDescription, CardHeader, CardTitle } from "./components/ui/card";
 
 interface ExampleSelectorProps {
   onSelect: (exampleId: string) => void;
@@ -17,9 +11,10 @@ export function ExampleSelector({ onSelect }: ExampleSelectorProps) {
       {examples.map((example) => {
         const Icon = example.icon;
         return (
-          <Card
+          <button
+            type="button"
             key={example.id}
-            className="cursor-pointer hover:bg-accent transition-colors"
+            className="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm text-left cursor-pointer hover:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             onClick={() => onSelect(example.id)}
           >
             <CardHeader>
@@ -28,10 +23,8 @@ export function ExampleSelector({ onSelect }: ExampleSelectorProps) {
                 <CardTitle>{example.title}</CardTitle>
               </div>
             </CardHeader>
-            <CardContent>
-              <CardDescription>{example.description}</CardDescription>
-            </CardContent>
-          </Card>
+            <CardDescription>{example.description}</CardDescription>
+          </button>
         );
       })}
     </div>
