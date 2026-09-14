@@ -3,6 +3,7 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { ReactNode, useEffect } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { parseExpression } from "../../lib/calculations/parser/semantics";
+import { CalculationManager } from "../../lib/calculations/CalculationState";
 import {
   DataLayerProvider,
   useDataLayer,
@@ -141,6 +142,23 @@ describe("DataLayerProvider Calculations", () => {
 
   afterEach(() => {
     cleanup();
+  });
+
+  it("evaluates calculation dependencies before their dependents", () => {
+    const manager = new CalculationManager([{ value: 1, __ID: 0 }]);
+    const dependent = {
+      expression: parseExpression("base + 1"),
+      resultColumnName: "dependent",
+    };
+    const base = {
+      expression: parseExpression("value + 1"),
+      resultColumnName: "base",
+    };
+
+    manager.addCalculation(dependent);
+    manager.addCalculation(base);
+
+    expect(manager.executeCalculation(dependent).get(0)).toBe(3);
   });
 
   it("should initialize with provided data", () => {
