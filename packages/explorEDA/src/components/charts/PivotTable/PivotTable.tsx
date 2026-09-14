@@ -8,7 +8,7 @@ import { Filter as FilterIcon } from "lucide-react";
 import { useCallback, useMemo } from "react";
 import { toast } from "sonner";
 import { useGetLiveIds } from "../useGetLiveData";
-import { PivotCell, PivotHeader, PivotRow, CellKey, RowKey } from "./types";
+import { PivotCell, PivotHeader, PivotRow, CellKey } from "./types";
 import { applyFilter } from "@/hooks/applyFilter";
 import { PivotTableSettings } from "./definition";
 
@@ -16,12 +16,7 @@ type PivotTableProps = BaseChartProps & {
   settings: PivotTableSettings;
 };
 
-export function PivotTable({
-  settings,
-  width,
-  height,
-  facetIds,
-}: PivotTableProps) {
+export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const updateChart = useDataLayer((state) => state.updateChart);
 
@@ -49,7 +44,7 @@ export function PivotTable({
     const data = liveIds.map((id: string | number) => {
       const row: Record<string, any> = {};
       allFields.forEach((field) => {
-        row[field] = fieldData[field][id];
+        row[field] = fieldData[field]?.[id];
       });
       return row;
     });
@@ -92,19 +87,14 @@ export function PivotTable({
     [settings, updateChart]
   );
 
-  const handleCellClick = useCallback(
-    (cell: PivotCell, rowKeys: RowKey[], colKey: CellKey) => {
-      if (!cell.sourceRows) {
-        return;
-      }
+  const handleCellClick = useCallback((cell: PivotCell) => {
+    if (!cell.sourceRows) {
+      return;
+    }
 
-      // TODO: Implement drill-down modal with source rows
-      toast(
-        `Showing details for ${cell.value} (${cell.sourceRows.length} rows)`
-      );
-    },
-    []
-  );
+    // TODO: Implement drill-down modal with source rows
+    toast(`Showing details for ${cell.value} (${cell.sourceRows.length} rows)`);
+  }, []);
 
   const isValueFiltered = useCallback(
     (field: string, value: datum) => {
@@ -315,10 +305,7 @@ export function PivotTable({
                       cell.sourceRows && "cursor-pointer hover:bg-muted/20",
                       isCellFiltered(row.headers, cell.key) && "bg-yellow-50"
                     )}
-                    onClick={() =>
-                      cell.sourceRows &&
-                      handleCellClick(cell, row.keys, cell.key)
-                    }
+                    onClick={() => cell.sourceRows && handleCellClick(cell)}
                   >
                     {typeof cell.value === "number"
                       ? cell.value.toLocaleString(undefined, {

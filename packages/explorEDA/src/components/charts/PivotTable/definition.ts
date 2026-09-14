@@ -26,19 +26,31 @@ export interface PivotTableSettings extends BaseChartSettings {
       | "variance"
       | "countUnique"
       | "singleValue";
-    formula?: string;
     label?: string;
   }>;
-  showTotals: {
+  /** Legacy saved-data field. Totals are not implemented and are ignored. */
+  showTotals?: {
     row: boolean;
     column: boolean;
     grand: boolean;
   };
-  dateBinning?: {
-    field: string;
-    type: "day" | "month" | "year";
-  };
 }
+
+const VALID_AGGREGATIONS: ReadonlySet<
+  PivotTableSettings["valueFields"][number]["aggregation"]
+> = new Set([
+  "sum",
+  "count",
+  "avg",
+  "min",
+  "max",
+  "median",
+  "mode",
+  "stddev",
+  "variance",
+  "countUnique",
+  "singleValue",
+]);
 
 export const pivotTableDefinition: ChartDefinition<PivotTableSettings> = {
   type: "pivot",
@@ -58,20 +70,36 @@ export const pivotTableDefinition: ChartDefinition<PivotTableSettings> = {
     margin: { top: 0, right: 0, bottom: 0, left: 0 },
     rowFields: [],
     columnField: "",
-    valueFields: [{ field: "", aggregation: "count" }],
-    showTotals: {
-      row: true,
-      column: true,
-      grand: true,
-    },
+    valueFields: [],
     filters: [],
   }),
 
   validateSettings: (settings) => {
+    const rowFields =
+      Array.isArray(settings.rowFields) &&
+      settings.rowFields.every(
+        (field) => typeof field === "string" && field.trim().length > 0
+      );
+    const columnField =
+      typeof settings.columnField === "string" &&
+      (settings.columnField === "" || settings.columnField.trim().length > 0);
+    const valueFields =
+      Array.isArray(settings.valueFields) &&
+      settings.valueFields.length > 0 &&
+      settings.valueFields.every(
+        (valueField) =>
+          typeof valueField.field === "string" &&
+          valueField.field.trim().length > 0 &&
+          VALID_AGGREGATIONS.has(valueField.aggregation)
+      );
+
     return (
-      settings.rowFields.length > 0 ||
-      settings.columnField !== "" ||
-      settings.valueFields.length > 0
+      rowFields &&
+      columnField &&
+      valueFields &&
+      new Set(settings.rowFields).size === settings.rowFields.length &&
+      (!settings.columnField ||
+        !settings.rowFields.includes(settings.columnField))
     );
   },
 

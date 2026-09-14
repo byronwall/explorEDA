@@ -6,7 +6,10 @@ import { PivotTableSettings } from "./definition";
 import { useColumnNames } from "./useColumnNames";
 import { FieldSelector } from "@/components/FieldSelector";
 
-const AGGREGATION_OPTIONS = [
+const AGGREGATION_OPTIONS: Array<{
+  label: string;
+  value: PivotTableSettings["valueFields"][number]["aggregation"];
+}> = [
   { label: "Sum", value: "sum" },
   { label: "Count", value: "count" },
   { label: "Average", value: "avg" },
@@ -18,7 +21,7 @@ const AGGREGATION_OPTIONS = [
   { label: "Variance", value: "variance" },
   { label: "Count Unique", value: "countUnique" },
   { label: "Single Value", value: "singleValue" },
-] as const;
+];
 
 export function PivotTableSettingsPanel({
   settings,
@@ -129,12 +132,17 @@ export function PivotTableSettingsPanel({
           <button
             className="text-sm text-blue-600 hover:text-blue-800"
             onClick={() => {
+              const field = availableFields[0];
+              if (!field) {
+                return;
+              }
+
               onSettingsChange({
                 ...settings,
                 valueFields: [
                   ...settings.valueFields,
                   {
-                    field: availableFields[0],
+                    field,
                     aggregation: "count",
                   },
                 ],

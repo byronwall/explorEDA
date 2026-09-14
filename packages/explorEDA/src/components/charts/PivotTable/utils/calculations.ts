@@ -2,29 +2,66 @@ import { datum } from "@/types/FilterTypes";
 import { PivotCell, PivotHeader, PivotRow, PivotTableData } from "../types";
 import { PivotTableSettings } from "../definition";
 
-type AggregationFunction = (values: any[]) => number | string;
+type AggregationFunction = (values: any[]) => number | string | undefined;
+
+function numericValues(values: any[]): number[] {
+  return values.flatMap((value) => {
+    if (
+      value === undefined ||
+      value === null ||
+      value === "" ||
+      (typeof value === "string" && value.trim() === "") ||
+      typeof value === "boolean"
+    ) {
+      return [];
+    }
+
+    const number = Number(value);
+    return Number.isFinite(number) ? [number] : [];
+  });
+}
+
+function aggregate(name: string, values: any[]): number | string | undefined {
+  return aggregationFunctions[name]?.(values);
+}
 
 const aggregationFunctions: Record<string, AggregationFunction> = {
-  sum: (values) => values.reduce((a, b) => a + (Number(b) || 0), 0),
+  sum: (values) => {
+    const numbers = numericValues(values);
+    return numbers.length
+      ? numbers.reduce((sum, value) => sum + value, 0)
+      : undefined;
+  },
   count: (values) => values.length,
   avg: (values) => {
-    const sum = values.reduce((a, b) => a + (Number(b) || 0), 0);
-    return values.length ? sum / values.length : 0;
+    const numbers = numericValues(values);
+    return numbers.length
+      ? numbers.reduce((sum, value) => sum + value, 0) / numbers.length
+      : undefined;
   },
-  min: (values) => Math.min(...values.map((v) => Number(v) || 0)),
-  max: (values) => Math.max(...values.map((v) => Number(v) || 0)),
+  min: (values) => {
+    const numbers = numericValues(values);
+    return numbers.length ? Math.min(...numbers) : undefined;
+  },
+  max: (values) => {
+    const numbers = numericValues(values);
+    return numbers.length ? Math.max(...numbers) : undefined;
+  },
   median: (values) => {
-    const sorted = values.map((v) => Number(v) || 0).sort((a, b) => a - b);
+    const sorted = numericValues(values).sort((a, b) => a - b);
+    if (sorted.length === 0) {
+      return undefined;
+    }
     const mid = Math.floor(sorted.length / 2);
     return sorted.length % 2
-      ? sorted[mid]
-      : (sorted[mid - 1] + sorted[mid]) / 2;
+      ? sorted[mid]!
+      : (sorted[mid - 1]! + sorted[mid]!) / 2;
   },
   mode: (values) => {
     const counts = new Map<number | string, number>();
     values.forEach((v) => counts.set(v, (counts.get(v) || 0) + 1));
     let maxCount = 0;
-    let mode: number | string = 0;
+    let mode: number | string | undefined;
     counts.forEach((count, value) => {
       if (count > maxCount) {
         maxCount = count;
@@ -34,20 +71,32 @@ const aggregationFunctions: Record<string, AggregationFunction> = {
     return mode;
   },
   stddev: (values) => {
-    const avg = aggregationFunctions.avg(values) as number;
-    const squareDiffs = values.map((v) => {
-      const diff = (Number(v) || 0) - avg;
+    const numbers = numericValues(values);
+    if (numbers.length === 0) {
+      return undefined;
+    }
+    const avg = numbers.reduce((sum, value) => sum + value, 0) / numbers.length;
+    const squareDiffs = numbers.map((v) => {
+      const diff = v - avg;
       return diff * diff;
     });
-    return Math.sqrt(aggregationFunctions.avg(squareDiffs) as number);
+    return Math.sqrt(
+      squareDiffs.reduce((sum, value) => sum + value, 0) / squareDiffs.length
+    );
   },
   variance: (values) => {
-    const avg = aggregationFunctions.avg(values) as number;
-    const squareDiffs = values.map((v) => {
-      const diff = (Number(v) || 0) - avg;
+    const numbers = numericValues(values);
+    if (numbers.length === 0) {
+      return undefined;
+    }
+    const avg = numbers.reduce((sum, value) => sum + value, 0) / numbers.length;
+    const squareDiffs = numbers.map((v) => {
+      const diff = v - avg;
       return diff * diff;
     });
-    return aggregationFunctions.avg(squareDiffs) as number;
+    return (
+      squareDiffs.reduce((sum, value) => sum + value, 0) / squareDiffs.length
+    );
   },
   countUnique: (values) => new Set(values).size,
   singleValue: (values) => {
@@ -58,18 +107,6 @@ const aggregationFunctions: Record<string, AggregationFunction> = {
     return values[0];
   },
 };
-
-function flattenHeaders(headers: PivotHeader[]): PivotHeader[] {
-  const result: PivotHeader[] = [];
-  headers.forEach((header) => {
-    if (!header.children?.length) {
-      result.push(header);
-    } else {
-      result.push(...flattenHeaders(header.children));
-    }
-  });
-  return result;
-}
 
 function generateHeaders(data: any[], field: string): PivotHeader[] {
   if (!field) {
@@ -101,7 +138,7 @@ function generateCells(
   if (columnHeaders.length === 0) {
     for (const valueField of valueFields) {
       const values = rowData.map((d) => d[valueField.field]);
-      const value = aggregationFunctions[valueField.aggregation](values);
+      const value = aggregate(valueField.aggregation, values);
 
       cells.push({
         key: {
@@ -123,7 +160,7 @@ function generateCells(
 
     for (const valueField of valueFields) {
       const values = columnData.map((d) => d[valueField.field]);
-      const value = aggregationFunctions[valueField.aggregation](values);
+      const value = aggregate(valueField.aggregation, values);
 
       cells.push({
         key: {
@@ -145,8 +182,7 @@ function generateRows(
   data: any[],
   rowFields: string[],
   columnField: string,
-  valueFields: PivotTableSettings["valueFields"],
-  showTotals: PivotTableSettings["showTotals"]
+  valueFields: PivotTableSettings["valueFields"]
 ): PivotRow[] {
   const rows: PivotRow[] = [];
   const columnHeaders = generateHeaders(data, columnField);
@@ -154,8 +190,13 @@ function generateRows(
   // Pre-compute row groups for better performance
   const rowGroups = new Map<string, any[]>();
   data.forEach((item) => {
-    // Create a composite key for grouping, but store the individual values
-    const keyString = rowFields.map((field) => item[field]).join(":");
+    // Include the value type so strings and numbers remain separate groups.
+    const keyString = JSON.stringify(
+      rowFields.map((field) => {
+        const value = item[field];
+        return [typeof value, value];
+      })
+    );
     if (!rowGroups.has(keyString)) {
       rowGroups.set(keyString, []);
     }
@@ -163,9 +204,9 @@ function generateRows(
   });
 
   // Generate rows
-  rowGroups.forEach((groupData, keyString) => {
+  rowGroups.forEach((groupData) => {
     // Create properly typed keys and headers
-    const keys = rowFields.map((field, index) => {
+    const keys = rowFields.map((field) => {
       const value = groupData[0][field];
       return {
         field,
@@ -202,8 +243,7 @@ export function calculatePivotData(
     data,
     settings.rowFields,
     settings.columnField,
-    settings.valueFields,
-    settings.showTotals
+    settings.valueFields
   );
 
   return {
