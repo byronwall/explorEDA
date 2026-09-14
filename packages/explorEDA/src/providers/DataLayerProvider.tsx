@@ -21,9 +21,15 @@ import { saveProject } from "@/utils/localStorage";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { createStore, useStore } from "zustand";
 import * as THREE from "three";
+import {
+  IdType,
+  initializeData,
+  invalidateCalculationCache,
+} from "./lib/dataLayerState";
 
 type DatumObject = { [key: string]: datum };
 export type { DatumObject };
+export type { IdType } from "./lib/dataLayerState";
 
 function toRuntimeChart(chart: SavedChartSettings): ChartSettings {
   if (chart.type !== "3d-scatter") {
@@ -53,7 +59,6 @@ interface DataLayerProps<T extends DatumObject> {
 }
 
 // Add ID to the data type
-export type IdType = number;
 export type HasId = { __ID: IdType };
 
 interface DataLayerState<T extends DatumObject> extends DataLayerProps<T> {
@@ -129,10 +134,7 @@ function getDataAndCrossfilterWrapper<T extends DatumObject>(
   fieldGetter?: (name: string) => Record<IdType, datum>,
   charts?: ChartSettings[]
 ): Partial<DataLayerState<T>> {
-  const dataWithIds = data.map((row, index) => ({
-    ...row,
-    __ID: index,
-  }));
+  const { dataWithIds, emptyColumn } = initializeData(data);
   const newCrossFilter = new CrossfilterWrapper<T & HasId>(
     dataWithIds,
     (d) => d.__ID
@@ -150,13 +152,7 @@ function getDataAndCrossfilterWrapper<T extends DatumObject>(
 
   return {
     data: dataWithIds,
-    emptyColumn: dataWithIds.reduce(
-      (acc, row) => {
-        acc[row.__ID] = undefined;
-        return acc;
-      },
-      {} as Record<IdType, datum>
-    ),
+    emptyColumn,
     crossfilterWrapper: newCrossFilter,
     charts: charts ?? [],
     colorScales: [],
@@ -188,6 +184,7 @@ const getInitialStoreState = <T extends DatumObject>(
 > => {
   const {
     data: initData,
+    emptyColumn: initialEmptyColumn,
     crossfilterWrapper,
     calculationManager: ogCalculationManager,
   } = getDataAndCrossfilterWrapper(initProps?.data ?? []);
@@ -224,13 +221,7 @@ const getInitialStoreState = <T extends DatumObject>(
 
     return {
       data: initData,
-      emptyColumn: initData.reduce(
-        (acc, row) => {
-          acc[row.__ID as IdType] = undefined;
-          return acc;
-        },
-        {} as Record<IdType, datum>
-      ),
+      emptyColumn: initialEmptyColumn!,
       crossfilterWrapper,
       calculationManager: ogCalculationManager,
       calculations: newCalculations,
@@ -248,13 +239,7 @@ const getInitialStoreState = <T extends DatumObject>(
   // Return default state if no saved data
   return {
     data: initData,
-    emptyColumn: initData.reduce(
-      (acc, row) => {
-        acc[row.__ID as IdType] = undefined;
-        return acc;
-      },
-      {} as Record<IdType, datum>
-    ),
+    emptyColumn: initialEmptyColumn!,
     crossfilterWrapper,
     calculationManager: ogCalculationManager,
     calculations: [],
@@ -627,10 +612,10 @@ const createDataLayerStore = <T extends DatumObject>(
 
       set((state) => {
         const newCalculations = [...state.calculations, calculation];
-        const newCalcColumnCache = { ...state.calcColumnCache };
-        for (const columnName of affectedColumns) {
-          newCalcColumnCache[columnName] = undefined;
-        }
+        const newCalcColumnCache = invalidateCalculationCache(
+          state.calcColumnCache,
+          affectedColumns
+        );
         return {
           calculations: newCalculations,
           calcColumnCache: newCalcColumnCache,
@@ -651,10 +636,10 @@ const createDataLayerStore = <T extends DatumObject>(
         calculationManager.removeCalculation(resultColumnName);
 
       set((state) => {
-        const newCalcColumnCache = { ...state.calcColumnCache };
-        for (const columnName of affectedColumns) {
-          delete newCalcColumnCache[columnName];
-        }
+        const newCalcColumnCache = invalidateCalculationCache(
+          state.calcColumnCache,
+          affectedColumns
+        );
         return {
           calculations: state.calculations.filter(
             (calc) => calc.resultColumnName !== resultColumnName
