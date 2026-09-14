@@ -1,15 +1,12 @@
 import { datum } from "@/types/ChartTypes";
 import { timeFormat } from "d3-time-format";
 import {
-  type AdvancedExpression,
   type BasicExpression,
   type CalculationContext,
   type CalculationResult,
   type Expression,
   type FunctionExpression,
-  type GroupExpression,
   type LiteralExpression,
-  type RankExpression,
   type TernaryExpression,
   type UnaryExpression,
 } from "../types";
@@ -37,15 +34,6 @@ export class Calculator {
             return funcResult;
           }
           result = funcResult.value;
-          break;
-        case "group":
-          result = this.evaluateGroup(expression as GroupExpression);
-          break;
-        case "rank":
-          result = this.evaluateRank(expression as RankExpression);
-          break;
-        case "advanced":
-          result = this.evaluateAdvanced(expression as AdvancedExpression);
           break;
         case "ternary":
           result = this.evaluateTernary(expression as TernaryExpression);
@@ -267,87 +255,6 @@ export class Calculator {
     }
   }
 
-  private evaluateGroup(expression: GroupExpression): Record<string, datum> {
-    const groupBy = expression.groupBy;
-    const aggregation = expression.aggregation;
-
-    // Group the data
-    const groups = new Map<string, any[]>();
-    for (const row of this.context.data) {
-      const key = groupBy.map((field: string) => row[field]).join(":");
-      if (!groups.has(key)) {
-        groups.set(key, []);
-      }
-      groups.get(key)!.push(row);
-    }
-
-    // Apply aggregation to each group
-    const results = new Map<string, any>();
-    for (const [key, groupData] of groups) {
-      results.set(key, this.aggregate(groupData, aggregation));
-    }
-
-    return Object.fromEntries(results);
-  }
-
-  private evaluateRank(expression: RankExpression): Record<number, number> {
-    const rankBy = expression.rankBy;
-    const isNormalized = expression.isNormalized;
-    const isCumulative = expression.isCumulative;
-
-    // Sort the data
-    const sortedData = [...this.context.data].sort((a, b) => {
-      for (const field of rankBy) {
-        if (a[field] < b[field]) {
-          return -1;
-        }
-        if (a[field] > b[field]) {
-          return 1;
-        }
-      }
-      return 0;
-    });
-
-    // Assign ranks
-    const ranks = new Map<number, number>();
-    sortedData.forEach((row, index) => {
-      const rank = index + 1;
-      ranks.set(row.id, isNormalized ? rank / sortedData.length : rank);
-    });
-
-    if (isCumulative) {
-      let sum = 0;
-      const sortedRanks = Array.from(ranks.entries()).sort(([id1], [id2]) => {
-        const row1 = sortedData.find((row) => row.id === id1);
-        const row2 = sortedData.find((row) => row.id === id2);
-        if (!row1 || !row2) {
-          return 0;
-        }
-        for (const field of rankBy) {
-          if (row1[field] < row2[field]) {
-            return -1;
-          }
-          if (row1[field] > row2[field]) {
-            return 1;
-          }
-        }
-        return 0;
-      });
-
-      for (const [id, value] of sortedRanks) {
-        sum += value;
-        ranks.set(id, sum);
-      }
-    }
-
-    return Object.fromEntries(ranks);
-  }
-
-  private evaluateAdvanced(expression: AdvancedExpression): Promise<any> {
-    // This would be implemented based on the specific advanced analytics needed
-    throw new Error("Advanced analytics not implemented yet");
-  }
-
   private getFunction(name: string): CalcFunction | undefined {
     console.log(`[Calculator.getFunction] Looking up function: ${name}`);
     const functions: Record<string, CalcFunction> = {
@@ -390,27 +297,6 @@ export class Calculator {
       (key) => key.toLowerCase() === lowerName
     );
     return functionKey ? functions[functionKey] : undefined;
-  }
-
-  private aggregate(data: any[], type: string): any {
-    const values = data.map((row) => row.value);
-
-    switch (type) {
-      case "sum":
-        return values.reduce((a, b) => a + b, 0);
-      case "average":
-        return values.reduce((a, b) => a + b, 0) / values.length;
-      case "min":
-        return Math.min(...values);
-      case "max":
-        return Math.max(...values);
-      case "count":
-        return values.length;
-      case "countUnique":
-        return new Set(values).size;
-      default:
-        throw new Error(`Unknown aggregation type: ${type}`);
-    }
   }
 
   private evaluateExpression(expr: Expression): number {
@@ -606,121 +492,6 @@ export class Calculator {
         }`
       );
     }
-  }
-
-  // String Operation Functions
-  private concatenateStrings(strings: string[]): string {
-    throw new Error("String concatenation not implemented");
-  }
-
-  private extractSubstring(str: string, start: number, end?: number): string {
-    throw new Error("Substring extraction not implemented");
-  }
-
-  private patternMatch(
-    str: string,
-    pattern: string,
-    replacement?: string
-  ): string | string[] {
-    throw new Error("Pattern matching not implemented");
-  }
-
-  // Statistical Functions
-  private calculatePercentile(values: number[], percentile: number): number {
-    throw new Error("Percentile calculation not implemented");
-  }
-
-  private calculateStandardDeviation(values: number[]): number {
-    throw new Error("Standard deviation calculation not implemented");
-  }
-
-  private calculateVariance(values: number[]): number {
-    throw new Error("Variance calculation not implemented");
-  }
-
-  private calculateMedian(values: number[]): number {
-    throw new Error("Median calculation not implemented");
-  }
-
-  private calculateZScore(value: number, mean: number, stdDev: number): number {
-    throw new Error("Z-score calculation not implemented");
-  }
-
-  // Advanced Analytics Functions
-  private performSOM(
-    data: number[][],
-    options: Record<string, any>
-  ): number[][] {
-    throw new Error("Self-organizing maps not implemented");
-  }
-
-  private performPCA(data: number[][], components: number): number[][] {
-    throw new Error("PCA not implemented");
-  }
-
-  private performUMAP(
-    data: number[][],
-    options: Record<string, any>
-  ): number[][] {
-    throw new Error("UMAP transformation not implemented");
-  }
-
-  private performTSNE(
-    data: number[][],
-    options: Record<string, any>
-  ): number[][] {
-    throw new Error("t-SNE transformation not implemented");
-  }
-
-  // Regression Analysis Functions
-  private performLinearRegression(
-    x: number[],
-    y: number[]
-  ): Record<string, any> {
-    throw new Error("Linear regression not implemented");
-  }
-
-  private performPolynomialRegression(
-    x: number[],
-    y: number[],
-    degree: number
-  ): Record<string, any> {
-    throw new Error("Polynomial regression not implemented");
-  }
-
-  private calculateResiduals(
-    observed: number[],
-    predicted: number[]
-  ): number[] {
-    throw new Error("Residuals calculation not implemented");
-  }
-
-  private performANOVA(groups: number[][]): Record<string, any> {
-    throw new Error("ANOVA not implemented");
-  }
-
-  // Data Transformation Functions
-  private normalizeData(values: number[]): number[] {
-    throw new Error("Data normalization not implemented");
-  }
-
-  private standardizeData(values: number[]): number[] {
-    throw new Error("Data standardization not implemented");
-  }
-
-  private logTransform(values: number[], base?: number): number[] {
-    throw new Error("Logarithmic transformation not implemented");
-  }
-
-  private binData(
-    values: number[],
-    binCount: number
-  ): Record<string, number[]> {
-    throw new Error("Data binning not implemented");
-  }
-
-  private createDummyVariables(categories: string[]): Record<string, number[]> {
-    throw new Error("Dummy variable creation not implemented");
   }
 
   private evaluateLiteral(expression: LiteralExpression): any {

@@ -2,25 +2,16 @@ import { describe, expect, it } from "vitest";
 import { Calculator } from "../../../../lib/calculations/engine/Calculator";
 import { parseExpression } from "../../../../lib/calculations/parser/semantics";
 import {
-  AdvancedExpression,
-  AggregationType,
   BasicExpression,
-  GroupExpression,
-  RankExpression,
   TernaryExpression,
   UnaryExpression,
 } from "../../../../lib/calculations/types";
 
 describe("Calculator", () => {
   describe("Expression Structure", () => {
-    const calculator = new Calculator({
-      data: [],
-      variables: new Map(),
-    });
-
-    it("should inspect parsed expression structure", async () => {
+    it("should parse an expression", () => {
       const expr = parseExpression("2 + 3");
-      console.log(JSON.stringify(expr, null, 2));
+      expect(expr.type).toBe("basic");
     });
   });
 
@@ -181,129 +172,6 @@ describe("Calculator", () => {
     });
   });
 
-  describe("Group Expression Evaluation", () => {
-    const calculator = new Calculator({
-      data: [
-        { id: 1, category: "A", value: 10 },
-        { id: 2, category: "A", value: 20 },
-        { id: 3, category: "B", value: 30 },
-        { id: 4, category: "B", value: 40 },
-      ],
-      variables: new Map(),
-    });
-
-    it("should evaluate group expressions with sum aggregation", async () => {
-      const expr: GroupExpression = {
-        id: "test-group",
-        type: "group",
-        name: "Group Test",
-        dependencies: [],
-        groupBy: ["category"],
-        aggregation: "sum" as AggregationType,
-        expression: "group by category",
-      };
-
-      const result = await calculator.evaluate(expr);
-      expect(result.success).toBe(true);
-      expect(result.value).toEqual({
-        A: 30,
-        B: 70,
-      });
-    });
-
-    it("should evaluate group expressions with average aggregation", async () => {
-      const expr: GroupExpression = {
-        id: "test-group-avg",
-        type: "group",
-        name: "Group Average Test",
-        dependencies: [],
-        groupBy: ["category"],
-        aggregation: "average" as AggregationType,
-        expression: "group by category",
-      };
-
-      const result = await calculator.evaluate(expr);
-      expect(result.success).toBe(true);
-      expect(result.value).toEqual({
-        A: 15,
-        B: 35,
-      });
-    });
-  });
-
-  describe("Rank Expression Evaluation", () => {
-    const testData = [
-      { id: 1, value: 30 },
-      { id: 2, value: 10 },
-      { id: 3, value: 20 },
-    ];
-
-    const calculator = new Calculator({
-      data: testData,
-      variables: new Map(),
-    });
-
-    it("should evaluate rank expressions", async () => {
-      const expr: RankExpression = {
-        id: "test-rank",
-        type: "rank",
-        name: "Rank Test",
-        dependencies: [],
-        rankBy: ["value"],
-        isNormalized: false,
-        isCumulative: false,
-        expression: "rank by value",
-      };
-
-      const result = await calculator.evaluate(expr);
-      expect(result.success).toBe(true);
-      const ranks = result.value as Record<number, number>;
-      expect(ranks[1]).toBe(3); // value 30
-      expect(ranks[2]).toBe(1); // value 10
-      expect(ranks[3]).toBe(2); // value 20
-    });
-
-    it("should evaluate normalized rank expressions", async () => {
-      const expr: RankExpression = {
-        id: "test-rank-norm",
-        type: "rank",
-        name: "Normalized Rank Test",
-        dependencies: [],
-        rankBy: ["value"],
-        isNormalized: true,
-        isCumulative: false,
-        expression: "rank by value normalized",
-      };
-
-      const result = await calculator.evaluate(expr);
-      expect(result.success).toBe(true);
-      const ranks = result.value as Record<number, number>;
-      expect(ranks[1]).toBe(1); // value 30
-      expect(ranks[2]).toBeCloseTo(0.333, 2); // value 10
-      expect(ranks[3]).toBeCloseTo(0.667, 2); // value 20
-    });
-
-    it("should evaluate cumulative rank expressions", async () => {
-      const expr: RankExpression = {
-        id: "test-rank-cum",
-        type: "rank",
-        name: "Cumulative Rank Test",
-        dependencies: [],
-        rankBy: ["value"],
-        isNormalized: false,
-        isCumulative: true,
-        expression: "rank by value cumulative",
-      };
-
-      const result = await calculator.evaluate(expr);
-      expect(result.success).toBe(true);
-      const ranks = result.value as Record<number, number>;
-      expect(ranks[1]).toBe(6); // 1 + 2 + 3
-      expect(ranks[2]).toBe(1); // 1
-      expect(ranks[3]).toBe(3); // 1 + 2
-    });
-  });
-
   describe("Error Handling", () => {
     const calculator = new Calculator({
       data: [],
@@ -332,6 +200,7 @@ describe("Calculator", () => {
         dependencies: [],
         operator: "+",
         expression: "invalid",
+        rawInput: "invalid",
         left: null as any,
         right: null as any,
       };
@@ -349,6 +218,7 @@ describe("Calculator", () => {
         dependencies: [],
         operator: "-",
         expression: "invalid",
+        rawInput: "invalid",
         operand: null as any,
       };
 
@@ -364,6 +234,7 @@ describe("Calculator", () => {
         name: "Invalid Ternary Test",
         dependencies: [],
         expression: "invalid",
+        rawInput: "invalid",
         condition: null as any,
         trueBranch: null as any,
         falseBranch: null as any,
@@ -375,35 +246,11 @@ describe("Calculator", () => {
     });
   });
 
-  describe("Advanced Expression Types", () => {
+  describe("Supported Date Functions", () => {
     const calculator = new Calculator({
       data: [],
-      variables: new Map(),
+      variables: new Map([["testDate", new Date("2024-03-15T12:30:00Z")]]),
     });
-
-    it("should handle advanced expressions", async () => {
-      const expr: AdvancedExpression = {
-        id: "test-advanced",
-        type: "advanced",
-        name: "Advanced Test",
-        dependencies: [],
-        expression: "advanced analytics",
-        algorithm: "pca",
-      };
-
-      const result = await calculator.evaluate(expr);
-      expect(result.success).toBe(false);
-      expect(result.error).toContain("Advanced analytics not implemented yet");
-    });
-  });
-
-  describe("Missing Functionality Tests (TODO)", () => {
-    // These tests are placeholders for functionality that needs to be implemented
-    describe("Date Processing", () => {
-      const calculator = new Calculator({
-        data: [],
-        variables: new Map([["testDate", new Date("2024-03-15T12:30:00Z")]]),
-      });
 
       it("should format dates using D3 format library", async () => {
         const expr = parseExpression('formatDate(testDate, "%Y-%m-%d")');
@@ -448,43 +295,5 @@ describe("Calculator", () => {
         expect(result.success).toBe(true);
         expect(result.value).toBe(11); // Week 11 of 2024
       });
-    });
-
-    describe("String Operations", () => {
-      it.todo("should concatenate strings");
-      it.todo("should extract substrings");
-      it.todo("should perform pattern matching/replacement");
-    });
-
-    describe("Statistical Functions", () => {
-      it.todo("should calculate percentiles");
-      it.todo("should calculate standard deviation");
-      it.todo("should calculate variance");
-      it.todo("should calculate median");
-      it.todo("should calculate z-scores");
-    });
-
-    describe("Advanced Analytics", () => {
-      it.todo("should perform self-organizing maps (Kohonen)");
-      it.todo("should perform PCA with first component extraction");
-      it.todo("should perform PCA with second component extraction");
-      it.todo("should perform UMAP transformation");
-      it.todo("should perform t-SNE transformation");
-    });
-
-    describe("Regression Analysis", () => {
-      it.todo("should perform linear regression");
-      it.todo("should perform polynomial regression");
-      it.todo("should calculate regression residuals");
-      it.todo("should perform ANOVA/factor analysis");
-    });
-
-    describe("Data Transformation", () => {
-      it.todo("should normalize data");
-      it.todo("should standardize data");
-      it.todo("should perform logarithmic transformations");
-      it.todo("should perform binning/bucketing of numeric values");
-      it.todo("should create dummy variables");
-    });
   });
 });

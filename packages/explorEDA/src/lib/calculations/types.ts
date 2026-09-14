@@ -1,15 +1,3 @@
-export type AggregationType =
-  | "sum"
-  | "count"
-  | "min"
-  | "max"
-  | "average"
-  | "countUnique"
-  | "percentile"
-  | "median"
-  | "stddev"
-  | "variance";
-
 // Base interface for common fields
 export interface BaseExpression {
   id: string;
@@ -35,30 +23,6 @@ export interface FunctionExpression extends BaseExpression {
   parameterTypes?: string[];
 }
 
-export interface GroupExpression extends BaseExpression {
-  type: "group";
-  groupBy: string[];
-  aggregation: AggregationType;
-}
-
-export interface RankExpression extends BaseExpression {
-  type: "rank";
-  rankBy: string[];
-  isNormalized: boolean;
-  isCumulative: boolean;
-}
-
-export interface AdvancedExpression extends BaseExpression {
-  type: "advanced";
-  algorithm: "pca" | "tsne" | "umap" | "som";
-  parameters?: Record<string, any>;
-  // Regression specific fields
-  regressionType?: "linear" | "polynomial";
-  degree?: number;
-  predictors?: string[];
-  response?: string;
-}
-
 export interface TernaryExpression extends BaseExpression {
   type: "ternary";
   condition: Expression;
@@ -80,9 +44,6 @@ export interface LiteralExpression extends BaseExpression {
 export type Expression =
   | BasicExpression
   | FunctionExpression
-  | GroupExpression
-  | RankExpression
-  | AdvancedExpression
   | TernaryExpression
   | UnaryExpression
   | LiteralExpression;

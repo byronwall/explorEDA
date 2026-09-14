@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { parseExpression } from "../../../../lib/calculations/parser/semantics";
+import { FunctionExpression } from "../../../../lib/calculations/types";
 
 describe("Calculator Parser", () => {
   describe("Basic Operations", () => {
@@ -29,24 +30,24 @@ describe("Calculator Parser", () => {
     it("should parse simple function calls", () => {
       const result = parseExpression("sum(1, 2, 3)");
       expect(result.type).toBe("function");
-      expect(result.functionName).toBe("sum");
-      expect(result.arguments).toHaveLength(3);
+      expect((result as FunctionExpression).functionName).toBe("sum");
+      expect((result as FunctionExpression).arguments).toHaveLength(3);
       expect(result.dependencies).toEqual([]);
     });
 
     it("should parse nested function calls", () => {
       const result = parseExpression("max(min(1, 2), 3)");
       expect(result.type).toBe("function");
-      expect(result.functionName).toBe("max");
-      expect(result.arguments).toHaveLength(2);
+      expect((result as FunctionExpression).functionName).toBe("max");
+      expect((result as FunctionExpression).arguments).toHaveLength(2);
       expect(result.dependencies).toEqual([]);
     });
 
     it("should parse function calls with variable references", () => {
       const result = parseExpression("average(x, y, z)");
       expect(result.type).toBe("function");
-      expect(result.functionName).toBe("average");
-      expect(result.arguments).toHaveLength(3);
+      expect((result as FunctionExpression).functionName).toBe("average");
+      expect((result as FunctionExpression).arguments).toHaveLength(3);
       expect(result.dependencies).toEqual(["x", "y", "z"]);
     });
   });
@@ -62,8 +63,8 @@ describe("Calculator Parser", () => {
     it("should parse expressions with functions and arithmetic", () => {
       const result = parseExpression("sum(x + y, z * 2)");
       expect(result.type).toBe("function");
-      expect(result.functionName).toBe("sum");
-      expect(result.arguments).toHaveLength(2);
+      expect((result as FunctionExpression).functionName).toBe("sum");
+      expect((result as FunctionExpression).arguments).toHaveLength(2);
       expect(result.dependencies).toEqual(["x", "y", "z"]);
     });
   });
@@ -96,15 +97,15 @@ describe("Calculator Parser", () => {
     it("should handle whitespace variations", () => {
       const result = parseExpression("  sum(  1,2,   3  )  ");
       expect(result.type).toBe("function");
-      expect(result.functionName).toBe("sum");
-      expect(result.arguments).toHaveLength(3);
+      expect((result as FunctionExpression).functionName).toBe("sum");
+      expect((result as FunctionExpression).arguments).toHaveLength(3);
     });
 
     it("should handle nested expressions in function arguments", () => {
       const result = parseExpression("max(min(1, 2 + 3), 4 * 5)");
       expect(result.type).toBe("function");
-      expect(result.functionName).toBe("max");
-      expect(result.arguments).toHaveLength(2);
+      expect((result as FunctionExpression).functionName).toBe("max");
+      expect((result as FunctionExpression).arguments).toHaveLength(2);
     });
 
     it("should handle unary operators", () => {
