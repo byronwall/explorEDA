@@ -1,9 +1,7 @@
-import { ChartDefinition, datum } from "@/types/ChartTypes";
+import { ChartDefinition } from "@/types/ChartTypes";
 import { DEFAULT_3D_SCATTER_SETTINGS } from "@/utils/defaultSettings";
 import { Box } from "lucide-react";
 
-import { IdType } from "@/providers/DataLayerProvider";
-import * as THREE from "three";
 import { ThreeDScatterChart } from "./ThreeDScatterChart";
 import { ThreeDScatterSettingsPanel } from "./ThreeDScatterSettingsPanel";
 import { ThreeDScatterSettings } from "./types";
@@ -44,11 +42,5 @@ export const threeDScatterDefinition: ChartDefinition<ThreeDScatterSettings> = {
     return !!settings.xField && !!settings.yField && !!settings.zField;
   },
 
-  getFilterFunction: (
-    settings: ThreeDScatterSettings,
-    fieldGetter: (name: string) => Record<IdType, datum>
-  ) => {
-    // Currently no filtering implemented for 3D scatter
-    return (d: IdType) => true;
-  },
+  getFilterFunction: () => () => true, // No filtering for 3D scatter
 };

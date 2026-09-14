@@ -33,7 +33,8 @@ export function ThreeDScatterChart({
 
   // Initialize Three.js scene
   useEffect(() => {
-    if (!containerRef.current || width <= 0 || height <= 0) {
+    const container = containerRef.current;
+    if (!container || width <= 0 || height <= 0) {
       return;
     }
 
@@ -55,7 +56,7 @@ export function ThreeDScatterChart({
     });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    containerRef.current.appendChild(renderer.domElement);
+    container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
     // Add orbit controls
@@ -119,10 +120,10 @@ export function ThreeDScatterChart({
         renderer.forceContextLoss();
         renderer.domElement.remove();
       }
-      if (containerRef.current) {
-        containerRef.current.innerHTML = "";
-      }
+      container.innerHTML = "";
     };
+    // Camera vectors are applied by the separate sync effect below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [width, height, settings.id, updateChart]);
 
   // Apply saved camera changes without rebuilding the scene.

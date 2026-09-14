@@ -1,7 +1,6 @@
 import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
 import { type ChartSettingsPanelProps } from "@/types/ChartTypes";
 import { type FC } from "react";
 import {

@@ -129,7 +129,7 @@ export function calculateKernelDensity(
     return [x, densityValue] as [number, number];
   });
 
-  const maxDensity = Math.max(...density.map(([_, y]) => y));
+  const maxDensity = Math.max(...density.map(([, y]) => y));
 
   return density.map(([x, y]) => [x, y / maxDensity] as [number, number]);
 }
