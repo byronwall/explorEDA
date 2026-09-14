@@ -51,6 +51,12 @@ export function getChartFields(settings: ChartSettings): string[] {
 
 export function getChartSummary(settings: ChartSettings): string {
   const name = chartNames[settings.type] ?? "Chart";
+  if (settings.type === "summary") {
+    return `${name} of all data columns.`;
+  }
+  if (settings.type === "markdown") {
+    return `${name}.`;
+  }
   const fields = getChartFields(settings);
   return fields.length
     ? `${name} showing ${fields.join(", ")}.`
