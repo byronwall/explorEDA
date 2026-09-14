@@ -4,7 +4,8 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "release": "turbo build && changeset publish"
+    "check": "turbo check-types test build",
+    "release": "pnpm check && changeset publish"
   },
   "dependencies": {
     "@changesets/cli": "^2.28.1",
