@@ -9,7 +9,7 @@ interface DataTableProps extends BaseChartProps {
   settings: DataTableSettings;
 }
 
-export function DataTable({ settings, width, height }: DataTableProps) {
+export function DataTable({ settings, height }: DataTableProps) {
   return (
     <div className="flex flex-col h-full w-full">
       <DataTableToolbar settings={settings} />

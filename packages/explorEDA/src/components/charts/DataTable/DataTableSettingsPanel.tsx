@@ -11,7 +11,7 @@ const PAGE_SIZE_OPTIONS = [
   { label: "25 rows", value: 25 },
   { label: "50 rows", value: 50 },
   { label: "100 rows", value: 100 },
-] as const;
+  ];
 
 export function DataTableSettingsPanel({
   settings,

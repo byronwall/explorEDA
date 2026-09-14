@@ -27,7 +27,7 @@ export function DataTableToolbar({ settings }: DataTableToolbarProps) {
 
     // Create CSV content
     const headers = settings.columns.map((col) => col.field).join(",");
-    const rows = searchFilteredData.map((row) =>
+    const rows = filteredData.map((row) =>
       settings.columns
         .map((col) => {
           const value = row[col.field];

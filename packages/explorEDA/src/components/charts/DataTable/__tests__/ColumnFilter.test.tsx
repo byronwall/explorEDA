@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ColumnFilter } from "../components/ColumnFilter";
 
 describe("ColumnFilter", () => {
@@ -7,12 +8,13 @@ describe("ColumnFilter", () => {
     columnLabel: "Name",
     value: "",
     operator: "contains" as const,
-    onChange: jest.fn(),
-    onClear: jest.fn(),
+    onChange: vi.fn(),
+    onClear: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
+    Element.prototype.scrollIntoView = vi.fn();
   });
 
   it("renders filter input and operator select", () => {
@@ -31,11 +33,12 @@ describe("ColumnFilter", () => {
     expect(mockProps.onChange).toHaveBeenCalledWith("name", "John", "contains");
   });
 
-  it("calls onChange when operator changes", () => {
+  it("calls onChange when operator changes", async () => {
     render(<ColumnFilter {...mockProps} />);
 
     const select = screen.getByRole("combobox");
-    fireEvent.change(select, { target: { value: "equals" } });
+    fireEvent.click(select);
+    fireEvent.click(await screen.findByText("Equals"));
 
     expect(mockProps.onChange).toHaveBeenCalledWith("name", "", "equals");
   });
@@ -56,6 +59,6 @@ describe("ColumnFilter", () => {
     const select = screen.getByRole("combobox");
 
     expect(input).toHaveValue("John");
-    expect(select).toHaveValue("equals");
+    expect(select).toHaveTextContent("Equals");
   });
 });

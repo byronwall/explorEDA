@@ -32,7 +32,9 @@ export function getFilteredRows(
 
     return textFilters.every((filter) => {
       const value = row[filter.field];
-      if (value === null || value === undefined) return false;
+      if (value === null || value === undefined) {
+        return false;
+      }
       const text = String(value).toLowerCase();
       const filterValue = filter.value.toLowerCase();
       return filter.operator === "contains"

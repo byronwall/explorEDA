@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { DataTableHeader } from "../DataTableHeader";
-import { DataTableSettings } from "@/types/ChartTypes";
+import { DataTableSettings } from "../definition";
 
 const mockSettings: DataTableSettings = {
   id: "test-table",
@@ -19,7 +19,7 @@ const mockSettings: DataTableSettings = {
   },
   xAxis: {},
   yAxis: {},
-  margin: {},
+  margin: { top: 0, right: 0, bottom: 0, left: 0 },
   xAxisLabel: "",
   yAxisLabel: "",
   xGridLines: 0,
@@ -31,7 +31,7 @@ const mockSettings: DataTableSettings = {
   pageSize: 10,
   currentPage: 1,
   sortDirection: "asc",
-  filters: {},
+  filters: [],
   globalSearch: "",
   tableHeight: 600,
 };
@@ -122,13 +122,9 @@ describe("DataTableHeader", () => {
     const nameHeader = screen.getByText("name");
     fireEvent.click(nameHeader);
 
-    expect(updateChart).toHaveBeenCalledWith(
-      "test-table",
-      expect.objectContaining({
-        sortBy: "name",
-        sortDirection: "desc",
-      })
-    );
+    expect(updateChart).toHaveBeenCalledWith("test-table", {
+      sortDirection: "desc",
+    });
   });
 
   it("handles column resizing", () => {
@@ -142,7 +138,7 @@ describe("DataTableHeader", () => {
 
     render(<DataTableHeader settings={mockSettings} />);
 
-    const resizeHandle = screen.getAllByRole("separator")[0];
+    const resizeHandle = screen.getAllByRole("separator")[0]!;
     fireEvent.mouseDown(resizeHandle, { clientX: 0 });
     fireEvent.mouseMove(window, { clientX: 50 });
     fireEvent.mouseUp(window);
@@ -171,7 +167,7 @@ describe("DataTableHeader", () => {
 
     render(<DataTableHeader settings={mockSettings} />);
 
-    const resizeHandle = screen.getAllByRole("separator")[0];
+    const resizeHandle = screen.getAllByRole("separator")[0]!;
     fireEvent.mouseDown(resizeHandle, { clientX: 0 });
     fireEvent.mouseMove(window, { clientX: -200 }); // Try to make it smaller than minimum
     fireEvent.mouseUp(window);

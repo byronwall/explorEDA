@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { DataTableBody } from "../DataTableBody";
-import { DataTableSettings } from "@/types/ChartTypes";
+import { DataTableSettings } from "../definition";
 
 const mockSettings: DataTableSettings = {
   id: "test-table",
@@ -19,7 +19,7 @@ const mockSettings: DataTableSettings = {
   },
   xAxis: {},
   yAxis: {},
-  margin: {},
+  margin: { top: 0, right: 0, bottom: 0, left: 0 },
   xAxisLabel: "",
   yAxisLabel: "",
   xGridLines: 0,
@@ -31,7 +31,7 @@ const mockSettings: DataTableSettings = {
   pageSize: 10,
   currentPage: 1,
   sortDirection: "asc",
-  filters: {},
+  filters: [],
   globalSearch: "",
   tableHeight: 600,
 };
@@ -93,12 +93,9 @@ describe("DataTableBody", () => {
   it("applies column filters correctly", () => {
     const settingsWithFilter = {
       ...mockSettings,
-      filters: {
-        name: {
-          value: "John",
-          operator: "equals" as const,
-        },
-      },
+      filters: [
+        { type: "text" as const, field: "name", value: "John", operator: "equals" as const },
+      ],
     };
 
     render(<DataTableBody settings={settingsWithFilter} />);
@@ -118,9 +115,9 @@ describe("DataTableBody", () => {
     render(<DataTableBody settings={settingsWithSort} />);
 
     const rows = screen.getAllByRole("row");
-    expect(rows[1]).toHaveTextContent("35"); // First row should be Bob (age 35)
-    expect(rows[2]).toHaveTextContent("30"); // Second row should be John (age 30)
-    expect(rows[3]).toHaveTextContent("25"); // Third row should be Jane (age 25)
+    expect(rows[0]).toHaveTextContent("35"); // First row should be Bob (age 35)
+    expect(rows[1]).toHaveTextContent("30"); // Second row should be John (age 30)
+    expect(rows[2]).toHaveTextContent("25"); // Third row should be Jane (age 25)
   });
 
   it("applies pagination correctly", () => {
@@ -143,5 +140,26 @@ describe("DataTableBody", () => {
     const cells = screen.getAllByRole("cell");
     expect(cells[0]).toHaveStyle({ width: "200px" });
     expect(cells[1]).toHaveStyle({ width: "100px" });
+  });
+
+  it("uses column fields for row lookup", () => {
+    const settingsWithStableIds = {
+      ...mockSettings,
+      columns: [
+        { id: "name-column", field: "name", width: 200 },
+        { id: "age-column", field: "age", width: 100 },
+      ],
+    };
+
+    render(<DataTableBody settings={settingsWithStableIds} />);
+
+    expect(screen.getByText("John")).toBeInTheDocument();
+    expect(screen.getByText("30")).toBeInTheDocument();
+  });
+
+  it("shows an empty state when no rows match", () => {
+    render(<DataTableBody settings={{ ...mockSettings, globalSearch: "missing" }} />);
+
+    expect(screen.getByText("No rows match the current filters.")).toBeInTheDocument();
   });
 });
