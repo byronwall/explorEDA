@@ -23,6 +23,7 @@ export interface ExampleData {
   id: string;
   title: string;
   description: string;
+  recommended?: boolean;
   icon: LucideIcon;
   data: string; // path to the data file
   savedData: SavedDataStructure;
@@ -33,6 +34,7 @@ export const examples: ExampleData[] = [
     id: "lorenz-3d",
     title: "Lorenz attractor: coordinated 2D and 3D views",
     description: "Brush one chart to filter every related view.",
+    recommended: true,
     icon: ScatterChart,
     data: "/explorEDA/lorenz_3d_small.csv",
     savedData: demoSettings,

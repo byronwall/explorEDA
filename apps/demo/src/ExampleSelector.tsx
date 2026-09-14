@@ -21,6 +21,11 @@ export function ExampleSelector({ onSelect }: ExampleSelectorProps) {
               <div className="flex items-center gap-2">
                 <Icon className="h-5 w-5" />
                 <CardTitle>{example.title}</CardTitle>
+                {example.recommended && (
+                  <span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+                    Recommended
+                  </span>
+                )}
               </div>
             </CardHeader>
             <CardDescription>{example.description}</CardDescription>
