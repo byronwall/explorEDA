@@ -3,6 +3,9 @@ import {
   type ChartDefinition,
   type ChartLayout,
 } from "@/types/ChartTypes";
+import { applyFilter } from "@/hooks/applyFilter";
+import { IdType } from "@/providers/DataLayerProvider";
+import { Filter } from "@/types/FilterTypes";
 import { LineChart as LineChartIcon } from "lucide-react";
 import { LineChart } from "./LineChart";
 import { LineChartSettingsPanel } from "./LineChartSettingsPanel";
@@ -95,7 +98,15 @@ export const lineChartDefinition: ChartDefinition<LineChartSettings> = {
   validateSettings: (settings: LineChartSettings): boolean => {
     return settings.xField !== "" && settings.seriesField.length > 0;
   },
-  getFilterFunction: (settings: LineChartSettings) => {
-    return (d: number) => true;
+  getFilterFunction: (
+    settings: LineChartSettings,
+    fieldGetter: (
+      name: string
+    ) => Record<IdType, string | number | boolean | undefined>
+  ) => {
+    return (d: IdType) =>
+      settings.filters.every((filter: Filter) =>
+        applyFilter(fieldGetter(filter.field)[d], filter)
+      );
   },
 };

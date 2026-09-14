@@ -80,7 +80,7 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
     facetIds
   );
 
-  const margin = settings.margin;
+  const margin = { ...settings.margin };
 
   // Adjust margins based on legend position
   if (settings.showLegend) {
@@ -106,19 +106,31 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
   // Convert data to numbers for d3
   const processedLiveSeriesData = useMemo(() => {
     return settings.seriesField.map((field) => {
-      const data =
-        liveSeriesData[field]?.map((d, i) => ({
-          x: Number(liveXData[i] ?? 0),
-          y: d != null ? Number(d) : 0,
-        })) ?? [];
+      const data = liveSeriesData[field] ?? [];
+      const reducedData: Array<{ x: number; y: number | null }> = [];
+      let segment: Array<{ x: number; y: number }> = [];
 
-      // Reduce the data points based on chart width
-      const reducedData = reduceDataPoints(data, innerWidth);
-
-      return {
-        name: field,
-        data: reducedData,
+      const flushSegment = () => {
+        if (segment.length > 0) {
+          reducedData.push(...reduceDataPoints(segment, innerWidth));
+          segment = [];
+        }
       };
+
+      data.forEach((value, i) => {
+        const xValue = liveXData[i];
+        const x = xValue == null ? NaN : Number(xValue);
+        const y = value == null ? NaN : Number(value);
+        if (!Number.isFinite(x) || !Number.isFinite(y)) {
+          flushSegment();
+          reducedData.push({ x: 0, y: null });
+          return;
+        }
+        segment.push({ x, y });
+      });
+      flushSegment();
+
+      return { name: field, data: reducedData };
     });
   }, [settings.seriesField, liveSeriesData, liveXData, innerWidth]);
 
@@ -200,10 +212,11 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
   }
 
   // Process data and create scales
-  const xExtent = extent(allXData.map((d) => (d != null ? Number(d) : 0))) as [
-    number,
-    number,
-  ];
+  const xExtent = extent(
+    allXData
+      .map((value) => (value == null ? NaN : Number(value)))
+      .filter(Number.isFinite)
+  ) as [number, number];
 
   // Calculate y extent across all series
   const leftAxisSeries = processedLiveSeriesData.filter(
@@ -214,11 +227,15 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
   );
 
   const leftYExtent = extent(
-    leftAxisSeries.flatMap((series) => series.data.map((d) => d.y))
+    leftAxisSeries.flatMap((series) =>
+      series.data.flatMap((d) => (d.y == null ? [] : [d.y]))
+    )
   ) as [number, number];
 
   const rightYExtent = extent(
-    rightAxisSeries.flatMap((series) => series.data.map((d) => d.y))
+    rightAxisSeries.flatMap((series) =>
+      series.data.flatMap((d) => (d.y == null ? [] : [d.y]))
+    )
   ) as [number, number];
 
   const xScale = scaleLinear().domain(xExtent).range([0, innerWidth]).nice();
@@ -234,11 +251,12 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
   // Create line generator with dynamic y-accessor
   const createLineGenerator = (yField: string) =>
     line<(typeof processedLiveSeriesData)[0]["data"][0]>()
+      .defined((d) => d.y != null && Number.isFinite(d.x))
       .x((d) => xScale(d.x))
       .y((d) =>
         settings.seriesSettings[yField]?.useRightAxis
-          ? rightYScale(d.y)
-          : leftYScale(d.y)
+          ? rightYScale(d.y ?? 0)
+          : leftYScale(d.y ?? 0)
       )
       .curve(curveTypes[settings.styles.curveType as CurveType]);
 
@@ -440,34 +458,36 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
                     }
                   />
                   {seriesSettings.showPoints &&
-                    series.data.map((d, j) => (
-                      <Tooltip key={j}>
-                        <TooltipTrigger asChild>
-                          <circle
-                            cx={xScale(d.x)}
-                            cy={
-                              seriesSettings.useRightAxis
-                                ? rightYScale(d.y)
-                                : leftYScale(d.y)
-                            }
-                            r={seriesSettings.pointSize}
-                            fill={seriesColor}
-                            fillOpacity={seriesSettings.pointOpacity}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <div className="space-y-1">
-                            <div className="font-medium">{series.name}</div>
-                            <div>
-                              {settings.xField}: {d.x}
+                    series.data.map((d, j) =>
+                      d.y == null ? null : (
+                        <Tooltip key={j}>
+                          <TooltipTrigger asChild>
+                            <circle
+                              cx={xScale(d.x)}
+                              cy={
+                                seriesSettings.useRightAxis
+                                  ? rightYScale(d.y)
+                                  : leftYScale(d.y)
+                              }
+                              r={seriesSettings.pointSize}
+                              fill={seriesColor}
+                              fillOpacity={seriesSettings.pointOpacity}
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <div className="space-y-1">
+                              <div className="font-medium">{series.name}</div>
+                              <div>
+                                {settings.xField}: {d.x}
+                              </div>
+                              <div>
+                                {series.name}: {d.y}
+                              </div>
                             </div>
-                            <div>
-                              {series.name}: {d.y}
-                            </div>
-                          </div>
-                        </TooltipContent>
-                      </Tooltip>
-                    ))}
+                          </TooltipContent>
+                        </Tooltip>
+                      )
+                    )}
                 </g>
               );
             })}
