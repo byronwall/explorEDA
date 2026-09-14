@@ -21,8 +21,8 @@ export function DataTableHeader({ settings }: DataTableHeaderProps) {
 
   useEffect(() => () => resizeCleanup.current?.(), []);
 
-  const handleSort = (columnId: string) => {
-    if (sortBy === columnId) {
+  const handleSort = (field: string) => {
+    if (sortBy === field) {
       // Toggle sort direction
       updateChart(settings.id, {
         sortDirection: sortDirection === "asc" ? "desc" : "asc",
@@ -30,7 +30,7 @@ export function DataTableHeader({ settings }: DataTableHeaderProps) {
     } else {
       // Set new sort column
       updateChart(settings.id, {
-        sortBy: columnId,
+        sortBy: field,
         sortDirection: "asc",
       });
     }
@@ -143,10 +143,10 @@ export function DataTableHeader({ settings }: DataTableHeaderProps) {
             >
               <div
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => handleSort(column.id)}
+                onClick={() => handleSort(column.field)}
               >
                 {column.field}
-                {sortBy === column.id &&
+                {sortBy === column.field &&
                   (sortDirection === "asc" ? (
                     <ChevronUp className="h-4 w-4" />
                   ) : (
