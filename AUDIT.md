@@ -23,8 +23,8 @@ records the final state through commit `c556782`.
 
 ## Resolution status
 
-All 54 original findings are resolved. One detector result remains an
-intentional false positive. The hashes below are the smallest relevant fixes.
+All 54 original findings are accounted for. Code or documentation resolves 53.
+One detector result is an intentional false positive.
 
 ### 1. Build, release, and package problems
 
@@ -129,7 +129,7 @@ Srcly also scanned the repository. Its default ranking favored old Markdown plan
 | Demo production build | Passes; vendor chunks are split under `apps/demo/dist/assets/**` |
 | Package pack | Passes; 210 files, README included, `src/**` excluded |
 | Lean package entry | Passes: 533,761 bytes, 116,068 bytes gzip; no Three.js or Tiptap |
-| Browser verification | Parent pass confirmed example selection, browser back, and the landing state after `c556782`; brush behavior was not verified, and no dark-mode implementation is claimed |
+| Browser verification | Clean-room pass confirmed example selection, Back/Forward state, mobile widths, filtering, pagination, chart data fallback, and a clean console after `c556782`; brush behavior was inconclusive |
 | Mechanical UI detector | One intentional false positive on the loading spinner |
 
 The final bundle check found these deferred demo chunks in the exact build path
@@ -137,7 +137,7 @@ The final bundle check found these deferred demo chunks in the exact build path
 `ExplorEda-m7ANby2B.js` (482.12 kB), and `tiptap-B9rXTEde.js` (302.36 kB).
 The package build artifacts are in the exact path `packages/explorEDA/dist/**`.
 
-The root check now proves types, tests, and builds in sequence. The parent
+The root check now proves types, tests, and builds in sequence. The clean-room
 browser pass confirmed the repaired history flow. Brush verification remains
 outside scope, and the audit does not claim a dark-mode implementation.
 
