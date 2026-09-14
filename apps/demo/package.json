@@ -65,10 +65,5 @@
         "vite": "^6.1.0",
         "vitest": "^3.0.7"
     },
-    "pnpm": {
-        "patchedDependencies": {
-            "use-custom-compare@1.4.0": "patches/use-custom-compare@1.4.0.patch"
-        }
-    },
     "packageManager": "pnpm@9.14.2"
 }
