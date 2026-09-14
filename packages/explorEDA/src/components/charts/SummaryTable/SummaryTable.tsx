@@ -155,8 +155,9 @@ export function SummaryTable({
 
     return columnNames.map((columnName) => {
       // Return cached data if already processed
-      if (columnSummaryData[columnName]) {
-        return columnSummaryData[columnName];
+      const summary = columnSummaryData[columnName];
+      if (summary) {
+        return summary;
       }
 
       // Return placeholder data for unprocessed columns
@@ -178,6 +179,9 @@ export function SummaryTable({
 
     setIsProcessing(true);
     const columnName = processingQueue[0];
+    if (!columnName) {
+      return;
+    }
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 100));
@@ -235,7 +239,11 @@ export function SummaryTable({
 
   const handleSampleSizeChange = useCallback(
     (value: number[]) => {
-      setSampleSize(value[0]);
+      const nextSampleSize = value[0];
+      if (nextSampleSize === undefined) {
+        return;
+      }
+      setSampleSize(nextSampleSize);
       // Reset processing state to reanalyze with new sample size
       setProcessedColumns(new Set());
       setProcessingQueue(getColumnNames());
@@ -259,8 +267,12 @@ export function SummaryTable({
     }
 
     return [...summaries].sort((a, b) => {
-      const aValue = a[sortConfig.column as keyof ColumnSummary];
-      const bValue = b[sortConfig.column as keyof ColumnSummary];
+      const column = sortConfig.column;
+      if (!column) {
+        return 0;
+      }
+      const aValue = a[column];
+      const bValue = b[column];
 
       if (aValue === bValue) {
         return 0;

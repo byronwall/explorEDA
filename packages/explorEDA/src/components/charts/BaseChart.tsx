@@ -1,5 +1,5 @@
 import { ReactNode, useId, useRef } from "react";
-import { ScaleBand, ScaleLinear } from "d3-scale";
+import { ScaleBand, ScaleLinear, scaleLinear } from "d3-scale";
 import { XAxis, YAxis } from "./Axis/Axis";
 import { useBrush } from "@/hooks/useBrush";
 import { cn } from "@/lib/utils";
@@ -47,10 +47,16 @@ export function BaseChart({
   ]
     .filter(Boolean)
     .join(" ");
+  const xIsLinear = "invert" in xScale;
+  const yIsLinear = "invert" in yScale;
   const extent = useFilterExtent({
-    settings,
-    xScale,
-    yScale,
+    settings: xIsLinear && yIsLinear ? settings : { ...settings, filters: [] },
+    xScale: xIsLinear
+      ? xScale
+      : scaleLinear().domain([0, 1]).range([0, innerWidth]),
+    yScale: yIsLinear
+      ? yScale
+      : scaleLinear().domain([0, 1]).range([0, innerHeight]),
     innerHeight,
   });
 
