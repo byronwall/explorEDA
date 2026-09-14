@@ -17,7 +17,6 @@ import {
   ViewMetadata,
 } from "@/types/SavedDataTypes";
 import { SavedDataStructure } from "@/types/SavedDataStructure";
-import { saveProject } from "@/utils/localStorage";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { createStore, useStore } from "zustand";
 import {
@@ -94,12 +93,6 @@ interface DataLayerState<T extends DatumObject> extends DataLayerProps<T> {
   getColumnData: (field: string | undefined) => Record<IdType, datum>;
   getColumnNames: () => string[];
   columnCache: Record<string, Record<IdType, datum>>;
-
-  // Project and View Management
-  currentProject: SavedProject | null;
-  setCurrentProject: (project: SavedProject) => void;
-  saveCurrentView: (name: string) => void;
-  loadView: (view: SavedView) => void;
 
   // Calculation state
   calculationManager: CalculationManager<T>;
@@ -178,7 +171,6 @@ const getInitialStoreState = <T extends DatumObject>(
     | "columnCache"
     | "calcColumnCache"
     | "nonce"
-    | "currentProject"
     | "fileName"
   >
 > => {
@@ -231,7 +223,6 @@ const getInitialStoreState = <T extends DatumObject>(
       columnCache: {},
       calcColumnCache: {},
       nonce: 0,
-      currentProject: null,
       fileName: undefined,
     };
   }
@@ -254,7 +245,6 @@ const getInitialStoreState = <T extends DatumObject>(
     columnCache: {},
     calcColumnCache: {},
     nonce: 0,
-    currentProject: null,
     fileName: undefined,
   };
 };
@@ -315,7 +305,6 @@ const createDataLayerStore = <T extends DatumObject>(
         columnCache: {},
         calcColumnCache: {},
         nonce: 0,
-        currentProject: null,
       });
     },
 
@@ -536,77 +525,6 @@ const createDataLayerStore = <T extends DatumObject>(
       return columnData;
     },
 
-    setCurrentProject: (project: SavedProject) => {
-      set({ currentProject: project });
-      // Only save to storage if the project is marked as saved
-      if (project.isSaved) {
-        saveProject(project);
-      }
-    },
-
-    saveCurrentView: (name: string) => {
-      const { charts, currentProject, calculations } = get();
-
-      if (!currentProject) {
-        return;
-      }
-
-      const newView: SavedView = {
-        version: 1,
-        name,
-        charts: [...charts],
-        calculations: [...calculations],
-      };
-
-      const updatedProject: SavedProject = {
-        ...currentProject,
-        views: [...currentProject.views, newView],
-      };
-
-      set({ currentProject: updatedProject });
-      // Only save to storage if the project is marked as saved
-      if (updatedProject.isSaved) {
-        saveProject(updatedProject);
-      }
-    },
-
-    loadView: (view: SavedView) => {
-      const { crossfilterWrapper, calculationManager } = get();
-
-      // Clear existing charts
-      crossfilterWrapper.charts.forEach((_, chartId) => {
-        crossfilterWrapper.removeChart({ id: chartId } as ChartSettings);
-      });
-
-      // Load new charts
-      set({ charts: view.charts });
-
-      // Initialize crossfilter for new charts
-      view.charts.forEach((chart) => {
-        crossfilterWrapper.addChart(chart);
-      });
-
-      // Clear existing calculations before loading the view.
-      for (const calc of calculationManager.getCalculations()) {
-        calculationManager.removeCalculation(calc.resultColumnName);
-      }
-
-      // Add new calculations
-      const newCalculations: CalculationDefinition[] = [];
-      for (const calc of view.calculations ?? []) {
-        try {
-          calculationManager.addCalculation(calc);
-          newCalculations.push(calc);
-        } catch {
-          continue;
-        }
-      }
-
-      set({ calculations: newCalculations, calcColumnCache: {} });
-
-      set({ liveItems: crossfilterWrapper.getAllData() });
-    },
-
     // Calculation management
     addCalculation: async (calculation) => {
       const { calculationManager } = get();
@@ -677,7 +595,7 @@ const createDataLayerStore = <T extends DatumObject>(
     saveToStructure: () => {
       const state = get();
       const metadata: ViewMetadata = {
-        name: state.currentProject?.name ?? "Untitled",
+        name: "Untitled",
         version: 1,
         createdAt: new Date().toISOString(),
         modifiedAt: new Date().toISOString(),
@@ -834,20 +752,3 @@ export function useDataLayer<T extends DatumObject, U>(
   }
   return useStore(store, selector);
 }
-
-type SavedView = {
-  version: 1;
-  charts: ChartSettings[];
-  name: string;
-  calculations?: CalculationDefinition[];
-};
-
-type SavedProject = {
-  version: 1;
-  name: string;
-  sourceDataPath: string;
-  views: SavedView[];
-  isSaved: boolean;
-};
-
-export type { SavedProject, SavedView };
