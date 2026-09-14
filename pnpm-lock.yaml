@@ -17,9 +17,6 @@ importers:
       prettier:
         specifier: ^3.5.3
         version: 3.5.3
-      turbo:
-        specifier: ^2.4.4
-        version: 2.4.4
       typescript:
         specifier: ~5.4.5
         version: 5.4.5
@@ -3720,10 +3717,6 @@ packages:
   turbo-stream@2.4.0:
     resolution: {integrity: sha512-FHncC10WpBd2eOmGwpmQsWLDoK4cqsA/UT/GqNoaKOQnT8uzhtCbg3EoUDMvqpOSAI0S26mr0rkjzbOO6S3v1g==}
 
-  turbo@2.4.4:
-    resolution: {integrity: sha512-N9FDOVaY3yz0YCOhYIgOGYad7+m2ptvinXygw27WPLQvcZDl3+0Sa77KGVlLSiuPDChOUEnTKE9VJwLSi9BPGQ==}
-    hasBin: true
-
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
     engines: {node: '>= 0.8.0'}
@@ -7292,8 +7285,6 @@ snapshots:
       - yaml
 
   turbo-stream@2.4.0: {}
-
-  turbo@2.4.4: {}
 
   type-check@0.4.0:
     dependencies:
