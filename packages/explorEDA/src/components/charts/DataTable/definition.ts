@@ -59,7 +59,7 @@ export const dataTableDefinition: ChartDefinition<DataTableSettings> = {
   ) => {
     // If no filters are active, return true
     if (settings.filters.length === 0) {
-      return (d: IdType) => true;
+      return () => true;
     }
 
     // Create filter functions for each active filter

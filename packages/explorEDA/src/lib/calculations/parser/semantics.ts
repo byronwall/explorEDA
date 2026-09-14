@@ -1,4 +1,4 @@
-import { type Expression } from "../types";
+import { type CalculationValue, type Expression } from "../types";
 import * as ohm from "ohm-js";
 
 // Define the grammar inline
@@ -52,7 +52,7 @@ const grammar = ohm.grammar(grammarSource);
 
 export interface ParsedExpression {
   type: string;
-  value?: any;
+  value?: CalculationValue;
   children?: ParsedExpression[];
   operator?: string;
   left?: ParsedExpression;
@@ -153,6 +153,9 @@ semantics.addOperation<ParsedExpression>("eval", {
   },
   TernaryExpr(...nodes: Node[]): ParsedExpression {
     const [condition, , trueBranch, , falseBranch] = nodes;
+    if (!condition || !trueBranch || !falseBranch) {
+      throw new Error("Invalid ternary expression");
+    }
     return {
       type: "ternary",
       condition: condition.eval(),
@@ -164,6 +167,9 @@ semantics.addOperation<ParsedExpression>("eval", {
   },
   IfExpr(...nodes: Node[]): ParsedExpression {
     const [, condition, , trueBranch, , falseBranch] = nodes;
+    if (!condition || !trueBranch || !falseBranch) {
+      throw new Error("Invalid if expression");
+    }
     return {
       type: "ternary",
       condition: condition.eval(),
@@ -183,6 +189,9 @@ semantics.addOperation<ParsedExpression>("eval", {
   },
   FunctionCall(...nodes: Node[]): ParsedExpression {
     const [name, , args] = nodes;
+    if (!name || !args) {
+      throw new Error("Invalid function call");
+    }
     return {
       type: "function",
       name: name.sourceString,

@@ -3,6 +3,7 @@ import { timeFormat } from "d3-time-format";
 import {
   type BasicExpression,
   type CalculationContext,
+  type CalculationValue,
   type CalculationResult,
   type Expression,
   type FunctionExpression,
@@ -11,14 +12,14 @@ import {
   type UnaryExpression,
 } from "../types";
 
-type CalcFunction = (...args: any[]) => any;
+type CalcFunction = (...args: CalculationValue[]) => CalculationValue;
 
 export class Calculator {
   constructor(private context: CalculationContext) {}
 
   evaluate(expression: Expression): CalculationResult {
     try {
-      let result: any;
+      let result: CalculationValue;
       let funcResult: CalculationResult;
 
       switch (expression.type) {
@@ -43,7 +44,7 @@ export class Calculator {
           break;
         default:
           throw new Error(
-            `Unknown expression type: ${(expression as any).type}`
+            "Unknown expression type"
           );
       }
 
@@ -80,8 +81,8 @@ export class Calculator {
     const right = rightResult.value;
 
     // Convert operands to numbers if they're strings that look like numbers
-    const leftNum = typeof left === "string" ? Number(left) : left;
-    const rightNum = typeof right === "string" ? Number(right) : right;
+    const leftNum = Number(left);
+    const rightNum = Number(right);
 
     if (isNaN(leftNum) || isNaN(rightNum)) {
       throw new Error(
@@ -193,13 +194,14 @@ export class Calculator {
               if (dateValue instanceof Date) {
                 evaluatedArgs[0] = dateValue;
               } else if (dateValue !== undefined) {
-                evaluatedArgs[0] = new Date(dateValue);
+                evaluatedArgs[0] = new Date(String(dateValue));
               }
             } else {
-              evaluatedArgs[0] = new Date(evaluatedArgs[0]);
+              evaluatedArgs[0] = new Date(String(evaluatedArgs[0]));
             }
 
-            if (isNaN(evaluatedArgs[0].getTime())) {
+            const dateArg = evaluatedArgs[0];
+            if (!(dateArg instanceof Date) || isNaN(dateArg.getTime())) {
               return {
                 success: false,
                 value: null,
@@ -237,31 +239,44 @@ export class Calculator {
 
   private getFunction(name: string): CalcFunction | undefined {
     const functions: Record<string, CalcFunction> = {
-      sum: (...values: number[]) => {
+      sum: (...values: CalculationValue[]) => {
         return values.reduce((a, b) => Number(a) + Number(b), 0);
       },
-      avg: (...values: number[]) => {
+      avg: (...values: CalculationValue[]) => {
         return (
-          values.reduce((a, b) => Number(a) + Number(b), 0) / values.length
+          values.reduce<number>((a, b) => Number(a) + Number(b), 0) /
+          values.length
         );
       },
-      min: (...values: number[]) => {
+      min: (...values: CalculationValue[]) => {
         return Math.min(...values.map((v) => Number(v)));
       },
-      max: (...values: number[]) => {
+      max: (...values: CalculationValue[]) => {
         return Math.max(...values.map((v) => Number(v)));
       },
-      count: (...values: any[]) => {
+      count: (...values: CalculationValue[]) => {
         return values.length;
       },
-      formatdate: (date: Date, format: string) => {
-        return this.formatDate(date, format);
+      formatdate: (date, format) => {
+        return this.formatDate(
+          date instanceof Date ? date : new Date(String(date)),
+          String(format)
+        );
       },
-      extractdatecomponent: (
-        date: Date,
-        component: "year" | "month" | "day" | "quarter" | "week"
-      ) => {
-        return this.extractDateComponent(date, component);
+      extractdatecomponent: (date, component) => {
+        if (
+          component !== "year" &&
+          component !== "month" &&
+          component !== "day" &&
+          component !== "quarter" &&
+          component !== "week"
+        ) {
+          throw new Error(`Unknown date component: ${String(component)}`);
+        }
+        return this.extractDateComponent(
+          date instanceof Date ? date : new Date(String(date)),
+          component
+        );
       },
     };
 
@@ -466,7 +481,7 @@ export class Calculator {
     }
   }
 
-  private evaluateLiteral(expression: LiteralExpression): any {
+  private evaluateLiteral(expression: LiteralExpression): CalculationValue {
     // If value is defined, use it first
     if (expression.value !== undefined) {
       // If it's a string that looks like an identifier, try to resolve it from variables

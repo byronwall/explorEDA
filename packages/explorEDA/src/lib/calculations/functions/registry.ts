@@ -9,7 +9,7 @@ export interface FunctionDefinition {
     optional?: boolean;
   }[];
   returnType: string;
-  implementation: (...args: any[]) => any;
+  implementation: (...args: never[]) => unknown;
 }
 
 export interface FunctionDocumentation {
@@ -85,7 +85,11 @@ function registerBuiltInFunctions() {
         },
       ],
       returnType: "number",
-      implementation: (values: number[]) => values.reduce((a, b) => a + b, 0),
+      implementation: (...args: never[]) =>
+        (args[0] as unknown as CalculationValue[]).reduce<number>(
+          (a, b) => Number(a) + Number(b),
+          0
+        ),
     },
     {
       name: "sum",
@@ -117,8 +121,13 @@ function registerBuiltInFunctions() {
         },
       ],
       returnType: "number",
-      implementation: (values: number[]) =>
-        values.reduce((a, b) => a + b, 0) / values.length,
+      implementation: (...args: never[]) => {
+        const numbers = args[0] as unknown as CalculationValue[];
+        return (
+          numbers.reduce<number>((a, b) => Number(a) + Number(b), 0) /
+          numbers.length
+        );
+      },
     },
     {
       name: "average",
@@ -151,14 +160,17 @@ function registerBuiltInFunctions() {
         },
       ],
       returnType: "number",
-      implementation: (values: number[]) => {
-        const avg = values.reduce((a, b) => a + b, 0) / values.length;
-        const squareDiffs = values.map((value) => {
-          const diff = value - avg;
+      implementation: (...args: never[]) => {
+        const numbers = args[0] as unknown as CalculationValue[];
+        const avg =
+          numbers.reduce<number>((a, b) => Number(a) + Number(b), 0) /
+          numbers.length;
+        const squareDiffs = numbers.map((value) => {
+          const diff = Number(value) - avg;
           return diff * diff;
         });
         const avgSquareDiff =
-          squareDiffs.reduce((a, b) => a + b, 0) / values.length;
+          squareDiffs.reduce((a, b) => a + b, 0) / numbers.length;
         return Math.sqrt(avgSquareDiff);
       },
     },
@@ -272,3 +284,4 @@ export default {
   getFunctionsByCategory,
   getCategories,
 };
+import type { CalculationValue } from "../types";

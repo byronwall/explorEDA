@@ -109,7 +109,7 @@ export interface MultipleSelectorRef {
   reset: () => void;
 }
 
-export function useDebounce<T>(value: T, delay?: number): T {
+function useDebounce<T>(value: T, delay?: number): T {
   const [debouncedValue, setDebouncedValue] = React.useState<T>(value);
 
   useEffect(() => {
@@ -153,17 +153,6 @@ function removePickedOption(groupOption: GroupOption, picked: Option[]) {
     );
   }
   return cloneOption;
-}
-
-function isOptionsExist(groupOption: GroupOption, targetOption: Option[]) {
-  for (const [, value] of Object.entries(groupOption)) {
-    if (
-      value.some((option) => targetOption.find((p) => p.value === option.value))
-    ) {
-      return true;
-    }
-  }
-  return false;
 }
 
 /**
@@ -392,7 +381,13 @@ const MultipleSelector = React.forwardRef<
       };
 
       void exec();
-    }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus]);
+    }, [
+      debouncedSearchTerm,
+      groupBy,
+      onSearchSync,
+      open,
+      triggerSearchOnFocus,
+    ]);
 
     useEffect(() => {
       /** async search */
@@ -418,7 +413,7 @@ const MultipleSelector = React.forwardRef<
       };
 
       void exec();
-    }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus]);
+    }, [debouncedSearchTerm, groupBy, onSearch, open, triggerSearchOnFocus]);
 
     const EmptyItem = () => {
       if (emptyIndicator) {
@@ -486,6 +481,7 @@ const MultipleSelector = React.forwardRef<
               }
               inputRef?.current?.focus();
             }}
+            onKeyDown={handleKeyDown}
           >
             <div className="relative flex flex-wrap items-center gap-1">
               <DndContext
@@ -540,7 +536,14 @@ const MultipleSelector = React.forwardRef<
             }
             filter={commandFilter()}
           >
-            <CommandInput placeholder="Search city..." />
+            <CommandInput
+              placeholder={
+                hidePlaceholderWhenSelected && selected.length > 0
+                  ? ""
+                  : placeholder
+              }
+              {...inputProps}
+            />
             <CommandList>
               {isLoading ? (
                 loadingIndicator

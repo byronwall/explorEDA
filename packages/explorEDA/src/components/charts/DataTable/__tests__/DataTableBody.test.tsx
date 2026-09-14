@@ -53,12 +53,12 @@ const mockLiveItems = {
 const mockUseDataLayer = vi.fn();
 
 vi.mock("@/providers/DataLayerProvider", () => ({
-  useDataLayer: (selector: (state: any) => any) => mockUseDataLayer(selector),
+  useDataLayer: (selector: (state: unknown) => unknown) => mockUseDataLayer(selector),
 }));
 
 describe("DataTableBody", () => {
   beforeEach(() => {
-    mockUseDataLayer.mockImplementation((selector: (state: any) => any) => {
+    mockUseDataLayer.mockImplementation((selector: (state: unknown) => unknown) => {
       if (selector.toString().includes("data")) {
         return mockData;
       }

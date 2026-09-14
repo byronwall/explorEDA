@@ -7,7 +7,6 @@ import {
   useState,
   useRef,
 } from "react";
-import { usePrevious } from "react-use";
 interface Point {
   x: number;
   y: number;
@@ -123,16 +122,17 @@ export function useBrush({
       brushStart: { x: roundedExtent[0][0], y: roundedExtent[0][1] },
       brushEnd: { x: roundedExtent[1][0], y: roundedExtent[1][1] },
     });
-  }, [defaultExtent]);
+  }, [defaultExtent, brushState.state]);
 
   // Call onBrushChange when brush state changes
+  const brushStateType = brushState.state;
 
   useEffect(() => {
     if (!onBrushChange) {
       return;
     }
 
-    if (brushState.state === "brushed") {
+    if (brushStateType === "brushed") {
       // Round coordinates to prevent floating point issues
       const extent: [[number, number], [number, number]] = [
         [
@@ -153,7 +153,7 @@ export function useBrush({
 
       lastExternalUpdateRef.current = extentKey;
       onBrushChange(extent);
-    } else if (brushState.state === "idle") {
+    } else if (brushStateType === "idle") {
       if (lastExternalUpdateRef.current == null) {
         // prevent infinite loop on non-change
         return;
@@ -161,7 +161,7 @@ export function useBrush({
       lastExternalUpdateRef.current = null;
       onBrushChange(null);
     }
-  }, [brushState, onBrushChange, brushState?.state]);
+  }, [brushState, brushStateType, onBrushChange, brushState.state]);
 
   const handleMouseDown = useCallback(
     (e: MouseEvent) => {

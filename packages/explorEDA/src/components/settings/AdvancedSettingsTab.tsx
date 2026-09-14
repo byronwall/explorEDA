@@ -1,11 +1,10 @@
 import { ChartSettings } from "@/types/ChartTypes";
 import { Label } from "../ui/label";
 import { NumericInputEnter } from "../NumericInputEnter";
-import { Switch } from "../ui/switch";
 
 interface AdvancedSettingsTabProps {
   settings: ChartSettings;
-  onSettingChange: (key: string, value: any) => void;
+  onSettingChange: (key: string, value: unknown) => void;
 }
 
 export function AdvancedSettingsTab({

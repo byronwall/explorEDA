@@ -1,6 +1,6 @@
 import { DatumObject, HasId } from "@/providers/DataLayerProvider";
 import { Calculator } from "./engine/Calculator";
-import { CalculationContext, Expression } from "./types";
+import { CalculationContext, CalculationValue, Expression } from "./types";
 import { datum } from "@/types/ChartTypes";
 
 export interface CalculationDefinition {
@@ -10,7 +10,7 @@ export interface CalculationDefinition {
 
 export interface CalculationStateType {
   calculations: CalculationDefinition[];
-  calculationResults: Map<string, Map<number, any>>;
+  calculationResults: Map<string, Map<number, CalculationValue>>;
   dependencyGraph: Map<string, Set<string>>;
 }
 
@@ -155,7 +155,12 @@ export class CalculationManager<T extends DatumObject> {
       const result = this.calculator.evaluate(calculation.expression);
 
       if (result.success) {
-        resultMap.set(row.__ID, result.value);
+        resultMap.set(
+          row.__ID,
+          result.value instanceof Date || result.value === null
+            ? undefined
+            : result.value
+        );
       } else {
         resultMap.set(row.__ID, undefined);
       }
@@ -219,8 +224,8 @@ export class CalculationManager<T extends DatumObject> {
   /**
    * Create variables map for a specific row
    */
-  private createVariablesForRow(row: T & HasId): Map<string, any> {
-    const variables = new Map<string, any>();
+  private createVariablesForRow(row: T & HasId): Map<string, CalculationValue> {
+    const variables = new Map<string, CalculationValue>();
 
     // Add all row fields as variables
     for (const [key, value] of Object.entries(row)) {

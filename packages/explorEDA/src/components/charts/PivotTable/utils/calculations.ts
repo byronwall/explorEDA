@@ -2,9 +2,10 @@ import { datum } from "@/types/FilterTypes";
 import { PivotCell, PivotHeader, PivotRow, PivotTableData } from "../types";
 import { PivotTableSettings } from "../definition";
 
-type AggregationFunction = (values: any[]) => number | string | undefined;
+type Row = Record<string, datum>;
+type AggregationFunction = (values: datum[]) => datum;
 
-function numericValues(values: any[]): number[] {
+function numericValues(values: datum[]): number[] {
   return values.flatMap((value) => {
     if (
       value === undefined ||
@@ -21,7 +22,7 @@ function numericValues(values: any[]): number[] {
   });
 }
 
-function aggregate(name: string, values: any[]): number | string | undefined {
+function aggregate(name: string, values: datum[]): datum {
   return aggregationFunctions[name]?.(values);
 }
 
@@ -58,14 +59,16 @@ const aggregationFunctions: Record<string, AggregationFunction> = {
       : (sorted[mid - 1]! + sorted[mid]!) / 2;
   },
   mode: (values) => {
-    const counts = new Map<number | string, number>();
-    values.forEach((v) => counts.set(v, (counts.get(v) || 0) + 1));
+    const counts = new Map<string | number | boolean | null, number>();
+    values.forEach((v) =>
+      counts.set(v ?? null, (counts.get(v ?? null) || 0) + 1)
+    );
     let maxCount = 0;
-    let mode: number | string | undefined;
+    let mode: datum = undefined;
     counts.forEach((count, value) => {
       if (count > maxCount) {
         maxCount = count;
-        mode = value;
+        mode = value === null ? undefined : value;
       }
     });
     return mode;
@@ -108,7 +111,7 @@ const aggregationFunctions: Record<string, AggregationFunction> = {
   },
 };
 
-function generateHeaders(data: any[], field: string): PivotHeader[] {
+function generateHeaders(data: Row[], field: string): PivotHeader[] {
   if (!field) {
     return [];
   }
@@ -128,7 +131,7 @@ function generateHeaders(data: any[], field: string): PivotHeader[] {
 }
 
 function generateCells(
-  rowData: any[],
+  rowData: Row[],
   columnHeaders: PivotHeader[],
   valueFields: PivotTableSettings["valueFields"]
 ): PivotCell[] {
@@ -177,7 +180,7 @@ function generateCells(
 }
 
 function generateRows(
-  data: any[],
+  data: Row[],
   rowFields: string[],
   columnField: string,
   valueFields: PivotTableSettings["valueFields"]
@@ -186,7 +189,7 @@ function generateRows(
   const columnHeaders = generateHeaders(data, columnField);
 
   // Pre-compute row groups for better performance
-  const rowGroups = new Map<string, any[]>();
+  const rowGroups = new Map<string, Row[]>();
   data.forEach((item) => {
     // Include the value type so strings and numbers remain separate groups.
     const keyString = JSON.stringify(
@@ -205,7 +208,7 @@ function generateRows(
   rowGroups.forEach((groupData) => {
     // Create properly typed keys and headers
     const keys = rowFields.map((field) => {
-      const value = groupData[0][field];
+      const value = groupData[0]![field];
       return {
         field,
         value,
@@ -233,7 +236,7 @@ function generateRows(
 }
 
 export function calculatePivotData(
-  data: any[],
+  data: Row[],
   settings: PivotTableSettings
 ): PivotTableData {
   const headers = generateHeaders(data, settings.columnField);

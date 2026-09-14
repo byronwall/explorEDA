@@ -38,7 +38,7 @@ export interface UnaryExpression extends BaseExpression {
 
 export interface LiteralExpression extends BaseExpression {
   type: "literal";
-  value: any;
+  value: CalculationValue;
 }
 
 export type Expression =
@@ -50,17 +50,20 @@ export type Expression =
 
 export interface CalculationResult {
   success: boolean;
-  value: any;
+  value: CalculationValue;
   error?: string;
   metadata?: {
     groupKey?: string;
     rank?: number;
     total?: number;
-    sourceRows?: any[];
+    sourceRows?: Record<string, CalculationValue>[];
   };
 }
 
 export interface CalculationContext {
-  data: Record<string, any>[];
-  variables: Record<string, any>;
+  data: Record<string, CalculationValue>[];
+  variables: Map<string, CalculationValue>;
 }
+import { datum } from "@/types/ChartTypes";
+
+export type CalculationValue = datum | null | Date;

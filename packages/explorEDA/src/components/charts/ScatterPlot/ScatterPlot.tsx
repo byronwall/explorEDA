@@ -208,6 +208,8 @@ export function ScatterPlot({
     yScale,
     getColorForValue,
     colorData,
+    settings.margin.left,
+    settings.margin.top,
   ]);
 
   const handleBrushChange = useCallback(

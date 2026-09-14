@@ -1,4 +1,5 @@
 import { IdType, useDataLayer } from "@/providers/DataLayerProvider";
+import type { datum } from "@/types/ChartTypes";
 import { useMemo } from "react";
 
 export function useGetColumnData(field: string | undefined) {
@@ -45,7 +46,7 @@ export function useGetColumnDataForMultipleIds(
       return {};
     }
 
-    const result: Record<string, any[]> = {};
+    const result: Record<string, datum[]> = {};
 
     for (const field of fields) {
       const data = getColumnData(field);

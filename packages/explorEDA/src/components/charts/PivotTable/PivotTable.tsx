@@ -35,14 +35,14 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
     ]);
 
     // Get column data for each field
-    const fieldData: Record<string, Record<string | number, any>> = {};
+    const fieldData: Record<string, Record<string | number, datum>> = {};
     allFields.forEach((field) => {
       fieldData[field] = getColumnData(field);
     });
 
     // Create data array for pivot calculations
     const data = liveIds.map((id: string | number) => {
-      const row: Record<string, any> = {};
+      const row: Record<string, datum> = {};
       allFields.forEach((field) => {
         row[field] = fieldData[field]?.[id];
       });

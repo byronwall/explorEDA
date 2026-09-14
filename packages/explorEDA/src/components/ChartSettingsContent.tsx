@@ -27,7 +27,7 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
     setLocalSettings(mergeWithDefaultSettings(settings));
   }, [settings]);
 
-  const handleSettingChange = (key: string, value: any) => {
+  const handleSettingChange = (key: string, value: unknown) => {
     setLocalSettings((prev) => {
       const newSettings = {
         ...prev,

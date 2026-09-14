@@ -3,6 +3,7 @@ import { Calculator } from "../../../../lib/calculations/engine/Calculator";
 import { parseExpression } from "../../../../lib/calculations/parser/semantics";
 import {
   BasicExpression,
+  Expression,
   TernaryExpression,
   UnaryExpression,
 } from "../../../../lib/calculations/types";
@@ -187,7 +188,7 @@ describe("Calculator", () => {
         expression: "invalid",
       };
 
-      const result = await calculator.evaluate(expr as any);
+      const result = await calculator.evaluate(expr as unknown as Expression);
       expect(result.success).toBe(false);
       expect(result.error).toContain("Unknown expression type");
     });
@@ -201,8 +202,8 @@ describe("Calculator", () => {
         operator: "+",
         expression: "invalid",
         rawInput: "invalid",
-        left: null as any,
-        right: null as any,
+        left: null as never,
+        right: null as never,
       };
 
       const result = await calculator.evaluate(expr);
@@ -219,7 +220,7 @@ describe("Calculator", () => {
         operator: "-",
         expression: "invalid",
         rawInput: "invalid",
-        operand: null as any,
+        operand: null as never,
       };
 
       const result = await calculator.evaluate(expr);
@@ -235,9 +236,9 @@ describe("Calculator", () => {
         dependencies: [],
         expression: "invalid",
         rawInput: "invalid",
-        condition: null as any,
-        trueBranch: null as any,
-        falseBranch: null as any,
+        condition: null as never,
+        trueBranch: null as never,
+        falseBranch: null as never,
       };
 
       const result = await calculator.evaluate(expr);

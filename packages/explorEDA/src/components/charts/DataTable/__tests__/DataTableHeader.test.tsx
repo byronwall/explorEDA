@@ -53,12 +53,12 @@ const mockLiveItems = {
 const mockUseDataLayer = vi.fn();
 
 vi.mock("@/providers/DataLayerProvider", () => ({
-  useDataLayer: (selector: (state: any) => any) => mockUseDataLayer(selector),
+  useDataLayer: (selector: (state: unknown) => unknown) => mockUseDataLayer(selector),
 }));
 
 describe("DataTableHeader", () => {
   beforeEach(() => {
-    mockUseDataLayer.mockImplementation((selector: (state: any) => any) => {
+    mockUseDataLayer.mockImplementation((selector: (state: unknown) => unknown) => {
       if (selector.toString().includes("data")) {
         return mockData;
       }
@@ -81,7 +81,7 @@ describe("DataTableHeader", () => {
 
   it("handles column sorting", () => {
     const updateChart = vi.fn();
-    mockUseDataLayer.mockImplementation((selector: (state: any) => any) => {
+    mockUseDataLayer.mockImplementation((selector: (state: unknown) => unknown) => {
       if (selector.toString().includes("updateChart")) {
         return updateChart;
       }
@@ -104,7 +104,7 @@ describe("DataTableHeader", () => {
 
   it("toggles sort direction when clicking the same column", () => {
     const updateChart = vi.fn();
-    mockUseDataLayer.mockImplementation((selector: (state: any) => any) => {
+    mockUseDataLayer.mockImplementation((selector: (state: unknown) => unknown) => {
       if (selector.toString().includes("updateChart")) {
         return updateChart;
       }
@@ -129,7 +129,7 @@ describe("DataTableHeader", () => {
 
   it("does not sort when opening a column filter", () => {
     const updateChart = vi.fn();
-    mockUseDataLayer.mockImplementation((selector: (state: any) => any) => {
+    mockUseDataLayer.mockImplementation((selector: (state: unknown) => unknown) => {
       if (selector.toString().includes("updateChart")) {
         return updateChart;
       }
@@ -145,7 +145,7 @@ describe("DataTableHeader", () => {
 
   it("handles column resizing", () => {
     const updateChart = vi.fn();
-    mockUseDataLayer.mockImplementation((selector: (state: any) => any) => {
+    mockUseDataLayer.mockImplementation((selector: (state: unknown) => unknown) => {
       if (selector.toString().includes("updateChart")) {
         return updateChart;
       }
@@ -174,7 +174,7 @@ describe("DataTableHeader", () => {
 
   it("respects minimum column width", () => {
     const updateChart = vi.fn();
-    mockUseDataLayer.mockImplementation((selector: (state: any) => any) => {
+    mockUseDataLayer.mockImplementation((selector: (state: unknown) => unknown) => {
       if (selector.toString().includes("updateChart")) {
         return updateChart;
       }

@@ -3,13 +3,14 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 
 import { DataTableSettings } from "./definition";
 import { getFilteredRows } from "./filteredRows";
+import type { datum } from "@/types/ChartTypes";
 
 interface DataTableBodyProps {
   settings: DataTableSettings;
 }
 
 // Helper function to check if a value is numeric
-function isNumeric(value: any): boolean {
+function isNumeric(value: datum): boolean {
   if (typeof value === "number") {
     return true;
   }
@@ -20,7 +21,7 @@ function isNumeric(value: any): boolean {
 }
 
 // Helper function to compare values with natural sort
-function compareValues(a: any, b: any): number {
+function compareValues(a: datum, b: datum): number {
   // Handle null/undefined values
   if (a === null || a === undefined) {
     return 1;

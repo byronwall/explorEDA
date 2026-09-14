@@ -777,7 +777,7 @@ const createDataLayerStore = <T extends DatumObject>(
 };
 
 // Create context
-export const DataLayerContext = createContext<DataLayerStore<any> | null>(null);
+export const DataLayerContext = createContext<unknown>(null);
 
 // Provider wrapper
 type DataLayerProviderProps<T extends DatumObject> = React.PropsWithChildren<
@@ -829,7 +829,7 @@ export function DataLayerProvider<T extends DatumObject>({
 export function useDataLayer<T extends DatumObject, U>(
   selector: (state: DataLayerState<T>) => U
 ): U {
-  const store = useContext(DataLayerContext);
+  const store = useContext(DataLayerContext) as DataLayerStore<T> | null;
   if (!store) {
     throw new Error("Missing DataLayerContext.Provider in the tree");
   }

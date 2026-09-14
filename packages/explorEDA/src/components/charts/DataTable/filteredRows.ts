@@ -1,9 +1,10 @@
 import { LiveItem } from "@/hooks/CrossfilterWrapper";
 import { IdType } from "@/providers/DataLayerProvider";
 import { isTextFilter } from "@/types/FilterTypes";
+import type { datum } from "@/types/ChartTypes";
 import type { DataTableSettings } from "./definition";
 
-export type DataTableRow = { __ID: IdType; [key: string]: any };
+export type DataTableRow = { __ID: IdType; [key: string]: datum };
 
 export function getFilteredRows(
   data: DataTableRow[],

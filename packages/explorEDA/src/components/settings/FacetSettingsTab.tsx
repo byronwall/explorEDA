@@ -12,7 +12,7 @@ import { ComboBox } from "../ComboBox";
 
 interface FacetSettingsTabProps {
   settings: ChartSettings;
-  onSettingChange: (key: string, value: any) => void;
+  onSettingChange: (key: string, value: unknown) => void;
 }
 
 const FACET_TYPES = [
@@ -24,7 +24,7 @@ export function FacetSettingsTab({
   settings,
   onSettingChange,
 }: FacetSettingsTabProps) {
-  const handleFacetChange = (key: string, value: any) => {
+  const handleFacetChange = (key: string, value: unknown) => {
     onSettingChange("facet", {
       ...settings.facet,
       [key]: value,

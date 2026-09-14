@@ -7,7 +7,7 @@ import { Label } from "../ui/label";
 
 interface AxisSettingsTabProps {
   settings: ChartSettings;
-  onSettingChange: (key: string, value: any) => void;
+  onSettingChange: (key: string, value: unknown) => void;
 }
 
 interface ScaleType {
@@ -33,7 +33,7 @@ export function AxisSettingsTab({
   settings,
   onSettingChange,
 }: AxisSettingsTabProps) {
-  const handleAxisChange = (axis: "x" | "y", key: string, value: any) => {
+  const handleAxisChange = (axis: "x" | "y", key: string, value: unknown) => {
     onSettingChange(`${axis}Axis`, {
       ...settings[`${axis}Axis`],
       [key]: value,

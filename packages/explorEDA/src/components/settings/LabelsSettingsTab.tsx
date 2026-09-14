@@ -4,7 +4,7 @@ import { Label } from "../ui/label";
 
 interface LabelsSettingsTabProps {
   settings: ChartSettings;
-  onSettingChange: (key: string, value: any) => void;
+  onSettingChange: (key: string, value: unknown) => void;
 }
 
 export function LabelsSettingsTab({

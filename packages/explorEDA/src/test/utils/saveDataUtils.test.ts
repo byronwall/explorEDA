@@ -73,8 +73,8 @@ describe("saveDataUtils", () => {
     });
 
     it("should return false for missing required properties", () => {
-      const invalidData = { ...mockValidData };
-      delete (invalidData as any).charts;
+      const invalidData: Partial<SavedDataStructure> = { ...mockValidData };
+      delete invalidData.charts;
       expect(validateSavedData(invalidData)).toBe(false);
     });
 
@@ -83,7 +83,7 @@ describe("saveDataUtils", () => {
         ...mockValidData,
         metadata: {
           ...mockValidData.metadata,
-          version: "1" as any,
+          version: "1" as unknown as number,
         },
       };
       expect(validateSavedData(invalidData)).toBe(false);
@@ -94,7 +94,7 @@ describe("saveDataUtils", () => {
         ...mockValidData,
         gridSettings: {
           ...mockValidData.gridSettings,
-          columnCount: "12" as any,
+          columnCount: "12" as unknown as number,
         },
       };
       expect(validateSavedData(invalidData)).toBe(false);
@@ -172,7 +172,7 @@ describe("saveDataUtils", () => {
     });
 
     it("should throw error when clipboard write fails", async () => {
-      (navigator.clipboard.writeText as any).mockRejectedValue(
+      vi.mocked(navigator.clipboard.writeText).mockRejectedValue(
         new Error("Clipboard error")
       );
       await expect(saveToClipboard(mockValidData)).rejects.toThrow(
