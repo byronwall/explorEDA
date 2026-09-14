@@ -1,6 +1,6 @@
 # explorEDA quick audit
 
-Date: 2026-09-13
+Date: 2026-09-14
 
 ## Executive summary
 
@@ -10,6 +10,9 @@ The current release is not safe to extend yet. Several basic checks fail, while 
 
 Fix correctness and feedback loops before a redesign. Do not start with a large architectural rewrite.
 
+The findings and baseline below record the pre-fix state. The resolution ledger
+records the final state through commit `c556782`.
+
 ### Highest-priority work
 
 1. Add one root check that runs type checks, tests, and builds.
@@ -17,6 +20,88 @@ Fix correctness and feedback loops before a redesign. Do not start with a large 
 3. Repair table filtering, pagination, export, and resize behavior.
 4. Make calculated columns deterministic and clear their caches correctly.
 5. Fix keyboard access and the mobile workspace before visual polish.
+
+## Resolution status
+
+All 54 original findings are resolved. One detector result remains an
+intentional false positive. The hashes below are the smallest relevant fixes.
+
+### 1. Build, release, and package problems
+
+1. Release gate — Resolved: `90cc12a`, `044a32d`, `1a5ca3d`.
+2. Red and stale tests — Resolved: `35ec261`, `759c8e2`.
+3. Demo type check — Resolved: `4d87380`, `1ad77d0`.
+4. Omitted type export — Resolved: `7b379e8`, `cd83248`.
+5. Package README — Resolved: `7b379e8`.
+6. Lint warnings — Resolved: `abd38e2`, `e87a472`, `50e6b7b`.
+
+### 2. Correctness and state-flow bugs
+
+7. Line margin mutation — Resolved: `3d6ebb5`.
+8. Stale `ExplorEda` props and browser history — Resolved: `4d6a531`, `c556782`.
+9. Calculation order — Resolved: `dfe513c`, `9f6f400`.
+10. Async saved-calculation restore — Resolved: `fef3f83`.
+11. Calculation cache removal — Resolved: `65f3073`.
+12. Empty-column state — Resolved: `3d64d25`.
+13. Internal `__ID` selectors — Resolved: `65f3073`.
+14. Table resize — Resolved: `c3ad874`.
+15. Shared table filtering — Resolved: `55b55b3`.
+16. Table field identity — Resolved: `ad63ebb`.
+17. Duplicate example fetch — Resolved: `26144dd`.
+18. JSON array loss — Resolved: `361830d`.
+19. CSV parse errors — Resolved: `4bb30e5`.
+20. Degenerate 3D camera — Resolved: `cd83248`.
+21. 3D scene rebuild — Resolved: `e68c423`.
+
+### 3. Data and statistical correctness
+
+22. Pivot key collisions — Resolved: `82821cc`.
+23. Inactive pivot options — Resolved: `73c0936`, `c59a412`, `dcdc7d2`.
+24. Missing pivot fields — Resolved: `baf6635`.
+25. Invalid numeric zeros — Resolved: `82821cc`, `3d6ebb5`.
+26. Line filters — Resolved: `3d6ebb5`.
+27. Sampling seed — Resolved: `58ade87`.
+28. Saved-data validation — Resolved: `87885c5`.
+29. Corrupt project storage — Resolved by removing dead persistence: `4fd46f6`.
+
+### 4. UX and accessibility
+
+30. Keyboard example cards — Resolved: `6f81d52`, `fd9d4c8`.
+31. Narrow workspace layout — Resolved: `1389591`, `6b87408`.
+32. Icon button names — Resolved: `5ca874f`.
+33. Chart nonvisual representation — Resolved: `b501553`, `c7034d6`, `3d2bcc0`.
+34. Table filter sorting — Resolved: `49c4497`.
+35. Showcase explanation — Resolved: `cf1a544`.
+36. Upload copy — Resolved: `669ac01`, `361830d`.
+37. Loading and error recovery — Resolved: `26144dd`.
+38. Dark-mode claim — Resolved by removing the unsupported claim: `d2a3f12`.
+39. Spinner detector result — Intentional false positive; no change required.
+
+### 5. Architecture and maintainability
+
+40. Provider scope — Resolved for the requested first step: pure data and
+cache helpers were extracted and dead project persistence was removed in
+`65f3073`, `4fd46f6`.
+41. Runtime vector leakage — Resolved: `4d87380`, `e0d262d`.
+42. Dead calculation engine code — Resolved: `ad3ecbc`, `759c8e2`.
+43. Unused UI primitives — Resolved: `38f4d97`, `109aaae`, `c115d54`.
+44. Disconnected features — Resolved: `882c556`, `4fd46f6`.
+45. Duplicate CSS tokens — Resolved: `27c52ac`.
+46. Registry type safety — Resolved: `e0d262d`, `cd83248`.
+47. Aspirational settings — Resolved: `73c0936`, `c59a412`, `dcdc7d2`.
+
+### 6. Dependency and performance problems
+
+48. Runtime dependencies and peers — Resolved: `63e69e1`, `afb791a`, `5bd7609`.
+49. Per-chart bundle entries — Resolved: `cd83248`; the lean entry check passes.
+50. Permanent Three.js loop — Resolved: `e68c423`.
+51. Per-chart layout updates — Resolved: `8663f9e`.
+
+### 7. Documentation and product truth
+
+52. README claims — Resolved: `d2a3f12`, `d54be5d`.
+53. Historical plans — Resolved: `d831aea`; historical notes are under `docs/archive`.
+54. Public API documentation — Resolved: `d54be5d`; package runtime, browser, saved-data, CSS, and prop guidance is documented.
 
 ## Scope and method
 
@@ -33,17 +118,28 @@ Srcly also scanned the repository. Its default ranking favored old Markdown plan
 
 | Check | Result |
 | --- | --- |
-| Library production build | Passes |
-| Demo production build | Passes; output is 1.99 MB JavaScript, 580 KB gzip |
-| Library TypeScript check | Fails with 125 errors |
-| Demo TypeScript check | Fails with 11 errors |
-| Library tests | 5 files failed, 4 passed; 15 tests failed, 83 passed, 22 are TODO |
-| Demo tests | No test files |
-| Library lint | 251 warnings; returns success |
-| Demo lint | 7 warnings; returns success |
-| Mechanical UI detector | One likely false positive on the loading spinner |
+| Root check | Passes with pnpm 11.9.0: `CI=true pnpm check` |
+| Library TypeScript check | Passes |
+| Demo TypeScript check | Passes |
+| Library tests | 13 files, 114 tests passed |
+| Demo tests | 2 files, 4 tests passed |
+| Library lint | Passes with `--max-warnings=0` |
+| Demo lint | Passes with `--max-warnings=0` |
+| Library production build | Passes; `packages/explorEDA/dist/**` contains ESM, CJS, and declarations |
+| Demo production build | Passes; vendor chunks are split under `apps/demo/dist/assets/**` |
+| Package pack | Passes; 210 files, README included, `src/**` excluded |
+| Lean package entry | Passes: 533,761 bytes, 116,068 bytes gzip; no Three.js or Tiptap |
+| Browser verification | Parent pass confirmed example selection, browser back, and the landing state after `c556782`; brush behavior was not verified, and no dark-mode implementation is claimed |
+| Mechanical UI detector | One intentional false positive on the loading spinner |
 
-The build is transpile-only. It does not prove that the repository is type-correct or tested.
+The final bundle check found these deferred demo chunks in the exact build path
+`apps/demo/dist/assets/**`: `three-BH4-L6gE.js` (491.20 kB),
+`ExplorEda-m7ANby2B.js` (482.12 kB), and `tiptap-B9rXTEde.js` (302.36 kB).
+The package build artifacts are in the exact path `packages/explorEDA/dist/**`.
+
+The root check now proves types, tests, and builds in sequence. The parent
+browser pass confirmed the repaired history flow. Brush verification remains
+outside scope, and the audit does not claim a dark-mode implementation.
 
 ## 1. Build, release, and package problems
 
