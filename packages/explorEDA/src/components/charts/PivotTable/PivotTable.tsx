@@ -303,7 +303,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
                     className={cn(
                       "border p-2 text-right",
                       cell.sourceRows && "cursor-pointer hover:bg-muted/20",
-                      isCellFiltered(row.headers, cell.key) && "bg-yellow-50"
+                      isCellFiltered(row.headers, cell.key) && "bg-accent/30"
                     )}
                     onClick={() => cell.sourceRows && handleCellClick(cell)}
                   >
