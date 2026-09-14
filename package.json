@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "check": "turbo check-types test build",
+    "check": "pnpm --recursive --if-present run check-types && pnpm --recursive --if-present run test && pnpm --recursive --if-present run build",
     "release": "pnpm check && changeset publish"
   },
   "dependencies": {
