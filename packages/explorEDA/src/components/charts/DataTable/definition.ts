@@ -77,11 +77,19 @@ export const dataTableDefinition: ChartDefinition<DataTableSettings> = {
           return false;
         }
 
-        if (applyFilter(value, filter)) {
-          return true;
+        if (filter.type === "text") {
+          const text = String(value).toLowerCase();
+          const search = filter.value.toLowerCase();
+          return filter.operator === "contains"
+            ? text.includes(search)
+            : filter.operator === "equals"
+              ? text === search
+              : filter.operator === "startsWith"
+                ? text.startsWith(search)
+                : text.endsWith(search);
         }
 
-        return false;
+        return applyFilter(value, filter);
       };
     });
 
