@@ -75,6 +75,7 @@ export function DataTablePagination({ settings }: DataTablePaginationProps) {
           <Button
             variant="outline"
             size="sm"
+            aria-label="Go to previous page"
             onClick={() => handlePageChange(page - 1)}
             disabled={page === 1}
           >
@@ -86,6 +87,7 @@ export function DataTablePagination({ settings }: DataTablePaginationProps) {
           <Button
             variant="outline"
             size="sm"
+            aria-label="Go to next page"
             onClick={() => handlePageChange(page + 1)}
             disabled={page === totalPages}
           >

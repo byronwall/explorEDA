@@ -156,18 +156,21 @@ export function DataTableHeader({ settings }: DataTableHeaderProps) {
                   variant="ghost"
                   size="sm"
                   className="flex items-center gap-2"
-                  onClick={() =>
+                  aria-label={`Filter ${column.field}`}
+                  aria-expanded={activeFilter === column.id}
+                  onClick={(event) => {
+                    event.stopPropagation();
                     setActiveFilter(
                       activeFilter === column.id ? null : column.id
-                    )
-                  }
+                    );
+                  }}
                 >
                   <FilterIcon className="h-4 w-4" />
                 </Button>
                 {activeFilter === column.id && (
                   <ColumnFilter
                     columnId={column.id}
-                    columnLabel={column.id}
+                    columnLabel={column.field}
                     value={textFilter?.value || ""}
                     operator={textFilter?.operator || "contains"}
                     onChange={handleFilterChange}
@@ -176,6 +179,9 @@ export function DataTableHeader({ settings }: DataTableHeaderProps) {
                 )}
               </div>
               <div
+                role="separator"
+                aria-orientation="vertical"
+                aria-label={`Resize ${column.field} column`}
                 className="absolute right-0 top-0 h-full w-1 cursor-col-resize hover:bg-primary"
                 onMouseDown={(e) => handleResizeStart(e, column.id)}
               />

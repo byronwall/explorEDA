@@ -142,7 +142,7 @@ describe("DataTableHeader", () => {
 
     render(<DataTableHeader settings={mockSettings} />);
 
-    const resizeHandle = screen.getAllByRole("presentation")[0];
+    const resizeHandle = screen.getAllByRole("separator")[0];
     fireEvent.mouseDown(resizeHandle, { clientX: 0 });
     fireEvent.mouseMove(window, { clientX: 50 });
     fireEvent.mouseUp(window);
@@ -171,7 +171,7 @@ describe("DataTableHeader", () => {
 
     render(<DataTableHeader settings={mockSettings} />);
 
-    const resizeHandle = screen.getAllByRole("presentation")[0];
+    const resizeHandle = screen.getAllByRole("separator")[0];
     fireEvent.mouseDown(resizeHandle, { clientX: 0 });
     fireEvent.mouseMove(window, { clientX: -200 }); // Try to make it smaller than minimum
     fireEvent.mouseUp(window);

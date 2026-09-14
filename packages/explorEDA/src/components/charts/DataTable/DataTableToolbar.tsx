@@ -65,6 +65,7 @@ export function DataTableToolbar({ settings }: DataTableToolbarProps) {
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search..."
+            aria-label="Search table"
             className="pl-8"
             value={settings.globalSearch}
             onChange={(e) => handleSearch(e.target.value)}

@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { useState } from "react";
 
 interface ColumnFilterProps {
   columnId: string;
@@ -31,14 +30,15 @@ export function ColumnFilter({
   onChange,
   onClear,
 }: ColumnFilterProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
-    <div className="flex items-center gap-2">
+    <div
+      className="flex items-center gap-2"
+      onClick={(event) => event.stopPropagation()}
+    >
       <Select
         value={operator}
-        onValueChange={(value: typeof operator) =>
-          onChange(columnId, value, value)
+        onValueChange={(nextOperator: typeof operator) =>
+          onChange(columnId, value, nextOperator)
         }
       >
         <SelectTrigger className="h-8 w-[100px]">
@@ -57,7 +57,13 @@ export function ColumnFilter({
         onChange={(e) => onChange(columnId, e.target.value, operator)}
         className="h-8 w-[200px]"
       />
-      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClear}>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8"
+        aria-label={`Clear filter for ${columnLabel}`}
+        onClick={onClear}
+      >
         <X className="h-4 w-4" />
       </Button>
     </div>

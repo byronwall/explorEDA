@@ -17,7 +17,11 @@ export function DataTable({ settings, width, height }: DataTableProps) {
         className="flex-1 overflow-auto relative"
         style={{ maxHeight: `${height - 100}px` }} // Subtract toolbar and pagination height
       >
-        <table className="w-full border-collapse">
+        <table
+          className="w-full border-collapse"
+          aria-label={settings.title || "Data table"}
+        >
+          <caption className="sr-only">{settings.title || "Data table"}</caption>
           <DataTableHeader settings={settings} />
           <DataTableBody settings={settings} />
         </table>
