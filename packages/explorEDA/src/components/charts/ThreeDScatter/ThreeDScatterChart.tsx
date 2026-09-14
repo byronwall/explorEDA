@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { ThreeDScatterChartProps } from "./types";
 
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { ThreeDScatterAxes } from "./ThreeDScatterAxes";
 import { ThreeDScatterPoints } from "./ThreeDScatterPoints";
 import { useThreeDScatterData } from "./useThreeDScatterData";
@@ -24,9 +24,8 @@ export function ThreeDScatterChart({
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const controlsRef = useRef<OrbitControls | null>(null);
-  const animationFrameRef = useRef<number>(null);
   const cameraStateRef = useRef<CameraState>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const updateChart = useDataLayer((state) => state.updateChart);
   const data = useThreeDScatterData(settings, facetIds);
@@ -61,7 +60,8 @@ export function ThreeDScatterChart({
 
     // Add orbit controls
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
+    controls.target.copy(settings.cameraTarget);
+    controls.enableDamping = false;
     controlsRef.current = controls;
     controls.addEventListener("change", () => {
       if (!controls.object || !controls.target) {
@@ -85,7 +85,10 @@ export function ThreeDScatterChart({
             cameraTarget: cameraStateRef.current.target,
           });
         }
+        timeoutRef.current = null;
       }, 1000);
+
+      renderer.render(scene, camera);
     });
 
     // Add ambient light
@@ -100,20 +103,13 @@ export function ThreeDScatterChart({
     // Force initial render
     renderer.render(scene, camera);
 
-    // Animation loop
-    const animate = () => {
-      animationFrameRef.current = requestAnimationFrame(animate);
-      controls.update();
-      renderer.render(scene, camera);
-    };
-    animate();
-
     setNonce((state) => state + 1);
 
     // Cleanup
     return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
       }
       if (controls) {
         controls.dispose();
@@ -127,14 +123,24 @@ export function ThreeDScatterChart({
         containerRef.current.innerHTML = "";
       }
     };
-  }, [
-    width,
-    height,
-    settings.cameraPosition,
-    settings.cameraTarget,
-    settings.id,
-    updateChart,
-  ]);
+  }, [width, height, settings.id, updateChart]);
+
+  // Apply saved camera changes without rebuilding the scene.
+  useEffect(() => {
+    const camera = cameraRef.current;
+    const controls = controlsRef.current;
+    const renderer = rendererRef.current;
+    const scene = sceneRef.current;
+    if (!camera || !controls || !renderer || !scene) {
+      return;
+    }
+
+    camera.position.copy(settings.cameraPosition);
+    controls.target.copy(settings.cameraTarget);
+    camera.lookAt(settings.cameraTarget);
+    camera.updateProjectionMatrix();
+    renderer.render(scene, camera);
+  }, [settings.cameraPosition, settings.cameraTarget]);
 
   // Handle window resize
   useEffect(() => {

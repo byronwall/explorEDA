@@ -26,12 +26,13 @@ export function useThreeDScatterData(
 
     const result = [];
     for (let i = 0; i < xData.length; i++) {
+      const size = sizeData[i];
       result.push({
-        x: xData[i],
-        y: yData[i],
-        z: zData[i],
+        x: Number(xData[i] ?? 0),
+        y: Number(yData[i] ?? 0),
+        z: Number(zData[i] ?? 0),
         color: getColorForValue(colorScaleId, colorData[i]),
-        size: sizeData[i],
+        size: typeof size === "number" ? size : undefined,
       });
     }
     return result;

@@ -1,5 +1,5 @@
-import { ChartDefinition, Filter, datum } from "@/types/ChartTypes";
-import { DEFAULT_CHART_SETTINGS } from "@/utils/defaultSettings";
+import { ChartDefinition, datum } from "@/types/ChartTypes";
+import { DEFAULT_3D_SCATTER_SETTINGS } from "@/utils/defaultSettings";
 import { Box } from "lucide-react";
 
 import { IdType } from "@/providers/DataLayerProvider";
@@ -18,12 +18,12 @@ export const threeDScatterDefinition: ChartDefinition<ThreeDScatterSettings> = {
   settingsPanel: ThreeDScatterSettingsPanel,
 
   createDefaultSettings: (layout) => ({
-    ...DEFAULT_CHART_SETTINGS,
+    ...DEFAULT_3D_SCATTER_SETTINGS,
     id: crypto.randomUUID(),
     type: "3d-scatter",
     title: "3D Scatter Plot",
     layout,
-    margin: {},
+    margin: { ...DEFAULT_3D_SCATTER_SETTINGS.margin },
     xField: "",
     yField: "",
     zField: "",
@@ -33,11 +33,11 @@ export const threeDScatterDefinition: ChartDefinition<ThreeDScatterSettings> = {
     pointOpacity: 0.8,
     showGrid: true,
     showAxes: true,
-    cameraPosition: new THREE.Vector3(0, 0, 0),
-    cameraTarget: new THREE.Vector3(0, 0, 0),
-    xAxis: { ...DEFAULT_CHART_SETTINGS.xAxis, zoomLevel: 1 },
-    yAxis: { ...DEFAULT_CHART_SETTINGS.yAxis, zoomLevel: 1 },
-    zAxis: { ...DEFAULT_CHART_SETTINGS.yAxis, zoomLevel: 1 },
+    cameraPosition: DEFAULT_3D_SCATTER_SETTINGS.cameraPosition.clone(),
+    cameraTarget: DEFAULT_3D_SCATTER_SETTINGS.cameraTarget.clone(),
+    xAxis: { ...DEFAULT_3D_SCATTER_SETTINGS.xAxis, zoomLevel: 1 },
+    yAxis: { ...DEFAULT_3D_SCATTER_SETTINGS.yAxis, zoomLevel: 1 },
+    zAxis: { ...DEFAULT_3D_SCATTER_SETTINGS.zAxis, zoomLevel: 1 },
   }),
 
   validateSettings: (settings) => {
