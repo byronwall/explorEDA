@@ -27,6 +27,9 @@ function Probe() {
       <output data-testid="values">
         {JSON.stringify(getColumnData("double"))}
       </output>
+      <output data-testid="missing">
+        {Object.keys(getColumnData("missing")).join(",")}
+      </output>
     </>
   );
 }
@@ -84,6 +87,8 @@ describe("DataLayerProvider", () => {
       expect(screen.getByTestId("rows")).toHaveTextContent("1")
     );
     expect(screen.getByTestId("columns")).toHaveTextContent("name");
+    expect(screen.getByTestId("missing")).toHaveTextContent("0");
+    expect(screen.getByTestId("missing")).not.toHaveTextContent("1");
   });
 
   it("restores saved calculations when the input prop changes", async () => {

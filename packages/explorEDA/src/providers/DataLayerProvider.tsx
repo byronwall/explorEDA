@@ -291,11 +291,17 @@ const createDataLayerStore = <T extends DatumObject>(
       // Get fresh crossfilter and data with IDs
       const {
         data: newData,
+        emptyColumn: newEmptyColumn,
         crossfilterWrapper: newCrossfilter,
         calculationManager: newCalculationManager,
       } = getDataAndCrossfilterWrapper(rawData, get().getColumnData);
 
-      if (!newData || !newCrossfilter || !newCalculationManager) {
+      if (
+        !newData ||
+        !newEmptyColumn ||
+        !newCrossfilter ||
+        !newCalculationManager
+      ) {
         throw new Error("Failed to reset data layer");
       }
 
@@ -313,6 +319,7 @@ const createDataLayerStore = <T extends DatumObject>(
       // Reset everything to initial state
       set({
         data: newData,
+        emptyColumn: newEmptyColumn,
         fileName,
         crossfilterWrapper: newCrossfilter,
         calculationManager: newCalculationManager,
