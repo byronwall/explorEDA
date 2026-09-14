@@ -3,7 +3,7 @@ import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { Filter, TextFilter } from "@/types/FilterTypes";
 import { ChevronDown, ChevronUp, Filter as FilterIcon } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ColumnFilter } from "./components/ColumnFilter";
 import { DataTableSettings } from "./definition";
 
@@ -17,6 +17,9 @@ export function DataTableHeader({ settings }: DataTableHeaderProps) {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [resizingColumn, setResizingColumn] = useState<string | null>(null);
   const [tempWidths, setTempWidths] = useState<Record<string, number>>({});
+  const resizeCleanup = useRef<(() => void) | null>(null);
+
+  useEffect(() => () => resizeCleanup.current?.(), []);
 
   const handleSort = (columnId: string) => {
     if (sortBy === columnId) {
@@ -81,39 +84,37 @@ export function DataTableHeader({ settings }: DataTableHeaderProps) {
 
   const handleResizeStart = (e: React.MouseEvent, columnId: string) => {
     e.preventDefault();
+    resizeCleanup.current?.();
     setResizingColumn(columnId);
 
-    const startX = e.pageX;
+    const startX = e.clientX;
     const column = columns.find((col) => col.id === columnId);
     const startWidth = column?.width || 0;
+    let width = startWidth;
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (!resizingColumn) {
-        return;
-      }
-
-      const diff = e.pageX - startX;
-      const newWidth = Math.max(50, startWidth + diff); // Minimum width of 50px
-      setTempWidths((prev) => ({ ...prev, [columnId]: newWidth }));
+      width = Math.max(50, startWidth + e.clientX - startX);
+      setTempWidths((prev) => ({ ...prev, [columnId]: width }));
     };
 
     const handleMouseUp = () => {
-      if (!resizingColumn) {
-        return;
-      }
-
-      const newWidth = tempWidths[columnId];
-      if (newWidth) {
-        const newColumns = columns.map((col) =>
-          col.id === columnId ? { ...col, width: newWidth } : col
-        );
-        updateChart(settings.id, { columns: newColumns });
-      }
-
+      const newColumns = columns.map((col) =>
+        col.id === columnId ? { ...col, width } : col
+      );
+      updateChart(settings.id, { columns: newColumns });
+      resizeCleanup.current = null;
       setResizingColumn(null);
       setTempWidths({});
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    resizeCleanup.current = () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      setResizingColumn(null);
+      setTempWidths({});
+      resizeCleanup.current = null;
     };
 
     window.addEventListener("mousemove", handleMouseMove);
