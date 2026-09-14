@@ -15,10 +15,12 @@ function getQuartile(sortedData: number[], q: number): number {
   const pos = (sortedData.length - 1) * q;
   const base = Math.floor(pos);
   const rest = pos - base;
-  if (sortedData[base + 1] !== undefined) {
-    return sortedData[base] + rest * (sortedData[base + 1] - sortedData[base]);
+  const value = sortedData[base]!;
+  const next = sortedData[base + 1];
+  if (next !== undefined) {
+    return value + rest * (next - value);
   } else {
-    return sortedData[base];
+    return value;
   }
 }
 
@@ -54,20 +56,20 @@ export function calculateBoxPlotStats(
       const lowerFence = q1 - 1.5 * iqr;
       const upperFence = q3 + 1.5 * iqr;
 
-      whiskerLow = Math.max(lowerFence, sortedData[0]);
-      whiskerHigh = Math.min(upperFence, sortedData[sortedData.length - 1]);
+      whiskerLow = Math.max(lowerFence, sortedData[0]!);
+      whiskerHigh = Math.min(upperFence, sortedData[sortedData.length - 1]!);
 
       if (whiskerLow > whiskerHigh) {
-        whiskerLow = sortedData[0];
-        whiskerHigh = sortedData[sortedData.length - 1];
+        whiskerLow = sortedData[0]!;
+        whiskerHigh = sortedData[sortedData.length - 1]!;
       }
 
       outliers = sortedData.filter((x) => x < whiskerLow || x > whiskerHigh);
       break;
     }
     case "minmax": {
-      whiskerLow = sortedData[0];
-      whiskerHigh = sortedData[sortedData.length - 1];
+      whiskerLow = sortedData[0]!;
+      whiskerHigh = sortedData[sortedData.length - 1]!;
       outliers = [];
       break;
     }
@@ -104,8 +106,11 @@ export function calculateKernelDensity(
   numPoints: number = 100
 ): [number, number][] {
   const sortedData = [...data].sort((a, b) => a - b);
-  const min = sortedData[0];
-  const max = sortedData[sortedData.length - 1];
+  if (sortedData.length === 0) {
+    return [];
+  }
+  const min = sortedData[0]!;
+  const max = sortedData[sortedData.length - 1]!;
   const range = max - min;
 
   const points = Array.from({ length: numPoints }, (_, i) => {
@@ -132,12 +137,23 @@ export function calculateKernelDensity(
 export function calculateBeeSwarmPositions(
   data: number[],
   width: number,
-  maxPoints: number = 1000
+  maxPoints: number = 1000,
+  seed = 0
 ): [number, number][] {
   if (data.length > maxPoints) {
-    const sampledData = [...data]
-      .sort(() => Math.random() - 0.5)
-      .slice(0, maxPoints);
+    const shuffled = [...data];
+    let state = seed >>> 0;
+    const random = () => {
+      state = (state * 1664525 + 1013904223) >>> 0;
+      return state / 2 ** 32;
+    };
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(random() * (i + 1));
+      const value = shuffled[i]!;
+      shuffled[i] = shuffled[j]!;
+      shuffled[j] = value;
+    }
+    const sampledData = shuffled.slice(0, maxPoints);
     return calculateBeeSwarmPositionsForData(sampledData, width);
   }
   return calculateBeeSwarmPositionsForData(data, width);

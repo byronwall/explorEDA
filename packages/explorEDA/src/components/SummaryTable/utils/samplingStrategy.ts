@@ -8,7 +8,7 @@ export interface SamplingOptions {
 
 export function sampleData(
   data: { [key: number]: datum },
-  options: SamplingOptions = { method: "random", sampleSize: 1000 }
+  options: SamplingOptions = { method: "random", sampleSize: 1000, seed: 0 }
 ): { [key: number]: datum } {
   const values = Object.entries(data);
   const totalSize = values.length;
@@ -23,9 +23,16 @@ export function sampleData(
 
   // Random sampling
   const shuffled = [...values];
+  let state = (options.seed ?? 0) >>> 0;
+  const random = () => {
+    state = (state * 1664525 + 1013904223) >>> 0;
+    return state / 2 ** 32;
+  };
   for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    const j = Math.floor(random() * (i + 1));
+    const value = shuffled[i]!;
+    shuffled[i] = shuffled[j]!;
+    shuffled[j] = value;
   }
 
   return Object.fromEntries(shuffled.slice(0, sampleSize));
