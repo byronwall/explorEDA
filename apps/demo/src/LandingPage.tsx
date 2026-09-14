@@ -64,6 +64,9 @@ export function LandingPage() {
   useEffect(() => {
     if (!exampleId) {
       setIsLoading(false);
+      setExample(null);
+      setExampleData([]);
+      setLoadError(null);
       return;
     }
 
