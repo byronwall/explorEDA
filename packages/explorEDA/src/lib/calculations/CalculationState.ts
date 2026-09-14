@@ -63,7 +63,13 @@ export class CalculationManager<T extends DatumObject> {
   /**
    * Remove a calculation by result column name
    */
-  removeCalculation(resultColumnName: string): void {
+  removeCalculation(resultColumnName: string): Set<string> {
+    const affectedColumns = new Set<string>([resultColumnName]);
+    const dependents = this.findDependents(resultColumnName);
+    for (const dependent of dependents) {
+      affectedColumns.add(dependent);
+    }
+
     this.state.calculations = this.state.calculations.filter(
       (calc) => calc.resultColumnName !== resultColumnName
     );
@@ -74,6 +80,12 @@ export class CalculationManager<T extends DatumObject> {
     for (const [, dependencies] of this.state.dependencyGraph.entries()) {
       dependencies.delete(resultColumnName);
     }
+
+    for (const columnName of dependents) {
+      this.state.calculationResults.delete(columnName);
+    }
+
+    return affectedColumns;
   }
 
   /**
@@ -86,10 +98,7 @@ export class CalculationManager<T extends DatumObject> {
   getPreceedingCalculations(
     calculation: CalculationDefinition
   ): CalculationDefinition[] {
-    const precedents = new Set<string>();
-
-    // find all calculations that come before this one in the dependency graph
-    // do it recursively until we have all precedents
+    const precedents: CalculationDefinition[] = [];
     const visited = new Set<string>();
     const visit = (resultColumnName: string) => {
       if (visited.has(resultColumnName)) {
@@ -97,29 +106,27 @@ export class CalculationManager<T extends DatumObject> {
       }
       visited.add(resultColumnName);
 
-      for (const [calcName, deps] of this.state.dependencyGraph.entries()) {
-        if (deps.has(resultColumnName)) {
-          precedents.add(calcName);
-          visit(calcName);
-        }
+      for (const dependency of this.state.dependencyGraph.get(
+        resultColumnName
+      ) ?? []) {
+        visit(dependency);
+      }
+
+      const precedent = this.state.calculations.find(
+        (calc) => calc.resultColumnName === resultColumnName
+      );
+      if (precedent) {
+        precedents.push(precedent);
       }
     };
 
-    visit(calculation.resultColumnName);
-
-    if (precedents.size === 0) {
-      return [];
+    for (const dependency of this.state.dependencyGraph.get(
+      calculation.resultColumnName
+    ) ?? []) {
+      visit(dependency);
     }
 
-    const precedentsArray = Array.from(precedents);
-    return precedentsArray
-      .map(
-        (name) =>
-          this.state.calculations.find(
-            (calc) => calc.resultColumnName === name
-          ) || undefined
-      )
-      .filter(Boolean) as CalculationDefinition[];
+    return precedents;
   }
 
   /**
