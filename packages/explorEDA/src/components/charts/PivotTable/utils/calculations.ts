@@ -148,7 +148,6 @@ function generateCells(
         },
         value,
         rawValue: value,
-        sourceRows: rowData,
       });
     }
     return cells;
@@ -170,7 +169,6 @@ function generateCells(
         },
         value,
         rawValue: value,
-        sourceRows: columnData,
       });
     }
   }

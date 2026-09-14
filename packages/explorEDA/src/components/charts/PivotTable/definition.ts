@@ -28,12 +28,6 @@ export interface PivotTableSettings extends BaseChartSettings {
       | "singleValue";
     label?: string;
   }>;
-  /** Legacy saved-data field. Totals are not implemented and are ignored. */
-  showTotals?: {
-    row: boolean;
-    column: boolean;
-    grand: boolean;
-  };
 }
 
 const VALID_AGGREGATIONS: ReadonlySet<

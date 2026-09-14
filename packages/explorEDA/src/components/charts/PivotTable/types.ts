@@ -19,7 +19,6 @@ export interface PivotCell {
   key: CellKey;
   value: datum;
   rawValue: datum;
-  sourceRows?: any[];
 }
 
 export interface RowKey {

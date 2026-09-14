@@ -6,7 +6,6 @@ import { BaseChartProps } from "@/types/ChartTypes";
 import { Filter, ValueFilter, datum } from "@/types/FilterTypes";
 import { Filter as FilterIcon } from "lucide-react";
 import { useCallback, useMemo } from "react";
-import { toast } from "sonner";
 import { useGetLiveIds } from "../useGetLiveData";
 import { PivotCell, PivotHeader, PivotRow, CellKey } from "./types";
 import { applyFilter } from "@/hooks/applyFilter";
@@ -86,15 +85,6 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
     },
     [settings, updateChart]
   );
-
-  const handleCellClick = useCallback((cell: PivotCell) => {
-    if (!cell.sourceRows) {
-      return;
-    }
-
-    // TODO: Implement drill-down modal with source rows
-    toast(`Showing details for ${cell.value} (${cell.sourceRows.length} rows)`);
-  }, []);
 
   const isValueFiltered = useCallback(
     (field: string, value: datum) => {
@@ -178,6 +168,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
               variant="ghost"
               size="icon"
               className="h-6 w-6"
+              aria-label={`Filter ${header.field} by ${header.label}`}
               onClick={() => handleFilterClick(header.field, header.value)}
             >
               <FilterIcon className="h-4 w-4" />
@@ -286,6 +277,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
                           variant="ghost"
                           size="icon"
                           className="h-6 w-6"
+                          aria-label={`Filter ${header.field} by ${header.label}`}
                           onClick={() =>
                             handleFilterClick(header.field, header.value)
                           }
@@ -302,10 +294,8 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
                     key={`${cell.key.columnField}-${cell.key.columnValue}${cell.key.valueField ? `-${cell.key.valueField}` : ""}`}
                     className={cn(
                       "border p-2 text-right",
-                      cell.sourceRows && "cursor-pointer hover:bg-muted/20",
                       isCellFiltered(row.headers, cell.key) && "bg-accent/30"
                     )}
-                    onClick={() => cell.sourceRows && handleCellClick(cell)}
                   >
                     {typeof cell.value === "number"
                       ? cell.value.toLocaleString(undefined, {
