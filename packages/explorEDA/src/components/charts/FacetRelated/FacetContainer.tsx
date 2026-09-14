@@ -56,11 +56,8 @@ export function FacetContainer({
 
       const facetKey = colLabel ? `${rowLabel}__${colLabel}` : rowLabel;
 
-      if (!facets[facetKey]) {
-        facets[facetKey] = [];
-      }
-
-      facets[facetKey].push(id);
+      const facetIds = facets[facetKey] ?? (facets[facetKey] = []);
+      facetIds.push(id);
     });
 
     return Object.entries(facets).map(([key, ids]) => {
@@ -69,8 +66,8 @@ export function FacetContainer({
 
       if (facet.type === "grid" && key.includes("__")) {
         const parts = key.split("__");
-        rowValue = parts[0];
-        columnValue = parts[1];
+        rowValue = parts[0] ?? key;
+        columnValue = parts[1] ?? null;
       } else {
         rowValue = key;
       }

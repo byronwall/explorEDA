@@ -36,15 +36,18 @@ export function FacetGridLayout({
     const grid: Record<string, Record<string, IdType[]>> = {};
 
     rows.forEach((row) => {
-      grid[row] = {};
+      const rowGrid: Record<string, IdType[]> = (grid[row] = {});
       columns.forEach((col) => {
-        grid[row][col] = [];
+        rowGrid[col] = [];
       });
     });
 
     facetData.forEach((facet) => {
       if (facet.rowValue && facet.columnValue) {
-        grid[facet.rowValue][facet.columnValue] = facet.ids;
+        const rowGrid = grid[facet.rowValue];
+        if (rowGrid) {
+          rowGrid[facet.columnValue] = facet.ids;
+        }
       }
     });
 
@@ -90,12 +93,12 @@ export function FacetGridLayout({
                       height: cellHeight,
                     }}
                   >
-                    {grid[row]?.[col]?.length > 0 ? (
+                    {(grid[row]?.[col] ?? []).length > 0 ? (
                       <ChartRenderer
                         settings={settings}
                         width={cellWidth}
                         height={cellHeight}
-                        facetIds={grid[row][col]}
+                        facetIds={grid[row]?.[col] ?? []}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-muted-foreground">

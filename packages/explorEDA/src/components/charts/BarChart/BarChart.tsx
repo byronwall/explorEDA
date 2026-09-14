@@ -194,7 +194,7 @@ export function BarChart({ settings, width, height, facetIds }: BarChartProps) {
         });
       }
       // Register y-axis limits (numerical for bar chart)
-      const maxValue = yScale.domain()[1];
+      const maxValue = yScale.domain()[1] ?? 0;
 
       registerAxisLimits(settings.id, "y", {
         type: "numerical",

@@ -71,7 +71,11 @@ const createFacetAxisStore = () => {
       }
 
       // Check if all limits are of the same type
-      const firstLimitType = limits[0].type;
+      const firstLimit = limits[0];
+      if (!firstLimit) {
+        return null;
+      }
+      const firstLimitType = firstLimit.type;
       const allSameType = limits.every(
         (limit) => limit.type === firstLimitType
       );

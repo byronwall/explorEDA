@@ -171,12 +171,17 @@ export function ScatterPlot({
     const yFilter = getRangeFilterForField(settings.filters, settings.yField);
 
     for (let i = 0; i < xValues.length; i++) {
-      const x = xScale(xValues[i]);
-      const y = yScale(yValues[i]);
+      const xValue = xValues[i];
+      const yValue = yValues[i];
+      if (xValue === undefined || yValue === undefined) {
+        continue;
+      }
+      const x = xScale(xValue);
+      const y = yScale(yValue);
 
       const isFiltered =
-        (!xFilter || applyFilter(xValues[i], xFilter)) &&
-        (!yFilter || applyFilter(yValues[i], yFilter));
+        (!xFilter || applyFilter(xValue, xFilter)) &&
+        (!yFilter || applyFilter(yValue, yFilter));
 
       ctx.fillStyle =
         (xFilter || yFilter) && !isFiltered

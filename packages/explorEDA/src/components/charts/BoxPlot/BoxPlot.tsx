@@ -229,8 +229,8 @@ export function BoxPlot({
     if (facetIds && allData.length > 0) {
       registerAxisLimits(settings.id, "y", {
         type: "numerical",
-        min: yScale.domain()[0],
-        max: yScale.domain()[1],
+        min: yScale.domain()[0] ?? 0,
+        max: yScale.domain()[1] ?? 0,
       });
 
       if (settings.colorField) {
@@ -404,6 +404,8 @@ export function BoxPlot({
 
             // Get KDE for this group if violin overlay is enabled
             const kde = groupKDEs?.find((g) => g.group === group)?.kde;
+            const firstKde = kde?.[0];
+            const lastKde = kde?.at(-1);
 
             // Get bee swarm positions for this group if enabled
             const beeSwarmPositions = groupBeeSwarmPositions?.find(
@@ -502,14 +504,14 @@ export function BoxPlot({
                   ))}
 
                 {/* Violin plot overlay */}
-                {settings.violinOverlay && kde && (
+                {settings.violinOverlay && kde && firstKde && lastKde && (
                   <g>
                     <path
                       d={createPath(
                         settings.beeSwarmOverlay
                           ? // If bee swarm is enabled, only show left half of violin
                             [
-                              [boxWidth / 2, yScale(kde[0][0])] as [
+                              [boxWidth / 2, yScale(firstKde[0])] as [
                                 number,
                                 number,
                               ],
@@ -522,12 +524,12 @@ export function BoxPlot({
                               ),
                               [
                                 boxWidth / 2,
-                                yScale(kde[kde.length - 1][0]),
+                                yScale(lastKde[0]),
                               ] as [number, number],
                             ]
                           : // Otherwise show full violin
                             [
-                              [boxWidth / 2, yScale(kde[0][0])] as [
+                              [boxWidth / 2, yScale(firstKde[0])] as [
                                 number,
                                 number,
                               ],
@@ -538,7 +540,7 @@ export function BoxPlot({
                                     yScale(x),
                                   ] as [number, number]
                               ),
-                              ...kde
+                              ...[...kde]
                                 .reverse()
                                 .map(
                                   ([x, y]) =>

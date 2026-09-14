@@ -31,14 +31,18 @@ export function XAxis({
 
   const ticks = getTicks();
   const range = scale.range();
-  const axisLength = range[1] - range[0];
+  const [rangeStart, rangeEnd] = range;
+  if (rangeStart === undefined || rangeEnd === undefined) {
+    return null;
+  }
+  const axisLength = rangeEnd - rangeStart;
 
   return (
     <g transform={transform} className="text-sm fill-foreground">
       {/* Main axis line */}
       <line
-        x1={range[0]}
-        x2={range[1]}
+        x1={rangeStart}
+        x2={rangeEnd}
         y1={0}
         y2={0}
         className="stroke-border"
@@ -48,7 +52,7 @@ export function XAxis({
       {ticks.map((tick, i) => {
         const x =
           "bandwidth" in scale
-            ? scale(tick as string)! + scale.bandwidth() / 2
+            ? (scale(tick as string) ?? 0) + scale.bandwidth() / 2
             : scale(tick as number);
 
         return (
@@ -81,7 +85,7 @@ export function XAxis({
       {/* Axis label */}
       {axisLabel && (
         <text
-          x={range[0] + axisLength / 2}
+          x={rangeStart + axisLength / 2}
           y={30}
           textAnchor="middle"
           className="fill-muted-foreground text-sm font-medium"
@@ -113,7 +117,11 @@ export function YAxis({
 
   const ticks = getTicks();
   const range = scale.range();
-  const axisLength = range[0] - range[1];
+  const [rangeStart, rangeEnd] = range;
+  if (rangeStart === undefined || rangeEnd === undefined) {
+    return null;
+  }
+  const axisLength = rangeStart - rangeEnd;
 
   return (
     <g transform={transform} className="text-sm fill-foreground">
@@ -121,8 +129,8 @@ export function YAxis({
       <line
         x1={0}
         x2={0}
-        y1={range[1]}
-        y2={range[0]}
+        y1={rangeEnd}
+        y2={rangeStart}
         className="stroke-border"
       />
 
@@ -130,7 +138,7 @@ export function YAxis({
       {ticks.map((tick, i) => {
         const y =
           "bandwidth" in scale
-            ? scale(tick as string)! + scale.bandwidth() / 2
+            ? (scale(tick as string) ?? 0) + scale.bandwidth() / 2
             : scale(tick as number);
 
         return (
@@ -164,7 +172,7 @@ export function YAxis({
       {/* Axis label */}
       {axisLabel && (
         <text
-          x={-(range[1] + (range[0] - range[1]) / 2)}
+          x={-(rangeEnd + (rangeStart - rangeEnd) / 2)}
           y={0}
           textAnchor="middle"
           transform="rotate(-90)"

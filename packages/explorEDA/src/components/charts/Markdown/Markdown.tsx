@@ -38,7 +38,7 @@ export function Markdown({
 
 const extensions = [
   Color.configure({ types: [TextStyle.name, ListItem.name] }),
-  TextStyle.configure({ types: [ListItem.name] }),
+  TextStyle,
   StarterKit.configure({
     bulletList: {
       keepMarks: true,
