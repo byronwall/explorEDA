@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Download, Search } from "lucide-react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { DataTableSettings } from "./definition";
+import { getFilteredRows } from "./filteredRows";
 
 interface DataTableToolbarProps {
   settings: DataTableSettings;
@@ -22,36 +23,14 @@ export function DataTableToolbar({ settings }: DataTableToolbarProps) {
   };
 
   const handleExport = () => {
-    // Get filtered data from liveItems
-    const filteredData =
-      liveItems?.items
-        .filter((item) => item.value > 0)
-        .map((item) => data.find((row) => row.__ID === item.key))
-        .filter(
-          (row): row is { __ID: number; [key: string]: any } =>
-            row !== undefined
-        ) || [];
-
-    // Apply global search if present
-    const searchFilteredData = settings.globalSearch
-      ? filteredData.filter((row) => {
-          const searchLower = settings.globalSearch.toLowerCase();
-          return Object.values(row).some((value) => {
-            if (value === null || value === undefined) {
-              return false;
-            }
-            const strValue = String(value).toLowerCase();
-            return strValue.includes(searchLower);
-          });
-        })
-      : filteredData;
+    const filteredData = getFilteredRows(data, liveItems, settings);
 
     // Create CSV content
     const headers = settings.columns.map((col) => col.field).join(",");
     const rows = searchFilteredData.map((row) =>
       settings.columns
         .map((col) => {
-          const value = row[col.id];
+          const value = row[col.field];
           // Escape commas and quotes in the value
           if (
             typeof value === "string" &&

@@ -9,6 +9,7 @@ import {
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DataTableSettings } from "./definition";
+import { getFilteredRows } from "./filteredRows";
 
 interface DataTablePaginationProps {
   settings: DataTableSettings;
@@ -27,22 +28,15 @@ export function DataTablePagination({ settings }: DataTablePaginationProps) {
   const liveItems = useDataLayer((state) => state.getLiveItems(settings));
   const updateChart = useDataLayer((state) => state.updateChart);
 
-  // Get filtered data from liveItems
-  const filteredData =
-    liveItems?.items
-      .filter((item) => item.value > 0)
-      .map((item) => data.find((row) => row.__ID === item.key))
-      .filter(
-        (row): row is { __ID: number; [key: string]: any } => row !== undefined
-      ) || [];
-
-  const totalPages = Math.ceil(filteredData.length / pageSize);
+  const filteredData = getFilteredRows(data, liveItems, settings);
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / pageSize));
+  const page = Math.min(Math.max(1, currentPage), totalPages);
 
   const handlePageSizeChange = (value: string) => {
     const newPageSize = parseInt(value, 10);
     const newCurrentPage = Math.min(
-      Math.ceil((currentPage * pageSize) / newPageSize),
-      Math.ceil(filteredData.length / newPageSize)
+      Math.ceil((page * pageSize) / newPageSize),
+      Math.max(1, Math.ceil(filteredData.length / newPageSize))
     );
     updateChart(settings.id, {
       pageSize: newPageSize,
@@ -81,19 +75,19 @@ export function DataTablePagination({ settings }: DataTablePaginationProps) {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
+            onClick={() => handlePageChange(page - 1)}
+            disabled={page === 1}
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <p className="text-sm text-gray-700">
-            Page {currentPage} of {totalPages}
+            Page {page} of {totalPages}
           </p>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(page + 1)}
+            disabled={page === totalPages}
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
