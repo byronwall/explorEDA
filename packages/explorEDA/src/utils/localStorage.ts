@@ -1,4 +1,4 @@
-import { SavedProject } from "@/providers/DataLayerProvider";
+import type { SavedProject } from "@/providers/DataLayerProvider";
 
 const PROJECTS_KEY = "data-viz-projects";
 
@@ -11,7 +11,27 @@ export function loadProjects(): SavedProject[] {
   if (!projectsJson) {
     return [];
   }
-  return JSON.parse(projectsJson);
+  try {
+    const projects: unknown = JSON.parse(projectsJson);
+    if (!Array.isArray(projects)) {
+      return [];
+    }
+
+    return projects.filter((project): project is SavedProject => {
+      if (!project || typeof project !== "object") return false;
+      const candidate = project as Record<string, unknown>;
+      return (
+        candidate.version === 1 &&
+        typeof candidate.name === "string" &&
+        typeof candidate.sourceDataPath === "string" &&
+        typeof candidate.isSaved === "boolean" &&
+        Array.isArray(candidate.views)
+      );
+    });
+  } catch (error) {
+    console.error("Error loading projects:", error);
+    return [];
+  }
 }
 
 export function saveProject(project: SavedProject): void {
