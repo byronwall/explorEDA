@@ -1,14 +1,14 @@
 import { CalculationDefinition } from "@/lib/calculations/CalculationState";
-import { ChartSettings } from "./ChartTypes";
 import {
   GridSettings,
   ViewMetadata,
   SerializedColorScale,
+  SavedChartSettings,
 } from "./SavedDataTypes";
 
 export interface SavedDataStructure {
   // Existing types from ChartSettings will be used
-  charts: ChartSettings[];
+  charts: SavedChartSettings[];
 
   // Existing types from CalculationDefinition will be used
   calculations: CalculationDefinition[];

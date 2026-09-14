@@ -69,6 +69,48 @@ describe("saveDataUtils", () => {
       };
       expect(validateSavedData(invalidData)).toBe(false);
     });
+
+    it("should return false for malformed nested chart and calculation data", () => {
+      expect(
+        validateSavedData({
+          ...mockValidData,
+          charts: [{ id: "chart", type: "scatter" }],
+        })
+      ).toBe(false);
+
+      expect(
+        validateSavedData({
+          ...mockValidData,
+          calculations: [
+            {
+              resultColumnName: "double",
+              expression: { type: "unknown", dependencies: [] },
+            },
+          ],
+        })
+      ).toBe(false);
+    });
+
+    it("accepts serialized 3D camera vectors", () => {
+      expect(
+        validateSavedData({
+          ...mockValidData,
+          charts: [
+            {
+              id: "chart",
+              type: "3d-scatter",
+              title: "3D",
+              field: "x",
+              layout: { x: 0, y: 0, w: 1, h: 1 },
+              facet: { enabled: false, type: "wrap" },
+              filters: [],
+              cameraPosition: { x: 1, y: 2, z: 3 },
+              cameraTarget: { x: 0, y: 0, z: 0 },
+            },
+          ],
+        })
+      ).toBe(true);
+    });
   });
 
   describe("saveToClipboard", () => {
