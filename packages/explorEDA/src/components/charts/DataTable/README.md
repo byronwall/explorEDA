@@ -10,7 +10,7 @@ The Data Table component is a powerful and flexible table implementation that su
 - **Pagination**: Navigate through large datasets
 - **Row Selection**: Select individual or all rows
 - **Virtual Scrolling**: Efficient rendering of large datasets
-- **Responsive Design**: Adapts to different screen sizes
+- **Flexible sizing**: Adapts within the supported desktop workspace
 
 ## Usage
 

@@ -39,6 +39,11 @@ The package runs in a browser with DOM, Canvas 2D, `ResizeObserver`,
 3D scatter chart also requires WebGL. Copy actions use the browser Clipboard
 API.
 
+explorEDA supports desktop viewports of 1024 CSS pixels or more. Narrow and
+mobile layouts are outside the supported product scope. Hosts should provide a
+desktop-sized workspace instead of depending on the library to adapt dense
+charts and settings to a narrow screen.
+
 ## Saved data shape
 
 `SavedDataStructure` stores workspace state in five top-level fields:

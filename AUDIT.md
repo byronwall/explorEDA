@@ -2,6 +2,10 @@
 
 Date: 2026-09-14
 
+> **Current display scope:** explorEDA supports desktop viewports of 1024 CSS
+> pixels or more. Narrow and mobile layouts are not supported. Mobile findings
+> below are retained only as historical audit records.
+
 ## Executive summary
 
 The project still has a strong core idea. The chart registry and shared filtering model are useful foundations.

@@ -20,6 +20,12 @@ remaining rows. A table can then show the records behind the selection.
 The available chart types are row, bar, line, scatter, 3D scatter, box plot,
 pivot table, data table, summary table, markdown, and color legend.
 
+## Display support
+
+explorEDA is a desktop charting workspace. Use it at viewport widths of 1024
+CSS pixels or more. Narrow and mobile layouts are not supported. The workspace
+can render below that width, but charts and settings might not remain usable.
+
 ## Install
 
 ```sh
