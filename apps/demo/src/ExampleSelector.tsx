@@ -1,5 +1,5 @@
 import { examples } from "./demos/examples";
-import { CardDescription, CardHeader, CardTitle } from "./components/ui/card";
+import { CardDescription, CardTitle } from "./components/ui/card";
 
 interface ExampleSelectorProps {
   onSelect: (exampleId: string) => void;
@@ -14,21 +14,28 @@ export function ExampleSelector({ onSelect }: ExampleSelectorProps) {
           <button
             type="button"
             key={example.id}
-            className="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm text-left cursor-pointer hover:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="bg-card text-card-foreground flex h-48 flex-col gap-4 rounded-xl border px-5 py-5 text-left shadow-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             onClick={() => onSelect(example.id)}
           >
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Icon className="h-5 w-5" />
-                <CardTitle>{example.title}</CardTitle>
+            <div className="flex min-w-0 items-start gap-3">
+              <Icon
+                className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <div className="min-w-0 flex-1">
+                <CardTitle className="text-base leading-snug">
+                  {example.title}
+                </CardTitle>
                 {example.recommended && (
-                  <span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+                  <span className="mt-2 inline-flex rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
                     Recommended
                   </span>
                 )}
               </div>
-            </CardHeader>
-            <CardDescription>{example.description}</CardDescription>
+            </div>
+            <CardDescription className="mt-auto leading-relaxed">
+              {example.description}
+            </CardDescription>
           </button>
         );
       })}
