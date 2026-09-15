@@ -16,6 +16,16 @@ const generateTimestamp = (startDate: Date, endDate: Date) => {
   return new Date(start + Math.random() * (end - start));
 };
 
+const createSeededRandom = (seed: number) => {
+  let state = seed >>> 0;
+  return () => {
+    state = (state + 0x6d2b79f5) | 0;
+    let value = Math.imul(state ^ (state >>> 15), 1 | state);
+    value ^= value + Math.imul(value ^ (value >>> 7), 61 | value);
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
+};
+
 // Data generators for different types
 const generators = {
   basic_numbers: (rows: number) => {
@@ -327,6 +337,83 @@ const generators = {
     return { headers, data };
   },
 
+  shop_operations: (rows: number) => {
+    const headers = [
+      { id: "order_date", title: "Order Date" },
+      { id: "region", title: "Region" },
+      { id: "channel", title: "Channel" },
+      { id: "category", title: "Category" },
+      { id: "product", title: "Product" },
+      { id: "customer_segment", title: "Customer Segment" },
+      { id: "units", title: "Units" },
+      { id: "unit_price", title: "Unit Price" },
+      { id: "discount", title: "Discount" },
+      { id: "revenue", title: "Revenue" },
+      { id: "cost", title: "Cost" },
+      { id: "margin", title: "Margin" },
+      { id: "fulfilled", title: "Fulfilled" },
+      { id: "returned", title: "Returned" },
+      { id: "delivery_days", title: "Delivery Days" },
+    ];
+    const random = createSeededRandom(0x5eeded);
+    const regions = ["North", "South", "East", "West"];
+    const channels = ["Web", "Store", "Wholesale"];
+    const products = [
+      { category: "Home", name: "Desk Lamp", price: 32, cost: 0.52 },
+      { category: "Home", name: "Storage Bin", price: 18, cost: 0.47 },
+      { category: "Outdoors", name: "Trail Bottle", price: 24, cost: 0.44 },
+      { category: "Outdoors", name: "Camp Chair", price: 74, cost: 0.58 },
+      { category: "Kitchen", name: "Chef Pan", price: 46, cost: 0.55 },
+      { category: "Electronics", name: "USB Hub", price: 28, cost: 0.63 },
+    ];
+    const segments = ["Consumer", "Small Business", "Enterprise"];
+    const data = Array.from({ length: rows }, (_, index) => {
+      const date = new Date(Date.UTC(2024, 0, 1 + (index % 366)));
+      const product = products[index % products.length];
+      const returned = index % 37 === 0 || random() < 0.025;
+      const outlier = index === 111 || index === 333;
+      const seasonalMultiplier = [
+        0.75, 0.8, 0.9, 1, 1.1, 1.15, 1.25, 1.2, 1.05, 0.95, 0.85, 0.8,
+      ][date.getUTCMonth()];
+      const units = outlier
+        ? 180 + index - 111
+        : Math.max(
+            1,
+            Math.round(
+              (1 + Math.floor(random() ** 2 * 28)) * seasonalMultiplier
+            )
+          );
+      const unitPrice = product.price * (0.94 + random() * 0.12);
+      const discountValue = [0, 0.05, 0.1, 0.2][index % 4];
+      const discount = index % 79 === 0 ? null : discountValue;
+      const effectiveDiscount = discount ?? 0;
+      const revenue = units * unitPrice * (1 - effectiveDiscount);
+      const cost = revenue * product.cost;
+      const deliveryDays =
+        index % 61 === 0 ? null : 1 + Math.floor(random() * (returned ? 9 : 6));
+
+      return {
+        order_date: date.toISOString().slice(0, 10),
+        region: regions[index % regions.length],
+        channel: channels[index % channels.length],
+        category: product.category,
+        product: product.name,
+        customer_segment: segments[index % segments.length],
+        units,
+        unit_price: unitPrice.toFixed(2),
+        discount: discount === null ? null : discount.toFixed(2),
+        revenue: revenue.toFixed(2),
+        cost: cost.toFixed(2),
+        margin: (revenue - cost).toFixed(2),
+        fulfilled: returned || random() > 0.08 ? "true" : "false",
+        returned: returned ? "true" : "false",
+        delivery_days: deliveryDays,
+      };
+    });
+
+    return { headers, data };
+  },
+
   lorenz_3d: (rows: number) => {
     const headers = [
       { id: "run_id", title: "Run ID" },
@@ -391,6 +478,7 @@ const sizePresets = {
   medium: 10000,
   large: 100000,
   huge: 1000000,
+  fixture: 500,
 };
 
 const program = new Command();
@@ -401,7 +489,7 @@ program
   .option("-t, --type <type>", "Data type to generate", "basic_numbers")
   .option(
     "-s, --size <size>",
-    "Size preset (tiny, small, medium, large, huge)",
+    "Size preset (tiny, small, medium, large, huge, fixture)",
     "small"
   )
   .option("-o, --output <dir>", "Output directory", "output");
@@ -429,7 +517,9 @@ async function generateFile() {
 
   const outputFile = path.join(
     options.output,
-    `${dataType}_${options.size}.csv`
+    dataType === "shop_operations"
+      ? "shop-operations.csv"
+      : `${dataType}_${options.size}.csv`
   );
 
   const csvWriter = createObjectCsvWriter({

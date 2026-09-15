@@ -2,12 +2,14 @@ import { demoSettings } from "@/demos/lorenz";
 import { SavedDataStructure } from "exploreda";
 import {
   BarChart,
+  Bird,
   Gamepad2,
   Globe,
   LineChart,
   LucideIcon,
   Palette,
   ScatterChart,
+  ShoppingCart,
   Table2,
 } from "lucide-react";
 import { boxPlotSettings } from "./boxPlotSettings";
@@ -26,10 +28,24 @@ export interface ExampleData {
   recommended?: boolean;
   icon: LucideIcon;
   data: string; // path to the data file
-  savedData: SavedDataStructure;
+  savedData?: SavedDataStructure;
 }
 
 export const examples: ExampleData[] = [
+  {
+    id: "palmer-penguins",
+    title: "Palmer Penguins",
+    description: "Inspect measurements, species, islands, and group sizes.",
+    icon: Bird,
+    data: "/explorEDA/datasets/palmer-penguins.csv",
+  },
+  {
+    id: "shop-operations",
+    title: "Shop Operations",
+    description: "Explore seasonal orders, margins, returns, and fulfillment.",
+    icon: ShoppingCart,
+    data: "/explorEDA/datasets/shop-operations.csv",
+  },
   {
     id: "lorenz-3d",
     title: "Lorenz attractor: coordinated 2D and 3D views",

@@ -24,7 +24,7 @@ const ExplorEda = lazy(() =>
 );
 
 export type DatumObject = {
-  [key: string]: string | number | boolean | undefined;
+  [key: string]: string | number | boolean | null | undefined;
 };
 
 export function LandingPage() {
