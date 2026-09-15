@@ -313,9 +313,9 @@ export function SummaryTable({
   return (
     <div className="space-y-4 overflow-auto" style={{ height }}>
       <div className="space-y-4">
-        <div className="flex flex-col">
-          <div className="flex items-center gap-4">
-            <div>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
+            <div className="flex shrink-0 flex-wrap items-center gap-2">
               {samplingAvailable && (
                 <Badge variant={useSampling ? "default" : "outline"}>
                   {useSampling ? "Sampling Enabled" : "Full Dataset"}
@@ -344,8 +344,8 @@ export function SummaryTable({
             </div>
 
             {useSampling && (
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
+              <div className="min-w-[16rem] flex-1 space-y-1.5">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
                   <span className="text-sm text-muted-foreground">
                     Sample Size: {sampleSize}
                   </span>
@@ -370,6 +370,7 @@ export function SummaryTable({
           <Button
             variant="outline"
             size="sm"
+            className="shrink-0 border-border/60 text-muted-foreground hover:text-foreground"
             onClick={() => exportToCSV(sortedSummaries)}
             disabled={isProcessing || processingQueue.length > 0}
           >

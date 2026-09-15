@@ -58,15 +58,15 @@ export function CompactSummaryTable({
   settings,
 }: CompactSummaryTableProps) {
   return (
-    <div className="rounded-md border">
-      <div className="flex items-center justify-between border-b px-4 py-2">
+    <div className="rounded-md border border-border/60">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-border/40 px-4 py-2">
         <span className="text-sm text-muted-foreground">
           Rows available: {totalRows.toLocaleString()}
         </span>
       </div>
       <Table>
         <caption className="sr-only">{getChartSummary(settings)}</caption>
-        <TableHeader>
+        <TableHeader className="[&_tr]:border-border/40">
           <TableRow>
             <TableHead className="w-24"></TableHead>
             <TableHead>
@@ -96,7 +96,7 @@ export function CompactSummaryTable({
             <TableHead>Stats</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody className="[&_tr]:border-border/30">
           {data.map((summary) => (
             <TableRow key={summary.name}>
               <TableCell>
@@ -135,7 +135,7 @@ export function CompactSummaryTable({
                 </div>
               </TableCell>
               <TableCell>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   {summary.statistics && (
                     <>
                       <StatBadge type="min" value={summary.statistics.min} />
