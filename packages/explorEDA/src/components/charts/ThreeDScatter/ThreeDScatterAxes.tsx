@@ -5,9 +5,14 @@ import { ThreeDScatterSettings } from "./types";
 interface ThreeDScatterAxesProps {
   scene: THREE.Scene;
   settings: ThreeDScatterSettings;
+  onSceneChange: () => void;
 }
 
-export function ThreeDScatterAxes({ scene, settings }: ThreeDScatterAxesProps) {
+export function ThreeDScatterAxes({
+  scene,
+  settings,
+  onSceneChange,
+}: ThreeDScatterAxesProps) {
   // Create axes helper
   const axesHelper = useMemo(() => {
     return new THREE.AxesHelper(10);
@@ -45,7 +50,10 @@ export function ThreeDScatterAxes({ scene, settings }: ThreeDScatterAxesProps) {
       scene.add(axesHelper);
     }
 
+    const frame = requestAnimationFrame(() => onSceneChange());
+
     return () => {
+      cancelAnimationFrame(frame);
       scene.remove(gridHelpers.xy);
       scene.remove(gridHelpers.xz);
       scene.remove(gridHelpers.yz);
@@ -56,7 +64,14 @@ export function ThreeDScatterAxes({ scene, settings }: ThreeDScatterAxesProps) {
       gridHelpers.yz.dispose();
       axesHelper.dispose();
     };
-  }, [scene, settings.showGrid, settings.showAxes, gridHelpers, axesHelper]);
+  }, [
+    scene,
+    settings.showGrid,
+    settings.showAxes,
+    gridHelpers,
+    axesHelper,
+    onSceneChange,
+  ]);
 
   return null;
 }

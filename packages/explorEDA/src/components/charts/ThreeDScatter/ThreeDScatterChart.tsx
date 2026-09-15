@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { ThreeDScatterChartProps } from "./types";
 
@@ -30,6 +30,18 @@ export function ThreeDScatterChart({
   const updateChart = useDataLayer((state) => state.updateChart);
   const data = useThreeDScatterData(settings, facetIds);
   const [nonce, setNonce] = useState(0);
+  const renderScene = useCallback(() => {
+    const renderer = rendererRef.current;
+    const scene = sceneRef.current;
+    const camera = cameraRef.current;
+    const controls = controlsRef.current;
+    if (!renderer || !scene || !camera || !controls) {
+      return;
+    }
+
+    controls.update();
+    renderer.render(scene, camera);
+  }, []);
 
   // Initialize Three.js scene
   useEffect(() => {
@@ -167,22 +179,6 @@ export function ThreeDScatterChart({
     return () => window.removeEventListener("resize", handleResize);
   }, [width, height]);
 
-  // Render points and axes immediately when scene is ready
-  useEffect(() => {
-    // Force a render after adding points and axes
-    if (
-      !sceneRef.current ||
-      !rendererRef.current ||
-      !cameraRef.current ||
-      width <= 0 ||
-      height <= 0
-    ) {
-      return;
-    }
-
-    rendererRef.current.render(sceneRef.current, cameraRef.current);
-  }, [data, width, height]);
-
   return (
     <div ref={containerRef} style={{ width, height }}>
       {sceneRef.current && (
@@ -191,11 +187,13 @@ export function ThreeDScatterChart({
             scene={sceneRef.current}
             data={data}
             settings={settings}
+            onSceneChange={renderScene}
             key={"points-" + nonce}
           />
           <ThreeDScatterAxes
             scene={sceneRef.current}
             settings={settings}
+            onSceneChange={renderScene}
             key={"axes-" + nonce}
           />
         </>

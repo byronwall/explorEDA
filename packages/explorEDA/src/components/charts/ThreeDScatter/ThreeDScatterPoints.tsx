@@ -14,12 +14,14 @@ interface ThreeDScatterPointsProps {
   scene: THREE.Scene;
   data: Point3D[];
   settings: ThreeDScatterSettings;
+  onSceneChange: () => void;
 }
 
 export function ThreeDScatterPoints({
   scene,
   data,
   settings,
+  onSceneChange,
 }: ThreeDScatterPointsProps) {
   const pointsRef = useRef<THREE.Points | null>(null);
 
@@ -79,15 +81,17 @@ export function ThreeDScatterPoints({
     const points = new THREE.Points(pointsGeometry, pointsMaterial);
     pointsRef.current = points;
     scene.add(points);
+    const frame = requestAnimationFrame(() => onSceneChange());
 
     return () => {
+      cancelAnimationFrame(frame);
       if (pointsRef.current) {
         scene.remove(pointsRef.current);
       }
       pointsGeometry.dispose();
       pointsMaterial.dispose();
     };
-  }, [scene, pointsGeometry, pointsMaterial]);
+  }, [scene, pointsGeometry, pointsMaterial, onSceneChange]);
 
   return null;
 }
