@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import type { FieldProfile } from "@/lib/fieldProfiles";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import { Filter, TextFilter } from "@/types/FilterTypes";
+import { Filter } from "@/types/FilterTypes";
 import { ChevronDown, ChevronUp, Filter as FilterIcon } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { ColumnFilter } from "./components/ColumnFilter";
@@ -14,6 +15,7 @@ interface DataTableHeaderProps {
 export function DataTableHeader({ settings }: DataTableHeaderProps) {
   const { columns, sortBy, sortDirection, filters } = settings;
   const updateChart = useDataLayer((state) => state.updateChart);
+  const fieldProfiles = useDataLayer((state) => state.fieldProfiles) ?? [];
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [resizingColumn, setResizingColumn] = useState<string | null>(null);
   const [tempWidths, setTempWidths] = useState<Record<string, number>>({});
@@ -36,29 +38,15 @@ export function DataTableHeader({ settings }: DataTableHeaderProps) {
     }
   };
 
-  const handleFilterChange = (
-    columnId: string,
-    value: string,
-    operator: TextFilter["operator"]
-  ) => {
+  const handleFilterChange = (columnId: string, filter?: Filter) => {
     const column = columns.find((col) => col.id === columnId);
     if (!column) {
       return;
     }
 
-    // Create new filters array with updated text filter
-    const newFilters = filters.filter(
-      (f: Filter) => f.type !== "text" || f.field !== column.field
-    );
-
-    if (value) {
-      const textFilter: TextFilter = {
-        type: "text",
-        field: column.field,
-        operator,
-        value,
-      };
-      newFilters.push(textFilter);
+    const newFilters = filters.filter((f: Filter) => f.field !== column.field);
+    if (filter) {
+      newFilters.push({ ...filter, field: column.field });
     }
 
     updateChart(settings.id, {
@@ -72,10 +60,7 @@ export function DataTableHeader({ settings }: DataTableHeaderProps) {
       return;
     }
 
-    // Remove text filter for this column
-    const newFilters = filters.filter(
-      (f: Filter) => f.type !== "text" || f.field !== column.field
-    );
+    const newFilters = filters.filter((f: Filter) => f.field !== column.field);
 
     updateChart(settings.id, {
       filters: newFilters,
@@ -125,10 +110,16 @@ export function DataTableHeader({ settings }: DataTableHeaderProps) {
     <TableHeader>
       <TableRow>
         {columns.map((column) => {
-          const textFilter = filters.find(
-            (f: Filter): f is TextFilter =>
-              f.type === "text" && f.field === column.field
-          );
+          const profile = fieldProfiles.find(
+            (fieldProfile: FieldProfile) => fieldProfile.name === column.field
+          ) ?? {
+            name: column.field,
+            dataType: "categorical" as const,
+            totalCount: 0,
+            uniqueCount: 11,
+            nullCount: 0,
+          };
+          const filter = filters.find((f: Filter) => f.field === column.field);
 
           return (
             <TableHead
@@ -171,8 +162,8 @@ export function DataTableHeader({ settings }: DataTableHeaderProps) {
                   <ColumnFilter
                     columnId={column.id}
                     columnLabel={column.field}
-                    value={textFilter?.value || ""}
-                    operator={textFilter?.operator || "contains"}
+                    profile={profile}
+                    filter={filter}
                     onChange={handleFilterChange}
                     onClear={() => handleFilterClear(column.id)}
                   />

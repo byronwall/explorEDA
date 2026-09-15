@@ -53,7 +53,8 @@ const mockLiveItems = {
 const mockUseDataLayer = vi.fn();
 
 vi.mock("@/providers/DataLayerProvider", () => ({
-  useDataLayer: (selector: (state: unknown) => unknown) => mockUseDataLayer(selector),
+  useDataLayer: (selector: (state: unknown) => unknown) =>
+    mockUseDataLayer(selector),
 }));
 
 const renderBody = (settings: DataTableSettings) =>
@@ -65,15 +66,17 @@ const renderBody = (settings: DataTableSettings) =>
 
 describe("DataTableBody", () => {
   beforeEach(() => {
-    mockUseDataLayer.mockImplementation((selector: (state: unknown) => unknown) => {
-      if (selector.toString().includes("data")) {
-        return mockData;
+    mockUseDataLayer.mockImplementation(
+      (selector: (state: unknown) => unknown) => {
+        if (selector.toString().includes("data")) {
+          return mockData;
+        }
+        if (selector.toString().includes("getLiveItems")) {
+          return mockLiveItems;
+        }
+        return null;
       }
-      if (selector.toString().includes("getLiveItems")) {
-        return mockLiveItems;
-      }
-      return null;
-    });
+    );
   });
 
   it("renders all rows when no filters are applied", () => {
@@ -101,7 +104,12 @@ describe("DataTableBody", () => {
     const settingsWithFilter = {
       ...mockSettings,
       filters: [
-        { type: "text" as const, field: "name", value: "John", operator: "equals" as const },
+        {
+          type: "text" as const,
+          field: "name",
+          value: "John",
+          operator: "equals" as const,
+        },
       ],
     };
 
@@ -110,6 +118,22 @@ describe("DataTableBody", () => {
     expect(screen.getByText("John")).toBeInTheDocument();
     expect(screen.queryByText("Jane")).not.toBeInTheDocument();
     expect(screen.queryByText("Bob")).not.toBeInTheDocument();
+  });
+
+  it("applies range and value filters locally with AND semantics", () => {
+    const settingsWithFilters = {
+      ...mockSettings,
+      filters: [
+        { type: "range" as const, field: "age", min: 30 },
+        { type: "value" as const, field: "name", values: ["Bob"] },
+      ],
+    };
+
+    renderBody(settingsWithFilters);
+
+    expect(screen.getByText("Bob")).toBeInTheDocument();
+    expect(screen.queryByText("John")).not.toBeInTheDocument();
+    expect(screen.queryByText("Jane")).not.toBeInTheDocument();
   });
 
   it("applies numeric sorting correctly", () => {
@@ -167,6 +191,8 @@ describe("DataTableBody", () => {
   it("shows an empty state when no rows match", () => {
     renderBody({ ...mockSettings, globalSearch: "missing" });
 
-    expect(screen.getByText("No rows match the current filters.")).toBeInTheDocument();
+    expect(
+      screen.getByText("No rows match the current filters.")
+    ).toBeInTheDocument();
   });
 });

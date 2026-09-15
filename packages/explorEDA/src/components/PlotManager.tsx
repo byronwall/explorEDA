@@ -5,16 +5,10 @@ import { ChartCreationButtons } from "./plot/ChartCreationButtons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDataLayer } from "@/providers/DataLayerProvider";
+import { ActiveFilterStatus } from "./ActiveFilterStatus";
 import type { ChartLayout } from "@/types/ChartTypes";
 import { saveRawDataToClipboard, saveToClipboard } from "@/utils/saveDataUtils";
-import {
-  Calculator,
-  Copy,
-  FilterX,
-  Grid,
-  MoreHorizontal,
-  X,
-} from "lucide-react";
+import { Calculator, Copy, Grid, MoreHorizontal, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ChartGridLayout } from "./ChartGridLayout";
@@ -66,7 +60,6 @@ export function PlotManager() {
   const addChart = useDataLayer((state) => state.addChart);
   const removeChart = useDataLayer((state) => state.removeChart);
   const removeAllCharts = useDataLayer((state) => state.removeAllCharts);
-  const clearAllFilters = useDataLayer((state) => state.clearAllFilters);
   const gridSettings = useDataLayer((state) => state.gridSettings);
   const saveToStructure = useDataLayer((state) => state.saveToStructure);
   const data = useDataLayer((state) => state.data);
@@ -171,15 +164,6 @@ export function PlotManager() {
         <div className="ml-auto flex flex-wrap items-center gap-2">
           {charts.length > 0 && activeTab === "charts" && (
             <>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={clearAllFilters}
-                title="Clear All Filters"
-                aria-label="Clear all filters"
-              >
-                <FilterX className="h-4 w-4" />
-              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -237,6 +221,8 @@ export function PlotManager() {
           </Dialog>
         </div>
       </header>
+
+      <ActiveFilterStatus />
 
       <Tabs value={activeTab} className="w-full">
         <TabsContent value="charts" className="mt-0">

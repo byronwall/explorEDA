@@ -73,22 +73,6 @@ export const dataTableDefinition: ChartDefinition<DataTableSettings> = {
 
       return (d: IdType) => {
         const value = dataHash[d];
-        if (value === undefined) {
-          return false;
-        }
-
-        if (filter.type === "text") {
-          const text = String(value).toLowerCase();
-          const search = filter.value.toLowerCase();
-          return filter.operator === "contains"
-            ? text.includes(search)
-            : filter.operator === "equals"
-              ? text === search
-              : filter.operator === "startsWith"
-                ? text.startsWith(search)
-                : text.endsWith(search);
-        }
-
         return applyFilter(value, filter);
       };
     });

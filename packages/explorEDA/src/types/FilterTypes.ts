@@ -20,7 +20,13 @@ export interface TextFilter extends FilterBase {
   value: string;
 }
 
-export type Filter = ValueFilter | RangeFilter | TextFilter;
+export interface DateRangeFilter extends FilterBase {
+  type: "date-range";
+  min?: string;
+  max?: string;
+}
+
+export type Filter = ValueFilter | RangeFilter | TextFilter | DateRangeFilter;
 
 export interface ChartFilters {
   filters: Filter[];
@@ -39,4 +45,10 @@ export const isRangeFilter = (filter: Filter): filter is RangeFilter => {
 
 export const isTextFilter = (filter: Filter): filter is TextFilter => {
   return filter.type === "text";
+};
+
+export const isDateRangeFilter = (
+  filter: Filter
+): filter is DateRangeFilter => {
+  return filter.type === "date-range";
 };

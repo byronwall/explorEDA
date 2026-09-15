@@ -87,6 +87,17 @@ function isFilter(value: unknown): boolean {
       (value.max === undefined || isFiniteNumber(value.max))
     );
   }
+  if (value.type === "date-range") {
+    const isIsoDate = (date: unknown) =>
+      typeof date === "string" &&
+      /^\d{4}-\d{2}-\d{2}(?:T.*)?$/.test(date) &&
+      !Number.isNaN(Date.parse(date));
+
+    return (
+      (value.min === undefined || isIsoDate(value.min)) &&
+      (value.max === undefined || isIsoDate(value.max))
+    );
+  }
   return (
     value.type === "text" &&
     typeof value.value === "string" &&

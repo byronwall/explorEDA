@@ -21,6 +21,12 @@ const dataWithLateField = [
   { name: "B", value: 3, late: true },
 ];
 
+const filteredSummaryData = [
+  { region: "North", units: 10 },
+  { region: "North", units: 20 },
+  { region: "South", units: 30 },
+];
+
 function Probe() {
   const rows = useDataLayer((state) => state.data);
   const calculations = useDataLayer((state) => state.calculations);
@@ -81,6 +87,44 @@ function WorkspaceProbe() {
         )}
       </output>
       <button onClick={() => setData([{ replacement: 1 }])}>replace</button>
+    </>
+  );
+}
+
+function FilteredSummaryProbe() {
+  const charts = useDataLayer((state) => state.charts);
+  const updateChart = useDataLayer((state) => state.updateChart);
+  const summary = charts.find((chart) => chart.type === "summary");
+  const table = charts.find((chart) => chart.type === "data-table");
+  if (!summary || !table || table.type !== "data-table") {
+    return null;
+  }
+
+  return (
+    <>
+      <SummaryTable
+        settings={summary as SummaryTableSettings}
+        width={400}
+        height={400}
+      />
+      <button
+        onClick={() =>
+          updateChart(table.id, {
+            filters: [{ type: "range", field: "units", min: 10, max: 20 }],
+          })
+        }
+      >
+        filter summary
+      </button>
+      <button
+        onClick={() =>
+          updateChart(table.id, {
+            filters: [{ type: "range", field: "units", min: 100, max: 200 }],
+          })
+        }
+      >
+        empty summary
+      </button>
     </>
   );
 }
@@ -205,6 +249,24 @@ describe("DataLayerProvider", () => {
     );
 
     expect(screen.getByText("double")).toBeInTheDocument();
+  });
+
+  it("profiles only rows surviving chart filters and keeps fields when empty", () => {
+    render(
+      <DataLayerProvider data={filteredSummaryData}>
+        <FilteredSummaryProbe />
+      </DataLayerProvider>
+    );
+
+    expect(screen.getByText("Rows available: 3")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "filter summary" }));
+    expect(screen.getByText("Rows available: 2")).toBeInTheDocument();
+    expect(screen.getByText("10")).toBeInTheDocument();
+    expect(screen.getByText("20")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "empty summary" }));
+    expect(screen.getByText("Rows available: 0")).toBeInTheDocument();
+    expect(screen.getByText("units")).toBeInTheDocument();
   });
 
   it("creates no defaults for empty rows and reuses the builder on setData", async () => {

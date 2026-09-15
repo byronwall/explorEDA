@@ -1,6 +1,6 @@
 import { LiveItem } from "@/hooks/CrossfilterWrapper";
 import { IdType } from "@/providers/DataLayerProvider";
-import { isTextFilter } from "@/types/FilterTypes";
+import { applyFilter } from "@/hooks/applyFilter";
 import type { datum } from "@/types/ChartTypes";
 import type { DataTableSettings } from "./definition";
 
@@ -16,7 +16,6 @@ export function getFilteredRows(
     .map((item) => data.find((row) => row.__ID === item.key))
     .filter((row): row is DataTableRow => row !== undefined);
   const search = settings.globalSearch.toLowerCase();
-  const textFilters = settings.filters.filter(isTextFilter);
 
   return rows.filter((row) => {
     if (
@@ -31,20 +30,8 @@ export function getFilteredRows(
       return false;
     }
 
-    return textFilters.every((filter) => {
-      const value = row[filter.field];
-      if (value === null || value === undefined) {
-        return false;
-      }
-      const text = String(value).toLowerCase();
-      const filterValue = filter.value.toLowerCase();
-      return filter.operator === "contains"
-        ? text.includes(filterValue)
-        : filter.operator === "equals"
-          ? text === filterValue
-          : filter.operator === "startsWith"
-            ? text.startsWith(filterValue)
-            : text.endsWith(filterValue);
-    });
+    return settings.filters.every((filter) =>
+      applyFilter(row[filter.field], filter)
+    );
   });
 }

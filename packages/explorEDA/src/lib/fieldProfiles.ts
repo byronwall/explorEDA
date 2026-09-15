@@ -26,6 +26,20 @@ export function buildFieldProfile(
   };
 }
 
+export function emptyFieldProfile(profile: FieldProfile): FieldProfile {
+  return {
+    name: profile.name,
+    dataType: profile.dataType,
+    totalCount: 0,
+    uniqueCount: 0,
+    nullCount: 0,
+    statistics: undefined,
+    categories: profile.categories
+      ? { topValues: [], distribution: {} }
+      : undefined,
+  };
+}
+
 export function buildFieldProfiles(
   rows: Array<Record<string, datum>>
 ): FieldProfile[] {

@@ -113,6 +113,14 @@ export class CrossfilterWrapper<T> {
     return definition.getFilterFunction(chart, this.fieldGetter);
   }
 
+  getFilteredRowCount() {
+    return this.ref.allFiltered().length;
+  }
+
+  getFilteredRowIds(): IdType[] {
+    return this.ref.allFiltered().map(this.idFunction);
+  }
+
   getAllData() {
     // obj with key as id and value as datum
 

@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { DataTableHeader } from "../DataTableHeader";
 import { DataTableSettings } from "../definition";
+import { getFilteredRows } from "../filteredRows";
 
 const mockSettings: DataTableSettings = {
   id: "test-table",
@@ -50,10 +51,38 @@ const mockLiveItems = {
   ],
 };
 
+const mockFieldProfiles = [
+  {
+    name: "name",
+    dataType: "categorical" as const,
+    totalCount: 3,
+    uniqueCount: 3,
+    nullCount: 0,
+    categories: { topValues: [], distribution: { John: 1, Jane: 1, Bob: 1 } },
+  },
+  {
+    name: "age",
+    dataType: "numeric" as const,
+    totalCount: 3,
+    uniqueCount: 3,
+    nullCount: 0,
+    statistics: { min: 25, max: 35, mean: 30, median: 30, stdDev: 5 },
+  },
+];
+
+const dateProfile = {
+  name: "Order Date",
+  dataType: "datetime" as const,
+  totalCount: 3,
+  uniqueCount: 3,
+  nullCount: 0,
+};
+
 const mockUseDataLayer = vi.fn();
 
 vi.mock("@/providers/DataLayerProvider", () => ({
-  useDataLayer: (selector: (state: unknown) => unknown) => mockUseDataLayer(selector),
+  useDataLayer: (selector: (state: unknown) => unknown) =>
+    mockUseDataLayer(selector),
 }));
 
 const renderHeader = (settings: DataTableSettings) =>
@@ -65,18 +94,23 @@ const renderHeader = (settings: DataTableSettings) =>
 
 describe("DataTableHeader", () => {
   beforeEach(() => {
-    mockUseDataLayer.mockImplementation((selector: (state: unknown) => unknown) => {
-      if (selector.toString().includes("data")) {
-        return mockData;
+    mockUseDataLayer.mockImplementation(
+      (selector: (state: unknown) => unknown) => {
+        if (selector.toString().includes("data")) {
+          return mockData;
+        }
+        if (selector.toString().includes("getLiveItems")) {
+          return mockLiveItems;
+        }
+        if (selector.toString().includes("fieldProfiles")) {
+          return mockFieldProfiles;
+        }
+        if (selector.toString().includes("updateChart")) {
+          return vi.fn();
+        }
+        return null;
       }
-      if (selector.toString().includes("getLiveItems")) {
-        return mockLiveItems;
-      }
-      if (selector.toString().includes("updateChart")) {
-        return vi.fn();
-      }
-      return null;
-    });
+    );
   });
 
   it("renders column headers", () => {
@@ -88,12 +122,14 @@ describe("DataTableHeader", () => {
 
   it("handles column sorting", () => {
     const updateChart = vi.fn();
-    mockUseDataLayer.mockImplementation((selector: (state: unknown) => unknown) => {
-      if (selector.toString().includes("updateChart")) {
-        return updateChart;
+    mockUseDataLayer.mockImplementation(
+      (selector: (state: unknown) => unknown) => {
+        if (selector.toString().includes("updateChart")) {
+          return updateChart;
+        }
+        return null;
       }
-      return null;
-    });
+    );
 
     renderHeader(mockSettings);
 
@@ -111,12 +147,14 @@ describe("DataTableHeader", () => {
 
   it("toggles sort direction when clicking the same column", () => {
     const updateChart = vi.fn();
-    mockUseDataLayer.mockImplementation((selector: (state: unknown) => unknown) => {
-      if (selector.toString().includes("updateChart")) {
-        return updateChart;
+    mockUseDataLayer.mockImplementation(
+      (selector: (state: unknown) => unknown) => {
+        if (selector.toString().includes("updateChart")) {
+          return updateChart;
+        }
+        return null;
       }
-      return null;
-    });
+    );
 
     const settingsWithSort = {
       ...mockSettings,
@@ -136,12 +174,14 @@ describe("DataTableHeader", () => {
 
   it("does not sort when opening a column filter", () => {
     const updateChart = vi.fn();
-    mockUseDataLayer.mockImplementation((selector: (state: unknown) => unknown) => {
-      if (selector.toString().includes("updateChart")) {
-        return updateChart;
+    mockUseDataLayer.mockImplementation(
+      (selector: (state: unknown) => unknown) => {
+        if (selector.toString().includes("updateChart")) {
+          return updateChart;
+        }
+        return null;
       }
-      return null;
-    });
+    );
 
     renderHeader(mockSettings);
     fireEvent.click(screen.getByRole("button", { name: "Filter name" }));
@@ -150,14 +190,81 @@ describe("DataTableHeader", () => {
     expect(screen.getByPlaceholderText("Filter name...")).toBeInTheDocument();
   });
 
+  it("keeps both native date bounds across rerenders", () => {
+    let settings: DataTableSettings = {
+      ...mockSettings,
+      columns: [{ id: "Order Date", field: "Order Date" }],
+      filters: [{ type: "value", field: "Region", values: ["North"] }],
+    };
+    const data = [
+      { __ID: 1, Region: "North", "Order Date": "2024-01-01" },
+      { __ID: 2, Region: "North", "Order Date": "2024-03-31" },
+      { __ID: 3, Region: "North", "Order Date": "2024-04-01" },
+    ];
+    const liveItems = {
+      items: data.map((row) => ({ key: row.__ID, value: 1 })),
+      nonce: 1,
+    };
+    const view = renderHeader(settings);
+    const updateChart = vi.fn(
+      (_id: string, updates: Partial<DataTableSettings>) => {
+        settings = { ...settings, ...updates } as DataTableSettings;
+        view.rerender(
+          <table>
+            <DataTableHeader settings={settings} />
+          </table>
+        );
+      }
+    );
+    mockUseDataLayer.mockImplementation(
+      (selector: (state: unknown) => unknown) => {
+        if (selector.toString().includes("updateChart")) {
+          return updateChart;
+        }
+        if (selector.toString().includes("fieldProfiles")) {
+          return [dateProfile];
+        }
+        return null;
+      }
+    );
+    view.rerender(
+      <table>
+        <DataTableHeader settings={settings} />
+      </table>
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Filter Order Date" }));
+    fireEvent.input(screen.getByLabelText("Start date Order Date"), {
+      target: { value: "2024-01-01" },
+    });
+    fireEvent.input(screen.getByLabelText("End date Order Date"), {
+      target: { value: "2024-03-31" },
+    });
+
+    expect(settings.filters).toEqual([
+      { type: "value", field: "Region", values: ["North"] },
+      {
+        type: "date-range",
+        field: "Order Date",
+        min: "2024-01-01",
+        max: "2024-03-31",
+      },
+    ]);
+    expect(
+      getFilteredRows(data, liveItems, settings).map((row) => row.__ID)
+    ).toEqual([1, 2]);
+  });
+
   it("handles column resizing", () => {
     const updateChart = vi.fn();
-    mockUseDataLayer.mockImplementation((selector: (state: unknown) => unknown) => {
-      if (selector.toString().includes("updateChart")) {
-        return updateChart;
+    mockUseDataLayer.mockImplementation(
+      (selector: (state: unknown) => unknown) => {
+        if (selector.toString().includes("updateChart")) {
+          return updateChart;
+        }
+        return null;
       }
-      return null;
-    });
+    );
 
     renderHeader(mockSettings);
 
@@ -181,12 +288,14 @@ describe("DataTableHeader", () => {
 
   it("respects minimum column width", () => {
     const updateChart = vi.fn();
-    mockUseDataLayer.mockImplementation((selector: (state: unknown) => unknown) => {
-      if (selector.toString().includes("updateChart")) {
-        return updateChart;
+    mockUseDataLayer.mockImplementation(
+      (selector: (state: unknown) => unknown) => {
+        if (selector.toString().includes("updateChart")) {
+          return updateChart;
+        }
+        return null;
       }
-      return null;
-    });
+    );
 
     renderHeader(mockSettings);
 

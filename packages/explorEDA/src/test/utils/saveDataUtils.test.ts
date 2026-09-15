@@ -166,6 +166,39 @@ describe("saveDataUtils", () => {
         })
       ).toBe(true);
     });
+
+    it("accepts ISO date-range filters and rejects invalid bounds", () => {
+      expect(
+        validateSavedData({
+          ...mockValidData,
+          charts: [
+            {
+              ...valid3dChart,
+              filters: [
+                {
+                  type: "date-range",
+                  field: "created",
+                  min: "2026-01-01",
+                  max: "2026-01-31",
+                },
+              ],
+            },
+          ],
+        })
+      ).toBe(true);
+
+      expect(
+        validateSavedData({
+          ...mockValidData,
+          charts: [
+            {
+              ...valid3dChart,
+              filters: [{ type: "date-range", field: "created", min: "soon" }],
+            },
+          ],
+        })
+      ).toBe(false);
+    });
   });
 
   describe("saveToClipboard", () => {
