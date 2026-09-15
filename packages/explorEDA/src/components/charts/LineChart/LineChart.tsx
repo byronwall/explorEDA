@@ -81,6 +81,16 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
   );
 
   const margin = { ...settings.margin };
+  // Leave room for numeric Y-axis labels.
+  margin.left = Math.max(margin.left, 60);
+  margin.bottom = Math.max(margin.bottom, 30);
+  if (
+    settings.seriesField.some(
+      (field) => settings.seriesSettings[field]?.useRightAxis
+    )
+  ) {
+    margin.right = Math.max(margin.right, 60);
+  }
 
   // Adjust margins based on legend position
   if (settings.showLegend) {
@@ -366,7 +376,7 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
         height={height}
         xScale={xScale}
         yScale={leftYScale}
-        settings={settings}
+        settings={{ ...settings, margin }}
       >
         <TooltipProvider>
           <g>

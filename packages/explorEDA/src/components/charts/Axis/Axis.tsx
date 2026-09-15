@@ -73,7 +73,9 @@ export function XAxis({
             <text
               x={0}
               y={20}
-              textAnchor="middle"
+              textAnchor={
+                i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle"
+              }
               className="fill-muted-foreground text-xs"
             >
               {tick}

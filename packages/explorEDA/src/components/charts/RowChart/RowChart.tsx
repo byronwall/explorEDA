@@ -56,9 +56,8 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   };
 
   // Chart dimensions
-  const margin = settings.margin;
-  const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
+  const baseMargin = settings.margin;
+  const innerHeight = height - baseMargin.top - baseMargin.bottom;
 
   // Calculate counts and handle overflow
   const { displayCounts } = useMemo(() => {
@@ -74,7 +73,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
       .sort((a, b) => b.count - a.count);
 
     // Calculate how many rows we can fit based on min and max row height constraints
-    const availableHeight = height - margin.top - margin.bottom;
+    const availableHeight = height - baseMargin.top - baseMargin.bottom;
     const rowHeight = Math.max(
       settings.minRowHeight,
       Math.min(settings.maxRowHeight, availableHeight / sortedCounts.length)
@@ -99,8 +98,8 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   }, [
     data,
     height,
-    margin.top,
-    margin.bottom,
+    baseMargin.top,
+    baseMargin.bottom,
     settings.minRowHeight,
     settings.maxRowHeight,
   ]);
@@ -121,6 +120,26 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   // Get global axis limits if in a facet
   const globalXLimits = facetIds ? getGlobalAxisLimits("x") : null;
   const globalYLimits = facetIds ? getGlobalAxisLimits("y") : null;
+
+  // Reserve room for the category labels before drawing the shared Y axis.
+  const yLabels =
+    globalYLimits?.type === "categorical"
+      ? Array.from(globalYLimits.categories)
+      : displayCounts.map((d) => String(d.label));
+  const requestedLabelMargin = Math.max(
+    baseMargin.left,
+    ...yLabels.map((label) => label.length * 7 + 24)
+  );
+  const minPlotWidth = Math.min(
+    80,
+    Math.max(0, width - baseMargin.left - baseMargin.right)
+  );
+  const maxLabelMargin = Math.max(0, width - baseMargin.right - minPlotWidth);
+  const labelMargin = Math.min(requestedLabelMargin, maxLabelMargin);
+  const margin = { ...baseMargin, left: labelMargin };
+  const innerWidth = width - margin.left - margin.right;
+  const chartSettings =
+    margin.left === baseMargin.left ? settings : { ...settings, margin };
 
   // Create scales with synchronized limits if in a facet
   const xScale = useMemo(() => {
@@ -162,7 +181,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
         height={height}
         xScale={xScale}
         yScale={yScale}
-        settings={settings}
+        settings={chartSettings}
       >
         <g className="select-none">
           {/* Bars */}
