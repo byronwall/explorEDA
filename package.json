@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "check": "pnpm --recursive --if-present run check-types && pnpm --recursive --if-present run test && pnpm --recursive --if-present run build",
+    "check": "pnpm --recursive --if-present run build && pnpm --recursive --if-present run check-types && pnpm --recursive --if-present run test",
     "release": "pnpm check && changeset publish"
   },
   "dependencies": {
