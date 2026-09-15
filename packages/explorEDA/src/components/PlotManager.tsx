@@ -146,12 +146,12 @@ export function PlotManager() {
 
   return (
     <div className="w-full min-w-0 overflow-x-clip pb-40" ref={containerRef}>
-      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <header className="mb-4 flex flex-wrap items-center gap-3 border-b border-border pb-3">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
-            className="w-full"
+            className="shrink-0"
           >
             <TabsList>
               <TabsTrigger value="charts" className="flex items-center gap-2">
@@ -168,7 +168,7 @@ export function PlotManager() {
           </Tabs>
           <ChartCreationButtons />
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="ml-auto flex flex-wrap items-center gap-2">
           {charts.length > 0 && activeTab === "charts" && (
             <>
               <Button
@@ -236,10 +236,11 @@ export function PlotManager() {
             </DialogContent>
           </Dialog>
         </div>
-      </div>
+      </header>
 
       <Tabs value={activeTab} className="w-full">
         <TabsContent value="charts" className="mt-0">
+          <h2 className="sr-only">Charts</h2>
           {containerWidth > 0 && (
             <ChartGridLayout charts={charts} containerWidth={containerWidth}>
               {charts.map((chart) => {

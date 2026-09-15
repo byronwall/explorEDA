@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ExampleData, examples } from "@/demos/examples";
 
 import { parseCsvData } from "./csvParser";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { X } from "lucide-react";
 import {
   lazy,
@@ -40,6 +40,8 @@ export function LandingPage() {
   const [example, setExample] = useState<ExampleData | null>(null);
   const [isCsvMode, setIsCsvMode] = useState(false);
   const workspaceRef = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotion();
+  const motionY = shouldReduceMotion ? 0 : 20;
 
   const hasData = example !== null || isCsvMode;
 
@@ -135,41 +137,32 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground ">
-      <div className="flex flex-col items-center p-8 gap-8">
-        {hasData && (
-          <Button
-            variant="ghost"
-            className="self-start"
-            onClick={handleClearData}
-          >
-            <X className="h-4 w-4" />
-            Return to Examples
-          </Button>
-        )}
+      <div className="flex flex-col items-center gap-6 p-6">
         <AnimatePresence mode="wait">
           {!hasData ? (
             <motion.div
               key="selector"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: motionY }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="w-full max-w-3xl mx-auto"
+              exit={{ opacity: 0, y: -motionY }}
+              transition={shouldReduceMotion ? { duration: 0 } : undefined}
+              className="mx-auto w-full max-w-5xl"
             >
-              <h1 className="text-3xl font-bold mb-3 text-center">
+              <h1 className="mb-2 text-center text-3xl font-bold">
                 Explore data by connecting charts and filters
               </h1>
-              <p className="text-center text-muted-foreground mb-8">
+              <p className="mb-6 text-center text-muted-foreground">
                 Start with an example or import your own CSV or JSON data.
               </p>
-              <div className="space-y-8">
+              <div className="space-y-6">
                 <div>
-                  <h2 className="text-xl font-semibold mb-4">
+                  <h2 className="mb-3 text-xl font-semibold">
                     Import CSV or JSON data
                   </h2>
                   <CsvUpload onImport={handleCsvImport} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold mb-4">
+                  <h2 className="mb-3 text-xl font-semibold">
                     Try Example Data
                   </h2>
                   <ExampleSelector onSelect={handleExampleSelect} />
@@ -195,13 +188,21 @@ export function LandingPage() {
           ) : (
             <motion.div
               key="plot"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: motionY }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="w-full max-w-[1200px] mx-auto"
+              exit={{ opacity: 0, y: -motionY }}
+              transition={shouldReduceMotion ? { duration: 0 } : undefined}
+              className="mx-auto w-full max-w-[1200px]"
               ref={workspaceRef}
               tabIndex={-1}
             >
+              <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <h1 className="text-xl font-semibold">Data workspace</h1>
+                <Button variant="ghost" onClick={handleClearData}>
+                  <X className="h-4 w-4" />
+                  Return to Examples
+                </Button>
+              </header>
               <Suspense
                 fallback={
                   <div role="status" aria-live="polite">
@@ -229,7 +230,7 @@ export function LandingPage() {
             aria-busy="true"
           >
             <div className="flex flex-col items-center gap-4">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary" />
+              <div className="motion-safe:animate-spin rounded-full h-16 w-16 border-b-2 border-primary" />
               <span>Loading example data…</span>
             </div>
           </div>

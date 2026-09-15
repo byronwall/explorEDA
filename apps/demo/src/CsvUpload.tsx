@@ -81,10 +81,10 @@ export function CsvUpload({ compact = false, onImport }: CsvUploadProps) {
   return (
     <div
       {...getRootProps()}
-      className="border-2 border-dashed border-input rounded-lg p-8 text-center cursor-pointer hover:border-ring transition-colors"
+      className="border-2 border-dashed border-input rounded-lg p-5 text-center cursor-pointer hover:border-ring transition-colors"
     >
       <input {...getInputProps()} />
-      <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+      <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
       {isDragActive ? (
         <p>Drop the CSV or JSON file here…</p>
       ) : (
