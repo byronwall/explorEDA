@@ -57,7 +57,6 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
 
   // Chart dimensions
   const baseMargin = settings.margin;
-  const innerHeight = height - baseMargin.top - baseMargin.bottom;
 
   // Calculate counts and handle overflow
   const { displayCounts } = useMemo(() => {
@@ -142,6 +141,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
     bottom: Math.max(baseMargin.bottom, 30),
   };
   const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
   const chartSettings =
     margin.left === baseMargin.left && margin.bottom === baseMargin.bottom
       ? settings
