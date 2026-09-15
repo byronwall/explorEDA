@@ -50,7 +50,7 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
   ];
 
   return (
-    <div className="space-y-4 max-h-[90vh] overflow-y-auto">
+    <div className="space-y-3">
       <TabContainer tabs={tabs}>
         {{
           main: (

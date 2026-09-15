@@ -5,6 +5,7 @@ import {
   Copy,
   FilterX,
   GripVertical,
+  MoreHorizontal,
   Settings2,
   Table2,
   X,
@@ -18,6 +19,12 @@ import { useAlertStore } from "@/stores/alertStore";
 import { useId } from "react";
 import { getChartFields, getChartSummary } from "./charts/chartAccessibility";
 import { dataTableDefinition } from "./charts/DataTable/definition";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 interface PlotChartPanelProps {
   settings: ChartSettings;
@@ -84,13 +91,13 @@ export function PlotChartPanel({
 
   return (
     <div
-      className="bg-card border rounded-lg m-1 flex min-w-0 flex-col overflow-hidden"
+      className="bg-card border border-border/60 rounded-lg m-1 flex min-w-0 flex-col overflow-hidden"
       style={{ width: widthWithPadding, height: heightWithPadding }}
       role="region"
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
     >
-      <div className="flex min-h-9 items-center justify-between gap-1 select-none px-2 py-1">
+      <div className="flex min-h-9 items-center justify-between gap-1 select-none border-b border-border/40 bg-muted/30 px-2 py-1">
         <div className="drag-handle flex min-w-0 flex-1 cursor-move items-center gap-2">
           <GripVertical
             className="h-4 w-4 shrink-0 text-muted-foreground"
@@ -104,36 +111,44 @@ export function PlotChartPanel({
             {settings.title}
           </h3>
         </div>
-        <div className="flex shrink-0 items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onDuplicate}
-            aria-label={`Duplicate ${settings.title}`}
-            title="Duplicate chart"
-          >
-            <Copy className="h-4 w-4" />
-          </Button>
-          {!isTableLike && dataFields.length > 0 && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleViewData}
-              aria-label={`View data for ${settings.title}`}
-              title="View chart data"
-            >
-              <Table2 className="h-4 w-4" />
-            </Button>
-          )}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => clearFilter(settings)}
-            aria-label={`Clear filters for ${settings.title}`}
-            title="Clear chart filters"
-          >
-            <FilterX className="h-4 w-4" />
-          </Button>
+        <div className="flex shrink-0 items-center gap-0">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={`More actions for ${settings.title}`}
+                title="More chart actions"
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onSelect={onDuplicate}
+                aria-label={`Duplicate ${settings.title}`}
+              >
+                <Copy />
+                Duplicate chart
+              </DropdownMenuItem>
+              {!isTableLike && dataFields.length > 0 && (
+                <DropdownMenuItem
+                  onSelect={handleViewData}
+                  aria-label={`View data for ${settings.title}`}
+                >
+                  <Table2 />
+                  View chart data
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem
+                onSelect={() => clearFilter(settings)}
+                aria-label={`Clear filters for ${settings.title}`}
+              >
+                <FilterX />
+                Clear chart filters
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -145,7 +160,11 @@ export function PlotChartPanel({
                 <Settings2 className="h-4 w-4" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="min-w-120" side="left" align="start">
+            <PopoverContent
+              className="w-[min(30rem,calc(100vw-2rem))] max-h-[calc(100vh-2rem)] overflow-y-auto"
+              side="left"
+              align="start"
+            >
               <ChartSettingsContent settings={settings} />
             </PopoverContent>
           </Popover>
