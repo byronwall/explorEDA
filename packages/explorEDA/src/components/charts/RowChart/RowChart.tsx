@@ -136,10 +136,16 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   );
   const maxLabelMargin = Math.max(0, width - baseMargin.right - minPlotWidth);
   const labelMargin = Math.min(requestedLabelMargin, maxLabelMargin);
-  const margin = { ...baseMargin, left: labelMargin };
+  const margin = {
+    ...baseMargin,
+    left: labelMargin,
+    bottom: Math.max(baseMargin.bottom, 30),
+  };
   const innerWidth = width - margin.left - margin.right;
   const chartSettings =
-    margin.left === baseMargin.left ? settings : { ...settings, margin };
+    margin.left === baseMargin.left && margin.bottom === baseMargin.bottom
+      ? settings
+      : { ...settings, margin };
 
   // Create scales with synchronized limits if in a facet
   const xScale = useMemo(() => {

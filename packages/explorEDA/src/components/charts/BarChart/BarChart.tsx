@@ -45,11 +45,6 @@ export function BarChart({ settings, width, height, facetIds }: BarChartProps) {
   const registerAxisLimits = useFacetAxis((s) => s.registerAxisLimits);
   const getGlobalAxisLimits = useFacetAxis((s) => s.getGlobalAxisLimits);
 
-  // Chart dimensions
-  const margin = settings.margin;
-  const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
-
   const isNumeric = useMemo(
     () => allColData.every((d) => !isNaN(Number(d))),
     [allColData]
@@ -127,6 +122,36 @@ export function BarChart({ settings, width, height, facetIds }: BarChartProps) {
   const globalXLimits = facetIds ? getGlobalAxisLimits("x") : null;
   const globalYLimits = facetIds ? getGlobalAxisLimits("y") : null;
 
+  // Keep numeric axis labels and X ticks inside the SVG viewport.
+  const yScaleMax = Math.max(
+    globalYLimits?.type === "numerical" ? globalYLimits.max : 0,
+    Math.max(...chartData.map((d) => d.value)) * (1 + Y_SCALE_PADDING)
+  );
+  const yTickLabelWidth = Math.max(
+    ...scaleLinear()
+      .domain([0, yScaleMax])
+      .ticks(5)
+      .map((tick) => String(tick).length * 7 + 24)
+  );
+  const minPlotWidth = Math.min(
+    80,
+    Math.max(0, width - settings.margin.left - settings.margin.right)
+  );
+  const maxLeftMargin = Math.max(
+    0,
+    width - settings.margin.right - minPlotWidth
+  );
+  const margin = {
+    ...settings.margin,
+    left: Math.min(
+      Math.max(settings.margin.left, yTickLabelWidth),
+      maxLeftMargin
+    ),
+    bottom: Math.max(settings.margin.bottom, 30),
+  };
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
+
   // Create scales with synchronized limits if in a facet
   const xScale = useCustomCompareMemo(
     () => {
@@ -165,17 +190,8 @@ export function BarChart({ settings, width, height, facetIds }: BarChartProps) {
   ) as ScaleLinear<number, number> | ScaleBand<string>;
 
   const yScale = useMemo(() => {
-    const maxValue = Math.max(...chartData.map((d) => d.value));
-    const paddedMax = maxValue * (1 + Y_SCALE_PADDING);
-
-    // take larger of global or padded max
-    const globalMax =
-      globalYLimits?.type === "numerical" ? globalYLimits.max : paddedMax;
-
-    const limitToUse = Math.max(globalMax, paddedMax);
-
-    return scaleLinear().domain([0, limitToUse]).range([innerHeight, 0]);
-  }, [chartData, innerHeight, globalYLimits]);
+    return scaleLinear().domain([0, yScaleMax]).range([innerHeight, 0]);
+  }, [innerHeight, yScaleMax]);
 
   // Register axis limits with the facet context if in a facet
   useEffect(() => {
@@ -319,7 +335,7 @@ export function BarChart({ settings, width, height, facetIds }: BarChartProps) {
         yScale={yScale}
         brushingMode={isBandScale ? "none" : "horizontal"}
         onBrushChange={handleBrushChange}
-        settings={settings}
+        settings={{ ...settings, margin }}
       >
         <g>
           {chartData.map((d, i) => {

@@ -80,10 +80,38 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
     facetIds
   );
 
-  const margin = { ...settings.margin };
-  // Leave room for numeric Y-axis labels.
-  margin.left = Math.max(margin.left, 60);
-  margin.bottom = Math.max(margin.bottom, 30);
+  const baseMargin = settings.margin;
+  const yValuesByAxis = settings.seriesField.reduce(
+    (values, field) => {
+      const useRightAxis = settings.seriesSettings[field]?.useRightAxis;
+      (liveSeriesData[field] ?? []).forEach((value) => {
+        const y = Number(value);
+        if (Number.isFinite(y)) {
+          values[useRightAxis ? "right" : "left"].push(y);
+        }
+      });
+      return values;
+    },
+    { left: [] as number[], right: [] as number[] }
+  );
+  const leftYExtent = extent(yValuesByAxis.left) as [number, number];
+  const leftYTicks = Number.isFinite(leftYExtent[0])
+    ? scaleLinear().domain(leftYExtent).nice().ticks(5)
+    : [];
+  const requestedLabelMargin = Math.max(
+    baseMargin.left,
+    ...leftYTicks.map((tick) => String(tick).length * 7 + 24)
+  );
+  const minPlotWidth = Math.min(
+    80,
+    Math.max(0, width - baseMargin.left - baseMargin.right)
+  );
+  const maxLabelMargin = Math.max(0, width - baseMargin.right - minPlotWidth);
+  const margin = {
+    ...baseMargin,
+    left: Math.min(requestedLabelMargin, maxLabelMargin),
+    bottom: Math.max(baseMargin.bottom, 30),
+  };
   if (
     settings.seriesField.some(
       (field) => settings.seriesSettings[field]?.useRightAxis
@@ -229,24 +257,11 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
   ) as [number, number];
 
   // Calculate y extent across all series
-  const leftAxisSeries = processedLiveSeriesData.filter(
-    (series) => !settings.seriesSettings[series.name]?.useRightAxis
-  );
   const rightAxisSeries = processedLiveSeriesData.filter(
     (series) => settings.seriesSettings[series.name]?.useRightAxis
   );
 
-  const leftYExtent = extent(
-    leftAxisSeries.flatMap((series) =>
-      series.data.flatMap((d) => (d.y == null ? [] : [d.y]))
-    )
-  ) as [number, number];
-
-  const rightYExtent = extent(
-    rightAxisSeries.flatMap((series) =>
-      series.data.flatMap((d) => (d.y == null ? [] : [d.y]))
-    )
-  ) as [number, number];
+  const rightYExtent = extent(yValuesByAxis.right) as [number, number];
 
   const xScale = scaleLinear().domain(xExtent).range([0, innerWidth]).nice();
   const leftYScale = scaleLinear()

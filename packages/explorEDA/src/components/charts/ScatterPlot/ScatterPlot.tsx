@@ -92,6 +92,39 @@ export function ScatterPlot({
   // Get global axis limits if in a facet
   const globalXLimits = facetIds ? getGlobalAxisLimits("x") : null;
   const globalYLimits = facetIds ? getGlobalAxisLimits("y") : null;
+  const yDomain: [number, number] =
+    globalYLimits && globalYLimits.type === "numerical" && facetIds
+      ? (() => {
+          const globalRange = globalYLimits.max - globalYLimits.min;
+          const globalBuffer = globalRange * AXIS_BUFFER_PERCENTAGE;
+          return [
+            globalYLimits.min - globalBuffer,
+            globalYLimits.max + globalBuffer,
+          ];
+        })()
+      : [bufferedYMin, bufferedYMax];
+  const requestedLabelMargin = Math.max(
+    settings.margin.left,
+    ...scaleLinear()
+      .domain(yDomain)
+      .ticks(5)
+      .map((tick) => String(tick).length * 7 + 24)
+  );
+  const minPlotWidth = Math.min(
+    80,
+    Math.max(0, width - settings.margin.left - settings.margin.right)
+  );
+  const maxLabelMargin = Math.max(
+    0,
+    width - settings.margin.right - minPlotWidth
+  );
+  const margin = {
+    ...settings.margin,
+    left: Math.min(requestedLabelMargin, maxLabelMargin),
+    bottom: Math.max(settings.margin.bottom, 30),
+  };
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
 
   // Create scales for BaseChart with synchronized limits if in a facet
   const xScale = useMemo(() => {
@@ -105,44 +138,24 @@ export function ScatterPlot({
           globalXLimits.min - globalBuffer,
           globalXLimits.max + globalBuffer,
         ])
-        .range([0, width - 80]);
+        .range([0, innerWidth]);
     }
 
     return scaleLinear()
       .domain([bufferedXMin, bufferedXMax])
-      .range([0, width - 80]);
+      .range([0, innerWidth]);
   }, [
     bufferedXMin,
     bufferedXMax,
     width,
     globalXLimits,
     facetIds,
+    innerWidth,
   ]) as ScaleLinear<number, number>;
 
   const yScale = useMemo(() => {
-    if (globalYLimits && globalYLimits.type === "numerical" && facetIds) {
-      // Apply buffer to global limits
-      const globalRange = globalYLimits.max - globalYLimits.min;
-      const globalBuffer = globalRange * AXIS_BUFFER_PERCENTAGE;
-
-      return scaleLinear()
-        .domain([
-          globalYLimits.min - globalBuffer,
-          globalYLimits.max + globalBuffer,
-        ])
-        .range([height - 50, 20]);
-    }
-
-    return scaleLinear()
-      .domain([bufferedYMin, bufferedYMax])
-      .range([height - 50, 20]);
-  }, [
-    bufferedYMin,
-    bufferedYMax,
-    height,
-    globalYLimits,
-    facetIds,
-  ]) as ScaleLinear<number, number>;
+    return scaleLinear().domain(yDomain).range([innerHeight, 0]);
+  }, [innerHeight, yDomain]) as ScaleLinear<number, number>;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -165,7 +178,7 @@ export function ScatterPlot({
     ctx.clearRect(0, 0, width, height);
 
     // Draw points using the same scales as BaseChart
-    ctx.translate(settings.margin.left, settings.margin.top);
+    ctx.translate(margin.left, margin.top);
 
     const xFilter = getRangeFilterForField(settings.filters, settings.xField);
     const yFilter = getRangeFilterForField(settings.filters, settings.yField);
@@ -208,8 +221,8 @@ export function ScatterPlot({
     yScale,
     getColorForValue,
     colorData,
-    settings.margin.left,
-    settings.margin.top,
+    margin.left,
+    margin.top,
   ]);
 
   const handleBrushChange = useCallback(
@@ -284,7 +297,7 @@ export function ScatterPlot({
             brushingMode="2d"
             onBrushChange={handleBrushChange}
             className="absolute"
-            settings={settings}
+            settings={{ ...settings, margin }}
           >
             <g /> {/* Empty group element as children */}
           </BaseChart>
