@@ -13,12 +13,18 @@ registerAllCharts();
 export function ExplorEda({
   data,
   savedData,
+  onStateChange,
 }: {
   data: DatumObject[];
   savedData: SavedDataStructure | undefined;
+  onStateChange?: (state: SavedDataStructure) => void;
 }) {
   return (
-    <DataLayerProvider data={data} savedData={savedData}>
+    <DataLayerProvider
+      data={data}
+      savedData={savedData}
+      onStateChange={onStateChange}
+    >
       <div className="bg-background text-foreground">
         <PlotManager />
         <GlobalAlertDialog />

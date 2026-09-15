@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ExampleData, examples } from "@/demos/examples";
+import type { SavedDataStructure } from "exploreda";
 
 import { parseCsvData } from "./csvParser";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
@@ -39,6 +40,13 @@ export function LandingPage() {
 
   const [example, setExample] = useState<ExampleData | null>(null);
   const [isCsvMode, setIsCsvMode] = useState(false);
+  const [capturedState, setCapturedState] = useState<
+    SavedDataStructure | undefined
+  >();
+  const [restoreSnapshot, setRestoreSnapshot] = useState<
+    SavedDataStructure | undefined
+  >();
+  const [workspaceKey, setWorkspaceKey] = useState(0);
   const workspaceRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
   const motionY = shouldReduceMotion ? 0 : 20;
@@ -70,7 +78,22 @@ export function LandingPage() {
     setExample(null);
     setIsCsvMode(false);
     setCsvData([]);
+    setCapturedState(undefined);
+    setRestoreSnapshot(undefined);
     setLoadError(null);
+  };
+
+  const handleStateChange = useCallback((state: SavedDataStructure) => {
+    setCapturedState(state);
+  }, []);
+
+  const handleRestore = () => {
+    if (!capturedState) {
+      return;
+    }
+
+    setRestoreSnapshot(capturedState);
+    setWorkspaceKey((key) => key + 1);
   };
 
   const handleExampleSelect = useCallback(
@@ -79,6 +102,11 @@ export function LandingPage() {
     },
     [setSearchParams]
   );
+
+  useEffect(() => {
+    setCapturedState(undefined);
+    setRestoreSnapshot(undefined);
+  }, [exampleId]);
 
   useEffect(() => {
     if (!exampleId) {
@@ -132,6 +160,8 @@ export function LandingPage() {
     setSearchParams({});
     setExample(null);
     setCsvData(data);
+    setCapturedState(undefined);
+    setRestoreSnapshot(undefined);
     setLoadError(null);
   };
 
@@ -198,10 +228,19 @@ export function LandingPage() {
             >
               <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <h1 className="text-xl font-semibold">Data workspace</h1>
-                <Button variant="ghost" onClick={handleClearData}>
-                  <X className="h-4 w-4" />
-                  Return to Examples
-                </Button>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={handleRestore}
+                    disabled={!capturedState}
+                  >
+                    Restore captured workspace
+                  </Button>
+                  <Button variant="ghost" onClick={handleClearData}>
+                    <X className="h-4 w-4" />
+                    Return to Examples
+                  </Button>
+                </div>
               </header>
               <Suspense
                 fallback={
@@ -211,11 +250,18 @@ export function LandingPage() {
                 }
               >
                 {isCsvMode ? (
-                  <ExplorEda data={csvData} savedData={undefined} />
+                  <ExplorEda
+                    key={workspaceKey}
+                    data={csvData}
+                    savedData={restoreSnapshot}
+                    onStateChange={handleStateChange}
+                  />
                 ) : (
                   <ExplorEda
+                    key={workspaceKey}
                     data={exampleData}
-                    savedData={example?.savedData}
+                    savedData={restoreSnapshot ?? example?.savedData}
+                    onStateChange={handleStateChange}
                   />
                 )}
               </Suspense>

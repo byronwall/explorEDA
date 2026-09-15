@@ -8,12 +8,25 @@ import "exploreda/dist/ExplorEda.css";
 
 const data = [{ category: "A", value: 1 }];
 const savedData: SavedDataStructure | undefined = undefined;
+const handleStateChange = (state: SavedDataStructure) => {
+  // Keep this snapshot in host state and pass it later to restore.
+};
 
-<ExplorEda data={data} savedData={savedData} />;
+<ExplorEda
+  data={data}
+  savedData={savedData}
+  onStateChange={handleStateChange}
+/>;
 ```
 
 The package entry point exports `ExplorEda` and the `SavedDataStructure` type.
 The CSS file is available at `exploreda/dist/ExplorEda.css`.
+
+`onStateChange` runs after meaningful workspace changes. It does not run on
+initial mount, and replacing `data` or `savedData` does not echo a callback.
+`savedData` is an input for initial or replacement restore, not a controlled
+value; do not feed every callback result back into it. Callback snapshots are
+JSON-serializable and do not include the raw data rows.
 
 For a smaller custom integration, import the registry and only the charts you
 need. Registration is explicit, so unused charts and their dependencies stay

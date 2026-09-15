@@ -1,5 +1,11 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { beforeAll, describe, expect, it } from "vitest";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { getChartDefinition } from "../../charts/registry";
 import { registerAllCharts } from "../../charts/registerAllCharts";
 import { parseExpression } from "../../lib/calculations/parser/semantics";
@@ -87,6 +93,35 @@ function WorkspaceProbe() {
         )}
       </output>
       <button onClick={() => setData([{ replacement: 1 }])}>replace</button>
+    </>
+  );
+}
+
+function StateChangeProbe() {
+  const charts = useDataLayer((state) => state.charts);
+  const updateChart = useDataLayer((state) => state.updateChart);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
+  const table =
+    charts.find((chart) => chart.type === "data-table") ?? charts[0];
+
+  return (
+    <>
+      <button
+        onClick={() => table && updateChart(table.id, { title: "Changed" })}
+      >
+        change chart
+      </button>
+      <button
+        onClick={() =>
+          table &&
+          updateChart(table.id, {
+            filters: [{ type: "value", field: "name", values: ["A"] }],
+          })
+        }
+      >
+        change filter
+      </button>
+      <button onClick={() => getColumnData("name")}>read column</button>
     </>
   );
 }
@@ -358,5 +393,117 @@ describe("DataLayerProvider", () => {
       expect(screen.getByTestId("layouts")).toHaveTextContent('"x":2');
     });
     expect(screen.getByTestId("layouts")).toHaveTextContent('"x":6');
+  });
+
+  it("does not emit on mount or prop-driven replacements", async () => {
+    const onStateChange = vi.fn();
+    const saved = savedData();
+    const view = render(
+      <DataLayerProvider
+        data={data}
+        savedData={saved}
+        onStateChange={onStateChange}
+      >
+        <Probe />
+      </DataLayerProvider>
+    );
+
+    expect(onStateChange).not.toHaveBeenCalled();
+
+    view.rerender(
+      <DataLayerProvider
+        data={[{ name: "C", value: 7 }]}
+        savedData={savedData()}
+        onStateChange={onStateChange}
+      >
+        <Probe />
+      </DataLayerProvider>
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId("rows")).toHaveTextContent("1")
+    );
+    expect(onStateChange).not.toHaveBeenCalled();
+  });
+
+  it("emits one serializable snapshot for chart and filter edits", () => {
+    const onStateChange = vi.fn();
+    render(
+      <DataLayerProvider data={data} onStateChange={onStateChange}>
+        <StateChangeProbe />
+      </DataLayerProvider>
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "change chart" }));
+    expect(onStateChange).toHaveBeenCalledTimes(1);
+    const snapshot = onStateChange.mock.calls[0]![0] as SavedDataStructure;
+    expect(snapshot.charts).toHaveLength(2);
+    expect(snapshot.gridSettings).toBeDefined();
+    expect(snapshot.calculations).toEqual([]);
+    expect(snapshot.colorScales).toEqual([]);
+    expect(() => JSON.stringify(snapshot)).not.toThrow();
+    const roundTrip = JSON.parse(
+      JSON.stringify(snapshot)
+    ) as SavedDataStructure;
+    expect(roundTrip.metadata).toEqual(snapshot.metadata);
+    expect(roundTrip.gridSettings).toEqual(snapshot.gridSettings);
+
+    fireEvent.click(screen.getByRole("button", { name: "change filter" }));
+    expect(onStateChange).toHaveBeenCalledTimes(2);
+    expect(
+      (onStateChange.mock.calls[1]![0] as SavedDataStructure).charts
+    ).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          filters: [{ type: "value", field: "name", values: ["A"] }],
+        }),
+      ])
+    );
+  });
+
+  it("does not emit for derived column cache updates", async () => {
+    const onStateChange = vi.fn();
+    render(
+      <DataLayerProvider data={data} onStateChange={onStateChange}>
+        <StateChangeProbe />
+      </DataLayerProvider>
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "read column" }));
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    expect(onStateChange).not.toHaveBeenCalled();
+  });
+
+  it("serializes 3D camera vectors in callback state", () => {
+    const chart = getChartDefinition("3d-scatter").createDefaultSettings({
+      x: 0,
+      y: 0,
+      w: 1,
+      h: 1,
+    });
+    const onStateChange = vi.fn();
+    render(
+      <DataLayerProvider
+        data={[{ x: 1, y: 2, z: 3 }]}
+        savedData={{
+          ...savedData(),
+          charts: [chart as unknown as SavedDataStructure["charts"][number]],
+        }}
+        onStateChange={onStateChange}
+      >
+        <StateChangeProbe />
+      </DataLayerProvider>
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "change chart" }));
+    const emittedChart = (onStateChange.mock.calls[0]![0] as SavedDataStructure)
+      .charts[0]!;
+    expect(emittedChart.type).toBe("3d-scatter");
+    if (emittedChart.type === "3d-scatter") {
+      expect(emittedChart.cameraPosition).toEqual({ x: 10, y: 10, z: 10 });
+      expect(emittedChart.cameraTarget).toEqual({ x: 0, y: 0, z: 0 });
+    }
   });
 });

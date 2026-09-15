@@ -51,11 +51,41 @@ function toRuntimeChart(chart: SavedChartSettings): ChartSettings {
   } as ChartSettings;
 }
 
+function toSavedChart(chart: ChartSettings): SavedChartSettings {
+  if (chart.type !== "3d-scatter") {
+    return chart as SavedChartSettings;
+  }
+
+  return {
+    ...chart,
+    cameraPosition: {
+      x: chart.cameraPosition.x,
+      y: chart.cameraPosition.y,
+      z: chart.cameraPosition.z,
+    },
+    cameraTarget: {
+      x: chart.cameraTarget.x,
+      y: chart.cameraTarget.y,
+      z: chart.cameraTarget.z,
+    },
+  } as SavedChartSettings;
+}
+
+function getSavedStateFingerprint(savedData: SavedDataStructure): string {
+  return JSON.stringify({
+    charts: savedData.charts,
+    calculations: savedData.calculations,
+    gridSettings: savedData.gridSettings,
+    colorScales: savedData.colorScales,
+  });
+}
+
 // Props and State interfaces
 interface DataLayerProps<T extends DatumObject> {
   data?: T[];
   charts?: ChartSettings[];
   savedData?: SavedDataStructure;
+  onStateChange?: (state: SavedDataStructure) => void;
 }
 
 // Add ID to the data type
@@ -641,7 +671,7 @@ const createDataLayerStore = <T extends DatumObject>(
         });
 
       return {
-        charts: state.charts,
+        charts: state.charts.map(toSavedChart),
         calculations: state.calculations,
         gridSettings: state.gridSettings,
         metadata,
@@ -734,6 +764,10 @@ export function DataLayerProvider<T extends DatumObject>({
 }: DataLayerProviderProps<T>) {
   const storeRef = useRef<DataLayerStore<T> | null>(null);
   const propsRef = useRef(props);
+  const onStateChangeRef = useRef(props.onStateChange);
+  const suppressStateChangeRef = useRef(false);
+  const savedStateFingerprintRef = useRef<string | undefined>(undefined);
+  onStateChangeRef.current = props.onStateChange;
   const nextData = props.data;
   const nextSavedData = props.savedData;
   if (!storeRef.current) {
@@ -746,21 +780,50 @@ export function DataLayerProvider<T extends DatumObject>({
     const dataChanged = previousProps.data !== nextData;
     const savedDataChanged = previousProps.savedData !== nextSavedData;
 
-    if (dataChanged) {
-      store.getState().setData(nextData ?? [], undefined, !nextSavedData);
-      if (nextSavedData) {
-        store.getState().restoreFromStructure(nextSavedData);
+    suppressStateChangeRef.current = true;
+    try {
+      if (dataChanged) {
+        store.getState().setData(nextData ?? [], undefined, !nextSavedData);
+        if (nextSavedData) {
+          store.getState().restoreFromStructure(nextSavedData);
+        }
+      } else if (savedDataChanged) {
+        if (nextSavedData) {
+          store.getState().restoreFromStructure(nextSavedData);
+        } else {
+          store.getState().setData(store.getState().data);
+        }
       }
-    } else if (savedDataChanged) {
-      if (nextSavedData) {
-        store.getState().restoreFromStructure(nextSavedData);
-      } else {
-        store.getState().setData(store.getState().data);
-      }
+    } finally {
+      suppressStateChangeRef.current = false;
+      savedStateFingerprintRef.current = getSavedStateFingerprint(
+        store.getState().saveToStructure()
+      );
     }
 
     propsRef.current = { data: nextData, savedData: nextSavedData };
   }, [nextData, nextSavedData]);
+
+  useEffect(() => {
+    const store = storeRef.current!;
+    savedStateFingerprintRef.current = getSavedStateFingerprint(
+      store.getState().saveToStructure()
+    );
+
+    return store.subscribe((state) => {
+      const savedData = state.saveToStructure();
+      const nextFingerprint = getSavedStateFingerprint(savedData);
+
+      if (nextFingerprint === savedStateFingerprintRef.current) {
+        return;
+      }
+
+      savedStateFingerprintRef.current = nextFingerprint;
+      if (!suppressStateChangeRef.current) {
+        onStateChangeRef.current?.(savedData);
+      }
+    });
+  }, []);
 
   return (
     <DataLayerContext.Provider value={storeRef.current}>
