@@ -14,7 +14,7 @@ export function ExampleSelector({ onSelect }: ExampleSelectorProps) {
           <button
             type="button"
             key={example.id}
-            className="bg-card text-card-foreground flex h-48 flex-col gap-4 rounded-xl border px-5 py-5 text-left shadow-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="bg-card text-card-foreground flex h-48 flex-col gap-4 rounded-xl border border-border px-5 py-5 text-left shadow-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             onClick={() => onSelect(example.id)}
           >
             <div className="flex min-w-0 items-start gap-3">
