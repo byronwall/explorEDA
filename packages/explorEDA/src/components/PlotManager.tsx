@@ -240,34 +240,36 @@ export function PlotManager() {
 
       <Tabs value={activeTab} className="w-full">
         <TabsContent value="charts" className="mt-0">
-          <ChartGridLayout charts={charts} containerWidth={containerWidth}>
-            {charts.map((chart) => {
-              if (!chart.layout) {
-                return null;
-              }
-              const size = gridToPixels(
-                chart.layout,
-                containerWidth,
-                chartGridSettings
-              );
-              return (
-                <div key={chart.id}>
-                  <PlotChartPanel
-                    settings={chart}
-                    onDelete={() => removeChart(chart)}
-                    onDuplicate={() => {
-                      const chartWithoutId = Object.fromEntries(
-                        Object.entries(chart).filter(([key]) => key !== "id")
-                      ) as Omit<typeof chart, "id">;
-                      addChart(chartWithoutId);
-                    }}
-                    width={size.width}
-                    height={size.height}
-                  />
-                </div>
-              );
-            })}
-          </ChartGridLayout>
+          {containerWidth > 0 && (
+            <ChartGridLayout charts={charts} containerWidth={containerWidth}>
+              {charts.map((chart) => {
+                if (!chart.layout) {
+                  return null;
+                }
+                const size = gridToPixels(
+                  chart.layout,
+                  containerWidth,
+                  chartGridSettings
+                );
+                return (
+                  <div key={chart.id}>
+                    <PlotChartPanel
+                      settings={chart}
+                      onDelete={() => removeChart(chart)}
+                      onDuplicate={() => {
+                        const chartWithoutId = Object.fromEntries(
+                          Object.entries(chart).filter(([key]) => key !== "id")
+                        ) as Omit<typeof chart, "id">;
+                        addChart(chartWithoutId);
+                      }}
+                      width={size.width}
+                      height={size.height}
+                    />
+                  </div>
+                );
+              })}
+            </ChartGridLayout>
+          )}
         </TabsContent>
         <TabsContent value="calculations" className="mt-0">
           <Card>
