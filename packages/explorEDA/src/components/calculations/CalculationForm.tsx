@@ -82,7 +82,11 @@ export function CalculationForm({
                 placeholder="Enter your expression..."
                 className="flex-1"
               />
-              <Button onClick={handleValidate} variant="secondary">
+              <Button
+                type="button"
+                onClick={handleValidate}
+                variant="secondary"
+              >
                 Validate
               </Button>
             </div>
@@ -110,6 +114,7 @@ export function CalculationForm({
               {availableFields.map((field) => (
                 <Button
                   key={field}
+                  type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => handleInsertField(field)}
@@ -122,7 +127,7 @@ export function CalculationForm({
         </div>
 
         <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={onCancel}>
+          <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
           </Button>
           <Button type="submit">{submitButtonText}</Button>

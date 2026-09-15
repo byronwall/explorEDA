@@ -4,7 +4,14 @@ import { ExampleData, examples } from "@/demos/examples";
 import { parseCsvData } from "./csvParser";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
-import { lazy, Suspense, useCallback, useEffect, useState } from "react";
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { CsvUpload } from "./CsvUpload";
@@ -32,8 +39,18 @@ export function LandingPage() {
 
   const [example, setExample] = useState<ExampleData | null>(null);
   const [isCsvMode, setIsCsvMode] = useState(false);
+  const workspaceRef = useRef<HTMLDivElement>(null);
 
   const hasData = example !== null || isCsvMode;
+
+  useEffect(() => {
+    if (!hasData || !workspaceRef.current) {
+      return;
+    }
+
+    workspaceRef.current.focus({ preventScroll: true });
+    workspaceRef.current.scrollIntoView?.({ block: "start" });
+  }, [exampleId, hasData]);
 
   const fetchExampleData = useCallback(
     async (url: string, signal: AbortSignal) => {
@@ -122,8 +139,7 @@ export function LandingPage() {
         {hasData && (
           <Button
             variant="ghost"
-            className="absolute top-4 left-[50%] self-start"
-            style={{ transform: "translateX(-50%)" }}
+            className="self-start"
             onClick={handleClearData}
           >
             <X className="h-4 w-4" />
@@ -183,6 +199,8 @@ export function LandingPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               className="w-full max-w-[1200px] mx-auto"
+              ref={workspaceRef}
+              tabIndex={-1}
             >
               <Suspense
                 fallback={
