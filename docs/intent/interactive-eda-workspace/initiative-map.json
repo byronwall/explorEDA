@@ -1,0 +1,732 @@
+{
+  "schema_version": "0.4.0",
+  "initiative": {
+    "title": "Interactive EDA workspace",
+    "slug": "interactive-eda-workspace",
+    "scale": "program",
+    "current_phase": "plan",
+    "last_updated": "2026-09-15",
+    "summary": "Build Byron's primary desktop analysis application on a public React workspace package for connected tables, charts, filters, saved views, and traceable transformations."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-14"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-14"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-09-15"
+    }
+  },
+  "sources": [
+    {
+      "id": "SRC-USER-PACKAGE-BOUNDARY",
+      "type": "direct-user-input",
+      "location": "Codex task feedback on 2026-09-14",
+      "anchor": "primary personal application, desirable public package, acceptable breaking changes, and deferred multi-source support",
+      "authority": "direct current intent"
+    },
+    {
+      "id": "SRC-USER-DATASETS",
+      "type": "direct-user-input",
+      "location": "Codex task feedback on 2026-09-14",
+      "anchor": "small pleasant public and synthetic datasets for source inspection and exploration",
+      "authority": "direct current intent"
+    },
+    {
+      "id": "SRC-TABLE-FOUNDATION",
+      "type": "voice-transcript-set",
+      "location": "docs/transcripts/2026-06-25-interactive-data-table-explorer.txt; docs/transcripts/2026-06-25-table-column-controls.txt; docs/transcripts/2026-06-25-interactive-data-table-controls.txt",
+      "anchor": "entire transcripts about when tables need interaction and how users control columns and rows",
+      "authority": "direct first-party intent"
+    },
+    {
+      "id": "SRC-TABLE-RENDERING",
+      "type": "voice-transcript-set",
+      "location": "docs/transcripts/2026-06-26-interactive-data-table-rows.txt; docs/transcripts/2026-06-26-rich-data-inside-table-cells.txt",
+      "anchor": "entire transcripts about row height, truncation, progressive disclosure, and rich cells",
+      "authority": "direct first-party intent"
+    },
+    {
+      "id": "SRC-TABLE-FILTERS",
+      "type": "voice-transcript-set",
+      "location": "docs/transcripts/2026-06-28-table-filtering-and-distributions.txt; docs/transcripts/2026-06-29-date-filtering-patterns.txt",
+      "anchor": "entire transcripts about global, column, range, category, distribution, and date filters",
+      "authority": "direct first-party intent"
+    },
+    {
+      "id": "SRC-TABLE-STATE",
+      "type": "voice-transcript-set",
+      "location": "docs/transcripts/2026-06-29-saved-table-views-and-formatting.txt; docs/transcripts/2026-06-29-data-table-defaults-and-schemas.txt",
+      "anchor": "entire transcripts about saved views, layered formats, known schemas, arbitrary data, and simple defaults",
+      "authority": "direct first-party intent"
+    },
+    {
+      "id": "SRC-REQUIREMENTS-REUSE",
+      "type": "voice-transcript",
+      "location": "docs/transcripts/2026-07-13-reusable-interactive-component-requirements.txt",
+      "anchor": "hierarchical reuse of source-backed interactive component requirements",
+      "authority": "direct first-party intent"
+    },
+    {
+      "id": "SRC-VIZ-ARCHITECTURE",
+      "type": "voice-transcript",
+      "location": "docs/transcripts/2026-07-26-data-visualization-system-design.txt",
+      "anchor": "source tables through transformations to visual artifacts, with multi-table support and auditability",
+      "authority": "direct first-party intent"
+    },
+    {
+      "id": "SRC-DASHBOARD",
+      "type": "voice-transcript",
+      "location": "docs/transcripts/2026-07-28-dashboarding-filtering-and-chart-defaults.txt",
+      "anchor": "self-serve charts, all versus working versus visible data, top-level filters, and saved dashboard views",
+      "authority": "direct first-party intent"
+    },
+    {
+      "id": "SRC-DATA-FLOW",
+      "type": "voice-transcript",
+      "location": "docs/transcripts/2026-07-28-data-transforms-loading-and-source-tables.txt",
+      "anchor": "client and server transforms, field discovery, source-table inspection, relationships, and cardinality",
+      "authority": "direct first-party intent"
+    },
+    {
+      "id": "SRC-FACETS",
+      "type": "voice-transcript",
+      "location": "docs/transcripts/2026-07-29-faceting-and-shared-scales.txt",
+      "anchor": "small multiples, shared scales and legends, and interactive facet controls",
+      "authority": "direct first-party intent"
+    },
+    {
+      "id": "SRC-TRACEABILITY",
+      "type": "voice-transcript",
+      "location": "docs/transcripts/2026-08-02-visualization-traceability-and-dataflow.txt",
+      "anchor": "complete traceability from source data through transformations to rendered glyphs",
+      "authority": "direct first-party intent"
+    },
+    {
+      "id": "SRC-SPEC-PIPELINE",
+      "type": "voice-transcript",
+      "location": "docs/transcripts/2026-08-03-spec-driven-interactive-visualization.txt",
+      "anchor": "specification of sources, transforms, filters, groups, repeats, scales, and rendering",
+      "authority": "direct first-party intent"
+    },
+    {
+      "id": "SRC-SPEC-LAYERS",
+      "type": "voice-transcript-set",
+      "location": "docs/transcripts/2026-08-04-chart-specs-grouping-and-derived-layers.txt; docs/transcripts/2026-08-04-advanced-chart-specs-and-transforms.txt",
+      "anchor": "derived layers, grouping, accumulation, ordering, positioning, and advanced chart construction",
+      "authority": "direct first-party intent"
+    },
+    {
+      "id": "SRC-AGENT-TEMPLATING",
+      "type": "voice-transcript-set",
+      "location": "docs/transcripts/2026-08-25-deterministic-ui-templating.txt; docs/transcripts/2026-08-27-ui-complexity-and-component-boundaries.txt",
+      "anchor": "thin deterministic specifications and the boundary between standard and custom interactive components",
+      "authority": "adjacent first-party possibility"
+    },
+    {
+      "id": "SRC-REPO-PUBLIC",
+      "type": "repository",
+      "location": "README.md; packages/explorEDA/README.md; packages/explorEDA/src/components/ExplorEda.tsx",
+      "anchor": "current public purpose, desktop boundary, single data prop, and saved state contract",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "SRC-REPO-DATA",
+      "type": "repository",
+      "location": "packages/explorEDA/src/providers/DataLayerProvider.tsx; packages/explorEDA/src/types/SavedDataStructure.ts; packages/explorEDA/src/types/FilterTypes.ts",
+      "anchor": "shared single-table data layer, calculations, filters, charts, color scales, and saved structure",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "SRC-REPO-SAMPLES",
+      "type": "repository",
+      "location": "apps/data-samples/sample_data.ts; apps/data-samples/generate_all_samples.ts; apps/demo/public",
+      "anchor": "current sample generators and generated CSV files",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "SRC-REPO-TABLE",
+      "type": "repository",
+      "location": "packages/explorEDA/src/components/charts/DataTable",
+      "anchor": "current table settings, sorting, paging, search, text filters, column widths, and CSV export",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "SRC-REPO-CHARTS",
+      "type": "repository",
+      "location": "packages/explorEDA/src/charts; packages/explorEDA/src/components/charts; packages/explorEDA/src/components/ChartGridLayout.tsx",
+      "anchor": "chart registry, eleven registered view types, grid layout, chart settings, brushing, and faceting",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "SRC-REPO-PRD",
+      "type": "repository-documentation",
+      "location": "packages/explorEDA/docs/archive/prd/overall.md; packages/explorEDA/docs/archive/prd/14-data-table/data_table.md; packages/explorEDA/docs/archive/prd/16-filter-rework/plan.md; packages/explorEDA/docs/archive/prd/08-faceting/status.md",
+      "anchor": "earlier product goals and recorded implementation status",
+      "authority": "older first-party product intent and implementation notes"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "INT-001",
+        "type": "outcome",
+        "statement": "Users can understand unfamiliar tabular data through one connected workspace of field summaries, source rows, charts, and filters.",
+        "commitment": "repeated",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "program",
+        "sources": ["SRC-TABLE-FOUNDATION", "SRC-VIZ-ARCHITECTURE", "SRC-DASHBOARD", "SRC-DATA-FLOW"]
+      },
+      {
+        "id": "INT-002",
+        "type": "desired-experience",
+        "statement": "Useful tables and charts appear from field types and data distributions with few required choices.",
+        "commitment": "repeated",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first-release",
+        "sources": ["SRC-TABLE-FOUNDATION", "SRC-TABLE-STATE", "SRC-DASHBOARD"]
+      },
+      {
+        "id": "INT-003",
+        "type": "required-behavior",
+        "statement": "Table controls adapt to row count, column count, field type, and the user's task.",
+        "commitment": "repeated",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first-release",
+        "sources": ["SRC-TABLE-FOUNDATION", "SRC-TABLE-RENDERING", "SRC-TABLE-FILTERS", "SRC-TABLE-STATE"]
+      },
+      {
+        "id": "INT-004",
+        "type": "required-behavior",
+        "statement": "Sorting, filtering, visible columns, formatting, detail disclosure, and export work as one coherent table experience.",
+        "commitment": "repeated",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first-release",
+        "sources": ["SRC-TABLE-FOUNDATION", "SRC-TABLE-RENDERING", "SRC-TABLE-FILTERS", "SRC-TABLE-STATE"]
+      },
+      {
+        "id": "INT-005",
+        "type": "required-behavior",
+        "statement": "Chart brushing, table filters, and explicit filter controls update related views through shared active-row state.",
+        "commitment": "repeated",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first-release",
+        "sources": ["SRC-TABLE-FILTERS", "SRC-DASHBOARD", "SRC-FACETS"]
+      },
+      {
+        "id": "INT-006",
+        "type": "required-behavior",
+        "statement": "The workspace makes active filters, filter scope, remaining rows, and reset behavior clear.",
+        "commitment": "repeated",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first-release",
+        "sources": ["SRC-TABLE-FILTERS", "SRC-DASHBOARD"]
+      },
+      {
+        "id": "INT-007",
+        "type": "required-behavior",
+        "statement": "Saved state restores charts, layout, calculations, filters, formats, and other settings needed to reproduce an analysis.",
+        "commitment": "repeated",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first-release",
+        "sources": ["SRC-TABLE-STATE", "SRC-DASHBOARD"]
+      },
+      {
+        "id": "INT-008",
+        "type": "desired-experience",
+        "statement": "Faceted views support direct comparison through deliberate shared scales, legends, headers, and interaction behavior.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first-release",
+        "sources": ["SRC-FACETS"]
+      },
+      {
+        "id": "INT-009",
+        "type": "outcome",
+        "statement": "A chart definition can describe its full path from source data through transformations and rendering.",
+        "commitment": "repeated",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "eventual",
+        "sources": ["SRC-VIZ-ARCHITECTURE", "SRC-TRACEABILITY", "SRC-SPEC-PIPELINE", "SRC-SPEC-LAYERS"]
+      },
+      {
+        "id": "INT-010",
+        "type": "required-behavior",
+        "statement": "Users can trace a rendered mark back to contributing rows and intermediate transformations.",
+        "commitment": "repeated",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "eventual",
+        "sources": ["SRC-VIZ-ARCHITECTURE", "SRC-TRACEABILITY", "SRC-SPEC-PIPELINE", "SRC-SPEC-LAYERS"]
+      },
+      {
+        "id": "INT-011",
+        "type": "required-behavior",
+        "statement": "The data model can eventually represent multiple tables, relationships, joins, lookups, aggregations, and derived values.",
+        "commitment": "repeated",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "eventual",
+        "sources": ["SRC-VIZ-ARCHITECTURE", "SRC-DATA-FLOW", "SRC-REPO-PRD"]
+      },
+      {
+        "id": "INT-012",
+        "type": "anti-goal",
+        "statement": "Small or known-schema tables do not expose advanced controls without a concrete user need.",
+        "commitment": "repeated",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "all",
+        "sources": ["SRC-TABLE-FOUNDATION", "SRC-TABLE-STATE"]
+      },
+      {
+        "id": "INT-013",
+        "type": "anti-goal",
+        "statement": "Charts do not hide material data transformations inside opaque rendering code.",
+        "commitment": "repeated",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "all",
+        "sources": ["SRC-VIZ-ARCHITECTURE", "SRC-TRACEABILITY", "SRC-SPEC-PIPELINE"]
+      },
+      {
+        "id": "INT-014",
+        "type": "future-possibility",
+        "statement": "Agents may create deterministic dashboards through a thin specification rather than generated component code.",
+        "commitment": "tentative",
+        "importance": "peripheral",
+        "status": "active",
+        "time_horizon": "eventual",
+        "sources": ["SRC-AGENT-TEMPLATING"]
+      },
+      {
+        "id": "INT-015",
+        "type": "audience",
+        "statement": "Byron is the primary consumer, and his complete analysis application decides near-term product priorities.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "all",
+        "sources": ["SRC-USER-PACKAGE-BOUNDARY"]
+      },
+      {
+        "id": "INT-016",
+        "type": "required-behavior",
+        "statement": "Other React developers can mount the complete analysis workspace with supplied rows and optional configuration or state.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first-release",
+        "sources": ["SRC-USER-PACKAGE-BOUNDARY"]
+      },
+      {
+        "id": "INT-017",
+        "type": "constraint",
+        "statement": "The primary application consumes the same public package boundary offered to other developers.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first-release",
+        "sources": ["SRC-USER-PACKAGE-BOUNDARY", "SRC-REPO-PUBLIC"]
+      },
+      {
+        "id": "INT-018",
+        "type": "decision",
+        "statement": "Breaking public API changes are acceptable, and backward compatibility is not required during current development.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "current",
+        "sources": ["SRC-USER-PACKAGE-BOUNDARY"]
+      },
+      {
+        "id": "INT-019",
+        "type": "decision",
+        "statement": "The first major program boundary assumes one data source and defers multiple sources and joins.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first-release",
+        "sources": ["SRC-USER-PACKAGE-BOUNDARY"]
+      },
+      {
+        "id": "INT-020",
+        "type": "desired-experience",
+        "statement": "The demo includes small purposeful datasets that make source inspection and chart exploration pleasant.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first-release",
+        "sources": ["SRC-USER-DATASETS"]
+      },
+      {
+        "id": "REAL-001",
+        "type": "current-repository-reality",
+        "statement": "The public component accepts one in-memory row array and optional saved workspace state.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "current",
+        "sources": ["SRC-REPO-PUBLIC", "SRC-REPO-DATA"]
+      },
+      {
+        "id": "REAL-002",
+        "type": "current-repository-reality",
+        "statement": "Shared cross-filtering, calculations, a resizable grid, saved state, faceting, and eleven registered view types already exist.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "current",
+        "sources": ["SRC-REPO-DATA", "SRC-REPO-CHARTS"]
+      },
+      {
+        "id": "REAL-003",
+        "type": "current-repository-reality",
+        "statement": "The table supports basic column choice, paging, sorting, text filters, search, width changes, and CSV export.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "current",
+        "sources": ["SRC-REPO-TABLE"]
+      },
+      {
+        "id": "REAL-004",
+        "type": "current-repository-reality",
+        "statement": "The table lacks grouping, row selection, virtual scrolling, column reordering, rich cells, distributions, and type-aware filters.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "current",
+        "sources": ["SRC-REPO-TABLE", "SRC-REPO-PRD"]
+      },
+      {
+        "id": "REAL-005",
+        "type": "current-repository-reality",
+        "statement": "The chart model uses per-type settings and renderers rather than one composable source-to-glyph specification.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "current",
+        "sources": ["SRC-REPO-CHARTS"]
+      },
+      {
+        "id": "REAL-006",
+        "type": "current-repository-reality",
+        "statement": "The demo already consumes the package's public main entry point instead of importing internal workspace code.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "current",
+        "sources": ["SRC-REPO-PUBLIC"]
+      },
+      {
+        "id": "REAL-007",
+        "type": "current-repository-reality",
+        "statement": "The main component accepts data and initial saved state but exposes no public state-change callback for host persistence.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "current",
+        "sources": ["SRC-REPO-PUBLIC", "SRC-REPO-DATA"]
+      },
+      {
+        "id": "REAL-008",
+        "type": "current-repository-reality",
+        "statement": "The repository has several large random samples, but their unseeded generation and generic fields make them weak default examples.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "current",
+        "sources": ["SRC-USER-DATASETS", "SRC-REPO-SAMPLES"]
+      }
+    ],
+    "themes": [
+      "data intake and field understanding",
+      "interactive data table",
+      "filtering and selection",
+      "chart creation and defaults",
+      "dashboard views and persistence",
+      "faceting and comparison",
+      "visualization specification",
+      "traceability and provenance"
+    ],
+    "work_packages": [
+      {
+        "id": "WP-01",
+        "name": "Data intake and field understanding",
+        "repository_fit": "partial",
+        "next_action": "implement with WP-02 through the first shaped slice"
+      },
+      {
+        "id": "WP-02",
+        "name": "Interactive data table",
+        "repository_fit": "partial",
+        "next_action": "implement with WP-01 through the first shaped slice"
+      },
+      {
+        "id": "WP-03",
+        "name": "Filtering and selection",
+        "repository_fit": "strong foundation, incomplete experience",
+        "next_action": "audit after WP-01 and WP-02 shape"
+      },
+      {
+        "id": "WP-04",
+        "name": "Chart creation and defaults",
+        "repository_fit": "partial",
+        "next_action": "shape after field model is stable"
+      },
+      {
+        "id": "WP-05",
+        "name": "Dashboard views and persistence",
+        "repository_fit": "partial",
+        "next_action": "separate temporary filters from durable view state"
+      },
+      {
+        "id": "WP-06",
+        "name": "Faceting and comparison",
+        "repository_fit": "implemented foundation, quality work remains",
+        "next_action": "focused behavior and usability audit"
+      },
+      {
+        "id": "WP-07",
+        "name": "Visualization specification",
+        "repository_fit": "early foundation only",
+        "next_action": "defer until two concrete chart workflows expose the needed common model"
+      },
+      {
+        "id": "WP-08",
+        "name": "Traceability and provenance",
+        "repository_fit": "mostly missing",
+        "next_action": "prove one chart-to-row path before generalizing"
+      }
+    ],
+    "package_boundary": {
+      "status": "resolved",
+      "application_owns": [
+        "file and source acquisition",
+        "routes and navigation",
+        "examples and onboarding",
+        "local or remote view storage",
+        "account and product-specific features"
+      ],
+      "package_owns": [
+        "field summaries and analysis state",
+        "tables and charts",
+        "calculations and filters",
+        "workspace layout and controls",
+        "serializable workspace state",
+        "public host integration hooks"
+      ],
+      "compatibility": "breaking changes allowed during current development",
+      "first_release_data_scope": "one source"
+    },
+    "conflicts": [
+      {
+        "id": "CON-001",
+        "summary": "The transcripts describe an end-user workspace, while the repository presents a reusable React package plus demo.",
+        "material": false,
+        "resolution": "Resolved: the application is primary, while the package owns the reusable analysis workspace and remains its public engine."
+      },
+      {
+        "id": "CON-002",
+        "summary": "Multiple tables are a repeated long-term goal, but the current API and implementation assume one row array.",
+        "material": false,
+        "resolution": "Resolved: keep multiple tables as an eventual goal and use one source for the first major program boundary."
+      }
+    ],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "One focused vertical slice delivered through several small waves, with one in-memory data source.",
+    "problem": "A user can load data and create charts, but the first exploration loop is fragmented and under-explained.",
+    "recommended_shape": {
+      "summary": "Use a small dataset pack and one shared field profile to drive a default field summary, improved source table, type-aware filters, and chart defaults inside the public package. Keep source ownership and persistence in the host application.",
+      "included_work_packages": ["WP-01", "WP-02"],
+      "public_boundary": "The application supplies rows and optional saved state. The package owns the analysis workspace and emits serializable state changes.",
+      "dataset_pack": [
+        "Palmer Penguins for mixed values, groups, and missing data",
+        "UCI red wine quality for numeric distributions and correlations",
+        "a deterministic synthetic shop operations fixture for dates, booleans, nulls, skew, seasonality, and outliers",
+        "the existing Lorenz fixture for linked selection and faceting"
+      ],
+      "provisional_choices": [
+        "exact public state callback signature",
+        "date inference threshold",
+        "which field actions appear in the first summary"
+      ]
+    },
+    "success_moves": [
+      "Prove the complete flow through the package's public entry point in the demo.",
+      "Use one field profile across summary, table, filters, and later chart defaults.",
+      "Keep storage outside the package and expose one small state-emission seam.",
+      "Improve numeric, categorical, text, and date behavior in separate useful steps.",
+      "Measure a representative dataset before adding table virtualization.",
+      "Keep tests focused on profiling, filtering, and serialization logic. Give each small dataset one clear behavior to prove."
+    ],
+    "first_proof": {
+      "question": "Can the public package turn one arbitrary dataset into a clear, stateful exploration loop without application-specific analysis code?",
+      "artifact": "A demo flow with Palmer Penguins and a deterministic synthetic shop fixture, default field summary and source table, numeric and categorical filters, visible active-row state, and host state capture.",
+      "decision_rule": "Proceed when summary, table, and one chart agree on types, filters, and remaining rows, and reload restores the analysis through the public API.",
+      "deliberately_excludes": [
+        "multiple sources and joins",
+        "remote data",
+        "saved-view management",
+        "rich cells",
+        "grouping and virtualization",
+        "new advanced charts",
+        "general visualization grammar"
+      ]
+    },
+    "rabbit_holes": [
+      "universal data-source adapters",
+      "general visualization grammar",
+      "unmeasured table virtualization",
+      "custom cell-renderer plug-in systems",
+      "simultaneous controlled and uncontrolled workspace APIs",
+      "backward compatibility for the current package API",
+      "a dataset catalog or generator framework"
+    ],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "planned",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/Projects/explorEDA",
+      "revision": "568b6d1",
+      "worktree_status": "untracked transcript, intent, dataset, and browser output; in-flight ThreeDScatter repair excluded from this plan",
+      "subsystems": [
+        "DataLayerProvider and CrossfilterWrapper",
+        "calculation engine",
+        "chart registry and chart definitions",
+        "DataTable and SummaryTable",
+        "facet layouts and FacetAxisProvider",
+        "ChartGridLayout and PlotManager",
+        "saved data validation and restoration",
+        "demo CSV and JSON intake"
+      ],
+      "test_commands": [
+        "pnpm --filter exploreda test",
+        "pnpm --filter demo build",
+        "pnpm check"
+      ],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda test && pnpm --filter demo build",
+      "network_required": false,
+      "fixtures": [
+        "Palmer Penguins",
+        "UCI red wine quality",
+        "fixed-seed shop operations"
+      ]
+    },
+    "milestones": [
+      {
+        "id": "M1",
+        "title": "Loaded rows become an inspection workspace",
+        "outcome": "Rows loaded without saved state show a shared field summary and source table by default.",
+        "proof": "Palmer Penguins and shop operations open through the public package with correct field and row facts.",
+        "valid_intermediate_state": "Uploads and new consumers get useful inspection views without filter or persistence changes.",
+        "rollback": "Revert the default workspace and shared profile changes; existing saved examples remain available.",
+        "dependencies_introduced": []
+      },
+      {
+        "id": "M2",
+        "title": "Table filters match each field",
+        "outcome": "Numeric, categorical, boolean, text, and date fields get suitable filters with visible row counts.",
+        "proof": "Filters from the table update the summary and one existing chart, and reset restores all rows.",
+        "valid_intermediate_state": "The package supports a complete single-source inspect-and-filter loop without host persistence.",
+        "rollback": "Revert field-aware controls while retaining the shared profile and default inspection workspace.",
+        "dependencies_introduced": []
+      },
+      {
+        "id": "M3",
+        "title": "A host can save and restore the workspace",
+        "outcome": "The public component emits serializable changes and accepts them again after remount.",
+        "proof": "The demo host captures state, remounts with the same rows, and restores the same visible analysis.",
+        "valid_intermediate_state": "The package is useful to the primary app and other React hosts without owning storage.",
+        "rollback": "Remove the optional callback; savedData input and clipboard export continue to work.",
+        "dependencies_introduced": []
+      }
+    ],
+    "cut_line": [
+      "multiple sources and joins",
+      "general visualization grammar and traceability graph",
+      "advanced table features",
+      "server loading and remote persistence",
+      "dataset catalog and generator framework",
+      "new WebGL behavior"
+    ],
+    "open_decisions": [
+      {
+        "id": "DEC-DATE-INFERENCE",
+        "decision_output": "Exact rule for classifying string fields as dates",
+        "evidence": "Palmer, shop operations, World Bank, and numeric-string fixtures",
+        "fallback": "Require all non-null sampled strings to match ISO-like dates"
+      },
+      {
+        "id": "DEC-PROFILE-COST",
+        "decision_output": "Full scan or deterministic sample for large sources",
+        "evidence": "Browser timing for FIFA and World Bank",
+        "fallback": "Use the current deterministic sampling helper for estimates"
+      }
+    ]
+  },
+  "history": [
+    {
+      "date": "2026-09-14",
+      "phase": "intent",
+      "change": "Created the program intent brief, identified eight work packages, and reconciled each package with the current repository."
+    },
+    {
+      "date": "2026-09-14",
+      "phase": "intent",
+      "change": "Resolved the application and package boundary, allowed breaking API changes, and deferred multi-source support."
+    },
+    {
+      "date": "2026-09-14",
+      "phase": "shape",
+      "change": "Shaped the first vertical slice around a shared field profile, default summary and table, type-aware filters, and public host state emission."
+    },
+    {
+      "date": "2026-09-14",
+      "phase": "shape",
+      "change": "Added a small purposeful dataset pack to the first source-and-inspection slice."
+    },
+    {
+      "date": "2026-09-15",
+      "phase": "plan",
+      "change": "Created a three-milestone implementation plan for default inspection, field-aware filters, and public state restoration."
+    }
+  ]
+}
