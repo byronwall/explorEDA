@@ -6,9 +6,52 @@ Date: 2026-09-14
 
 explorEDA has a strong product concept. It lets users connect charts, filters, tables, and calculations in one workspace.
 
-The current interface does not yet support that concept. The main problems are structural, not decorative. Controls overlap. Important actions fail. Spacing changes by accident instead of following a system.
+At audit time, the interface did not yet support that concept. The main problems were structural, not decorative. Controls overlapped. Important actions failed. Spacing changed by accident instead of following a system.
 
 The recommended direction is a calm data workbench. Use one compact toolbar, quiet surfaces, clear chart frames, and a small token set. Do not add a large design system or new UI dependency.
+
+## Implementation status (2026-09-15)
+
+The findings below are the original audit findings. This audit remains the evidence record.
+Desktop support is >=1024 CSS px. Mobile and narrow layouts remain out of scope.
+
+| Original finding                                   | Status   | Relevant commit                 | Current verification                                                    |
+| -------------------------------------------------- | -------- | ------------------------------- | ----------------------------------------------------------------------- |
+| Return action blocks Calculations                  | Resolved | `f7bc87e`, `e2232ad`            | Normal-flow header; 1024 and 1280 desktop captures.                     |
+| Calculation helper actions submit the form         | Resolved | `f7bc87e`                       | Current source sets explicit types for helper actions.                  |
+| Summary chart actions have no accessible name      | Resolved | `f7bc87e`                       | Labels include the action, chart type, and column.                      |
+| Landing card content has no horizontal padding     | Resolved | `3ef1b25`                       | Cards use `px-5` and separate badge flow.                               |
+| Workspace overlaps while layout settles            | Resolved | `cd67997`                       | Grid waits for measured width; settled Box Plot captures pass.          |
+| Borders use text color instead of the border token | Resolved | `3ef1b25`, `14d850b`, `4a17da4` | Global `border-border` and quieter variants are present.                |
+| Motion has no reduced-motion treatment             | Resolved | `e2232ad`, `3f72048`            | Landing, spinner, and shared overlay animations honor reduced motion.   |
+| Workspace heading hierarchy starts at level three  | Resolved | `e2232ad`                       | Workspace `h1` and chart-area `h2` are present.                         |
+| Navigation does not reset scroll position          | Resolved | `f7bc87e`                       | Focus and `scrollIntoView` run after data loads.                        |
+| Shell spends too much space before the work area   | Resolved | `e2232ad`, `1949bb2`            | 1024 and 1280 landing and workspace checks show tighter vertical space. |
+
+### Final post-change desktop sweep (2026-09-15)
+
+The final sweep covers all nine examples at 1280 CSS pixels. Selected boundary cases also cover 1024 CSS pixels.
+
+| Example              | Result | Relevant commit(s)                         | Sweep evidence                                                                   |
+| -------------------- | ------ | ------------------------------------------ | -------------------------------------------------------------------------------- |
+| Lorenz               | Pass   | `5ef70de`, `4a17da4`                       | Six 3D canvases render, survive a 2D brush, and sync cameras. Console clean.     |
+| Box Plot             | Pass   | `4a17da4`                                  | Console clean; no settled panel overlap or header collision.                     |
+| Pivot + Categorical  | Pass   | `45e1831`, `93ccde3`, `ffb6b33`            | Row labels and ticks fit. Bar geometry stays above ticks at 1280.                |
+| Color Legend         | Pass   | `45e1831`, `4a17da4`                       | Passes at 1280 and 1024.                                                         |
+| Line Chart           | Pass   | `8601d72`, `45e1831`, `93ccde3`            | Axes pass at 1280 and 1024.                                                      |
+| Summary + Data Table | Pass   | `1949bb2`, `4a17da4`                       | Summary Table polish; console clean and no settled panel overlap.                |
+| FIFA                 | Pass   | `8601d72`, `45e1831`, `ffb6b33`            | Row labels pass after the row fixes. Prior slow settle is not a current failure. |
+| World Bank           | Pass   | `45e1831`, `93ccde3`, `568b6d1`, `1bc4713` | All 16 facets show readable axes and a nonblank title.                           |
+| NBA                  | Pass   | `45e1831`, `4a17da4`                       | Passes at 1280 and 1024; scatter axes and points align.                          |
+
+All relevant console checks were clean. No settled panel overlap or header collision appeared.
+
+### Resolved post-audit sweep items
+
+| Item               | Status   | Commit    | Verification                                                                          |
+| ------------------ | -------- | --------- | ------------------------------------------------------------------------------------- |
+| Blank panel titles | Resolved | `1bc4713` | Line Chart and World Bank show fallback titles with matching accessible action names. |
+| 3D lifecycle       | Resolved | `5ef70de` | All six 3D canvases render automatically, survive a 2D brush, and sync cameras.       |
 
 ### Intended audience and purpose
 
@@ -19,6 +62,8 @@ The recommended direction is a calm data workbench. Use one compact toolbar, qui
 - **Out of scope:** Narrow and mobile layouts. Defects below 1024 pixels are not release blockers.
 
 ### Highest-priority problems
+
+These are the baseline problems recorded during the audit. See the implementation status table for current state.
 
 1. The absolute return control overlaps the workspace tabs. Pointer clicks on **Calculations** open the landing page.
 2. Calculation helper buttons submit the form. **Validate** creates a calculation instead of only validating it.
@@ -43,6 +88,10 @@ The audit used the local Vite demo at `/explorEDA/`.
 - Desktop viewport: 1280 by 720 pixels.
 - Inputs: pointer and keyboard.
 - Browser console: No warnings or errors during the tested flows.
+- Final post-change sweep: all nine examples checked at 1280 CSS pixels.
+- Boundary checks: selected examples checked at 1024 CSS pixels.
+- Sweep result: clean console output and no settled panel overlap in every example.
+- Final result: no settled panel overlap or header collision in the checked flows.
 - Build: `pnpm --filter demo build` passed.
 - Narrow-width observations were removed after the product scope was clarified.
 
@@ -63,6 +112,8 @@ The audit used the local Vite demo at `/explorEDA/`.
 
 ## UX scorecard
 
+This is the baseline scorecard from the audit session. Use the implementation status table above for current repair status; do not read these scores as a fresh post-change measurement.
+
 | Category                            | Score | Coverage | Evidence-based rationale                                              |
 | ----------------------------------- | ----: | -------- | --------------------------------------------------------------------- |
 | Orientation and purpose             |   4/5 | High     | The first heading and two start paths are clear.                      |
@@ -79,6 +130,8 @@ The audit used the local Vite demo at `/explorEDA/`.
 
 ## Technical audit health score
 
+This is the baseline technical score from the audit session. The current source has since repaired several findings listed below.
+
 | #         | Dimension                |    Score | Key finding                                                                  |
 | --------- | ------------------------ | -------: | ---------------------------------------------------------------------------- |
 | 1         | Accessibility            |      1/4 | Unnamed icon actions and no reduced-motion path.                             |
@@ -90,6 +143,8 @@ The audit used the local Vite demo at `/explorEDA/`.
 
 ## Implementation integrity verdict
 
+This is the baseline verdict from the audit session. The implementation status and post-change sweep above record current evidence.
+
 **Fail.** The interface has useful product-specific parts, but its shell does not form one coherent system.
 
 The most important evidence is functional. A pointer click on **Calculations** activates **Return to Examples**. Helper buttons in the calculation form use the browser's default submit behavior.
@@ -97,6 +152,8 @@ The most important evidence is functional. A pointer click on **Calculations** a
 The mechanical detector reported two warnings. The spinner warning is not material. The Markdown side border is a low-priority style issue. Neither warning explains the main quality problems.
 
 ## Journey results
+
+These results preserve the original audit observations. They are not a post-change measurement.
 
 ### 1. Orient
 
@@ -142,6 +199,8 @@ The mechanical detector reported two warnings. The spinner warning is not materi
 ![Calculations reached with keyboard activation](tmp/evals/website-experience-audit/2026-09-14-ui-ux/calculations-keyboard-desktop.jpg)
 
 ## Prioritized findings
+
+These findings preserve the original evidence and acceptance checks. Their current status is in the implementation status table.
 
 ### P1 — The return action blocks the Calculations tab
 
@@ -280,65 +339,15 @@ Use a neutral workbench with one restrained blue accent. The charts should provi
 
 ### Recommended tokens
 
-Keep this token set small. Add no new design-system package.
+Do not add a second `--ui-*`, spacing, or type token system. The applied token system is the existing semantic CSS variables in `packages/explorEDA/src/index.css`, mapped to Tailwind utilities through `@theme`. Use those variables for color, border, radius, and focus semantics. Use Tailwind spacing and type utilities such as `gap-6`, `p-6`, `text-sm`, and `text-xl` for layout and text scale.
 
-```css
-:root {
-  /* Color */
-  --ui-canvas: #f7f8fa;
-  --ui-surface: #ffffff;
-  --ui-surface-subtle: #f2f4f7;
-  --ui-text: #101828;
-  --ui-text-muted: #667085;
-  --ui-border: #d0d5dd;
-  --ui-border-subtle: #eaecf0;
-  --ui-accent: #2563eb;
-  --ui-accent-hover: #1d4ed8;
-  --ui-success: #15803d;
-  --ui-danger: #b42318;
-  --ui-focus: #2563eb;
+| Surface                           | Applied system                                                                       |
+| --------------------------------- | ------------------------------------------------------------------------------------ |
+| Page, cards, panels, and controls | Semantic color variables such as `--background`, `--card`, `--border`, and `--ring`. |
+| Spacing and type                  | Tailwind spacing, size, weight, and leading utilities.                               |
+| Borders and radius                | Global `border-border` plus the existing `--border` and `--radius` mappings.         |
 
-  /* Space: 4-pixel base */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
-  --space-12: 3rem;
-
-  /* Type */
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-md: 1rem;
-  --text-lg: 1.25rem;
-  --text-xl: 1.75rem;
-  --leading-tight: 1.25;
-  --leading-body: 1.5;
-
-  /* Shape and controls */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --control-sm: 2rem;
-  --control-md: 2.5rem;
-
-  /* Elevation */
-  --shadow-popover: 0 12px 32px rgb(16 24 40 / 0.16);
-}
-```
-
-### Token application map
-
-| Surface                    | Apply                                                                      |
-| -------------------------- | -------------------------------------------------------------------------- |
-| Page                       | `--ui-canvas`, `--ui-text`, `--space-8`                                    |
-| Cards and chart panels     | `--ui-surface`, `--ui-border-subtle`, `--radius-lg`                        |
-| Toolbars                   | `--ui-surface`, bottom `--ui-border`, `--space-2` gaps                     |
-| Inputs and select controls | `--control-md`, `--ui-border`, `--radius-md`                               |
-| Popovers and dialogs       | `--ui-surface`, `--shadow-popover`, `--radius-lg`                          |
-| Focus                      | 2-pixel `--ui-focus` ring with a 2-pixel offset                            |
-| Success and error text     | `--ui-success` and `--ui-danger`; do not use light utility colors on white |
+No additional token is required by the current source. Extend the existing semantic variables only if a later repeated value needs central control.
 
 ### Typography rules
 
@@ -350,37 +359,16 @@ Keep this token set small. Add no new design-system package.
 - Use sentence case for all actions and headings.
 - Limit landing copy to about 60 characters per line.
 
-## Recommended implementation order
+## Recommended next steps
 
-### Pass 1 — Repair broken actions
+No active audit findings remain in the supported desktop scope.
 
-1. Move Return to Examples into the workspace header.
-2. Add `type="button"` to calculation helper actions.
-3. Add accessible names to summary chart actions.
-4. Reset focus and scroll after example navigation.
+1. Keep broader integration flow tests deferred until behavior stabilizes. Current verification is lean browser checks plus `pnpm --filter demo build` and `pnpm --filter demo check-types`.
+2. Run a fresh audit later to rescore the desktop experience.
 
-### Pass 2 — Establish the visual system
+## Deferred review commands
 
-1. Add the small token set to the shared CSS entry.
-2. Apply the border token globally.
-3. Replace ad hoc page, card, panel, and toolbar spacing.
-4. Standardize button and input heights.
-
-### Pass 3 — Visual polish
-
-1. Reduce border contrast and repeated outlines.
-2. Improve title truncation and toolbar grouping.
-3. Add a stable loading shell for chart layout.
-4. Add reduced-motion styles.
-5. Test all nine examples at representative supported desktop widths.
-
-## Recommended Impeccable commands
-
-1. **P1 `/impeccable layout`:** Repair the header, landing cards, chart spacing, and control grouping.
-2. **P1 `/impeccable harden`:** Fix form button behavior, accessible names, focus, and reduced motion.
-3. **P2 `/impeccable typeset`:** Apply the compact workbench type scale.
-4. **P2 `/impeccable quieter`:** Reduce borders and let data visuals carry color.
-5. **P3 `/impeccable polish`:** Run final desktop, keyboard, and visual passes.
+1. **`/impeccable audit`:** Re-measure the desktop experience during a future fresh audit.
 
 ## Evidence index
 
@@ -408,6 +396,4 @@ The minimum release bar is:
 - Landing and workspace spacing use the defined token scale.
 - All nine examples pass visual checks at representative supported desktop widths.
 
-You can run the recommended commands one at a time, together, or in another order.
-
-Re-run `/impeccable audit` after the fixes to measure the new score.
+The original recommendations remain above as historical audit context. The next audit should measure the updated score against the current desktop scope.
