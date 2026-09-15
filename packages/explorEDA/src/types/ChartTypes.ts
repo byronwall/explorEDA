@@ -116,7 +116,7 @@ export interface BaseChartProps<
   facetIds?: IdType[];
 }
 
-export type datum = string | number | boolean | undefined;
+export type datum = string | number | boolean | null | undefined;
 export interface ChartDefinition<
   TSettings extends BaseChartSettings = BaseChartSettings,
 > {

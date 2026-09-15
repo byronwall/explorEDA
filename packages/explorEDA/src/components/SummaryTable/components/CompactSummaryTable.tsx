@@ -17,36 +17,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ChartActions } from "./ChartActions";
-import { DataType } from "../utils/dataTypeDetection";
+import type { FieldProfile } from "@/lib/fieldProfiles";
 import { getChartSummary } from "../../charts/chartAccessibility";
 import type { SummaryTableSettings } from "../../charts/SummaryTable/definition";
 
-interface ColumnSummary {
-  name: string;
-  dataType: DataType | "unknown";
-  totalCount: number;
-  uniqueCount: number;
-  nullCount: number;
-  statistics?: NumericStatistics;
-  categories?: CategoryStatistics;
-}
-
-interface NumericStatistics {
-  min: number;
-  max: number;
-  mean: number;
-  median: number;
-  stdDev: number;
-}
-
-interface CategoryStatistics {
-  topValues: Array<{ value: string; count: number }>;
-  distribution: Record<string, number>;
-}
-
 interface CompactSummaryTableProps {
-  data: ColumnSummary[];
-  onSort: (column: keyof ColumnSummary) => void;
+  data: FieldProfile[];
+  onSort: (column: keyof FieldProfile) => void;
   totalRows: number;
   settings: SummaryTableSettings;
 }
@@ -103,11 +80,7 @@ export function CompactSummaryTable({
                 <div className="flex gap-1">
                   <ChartActions
                     columnName={summary.name}
-                    dataType={
-                      summary.dataType === "unknown"
-                        ? "categorical"
-                        : summary.dataType
-                    }
+                    dataType={summary.dataType}
                   />
                 </div>
               </TableCell>

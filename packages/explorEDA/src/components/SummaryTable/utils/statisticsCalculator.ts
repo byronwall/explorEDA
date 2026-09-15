@@ -1,7 +1,7 @@
 import { datum } from "@/types/ChartTypes";
 import { DataType } from "./dataTypeDetection";
 
-interface NumericStatistics {
+export interface NumericStatistics {
   min: number;
   max: number;
   mean: number;
@@ -9,12 +9,12 @@ interface NumericStatistics {
   stdDev: number;
 }
 
-interface CategoryStatistics {
+export interface CategoryStatistics {
   topValues: Array<{ value: string; count: number }>;
   distribution: Record<string, number>;
 }
 
-interface ColumnStatistics {
+export interface ColumnStatistics {
   dataType: DataType;
   totalCount: number;
   uniqueCount: number;
@@ -30,7 +30,8 @@ export function calculateColumnStatistics(
   const values = Object.values(columnData);
   const totalCount = values.length;
   const nullCount = values.filter((v) => v == null).length;
-  const uniqueValues = new Set(values);
+  const nonNullValues = values.filter((v) => v != null);
+  const uniqueValues = new Set(nonNullValues);
   const uniqueCount = uniqueValues.size;
 
   if (dataType === "numeric") {
@@ -93,7 +94,7 @@ export function calculateColumnStatistics(
   } else {
     // For non-numeric types, calculate category statistics
     const distribution: Record<string, number> = {};
-    values.forEach((v) => {
+    nonNullValues.forEach((v) => {
       const key = String(v);
       distribution[key] = (distribution[key] || 0) + 1;
     });

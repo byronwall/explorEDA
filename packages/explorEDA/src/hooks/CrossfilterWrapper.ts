@@ -4,7 +4,7 @@ import { ChartSettings } from "@/types/ChartTypes";
 import crossfilter from "crossfilter2";
 import isEqual from "react-fast-compare";
 
-type FieldValue = string | number | boolean | undefined;
+type FieldValue = string | number | boolean | null | undefined;
 
 type ChartDimension<TData, TId extends IdType> = {
   dimension: crossfilter.Dimension<TData, TId>;

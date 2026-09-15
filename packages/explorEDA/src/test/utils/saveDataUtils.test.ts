@@ -152,6 +152,20 @@ describe("saveDataUtils", () => {
         })
       ).toBe(true);
     });
+
+    it("accepts null values in saved value filters", () => {
+      expect(
+        validateSavedData({
+          ...mockValidData,
+          charts: [
+            {
+              ...valid3dChart,
+              filters: [{ type: "value", field: "x", values: [null] }],
+            },
+          ],
+        })
+      ).toBe(true);
+    });
   });
 
   describe("saveToClipboard", () => {

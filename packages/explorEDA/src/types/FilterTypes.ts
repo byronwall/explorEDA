@@ -26,7 +26,7 @@ export interface ChartFilters {
   filters: Filter[];
 }
 
-export type datum = string | number | boolean | undefined;
+export type datum = string | number | boolean | null | undefined;
 
 // Helper type guards
 export const isValueFilter = (filter: Filter): filter is ValueFilter => {

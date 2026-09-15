@@ -98,6 +98,7 @@ function isFilter(value: unknown): boolean {
 
 function isDatum(value: unknown): boolean {
   return (
+    value === null ||
     value === undefined ||
     typeof value === "string" ||
     typeof value === "boolean" ||

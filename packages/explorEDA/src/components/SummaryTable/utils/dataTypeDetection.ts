@@ -21,7 +21,11 @@ export function detectColumnType(columnData: {
   }
 
   // Check if all values are numbers or can be converted to numbers
-  if (nonNullValues.every((v) => !isNaN(Number(v)))) {
+  if (
+    nonNullValues.every(
+      (v) => v !== "" && (typeof v === "number" || !isNaN(Number(v)))
+    )
+  ) {
     return "numeric";
   }
 

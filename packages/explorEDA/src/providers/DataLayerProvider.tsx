@@ -1,4 +1,4 @@
-import { getChartDefinition } from "@/charts/registry";
+import { chartRegistry, getChartDefinition } from "@/charts/registry";
 import {
   CrossfilterWrapper,
   LiveItem,
@@ -8,6 +8,8 @@ import {
   CalculationDefinition,
   CalculationManager,
 } from "@/lib/calculations/CalculationState";
+import { FieldProfile, buildFieldProfiles } from "@/lib/fieldProfiles";
+import { DataTableSettings } from "@/components/charts/DataTable/definition";
 import { ChartLayout, ChartSettings, datum } from "@/types/ChartTypes";
 import { ColorScaleType } from "@/types/ColorScaleTypes";
 import {
@@ -61,9 +63,10 @@ export type HasId = { __ID: IdType };
 
 interface DataLayerState<T extends DatumObject> extends DataLayerProps<T> {
   data: (T & HasId)[];
+  fieldProfiles: FieldProfile[];
   emptyColumn: Record<IdType, datum>;
   fileName: string | undefined;
-  setData: (data: T[], fileName?: string) => void;
+  setData: (data: T[], fileName?: string, useDefaults?: boolean) => void;
 
   liveItems: LiveItemMap;
 
@@ -154,6 +157,34 @@ function getDataAndCrossfilterWrapper<T extends DatumObject>(
   };
 }
 
+function createDefaultWorkspaceCharts(
+  fieldProfiles: FieldProfile[]
+): ChartSettings[] {
+  if (
+    fieldProfiles.length === 0 ||
+    !chartRegistry.has("summary") ||
+    !chartRegistry.has("data-table")
+  ) {
+    return [];
+  }
+
+  const summary = getChartDefinition("summary").createDefaultSettings({
+    x: 0,
+    y: 0,
+    w: 4,
+    h: 6,
+  });
+  const table = getChartDefinition("data-table").createDefaultSettings({
+    x: 4,
+    y: 0,
+    w: 8,
+    h: 6,
+  }) as DataTableSettings;
+  table.columns = fieldProfiles.map(({ name }) => ({ id: name, field: name }));
+
+  return [summary, table];
+}
+
 // Store creator
 const getInitialStoreState = <T extends DatumObject>(
   initProps?: Partial<DataLayerProps<T>>
@@ -161,6 +192,7 @@ const getInitialStoreState = <T extends DatumObject>(
   Pick<
     DataLayerState<T>,
     | "data"
+    | "fieldProfiles"
     | "emptyColumn"
     | "crossfilterWrapper"
     | "calculationManager"
@@ -180,6 +212,7 @@ const getInitialStoreState = <T extends DatumObject>(
     crossfilterWrapper,
     calculationManager: ogCalculationManager,
   } = getDataAndCrossfilterWrapper(initProps?.data ?? []);
+  const fieldProfiles = buildFieldProfiles(initProps?.data ?? []);
 
   if (!crossfilterWrapper || !initData || !ogCalculationManager) {
     throw new Error(
@@ -213,6 +246,7 @@ const getInitialStoreState = <T extends DatumObject>(
 
     return {
       data: initData,
+      fieldProfiles,
       emptyColumn: initialEmptyColumn!,
       crossfilterWrapper,
       calculationManager: ogCalculationManager,
@@ -230,11 +264,12 @@ const getInitialStoreState = <T extends DatumObject>(
   // Return default state if no saved data
   return {
     data: initData,
+    fieldProfiles,
     emptyColumn: initialEmptyColumn!,
     crossfilterWrapper,
     calculationManager: ogCalculationManager,
     calculations: [],
-    charts: initProps?.charts ?? [],
+    charts: initProps?.charts ?? createDefaultWorkspaceCharts(fieldProfiles),
     colorScales: [],
     gridSettings: {
       columnCount: 12,
@@ -262,7 +297,7 @@ const createDataLayerStore = <T extends DatumObject>(
   const store = createStore<DataLayerState<T>>()((set, get) => ({
     ...initialState,
     liveItems: {},
-    setData: (rawData, fileName) => {
+    setData: (rawData, fileName, useDefaults = true) => {
       // Get fresh crossfilter and data with IDs
       const {
         data: newData,
@@ -270,6 +305,7 @@ const createDataLayerStore = <T extends DatumObject>(
         crossfilterWrapper: newCrossfilter,
         calculationManager: newCalculationManager,
       } = getDataAndCrossfilterWrapper(rawData, get().getColumnData);
+      const fieldProfiles = buildFieldProfiles(rawData);
 
       if (
         !newData ||
@@ -280,26 +316,21 @@ const createDataLayerStore = <T extends DatumObject>(
         throw new Error("Failed to reset data layer");
       }
 
-      // Create default summary chart
-      const definition = getChartDefinition("summary");
-
-      const summaryChart = definition.createDefaultSettings({
-        x: 0,
-        y: 0,
-        w: 4,
-        h: 6,
-      });
-      newCrossfilter.addChart(summaryChart);
+      const charts = useDefaults
+        ? createDefaultWorkspaceCharts(fieldProfiles)
+        : [];
+      charts.forEach((chart) => newCrossfilter.addChart(chart));
 
       // Reset everything to initial state
       set({
         data: newData,
+        fieldProfiles,
         emptyColumn: newEmptyColumn,
         fileName,
         crossfilterWrapper: newCrossfilter,
         calculationManager: newCalculationManager,
         calculations: [],
-        charts: [summaryChart],
+        charts,
         colorScales: [],
         liveItems: newCrossfilter.getAllData(),
         columnCache: {},
@@ -440,10 +471,8 @@ const createDataLayerStore = <T extends DatumObject>(
     },
 
     getColumnNames() {
-      const { data, calculations } = get();
-      const baseColumns = Object.keys(data[0] || {}).filter(
-        (field) => field !== "__ID"
-      );
+      const { fieldProfiles, calculations } = get();
+      const baseColumns = fieldProfiles.map((profile) => profile.name);
 
       const calcFields = calculations.map((calc) => calc.resultColumnName);
 
@@ -718,7 +747,7 @@ export function DataLayerProvider<T extends DatumObject>({
     const savedDataChanged = previousProps.savedData !== nextSavedData;
 
     if (dataChanged) {
-      store.getState().setData(nextData ?? []);
+      store.getState().setData(nextData ?? [], undefined, !nextSavedData);
       if (nextSavedData) {
         store.getState().restoreFromStructure(nextSavedData);
       }

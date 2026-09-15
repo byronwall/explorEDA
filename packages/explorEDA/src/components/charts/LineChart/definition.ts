@@ -2,6 +2,7 @@ import {
   type BaseChartSettings,
   type ChartDefinition,
   type ChartLayout,
+  type datum,
 } from "@/types/ChartTypes";
 import { applyFilter } from "@/hooks/applyFilter";
 import { IdType } from "@/providers/DataLayerProvider";
@@ -100,9 +101,7 @@ export const lineChartDefinition: ChartDefinition<LineChartSettings> = {
   },
   getFilterFunction: (
     settings: LineChartSettings,
-    fieldGetter: (
-      name: string
-    ) => Record<IdType, string | number | boolean | undefined>
+    fieldGetter: (name: string) => Record<IdType, datum>
   ) => {
     return (d: IdType) =>
       settings.filters.every((filter: Filter) =>

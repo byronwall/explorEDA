@@ -3,6 +3,8 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { getChartDefinition } from "../../charts/registry";
 import { registerAllCharts } from "../../charts/registerAllCharts";
 import { parseExpression } from "../../lib/calculations/parser/semantics";
+import { SummaryTable } from "../../components/charts/SummaryTable/SummaryTable";
+import type { SummaryTableSettings } from "../../components/charts/SummaryTable/definition";
 import {
   DataLayerProvider,
   useDataLayer,
@@ -12,6 +14,11 @@ import { SavedDataStructure } from "../../types/SavedDataStructure";
 const data = [
   { name: "A", value: 2 },
   { name: "B", value: 3 },
+];
+
+const dataWithLateField = [
+  { name: "A", value: 2 },
+  { name: "B", value: 3, late: true },
 ];
 
 function Probe() {
@@ -59,6 +66,25 @@ function LayoutProbe() {
   );
 }
 
+function WorkspaceProbe() {
+  const charts = useDataLayer((state) => state.charts);
+  const setData = useDataLayer((state) => state.setData);
+
+  return (
+    <>
+      <output data-testid="workspace">
+        {JSON.stringify(
+          charts.map((chart) => ({
+            type: chart.type,
+            columns: chart.type === "data-table" ? chart.columns : undefined,
+          }))
+        )}
+      </output>
+      <button onClick={() => setData([{ replacement: 1 }])}>replace</button>
+    </>
+  );
+}
+
 function savedData(calculations: SavedDataStructure["calculations"] = []) {
   return {
     charts: [],
@@ -93,6 +119,110 @@ describe("DataLayerProvider", () => {
     expect(screen.getByTestId("columns")).toHaveTextContent("name");
     expect(screen.getByTestId("columns")).toHaveTextContent("value");
     expect(screen.getByTestId("columns")).not.toHaveTextContent("__ID");
+  });
+
+  it("creates a summary and table from the union of source fields", () => {
+    render(
+      <DataLayerProvider data={dataWithLateField}>
+        <WorkspaceProbe />
+      </DataLayerProvider>
+    );
+
+    expect(screen.getByTestId("workspace")).toHaveTextContent(
+      '"type":"summary"'
+    );
+    expect(screen.getByTestId("workspace")).toHaveTextContent(
+      '"type":"data-table"'
+    );
+    expect(screen.getByTestId("workspace")).toHaveTextContent('"field":"late"');
+  });
+
+  it("does not create defaults when saved data is supplied", () => {
+    render(
+      <DataLayerProvider data={data} savedData={savedData()}>
+        <WorkspaceProbe />
+      </DataLayerProvider>
+    );
+
+    expect(screen.getByTestId("workspace")).toHaveTextContent("[]");
+  });
+
+  it("keeps saved state precedence when the source rows change", async () => {
+    const view = render(
+      <DataLayerProvider data={data}>
+        <WorkspaceProbe />
+      </DataLayerProvider>
+    );
+
+    view.rerender(
+      <DataLayerProvider data={dataWithLateField} savedData={savedData()}>
+        <WorkspaceProbe />
+      </DataLayerProvider>
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId("workspace")).toHaveTextContent("[]")
+    );
+  });
+
+  it("does not expose the internal row id when saved state is removed", async () => {
+    const view = render(
+      <DataLayerProvider data={data} savedData={savedData()}>
+        <WorkspaceProbe />
+      </DataLayerProvider>
+    );
+
+    view.rerender(
+      <DataLayerProvider data={data}>
+        <WorkspaceProbe />
+      </DataLayerProvider>
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId("workspace")).toHaveTextContent(
+        '"field":"value"'
+      )
+    );
+    expect(screen.getByTestId("workspace")).not.toHaveTextContent("__ID");
+  });
+
+  it("adds calculated fields to the shared summary profiles", () => {
+    const calculation = {
+      expression: parseExpression("value * 2"),
+      resultColumnName: "double",
+    };
+    const settings = getChartDefinition("summary").createDefaultSettings({
+      x: 0,
+      y: 0,
+      w: 1,
+      h: 1,
+    }) as SummaryTableSettings;
+
+    render(
+      <DataLayerProvider data={data} savedData={savedData([calculation])}>
+        <SummaryTable settings={settings} width={400} height={400} />
+      </DataLayerProvider>
+    );
+
+    expect(screen.getByText("double")).toBeInTheDocument();
+  });
+
+  it("creates no defaults for empty rows and reuses the builder on setData", async () => {
+    const view = render(
+      <DataLayerProvider data={[]}>
+        <WorkspaceProbe />
+      </DataLayerProvider>
+    );
+
+    expect(screen.getByTestId("workspace")).toHaveTextContent("[]");
+    fireEvent.click(screen.getByRole("button", { name: "replace" }));
+
+    await waitFor(() =>
+      expect(screen.getByTestId("workspace")).toHaveTextContent(
+        '"field":"replacement"'
+      )
+    );
+    view.unmount();
   });
 
   it("replaces data when the input prop changes", async () => {
