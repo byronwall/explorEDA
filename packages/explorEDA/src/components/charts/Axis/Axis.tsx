@@ -100,24 +100,18 @@ export function YAxis({
   showGridLines = false,
   axisLabel,
 }: AxisProps) {
-  // Helper function to get ticks
-  const getTicks = () => {
-    if ("ticks" in scale) {
-      // For linear scales
-      return scale.ticks(tickCount);
-    } else {
-      // For band scales
-      return scale.domain();
-    }
-  };
-
-  const ticks = getTicks();
   const range = scale.range();
   const [rangeStart, rangeEnd] = range;
   if (rangeStart === undefined || rangeEnd === undefined) {
     return null;
   }
   const axisLength = rangeStart - rangeEnd;
+  const ticks =
+    "ticks" in scale
+      ? scale.ticks(
+          Math.min(tickCount, Math.max(2, Math.floor(axisLength / 24)))
+        )
+      : scale.domain();
 
   return (
     <g transform={transform} className="text-sm fill-foreground">
