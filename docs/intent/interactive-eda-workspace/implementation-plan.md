@@ -18,6 +18,16 @@ Last, add one public state-change callback. The demo will capture that state and
 
 The current 3D WebGL repairs are not part of this path. None of these milestones need the `ThreeDScatter` files.
 
+## Completion record
+
+All three milestones were completed on 2026-09-15.
+
+- Milestone 1: `f35c80e` and `f298e37`
+- Milestone 2: `180089f`
+- Milestone 3: `14e4f5e`
+
+Package and demo checks passed. Browser checks passed at desktop and mobile widths. The restore kept 500 rows and two filters. No update loop occurred.
+
 ## Implementation strategy
 
 - **First proof:** Load Palmer Penguins through `ExplorEda` with no saved state. See a field summary and data table at once.

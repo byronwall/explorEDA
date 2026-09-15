@@ -618,7 +618,9 @@
     "open_decisions": []
   },
   "implementation": {
-    "status": "planned",
+    "status": "current",
+    "execution_status": "complete",
+    "completed_at": "2026-09-15",
     "repository_snapshot": {
       "root": "/Users/byronwall/Projects/explorEDA",
       "revision": "568b6d1",
@@ -658,6 +660,8 @@
         "proof": "Palmer Penguins and shop operations open through the public package with correct field and row facts.",
         "valid_intermediate_state": "Uploads and new consumers get useful inspection views without filter or persistence changes.",
         "rollback": "Revert the default workspace and shared profile changes; existing saved examples remain available.",
+        "status": "complete",
+        "proof_evidence": "Commits f35c80e and f298e37; package tests and desktop/mobile browser checks passed.",
         "dependencies_introduced": []
       },
       {
@@ -667,6 +671,8 @@
         "proof": "Filters from the table update the summary and one existing chart, and reset restores all rows.",
         "valid_intermediate_state": "The package supports a complete single-source inspect-and-filter loop without host persistence.",
         "rollback": "Revert field-aware controls while retaining the shared profile and default inspection workspace.",
+        "status": "complete",
+        "proof_evidence": "Commit 180089f; connected filters, single-filter removal, and clear all passed browser checks.",
         "dependencies_introduced": []
       },
       {
@@ -676,6 +682,8 @@
         "proof": "The demo host captures state, remounts with the same rows, and restores the same visible analysis.",
         "valid_intermediate_state": "The package is useful to the primary app and other React hosts without owning storage.",
         "rollback": "Remove the optional callback; savedData input and clipboard export continue to work.",
+        "status": "complete",
+        "proof_evidence": "Commit 14e4f5e; callback tests passed. Browser restore kept 500 rows and two filters without an update loop.",
         "dependencies_introduced": []
       }
     ],
@@ -727,6 +735,11 @@
       "date": "2026-09-15",
       "phase": "plan",
       "change": "Created a three-milestone implementation plan for default inspection, field-aware filters, and public state restoration."
+    },
+    {
+      "date": "2026-09-15",
+      "phase": "plan",
+      "change": "Completed all three milestones and verified default inspection, connected field filters, and public workspace restoration."
     }
   ]
 }
