@@ -17,7 +17,11 @@ import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { useAlertStore } from "@/stores/alertStore";
 import { useId } from "react";
-import { getChartFields, getChartSummary } from "./charts/chartAccessibility";
+import {
+  getChartFields,
+  getChartSummary,
+  getChartTitle,
+} from "./charts/chartAccessibility";
 import { dataTableDefinition } from "./charts/DataTable/definition";
 import {
   DropdownMenu,
@@ -46,6 +50,7 @@ export function PlotChartPanel({
   const showAlert = useAlertStore((state) => state.showAlert);
   const titleId = useId();
   const descriptionId = useId();
+  const chartTitle = getChartTitle(settings);
   const chartSummary = getChartSummary(settings);
   const isGraphical = ![
     "data-table",
@@ -67,7 +72,7 @@ export function PlotChartPanel({
       ...settings.layout,
       y: settings.layout.y + settings.layout.h,
     });
-    dataTable.title = `${settings.title} data`;
+    dataTable.title = `${chartTitle} data`;
     dataTable.columns = dataFields.map((field) => ({ id: field, field }));
     dataTable.filters = settings.filters.filter((filter) =>
       dataFields.includes(filter.field)
@@ -106,9 +111,9 @@ export function PlotChartPanel({
           <h3
             id={titleId}
             className="min-w-0 truncate font-medium"
-            title={settings.title}
+            title={chartTitle}
           >
-            {settings.title}
+            {chartTitle}
           </h3>
         </div>
         <div className="flex shrink-0 items-center gap-0">
@@ -117,7 +122,7 @@ export function PlotChartPanel({
               <Button
                 variant="ghost"
                 size="icon"
-                aria-label={`More actions for ${settings.title}`}
+                aria-label={`More actions for ${chartTitle}`}
                 title="More chart actions"
               >
                 <MoreHorizontal className="h-4 w-4" />
@@ -126,7 +131,7 @@ export function PlotChartPanel({
             <DropdownMenuContent align="end">
               <DropdownMenuItem
                 onSelect={onDuplicate}
-                aria-label={`Duplicate ${settings.title}`}
+                aria-label={`Duplicate ${chartTitle}`}
               >
                 <Copy />
                 Duplicate chart
@@ -134,7 +139,7 @@ export function PlotChartPanel({
               {!isTableLike && dataFields.length > 0 && (
                 <DropdownMenuItem
                   onSelect={handleViewData}
-                  aria-label={`View data for ${settings.title}`}
+                  aria-label={`View data for ${chartTitle}`}
                 >
                   <Table2 />
                   View chart data
@@ -142,7 +147,7 @@ export function PlotChartPanel({
               )}
               <DropdownMenuItem
                 onSelect={() => clearFilter(settings)}
-                aria-label={`Clear filters for ${settings.title}`}
+                aria-label={`Clear filters for ${chartTitle}`}
               >
                 <FilterX />
                 Clear chart filters
@@ -154,7 +159,7 @@ export function PlotChartPanel({
               <Button
                 variant="ghost"
                 size="icon"
-                aria-label={`Configure ${settings.title}`}
+                aria-label={`Configure ${chartTitle}`}
                 title="Chart settings"
               >
                 <Settings2 className="h-4 w-4" />
@@ -172,7 +177,7 @@ export function PlotChartPanel({
             variant="ghost"
             size="icon"
             onClick={handleDelete}
-            aria-label={`Delete ${settings.title}`}
+            aria-label={`Delete ${chartTitle}`}
             title="Delete chart"
           >
             <X className="h-4 w-4" />

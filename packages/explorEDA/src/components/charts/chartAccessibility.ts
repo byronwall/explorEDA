@@ -1,4 +1,5 @@
 import { ChartSettings } from "@/types/ChartTypes";
+import { getChartDefinition } from "@/charts/registry";
 
 const chartNames: Record<string, string> = {
   row: "Row chart",
@@ -13,6 +14,10 @@ const chartNames: Record<string, string> = {
   "color-legend": "Color legend",
   markdown: "Markdown note",
 };
+
+export function getChartTitle(settings: ChartSettings): string {
+  return settings.title.trim() || getChartDefinition(settings.type).name;
+}
 
 export function getChartFields(settings: ChartSettings): string[] {
   const fields = (() => {
