@@ -8,6 +8,7 @@ interface ChartRendererProps {
   width: number;
   height: number;
   facetIds?: IdType[];
+  toolbarTarget?: HTMLElement | null;
 }
 
 export function ChartRenderer({
@@ -15,6 +16,7 @@ export function ChartRenderer({
   width,
   height,
   facetIds,
+  toolbarTarget,
 }: ChartRendererProps) {
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
   const definition = useChartDefinition(settings.type);
@@ -53,6 +55,7 @@ export function ChartRenderer({
       width={width}
       height={height}
       facetIds={facetIds}
+      toolbarTarget={toolbarTarget}
     />
   );
 }

@@ -3,7 +3,7 @@ import { SavedDataStructure } from "exploreda";
 export const categoricalSmallSettings: SavedDataStructure = {
   charts: [
     {
-      title: "Data Summary",
+      title: "What fields describe these products?",
       type: "summary",
       field: "",
       layout: { x: 0, y: 0, w: 6, h: 6 },
@@ -26,7 +26,7 @@ export const categoricalSmallSettings: SavedDataStructure = {
       id: "a4a09ac0-43bb-4c46-bd25-5ca0b1fd6a56",
     },
     {
-      title: "Data Table",
+      title: "Which product rows match “Sports”?",
       type: "data-table",
       field: "",
       layout: { x: 6, y: 0, w: 6, h: 5 },
@@ -46,22 +46,26 @@ export const categoricalSmallSettings: SavedDataStructure = {
       xGridLines: 5,
       yGridLines: 5,
       columns: [
-        { id: "Category", field: "Category", width: 50 },
-        { id: "ID", field: "ID", width: 50 },
+        { id: "ID", field: "ID", width: 70 },
+        { id: "Category", field: "Category", width: 120 },
         {
           id: "Subcategory",
           field: "Subcategory",
-          width: 180,
+          width: 150,
+        },
+        { id: "Rating", field: "Rating", width: 80 },
+        {
+          id: "Shipping Weight",
+          field: "Shipping Weight",
+          width: 140,
         },
       ],
-      pageSize: 10,
-      currentPage: 1,
+
       filters: [],
       id: "0ecad4f5-288f-48a3-8ae2-942d24780120",
-      sortDirection: "asc",
-      sortBy: "ID",
-      globalSearch: "",
-      tableHeight: 400,
+      sortDirection: "desc",
+      sortBy: "Rating",
+      globalSearch: "Sports",
     },
   ],
   calculations: [],

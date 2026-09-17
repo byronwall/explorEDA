@@ -110,18 +110,16 @@ describe("LandingPage routing", () => {
     render(<RouterProvider router={router} />);
     const workspace = await screen.findByTestId("workspace");
     expect(workspace).toHaveAttribute("data-rows", "1");
-    expect(workspace).toHaveAttribute("data-has-saved-data", "false");
+    expect(workspace).toHaveAttribute("data-has-saved-data", "true");
     const initialMount = workspace.getAttribute("data-mount");
 
     fireEvent.click(screen.getByRole("button", { name: "Emit state" }));
     expect(screen.getByTestId("workspace")).toHaveAttribute(
       "data-has-saved-data",
-      "false"
+      "true"
     );
 
-    fireEvent.click(
-      screen.getByRole("button", { name: "Restore captured workspace" })
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Reset workspace" }));
 
     await waitFor(() => {
       const restoredWorkspace = screen.getByTestId("workspace");

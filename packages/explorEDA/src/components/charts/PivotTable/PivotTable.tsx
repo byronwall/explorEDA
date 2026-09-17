@@ -1,5 +1,4 @@
 import { calculatePivotData } from "@/components/charts/PivotTable/utils/calculations";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { BaseChartProps } from "@/types/ChartTypes";
@@ -25,7 +24,9 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
   // Get all required field data
   const pivotData = useMemo(() => {
     // Use facetIds if provided, otherwise use liveItems
-    const liveIds = facetIds || allLiveIds;
+    const liveIds = facetIds
+      ? allLiveIds.filter((id) => facetIds.includes(id))
+      : allLiveIds;
 
     // Gather all required fields
     const allFields = new Set([
@@ -126,9 +127,9 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
       const hasRowFilters = rowFieldFilters.some((rf) => rf.filters.length > 0);
       const rowMatches =
         !hasRowFilters ||
-        rowFieldFilters.some(
+        rowFieldFilters.every(
           ({ header, filters }) =>
-            filters.length > 0 &&
+            filters.length === 0 ||
             filters.some((filter) => applyFilter(header.value, filter))
         );
 
@@ -151,166 +152,146 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
     [settings.filters]
   );
 
-  const renderHeader = useCallback(
-    (header: PivotHeader) => {
-      const isFiltered = isValueFiltered(header.field, header.value);
-      return (
-        <th
-          key={`${header.field}-${header.value}`}
-          colSpan={settings.valueFields.length}
-          className={cn(
-            "border p-2",
-            header.depth === 0 && "font-semibold",
-            isFiltered ? "bg-accent/50" : "bg-muted/50"
-          )}
-        >
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6"
-              aria-label={`Filter ${header.field} by ${header.label}`}
-              onClick={() => handleFilterClick(header.field, header.value)}
-            >
-              <FilterIcon className="h-4 w-4" />
-            </Button>
-            <span>{header.label}</span>
-          </div>
-        </th>
-      );
-    },
-    [handleFilterClick, settings.valueFields.length, isValueFiltered]
+  const filterButton = (header: PivotHeader) => (
+    <button
+      type="button"
+      className="eda-pivot-filter"
+      aria-label={`Filter ${header.field} by ${header.label}`}
+      aria-pressed={isValueFiltered(header.field, header.value)}
+      onClick={() => handleFilterClick(header.field, header.value)}
+      title={header.label}
+    >
+      <span>{header.label}</span>
+      <FilterIcon aria-hidden="true" />
+    </button>
   );
-
-  // Calculate the number of header rows needed
+  const valueColumnCount =
+    settings.valueFields.length *
+    (settings.columnField ? pivotData.headers.length : 1);
 
   return (
     <div
-      className={cn("w-full h-full border rounded-md flex flex-col p-4")}
+      className="w-full min-h-0 overflow-auto"
       style={{ height }}
+      tabIndex={0}
+      aria-label="Pivot table, scroll to see more"
     >
-      <div className="overflow-auto flex-1">
-        <table className="w-full border-collapse relative">
-          <caption className="sr-only">{getChartSummary(settings)}</caption>
-          <thead className="sticky top-0 bg-background z-40">
-            {/* First row: Row field headers and column field headers */}
-            <tr>
-              {/* Row field headers */}
-              {settings.rowFields.map((field, i) => {
-                const leftPosition = i * 150; // Match the body's width
-                return (
-                  <th
-                    key={field}
-                    rowSpan={settings.columnField ? 2 : 1}
-                    className={cn(
-                      "border p-2 bg-muted/50 font-semibold sticky",
-                      // Add z-index that decreases as we go right to ensure proper layering
-                      `z-[${30 - i}]` // Higher z-index than body to stay on top
-                    )}
-                    style={{
-                      left: `${leftPosition}px`,
-                      minWidth: "150px",
-                      maxWidth: "150px",
-                    }}
-                  >
-                    {field}
-                  </th>
-                );
-              })}
-
-              {/* Column headers or value fields if no columns */}
-              {!settings.columnField
-                ? settings.valueFields.map((valueField) => (
-                    <th
-                      key={valueField.field}
-                      className="border p-2 bg-muted/50 font-semibold"
-                    >
-                      {valueField.label ||
-                        `${valueField.field} (${valueField.aggregation})`}
-                    </th>
-                  ))
-                : pivotData.headers.map(renderHeader)}
-            </tr>
-
-            {/* Value field headers when column field exists */}
-            {settings.columnField && (
-              <tr>
-                {pivotData.headers.map((header) =>
-                  settings.valueFields.map((valueField) => (
-                    <th
-                      key={`${header.field}-${header.value}-${valueField.field}`}
-                      className="border p-2 bg-muted/50"
-                    >
-                      {valueField.label ||
-                        `${valueField.field} (${valueField.aggregation})`}
-                    </th>
-                  ))
-                )}
-              </tr>
-            )}
-          </thead>
-          <tbody>
-            {pivotData.rows.map((row: PivotRow) => (
-              <tr key={row.keys.map((k) => `${k.field}-${k.value}`).join(":")}>
-                {row.headers.map((header: PivotHeader, i) => {
-                  // Calculate cumulative width of previous headers
-                  const leftPosition = i * 150; // Using fixed width for consistency
-                  const isFiltered = isValueFiltered(
-                    header.field,
-                    header.value
-                  );
-                  return (
-                    <th
-                      key={`${header.field}-${header.value}`}
-                      className={cn(
-                        "border p-2 text-left font-normal sticky",
-                        isFiltered ? "bg-accent/50" : "bg-background",
-                        // Add z-index that decreases as we go right to ensure proper layering
-                        `z-[${20 - i}]`
-                      )}
-                      style={{
-                        left: `${leftPosition}px`,
-                        minWidth: "150px", // Fixed width for consistency
-                        maxWidth: "150px",
-                      }}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6"
-                          aria-label={`Filter ${header.field} by ${header.label}`}
-                          onClick={() =>
-                            handleFilterClick(header.field, header.value)
-                          }
-                        >
-                          <FilterIcon className="h-4 w-4" />
-                        </Button>
-                        <span>{header.label}</span>
-                      </div>
-                    </th>
-                  );
-                })}
-                {row.cells.map((cell: PivotCell) => (
-                  <td
-                    key={`${cell.key.columnField}-${cell.key.columnValue}${cell.key.valueField ? `-${cell.key.valueField}` : ""}`}
-                    className={cn(
-                      "border p-2 text-right",
-                      isCellFiltered(row.headers, cell.key) && "bg-accent/30"
-                    )}
-                  >
-                    {typeof cell.value === "number"
-                      ? cell.value.toLocaleString(undefined, {
-                          maximumFractionDigits: 2,
-                        })
-                      : cell.value}
-                  </td>
-                ))}
-              </tr>
+      <table
+        className="eda-pivot-table"
+        style={{
+          minWidth: settings.rowFields.length * 140 + valueColumnCount * 112,
+        }}
+      >
+        <caption className="sr-only">{getChartSummary(settings)}</caption>
+        <colgroup>
+          {settings.rowFields.map((field) => (
+            <col key={field} style={{ width: 140 }} />
+          ))}
+          {Array.from({ length: valueColumnCount }, (_, index) => (
+            <col key={index} />
+          ))}
+        </colgroup>
+        <thead className="sticky top-0 z-30">
+          <tr>
+            {settings.rowFields.map((field, index) => (
+              <th
+                key={field}
+                scope="col"
+                rowSpan={settings.columnField ? 2 : 1}
+                className="eda-pivot-row-label"
+                style={{ left: index * 140, zIndex: 20 - index }}
+                title={field}
+              >
+                {field}
+              </th>
             ))}
-          </tbody>
-        </table>
-      </div>
+            {settings.columnField
+              ? pivotData.headers.map((header) => (
+                  <th
+                    key={`${header.field}-${header.value}`}
+                    scope="colgroup"
+                    colSpan={settings.valueFields.length}
+                  >
+                    {filterButton(header)}
+                  </th>
+                ))
+              : settings.valueFields.map((valueField) => (
+                  <th
+                    key={valueField.field}
+                    scope="col"
+                    title={
+                      valueField.label ||
+                      `${valueField.field} (${valueField.aggregation})`
+                    }
+                  >
+                    {valueField.label ||
+                      `${valueField.field} (${valueField.aggregation})`}
+                  </th>
+                ))}
+          </tr>
+          {settings.columnField && (
+            <tr>
+              {pivotData.headers.flatMap((header) =>
+                settings.valueFields.map((valueField) => (
+                  <th
+                    key={`${header.field}-${header.value}-${valueField.field}`}
+                    scope="col"
+                    title={
+                      valueField.label ||
+                      `${valueField.field} (${valueField.aggregation})`
+                    }
+                  >
+                    {valueField.label ||
+                      `${valueField.field} (${valueField.aggregation})`}
+                  </th>
+                ))
+              )}
+            </tr>
+          )}
+        </thead>
+        <tbody>
+          {pivotData.rows.map((row: PivotRow) => (
+            <tr
+              key={row.keys.map((key) => `${key.field}-${key.value}`).join(":")}
+            >
+              {row.headers.map((header, index) => (
+                <th
+                  key={`${header.field}-${header.value}`}
+                  scope="row"
+                  className="eda-pivot-row-label"
+                  style={{ left: index * 140, zIndex: 10 - index }}
+                >
+                  {filterButton(header)}
+                </th>
+              ))}
+              {row.cells.map((cell: PivotCell) => (
+                <td
+                  key={`${cell.key.columnField}-${cell.key.columnValue}-${cell.key.valueField}`}
+                  className={cn(
+                    isCellFiltered(row.headers, cell.key) && "is-selected"
+                  )}
+                >
+                  {typeof cell.value === "number"
+                    ? cell.value.toLocaleString(undefined, {
+                        maximumFractionDigits: 2,
+                      })
+                    : cell.value}
+                </td>
+              ))}
+            </tr>
+          ))}
+          {pivotData.rows.length === 0 && (
+            <tr>
+              <td
+                colSpan={settings.rowFields.length + valueColumnCount}
+                className="text-muted-foreground"
+              >
+                No matching rows
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

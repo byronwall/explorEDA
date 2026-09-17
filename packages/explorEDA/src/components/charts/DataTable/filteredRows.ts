@@ -11,10 +11,10 @@ export function getFilteredRows(
   liveItems: LiveItem | undefined,
   settings: DataTableSettings
 ): DataTableRow[] {
-  const rows = (liveItems?.items ?? [])
-    .filter((item) => item.value > 0)
-    .map((item) => data.find((row) => row.__ID === item.key))
-    .filter((row): row is DataTableRow => row !== undefined);
+  const ids = new Set(
+    liveItems?.items.filter((item) => item.value > 0).map((item) => item.key)
+  );
+  const rows = data.filter((row) => ids.has(row.__ID));
   const search = settings.globalSearch.toLowerCase();
 
   return rows.filter((row) => {

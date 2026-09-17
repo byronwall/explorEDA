@@ -11,6 +11,8 @@ import { Filter } from "@/types/FilterTypes";
 
 export interface ScatterPlotSettings extends BaseChartSettings {
   type: "scatter";
+  pointSize?: number;
+  pointOpacity?: number;
   xField: string;
   yField: string;
   filters: Filter[];

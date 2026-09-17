@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { FacetAxisProvider } from "@/providers/FacetAxisProvider";
 import { ChartSettings } from "@/types/ChartTypes";
@@ -6,6 +7,8 @@ import {
   FilterX,
   GripVertical,
   MoreHorizontal,
+  Maximize2,
+  Minimize2,
   Settings2,
   Table2,
   X,
@@ -16,7 +19,7 @@ import { ChartSettingsContent } from "./ChartSettingsContent";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { useAlertStore } from "@/stores/alertStore";
-import { useId } from "react";
+import { useId, useState } from "react";
 import {
   getChartFields,
   getChartSummary,
@@ -45,6 +48,10 @@ export function PlotChartPanel({
   width,
   height,
 }: PlotChartPanelProps) {
+  const [expanded, setExpanded] = useState(false);
+  const [toolbarTarget, setToolbarTarget] = useState<HTMLDivElement | null>(
+    null
+  );
   const clearFilter = useDataLayer((state) => state.clearFilter);
   const addChart = useDataLayer((state) => state.addChart);
   const showAlert = useAlertStore((state) => state.showAlert);
@@ -52,13 +59,6 @@ export function PlotChartPanel({
   const descriptionId = useId();
   const chartTitle = getChartTitle(settings);
   const chartSummary = getChartSummary(settings);
-  const isGraphical = ![
-    "data-table",
-    "pivot",
-    "summary",
-    "markdown",
-    "color-legend",
-  ].includes(settings.type);
   const isTableLike = ["data-table", "pivot", "summary"].includes(
     settings.type
   );
@@ -91,32 +91,62 @@ export function PlotChartPanel({
   };
 
   // shrink the panel by 8px on each side to account for the border
-  const widthWithPadding = width - 8;
-  const heightWithPadding = height - 8;
+  const panelWidth = expanded ? window.innerWidth - 40 : width;
+  const panelHeight = expanded ? window.innerHeight - 40 : height;
+  const widthWithPadding = panelWidth - 12;
+  const heightWithPadding = panelHeight - 12;
 
-  return (
+  const panel = (
     <div
-      className="bg-card border border-border/60 rounded-lg m-1 flex min-w-0 flex-col overflow-hidden"
-      style={{ width: widthWithPadding, height: heightWithPadding }}
+      className={`eda-panel bg-card border rounded-lg flex min-w-0 flex-col overflow-hidden ${expanded ? "eda-panel-expanded" : ""}`}
+      style={{
+        width: widthWithPadding,
+        height: heightWithPadding,
+        margin: expanded ? 0 : 6,
+      }}
+      onKeyDown={(event) => {
+        if (
+          event.key === "Escape" &&
+          expanded &&
+          !event.defaultPrevented &&
+          event.currentTarget.contains(event.target as Node)
+        ) {
+          setExpanded(false);
+        }
+      }}
       role="region"
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
     >
-      <div className="flex min-h-9 items-center justify-between gap-1 select-none border-b border-border/40 bg-muted/30 px-2 py-1">
+      <div className="eda-panel-header flex min-h-10 items-center justify-between gap-1 select-none px-3 py-1">
         <div className="drag-handle flex min-w-0 flex-1 cursor-move items-center gap-2">
           <GripVertical
-            className="h-4 w-4 shrink-0 text-muted-foreground"
+            className="eda-drag h-3 w-3 shrink-0 text-muted-foreground"
             aria-hidden="true"
           />
           <h3
             id={titleId}
-            className="min-w-0 truncate font-medium"
+            className="min-w-0 truncate text-sm font-semibold"
             title={chartTitle}
           >
             {chartTitle}
           </h3>
         </div>
-        <div className="flex shrink-0 items-center gap-0">
+        <div className="eda-panel-actions flex shrink-0 items-center gap-0">
+          {isTableLike && <div ref={setToolbarTarget} />}
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={`${expanded ? "Restore" : "Expand"} ${chartTitle}`}
+            title={expanded ? "Restore size" : "Expand chart"}
+            onClick={() => setExpanded(!expanded)}
+          >
+            {expanded ? (
+              <Minimize2 className="h-4 w-4" />
+            ) : (
+              <Maximize2 className="h-4 w-4" />
+            )}
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -129,6 +159,13 @@ export function PlotChartPanel({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onSelect={handleDelete}
+                className="text-destructive"
+              >
+                <X />
+                Delete chart
+              </DropdownMenuItem>
               <DropdownMenuItem
                 onSelect={onDuplicate}
                 aria-label={`Duplicate ${chartTitle}`}
@@ -166,47 +203,42 @@ export function PlotChartPanel({
               </Button>
             </PopoverTrigger>
             <PopoverContent
-              className="w-[min(30rem,calc(100vw-2rem))] max-h-[calc(100vh-2rem)] overflow-y-auto"
-              side="left"
-              align="start"
+              className="eda-settings-popover w-[min(30rem,calc(100vw-1rem))] max-w-[calc(100vw-1rem)]"
+              style={{
+                maxHeight: "var(--radix-popover-content-available-height)",
+                overflow: "hidden",
+              }}
+              side="bottom"
+              align="end"
+              collisionPadding={8}
             >
               <ChartSettingsContent settings={settings} />
             </PopoverContent>
           </Popover>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleDelete}
-            aria-label={`Delete ${chartTitle}`}
-            title="Delete chart"
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </div>
       </div>
       <p id={descriptionId} className="sr-only">
         {chartSummary}
       </p>
-      <div
-        className="min-h-0 flex-1"
-        aria-hidden={isGraphical ? true : undefined}
-      >
+      <div className="eda-chart-content min-h-0 flex-1">
         <FacetAxisProvider>
           {settings.facet?.enabled ? (
             <FacetContainer
               settings={settings}
-              width={width - 32}
-              height={height - 48}
+              width={Math.max(1, panelWidth - 24)}
+              height={Math.max(1, panelHeight - 58)}
             />
           ) : (
             <ChartRenderer
               settings={settings}
-              width={width - 32}
-              height={height - 48}
+              toolbarTarget={isTableLike ? toolbarTarget : undefined}
+              width={Math.max(1, panelWidth - 24)}
+              height={Math.max(1, panelHeight - 58)}
             />
           )}
         </FacetAxisProvider>
       </div>
     </div>
   );
+  return expanded ? createPortal(panel, document.body) : panel;
 }

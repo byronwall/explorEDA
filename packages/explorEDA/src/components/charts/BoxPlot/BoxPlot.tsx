@@ -1,18 +1,19 @@
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { numericScale } from "../Axis/numericScale";
 import { applyFilter } from "@/hooks/applyFilter";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useFacetAxis } from "@/providers/FacetAxisProvider";
 import { BaseChartProps } from "@/types/ChartTypes";
 import { Filter, datum } from "@/types/FilterTypes";
-import { ScaleLinear, scaleBand, scaleLinear } from "d3-scale";
+import { ScaleLinear, scaleBand } from "d3-scale";
 import natsort from "natsort";
-import { useCallback, useEffect, useMemo } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { BaseChart } from "../BaseChart";
 import { useGetColumnDataForIds } from "../useGetColumnData";
 import { useGetLiveData } from "../useGetLiveData";
@@ -32,6 +33,7 @@ export function BoxPlot({
   height,
   facetIds,
 }: BaseChartProps<BoxPlotSettings>) {
+  const [tooltip, setTooltip] = useState<ReactNode>(null);
   const updateChart = useDataLayer((s) => s.updateChart);
   const { getColorForValue } = useColorScales();
   const registerAxisLimits = useFacetAxis((s) => s.registerAxisLimits);
@@ -39,6 +41,7 @@ export function BoxPlot({
 
   // Get all data for axis limits calculation
   const allData = useGetColumnDataForIds(settings.field);
+  const allGroupData = useGetColumnDataForIds(settings.colorField);
 
   // Get filtered data for rendering
   const liveData = useGetLiveData(settings, settings.field, facetIds);
@@ -52,14 +55,21 @@ export function BoxPlot({
   const hasColorField = !!settings.colorField;
 
   // Chart dimensions
-  const margin = settings.margin;
+  const margin = {
+    ...settings.margin,
+    left: Math.max(settings.margin.left, settings.yAxisLabel ? 64 : 42),
+    bottom: Math.max(settings.margin.bottom, settings.xAxisLabel ? 44 : 28),
+  };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
   // Group data by color field if specified
   const groupedData = useMemo(() => {
     if (!hasColorField) {
-      const validData = liveData.map(Number).filter((x) => !isNaN(x));
+      const validData = liveData
+        .filter((value) => value != null && value !== "")
+        .map(Number)
+        .filter(Number.isFinite);
 
       const result = [
         {
@@ -80,7 +90,7 @@ export function BoxPlot({
         return;
       }
 
-      if (isNaN(numValue)) {
+      if (value == null || value === "" || !Number.isFinite(numValue)) {
         return;
       }
 
@@ -99,7 +109,10 @@ export function BoxPlot({
 
     // If we have no valid groups but we do have data, fall back to single group
     if (result.length === 0 && liveData.length > 0) {
-      const validData = liveData.map(Number).filter((x) => !isNaN(x));
+      const validData = liveData
+        .filter((value) => value != null && value !== "")
+        .map(Number)
+        .filter(Number.isFinite);
 
       return [
         {
@@ -129,15 +142,14 @@ export function BoxPlot({
 
     return groupedData.map(({ group, data }) => {
       // Calculate bandwidth using Silverman's rule of thumb
+      const mean = data.reduce((sum, value) => sum + value, 0) / data.length;
       const stdDev = Math.sqrt(
-        data.reduce(
-          (sum, x) =>
-            sum +
-            Math.pow(x - data.reduce((a, b) => a + b, 0) / data.length, 2),
-          0
-        ) / data.length
+        data.reduce((sum, value) => sum + (value - mean) ** 2, 0) / data.length
       );
-      const autoBandwidth = 1.06 * stdDev * Math.pow(data.length, -0.2);
+      const autoBandwidth = Math.max(
+        0.001,
+        1.06 * (stdDev || 1) * Math.pow(Math.max(1, data.length), -0.2)
+      );
 
       const bandwidth = settings.autoBandwidth
         ? autoBandwidth
@@ -157,14 +169,33 @@ export function BoxPlot({
 
   // Create scales
   const xScale = useMemo(() => {
-    const groups = groupedData.map((g) => g.group?.toString() ?? "All Data");
+    const groups = settings.colorField
+      ? [...new Set(allGroupData.filter((value) => value != null).map(String))]
+      : ["All Data"];
 
-    // Sort groups based on settings
+    const medians = new Map<string, number>();
+    if (settings.sortBy === "median") {
+      const values = new Map<string, number[]>();
+      allData.forEach((value, index) => {
+        if (value == null || value === "" || !Number.isFinite(Number(value)))
+          return;
+        const group = settings.colorField
+          ? String(allGroupData[index])
+          : "All Data";
+        if (!values.has(group)) values.set(group, []);
+        values.get(group)!.push(Number(value));
+      });
+      values.forEach((data, group) =>
+        medians.set(
+          group,
+          calculateBoxPlotStats(data, settings.whiskerType).median
+        )
+      );
+    }
+    // Keep the population order while linked filters change the displayed statistics.
     const sortedGroups = [...groups].sort((a, b) => {
       if (settings.sortBy === "median") {
-        const aStats = groupStats.find((g) => g.group?.toString() === a)?.stats;
-        const bStats = groupStats.find((g) => g.group?.toString() === b)?.stats;
-        return (bStats?.median ?? 0) - (aStats?.median ?? 0);
+        return (medians.get(b) ?? 0) - (medians.get(a) ?? 0);
       }
       return natsort()(a, b);
     });
@@ -175,7 +206,14 @@ export function BoxPlot({
       .padding(BOX_PADDING);
 
     return scale;
-  }, [groupedData, innerWidth, settings.sortBy, groupStats]);
+  }, [
+    allData,
+    allGroupData,
+    settings.colorField,
+    innerWidth,
+    settings.sortBy,
+    settings.whiskerType,
+  ]);
 
   // Create path generator for violin shapes
   const createPath = useCallback((points: [number, number][]) => {
@@ -206,9 +244,12 @@ export function BoxPlot({
 
   // Create y scale with synchronized limits if in a facet
   const yScale = useMemo(() => {
-    const allStats = groupStats.map((g) => g.stats);
-    const min = Math.min(...allStats.map((s) => s.whiskerLow));
-    const max = Math.max(...allStats.map((s) => s.whiskerHigh));
+    const values = allData
+      .filter((value) => value != null && value !== "")
+      .map(Number)
+      .filter(Number.isFinite);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
     const range = max - min;
     const padding = range * Y_SCALE_PADDING;
 
@@ -217,12 +258,18 @@ export function BoxPlot({
     const globalMax =
       globalYLimits?.type === "numerical" ? globalYLimits.max : max + padding;
 
-    const scale = scaleLinear()
-      .domain([globalMin, globalMax])
+    const scale = numericScale(settings.yAxis)
+      .domain([
+        settings.yAxis.scaleType === "symlog" ? min : globalMin,
+        globalMax,
+      ])
       .range([innerHeight, 0]);
 
     return scale;
-  }, [groupStats, innerHeight, globalYLimits]) as ScaleLinear<number, number>;
+  }, [allData, innerHeight, globalYLimits, settings.yAxis]) as ScaleLinear<
+    number,
+    number
+  >;
 
   // Register axis limits with the facet context
   useEffect(() => {
@@ -252,38 +299,6 @@ export function BoxPlot({
     yScale,
     groupedData,
   ]);
-
-  const handleBrushChange = useCallback(
-    (extent: [[number, number], [number, number]] | null) => {
-      if (!extent) {
-        // Remove range filter for the field
-        const newFilters = settings.filters.filter(
-          (f: Filter) => f.field !== settings.field
-        );
-        updateChart(settings.id, { filters: newFilters });
-        return;
-      }
-
-      const [, [, y1]] = extent;
-      const yStart = yScale.invert(y1);
-      const yEnd = yScale.invert(extent[0][1]);
-
-      // Create new filters array with updated range filter
-      const newFilters = settings.filters.filter(
-        (f: Filter) => f.field !== settings.field
-      );
-
-      newFilters.push({
-        type: "range",
-        field: settings.field,
-        min: Math.min(yStart, yEnd),
-        max: Math.max(yStart, yEnd),
-      });
-
-      updateChart(settings.id, { filters: newFilters });
-    },
-    [settings.id, settings.field, settings.filters, updateChart, yScale]
-  );
 
   const activeFilter = useMemo(() => {
     return settings.filters.find(
@@ -356,47 +371,34 @@ export function BoxPlot({
   );
 
   return (
-    <div style={{ width, height }}>
-      <TooltipProvider>
-        <BaseChart
-          width={width}
-          height={height}
-          xScale={xScale}
-          yScale={yScale}
-          brushingMode="2d"
-          onBrushChange={handleBrushChange}
-          settings={settings}
-        >
-          {/* Axis labels */}
-          {settings.xAxisLabel && (
-            <text
-              x={innerWidth / 2}
-              y={innerHeight + margin.bottom - 5}
-              textAnchor="middle"
-              className="text-sm fill-muted-foreground"
-            >
-              {settings.xAxisLabel}
-            </text>
-          )}
-          {settings.yAxisLabel && (
-            <text
-              x={-innerHeight / 2}
-              y={-margin.left + 15}
-              textAnchor="middle"
-              transform="rotate(-90)"
-              className="text-sm fill-muted-foreground"
-            >
-              {settings.yAxisLabel}
-            </text>
-          )}
-
-          {/* Main content */}
-          {groupStats.map(({ group, stats }) => {
+    <div
+      className="relative"
+      style={{ width, height }}
+      onPointerLeave={() => setTooltip(null)}
+    >
+      {tooltip && (
+        <div role="tooltip" className="eda-tooltip">
+          {tooltip}
+        </div>
+      )}
+      <BaseChart
+        width={width}
+        height={height}
+        xScale={xScale}
+        yScale={yScale}
+        brushingMode="none"
+        settings={{ ...settings, margin }}
+      >
+        {/* Main content */}
+        {groupStats
+          .filter(({ stats }) => stats.totalCount > 0)
+          .map(({ group, stats }) => {
             const isFiltered = isGroupFiltered(group);
             const boxColor = isFiltered
               ? getColorForValue(
                   settings.colorScaleId,
-                  group ?? settings.styles.boxFill
+                  group,
+                  settings.styles.boxFill
                 )
               : "rgb(156 163 175)";
             const xPos = xScale(group?.toString() ?? "") ?? 0;
@@ -412,25 +414,41 @@ export function BoxPlot({
               (g) => g.group === group
             )?.positions;
 
-            // Create tooltip content for the box
+            const format = (value: number) =>
+              value.toLocaleString(undefined, { maximumFractionDigits: 2 });
             const boxTooltipContent = (
-              <div className="space-y-1">
-                <p className="font-medium">{group?.toString() ?? "All Data"}</p>
-                <p>Total Points: {stats.totalCount}</p>
-                <p>Outliers: {stats.outliers.length}</p>
-                <p>Q1: {stats.q1.toFixed(2)}</p>
-                <p>Median: {stats.median.toFixed(2)}</p>
-                <p>Q3: {stats.q3.toFixed(2)}</p>
-                <p>IQR: {stats.iqr.toFixed(2)}</p>
+              <div>
+                <p className="font-medium">
+                  {group?.toString() ?? "All Data"}{" "}
+                  <span className="font-normal text-muted-foreground">
+                    · {stats.totalCount} rows
+                  </span>
+                </p>
+                <dl className="grid grid-cols-[auto_auto] gap-x-3">
+                  <dt>Median</dt>
+                  <dd className="text-right tabular-nums">
+                    {format(stats.median)}
+                  </dd>
+                  <dt>Middle 50%</dt>
+                  <dd className="text-right tabular-nums">
+                    {format(stats.q1)}–{format(stats.q3)}
+                  </dd>
+                  {stats.outliers.length > 0 && (
+                    <>
+                      <dt>Outliers</dt>
+                      <dd className="text-right">{stats.outliers.length}</dd>
+                    </>
+                  )}
+                </dl>
               </div>
             );
-
-            // Create tooltip content for whiskers
             const whiskerTooltipContent = (
-              <div className="space-y-1">
+              <div>
                 <p className="font-medium">{group?.toString() ?? "All Data"}</p>
-                <p>Lower Whisker: {stats.whiskerLow.toFixed(2)}</p>
-                <p>Upper Whisker: {stats.whiskerHigh.toFixed(2)}</p>
+                <p>
+                  Whiskers {format(stats.whiskerLow)}–
+                  {format(stats.whiskerHigh)}
+                </p>
               </div>
             );
 
@@ -440,42 +458,56 @@ export function BoxPlot({
                 transform={`translate(${xPos}, 0)`}
               >
                 {/* Whiskers */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <line
-                      x1={boxWidth / 2}
-                      x2={boxWidth / 2}
-                      y1={yScale(stats.whiskerHigh)}
-                      y2={yScale(stats.whiskerLow)}
-                      stroke={boxColor}
-                      strokeWidth={settings.styles.whiskerStrokeWidth}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>{whiskerTooltipContent}</TooltipContent>
-                </Tooltip>
+                <line
+                  onPointerEnter={() => setTooltip(whiskerTooltipContent)}
+                  onPointerLeave={() => setTooltip(null)}
+                  x1={boxWidth / 2}
+                  x2={boxWidth / 2}
+                  y1={yScale(stats.whiskerHigh)}
+                  y2={yScale(stats.whiskerLow)}
+                  stroke={boxColor}
+                  strokeWidth={settings.styles.whiskerStrokeWidth}
+                />
 
                 {/* Box */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <rect
-                      x={0}
-                      y={yScale(stats.q3)}
-                      width={boxWidth}
-                      height={yScale(stats.q1) - yScale(stats.q3)}
-                      fill={boxColor}
-                      stroke={settings.styles.boxStroke}
-                      strokeWidth={settings.styles.boxStrokeWidth}
-                      onClick={() => handleBoxClick(group)}
-                      style={{
-                        cursor: settings.colorField ? "pointer" : "default",
-                      }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>{boxTooltipContent}</TooltipContent>
-                </Tooltip>
+                <rect
+                  onPointerEnter={() => setTooltip(boxTooltipContent)}
+                  onPointerMove={() => setTooltip(boxTooltipContent)}
+                  onPointerLeave={() => setTooltip(null)}
+                  onFocus={() => setTooltip(boxTooltipContent)}
+                  onBlur={() => setTooltip(null)}
+                  role={settings.colorField ? "button" : undefined}
+                  tabIndex={settings.colorField ? 0 : undefined}
+                  aria-label={`${group}: median ${stats.median.toFixed(2)}, ${stats.totalCount} records`}
+                  aria-pressed={
+                    activeFilter?.type === "value"
+                      ? activeFilter.values.includes(group)
+                      : false
+                  }
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      handleBoxClick(group);
+                    }
+                  }}
+                  className="chart-mark"
+                  rx={2}
+                  x={boxWidth * 0.15}
+                  y={yScale(stats.q3)}
+                  width={boxWidth * 0.7}
+                  height={yScale(stats.q1) - yScale(stats.q3)}
+                  fill={boxColor}
+                  stroke={settings.styles.boxStroke}
+                  strokeWidth={settings.styles.boxStrokeWidth}
+                  onClick={() => handleBoxClick(group)}
+                  style={{
+                    cursor: settings.colorField ? "pointer" : "default",
+                  }}
+                />
 
                 {/* Median line */}
                 <line
+                  pointerEvents="none"
                   x1={0}
                   x2={boxWidth}
                   y1={yScale(stats.median)}
@@ -487,20 +519,18 @@ export function BoxPlot({
                 {/* Outliers */}
                 {settings.showOutliers &&
                   stats.outliers.map((value: number, i: number) => (
-                    <Tooltip key={i}>
-                      <TooltipTrigger asChild>
-                        <circle
-                          cx={boxWidth / 2}
-                          cy={yScale(value)}
-                          r={settings.styles.outlierSize}
-                          fill={boxColor}
-                          stroke={settings.styles.outlierStroke}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Outlier: {value.toFixed(2)}</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    <circle
+                      key={i}
+                      onPointerEnter={() =>
+                        setTooltip(<span>Outlier: {format(value)}</span>)
+                      }
+                      onPointerLeave={() => setTooltip(null)}
+                      cx={boxWidth / 2}
+                      cy={yScale(value)}
+                      r={settings.styles.outlierSize}
+                      fill={boxColor}
+                      stroke={settings.styles.outlierStroke}
+                    />
                   ))}
 
                 {/* Violin plot overlay */}
@@ -522,10 +552,10 @@ export function BoxPlot({
                                     yScale(x),
                                   ] as [number, number]
                               ),
-                              [
-                                boxWidth / 2,
-                                yScale(lastKde[0]),
-                              ] as [number, number],
+                              [boxWidth / 2, yScale(lastKde[0])] as [
+                                number,
+                                number,
+                              ],
                             ]
                           : // Otherwise show full violin
                             [
@@ -584,8 +614,7 @@ export function BoxPlot({
               </g>
             );
           })}
-        </BaseChart>
-      </TooltipProvider>
+      </BaseChart>
     </div>
   );
 }

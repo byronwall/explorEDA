@@ -29,12 +29,10 @@ const mockSettings: DataTableSettings = {
     { id: "name", field: "name", width: 200 },
     { id: "age", field: "age", width: 100 },
   ],
-  pageSize: 10,
-  currentPage: 1,
+
   sortDirection: "asc",
   filters: [],
   globalSearch: "",
-  tableHeight: 600,
 };
 
 const mockData = [
@@ -256,6 +254,7 @@ describe("DataTableHeader", () => {
   });
 
   it("handles column resizing", () => {
+    window.PointerEvent = MouseEvent as typeof PointerEvent;
     const updateChart = vi.fn();
     mockUseDataLayer.mockImplementation(
       (selector: (state: unknown) => unknown) => {
@@ -269,9 +268,9 @@ describe("DataTableHeader", () => {
     renderHeader(mockSettings);
 
     const resizeHandle = screen.getAllByRole("separator")[0]!;
-    fireEvent.mouseDown(resizeHandle, { clientX: 0 });
-    fireEvent.mouseMove(window, { clientX: 50 });
-    fireEvent.mouseUp(window);
+    fireEvent.pointerDown(resizeHandle, { clientX: 0 });
+    fireEvent.pointerMove(window, { clientX: 50 });
+    fireEvent.pointerUp(window);
 
     expect(updateChart).toHaveBeenCalledWith(
       "test-table",
@@ -287,6 +286,7 @@ describe("DataTableHeader", () => {
   });
 
   it("respects minimum column width", () => {
+    window.PointerEvent = MouseEvent as typeof PointerEvent;
     const updateChart = vi.fn();
     mockUseDataLayer.mockImplementation(
       (selector: (state: unknown) => unknown) => {
@@ -300,9 +300,9 @@ describe("DataTableHeader", () => {
     renderHeader(mockSettings);
 
     const resizeHandle = screen.getAllByRole("separator")[0]!;
-    fireEvent.mouseDown(resizeHandle, { clientX: 0 });
-    fireEvent.mouseMove(window, { clientX: -200 }); // Try to make it smaller than minimum
-    fireEvent.mouseUp(window);
+    fireEvent.pointerDown(resizeHandle, { clientX: 0 });
+    fireEvent.pointerMove(window, { clientX: -200 }); // Try to make it smaller than minimum
+    fireEvent.pointerUp(window);
 
     expect(updateChart).toHaveBeenCalledWith(
       "test-table",

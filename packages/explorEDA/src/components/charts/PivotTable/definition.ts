@@ -101,48 +101,20 @@ export const pivotTableDefinition: ChartDefinition<PivotTableSettings> = {
     settings: PivotTableSettings,
     fieldGetter: (name: string) => Record<IdType, datum>
   ) => {
-    // Get all value filters for row and column fields
-    const rowFilters = settings.filters.filter(
-      (f): f is ValueFilter =>
-        f.type === "value" && settings.rowFields.includes(f.field)
+    const fields = [...settings.rowFields, settings.columnField];
+    const filters = settings.filters.filter(
+      (filter): filter is ValueFilter =>
+        filter.type === "value" && fields.includes(filter.field)
     );
-    const columnFilters = settings.filters.filter(
-      (f): f is ValueFilter =>
-        f.type === "value" && f.field === settings.columnField
-    );
-
-    const noMatchingFilters =
-      rowFilters.length === 0 && columnFilters.length === 0;
-
-    return (d: IdType) => {
-      if (noMatchingFilters) {
-        return true;
-      }
-
-      // Check if the data point matches all active row filters
-      const matchesRowFilters = rowFilters.some((filter) => {
-        const dataHash = fieldGetter(filter.field);
-        return applyFilter(dataHash[d], filter);
-      });
-
-      // Check if the data point matches all active column filters
-      const matchesColumnFilters = columnFilters.some((filter) => {
-        const dataHash = fieldGetter(filter.field);
-        return applyFilter(dataHash[d], filter);
-      });
-
-      // if there are only row filters, return true if any row filter matches
-      if (columnFilters.length === 0) {
-        return matchesRowFilters;
-      }
-
-      // if there are only column filters, return true if any column filter matches
-      if (rowFilters.length === 0) {
-        return matchesColumnFilters;
-      }
-
-      // if there are both row and column filters, return true if any row or column filter matches
-      return matchesRowFilters && matchesColumnFilters;
-    };
+    const activeFields = [...new Set(filters.map((filter) => filter.field))];
+    const groups = activeFields.map((field) => ({
+      data: fieldGetter(field),
+      filters: filters.filter((filter) => filter.field === field),
+    }));
+    // Alternatives within one field; intersection across different fields.
+    return (id) =>
+      groups.every((group) =>
+        group.filters.some((filter) => applyFilter(group.data[id], filter))
+      );
   },
 };

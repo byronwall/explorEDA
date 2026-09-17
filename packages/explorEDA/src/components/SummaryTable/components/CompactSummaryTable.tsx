@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import {
-  Table,
   TableBody,
   TableCell,
   TableHead,
@@ -24,110 +23,99 @@ import type { SummaryTableSettings } from "../../charts/SummaryTable/definition"
 interface CompactSummaryTableProps {
   data: FieldProfile[];
   onSort: (column: keyof FieldProfile) => void;
-  totalRows: number;
   settings: SummaryTableSettings;
 }
 
 export function CompactSummaryTable({
   data,
   onSort,
-  totalRows,
   settings,
 }: CompactSummaryTableProps) {
   return (
-    <div className="rounded-md border border-border/60">
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-border/40 px-4 py-2">
-        <span className="text-sm text-muted-foreground">
-          Rows available: {totalRows.toLocaleString()}
-        </span>
-      </div>
-      <Table>
-        <caption className="sr-only">{getChartSummary(settings)}</caption>
-        <TableHeader className="[&_tr]:border-border/40">
-          <TableRow>
-            <TableHead className="w-24"></TableHead>
-            <TableHead>
+    <table className="eda-summary-table w-full border-collapse text-xs">
+      <caption className="sr-only">{getChartSummary(settings)}</caption>
+      <TableHeader className="[&_tr]:border-border/40">
+        <TableRow>
+          <TableHead>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                onClick={() => onSort("name")}
+                className="h-8 text-left font-medium"
+              >
+                Column
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </TableHead>
+          <TableHead className="w-16 text-right">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <span>Distinct</span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Number of distinct values</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </TableHead>
+          <TableHead>Stats</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody className="[&_tr]:border-border/30">
+        {data.map((summary) => (
+          <TableRow key={summary.name}>
+            <TableCell>
               <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  onClick={() => onSort("name")}
-                  className="h-8 text-left font-medium"
-                >
-                  Column
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
+                <DataTypeIcon type={summary.dataType} />
+                <span className="font-medium">{summary.name}</span>
+                {summary.nullCount > 0 && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger
+                        className="shrink-0"
+                        aria-label={`${summary.name}: ${summary.nullCount} null values`}
+                      >
+                        <AlertCircle className="h-4 w-4 text-yellow-500" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{summary.nullCount} null values</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </div>
-            </TableHead>
-            <TableHead className="w-16">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <span>Count</span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Unique values / Total values</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </TableHead>
-            <TableHead>Stats</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody className="[&_tr]:border-border/30">
-          {data.map((summary) => (
-            <TableRow key={summary.name}>
-              <TableCell>
-                <div className="flex gap-1">
-                  <ChartActions
-                    columnName={summary.name}
-                    dataType={summary.dataType}
+            </TableCell>
+            <TableCell className="text-right tabular-nums">
+              {summary.uniqueCount}
+            </TableCell>
+            <TableCell className="relative">
+              <div className="flex flex-wrap gap-2">
+                {summary.statistics && (
+                  <>
+                    <StatBadge type="min" value={summary.statistics.min} />
+                    <StatBadge type="max" value={summary.statistics.max} />
+                  </>
+                )}
+                {summary.categories && summary.categories.topValues[0] && (
+                  <StatBadge
+                    type="common"
+                    value={summary.categories.topValues[0].value}
+                    count={summary.categories.topValues[0].count}
                   />
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <DataTypeIcon type={summary.dataType} />
-                  <span className="font-semibold">{summary.name}</span>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-1">
-                  <span>{summary.uniqueCount}</span>
-                  {summary.nullCount > 0 && (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <AlertCircle className="h-4 w-4 text-yellow-500" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{summary.nullCount} null values</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex flex-wrap gap-2">
-                  {summary.statistics && (
-                    <>
-                      <StatBadge type="min" value={summary.statistics.min} />
-                      <StatBadge type="max" value={summary.statistics.max} />
-                    </>
-                  )}
-                  {summary.categories && summary.categories.topValues[0] && (
-                    <StatBadge
-                      type="common"
-                      value={summary.categories.topValues[0].value}
-                      count={summary.categories.topValues[0].count}
-                    />
-                  )}
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+                )}
+              </div>
+              <div className="eda-summary-actions">
+                <ChartActions
+                  columnName={summary.name}
+                  dataType={summary.dataType}
+                />
+              </div>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </table>
   );
 }

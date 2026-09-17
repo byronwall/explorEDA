@@ -64,9 +64,9 @@ export const nbaStatsSettings: SavedDataStructure = {
     {
       id: "a446cf58-2839-4497-afa0-73782bc573ec",
       type: "color-legend",
-      title: "Color Legend",
+      title: "Player positions",
       field: "",
-      layout: { x: 0, y: 6, w: 6, h: 2 },
+      layout: { x: 0, y: 6, w: 6, h: 1 },
       facet: {
         enabled: false,
         type: "grid",
@@ -91,7 +91,7 @@ export const nbaStatsSettings: SavedDataStructure = {
       title: "Data Table",
       type: "data-table",
       field: "",
-      layout: { x: 6, y: 8, w: 6, h: 4 },
+      layout: { x: 0, y: 7, w: 6, h: 4 },
       xAxis: { scaleType: "linear", grid: false, min: 0, max: 100 },
       yAxis: { scaleType: "linear", grid: false, min: 0, max: 100 },
       margin: { top: 20, right: 20, bottom: 20, left: 20 },
@@ -107,11 +107,10 @@ export const nbaStatsSettings: SavedDataStructure = {
         { id: "Player", field: "Player" },
         { id: "Pos", field: "Pos" },
       ],
-      pageSize: 25,
-      currentPage: 1,
+
       sortDirection: "asc",
       globalSearch: "",
-      tableHeight: 400,
+
       colorScaleId: undefined,
       colorField: undefined,
     },
@@ -121,7 +120,7 @@ export const nbaStatsSettings: SavedDataStructure = {
     columnCount: 12,
     rowHeight: 100,
     containerPadding: 10,
-    showBackgroundMarkers: true,
+    showBackgroundMarkers: false,
   },
   metadata: {
     name: "Untitled",

@@ -17,22 +17,23 @@ export function FacetWrapLayout({
   facetData,
   settings,
 }: FacetWrapLayoutProps) {
+  columns = Math.max(1, Math.min(columns, Math.floor(width / 260)));
   // Calculate dimensions based on the number of facet values
-  const facetWidth = width / (columns || 1);
+  const facetWidth = (width - (columns - 1) * 8) / columns;
   const rows = Math.ceil(facetData.length / (columns || 1));
-  const facetHeight = height / (rows || 1);
+  const facetHeight = Math.max(230, (height - (rows - 1) * 8) / (rows || 1));
 
   return (
     <div
-      className="w-full h-full grid gap-2"
+      className="w-full h-full grid gap-2 overflow-auto"
       style={{
         gridTemplateColumns: `repeat(${columns || 1}, 1fr)`,
         gridAutoRows: `${facetHeight}px`,
       }}
     >
       {facetData.map((facet) => (
-        <div key={facet.id} className="border p-2">
-          <div className="font-medium mb-1">{facet.rowValue}</div>
+        <div key={facet.id} className="border border-border/50 rounded-md p-2">
+          <div className="text-xs font-medium mb-1">{facet.rowValue}</div>
           <div style={{ height: facetHeight - 30 }}>
             <ChartRenderer
               settings={settings}

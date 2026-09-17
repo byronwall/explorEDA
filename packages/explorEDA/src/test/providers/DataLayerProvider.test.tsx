@@ -16,6 +16,7 @@ import {
   useDataLayer,
 } from "../../providers/DataLayerProvider";
 import { SavedDataStructure } from "../../types/SavedDataStructure";
+import { useGetLiveIds } from "../../components/charts/useGetLiveData";
 
 const data = [
   { name: "A", value: 2 },
@@ -32,6 +33,30 @@ const filteredSummaryData = [
   { region: "North", units: 20 },
   { region: "South", units: 30 },
 ];
+
+function LiveIdsProbe() {
+  const charts = useDataLayer((state) => state.charts);
+  const updateChart = useDataLayer((state) => state.updateChart);
+  const clearAllFilters = useDataLayer((state) => state.clearAllFilters);
+  const table = charts.find((chart) => chart.type === "data-table")!;
+  const summary = charts.find((chart) => chart.type === "summary")!;
+  const ids = useGetLiveIds(summary);
+  return (
+    <>
+      <output data-testid="live-count">{ids.length}</output>
+      <button
+        onClick={() =>
+          updateChart(table.id, {
+            filters: [{ type: "range", field: "units", min: 15 }],
+          })
+        }
+      >
+        Filter rows
+      </button>
+      <button onClick={clearAllFilters}>Clear rows</button>
+    </>
+  );
+}
 
 function Probe() {
   const rows = useDataLayer((state) => state.data);
@@ -88,6 +113,9 @@ function WorkspaceProbe() {
         {JSON.stringify(
           charts.map((chart) => ({
             type: chart.type,
+            title: chart.title,
+            xAxisLabel: chart.xAxisLabel,
+            yAxisLabel: chart.yAxisLabel,
             columns: chart.type === "data-table" ? chart.columns : undefined,
           }))
         )}
@@ -185,6 +213,18 @@ function savedData(calculations: SavedDataStructure["calculations"] = []) {
 }
 
 describe("DataLayerProvider", () => {
+  it("refreshes live row ids when another chart changes or clears filters", () => {
+    render(
+      <DataLayerProvider data={filteredSummaryData}>
+        <LiveIdsProbe />
+      </DataLayerProvider>
+    );
+    expect(screen.getByTestId("live-count")).toHaveTextContent("3");
+    fireEvent.click(screen.getByRole("button", { name: "Filter rows" }));
+    expect(screen.getByTestId("live-count")).toHaveTextContent("2");
+    fireEvent.click(screen.getByRole("button", { name: "Clear rows" }));
+    expect(screen.getByTestId("live-count")).toHaveTextContent("3");
+  });
   beforeAll(() => registerAllCharts());
 
   it("exposes source columns without the internal row id", () => {
@@ -214,6 +254,15 @@ describe("DataLayerProvider", () => {
       '"type":"data-table"'
     );
     expect(screen.getByTestId("workspace")).toHaveTextContent('"field":"late"');
+    expect(screen.getByTestId("workspace")).toHaveTextContent(
+      '"title":"Distribution of value"'
+    );
+    expect(screen.getByTestId("workspace")).toHaveTextContent(
+      '"xAxisLabel":"value"'
+    );
+    expect(screen.getByTestId("workspace")).toHaveTextContent(
+      '"yAxisLabel":"Rows (count)"'
+    );
   });
 
   it("does not create defaults when saved data is supplied", () => {
@@ -293,14 +342,14 @@ describe("DataLayerProvider", () => {
       </DataLayerProvider>
     );
 
-    expect(screen.getByText("Rows available: 3")).toBeInTheDocument();
+    expect(screen.getByText("3 rows")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "filter summary" }));
-    expect(screen.getByText("Rows available: 2")).toBeInTheDocument();
+    expect(screen.getByText("2 rows")).toBeInTheDocument();
     expect(screen.getByText("10")).toBeInTheDocument();
     expect(screen.getByText("20")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "empty summary" }));
-    expect(screen.getByText("Rows available: 0")).toBeInTheDocument();
+    expect(screen.getByText("0 rows")).toBeInTheDocument();
     expect(screen.getByText("units")).toBeInTheDocument();
   });
 
@@ -437,7 +486,7 @@ describe("DataLayerProvider", () => {
     fireEvent.click(screen.getByRole("button", { name: "change chart" }));
     expect(onStateChange).toHaveBeenCalledTimes(1);
     const snapshot = onStateChange.mock.calls[0]![0] as SavedDataStructure;
-    expect(snapshot.charts).toHaveLength(2);
+    expect(snapshot.charts).toHaveLength(3);
     expect(snapshot.gridSettings).toBeDefined();
     expect(snapshot.calculations).toEqual([]);
     expect(snapshot.colorScales).toEqual([]);

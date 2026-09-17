@@ -274,12 +274,9 @@ function isChart(value: unknown): boolean {
             (column.width === undefined || isFiniteNumber(column.width))
           );
         }) &&
-        isFiniteNumber(value.pageSize) &&
-        isFiniteNumber(value.currentPage) &&
         (value.sortBy === undefined || typeof value.sortBy === "string") &&
         ["asc", "desc"].includes(value.sortDirection as string) &&
-        typeof value.globalSearch === "string" &&
-        isFiniteNumber(value.tableHeight)
+        typeof value.globalSearch === "string"
       );
     case "summary":
       return true;

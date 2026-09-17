@@ -1,3 +1,4 @@
+import { numericScale } from "../Axis/numericScale";
 import { BaseChartProps, RowChartSettings } from "@/types/ChartTypes";
 
 import { useColorScales } from "@/hooks/useColorScales";
@@ -5,14 +6,16 @@ import { applyFilter } from "@/hooks/applyFilter";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useFacetAxis } from "@/providers/FacetAxisProvider";
 import { datum, Filter, ValueFilter } from "@/types/FilterTypes";
-import { scaleBand, scaleLinear } from "d3-scale";
+import { scaleBand } from "d3-scale";
 import { useEffect, useMemo } from "react";
+import { useGetColumnDataForIds } from "../useGetColumnData";
 import { BaseChart } from "../BaseChart";
 import { useGetLiveData } from "../useGetLiveData";
 
 type RowChartProps = BaseChartProps<RowChartSettings>;
 
 export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
+  const allData = useGetColumnDataForIds(settings.field, facetIds);
   const data = useGetLiveData(settings, settings.field, facetIds);
 
   const { getColorForValue } = useColorScales();
@@ -61,7 +64,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   // Calculate counts and handle overflow
   const { displayCounts } = useMemo(() => {
     const countMap = new Map<datum, number>();
-    data.forEach((value) => {
+    allData.forEach((value) => {
       const key = value === undefined ? "undefined" : value;
       countMap.set(key, (countMap.get(key) || 0) + 1);
     });
@@ -77,25 +80,45 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
       settings.minRowHeight,
       Math.min(settings.maxRowHeight, availableHeight / sortedCounts.length)
     );
-    const maxRows = Math.floor(availableHeight / rowHeight);
+    const maxRows = Math.max(2, Math.floor(availableHeight / rowHeight));
+    const liveCounts = new Map<datum, number>();
+    data.forEach((value) => {
+      const key = value === undefined ? "undefined" : value;
+      liveCounts.set(key, (liveCounts.get(key) ?? 0) + 1);
+    });
+    const visible = sortedCounts.map((item) => ({
+      ...item,
+      total: item.count,
+      count: liveCounts.get(item.label) ?? 0,
+    }));
 
     // If we have more items than we can display, create an "Others" category
     if (sortedCounts.length > maxRows) {
-      const visibleCounts = sortedCounts.slice(0, maxRows - 1);
-      const otherSum = sortedCounts
+      const visibleCounts = visible.slice(0, maxRows - 1);
+      const otherSum = visible
         .slice(maxRows - 1)
         .reduce((sum, item) => sum + item.count, 0);
 
       return {
-        displayCounts: [...visibleCounts, { label: "Others", count: otherSum }],
+        displayCounts: [
+          ...visibleCounts,
+          {
+            label: "Others",
+            count: otherSum,
+            total: visible
+              .slice(maxRows - 1)
+              .reduce((sum, item) => sum + item.total, 0),
+          },
+        ],
       };
     }
 
     return {
-      displayCounts: sortedCounts,
+      displayCounts: visible,
     };
   }, [
     data,
+    allData,
     height,
     baseMargin.top,
     baseMargin.bottom,
@@ -107,7 +130,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   useEffect(() => {
     if (facetIds && displayCounts.length > 0) {
       // Register x-axis limits (numerical for row chart)
-      const maxValue = Math.max(...displayCounts.map((d) => d.count));
+      const maxValue = Math.max(1, ...displayCounts.map((d) => d.total));
       registerAxisLimits(settings.id, "x", {
         type: "numerical",
         min: 0,
@@ -137,29 +160,30 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   const labelMargin = Math.min(requestedLabelMargin, maxLabelMargin);
   const margin = {
     ...baseMargin,
-    left: labelMargin,
-    bottom: Math.max(baseMargin.bottom, 30),
+    left: Math.min(labelMargin, width * 0.42),
+    right: Math.max(baseMargin.right, 48),
+    bottom: Math.max(baseMargin.bottom, settings.xAxisLabel ? 42 : 26),
   };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
-  const chartSettings =
-    margin.left === baseMargin.left && margin.bottom === baseMargin.bottom
-      ? settings
-      : { ...settings, margin };
+  const chartSettings = { ...settings, margin };
 
   // Create scales with synchronized limits if in a facet
   const xScale = useMemo(() => {
-    const maxValue = Math.max(...displayCounts.map((d) => d.count));
+    const maxValue = Math.max(1, ...displayCounts.map((d) => d.total));
 
     if (globalXLimits && globalXLimits.type === "numerical") {
-      return scaleLinear()
+      return numericScale(settings.xAxis)
         .domain([0, globalXLimits.max])
         .range([0, innerWidth])
         .nice();
     }
 
-    return scaleLinear().domain([0, maxValue]).range([0, innerWidth]).nice();
-  }, [displayCounts, innerWidth, globalXLimits]);
+    return numericScale(settings.xAxis)
+      .domain([0, maxValue])
+      .range([0, innerWidth])
+      .nice();
+  }, [displayCounts, innerWidth, globalXLimits, settings.xAxis]);
 
   const yScale = useMemo(() => {
     if (globalYLimits && globalYLimits.type === "categorical") {
@@ -167,13 +191,13 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
       return scaleBand()
         .domain(allCategories)
         .range([0, innerHeight])
-        .padding(0.1);
+        .padding(0.3);
     }
 
     return scaleBand()
       .domain(displayCounts.map((d) => String(d.label)))
       .range([0, innerHeight])
-      .padding(0.1);
+      .padding(0.3);
   }, [displayCounts, innerHeight, globalYLimits]);
 
   if (displayCounts.length === 0) {
@@ -188,6 +212,24 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
         xScale={xScale}
         yScale={yScale}
         settings={chartSettings}
+        overlay={
+          <g pointerEvents="none">
+            {" "}
+            {/* Count labels */}
+            {displayCounts.map(({ label, count }) => (
+              <text
+                key={String(label)}
+                x={xScale(count) + 5}
+                y={yScale(String(label))! + yScale.bandwidth() / 2}
+                dominantBaseline="middle"
+                className="fill-foreground"
+                fontSize={11}
+              >
+                {count.toLocaleString()}
+              </text>
+            ))}
+          </g>
+        }
       >
         <g className="select-none">
           {/* Bars */}
@@ -203,13 +245,13 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
                 : getColorForValue(
                     settings.colorScaleId,
                     String(label),
-                    "hsl(217.2 91.2% 59.8%)"
+                    "#3479a8"
                   );
 
             const barWidth = xScale(count);
             const barHeight = yScale.bandwidth();
 
-            if (barWidth < 1 || barHeight < 1) {
+            if (barHeight < 1) {
               return null;
             }
 
@@ -218,31 +260,32 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
                 key={String(label)}
                 x={0}
                 y={yScale(String(label))}
-                width={barWidth}
+                width={Math.max(0, barWidth)}
+                rx={2}
+                role={label === "Others" ? undefined : "button"}
+                tabIndex={label === "Others" ? undefined : 0}
+                aria-label={`${label}: ${count.toLocaleString()} rows`}
+                aria-pressed={filterValues.includes(label)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    handleBarClick(label);
+                  }
+                }}
                 height={barHeight}
-                className={`${
+                className={`chart-mark ${
                   label === "Others"
                     ? "fill-muted/80 hover:fill-muted"
                     : "cursor-pointer"
                 }`}
-                style={{ fill: color }}
+                style={{
+                  fill: color,
+                  opacity: valueFilter && !isFiltered ? 0.3 : 1,
+                }}
                 onClick={() => handleBarClick(label)}
               />
             );
           })}
-
-          {/* Count labels */}
-          {displayCounts.map(({ label, count }) => (
-            <text
-              key={String(label)}
-              x={xScale(count) + 5}
-              y={yScale(String(label))! + yScale.bandwidth() / 2}
-              dominantBaseline="middle"
-              className="text-sm fill-foreground"
-            >
-              {count}
-            </text>
-          ))}
         </g>
       </BaseChart>
     </div>

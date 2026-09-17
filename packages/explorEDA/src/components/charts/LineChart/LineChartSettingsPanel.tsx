@@ -12,7 +12,6 @@ import { LineSeriesSettings } from "./LineSeriesSettings";
 import { ComboBox } from "@/components/ComboBox";
 import MultiSelect, { type Option } from "@/components/ui/multi-select";
 import { useColumnNames } from "@/components/charts/PivotTable/useColumnNames";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const LineChartSettingsPanel: FC<
   ChartSettingsPanelProps<LineChartSettings>
@@ -147,56 +146,16 @@ export const LineChartSettingsPanel: FC<
         )}
       </div>
 
-      <Tabs defaultValue="general">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="series">Series</TabsTrigger>
-          <TabsTrigger value="axis">Axis</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="series">
-          <div className="space-y-4">
-            {settings.seriesField.map((field) => (
-              <LineSeriesSettings
-                key={field}
-                seriesName={field}
-                settings={
-                  settings.seriesSettings[field] ?? DEFAULT_SERIES_SETTINGS
-                }
-                onSettingsChange={(newSettings) =>
-                  updateSeriesSettings(field, newSettings)
-                }
-              />
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="axis">
-          <div className="grid grid-cols-[120px_1fr] items-center gap-4">
-            <Label className="font-medium">Grid Lines</Label>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={settings.showXGrid}
-                  onCheckedChange={(checked) =>
-                    updateSettings({ showXGrid: checked })
-                  }
-                />
-                <Label>Show X Grid</Label>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={settings.showYGrid}
-                  onCheckedChange={(checked) =>
-                    updateSettings({ showYGrid: checked })
-                  }
-                />
-                <Label>Show Y Grid</Label>
-              </div>
-            </div>
-          </div>
-        </TabsContent>
-      </Tabs>
+      <div className="space-y-4">
+        {settings.seriesField.map((field) => (
+          <LineSeriesSettings
+            key={field}
+            seriesName={field}
+            settings={settings.seriesSettings[field] ?? DEFAULT_SERIES_SETTINGS}
+            onSettingsChange={(next) => updateSeriesSettings(field, next)}
+          />
+        ))}
+      </div>
     </div>
   );
 };

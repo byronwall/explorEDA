@@ -9,7 +9,6 @@ import {
   CalculationManager,
 } from "@/lib/calculations/CalculationState";
 import { FieldProfile, buildFieldProfiles } from "@/lib/fieldProfiles";
-import { DataTableSettings } from "@/components/charts/DataTable/definition";
 import { ChartLayout, ChartSettings, datum } from "@/types/ChartTypes";
 import { ColorScaleType } from "@/types/ColorScaleTypes";
 import {
@@ -190,29 +189,63 @@ function getDataAndCrossfilterWrapper<T extends DatumObject>(
 function createDefaultWorkspaceCharts(
   fieldProfiles: FieldProfile[]
 ): ChartSettings[] {
-  if (
-    fieldProfiles.length === 0 ||
-    !chartRegistry.has("summary") ||
-    !chartRegistry.has("data-table")
-  ) {
+  if (fieldProfiles.length === 0) {
     return [];
   }
 
-  const summary = getChartDefinition("summary").createDefaultSettings({
-    x: 0,
-    y: 0,
-    w: 4,
-    h: 6,
-  });
-  const table = getChartDefinition("data-table").createDefaultSettings({
-    x: 4,
-    y: 0,
-    w: 8,
-    h: 6,
-  }) as DataTableSettings;
-  table.columns = fieldProfiles.map(({ name }) => ({ id: name, field: name }));
+  const field =
+    fieldProfiles.find((profile) => profile.dataType === "numeric") ??
+    fieldProfiles[0];
+  if (!field) {
+    return [];
+  }
+  const chartType = field.dataType === "numeric" ? "bar" : "row";
+  if (!chartRegistry.has(chartType)) {
+    return [];
+  }
 
-  return [summary, table];
+  const chart = getChartDefinition(chartType).createDefaultSettings(
+    {
+      x: 0,
+      y: 0,
+      w: 12,
+      h: 6,
+    },
+    field.name
+  );
+  chart.title =
+    chartType === "bar"
+      ? `Distribution of ${field.name}`
+      : `Rows by ${field.name}`;
+  chart.xAxisLabel = chartType === "bar" ? field.name : "Rows (count)";
+  chart.yAxisLabel = chartType === "bar" ? "Rows (count)" : field.name;
+
+  const summary = chartRegistry.has("summary")
+    ? getChartDefinition("summary").createDefaultSettings({
+        x: 0,
+        y: 0,
+        w: 4,
+        h: 5,
+      })
+    : undefined;
+  const table = chartRegistry.has("data-table")
+    ? getChartDefinition("data-table").createDefaultSettings({
+        x: 4,
+        y: 0,
+        w: 8,
+        h: 5,
+      })
+    : undefined;
+  if (table?.type === "data-table") {
+    table.columns = fieldProfiles.map(({ name }) => ({
+      id: name,
+      field: name,
+    }));
+  }
+
+  return [chart, summary, table].filter((item): item is ChartSettings =>
+    Boolean(item)
+  );
 }
 
 // Store creator
@@ -388,13 +421,14 @@ const createDataLayerStore = <T extends DatumObject>(
       crossfilterWrapper.removeChart(chart);
       set((state) => ({
         charts: state.charts.filter((ogChart) => ogChart.id !== chart.id),
+        liveItems: crossfilterWrapper.getAllData(),
       }));
     },
 
     removeAllCharts: () => {
       const { crossfilterWrapper } = get();
       crossfilterWrapper.removeAllCharts();
-      set({ charts: [] });
+      set({ charts: [], liveItems: crossfilterWrapper.getAllData() });
     },
 
     updateChart: (id, settings) => {
@@ -406,24 +440,8 @@ const createDataLayerStore = <T extends DatumObject>(
         return;
       }
 
-      let updatedChart: ChartSettings;
-
-      if (id !== settings.id && settings.id) {
-        // goal here is to catch obvious problem where id has changed
-
-        // remove the old chart, add the new one
-        crossfilterWrapper.removeChart(chart);
-        crossfilterWrapper.addChart(settings as ChartSettings);
-
-        updatedChart = settings as ChartSettings;
-      } else {
-        updatedChart = {
-          ...chart,
-          ...settings,
-        } as ChartSettings;
-
-        crossfilterWrapper.updateChart(updatedChart);
-      }
+      const updatedChart = { ...chart, ...settings, id } as ChartSettings;
+      crossfilterWrapper.updateChart(updatedChart);
       set((state) => ({
         charts: state.charts.map((chart) =>
           chart.id === id ? updatedChart : chart

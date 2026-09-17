@@ -44,7 +44,7 @@ export type FacetSettings = GridFacetSettings | WrapFacetSettings;
 
 export interface AxisSettings {
   title?: string;
-  scaleType?: "linear" | "log" | "time" | "band";
+  scaleType?: "linear" | "log" | "time" | "band" | "symlog";
   grid?: boolean;
   min?: number;
   max?: number;
@@ -114,6 +114,7 @@ export interface BaseChartProps<
   width: number;
   height: number;
   facetIds?: IdType[];
+  toolbarTarget?: HTMLElement | null;
 }
 
 export type datum = string | number | boolean | null | undefined;

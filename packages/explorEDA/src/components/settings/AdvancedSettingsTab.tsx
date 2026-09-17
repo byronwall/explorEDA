@@ -22,7 +22,7 @@ export function AdvancedSettingsTab({
           <div className="grid grid-cols-3 gap-2">
             <div className="col-start-2">
               <NumericInputEnter
-                value={settings.margin?.top || 20}
+                value={settings.margin?.top ?? 20}
                 onChange={(value) =>
                   onSettingChange("margin", {
                     ...settings.margin,
@@ -39,7 +39,7 @@ export function AdvancedSettingsTab({
             </div>
             <div className="col-start-1 row-start-2">
               <NumericInputEnter
-                value={settings.margin?.left || 20}
+                value={settings.margin?.left ?? 20}
                 onChange={(value) =>
                   onSettingChange("margin", {
                     ...settings.margin,
@@ -56,7 +56,7 @@ export function AdvancedSettingsTab({
             </div>
             <div className="col-start-3 row-start-2">
               <NumericInputEnter
-                value={settings.margin?.right || 20}
+                value={settings.margin?.right ?? 20}
                 onChange={(value) =>
                   onSettingChange("margin", {
                     ...settings.margin,
@@ -73,7 +73,7 @@ export function AdvancedSettingsTab({
             </div>
             <div className="col-start-2 row-start-3">
               <NumericInputEnter
-                value={settings.margin?.bottom || 20}
+                value={settings.margin?.bottom ?? 20}
                 onChange={(value) =>
                   onSettingChange("margin", {
                     ...settings.margin,

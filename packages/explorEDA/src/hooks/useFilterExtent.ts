@@ -61,6 +61,7 @@ export function useFilterExtent({
         ] as [[number, number], [number, number]];
       }
 
+      case "line":
       case "bar": {
         if ("bandwidth" in xScale) {
           return null;
@@ -68,7 +69,7 @@ export function useFilterExtent({
 
         const rangeFilter = getRangeFilterForField(
           settings.filters,
-          settings.field
+          settings.type === "line" ? settings.xField : settings.field
         );
         if (!rangeFilter) {
           return null;

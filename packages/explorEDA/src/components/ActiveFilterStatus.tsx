@@ -4,9 +4,16 @@ import type { Filter } from "@/types/FilterTypes";
 import { FilterX, X } from "lucide-react";
 import { Button } from "./ui/button";
 
+const numberFormatter = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 2,
+});
+
 const displayValue = (value: unknown) => {
   if (value === null || value === undefined || value === "") {
     return "missing";
+  }
+  if (typeof value === "number") {
+    return numberFormatter.format(value);
   }
   return String(value);
 };
@@ -72,21 +79,26 @@ export function ActiveFilterStatus() {
   return (
     <section
       aria-label="Active chart filters"
-      className="mb-4 flex flex-wrap items-center gap-2 rounded-md border border-border/60 bg-muted/20 px-3 py-2"
+      className="eda-filter-status mb-2 flex h-11 items-center gap-3 rounded-md border border-border bg-card px-3 py-2"
     >
       <p
         role="status"
         aria-live="polite"
-        className="text-sm text-muted-foreground"
+        className="shrink-0 text-xs text-muted-foreground tabular-nums"
       >
         Showing <strong className="text-foreground">{remainingRows}</strong> of{" "}
-        <strong className="text-foreground">{data.length}</strong> rows after
-        chart filters.
+        <strong className="text-foreground">{data.length}</strong> rows
+        <span className="filter-context"> after chart filters.</span>
       </p>
+      {activeFilters.length === 0 && (
+        <span className="ml-auto hidden whitespace-nowrap text-xs text-muted-foreground sm:inline">
+          Linked views · select in any chart to explore
+        </span>
+      )}
       {activeFilters.length > 0 && (
         <>
           <ul
-            className="flex min-w-0 flex-wrap items-center gap-2"
+            className="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto whitespace-nowrap"
             aria-label="Active filters"
           >
             {activeFilters.map(({ chart, filter, index }) => {
@@ -119,7 +131,7 @@ export function ActiveFilterStatus() {
             type="button"
             variant="ghost"
             size="sm"
-            className="ml-auto"
+            className="ml-auto shrink-0"
             onClick={clearAllFilters}
           >
             <FilterX aria-hidden="true" />

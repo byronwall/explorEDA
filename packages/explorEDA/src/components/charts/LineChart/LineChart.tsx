@@ -1,25 +1,19 @@
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { numericScale } from "../Axis/numericScale";
+import { AxisReadout } from "../Axis/AxisReadout";
 import { reduceDataPoints } from "@/lib/chartUtils";
-import { cn } from "@/lib/utils";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { type BaseChartProps } from "@/types/ChartTypes";
 import { extent } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { curveLinear, curveMonotoneX, curveStepAfter, line } from "d3-shape";
-import { ArrowRight } from "lucide-react";
-import { useEffect, useMemo, type FC } from "react";
+import { useEffect, useMemo, useState, type FC } from "react";
 import { BaseChart } from "../BaseChart";
 import {
   useGetColumnDataForIds,
   useGetColumnDataForMultipleIds,
 } from "../useGetColumnData";
-import { useGetLiveData } from "../useGetLiveData";
-import { type LineChartSettings } from "./definition";
+import { useGetLiveIds } from "../useGetLiveData";
+import { type LineChartSettings, DEFAULT_SERIES_SETTINGS } from "./definition";
 
 const curveTypes = {
   linear: curveLinear,
@@ -45,47 +39,45 @@ const COLOR_PALETTES = {
   ],
 } as const;
 
-const getRandomHslColor = () => {
-  const hue = Math.floor(Math.random() * 360);
-  return `hsl(${hue}, 50%, 50%)`;
-};
-
-const defaultSeriesSettings = {
-  showPoints: false,
-  pointSize: 4,
-  pointOpacity: 1,
-  lineWidth: 2,
-  lineOpacity: 0.8,
-  lineStyle: "solid",
-  useRightAxis: false,
-} as const;
-
 export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
   settings,
   width,
   height,
   facetIds,
 }) => {
+  const [hovered, setHovered] = useState<{
+    index: number;
+    field: string;
+  } | null>(null);
   const updateChart = useDataLayer((state) => state.updateChart);
 
   // Get all data for axis limits calculation
   const allXData = useGetColumnDataForIds(settings.xField);
 
   // Get filtered data for rendering
-  const liveXData = useGetLiveData(settings, settings.xField, facetIds);
+  const liveIds = useGetLiveIds(settings);
+  const selectedIds = useMemo(
+    () => (facetIds ? liveIds.filter((id) => facetIds.includes(id)) : liveIds),
+    [liveIds, facetIds]
+  );
+  const liveXData = useGetColumnDataForIds(settings.xField, selectedIds);
+  const allSeriesData = useGetColumnDataForMultipleIds(
+    settings.seriesField,
+    facetIds
+  );
 
   // Get all series data using the new hook
   const liveSeriesData = useGetColumnDataForMultipleIds(
     settings.seriesField,
-    facetIds
+    selectedIds
   );
 
   const baseMargin = settings.margin;
   const yValuesByAxis = settings.seriesField.reduce(
     (values, field) => {
       const useRightAxis = settings.seriesSettings[field]?.useRightAxis;
-      (liveSeriesData[field] ?? []).forEach((value) => {
-        const y = Number(value);
+      (allSeriesData[field] ?? []).forEach((value) => {
+        const y = value == null || value === "" ? NaN : Number(value);
         if (Number.isFinite(y)) {
           values[useRightAxis ? "right" : "left"].push(y);
         }
@@ -100,7 +92,9 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
     : [];
   const requestedLabelMargin = Math.max(
     baseMargin.left,
-    ...leftYTicks.map((tick) => String(tick).length * 7 + 24)
+    ...leftYTicks.map(
+      (tick) => String(tick).length * 7 + (settings.yAxisLabel ? 38 : 18)
+    )
   );
   const minPlotWidth = Math.min(
     80,
@@ -110,7 +104,7 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
   const margin = {
     ...baseMargin,
     left: Math.min(requestedLabelMargin, maxLabelMargin),
-    bottom: Math.max(baseMargin.bottom, 30),
+    bottom: Math.max(baseMargin.bottom, settings.xAxisLabel ? 46 : 28),
   };
   if (
     settings.seriesField.some(
@@ -124,16 +118,16 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
   if (settings.showLegend) {
     switch (settings.legendPosition) {
       case "top":
-        margin.top += 40;
+        margin.top += 18;
         break;
       case "bottom":
-        margin.bottom += 40;
+        margin.bottom += 18;
         break;
       case "right":
-        margin.right += 120;
+        margin.right += Math.min(110, width * 0.24);
         break;
       case "left":
-        margin.left += 120;
+        margin.left += Math.min(110, width * 0.24);
         break;
     }
   }
@@ -157,8 +151,8 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
 
       data.forEach((value, i) => {
         const xValue = liveXData[i];
-        const x = xValue == null ? NaN : Number(xValue);
-        const y = value == null ? NaN : Number(value);
+        const x = xValue == null || xValue === "" ? NaN : Number(xValue);
+        const y = value == null || value === "" ? NaN : Number(value);
         if (!Number.isFinite(x) || !Number.isFinite(y)) {
           flushSegment();
           reducedData.push({ x: 0, y: null });
@@ -197,13 +191,13 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
     // Second pass - assign colors to series that need them
     // splice off the first color from the unused palette colors
     settings.seriesField.forEach((field) => {
+      if (colors[field]) return;
       const nextColor = unusedPaletteColors.shift();
-      if (colors[field]) {
-        return;
-      }
 
       // Use an unused palette color
-      colors[field] = nextColor ?? getRandomHslColor();
+      colors[field] =
+        nextColor ??
+        palette[settings.seriesField.indexOf(field) % palette.length]!;
     });
 
     return colors;
@@ -217,7 +211,7 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
 
       settings.seriesField.forEach((field) => {
         if (!newSeriesSettings[field]) {
-          newSeriesSettings[field] = { ...defaultSeriesSettings };
+          newSeriesSettings[field] = { ...DEFAULT_SERIES_SETTINGS };
           hasChanges = true;
         }
 
@@ -226,7 +220,10 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
           !newSeriesSettings[field]?.lineColor ||
           newSeriesSettings[field]?.lineColor === "default"
         ) {
-          newSeriesSettings[field]!.lineColor = seriesColors[field];
+          newSeriesSettings[field] = {
+            ...newSeriesSettings[field]!,
+            lineColor: seriesColors[field],
+          };
           hasChanges = true;
         }
       });
@@ -263,12 +260,15 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
 
   const rightYExtent = extent(yValuesByAxis.right) as [number, number];
 
-  const xScale = scaleLinear().domain(xExtent).range([0, innerWidth]).nice();
-  const leftYScale = scaleLinear()
+  const xScale = numericScale(settings.xAxis)
+    .domain(xExtent)
+    .range([0, innerWidth])
+    .nice();
+  const leftYScale = numericScale(settings.yAxis)
     .domain(leftYExtent)
     .range([innerHeight, 0])
     .nice();
-  const rightYScale = scaleLinear()
+  const rightYScale = numericScale(settings.yAxis)
     .domain(rightYExtent)
     .range([innerHeight, 0])
     .nice();
@@ -285,148 +285,134 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
       )
       .curve(curveTypes[settings.styles.curveType as CurveType]);
 
-  // Legend component
   const Legend = () => {
-    if (!settings.showLegend) {
-      return null;
-    }
-
-    const legendItems = processedLiveSeriesData.map((series) => {
-      const seriesSettings = settings.seriesSettings[series.name] ?? {
-        showPoints: false,
-        pointSize: 4,
-        pointOpacity: 1,
-        lineWidth: 2,
-        lineOpacity: 0.8,
-        lineStyle: "solid",
-        useRightAxis: false,
-      };
-
-      return {
-        name: series.name,
-        color: seriesColors[series.name],
-        lineStyle: seriesSettings.lineStyle,
-        useRightAxis: seriesSettings.useRightAxis,
-      };
-    });
-
-    const handleAxisToggle = (seriesName: string) => {
-      const currentSettings = settings.seriesSettings[seriesName] ?? {
-        ...defaultSeriesSettings,
-      };
-      updateChart(settings.id, {
-        seriesSettings: {
-          ...settings.seriesSettings,
-          [seriesName]: {
-            ...currentSettings,
-            useRightAxis: !currentSettings.useRightAxis,
-          },
-        },
-      });
-    };
-
-    const isVertical =
+    if (!settings.showLegend) return null;
+    const vertical =
       settings.legendPosition === "left" || settings.legendPosition === "right";
-
+    const sideWidth = Math.min(100, width * 0.22);
+    const position =
+      settings.legendPosition === "top"
+        ? { top: 0, left: margin.left, right: baseMargin.right }
+        : settings.legendPosition === "bottom"
+          ? { bottom: 0, left: margin.left, right: baseMargin.right }
+          : settings.legendPosition === "left"
+            ? { left: 0, top: margin.top, width: sideWidth }
+            : { right: 0, top: margin.top, width: sideWidth };
     return (
       <div
-        className={cn(
-          "absolute flex gap-4 text-sm items-center",
-          isVertical ? "flex-col" : "flex-row",
-          settings.legendPosition === "top" && "top-0 left-[60px] right-[60px]",
-          settings.legendPosition === "bottom" &&
-            "bottom-0 left-[60px] right-[60px]",
-          settings.legendPosition === "left" &&
-            "left-0 top-[20px] bottom-[30px] w-[100px]",
-          settings.legendPosition === "right" &&
-            "right-0 top-[20px] bottom-[30px] w-[100px]"
-        )}
+        className="eda-line-legend"
+        style={{ ...position, flexDirection: vertical ? "column" : "row" }}
+        aria-label="Chart series"
       >
-        {legendItems.map((item) => (
-          <div key={item.name} className="flex items-center gap-2">
-            <div
-              className="flex items-center gap-2 px-2 py-1 rounded cursor-pointer hover:bg-accent/50"
-              style={{
-                border: `1px solid ${item.color}`,
-              }}
-              onClick={() => handleAxisToggle(item.name)}
-            >
-              <svg width="20" height="2" className="flex-shrink-0">
-                <line
-                  x1="0"
-                  y1="1"
-                  x2="20"
-                  y2="1"
-                  stroke={item.color}
-                  strokeWidth="2"
-                  strokeDasharray={
-                    item.lineStyle === "dashed"
-                      ? "4,4"
-                      : item.lineStyle === "dotted"
-                        ? "2,2"
-                        : undefined
-                  }
-                />
-              </svg>
-              <span className="text-sm text-muted-foreground truncate">
-                {item.name}
-              </span>
-              {item.useRightAxis && (
-                <ArrowRight
-                  className="h-3 w-3 text-muted-foreground"
-                  style={{ color: item.color }}
-                />
-              )}
-            </div>
-          </div>
+        {settings.seriesField.map((name) => (
+          <span
+            key={name}
+            className="eda-line-legend-item"
+            title={`${name}${settings.seriesSettings[name]?.useRightAxis ? " · right axis" : ""}`}
+          >
+            <svg width="14" height="6" aria-hidden="true">
+              <line
+                x1="0"
+                x2="14"
+                y1="3"
+                y2="3"
+                stroke={seriesColors[name]}
+                strokeWidth="2"
+                strokeDasharray={
+                  settings.seriesSettings[name]?.lineStyle === "dashed"
+                    ? "4 2"
+                    : settings.seriesSettings[name]?.lineStyle === "dotted"
+                      ? "1 2"
+                      : undefined
+                }
+              />
+            </svg>
+            <span>
+              {name}
+              {settings.seriesSettings[name]?.useRightAxis ? " ↗" : ""}
+            </span>
+          </span>
         ))}
       </div>
     );
   };
 
+  const hoverX = hovered ? Number(liveXData[hovered.index]) : NaN;
+  const hoverY = hovered
+    ? Number(liveSeriesData[hovered.field]?.[hovered.index])
+    : NaN;
+  const hoverRight = hovered
+    ? settings.seriesSettings[hovered.field]?.useRightAxis
+    : false;
+
   return (
-    <div className="relative" style={{ width, height }}>
+    <div
+      className="relative"
+      style={{ width, height }}
+      onPointerLeave={() => setHovered(null)}
+      onPointerDownCapture={() => setHovered(null)}
+      onKeyDownCapture={(event) => {
+        if (event.key === "Escape") setHovered(null);
+      }}
+      onPointerMove={(event) => {
+        if (event.buttons) return;
+        const rect = event.currentTarget.getBoundingClientRect();
+        const x = event.clientX - rect.left - margin.left;
+        const y = event.clientY - rect.top - margin.top;
+        if (x < 0 || x > innerWidth || y < 0 || y > innerHeight) {
+          setHovered(null);
+          return;
+        }
+        const target = xScale.invert(x);
+        // ponytail: linear scan; use a bisector if large series make hover slow.
+        let index = -1,
+          distance = Infinity;
+        liveXData.forEach((value, i) => {
+          if (value == null || value === "" || !Number.isFinite(Number(value)))
+            return;
+          const next = Math.abs(Number(value) - target);
+          if (next < distance) {
+            index = i;
+            distance = next;
+          }
+        });
+        let field: string | null = null;
+        distance = Infinity;
+        for (const name of settings.seriesField) {
+          const value = liveSeriesData[name]?.[index];
+          if (value == null || value === "" || !Number.isFinite(Number(value)))
+            continue;
+          const scale = settings.seriesSettings[name]?.useRightAxis
+            ? rightYScale
+            : leftYScale;
+          const next = Math.abs(scale(Number(value)) - y);
+          if (next < distance) {
+            field = name;
+            distance = next;
+          }
+        }
+        setHovered(field === null ? null : { index, field });
+      }}
+    >
       <BaseChart
         width={width}
         height={height}
         xScale={xScale}
         yScale={leftYScale}
-        settings={{ ...settings, margin }}
-      >
-        <TooltipProvider>
-          <g>
-            {/* Grid */}
-            {settings.showXGrid && (
-              <g>
-                {leftYScale.ticks(5).map((tick: number) => (
-                  <line
-                    key={tick}
-                    x1={0}
-                    x2={innerWidth}
-                    y1={leftYScale(tick)}
-                    y2={leftYScale(tick)}
-                    stroke="currentColor"
-                    strokeOpacity={0.1}
-                  />
-                ))}
-              </g>
-            )}
-            {settings.showYGrid && (
-              <g>
-                {xScale.ticks(5).map((tick: number) => (
-                  <line
-                    key={tick}
-                    x1={xScale(tick)}
-                    x2={xScale(tick)}
-                    y1={0}
-                    y2={innerHeight}
-                    stroke="currentColor"
-                    strokeOpacity={0.1}
-                  />
-                ))}
-              </g>
-            )}
-
+        settings={{
+          ...settings,
+          margin,
+          xAxis: {
+            ...settings.xAxis,
+            grid: settings.xAxis.grid ?? settings.showYGrid,
+          },
+          yAxis: {
+            ...settings.yAxis,
+            grid: settings.yAxis.grid ?? settings.showXGrid,
+          },
+        }}
+        overlay={
+          <>
             {/* Right Y-Axis */}
             {rightAxisSeries.length > 0 && (
               <g transform={`translate(${innerWidth}, 0)`}>
@@ -450,74 +436,93 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
                 ))}
               </g>
             )}
+            {hovered && (
+              <AxisReadout
+                x={xScale(hoverX)}
+                y={(hoverRight ? rightYScale : leftYScale)(hoverY)}
+                xValue={hoverX}
+                yValue={hoverY}
+                width={innerWidth}
+                height={innerHeight}
+                color={seriesColors[hovered.field]!}
+                rightAxis={hoverRight}
+                label={`${settings.xField}: ${hoverX}; ${hovered.field}: ${hoverY}`}
+              />
+            )}
+          </>
+        }
+        brushingMode="horizontal"
+        onBrushChange={(extent) =>
+          updateChart(settings.id, {
+            filters: [
+              ...settings.filters.filter(
+                (filter) => filter.field !== settings.xField
+              ),
+              ...(extent
+                ? [
+                    {
+                      type: "range" as const,
+                      field: settings.xField,
+                      min: xScale.invert(extent[0][0]),
+                      max: xScale.invert(extent[1][0]),
+                    },
+                  ]
+                : []),
+            ],
+          })
+        }
+      >
+        <g>
+          {/* Lines */}
+          {processedLiveSeriesData.map((series) => {
+            const lineGenerator = createLineGenerator(series.name);
+            const seriesSettings = settings.seriesSettings[series.name] ?? {
+              showPoints: false,
+              pointSize: 4,
+              pointOpacity: 1,
+              lineWidth: 2,
+              lineOpacity: 0.8,
+              lineStyle: "solid",
+              useRightAxis: false,
+            };
 
-            {/* Lines */}
-            {processedLiveSeriesData.map((series) => {
-              const lineGenerator = createLineGenerator(series.name);
-              const seriesSettings = settings.seriesSettings[series.name] ?? {
-                showPoints: false,
-                pointSize: 4,
-                pointOpacity: 1,
-                lineWidth: 2,
-                lineOpacity: 0.8,
-                lineStyle: "solid",
-                useRightAxis: false,
-              };
+            const seriesColor = seriesColors[series.name];
 
-              const seriesColor = seriesColors[series.name];
-
-              return (
-                <g key={series.name}>
-                  <path
-                    d={lineGenerator(series.data) || undefined}
-                    fill="none"
-                    stroke={seriesColor}
-                    strokeWidth={seriesSettings.lineWidth}
-                    strokeOpacity={seriesSettings.lineOpacity}
-                    strokeDasharray={
-                      seriesSettings.lineStyle === "dashed"
-                        ? "5,5"
-                        : seriesSettings.lineStyle === "dotted"
-                          ? "2,2"
-                          : undefined
-                    }
-                  />
-                  {seriesSettings.showPoints &&
-                    series.data.map((d, j) =>
-                      d.y == null ? null : (
-                        <Tooltip key={j}>
-                          <TooltipTrigger asChild>
-                            <circle
-                              cx={xScale(d.x)}
-                              cy={
-                                seriesSettings.useRightAxis
-                                  ? rightYScale(d.y)
-                                  : leftYScale(d.y)
-                              }
-                              r={seriesSettings.pointSize}
-                              fill={seriesColor}
-                              fillOpacity={seriesSettings.pointOpacity}
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <div className="space-y-1">
-                              <div className="font-medium">{series.name}</div>
-                              <div>
-                                {settings.xField}: {d.x}
-                              </div>
-                              <div>
-                                {series.name}: {d.y}
-                              </div>
-                            </div>
-                          </TooltipContent>
-                        </Tooltip>
-                      )
-                    )}
-                </g>
-              );
-            })}
-          </g>
-        </TooltipProvider>
+            return (
+              <g key={series.name}>
+                <path
+                  d={lineGenerator(series.data) || undefined}
+                  fill="none"
+                  stroke={seriesColor}
+                  strokeWidth={seriesSettings.lineWidth}
+                  strokeOpacity={seriesSettings.lineOpacity}
+                  strokeDasharray={
+                    seriesSettings.lineStyle === "dashed"
+                      ? "5,5"
+                      : seriesSettings.lineStyle === "dotted"
+                        ? "2,2"
+                        : undefined
+                  }
+                />
+                {seriesSettings.showPoints &&
+                  series.data.map((d, j) =>
+                    d.y == null ? null : (
+                      <circle
+                        key={j}
+                        cx={xScale(d.x)}
+                        cy={(seriesSettings.useRightAxis
+                          ? rightYScale
+                          : leftYScale)(d.y)}
+                        r={seriesSettings.pointSize}
+                        fill={seriesColor}
+                        fillOpacity={seriesSettings.pointOpacity}
+                      />
+                    )
+                  )}
+              </g>
+            );
+          })}
+        </g>
       </BaseChart>
       <Legend />
     </div>

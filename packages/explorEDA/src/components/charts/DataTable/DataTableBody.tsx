@@ -1,12 +1,16 @@
+import { useMemo } from "react";
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 
 import { DataTableSettings } from "./definition";
-import { getFilteredRows } from "./filteredRows";
+import { DataTableRow, getFilteredRows } from "./filteredRows";
 import type { datum } from "@/types/ChartTypes";
 
 interface DataTableBodyProps {
   settings: DataTableSettings;
+  rows?: DataTableRow[];
+  scrollTop?: number;
+  viewportHeight?: number;
 }
 
 // Helper function to check if a value is numeric
@@ -47,45 +51,81 @@ function compareValues(a: datum, b: datum): number {
 }
 
 // Helper function to check if a row matches the global search
-export function DataTableBody({ settings }: DataTableBodyProps) {
-  const {
-    pageSize,
-    currentPage,
-    sortBy,
-    sortDirection,
-  } = settings;
+export function DataTableBody({
+  settings,
+  rows,
+  scrollTop = 0,
+  viewportHeight = 400,
+}: DataTableBodyProps) {
+  const { sortBy, sortDirection } = settings;
   const data = useDataLayer((state) => state.data);
   const liveItems = useDataLayer((state) => state.getLiveItems(settings));
 
-  const filteredByColumns = getFilteredRows(data, liveItems, settings);
+  const filteredByColumns = useMemo(
+    () => rows ?? getFilteredRows(data, liveItems, settings),
+    [rows, data, liveItems, settings]
+  );
 
   // Sort data if sortBy is set
-  const sortedData = sortBy
-    ? [...filteredByColumns].sort((a, b) => {
-        const aValue = a[sortBy];
-        const bValue = b[sortBy];
-        const comparison = compareValues(aValue, bValue);
-        return sortDirection === "asc" ? comparison : -comparison;
-      })
-    : filteredByColumns;
-
-  // Calculate pagination
-  // Get paginated data
-  const totalPages = Math.max(1, Math.ceil(sortedData.length / pageSize));
-  const page = Math.min(Math.max(1, currentPage), totalPages);
-  const paginatedData = sortedData.slice(
-    (page - 1) * pageSize,
-    page * pageSize
+  const sortedData = useMemo(
+    () =>
+      sortBy
+        ? [...filteredByColumns].sort((a, b) => {
+            const aValue = a[sortBy];
+            const bValue = b[sortBy];
+            const comparison = compareValues(aValue, bValue);
+            return sortDirection === "asc" ? comparison : -comparison;
+          })
+        : filteredByColumns,
+    [filteredByColumns, sortBy, sortDirection]
   );
+
+  // Fixed-height rows keep the scroll position stable. Render one viewport plus overscan.
+  const start = Math.min(
+    Math.max(0, Math.floor((scrollTop - 36) / 30) - 6),
+    Math.max(0, sortedData.length - 1)
+  );
+  const end = Math.min(
+    sortedData.length,
+    start + Math.ceil(viewportHeight / 30) + 12
+  );
+  const visibleRows = sortedData.slice(start, end);
+  const spacer = (count: number, key: string) =>
+    count > 0 && (
+      <tr key={key} aria-hidden="true" className="eda-table-spacer">
+        <td
+          colSpan={settings.columns.length}
+          style={{ height: count * 30, padding: 0, border: 0 }}
+        />
+      </tr>
+    );
 
   return (
     <TableBody>
-      {paginatedData.length > 0 ? (
-        paginatedData.map((row) => (
-          <TableRow key={String(row.__ID)}>
-            {settings.columns.map((column) => (
-              <TableCell key={column.id} style={{ width: column.width }}>
-                {row[column.field]}
+      {spacer(start, "before")}
+      {visibleRows.length > 0 ? (
+        visibleRows.map((row, index) => (
+          <TableRow key={String(row.__ID)} aria-rowindex={start + index + 2}>
+            {settings.columns.map((column, index) => (
+              <TableCell
+                key={column.id}
+                className={
+                  index === 0 ? "sticky left-0 z-10 bg-background" : ""
+                }
+                style={{
+                  width: column.width,
+                  textAlign:
+                    typeof row[column.field] === "number" ? "right" : "left",
+                }}
+                title={String(row[column.field] ?? "Missing")}
+              >
+                {row[column.field] == null
+                  ? "—"
+                  : typeof row[column.field] === "boolean"
+                    ? row[column.field]
+                      ? "Yes"
+                      : "No"
+                    : row[column.field]}
               </TableCell>
             ))}
           </TableRow>
@@ -97,6 +137,7 @@ export function DataTableBody({ settings }: DataTableBodyProps) {
           </TableCell>
         </TableRow>
       )}
+      {spacer(sortedData.length - end, "after")}
     </TableBody>
   );
 }

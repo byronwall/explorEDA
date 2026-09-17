@@ -8,11 +8,7 @@ export function useGetLiveData(
   field: string | undefined,
   facetIds?: IdType[]
 ) {
-  const getLiveItems = useDataLayer((s) => s.getLiveItems);
-
-  // WARNING: this must live outside the hook below
-  // need to see new items on every render
-  const liveItems = getLiveItems(settings);
+  const liveItems = useDataLayer((state) => state.getLiveItems(settings));
 
   const liveIdsPerFacet = useMemo(() => {
     if (!liveItems) {
@@ -29,9 +25,7 @@ export function useGetLiveData(
       .map((d) => d.key);
 
     return liveIds;
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [facetIds, liveItems?.nonce]);
+  }, [facetIds, liveItems]);
 
   const data = useGetColumnDataForIds(field, liveIdsPerFacet);
 
@@ -43,22 +37,14 @@ export function useGetLiveData(
 }
 
 export function useGetLiveIds(settings: ChartSettings) {
-  const getLiveItems = useDataLayer((s) => s.getLiveItems);
-  const nonce = useDataLayer((s) => s.nonce);
-
-  const liveItems = getLiveItems(settings);
-
-  // useMemo against the nonce
+  const liveItems = useDataLayer((state) => state.getLiveItems(settings));
   return useMemo(() => {
     if (!liveItems) {
       return [];
     }
 
     return liveItems.items.filter((c) => c.value > 0).map((d) => d.key);
-
-    // need the nonce to trigger a re-render
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nonce, liveItems?.items]);
+  }, [liveItems]);
 }
 
 export function useGetAllIds() {

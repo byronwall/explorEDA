@@ -1,190 +1,20 @@
-# Data Table Component
+# Data table
 
-The Data Table component is a powerful and flexible table implementation that supports sorting, filtering, grouping, and pagination. It's designed to handle large datasets efficiently through virtual scrolling.
+The table provides sorting, search, column filters, column resizing, and CSV export.
+All matching records remain available through one scroll area. The header and first column stay visible.
+Search and export sit in the chart header. In Rows, they sit beside the view tabs.
+Open the search icon to search or clear the table.
+Rows have a fixed height of 30 pixels. The table renders the viewport plus twelve extra rows.
 
-## Features
+The dashboard table applies column filters to linked charts. Search applies only to the table.
+The Rows tab shows all fields in one viewport. Its search, sort, and column filters apply to that view.
+Switching tabs preserves its controls and does not change the dashboard layout.
 
-- **Sorting**: Click on column headers to sort data
-- **Filtering**: Use column-specific filters with multiple operators
-- **Grouping**: Group data by any column
-- **Pagination**: Navigate through large datasets
-- **Row Selection**: Select individual or all rows
-- **Virtual Scrolling**: Efficient rendering of large datasets
-- **Flexible sizing**: Adapts within the supported desktop workspace
+Create settings with `dataTableDefinition.createDefaultSettings(layout)`, then set `columns`.
+Each column needs an `id` and a `field`. Set `width` to choose its initial pixel width.
+Pass `width` and `height` to `DataTable`. Use `onSettingsChange` and `rows` for a local data view.
+Pass a header element as `toolbarTarget` to place compact tools there. Without it, tools render above the table.
 
-## Usage
-
-```tsx
-import { DataTable } from "@/components/charts/DataTable";
-
-const settings = {
-  id: "my-table",
-  type: "data-table",
-  columns: [
-    { id: "name", label: "Name", field: "name" },
-    { id: "age", label: "Age", field: "age" },
-  ],
-  visibleColumns: ["name", "age"],
-  pageSize: 10,
-  currentPage: 1,
-  sortDirection: "asc",
-  selectedRows: new Set(),
-  filters: {},
-};
-
-function MyComponent() {
-  return <DataTable settings={settings} width={800} height={600} />;
-}
-```
-
-## Props
-
-### DataTable
-
-| Prop     | Type              | Description                   |
-| -------- | ----------------- | ----------------------------- |
-| settings | DataTableSettings | Table configuration and state |
-| width    | number            | Width of the table in pixels  |
-| height   | number            | Height of the table in pixels |
-
-### DataTableSettings
-
-| Property       | Type                   | Description                     |
-| -------------- | ---------------------- | ------------------------------- |
-| id             | string                 | Unique identifier for the table |
-| type           | "data-table"           | Component type identifier       |
-| columns        | Column[]               | Array of column definitions     |
-| visibleColumns | string[]               | Array of visible column IDs     |
-| pageSize       | number                 | Number of rows per page         |
-| currentPage    | number                 | Current page number             |
-| sortBy         | string?                | Column ID to sort by            |
-| sortDirection  | "asc" \| "desc"        | Sort direction                  |
-| selectedRows   | Set<string>            | Set of selected row IDs         |
-| filters        | Record<string, Filter> | Column-specific filters         |
-| groupBy        | string?                | Column ID to group by           |
-
-### Column
-
-| Property | Type   | Description                      |
-| -------- | ------ | -------------------------------- |
-| id       | string | Unique identifier for the column |
-| label    | string | Display label for the column     |
-| field    | string | Data field name                  |
-
-### Filter
-
-| Property | Type                                                 | Description     |
-| -------- | ---------------------------------------------------- | --------------- |
-| value    | string                                               | Filter value    |
-| operator | "contains" \| "equals" \| "startsWith" \| "endsWith" | Filter operator |
-
-## Performance Considerations
-
-1. **Virtual Scrolling**: The table uses virtual scrolling to render only visible rows, making it efficient for large datasets.
-2. **Data Caching**: Filtered and sorted data is cached to prevent unnecessary recalculations.
-3. **Optimized Re-renders**: Components are memoized to prevent unnecessary re-renders.
-
-## Keyboard Shortcuts
-
-- **Space**: Select/deselect row
-- **Ctrl/Cmd + A**: Select all rows
-- **Ctrl/Cmd + Shift + A**: Deselect all rows
-- **Arrow Up/Down**: Navigate rows
-- **Page Up/Down**: Navigate pages
-- **Home/End**: Go to first/last page
-
-## Troubleshooting
-
-1. **Slow Performance**
-
-   - Check if virtual scrolling is enabled
-   - Reduce the number of visible columns
-   - Consider increasing page size
-
-2. **Filter Not Working**
-
-   - Verify column ID matches filter key
-   - Check filter operator is supported
-   - Ensure data type matches filter value
-
-3. **Sort Not Working**
-   - Verify column is sortable
-   - Check data type compatibility
-   - Ensure sort direction is valid
-
-## Examples
-
-### Basic Table
-
-```tsx
-<DataTable
-  settings={{
-    id: "basic-table",
-    type: "data-table",
-    columns: [
-      { id: "name", label: "Name", field: "name" },
-      { id: "age", label: "Age", field: "age" },
-    ],
-    visibleColumns: ["name", "age"],
-    pageSize: 10,
-    currentPage: 1,
-    sortDirection: "asc",
-    selectedRows: new Set(),
-    filters: {},
-  }}
-  width={800}
-  height={600}
-/>
-```
-
-### Table with Filters
-
-```tsx
-<DataTable
-  settings={{
-    id: "filtered-table",
-    type: "data-table",
-    columns: [
-      { id: "name", label: "Name", field: "name" },
-      { id: "age", label: "Age", field: "age" },
-    ],
-    visibleColumns: ["name", "age"],
-    pageSize: 10,
-    currentPage: 1,
-    sortDirection: "asc",
-    selectedRows: new Set(),
-    filters: {
-      name: {
-        value: "John",
-        operator: "contains",
-      },
-    },
-  }}
-  width={800}
-  height={600}
-/>
-```
-
-### Grouped Table
-
-```tsx
-<DataTable
-  settings={{
-    id: "grouped-table",
-    type: "data-table",
-    columns: [
-      { id: "name", label: "Name", field: "name" },
-      { id: "age", label: "Age", field: "age" },
-    ],
-    visibleColumns: ["name", "age"],
-    pageSize: 10,
-    currentPage: 1,
-    sortDirection: "asc",
-    selectedRows: new Set(),
-    filters: {},
-    groupBy: "age",
-  }}
-  width={800}
-  height={600}
-/>
-```
+Use Tab to reach column controls. Enter sorts a column or opens its filter.
+Focus the scroll area to use the browser's arrow, Page Up, Page Down, Home, and End keys.
+CSV export includes every matching row, including rows outside the viewport.

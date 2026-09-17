@@ -2,89 +2,69 @@ import { ScaleBand, ScaleLinear } from "d3-scale";
 
 type Scale = ScaleLinear<number, number> | ScaleBand<string>;
 
+export function formatTick(value: string | number) {
+  if (typeof value === "string") return value;
+  return new Intl.NumberFormat("en-US", {
+    notation: Math.abs(value) >= 10000 ? "compact" : "standard",
+    maximumFractionDigits: Math.abs(value) < 1 ? 3 : 2,
+  }).format(value);
+}
+
 interface AxisProps {
   scale: Scale;
   transform: string;
-  className?: string;
   tickCount?: number;
-  showGridLines?: boolean;
   axisLabel?: string;
+  labelOffset?: number;
 }
 
 export function XAxis({
   scale,
   transform,
   tickCount = 5,
-  showGridLines = false,
   axisLabel,
+  labelOffset = 40,
 }: AxisProps) {
-  const range = scale.range();
-  const [rangeStart, rangeEnd] = range;
-  if (rangeStart === undefined || rangeEnd === undefined) {
-    return null;
-  }
-  const axisLength = rangeEnd - rangeStart;
+  const [start = 0, end = 0] = scale.range();
   const ticks =
     "ticks" in scale
       ? scale.ticks(
-          Math.min(tickCount, Math.max(2, Math.floor(axisLength / 60)))
+          Math.max(2, Math.min(tickCount, Math.floor((end - start) / 65)))
         )
       : scale.domain();
-
+  const labelWidth =
+    "bandwidth" in scale ? Math.max(3, Math.floor(scale.step() / 7)) : 20;
   return (
-    <g transform={transform} className="text-sm fill-foreground">
-      {/* Main axis line */}
-      <line
-        x1={rangeStart}
-        x2={rangeEnd}
-        y1={0}
-        y2={0}
-        className="stroke-border"
-      />
-
-      {/* Ticks and labels */}
+    <g
+      transform={transform}
+      className="fill-muted-foreground"
+      pointerEvents="none"
+    >
+      <line x1={start} x2={end} y1={0} y2={0} className="stroke-border" />
       {ticks.map((tick, i) => {
         const x =
           "bandwidth" in scale
-            ? (scale(tick as string) ?? 0) + scale.bandwidth() / 2
-            : scale(tick as number);
-
+            ? (scale(String(tick)) ?? 0) + scale.bandwidth() / 2
+            : scale(Number(tick));
+        const text = formatTick(tick);
         return (
-          <g key={i} transform={`translate(${x}, 0)`}>
-            {/* Tick line */}
-            <line x1={0} x2={0} y1={0} y2={6} className="stroke-border" />
-            {/* Grid line */}
-            {showGridLines && (
-              <line
-                x1={0}
-                x2={0}
-                y1={0}
-                y2={-axisLength}
-                className="stroke-border/20 stroke-dasharray-2"
-              />
-            )}
-            {/* Label */}
-            <text
-              x={0}
-              y={20}
-              textAnchor={
-                i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle"
-              }
-              className="fill-muted-foreground text-xs"
-            >
-              {tick}
+          <g key={i} transform={`translate(${x},0)`}>
+            <line y2={4} className="stroke-border" />
+            <text y={17} textAnchor="middle" fontSize={10}>
+              <title>{text}</title>
+              {text.length > labelWidth
+                ? `${text.slice(0, labelWidth - 1)}…`
+                : text}
             </text>
           </g>
         );
       })}
-
-      {/* Axis label */}
       {axisLabel && (
         <text
-          x={rangeStart + axisLength / 2}
-          y={30}
+          x={(start + end) / 2}
+          y={labelOffset}
           textAnchor="middle"
-          className="fill-muted-foreground text-sm font-medium"
+          fontSize={11}
         >
           {axisLabel}
         </text>
@@ -97,76 +77,46 @@ export function YAxis({
   scale,
   transform,
   tickCount = 5,
-  showGridLines = false,
   axisLabel,
+  labelOffset = 48,
 }: AxisProps) {
-  const range = scale.range();
-  const [rangeStart, rangeEnd] = range;
-  if (rangeStart === undefined || rangeEnd === undefined) {
-    return null;
-  }
-  const axisLength = rangeStart - rangeEnd;
+  const [start = 0, end = 0] = scale.range();
   const ticks =
     "ticks" in scale
       ? scale.ticks(
-          Math.min(tickCount, Math.max(2, Math.floor(axisLength / 24)))
+          Math.max(
+            2,
+            Math.min(tickCount, Math.floor(Math.abs(end - start) / 38))
+          )
         )
       : scale.domain();
-
   return (
-    <g transform={transform} className="text-sm fill-foreground">
-      {/* Main axis line */}
-      <line
-        x1={0}
-        x2={0}
-        y1={rangeEnd}
-        y2={rangeStart}
-        className="stroke-border"
-      />
-
-      {/* Ticks and labels */}
+    <g
+      transform={transform}
+      className="fill-muted-foreground"
+      pointerEvents="none"
+    >
       {ticks.map((tick, i) => {
         const y =
           "bandwidth" in scale
-            ? (scale(tick as string) ?? 0) + scale.bandwidth() / 2
-            : scale(tick as number);
-
+            ? (scale(String(tick)) ?? 0) + scale.bandwidth() / 2
+            : scale(Number(tick));
+        const text = formatTick(tick);
+        const maxChars = Math.max(5, Math.floor((labelOffset - 4) / 6));
         return (
-          <g key={i} transform={`translate(0, ${y})`}>
-            {/* Tick line */}
-            <line x1={0} x2={-6} y1={0} y2={0} className="stroke-border" />
-            {/* Grid line */}
-            {showGridLines && (
-              <line
-                x1={0}
-                x2={axisLength}
-                y1={0}
-                y2={0}
-                className="stroke-border/20 stroke-dasharray-2"
-              />
-            )}
-            {/* Label */}
-            <text
-              x={-12}
-              y={0}
-              dy="0.32em"
-              textAnchor="end"
-              className="fill-muted-foreground text-xs"
-            >
-              {tick}
-            </text>
-          </g>
+          <text key={i} x={-9} y={y} dy=".32em" textAnchor="end" fontSize={10}>
+            <title>{text}</title>
+            {text.length > maxChars ? `${text.slice(0, maxChars - 1)}…` : text}
+          </text>
         );
       })}
-
-      {/* Axis label */}
-      {axisLabel && (
+      {axisLabel && !("bandwidth" in scale) && (
         <text
-          x={-(rangeEnd + (rangeStart - rangeEnd) / 2)}
-          y={0}
-          textAnchor="middle"
           transform="rotate(-90)"
-          className="fill-muted-foreground text-sm font-medium"
+          x={-(start + end) / 2}
+          y={-labelOffset}
+          textAnchor="middle"
+          fontSize={11}
         >
           {axisLabel}
         </text>

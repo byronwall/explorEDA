@@ -1,159 +1,78 @@
 import { ChartSettings } from "@/types/ChartTypes";
-import { RotateCcw } from "lucide-react";
-import { ComboBox } from "../ComboBox";
-import { NumericInputEnter } from "../NumericInputEnter";
-import { Button } from "../ui/button";
-import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Switch } from "../ui/switch";
 
-interface AxisSettingsTabProps {
+interface Props {
   settings: ChartSettings;
   onSettingChange: (key: string, value: unknown) => void;
 }
-
-interface ScaleType {
-  value: string;
-  label: string;
-}
-
-const SCALE_TYPES: ScaleType[] = [
-  { value: "linear", label: "Linear" },
-  { value: "log", label: "Logarithmic" },
-  { value: "time", label: "Time" },
-  { value: "band", label: "Band" },
-];
-
-const DEFAULT_AXIS_SETTINGS = {
-  scaleType: "linear",
-  grid: false,
-  min: 0,
-  max: 100,
-};
-
-export function AxisSettingsTab({
-  settings,
-  onSettingChange,
-}: AxisSettingsTabProps) {
-  const handleAxisChange = (axis: "x" | "y", key: string, value: unknown) => {
-    onSettingChange(`${axis}Axis`, {
-      ...settings[`${axis}Axis`],
-      [key]: value,
-    });
-  };
-
-  const handleAxisReset = () => {
-    onSettingChange("xAxis", DEFAULT_AXIS_SETTINGS);
-    onSettingChange("yAxis", DEFAULT_AXIS_SETTINGS);
-    onSettingChange("xGridLines", 5);
-    onSettingChange("yGridLines", 5);
-  };
-
+export function AxisSettingsTab({ settings, onSettingChange }: Props) {
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-[120px_1fr_1fr] gap-x-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleAxisReset}
-          className="h-8 px-2"
-        >
-          <RotateCcw className="h-4 w-4 mr-1" />
-          Reset
-        </Button>
-        <h4 className="font-medium text-sm text-center">X Axis</h4>
-        <h4 className="font-medium text-sm text-center">Y Axis</h4>
-      </div>
-
-      <div className="grid grid-cols-[120px_1fr_1fr] gap-x-4 gap-y-6 items-center">
-        <Label>Scale Type</Label>
-        <ComboBox
-          value={SCALE_TYPES.find(
-            (option) => option.value === (settings.xAxis?.scaleType || "linear")
-          )}
-          options={SCALE_TYPES}
-          onChange={(option) =>
-            handleAxisChange("x", "scaleType", option?.value)
-          }
-          optionToString={(option) => option.label}
-          placeholder="X Scale"
-        />
-        <ComboBox
-          value={SCALE_TYPES.find(
-            (option) => option.value === (settings.yAxis?.scaleType || "linear")
-          )}
-          options={SCALE_TYPES}
-          onChange={(option) =>
-            handleAxisChange("y", "scaleType", option?.value)
-          }
-          optionToString={(option) => option.label}
-          placeholder="Y Scale"
-        />
-
-        <Label>Grid Lines</Label>
-        <NumericInputEnter
-          value={settings.xGridLines ?? 5}
-          onChange={(value) => onSettingChange("xGridLines", value)}
-          min={0}
-          max={20}
-          stepSmall={1}
-          stepMedium={2}
-          stepLarge={5}
-          placeholder="X Grid Lines"
-        />
-        <NumericInputEnter
-          value={settings.yGridLines ?? 5}
-          onChange={(value) => onSettingChange("yGridLines", value)}
-          min={0}
-          max={20}
-          stepSmall={1}
-          stepMedium={2}
-          stepLarge={5}
-          placeholder="Y Grid Lines"
-        />
-
-        <Label>Domain Min</Label>
-        <NumericInputEnter
-          value={settings.xAxis?.min || 0}
-          onChange={(value) => handleAxisChange("x", "min", value)}
-          placeholder="X Min"
-          min={-1000}
-          max={1000}
-          stepSmall={1}
-          stepMedium={10}
-          stepLarge={100}
-        />
-        <NumericInputEnter
-          value={settings.yAxis?.min || 0}
-          onChange={(value) => handleAxisChange("y", "min", value)}
-          placeholder="Y Min"
-          min={-1000}
-          max={1000}
-          stepSmall={1}
-          stepMedium={10}
-          stepLarge={100}
-        />
-
-        <Label>Domain Max</Label>
-        <NumericInputEnter
-          value={settings.xAxis?.max || 100}
-          onChange={(value) => handleAxisChange("x", "max", value)}
-          placeholder="X Max"
-          min={-1000}
-          max={1000}
-          stepSmall={1}
-          stepMedium={10}
-          stepLarge={100}
-        />
-        <NumericInputEnter
-          value={settings.yAxis?.max || 100}
-          onChange={(value) => handleAxisChange("y", "max", value)}
-          placeholder="Y Max"
-          min={-1000}
-          max={1000}
-          stepSmall={1}
-          stepMedium={10}
-          stepLarge={100}
-        />
-      </div>
+    <div className="space-y-5">
+      <p className="text-xs text-muted-foreground">
+        Symmetric log reveals detail across large ranges and keeps zero and
+        negative values. Category axes retain their order.
+      </p>
+      {(["x", "y"] as const).map((axis) => (
+        <fieldset key={axis} className="space-y-3 rounded-md border p-3">
+          <legend className="px-1 text-sm font-medium">
+            {axis === "x" ? "Horizontal axis" : "Vertical axis"}
+          </legend>
+          <label className="flex items-center justify-between gap-4">
+            Numeric scale
+            <select
+              className="h-8 rounded-md border bg-background px-2 text-xs"
+              aria-label={`${axis.toUpperCase()} numeric scale`}
+              value={
+                settings[`${axis}Axis`]?.scaleType === "symlog"
+                  ? "symlog"
+                  : "linear"
+              }
+              onChange={(event) =>
+                onSettingChange(`${axis}Axis`, {
+                  ...settings[`${axis}Axis`],
+                  scaleType: event.target.value,
+                })
+              }
+            >
+              <option value="linear">Linear</option>
+              <option value="symlog">Symmetric log</option>
+            </select>
+          </label>
+          <label className="flex items-center justify-between gap-4">
+            Grid lines
+            <Switch
+              aria-label={`${axis.toUpperCase()} axis grid lines`}
+              checked={settings[`${axis}Axis`]?.grid ?? false}
+              onCheckedChange={(grid) =>
+                onSettingChange(`${axis}Axis`, {
+                  ...settings[`${axis}Axis`],
+                  grid,
+                })
+              }
+            />
+          </label>
+          <label className="flex items-center justify-between gap-4">
+            Tick density
+            <Input
+              className="w-24"
+              type="number"
+              min={2}
+              max={12}
+              value={settings[`${axis}GridLines`] || 5}
+              onChange={(event) => {
+                const value = Number(event.target.value);
+                if (value >= 2 && value <= 12)
+                  onSettingChange(`${axis}GridLines`, value);
+              }}
+            />
+          </label>
+        </fieldset>
+      ))}
+      <p className="text-xs text-muted-foreground">
+        Tick labels adapt to the available space. Use Labels to add units to
+        each axis.
+      </p>
     </div>
   );
 }

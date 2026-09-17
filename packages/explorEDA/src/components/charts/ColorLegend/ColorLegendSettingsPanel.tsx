@@ -39,7 +39,7 @@ export function ColorLegendSettingsPanel({
       </div>
 
       <div className="space-y-2">
-        <Label>Numerical Scale Breakpoints</Label>
+        <Label>Numeric scale labels</Label>
         <NumericInputEnter
           value={settings.numericalBreakpoints}
           onChange={(value) =>
@@ -64,7 +64,7 @@ export function ColorLegendSettingsPanel({
             onSettingsChange({ ...settings, wrap: checked })
           }
         />
-        <Label htmlFor="wrap">Wrap Colors</Label>
+        <Label htmlFor="wrap">Wrap categories</Label>
       </div>
     </div>
   );

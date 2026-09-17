@@ -16,6 +16,13 @@ const chartNames: Record<string, string> = {
 };
 
 export function getChartTitle(settings: ChartSettings): string {
+  if (
+    settings.type === "color-legend" &&
+    settings.fields.length === 1 &&
+    (!settings.title.trim() || settings.title === "Color Legend")
+  ) {
+    return settings.fields[0]!;
+  }
   return settings.title.trim() || getChartDefinition(settings.type).name;
 }
 

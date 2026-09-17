@@ -55,22 +55,25 @@ export function FacetGridLayout({
   }, [facetData]);
 
   // Calculate cell dimensions based on the number of rows and columns
-  const cellWidth = width / (columns.length + 1); // +1 for the row headers
-  const cellHeight = height / (rows.length + 1); // +1 for the column headers
+  const cellWidth = Math.max(220, (width - 90) / Math.max(1, columns.length)); // +1 for the row headers
+  const cellHeight = Math.max(160, (height - 32) / Math.max(1, rows.length)); // +1 for the column headers
 
   return (
     <div className="w-full h-full overflow-auto">
-      <table className="w-full h-full border-collapse">
+      <table className="border-collapse text-xs">
         <thead>
           <tr>
             {/* Top-left empty cell */}
-            <th className="border p-2 bg-muted/50 font-semibold">
+            <th className="border border-border/50 px-2 py-1 bg-muted/30 font-medium">
               {rowVariable} / {columnVariable}
             </th>
 
             {/* Column headers */}
             {columns.map((col) => (
-              <th key={col} className="border p-2 bg-muted/50 font-semibold">
+              <th
+                key={col}
+                className="border border-border/50 px-2 py-1 bg-muted/30 font-medium"
+              >
                 {col}
               </th>
             ))}
@@ -80,13 +83,16 @@ export function FacetGridLayout({
           {rows.map((row) => (
             <tr key={row}>
               {/* Row header */}
-              <th className="border p-2 bg-muted/50 font-semibold text-left">
+              <th className="border border-border/50 px-2 py-1 bg-muted/30 font-medium text-left">
                 {row}
               </th>
 
               {/* Facet cells */}
               {columns.map((col) => (
-                <td key={`${row}-${col}`} className="border p-0">
+                <td
+                  key={`${row}-${col}`}
+                  className="border border-border/50 p-0"
+                >
                   <div
                     style={{
                       width: cellWidth,

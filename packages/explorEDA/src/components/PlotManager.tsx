@@ -5,11 +5,12 @@ import { ChartCreationButtons } from "./plot/ChartCreationButtons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDataLayer } from "@/providers/DataLayerProvider";
+import { RowsView } from "./RowsView";
 import { ActiveFilterStatus } from "./ActiveFilterStatus";
 import type { ChartLayout } from "@/types/ChartTypes";
 import { saveRawDataToClipboard, saveToClipboard } from "@/utils/saveDataUtils";
 import { Calculator, Copy, Grid, MoreHorizontal, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ChartGridLayout } from "./ChartGridLayout";
 import { PlotChartPanel } from "./PlotChartPanel";
@@ -30,6 +31,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+
+export function focusChartInContainer(
+  container: HTMLElement | null,
+  id: string
+) {
+  const element = Array.from(
+    container?.querySelectorAll<HTMLElement>("[data-chart-id]") ?? []
+  ).find((candidate) => candidate.dataset.chartId === id);
+  if (!element) {
+    return;
+  }
+
+  element.scrollIntoView({ behavior: "auto", block: "start" });
+  element.focus({ preventScroll: true });
+}
 
 // Add this conversion function
 const gridToPixels = (
@@ -66,6 +82,10 @@ export function PlotManager() {
   const showAlert = useAlertStore((state) => state.showAlert);
 
   const [activeTab, setActiveTab] = useState("charts");
+  const [rowsToolbarTarget, setRowsToolbarTarget] =
+    useState<HTMLDivElement | null>(null);
+  const knownChartIds = useRef(new Set<string>());
+  const [announcement, setAnnouncement] = useState("");
 
   // Add ref and state for container dimensions
   const containerRef = useRef<HTMLDivElement>(null);
@@ -93,6 +113,32 @@ export function PlotManager() {
     columnCount:
       containerWidth > 0 && containerWidth < 640 ? 1 : gridSettings.columnCount,
   };
+
+  const focusChartElement = useCallback((id: string) => {
+    requestAnimationFrame(() =>
+      focusChartInContainer(containerRef.current, id)
+    );
+  }, []);
+
+  useEffect(() => {
+    if (knownChartIds.current.size === 0) {
+      charts.forEach((chart) => knownChartIds.current.add(chart.id));
+      return;
+    }
+
+    const addedChart = charts.find(
+      (chart) => !knownChartIds.current.has(chart.id)
+    );
+    charts.forEach((chart) => knownChartIds.current.add(chart.id));
+    if (!addedChart) {
+      return;
+    }
+
+    const title = addedChart.title || "New chart";
+    setAnnouncement(`${title} added`);
+    setActiveTab("charts");
+    requestAnimationFrame(() => focusChartElement(addedChart.id));
+  }, [charts, focusChartElement]);
 
   const copyChartsToClipboard = async () => {
     if (charts.length === 0) {
@@ -138,8 +184,8 @@ export function PlotManager() {
   };
 
   return (
-    <div className="w-full min-w-0 overflow-x-clip pb-40" ref={containerRef}>
-      <header className="mb-4 flex flex-wrap items-center gap-3 border-b border-border pb-3">
+    <div className="eda-workspace w-full min-w-0 pb-8" ref={containerRef}>
+      <header className="eda-workspace-toolbar">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           <Tabs
             value={activeTab}
@@ -150,6 +196,9 @@ export function PlotManager() {
               <TabsTrigger value="charts" className="flex items-center gap-2">
                 Charts
               </TabsTrigger>
+              <TabsTrigger value="rows" className="flex items-center gap-2">
+                Rows
+              </TabsTrigger>
               <TabsTrigger
                 value="calculations"
                 className="flex items-center gap-2"
@@ -159,9 +208,10 @@ export function PlotManager() {
               </TabsTrigger>
             </TabsList>
           </Tabs>
-          <ChartCreationButtons />
+          {activeTab === "charts" && <ChartCreationButtons />}
         </div>
         <div className="ml-auto flex flex-wrap items-center gap-2">
+          {activeTab === "rows" && <div ref={setRowsToolbarTarget} />}
           {charts.length > 0 && activeTab === "charts" && (
             <>
               <DropdownMenu>
@@ -201,62 +251,103 @@ export function PlotManager() {
               </DropdownMenu>
             </>
           )}
-          <ColorScaleManager />
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Grid className="h-4 w-4 mr-2" />
-                Grid Settings
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>Grid Settings</DialogTitle>
-                <DialogDescription>
-                  Configure the grid layout settings for all charts
-                </DialogDescription>
-              </DialogHeader>
-              <GridSettingsPanel />
-            </DialogContent>
-          </Dialog>
+          {activeTab === "charts" && (
+            <details className="relative">
+              <summary className="flex h-9 cursor-pointer list-none items-center rounded-md border bg-background px-3 text-sm font-medium shadow-xs">
+                View options
+              </summary>
+              <div className="absolute right-0 z-20 mt-2 flex min-w-52 flex-col gap-2 rounded-md border bg-popover p-2 shadow-md">
+                <ColorScaleManager />
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="justify-start"
+                    >
+                      <Grid className="mr-2 h-4 w-4" />
+                      Grid settings
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Grid settings</DialogTitle>
+                      <DialogDescription>
+                        Configure the grid layout settings for all charts
+                      </DialogDescription>
+                    </DialogHeader>
+                    <GridSettingsPanel />
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </details>
+          )}
         </div>
       </header>
 
       <ActiveFilterStatus />
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        {announcement}
+      </div>
 
       <Tabs value={activeTab} className="w-full">
         <TabsContent value="charts" className="mt-0">
           <h2 className="sr-only">Charts</h2>
-          {containerWidth > 0 && (
-            <ChartGridLayout charts={charts} containerWidth={containerWidth}>
-              {charts.map((chart) => {
-                if (!chart.layout) {
-                  return null;
-                }
-                const size = gridToPixels(
-                  chart.layout,
-                  containerWidth,
-                  chartGridSettings
-                );
-                return (
-                  <div key={chart.id}>
-                    <PlotChartPanel
-                      settings={chart}
-                      onDelete={() => removeChart(chart)}
-                      onDuplicate={() => {
-                        const chartWithoutId = Object.fromEntries(
-                          Object.entries(chart).filter(([key]) => key !== "id")
-                        ) as Omit<typeof chart, "id">;
-                        addChart(chartWithoutId);
-                      }}
-                      width={size.width}
-                      height={size.height}
-                    />
-                  </div>
-                );
-              })}
-            </ChartGridLayout>
+          {charts.length === 0 ? (
+            <Card>
+              <CardContent className="space-y-2 pt-6">
+                <h3 className="font-medium">No charts yet</h3>
+                <p className="text-sm text-muted-foreground">
+                  Add a chart to begin exploring this data.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            containerWidth > 0 && (
+              <ChartGridLayout charts={charts} containerWidth={containerWidth}>
+                {charts.map((chart) => {
+                  if (!chart.layout) {
+                    return null;
+                  }
+                  const size = gridToPixels(
+                    chart.layout,
+                    containerWidth,
+                    chartGridSettings
+                  );
+                  return (
+                    <div key={chart.id} data-chart-id={chart.id} tabIndex={-1}>
+                      <PlotChartPanel
+                        settings={chart}
+                        onDelete={() => removeChart(chart)}
+                        onDuplicate={() => {
+                          const chartWithoutId = Object.fromEntries(
+                            Object.entries(chart).filter(
+                              ([key]) => key !== "id"
+                            )
+                          ) as Omit<typeof chart, "id">;
+                          addChart(chartWithoutId);
+                        }}
+                        width={size.width}
+                        height={size.height}
+                      />
+                    </div>
+                  );
+                })}
+              </ChartGridLayout>
+            )
           )}
+        </TabsContent>
+        <TabsContent
+          forceMount
+          value="rows"
+          className="mt-0 data-[state=inactive]:hidden"
+        >
+          <h2 className="sr-only">Rows</h2>
+          <RowsView
+            width={containerWidth}
+            active={activeTab === "rows"}
+            toolbarTarget={rowsToolbarTarget}
+          />
         </TabsContent>
         <TabsContent value="calculations" className="mt-0">
           <Card>

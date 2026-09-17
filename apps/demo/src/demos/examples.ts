@@ -1,3 +1,8 @@
+import {
+  penguinDashboard,
+  shopDashboard,
+  activityDashboard,
+} from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import { SavedDataStructure } from "exploreda";
 import {
@@ -26,6 +31,7 @@ export interface ExampleData {
   title: string;
   description: string;
   recommended?: boolean;
+  dashboard?: boolean;
   icon: LucideIcon;
   data: string; // path to the data file
   savedData?: SavedDataStructure;
@@ -33,23 +39,39 @@ export interface ExampleData {
 
 export const examples: ExampleData[] = [
   {
+    id: "product-activity",
+    title: "90 days of product activity",
+    dashboard: true,
+    description:
+      "Explore a release through traffic, conversion, and response time. Synthetic daily observations.",
+    icon: LineChart,
+    data: "/explorEDA/datasets/product-activity.csv",
+    savedData: activityDashboard,
+  },
+  {
     id: "palmer-penguins",
-    title: "Palmer Penguins",
-    description: "Inspect measurements, species, islands, and group sizes.",
+    title: "Penguin field notes",
+    dashboard: true,
+    savedData: penguinDashboard,
+    description:
+      "Seven linked views of species, body size, bill shape, and island populations.",
     icon: Bird,
     data: "/explorEDA/datasets/palmer-penguins.csv",
   },
   {
     id: "shop-operations",
-    title: "Shop Operations",
-    description: "Explore seasonal orders, margins, returns, and fulfillment.",
+    title: "Inside the order book",
+    dashboard: true,
+    savedData: shopDashboard,
+    description:
+      "Follow orders from revenue and margin to delivery, channels, and individual records.",
     icon: ShoppingCart,
     data: "/explorEDA/datasets/shop-operations.csv",
   },
   {
     id: "lorenz-3d",
-    title: "Lorenz attractor: coordinated 2D and 3D views",
-    description: "Brush one chart to filter every related view.",
+    title: "How quickly do nearby Lorenz runs diverge?",
+    description: "Inspect a saved 2D brush across coordinated 3D views.",
     recommended: true,
     icon: ScatterChart,
     data: "/explorEDA/lorenz_3d_small.csv",
@@ -65,8 +87,8 @@ export const examples: ExampleData[] = [
   },
   {
     id: "categorical-charts",
-    title: "Pivot + Categorical Charts",
-    description: "Group categories, then compare their totals.",
+    title: "What drives categorical product counts?",
+    description: "Compare category totals with stock and size facets.",
     icon: BarChart,
     data: "/explorEDA/categorical_medium.csv",
     savedData: categoricalChartSettings,
@@ -82,16 +104,16 @@ export const examples: ExampleData[] = [
 
   {
     id: "line-chart",
-    title: "Line Chart",
-    description: "Follow trends across a numeric sequence.",
+    title: "How does square-root growth slow?",
+    description: "Follow one labeled transform across an ordered sequence.",
     icon: LineChart,
     data: "/explorEDA/basic_numbers_medium.csv",
     savedData: lineChartSettings,
   },
   {
     id: "tables",
-    title: "Summary Table + Data Table",
-    description: "Inspect distributions and browse the source rows.",
+    title: "Which product rows match a search?",
+    description: "Inspect fields, then browse sorted Sports rows.",
     icon: Table2,
     data: "/explorEDA/categorical_small.csv",
     savedData: categoricalSmallSettings,

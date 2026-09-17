@@ -15,13 +15,11 @@ export interface DataTableSettings extends BaseChartSettings {
     field: string;
     width?: number;
   }>;
-  pageSize: number;
-  currentPage: number;
+
   sortBy?: string;
   sortDirection: "asc" | "desc";
   filters: Filter[];
   globalSearch: string;
-  tableHeight: number;
 }
 
 export const dataTableDefinition: ChartDefinition<DataTableSettings> = {
@@ -41,12 +39,10 @@ export const dataTableDefinition: ChartDefinition<DataTableSettings> = {
     layout,
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
     columns: [],
-    pageSize: 25,
-    currentPage: 1,
+
     sortDirection: "asc",
     filters: [],
     globalSearch: "",
-    tableHeight: 400,
   }),
 
   validateSettings: (settings) => {

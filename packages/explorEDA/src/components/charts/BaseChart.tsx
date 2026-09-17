@@ -16,6 +16,7 @@ interface BaseChartProps {
   brushingMode?: BrushMode;
   onBrushChange?: (extent: [[number, number], [number, number]] | null) => void;
   children: ReactNode;
+  overlay?: ReactNode;
   className?: string;
   settings: ChartSettings;
 }
@@ -28,6 +29,7 @@ export function BaseChart({
   brushingMode = "none",
   onBrushChange,
   children,
+  overlay,
   className,
   settings,
 }: BaseChartProps) {
@@ -80,36 +82,103 @@ export function BaseChart({
       ref={svgRef}
       width={width}
       height={height}
-      role="img"
+      role="group"
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
       className={cn("select-none", className)}
-      style={{ cursor: brush.getCursor() }}
-      onMouseDownCapture={brush.handleMouseDown}
-      onMouseMoveCapture={brush.handleMouseMove}
-      onMouseUpCapture={brush.handleMouseUp}
-      onMouseLeave={brush.handleMouseUp}
+      style={{
+        cursor: brush.getCursor(),
+        touchAction: brushingMode === "none" ? "auto" : "none",
+      }}
+      tabIndex={brushingMode === "none" ? undefined : 0}
+      onKeyDown={(event) => {
+        if (event.key === "Escape") {
+          event.stopPropagation();
+          brush.clear();
+        }
+      }}
+      onPointerDownCapture={brush.handlePointerDown}
+      onPointerMoveCapture={brush.handlePointerMove}
+      onPointerUpCapture={brush.handlePointerUp}
+      onPointerCancel={brush.cancel}
+      onLostPointerCapture={brush.cancel}
     >
       <title id={titleId}>{chartTitle}</title>
       <desc id={descriptionId}>{chartDescription}</desc>
+      <defs>
+        <clipPath id={`${chartId}-plot`}>
+          <rect
+            x={0}
+            y={0}
+            width={Math.max(0, innerWidth)}
+            height={Math.max(0, innerHeight)}
+          />
+        </clipPath>
+      </defs>
       <g transform={`translate(${margin.left},${margin.top})`}>
+        <g className="stroke-border" opacity={0.55} pointerEvents="none">
+          {settings.xAxis?.grid &&
+            "ticks" in xScale &&
+            xScale
+              .ticks(
+                Math.min(
+                  settings.xGridLines || 5,
+                  Math.max(2, Math.floor(innerWidth / 70))
+                )
+              )
+              .map((tick) => (
+                <line
+                  key={`x${tick}`}
+                  x1={xScale(tick)}
+                  x2={xScale(tick)}
+                  y2={innerHeight}
+                />
+              ))}
+          {settings.yAxis?.grid &&
+            "ticks" in yScale &&
+            yScale
+              .ticks(settings.yGridLines || 5)
+              .map((tick) => (
+                <line
+                  key={`y${tick}`}
+                  y1={yScale(tick)}
+                  y2={yScale(tick)}
+                  x2={innerWidth}
+                />
+              ))}
+        </g>
         {/* Main content */}
-        {children}
+        <g clipPath={`url(#${chartId}-plot)`}>{children}</g>
 
         {/* Brush overlay */}
-        {brush.renderBrush}
+        <g clipPath={`url(#${chartId}-plot)`}>{brush.renderBrush}</g>
 
         {/* Axes */}
         <XAxis
           scale={xScale}
           transform={`translate(0,${innerHeight})`}
-          axisLabel={settings.xAxisLabel}
+          axisLabel={[
+            settings.xAxisLabel,
+            settings.xAxis.scaleType === "symlog" && "symlog",
+          ]
+            .filter(Boolean)
+            .join(" · ")}
+          tickCount={settings.xGridLines}
+          labelOffset={Math.max(32, margin.bottom - 8)}
         />
         <YAxis
           scale={yScale}
           transform="translate(0,0)"
-          axisLabel={settings.yAxisLabel}
+          axisLabel={[
+            settings.yAxisLabel,
+            settings.yAxis.scaleType === "symlog" && "symlog",
+          ]
+            .filter(Boolean)
+            .join(" · ")}
+          tickCount={settings.yGridLines}
+          labelOffset={margin.left - 12}
         />
+        {overlay}
       </g>
     </svg>
   );

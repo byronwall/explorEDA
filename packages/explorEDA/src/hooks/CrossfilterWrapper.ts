@@ -9,10 +9,12 @@ type FieldValue = string | number | boolean | null | undefined;
 type ChartDimension<TData, TId extends IdType> = {
   dimension: crossfilter.Dimension<TData, TId>;
   chart: ChartSettings;
+  group: crossfilter.Group<TData, TId, number>;
 };
 
 export class CrossfilterWrapper<T> {
   ref: crossfilter.Crossfilter<T>;
+  private nonce = 0;
   charts: Map<string, ChartDimension<T, IdType>> = new Map();
   idFunction: (item: T) => IdType;
 
@@ -29,28 +31,13 @@ export class CrossfilterWrapper<T> {
   }
 
   updateChart(chart: ChartSettings) {
-    // check if the filters have changed
-    const oldChart = this.charts.get(chart.id);
-
-    // Compare filters directly
-    if (!isEqual(oldChart?.chart.filters, chart.filters)) {
-      this.updateChartFilters(chart);
+    const existing = this.charts.get(chart.id);
+    if (!existing) {
+      this.addChart(chart);
+      return;
     }
-
-    // need to update internal defs so diff works again
-
-    if (!oldChart) {
-      // will hit this case if we did an update and should have done remove/add
-      this.charts.set(chart.id, {
-        dimension: this.ref.dimension(this.idFunction),
-        chart,
-      });
-    } else {
-      this.charts.set(chart.id, {
-        ...oldChart,
-        chart,
-      });
-    }
+    if (!isEqual(existing.chart, chart)) this.updateChartFilters(chart);
+    existing.chart = chart;
   }
 
   updateChartFilters(chart: ChartSettings) {
@@ -80,6 +67,7 @@ export class CrossfilterWrapper<T> {
     const chartDimension: ChartDimension<T, IdType> = {
       dimension,
       chart,
+      group: dimension.group<IdType, number>(),
     };
 
     this.charts.set(chart.id, chartDimension);
@@ -94,6 +82,7 @@ export class CrossfilterWrapper<T> {
     }
 
     savedChart.dimension.filterAll();
+    savedChart.group.dispose();
     savedChart.dimension.dispose();
     this.charts.delete(chart.id);
   }
@@ -102,6 +91,7 @@ export class CrossfilterWrapper<T> {
     // Clear and dispose all dimensions
     for (const chart of this.charts.values()) {
       chart.dimension.filterAll();
+      chart.group.dispose();
       chart.dimension.dispose();
     }
     // Clear the charts map
@@ -127,11 +117,11 @@ export class CrossfilterWrapper<T> {
     // id -> count
     const data: LiveItemMap = {};
 
-    const commonNonce = new Date().getTime();
+    const commonNonce = ++this.nonce;
 
     for (const chart of this.charts.values()) {
       data[chart.chart.id] = {
-        items: chart.dimension.group<IdType, number>().all(),
+        items: chart.group.all(),
         nonce: commonNonce,
       };
     }

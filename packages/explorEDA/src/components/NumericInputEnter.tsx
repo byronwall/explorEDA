@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils";
 import { Input } from "./ui/input";
-import { KeyboardEvent, useState } from "react";
+import { KeyboardEvent, useEffect, useState } from "react";
 
 export interface NumericInputEnterProps {
+  id?: string;
   value: number;
   onChange: (value: number) => void;
   min?: number;
@@ -15,6 +16,7 @@ export interface NumericInputEnterProps {
 }
 
 export function NumericInputEnter({
+  id,
   value,
   onChange,
   stepSmall = 1,
@@ -26,6 +28,8 @@ export function NumericInputEnter({
   className,
 }: NumericInputEnterProps) {
   const [localValue, setLocalValue] = useState<string>(value.toString());
+
+  useEffect(() => setLocalValue(value.toString()), [value]);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     let delta = 0;
@@ -72,15 +76,13 @@ export function NumericInputEnter({
   };
 
   const handleBlur = () => {
-    // Reset to last valid value if input is empty or invalid
-    if (!localValue || isNaN(parseFloat(localValue))) {
-      setLocalValue(value.toString());
-    }
+    setLocalValue(value.toString());
   };
 
   return (
     <div className={cn("relative max-w-[160px]", className)}>
       <Input
+        id={id}
         type="number"
         value={localValue}
         onChange={handleChange}

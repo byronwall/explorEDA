@@ -8,6 +8,7 @@ import {
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { Download } from "lucide-react";
 import { useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { toast } from "sonner";
 import { CompactSummaryTable } from "../../SummaryTable/components/CompactSummaryTable";
 import type { SummaryTableSettings } from "./definition";
@@ -66,6 +67,7 @@ const exportToCSV = (profiles: FieldProfile[]) => {
 export function SummaryTable({
   height,
   settings,
+  toolbarTarget,
 }: BaseChartProps<SummaryTableSettings>) {
   const sourceProfiles = useDataLayer((state) => state.fieldProfiles);
   const data = useDataLayer((state) => state.data);
@@ -154,22 +156,31 @@ export function SummaryTable({
     }));
   };
 
+  const toolbar = (
+    <div className="eda-table-toolbar-compact">
+      <span className="text-muted-foreground tabular-nums">
+        {(allProfiles[0]?.totalCount ?? 0).toLocaleString()} rows
+      </span>
+      <Button
+        variant="ghost"
+        size="icon"
+        aria-label="Export summary as CSV"
+        title="Export summary as CSV"
+        onClick={() => exportToCSV(sortedProfiles)}
+      >
+        <Download className="h-3.5 w-3.5" />
+      </Button>
+    </div>
+  );
+
   return (
-    <div className="space-y-4 overflow-auto" style={{ height }}>
-      <div className="flex justify-end">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => exportToCSV(sortedProfiles)}
-        >
-          <Download className="mr-2 h-4 w-4" />
-          Export to CSV
-        </Button>
-      </div>
+    <div className="eda-summary-view overflow-auto" style={{ height }}>
+      {toolbarTarget === undefined
+        ? toolbar
+        : toolbarTarget && createPortal(toolbar, toolbarTarget)}
       <CompactSummaryTable
         data={sortedProfiles}
         onSort={handleSort}
-        totalRows={allProfiles[0]?.totalCount ?? 0}
         settings={settings}
       />
     </div>

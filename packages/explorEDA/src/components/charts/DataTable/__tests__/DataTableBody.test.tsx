@@ -28,12 +28,10 @@ const mockSettings: DataTableSettings = {
     { id: "name", field: "name", width: 200 },
     { id: "age", field: "age", width: 100 },
   ],
-  pageSize: 10,
-  currentPage: 1,
+
   sortDirection: "asc",
   filters: [],
   globalSearch: "",
-  tableHeight: 600,
 };
 
 const mockData = [
@@ -151,18 +149,37 @@ describe("DataTableBody", () => {
     expect(rows[2]).toHaveTextContent("25"); // Third row should be Jane (age 25)
   });
 
-  it("applies pagination correctly", () => {
-    const settingsWithPagination = {
-      ...mockSettings,
-      pageSize: 2,
-      currentPage: 2,
-    };
-
-    renderBody(settingsWithPagination);
-
-    expect(screen.getByText("Bob")).toBeInTheDocument();
-    expect(screen.queryByText("John")).not.toBeInTheDocument();
-    expect(screen.queryByText("Jane")).not.toBeInTheDocument();
+  it("virtualizes rows and reaches the last record without pages", () => {
+    const rows = Array.from({ length: 10000 }, (_, index) => ({
+      __ID: index,
+      name: `Person ${index}`,
+      age: index,
+    }));
+    const { rerender } = render(
+      <table>
+        <DataTableBody
+          settings={mockSettings}
+          rows={rows}
+          viewportHeight={300}
+        />
+      </table>
+    );
+    expect(screen.getByText("Person 0")).toBeInTheDocument();
+    expect(screen.queryByText("Person 9999")).not.toBeInTheDocument();
+    expect(screen.getAllByRole("row").length).toBeLessThan(30);
+    rerender(
+      <table>
+        <DataTableBody
+          settings={mockSettings}
+          rows={rows}
+          viewportHeight={300}
+          scrollTop={299736}
+        />
+      </table>
+    );
+    expect(screen.getByText("Person 9999")).toBeInTheDocument();
+    expect(screen.queryByText("Person 0")).not.toBeInTheDocument();
+    expect(screen.getAllByRole("row").length).toBeLessThan(30);
   });
 
   it("respects column widths", () => {

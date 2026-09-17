@@ -87,12 +87,10 @@ export const DEFAULT_DATA_TABLE_SETTINGS: Omit<DataTableSettings, "id"> = {
   ...DEFAULT_CHART_SETTINGS,
   type: "data-table",
   columns: [],
-  pageSize: 10,
-  currentPage: 1,
+
   sortDirection: "asc",
   filters: [] as Filter[],
   globalSearch: "",
-  tableHeight: 600,
 };
 
 export function mergeWithDefaultSettings<T extends ChartSettings>(

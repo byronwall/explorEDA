@@ -1,58 +1,60 @@
 import { ColorScaleType } from "@/types/ColorScaleTypes";
-
-import { getContrastTextColor } from "./getContrastTextColor";
+import { datum } from "@/types/ChartTypes";
 
 interface ColorScaleProps {
   scale: ColorScaleType;
+  width: number;
   wrap: boolean;
-  numericalBreakpoints?: number;
-  getColorForValue: (scaleId: string, value: number) => string;
+  numericalBreakpoints: number;
+  getColorForValue: (scaleId: string, value: datum) => string;
+  counts: Map<string, number>;
+  countWidth: number;
+  selected: string[];
+  onToggle: (value: string) => void;
 }
+
 export function ColorScale({
   scale,
+  width,
   wrap,
-  numericalBreakpoints = 5,
+  numericalBreakpoints,
   getColorForValue,
+  counts,
+  countWidth,
+  selected,
+  onToggle,
 }: ColorScaleProps) {
-  if (!scale?.palette) {
-    return <div className="h-8 rounded-md bg-muted">Invalid color scale</div>;
-  }
-
   if (scale.type === "numerical") {
-    // Create discrete colors based on breakpoints
-    const steps = numericalBreakpoints;
-    const min = scale.min;
-    const max = scale.max;
-    const range = max - min;
-    const stepSize = range / (steps - 1);
-
-    const breakpoints = Array.from({ length: steps }, (_, i) => {
-      const value = min + i * stepSize;
-      return {
-        value,
-        color: getColorForValue(scale.id, value),
-      };
+    const steps =
+      scale.min === scale.max
+        ? 1
+        : Math.max(
+            2,
+            Math.min(Math.round(numericalBreakpoints), Math.floor(width / 56))
+          );
+    const stops = Array.from({ length: steps }, (_, index) => {
+      const value =
+        scale.min + ((scale.max - scale.min) * index) / Math.max(1, steps - 1);
+      return { value, color: getColorForValue(scale.id, value) };
     });
-
     return (
-      <div className="rounded-md">
-        <div className={`flex h-full ${wrap ? "flex-wrap" : ""}`}>
-          {breakpoints.map(({ value, color }, i) => (
-            <div
-              key={i}
-              className="h-8 flex items-center justify-center"
-              style={{
-                backgroundColor: color,
-                color: getContrastTextColor(color),
-                flexBasis: wrap ? "20%" : `${100 / steps}%`,
-              }}
-            >
-              <span className="text-xs truncate px-1">
-                {value.toLocaleString(undefined, {
-                  maximumFractionDigits: 1,
-                })}
-              </span>
-            </div>
+      <div className="eda-legend-numeric">
+        <div
+          className="eda-legend-ramp"
+          role="img"
+          aria-label={`${scale.name}: ${scale.min} to ${scale.max}`}
+          style={{
+            background:
+              steps === 1
+                ? stops[0]!.color
+                : `linear-gradient(to right, ${stops.map((stop) => stop.color).join(", ")})`,
+          }}
+        />
+        <div className="eda-legend-ticks">
+          {stops.map(({ value }, index) => (
+            <span key={index}>
+              {value.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+            </span>
           ))}
         </div>
       </div>
@@ -60,23 +62,36 @@ export function ColorScale({
   }
 
   return (
-    <div className="rounded-md">
-      <div className={`flex h-full ${wrap ? "flex-wrap" : ""}`}>
-        {Array.from(scale.mapping.entries()).map(([value, color], i) => (
-          <div
-            key={i}
-            className="h-8 flex items-center justify-center"
-            style={{
-              backgroundColor: color,
-              color: getContrastTextColor(color),
-              flexBasis: wrap ? "20%" : "auto",
-              flexGrow: wrap ? 0 : 1,
-            }}
+    <div className={`eda-legend-items ${wrap ? "is-wrapped" : ""}`}>
+      {Array.from(scale.mapping.keys()).map((value) => {
+        const active = selected.includes(value);
+        const count = counts.get(value) ?? 0;
+        return (
+          <button
+            key={value}
+            type="button"
+            className="eda-legend-item"
+            aria-label={`Filter ${scale.name} by ${value || "(blank)"}, ${count.toLocaleString()} rows`}
+            aria-pressed={active}
+            data-dimmed={(selected.length > 0 && !active) || count === 0}
+            title={`${value || "(blank)"} · ${count.toLocaleString()} rows · Click to ${active ? "remove" : "add"} filter`}
+            onClick={() => onToggle(value)}
           >
-            <span className="text-xs truncate px-1">{value}</span>
-          </div>
-        ))}
-      </div>
+            <span
+              className="eda-legend-swatch"
+              style={{ background: getColorForValue(scale.id, value) }}
+              aria-hidden="true"
+            />
+            <span className="eda-legend-value">{value || "(blank)"}</span>
+            <span
+              className="eda-legend-count"
+              style={{ width: `${countWidth}ch` }}
+            >
+              {count.toLocaleString()}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }

@@ -80,17 +80,24 @@ export function CsvUpload({ compact = false, onImport }: CsvUploadProps) {
 
   return (
     <div
-      {...getRootProps()}
-      className="border-2 border-dashed border-input rounded-lg p-5 text-center cursor-pointer hover:border-ring transition-colors"
+      {...getRootProps({
+        role: "button",
+        tabIndex: 0,
+        "aria-label": "Import CSV or JSON data",
+        "aria-describedby": "file-upload-help",
+      })}
+      className="cursor-pointer rounded-lg border-2 border-dashed border-input p-5 text-center outline-none transition-colors hover:border-ring focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
-      <input {...getInputProps()} />
+      <input
+        {...getInputProps({ "aria-label": "Choose a CSV or JSON file" })}
+      />
       <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
       {isDragActive ? (
         <p>Drop the CSV or JSON file here…</p>
       ) : (
         <p>Drag and drop a CSV or JSON file here, or click to select one</p>
       )}
-      <p className="mt-2 text-sm text-muted-foreground">
+      <p id="file-upload-help" className="mt-2 text-sm text-muted-foreground">
         Use a header row for CSV, or an object or array of objects for JSON.
       </p>
       {error && (

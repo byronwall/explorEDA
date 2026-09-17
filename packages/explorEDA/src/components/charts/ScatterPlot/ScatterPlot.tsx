@@ -1,3 +1,5 @@
+import { numericScale } from "../Axis/numericScale";
+import { AxisReadout } from "../Axis/AxisReadout";
 import { applyFilter } from "@/hooks/applyFilter";
 import { getRangeFilterForField } from "@/hooks/getAxisFilter";
 import { useColorScales } from "@/hooks/useColorScales";
@@ -5,7 +7,7 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useFacetAxis } from "@/providers/FacetAxisProvider";
 import { BaseChartProps } from "@/types/ChartTypes";
 import { ScaleLinear, scaleLinear } from "d3-scale";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BaseChart } from "../BaseChart";
 import { useGetColumnDataForIds } from "../useGetColumnData";
 import { useGetLiveData } from "../useGetLiveData";
@@ -24,6 +26,7 @@ export function ScatterPlot({
   height,
   facetIds,
 }: ScatterPlotProps) {
+  const [hovered, setHovered] = useState<number | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const updateChart = useDataLayer((s) => s.updateChart);
   const { getColorForValue } = useColorScales();
@@ -40,14 +43,46 @@ export function ScatterPlot({
   const colorData = useGetLiveData(settings, settings.colorField, facetIds);
 
   // Convert object to array and map to numbers
-  const xValues = xData.map(Number);
-  const yValues = yData.map(Number);
+  const xValues = xData.map((value) =>
+    value == null || value === "" ? NaN : Number(value)
+  );
+  const yValues = yData.map((value) =>
+    value == null || value === "" ? NaN : Number(value)
+  );
 
   // Calculate data bounds from ALL data (not just filtered data)
-  const xMin = Math.min(...(allXData as number[]));
-  const xMax = Math.max(...(allXData as number[]));
-  const yMin = Math.min(...(allYData as number[]));
-  const yMax = Math.max(...(allYData as number[]));
+  const xMin = Math.min(
+    ...allXData
+      .filter(
+        (value) =>
+          value != null && value !== "" && Number.isFinite(Number(value))
+      )
+      .map(Number)
+  );
+  const xMax = Math.max(
+    ...allXData
+      .filter(
+        (value) =>
+          value != null && value !== "" && Number.isFinite(Number(value))
+      )
+      .map(Number)
+  );
+  const yMin = Math.min(
+    ...allYData
+      .filter(
+        (value) =>
+          value != null && value !== "" && Number.isFinite(Number(value))
+      )
+      .map(Number)
+  );
+  const yMax = Math.max(
+    ...allYData
+      .filter(
+        (value) =>
+          value != null && value !== "" && Number.isFinite(Number(value))
+      )
+      .map(Number)
+  );
 
   // Calculate buffered bounds for scales
   const xRange = xMax - xMin;
@@ -108,7 +143,7 @@ export function ScatterPlot({
     ...scaleLinear()
       .domain(yDomain)
       .ticks(5)
-      .map((tick) => String(tick).length * 7 + 24)
+      .map((tick) => String(tick).length * 7 + (settings.yAxisLabel ? 38 : 18))
   );
   const minPlotWidth = Math.min(
     80,
@@ -121,7 +156,7 @@ export function ScatterPlot({
   const margin = {
     ...settings.margin,
     left: Math.min(requestedLabelMargin, maxLabelMargin),
-    bottom: Math.max(settings.margin.bottom, 30),
+    bottom: Math.max(settings.margin.bottom, settings.xAxisLabel ? 46 : 28),
   };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
@@ -133,7 +168,7 @@ export function ScatterPlot({
       const globalRange = globalXLimits.max - globalXLimits.min;
       const globalBuffer = globalRange * AXIS_BUFFER_PERCENTAGE;
 
-      return scaleLinear()
+      return numericScale(settings.xAxis)
         .domain([
           globalXLimits.min - globalBuffer,
           globalXLimits.max + globalBuffer,
@@ -141,10 +176,15 @@ export function ScatterPlot({
         .range([0, innerWidth]);
     }
 
-    return scaleLinear()
-      .domain([bufferedXMin, bufferedXMax])
+    return numericScale(settings.xAxis)
+      .domain([
+        settings.xAxis.scaleType === "symlog" ? xMin : bufferedXMin,
+        bufferedXMax,
+      ])
       .range([0, innerWidth]);
   }, [
+    settings.xAxis,
+    xMin,
     bufferedXMin,
     bufferedXMax,
     width,
@@ -154,8 +194,15 @@ export function ScatterPlot({
   ]) as ScaleLinear<number, number>;
 
   const yScale = useMemo(() => {
-    return scaleLinear().domain(yDomain).range([innerHeight, 0]);
-  }, [innerHeight, yDomain]) as ScaleLinear<number, number>;
+    return numericScale(settings.yAxis)
+      .domain(
+        settings.yAxis.scaleType === "symlog" ? [yMin, yDomain[1]] : yDomain
+      )
+      .range([innerHeight, 0]);
+  }, [innerHeight, yDomain, yMin, settings.yAxis]) as ScaleLinear<
+    number,
+    number
+  >;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -179,6 +226,9 @@ export function ScatterPlot({
 
     // Draw points using the same scales as BaseChart
     ctx.translate(margin.left, margin.top);
+    ctx.beginPath();
+    ctx.rect(0, 0, innerWidth, innerHeight);
+    ctx.clip();
 
     const xFilter = getRangeFilterForField(settings.filters, settings.xField);
     const yFilter = getRangeFilterForField(settings.filters, settings.yField);
@@ -186,7 +236,12 @@ export function ScatterPlot({
     for (let i = 0; i < xValues.length; i++) {
       const xValue = xValues[i];
       const yValue = yValues[i];
-      if (xValue === undefined || yValue === undefined) {
+      if (
+        xValue === undefined ||
+        yValue === undefined ||
+        !Number.isFinite(xValue) ||
+        !Number.isFinite(yValue)
+      ) {
         continue;
       }
       const x = xScale(xValue);
@@ -199,18 +254,18 @@ export function ScatterPlot({
       ctx.fillStyle =
         (xFilter || yFilter) && !isFiltered
           ? "rgb(156 163 175)" // gray-400 for filtered out points
-          : getColorForValue(
-              settings.colorScaleId,
-              colorData[i] ?? "hsl(217.2 91.2% 59.8%)"
-            );
+          : getColorForValue(settings.colorScaleId, colorData[i], "#3479a8");
 
       ctx.beginPath();
-      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.globalAlpha = isFiltered ? (settings.pointOpacity ?? 0.7) : 0.15;
+      ctx.arc(x, y, settings.pointSize ?? 3, 0, Math.PI * 2);
       ctx.fill();
     }
   }, [
     xValues,
     yValues,
+    settings.pointSize,
+    settings.pointOpacity,
     settings.xField,
     settings.yField,
     settings.filters,
@@ -221,6 +276,8 @@ export function ScatterPlot({
     yScale,
     getColorForValue,
     colorData,
+    innerHeight,
+    innerWidth,
     margin.left,
     margin.top,
   ]);
@@ -281,7 +338,38 @@ export function ScatterPlot({
   );
 
   return (
-    <div style={{ width, height }} className="relative">
+    <div
+      style={{ width, height }}
+      className="relative"
+      onPointerLeave={() => setHovered(null)}
+      onPointerDownCapture={() => setHovered(null)}
+      onKeyDownCapture={(event) => {
+        if (event.key === "Escape") setHovered(null);
+      }}
+      onPointerMove={(event) => {
+        if (event.buttons) return;
+        const bounds = event.currentTarget.getBoundingClientRect();
+        const px = event.clientX - bounds.left - margin.left,
+          py = event.clientY - bounds.top - margin.top;
+        if (px < 0 || px > innerWidth || py < 0 || py > innerHeight) {
+          setHovered(null);
+          return;
+        }
+        let nearest: number | null = null,
+          distance = 100;
+        // ponytail: linear hit testing; use a spatial index if very large point clouds need hover.
+        for (let i = 0; i < xValues.length; i++) {
+          const dx = xScale(xValues[i]!) - px,
+            dy = yScale(yValues[i]!) - py;
+          const d = dx * dx + dy * dy;
+          if (d < distance) {
+            nearest = i;
+            distance = d;
+          }
+        }
+        setHovered(nearest);
+      }}
+    >
       {xValues.length > 0 ? (
         <>
           <canvas
@@ -298,8 +386,27 @@ export function ScatterPlot({
             onBrushChange={handleBrushChange}
             className="absolute"
             settings={{ ...settings, margin }}
+            overlay={
+              hovered !== null && (
+                <AxisReadout
+                  x={xScale(xValues[hovered]!)}
+                  y={yScale(yValues[hovered]!)}
+                  xValue={xValues[hovered]!}
+                  yValue={yValues[hovered]!}
+                  width={innerWidth}
+                  height={innerHeight}
+                  color={getColorForValue(
+                    settings.colorScaleId,
+                    colorData[hovered],
+                    "#3479a8"
+                  )}
+                  radius={(settings.pointSize ?? 3) + 2}
+                  label={`${String(colorData[hovered] ?? "Observation")}; ${settings.xAxisLabel || settings.xField}: ${xValues[hovered]}; ${settings.yAxisLabel || settings.yField}: ${yValues[hovered]}`}
+                />
+              )
+            }
           >
-            <g /> {/* Empty group element as children */}
+            {null}
           </BaseChart>
         </>
       ) : (

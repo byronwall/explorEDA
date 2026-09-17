@@ -1,0 +1,73 @@
+{
+  "schema_version": "0.4.0",
+  "initiative": {
+    "title": "Data visualization review and example coverage",
+    "slug": "data-viz-review-and-example-coverage",
+    "scale": "capability",
+    "current_phase": "plan",
+    "last_updated": "2026-09-15",
+    "summary": "Create a transcript-grounded chart review skill, then make chart and feature example coverage explicit, rendered, and checked."
+  },
+  "artifacts": {
+    "intent_brief": {"path": "intent-brief.md", "status": "current", "updated_at": "2026-09-15"},
+    "brainstorm": {"path": "brainstorm.md", "status": "not-requested", "updated_at": null},
+    "shape_brief": {"path": "shape-brief.md", "status": "current", "updated_at": "2026-09-15"},
+    "implementation_plan": {"path": "implementation-plan.md", "status": "current", "updated_at": "2026-09-15"}
+  },
+  "sources": [
+    {"id": "current-request", "type": "dictation", "location": "current conversation", "anchor": "full request", "authority": "current explicit instruction"},
+    {"id": "viz-system", "type": "transcript", "location": "docs/transcripts/2026-07-26-data-visualization-system-design.txt", "anchor": "chart types, defaults, transformations, and auditability", "authority": "direct first-party transcript"},
+    {"id": "dashboarding", "type": "transcript", "location": "docs/transcripts/2026-07-28-dashboarding-filtering-and-chart-defaults.txt", "anchor": "dashboards, controls, filters, and chart defaults", "authority": "direct first-party transcript"},
+    {"id": "source-tables", "type": "transcript", "location": "docs/transcripts/2026-07-28-data-transforms-loading-and-source-tables.txt", "anchor": "data transformation, source tables, and visible data", "authority": "direct first-party transcript"},
+    {"id": "faceting", "type": "transcript", "location": "docs/transcripts/2026-07-29-faceting-and-shared-scales.txt", "anchor": "shared scales, legends, labels, chart ink, density, and faceting", "authority": "direct first-party transcript"},
+    {"id": "traceability", "type": "transcript", "location": "docs/transcripts/2026-08-02-visualization-traceability-and-dataflow.txt", "anchor": "traceability from data to rendered glyphs", "authority": "direct first-party transcript"},
+    {"id": "spec-driven", "type": "transcript", "location": "docs/transcripts/2026-08-03-spec-driven-interactive-visualization.txt", "anchor": "chart, filter, grouping, and repetition semantics", "authority": "direct first-party transcript"},
+    {"id": "advanced-specs", "type": "transcript", "location": "docs/transcripts/2026-08-04-advanced-chart-specs-and-transforms.txt", "anchor": "stacking, ordering, treemaps, and positional transforms", "authority": "direct first-party transcript"},
+    {"id": "tables", "type": "transcript", "location": "docs/transcripts/2026-06-29-data-table-defaults-and-schemas.txt", "anchor": "table defaults, sorting, filtering, and formatting", "authority": "direct first-party transcript"},
+    {"id": "reusable-requirements", "type": "transcript", "location": "docs/transcripts/2026-07-13-reusable-interactive-component-requirements.txt", "anchor": "source-backed reusable review requirements", "authority": "direct first-party transcript"},
+    {"id": "registry", "type": "repository", "location": "packages/explorEDA/src/charts/registerAllCharts.ts", "anchor": "registered chart types", "authority": "current repository reality"},
+    {"id": "examples", "type": "repository", "location": "apps/demo/src/demos/examples.ts", "anchor": "current example catalog", "authority": "current repository reality"}
+  ],
+  "intent": {
+    "claims": [
+      {"id": "chart-first", "type": "outcome", "statement": "Interactive views must be good charts before rich interaction earns credit.", "commitment": "explicit", "importance": "core", "status": "active", "time_horizon": "proof", "sources": ["current-request", "dashboarding"]},
+      {"id": "review-skill", "type": "required behavior", "statement": "A repository skill must review charts, tables, and dashboards with a consistent rubric.", "commitment": "explicit", "importance": "core", "status": "active", "time_horizon": "first release", "sources": ["current-request", "reusable-requirements"]},
+      {"id": "rubric-surface", "type": "required behavior", "statement": "The rubric must cover titles, hierarchy, spacing, typography, ink, color, axes, ticks, labels, tables, filtering, and multi-view relationships.", "commitment": "explicit", "importance": "core", "status": "active", "time_horizon": "first release", "sources": ["current-request", "faceting", "tables"]},
+      {"id": "coverage", "type": "outcome", "statement": "The example set must intentionally cover each chart type and material feature.", "commitment": "explicit", "importance": "core", "status": "active", "time_horizon": "first release", "sources": ["current-request"]},
+      {"id": "feature-matrix", "type": "implementation hypothesis", "statement": "A rendered feature matrix can make coverage and gaps visible and can support later article content.", "commitment": "tentative", "importance": "supporting", "status": "active", "time_horizon": "first release", "sources": ["current-request"]},
+      {"id": "no-cartesian", "type": "derived implication", "statement": "Coverage should use a representative basis set instead of every chart-feature combination.", "commitment": "derived", "importance": "supporting", "status": "active", "time_horizon": "first release", "sources": ["current-request", "registry", "examples"]},
+      {"id": "traceable-semantics", "type": "desired experience", "statement": "A review should detect when the visible result obscures its data, transformation, scope, or active filter state.", "commitment": "repeated", "importance": "supporting", "status": "active", "time_horizon": "first release", "sources": ["viz-system", "traceability", "spec-driven"]}
+    ],
+    "themes": ["chart-first quality", "visual hierarchy", "semantic clarity", "visible interaction state", "intentional example coverage", "source-backed reusable review"],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {"status": "not-requested", "requested_count": 7, "options": [], "selected_option": null},
+  "shape": {
+    "status": "current",
+    "appetite": "One small skill, one coverage source, one rendered matrix, one completeness test, and the minimum examples needed to close material gaps.",
+    "problem": "Current demos prove that chart components render, but they do not prove visual quality or intentional feature coverage.",
+    "recommended_shape": {"skill": "One chart-first rubric with chart-family addenda", "coverage": "One typed example coverage manifest", "view": "One rendered feature matrix", "verification": "One completeness test plus visual reviews"},
+    "success_moves": ["Prove the rubric on three contrasting current examples", "Separate implemented support from intentional demonstration", "Use a representative basis set instead of a Cartesian product", "Keep visual judgment in the skill and structural integrity in tests", "Improve existing examples before adding new ones"],
+    "first_proof": {"question": "Does the rubric produce specific and useful findings across simple, faceted, and coordinated views?", "artifact": "Three reviews from the initial repository skill", "decision_rule": "Keep the shape if each review has a clear verdict, blockers, section findings, and three priority fixes."},
+    "rabbit_holes": ["automated visual scoring", "exhaustive feature combinations", "new documentation platform", "screenshot regression infrastructure"],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "current",
+    "repository_snapshot": {"root": "/Users/byronwall/Projects/explorEDA", "revision": "af4d35b", "worktree_status": "clean before planning artifacts", "subsystems": ["chart registry", "chart settings and renderers", "saved demo configurations", "demo example selector", "Vitest suites"], "test_commands": ["pnpm --filter demo test", "pnpm --filter demo build"], "deployment_surfaces": ["Vite demo application"]},
+    "dependencies": [],
+    "fast_local_loop": {"command": "pnpm --filter demo test && pnpm --filter demo build", "network_required": false, "fixtures": "Existing local datasets and saved demo settings", "failure_control": "Manifest test reports unknown and uncovered feature IDs"},
+    "milestones": [
+      {"id": "m1", "title": "The skill gives useful chart-first reviews", "outcome": "A repository skill produces decisive reviews for three current examples.", "dependencies_introduced": [], "proof": "Review line-chart, categorical-charts, and Lorenz examples.", "valid_intermediate_state": "The skill is useful even without the matrix.", "rollback": "Remove the new skill directory.", "status": "planned"},
+      {"id": "m2", "title": "Feature coverage becomes explicit and checked", "outcome": "A typed manifest and one test expose current coverage gaps.", "dependencies_introduced": [], "proof": "All registry types map to examples and uncovered required features remain explicit.", "valid_intermediate_state": "The manifest and test work without a rendered matrix.", "rollback": "Remove the additive manifest and test imports.", "status": "planned"},
+      {"id": "m3", "title": "The demo renders the feature matrix", "outcome": "A maintainer can inspect and navigate coverage in the demo.", "dependencies_introduced": [], "proof": "Desktop browser review plus focused view test.", "valid_intermediate_state": "Existing example routes remain unchanged.", "rollback": "Remove the additive matrix route or view.", "status": "planned"},
+      {"id": "m4", "title": "A minimal example basis closes material gaps", "outcome": "Required features are intentionally demonstrated or explicitly deferred.", "dependencies_introduced": [], "proof": "Run the skill on each changed example and mark reviewed only after blockers are cleared.", "valid_intermediate_state": "Each revised example improves the current catalog independently.", "rollback": "Revert individual example configuration changes.", "status": "planned"}
+    ],
+    "cut_line": ["screenshot contact sheets", "automated screenshot scoring", "pairwise generation", "new chart types for breadth", "public article generation", "mobile support"],
+    "open_decisions": ["Keep the first matrix inside the demo", "Store only compact review metadata until review history proves useful"]
+  },
+  "history": [
+    {"date": "2026-09-15", "event": "Created intent, shape, and implementation plan from current dictation, repository evidence, and the local transcript set."}
+  ]
+}

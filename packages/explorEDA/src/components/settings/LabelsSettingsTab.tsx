@@ -14,26 +14,35 @@ export function LabelsSettingsTab({
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-[120px_1fr] items-center gap-4">
-        <Label>Title Text</Label>
+        <Label htmlFor="chart-title">Chart title</Label>
         <Input
+          id="chart-title"
           value={settings.title || ""}
           onChange={(e) => onSettingChange("title", e.target.value)}
           placeholder="Enter chart title"
         />
 
-        <Label>X Axis Label</Label>
-        <Input
-          value={settings.xAxisLabel || ""}
-          onChange={(e) => onSettingChange("xAxisLabel", e.target.value)}
-          placeholder="Enter X axis label"
-        />
+        {["row", "bar", "scatter", "line", "boxplot"].includes(
+          settings.type
+        ) && (
+          <>
+            <Label htmlFor="chart-x-label">X axis & units</Label>
+            <Input
+              id="chart-x-label"
+              value={settings.xAxisLabel || ""}
+              onChange={(e) => onSettingChange("xAxisLabel", e.target.value)}
+              placeholder="Enter X axis label"
+            />
 
-        <Label>Y Axis Label</Label>
-        <Input
-          value={settings.yAxisLabel || ""}
-          onChange={(e) => onSettingChange("yAxisLabel", e.target.value)}
-          placeholder="Enter Y axis label"
-        />
+            <Label htmlFor="chart-y-label">Y axis & units</Label>
+            <Input
+              id="chart-y-label"
+              value={settings.yAxisLabel || ""}
+              onChange={(e) => onSettingChange("yAxisLabel", e.target.value)}
+              placeholder="Enter Y axis label"
+            />
+          </>
+        )}
       </div>
     </div>
   );

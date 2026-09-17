@@ -1,3 +1,4 @@
+import { SelectionSettingsTab } from "./settings/SelectionSettingsTab";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { ChartSettings } from "@/types/ChartTypes";
 import { mergeWithDefaultSettings } from "@/utils/defaultSettings";
@@ -28,6 +29,7 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
   }, [settings]);
 
   const handleSettingChange = (key: string, value: unknown) => {
+    if (key === "id" || key === "layout") return;
     setLocalSettings((prev) => {
       const newSettings = {
         ...prev,
@@ -38,21 +40,57 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
   };
 
   const handleUpdate = () => {
-    updateChart(settings.id, localSettings);
+    updateChart(settings.id, {
+      ...localSettings,
+      id: settings.id,
+      layout: settings.layout,
+    });
   };
 
+  const hasAxes = ["row", "bar", "scatter", "line", "boxplot"].includes(
+    localSettings.type
+  );
   const tabs = [
-    { value: "main", label: "Main" },
-    { value: "facet", label: "Facet" },
-    { value: "axis", label: "Axis" },
+    { value: "main", label: "Data" },
+    ...(hasAxes
+      ? [
+          { value: "facet", label: "Facets" },
+          { value: "axis", label: "Axes" },
+        ]
+      : []),
+    ...(["scatter", "line", "bar"].includes(localSettings.type)
+      ? [{ value: "selection", label: "Select" }]
+      : []),
     { value: "labels", label: "Labels" },
-    { value: "advanced", label: "Advanced" },
+    ...(hasAxes ? [{ value: "advanced", label: "Spacing" }] : []),
   ];
+  const invalidRange = localSettings.filters.some(
+    (filter) =>
+      filter.type === "range" &&
+      filter.min !== undefined &&
+      filter.max !== undefined &&
+      filter.min > filter.max
+  );
+  const dirty =
+    JSON.stringify(localSettings) !==
+    JSON.stringify(mergeWithDefaultSettings(settings));
 
   return (
-    <div className="space-y-3">
+    <div className="eda-settings space-y-3">
+      <div className="space-y-1 pb-2">
+        <h4 className="text-base font-semibold">Chart settings</h4>
+        <p className="text-xs text-muted-foreground">
+          Choose fields, tune the view, then apply your changes.
+        </p>
+      </div>
       <TabContainer tabs={tabs}>
         {{
+          selection: (
+            <SelectionSettingsTab
+              settings={localSettings}
+              onSettingChange={handleSettingChange}
+            />
+          ),
           main: (
             <MainSettingsTab
               settings={localSettings}
@@ -86,9 +124,28 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
         }}
       </TabContainer>
 
-      <Button className="w-full" onClick={handleUpdate}>
-        Update Chart
-      </Button>
+      {invalidRange && (
+        <p role="alert" className="text-xs text-destructive">
+          The minimum must not exceed the maximum.
+        </p>
+      )}
+      <div className="eda-settings-footer flex items-center justify-between gap-3">
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={!dirty}
+          onClick={() => setLocalSettings(mergeWithDefaultSettings(settings))}
+        >
+          Reset changes
+        </Button>
+        <Button
+          size="sm"
+          disabled={!dirty || invalidRange}
+          onClick={handleUpdate}
+        >
+          {dirty ? "Apply changes" : "Up to date"}
+        </Button>
+      </div>
     </div>
   );
 }

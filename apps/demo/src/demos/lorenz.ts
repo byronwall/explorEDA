@@ -3,10 +3,10 @@ import { SavedDataStructure } from "exploreda";
 export const demoSettings: SavedDataStructure = {
   charts: [
     {
-      title: "2D View",
+      title: "Where does Z change within the selected time window?",
       type: "scatter",
       field: "Run ID",
-      layout: { x: 9, y: 0, w: 3, h: 3 },
+      layout: { x: 8, y: 0, w: 4, h: 3 },
       xAxis: {
         scaleType: "linear",
         grid: false,
@@ -19,24 +19,27 @@ export const demoSettings: SavedDataStructure = {
         min: 0,
         max: 100,
       },
-      margin: { top: 20, right: 20, bottom: 30, left: 60 },
+      margin: { top: 20, right: 20, bottom: 45, left: 60 },
       facet: { enabled: false, type: "wrap", rowVariable: "", columnCount: 2 },
       colorScaleId: "b9b0fa64-5d7b-4fdc-b191-daeb7920ecb3",
       colorField: "Run ID",
-      xAxisLabel: "",
-      yAxisLabel: "",
+      xAxisLabel: "Time (seconds)",
+      yAxisLabel: "Z coordinate",
       xGridLines: 5,
       yGridLines: 5,
       xField: "Time",
       yField: "Z",
-      filters: [],
+      filters: [
+        { type: "range", field: "Time", min: 0.2, max: 1 },
+        { type: "range", field: "Z", min: 10, max: 30 },
+      ],
       id: "5cc180fb-d35e-4249-a46c-cba04f13b6a8",
     },
     {
-      title: "Facet by run so each is its own chart",
+      title: "How does each run trace the Lorenz attractor?",
       type: "3d-scatter",
       field: "Run ID",
-      layout: { x: 3, y: 3, w: 9, h: 7 },
+      layout: { x: 4, y: 3, w: 8, h: 7 },
       xAxis: {
         scaleType: "linear",
         grid: false,
@@ -88,10 +91,10 @@ export const demoSettings: SavedDataStructure = {
       },
     },
     {
-      title: "All Runs together, use color",
+      title: "How do five runs diverge in X, Y, and Z?",
       type: "3d-scatter",
       field: "Run ID",
-      layout: { x: 0, y: 3, w: 3, h: 4 },
+      layout: { x: 0, y: 3, w: 4, h: 5 },
       xAxis: {
         scaleType: "linear",
         grid: false,
@@ -143,10 +146,10 @@ export const demoSettings: SavedDataStructure = {
       id: "63671467-96ba-49f1-87a6-5310a20e1a60",
     },
     {
-      title: "",
+      title: "How should these coordinated views be read?",
       type: "markdown",
       field: "",
-      layout: { x: 0, y: 0, w: 9, h: 4 },
+      layout: { x: 0, y: 0, w: 8, h: 3 },
       xAxis: { scaleType: "linear", grid: false, min: 0, max: 100 },
       yAxis: { scaleType: "linear", grid: false, min: 0, max: 100 },
       margin: { top: 20, right: 20, bottom: 20, left: 20 },
@@ -160,7 +163,7 @@ export const demoSettings: SavedDataStructure = {
       colorField: "",
       colorScaleId: undefined,
       content:
-        '<h1 class="heading-node">Lorenz Attractor Demo</h1><p class="text-node"><span>This shows using a 2D scatter alongside 3D scatters to show the development of several slightly different Lorenz attractors.  The 3D scatters show facetting on the </span><code class="inline" spellcheck="false">Run ID</code> or coloring on it (and putting all points together).</p><p class="text-node"><span>To have some fun:</span></p><ul class="list-node"><li><p class="text-node">Drag a box around the 2D scatter chart and watch all the 3D charts update</p></li><li><p class="text-node"><span>Drag the 3D facet to change the view, wait 1s and watch all the other 3D views synchronize!</span></p></li></ul>',
+        '<h1 class="heading-node">How quickly do nearby Lorenz runs diverge?</h1><p class="text-node">The saved brush selects Time 0.20–1.00 seconds and Z 10–30. It shows 159 of 1,000 rows in both 3D views. Remove either filter above to expand the scope.</p><p class="text-node">The 3D axes use red for X, green for Y, and blue for Z. Rotate any faceted run to synchronize every 3D camera.</p>',
     },
   ],
   calculations: [],

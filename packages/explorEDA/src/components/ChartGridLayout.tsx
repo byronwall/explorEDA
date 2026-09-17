@@ -70,7 +70,7 @@ export function ChartGridLayout({
         draggableHandle=".drag-handle"
         isDraggable={!isNarrow}
         isResizable={!isNarrow}
-        style={{ position: "absolute", inset: 0 }}
+        style={{ position: "relative" }}
         resizeHandle={<BottomRightHandle />}
       >
         {children}
@@ -79,48 +79,16 @@ export function ChartGridLayout({
   );
 }
 
-const SouthEastArrow = () => {
-  // Parameters for the curved triangle
-  const size = 100; // SVG viewBox size
-  const margin = 20; // Margin from edges
-
-  // Right edge is perfectly aligned
-  const rightEdgeX = size - margin;
-
-  // Calculate points for the triangle
-  const startX = margin;
-  const startY = size - margin;
-  const bottomRightX = rightEdgeX; // Aligned with top right
-  const bottomRightY = size - margin;
-  const topRightX = rightEdgeX; // Aligned with bottom right
-  const topRightY = margin;
-
-  // Control point for the curve
-  const controlX = Math.floor(startX + (rightEdgeX - startX) * 0.7);
-  const controlY = Math.floor(startY - (startY - topRightY) * 0.3);
-
-  // Create the SVG path for a triangle with curved hypotenuse
-  const path = `
-    M ${startX} ${startY}
-    L ${bottomRightX} ${bottomRightY}
-    L ${topRightX} ${topRightY}
-    Q ${controlX} ${controlY} ${startX} ${startY}
-    Z
-  `;
-
-  return (
-    <svg
-      width="20px"
-      height="20px"
-      version="1.1"
-      viewBox={`0 0 ${size} ${size}`}
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path d={path} fill="currentColor" />
-    </svg>
-  );
-};
+const SouthEastArrow = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+    <path
+      d="M5 12L12 5M9 12l3-3"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    />
+  </svg>
+);
 
 export const BottomRightHandle = React.forwardRef<
   HTMLDivElement,

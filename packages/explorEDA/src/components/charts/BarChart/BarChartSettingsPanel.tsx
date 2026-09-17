@@ -22,8 +22,9 @@ export function BarChartSettingsPanel({
           onChange={(value) => onSettingsChange({ ...settings, field: value })}
         />
 
-        <Label>Bin Count</Label>
+        <Label>Bins · {settings.binCount ?? 10}</Label>
         <Slider
+          aria-label="Histogram bin count"
           value={[settings.binCount ?? 10]}
           min={2}
           max={50}
@@ -45,7 +46,7 @@ export function BarChartSettingsPanel({
                 })
               }
             />
-            <Label htmlFor="forceString">Force String Values</Label>
+            <Label htmlFor="forceString">Treat values as categories</Label>
           </div>
         </div>
 
