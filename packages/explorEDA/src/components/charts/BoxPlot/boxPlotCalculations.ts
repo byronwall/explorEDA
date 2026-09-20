@@ -56,8 +56,11 @@ export function calculateBoxPlotStats(
       const lowerFence = q1 - 1.5 * iqr;
       const upperFence = q3 + 1.5 * iqr;
 
-      whiskerLow = Math.max(lowerFence, sortedData[0]!);
-      whiskerHigh = Math.min(upperFence, sortedData[sortedData.length - 1]!);
+      whiskerLow =
+        sortedData.find((value) => value >= lowerFence) ?? sortedData[0]!;
+      whiskerHigh =
+        [...sortedData].reverse().find((value) => value <= upperFence) ??
+        sortedData[sortedData.length - 1]!;
 
       if (whiskerLow > whiskerHigh) {
         whiskerLow = sortedData[0]!;

@@ -10,7 +10,7 @@ export interface ReducedDataPoint extends DataPoint {
 /**
  * Reduces a dataset to a fixed number of buckets using min-max-start algorithm.
  * For each bucket, it keeps the start point, minimum point, and maximum point.
- * If the input data length is less than buckets * 3, returns original data.
+ * Small inputs keep every point in ascending X order.
  *
  * @param data Array of data points with x and y values
  * @param numBuckets Number of buckets to divide the data into (typically chart width)
@@ -28,14 +28,21 @@ export function reduceDataPoints(
   // Ensure numBuckets is valid and reasonable
   const validBuckets = Math.max(1, Math.min(1000, Math.floor(numBuckets)));
 
+  const orderedData = [...data].sort((a, b) => {
+    const aFinite = Number.isFinite(a.x);
+    const bFinite = Number.isFinite(b.x);
+    if (aFinite !== bFinite) return aFinite ? -1 : 1;
+    return aFinite ? a.x - b.x : 0;
+  });
+
   // If data is small enough, just convert to ReducedDataPoint format
   if (data.length <= validBuckets * 3) {
-    return data.map((point) => ({ ...point, type: "start" as const }));
+    return orderedData.map((point) => ({ ...point, type: "start" as const }));
   }
 
   const xExtent = {
-    min: Math.min(...data.map((d) => d.x)),
-    max: Math.max(...data.map((d) => d.x)),
+    min: Math.min(...orderedData.map((d) => d.x)),
+    max: Math.max(...orderedData.map((d) => d.x)),
   };
 
   // If all x values are the same, return just one point
@@ -49,7 +56,7 @@ export function reduceDataPoints(
     .map(() => []);
 
   // Distribute points into buckets
-  data.forEach((point) => {
+  orderedData.forEach((point) => {
     const bucketIndex = Math.min(
       Math.floor(
         ((point.x - xExtent.min) / (xExtent.max - xExtent.min)) * validBuckets

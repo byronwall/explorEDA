@@ -46,7 +46,8 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
   facetIds,
 }) => {
   const [hovered, setHovered] = useState<{
-    index: number;
+    x: number;
+    y: number;
     field: string;
   } | null>(null);
   const updateChart = useDataLayer((state) => state.updateChart);
@@ -134,6 +135,19 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
 
   // Convert data to numbers for d3
   const processedLiveSeriesData = useMemo(() => {
+    const orderedIndices = liveXData
+      .map((_, index) => index)
+      .sort((a, b) => {
+        const aValue = liveXData[a];
+        const bValue = liveXData[b];
+        const aX = aValue == null || aValue === "" ? NaN : Number(aValue);
+        const bX = bValue == null || bValue === "" ? NaN : Number(bValue);
+        const aFinite = Number.isFinite(aX);
+        const bFinite = Number.isFinite(bX);
+        if (aFinite !== bFinite) return aFinite ? -1 : 1;
+        return aFinite ? aX - bX || a - b : a - b;
+      });
+
     return settings.seriesField.map((field) => {
       const data = liveSeriesData[field] ?? [];
       const reducedData: Array<{ x: number; y: number | null }> = [];
@@ -146,13 +160,14 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
         }
       };
 
-      data.forEach((value, i) => {
+      orderedIndices.forEach((i) => {
+        const value = data[i];
         const xValue = liveXData[i];
         const x = xValue == null || xValue === "" ? NaN : Number(xValue);
         const y = value == null || value === "" ? NaN : Number(value);
         if (!Number.isFinite(x) || !Number.isFinite(y)) {
           flushSegment();
-          reducedData.push({ x: 0, y: null });
+          reducedData.push({ x, y: null });
           return;
         }
         segment.push({ x, y });
@@ -334,10 +349,8 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
     );
   };
 
-  const hoverX = hovered ? Number(liveXData[hovered.index]) : NaN;
-  const hoverY = hovered
-    ? Number(liveSeriesData[hovered.field]?.[hovered.index])
-    : NaN;
+  const hoverX = hovered ? hovered.x : NaN;
+  const hoverY = hovered ? hovered.y : NaN;
   const hoverRight = hovered
     ? settings.seriesSettings[hovered.field]?.useRightAxis
     : false;
@@ -361,34 +374,42 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
           return;
         }
         const target = xScale.invert(x);
-        // ponytail: linear scan; use a bisector if large series make hover slow.
-        let index = -1,
-          distance = Infinity;
-        liveXData.forEach((value, i) => {
-          if (value == null || value === "" || !Number.isFinite(Number(value)))
-            return;
-          const next = Math.abs(Number(value) - target);
-          if (next < distance) {
-            index = i;
-            distance = next;
-          }
-        });
-        let field: string | null = null;
-        distance = Infinity;
-        for (const name of settings.seriesField) {
-          const value = liveSeriesData[name]?.[index];
-          if (value == null || value === "" || !Number.isFinite(Number(value)))
-            continue;
-          const scale = settings.seriesSettings[name]?.useRightAxis
-            ? rightYScale
-            : leftYScale;
-          const next = Math.abs(scale(Number(value)) - y);
-          if (next < distance) {
-            field = name;
-            distance = next;
+        let nearestX = NaN;
+        let distance = Infinity;
+        for (const series of processedLiveSeriesData) {
+          for (const point of series.data) {
+            if (!Number.isFinite(point.x)) continue;
+            const next = Math.abs(point.x - target);
+            if (next < distance) {
+              nearestX = point.x;
+              distance = next;
+            }
           }
         }
-        setHovered(field === null ? null : { index, field });
+
+        if (!Number.isFinite(nearestX)) {
+          setHovered(null);
+          return;
+        }
+
+        let field: string | null = null;
+        let valueAtX = NaN;
+        distance = Infinity;
+        for (const series of processedLiveSeriesData) {
+          for (const point of series.data) {
+            if (point.x !== nearestX || point.y == null) continue;
+            const scale = settings.seriesSettings[series.name]?.useRightAxis
+              ? rightYScale
+              : leftYScale;
+            const next = Math.abs(scale(point.y) - y);
+            if (next < distance) {
+              field = series.name;
+              valueAtX = point.y;
+              distance = next;
+            }
+          }
+        }
+        setHovered(field === null ? null : { x: nearestX, y: valueAtX, field });
       }}
     >
       <BaseChart

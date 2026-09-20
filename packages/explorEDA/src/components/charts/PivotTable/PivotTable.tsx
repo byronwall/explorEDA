@@ -5,16 +5,74 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import { BaseChartProps } from "@/types/ChartTypes";
 import { Filter, ValueFilter, datum } from "@/types/FilterTypes";
 import { Filter as FilterIcon } from "lucide-react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useGetLiveIds } from "../useGetLiveData";
 import { PivotCell, PivotHeader, PivotRow, CellKey } from "./types";
 import { applyFilter } from "@/hooks/applyFilter";
 import { PivotTableSettings } from "./definition";
 import { getChartSummary } from "../chartAccessibility";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type PivotTableProps = BaseChartProps & {
   settings: PivotTableSettings;
 };
+
+type SelectedCell = { cell: PivotCell; rowHeaders: PivotHeader[] };
+
+function displayValue(value: datum): string {
+  if (value === undefined || value === null || value === "") {
+    return "Missing";
+  }
+  if (typeof value === "number") {
+    return String(value);
+  }
+  if (typeof value === "string") {
+    return JSON.stringify(value);
+  }
+  return String(value);
+}
+
+function displayExactValue(value: datum): string {
+  if (value === undefined) {
+    return "undefined";
+  }
+  if (value === null) {
+    return "null";
+  }
+  if (typeof value === "string") {
+    return JSON.stringify(value);
+  }
+  return String(value);
+}
+
+function displayCellValue(cell: PivotCell): string {
+  if (cell.status === "empty") {
+    return "No rows";
+  }
+  if (cell.status === "error") {
+    return "Conflict";
+  }
+  if (cell.status === "invalid") {
+    return "No valid numbers";
+  }
+  return displayValue(cell.value);
+}
+
+function cellName(cell: PivotCell, rowHeaders: PivotHeader[]): string {
+  const rowLabel = rowHeaders.map((header) => header.label).join(" / ");
+  const columnLabel = cell.key.isTotal
+    ? "Total"
+    : displayValue(cell.key.columnValue);
+  return [rowLabel, columnLabel, cell.key.valueField]
+    .filter(Boolean)
+    .join(" · ");
+}
 
 export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
   const getColumnData = useDataLayer((state) => state.getColumnData);
@@ -44,7 +102,9 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
 
     // Create data array for pivot calculations
     const data = liveIds.map((id: string | number) => {
-      const row: Record<string, datum> = {};
+      const row: Record<string, datum> & { __ID: string | number } = {
+        __ID: id,
+      };
       allFields.forEach((field) => {
         row[field] = fieldData[field]?.[id];
       });
@@ -53,6 +113,16 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
 
     return calculatePivotData(data, settings);
   }, [facetIds, allLiveIds, settings, getColumnData]);
+
+  const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
+  const lastTrigger = useRef<HTMLButtonElement | null>(null);
+  const [contributorPage, setContributorPage] = useState(0);
+  useEffect(() => {
+    setSelectedCell(null);
+  }, [pivotData, settings]);
+  useEffect(() => {
+    setContributorPage(0);
+  }, [selectedCell]);
 
   const handleFilterClick = useCallback(
     (field: string, value: datum) => {
@@ -136,7 +206,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
 
       // Get column filters
       const columnFilters = currentFilters.filter(
-        (f) => f.field === cellKey.columnField
+        (f) => !cellKey.isTotal && f.field === cellKey.columnField
       );
 
       // Check if column matches its filters
@@ -166,9 +236,25 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
       <FilterIcon aria-hidden="true" />
     </button>
   );
+
+  const selectedCellName = selectedCell
+    ? cellName(selectedCell.cell, selectedCell.rowHeaders)
+    : "";
   const valueColumnCount =
     settings.valueFields.length *
     (settings.columnField ? pivotData.headers.length : 1);
+  const contributorPageSize = 50;
+  const contributorCount = selectedCell?.cell.contributors.length ?? 0;
+  const contributorPageCount = Math.max(
+    1,
+    Math.ceil(contributorCount / contributorPageSize)
+  );
+  const contributorStart = contributorPage * contributorPageSize;
+  const visibleContributors =
+    selectedCell?.cell.contributors.slice(
+      contributorStart,
+      contributorStart + contributorPageSize
+    ) ?? [];
 
   return (
     <div
@@ -209,7 +295,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
             {settings.columnField
               ? pivotData.headers.map((header) => (
                   <th
-                    key={`${header.field}-${header.value}`}
+                    key={`${header.field}-${categoryKey(header.value)}`}
                     scope="colgroup"
                     colSpan={settings.valueFields.length}
                   >
@@ -235,7 +321,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
               {pivotData.headers.flatMap((header) =>
                 settings.valueFields.map((valueField) => (
                   <th
-                    key={`${header.field}-${header.value}-${valueField.field}`}
+                    key={`${header.field}-${categoryKey(header.value)}-${valueField.field}`}
                     scope="col"
                     title={
                       valueField.label ||
@@ -259,7 +345,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
             >
               {row.headers.map((header, index) => (
                 <th
-                  key={`${header.field}-${header.value}`}
+                  key={`${header.field}-${categoryKey(header.value)}`}
                   scope="row"
                   className="eda-pivot-row-label"
                   style={{ left: index * 140, zIndex: 10 - index }}
@@ -269,16 +355,26 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
               ))}
               {row.cells.map((cell: PivotCell) => (
                 <td
-                  key={`${cell.key.columnField}-${cell.key.columnValue}-${cell.key.valueField}`}
+                  key={`${cell.key.isTotal ? "total" : cell.key.columnField}-${categoryKey(cell.key.columnValue)}-${cell.key.valueField}`}
                   className={cn(
                     isCellFiltered(row.headers, cell.key) && "is-selected"
                   )}
                 >
-                  {typeof cell.value === "number"
-                    ? cell.value.toLocaleString(undefined, {
-                        maximumFractionDigits: 2,
-                      })
-                    : cell.value}
+                  <div className="flex items-center justify-end gap-2">
+                    <span title={cell.error}>{displayCellValue(cell)}</span>
+                    <button
+                      type="button"
+                      className="rounded px-1 text-[10px] text-muted-foreground underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      aria-haspopup="dialog"
+                      aria-label={`Inspect ${cellName(cell, row.headers)}`}
+                      onClick={(event) => {
+                        lastTrigger.current = event.currentTarget;
+                        setSelectedCell({ cell, rowHeaders: row.headers });
+                      }}
+                    >
+                      Inspect
+                    </button>
+                  </div>
                 </td>
               ))}
             </tr>
@@ -295,6 +391,146 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
           )}
         </tbody>
       </table>
+
+      <Dialog
+        open={selectedCell !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedCell(null);
+            window.setTimeout(() => lastTrigger.current?.focus(), 0);
+          }
+        }}
+      >
+        <DialogContent className="max-h-[80vh] max-w-3xl overflow-y-auto">
+          {selectedCell && (
+            <>
+              <DialogHeader>
+                <DialogTitle>Inspect {selectedCellName}</DialogTitle>
+                <DialogDescription>
+                  This cell uses the current filtered rows and the same
+                  aggregation as the table.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-2 text-sm sm:grid-cols-3">
+                <div>
+                  <div className="text-muted-foreground">Aggregation</div>
+                  <div>{selectedCell.cell.aggregation}</div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground">Result</div>
+                  <div>{displayCellValue(selectedCell.cell)}</div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground">Contributors</div>
+                  <div>{selectedCell.cell.contributors.length}</div>
+                </div>
+              </div>
+              {selectedCell.cell.error && (
+                <p
+                  role="alert"
+                  className="rounded border border-destructive/50 p-2 text-sm text-destructive"
+                >
+                  {selectedCell.cell.error}. The other pivot cells remain
+                  available.
+                </p>
+              )}
+              {selectedCell.cell.numericExclusions.length > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  {selectedCell.cell.numericExclusions.length} numeric value(s)
+                  excluded; the result uses the{" "}
+                  {
+                    selectedCell.cell.contributors.filter(
+                      (contributor) => contributor.included
+                    ).length
+                  }{" "}
+                  valid value(s).
+                </p>
+              )}
+              <div className="overflow-auto rounded border">
+                <table className="w-full text-left text-sm">
+                  <caption className="sr-only">Pivot cell contributors</caption>
+                  <thead className="bg-muted">
+                    <tr>
+                      <th className="p-2" scope="col">
+                        Source row ID (zero-based)
+                      </th>
+                      <th className="p-2" scope="col">
+                        Grouping keys
+                      </th>
+                      <th className="p-2" scope="col">
+                        Input
+                      </th>
+                      <th className="p-2" scope="col">
+                        Used
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {visibleContributors.map((contributor, index) => (
+                      <tr
+                        key={`${contributor.sourceId ?? "unknown"}-${index}`}
+                        className="border-t"
+                      >
+                        <td className="p-2">
+                          {contributor.sourceId ?? "Unknown"}
+                        </td>
+                        <td className="p-2">
+                          {contributor.groupingKeys
+                            .map(
+                              (key) => `${key.field}=${displayValue(key.value)}`
+                            )
+                            .join(", ")}
+                        </td>
+                        <td className="p-2">
+                          {displayExactValue(contributor.input)}
+                        </td>
+                        <td className="p-2">
+                          {contributor.included
+                            ? "Yes"
+                            : contributor.exclusionReason || "No"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {contributorCount === 0 && (
+                  <p className="p-3 text-sm text-muted-foreground">
+                    No rows match this cell.
+                  </p>
+                )}
+              </div>
+              <div className="flex items-center justify-between gap-3 text-sm text-muted-foreground">
+                <span>
+                  Showing {contributorCount === 0 ? 0 : contributorStart + 1}–
+                  {Math.min(
+                    contributorStart + contributorPageSize,
+                    contributorCount
+                  )}{" "}
+                  of {contributorCount} source rows
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    className="rounded border px-2 py-1 disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={contributorPage === 0}
+                    onClick={() => setContributorPage((page) => page - 1)}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded border px-2 py-1 disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={contributorPage >= contributorPageCount - 1}
+                    onClick={() => setContributorPage((page) => page + 1)}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

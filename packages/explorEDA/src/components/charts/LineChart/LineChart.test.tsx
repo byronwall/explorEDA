@@ -58,6 +58,37 @@ it("reads the nearest series on its own axis and clears during brushing or missi
   });
   fireEvent.pointerMove(chart, { clientX: 201, clientY: 208, buttons: 1 });
   expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  fireEvent.pointerUp(document.body, { clientX: 500, clientY: 208 });
+  fireEvent.pointerMove(chart, { clientX: 200, clientY: 208 });
+  expect(
+    screen.getByRole("img", { name: "day: 5; visitors: 2.5" })
+  ).toBeInTheDocument();
   fireEvent.pointerMove(chart, { clientX: 256, clientY: 208 });
   expect(screen.queryByRole("img")).not.toBeInTheDocument();
+});
+
+it("sorts X values while retaining a missing-value line gap", () => {
+  const settings = {
+    ...lineChartDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }),
+    id: "line-ordering",
+    xField: "x",
+    seriesField: ["y"],
+    showLegend: false,
+  };
+  const { container } = render(
+    <DataLayerProvider
+      data={[
+        { x: 3, y: 30 },
+        { x: 1, y: 10 },
+        { x: 2, y: null },
+        { x: 0, y: 0 },
+      ]}
+      charts={[settings]}
+    >
+      <LineChart settings={settings} width={400} height={300} />
+    </DataLayerProvider>
+  );
+
+  const path = container.querySelector("path");
+  expect(path?.getAttribute("d")?.match(/M/g)).toHaveLength(2);
 });
