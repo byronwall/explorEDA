@@ -28,7 +28,7 @@ export function ThreeDScatterChart({
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const updateChart = useDataLayer((state) => state.updateChart);
-  const data = useThreeDScatterData(settings, facetIds);
+  const { points, omitted } = useThreeDScatterData(settings, facetIds);
   const [nonce, setNonce] = useState(0);
   const renderScene = useCallback(() => {
     const renderer = rendererRef.current;
@@ -180,12 +180,20 @@ export function ThreeDScatterChart({
   }, [width, height]);
 
   return (
-    <div ref={containerRef} style={{ width, height }}>
+    <div ref={containerRef} className="relative" style={{ width, height }}>
+      {omitted > 0 && (
+        <div
+          role="status"
+          className="absolute z-10 m-2 rounded bg-background/90 px-2 py-1 text-xs text-muted-foreground"
+        >
+          {omitted.toLocaleString()} rows omitted: coordinates must be finite
+        </div>
+      )}
       {sceneRef.current && (
         <>
           <ThreeDScatterPoints
             scene={sceneRef.current}
-            data={data}
+            data={points}
             settings={settings}
             onSceneChange={renderScene}
             key={"points-" + nonce}

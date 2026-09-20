@@ -14,6 +14,18 @@ import type {
   ViewMetadata,
 } from "@/types/SavedDataTypes";
 import {
+  formatFieldValue,
+  getFieldSettingsError,
+  getFieldLabel,
+  hasFieldDisplayFormat,
+  type ConversionPreview,
+  type DatePreset,
+  type FieldFormat,
+  type FieldSettings,
+  type FieldSettingsMap,
+} from "@/lib/fieldSettings";
+import type { AggregateResult, AggregateSpec } from "@/lib/aggregates";
+import {
   parseSavedAnalysis,
   parseSavedData,
   saveAnalysisToClipboard,
@@ -70,6 +82,13 @@ export type {
   SavedColumnSettings,
   SavedRowsSettings,
   ViewMetadata,
+  ConversionPreview,
+  DatePreset,
+  FieldFormat,
+  FieldSettings,
+  FieldSettingsMap,
+  AggregateSpec,
+  AggregateResult,
 };
 export {
   parseSavedAnalysis,
@@ -81,4 +100,8 @@ export {
   validateSavedAnalysis,
   validateSavedAnalysisForData,
   validateSavedData,
+  formatFieldValue,
+  getFieldSettingsError,
+  getFieldLabel,
+  hasFieldDisplayFormat,
 };

@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { ChartRenderer } from "./charts/ChartRenderer";
+import { ChartColorLegend } from "./charts/ColorLegend/ChartColorLegend";
 import { FacetContainer } from "./charts/FacetRelated/FacetContainer";
 import { ChartSettingsContent } from "./ChartSettingsContent";
 import { Button } from "./ui/button";
@@ -54,15 +55,31 @@ export function PlotChartPanel({
   );
   const clearFilter = useDataLayer((state) => state.clearFilter);
   const addChart = useDataLayer((state) => state.addChart);
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
+  const fieldSettings = useDataLayer((state) => state.fieldSettings);
+  void fieldSettings;
   const showAlert = useAlertStore((state) => state.showAlert);
   const titleId = useId();
   const descriptionId = useId();
-  const chartTitle = getChartTitle(settings);
-  const chartSummary = getChartSummary(settings);
+  const chartTitle = getChartTitle(settings, getFieldLabel);
+  const chartSummary = getChartSummary(settings, getFieldLabel);
+  const aggregateId =
+    "aggregateId" in settings ? settings.aggregateId : undefined;
+  const aggregate = useDataLayer((state) =>
+    aggregateId ? state.getAggregate(aggregateId) : undefined
+  );
   const isTableLike = ["data-table", "pivot", "summary"].includes(
     settings.type
   );
-  const dataFields = getChartFields(settings);
+  const dataFields = aggregate
+    ? Array.from(
+        new Set(
+          [aggregate.groupField, aggregate.measureField].filter(
+            (field): field is string => Boolean(field)
+          )
+        )
+      )
+    : getChartFields(settings);
   const calculations = useDataLayer((state) => state.calculations);
   const calculatedFields = ["data-table", "summary"].includes(settings.type)
     ? []
@@ -70,6 +87,8 @@ export function PlotChartPanel({
         calculations.some((calc) => calc.resultColumnName === field)
       );
   const fieldStripHeight = calculatedFields.length ? 28 : 0;
+  const autoLegendHeight =
+    settings.colorField && settings.colorScaleId ? 56 : 0;
 
   const handleViewData = () => {
     if (dataFields.length === 0) {
@@ -237,19 +256,31 @@ export function PlotChartPanel({
       <p id={descriptionId} className="sr-only">
         {chartSummary}
       </p>
-      <div className="eda-chart-content min-h-0 flex-1">
-        {settings.facet?.enabled ? (
+      <div className="eda-chart-content flex min-h-0 flex-1 flex-col">
+        {autoLegendHeight > 0 && (
+          <ChartColorLegend
+            settings={settings}
+            width={Math.max(1, panelWidth - 24)}
+          />
+        )}
+        {settings.facet?.enabled && !aggregate ? (
           <FacetContainer
             settings={settings}
             width={Math.max(1, panelWidth - 24)}
-            height={Math.max(1, panelHeight - 58 - fieldStripHeight)}
+            height={Math.max(
+              1,
+              panelHeight - 58 - fieldStripHeight - autoLegendHeight
+            )}
           />
         ) : (
           <ChartRenderer
             settings={settings}
             toolbarTarget={isTableLike ? toolbarTarget : undefined}
             width={Math.max(1, panelWidth - 24)}
-            height={Math.max(1, panelHeight - 58 - fieldStripHeight)}
+            height={Math.max(
+              1,
+              panelHeight - 58 - fieldStripHeight - autoLegendHeight
+            )}
           />
         )}
       </div>

@@ -2,8 +2,10 @@ import {
   categoryEqual,
   categoryIncludes,
   categoryKey,
+  categoryLabel,
   categoryValue,
 } from "@/lib/categories";
+import { hasFieldDisplayFormat } from "@/lib/fieldSettings";
 import { useEffect, useMemo } from "react";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
@@ -24,14 +26,37 @@ export function ColorLegendChart({
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const updateChart = useDataLayer((state) => state.updateChart);
   const rowCount = useDataLayer((state) => state.data.length);
+  const fieldSettings = useDataLayer((state) => state.fieldSettings);
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
+  const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
   const liveIds = useGetLiveIds(settings);
 
   useEffect(() => {
     for (const field of settings.fields) {
-      if (!colorScales.some((scale) => scale.name === field))
-        getOrCreateScaleForField(field);
+      if (
+        settings.fields.length === 1 &&
+        settings.colorScaleId &&
+        colorScales.some((item) => item.id === settings.colorScaleId)
+      ) {
+        continue;
+      }
+      const scale = colorScales.find((item) => item.sourceField === field);
+      const scaleId = scale?.id ?? getOrCreateScaleForField(field);
+      if (
+        settings.fields.length === 1 &&
+        settings.colorScaleId !== scaleId &&
+        colorScales.some((item) => item.id === scaleId)
+      ) {
+        updateChart(settings.id, { colorScaleId: scaleId });
+      }
     }
-  }, [settings.fields, colorScales, getOrCreateScaleForField]);
+  }, [
+    settings.fields,
+    settings.colorScaleId,
+    colorScales,
+    getOrCreateScaleForField,
+    updateChart,
+  ]);
 
   const fieldCounts = useMemo(() => {
     const facet = facetIds && new Set(facetIds);
@@ -51,8 +76,12 @@ export function ColorLegendChart({
 
   if (settings.fields.length === 0) {
     return (
-      <div className="flex items-center justify-center w-full h-full text-muted-foreground">
-        Select a field to see a legend
+      <div
+        className="flex h-full w-full flex-col items-center justify-center gap-1 text-center text-muted-foreground"
+        aria-label="Color legend"
+      >
+        <h3 className="text-sm font-medium text-foreground">Color legend</h3>
+        <p className="text-xs">Open chart settings and select a field.</p>
       </div>
     );
   }
@@ -60,7 +89,11 @@ export function ColorLegendChart({
   return (
     <div className="eda-color-legend" style={{ width, height }}>
       {settings.fields.map((field) => {
-        const scale = colorScales.find((scale) => scale.name === field);
+        void fieldSettings[field];
+        const scale =
+          settings.fields.length === 1 && settings.colorScaleId
+            ? colorScales.find((item) => item.id === settings.colorScaleId)
+            : colorScales.find((item) => item.sourceField === field);
         if (!scale) return null;
         const selected = settings.filters
           .filter(
@@ -69,9 +102,9 @@ export function ColorLegendChart({
           )
           .flatMap((filter) => filter.values.map(categoryValue));
         return (
-          <section key={field} aria-label={field}>
+          <section key={field} aria-label={getFieldLabel(field)}>
             {settings.fields.length > 1 && (
-              <div className="eda-legend-field">{field}</div>
+              <div className="eda-legend-field">{getFieldLabel(field)}</div>
             )}
             <ColorScale
               scale={scale}
@@ -90,6 +123,11 @@ export function ColorLegendChart({
               ]}
               countWidth={rowCount.toLocaleString().length}
               selected={selected}
+              formatValue={(value) =>
+                hasFieldDisplayFormat(fieldSettings[field])
+                  ? formatFieldValue(field, value)
+                  : categoryLabel(value)
+              }
               onToggle={(value) => {
                 const values = categoryIncludes(selected, value)
                   ? selected.filter((item) => !categoryEqual(item, value))

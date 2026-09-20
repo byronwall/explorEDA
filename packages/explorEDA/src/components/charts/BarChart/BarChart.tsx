@@ -15,13 +15,20 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import { BaseChartProps } from "@/types/ChartTypes";
 import { ValueFilter } from "@/types/FilterTypes";
 import { scaleBand, ScaleBand, scaleLinear, ScaleLinear } from "d3-scale";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import isEqual from "react-fast-compare";
 import { useCustomCompareMemo } from "use-custom-compare";
 import { BaseChart } from "../BaseChart";
 import { useGetColumnDataForIds } from "../useGetColumnData";
 import { useGetLiveData } from "../useGetLiveData";
+import {
+  displayAggregateValue,
+  type AggregateResult,
+  type AggregateResultRow,
+} from "@/lib/aggregates";
+import { GroupedAggregateInspector } from "./GroupedAggregateInspector";
 import { BarChartSettings } from "./definition";
+import { getChartAxisLabel } from "../chartAccessibility";
 
 const X_SCALE_PADDING = 0.05; // 5% padding on each side
 const Y_SCALE_PADDING = 0.1; // 10% padding for top of bars
@@ -41,9 +48,56 @@ type CategoryBin = {
   isNumeric: false;
 };
 
-type BarChartProps = BaseChartProps<BarChartSettings>;
+type AggregateBin = {
+  label: string;
+  category: datum;
+  value: number | undefined;
+  isNumeric: false;
+  aggregateRow: AggregateResultRow;
+};
 
-export function BarChart({ settings, width, height, facetIds }: BarChartProps) {
+type BarChartProps = BaseChartProps<BarChartSettings> & {
+  aggregateResult?: AggregateResult;
+  aggregateScope?: string;
+  formatValue?: (value: datum) => string;
+};
+
+export function BarChart({
+  settings,
+  width,
+  height,
+  facetIds,
+  aggregateResult,
+  aggregateScope = "This result uses the current globally filtered source rows",
+  formatValue,
+}: BarChartProps) {
+  const getAggregateResult = useDataLayer((s) => s.getAggregateResult);
+  const formatFieldValue = useDataLayer((s) => s.formatFieldValue);
+  const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
+  const fieldSettings = useDataLayer((s) => s.fieldSettings);
+  const nonce = useDataLayer((s) => s.nonce);
+  const aggregates = useDataLayer((s) => s.aggregates);
+  const aggregateLiveItems = useDataLayer((s) => s.getLiveItems(settings));
+  const resolvedAggregateResult = useMemo(() => {
+    void aggregates;
+    void aggregateLiveItems;
+    void fieldSettings;
+    void nonce;
+    return settings.aggregateId
+      ? getAggregateResult(settings.aggregateId)
+      : undefined;
+  }, [
+    settings.aggregateId,
+    getAggregateResult,
+    aggregates,
+    aggregateLiveItems,
+    fieldSettings,
+    nonce,
+  ]);
+  const effectiveAggregateResult = aggregateResult ?? resolvedAggregateResult;
+  void fieldSettings;
+  void nonce;
+  const isAggregate = Boolean(settings.aggregateId);
   // Get all data for axis limits calculation (not filtered by current selections)
   const allColData = useGetColumnDataForIds(settings.field);
   // Get filtered data for rendering
@@ -51,19 +105,41 @@ export function BarChart({ settings, width, height, facetIds }: BarChartProps) {
 
   const updateChart = useDataLayer((s) => s.updateChart);
   const { getColorForValue } = useColorScales();
+  const [inspectedRowId, setInspectedRowId] = useState<string>();
+  const [inspectorOpen, setInspectorOpen] = useState(false);
 
   const isNumeric = useMemo(
     () =>
+      !isAggregate &&
+      fieldSettings[settings.field]?.type !== "categorical" &&
       !settings.forceString &&
       allColData.some((d) => d != null && d !== "") &&
       allColData
         .filter((d) => d != null && d !== "")
         .every((d) => typeof d !== "boolean" && Number.isFinite(Number(d))),
-    [allColData, settings.forceString]
+    [
+      allColData,
+      fieldSettings,
+      isAggregate,
+      settings.field,
+      settings.forceString,
+    ]
   );
 
   // Calculate chart data from live (filtered) data for rendering
   const chartData = useMemo(() => {
+    void nonce;
+    if (isAggregate) {
+      return (effectiveAggregateResult?.rows ?? []).map(
+        (row): AggregateBin => ({
+          label: row.groupLabel,
+          category: row.groupValue,
+          value: row.value,
+          isNumeric: false,
+          aggregateRow: row,
+        })
+      );
+    }
     if (isNumeric) {
       return numericBins(
         allColData.filter((d) => d != null && d !== "").map(Number),
@@ -91,10 +167,25 @@ export function BarChart({ settings, width, height, facetIds }: BarChartProps) {
         })
       );
     }
-  }, [liveColData, allColData, isNumeric, settings.binCount]);
+  }, [
+    effectiveAggregateResult,
+    allColData,
+    isAggregate,
+    isNumeric,
+    liveColData,
+    settings.binCount,
+    nonce,
+  ]);
 
   // Calculate min/max from ALL data for axis limits
   const { min, max, uniqueValues } = useMemo(() => {
+    if (isAggregate) {
+      return {
+        min: undefined,
+        max: undefined,
+        uniqueValues: chartData.map((item) => item.label),
+      };
+    }
     if (isNumeric) {
       const numericData = allColData
         .filter((d) => d != null && d !== "")
@@ -114,7 +205,7 @@ export function BarChart({ settings, width, height, facetIds }: BarChartProps) {
       max: undefined,
       uniqueValues: Array.from(new Set(allColData.map(categoryLabel))),
     };
-  }, [allColData, isNumeric, settings.binCount]);
+  }, [allColData, chartData, isAggregate, isNumeric]);
 
   // Keep numeric axis labels and X ticks inside the SVG viewport.
   const populationCounts = isNumeric
@@ -123,27 +214,77 @@ export function BarChart({ settings, width, height, facetIds }: BarChartProps) {
         allColData.filter((d) => d != null && d !== "").map(Number),
         settings.binCount || 20
       ).map((bin) => bin.value)
-    : Array.from(
-        allColData
-          .reduce(
-            (counts, value) =>
-              counts.set(
-                categoryKey(value),
-                (counts.get(categoryKey(value)) ?? 0) + 1
-              ),
-            new Map<string, number>()
-          )
-          .values()
-      );
+    : isAggregate
+      ? chartData
+          .map((item) => item.value)
+          .filter((value): value is number => Number.isFinite(value))
+      : Array.from(
+          allColData
+            .reduce(
+              (counts, value) =>
+                counts.set(
+                  categoryKey(value),
+                  (counts.get(categoryKey(value)) ?? 0) + 1
+                ),
+              new Map<string, number>()
+            )
+            .values()
+        );
   const yScaleMax = Math.max(
     1,
-    Math.max(...populationCounts) * (1 + Y_SCALE_PADDING)
+    Math.max(...populationCounts, 0) * (1 + Y_SCALE_PADDING)
+  );
+  const aggregateMin = isAggregate ? Math.min(...populationCounts, 0) : 0;
+  const aggregateMax = isAggregate
+    ? Math.max(...populationCounts, 0)
+    : yScaleMax;
+  const aggregatePadding =
+    isAggregate && aggregateMin === aggregateMax
+      ? 0.5
+      : (aggregateMax - aggregateMin) * Y_SCALE_PADDING;
+  const aggregateAxisFields = isAggregate
+    ? {
+        x: effectiveAggregateResult?.spec.groupField,
+        y:
+          effectiveAggregateResult?.spec.aggregation === "count"
+            ? undefined
+            : effectiveAggregateResult?.spec.measureField,
+      }
+    : undefined;
+  const aggregateXAxisLabel =
+    effectiveAggregateResult &&
+    (settings.xAxisLabel ||
+      getFieldLabel(effectiveAggregateResult.spec.groupField));
+  const aggregateYAxisLabel = effectiveAggregateResult
+    ? settings.yAxisLabel ||
+      (effectiveAggregateResult.spec.aggregation === "count"
+        ? "Count"
+        : getFieldLabel(
+            effectiveAggregateResult.spec.measureField ?? "Measure"
+          ))
+    : settings.yAxisLabel;
+  const xAxisLabel = getChartAxisLabel(
+    aggregateAxisFields?.x ?? settings.field,
+    isAggregate ? aggregateXAxisLabel || "" : settings.xAxisLabel,
+    getFieldLabel
+  );
+  const yAxisLabel = getChartAxisLabel(
+    aggregateAxisFields?.y,
+    isAggregate ? aggregateYAxisLabel || "" : settings.yAxisLabel,
+    getFieldLabel
   );
   const yTickLabelWidth = Math.max(
     ...scaleLinear()
-      .domain([0, yScaleMax])
+      .domain(
+        isAggregate
+          ? [
+              aggregateMin - (aggregateMin < 0 ? aggregatePadding : 0),
+              aggregateMax + aggregatePadding,
+            ]
+          : [0, yScaleMax]
+      )
       .ticks(5)
-      .map((tick) => String(tick).length * 7 + (settings.yAxisLabel ? 38 : 18))
+      .map((tick) => String(tick).length * 7 + (yAxisLabel ? 38 : 18))
   );
   const minPlotWidth = Math.min(
     80,
@@ -159,10 +300,21 @@ export function BarChart({ settings, width, height, facetIds }: BarChartProps) {
       Math.max(settings.margin.left, yTickLabelWidth),
       maxLeftMargin
     ),
-    bottom: Math.max(settings.margin.bottom, settings.xAxisLabel ? 46 : 28),
+    bottom: Math.max(settings.margin.bottom, xAxisLabel ? 46 : 28),
   };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
+  const aggregateGroupField = effectiveAggregateResult?.spec.groupField;
+  const groupDisplaySettings = aggregateGroupField
+    ? fieldSettings[aggregateGroupField]
+    : undefined;
+  const hasGroupDisplayFormat = Boolean(
+    groupDisplaySettings &&
+      ((groupDisplaySettings.format &&
+        groupDisplaySettings.format !== "auto") ||
+        groupDisplaySettings.precision !== undefined ||
+        groupDisplaySettings.unit)
+  );
 
   // Create scales with synchronized limits if in a facet
   const xScale = useCustomCompareMemo(
@@ -186,20 +338,47 @@ export function BarChart({ settings, width, height, facetIds }: BarChartProps) {
 
   const yScale = useMemo(() => {
     return numericScale(settings.yAxis)
-      .domain([0, yScaleMax])
+      .domain(
+        isAggregate
+          ? [
+              aggregateMin - (aggregateMin < 0 ? aggregatePadding : 0),
+              aggregateMax + aggregatePadding,
+            ]
+          : [0, yScaleMax]
+      )
       .range([innerHeight, 0]);
-  }, [innerHeight, yScaleMax, settings.yAxis]);
+  }, [
+    aggregateMax,
+    aggregateMin,
+    aggregatePadding,
+    innerHeight,
+    isAggregate,
+    settings.yAxis,
+    yScaleMax,
+  ]);
 
   const isBandScale = "bandwidth" in xScale;
 
   const valueFilter = settings.filters.find(
     (f): f is ValueFilter => f.type === "value" && f.field === settings.field
   );
-  const rangeFilter = getRangeFilterForField(settings.filters, settings.field);
-  const hasActiveFilters = valueFilter || rangeFilter;
+  const rangeFilter = isAggregate
+    ? undefined
+    : getRangeFilterForField(settings.filters, settings.field);
+  const hasActiveFilters = !isAggregate && (valueFilter || rangeFilter);
 
   const handleBarClick = useCallback(
     (label: datum) => {
+      if (isAggregate) {
+        const row = effectiveAggregateResult?.rows.find((candidate) =>
+          categoryEqual(candidate.groupValue, label)
+        );
+        if (row) {
+          setInspectedRowId(row.id);
+          setInspectorOpen(true);
+        }
+        return;
+      }
       if (!isBandScale) {
         return;
       }
@@ -233,6 +412,8 @@ export function BarChart({ settings, width, height, facetIds }: BarChartProps) {
       updateChart,
       valueFilter,
       settings.filters,
+      effectiveAggregateResult,
+      isAggregate,
     ]
   );
 
@@ -297,9 +478,16 @@ export function BarChart({ settings, width, height, facetIds }: BarChartProps) {
         onBrushChange={handleBrushChange}
         settings={{
           ...settings,
+          ...(isAggregate
+            ? {
+                xAxisLabel: aggregateXAxisLabel || "",
+                yAxisLabel: aggregateYAxisLabel || "",
+              }
+            : {}),
           margin,
           yAxis: { grid: true, ...settings.yAxis },
         }}
+        axisFields={aggregateAxisFields}
       >
         <g>
           {chartData.map((d, i) => {
@@ -323,6 +511,10 @@ export function BarChart({ settings, width, height, facetIds }: BarChartProps) {
             const value = isNumeric
               ? (d as NumericBin).start
               : (d as CategoryBin).category;
+            const aggregateRow =
+              !isNumeric && "aggregateRow" in d
+                ? (d as AggregateBin).aggregateRow
+                : undefined;
             let isFiltered = true;
 
             // Apply value and range filters using applyFilter
@@ -339,22 +531,36 @@ export function BarChart({ settings, width, height, facetIds }: BarChartProps) {
                 ? "rgb(156 163 175)" // gray-400 for filtered out points
                 : getColorForValue(settings.colorScaleId, value, "#3479a8");
 
-            const barHeight = innerHeight - yScale(d.value);
-
-            if (barWidth < 1 || barHeight < 1) {
+            if (typeof d.value !== "number" || !Number.isFinite(d.value)) {
               return null;
             }
+
+            const baseline = yScale(0);
+            const valuePosition = yScale(d.value);
+            const barHeight = Math.abs(baseline - valuePosition);
+            const barY = Math.min(baseline, valuePosition);
+
+            if (barWidth < 1) {
+              return null;
+            }
+
+            const displayHeight = Math.max(1, barHeight);
+            const measureLabel = isAggregate
+              ? aggregateRow && aggregateRow.value === undefined
+                ? "No valid numbers"
+                : displayAggregateValue(d.value)
+              : `${d.value} records`;
 
             return (
               <rect
                 key={i}
                 x={x}
-                y={yScale(d.value)}
+                y={barY}
                 width={Math.max(0, barWidth - (isNumeric ? 1 : 0))}
                 rx={1.5}
                 role={isBandScale ? "button" : undefined}
                 tabIndex={isBandScale ? 0 : undefined}
-                aria-label={`${d.label}: ${d.value} records`}
+                aria-label={`${d.label}: ${measureLabel}`}
                 aria-pressed={
                   isBandScale
                     ? !!valueFilter && applyFilter(value, valueFilter)
@@ -369,25 +575,56 @@ export function BarChart({ settings, width, height, facetIds }: BarChartProps) {
                     handleBarClick(value);
                   }
                 }}
-                height={barHeight}
                 className={`chart-mark ${isBandScale ? "cursor-pointer" : ""}`}
                 style={{ fill: color }}
                 onClick={() =>
                   isBandScale && handleBarClick((d as CategoryBin).category)
                 }
+                height={displayHeight}
               >
                 <title>
-                  {isNumeric
-                    ? `Range: ${(d as NumericBin).start.toFixed(2)} - ${(
-                        d as NumericBin
-                      ).end.toFixed(2)}, Count: ${d.value}`
-                    : `${(d as CategoryBin).label}, Count: ${d.value}`}
+                  {isAggregate
+                    ? `${d.label}: ${measureLabel}; ${aggregateRow?.contributors.length ?? 0} source rows`
+                    : isNumeric
+                      ? `Range: ${(d as NumericBin).start.toFixed(2)} - ${(
+                          d as NumericBin
+                        ).end.toFixed(2)}, Count: ${d.value}`
+                      : `${(d as CategoryBin).label}, Count: ${d.value}`}
                 </title>
               </rect>
             );
           })}
         </g>
       </BaseChart>
+      {isAggregate && effectiveAggregateResult && (
+        <GroupedAggregateInspector
+          result={effectiveAggregateResult}
+          open={inspectorOpen}
+          onOpenChange={setInspectorOpen}
+          selectedRowId={inspectedRowId}
+          scopeDescription={aggregateScope}
+          formatValue={
+            formatValue ??
+            ((value) =>
+              effectiveAggregateResult.spec.aggregation === "count"
+                ? displayAggregateValue(value)
+                : formatFieldValue(
+                    effectiveAggregateResult.spec.measureField ??
+                      effectiveAggregateResult.spec.groupField,
+                    value
+                  ))
+          }
+          getFieldLabel={getFieldLabel}
+          formatGroupValue={(value) =>
+            hasGroupDisplayFormat && value != null
+              ? formatFieldValue(
+                  effectiveAggregateResult.spec.groupField,
+                  value
+                )
+              : categoryLabel(value)
+          }
+        />
+      )}
     </div>
   );
 }

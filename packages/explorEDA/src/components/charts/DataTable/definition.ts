@@ -10,6 +10,7 @@ import { DataTableSettingsPanel } from "./DataTableSettingsPanel";
 
 export interface DataTableSettings extends BaseChartSettings {
   type: "data-table";
+  aggregateId?: string;
   columns: Array<{
     id: string;
     field: string;

@@ -78,6 +78,7 @@ export const fifaSettings: SavedDataStructure = {
   colorScales: [
     {
       name: "nation",
+      sourceField: "nation",
       type: "categorical",
       palette: [
         "#1f77b4",

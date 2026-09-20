@@ -13,6 +13,7 @@ interface ColorScaleProps {
   categories: datum[];
   selected: datum[];
   onToggle: (value: datum) => void;
+  formatValue?: (value: datum) => string;
 }
 
 export function ColorScale({
@@ -26,6 +27,7 @@ export function ColorScale({
   selected,
   categories,
   onToggle,
+  formatValue = categoryLabel,
 }: ColorScaleProps) {
   if (scale.type === "numerical") {
     const steps =
@@ -45,7 +47,7 @@ export function ColorScale({
         <div
           className="eda-legend-ramp"
           role="img"
-          aria-label={`${scale.name}: ${scale.min} to ${scale.max}`}
+          aria-label={`${scale.name}: ${formatValue(scale.min)} to ${formatValue(scale.max)}`}
           style={{
             background:
               steps === 1
@@ -55,9 +57,7 @@ export function ColorScale({
         />
         <div className="eda-legend-ticks">
           {stops.map(({ value }, index) => (
-            <span key={index}>
-              {value.toLocaleString(undefined, { maximumFractionDigits: 1 })}
-            </span>
+            <span key={index}>{formatValue(value)}</span>
           ))}
         </div>
       </div>
@@ -74,10 +74,10 @@ export function ColorScale({
             key={categoryKey(value)}
             type="button"
             className="eda-legend-item"
-            aria-label={`Filter ${scale.name} by ${categoryLabel(value)}, ${count.toLocaleString()} rows`}
+            aria-label={`Filter ${scale.name} by ${formatValue(value)}, ${count.toLocaleString()} rows`}
             aria-pressed={active}
             data-dimmed={(selected.length > 0 && !active) || count === 0}
-            title={`${categoryLabel(value)} · ${count.toLocaleString()} rows · Click to ${active ? "remove" : "add"} filter`}
+            title={`${formatValue(value)} · ${count.toLocaleString()} rows · Click to ${active ? "remove" : "add"} filter`}
             onClick={() => onToggle(value)}
           >
             <span
@@ -85,7 +85,7 @@ export function ColorScale({
               style={{ background: getColorForValue(scale.id, value) }}
               aria-hidden="true"
             />
-            <span className="eda-legend-value">{categoryLabel(value)}</span>
+            <span className="eda-legend-value">{formatValue(value)}</span>
             <span
               className="eda-legend-count"
               style={{ width: `${countWidth}ch` }}

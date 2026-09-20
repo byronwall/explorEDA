@@ -11,6 +11,8 @@ interface AxisReadoutProps {
   label: string;
   rightAxis?: boolean;
   radius?: number;
+  xFormatter?: (value: number) => string;
+  yFormatter?: (value: number) => string;
 }
 
 export function AxisReadout({
@@ -24,10 +26,12 @@ export function AxisReadout({
   label,
   rightAxis = false,
   radius = 4,
+  xFormatter = formatTick,
+  yFormatter = formatTick,
 }: AxisReadoutProps) {
   if (![x, y, xValue, yValue].every(Number.isFinite)) return null;
-  const xText = formatTick(xValue);
-  const yText = formatTick(yValue);
+  const xText = xFormatter(xValue);
+  const yText = yFormatter(yValue);
   const xLabelWidth = xText.length * 6 + 12;
   const yLabelWidth = yText.length * 6 + 12;
   const labelX = Math.max(

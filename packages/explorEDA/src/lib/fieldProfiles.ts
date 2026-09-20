@@ -18,11 +18,15 @@ export interface FieldProfile extends ColumnStatistics {
 
 export function buildFieldProfile(
   name: string,
-  columnData: Record<number, datum>
+  columnData: Record<number, datum>,
+  typeOverride?: DataType
 ): FieldProfile {
   return {
     name,
-    ...calculateColumnStatistics(columnData, detectColumnType(columnData)),
+    ...calculateColumnStatistics(
+      columnData,
+      typeOverride ?? detectColumnType(columnData)
+    ),
   };
 }
 
@@ -41,7 +45,8 @@ export function emptyFieldProfile(profile: FieldProfile): FieldProfile {
 }
 
 export function buildFieldProfiles(
-  rows: Array<Record<string, datum>>
+  rows: Array<Record<string, datum>>,
+  typeOverrides: Record<string, DataType> = {}
 ): FieldProfile[] {
   const fields = new Set<string>();
   for (const row of rows) {
@@ -56,6 +61,6 @@ export function buildFieldProfiles(
       columnData[index] = row[name];
     });
 
-    return buildFieldProfile(name, columnData);
+    return buildFieldProfile(name, columnData, typeOverrides[name]);
   });
 }

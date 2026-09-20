@@ -4,6 +4,8 @@ import { datum } from "./ChartTypes";
 export interface BaseColorScale {
   id: string;
   name: string;
+  /** Source field used to create this scale. Display names may change. */
+  sourceField?: string;
 }
 
 export interface NumericalColorScale extends BaseColorScale {
@@ -42,11 +44,13 @@ export interface UseColorScalesReturn {
   createDefaultNumericalScale: (
     name: string,
     min: number,
-    max: number
+    max: number,
+    sourceField?: string
   ) => ColorScaleType;
   createDefaultCategoricalScale: (
     name: string,
-    values: string[]
+    values: string[],
+    sourceField?: string
   ) => ColorScaleType;
 
   // D3 Integration

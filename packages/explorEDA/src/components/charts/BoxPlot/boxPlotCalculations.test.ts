@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { calculateBoxPlotStats } from "./boxPlotCalculations";
+import {
+  calculateBeeSwarmPositions,
+  calculateBoxPlotStats,
+} from "./boxPlotCalculations";
 
 describe("calculateBoxPlotStats", () => {
   it("uses observed Tukey whisker endpoints inside the fences", () => {
@@ -13,5 +16,16 @@ describe("calculateBoxPlotStats", () => {
       outliers: [100],
       totalCount: 5,
     });
+  });
+
+  it("uses screen-space Y distances for beeswarm collisions", () => {
+    expect(calculateBeeSwarmPositions([0, 1], 20, 1000, 0, (value) => value * 100)).toEqual([
+      [0, 0],
+      [0, 1],
+    ]);
+    expect(calculateBeeSwarmPositions([0, 1], 20, 1000, 0, (value) => value)).toEqual([
+      [0, 0],
+      [4, 1],
+    ]);
   });
 });

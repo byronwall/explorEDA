@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowUpDown, AlertCircle } from "lucide-react";
+import { ArrowUpDown, AlertCircle, Settings2 } from "lucide-react";
 import { DataTypeIcon } from "./DataTypeIcon";
 import { StatBadge } from "./StatBadge";
 import {
@@ -18,6 +18,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ChartActions } from "./ChartActions";
+import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { FieldProfile } from "@/lib/fieldProfiles";
 import { getChartSummary } from "../../charts/chartAccessibility";
 import type { SummaryTableSettings } from "../../charts/SummaryTable/definition";
@@ -26,13 +27,17 @@ interface CompactSummaryTableProps {
   data: FieldProfile[];
   onSort: (column: keyof FieldProfile) => void;
   settings: SummaryTableSettings;
+  onInspect: (field: string) => void;
 }
 
 export function CompactSummaryTable({
   data,
   onSort,
   settings,
+  onInspect,
 }: CompactSummaryTableProps) {
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
+  const label = getFieldLabel ?? ((field: string) => field);
   return (
     <table className="eda-summary-table w-full border-collapse text-xs">
       <caption className="sr-only">{getChartSummary(settings)}</caption>
@@ -71,7 +76,9 @@ export function CompactSummaryTable({
             <TableCell>
               <div className="flex items-center gap-2">
                 <DataTypeIcon type={summary.dataType} />
-                <span className="font-medium">{summary.name}</span>
+                <span className="font-medium" title={summary.name}>
+                  {label(summary.name)}
+                </span>
                 <CalculatedFieldBadge field={summary.name} />
                 {summary.nullCount > 0 && (
                   <TooltipProvider>
@@ -110,6 +117,16 @@ export function CompactSummaryTable({
                 )}
               </div>
               <div className="eda-summary-actions">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  aria-label={`Inspect ${summary.name}`}
+                  title={`Inspect ${summary.name}`}
+                  onClick={() => onInspect(summary.name)}
+                >
+                  <Settings2 className="h-4 w-4" />
+                </Button>
                 <ChartActions
                   columnName={summary.name}
                   dataType={summary.dataType}

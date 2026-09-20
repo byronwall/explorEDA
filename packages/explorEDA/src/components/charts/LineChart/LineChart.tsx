@@ -2,12 +2,14 @@ import { numericScale } from "../Axis/numericScale";
 import { AxisReadout } from "../Axis/AxisReadout";
 import { reduceDataPoints } from "@/lib/chartUtils";
 import { useDataLayer } from "@/providers/DataLayerProvider";
+import { hasFieldDisplayFormat } from "@/lib/fieldSettings";
 import { type BaseChartProps } from "@/types/ChartTypes";
 import { extent } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { curveLinear, curveMonotoneX, curveStepAfter, line } from "d3-shape";
 import { useEffect, useMemo, useState, type FC } from "react";
 import { BaseChart } from "../BaseChart";
+import { getChartAxisFields, getChartAxisLabel } from "../chartAccessibility";
 import {
   useGetColumnDataForIds,
   useGetColumnDataForMultipleIds,
@@ -51,6 +53,14 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
     field: string;
   } | null>(null);
   const updateChart = useDataLayer((state) => state.updateChart);
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
+  const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
+  const fieldSettings = useDataLayer((state) => state.fieldSettings);
+  void fieldSettings;
+  const displayValue = (field: string, value: number) =>
+    hasFieldDisplayFormat(fieldSettings[field])
+      ? (formatFieldValue?.(field, value) ?? String(value))
+      : String(value);
 
   // Get all data for axis limits calculation
   const allXData = useGetColumnDataForIds(settings.xField);
@@ -88,10 +98,21 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
   const leftYTicks = Number.isFinite(leftYExtent[0])
     ? scaleLinear().domain(leftYExtent).nice().ticks(5)
     : [];
+  const axisFields = getChartAxisFields(settings);
+  const xAxisLabel = getChartAxisLabel(
+    axisFields.x,
+    settings.xAxisLabel,
+    getFieldLabel
+  );
+  const yAxisLabel = getChartAxisLabel(
+    axisFields.y,
+    settings.yAxisLabel,
+    getFieldLabel
+  );
   const requestedLabelMargin = Math.max(
     baseMargin.left,
     ...leftYTicks.map(
-      (tick) => String(tick).length * 7 + (settings.yAxisLabel ? 38 : 18)
+      (tick) => String(tick).length * 7 + (yAxisLabel ? 38 : 18)
     )
   );
   const minPlotWidth = Math.min(
@@ -102,7 +123,7 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
   const margin = {
     ...baseMargin,
     left: Math.min(requestedLabelMargin, maxLabelMargin),
-    bottom: Math.max(baseMargin.bottom, settings.xAxisLabel ? 46 : 28),
+    bottom: Math.max(baseMargin.bottom, xAxisLabel ? 46 : 28),
   };
   if (
     settings.seriesField.some(
@@ -464,7 +485,9 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
                 height={innerHeight}
                 color={seriesColors[hovered.field]!}
                 rightAxis={hoverRight}
-                label={`${settings.xField}: ${hoverX}; ${hovered.field}: ${hoverY}`}
+                xFormatter={(value) => displayValue(settings.xField, value)}
+                yFormatter={(value) => displayValue(hovered.field, value)}
+                label={`${getFieldLabel?.(settings.xField) ?? settings.xField}: ${displayValue(settings.xField, hoverX)}; ${getFieldLabel?.(hovered.field) ?? hovered.field}: ${displayValue(hovered.field, hoverY)}`}
               />
             )}
           </>

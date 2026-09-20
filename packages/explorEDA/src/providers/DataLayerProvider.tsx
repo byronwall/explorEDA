@@ -11,6 +11,22 @@ import {
 } from "@/lib/calculations/CalculationState";
 import { parseExpression } from "@/lib/calculations/parser/semantics";
 import { FieldProfile, buildFieldProfiles } from "@/lib/fieldProfiles";
+import type { DataType } from "@/components/SummaryTable/utils/dataTypeDetection";
+import {
+  AggregateResult,
+  AggregateSpec,
+  calculateGroupedAggregate,
+} from "@/lib/aggregates";
+import {
+  applyFieldSettings,
+  buildConversionPreview,
+  convertFieldValue,
+  FieldSettings,
+  FieldSettingsMap,
+  formatFieldValue as formatValue,
+  getFieldSettingsError,
+  getFieldLabel as resolveFieldLabel,
+} from "@/lib/fieldSettings";
 import { ChartLayout, ChartSettings, datum } from "@/types/ChartTypes";
 import { ColorScaleType } from "@/types/ColorScaleTypes";
 import {
@@ -33,6 +49,23 @@ import { IdType, initializeData } from "./lib/dataLayerState";
 type DatumObject = { [key: string]: datum };
 export type { DatumObject };
 export type { IdType } from "./lib/dataLayerState";
+
+function typeOverrides(settings: FieldSettingsMap): Record<string, DataType> {
+  return Object.fromEntries(
+    Object.entries(settings)
+      .filter(([, value]) => value.type)
+      .map(([field, value]) => [field, value.type as DataType])
+  );
+}
+
+function validateFieldSettings(settings: FieldSettingsMap) {
+  for (const [field, value] of Object.entries(settings)) {
+    const error = getFieldSettingsError(value);
+    if (error) {
+      throw new Error(`Invalid settings for ${field}: ${error}`);
+    }
+  }
+}
 
 const toVector3 = ({ x, y, z }: { x: number; y: number; z: number }) => ({
   x,
@@ -92,6 +125,56 @@ function toSavedCalculations(
   }));
 }
 
+function validateAggregateState(
+  aggregates: AggregateSpec[],
+  charts: SavedChartSettings[] | ChartSettings[],
+  fieldNames?: Iterable<string>
+) {
+  const ids = new Set<string>();
+  const availableFields = fieldNames ? new Set(fieldNames) : undefined;
+  for (const aggregate of aggregates) {
+    if (
+      !aggregate.id ||
+      !aggregate.name.trim() ||
+      !aggregate.groupField.trim() ||
+      !["count", "sum", "average"].includes(aggregate.aggregation) ||
+      (aggregate.aggregation !== "count" && !aggregate.measureField?.trim())
+    ) {
+      throw new Error("Invalid grouped summary definition");
+    }
+    if (availableFields && !availableFields.has(aggregate.groupField)) {
+      throw new Error(
+        `Grouped summary ${aggregate.name} references missing group field ${aggregate.groupField}`
+      );
+    }
+    if (
+      availableFields &&
+      aggregate.measureField &&
+      !availableFields.has(aggregate.measureField)
+    ) {
+      throw new Error(
+        `Grouped summary ${aggregate.name} references missing measure field ${aggregate.measureField}`
+      );
+    }
+    if (ids.has(aggregate.id)) {
+      throw new Error(`Duplicate grouped summary id: ${aggregate.id}`);
+    }
+    ids.add(aggregate.id);
+  }
+  for (const chart of charts) {
+    const aggregateId = (chart as ChartSettings & { aggregateId?: unknown })
+      .aggregateId;
+    if (
+      aggregateId !== undefined &&
+      (typeof aggregateId !== "string" || !ids.has(aggregateId))
+    ) {
+      throw new Error(
+        `Chart references missing grouped summary: ${String(aggregateId)}`
+      );
+    }
+  }
+}
+
 function getDefaultRowsSettings(
   fields: string[],
   calculationNames: string[] = []
@@ -118,7 +201,9 @@ function getSavedStateFingerprint(savedData: SavedDataStructure): string {
       },
     },
     (_key, value: unknown) => {
-      if (value === undefined) return { __exploreda_fingerprint: "undefined" };
+      if (value === undefined) {
+        return { __exploreda_fingerprint: "undefined" };
+      }
       if (typeof value === "number" && !Number.isFinite(value)) {
         return {
           __exploreda_fingerprint: Number.isNaN(value)
@@ -145,11 +230,35 @@ interface DataLayerProps<T extends DatumObject> {
 export type HasId = { __ID: IdType };
 
 interface DataLayerState<T extends DatumObject> extends DataLayerProps<T> {
+  rawData: T[];
   data: (T & HasId)[];
   fieldProfiles: FieldProfile[];
   emptyColumn: Record<IdType, datum>;
   fileName: string | undefined;
   setData: (data: T[], fileName?: string, useDefaults?: boolean) => void;
+  fieldSettings: FieldSettingsMap;
+  aggregates: AggregateSpec[];
+  addAggregate: (spec: Omit<AggregateSpec, "id">) => AggregateSpec;
+  updateAggregate: (
+    id: string,
+    updates: Partial<Omit<AggregateSpec, "id">>
+  ) => void;
+  removeAggregate: (id: string) => void;
+  getAggregate: (id: string) => AggregateSpec | undefined;
+  getAggregateResult: (
+    id: string,
+    sourceIds?: IdType[]
+  ) => AggregateResult | undefined;
+  updateFieldSettings: (
+    field: string,
+    settings: Partial<FieldSettings>
+  ) => void;
+  getFieldLabel: (field: string) => string;
+  formatFieldValue: (field: string, value: datum) => string;
+  getFieldConversionPreview: (
+    field: string,
+    settings?: FieldSettings
+  ) => ReturnType<typeof buildConversionPreview>;
 
   liveItems: LiveItemMap;
 
@@ -273,12 +382,9 @@ function createDefaultWorkspaceCharts(
     },
     field.name
   );
-  chart.title =
-    chartType === "bar"
-      ? `Distribution of ${field.name}`
-      : `Rows by ${field.name}`;
-  chart.xAxisLabel = chartType === "bar" ? field.name : "Rows (count)";
-  chart.yAxisLabel = chartType === "bar" ? "Rows (count)" : field.name;
+  chart.title = "";
+  chart.xAxisLabel = chartType === "bar" ? "" : "Rows (count)";
+  chart.yAxisLabel = chartType === "bar" ? "Rows (count)" : "";
 
   const summary = chartRegistry.has("summary")
     ? getChartDefinition("summary").createDefaultSettings({
@@ -314,6 +420,7 @@ const getInitialStoreState = <T extends DatumObject>(
 ): Required<
   Pick<
     DataLayerState<T>,
+    | "rawData"
     | "data"
     | "fieldProfiles"
     | "emptyColumn"
@@ -329,15 +436,30 @@ const getInitialStoreState = <T extends DatumObject>(
     | "fileName"
     | "rowsSettings"
     | "metadata"
+    | "fieldSettings"
+    | "aggregates"
   >
 > => {
+  const rawData = initProps?.data ?? [];
+  const fieldSettings = initProps?.savedData?.fieldSettings ?? {};
+  validateFieldSettings(fieldSettings);
+  const inferredTypes = Object.fromEntries(
+    buildFieldProfiles(rawData, typeOverrides(fieldSettings)).map((profile) => [
+      profile.name,
+      profile.dataType,
+    ])
+  );
+  const runtimeData = applyFieldSettings(rawData, fieldSettings, inferredTypes);
   const {
     data: initData,
     emptyColumn: initialEmptyColumn,
     crossfilterWrapper,
     calculationManager: ogCalculationManager,
-  } = getDataAndCrossfilterWrapper(initProps?.data ?? []);
-  const fieldProfiles = buildFieldProfiles(initProps?.data ?? []);
+  } = getDataAndCrossfilterWrapper(runtimeData);
+  const fieldProfiles = buildFieldProfiles(
+    runtimeData,
+    typeOverrides(fieldSettings)
+  );
 
   if (!crossfilterWrapper || !initData || !ogCalculationManager) {
     throw new Error(
@@ -354,6 +476,10 @@ const getInitialStoreState = <T extends DatumObject>(
       toRuntimeCalculations(savedData.calculations)
     );
     const newCalculations = ogCalculationManager.getCalculations();
+    validateAggregateState(savedData.aggregates ?? [], savedData.charts, [
+      ...fieldProfiles.map((profile) => profile.name),
+      ...newCalculations.map((calculation) => calculation.resultColumnName),
+    ]);
 
     // Restore color scales with proper Map objects
     const restoredColorScales: ColorScaleType[] = savedData.colorScales.map(
@@ -369,6 +495,7 @@ const getInitialStoreState = <T extends DatumObject>(
     );
 
     return {
+      rawData,
       data: initData,
       fieldProfiles,
       emptyColumn: initialEmptyColumn!,
@@ -389,11 +516,14 @@ const getInitialStoreState = <T extends DatumObject>(
       calcColumnCache: {},
       nonce: 0,
       fileName: undefined,
+      fieldSettings,
+      aggregates: savedData.aggregates ?? [],
     };
   }
 
   // Return default state if no saved data
   return {
+    rawData,
     data: initData,
     fieldProfiles,
     emptyColumn: initialEmptyColumn!,
@@ -421,6 +551,8 @@ const getInitialStoreState = <T extends DatumObject>(
     calcColumnCache: {},
     nonce: 0,
     fileName: undefined,
+    fieldSettings,
+    aggregates: [],
   };
 };
 
@@ -439,14 +571,21 @@ const createDataLayerStore = <T extends DatumObject>(
     liveItems: {},
     filterReset: 0,
     setData: (rawData, fileName, useDefaults = true) => {
+      const inferredTypes = Object.fromEntries(
+        buildFieldProfiles(rawData, typeOverrides({})).map((profile) => [
+          profile.name,
+          profile.dataType,
+        ])
+      );
+      const runtimeData = applyFieldSettings(rawData, {}, inferredTypes);
       // Get fresh crossfilter and data with IDs
       const {
         data: newData,
         emptyColumn: newEmptyColumn,
         crossfilterWrapper: newCrossfilter,
         calculationManager: newCalculationManager,
-      } = getDataAndCrossfilterWrapper(rawData, get().getColumnData);
-      const fieldProfiles = buildFieldProfiles(rawData);
+      } = getDataAndCrossfilterWrapper(runtimeData, get().getColumnData);
+      const fieldProfiles = buildFieldProfiles(runtimeData, typeOverrides({}));
 
       if (
         !newData ||
@@ -464,6 +603,7 @@ const createDataLayerStore = <T extends DatumObject>(
 
       // Reset everything to initial state
       set({
+        rawData,
         data: newData,
         fieldProfiles,
         emptyColumn: newEmptyColumn,
@@ -479,9 +619,233 @@ const createDataLayerStore = <T extends DatumObject>(
         liveItems: newCrossfilter.getAllData(),
         columnCache: {},
         calcColumnCache: {},
+        fieldSettings: {},
+        aggregates: [],
         nonce: get().nonce + 1,
         filterReset: get().filterReset + 1,
       });
+    },
+
+    updateFieldSettings: (field, updates) => {
+      const current = get().fieldSettings[field] ?? {};
+      const nextFieldSettings = { ...current, ...updates };
+      const settingsError = getFieldSettingsError(nextFieldSettings);
+      if (settingsError) {
+        throw new Error(settingsError);
+      }
+      const nextFieldSettingsMap = { ...get().fieldSettings };
+      if (Object.keys(nextFieldSettings).length === 0) {
+        delete nextFieldSettingsMap[field];
+      } else {
+        nextFieldSettingsMap[field] = nextFieldSettings;
+      }
+
+      const typeChanged =
+        current.type !== nextFieldSettings.type ||
+        current.datePreset !== nextFieldSettings.datePreset ||
+        JSON.stringify(current.nullTokens?.filter(Boolean) ?? []) !==
+          JSON.stringify(nextFieldSettings.nullTokens?.filter(Boolean) ?? []);
+      if (!typeChanged) {
+        set((state) => ({
+          fieldSettings: nextFieldSettingsMap,
+          nonce: state.nonce + 1,
+        }));
+        return;
+      }
+
+      const inferredTypes = Object.fromEntries(
+        buildFieldProfiles(
+          get().rawData,
+          typeOverrides(nextFieldSettingsMap)
+        ).map((profile) => [profile.name, profile.dataType])
+      );
+      const runtimeRows = applyFieldSettings(
+        get().rawData,
+        nextFieldSettingsMap,
+        inferredTypes
+      );
+      const nextData = initializeData(runtimeRows);
+      const nextCrossfilter = new CrossfilterWrapper<T & HasId>(
+        nextData.dataWithIds,
+        (row) => row.__ID
+      );
+      const nextCharts = get().charts.map((chart) => ({
+        ...chart,
+        filters: chart.filters.filter((filter) => filter.field !== field),
+        facet:
+          typeChanged &&
+          (chart.facet.rowVariable === field ||
+            (chart.facet.type === "grid" &&
+              chart.facet.columnVariable === field))
+            ? { ...chart.facet, visibleFacetIds: undefined }
+            : chart.facet,
+      })) as ChartSettings[];
+      nextCharts.forEach((chart) => nextCrossfilter.addChart(chart));
+      const nextManager = new CalculationManager(
+        nextData.dataWithIds,
+        get().calculations
+      );
+      set((state) => ({
+        fieldSettings: nextFieldSettingsMap,
+        data: nextData.dataWithIds,
+        emptyColumn: nextData.emptyColumn,
+        fieldProfiles: buildFieldProfiles(
+          runtimeRows,
+          typeOverrides(nextFieldSettingsMap)
+        ),
+        crossfilterWrapper: nextCrossfilter,
+        calculationManager: nextManager,
+        charts: nextCharts,
+        rowsSettings: {
+          ...state.rowsSettings,
+          filters: state.rowsSettings.filters.filter(
+            (filter) => filter.field !== field
+          ),
+        },
+        columnCache: {},
+        calcColumnCache: {},
+        liveItems: {},
+        nonce: state.nonce + 1,
+        filterReset: state.filterReset + 1,
+      }));
+      nextCrossfilter.setFieldGetter(get().getColumnData);
+      nextCharts.forEach((chart) => nextCrossfilter.updateChartFilters(chart));
+      set({ liveItems: nextCrossfilter.getAllData() });
+    },
+
+    getFieldLabel: (field) =>
+      resolveFieldLabel(field, get().fieldSettings[field]),
+
+    formatFieldValue: (field, value) =>
+      formatValue(field, value, get().fieldSettings[field]),
+
+    getFieldConversionPreview: (field, previewSettings) => {
+      const rawRows = get().rawData;
+      const rawProfile = buildFieldProfiles(rawRows).find(
+        (profile) => profile.name === field
+      );
+      return buildConversionPreview(
+        field,
+        rawRows,
+        previewSettings ?? get().fieldSettings[field],
+        rawProfile?.dataType ?? "categorical"
+      );
+    },
+
+    addAggregate: (spec) => {
+      if (!spec.name.trim() || !spec.groupField.trim()) {
+        throw new Error("Grouped summaries need a name and group field");
+      }
+      if (spec.aggregation !== "count" && !spec.measureField?.trim()) {
+        throw new Error(`${spec.aggregation} requires a measure field`);
+      }
+      validateAggregateState(
+        [{ ...spec, id: "new" }],
+        [],
+        get().getColumnNames()
+      );
+      const aggregate = { ...spec, id: crypto.randomUUID() };
+      set((state) => ({
+        aggregates: [...state.aggregates, aggregate],
+        nonce: state.nonce + 1,
+      }));
+      return aggregate;
+    },
+
+    updateAggregate: (id, updates) => {
+      const current = get().aggregates.find((aggregate) => aggregate.id === id);
+      if (!current) {
+        throw new Error("Grouped summary was not found");
+      }
+      const next = { ...current, ...updates };
+      if (!next.name.trim() || !next.groupField.trim()) {
+        throw new Error("Grouped summaries need a name and group field");
+      }
+      if (next.aggregation !== "count" && !next.measureField?.trim()) {
+        throw new Error(`${next.aggregation} requires a measure field`);
+      }
+      validateAggregateState([next], [], get().getColumnNames());
+      set((state) => ({
+        aggregates: state.aggregates.map((aggregate) =>
+          aggregate.id === id ? next : aggregate
+        ),
+        nonce: state.nonce + 1,
+      }));
+    },
+
+    removeAggregate: (id) => {
+      const aggregate = get().aggregates.find((item) => item.id === id);
+      if (!aggregate) {
+        return;
+      }
+      if (
+        get().charts.some(
+          (chart) =>
+            (chart as ChartSettings & { aggregateId?: string }).aggregateId ===
+            id
+        )
+      ) {
+        throw new Error(
+          `Remove charts using ${aggregate.name} before deleting the grouped summary`
+        );
+      }
+      set((state) => ({
+        aggregates: state.aggregates.filter((item) => item.id !== id),
+        nonce: state.nonce + 1,
+      }));
+    },
+
+    getAggregate: (id) => get().aggregates.find((item) => item.id === id),
+
+    getAggregateResult: (id, sourceIds) => {
+      const spec = get().aggregates.find((item) => item.id === id);
+      if (!spec) {
+        return undefined;
+      }
+      const ids = sourceIds ?? get().crossfilterWrapper.getFilteredRowIds();
+      const groupData = get().getColumnData(spec.groupField);
+      const measureData = spec.measureField
+        ? get().getColumnData(spec.measureField)
+        : undefined;
+      const rawRows = get().rawData as Array<Record<string, datum>>;
+      const rawInputs: Record<number, datum> = {};
+      const exclusionReasons: Record<number, string> = {};
+      const calculationField = get().calculations.some(
+        (calculation) => calculation.resultColumnName === spec.measureField
+      );
+      const measureProfile = get().fieldProfiles.find(
+        (profile) => profile.name === spec.measureField
+      );
+      const measureSettings = spec.measureField
+        ? (get().fieldSettings[spec.measureField] ?? {})
+        : {};
+      const rows = ids.map((sourceId) => ({
+        __ID: sourceId,
+        [spec.groupField]: groupData[sourceId],
+        ...(spec.measureField
+          ? {
+              [spec.measureField]: measureData?.[sourceId],
+            }
+          : {}),
+      }));
+      if (spec.measureField) {
+        ids.forEach((sourceId) => {
+          const rawValue = rawRows[sourceId]?.[spec.measureField!];
+          if (!calculationField) {
+            rawInputs[sourceId] = rawValue;
+            const conversion = convertFieldValue(
+              rawValue,
+              measureSettings.type ?? measureProfile?.dataType ?? "categorical",
+              measureSettings
+            );
+            if (conversion.error) {
+              exclusionReasons[sourceId] =
+                `Conversion failed: ${conversion.error}`;
+            }
+          }
+        });
+      }
+      return calculateGroupedAggregate(rows, spec, rawInputs, exclusionReasons);
     },
 
     addChart: (chartSettings) => {
@@ -697,7 +1061,9 @@ const createDataLayerStore = <T extends DatumObject>(
     },
 
     updateCalculation: (name, calculation) => {
-      if (name !== calculation.resultColumnName) assertUnusedCalculation(name);
+      if (name !== calculation.resultColumnName) {
+        assertUnusedCalculation(name);
+      }
       get().calculationManager.updateCalculation(name, calculation);
       refreshCalculations();
     },
@@ -743,16 +1109,13 @@ const createDataLayerStore = <T extends DatumObject>(
         },
         colorScales: serializedColorScales,
         rowsSettings: state.rowsSettings,
+        fieldSettings: state.fieldSettings,
+        aggregates: state.aggregates,
       };
     },
 
     restoreFromStructure: (savedData: SavedDataStructure) => {
-      const data = get().data.map(
-        (row) =>
-          Object.fromEntries(
-            Object.entries(row).filter(([key]) => key !== "__ID")
-          ) as T
-      );
+      const data = get().rawData;
       get().restoreAnalysisFromStructure({
         format: "exploreda-analysis",
         version: 1,
@@ -765,17 +1128,25 @@ const createDataLayerStore = <T extends DatumObject>(
       return {
         format: "exploreda-analysis",
         version: 1,
-        data: state.data.map(
-          (row) =>
-            Object.fromEntries(
-              Object.entries(row).filter(([key]) => key !== "__ID")
-            ) as SavedRow
-        ),
+        data: state.rawData as SavedRow[],
         settings: state.saveToStructure(),
       };
     },
     restoreAnalysisFromStructure: (savedData) => {
-      const next = getDataAndCrossfilterWrapper(savedData.data as T[]);
+      const rawData = savedData.data as T[];
+      const fieldSettings = savedData.settings.fieldSettings ?? {};
+      validateFieldSettings(fieldSettings);
+      const inferredTypes = Object.fromEntries(
+        buildFieldProfiles(rawData, typeOverrides(fieldSettings)).map(
+          (profile) => [profile.name, profile.dataType]
+        )
+      );
+      const runtimeData = applyFieldSettings(
+        rawData,
+        fieldSettings,
+        inferredTypes
+      );
+      const next = getDataAndCrossfilterWrapper(runtimeData);
       const nextData = next.data;
       const nextCrossfilter = next.crossfilterWrapper;
       const nextEmptyColumn = next.emptyColumn;
@@ -791,7 +1162,18 @@ const createDataLayerStore = <T extends DatumObject>(
         savedData.settings.calculations
       );
       const calculationManager = new CalculationManager(nextData, calculations);
-      const fieldProfiles = buildFieldProfiles(savedData.data as T[]);
+      const fieldProfiles = buildFieldProfiles(
+        runtimeData,
+        typeOverrides(fieldSettings)
+      );
+      validateAggregateState(
+        savedData.settings.aggregates ?? [],
+        savedData.settings.charts,
+        [
+          ...fieldProfiles.map((profile) => profile.name),
+          ...calculations.map((calculation) => calculation.resultColumnName),
+        ]
+      );
       const charts = savedData.settings.charts.map(toRuntimeChart);
       const fieldGetter = (field: string): Record<IdType, datum> => {
         const calculation = calculations.find(
@@ -804,7 +1186,9 @@ const createDataLayerStore = <T extends DatumObject>(
             .forEach((value, id) => (values[id] = value));
           return values;
         }
-        if (!nextData.some((row) => field in row)) return nextEmptyColumn;
+        if (!nextData.some((row) => field in row)) {
+          return nextEmptyColumn;
+        }
         return Object.fromEntries(
           nextData.map((row) => [row.__ID, row[field]])
         ) as Record<IdType, datum>;
@@ -818,6 +1202,7 @@ const createDataLayerStore = <T extends DatumObject>(
             : scale
       );
       set((state) => ({
+        rawData,
         data: nextData,
         fieldProfiles,
         emptyColumn: nextEmptyColumn,
@@ -840,13 +1225,25 @@ const createDataLayerStore = <T extends DatumObject>(
         calcColumnCache: {},
         nonce: state.nonce + 1,
         filterReset: state.filterReset + 1,
+        fieldSettings,
+        aggregates: savedData.settings.aggregates ?? [],
       }));
       nextCrossfilter.setFieldGetter(get().getColumnData);
     },
   }));
 
   function assertUnusedCalculation(name: string) {
-    const { charts } = store.getState();
+    const { charts, aggregates } = store.getState();
+    if (
+      aggregates.some(
+        (aggregate) =>
+          aggregate.groupField === name || aggregate.measureField === name
+      )
+    ) {
+      throw new Error(
+        `Remove ${name} from its grouped summaries before renaming or deleting it`
+      );
+    }
     if (
       charts.some(
         (chart) =>
@@ -963,7 +1360,7 @@ export function DataLayerProvider<T extends DatumObject>({
         if (nextSavedData) {
           store.getState().restoreFromStructure(nextSavedData);
         } else {
-          store.getState().setData(store.getState().data);
+          store.getState().setData(store.getState().rawData);
         }
       }
     } finally {

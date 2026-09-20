@@ -1,6 +1,7 @@
 import {
   categoryEqual,
   categoryIncludes,
+  categoryKey,
   categoryLabel,
   categoryValue,
 } from "@/lib/categories";
@@ -15,7 +16,9 @@ import { scaleBand } from "d3-scale";
 import { useMemo } from "react";
 import { useGetColumnDataForIds } from "../useGetColumnData";
 import { BaseChart } from "../BaseChart";
+import { getChartAxisFields, getChartAxisLabel } from "../chartAccessibility";
 import { useGetLiveData } from "../useGetLiveData";
+import { hasFieldDisplayFormat } from "@/lib/fieldSettings";
 
 type RowChartProps = BaseChartProps<RowChartSettings>;
 
@@ -26,6 +29,10 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   const { getColorForValue } = useColorScales();
 
   const updateChart = useDataLayer((s) => s.updateChart);
+  const formatFieldValue = useDataLayer((s) => s.formatFieldValue);
+  const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
+  const fieldSettings = useDataLayer((s) => s.fieldSettings);
+  void fieldSettings;
 
   const valueFilter = settings.filters.find(
     (f: Filter): f is ValueFilter =>
@@ -71,7 +78,12 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
     const sortedCounts = Array.from(countMap.entries())
       .map(([value, count]) => ({
         value,
-        label: categoryLabel(value),
+        key: categoryKey(value),
+        label:
+          value != null && hasFieldDisplayFormat(fieldSettings[settings.field])
+            ? (formatFieldValue?.(settings.field, value) ??
+              categoryLabel(value))
+            : categoryLabel(value),
         count,
         other: false,
       }))
@@ -106,6 +118,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
         displayCounts: [
           ...visibleCounts,
           {
+            key: "__other",
             label: "Other categories",
             value: undefined,
             other: true,
@@ -129,9 +142,17 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
     baseMargin.bottom,
     settings.minRowHeight,
     settings.maxRowHeight,
+    formatFieldValue,
+    fieldSettings,
   ]);
 
   const yLabels = displayCounts.map((d) => d.label);
+  const axisFields = getChartAxisFields(settings);
+  const xAxisLabel = getChartAxisLabel(
+    axisFields.x,
+    settings.xAxisLabel,
+    getFieldLabel
+  );
   const requestedLabelMargin = Math.max(
     baseMargin.left,
     ...yLabels.map((label) => label.length * 7 + 24)
@@ -146,7 +167,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
     ...baseMargin,
     left: Math.min(labelMargin, width * 0.42),
     right: Math.max(baseMargin.right, 48),
-    bottom: Math.max(baseMargin.bottom, settings.xAxisLabel ? 42 : 26),
+    bottom: Math.max(baseMargin.bottom, xAxisLabel ? 42 : 26),
   };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
@@ -164,7 +185,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
 
   const yScale = useMemo(() => {
     return scaleBand()
-      .domain(displayCounts.map((d) => String(d.label)))
+      .domain(displayCounts.map((d) => d.key))
       .range([0, innerHeight])
       .padding(0.3);
   }, [displayCounts, innerHeight]);
@@ -172,6 +193,10 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   if (displayCounts.length === 0) {
     return <div style={{ width, height }}>No data to display</div>;
   }
+
+  const yLabelsByKey = new Map(
+    displayCounts.map((item) => [item.key, item.label])
+  );
 
   return (
     <div style={{ width, height }}>
@@ -181,15 +206,18 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
         xScale={xScale}
         yScale={yScale}
         settings={chartSettings}
+        yTickFormatter={(value) =>
+          yLabelsByKey.get(String(value)) ?? String(value)
+        }
         overlay={
           <g pointerEvents="none">
             {" "}
             {/* Count labels */}
-            {displayCounts.map(({ label, count }) => (
+            {displayCounts.map(({ key, count }) => (
               <text
-                key={String(label)}
+                key={key}
                 x={xScale(count) + 5}
-                y={yScale(String(label))! + yScale.bandwidth() / 2}
+                y={yScale(key)! + yScale.bandwidth() / 2}
                 dominantBaseline="middle"
                 className="fill-foreground"
                 fontSize={11}
@@ -202,7 +230,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
       >
         <g className="select-none">
           {/* Bars */}
-          {displayCounts.map(({ label, value, count, other }) => {
+          {displayCounts.map(({ key, label, value, count, other }) => {
             let isFiltered = true;
             if (valueFilter) {
               isFiltered = applyFilter(value, valueFilter);
@@ -222,9 +250,9 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
 
             return (
               <rect
-                key={String(label)}
+                key={key}
                 x={0}
-                y={yScale(String(label))}
+                y={yScale(key)}
                 width={Math.max(0, barWidth)}
                 rx={2}
                 role={other ? undefined : "button"}

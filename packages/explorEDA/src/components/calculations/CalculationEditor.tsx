@@ -57,6 +57,7 @@ export function CalculationEditorProvider({
   const savedManager = useDataLayer((state) => state.calculationManager);
   const charts = useDataLayer((state) => state.charts);
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const addCalculation = useDataLayer((state) => state.addCalculation);
   const updateCalculation = useDataLayer((state) => state.updateCalculation);
   const [visible, setVisible] = useState(false);
@@ -330,7 +331,9 @@ export function CalculationEditorProvider({
                     <h3 className="text-sm font-medium">Used in views</h3>
                     <ul className="eda-calc-view-list">
                       {usedViews.map((chart) => (
-                        <li key={chart.id}>{getChartTitle(chart)}</li>
+                        <li key={chart.id}>
+                          {getChartTitle(chart, getFieldLabel)}
+                        </li>
                       ))}
                     </ul>
                   </section>

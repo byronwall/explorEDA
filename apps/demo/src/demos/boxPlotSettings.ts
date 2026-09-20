@@ -93,6 +93,7 @@ export const boxPlotSettings: SavedDataStructure = {
   colorScales: [
     {
       name: "Mood Index",
+      sourceField: "Mood Index",
       type: "numerical",
       palette: "Viridis",
       min: 1,

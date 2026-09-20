@@ -1,10 +1,16 @@
 import { ReactNode, useId, useRef } from "react";
 import { ScaleBand, ScaleLinear, scaleLinear } from "d3-scale";
-import { XAxis, YAxis } from "./Axis/Axis";
+import { formatTick, XAxis, YAxis } from "./Axis/Axis";
 import { useBrush } from "@/hooks/useBrush";
 import { cn } from "@/lib/utils";
 import { ChartSettings } from "@/types/ChartTypes";
 import { useFilterExtent } from "@/hooks/useFilterExtent";
+import { useDataLayer } from "@/providers/DataLayerProvider";
+import {
+  getChartAxisFields,
+  getChartAxisLabel,
+  getChartTitle,
+} from "./chartAccessibility";
 
 type BrushMode = "horizontal" | "2d" | "none";
 
@@ -19,6 +25,9 @@ interface BaseChartProps {
   overlay?: ReactNode;
   className?: string;
   settings: ChartSettings;
+  axisFields?: { x?: string; y?: string };
+  xTickFormatter?: (value: string | number) => string;
+  yTickFormatter?: (value: string | number) => string;
 }
 
 export function BaseChart({
@@ -32,6 +41,9 @@ export function BaseChart({
   overlay,
   className,
   settings,
+  axisFields: axisFieldsOverride,
+  xTickFormatter,
+  yTickFormatter,
 }: BaseChartProps) {
   const margin = settings.margin;
 
@@ -39,9 +51,22 @@ export function BaseChart({
   const innerHeight = height - margin.top - margin.bottom;
   const svgRef = useRef<SVGSVGElement>(null);
   const chartId = useId();
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
+  const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
+  const fieldSettings = useDataLayer((state) => state.fieldSettings);
+  void fieldSettings;
+  const axisFields = axisFieldsOverride ?? getChartAxisFields(settings);
+  const formatAxisValue = (
+    field: string | undefined,
+    override?: (value: string | number) => string
+  ) =>
+    override ??
+    (field && formatFieldValue
+      ? (value: string | number) => formatFieldValue(field, value)
+      : formatTick);
   const titleId = `${chartId}-title`;
   const descriptionId = `${chartId}-description`;
-  const chartTitle = settings.title || "Chart";
+  const chartTitle = getChartTitle(settings, getFieldLabel);
   const chartDescription = [
     `Interactive ${settings.type} chart.`,
     settings.xAxisLabel && `Horizontal axis: ${settings.xAxisLabel}.`,
@@ -158,25 +183,27 @@ export function BaseChart({
           scale={xScale}
           transform={`translate(0,${innerHeight})`}
           axisLabel={[
-            settings.xAxisLabel,
+            getChartAxisLabel(axisFields.x, settings.xAxisLabel, getFieldLabel),
             settings.xAxis.scaleType === "symlog" && "symlog",
           ]
             .filter(Boolean)
             .join(" · ")}
           tickCount={settings.xGridLines}
           labelOffset={Math.max(32, margin.bottom - 8)}
+          tickFormatter={formatAxisValue(axisFields.x, xTickFormatter)}
         />
         <YAxis
           scale={yScale}
           transform="translate(0,0)"
           axisLabel={[
-            settings.yAxisLabel,
+            getChartAxisLabel(axisFields.y, settings.yAxisLabel, getFieldLabel),
             settings.yAxis.scaleType === "symlog" && "symlog",
           ]
             .filter(Boolean)
             .join(" · ")}
           tickCount={settings.yGridLines}
           labelOffset={margin.left - 12}
+          tickFormatter={formatAxisValue(axisFields.y, yTickFormatter)}
         />
         {overlay}
       </g>

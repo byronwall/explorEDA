@@ -41,6 +41,10 @@ export function LabelsSettingsTab({
               onChange={(e) => onSettingChange("yAxisLabel", e.target.value)}
               placeholder="Enter Y axis label"
             />
+            <p className="col-start-2 text-xs text-muted-foreground">
+              Leave an axis label blank to inherit the field label. Text here
+              always stays local to this chart.
+            </p>
           </>
         )}
       </div>

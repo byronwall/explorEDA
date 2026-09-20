@@ -200,6 +200,7 @@ const categoricalScale = (
 ): SavedDataStructure["colorScales"][number] => ({
   id,
   name,
+  sourceField: name,
   type: "categorical",
   palette,
   mapping: labels.map((label, i) => [label, palette[i % palette.length]!]),

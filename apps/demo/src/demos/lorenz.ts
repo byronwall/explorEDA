@@ -182,6 +182,7 @@ export const demoSettings: SavedDataStructure = {
   colorScales: [
     {
       name: "Run ID",
+      sourceField: "Run ID",
       type: "numerical",
       palette: "Viridis",
       min: 1,
@@ -190,6 +191,7 @@ export const demoSettings: SavedDataStructure = {
     },
     {
       name: "Time",
+      sourceField: "Time",
       type: "numerical",
       palette: "Viridis",
       min: 0,

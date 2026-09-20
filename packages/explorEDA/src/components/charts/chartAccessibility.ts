@@ -15,15 +15,43 @@ const chartNames: Record<string, string> = {
   markdown: "Markdown note",
 };
 
-export function getChartTitle(settings: ChartSettings): string {
+export function getChartTitle(
+  settings: ChartSettings,
+  getFieldLabel: (field: string) => string = (field) => field
+): string {
+  const title = settings.title.trim();
   if (
     settings.type === "color-legend" &&
     settings.fields.length === 1 &&
-    (!settings.title.trim() || settings.title === "Color Legend")
+    (!title || settings.title === "Color Legend")
   ) {
-    return settings.fields[0]!;
+    return getFieldLabel(settings.fields[0]!);
   }
-  return settings.title.trim() || getChartDefinition(settings.type).name;
+  if (title) {
+    return title;
+  }
+
+  const field =
+    settings.type === "bar" ||
+    settings.type === "row" ||
+    settings.type === "boxplot"
+      ? settings.field
+      : settings.type === "scatter" || settings.type === "3d-scatter"
+        ? settings.yField
+        : settings.type === "line" && settings.seriesField.length === 1
+          ? settings.seriesField[0]
+          : undefined;
+  if (!field) {
+    return getChartDefinition(settings.type).name;
+  }
+  const label = field === "__ID" ? "Row sequence" : getFieldLabel(field);
+  if (settings.type === "bar") {
+    return `Distribution of ${label}`;
+  }
+  if (settings.type === "row") {
+    return `Rows by ${label}`;
+  }
+  return `${getChartDefinition(settings.type).name} · ${label}`;
 }
 
 export function getChartFields(settings: ChartSettings): string[] {
@@ -61,7 +89,49 @@ export function getChartFields(settings: ChartSettings): string[] {
   );
 }
 
-export function getChartSummary(settings: ChartSettings): string {
+export function getChartAxisFields(settings: ChartSettings): {
+  x?: string;
+  y?: string;
+} {
+  switch (settings.type) {
+    case "bar":
+      return { x: settings.field };
+    case "row":
+      return { y: settings.field };
+    case "scatter":
+      return { x: settings.xField, y: settings.yField };
+    case "line":
+      return {
+        x: settings.xField,
+        y:
+          settings.seriesField.length === 1
+            ? settings.seriesField[0]
+            : undefined,
+      };
+    case "boxplot":
+      return { y: settings.field };
+    case "3d-scatter":
+      return { x: settings.xField, y: settings.yField };
+    default:
+      return {};
+  }
+}
+
+export function getChartAxisLabel(
+  field: string | undefined,
+  local: string,
+  getFieldLabel: (field: string) => string = (value) => value
+): string {
+  return (
+    local ||
+    (field === "__ID" ? "Row sequence" : field ? getFieldLabel(field) : "")
+  );
+}
+
+export function getChartSummary(
+  settings: ChartSettings,
+  getFieldLabel: (field: string) => string = (field) => field
+): string {
   const name = chartNames[settings.type] ?? "Chart";
   if (settings.type === "summary") {
     return `${name} of all data columns.`;
@@ -71,6 +141,6 @@ export function getChartSummary(settings: ChartSettings): string {
   }
   const fields = getChartFields(settings);
   return fields.length
-    ? `${name} showing ${fields.join(", ")}.`
+    ? `${name} showing ${fields.map(getFieldLabel).join(", ")}.`
     : `${name} with no data fields selected.`;
 }

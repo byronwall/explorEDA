@@ -22,6 +22,7 @@ import { ChartGridLayout } from "./ChartGridLayout";
 import { PlotChartPanel } from "./PlotChartPanel";
 import { CalculationManager } from "./calculations/CalculationManager";
 import { GridSettingsPanel } from "./settings/GridSettingsPanel";
+import { GroupedSummaryManager } from "./GroupedSummaryManager";
 import { useAlertStore } from "@/stores/alertStore";
 import {
   Dialog,
@@ -258,6 +259,7 @@ export function PlotManager() {
             </TabsList>
           </Tabs>
           {activeTab === "charts" && <ChartCreationButtons />}
+          {activeTab === "charts" && <GroupedSummaryManager />}
         </div>
         <div className="ml-auto flex flex-wrap items-center gap-2">
           {activeTab === "rows" && <div ref={setRowsToolbarTarget} />}
@@ -326,7 +328,7 @@ export function PlotManager() {
           {activeTab === "charts" && (
             <details className="relative">
               <summary className="flex h-9 cursor-pointer list-none items-center rounded-md border bg-background px-3 text-sm font-medium shadow-xs">
-                View options
+                Colors and layout
               </summary>
               <div className="absolute right-0 z-20 mt-2 flex min-w-52 flex-col gap-2 rounded-md border bg-popover p-2 shadow-md">
                 <ColorScaleManager />

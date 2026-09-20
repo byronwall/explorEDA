@@ -4,11 +4,13 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { NumericInputEnter } from "@/components/NumericInputEnter";
 import { FieldSelector } from "@/components/FieldSelector";
+import { useColorScales } from "@/hooks/useColorScales";
 
 export function ThreeDScatterSettingsPanel({
   settings,
   onSettingsChange,
 }: ChartSettingsPanelProps<ThreeDScatterSettings>) {
+  const { getOrCreateScaleForField } = useColorScales();
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-[120px_1fr] items-center gap-4">
@@ -55,6 +57,7 @@ export function ThreeDScatterSettingsPanel({
             onSettingsChange({
               ...settings,
               colorField: value || undefined,
+              colorScaleId: value ? getOrCreateScaleForField(value) : undefined,
             })
           }
         />

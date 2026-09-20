@@ -14,6 +14,7 @@ import { ScaleLinear, scaleBand } from "d3-scale";
 import natsort from "natsort";
 import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { BaseChart } from "../BaseChart";
+import { getChartAxisFields, getChartAxisLabel } from "../chartAccessibility";
 import { useGetColumnDataForIds } from "../useGetColumnData";
 import { useGetLiveData } from "../useGetLiveData";
 import {
@@ -34,7 +35,12 @@ export function BoxPlot({
 }: BaseChartProps<BoxPlotSettings>) {
   const [tooltip, setTooltip] = useState<ReactNode>(null);
   const updateChart = useDataLayer((s) => s.updateChart);
+  const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
+  const fieldSettings = useDataLayer((s) => s.fieldSettings);
+  const formatFieldValue = useDataLayer((s) => s.formatFieldValue);
   const { getColorForValue } = useColorScales();
+  void fieldSettings[settings.field];
+  if (settings.colorField) void fieldSettings[settings.colorField];
 
   // Get all data for axis limits calculation
   const allData = useGetColumnDataForIds(settings.field);
@@ -50,12 +56,23 @@ export function BoxPlot({
     facetIds
   );
   const hasColorField = !!settings.colorField;
+  const axisFields = getChartAxisFields(settings);
+  const xAxisLabel = getChartAxisLabel(
+    axisFields.x,
+    settings.xAxisLabel,
+    getFieldLabel
+  );
+  const yAxisLabel = getChartAxisLabel(
+    axisFields.y,
+    settings.yAxisLabel,
+    getFieldLabel
+  );
 
   // Chart dimensions
   const margin = {
     ...settings.margin,
-    left: Math.max(settings.margin.left, settings.yAxisLabel ? 64 : 42),
-    bottom: Math.max(settings.margin.bottom, settings.xAxisLabel ? 44 : 28),
+    left: Math.max(settings.margin.left, yAxisLabel ? 64 : 42),
+    bottom: Math.max(settings.margin.bottom, xAxisLabel ? 44 : 28),
   };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
@@ -199,20 +216,6 @@ export function BoxPlot({
       .join(" ");
   }, []);
 
-  // Calculate bee swarm positions for each group if enabled
-  const groupBeeSwarmPositions = useMemo(() => {
-    if (!settings.beeSwarmOverlay) {
-      return null;
-    }
-
-    return groupedData.map(({ group, data }) => {
-      return {
-        group,
-        positions: calculateBeeSwarmPositions(data, xScale.bandwidth(), 1000),
-      };
-    });
-  }, [groupedData, settings.beeSwarmOverlay, xScale]);
-
   // Create y scale with synchronized limits if in a facet
   const yScale = useMemo(() => {
     const values = allData
@@ -233,6 +236,24 @@ export function BoxPlot({
 
     return scale;
   }, [allData, innerHeight, settings.yAxis]) as ScaleLinear<number, number>;
+
+  // Calculate bee swarm positions in screen space so ranges keep one meaning.
+  const groupBeeSwarmPositions = useMemo(() => {
+    if (!settings.beeSwarmOverlay) {
+      return null;
+    }
+
+    return groupedData.map(({ group, data }) => ({
+      group,
+      positions: calculateBeeSwarmPositions(
+        data,
+        xScale.bandwidth(),
+        1000,
+        0,
+        yScale
+      ),
+    }));
+  }, [groupedData, settings.beeSwarmOverlay, xScale, yScale]);
 
   const activeFilter = useMemo(() => {
     return settings.filters.find(
@@ -351,11 +372,15 @@ export function BoxPlot({
             )?.positions;
 
             const format = (value: number) =>
-              value.toLocaleString(undefined, { maximumFractionDigits: 2 });
+              formatFieldValue(settings.field, value);
+            const formatGroup = (value: datum) =>
+              settings.colorField
+                ? formatFieldValue(settings.colorField, value)
+                : categoryLabel(value);
             const boxTooltipContent = (
               <div>
                 <p className="font-medium">
-                  {categoryLabel(group)}{" "}
+                  {formatGroup(group)}{" "}
                   <span className="font-normal text-muted-foreground">
                     · {stats.totalCount} rows
                   </span>
@@ -380,7 +405,7 @@ export function BoxPlot({
             );
             const whiskerTooltipContent = (
               <div>
-                <p className="font-medium">{categoryLabel(group)}</p>
+                <p className="font-medium">{formatGroup(group)}</p>
                 <p>
                   Whiskers {format(stats.whiskerLow)}–
                   {format(stats.whiskerHigh)}

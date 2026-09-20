@@ -141,7 +141,8 @@ export function calculateBeeSwarmPositions(
   data: number[],
   width: number,
   maxPoints: number = 1000,
-  seed = 0
+  seed = 0,
+  yToPixel: (value: number) => number = (value) => value
 ): [number, number][] {
   if (data.length > maxPoints) {
     const shuffled = [...data];
@@ -157,14 +158,15 @@ export function calculateBeeSwarmPositions(
       shuffled[j] = value;
     }
     const sampledData = shuffled.slice(0, maxPoints);
-    return calculateBeeSwarmPositionsForData(sampledData, width);
+    return calculateBeeSwarmPositionsForData(sampledData, width, yToPixel);
   }
-  return calculateBeeSwarmPositionsForData(data, width);
+  return calculateBeeSwarmPositionsForData(data, width, yToPixel);
 }
 
 function calculateBeeSwarmPositionsForData(
   data: number[],
-  width: number
+  width: number,
+  yToPixel: (value: number) => number
 ): [number, number][] {
   const positions: [number, number][] = [];
   const radius = 2;
@@ -181,7 +183,7 @@ function calculateBeeSwarmPositionsForData(
     while (attempts < maxAttempts) {
       const overlaps = positions.some(([px, py]) => {
         const dx = x - px;
-        const dy = y - py;
+        const dy = yToPixel(y) - yToPixel(py);
         return Math.sqrt(dx * dx + dy * dy) < spacing;
       });
 

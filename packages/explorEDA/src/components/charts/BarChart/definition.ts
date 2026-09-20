@@ -11,6 +11,7 @@ export interface BarChartSettings extends BaseChartSettings {
   type: "bar";
   binCount?: number;
   forceString?: boolean;
+  aggregateId?: string;
   filters: Filter[];
 }
 

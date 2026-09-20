@@ -16,6 +16,7 @@ import {
 } from "../../providers/DataLayerProvider";
 import { SavedDataStructure } from "../../types/SavedDataStructure";
 import { useGetLiveIds } from "../../components/charts/useGetLiveData";
+import { useColorScales } from "../../hooks/useColorScales";
 import { RowsView } from "../../components/RowsView";
 import {
   parseSavedAnalysis,
@@ -36,6 +37,13 @@ const filteredSummaryData = [
   { region: "North", units: 10 },
   { region: "North", units: 20 },
   { region: "South", units: 30 },
+];
+
+const aggregateFixture = [
+  { region: "North", Revenue: "10" },
+  { region: "North", Revenue: "NULL" },
+  { region: "North", Revenue: "10" },
+  { region: "South", Revenue: "25.25" },
 ];
 
 function LiveIdsProbe() {
@@ -158,6 +166,21 @@ function StateChangeProbe() {
   );
 }
 
+function ColorScaleProbe() {
+  const { colorScales, getOrCreateScaleForField, updateColorScale } =
+    useColorScales();
+  const scaleId = getOrCreateScaleForField("category");
+  return (
+    <>
+      <output data-testid="bound-scale">{scaleId}</output>
+      <output data-testid="scale-count">{colorScales.length}</output>
+      <button onClick={() => updateColorScale(scaleId, { name: "Renamed" })}>
+        Rename scale
+      </button>
+    </>
+  );
+}
+
 function FilteredSummaryProbe() {
   const charts = useDataLayer((state) => state.charts);
   const updateChart = useDataLayer((state) => state.updateChart);
@@ -217,6 +240,165 @@ function savedData(calculations: SavedDataStructure["calculations"] = []) {
 }
 
 describe("DataLayerProvider", () => {
+  it("keeps an exact chart color scale binding when the saved scale is renamed", () => {
+    const chart = getChartDefinition("row").createDefaultSettings(
+      { x: 0, y: 0, w: 4, h: 4 },
+      "category"
+    );
+    chart.colorField = "category";
+    chart.colorScaleId = "shared-scale";
+
+    render(
+      <DataLayerProvider
+        data={[{ category: "A" }, { category: "B" }]}
+        savedData={{
+          ...savedData(),
+          charts: [chart],
+          colorScales: [
+            {
+              id: "shared-scale",
+              name: "Old name",
+              type: "categorical",
+              palette: ["#111111", "#222222"],
+              mapping: [
+                ["A", "#111111"],
+                ["B", "#222222"],
+              ],
+            },
+          ],
+        }}
+      >
+        <ColorScaleProbe />
+      </DataLayerProvider>
+    );
+
+    expect(screen.getByTestId("bound-scale")).toHaveTextContent("shared-scale");
+    expect(screen.getByTestId("scale-count")).toHaveTextContent("1");
+    fireEvent.click(screen.getByRole("button", { name: "Rename scale" }));
+    expect(screen.getByTestId("bound-scale")).toHaveTextContent("shared-scale");
+    expect(screen.getByTestId("scale-count")).toHaveTextContent("1");
+  });
+
+  it("recomputes named grouped summaries from converted values and persists one definition", () => {
+    const useStateLayer = () => useDataLayer((current) => current);
+    void useStateLayer;
+    let state!: ReturnType<typeof useStateLayer>;
+    function AggregateProbe() {
+      state = useDataLayer((current) => current);
+      return null;
+    }
+    const spec = {
+      id: "revenue-by-region",
+      name: "Revenue by region",
+      groupField: "region",
+      measureField: "Revenue",
+      aggregation: "sum" as const,
+    };
+    render(
+      <DataLayerProvider
+        data={aggregateFixture}
+        savedData={{
+          ...savedData(),
+          fieldSettings: { Revenue: { type: "numeric", nullTokens: ["NULL"] } },
+          aggregates: [spec],
+        }}
+      >
+        <AggregateProbe />
+      </DataLayerProvider>
+    );
+    expect(
+      state.getAggregateResult(spec.id)?.rows.map((row) => row.value)
+    ).toEqual([20, 25.25]);
+    expect(state.saveToStructure().aggregates).toEqual([spec]);
+    act(() => state.removeAggregate(spec.id));
+    expect(state.getAggregate(spec.id)).toBeUndefined();
+  });
+
+  it("rejects duplicate grouped summary ids before restore replaces state", () => {
+    const useStateLayer = () => useDataLayer((current) => current);
+    void useStateLayer;
+    let state!: ReturnType<typeof useStateLayer>;
+    function AggregateProbe() {
+      state = useDataLayer((current) => current);
+      return null;
+    }
+    render(
+      <DataLayerProvider data={data}>
+        <AggregateProbe />
+      </DataLayerProvider>
+    );
+    const before = state.saveToStructure();
+    expect(() =>
+      state.restoreFromStructure({
+        ...before,
+        aggregates: [
+          { id: "same", name: "One", groupField: "name", aggregation: "count" },
+          { id: "same", name: "Two", groupField: "name", aggregation: "count" },
+        ],
+      })
+    ).toThrow(/Duplicate grouped summary id/);
+    expect(state.saveToStructure().aggregates).toEqual([]);
+  });
+
+  it("keeps original raw rows when saved settings are cleared after conversion", () => {
+    const useStateLayer = () => useDataLayer((current) => current);
+    let state!: ReturnType<typeof useStateLayer>;
+    function AggregateProbe() {
+      state = useStateLayer();
+      return null;
+    }
+    const convertedSettings = {
+      ...savedData(),
+      fieldSettings: { Revenue: { type: "numeric" as const } },
+    };
+    const view = render(
+      <DataLayerProvider
+        data={[{ Revenue: "12.5" }]}
+        savedData={convertedSettings}
+      >
+        <AggregateProbe />
+      </DataLayerProvider>
+    );
+    expect(state.data[0]?.Revenue).toBe(12.5);
+    act(() =>
+      view.rerender(
+        <DataLayerProvider data={[{ Revenue: "12.5" }]}>
+          <AggregateProbe />
+        </DataLayerProvider>
+      )
+    );
+    expect(state.saveAnalysisToStructure().data).toEqual([{ Revenue: "12.5" }]);
+  });
+
+  it("rejects grouped summaries that reference unavailable fields atomically", () => {
+    const useStateLayer = () => useDataLayer((current) => current);
+    let state!: ReturnType<typeof useStateLayer>;
+    function AggregateProbe() {
+      state = useStateLayer();
+      return null;
+    }
+    render(
+      <DataLayerProvider data={data}>
+        <AggregateProbe />
+      </DataLayerProvider>
+    );
+    const before = state.saveToStructure();
+    expect(() =>
+      state.restoreFromStructure({
+        ...before,
+        aggregates: [
+          {
+            id: "missing",
+            name: "Missing",
+            groupField: "nope",
+            aggregation: "count",
+          },
+        ],
+      })
+    ).toThrow(/missing group field/);
+    expect(state.saveToStructure().aggregates).toEqual([]);
+  });
+
   it("refreshes live row ids when another chart changes or clears filters", () => {
     render(
       <DataLayerProvider data={filteredSummaryData}>
@@ -258,11 +440,9 @@ describe("DataLayerProvider", () => {
       '"type":"data-table"'
     );
     expect(screen.getByTestId("workspace")).toHaveTextContent('"field":"late"');
+    expect(screen.getByTestId("workspace")).toHaveTextContent('"title":""');
     expect(screen.getByTestId("workspace")).toHaveTextContent(
-      '"title":"Distribution of value"'
-    );
-    expect(screen.getByTestId("workspace")).toHaveTextContent(
-      '"xAxisLabel":"value"'
+      '"xAxisLabel":""'
     );
     expect(screen.getByTestId("workspace")).toHaveTextContent(
       '"yAxisLabel":"Rows (count)"'

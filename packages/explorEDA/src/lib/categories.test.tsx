@@ -7,8 +7,10 @@ import {
   screen,
   fireEvent,
   cleanup,
+  waitFor,
 } from "@testing-library/react";
 import { beforeAll, expect, it } from "vitest";
+import { useEffect } from "react";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import { useGetAllIds } from "@/components/charts/useGetLiveData";
@@ -120,6 +122,13 @@ it("clicks typed and missing categories without merging their rows or facet keys
   );
   expect(facets).toHaveLength(5);
   expect(facets.map((facet) => facet.ids)).toEqual([[0], [1], [2], [3], [4]]);
+  expect(facets.map((facet) => facet.rowRawValue)).toEqual([
+    1,
+    "1",
+    "a__b",
+    "a",
+    "__proto__",
+  ]);
 });
 
 it("keeps mixed types in table category options", () => {
@@ -152,6 +161,34 @@ it("keeps mixed types in table category options", () => {
     field: "value",
     values: [1],
   });
+});
+
+it("keeps row bars separate when display precision makes labels equal", async () => {
+  const chart = rowChartDefinition.createDefaultSettings(
+    { x: 0, y: 0, w: 6, h: 6 },
+    "category"
+  );
+  function ApplyDisplayFormat() {
+    const updateFieldSettings = useDataLayer(
+      (state) => state.updateFieldSettings
+    );
+    useEffect(() => {
+      updateFieldSettings("category", { format: "number", precision: 0 });
+    }, [updateFieldSettings]);
+    return null;
+  }
+
+  render(
+    <DataLayerProvider data={[{ category: 1.1 }, { category: 1.2 }]} charts={[chart]}>
+      <ApplyDisplayFormat />
+      <CategoryChart chartId={chart.id} />
+    </DataLayerProvider>
+  );
+
+  await waitFor(() => {
+    expect(screen.getAllByRole("button", { name: "1: 1 rows" })).toHaveLength(2);
+  });
+  cleanup();
 });
 
 it("keeps non-finite categories distinct", () => {

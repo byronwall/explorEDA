@@ -12,6 +12,7 @@ import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { toast } from "sonner";
 import { CompactSummaryTable } from "../../SummaryTable/components/CompactSummaryTable";
+import { FieldInspector } from "../../SummaryTable/components/FieldInspector";
 import type { SummaryTableSettings } from "./definition";
 
 type SortConfig = {
@@ -75,6 +76,7 @@ export function SummaryTable({
   const sourceProfiles = useDataLayer((state) => state.fieldProfiles);
   const data = useDataLayer((state) => state.data);
   const calculations = useDataLayer((state) => state.calculations);
+  const fieldSettings = useDataLayer((state) => state.fieldSettings);
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const crossfilterWrapper = useDataLayer((state) => state.crossfilterWrapper);
   const liveItems = useDataLayer((state) => state.liveItems);
@@ -83,6 +85,7 @@ export function SummaryTable({
     column: null,
     direction: "asc",
   });
+  const [inspectedField, setInspectedField] = useState<string | null>(null);
 
   const allProfiles = useMemo(() => {
     const filteredIds = new Set(
@@ -99,7 +102,11 @@ export function SummaryTable({
     const source = sourceProfiles.map((profile) =>
       filteredRows.length === 0
         ? emptyFieldProfile(profile)
-        : buildFieldProfile(profile.name, profileColumn(profile.name))
+        : buildFieldProfile(
+            profile.name,
+            profileColumn(profile.name),
+            profile.dataType
+          )
     );
     const calculated = calculations.map((calculation) => {
       const allColumnData = getColumnData(calculation.resultColumnName);
@@ -112,7 +119,11 @@ export function SummaryTable({
       );
       return filteredRows.length === 0
         ? emptyFieldProfile(profile)
-        : buildFieldProfile(calculation.resultColumnName, filteredColumnData);
+        : buildFieldProfile(
+            calculation.resultColumnName,
+            filteredColumnData,
+            profile.dataType
+          );
     });
 
     return [...source, ...calculated];
@@ -124,6 +135,7 @@ export function SummaryTable({
     crossfilterWrapper,
     chartState,
     liveItems,
+    fieldSettings,
   ]);
 
   const sortedProfiles = useMemo(() => {
@@ -187,6 +199,12 @@ export function SummaryTable({
         data={sortedProfiles}
         onSort={handleSort}
         settings={settings}
+        onInspect={setInspectedField}
+      />
+      <FieldInspector
+        field={inspectedField}
+        open={inspectedField !== null}
+        onOpenChange={(open) => !open && setInspectedField(null)}
       />
     </div>
   );

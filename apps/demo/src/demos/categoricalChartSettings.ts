@@ -95,6 +95,7 @@ export const categoricalChartSettings: SavedDataStructure = {
   colorScales: [
     {
       name: "Category",
+      sourceField: "Category",
       type: "categorical",
       palette: ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd"],
       mapping: [

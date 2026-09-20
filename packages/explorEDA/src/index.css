@@ -753,6 +753,38 @@ html {
   overflow: auto;
   scrollbar-gutter: stable;
 }
+.eda-chart-color-legend {
+  flex: 0 0 auto;
+  max-height: 56px;
+  overflow: visible;
+  position: relative;
+  z-index: 2;
+  padding: 2px 12px 4px;
+}
+.eda-legend-disclosure {
+  position: relative;
+}
+.eda-legend-disclosure summary {
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.eda-legend-disclosure-content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 180px;
+  overflow: auto;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--card);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 12%);
+}
+.eda-chart-color-legend .eda-legend-items {
+  flex-wrap: wrap;
+}
 .eda-color-legend section + section {
   margin-top: 16px;
 }

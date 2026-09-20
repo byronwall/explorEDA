@@ -23,6 +23,8 @@ export interface ChartLayout {
 export interface BaseFacetSettings {
   enabled: boolean;
   type: "grid" | "wrap";
+  /** Ordered facet IDs to display. Undefined shows all; [] shows none. */
+  visibleFacetIds?: string[];
 }
 
 // Grid facet settings

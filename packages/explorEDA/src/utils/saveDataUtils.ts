@@ -7,6 +7,10 @@ import type {
 import { CalculationManager } from "@/lib/calculations/CalculationState";
 import { parseExpression } from "@/lib/calculations/parser/semantics";
 import { initializeData } from "@/providers/lib/dataLayerState";
+import type { DataType } from "@/components/SummaryTable/utils/dataTypeDetection";
+import type { AggregateSpec } from "@/lib/aggregates";
+import { getFieldSettingsError } from "@/lib/fieldSettings";
+import type { FieldSettings } from "@/lib/fieldSettings";
 
 export async function saveToClipboard(data: SavedDataStructure): Promise<void> {
   try {
@@ -26,8 +30,9 @@ export function stringifySavedData(data: SavedDataStructure): string {
 
 export function parseSavedData(text: string): SavedDataStructure {
   const value = JSON.parse(text) as unknown;
-  if (!validateSavedData(value))
+  if (!validateSavedData(value)) {
     throw new Error("Invalid ExploreEDA settings JSON");
+  }
   return value;
 }
 
@@ -178,6 +183,62 @@ function isDatum(value: unknown): boolean {
   );
 }
 
+function isFieldSettings(value: unknown): boolean {
+  if (!isRecord(value)) {
+    return false;
+  }
+  const shapeIsValid =
+    (value.type === undefined ||
+      (
+        ["numeric", "categorical", "datetime", "boolean"] as DataType[]
+      ).includes(value.type as DataType)) &&
+    (value.label === undefined || typeof value.label === "string") &&
+    (value.description === undefined ||
+      typeof value.description === "string") &&
+    (value.format === undefined ||
+      ["auto", "number", "currency", "percent", "date", "datetime"].includes(
+        value.format as string
+      )) &&
+    (value.precision === undefined ||
+      (isFiniteNumber(value.precision) &&
+        Number.isInteger(value.precision) &&
+        value.precision >= 0 &&
+        value.precision <= 20)) &&
+    (value.unit === undefined || typeof value.unit === "string") &&
+    (value.currency === undefined ||
+      (typeof value.currency === "string" &&
+        /^[A-Z]{3}$/.test(value.currency))) &&
+    (value.datePreset === undefined ||
+      ["iso", "month-day-year", "day-month-year"].includes(
+        value.datePreset as string
+      )) &&
+    (value.nullTokens === undefined ||
+      (Array.isArray(value.nullTokens) &&
+        value.nullTokens.every((token) => typeof token === "string")));
+  return shapeIsValid && !getFieldSettingsError(value as FieldSettings);
+}
+
+function isAggregateSpec(value: unknown): value is AggregateSpec {
+  if (!isRecord(value)) {
+    return false;
+  }
+  return (
+    typeof value.id === "string" &&
+    value.id.length > 0 &&
+    typeof value.name === "string" &&
+    value.name.trim().length > 0 &&
+    typeof value.groupField === "string" &&
+    value.groupField.length > 0 &&
+    ["count", "sum", "average"].includes(value.aggregation as string) &&
+    (value.measureField === undefined ||
+      (typeof value.measureField === "string" &&
+        value.measureField.trim().length > 0)) &&
+    (value.aggregation === "count" ||
+      (typeof value.measureField === "string" &&
+        value.measureField.trim().length > 0))
+  );
+}
+
 function isVector3(value: unknown): boolean {
   return (
     isRecord(value) &&
@@ -290,7 +351,9 @@ function isChart(value: unknown): boolean {
       return (
         (value.binCount === undefined || isFiniteNumber(value.binCount)) &&
         (value.forceString === undefined ||
-          typeof value.forceString === "boolean")
+          typeof value.forceString === "boolean") &&
+        (value.aggregateId === undefined ||
+          typeof value.aggregateId === "string")
       );
     case "scatter":
       return (
@@ -326,6 +389,8 @@ function isChart(value: unknown): boolean {
       );
     case "data-table":
       return (
+        (value.aggregateId === undefined ||
+          typeof value.aggregateId === "string") &&
         Array.isArray(value.columns) &&
         value.columns.every((column) => {
           if (!isRecord(column)) {
@@ -489,7 +554,9 @@ export function validateSavedData(data: unknown): data is SavedDataStructure {
       !isRecord(rowsSettings) ||
       !Array.isArray(rowsSettings.columns) ||
       !rowsSettings.columns.every((column) => {
-        if (!isRecord(column)) return false;
+        if (!isRecord(column)) {
+          return false;
+        }
         return (
           typeof column.id === "string" &&
           typeof column.field === "string" &&
@@ -505,6 +572,38 @@ export function validateSavedData(data: unknown): data is SavedDataStructure {
     ) {
       return false;
     }
+  }
+
+  if (
+    data.fieldSettings !== undefined &&
+    (!isRecord(data.fieldSettings) ||
+      !Object.values(data.fieldSettings).every(isFieldSettings))
+  ) {
+    return false;
+  }
+
+  if (
+    data.aggregates !== undefined &&
+    (!Array.isArray(data.aggregates) ||
+      !data.aggregates.every(isAggregateSpec) ||
+      new Set(data.aggregates.map((aggregate) => aggregate.id)).size !==
+        data.aggregates.length)
+  ) {
+    return false;
+  }
+
+  const aggregateIds = new Set(
+    (data.aggregates ?? []).map((aggregate) => aggregate.id)
+  );
+  if (
+    (data.charts as unknown[]).some(
+      (chart: unknown) =>
+        isRecord(chart) &&
+        chart.aggregateId !== undefined &&
+        !aggregateIds.has(chart.aggregateId as string)
+    )
+  ) {
+    return false;
   }
 
   return true;

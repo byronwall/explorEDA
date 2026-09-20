@@ -16,12 +16,12 @@ import {
   RowKey,
 } from "../types";
 import { PivotTableSettings } from "../definition";
+import { numericInputs } from "@/lib/aggregates";
 
 export type PivotInputRow = Record<string, datum> & {
   __ID?: PivotSourceId;
 };
 
-type NumericInput = { value: number; index: number };
 type AggregateResult = {
   value: datum;
   includedIndexes: Set<number>;
@@ -37,35 +37,6 @@ const numericAggregations = new Set([
   "stddev",
   "variance",
 ]);
-
-function numericInputs(values: datum[]): {
-  inputs: NumericInput[];
-  exclusions: Array<{ index: number; reason: string }>;
-} {
-  const inputs: NumericInput[] = [];
-  const exclusions: Array<{ index: number; reason: string }> = [];
-  values.forEach((value, index) => {
-    if (value === undefined || value === null || value === "") {
-      exclusions.push({ index, reason: "Missing value" });
-      return;
-    }
-    if (typeof value === "boolean") {
-      exclusions.push({ index, reason: "Boolean values are not numeric" });
-      return;
-    }
-    if (typeof value === "string" && value.trim() === "") {
-      exclusions.push({ index, reason: "Blank value" });
-      return;
-    }
-    const number = Number(value);
-    if (Number.isFinite(number)) {
-      inputs.push({ value: number, index });
-    } else {
-      exclusions.push({ index, reason: "Not a finite number" });
-    }
-  });
-  return { inputs, exclusions };
-}
 
 function aggregate(name: string, values: datum[]): AggregateResult {
   const includedIndexes = new Set<number>();

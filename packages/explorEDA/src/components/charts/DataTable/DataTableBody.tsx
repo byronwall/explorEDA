@@ -1,5 +1,4 @@
 import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
-import { calculationValue } from "@/components/calculations/calculationHelpers";
 import { useMemo } from "react";
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useDataLayer } from "@/providers/DataLayerProvider";
@@ -24,6 +23,11 @@ export function DataTableBody({
   const calculations = useDataLayer((state) => state.calculations) ?? [];
   const manager = useDataLayer((state) => state.calculationManager);
   const data = useDataLayer((state) => state.data);
+  const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
+  const fieldSettings = useDataLayer((state) => state.fieldSettings);
+  const format =
+    formatFieldValue ?? ((_: string, value: unknown) => String(value ?? "—"));
+  void fieldSettings;
   const liveItems = useDataLayer((state) => state.getLiveItems(settings));
 
   const filteredByColumns = useMemo(
@@ -81,24 +85,10 @@ export function DataTableBody({
                   <CalculatedFieldBadge field={column.field} rowId={row.__ID}>
                     {manager?.getErrors(column.field).has(row.__ID)
                       ? "Error"
-                      : row[column.field] == null
-                        ? "—"
-                        : typeof row[column.field] === "boolean"
-                          ? row[column.field]
-                            ? "Yes"
-                            : "No"
-                          : calculationValue(row[column.field])}
+                      : format(column.field, row[column.field])}
                   </CalculatedFieldBadge>
-                ) : row[column.field] == null ? (
-                  "—"
-                ) : typeof row[column.field] === "boolean" ? (
-                  row[column.field] ? (
-                    "Yes"
-                  ) : (
-                    "No"
-                  )
                 ) : (
-                  row[column.field]
+                  format(column.field, row[column.field])
                 )}
               </TableCell>
             ))}

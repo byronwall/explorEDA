@@ -95,16 +95,18 @@ function NumericalScaleEditor({
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label>Name</Label>
+        <Label htmlFor="numerical-scale-name">Name</Label>
         <Input
+          id="numerical-scale-name"
           value={scale.name}
           onChange={(e) => onUpdate({ ...scale, name: e.target.value })}
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label>Min</Label>
+          <Label htmlFor="numerical-scale-min">Min</Label>
           <Input
+            id="numerical-scale-min"
             type="number"
             value={scale.min}
             onChange={(e) =>
@@ -116,8 +118,9 @@ function NumericalScaleEditor({
           />
         </div>
         <div className="space-y-2">
-          <Label>Max</Label>
+          <Label htmlFor="numerical-scale-max">Max</Label>
           <Input
+            id="numerical-scale-max"
             type="number"
             value={scale.max}
             onChange={(e) =>
@@ -176,8 +179,9 @@ function CategoricalScaleEditor({
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label>Name</Label>
+        <Label htmlFor="categorical-scale-name">Name</Label>
         <Input
+          id="categorical-scale-name"
           value={scale.name}
           onChange={(e) => onUpdate({ ...scale, name: e.target.value })}
         />
@@ -246,6 +250,7 @@ function CategoricalScaleEditor({
                 }
               />
               <Input
+                aria-label={`Color for ${editingColor.value}`}
                 value={editingColor.color}
                 onChange={(e) =>
                   updateColor(editingColor.value, e.target.value)
@@ -349,6 +354,7 @@ export function ColorScaleManager() {
           {/* Left Sidebar */}
           <div className="w-64 border-r pr-4 space-y-4">
             <Input
+              aria-label="Search color scales"
               placeholder="Search scales..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

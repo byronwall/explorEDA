@@ -39,7 +39,8 @@ initial mount, and replacing `data` or `savedData` does not echo a callback.
 `savedData` is an input for initial or replacement restore, not a controlled
 value; do not feed every callback result back into it. Callback snapshots are
 storage-neutral JSON settings. They include Rows filters, search, sort, column
-order, and widths, but do not include raw data rows.
+order, widths, field settings, and grouped summary definitions, but do not
+include raw data rows.
 
 Native settings JSON rejects nonfinite filter values during validation. Draft
 calculations remain session-local. `modifiedAt` records the snapshot time.
@@ -56,8 +57,9 @@ chartRegistry.register(barChartDefinition);
 ```
 
 `data` supplies the rows. `savedData` optionally restores chart, calculation,
-Rows, grid, metadata, and color-scale state. Pass new references when either
-value changes; in-place mutations are not observed.
+Rows, grid, metadata, color-scale, field-settings, and grouped-summary state.
+Pass new references when either value changes; in-place mutations are not
+observed.
 
 React and ReactDOM are peer dependencies.
 
@@ -85,6 +87,8 @@ interface SavedDataStructure {
   metadata: ViewMetadata;
   colorScales: SerializedColorScale[];
   rowsSettings?: SavedRowsSettings;
+  fieldSettings?: FieldSettingsMap;
+  aggregates?: AggregateSpec[];
 }
 
 interface SavedCalculation {
@@ -96,6 +100,17 @@ interface SavedCalculation {
 The `expression` value is formula text. Runtime code parses and validates it
 when it restores the settings. The settings JSON does not store an AST and no
 AST compatibility layer is provided.
+
+`fieldSettings` keeps canonical source names separate from display labels and aliases. It
+can store type overrides, null tokens, date input presets, units, currencies,
+formats, and precision. A field inspector previews raw and effective values
+before applying a change.
+Valid conversions apply to runtime values. Failed conversions become missing;
+the original rows remain unchanged.
+
+`aggregates` stores named grouped definitions. Each definition uses one group
+field and count, sum, or average. Read-only bar and data-table views can reuse
+the definition by ID and inspect exact source contributors.
 
 For a self-contained analysis, use the secondary full bundle:
 

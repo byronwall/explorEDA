@@ -4,10 +4,12 @@ import { applyFilter } from "@/hooks/applyFilter";
 import { getRangeFilterForField } from "@/hooks/getAxisFilter";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
+import { hasFieldDisplayFormat } from "@/lib/fieldSettings";
 import { BaseChartProps } from "@/types/ChartTypes";
 import { ScaleLinear, scaleLinear } from "d3-scale";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BaseChart } from "../BaseChart";
+import { getChartAxisLabel } from "../chartAccessibility";
 import { useGetColumnDataForIds } from "../useGetColumnData";
 import { useGetLiveData } from "../useGetLiveData";
 import { ScatterPlotSettings } from "./definition";
@@ -28,6 +30,14 @@ export function ScatterPlot({
   const [hovered, setHovered] = useState<number | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const updateChart = useDataLayer((s) => s.updateChart);
+  const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
+  const formatFieldValue = useDataLayer((s) => s.formatFieldValue);
+  const fieldSettings = useDataLayer((s) => s.fieldSettings);
+  void fieldSettings;
+  const displayValue = (field: string, value: number) =>
+    hasFieldDisplayFormat(fieldSettings[field])
+      ? (formatFieldValue?.(field, value) ?? String(value))
+      : String(value);
   const { getColorForValue } = useColorScales();
 
   // Get all data for axis limits calculation (not filtered by current selections)
@@ -93,12 +103,22 @@ export function ScatterPlot({
   const bufferedYMax = yMax + yBuffer;
 
   const yDomain: [number, number] = [bufferedYMin, bufferedYMax];
+  const xAxisLabel = getChartAxisLabel(
+    settings.xField,
+    settings.xAxisLabel,
+    getFieldLabel
+  );
+  const yAxisLabel = getChartAxisLabel(
+    settings.yField,
+    settings.yAxisLabel,
+    getFieldLabel
+  );
   const requestedLabelMargin = Math.max(
     settings.margin.left,
     ...scaleLinear()
       .domain(yDomain)
       .ticks(5)
-      .map((tick) => String(tick).length * 7 + (settings.yAxisLabel ? 38 : 18))
+      .map((tick) => String(tick).length * 7 + (yAxisLabel ? 38 : 18))
   );
   const minPlotWidth = Math.min(
     80,
@@ -111,7 +131,7 @@ export function ScatterPlot({
   const margin = {
     ...settings.margin,
     left: Math.min(requestedLabelMargin, maxLabelMargin),
-    bottom: Math.max(settings.margin.bottom, settings.xAxisLabel ? 46 : 28),
+    bottom: Math.max(settings.margin.bottom, xAxisLabel ? 46 : 28),
   };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
@@ -341,7 +361,9 @@ export function ScatterPlot({
                     "#3479a8"
                   )}
                   radius={(settings.pointSize ?? 3) + 2}
-                  label={`${String(colorData[hovered] ?? "Observation")}; ${settings.xAxisLabel || settings.xField}: ${xValues[hovered]}; ${settings.yAxisLabel || settings.yField}: ${yValues[hovered]}`}
+                  xFormatter={(value) => displayValue(settings.xField, value)}
+                  yFormatter={(value) => displayValue(settings.yField, value)}
+                  label={`${String(colorData[hovered] ?? "Observation")}; ${getFieldLabel?.(settings.xField) ?? settings.xField}: ${displayValue(settings.xField, xValues[hovered]!)}; ${getFieldLabel?.(settings.yField) ?? settings.yField}: ${displayValue(settings.yField, yValues[hovered]!)}`}
                 />
               )
             }

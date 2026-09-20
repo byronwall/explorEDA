@@ -1,4 +1,5 @@
 import { categoryLabel } from "@/lib/categories";
+import { detectColumnType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import {
   CategoricalColorScale,
@@ -42,6 +43,8 @@ export function useColorScales(): UseColorScalesReturn {
   const removeColorScale = useDataLayer((state) => state.removeColorScale);
   const updateColorScale = useDataLayer((state) => state.updateColorScale);
   const getColumnData = useDataLayer((state) => state.getColumnData);
+  const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
+  const charts = useDataLayer((state) => state.charts);
 
   // Memoized d3 scale objects
   const d3Scales = useMemo(() => {
@@ -119,7 +122,8 @@ export function useColorScales(): UseColorScalesReturn {
   const createDefaultNumericalScale = (
     name: string,
     min: number,
-    max: number
+    max: number,
+    sourceField?: string
   ): ColorScaleType => {
     const scale: Omit<NumericalColorScale, "id"> = {
       name,
@@ -127,13 +131,15 @@ export function useColorScales(): UseColorScalesReturn {
       palette: "Viridis",
       min,
       max,
+      sourceField,
     };
     return addColorScale(scale);
   };
 
   const createDefaultCategoricalScale = (
     name: string,
-    values: string[]
+    values: string[],
+    sourceField?: string
   ): ColorScaleType => {
     const defaultPalette = DEFAULT_CATEGORICAL_PALETTES[0]?.colors ?? [];
     const mapping = new Map<string, string>();
@@ -149,6 +155,7 @@ export function useColorScales(): UseColorScalesReturn {
       type: "categorical",
       palette: Array.from(mapping.values()),
       mapping,
+      sourceField,
     };
     return addColorScale(scale);
   };
@@ -161,8 +168,28 @@ export function useColorScales(): UseColorScalesReturn {
   };
 
   const getOrCreateScaleForField = (field: string, name?: string): string => {
-    // First check if a scale already exists for this field
-    const existingScale = colorScales.find((s) => s.name === (name ?? field));
+    // Existing chart bindings are authoritative. Keep the exact ID instead of
+    // matching display names.
+    const boundScaleIds = new Set(
+      charts
+        .filter(
+          (chart) =>
+            chart.colorField === field && typeof chart.colorScaleId === "string"
+        )
+        .map((chart) => chart.colorScaleId as string)
+    );
+    if (boundScaleIds.size === 1) {
+      const [boundScaleId] = boundScaleIds;
+      if (
+        boundScaleId &&
+        colorScales.some((scale) => scale.id === boundScaleId)
+      ) {
+        return boundScaleId;
+      }
+    }
+
+    // Otherwise reuse the explicitly bound source scale before creating one.
+    const existingScale = colorScales.find((s) => s.sourceField === field);
     if (existingScale) {
       return existingScale.id;
     }
@@ -174,19 +201,25 @@ export function useColorScales(): UseColorScalesReturn {
     const cleanValues = values.filter((v): v is string | number => v != null);
 
     // Check if values are numerical
+    const profile = fieldProfiles.find((item) => item.name === field);
     const isNumerical =
-      cleanValues.length > 0 &&
-      cleanValues.every((v) => typeof v === "number" && Number.isFinite(v));
+      (profile?.dataType ?? detectColumnType(getColumnData(field))) ===
+        "numeric" &&
+      cleanValues.some((value) => Number.isFinite(Number(value)));
 
     let newScale: ColorScaleType;
     if (isNumerical) {
-      const numericValues = cleanValues.map(Number);
+      const numericValues = cleanValues.map(Number).filter(Number.isFinite);
       const min = Math.min(...numericValues);
       const max = Math.max(...numericValues);
-      newScale = createDefaultNumericalScale(name ?? field, min, max);
+      newScale = createDefaultNumericalScale(name ?? field, min, max, field);
     } else {
       const uniqueValues = Array.from(new Set(values.map(categoryLabel)));
-      newScale = createDefaultCategoricalScale(name ?? field, uniqueValues);
+      newScale = createDefaultCategoricalScale(
+        name ?? field,
+        uniqueValues,
+        field
+      );
     }
 
     return newScale.id;

@@ -75,7 +75,6 @@ export const nbaStatsSettings: SavedDataStructure = {
       },
       xAxis: { scaleType: "linear", grid: false, min: 0, max: 100 },
       yAxis: { scaleType: "linear", grid: false, min: 0, max: 100 },
-      colorScaleId: undefined,
       colorField: undefined,
       margin: { top: 20, right: 20, bottom: 20, left: 20 },
       filters: [],
@@ -84,6 +83,7 @@ export const nbaStatsSettings: SavedDataStructure = {
       xGridLines: 0,
       yGridLines: 0,
       fields: ["Pos"],
+      colorScaleId: "4f3d01de-a3e2-41c5-aaeb-2c1bdf2a4fb0",
       numericalBreakpoints: 5,
       wrap: false,
     },
@@ -131,6 +131,7 @@ export const nbaStatsSettings: SavedDataStructure = {
   colorScales: [
     {
       name: "Team",
+      sourceField: "Team",
       type: "categorical",
       palette: [
         "#1f77b4",
@@ -204,6 +205,7 @@ export const nbaStatsSettings: SavedDataStructure = {
     },
     {
       name: "Pos",
+      sourceField: "Pos",
       type: "categorical",
       palette: ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd"],
       mapping: [

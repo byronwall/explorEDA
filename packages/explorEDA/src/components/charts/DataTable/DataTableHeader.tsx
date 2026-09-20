@@ -4,7 +4,12 @@ import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { buildFieldProfile, type FieldProfile } from "@/lib/fieldProfiles";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { Filter } from "@/types/FilterTypes";
-import { ChevronDown, ChevronUp, Filter as FilterIcon } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Filter as FilterIcon,
+  Settings2,
+} from "lucide-react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Popover,
@@ -13,6 +18,7 @@ import {
 } from "@/components/ui/popover";
 import { ColumnFilter } from "./components/ColumnFilter";
 import { DataTableSettings } from "./definition";
+import { FieldInspector } from "@/components/SummaryTable/components/FieldInspector";
 
 interface DataTableHeaderProps {
   settings: DataTableSettings;
@@ -32,6 +38,9 @@ export function DataTableHeader({
     ((next: Partial<DataTableSettings>) => updateChart(settings.id, next));
   const fieldProfiles = useDataLayer((state) => state.fieldProfiles) ?? [];
   const calculations = useDataLayer((state) => state.calculations) ?? [];
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
+  const fieldSettings = useDataLayer((state) => state.fieldSettings);
+  const label = getFieldLabel ?? ((field: string) => field);
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const nonce = useDataLayer((state) => state.nonce);
   const profiles = useMemo(
@@ -48,10 +57,11 @@ export function DataTableHeader({
           )
         ),
     ],
-    [fieldProfiles, calculations, columns, getColumnData, nonce]
+    [fieldProfiles, calculations, columns, getColumnData, nonce, fieldSettings]
   );
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [resizingColumn, setResizingColumn] = useState<string | null>(null);
+  const [inspectedField, setInspectedField] = useState<string | null>(null);
   const [tempWidths, setTempWidths] = useState<Record<string, number>>({});
   const resizeCleanup = useRef<(() => void) | null>(null);
 
@@ -153,123 +163,151 @@ export function DataTableHeader({
   };
 
   return (
-    <TableHeader>
-      <TableRow>
-        {columns.map((column, index) => {
-          const profile = profiles.find(
-            (fieldProfile: FieldProfile) => fieldProfile.name === column.field
-          ) ?? {
-            name: column.field,
-            dataType: "categorical" as const,
-            totalCount: 0,
-            uniqueCount: 11,
-            nullCount: 0,
-          };
-          const filter = filters.find((f: Filter) => f.field === column.field);
+    <>
+      <TableHeader>
+        <TableRow>
+          {columns.map((column, index) => {
+            const profile = profiles.find(
+              (fieldProfile: FieldProfile) => fieldProfile.name === column.field
+            ) ?? {
+              name: column.field,
+              dataType: "categorical" as const,
+              totalCount: 0,
+              uniqueCount: 11,
+              nullCount: 0,
+            };
+            const filter = filters.find(
+              (f: Filter) => f.field === column.field
+            );
 
-          return (
-            <TableHead
-              key={column.id}
-              className={`relative select-none ${index === 0 ? "sticky left-0 z-20 bg-background" : ""}`}
-              style={{
-                width:
-                  resizingColumn === column.id
-                    ? tempWidths[column.id] || column.width
-                    : column.width,
-              }}
-              aria-sort={
-                sortBy === column.field
-                  ? sortDirection === "asc"
-                    ? "ascending"
-                    : "descending"
-                  : "none"
-              }
-            >
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  className="flex min-w-0 flex-1 items-center gap-1 text-left"
-                  aria-label={`Sort by ${column.field}`}
-                  onClick={() => handleSort(column.field)}
-                >
-                  <span className="truncate">{column.field}</span>
-                  {sortBy === column.field &&
-                    (sortDirection === "asc" ? (
-                      <ChevronUp className="h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4" />
-                    ))}
-                </button>
-                <CalculatedFieldBadge field={column.field} />
-                <Popover
-                  open={activeFilter === column.id}
-                  onOpenChange={(open) =>
-                    setActiveFilter(open ? column.id : null)
-                  }
-                >
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={`eda-column-filter ${filter ? "is-active" : ""}`}
-                      aria-label={`Filter ${column.field}`}
-                      aria-expanded={activeFilter === column.id}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        setActiveFilter(
-                          activeFilter === column.id ? null : column.id
-                        );
-                      }}
-                    >
-                      <FilterIcon className="h-4 w-4" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    className="w-auto max-w-[calc(100vw-24px)]"
-                    align="start"
-                    collisionPadding={12}
-                  >
-                    <ColumnFilter
-                      columnId={column.id}
-                      columnLabel={column.field}
-                      profile={profile}
-                      filter={filter}
-                      onChange={handleFilterChange}
-                      onClear={() => handleFilterClear(column.id)}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <div
-                role="separator"
-                aria-orientation="vertical"
-                aria-label={`Resize ${column.field} column`}
-                className="eda-column-resize"
-                data-resizing={resizingColumn === column.id}
-                tabIndex={0}
-                aria-valuemin={50}
-                aria-valuenow={tempWidths[column.id] ?? column.width ?? 120}
-                onKeyDown={(event) => {
-                  if (event.key !== "ArrowLeft" && event.key !== "ArrowRight")
-                    return;
-                  event.preventDefault();
-                  const width = Math.max(
-                    50,
-                    event.currentTarget.parentElement!.getBoundingClientRect()
-                      .width + (event.key === "ArrowRight" ? 16 : -16)
-                  );
-                  update({
-                    columns: columns.map((item) =>
-                      item.id === column.id ? { ...item, width } : item
-                    ),
-                  });
+            return (
+              <TableHead
+                key={column.id}
+                className={`relative select-none ${index === 0 ? "sticky left-0 z-20 bg-background" : ""}`}
+                style={{
+                  width:
+                    resizingColumn === column.id
+                      ? tempWidths[column.id] || column.width
+                      : column.width,
                 }}
-                onPointerDown={(e) => handleResizeStart(e, column.id)}
-              />
-            </TableHead>
-          );
-        })}
-      </TableRow>
-    </TableHeader>
+                aria-sort={
+                  sortBy === column.field
+                    ? sortDirection === "asc"
+                      ? "ascending"
+                      : "descending"
+                    : "none"
+                }
+              >
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    className="flex min-w-0 flex-1 items-center gap-1 text-left"
+                    aria-label={`Sort by ${column.field}`}
+                    onClick={() => handleSort(column.field)}
+                  >
+                    <span className="truncate" title={column.field}>
+                      {label(column.field)}
+                    </span>
+                    {sortBy === column.field &&
+                      (sortDirection === "asc" ? (
+                        <ChevronUp className="h-4 w-4" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4" />
+                      ))}
+                  </button>
+                  <CalculatedFieldBadge field={column.field} />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 w-7 p-0"
+                    aria-label={`Inspect ${column.field}`}
+                    title={`Inspect ${column.field}`}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setInspectedField(column.field);
+                    }}
+                  >
+                    <Settings2 className="h-3.5 w-3.5" />
+                  </Button>
+                  <Popover
+                    open={activeFilter === column.id}
+                    onOpenChange={(open) =>
+                      setActiveFilter(open ? column.id : null)
+                    }
+                  >
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={`eda-column-filter ${filter ? "is-active" : ""}`}
+                        aria-label={`Filter ${column.field}`}
+                        aria-expanded={activeFilter === column.id}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setActiveFilter(
+                            activeFilter === column.id ? null : column.id
+                          );
+                        }}
+                      >
+                        <FilterIcon className="h-4 w-4" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-auto max-w-[calc(100vw-24px)]"
+                      align="start"
+                      collisionPadding={12}
+                    >
+                      <ColumnFilter
+                        columnId={column.id}
+                        columnLabel={column.field}
+                        profile={profile}
+                        filter={filter}
+                        onChange={handleFilterChange}
+                        onClear={() => handleFilterClear(column.id)}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div
+                  role="separator"
+                  aria-orientation="vertical"
+                  aria-label={`Resize ${column.field} column`}
+                  className="eda-column-resize"
+                  data-resizing={resizingColumn === column.id}
+                  tabIndex={0}
+                  aria-valuemin={50}
+                  aria-valuenow={tempWidths[column.id] ?? column.width ?? 120}
+                  onKeyDown={(event) => {
+                    if (
+                      event.key !== "ArrowLeft" &&
+                      event.key !== "ArrowRight"
+                    ) {
+                      return;
+                    }
+                    event.preventDefault();
+                    const width = Math.max(
+                      50,
+                      event.currentTarget.parentElement!.getBoundingClientRect()
+                        .width + (event.key === "ArrowRight" ? 16 : -16)
+                    );
+                    update({
+                      columns: columns.map((item) =>
+                        item.id === column.id ? { ...item, width } : item
+                      ),
+                    });
+                  }}
+                  onPointerDown={(e) => handleResizeStart(e, column.id)}
+                />
+              </TableHead>
+            );
+          })}
+        </TableRow>
+      </TableHeader>
+      <FieldInspector
+        field={inspectedField}
+        open={inspectedField !== null}
+        onOpenChange={(open) => !open && setInspectedField(null)}
+      />
+    </>
   );
 }

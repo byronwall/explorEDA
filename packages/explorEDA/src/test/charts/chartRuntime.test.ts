@@ -4,6 +4,7 @@ import { lineChartDefinition } from "../../components/charts/LineChart/definitio
 import { calculateBeeSwarmPositions } from "../../components/charts/BoxPlot/boxPlotCalculations";
 import { sampleData } from "../../components/SummaryTable/utils/samplingStrategy";
 import { threeDScatterDefinition } from "../../components/charts/ThreeDScatter/definition";
+import { buildThreeDScatterData } from "../../components/charts/ThreeDScatter/useThreeDScatterData";
 import { colorLegendDefinition } from "../../components/charts/ColorLegend/definition";
 
 describe("chart runtime", () => {
@@ -109,5 +110,22 @@ describe("chart runtime", () => {
     });
     expect(settings.cameraPosition.toArray()).toEqual([10, 10, 10]);
     expect(settings.cameraTarget.toArray()).toEqual([0, 0, 0]);
+  });
+
+  it("omits invalid 3D coordinates and normalizes finite sizes", () => {
+    const result = buildThreeDScatterData(
+      [1, 2, 3],
+      [10, 20, 30],
+      [100, 200, Number.NaN],
+      ["a", "b", "c"],
+      [2, null, 8],
+      [2, 8],
+      (value) => String(value)
+    );
+    expect(result.omitted).toBe(1);
+    expect(result.points).toEqual([
+      { x: 1, y: 10, z: 100, color: "a", size: 0.5 },
+      { x: 2, y: 20, z: 200, color: "b", size: 1 },
+    ]);
   });
 });

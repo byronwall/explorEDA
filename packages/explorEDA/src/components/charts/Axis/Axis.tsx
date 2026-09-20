@@ -16,6 +16,7 @@ interface AxisProps {
   tickCount?: number;
   axisLabel?: string;
   labelOffset?: number;
+  tickFormatter?: (value: string | number) => string;
 }
 
 export function XAxis({
@@ -24,6 +25,7 @@ export function XAxis({
   tickCount = 5,
   axisLabel,
   labelOffset = 40,
+  tickFormatter = formatTick,
 }: AxisProps) {
   const [start = 0, end = 0] = scale.range();
   const ticks =
@@ -46,7 +48,7 @@ export function XAxis({
           "bandwidth" in scale
             ? (scale(String(tick)) ?? 0) + scale.bandwidth() / 2
             : scale(Number(tick));
-        const text = formatTick(tick);
+        const text = tickFormatter(tick);
         return (
           <g key={i} transform={`translate(${x},0)`}>
             <line y2={4} className="stroke-border" />
@@ -79,6 +81,7 @@ export function YAxis({
   tickCount = 5,
   axisLabel,
   labelOffset = 48,
+  tickFormatter = formatTick,
 }: AxisProps) {
   const [start = 0, end = 0] = scale.range();
   const ticks =
@@ -101,7 +104,7 @@ export function YAxis({
           "bandwidth" in scale
             ? (scale(String(tick)) ?? 0) + scale.bandwidth() / 2
             : scale(Number(tick));
-        const text = formatTick(tick);
+        const text = tickFormatter(tick);
         const maxChars = Math.max(5, Math.floor((labelOffset - 4) / 6));
         return (
           <text key={i} x={-9} y={y} dy=".32em" textAnchor="end" fontSize={10}>

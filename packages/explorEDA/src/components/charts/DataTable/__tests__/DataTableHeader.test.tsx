@@ -129,6 +129,9 @@ describe("DataTableHeader", () => {
     const updateChart = vi.fn();
     mockUseDataLayer.mockImplementation(
       (selector: (state: unknown) => unknown) => {
+        if (selector.toString().includes("fieldProfiles")) {
+          return mockFieldProfiles;
+        }
         if (selector.toString().includes("updateChart")) {
           return updateChart;
         }
@@ -154,6 +157,9 @@ describe("DataTableHeader", () => {
     const updateChart = vi.fn();
     mockUseDataLayer.mockImplementation(
       (selector: (state: unknown) => unknown) => {
+        if (selector.toString().includes("fieldProfiles")) {
+          return mockFieldProfiles;
+        }
         if (selector.toString().includes("updateChart")) {
           return updateChart;
         }
@@ -181,6 +187,9 @@ describe("DataTableHeader", () => {
     const updateChart = vi.fn();
     mockUseDataLayer.mockImplementation(
       (selector: (state: unknown) => unknown) => {
+        if (selector.toString().includes("fieldProfiles")) {
+          return mockFieldProfiles;
+        }
         if (selector.toString().includes("updateChart")) {
           return updateChart;
         }
@@ -192,7 +201,7 @@ describe("DataTableHeader", () => {
     fireEvent.click(screen.getByRole("button", { name: "Filter name" }));
 
     expect(updateChart).not.toHaveBeenCalled();
-    expect(screen.getByPlaceholderText("Filter name...")).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: "John" })).toBeInTheDocument();
   });
 
   it("keeps both native date bounds across rerenders", () => {
@@ -265,6 +274,9 @@ describe("DataTableHeader", () => {
     const updateChart = vi.fn();
     mockUseDataLayer.mockImplementation(
       (selector: (state: unknown) => unknown) => {
+        if (selector.toString().includes("fieldProfiles")) {
+          return mockFieldProfiles;
+        }
         if (selector.toString().includes("updateChart")) {
           return updateChart;
         }
@@ -297,6 +309,9 @@ describe("DataTableHeader", () => {
     const updateChart = vi.fn();
     mockUseDataLayer.mockImplementation(
       (selector: (state: unknown) => unknown) => {
+        if (selector.toString().includes("fieldProfiles")) {
+          return mockFieldProfiles;
+        }
         if (selector.toString().includes("updateChart")) {
           return updateChart;
         }

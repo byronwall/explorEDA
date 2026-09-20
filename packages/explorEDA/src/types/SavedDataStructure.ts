@@ -5,6 +5,8 @@ import {
   SavedChartSettings,
   SavedRowsSettings,
 } from "./SavedDataTypes";
+import type { FieldSettingsMap } from "@/lib/fieldSettings";
+import type { AggregateSpec } from "@/lib/aggregates";
 
 export interface SavedCalculation {
   resultColumnName: string;
@@ -31,6 +33,12 @@ export interface SavedDataStructure {
 
   // Rows has independent filters, search, sort, order, and widths.
   rowsSettings?: SavedRowsSettings;
+
+  // Source field labels, type overrides, and display settings.
+  fieldSettings?: FieldSettingsMap;
+
+  // Named grouped summaries. Charts store only an aggregateId reference.
+  aggregates?: AggregateSpec[];
 }
 
 export interface SavedAnalysisStructure {

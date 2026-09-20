@@ -11,6 +11,7 @@ import { PivotCell, PivotHeader, PivotRow, CellKey } from "./types";
 import { applyFilter } from "@/hooks/applyFilter";
 import { PivotTableSettings } from "./definition";
 import { getChartSummary } from "../chartAccessibility";
+import { hasFieldDisplayFormat } from "@/lib/fieldSettings";
 import {
   Dialog,
   DialogContent,
@@ -76,7 +77,11 @@ function cellName(cell: PivotCell, rowHeaders: PivotHeader[]): string {
 
 export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
   const getColumnData = useDataLayer((state) => state.getColumnData);
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
+  const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
+  const fieldSettings = useDataLayer((state) => state.fieldSettings);
   const updateChart = useDataLayer((state) => state.updateChart);
+  void fieldSettings;
 
   const allLiveIds = useGetLiveIds(settings);
 
@@ -232,10 +237,24 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
       onClick={() => handleFilterClick(header.field, header.value)}
       title={header.label}
     >
-      <span>{header.label}</span>
+      <span>
+        {hasFieldDisplayFormat(fieldSettings[header.field])
+          ? (formatFieldValue?.(header.field, header.value) ?? header.label)
+          : header.label}
+      </span>
       <FilterIcon aria-hidden="true" />
     </button>
   );
+
+  const valueLabel = (field: string, aggregation: string, label?: string) =>
+    label || `${getFieldLabel?.(field) ?? field} (${aggregation})`;
+  const displayPivotCell = (cell: PivotCell) => {
+    if (cell.status !== "ok") return displayCellValue(cell);
+    return hasFieldDisplayFormat(fieldSettings[cell.key.valueField!])
+      ? (formatFieldValue?.(cell.key.valueField!, cell.value) ??
+        displayCellValue(cell))
+      : displayCellValue(cell);
+  };
 
   const selectedCellName = selectedCell
     ? cellName(selectedCell.cell, selectedCell.rowHeaders)
@@ -289,7 +308,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
                 style={{ left: index * 140, zIndex: 20 - index }}
                 title={field}
               >
-                {field}
+                {getFieldLabel?.(field) ?? field}
               </th>
             ))}
             {settings.columnField
@@ -307,12 +326,18 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
                     key={valueField.field}
                     scope="col"
                     title={
-                      valueField.label ||
-                      `${valueField.field} (${valueField.aggregation})`
+                      valueLabel(
+                        valueField.field,
+                        valueField.aggregation,
+                        valueField.label
+                      )
                     }
                   >
-                    {valueField.label ||
-                      `${valueField.field} (${valueField.aggregation})`}
+                    {valueLabel(
+                      valueField.field,
+                      valueField.aggregation,
+                      valueField.label
+                    )}
                   </th>
                 ))}
           </tr>
@@ -324,12 +349,18 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
                     key={`${header.field}-${categoryKey(header.value)}-${valueField.field}`}
                     scope="col"
                     title={
-                      valueField.label ||
-                      `${valueField.field} (${valueField.aggregation})`
+                      valueLabel(
+                        valueField.field,
+                        valueField.aggregation,
+                        valueField.label
+                      )
                     }
                   >
-                    {valueField.label ||
-                      `${valueField.field} (${valueField.aggregation})`}
+                    {valueLabel(
+                      valueField.field,
+                      valueField.aggregation,
+                      valueField.label
+                    )}
                   </th>
                 ))
               )}
@@ -361,7 +392,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
                   )}
                 >
                   <div className="flex items-center justify-end gap-2">
-                    <span title={cell.error}>{displayCellValue(cell)}</span>
+                    <span title={cell.error}>{displayPivotCell(cell)}</span>
                     <button
                       type="button"
                       className="rounded px-1 text-[10px] text-muted-foreground underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -418,7 +449,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
                 </div>
                 <div>
                   <div className="text-muted-foreground">Result</div>
-                  <div>{displayCellValue(selectedCell.cell)}</div>
+                  <div>{displayPivotCell(selectedCell.cell)}</div>
                 </div>
                 <div>
                   <div className="text-muted-foreground">Contributors</div>

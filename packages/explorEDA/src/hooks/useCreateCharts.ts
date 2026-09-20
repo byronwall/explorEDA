@@ -35,16 +35,16 @@ export function useCreateCharts() {
     if (settings.type === "scatter" || settings.type === "3d-scatter") {
       settings.xField = numeric[0] || "__ID";
       settings.yField = field || numeric[1] || numeric[0] || "__ID";
-      settings.xAxisLabel = settings.xField;
-      settings.yAxisLabel = settings.yField;
+      settings.xAxisLabel = "";
+      settings.yAxisLabel = "";
       if (settings.type === "3d-scatter")
         settings.zField = numeric[2] || numeric[0] || "__ID";
     }
     if (settings.type === "line") {
       settings.xField = "__ID";
       settings.seriesField = selectedField ? [selectedField] : [];
-      settings.xAxisLabel = "Row sequence";
-      settings.yAxisLabel = selectedField;
+      settings.xAxisLabel = "";
+      settings.yAxisLabel = "";
     }
     if (settings.type === "data-table")
       settings.columns = profiles
@@ -60,17 +60,11 @@ export function useCreateCharts() {
     if (settings.type === "color-legend")
       settings.fields = categories.slice(0, 1);
     if (settings.type === "bar" || settings.type === "row") {
-      settings.xAxisLabel = settings.type === "row" ? "Records" : selectedField;
+      settings.xAxisLabel = settings.type === "row" ? "Records" : "";
       settings.yAxisLabel = settings.type === "bar" ? "Records" : "";
     }
-    if (settings.type === "boxplot") settings.yAxisLabel = selectedField;
-    settings.title =
-      selectedField &&
-      !["data-table", "pivot", "summary", "markdown", "color-legend"].includes(
-        type
-      )
-        ? `${definition.name} · ${selectedField}`
-        : definition.name;
+    if (settings.type === "boxplot") settings.yAxisLabel = "";
+    settings.title = "";
     addChart(settings);
   };
 

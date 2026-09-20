@@ -1,18 +1,11 @@
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
+import { ThreeDScatterPoint } from "./useThreeDScatterData";
 import { ThreeDScatterSettings } from "./types";
-
-interface Point3D {
-  x: number;
-  y: number;
-  z: number;
-  color?: number | string;
-  size?: number;
-}
 
 interface ThreeDScatterPointsProps {
   scene: THREE.Scene;
-  data: Point3D[];
+  data: ThreeDScatterPoint[];
   settings: ThreeDScatterSettings;
   onSceneChange: () => void;
 }
@@ -29,50 +22,57 @@ export function ThreeDScatterPoints({
   const pointsGeometry = useMemo(() => {
     const positions = new Float32Array(data.length * 3);
     const colors = new Float32Array(data.length * 3);
+    const sizes = new Float32Array(data.length);
 
     data.forEach((point, i) => {
-      positions[i * 3] = point.x || 0;
-      positions[i * 3 + 1] = point.y || 0;
-      positions[i * 3 + 2] = point.z || 0;
+      positions[i * 3] = point.x;
+      positions[i * 3 + 1] = point.y;
+      positions[i * 3 + 2] = point.z;
+      sizes[i] = point.size;
 
       // Handle color from point data
-      if (point.color) {
-        if (typeof point.color === "string") {
-          // Convert hex string to RGB
-          const color = new THREE.Color(point.color);
-          colors[i * 3] = color.r;
-          colors[i * 3 + 1] = color.g;
-          colors[i * 3 + 2] = color.b;
-        } else {
-          // Handle numeric color
-          const color = new THREE.Color(point.color);
-          colors[i * 3] = color.r;
-          colors[i * 3 + 1] = color.g;
-          colors[i * 3 + 2] = color.b;
-        }
-      } else {
-        // Default color (white)
-        colors[i * 3] = 1;
-        colors[i * 3 + 1] = 1;
-        colors[i * 3 + 2] = 1;
-      }
+      const color = new THREE.Color(point.color);
+      colors[i * 3] = color.r;
+      colors[i * 3 + 1] = color.g;
+      colors[i * 3 + 2] = color.b;
     });
 
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+    geometry.setAttribute("size", new THREE.BufferAttribute(sizes, 1));
 
     return geometry;
   }, [data]);
 
   // Create points material
   const pointsMaterial = useMemo(() => {
-    return new THREE.PointsMaterial({
-      size: settings.pointSize,
+    return new THREE.ShaderMaterial({
       vertexColors: true,
       transparent: true,
-      opacity: settings.pointOpacity,
-      sizeAttenuation: true,
+      uniforms: {
+        pointSize: { value: settings.pointSize },
+        opacity: { value: settings.pointOpacity },
+      },
+      vertexShader: `
+        attribute float size;
+        varying vec3 pointColor;
+        uniform float pointSize;
+        void main() {
+          pointColor = color;
+          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+          gl_PointSize = pointSize * size * (300.0 / max(1.0, -mvPosition.z));
+          gl_Position = projectionMatrix * mvPosition;
+        }
+      `,
+      fragmentShader: `
+        varying vec3 pointColor;
+        uniform float opacity;
+        void main() {
+          if (distance(gl_PointCoord, vec2(0.5)) > 0.5) discard;
+          gl_FragColor = vec4(pointColor, opacity);
+        }
+      `,
     });
   }, [settings.pointSize, settings.pointOpacity]);
 

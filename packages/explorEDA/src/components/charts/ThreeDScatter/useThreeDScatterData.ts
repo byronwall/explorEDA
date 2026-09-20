@@ -1,8 +1,65 @@
 import { useColorScales } from "@/hooks/useColorScales";
 import { IdType } from "@/providers/DataLayerProvider";
 import { useMemo } from "react";
+import { useGetColumnDataForIds } from "../useGetColumnData";
 import { useGetLiveData } from "../useGetLiveData";
+import { datum } from "@/types/ChartTypes";
 import { ThreeDScatterSettings } from "./types";
+
+export interface ThreeDScatterPoint {
+  x: number;
+  y: number;
+  z: number;
+  color: string;
+  size: number;
+}
+
+export interface ThreeDScatterData {
+  points: ThreeDScatterPoint[];
+  omitted: number;
+}
+
+export function buildThreeDScatterData(
+  xData: datum[],
+  yData: datum[],
+  zData: datum[],
+  colorData: datum[],
+  sizeData: datum[],
+  sizeDomain: [number, number],
+  getColor: (value: datum) => string
+): ThreeDScatterData {
+  const [sizeMin, sizeMax] = sizeDomain;
+  const sizeRange = sizeMax - sizeMin;
+  const points: ThreeDScatterPoint[] = [];
+  let omitted = 0;
+
+  const numericValue = (value: datum) =>
+    value == null ||
+    typeof value === "boolean" ||
+    (typeof value === "string" && value.trim() === "")
+      ? NaN
+      : Number(value);
+
+  for (let i = 0; i < xData.length; i++) {
+    const x = numericValue(xData[i]);
+    const y = numericValue(yData[i]);
+    const z = numericValue(zData[i]);
+    if (![x, y, z].every(Number.isFinite)) {
+      omitted += 1;
+      continue;
+    }
+
+    const rawSize = numericValue(sizeData[i]);
+    const size = Number.isFinite(rawSize)
+      ? sizeRange > 0
+        ? 0.5 + ((rawSize - sizeMin) / sizeRange) * 1.5
+        : 1
+      : 1;
+    points.push({ x, y, z, color: getColor(colorData[i]), size });
+  }
+
+  return { points, omitted };
+}
 
 export function useThreeDScatterData(
   settings: ThreeDScatterSettings,
@@ -15,27 +72,40 @@ export function useThreeDScatterData(
   const zData = useGetLiveData(settings, settings.zField, facetIds);
   const colorData = useGetLiveData(settings, settings.colorField, facetIds);
   const sizeData = useGetLiveData(settings, settings.sizeField, facetIds);
+  const allSizeData = useGetColumnDataForIds(settings.sizeField);
 
   const { getColorForValue } = useColorScales();
   const colorScaleId = settings.colorScaleId;
 
   return useMemo(() => {
     if (!is3DScatter) {
-      return [];
+      return { points: [], omitted: 0 };
     }
 
-    const result = [];
-    for (let i = 0; i < xData.length; i++) {
-      const size = sizeData[i];
-      result.push({
-        x: Number(xData[i] ?? 0),
-        y: Number(yData[i] ?? 0),
-        z: Number(zData[i] ?? 0),
-        color: getColorForValue(colorScaleId, colorData[i]),
-        size: typeof size === "number" ? size : undefined,
-      });
-    }
-    return result;
+    const sizes = allSizeData
+      .map((value) => {
+        if (
+          value == null ||
+          typeof value === "boolean" ||
+          (typeof value === "string" && value.trim() === "")
+        ) {
+          return NaN;
+        }
+        return Number(value);
+      })
+      .filter(Number.isFinite);
+    const sizeDomain: [number, number] = sizes.length
+      ? [Math.min(...sizes), Math.max(...sizes)]
+      : [0, 0];
+    return buildThreeDScatterData(
+      xData,
+      yData,
+      zData,
+      colorData,
+      sizeData,
+      sizeDomain,
+      (value) => getColorForValue(colorScaleId, value, "#ffffff")
+    );
   }, [
     is3DScatter,
     xData,
@@ -45,5 +115,6 @@ export function useThreeDScatterData(
     colorScaleId,
     colorData,
     sizeData,
+    allSizeData,
   ]);
 }
