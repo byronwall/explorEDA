@@ -1,10 +1,11 @@
+import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
 import { Button } from "@/components/ui/button";
 import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { FieldProfile } from "@/lib/fieldProfiles";
+import { buildFieldProfile, type FieldProfile } from "@/lib/fieldProfiles";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { Filter } from "@/types/FilterTypes";
 import { ChevronDown, ChevronUp, Filter as FilterIcon } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -30,6 +31,25 @@ export function DataTableHeader({
     onSettingsChange ??
     ((next: Partial<DataTableSettings>) => updateChart(settings.id, next));
   const fieldProfiles = useDataLayer((state) => state.fieldProfiles) ?? [];
+  const calculations = useDataLayer((state) => state.calculations) ?? [];
+  const getColumnData = useDataLayer((state) => state.getColumnData);
+  const nonce = useDataLayer((state) => state.nonce);
+  const profiles = useMemo(
+    () => [
+      ...fieldProfiles,
+      ...calculations
+        .filter((calc) =>
+          columns.some((column) => column.field === calc.resultColumnName)
+        )
+        .map((calc) =>
+          buildFieldProfile(
+            calc.resultColumnName,
+            getColumnData(calc.resultColumnName)
+          )
+        ),
+    ],
+    [fieldProfiles, calculations, columns, getColumnData, nonce]
+  );
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [resizingColumn, setResizingColumn] = useState<string | null>(null);
   const [tempWidths, setTempWidths] = useState<Record<string, number>>({});
@@ -136,7 +156,7 @@ export function DataTableHeader({
     <TableHeader>
       <TableRow>
         {columns.map((column, index) => {
-          const profile = fieldProfiles.find(
+          const profile = profiles.find(
             (fieldProfile: FieldProfile) => fieldProfile.name === column.field
           ) ?? {
             name: column.field,
@@ -180,6 +200,7 @@ export function DataTableHeader({
                       <ChevronDown className="h-4 w-4" />
                     ))}
                 </button>
+                <CalculatedFieldBadge field={column.field} />
                 <Popover
                   open={activeFilter === column.id}
                   onOpenChange={(open) =>

@@ -56,7 +56,14 @@ const mockFieldProfiles = [
     totalCount: 3,
     uniqueCount: 3,
     nullCount: 0,
-    categories: { topValues: [], distribution: { John: 1, Jane: 1, Bob: 1 } },
+    categories: {
+      topValues: [],
+      distribution: [
+        { value: "John", count: 1 },
+        { value: "Jane", count: 1 },
+        { value: "Bob", count: 1 },
+      ],
+    },
   },
   {
     name: "age",

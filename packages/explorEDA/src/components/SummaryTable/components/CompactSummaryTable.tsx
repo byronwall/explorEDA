@@ -1,3 +1,5 @@
+import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
+import { categoryLabel } from "@/lib/categories";
 import { Button } from "@/components/ui/button";
 import {
   TableBody,
@@ -70,6 +72,7 @@ export function CompactSummaryTable({
               <div className="flex items-center gap-2">
                 <DataTypeIcon type={summary.dataType} />
                 <span className="font-medium">{summary.name}</span>
+                <CalculatedFieldBadge field={summary.name} />
                 {summary.nullCount > 0 && (
                   <TooltipProvider>
                     <Tooltip>
@@ -101,7 +104,7 @@ export function CompactSummaryTable({
                 {summary.categories && summary.categories.topValues[0] && (
                   <StatBadge
                     type="common"
-                    value={summary.categories.topValues[0].value}
+                    value={categoryLabel(summary.categories.topValues[0].value)}
                     count={summary.categories.topValues[0].count}
                   />
                 )}

@@ -840,3 +840,575 @@ html {
     padding: 0 4px;
   }
 }
+
+/* Calculations inherit the workspace's compact, neutral control language. */
+.eda-calc-symbol {
+  color: var(--primary);
+  font-weight: 650;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.eda-calc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 24px;
+  padding: 2px 5px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 11px;
+  text-align: left;
+  background: var(--card);
+  white-space: nowrap;
+}
+.eda-calc-badge:hover,
+.eda-calc-cell:hover {
+  color: var(--primary);
+  background: var(--muted);
+}
+.eda-calc-badge:focus-visible,
+.eda-calc-cell:focus-visible,
+.eda-calc-node:focus-visible,
+.eda-calc-text-button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.eda-calc-cell {
+  font: inherit;
+  color: inherit;
+  text-decoration: underline dotted var(--border);
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+.eda-calc-chart-fields {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px 4px;
+  height: 28px;
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+.eda-calc-peek {
+  width: min(380px, calc(100vw - 24px));
+  font-size: 13px;
+  max-height: var(--radix-popover-content-available-height);
+  overflow: auto;
+}
+.eda-calc-peek pre {
+  margin: 12px 0;
+  padding: 12px;
+  border-radius: 5px;
+  background: var(--muted);
+  font-size: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.eda-calc-peek-result {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 16px 0 8px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.eda-calc-peek-result strong {
+  overflow-wrap: anywhere;
+}
+.eda-calc-peek-result > span {
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+.eda-calc-editor {
+  display: flex;
+  flex-direction: column;
+  width: min(1120px, calc(100vw - 40px));
+  max-width: none;
+  height: min(820px, calc(100dvh - 40px));
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+  font-size: 13px;
+}
+.eda-calc-editor-header {
+  padding: 22px 52px 18px 24px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  flex-shrink: 0;
+}
+.eda-calc-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.eda-calc-editor-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+  flex: 1;
+  min-height: 0;
+}
+.eda-calc-main {
+  padding: 22px 24px;
+  min-width: 0;
+  overflow: auto;
+}
+.eda-calc-name {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+.eda-calc-name input {
+  max-width: 400px;
+  background: var(--card);
+  font-size: 14px;
+}
+.eda-calc-name input[readonly] {
+  border-color: transparent;
+  padding-left: 0;
+  font-size: 18px;
+  font-weight: 600;
+  box-shadow: none;
+  background: none;
+}
+.eda-calc-section-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.eda-calc-section-heading h3,
+.eda-calc-section-heading label {
+  font-size: 13px;
+  font-weight: 600;
+}
+.eda-calc-section-heading > span {
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.eda-calc-main textarea {
+  display: block;
+  width: 100%;
+  min-height: 104px;
+  max-height: 300px;
+  resize: vertical;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  padding: 14px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.65;
+  tab-size: 2;
+}
+.eda-calc-main textarea:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+.eda-calc-main textarea::placeholder {
+  color: var(--muted-foreground);
+}
+.eda-calc-formula-tools {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.eda-calc-help {
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.55;
+}
+.eda-calc-text-button {
+  color: var(--primary);
+  font-size: 12px;
+  text-align: left;
+}
+.eda-calc-text-button:hover {
+  text-decoration: underline;
+}
+.eda-calc-validation {
+  min-height: 54px;
+  padding: 14px 0;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+.eda-calc-valid,
+.eda-calc-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.eda-calc-valid {
+  color: var(--primary);
+}
+.eda-calc-error {
+  color: var(--destructive);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.eda-calc-error svg,
+.eda-calc-valid svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.eda-calc-aside {
+  background: var(--card);
+  padding: 18px;
+  border-left: 1px solid var(--border);
+  overflow: auto;
+  min-width: 0;
+}
+.eda-calc-aside [role="tablist"] {
+  margin-bottom: 18px;
+}
+.eda-calc-aside [role="tab"] {
+  flex: 1;
+  font-size: 12px;
+}
+.eda-calc-field-group {
+  margin-top: 18px;
+}
+.eda-calc-field-group h3 {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted-foreground);
+  margin-bottom: 6px;
+}
+.eda-calc-field-group > button,
+.eda-calc-link-list > button {
+  display: flex;
+  width: 100%;
+  text-align: left;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.eda-calc-field-group > button:hover,
+.eda-calc-link-list > button:hover {
+  background: var(--muted);
+  color: var(--primary);
+}
+.eda-calc-function-list {
+  display: grid;
+  gap: 2px;
+}
+.eda-calc-function-list button {
+  display: grid;
+  gap: 5px;
+  padding: 10px 6px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.eda-calc-function-list button:hover {
+  background: var(--muted);
+}
+.eda-calc-function-list code {
+  font-size: 11px;
+  color: var(--primary);
+  overflow-wrap: anywhere;
+}
+.eda-calc-function-list span {
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+.eda-calc-syntax-help {
+  font-size: 12px;
+  margin-top: 18px;
+  line-height: 1.7;
+}
+.eda-calc-syntax-help summary {
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.eda-calc-tree {
+  margin: 16px 0;
+}
+.eda-calc-tree ul {
+  margin-left: 8px;
+  padding-left: 9px;
+  border-left: 1px solid var(--border);
+}
+.eda-calc-tree li {
+  list-style: none;
+}
+.eda-calc-node,
+.eda-calc-source {
+  display: flex;
+  align-items: baseline;
+  width: 100%;
+  gap: 7px;
+  text-align: left;
+  padding: 8px 5px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+.eda-calc-node:hover {
+  background: var(--muted);
+}
+.eda-calc-node[aria-pressed="true"] {
+  color: var(--primary);
+  background: var(--secondary);
+  box-shadow: inset 0 0 0 1px var(--border);
+  font-weight: 600;
+}
+.eda-calc-source {
+  color: var(--muted-foreground);
+}
+.eda-calc-source small {
+  display: block;
+  font-size: 10px;
+}
+.eda-calc-node-value {
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-calc-view-list {
+  list-style: disc;
+  padding-left: 16px;
+  margin-top: 10px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.eda-calc-preview {
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+.eda-calc-preview-scroll {
+  max-width: 100%;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+}
+.eda-calc-preview table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.eda-calc-preview th {
+  text-align: right;
+  font-weight: 500;
+  padding: 9px 12px;
+  color: var(--muted-foreground);
+  background: var(--muted);
+}
+.eda-calc-preview td {
+  padding: 8px 12px;
+  text-align: right;
+  border-top: 1px solid var(--border);
+}
+.eda-calc-preview th:first-child,
+.eda-calc-preview th:last-child,
+.eda-calc-preview td:first-child,
+.eda-calc-preview td:last-child {
+  text-align: left;
+}
+.eda-calc-preview tr[data-selected="true"] {
+  background: var(--card);
+}
+.eda-calc-preview td button {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 2px 4px;
+}
+.eda-calc-preview td button[aria-pressed="true"] {
+  font-weight: 700;
+  background: var(--secondary);
+  border-radius: 3px;
+}
+.eda-calc-preview-empty {
+  padding: 28px 0;
+  border-top: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+.eda-calc-preview-empty h3 {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--foreground);
+}
+.eda-calc-editor-footer {
+  border-top: 1px solid var(--border);
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 24px;
+  flex-shrink: 0;
+}
+.eda-calc-editor-footer p {
+  font-size: 12px;
+}
+.eda-calc-editor-footer .eda-calc-help {
+  font-size: 11px;
+  margin-top: 4px;
+}
+.eda-calc-shortcut {
+  margin-left: 8px;
+  font-size: 10px;
+  opacity: 0.85;
+}
+.eda-calculations-header {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.eda-calculations-header h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.eda-calculations-header p {
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+.eda-calculations-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+.eda-calculations-toolbar > div {
+  width: min(360px, 60%);
+}
+.eda-calculations-toolbar > span {
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+.eda-calculation-list {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.eda-calculation-list th {
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--border);
+}
+.eda-calculation-list td {
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.eda-calculation-list td:first-child {
+  min-width: 180px;
+}
+.eda-calculation-list td:nth-child(3),
+.eda-calculation-list td:nth-child(4) {
+  white-space: nowrap;
+}
+.eda-calc-field-name {
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+}
+.eda-calc-field-name:hover,
+.eda-calc-formula-link:hover {
+  color: var(--primary);
+}
+.eda-calc-formula-link {
+  text-align: left;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.eda-calc-input-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 11px;
+  color: var(--muted-foreground);
+  margin-top: 7px;
+}
+.eda-calc-input-list button:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+.eda-calc-empty {
+  padding: 48px 24px;
+  max-width: 520px;
+}
+.eda-calc-empty > .eda-calc-symbol {
+  font-size: 28px;
+}
+.eda-calc-empty h3 {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 12px 0 8px;
+}
+.eda-calc-empty p {
+  color: var(--muted-foreground);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+@media (max-width: 800px) {
+  .eda-calc-editor {
+    width: calc(100vw - 20px);
+    height: calc(100dvh - 20px);
+  }
+  .eda-calc-editor-grid {
+    grid-template-columns: minmax(0, 1fr);
+    overflow: auto;
+    display: block;
+  }
+  .eda-calc-main,
+  .eda-calc-aside {
+    overflow: visible;
+    padding: 16px;
+  }
+  .eda-calc-aside {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+  }
+  .eda-calc-editor-footer {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .eda-calc-shortcut {
+    display: none;
+  }
+  .eda-calculations-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+}
+.eda-calc-name-locked {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  column-gap: 16px;
+  row-gap: 4px;
+  margin-bottom: 16px;
+}
+.eda-calc-name-locked input {
+  width: auto;
+  flex: 1;
+  min-width: 160px;
+  max-width: none;
+}
+.eda-calc-name-locked p {
+  flex-basis: 100%;
+  font-size: 11px;
+}

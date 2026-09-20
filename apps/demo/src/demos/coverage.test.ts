@@ -62,6 +62,8 @@ describe("example coverage manifest", () => {
     expect(getImplementationStatus("scale:log")).toBe("not-checked");
     expect(getFeatureReviewStatus("chart:row")).toBe("not-reviewed");
     expect(getExamplesUsingFeature("chart:row")).toEqual([
+      "calculated-orders",
+      "shop-10000",
       "product-activity",
       "categorical-charts",
     ]);

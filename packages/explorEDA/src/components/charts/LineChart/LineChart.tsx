@@ -61,10 +61,7 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
     [liveIds, facetIds]
   );
   const liveXData = useGetColumnDataForIds(settings.xField, selectedIds);
-  const allSeriesData = useGetColumnDataForMultipleIds(
-    settings.seriesField,
-    facetIds
-  );
+  const allSeriesData = useGetColumnDataForMultipleIds(settings.seriesField);
 
   // Get all series data using the new hook
   const liveSeriesData = useGetColumnDataForMultipleIds(

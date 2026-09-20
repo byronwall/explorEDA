@@ -1,3 +1,4 @@
+import { getChartFields } from "@/components/charts/chartAccessibility";
 import { chartRegistry, getChartDefinition } from "@/charts/registry";
 import {
   CrossfilterWrapper,
@@ -20,11 +21,7 @@ import {
 import { SavedDataStructure } from "@/types/SavedDataStructure";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { createStore, useStore } from "zustand";
-import {
-  IdType,
-  initializeData,
-  invalidateCalculationCache,
-} from "./lib/dataLayerState";
+import { IdType, initializeData } from "./lib/dataLayerState";
 
 type DatumObject = { [key: string]: datum };
 export type { DatumObject };
@@ -115,6 +112,7 @@ interface DataLayerState<T extends DatumObject> extends DataLayerProps<T> {
 
   // Filter state (placeholder)
   clearAllFilters: () => void;
+  filterReset: number;
   clearFilter: (chart: ChartSettings) => void;
 
   crossfilterWrapper: CrossfilterWrapper<T & HasId>;
@@ -288,11 +286,8 @@ const getInitialStoreState = <T extends DatumObject>(
     const savedData = initProps.savedData;
 
     // Restore calculations
-    const newCalculations: CalculationDefinition[] = [];
-    savedData.calculations.forEach((calc) => {
-      ogCalculationManager.addCalculation(calc);
-      newCalculations.push(calc);
-    });
+    ogCalculationManager.setCalculations(savedData.calculations);
+    const newCalculations = ogCalculationManager.getCalculations();
 
     // Restore color scales with proper Map objects
     const restoredColorScales: ColorScaleType[] = savedData.colorScales.map(
@@ -360,6 +355,7 @@ const createDataLayerStore = <T extends DatumObject>(
   const store = createStore<DataLayerState<T>>()((set, get) => ({
     ...initialState,
     liveItems: {},
+    filterReset: 0,
     setData: (rawData, fileName, useDefaults = true) => {
       // Get fresh crossfilter and data with IDs
       const {
@@ -398,7 +394,8 @@ const createDataLayerStore = <T extends DatumObject>(
         liveItems: newCrossfilter.getAllData(),
         columnCache: {},
         calcColumnCache: {},
-        nonce: 0,
+        nonce: get().nonce + 1,
+        filterReset: get().filterReset + 1,
       });
     },
 
@@ -492,6 +489,7 @@ const createDataLayerStore = <T extends DatumObject>(
       const newCharts = charts.map((chart) => ({
         ...chart,
         filters: [],
+        ...(chart.type === "data-table" ? { globalSearch: "" } : {}),
       })) as ChartSettings[];
 
       for (const chart of newCharts) {
@@ -499,10 +497,11 @@ const createDataLayerStore = <T extends DatumObject>(
       }
 
       // Update all live items in a single update
-      set({
+      set((state) => ({
         charts: newCharts,
         liveItems: crossfilterWrapper.getAllData(),
-      });
+        filterReset: state.filterReset + 1,
+      }));
     },
 
     clearFilter: (chart) => {
@@ -541,7 +540,7 @@ const createDataLayerStore = <T extends DatumObject>(
         return emptyColumn;
       }
 
-      if (columnCache[field]) {
+      if (Object.hasOwn(columnCache, field)) {
         return columnCache[field] as Record<string, datum>;
       }
 
@@ -550,7 +549,7 @@ const createDataLayerStore = <T extends DatumObject>(
       );
 
       if (calculation) {
-        if (calcColumnCache[field]) {
+        if (Object.hasOwn(calcColumnCache, field)) {
           return calcColumnCache[field] as Record<string, datum>;
         }
 
@@ -563,14 +562,11 @@ const createDataLayerStore = <T extends DatumObject>(
           columnData[key] = value;
         });
 
-        // update the column cache
-        // doing the RAF since this is called in the render loop
-        requestAnimationFrame(() => {
-          set((state) => {
-            const newCalcColumnCache = { ...state.calcColumnCache };
-            newCalcColumnCache[field] = columnData;
-            return { calcColumnCache: newCalcColumnCache };
-          });
+        // Caches are read through getters; nonce carries visible data changes.
+        Object.defineProperty(calcColumnCache, field, {
+          value: columnData,
+          enumerable: true,
+          configurable: true,
         });
 
         return columnData;
@@ -588,13 +584,10 @@ const createDataLayerStore = <T extends DatumObject>(
         columnData[row.__ID] = row[field];
       });
 
-      // doing the RAF since this is called in the render loop
-      requestAnimationFrame(() => {
-        set((state) => {
-          const newColumnCache = { ...state.columnCache };
-          newColumnCache[field] = columnData;
-          return { columnCache: newColumnCache };
-        });
+      Object.defineProperty(columnCache, field, {
+        value: columnData,
+        enumerable: true,
+        configurable: true,
       });
 
       return columnData;
@@ -602,59 +595,21 @@ const createDataLayerStore = <T extends DatumObject>(
 
     // Calculation management
     addCalculation: async (calculation) => {
-      const { calculationManager } = get();
-
-      if (!calculationManager) {
-        throw new Error("Calculation manager not initialized");
-      }
-
-      const affectedColumns = calculationManager.addCalculation(calculation);
-
-      set((state) => {
-        const newCalculations = [...state.calculations, calculation];
-        const newCalcColumnCache = invalidateCalculationCache(
-          state.calcColumnCache,
-          affectedColumns
-        );
-        return {
-          calculations: newCalculations,
-          calcColumnCache: newCalcColumnCache,
-          nonce: state.nonce + 1,
-        };
-      });
-
+      get().calculationManager.addCalculation(calculation);
+      refreshCalculations();
       return calculation;
     },
 
-    removeCalculation: (resultColumnName) => {
-      const { calculationManager } = get();
-      if (!calculationManager) {
-        throw new Error("Calculation manager not initialized");
-      }
-
-      const affectedColumns =
-        calculationManager.removeCalculation(resultColumnName);
-
-      set((state) => {
-        const newCalcColumnCache = invalidateCalculationCache(
-          state.calcColumnCache,
-          affectedColumns
-        );
-        return {
-          calculations: state.calculations.filter(
-            (calc) => calc.resultColumnName !== resultColumnName
-          ),
-          calcColumnCache: newCalcColumnCache,
-          nonce: state.nonce + 1,
-        };
-      });
+    removeCalculation: (name) => {
+      assertUnusedCalculation(name);
+      get().calculationManager.removeCalculation(name);
+      refreshCalculations();
     },
 
-    updateCalculation: (resultColumnName, newCalculation) => {
-      const { addCalculation, removeCalculation } = get();
-
-      removeCalculation(resultColumnName);
-      addCalculation(newCalculation);
+    updateCalculation: (name, calculation) => {
+      if (name !== calculation.resultColumnName) assertUnusedCalculation(name);
+      get().calculationManager.updateCalculation(name, calculation);
+      refreshCalculations();
     },
 
     updateGridSettings: (settings) => {
@@ -698,30 +653,21 @@ const createDataLayerStore = <T extends DatumObject>(
     },
 
     restoreFromStructure: (savedData: SavedDataStructure) => {
-      const { crossfilterWrapper, calculationManager } = get();
-
-      // Clear existing charts
-      crossfilterWrapper.removeAllCharts();
-
+      const { crossfilterWrapper, data } = get();
+      // Validate the complete replacement before changing the current analysis.
+      const calculationManager = new CalculationManager(
+        data,
+        savedData.calculations
+      );
       const charts = savedData.charts.map(toRuntimeChart);
-      charts.forEach((chart) => {
-        crossfilterWrapper.addChart(chart);
+      crossfilterWrapper.removeAllCharts();
+      set({
+        calculationManager,
+        calculations: calculationManager.getCalculations(),
+        columnCache: {},
+        calcColumnCache: {},
       });
-
-      // Restore calculations
-      for (const calc of calculationManager.getCalculations()) {
-        calculationManager.removeCalculation(calc.resultColumnName);
-      }
-
-      const newCalculations: CalculationDefinition[] = [];
-      for (const calc of savedData.calculations) {
-        try {
-          calculationManager.addCalculation(calc);
-          newCalculations.push(calc);
-        } catch {
-          continue;
-        }
-      }
+      charts.forEach((chart) => crossfilterWrapper.addChart(chart));
 
       // Restore color scales with proper Map objects
       const restoredColorScales: ColorScaleType[] = savedData.colorScales.map(
@@ -739,7 +685,7 @@ const createDataLayerStore = <T extends DatumObject>(
       set((state) => ({
         gridSettings: savedData.gridSettings,
         charts,
-        calculations: newCalculations,
+        calculations: calculationManager.getCalculations(),
         colorScales: restoredColorScales,
         columnCache: {},
         calcColumnCache: {},
@@ -748,6 +694,36 @@ const createDataLayerStore = <T extends DatumObject>(
       }));
     },
   }));
+
+  function assertUnusedCalculation(name: string) {
+    const { charts } = store.getState();
+    if (
+      charts.some(
+        (chart) =>
+          getChartFields(chart).includes(name) ||
+          chart.filters.some((filter) => filter.field === name) ||
+          chart.facet.rowVariable === name ||
+          (chart.facet.type === "grid" && chart.facet.columnVariable === name)
+      )
+    ) {
+      throw new Error(
+        `Remove ${name} from its charts and colors before renaming or deleting it`
+      );
+    }
+  }
+
+  function refreshCalculations() {
+    const { calculationManager, crossfilterWrapper, charts } = store.getState();
+    store.setState({
+      calculations: calculationManager.getCalculations(),
+      calcColumnCache: {},
+    });
+    charts.forEach((chart) => crossfilterWrapper.updateChartFilters(chart));
+    store.setState((state) => ({
+      liveItems: crossfilterWrapper.getAllData(),
+      nonce: state.nonce + 1,
+    }));
+  }
 
   // this stuff is done down here because we need the store methods to exist
   // before plumbing them into the crossfilter wrapper

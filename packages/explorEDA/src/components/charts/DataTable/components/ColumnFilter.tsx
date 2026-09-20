@@ -1,3 +1,9 @@
+import {
+  categoryEqual,
+  categoryIncludes,
+  categoryKey,
+  categoryLabel,
+} from "@/lib/categories";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { FieldProfile } from "@/lib/fieldProfiles";
@@ -14,10 +20,6 @@ interface ColumnFilterProps {
   filter?: Filter;
   onChange: (columnId: string, filter?: Filter) => void;
   onClear: () => void;
-}
-
-function optionValue(value: string, profile: FieldProfile): datum {
-  return profile.dataType === "boolean" ? value === "true" : value;
 }
 
 export function ColumnFilter({
@@ -55,9 +57,7 @@ export function ColumnFilter({
     const selected = filter?.type === "value" ? filter.values : [];
     const next = checked
       ? [...selected, value]
-      : selected.filter(
-          (item) => !(item == null && value == null) && item !== value
-        );
+      : selected.filter((item) => !categoryEqual(item, value));
     onChange(
       columnId,
       next.length > 0
@@ -86,26 +86,27 @@ export function ColumnFilter({
     >
       {lowCardinality ? (
         <div className="flex flex-col gap-1 p-1">
-          {Object.entries(profile.categories?.distribution ?? {}).map(
-            ([label]) => {
-              const value = optionValue(label, profile);
-              return (
-                <label key={label} className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={
-                      filter?.type === "value" &&
-                      filter.values.some((item) => item === value)
-                    }
-                    onChange={(event) =>
-                      updateValues(value, event.currentTarget.checked)
-                    }
-                  />
-                  {label}
-                </label>
-              );
-            }
-          )}
+          {(profile.categories?.distribution ?? []).map(({ value }) => {
+            const label = categoryLabel(value);
+            return (
+              <label
+                key={categoryKey(value)}
+                className="flex items-center gap-2 text-sm"
+              >
+                <input
+                  type="checkbox"
+                  checked={
+                    filter?.type === "value" &&
+                    categoryIncludes(filter.values, value)
+                  }
+                  onChange={(event) =>
+                    updateValues(value, event.currentTarget.checked)
+                  }
+                />
+                {label}
+              </label>
+            );
+          })}
           {profile.nullCount > 0 && (
             <label className="flex items-center gap-2 text-sm">
               <input

@@ -1,53 +1,17 @@
+import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
+import { calculationValue } from "@/components/calculations/calculationHelpers";
 import { useMemo } from "react";
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 
 import { DataTableSettings } from "./definition";
 import { DataTableRow, getFilteredRows } from "./filteredRows";
-import type { datum } from "@/types/ChartTypes";
 
 interface DataTableBodyProps {
   settings: DataTableSettings;
   rows?: DataTableRow[];
   scrollTop?: number;
   viewportHeight?: number;
-}
-
-// Helper function to check if a value is numeric
-function isNumeric(value: datum): boolean {
-  if (typeof value === "number") {
-    return true;
-  }
-  if (typeof value !== "string") {
-    return false;
-  }
-  return !isNaN(Number(value)) && !isNaN(parseFloat(value));
-}
-
-// Helper function to compare values with natural sort
-function compareValues(a: datum, b: datum): number {
-  // Handle null/undefined values
-  if (a === null || a === undefined) {
-    return 1;
-  }
-  if (b === null || b === undefined) {
-    return -1;
-  }
-  if (a === b) {
-    return 0;
-  }
-
-  // Convert to strings for comparison if not numeric
-  const aStr = String(a);
-  const bStr = String(b);
-
-  // If both values are numeric, compare as numbers
-  if (isNumeric(a) && isNumeric(b)) {
-    return Number(a) - Number(b);
-  }
-
-  // For strings, use localeCompare for natural sort
-  return aStr.localeCompare(bStr);
 }
 
 // Helper function to check if a row matches the global search
@@ -57,7 +21,8 @@ export function DataTableBody({
   scrollTop = 0,
   viewportHeight = 400,
 }: DataTableBodyProps) {
-  const { sortBy, sortDirection } = settings;
+  const calculations = useDataLayer((state) => state.calculations) ?? [];
+  const manager = useDataLayer((state) => state.calculationManager);
   const data = useDataLayer((state) => state.data);
   const liveItems = useDataLayer((state) => state.getLiveItems(settings));
 
@@ -66,19 +31,7 @@ export function DataTableBody({
     [rows, data, liveItems, settings]
   );
 
-  // Sort data if sortBy is set
-  const sortedData = useMemo(
-    () =>
-      sortBy
-        ? [...filteredByColumns].sort((a, b) => {
-            const aValue = a[sortBy];
-            const bValue = b[sortBy];
-            const comparison = compareValues(aValue, bValue);
-            return sortDirection === "asc" ? comparison : -comparison;
-          })
-        : filteredByColumns,
-    [filteredByColumns, sortBy, sortDirection]
-  );
+  const sortedData = filteredByColumns;
 
   // Fixed-height rows keep the scroll position stable. Render one viewport plus overscan.
   const start = Math.min(
@@ -117,15 +70,36 @@ export function DataTableBody({
                   textAlign:
                     typeof row[column.field] === "number" ? "right" : "left",
                 }}
-                title={String(row[column.field] ?? "Missing")}
+                title={
+                  manager?.getErrors(column.field).get(row.__ID) ??
+                  String(row[column.field] ?? "Missing")
+                }
               >
-                {row[column.field] == null
-                  ? "—"
-                  : typeof row[column.field] === "boolean"
-                    ? row[column.field]
-                      ? "Yes"
-                      : "No"
-                    : row[column.field]}
+                {calculations.some(
+                  (calc) => calc.resultColumnName === column.field
+                ) ? (
+                  <CalculatedFieldBadge field={column.field} rowId={row.__ID}>
+                    {manager?.getErrors(column.field).has(row.__ID)
+                      ? "Error"
+                      : row[column.field] == null
+                        ? "—"
+                        : typeof row[column.field] === "boolean"
+                          ? row[column.field]
+                            ? "Yes"
+                            : "No"
+                          : calculationValue(row[column.field])}
+                  </CalculatedFieldBadge>
+                ) : row[column.field] == null ? (
+                  "—"
+                ) : typeof row[column.field] === "boolean" ? (
+                  row[column.field] ? (
+                    "Yes"
+                  ) : (
+                    "No"
+                  )
+                ) : (
+                  row[column.field]
+                )}
               </TableCell>
             ))}
           </TableRow>

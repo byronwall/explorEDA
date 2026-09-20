@@ -133,7 +133,9 @@ function isAxis(value: unknown, zoomLevel = false): boolean {
   return (
     (value.title === undefined || typeof value.title === "string") &&
     (value.scaleType === undefined ||
-      ["linear", "log", "time", "band"].includes(value.scaleType as string)) &&
+      ["linear", "log", "symlog", "time", "band"].includes(
+        value.scaleType as string
+      )) &&
     (value.grid === undefined || typeof value.grid === "boolean") &&
     (value.min === undefined || isFiniteNumber(value.min)) &&
     (value.max === undefined || isFiniteNumber(value.max)) &&

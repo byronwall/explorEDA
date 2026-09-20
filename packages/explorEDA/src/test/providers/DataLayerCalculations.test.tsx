@@ -155,8 +155,7 @@ describe("DataLayerProvider Calculations", () => {
       resultColumnName: "base",
     };
 
-    manager.addCalculation(dependent);
-    manager.addCalculation(base);
+    manager.setCalculations([dependent, base]);
 
     expect(manager.executeCalculation(dependent).get(0)).toBe(3);
   });

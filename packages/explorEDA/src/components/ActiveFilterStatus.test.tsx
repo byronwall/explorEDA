@@ -50,7 +50,7 @@ describe("ActiveFilterStatus", () => {
 
     expect(
       screen.getByRole("button", {
-        name: /Remove kind: A, missing from Data Table/i,
+        name: /Remove kind: A, \(missing\) from Data Table/i,
       })
     ).toBeInTheDocument();
     expect(

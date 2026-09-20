@@ -15,6 +15,7 @@ interface DataTableToolbarProps {
   rows?: DataTableRow[];
   onSettingsChange?: (settings: Partial<DataTableSettings>) => void;
   compact?: boolean;
+  localFilters?: boolean;
 }
 
 export function DataTableToolbar({
@@ -22,6 +23,7 @@ export function DataTableToolbar({
   rows,
   onSettingsChange,
   compact = false,
+  localFilters = false,
 }: DataTableToolbarProps) {
   const updateChart = useDataLayer((state) => state.updateChart);
   const data = useDataLayer((state) => state.data);
@@ -34,22 +36,10 @@ export function DataTableToolbar({
   };
 
   const handleExport = () => {
-    // Create CSV content
-    const headers = settings.columns.map((col) => col.field).join(",");
-    const rows = filteredData.map((row) =>
-      settings.columns
-        .map((col) => {
-          const value = row[col.field];
-          // Escape commas and quotes in the value
-          if (typeof value === "string" && /[",\r\n]/.test(value)) {
-            return `"${value.replace(/"/g, '""')}"`;
-          }
-          return value;
-        })
-        .join(",")
+    const csvContent = toTableCsv(
+      filteredData,
+      settings.columns.map((column) => column.field)
     );
-
-    const csvContent = [headers, ...rows].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
@@ -69,7 +59,7 @@ export function DataTableToolbar({
     <div className="eda-table-search relative min-w-0">
       <Input
         className="h-8 text-xs"
-        placeholder="Search rows…"
+        placeholder="Search this table…"
         aria-label="Search table"
         value={settings.globalSearch}
         onChange={(event) => handleSearch(event.target.value)}
@@ -96,10 +86,16 @@ export function DataTableToolbar({
       <span
         className="ml-auto whitespace-nowrap text-muted-foreground tabular-nums"
         aria-live="polite"
+        title={
+          localFilters
+            ? "Rows after chart filters, local field filters, and table search"
+            : "Rows after chart filters and table search"
+        }
       >
         {filteredData.length.toLocaleString()}{" "}
         {filteredData.length === 1 ? "row" : "rows"}
       </span>
+      <span className="text-xs text-muted-foreground">in this table</span>
       {compact && (
         <Popover>
           <PopoverTrigger asChild>
@@ -140,4 +136,15 @@ export function DataTableToolbar({
       </Button>
     </div>
   );
+}
+
+export function toTableCsv(rows: DataTableRow[], fields: string[]): string {
+  const cell = (value: unknown) => {
+    const text = String(value ?? "");
+    return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+  };
+  return [
+    fields.map(cell).join(","),
+    ...rows.map((row) => fields.map((field) => cell(row[field])).join(",")),
+  ].join("\n");
 }

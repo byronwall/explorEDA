@@ -1,3 +1,4 @@
+import { categoryIncludes, categoryKey } from "@/lib/categories";
 import { calculatePivotData } from "@/components/charts/PivotTable/utils/calculations";
 import { cn } from "@/lib/utils";
 import { useDataLayer } from "@/providers/DataLayerProvider";
@@ -60,7 +61,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
         (f): f is ValueFilter =>
           f.type === "value" &&
           f.field === field &&
-          f.values.includes(value as string | number)
+          categoryIncludes(f.values, value)
       );
 
       let newFilters: Filter[];
@@ -75,7 +76,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
         const newFilter: ValueFilter = {
           type: "value",
           field,
-          values: [value as string | number],
+          values: [value],
         };
         newFilters = [...currentFilters, newFilter];
       }
@@ -252,7 +253,9 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
         <tbody>
           {pivotData.rows.map((row: PivotRow) => (
             <tr
-              key={row.keys.map((key) => `${key.field}-${key.value}`).join(":")}
+              key={JSON.stringify(
+                row.keys.map((key) => [key.field, categoryKey(key.value)])
+              )}
             >
               {row.headers.map((header, index) => (
                 <th

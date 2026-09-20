@@ -22,13 +22,19 @@ describe("chart runtime", () => {
     const getter = (name: string) => fields[name as keyof typeof fields];
     settings.filters = [
       { type: "value", field: "position", values: ["PG", "C"] },
-      { type: "value", field: "group", values: ["1"] },
+      { type: "value", field: "group", values: [1] },
     ];
     expect(
       [1, 2, 3, 4].filter(
         colorLegendDefinition.getFilterFunction(settings, getter)
       )
     ).toEqual([1, 2]);
+    settings.filters = [{ type: "value", field: "group", values: ["1"] }];
+    expect(
+      [1, 2, 3, 4].filter(
+        colorLegendDefinition.getFilterFunction(settings, getter)
+      )
+    ).toEqual([]);
     settings.filters = [];
     expect(
       [1, 2, 3, 4].filter(

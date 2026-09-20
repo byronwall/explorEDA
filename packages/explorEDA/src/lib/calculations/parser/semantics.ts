@@ -5,8 +5,11 @@ import * as ohm from "ohm-js";
 const grammarSource = `Calculation {
   Expression = IfExpr | TernaryExpr | LogicalExpr
 
-  LogicalExpr = LogicalExpr LogicalOp ComparisonExpr  -- binary
-              | ComparisonExpr                        -- term
+  LogicalExpr = LogicalExpr "||" AndExpr  -- binary
+              | AndExpr                        -- term
+
+  AndExpr = AndExpr "&&" ComparisonExpr  -- binary
+          | ComparisonExpr              -- term
 
   ComparisonExpr = ComparisonExpr ComparisonOp AddExpr  -- binary
                  | AddExpr                              -- term
@@ -21,26 +24,26 @@ const grammarSource = `Calculation {
            | Term                 -- term
 
   TernaryExpr = LogicalExpr "?" Expression ":" Expression
-  Term = UnaryExpr | FunctionCall | ParenTerm | number | string | boolean | null | identifier
+  Term = UnaryExpr | FunctionCall | ParenTerm | fieldReference | number | string | boolean | null | identifier
+  fieldReference = "[" string "]"
   UnaryExpr = UnaryOperator Term
   FunctionCall = identifier "(" ListOf<Expression, ","> ")"
   ParenTerm = "(" Expression ")"
   IfExpr = "if" Expression "then" Expression "else" Expression
 
   ComparisonOp = "==" | "!=" | "<=" | ">=" | "<" | ">"
-  LogicalOp = "&&" | "||"
   UnaryOperator = "-" | "+" | "!"
 
-  identifier = ~keyword letter (letter | digit | "_")*
+  identifier = ~keyword (letter | "_") (letter | digit | "_")*
   number = digit+ ("." digit+)?
   string = "\\"" stringChar* "\\""
   stringChar = ~("\\"" | "\\\\") any  -- nonEscape
              | "\\\\" any              -- escape
-  boolean = "true" | "false"
-  null = "null"
+  boolean = ("true" | "false") ~(letter | digit | "_")
+  null = "null" ~(letter | digit | "_")
 
   // Built-in keywords
-  keyword = "if" | "then" | "else" | "true" | "false" | "null"
+  keyword = ("if" | "then" | "else" | "true" | "false" | "null") ~(letter | digit | "_")
 
   // Whitespace handling
   space += comment
@@ -86,6 +89,17 @@ semantics.addOperation<ParsedExpression>("eval", {
     };
   },
   LogicalExpr_term(term: Node): ParsedExpression {
+    return term.eval();
+  },
+  AndExpr_binary(left: Node, op: Node, right: Node): ParsedExpression {
+    return {
+      type: "basic",
+      operator: op.sourceString,
+      left: left.eval(),
+      right: right.eval(),
+    };
+  },
+  AndExpr_term(term: Node): ParsedExpression {
     return term.eval();
   },
   ComparisonExpr_binary(left: Node, op: Node, right: Node): ParsedExpression {
@@ -231,8 +245,15 @@ semantics.addOperation<ParsedExpression>("eval", {
     void _close;
     return {
       type: "literal",
-      value: chars.sourceString.replace(/\\(.)/g, "$1"),
+      value: JSON.parse(this.sourceString),
       expression: chars.sourceString,
+    };
+  },
+  fieldReference(_open: Node, field: Node, _close: Node): ParsedExpression {
+    return {
+      type: "identifier",
+      name: field.eval().value as string,
+      expression: this.sourceString,
     };
   },
   boolean(_value: Node): ParsedExpression {

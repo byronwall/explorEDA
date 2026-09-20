@@ -73,3 +73,20 @@ interface SavedDataStructure {
 
 It stores chart, calculation, grid, metadata, and color-scale state. It does
 not store the raw data rows.
+
+## Calculated fields
+
+Use the ƒx markers in charts and tables to inspect formulas and their dependency chains. The editor previews drafts before Apply. Field and function insertion uses the current cursor position.
+
+Hosts can build saved calculation definitions with the parser export:
+
+```ts
+import { parseExpression } from "exploreda/calculations";
+
+const calculation = {
+  resultColumnName: "Net sales",
+  expression: parseExpression('["Gross sales"] - ["Discount amount"]'),
+};
+```
+
+See [the calculation workflow](../../docs/calculation-workflow.md) and the demo's `calculated-orders` example.

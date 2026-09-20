@@ -1,3 +1,4 @@
+import { categoryLabel } from "@/lib/categories";
 import { BaseChartProps, datum } from "@/types/ChartTypes";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,13 +45,15 @@ const exportToCSV = (profiles: FieldProfile[]) => {
     profile.statistics?.median ?? "",
     profile.statistics?.stdDev ?? "",
     profile.categories?.topValues
-      .map((value) => `${value.value}(${value.count})`)
+      .map((value) => `${categoryLabel(value.value)}(${value.count})`)
       .join("; ") ?? "",
   ]);
 
   const csvContent = [
     headers.join(","),
-    ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+    ...rows.map((row) =>
+      row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
+    ),
   ].join("\n");
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const link = document.createElement("a");
@@ -74,6 +77,7 @@ export function SummaryTable({
   const calculations = useDataLayer((state) => state.calculations);
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const crossfilterWrapper = useDataLayer((state) => state.crossfilterWrapper);
+  const liveItems = useDataLayer((state) => state.liveItems);
   const chartState = useDataLayer((state) => state.charts);
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: null,
@@ -119,6 +123,7 @@ export function SummaryTable({
     getColumnData,
     crossfilterWrapper,
     chartState,
+    liveItems,
   ]);
 
   const sortedProfiles = useMemo(() => {

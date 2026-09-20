@@ -1,19 +1,18 @@
+import {
+  categoryEqual,
+  categoryIncludes,
+  categoryLabel,
+  categoryValue,
+} from "@/lib/categories";
 import { numericScale } from "../Axis/numericScale";
 import { applyFilter } from "@/hooks/applyFilter";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import { useFacetAxis } from "@/providers/FacetAxisProvider";
 import { BaseChartProps } from "@/types/ChartTypes";
 import { Filter, datum } from "@/types/FilterTypes";
 import { ScaleLinear, scaleBand } from "d3-scale";
 import natsort from "natsort";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { BaseChart } from "../BaseChart";
 import { useGetColumnDataForIds } from "../useGetColumnData";
 import { useGetLiveData } from "../useGetLiveData";
@@ -36,8 +35,6 @@ export function BoxPlot({
   const [tooltip, setTooltip] = useState<ReactNode>(null);
   const updateChart = useDataLayer((s) => s.updateChart);
   const { getColorForValue } = useColorScales();
-  const registerAxisLimits = useFacetAxis((s) => s.registerAxisLimits);
-  const getGlobalAxisLimits = useFacetAxis((s) => s.getGlobalAxisLimits);
 
   // Get all data for axis limits calculation
   const allData = useGetColumnDataForIds(settings.field);
@@ -80,47 +77,24 @@ export function BoxPlot({
       return result;
     }
 
-    const groups = new Map<string | number, number[]>();
+    const groups = new Map<datum, number[]>();
 
     liveData.forEach((value, index) => {
-      const colorValue = colorFieldData[index];
+      const colorValue = categoryValue(colorFieldData[index]);
       const numValue = Number(value);
-
-      if (colorValue === undefined || colorValue === null) {
-        return;
-      }
 
       if (value == null || value === "" || !Number.isFinite(numValue)) {
         return;
       }
 
-      if (typeof colorValue === "string" || typeof colorValue === "number") {
-        if (!groups.has(colorValue)) {
-          groups.set(colorValue, []);
-        }
-        groups.get(colorValue)?.push(numValue);
-      }
+      if (!groups.has(colorValue)) groups.set(colorValue, []);
+      groups.get(colorValue)!.push(numValue);
     });
 
     const result = Array.from(groups.entries()).map(([group, data]) => ({
       group,
       data,
     }));
-
-    // If we have no valid groups but we do have data, fall back to single group
-    if (result.length === 0 && liveData.length > 0) {
-      const validData = liveData
-        .filter((value) => value != null && value !== "")
-        .map(Number)
-        .filter(Number.isFinite);
-
-      return [
-        {
-          group: "All Data",
-          data: validData,
-        },
-      ];
-    }
 
     return result;
   }, [liveData, colorFieldData, hasColorField]);
@@ -170,7 +144,7 @@ export function BoxPlot({
   // Create scales
   const xScale = useMemo(() => {
     const groups = settings.colorField
-      ? [...new Set(allGroupData.filter((value) => value != null).map(String))]
+      ? [...new Set(allGroupData.map(categoryLabel))]
       : ["All Data"];
 
     const medians = new Map<string, number>();
@@ -180,7 +154,7 @@ export function BoxPlot({
         if (value == null || value === "" || !Number.isFinite(Number(value)))
           return;
         const group = settings.colorField
-          ? String(allGroupData[index])
+          ? categoryLabel(allGroupData[index])
           : "All Data";
         if (!values.has(group)) values.set(group, []);
         values.get(group)!.push(Number(value));
@@ -239,9 +213,6 @@ export function BoxPlot({
     });
   }, [groupedData, settings.beeSwarmOverlay, xScale]);
 
-  // Get global axis limits if in a facet
-  const globalYLimits = facetIds ? getGlobalAxisLimits("y") : null;
-
   // Create y scale with synchronized limits if in a facet
   const yScale = useMemo(() => {
     const values = allData
@@ -253,52 +224,15 @@ export function BoxPlot({
     const range = max - min;
     const padding = range * Y_SCALE_PADDING;
 
-    const globalMin =
-      globalYLimits?.type === "numerical" ? globalYLimits.min : min - padding;
-    const globalMax =
-      globalYLimits?.type === "numerical" ? globalYLimits.max : max + padding;
-
     const scale = numericScale(settings.yAxis)
       .domain([
-        settings.yAxis.scaleType === "symlog" ? min : globalMin,
-        globalMax,
+        settings.yAxis.scaleType === "symlog" ? min : min - padding,
+        max + padding,
       ])
       .range([innerHeight, 0]);
 
     return scale;
-  }, [allData, innerHeight, globalYLimits, settings.yAxis]) as ScaleLinear<
-    number,
-    number
-  >;
-
-  // Register axis limits with the facet context
-  useEffect(() => {
-    if (facetIds && allData.length > 0) {
-      registerAxisLimits(settings.id, "y", {
-        type: "numerical",
-        min: yScale.domain()[0] ?? 0,
-        max: yScale.domain()[1] ?? 0,
-      });
-
-      if (settings.colorField) {
-        registerAxisLimits(settings.id, "x", {
-          type: "categorical",
-          categories: new Set(
-            groupedData.map((g) => g.group?.toString() ?? "")
-          ),
-        });
-      }
-    }
-  }, [
-    settings.id,
-    settings.colorField,
-    facetIds,
-    allData,
-    groupStats,
-    registerAxisLimits,
-    yScale,
-    groupedData,
-  ]);
+  }, [allData, innerHeight, settings.yAxis]) as ScaleLinear<number, number>;
 
   const activeFilter = useMemo(() => {
     return settings.filters.find(
@@ -307,7 +241,7 @@ export function BoxPlot({
   }, [settings.filters, settings.colorField]);
 
   const handleBoxClick = useCallback(
-    (group: string | number) => {
+    (group: datum) => {
       if (!settings.colorField) {
         return;
       }
@@ -315,8 +249,10 @@ export function BoxPlot({
       let newValues: datum[] = [];
       if (activeFilter && activeFilter.type === "value") {
         // If group is already in filter, remove it
-        if (activeFilter.values.includes(group)) {
-          newValues = activeFilter.values.filter((v) => v !== group);
+        if (categoryIncludes(activeFilter.values, group)) {
+          newValues = activeFilter.values.filter(
+            (v) => !categoryEqual(v, group)
+          );
         } else {
           // Add group to existing filter
           newValues = [...activeFilter.values, group];
@@ -352,7 +288,7 @@ export function BoxPlot({
 
   // Helper function to check if a group matches the current filter
   const isGroupFiltered = useCallback(
-    (group: string | number) => {
+    (group: datum) => {
       if (!settings.colorField) {
         return true;
       }
@@ -401,7 +337,7 @@ export function BoxPlot({
                   settings.styles.boxFill
                 )
               : "rgb(156 163 175)";
-            const xPos = xScale(group?.toString() ?? "") ?? 0;
+            const xPos = xScale(categoryLabel(group)) ?? 0;
             const boxWidth = xScale.bandwidth();
 
             // Get KDE for this group if violin overlay is enabled
@@ -419,7 +355,7 @@ export function BoxPlot({
             const boxTooltipContent = (
               <div>
                 <p className="font-medium">
-                  {group?.toString() ?? "All Data"}{" "}
+                  {categoryLabel(group)}{" "}
                   <span className="font-normal text-muted-foreground">
                     · {stats.totalCount} rows
                   </span>
@@ -444,7 +380,7 @@ export function BoxPlot({
             );
             const whiskerTooltipContent = (
               <div>
-                <p className="font-medium">{group?.toString() ?? "All Data"}</p>
+                <p className="font-medium">{categoryLabel(group)}</p>
                 <p>
                   Whiskers {format(stats.whiskerLow)}–
                   {format(stats.whiskerHigh)}
@@ -453,10 +389,7 @@ export function BoxPlot({
             );
 
             return (
-              <g
-                key={group?.toString() ?? "default"}
-                transform={`translate(${xPos}, 0)`}
-              >
+              <g key={categoryLabel(group)} transform={`translate(${xPos}, 0)`}>
                 {/* Whiskers */}
                 <line
                   onPointerEnter={() => setTooltip(whiskerTooltipContent)}
@@ -481,7 +414,7 @@ export function BoxPlot({
                   aria-label={`${group}: median ${stats.median.toFixed(2)}, ${stats.totalCount} records`}
                   aria-pressed={
                     activeFilter?.type === "value"
-                      ? activeFilter.values.includes(group)
+                      ? categoryIncludes(activeFilter.values, group)
                       : false
                   }
                   onKeyDown={(event) => {

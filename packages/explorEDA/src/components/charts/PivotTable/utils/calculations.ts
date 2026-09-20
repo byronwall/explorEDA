@@ -1,3 +1,4 @@
+import { categoryLabel } from "@/lib/categories";
 import { datum } from "@/types/FilterTypes";
 import { PivotCell, PivotHeader, PivotRow, PivotTableData } from "../types";
 import { PivotTableSettings } from "../definition";
@@ -121,7 +122,7 @@ function generateHeaders(data: Row[], field: string): PivotHeader[] {
   const values = Array.from(uniqueValues).sort();
 
   return values.map((value) => ({
-    label: String(value),
+    label: categoryLabel(value),
     field,
     value,
     children: [],
@@ -216,7 +217,7 @@ function generateRows(
     });
 
     const headers = keys.map((key, index) => ({
-      label: String(key.value),
+      label: categoryLabel(key.value),
       field: key.field,
       value: key.value,
       span: 1,

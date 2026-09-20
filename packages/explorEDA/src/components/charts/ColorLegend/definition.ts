@@ -1,3 +1,4 @@
+import { categoryKey } from "@/lib/categories";
 import { BaseChartSettings, ChartDefinition } from "@/types/ChartTypes";
 import { ValueFilter } from "@/types/FilterTypes";
 import { Palette } from "lucide-react";
@@ -58,11 +59,11 @@ export const colorLegendDefinition: ChartDefinition<ColorLegendSettings> = {
         values: new Set(
           filters
             .filter((filter) => filter.field === field)
-            .flatMap((filter) => filter.values.map(String))
+            .flatMap((filter) => filter.values.map(categoryKey))
         ),
       })
     );
     return (id) =>
-      groups.every(({ data, values }) => values.has(String(data[id])));
+      groups.every(({ data, values }) => values.has(categoryKey(data[id])));
   },
 };

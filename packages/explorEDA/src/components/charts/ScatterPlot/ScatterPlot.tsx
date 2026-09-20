@@ -4,7 +4,6 @@ import { applyFilter } from "@/hooks/applyFilter";
 import { getRangeFilterForField } from "@/hooks/getAxisFilter";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import { useFacetAxis } from "@/providers/FacetAxisProvider";
 import { BaseChartProps } from "@/types/ChartTypes";
 import { ScaleLinear, scaleLinear } from "d3-scale";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -30,12 +29,10 @@ export function ScatterPlot({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const updateChart = useDataLayer((s) => s.updateChart);
   const { getColorForValue } = useColorScales();
-  const registerAxisLimits = useFacetAxis((s) => s.registerAxisLimits);
-  const getGlobalAxisLimits = useFacetAxis((s) => s.getGlobalAxisLimits);
 
   // Get all data for axis limits calculation (not filtered by current selections)
-  const allXData = useGetColumnDataForIds(settings.xField, facetIds);
-  const allYData = useGetColumnDataForIds(settings.yField, facetIds);
+  const allXData = useGetColumnDataForIds(settings.xField);
+  const allYData = useGetColumnDataForIds(settings.yField);
 
   // Get filtered data for rendering
   const xData = useGetLiveData(settings, settings.xField, facetIds);
@@ -95,49 +92,7 @@ export function ScatterPlot({
   const bufferedYMin = yMin - yBuffer;
   const bufferedYMax = yMax + yBuffer;
 
-  // Register axis limits with the facet context if in a facet using requestAnimationFrame
-  useEffect(() => {
-    if (facetIds && allXData.length > 0) {
-      // Register x-axis limits
-      registerAxisLimits(settings.id, "x", {
-        type: "numerical",
-        min: xMin,
-        max: xMax,
-      });
-
-      // Register y-axis limits
-      registerAxisLimits(settings.id, "y", {
-        type: "numerical",
-        min: yMin,
-        max: yMax,
-      });
-    }
-  }, [
-    settings.id,
-    facetIds,
-    allXData,
-    allYData,
-    xMin,
-    xMax,
-    yMin,
-    yMax,
-    registerAxisLimits,
-  ]);
-
-  // Get global axis limits if in a facet
-  const globalXLimits = facetIds ? getGlobalAxisLimits("x") : null;
-  const globalYLimits = facetIds ? getGlobalAxisLimits("y") : null;
-  const yDomain: [number, number] =
-    globalYLimits && globalYLimits.type === "numerical" && facetIds
-      ? (() => {
-          const globalRange = globalYLimits.max - globalYLimits.min;
-          const globalBuffer = globalRange * AXIS_BUFFER_PERCENTAGE;
-          return [
-            globalYLimits.min - globalBuffer,
-            globalYLimits.max + globalBuffer,
-          ];
-        })()
-      : [bufferedYMin, bufferedYMax];
+  const yDomain: [number, number] = [bufferedYMin, bufferedYMax];
   const requestedLabelMargin = Math.max(
     settings.margin.left,
     ...scaleLinear()
@@ -163,19 +118,6 @@ export function ScatterPlot({
 
   // Create scales for BaseChart with synchronized limits if in a facet
   const xScale = useMemo(() => {
-    if (globalXLimits && globalXLimits.type === "numerical" && facetIds) {
-      // Apply buffer to global limits
-      const globalRange = globalXLimits.max - globalXLimits.min;
-      const globalBuffer = globalRange * AXIS_BUFFER_PERCENTAGE;
-
-      return numericScale(settings.xAxis)
-        .domain([
-          globalXLimits.min - globalBuffer,
-          globalXLimits.max + globalBuffer,
-        ])
-        .range([0, innerWidth]);
-    }
-
     return numericScale(settings.xAxis)
       .domain([
         settings.xAxis.scaleType === "symlog" ? xMin : bufferedXMin,
@@ -188,8 +130,6 @@ export function ScatterPlot({
     bufferedXMin,
     bufferedXMax,
     width,
-    globalXLimits,
-    facetIds,
     innerWidth,
   ]) as ScaleLinear<number, number>;
 

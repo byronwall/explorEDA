@@ -1,13 +1,18 @@
+import {
+  categoryEqual,
+  categoryIncludes,
+  categoryLabel,
+  categoryValue,
+} from "@/lib/categories";
 import { numericScale } from "../Axis/numericScale";
 import { BaseChartProps, RowChartSettings } from "@/types/ChartTypes";
 
 import { useColorScales } from "@/hooks/useColorScales";
 import { applyFilter } from "@/hooks/applyFilter";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import { useFacetAxis } from "@/providers/FacetAxisProvider";
 import { datum, Filter, ValueFilter } from "@/types/FilterTypes";
 import { scaleBand } from "d3-scale";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useGetColumnDataForIds } from "../useGetColumnData";
 import { BaseChart } from "../BaseChart";
 import { useGetLiveData } from "../useGetLiveData";
@@ -15,12 +20,10 @@ import { useGetLiveData } from "../useGetLiveData";
 type RowChartProps = BaseChartProps<RowChartSettings>;
 
 export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
-  const allData = useGetColumnDataForIds(settings.field, facetIds);
+  const allData = useGetColumnDataForIds(settings.field);
   const data = useGetLiveData(settings, settings.field, facetIds);
 
   const { getColorForValue } = useColorScales();
-  const getGlobalAxisLimits = useFacetAxis((s) => s.getGlobalAxisLimits);
-  const registerAxisLimits = useFacetAxis((s) => s.registerAxisLimits);
 
   const updateChart = useDataLayer((s) => s.updateChart);
 
@@ -31,13 +34,8 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   const filterValues = valueFilter?.values ?? [];
 
   const handleBarClick = (label: datum) => {
-    if (label === "Others") {
-      // Don't allow filtering on "Others" category
-      return;
-    }
-
-    const newValues = filterValues.includes(label)
-      ? filterValues.filter((f) => f !== label)
+    const newValues = categoryIncludes(filterValues, label)
+      ? filterValues.filter((f) => !categoryEqual(f, label))
       : [...filterValues, label];
 
     // Create new filters array with updated value filter
@@ -65,13 +63,18 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   const { displayCounts } = useMemo(() => {
     const countMap = new Map<datum, number>();
     allData.forEach((value) => {
-      const key = value === undefined ? "undefined" : value;
+      const key = categoryValue(value);
       countMap.set(key, (countMap.get(key) || 0) + 1);
     });
 
     // Convert to array and sort by count descending
     const sortedCounts = Array.from(countMap.entries())
-      .map(([label, count]) => ({ label, count }))
+      .map(([value, count]) => ({
+        value,
+        label: categoryLabel(value),
+        count,
+        other: false,
+      }))
       .sort((a, b) => b.count - a.count);
 
     // Calculate how many rows we can fit based on min and max row height constraints
@@ -83,13 +86,13 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
     const maxRows = Math.max(2, Math.floor(availableHeight / rowHeight));
     const liveCounts = new Map<datum, number>();
     data.forEach((value) => {
-      const key = value === undefined ? "undefined" : value;
+      const key = categoryValue(value);
       liveCounts.set(key, (liveCounts.get(key) ?? 0) + 1);
     });
     const visible = sortedCounts.map((item) => ({
       ...item,
       total: item.count,
-      count: liveCounts.get(item.label) ?? 0,
+      count: liveCounts.get(item.value) ?? 0,
     }));
 
     // If we have more items than we can display, create an "Others" category
@@ -103,7 +106,9 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
         displayCounts: [
           ...visibleCounts,
           {
-            label: "Others",
+            label: "Other categories",
+            value: undefined,
+            other: true,
             count: otherSum,
             total: visible
               .slice(maxRows - 1)
@@ -126,28 +131,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
     settings.maxRowHeight,
   ]);
 
-  // Register axis limits with the facet context if in a facet
-  useEffect(() => {
-    if (facetIds && displayCounts.length > 0) {
-      // Register x-axis limits (numerical for row chart)
-      const maxValue = Math.max(1, ...displayCounts.map((d) => d.total));
-      registerAxisLimits(settings.id, "x", {
-        type: "numerical",
-        min: 0,
-        max: maxValue,
-      });
-    }
-  }, [settings.id, facetIds, displayCounts, registerAxisLimits]);
-
-  // Get global axis limits if in a facet
-  const globalXLimits = facetIds ? getGlobalAxisLimits("x") : null;
-  const globalYLimits = facetIds ? getGlobalAxisLimits("y") : null;
-
-  // Reserve room for the category labels before drawing the shared Y axis.
-  const yLabels =
-    globalYLimits?.type === "categorical"
-      ? Array.from(globalYLimits.categories)
-      : displayCounts.map((d) => String(d.label));
+  const yLabels = displayCounts.map((d) => d.label);
   const requestedLabelMargin = Math.max(
     baseMargin.left,
     ...yLabels.map((label) => label.length * 7 + 24)
@@ -172,33 +156,18 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   const xScale = useMemo(() => {
     const maxValue = Math.max(1, ...displayCounts.map((d) => d.total));
 
-    if (globalXLimits && globalXLimits.type === "numerical") {
-      return numericScale(settings.xAxis)
-        .domain([0, globalXLimits.max])
-        .range([0, innerWidth])
-        .nice();
-    }
-
     return numericScale(settings.xAxis)
       .domain([0, maxValue])
       .range([0, innerWidth])
       .nice();
-  }, [displayCounts, innerWidth, globalXLimits, settings.xAxis]);
+  }, [displayCounts, innerWidth, settings.xAxis]);
 
   const yScale = useMemo(() => {
-    if (globalYLimits && globalYLimits.type === "categorical") {
-      const allCategories = Array.from(globalYLimits.categories);
-      return scaleBand()
-        .domain(allCategories)
-        .range([0, innerHeight])
-        .padding(0.3);
-    }
-
     return scaleBand()
       .domain(displayCounts.map((d) => String(d.label)))
       .range([0, innerHeight])
       .padding(0.3);
-  }, [displayCounts, innerHeight, globalYLimits]);
+  }, [displayCounts, innerHeight]);
 
   if (displayCounts.length === 0) {
     return <div style={{ width, height }}>No data to display</div>;
@@ -233,20 +202,16 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
       >
         <g className="select-none">
           {/* Bars */}
-          {displayCounts.map(({ label, count }) => {
+          {displayCounts.map(({ label, value, count, other }) => {
             let isFiltered = true;
             if (valueFilter) {
-              isFiltered = applyFilter(label, valueFilter);
+              isFiltered = applyFilter(value, valueFilter);
             }
 
             const color =
               valueFilter && !isFiltered
                 ? "rgb(156 163 175)" // gray-400 for filtered out points
-                : getColorForValue(
-                    settings.colorScaleId,
-                    String(label),
-                    "#3479a8"
-                  );
+                : getColorForValue(settings.colorScaleId, value, "#3479a8");
 
             const barWidth = xScale(count);
             const barHeight = yScale.bandwidth();
@@ -262,27 +227,27 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
                 y={yScale(String(label))}
                 width={Math.max(0, barWidth)}
                 rx={2}
-                role={label === "Others" ? undefined : "button"}
-                tabIndex={label === "Others" ? undefined : 0}
+                role={other ? undefined : "button"}
+                tabIndex={other ? undefined : 0}
                 aria-label={`${label}: ${count.toLocaleString()} rows`}
-                aria-pressed={filterValues.includes(label)}
+                aria-pressed={categoryIncludes(filterValues, value)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault();
-                    handleBarClick(label);
+                    if (!other) handleBarClick(value);
                   }
                 }}
                 height={barHeight}
                 className={`chart-mark ${
-                  label === "Others"
-                    ? "fill-muted/80 hover:fill-muted"
-                    : "cursor-pointer"
+                  other ? "fill-muted/80 hover:fill-muted" : "cursor-pointer"
                 }`}
                 style={{
                   fill: color,
                   opacity: valueFilter && !isFiltered ? 0.3 : 1,
                 }}
-                onClick={() => handleBarClick(label)}
+                onClick={() => {
+                  if (!other) handleBarClick(value);
+                }}
               />
             );
           })}

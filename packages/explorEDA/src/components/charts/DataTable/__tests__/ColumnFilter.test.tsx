@@ -11,7 +11,11 @@ const profile = (overrides: Partial<FieldProfile> = {}): FieldProfile => ({
   nullCount: 0,
   categories: {
     topValues: [],
-    distribution: { John: 1, Jane: 1, Bob: 1 },
+    distribution: [
+      { value: "John", count: 1 },
+      { value: "Jane", count: 1 },
+      { value: "Bob", count: 1 },
+    ],
   },
   ...overrides,
 });
@@ -99,7 +103,10 @@ describe("ColumnFilter", () => {
           nullCount: 1,
           categories: {
             topValues: [],
-            distribution: { Adelie: 2, Gentoo: 1 },
+            distribution: [
+              { value: "Adelie", count: 2 },
+              { value: "Gentoo", count: 1 },
+            ],
           },
         })}
         onChange={onChange}

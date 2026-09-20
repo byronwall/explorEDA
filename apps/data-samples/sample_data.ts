@@ -339,6 +339,7 @@ const generators = {
 
   shop_operations: (rows: number) => {
     const headers = [
+      { id: "order", title: "Order" },
       { id: "order_date", title: "Order Date" },
       { id: "region", title: "Region" },
       { id: "channel", title: "Channel" },
@@ -393,6 +394,7 @@ const generators = {
         index % 61 === 0 ? null : 1 + Math.floor(random() * (returned ? 9 : 6));
 
       return {
+        order: index + 1,
         order_date: date.toISOString().slice(0, 10),
         region: regions[index % regions.length],
         channel: channels[index % channels.length],

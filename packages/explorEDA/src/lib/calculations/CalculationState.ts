@@ -1,249 +1,135 @@
-import { DatumObject, HasId } from "@/providers/DataLayerProvider";
-import { Calculator } from "./engine/Calculator";
-import { CalculationContext, CalculationValue, Expression } from "./types";
-import { datum } from "@/types/ChartTypes";
+import type { DatumObject, HasId } from "@/providers/DataLayerProvider";
+import type { datum } from "@/types/ChartTypes";
+import { Calculator, validateExpression } from "./engine/Calculator";
+import type { CalculationValue, Expression } from "./types";
 
 export interface CalculationDefinition {
   expression: Expression;
   resultColumnName: string;
 }
 
-export interface CalculationStateType {
-  calculations: CalculationDefinition[];
-  calculationResults: Map<string, Map<number, CalculationValue>>;
-  dependencyGraph: Map<string, Set<string>>;
-}
-
-export const createCalculationState = (): CalculationStateType => {
-  return {
-    calculations: [],
-    calculationResults: new Map(),
-    dependencyGraph: new Map(),
-  };
-};
-
 export class CalculationManager<T extends DatumObject> {
-  private calculator: Calculator | null = null;
-  private state: CalculationStateType;
+  private calculations: CalculationDefinition[] = [];
+  private results = new Map<string, Map<number, datum>>();
+  private errors = new Map<string, Map<number, string>>();
 
-  constructor(private data: (T & HasId)[]) {
-    this.state = createCalculationState();
+  constructor(
+    private data: (T & HasId)[],
+    calculations: CalculationDefinition[] = []
+  ) {
+    this.setCalculations(calculations);
   }
 
-  /**
-   * Add a new calculation definition
-   */
-  addCalculation(calculation: CalculationDefinition): Set<string> {
-    // Check if a calculation with this result column name already exists
-    const existingIndex = this.state.calculations.findIndex(
-      (calc) => calc.resultColumnName === calculation.resultColumnName
-    );
-
-    if (existingIndex !== -1) {
-      throw new Error(
-        `A calculation with result column name '${calculation.resultColumnName}' already exists`
-      );
+  setCalculations(calculations: CalculationDefinition[]): Set<string> {
+    const sourceFields = new Set(this.data.flatMap((row) => Object.keys(row)));
+    const names = calculations.map((calc) => calc.resultColumnName);
+    for (const name of names) {
+      if (!name.trim()) throw new Error("Enter a result column name");
+      if (
+        sourceFields.has(name) ||
+        names.filter((other) => other === name).length > 1
+      ) {
+        throw new Error(`Field already exists: ${name}`);
+      }
     }
-
-    this.state.calculations.push(calculation);
-    this.updateDependencyGraph(calculation);
-
-    // Execute the calculation and collect all affected columns
-    const affectedColumns = new Set<string>([calculation.resultColumnName]);
-
-    // Find all dependent calculations that were executed
-    const dependents = this.findDependents(calculation.resultColumnName);
-    for (const dependent of dependents) {
-      affectedColumns.add(dependent);
-    }
-
-    return affectedColumns;
-  }
-
-  /**
-   * Remove a calculation by result column name
-   */
-  removeCalculation(resultColumnName: string): Set<string> {
-    const affectedColumns = new Set<string>([resultColumnName]);
-    const dependents = this.findDependents(resultColumnName);
-    for (const dependent of dependents) {
-      affectedColumns.add(dependent);
-    }
-
-    this.state.calculations = this.state.calculations.filter(
-      (calc) => calc.resultColumnName !== resultColumnName
-    );
-    this.state.calculationResults.delete(resultColumnName);
-    this.state.dependencyGraph.delete(resultColumnName);
-
-    // Remove this calculation from other calculations' dependencies
-    for (const [, dependencies] of this.state.dependencyGraph.entries()) {
-      dependencies.delete(resultColumnName);
-    }
-
-    for (const columnName of dependents) {
-      this.state.calculationResults.delete(columnName);
-    }
-
-    return affectedColumns;
-  }
-
-  /**
-   * Get all calculation definitions
-   */
-  getCalculations(): CalculationDefinition[] {
-    return [...this.state.calculations];
-  }
-
-  getPreceedingCalculations(
-    calculation: CalculationDefinition
-  ): CalculationDefinition[] {
-    const precedents: CalculationDefinition[] = [];
+    const fields = [...sourceFields, ...names];
+    const visiting = new Set<string>();
     const visited = new Set<string>();
-    const visit = (resultColumnName: string) => {
-      if (visited.has(resultColumnName)) {
-        return;
-      }
-      visited.add(resultColumnName);
-
-      for (const dependency of this.state.dependencyGraph.get(
-        resultColumnName
-      ) ?? []) {
-        visit(dependency);
-      }
-
-      const precedent = this.state.calculations.find(
-        (calc) => calc.resultColumnName === resultColumnName
-      );
-      if (precedent) {
-        precedents.push(precedent);
-      }
-    };
-
-    for (const dependency of this.state.dependencyGraph.get(
-      calculation.resultColumnName
-    ) ?? []) {
-      visit(dependency);
-    }
-
-    return precedents;
-  }
-
-  /**
-   * Execute a specific calculation
-   */
-  executeCalculation(calculation: CalculationDefinition): Map<number, datum> {
-    if (!this.calculator) {
-      this.initializeCalculator();
-    }
-
-    const precedents = this.getPreceedingCalculations(calculation);
-    for (const precedent of precedents) {
-      this.executeCalculation(precedent);
-    }
-
-    const resultMap = new Map<number, datum>();
-
-    // Execute the calculation for each row
-    for (const row of this.data) {
-      const context: CalculationContext = {
-        data: this.data,
-        variables: this.createVariablesForRow(row),
-      };
-
-      this.calculator = new Calculator(context);
-      const result = this.calculator.evaluate(calculation.expression);
-
-      if (result.success) {
-        resultMap.set(
-          row.__ID,
-          result.value instanceof Date || result.value === null
-            ? undefined
-            : result.value
+    const visit = (calc: CalculationDefinition) => {
+      const name = calc.resultColumnName;
+      if (visiting.has(name)) throw new Error(`Circular calculation: ${name}`);
+      if (visited.has(name)) return;
+      visiting.add(name);
+      validateExpression(calc.expression, fields);
+      for (const field of calc.expression.dependencies) {
+        const dependency = calculations.find(
+          (item) => item.resultColumnName === field
         );
-      } else {
-        resultMap.set(row.__ID, undefined);
+        if (dependency) visit(dependency);
       }
-    }
-
-    // Store the results
-    this.state.calculationResults.set(calculation.resultColumnName, resultMap);
-
-    return resultMap;
-  }
-
-  /**
-   * Find all calculations that depend on a given calculation
-   */
-  private findDependents(resultColumnName: string): Set<string> {
-    const dependents = new Set<string>();
-
-    // Find calculations that directly depend on this calculation's result column
-    for (const [
-      calcName,
-      dependencies,
-    ] of this.state.dependencyGraph.entries()) {
-      // Check if this calculation depends on the target calculation
-      if (dependencies.has(resultColumnName)) {
-        dependents.add(calcName);
-
-        // Recursively find dependents of this dependent
-        const nestedDependents = this.findDependents(calcName);
-        for (const nestedName of nestedDependents) {
-          dependents.add(nestedName);
-        }
-      }
-    }
-
-    return dependents;
-  }
-
-  /**
-   * Update the dependency graph for a calculation
-   */
-  private updateDependencyGraph(calculation: CalculationDefinition): void {
-    // Extract variable dependencies from the expression
-    const dependencies = new Set<string>(calculation.expression.dependencies);
-
-    // Update the dependency graph
-    this.state.dependencyGraph.set(calculation.resultColumnName, dependencies);
-  }
-
-  /**
-   * Initialize the calculator with current data
-   */
-  private initializeCalculator(): void {
-    const context: CalculationContext = {
-      data: this.data,
-      variables: new Map(),
+      visiting.delete(name);
+      visited.add(name);
     };
-
-    this.calculator = new Calculator(context);
+    calculations.forEach(visit);
+    const affected = new Set([
+      ...this.calculations.map((calc) => calc.resultColumnName),
+      ...names,
+    ]);
+    // ponytail: edits clear all calculated results; invalidate dependents only if edit latency warrants it.
+    this.calculations = [...calculations];
+    this.results.clear();
+    this.errors.clear();
+    return affected;
   }
 
-  /**
-   * Create variables map for a specific row
-   */
-  private createVariablesForRow(row: T & HasId): Map<string, CalculationValue> {
-    const variables = new Map<string, CalculationValue>();
+  addCalculation(calculation: CalculationDefinition): Set<string> {
+    return this.setCalculations([...this.calculations, calculation]);
+  }
 
-    // Add all row fields as variables
-    for (const [key, value] of Object.entries(row)) {
-      if (key !== "__ID") {
-        variables.set(key, value);
-      }
+  updateCalculation(
+    name: string,
+    calculation: CalculationDefinition
+  ): Set<string> {
+    if (!this.calculations.some((calc) => calc.resultColumnName === name)) {
+      throw new Error(`Unknown calculation: ${name}`);
     }
+    return this.setCalculations(
+      this.calculations.map((calc) =>
+        calc.resultColumnName === name ? calculation : calc
+      )
+    );
+  }
 
-    // Add results from already calculated fields
-    for (const calculation of this.state.calculations) {
-      const results = this.state.calculationResults.get(
-        calculation.resultColumnName
+  removeCalculation(name: string): Set<string> {
+    return this.setCalculations(
+      this.calculations.filter((calc) => calc.resultColumnName !== name)
+    );
+  }
+
+  getCalculations(): CalculationDefinition[] {
+    return [...this.calculations];
+  }
+
+  getErrors(name: string): Map<number, string> {
+    const calculation = this.calculations.find(
+      (calc) => calc.resultColumnName === name
+    );
+    if (calculation) this.executeCalculation(calculation);
+    return this.errors.get(name) ?? new Map();
+  }
+
+  executeCalculation(calculation: CalculationDefinition): Map<number, datum> {
+    const name = calculation.resultColumnName;
+    const cached = this.results.get(name);
+    if (cached) return cached;
+    for (const field of calculation.expression.dependencies) {
+      const dependency = this.calculations.find(
+        (calc) => calc.resultColumnName === field
       );
-      if (results && results.has(row.__ID)) {
-        variables.set(calculation.resultColumnName, results.get(row.__ID));
-      }
+      if (dependency) this.executeCalculation(dependency);
     }
-
-    return variables;
+    const values = new Map<number, datum>();
+    const errors = new Map<number, string>();
+    for (const row of this.data) {
+      const variables = new Map<string, CalculationValue>(Object.entries(row));
+      for (const field of calculation.expression.dependencies) {
+        const results = this.results.get(field);
+        variables.set(field, results ? results.get(row.__ID) : row[field]);
+      }
+      const result = new Calculator({ data: this.data, variables }).evaluate(
+        calculation.expression
+      );
+      values.set(
+        row.__ID,
+        result.success && !(result.value instanceof Date)
+          ? (result.value ?? undefined)
+          : undefined
+      );
+      if (!result.success)
+        errors.set(row.__ID, result.error ?? "Calculation failed");
+    }
+    this.results.set(name, values);
+    this.errors.set(name, errors);
+    return values;
   }
 }

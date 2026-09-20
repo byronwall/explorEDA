@@ -1,3 +1,4 @@
+import { categoryLabel } from "@/lib/categories";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
@@ -25,7 +26,7 @@ function assertNever(value: never): never {
 function formatFilterLabel(filter: Filter): string {
   switch (filter.type) {
     case "value":
-      return `${filter.field}: ${filter.values.map(displayValue).join(", ")}`;
+      return `${filter.field}: ${filter.values.map(categoryLabel).join(", ")}`;
     case "range":
     case "date-range":
       if (filter.min !== undefined && filter.max !== undefined) {
@@ -70,11 +71,12 @@ function getActiveFilters(charts: ChartSettings[]) {
 export function ActiveFilterStatus() {
   const charts = useDataLayer((state) => state.charts);
   const data = useDataLayer((state) => state.data);
-  const crossfilterWrapper = useDataLayer((state) => state.crossfilterWrapper);
+  const remainingRows = useDataLayer((state) =>
+    state.crossfilterWrapper.getFilteredRowCount()
+  );
   const updateChart = useDataLayer((state) => state.updateChart);
   const clearAllFilters = useDataLayer((state) => state.clearAllFilters);
   const activeFilters = getActiveFilters(charts);
-  const remainingRows = crossfilterWrapper.getFilteredRowCount();
 
   return (
     <section
@@ -92,7 +94,7 @@ export function ActiveFilterStatus() {
       </p>
       {activeFilters.length === 0 && (
         <span className="ml-auto hidden whitespace-nowrap text-xs text-muted-foreground sm:inline">
-          Linked views · select in any chart to explore
+          Table searches and Rows filters apply locally
         </span>
       )}
       {activeFilters.length > 0 && (
@@ -127,18 +129,19 @@ export function ActiveFilterStatus() {
               );
             })}
           </ul>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="ml-auto shrink-0"
-            onClick={clearAllFilters}
-          >
-            <FilterX aria-hidden="true" />
-            Clear all filters
-          </Button>
         </>
       )}
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        className="ml-auto shrink-0"
+        title="Clear chart filters, all table searches, and Rows filters"
+        onClick={clearAllFilters}
+      >
+        <FilterX aria-hidden="true" />
+        Clear all filters
+      </Button>
     </section>
   );
 }

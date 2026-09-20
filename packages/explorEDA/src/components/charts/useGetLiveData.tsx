@@ -1,5 +1,5 @@
 import { IdType, useDataLayer } from "@/providers/DataLayerProvider";
-import { ChartSettings, datum } from "@/types/ChartTypes";
+import { ChartSettings } from "@/types/ChartTypes";
 import { useMemo } from "react";
 import { useGetColumnDataForIds } from "./useGetColumnData";
 
@@ -48,12 +48,9 @@ export function useGetLiveIds(settings: ChartSettings) {
 }
 
 export function useGetAllIds() {
-  const getColumnData = useDataLayer((s) => s.getColumnData);
+  const data = useDataLayer((s) => s.data);
 
-  const allIds = useMemo(() => {
-    const data = getColumnData("__ID") as Record<IdType, datum>;
-    return Object.values(data) as IdType[];
-  }, [getColumnData]);
+  const allIds = useMemo(() => data.map((row) => row.__ID), [data]);
 
   return allIds;
 }

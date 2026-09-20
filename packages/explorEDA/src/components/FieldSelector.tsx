@@ -1,3 +1,4 @@
+import { CalculatedFieldBadge } from "./calculations/CalculatedFieldBadge";
 import { Button } from "@/components/ui/button";
 import { ComboBox } from "./ComboBox";
 import { Label } from "./ui/label";
@@ -21,6 +22,7 @@ export function FieldSelector({
 }: FieldSelectorProps) {
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
   const availableFields = getColumnNames();
+  const calculations = useDataLayer((state) => state.calculations);
 
   const fieldOptions = availableFields.map((field) => ({
     value: field,
@@ -32,12 +34,30 @@ export function FieldSelector({
   return (
     <div className="flex gap-2 items-center">
       <div className="flex-1">
-        <Label htmlFor={label}>{label}</Label>
+        <div className="flex items-center gap-2">
+          <Label htmlFor={label}>{label}</Label>
+          <CalculatedFieldBadge field={value} />
+        </div>
         <ComboBox
           value={selectedOption}
           options={fieldOptions}
           onChange={(option) => onChange(option?.value || value)}
           optionToString={(option) => option.label}
+          optionToNode={(option) => (
+            <span>
+              {calculations.some(
+                (calc) => calc.resultColumnName === option.value
+              ) && (
+                <span
+                  className="eda-calc-symbol mr-2"
+                  aria-label="Calculated field"
+                >
+                  ƒx
+                </span>
+              )}
+              {option.label}
+            </span>
+          )}
           placeholder={placeholder}
         />
       </div>

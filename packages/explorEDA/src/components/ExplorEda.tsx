@@ -7,6 +7,7 @@ import { Toaster } from "./ui/sonner";
 import { GlobalAlertDialog } from "./GlobalAlertDialog";
 
 import "../index.css";
+import { CalculationEditorProvider } from "./calculations/CalculationEditor";
 
 registerAllCharts();
 
@@ -26,7 +27,9 @@ export function ExplorEda({
       onStateChange={onStateChange}
     >
       <div className="bg-background text-foreground">
-        <PlotManager />
+        <CalculationEditorProvider>
+          <PlotManager />
+        </CalculationEditorProvider>
         <GlobalAlertDialog />
         <Toaster />
       </div>

@@ -4,6 +4,7 @@ export default defineConfig({
   entry: {
     ExplorEda: "src/components/ExplorEda.tsx",
     core: "src/charts/registry.ts",
+    calculations: "src/lib/calculations/parser/semantics.ts",
     "charts/bar": "src/components/charts/BarChart/definition.ts",
     "charts/box-plot": "src/components/charts/BoxPlot/definition.ts",
     "charts/color-legend": "src/components/charts/ColorLegend/definition.ts",

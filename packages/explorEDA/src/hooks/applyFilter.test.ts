@@ -21,6 +21,19 @@ describe("applyFilter", () => {
     expect(applyFilter("b", filter)).toBe(false);
   });
 
+  it("uses SameValueZero for selected values while keeping missing values grouped", () => {
+    const filter = {
+      type: "value" as const,
+      field: "value",
+      values: [NaN, Infinity, 0, null],
+    };
+    expect(applyFilter(NaN, filter)).toBe(true);
+    expect(applyFilter(Infinity, filter)).toBe(true);
+    expect(applyFilter(-Infinity, filter)).toBe(false);
+    expect(applyFilter(-0, filter)).toBe(true);
+    expect(applyFilter(undefined, filter)).toBe(true);
+  });
+
   it("applies text operators", () => {
     const filter = {
       type: "text" as const,
@@ -42,5 +55,7 @@ describe("applyFilter", () => {
     expect(applyFilter("2026-01-01T12:00:00Z", filter)).toBe(true);
     expect(applyFilter("2025-12-31T23:59:59Z", filter)).toBe(false);
     expect(applyFilter("not a date", filter)).toBe(false);
+    expect(applyFilter("2026-01-01T23:30:00", filter)).toBe(true);
+    expect(applyFilter("2026-01-02T00:30:00+02:00", filter)).toBe(true);
   });
 });

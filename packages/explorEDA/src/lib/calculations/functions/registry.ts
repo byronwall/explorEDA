@@ -1,287 +1,117 @@
-export interface FunctionDefinition {
-  name: string;
-  category: string;
-  description: string;
-  parameters: {
-    name: string;
-    type: string;
-    description: string;
-    optional?: boolean;
-  }[];
-  returnType: string;
-  implementation: (...args: never[]) => unknown;
-}
-
-export interface FunctionDocumentation {
-  name: string;
-  category: string;
-  description: string;
-  syntax: string;
-  examples: string[];
-  parameters: {
-    name: string;
-    type: string;
-    description: string;
-    optional?: boolean;
-  }[];
-  returnType: string;
-  notes?: string[];
-}
-
-// Function registry to store all available functions
-const functionRegistry = new Map<string, FunctionDefinition>();
-const functionDocs = new Map<string, FunctionDocumentation>();
-
-// Register a function with its implementation and documentation
-export function registerFunction(
-  definition: FunctionDefinition,
-  documentation: FunctionDocumentation
-) {
-  functionRegistry.set(definition.name, definition);
-  functionDocs.set(definition.name, documentation);
-}
-
-// Get a function implementation by name
-export function getFunction(name: string): FunctionDefinition | undefined {
-  return functionRegistry.get(name);
-}
-
-// Get function documentation by name
-export function getFunctionDocs(
-  name: string
-): FunctionDocumentation | undefined {
-  return functionDocs.get(name);
-}
-
-// Get all functions in a category
-export function getFunctionsByCategory(category: string): FunctionDefinition[] {
-  return Array.from(functionRegistry.values()).filter(
-    (func) => func.category === category
-  );
-}
-
-// Get all available categories
-export function getCategories(): string[] {
-  const categories = new Set<string>();
-  for (const func of functionRegistry.values()) {
-    categories.add(func.category);
-  }
-  return Array.from(categories);
-}
-
-// Register built-in functions
-function registerBuiltInFunctions() {
-  // Math functions
-  registerFunction(
-    {
-      name: "sum",
-      category: "math",
-      description: "Calculate the sum of a list of numbers",
-      parameters: [
-        {
-          name: "values",
-          type: "number[]",
-          description: "Array of numbers to sum",
-        },
-      ],
-      returnType: "number",
-      implementation: (...args: never[]) =>
-        (args[0] as unknown as CalculationValue[]).reduce<number>(
-          (a, b) => Number(a) + Number(b),
-          0
-        ),
-    },
-    {
-      name: "sum",
-      category: "math",
-      description: "Calculate the sum of a list of numbers",
-      syntax: "sum(values)",
-      examples: ["sum([1, 2, 3]) // Returns 6"],
-      parameters: [
-        {
-          name: "values",
-          type: "number[]",
-          description: "Array of numbers to sum",
-        },
-      ],
-      returnType: "number",
-    }
-  );
-
-  registerFunction(
-    {
-      name: "average",
-      category: "math",
-      description: "Calculate the arithmetic mean of a list of numbers",
-      parameters: [
-        {
-          name: "values",
-          type: "number[]",
-          description: "Array of numbers to average",
-        },
-      ],
-      returnType: "number",
-      implementation: (...args: never[]) => {
-        const numbers = args[0] as unknown as CalculationValue[];
-        return (
-          numbers.reduce<number>((a, b) => Number(a) + Number(b), 0) /
-          numbers.length
-        );
-      },
-    },
-    {
-      name: "average",
-      category: "math",
-      description: "Calculate the arithmetic mean of a list of numbers",
-      syntax: "average(values)",
-      examples: ["average([1, 2, 3]) // Returns 2"],
-      parameters: [
-        {
-          name: "values",
-          type: "number[]",
-          description: "Array of numbers to average",
-        },
-      ],
-      returnType: "number",
-    }
-  );
-
-  // Statistical functions
-  registerFunction(
-    {
-      name: "standardDeviation",
-      category: "statistics",
-      description: "Calculate the standard deviation of a list of numbers",
-      parameters: [
-        {
-          name: "values",
-          type: "number[]",
-          description: "Array of numbers",
-        },
-      ],
-      returnType: "number",
-      implementation: (...args: never[]) => {
-        const numbers = args[0] as unknown as CalculationValue[];
-        const avg =
-          numbers.reduce<number>((a, b) => Number(a) + Number(b), 0) /
-          numbers.length;
-        const squareDiffs = numbers.map((value) => {
-          const diff = Number(value) - avg;
-          return diff * diff;
-        });
-        const avgSquareDiff =
-          squareDiffs.reduce((a, b) => a + b, 0) / numbers.length;
-        return Math.sqrt(avgSquareDiff);
-      },
-    },
-    {
-      name: "standardDeviation",
-      category: "statistics",
-      description: "Calculate the standard deviation of a list of numbers",
-      syntax: "standardDeviation(values)",
-      examples: ["standardDeviation([1, 2, 3, 4, 5])"],
-      parameters: [
-        {
-          name: "values",
-          type: "number[]",
-          description: "Array of numbers",
-        },
-      ],
-      returnType: "number",
-    }
-  );
-
-  // Date functions
-  registerFunction(
-    {
-      name: "year",
-      category: "date",
-      description: "Extract the year from a date",
-      parameters: [
-        {
-          name: "date",
-          type: "Date",
-          description: "Date to extract year from",
-        },
-      ],
-      returnType: "number",
-      implementation: (date: Date) => date.getFullYear(),
-    },
-    {
-      name: "year",
-      category: "date",
-      description: "Extract the year from a date",
-      syntax: "year(date)",
-      examples: ['year(new Date("2024-01-01")) // Returns 2024'],
-      parameters: [
-        {
-          name: "date",
-          type: "Date",
-          description: "Date to extract year from",
-        },
-      ],
-      returnType: "number",
-    }
-  );
-
-  // String functions
-  registerFunction(
-    {
-      name: "concat",
-      category: "string",
-      description: "Concatenate multiple strings",
-      parameters: [
-        {
-          name: "strings",
-          type: "string[]",
-          description: "Array of strings to concatenate",
-        },
-        {
-          name: "separator",
-          type: "string",
-          description: "Optional separator between strings",
-          optional: true,
-        },
-      ],
-      returnType: "string",
-      implementation: (strings: string[], separator = "") =>
-        strings.join(separator),
-    },
-    {
-      name: "concat",
-      category: "string",
-      description: "Concatenate multiple strings",
-      syntax: "concat(strings, separator?)",
-      examples: [
-        'concat(["Hello", "World"]) // Returns "HelloWorld"',
-        'concat(["Hello", "World"], " ") // Returns "Hello World"',
-      ],
-      parameters: [
-        {
-          name: "strings",
-          type: "string[]",
-          description: "Array of strings to concatenate",
-        },
-        {
-          name: "separator",
-          type: "string",
-          description: "Optional separator between strings",
-          optional: true,
-        },
-      ],
-      returnType: "string",
-    }
-  );
-}
-
-// Initialize the registry with built-in functions
-registerBuiltInFunctions();
-
-export default {
-  registerFunction,
-  getFunction,
-  getFunctionDocs,
-  getFunctionsByCategory,
-  getCategories,
-};
+import { dateTimestamp } from "@/lib/dateTime";
+import { utcFormat } from "d3-time-format";
 import type { CalculationValue } from "../types";
+
+export function numericValue(value: CalculationValue): number {
+  if (value == null || value === "") throw new Error("Missing numeric value");
+  if (
+    (typeof value !== "number" && typeof value !== "string") ||
+    (typeof value === "string" && !value.trim()) ||
+    !Number.isFinite(Number(value))
+  ) {
+    throw new Error(`Invalid numeric value: ${String(value)}`);
+  }
+  return Number(value);
+}
+
+function dateValue(value: CalculationValue): Date {
+  const date =
+    value instanceof Date ? value : new Date(dateTimestamp(String(value)));
+  if (!Number.isFinite(date.getTime())) {
+    throw new Error(`Invalid date: ${String(value)}`);
+  }
+  return date;
+}
+
+interface CalculationFunction {
+  syntax: string;
+  description: string;
+  minArgs: number;
+  maxArgs?: number;
+  evaluate: (...args: CalculationValue[]) => CalculationValue;
+}
+
+// Functions operate on values within one row. Date results use UTC.
+export const calculationFunctions: Record<string, CalculationFunction> = {
+  sum: {
+    description: "Add values within this row.",
+    syntax: "sum(x, y, …)",
+    minArgs: 1,
+    evaluate: (...values) =>
+      values.reduce<number>((sum, value) => sum + numericValue(value), 0),
+  },
+  avg: {
+    description: "Average values within this row, not across rows.",
+    syntax: "avg(x, y, …)",
+    minArgs: 1,
+    evaluate: (...values) =>
+      values.reduce<number>((sum, value) => sum + numericValue(value), 0) /
+      values.length,
+  },
+  min: {
+    description: "Return the smallest supplied value.",
+    syntax: "min(x, y, …)",
+    minArgs: 1,
+    evaluate: (...values) => Math.min(...values.map(numericValue)),
+  },
+  max: {
+    description: "Return the largest supplied value.",
+    syntax: "max(x, y, …)",
+    minArgs: 1,
+    evaluate: (...values) => Math.max(...values.map(numericValue)),
+  },
+  count: {
+    description: "Count supplied arguments, including missing values.",
+    syntax: "count(x, y, …)",
+    minArgs: 0,
+    evaluate: (...values) => values.length,
+  },
+  formatdate: {
+    description: "Format a UTC date. Use %Y-%m for a month label.",
+    syntax: 'formatDate(date, "%Y-%m-%d")',
+    minArgs: 2,
+    maxArgs: 2,
+    evaluate: (value, format) => utcFormat(String(format))(dateValue(value)),
+  },
+  extractdatecomponent: {
+    description: "Extract a UTC year, month, day, quarter, or ISO week.",
+    syntax: 'extractDateComponent(date, "year")',
+    minArgs: 2,
+    maxArgs: 2,
+    evaluate: (value, component) => {
+      const date = dateValue(value);
+      switch (component) {
+        case "year":
+          return date.getUTCFullYear();
+        case "month":
+          return date.getUTCMonth() + 1;
+        case "day":
+          return date.getUTCDate();
+        case "quarter":
+          return Math.floor(date.getUTCMonth() / 3) + 1;
+        case "week":
+          return Number(utcFormat("%V")(date));
+        default:
+          throw new Error(`Unknown date component: ${String(component)}`);
+      }
+    },
+  },
+};
+
+export function getFunction(
+  name: string,
+  argumentCount: number
+): CalculationFunction {
+  const key = name.toLowerCase();
+  const fn = Object.hasOwn(calculationFunctions, key)
+    ? calculationFunctions[key]
+    : undefined;
+  if (!fn) throw new Error(`Unknown function: ${name}`);
+  if (
+    argumentCount < fn.minArgs ||
+    (fn.maxArgs !== undefined && argumentCount > fn.maxArgs)
+  ) {
+    throw new Error(`Invalid arguments. Use ${fn.syntax}`);
+  }
+  return fn;
+}

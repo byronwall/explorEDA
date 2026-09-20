@@ -290,10 +290,10 @@ export const coverageFeatures = [
     gaps: ["No example is the declared reference for table filtering."],
   },
   {
-    id: "table:paging",
-    label: "Table paging",
+    id: "table:virtualization",
+    label: "Virtual table scrolling",
     family: "Tables",
-    description: "Move through a bounded number of rows per page.",
+    description: "Scroll through rows while rendering only the visible range.",
     required: true,
     status: "supported",
   },
@@ -366,6 +366,37 @@ export type ExampleCoverage = {
 };
 
 export const exampleCoverage = [
+  {
+    exampleId: "calculated-orders",
+    intent:
+      "Trace chained calculations from source orders to contribution, dates, and service rules.",
+    features: {
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:scatter": "shown",
+      "chart:data-table": "shown",
+      "chart:line": "shown",
+      "chart:pivot": "shown",
+      "chart:markdown": "shown",
+      "facet:wrap": "shown",
+    },
+  },
+  {
+    exampleId: "shop-10000",
+    intent:
+      "Explore 10,000 orders through 15 linked views and comparable regional facets.",
+    features: {
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:scatter": "shown",
+      "chart:boxplot": "shown",
+      "chart:data-table": "shown",
+      "chart:line": "shown",
+      "facet:wrap": "shown",
+      "facet:shared-scales": "shown",
+      "layout:dashboard": "shown",
+    },
+  },
   {
     exampleId: "product-activity",
     intent:
@@ -448,7 +479,7 @@ export const exampleCoverage = [
       "chart:summary": "shown",
       "chart:data-table": "shown",
       "table:sorting": "shown",
-      "table:paging": "shown",
+      "table:virtualization": "shown",
     },
   },
   {

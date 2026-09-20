@@ -1,3 +1,9 @@
+import {
+  categoryEqual,
+  categoryIncludes,
+  categoryKey,
+  categoryValue,
+} from "@/lib/categories";
 import { useEffect, useMemo } from "react";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
@@ -35,8 +41,7 @@ export function ColorLegendChart({
         const values = getColumnData(field);
         const counts = new Map<string, number>();
         for (const id of ids) {
-          if (values[id] == null) continue;
-          const value = String(values[id]);
+          const value = categoryKey(values[id]);
           counts.set(value, (counts.get(value) ?? 0) + 1);
         }
         return [field, counts];
@@ -62,7 +67,7 @@ export function ColorLegendChart({
             (filter): filter is ValueFilter =>
               filter.type === "value" && filter.field === field
           )
-          .flatMap((filter) => filter.values.map(String));
+          .flatMap((filter) => filter.values.map(categoryValue));
         return (
           <section key={field} aria-label={field}>
             {settings.fields.length > 1 && (
@@ -75,11 +80,19 @@ export function ColorLegendChart({
               numericalBreakpoints={settings.numericalBreakpoints}
               getColorForValue={getColorForValue}
               counts={fieldCounts.get(field)!}
+              categories={[
+                ...new Map(
+                  Object.values(getColumnData(field)).map((value) => [
+                    categoryKey(value),
+                    categoryValue(value),
+                  ])
+                ).values(),
+              ]}
               countWidth={rowCount.toLocaleString().length}
               selected={selected}
               onToggle={(value) => {
-                const values = selected.includes(value)
-                  ? selected.filter((item) => item !== value)
+                const values = categoryIncludes(selected, value)
+                  ? selected.filter((item) => !categoryEqual(item, value))
                   : [...selected, value];
                 const filters = settings.filters.filter(
                   (filter) => filter.field !== field

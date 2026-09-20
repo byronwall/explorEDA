@@ -41,7 +41,12 @@
       "require": "./dist/charts/*.cjs",
       "import": "./dist/charts/*.js"
     },
-    "./dist/ExplorEda.css": "./dist/ExplorEda.css"
+    "./dist/ExplorEda.css": "./dist/ExplorEda.css",
+    "./calculations": {
+      "types": "./dist/calculations.d.ts",
+      "require": "./dist/calculations.cjs",
+      "import": "./dist/calculations.js"
+    }
   },
   "main": "./dist/ExplorEda.cjs",
   "module": "./dist/ExplorEda.js",

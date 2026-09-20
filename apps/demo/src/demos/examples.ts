@@ -1,12 +1,15 @@
 import {
   penguinDashboard,
   shopDashboard,
+  largeShopDashboard,
+  calculationDashboard,
   activityDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import { SavedDataStructure } from "exploreda";
 import {
   BarChart,
+  Calculator,
   Bird,
   Gamepad2,
   Globe,
@@ -38,6 +41,27 @@ export interface ExampleData {
 }
 
 export const examples: ExampleData[] = [
+  {
+    id: "calculated-orders",
+    title: "From orders to contribution",
+    dashboard: true,
+    recommended: true,
+    description:
+      "14 calculated fields across 10,000 synthetic orders. Inspect chains, preview a rule change, and apply it across linked views.",
+    icon: Calculator,
+    data: "/explorEDA/datasets/shop-10000.csv",
+    savedData: calculationDashboard,
+  },
+  {
+    id: "shop-10000",
+    title: "10,000 orders · 15 linked views",
+    dashboard: true,
+    description:
+      "Explore 16 fields across linked charts, tables, and regional facets. Deterministic synthetic orders.",
+    icon: ShoppingCart,
+    data: "/explorEDA/datasets/shop-10000.csv",
+    savedData: largeShopDashboard,
+  },
   {
     id: "product-activity",
     title: "90 days of product activity",

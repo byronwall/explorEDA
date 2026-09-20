@@ -253,48 +253,98 @@ describe("Calculator", () => {
       variables: new Map([["testDate", new Date("2024-03-15T12:30:00Z")]]),
     });
 
-      it("should format dates using D3 format library", async () => {
-        const expr = parseExpression('formatDate(testDate, "%Y-%m-%d")');
-        const result = await calculator.evaluate(expr);
-        expect(result.success).toBe(true);
-        expect(result.value).toBe("2024-03-15");
-      });
+    it("should format dates using D3 format library", async () => {
+      const expr = parseExpression('formatDate(testDate, "%Y-%m-%d")');
+      const result = await calculator.evaluate(expr);
+      expect(result.success).toBe(true);
+      expect(result.value).toBe("2024-03-15");
+    });
 
-      it("should extract year from date", async () => {
-        const expr = parseExpression('extractDateComponent(testDate, "year")');
-        const result = await calculator.evaluate(expr);
-        expect(result.success).toBe(true);
-        expect(result.value).toBe(2024);
-      });
+    it("should extract year from date", async () => {
+      const expr = parseExpression('extractDateComponent(testDate, "year")');
+      const result = await calculator.evaluate(expr);
+      expect(result.success).toBe(true);
+      expect(result.value).toBe(2024);
+    });
 
-      it("should extract month from date", async () => {
-        const expr = parseExpression('extractDateComponent(testDate, "month")');
-        const result = await calculator.evaluate(expr);
-        expect(result.success).toBe(true);
-        expect(result.value).toBe(3); // March
-      });
+    it("should extract month from date", async () => {
+      const expr = parseExpression('extractDateComponent(testDate, "month")');
+      const result = await calculator.evaluate(expr);
+      expect(result.success).toBe(true);
+      expect(result.value).toBe(3); // March
+    });
 
-      it("should extract day from date", async () => {
-        const expr = parseExpression('extractDateComponent(testDate, "day")');
-        const result = await calculator.evaluate(expr);
-        expect(result.success).toBe(true);
-        expect(result.value).toBe(15);
-      });
+    it("should extract day from date", async () => {
+      const expr = parseExpression('extractDateComponent(testDate, "day")');
+      const result = await calculator.evaluate(expr);
+      expect(result.success).toBe(true);
+      expect(result.value).toBe(15);
+    });
 
-      it("should extract quarter from date", async () => {
-        const expr = parseExpression(
-          'extractDateComponent(testDate, "quarter")'
-        );
-        const result = await calculator.evaluate(expr);
-        expect(result.success).toBe(true);
-        expect(result.value).toBe(1); // Q1
-      });
+    it("should extract quarter from date", async () => {
+      const expr = parseExpression('extractDateComponent(testDate, "quarter")');
+      const result = await calculator.evaluate(expr);
+      expect(result.success).toBe(true);
+      expect(result.value).toBe(1); // Q1
+    });
 
-      it("should extract week number from date", async () => {
-        const expr = parseExpression('extractDateComponent(testDate, "week")');
-        const result = await calculator.evaluate(expr);
-        expect(result.success).toBe(true);
-        expect(result.value).toBe(11); // Week 11 of 2024
+    it("should extract week number from date", async () => {
+      const expr = parseExpression('extractDateComponent(testDate, "week")');
+      const result = await calculator.evaluate(expr);
+      expect(result.success).toBe(true);
+      expect(result.value).toBe(11); // Week 11 of 2024
+    });
+  });
+});
+
+describe("calculation trust", () => {
+  it("evaluates conditional rules, quoted values, missing values, and UTC dates consistently", () => {
+    const calculator = new Calculator({
+      data: [],
+      variables: new Map<string, string | number | undefined>([
+        ["x", 3],
+        ["hello", 9],
+        ["missing", undefined],
+        ["offset", "2026-01-01T00:30:00+02:00"],
+        ["Order Date", "2026-01-01"],
+        ["Revenue Doubled", 12],
+        ["falsehood", 7],
+      ]),
+    });
+    for (const [input, value] of [
+      ["if x > 1 then max(x, 10) else 0", 10],
+      ["x >= 3 && x != 4", true],
+      ["true || false && false", true],
+      ["!true", false],
+      ['"hello"', "hello"],
+      ['"1"', "1"],
+      ['"1" == 1', false],
+      ['["Revenue Doubled"] / 2', 6],
+      ["falsehood + 1", 8],
+      ["false && 1 / 0 > 1", false],
+      ["missing == null ? 0 : missing * 2", 0],
+      ['formatDate("2026-01-01", "%Y-%m-%d")', "2026-01-01"],
+      ['formatDate("2026-01-01T23:30:00", "%Y-%m-%d %H")', "2026-01-01 23"],
+      ['extractDateComponent(offset, "year")', 2025],
+      ['extractDateComponent(["Order Date"], "year")', 2026],
+      ['extractDateComponent("2021-01-01", "week")', 53],
+    ] as const) {
+      expect(calculator.evaluate(parseExpression(input)), input).toEqual({
+        success: true,
+        value,
       });
+    }
+    for (const input of [
+      "missing * 2",
+      "1 / 0",
+      "avg()",
+      "sum(unknown)",
+      'formatDate("bad", "%Y")',
+      "10 ^ 1000",
+    ]) {
+      expect(calculator.evaluate(parseExpression(input)).success, input).toBe(
+        false
+      );
+    }
   });
 });

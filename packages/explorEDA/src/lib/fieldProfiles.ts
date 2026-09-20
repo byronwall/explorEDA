@@ -35,7 +35,7 @@ export function emptyFieldProfile(profile: FieldProfile): FieldProfile {
     nullCount: 0,
     statistics: undefined,
     categories: profile.categories
-      ? { topValues: [], distribution: {} }
+      ? { topValues: [], distribution: [] }
       : undefined,
   };
 }

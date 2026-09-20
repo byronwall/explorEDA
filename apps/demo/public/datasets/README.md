@@ -35,3 +35,22 @@ The fixture contains these fields:
 - fulfilled, returned, and delivery days
 
 Dates repeat through 2024 for visible seasonality. Units use a right-skewed distribution with two large orders. Discount and delivery days include blank values for null handling.
+
+## Shop Operations: 10,000 rows
+
+- File: `shop-10000.csv`
+- Size: 10,000 rows and 16 fields
+- Demo: `?example=shop-10000`
+- Layout: 15 panels, including one line panel with four regional facets
+- Use: formula edits, linked filters, local reset, table export, and shared facet domains
+
+This sample uses the same fixed-seed generator as Shop Operations. It adds the numeric `Order` sequence. The data is synthetic.
+
+Generate the file from the repository root:
+
+```sh
+pnpm --filter data-samples exec node --experimental-strip-types sample_data.ts --type shop_operations --size medium --output /tmp/exploreda-10000
+cp /tmp/exploreda-10000/shop-operations.csv apps/demo/public/datasets/shop-10000.csv
+```
+
+This is a representative workflow fixture, not a maximum-capacity claim.

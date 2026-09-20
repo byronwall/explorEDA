@@ -10,8 +10,8 @@ export interface NumericStatistics {
 }
 
 export interface CategoryStatistics {
-  topValues: Array<{ value: string; count: number }>;
-  distribution: Record<string, number>;
+  topValues: Array<{ value: datum; count: number }>;
+  distribution: Array<{ value: datum; count: number }>;
 }
 
 export interface ColumnStatistics {
@@ -93,14 +93,15 @@ export function calculateColumnStatistics(
     };
   } else {
     // For non-numeric types, calculate category statistics
-    const distribution: Record<string, number> = {};
-    nonNullValues.forEach((v) => {
-      const key = String(v);
-      distribution[key] = (distribution[key] || 0) + 1;
-    });
-
-    const topValues = Object.entries(distribution)
-      .map(([value, count]) => ({ value, count }))
+    const counts = new Map<datum, number>();
+    nonNullValues.forEach((value) =>
+      counts.set(value, (counts.get(value) ?? 0) + 1)
+    );
+    const distribution = [...counts].map(([value, count]) => ({
+      value,
+      count,
+    }));
+    const topValues = [...distribution]
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 

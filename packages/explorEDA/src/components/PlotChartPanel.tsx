@@ -1,6 +1,6 @@
+import { CalculatedFieldBadge } from "./calculations/CalculatedFieldBadge";
 import { createPortal } from "react-dom";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import { FacetAxisProvider } from "@/providers/FacetAxisProvider";
 import { ChartSettings } from "@/types/ChartTypes";
 import {
   Copy,
@@ -63,6 +63,13 @@ export function PlotChartPanel({
     settings.type
   );
   const dataFields = getChartFields(settings);
+  const calculations = useDataLayer((state) => state.calculations);
+  const calculatedFields = ["data-table", "summary"].includes(settings.type)
+    ? []
+    : dataFields.filter((field) =>
+        calculations.some((calc) => calc.resultColumnName === field)
+      );
+  const fieldStripHeight = calculatedFields.length ? 28 : 0;
 
   const handleViewData = () => {
     if (dataFields.length === 0) {
@@ -217,26 +224,34 @@ export function PlotChartPanel({
           </Popover>
         </div>
       </div>
+      {calculatedFields.length > 0 && (
+        <div
+          className="eda-calc-chart-fields"
+          aria-label="Calculated chart fields"
+        >
+          {calculatedFields.map((field) => (
+            <CalculatedFieldBadge key={field} field={field} showName />
+          ))}
+        </div>
+      )}
       <p id={descriptionId} className="sr-only">
         {chartSummary}
       </p>
       <div className="eda-chart-content min-h-0 flex-1">
-        <FacetAxisProvider>
-          {settings.facet?.enabled ? (
-            <FacetContainer
-              settings={settings}
-              width={Math.max(1, panelWidth - 24)}
-              height={Math.max(1, panelHeight - 58)}
-            />
-          ) : (
-            <ChartRenderer
-              settings={settings}
-              toolbarTarget={isTableLike ? toolbarTarget : undefined}
-              width={Math.max(1, panelWidth - 24)}
-              height={Math.max(1, panelHeight - 58)}
-            />
-          )}
-        </FacetAxisProvider>
+        {settings.facet?.enabled ? (
+          <FacetContainer
+            settings={settings}
+            width={Math.max(1, panelWidth - 24)}
+            height={Math.max(1, panelHeight - 58 - fieldStripHeight)}
+          />
+        ) : (
+          <ChartRenderer
+            settings={settings}
+            toolbarTarget={isTableLike ? toolbarTarget : undefined}
+            width={Math.max(1, panelWidth - 24)}
+            height={Math.max(1, panelHeight - 58 - fieldStripHeight)}
+          />
+        )}
       </div>
     </div>
   );

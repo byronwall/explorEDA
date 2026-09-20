@@ -26,6 +26,23 @@ export function DataTable({
   const data = useDataLayer((state) => state.data);
   const liveItems = useDataLayer((state) => state.getLiveItems(settings));
   const updateChart = useDataLayer((state) => state.updateChart);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
+  const calculations = useDataLayer((state) => state.calculations);
+  const nonce = useDataLayer((state) => state.nonce);
+  const resolvedRows = useMemo(() => {
+    const source = rows ?? data;
+    if (!calculations.length) return source;
+    const columns = calculations.map(
+      (calc) =>
+        [calc.resultColumnName, getColumnData(calc.resultColumnName)] as const
+    );
+    return source.map((row) => ({
+      ...row,
+      ...Object.fromEntries(
+        columns.map(([name, values]) => [name, values[row.__ID]])
+      ),
+    }));
+  }, [rows, data, calculations, getColumnData, nonce]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [scrollTop, setScrollTop] = useState(0);
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
@@ -35,7 +52,7 @@ export function DataTable({
   const filteredRows = useMemo(
     () =>
       getFilteredRows(
-        rows ?? data,
+        resolvedRows,
         rows
           ? {
               items: rows.map((row) => ({ key: row.__ID, value: 1 })),
@@ -44,7 +61,7 @@ export function DataTable({
           : liveItems,
         settings
       ),
-    [rows, data, liveItems, settings]
+    [resolvedRows, rows, liveItems, settings]
   );
 
   useEffect(() => {
@@ -64,6 +81,7 @@ export function DataTable({
       rows={filteredRows}
       onSettingsChange={update}
       compact={toolbarTarget !== undefined}
+      localFilters={rows !== undefined}
     />
   );
 

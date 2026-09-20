@@ -1,11 +1,11 @@
+import { dateTimestamp } from "@/lib/dateTime";
+import { categoryIncludes } from "@/lib/categories";
 import { datum, Filter } from "@/types/FilterTypes";
 
 export function applyFilter(value: datum, filter: Filter): boolean {
   switch (filter.type) {
     case "value":
-      return filter.values.some((filterValue) =>
-        filterValue === null ? value == null : filterValue === value
-      );
+      return categoryIncludes(filter.values, value);
     case "range":
       if (
         typeof value === "number" ||
@@ -43,18 +43,19 @@ export function applyFilter(value: datum, filter: Filter): boolean {
         return false;
       }
 
-      const timestamp = Date.parse(value);
+      const timestamp = dateTimestamp(value);
       if (Number.isNaN(timestamp)) {
         return false;
       }
 
-      const min = filter.min === undefined ? undefined : Date.parse(filter.min);
+      const min =
+        filter.min === undefined ? undefined : dateTimestamp(filter.min);
       const max =
         filter.max === undefined
           ? undefined
           : filter.max.length === 10
-            ? Date.parse(`${filter.max}T23:59:59.999Z`)
-            : Date.parse(filter.max);
+            ? dateTimestamp(`${filter.max}T23:59:59.999Z`)
+            : dateTimestamp(filter.max);
 
       return (
         (min === undefined || (!Number.isNaN(min) && timestamp >= min)) &&

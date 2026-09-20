@@ -1,3 +1,4 @@
+import { categoryLabel } from "@/lib/categories";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import {
   CategoricalColorScale,
@@ -103,7 +104,7 @@ export function useColorScales(): UseColorScalesReturn {
         if (scale.type === "numerical") {
           return (d3Scale as ScaleSequential<string>)(Number(value));
         }
-        return (d3Scale as ScaleOrdinal<string, string>)(String(value));
+        return (d3Scale as ScaleOrdinal<string, string>)(categoryLabel(value));
       } catch {
         return "#000000";
       }
@@ -173,7 +174,9 @@ export function useColorScales(): UseColorScalesReturn {
     const cleanValues = values.filter((v): v is string | number => v != null);
 
     // Check if values are numerical
-    const isNumerical = cleanValues.every((v) => !isNaN(Number(v)));
+    const isNumerical =
+      cleanValues.length > 0 &&
+      cleanValues.every((v) => typeof v === "number" && Number.isFinite(v));
 
     let newScale: ColorScaleType;
     if (isNumerical) {
@@ -182,7 +185,7 @@ export function useColorScales(): UseColorScalesReturn {
       const max = Math.max(...numericValues);
       newScale = createDefaultNumericalScale(name ?? field, min, max);
     } else {
-      const uniqueValues = Array.from(new Set(cleanValues.map(String)));
+      const uniqueValues = Array.from(new Set(values.map(categoryLabel)));
       newScale = createDefaultCategoricalScale(name ?? field, uniqueValues);
     }
 

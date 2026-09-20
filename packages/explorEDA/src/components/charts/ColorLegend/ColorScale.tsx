@@ -1,3 +1,4 @@
+import { categoryIncludes, categoryKey, categoryLabel } from "@/lib/categories";
 import { ColorScaleType } from "@/types/ColorScaleTypes";
 import { datum } from "@/types/ChartTypes";
 
@@ -9,8 +10,9 @@ interface ColorScaleProps {
   getColorForValue: (scaleId: string, value: datum) => string;
   counts: Map<string, number>;
   countWidth: number;
-  selected: string[];
-  onToggle: (value: string) => void;
+  categories: datum[];
+  selected: datum[];
+  onToggle: (value: datum) => void;
 }
 
 export function ColorScale({
@@ -22,6 +24,7 @@ export function ColorScale({
   counts,
   countWidth,
   selected,
+  categories,
   onToggle,
 }: ColorScaleProps) {
   if (scale.type === "numerical") {
@@ -63,18 +66,18 @@ export function ColorScale({
 
   return (
     <div className={`eda-legend-items ${wrap ? "is-wrapped" : ""}`}>
-      {Array.from(scale.mapping.keys()).map((value) => {
-        const active = selected.includes(value);
-        const count = counts.get(value) ?? 0;
+      {categories.map((value) => {
+        const active = categoryIncludes(selected, value);
+        const count = counts.get(categoryKey(value)) ?? 0;
         return (
           <button
-            key={value}
+            key={categoryKey(value)}
             type="button"
             className="eda-legend-item"
-            aria-label={`Filter ${scale.name} by ${value || "(blank)"}, ${count.toLocaleString()} rows`}
+            aria-label={`Filter ${scale.name} by ${categoryLabel(value)}, ${count.toLocaleString()} rows`}
             aria-pressed={active}
             data-dimmed={(selected.length > 0 && !active) || count === 0}
-            title={`${value || "(blank)"} · ${count.toLocaleString()} rows · Click to ${active ? "remove" : "add"} filter`}
+            title={`${categoryLabel(value)} · ${count.toLocaleString()} rows · Click to ${active ? "remove" : "add"} filter`}
             onClick={() => onToggle(value)}
           >
             <span
@@ -82,7 +85,7 @@ export function ColorScale({
               style={{ background: getColorForValue(scale.id, value) }}
               aria-hidden="true"
             />
-            <span className="eda-legend-value">{value || "(blank)"}</span>
+            <span className="eda-legend-value">{categoryLabel(value)}</span>
             <span
               className="eda-legend-count"
               style={{ width: `${countWidth}ch` }}

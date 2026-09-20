@@ -1,3 +1,5 @@
+// @ts-expect-error The demo uses legacy module resolution; runtime resolves the package export.
+import { parseExpression } from "exploreda/calculations";
 import type { SavedDataStructure } from "exploreda";
 
 type Chart = SavedDataStructure["charts"][number];
@@ -69,7 +71,7 @@ const scatter = (
   labels: [string, string],
   colorField?: string,
   colorScaleId?: string
-): Chart => ({
+): Extract<Chart, { type: "scatter" }> => ({
   ...base,
   id,
   type: "scatter",
@@ -141,7 +143,7 @@ const line = (
   fields: string[],
   position: ReturnType<typeof layout>,
   label: string
-): Chart => ({
+): Extract<Chart, { type: "line" }> => ({
   ...base,
   id,
   type: "line",
@@ -425,3 +427,222 @@ for (const chart of shopDashboard.charts) {
     chart.yAxisLabel = "Revenue ($)";
   }
 }
+
+export const largeShopDashboard = dashboard(
+  "10,000 orders · 15 linked views",
+  [
+    ...shopDashboard.charts,
+    histogram("large-units", "Units per order", "Units", layout(0, 14, 4)),
+    histogram(
+      "large-discount",
+      "Discount distribution",
+      "Discount",
+      layout(4, 14, 4)
+    ),
+    row("large-returned", "Returned orders", "Returned", layout(8, 14, 4)),
+    scatter(
+      "large-volume",
+      "Units & revenue",
+      "Units",
+      "Revenue",
+      layout(0, 18, 6),
+      ["Units", "Revenue ($)"]
+    ),
+    scatter(
+      "large-cost",
+      "Revenue & cost",
+      "Revenue",
+      "Cost",
+      layout(6, 18, 6),
+      ["Revenue ($)", "Cost ($)"]
+    ),
+    box(
+      "large-margin",
+      "Margin by category",
+      "Margin",
+      "Category",
+      layout(0, 22, 6),
+      "category-colors",
+      "Margin ($)"
+    ),
+    row(
+      "large-segment",
+      "Customer segments",
+      "Customer Segment",
+      layout(6, 22, 6)
+    ),
+    {
+      ...line(
+        "large-trend",
+        "Order values by region",
+        ["Revenue"],
+        layout(0, 26, 12, 7),
+        "Revenue ($)"
+      ),
+      xField: "Order",
+      xAxisLabel: "Order sequence",
+      facet: {
+        enabled: true,
+        type: "wrap",
+        rowVariable: "Region",
+        columnCount: 2,
+      },
+    } as Chart,
+  ],
+  shopDashboard.colorScales
+);
+
+const orderCalculations = [
+  [
+    "Discount rate",
+    "min(0.25, max(0, if Discount == null then 0 else Discount))",
+  ],
+  ["Gross sales", 'Units * ["Unit Price"]'],
+  ["Discount amount", '["Gross sales"] * ["Discount rate"]'],
+  ["Net sales", '["Gross sales"] - ["Discount amount"]'],
+  ["Contribution", '["Net sales"] - Cost'],
+  [
+    "Contribution rate",
+    'if ["Net sales"] > 0 then ["Contribution"] / ["Net sales"] * 100 else 0',
+  ],
+  ["Sales per unit", '["Net sales"] / max(1, Units)'],
+  [
+    "Order band",
+    'if ["Net sales"] >= 500 then "Large" else if ["Net sales"] >= 100 then "Standard" else "Small"',
+  ],
+  [
+    "Service score",
+    '100 * avg(if Fulfilled then 1 else 0, if Returned then 0 else 1, if ["Delivery Days"] == null then 0 else if ["Delivery Days"] <= 5 then 1 else 0)',
+  ],
+  [
+    "Risk points",
+    'sum(if Returned then 10 else 0, if !Fulfilled then 5 else 0, if ["Delivery Days"] != null && ["Delivery Days"] > 7 then 2 else 0)',
+  ],
+  ["Needs review", '["Risk points"] >= 5 || ["Contribution"] < 0'],
+  ["Order month", 'formatDate(["Order Date"], "%Y-%m")'],
+  ["Order quarter", 'extractDateComponent(["Order Date"], "quarter")'],
+  ["Target gap", 'max(0, 45 - ["Contribution rate"])'],
+].map(([resultColumnName, expression]) => ({
+  resultColumnName: resultColumnName!,
+  expression: parseExpression(expression!),
+}));
+
+export const calculationDashboard: SavedDataStructure = {
+  ...dashboard("From orders to contribution", [
+    {
+      ...base,
+      id: "calc-guide",
+      type: "markdown",
+      title: "Follow a value from source to result",
+      layout: layout(0, 0, 12, 2),
+      content:
+        "<p><strong>Gross sales → Discount amount → Net sales → Contribution.</strong> Hover an <strong>ƒx</strong> field to inspect its chain. In Discount rate, try a 10% cap, preview, then Apply.</p>",
+    },
+    {
+      ...scatter(
+        "calc-sales-contribution",
+        "How much of each order remains?",
+        "Net sales",
+        "Contribution",
+        layout(0, 2, 6, 5),
+        ["Net sales ($)", "Contribution ($)"]
+      ),
+      xAxis: { scaleType: "symlog", grid: false },
+      yAxis: { scaleType: "symlog", grid: true },
+    },
+    row("calc-order-band", "Orders by size", "Order band", layout(6, 2, 3, 5)),
+    row(
+      "calc-review",
+      "Which orders need review?",
+      "Needs review",
+      layout(9, 2, 3, 5)
+    ),
+    histogram(
+      "calc-rate",
+      "Contribution as a share of sales",
+      "Contribution rate",
+      layout(0, 7, 4),
+      "Contribution (%)"
+    ),
+    histogram(
+      "calc-unit-sales",
+      "Sales per unit",
+      "Sales per unit",
+      layout(4, 7, 4)
+    ),
+    histogram(
+      "calc-discounts",
+      "Discount amount per order",
+      "Discount amount",
+      layout(8, 7, 4)
+    ),
+    table(
+      "calc-chain-table",
+      "Trace the order calculation",
+      [
+        "Order",
+        "Units",
+        "Unit Price",
+        "Gross sales",
+        "Discount rate",
+        "Discount amount",
+        "Net sales",
+        "Cost",
+        "Contribution",
+        "Contribution rate",
+      ],
+      layout(0, 11, 12, 5)
+    ),
+    row(
+      "calc-service",
+      "Service score: three checks",
+      "Service score",
+      layout(0, 16, 4)
+    ),
+    row("calc-risk", "Risk points by order", "Risk points", layout(4, 16, 4)),
+    row(
+      "calc-quarter",
+      "Orders by UTC quarter",
+      "Order quarter",
+      layout(8, 16, 4)
+    ),
+    {
+      ...line(
+        "calc-quarter-sales",
+        "Net sales across quarters",
+        ["Net sales"],
+        layout(0, 20, 8, 6),
+        "Net sales"
+      ),
+      xField: "Order",
+      xAxisLabel: "Order sequence",
+      facet: {
+        enabled: true,
+        type: "wrap",
+        rowVariable: "Order quarter",
+        columnCount: 2,
+      },
+    },
+    {
+      ...base,
+      id: "calc-monthly",
+      type: "pivot",
+      title: "Monthly sales and contribution",
+      layout: layout(8, 20, 4, 6),
+      rowFields: ["Order month"],
+      columnField: "",
+      valueFields: [
+        { field: "Net sales", aggregation: "sum", label: "Net sales" },
+        { field: "Contribution", aggregation: "sum", label: "Contribution" },
+      ],
+    },
+    histogram(
+      "calc-target",
+      "Gap to 45% contribution target",
+      "Target gap",
+      layout(0, 26, 12),
+      "Percentage points below target"
+    ),
+  ]),
+  calculations: orderCalculations,
+};
