@@ -26,11 +26,11 @@ function FilterProbe({ chartId }: { chartId: string }) {
   const filters = useDataLayer(
     (state) => state.charts.find((item) => item.id === chartId)?.filters ?? []
   );
-  const values = filters
-    .filter((filter) => filter.type === "value")
-    .flatMap((filter) =>
-      filter.values.map((value) => typeof value + ":" + String(value))
-    );
+  const values = filters.flatMap((filter) =>
+    filter.type === "value"
+      ? filter.values.map((value) => typeof value + ":" + String(value))
+      : []
+  );
   return <div data-testid="category-filter">{values.join("|")}</div>;
 }
 
@@ -38,7 +38,8 @@ function CategoryChart({ chartId }: { chartId: string }) {
   const settings = useDataLayer((state) =>
     state.charts.find((item) => item.id === chartId)
   );
-  if (!settings) return null;
+  if (!settings || (settings.type !== "row" && settings.type !== "bar"))
+    return null;
   return settings.type === "row" ? (
     <RowChart settings={settings} width={700} height={600} />
   ) : (
