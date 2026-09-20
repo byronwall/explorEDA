@@ -1,7 +1,10 @@
 import { IdType, useDataLayer } from "@/providers/DataLayerProvider";
 import { ChartSettings } from "@/types/ChartTypes";
+import type { datum } from "@/types/ChartTypes";
 import { useMemo } from "react";
 import { useGetColumnDataForIds } from "./useGetColumnData";
+
+const EMPTY_DATA: datum[] = [];
 
 export function useGetLiveData(
   settings: ChartSettings,
@@ -30,7 +33,7 @@ export function useGetLiveData(
   const data = useGetColumnDataForIds(field, liveIdsPerFacet);
 
   if (!field) {
-    return [];
+    return EMPTY_DATA;
   }
 
   return data;

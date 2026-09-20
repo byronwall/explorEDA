@@ -103,8 +103,8 @@ export const examples: ExampleData[] = [
   },
   {
     id: "box-plot",
-    title: "Box Plot",
-    description: "Compare distributions and spot outliers.",
+    title: "Box Plot with Beeswarm",
+    description: "Compare distributions with sampled individual observations.",
     icon: BarChart,
     data: "/explorEDA/correlated_medium.csv",
     savedData: boxPlotSettings,

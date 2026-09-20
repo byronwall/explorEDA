@@ -11,6 +11,9 @@ export interface BoxPlotStats {
   totalCount: number;
 }
 
+// ponytail: per-group cap and bounded quadratic search; add a chart-wide pixel budget if many groups still render slowly.
+export const MAX_BEE_SWARM_POINTS_PER_GROUP = 300;
+
 function getQuartile(sortedData: number[], q: number): number {
   const pos = (sortedData.length - 1) * q;
   const base = Math.floor(pos);
@@ -140,7 +143,7 @@ export function calculateKernelDensity(
 export function calculateBeeSwarmPositions(
   data: number[],
   width: number,
-  maxPoints: number = 1000,
+  maxPoints: number = MAX_BEE_SWARM_POINTS_PER_GROUP,
   seed = 0,
   yToPixel: (value: number) => number = (value) => value
 ): [number, number][] {
@@ -173,18 +176,20 @@ function calculateBeeSwarmPositionsForData(
   const spacing = radius * 2;
 
   const sortedData = [...data].sort((a, b) => a - b);
+  const screenY = sortedData.map(yToPixel);
 
-  for (const value of sortedData) {
+  for (let index = 0; index < sortedData.length; index++) {
+    const value = sortedData[index]!;
+    const pointY = screenY[index]!;
     let x = 0;
-    const y = value;
     let attempts = 0;
     const maxAttempts = 100;
 
     while (attempts < maxAttempts) {
-      const overlaps = positions.some(([px, py]) => {
+      const overlaps = positions.some(([px], positionIndex) => {
         const dx = x - px;
-        const dy = yToPixel(y) - yToPixel(py);
-        return Math.sqrt(dx * dx + dy * dy) < spacing;
+        const dy = pointY - screenY[positionIndex]!;
+        return dx * dx + dy * dy < spacing * spacing;
       });
 
       if (!overlaps) {
@@ -195,7 +200,7 @@ function calculateBeeSwarmPositionsForData(
       attempts++;
     }
 
-    positions.push([x, y]);
+    positions.push([x, value]);
   }
 
   return positions;

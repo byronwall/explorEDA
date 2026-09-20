@@ -21,6 +21,7 @@ import {
   calculateBeeSwarmPositions,
   calculateBoxPlotStats,
   calculateKernelDensity,
+  MAX_BEE_SWARM_POINTS_PER_GROUP,
 } from "./boxPlotCalculations";
 import { BoxPlotSettings } from "./definition";
 
@@ -248,12 +249,18 @@ export function BoxPlot({
       positions: calculateBeeSwarmPositions(
         data,
         xScale.bandwidth(),
-        1000,
+        MAX_BEE_SWARM_POINTS_PER_GROUP,
         0,
         yScale
       ),
     }));
   }, [groupedData, settings.beeSwarmOverlay, xScale, yScale]);
+
+  const beeSwarmIsSampled =
+    settings.beeSwarmOverlay &&
+    groupedData.some(
+      ({ data }) => data.length > MAX_BEE_SWARM_POINTS_PER_GROUP
+    );
 
   const activeFilter = useMemo(() => {
     return settings.filters.find(
@@ -346,6 +353,18 @@ export function BoxPlot({
         brushingMode="none"
         settings={{ ...settings, margin }}
       >
+        {beeSwarmIsSampled && (
+          <text
+            x={innerWidth}
+            y={14}
+            textAnchor="end"
+            fontSize={10}
+            className="fill-muted-foreground"
+            pointerEvents="none"
+          >
+            Sample ≤{MAX_BEE_SWARM_POINTS_PER_GROUP}/group · boxes use all rows
+          </text>
+        )}
         {/* Main content */}
         {groupStats
           .filter(({ stats }) => stats.totalCount > 0)

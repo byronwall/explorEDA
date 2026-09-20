@@ -368,7 +368,7 @@ Users can show outliers, a violin overlay, a beeswarm overlay, or both overlays.
 
 The violin uses a Gaussian density estimate at 100 evaluation points. Automatic bandwidth follows a Silverman-style calculation; a manual bandwidth setting also exists. Each group's peak width is normalized independently. Violin width therefore does not compare group population or absolute peak density directly.
 
-The beeswarm uses deterministic sampling up to 1,000 points per group and a bounded placement search. Collision distances use the chart's screen-space Y scale, so value ranges keep one visual meaning. It remains a heuristic and does not retain source row IDs.
+The beeswarm uses deterministic sampling up to 300 points per group and a bounded placement search. Collision distances use the chart's screen-space Y scale, so value ranges keep one visual meaning. A visible note marks capped samples, while box statistics still use all rows. It remains a heuristic and does not retain source row IDs.
 
 Group order can follow labels or population medians. Full-source groups and numerical domains help preserve context. Style controls cover box, median, whisker, and outlier appearance, although some stored color properties are not used independently by the renderer.
 
