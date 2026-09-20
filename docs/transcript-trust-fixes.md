@@ -60,4 +60,4 @@ The browser download event did not arrive, so browser CSV file contents remain u
 
 This sample is not a general performance guarantee. No device sweep, heap profile, long-session test, or screen-reader audit was run. Facet field-change combinations have source review, not a complete browser matrix.
 
-Remaining analysis findings include line ordering, box whisker convention, beeswarm geometry, 3D behavior, table width retention, and pivot aggregate errors. Durable persistence and reusable transform tables remain separate work.
+Later approved source work addresses line ordering, observed box whiskers, table width retention, pivot cell errors, and pivot contributor inspection. Browser evidence for those changes is tracked in the [gap audit's single evidence paragraph](transcript-gap-analysis.md#audit-limits). Beeswarm geometry, 3D behavior, durable host/server persistence, and reusable transform tables remain separate work.

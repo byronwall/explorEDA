@@ -1,8 +1,8 @@
 # explorEDA application feature inventory
 
-Updated after the trust repair, calculation workflow, and 2026-09-19 reconciliation passes. See the [current gaps and verification](transcript-gap-analysis.md).
+Updated after the trust repair, calculation workflow, and 2026-09-19 reconciliation passes. See the [current gaps and verification](transcript-gap-analysis.md), including the browser status.
 
-Original audit: 2026-09-17, commit `a168f1b`. Current reviewed implementation: `eb887c4` on `main`.
+Original audit: 2026-09-17, commit `a168f1b`. Baseline reviewed implementation: `eb887c4` on `main`; later approved changes are in the working tree.
 
 This document describes the current reviewed implementation. It covers the demo application and the public `exploreda` package. The companion [transcript gap analysis](transcript-gap-analysis.md) compares this behavior with the recorded product intent.
 
@@ -33,7 +33,7 @@ This is a source-based audit with automated checks. It is not a complete browser
 
 Evidence comes from active components, their data paths, chart definitions, parsers, state management, and tests. A type declaration, unused helper, demo label, or old plan does not establish working behavior.
 
-The baseline passed 151 package tests. The fresh reconciliation passes **160 package tests and 10 demo tests**, plus builds and type checks. The [repair record](transcript-trust-fixes.md) and [calculation workflow](calculation-workflow.md) separate browser evidence from automated checks.
+The baseline passed 151 package tests. Final checks pass 174 package tests, 11 demo tests, builds, type checks, and the lean bundle check (704,326 bytes; 154,398 bytes gzip). Browser evidence is in the [gap audit](transcript-gap-analysis.md#audit-limits). The [repair record](transcript-trust-fixes.md) and [calculation workflow](calculation-workflow.md) separate historical browser evidence from current checks.
 
 The audit covers all eleven registered view types. It also covers common settings, data ingestion, the separate Rows and Calculations modes, serialization, and source-derived performance limits. It does not claim that every combination of settings was exercised in a browser.
 
@@ -191,7 +191,7 @@ Sources: [Crossfilter wrapper][crossfilter], [common predicates][filter], [brush
 
 Calculated fields have an ƒx inspector in charts, tables, Summary, and field selectors. The shared editor includes live draft preview, per-row inputs/results, and a selectable dependency tree. See the [calculation workflow](calculation-workflow.md).
 
-The Calculations mode creates, validates, edits, previews, and removes derived fields. Validation executes the candidate against all loaded rows. Preview supports paging, failed-only rows, counts, and per-row reasons. Definitions preserve the expression and parsed tree.
+The Calculations mode creates, validates, edits, previews, and removes derived fields. Validation executes the candidate against all loaded rows. Preview supports paging, failed-only rows, counts, and per-row reasons. Runtime definitions preserve parsed trees, while persistence stores formula strings and parses them on restore. There is no AST compatibility layer.
 
 Dependencies execute before their consumers and share cached values. Formula edits preserve active thresholds and recompute chart predicates, tables, summaries, and facets. Invalid replacements leave the old definition intact. Cycles, missing dependencies, and source-name collisions are rejected.
 
@@ -386,15 +386,15 @@ Source: [3D renderer](../packages/explorEDA/src/components/charts/ThreeDScatter/
 
 The pivot supports multiple row fields, one column field, and multiple measure fields. Supported aggregates are sum, count, average, minimum, maximum, median, mode, population standard deviation, population variance, unique count, and single value.
 
-Numeric aggregates exclude missing, blank, boolean, and nonfinite values. Count counts rows. Unique count and mode have different missing-value semantics from numeric aggregates. Single value throws when a group does not contain exactly one distinct value.
+Numeric aggregates exclude missing, blank, boolean, and nonfinite values. Count counts rows. Unique count and mode have different missing-value semantics from numeric aggregates. Single value reports a cell-local error when a group does not contain exactly one distinct value, so other cells remain available.
 
 Row groups use typed tuples. This avoids simple string-key collisions. Column ordering remains a basic sort. The table scrolls with sticky headers and group columns. Numerical display uses fixed precision rather than field-specific formatting.
 
 Row and column header buttons filter their fields. Alternatives within one field combine with OR; fields combine with AND. The pivot retains its own unselected context because its aggregates use peer-filtered rows.
 
-Calculated measures are supported through column access. Missing field names produce a specific recovery alert. Other aggregate errors do not have a general chart-level error boundary.
+Calculated measures are supported through column access. Missing field names produce a specific recovery alert. Pivot cells expose an inspector with stable source IDs, grouping keys, inputs, included and excluded rows with reasons, aggregation, result, and error. Contributors are paged in groups of 50. Other aggregate errors do not have a general chart-level error boundary.
 
-There are no grand totals, subtotals, collapsible hierarchies, percent-of-row/column/grand-total calculations, previous-period differences, cell-to-source drill-down, or pivot-as-source reuse.
+There are no grand totals, subtotals, collapsible hierarchies, percent-of-row/column/grand-total calculations, previous-period differences, pivot-as-source reuse, or contributor inspection for non-pivot chart marks.
 
 Source: [pivot renderer](../packages/explorEDA/src/components/charts/PivotTable/PivotTable.tsx), [aggregations](../packages/explorEDA/src/components/charts/PivotTable/utils/calculations.ts), [definition](../packages/explorEDA/src/components/charts/PivotTable/definition.ts), [missing-field handling][renderer].
 
@@ -402,7 +402,7 @@ Source: [pivot renderer](../packages/explorEDA/src/components/charts/PivotTable/
 
 The table displays selected source and calculated scalar fields. It supports a column chooser, single-column sorting, field filters, text search, width changes, row counts, scrolling, and CSV export.
 
-Selected field badges can be reordered by pointer or keyboard in the settings selector. There is no direct header drag reordering. Changing the selected column list rebuilds its column settings and drops stored widths.
+Selected field badges can be reordered by pointer or keyboard in the settings selector. There is no direct header drag reordering. Existing column objects and widths remain when a selected field stays selected. Provider-owned Rows settings serialize filters, search, sort, column order, and widths.
 
 Headers and the first column remain visible during scrolling. The body uses fixed-height virtual rows, not pagination. It renders the viewport plus a small overscan. Column widths have a name-based default, a minimum width, pointer resizing, and keyboard resizing. There is no content-measured auto-fit or double-click fit.
 
@@ -463,11 +463,11 @@ Source: [editor](../packages/explorEDA/src/components/charts/Markdown/Markdown.t
 
 | Capability       | Current contract                                                                                                       |
 | ---------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| Saved workspace  | Charts and their settings/filters/layouts, calculation definitions, color scales, grid settings, and metadata.         |
-| Source data      | Passed separately. It is not embedded in saved workspace state.                                                        |
-| Host callback    | `onStateChange` emits a serializable structure when relevant workspace state changes.                                  |
-| Restore          | A supplied `savedData` value restores chart state. A changed object reference can replace an existing workspace state. |
-| Clipboard        | Workspace JSON and raw data JSON can be copied separately.                                                             |
+| Saved workspace  | Charts and settings/filters/layouts, formula-string calculations, color scales, grid settings, metadata, and Rows settings. |
+| Source data      | Passed separately for primary settings restore. A full analysis bundle also includes raw rows and preserves undefined/nonfinite values. |
+| Host callback    | `onStateChange` emits storage-neutral settings JSON when relevant workspace state changes.                                  |
+| Restore          | `savedData` restores settings against current rows. Restore validates calculations and settings before replacement.      |
+| Clipboard        | The package and demo support copy/open settings JSON and copy/open full analysis JSON.                                      |
 | Table download   | CSV of selected source/derived columns and matching rows in displayed order.                                           |
 | Summary download | CSV of current field profiles.                                                                                         |
 | Demo URL         | Identifies an example or coverage page. It does not encode the live analysis.                                          |
@@ -478,11 +478,11 @@ The callback compares a fingerprint of charts, calculations, colors, and grid se
 
 Metadata is regenerated as “Untitled,” version 1, with fresh timestamps. It does not preserve a user-owned view identity or original creation time. The version migration helper currently returns the structure unchanged.
 
-The saved-data validator checks nested structures and accepts linear and symlog. It is not a complete semantic validator. The calculation manager checks dependencies and supported functions during restore. The demo has no paste/import saved-state workflow.
+The saved-data validator checks nested structures and accepts linear and symlog. Native settings JSON rejects nonfinite filter values. The full analysis codec tags and restores undefined, NaN, Infinity, and -Infinity raw values. The calculation manager checks dependencies and supported functions before restore replaces state. `parseSavedAnalysis` handles the secondary full bundle with rows. The host still owns durable named/server storage.
 
 Restore validates and installs calculations before rebuilding chart predicates. A focused integration check verifies a saved calculated-field threshold against the restored values.
 
-The demo remembers emitted state only in memory to support reset behavior. There is no durable save/load library, autosave, named view selector, shareable live-state URL, undo history for dashboard actions, or data-version binding. Markdown editor undo is local to its content editor.
+The demo remembers emitted state only in memory to support reset behavior. There is no durable save/load library, autosave, named view selector, shareable live-state URL, undo history for dashboard actions, or data-version binding. Draft calculations remain session-local. `modifiedAt` records the snapshot time. Markdown editor undo is local to its content editor.
 
 There is no built-in chart image, SVG, PDF, or complete dashboard export. Clipboard configuration and CSV downloads are the current export paths.
 
@@ -519,7 +519,7 @@ Sources: [table body][tablebody], [Crossfilter wrapper][crossfilter], [provider]
 
 The application preserves useful configuration evidence: field names, calculation text and dependencies, active chart filters, layouts, color choices, and saved chart settings. Tooltips expose some computed values. Raw rows can be viewed and exported.
 
-Scalar calculations now expose source-row inputs, saved and draft values, dependency trees, and downstream uses. Complete mark provenance remains absent. A rendered bar, box, pivot cell, or violin does not expose its full chain of input rows, exclusions, aggregate values, scale population, defaults, and pixel calculations.
+Scalar calculations now expose source-row inputs, saved and draft values, dependency trees, and downstream uses. Pivot cells now expose exact contributor inputs and stable source IDs. Complete mark provenance remains absent for bars, boxes, violins, lines, and other aggregate marks. There is no source checksum or data-version binding.
 
 **View chart data** is a field-oriented raw table shortcut. It does not materialize bins, grouped tables, density samples, line reduction buckets, or the records that produced one selected mark.
 
@@ -543,9 +543,7 @@ Sources: [chart accessibility helpers](../packages/explorEDA/src/components/char
 
 ## Verification and documentation limits
 
-The fresh review fixed stale facet IDs after data replacement and non-finite category collisions. New checks cover replacement with larger/smaller datasets and typed category selection. The complete workspace check and lean-consumer check pass.
-
-Independent desktop browser checks passed for calculation preview/Apply, retained filters, invalid-row reasons, and reset. A 390×844 check found 13px page overflow and a clipped Clear all filters control. Mobile remains outside the supported slice.
+The historical review fixed stale facet IDs after data replacement and non-finite category collisions. The approved source changes and combined checks are recorded in the [gap audit](transcript-gap-analysis.md#audit-limits). The 390×844 overflow finding remains a parked desktop-scope limitation.
 
 The passing package tests cover useful behavior such as field profiles, predicates, calculation arithmetic, state handling, serialization checks, table controls, chart utilities, and accessibility helpers. They do not establish every feature combination described here.
 
@@ -553,7 +551,7 @@ The original probes found parser/evaluator mismatches, local-time date output, a
 
 Several older documents and the demo coverage manifest lag current code. Examples include references to pagination after table virtualization, and plans that list field profiles or the public state callback as future work. Coverage labels such as “supported” and “not checked” are manually maintained evidence, not a runtime feature detector.
 
-This inventory includes the approved five-concern repair pass. Other transcript ideas retain their original scope status.
+This inventory includes the approved trust, calculation, chart, restore, and pivot source changes as source status. Other transcript ideas retain their original scope status.
 
 [entry]: ../packages/explorEDA/src/components/ExplorEda.tsx
 [provider]: ../packages/explorEDA/src/providers/DataLayerProvider.tsx

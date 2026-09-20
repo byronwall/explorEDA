@@ -30,6 +30,19 @@ Apply changes updates dependent calculations and views. Existing filters stay ac
 
 Drafts survive changing chain steps and closing the editor during the current workspace session. **Discard draft** returns to the saved formula. Drafts are not included in workspace serialization. Reloading or replacing the dataset clears them.
 
+## Persistence boundary
+
+Runtime calculations use parsed expression trees. The persistence boundary stores formula text:
+
+```ts
+{
+  resultColumnName: "Net sales",
+  expression: '["Gross sales"] - ["Discount amount"]',
+}
+```
+
+The package parses and validates that string during restore. It does not persist an AST and has no compatibility layer for an older AST-shaped calculation format. The primary `SavedDataStructure` restores formulas and Rows settings against current host data, and rejects nonfinite filter values. The secondary `SavedAnalysisStructure` also includes raw rows, preserves undefined and nonfinite values with tagged special values, and is parsed with `parseSavedAnalysis` when rows must travel with the analysis. Durable storage remains the host's responsibility.
+
 ## Example
 
 Open `?example=calculated-orders` in the demo. It uses 10,000 synthetic shop orders, 16 source fields, 14 calculated fields, and 14 panels.
@@ -42,11 +55,11 @@ Service score and Risk points are illustrative business rules. Their formulas sh
 
 ## Verification
 
-`pnpm check` passes builds, type checks, 160 package tests, and 10 demo tests after the reconciliation fixes. See the [fresh review and remaining gaps](transcript-gap-analysis.md).
+The combined checks pass 174 package tests, 11 demo tests, builds, type checks, and the lean bundle check. Browser status is recorded in the [gap audit's single evidence paragraph](transcript-gap-analysis.md#audit-limits).
 
 The editor integration test checks in-place inspection, chain navigation, preserved drafts, explicit Apply, dependent updates, and rejection of invalid changes. The full workspace checks include the previous calculation, filter, category, export, and restore tests.
 
-Browser checks cover both 1280×800 and 1024×768 desktop layouts. They cover hover cards, chain navigation, row inspection, field/function insertion, draft recovery, Apply, and focus return.
+Earlier browser checks cover both 1280×800 and 1024×768 desktop layouts. They cover hover cards, chain navigation, row inspection, field/function insertion, draft recovery, Apply, and focus return. They do not certify the current chart, restore, or pivot implementation.
 
 Changing the discount cap to 10% changes row 4 net sales from 625.504 to 703.692 after Apply. The browser shows the revised inputs and result.
 
