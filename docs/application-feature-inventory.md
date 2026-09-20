@@ -1,10 +1,10 @@
 # explorEDA application feature inventory
 
-Updated after the 2026-09-18 trust repair pass and the 2026-09-19 calculation workflow pass. See [scope and verification](transcript-trust-fixes.md).
+Updated after the trust repair, calculation workflow, and 2026-09-19 reconciliation passes. See the [current gaps and verification](transcript-gap-analysis.md).
 
-Audit date: 2026-09-17. Source baseline: commit `a168f1b`, on `main`.
+Original audit: 2026-09-17, commit `a168f1b`. Current reviewed implementation: `eb887c4` on `main`.
 
-This document describes the baseline and the approved repair pass. It covers the demo application and the public `exploreda` package. The companion [transcript gap analysis](transcript-gap-analysis.md) compares this behavior with the recorded product intent.
+This document describes the current reviewed implementation. It covers the demo application and the public `exploreda` package. The companion [transcript gap analysis](transcript-gap-analysis.md) compares this behavior with the recorded product intent.
 
 The application is a desktop workspace for one in-memory table. Users can inspect fields, create linked views, filter rows, define calculated columns, and arrange a dashboard. Eleven registered view types share one data store and one Crossfilter instance per workspace.
 
@@ -33,7 +33,7 @@ This is a source-based audit with automated checks. It is not a complete browser
 
 Evidence comes from active components, their data paths, chart definitions, parsers, state management, and tests. A type declaration, unused helper, demo label, or old plan does not establish working behavior.
 
-The baseline passed 151 package tests. The repair and calculation UI passes now pass **157 package tests and 10 demo tests**, plus builds and type checks. The [repair record](transcript-trust-fixes.md) and [calculation workflow](calculation-workflow.md) separate browser evidence from automated checks.
+The baseline passed 151 package tests. The fresh reconciliation passes **160 package tests and 10 demo tests**, plus builds and type checks. The [repair record](transcript-trust-fixes.md) and [calculation workflow](calculation-workflow.md) separate browser evidence from automated checks.
 
 The audit covers all eleven registered view types. It also covers common settings, data ingestion, the separate Rows and Calculations modes, serialization, and source-derived performance limits. It does not claim that every combination of settings was exercised in a browser.
 
@@ -68,13 +68,13 @@ Sources: [workspace entry][entry], [data provider][provider], [Crossfilter wrapp
 
 ### Sources and loading
 
-| Path             | Current behavior                                                                                              | Boundary                                                                                 |
-| ---------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Host integration | The host passes an array of row objects through `data`.                                                       | One source table per workspace; no source adapter or query protocol.                     |
-| CSV upload       | File picker or drop target; Papa Parse uses headers, skips empty lines, and enables dynamic typing.           | A parse error rejects the import. No type preview or per-column conversion controls.     |
-| JSON upload      | Accepts one object or an array of objects. Nested objects become dotted fields. Arrays become indexed fields. | Rich values become scalar columns. Null becomes undefined in this parser.                |
-| Example data     | Fetches complete CSV files and opens optional saved dashboard settings.                                       | Loading, cancellation of stale requests, HTTP errors, and retry are handled in the demo. |
-| Data replacement | A new `data` reference rebuilds rows, profiles, calculations, and chart filtering state.                      | Mutation of the same array reference does not trigger this replacement path.             |
+| Path             | Current behavior                                                                                                        | Boundary                                                                                 |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Host integration | The host passes an array of row objects through `data`.                                                                 | One source table per workspace; no source adapter or query protocol.                     |
+| CSV upload       | File picker or drop target; Papa Parse uses headers, skips empty lines, and enables dynamic typing.                     | A parse error rejects the import. No type preview or per-column conversion controls.     |
+| JSON upload      | Accepts one object or an array of objects. Nested objects become dotted fields. Arrays become indexed fields.           | Rich values become scalar columns. Null becomes undefined in this parser.                |
+| Example data     | Fetches complete CSV files and opens optional saved dashboard settings.                                                 | Loading, cancellation of stale requests, HTTP errors, and retry are handled in the demo. |
+| Data replacement | A new `data` reference rebuilds rows, profiles, calculations, and chart filtering state. Facet IDs follow the new rows. | Mutation of the same array reference does not trigger this replacement path.             |
 
 The supported cell model is string, number, boolean, null, or undefined. Dates arrive as strings or numeric values. There is no first-class date, duration, quantity, unit, array, image, or related-record cell type.
 
@@ -433,7 +433,7 @@ Summary lists all available fields, including calculations. It recalculates prof
 
 The compact display shows field names, type icons, distinct counts, ranges or common values, and missing-value information. Users can sort the field list and create suitable charts through field actions.
 
-The CSV export includes more detail than the compact view: counts, missing values, numerical statistics, and common values. Its current quoting does not escape embedded quotes fully.
+The CSV export includes more detail than the compact view: counts, missing values, numerical statistics, and common values. Headers and cells escape embedded quotes.
 
 Summary has no independent filter dimension behavior. It does not show inline histograms, calendar heatmaps, a missing-value matrix, field examples in a detail inspector, or editable type declarations. A sampling utility elsewhere in the source is not used by the active Summary path.
 
@@ -519,7 +519,7 @@ Sources: [table body][tablebody], [Crossfilter wrapper][crossfilter], [provider]
 
 The application preserves useful configuration evidence: field names, calculation text and dependencies, active chart filters, layouts, color choices, and saved chart settings. Tooltips expose some computed values. Raw rows can be viewed and exported.
 
-This is configuration traceability, not complete data provenance. A rendered bar, box, pivot cell, or violin does not expose its full chain of input rows, exclusions, aggregate values, scale population, defaults, and pixel calculations.
+Scalar calculations now expose source-row inputs, saved and draft values, dependency trees, and downstream uses. Complete mark provenance remains absent. A rendered bar, box, pivot cell, or violin does not expose its full chain of input rows, exclusions, aggregate values, scale population, defaults, and pixel calculations.
 
 **View chart data** is a field-oriented raw table shortcut. It does not materialize bins, grouped tables, density samples, line reduction buckets, or the records that produced one selected mark.
 
@@ -542,6 +542,10 @@ The demo reports file and fetch errors. Calculation validation reports syntax, d
 Sources: [chart accessibility helpers](../packages/explorEDA/src/components/charts/chartAccessibility.ts), [base chart][basechart], [table header][tableheader], [panel][panel], [chart renderer][renderer], [upload][upload].
 
 ## Verification and documentation limits
+
+The fresh review fixed stale facet IDs after data replacement and non-finite category collisions. New checks cover replacement with larger/smaller datasets and typed category selection. The complete workspace check and lean-consumer check pass.
+
+Independent desktop browser checks passed for calculation preview/Apply, retained filters, invalid-row reasons, and reset. A 390×844 check found 13px page overflow and a clipped Clear all filters control. Mobile remains outside the supported slice.
 
 The passing package tests cover useful behavior such as field profiles, predicates, calculation arithmetic, state handling, serialization checks, table controls, chart utilities, and accessibility helpers. They do not establish every feature combination described here.
 

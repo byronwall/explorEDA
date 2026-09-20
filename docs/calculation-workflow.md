@@ -42,7 +42,7 @@ Service score and Risk points are illustrative business rules. Their formulas sh
 
 ## Verification
 
-`pnpm check` passes builds, type checks, 157 package tests, and 10 demo tests.
+`pnpm check` passes builds, type checks, 160 package tests, and 10 demo tests after the reconciliation fixes. See the [fresh review and remaining gaps](transcript-gap-analysis.md).
 
 The editor integration test checks in-place inspection, chain navigation, preserved drafts, explicit Apply, dependent updates, and rejection of invalid changes. The full workspace checks include the previous calculation, filter, category, export, and restore tests.
 

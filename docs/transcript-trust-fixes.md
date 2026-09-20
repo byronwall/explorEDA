@@ -28,6 +28,8 @@ Open `?example=shop-10000` in the demo. It contains **10,000 rows, 16 fields, an
 
 ## Verification
 
+These results describe the 2026-09-18 repair pass. See the [fresh reconciliation](transcript-gap-analysis.md) for later editor work, review fixes, and current checks.
+
 `pnpm check` passes package/demo builds, type checks, 156 package tests, and 10 demo tests.
 
 Focused checks cover formula edits under a retained threshold, restore ordering, partial failures, invalid replacements, typed category selections, and sorted CSV values. CSV headers and cells with commas and quotes have checked escaping. Date checks also pass under `TZ=America/Indiana/Indianapolis`.
