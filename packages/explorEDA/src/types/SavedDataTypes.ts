@@ -1,6 +1,21 @@
 import { CategoricalColorScale, NumericalColorScale } from "./ColorScaleTypes";
 import type { ChartSettings } from "./ChartTypes";
 import type { ThreeDScatterSettings } from "@/components/charts/ThreeDScatter/types";
+import type { Filter } from "./FilterTypes";
+
+export interface SavedColumnSettings {
+  id: string;
+  field: string;
+  width?: number;
+}
+
+export interface SavedRowsSettings {
+  columns: SavedColumnSettings[];
+  sortBy?: string;
+  sortDirection: "asc" | "desc";
+  filters: Filter[];
+  globalSearch: string;
+}
 
 export interface GridSettings {
   columnCount: number;

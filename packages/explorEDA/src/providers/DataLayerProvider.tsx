@@ -9,16 +9,23 @@ import {
   CalculationDefinition,
   CalculationManager,
 } from "@/lib/calculations/CalculationState";
+import { parseExpression } from "@/lib/calculations/parser/semantics";
 import { FieldProfile, buildFieldProfiles } from "@/lib/fieldProfiles";
 import { ChartLayout, ChartSettings, datum } from "@/types/ChartTypes";
 import { ColorScaleType } from "@/types/ColorScaleTypes";
 import {
   GridSettings,
   SavedChartSettings,
+  SavedRowsSettings,
   SerializedColorScale,
   ViewMetadata,
 } from "@/types/SavedDataTypes";
-import { SavedDataStructure } from "@/types/SavedDataStructure";
+import {
+  SavedAnalysisStructure,
+  SavedCalculation,
+  SavedDataStructure,
+  SavedRow,
+} from "@/types/SavedDataStructure";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { createStore, useStore } from "zustand";
 import { IdType, initializeData } from "./lib/dataLayerState";
@@ -67,13 +74,63 @@ function toSavedChart(chart: ChartSettings): SavedChartSettings {
   } as SavedChartSettings;
 }
 
+function toRuntimeCalculations(
+  calculations: SavedCalculation[]
+): CalculationDefinition[] {
+  return calculations.map(({ resultColumnName, expression }) => ({
+    resultColumnName,
+    expression: parseExpression(expression),
+  }));
+}
+
+function toSavedCalculations(
+  calculations: CalculationDefinition[]
+): SavedCalculation[] {
+  return calculations.map(({ resultColumnName, expression }) => ({
+    resultColumnName,
+    expression: expression.rawInput,
+  }));
+}
+
+function getDefaultRowsSettings(
+  fields: string[],
+  calculationNames: string[] = []
+): SavedRowsSettings {
+  const allFields = [
+    ...fields,
+    ...calculationNames.filter((field) => !fields.includes(field)),
+  ];
+  return {
+    columns: allFields.map((field) => ({ id: field, field })),
+    sortDirection: "asc",
+    filters: [],
+    globalSearch: "",
+  };
+}
+
 function getSavedStateFingerprint(savedData: SavedDataStructure): string {
-  return JSON.stringify({
-    charts: savedData.charts,
-    calculations: savedData.calculations,
-    gridSettings: savedData.gridSettings,
-    colorScales: savedData.colorScales,
-  });
+  return JSON.stringify(
+    {
+      ...savedData,
+      metadata: {
+        ...savedData.metadata,
+        modifiedAt: "",
+      },
+    },
+    (_key, value: unknown) => {
+      if (value === undefined) return { __exploreda_fingerprint: "undefined" };
+      if (typeof value === "number" && !Number.isFinite(value)) {
+        return {
+          __exploreda_fingerprint: Number.isNaN(value)
+            ? "NaN"
+            : value === Infinity
+              ? "Infinity"
+              : "-Infinity",
+        };
+      }
+      return value;
+    }
+  );
 }
 
 // Props and State interfaces
@@ -141,10 +198,15 @@ interface DataLayerState<T extends DatumObject> extends DataLayerProps<T> {
   // Grid settings
   gridSettings: GridSettings;
   updateGridSettings: (settings: Partial<GridSettings>) => void;
+  rowsSettings: SavedRowsSettings;
+  updateRowsSettings: (settings: Partial<SavedRowsSettings>) => void;
+  metadata: ViewMetadata;
 
   // Save/Restore functionality
   saveToStructure: () => SavedDataStructure;
   restoreFromStructure: (savedData: SavedDataStructure) => void;
+  saveAnalysisToStructure: () => SavedAnalysisStructure;
+  restoreAnalysisFromStructure: (savedData: SavedAnalysisStructure) => void;
 }
 
 // Store type
@@ -265,6 +327,8 @@ const getInitialStoreState = <T extends DatumObject>(
     | "calcColumnCache"
     | "nonce"
     | "fileName"
+    | "rowsSettings"
+    | "metadata"
   >
 > => {
   const {
@@ -286,7 +350,9 @@ const getInitialStoreState = <T extends DatumObject>(
     const savedData = initProps.savedData;
 
     // Restore calculations
-    ogCalculationManager.setCalculations(savedData.calculations);
+    ogCalculationManager.setCalculations(
+      toRuntimeCalculations(savedData.calculations)
+    );
     const newCalculations = ogCalculationManager.getCalculations();
 
     // Restore color scales with proper Map objects
@@ -312,6 +378,13 @@ const getInitialStoreState = <T extends DatumObject>(
       charts: savedData.charts.map(toRuntimeChart),
       colorScales: restoredColorScales,
       gridSettings: savedData.gridSettings,
+      rowsSettings:
+        savedData.rowsSettings ??
+        getDefaultRowsSettings(
+          fieldProfiles.map((profile) => profile.name),
+          newCalculations.map((calculation) => calculation.resultColumnName)
+        ),
+      metadata: savedData.metadata,
       columnCache: {},
       calcColumnCache: {},
       nonce: 0,
@@ -334,6 +407,15 @@ const getInitialStoreState = <T extends DatumObject>(
       rowHeight: 100,
       containerPadding: 10,
       showBackgroundMarkers: true,
+    },
+    rowsSettings: getDefaultRowsSettings(
+      fieldProfiles.map((profile) => profile.name)
+    ),
+    metadata: {
+      name: "Untitled",
+      version: 1,
+      createdAt: new Date().toISOString(),
+      modifiedAt: new Date().toISOString(),
     },
     columnCache: {},
     calcColumnCache: {},
@@ -391,6 +473,9 @@ const createDataLayerStore = <T extends DatumObject>(
         calculations: [],
         charts,
         colorScales: [],
+        rowsSettings: getDefaultRowsSettings(
+          fieldProfiles.map((profile) => profile.name)
+        ),
         liveItems: newCrossfilter.getAllData(),
         columnCache: {},
         calcColumnCache: {},
@@ -499,6 +584,11 @@ const createDataLayerStore = <T extends DatumObject>(
       // Update all live items in a single update
       set((state) => ({
         charts: newCharts,
+        rowsSettings: {
+          ...state.rowsSettings,
+          filters: [],
+          globalSearch: "",
+        },
         liveItems: crossfilterWrapper.getAllData(),
         filterReset: state.filterReset + 1,
       }));
@@ -621,15 +711,15 @@ const createDataLayerStore = <T extends DatumObject>(
       }));
     },
 
+    updateRowsSettings: (settings) => {
+      set((state) => ({
+        rowsSettings: { ...state.rowsSettings, ...settings },
+      }));
+    },
+
     // Save/Restore functionality
     saveToStructure: () => {
       const state = get();
-      const metadata: ViewMetadata = {
-        name: "Untitled",
-        version: 1,
-        createdAt: new Date().toISOString(),
-        modifiedAt: new Date().toISOString(),
-      };
 
       // Convert Map objects in colorScales to arrays for serialization
       const serializedColorScales: SerializedColorScale[] =
@@ -645,53 +735,113 @@ const createDataLayerStore = <T extends DatumObject>(
 
       return {
         charts: state.charts.map(toSavedChart),
-        calculations: state.calculations,
+        calculations: toSavedCalculations(state.calculations),
         gridSettings: state.gridSettings,
-        metadata,
+        metadata: {
+          ...state.metadata,
+          modifiedAt: new Date().toISOString(),
+        },
         colorScales: serializedColorScales,
+        rowsSettings: state.rowsSettings,
       };
     },
 
     restoreFromStructure: (savedData: SavedDataStructure) => {
-      const { crossfilterWrapper, data } = get();
-      // Validate the complete replacement before changing the current analysis.
-      const calculationManager = new CalculationManager(
-        data,
-        savedData.calculations
+      const data = get().data.map(
+        (row) =>
+          Object.fromEntries(
+            Object.entries(row).filter(([key]) => key !== "__ID")
+          ) as T
       );
-      const charts = savedData.charts.map(toRuntimeChart);
-      crossfilterWrapper.removeAllCharts();
-      set({
+      get().restoreAnalysisFromStructure({
+        format: "exploreda-analysis",
+        version: 1,
+        data,
+        settings: savedData,
+      });
+    },
+    saveAnalysisToStructure: () => {
+      const state = get();
+      return {
+        format: "exploreda-analysis",
+        version: 1,
+        data: state.data.map(
+          (row) =>
+            Object.fromEntries(
+              Object.entries(row).filter(([key]) => key !== "__ID")
+            ) as SavedRow
+        ),
+        settings: state.saveToStructure(),
+      };
+    },
+    restoreAnalysisFromStructure: (savedData) => {
+      const next = getDataAndCrossfilterWrapper(savedData.data as T[]);
+      const nextData = next.data;
+      const nextCrossfilter = next.crossfilterWrapper;
+      const nextEmptyColumn = next.emptyColumn;
+      if (
+        !nextData ||
+        !nextCrossfilter ||
+        !nextEmptyColumn ||
+        !next.calculationManager
+      ) {
+        throw new Error("Failed to restore analysis rows");
+      }
+      const calculations = toRuntimeCalculations(
+        savedData.settings.calculations
+      );
+      const calculationManager = new CalculationManager(nextData, calculations);
+      const fieldProfiles = buildFieldProfiles(savedData.data as T[]);
+      const charts = savedData.settings.charts.map(toRuntimeChart);
+      const fieldGetter = (field: string): Record<IdType, datum> => {
+        const calculation = calculations.find(
+          (item) => item.resultColumnName === field
+        );
+        if (calculation) {
+          const values: Record<IdType, datum> = {};
+          calculationManager
+            .executeCalculation(calculation)
+            .forEach((value, id) => (values[id] = value));
+          return values;
+        }
+        if (!nextData.some((row) => field in row)) return nextEmptyColumn;
+        return Object.fromEntries(
+          nextData.map((row) => [row.__ID, row[field]])
+        ) as Record<IdType, datum>;
+      };
+      nextCrossfilter.setFieldGetter(fieldGetter);
+      charts.forEach((chart) => nextCrossfilter.addChart(chart));
+      const colorScales: ColorScaleType[] = savedData.settings.colorScales.map(
+        (scale) =>
+          scale.type === "categorical"
+            ? { ...scale, mapping: new Map(scale.mapping) }
+            : scale
+      );
+      set((state) => ({
+        data: nextData,
+        fieldProfiles,
+        emptyColumn: nextEmptyColumn,
+        fileName: undefined,
+        crossfilterWrapper: nextCrossfilter,
         calculationManager,
         calculations: calculationManager.getCalculations(),
-        columnCache: {},
-        calcColumnCache: {},
-      });
-      charts.forEach((chart) => crossfilterWrapper.addChart(chart));
-
-      // Restore color scales with proper Map objects
-      const restoredColorScales: ColorScaleType[] = savedData.colorScales.map(
-        (scale) => {
-          if (scale.type === "categorical") {
-            return {
-              ...scale,
-              mapping: new Map(scale.mapping),
-            };
-          }
-          return scale;
-        }
-      );
-
-      set((state) => ({
-        gridSettings: savedData.gridSettings,
         charts,
-        calculations: calculationManager.getCalculations(),
-        colorScales: restoredColorScales,
+        colorScales,
+        gridSettings: savedData.settings.gridSettings,
+        rowsSettings:
+          savedData.settings.rowsSettings ??
+          getDefaultRowsSettings(
+            fieldProfiles.map((profile) => profile.name),
+            calculations.map((calculation) => calculation.resultColumnName)
+          ),
+        metadata: savedData.settings.metadata,
+        liveItems: nextCrossfilter.getAllData(),
         columnCache: {},
         calcColumnCache: {},
-        liveItems: crossfilterWrapper.getAllData(),
         nonce: state.nonce + 1,
+        filterReset: state.filterReset + 1,
       }));
+      nextCrossfilter.setFieldGetter(get().getColumnData);
     },
   }));
 
@@ -714,10 +864,38 @@ const createDataLayerStore = <T extends DatumObject>(
 
   function refreshCalculations() {
     const { calculationManager, crossfilterWrapper, charts } = store.getState();
-    store.setState({
-      calculations: calculationManager.getCalculations(),
+    const previousCalculations = store.getState().calculations;
+    const calculations = calculationManager.getCalculations();
+    const previousNames = new Set(
+      previousCalculations.map((calculation) => calculation.resultColumnName)
+    );
+    const nextNames = new Set(
+      calculations.map((calculation) => calculation.resultColumnName)
+    );
+    const addedNames = calculations
+      .map((calculation) => calculation.resultColumnName)
+      .filter((name) => !previousNames.has(name));
+    store.setState((state) => ({
+      calculations,
       calcColumnCache: {},
-    });
+      rowsSettings: {
+        ...state.rowsSettings,
+        columns: [
+          ...state.rowsSettings.columns.filter(
+            (column) =>
+              !previousNames.has(column.field) || nextNames.has(column.field)
+          ),
+          ...addedNames
+            .filter(
+              (name) =>
+                !state.rowsSettings.columns.some(
+                  (column) => column.field === name
+                )
+            )
+            .map((name) => ({ id: name, field: name })),
+        ],
+      },
+    }));
     charts.forEach((chart) => crossfilterWrapper.updateChartFilters(chart));
     store.setState((state) => ({
       liveItems: crossfilterWrapper.getAllData(),

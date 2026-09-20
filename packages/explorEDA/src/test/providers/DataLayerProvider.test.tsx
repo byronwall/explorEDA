@@ -8,7 +8,6 @@ import {
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { getChartDefinition } from "../../charts/registry";
 import { registerAllCharts } from "../../charts/registerAllCharts";
-import { parseExpression } from "../../lib/calculations/parser/semantics";
 import { SummaryTable } from "../../components/charts/SummaryTable/SummaryTable";
 import type { SummaryTableSettings } from "../../components/charts/SummaryTable/definition";
 import {
@@ -17,6 +16,11 @@ import {
 } from "../../providers/DataLayerProvider";
 import { SavedDataStructure } from "../../types/SavedDataStructure";
 import { useGetLiveIds } from "../../components/charts/useGetLiveData";
+import { RowsView } from "../../components/RowsView";
+import {
+  parseSavedAnalysis,
+  stringifySavedAnalysis,
+} from "../../utils/saveDataUtils";
 
 const data = [
   { name: "A", value: 2 },
@@ -316,7 +320,7 @@ describe("DataLayerProvider", () => {
 
   it("adds calculated fields to the shared summary profiles", () => {
     const calculation = {
-      expression: parseExpression("value * 2"),
+      expression: "value * 2",
       resultColumnName: "double",
     };
     const settings = getChartDefinition("summary").createDefaultSettings({
@@ -399,7 +403,7 @@ describe("DataLayerProvider", () => {
       </DataLayerProvider>
     );
     const calculation = {
-      expression: parseExpression("value * 2"),
+      expression: "value * 2",
       resultColumnName: "double",
     };
 
@@ -554,5 +558,192 @@ describe("DataLayerProvider", () => {
       expect(emittedChart.cameraPosition).toEqual({ x: 10, y: 10, z: 10 });
       expect(emittedChart.cameraTarget).toEqual({ x: 0, y: 0, z: 0 });
     }
+  });
+
+  it("restores edited formula text and independent rows settings", async () => {
+    const useStateLayer = () => useDataLayer((current) => current);
+    let state!: ReturnType<typeof useStateLayer>;
+    const onStateChange = vi.fn();
+    function StateProbe() {
+      state = useStateLayer();
+      return null;
+    }
+
+    render(
+      <DataLayerProvider
+        data={[{ value: 2 }, { value: 3, missing: undefined }]}
+        savedData={{
+          ...savedData(),
+          metadata: {
+            name: "Named analysis",
+            version: 1,
+            createdAt: "2025-01-01T00:00:00.000Z",
+            modifiedAt: "2025-01-02T00:00:00.000Z",
+          },
+          calculations: [
+            { resultColumnName: "double", expression: "value * 2" },
+          ],
+        }}
+        onStateChange={onStateChange}
+      >
+        <StateProbe />
+      </DataLayerProvider>
+    );
+
+    expect(state.getColumnData("double")[1]).toBe(6);
+    onStateChange.mockClear();
+    act(() =>
+      state.restoreFromStructure({
+        ...state.saveToStructure(),
+        calculations: [{ resultColumnName: "double", expression: "value * 3" }],
+      })
+    );
+    expect(state.getColumnData("double")[1]).toBe(9);
+    expect(onStateChange).toHaveBeenCalledTimes(1);
+    expect(onStateChange.mock.calls[0]?.[0]).toMatchObject({
+      calculations: [{ resultColumnName: "double", expression: "value * 3" }],
+    });
+
+    act(() =>
+      state.updateRowsSettings({
+        columns: [
+          { id: "value", field: "value", width: 240 },
+          { id: "missing", field: "missing", width: 180 },
+        ],
+        sortBy: "value",
+        sortDirection: "desc",
+        filters: [
+          { type: "text", field: "missing", operator: "equals", value: "x" },
+        ],
+        globalSearch: "needle",
+      })
+    );
+    const snapshot = state.saveToStructure();
+    expect(snapshot.metadata.name).toBe("Named analysis");
+    expect(snapshot.calculations).toEqual([
+      { resultColumnName: "double", expression: "value * 3" },
+    ]);
+    expect(snapshot.rowsSettings?.columns[0]?.width).toBe(240);
+
+    const analysis = parseSavedAnalysis(
+      stringifySavedAnalysis(state.saveAnalysisToStructure())
+    );
+    expect(analysis.data[1]).toEqual({ value: 3, missing: undefined });
+    act(() => state.updateRowsSettings({ globalSearch: "changed" }));
+    onStateChange.mockClear();
+    act(() => state.restoreAnalysisFromStructure(analysis));
+    expect(onStateChange).toHaveBeenCalledTimes(1);
+    expect(state.rowsSettings.sortDirection).toBe("desc");
+    expect(state.rowsSettings.columns[0]?.width).toBe(240);
+    expect(state.data[1]?.missing).toBeUndefined();
+
+    const beforeInvalidRestore = state.data.map((row) => ({ ...row }));
+    expect(() =>
+      state.restoreAnalysisFromStructure({
+        ...analysis,
+        settings: {
+          ...analysis.settings,
+          calculations: [{ resultColumnName: "double", expression: "value *" }],
+        },
+      })
+    ).toThrow();
+    expect(state.data).toEqual(beforeInvalidRestore);
+  });
+
+  it("keeps RowsView selections across mount and clears only on clear-all", () => {
+    function RowsProbe() {
+      const rowsSettings = useDataLayer((state) => state.rowsSettings);
+      const updateRowsSettings = useDataLayer(
+        (state) => state.updateRowsSettings
+      );
+      const clearAllFilters = useDataLayer((state) => state.clearAllFilters);
+      return (
+        <>
+          <output data-testid="rows-settings">
+            {JSON.stringify(rowsSettings)}
+          </output>
+          <button
+            onClick={() =>
+              updateRowsSettings({
+                columns: [{ id: "value", field: "value", width: 240 }],
+                globalSearch: "needle",
+                filters: [
+                  {
+                    type: "text",
+                    field: "value",
+                    operator: "contains",
+                    value: "2",
+                  },
+                ],
+              })
+            }
+          >
+            hide name
+          </button>
+          <button onClick={clearAllFilters}>clear all</button>
+          <RowsView width={800} active={false} toolbarTarget={null} />
+        </>
+      );
+    }
+
+    render(
+      <DataLayerProvider data={[{ name: "A", value: 2 }]}>
+        <RowsProbe />
+      </DataLayerProvider>
+    );
+    expect(
+      screen.getByRole("columnheader", { name: /name/i })
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "hide name" }));
+    expect(
+      screen.queryByRole("columnheader", { name: /name/i })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("columnheader", { name: /value/i })
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "clear all" }));
+    expect(screen.getByTestId("rows-settings")).toHaveTextContent(
+      '"globalSearch":""'
+    );
+    expect(screen.getByTestId("rows-settings")).toHaveTextContent(
+      '"filters":[]'
+    );
+    expect(
+      screen.queryByRole("columnheader", { name: /name/i })
+    ).not.toBeInTheDocument();
+  });
+
+  it("keeps a newly restored calculated column hidden when RowsView mounts", () => {
+    const useStateLayer = () => useDataLayer((current) => current);
+    let state!: ReturnType<typeof useStateLayer>;
+    function RowsProbe() {
+      state = useStateLayer();
+      return <RowsView width={800} active={false} toolbarTarget={null} />;
+    }
+
+    render(
+      <DataLayerProvider data={data}>
+        <RowsProbe />
+      </DataLayerProvider>
+    );
+
+    const analysis = state.saveAnalysisToStructure();
+    analysis.settings.calculations = [
+      { resultColumnName: "double", expression: "value * 2" },
+    ];
+    analysis.settings.rowsSettings = {
+      columns: [{ id: "value", field: "value" }],
+      sortDirection: "asc",
+      filters: [],
+      globalSearch: "",
+    };
+    act(() => state.restoreAnalysisFromStructure(analysis));
+
+    expect(
+      screen.getByRole("columnheader", { name: /value/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("columnheader", { name: /double/i })
+    ).not.toBeInTheDocument();
   });
 });

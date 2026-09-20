@@ -27,10 +27,15 @@ export function DataTableSettingsPanel({
           onChange={(values: Option[]) =>
             onSettingsChange({
               ...settings,
-              columns: values.map((v) => ({
-                id: v.value,
-                field: v.value,
-              })),
+              columns: values.map(
+                (v) =>
+                  settings.columns.find(
+                    (column) => column.field === v.value
+                  ) ?? {
+                    id: v.value,
+                    field: v.value,
+                  }
+              ),
             })
           }
         />

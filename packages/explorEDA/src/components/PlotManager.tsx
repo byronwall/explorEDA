@@ -8,7 +8,13 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import { RowsView } from "./RowsView";
 import { ActiveFilterStatus } from "./ActiveFilterStatus";
 import type { ChartLayout } from "@/types/ChartTypes";
-import { saveRawDataToClipboard, saveToClipboard } from "@/utils/saveDataUtils";
+import {
+  parseSavedAnalysis,
+  parseSavedData,
+  saveAnalysisToClipboard,
+  saveRawDataToClipboard,
+  saveToClipboard,
+} from "@/utils/saveDataUtils";
 import { Calculator, Copy, Grid, MoreHorizontal, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -21,6 +27,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -78,6 +85,15 @@ export function PlotManager() {
   const removeAllCharts = useDataLayer((state) => state.removeAllCharts);
   const gridSettings = useDataLayer((state) => state.gridSettings);
   const saveToStructure = useDataLayer((state) => state.saveToStructure);
+  const saveAnalysisToStructure = useDataLayer(
+    (state) => state.saveAnalysisToStructure
+  );
+  const restoreFromStructure = useDataLayer(
+    (state) => state.restoreFromStructure
+  );
+  const restoreAnalysisFromStructure = useDataLayer(
+    (state) => state.restoreAnalysisFromStructure
+  );
   const data = useDataLayer((state) => state.data);
   const showAlert = useAlertStore((state) => state.showAlert);
 
@@ -86,6 +102,10 @@ export function PlotManager() {
     useState<HTMLDivElement | null>(null);
   const knownChartIds = useRef(new Set<string>());
   const [announcement, setAnnouncement] = useState("");
+  const [jsonDialogOpen, setJsonDialogOpen] = useState(false);
+  const [jsonMode, setJsonMode] = useState<"settings" | "analysis">("settings");
+  const [jsonText, setJsonText] = useState("");
+  const [jsonError, setJsonError] = useState<string | null>(null);
 
   // Add ref and state for container dimensions
   const containerRef = useRef<HTMLDivElement>(null);
@@ -141,19 +161,48 @@ export function PlotManager() {
   }, [charts, focusChartElement]);
 
   const copyChartsToClipboard = async () => {
-    if (charts.length === 0) {
-      toast("No charts to copy");
-      return;
-    }
-
     try {
       const savedData = saveToStructure();
       await saveToClipboard(savedData);
 
-      toast("Configuration saved to clipboard");
+      toast("Settings JSON copied to clipboard");
     } catch {
       toast.error("Failed to copy configuration to clipboard");
     }
+  };
+
+  const copyAnalysisToClipboard = async () => {
+    try {
+      await saveAnalysisToClipboard(saveAnalysisToStructure());
+      toast("Full analysis JSON copied to clipboard");
+    } catch {
+      toast.error("Failed to copy analysis JSON to clipboard");
+    }
+  };
+
+  const openJson = () => {
+    try {
+      if (jsonMode === "settings") {
+        restoreFromStructure(parseSavedData(jsonText));
+      } else {
+        restoreAnalysisFromStructure(parseSavedAnalysis(jsonText));
+      }
+      setJsonDialogOpen(false);
+      setJsonText("");
+      setJsonError(null);
+      toast("JSON opened");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Invalid JSON";
+      setJsonError(message);
+      toast.error(message);
+    }
+  };
+
+  const openJsonDialog = (mode: "settings" | "analysis") => {
+    setJsonMode(mode);
+    setJsonText("");
+    setJsonError(null);
+    setJsonDialogOpen(true);
   };
 
   const copyDataToClipboard = async () => {
@@ -212,15 +261,15 @@ export function PlotManager() {
         </div>
         <div className="ml-auto flex flex-wrap items-center gap-2">
           {activeTab === "rows" && <div ref={setRowsToolbarTarget} />}
-          {charts.length > 0 && activeTab === "charts" && (
+          {(activeTab === "charts" || activeTab === "rows") && (
             <>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
                     size="sm"
-                    title="More chart actions"
-                    aria-label="More chart actions"
+                    title="Workspace actions"
+                    aria-label="Workspace actions"
                   >
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
@@ -231,7 +280,30 @@ export function PlotManager() {
                     className="flex items-center gap-2"
                   >
                     <Copy className="h-4 w-4" />
-                    Copy Charts
+                    Copy settings JSON
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      openJsonDialog("settings");
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    Open settings JSON
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={copyAnalysisToClipboard}
+                    className="flex items-center gap-2"
+                  >
+                    <Copy className="h-4 w-4" />
+                    Copy full analysis JSON
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      openJsonDialog("analysis");
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    Open full analysis JSON
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={copyDataToClipboard}
@@ -284,6 +356,53 @@ export function PlotManager() {
           )}
         </div>
       </header>
+
+      <Dialog
+        open={jsonDialogOpen}
+        onOpenChange={(open) => {
+          setJsonDialogOpen(open);
+          if (open) setJsonError(null);
+        }}
+      >
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              Open {jsonMode === "settings" ? "settings" : "full analysis"} JSON
+            </DialogTitle>
+            <DialogDescription>
+              {jsonMode === "settings"
+                ? "Paste settings JSON from this workspace. It restores against the current data."
+                : "Paste a full analysis JSON export. It includes the source rows and restores them with the settings."}
+            </DialogDescription>
+          </DialogHeader>
+          <textarea
+            value={jsonText}
+            onChange={(event) => {
+              setJsonText(event.target.value);
+              setJsonError(null);
+            }}
+            aria-label="JSON to open"
+            aria-describedby={jsonError ? "json-open-error" : undefined}
+            className="min-h-64 w-full rounded-md border bg-background p-3 font-mono text-xs"
+            placeholder="Paste JSON here"
+          />
+          {jsonError && (
+            <p
+              id="json-open-error"
+              role="alert"
+              aria-live="assertive"
+              className="rounded-md border border-destructive/50 bg-destructive/10 p-2 text-sm text-destructive"
+            >
+              {jsonError}
+            </p>
+          )}
+          <DialogFooter>
+            <Button onClick={openJson} disabled={!jsonText.trim()}>
+              Open JSON
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <ActiveFilterStatus />
       <div className="sr-only" aria-live="polite" aria-atomic="true">

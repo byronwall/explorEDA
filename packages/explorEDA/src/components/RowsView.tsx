@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, useLayoutEffect, useEffect } from "react";
+import { useMemo, useRef, useState, useLayoutEffect } from "react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { DataTable } from "./charts/DataTable/DataTable";
 import {
@@ -18,33 +18,16 @@ export function RowsView({
   const data = useDataLayer((state) => state.data);
   const liveItems = useDataLayer((state) => state.liveItems);
   const crossfilter = useDataLayer((state) => state.crossfilterWrapper);
-  const getColumnNames = useDataLayer((state) => state.getColumnNames);
-  const [settings, setSettings] = useState<DataTableSettings>(() => ({
-    ...dataTableDefinition.createDefaultSettings({ x: 0, y: 0, w: 12, h: 6 }),
-    title: "Data rows",
-    columns: getColumnNames()
-      .filter((field) => field !== "__ID")
-      .map((field) => ({ id: field, field })),
-  }));
-  const filterReset = useDataLayer((state) => state.filterReset);
-  const calculations = useDataLayer((state) => state.calculations);
-  useEffect(() => {
-    setSettings((current) => ({ ...current, filters: [], globalSearch: "" }));
-  }, [filterReset]);
-  useEffect(() => {
-    setSettings((current) => ({
-      ...current,
-      columns: getColumnNames()
-        .filter((field) => field !== "__ID")
-        .map(
-          (field) =>
-            current.columns.find((column) => column.field === field) ?? {
-              id: field,
-              field,
-            }
-        ),
-    }));
-  }, [data, calculations, getColumnNames]);
+  const rowsSettings = useDataLayer((state) => state.rowsSettings);
+  const updateRowsSettings = useDataLayer((state) => state.updateRowsSettings);
+  const settings = useMemo<DataTableSettings>(
+    () => ({
+      ...dataTableDefinition.createDefaultSettings({ x: 0, y: 0, w: 12, h: 6 }),
+      ...rowsSettings,
+      title: "Data rows",
+    }),
+    [rowsSettings]
+  );
   const rows = useMemo(() => {
     const ids = new Set(crossfilter.getFilteredRowIds());
     return data.filter((row) => ids.has(row.__ID));
@@ -85,9 +68,7 @@ export function RowsView({
         rows={rows}
         width={width - 2}
         height={height}
-        onSettingsChange={(next) =>
-          setSettings((current) => ({ ...current, ...next }))
-        }
+        onSettingsChange={(next) => updateRowsSettings(next)}
       />
     </div>
   );

@@ -1,10 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   saveToClipboard,
+  parseSavedAnalysis,
+  stringifySavedAnalysis,
+  stringifySavedData,
+  validateSavedAnalysisForData,
   validateSavedData,
   migrateDataVersion,
 } from "@/utils/saveDataUtils";
 import { SavedDataStructure } from "@/types/SavedDataStructure";
+import type { SavedRow } from "@/types/SavedDataStructure";
 
 describe("saveDataUtils", () => {
   const mockValidData: SavedDataStructure = {
@@ -226,6 +231,64 @@ describe("saveDataUtils", () => {
         "Failed to save data to clipboard"
       );
     });
+  });
+
+  it("keeps settings JSON native and round-trips special source values safely", () => {
+    const settingsJson = stringifySavedData(mockValidData);
+    expect(settingsJson).not.toContain("__exploreda_value");
+
+    const row = Object.create(null) as SavedRow;
+    row.missing = undefined;
+    row.notNumber = NaN;
+    row.positiveInfinity = Infinity;
+    row.negativeInfinity = -Infinity;
+    row.__exploreda_value = "NaN";
+    Object.defineProperty(row, "__proto__", {
+      value: "literal",
+      enumerable: true,
+    });
+    const restored = parseSavedAnalysis(
+      stringifySavedAnalysis({
+        format: "exploreda-analysis",
+        version: 1,
+        data: [row],
+        settings: mockValidData,
+      })
+    ).data[0]!;
+    expect(Object.hasOwn(restored, "missing")).toBe(true);
+    expect(restored.missing).toBeUndefined();
+    expect(restored.notNumber).toBeNaN();
+    expect(restored.positiveInfinity).toBe(Infinity);
+    expect(restored.negativeInfinity).toBe(-Infinity);
+    expect(restored.__exploreda_value).toBe("NaN");
+    expect(restored.__proto__).toBe("literal");
+
+    restored.notNumber = 4;
+    const finite = parseSavedAnalysis(
+      stringifySavedAnalysis({
+        format: "exploreda-analysis",
+        version: 1,
+        data: [restored],
+        settings: mockValidData,
+      })
+    ).data[0]!;
+    expect(finite.notNumber).toBe(4);
+  });
+
+  it("validates saved formulas with the calculation runtime", () => {
+    expect(
+      validateSavedAnalysisForData({
+        format: "exploreda-analysis",
+        version: 1,
+        data: [{ value: 2 }],
+        settings: {
+          ...mockValidData,
+          calculations: [
+            { resultColumnName: "double", expression: "unknown(value)" },
+          ],
+        },
+      })
+    ).toBe(false);
   });
 
   describe("migrateDataVersion", () => {

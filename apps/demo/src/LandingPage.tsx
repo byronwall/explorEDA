@@ -1,6 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { ExampleData, examples } from "@/demos/examples";
-import type { SavedDataStructure } from "exploreda";
+import {
+  parseSavedAnalysis,
+  type SavedDataStructure,
+  validateSavedAnalysisForData,
+} from "exploreda";
 
 import { parseCsvData } from "./csvParser";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
@@ -45,6 +49,13 @@ export function LandingPage() {
   const [capturedState, setCapturedState] = useState<
     SavedDataStructure | undefined
   >();
+  const [csvSavedData, setCsvSavedData] = useState<
+    SavedDataStructure | undefined
+  >();
+  const [analysisJson, setAnalysisJson] = useState("");
+  const [analysisJsonError, setAnalysisJsonError] = useState<string | null>(
+    null
+  );
   const [workspaceKey, setWorkspaceKey] = useState(0);
   const workspaceRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
@@ -78,6 +89,9 @@ export function LandingPage() {
     setIsCsvMode(false);
     setCsvData([]);
     setCapturedState(undefined);
+    setCsvSavedData(undefined);
+    setAnalysisJson("");
+    setAnalysisJsonError(null);
     setLoadError(null);
   };
 
@@ -159,7 +173,28 @@ export function LandingPage() {
     setExample(null);
     setCsvData(data);
     setCapturedState(undefined);
+    setCsvSavedData(undefined);
     setLoadError(null);
+  };
+
+  const handleAnalysisJson = () => {
+    try {
+      const analysis = parseSavedAnalysis(analysisJson);
+      if (!validateSavedAnalysisForData(analysis)) {
+        throw new Error("Analysis formulas do not match the saved source rows");
+      }
+      setCsvData(analysis.data as DatumObject[]);
+      setCsvSavedData(analysis.settings);
+      setIsCsvMode(true);
+      setSearchParams({});
+      setExample(null);
+      setCapturedState(undefined);
+      setAnalysisJsonError(null);
+    } catch (error) {
+      setAnalysisJsonError(
+        error instanceof Error ? error.message : "Invalid analysis JSON"
+      );
+    }
   };
 
   return (
@@ -198,6 +233,48 @@ export function LandingPage() {
                         Import your data
                       </h2>
                       <CsvUpload onImport={handleCsvImport} />
+                    </section>
+                    <section aria-labelledby="json-heading">
+                      <h2
+                        id="json-heading"
+                        className="mb-3 text-xl font-semibold"
+                      >
+                        Open a saved analysis
+                      </h2>
+                      <p className="mb-3 text-sm text-muted-foreground">
+                        Paste full analysis JSON to restore its source rows and
+                        settings.
+                      </p>
+                      <textarea
+                        value={analysisJson}
+                        onChange={(event) => {
+                          setAnalysisJson(event.target.value);
+                          setAnalysisJsonError(null);
+                        }}
+                        aria-label="Full analysis JSON"
+                        aria-describedby={
+                          analysisJsonError ? "analysis-json-error" : undefined
+                        }
+                        placeholder="Paste full analysis JSON here"
+                        className="min-h-32 w-full rounded-md border bg-background p-3 font-mono text-xs"
+                      />
+                      <Button
+                        className="mt-3"
+                        onClick={handleAnalysisJson}
+                        disabled={!analysisJson.trim()}
+                      >
+                        Open analysis JSON
+                      </Button>
+                      {analysisJsonError && (
+                        <p
+                          id="analysis-json-error"
+                          role="alert"
+                          aria-live="assertive"
+                          className="mt-2 rounded-md border border-destructive/50 bg-destructive/10 p-2 text-sm text-destructive"
+                        >
+                          {analysisJsonError}
+                        </p>
+                      )}
                     </section>
                     <section aria-labelledby="examples-heading">
                       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
@@ -318,7 +395,7 @@ export function LandingPage() {
                   <ExplorEda
                     key={workspaceKey}
                     data={csvData}
-                    savedData={undefined}
+                    savedData={csvSavedData}
                     onStateChange={handleStateChange}
                   />
                 ) : (

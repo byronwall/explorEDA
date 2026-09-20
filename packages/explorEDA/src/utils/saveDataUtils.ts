@@ -1,11 +1,126 @@
-import type { SavedDataStructure } from "@/types/SavedDataStructure";
+import type {
+  SavedAnalysisStructure,
+  SavedDataStructure,
+  SavedRow,
+  SavedSpecialValue,
+} from "@/types/SavedDataStructure";
+import { CalculationManager } from "@/lib/calculations/CalculationState";
+import { parseExpression } from "@/lib/calculations/parser/semantics";
+import { initializeData } from "@/providers/lib/dataLayerState";
 
 export async function saveToClipboard(data: SavedDataStructure): Promise<void> {
   try {
-    const jsonString = JSON.stringify(data);
+    const jsonString = stringifySavedData(data);
     await navigator.clipboard.writeText(jsonString);
   } catch {
     throw new Error("Failed to save data to clipboard");
+  }
+}
+
+export function stringifySavedData(data: SavedDataStructure): string {
+  if (!validateSavedData(data)) {
+    throw new Error("Cannot serialize invalid ExploreEDA settings");
+  }
+  return JSON.stringify(data);
+}
+
+export function parseSavedData(text: string): SavedDataStructure {
+  const value = JSON.parse(text) as unknown;
+  if (!validateSavedData(value))
+    throw new Error("Invalid ExploreEDA settings JSON");
+  return value;
+}
+
+export function stringifySavedAnalysis(data: SavedAnalysisStructure): string {
+  if (!validateSavedData(data.settings)) {
+    throw new Error("Cannot serialize invalid ExploreEDA settings");
+  }
+  const specialValues: Record<string, SavedSpecialValue> = {};
+  const rows = data.data.map((row, rowIndex) => {
+    const cleanRow = Object.create(null) as SavedRow;
+    Object.entries(row).forEach(([field, value]) => {
+      const key = JSON.stringify([rowIndex, field]);
+      if (value === undefined) {
+        specialValues[key] = "undefined";
+      } else if (typeof value === "number" && !Number.isFinite(value)) {
+        specialValues[key] = Number.isNaN(value)
+          ? "NaN"
+          : value === Infinity
+            ? "Infinity"
+            : "-Infinity";
+      } else {
+        cleanRow[field] = value;
+      }
+    });
+    return cleanRow;
+  });
+  return JSON.stringify({
+    ...data,
+    data: rows,
+    specialValues: Object.keys(specialValues).length
+      ? specialValues
+      : undefined,
+  });
+}
+
+export function parseSavedAnalysis(text: string): SavedAnalysisStructure {
+  const value = JSON.parse(text) as unknown;
+  if (
+    isRecord(value) &&
+    Array.isArray(value.data) &&
+    isRecord(value.specialValues)
+  ) {
+    const rows = value.data as unknown[];
+    Object.entries(value.specialValues).forEach(([encodedKey, tag]) => {
+      if (
+        !["undefined", "NaN", "Infinity", "-Infinity"].includes(tag as string)
+      ) {
+        return;
+      }
+      let path: unknown;
+      try {
+        path = JSON.parse(encodedKey);
+      } catch {
+        return;
+      }
+      if (
+        !Array.isArray(path) ||
+        path.length !== 2 ||
+        typeof path[0] !== "number" ||
+        typeof path[1] !== "string" ||
+        !isRecord(rows[path[0]])
+      ) {
+        return;
+      }
+      const row = rows[path[0]] as Record<string, unknown>;
+      Object.defineProperty(row, path[1], {
+        value:
+          tag === "undefined"
+            ? undefined
+            : tag === "NaN"
+              ? NaN
+              : tag === "Infinity"
+                ? Infinity
+                : -Infinity,
+        enumerable: true,
+        configurable: true,
+        writable: true,
+      });
+    });
+  }
+  if (!validateSavedAnalysis(value)) {
+    throw new Error("Invalid ExploreEDA analysis JSON");
+  }
+  return value;
+}
+
+export async function saveAnalysisToClipboard(
+  data: SavedAnalysisStructure
+): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(stringifySavedAnalysis(data));
+  } catch {
+    throw new Error("Failed to save analysis to clipboard");
   }
 }
 
@@ -15,60 +130,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
-}
-
-function isExpression(value: unknown): boolean {
-  if (!isRecord(value) || typeof value.type !== "string") {
-    return false;
-  }
-  if (
-    !Array.isArray(value.dependencies) ||
-    !value.dependencies.every((dependency) => typeof dependency === "string")
-  ) {
-    return false;
-  }
-
-  switch (value.type) {
-    case "basic":
-      return (
-        typeof value.operator === "string" &&
-        isExpression(value.left) &&
-        isExpression(value.right)
-      );
-    case "function":
-      return (
-        typeof value.functionName === "string" &&
-        Array.isArray(value.arguments) &&
-        value.arguments.every(isExpression)
-      );
-    case "group":
-      return (
-        Array.isArray(value.groupBy) &&
-        value.groupBy.every((field) => typeof field === "string") &&
-        typeof value.aggregation === "string"
-      );
-    case "rank":
-      return (
-        Array.isArray(value.rankBy) &&
-        value.rankBy.every((field) => typeof field === "string") &&
-        typeof value.isNormalized === "boolean" &&
-        typeof value.isCumulative === "boolean"
-      );
-    case "advanced":
-      return typeof value.algorithm === "string";
-    case "ternary":
-      return (
-        isExpression(value.condition) &&
-        isExpression(value.trueBranch) &&
-        isExpression(value.falseBranch)
-      );
-    case "unary":
-      return typeof value.operator === "string" && isExpression(value.operand);
-    case "literal":
-      return true;
-    default:
-      return false;
-  }
 }
 
 function isFilter(value: unknown): boolean {
@@ -394,7 +455,7 @@ export function validateSavedData(data: unknown): data is SavedDataStructure {
       (calculation) =>
         isRecord(calculation) &&
         typeof calculation.resultColumnName === "string" &&
-        isExpression(calculation.expression)
+        typeof calculation.expression === "string"
     ) ||
     !Array.isArray(colorScales) ||
     !colorScales.every(isColorScale) ||
@@ -422,7 +483,106 @@ export function validateSavedData(data: unknown): data is SavedDataStructure {
     return false;
   }
 
+  if (data.rowsSettings !== undefined) {
+    const rowsSettings = data.rowsSettings;
+    if (
+      !isRecord(rowsSettings) ||
+      !Array.isArray(rowsSettings.columns) ||
+      !rowsSettings.columns.every((column) => {
+        if (!isRecord(column)) return false;
+        return (
+          typeof column.id === "string" &&
+          typeof column.field === "string" &&
+          (column.width === undefined || isFiniteNumber(column.width))
+        );
+      }) ||
+      (rowsSettings.sortBy !== undefined &&
+        typeof rowsSettings.sortBy !== "string") ||
+      !["asc", "desc"].includes(rowsSettings.sortDirection as string) ||
+      !Array.isArray(rowsSettings.filters) ||
+      !rowsSettings.filters.every(isFilter) ||
+      typeof rowsSettings.globalSearch !== "string"
+    ) {
+      return false;
+    }
+  }
+
   return true;
+}
+
+function isSavedRow(value: unknown): value is SavedRow {
+  return (
+    isRecord(value) &&
+    Object.values(value).every(
+      (item) =>
+        item === null ||
+        item === undefined ||
+        typeof item === "string" ||
+        typeof item === "boolean" ||
+        typeof item === "number"
+    )
+  );
+}
+
+export function validateSavedAnalysis(
+  data: unknown
+): data is SavedAnalysisStructure {
+  const specialValuesValid =
+    isRecord(data) &&
+    (data.specialValues === undefined ||
+      (isRecord(data.specialValues) &&
+        Object.entries(data.specialValues).every(([key, value]) => {
+          if (
+            !["undefined", "NaN", "Infinity", "-Infinity"].includes(
+              value as string
+            )
+          ) {
+            return false;
+          }
+          try {
+            const path = JSON.parse(key) as unknown;
+            return (
+              Array.isArray(path) &&
+              path.length === 2 &&
+              Number.isInteger(path[0]) &&
+              (path[0] as number) >= 0 &&
+              Array.isArray(data.data) &&
+              (path[0] as number) < data.data.length &&
+              typeof path[1] === "string"
+            );
+          } catch {
+            return false;
+          }
+        })));
+  return (
+    isRecord(data) &&
+    data.format === "exploreda-analysis" &&
+    data.version === 1 &&
+    Array.isArray(data.data) &&
+    data.data.every(isSavedRow) &&
+    specialValuesValid &&
+    validateSavedData(data.settings)
+  );
+}
+
+export function validateSavedAnalysisForData(
+  analysis: SavedAnalysisStructure
+): boolean {
+  try {
+    const { dataWithIds } = initializeData(analysis.data);
+    new CalculationManager(
+      dataWithIds,
+      analysis.settings.calculations.map(
+        ({ resultColumnName, expression }) => ({
+          resultColumnName,
+          expression: parseExpression(expression),
+        })
+      )
+    );
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function migrateDataVersion(

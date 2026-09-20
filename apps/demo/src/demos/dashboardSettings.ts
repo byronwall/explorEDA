@@ -1,5 +1,3 @@
-// @ts-expect-error The demo uses legacy module resolution; runtime resolves the package export.
-import { parseExpression } from "exploreda/calculations";
 import type { SavedDataStructure } from "exploreda";
 
 type Chart = SavedDataStructure["charts"][number];
@@ -524,7 +522,7 @@ const orderCalculations = [
   ["Target gap", 'max(0, 45 - ["Contribution rate"])'],
 ].map(([resultColumnName, expression]) => ({
   resultColumnName: resultColumnName!,
-  expression: parseExpression(expression!),
+  expression: expression!,
 }));
 
 export const calculationDashboard: SavedDataStructure = {

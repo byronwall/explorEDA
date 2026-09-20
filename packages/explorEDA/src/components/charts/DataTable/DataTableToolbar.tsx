@@ -9,6 +9,7 @@ import {
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { DataTableSettings } from "./definition";
 import { DataTableRow, getFilteredRows } from "./filteredRows";
+import MultiSelect, { Option } from "@/components/ui/multi-select";
 
 interface DataTableToolbarProps {
   settings: DataTableSettings;
@@ -28,6 +29,7 @@ export function DataTableToolbar({
   const updateChart = useDataLayer((state) => state.updateChart);
   const data = useDataLayer((state) => state.data);
   const liveItems = useDataLayer((state) => state.getLiveItems(settings));
+  const getColumnNames = useDataLayer((state) => state.getColumnNames);
 
   const filteredData = rows ?? getFilteredRows(data, liveItems, settings);
   const handleSearch = (globalSearch: string) => {
@@ -83,6 +85,31 @@ export function DataTableToolbar({
       className={compact ? "eda-table-toolbar-compact" : "eda-table-toolbar"}
     >
       {!compact && search}
+      {localFilters && (
+        <MultiSelect
+          className="min-w-48 max-w-full"
+          options={getColumnNames()
+            .filter((field) => field !== "__ID")
+            .map((field) => ({ label: field, value: field }))}
+          value={settings.columns.map((column) => ({
+            label: column.field,
+            value: column.field,
+          }))}
+          onChange={(values: Option[]) =>
+            onSettingsChange?.({
+              columns: values.map(
+                ({ value }) =>
+                  settings.columns.find((column) => column.field === value) ?? {
+                    id: value,
+                    field: value,
+                  }
+              ),
+            })
+          }
+          placeholder="Columns"
+          hidePlaceholderWhenSelected
+        />
+      )}
       <span
         className="ml-auto whitespace-nowrap text-muted-foreground tabular-nums"
         aria-live="polite"

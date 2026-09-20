@@ -55,6 +55,13 @@ vi.mock("exploreda", () => {
         </div>
       );
     },
+    parseSavedAnalysis: (text: string) => JSON.parse(text),
+    validateSavedAnalysisForData: (analysis: {
+      settings: { calculations: { expression: string }[] };
+    }) =>
+      analysis.settings.calculations.every(
+        ({ expression }) => !expression.includes("UnknownField")
+      ),
   };
 });
 
@@ -129,5 +136,64 @@ describe("LandingPage routing", () => {
         initialMount
       );
     });
+  });
+
+  it("shows full-analysis validation errors and accepts a valid followup", async () => {
+    const router = createMemoryRouter(
+      [{ path: "/explorEDA/*", element: <LandingPage /> }],
+      { initialEntries: ["/explorEDA/"] }
+    );
+
+    render(<RouterProvider router={router} />);
+    const input = screen.getByRole("textbox", { name: "Full analysis JSON" });
+    const base = {
+      format: "exploreda-analysis",
+      version: 1,
+      data: [{ value: 2 }],
+      settings: {
+        charts: [],
+        calculations: [],
+        gridSettings: {
+          columnCount: 12,
+          rowHeight: 100,
+          containerPadding: 10,
+          showBackgroundMarkers: true,
+        },
+        metadata: {
+          name: "Test",
+          version: 1,
+          createdAt: "2026-01-01T00:00:00.000Z",
+          modifiedAt: "2026-01-01T00:00:00.000Z",
+        },
+        colorScales: [],
+      },
+    };
+
+    fireEvent.change(input, {
+      target: {
+        value: JSON.stringify({
+          ...base,
+          settings: {
+            ...base.settings,
+            calculations: [
+              { resultColumnName: "double", expression: "UnknownField * 2" },
+            ],
+          },
+        }),
+      },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Open analysis JSON" }));
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Analysis formulas do not match the saved source rows"
+    );
+    expect(screen.queryByTestId("workspace")).not.toBeInTheDocument();
+
+    fireEvent.change(input, { target: { value: JSON.stringify(base) } });
+    fireEvent.click(screen.getByRole("button", { name: "Open analysis JSON" }));
+    expect(await screen.findByTestId("workspace")).toHaveAttribute(
+      "data-rows",
+      "1"
+    );
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 });
