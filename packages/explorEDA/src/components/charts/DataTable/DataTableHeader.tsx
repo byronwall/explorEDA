@@ -1,4 +1,5 @@
 import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { buildFieldProfile, type FieldProfile } from "@/lib/fieldProfiles";
@@ -23,6 +24,7 @@ import { FieldInspector } from "@/components/SummaryTable/components/FieldInspec
 interface DataTableHeaderProps {
   settings: DataTableSettings;
   onSettingsChange?: (settings: Partial<DataTableSettings>) => void;
+  localFilters?: boolean;
   onColumnResize?: (id: string, width: number | null) => void;
 }
 
@@ -30,6 +32,7 @@ export function DataTableHeader({
   settings,
   onSettingsChange,
   onColumnResize,
+  localFilters = false,
 }: DataTableHeaderProps) {
   const { columns, sortBy, sortDirection, filters } = settings;
   const updateChart = useDataLayer((state) => state.updateChart);
@@ -61,7 +64,6 @@ export function DataTableHeader({
   );
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [resizingColumn, setResizingColumn] = useState<string | null>(null);
-  const [inspectedField, setInspectedField] = useState<string | null>(null);
   const [tempWidths, setTempWidths] = useState<Record<string, number>>({});
   const resizeCleanup = useRef<(() => void) | null>(null);
 
@@ -198,16 +200,14 @@ export function DataTableHeader({
                     : "none"
                 }
               >
-                <div className="flex items-center gap-2">
+                <div className="eda-column-heading">
                   <button
                     type="button"
                     className="flex min-w-0 flex-1 items-center gap-1 text-left"
                     aria-label={`Sort by ${column.field}`}
                     onClick={() => handleSort(column.field)}
                   >
-                    <span className="truncate" title={column.field}>
-                      {label(column.field)}
-                    </span>
+                    <span className="truncate">{label(column.field)}</span>
                     {sortBy === column.field &&
                       (sortDirection === "asc" ? (
                         <ChevronUp className="h-4 w-4" />
@@ -215,58 +215,60 @@ export function DataTableHeader({
                         <ChevronDown className="h-4 w-4" />
                       ))}
                   </button>
-                  <CalculatedFieldBadge field={column.field} />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 w-7 p-0"
-                    aria-label={`Inspect ${column.field}`}
-                    title={`Inspect ${column.field}`}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setInspectedField(column.field);
-                    }}
-                  >
-                    <Settings2 className="h-3.5 w-3.5" />
-                  </Button>
-                  <Popover
-                    open={activeFilter === column.id}
-                    onOpenChange={(open) =>
-                      setActiveFilter(open ? column.id : null)
-                    }
-                  >
-                    <PopoverTrigger asChild>
+                  <div className="eda-column-actions">
+                    <CalculatedFieldBadge field={column.field} />
+                    <FieldInspector field={column.field}>
                       <Button
                         variant="ghost"
-                        size="sm"
-                        className={`eda-column-filter ${filter ? "is-active" : ""}`}
-                        aria-label={`Filter ${column.field}`}
-                        aria-expanded={activeFilter === column.id}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setActiveFilter(
-                            activeFilter === column.id ? null : column.id
-                          );
-                        }}
+                        size="icon"
+                        className="h-6 w-6"
+                        aria-label={`Inspect ${column.field}`}
                       >
-                        <FilterIcon className="h-4 w-4" />
+                        <Settings2 className="h-3.5 w-3.5" />
                       </Button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto max-w-[calc(100vw-24px)]"
-                      align="start"
-                      collisionPadding={12}
+                    </FieldInspector>
+                    <Popover
+                      open={activeFilter === column.id}
+                      onOpenChange={(open) =>
+                        setActiveFilter(open ? column.id : null)
+                      }
                     >
-                      <ColumnFilter
-                        columnId={column.id}
-                        columnLabel={column.field}
-                        profile={profile}
-                        filter={filter}
-                        onChange={handleFilterChange}
-                        onClear={() => handleFilterClear(column.id)}
-                      />
-                    </PopoverContent>
-                  </Popover>
+                      <ActionTooltip content={`Filter ${label(column.field)}`}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className={`eda-column-filter ${filter ? "is-active" : ""}`}
+                            aria-label={`Filter ${column.field}`}
+                            aria-expanded={activeFilter === column.id}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              setActiveFilter(
+                                activeFilter === column.id ? null : column.id
+                              );
+                            }}
+                          >
+                            <FilterIcon className="h-4 w-4" />
+                          </Button>
+                        </PopoverTrigger>
+                      </ActionTooltip>
+                      <PopoverContent
+                        className="w-auto max-w-[calc(100vw-24px)]"
+                        align="start"
+                        collisionPadding={12}
+                      >
+                        <ColumnFilter
+                          local={localFilters}
+                          columnId={column.id}
+                          columnLabel={label(column.field)}
+                          profile={profile}
+                          filter={filter}
+                          onChange={handleFilterChange}
+                          onClear={() => handleFilterClear(column.id)}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 </div>
                 <div
                   role="separator"
@@ -303,11 +305,6 @@ export function DataTableHeader({
           })}
         </TableRow>
       </TableHeader>
-      <FieldInspector
-        field={inspectedField}
-        open={inspectedField !== null}
-        onOpenChange={(open) => !open && setInspectedField(null)}
-      />
     </>
   );
 }

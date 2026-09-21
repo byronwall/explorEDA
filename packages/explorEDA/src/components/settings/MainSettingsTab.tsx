@@ -5,12 +5,12 @@ import { Label } from "../ui/label";
 
 interface MainSettingsTabProps {
   settings: ChartSettings;
-  onSettingChange: (key: string, value: unknown) => void;
+  onSettingsChange: (settings: Partial<ChartSettings>) => void;
 }
 
 export function MainSettingsTab({
   settings,
-  onSettingChange,
+  onSettingsChange,
 }: MainSettingsTabProps) {
   const chartDefinition = useChartDefinition(settings.type);
   const chartTypes = chartRegistry.getAll();
@@ -23,6 +23,8 @@ export function MainSettingsTab({
       <div className="grid grid-cols-[120px_1fr] items-center gap-4">
         <Label htmlFor="chartType">Chart Type</Label>
         <ComboBox
+          id="chartType"
+          aria-label="Chart type"
           value={chartDefinition}
           options={chartTypes}
           onChange={(option) => {
@@ -31,9 +33,7 @@ export function MainSettingsTab({
                 settings.layout,
                 settings.field
               );
-              Object.entries(newSettings).forEach(([key, value]) => {
-                onSettingChange(key, value);
-              });
+              onSettingsChange(newSettings);
             }
           }}
           optionToNode={(option) => {
@@ -50,14 +50,7 @@ export function MainSettingsTab({
         />
       </div>
 
-      <SettingsPanel
-        settings={settings}
-        onSettingsChange={(newSettings) => {
-          Object.entries(newSettings).forEach(([key, value]) => {
-            onSettingChange(key, value);
-          });
-        }}
-      />
+      <SettingsPanel settings={settings} onSettingsChange={onSettingsChange} />
     </div>
   );
 }

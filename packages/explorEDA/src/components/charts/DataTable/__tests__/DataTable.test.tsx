@@ -100,6 +100,6 @@ it("closes table search with Escape without restoring the expanded panel", async
     { key: "Escape" }
   );
   expect(
-    screen.getByRole("button", { name: "Expand Observations" })
+    await screen.findByRole("button", { name: "Expand Observations" })
   ).toBeInTheDocument();
 });

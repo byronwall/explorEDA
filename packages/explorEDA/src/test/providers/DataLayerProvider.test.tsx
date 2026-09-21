@@ -440,13 +440,11 @@ describe("DataLayerProvider", () => {
       '"type":"data-table"'
     );
     expect(screen.getByTestId("workspace")).toHaveTextContent('"field":"late"');
-    expect(screen.getByTestId("workspace")).toHaveTextContent('"title":""');
-    expect(screen.getByTestId("workspace")).toHaveTextContent(
-      '"xAxisLabel":""'
-    );
-    expect(screen.getByTestId("workspace")).toHaveTextContent(
-      '"yAxisLabel":"Rows (count)"'
-    );
+    const charts = JSON.parse(screen.getByTestId("workspace").textContent!);
+    expect(charts.map((chart: { type: string }) => chart.type)).toEqual([
+      "summary",
+      "data-table",
+    ]);
   });
 
   it("does not create defaults when saved data is supplied", () => {
@@ -670,7 +668,7 @@ describe("DataLayerProvider", () => {
     fireEvent.click(screen.getByRole("button", { name: "change chart" }));
     expect(onStateChange).toHaveBeenCalledTimes(1);
     const snapshot = onStateChange.mock.calls[0]![0] as SavedDataStructure;
-    expect(snapshot.charts).toHaveLength(3);
+    expect(snapshot.charts).toHaveLength(2);
     expect(snapshot.gridSettings).toBeDefined();
     expect(snapshot.calculations).toEqual([]);
     expect(snapshot.colorScales).toEqual([]);

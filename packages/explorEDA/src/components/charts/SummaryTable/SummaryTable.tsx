@@ -1,6 +1,7 @@
 import { categoryLabel } from "@/lib/categories";
 import { BaseChartProps, datum } from "@/types/ChartTypes";
 import { Button } from "@/components/ui/button";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import {
   buildFieldProfile,
   emptyFieldProfile,
@@ -12,7 +13,6 @@ import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { toast } from "sonner";
 import { CompactSummaryTable } from "../../SummaryTable/components/CompactSummaryTable";
-import { FieldInspector } from "../../SummaryTable/components/FieldInspector";
 import type { SummaryTableSettings } from "./definition";
 
 type SortConfig = {
@@ -85,7 +85,6 @@ export function SummaryTable({
     column: null,
     direction: "asc",
   });
-  const [inspectedField, setInspectedField] = useState<string | null>(null);
 
   const allProfiles = useMemo(() => {
     const filteredIds = new Set(
@@ -178,15 +177,16 @@ export function SummaryTable({
       <span className="text-muted-foreground tabular-nums">
         {(allProfiles[0]?.totalCount ?? 0).toLocaleString()} rows
       </span>
-      <Button
-        variant="ghost"
-        size="icon"
-        aria-label="Export summary as CSV"
-        title="Export summary as CSV"
-        onClick={() => exportToCSV(sortedProfiles)}
-      >
-        <Download className="h-3.5 w-3.5" />
-      </Button>
+      <ActionTooltip content="Export summary as CSV">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Export summary as CSV"
+          onClick={() => exportToCSV(sortedProfiles)}
+        >
+          <Download className="h-3.5 w-3.5" />
+        </Button>
+      </ActionTooltip>
     </div>
   );
 
@@ -199,12 +199,6 @@ export function SummaryTable({
         data={sortedProfiles}
         onSort={handleSort}
         settings={settings}
-        onInspect={setInspectedField}
-      />
-      <FieldInspector
-        field={inspectedField}
-        open={inspectedField !== null}
-        onOpenChange={(open) => !open && setInspectedField(null)}
       />
     </div>
   );

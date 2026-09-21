@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useCalculationEditor } from "./CalculationEditor";
 import { calculationValue, dependentCalculations } from "./calculationHelpers";
+import { FieldMetadata, resolveFieldProfile } from "@/components/FieldMetadata";
 
 export function CalculatedFieldBadge({
   field,
@@ -23,6 +24,8 @@ export function CalculatedFieldBadge({
   const calculations = useDataLayer((state) => state.calculations) ?? [];
   const manager = useDataLayer((state) => state.calculationManager);
   const data = useDataLayer((state) => state.data);
+  const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
   const editor = useCalculationEditor();
   const calc = calculations.find((item) => item.resultColumnName === field);
   const [open, setOpen] = useState(false);
@@ -39,6 +42,9 @@ export function CalculatedFieldBadge({
   };
   const errors = open ? manager.getErrors(field) : new Map<number, string>();
   const value = open ? manager.executeCalculation(calc).get(rowId) : undefined;
+  const profile = open
+    ? resolveFieldProfile(field, fieldProfiles, getColumnData)
+    : undefined;
   return (
     <Popover
       open={open}
@@ -103,7 +109,7 @@ export function CalculatedFieldBadge({
         }}
       >
         <div className="eda-calc-section-heading">
-          <strong>{field}</strong>
+          <FieldMetadata profile={profile} label={field} compact />
           <span>Calculated field</span>
         </div>
         <pre>{calc.expression.rawInput}</pre>
@@ -116,9 +122,7 @@ export function CalculatedFieldBadge({
         </p>
         <div className="eda-calc-peek-result">
           <span>Row {rowId + 1}</span>
-          <strong title={errors.get(rowId)}>
-            {errors.get(rowId) ?? calculationValue(value)}
-          </strong>
+          <strong>{errors.get(rowId) ?? calculationValue(value)}</strong>
         </div>
         <p className="eda-calc-help">
           {errors.size

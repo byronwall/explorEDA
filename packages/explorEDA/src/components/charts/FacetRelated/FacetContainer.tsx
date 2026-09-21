@@ -131,10 +131,7 @@ export function FacetContainer({
       return (
         <div className="flex h-full w-full min-h-0 flex-col">
           <div className="flex shrink-0 items-center justify-between gap-2 overflow-hidden pb-1 text-xs">
-            <span
-              className="min-w-0 truncate whitespace-nowrap font-medium"
-              title={`${displayFacetValue(settings.facet.rowVariable, focused.rowRawValue)}${settings.facet.type === "grid" && focused.columnRawValue !== null ? ` · ${displayFacetValue(settings.facet.columnVariable, focused.columnRawValue)}` : ""}`}
-            >
+            <span className="min-w-0 truncate whitespace-nowrap font-medium">
               {displayFacetValue(
                 settings.facet.rowVariable,
                 focused.rowRawValue
@@ -183,10 +180,7 @@ export function FacetContainer({
 
   return (
     <div className="flex h-full w-full flex-col">
-      <p
-        className="mb-1 shrink-0 truncate whitespace-nowrap text-xs text-muted-foreground"
-        title="Shared full-data scales · selections apply across all facets"
-      >
+      <p className="mb-1 shrink-0 truncate whitespace-nowrap text-xs text-muted-foreground">
         Shared full-data scales · selections apply across all facets
       </p>
       <div className="min-h-0 flex-1">

@@ -46,7 +46,7 @@ function formatFilterLabel(filter: Filter): string {
   }
 }
 
-function isActiveFilter(filter: Filter) {
+export function isActiveFilter(filter: Filter) {
   switch (filter.type) {
     case "value":
       return filter.values.length > 0;
@@ -68,7 +68,7 @@ function getActiveFilters(charts: ChartSettings[]) {
   );
 }
 
-export function ActiveFilterStatus() {
+export function ActiveFilterStatus({ view = "charts" }: { view?: string }) {
   const charts = useDataLayer((state) => state.charts);
   const data = useDataLayer((state) => state.data);
   const remainingRows = useDataLayer((state) =>
@@ -76,7 +76,27 @@ export function ActiveFilterStatus() {
   );
   const updateChart = useDataLayer((state) => state.updateChart);
   const clearAllFilters = useDataLayer((state) => state.clearAllFilters);
+  const rowsSettings = useDataLayer((state) => state.rowsSettings);
+  const updateRowsSettings = useDataLayer((state) => state.updateRowsSettings);
   const activeFilters = getActiveFilters(charts);
+  const localFilters =
+    view === "rows" ? rowsSettings.filters.filter(isActiveFilter) : [];
+  const searches =
+    view === "rows"
+      ? rowsSettings.globalSearch
+        ? [{ id: "rows", title: "Rows", text: rowsSettings.globalSearch }]
+        : []
+      : charts.flatMap((chart) =>
+          chart.type === "data-table" && chart.globalSearch
+            ? [
+                {
+                  id: chart.id,
+                  title: chart.title || "Table",
+                  text: chart.globalSearch,
+                },
+              ]
+            : []
+        );
 
   return (
     <section
@@ -92,17 +112,57 @@ export function ActiveFilterStatus() {
         <strong className="text-foreground">{data.length}</strong> rows
         <span className="filter-context"> after chart filters.</span>
       </p>
-      {activeFilters.length === 0 && (
+      {activeFilters.length + localFilters.length + searches.length === 0 && (
         <span className="ml-auto hidden whitespace-nowrap text-xs text-muted-foreground sm:inline">
           Table searches and Rows filters apply locally
         </span>
       )}
-      {activeFilters.length > 0 && (
+      {activeFilters.length + localFilters.length + searches.length > 0 && (
         <>
           <ul
             className="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto whitespace-nowrap"
             aria-label="Active filters"
           >
+            {localFilters.map((filter, index) => (
+              <li key={`rows-${index}`}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  aria-label={`Remove Rows filter: ${formatFilterLabel(filter)}`}
+                  onClick={() =>
+                    updateRowsSettings({
+                      filters: rowsSettings.filters.filter(
+                        (item) => item !== filter
+                      ),
+                    })
+                  }
+                >
+                  <span className="truncate">
+                    Rows · {formatFilterLabel(filter)}
+                  </span>
+                  <X aria-hidden="true" />
+                </Button>
+              </li>
+            ))}
+            {searches.map((search) => (
+              <li key={`search-${search.id}`}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  aria-label={`Clear ${search.title} search: ${search.text}`}
+                  onClick={() =>
+                    search.id === "rows"
+                      ? updateRowsSettings({ globalSearch: "" })
+                      : updateChart(search.id, { globalSearch: "" })
+                  }
+                >
+                  <span className="truncate">
+                    {search.title} search · {search.text}
+                  </span>
+                  <X aria-hidden="true" />
+                </Button>
+              </li>
+            ))}
             {activeFilters.map(({ chart, filter, index }) => {
               const label = formatFilterLabel(filter);
               return (
@@ -112,7 +172,7 @@ export function ActiveFilterStatus() {
                     variant="outline"
                     size="sm"
                     className="h-7 max-w-full"
-                    title={`Remove ${label} from ${chart.title || chart.type}`}
+                    tooltip={`Remove ${label} from ${chart.title || chart.type}`}
                     aria-label={`Remove ${label} from ${chart.title || chart.type}`}
                     onClick={() =>
                       updateChart(chart.id, {
@@ -136,7 +196,7 @@ export function ActiveFilterStatus() {
         variant="ghost"
         size="sm"
         className="ml-auto shrink-0"
-        title="Clear chart filters, all table searches, and Rows filters"
+        tooltip="Clear chart filters, all table searches, and Rows filters"
         onClick={clearAllFilters}
       >
         <FilterX aria-hidden="true" />

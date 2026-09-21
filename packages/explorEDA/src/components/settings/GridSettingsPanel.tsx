@@ -10,45 +10,45 @@ export function GridSettingsPanel() {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label>Column Count</Label>
+        <Label htmlFor="grid-columns">Columns</Label>
         <Input
+          id="grid-columns"
           type="number"
           value={gridSettings.columnCount}
-          onChange={(e) =>
-            updateGridSettings({
-              columnCount: parseInt(e.target.value),
-            })
-          }
+          onChange={(e) => {
+            if (e.target.value && e.target.validity.valid)
+              updateGridSettings({ columnCount: e.target.valueAsNumber });
+          }}
           min={1}
           max={24}
         />
       </div>
 
       <div className="space-y-2">
-        <Label>Row Height (px)</Label>
+        <Label htmlFor="grid-row-height">Row height (px)</Label>
         <Input
+          id="grid-row-height"
           type="number"
           value={gridSettings.rowHeight}
-          onChange={(e) =>
-            updateGridSettings({
-              rowHeight: parseInt(e.target.value),
-            })
-          }
+          onChange={(e) => {
+            if (e.target.value && e.target.validity.valid)
+              updateGridSettings({ rowHeight: e.target.valueAsNumber });
+          }}
           min={20}
           max={200}
         />
       </div>
 
       <div className="space-y-2">
-        <Label>Container Padding (px)</Label>
+        <Label htmlFor="grid-padding">Outer spacing (px)</Label>
         <Input
+          id="grid-padding"
           type="number"
           value={gridSettings.containerPadding}
-          onChange={(e) =>
-            updateGridSettings({
-              containerPadding: parseInt(e.target.value),
-            })
-          }
+          onChange={(e) => {
+            if (e.target.value && e.target.validity.valid)
+              updateGridSettings({ containerPadding: e.target.valueAsNumber });
+          }}
           min={0}
           max={50}
         />

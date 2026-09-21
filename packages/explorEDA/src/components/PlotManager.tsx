@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { ActionTooltip } from "./ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { ColorScaleManager } from "./ColorScaleManager";
 import { ChartCreationButtons } from "./plot/ChartCreationButtons";
 
@@ -31,7 +33,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "./ui/dialog";
 import {
   DropdownMenu,
@@ -132,7 +133,7 @@ export function PlotManager() {
   const chartGridSettings = {
     ...gridSettings,
     columnCount:
-      containerWidth > 0 && containerWidth < 640 ? 1 : gridSettings.columnCount,
+      containerWidth > 0 && containerWidth < 960 ? 1 : gridSettings.columnCount,
   };
 
   const focusChartElement = useCallback((id: string) => {
@@ -235,129 +236,127 @@ export function PlotManager() {
 
   return (
     <div className="eda-workspace w-full min-w-0 pb-8" ref={containerRef}>
-      <header className="eda-workspace-toolbar">
-        <div className="flex min-w-0 flex-wrap items-center gap-2">
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="shrink-0"
-          >
-            <TabsList>
-              <TabsTrigger value="charts" className="flex items-center gap-2">
-                Charts
-              </TabsTrigger>
-              <TabsTrigger value="rows" className="flex items-center gap-2">
-                Rows
-              </TabsTrigger>
-              <TabsTrigger
-                value="calculations"
-                className="flex items-center gap-2"
-              >
-                <Calculator className="h-4 w-4" />
-                Calculations
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-          {activeTab === "charts" && <ChartCreationButtons />}
-          {activeTab === "charts" && <GroupedSummaryManager />}
-        </div>
-        <div className="ml-auto flex flex-wrap items-center gap-2">
-          {activeTab === "rows" && <div ref={setRowsToolbarTarget} />}
-          {(activeTab === "charts" || activeTab === "rows") && (
-            <>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    title="Workspace actions"
-                    aria-label="Workspace actions"
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem
-                    onClick={copyChartsToClipboard}
-                    className="flex items-center gap-2"
-                  >
-                    <Copy className="h-4 w-4" />
-                    Copy settings JSON
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => {
-                      openJsonDialog("settings");
-                    }}
-                    className="flex items-center gap-2"
-                  >
-                    Open settings JSON
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={copyAnalysisToClipboard}
-                    className="flex items-center gap-2"
-                  >
-                    <Copy className="h-4 w-4" />
-                    Copy full analysis JSON
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => {
-                      openJsonDialog("analysis");
-                    }}
-                    className="flex items-center gap-2"
-                  >
-                    Open full analysis JSON
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={copyDataToClipboard}
-                    className="flex items-center gap-2"
-                  >
-                    <Copy className="h-4 w-4" />
-                    Copy Data
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={handleRemoveAllCharts}
-                    className="flex items-center gap-2 text-destructive"
-                  >
-                    <X className="h-4 w-4" />
-                    Remove All Charts
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </>
-          )}
-          {activeTab === "charts" && (
-            <details className="relative">
-              <summary className="flex h-9 cursor-pointer list-none items-center rounded-md border bg-background px-3 text-sm font-medium shadow-xs">
-                Colors and layout
-              </summary>
-              <div className="absolute right-0 z-20 mt-2 flex min-w-52 flex-col gap-2 rounded-md border bg-popover p-2 shadow-md">
-                <ColorScaleManager />
-                <Dialog>
-                  <DialogTrigger asChild>
+      <div className="eda-workspace-controls">
+        <header className="eda-workspace-toolbar">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="shrink-0"
+            >
+              <TabsList>
+                <TabsTrigger value="charts" className="flex items-center gap-2">
+                  Charts
+                </TabsTrigger>
+                <TabsTrigger value="rows" className="flex items-center gap-2">
+                  Rows
+                </TabsTrigger>
+                <TabsTrigger
+                  value="calculations"
+                  className="flex items-center gap-2"
+                >
+                  <Calculator className="h-4 w-4" />
+                  Calculations
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+            {activeTab === "charts" && <ChartCreationButtons />}
+            {activeTab === "charts" && <GroupedSummaryManager />}
+          </div>
+          <div className="ml-auto flex flex-wrap items-center gap-2">
+            {activeTab === "rows" && <div ref={setRowsToolbarTarget} />}
+            {(activeTab === "charts" || activeTab === "rows") && (
+              <>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
                     <Button
                       variant="outline"
                       size="sm"
-                      className="justify-start"
+                      aria-label="Workspace actions"
+                      tooltip="Workspace actions"
                     >
-                      <Grid className="mr-2 h-4 w-4" />
-                      Grid settings
+                      <MoreHorizontal className="h-4 w-4" />
                     </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Grid settings</DialogTitle>
-                      <DialogDescription>
-                        Configure the grid layout settings for all charts
-                      </DialogDescription>
-                    </DialogHeader>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem
+                      onClick={copyChartsToClipboard}
+                      className="flex items-center gap-2"
+                    >
+                      <Copy className="h-4 w-4" />
+                      Copy settings JSON
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        openJsonDialog("settings");
+                      }}
+                      className="flex items-center gap-2"
+                    >
+                      Open settings JSON
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={copyAnalysisToClipboard}
+                      className="flex items-center gap-2"
+                    >
+                      <Copy className="h-4 w-4" />
+                      Copy full analysis JSON
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        openJsonDialog("analysis");
+                      }}
+                      className="flex items-center gap-2"
+                    >
+                      Open full analysis JSON
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={copyDataToClipboard}
+                      className="flex items-center gap-2"
+                    >
+                      <Copy className="h-4 w-4" />
+                      Copy Data
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={handleRemoveAllCharts}
+                      className="flex items-center gap-2 text-destructive"
+                    >
+                      <X className="h-4 w-4" />
+                      Remove All Charts
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            )}
+            {activeTab === "charts" && (
+              <>
+                <ColorScaleManager />
+                <Popover>
+                  <ActionTooltip content="Grid settings">
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Grid settings"
+                      >
+                        <Grid className="h-4 w-4" />
+                      </Button>
+                    </PopoverTrigger>
+                  </ActionTooltip>
+                  <PopoverContent
+                    align="end"
+                    aria-label="Grid settings"
+                    className="w-72 space-y-4"
+                  >
+                    <h3 className="text-sm font-semibold">Grid settings</h3>
                     <GridSettingsPanel />
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </details>
-          )}
-        </div>
-      </header>
+                  </PopoverContent>
+                </Popover>
+              </>
+            )}
+          </div>
+        </header>
+        <ActiveFilterStatus view={activeTab} />
+      </div>
 
       <Dialog
         open={jsonDialogOpen}
@@ -406,7 +405,6 @@ export function PlotManager() {
         </DialogContent>
       </Dialog>
 
-      <ActiveFilterStatus />
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {announcement}
       </div>

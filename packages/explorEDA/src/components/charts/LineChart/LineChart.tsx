@@ -338,11 +338,7 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
         aria-label="Chart series"
       >
         {settings.seriesField.map((name) => (
-          <span
-            key={name}
-            className="eda-line-legend-item"
-            title={`${name}${settings.seriesSettings[name]?.useRightAxis ? " · right axis" : ""}`}
-          >
+          <span key={name} className="eda-line-legend-item">
             <svg width="14" height="6" aria-hidden="true">
               <line
                 x1="0"

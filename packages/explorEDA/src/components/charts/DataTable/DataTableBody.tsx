@@ -74,10 +74,6 @@ export function DataTableBody({
                   textAlign:
                     typeof row[column.field] === "number" ? "right" : "left",
                 }}
-                title={
-                  manager?.getErrors(column.field).get(row.__ID) ??
-                  String(row[column.field] ?? "Missing")
-                }
               >
                 {calculations.some(
                   (calc) => calc.resultColumnName === column.field

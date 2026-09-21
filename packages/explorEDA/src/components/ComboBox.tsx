@@ -27,6 +27,8 @@ interface ComboBoxProps<T> {
   optionToNode?: (option: T) => React.ReactNode;
   placeholder?: string;
   className?: string;
+  id?: string;
+  "aria-label"?: string;
 }
 
 export function ComboBox<T>({
@@ -37,6 +39,8 @@ export function ComboBox<T>({
   optionToNode,
   placeholder = "Select option...",
   className,
+  id,
+  "aria-label": ariaLabel,
 }: ComboBoxProps<T>) {
   const [open, setOpen] = useState(false);
 
@@ -53,18 +57,22 @@ export function ComboBox<T>({
         <Button
           variant="outline"
           role="combobox"
+          id={id}
+          aria-label={ariaLabel}
           aria-expanded={open}
           className={cn("w-full justify-between", className)}
         >
-          {value ? renderOption(value) : placeholder}
+          <span className="min-w-0 truncate">
+            {value ? optionToString(value) : placeholder}
+          </span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0">
+      <PopoverContent className="w-[max(18rem,var(--radix-popover-trigger-width))] p-0">
         <Command>
           <CommandInput placeholder={placeholder} />
           <CommandGroup>
-            <CommandList>
+            <CommandList className="max-h-72 overflow-y-auto">
               <CommandEmpty>No options found.</CommandEmpty>
               {options.map((option, index) => {
                 return (

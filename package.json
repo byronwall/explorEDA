@@ -4,8 +4,9 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "check": "pnpm --recursive --if-present run build && pnpm --recursive --if-present run check-types && pnpm --recursive --if-present run test",
-    "release": "pnpm check && changeset publish"
+    "check": "pnpm check:ui && pnpm --recursive --if-present run build && pnpm --recursive --if-present run check-types && pnpm --recursive --if-present run test",
+    "release": "pnpm check && changeset publish",
+    "check:ui": "node scripts/check-ui.mjs"
   },
   "dependencies": {
     "@changesets/cli": "^2.28.1",

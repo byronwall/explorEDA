@@ -1,3 +1,4 @@
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { categoryIncludes, categoryKey } from "@/lib/categories";
 import { calculatePivotData } from "@/components/charts/PivotTable/utils/calculations";
 import { cn } from "@/lib/utils";
@@ -235,7 +236,6 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
       aria-label={`Filter ${header.field} by ${header.label}`}
       aria-pressed={isValueFiltered(header.field, header.value)}
       onClick={() => handleFilterClick(header.field, header.value)}
-      title={header.label}
     >
       <span>
         {hasFieldDisplayFormat(fieldSettings[header.field])
@@ -252,7 +252,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
     if (cell.status !== "ok") return displayCellValue(cell);
     return hasFieldDisplayFormat(fieldSettings[cell.key.valueField!])
       ? (formatFieldValue?.(cell.key.valueField!, cell.value) ??
-        displayCellValue(cell))
+          displayCellValue(cell))
       : displayCellValue(cell);
   };
 
@@ -306,7 +306,6 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
                 rowSpan={settings.columnField ? 2 : 1}
                 className="eda-pivot-row-label"
                 style={{ left: index * 140, zIndex: 20 - index }}
-                title={field}
               >
                 {getFieldLabel?.(field) ?? field}
               </th>
@@ -322,17 +321,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
                   </th>
                 ))
               : settings.valueFields.map((valueField) => (
-                  <th
-                    key={valueField.field}
-                    scope="col"
-                    title={
-                      valueLabel(
-                        valueField.field,
-                        valueField.aggregation,
-                        valueField.label
-                      )
-                    }
-                  >
+                  <th key={valueField.field} scope="col">
                     {valueLabel(
                       valueField.field,
                       valueField.aggregation,
@@ -348,13 +337,6 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
                   <th
                     key={`${header.field}-${categoryKey(header.value)}-${valueField.field}`}
                     scope="col"
-                    title={
-                      valueLabel(
-                        valueField.field,
-                        valueField.aggregation,
-                        valueField.label
-                      )
-                    }
                   >
                     {valueLabel(
                       valueField.field,
@@ -392,7 +374,13 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
                   )}
                 >
                   <div className="flex items-center justify-end gap-2">
-                    <span title={cell.error}>{displayPivotCell(cell)}</span>
+                    <ActionTooltip
+                      content={cell.error ?? cellName(cell, row.headers)}
+                    >
+                      <span tabIndex={cell.error ? 0 : undefined}>
+                        {displayPivotCell(cell)}
+                      </span>
+                    </ActionTooltip>
                     <button
                       type="button"
                       className="rounded px-1 text-[10px] text-muted-foreground underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"

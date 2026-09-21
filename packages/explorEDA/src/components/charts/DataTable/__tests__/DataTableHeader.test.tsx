@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { DataTableHeader } from "../DataTableHeader";
@@ -82,6 +83,10 @@ const dateProfile = {
   uniqueCount: 3,
   nullCount: 0,
 };
+
+vi.mock("@/components/SummaryTable/components/FieldInspector", () => ({
+  FieldInspector: ({ children }: { children: ReactNode }) => children,
+}));
 
 const mockUseDataLayer = vi.fn();
 

@@ -355,21 +355,14 @@ export function LandingPage() {
                   size="icon"
                   onClick={handleClearData}
                   aria-label="Back to examples"
-                  title="Back to examples"
                 >
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
                 <div className="min-w-0 flex-1">
-                  <h1
-                    title={example?.title}
-                    className="truncate text-lg font-semibold"
-                  >
+                  <h1 className="truncate text-lg font-semibold">
                     {example?.title ?? "Explore your data"}
                   </h1>
-                  <p
-                    className="truncate text-xs text-muted-foreground"
-                    title={example?.description}
-                  >
+                  <p className="truncate text-xs text-muted-foreground">
                     {example?.description}
                   </p>
                 </div>
@@ -379,7 +372,6 @@ export function LandingPage() {
                   disabled={!capturedState}
                   onClick={handleResetWorkspace}
                   aria-label="Reset workspace"
-                  title="Reset workspace"
                 >
                   <RotateCcw className="h-4 w-4" />
                 </Button>

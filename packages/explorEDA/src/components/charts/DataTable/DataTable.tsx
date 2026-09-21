@@ -223,6 +223,7 @@ export function DataTable({
             ))}
           </colgroup>
           <DataTableHeader
+            localFilters={rows !== undefined}
             settings={settings}
             onSettingsChange={update}
             onColumnResize={(id, width) =>

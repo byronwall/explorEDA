@@ -77,7 +77,6 @@ export function ColorScale({
             aria-label={`Filter ${scale.name} by ${formatValue(value)}, ${count.toLocaleString()} rows`}
             aria-pressed={active}
             data-dimmed={(selected.length > 0 && !active) || count === 0}
-            title={`${formatValue(value)} · ${count.toLocaleString()} rows · Click to ${active ? "remove" : "add"} filter`}
             onClick={() => onToggle(value)}
           >
             <span

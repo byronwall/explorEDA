@@ -1,6 +1,6 @@
 # explorEDA application feature inventory
 
-Updated after the 2026-09-20 field, chart, and grouped-summary implementation. See the [current gaps and verification](transcript-gap-analysis.md).
+Updated after the 2026-09-20 field, chart, and grouped-summary implementation and task-history reconciliation. See the [current gaps and verification](transcript-gap-analysis.md).
 
 Original audit: 2026-09-17, commit `a168f1b`. Current reviewed implementation: `f04e790` on `main`.
 
@@ -58,7 +58,7 @@ flowchart TD
     L[Layout, charts, calculations, and color scales] --> M[Serializable state / host callback]
 ```
 
-This diagram shows responsibilities, not a persisted transformation graph. Most chart transformations execute inside their own renderer or helper. Their output cannot become another named source table.
+This diagram shows responsibilities, not a persisted transformation graph. Named grouped summaries provide one shared bar/table input. Other chart transformations remain internal and cannot become named source tables.
 
 The full package entry registers every chart. The `exploreda/core` entry exposes the chart registry. Individual `exploreda/charts/*` entries export chart definitions for selective registration. These entries support composition and bundle control; they do not provide a renderer-independent visualization language. The public chart type union still names the built-in chart types.
 
@@ -276,6 +276,8 @@ Common charts provide axis labels, chart titles, margins, grid lines, and densit
 
 Field settings provide shared labels and value formatting for numbers, currency, percentages, dates, datetimes, units, and precision. The formatter is used by table cells, chart labels and tooltips, facet labels, pivot values, and legends. Explicit chart axis labels override field labels; blank labels inherit them. Multiple measures on one axis still need a shared formatting policy.
 
+Summary statistic badges still display raw values. Active-filter chips use canonical names and a separate two-decimal formatter. These are remaining shared-formatting gaps, tracked as R19 in the gap analysis.
+
 ### Color scales
 
 Charts refer to shared color scales by ID. Scale creation reuses an unambiguous chart binding or a scale with the same source field. Display names do not control reuse. Numerical palettes include Viridis, Inferno, Magma, Plasma, Warm, and Cool. Categorical choices include Category10 and Set3, plus individual category colors.
@@ -396,7 +398,7 @@ The pivot supports multiple row fields, one column field, and multiple measure f
 
 Numeric aggregates exclude missing, blank, boolean, and nonfinite values. Count counts rows. Unique count and mode have different missing-value semantics from numeric aggregates. Single value reports a cell-local error when a group does not contain exactly one distinct value, so other cells remain available.
 
-Row groups use typed tuples. This avoids simple string-key collisions. Column ordering remains a basic sort. The table scrolls with sticky headers and group columns. Numerical display uses fixed precision rather than field-specific formatting.
+Row groups use typed tuples. This avoids simple string-key collisions. Column ordering remains a basic sort. The table scrolls with sticky headers and group columns. Pivot results use configured measure-field formatting, including count results. Count-specific formatting still needs separation from measure formatting.
 
 Row and column header buttons filter their fields. Alternatives within one field combine with OR; fields combine with AND. The pivot retains its own unselected context because its aggregates use peer-filtered rows.
 
@@ -444,6 +446,8 @@ The compact display shows canonical field names through display labels (aliases)
 The CSV export includes more detail than the compact view: counts, missing values, numerical statistics, and common values. Headers and cells escape embedded quotes.
 
 The field inspector shows inferred and effective types, counts, raw/runtime examples, conversion failures, and editable labels, descriptions, formats, units, precision, currencies, date presets, null tokens, and type overrides. Applying a type-related setting rebuilds effective values and clears filters for that field. Summary has no independent filter dimension, inline histograms, calendar heatmaps, or missing-value matrix.
+
+Numeric eligibility remains inconsistent without explicit overrides. Summary treats whitespace as zero and retains infinity; grouped numeric summaries exclude both. The gap analysis records the direct runtime proof as R18.
 
 Source: [summary renderer](../packages/explorEDA/src/components/charts/SummaryTable/SummaryTable.tsx), [field profiles][profiles].
 
@@ -519,6 +523,8 @@ Crossfilter refresh collects groups for every registered chart. General chart-se
 
 Calculation execution builds per-row variable maps and reuses cached dependency results. There is no worker-thread calculation service, server aggregation, query pushdown, streaming, progressive result display, or explicit loaded/total count distinction.
 
+Named grouped summaries share definitions and calculation logic. Each consumer still calculates its result separately; there is no shared result cache.
+
 On 2026-09-20, a desktop browser walkthrough covered a 10,000-row sample. This does not establish a general capacity envelope. There was no size sweep, memory profile, frame-rate test, or long-session stability run. Existing bundle checks concern import composition, not interactive scalability.
 
 Sources: [table body][tablebody], [Crossfilter wrapper][crossfilter], [provider][provider], [calculation manager][calcstate], [line reduction](../packages/explorEDA/src/lib/chartUtils.ts), [lean bundle check](../packages/explorEDA/scripts/verify-lean-bundle.mjs).
@@ -527,13 +533,13 @@ Sources: [table body][tablebody], [Crossfilter wrapper][crossfilter], [provider]
 
 The application preserves useful configuration evidence: field names, calculation text and dependencies, active chart filters, layouts, color choices, and saved chart settings. Tooltips expose some computed values. Raw rows can be viewed and exported.
 
-Scalar calculations now expose source-row inputs, saved and draft values, dependency trees, and downstream uses. Pivot cells and named grouped summaries expose exact contributor inputs and stable source IDs. Complete mark provenance remains absent for ordinary bars, boxes, violins, lines, and other chart-local aggregates. There is no source checksum or data-version binding.
+Scalar calculations expose source-row inputs, saved and draft values, dependency trees, and downstream uses. Pivot cells and named grouped summaries expose exact inputs and positional source IDs. IDs remain valid within the loaded snapshot. Complete mark provenance remains absent for ordinary bars, boxes, violins, and lines. There is no source checksum or data-version binding.
 
 **View chart data** is a field-oriented raw table shortcut for ordinary charts. It does not materialize bins, pivot outputs, density samples, line reduction buckets, or the records that produced one selected mark. A data-table chart with an aggregate ID uses the separate named grouped-summary path.
 
 Calculated columns retain expression dependencies and per-row errors, but not execution history. Positional IDs do not bind saved filters to a specific source version. File name, source checksum, row grain, schema, and transformation lineage are absent from saved state.
 
-Several local computations are deterministic, including fixed-seed beeswarm sampling. That is not an end-to-end reproducibility contract. ISO date calculations use UTC. Source order can still affect line paths, and saved metadata is regenerated.
+Several local computations are deterministic, including fixed-seed beeswarm sampling. That is not an end-to-end reproducibility contract. ISO date calculations use UTC. Lines sort finite X values before reduction and preserve missing-Y gaps. Equal-X values retain source order. Saved metadata is regenerated.
 
 Sources: [panel data action][panel], [chart field selection](../packages/explorEDA/src/components/charts/chartAccessibility.ts), [calculation manager][calcstate], [data provider][provider], chart helpers above.
 

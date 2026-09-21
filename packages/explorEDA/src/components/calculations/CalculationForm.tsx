@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { calculationFunctions } from "@/lib/calculations/functions/registry";
+import { useDataLayer } from "@/providers/DataLayerProvider";
+import { FieldMetadata, resolveFieldProfile } from "@/components/FieldMetadata";
 
 export type CalculationDraft = { name: string; expression: string };
 type Props = {
@@ -50,6 +52,8 @@ export function CalculationForm({
   onDiscard,
   onClose,
 }: Props) {
+  const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
   const input = useRef<HTMLTextAreaElement>(null);
   const [search, setSearch] = useState("");
   const [tab, setTab] = useState(editing ? "chain" : "fields");
@@ -201,7 +205,16 @@ export function CalculationForm({
                           >
                             {calculated ? "ƒx" : "·"}
                           </span>
-                          <span>{field}</span>
+                          <FieldMetadata
+                            profile={resolveFieldProfile(
+                              field,
+                              fieldProfiles,
+                              getColumnData
+                            )}
+                            label={field}
+                            compact
+                            className="min-w-0 flex-1"
+                          />
                           <span
                             className="ml-auto text-muted-foreground"
                             aria-hidden="true"

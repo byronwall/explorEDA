@@ -4,6 +4,7 @@ import { ComboBox } from "./ComboBox";
 import { Label } from "./ui/label";
 import { X } from "lucide-react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
+import { FieldMetadata, resolveFieldProfile } from "./FieldMetadata";
 
 interface FieldSelectorProps {
   label: string;
@@ -23,6 +24,9 @@ export function FieldSelector({
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
   const availableFields = getColumnNames();
   const calculations = useDataLayer((state) => state.calculations);
+  const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
 
   const fieldOptions = availableFields.map((field) => ({
     value: field,
@@ -42,9 +46,10 @@ export function FieldSelector({
           value={selectedOption}
           options={fieldOptions}
           onChange={(option) => onChange(option?.value || value)}
-          optionToString={(option) => option.label}
+          optionToString={(option) => getFieldLabel(option.value)}
+          aria-label={label}
           optionToNode={(option) => (
-            <span>
+            <span className="flex min-w-0 items-center gap-1">
               {calculations.some(
                 (calc) => calc.resultColumnName === option.value
               ) && (
@@ -55,7 +60,15 @@ export function FieldSelector({
                   ƒx
                 </span>
               )}
-              {option.label}
+              <FieldMetadata
+                profile={resolveFieldProfile(
+                  option.value,
+                  fieldProfiles,
+                  getColumnData
+                )}
+                label={getFieldLabel(option.value)}
+                compact
+              />
             </span>
           )}
           placeholder={placeholder}
@@ -66,6 +79,7 @@ export function FieldSelector({
           variant="ghost"
           size="icon"
           className="h-8 w-8"
+          aria-label={`Clear ${label}`}
           onClick={() => onChange("")}
         >
           <X className="h-4 w-4" />

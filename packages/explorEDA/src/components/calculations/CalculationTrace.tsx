@@ -4,6 +4,9 @@ import type {
 } from "@/lib/calculations/CalculationState";
 import type { DatumObject, HasId } from "@/providers/DataLayerProvider";
 import { calculationValue, dependentCalculations } from "./calculationHelpers";
+import { useDataLayer } from "@/providers/DataLayerProvider";
+import { FieldMetadata, resolveFieldProfile } from "@/components/FieldMetadata";
+import { ActionTooltip } from "@/components/ui/tooltip";
 
 type Props = {
   calculations: CalculationDefinition[];
@@ -26,6 +29,8 @@ export function CalculationTrace({
   previewing,
   onSelect,
 }: Props) {
+  const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
   const byName = new Map(
     calculations.map((calc) => [calc.resultColumnName, calc])
   );
@@ -41,45 +46,57 @@ export function CalculationTrace({
     return (
       <li key={name}>
         {calc ? (
-          <button
-            type="button"
-            className="eda-calc-node"
-            aria-pressed={name === selected}
-            onClick={() => onSelect(name)}
-            title={calc.expression.rawInput}
-          >
-            <span className="eda-calc-symbol" aria-hidden="true">
-              ƒx
-            </span>
-            <span className="min-w-0 flex-1 break-words">
-              {name}
-              {draftFields.includes(name) && (
-                <small className="block text-xs font-normal text-muted-foreground">
-                  {name === selected && previewing
-                    ? "Draft preview"
-                    : "Draft kept"}
-                </small>
-              )}
-            </span>
-            <span
-              className={error ? "text-destructive" : "eda-calc-node-value"}
-              title={error || String(value ?? "Missing")}
+          <ActionTooltip content={calc.expression.rawInput}>
+            <button
+              type="button"
+              className="eda-calc-node"
+              aria-pressed={name === selected}
+              onClick={() => onSelect(name)}
             >
-              {error ? "Error" : calculationValue(value)}
-            </span>
-          </button>
+              <span className="eda-calc-symbol" aria-hidden="true">
+                ƒx
+              </span>
+              <span className="min-w-0 flex-1">
+                <FieldMetadata
+                  profile={resolveFieldProfile(
+                    name,
+                    fieldProfiles,
+                    getColumnData
+                  )}
+                  label={name}
+                  compact
+                  className="min-w-0"
+                />
+                {draftFields.includes(name) && (
+                  <small className="block text-xs font-normal text-muted-foreground">
+                    {name === selected && previewing
+                      ? "Draft preview"
+                      : "Draft kept"}
+                  </small>
+                )}
+              </span>
+              <ActionTooltip content={error || String(value ?? "Missing")}>
+                <span
+                  className={error ? "text-destructive" : "eda-calc-node-value"}
+                >
+                  {error ? "Error" : calculationValue(value)}
+                </span>
+              </ActionTooltip>
+            </button>
+          </ActionTooltip>
         ) : (
           <div className="eda-calc-source">
-            <span className="min-w-0 flex-1 break-words">
-              {name}
-              <small>Source field</small>
-            </span>
-            <span
-              className="eda-calc-node-value"
-              title={String(value ?? "Missing")}
-            >
-              {calculationValue(value)}
-            </span>
+            <FieldMetadata
+              profile={resolveFieldProfile(name, fieldProfiles, getColumnData)}
+              label={name}
+              compact
+              className="min-w-0 flex-1"
+            />
+            <ActionTooltip content={String(value ?? "Missing")}>
+              <span className="eda-calc-node-value">
+                {calculationValue(value)}
+              </span>
+            </ActionTooltip>
           </div>
         )}
         {calc && calc.expression.dependencies.length > 0 && (

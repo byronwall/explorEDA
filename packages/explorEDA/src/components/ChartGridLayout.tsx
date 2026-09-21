@@ -26,7 +26,7 @@ export function ChartGridLayout({
 }: ChartGridLayoutProps) {
   const gridSettings = useDataLayer((s) => s.gridSettings);
   const updateChartLayouts = useDataLayer((s) => s.updateChartLayouts);
-  const isNarrow = containerWidth > 0 && containerWidth < 640;
+  const isNarrow = containerWidth > 0 && containerWidth < 960;
 
   const layout: Layout[] = charts.map((chart, index) => ({
     ...chart.layout,

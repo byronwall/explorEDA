@@ -362,44 +362,20 @@ function createDefaultWorkspaceCharts(
     return [];
   }
 
-  const field =
-    fieldProfiles.find((profile) => profile.dataType === "numeric") ??
-    fieldProfiles[0];
-  if (!field) {
-    return [];
-  }
-  const chartType = field.dataType === "numeric" ? "bar" : "row";
-  if (!chartRegistry.has(chartType)) {
-    return [];
-  }
-
-  const chart = getChartDefinition(chartType).createDefaultSettings(
-    {
-      x: 0,
-      y: 0,
-      w: 12,
-      h: 6,
-    },
-    field.name
-  );
-  chart.title = "";
-  chart.xAxisLabel = chartType === "bar" ? "" : "Rows (count)";
-  chart.yAxisLabel = chartType === "bar" ? "Rows (count)" : "";
-
   const summary = chartRegistry.has("summary")
     ? getChartDefinition("summary").createDefaultSettings({
         x: 0,
         y: 0,
-        w: 4,
-        h: 5,
+        w: 5,
+        h: 6,
       })
     : undefined;
   const table = chartRegistry.has("data-table")
     ? getChartDefinition("data-table").createDefaultSettings({
-        x: 4,
+        x: 5,
         y: 0,
-        w: 8,
-        h: 5,
+        w: 7,
+        h: 6,
       })
     : undefined;
   if (table?.type === "data-table") {
@@ -409,7 +385,7 @@ function createDefaultWorkspaceCharts(
     }));
   }
 
-  return [chart, summary, table].filter((item): item is ChartSettings =>
+  return [summary, table].filter((item): item is ChartSettings =>
     Boolean(item)
   );
 }

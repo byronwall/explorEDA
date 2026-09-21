@@ -290,7 +290,7 @@ export function GroupedSummaryManager() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    title="Delete grouped summary"
+                    tooltip="Delete grouped summary"
                     aria-label={`Delete ${aggregate.name}`}
                     onClick={() => {
                       setError(undefined);

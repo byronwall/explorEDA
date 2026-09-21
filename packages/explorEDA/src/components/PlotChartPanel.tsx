@@ -1,5 +1,13 @@
 import { CalculatedFieldBadge } from "./calculations/CalculatedFieldBadge";
-import { createPortal } from "react-dom";
+import { isActiveFilter } from "./ActiveFilterStatus";
+import { ChartDataPreview } from "./ChartDataPreview";
+import { ActionTooltip } from "./ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "./ui/dialog";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { ChartSettings } from "@/types/ChartTypes";
 import {
@@ -18,15 +26,19 @@ import { ChartColorLegend } from "./charts/ColorLegend/ChartColorLegend";
 import { FacetContainer } from "./charts/FacetRelated/FacetContainer";
 import { ChartSettingsContent } from "./ChartSettingsContent";
 import { Button } from "./ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverTrigger,
+} from "./ui/popover";
 import { useAlertStore } from "@/stores/alertStore";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import {
   getChartFields,
   getChartSummary,
   getChartTitle,
 } from "./charts/chartAccessibility";
-import { dataTableDefinition } from "./charts/DataTable/definition";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,11 +62,45 @@ export function PlotChartPanel({
   height,
 }: PlotChartPanelProps) {
   const [expanded, setExpanded] = useState(false);
+  const [dataOpen, setDataOpen] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const settingsRef = useRef<HTMLButtonElement>(null);
+  const settingsAnchor = useRef<HTMLElement | null>(null);
+  const actionsRef = useRef<HTMLButtonElement>(null);
+  const previewAfterMenu = useRef(false);
+  const expandRef = useRef<HTMLButtonElement>(null);
+  const [settingsSide, setSettingsSide] = useState<
+    "left" | "right" | "top" | "bottom"
+  >("right");
+  const [settingsHeight, setSettingsHeight] = useState(460);
+  const placeSettings = (open: boolean) => {
+    if (!open || !panelRef.current) return;
+    settingsAnchor.current = panelRef.current;
+    const rect = panelRef.current.getBoundingClientRect();
+    if (window.innerWidth - rect.right >= 352) {
+      setSettingsSide("right");
+      setSettingsHeight(window.innerHeight - 32);
+    } else if (rect.left >= 352) {
+      setSettingsSide("left");
+      setSettingsHeight(window.innerHeight - 32);
+    } else {
+      const above = rect.top;
+      const below = window.innerHeight - rect.bottom;
+      if (Math.max(above, below) >= 260) {
+        setSettingsSide(above > below ? "top" : "bottom");
+        setSettingsHeight(Math.max(above, below) - 20);
+      } else {
+        // A full-screen chart leaves no outside space. Keep a usable corner editor.
+        settingsAnchor.current = settingsRef.current;
+        setSettingsSide("bottom");
+        setSettingsHeight(Math.min(420, window.innerHeight - 48));
+      }
+    }
+  };
   const [toolbarTarget, setToolbarTarget] = useState<HTMLDivElement | null>(
     null
   );
   const clearFilter = useDataLayer((state) => state.clearFilter);
-  const addChart = useDataLayer((state) => state.addChart);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const fieldSettings = useDataLayer((state) => state.fieldSettings);
   void fieldSettings;
@@ -90,22 +136,6 @@ export function PlotChartPanel({
   const autoLegendHeight =
     settings.colorField && settings.colorScaleId ? 56 : 0;
 
-  const handleViewData = () => {
-    if (dataFields.length === 0) {
-      return;
-    }
-    const dataTable = dataTableDefinition.createDefaultSettings({
-      ...settings.layout,
-      y: settings.layout.y + settings.layout.h,
-    });
-    dataTable.title = `${chartTitle} data`;
-    dataTable.columns = dataFields.map((field) => ({ id: field, field }));
-    dataTable.filters = settings.filters.filter((filter) =>
-      dataFields.includes(filter.field)
-    );
-    addChart(dataTable);
-  };
-
   const handleDelete = async () => {
     const confirmed = await showAlert(
       "Delete Chart",
@@ -124,23 +154,24 @@ export function PlotChartPanel({
 
   const panel = (
     <div
+      ref={panelRef}
       className={`eda-panel bg-card border rounded-lg flex min-w-0 flex-col overflow-hidden ${expanded ? "eda-panel-expanded" : ""}`}
       style={{
         width: widthWithPadding,
         height: heightWithPadding,
         margin: expanded ? 0 : 6,
       }}
+      role="region"
       onKeyDown={(event) => {
+        // A tooltip can consume Escape. Nested portalled editors close first.
         if (
-          event.key === "Escape" &&
           expanded &&
-          !event.defaultPrevented &&
+          event.key === "Escape" &&
           event.currentTarget.contains(event.target as Node)
         ) {
           setExpanded(false);
         }
       }}
-      role="region"
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
     >
@@ -150,93 +181,142 @@ export function PlotChartPanel({
             className="eda-drag h-3 w-3 shrink-0 text-muted-foreground"
             aria-hidden="true"
           />
-          <h3
-            id={titleId}
-            className="min-w-0 truncate text-sm font-semibold"
-            title={chartTitle}
-          >
+          <h3 id={titleId} className="min-w-0 truncate text-sm font-semibold">
             {chartTitle}
           </h3>
         </div>
+        {settings.filters.some(isActiveFilter) && (
+          <ActionTooltip content="Clear this chart’s filters">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="eda-chart-filter is-active"
+              aria-label={`Clear filters for ${chartTitle}`}
+              onClick={() => clearFilter(settings)}
+            >
+              <FilterX className="h-4 w-4" />
+            </Button>
+          </ActionTooltip>
+        )}
         <div className="eda-panel-actions flex shrink-0 items-center gap-0">
           {isTableLike && <div ref={setToolbarTarget} />}
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={`${expanded ? "Restore" : "Expand"} ${chartTitle}`}
-            title={expanded ? "Restore size" : "Expand chart"}
-            onClick={() => setExpanded(!expanded)}
+          <ActionTooltip
+            content={expanded ? "Close expanded chart" : "Expand chart"}
           >
-            {expanded ? (
-              <Minimize2 className="h-4 w-4" />
-            ) : (
-              <Maximize2 className="h-4 w-4" />
-            )}
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label={`More actions for ${chartTitle}`}
-                title="More chart actions"
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onSelect={handleDelete}
-                className="text-destructive"
-              >
-                <X />
-                Delete chart
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={onDuplicate}
-                aria-label={`Duplicate ${chartTitle}`}
-              >
-                <Copy />
-                Duplicate chart
-              </DropdownMenuItem>
-              {!isTableLike && dataFields.length > 0 && (
-                <DropdownMenuItem
-                  onSelect={handleViewData}
-                  aria-label={`View data for ${chartTitle}`}
-                >
-                  <Table2 />
-                  View chart data
-                </DropdownMenuItem>
+            <Button
+              ref={expandRef}
+              variant="ghost"
+              size="icon"
+              aria-label={`${expanded ? "Restore" : "Expand"} ${chartTitle}`}
+              onClick={() => setExpanded(!expanded)}
+            >
+              {expanded ? (
+                <Minimize2 className="h-4 w-4" />
+              ) : (
+                <Maximize2 className="h-4 w-4" />
               )}
-              <DropdownMenuItem
-                onSelect={() => clearFilter(settings)}
-                aria-label={`Clear filters for ${chartTitle}`}
+            </Button>
+          </ActionTooltip>
+          <Popover open={dataOpen} onOpenChange={setDataOpen}>
+            <DropdownMenu modal={false}>
+              <PopoverAnchor asChild>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    ref={actionsRef}
+                    aria-label={`More actions for ${chartTitle}`}
+                    tooltip="More chart actions"
+                  >
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+              </PopoverAnchor>
+              <DropdownMenuContent
+                align="end"
+                onCloseAutoFocus={(event) => {
+                  if (previewAfterMenu.current) {
+                    event.preventDefault();
+                    previewAfterMenu.current = false;
+                    setDataOpen(true);
+                  }
+                }}
               >
-                <FilterX />
-                Clear chart filters
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label={`Configure ${chartTitle}`}
-                title="Chart settings"
-              >
-                <Settings2 className="h-4 w-4" />
-              </Button>
-            </PopoverTrigger>
+                <DropdownMenuItem
+                  onSelect={handleDelete}
+                  className="text-destructive"
+                >
+                  <X />
+                  Delete chart
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={onDuplicate}
+                  aria-label={`Duplicate ${chartTitle}`}
+                >
+                  <Copy />
+                  Duplicate chart
+                </DropdownMenuItem>
+                {!isTableLike && dataFields.length > 0 && (
+                  <DropdownMenuItem
+                    onSelect={() => {
+                      previewAfterMenu.current = true;
+                    }}
+                    aria-label={`View data for ${chartTitle}`}
+                  >
+                    <Table2 />
+                    View chart data
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem
+                  onSelect={() => clearFilter(settings)}
+                  aria-label={`Clear filters for ${chartTitle}`}
+                >
+                  <FilterX />
+                  Clear chart filters
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <PopoverContent
-              className="eda-settings-popover w-[min(30rem,calc(100vw-1rem))] max-w-[calc(100vw-1rem)]"
-              style={{
-                maxHeight: "var(--radix-popover-content-available-height)",
-                overflow: "hidden",
+              onCloseAutoFocus={(event) => {
+                event.preventDefault();
+                actionsRef.current?.focus();
               }}
-              side="bottom"
+              aria-label={`Data for ${chartTitle}`}
+              className="w-[min(36rem,calc(100vw-1.5rem))]"
               align="end"
-              collisionPadding={8}
+            >
+              <ChartDataPreview settings={settings} />
+            </PopoverContent>
+          </Popover>
+          <Popover onOpenChange={placeSettings}>
+            <PopoverAnchor
+              virtualRef={settingsAnchor as React.RefObject<HTMLElement>}
+            />
+            <ActionTooltip content="Chart settings">
+              <PopoverTrigger asChild>
+                <Button
+                  ref={settingsRef}
+                  variant="ghost"
+                  size="icon"
+                  aria-label={`Configure ${chartTitle}`}
+                >
+                  <Settings2 className="h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+            </ActionTooltip>
+            <PopoverContent
+              aria-label={`Settings for ${chartTitle}`}
+              className="eda-settings-popover w-[min(21rem,calc(100vw-1.5rem))]"
+              style={
+                {
+                  maxHeight: settingsHeight,
+                  "--eda-settings-height": `${settingsHeight - 26}px`,
+                  overflow: "hidden",
+                } as React.CSSProperties
+              }
+              side={settingsSide}
+              align="start"
+              collisionPadding={12}
             >
               <ChartSettingsContent settings={settings} />
             </PopoverContent>
@@ -286,5 +366,26 @@ export function PlotChartPanel({
       </div>
     </div>
   );
-  return expanded ? createPortal(panel, document.body) : panel;
+  return (
+    <Dialog open={expanded} onOpenChange={setExpanded}>
+      {expanded ? (
+        <DialogContent
+          showCloseButton={false}
+          className="max-w-none w-auto border-0 bg-transparent p-0 shadow-none"
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            requestAnimationFrame(() => expandRef.current?.focus());
+          }}
+        >
+          <DialogTitle className="sr-only">{chartTitle}</DialogTitle>
+          <DialogDescription className="sr-only">
+            {chartSummary}
+          </DialogDescription>
+          {panel}
+        </DialogContent>
+      ) : (
+        panel
+      )}
+    </Dialog>
+  );
 }

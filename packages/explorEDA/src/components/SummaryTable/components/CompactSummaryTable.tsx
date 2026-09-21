@@ -9,8 +9,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ArrowUpDown, AlertCircle, Settings2 } from "lucide-react";
-import { DataTypeIcon } from "./DataTypeIcon";
 import { StatBadge } from "./StatBadge";
+import { FieldMetadata } from "@/components/FieldMetadata";
 import {
   Tooltip,
   TooltipContent,
@@ -18,6 +18,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ChartActions } from "./ChartActions";
+import { FieldInspector } from "./FieldInspector";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { FieldProfile } from "@/lib/fieldProfiles";
 import { getChartSummary } from "../../charts/chartAccessibility";
@@ -27,15 +28,14 @@ interface CompactSummaryTableProps {
   data: FieldProfile[];
   onSort: (column: keyof FieldProfile) => void;
   settings: SummaryTableSettings;
-  onInspect: (field: string) => void;
 }
 
 export function CompactSummaryTable({
   data,
   onSort,
   settings,
-  onInspect,
 }: CompactSummaryTableProps) {
+  const formatValue = useDataLayer((state) => state.formatFieldValue);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const label = getFieldLabel ?? ((field: string) => field);
   return (
@@ -73,21 +73,26 @@ export function CompactSummaryTable({
       <TableBody className="[&_tr]:border-border/30">
         {data.map((summary) => (
           <TableRow key={summary.name}>
-            <TableCell>
-              <div className="flex items-center gap-2">
-                <DataTypeIcon type={summary.dataType} />
-                <span className="font-medium" title={summary.name}>
-                  {label(summary.name)}
-                </span>
+            <TableCell className="min-w-0">
+              <div className="flex min-w-0 items-center gap-2">
+                <FieldMetadata
+                  profile={summary}
+                  label={label(summary.name)}
+                  compact
+                  showDetail={false}
+                  className="min-w-0 flex-1"
+                />
                 <CalculatedFieldBadge field={summary.name} />
                 {summary.nullCount > 0 && (
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger
-                        className="shrink-0"
-                        aria-label={`${summary.name}: ${summary.nullCount} null values`}
-                      >
-                        <AlertCircle className="h-4 w-4 text-yellow-500" />
+                      <TooltipTrigger asChild>
+                        <span
+                          className="shrink-0"
+                          aria-label={`${summary.name}: ${summary.nullCount} null values`}
+                        >
+                          <AlertCircle className="h-4 w-4 text-yellow-500" />
+                        </span>
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>{summary.nullCount} null values</p>
@@ -101,15 +106,24 @@ export function CompactSummaryTable({
               {summary.uniqueCount}
             </TableCell>
             <TableCell className="relative">
-              <div className="flex flex-wrap gap-2">
+              <div className="flex min-w-0 flex-wrap gap-2">
                 {summary.statistics && (
                   <>
-                    <StatBadge type="min" value={summary.statistics.min} />
-                    <StatBadge type="max" value={summary.statistics.max} />
+                    <StatBadge
+                      fieldLabel={label(summary.name)}
+                      type="min"
+                      value={formatValue(summary.name, summary.statistics.min)}
+                    />
+                    <StatBadge
+                      fieldLabel={label(summary.name)}
+                      type="max"
+                      value={formatValue(summary.name, summary.statistics.max)}
+                    />
                   </>
                 )}
                 {summary.categories && summary.categories.topValues[0] && (
                   <StatBadge
+                    fieldLabel={label(summary.name)}
                     type="common"
                     value={categoryLabel(summary.categories.topValues[0].value)}
                     count={summary.categories.topValues[0].count}
@@ -117,16 +131,16 @@ export function CompactSummaryTable({
                 )}
               </div>
               <div className="eda-summary-actions">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6"
-                  aria-label={`Inspect ${summary.name}`}
-                  title={`Inspect ${summary.name}`}
-                  onClick={() => onInspect(summary.name)}
-                >
-                  <Settings2 className="h-4 w-4" />
-                </Button>
+                <FieldInspector field={summary.name}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6"
+                    aria-label={`Inspect ${summary.name}`}
+                  >
+                    <Settings2 className="h-4 w-4" />
+                  </Button>
+                </FieldInspector>
                 <ChartActions
                   columnName={summary.name}
                   dataType={summary.dataType}

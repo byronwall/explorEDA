@@ -15,6 +15,10 @@ describe("FieldInspector", () => {
       </DataLayerProvider>
     );
 
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "Type" }), {
+      button: 0,
+      ctrlKey: false,
+    });
     fireEvent.click(screen.getByRole("combobox", { name: "Type override" }));
     fireEvent.click(await screen.findByRole("option", { name: "numeric" }));
     fireEvent.click(

@@ -2,7 +2,7 @@ import { SelectionSettingsTab } from "./settings/SelectionSettingsTab";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { ChartSettings } from "@/types/ChartTypes";
 import { mergeWithDefaultSettings } from "@/utils/defaultSettings";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AdvancedSettingsTab } from "./settings/AdvancedSettingsTab";
 import { AxisSettingsTab } from "./settings/AxisSettingsTab";
 import { FacetSettingsTab } from "./settings/FacetSettingsTab";
@@ -21,6 +21,7 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
     mergeWithDefaultSettings(settings)
   );
 
+  const resetValues = useRef<Partial<ChartSettings>>({});
   const updateChart = useDataLayer((s) => s.updateChart);
 
   // Update local settings when prop changes
@@ -28,24 +29,38 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
     setLocalSettings(mergeWithDefaultSettings(settings));
   }, [settings]);
 
-  const handleSettingChange = (key: string, value: unknown) => {
-    if (key === "id" || key === "layout") return;
-    setLocalSettings((prev) => {
-      const newSettings = {
-        ...prev,
-        [key]: value,
-      };
-      return mergeWithDefaultSettings(newSettings);
-    });
-  };
-
-  const handleUpdate = () => {
-    updateChart(settings.id, {
+  const handleSettingsChange = (updates: Partial<ChartSettings>) => {
+    for (const key of Object.keys(updates) as (keyof ChartSettings)[]) {
+      if (!(key in resetValues.current)) {
+        Object.assign(resetValues.current, { [key]: settings[key] });
+      }
+    }
+    const next = mergeWithDefaultSettings({
       ...localSettings,
+      ...updates,
       id: settings.id,
       layout: settings.layout,
-    });
+    } as ChartSettings);
+    setLocalSettings(next);
+    if (
+      !next.filters.some(
+        (filter) =>
+          (filter.type === "range" || filter.type === "date-range") &&
+          filter.min !== undefined &&
+          filter.max !== undefined &&
+          filter.min > filter.max
+      )
+    ) {
+      updateChart(settings.id, {
+        ...next,
+        id: settings.id,
+        layout: settings.layout,
+      });
+    }
   };
+
+  const handleSettingChange = (key: string, value: unknown) =>
+    handleSettingsChange({ [key]: value });
 
   const hasAxes = ["row", "bar", "scatter", "line", "boxplot"].includes(
     localSettings.type
@@ -66,21 +81,23 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
   ];
   const invalidRange = localSettings.filters.some(
     (filter) =>
-      filter.type === "range" &&
+      (filter.type === "range" || filter.type === "date-range") &&
       filter.min !== undefined &&
       filter.max !== undefined &&
       filter.min > filter.max
   );
-  const dirty =
-    JSON.stringify(localSettings) !==
-    JSON.stringify(mergeWithDefaultSettings(settings));
+  const dirty = Object.entries(resetValues.current).some(
+    ([key, value]) =>
+      JSON.stringify(localSettings[key as keyof ChartSettings]) !==
+      JSON.stringify(value)
+  );
 
   return (
     <div className="eda-settings space-y-3">
       <div className="space-y-1 pb-2">
         <h4 className="text-base font-semibold">Chart settings</h4>
         <p className="text-xs text-muted-foreground">
-          Choose fields, tune the view, then apply your changes.
+          Changes update the chart immediately.
         </p>
       </div>
       <TabContainer tabs={tabs}>
@@ -94,7 +111,7 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
           main: (
             <MainSettingsTab
               settings={localSettings}
-              onSettingChange={handleSettingChange}
+              onSettingsChange={handleSettingsChange}
             />
           ),
           facet: (
@@ -134,17 +151,19 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
           variant="ghost"
           size="sm"
           disabled={!dirty}
-          onClick={() => setLocalSettings(mergeWithDefaultSettings(settings))}
+          onClick={() => {
+            const next = {
+              ...settings,
+              ...resetValues.current,
+            } as ChartSettings;
+            resetValues.current = {};
+            setLocalSettings(mergeWithDefaultSettings(next));
+            updateChart(settings.id, next);
+          }}
         >
           Reset changes
         </Button>
-        <Button
-          size="sm"
-          disabled={!dirty || invalidRange}
-          onClick={handleUpdate}
-        >
-          {dirty ? "Apply changes" : "Up to date"}
-        </Button>
+        <span className="text-xs text-muted-foreground">Live preview</span>
       </div>
     </div>
   );

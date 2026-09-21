@@ -1,14 +1,12 @@
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ActionTooltip } from "@/components/ui/tooltip";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useColorScales } from "@/hooks/useColorScales";
 import {
   CategoricalColorScale,
@@ -50,20 +48,20 @@ interface ColorScaleEditorState {
 
 function NumericalScalePreview({ palette }: { palette: string }) {
   const interpolator = NUMERICAL_PALETTES.find(
-    (p) => p.name === palette
+    (item) => item.name === palette
   )?.interpolator;
   if (!interpolator) {
     return null;
   }
 
   return (
-    <div className="w-full h-8 rounded-md overflow-hidden">
+    <div className="h-5 w-full overflow-hidden rounded-sm">
       <div
-        className="w-full h-full"
+        className="h-full w-full"
         style={{
           background: `linear-gradient(to right, ${Array.from(
             { length: 10 },
-            (_, i) => interpolator(i / 9)
+            (_, index) => interpolator(index / 9)
           ).join(", ")})`,
         }}
       />
@@ -73,11 +71,11 @@ function NumericalScalePreview({ palette }: { palette: string }) {
 
 function CategoricalScalePreview({ colors }: { colors: string[] }) {
   return (
-    <div className="flex w-full h-8 rounded-md overflow-hidden">
-      {colors.map((color, i) => (
+    <div className="flex h-5 w-full overflow-hidden rounded-sm">
+      {Array.from(new Set(colors)).map((color, index) => (
         <div
-          key={i}
-          className="flex-1 h-full"
+          key={`${color}-${index}`}
+          className="h-full min-w-0 flex-1"
           style={{ backgroundColor: color }}
         />
       ))}
@@ -93,59 +91,54 @@ function NumericalScaleEditor({
   onUpdate: (scale: NumericalColorScale) => void;
 }) {
   return (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="numerical-scale-name">Name</Label>
+    <div className="space-y-3">
+      <div className="space-y-1.5">
+        <Label htmlFor={`numerical-scale-name-${scale.id}`}>Name</Label>
         <Input
-          id="numerical-scale-name"
+          id={`numerical-scale-name-${scale.id}`}
           value={scale.name}
-          onChange={(e) => onUpdate({ ...scale, name: e.target.value })}
+          onChange={(event) => onUpdate({ ...scale, name: event.target.value })}
         />
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="numerical-scale-min">Min</Label>
+      <div className="grid grid-cols-2 gap-2">
+        <div className="space-y-1.5">
+          <Label htmlFor={`numerical-scale-min-${scale.id}`}>Min</Label>
           <Input
-            id="numerical-scale-min"
+            id={`numerical-scale-min-${scale.id}`}
             type="number"
             value={scale.min}
-            onChange={(e) =>
-              onUpdate({
-                ...scale,
-                min: parseFloat(e.target.value),
-              })
+            onChange={(event) =>
+              onUpdate({ ...scale, min: parseFloat(event.target.value) })
             }
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="numerical-scale-max">Max</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor={`numerical-scale-max-${scale.id}`}>Max</Label>
           <Input
-            id="numerical-scale-max"
+            id={`numerical-scale-max-${scale.id}`}
             type="number"
             value={scale.max}
-            onChange={(e) =>
-              onUpdate({
-                ...scale,
-                max: parseFloat(e.target.value),
-              })
+            onChange={(event) =>
+              onUpdate({ ...scale, max: parseFloat(event.target.value) })
             }
           />
         </div>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <Label>Palette</Label>
         <div className="grid grid-cols-2 gap-2">
-          {NUMERICAL_PALETTES.map((p) => (
+          {NUMERICAL_PALETTES.map((palette) => (
             <Button
-              key={p.name}
-              variant={scale.palette === p.name ? "default" : "outline"}
-              className="w-full h-auto p-2"
-              onClick={() => onUpdate({ ...scale, palette: p.name })}
+              key={palette.name}
+              type="button"
+              variant={scale.palette === palette.name ? "default" : "outline"}
+              className="h-auto min-w-0 justify-start p-2"
+              onClick={() => onUpdate({ ...scale, palette: palette.name })}
             >
-              <div className="w-full space-y-2">
-                <span>{p.name}</span>
-                <NumericalScalePreview palette={p.name} />
-              </div>
+              <span className="min-w-0 flex-1 space-y-1 text-left">
+                <span className="block truncate text-xs">{palette.name}</span>
+                <NumericalScalePreview palette={palette.name} />
+              </span>
             </Button>
           ))}
         </div>
@@ -161,105 +154,140 @@ function CategoricalScaleEditor({
   scale: CategoricalColorScale;
   onUpdate: (scale: CategoricalColorScale) => void;
 }) {
+  const [query, setQuery] = useState("");
   const [editingColor, setEditingColor] = useState<{
     value: string;
     color: string;
   } | null>(null);
+  const categories = Array.from(scale.mapping.entries()).filter(([value]) =>
+    value.toLowerCase().includes(query.trim().toLowerCase())
+  );
 
   const updateColor = useCallback(
-    (value: string, newColor: string) => {
-      const newMapping = new Map(scale.mapping);
-      newMapping.set(value, newColor);
-      const newPalette = Array.from(newMapping.values());
-      onUpdate({ ...scale, mapping: newMapping, palette: newPalette });
+    (value: string, color: string) => {
+      const mapping = new Map(scale.mapping);
+      mapping.set(value, color);
+      onUpdate({ ...scale, mapping, palette: Array.from(mapping.values()) });
+      setEditingColor({ value, color });
     },
-    [scale, onUpdate]
+    [onUpdate, scale]
   );
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="categorical-scale-name">Name</Label>
+    <div className="space-y-3">
+      <div className="space-y-1.5">
+        <Label htmlFor={`categorical-scale-name-${scale.id}`}>Name</Label>
         <Input
-          id="categorical-scale-name"
+          id={`categorical-scale-name-${scale.id}`}
           value={scale.name}
-          onChange={(e) => onUpdate({ ...scale, name: e.target.value })}
+          onChange={(event) => onUpdate({ ...scale, name: event.target.value })}
         />
       </div>
-      <div className="space-y-2">
-        <Label>Preset Palettes</Label>
+      <div className="space-y-1.5">
+        <Label>Preset palettes</Label>
         <div className="grid grid-cols-2 gap-2">
-          {CATEGORICAL_PALETTES.map((p) => (
+          {CATEGORICAL_PALETTES.map((palette) => (
             <Button
-              key={p.name}
+              key={palette.name}
+              type="button"
               variant="outline"
-              className="w-full h-auto p-2"
+              className="h-auto min-w-0 justify-start p-2"
               onClick={() => {
-                const newMapping = new Map();
-                Array.from(scale.mapping.keys()).forEach((value, i) => {
-                  newMapping.set(value, p.colors[i % p.colors.length]);
+                const mapping = new Map<string, string>();
+                Array.from(scale.mapping.keys()).forEach((value, index) => {
+                  mapping.set(
+                    value,
+                    palette.colors[index % palette.colors.length] ?? "#000000"
+                  );
                 });
                 onUpdate({
                   ...scale,
-                  mapping: newMapping,
-                  palette: Array.from(newMapping.values()),
+                  mapping,
+                  palette: Array.from(mapping.values()),
                 });
               }}
             >
-              <div className="w-full space-y-2">
-                <span>{p.name}</span>
-                <CategoricalScalePreview colors={p.colors} />
-              </div>
+              <span className="min-w-0 flex-1 space-y-1 text-left">
+                <span className="block truncate text-xs">{palette.name}</span>
+                <CategoricalScalePreview colors={palette.colors} />
+              </span>
             </Button>
           ))}
         </div>
       </div>
-      <div className="space-y-2">
-        <Label>Category Colors</Label>
-        <div className="grid grid-cols-2 gap-2">
-          {Array.from(scale.mapping.entries()).map(([value, color]) => (
-            <Button
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between">
+          <Label>Category colors</Label>
+          <span className="text-xs text-muted-foreground">
+            {scale.mapping.size}{" "}
+            {scale.mapping.size === 1 ? "category" : "categories"}
+          </span>
+        </div>
+        {scale.mapping.size > 8 && (
+          <Input
+            aria-label="Find category colors"
+            placeholder="Find a category"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+        )}
+        <div className="max-h-36 space-y-1 overflow-y-auto rounded-md border p-1">
+          {categories.slice(0, 100).map(([value, color]) => (
+            <Popover
               key={value}
-              variant="outline"
-              className="w-full"
-              onClick={() => setEditingColor({ value, color })}
+              open={editingColor?.value === value}
+              onOpenChange={(open) => !open && setEditingColor(null)}
             >
-              <div className="flex items-center gap-2 w-full">
-                <div
-                  className="w-4 h-4 rounded"
-                  style={{ backgroundColor: color }}
+              <PopoverTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="h-8 w-full justify-start px-2"
+                  aria-label={`Edit color for ${value}`}
+                  onClick={() => setEditingColor({ value, color })}
+                >
+                  <span
+                    className="h-4 w-4 shrink-0 rounded-sm border"
+                    style={{ backgroundColor: color }}
+                  />
+                  <span className="truncate">{value}</span>
+                  <span className="ml-auto text-xs text-muted-foreground">
+                    {color}
+                  </span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                side="left"
+                align="start"
+                className="w-[min(240px,calc(100vw-24px))] space-y-3 p-3"
+              >
+                <div className="text-sm font-medium">{value}</div>
+                <HexColorPicker
+                  color={editingColor?.color ?? color}
+                  onChange={(newColor) => updateColor(value, newColor)}
+                  className="!h-36 !w-full"
                 />
-                <span className="truncate">{value}</span>
-              </div>
-            </Button>
+                <Input
+                  aria-label={`Color for ${value}`}
+                  value={editingColor?.color ?? color}
+                  onChange={(event) => updateColor(value, event.target.value)}
+                />
+              </PopoverContent>
+            </Popover>
           ))}
+          {categories.length === 0 && (
+            <p className="p-2 text-xs text-muted-foreground">
+              No matching categories
+            </p>
+          )}
         </div>
+        {categories.length > 100 && (
+          <p className="text-xs text-muted-foreground">
+            First 100 of {categories.length.toLocaleString()} shown. Search to
+            find a category.
+          </p>
+        )}
       </div>
-
-      {editingColor && (
-        <Dialog open={true} onOpenChange={() => setEditingColor(null)}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Color for {editingColor.value}</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <HexColorPicker
-                color={editingColor.color}
-                onChange={(newColor) =>
-                  updateColor(editingColor.value, newColor)
-                }
-              />
-              <Input
-                aria-label={`Color for ${editingColor.value}`}
-                value={editingColor.color}
-                onChange={(e) =>
-                  updateColor(editingColor.value, e.target.value)
-                }
-              />
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
     </div>
   );
 }
@@ -275,18 +303,22 @@ function ScaleListItem({
 }) {
   return (
     <Button
-      variant={isSelected ? "default" : "ghost"}
-      className="w-full justify-start"
+      type="button"
+      variant={isSelected ? "secondary" : "ghost"}
+      className="h-auto w-full justify-start px-2 py-1.5"
       onClick={onClick}
     >
-      <div className="flex items-center gap-2 w-full">
-        {scale.type === "numerical" ? (
-          <Hash className="w-4 h-4" />
-        ) : (
-          <Shapes className="w-4 h-4" />
-        )}
-        <span className="truncate">{scale.name}</span>
-      </div>
+      {scale.type === "numerical" ? (
+        <Hash className="h-4 w-4 shrink-0" aria-hidden="true" />
+      ) : (
+        <Shapes className="h-4 w-4 shrink-0" aria-hidden="true" />
+      )}
+      <span className="min-w-0 flex-1 text-left">
+        <span className="block truncate text-sm">{scale.name}</span>
+        <span className="block text-xs text-muted-foreground">
+          {scale.type === "numerical" ? "Numerical" : "Categorical"}
+        </span>
+      </span>
     </Button>
   );
 }
@@ -304,110 +336,160 @@ export function ColorScaleManager() {
 
   useEffect(() => {
     setState({ scales: colorScales, isDirty: false });
+    setSelectedScaleId((current) =>
+      colorScales.some((scale) => scale.id === current)
+        ? current
+        : (colorScales[0]?.id ?? null)
+    );
   }, [colorScales]);
 
   const filteredScales = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
     return state.scales.filter((scale) =>
-      scale.name.toLowerCase().includes(searchQuery.toLowerCase())
+      scale.name.toLowerCase().includes(query)
     );
-  }, [state.scales, searchQuery]);
+  }, [searchQuery, state.scales]);
 
-  const selectedScale = useMemo(
-    () => state.scales.find((s) => s.id === selectedScaleId),
-    [state.scales, selectedScaleId]
+  const selectedScale = state.scales.find(
+    (scale) => scale.id === selectedScaleId
   );
 
-  const handleSave = () => {
-    state.scales.forEach((scale) => {
-      const { id, ...scaleWithoutId } = scale;
-      updateColorScale(id, scaleWithoutId);
-    });
-    setState((prev) => ({ ...prev, isDirty: false }));
-  };
+  const invalidNumericalScale = state.scales.find(
+    (scale): scale is NumericalColorScale =>
+      scale.type === "numerical" &&
+      (!Number.isFinite(scale.min) ||
+        !Number.isFinite(scale.max) ||
+        scale.min >= scale.max)
+  );
+
+  const selectedNumericalScaleError =
+    selectedScale?.type === "numerical" &&
+    (!Number.isFinite(selectedScale.min) ||
+      !Number.isFinite(selectedScale.max) ||
+      selectedScale.min >= selectedScale.max);
 
   const handleScaleUpdate = (updatedScale: ColorScaleType) => {
-    setState((prev) => ({
-      scales: prev.scales.map((s) =>
-        s.id === updatedScale.id ? updatedScale : s
+    setState((previous) => ({
+      scales: previous.scales.map((scale) =>
+        scale.id === updatedScale.id ? updatedScale : scale
       ),
       isDirty: true,
     }));
   };
 
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Palette className="w-4 h-4 mr-2" />
-          Color Scales
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-[80vw] max-h-[80vh] min-h-[50vh]">
-        <DialogHeader>
-          <DialogTitle>Color Scale Manager</DialogTitle>
-          <DialogDescription>
-            Manage color scales for your visualizations
-          </DialogDescription>
-        </DialogHeader>
+  const handleSave = () => {
+    if (invalidNumericalScale) {
+      return;
+    }
+    state.scales.forEach(({ id, ...scale }) => updateColorScale(id, scale));
+    setState((previous) => ({ ...previous, isDirty: false }));
+  };
 
-        <div className="flex gap-6">
-          {/* Left Sidebar */}
-          <div className="w-64 border-r pr-4 space-y-4">
-            <Input
-              aria-label="Search color scales"
-              placeholder="Search scales..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <div className="space-y-1 overflow-y-auto">
-              {filteredScales.map((scale) => (
+  return (
+    <Popover>
+      <ActionTooltip content="Manage color scales">
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label="Manage color scales"
+          >
+            <Palette aria-hidden="true" />
+          </Button>
+        </PopoverTrigger>
+      </ActionTooltip>
+      <PopoverContent
+        align="end"
+        aria-label="Color scale manager"
+        className="max-h-[min(80vh,640px)] w-[min(360px,calc(100vw-24px))] space-y-3 overflow-y-auto p-3"
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h2 className="truncate text-sm font-semibold">Color scales</h2>
+            <p className="text-xs text-muted-foreground">
+              Choose a scale, then adjust its palette.
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Input
+            aria-label="Search color scales"
+            placeholder="Search scales"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+          />
+          <div className="max-h-32 space-y-0.5 overflow-y-auto rounded-md border p-1">
+            {filteredScales.length > 0 ? (
+              filteredScales.map((scale) => (
                 <ScaleListItem
                   key={scale.id}
                   scale={scale}
                   isSelected={scale.id === selectedScaleId}
                   onClick={() => setSelectedScaleId(scale.id)}
                 />
-              ))}
-            </div>
-          </div>
-
-          {/* Right Content */}
-          <div className="overflow-y-auto w-[400px]">
-            {selectedScale && (
-              <div className="space-y-4">
-                {selectedScale.type === "numerical" ? (
-                  <NumericalScaleEditor
-                    scale={selectedScale}
-                    onUpdate={handleScaleUpdate}
-                  />
-                ) : (
-                  <CategoricalScaleEditor
-                    scale={selectedScale}
-                    onUpdate={handleScaleUpdate}
-                  />
-                )}
-                {selectedScale.type === "numerical" ? (
-                  <NumericalScalePreview palette={selectedScale.palette} />
-                ) : (
-                  <CategoricalScalePreview colors={selectedScale.palette} />
-                )}
-              </div>
+              ))
+            ) : (
+              <p className="px-2 py-3 text-center text-xs text-muted-foreground">
+                No matching scales
+              </p>
             )}
           </div>
         </div>
 
-        <div className="flex justify-end gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setState({ scales: colorScales, isDirty: false })}
-          >
-            Reset
-          </Button>
-          <Button onClick={handleSave} disabled={!state.isDirty}>
-            Save Changes
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+        {selectedScale ? (
+          <div className="space-y-3 border-t pt-3">
+            {selectedScale.type === "numerical" ? (
+              <NumericalScaleEditor
+                scale={selectedScale}
+                onUpdate={handleScaleUpdate}
+              />
+            ) : (
+              <CategoricalScaleEditor
+                key={selectedScale.id}
+                scale={selectedScale}
+                onUpdate={handleScaleUpdate}
+              />
+            )}
+            {selectedScale.type === "numerical" ? (
+              <NumericalScalePreview palette={selectedScale.palette} />
+            ) : (
+              <CategoricalScalePreview colors={selectedScale.palette} />
+            )}
+            {selectedNumericalScaleError && (
+              <p className="text-xs text-destructive" role="alert">
+                Enter finite values with a minimum below the maximum.
+              </p>
+            )}
+            <div className="sticky bottom-0 -mx-3 -mb-3 flex justify-end gap-2 border-t bg-popover px-3 py-3">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setState({ scales: colorScales, isDirty: false })
+                }
+                disabled={!state.isDirty}
+              >
+                Reset
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={handleSave}
+                disabled={!state.isDirty || Boolean(invalidNumericalScale)}
+              >
+                Save changes
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <p className="border-t pt-3 text-sm text-muted-foreground">
+            Choose a color field in chart settings to create its color scale.
+          </p>
+        )}
+      </PopoverContent>
+    </Popover>
   );
 }

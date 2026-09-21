@@ -2,6 +2,22 @@ import { ScaleBand, ScaleLinear } from "d3-scale";
 
 type Scale = ScaleLinear<number, number> | ScaleBand<string>;
 
+function spacedTicks(
+  ticks: (string | number)[],
+  position: (tick: string | number) => number,
+  size: (tick: string | number) => number
+) {
+  let edge = -Infinity;
+  return [...ticks]
+    .sort((a, b) => position(a) - position(b))
+    .filter((tick) => {
+      const half = size(tick) / 2;
+      if (position(tick) - half < edge + 8) return false;
+      edge = position(tick) + half;
+      return true;
+    });
+}
+
 export function formatTick(value: string | number) {
   if (typeof value === "string") return value;
   return new Intl.NumberFormat("en-US", {
@@ -28,12 +44,20 @@ export function XAxis({
   tickFormatter = formatTick,
 }: AxisProps) {
   const [start = 0, end = 0] = scale.range();
-  const ticks =
+  const candidates =
     "ticks" in scale
       ? scale.ticks(
           Math.max(2, Math.min(tickCount, Math.floor((end - start) / 65)))
         )
       : scale.domain();
+  const ticks =
+    "ticks" in scale
+      ? spacedTicks(
+          candidates,
+          (tick) => scale(Number(tick)),
+          (tick) => tickFormatter(tick).length * 6
+        )
+      : candidates;
   const labelWidth =
     "bandwidth" in scale ? Math.max(3, Math.floor(scale.step() / 7)) : 20;
   return (
@@ -84,7 +108,7 @@ export function YAxis({
   tickFormatter = formatTick,
 }: AxisProps) {
   const [start = 0, end = 0] = scale.range();
-  const ticks =
+  const candidates =
     "ticks" in scale
       ? scale.ticks(
           Math.max(
@@ -93,6 +117,14 @@ export function YAxis({
           )
         )
       : scale.domain();
+  const ticks =
+    "ticks" in scale
+      ? spacedTicks(
+          candidates,
+          (tick) => scale(Number(tick)),
+          () => 12
+        )
+      : candidates;
   return (
     <g
       transform={transform}

@@ -59,10 +59,7 @@ export function FacetWrapLayout({
     <div className="flex h-full min-h-0 flex-col">
       {pageCount > 1 && (
         <div className="flex shrink-0 items-center justify-between gap-2 overflow-hidden pb-1 text-xs text-muted-foreground">
-          <span
-            className="min-w-0 truncate whitespace-nowrap"
-            title={`Facets ${page * pageSize + 1}–${Math.min((page + 1) * pageSize, facetData.length)} of ${facetData.length}`}
-          >
+          <span className="min-w-0 truncate whitespace-nowrap">
             Facets {page * pageSize + 1}–
             {Math.min((page + 1) * pageSize, facetData.length)} of{" "}
             {facetData.length}

@@ -117,10 +117,7 @@ export function FacetGridLayout({
     <div className="flex h-full min-h-0 flex-col">
       {(pageLabel || rowPages > 1 || columnPages > 1) && (
         <div className="flex shrink-0 items-center justify-between gap-2 overflow-hidden pb-1 text-xs text-muted-foreground">
-          <span
-            className="min-w-0 truncate whitespace-nowrap"
-            title={pageLabel ?? "All facets"}
-          >
+          <span className="min-w-0 truncate whitespace-nowrap">
             {pageLabel ?? "All facets"}
           </span>
           <span className="flex shrink-0 gap-1 whitespace-nowrap">
