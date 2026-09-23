@@ -76,8 +76,7 @@ export function XAxis({
         return (
           <g key={i} transform={`translate(${x},0)`}>
             <line y2={4} className="stroke-border" />
-            <text y={17} textAnchor="middle" fontSize={10}>
-              <title>{text}</title>
+            <text y={17} textAnchor="middle" fontSize={10} aria-label={text}>
               {text.length > labelWidth
                 ? `${text.slice(0, labelWidth - 1)}…`
                 : text}
@@ -139,8 +138,15 @@ export function YAxis({
         const text = tickFormatter(tick);
         const maxChars = Math.max(5, Math.floor((labelOffset - 4) / 6));
         return (
-          <text key={i} x={-9} y={y} dy=".32em" textAnchor="end" fontSize={10}>
-            <title>{text}</title>
+          <text
+            key={i}
+            x={-9}
+            y={y}
+            dy=".32em"
+            textAnchor="end"
+            fontSize={10}
+            aria-label={text}
+          >
             {text.length > maxChars ? `${text.slice(0, maxChars - 1)}…` : text}
           </text>
         );

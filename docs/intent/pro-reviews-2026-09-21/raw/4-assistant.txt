@@ -1,0 +1,246 @@
+Source: https://chatgpt.com/c/6ab0a0d5-fce4-83ea-b70d-dd28a66b1260
+Turn: 4 (assistant)
+
+Hi, explorEDA has a broader foundation than its chart menu suggests, but its analytical capabilities are unevenly distributed. Histograms already exist inside Bar Chart. Violin and beeswarm overlays already exist inside Box Plot. The biggest opportunity is making common analytical combinations work consistently—not accumulating another twenty chart names.
+
+The target should be: “Whatever question occurs to me next, there is a direct way to answer it without leaving this workspace.” That is a more useful definition of completeness than chart count.
+
+Scope: source-level review of commit 593ca2e, including chart implementations, settings, filtering, aggregation, and inspection interfaces. Browser navigation was blocked in this environment, so interaction smoothness, visual quality, and performance were not validated. “Supported” below means evidenced in the source, not independently certified by a runtime test.
+
+1. The priority order
+Priority	Capability	Why it belongs near the top
+1	Complete metric-based bars: horizontal/vertical, grouped, stacked, 100% stacked	Makes ordinary “measure by category” questions work without special-case paths.
+2	Heatmap / matrix	The most conspicuously missing new chart family; adds two-dimensional categorical comparison and a foundation for other matrix views.
+3	Calendar-aware time series and categorical series grouping	Makes event/order data usable directly, rather than requiring a suitably pre-shaped dataset.
+4	Metric cards	A relatively small addition that makes a filtered workspace immediately legible.
+5	Reference lines, bands, intervals, and annotations	Adds interpretation to many existing charts instead of adding one isolated visualization.
+6	Relationship tools: bubble encoding, density view, correlation-to-scatter workflow	Extends exploratory analysis beyond choosing two fields and looking at a point cloud.
+7	Cumulative distributions and selected-versus-baseline comparisons	Makes distribution analysis answer practical threshold and comparison questions.
+
+This is not an arbitrary feature wishlist. The incumbent dc.js documentation includes heatmaps, number displays, bubble charts, series/stacking, maps, and filter widgets. Those are reasonable reference points for users coming from that ecosystem—but not a mandate to copy every chart. 
+dc.js
+
+2. What is already working—and where each family stops
+
+The registry contains 11 types, but two are explanatory components: Markdown and Color Legend. Evaluate the analytical behaviors rather than treating all 11 as equivalent coverage.
+
+Current family	Useful foundation	Main limitation or next improvement
+Bar / histogram	Numeric binning with range brushing; categorical counts with multiselect; a grouped-aggregate rendering path.	These paths do not form one consistent metric-chart experience. Aggregate clicks inspect rather than filter.
+Row / horizontal bar	Ranked category counts, selection, population-based ordering, automatic overflow grouping.	Count-oriented rather than a general horizontal metric chart. “Other categories” is not selectable or drillable.
+Line	Multiple measure-column series, horizontal brushing, hover readout, point/line styles, right-axis support, explicit missing-value breaks.	No first-class categorical series grouping or calendar aggregation in the inspected path. The inline series legend is static.
+Scatter	Canvas rendering, color encoding, two-dimensional brushing, nearest-point readout, population-based domains.	Uniform point size; no size-by-field, density mode, or lasso in the inspected implementation.
+Box / violin / beeswarm	Distribution summaries, alternative whisker definitions, outliers, density overlay, observation overlay, group sorting.	These capabilities are hidden behind Box Plot. Grouping is coupled to the color field; filtering is category-oriented rather than numeric-range selection.
+Pivot	Multiple row fields and measures; reducers include median, standard deviation, and distinct count; header filtering and cell inspection.	Its richer aggregation model is not shared consistently with the other chart families.
+Data table / summary	A record-inspection and profiling foundation. The data table documents virtualization, sorting, filters, resizing, search, and full matching-row CSV export.	Dashboard-column filters are global; table search and Rows-tab filters are local. That distinction must stay visible.
+Color legend	Standalone categorical legends already act as filter controls and show counts.	Extend that consistency to inline legends; do not rebuild legend filtering as a new feature.
+3D scatter	Orbit controls, saved camera state, linked-data rendering, omitted-coordinate reporting.	Preserve it, but further 3D work should rank below the missing everyday 2D capabilities.
+Markdown and facets	Explanation and repeated views are already part of the composition model.	Build on these rather than adding separate “small multiples” or “text panel” projects.
+
+Preserve the inspection infrastructure. The chart-data preview distinguishes source rows from aggregate groups, and grouped results carry contributor IDs plus inclusion/exclusion reasons. This is valuable groundwork for answering “Where did that number come from?”
+
+3. The highest-value gaps in detail
+A. Finish the bar family before adding exotic charts
+
+User question: “Show revenue by region, split by channel. Rank it. Click a segment to inspect that business.”
+
+Current gap: The horizontal chart counts categories. The separate grouped-aggregate path supports count, sum, and average, while pivot supports a much larger reducer set. The grouped bar’s click opens an inspector instead of creating the linked filter an ordinary category bar creates. That is a discontinuity in a basic workflow, not a cosmetic omission.
+
+Build next: A common category-and-measure path with horizontal/vertical orientation, an optional series field, and grouped/stacked/100% display modes. Make count, sum, and mean consistent first; then expose the existing useful reducers through the same contract.
+
+Include metric sorting, explicit Top N, and Show other categories. The existing height-dependent overflow bucket should not become an analytical dead end. Retain the exact membership of “Other” and make it inspectable; resizing should not silently redefine a saved selection.
+
+Important semantics: Stacking an average is not automatically meaningful. Enable ordinary additive stacks first. For percentages, state the denominator and reject or explicitly handle negative values. Keep a separate inspect action so clicking a mark can select without sacrificing provenance.
+
+Delight test: Switching a view from “order count” to “revenue” preserves its categories, colors, layout, and filtering behavior.
+
+Effort: Medium for the initial consistent metric-bar path; larger when all variants and reducers are included. Split it into releases rather than treating “complete bars” as one task.
+
+B. Add a real heatmap—the first new chart family
+
+User question: “Which combinations of region and category stand out?”
+
+Current gap: There is a pivot table, but no registered heatmap. A table answers exact-value lookup; the missing opportunity is a compact visual matrix with deliberate color encoding and spatial selection.
+
+Minimum useful version: Two categorical dimensions plus one metric. Provide explicit ordering, a legend, optional cell values, sensible handling of high cardinality, and distinct appearances for zero, no source rows, and no valid numeric values. Clicking a cell should select its source group; inspecting it should explain its value.
+
+Reuse grouping and contributor information from the existing table/aggregate work. Do not implement a separate meaning of “average” inside the heatmap renderer.
+
+The critical interaction detail: Selecting (North, Web) and (South, Retail) must mean those two pairs—not all four combinations of the two regions and channels. Introduce tuple-aware selection before enabling arbitrary multicell selection. The current filter types are field-based, so this needs explicit design rather than two independent value filters.
+
+That cell/rectangle primitive can later support binned density and calendar layouts; Observable Plot demonstrates the same rectangle primitive with one- and two-dimensional binning. 
+Observable
+
+Do not call every matrix a finished preset. Correlation requires a correlation computation and missing-data policy. Retention requires cohort membership and denominator rules. Reusing the renderer does not eliminate those analytical responsibilities.
+
+Delight test: Click an unusual cell, see the rest of the workspace react, and inspect the exact contributing records without reconstructing filters manually.
+
+Effort: Medium for categorical heatmap with single-cell selection. Tuple multiselect and specialized matrix transforms are subsequent increments.
+
+C. Make time series understand the data—not just draw lines
+
+User question: “Show weekly revenue by channel, then investigate the unusual week.”
+
+Current gap: The line implementation already supports several numeric measure columns. It sorts numeric x-values and connects row values; it does not perform calendar rollups or partition long-form records into series by a category. The shared numeric-scale helper implements linear and symmetric-log scales, not a calendar-aware axis. Date parsing and formatting elsewhere should not be confused with this missing time-series capability.
+
+Build next: First-class date field, interval, metric, and series-by-category settings. Start with day/week/month and an explicit time-zone/week-boundary policy. Use calendar-aligned ticks and make brush selections resolve to the corresponding source-time intervals. Vega-Lite’s time-unit model is a useful precedent for separating chronological buckets from recurring calendar components. 
+Vega
+
+Treat duplicate timestamps, absent periods, and invalid measurements deliberately. “No orders” can reasonably become zero for an order count; “no latency measurement” should not automatically become zero latency.
+
+Then add area and stacked-area modes on the same grouped result, plus an optional rolling window. A line renderer and an area renderer should not maintain separate definitions of the same weekly metric.
+
+Improve interaction with a shared-x tooltip, inline legend hide/isolate, and an explicit distinction between zooming the viewport and filtering the population. Keep the existing raw-observation line mode; not every line should aggregate.
+
+Delight test: Raw order records become “weekly revenue by channel” through settings, without an external pivot or custom preprocessing script.
+
+Effort: Medium for one well-defined calendar/grouping path; Large for the entire time-series package. Area fill alone is not the hard part.
+
+D. Add metric cards, not decorative gauges
+
+User question: “What happened to the total when I made that selection?”
+
+The workspace already has a filtered-row count, but no registered arbitrary metric-card type. Those solve different problems: selection feedback versus a prominent business or analytical measure.
+
+Minimum useful version: Count, sum, or mean; field-aware formatting; an explicit population label; and a view-contributors action. Add distinct count through the shared reducer work. A small sparkline can follow once time aggregation exists.
+
+The useful comparison is not an unexplained green arrow. It is something like selected revenue versus revenue before this selection, with the baseline named. Prior-period comparisons need their own date logic and should arrive later.
+
+Rates need a metric definition, not just a formatter. For example, sum(trials) / sum(visitors) and average(daily conversion rate) answer different questions. Expose which expression is being used.
+
+Delight test: A brush immediately updates count, revenue, and a clearly defined rate, and the user can inspect why each changed.
+
+Effort: Small for basic cards using existing reducers; Medium for reusable ratio metrics and comparison scopes. This is the smallest conspicuous new visual component worth shipping.
+
+E. Add reference marks and intervals across existing charts
+
+User questions: “Which values exceed the target?” “What changed after this event?” “How uncertain is this estimate?”
+
+The common chart component has an internal overlay slot, but the inspected shared settings do not expose a reusable persisted model for reference lines, bands, or annotations. This is a practical extension point, not a reason to rebuild the rendering architecture.
+
+Start with horizontal/vertical reference lines, a labeled interval band, and a point annotation. Then add supplied lower/upper bounds for error bars or shaded ranges. These can make existing bars, lines, and scatter plots useful for targets, release events, tolerance ranges, and estimate comparisons.
+
+Separate reference scopes: A fixed target, whole-population median, and current-selection median are different objects. Name the scope so a reference does not move unexpectedly when someone filters.
+
+For scatter, an identity line is a useful option when comparing like units. For uncertainty, first render caller-supplied bounds; do not imply automatic confidence intervals without defining the estimation method.
+
+Delight test: Add a target once, retain it through filters and saved-state restoration, and see exactly which observations are above it.
+
+Effort: Small for a constant rule; Medium for a reusable, labeled, serialized reference/interval system.
+
+F. Add a relationship-analysis path, not just more point styles
+
+User questions: “Which fields move together?” “Where is the concentration?” “Which entities are large as well as unusual?”
+
+The current scatter already has Canvas, brushing, color, and hover. It has a scalar point size rather than a size field, and the inspected implementation has no density mode. Extend it rather than replacing it.
+
+Three additions have different jobs:
+
+Bubble encoding adds size-by-field and a size legend. Make area, rather than radius, proportional to the encoded quantity, and define behavior for missing or negative sizes. Include label/tooltip fields so an unusual dot has an identity.
+
+Binned density provides a view for overlapping observations. Start with rectangular two-dimensional bins when that shares more infrastructure with the heatmap. Hexagons and smooth contours can wait. Filtering a bin should resolve to raw observations, not merely select an already-aggregated display row.
+
+Correlation matrix → scatter provides an exploration starting point. Select several numeric fields; inspect pairwise relationships; click a cell to open the corresponding scatter with those fields already configured. Show the correlation method and valid-pair count, and treat constant or insufficient-data pairs as unavailable—not zero correlation.
+
+An optional fitted trend line is another useful follow-on; label its method and population rather than turning it into an unexplained forecasting feature.
+
+A correlation cell represents a relationship between fields, not a natural subset of records. Its primary action should open that relationship, not pretend every heatmap must use identical filtering semantics.
+
+Delight test: Start with a matrix, open an interesting pair, inspect dense structure, and identify the observations behind it.
+
+Effort: Small–Medium for bubble encoding; Medium each for density and correlation workflow. These are separate increments, not one small ticket.
+
+G. Finish distribution exploration with cumulative views and baselines
+
+User question: “What fraction is below this threshold, and how does this selected segment differ from the rest?”
+
+Do not begin by implementing violin plots or beeswarms again. The settings and Box Plot calculation path already support these. Give them discoverable presets and names.
+
+The missing view worth adding is an empirical cumulative distribution function (ECDF): at each value, the fraction of valid observations at or below it. This gives a direct interface for threshold and percentile questions.
+
+Pair it with selected-versus-baseline comparison, first for histograms and ECDFs. Keep histogram bins identical across the comparison and identify whether the vertical scale is count or within-group percentage. Otherwise, a larger group can dominate the picture simply because it contains more records.
+
+Give histogram a dedicated creation preset even if it keeps the existing renderer and saved type internally. Expose bin width or boundaries as well as count when practical. Likewise, make box/violin/swarm visible options within a Distribution family.
+
+Delight test: Select a segment elsewhere, compare its distribution with a named baseline, and answer “What proportion exceeds this limit?” without exporting the data.
+
+Effort: Tiny–Small for naming and presets; Medium for cumulative mode plus correctly scoped comparison behavior.
+
+4. Interaction gaps that matter as much as chart types
+Make “select,” “inspect,” and “navigate” deliberate actions
+
+Existing components already do useful pieces: ordinary bars filter, aggregate bars inspect, pivot headers filter, pivot cells have inspection state, and chart-data preview shows records or groups. The missing improvement is a predictable contract and a direct path between these operations.
+
+Make the default action explicit. Offer inspection without making it compete with selection. Preserve an aggregate’s complete group membership separately from the records actually included by its reducer: those are not always the same set.
+
+Start with value/category selection and numeric ranges. Add exclusion and tuple unions deliberately; do not build a full visual boolean-query editor before these common cases work.
+
+Make exploration reversible
+
+Filter chips, clear-all, precise numeric range inputs, and Escape-to-clear brushing are already implemented. Preserve them.
+
+The next improvement should be selection undo/redo, followed by pinning a named comparison selection. Scope the first implementation to filter history rather than universal undo for formulas, layouts, and data replacement. A completed brush gesture should be one history entry, not hundreds of pointer positions.
+
+A baseline is also not just the current chart’s dimmed marks. Define whether it represents all data, the population before the last selection, or a saved selection.
+
+Clarify local filtering and provide a global route
+
+The dashboard table’s column filters affect linked charts. Its search is local. The Rows tab’s filters and search are also local. This is a legitimate distinction, but a visitor should not need to infer it from which view happened to be open.
+
+Keep clear scope labels and add an explicit Apply to workspace action where promotion is supported. Provide compact categorical and date/range filter widgets for users who do not need a chart merely to choose a segment. Reuse the existing filtering infrastructure.
+
+Bring inline line legends up to the standard of the interactive standalone legend. Distinguish hiding a series from excluding its records; they must not silently become the same operation.
+
+Treat defaults and consistency as completion criteria
+
+A chart should not need extensive settings work to be useful. Keep stable category colors and comparison domains, preserve meaningful selections when switching presentation modes, label invalid or omitted values, and provide a non-pointer path for essential actions.
+
+There is already keyboard support in categorical bars and precise range entry. Extend that pattern to new heatmap and aggregate interactions rather than calling accessibility an entirely missing feature.
+
+Round out axis control with explicit limits, lock/reset, and a true logarithmic option for positive-valued data. The inspected numeric-scale UI currently offers linear and symmetric log; preserve those while separating axis-domain changes from filter changes. Calendar scales belong in the time-series work.
+
+For performance, benchmark complete interactions—not just drawing. Measure filter-to-paint latency, hover, repeated brushing, and selection restoration on named workloads. Canvas usage alone does not establish responsiveness.
+
+5. What should wait—and what depends on the audience
+Candidate	Recommendation
+Maps	Important when early users have geographic questions. Add an optional point/GeoJSON-region path, joined to existing records, before undertaking geocoding, tiles, or a full geographic platform. Move this up when that audience is real.
+Pie / donut	A reasonable later completeness feature for a small number of nonnegative categories. Lower leverage than metric bars and heatmaps, but not something to reject on principle. Reuse metric, label, and selection contracts.
+Waterfall	A good follow-on for contribution analysis. Build it on explicit cumulative start/end values and subtotal semantics—not ad hoc rectangle offsets.
+Scatterplot matrix	Useful for exploratory analysis. Start with selected fields and bounded matrix size; build after correlation-to-scatter unless users specifically need simultaneous pairwise brushing.
+Missingness matrix	A useful diagnostic heatmap preset. Show where values are absent and allow inspection of affected rows. Do not confuse this with ordinary zero-valued cells.
+Treemap / sunburst	Defer until hierarchical data is a demonstrated need. Nested categories, totals, drill paths, and breadcrumb state are the substantive work.
+Sankey / network / parallel coordinates	Defer. Each introduces specialized data or interaction semantics. They should not displace common analytical workflows simply because they look impressive.
+Funnels / retention / Gantt	Treat these as domain packages. A convincing renderer without correct event ordering, cohorts, denominators, or interval semantics is incomplete.
+More 3D variants / gauges	Low priority for this product direction. Finish high-frequency 2D analysis first.
+6. A practical build sequence
+
+Phase 1 — remove existing dead ends. Expose Histogram and Distribution presets. Make Other drillable. Finish the grouped-metric bar → linked selection → source-record path. Establish shared reducer and population semantics across a small number of existing views. Add a basic metric card as the first consumer.
+
+Phase 2 — add broad analytical coverage. Add categorical heatmap, then long-form/calendar series. Extend the common grouped result into grouped/stacked bars and area variants. Keep the current chart IDs and use adapters where possible; this does not require a big-bang grammar-of-graphics rewrite.
+
+Phase 3 — add the sense of completeness. Add reference layers, correlation-to-scatter, size/density encoding, cumulative distributions, and named comparison selections. Bring in maps or domain-specific charts when user data makes their absence consequential.
+
+The small shared contracts worth extracting are grouping, metric definition, population scope, source membership, and formatting. Do not spend months designing a universal query engine before shipping one end-to-end workflow.
+
+The acceptance scenario
+
+Use an order dataset and require one uninterrupted experience:
+
+Group revenue by region and channel. Select an exact segment. See the metric card, weekly trend, and distribution agree on that selection. Inspect the contributing records. Compare against a named baseline. Undo. Restore the saved workspace and get the same result.
+
+Each stage can be delivered incrementally. At every stage, test that the number in the chart agrees with the pivot, card, and exported records under the same metric and scope.
+
+Download the evaluation, 21-item implementation backlog, source references, and acceptance checklist.
+
+The single next move
+
+Complete “revenue by region → select region → linked views update → inspect source records” using the existing grouped-aggregate path.
+
+This fixes a concrete gap in an ordinary question, exercises the shared contracts needed by several future charts, and avoids starting with a new renderer that inherits inconsistent behavior.
+
+Then make heatmap the first genuinely new chart family. It adds the most useful new analytical dimension to the existing collection. Metric cards are the smaller parallel addition; specialized charts can follow once common views feel like parts of one coherent tool.
+
+Links:
+dc.js: https://dc-js.github.io/api-docs/index.html
+Observable: https://observablehq.com/plot/marks/rect
+Vega: https://vega.github.io/vega-lite/docs/timeunit.html
+

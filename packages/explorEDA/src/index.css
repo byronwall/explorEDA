@@ -321,8 +321,8 @@ html {
 }
 .eda-column-heading {
   display: flex;
-  flex-direction: column;
-  gap: 1px;
+  align-items: center;
+  position: relative;
   min-width: 0;
 }
 .eda-column-heading > button {
@@ -331,8 +331,13 @@ html {
 .eda-column-actions {
   display: flex;
   align-items: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
   height: 24px;
   gap: 2px;
+  pointer-events: none;
 }
 .eda-column-actions button {
   width: 24px;
@@ -343,12 +348,19 @@ html {
 @media (hover: hover) and (pointer: fine) {
   .eda-column-actions > :where(:not(:has(.is-active)):not(.is-active)) {
     opacity: 0;
+    pointer-events: none;
+  }
+  th:hover .eda-column-actions,
+  th:focus-within .eda-column-actions {
+    background: var(--muted);
+    pointer-events: auto;
   }
   th:hover .eda-column-actions > *,
   th:focus-within .eda-column-actions > *,
   th:has([aria-expanded="true"]) .eda-column-actions > *,
   th:has([data-state="open"]) .eda-column-actions > * {
     opacity: 1;
+    pointer-events: auto;
   }
 }
 .eda-data-table th button[aria-label^="Filter"] {
@@ -836,7 +848,11 @@ html {
 }
 .eda-chart-color-legend {
   flex: 0 0 auto;
-  max-height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-height: 36px;
   overflow: visible;
   position: relative;
   z-index: 2;
@@ -864,13 +880,24 @@ html {
   box-shadow: 0 4px 12px rgb(0 0 0 / 12%);
 }
 .eda-chart-color-legend .eda-legend-items {
-  flex-wrap: wrap;
+  min-width: 0;
+  flex: 1;
+  flex-wrap: nowrap;
+}
+.eda-chart-color-legend .eda-legend-numeric {
+  flex: 0 1 220px;
+  width: min(220px, 100%);
+}
+.eda-chart-color-legend:has(.eda-legend-numeric) .eda-legend-field {
+  margin-left: auto;
 }
 .eda-color-legend section + section {
   margin-top: 16px;
 }
 .eda-legend-field {
-  margin: 0 0 5px;
+  margin: 0;
+  flex-shrink: 0;
+  white-space: nowrap;
   font-size: 11px;
   font-weight: 500;
   color: var(--muted-foreground);
@@ -900,9 +927,15 @@ html {
 .eda-legend-item:hover {
   background: var(--muted);
 }
+.eda-legend-trace-target[aria-pressed="true"] {
+  border-color: var(--primary);
+}
 .eda-legend-item[aria-pressed="true"] {
   background: var(--muted);
   border-color: var(--border);
+}
+.eda-legend-item[data-trace-selected="true"] {
+  border-color: var(--primary);
 }
 .eda-legend-item[data-dimmed="true"] {
   opacity: 0.45;
@@ -930,6 +963,18 @@ html {
 }
 .eda-legend-numeric {
   padding: 3px 4px;
+}
+.eda-legend-trace-target {
+  display: block;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+.eda-legend-trace-target:focus-visible {
+  outline: 2px solid var(--ring);
 }
 .eda-legend-ramp {
   height: 8px;
@@ -967,17 +1012,21 @@ html {
   gap: 5px;
   min-height: 24px;
   padding: 2px 5px;
-  border: 1px solid var(--border);
+  border: 1px solid transparent;
   border-radius: 4px;
   font-size: 11px;
   text-align: left;
-  background: var(--card);
+  background: transparent;
   white-space: nowrap;
+  cursor: pointer;
 }
 .eda-calc-badge:hover,
 .eda-calc-cell:hover {
   color: var(--primary);
   background: var(--muted);
+}
+.eda-calc-badge:hover {
+  border-color: var(--border);
 }
 .eda-calc-badge:focus-visible,
 .eda-calc-cell:focus-visible,
@@ -1001,6 +1050,25 @@ html {
   height: 28px;
   overflow-x: auto;
   flex-shrink: 0;
+}
+.eda-field-selector-calc {
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  z-index: 1;
+  transform: translateY(-50%);
+}
+.eda-field-selector-calc .eda-calc-badge,
+.eda-scatter-axis-calc .eda-calc-badge {
+  min-height: 24px;
+  padding: 2px 4px;
+}
+.eda-scatter-axis-calc {
+  position: absolute;
+  z-index: 1;
+}
+.eda-scatter-axis-calc-y {
+  transform: rotate(-90deg);
 }
 .eda-calc-peek {
   width: min(340px, calc(100vw - 24px));

@@ -6,6 +6,14 @@ import type {
   Expression,
 } from "../types";
 
+export interface CalculationStep {
+  id: string;
+  depth: number;
+  label: string;
+  value?: CalculationValue;
+  error?: string;
+}
+
 export function validateExpression(
   expression: Expression,
   fields: string[]
@@ -33,7 +41,12 @@ export function validateExpression(
 }
 
 export class Calculator {
-  constructor(private context: CalculationContext) {}
+  private depth = 0;
+
+  constructor(
+    private context: CalculationContext,
+    private steps?: CalculationStep[]
+  ) {}
 
   evaluate(expression: Expression): CalculationResult {
     try {
@@ -48,11 +61,33 @@ export class Calculator {
   }
 
   private value(expression: Expression): CalculationValue {
-    const result = this.evaluateValue(expression);
-    if (typeof result === "number" && !Number.isFinite(result)) {
-      throw new Error("Calculation produced a non-finite number");
+    const depth = this.depth++;
+    const label =
+      expression.type === "literal"
+        ? (expression.dependencies[0] ?? String(expression.value))
+        : expression.type === "function"
+          ? expression.functionName
+          : expression.type === "ternary"
+            ? "conditional"
+            : expression.operator;
+    try {
+      const result = this.evaluateValue(expression);
+      if (typeof result === "number" && !Number.isFinite(result)) {
+        throw new Error("Calculation produced a non-finite number");
+      }
+      this.steps?.push({ id: expression.id, depth, label, value: result });
+      return result;
+    } catch (error) {
+      this.steps?.push({
+        id: expression.id,
+        depth,
+        label,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    } finally {
+      this.depth--;
     }
-    return result;
   }
 
   private evaluateValue(expression: Expression): CalculationValue {

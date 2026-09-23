@@ -1,0 +1,181 @@
+{
+  "schema_version": "0.4.0",
+  "initiative": {
+    "title": "Facet controls",
+    "slug": "facet-controls",
+    "scale": "feature",
+    "current_phase": "plan",
+    "last_updated": "2026-09-22",
+    "summary": "Make facet focus and visibility controls compact and remove technical header copy."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-22"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-22"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-09-22"
+    }
+  },
+  "sources": [
+    {
+      "id": "user-2026-09-22",
+      "type": "direct-user-input",
+      "location": "current conversation and attached screenshot",
+      "anchor": "facet focus, paging picker, and shared-scales copy",
+      "authority": "direct intent"
+    },
+    {
+      "id": "repo-593ca2e",
+      "type": "repository",
+      "location": "../../packages/explorEDA/src/components/charts/FacetRelated/",
+      "anchor": "facet container and layouts at 593ca2e plus working-tree edits",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "ui-defaults",
+      "type": "project-guidance",
+      "location": "../../docs/ui-defaults.md",
+      "anchor": "controls, popovers, and verification",
+      "authority": "project constraint"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "focus",
+        "kind": "required behavior",
+        "text": "Put a compact focus or expand control beside the wrap facet name and keep grid focus usable.",
+        "source": "user-2026-09-22",
+        "status": "active"
+      },
+      {
+        "id": "filter",
+        "kind": "decision",
+        "text": "Keep facet-name click filtering for now.",
+        "source": "user-2026-09-22",
+        "status": "active"
+      },
+      {
+        "id": "picker",
+        "kind": "required behavior",
+        "text": "Put a subtle visible-facet picker between paging actions.",
+        "source": "user-2026-09-22",
+        "status": "active"
+      },
+      {
+        "id": "copy",
+        "kind": "required behavior",
+        "text": "Remove the shared-scales and cross-facet-selection sentence.",
+        "source": "user-2026-09-22",
+        "status": "active"
+      },
+      {
+        "id": "behavior",
+        "kind": "constraint",
+        "text": "Keep existing facet data, filters, scales, selections, and saved layouts.",
+        "source": "user-2026-09-22",
+        "status": "active"
+      },
+      {
+        "id": "access",
+        "kind": "constraint",
+        "text": "Controls must have accessible names and work at three project widths.",
+        "source": "ui-defaults",
+        "status": "active"
+      }
+    ],
+    "themes": ["Quiet facet controls", "Direct facet visibility"],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "ready",
+    "appetite": "Two focused UI passes",
+    "problem": "Facet controls compete with chart data and visibility is buried in settings.",
+    "recommended_shape": "Use compact focus controls and a paging-row picker backed by existing visibleFacetIds; remove technical copy.",
+    "success_moves": [
+      "Prove focus first",
+      "Reuse chart visibility state",
+      "Keep paging temporary"
+    ],
+    "first_proof": {
+      "question": "Can a compact control focus one facet without changing label filtering?",
+      "artifact": "Wrap facet header and focused view",
+      "decision_rule": "Pointer and keyboard focus and return work; label click still filters at three widths."
+    },
+    "rabbit_holes": [
+      "New facet state",
+      "Changing filter semantics",
+      "Layout planner rewrite"
+    ],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "plan-ready",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/Projects/explorEDA",
+      "revision": "593ca2e",
+      "worktree_status": "dirty; preserve existing edits",
+      "subsystems": [
+        "FacetContainer",
+        "FacetWrapLayout",
+        "FacetGridLayout",
+        "FacetSettingsTab",
+        "facetLayout"
+      ],
+      "test_commands": ["pnpm check:ui", "pnpm check"],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": {
+      "command": "focused package test; pnpm check:ui; browser check",
+      "network_required": false,
+      "shared_infrastructure_required": false
+    },
+    "milestones": [
+      {
+        "id": "M1",
+        "outcome": "Compact focus and quiet chart header",
+        "proof": "Focus, return, label filtering, and absent technical copy in browser",
+        "valid_intermediate_state": "Existing paging and visibility setting work",
+        "rollback": "Revert focus and header presentation"
+      },
+      {
+        "id": "M2",
+        "outcome": "Choose visible facets beside paging",
+        "proof": "Picker updates existing visibility state and remains reachable with one facet",
+        "valid_intermediate_state": "Existing settings picker and paging work",
+        "rollback": "Remove paging-row picker"
+      }
+    ],
+    "cut_line": [
+      "Changing label-click filtering",
+      "Facet-local selection",
+      "Scale changes",
+      "New saved-state shape"
+    ],
+    "open_decisions": [],
+    "tickets": ["exp-y529", "exp-51gm"]
+  },
+  "history": []
+}

@@ -19,10 +19,16 @@ import {
   Minimize2,
   Settings2,
   Table2,
+  Waypoints,
   X,
 } from "lucide-react";
 import { ChartRenderer } from "./charts/ChartRenderer";
 import { ChartColorLegend } from "./charts/ColorLegend/ChartColorLegend";
+import {
+  ScatterTraceScope,
+  useScatterTraceSelection,
+} from "./charts/ScatterPlot/ScatterTraceContext";
+import { ScatterTracePanel } from "./charts/ScatterPlot/ScatterTracePanel";
 import { FacetContainer } from "./charts/FacetRelated/FacetContainer";
 import { ChartSettingsContent } from "./ChartSettingsContent";
 import { Button } from "./ui/button";
@@ -33,7 +39,7 @@ import {
   PopoverTrigger,
 } from "./ui/popover";
 import { useAlertStore } from "@/stores/alertStore";
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import {
   getChartFields,
   getChartSummary,
@@ -52,6 +58,86 @@ interface PlotChartPanelProps {
   onDuplicate: () => void;
   width: number;
   height: number;
+}
+
+function ScatterTraceControl() {
+  const trace = useScatterTraceSelection();
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (trace?.selection) setOpen(true);
+  }, [trace?.selection]);
+  useEffect(() => {
+    if (
+      trace?.selection?.kind === "facet" &&
+      trace.selection.plan !== trace.plan
+    ) {
+      trace.select(null);
+    }
+  }, [trace?.selection, trace?.plan, trace?.select]);
+  return (
+    <Popover
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (!next) trace?.select(null);
+      }}
+    >
+      <ActionTooltip content="Trace chart objects">
+        <PopoverTrigger asChild>
+          <Button variant="ghost" size="icon" aria-label="Trace chart objects">
+            <Waypoints className="h-4 w-4" />
+          </Button>
+        </PopoverTrigger>
+      </ActionTooltip>
+      <PopoverContent
+        align={window.innerWidth < 700 ? "start" : "end"}
+        side={window.innerWidth < 700 ? "bottom" : "left"}
+        collisionPadding={12}
+        className="w-[min(18rem,calc(100vw-1.5rem))] max-h-[min(70vh,var(--radix-popover-content-available-height))] overflow-y-auto"
+        aria-label="Scatter trace inspector"
+      >
+        <ScatterTracePanel
+          plan={trace?.selection?.plan ?? trace?.plan ?? undefined}
+          trace={trace?.selection?.trace}
+          onFindRow={trace?.inspectRow}
+          onSelect={(selection) => {
+            if (trace?.selection?.inspect) trace.selection.inspect(selection);
+            else trace?.inspectFirst(selection);
+          }}
+        />
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+function ScatterTraceTitle({ id, text }: { id: string; text: string }) {
+  const trace = useScatterTraceSelection();
+  const inspect = () => trace?.inspectFirst({ kind: "title", id: "title" });
+  return (
+    <h3
+      id={id}
+      className="min-w-0 truncate text-sm font-semibold"
+      tabIndex={0}
+      aria-description="Alt-click or Alt-Enter to trace title"
+      onMouseDownCapture={(event) => {
+        if (event.altKey) event.stopPropagation();
+      }}
+      onMouseUpCapture={(event) => {
+        if (event.altKey) {
+          event.stopPropagation();
+          inspect();
+        }
+      }}
+      onKeyDown={(event) => {
+        if (event.altKey && event.key === "Enter") {
+          event.preventDefault();
+          inspect();
+        }
+      }}
+    >
+      {text}
+    </h3>
+  );
 }
 
 export function PlotChartPanel({
@@ -77,10 +163,10 @@ export function PlotChartPanel({
     if (!open || !panelRef.current) return;
     settingsAnchor.current = panelRef.current;
     const rect = panelRef.current.getBoundingClientRect();
-    if (window.innerWidth - rect.right >= 352) {
+    if (window.innerWidth - rect.right >= 300) {
       setSettingsSide("right");
       setSettingsHeight(window.innerHeight - 32);
-    } else if (rect.left >= 352) {
+    } else if (rect.left >= 300) {
       setSettingsSide("left");
       setSettingsHeight(window.innerHeight - 32);
     } else {
@@ -132,9 +218,10 @@ export function PlotChartPanel({
     : dataFields.filter((field) =>
         calculations.some((calc) => calc.resultColumnName === field)
       );
-  const fieldStripHeight = calculatedFields.length ? 28 : 0;
+  const fieldStripHeight =
+    settings.type !== "scatter" && calculatedFields.length ? 28 : 0;
   const autoLegendHeight =
-    settings.colorField && settings.colorScaleId ? 56 : 0;
+    settings.colorField && settings.colorScaleId ? 36 : 0;
 
   const handleDelete = async () => {
     const confirmed = await showAlert(
@@ -181,9 +268,13 @@ export function PlotChartPanel({
             className="eda-drag h-3 w-3 shrink-0 text-muted-foreground"
             aria-hidden="true"
           />
-          <h3 id={titleId} className="min-w-0 truncate text-sm font-semibold">
-            {chartTitle}
-          </h3>
+          {settings.type === "scatter" ? (
+            <ScatterTraceTitle id={titleId} text={chartTitle} />
+          ) : (
+            <h3 id={titleId} className="min-w-0 truncate text-sm font-semibold">
+              {chartTitle}
+            </h3>
+          )}
         </div>
         {settings.filters.some(isActiveFilter) && (
           <ActionTooltip content="Clear this chart’s filters">
@@ -200,6 +291,7 @@ export function PlotChartPanel({
         )}
         <div className="eda-panel-actions flex shrink-0 items-center gap-0">
           {isTableLike && <div ref={setToolbarTarget} />}
+          {settings.type === "scatter" && <ScatterTraceControl />}
           <ActionTooltip
             content={expanded ? "Close expanded chart" : "Expand chart"}
           >
@@ -315,6 +407,9 @@ export function PlotChartPanel({
                 } as React.CSSProperties
               }
               side={settingsSide}
+              sideOffset={
+                settingsSide === "right" || settingsSide === "left" ? -44 : 4
+              }
               align="start"
               collisionPadding={12}
             >
@@ -323,7 +418,7 @@ export function PlotChartPanel({
           </Popover>
         </div>
       </div>
-      {calculatedFields.length > 0 && (
+      {settings.type !== "scatter" && calculatedFields.length > 0 && (
         <div
           className="eda-calc-chart-fields"
           aria-label="Calculated chart fields"
@@ -367,25 +462,27 @@ export function PlotChartPanel({
     </div>
   );
   return (
-    <Dialog open={expanded} onOpenChange={setExpanded}>
-      {expanded ? (
-        <DialogContent
-          showCloseButton={false}
-          className="max-w-none w-auto border-0 bg-transparent p-0 shadow-none"
-          onCloseAutoFocus={(event) => {
-            event.preventDefault();
-            requestAnimationFrame(() => expandRef.current?.focus());
-          }}
-        >
-          <DialogTitle className="sr-only">{chartTitle}</DialogTitle>
-          <DialogDescription className="sr-only">
-            {chartSummary}
-          </DialogDescription>
-          {panel}
-        </DialogContent>
-      ) : (
-        panel
-      )}
-    </Dialog>
+    <ScatterTraceScope>
+      <Dialog open={expanded} onOpenChange={setExpanded}>
+        {expanded ? (
+          <DialogContent
+            showCloseButton={false}
+            className="max-w-none w-auto border-0 bg-transparent p-0 shadow-none"
+            onCloseAutoFocus={(event) => {
+              event.preventDefault();
+              requestAnimationFrame(() => expandRef.current?.focus());
+            }}
+          >
+            <DialogTitle className="sr-only">{chartTitle}</DialogTitle>
+            <DialogDescription className="sr-only">
+              {chartSummary}
+            </DialogDescription>
+            {panel}
+          </DialogContent>
+        ) : (
+          panel
+        )}
+      </Dialog>
+    </ScatterTraceScope>
   );
 }

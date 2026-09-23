@@ -16,7 +16,7 @@ Use these tokens:
 
 Keep default borders soft in both themes. Do not use literal colors or Tailwind palette colors for borders.
 The base rule must also cover portals and survive a host application's Tailwind reset.
-Run `pnpm check:ui` to reject native title attributes and raw border colors.
+Run `pnpm check:ui` to reject native title attributes, SVG `<title>` elements, and raw border colors.
 
 ## Tooltips and field details
 
@@ -26,8 +26,8 @@ Run `pnpm check:ui` to reject native title attributes and raw border colors.
 - Identify a statistic by field and meaning. Never show an unexplained duplicate number.
 - Use `FieldMetadata` for type, range or sample, distinct values, and null counts.
 - Keep field metadata based on the correct data scope. A filtered summary must describe filtered rows.
-- Put the field name first. Optional controls must not shorten or cover it.
-- Put table header actions on a second line. Keep active filter controls visible without hover.
+- Keep field controls on one line. Put the type icon before the name and move details into the tooltip.
+- Keep table headers on one line. Show actions on the right without moving the name. Keep active filters visible.
 - Keep row actions horizontal. Show them on hover and keyboard focus, and keep them available on touch screens.
 
 ## Popovers and dialogs

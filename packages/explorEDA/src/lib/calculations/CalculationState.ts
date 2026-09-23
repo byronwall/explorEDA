@@ -1,11 +1,25 @@
 import type { DatumObject, HasId } from "@/providers/DataLayerProvider";
 import type { datum } from "@/types/ChartTypes";
-import { Calculator, validateExpression } from "./engine/Calculator";
+import {
+  Calculator,
+  validateExpression,
+  type CalculationStep,
+} from "./engine/Calculator";
 import type { CalculationValue, Expression } from "./types";
 
 export interface CalculationDefinition {
   expression: Expression;
   resultColumnName: string;
+}
+
+export interface RowCalculationTrace {
+  field: string;
+  expression: string;
+  value: datum;
+  error?: string;
+  steps: CalculationStep[];
+  inputs: { field: string; value: CalculationValue }[];
+  dependencies: RowCalculationTrace[];
 }
 
 export class CalculationManager<T extends DatumObject> {
@@ -96,6 +110,43 @@ export class CalculationManager<T extends DatumObject> {
     );
     if (calculation) this.executeCalculation(calculation);
     return this.errors.get(name) ?? new Map();
+  }
+
+  traceRow(name: string, rowId: number): RowCalculationTrace | undefined {
+    const calc = this.calculations.find(
+      (item) => item.resultColumnName === name
+    );
+    const row = this.data.find((item) => item.__ID === rowId);
+    if (!calc || !row) return undefined;
+    const dependencies = calc.expression.dependencies.flatMap((field) => {
+      const trace = this.traceRow(field, rowId);
+      return trace ? [trace] : [];
+    });
+    const variables = new Map<string, CalculationValue>(Object.entries(row));
+    for (const field of calc.expression.dependencies) {
+      const dependency = dependencies.find((item) => item.field === field);
+      if (dependency) variables.set(field, dependency.value);
+    }
+    const steps: CalculationStep[] = [];
+    const result = new Calculator(
+      { data: this.data, variables },
+      steps
+    ).evaluate(calc.expression);
+    return {
+      field: name,
+      expression: calc.expression.rawInput,
+      value:
+        result.success && !(result.value instanceof Date)
+          ? (result.value ?? undefined)
+          : undefined,
+      error: result.error,
+      steps,
+      inputs: calc.expression.dependencies.map((field) => ({
+        field,
+        value: variables.get(field),
+      })),
+      dependencies,
+    };
   }
 
   executeCalculation(calculation: CalculationDefinition): Map<number, datum> {

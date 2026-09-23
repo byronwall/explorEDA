@@ -14,6 +14,8 @@ import { FacetGridLayout } from "./FacetGridLayout";
 import { FacetWrapLayout } from "./FacetWrapLayout";
 import { useGetAllIds } from "../useGetLiveData";
 import { hasFieldDisplayFormat } from "@/lib/fieldSettings";
+import { useScatterTraceSelection } from "../ScatterPlot/ScatterTraceContext";
+import type { FacetLayoutPlan } from "./facetLayout";
 
 const FACET_HEADER_HEIGHT = 20;
 
@@ -46,7 +48,11 @@ export function FacetContainer({
   const updateChart = useDataLayer((state) => state.updateChart);
   const allIds = useGetAllIds();
   const nonce = useDataLayer((state) => state.nonce);
+  const rawRows = useDataLayer((state) => state.rawData);
+  const calculations = useDataLayer((state) => state.calculationManager);
+  const trace = useScatterTraceSelection();
   const [focusedFacetId, setFocusedFacetId] = useState<string | null>(null);
+  const [pendingRow, setPendingRow] = useState<number | null>(null);
   const displayFacetValue = useMemo(
     () => (field: string, value: datum) =>
       hasFieldDisplayFormat(fieldSettings[field])
@@ -73,6 +79,24 @@ export function FacetContainer({
 
     return groupFacetData(allIds, rowData, columnData);
   }, [settings.facet, getColumnData, allIds, nonce]);
+
+  const registerRowFallback = trace?.registerRowFallback;
+  const inspectVisibleRow = trace?.inspectVisibleRow;
+  useEffect(() => {
+    if (settings.type !== "scatter") return;
+    return registerRowFallback?.((id) => {
+      const facet = allFacetData.find((item) => item.ids.includes(id));
+      if (!facet) return false;
+      setFocusedFacetId(facet.id);
+      setPendingRow(id);
+      return true;
+    });
+  }, [settings.type, registerRowFallback, allFacetData]);
+  useEffect(() => {
+    if (pendingRow !== null && inspectVisibleRow?.(pendingRow)) {
+      setPendingRow(null);
+    }
+  }, [pendingRow, inspectVisibleRow, trace?.plan]);
 
   useEffect(() => {
     if (
@@ -116,6 +140,65 @@ export function FacetContainer({
     return !filter || categoryIncludes(filter.values, value);
   };
 
+  const inspectFacet =
+    settings.type === "scatter"
+      ? (
+          role: "panel" | "row-heading" | "column-heading",
+          facets: FacetData[],
+          layout: FacetLayoutPlan = {
+            mode: "focused",
+            width,
+            height: Math.max(1, height - FACET_HEADER_HEIGHT),
+          }
+        ) => {
+          const first = facets[0];
+          if (!first) return;
+          const sourceIds = [
+            ...new Set(facets.flatMap((facet) => facet.ids)),
+          ].sort((a, b) => a - b);
+          const chartIds = new Set(trace?.plan?.rowSets.chart ?? []);
+          const sampleSourceId = sourceIds[0];
+          const heading = (field: string, value: datum) => ({
+            field,
+            value,
+            label: displayFacetValue(field, value),
+            sampleSourceId,
+            raw:
+              sampleSourceId === undefined
+                ? undefined
+                : rawRows[sampleSourceId]?.[field],
+            calculation:
+              sampleSourceId === undefined
+                ? undefined
+                : calculations.traceRow(field, sampleSourceId),
+          });
+          const row =
+            role !== "column-heading"
+              ? heading(settings.facet.rowVariable, first.rowRawValue)
+              : undefined;
+          const column =
+            settings.facet.type === "grid" && role !== "row-heading"
+              ? heading(settings.facet.columnVariable, first.columnRawValue)
+              : undefined;
+          trace?.select({
+            kind: "facet",
+            id: `facet:${role}:${first.id}`,
+            plan: trace.plan ?? undefined,
+            trace: {
+              kind: "facet",
+              id: `facet:${role}:${first.id}`,
+              revision: trace.plan?.revision ?? String(nonce),
+              role,
+              row,
+              column,
+              sourceIds,
+              chartIds: sourceIds.filter((id) => chartIds.has(id)),
+              layout,
+            },
+          });
+        }
+      : undefined;
+
   const updateVisibleFacetIds = (visibleFacetIds: string[] | undefined) =>
     updateChart(settings.id, {
       facet: { ...settings.facet, visibleFacetIds } as ChartSettings["facet"],
@@ -131,7 +214,24 @@ export function FacetContainer({
       return (
         <div className="flex h-full w-full min-h-0 flex-col">
           <div className="flex shrink-0 items-center justify-between gap-2 overflow-hidden pb-1 text-xs">
-            <span className="min-w-0 truncate whitespace-nowrap font-medium">
+            <span
+              className="min-w-0 truncate whitespace-nowrap font-medium"
+              tabIndex={inspectFacet ? 0 : undefined}
+              aria-description={
+                inspectFacet
+                  ? "Alt-click or Alt-Enter to trace this facet"
+                  : undefined
+              }
+              onClick={(event) => {
+                if (event.altKey) inspectFacet?.("panel", [focused]);
+              }}
+              onKeyDown={(event) => {
+                if (event.altKey && event.key === "Enter") {
+                  event.preventDefault();
+                  inspectFacet?.("panel", [focused]);
+                }
+              }}
+            >
               {displayFacetValue(
                 settings.facet.rowVariable,
                 focused.rowRawValue
@@ -195,6 +295,7 @@ export function FacetContainer({
             onToggleFacet={toggleFacetValue}
             isFacetFiltered={isFacetFiltered}
             onFocusFacet={setFocusedFacetId}
+            onTraceFacet={inspectFacet}
             formatFacetValue={displayFacetValue}
             getFieldLabel={getFieldLabel}
             formatVersion={fieldSettings}
@@ -209,6 +310,7 @@ export function FacetContainer({
             onToggleFacet={toggleFacetValue}
             isFacetFiltered={isFacetFiltered}
             onFocusFacet={setFocusedFacetId}
+            onTraceFacet={inspectFacet}
             formatFacetValue={displayFacetValue}
           />
         )}

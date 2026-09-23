@@ -1,21 +1,28 @@
-import { numericScale } from "../Axis/numericScale";
-import { AxisReadout } from "../Axis/AxisReadout";
-import { applyFilter } from "@/hooks/applyFilter";
-import { getRangeFilterForField } from "@/hooks/getAxisFilter";
-import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import { hasFieldDisplayFormat } from "@/lib/fieldSettings";
-import { BaseChartProps } from "@/types/ChartTypes";
-import { ScaleLinear, scaleLinear } from "d3-scale";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BaseChart } from "../BaseChart";
-import { getChartAxisLabel } from "../chartAccessibility";
-import { useGetColumnDataForIds } from "../useGetColumnData";
-import { useGetLiveData } from "../useGetLiveData";
-import { ScatterPlotSettings } from "./definition";
-
-// Configurable constant for axis buffer (10%)
-const AXIS_BUFFER_PERCENTAGE = 0.1;
+import type { BaseChartProps } from "@/types/ChartTypes";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import type { ScatterPlotSettings } from "./definition";
+import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
+import { ScatterSvg } from "./ScatterSvg";
+import { resolveScatterTrace } from "./scatterTrace";
+import {
+  useScatterTraceSelection,
+  type ScatterSelection,
+} from "./ScatterTraceContext";
+import {
+  brushFilters,
+  planScatter,
+  scatterHoverReadout,
+  type Extent,
+  type ScatterSnapshot,
+} from "./scatterPlan";
 
 interface ScatterPlotProps extends BaseChartProps {
   settings: ScatterPlotSettings;
@@ -27,349 +34,299 @@ export function ScatterPlot({
   height,
   facetIds,
 }: ScatterPlotProps) {
-  const [hovered, setHovered] = useState<number | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const traceScope = useScatterTraceSelection();
+  const owner = useId();
+  const selection = traceScope?.selection;
+  const select = traceScope?.select;
+  const register = traceScope?.register;
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const updateChart = useDataLayer((s) => s.updateChart);
-  const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
-  const formatFieldValue = useDataLayer((s) => s.formatFieldValue);
-  const fieldSettings = useDataLayer((s) => s.fieldSettings);
-  void fieldSettings;
-  const displayValue = (field: string, value: number) =>
-    hasFieldDisplayFormat(fieldSettings[field])
-      ? (formatFieldValue?.(field, value) ?? String(value))
-      : String(value);
-  const { getColorForValue } = useColorScales();
+  const data = useDataLayer((state) => state.data);
+  const rawData = useDataLayer((state) => state.rawData);
+  const profiles = useDataLayer((state) => state.fieldProfiles);
+  const manager = useDataLayer((state) => state.calculationManager);
+  const calculations = useDataLayer((state) => state.calculations);
+  const nonce = useDataLayer((state) => state.nonce);
+  const chartItems = useDataLayer((state) => state.liveItems[settings.id]);
+  const crossfilter = useDataLayer((state) => state.crossfilterWrapper);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
+  const fieldSettings = useDataLayer((state) => state.fieldSettings);
+  const colorScale = useDataLayer((state) =>
+    state.colorScales.find((item) => item.id === settings.colorScaleId)
+  );
+  const updateChart = useDataLayer((state) => state.updateChart);
+  const allIds = useMemo(() => data.map((row) => row.__ID), [data]);
 
-  // Get all data for axis limits calculation (not filtered by current selections)
-  const allXData = useGetColumnDataForIds(settings.xField);
-  const allYData = useGetColumnDataForIds(settings.yField);
-
-  // Get filtered data for rendering
-  const xData = useGetLiveData(settings, settings.xField, facetIds);
-  const yData = useGetLiveData(settings, settings.yField, facetIds);
-  const colorData = useGetLiveData(settings, settings.colorField, facetIds);
-
-  // Convert object to array and map to numbers
-  const xValues = xData.map((value) =>
-    value == null || value === "" ? NaN : Number(value)
-  );
-  const yValues = yData.map((value) =>
-    value == null || value === "" ? NaN : Number(value)
-  );
-
-  // Calculate data bounds from ALL data (not just filtered data)
-  const xMin = Math.min(
-    ...allXData
-      .filter(
-        (value) =>
-          value != null && value !== "" && Number.isFinite(Number(value))
-      )
-      .map(Number)
-  );
-  const xMax = Math.max(
-    ...allXData
-      .filter(
-        (value) =>
-          value != null && value !== "" && Number.isFinite(Number(value))
-      )
-      .map(Number)
-  );
-  const yMin = Math.min(
-    ...allYData
-      .filter(
-        (value) =>
-          value != null && value !== "" && Number.isFinite(Number(value))
-      )
-      .map(Number)
-  );
-  const yMax = Math.max(
-    ...allYData
-      .filter(
-        (value) =>
-          value != null && value !== "" && Number.isFinite(Number(value))
-      )
-      .map(Number)
-  );
-
-  // Calculate buffered bounds for scales
-  const xRange = xMax - xMin;
-  const yRange = yMax - yMin;
-  const xBuffer = xRange * AXIS_BUFFER_PERCENTAGE;
-  const yBuffer = yRange * AXIS_BUFFER_PERCENTAGE;
-
-  const bufferedXMin = xMin - xBuffer;
-  const bufferedXMax = xMax + xBuffer;
-  const bufferedYMin = yMin - yBuffer;
-  const bufferedYMax = yMax + yBuffer;
-
-  const yDomain: [number, number] = [bufferedYMin, bufferedYMax];
-  const xAxisLabel = getChartAxisLabel(
-    settings.xField,
-    settings.xAxisLabel,
-    getFieldLabel
-  );
-  const yAxisLabel = getChartAxisLabel(
-    settings.yField,
-    settings.yAxisLabel,
-    getFieldLabel
-  );
-  const requestedLabelMargin = Math.max(
-    settings.margin.left,
-    ...scaleLinear()
-      .domain(yDomain)
-      .ticks(5)
-      .map((tick) => String(tick).length * 7 + (yAxisLabel ? 38 : 18))
-  );
-  const minPlotWidth = Math.min(
-    80,
-    Math.max(0, width - settings.margin.left - settings.margin.right)
-  );
-  const maxLabelMargin = Math.max(
-    0,
-    width - settings.margin.right - minPlotWidth
-  );
-  const margin = {
-    ...settings.margin,
-    left: Math.min(requestedLabelMargin, maxLabelMargin),
-    bottom: Math.max(settings.margin.bottom, xAxisLabel ? 46 : 28),
-  };
-  const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
-
-  // Create scales for BaseChart with synchronized limits if in a facet
-  const xScale = useMemo(() => {
-    return numericScale(settings.xAxis)
-      .domain([
-        settings.xAxis.scaleType === "symlog" ? xMin : bufferedXMin,
-        bufferedXMax,
-      ])
-      .range([0, innerWidth]);
+  const snapshot = useMemo((): ScatterSnapshot => {
+    // Chart and global filter populations come from the same store update.
+    const chartIds =
+      chartItems?.items
+        .filter((item) => item.value > 0)
+        .map((item) => item.key) ?? [];
+    // The data layer replaces cached columns after edits; old maps stay stable.
+    const column = (field: string | undefined) =>
+      field ? getColumnData(field) : {};
+    return {
+      revision: `${nonce}:${chartItems?.nonce ?? 0}`,
+      allIds,
+      chartIds,
+      filteredIds: crossfilter.getFilteredRowIds(),
+      facetIds: facetIds?.slice(),
+      xData: column(settings.xField),
+      yData: column(settings.yField),
+      colorData: column(settings.colorField),
+      facetRowData: settings.facet.enabled
+        ? column(settings.facet.rowVariable)
+        : undefined,
+      facetColumnData:
+        settings.facet.enabled && settings.facet.type === "grid"
+          ? column(settings.facet.columnVariable)
+          : undefined,
+      fieldSettings: Object.fromEntries(
+        Object.entries(fieldSettings).map(([field, value]) => [
+          field,
+          { ...value },
+        ])
+      ),
+      colorScale:
+        colorScale?.type === "categorical"
+          ? {
+              ...colorScale,
+              mapping: new Map(colorScale.mapping),
+              palette: [...colorScale.palette],
+            }
+          : colorScale && { ...colorScale },
+      calculatedFields: calculations.map((calc) => calc.resultColumnName),
+      pixelRatio:
+        typeof window === "undefined" ? 1 : window.devicePixelRatio || 1,
+    };
   }, [
-    settings.xAxis,
-    xMin,
-    bufferedXMin,
-    bufferedXMax,
-    width,
-    innerWidth,
-  ]) as ScaleLinear<number, number>;
+    allIds,
+    chartItems,
+    crossfilter,
+    getColumnData,
+    fieldSettings,
+    colorScale,
+    calculations,
+    nonce,
+    settings.xField,
+    settings.yField,
+    settings.colorField,
+    settings.facet,
+    facetIds,
+  ]);
 
-  const yScale = useMemo(() => {
-    return numericScale(settings.yAxis)
-      .domain(
-        settings.yAxis.scaleType === "symlog" ? [yMin, yDomain[1]] : yDomain
-      )
-      .range([innerHeight, 0]);
-  }, [innerHeight, yDomain, yMin, settings.yAxis]) as ScaleLinear<
-    number,
-    number
-  >;
+  const plan = useMemo(
+    () => planScatter(settings, snapshot, width, height),
+    [settings, snapshot, width, height]
+  );
+  const activeSelection =
+    selection && (!selection.owner || selection.owner === owner)
+      ? selection
+      : null;
+  const choose = useCallback(
+    (next: ScatterSelection) => {
+      const selected = {
+        kind: next.kind,
+        id: next.id,
+        owner,
+        plan,
+        numericalPlan: next.numericalPlan,
+      };
+      select?.({
+        ...selected,
+        trace: resolveScatterTrace(
+          selected,
+          plan,
+          snapshot,
+          settings,
+          rawData,
+          data,
+          profiles,
+          manager
+        ),
+        inspect: choose,
+      });
+    },
+    [owner, plan, select, snapshot, settings, rawData, data, profiles, manager]
+  );
+  useEffect(
+    () => register?.(owner, plan, choose),
+    [register, owner, plan, choose]
+  );
+  useEffect(() => {
+    if (
+      selection?.owner === owner &&
+      selection.plan &&
+      selection.plan !== plan
+    ) {
+      select?.(null);
+    }
+  }, [selection, plan, owner, select]);
+  const pointAt = (x: number, y: number) => {
+    let nearest: (typeof plan.points)[number] | undefined;
+    let distance = 100;
+    for (const point of plan.points) {
+      const dx = point.x - x;
+      const dy = point.y - y;
+      const squared = dx * dx + dy * dy;
+      if (squared < distance) {
+        nearest = point;
+        distance = squared;
+      }
+    }
+    return nearest;
+  };
+  const hoveredPoint = plan.points.find((point) => point.id === hoveredId);
+  const hoveredText =
+    hoveredPoint && scatterHoverReadout(plan, snapshot, settings, hoveredPoint);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas || xValues.length === 0) {
+    if (!canvas) {
       return;
     }
-
     const ctx = canvas.getContext("2d");
     if (!ctx) {
       return;
     }
-
-    // Use provided width and height instead of getBoundingClientRect
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = plan.pixelRatio;
     canvas.width = width * dpr;
     canvas.height = height * dpr;
     ctx.scale(dpr, dpr);
-
-    // Clear canvas using provided dimensions
     ctx.clearRect(0, 0, width, height);
-
-    // Draw points using the same scales as BaseChart
-    ctx.translate(margin.left, margin.top);
+    ctx.translate(plan.margin.left, plan.margin.top);
     ctx.beginPath();
-    ctx.rect(0, 0, innerWidth, innerHeight);
+    ctx.rect(0, 0, plan.plotWidth, plan.plotHeight);
     ctx.clip();
-
-    const xFilter = getRangeFilterForField(settings.filters, settings.xField);
-    const yFilter = getRangeFilterForField(settings.filters, settings.yField);
-
-    for (let i = 0; i < xValues.length; i++) {
-      const xValue = xValues[i];
-      const yValue = yValues[i];
-      if (
-        xValue === undefined ||
-        yValue === undefined ||
-        !Number.isFinite(xValue) ||
-        !Number.isFinite(yValue)
-      ) {
-        continue;
-      }
-      const x = xScale(xValue);
-      const y = yScale(yValue);
-
-      const isFiltered =
-        (!xFilter || applyFilter(xValue, xFilter)) &&
-        (!yFilter || applyFilter(yValue, yFilter));
-
-      ctx.fillStyle =
-        (xFilter || yFilter) && !isFiltered
-          ? "rgb(156 163 175)" // gray-400 for filtered out points
-          : getColorForValue(settings.colorScaleId, colorData[i], "#3479a8");
-
+    for (const point of plan.points) {
+      ctx.fillStyle = point.color;
+      ctx.globalAlpha = point.opacity;
       ctx.beginPath();
-      ctx.globalAlpha = isFiltered ? (settings.pointOpacity ?? 0.7) : 0.15;
-      ctx.arc(x, y, settings.pointSize ?? 3, 0, Math.PI * 2);
+      ctx.arc(point.x, point.y, point.radius, 0, Math.PI * 2);
       ctx.fill();
     }
-  }, [
-    xValues,
-    yValues,
-    settings.pointSize,
-    settings.pointOpacity,
-    settings.xField,
-    settings.yField,
-    settings.filters,
-    settings.colorScaleId,
-    width,
-    height,
-    xScale,
-    yScale,
-    getColorForValue,
-    colorData,
-    innerHeight,
-    innerWidth,
-    margin.left,
-    margin.top,
-  ]);
+  }, [plan, width, height]);
 
   const handleBrushChange = useCallback(
-    (extent: [[number, number], [number, number]] | null) => {
-      if (!extent) {
-        updateChart(settings.id, {
-          filters: settings.filters.filter(
-            (f) => f.field !== settings.xField && f.field !== settings.yField
-          ),
-        });
-        return;
-      }
-
-      const [[x0, y0], [x1, y1]] = extent;
-
-      // Convert pixel coordinates back to data values
-      const xStart = xScale.invert(x0);
-      const xEnd = xScale.invert(x1);
-      const yStart = yScale.invert(y0);
-      const yEnd = yScale.invert(y1);
-
-      // Create new filters array with updated x and y filters
-      const newFilters = settings.filters.filter(
-        (f) => f.field !== settings.xField && f.field !== settings.yField
+    (extent: Extent | null) => {
+      const filters = settings.filters.filter(
+        (filter) =>
+          filter.field !== settings.xField && filter.field !== settings.yField
       );
-
-      // Add x filter
-      newFilters.push({
-        type: "range",
-        field: settings.xField,
-        min: Math.min(xStart, xEnd),
-        max: Math.max(xStart, xEnd),
-      });
-
-      // Add y filter
-      newFilters.push({
-        type: "range",
-        field: settings.yField,
-        min: Math.min(yStart, yEnd),
-        max: Math.max(yStart, yEnd),
-      });
-
-      updateChart(settings.id, {
-        filters: newFilters,
-      });
+      if (extent) {
+        const next = brushFilters(plan, extent);
+        filters.push({
+          type: "range",
+          field: settings.xField,
+          min: next.x[0],
+          max: next.x[1],
+        });
+        filters.push({
+          type: "range",
+          field: settings.yField,
+          min: next.y[0],
+          max: next.y[1],
+        });
+      }
+      updateChart(settings.id, { filters });
     },
-    [
-      settings.id,
-      settings.xField,
-      settings.yField,
-      settings.filters,
-      updateChart,
-      xScale,
-      yScale,
-    ]
+    [plan, settings, updateChart]
   );
 
   return (
     <div
       style={{ width, height }}
       className="relative"
-      onPointerLeave={() => setHovered(null)}
-      onPointerDownCapture={() => setHovered(null)}
+      onPointerLeave={() => setHoveredId(null)}
+      onPointerDownCapture={() => setHoveredId(null)}
       onKeyDownCapture={(event) => {
-        if (event.key === "Escape") setHovered(null);
+        if (event.key === "Escape") {
+          setHoveredId(null);
+        }
       }}
       onPointerMove={(event) => {
-        if (event.buttons) return;
-        const bounds = event.currentTarget.getBoundingClientRect();
-        const px = event.clientX - bounds.left - margin.left,
-          py = event.clientY - bounds.top - margin.top;
-        if (px < 0 || px > innerWidth || py < 0 || py > innerHeight) {
-          setHovered(null);
+        if (event.buttons) {
           return;
         }
-        let nearest: number | null = null,
-          distance = 100;
-        // ponytail: linear hit testing; use a spatial index if very large point clouds need hover.
-        for (let i = 0; i < xValues.length; i++) {
-          const dx = xScale(xValues[i]!) - px,
-            dy = yScale(yValues[i]!) - py;
-          const d = dx * dx + dy * dy;
-          if (d < distance) {
-            nearest = i;
-            distance = d;
-          }
+        const bounds = event.currentTarget.getBoundingClientRect();
+        const px = event.clientX - bounds.left - plan.margin.left;
+        const py = event.clientY - bounds.top - plan.margin.top;
+        if (px < 0 || px > plan.plotWidth || py < 0 || py > plan.plotHeight) {
+          setHoveredId(null);
+          return;
         }
-        setHovered(nearest);
+        // ponytail: linear hit testing; use a spatial index if large point clouds need hover.
+        setHoveredId(pointAt(px, py)?.id ?? null);
       }}
     >
-      {xValues.length > 0 ? (
+      {plan.populations.facet > 0 ? (
         <>
           <canvas
             ref={canvasRef}
             className="absolute inset-0 pointer-events-none"
             style={{ width, height }}
           />
-          <BaseChart
-            width={width}
-            height={height}
-            xScale={xScale}
-            yScale={yScale}
-            brushingMode="2d"
+          <ScatterSvg
+            plan={plan}
+            hoveredId={hoveredId}
             onBrushChange={handleBrushChange}
-            className="absolute"
-            settings={{ ...settings, margin }}
-            overlay={
-              hovered !== null && (
-                <AxisReadout
-                  x={xScale(xValues[hovered]!)}
-                  y={yScale(yValues[hovered]!)}
-                  xValue={xValues[hovered]!}
-                  yValue={yValues[hovered]!}
-                  width={innerWidth}
-                  height={innerHeight}
-                  color={getColorForValue(
-                    settings.colorScaleId,
-                    colorData[hovered],
-                    "#3479a8"
-                  )}
-                  radius={(settings.pointSize ?? 3) + 2}
-                  xFormatter={(value) => displayValue(settings.xField, value)}
-                  yFormatter={(value) => displayValue(settings.yField, value)}
-                  label={`${String(colorData[hovered] ?? "Observation")}; ${getFieldLabel?.(settings.xField) ?? settings.xField}: ${displayValue(settings.xField, xValues[hovered]!)}; ${getFieldLabel?.(settings.yField) ?? settings.yField}: ${displayValue(settings.yField, yValues[hovered]!)}`}
-                />
-              )
+            onInspectPoint={(x, y) => {
+              const point = pointAt(x, y);
+              if (!point) return false;
+              choose({ kind: "point", id: point.id });
+              return true;
+            }}
+            onInspectGuide={(id) => choose({ kind: "guide", id })}
+            onInspectOverlay={(id) => choose({ kind: "overlay", id })}
+            selectedId={
+              activeSelection?.kind === "guide" ? activeSelection.id : undefined
             }
-          >
-            {null}
-          </BaseChart>
+          />
+          {plan.calculatedBadges.map((badge) => (
+            <span
+              key={badge.id}
+              className={`eda-scatter-axis-calc ${badge.rotation ? "eda-scatter-axis-calc-y" : ""}`}
+              style={{ left: badge.x, top: badge.y }}
+              onClickCapture={(event) => {
+                if (!event.altKey) return;
+                event.stopPropagation();
+                choose({ kind: "badge", id: badge.id });
+              }}
+            >
+              <CalculatedFieldBadge
+                field={badge.field}
+                hoverOpen={false}
+                side={badge.rotation ? "right" : "top"}
+              />
+            </span>
+          ))}
+          {hoveredPoint && (
+            <div
+              className="pointer-events-none absolute left-2 top-2 max-w-[min(16rem,70%)] rounded border border-border bg-card/95 px-2 py-1 text-xs text-card-foreground shadow-sm"
+              role="status"
+            >
+              <div>
+                {plan.xDisplay}: {hoveredText?.xText}
+              </div>
+              <div>
+                {plan.yDisplay}: {hoveredText?.yText}
+              </div>
+              {settings.colorField && (
+                <div>
+                  Color · {settings.colorField}: {hoveredText?.colorText}
+                </div>
+              )}
+              {settings.facet.enabled && (
+                <div>
+                  Facet {settings.facet.rowVariable}:{" "}
+                  {hoveredText?.facetRowText}
+                  {settings.facet.type === "grid" &&
+                    ` · ${settings.facet.columnVariable}: ${hoveredText?.facetColumnText}`}
+                </div>
+              )}
+            </div>
+          )}
         </>
       ) : (
         <div className="flex items-center justify-center h-full text-muted-foreground">

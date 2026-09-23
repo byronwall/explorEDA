@@ -581,17 +581,7 @@ export function BarChart({
                   isBandScale && handleBarClick((d as CategoryBin).category)
                 }
                 height={displayHeight}
-              >
-                <title>
-                  {isAggregate
-                    ? `${d.label}: ${measureLabel}; ${aggregateRow?.contributors.length ?? 0} source rows`
-                    : isNumeric
-                      ? `Range: ${(d as NumericBin).start.toFixed(2)} - ${(
-                          d as NumericBin
-                        ).end.toFixed(2)}, Count: ${d.value}`
-                      : `${(d as CategoryBin).label}, Count: ${d.value}`}
-                </title>
-              </rect>
+              />
             );
           })}
         </g>

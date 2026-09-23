@@ -1,0 +1,9 @@
+{
+  "browserVersion": "144.0.7559.96",
+  "loaded": "set_content; network blocked; not file://",
+  "circles": 2,
+  "identityAndGeometryChecks": "pass",
+  "requests": [],
+  "javascriptErrors": [],
+  "scope": "minimal SVG adapter only; not repository browser validation"
+}

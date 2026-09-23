@@ -1,0 +1,188 @@
+{
+  "schema_version": "0.4.0",
+  "initiative": {
+    "title": "Chart grid direct manipulation",
+    "slug": "chart-grid-direct-manipulation",
+    "scale": "feature",
+    "current_phase": "plan",
+    "last_updated": "2026-09-22",
+    "summary": "Resize charts from any edge and add charts from hovered empty grid space."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-22"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-22"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-09-22"
+    }
+  },
+  "sources": [
+    {
+      "id": "user-2026-09-22",
+      "type": "direct-user-input",
+      "location": "current conversation and attached screenshot",
+      "anchor": "two chart-grid bullets and red annotation",
+      "authority": "direct intent"
+    },
+    {
+      "id": "repo-593ca2e",
+      "type": "repository",
+      "location": "../../packages/explorEDA/src/components/ChartGridLayout.tsx",
+      "anchor": "grid implementation at 593ca2e",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "user-grid-choice",
+      "type": "direct-user-input",
+      "location": "current conversation follow-up",
+      "anchor": "remove the dependency and roll our own as a possible option",
+      "authority": "direct implementation preference"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "resize",
+        "kind": "required behavior",
+        "text": "Drag any chart edge to expand or shrink in that direction.",
+        "source": "user-2026-09-22",
+        "status": "active"
+      },
+      {
+        "id": "hover",
+        "kind": "required behavior",
+        "text": "Show a small plus after about 0.5 seconds of hover in empty grid space.",
+        "source": "user-2026-09-22",
+        "status": "active"
+      },
+      {
+        "id": "menu",
+        "kind": "required behavior",
+        "text": "Clicking the plus opens new-chart choices.",
+        "source": "user-2026-09-22",
+        "status": "active"
+      },
+      {
+        "id": "place",
+        "kind": "required behavior",
+        "text": "The chosen chart appears in the indicated empty area.",
+        "source": "user-2026-09-22",
+        "status": "active"
+      },
+      {
+        "id": "grid-choice",
+        "kind": "implementation option",
+        "text": "The executor may remove react-grid-layout and write a small local grid if that better fits the requested behavior.",
+        "source": "user-grid-choice",
+        "status": "active"
+      }
+    ],
+    "themes": ["Direct chart-grid manipulation"],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "ready",
+    "appetite": "Two focused UI changes",
+    "problem": "Chart sizing and creation require leaving the intended grid area.",
+    "recommended_shape": "Keep the current grid data contract; use the installed library or a small local replacement for resize and placement, plus the existing chart menu.",
+    "success_moves": [
+      "Prove left/top resizing first",
+      "Reuse chart defaults",
+      "Test placement beside and below charts",
+      "Keep toolbar path"
+    ],
+    "first_proof": {
+      "question": "Can the chosen grid resize from the left while preserving chart layout?",
+      "artifact": "ChartGridLayout with left-edge resize",
+      "decision_rule": "The chart grows left while its right edge stays fixed where space permits and the result survives restore."
+    },
+    "rabbit_holes": [
+      "Pixel positioning",
+      "Automatic rearrangement",
+      "New layout schema"
+    ],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "plan-ready",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/Projects/explorEDA",
+      "revision": "593ca2e",
+      "worktree_status": "dirty; preserve unrelated edits",
+      "subsystems": [
+        "ChartGridLayout",
+        "PlotManager",
+        "ChartCreationButtons",
+        "useCreateCharts",
+        "DataLayerProvider"
+      ],
+      "test_commands": ["pnpm check:ui", "pnpm check"],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": {
+      "command": "focused package test; pnpm check:ui; browser check",
+      "network_required": false,
+      "shared_infrastructure_required": false
+    },
+    "milestones": [
+      {
+        "id": "M1",
+        "outcome": "Resize charts from any side",
+        "proof": "Real pointer drags on left, top, right, and bottom edges and saved-state restore",
+        "valid_intermediate_state": "Existing chart creation and saved layouts work",
+        "rollback": "Revert resize handles or local grid replacement"
+      },
+      {
+        "id": "M2",
+        "outcome": "Add a chart in empty grid space",
+        "proof": "Hover beside and below a chart, choose a type, and restore the new layout",
+        "valid_intermediate_state": "Toolbar Add chart remains available",
+        "rollback": "Remove transient grid control and optional layout input"
+      }
+    ],
+    "cut_line": [
+      "Pixel placement",
+      "Automatic chart movement",
+      "Separate touch placement gesture",
+      "New layout schema"
+    ],
+    "open_decisions": [],
+    "tickets": [
+      {
+        "id": "exp-f9tk",
+        "milestone": "M1",
+        "claims": ["resize", "grid-choice"],
+        "status": "ready"
+      },
+      {
+        "id": "exp-0md7",
+        "milestone": "M2",
+        "claims": ["hover", "menu", "place"],
+        "status": "ready"
+      }
+    ]
+  },
+  "history": []
+}

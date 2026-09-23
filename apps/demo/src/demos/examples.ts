@@ -3,6 +3,7 @@ import {
   shopDashboard,
   largeShopDashboard,
   calculationDashboard,
+  scatterTraceDashboard,
   activityDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
@@ -41,6 +42,17 @@ export interface ExampleData {
 }
 
 export const examples: ExampleData[] = [
+  {
+    id: "scatter-trace",
+    title: "Trace a scatter point",
+    dashboard: true,
+    recommended: true,
+    description:
+      "Follow a point from raw order values through calculations, filters, scales, color, and final position.",
+    icon: ScatterChart,
+    data: "/explorEDA/datasets/scatter-trace.csv",
+    savedData: scatterTraceDashboard,
+  },
   {
     id: "calculated-orders",
     title: "From orders to contribution",

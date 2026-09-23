@@ -1,0 +1,254 @@
+Source: https://chatgpt.com/c/6ab0a0d5-fce4-83ea-b70d-dd28a66b1260
+Turn: 2 (assistant)
+
+Hi, the page currently presents explorEDA as a place to use an analysis tool, not as a toolkit a developer can adopt. A technically sophisticated visitor is likely to leave thinking: “Interesting data explorer. Is the product this website, or something that belongs inside my application?”
+
+The current sequence—import data, reopen a saved analysis, then choose an example—serves someone who already understands the product. It asks a newcomer to operate the application before establishing why they should evaluate the dependency.
+
+The strongest material already exists: an embeddable React workspace, linked views, restorable configuration, formula inspection and preview, and documented smaller chart imports. The opportunity is to expose that material in the right order, not add more capabilities.
+
+Review scope: The live URL returned a client-rendered shell. This review examined the source associated with the latest successful Pages deployment, its downloaded build, and the project documentation. Browser execution was blocked in this environment, so visual layout, actual interactions, and performance remain unverified. The findings below concern product presentation, information hierarchy, and developer experience—not a completed live usability test.
+
+Highest-leverage changes
+Priority	Change	Effort
+1	Identify the embeddable React product in the hero.	Tiny
+2	Put one guided example before import and saved-state controls.	Small
+3	Show the installation, component, and configuration boundary.	Small
+4	Explain the workspace-level advantage over linked charts alone.	Small
+5	Give evaluators clear integration facts instead of a maintenance-oriented learning path.	Small
+1. Make the hero answer “What am I adopting?”
+
+Problem: The headline, “Explore data by connecting charts and filters,” describes an activity. It does not identify the product as an installable React integration or say that the visitor can put this experience inside an existing application. The prominent import and reopening controls reinforce the impression of a standalone file-analysis app.
+
+Why it matters: A developer with 30–60 seconds needs the product category before the feature list. Without that category, an impressive demo can succeed as a tool while failing to sell the toolkit.
+
+Change: Replace the top copy with something like:
+
+explorEDA · React data-exploration toolkit
+
+Embed an interactive analysis workspace in your React app.
+
+Give users linked charts, record-level tables, and editable calculated fields—without building the surrounding workspace from scratch.
+
+Explore the order dashboard · See the React integration
+
+This proposed positioning follows the documented entry point. It does not imply that explorEDA is framework-agnostic or a headless engine. The package currently documents a React workspace and a smaller, explicitly registered chart-integration path.
+
+That distinction should be explicit:
+
+The primary promise is an analytical experience developers can embed. The underlying primitives are the next layer of explanation.
+
+Do not make visitors infer the framework from the repository or reverse-engineer whether the product is a chart library, query engine, application, or combination.
+
+Effort: Tiny. Copy and links, not product development.
+
+Expected impact: This corrects the largest misunderstanding before the visitor evaluates anything else. The existing examples immediately become evidence of something the developer can use in their own product.
+
+2. Demonstrate value before asking visitors for data
+
+Problem: The source places CSV import and the full-analysis JSON form before the examples. Reopening saved state is useful for returning users, but a first-time visitor has no saved state. The strongest proof arrives after two operational tasks.
+
+Why it matters: Importing data introduces unnecessary decisions: which file to choose, whether its format is suitable, and whether to trust the site with it. None is necessary to discover whether the toolkit is interesting.
+
+Change: Use this reading order:
+
+Product promise → featured example → embedding code → reason to choose it → additional examples and import/reopen tools.
+
+Reuse the existing order-book dashboard as the introductory example. Keep the larger 10,000-order dashboard and calculation workflow as deeper examples. Those scenarios are already defined; another showcase is not the first requirement.
+
+Give the featured example one explicit starting action, matched to its actual controls:
+
+Select a sales channel. Watch the linked views and matching records change.
+
+Place a clear reset and a route to the implementation nearby. Verify that exact gesture in the running application before publishing the instruction.
+
+The first interaction should reveal three things: the selection, its effect elsewhere, and the records behind the result. Do not start by teaching every chart setting.
+
+Keep import available as a secondary Try your data action. Collapse the saved-analysis form or move it into the application’s opening/import flow. Preserve the functionality; remove it from the first-time explanation.
+
+Also, do not make the number of linked views the entire pitch. The impressive part is the relationship between an action and its consequences, not the number of widgets.
+
+Effort: Small. Reorder existing elements, feature one preset, and add an interaction cue. An inline demo can come later; a direct launch button already improves the path.
+
+Expected impact: Visitors encounter the promised outcome without committing data or learning the application first. This improves interest, comprehension, and willingness to try with the same change.
+
+3. Add the bridge from demo to application
+
+Problem: The landing page does not expose installation or the public component API. The repository already documents a small integration, but the page makes developers discover it separately.
+
+Why it matters: A good demo does not answer: “How much of this must the application team build?” Developers need to distinguish library-provided behavior from demo-only code.
+
+Change: Put a Use it in your app section immediately after the featured example.
+
+Start with the documented installation command:
+
+Bash
+# Add the toolkit and its React peer dependencies.
+pnpm add exploreda react react-dom
+
+Then show the component boundary with a small example adapted from the documented API:
+
+TypeScript
+import { ExplorEda } from "exploreda";
+import "exploreda/dist/ExplorEda.css";
+
+const orders = [
+  { channel: "Web", revenue: 120, cost: 70 },
+  { channel: "Retail", revenue: 180, cost: 110 },
+];
+
+export function OrdersExplorer() {
+  return (
+    <ExplorEda
+      data={orders}
+      savedData={undefined}
+    />
+  );
+}
+
+The installation and component interface are documented in the repository; this illustrative snippet was not runtime-tested during the review.
+
+Be honest about what that example produces. It mounts a workspace; it does not recreate a preconfigured dashboard. Put the real example data and its typed saved configuration behind View the complete example. Do not advertise a ten-line dashboard while concealing the configuration required to reproduce the screenshot.
+
+Explain the mental model through three concrete boundaries:
+
+Boundary	Meaning
+data	Source records supplied by the host application.
+savedData	Restorable workspace configuration, not the raw dataset.
+onStateChange	Configuration snapshots the host can persist—not a controlled-state round trip.
+
+These distinctions matter. The package documentation says savedData is a restore input, warns against feeding every callback result back into it, distinguishes settings-only snapshots from full analysis bundles, and leaves durable storage to the host.
+
+For the first explanation, ordinary language is sufficient:
+
+Your application supplies records. The workspace configures views and calculations. Selections affect linked views. Your application can retain the workspace configuration.
+
+Detailed filtering semantics belong in a linked API note, not in the hero.
+
+Also label demo-only affordances. The root README identifies CSV/JSON import as functionality of the demo application; the library integration accepts records from the host. Uploading a file should not appear to be a prerequisite for using the toolkit.
+
+Effort: Small. Most of this content exists. The work is presenting one complete, reproducible path.
+
+Expected impact: This turns “interesting demo” into “plausible integration” while clarifying how much control the application retains.
+
+4. Differentiate the workspace—not the existence of linked filtering
+
+Problem: Coordinated filtering alone is not a compelling reason for an experienced dc.js or Crossfilter user to switch. Those projects already explain and demonstrate linked interactive views. 
+dc.js
++1
+
+The page’s differentiation is currently unclear. That is a presentation problem, not evidence that differentiation is absent.
+
+Why it matters: An incumbent user is comparing switching cost against work the new toolkit removes. More chart types or another generic reactivity claim does not settle that comparison.
+
+Change: Add a brief Why this exists section centered on the complete analytical interface:
+
+Use explorEDA when you need an exploratory workspace inside your application—not just individual charts. Configure linked views, inspect the records behind selections, define calculated fields, and restore the workspace from application-owned settings.
+
+The strongest differentiating hypothesis is that explorEDA removes surrounding application work: configuration interfaces, formula workflows, record inspection, and restorable workspace state.
+
+Translate the existing capabilities into consequences:
+
+Existing capability	Consequence worth demonstrating
+Formula dependencies and draft preview	Inspect how a business metric is computed and preview a change before applying it.
+Serializable workspace settings	Configure an analysis visually, then retain that configuration in the host application.
+Selective chart registration	Evaluate a smaller integration rather than assuming the entire workspace is mandatory.
+
+These capabilities are documented. Their comparative advantage still needs demonstration; they do not justify claiming that alternatives cannot implement the same outcomes.
+
+The smallest persuasive proof is a short workflow:
+
+Edit a calculation → preview the result → apply it → retain the workspace settings.
+
+Use the existing calculation example, whose definition describes calculated fields over 10,000 synthetic orders. Show the configuration handoff beside the interaction, without implying that the library supplies durable storage.
+
+For dc.js users, separate familiar filtering behavior from the workspace functionality being added. For custom-stack users, show the interfaces and application code they no longer need to assemble.
+
+Effort: Small. Add a focused explanation and guide visitors through an existing example. New functionality is not required for the first version.
+
+Expected impact: This provides a defensible reason to evaluate a switch instead of making explorEDA look like an incremental rewrite of coordinated charts.
+
+5. Give evaluators clear integration facts—not QA bookkeeping
+
+Problem: The page’s learning link leads to feature coverage. That surface tracks implementation, evidence, open gaps, and review status; its default view is an attention queue. It is useful maintenance information, but it is not a getting-started experience.
+
+Meanwhile, important integration constraints exist in the repository but are not surfaced on the landing page.
+
+Why it matters: Technical leads and dependency skeptics need clear boundaries. A feature being implemented does not establish its compatibility, extension model, package cost, or stability.
+
+Change: Make the primary learning route a complete embedding example. Keep coverage public under a clearly named project-status link.
+
+Do not conceal limitations. Separate user-facing limitations from unfinished review bookkeeping.
+
+Add a compact Before you integrate block:
+
+Topic	Answer to surface
+Framework	The package declares React/ReactDOM 18 or 19 peer support. Do not substitute a framework-agnostic claim.
+Runtime and display	Browser workspace; desktop widths of at least 1024 CSS pixels. The 3D chart requires WebGL.
+State and storage	Settings snapshots are separate from full analysis bundles. Durable storage comes from the host.
+Integration size	Full workspace and smaller chart-import paths. Provide a reproducible size check before claiming “lightweight.”
+Stability and reuse	Link the actual release, license, and API/saved-format compatibility policy. State the policy rather than implying it from a badge.
+
+The framework, runtime, persistence, and import-path details are already in the package documentation and manifest. Declared compatibility is not evidence that every configuration has been tested.
+
+Add direct repository and API/example links. Answer whether imported data leaves the browser—but verify the data path before publishing a privacy claim.
+
+For scale, use the existing 10,000-row, 15-view example as a named workload, not proof of speed. A later benchmark note should distinguish startup from warm filtering and include the fields, views, browser, hardware, and measured results. Do not extrapolate from a dependency’s benchmark.
+
+Effort: Small for the compatibility block and navigation. Measuring performance is a separate follow-on, not a prerequisite for rewriting the page.
+
+Expected impact: Serious evaluators can identify fit and limitations quickly. Explicit boundaries create more useful confidence than generic maturity claims.
+
+What is already working
+
+There are substantial examples to reuse. The example definitions cover order analysis, product activity, and a calculation-focused scenario rather than only isolated chart types. Their descriptions also identify synthetic data where relevant. The problem is discovering and interpreting this material, not an absence of scenarios.
+
+The opening language is concrete. It names exploration, charts, and filters instead of leading with an abstract technical slogan. Preserve that directness while adding the missing product category.
+
+The repository contains a usable mental model and integration boundary. Shared filter state, a React component, and documented saved-state behavior provide the foundation for a clearer landing page. Promote those explanations rather than inventing a new abstraction.
+
+The project exposes limitations and status honestly. Desktop scope and feature evidence are useful foundations for trust. Preserve the honesty; improve where that information appears and what visitors are expected to conclude from it.
+
+Questions the page currently leaves unanswered
+
+Some are answered in the repository. They remain unanswered for someone evaluating the landing page alone.
+
+Question	Decision it blocks
+Is the primary product a complete React workspace, composable chart components, or a reusable analysis engine?	Whether it belongs in the visitor’s architecture.
+What exact code and configuration reproduce the demonstrated dashboard?	Estimating integration effort.
+Can application state drive filters, receive selections, and supply custom views? What is the supported extension API?	Retaining control instead of adopting an opaque interface.
+How do filters combine? Do views exclude their own filter, and how do aggregates respond?	Predicting analytical behavior when coming from Crossfilter-style systems.
+What is preserved in settings versus a full analysis, and what survives data or package-version changes?	Designing persistence and upgrades.
+What happens with a representative dataset, many charts, missing values, and larger cardinalities?	Evaluating correctness and responsiveness without extrapolating from one demo.
+What are the supported environment, dependency cost, stability policy, license, and data-handling boundary?	Approving a new dependency.
+
+Do not answer every question in the hero. Give each an obvious route to an answer.
+
+Things not worth working on yet
+
+A visual rebrand or additional animation. First fix the product category, demonstration path, and integration explanation.
+
+More chart types or a larger gallery. Improve the first interaction and its connection to source before increasing the number of examples.
+
+A giant competitor matrix. One narrow workspace-level comparison and one complete example are more useful now.
+
+A comprehensive documentation platform. Publish a reproducible starter and compact compatibility guidance first. Expand around actual integration questions.
+
+Mobile-workspace engineering or new framework adapters solely to broaden the pitch. State the supported entry point honestly. Keep the landing page readable on smaller screens, but treat dense workspace support as a separate product decision.
+
+Unqualified scale, performance, or maturity claims. A named workload and explicit limitations are better than unsupported adjectives.
+
+Download the review, proposed hero copy, and example component as a ZIP.
+
+The single next move
+
+Rewrite the hero to identify explorEDA as an embeddable React analysis workspace.
+
+This is the smallest change that corrects the largest misunderstanding. The existing examples cannot sell a developer toolkit when visitors do not know that the demonstrated experience can belong inside their own application.
+
+Do that before adding another feature, example, or marketing section.
+
+Links:
+dc.js
++1: https://dc-js.github.io/dc.js/
+

@@ -8,34 +8,15 @@ import {
   UseColorScalesReturn,
 } from "@/types/ColorScaleTypes";
 import type { datum } from "@/types/ChartTypes";
-import {
-  interpolateCool,
-  interpolateInferno,
-  interpolateMagma,
-  interpolatePlasma,
-  interpolateViridis,
-  interpolateWarm,
-  schemeCategory10,
-  schemeSet3,
-} from "d3-scale-chromatic";
-import { scaleOrdinal, scaleSequential } from "d3-scale";
+import { interpolateViridis } from "d3-scale-chromatic";
+import { scaleSequential } from "d3-scale";
 import type { ScaleOrdinal, ScaleSequential } from "d3-scale";
+import {
+  defaultCategoricalColors,
+  makeD3ColorScale,
+} from "@/lib/colorScaleMath";
 
 import { useCallback, useMemo } from "react";
-
-const DEFAULT_NUMERICAL_PALETTES = [
-  { name: "Viridis", interpolator: interpolateViridis },
-  { name: "Inferno", interpolator: interpolateInferno },
-  { name: "Magma", interpolator: interpolateMagma },
-  { name: "Plasma", interpolator: interpolatePlasma },
-  { name: "Warm", interpolator: interpolateWarm },
-  { name: "Cool", interpolator: interpolateCool },
-];
-
-const DEFAULT_CATEGORICAL_PALETTES = [
-  { name: "Category10", colors: schemeCategory10 },
-  { name: "Set3", colors: schemeSet3 },
-];
 
 export function useColorScales(): UseColorScalesReturn {
   const colorScales = useDataLayer((state) => state.colorScales);
@@ -53,31 +34,9 @@ export function useColorScales(): UseColorScalesReturn {
       ScaleSequential<string> | ScaleOrdinal<string, string>
     >();
 
-    colorScales.forEach((scale) => {
-      if (scale.type === "numerical") {
-        const numericalScale = scale as NumericalColorScale;
-        const interpolator =
-          DEFAULT_NUMERICAL_PALETTES.find(
-            (p) => p.name === numericalScale.palette
-          )?.interpolator || interpolateViridis;
-
-        scales.set(
-          scale.id,
-          scaleSequential(interpolator).domain([
-            numericalScale.min,
-            numericalScale.max,
-          ])
-        );
-      } else {
-        const categoricalScale = scale as CategoricalColorScale;
-        scales.set(
-          scale.id,
-          scaleOrdinal<string>()
-            .domain(Array.from(categoricalScale.mapping.keys()))
-            .range(categoricalScale.palette)
-        );
-      }
-    });
+    colorScales.forEach((scale) =>
+      scales.set(scale.id, makeD3ColorScale(scale))
+    );
 
     return scales;
   }, [colorScales]);
@@ -141,7 +100,7 @@ export function useColorScales(): UseColorScalesReturn {
     values: string[],
     sourceField?: string
   ): ColorScaleType => {
-    const defaultPalette = DEFAULT_CATEGORICAL_PALETTES[0]?.colors ?? [];
+    const defaultPalette = defaultCategoricalColors;
     const mapping = new Map<string, string>();
     values.forEach((value, i) => {
       mapping.set(

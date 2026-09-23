@@ -1,0 +1,49 @@
+{
+  "schema_version": "0.4.0",
+  "initiative": {
+    "title": "Developer adoption page",
+    "slug": "developer-adoption-page",
+    "scale": "capability",
+    "current_phase": "plan",
+    "last_updated": "2026-09-21",
+    "summary": "Explain and prove the existing React workspace from the first visit."
+  },
+  "artifacts": {
+    "intent_brief": { "path": "intent-brief.md", "status": "current", "updated_at": "2026-09-21" },
+    "brainstorm": { "path": "brainstorm.md", "status": "not-requested", "updated_at": null },
+    "shape_brief": { "path": "shape-brief.md", "status": "current", "updated_at": "2026-09-21" },
+    "implementation_plan": { "path": "implementation-plan.md", "status": "current", "updated_at": "2026-09-21" }
+  },
+  "sources": [
+    { "id": "prompt", "type": "direct-user-input", "location": "../pro-reviews-2026-09-21/raw/1-user.txt", "anchor": "Primary objective and response format", "authority": "direct intent" },
+    { "id": "review", "type": "agent-review", "location": "../pro-reviews-2026-09-21/raw/2-assistant.txt", "anchor": "Highest-leverage changes", "authority": "recommendation, not direct intent" },
+    { "id": "review-zip", "type": "agent-review-attachment", "location": "../pro-reviews-2026-09-21/raw/landing-review", "anchor": "hero-copy.md and OrdersExplorer.tsx", "authority": "proposed copy and untested example" },
+    { "id": "repo", "type": "repository", "location": "../../apps/demo/src/LandingPage.tsx", "anchor": "import and restore before ExampleSelector at 593ca2e", "authority": "current implementation reality" }
+  ],
+  "intent": {
+    "claims": [
+      { "id": "d1", "type": "outcome", "statement": "Improve developer comprehension and willingness to try the toolkit", "commitment": "explicit", "importance": "core", "status": "active", "time_horizon": "proof", "source_anchors": ["prompt:Primary objective"] },
+      { "id": "d2", "type": "constraint", "statement": "Prioritize small changes with outsized effect and do not penalize incomplete sections", "commitment": "explicit", "importance": "core", "status": "active", "time_horizon": "proof", "source_anchors": ["prompt:Be especially alert for high-leverage improvements"] },
+      { "id": "d3", "type": "implementation hypothesis", "statement": "Lead with React identity, a guided example, and integration code", "commitment": "derived", "importance": "supporting", "status": "active", "time_horizon": "proof", "source_anchors": ["review:Highest-leverage changes"] }
+    ],
+    "themes": ["product identity", "proof before import", "reproducible integration"],
+    "conflicts": ["The earlier workspace intent makes Byron's analysis app primary; the review frames developer adoption as primary. Present both without changing product ownership."],
+    "human_questions": []
+  },
+  "brainstorm": { "status": "not-requested", "requested_count": 7, "options": [], "selected_option": null },
+  "shape": {
+    "status": "current", "appetite": "small landing/content work", "problem": "An import-first entry obscures the product and its proof", "recommended_shape": "Identity, guided example, real integration boundary, then file tools", "success_moves": ["Verify the named gesture", "Link the complete saved example", "Keep the analysis app path", "State only verified limits"], "first_proof": { "question": "Can a first visitor understand and use one linked interaction?", "artifact": "Reordered landing page with featured example", "decision_rule": "Proceed when selection, linked records, reset, and integration route work at three widths" }, "rabbit_holes": ["new documentation platform", "unmeasured performance claims"], "open_decisions": []
+  },
+  "implementation": {
+    "status": "current",
+    "repository_snapshot": { "root": "/Users/byronwall/Projects/explorEDA", "revision": "593ca2e", "worktree_status": "main with an unrelated untracked prompt file", "subsystems": ["apps/demo/src/LandingPage.tsx", "apps/demo/src/ExampleSelector.tsx", "packages/explorEDA public entry"], "test_commands": ["pnpm check", "pnpm test"], "deployment_surfaces": ["GitHub Pages demo"] },
+    "dependencies": [], "fast_local_loop": { "command": "pnpm --filter demo test; pnpm --filter demo dev", "network_required": false, "shared_infrastructure_required": false }, "milestones": [
+      { "id": "M1", "outcome": "Guided first-visit example", "proof": "Browser selection, linked records, reset at three widths", "valid_intermediate_state": "Existing file tools remain usable", "rollback": "Revert landing hierarchy" },
+      { "id": "M2", "outcome": "Reproducible React integration", "proof": "Displayed code builds and full configuration recreates demo", "valid_intermediate_state": "Landing page and existing demo remain useful", "rollback": "Remove explanatory section without package changes" }
+    ], "cut_line": ["new framework adapters", "docs platform", "new charts", "unmeasured benchmark claims"], "open_decisions": []
+  },
+  "history": [
+    { "date": "2026-09-21", "change": "Created from two visible conversation turns; ZIP archives unavailable." },
+    { "date": "2026-09-21", "change": "Imported landing review ZIP. It adds proposed copy and a sample, but does not change intent, shape, or plan order." }
+  ]
+}

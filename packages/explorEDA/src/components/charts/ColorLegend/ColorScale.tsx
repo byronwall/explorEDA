@@ -1,6 +1,7 @@
 import { categoryIncludes, categoryKey, categoryLabel } from "@/lib/categories";
 import { ColorScaleType } from "@/types/ColorScaleTypes";
 import { datum } from "@/types/ChartTypes";
+import { planNumericalLegend } from "@/lib/colorScaleMath";
 
 interface ColorScaleProps {
   scale: ColorScaleType;
@@ -13,7 +14,10 @@ interface ColorScaleProps {
   categories: datum[];
   selected: datum[];
   onToggle: (value: datum) => void;
+  onTrace?: (value?: datum) => void;
+  traceId?: string;
   formatValue?: (value: datum) => string;
+  numericalPlan?: ReturnType<typeof planNumericalLegend>;
 }
 
 export function ColorScale({
@@ -27,40 +31,50 @@ export function ColorScale({
   selected,
   categories,
   onToggle,
+  onTrace,
+  traceId,
   formatValue = categoryLabel,
+  numericalPlan,
 }: ColorScaleProps) {
   if (scale.type === "numerical") {
-    const steps =
-      scale.min === scale.max
-        ? 1
-        : Math.max(
-            2,
-            Math.min(Math.round(numericalBreakpoints), Math.floor(width / 56))
-          );
-    const stops = Array.from({ length: steps }, (_, index) => {
-      const value =
-        scale.min + ((scale.max - scale.min) * index) / Math.max(1, steps - 1);
-      return { value, color: getColorForValue(scale.id, value) };
-    });
-    return (
-      <div className="eda-legend-numeric">
+    const plan =
+      numericalPlan ??
+      planNumericalLegend(
+        scale,
+        width,
+        numericalBreakpoints,
+        formatValue,
+        (value) => getColorForValue(scale.id, value)
+      );
+    const content = (
+      <>
         <div
           className="eda-legend-ramp"
           role="img"
           aria-label={`${scale.name}: ${formatValue(scale.min)} to ${formatValue(scale.max)}`}
-          style={{
-            background:
-              steps === 1
-                ? stops[0]!.color
-                : `linear-gradient(to right, ${stops.map((stop) => stop.color).join(", ")})`,
-          }}
+          style={{ background: plan.background }}
         />
         <div className="eda-legend-ticks">
-          {stops.map(({ value }, index) => (
-            <span key={index}>{formatValue(value)}</span>
+          {plan.stops.map(({ label }, index) => (
+            <span key={index}>{label}</span>
           ))}
         </div>
-      </div>
+      </>
+    );
+    return onTrace ? (
+      <button
+        type="button"
+        className="eda-legend-numeric eda-legend-trace-target"
+        aria-label={`Alt-click to trace ${scale.name} color scale`}
+        aria-pressed={traceId === "scale"}
+        onClick={(event) => {
+          if (event.altKey) onTrace();
+        }}
+      >
+        {content}
+      </button>
+    ) : (
+      <div className="eda-legend-numeric">{content}</div>
     );
   }
 
@@ -74,10 +88,16 @@ export function ColorScale({
             key={categoryKey(value)}
             type="button"
             className="eda-legend-item"
-            aria-label={`Filter ${scale.name} by ${formatValue(value)}, ${count.toLocaleString()} rows`}
+            aria-label={`Filter ${scale.name} by ${formatValue(value)}, ${count.toLocaleString()} rows${onTrace ? "; Alt-click to trace color" : ""}`}
             aria-pressed={active}
+            data-trace-selected={Boolean(
+              onTrace && traceId === categoryKey(value)
+            )}
             data-dimmed={(selected.length > 0 && !active) || count === 0}
-            onClick={() => onToggle(value)}
+            onClick={(event) => {
+              if (event.altKey && onTrace) onTrace(value);
+              else onToggle(value);
+            }}
           >
             <span
               className="eda-legend-swatch"

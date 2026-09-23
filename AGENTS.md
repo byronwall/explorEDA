@@ -4,7 +4,9 @@
 - Use pnpm. Run `pnpm check` after a broad change.
 - Read [UI defaults](docs/ui-defaults.md) before changing controls, tables, overlays, or field details.
 - Use `--border` for neutral borders, `--input` for inputs, and semantic tokens for status borders.
-- Do not add native `title` tooltips. Use `ActionTooltip` or the `Button` `tooltip` prop for important actions.
+- Never add a `title` attribute or SVG `<title>` element to rendered UI. Both create native hover tooltips.
+- Use `aria-label` or visible text for accessible names. Use `ActionTooltip` or the `Button` `tooltip` prop only when hover help is needed.
+- Run `pnpm check:ui`; it rejects native tooltip sources in TSX.
 - Keep field names and filter state visible. Put optional actions beside or below the content.
 - Prefer compact nonmodal popovers for inspection and settings. Keep the data visible during edits.
 - Start new imports with summary and rows. Preserve saved layouts.

@@ -36,43 +36,50 @@ export function FieldSelector({
   const selectedOption = fieldOptions.find((option) => option.value === value);
 
   return (
-    <div className="flex gap-2 items-center">
-      <div className="flex-1">
-        <div className="flex items-center gap-2">
-          <Label htmlFor={label}>{label}</Label>
-          <CalculatedFieldBadge field={value} />
-        </div>
-        <ComboBox
-          value={selectedOption}
-          options={fieldOptions}
-          onChange={(option) => onChange(option?.value || value)}
-          optionToString={(option) => getFieldLabel(option.value)}
-          aria-label={label}
-          optionToNode={(option) => (
-            <span className="flex min-w-0 items-center gap-1">
-              {calculations.some(
-                (calc) => calc.resultColumnName === option.value
-              ) && (
-                <span
-                  className="eda-calc-symbol mr-2"
-                  aria-label="Calculated field"
-                >
-                  ƒx
-                </span>
-              )}
-              <FieldMetadata
-                profile={resolveFieldProfile(
-                  option.value,
-                  fieldProfiles,
-                  getColumnData
+    <div className="flex min-w-0 gap-2 items-center">
+      <div className="min-w-0 flex-1">
+        {label && <Label htmlFor={label}>{label}</Label>}
+        <div className="relative">
+          <span className="eda-field-selector-calc">
+            <CalculatedFieldBadge
+              field={value}
+              hoverOpen={false}
+              side={window.innerWidth < 700 ? "bottom" : "left"}
+            />
+          </span>
+          <ComboBox
+            value={selectedOption}
+            options={fieldOptions}
+            onChange={(option) => onChange(option?.value || value)}
+            optionToString={(option) => getFieldLabel(option.value)}
+            aria-label={label}
+            optionToNode={(option) => (
+              <span className="flex min-w-0 items-center gap-1">
+                {calculations.some(
+                  (calc) => calc.resultColumnName === option.value
+                ) && (
+                  <span
+                    className="eda-calc-symbol"
+                    aria-label="Calculated field"
+                  >
+                    ƒx
+                  </span>
                 )}
-                label={getFieldLabel(option.value)}
-                compact
-              />
-            </span>
-          )}
-          placeholder={placeholder}
-        />
+                <FieldMetadata
+                  profile={resolveFieldProfile(
+                    option.value,
+                    fieldProfiles,
+                    getColumnData
+                  )}
+                  label={getFieldLabel(option.value)}
+                  compact
+                  tooltipSide={window.innerWidth < 700 ? "top" : "left"}
+                />
+              </span>
+            )}
+            placeholder={placeholder}
+          />
+        </div>
       </div>
       {allowClear && value && (
         <Button

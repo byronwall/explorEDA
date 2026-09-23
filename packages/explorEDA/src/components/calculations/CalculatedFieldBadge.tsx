@@ -15,11 +15,15 @@ export function CalculatedFieldBadge({
   showName = false,
   rowId = 0,
   children,
+  hoverOpen = true,
+  side = "bottom",
 }: {
   field: string;
   showName?: boolean;
   rowId?: number;
   children?: ReactNode;
+  hoverOpen?: boolean;
+  side?: "bottom" | "left" | "top" | "right";
 }) {
   const calculations = useDataLayer((state) => state.calculations) ?? [];
   const manager = useDataLayer((state) => state.calculationManager);
@@ -67,7 +71,8 @@ export function CalculatedFieldBadge({
             (children !== undefined ? ", row " + (rowId + 1) : "")
           }
           onPointerEnter={(event) => {
-            if (event.pointerType === "touch" || event.buttons) return;
+            if (!hoverOpen || event.pointerType === "touch" || event.buttons)
+              return;
             cancelTimer();
             timer.current = setTimeout(() => setOpen(true), 250);
           }}
@@ -96,6 +101,7 @@ export function CalculatedFieldBadge({
       <PopoverContent
         className="eda-calc-peek"
         align="start"
+        side={side}
         collisionPadding={12}
         onPointerEnter={cancelTimer}
         onPointerLeave={leave}

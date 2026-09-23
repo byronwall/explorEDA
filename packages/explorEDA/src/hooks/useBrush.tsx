@@ -10,6 +10,7 @@ interface Options {
   innerHeight: number;
   mode: "horizontal" | "2d" | "none";
   onBrushChange?: (extent: Extent | null) => void;
+  onPlotClick?: (point: Point, event: PointerEvent<SVGSVGElement>) => boolean;
   defaultExtent?: Extent | null;
 }
 interface Gesture {
@@ -29,9 +30,11 @@ export function useBrush({
   innerHeight,
   mode,
   onBrushChange,
+  onPlotClick,
   defaultExtent,
 }: Options) {
   const gesture = useRef<Gesture | null>(null);
+  const wasDrag = useRef(false);
   const draftRef = useRef<Extent | null>(null);
   const [draft, setDraft] = useState<Extent | null>(null);
   // External selections only supply the resting state. They never interrupt a gesture.
@@ -54,6 +57,7 @@ export function useBrush({
   };
 
   const handlePointerDown = (event: PointerEvent<SVGSVGElement>) => {
+    wasDrag.current = false;
     if (mode === "none" || event.button !== 0 || !svgRef.current) return;
     const [x, y] = position(event);
     if (x < 0 || x > innerWidth || y < 0 || y > innerHeight) return;
@@ -94,6 +98,7 @@ export function useBrush({
     // Capture only a confirmed drag so clicks on marks keep their original target.
     if (!active.moved) event.currentTarget.setPointerCapture?.(event.pointerId);
     active.moved = true;
+    wasDrag.current = true;
     event.preventDefault();
     const x = clamp(raw[0], innerWidth),
       y = clamp(raw[1], innerHeight);
@@ -143,7 +148,8 @@ export function useBrush({
       event.currentTarget.releasePointerCapture(event.pointerId);
     cancel();
     if (!active.moved) {
-      if (active.kind === "draw") onBrushChange?.(null);
+      if (active.kind === "draw" && !onPlotClick?.(active.start, event))
+        onBrushChange?.(null);
       return;
     }
     if (
@@ -197,11 +203,13 @@ export function useBrush({
       </g>
     ) : null;
   return {
+    extent,
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
     cancel,
     clear,
+    wasDrag,
     renderBrush,
     getCursor: () => (mode === "none" ? "default" : "crosshair"),
   };

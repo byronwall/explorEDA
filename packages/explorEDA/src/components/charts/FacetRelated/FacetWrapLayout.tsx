@@ -2,8 +2,8 @@ import { ChartSettings, datum } from "@/types/ChartTypes";
 import { useEffect, useState } from "react";
 import { ChartRenderer } from "../ChartRenderer";
 import { FacetData } from "./FacetContainer";
+import { planFacetWrapLayout, type FacetLayoutPlan } from "./facetLayout";
 
-const PAGER_HEIGHT = 20;
 const FACET_CARD_WIDTH_CHROME = 18;
 const FACET_CARD_HEIGHT_CHROME = 38;
 
@@ -16,6 +16,11 @@ interface FacetWrapLayoutProps {
   onToggleFacet: (field: string, value: datum) => void;
   isFacetFiltered: (field: string, value: datum) => boolean;
   onFocusFacet: (id: string) => void;
+  onTraceFacet?: (
+    role: "panel",
+    facets: FacetData[],
+    layout: FacetLayoutPlan
+  ) => void;
   formatFacetValue: (field: string, value: datum) => string;
 }
 
@@ -28,31 +33,21 @@ export function FacetWrapLayout({
   onToggleFacet,
   isFacetFiltered,
   onFocusFacet,
+  onTraceFacet,
   formatFacetValue,
 }: FacetWrapLayoutProps) {
-  const columnCount = Math.max(
-    1,
-    Math.min(columns, Math.floor(width / 260) || 1)
-  );
-  const rowCount = Math.max(
-    1,
-    Math.floor(Math.max(1, height - PAGER_HEIGHT) / 230) || 1
-  );
-  const pageSize = columnCount * rowCount;
-  const pageCount = Math.max(1, Math.ceil(facetData.length / pageSize));
   const [page, setPage] = useState(0);
-  useEffect(
-    () => setPage((current) => Math.min(current, pageCount - 1)),
-    [pageCount]
+  const layout = planFacetWrapLayout(
+    width,
+    height,
+    facetData.length,
+    columns,
+    page
   );
+  const { columnCount, pageSize, pageCount, facetWidth, facetHeight } = layout;
+  useEffect(() => setPage(layout.page), [layout.page]);
 
   const visible = facetData.slice(page * pageSize, (page + 1) * pageSize);
-  const pagerHeight = pageCount > 1 ? PAGER_HEIGHT : 0;
-  const facetWidth = Math.max(1, (width - (columnCount - 1) * 8) / columnCount);
-  const facetHeight = Math.max(
-    1,
-    (height - pagerHeight - (rowCount - 1) * 8) / rowCount
-  );
   const rowVariable = settings.facet.rowVariable;
 
   return (
@@ -102,7 +97,11 @@ export function FacetWrapLayout({
                 type="button"
                 className="min-w-0 truncate text-left underline-offset-2 hover:underline"
                 aria-pressed={isFacetFiltered(rowVariable, facet.rowRawValue)}
-                onClick={() => onToggleFacet(rowVariable, facet.rowRawValue)}
+                onClick={(event) => {
+                  if (event.altKey && onTraceFacet)
+                    onTraceFacet("panel", [facet], layout);
+                  else onToggleFacet(rowVariable, facet.rowRawValue);
+                }}
               >
                 {formatFacetValue(rowVariable, facet.rowRawValue)}
               </button>
@@ -110,7 +109,11 @@ export function FacetWrapLayout({
                 type="button"
                 className="shrink-0 underline"
                 aria-label={`Focus ${formatFacetValue(rowVariable, facet.rowRawValue)} facet`}
-                onClick={() => onFocusFacet(facet.id)}
+                onClick={(event) => {
+                  if (event.altKey && onTraceFacet)
+                    onTraceFacet("panel", [facet], layout);
+                  else onFocusFacet(facet.id);
+                }}
               >
                 Focus
               </button>

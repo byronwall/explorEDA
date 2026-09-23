@@ -28,12 +28,17 @@ for (const path of [
     );
     const visit = (node) => {
       if (
-        ts.isJsxAttribute(node) &&
-        node.name.getText(source) === "title" &&
-        /^(?:[a-z]|Button$|Input$|TableCell$|TableHead$|ToggleGroupItem$)/.test(
-          node.parent.parent.tagName.getText(source)
-        )
+        (ts.isJsxElement(node) || ts.isJsxSelfClosingElement(node)) &&
+        (ts.isJsxElement(node) ? node.openingElement : node).tagName.getText(
+          source
+        ) === "title"
       ) {
+        report(
+          node.getStart(source),
+          "SVG <title> creates a native hover tooltip; use aria-label or visible text."
+        );
+      }
+      if (ts.isJsxAttribute(node) && node.name.getText(source) === "title") {
         report(
           node.getStart(source),
           "Use ActionTooltip or Button tooltip for actions; omit redundant hover text."

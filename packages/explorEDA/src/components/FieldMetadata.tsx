@@ -7,12 +7,19 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { CalendarDays, Hash, ToggleLeft, Type } from "lucide-react";
 
 const typeLabels: Record<FieldProfile["dataType"], string> = {
   numeric: "Number",
   categorical: "Text",
   datetime: "Date",
   boolean: "Boolean",
+};
+const typeIcons = {
+  numeric: Hash,
+  categorical: Type,
+  datetime: CalendarDays,
+  boolean: ToggleLeft,
 };
 
 const valueLabel = (value: unknown) => {
@@ -86,16 +93,19 @@ export function FieldMetadata({
   compact = false,
   showDetail = true,
   className,
+  tooltipSide = "bottom",
 }: {
   profile?: FieldProfile;
   label?: string;
   compact?: boolean;
   showDetail?: boolean;
   className?: string;
+  tooltipSide?: "bottom" | "left" | "top";
 }) {
   if (!profile) return <span className={className}>{label}</span>;
   const metadata = fieldMetadata(profile);
   const description = `${metadata.type}; ${metadata.detail}; ${metadata.nulls}`;
+  const TypeIcon = typeIcons[profile.dataType];
 
   return (
     <TooltipProvider>
@@ -104,23 +114,31 @@ export function FieldMetadata({
           <span
             className={cn(
               compact
-                ? "inline-flex min-w-0 flex-col items-start gap-0"
+                ? "inline-flex min-w-0 items-center gap-1"
                 : "inline-flex min-w-0 items-baseline gap-1.5",
               className
             )}
             aria-label={`${label ?? profile.name}: ${description}`}
           >
+            {compact && (
+              <TypeIcon
+                className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
+                aria-hidden="true"
+              />
+            )}
             {label && <span className="truncate font-medium">{label}</span>}
-            <span className="flex min-w-0 gap-1.5 text-[10px] text-muted-foreground">
-              <span className="shrink-0">{metadata.type}</span>
-              {showDetail && (
-                <span className="truncate">{metadata.detail}</span>
-              )}
-              <span className="shrink-0">{metadata.nulls}</span>
-            </span>
+            {!compact && (
+              <span className="flex min-w-0 gap-1.5 text-[10px] text-muted-foreground">
+                <span className="shrink-0">{metadata.type}</span>
+                {showDetail && (
+                  <span className="truncate">{metadata.detail}</span>
+                )}
+                <span className="shrink-0">{metadata.nulls}</span>
+              </span>
+            )}
           </span>
         </TooltipTrigger>
-        <TooltipContent side="bottom" align="start">
+        <TooltipContent side={tooltipSide} align="start" collisionPadding={12}>
           <p className="mb-2 font-semibold">{label ?? profile.name}</p>
           <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-xs">
             <dt className="text-muted-foreground">Type</dt>

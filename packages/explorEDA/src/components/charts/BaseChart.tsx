@@ -64,7 +64,6 @@ export function BaseChart({
     (field && formatFieldValue
       ? (value: string | number) => formatFieldValue(field, value)
       : formatTick);
-  const titleId = `${chartId}-title`;
   const descriptionId = `${chartId}-description`;
   const chartTitle = getChartTitle(settings, getFieldLabel);
   const chartDescription = [
@@ -108,7 +107,7 @@ export function BaseChart({
       width={width}
       height={height}
       role="group"
-      aria-labelledby={titleId}
+      aria-label={chartTitle}
       aria-describedby={descriptionId}
       className={cn("select-none", className)}
       style={{
@@ -128,7 +127,6 @@ export function BaseChart({
       onPointerCancel={brush.cancel}
       onLostPointerCapture={brush.cancel}
     >
-      <title id={titleId}>{chartTitle}</title>
       <desc id={descriptionId}>{chartDescription}</desc>
       <defs>
         <clipPath id={`${chartId}-plot`}>

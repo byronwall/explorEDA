@@ -1,0 +1,312 @@
+{
+  "schema_version": "0.4.0",
+  "initiative": {
+    "title": "Deterministic rendering and data traceability",
+    "slug": "deterministic-rendering-and-data-traceability",
+    "scale": "capability",
+    "current_phase": "plan",
+    "last_updated": "2026-09-22",
+    "summary": "Complete visible scatter tracing, then compare one grouped bar before sharing a chart contract."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-22"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-22"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-09-22"
+    }
+  },
+  "sources": [
+    {
+      "id": "USER-TRACKS",
+      "type": "direct-user-input",
+      "location": "Codex conversation, 2026-09-20",
+      "anchor": "Separate rendering from TSX; trace source to glyph",
+      "authority": "direct current intent"
+    },
+    {
+      "id": "USER-PROTOTYPE",
+      "type": "direct-user-input",
+      "location": "User-supplied Build Traceability Prototype appshot, 2026-09-21",
+      "anchor": "Select every text object, legend, annotation, and other chart object",
+      "authority": "direct product context"
+    },
+    {
+      "id": "TRANSCRIPT-TRACE",
+      "type": "voice-transcript",
+      "location": "docs/transcripts/2026-08-02-visualization-traceability-and-dataflow.txt",
+      "anchor": "Trace source tables through transforms to final glyphs",
+      "authority": "first-party intent"
+    },
+    {
+      "id": "TRANSCRIPT-SPEC",
+      "type": "voice-transcript-set",
+      "location": "docs/transcripts/2026-08-03-spec-driven-interactive-visualization.txt; docs/transcripts/2026-08-25-deterministic-ui-templating.txt",
+      "anchor": "Explicit deterministic expansion before rendering",
+      "authority": "first-party intent"
+    },
+    {
+      "id": "PRO-BUNDLE",
+      "type": "external-agent-artifact",
+      "location": "docs/research/pro-traceability-2026-09-21/exploreda-investigation/",
+      "anchor": "Three documents, experimental scatter source, checks, and patch; no repository integration",
+      "authority": "proposal and limited experiment"
+    },
+    {
+      "id": "REPO-RUNTIME",
+      "type": "repository",
+      "location": "packages/explorEDA/src/providers/DataLayerProvider.tsx; packages/explorEDA/src/hooks/CrossfilterWrapper.ts; packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
+      "anchor": "Prepared fields, Crossfilter populations, and scatter computation/drawing",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "REPO-TRACE",
+      "type": "repository",
+      "location": "packages/explorEDA/src/lib/aggregates.ts; packages/explorEDA/src/components/charts/PivotTable/utils/calculations.ts; packages/explorEDA/src/components/calculations/CalculationTrace.tsx",
+      "anchor": "Existing contributor and calculation inspection paths",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "USER-SCOPE-SEP22",
+      "type": "direct-user-input",
+      "location": "Current Codex conversation, 2026-09-22",
+      "anchor": "Complete visible scatter rendering and guide traces; defer removed-row flow, atomic checks, and performance baselines",
+      "authority": "direct current intent"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "GOAL-1",
+        "type": "outcome",
+        "statement": "A selected visible chart object explains its source or setting, value, position, and appearance.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first-release",
+        "sources": [
+          "USER-TRACKS",
+          "USER-PROTOTYPE",
+          "TRANSCRIPT-TRACE",
+          "USER-SCOPE-SEP22"
+        ]
+      },
+      {
+        "id": "GOAL-2",
+        "type": "required-behavior",
+        "statement": "Chart computation resolves a repeatable plan before target-specific drawing.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first-release",
+        "sources": [
+          "USER-TRACKS",
+          "TRANSCRIPT-SPEC",
+          "USER-SCOPE-SEP22"
+        ]
+      },
+      {
+        "id": "GOAL-3",
+        "type": "constraint",
+        "statement": "Current Crossfilter and saved-workspace behavior remain usable during a staged migration.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "REPO-RUNTIME",
+          "PRO-BUNDLE"
+        ]
+      },
+      {
+        "id": "OPTION-1",
+        "type": "implementation-hypothesis",
+        "statement": "Chart-specific pure planners with a small shared contract may satisfy both tracks.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "PRO-BUNDLE"
+        ]
+      },
+      {
+        "id": "LATER-1",
+        "type": "future-possibility",
+        "statement": "Text editing, multiple data sources, and a general chart grammar may follow tested chart paths.",
+        "commitment": "illustrative",
+        "importance": "peripheral",
+        "status": "active",
+        "time_horizon": "later",
+        "sources": [
+          "USER-PROTOTYPE",
+          "TRANSCRIPT-SPEC"
+        ]
+      },
+      {
+        "id": "DECISION-SEP22-1",
+        "type": "decision",
+        "statement": "Rows removed by another chart need no scatter glyph trace; a source-data filter-flow view may come later.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "sources": [
+          "USER-SCOPE-SEP22"
+        ]
+      },
+      {
+        "id": "DECISION-SEP22-2",
+        "type": "decision",
+        "statement": "Complete numeric legend, facet layout, hover, badge, and guide decision traces for scatter now.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "USER-SCOPE-SEP22"
+        ]
+      },
+      {
+        "id": "DECISION-SEP22-3",
+        "type": "decision",
+        "statement": "Assume current render revisions are coherent until a bug appears; defer a full visual baseline and performance measurement.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "sources": [
+          "USER-SCOPE-SEP22"
+        ]
+      }
+    ],
+    "themes": [
+      "source-to-glyph inspection",
+      "deterministic planning",
+      "Crossfilter scope integrity"
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "Complete visible scatter traces, then compare one grouped bar.",
+    "problem": "Current chart components hide source identity and computation inside rendering.",
+    "recommended_shape": "Keep scatter planning specific; use pure helpers for numeric legend and facet layout; compare a grouped bar before sharing a contract.",
+    "success_moves": [
+      "Use one rendered plan for points, guides, and hover",
+      "Use numeric legend and facet layout plans in both renderer and trace",
+      "Show D3 tick candidates before spacing removes labels",
+      "Compare one aggregate bar before generalizing"
+    ],
+    "first_proof": {
+      "question": "Can visible scatter objects explain their rendering decisions?",
+      "artifact": "Live scatter planner and one chart-level trace",
+      "decision_rule": "Proceed to a grouped bar after focused tests, full checks, and browser traces pass."
+    },
+    "rabbit_holes": [
+      "general chart grammar",
+      "all-chart migration",
+      "editable trace graph",
+      "multi-source joins"
+    ],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "current",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/Projects/explorEDA",
+      "revision": "593ca2e1f9210d5bc66985437afc37fcfcd8a56a",
+      "worktree_status": "main; current user edits retained; no commit",
+      "subsystems": [
+        "DataLayerProvider",
+        "CrossfilterWrapper",
+        "ScatterPlot",
+        "scatterPlan",
+        "ColorScale",
+        "facetLayout",
+        "calculateGroupedAggregate"
+      ],
+      "test_commands": [
+        "pnpm --filter exploreda test",
+        "pnpm check",
+        "pnpm --filter demo dev"
+      ],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda exec vitest run scatterPlan scatterTrace facetLayout ColorScale",
+      "network_required": false
+    },
+    "milestones": [
+      {
+        "id": "M1",
+        "title": "Scatter visible objects explain their rendering",
+        "outcome": "Points, guides, legends, facets, hover, and badges trace to source or settings.",
+        "proof": "Focused tests, pnpm check, and browser checks at three widths passed.",
+        "valid_intermediate_state": "Scatter remains usable and inspectable.",
+        "rollback": "Revert only the affected planner or trace edit.",
+        "dependencies_introduced": []
+      },
+      {
+        "id": "M2",
+        "title": "A grouped bar reuses contributor lineage",
+        "outcome": "One aggregate bar explains contributors, exclusions, domain, and baseline.",
+        "proof": "Compare visible bar values and geometry under filters, then run checks.",
+        "valid_intermediate_state": "Scatter and one bar path are inspectable.",
+        "rollback": "Keep the current bar drawing path until parity passes.",
+        "dependencies_introduced": []
+      },
+      {
+        "id": "M3",
+        "title": "A small shared trace contract follows two chart proofs",
+        "outcome": "Only proven common fields are shared.",
+        "proof": "Both chart traces use the same field meanings without scatter-only data in the bar.",
+        "valid_intermediate_state": "Other charts remain unchanged.",
+        "rollback": "Keep chart-specific traces if sharing adds complexity.",
+        "dependencies_introduced": []
+      }
+    ],
+    "cut_line": [
+      "source-data filter-flow view",
+      "atomic snapshot enforcement without a reproduced bug",
+      "full visual and 10000-row performance baselines without a concrete need",
+      "all-chart migration",
+      "editable trace graph",
+      "multi-source joins",
+      "general graph engine"
+    ],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-09-21",
+      "event": "Imported Pro investigation ZIP without applying its patch; shaped a local proof-first route."
+    },
+    {
+      "date": "2026-09-22",
+      "event": "Completed visible scatter traces, fixed tick candidate density, and deferred removed-row flow, atomic checks, and broad baselines by user decision."
+    }
+  ]
+}

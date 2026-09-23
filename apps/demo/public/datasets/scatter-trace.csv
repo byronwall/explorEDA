@@ -1,0 +1,19 @@
+Order,Units,Unit Price,Discount,Cost,Channel
+T-001,2,40,5,45,Online
+T-002,4,35,12,96,Store
+T-003,1,90,0,52,Partner
+T-004,3,48,15,110,Online
+T-005,5,27,10,102,Store
+T-006,2,75,8,bad,Partner
+T-007,6,22,6,98,Online
+T-008,1,120,20,80,Store
+T-009,3,65,18,130,Partner
+T-010,4,55,25,165,Online
+T-011,2,32,0,70,Store
+T-012,5,44,16,185,Partner
+T-013,1,55,,36,Online
+T-014,3,80,30,150,Store
+T-015,7,18,8,90,Partner
+T-016,2,110,25,160,Online
+T-017,4,42,12,145,Store
+T-018,6,38,20,190,Partner

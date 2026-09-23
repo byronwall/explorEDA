@@ -367,6 +367,23 @@ export type ExampleCoverage = {
 
 export const exampleCoverage = [
   {
+    exampleId: "scatter-trace",
+    intent:
+      "Trace one scatter point from source values through calculations, filters, scales, and color.",
+    features: {
+      "chart:scatter": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "chart:markdown": "shown",
+      "guides:grids": "shown",
+      "color:categorical": "shown",
+      "color:legend": "shown",
+      "interaction:brushing": "shown",
+      "interaction:cross-filter": "shown",
+      "layout:dashboard": "shown",
+    },
+  },
+  {
     exampleId: "calculated-orders",
     intent:
       "Trace chained calculations from source orders to contribution, dates, and service rules.",
@@ -436,8 +453,7 @@ export const exampleCoverage = [
   },
   {
     exampleId: "box-plot",
-    intent:
-      "Compare a box plot with a beeswarm, histogram, and summary table.",
+    intent: "Compare a box plot with a beeswarm, histogram, and summary table.",
     features: {
       "chart:bar": "shown",
       "chart:boxplot": "shown",

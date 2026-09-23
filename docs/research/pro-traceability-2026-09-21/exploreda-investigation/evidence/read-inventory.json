@@ -1,0 +1,279 @@
+{
+  "repository": "byronwall/explorEDA",
+  "baseCommit": "593ca2e1f9210d5bc66985437afc37fcfcd8a56a",
+  "access": "GitHub connector source inspection; no clone",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "symbolsOrSections": "Repository contribution rules"
+    },
+    {
+      "path": "README.md",
+      "symbolsOrSections": "Supported workspace and source-reference contract"
+    },
+    {
+      "path": "package.json",
+      "symbolsOrSections": "packageManager; check"
+    },
+    {
+      "path": "packages/explorEDA/package.json",
+      "symbolsOrSections": "exports; scripts; dependencies"
+    },
+    {
+      "path": "packages/explorEDA/tsup.config.ts",
+      "symbolsOrSections": "entry; external; splitting"
+    },
+    {
+      "path": "docs/transcripts/2026-08-02-visualization-traceability-and-dataflow.txt",
+      "symbolsOrSections": "Source-to-glyph provenance; explicit boundaries"
+    },
+    {
+      "path": "docs/transcripts/2026-08-25-deterministic-ui-templating.txt",
+      "symbolsOrSections": "Deterministic template expansion; role of TSX"
+    },
+    {
+      "path": "docs/transcripts/2026-08-03-spec-driven-interactive-visualization.txt",
+      "symbolsOrSections": "Declarative expansion; chart defaults"
+    },
+    {
+      "path": "docs/transcripts/2026-08-04-advanced-chart-specs-and-transforms.txt",
+      "symbolsOrSections": "Transform order; stacking; derived layers"
+    },
+    {
+      "path": "docs/transcripts/2026-08-04-chart-specs-grouping-and-derived-layers.txt",
+      "symbolsOrSections": "Grouping versus encodings"
+    },
+    {
+      "path": "docs/transcripts/2026-07-28-data-transforms-loading-and-source-tables.txt",
+      "symbolsOrSections": "Loaded, available and visible data"
+    },
+    {
+      "path": "docs/calculation-workflow.md",
+      "symbolsOrSections": "Calculation workflow; calculated-orders example"
+    },
+    {
+      "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "symbolsOrSections": "getInitialStoreState; getColumnData; refreshCalculations; getAggregateResult; updateFieldSettings; restoreAnalysisFromStructure"
+    },
+    {
+      "path": "packages/explorEDA/src/providers/lib/dataLayerState.ts",
+      "symbolsOrSections": "initializeData; IdType"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+      "symbolsOrSections": "addChart; getAllData; getFilteredRowIds; updateChartFilters"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/useGetLiveData.tsx",
+      "symbolsOrSections": "useGetLiveData; useGetLiveIds; useGetAllIds"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/useGetColumnData.tsx",
+      "symbolsOrSections": "useGetColumnData; useGetColumnDataForIds"
+    },
+    {
+      "path": "packages/explorEDA/src/types/ChartTypes.ts",
+      "symbolsOrSections": "ChartDefinition; ChartSettings; BaseChartProps; AxisSettings"
+    },
+    {
+      "path": "packages/explorEDA/src/types/SavedDataStructure.ts",
+      "symbolsOrSections": "SavedDataStructure; SavedAnalysisStructure"
+    },
+    {
+      "path": "packages/explorEDA/src/charts/registry.ts",
+      "symbolsOrSections": "registerChart; getChartDefinition; component wrapper"
+    },
+    {
+      "path": "packages/explorEDA/src/charts/registerAllCharts.ts",
+      "symbolsOrSections": "registerAllCharts"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ChartRenderer.tsx",
+      "symbolsOrSections": "ChartRenderer"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BaseChart.tsx",
+      "symbolsOrSections": "BaseChart; brush and guide rendering"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetContainer.tsx",
+      "symbolsOrSections": "groupFacetData; FacetContainer; header selection"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/aggregates.ts",
+      "symbolsOrSections": "calculateGroupedAggregate; numericInputs"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/calculations/CalculationState.ts",
+      "symbolsOrSections": "CalculationManager; executeCalculation; getErrors"
+    },
+    {
+      "path": "packages/explorEDA/src/components/calculations/CalculationTrace.tsx",
+      "symbolsOrSections": "CalculationTrace; dependency inspection"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/GroupedAggregateInspector.tsx",
+      "symbolsOrSections": "GroupedAggregateInspector"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
+      "symbolsOrSections": "ScatterPlot; full domains; Canvas draw; hover; brush"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/definition.ts",
+      "symbolsOrSections": "scatterPlotDefinition.getFilterFunction"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+      "symbolsOrSections": "LineChart; sorted indices; segments; reduction; color effect"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+      "symbolsOrSections": "lineChartDefinition; SeriesSettings"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChart.tsx",
+      "symbolsOrSections": "BarChart; named aggregate branch; bins and categories"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/definition.ts",
+      "symbolsOrSections": "barChartDefinition.getFilterFunction"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/BoxPlot.tsx",
+      "symbolsOrSections": "BoxPlot; full versus live groups; overlays"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/boxPlotCalculations.ts",
+      "symbolsOrSections": "calculateBoxPlotStats; calculateKernelDensity; calculateBeeSwarmPositions"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PivotTable/PivotTable.tsx",
+      "symbolsOrSections": "PivotTable; selected rows; contributor inspector"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PivotTable/utils/calculations.ts",
+      "symbolsOrSections": "calculatePivotData; generateCell; makeContributors"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/DataTable.tsx",
+      "symbolsOrSections": "DataTable; prepared rows; named aggregate branch"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/filteredRows.ts",
+      "symbolsOrSections": "getFilteredRows; compareValues"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/definition.ts",
+      "symbolsOrSections": "dataTableDefinition.getFilterFunction"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/definition.ts",
+      "symbolsOrSections": "threeDScatterDefinition"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/ThreeDScatterChart.tsx",
+      "symbolsOrSections": "ThreeDScatterChart; scene and camera lifecycle"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/useThreeDScatterData.ts",
+      "symbolsOrSections": "buildThreeDScatterData; useThreeDScatterData"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/ThreeDScatterPoints.tsx",
+      "symbolsOrSections": "ThreeDScatterPoints; attributes and shaders"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/chartUtils.ts",
+      "symbolsOrSections": "reduceDataPoints"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/applyFilter.ts",
+      "symbolsOrSections": "applyFilter"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useColorScales.ts",
+      "symbolsOrSections": "getColorForValue; getOrCreateScaleForField; d3Scales"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/categories.ts",
+      "symbolsOrSections": "categoryKey; categoryValue; categoryLabel; categoryEqual"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/numericScale.ts",
+      "symbolsOrSections": "numericScale"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/fieldSettings.ts",
+      "symbolsOrSections": "applyFieldSettings; convertFieldValue; buildConversionPreview; formatFieldValue"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/RowChart/RowChart.tsx",
+      "symbolsOrSections": "RowChart; displayCounts; Other categories"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/SummaryTable/SummaryTable.tsx",
+      "symbolsOrSections": "SummaryTable; allProfiles"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ColorLegend/ColorLegendChart.tsx",
+      "symbolsOrSections": "ColorLegendChart; fieldCounts; scale creation effect"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Markdown/definition.ts",
+      "symbolsOrSections": "markdownDefinition"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Markdown/Markdown.tsx",
+      "symbolsOrSections": "Markdown; EditorProvider"
+    },
+    {
+      "path": "docs/ui-defaults.md",
+      "symbolsOrSections": "Inspection, tokens, keyboard and responsive checks"
+    },
+    {
+      "path": "apps/demo/src/demos/examples.ts",
+      "symbolsOrSections": "calculated-orders"
+    },
+    {
+      "path": "apps/demo/src/demos/dashboardSettings.ts",
+      "symbolsOrSections": "orderCalculations; calculationDashboard (relevant sections)"
+    },
+    {
+      "path": "apps/demo/public/datasets/README.md",
+      "symbolsOrSections": "Shop Operations: 10,000 rows"
+    },
+    {
+      "path": "apps/data-samples/sample_data.ts",
+      "symbolsOrSections": "createSeededRandom; shop_operations (relevant sections)"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/CrossfilterWrapper.test.ts",
+      "symbolsOrSections": "counts rows that survive every chart filter"
+    },
+    {
+      "path": "packages/explorEDA/src/test/charts/chartRuntime.test.ts",
+      "symbolsOrSections": "line, pivot, legend filters; seeded sampling; 3D data"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/DataLayerCalculations.test.tsx",
+      "symbolsOrSections": "dependency order and calculated columns"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/analysisReliability.test.tsx",
+      "symbolsOrSections": "formula edits + active derived filter + restore + CSV"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/chartUtils.test.ts",
+      "symbolsOrSections": "small-data ordering; ties; reduction"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/aggregates.test.ts",
+      "symbolsOrSections": "typed groups; raw inputs; numeric exclusions; signed results"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PivotTable/__tests__/calculations.test.ts",
+      "symbolsOrSections": "contributors; errors; missing saved fields; focus restoration"
+    }
+  ]
+}

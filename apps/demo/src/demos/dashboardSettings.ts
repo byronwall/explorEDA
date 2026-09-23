@@ -491,6 +491,74 @@ export const largeShopDashboard = dashboard(
   shopDashboard.colorScales
 );
 
+export const scatterTraceDashboard: SavedDataStructure = {
+  ...dashboard(
+    "Trace a scatter point",
+    [
+      {
+        ...base,
+        id: "trace-guide",
+        type: "markdown",
+        title: "Source to scatter glyph",
+        layout: layout(0, 0, 12, 2),
+        content:
+          "<p>Use the chart-header trace icon, or Alt-click a point, chart title, axis object, color label, or facet label. Normal clicks keep brushing and filtering. Find a source row in the trace panel. Each point links raw values, calculations, filters, scales, and pixels. Rows T-006 and T-013 have missing numeric inputs.</p>",
+      },
+      {
+        ...scatter(
+          "trace-scatter",
+          "Net sales to contribution",
+          "Net sales",
+          "Contribution",
+          layout(0, 2, 9, 7),
+          ["Net sales ($)", "Contribution ($)"],
+          "Channel",
+          "trace-channel-colors"
+        ),
+        xAxis: { grid: true },
+        yAxis: { grid: true },
+      },
+      row("trace-channel", "Filter by channel", "Channel", layout(9, 2, 3, 7)),
+      table(
+        "trace-rows",
+        "Source rows and calculated values",
+        [
+          "Order",
+          "Units",
+          "Unit Price",
+          "Discount",
+          "Cost",
+          "Channel",
+          "Gross sales",
+          "Net sales",
+          "Contribution",
+        ],
+        layout(0, 9, 12, 5)
+      ),
+    ],
+    [
+      categoricalScale("trace-channel-colors", "Channel", [
+        "Online",
+        "Store",
+        "Partner",
+      ]),
+    ]
+  ),
+  calculations: [
+    { resultColumnName: "Gross sales", expression: 'Units * ["Unit Price"]' },
+    { resultColumnName: "Net sales", expression: '["Gross sales"] - Discount' },
+    { resultColumnName: "Contribution", expression: '["Net sales"] - Cost' },
+  ],
+  fieldSettings: {
+    Units: { type: "numeric" },
+    "Unit Price": { type: "numeric" },
+    Discount: { type: "numeric" },
+    Cost: { type: "numeric" },
+    "Net sales": { format: "currency", precision: 0 },
+    Contribution: { format: "currency", precision: 0 },
+  },
+};
+
 const orderCalculations = [
   [
     "Discount rate",

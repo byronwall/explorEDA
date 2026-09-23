@@ -2,8 +2,8 @@ import { ChartSettings, datum } from "@/types/ChartTypes";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ChartRenderer } from "../ChartRenderer";
 import { FacetData } from "./FacetContainer";
+import { planFacetGridLayout, type FacetLayoutPlan } from "./facetLayout";
 
-const PAGER_HEIGHT = 20;
 const TABLE_HEADER_HEIGHT = 32;
 
 interface FacetGridLayoutProps {
@@ -16,6 +16,11 @@ interface FacetGridLayoutProps {
   onToggleFacet: (field: string, value: datum) => void;
   isFacetFiltered: (field: string, value: datum) => boolean;
   onFocusFacet: (id: string) => void;
+  onTraceFacet?: (
+    role: "panel" | "row-heading" | "column-heading",
+    facets: FacetData[],
+    layout: FacetLayoutPlan
+  ) => void;
   formatFacetValue: (field: string, value: datum) => string;
   getFieldLabel: (field: string) => string;
   formatVersion: unknown;
@@ -31,6 +36,7 @@ export function FacetGridLayout({
   onToggleFacet,
   isFacetFiltered,
   onFocusFacet,
+  onTraceFacet,
   formatFacetValue,
   getFieldLabel,
   formatVersion,
@@ -55,21 +61,28 @@ export function FacetGridLayout({
     return { rows: [...rows], columns: [...columns], grid };
   }, [columnVariable, facetData, formatFacetValue, formatVersion, rowVariable]);
 
-  const rowPageSize = Math.max(
-    1,
-    Math.floor(Math.max(1, height - PAGER_HEIGHT - TABLE_HEADER_HEIGHT) / 160)
-  );
-  const columnPageSize = Math.max(1, Math.floor(Math.max(1, width - 90) / 220));
-  const rowPages = Math.max(1, Math.ceil(rows.length / rowPageSize));
-  const columnPages = Math.max(1, Math.ceil(columns.length / columnPageSize));
-  const pageCount = rowPages * columnPages;
   const [page, setPage] = useState(0);
-  useEffect(
-    () => setPage((current) => Math.min(current, pageCount - 1)),
-    [pageCount]
+  const tableHeaderRef = useRef<HTMLTableSectionElement>(null);
+  const [tableHeaderHeight, setTableHeaderHeight] =
+    useState(TABLE_HEADER_HEIGHT);
+  const layout = planFacetGridLayout(
+    width,
+    height,
+    rows.length,
+    columns.length,
+    page,
+    tableHeaderHeight
   );
-  const rowPage = Math.floor(page / columnPages);
-  const columnPage = page % columnPages;
+  const {
+    rowPageSize,
+    columnPageSize,
+    rowPages,
+    columnPages,
+    pageCount,
+    rowPage,
+    columnPage,
+  } = layout;
+  useEffect(() => setPage(layout.page), [layout.page]);
 
   const visibleRows = rows.slice(
     rowPage * rowPageSize,
@@ -79,9 +92,6 @@ export function FacetGridLayout({
     columnPage * columnPageSize,
     (columnPage + 1) * columnPageSize
   );
-  const tableHeaderRef = useRef<HTMLTableSectionElement>(null);
-  const [tableHeaderHeight, setTableHeaderHeight] =
-    useState(TABLE_HEADER_HEIGHT);
   useLayoutEffect(() => {
     const header = tableHeaderRef.current;
     if (!header) return;
@@ -99,15 +109,7 @@ export function FacetGridLayout({
     return () => observer.disconnect();
   }, [page, visibleColumns.length, width]);
 
-  const pagerHeight = pageCount > 1 ? PAGER_HEIGHT : 0;
-  const cellWidth = Math.max(
-    1,
-    (width - 90) / Math.max(1, visibleColumns.length)
-  );
-  const cellHeight = Math.max(
-    1,
-    (height - pagerHeight - tableHeaderHeight) / Math.max(1, visibleRows.length)
-  );
+  const { cellWidth, cellHeight } = layout;
   const pageLabel =
     rowPages > 1 || columnPages > 1
       ? `Rows ${rowPage + 1}/${rowPages} · Columns ${columnPage + 1}/${columnPages}`
@@ -158,7 +160,17 @@ export function FacetGridLayout({
                     type="button"
                     className="max-w-full truncate underline-offset-2 hover:underline"
                     aria-pressed={isFacetFiltered(columnVariable, column.value)}
-                    onClick={() => onToggleFacet(columnVariable, column.value)}
+                    onClick={(event) => {
+                      if (event.altKey && onTraceFacet)
+                        onTraceFacet(
+                          "column-heading",
+                          facetData.filter(
+                            (facet) => facet.columnKey === columnKey
+                          ),
+                          layout
+                        );
+                      else onToggleFacet(columnVariable, column.value);
+                    }}
                   >
                     {column.label}
                   </button>
@@ -174,7 +186,15 @@ export function FacetGridLayout({
                     type="button"
                     className="max-w-full truncate underline-offset-2 hover:underline"
                     aria-pressed={isFacetFiltered(rowVariable, row.value)}
-                    onClick={() => onToggleFacet(rowVariable, row.value)}
+                    onClick={(event) => {
+                      if (event.altKey && onTraceFacet)
+                        onTraceFacet(
+                          "row-heading",
+                          facetData.filter((facet) => facet.rowKey === rowKey),
+                          layout
+                        );
+                      else onToggleFacet(rowVariable, row.value);
+                    }}
                   >
                     {row.label}
                   </button>
@@ -190,7 +210,11 @@ export function FacetGridLayout({
                               type="button"
                               className="absolute right-1 top-1 z-10 rounded bg-background/80 px-1 text-[10px] underline"
                               aria-label={`Focus ${formatFacetValue(rowVariable, facet.rowRawValue)}${facet.columnRawValue !== null ? `, ${formatFacetValue(columnVariable, facet.columnRawValue)}` : ""} facet`}
-                              onClick={() => onFocusFacet(facet.id)}
+                              onClick={(event) => {
+                                if (event.altKey && onTraceFacet)
+                                  onTraceFacet("panel", [facet], layout);
+                                else onFocusFacet(facet.id);
+                              }}
                             >
                               Focus
                             </button>

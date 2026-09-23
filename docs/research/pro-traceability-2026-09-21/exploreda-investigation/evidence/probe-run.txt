@@ -1,0 +1,54 @@
+PASS repeatability of plan and serialized SVG
+PASS self-filter dims; other filters remove; coordinate omissions accounted
+PASS shared domain keeps a filtered-out extreme; values have one source
+PASS snapshots are isolated from subsequent alias mutations
+PASS facets use explicit membership; empty is not unrestricted
+PASS stable mark identity survives parameter/filter revisions
+PASS drawing uses the plan only; adapter identity matches the marks
+PASS bad identities, inconsistent scopes and viewport reject atomically
+PASS equal-valued domains produce finite center points
+PASS linear and symlog paths finite; current 2D coercion remains explicit
+PASS draw order follows the captured group order, not a new sort
+PASS input values do not leak into the serialized mark plan
+{
+  "environment": {
+    "node": "v22.16.0",
+    "platform": "linux",
+    "arch": "x64"
+  },
+  "scope": "isolated planner on 10,000 rows adapted from pinned shop generator; two prepared calculations evaluated directly; NOT the demo or CalculationManager",
+  "warmups": 5,
+  "iterations": 30,
+  "rows": 10000,
+  "marks": 5000,
+  "excluded": 5000,
+  "timings": {
+    "capture": {
+      "medianMs": 2.6738730000000146,
+      "p95Ms": 4.663535000000024
+    },
+    "plan": {
+      "medianMs": 6.206872999999973,
+      "p95Ms": 8.36897399999998
+    },
+    "svg": {
+      "medianMs": 6.683221000000003,
+      "p95Ms": 9.023916999999983
+    }
+  },
+  "memory": {
+    "measure": "UTF-8 serialized bytes, not heap allocation",
+    "planBytes": 2587496,
+    "scopesBytes": 89872,
+    "lineageBytes": 824445,
+    "rowSetMemberships": 18374,
+    "pointSourceReferences": 5000,
+    "scalePopulationReferences": 2,
+    "scalePopulationCopiesPerMark": 0
+  },
+  "limitations": [
+    "No React, live Crossfilter, D3, actual CSV parse or all fourteen calculations executed",
+    "Capture clones requested two columns; sharing immutable prepared columns remains future work",
+    "No measured heap peak or React frame-time claims"
+  ]
+}

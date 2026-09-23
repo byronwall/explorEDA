@@ -1,0 +1,132 @@
+{
+  "version": "scatter-probe/1",
+  "revision": {
+    "dataset": "fixture-1",
+    "values": 1,
+    "filters": 1
+  },
+  "chartId": "probe",
+  "width": 400,
+  "height": 300,
+  "clip": {
+    "x": 40,
+    "y": 20,
+    "width": 340,
+    "height": 240
+  },
+  "scopes": {
+    "all": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "othersPass": [
+      0,
+      1,
+      3
+    ],
+    "allPass": [
+      1,
+      3
+    ]
+  },
+  "scales": [
+    {
+      "id": "[\"probe\",\"scale\",\"x\"]",
+      "field": "x",
+      "kind": "linear",
+      "domain": [
+        -8.9,
+        109.9
+      ],
+      "range": [
+        40,
+        380
+      ],
+      "population": "all",
+      "policy": "full-column-10-percent-padding"
+    },
+    {
+      "id": "[\"probe\",\"scale\",\"y\"]",
+      "field": "y",
+      "kind": "linear",
+      "domain": [
+        4.6,
+        9.4
+      ],
+      "range": [
+        260,
+        20
+      ],
+      "population": "all",
+      "policy": "full-column-10-percent-padding"
+    }
+  ],
+  "marks": [
+    {
+      "id": "[\"fixture-1\",\"probe\",\"point\",0]",
+      "rowId": 0,
+      "x": 68.33333333333333,
+      "y": 239.99999999999997,
+      "radius": 3,
+      "fill": "rgb(156 163 175)",
+      "opacity": 0.15,
+      "ownFilterPass": false,
+      "lineage": {
+        "row": 0,
+        "fields": [
+          "x",
+          "y"
+        ],
+        "controlRefs": [
+          "[\"probe\",\"scale\",\"x\"]",
+          "[\"probe\",\"scale\",\"y\"]",
+          "scope:allPass",
+          "parameter:point-style",
+          "parameter:fill"
+        ]
+      }
+    },
+    {
+      "id": "[\"fixture-1\",\"probe\",\"point\",1]",
+      "rowId": 1,
+      "x": 71.1952861952862,
+      "y": 190,
+      "radius": 3,
+      "fill": "#3479a8",
+      "opacity": 0.7,
+      "ownFilterPass": true,
+      "lineage": {
+        "row": 1,
+        "fields": [
+          "x",
+          "y"
+        ],
+        "controlRefs": [
+          "[\"probe\",\"scale\",\"x\"]",
+          "[\"probe\",\"scale\",\"y\"]",
+          "scope:allPass",
+          "parameter:point-style",
+          "parameter:fill"
+        ]
+      }
+    }
+  ],
+  "exclusions": [
+    {
+      "rowId": 2,
+      "stage": "other-filters",
+      "reason": "Excluded by at least one other chart; specific predicate not captured by this probe"
+    },
+    {
+      "rowId": 3,
+      "stage": "coordinates",
+      "reason": "Non-finite coordinate: y"
+    }
+  ],
+  "diagnostics": [
+    "Probe only: margins are supplied, axes/text shell and interaction controller are not migrated",
+    "Own-filter-exempt IDs and all-filter IDs must be captured atomically from the same revision"
+  ]
+}

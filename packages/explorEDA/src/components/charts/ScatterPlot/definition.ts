@@ -5,7 +5,6 @@ import { ScatterChart } from "lucide-react";
 import { ScatterPlotSettingsPanel } from "./ScatterPlotSettingsPanel";
 import { ScatterPlot } from "./ScatterPlot";
 import { IdType } from "@/providers/DataLayerProvider";
-import { getRangeFilterForField } from "@/hooks/getAxisFilter";
 import { applyFilter } from "@/hooks/applyFilter";
 import { Filter } from "@/types/FilterTypes";
 
@@ -47,31 +46,11 @@ export const scatterPlotDefinition: ChartDefinition<ScatterPlotSettings> = {
     settings: ScatterPlotSettings,
     fieldGetter: (name: string) => Record<IdType, datum>
   ) => {
-    const xDataHash = fieldGetter(settings.xField);
-    const yDataHash = fieldGetter(settings.yField);
-
-    const xFilter = getRangeFilterForField(settings.filters, settings.xField);
-    const yFilter = getRangeFilterForField(settings.filters, settings.yField);
-
-    return (d: IdType) => {
-      if (!xFilter && !yFilter) {
-        return true;
-      }
-
-      const xValue = xDataHash[d];
-      const yValue = yDataHash[d];
-
-      // check both for exclusion -- if OK, then return true
-      // we need both to be true to return true
-      if (xFilter && !applyFilter(xValue, xFilter)) {
-        return false;
-      }
-
-      if (yFilter && !applyFilter(yValue, yFilter)) {
-        return false;
-      }
-
-      return true;
-    };
+    const filters = settings.filters.map((filter) => ({
+      filter,
+      values: fieldGetter(filter.field),
+    }));
+    return (id: IdType) =>
+      filters.every(({ filter, values }) => applyFilter(values[id], filter));
   },
 };

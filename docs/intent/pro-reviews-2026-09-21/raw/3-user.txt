@@ -1,0 +1,8 @@
+Source: https://chatgpt.com/c/6ab0a0d5-fce4-83ea-b70d-dd28a66b1260
+Turn: 3 (user)
+
+Now do a deeper dive on the supported chart types and interactions.  Give me a full eval: wha'ts working, what's missing, what should be done next?  Really focus on the chart types or data viz primitives that seem most useful and are "conspicuously" missing.  I wnat to close gaps so that future users expereince delight and a sense of "man, everything is here".
+
+Links:
+
+
