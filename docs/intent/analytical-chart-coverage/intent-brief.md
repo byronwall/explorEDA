@@ -3,14 +3,14 @@ title: "Analytical chart coverage"
 slug: "analytical-chart-coverage"
 phase: intent
 status: current
-last_updated: "2026-09-21"
+last_updated: "2026-09-23"
 ---
 
 # Analytical chart coverage
 
 ## My read
 
-Byron wants a deeper evaluation of the chart types and interactions in explorEDA. The desired experience is a workspace where a useful next question has a direct answer. He calls out conspicuously missing primitives and wants future users to feel that the toolkit is complete and pleasant. That is a product-quality goal, not an instruction to copy every chart in another library.
+Byron wants a deeper evaluation of the chart types and interactions in explorEDA. The desired experience is a workspace where a useful next question has a direct answer. He calls out conspicuously missing primitives and wants future users to feel that the toolkit is complete and pleasant. Calendar heatmap, maps, Sankey, and parallel coordinates now matter to him soon. Their implementation order and first datasets remain open.
 
 The Pro review gives a strong candidate sequence: close the discontinuity between category bars, grouped measures, selection, and source inspection; then add a heatmap, calendar-aware time series, and metric cards. It also names reference marks, relationship views, cumulative distributions, comparison, and selection history. Its linked 21-item backlog and acceptance checklist are now available. They add exact tests and two useful near-term tasks: expose hidden Histogram and Distribution modes, and make the Row Chart's Other bucket inspectable. These remain Pro recommendations, not an approved feature backlog.
 
@@ -52,7 +52,7 @@ An analyst opens orders, groups revenue by region, selects a segment, and sees o
 
 - Heatmap is the strongest candidate for the first new chart family; metric cards may be a smaller addition.
 - Grouped/stacked bars, time rollups, references, ECDF, density, bubble encoding, and correlation-to-scatter are possible follow-ons. Their order depends on actual use.
-- Maps and domain-specific views rise only when early datasets call for them.
+- Calendar heatmap, maps, Sankey, and parallel coordinates need near-term designs. Their first data shapes decide their exact order; they are no longer distant gallery ideas.
 
 ## Current reality that matters
 
@@ -60,4 +60,4 @@ At commit `593ca2e`, `calculateGroupedAggregate` has one group field and count, 
 
 ## Next step after confirmation
 
-Prove the grouped revenue → linked selection → source inspection path on existing order data. Use that result to decide whether the next missing view should be heatmap or time series.
+Prove the grouped revenue → linked selection → source inspection path on existing order data. Use that contract for the near-term views. The [focused research](calendar-map-sankey-parallel-research.md) defines their settings, trace, and first proofs.

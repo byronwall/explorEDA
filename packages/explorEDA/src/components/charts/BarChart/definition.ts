@@ -44,11 +44,14 @@ export const barChartDefinition: ChartDefinition<BarChartSettings> = {
     settings: BarChartSettings,
     fieldGetter: (name: string) => Record<IdType, datum>
   ) => {
-    const dataHash = fieldGetter(settings.field);
-
-    const filter = settings.filters.find(
-      (f): f is Filter => f.field === settings.field
-    );
+    const filter = settings.aggregateId
+      ? [...settings.filters]
+          .reverse()
+          .find(
+            (f): f is Filter => f.type === "range" || f.type === "date-range"
+          )
+      : settings.filters.find((f): f is Filter => f.field === settings.field);
+    const dataHash = fieldGetter(filter?.field ?? settings.field);
 
     return (d: IdType) => {
       const value = dataHash[d];

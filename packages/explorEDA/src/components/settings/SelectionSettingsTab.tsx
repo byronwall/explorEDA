@@ -1,5 +1,6 @@
 import { ChartSettings } from "@/types/ChartTypes";
 import { RangeFilter } from "@/types/FilterTypes";
+import { useDataLayer } from "@/providers/DataLayerProvider";
 import { Input } from "../ui/input";
 
 export function SelectionSettingsTab({
@@ -9,12 +10,19 @@ export function SelectionSettingsTab({
   settings: ChartSettings;
   onSettingChange: (key: string, value: unknown) => void;
 }) {
+  const aggregate = useDataLayer((state) =>
+    settings.type === "bar" && settings.aggregateId
+      ? state.getAggregate(settings.aggregateId)
+      : undefined
+  );
   const fields =
     settings.type === "scatter"
       ? [settings.xField, settings.yField]
       : settings.type === "line"
         ? [settings.xField]
-        : [settings.field];
+        : aggregate
+          ? [aggregate.measureField ?? aggregate.groupField]
+          : [settings.field];
   return (
     <div className="space-y-4">
       <p className="text-xs text-muted-foreground">

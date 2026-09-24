@@ -10,6 +10,7 @@ interface FieldSelectorProps {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  fields?: string[];
   placeholder?: string;
   allowClear?: boolean;
 }
@@ -18,11 +19,12 @@ export function FieldSelector({
   label,
   value,
   onChange,
+  fields,
   placeholder = "Select field",
   allowClear = false,
 }: FieldSelectorProps) {
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
-  const availableFields = getColumnNames();
+  const availableFields = fields ?? getColumnNames();
   const calculations = useDataLayer((state) => state.calculations);
   const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
   const getColumnData = useDataLayer((state) => state.getColumnData);
@@ -52,7 +54,7 @@ export function FieldSelector({
             options={fieldOptions}
             onChange={(option) => onChange(option?.value || value)}
             optionToString={(option) => getFieldLabel(option.value)}
-            aria-label={label}
+            aria-label={label || placeholder}
             optionToNode={(option) => (
               <span className="flex min-w-0 items-center gap-1">
                 {calculations.some(

@@ -1,96 +1,26 @@
 import { useState } from "react";
-import type { RowCalculationTrace } from "@/lib/calculations/CalculationState";
-import type { datum } from "@/types/ChartTypes";
 import { planScatterOverlay, type ScatterPlan } from "./scatterPlan";
-import type { FieldTrace, ScatterTrace } from "./scatterTrace";
+import type { ScatterTrace } from "./scatterTrace";
 import type { ScatterSelection } from "./ScatterTraceContext";
+import {
+  ChartTraceRowSteps,
+  TraceGuideDetails,
+  TraceMarkGeometry,
+  showTraceValue,
+  TraceReadout,
+  TraceScaleReadout,
+  TraceSection,
+} from "../ChartTraceDetails";
 
-const show = (value: datum | Date) =>
-  value === undefined ? "undefined" : value === null ? "null" : String(value);
+const show = showTraceValue;
 
 const facetHeading = (item: {
   field: string;
-  raw?: datum;
-  value: datum;
+  raw?: import("@/types/ChartTypes").datum;
+  value: import("@/types/ChartTypes").datum;
   label: string;
 }) =>
   `${item.field} ${show(item.raw)}${item.raw !== item.value ? ` → ${show(item.value)}` : ""}${item.label !== show(item.value) ? ` → ${item.label}` : ""}`;
-
-function RowSteps({ fields }: { fields: FieldTrace[] }) {
-  const sources = new Map<
-    string,
-    { raw: datum; prepared: datum; error?: string }
-  >();
-  const calculations = new Map<string, RowCalculationTrace>();
-  const addCalculation = (trace: RowCalculationTrace) => {
-    trace.dependencies.forEach(addCalculation);
-    calculations.set(trace.field, trace);
-  };
-  for (const field of fields) {
-    if (field.calculation) {
-      addCalculation(field.calculation);
-      for (const source of field.sources) {
-        sources.set(source.field, {
-          raw: source.raw,
-          prepared: source.prepared,
-          error: source.conversion?.error,
-        });
-      }
-    } else {
-      sources.set(field.field, {
-        raw: field.raw,
-        prepared: field.prepared,
-        error: field.conversion?.error,
-      });
-    }
-  }
-  return (
-    <div className="space-y-2 border-t border-border pt-2">
-      <div>
-        <h4 className="font-medium">Source row</h4>
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-2">
-          {[...sources].map(([field, value]) => (
-            <div className="contents" key={field}>
-              <span className="min-w-0 break-words text-muted-foreground">
-                {field}
-              </span>
-              <span className="text-right">
-                {show(value.raw)}
-                {value.raw !== value.prepared && ` → ${show(value.prepared)}`}
-                {value.error && ` · ${value.error}`}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-      {calculations.size > 0 && (
-        <div className="border-t border-border pt-2">
-          <h4 className="font-medium">Calculations</h4>
-          {[...calculations.values()].map((calc) => (
-            <details key={calc.field} className="group">
-              <summary className="cursor-pointer py-0.5 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                {calc.field} = {calc.error ?? show(calc.value)}
-              </summary>
-              <div className="ml-3 space-y-1 border-l border-border pl-2 pb-1 text-muted-foreground">
-                <code className="block break-words">{calc.expression}</code>
-                <ol aria-label={`${calc.field} calculation steps`}>
-                  {calc.steps.map((step, index) => (
-                    <li
-                      key={`${step.id}-${index}`}
-                      style={{ paddingLeft: Math.min(step.depth, 5) * 8 }}
-                    >
-                      {step.label} → {step.error ?? show(step.value)}
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            </details>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 export function ScatterTracePanel({
   plan,
@@ -144,26 +74,16 @@ export function ScatterTracePanel({
   };
   return (
     <div className="space-y-3 text-xs" aria-label="Scatter trace">
-      <div>
-        <h3 className="text-sm font-semibold">Scatter trace</h3>
-        {!trace && (
-          <p className="text-muted-foreground">
-            Alt-click a point, axis object, or color label to trace it.
-          </p>
-        )}
-      </div>
       {trace?.kind === "point" && plan && (
         <div className="space-y-2">
           <div className="font-medium">Row {trace.sourceId} → point</div>
-          <div className="text-muted-foreground">
-            Other filters{" "}
+          <TraceReadout label="Other filters">
             {plan.rowSets.chart.includes(trace.sourceId) ? "pass" : "exclude"} ·
             This chart {trace.passesOwnFilter ? "pass" : "dim"} · All filters{" "}
             {trace.passesAllFilters ? "pass" : "exclude"}
-          </div>
+          </TraceReadout>
           {trace.facet && (
-            <div className="border-t border-border pt-2">
-              <h4 className="font-medium">Facet placement</h4>
+            <TraceSection heading="Facet placement">
               <div>
                 {trace.facet.row.field} {show(trace.facet.row.prepared)}
                 {trace.facet.column &&
@@ -175,9 +95,9 @@ export function ScatterTracePanel({
                 {trace.facet.sourceRows} source rows in this facet ·{" "}
                 {trace.facet.chartRows} pass chart filters
               </div>
-            </div>
+            </TraceSection>
           )}
-          <RowSteps
+          <ChartTraceRowSteps
             fields={[
               trace.x,
               trace.y,
@@ -190,8 +110,7 @@ export function ScatterTracePanel({
                 : []),
             ]}
           />
-          <div className="border-t border-border pt-2">
-            <h4 className="font-medium">Rendered point</h4>
+          <TraceSection heading="Rendered point">
             <div>
               {trace.x.field} {show(trace.x.prepared)} → x{" "}
               {Math.round(trace.x.pixel)} px
@@ -200,6 +119,10 @@ export function ScatterTracePanel({
               {trace.y.field} {show(trace.y.prepared)} → y{" "}
               {Math.round(trace.y.pixel)} px
             </div>
+            <TraceMarkGeometry
+              label="Point geometry"
+              geometry={{ x: trace.x.pixel, y: trace.y.pixel }}
+            />
             {trace.color && (
               <>
                 <div>
@@ -265,18 +188,22 @@ export function ScatterTracePanel({
               {plan.pixelRatio} device pixels per CSS pixel; plot clip{" "}
               {Math.round(plan.clipWidth)} × {Math.round(plan.clipHeight)} px
             </div>
-          </div>
+          </TraceSection>
           <details className="border-t border-border pt-2">
             <summary className="cursor-pointer">Scale and plan details</summary>
             <div className="mt-1 text-muted-foreground">
-              <div>
-                X {plan.xScale.type}: {plan.xScale.domain.join(" to ")} →{" "}
-                {plan.xScale.range.join(" to ")} px
-              </div>
-              <div>
-                Y {plan.yScale.type}: {plan.yScale.domain.join(" to ")} →{" "}
-                {plan.yScale.range.join(" to ")} px
-              </div>
+              <TraceScaleReadout
+                axis="x"
+                type={plan.xScale.type}
+                domain={plan.xScale.domain}
+                range={plan.xScale.range}
+              />
+              <TraceScaleReadout
+                axis="y"
+                type={plan.yScale.type}
+                domain={plan.yScale.domain}
+                range={plan.yScale.range}
+              />
               <div>
                 {plan.rowSets.all.length} full-source rows set the domains ·
                 Revision {trace.revision}
@@ -297,7 +224,7 @@ export function ScatterTracePanel({
                 ? `${trace.y.field} has no finite value.`
                 : "The scale has no finite position for this row."}
           </div>
-          <RowSteps fields={[trace.x, trace.y]} />
+          <ChartTraceRowSteps fields={[trace.x, trace.y]} />
         </div>
       )}
       {trace?.kind === "badge" && (
@@ -317,49 +244,44 @@ export function ScatterTracePanel({
       )}
       {trace?.kind === "guide" && (
         <div className="space-y-1">
-          <div className="font-medium">{trace.id}</div>
-          <div>
-            Object: {trace.detail.role} · Source: {trace.detail.source}
-          </div>
-          <div>
-            Field: {trace.field}
-            {trace.detail.value !== undefined &&
-              ` · Tick value: ${trace.detail.value}`}
-          </div>
-          {trace.primitive.kind === "text" && (
-            <>
-              <div>Rendered text: {trace.primitive.text}</div>
-              <div>
-                Position: x {Math.round(trace.primitive.x)} px · y{" "}
-                {Math.round(trace.primitive.y)} px
-              </div>
-              <div>
-                Text size {trace.primitive.fontSize ?? "SVG default"} · anchor{" "}
-                {trace.primitive.textAnchor ?? "SVG default"} ← guide style
-              </div>
-              {trace.primitive.title &&
-                trace.primitive.title !== trace.primitive.text && (
-                  <div>Full formatted text: {trace.primitive.title}</div>
-                )}
-            </>
-          )}
-          {trace.primitive.kind === "line" && (
-            <div>
-              Planned line: ({Math.round(trace.primitive.x1)},{" "}
-              {Math.round(trace.primitive.y1)}) → (
-              {Math.round(trace.primitive.x2)}, {Math.round(trace.primitive.y2)}
-              ) px · stroke{" "}
-              {trace.primitive.stroke ??
-                trace.primitive.className ??
-                "SVG default"}
-              {trace.primitive.hitStrokeWidth &&
-                ` · ${trace.primitive.hitStrokeWidth} px hit target`}
-            </div>
-          )}
-          <div>
-            {trace.scale.type} scale · domain {trace.scale.domain.join(" to ")}{" "}
-            · range {trace.scale.range.join(" to ")} px
-          </div>
+          <TraceGuideDetails
+            heading={trace.id}
+            guide={{
+              object: trace.detail.role,
+              source: trace.detail.source,
+              field: trace.field,
+              tickValue: trace.detail.value,
+              scale: {
+                axis: trace.detail.axis,
+                type: trace.scale.type,
+                domain: trace.scale.domain,
+                range: trace.scale.range,
+              },
+              primitive:
+                trace.primitive.kind === "text"
+                  ? {
+                      kind: "text",
+                      text: trace.primitive.text,
+                      x: trace.primitive.x,
+                      y: trace.primitive.y,
+                      fontSize: trace.primitive.fontSize,
+                      textAnchor: trace.primitive.textAnchor,
+                      fullText: trace.primitive.title,
+                    }
+                  : trace.primitive.kind === "line"
+                    ? {
+                        kind: "line",
+                        x1: trace.primitive.x1,
+                        y1: trace.primitive.y1,
+                        x2: trace.primitive.x2,
+                        y2: trace.primitive.y2,
+                        stroke:
+                          trace.primitive.stroke ?? trace.primitive.className,
+                        hitStrokeWidth: trace.primitive.hitStrokeWidth,
+                      }
+                    : undefined,
+            }}
+          />
           <div>
             Raw bounds: {trace.sourceBounds.join(" to ")} · {trace.population}{" "}
             full-source rows · {Math.round(trace.buffer * 100)}% padding
@@ -553,12 +475,6 @@ export function ScatterTracePanel({
             {trace.rowIds.length > 12 && `, … (${trace.rowIds.length} total)`}
           </div>
         </div>
-      )}
-      {!trace && (
-        <p>
-          Normal clicks keep chart interactions. You can also find a source row
-          below.
-        </p>
       )}
       {(plan || onFindRow) && (
         <form

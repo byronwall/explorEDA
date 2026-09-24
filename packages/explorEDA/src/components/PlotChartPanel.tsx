@@ -19,16 +19,21 @@ import {
   Minimize2,
   Settings2,
   Table2,
-  Waypoints,
   X,
 } from "lucide-react";
 import { ChartRenderer } from "./charts/ChartRenderer";
 import { ChartColorLegend } from "./charts/ColorLegend/ChartColorLegend";
+import { ChartTraceControl } from "./charts/ChartTraceControl";
 import {
   ScatterTraceScope,
   useScatterTraceSelection,
 } from "./charts/ScatterPlot/ScatterTraceContext";
 import { ScatterTracePanel } from "./charts/ScatterPlot/ScatterTracePanel";
+import { BarTracePanel } from "./charts/BarChart/BarTracePanel";
+import {
+  BarTraceScope,
+  useBarTraceSelection,
+} from "./charts/BarChart/BarTraceContext";
 import { FacetContainer } from "./charts/FacetRelated/FacetContainer";
 import { ChartSettingsContent } from "./ChartSettingsContent";
 import { Button } from "./ui/button";
@@ -62,10 +67,6 @@ interface PlotChartPanelProps {
 
 function ScatterTraceControl() {
   const trace = useScatterTraceSelection();
-  const [open, setOpen] = useState(false);
-  useEffect(() => {
-    if (trace?.selection) setOpen(true);
-  }, [trace?.selection]);
   useEffect(() => {
     if (
       trace?.selection?.kind === "facet" &&
@@ -74,45 +75,84 @@ function ScatterTraceControl() {
       trace.select(null);
     }
   }, [trace?.selection, trace?.plan, trace?.select]);
+  if (!trace) return null;
   return (
-    <Popover
-      open={open}
-      onOpenChange={(next) => {
-        setOpen(next);
-        if (!next) trace?.select(null);
-      }}
+    <ChartTraceControl
+      selection={trace.selection}
+      onClear={() => trace.select(null)}
+      heading="Scatter trace"
+      emptyText="Alt-click a point, axis object, or color label to trace it. Normal clicks keep chart interactions. You can also find a source row below."
+      ariaLabel="Scatter trace inspector"
     >
-      <ActionTooltip content="Trace chart objects">
-        <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" aria-label="Trace chart objects">
-            <Waypoints className="h-4 w-4" />
-          </Button>
-        </PopoverTrigger>
-      </ActionTooltip>
-      <PopoverContent
-        align={window.innerWidth < 700 ? "start" : "end"}
-        side={window.innerWidth < 700 ? "bottom" : "left"}
-        collisionPadding={12}
-        className="w-[min(18rem,calc(100vw-1.5rem))] max-h-[min(70vh,var(--radix-popover-content-available-height))] overflow-y-auto"
-        aria-label="Scatter trace inspector"
-      >
-        <ScatterTracePanel
-          plan={trace?.selection?.plan ?? trace?.plan ?? undefined}
-          trace={trace?.selection?.trace}
-          onFindRow={trace?.inspectRow}
-          onSelect={(selection) => {
-            if (trace?.selection?.inspect) trace.selection.inspect(selection);
-            else trace?.inspectFirst(selection);
-          }}
-        />
-      </PopoverContent>
-    </Popover>
+      <ScatterTracePanel
+        plan={trace?.selection?.plan ?? trace?.plan ?? undefined}
+        trace={trace?.selection?.trace}
+        onFindRow={trace?.inspectRow}
+        onSelect={(selection) => {
+          if (trace?.selection?.inspect) trace.selection.inspect(selection);
+          else trace?.inspectFirst(selection);
+        }}
+      />
+    </ChartTraceControl>
   );
 }
 
 function ScatterTraceTitle({ id, text }: { id: string; text: string }) {
   const trace = useScatterTraceSelection();
   const inspect = () => trace?.inspectFirst({ kind: "title", id: "title" });
+  return (
+    <h3
+      id={id}
+      className="min-w-0 truncate text-sm font-semibold"
+      tabIndex={0}
+      aria-description="Alt-click or Alt-Enter to trace title"
+      onMouseDownCapture={(event) => {
+        if (event.altKey) event.stopPropagation();
+      }}
+      onMouseUpCapture={(event) => {
+        if (event.altKey) {
+          event.stopPropagation();
+          inspect();
+        }
+      }}
+      onKeyDown={(event) => {
+        if (event.altKey && event.key === "Enter") {
+          event.preventDefault();
+          inspect();
+        }
+      }}
+    >
+      {text}
+    </h3>
+  );
+}
+
+function BarTraceControl() {
+  const trace = useBarTraceSelection();
+  if (!trace) return null;
+  return (
+    <ChartTraceControl
+      selection={trace.selection}
+      onClear={() => trace.select(null)}
+      heading="Bar trace"
+      emptyText="Alt-click a bar, axis object, or zero baseline to trace it. Normal clicks keep chart interactions. You can also find a source row below."
+      ariaLabel="Bar trace inspector"
+    >
+      <BarTracePanel
+        selection={trace.selection}
+        onFindRow={trace.inspectRow}
+        guides={trace.guides}
+        onSelect={(selection) =>
+          trace.select({ ...selection, owner: trace.selection?.owner })
+        }
+      />
+    </ChartTraceControl>
+  );
+}
+
+function BarTraceTitle({ id, text }: { id: string; text: string }) {
+  const trace = useBarTraceSelection();
+  const inspect = () => trace?.inspectTitle();
   return (
     <h3
       id={id}
@@ -270,6 +310,8 @@ export function PlotChartPanel({
           />
           {settings.type === "scatter" ? (
             <ScatterTraceTitle id={titleId} text={chartTitle} />
+          ) : settings.type === "bar" ? (
+            <BarTraceTitle id={titleId} text={chartTitle} />
           ) : (
             <h3 id={titleId} className="min-w-0 truncate text-sm font-semibold">
               {chartTitle}
@@ -292,6 +334,7 @@ export function PlotChartPanel({
         <div className="eda-panel-actions flex shrink-0 items-center gap-0">
           {isTableLike && <div ref={setToolbarTarget} />}
           {settings.type === "scatter" && <ScatterTraceControl />}
+          {settings.type === "bar" && <BarTraceControl />}
           <ActionTooltip
             content={expanded ? "Close expanded chart" : "Expand chart"}
           >
@@ -463,6 +506,7 @@ export function PlotChartPanel({
   );
   return (
     <ScatterTraceScope>
+      <BarTraceScope>
       <Dialog open={expanded} onOpenChange={setExpanded}>
         {expanded ? (
           <DialogContent
@@ -483,6 +527,7 @@ export function PlotChartPanel({
           panel
         )}
       </Dialog>
+      </BarTraceScope>
     </ScatterTraceScope>
   );
 }

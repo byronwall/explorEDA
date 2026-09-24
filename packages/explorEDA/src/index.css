@@ -161,6 +161,19 @@
   stroke: var(--foreground);
   stroke-width: 1.5px;
 }
+.eda-panel svg [role="button"]:focus:not(:focus-visible) {
+  outline: none;
+}
+.eda-panel svg[data-alt-hover="true"] [data-guide-id] {
+  cursor: pointer;
+}
+.eda-panel svg[data-alt-hover="true"] [data-guide-id]:hover {
+  stroke: var(--primary);
+  stroke-width: 2.5px;
+}
+.eda-panel svg[data-alt-hover="true"] [data-guide-id].chart-guide-hit:hover {
+  stroke-opacity: 0.35;
+}
 .eda-panel .handle-se,
 .handle-se {
   color: var(--muted-foreground);

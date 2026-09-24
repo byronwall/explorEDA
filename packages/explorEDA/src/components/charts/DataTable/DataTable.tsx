@@ -8,11 +8,6 @@ import { DataTableToolbar } from "./DataTableToolbar";
 import { DataTableSettings } from "./definition";
 import { getFilteredRows, DataTableRow } from "./filteredRows";
 import { getChartSummary } from "../chartAccessibility";
-import { categoryLabel } from "@/lib/categories";
-import {
-  AggregateResultTable,
-  GroupedAggregateInspector,
-} from "../BarChart/GroupedAggregateInspector";
 
 interface DataTableProps extends BaseChartProps {
   settings: DataTableSettings;
@@ -34,22 +29,6 @@ export function DataTable({
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const calculations = useDataLayer((state) => state.calculations);
   const nonce = useDataLayer((state) => state.nonce);
-  const getAggregateResult = useDataLayer((state) => state.getAggregateResult);
-  const aggregates = useDataLayer((state) => state.aggregates);
-  const aggregateResult = useMemo(() => {
-    void aggregates;
-    void liveItems;
-    void nonce;
-    return settings.aggregateId
-      ? getAggregateResult(settings.aggregateId)
-      : undefined;
-  }, [settings.aggregateId, getAggregateResult, aggregates, liveItems, nonce]);
-  const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
-  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
-  const fieldSettings = useDataLayer((state) => state.fieldSettings);
-  void fieldSettings;
-  const [inspectedRowId, setInspectedRowId] = useState<string>();
-  const [inspectorOpen, setInspectorOpen] = useState(false);
   const resolvedRows = useMemo(() => {
     void nonce;
     const source = rows ?? data;
@@ -100,70 +79,6 @@ export function DataTable({
     settings.sortDirection,
     filteredRows.length,
   ]);
-
-  if (settings.aggregateId && aggregateResult) {
-    const measureField = aggregateResult.spec.measureField;
-    const groupSettings = fieldSettings[aggregateResult.spec.groupField];
-    const hasGroupDisplayFormat = Boolean(
-      groupSettings &&
-        ((groupSettings.format && groupSettings.format !== "auto") ||
-          groupSettings.precision !== undefined ||
-          groupSettings.unit)
-    );
-    return (
-      <div
-        className="eda-table-view flex min-h-0 flex-col w-full gap-3 p-2"
-        style={{ height }}
-      >
-        <p className="text-xs text-muted-foreground">
-          {aggregateResult.spec.name} · current globally filtered source rows
-        </p>
-        <AggregateResultTable
-          result={aggregateResult}
-          selectedRowId={inspectedRowId}
-          onSelect={(row) => {
-            setInspectedRowId(row.id);
-            setInspectorOpen(true);
-          }}
-          formatValue={(value) =>
-            aggregateResult.spec.aggregation === "count"
-              ? String(value)
-              : formatFieldValue(
-                  measureField ?? aggregateResult.spec.groupField,
-                  value
-                )
-          }
-          getFieldLabel={getFieldLabel}
-          formatGroupValue={(value) =>
-            hasGroupDisplayFormat && value != null
-              ? formatFieldValue(aggregateResult.spec.groupField, value)
-              : categoryLabel(value)
-          }
-        />
-        <GroupedAggregateInspector
-          result={aggregateResult}
-          open={inspectorOpen}
-          onOpenChange={setInspectorOpen}
-          selectedRowId={inspectedRowId}
-          scopeDescription="Current globally filtered source rows"
-          formatValue={(value) =>
-            aggregateResult.spec.aggregation === "count"
-              ? String(value)
-              : formatFieldValue(
-                  measureField ?? aggregateResult.spec.groupField,
-                  value
-                )
-          }
-          getFieldLabel={getFieldLabel}
-          formatGroupValue={(value) =>
-            hasGroupDisplayFormat && value != null
-              ? formatFieldValue(aggregateResult.spec.groupField, value)
-              : categoryLabel(value)
-          }
-        />
-      </div>
-    );
-  }
 
   const toolbar = (
     <DataTableToolbar

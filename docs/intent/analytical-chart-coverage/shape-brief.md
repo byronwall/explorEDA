@@ -3,7 +3,7 @@ title: "Analytical chart coverage — shape brief"
 slug: "analytical-chart-coverage"
 phase: shape
 status: current
-last_updated: "2026-09-21"
+last_updated: "2026-09-23"
 ---
 
 # Analytical chart coverage — shape brief
@@ -16,7 +16,7 @@ Treat the first work as consistency, not a chart expansion campaign. Make one gr
 
 - **Problem:** Basic measure-by-category analysis splits across paths with different actions and reducer rules.
 - **Outcome:** A user can move from a measure to a linked selection and its source records without a dead end.
-- **Appetite:** One focused vertical slice, then one new chart family. The complete Pro wishlist is not one release.
+- **Appetite:** One focused vertical slice at a time. Calendar heatmap, maps, Sankey, and parallel coordinates are near-term goals, each with its own proof.
 - **Not in this shape:** All chart variants, domain-specific matrices, or new data infrastructure.
 
 ## Core shape
@@ -58,4 +58,4 @@ Add a heatmap immediately. It would make the gallery look broader, but it would 
 
 ## Plan handoff
 
-Build and browser-test the grouped-bar path. Keep heatmap and card as separate decisions after the first proof.
+Build and browser-test the grouped-bar path. Keep heatmap and card as separate decisions after the first proof. Use the [focused research](calendar-map-sankey-parallel-research.md) to choose the next calendar, geographic, flow, or multivariate slice from real data.

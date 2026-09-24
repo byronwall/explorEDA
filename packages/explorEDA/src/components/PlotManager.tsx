@@ -24,7 +24,6 @@ import { ChartGridLayout } from "./ChartGridLayout";
 import { PlotChartPanel } from "./PlotChartPanel";
 import { CalculationManager } from "./calculations/CalculationManager";
 import { GridSettingsPanel } from "./settings/GridSettingsPanel";
-import { GroupedSummaryManager } from "./GroupedSummaryManager";
 import { useAlertStore } from "@/stores/alertStore";
 import {
   Dialog,
@@ -261,7 +260,6 @@ export function PlotManager() {
               </TabsList>
             </Tabs>
             {activeTab === "charts" && <ChartCreationButtons />}
-            {activeTab === "charts" && <GroupedSummaryManager />}
           </div>
           <div className="ml-auto flex flex-wrap items-center gap-2">
             {activeTab === "rows" && <div ref={setRowsToolbarTarget} />}

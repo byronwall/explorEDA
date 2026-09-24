@@ -5,20 +5,25 @@
     "slug": "analytical-chart-coverage",
     "scale": "program",
     "current_phase": "plan",
-    "last_updated": "2026-09-21",
+    "last_updated": "2026-09-23",
     "summary": "Make common analytical views coherent before expanding chart count."
   },
   "artifacts": {
-    "intent_brief": { "path": "intent-brief.md", "status": "current", "updated_at": "2026-09-21" },
+    "intent_brief": { "path": "intent-brief.md", "status": "current", "updated_at": "2026-09-23" },
     "brainstorm": { "path": "brainstorm.md", "status": "not-requested", "updated_at": null },
-    "shape_brief": { "path": "shape-brief.md", "status": "current", "updated_at": "2026-09-21" },
-    "implementation_plan": { "path": "implementation-plan.md", "status": "current", "updated_at": "2026-09-21" }
+    "shape_brief": { "path": "shape-brief.md", "status": "current", "updated_at": "2026-09-23" },
+    "implementation_plan": { "path": "implementation-plan.md", "status": "current", "updated_at": "2026-09-23" },
+    "chart_additions_research": { "path": "chart-additions-research.md", "status": "current", "updated_at": "2026-09-23" },
+    "calendar_map_sankey_parallel_research": { "path": "calendar-map-sankey-parallel-research.md", "status": "current", "updated_at": "2026-09-23" }
   },
   "sources": [
     { "id": "prompt", "type": "direct-user-input", "location": "../pro-reviews-2026-09-21/raw/3-user.txt", "anchor": "conspicuously missing primitives", "authority": "direct intent" },
     { "id": "review", "type": "agent-review", "location": "../pro-reviews-2026-09-21/raw/4-assistant.txt", "anchor": "priority order and single next move", "authority": "recommendation, not direct intent" },
     { "id": "review-zip", "type": "agent-review-attachment", "location": "../pro-reviews-2026-09-21/raw/chart-review/exploreda-chart-interaction-review", "anchor": "backlog.md C01-C05 and acceptance-checklist.md sections 1-3", "authority": "proposed backlog and checks, not approved scope" },
-    { "id": "repo", "type": "repository", "location": "../../packages/explorEDA/src/lib/aggregates.ts", "anchor": "AggregateResult and calculateGroupedAggregate at 593ca2e", "authority": "current implementation reality" }
+    { "id": "repo", "type": "repository", "location": "../../packages/explorEDA/src/lib/aggregates.ts", "anchor": "AggregateResult and calculateGroupedAggregate at 593ca2e", "authority": "current implementation reality" },
+    { "id": "chart-research", "type": "primary-documentation", "location": "chart-additions-research.md#evidence-and-limits", "anchor": "D3, Observable Plot, and Vega-Lite chart semantics", "authority": "implementation precedent, not product intent" },
+    { "id": "priority-update", "type": "direct-user-input", "location": "2026-09-23 follow-up", "anchor": "Calendar heatmap, maps, Sankey, and parallel coordinates are important soon", "authority": "direct intent" },
+    { "id": "focused-research", "type": "primary-documentation", "location": "calendar-map-sankey-parallel-research.md#evidence-and-limits", "anchor": "GeoJSON, D3, Observable Plot, and Vega chart semantics", "authority": "implementation precedent, not product intent" }
   ],
   "intent": {
     "claims": [
@@ -26,15 +31,16 @@
       { "id": "c2", "type": "preference", "statement": "Prioritize conspicuously missing useful views and interactions", "commitment": "explicit", "importance": "core", "status": "active", "time_horizon": "first release", "source_anchors": ["prompt:conspicuously missing"] },
       { "id": "c3", "type": "implementation hypothesis", "statement": "Repair metric bars before heatmap and time series", "commitment": "derived", "importance": "supporting", "status": "active", "time_horizon": "proof", "source_anchors": ["review:The single next move"] },
       { "id": "c4", "type": "current repository reality", "statement": "Grouped results retain contributors but aggregate bars inspect rather than filter", "commitment": "derived", "importance": "supporting", "status": "active", "time_horizon": "proof", "source_anchors": ["repo:BarChart", "repo:aggregates"] },
-      { "id": "c5", "type": "implementation hypothesis", "statement": "Expose existing distribution modes and make Other membership inspectable before adding a new family", "commitment": "derived", "importance": "supporting", "status": "active", "time_horizon": "first release", "source_anchors": ["review-zip:backlog.md C01-C02"] }
+      { "id": "c5", "type": "implementation hypothesis", "statement": "Expose existing distribution modes and make Other membership inspectable before adding a new family", "commitment": "derived", "importance": "supporting", "status": "active", "time_horizon": "first release", "source_anchors": ["review-zip:backlog.md C01-C02"] },
+      { "id": "c6", "type": "outcome", "statement": "Calendar heatmap, maps, Sankey, and parallel coordinates should be planned as near-term chart additions", "commitment": "explicit", "importance": "core", "status": "active", "time_horizon": "soon", "source_anchors": ["priority-update:important soon"] }
     ],
-    "themes": ["common metrics", "linked actions and provenance", "missing 2D and calendar views", "discoverable existing modes"],
+    "themes": ["common metrics", "linked actions and provenance", "missing 2D and calendar views", "discoverable existing modes", "near-term maps, flows, and multivariate views"],
     "conflicts": [],
-    "human_questions": ["After the first proof, is categorical comparison or time analysis more important in real datasets?"]
+    "human_questions": ["Which chart and real dataset should follow the shared selection proof?", "Does the first map use coordinates or region keys, and does the first Sankey use stage columns or edge rows?"]
   },
   "brainstorm": { "status": "not-requested", "requested_count": 7, "options": [], "selected_option": null },
   "shape": {
-    "status": "current", "appetite": "one consistent path, then one new family", "problem": "Chart families disagree on ordinary metric and interaction semantics", "recommended_shape": "Repair grouped selection and inspection, expose hidden modes and Other membership, then add consumers of the same result", "success_moves": ["Prove one revenue question", "Keep metric scope visible", "Separate select from inspect", "Bound heatmap to one exact pair"], "first_proof": { "question": "Can the grouped result drive selection and retain provenance?", "artifact": "Revenue by region selection and contributor inspection", "decision_rule": "Bar, pivot, and source rows agree on metric, population, and IDs" }, "rabbit_holes": ["universal grammar", "stacked averages", "tuple multiselect before filter design"], "open_decisions": ["heatmap versus time-series priority after first proof"]
+    "status": "current", "appetite": "one focused chart slice at a time; four additional families matter soon", "problem": "Chart families disagree on ordinary metric and interaction semantics", "recommended_shape": "Repair grouped selection and inspection, expose hidden modes and Other membership, then add consumers and the four near-term families through separate proofs", "success_moves": ["Prove one revenue question", "Keep metric scope visible", "Separate select from inspect", "Bound heatmap to one exact pair"], "first_proof": { "question": "Can the grouped result drive selection and retain provenance?", "artifact": "Revenue by region selection and contributor inspection", "decision_rule": "Bar, pivot, and source rows agree on metric, population, and IDs" }, "rabbit_holes": ["universal grammar", "stacked averages", "tuple multiselect before filter design"], "open_decisions": ["next chart and real dataset after first proof", "first map and Sankey input shapes"]
   },
   "implementation": {
     "status": "current",
@@ -44,10 +50,12 @@
       { "id": "M2", "outcome": "Existing distribution modes and Other membership are usable", "proof": "Modes can be found by name; selected Other member remains stable through resize", "valid_intermediate_state": "Old view types and layouts still load", "rollback": "Remove new presets and Other drill control" },
       { "id": "M3", "outcome": "Selected metric shown in a card", "proof": "Card agrees with grouped result through filter and restore", "valid_intermediate_state": "Card is optional; old layouts load", "rollback": "Remove optional card registration" },
       { "id": "M4", "outcome": "One categorical pair can be selected and inspected", "proof": "Heatmap cell agrees with pivot and source IDs", "valid_intermediate_state": "Existing views and saved layouts load", "rollback": "Remove optional heatmap registration" }
-    ], "cut_line": ["universal grammar", "tuple unions", "specialized charts", "unmeasured speed claims"], "open_decisions": ["Choose heatmap or calendar series from observed user tasks after milestone 1"]
+    ], "follow_on_proofs": ["Calendar day agrees with daily Line and source IDs", "Map point or region agrees with inspected records", "Sankey stage link agrees with source IDs and linked filters", "Parallel axes preserve selected IDs through reorder and restore"], "cut_line": ["universal grammar", "tuple unions", "network diagrams", "unmeasured speed claims"], "open_decisions": ["Choose next chart from real datasets after first proof", "Confirm first map and Sankey input shapes"]
   },
   "history": [
     { "date": "2026-09-21", "change": "Created from visible Pro evaluation and direct user request; linked backlog unavailable." },
-    { "date": "2026-09-21", "change": "Imported chart review ZIP. Added a narrow second milestone for hidden distribution modes and stable Other membership; first proof remains grouped-bar selection." }
+    { "date": "2026-09-21", "change": "Imported chart review ZIP. Added a narrow second milestone for hidden distribution modes and stable Other membership; first proof remains grouped-bar selection." },
+    { "date": "2026-09-23", "change": "Added per-chart comparison, settings, selection, and trace recommendations. Existing shape and milestone order remain current." },
+    { "date": "2026-09-23", "change": "Promoted calendar heatmap, maps, Sankey, and parallel coordinates to near-term goals; added focused research and follow-on proofs." }
   ]
 }

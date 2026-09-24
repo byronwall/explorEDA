@@ -39,15 +39,21 @@ export function useGetLiveData(
   return data;
 }
 
-export function useGetLiveIds(settings: ChartSettings) {
+export function useGetLiveIds(settings: ChartSettings, facetIds?: IdType[]) {
   const liveItems = useDataLayer((state) => state.getLiveItems(settings));
   return useMemo(() => {
     if (!liveItems) {
       return [];
     }
 
-    return liveItems.items.filter((c) => c.value > 0).map((d) => d.key);
-  }, [liveItems]);
+    const facetIdSet = new Set(facetIds);
+    return liveItems.items
+      .filter((c) => c.value > 0)
+      .filter((c) =>
+        facetIds && facetIds.length > 0 ? facetIdSet.has(c.key) : true
+      )
+      .map((d) => d.key);
+  }, [facetIds, liveItems]);
 }
 
 export function useGetAllIds() {

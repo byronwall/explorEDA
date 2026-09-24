@@ -37,7 +37,7 @@ export interface SavedDataStructure {
   // Source field labels, type overrides, and display settings.
   fieldSettings?: FieldSettingsMap;
 
-  // Named grouped summaries. Charts store only an aggregateId reference.
+  // Bar chart aggregates. Charts store only an aggregateId reference.
   aggregates?: AggregateSpec[];
 }
 

@@ -710,7 +710,7 @@ const createDataLayerStore = <T extends DatumObject>(
 
     addAggregate: (spec) => {
       if (!spec.name.trim() || !spec.groupField.trim()) {
-        throw new Error("Grouped summaries need a name and group field");
+        throw new Error("Bar aggregates need a name and group field");
       }
       if (spec.aggregation !== "count" && !spec.measureField?.trim()) {
         throw new Error(`${spec.aggregation} requires a measure field`);
@@ -735,7 +735,7 @@ const createDataLayerStore = <T extends DatumObject>(
       }
       const next = { ...current, ...updates };
       if (!next.name.trim() || !next.groupField.trim()) {
-        throw new Error("Grouped summaries need a name and group field");
+        throw new Error("Bar aggregates need a name and group field");
       }
       if (next.aggregation !== "count" && !next.measureField?.trim()) {
         throw new Error(`${next.aggregation} requires a measure field`);

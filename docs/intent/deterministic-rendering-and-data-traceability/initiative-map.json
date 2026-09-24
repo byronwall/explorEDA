@@ -113,11 +113,7 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "first-release",
-        "sources": [
-          "USER-TRACKS",
-          "TRANSCRIPT-SPEC",
-          "USER-SCOPE-SEP22"
-        ]
+        "sources": ["USER-TRACKS", "TRANSCRIPT-SPEC", "USER-SCOPE-SEP22"]
       },
       {
         "id": "GOAL-3",
@@ -127,10 +123,7 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "proof",
-        "sources": [
-          "REPO-RUNTIME",
-          "PRO-BUNDLE"
-        ]
+        "sources": ["REPO-RUNTIME", "PRO-BUNDLE"]
       },
       {
         "id": "OPTION-1",
@@ -140,9 +133,7 @@
         "importance": "supporting",
         "status": "active",
         "time_horizon": "proof",
-        "sources": [
-          "PRO-BUNDLE"
-        ]
+        "sources": ["PRO-BUNDLE"]
       },
       {
         "id": "LATER-1",
@@ -152,10 +143,7 @@
         "importance": "peripheral",
         "status": "active",
         "time_horizon": "later",
-        "sources": [
-          "USER-PROTOTYPE",
-          "TRANSCRIPT-SPEC"
-        ]
+        "sources": ["USER-PROTOTYPE", "TRANSCRIPT-SPEC"]
       },
       {
         "id": "DECISION-SEP22-1",
@@ -165,9 +153,7 @@
         "importance": "supporting",
         "status": "active",
         "time_horizon": "later",
-        "sources": [
-          "USER-SCOPE-SEP22"
-        ]
+        "sources": ["USER-SCOPE-SEP22"]
       },
       {
         "id": "DECISION-SEP22-2",
@@ -177,9 +163,7 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "proof",
-        "sources": [
-          "USER-SCOPE-SEP22"
-        ]
+        "sources": ["USER-SCOPE-SEP22"]
       },
       {
         "id": "DECISION-SEP22-3",
@@ -189,9 +173,7 @@
         "importance": "supporting",
         "status": "active",
         "time_horizon": "later",
-        "sources": [
-          "USER-SCOPE-SEP22"
-        ]
+        "sources": ["USER-SCOPE-SEP22"]
       }
     ],
     "themes": [
@@ -236,8 +218,8 @@
     "status": "current",
     "repository_snapshot": {
       "root": "/Users/byronwall/Projects/explorEDA",
-      "revision": "593ca2e1f9210d5bc66985437afc37fcfcd8a56a",
-      "worktree_status": "main; current user edits retained; no commit",
+      "revision": "bd0d355",
+      "worktree_status": "main; next-step ticket added; no commit",
       "subsystems": [
         "DataLayerProvider",
         "CrossfilterWrapper",
@@ -299,6 +281,12 @@
     ],
     "open_decisions": []
   },
+  "tickets": {
+    "scope": "next step only",
+    "tracker": "tk",
+    "ready": ["exp-9wuz"],
+    "deferred_milestones": ["M3"]
+  },
   "history": [
     {
       "date": "2026-09-21",
@@ -307,6 +295,10 @@
     {
       "date": "2026-09-22",
       "event": "Completed visible scatter traces, fixed tick candidate density, and deferred removed-row flow, atomic checks, and broad baselines by user decision."
+    },
+    {
+      "date": "2026-09-22",
+      "event": "Created exp-9wuz for the grouped aggregate bar comparison. Left shared-contract extraction and later chart types unticketed."
     }
   ]
 }

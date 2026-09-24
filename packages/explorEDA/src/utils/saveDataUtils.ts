@@ -389,8 +389,6 @@ function isChart(value: unknown): boolean {
       );
     case "data-table":
       return (
-        (value.aggregateId === undefined ||
-          typeof value.aggregateId === "string") &&
         Array.isArray(value.columns) &&
         value.columns.every((column) => {
           if (!isRecord(column)) {

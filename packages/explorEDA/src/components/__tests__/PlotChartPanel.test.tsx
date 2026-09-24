@@ -151,3 +151,77 @@ it("applies a chart type change together and can reset the edit session", async 
     screen.getByRole("button", { name: "Clear filters for Values" })
   ).toBeInTheDocument();
 });
+
+it("opens the shared bar trace popover from an Alt-click", async () => {
+  const chart = {
+    ...barChartDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }, "category"),
+    title: "Categories",
+  };
+  render(
+    <DataLayerProvider
+      data={[{ category: "A" }, { category: "A" }, { category: "B" }]}
+      charts={[chart]}
+    >
+      <PlotChartPanel
+        settings={chart}
+        width={500}
+        height={400}
+        onDelete={() => {}}
+        onDuplicate={() => {}}
+      />
+    </DataLayerProvider>
+  );
+  fireEvent.click(screen.getByRole("button", { name: "A: 2 records" }), {
+    altKey: true,
+  });
+  expect(
+    await screen.findByRole("dialog", { name: "Bar trace inspector" })
+  ).toHaveTextContent("Bar geometry");
+});
+
+it("clears a selected bar when another chart changes its filter scope", async () => {
+  const first = {
+    ...barChartDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }, "category"),
+    title: "Categories",
+  };
+  const second = {
+    ...barChartDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }, "value"),
+    title: "Values",
+  };
+  function Panels() {
+    const updateChart = useDataLayer((state) => state.updateChart);
+    const charts = useDataLayer((state) => state.charts);
+    return (
+      <>
+        <button
+          onClick={() =>
+            updateChart(first.id, {
+              filters: [{ type: "value", field: "category", values: ["B"] }],
+            })
+          }
+        >
+          Filter categories from values chart
+        </button>
+        <PlotChartPanel settings={charts[0]!} width={500} height={400} onDelete={() => {}} onDuplicate={() => {}} />
+        <PlotChartPanel settings={charts[1]!} width={500} height={400} onDelete={() => {}} onDuplicate={() => {}} />
+      </>
+    );
+  }
+  render(
+    <DataLayerProvider
+      data={[{ category: "A", value: 1 }, { category: "B", value: 2 }]}
+      charts={[first, second]}
+    >
+      <Panels />
+    </DataLayerProvider>
+  );
+  fireEvent.click(screen.getByRole("button", { name: "A: 1 records" }), { altKey: true });
+  expect(await screen.findByRole("dialog", { name: "Bar trace inspector" })).toHaveTextContent(
+    "Bar geometry"
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Filter categories from values chart" }));
+  await waitFor(() => expect(screen.queryByText("Bar geometry")).not.toBeInTheDocument());
+  expect(screen.getByRole("dialog", { name: "Bar trace inspector" })).toHaveTextContent(
+    "Alt-click a bar"
+  );
+});

@@ -158,9 +158,8 @@ it("applies legend category filters globally and dims other scatter points", () 
   );
   crossfilter.addChart(chart);
   expect(crossfilter.getFilteredRowIds()).toEqual([1, 2]);
-  const chartIds = crossfilter
-    .getAllData()
-    [chart.id]!.items.filter((item) => item.value > 0)
+  const chartIds = crossfilter.getAllData()[chart.id]!.items
+    .filter((item) => item.value > 0)
     .map((item) => item.key);
   expect(chartIds).toEqual([0, 1, 2]);
 

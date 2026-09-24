@@ -32,6 +32,8 @@ A selected visible scatter object explains the values and decisions used to draw
 
 ## Milestone 2: One grouped bar explains its contributors — next comparison
 
+Ready packet: [trace one grouped aggregate bar](../../../.tickets/exp-9wuz.md). This is the only ticket in the next step.
+
 - Use the current `getAggregateResult` and `calculateGroupedAggregate` path. Do not create another aggregate engine.
 - Give one named aggregate bar a stable mark ID. Link its value to contributor rows and numeric exclusions.
 - Explain its height from the scale domain and baseline. Name which rows set that domain.

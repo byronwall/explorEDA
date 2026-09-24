@@ -3,14 +3,14 @@ title: "Analytical chart coverage — implementation plan"
 slug: "analytical-chart-coverage"
 phase: plan
 status: current
-last_updated: "2026-09-21"
+last_updated: "2026-09-23"
 ---
 
 # Analytical chart coverage — implementation plan
 
 ## Plan at a glance
 
-The first milestone repairs a common journey in the current bar rather than adding a renderer. It validates the grouped summary, selection, and contributor inspection on one order dataset. The ZIP adds a short second step: expose hidden distribution modes and make Other categories inspectable without unstable selection. A small metric card then consumes the same scoped result. The first new family is a categorical heatmap with one exact-cell selection; tuple multiselect waits for a distinct filter design. Calendar-aware lines remain separate because time bucketing and series partitioning need their own proof. Each step leaves a useful workspace.
+The first milestone repairs a common journey in the current bar rather than adding a renderer. It validates the grouped summary, selection, and contributor inspection on one order dataset. The ZIP adds a short second step: expose hidden distribution modes and make Other categories inspectable without unstable selection. A small metric card then consumes the same scoped result. The first new family is a categorical heatmap with one exact-cell selection; tuple multiselect waits for a distinct filter design. Calendar-aware lines remain separate because time bucketing and series partitioning need their own proof. Calendar heatmap, maps, Sankey, and parallel coordinates are now near-term candidates with separate first proofs in the [focused research](calendar-map-sankey-parallel-research.md). Each step leaves a useful workspace.
 
 ## Implementation strategy
 
@@ -67,8 +67,16 @@ The first milestone repairs a common journey in the current bar rather than addi
 ## Open decisions and spikes
 
 - **Next family after the first proof:** Compare real order-data tasks needing a heatmap versus calendar time series. If time dominates, swap milestone 3 for one day/week/month rollup with an explicit zone and week boundary.
+- **First map and flow inputs:** Use real data to choose Point versus Region map, and stage columns versus edge rows for Sankey. Keep those mode choices explicit in settings.
+
+## Near-term follow-on proofs
+
+- **Calendar heatmap:** Prove one UTC daily result in Line, then display and select the same day in the calendar. Check year-boundary IDs and zero/missing days.
+- **Map:** Point mode checks invalid coordinates and exact row inspection. Region mode checks a GeoJSON join, unmatched keys, and exact region contributors.
+- **Sankey:** Check each stage link against source IDs, then select one link and confirm linked views. Use a real stage table; an edge list needs a separate input proof.
+- **Parallel coordinates:** Brush two numeric axes, reorder and invert them, then restore a save. The selected source IDs must stay fixed.
 
 ## Below the cut line
 
 - Grouped, stacked, and 100% bars; tuple multiselect; correlation and cohort matrices; selected-baseline comparison and undo.
-- Bubble, density, ECDF, reference layers, maps, domain charts, and more 3D variants. Revisit by observed questions, not gallery count.
+- Bubble, density, ECDF, reference layers, network diagrams, and more 3D variants. Revisit by observed questions, not gallery count.
