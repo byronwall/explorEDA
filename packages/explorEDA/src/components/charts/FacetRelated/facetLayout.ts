@@ -25,7 +25,8 @@ export function planFacetGridLayout(
     columnPageSize,
     columnCount - columnPage * columnPageSize
   );
-  const pagerHeight = pageCount > 1 ? PAGER_HEIGHT : 0;
+  // The pager row always holds the facet picker.
+  const pagerHeight = PAGER_HEIGHT;
   return {
     mode: "grid" as const,
     width,
@@ -67,7 +68,8 @@ export function planFacetWrapLayout(
   const pageSize = columnCount * rowCount;
   const pageCount = Math.max(1, Math.ceil(facetCount / pageSize));
   const currentPage = Math.min(page, pageCount - 1);
-  const pagerHeight = pageCount > 1 ? PAGER_HEIGHT : 0;
+  // The pager row always holds the facet picker.
+  const pagerHeight = PAGER_HEIGHT;
   return {
     mode: "wrap" as const,
     width,
