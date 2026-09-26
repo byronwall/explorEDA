@@ -106,7 +106,7 @@ export function CodePanel({ files }: { files: CodeFile[] }) {
 
 export function InstallCommand({ command }: { command: string }) {
   return (
-    <div className="inline-flex items-center gap-3 rounded-lg border border-border bg-card py-1.5 pl-4 pr-1.5 shadow-sm">
+    <div className="inline-flex items-center justify-between gap-3 rounded-lg border border-border bg-card py-1.5 pl-4 pr-1.5 shadow-sm">
       <code className="font-mono text-sm">
         <span aria-hidden="true" className="select-none text-muted-foreground">
           ${" "}
