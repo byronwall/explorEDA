@@ -1,6 +1,6 @@
 ---
 id: exp-o1pe
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-09-26T02:40:00Z
@@ -29,3 +29,7 @@ Open `?example=shop-operations`. At a 1280 px viewport, the "Orders by category"
 ## Cut Line and Provenance
 
 Seen while building the landing page for PR #27. It is a package bug, not a landing page bug.
+
+## Resolution
+
+Row charts no longer show a color legend, because each bar is already labeled with its category (PR #27, per Byron on 2026-09-26). Other chart types keep their legends.

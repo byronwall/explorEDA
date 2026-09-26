@@ -9,6 +9,7 @@ import { beforeAll, expect, it, vi } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import { barChartDefinition } from "../charts/BarChart/definition";
+import { rowChartDefinition } from "../charts/RowChart/definition";
 import { PlotChartPanel } from "../PlotChartPanel";
 
 beforeAll(() => {
@@ -154,7 +155,10 @@ it("applies a chart type change together and can reset the edit session", async 
 
 it("opens the shared bar trace popover from an Alt-click", async () => {
   const chart = {
-    ...barChartDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }, "category"),
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "category"
+    ),
     title: "Categories",
   };
   render(
@@ -181,11 +185,17 @@ it("opens the shared bar trace popover from an Alt-click", async () => {
 
 it("clears a selected bar when another chart changes its filter scope", async () => {
   const first = {
-    ...barChartDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }, "category"),
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "category"
+    ),
     title: "Categories",
   };
   const second = {
-    ...barChartDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }, "value"),
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "value"
+    ),
     title: "Values",
   };
   function Panels() {
@@ -202,26 +212,137 @@ it("clears a selected bar when another chart changes its filter scope", async ()
         >
           Filter categories from values chart
         </button>
-        <PlotChartPanel settings={charts[0]!} width={500} height={400} onDelete={() => {}} onDuplicate={() => {}} />
-        <PlotChartPanel settings={charts[1]!} width={500} height={400} onDelete={() => {}} onDuplicate={() => {}} />
+        <PlotChartPanel
+          settings={charts[0]!}
+          width={500}
+          height={400}
+          onDelete={() => {}}
+          onDuplicate={() => {}}
+        />
+        <PlotChartPanel
+          settings={charts[1]!}
+          width={500}
+          height={400}
+          onDelete={() => {}}
+          onDuplicate={() => {}}
+        />
       </>
     );
   }
   render(
     <DataLayerProvider
-      data={[{ category: "A", value: 1 }, { category: "B", value: 2 }]}
+      data={[
+        { category: "A", value: 1 },
+        { category: "B", value: 2 },
+      ]}
       charts={[first, second]}
     >
       <Panels />
     </DataLayerProvider>
   );
-  fireEvent.click(screen.getByRole("button", { name: "A: 1 records" }), { altKey: true });
-  expect(await screen.findByRole("dialog", { name: "Bar trace inspector" })).toHaveTextContent(
-    "Bar geometry"
+  fireEvent.click(screen.getByRole("button", { name: "A: 1 records" }), {
+    altKey: true,
+  });
+  expect(
+    await screen.findByRole("dialog", { name: "Bar trace inspector" })
+  ).toHaveTextContent("Bar geometry");
+  fireEvent.click(
+    screen.getByRole("button", { name: "Filter categories from values chart" })
   );
-  fireEvent.click(screen.getByRole("button", { name: "Filter categories from values chart" }));
-  await waitFor(() => expect(screen.queryByText("Bar geometry")).not.toBeInTheDocument());
-  expect(screen.getByRole("dialog", { name: "Bar trace inspector" })).toHaveTextContent(
-    "Alt-click a bar"
+  await waitFor(() =>
+    expect(screen.queryByText("Bar geometry")).not.toBeInTheDocument()
   );
+  expect(
+    screen.getByRole("dialog", { name: "Bar trace inspector" })
+  ).toHaveTextContent("Alt-click a bar");
+});
+
+it("omits the color legend on row charts, whose bars already label each color", async () => {
+  const colorScale = {
+    id: "category-colors",
+    name: "category",
+    sourceField: "category",
+    type: "categorical" as const,
+    palette: ["#1f77b4", "#ff7f0e"],
+    mapping: [
+      ["A", "#1f77b4"],
+      ["B", "#ff7f0e"],
+    ] as [string, string][],
+  };
+  const colored = {
+    colorField: "category",
+    colorScaleId: colorScale.id,
+  };
+  const rowChart = {
+    ...rowChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "category"
+    ),
+    ...colored,
+    title: "Rows by category",
+  };
+  const barChart = {
+    ...barChartDefinition.createDefaultSettings(
+      { x: 6, y: 0, w: 6, h: 4 },
+      "value"
+    ),
+    ...colored,
+    title: "Values by category",
+  };
+  function Panels() {
+    const charts = useDataLayer((s) => s.charts);
+    return (
+      <>
+        {charts.map((chart) => (
+          <PlotChartPanel
+            key={chart.id}
+            settings={chart}
+            width={500}
+            height={400}
+            onDelete={() => {}}
+            onDuplicate={() => {}}
+          />
+        ))}
+      </>
+    );
+  }
+  render(
+    <DataLayerProvider
+      data={[
+        { category: "A", value: 1 },
+        { category: "B", value: 2 },
+      ]}
+      savedData={{
+        charts: [rowChart, barChart],
+        calculations: [],
+        gridSettings: {
+          columnCount: 12,
+          rowHeight: 100,
+          containerPadding: 10,
+          showBackgroundMarkers: false,
+        },
+        metadata: {
+          name: "Legends",
+          version: 1,
+          createdAt: "2026-01-01T00:00:00.000Z",
+          modifiedAt: "2026-01-01T00:00:00.000Z",
+        },
+        colorScales: [colorScale],
+      }}
+    >
+      <Panels />
+    </DataLayerProvider>
+  );
+
+  const legendItem = { name: /^Filter category by A/ };
+  expect(
+    await within(
+      screen.getByRole("region", { name: "Values by category" })
+    ).findByRole("button", legendItem)
+  ).toBeInTheDocument();
+  expect(
+    within(
+      screen.getByRole("region", { name: "Rows by category" })
+    ).queryByRole("button", legendItem)
+  ).not.toBeInTheDocument();
 });
