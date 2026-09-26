@@ -280,14 +280,11 @@ export function FacetContainer({
 
   return (
     <div className="flex h-full w-full flex-col">
-      <p className="mb-1 shrink-0 truncate whitespace-nowrap text-xs text-muted-foreground">
-        Shared full-data scales · selections apply across all facets
-      </p>
       <div className="min-h-0 flex-1">
         {settings.facet.type === "grid" ? (
           <FacetGridLayout
             width={width}
-            height={Math.max(1, height - FACET_HEADER_HEIGHT)}
+            height={height}
             rowVariable={settings.facet.rowVariable}
             columnVariable={settings.facet.columnVariable}
             facetData={facetData}
@@ -303,7 +300,7 @@ export function FacetContainer({
         ) : (
           <FacetWrapLayout
             width={width}
-            height={Math.max(1, height - FACET_HEADER_HEIGHT)}
+            height={height}
             columns={settings.facet.columnCount}
             facetData={facetData}
             settings={settings}

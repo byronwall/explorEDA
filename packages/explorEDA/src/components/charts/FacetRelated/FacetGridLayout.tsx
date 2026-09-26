@@ -1,10 +1,13 @@
 import { ChartSettings, datum } from "@/types/ChartTypes";
+import { Maximize2 } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { ChartRenderer } from "../ChartRenderer";
 import { FacetData } from "./FacetContainer";
 import { planFacetGridLayout, type FacetLayoutPlan } from "./facetLayout";
 
 const TABLE_HEADER_HEIGHT = 32;
+const CELL_ACTION_HEIGHT = 20;
 
 interface FacetGridLayoutProps {
   width: number;
@@ -203,25 +206,35 @@ export function FacetGridLayout({
                   const facet = grid.get(JSON.stringify([rowKey, columnKey]));
                   return (
                     <td key={columnKey} className="border border-border/50 p-0">
-                      <div className="relative h-full w-full">
+                      <div className="h-full w-full">
                         {facet ? (
                           <>
-                            <button
-                              type="button"
-                              className="absolute right-1 top-1 z-10 rounded bg-background/80 px-1 text-[10px] underline"
-                              aria-label={`Focus ${formatFacetValue(rowVariable, facet.rowRawValue)}${facet.columnRawValue !== null ? `, ${formatFacetValue(columnVariable, facet.columnRawValue)}` : ""} facet`}
-                              onClick={(event) => {
-                                if (event.altKey && onTraceFacet)
-                                  onTraceFacet("panel", [facet], layout);
-                                else onFocusFacet(facet.id);
-                              }}
+                            <div
+                              className="flex justify-end"
+                              style={{ height: CELL_ACTION_HEIGHT }}
                             >
-                              Focus
-                            </button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-5 text-muted-foreground hover:text-foreground"
+                                tooltip="Focus facet"
+                                aria-label={`Focus ${formatFacetValue(rowVariable, facet.rowRawValue)}${facet.columnRawValue !== null ? `, ${formatFacetValue(columnVariable, facet.columnRawValue)}` : ""} facet`}
+                                onClick={(event) => {
+                                  if (event.altKey && onTraceFacet)
+                                    onTraceFacet("panel", [facet], layout);
+                                  else onFocusFacet(facet.id);
+                                }}
+                              >
+                                <Maximize2 className="size-3" />
+                              </Button>
+                            </div>
                             <ChartRenderer
                               settings={settings}
                               width={cellWidth}
-                              height={cellHeight}
+                              height={Math.max(
+                                1,
+                                cellHeight - CELL_ACTION_HEIGHT
+                              )}
                               facetIds={facet.ids}
                             />
                           </>

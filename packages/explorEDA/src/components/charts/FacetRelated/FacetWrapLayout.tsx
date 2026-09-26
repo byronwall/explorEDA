@@ -1,5 +1,7 @@
 import { ChartSettings, datum } from "@/types/ChartTypes";
+import { Maximize2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { ChartRenderer } from "../ChartRenderer";
 import { FacetData } from "./FacetContainer";
 import { planFacetWrapLayout, type FacetLayoutPlan } from "./facetLayout";
@@ -92,7 +94,7 @@ export function FacetWrapLayout({
             key={facet.id}
             className="relative min-h-0 min-w-0 overflow-hidden rounded-md border border-border/50 p-2"
           >
-            <div className="mb-1 flex items-center justify-between gap-1 text-xs font-medium">
+            <div className="mb-1 flex h-4 min-w-0 items-center gap-0.5 text-xs font-medium">
               <button
                 type="button"
                 className="min-w-0 truncate text-left underline-offset-2 hover:underline"
@@ -105,9 +107,11 @@ export function FacetWrapLayout({
               >
                 {formatFacetValue(rowVariable, facet.rowRawValue)}
               </button>
-              <button
-                type="button"
-                className="shrink-0 underline"
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-5 shrink-0 text-muted-foreground hover:text-foreground"
+                tooltip="Focus facet"
                 aria-label={`Focus ${formatFacetValue(rowVariable, facet.rowRawValue)} facet`}
                 onClick={(event) => {
                   if (event.altKey && onTraceFacet)
@@ -115,8 +119,8 @@ export function FacetWrapLayout({
                   else onFocusFacet(facet.id);
                 }}
               >
-                Focus
-              </button>
+                <Maximize2 className="size-3" />
+              </Button>
             </div>
             <ChartRenderer
               settings={settings}
