@@ -50,7 +50,7 @@ export const examples: ExampleData[] = [
     description:
       "Follow a point from raw order values through calculations, filters, scales, color, and final position.",
     icon: ScatterChart,
-    data: "/explorEDA/datasets/scatter-trace.csv",
+    data: "/datasets/scatter-trace.csv",
     savedData: scatterTraceDashboard,
   },
   {
@@ -61,7 +61,7 @@ export const examples: ExampleData[] = [
     description:
       "14 calculated fields across 10,000 synthetic orders. Inspect chains, preview a rule change, and apply it across linked views.",
     icon: Calculator,
-    data: "/explorEDA/datasets/shop-10000.csv",
+    data: "/datasets/shop-10000.csv",
     savedData: calculationDashboard,
   },
   {
@@ -71,7 +71,7 @@ export const examples: ExampleData[] = [
     description:
       "Explore 16 fields across linked charts, tables, and regional facets. Deterministic synthetic orders.",
     icon: ShoppingCart,
-    data: "/explorEDA/datasets/shop-10000.csv",
+    data: "/datasets/shop-10000.csv",
     savedData: largeShopDashboard,
   },
   {
@@ -81,7 +81,7 @@ export const examples: ExampleData[] = [
     description:
       "Explore a release through traffic, conversion, and response time. Synthetic daily observations.",
     icon: LineChart,
-    data: "/explorEDA/datasets/product-activity.csv",
+    data: "/datasets/product-activity.csv",
     savedData: activityDashboard,
   },
   {
@@ -92,7 +92,7 @@ export const examples: ExampleData[] = [
     description:
       "Seven linked views of species, body size, bill shape, and island populations.",
     icon: Bird,
-    data: "/explorEDA/datasets/palmer-penguins.csv",
+    data: "/datasets/palmer-penguins.csv",
   },
   {
     id: "shop-operations",
@@ -102,7 +102,7 @@ export const examples: ExampleData[] = [
     description:
       "Follow orders from revenue and margin to delivery, channels, and individual records.",
     icon: ShoppingCart,
-    data: "/explorEDA/datasets/shop-operations.csv",
+    data: "/datasets/shop-operations.csv",
   },
   {
     id: "lorenz-3d",
@@ -110,7 +110,7 @@ export const examples: ExampleData[] = [
     description: "Inspect a saved 2D brush across coordinated 3D views.",
     recommended: true,
     icon: ScatterChart,
-    data: "/explorEDA/lorenz_3d_small.csv",
+    data: "/lorenz_3d_small.csv",
     savedData: demoSettings,
   },
   {
@@ -118,7 +118,7 @@ export const examples: ExampleData[] = [
     title: "Box Plot with Beeswarm",
     description: "Compare distributions with sampled individual observations.",
     icon: BarChart,
-    data: "/explorEDA/correlated_medium.csv",
+    data: "/correlated_medium.csv",
     savedData: boxPlotSettings,
   },
   {
@@ -126,7 +126,7 @@ export const examples: ExampleData[] = [
     title: "What drives categorical product counts?",
     description: "Compare category totals with stock and size facets.",
     icon: BarChart,
-    data: "/explorEDA/categorical_medium.csv",
+    data: "/categorical_medium.csv",
     savedData: categoricalChartSettings,
   },
   {
@@ -134,7 +134,7 @@ export const examples: ExampleData[] = [
     title: "Color Legend",
     description: "Use a shared color scale across categorical views.",
     icon: Palette,
-    data: "/explorEDA/categorical_medium.csv",
+    data: "/categorical_medium.csv",
     savedData: colorLegendSettings,
   },
 
@@ -143,7 +143,7 @@ export const examples: ExampleData[] = [
     title: "How does square-root growth slow?",
     description: "Follow one labeled transform across an ordered sequence.",
     icon: LineChart,
-    data: "/explorEDA/basic_numbers_medium.csv",
+    data: "/basic_numbers_medium.csv",
     savedData: lineChartSettings,
   },
   {
@@ -151,7 +151,7 @@ export const examples: ExampleData[] = [
     title: "Which product rows match a search?",
     description: "Inspect fields, then browse sorted Sports rows.",
     icon: Table2,
-    data: "/explorEDA/categorical_small.csv",
+    data: "/categorical_small.csv",
     savedData: categoricalSmallSettings,
   },
   {
@@ -159,7 +159,7 @@ export const examples: ExampleData[] = [
     title: "Fifa",
     description: "Explore player ratings, roles, and nationalities.",
     icon: Gamepad2,
-    data: "/explorEDA/all_fc_24_players.csv",
+    data: "/all_fc_24_players.csv",
     savedData: fifaSettings,
   },
   {
@@ -167,7 +167,7 @@ export const examples: ExampleData[] = [
     title: "World Bank Population",
     description: "Compare population trends across countries.",
     icon: Globe,
-    data: "/explorEDA/world_bank_population.csv",
+    data: "/world_bank_population.csv",
     savedData: worldBankPopulationSettings,
   },
 
@@ -176,7 +176,7 @@ export const examples: ExampleData[] = [
     title: "NBA Stats",
     description: "Compare team and player performance metrics.",
     icon: BarChart,
-    data: "/explorEDA/nba_stats.csv",
+    data: "/nba_stats.csv",
     savedData: nbaStatsSettings,
   },
 ];
