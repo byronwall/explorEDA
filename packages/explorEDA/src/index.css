@@ -758,46 +758,264 @@ html {
   }
 }
 
-.eda-summary-table thead {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  background: var(--muted);
+.eda-summary-view {
+  container-type: inline-size;
 }
-.eda-summary-table th {
-  height: 36px;
-  padding: 4px 8px;
-}
-.eda-summary-table td {
-  height: 32px;
-  padding: 3px 8px;
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-.eda-summary-table th button {
-  height: 26px;
-  padding: 0;
+.eda-summary-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 12px;
-}
-.eda-summary-table td [data-slot="badge"] {
-  background: transparent;
-  border: none;
-  padding: 0;
-  font-weight: 400;
-  font-size: 11px;
   font-variant-numeric: tabular-nums;
 }
-.eda-summary-table td [data-slot="badge"] svg {
+.eda-summary-col-field {
+  width: 28%;
+}
+.eda-summary-col-count {
+  width: 72px;
+}
+.eda-summary-col-actions {
+  width: 88px;
+}
+.eda-summary-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  height: 32px;
+  padding: 0 10px;
+  background: var(--muted);
+  border-bottom: 1px solid var(--border);
   color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+}
+.eda-summary-table thead th.eda-summary-num {
+  text-align: right;
+}
+.eda-summary-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  margin: 0 -4px;
+  padding: 0 4px;
+  border-radius: 4px;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.eda-summary-num .eda-summary-sort {
+  flex-direction: row-reverse;
+}
+.eda-summary-sort svg {
+  width: 12px;
+  height: 12px;
+  opacity: 0.45;
+}
+.eda-summary-sort:hover,
+.eda-summary-sort[data-active] {
+  color: var(--foreground);
+}
+.eda-summary-sort[data-active] svg {
+  opacity: 1;
+}
+.eda-summary-sort:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.eda-summary-table tbody th,
+.eda-summary-table tbody td {
+  height: 36px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  text-align: left;
+  font-weight: 400;
+  white-space: nowrap;
+}
+.eda-summary-table tbody tr:last-child > * {
+  border-bottom: none;
+}
+.eda-summary-table tbody tr:hover > *,
+.eda-summary-table tbody tr:focus-within > * {
+  background: color-mix(in oklab, var(--muted) 55%, transparent);
+}
+.eda-summary-field {
+  overflow: hidden;
+}
+.eda-summary-num {
+  text-align: right !important;
+}
+.eda-summary-missing {
+  color: var(--warning);
+}
+.eda-summary-share-label {
+  display: inline-block;
+  min-width: 3ch;
+  margin-left: 6px;
+  color: var(--muted-foreground);
+  font-size: 10px;
+  text-align: right;
+}
+.eda-summary-values {
+  overflow: hidden;
+}
+.eda-summary-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.eda-summary-spark {
+  flex: 0 0 96px;
+  width: 96px;
+  height: 20px;
+  overflow: visible;
+}
+.eda-summary-spark-base {
+  stroke: var(--border);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.eda-summary-spark-bar {
+  fill: color-mix(in oklab, var(--primary) 62%, transparent);
+}
+.eda-summary-share {
+  fill: color-mix(in oklab, var(--primary) 34%, transparent);
+}
+.eda-summary-share[data-rank="0"] {
+  fill: color-mix(in oklab, var(--primary) 70%, transparent);
+}
+.eda-summary-share-rest {
+  fill: var(--muted);
+}
+.eda-summary-reading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 8px;
+  min-width: 0;
+  height: 16px;
+  overflow: hidden;
+  line-height: 16px;
+}
+.eda-summary-primary {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--foreground);
+}
+.eda-summary-secondary {
+  flex: 0 0 auto;
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.eda-summary-actions-cell {
+  position: relative;
+  padding-right: 6px !important;
 }
 .eda-summary-actions {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 2px;
-  margin-left: 12px;
-  vertical-align: middle;
 }
+.eda-summary-actions button {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  color: var(--muted-foreground);
+}
+.eda-summary-actions button:hover {
+  color: var(--foreground);
+}
+.eda-summary-actions button svg {
+  width: 14px;
+  height: 14px;
+}
+@media (hover: hover) and (pointer: fine) {
+  /* Actions float over the end of the row so values keep the full width. */
+  .eda-summary-table col.eda-summary-col-actions {
+    width: 0;
+  }
+  .eda-summary-table .eda-summary-actions-cell {
+    padding: 0 !important;
+    overflow: visible;
+  }
+  .eda-summary-actions {
+    position: absolute;
+    top: 50%;
+    right: 4px;
+    padding-left: 20px;
+    transform: translateY(-50%);
+    background: linear-gradient(
+      to right,
+      transparent,
+      color-mix(in oklab, var(--muted) 55%, var(--card)) 20px
+    );
+    opacity: 0;
+    transition: opacity 120ms ease-out;
+  }
+  .eda-summary-table tbody tr:hover .eda-summary-actions,
+  .eda-summary-table tbody tr:focus-within .eda-summary-actions,
+  .eda-summary-actions:has([data-state="open"]) {
+    opacity: 1;
+  }
+}
+@container (max-width: 760px) {
+  .eda-summary-spark {
+    flex-basis: 64px;
+    width: 64px;
+  }
+  .eda-summary-profile {
+    gap: 10px;
+  }
+}
+@container (max-width: 560px) {
+  .eda-summary-col-field {
+    width: 34%;
+  }
+  .eda-summary-col-count {
+    width: 60px;
+  }
+  .eda-summary-secondary {
+    display: none;
+  }
+}
+@container (max-width: 440px) {
+  /* Distinct and missing counts stay in the field details tooltip. */
+  .eda-summary-table col.eda-summary-col-count {
+    width: 0;
+  }
+  .eda-summary-table .eda-summary-num {
+    padding: 0;
+    overflow: hidden;
+    visibility: hidden;
+  }
+  .eda-summary-profile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 6px 0;
+  }
+  .eda-summary-spark {
+    flex-basis: auto;
+    height: 14px;
+  }
+  .eda-summary-table tbody th,
+  .eda-summary-table tbody td {
+    white-space: normal;
+  }
+  .eda-summary-field {
+    overflow-wrap: anywhere;
+  }
+}
+
 @media (max-width: 640px) {
   .eda-workspace-toolbar {
     flex-wrap: wrap;
@@ -830,27 +1048,6 @@ html {
     width: auto;
     max-width: 100%;
     font-size: 11px;
-  }
-
-  .eda-summary-table {
-    table-layout: fixed;
-  }
-  .eda-summary-table th:first-child,
-  .eda-summary-table td:first-child {
-    width: 38%;
-  }
-  .eda-summary-table th:nth-child(2),
-  .eda-summary-table td:nth-child(2) {
-    width: 56px;
-  }
-  .eda-summary-table td:first-child [class~="truncate"] {
-    overflow: visible;
-    overflow-wrap: anywhere;
-    text-overflow: clip;
-    white-space: normal;
-  }
-  .eda-summary-table td:nth-child(3) {
-    white-space: normal;
   }
 }
 

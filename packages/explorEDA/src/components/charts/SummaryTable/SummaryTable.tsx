@@ -12,13 +12,12 @@ import { Download } from "lucide-react";
 import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { toast } from "sonner";
-import { CompactSummaryTable } from "../../SummaryTable/components/CompactSummaryTable";
+import {
+  CompactSummaryTable,
+  type SummarySort,
+  type SummarySortColumn,
+} from "../../SummaryTable/components/CompactSummaryTable";
 import type { SummaryTableSettings } from "./definition";
-
-type SortConfig = {
-  column: keyof FieldProfile | null;
-  direction: "asc" | "desc";
-};
 
 const exportToCSV = (profiles: FieldProfile[]) => {
   const headers = [
@@ -26,7 +25,7 @@ const exportToCSV = (profiles: FieldProfile[]) => {
     "Type",
     "Total",
     "Unique",
-    "Null",
+    "Missing",
     "Min",
     "Max",
     "Mean",
@@ -81,7 +80,7 @@ export function SummaryTable({
   const crossfilterWrapper = useDataLayer((state) => state.crossfilterWrapper);
   const liveItems = useDataLayer((state) => state.liveItems);
   const chartState = useDataLayer((state) => state.charts);
-  const [sortConfig, setSortConfig] = useState<SortConfig>({
+  const [sortConfig, setSortConfig] = useState<SummarySort>({
     column: null,
     direction: "asc",
   });
@@ -162,14 +161,13 @@ export function SummaryTable({
     });
   }, [allProfiles, sortConfig]);
 
-  const handleSort = (column: keyof FieldProfile) => {
-    setSortConfig((current) => ({
-      column,
-      direction:
-        current.column === column && current.direction === "asc"
-          ? "desc"
-          : "asc",
-    }));
+  // Ascending, then descending, then back to source order.
+  const handleSort = (column: SummarySortColumn) => {
+    setSortConfig((current) => {
+      if (current.column !== column) return { column, direction: "asc" };
+      if (current.direction === "asc") return { column, direction: "desc" };
+      return { column: null, direction: "asc" };
+    });
   };
 
   const toolbar = (
@@ -198,6 +196,7 @@ export function SummaryTable({
       <CompactSummaryTable
         data={sortedProfiles}
         onSort={handleSort}
+        sort={sortConfig}
         settings={settings}
       />
     </div>
