@@ -11,7 +11,7 @@ export interface NumericStatistics {
   bins?: number[];
 }
 
-const DISTRIBUTION_BINS = 24;
+export const DISTRIBUTION_BINS = 24;
 
 export function binValues(
   sorted: number[],
@@ -24,7 +24,7 @@ export function binValues(
   }
   if (min === max) return [sorted.length];
   // Give small integer ranges one bin per value instead of sparse spikes.
-  if (max - min < binCount && sorted.every(Number.isInteger)) {
+  if (max - min + 1 < binCount && sorted.every(Number.isInteger)) {
     binCount = max - min + 1;
     const bins = new Array<number>(binCount).fill(0);
     for (const value of sorted) bins[value - min] += 1;

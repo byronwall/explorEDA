@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { buildFieldProfile } from "@/lib/fieldProfiles";
 import type { datum } from "@/types/ChartTypes";
 import { binValues } from "../utils/statisticsCalculator";
-import { summarizeField } from "./FieldDistribution";
+import { labelBins, summarizeField } from "./FieldDistribution";
 
 const column = (values: datum[]) =>
   Object.fromEntries(values.map((value, index) => [index, value])) as Record<
@@ -26,12 +26,27 @@ describe("binValues", () => {
   });
 });
 
+describe("labelBins", () => {
+  it("names one-value bins by their value and wider bins by their range", () => {
+    expect(labelBins([2, 0, 1], 1, 3, String)).toEqual([
+      { label: "1", count: 2 },
+      { label: "2", count: 0 },
+      { label: "3", count: 1 },
+    ]);
+    const wide = labelBins(new Array(24).fill(1), 0, 24, String);
+    expect(wide[0]!.label).toBe("0 – 1");
+    expect(wide[23]!.label).toBe("23 – 24");
+  });
+});
+
 describe("summarizeField", () => {
   it("reads a numeric range with its median", () => {
     const profile = buildFieldProfile("units", column([1, 2, 3, null]));
     expect(summarizeField(profile, format)).toMatchObject({
-      primary: "1 – 3",
-      secondary: "median 2",
+      low: "1",
+      high: "3",
+      statLabel: "median",
+      stat: "2",
     });
   });
 
@@ -41,9 +56,10 @@ describe("summarizeField", () => {
       column(["2024-03-01", "2024-01-01", "2024-02-01"]),
       "datetime"
     );
-    expect(summarizeField(profile, format)?.primary).toBe(
-      "2024-01-01 – 2024-03-01"
-    );
+    expect(summarizeField(profile, format)).toMatchObject({
+      low: "2024-01-01",
+      high: "2024-03-01",
+    });
   });
 
   it("reads a category field as its most common value and share", () => {
@@ -52,14 +68,19 @@ describe("summarizeField", () => {
       column(["North", "North", "South", null])
     );
     expect(summarizeField(profile, format)).toMatchObject({
-      primary: "North 67%",
-      secondary: "most common of 2",
+      label: "North",
+      statLabel: "share",
+      stat: "67%",
+      bars: [
+        { label: "North", count: 2 },
+        { label: "South", count: 1 },
+      ],
     });
   });
 
   it("says when every value is unique", () => {
     const profile = buildFieldProfile("id", column(["a", "b", "c"]));
-    expect(summarizeField(profile, format)?.primary).toBe("All values unique");
+    expect(summarizeField(profile, format)?.label).toBe("All values unique");
   });
 
   it("has no reading when every value is missing", () => {

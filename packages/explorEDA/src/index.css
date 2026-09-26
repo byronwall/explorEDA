@@ -892,28 +892,71 @@ html {
 .eda-summary-share-rest {
   fill: var(--muted);
 }
+/* Readings share track widths sized from the longest value in the table, so
+   ranges and statistics line up by column. A statistic that does not fit
+   wraps onto the hidden second line instead of being clipped. */
 .eda-summary-reading {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  column-gap: 8px;
+  column-gap: 12px;
   min-width: 0;
   height: 16px;
   overflow: hidden;
   line-height: 16px;
+  white-space: nowrap;
 }
-.eda-summary-primary {
-  flex: 0 1 auto;
-  min-width: 0;
+.eda-summary-range {
+  display: grid;
+  flex: none;
+  grid-template-columns: var(--eda-summary-low, auto) 2ch var(
+      --eda-summary-high,
+      auto
+    );
   max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: var(--foreground);
 }
-.eda-summary-secondary {
-  flex: 0 0 auto;
+.eda-summary-stat-group {
+  display: grid;
+  flex: none;
+  grid-template-columns: var(--eda-summary-stat-label, auto) var(
+      --eda-summary-stat,
+      auto
+    );
+  column-gap: 5px;
+  align-items: baseline;
   color: var(--muted-foreground);
   font-size: 11px;
+}
+.eda-summary-low,
+.eda-summary-high,
+.eda-summary-stat {
+  text-align: right;
+}
+.eda-summary-sep {
+  color: var(--muted-foreground);
+  text-align: center;
+}
+.eda-summary-label {
+  grid-column: 1 / -1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.eda-summary-spark-hit {
+  display: inline-flex;
+  flex: none;
+  padding: 4px 0;
+  cursor: crosshair;
+}
+.eda-summary-spark-focus {
+  fill: var(--muted);
+}
+.eda-summary-spark-bar[data-active],
+.eda-summary-share[data-active] {
+  fill: var(--primary);
+}
+.eda-summary-share-rest[data-active] {
+  fill: color-mix(in oklab, var(--muted-foreground) 40%, transparent);
 }
 .eda-summary-actions-cell {
   position: relative;
@@ -983,7 +1026,7 @@ html {
   .eda-summary-col-count {
     width: 60px;
   }
-  .eda-summary-secondary {
+  .eda-summary-stat-group {
     display: none;
   }
 }

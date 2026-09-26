@@ -1,10 +1,11 @@
+import type { CSSProperties } from "react";
 import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
 import { Button } from "@/components/ui/button";
 import { ArrowDown, ArrowUp, ArrowUpDown, Settings2 } from "lucide-react";
 import { FieldMetadata } from "@/components/FieldMetadata";
 import { ChartActions } from "./ChartActions";
 import { FieldInspector } from "./FieldInspector";
-import { summarizeField } from "./FieldDistribution";
+import { summarizeField, type FieldSummary } from "./FieldDistribution";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { FieldProfile } from "@/lib/fieldProfiles";
 import type { datum } from "@/types/ChartTypes";
@@ -23,6 +24,35 @@ interface CompactSummaryTableProps {
   onSort: (column: SummarySortColumn) => void;
   sort?: SummarySort;
   settings: SummaryTableSettings;
+}
+
+const MAX_TRACK = 16;
+const width = (values: Array<string | undefined>) =>
+  Math.min(
+    MAX_TRACK,
+    Math.max(0, ...values.map((value) => value?.length ?? 0))
+  );
+
+/**
+ * Size the reading tracks from the longest value in each, so ranges, medians,
+ * and shares line up down the table instead of following each row's text.
+ */
+function readingColumns(summaries: Array<FieldSummary | undefined>) {
+  const present = summaries.filter(
+    (summary): summary is FieldSummary => summary !== undefined
+  );
+  const measuredLow = width(present.map((summary) => summary.low));
+  const high = width(present.map((summary) => summary.high));
+  const label = width(present.map((summary) => summary.label));
+  // Top values span the range tracks and truncate past them. A table of only
+  // text fields gives the label its own width.
+  const low = measuredLow === 0 && high === 0 ? label : measuredLow;
+  return {
+    "--eda-summary-low": `${low}ch`,
+    "--eda-summary-high": `${high}ch`,
+    "--eda-summary-stat-label": `${width(present.map((summary) => summary.statLabel))}ch`,
+    "--eda-summary-stat": `${width(present.map((summary) => summary.stat))}ch`,
+  } as CSSProperties;
 }
 
 function SortHeader({
@@ -78,8 +108,19 @@ export function CompactSummaryTable({
   const formatValue = useDataLayer((state) => state.formatFieldValue);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const label = getFieldLabel ?? ((field: string) => field);
+  const rows = data.map((profile) => ({
+    profile,
+    summary: summarizeField(
+      profile,
+      (value) => formatValue(profile.name, value as datum),
+      label(profile.name)
+    ),
+  }));
   return (
-    <table className="eda-summary-table">
+    <table
+      className="eda-summary-table"
+      style={readingColumns(rows.map((row) => row.summary))}
+    >
       <caption className="sr-only">{getChartSummary(settings)}</caption>
       <colgroup>
         <col className="eda-summary-col-field" />
@@ -112,11 +153,8 @@ export function CompactSummaryTable({
         </tr>
       </thead>
       <tbody>
-        {data.map((profile) => {
+        {rows.map(({ profile, summary }) => {
           const fieldLabel = label(profile.name);
-          const summary = summarizeField(profile, (value) =>
-            formatValue(profile.name, value as datum)
-          );
           const missingShare =
             profile.totalCount > 0 ? profile.nullCount / profile.totalCount : 0;
           return (
@@ -164,17 +202,37 @@ export function CompactSummaryTable({
                 {summary ? (
                   <div className="eda-summary-profile">
                     {summary.graphic}
-                    <span className="eda-summary-reading">
-                      <span className="sr-only">{summary.description}</span>
-                      <span aria-hidden="true" className="eda-summary-primary">
-                        {summary.primary}
+                    <span className="sr-only">{summary.description}</span>
+                    <span aria-hidden="true" className="eda-summary-reading">
+                      <span className="eda-summary-range">
+                        {summary.label !== undefined ? (
+                          <span className="eda-summary-label">
+                            {summary.label}
+                          </span>
+                        ) : (
+                          <>
+                            <span className="eda-summary-low">
+                              {summary.low}
+                            </span>
+                            {summary.high !== undefined && (
+                              <>
+                                <span className="eda-summary-sep">–</span>
+                                <span className="eda-summary-high">
+                                  {summary.high}
+                                </span>
+                              </>
+                            )}
+                          </>
+                        )}
                       </span>
-                      {summary.secondary && (
-                        <span
-                          aria-hidden="true"
-                          className="eda-summary-secondary"
-                        >
-                          {summary.secondary}
+                      {summary.stat !== undefined && (
+                        <span className="eda-summary-stat-group">
+                          <span className="eda-summary-stat-label">
+                            {summary.statLabel}
+                          </span>
+                          <span className="eda-summary-stat">
+                            {summary.stat}
+                          </span>
                         </span>
                       )}
                     </span>
