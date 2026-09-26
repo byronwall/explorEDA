@@ -1,19 +1,15 @@
-import { FunctionSquare, Network, Save } from "lucide-react";
 import { SectionHeading } from "./SectionHeading";
 
 const reasons = [
   {
-    icon: Network,
     title: "Linked views and their records",
     body: "A selection in one chart filters every other view and the record table, so users can check the rows behind a pattern.",
   },
   {
-    icon: FunctionSquare,
     title: "Calculated fields users can inspect",
     body: "Formulas show their dependency chains, and the editor previews a draft before it is applied across views.",
   },
   {
-    icon: Save,
     title: "Settings your app keeps",
     body: "Users arrange the analysis visually. Your app receives the settings as JSON and restores them later through savedData.",
   },
@@ -27,22 +23,16 @@ export function WhyWorkspace() {
         around the charts: configuration, record inspection, formulas, and
         restorable settings.
       </SectionHeading>
-      <ul className="mt-10 grid gap-4 md:grid-cols-3">
-        {reasons.map(({ icon: Icon, title, body }) => (
-          <li
-            key={title}
-            className="rounded-xl border border-border bg-card p-6 transition-shadow hover:shadow-md"
-          >
-            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-              <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
-            </span>
-            <h3 className="mt-4 font-semibold">{title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+      <dl className="mt-10 grid gap-x-10 gap-y-8 md:grid-cols-3">
+        {reasons.map(({ title, body }) => (
+          <div key={title} className="border-t border-foreground/80 pt-4">
+            <dt className="font-semibold">{title}</dt>
+            <dd className="mt-2 text-sm leading-relaxed text-muted-foreground">
               {body}
-            </p>
-          </li>
+            </dd>
+          </div>
         ))}
-      </ul>
+      </dl>
       <p className="mt-5 text-sm text-muted-foreground">
         To try the formula workflow, open{" "}
         <span className="font-medium text-foreground">

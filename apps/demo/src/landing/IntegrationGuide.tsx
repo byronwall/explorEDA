@@ -97,24 +97,23 @@ export function IntegrationGuide() {
           </p>
         </div>
 
-        <div className="min-w-0 space-y-3">
+        <div className="min-w-0">
           <h3 className="text-sm font-semibold">Three props, one boundary</h3>
-          {boundaries.map((item) => (
-            <div
-              key={item.name}
-              className="rounded-xl border border-border bg-card p-4"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <code className="text-sm font-semibold">{item.name}</code>
-                <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
-                  {item.role}
-                </span>
+          <dl className="mt-3 divide-y divide-border border-y border-border">
+            {boundaries.map((item) => (
+              <div key={item.name} className="py-4">
+                <dt className="flex items-baseline justify-between gap-3">
+                  <code className="text-sm font-semibold">{item.name}</code>
+                  <span className="text-xs text-muted-foreground">
+                    {item.role}
+                  </span>
+                </dt>
+                <dd className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                  {item.meaning}
+                </dd>
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                {item.meaning}
-              </p>
-            </div>
-          ))}
+            ))}
+          </dl>
         </div>
       </div>
 
@@ -131,10 +130,10 @@ export function IntegrationGuide() {
         <dl className="grid gap-px overflow-hidden rounded-b-xl bg-border sm:grid-cols-2 lg:grid-cols-4">
           {facts.map((fact) => (
             <div key={fact.label} className="bg-card p-5">
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {fact.label}
-              </dt>
-              <dd className="mt-1.5 text-sm leading-relaxed">{fact.value}</dd>
+              <dt className="text-sm font-semibold">{fact.label}</dt>
+              <dd className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                {fact.value}
+              </dd>
             </div>
           ))}
         </dl>

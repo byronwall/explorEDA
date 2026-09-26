@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Filter, FunctionSquare, Save, Table2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { InstallCommand } from "./CodePanel";
 import { REPO_URL } from "./links";
 import { LiveOrderBook } from "./LiveOrderBook";
@@ -7,16 +7,9 @@ import { LiveOrderBook } from "./LiveOrderBook";
 const navLinkClass =
   "rounded-md px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground";
 
-const capabilities = [
-  { icon: Filter, label: "Linked filters across every view" },
-  { icon: Table2, label: "Record tables for any selection" },
-  { icon: FunctionSquare, label: "Calculated fields with previews" },
-  { icon: Save, label: "Settings your app can restore" },
-];
-
 export function Hero({ onOpenFeatured }: { onOpenFeatured: () => void }) {
   return (
-    <header className="relative isolate">
+    <header>
       <nav
         aria-label="Site"
         className="mx-auto flex max-w-6xl items-center justify-between gap-4 pt-3"
@@ -34,15 +27,9 @@ export function Hero({ onOpenFeatured }: { onOpenFeatured: () => void }) {
           </a>
         </div>
       </nav>
-      <div
-        aria-hidden="true"
-        className="landing-hero-bg pointer-events-none absolute inset-x-0 -top-3 -z-10 h-[40rem]"
-      />
       <div className="mx-auto max-w-6xl px-1 pt-12 text-center sm:pt-16">
-        <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl">
-          Embed an interactive{" "}
-          <span className="landing-gradient-text">analysis workspace</span> in
-          your React app
+        <h1 className="mx-auto max-w-4xl text-4xl font-bold leading-[1.05] tracking-[-0.03em] text-balance sm:text-6xl">
+          Embed an interactive analysis workspace in your React app
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
           Give users linked charts, record-level tables, and editable calculated
@@ -76,16 +63,6 @@ export function Hero({ onOpenFeatured }: { onOpenFeatured: () => void }) {
           <span className="font-medium text-foreground">Web</span> in Sales
           channels and watch every view follow.
         </p>
-        <ul className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4 text-sm lg:grid-cols-4">
-          {capabilities.map(({ icon: Icon, label }) => (
-            <li key={label} className="flex items-center gap-2.5">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border bg-card">
-                <Icon className="h-4 w-4 text-primary" aria-hidden="true" />
-              </span>
-              <span className="font-medium">{label}</span>
-            </li>
-          ))}
-        </ul>
       </div>
     </header>
   );

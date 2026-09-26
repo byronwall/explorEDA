@@ -53,15 +53,10 @@ export function LiveOrderBook({ onOpenFull }: { onOpenFull: () => void }) {
   return (
     <div className="landing-shot overflow-hidden rounded-xl border border-border bg-card text-left">
       <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-3 py-2">
-        <div aria-hidden="true" className="flex gap-1.5 pl-1">
-          <span className="h-2.5 w-2.5 rounded-full bg-border" />
-          <span className="h-2.5 w-2.5 rounded-full bg-border" />
-          <span className="h-2.5 w-2.5 rounded-full bg-border" />
-        </div>
-        <span className="mx-auto hidden truncate rounded-md bg-background px-3 py-0.5 font-mono text-[11px] text-muted-foreground sm:block">
+        <span className="hidden truncate rounded-md bg-background px-3 py-0.5 font-mono text-[11px] text-muted-foreground sm:block">
           your-app.example/orders
         </span>
-        <div className="ml-auto flex items-center gap-1 sm:ml-0">
+        <div className="ml-auto flex items-center gap-1">
           <Button
             variant="ghost"
             size="sm"
@@ -83,7 +78,7 @@ export function LiveOrderBook({ onOpenFull }: { onOpenFull: () => void }) {
       <div
         role="region"
         aria-label="Live order book example"
-        className="h-[560px] overflow-auto bg-background sm:h-[680px]"
+        className="landing-frame h-[560px] overflow-auto bg-background sm:h-[680px]"
       >
         <div className="h-full min-w-[1024px] p-3">
           {failed ? (
