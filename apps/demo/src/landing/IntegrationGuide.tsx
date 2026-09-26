@@ -25,7 +25,7 @@ const boundaries = [
   },
 ];
 
-const facts: { label: string; value: string; attention?: boolean }[] = [
+const facts = [
   {
     label: "Framework",
     value: "React and ReactDOM 18 or 19 as peer dependencies.",
@@ -39,12 +39,6 @@ const facts: { label: string; value: string; attention?: boolean }[] = [
     label: "Browser",
     value:
       "A browser with DOM and Canvas 2D. The 3D scatter chart also needs WebGL.",
-  },
-  {
-    label: "Release",
-    attention: true,
-    value:
-      "npm has exploreda 0.0.6, which predates onStateChange and optional savedData. These examples match the current source and need the next release.",
   },
   {
     label: "Storage",
@@ -134,14 +128,10 @@ export function IntegrationGuide() {
             Package README and API details
           </a>
         </div>
-        <dl className="grid gap-px overflow-hidden rounded-b-xl bg-border sm:grid-cols-2 lg:grid-cols-5">
+        <dl className="grid gap-px overflow-hidden rounded-b-xl bg-border sm:grid-cols-2 lg:grid-cols-4">
           {facts.map((fact) => (
             <div key={fact.label} className="bg-card p-5">
-              <dt
-                className={`text-xs font-semibold uppercase tracking-wide ${
-                  fact.attention ? "text-warning" : "text-muted-foreground"
-                }`}
-              >
+              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {fact.label}
               </dt>
               <dd className="mt-1.5 text-sm leading-relaxed">{fact.value}</dd>

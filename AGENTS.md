@@ -7,6 +7,7 @@
 - Never add a `title` attribute or SVG `<title>` element to rendered UI. Both create native hover tooltips.
 - Use `aria-label` or visible text for accessible names. Use `ActionTooltip` or the `Button` `tooltip` prop only when hover help is needed.
 - Run `pnpm check:ui`; it rejects native tooltip sources in TSX.
+- Keep user-facing copy about the product. Put internal caveats, release gaps, known bugs, and to-dos in a `.tickets/` ticket, not on the page, in the UI, or in example comments.
 - Keep field names and filter state visible. Put optional actions beside or below the content.
 - Prefer compact nonmodal popovers for inspection and settings. Keep the data visible during edits.
 - Start new imports with summary and rows. Preserve saved layouts.
