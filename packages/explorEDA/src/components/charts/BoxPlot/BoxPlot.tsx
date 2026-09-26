@@ -1,3 +1,4 @@
+import { finiteNumber, finiteNumbers } from "@/lib/numeric";
 import {
   categoryEqual,
   categoryIncludes,
@@ -81,10 +82,7 @@ export function BoxPlot({
   // Group data by color field if specified
   const groupedData = useMemo(() => {
     if (!hasColorField) {
-      const validData = liveData
-        .filter((value) => value != null && value !== "")
-        .map(Number)
-        .filter(Number.isFinite);
+      const validData = finiteNumbers(liveData);
 
       const result = [
         {
@@ -99,11 +97,8 @@ export function BoxPlot({
 
     liveData.forEach((value, index) => {
       const colorValue = categoryValue(colorFieldData[index]);
-      const numValue = Number(value);
-
-      if (value == null || value === "" || !Number.isFinite(numValue)) {
-        return;
-      }
+      const numValue = finiteNumber(value);
+      if (numValue === undefined) return;
 
       if (!groups.has(colorValue)) groups.set(colorValue, []);
       groups.get(colorValue)!.push(numValue);
@@ -169,13 +164,13 @@ export function BoxPlot({
     if (settings.sortBy === "median") {
       const values = new Map<string, number[]>();
       allData.forEach((value, index) => {
-        if (value == null || value === "" || !Number.isFinite(Number(value)))
-          return;
+        const number = finiteNumber(value);
+        if (number === undefined) return;
         const group = settings.colorField
           ? categoryLabel(allGroupData[index])
           : "All Data";
         if (!values.has(group)) values.set(group, []);
-        values.get(group)!.push(Number(value));
+        values.get(group)!.push(number);
       });
       values.forEach((data, group) =>
         medians.set(
@@ -219,10 +214,7 @@ export function BoxPlot({
 
   // Create y scale with synchronized limits if in a facet
   const yScale = useMemo(() => {
-    const values = allData
-      .filter((value) => value != null && value !== "")
-      .map(Number)
-      .filter(Number.isFinite);
+    const values = finiteNumbers(allData);
     const min = Math.min(...values);
     const max = Math.max(...values);
     const range = max - min;

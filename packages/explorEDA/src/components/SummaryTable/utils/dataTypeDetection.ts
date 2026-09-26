@@ -1,3 +1,4 @@
+import { isMissingValue, isNumberLike } from "@/lib/numeric";
 import { datum } from "@/types/ChartTypes";
 
 export type DataType = "numeric" | "categorical" | "datetime" | "boolean";
@@ -8,8 +9,8 @@ export function detectColumnType(columnData: {
   // Convert object to array for easier processing
   const values = Object.values(columnData);
 
-  // Skip null/undefined values for type detection
-  const nonNullValues = values.filter((v) => v != null);
+  // Skip missing values (null, undefined, blank strings) for type detection
+  const nonNullValues = values.filter((v) => !isMissingValue(v));
   if (nonNullValues.length === 0) {
     return "categorical";
   }
@@ -21,11 +22,7 @@ export function detectColumnType(columnData: {
   }
 
   // Check if all values are numbers or can be converted to numbers
-  if (
-    nonNullValues.every(
-      (v) => v !== "" && (typeof v === "number" || !isNaN(Number(v)))
-    )
-  ) {
+  if (nonNullValues.every(isNumberLike)) {
     return "numeric";
   }
 

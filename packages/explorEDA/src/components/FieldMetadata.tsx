@@ -84,6 +84,9 @@ export function fieldMetadata(profile: FieldProfile) {
     detail: range ?? (sample ? `e.g. ${sample}` : "No sample"),
     detailLabel: range ? "Range" : "Sample",
     nulls: `${profile.nullCount.toLocaleString()} null${profile.nullCount === 1 ? "" : "s"}`,
+    excluded: profile.excludedCount
+      ? `${profile.excludedCount.toLocaleString()} not finite`
+      : undefined,
   };
 }
 
@@ -104,7 +107,14 @@ export function FieldMetadata({
 }) {
   if (!profile) return <span className={className}>{label}</span>;
   const metadata = fieldMetadata(profile);
-  const description = `${metadata.type}; ${metadata.detail}; ${metadata.nulls}`;
+  const description = [
+    metadata.type,
+    metadata.detail,
+    metadata.nulls,
+    metadata.excluded,
+  ]
+    .filter(Boolean)
+    .join("; ");
   const TypeIcon = typeIcons[profile.dataType];
 
   return (
@@ -147,6 +157,12 @@ export function FieldMetadata({
             <dd>{metadata.detail}</dd>
             <dt className="text-muted-foreground">Nulls</dt>
             <dd>{metadata.nulls}</dd>
+            {metadata.excluded && (
+              <>
+                <dt className="text-muted-foreground">Excluded</dt>
+                <dd>{metadata.excluded}</dd>
+              </>
+            )}
             <dt className="text-muted-foreground">Distinct</dt>
             <dd>{profile.uniqueCount.toLocaleString()}</dd>
           </dl>

@@ -1,3 +1,4 @@
+import { finiteNumber } from "@/lib/numeric";
 import { numericScale } from "../Axis/numericScale";
 import { AxisReadout } from "../Axis/AxisReadout";
 import { reduceDataPoints } from "@/lib/chartUtils";
@@ -85,7 +86,7 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
     (values, field) => {
       const useRightAxis = settings.seriesSettings[field]?.useRightAxis;
       (allSeriesData[field] ?? []).forEach((value) => {
-        const y = value == null || value === "" ? NaN : Number(value);
+        const y = finiteNumber(value) ?? NaN;
         if (Number.isFinite(y)) {
           values[useRightAxis ? "right" : "left"].push(y);
         }
@@ -161,8 +162,8 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
       .sort((a, b) => {
         const aValue = liveXData[a];
         const bValue = liveXData[b];
-        const aX = aValue == null || aValue === "" ? NaN : Number(aValue);
-        const bX = bValue == null || bValue === "" ? NaN : Number(bValue);
+        const aX = finiteNumber(aValue) ?? NaN;
+        const bX = finiteNumber(bValue) ?? NaN;
         const aFinite = Number.isFinite(aX);
         const bFinite = Number.isFinite(bX);
         if (aFinite !== bFinite) return aFinite ? -1 : 1;
@@ -184,8 +185,8 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
       orderedIndices.forEach((i) => {
         const value = data[i];
         const xValue = liveXData[i];
-        const x = xValue == null || xValue === "" ? NaN : Number(xValue);
-        const y = value == null || value === "" ? NaN : Number(value);
+        const x = finiteNumber(xValue) ?? NaN;
+        const y = finiteNumber(value) ?? NaN;
         if (!Number.isFinite(x) || !Number.isFinite(y)) {
           flushSegment();
           reducedData.push({ x, y: null });
@@ -281,9 +282,7 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
 
   // Process data and create scales
   const xExtent = extent(
-    allXData
-      .map((value) => (value == null ? NaN : Number(value)))
-      .filter(Number.isFinite)
+    allXData.map((value) => finiteNumber(value) ?? NaN).filter(Number.isFinite)
   ) as [number, number];
 
   // Calculate y extent across all series

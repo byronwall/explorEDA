@@ -447,7 +447,7 @@ The CSV export includes more detail than the compact view: counts, missing value
 
 The field inspector shows inferred and effective types, counts, raw/runtime examples, conversion failures, and editable labels, descriptions, formats, units, precision, currencies, date presets, null tokens, and type overrides. Applying a type-related setting rebuilds effective values and clears filters for that field. Summary has no independent filter dimension, inline histograms, calendar heatmaps, or missing-value matrix.
 
-Numeric eligibility remains inconsistent without explicit overrides. Summary treats whitespace as zero and retains infinity; grouped numeric summaries exclude both. The gap analysis records the direct runtime proof as R18.
+Numeric views share one eligibility rule ([numeric eligibility](../packages/explorEDA/src/lib/numeric.ts)). Blank strings count as missing. Nonfinite values stay in a numeric field but are excluded from measurements, and field details show the excluded count. The gap analysis records the repair as R18.
 
 Source: [summary renderer](../packages/explorEDA/src/components/charts/SummaryTable/SummaryTable.tsx), [field profiles][profiles].
 
