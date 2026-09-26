@@ -1,4 +1,9 @@
-import { finiteNumbers, isMissingValue, isNumberLike } from "@/lib/numeric";
+import {
+  finiteNumber,
+  finiteNumbers,
+  isMissingValue,
+  isNumberLike,
+} from "@/lib/numeric";
 import {
   categoryEqual,
   categoryIncludes,
@@ -130,7 +135,7 @@ export function BarChart({
       !isAggregate &&
       fieldSettings[settings.field]?.type !== "categorical" &&
       !settings.forceString &&
-      allColData.some((d) => !isMissingValue(d)) &&
+      allColData.some((d) => finiteNumber(d) !== undefined) &&
       allColData.filter((d) => !isMissingValue(d)).every(isNumberLike),
     [
       allColData,
@@ -867,7 +872,8 @@ export function BarChart({
       const value = fieldData[id];
       if (value === undefined) return false;
       if (isNumeric) {
-        const number = Number(value);
+        const number = finiteNumber(value);
+        if (number === undefined) return false;
         const index = chartData.findIndex((item, itemIndex) => {
           if (!item.isNumeric) return false;
           return (

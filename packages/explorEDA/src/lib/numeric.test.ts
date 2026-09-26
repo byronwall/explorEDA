@@ -78,6 +78,19 @@ describe("numeric eligibility", () => {
     expect(profile.statistics?.mean).toBe(row?.value);
   });
 
+  it("reports a numeric field with no finite values as all excluded", () => {
+    const profile = buildFieldProfile("ratio", {
+      0: "NaN",
+      1: Infinity,
+      2: " ",
+    });
+    expect(profile.dataType).toBe("numeric");
+    expect(profile.statistics).toBeUndefined();
+    expect(profile.nullCount).toBe(1);
+    expect(profile.excludedCount).toBe(2);
+    expect(finiteNumbers(["NaN", Infinity, " "])).toEqual([]);
+  });
+
   it("does not infer a numeric type from blanks alone", () => {
     expect(buildFieldProfile("empty", { 0: " ", 1: null }).dataType).toBe(
       "categorical"
