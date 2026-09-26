@@ -17,8 +17,12 @@ import type { IdType } from "@/providers/DataLayerProvider";
 import type { datum, MarginSettings } from "@/types/ChartTypes";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import type { ValueFilter } from "@/types/FilterTypes";
-import { scaleLinear } from "d3-scale";
 import { numericScale } from "../Axis/numericScale";
+import {
+  planAxes,
+  planChartMargin,
+  type ChartAxesPlan,
+} from "../Axis/axisPlan";
 import { getChartTitle } from "../chartAccessibility";
 import { planScatterPoints, type ScatterPointStyle } from "./planScatterPoints";
 import type { ScatterPlotSettings } from "./definition";
@@ -128,43 +132,7 @@ export interface ScatterPlan {
   };
   title: string;
   description: string;
-  grid: SvgPrimitive[];
-  axes: SvgPrimitive[];
-  guideRefs: Record<string, string[]>;
-  guidePolicy: {
-    requestedLeftMargin: number;
-    labelLeftMargin: number;
-    maxLeftMargin: number;
-    minPlotWidth: number;
-    bottomMargin: number;
-    x: {
-      gridRequested: number;
-      axisRequested: number;
-      candidates: number[];
-      kept: number[];
-      omitted: number[];
-      minLabelGap: number;
-      maxLabelChars: number;
-    };
-    y: {
-      gridRequested: number;
-      axisRequested: number;
-      candidates: number[];
-      kept: number[];
-      omitted: number[];
-      minLabelGap: number;
-      maxLabelChars: number;
-    };
-  };
-  guideDetails: Record<
-    string,
-    {
-      axis: "x" | "y";
-      role: "grid" | "tick" | "tick-text" | "rule" | "label";
-      value?: number;
-      source: "scale" | "chart-setting" | "field-label";
-    }
-  >;
+  axes: ChartAxesPlan;
   domainInputs: {
     x: [number, number];
     y: [number, number];
@@ -225,24 +193,6 @@ function bounds(ids: IdType[], data: Record<IdType, datum>): [number, number] {
   return min === Infinity ? [0, 1] : [min, max];
 }
 
-function spacedTicks(
-  ticks: number[],
-  position: (value: number) => number,
-  size: (value: number) => number
-) {
-  let edge = -Infinity;
-  return [...ticks]
-    .sort((a, b) => position(a) - position(b))
-    .filter((tick) => {
-      const half = size(tick) / 2;
-      if (position(tick) - half < edge + 8) {
-        return false;
-      }
-      edge = position(tick) + half;
-      return true;
-    });
-}
-
 function fieldLabel(field: string, settings: FieldSettingsMap) {
   return field === "__ID"
     ? "Row sequence"
@@ -270,26 +220,13 @@ export function planScatter(
   const xBuffer = (xMax - xMin) * 0.1;
   const yBuffer = (yMax - yMin) * 0.1;
   const yDomain: [number, number] = [yMin - yBuffer, yMax + yBuffer];
-  const requestedLabelMargin = Math.max(
-    settings.margin.left,
-    ...scaleLinear()
-      .domain(yDomain)
-      .ticks(5)
-      .map((tick) => String(tick).length * 7 + (yLabel ? 38 : 18))
-  );
-  const minPlotWidth = Math.min(
-    80,
-    Math.max(0, width - settings.margin.left - settings.margin.right)
-  );
-  const maxLabelMargin = Math.max(
-    0,
-    width - settings.margin.right - minPlotWidth
-  );
-  const margin = {
-    ...settings.margin,
-    left: Math.min(requestedLabelMargin, maxLabelMargin),
-    bottom: Math.max(settings.margin.bottom, xLabel ? 46 : 28),
-  };
+  const { margin, policy: marginPolicy } = planChartMargin({
+    margin: settings.margin,
+    width,
+    yDomain,
+    hasXLabel: Boolean(xLabel),
+    hasYLabel: Boolean(yLabel),
+  });
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
   const xDomain: [number, number] = [
@@ -356,144 +293,51 @@ export function planScatter(
   }));
   const included = new Set(points.map((point) => point.sourceId));
 
-  const grid: SvgPrimitive[] = [];
-  const xGridRequested = settings.xGridLines || 5;
-  const yGridRequested = settings.yGridLines || 5;
-  if (settings.xAxis.grid) {
-    for (const tick of xScale.ticks(xGridRequested)) {
-      grid.push({
-        kind: "line",
-        id: `grid:x:${tick}`,
-        x1: xScale(tick),
-        x2: xScale(tick),
-        y1: 0,
-        y2: plotHeight,
-        className: "stroke-border",
-        strokeOpacity: 0.55,
-        hitStrokeWidth: 9,
-      });
-    }
-  }
-  if (settings.yAxis.grid) {
-    for (const tick of yScale.ticks(yGridRequested)) {
-      grid.push({
-        kind: "line",
-        id: `grid:y:${tick}`,
-        x1: 0,
-        x2: plotWidth,
-        y1: yScale(tick),
-        y2: yScale(tick),
-        className: "stroke-border",
-        strokeOpacity: 0.55,
-        hitStrokeWidth: 9,
-      });
-    }
-  }
-
-  const axes: SvgPrimitive[] = [
-    {
-      kind: "line",
-      id: "x:rule",
-      x1: 0,
-      x2: plotWidth,
-      y1: plotHeight,
-      y2: plotHeight,
-      className: "stroke-border",
+  const format = (field: string) => (value: string | number) =>
+    formatFieldValue(field, value, snapshot.fieldSettings[field]);
+  const labelSource = (local: string) =>
+    local ? ("chart-setting" as const) : ("field-label" as const);
+  const axes = planAxes({
+    plotWidth,
+    plotHeight,
+    margin,
+    marginPolicy,
+    x: {
+      scale: xScale,
+      scaleType: xType,
+      field: settings.xField,
+      fieldLabel: xLabel,
+      density: settings.xGridLines,
+      grid: settings.xAxis.grid,
+      format: format(settings.xField),
+      label: [xLabel, xType === "symlog" && "symlog"].filter(Boolean).join(" · "),
+      labelSource: labelSource(settings.xAxisLabel),
+      domainSource: {
+        population: "all source rows",
+        rows: snapshot.allIds.length,
+        bounds: [xMin, xMax],
+        padding: xType === "symlog" ? "10% above" : "10% on each side",
+      },
     },
-  ];
-  const xCount = Math.max(2, settings.xGridLines ?? 5);
-  const xFormat = (value: number) =>
-    formatFieldValue(
-      settings.xField,
-      value,
-      snapshot.fieldSettings[settings.xField]
-    );
-  const yFormat = (value: number) =>
-    formatFieldValue(
-      settings.yField,
-      value,
-      snapshot.fieldSettings[settings.yField]
-    );
-  const xCandidates = xScale.ticks(xCount);
-  const xTicks = spacedTicks(
-    xCandidates,
-    xScale,
-    (tick) => xFormat(tick).length * 6
-  );
-  for (const tick of xTicks) {
-    const x = xScale(tick);
-    const text = xFormat(tick);
-    axes.push({
-      kind: "line",
-      id: `x:tick:${tick}`,
-      x1: x,
-      x2: x,
-      y1: plotHeight,
-      y2: plotHeight + 4,
-      className: "stroke-border",
-    });
-    axes.push({
-      kind: "text",
-      id: `x:text:${tick}`,
-      x,
-      y: plotHeight + 17,
-      text: text.length > 20 ? `${text.slice(0, 19)}…` : text,
-      title: text,
-      textAnchor: "middle",
-      fontSize: 10,
-      className: "fill-muted-foreground",
-    });
-  }
-  const xAxisText = [xLabel, xType === "symlog" && "symlog"]
-    .filter(Boolean)
-    .join(" · ");
-  if (xAxisText) {
-    axes.push({
-      kind: "text",
-      id: "x:label",
-      x: plotWidth / 2,
-      y: plotHeight + Math.max(32, margin.bottom - 8),
-      text: xAxisText,
-      textAnchor: "middle",
-      fontSize: 11,
-      className: "fill-muted-foreground",
-    });
-  }
-  const yCount = Math.max(2, settings.yGridLines ?? 5);
-  const yCandidates = yScale.ticks(yCount);
-  const yTicks = spacedTicks(yCandidates, yScale, () => 12);
-  const yMaxChars = Math.max(5, Math.floor((margin.left - 12 - 4) / 6));
-  for (const tick of yTicks) {
-    const text = yFormat(tick);
-    axes.push({
-      kind: "text",
-      id: `y:text:${tick}`,
-      x: -9,
-      y: yScale(tick),
-      dy: ".32em",
-      text: text.length > yMaxChars ? `${text.slice(0, yMaxChars - 1)}…` : text,
-      title: text,
-      textAnchor: "end",
-      fontSize: 10,
-      className: "fill-muted-foreground",
-    });
-  }
-  const yAxisText = [yLabel, yType === "symlog" && "symlog"]
-    .filter(Boolean)
-    .join(" · ");
-  if (yAxisText) {
-    axes.push({
-      kind: "text",
-      id: "y:label",
-      x: -plotHeight / 2,
-      y: -(margin.left - 12),
-      transform: "rotate(-90)",
-      text: yAxisText,
-      textAnchor: "middle",
-      fontSize: 11,
-      className: "fill-muted-foreground",
-    });
-  }
+    y: {
+      scale: yScale,
+      scaleType: yType,
+      field: settings.yField,
+      fieldLabel: yLabel,
+      density: settings.yGridLines,
+      grid: settings.yAxis.grid,
+      format: format(settings.yField),
+      label: [yLabel, yType === "symlog" && "symlog"].filter(Boolean).join(" · "),
+      labelSource: labelSource(settings.yAxisLabel),
+      rule: false,
+      domainSource: {
+        population: "all source rows",
+        rows: snapshot.allIds.length,
+        bounds: [yMin, yMax],
+        padding: yType === "symlog" ? "10% above" : "10% on each side",
+      },
+    },
+  });
 
   const xFilter = getRangeFilterForField(settings.filters, settings.xField);
   const yFilter = getRangeFilterForField(settings.filters, settings.yField);
@@ -530,79 +374,6 @@ export function planScatter(
       rotation: -90,
     });
   }
-  const guideRefs = Object.fromEntries(
-    [...grid, ...axes].map((item) => {
-      const axis =
-        item.id.startsWith("x:") || item.id.startsWith("grid:x:") ? "x" : "y";
-      const refs = [`scale:${axis}`];
-      if (item.kind === "text") {
-        refs.push(`field-format:${axis}`);
-      }
-      if (item.id.endsWith(":label")) {
-        refs.push(`axis-label:${axis}`);
-      }
-      return [item.id, refs];
-    })
-  );
-  const guidePolicy: ScatterPlan["guidePolicy"] = {
-    requestedLeftMargin: settings.margin.left,
-    labelLeftMargin: requestedLabelMargin,
-    maxLeftMargin: maxLabelMargin,
-    minPlotWidth,
-    bottomMargin: margin.bottom,
-    x: {
-      gridRequested: xGridRequested,
-      axisRequested: xCount,
-      candidates: xCandidates,
-      kept: xTicks,
-      omitted: xCandidates.filter((tick) => !xTicks.includes(tick)),
-      minLabelGap: 8,
-      maxLabelChars: 20,
-    },
-    y: {
-      gridRequested: yGridRequested,
-      axisRequested: yCount,
-      candidates: yCandidates,
-      kept: yTicks,
-      omitted: yCandidates.filter((tick) => !yTicks.includes(tick)),
-      minLabelGap: 8,
-      maxLabelChars: yMaxChars,
-    },
-  };
-  const guideDetails: ScatterPlan["guideDetails"] = Object.fromEntries(
-    [...grid, ...axes].map((item) => {
-      const axis =
-        item.id.startsWith("x:") || item.id.startsWith("grid:x:") ? "x" : "y";
-      const role = item.id.startsWith("grid:")
-        ? "grid"
-        : item.id.endsWith(":label")
-          ? "label"
-          : item.id.endsWith(":rule")
-            ? "rule"
-            : item.id.includes(":text:")
-              ? "tick-text"
-              : "tick";
-      const valueText = item.id.split(":").at(-1);
-      const value =
-        role === "grid" || role === "tick" || role === "tick-text"
-          ? Number(valueText)
-          : undefined;
-      return [
-        item.id,
-        {
-          axis,
-          role,
-          value,
-          source:
-            role === "label"
-              ? (axis === "x" ? settings.xAxisLabel : settings.yAxisLabel)
-                ? "chart-setting"
-                : "field-label"
-              : "scale",
-        },
-      ];
-    })
-  );
   let legend: ScatterPlan["legend"];
   if (settings.colorField && settings.colorScaleId && snapshot.colorScale) {
     const scale = snapshot.colorScale;
@@ -677,11 +448,7 @@ export function planScatter(
     ]
       .filter(Boolean)
       .join(" "),
-    grid,
     axes,
-    guideRefs,
-    guidePolicy,
-    guideDetails,
     domainInputs: {
       x: [xMin, xMax],
       y: [yMin, yMax],

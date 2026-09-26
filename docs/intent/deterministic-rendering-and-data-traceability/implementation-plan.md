@@ -30,7 +30,7 @@ The scatter plan retains source IDs, row sets, scales, points, guides, brush geo
 
 A selected visible scatter object explains the values and decisions used to draw it.
 
-## Milestone 2: One grouped bar explains its contributors — next comparison
+## Milestone 2: One grouped bar explains its contributors — complete
 
 Ready packet: [trace one grouped aggregate bar](../../../.tickets/exp-9wuz.md). This is the only ticket in the next step.
 
@@ -44,13 +44,19 @@ Ready packet: [trace one grouped aggregate bar](../../../.tickets/exp-9wuz.md). 
 
 One visible bar explains its value and geometry through the same kind of trace used by scatter.
 
-## Milestone 3: Extract only the shared contract both charts need
+## Milestone 3: Extract only the shared contract both charts need — complete
 
-Compare scatter points with the grouped bar. Share fields only when both paths need them. Likely common fields are mark identity, source row set, control inputs, and final drawing values. Keep legend stops, facet pages, and guide rules as small helpers unless another chart needs a broader scene plan.
+Scatter and bar now share a small contract. Everything else stays chart-specific.
 
-### Desired end state
+- **Axis plan.** `planAxes` in [`axisPlan.ts`](../../../packages/explorEDA/src/components/charts/Axis/axisPlan.ts) decides ticks, grid lines, labels, the zero line and margins. `AxisLayer` draws that plan, and a guide trace reads it. Tick density sets the D3 candidate target; spacing then drops overlapping labels. Every chart drawn through `BaseChart` uses this rule, even one that does not trace yet.
+- **Planned ids in the DOM.** A drawn object carries only `data-plan-id`. Inspection looks the id up in the plan; it never reads values back from SVG attributes.
+- **Trace scope.** One [`ChartTraceScope`](../../../packages/explorEDA/src/components/charts/trace/ChartTraceScope.tsx) per chart panel. The chart, each facet chart, the facet layout, the color legend and the title register as sources. A source reports a revision, resolves a kind and id to a typed trace, finds the object that draws a source row, and lists its objects for browsing.
+- **Selection.** A selection keeps only owner, kind, id and revision. Its trace is resolved from the owner's current plan on each render, so a resize updates the trace. A new data revision, or an id the plan no longer draws, clears it.
+- **Bar plan.** [`planBarChart`](../../../packages/explorEDA/src/components/charts/BarChart/barPlan.ts) owns its scales, domain setters, margins and all three bar modes: grouped aggregate, count per category and numeric bins. Each bar keeps the aggregate, count or bin row that sets its value, with contributors. Bins use the shared numeric rule, so blank and nonfinite values match no bin.
 
-The next chart can reuse a proven trace shape without adopting scatter-only fields.
+### Next chart
+
+Row chart is closest to bar; line chart is closest to scatter. For either, write a pure planner that returns `axes` and marks with planned ids, a resolver that returns a typed trace, and register a chart source. Add a trace body only for kinds the shared bodies do not cover.
 
 ## Below the cut line
 
