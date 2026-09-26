@@ -9,15 +9,21 @@ import { IdType, useDataLayer } from "@/providers/DataLayerProvider";
 import { ChartSettings, datum } from "@/types/ChartTypes";
 import { Filter } from "@/types/FilterTypes";
 import { Minimize2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChartRenderer } from "../ChartRenderer";
 import { FacetGridLayout } from "./FacetGridLayout";
 import { FacetWrapLayout } from "./FacetWrapLayout";
 import { FacetPager, type FacetPickerProps } from "./FacetPager";
-import { useGetAllIds } from "../useGetLiveData";
+import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import { hasFieldDisplayFormat } from "@/lib/fieldSettings";
-import { useScatterTraceSelection } from "../ScatterPlot/ScatterTraceContext";
+import {
+  useChartTrace,
+  useChartTraceApi,
+  useTraceRevision,
+  useTraceSource,
+} from "../trace/ChartTraceScope";
+import type { FacetTrace, TraceSource } from "../trace/traceTypes";
 import type { FacetLayoutPlan } from "./facetLayout";
 
 const FACET_HEADER_HEIGHT = 20;
@@ -53,7 +59,23 @@ export function FacetContainer({
   const nonce = useDataLayer((state) => state.nonce);
   const rawRows = useDataLayer((state) => state.rawData);
   const calculations = useDataLayer((state) => state.calculationManager);
-  const trace = useScatterTraceSelection();
+  const trace = useChartTrace();
+  const traceApi = useChartTraceApi();
+  const owner = useId();
+  const revision = useTraceRevision(settings);
+  const chartIds = useGetLiveIds(settings);
+  const canTrace = settings.type === "scatter" || settings.type === "bar";
+  /** Layout and members for each traced heading, recorded when it is clicked. */
+  const traced = useRef(
+    new Map<
+      string,
+      {
+        role: FacetTrace["role"];
+        facetIds: string[];
+        layout: FacetLayoutPlan;
+      }
+    >()
+  );
   const [focusedFacetId, setFocusedFacetId] = useState<string | null>(null);
   const [pendingRow, setPendingRow] = useState<number | null>(null);
   const displayFacetValue = useMemo(
@@ -83,23 +105,13 @@ export function FacetContainer({
     return groupFacetData(allIds, rowData, columnData);
   }, [settings.facet, getColumnData, allIds, nonce]);
 
-  const registerRowFallback = trace?.registerRowFallback;
-  const inspectVisibleRow = trace?.inspectVisibleRow;
+  const findVisibleRow = traceApi?.findVisibleRow;
   useEffect(() => {
-    if (settings.type !== "scatter") return;
-    return registerRowFallback?.((id) => {
-      const facet = allFacetData.find((item) => item.ids.includes(id));
-      if (!facet) return false;
-      setFocusedFacetId(facet.id);
-      setPendingRow(id);
-      return true;
-    });
-  }, [settings.type, registerRowFallback, allFacetData]);
-  useEffect(() => {
-    if (pendingRow !== null && inspectVisibleRow?.(pendingRow)) {
+    if (pendingRow !== null && findVisibleRow?.(pendingRow)) {
       setPendingRow(null);
     }
-  }, [pendingRow, inspectVisibleRow, trace?.plan]);
+    // A focused facet's chart registers after this render; the version shows it.
+  }, [pendingRow, findVisibleRow, trace?.version]);
 
   useEffect(() => {
     if (
@@ -143,64 +155,98 @@ export function FacetContainer({
     return !filter || categoryIncludes(filter.values, value);
   };
 
-  const inspectFacet =
-    settings.type === "scatter"
-      ? (
-          role: "panel" | "row-heading" | "column-heading",
-          facets: FacetData[],
-          layout: FacetLayoutPlan = {
-            mode: "focused",
-            width,
-            height: Math.max(1, height - FACET_HEADER_HEIGHT),
-          }
-        ) => {
-          const first = facets[0];
-          if (!first) return;
-          const sourceIds = [
-            ...new Set(facets.flatMap((facet) => facet.ids)),
-          ].sort((a, b) => a - b);
-          const chartIds = new Set(trace?.plan?.rowSets.chart ?? []);
-          const sampleSourceId = sourceIds[0];
-          const heading = (field: string, value: datum) => ({
-            field,
-            value,
-            label: displayFacetValue(field, value),
-            sampleSourceId,
-            raw:
-              sampleSourceId === undefined
-                ? undefined
-                : rawRows[sampleSourceId]?.[field],
-            calculation:
-              sampleSourceId === undefined
-                ? undefined
-                : calculations.traceRow(field, sampleSourceId),
-          });
-          const row =
-            role !== "column-heading"
-              ? heading(settings.facet.rowVariable, first.rowRawValue)
-              : undefined;
-          const column =
-            settings.facet.type === "grid" && role !== "row-heading"
-              ? heading(settings.facet.columnVariable, first.columnRawValue)
-              : undefined;
-          trace?.select({
-            kind: "facet",
-            id: `facet:${role}:${first.id}`,
-            plan: trace.plan ?? undefined,
-            trace: {
-              kind: "facet",
-              id: `facet:${role}:${first.id}`,
-              revision: trace.plan?.revision ?? String(nonce),
-              role,
-              row,
-              column,
-              sourceIds,
-              chartIds: sourceIds.filter((id) => chartIds.has(id)),
-              layout,
+  const resolveFacet = (id: string): FacetTrace | undefined => {
+    const record = traced.current.get(id);
+    if (!record) return undefined;
+    const facets = allFacetData.filter((facet) =>
+      record.facetIds.includes(facet.id)
+    );
+    const first = facets[0];
+    if (!first) return undefined;
+    const sourceIds = [...new Set(facets.flatMap((facet) => facet.ids))].sort(
+      (a, b) => a - b
+    );
+    const chartSet = new Set(chartIds);
+    const sampleSourceId = sourceIds[0];
+    const heading = (field: string, value: datum) => ({
+      field,
+      value,
+      label: displayFacetValue(field, value),
+      sampleSourceId,
+      raw:
+        sampleSourceId === undefined
+          ? undefined
+          : rawRows[sampleSourceId]?.[field],
+      calculation:
+        sampleSourceId === undefined
+          ? undefined
+          : calculations.traceRow(field, sampleSourceId),
+    });
+    return {
+      kind: "facet",
+      id,
+      revision,
+      role: record.role,
+      row:
+        record.role !== "column-heading"
+          ? heading(settings.facet.rowVariable, first.rowRawValue)
+          : undefined,
+      column:
+        settings.facet.type === "grid" && record.role !== "row-heading"
+          ? heading(settings.facet.columnVariable, first.columnRawValue)
+          : undefined,
+      sourceIds,
+      chartIds: sourceIds.filter((sourceId) => chartSet.has(sourceId)),
+      layout: record.layout,
+    };
+  };
+  const resolveRef = useRef(resolveFacet);
+  resolveRef.current = resolveFacet;
+  const source = useMemo(
+    (): TraceSource | null =>
+      canTrace
+        ? {
+            role: "facets",
+            revision,
+            resolve: (kind, id) =>
+              kind === "facet" ? resolveRef.current(id) : undefined,
+            // Rows in a facet off the page open that facet, then the chart finds them.
+            findRow: (id) => {
+              const facet = allFacetData.find((item) => item.ids.includes(id));
+              if (!facet) return undefined;
+              setFocusedFacetId(facet.id);
+              setPendingRow(id);
+              return "pending";
             },
-          });
+          }
+        : null,
+    // Facet data, chart rows and settings change the resolved trace too.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [canTrace, revision, allFacetData, chartIds, settings.facet, displayFacetValue]
+  );
+  useTraceSource(owner, source);
+
+  const inspectFacet = canTrace
+    ? (
+        role: FacetTrace["role"],
+        facets: FacetData[],
+        layout: FacetLayoutPlan = {
+          mode: "focused",
+          width,
+          height: Math.max(1, height - FACET_HEADER_HEIGHT),
         }
-      : undefined;
+      ) => {
+        const first = facets[0];
+        if (!first) return;
+        const id = `facet:${role}:${first.id}`;
+        traced.current.set(id, {
+          role,
+          facetIds: facets.map((facet) => facet.id),
+          layout,
+        });
+        traceApi?.inspect(owner, "facet", id);
+      }
+    : undefined;
 
   const updateVisibleFacetIds = (visibleFacetIds: string[] | undefined) =>
     updateChart(settings.id, {

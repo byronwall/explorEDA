@@ -70,16 +70,13 @@ it("plans scatter points, guides, and brush from distinct row populations", () =
     dimmedOpacity: { value: 0.15, source: "own-filter-rule" },
   });
   expect(plan.populations).toEqual({ all: 4, chart: 3, filtered: 2, facet: 3 });
-  expect(plan.grid.length).toBeGreaterThan(0);
-  expect(
-    plan.grid.every((item) => item.kind === "line" && item.hitStrokeWidth === 9)
-  ).toBe(true);
-  expect(plan.axes.some((item) => item.id === "x:label")).toBe(true);
-  expect(
-    [...plan.grid, ...plan.axes].every(
-      (item) => plan.guideRefs[item.id]?.length
-    )
-  ).toBe(true);
+  expect(plan.axes.x.gridGuides.length).toBeGreaterThan(0);
+  expect(plan.axes.x.guides.some((item) => item.id === "x:label")).toBe(true);
+  expect(plan.axes.y.guides.some((item) => item.role === "rule")).toBe(false);
+  expect(plan.axes.x.domainSource).toMatchObject({
+    population: "all source rows",
+    rows: 4,
+  });
   expect(plan.rowSets.filtered).toEqual([1, 2]);
   expect(plan.points[0]?.passesAllFilters).toBe(false);
   expect(plan.brushExtent).toBeNull();
@@ -96,12 +93,14 @@ it("plans scatter points, guides, and brush from distinct row populations", () =
     200,
     220
   );
-  expect(dense.guidePolicy.x.axisRequested).toBe(12);
-  expect(dense.guidePolicy.x.candidates.length).toBeGreaterThan(
-    sparse.guidePolicy.x.candidates.length
+  expect(dense.axes.x.ticks.requested).toBe(12);
+  expect(dense.axes.x.ticks.candidates.length).toBeGreaterThan(
+    sparse.axes.x.ticks.candidates.length
   );
-  expect(dense.guidePolicy.x.omitted.length).toBeGreaterThan(0);
-  expect(dense.grid.length).toBeGreaterThan(sparse.grid.length);
+  expect(dense.axes.x.ticks.omitted.length).toBeGreaterThan(0);
+  expect(dense.axes.x.gridGuides.length).toBeGreaterThan(
+    sparse.axes.x.gridGuides.length
+  );
 
   const facet = planScatter(chart, { ...snapshot, facetIds: [2, 3] }, 300, 220);
   expect(facet.points.map((point) => point.sourceId)).toEqual([2]);

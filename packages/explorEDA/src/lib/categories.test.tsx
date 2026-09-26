@@ -25,11 +25,12 @@ import { RowChart } from "@/components/charts/RowChart/RowChart";
 import { rowChartDefinition } from "@/components/charts/RowChart/definition";
 import { BarChart } from "@/components/charts/BarChart/BarChart";
 import { barChartDefinition } from "@/components/charts/BarChart/definition";
-import { BarTracePanel } from "@/components/charts/BarChart/BarTracePanel";
+import { ChartTracePanel } from "@/components/charts/trace/ChartTracePanel";
 import {
-  BarTraceScope,
-  useBarTraceSelection,
-} from "@/components/charts/BarChart/BarTraceContext";
+  ChartTraceScope,
+  useChartTrace,
+  useChartTraceApi,
+} from "@/components/charts/trace/ChartTraceScope";
 import { ChartTraceControl } from "@/components/charts/ChartTraceControl";
 import { groupFacetData } from "@/components/charts/FacetRelated/FacetContainer";
 import { categoryKey, categoryLabel } from "./categories";
@@ -79,7 +80,7 @@ function CategoryChart({
   return settings.type === "row" ? (
     <RowChart settings={settings} width={700} height={600} />
   ) : (
-    <BarTraceScope>
+    <ChartTraceScope>
       <BarChart
         settings={settings}
         width={700}
@@ -87,25 +88,21 @@ function CategoryChart({
         facetIds={facetIds}
       />
       <BarTraceTestControl />
-    </BarTraceScope>
+    </ChartTraceScope>
   );
 }
 
 function BarTraceTestControl() {
-  const trace = useBarTraceSelection()!;
+  const trace = useChartTrace()!;
+  const api = useChartTraceApi()!;
   return (
     <ChartTraceControl
       selection={trace.selection}
-      onClear={() => trace.select(null)}
+      onClear={api.clear}
       heading="Bar trace"
       ariaLabel="Bar trace inspector"
     >
-      <BarTracePanel
-        selection={trace.selection}
-        onFindRow={trace.inspectRow}
-        onSelect={(selection) => trace.select(selection)}
-        guides={trace.guides}
-      />
+      <ChartTracePanel />
     </ChartTraceControl>
   );
 }
@@ -400,7 +397,7 @@ it("finds only live numeric source rows and uses half-open bins", async () => {
   const input = screen.getByLabelText("Source row ID");
   fireEvent.change(input, { target: { value: "1" } });
   fireEvent.submit(input.closest("form")!);
-  expect(screen.getByRole("status")).toHaveTextContent("outside the visible bars");
+  expect(screen.getByRole("status")).toHaveTextContent("No drawn object uses this row");
   fireEvent.change(input, { target: { value: "0" } });
   fireEvent.submit(input.closest("form")!);
   expect(
