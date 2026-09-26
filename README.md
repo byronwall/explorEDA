@@ -99,7 +99,7 @@ Releases use [Changesets](https://github.com/changesets/changesets). Add a
 changeset to any PR that changes the published package:
 
 ```sh
-pnpm changeset          # pick exploreda, the bump, and a summary
+pnpm changeset:add patch "Keep bar tooltips inside the panel"
 ```
 
 When a changeset reaches `main`, the Release workflow opens or updates a
