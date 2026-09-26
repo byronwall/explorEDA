@@ -14,7 +14,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { GridBackground } from "./GridBackground";
 import { ChartTypeMenuItems } from "./plot/ChartCreationButtons";
-import { findEmptyPlacement, GridCell } from "./chartGridPlacement";
+import {
+  findEmptyPlacement,
+  GridCell,
+  resizeLimits,
+} from "./chartGridPlacement";
 
 export type ResizeAxis = "n" | "s" | "e" | "w" | "ne" | "nw" | "se" | "sw";
 
@@ -56,10 +60,23 @@ export function ChartGridLayout({
     setMenuOpenState(open);
   };
   const [previewVisible, setPreviewVisible] = useState(false);
+  const createdChart = useRef(false);
+  // Growing a chart into its neighbor stops at the neighbor instead of
+  // pushing it down and leaving a hole. Only a bottom-edge resize may push
+  // the charts below it further down.
+  const [activeResize, setActiveResize] = useState<{
+    id: string;
+    axis: string;
+    maxW?: number;
+    maxH?: number;
+  } | null>(null);
 
   const layout: Layout[] = charts.map((chart, index) => ({
     ...chart.layout,
     ...(isNarrow ? { x: 0, y: index, w: 1 } : {}),
+    ...(activeResize?.id === chart.id
+      ? { maxW: activeResize.maxW, maxH: activeResize.maxH }
+      : {}),
     i: chart.id,
   }));
 
@@ -75,6 +92,10 @@ export function ChartGridLayout({
     gridSettings.columnCount;
 
   const clearHover = () => {
+    // Removing a focused add button would drop focus to the page body.
+    if (document.activeElement?.closest("[data-grid-add-control]")) {
+      containerRef.current?.focus({ preventScroll: true });
+    }
     window.clearTimeout(hoverTimer.current);
     pendingCell.current = null;
     setAddTarget(null);
@@ -147,6 +168,8 @@ export function ChartGridLayout({
       gridSettings.columnCount
     );
     createChart(type, "", placement ?? undefined);
+    // The new chart takes focus, so the menu must not return it to the plus.
+    createdChart.current = true;
     clearHover();
   };
 
@@ -164,6 +187,30 @@ export function ChartGridLayout({
   };
   const stopInteraction = () => {
     isInteracting.current = false;
+    setActiveResize(null);
+  };
+  const startResize: GridLayout.ItemCallback = (
+    currentLayout,
+    item,
+    _newItem,
+    _placeholder,
+    event
+  ) => {
+    const axis =
+      (event.target as Element | null)
+        ?.closest("[data-resize-axis]")
+        ?.getAttribute("data-resize-axis") ?? "se";
+    setActiveResize({
+      id: item.i,
+      axis,
+      ...resizeLimits(
+        item,
+        axis,
+        currentLayout.filter((other) => other.i !== item.i),
+        gridSettings.columnCount
+      ),
+    });
+    startInteraction();
   };
 
   const toPixels = (cell: { x: number; y: number }) => ({
@@ -174,7 +221,8 @@ export function ChartGridLayout({
   return (
     <div
       ref={containerRef}
-      className="relative w-full"
+      tabIndex={-1}
+      className="relative w-full outline-none"
       style={{ minHeight: totalHeight }}
       onPointerMove={handlePointerMove}
       onPointerLeave={() => {
@@ -212,10 +260,14 @@ export function ChartGridLayout({
         // added in empty space stays there and a top or left resize keeps
         // the opposite edge fixed. The narrow layout stays a simple stack.
         compactType={isNarrow ? "vertical" : null}
+        // A backstop for corner resizes that meet a chart diagonally.
+        preventCollision={
+          activeResize !== null && !activeResize.axis.includes("s")
+        }
         onLayoutChange={isNarrow ? undefined : handleLayoutChange}
         onDragStart={startInteraction}
         onDragStop={stopInteraction}
-        onResizeStart={startInteraction}
+        onResizeStart={startResize}
         onResizeStop={stopInteraction}
         draggableHandle=".drag-handle"
         isDraggable={!isNarrow}
@@ -237,8 +289,7 @@ export function ChartGridLayout({
           open={menuOpen}
           onOpenChange={(open) => {
             setMenuOpen(open);
-            if (open) setPreviewVisible(true);
-            else clearHover();
+            setPreviewVisible(open);
           }}
         >
           <DropdownMenuTrigger asChild>
@@ -260,7 +311,14 @@ export function ChartGridLayout({
               <Plus className="h-4 w-4" aria-hidden="true" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" sideOffset={6}>
+          <DropdownMenuContent
+            align="start"
+            sideOffset={6}
+            onCloseAutoFocus={(event) => {
+              if (createdChart.current) event.preventDefault();
+              createdChart.current = false;
+            }}
+          >
             <ChartTypeMenuItems onSelect={handleCreate} />
           </DropdownMenuContent>
         </DropdownMenu>
