@@ -7,6 +7,37 @@ export interface NumericStatistics {
   mean: number;
   median: number;
   stdDev: number;
+  /** Equal-width bin counts from min to max, for inline distributions. */
+  bins?: number[];
+}
+
+export const DISTRIBUTION_BINS = 24;
+
+export function binValues(
+  sorted: number[],
+  min: number,
+  max: number,
+  binCount = DISTRIBUTION_BINS
+) {
+  if (sorted.length === 0 || !Number.isFinite(min) || !Number.isFinite(max)) {
+    return [];
+  }
+  if (min === max) return [sorted.length];
+  // Give small integer ranges one bin per value instead of sparse spikes.
+  if (max - min + 1 < binCount && sorted.every(Number.isInteger)) {
+    binCount = max - min + 1;
+    const bins = new Array<number>(binCount).fill(0);
+    for (const value of sorted) bins[value - min] += 1;
+    return bins;
+  }
+  const bins = new Array<number>(binCount).fill(0);
+  const width = (max - min) / binCount;
+  for (const value of sorted) {
+    if (!Number.isFinite(value)) continue;
+    const index = Math.min(binCount - 1, Math.floor((value - min) / width));
+    bins[index] += 1;
+  }
+  return bins;
 }
 
 export interface CategoryStatistics {
@@ -89,6 +120,7 @@ export function calculateColumnStatistics(
         mean,
         median,
         stdDev,
+        bins: binValues(sorted, min, max),
       },
     };
   } else {

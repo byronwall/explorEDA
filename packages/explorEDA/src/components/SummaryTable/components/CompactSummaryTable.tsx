@@ -1,155 +1,271 @@
+import type { CSSProperties } from "react";
 import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
-import { categoryLabel } from "@/lib/categories";
 import { Button } from "@/components/ui/button";
-import {
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { ArrowUpDown, AlertCircle, Settings2 } from "lucide-react";
-import { StatBadge } from "./StatBadge";
+import { ArrowDown, ArrowUp, ArrowUpDown, Settings2 } from "lucide-react";
 import { FieldMetadata } from "@/components/FieldMetadata";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { ChartActions } from "./ChartActions";
 import { FieldInspector } from "./FieldInspector";
+import { summarizeField, type FieldSummary } from "./FieldDistribution";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { FieldProfile } from "@/lib/fieldProfiles";
+import type { datum } from "@/types/ChartTypes";
+import { cn } from "@/lib/utils";
 import { getChartSummary } from "../../charts/chartAccessibility";
 import type { SummaryTableSettings } from "../../charts/SummaryTable/definition";
 
+export type SummarySortColumn = "name" | "uniqueCount" | "nullCount";
+export type SummarySort = {
+  column: SummarySortColumn | null;
+  direction: "asc" | "desc";
+};
+
 interface CompactSummaryTableProps {
   data: FieldProfile[];
-  onSort: (column: keyof FieldProfile) => void;
+  onSort: (column: SummarySortColumn) => void;
+  sort?: SummarySort;
   settings: SummaryTableSettings;
+}
+
+const MAX_TRACK = 16;
+const width = (values: Array<string | undefined>) =>
+  Math.min(
+    MAX_TRACK,
+    Math.max(0, ...values.map((value) => value?.length ?? 0))
+  );
+
+/**
+ * Size the reading tracks from the longest value in each, so ranges, medians,
+ * and shares line up down the table instead of following each row's text.
+ */
+function readingColumns(summaries: Array<FieldSummary | undefined>) {
+  const present = summaries.filter(
+    (summary): summary is FieldSummary => summary !== undefined
+  );
+  const measuredLow = width(present.map((summary) => summary.low));
+  const high = width(present.map((summary) => summary.high));
+  const label = width(present.map((summary) => summary.label));
+  // Top values span the range tracks and truncate past them. A table of only
+  // text fields gives the label its own width.
+  const low = measuredLow === 0 && high === 0 ? label : measuredLow;
+  return {
+    "--eda-summary-low": `${low}ch`,
+    "--eda-summary-high": `${high}ch`,
+    "--eda-summary-stat-label": `${width(present.map((summary) => summary.statLabel))}ch`,
+    "--eda-summary-stat": `${width(present.map((summary) => summary.stat))}ch`,
+  } as CSSProperties;
+}
+
+function SortHeader({
+  column,
+  label,
+  sort,
+  onSort,
+  className,
+}: {
+  column: SummarySortColumn;
+  label: string;
+  sort?: SummarySort;
+  onSort: (column: SummarySortColumn) => void;
+  className?: string;
+}) {
+  const active = sort?.column === column;
+  const Icon = !active
+    ? ArrowUpDown
+    : sort.direction === "asc"
+      ? ArrowUp
+      : ArrowDown;
+  return (
+    <th
+      scope="col"
+      className={className}
+      aria-sort={
+        active
+          ? sort.direction === "asc"
+            ? "ascending"
+            : "descending"
+          : "none"
+      }
+    >
+      <button
+        type="button"
+        className="eda-summary-sort"
+        data-active={active || undefined}
+        onClick={() => onSort(column)}
+      >
+        <span>{label}</span>
+        <Icon aria-hidden="true" />
+      </button>
+    </th>
+  );
 }
 
 export function CompactSummaryTable({
   data,
   onSort,
+  sort,
   settings,
 }: CompactSummaryTableProps) {
   const formatValue = useDataLayer((state) => state.formatFieldValue);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const label = getFieldLabel ?? ((field: string) => field);
+  const rows = data.map((profile) => ({
+    profile,
+    summary: summarizeField(
+      profile,
+      (value) => formatValue(profile.name, value as datum),
+      label(profile.name)
+    ),
+  }));
   return (
-    <table className="eda-summary-table w-full border-collapse text-xs">
+    <table
+      className="eda-summary-table"
+      style={readingColumns(rows.map((row) => row.summary))}
+    >
       <caption className="sr-only">{getChartSummary(settings)}</caption>
-      <TableHeader className="[&_tr]:border-border/40">
-        <TableRow>
-          <TableHead>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                onClick={() => onSort("name")}
-                className="h-8 text-left font-medium"
-              >
-                Column
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          </TableHead>
-          <TableHead className="w-16 text-right">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <span>Distinct</span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Number of distinct values</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </TableHead>
-          <TableHead>Stats</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody className="[&_tr]:border-border/30">
-        {data.map((summary) => (
-          <TableRow key={summary.name}>
-            <TableCell className="min-w-0">
-              <div className="flex min-w-0 items-center gap-2">
-                <FieldMetadata
-                  profile={summary}
-                  label={label(summary.name)}
-                  compact
-                  showDetail={false}
-                  className="min-w-0 flex-1"
-                />
-                <CalculatedFieldBadge field={summary.name} />
-                {summary.nullCount > 0 && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span
-                          className="shrink-0"
-                          aria-label={`${summary.name}: ${summary.nullCount} null values`}
-                        >
-                          <AlertCircle className="h-4 w-4 text-yellow-500" />
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{summary.nullCount} null values</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+      <colgroup>
+        <col className="eda-summary-col-field" />
+        <col className="eda-summary-col-count" />
+        <col className="eda-summary-col-count" />
+        <col />
+        <col className="eda-summary-col-actions" />
+      </colgroup>
+      <thead>
+        <tr>
+          <SortHeader column="name" label="Field" sort={sort} onSort={onSort} />
+          <SortHeader
+            column="uniqueCount"
+            label="Distinct"
+            sort={sort}
+            onSort={onSort}
+            className="eda-summary-num"
+          />
+          <SortHeader
+            column="nullCount"
+            label="Missing"
+            sort={sort}
+            onSort={onSort}
+            className="eda-summary-num"
+          />
+          <th scope="col">Values</th>
+          <th scope="col">
+            <span className="sr-only">Actions</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map(({ profile, summary }) => {
+          const fieldLabel = label(profile.name);
+          const missingShare =
+            profile.totalCount > 0 ? profile.nullCount / profile.totalCount : 0;
+          return (
+            <tr key={profile.name}>
+              <th scope="row" className="eda-summary-field">
+                <span className="flex min-w-0 items-center gap-1.5">
+                  <FieldMetadata
+                    profile={profile}
+                    label={fieldLabel}
+                    compact
+                    showDetail={false}
+                    className="min-w-0"
+                  />
+                  <CalculatedFieldBadge field={profile.name} />
+                </span>
+              </th>
+              <td className="eda-summary-num">
+                {profile.uniqueCount.toLocaleString()}
+              </td>
+              <td
+                className={cn(
+                  "eda-summary-num",
+                  profile.nullCount > 0 && "eda-summary-missing"
                 )}
-              </div>
-            </TableCell>
-            <TableCell className="text-right tabular-nums">
-              {summary.uniqueCount}
-            </TableCell>
-            <TableCell className="relative">
-              <div className="flex min-w-0 flex-wrap gap-2">
-                {summary.statistics && (
+              >
+                {profile.nullCount > 0 ? (
                   <>
-                    <StatBadge
-                      fieldLabel={label(summary.name)}
-                      type="min"
-                      value={formatValue(summary.name, summary.statistics.min)}
-                    />
-                    <StatBadge
-                      fieldLabel={label(summary.name)}
-                      type="max"
-                      value={formatValue(summary.name, summary.statistics.max)}
-                    />
+                    {profile.nullCount.toLocaleString()}
+                    <span className="eda-summary-share-label">
+                      {missingShare < 0.01
+                        ? "<1%"
+                        : `${Math.round(missingShare * 100)}%`}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span aria-hidden="true" className="text-muted-foreground">
+                      –
+                    </span>
+                    <span className="sr-only">None</span>
                   </>
                 )}
-                {summary.categories && summary.categories.topValues[0] && (
-                  <StatBadge
-                    fieldLabel={label(summary.name)}
-                    type="common"
-                    value={categoryLabel(summary.categories.topValues[0].value)}
-                    count={summary.categories.topValues[0].count}
-                  />
+              </td>
+              <td className="eda-summary-values">
+                {summary ? (
+                  <div className="eda-summary-profile">
+                    {summary.graphic}
+                    <span className="sr-only">{summary.description}</span>
+                    <span aria-hidden="true" className="eda-summary-reading">
+                      <span className="eda-summary-range">
+                        {summary.label !== undefined ? (
+                          <span className="eda-summary-label">
+                            {summary.label}
+                          </span>
+                        ) : (
+                          <>
+                            <span className="eda-summary-low">
+                              {summary.low}
+                            </span>
+                            {summary.high !== undefined && (
+                              <>
+                                <span className="eda-summary-sep">–</span>
+                                <span className="eda-summary-high">
+                                  {summary.high}
+                                </span>
+                              </>
+                            )}
+                          </>
+                        )}
+                      </span>
+                      {summary.stat !== undefined && (
+                        <span className="eda-summary-stat-group">
+                          <span className="eda-summary-stat-label">
+                            {summary.statLabel}
+                          </span>
+                          <span className="eda-summary-stat">
+                            {summary.stat}
+                          </span>
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                ) : (
+                  <span className="text-muted-foreground">
+                    {profile.totalCount === 0
+                      ? "No rows in the current filter"
+                      : "No values"}
+                  </span>
                 )}
-              </div>
-              <div className="eda-summary-actions">
-                <FieldInspector field={summary.name}>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6"
-                    aria-label={`Inspect ${summary.name}`}
-                  >
-                    <Settings2 className="h-4 w-4" />
-                  </Button>
-                </FieldInspector>
-                <ChartActions
-                  columnName={summary.name}
-                  dataType={summary.dataType}
-                />
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
+              </td>
+              <td className="eda-summary-actions-cell">
+                <div className="eda-summary-actions">
+                  <FieldInspector field={profile.name}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label={`Inspect ${fieldLabel}`}
+                    >
+                      <Settings2 />
+                    </Button>
+                  </FieldInspector>
+                  <ChartActions
+                    columnName={profile.name}
+                    dataType={profile.dataType}
+                  />
+                </div>
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
     </table>
   );
 }

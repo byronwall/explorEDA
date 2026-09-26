@@ -527,8 +527,7 @@ describe("DataLayerProvider", () => {
     expect(screen.getByText("3 rows")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "filter summary" }));
     expect(screen.getByText("2 rows")).toBeInTheDocument();
-    expect(screen.getByText("10")).toBeInTheDocument();
-    expect(screen.getByText("20")).toBeInTheDocument();
+    expect(screen.getByText(/^Range 10 to 20,/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "empty summary" }));
     expect(screen.getByText("0 rows")).toBeInTheDocument();
