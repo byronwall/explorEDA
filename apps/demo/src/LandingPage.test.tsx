@@ -10,6 +10,11 @@ import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { LandingPage } from "./LandingPage";
 
+// The hero's live embed has its own test; keep these tests to one workspace.
+vi.mock("./landing/LiveOrderBook", () => ({
+  LiveOrderBook: () => <div data-testid="live-order-book" />,
+}));
+
 vi.mock("exploreda", () => {
   let workspaceMounts = 0;
 
@@ -77,9 +82,9 @@ describe("LandingPage routing", () => {
       })
     );
     const router = createMemoryRouter(
-      [{ path: "/explorEDA/*", element: <LandingPage /> }],
+      [{ path: "/*", element: <LandingPage /> }],
       {
-        initialEntries: ["/explorEDA/", "/explorEDA/?example=lorenz-3d"],
+        initialEntries: ["/", "/?example=lorenz-3d"],
         initialIndex: 1,
       }
     );
@@ -94,11 +99,125 @@ describe("LandingPage routing", () => {
     await waitFor(() =>
       expect(
         screen.getByRole("heading", {
-          name: /Explore data by connecting charts and filters/i,
+          name: /Embed an interactive analysis workspace/i,
         })
       ).toBeInTheDocument()
     );
     expect(screen.queryByTestId("workspace")).not.toBeInTheDocument();
+  });
+
+  it("leads with the featured example before import and restore", () => {
+    const router = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
+    );
+
+    render(<RouterProvider router={router} />);
+    const featured = screen.getByRole("heading", {
+      name: "Inside the order book",
+    });
+    const integration = screen.getByRole("heading", {
+      name: "Use it in your React app",
+    });
+    const importHeading = screen.getByRole("heading", {
+      name: "Import your data",
+    });
+    const follows = (a: Element, b: Element) =>
+      Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(follows(featured, integration)).toBe(true);
+    expect(follows(integration, importHeading)).toBe(true);
+    expect(
+      screen.getByRole("textbox", { name: "Full analysis JSON" })
+    ).toBeInTheDocument();
+  });
+
+  it("shows the featured guide above the workspace and opens it from the hero", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        text: () => Promise.resolve("Channel,Revenue\nWeb,2"),
+      })
+    );
+    const router = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
+    );
+
+    render(<RouterProvider router={router} />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Explore the order book" })
+    );
+
+    expect(await screen.findByTestId("workspace")).toBeInTheDocument();
+    expect(router.state.location.search).toBe("?example=shop-operations");
+    expect(screen.getByRole("note")).toHaveTextContent(
+      "click Web in Sales channels"
+    );
+  });
+
+  it("opens bundled sample data as a new import", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve("species,mass\nAdelie,3750\nGentoo,5000"),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const router = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
+    );
+
+    render(<RouterProvider router={router} />);
+    fireEvent.click(screen.getByRole("button", { name: /Palmer penguins/ }));
+
+    const workspace = await screen.findByTestId("workspace");
+    expect(fetchMock).toHaveBeenCalledWith("/datasets/palmer-penguins.csv");
+    expect(workspace).toHaveAttribute("data-rows", "2");
+    expect(workspace).toHaveAttribute("data-has-saved-data", "false");
+  });
+
+  it("opens a CSV dropped anywhere on the page in the workspace", async () => {
+    const router = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
+    );
+    render(<RouterProvider router={router} />);
+
+    const file = new File(
+      ["species,mass\nAdelie,3750\nGentoo,5000"],
+      "penguins.csv",
+      {
+        type: "text/csv",
+      }
+    );
+    const dataTransfer = { types: ["Files"], files: [file] };
+    fireEvent.dragEnter(window, { dataTransfer });
+    expect(
+      await screen.findByText("Drop to explore your data")
+    ).toBeInTheDocument();
+
+    fireEvent.drop(window, { dataTransfer });
+    const workspace = await screen.findByTestId("workspace");
+    expect(workspace).toHaveAttribute("data-rows", "2");
+    expect(workspace).toHaveAttribute("data-has-saved-data", "false");
+    expect(screen.queryByText("Drop to explore your data")).toBeNull();
+  });
+
+  it("explains when a dropped file is not CSV or JSON", async () => {
+    const router = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
+    );
+    render(<RouterProvider router={router} />);
+
+    const file = new File(["hi"], "notes.txt", { type: "text/plain" });
+    fireEvent.drop(window, {
+      dataTransfer: { types: ["Files"], files: [file] },
+    });
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "notes.txt is not a CSV or JSON file."
+    );
+    expect(screen.queryByTestId("workspace")).toBeNull();
   });
 
   it("captures state without controlling the workspace and restores it on remount", async () => {
@@ -110,8 +229,8 @@ describe("LandingPage routing", () => {
       })
     );
     const router = createMemoryRouter(
-      [{ path: "/explorEDA/*", element: <LandingPage /> }],
-      { initialEntries: ["/explorEDA/?example=palmer-penguins"] }
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/?example=palmer-penguins"] }
     );
 
     render(<RouterProvider router={router} />);
@@ -140,8 +259,8 @@ describe("LandingPage routing", () => {
 
   it("shows full-analysis validation errors and accepts a valid followup", async () => {
     const router = createMemoryRouter(
-      [{ path: "/explorEDA/*", element: <LandingPage /> }],
-      { initialEntries: ["/explorEDA/"] }
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
     );
 
     render(<RouterProvider router={router} />);
