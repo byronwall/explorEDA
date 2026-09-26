@@ -25,15 +25,13 @@ import { ChartRenderer } from "./charts/ChartRenderer";
 import { ChartColorLegend } from "./charts/ColorLegend/ChartColorLegend";
 import { ChartTraceControl } from "./charts/ChartTraceControl";
 import {
-  ScatterTraceScope,
-  useScatterTraceSelection,
-} from "./charts/ScatterPlot/ScatterTraceContext";
-import { ScatterTracePanel } from "./charts/ScatterPlot/ScatterTracePanel";
-import { BarTracePanel } from "./charts/BarChart/BarTracePanel";
-import {
-  BarTraceScope,
-  useBarTraceSelection,
-} from "./charts/BarChart/BarTraceContext";
+  ChartTraceScope,
+  useChartTrace,
+  useChartTraceApi,
+  useTraceSource,
+} from "./charts/trace/ChartTraceScope";
+import { ChartTracePanel } from "./charts/trace/ChartTracePanel";
+import type { TraceSource } from "./charts/trace/traceTypes";
 import { FacetContainer } from "./charts/FacetRelated/FacetContainer";
 import { ChartSettingsContent } from "./ChartSettingsContent";
 import { Button } from "./ui/button";
@@ -44,7 +42,7 @@ import {
   PopoverTrigger,
 } from "./ui/popover";
 import { useAlertStore } from "@/stores/alertStore";
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import {
   getChartFields,
   getChartSummary,
@@ -65,94 +63,75 @@ interface PlotChartPanelProps {
   height: number;
 }
 
-function ScatterTraceControl() {
-  const trace = useScatterTraceSelection();
-  useEffect(() => {
-    if (
-      trace?.selection?.kind === "facet" &&
-      trace.selection.plan !== trace.plan
-    ) {
-      trace.select(null);
-    }
-  }, [trace?.selection, trace?.plan, trace?.select]);
-  if (!trace) return null;
+const TRACE_COPY = {
+  scatter: {
+    heading: "Scatter trace",
+    emptyText:
+      "Alt-click a point, axis object, or color label to trace it. Normal clicks keep chart interactions. You can also find a source row below.",
+    ariaLabel: "Scatter trace inspector",
+  },
+  bar: {
+    heading: "Bar trace",
+    emptyText:
+      "Alt-click a bar, axis object, or zero baseline to trace it. Normal clicks keep chart interactions. You can also find a source row below.",
+    ariaLabel: "Bar trace inspector",
+  },
+} as const;
+
+function isTraceable(type: string): type is keyof typeof TRACE_COPY {
+  return type in TRACE_COPY;
+}
+
+function ChartTraceInspector({ type }: { type: keyof typeof TRACE_COPY }) {
+  const trace = useChartTrace();
+  const api = useChartTraceApi();
+  if (!trace || !api) return null;
   return (
     <ChartTraceControl
       selection={trace.selection}
-      onClear={() => trace.select(null)}
-      heading="Scatter trace"
-      emptyText="Alt-click a point, axis object, or color label to trace it. Normal clicks keep chart interactions. You can also find a source row below."
-      ariaLabel="Scatter trace inspector"
+      onClear={api.clear}
+      {...TRACE_COPY[type]}
     >
-      <ScatterTracePanel
-        plan={trace?.selection?.plan ?? trace?.plan ?? undefined}
-        trace={trace?.selection?.trace}
-        onFindRow={trace?.inspectRow}
-        onSelect={(selection) => {
-          if (trace?.selection?.inspect) trace.selection.inspect(selection);
-          else trace?.inspectFirst(selection);
-        }}
-      />
+      <ChartTracePanel />
     </ChartTraceControl>
   );
 }
 
-function ScatterTraceTitle({ id, text }: { id: string; text: string }) {
-  const trace = useScatterTraceSelection();
-  const inspect = () => trace?.inspectFirst({ kind: "title", id: "title" });
-  return (
-    <h3
-      id={id}
-      className="min-w-0 truncate text-sm font-semibold"
-      tabIndex={0}
-      aria-description="Alt-click or Alt-Enter to trace title"
-      onMouseDownCapture={(event) => {
-        if (event.altKey) event.stopPropagation();
-      }}
-      onMouseUpCapture={(event) => {
-        if (event.altKey) {
-          event.stopPropagation();
-          inspect();
-        }
-      }}
-      onKeyDown={(event) => {
-        if (event.altKey && event.key === "Enter") {
-          event.preventDefault();
-          inspect();
-        }
-      }}
-    >
-      {text}
-    </h3>
+function TraceTitle({
+  id,
+  text,
+  settings,
+}: {
+  id: string;
+  text: string;
+  settings: ChartSettings;
+}) {
+  const api = useChartTraceApi();
+  const owner = useId();
+  const source = useMemo(
+    (): TraceSource => ({
+      role: "title",
+      revision: text,
+      resolve: (kind) =>
+        kind === "title"
+          ? {
+              kind: "title",
+              id: "title",
+              revision: text,
+              text,
+              source: settings.title.trim() ? "chart-setting" : "field-label",
+              field: settings.title.trim()
+                ? undefined
+                : settings.type === "scatter"
+                  ? settings.yField
+                  : settings.field,
+            }
+          : undefined,
+    }),
+    [settings, text]
   );
-}
-
-function BarTraceControl() {
-  const trace = useBarTraceSelection();
-  if (!trace) return null;
-  return (
-    <ChartTraceControl
-      selection={trace.selection}
-      onClear={() => trace.select(null)}
-      heading="Bar trace"
-      emptyText="Alt-click a bar, axis object, or zero baseline to trace it. Normal clicks keep chart interactions. You can also find a source row below."
-      ariaLabel="Bar trace inspector"
-    >
-      <BarTracePanel
-        selection={trace.selection}
-        onFindRow={trace.inspectRow}
-        guides={trace.guides}
-        onSelect={(selection) =>
-          trace.select({ ...selection, owner: trace.selection?.owner })
-        }
-      />
-    </ChartTraceControl>
-  );
-}
-
-function BarTraceTitle({ id, text }: { id: string; text: string }) {
-  const trace = useBarTraceSelection();
-  const inspect = () => trace?.inspectTitle();
+  useTraceSource(owner, source);
+  const inspect = () => api?.inspect(owner, "title", "title");
   return (
     <h3
       id={id}
@@ -311,10 +290,8 @@ export function PlotChartPanel({
             className="eda-drag h-3 w-3 shrink-0 text-muted-foreground"
             aria-hidden="true"
           />
-          {settings.type === "scatter" ? (
-            <ScatterTraceTitle id={titleId} text={chartTitle} />
-          ) : settings.type === "bar" ? (
-            <BarTraceTitle id={titleId} text={chartTitle} />
+          {isTraceable(settings.type) ? (
+            <TraceTitle id={titleId} text={chartTitle} settings={settings} />
           ) : (
             <h3 id={titleId} className="min-w-0 truncate text-sm font-semibold">
               {chartTitle}
@@ -336,8 +313,9 @@ export function PlotChartPanel({
         )}
         <div className="eda-panel-actions flex shrink-0 items-center gap-0">
           {isTableLike && <div ref={setToolbarTarget} />}
-          {settings.type === "scatter" && <ScatterTraceControl />}
-          {settings.type === "bar" && <BarTraceControl />}
+          {isTraceable(settings.type) && (
+            <ChartTraceInspector type={settings.type} />
+          )}
           <ActionTooltip
             content={expanded ? "Close expanded chart" : "Expand chart"}
           >
@@ -508,8 +486,7 @@ export function PlotChartPanel({
     </div>
   );
   return (
-    <ScatterTraceScope>
-      <BarTraceScope>
+    <ChartTraceScope>
         <Dialog open={expanded} onOpenChange={setExpanded}>
           {expanded ? (
             <DialogContent
@@ -530,7 +507,6 @@ export function PlotChartPanel({
             panel
           )}
         </Dialog>
-      </BarTraceScope>
-    </ScatterTraceScope>
+    </ChartTraceScope>
   );
 }

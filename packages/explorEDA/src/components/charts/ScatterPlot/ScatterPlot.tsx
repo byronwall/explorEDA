@@ -11,11 +11,17 @@ import {
 import type { ScatterPlotSettings } from "./definition";
 import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
 import { ScatterSvg } from "./ScatterSvg";
-import { resolveScatterTrace } from "./scatterTrace";
 import {
-  useScatterTraceSelection,
-  type ScatterSelection,
-} from "./ScatterTraceContext";
+  findScatterTraceRow,
+  resolveScatterTrace,
+  scatterTraceTargets,
+} from "./scatterTrace";
+import {
+  useChartTrace,
+  useChartTraceApi,
+  useTraceSource,
+} from "../trace/ChartTraceScope";
+import type { TraceSource } from "../trace/traceTypes";
 import {
   brushFilters,
   planScatter,
@@ -35,11 +41,9 @@ export function ScatterPlot({
   facetIds,
 }: ScatterPlotProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const traceScope = useScatterTraceSelection();
+  const trace = useChartTrace();
+  const traceApi = useChartTraceApi();
   const owner = useId();
-  const selection = traceScope?.selection;
-  const select = traceScope?.select;
-  const register = traceScope?.register;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const data = useDataLayer((state) => state.data);
   const rawData = useDataLayer((state) => state.rawData);
@@ -120,23 +124,13 @@ export function ScatterPlot({
     () => planScatter(settings, snapshot, width, height),
     [settings, snapshot, width, height]
   );
-  const activeSelection =
-    selection && (!selection.owner || selection.owner === owner)
-      ? selection
-      : null;
-  const choose = useCallback(
-    (next: ScatterSelection) => {
-      const selected = {
-        kind: next.kind,
-        id: next.id,
-        owner,
-        plan,
-        numericalPlan: next.numericalPlan,
-      };
-      select?.({
-        ...selected,
-        trace: resolveScatterTrace(
-          selected,
+  const source = useMemo(
+    (): TraceSource => ({
+      role: "chart",
+      revision: plan.revision,
+      resolve: (kind, id) =>
+        resolveScatterTrace(
+          { kind, id },
           plan,
           snapshot,
           settings,
@@ -145,24 +139,18 @@ export function ScatterPlot({
           profiles,
           manager
         ),
-        inspect: choose,
-      });
-    },
-    [owner, plan, select, snapshot, settings, rawData, data, profiles, manager]
+      findRow: (id) => findScatterTraceRow(plan, id),
+      targets: () => scatterTraceTargets(plan),
+      legendItems:
+        plan.legend?.type === "categorical" ? plan.legend.items : undefined,
+    }),
+    [plan, snapshot, settings, rawData, data, profiles, manager]
   );
-  useEffect(
-    () => register?.(owner, plan, choose),
-    [register, owner, plan, choose]
-  );
-  useEffect(() => {
-    if (
-      selection?.owner === owner &&
-      selection.plan &&
-      selection.plan !== plan
-    ) {
-      select?.(null);
-    }
-  }, [selection, plan, owner, select]);
+  useTraceSource(owner, source);
+  const choose = (kind: string, id: string) =>
+    traceApi?.inspect(owner, kind, id);
+  const activeSelection =
+    trace?.selection?.owner === owner ? trace.selection : null;
   const pointAt = (x: number, y: number) => {
     let nearest: (typeof plan.points)[number] | undefined;
     let distance = 100;
@@ -274,11 +262,10 @@ export function ScatterPlot({
             onInspectPoint={(x, y) => {
               const point = pointAt(x, y);
               if (!point) return false;
-              choose({ kind: "point", id: point.id });
-              return true;
+              return Boolean(choose("point", point.id));
             }}
-            onInspectGuide={(id) => choose({ kind: "guide", id })}
-            onInspectOverlay={(id) => choose({ kind: "overlay", id })}
+            onInspectGuide={(id) => choose("guide", id)}
+            onInspectOverlay={(id) => choose("overlay", id)}
             selectedId={
               activeSelection?.kind === "guide" ? activeSelection.id : undefined
             }
@@ -291,7 +278,7 @@ export function ScatterPlot({
               onClickCapture={(event) => {
                 if (!event.altKey) return;
                 event.stopPropagation();
-                choose({ kind: "badge", id: badge.id });
+                choose("badge", badge.id);
               }}
             >
               <CalculatedFieldBadge

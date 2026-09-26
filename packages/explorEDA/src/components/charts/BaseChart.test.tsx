@@ -45,8 +45,5 @@ it("does not start a brush from a guide and keeps Alt+Enter inspection", () => {
   expect(onBrushChange).not.toHaveBeenCalled();
 
   fireEvent.keyDown(tick, { altKey: true, key: "Enter" });
-  expect(onInspectGuide).toHaveBeenCalledWith(
-    expect.objectContaining({ role: "tick", axis: "x", value: 2 }),
-    expect.anything()
-  );
+  expect(onInspectGuide).toHaveBeenCalledWith("x:tick:2");
 });

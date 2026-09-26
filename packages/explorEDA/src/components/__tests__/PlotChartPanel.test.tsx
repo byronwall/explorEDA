@@ -346,3 +346,57 @@ it("omits the color legend on row charts, whose bars already label each color", 
     ).queryByRole("button", legendItem)
   ).not.toBeInTheDocument();
 });
+
+it("traces a faceted bar chart's facets, bars and title through one inspector", async () => {
+  const chart = {
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "category"
+    ),
+    title: "Categories",
+    facet: {
+      enabled: true,
+      type: "wrap" as const,
+      rowVariable: "group",
+      columnCount: 2,
+    },
+  };
+  render(
+    <DataLayerProvider
+      data={[
+        { category: "A", group: "left" },
+        { category: "A", group: "left" },
+        { category: "A", group: "right" },
+        { category: "B", group: "right" },
+      ]}
+      charts={[chart]}
+    >
+      <PlotChartPanel
+        settings={chart}
+        width={700}
+        height={500}
+        onDelete={() => {}}
+        onDuplicate={() => {}}
+      />
+    </DataLayerProvider>
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Focus left facet" }), {
+    altKey: true,
+  });
+  const dialog = await screen.findByRole("dialog", {
+    name: "Bar trace inspector",
+  });
+  expect(dialog).toHaveTextContent("Facet panel");
+  expect(dialog).toHaveTextContent("2 source rows belong to this facet");
+
+  fireEvent.click(screen.getAllByRole("button", { name: "A: 2 records" })[0]!, {
+    altKey: true,
+  });
+  await waitFor(() => expect(dialog).toHaveTextContent("Contributors: 2 of 2"));
+
+  const title = screen.getByRole("heading", { name: "Categories" });
+  fireEvent.mouseUp(title, { altKey: true });
+  await waitFor(() =>
+    expect(dialog).toHaveTextContent("Chart title · Categories")
+  );
+});

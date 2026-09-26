@@ -142,126 +142,16 @@ export function TraceScaleReadout({
   domain: readonly unknown[];
   range: readonly unknown[];
 }) {
+  const show = (value: unknown) =>
+    typeof value === "number" ? String(Math.round(value * 100) / 100) : String(value);
+  const domainText =
+    type === "band"
+      ? `${domain.slice(0, 12).map(show).join(", ")}${domain.length > 12 ? `, … (${domain.length} bands)` : ""}`
+      : domain.map(show).join(" to ");
   return (
     <TraceReadout label={`${axis.toUpperCase()} ${type} scale`}>
-      domain {domain.join(" to ")} · range {range.join(" to ")} px
+      domain {domainText} · range {range.map(show).join(" to ")} px
     </TraceReadout>
-  );
-}
-
-export type ChartTraceGuide = {
-  object: string;
-  source: string;
-  field: string;
-  tickValue?: datum | Date;
-  bin?: { start: datum | Date; end: datum | Date };
-  position?: { x?: number; y?: number };
-  line?: { x1?: number; y1?: number; x2?: number; y2?: number };
-  label?: string;
-  scale?: {
-    axis: string;
-    type: string;
-    domain: readonly unknown[];
-    range: readonly unknown[];
-  };
-  primitive?:
-    | {
-        kind: "text";
-        text: string;
-        x: number;
-        y: number;
-        fontSize?: number;
-        textAnchor?: string;
-        fullText?: string;
-      }
-    | {
-        kind: "line";
-        x1: number;
-        y1: number;
-        x2: number;
-        y2: number;
-        stroke?: string;
-        hitStrokeWidth?: number;
-      };
-};
-
-export function TraceGuideDetails({
-  guide,
-  heading,
-}: {
-  guide: ChartTraceGuide;
-  heading?: string;
-}) {
-  return (
-    <TraceSection heading={heading}>
-      <TraceReadout label="Object">{guide.object}</TraceReadout>
-      <TraceReadout label="Source">{guide.source}</TraceReadout>
-      <TraceReadout label="Field">{guide.field}</TraceReadout>
-      {guide.tickValue !== undefined && (
-        <TraceReadout label="Tick value">
-          {showTraceValue(guide.tickValue)}
-        </TraceReadout>
-      )}
-      {guide.bin && (
-        <TraceReadout label="Bin interval">
-          {showTraceValue(guide.bin.start)} to {showTraceValue(guide.bin.end)}
-        </TraceReadout>
-      )}
-      {guide.position &&
-        (guide.position.x !== undefined || guide.position.y !== undefined) && (
-          <TraceReadout label="Position">
-            x {Math.round(guide.position.x ?? 0)} px · y{" "}
-            {Math.round(guide.position.y ?? 0)} px
-          </TraceReadout>
-        )}
-      {guide.line &&
-        (guide.line.x1 !== undefined || guide.line.y1 !== undefined) && (
-          <TraceReadout label="Line endpoints">
-            ({Math.round(guide.line.x1 ?? 0)}, {Math.round(guide.line.y1 ?? 0)})
-            → ( {Math.round(guide.line.x2 ?? 0)},{" "}
-            {Math.round(guide.line.y2 ?? 0)}) px
-          </TraceReadout>
-        )}
-      {guide.primitive?.kind === "text" && (
-        <>
-          <TraceReadout label="Rendered text">
-            {guide.primitive.text}
-          </TraceReadout>
-          <TraceReadout label="Position">
-            x {Math.round(guide.primitive.x)} px · y{" "}
-            {Math.round(guide.primitive.y)} px
-          </TraceReadout>
-          <TraceReadout label="Text size">
-            {guide.primitive.fontSize ?? "SVG default"} · anchor{" "}
-            {guide.primitive.textAnchor ?? "SVG default"} ← guide style
-          </TraceReadout>
-          {guide.primitive.fullText &&
-            guide.primitive.fullText !== guide.primitive.text && (
-              <TraceReadout label="Full formatted text">
-                {guide.primitive.fullText}
-              </TraceReadout>
-            )}
-        </>
-      )}
-      {guide.primitive?.kind === "line" && (
-        <TraceReadout label="Planned line">
-          ({Math.round(guide.primitive.x1)}, {Math.round(guide.primitive.y1)}) →
-          ( {Math.round(guide.primitive.x2)}, {Math.round(guide.primitive.y2)})
-          px · stroke {guide.primitive.stroke ?? "SVG default"}
-          {guide.primitive.hitStrokeWidth &&
-            ` · ${guide.primitive.hitStrokeWidth} px hit target`}
-        </TraceReadout>
-      )}
-      {guide.scale && (
-        <TraceScaleReadout
-          axis={guide.scale.axis}
-          type={guide.scale.type}
-          domain={guide.scale.domain}
-          range={guide.scale.range}
-        />
-      )}
-      {guide.label && <TraceReadout label="Label">{guide.label}</TraceReadout>}
-    </TraceSection>
   );
 }
 

@@ -6,6 +6,8 @@ import {
   type ScatterPlan,
   type SvgPrimitive,
 } from "./scatterPlan";
+import { findAxisGuide } from "../Axis/axisPlan";
+import { PlannedAxes, PlannedGrid } from "../Axis/AxisLayer";
 
 function Primitive({
   item,
@@ -140,6 +142,20 @@ export function ScatterSvg({
       }}
       tabIndex={0}
       onKeyDown={(event) => {
+        const id = (event.target as Element)
+          .closest("[data-plan-id]")
+          ?.getAttribute("data-plan-id");
+        if (
+          event.altKey &&
+          event.key === "Enter" &&
+          id &&
+          findAxisGuide(plan.axes, id)
+        ) {
+          event.preventDefault();
+          event.stopPropagation();
+          onInspectGuide(id);
+          return;
+        }
         if (event.key === "Escape") {
           event.stopPropagation();
           brush.clear();
@@ -156,7 +172,7 @@ export function ScatterSvg({
           .closest("[data-plan-id]")
           ?.getAttribute("data-plan-id");
         setHoveredGuideId(
-          event.altKey && id && plan.guideDetails[id] ? id : null
+          event.altKey && id && findAxisGuide(plan.axes, id) ? id : null
         );
       }}
       onPointerLeave={() => {
@@ -182,7 +198,7 @@ export function ScatterSvg({
         const id = (event.target as Element)
           .closest("[data-plan-id]")
           ?.getAttribute("data-plan-id");
-        if (id && plan.guideDetails[id]) {
+        if (id && findAxisGuide(plan.axes, id)) {
           onInspectGuide(id);
           return;
         }
@@ -199,20 +215,20 @@ export function ScatterSvg({
       </defs>
       <g transform={`translate(${plan.margin.left},${plan.margin.top})`}>
         <g clipPath={`url(#${chartId}-plot)`}>
-          <Primitives
-            items={plan.grid}
-            selectedId={hoveredGuideId ?? selectedId}
+          <PlannedGrid
+            plan={plan.axes}
+            interactive
+            activeId={hoveredGuideId ?? selectedId}
           />
         </g>
         <g className="eda-brush" clipPath={`url(#${chartId}-plot)`}>
           <Primitives items={overlay.brush} />
         </g>
-        <g>
-          <Primitives
-            items={plan.axes}
-            selectedId={hoveredGuideId ?? selectedId}
-          />
-        </g>
+        <PlannedAxes
+          plan={plan.axes}
+          interactive
+          activeId={hoveredGuideId ?? selectedId}
+        />
         <g
           className="eda-axis-readout"
           role={overlay.readoutLabel ? "img" : undefined}

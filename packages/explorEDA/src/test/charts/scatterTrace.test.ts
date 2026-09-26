@@ -5,7 +5,7 @@ import { scatterPlotDefinition } from "../../components/charts/ScatterPlot/defin
 import { planScatter } from "../../components/charts/ScatterPlot/scatterPlan";
 import { resolveScatterTrace } from "../../components/charts/ScatterPlot/scatterTrace";
 
-it("resolves source, calculation, guide, and legend inputs from one scatter plan", () => {
+it("resolves source, calculation, and guide inputs from one scatter plan", () => {
   const raw = [
     { price: "10", cost: "4", group: "A" },
     { price: "20", cost: "bad", group: "B" },
@@ -59,9 +59,9 @@ it("resolves source, calculation, guide, and legend inputs from one scatter plan
     radius: { value: 4, source: "chart-setting" },
     opacity: { value: 1, source: "chart-setting" },
   });
-  const resolve = (kind: "point" | "guide" | "legend" | "title", id: string) =>
+  const resolve = (kind: "point" | "guide", id: string) =>
     resolveScatterTrace(
-      { kind, id, plan },
+      { kind, id },
       plan,
       snapshot,
       settings,
@@ -87,29 +87,19 @@ it("resolves source, calculation, guide, and legend inputs from one scatter plan
   expect(plan.exclusions).toContainEqual({ sourceId: 1, reason: "invalid-y" });
   expect(resolve("guide", "x:label")).toMatchObject({
     kind: "guide",
-    population: 2,
-    field: "price",
-    sourceBounds: [10, 20],
+    guide: { role: "label", source: "field-label" },
+    axis: {
+      field: "price",
+      domainSource: { rows: 2, bounds: [10, 20] },
+      ticks: { minLabelGap: 8, maxLabelChars: 20 },
+    },
   });
-  expect(plan.guidePolicy.x.kept).toEqual(
-    plan.axes
-      .filter((item) => item.id.startsWith("x:tick:"))
-      .map((item) => Number(item.id.split(":").at(-1)))
+  expect(plan.axes.x.ticks.shown).toEqual(
+    plan.axes.x.guides
+      .filter((item) => item.role === "tick")
+      .map((item) => item.value)
   );
-  expect(resolve("guide", "x:label")).toMatchObject({
-    refs: ["scale:x", "field-format:x", "axis-label:x"],
-    policy: { x: { minLabelGap: 8, maxLabelChars: 20 } },
-  });
-  expect(resolve("legend", plan.legend!.items[0]!.id)).toMatchObject({
-    kind: "legend",
-    item: { label: "A", count: 1 },
-    rowIds: [0],
-  });
-  expect(resolve("title", "title")).toMatchObject({
-    kind: "title",
-    text: plan.title,
-    source: "chart-setting",
-  });
+  expect(resolve("guide", "missing")).toBeUndefined();
   const badgePlan = planScatter(
     settings,
     { ...snapshot, calculatedFields: ["net"], pixelRatio: 2 },
@@ -125,7 +115,7 @@ it("resolves source, calculation, guide, and legend inputs from one scatter plan
   const dimmedPlan = planScatter(settings, snapshot, 400, 300);
   expect(
     resolveScatterTrace(
-      { kind: "point", id: dimmedPlan.points[0]!.id, plan: dimmedPlan },
+      { kind: "point", id: dimmedPlan.points[0]!.id },
       dimmedPlan,
       snapshot,
       settings,
@@ -153,7 +143,7 @@ it("resolves source, calculation, guide, and legend inputs from one scatter plan
   const brushedPlan = planScatter(settings, snapshot, 400, 300);
   expect(
     resolveScatterTrace(
-      { kind: "overlay", id: "brush", plan: brushedPlan },
+      { kind: "overlay", id: "brush" },
       brushedPlan,
       snapshot,
       settings,
@@ -180,7 +170,7 @@ it("resolves source, calculation, guide, and legend inputs from one scatter plan
   const facetPlan = planScatter(settings, facetSnapshot, 400, 300);
   expect(
     resolveScatterTrace(
-      { kind: "point", id: facetPlan.points[0]!.id, plan: facetPlan },
+      { kind: "point", id: facetPlan.points[0]!.id },
       facetPlan,
       facetSnapshot,
       settings,
