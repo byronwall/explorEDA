@@ -60,6 +60,7 @@ export function ChartGridLayout({
     setMenuOpenState(open);
   };
   const [previewVisible, setPreviewVisible] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const createdChart = useRef(false);
   // Growing a chart into its neighbor stops at the neighbor instead of
   // pushing it down and leaving a hole. Only a bottom-edge resize may push
@@ -188,6 +189,11 @@ export function ChartGridLayout({
   const stopInteraction = () => {
     isInteracting.current = false;
     setActiveResize(null);
+    setDragging(false);
+  };
+  const startDrag = () => {
+    setDragging(true);
+    startInteraction();
   };
   const startResize: GridLayout.ItemCallback = (
     currentLayout,
@@ -258,14 +264,15 @@ export function ChartGridLayout({
         ]}
         // Free placement keeps charts where the user puts them, so a chart
         // added in empty space stays there and a top or left resize keeps
-        // the opposite edge fixed. The narrow layout stays a simple stack.
-        compactType={isNarrow ? "vertical" : null}
+        // the opposite edge fixed. A move closes the gaps it leaves, and the
+        // narrow layout stays a simple stack.
+        compactType={isNarrow || dragging ? "vertical" : null}
         // A backstop for corner resizes that meet a chart diagonally.
         preventCollision={
           activeResize !== null && !activeResize.axis.includes("s")
         }
         onLayoutChange={isNarrow ? undefined : handleLayoutChange}
-        onDragStart={startInteraction}
+        onDragStart={startDrag}
         onDragStop={stopInteraction}
         onResizeStart={startResize}
         onResizeStop={stopInteraction}

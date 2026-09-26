@@ -45,10 +45,14 @@ function chartAt(title: string, layout: ChartLayout) {
 
 let readLayouts: () => Record<string, ChartLayout> = () => ({});
 let addChartAt: (layout: ChartLayout) => void = () => {};
+let removeChartNamed: (title: string) => void = () => {};
 
 function Grid() {
   const charts = useDataLayer((s) => s.charts);
   const addChart = useDataLayer((s) => s.addChart);
+  const removeChart = useDataLayer((s) => s.removeChart);
+  removeChartNamed = (title) =>
+    removeChart(charts.find((chart) => chart.title === title)!);
   readLayouts = () =>
     Object.fromEntries(charts.map((chart) => [chart.title, chart.layout]));
   addChartAt = (layout) => addChart(chartAt("Blocker", layout));
@@ -56,7 +60,7 @@ function Grid() {
     <ChartGridLayout charts={charts} containerWidth={WIDTH}>
       {charts.map((chart) => (
         <div key={chart.id} data-testid={chart.title}>
-          {chart.title}
+          <span className="drag-handle">{chart.title}</span>
         </div>
       ))}
     </ChartGridLayout>
@@ -144,6 +148,59 @@ describe("ChartGridLayout resizing", () => {
       Neighbor: { x: 0, y: 0, w: 4, h: 4 },
       Target: { x: 4, y: 0, w: 8, h: 4 },
     });
+  });
+});
+
+describe("closing gaps", () => {
+  it("moves charts up after a chart is moved away", () => {
+    // jsdom has no layout, and the grid needs an offset parent to start a drag.
+    const offsetParent = vi
+      .spyOn(HTMLElement.prototype, "offsetParent", "get")
+      .mockImplementation(function (this: HTMLElement) {
+        return this.parentElement;
+      });
+    renderGrid({
+      Moved: { x: 0, y: 0, w: 6, h: 2 },
+      Below: { x: 0, y: 2, w: 6, h: 4 },
+    });
+    const handle = screen.getByText("Moved");
+    fireEvent.mouseDown(handle, { clientX: 100, clientY: 100, button: 0 });
+    for (let step = 1; step <= 6; step++) {
+      fireEvent.mouseMove(document, {
+        clientX: 100 + step * CELL,
+        clientY: 100,
+      });
+    }
+    fireEvent.mouseUp(document, { clientX: 100 + 6 * CELL, clientY: 100 });
+
+    expect(readLayouts()).toEqual({
+      Moved: { x: 6, y: 0, w: 6, h: 2 },
+      Below: { x: 0, y: 0, w: 6, h: 4 },
+    });
+    offsetParent.mockRestore();
+  });
+
+  it("moves charts up after a chart is deleted", () => {
+    renderGrid({
+      Deleted: { x: 0, y: 0, w: 6, h: 2 },
+      Below: { x: 0, y: 2, w: 6, h: 4 },
+      Beside: { x: 6, y: 0, w: 6, h: 3 },
+    });
+
+    act(() => removeChartNamed("Deleted"));
+
+    expect(readLayouts()).toEqual({
+      Below: { x: 0, y: 0, w: 6, h: 4 },
+      Beside: { x: 6, y: 0, w: 6, h: 3 },
+    });
+  });
+
+  it("keeps a resized chart's gap until something moves", () => {
+    renderGrid({ Target: { x: 0, y: 2, w: 6, h: 3 } });
+
+    dragHandle("Target", "s", 0, CELL);
+
+    expect(readLayouts().Target).toEqual({ x: 0, y: 2, w: 6, h: 4 });
   });
 });
 

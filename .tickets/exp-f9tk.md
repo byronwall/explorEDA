@@ -49,4 +49,4 @@ No pixel-based freeform sizing or keyboard grid editor. Source: Byron's 2026-09-
 
 ## Resolution
 
-Charts resize from all four edges and all four corners, and the southeast grip is still shown (PR #32). The grid keeps the existing `react-grid-layout` dependency with `compactType={null}` on wide grids, so a top or left resize keeps the opposite edge fixed. Narrow layouts stay a stack with no handles. Saved layouts keep the same fields.
+Charts resize from all four edges and all four corners, and the southeast grip is still shown (PR #32). The grid keeps the existing `react-grid-layout` dependency. Wide grids use free placement during a resize, so a top or left resize keeps the opposite edge fixed. Top, left and right resizes stop at the nearest chart. Moving or deleting a chart still closes the gaps it leaves (Byron's choice, 2026-09-26). Narrow layouts stay a stack with no handles. Saved layouts keep the same fields.
