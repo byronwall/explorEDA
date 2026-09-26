@@ -89,7 +89,7 @@ export function IntegrationGuide() {
             or download the{" "}
             <a
               className="font-medium text-foreground underline underline-offset-4"
-              href="/explorEDA/datasets/shop-operations.csv"
+              href="/datasets/shop-operations.csv"
             >
               example CSV
             </a>

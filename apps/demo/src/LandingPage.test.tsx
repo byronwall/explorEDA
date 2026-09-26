@@ -82,9 +82,9 @@ describe("LandingPage routing", () => {
       })
     );
     const router = createMemoryRouter(
-      [{ path: "/explorEDA/*", element: <LandingPage /> }],
+      [{ path: "/*", element: <LandingPage /> }],
       {
-        initialEntries: ["/explorEDA/", "/explorEDA/?example=lorenz-3d"],
+        initialEntries: ["/", "/?example=lorenz-3d"],
         initialIndex: 1,
       }
     );
@@ -108,8 +108,8 @@ describe("LandingPage routing", () => {
 
   it("leads with the featured example before import and restore", () => {
     const router = createMemoryRouter(
-      [{ path: "/explorEDA/*", element: <LandingPage /> }],
-      { initialEntries: ["/explorEDA/"] }
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
     );
 
     render(<RouterProvider router={router} />);
@@ -140,8 +140,8 @@ describe("LandingPage routing", () => {
       })
     );
     const router = createMemoryRouter(
-      [{ path: "/explorEDA/*", element: <LandingPage /> }],
-      { initialEntries: ["/explorEDA/"] }
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
     );
 
     render(<RouterProvider router={router} />);
@@ -163,25 +163,23 @@ describe("LandingPage routing", () => {
     });
     vi.stubGlobal("fetch", fetchMock);
     const router = createMemoryRouter(
-      [{ path: "/explorEDA/*", element: <LandingPage /> }],
-      { initialEntries: ["/explorEDA/"] }
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
     );
 
     render(<RouterProvider router={router} />);
     fireEvent.click(screen.getByRole("button", { name: /Palmer penguins/ }));
 
     const workspace = await screen.findByTestId("workspace");
-    expect(fetchMock).toHaveBeenCalledWith(
-      "/explorEDA/datasets/palmer-penguins.csv"
-    );
+    expect(fetchMock).toHaveBeenCalledWith("/datasets/palmer-penguins.csv");
     expect(workspace).toHaveAttribute("data-rows", "2");
     expect(workspace).toHaveAttribute("data-has-saved-data", "false");
   });
 
   it("opens a CSV dropped anywhere on the page in the workspace", async () => {
     const router = createMemoryRouter(
-      [{ path: "/explorEDA/*", element: <LandingPage /> }],
-      { initialEntries: ["/explorEDA/"] }
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
     );
     render(<RouterProvider router={router} />);
 
@@ -207,8 +205,8 @@ describe("LandingPage routing", () => {
 
   it("explains when a dropped file is not CSV or JSON", async () => {
     const router = createMemoryRouter(
-      [{ path: "/explorEDA/*", element: <LandingPage /> }],
-      { initialEntries: ["/explorEDA/"] }
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
     );
     render(<RouterProvider router={router} />);
 
@@ -231,8 +229,8 @@ describe("LandingPage routing", () => {
       })
     );
     const router = createMemoryRouter(
-      [{ path: "/explorEDA/*", element: <LandingPage /> }],
-      { initialEntries: ["/explorEDA/?example=palmer-penguins"] }
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/?example=palmer-penguins"] }
     );
 
     render(<RouterProvider router={router} />);
@@ -261,8 +259,8 @@ describe("LandingPage routing", () => {
 
   it("shows full-analysis validation errors and accepts a valid followup", async () => {
     const router = createMemoryRouter(
-      [{ path: "/explorEDA/*", element: <LandingPage /> }],
-      { initialEntries: ["/explorEDA/"] }
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
     );
 
     render(<RouterProvider router={router} />);

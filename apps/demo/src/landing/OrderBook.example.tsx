@@ -12,7 +12,7 @@ export function OrderBook() {
   const [orders, setOrders] = useState<Order[] | null>(null);
 
   useEffect(() => {
-    fetch("/explorEDA/datasets/shop-operations.csv")
+    fetch("/datasets/shop-operations.csv")
       .then((response) => response.text())
       .then(parseCsvData)
       .then((rows) => setOrders(rows as Order[]));

@@ -81,7 +81,7 @@ export function FeaturedExample({ example, onOpen }: FeaturedExampleProps) {
         <figure className="min-w-0">
           <div className="landing-shot overflow-hidden rounded-xl border border-border bg-card">
             <img
-              src="/explorEDA/landing/order-book-web.jpg"
+              src="/landing/order-book-web.jpg"
               alt="The order book after selecting Web: a Channel: Web filter chip, 167 of 500 rows, and every chart narrowed to web orders."
               width={2040}
               height={1230}

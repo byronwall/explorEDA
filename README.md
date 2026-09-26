@@ -5,7 +5,7 @@
 Give users linked charts, record-level tables, and editable calculated fields
 without building the workspace around them.
 
-[Live demo](https://byronwall.github.io/explorEDA/) ·
+[Live demo](https://exploreda.dev) ·
 [Package docs](packages/explorEDA/README.md) ·
 [Example source](apps/demo/src/demos)
 
@@ -90,7 +90,7 @@ and the demo site is in `apps/demo`. It requires pnpm 11.9.0.
 ```sh
 pnpm install
 pnpm check              # UI rules, build, typecheck, and tests
-pnpm --filter demo dev  # demo site at http://localhost:5173/explorEDA/
+pnpm --filter demo dev  # demo site at http://localhost:5173/
 ```
 
 ## Inspiration

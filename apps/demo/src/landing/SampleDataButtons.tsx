@@ -8,19 +8,19 @@ const samples = [
     id: "penguins",
     label: "Palmer penguins",
     detail: "344 rows",
-    url: "/explorEDA/datasets/palmer-penguins.csv",
+    url: "/datasets/palmer-penguins.csv",
   },
   {
     id: "wine",
     label: "Red wine quality",
     detail: "1,599 rows",
-    url: "/explorEDA/datasets/wine-quality-red.csv",
+    url: "/datasets/wine-quality-red.csv",
   },
   {
     id: "orders",
     label: "Shop orders",
     detail: "500 rows",
-    url: "/explorEDA/datasets/shop-operations.csv",
+    url: "/datasets/shop-operations.csv",
   },
 ];
 

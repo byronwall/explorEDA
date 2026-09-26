@@ -11,7 +11,7 @@ const ExplorEda = lazy(() =>
   }))
 );
 
-const DATA_URL = "/explorEDA/datasets/shop-operations.csv";
+const DATA_URL = "/datasets/shop-operations.csv";
 
 function Placeholder({ children }: { children: string }) {
   return (
