@@ -25,6 +25,9 @@ import { ExampleSelector } from "./ExampleSelector";
 import { FeaturedExample } from "./landing/FeaturedExample";
 import { IntegrationGuide } from "./landing/IntegrationGuide";
 import { WhyWorkspace } from "./landing/WhyWorkspace";
+import { Hero } from "./landing/Hero";
+import { LandingFooter } from "./landing/LandingFooter";
+import { SectionHeading } from "./landing/SectionHeading";
 
 const featuredExample = examples.find(
   (item) => item.id === FEATURED_EXAMPLE_ID
@@ -218,45 +221,21 @@ export function LandingPage() {
               className={
                 showCoverage
                   ? "mx-auto w-full max-w-[calc(100vw-3rem)]"
-                  : "mx-auto w-full max-w-5xl"
+                  : "landing mx-auto w-full max-w-6xl"
               }
             >
               {showCoverage ? (
                 <CoverageMatrix />
               ) : (
                 <>
-                  <header className="mb-10 pt-6 sm:pt-10">
-                    <p className="text-sm font-medium text-muted-foreground">
-                      explorEDA · React workspace for exploratory data analysis
-                    </p>
-                    <h1 className="mt-2 max-w-3xl text-3xl font-bold leading-tight sm:text-4xl">
-                      Embed an interactive analysis workspace in your React app
-                    </h1>
-                    <p className="mt-3 max-w-2xl text-muted-foreground">
-                      Give users linked charts, record-level tables, and
-                      editable calculated fields without building the workspace
-                      around them. Every example on this page runs the same
-                      component.
-                    </p>
-                    <div className="mt-5 flex flex-wrap gap-3">
-                      {featuredExample && (
-                        <Button
-                          onClick={() =>
-                            handleExampleSelect(featuredExample.id)
-                          }
-                        >
-                          Explore the order book
-                        </Button>
-                      )}
-                      <Button variant="outline" asChild>
-                        <a href="#integration">See the React integration</a>
-                      </Button>
-                      <Button variant="ghost" asChild>
-                        <a href="#your-data">Try your own data</a>
-                      </Button>
-                    </div>
-                  </header>
-                  <div className="space-y-12">
+                  {featuredExample && (
+                    <Hero
+                      onOpenFeatured={() =>
+                        handleExampleSelect(featuredExample.id)
+                      }
+                    />
+                  )}
+                  <div className="mt-28 space-y-28 pb-10">
                     {featuredExample && (
                       <FeaturedExample
                         example={featuredExample}
@@ -282,19 +261,15 @@ export function LandingPage() {
                     <IntegrationGuide />
                     <WhyWorkspace />
                     <section aria-labelledby="examples-heading">
-                      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-                        <div>
-                          <h2
-                            id="examples-heading"
-                            className="text-xl font-semibold"
-                          >
-                            More examples
-                          </h2>
-                          <p className="mt-1 text-sm text-muted-foreground">
-                            Open another linked dashboard, or browse focused
-                            component examples.
-                          </p>
-                        </div>
+                      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+                        <SectionHeading
+                          id="examples-heading"
+                          eyebrow="Gallery"
+                          heading="More examples"
+                        >
+                          Open another linked dashboard, or browse focused
+                          component examples.
+                        </SectionHeading>
                         <Button
                           variant="link"
                           className="px-0"
@@ -310,7 +285,7 @@ export function LandingPage() {
                         )}
                         onSelect={handleExampleSelect}
                       />
-                      <details className="mt-6 rounded-lg border border-border px-4">
+                      <details className="mt-6 rounded-xl border border-border bg-card px-5">
                         <summary className="cursor-pointer py-3 font-medium">
                           Show all examples
                         </summary>
@@ -327,76 +302,78 @@ export function LandingPage() {
                     <section
                       aria-labelledby="your-data-heading"
                       id="your-data"
-                      className="space-y-8"
+                      className="scroll-mt-8"
                     >
-                      <div>
-                        <h2
-                          id="your-data-heading"
-                          className="text-xl font-semibold"
+                      <SectionHeading
+                        id="your-data-heading"
+                        eyebrow="Your data"
+                        heading="Try your own data"
+                      >
+                        Import a file into this demo, or reopen an analysis you
+                        exported earlier. In your app, rows arrive through{" "}
+                        <code>data</code> instead.
+                      </SectionHeading>
+                      <div className="mt-10 grid gap-6 lg:grid-cols-2">
+                        <section
+                          aria-labelledby="import-heading"
+                          className="rounded-xl border border-border bg-card p-6"
                         >
-                          Try your own data
-                        </h2>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          Import a file into this demo, or reopen an analysis
-                          you exported earlier. In your app, rows arrive through{" "}
-                          <code>data</code> instead.
-                        </p>
-                      </div>
-                      <section aria-labelledby="import-heading">
-                        <h3
-                          id="import-heading"
-                          className="mb-3 text-lg font-semibold"
-                        >
-                          Import your data
-                        </h3>
-                        <CsvUpload onImport={handleCsvImport} />
-                      </section>
-                      <section aria-labelledby="json-heading">
-                        <h3
-                          id="json-heading"
-                          className="mb-3 text-lg font-semibold"
-                        >
-                          Open a saved analysis
-                        </h3>
-                        <p className="mb-3 text-sm text-muted-foreground">
-                          Paste full analysis JSON to restore its source rows
-                          and settings.
-                        </p>
-                        <textarea
-                          value={analysisJson}
-                          onChange={(event) => {
-                            setAnalysisJson(event.target.value);
-                            setAnalysisJsonError(null);
-                          }}
-                          aria-label="Full analysis JSON"
-                          aria-describedby={
-                            analysisJsonError
-                              ? "analysis-json-error"
-                              : undefined
-                          }
-                          placeholder="Paste full analysis JSON here"
-                          className="min-h-32 w-full rounded-md border border-input bg-background p-3 font-mono text-xs"
-                        />
-                        <Button
-                          className="mt-3"
-                          onClick={handleAnalysisJson}
-                          disabled={!analysisJson.trim()}
-                        >
-                          Open analysis JSON
-                        </Button>
-                        {analysisJsonError && (
-                          <p
-                            id="analysis-json-error"
-                            role="alert"
-                            aria-live="assertive"
-                            className="mt-2 rounded-md border border-destructive/50 bg-destructive/10 p-2 text-sm text-destructive"
+                          <h3
+                            id="import-heading"
+                            className="mb-4 font-semibold"
                           >
-                            {analysisJsonError}
+                            Import your data
+                          </h3>
+                          <CsvUpload onImport={handleCsvImport} />
+                        </section>
+                        <section
+                          aria-labelledby="json-heading"
+                          className="rounded-xl border border-border bg-card p-6"
+                        >
+                          <h3 id="json-heading" className="mb-1 font-semibold">
+                            Open a saved analysis
+                          </h3>
+                          <p className="mb-3 text-sm text-muted-foreground">
+                            Paste full analysis JSON to restore its source rows
+                            and settings.
                           </p>
-                        )}
-                      </section>
+                          <textarea
+                            value={analysisJson}
+                            onChange={(event) => {
+                              setAnalysisJson(event.target.value);
+                              setAnalysisJsonError(null);
+                            }}
+                            aria-label="Full analysis JSON"
+                            aria-describedby={
+                              analysisJsonError
+                                ? "analysis-json-error"
+                                : undefined
+                            }
+                            placeholder="Paste full analysis JSON here"
+                            className="min-h-32 w-full rounded-md border border-input bg-background p-3 font-mono text-xs"
+                          />
+                          <Button
+                            className="mt-3"
+                            onClick={handleAnalysisJson}
+                            disabled={!analysisJson.trim()}
+                          >
+                            Open analysis JSON
+                          </Button>
+                          {analysisJsonError && (
+                            <p
+                              id="analysis-json-error"
+                              role="alert"
+                              aria-live="assertive"
+                              className="mt-2 rounded-md border border-destructive/50 bg-destructive/10 p-2 text-sm text-destructive"
+                            >
+                              {analysisJsonError}
+                            </p>
+                          )}
+                        </section>
+                      </div>
                     </section>
                   </div>
+                  <LandingFooter />
                 </>
               )}
             </motion.div>

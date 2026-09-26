@@ -1,28 +1,31 @@
 import orderBookSource from "./OrderBook.example.tsx?raw";
 import ordersExplorerSource from "./OrdersExplorer.example.tsx?raw";
+import { CodePanel } from "./CodePanel";
 import { PACKAGE_README_URL, REPO_URL } from "./links";
-
-const installCommand = "pnpm add exploreda";
+import { SectionHeading } from "./SectionHeading";
 
 const boundaries = [
   {
     name: "data",
+    role: "Input",
     meaning:
       "The rows your app supplies. Pass a new array when the rows change; in-place mutations are not observed.",
   },
   {
     name: "savedData",
+    role: "Restore",
     meaning:
       "Optional settings that restore charts, calculations, Rows filters, and layout. It is read on mount or replacement, not kept in sync.",
   },
   {
     name: "onStateChange",
+    role: "Callback",
     meaning:
       "Called after meaningful edits with JSON settings, never raw rows. Your app decides where to keep them; do not feed each result back into savedData.",
   },
 ];
 
-const facts = [
+const facts: { label: string; value: string; attention?: boolean }[] = [
   {
     label: "Framework",
     value: "React and ReactDOM 18 or 19 as peer dependencies.",
@@ -39,6 +42,7 @@ const facts = [
   },
   {
     label: "Release",
+    attention: true,
     value:
       "npm has exploreda 0.0.6, which predates onStateChange and optional savedData. These examples match the current source and need the next release.",
   },
@@ -49,95 +53,102 @@ const facts = [
   },
 ];
 
-function CodeBlock({ label, code }: { label: string; code: string }) {
-  return (
-    <pre
-      aria-label={label}
-      className="overflow-x-auto rounded-md border border-border bg-muted/40 p-4 font-mono text-xs leading-relaxed"
-    >
-      <code>{code.trimEnd()}</code>
-    </pre>
-  );
-}
-
 export function IntegrationGuide() {
   return (
-    <section aria-labelledby="integration-heading" id="integration">
-      <h2 id="integration-heading" className="text-xl font-semibold">
-        Use it in your React app
-      </h2>
-      <p className="mt-1 text-sm text-muted-foreground">
+    <section
+      aria-labelledby="integration-heading"
+      id="integration"
+      className="scroll-mt-8"
+    >
+      <SectionHeading
+        id="integration-heading"
+        eyebrow="Integration"
+        heading="Use it in your React app"
+      >
         The order book is the published <code>ExplorEda</code> component. This
         site adds the page around it: routing, file import, and a reset button.
-      </p>
+      </SectionHeading>
 
-      <div className="mt-5 grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-        <div className="min-w-0 space-y-3">
-          <CodeBlock label="Install command" code={installCommand} />
-          <CodeBlock label="Component example" code={ordersExplorerSource} />
-          <p className="text-sm text-muted-foreground">
-            Without <code>savedData</code>, this opens a workspace with summary
-            and row views. The order book adds its{" "}
+      <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+        <div className="min-w-0">
+          <CodePanel
+            files={[
+              {
+                name: "OrdersExplorer.tsx",
+                code: ordersExplorerSource,
+                note: "Without savedData, this opens a workspace with summary and row views. See OrderBook.tsx for the featured dashboard.",
+              },
+              {
+                name: "OrderBook.tsx",
+                code: orderBookSource,
+                note: "The featured example: its CSV as data and its typed settings as savedData. parseCsvData and shopDashboard come from this demo app, not the package.",
+              },
+            ]}
+          />
+          <p className="mt-3 text-sm text-muted-foreground">
+            Browse the{" "}
             <a
-              className="text-primary underline-offset-4 hover:underline"
+              className="font-medium text-foreground underline underline-offset-4"
               href={`${REPO_URL}/blob/main/apps/demo/src/demos/dashboardSettings.ts`}
             >
               typed saved settings
             </a>{" "}
-            and the{" "}
+            or download the{" "}
             <a
-              className="text-primary underline-offset-4 hover:underline"
+              className="font-medium text-foreground underline underline-offset-4"
               href="/explorEDA/datasets/shop-operations.csv"
             >
               example CSV
             </a>
             .
           </p>
-          <details className="rounded-md border border-border px-4">
-            <summary className="cursor-pointer py-3 text-sm font-medium">
-              Show the complete order book example
-            </summary>
-            <div className="pb-4">
-              <CodeBlock
-                label="Complete order book example"
-                code={orderBookSource}
-              />
-              <p className="mt-2 text-sm text-muted-foreground">
-                <code>parseCsvData</code> and <code>shopDashboard</code> come
-                from this demo app, not the package. Your app supplies its own
-                rows and settings.
-              </p>
-            </div>
-          </details>
         </div>
 
-        <div className="min-w-0 space-y-5">
-          <dl className="space-y-3 text-sm">
-            {boundaries.map((item) => (
-              <div key={item.name}>
-                <dt className="font-mono font-medium">{item.name}</dt>
-                <dd className="text-muted-foreground">{item.meaning}</dd>
-              </div>
-            ))}
-          </dl>
-          <div className="rounded-md border border-border p-4">
-            <h3 className="text-sm font-semibold">Before you integrate</h3>
-            <dl className="mt-2 space-y-2 text-sm">
-              {facts.map((fact) => (
-                <div key={fact.label}>
-                  <dt className="font-medium">{fact.label}</dt>
-                  <dd className="text-muted-foreground">{fact.value}</dd>
-                </div>
-              ))}
-            </dl>
-            <a
-              className="mt-3 inline-block text-sm text-primary underline-offset-4 hover:underline"
-              href={PACKAGE_README_URL}
+        <div className="min-w-0 space-y-3">
+          <h3 className="text-sm font-semibold">Three props, one boundary</h3>
+          {boundaries.map((item) => (
+            <div
+              key={item.name}
+              className="rounded-xl border border-border bg-card p-4"
             >
-              Package README and API details
-            </a>
-          </div>
+              <div className="flex items-center justify-between gap-3">
+                <code className="text-sm font-semibold">{item.name}</code>
+                <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
+                  {item.role}
+                </span>
+              </div>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {item.meaning}
+              </p>
+            </div>
+          ))}
         </div>
+      </div>
+
+      <div className="mt-10 rounded-xl border border-border bg-card">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-5 py-3">
+          <h3 className="text-sm font-semibold">Before you integrate</h3>
+          <a
+            className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+            href={PACKAGE_README_URL}
+          >
+            Package README and API details
+          </a>
+        </div>
+        <dl className="grid gap-px overflow-hidden rounded-b-xl bg-border sm:grid-cols-2 lg:grid-cols-5">
+          {facts.map((fact) => (
+            <div key={fact.label} className="bg-card p-5">
+              <dt
+                className={`text-xs font-semibold uppercase tracking-wide ${
+                  fact.attention ? "text-warning" : "text-muted-foreground"
+                }`}
+              >
+                {fact.label}
+              </dt>
+              <dd className="mt-1.5 text-sm leading-relaxed">{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   );

@@ -10,3 +10,75 @@
     color: var(--foreground);
   }
 }
+
+/* Landing page only; the workspace keeps the package typography. */
+.landing {
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: "cv11", "ss01";
+}
+
+.landing code,
+.landing pre,
+.landing .font-mono {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+.landing-hero-bg {
+  background-image:
+    radial-gradient(
+      60% 55% at 50% 0%,
+      color-mix(in oklab, hsl(210 80% 55%) 16%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      circle at 1px 1px,
+      color-mix(in oklab, var(--foreground) 12%, transparent) 1px,
+      transparent 0
+    );
+  background-size:
+    100% 100%,
+    22px 22px;
+  mask-image: linear-gradient(to bottom, black 55%, transparent);
+}
+
+.landing-gradient-text {
+  background: linear-gradient(100deg, hsl(215 75% 44%), hsl(186 72% 36%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.dark .landing-gradient-text {
+  background-image: linear-gradient(100deg, hsl(212 90% 70%), hsl(168 60% 62%));
+}
+
+.landing-shot {
+  box-shadow:
+    0 1px 2px color-mix(in oklab, var(--foreground) 6%, transparent),
+    0 24px 60px -24px color-mix(in oklab, hsl(215 70% 42%) 40%, transparent);
+}
+
+/* Code panels stay dark in both themes, like an editor. */
+.landing-code {
+  --code-bg: hsl(222 30% 9%);
+  --code-fg: hsl(220 20% 88%);
+  --code-muted: hsl(220 12% 55%);
+  --code-keyword: hsl(286 60% 74%);
+  --code-string: hsl(95 38% 66%);
+  --code-tag: hsl(199 80% 70%);
+  background: var(--code-bg);
+  color: var(--code-fg);
+}
+.landing-code .tok-comment {
+  color: var(--code-muted);
+  font-style: italic;
+}
+.landing-code .tok-keyword {
+  color: var(--code-keyword);
+}
+.landing-code .tok-string {
+  color: var(--code-string);
+}
+.landing-code .tok-tag {
+  color: var(--code-tag);
+}
