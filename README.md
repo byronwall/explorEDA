@@ -1,79 +1,97 @@
 # explorEDA
 
-React components for interactive exploratory data analysis.
+**Embed an interactive analysis workspace in your React app.**
 
-![explorEDA workspace](packages/explorEDA/docs/main-image.png)
+Give users linked charts, record-level tables, and editable calculated fields
+without building the workspace around them.
 
-explorEDA builds a workspace of charts that share one filter state. Brush a
-scatter plot or select bars, and the other charts recompute against the same
-remaining rows. A table can then show the records behind the selection.
+[Live demo](https://byronwall.github.io/explorEDA/) ·
+[Package docs](packages/explorEDA/README.md) ·
+[Example source](apps/demo/src/demos)
 
-## Features
+![The order book example after selecting Web in Sales channels: a Channel: Web filter chip, 167 of 500 rows, and every chart narrowed to web orders.](apps/demo/public/landing/order-book-web.jpg)
 
-- Cross-chart filtering with shared data and filter state
-- Faceted charts with shared axis limits
-- Calculated columns
-- Configurable axes, grid lines, color scales, and chart layouts
-- CSV export from data and summary tables
-- CSV and JSON import in the demo application
+## Why a workspace
 
-The available chart types are row, bar, line, scatter, 3D scatter, box plot,
-pivot table, data table, summary table, markdown, and color legend.
+Linked filtering alone is common. explorEDA also provides the parts around the
+charts: configuration, record inspection, formulas, and restorable settings.
 
-## Display support
+- **Linked views and their records.** A selection in one chart filters every
+  other view and the record table, so users can check the rows behind a
+  pattern.
+- **Calculated fields users can inspect.** Formulas show their dependency
+  chains, and the editor previews a draft before it is applied across views.
+- **Settings your app keeps.** Users arrange the analysis visually. Your app
+  receives the settings as JSON and restores them later through `savedData`.
 
-explorEDA is a desktop charting workspace. Use it at viewport widths of 1024
-CSS pixels or more. Narrow and mobile layouts are not supported. The workspace
-can render below that width, but charts and settings might not remain usable.
+Chart types include row, bar, line, scatter, 3D scatter, box plot, pivot
+table, data table, summary table, markdown, and color legend.
 
 ## Install
 
 ```sh
-pnpm add exploreda react react-dom
+pnpm add exploreda
 ```
 
-React and ReactDOM are peer dependencies.
+React and ReactDOM 18 or 19 are peer dependencies.
 
-## Use
+## Use it in your React app
 
 ```tsx
 import { ExplorEda, type SavedDataStructure } from "exploreda";
 import "exploreda/dist/ExplorEda.css";
 
-const data = [
-  { category: "A", value: 1 },
-  { category: "B", value: 2 },
-];
+type Order = Record<string, string | number | boolean | null>;
 
-const savedData: SavedDataStructure | undefined = undefined;
-
-export function App() {
-  return <ExplorEda data={data} savedData={savedData} />;
+export function OrdersExplorer({
+  orders,
+  savedSettings,
+  onSettingsChange,
+}: {
+  orders: Order[];
+  savedSettings?: SavedDataStructure;
+  onSettingsChange: (settings: SavedDataStructure) => void;
+}) {
+  return (
+    <ExplorEda
+      data={orders}
+      savedData={savedSettings}
+      onStateChange={onSettingsChange}
+    />
+  );
 }
 ```
 
-`data` is an array of objects. Values can be strings, numbers, booleans, or
-`undefined`.
+Three props define the boundary between your app and the workspace:
 
-`savedData` restores chart, calculation, grid, metadata, and color-scale state.
-It does not contain the raw rows. Pass `undefined` when no saved state exists.
+| Prop            | Role     | What it does                                                                                                 |
+| --------------- | -------- | ------------------------------------------------------------------------------------------------------------ |
+| `data`          | Input    | The rows your app supplies. Pass a new array when the rows change; in-place mutations are not observed.      |
+| `savedData`     | Restore  | Optional settings that restore charts, calculations, Rows filters, and layout. Read on mount or replacement. |
+| `onStateChange` | Callback | Called after meaningful edits with JSON settings, never raw rows. Your app decides where to keep them.       |
 
-The provider applies a new `data` or `savedData` value when its reference
-changes. Pass a new array or object to update the workspace. In-place
-mutations are not observed. If both values change, the provider updates the
-rows and then restores the saved state.
+`savedData` is not a controlled value, so do not feed each `onStateChange`
+result back into it. The [package docs](packages/explorEDA/README.md) cover
+the settings shape, full analysis bundles with rows, and registering only the
+charts you need.
 
-## Development
+## Before you integrate
 
-Requires pnpm 11.9.0.
+- **Screen size:** desktop viewports of 1024 CSS pixels or more.
+- **Browser:** DOM and Canvas 2D. The 3D scatter chart also needs WebGL.
+- **Storage:** none built in. Settings and full analysis exports are JSON your
+  app stores.
+
+## Develop
+
+This repository is a pnpm workspace: the library is in `packages/explorEDA`
+and the demo site is in `apps/demo`. It requires pnpm 11.9.0.
 
 ```sh
 pnpm install
-pnpm check
-pnpm --filter demo dev
+pnpm check              # UI rules, build, typecheck, and tests
+pnpm --filter demo dev  # demo site at http://localhost:5173/explorEDA/
 ```
-
-The demo source and sample datasets are in `apps/demo/src`.
 
 ## Inspiration
 
