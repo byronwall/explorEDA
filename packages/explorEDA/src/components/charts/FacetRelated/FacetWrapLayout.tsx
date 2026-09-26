@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChartRenderer } from "../ChartRenderer";
 import { traceOnAltEnter } from "./facetTrace";
+import { FacetPager, type FacetPickerProps } from "./FacetPager";
 import { FacetData } from "./FacetContainer";
 import { planFacetWrapLayout, type FacetLayoutPlan } from "./facetLayout";
 
@@ -25,6 +26,7 @@ interface FacetWrapLayoutProps {
     layout: FacetLayoutPlan
   ) => void;
   formatFacetValue: (field: string, value: datum) => string;
+  picker: FacetPickerProps;
 }
 
 export function FacetWrapLayout({
@@ -38,6 +40,7 @@ export function FacetWrapLayout({
   onFocusFacet,
   onTraceFacet,
   formatFacetValue,
+  picker,
 }: FacetWrapLayoutProps) {
   const [page, setPage] = useState(0);
   const layout = planFacetWrapLayout(
@@ -52,38 +55,22 @@ export function FacetWrapLayout({
 
   const visible = facetData.slice(page * pageSize, (page + 1) * pageSize);
   const rowVariable = settings.facet.rowVariable;
+  const first = page * pageSize + 1;
+  const last = Math.min((page + 1) * pageSize, facetData.length);
+  const pageLabel =
+    first === last
+      ? `Facet ${first} of ${facetData.length}`
+      : `Facets ${first}–${last} of ${facetData.length}`;
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      {pageCount > 1 && (
-        <div className="flex shrink-0 items-center justify-between gap-2 overflow-hidden pb-1 text-xs text-muted-foreground">
-          <span className="min-w-0 truncate whitespace-nowrap">
-            Facets {page * pageSize + 1}–
-            {Math.min((page + 1) * pageSize, facetData.length)} of{" "}
-            {facetData.length}
-          </span>
-          <span className="flex shrink-0 gap-1 whitespace-nowrap">
-            <button
-              type="button"
-              className="whitespace-nowrap underline disabled:no-underline disabled:opacity-40"
-              disabled={page === 0}
-              onClick={() => setPage((current) => Math.max(0, current - 1))}
-            >
-              Previous
-            </button>
-            <button
-              type="button"
-              className="whitespace-nowrap underline disabled:no-underline disabled:opacity-40"
-              disabled={page === pageCount - 1}
-              onClick={() =>
-                setPage((current) => Math.min(pageCount - 1, current + 1))
-              }
-            >
-              Next
-            </button>
-          </span>
-        </div>
-      )}
+      <FacetPager
+        label={pageLabel}
+        page={page}
+        pageCount={pageCount}
+        onPageChange={setPage}
+        picker={picker}
+      />
       <div
         className="grid min-h-0 flex-1 gap-2 overflow-hidden"
         style={{

@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { ChartRenderer } from "../ChartRenderer";
 import { FacetGridLayout } from "./FacetGridLayout";
 import { FacetWrapLayout } from "./FacetWrapLayout";
+import { FacetPager, type FacetPickerProps } from "./FacetPager";
 import { useGetAllIds } from "../useGetLiveData";
 import { hasFieldDisplayFormat } from "@/lib/fieldSettings";
 import { useScatterTraceSelection } from "../ScatterPlot/ScatterTraceContext";
@@ -206,6 +207,19 @@ export function FacetContainer({
       facet: { ...settings.facet, visibleFacetIds } as ChartSettings["facet"],
     });
 
+  const facetLabel = (facet: FacetData) =>
+    settings.facet?.type === "grid" && facet.columnRawValue !== null
+      ? `${displayFacetValue(settings.facet.rowVariable, facet.rowRawValue)} · ${displayFacetValue(settings.facet.columnVariable, facet.columnRawValue)}`
+      : displayFacetValue(settings.facet?.rowVariable ?? "", facet.rowRawValue);
+  const picker: FacetPickerProps = {
+    options: allFacetData.map((facet) => ({
+      id: facet.id,
+      label: facetLabel(facet),
+    })),
+    visibleIds: settings.facet?.visibleFacetIds,
+    onChange: updateVisibleFacetIds,
+  };
+
   if (!settings.facet?.enabled) {
     return null;
   }
@@ -216,31 +230,37 @@ export function FacetContainer({
       return (
         <div className="flex h-full w-full min-h-0 flex-col">
           <div className="flex shrink-0 items-center justify-between gap-2 overflow-hidden pb-1 text-xs">
-            <span
-              className="min-w-0 truncate whitespace-nowrap font-medium"
-              tabIndex={inspectFacet ? 0 : undefined}
-              aria-description={
-                inspectFacet
-                  ? "Alt-click or Alt-Enter to trace this facet"
-                  : undefined
-              }
-              onClick={(event) => {
-                if (event.altKey) inspectFacet?.("panel", [focused]);
-              }}
-              onKeyDown={(event) => {
-                if (event.altKey && event.key === "Enter") {
-                  event.preventDefault();
-                  inspectFacet?.("panel", [focused]);
+            <span className="flex min-w-0 items-center gap-0.5">
+              <span
+                className="min-w-0 truncate whitespace-nowrap font-medium"
+                tabIndex={inspectFacet ? 0 : undefined}
+                aria-description={
+                  inspectFacet
+                    ? "Alt-click or Alt-Enter to trace this facet"
+                    : undefined
                 }
-              }}
-            >
-              {displayFacetValue(
-                settings.facet.rowVariable,
-                focused.rowRawValue
-              )}
-              {settings.facet.type === "grid" && focused.columnRawValue !== null
-                ? ` · ${displayFacetValue(settings.facet.columnVariable, focused.columnRawValue)}`
-                : ""}
+                onClick={(event) => {
+                  if (event.altKey) inspectFacet?.("panel", [focused]);
+                }}
+                onKeyDown={(event) => {
+                  if (event.altKey && event.key === "Enter") {
+                    event.preventDefault();
+                    inspectFacet?.("panel", [focused]);
+                  }
+                }}
+              >
+                {facetLabel(focused)}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-5 shrink-0 text-muted-foreground hover:text-foreground"
+                tooltip="Back to all facets"
+                aria-label={`Unfocus ${facetLabel(focused)} facet`}
+                onClick={() => setFocusedFacetId(null)}
+              >
+                <Minimize2 className="size-3" />
+              </Button>
             </span>
             <Button
               variant="ghost"
@@ -267,17 +287,26 @@ export function FacetContainer({
 
   if (facetData.length === 0) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
-        <span>No facets selected.</span>
-        {settings.facet.visibleFacetIds !== undefined && (
-          <button
-            type="button"
-            className="underline"
-            onClick={() => updateVisibleFacetIds(undefined)}
-          >
-            Show all facets
-          </button>
-        )}
+      <div className="flex h-full flex-col">
+        <FacetPager
+          label="No facets shown"
+          page={0}
+          pageCount={1}
+          onPageChange={() => undefined}
+          picker={picker}
+        />
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
+          <span>No facets selected.</span>
+          {settings.facet.visibleFacetIds !== undefined && (
+            <button
+              type="button"
+              className="underline"
+              onClick={() => updateVisibleFacetIds(undefined)}
+            >
+              Show all facets
+            </button>
+          )}
+        </div>
       </div>
     );
   }
@@ -298,6 +327,7 @@ export function FacetContainer({
             onFocusFacet={setFocusedFacetId}
             onTraceFacet={inspectFacet}
             formatFacetValue={displayFacetValue}
+            picker={picker}
             getFieldLabel={getFieldLabel}
             formatVersion={fieldSettings}
           />
@@ -313,6 +343,7 @@ export function FacetContainer({
             onFocusFacet={setFocusedFacetId}
             onTraceFacet={inspectFacet}
             formatFacetValue={displayFacetValue}
+            picker={picker}
           />
         )}
       </div>

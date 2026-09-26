@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChartRenderer } from "../ChartRenderer";
 import { traceOnAltEnter } from "./facetTrace";
+import { FacetPager, type FacetPickerProps } from "./FacetPager";
 import { FacetData } from "./FacetContainer";
 import { planFacetGridLayout, type FacetLayoutPlan } from "./facetLayout";
 
@@ -26,6 +27,7 @@ interface FacetGridLayoutProps {
     layout: FacetLayoutPlan
   ) => void;
   formatFacetValue: (field: string, value: datum) => string;
+  picker: FacetPickerProps;
   getFieldLabel: (field: string) => string;
   formatVersion: unknown;
 }
@@ -42,6 +44,7 @@ export function FacetGridLayout({
   onFocusFacet,
   onTraceFacet,
   formatFacetValue,
+  picker,
   getFieldLabel,
   formatVersion,
 }: FacetGridLayoutProps) {
@@ -121,33 +124,13 @@ export function FacetGridLayout({
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      {(pageLabel || rowPages > 1 || columnPages > 1) && (
-        <div className="flex shrink-0 items-center justify-between gap-2 overflow-hidden pb-1 text-xs text-muted-foreground">
-          <span className="min-w-0 truncate whitespace-nowrap">
-            {pageLabel ?? "All facets"}
-          </span>
-          <span className="flex shrink-0 gap-1 whitespace-nowrap">
-            <button
-              type="button"
-              className="whitespace-nowrap underline disabled:no-underline disabled:opacity-40"
-              disabled={page === 0}
-              onClick={() => setPage((current) => Math.max(0, current - 1))}
-            >
-              Previous
-            </button>
-            <button
-              type="button"
-              className="whitespace-nowrap underline disabled:no-underline disabled:opacity-40"
-              disabled={page === pageCount - 1}
-              onClick={() =>
-                setPage((current) => Math.min(pageCount - 1, current + 1))
-              }
-            >
-              Next
-            </button>
-          </span>
-        </div>
-      )}
+      <FacetPager
+        label={pageLabel ?? `${facetData.length} facets`}
+        page={page}
+        pageCount={pageCount}
+        onPageChange={setPage}
+        picker={picker}
+      />
       <div className="min-h-0 flex-1 overflow-hidden">
         <table className="h-full w-full border-collapse text-xs">
           <thead ref={tableHeaderRef}>
