@@ -1,6 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Filter, FunctionSquare, Save, Table2 } from "lucide-react";
 import { InstallCommand } from "./CodePanel";
+import { REPO_URL } from "./links";
+import { LiveOrderBook } from "./LiveOrderBook";
+
+const navLinkClass =
+  "rounded-md px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground";
 
 const capabilities = [
   { icon: Filter, label: "Linked filters across every view" },
@@ -12,16 +17,29 @@ const capabilities = [
 export function Hero({ onOpenFeatured }: { onOpenFeatured: () => void }) {
   return (
     <header className="relative isolate">
+      <nav
+        aria-label="Site"
+        className="mx-auto flex max-w-6xl items-center justify-between gap-4 pt-3"
+      >
+        <span className="text-lg font-bold tracking-tight">explorEDA</span>
+        <div className="flex items-center gap-1 text-sm">
+          <a className={navLinkClass} href="#integration">
+            Docs
+          </a>
+          <a className={navLinkClass} href="#examples-heading">
+            Examples
+          </a>
+          <a className={navLinkClass} href={REPO_URL}>
+            GitHub
+          </a>
+        </div>
+      </nav>
       <div
         aria-hidden="true"
         className="landing-hero-bg pointer-events-none absolute inset-x-0 -top-3 -z-10 h-[40rem]"
       />
-      <div className="mx-auto max-w-6xl px-1 pt-14 text-center sm:pt-20">
-        <p className="mx-auto inline-flex items-center gap-2 rounded-full border border-border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
-          <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-          explorEDA · React workspace for exploratory data analysis
-        </p>
-        <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl">
+      <div className="mx-auto max-w-6xl px-1 pt-12 text-center sm:pt-16">
+        <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl">
           Embed an interactive{" "}
           <span className="landing-gradient-text">analysis workspace</span> in
           your React app
@@ -52,33 +70,12 @@ export function Hero({ onOpenFeatured }: { onOpenFeatured: () => void }) {
       </div>
 
       <div className="mx-auto mt-14 max-w-6xl">
-        <button
-          type="button"
-          onClick={onOpenFeatured}
-          aria-label="Open the order book example"
-          className="landing-shot group block w-full overflow-hidden rounded-xl border border-border bg-card text-left transition-transform duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring motion-safe:hover:-translate-y-0.5"
-        >
-          <div className="flex items-center gap-3 border-b border-border bg-muted/40 px-4 py-2.5">
-            <div aria-hidden="true" className="flex gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25" />
-              <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25" />
-              <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25" />
-            </div>
-            <span className="mx-auto truncate rounded-md bg-background px-3 py-0.5 font-mono text-[11px] text-muted-foreground">
-              your-app.example/orders
-            </span>
-            <span className="hidden text-xs font-medium text-primary sm:inline">
-              Open live
-            </span>
-          </div>
-          <img
-            src="/explorEDA/landing/order-book.jpg"
-            alt="The order book workspace: a revenue and margin scatter plot, category and channel bar charts, delivery and order value distributions, and a regional mix, all linked."
-            width={2040}
-            height={1230}
-            className="block h-auto w-full"
-          />
-        </button>
+        <LiveOrderBook onOpenFull={onOpenFeatured} />
+        <p className="mt-3 text-center text-sm text-muted-foreground">
+          This is the real workspace. Click{" "}
+          <span className="font-medium text-foreground">Web</span> in Sales
+          channels and watch every view follow.
+        </p>
         <ul className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4 text-sm lg:grid-cols-4">
           {capabilities.map(({ icon: Icon, label }) => (
             <li key={label} className="flex items-center gap-2.5">

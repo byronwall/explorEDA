@@ -62,7 +62,6 @@ export function IntegrationGuide() {
     >
       <SectionHeading
         id="integration-heading"
-        eyebrow="Integration"
         heading="Use it in your React app"
       >
         The order book is the published <code>ExplorEda</code> component. This

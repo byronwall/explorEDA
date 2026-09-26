@@ -16,14 +16,15 @@
         "eslint": "eslint . --max-warnings=0"
     },
     "dependencies": {
-        "exploreda": "workspace:*",
         "@radix-ui/react-slot": "^1.1.2",
         "@tailwindcss/vite": "^4.0.14",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
+        "exploreda": "workspace:*",
         "framer-motion": "^12.4.10",
         "lucide-react": "^0.475.0",
         "papaparse": "^5.5.2",
+        "prism-react-renderer": "^2.4.1",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "react-dropzone": "^14.3.5",

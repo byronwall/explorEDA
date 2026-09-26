@@ -32,11 +32,7 @@ export function FeaturedExample({ example, onOpen }: FeaturedExampleProps) {
     <section aria-labelledby="featured-heading" className="scroll-mt-8">
       <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <div>
-          <SectionHeading
-            id="featured-heading"
-            eyebrow="Try it in 30 seconds"
-            heading={example.title}
-          >
+          <SectionHeading id="featured-heading" heading={example.title}>
             {example.description}
           </SectionHeading>
           <ol className="mt-8 space-y-0">

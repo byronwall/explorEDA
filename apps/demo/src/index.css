@@ -57,28 +57,3 @@
     0 1px 2px color-mix(in oklab, var(--foreground) 6%, transparent),
     0 24px 60px -24px color-mix(in oklab, hsl(215 70% 42%) 40%, transparent);
 }
-
-/* Code panels stay dark in both themes, like an editor. */
-.landing-code {
-  --code-bg: hsl(222 30% 9%);
-  --code-fg: hsl(220 20% 88%);
-  --code-muted: hsl(220 12% 55%);
-  --code-keyword: hsl(286 60% 74%);
-  --code-string: hsl(95 38% 66%);
-  --code-tag: hsl(199 80% 70%);
-  background: var(--code-bg);
-  color: var(--code-fg);
-}
-.landing-code .tok-comment {
-  color: var(--code-muted);
-  font-style: italic;
-}
-.landing-code .tok-keyword {
-  color: var(--code-keyword);
-}
-.landing-code .tok-string {
-  color: var(--code-string);
-}
-.landing-code .tok-tag {
-  color: var(--code-tag);
-}

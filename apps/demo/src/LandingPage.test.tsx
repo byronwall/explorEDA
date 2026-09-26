@@ -10,6 +10,11 @@ import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { LandingPage } from "./LandingPage";
 
+// The hero's live embed has its own test; keep these tests to one workspace.
+vi.mock("./landing/LiveOrderBook", () => ({
+  LiveOrderBook: () => <div data-testid="live-order-book" />,
+}));
+
 vi.mock("exploreda", () => {
   let workspaceMounts = 0;
 
@@ -149,6 +154,28 @@ describe("LandingPage routing", () => {
     expect(screen.getByRole("note")).toHaveTextContent(
       "click Web in Sales channels"
     );
+  });
+
+  it("opens bundled sample data as a new import", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve("species,mass\nAdelie,3750\nGentoo,5000"),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const router = createMemoryRouter(
+      [{ path: "/explorEDA/*", element: <LandingPage /> }],
+      { initialEntries: ["/explorEDA/"] }
+    );
+
+    render(<RouterProvider router={router} />);
+    fireEvent.click(screen.getByRole("button", { name: /Palmer penguins/ }));
+
+    const workspace = await screen.findByTestId("workspace");
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/explorEDA/datasets/palmer-penguins.csv"
+    );
+    expect(workspace).toHaveAttribute("data-rows", "2");
+    expect(workspace).toHaveAttribute("data-has-saved-data", "false");
   });
 
   it("captures state without controlling the workspace and restores it on remount", async () => {

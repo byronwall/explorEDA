@@ -27,6 +27,7 @@ import { IntegrationGuide } from "./landing/IntegrationGuide";
 import { WhyWorkspace } from "./landing/WhyWorkspace";
 import { Hero } from "./landing/Hero";
 import { LandingFooter } from "./landing/LandingFooter";
+import { SampleDataButtons } from "./landing/SampleDataButtons";
 import { SectionHeading } from "./landing/SectionHeading";
 
 const featuredExample = examples.find(
@@ -264,7 +265,6 @@ export function LandingPage() {
                       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
                         <SectionHeading
                           id="examples-heading"
-                          eyebrow="Gallery"
                           heading="More examples"
                         >
                           Open another linked dashboard, or browse focused
@@ -306,7 +306,6 @@ export function LandingPage() {
                     >
                       <SectionHeading
                         id="your-data-heading"
-                        eyebrow="Your data"
                         heading="Try your own data"
                       >
                         Import a file into this demo, or reopen an analysis you
@@ -325,6 +324,7 @@ export function LandingPage() {
                             Import your data
                           </h3>
                           <CsvUpload onImport={handleCsvImport} />
+                          <SampleDataButtons onImport={handleCsvImport} />
                         </section>
                         <section
                           aria-labelledby="json-heading"

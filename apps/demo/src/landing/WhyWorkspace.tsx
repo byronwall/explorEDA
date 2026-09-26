@@ -22,11 +22,7 @@ const reasons = [
 export function WhyWorkspace() {
   return (
     <section aria-labelledby="why-heading">
-      <SectionHeading
-        id="why-heading"
-        eyebrow="Why explorEDA"
-        heading="A workspace, not only charts"
-      >
+      <SectionHeading id="why-heading" heading="A workspace, not only charts">
         Linked filtering alone is common. explorEDA also provides the parts
         around the charts: configuration, record inspection, formulas, and
         restorable settings.
