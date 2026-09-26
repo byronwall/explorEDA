@@ -1,6 +1,6 @@
 ---
 id: exp-0md7
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-09-23T01:59:22Z
@@ -46,3 +46,7 @@ At 1280 px, hover beside and below a chart. The plus appears after the delay and
 ## Cut Line and Provenance
 
 No drag-to-draw sizing, automatic chart rearrangement, or separate touch placement gesture. Source: Byron's 2026-09-22 request and annotated screenshot; chart-grid-direct-manipulation claims `hover`, `menu`, and `place`, shape, and milestone M2. Repository baseline: `593ca2e`, with unrelated worktree edits. This packet stands alone; if another worker edits `ChartGridLayout.tsx` concurrently, coordinate the file change before merging.
+
+## Resolution
+
+Hovering empty grid space for 500 ms shows an "Add chart here" plus. It opens the shared chart menu and places the chart in a grid-aligned free rectangle: 6×4 when it fits, shrinking to 3×3 at the smallest, and never overlapping (PR #32). A spare row under the charts allows adding below them. If the space fills before selection, the chart goes to the bottom instead. The toolbar Add chart is unchanged.
