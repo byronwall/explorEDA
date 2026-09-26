@@ -24,6 +24,7 @@ import { CoverageMatrix } from "./CoverageMatrix";
 import { ExampleSelector } from "./ExampleSelector";
 import { FeaturedExample } from "./landing/FeaturedExample";
 import { IntegrationGuide } from "./landing/IntegrationGuide";
+import { WhyWorkspace } from "./landing/WhyWorkspace";
 
 const featuredExample = examples.find(
   (item) => item.id === FEATURED_EXAMPLE_ID
@@ -279,6 +280,7 @@ export function LandingPage() {
                       </div>
                     )}
                     <IntegrationGuide />
+                    <WhyWorkspace />
                     <section aria-labelledby="examples-heading">
                       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
                         <div>

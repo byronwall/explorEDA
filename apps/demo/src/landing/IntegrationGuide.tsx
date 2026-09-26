@@ -1,3 +1,4 @@
+import orderBookSource from "./OrderBook.example.tsx?raw";
 import ordersExplorerSource from "./OrdersExplorer.example.tsx?raw";
 import { PACKAGE_README_URL, REPO_URL } from "./links";
 
@@ -12,7 +13,7 @@ const boundaries = [
   {
     name: "savedData",
     meaning:
-      "Optional settings that restore charts, calculations, filters, and layout. It is read on mount or replacement, not kept in sync.",
+      "Optional settings that restore charts, calculations, Rows filters, and layout. It is read on mount or replacement, not kept in sync.",
   },
   {
     name: "onStateChange",
@@ -35,6 +36,11 @@ const facts = [
     label: "Browser",
     value:
       "A browser with DOM and Canvas 2D. The 3D scatter chart also needs WebGL.",
+  },
+  {
+    label: "Release",
+    value:
+      "npm has exploreda 0.0.6, which predates onStateChange and optional savedData. These examples match the current source and need the next release.",
   },
   {
     label: "Storage",
@@ -70,23 +76,39 @@ export function IntegrationGuide() {
           <CodeBlock label="Install command" code={installCommand} />
           <CodeBlock label="Component example" code={ordersExplorerSource} />
           <p className="text-sm text-muted-foreground">
-            Without <code>savedData</code>, this opens an empty workspace with
-            summary and row views. The order book's charts come from its{" "}
+            Without <code>savedData</code>, this opens a workspace with summary
+            and row views. The order book adds its{" "}
             <a
               className="text-primary underline-offset-4 hover:underline"
               href={`${REPO_URL}/blob/main/apps/demo/src/demos/dashboardSettings.ts`}
             >
-              saved settings
-            </a>
-            , passed as <code>savedData</code> with the{" "}
+              typed saved settings
+            </a>{" "}
+            and the{" "}
             <a
               className="text-primary underline-offset-4 hover:underline"
               href="/explorEDA/datasets/shop-operations.csv"
             >
               example CSV
-            </a>{" "}
-            as <code>data</code>.
+            </a>
+            .
           </p>
+          <details className="rounded-md border border-border px-4">
+            <summary className="cursor-pointer py-3 text-sm font-medium">
+              Show the complete order book example
+            </summary>
+            <div className="pb-4">
+              <CodeBlock
+                label="Complete order book example"
+                code={orderBookSource}
+              />
+              <p className="mt-2 text-sm text-muted-foreground">
+                <code>parseCsvData</code> and <code>shopDashboard</code> come
+                from this demo app, not the package. Your app supplies its own
+                rows and settings.
+              </p>
+            </div>
+          </details>
         </div>
 
         <div className="min-w-0 space-y-5">
