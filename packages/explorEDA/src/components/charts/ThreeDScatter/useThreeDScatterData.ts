@@ -1,3 +1,4 @@
+import { finiteNumber, finiteNumbers } from "@/lib/numeric";
 import { useColorScales } from "@/hooks/useColorScales";
 import { IdType } from "@/providers/DataLayerProvider";
 import { useMemo } from "react";
@@ -33,12 +34,7 @@ export function buildThreeDScatterData(
   const points: ThreeDScatterPoint[] = [];
   let omitted = 0;
 
-  const numericValue = (value: datum) =>
-    value == null ||
-    typeof value === "boolean" ||
-    (typeof value === "string" && value.trim() === "")
-      ? NaN
-      : Number(value);
+  const numericValue = (value: datum) => finiteNumber(value) ?? NaN;
 
   for (let i = 0; i < xData.length; i++) {
     const x = numericValue(xData[i]);
@@ -82,18 +78,7 @@ export function useThreeDScatterData(
       return { points: [], omitted: 0 };
     }
 
-    const sizes = allSizeData
-      .map((value) => {
-        if (
-          value == null ||
-          typeof value === "boolean" ||
-          (typeof value === "string" && value.trim() === "")
-        ) {
-          return NaN;
-        }
-        return Number(value);
-      })
-      .filter(Number.isFinite);
+    const sizes = finiteNumbers(allSizeData);
     const sizeDomain: [number, number] = sizes.length
       ? [Math.min(...sizes), Math.max(...sizes)]
       : [0, 0];

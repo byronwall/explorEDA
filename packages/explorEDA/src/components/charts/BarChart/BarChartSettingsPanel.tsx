@@ -1,3 +1,4 @@
+import { finiteNumber } from "@/lib/numeric";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -47,14 +48,7 @@ export function BarChartSettingsPanel({
     calculations.forEach((calculation) => {
       const values = Object.values(getColumnData(calculation.resultColumnName));
       if (
-        values.some(
-          (value) =>
-            value !== null &&
-            value !== undefined &&
-            value !== "" &&
-            typeof value !== "boolean" &&
-            Number.isFinite(Number(value))
-        )
+values.some((value) => finiteNumber(value) !== undefined)
       ) {
         numeric.push(calculation.resultColumnName);
       }

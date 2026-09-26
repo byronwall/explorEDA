@@ -1,3 +1,4 @@
+import { finiteNumber } from "@/lib/numeric";
 import { applyFilter } from "@/hooks/applyFilter";
 import { getRangeFilterForField } from "@/hooks/getAxisFilter";
 import type { IdType } from "@/providers/DataLayerProvider";
@@ -41,8 +42,8 @@ export function planScatterPoints({
   for (const sourceId of ids) {
     const rawX = xData[sourceId];
     const rawY = yData[sourceId];
-    const xValue = rawX == null || rawX === "" ? NaN : Number(rawX);
-    const yValue = rawY == null || rawY === "" ? NaN : Number(rawY);
+    const xValue = finiteNumber(rawX) ?? NaN;
+    const yValue = finiteNumber(rawY) ?? NaN;
     if (!Number.isFinite(xValue) || !Number.isFinite(yValue)) {
       continue;
     }

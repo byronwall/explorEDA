@@ -1,3 +1,4 @@
+import { finiteNumber } from "@/lib/numeric";
 import { getRangeFilterForField } from "@/hooks/getAxisFilter";
 import {
   getFieldLabel,
@@ -207,7 +208,7 @@ export interface ScatterPlan {
 }
 
 function numeric(value: datum) {
-  return value == null || value === "" ? NaN : Number(value);
+  return finiteNumber(value) ?? NaN;
 }
 
 function bounds(ids: IdType[], data: Record<IdType, datum>): [number, number] {

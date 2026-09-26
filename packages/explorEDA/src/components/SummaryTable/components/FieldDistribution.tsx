@@ -253,7 +253,8 @@ export function summarizeField(
   format: (value: unknown) => string,
   fieldLabel = profile.name
 ): FieldSummary | undefined {
-  const present = profile.totalCount - profile.nullCount;
+  const present =
+    profile.totalCount - profile.nullCount - (profile.excludedCount ?? 0);
   if (present <= 0) return undefined;
 
   if (profile.statistics) {

@@ -1,3 +1,4 @@
+import { finiteNumber, finiteNumbers } from "@/lib/numeric";
 import { categoryLabel } from "@/lib/categories";
 import { detectColumnType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import { useDataLayer } from "@/providers/DataLayerProvider";
@@ -164,11 +165,11 @@ export function useColorScales(): UseColorScalesReturn {
     const isNumerical =
       (profile?.dataType ?? detectColumnType(getColumnData(field))) ===
         "numeric" &&
-      cleanValues.some((value) => Number.isFinite(Number(value)));
+      cleanValues.some((value) => finiteNumber(value) !== undefined);
 
     let newScale: ColorScaleType;
     if (isNumerical) {
-      const numericValues = cleanValues.map(Number).filter(Number.isFinite);
+      const numericValues = finiteNumbers(cleanValues);
       const min = Math.min(...numericValues);
       const max = Math.max(...numericValues);
       newScale = createDefaultNumericalScale(name ?? field, min, max, field);
