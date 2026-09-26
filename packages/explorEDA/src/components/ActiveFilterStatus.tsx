@@ -1,46 +1,77 @@
 import { categoryLabel } from "@/lib/categories";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
-import type { Filter } from "@/types/FilterTypes";
+import type { datum, Filter } from "@/types/FilterTypes";
+import {
+  displayRoundsValue,
+  formatFieldBounds,
+  formatFieldValue,
+  getFieldName,
+} from "@/lib/fieldSettings";
 import { FilterX, X } from "lucide-react";
 import { Button } from "./ui/button";
 
-const numberFormatter = new Intl.NumberFormat("en-US", {
-  maximumFractionDigits: 2,
-});
-
-const displayValue = (value: unknown) => {
-  if (value === null || value === undefined || value === "") {
-    return "missing";
-  }
-  if (typeof value === "number") {
-    return numberFormatter.format(value);
-  }
-  return String(value);
+type FieldFormatting = {
+  name: (field: string) => string;
+  bounds: (field: string, min: datum, max: datum) => [string, string];
+  value: (field: string, value: datum) => string;
+  rounds: (field: string, value: number) => boolean;
 };
+
+const plainFormatting: FieldFormatting = {
+  name: (field) => field,
+  bounds: (field, min, max) => formatFieldBounds(field, min, max),
+  value: (field, value) => formatFieldValue(field, value),
+  rounds: (_field, value) => displayRoundsValue(value),
+};
+
+/** Raw numeric bounds, shown when display rounding hides their exact values. */
+function exactBounds(filter: Filter, format: FieldFormatting) {
+  if (filter.type !== "range") {
+    return undefined;
+  }
+  const bounds = [filter.min, filter.max].filter(
+    (bound): bound is number => bound !== undefined
+  );
+  const rounded = bounds.some((bound) => format.rounds(filter.field, bound));
+  return rounded
+    ? `Exact bounds: ${bounds.map(String).join(" to ")}`
+    : undefined;
+}
 
 function assertNever(value: never): never {
   throw new Error(`Unsupported filter type: ${String(value)}`);
 }
 
-function formatFilterLabel(filter: Filter): string {
+/**
+ * Name a filter the way the field reads everywhere else: its display label,
+ * with bounds in the field's format and unit.
+ */
+function formatFilterLabel(
+  filter: Filter,
+  format: FieldFormatting = plainFormatting
+): string {
+  const name = format.name(filter.field);
   switch (filter.type) {
     case "value":
-      return `${filter.field}: ${filter.values.map(categoryLabel).join(", ")}`;
+      return `${name}: ${filter.values.map(categoryLabel).join(", ")}`;
     case "range":
-    case "date-range":
-      if (filter.min !== undefined && filter.max !== undefined) {
-        return `${filter.field}: ${displayValue(filter.min)}–${displayValue(filter.max)}`;
+    case "date-range": {
+      const { min, max } = filter;
+      if (min !== undefined && max !== undefined) {
+        const [low, high] = format.bounds(filter.field, min, max);
+        return `${name}: ${low}–${high}`;
       }
-      if (filter.min !== undefined) {
-        return `${filter.field}: ≥ ${displayValue(filter.min)}`;
+      if (min !== undefined) {
+        return `${name}: ≥ ${format.value(filter.field, min)}`;
       }
-      if (filter.max !== undefined) {
-        return `${filter.field}: ≤ ${displayValue(filter.max)}`;
+      if (max !== undefined) {
+        return `${name}: ≤ ${format.value(filter.field, max)}`;
       }
-      return `${filter.field}: active`;
+      return `${name}: active`;
+    }
     case "text":
-      return `${filter.field} ${filter.operator} “${filter.value}”`;
+      return `${name} ${filter.operator} “${filter.value}”`;
     default:
       return assertNever(filter);
   }
@@ -78,6 +109,16 @@ export function ActiveFilterStatus({ view = "charts" }: { view?: string }) {
   const clearAllFilters = useDataLayer((state) => state.clearAllFilters);
   const rowsSettings = useDataLayer((state) => state.rowsSettings);
   const updateRowsSettings = useDataLayer((state) => state.updateRowsSettings);
+  const fieldSettings = useDataLayer((state) => state.fieldSettings);
+  const formatting: FieldFormatting = {
+    name: (field) => getFieldName(field, fieldSettings[field]),
+    bounds: (field, min, max) =>
+      formatFieldBounds(field, min, max, fieldSettings[field]),
+    value: (field, value) =>
+      formatFieldValue(field, value, fieldSettings[field]),
+    rounds: (field, value) => displayRoundsValue(value, fieldSettings[field]),
+  };
+  const filterLabel = (filter: Filter) => formatFilterLabel(filter, formatting);
   const activeFilters = getActiveFilters(charts);
   const localFilters =
     view === "rows" ? rowsSettings.filters.filter(isActiveFilter) : [];
@@ -128,7 +169,7 @@ export function ActiveFilterStatus({ view = "charts" }: { view?: string }) {
                 <Button
                   variant="outline"
                   size="sm"
-                  aria-label={`Remove Rows filter: ${formatFilterLabel(filter)}`}
+                  aria-label={`Remove Rows filter: ${filterLabel(filter)}`}
                   onClick={() =>
                     updateRowsSettings({
                       filters: rowsSettings.filters.filter(
@@ -137,9 +178,7 @@ export function ActiveFilterStatus({ view = "charts" }: { view?: string }) {
                     })
                   }
                 >
-                  <span className="truncate">
-                    Rows · {formatFilterLabel(filter)}
-                  </span>
+                  <span className="truncate">Rows · {filterLabel(filter)}</span>
                   <X aria-hidden="true" />
                 </Button>
               </li>
@@ -164,7 +203,8 @@ export function ActiveFilterStatus({ view = "charts" }: { view?: string }) {
               </li>
             ))}
             {activeFilters.map(({ chart, filter, index }) => {
-              const label = formatFilterLabel(filter);
+              const label = formatFilterLabel(filter, formatting);
+              const exact = exactBounds(filter, formatting);
               return (
                 <li key={`${chart.id}-${index}`}>
                   <Button
@@ -172,7 +212,11 @@ export function ActiveFilterStatus({ view = "charts" }: { view?: string }) {
                     variant="outline"
                     size="sm"
                     className="h-7 max-w-full"
-                    tooltip={`Remove ${label} from ${chart.title || chart.type}`}
+                    tooltip={
+                      exact
+                        ? `Remove ${label} from ${chart.title || chart.type}. ${exact}.`
+                        : `Remove ${label} from ${chart.title || chart.type}`
+                    }
                     aria-label={`Remove ${label} from ${chart.title || chart.type}`}
                     onClick={() =>
                       updateChart(chart.id, {

@@ -11,7 +11,7 @@ import { ChartRenderer } from "@/components/charts/ChartRenderer";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import { SavedDataStructure } from "@/types/SavedDataStructure";
 import { createElement } from "react";
-import { calculatePivotData } from "../utils/calculations";
+import { aggregationUnits, calculatePivotData } from "../utils/calculations";
 import { pivotTableDefinition, PivotTableSettings } from "../definition";
 
 beforeAll(() => registerAllCharts());
@@ -306,5 +306,84 @@ describe("PivotTable rendering", () => {
     fireEvent.keyDown(dialog, { key: "Escape" });
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     await waitFor(() => expect(document.activeElement).toBe(inspectButton));
+  });
+});
+
+describe("PivotTable units", () => {
+  it("keeps measure units on sums and gives counts plain row counts", () => {
+    const chart = pivotTableDefinition.createDefaultSettings({
+      x: 0,
+      y: 0,
+      w: 4,
+      h: 4,
+    });
+    chart.rowFields = ["group"];
+    chart.valueFields = [
+      { field: "amount", aggregation: "sum" },
+      { field: "amount", aggregation: "count" },
+      { field: "amount", aggregation: "variance" },
+    ];
+    const savedData = {
+      charts: [chart],
+      calculations: [],
+      fieldSettings: {
+        amount: {
+          label: "Amount",
+          format: "currency",
+          precision: 2,
+          unit: "net",
+        },
+      },
+      gridSettings: {
+        columnCount: 12,
+        rowHeight: 100,
+        containerPadding: 10,
+        showBackgroundMarkers: true,
+      },
+      metadata: {
+        name: "Test",
+        version: 1,
+        createdAt: "2025-01-01T00:00:00.000Z",
+        modifiedAt: "2025-01-01T00:00:00.000Z",
+      },
+      colorScales: [],
+    } satisfies SavedDataStructure;
+
+    render(
+      createElement(
+        DataLayerProvider,
+        {
+          data: [
+            { group: "A", amount: 1000 },
+            { group: "A", amount: 3000 },
+          ],
+          savedData,
+        },
+        createElement(SavedPivotProbe)
+      )
+    );
+
+    const table = screen.getByRole("table");
+    expect(
+      within(table).getByRole("columnheader", { name: "Amount (net) (sum)" })
+    ).toBeInTheDocument();
+    expect(
+      within(table).getByRole("columnheader", { name: "Amount (count)" })
+    ).toBeInTheDocument();
+    const row = within(table).getAllByRole("row")[1]!;
+    const cells = within(row)
+      .getAllByRole("cell")
+      .map((cell) => cell.textContent?.replace(/Inspect.*$/, ""));
+    expect(cells).toEqual(["$4,000.00 net", "2", "1,000,000.00"]);
+  });
+});
+
+describe("aggregationUnits", () => {
+  it("separates counts and squared units from measures", () => {
+    expect(aggregationUnits("count")).toBe("count");
+    expect(aggregationUnits("countUnique")).toBe("count");
+    expect(aggregationUnits("variance")).toBe("none");
+    expect(aggregationUnits("avg")).toBe("measure");
+    expect(aggregationUnits("stddev")).toBe("measure");
   });
 });

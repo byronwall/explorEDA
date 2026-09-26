@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildFieldProfile } from "@/lib/fieldProfiles";
+import { formatFieldValue } from "@/lib/fieldSettings";
 import { fieldMetadata } from "./FieldMetadata";
 
 describe("fieldMetadata", () => {
@@ -18,5 +19,15 @@ describe("fieldMetadata", () => {
       detailLabel: "Range",
       nulls: "1 null",
     });
+  });
+  it("formats ranges and samples with the field's display format", () => {
+    const profile = buildFieldProfile("price", { 0: 12.5, 1: 40, 2: null });
+    const settings = { format: "currency" as const, precision: 2 };
+
+    expect(
+      fieldMetadata(profile, (value) =>
+        formatFieldValue("price", value, settings)
+      )
+    ).toMatchObject({ detail: "$12.50–$40.00", detailLabel: "Range" });
   });
 });

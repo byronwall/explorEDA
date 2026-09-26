@@ -139,4 +139,49 @@ describe("ActiveFilterStatus", () => {
     );
     expect(screen.getByRole("status")).toHaveTextContent("Showing 2 of 3 rows");
   });
+  it("labels chips with the field's name, format, and unit", () => {
+    const chart = makeChart([
+      { type: "range", field: "time", min: 1.02, max: 1.04 },
+      { type: "range", field: "z", min: 12.5 },
+    ]);
+
+    render(
+      <DataLayerProvider
+        data={data}
+        savedData={{
+          charts: [chart],
+          calculations: [],
+          fieldSettings: {
+            time: { label: "Duration", unit: "s", precision: 1 },
+            z: { format: "currency", precision: 2 },
+          },
+          gridSettings: {
+            columnCount: 12,
+            rowHeight: 100,
+            containerPadding: 10,
+            showBackgroundMarkers: false,
+          },
+          metadata: {
+            name: "Test",
+            version: 1,
+            createdAt: "2026-01-01T00:00:00.000Z",
+            modifiedAt: "2026-01-01T00:00:00.000Z",
+          },
+          colorScales: [],
+        }}
+      >
+        <ActiveFilterStatus />
+      </DataLayerProvider>
+    );
+
+    // Rounding to one place would show 1.0 s–1.0 s, so the bounds gain a place.
+    expect(
+      screen.getByRole("button", {
+        name: "Remove Duration: 1.02 s–1.04 s from Data Table",
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Remove z: ≥ $12.50 from Data Table" })
+    ).toBeInTheDocument();
+  });
 });

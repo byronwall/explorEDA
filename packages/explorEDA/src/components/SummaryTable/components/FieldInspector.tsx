@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { AlertCircle, Settings2 } from "lucide-react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
+import { buildFieldDistribution } from "@/lib/fieldDistribution";
+import { resolveFieldProfile } from "@/components/FieldMetadata";
+import type { datum } from "@/types/ChartTypes";
 import {
   buildConversionPreview,
+  formatFieldValue,
   getFieldSettingsError,
   type DatePreset,
   type FieldFormat,
@@ -25,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { FieldValues } from "./FieldValues";
 
 const dataTypes = ["numeric", "categorical", "datetime", "boolean"] as const;
 const formats = [
@@ -55,6 +60,9 @@ export function FieldInspector({ field, children, open, onOpenChange }: Props) {
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const calculations = useDataLayer((state) => state.calculations);
   const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
+  const crossfilterWrapper = useDataLayer((state) => state.crossfilterWrapper);
+  const liveItems = useDataLayer((state) => state.liveItems);
+  const charts = useDataLayer((state) => state.charts);
   const [draft, setDraft] = useState<FieldSettings>({});
   const [showAllFailures, setShowAllFailures] = useState(false);
   const [localOpen, setLocalOpen] = useState(false);
@@ -98,6 +106,47 @@ export function FieldInspector({ field, children, open, onOpenChange }: Props) {
     isOpen,
     draft,
   ]);
+  const distribution = useMemo(() => {
+    // liveItems changes whenever chart filters change the remaining rows.
+    void liveItems;
+    if (!isOpen || !field) {
+      return null;
+    }
+    const profile = resolveFieldProfile(
+      field,
+      fieldProfiles ?? [],
+      getColumnData
+    );
+    if (!profile) {
+      return null;
+    }
+    // Chart filters scope the rows; with no charts every row is in scope.
+    const filteredIds = charts.length
+      ? new Set(crossfilterWrapper.getFilteredRowIds())
+      : undefined;
+    return buildFieldDistribution(
+      getColumnData(field),
+      profile.dataType,
+      filteredIds
+    );
+  }, [
+    isOpen,
+    field,
+    fieldProfiles,
+    getColumnData,
+    crossfilterWrapper,
+    charts,
+    liveItems,
+  ]);
+  const appliedFailures = useMemo(
+    () =>
+      isOpen && field && !isCalculated
+        ? getFieldConversionPreview(field, applied).failedCount
+        : 0,
+    // Field settings identify the applied conversion for this field.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isOpen, field, isCalculated, getFieldConversionPreview, fieldSettings]
+  );
   const settingsError = getFieldSettingsError(draft);
   const conversionChanged =
     !isCalculated &&
@@ -107,6 +156,20 @@ export function FieldInspector({ field, children, open, onOpenChange }: Props) {
         JSON.stringify(applied.nullTokens ?? []));
 
   if (!field) return null;
+  // Values tab previews the draft display settings before they are applied.
+  const formatDistributionValue = (value: number) => {
+    if (distribution?.kind !== "date") {
+      return formatFieldValue(field, value as datum, draft);
+    }
+    if (draft.format === "date" || draft.format === "datetime") {
+      return formatFieldValue(field, value, draft);
+    }
+    const range = distribution.range?.all;
+    const iso = new Date(value).toISOString();
+    return range && range.last - range.first < 3 * 24 * 60 * 60 * 1000
+      ? `${iso.slice(0, 10)} ${iso.slice(11, 16)}`
+      : iso.slice(0, 10);
+  };
   const update = (next: Partial<FieldSettings>) =>
     setDraft((current) => ({ ...current, ...next }));
 
@@ -126,7 +189,7 @@ export function FieldInspector({ field, children, open, onOpenChange }: Props) {
         align="start"
         side="bottom"
         collisionPadding={12}
-        className="w-[min(400px,calc(100vw-24px))] max-h-[min(480px,var(--radix-popover-content-available-height))] overflow-y-auto p-3"
+        className="w-[min(440px,calc(100vw-24px))] max-h-[min(600px,var(--radix-popover-content-available-height))] overflow-y-auto p-3"
       >
         <div className="mb-3 space-y-1">
           <div className="flex items-center gap-2 text-sm font-semibold">
@@ -144,29 +207,11 @@ export function FieldInspector({ field, children, open, onOpenChange }: Props) {
           </p>
         </div>
 
-        {preview && (
-          <div className="mb-3 flex flex-wrap gap-x-3 gap-y-1 rounded bg-muted/50 px-2 py-2 text-xs">
-            <div className="flex flex-wrap gap-x-3 gap-y-1">
-              <span>
-                Inferred: <strong>{preview.inferredType}</strong>
-              </span>
-              <span>
-                Effective: <strong>{preview.effectiveType}</strong>
-              </span>
-              <span>{preview.validCount} valid</span>
-              <span>{preview.missingCount} missing</span>
-              <span>{preview.failedCount} failed</span>
-            </div>
-            {preview.failedCount > 0 && (
-              <div className="mt-2 text-destructive">
-                Invalid values become missing. Review the failed rows below.
-              </div>
-            )}
-          </div>
-        )}
-
-        <Tabs defaultValue="display">
-          <TabsList className="grid h-8 w-full grid-cols-3">
+        <Tabs defaultValue="values">
+          <TabsList className="grid h-8 w-full grid-cols-4">
+            <TabsTrigger value="values" className="text-xs">
+              Values
+            </TabsTrigger>
             <TabsTrigger value="display" className="text-xs">
               Display
             </TabsTrigger>
@@ -177,6 +222,20 @@ export function FieldInspector({ field, children, open, onOpenChange }: Props) {
               Preview
             </TabsTrigger>
           </TabsList>
+          <TabsContent value="values" className="mt-3">
+            {distribution ? (
+              <FieldValues
+                distribution={distribution}
+                fieldLabel={getFieldLabel(field)}
+                format={formatDistributionValue}
+                failedCount={appliedFailures}
+              />
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                This field has no rows.
+              </p>
+            )}
+          </TabsContent>
           <TabsContent value="display" className="mt-3 space-y-3">
             <div className="space-y-1.5">
               <Label htmlFor="field-label">Display label</Label>
@@ -261,6 +320,27 @@ export function FieldInspector({ field, children, open, onOpenChange }: Props) {
             </div>
           </TabsContent>
           <TabsContent value="type" className="mt-3 space-y-3">
+            {preview && (
+              <div className="flex flex-wrap gap-x-3 gap-y-1 rounded bg-muted/50 px-2 py-2 text-xs">
+                <div className="flex flex-wrap gap-x-3 gap-y-1">
+                  <span>
+                    Inferred: <strong>{preview.inferredType}</strong>
+                  </span>
+                  <span>
+                    Effective: <strong>{preview.effectiveType}</strong>
+                  </span>
+                  <span>{preview.validCount} valid</span>
+                  <span>{preview.missingCount} missing</span>
+                  <span>{preview.failedCount} failed</span>
+                </div>
+                {preview.failedCount > 0 && (
+                  <div className="mt-2 text-destructive">
+                    Invalid values become missing. The Preview tab lists each
+                    failed row.
+                  </div>
+                )}
+              </div>
+            )}
             {isCalculated && (
               <p className="text-xs text-muted-foreground">
                 This is a calculated field. Its formula controls the runtime

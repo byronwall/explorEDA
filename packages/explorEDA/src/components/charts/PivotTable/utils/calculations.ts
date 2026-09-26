@@ -350,3 +350,16 @@ export function calculatePivotData(
     ),
   };
 }
+
+/**
+ * Which units an aggregate carries. Counts count rows, so they never take the
+ * measure's currency or unit. Variance is in squared units.
+ */
+export function aggregationUnits(
+  aggregation: string
+): "measure" | "count" | "none" {
+  if (aggregation === "count" || aggregation === "countUnique") {
+    return "count";
+  }
+  return aggregation === "variance" ? "none" : "measure";
+}
