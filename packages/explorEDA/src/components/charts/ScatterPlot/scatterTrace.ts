@@ -4,7 +4,6 @@ import type {
   CalculationManager,
   RowCalculationTrace,
 } from "@/lib/calculations/CalculationState";
-import { categoryKey } from "@/lib/categories";
 import type { datum } from "@/types/ChartTypes";
 import type { ScatterPlotSettings } from "./definition";
 import {
@@ -12,9 +11,14 @@ import {
   scatterHoverReadout,
   type ScatterPlan,
   type ScatterSnapshot,
+  type SvgPrimitive,
 } from "./scatterPlan";
-import type { ScatterSelection } from "./ScatterTraceContext";
-import type { FacetLayoutPlan } from "../FacetRelated/facetLayout";
+import {
+  guideTargets,
+  resolveGuideTrace,
+  type GuideTrace,
+  type TraceTarget,
+} from "../trace/traceTypes";
 
 export interface FieldTrace {
   field: string;
@@ -35,6 +39,7 @@ export type ScatterTrace =
       kind: "point";
       id: string;
       revision: string;
+      plan: ScatterPlan;
       sourceId: number;
       x: FieldTrace & { pixel: number };
       y: FieldTrace & { pixel: number };
@@ -68,66 +73,10 @@ export type ScatterTrace =
       y: FieldTrace;
     }
   | {
-      kind: "guide";
-      id: string;
-      revision: string;
-      detail: ScatterPlan["guideDetails"][string];
-      primitive: ScatterPlan["axes"][number];
-      field: string;
-      scale: ScatterPlan["xScale"];
-      sourceBounds: [number, number];
-      population: number;
-      buffer: number;
-      refs: string[];
-      policy: ScatterPlan["guidePolicy"];
-    }
-  | {
-      kind: "legend";
-      id: string;
-      revision: string;
-      legend: NonNullable<ScatterPlan["legend"]>;
-      item?: NonNullable<ScatterPlan["legend"]>["items"][number];
-      rowIds: number[];
-      numericalPlan?: NonNullable<ScatterSelection["numericalPlan"]>;
-    }
-  | {
-      kind: "title";
-      id: string;
-      revision: string;
-      text: string;
-      source: "chart-setting" | "field-label";
-      field?: string;
-    }
-  | {
-      kind: "facet";
-      id: string;
-      revision: string;
-      role: "panel" | "row-heading" | "column-heading";
-      row?: {
-        field: string;
-        value: datum;
-        label: string;
-        raw?: datum;
-        sampleSourceId?: number;
-        calculation?: RowCalculationTrace;
-      };
-      column?: {
-        field: string;
-        value: datum;
-        label: string;
-        raw?: datum;
-        sampleSourceId?: number;
-        calculation?: RowCalculationTrace;
-      };
-      layout: FacetLayoutPlan;
-      sourceIds: number[];
-      chartIds: number[];
-    }
-  | {
       kind: "overlay";
       id: string;
       revision: string;
-      primitive: ScatterPlan["axes"][number];
+      primitive: SvgPrimitive;
       extent: ScatterPlan["brushExtent"];
       filters: ScatterPlotSettings["filters"];
     };
@@ -145,7 +94,7 @@ function sourceFields(trace: RowCalculationTrace): string[] {
 }
 
 export function resolveScatterTrace(
-  selection: ScatterSelection,
+  selection: { kind: string; id: string },
   plan: ScatterPlan,
   snapshot: ScatterSnapshot,
   settings: ScatterPlotSettings,
@@ -153,18 +102,9 @@ export function resolveScatterTrace(
   preparedRows: Record<string, datum>[],
   profiles: FieldProfile[],
   manager: CalculationManager<Record<string, datum>>
-): ScatterTrace | undefined {
-  if (selection.plan && selection.plan !== plan) return undefined;
-  if (selection.kind === "title") {
-    return {
-      kind: "title",
-      id: selection.id,
-      revision: plan.revision,
-      text: plan.title,
-      source: settings.title.trim() ? "chart-setting" : "field-label",
-      field: settings.title.trim() ? undefined : settings.yField,
-    };
-  }
+): ScatterTrace | GuideTrace | undefined {
+  if (selection.kind === "guide")
+    return resolveGuideTrace(plan.axes, selection.id, plan.revision);
   if (selection.kind === "badge") {
     const badge = plan.calculatedBadges.find(
       (item) => item.id === selection.id
@@ -172,7 +112,6 @@ export function resolveScatterTrace(
     if (!badge) return undefined;
     return { kind: "badge", id: badge.id, revision: plan.revision, badge };
   }
-  if (selection.kind === "facet") return selection.trace;
   if (selection.kind === "overlay") {
     const primitive = planScatterOverlay(
       plan,
@@ -233,6 +172,7 @@ export function resolveScatterTrace(
       kind: "point",
       id: point.id,
       revision: plan.revision,
+      plan,
       sourceId: point.sourceId,
       x: {
         ...fieldTrace(settings.xField, point.xValue, point.sourceId),
@@ -297,44 +237,30 @@ export function resolveScatterTrace(
       y: fieldTrace(settings.yField, snapshot.yData[sourceId], sourceId),
     };
   }
-  if (selection.kind === "guide") {
-    const detail = plan.guideDetails[selection.id];
-    const primitive = [...plan.grid, ...plan.axes].find(
-      (item) => item.id === selection.id
-    );
-    if (!detail || !primitive) return undefined;
-    const axis = detail.axis;
-    return {
-      kind: "guide",
-      id: selection.id,
-      revision: plan.revision,
-      detail,
-      primitive,
-      field: axis === "x" ? settings.xField : settings.yField,
-      scale: axis === "x" ? plan.xScale : plan.yScale,
-      sourceBounds: plan.domainInputs[axis],
-      population: plan.rowSets.all.length,
-      buffer: plan.domainInputs.buffer,
-      refs: plan.guideRefs[selection.id] ?? [],
-      policy: plan.guidePolicy,
-    };
-  }
-  const legend = plan.legend;
-  if (!legend) return undefined;
-  const item = legend.items.find((entry) => entry.id === selection.id);
-  if (selection.id !== "scale" && !item) return undefined;
-  const rowIds = item
-    ? snapshot.chartIds.filter(
-        (id) => categoryKey(snapshot.colorData[id]) === item.id
-      )
-    : snapshot.chartIds;
-  return {
-    kind: "legend",
-    id: selection.id,
-    revision: plan.revision,
-    legend,
-    item,
-    rowIds,
-    numericalPlan: selection.numericalPlan,
-  };
+  return undefined;
+}
+
+export function scatterTraceTargets(plan: ScatterPlan): TraceTarget[] {
+  return [
+    ...guideTargets(plan.axes),
+    ...planScatterOverlay(plan, plan.brushExtent, null).brush.map(({ id }) => ({
+      kind: "overlay",
+      id,
+      label: id,
+    })),
+    ...plan.calculatedBadges.map((badge) => ({
+      kind: "badge",
+      id: badge.id,
+      label: `Calculated: ${badge.field}`,
+    })),
+  ];
+}
+
+/** The point that draws a source row, or its invalid-value exclusion. */
+export function findScatterTraceRow(plan: ScatterPlan, id: number) {
+  const point = plan.points.find((item) => item.sourceId === id);
+  if (point) return { kind: "point", id: point.id };
+  return plan.exclusions.some((item) => item.sourceId === id)
+    ? { kind: "excluded", id: String(id) }
+    : undefined;
 }
