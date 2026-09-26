@@ -10,3 +10,34 @@
     color: var(--foreground);
   }
 }
+
+/* Landing page only; the workspace keeps the package typography. */
+.landing {
+  font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+.landing code,
+.landing pre,
+.landing .font-mono {
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+.landing ::selection {
+  background: color-mix(in oklab, var(--primary) 22%, transparent);
+}
+
+.landing-frame {
+  scrollbar-color: color-mix(in oklab, var(--foreground) 25%, transparent)
+    transparent;
+  scrollbar-width: thin;
+}
+
+.landing-shot {
+  box-shadow:
+    0 1px 2px color-mix(in oklab, var(--foreground) 6%, transparent),
+    0 18px 40px -20px color-mix(in oklab, var(--foreground) 22%, transparent);
+}
+
+.landing-drop-overlay {
+  background: var(--background);
+}

@@ -260,8 +260,11 @@ export function PlotChartPanel({
       );
   const fieldStripHeight =
     settings.type !== "scatter" && calculatedFields.length ? 28 : 0;
+  // Row charts color bars by their own labeled category, so a legend repeats them.
   const autoLegendHeight =
-    settings.colorField && settings.colorScaleId ? 36 : 0;
+    settings.colorField && settings.colorScaleId && settings.type !== "row"
+      ? 36
+      : 0;
 
   const handleDelete = async () => {
     const confirmed = await showAlert(
@@ -507,26 +510,26 @@ export function PlotChartPanel({
   return (
     <ScatterTraceScope>
       <BarTraceScope>
-      <Dialog open={expanded} onOpenChange={setExpanded}>
-        {expanded ? (
-          <DialogContent
-            showCloseButton={false}
-            className="max-w-none w-auto border-0 bg-transparent p-0 shadow-none"
-            onCloseAutoFocus={(event) => {
-              event.preventDefault();
-              requestAnimationFrame(() => expandRef.current?.focus());
-            }}
-          >
-            <DialogTitle className="sr-only">{chartTitle}</DialogTitle>
-            <DialogDescription className="sr-only">
-              {chartSummary}
-            </DialogDescription>
-            {panel}
-          </DialogContent>
-        ) : (
-          panel
-        )}
-      </Dialog>
+        <Dialog open={expanded} onOpenChange={setExpanded}>
+          {expanded ? (
+            <DialogContent
+              showCloseButton={false}
+              className="max-w-none w-auto border-0 bg-transparent p-0 shadow-none"
+              onCloseAutoFocus={(event) => {
+                event.preventDefault();
+                requestAnimationFrame(() => expandRef.current?.focus());
+              }}
+            >
+              <DialogTitle className="sr-only">{chartTitle}</DialogTitle>
+              <DialogDescription className="sr-only">
+                {chartSummary}
+              </DialogDescription>
+              {panel}
+            </DialogContent>
+          ) : (
+            panel
+          )}
+        </Dialog>
       </BarTraceScope>
     </ScatterTraceScope>
   );

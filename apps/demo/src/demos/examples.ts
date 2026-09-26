@@ -36,10 +36,14 @@ export interface ExampleData {
   description: string;
   recommended?: boolean;
   dashboard?: boolean;
+  /** One tested first action, shown above the workspace. */
+  guide?: string;
   icon: LucideIcon;
   data: string; // path to the data file
   savedData?: SavedDataStructure;
 }
+
+export const FEATURED_EXAMPLE_ID = "shop-operations";
 
 export const examples: ExampleData[] = [
   {
@@ -99,6 +103,8 @@ export const examples: ExampleData[] = [
     title: "Inside the order book",
     dashboard: true,
     savedData: shopDashboard,
+    guide:
+      "Try this: click Web in Sales channels. The other charts and the orders table narrow to web orders. Click Web again, or use Reset workspace, to start over.",
     description:
       "Follow orders from revenue and margin to delivery, channels, and individual records.",
     icon: ShoppingCart,
