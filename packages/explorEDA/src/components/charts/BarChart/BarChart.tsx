@@ -1,3 +1,4 @@
+import { finiteNumbers, isMissingValue, isNumberLike } from "@/lib/numeric";
 import {
   categoryEqual,
   categoryIncludes,
@@ -15,7 +16,14 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import { BaseChartProps } from "@/types/ChartTypes";
 import { ValueFilter } from "@/types/FilterTypes";
 import { scaleBand, ScaleBand, scaleLinear, ScaleLinear } from "d3-scale";
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import isEqual from "react-fast-compare";
 import { useCustomCompareMemo } from "use-custom-compare";
 import { BaseChart, type ChartGuide } from "../BaseChart";
@@ -122,10 +130,8 @@ export function BarChart({
       !isAggregate &&
       fieldSettings[settings.field]?.type !== "categorical" &&
       !settings.forceString &&
-      allColData.some((d) => d != null && d !== "") &&
-      allColData
-        .filter((d) => d != null && d !== "")
-        .every((d) => typeof d !== "boolean" && Number.isFinite(Number(d))),
+      allColData.some((d) => !isMissingValue(d)) &&
+      allColData.filter((d) => !isMissingValue(d)).every(isNumberLike),
     [
       allColData,
       fieldSettings,
@@ -151,8 +157,8 @@ export function BarChart({
     }
     if (isNumeric) {
       return numericBins(
-        allColData.filter((d) => d != null && d !== "").map(Number),
-        liveColData.filter((d) => d != null && d !== "").map(Number),
+        finiteNumbers(allColData),
+        finiteNumbers(liveColData),
         settings.binCount || 20
       );
     } else {
@@ -196,9 +202,7 @@ export function BarChart({
       };
     }
     if (isNumeric) {
-      const numericData = allColData
-        .filter((d) => d != null && d !== "")
-        .map(Number);
+      const numericData = finiteNumbers(allColData);
       const dataMin = Math.min(...numericData);
       const dataMax = Math.max(...numericData);
 
@@ -219,8 +223,8 @@ export function BarChart({
   // Keep numeric axis labels and X ticks inside the SVG viewport.
   const populationCounts = isNumeric
     ? numericBins(
-        allColData.filter((d) => d != null && d !== "").map(Number),
-        allColData.filter((d) => d != null && d !== "").map(Number),
+        finiteNumbers(allColData),
+        finiteNumbers(allColData),
         settings.binCount || 20
       ).map((bin) => bin.value)
     : isAggregate
@@ -490,7 +494,13 @@ export function BarChart({
         range: yScale.range(),
       },
     }),
-    [isBandScale, settings.xAxis.scaleType, settings.yAxis.scaleType, xScale, yScale]
+    [
+      isBandScale,
+      settings.xAxis.scaleType,
+      settings.yAxis.scaleType,
+      xScale,
+      yScale,
+    ]
   );
 
   const traceRevisionKey = useMemo(
@@ -530,11 +540,11 @@ export function BarChart({
     (guide: ChartGuide): Omit<BarTraceSelection, "owner"> => {
       const field =
         guide.axis === "x"
-          ? effectiveAggregateResult?.spec.groupField ?? settings.field
-          : effectiveAggregateResult?.spec.measureField ??
+          ? (effectiveAggregateResult?.spec.groupField ?? settings.field)
+          : (effectiveAggregateResult?.spec.measureField ??
             (effectiveAggregateResult?.spec.aggregation === "count"
               ? "Row count"
-              : settings.field);
+              : settings.field));
       return {
         kind: "guide",
         id: guide.id,
@@ -546,7 +556,13 @@ export function BarChart({
         yScale: traceScales.y,
       };
     },
-    [effectiveAggregateResult, getFieldLabel, settings.field, traceRevisionKey, traceScales]
+    [
+      effectiveAggregateResult,
+      getFieldLabel,
+      settings.field,
+      traceRevisionKey,
+      traceScales,
+    ]
   );
 
   const valueFilter = settings.filters.find(
@@ -635,17 +651,20 @@ export function BarChart({
         })
       );
     } else {
-      xScale.domain().slice(0, 12).forEach((tick) =>
-        guides.push({
-          id: `x-tick:${String(tick)}`,
-          axis: "x",
-          role: "tick",
-          value: tick,
-          label: String(tick),
-          x: (xScale(tick) ?? 0) + xScale.bandwidth() / 2,
-          y: 0,
-        })
-      );
+      xScale
+        .domain()
+        .slice(0, 12)
+        .forEach((tick) =>
+          guides.push({
+            id: `x-tick:${String(tick)}`,
+            axis: "x",
+            role: "tick",
+            value: tick,
+            label: String(tick),
+            x: (xScale(tick) ?? 0) + xScale.bandwidth() / 2,
+            y: 0,
+          })
+        );
     }
     if ("ticks" in yScale) {
       yScale.ticks(Math.min(settings.yGridLines || 5, 12)).forEach((tick) =>
@@ -688,7 +707,12 @@ export function BarChart({
           label: bar.label,
           value: bar.value,
           groupValue: bar.groupValue,
-          geometry: { x: bar.x, y: bar.y, width: bar.width, height: bar.height },
+          geometry: {
+            x: bar.x,
+            y: bar.y,
+            width: bar.width,
+            height: bar.height,
+          },
           baseline: bar.baseline,
           fill: bar.fill,
         },
@@ -700,11 +724,26 @@ export function BarChart({
         scopeDescription: isAggregate ? aggregateScope : countScopeDescription,
       });
     },
-    [aggregateScope, countScopeDescription, getFieldLabel, isAggregate, selectTrace, tracePlan, traceScales]
+    [
+      aggregateScope,
+      countScopeDescription,
+      getFieldLabel,
+      isAggregate,
+      selectTrace,
+      tracePlan,
+      traceScales,
+    ]
   );
 
   const inspectRegularBar = useCallback(
-    (item: NumericBin | CategoryBin, index: number, x: number, y: number, width: number, height: number) => {
+    (
+      item: NumericBin | CategoryBin,
+      index: number,
+      x: number,
+      y: number,
+      width: number,
+      height: number
+    ) => {
       selectTrace({
         kind: "bar",
         id: `bar:${index}`,
@@ -719,13 +758,25 @@ export function BarChart({
           end: item.isNumeric ? item.end : undefined,
           geometry: { x, y, width, height },
           baseline: yScale(0),
-          fill: getColorForValue(settings.colorScaleId, item.isNumeric ? item.start : item.category, "#3479a8"),
+          fill: getColorForValue(
+            settings.colorScaleId,
+            item.isNumeric ? item.start : item.category,
+            "#3479a8"
+          ),
         },
         xScale: traceScales.x,
         yScale: traceScales.y,
       });
     },
-    [getColorForValue, getFieldLabel, selectTrace, settings.colorScaleId, settings.field, traceScales, yScale]
+    [
+      getColorForValue,
+      getFieldLabel,
+      selectTrace,
+      settings.colorScaleId,
+      settings.field,
+      traceScales,
+      yScale,
+    ]
   );
 
   const inspectBarAtPoint = useCallback(
@@ -739,7 +790,10 @@ export function BarChart({
           pointY <= bar.y + bar.height
       );
       if (plannedBar && (aggregatePlan || countPlan)) {
-        inspectAggregateBar(plannedBar, isAggregate ? effectiveAggregateResult! : countAggregateResult!);
+        inspectAggregateBar(
+          plannedBar,
+          isAggregate ? effectiveAggregateResult! : countAggregateResult!
+        );
         return true;
       }
 
@@ -775,17 +829,34 @@ export function BarChart({
       );
       return true;
     },
-    [chartData, countAggregateResult, effectiveAggregateResult, inspectAggregateBar, inspectRegularBar, isAggregate, isNumeric, tracePlan, xScale, yScale]
+    [
+      chartData,
+      countAggregateResult,
+      effectiveAggregateResult,
+      inspectAggregateBar,
+      inspectRegularBar,
+      isAggregate,
+      isNumeric,
+      tracePlan,
+      xScale,
+      yScale,
+    ]
   );
 
   const findTraceRow = useCallback(
     (id: number) => {
       if (isAggregate || countAggregateResult) {
-        const result = isAggregate ? effectiveAggregateResult : countAggregateResult;
+        const result = isAggregate
+          ? effectiveAggregateResult
+          : countAggregateResult;
         const row = result?.rows.find((candidate) =>
-          candidate.contributors.some((contributor) => contributor.sourceId === id)
+          candidate.contributors.some(
+            (contributor) => contributor.sourceId === id
+          )
         );
-        const bar = row && tracePlan?.bars.find((candidate) => candidate.rowId === row.id);
+        const bar =
+          row &&
+          tracePlan?.bars.find((candidate) => candidate.rowId === row.id);
         if (row && bar && result) {
           inspectAggregateBar(bar, result);
           return true;
@@ -799,14 +870,23 @@ export function BarChart({
         const number = Number(value);
         const index = chartData.findIndex((item, itemIndex) => {
           if (!item.isNumeric) return false;
-          return number >= item.start &&
-            (number < item.end || itemIndex === chartData.length - 1);
+          return (
+            number >= item.start &&
+            (number < item.end || itemIndex === chartData.length - 1)
+          );
         });
         const item = chartData[index];
         if (index >= 0 && item?.isNumeric && typeof item.value === "number") {
           const scale = xScale as ScaleLinear<number, number>;
           const x = scale(item.start);
-          inspectRegularBar(item as NumericBin, index, x, Math.min(yScale(0), yScale(item.value)), Math.max(0, scale(item.end) - x - 1), Math.max(1, Math.abs(yScale(0) - yScale(item.value))));
+          inspectRegularBar(
+            item as NumericBin,
+            index,
+            x,
+            Math.min(yScale(0), yScale(item.value)),
+            Math.max(0, scale(item.end) - x - 1),
+            Math.max(1, Math.abs(yScale(0) - yScale(item.value)))
+          );
           return true;
         }
         return false;
@@ -815,13 +895,39 @@ export function BarChart({
         (item) => !item.isNumeric && categoryEqual(item.category, value)
       );
       const item = chartData[index];
-      if (index < 0 || !item || item.isNumeric || typeof item.value !== "number") return false;
+      if (
+        index < 0 ||
+        !item ||
+        item.isNumeric ||
+        typeof item.value !== "number"
+      )
+        return false;
       const scale = xScale as ScaleBand<string>;
       const x = scale(item.label) ?? 0;
-      inspectRegularBar(item as CategoryBin, index, x, Math.min(yScale(0), yScale(item.value)), scale.bandwidth(), Math.max(1, Math.abs(yScale(0) - yScale(item.value))));
+      inspectRegularBar(
+        item as CategoryBin,
+        index,
+        x,
+        Math.min(yScale(0), yScale(item.value)),
+        scale.bandwidth(),
+        Math.max(1, Math.abs(yScale(0) - yScale(item.value)))
+      );
       return true;
     },
-    [chartData, countAggregateResult, effectiveAggregateResult, fieldData, inspectAggregateBar, inspectRegularBar, isAggregate, isNumeric, liveIds, tracePlan, xScale, yScale]
+    [
+      chartData,
+      countAggregateResult,
+      effectiveAggregateResult,
+      fieldData,
+      inspectAggregateBar,
+      inspectRegularBar,
+      isAggregate,
+      isNumeric,
+      liveIds,
+      tracePlan,
+      xScale,
+      yScale,
+    ]
   );
 
   useEffect(() => {
@@ -841,12 +947,21 @@ export function BarChart({
   useEffect(
     () =>
       traceRegister?.(owner, {
-        inspect: (selection) => traceSelect?.({ ...selection, owner, revision: traceRevisionKey }),
+        inspect: (selection) =>
+          traceSelect?.({ ...selection, owner, revision: traceRevisionKey }),
         findRow: findTraceRow,
         guides: getTraceGuides,
         title: getTraceTitle,
       }),
-    [findTraceRow, getTraceGuides, getTraceTitle, owner, traceRegister, traceRevisionKey, traceSelect]
+    [
+      findTraceRow,
+      getTraceGuides,
+      getTraceTitle,
+      owner,
+      traceRegister,
+      traceRevisionKey,
+      traceSelect,
+    ]
   );
 
   const handleBrushChange = useCallback(
@@ -990,7 +1105,9 @@ export function BarChart({
                         if (event.altKey) {
                           inspectAggregateBar(
                             bar,
-                            isCountBar ? countAggregateResult! : effectiveAggregateResult!
+                            isCountBar
+                              ? countAggregateResult!
+                              : effectiveAggregateResult!
                           );
                         } else if (isCountBar) {
                           handleBarClick(bar.groupValue);
@@ -1115,7 +1232,14 @@ export function BarChart({
                         event.key === "Enter"
                       ) {
                         event.preventDefault();
-                        inspectRegularBar(d as NumericBin | CategoryBin, i, x, barY, Math.max(0, barWidth - (isNumeric ? 1 : 0)), displayHeight);
+                        inspectRegularBar(
+                          d as NumericBin | CategoryBin,
+                          i,
+                          x,
+                          barY,
+                          Math.max(0, barWidth - (isNumeric ? 1 : 0)),
+                          displayHeight
+                        );
                       } else if (
                         isBandScale &&
                         (event.key === "Enter" || event.key === " ")
@@ -1130,7 +1254,14 @@ export function BarChart({
                       if (event.altKey) {
                         event.preventDefault();
                         event.stopPropagation();
-                        inspectRegularBar(d as NumericBin | CategoryBin, i, x, barY, Math.max(0, barWidth - (isNumeric ? 1 : 0)), displayHeight);
+                        inspectRegularBar(
+                          d as NumericBin | CategoryBin,
+                          i,
+                          x,
+                          barY,
+                          Math.max(0, barWidth - (isNumeric ? 1 : 0)),
+                          displayHeight
+                        );
                       } else if (isBandScale) {
                         handleBarClick((d as CategoryBin).category);
                       }

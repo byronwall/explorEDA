@@ -1,3 +1,4 @@
+import { finiteNumbers, isMissingValue } from "@/lib/numeric";
 import { datum } from "@/types/ChartTypes";
 import { DataType } from "./dataTypeDetection";
 
@@ -50,6 +51,8 @@ export interface ColumnStatistics {
   totalCount: number;
   uniqueCount: number;
   nullCount: number;
+  /** Present values a numeric field cannot measure, such as Infinity. */
+  excludedCount?: number;
   statistics?: NumericStatistics;
   categories?: CategoryStatistics;
 }
@@ -66,42 +69,33 @@ export function calculateColumnStatistics(
   const uniqueCount = uniqueValues.size;
 
   if (dataType === "numeric") {
-    const numericValues = values
-      .filter((v) => v != null)
-      .map((v) => Number(v))
-      .filter((v) => !isNaN(v));
+    // Numeric fields share the eligibility rule used by charts and aggregates.
+    const missingCount = values.filter(isMissingValue).length;
+    const numericValues = finiteNumbers(values);
+    const numericBase = {
+      dataType,
+      totalCount,
+      uniqueCount,
+      nullCount: missingCount,
+      excludedCount: totalCount - missingCount - numericValues.length,
+    };
 
     if (numericValues.length === 0) {
-      return {
-        dataType,
-        totalCount,
-        uniqueCount,
-        nullCount,
-      };
+      return numericBase;
     }
 
     const sorted = [...numericValues].sort((a, b) => a - b);
     const min = sorted.at(0);
     const max = sorted.at(-1);
     if (min === undefined || max === undefined) {
-      return {
-        dataType,
-        totalCount,
-        uniqueCount,
-        nullCount,
-      };
+      return numericBase;
     }
     const sum = numericValues.reduce((a, b) => a + b, 0);
     const mean = sum / numericValues.length;
     const lower = sorted[Math.floor((sorted.length - 1) / 2)];
     const upper = sorted[Math.floor(sorted.length / 2)];
     if (lower === undefined || upper === undefined) {
-      return {
-        dataType,
-        totalCount,
-        uniqueCount,
-        nullCount,
-      };
+      return numericBase;
     }
     const median = (lower + upper) / 2;
     const squaredDiffs = numericValues.map((v) => Math.pow(v - mean, 2));
@@ -110,10 +104,7 @@ export function calculateColumnStatistics(
     const stdDev = Math.sqrt(variance);
 
     return {
-      dataType,
-      totalCount,
-      uniqueCount,
-      nullCount,
+      ...numericBase,
       statistics: {
         min,
         max,

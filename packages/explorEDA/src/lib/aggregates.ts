@@ -1,5 +1,6 @@
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import type { datum } from "@/types/ChartTypes";
+import { numericExclusionReason } from "@/lib/numeric";
 
 export type AggregateAggregation = "count" | "sum" | "average";
 
@@ -69,23 +70,11 @@ export function numericInputs(values: datum[]): {
   const inputs: NumericInput[] = [];
   const exclusions: NumericExclusion[] = [];
   values.forEach((value, index) => {
-    if (value === undefined || value === null || value === "") {
-      exclusions.push({ index, reason: "Missing value" });
-      return;
-    }
-    if (typeof value === "boolean") {
-      exclusions.push({ index, reason: "Boolean values are not numeric" });
-      return;
-    }
-    if (typeof value === "string" && value.trim() === "") {
-      exclusions.push({ index, reason: "Blank value" });
-      return;
-    }
-    const number = Number(value);
-    if (Number.isFinite(number)) {
-      inputs.push({ value: number, index });
+    const reason = numericExclusionReason(value);
+    if (reason) {
+      exclusions.push({ index, reason });
     } else {
-      exclusions.push({ index, reason: "Not a finite number" });
+      inputs.push({ value: Number(value), index });
     }
   });
   return { inputs, exclusions };

@@ -4,7 +4,7 @@ Original audit: 2026-09-17, commit `a168f1b`. Baseline reconciliation: 2026-09-1
 
 This review covers all three completed rounds in [⭐ 🧮 00 · Close analysis gaps](thread://01a0bcb3-c383-70c0-a4ea-5b54cc265e8f?hostId=local). The working tree was clean before review. No outstanding work needed an initial commit.
 
-**Next action: repair numeric eligibility before adding features.** A fresh probe found inconsistent results for blank and nonfinite inputs (R18). Then add inline field distributions and finish shared formatting. Histogram and box contributors follow; date controls and time axes come next.
+**Next action: add inline field distributions and finish shared formatting.** Numeric eligibility is repaired: blank and nonfinite inputs now give the same results in every view (R18). Histogram and box contributors follow; date controls and time axes come next.
 
 This update includes the [trust repairs](transcript-trust-fixes.md) and [calculation workflow](calculation-workflow.md). It separates completed work, remaining defects, and proposed scope.
 
@@ -92,7 +92,7 @@ The accepted save path puts settings JSON first for library embedding. The full 
 | Finding                       | Assessment                                                                                                                                                                    | Relevant gaps                         |
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
 | One-table exploration         | Substantial implementation exists. Field profiles, field overrides, typed controls, defaults, linked filters, and public state emission are current features.              | DATA-01–04, DASH-01, FILT-01–03       |
-| Trust in derived values       | Scalar evaluation and exports share results. Summary statistics and grouped aggregates still disagree on blank and nonfinite numeric inputs. | CALC-01–07; R01–R02, R18 |
+| Trust in derived values       | Scalar evaluation and exports share results. Summary statistics, chart paths, and grouped aggregates share one numeric eligibility rule. | CALC-01–07; R01–R02, R18 |
 | Meaning of the current subset | Global chart filters, peer-filtered chart context, table search, and local Rows controls coexist. Labels explain their scope, and the main reset clears all row restrictions. | FILT-01–05                            |
 | Persistence                   | The package emits and restores primary settings JSON and full analysis JSON. The demo does not provide durable named saved analyses. Metadata remains limited; `modifiedAt` records snapshot time. | DASH-03–06; V05, R02                  |
 | Comparable facets             | Supported facets share full-source domains and category order. Selections apply across facets, as approved.                                                                   | FACET-01–06                           |
@@ -102,7 +102,7 @@ The accepted save path puts settings JSON first for library embedding. The full 
 | Performance                   | Several concrete measures exist. A 2026-09-20 desktop walkthrough covered a 10,000-row sample; this does not establish a general size envelope. | PERF-01–05 |
 | Advanced architecture         | A general dataflow/spec system, server queries, joins, and custom glyph composition are largely exploratory or parked.                                                        | DATA-05–08, TRACE-04–06, CHART-08–10  |
 
-The next repair should make numeric summaries agree on eligible inputs. The next feature should improve field inspection within the existing single-source flow.
+Numeric summaries now agree on eligible inputs. The next feature should improve field inspection within the existing single-source flow.
 
 ## Intent already represented in the application
 
@@ -363,14 +363,14 @@ The approved source changes address these findings. Historical browser evidence 
 | R15 | Use `singleValue` on a pivot group containing several values.            | Implemented: the cell records an error and the pivot keeps the other cells available.                                                     | Historical browser proof: [Audit limits](#audit-limits). |
 | R16 | Replace a dataset with more or fewer rows while using facets. | Fixed in the first linked-task round: the all-ID hook subscribes to source data. | Provider replacement test checks current IDs and facet groups after growth and shrinkage. |
 | R17 | Use NaN, Infinity, or -Infinity as host-supplied numeric categories. | Fixed in the first linked-task round: keys remain distinct; shared membership and removal preserve category identity. | Category selection and shared filter regression checks. Numeric range filters still exclude non-finite values. |
-| R18 | Inspect an automatically inferred numeric field containing whitespace or nonfinite values. | **Open mismatch:** Summary statistics include whitespace as zero and retain infinity. Named grouped numeric summaries exclude those inputs. | Fresh direct runtime probe, described below. No browser claim. |
+| R18 | Inspect an automatically inferred numeric field containing whitespace or nonfinite values. | Fixed: one shared rule in `lib/numeric.ts` treats blanks as missing and excludes nonfinite values. Summary, bins, boxes, scatter, line, 3D, and grouped results agree. | `src/lib/numeric.test.ts` compares profiles, bins, boxes, and grouped averages on one mixed-input group. |
 | R19 | Apply currency/precision settings, then inspect Summary badges, filter chips, and pivot counts. | **Open display gap:** badges and chips bypass shared formatting. Pivot counts inherit measure-field formats, which can mislabel units. | Current source trace. No fresh browser reproduction. |
 
 Source map for these findings: [provider](../packages/explorEDA/src/providers/DataLayerProvider.tsx), [calculation manager](../packages/explorEDA/src/lib/calculations/CalculationState.ts), [table](../packages/explorEDA/src/components/charts/DataTable/), [facets](../packages/explorEDA/src/components/charts/FacetRelated/), [line helpers](../packages/explorEDA/src/lib/chartUtils.ts), [box files](../packages/explorEDA/src/components/charts/BoxPlot/), [3D points](../packages/explorEDA/src/components/charts/ThreeDScatter/ThreeDScatterPoints.tsx), [pivot aggregates](../packages/explorEDA/src/components/charts/PivotTable/utils/calculations.ts).
 
 ### New open findings from this review
 
-**R18 — numeric eligibility disagrees across views.** The probe used raw source values without field overrides. It executed current inference, statistics, and grouped-average functions on identical rows.
+**R18 — numeric eligibility disagreed across views (now fixed).** The probe used raw source values without field overrides. It executed current inference, statistics, and grouped-average functions on identical rows.
 
 | Values in one group | Summary statistics | Grouped average | Why it matters |
 | ------------------- | ------------------ | --------------- | -------------- |
@@ -380,6 +380,8 @@ Source map for these findings: [provider](../packages/explorEDA/src/providers/Da
 [Type inference](../packages/explorEDA/src/components/SummaryTable/utils/dataTypeDetection.ts) accepts these columns as numeric. [Statistics](../packages/explorEDA/src/components/SummaryTable/utils/statisticsCalculator.ts) use `Number` and reject only `NaN`. [Grouped inputs](../packages/explorEDA/src/lib/aggregates.ts) reject blanks and all nonfinite numbers. Ordinary chart paths also contain separate numeric conversions.
 
 Repair this before adding distributions. Reuse the existing numeric eligibility rule where numeric analysis needs it. Preserve raw values and explicit categorical choices. Show excluded counts separately from valid measurements. One regression should compare profiles, bins, boxes, and grouped results on the same mixed-input fixture.
+
+The repair moved the grouped-input rule into [numeric eligibility](../packages/explorEDA/src/lib/numeric.ts). Type inference, Summary statistics, bar bins, box plots, scatter, line, 3D, pivots, and grouped summaries now call it. Blank strings count as missing. Nonfinite values stay in a numeric field but are counted as excluded, and field details show that count. Explicit categorical fields keep their raw values.
 
 **R19 — display formatting still needs consistent scope and units.** [Summary badges](../packages/explorEDA/src/components/SummaryTable/components/CompactSummaryTable.tsx) pass raw min/max values to `StatBadge`. [Active-filter chips](../packages/explorEDA/src/components/ActiveFilterStatus.tsx) use a separate formatter and canonical field names.
 
@@ -431,7 +433,7 @@ The prior proof list mixed completed source slices with future scenarios. Focuse
 
 | Rank | Priority and remaining gap | Why this order | Smallest decisive proof |
 | ---- | -------------------------- | -------------- | ----------------------- |
-| 1 | **P1: Numeric eligibility repair** (R18, DATA-02, UX-01/02) | Existing views can disagree on a basic result. New distributions would expose or copy that disagreement. | Use `10`, `20`, whitespace, null, and nonfinite inputs. Numeric views agree on eligible IDs and counts; grouped average stays `15`. Explicit categories retain their raw identity. |
+| 1 | **Done: Numeric eligibility repair** (R18, DATA-02, UX-01/02) | Existing views can disagree on a basic result. New distributions would expose or copy that disagreement. | Use `10`, `20`, whitespace, null, and nonfinite inputs. Numeric views agree on eligible IDs and counts; grouped average stays `15`. Explicit categories retain their raw identity. |
 | 2 | **P2: Inline field distributions and consistent display** (DATA-02, FILT-12, TABLE-05, R19) | This completes the first inspection loop using existing profiles and field controls. | Inspect a numeric field and a category. Show distributions, population scope, missing/failed counts, and shared formats. Use existing filter controls; counts agree across Summary, Rows, and a chart. |
 | 3 | **P2: Histogram and box contributor inspection** (TRACE-01/02/03, CHART-01/04) | It extends a working inspection pattern and exposes the meaning of current marks. | Inspect a bin boundary and a box group. Show exact source IDs, exclusions, bin bounds, quartiles, whiskers, and outliers. Recompute the displayed result. |
 | 4 | **P2: Calendar filtering and real time axes** (FILT-11, SCALE-03, CHART-03) | Date conversion and date inputs work, but line X values still use numeric conversion and common scales lack time behavior. | Mix date-only and offset timestamps across a month boundary. A month/year filter and UTC time axis agree before and after JSON restore. |
@@ -442,7 +444,7 @@ P1 means repair before feature work. P2 means the next bounded product slices. P
 
 The chart semantics, save/restore codec, Rows state, field settings, grouped summaries, and pivot contributor inspector are implemented slices. Facet navigation, bound legends, beeswarm geometry, and 3D omission/size controls are also implemented within the stated boundaries. Runtime status is recorded under [Audit limits](#audit-limits).
 
-**Recommendation: repair R18, then build the rank-2 field inspection slice.** Keep the existing field inspector, profiles, histogram bins, formatter, and filter ownership. Do not combine this with import preflight, a schema catalogue, or a new filtering model.
+**Recommendation: R18 is repaired; build the rank-2 field inspection slice next.** Keep the existing field inspector, profiles, histogram bins, formatter, and filter ownership. Do not combine this with import preflight, a schema catalogue, or a new filtering model.
 
 ### Concrete next steps
 
