@@ -1,0 +1,45 @@
+name: Release
+
+# Runs only when a commit on main adds, changes, or removes a changeset, or
+# when started by hand. Ordinary commits do not start a release.
+#
+# - A changeset lands on main: open or update the "Version Packages" PR.
+# - The "Version Packages" PR merges (it deletes the changesets): run
+#   `pnpm check`, publish to npm, and create the tag and GitHub release.
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".changeset/**"
+  workflow_dispatch:
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Open the Version Packages PR or publish to npm
+        uses: changesets/action@v1
+        with:
+          publish: pnpm run release
+          title: "Version Packages"
+          commit: "Version Packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true

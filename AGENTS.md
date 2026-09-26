@@ -15,3 +15,13 @@
 - Use the shared `FieldMetadata` component in field lists and pickers.
 - Verify changed flows in the browser at wide, intermediate, and narrow widths.
 - Keep existing user edits. Do not commit on `main` without an explicit request.
+
+## Changesets
+
+- Every PR that changes what `exploreda` users get (anything under `packages/explorEDA` except tests, or its build output) includes a changeset. Write it yourself; nobody adds them later.
+- Run `pnpm changeset:add <patch|minor|major> "summary"`. It writes `.changeset/<slug>.md` without prompts. Do not run the interactive `pnpm changeset`.
+- Pick `patch` for fixes and polish, `minor` for new features or options, and `major` only when Byron asks for a breaking release. While the version is 0.x, a breaking API change is `minor`.
+- Write the summary for package users: what they can now do or what now behaves differently, in one or two plain sentences. It goes straight into the changelog.
+- One changeset per PR is usual. Edit it when the PR's scope changes instead of adding another.
+- Skip it for demo-only, docs-only, test-only, or tooling-only PRs.
+- Never run `changeset version` or `changeset publish`, and never edit versions or `CHANGELOG.md` by hand. The Release workflow does that through the "Version Packages" PR.
