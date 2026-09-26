@@ -3,6 +3,7 @@ import { Maximize2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChartRenderer } from "../ChartRenderer";
+import { traceOnAltEnter } from "./facetTrace";
 import { FacetData } from "./FacetContainer";
 import { planFacetWrapLayout, type FacetLayoutPlan } from "./facetLayout";
 
@@ -99,6 +100,9 @@ export function FacetWrapLayout({
                 type="button"
                 className="min-w-0 truncate text-left underline-offset-2 hover:underline"
                 aria-pressed={isFacetFiltered(rowVariable, facet.rowRawValue)}
+                onKeyDown={traceOnAltEnter(
+                  onTraceFacet && (() => onTraceFacet("panel", [facet], layout))
+                )}
                 onClick={(event) => {
                   if (event.altKey && onTraceFacet)
                     onTraceFacet("panel", [facet], layout);
@@ -113,6 +117,9 @@ export function FacetWrapLayout({
                 className="size-5 shrink-0 text-muted-foreground hover:text-foreground"
                 tooltip="Focus facet"
                 aria-label={`Focus ${formatFacetValue(rowVariable, facet.rowRawValue)} facet`}
+                onKeyDown={traceOnAltEnter(
+                  onTraceFacet && (() => onTraceFacet("panel", [facet], layout))
+                )}
                 onClick={(event) => {
                   if (event.altKey && onTraceFacet)
                     onTraceFacet("panel", [facet], layout);

@@ -8,7 +8,9 @@ import {
 import { IdType, useDataLayer } from "@/providers/DataLayerProvider";
 import { ChartSettings, datum } from "@/types/ChartTypes";
 import { Filter } from "@/types/FilterTypes";
+import { Minimize2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { ChartRenderer } from "../ChartRenderer";
 import { FacetGridLayout } from "./FacetGridLayout";
 import { FacetWrapLayout } from "./FacetWrapLayout";
@@ -240,13 +242,15 @@ export function FacetContainer({
                 ? ` · ${displayFacetValue(settings.facet.columnVariable, focused.columnRawValue)}`
                 : ""}
             </span>
-            <button
-              type="button"
-              className="shrink-0 whitespace-nowrap underline"
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-5 shrink-0 gap-1 px-1.5 text-xs font-normal text-muted-foreground hover:text-foreground"
               onClick={() => setFocusedFacetId(null)}
             >
+              <Minimize2 className="size-3" />
               Back to all facets
-            </button>
+            </Button>
           </div>
           <div className="min-h-0 flex-1">
             <ChartRenderer

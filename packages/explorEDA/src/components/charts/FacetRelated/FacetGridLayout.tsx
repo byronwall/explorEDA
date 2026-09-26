@@ -3,6 +3,7 @@ import { Maximize2 } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChartRenderer } from "../ChartRenderer";
+import { traceOnAltEnter } from "./facetTrace";
 import { FacetData } from "./FacetContainer";
 import { planFacetGridLayout, type FacetLayoutPlan } from "./facetLayout";
 
@@ -163,6 +164,17 @@ export function FacetGridLayout({
                     type="button"
                     className="max-w-full truncate underline-offset-2 hover:underline"
                     aria-pressed={isFacetFiltered(columnVariable, column.value)}
+                    onKeyDown={traceOnAltEnter(
+                      onTraceFacet &&
+                        (() =>
+                          onTraceFacet(
+                            "column-heading",
+                            facetData.filter(
+                              (facet) => facet.columnKey === columnKey
+                            ),
+                            layout
+                          ))
+                    )}
                     onClick={(event) => {
                       if (event.altKey && onTraceFacet)
                         onTraceFacet(
@@ -189,6 +201,17 @@ export function FacetGridLayout({
                     type="button"
                     className="max-w-full truncate underline-offset-2 hover:underline"
                     aria-pressed={isFacetFiltered(rowVariable, row.value)}
+                    onKeyDown={traceOnAltEnter(
+                      onTraceFacet &&
+                        (() =>
+                          onTraceFacet(
+                            "row-heading",
+                            facetData.filter(
+                              (facet) => facet.rowKey === rowKey
+                            ),
+                            layout
+                          ))
+                    )}
                     onClick={(event) => {
                       if (event.altKey && onTraceFacet)
                         onTraceFacet(
@@ -219,6 +242,11 @@ export function FacetGridLayout({
                                 className="size-5 text-muted-foreground hover:text-foreground"
                                 tooltip="Focus facet"
                                 aria-label={`Focus ${formatFacetValue(rowVariable, facet.rowRawValue)}${facet.columnRawValue !== null ? `, ${formatFacetValue(columnVariable, facet.columnRawValue)}` : ""} facet`}
+                                onKeyDown={traceOnAltEnter(
+                                  onTraceFacet &&
+                                    (() =>
+                                      onTraceFacet("panel", [facet], layout))
+                                )}
                                 onClick={(event) => {
                                   if (event.altKey && onTraceFacet)
                                     onTraceFacet("panel", [facet], layout);
