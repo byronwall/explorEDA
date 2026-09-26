@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 
-import { parseCsvData } from "./csvParser";
-import { parseJsonData } from "./jsonParser";
+import { readDataFile } from "./readDataFile";
 import { Plus, Upload } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -29,15 +28,7 @@ export function CsvUpload({ compact = false, onImport }: CsvUploadProps) {
       try {
         setError(null);
         setFailedFile(null);
-        let data: DatumObject[];
-        if (file.name.toLowerCase().endsWith(".csv")) {
-          data = await parseCsvData(file);
-        } else if (file.name.toLowerCase().endsWith(".json")) {
-          data = await parseJsonData(file);
-        } else {
-          throw new Error("Unsupported file type");
-        }
-        onImport?.(data, file.name);
+        onImport?.(await readDataFile(file), file.name);
       } catch (error) {
         const message =
           error instanceof Error ? error.message : "Unknown error";
@@ -86,6 +77,7 @@ export function CsvUpload({ compact = false, onImport }: CsvUploadProps) {
         "aria-label": "Import CSV or JSON data",
         "aria-describedby": "file-upload-help",
       })}
+      data-file-dropzone=""
       className="cursor-pointer rounded-lg border-2 border-dashed border-input p-5 text-center outline-none transition-colors hover:border-ring focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
       <input

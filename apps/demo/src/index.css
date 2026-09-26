@@ -37,3 +37,7 @@
     0 1px 2px color-mix(in oklab, var(--foreground) 6%, transparent),
     0 18px 40px -20px color-mix(in oklab, var(--foreground) 22%, transparent);
 }
+
+.landing-drop-overlay {
+  background: var(--background);
+}

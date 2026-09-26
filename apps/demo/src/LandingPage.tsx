@@ -28,6 +28,7 @@ import { WhyWorkspace } from "./landing/WhyWorkspace";
 import { Hero } from "./landing/Hero";
 import { LandingFooter } from "./landing/LandingFooter";
 import { SampleDataButtons } from "./landing/SampleDataButtons";
+import { PageFileDrop } from "./landing/PageFileDrop";
 import { SectionHeading } from "./landing/SectionHeading";
 
 const featuredExample = examples.find(
@@ -229,6 +230,7 @@ export function LandingPage() {
                 <CoverageMatrix />
               ) : (
                 <>
+                  <PageFileDrop onImport={handleCsvImport} />
                   {featuredExample && (
                     <Hero
                       onOpenFeatured={() =>

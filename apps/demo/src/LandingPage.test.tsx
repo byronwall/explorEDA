@@ -178,6 +178,50 @@ describe("LandingPage routing", () => {
     expect(workspace).toHaveAttribute("data-has-saved-data", "false");
   });
 
+  it("opens a CSV dropped anywhere on the page in the workspace", async () => {
+    const router = createMemoryRouter(
+      [{ path: "/explorEDA/*", element: <LandingPage /> }],
+      { initialEntries: ["/explorEDA/"] }
+    );
+    render(<RouterProvider router={router} />);
+
+    const file = new File(
+      ["species,mass\nAdelie,3750\nGentoo,5000"],
+      "penguins.csv",
+      {
+        type: "text/csv",
+      }
+    );
+    const dataTransfer = { types: ["Files"], files: [file] };
+    fireEvent.dragEnter(window, { dataTransfer });
+    expect(
+      await screen.findByText("Drop to explore your data")
+    ).toBeInTheDocument();
+
+    fireEvent.drop(window, { dataTransfer });
+    const workspace = await screen.findByTestId("workspace");
+    expect(workspace).toHaveAttribute("data-rows", "2");
+    expect(workspace).toHaveAttribute("data-has-saved-data", "false");
+    expect(screen.queryByText("Drop to explore your data")).toBeNull();
+  });
+
+  it("explains when a dropped file is not CSV or JSON", async () => {
+    const router = createMemoryRouter(
+      [{ path: "/explorEDA/*", element: <LandingPage /> }],
+      { initialEntries: ["/explorEDA/"] }
+    );
+    render(<RouterProvider router={router} />);
+
+    const file = new File(["hi"], "notes.txt", { type: "text/plain" });
+    fireEvent.drop(window, {
+      dataTransfer: { types: ["Files"], files: [file] },
+    });
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "notes.txt is not a CSV or JSON file."
+    );
+    expect(screen.queryByTestId("workspace")).toBeNull();
+  });
+
   it("captures state without controlling the workspace and restores it on remount", async () => {
     vi.stubGlobal(
       "fetch",
