@@ -93,6 +93,21 @@ pnpm check              # UI rules, build, typecheck, and tests
 pnpm --filter demo dev  # demo site at http://localhost:5173/
 ```
 
+## Release
+
+Releases use [Changesets](https://github.com/changesets/changesets). Add a
+changeset to any PR that changes the published package:
+
+```sh
+pnpm changeset          # pick exploreda, the bump, and a summary
+```
+
+When a changeset reaches `main`, the Release workflow opens or updates a
+"Version Packages" PR with the new version and changelog. Merging that PR
+runs `pnpm check`, publishes `exploreda` to npm, and tags a GitHub release.
+Commits without a changeset do not start a release. The workflow needs an
+`NPM_TOKEN` repository secret with publish rights to `exploreda`.
+
 ## Inspiration
 
 explorEDA was inspired by [DC.js](https://dc-js.github.io/dc.js/) and

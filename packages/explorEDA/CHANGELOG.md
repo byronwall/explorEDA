@@ -1,4 +1,4 @@
-# @repo/explorEDA
+# exploreda
 
 ## 0.0.6
 
