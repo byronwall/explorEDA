@@ -44,6 +44,7 @@ import {
 } from "@/types/SavedDataStructure";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { createStore, useStore } from "zustand";
+import { compactChartLayouts } from "@/utils/compactChartLayouts";
 import { IdType, initializeData } from "./lib/dataLayerState";
 
 type DatumObject = { [key: string]: datum };
@@ -842,7 +843,9 @@ const createDataLayerStore = <T extends DatumObject>(
       const { crossfilterWrapper } = get();
       crossfilterWrapper.removeChart(chart);
       set((state) => ({
-        charts: state.charts.filter((ogChart) => ogChart.id !== chart.id),
+        charts: compactChartLayouts(
+          state.charts.filter((ogChart) => ogChart.id !== chart.id)
+        ),
         liveItems: crossfilterWrapper.getAllData(),
       }));
     },

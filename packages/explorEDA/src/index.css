@@ -182,6 +182,147 @@
 .react-grid-item:hover > .handle-se {
   opacity: 1;
 }
+
+/* Resize from any side: quiet edge strips and corners, with the visible
+   southeast grip kept as the familiar affordance. */
+.react-grid-item > .eda-resize-handle {
+  z-index: 3;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  background-image: none;
+  transform: none;
+}
+.react-grid-item > .eda-resize-n,
+.react-grid-item > .eda-resize-s {
+  left: 16px;
+  right: 16px;
+  height: 6px;
+  cursor: ns-resize;
+}
+.react-grid-item > .eda-resize-n {
+  top: 0;
+}
+.react-grid-item > .eda-resize-s {
+  bottom: 0;
+}
+.react-grid-item > .eda-resize-e,
+.react-grid-item > .eda-resize-w {
+  top: 16px;
+  bottom: 16px;
+  width: 6px;
+  cursor: ew-resize;
+}
+.react-grid-item > .eda-resize-e {
+  right: 0;
+}
+.react-grid-item > .eda-resize-w {
+  left: 0;
+}
+.react-grid-item > .eda-resize-nw,
+.react-grid-item > .eda-resize-ne,
+.react-grid-item > .eda-resize-sw {
+  width: 12px;
+  height: 12px;
+}
+.react-grid-item > .eda-resize-nw {
+  top: 0;
+  left: 0;
+  cursor: nwse-resize;
+}
+.react-grid-item > .eda-resize-ne {
+  top: 0;
+  right: 0;
+  cursor: nesw-resize;
+}
+.react-grid-item > .eda-resize-sw {
+  bottom: 0;
+  left: 0;
+  cursor: nesw-resize;
+}
+.react-grid-item > .eda-resize-se {
+  right: 0;
+  bottom: 0;
+  width: 20px;
+  height: 20px;
+  cursor: nwse-resize;
+}
+/* Replaces react-grid-layout's corner glyph on every handle. */
+.react-grid-item > .eda-resize-handle::after {
+  content: none;
+  border: 0;
+}
+.react-grid-item > .eda-resize-n::after,
+.react-grid-item > .eda-resize-s::after,
+.react-grid-item > .eda-resize-e::after,
+.react-grid-item > .eda-resize-w::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: auto;
+  bottom: auto;
+  left: 50%;
+  border-radius: 999px;
+  background: var(--primary);
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 120ms ease-out;
+}
+.react-grid-item > .eda-resize-n::after,
+.react-grid-item > .eda-resize-s::after {
+  width: 32px;
+  height: 3px;
+}
+.react-grid-item > .eda-resize-e::after,
+.react-grid-item > .eda-resize-w::after {
+  width: 3px;
+  height: 32px;
+}
+.react-grid-item > .eda-resize-handle:hover::after,
+.react-grid-item.resizing > .eda-resize-handle:active::after {
+  opacity: 0.7;
+}
+
+/* Add a chart from empty grid space. */
+.eda-grid-add {
+  position: absolute;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--muted-foreground);
+  box-shadow: 0 2px 6px rgb(20 40 70 / 12%);
+  transform: translate(-50%, -50%);
+  animation: eda-grid-add-in 140ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.eda-grid-add:hover,
+.eda-grid-add[data-state="open"] {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.eda-grid-add:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.eda-grid-add-preview {
+  position: absolute;
+  z-index: 1;
+  border: 1.5px dashed color-mix(in oklab, var(--primary) 55%, transparent);
+  border-radius: var(--radius, 8px);
+  background: color-mix(in oklab, var(--primary) 5%, transparent);
+  pointer-events: none;
+}
+@keyframes eda-grid-add-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.85);
+  }
+}
 .eda-settings input,
 .eda-settings button[role="combobox"] {
   min-width: 0;
@@ -978,8 +1119,8 @@ html {
   color: var(--foreground);
 }
 .eda-summary-actions button svg {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
 }
 @media (hover: hover) and (pointer: fine) {
   /* Actions float over the end of the row so values keep the full width. */
@@ -1071,8 +1212,8 @@ html {
   padding: 3px;
 }
 .eda-summary-actions button svg {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
 }
 
 @media (max-width: 640px) {

@@ -1,6 +1,6 @@
 ---
 id: exp-f9tk
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-09-23T01:59:06Z
@@ -46,3 +46,7 @@ Drag left and top edges first: each chart changes in the dragged direction, and 
 ## Cut Line and Provenance
 
 No pixel-based freeform sizing or keyboard grid editor. Source: Byron's 2026-09-22 request and follow-up allowing removal of `react-grid-layout`; chart-grid-direct-manipulation claims `resize` and `grid-choice`, shape, and milestone M1. Repository baseline: `593ca2e`, with unrelated worktree edits. This packet stands alone; if another worker edits `ChartGridLayout.tsx` concurrently, coordinate the file change before merging.
+
+## Resolution
+
+Charts resize from all four edges and all four corners, and the southeast grip is still shown (PR #32). The grid keeps the existing `react-grid-layout` dependency. Wide grids use free placement during a resize, so a top or left resize keeps the opposite edge fixed. Top, left and right resizes stop at the nearest chart. Moving or deleting a chart still closes the gaps it leaves (Byron's choice, 2026-09-26). Narrow layouts stay a stack with no handles. Saved layouts keep the same fields.

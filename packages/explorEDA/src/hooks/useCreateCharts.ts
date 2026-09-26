@@ -1,14 +1,18 @@
 import { getChartDefinition } from "@/charts/registry";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import { ChartType } from "@/types/ChartTypes";
+import { ChartLayout, ChartType } from "@/types/ChartTypes";
 
 export function useCreateCharts() {
   const profiles = useDataLayer((s) => s.fieldProfiles);
   const charts = useDataLayer((s) => s.charts);
   const addChart = useDataLayer((s) => s.addChart);
 
-  const createChart = (type: ChartType, field: string) => {
-    const layout = {
+  const createChart = (
+    type: ChartType,
+    field: string,
+    initialLayout?: ChartLayout
+  ) => {
+    const layout = initialLayout ?? {
       x: 0,
       y: Math.max(0, ...charts.map((chart) => chart.layout.y + chart.layout.h)),
       w: 6,
