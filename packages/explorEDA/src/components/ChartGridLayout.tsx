@@ -191,9 +191,10 @@ export function ChartGridLayout({
     setActiveResize(null);
     setDragging(false);
   };
-  const startDrag = () => {
-    setDragging(true);
-    startInteraction();
+  // Compaction starts with the first movement, so pressing a chart header
+  // without moving it leaves the grid alone.
+  const moveDrag = () => {
+    if (!dragging) setDragging(true);
   };
   const startResize: GridLayout.ItemCallback = (
     currentLayout,
@@ -272,7 +273,8 @@ export function ChartGridLayout({
           activeResize !== null && !activeResize.axis.includes("s")
         }
         onLayoutChange={isNarrow ? undefined : handleLayoutChange}
-        onDragStart={startDrag}
+        onDragStart={startInteraction}
+        onDrag={moveDrag}
         onDragStop={stopInteraction}
         onResizeStart={startResize}
         onResizeStop={stopInteraction}
