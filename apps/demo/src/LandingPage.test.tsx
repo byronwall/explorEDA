@@ -94,11 +94,61 @@ describe("LandingPage routing", () => {
     await waitFor(() =>
       expect(
         screen.getByRole("heading", {
-          name: /Explore data by connecting charts and filters/i,
+          name: /Embed an interactive analysis workspace/i,
         })
       ).toBeInTheDocument()
     );
     expect(screen.queryByTestId("workspace")).not.toBeInTheDocument();
+  });
+
+  it("leads with the featured example before import and restore", () => {
+    const router = createMemoryRouter(
+      [{ path: "/explorEDA/*", element: <LandingPage /> }],
+      { initialEntries: ["/explorEDA/"] }
+    );
+
+    render(<RouterProvider router={router} />);
+    const featured = screen.getByRole("heading", {
+      name: "Inside the order book",
+    });
+    const integration = screen.getByRole("heading", {
+      name: "Use it in your React app",
+    });
+    const importHeading = screen.getByRole("heading", {
+      name: "Import your data",
+    });
+    const follows = (a: Element, b: Element) =>
+      Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(follows(featured, integration)).toBe(true);
+    expect(follows(integration, importHeading)).toBe(true);
+    expect(
+      screen.getByRole("textbox", { name: "Full analysis JSON" })
+    ).toBeInTheDocument();
+  });
+
+  it("shows the featured guide above the workspace and opens it from the hero", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        text: () => Promise.resolve("Channel,Revenue\nWeb,2"),
+      })
+    );
+    const router = createMemoryRouter(
+      [{ path: "/explorEDA/*", element: <LandingPage /> }],
+      { initialEntries: ["/explorEDA/"] }
+    );
+
+    render(<RouterProvider router={router} />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Explore the order book" })
+    );
+
+    expect(await screen.findByTestId("workspace")).toBeInTheDocument();
+    expect(router.state.location.search).toBe("?example=shop-operations");
+    expect(screen.getByRole("note")).toHaveTextContent(
+      "click Web in Sales channels"
+    );
   });
 
   it("captures state without controlling the workspace and restores it on remount", async () => {

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ExampleData, examples } from "@/demos/examples";
+import { ExampleData, examples, FEATURED_EXAMPLE_ID } from "@/demos/examples";
 import {
   parseSavedAnalysis,
   type SavedDataStructure,
@@ -22,6 +22,12 @@ import { toast } from "sonner";
 import { CsvUpload } from "./CsvUpload";
 import { CoverageMatrix } from "./CoverageMatrix";
 import { ExampleSelector } from "./ExampleSelector";
+import { FeaturedExample } from "./landing/FeaturedExample";
+import { IntegrationGuide } from "./landing/IntegrationGuide";
+
+const featuredExample = examples.find(
+  (item) => item.id === FEATURED_EXAMPLE_ID
+);
 
 const ExplorEda = lazy(() =>
   import("exploreda").then(({ ExplorEda: Workspace }) => ({
@@ -218,106 +224,44 @@ export function LandingPage() {
                 <CoverageMatrix />
               ) : (
                 <>
-                  <h1 className="mb-2 text-center text-2xl font-bold sm:text-3xl">
-                    Explore data by connecting charts and filters
-                  </h1>
-                  <p className="mb-8 text-center text-muted-foreground">
-                    Bring your data in, or start with a focused question.
-                  </p>
-                  <div className="space-y-10">
-                    <section aria-labelledby="import-heading">
-                      <h2
-                        id="import-heading"
-                        className="mb-3 text-xl font-semibold"
-                      >
-                        Import your data
-                      </h2>
-                      <CsvUpload onImport={handleCsvImport} />
-                    </section>
-                    <section aria-labelledby="json-heading">
-                      <h2
-                        id="json-heading"
-                        className="mb-3 text-xl font-semibold"
-                      >
-                        Open a saved analysis
-                      </h2>
-                      <p className="mb-3 text-sm text-muted-foreground">
-                        Paste full analysis JSON to restore its source rows and
-                        settings.
-                      </p>
-                      <textarea
-                        value={analysisJson}
-                        onChange={(event) => {
-                          setAnalysisJson(event.target.value);
-                          setAnalysisJsonError(null);
-                        }}
-                        aria-label="Full analysis JSON"
-                        aria-describedby={
-                          analysisJsonError ? "analysis-json-error" : undefined
-                        }
-                        placeholder="Paste full analysis JSON here"
-                        className="min-h-32 w-full rounded-md border bg-background p-3 font-mono text-xs"
-                      />
-                      <Button
-                        className="mt-3"
-                        onClick={handleAnalysisJson}
-                        disabled={!analysisJson.trim()}
-                      >
-                        Open analysis JSON
-                      </Button>
-                      {analysisJsonError && (
-                        <p
-                          id="analysis-json-error"
-                          role="alert"
-                          aria-live="assertive"
-                          className="mt-2 rounded-md border border-destructive/50 bg-destructive/10 p-2 text-sm text-destructive"
-                        >
-                          {analysisJsonError}
-                        </p>
-                      )}
-                    </section>
-                    <section aria-labelledby="examples-heading">
-                      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-                        <div>
-                          <h2
-                            id="examples-heading"
-                            className="text-xl font-semibold"
-                          >
-                            Start with a question
-                          </h2>
-                          <p className="mt-1 text-sm text-muted-foreground">
-                            Open a complete linked dashboard, or browse focused
-                            component examples.
-                          </p>
-                        </div>
+                  <header className="mb-10 pt-6 sm:pt-10">
+                    <p className="text-sm font-medium text-muted-foreground">
+                      explorEDA · React workspace for exploratory data analysis
+                    </p>
+                    <h1 className="mt-2 max-w-3xl text-3xl font-bold leading-tight sm:text-4xl">
+                      Embed an interactive analysis workspace in your React app
+                    </h1>
+                    <p className="mt-3 max-w-2xl text-muted-foreground">
+                      Give users linked charts, record-level tables, and
+                      editable calculated fields without building the workspace
+                      around them. Every example on this page runs the same
+                      component.
+                    </p>
+                    <div className="mt-5 flex flex-wrap gap-3">
+                      {featuredExample && (
                         <Button
-                          variant="link"
-                          className="px-0"
-                          onClick={() => setSearchParams({ view: "coverage" })}
+                          onClick={() =>
+                            handleExampleSelect(featuredExample.id)
+                          }
                         >
-                          Learn: feature coverage
+                          Explore the order book
                         </Button>
-                      </div>
-                      <ExampleSelector
-                        examplesToShow={examples.filter(
-                          (item) => item.dashboard
-                        )}
-                        onSelect={handleExampleSelect}
+                      )}
+                      <Button variant="outline" asChild>
+                        <a href="#integration">See the React integration</a>
+                      </Button>
+                      <Button variant="ghost" asChild>
+                        <a href="#your-data">Try your own data</a>
+                      </Button>
+                    </div>
+                  </header>
+                  <div className="space-y-12">
+                    {featuredExample && (
+                      <FeaturedExample
+                        example={featuredExample}
+                        onOpen={handleExampleSelect}
                       />
-                      <details className="mt-6 rounded-lg border border-border/70 px-4">
-                        <summary className="cursor-pointer py-3 font-medium">
-                          Show all examples
-                        </summary>
-                        <div className="pb-4">
-                          <ExampleSelector
-                            examplesToShow={examples.filter(
-                              (item) => !item.dashboard
-                            )}
-                            onSelect={handleExampleSelect}
-                          />
-                        </div>
-                      </details>
-                    </section>
+                    )}
                     {loadError && (
                       <div
                         role="alert"
@@ -334,6 +278,122 @@ export function LandingPage() {
                         </Button>
                       </div>
                     )}
+                    <IntegrationGuide />
+                    <section aria-labelledby="examples-heading">
+                      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+                        <div>
+                          <h2
+                            id="examples-heading"
+                            className="text-xl font-semibold"
+                          >
+                            More examples
+                          </h2>
+                          <p className="mt-1 text-sm text-muted-foreground">
+                            Open another linked dashboard, or browse focused
+                            component examples.
+                          </p>
+                        </div>
+                        <Button
+                          variant="link"
+                          className="px-0"
+                          onClick={() => setSearchParams({ view: "coverage" })}
+                        >
+                          Project status: feature coverage
+                        </Button>
+                      </div>
+                      <ExampleSelector
+                        examplesToShow={examples.filter(
+                          (item) =>
+                            item.dashboard && item.id !== FEATURED_EXAMPLE_ID
+                        )}
+                        onSelect={handleExampleSelect}
+                      />
+                      <details className="mt-6 rounded-lg border border-border px-4">
+                        <summary className="cursor-pointer py-3 font-medium">
+                          Show all examples
+                        </summary>
+                        <div className="pb-4">
+                          <ExampleSelector
+                            examplesToShow={examples.filter(
+                              (item) => !item.dashboard
+                            )}
+                            onSelect={handleExampleSelect}
+                          />
+                        </div>
+                      </details>
+                    </section>
+                    <section
+                      aria-labelledby="your-data-heading"
+                      id="your-data"
+                      className="space-y-8"
+                    >
+                      <div>
+                        <h2
+                          id="your-data-heading"
+                          className="text-xl font-semibold"
+                        >
+                          Try your own data
+                        </h2>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          Import a file into this demo, or reopen an analysis
+                          you exported earlier. In your app, rows arrive through{" "}
+                          <code>data</code> instead.
+                        </p>
+                      </div>
+                      <section aria-labelledby="import-heading">
+                        <h3
+                          id="import-heading"
+                          className="mb-3 text-lg font-semibold"
+                        >
+                          Import your data
+                        </h3>
+                        <CsvUpload onImport={handleCsvImport} />
+                      </section>
+                      <section aria-labelledby="json-heading">
+                        <h3
+                          id="json-heading"
+                          className="mb-3 text-lg font-semibold"
+                        >
+                          Open a saved analysis
+                        </h3>
+                        <p className="mb-3 text-sm text-muted-foreground">
+                          Paste full analysis JSON to restore its source rows
+                          and settings.
+                        </p>
+                        <textarea
+                          value={analysisJson}
+                          onChange={(event) => {
+                            setAnalysisJson(event.target.value);
+                            setAnalysisJsonError(null);
+                          }}
+                          aria-label="Full analysis JSON"
+                          aria-describedby={
+                            analysisJsonError
+                              ? "analysis-json-error"
+                              : undefined
+                          }
+                          placeholder="Paste full analysis JSON here"
+                          className="min-h-32 w-full rounded-md border border-input bg-background p-3 font-mono text-xs"
+                        />
+                        <Button
+                          className="mt-3"
+                          onClick={handleAnalysisJson}
+                          disabled={!analysisJson.trim()}
+                        >
+                          Open analysis JSON
+                        </Button>
+                        {analysisJsonError && (
+                          <p
+                            id="analysis-json-error"
+                            role="alert"
+                            aria-live="assertive"
+                            className="mt-2 rounded-md border border-destructive/50 bg-destructive/10 p-2 text-sm text-destructive"
+                          >
+                            {analysisJsonError}
+                          </p>
+                        )}
+                      </section>
+                    </section>
                   </div>
                 </>
               )}
@@ -376,6 +436,14 @@ export function LandingPage() {
                   <RotateCcw className="h-4 w-4" />
                 </Button>
               </header>
+              {example?.guide && (
+                <p
+                  role="note"
+                  className="mb-3 rounded-md border border-border bg-primary/5 px-3 py-2 text-sm"
+                >
+                  {example.guide}
+                </p>
+              )}
               <Suspense
                 fallback={
                   <div role="status" aria-live="polite">
