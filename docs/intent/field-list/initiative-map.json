@@ -1,0 +1,216 @@
+{
+  "schema_version": "0.4.0",
+  "initiative": {
+    "title": "Field list",
+    "slug": "field-list",
+    "scale": "feature",
+    "current_phase": "plan",
+    "last_updated": "2026-09-27",
+    "summary": "A fast field list that opens anywhere in the workspace for quick inspection, chart creation, and later putting fields on chart axes."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-27"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-27"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-09-27"
+    }
+  },
+  "sources": [
+    {
+      "id": "user-2026-09-27",
+      "type": "direct-user-input",
+      "location": "ExplorEDA project chat",
+      "anchor": "detailed field list that opens anywhere, quick inspection, add charts, maybe drag fields to charts",
+      "authority": "direct intent"
+    },
+    {
+      "id": "repo-9435727",
+      "type": "repository",
+      "location": "../../packages/explorEDA/src/",
+      "anchor": "PlotManager, FieldMetadata, FieldInspector, ChartActions, useCreateCharts, chartAccessibility at 9435727",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "pr-36",
+      "type": "repository",
+      "location": "https://github.com/byronwall/explorEDA/pull/36",
+      "anchor": "field inspector Values view and axis-label open path",
+      "authority": "in-flight related work"
+    },
+    {
+      "id": "ui-defaults",
+      "type": "project-guidance",
+      "location": "../../docs/ui-defaults.md",
+      "anchor": "field details, popovers, no persistent inspection sidebar, verification widths",
+      "authority": "project constraint"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "anywhere",
+        "kind": "required behavior",
+        "text": "Open a detailed field list from anywhere, without a summary or data table in the layout.",
+        "source": "user-2026-09-27",
+        "status": "active"
+      },
+      {
+        "id": "fast",
+        "kind": "required behavior",
+        "text": "The list opens quickly and supports quick inspections.",
+        "source": "user-2026-09-27",
+        "status": "active"
+      },
+      {
+        "id": "actions",
+        "kind": "required behavior",
+        "text": "From a field, add a chart and open the field inspector.",
+        "source": "user-2026-09-27",
+        "status": "active"
+      },
+      {
+        "id": "drag",
+        "kind": "possibility",
+        "text": "A narrow list may let users drag a field onto a chart to swap it in.",
+        "source": "user-2026-09-27",
+        "status": "active"
+      },
+      {
+        "id": "reuse-inspector",
+        "kind": "constraint",
+        "text": "Reuse the field inspector and its open path from the axis-label work; do not redesign it.",
+        "source": "pr-36",
+        "status": "active"
+      },
+      {
+        "id": "layout",
+        "kind": "constraint",
+        "text": "Opening or using the list never changes the saved layout except when the user adds or edits a chart.",
+        "source": "ui-defaults",
+        "status": "active"
+      },
+      {
+        "id": "metadata",
+        "kind": "constraint",
+        "text": "Rows use FieldMetadata and follow the current filter scope.",
+        "source": "ui-defaults",
+        "status": "active"
+      }
+    ],
+    "themes": ["Field view everywhere", "Field-first actions", "Direct chart editing"],
+    "conflicts": [
+      {
+        "id": "sidebar-rule",
+        "text": "UI defaults say not to add a persistent sidebar for temporary inspection; the list stays open as a floating workspace tool.",
+        "claims": ["anywhere", "drag"],
+        "source": "ui-defaults",
+        "resolution": "Float over the grid without resizing it; offer outside-click close if Byron prefers."
+      }
+    ],
+    "human_questions": [
+      "Float over charts (recommended) or dock and narrow the grid?",
+      "Stay open until closed (recommended) or close on an outside click?"
+    ]
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 0,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "ready",
+    "appetite": "Three focused passes; the third is optional",
+    "problem": "Field details and field-first actions exist only inside tables, so a chart-only workspace has no field view.",
+    "recommended_shape": "A floating workspace panel opened by toolbar and shortcut, with FieldMetadata rows, Inspect, Add chart, expandable quick inspection, and later axis drop.",
+    "success_moves": [
+      "Prove open speed first",
+      "Share one inspector open path with the axis-label work",
+      "Build the menu before drag"
+    ],
+    "first_proof": {
+      "question": "Can a chart-only workspace open the list, find a field, inspect it, and add a chart without other layout changes?",
+      "artifact": "Demo with tables removed and the field list open",
+      "decision_rule": "Works by pointer and keyboard at three widths and opens without visible delay on the largest demo dataset."
+    },
+    "rabbit_holes": [
+      "New per-field statistics",
+      "Drop that changes chart type",
+      "Drop targets for multi-field slots"
+    ],
+    "open_decisions": ["Panel placement", "Close behavior", "Shortcut key"]
+  },
+  "implementation": {
+    "status": "plan-ready",
+    "repository_snapshot": {
+      "root": "explorEDA",
+      "revision": "9435727",
+      "worktree_status": "clean",
+      "subsystems": [
+        "PlotManager",
+        "ChartGridLayout",
+        "FieldMetadata",
+        "FieldInspector",
+        "ChartActions",
+        "useCreateCharts",
+        "chartAccessibility"
+      ],
+      "test_commands": ["pnpm check:ui", "pnpm check"],
+      "deployment_surfaces": ["exploreda npm package"]
+    },
+    "dependencies": ["PR 36 field inspector Values view", "axis-label inspector open path"],
+    "fast_local_loop": {
+      "command": "focused component test; pnpm check:ui; browser check",
+      "network_required": false,
+      "shared_infrastructure_required": false
+    },
+    "milestones": [
+      {
+        "id": "M1",
+        "outcome": "Open-anywhere field list with search, Inspect, and Add chart",
+        "proof": "Chart-only workspace opens the list, inspects a field, and adds a chart; layout unchanged otherwise",
+        "valid_intermediate_state": "Tables and inspector work as before",
+        "rollback": "Remove the panel and toolbar toggle"
+      },
+      {
+        "id": "M2",
+        "outcome": "Quick inspection and chart usage in the row",
+        "proof": "Expanded row shows filtered distribution and focuses charts that use the field",
+        "valid_intermediate_state": "M1 list works with collapsed rows",
+        "rollback": "Remove row expansion"
+      },
+      {
+        "id": "M3",
+        "outcome": "Put a field on a chart axis by menu, then by drag",
+        "proof": "Menu and drop replace one axis field and refuse invalid fields without other changes",
+        "valid_intermediate_state": "Menu path works before drag ships",
+        "rollback": "Remove the menu action and drag handlers"
+      }
+    ],
+    "cut_line": [
+      "Docked sidebar that narrows the grid",
+      "Field editing in the list",
+      "Grouping, folders, hiding, or custom order",
+      "Multi-field drag or multi-field slot targets",
+      "Saving list state in the analysis"
+    ],
+    "open_decisions": ["Panel placement", "Close behavior", "Shortcut key"],
+    "tickets": []
+  },
+  "history": []
+}
