@@ -170,4 +170,45 @@ describe("FieldList", () => {
     expect(JSON.parse(saved())).toHaveLength(before.length + 1);
     expect(screen.getByRole("complementary")).toBeInTheDocument();
   });
+
+  it("expands to a card for every field and collapses back", () => {
+    const row = {
+      ...rowChartDefinition.createDefaultSettings(layout, "region"),
+      filters: [{ type: "value", field: "region", values: ["North"] }],
+    } as ChartSettings;
+    renderWorkspace([row]);
+    const before = saved();
+    const list = openList();
+    fireEvent.click(
+      within(list).getByRole("button", {
+        name: "Expand to every field's distribution",
+      })
+    );
+
+    const overview = screen.getByRole("dialog", { name: "Fields" });
+    const cards = within(overview).getAllByRole("article");
+    expect(cards).toHaveLength(3);
+    const revenue = within(overview).getByRole("article", {
+      name: "Number: revenue",
+    });
+    // Medians describe the filtered rows: North has 10 and 20.
+    expect(revenue).toHaveTextContent("Median15");
+    const region = within(overview).getByRole("article", {
+      name: "Text: region",
+    });
+    expect(region).toHaveTextContent("North100%");
+
+    const search = within(overview).getByRole("searchbox", {
+      name: "Search fields",
+    });
+    fireEvent.change(search, { target: { value: "unit" } });
+    expect(within(overview).getAllByRole("article")).toHaveLength(1);
+
+    fireEvent.keyDown(search, { key: "Escape" });
+    expect(search).toHaveValue("");
+    fireEvent.keyDown(search, { key: "Escape" });
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByRole("complementary")).toBeInTheDocument();
+    expect(saved()).toBe(before);
+  });
 });

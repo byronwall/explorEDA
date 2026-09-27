@@ -130,14 +130,16 @@ function UseOnChartMenu({ field, label }: { field: string; label: string }) {
   );
 }
 
-function AddChartMenu({
+export function AddChartMenu({
   field,
   label,
   dataType,
+  onAdded,
 }: {
   field: string;
   label: string;
   dataType: FieldProfile["dataType"];
+  onAdded?: () => void;
 }) {
   const { createChart } = useCreateCharts();
   const options = chartOptionsForField(dataType);
@@ -162,7 +164,10 @@ function AddChartMenu({
         {options.map((option) => (
           <DropdownMenuItem
             key={option.type}
-            onSelect={() => createChart(option.type, field)}
+            onSelect={() => {
+              createChart(option.type, field);
+              onAdded?.();
+            }}
           >
             <option.icon aria-hidden="true" className={option.iconClassName} />
             {option.name}

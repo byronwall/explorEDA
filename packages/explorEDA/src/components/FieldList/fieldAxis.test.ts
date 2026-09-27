@@ -13,6 +13,7 @@ import {
   hasFiniteNumber,
   type FieldFacts,
 } from "./fieldAxis";
+import { edgeScrollSpeed } from "./FieldDragContext";
 
 const layout = { x: 0, y: 0, w: 6, h: 4 };
 const facts = (
@@ -148,5 +149,18 @@ describe("hasFiniteNumber", () => {
       false
     );
     expect(hasFiniteNumber({ 0: null, 1: "4.5" })).toBe(true);
+  });
+});
+
+describe("edgeScrollSpeed", () => {
+  it("scrolls near the edges and faster closer to them", () => {
+    expect(edgeScrollSpeed(400, 100, 800)).toBe(0);
+    expect(edgeScrollSpeed(790, 100, 800)).toBeGreaterThan(0);
+    expect(edgeScrollSpeed(799, 100, 800)).toBeGreaterThan(
+      edgeScrollSpeed(760, 100, 800)
+    );
+    expect(edgeScrollSpeed(110, 100, 800)).toBeLessThan(0);
+    // Above the sticky controls still scrolls up, at full speed.
+    expect(edgeScrollSpeed(20, 100, 800)).toBe(-20);
   });
 });

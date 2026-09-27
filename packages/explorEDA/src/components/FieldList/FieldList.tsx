@@ -6,13 +6,14 @@ import {
   useState,
   type RefObject,
 } from "react";
-import { Search, X } from "lucide-react";
+import { Maximize2, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useFilteredFieldProfiles } from "@/hooks/useFilteredFieldProfiles";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { FieldDragProvider } from "./FieldDragContext";
 import { FieldListRow } from "./FieldListRow";
+import { FieldOverview } from "./FieldOverview";
 
 /** Case-insensitive match on the display label or the source name. */
 export function matchesField(query: string, name: string, label: string) {
@@ -88,6 +89,7 @@ export function FieldList({
   const data = useDataLayer((state) => state.data);
   const [query, setQuery] = useState("");
   const [expanded, setExpanded] = useState<string>();
+  const [overview, setOverview] = useState(false);
   const searchRef = useRef<HTMLLabelElement>(null);
   const panelRef = useRef<HTMLElement>(null);
   const headingId = useId();
@@ -111,6 +113,15 @@ export function FieldList({
     [profiles, query, getFieldLabel]
   );
   const scopeRows = profiles[0]?.totalCount ?? data.length;
+  const scope = `Values describe ${scopeRows.toLocaleString()} of ${data.length.toLocaleString()} rows after chart filters`;
+  const collapse = () => {
+    setOverview(false);
+    requestAnimationFrame(() =>
+      panelRef.current
+        ?.querySelector<HTMLElement>("[data-field-list-expand]")
+        ?.focus({ preventScroll: true })
+    );
+  };
 
   return (
     <aside
@@ -145,6 +156,17 @@ export function FieldList({
           <Button
             variant="ghost"
             size="icon"
+            className="eda-field-list-expand"
+            aria-label="Expand to every field's distribution"
+            tooltip="Show every field's distribution in a full view"
+            data-field-list-expand=""
+            onClick={() => setOverview(true)}
+          >
+            <Maximize2 />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
             className="eda-field-list-close"
             aria-label="Close field list"
             tooltip="Close field list (F)"
@@ -163,10 +185,7 @@ export function FieldList({
             onChange={(event) => setQuery(event.target.value)}
           />
         </label>
-        <p className="eda-field-list-scope">
-          Values describe {scopeRows.toLocaleString()} of{" "}
-          {data.length.toLocaleString()} rows after chart filters
-        </p>
+        <p className="eda-field-list-scope">{scope}</p>
       </div>
       {shown.length === 0 ? (
         <p className="eda-field-list-empty">
@@ -190,6 +209,17 @@ export function FieldList({
             ))}
           </ul>
         </FieldDragProvider>
+      )}
+      {overview && (
+        <FieldOverview
+          profiles={shown}
+          total={profiles.length}
+          query={query}
+          onQueryChange={setQuery}
+          scope={scope}
+          onCollapse={collapse}
+          onClose={() => onClose("button")}
+        />
       )}
     </aside>
   );

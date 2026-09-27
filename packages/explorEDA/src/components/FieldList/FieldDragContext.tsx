@@ -1,6 +1,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useRef,
   useState,
   type ReactNode,
@@ -79,6 +80,37 @@ function findZones(
   });
 }
 
+/** How close to an edge, in pixels, a dragged field starts scrolling. */
+const EDGE = 64;
+const MAX_SPEED = 20;
+
+/**
+ * Pixels to scroll per frame for a pointer at `y`, given the top and bottom
+ * of the visible area: negative near the top, positive near the bottom, and
+ * faster the closer the pointer gets to the edge.
+ */
+export function edgeScrollSpeed(y: number, top: number, bottom: number) {
+  const ramp = (depth: number) =>
+    Math.max(2, Math.round(Math.min(1, depth / EDGE) * MAX_SPEED));
+  if (y < top + EDGE) return -ramp(top + EDGE - y);
+  if (y > bottom - EDGE) return ramp(y - (bottom - EDGE));
+  return 0;
+}
+
+/** The element that scrolls the workspace: a scrolling ancestor or the page. */
+function scrollerFor(element: HTMLElement | null): Element {
+  for (let node = element?.parentElement; node; node = node.parentElement) {
+    const { overflowY } = getComputedStyle(node);
+    if (
+      (overflowY === "auto" || overflowY === "scroll") &&
+      node.scrollHeight > node.clientHeight
+    ) {
+      return node;
+    }
+  }
+  return document.scrollingElement ?? document.documentElement;
+}
+
 type DragState = {
   facts: FieldFacts;
   zones: DropZone[];
@@ -134,6 +166,72 @@ export function FieldDragProvider({
     useSensor(MouseSensor, { activationConstraint: { distance: 6 } })
   );
 
+  const lastPointer = useRef({ x: 0, y: 0 });
+  const scrollFrame = useRef(0);
+  const dragging = drag !== undefined;
+
+  /** Re-measures drop zones after the page scrolls under the pointer. */
+  const rescan = () =>
+    setDrag((current) => {
+      if (!current) return current;
+      const zones = findZones(
+        workspaceRef.current,
+        axisTargets(charts),
+        current.facts
+      );
+      const { x, y } = lastPointer.current;
+      return { ...current, zones, active: zoneAt(zones, x, y) };
+    });
+  const rescanRef = useRef(rescan);
+  rescanRef.current = rescan;
+
+  // Wheel or edge scrolling during a drag moves the axes; follow them.
+  useEffect(() => {
+    if (!dragging) return;
+    let frame = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => rescanRef.current());
+    };
+    window.addEventListener("scroll", onScroll, true);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll, true);
+    };
+  }, [dragging]);
+
+  const stopEdgeScroll = () => {
+    cancelAnimationFrame(scrollFrame.current);
+    scrollFrame.current = 0;
+  };
+  useEffect(() => stopEdgeScroll, []);
+
+  /** Scrolls while the pointer rests near the top or bottom edge. */
+  const edgeScroll = () => {
+    if (scrollFrame.current) return;
+    const step = () => {
+      const workspace = workspaceRef.current;
+      const scroller = scrollerFor(workspace);
+      const isPage = scroller === document.scrollingElement;
+      const box = isPage
+        ? { top: 0, bottom: window.innerHeight }
+        : scroller.getBoundingClientRect();
+      // Sticky controls cover the top of the view; scroll from below them.
+      const controls = workspace
+        ?.querySelector(".eda-workspace-controls")
+        ?.getBoundingClientRect();
+      const top = Math.max(box.top, controls?.bottom ?? box.top);
+      const speed = edgeScrollSpeed(lastPointer.current.y, top, box.bottom);
+      if (speed === 0) {
+        scrollFrame.current = 0;
+        return;
+      }
+      scroller.scrollBy(0, speed);
+      scrollFrame.current = requestAnimationFrame(step);
+    };
+    scrollFrame.current = requestAnimationFrame(step);
+  };
+
   const pointer = (event: DragMoveEvent) => {
     const start = event.activatorEvent as MouseEvent;
     return {
@@ -184,6 +282,8 @@ export function FieldDragProvider({
         }}
         onDragMove={(event) => {
           const { x, y } = pointer(event);
+          lastPointer.current = { x, y };
+          edgeScroll();
           setDrag((current) => {
             if (!current) return current;
             const active = zoneAt(current.zones, x, y);
@@ -193,12 +293,14 @@ export function FieldDragProvider({
           });
         }}
         onDragEnd={() => {
+          stopEdgeScroll();
           if (drag?.active) apply(drag.active.target, drag.facts);
           setDrag(undefined);
           // A drag that ends outside the row fires no click to clear this.
           setTimeout(() => (suppressClick.current = false));
         }}
         onDragCancel={() => {
+          stopEdgeScroll();
           setDrag(undefined);
           setTimeout(() => (suppressClick.current = false));
         }}
