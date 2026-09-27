@@ -319,7 +319,7 @@ export function FieldListRow({
             label={label}
             compact
             showDetail={false}
-            tooltipSide="left"
+            showTooltip={false}
             className="min-w-0"
           />
           <span className="eda-field-row-reading">{reading}</span>
