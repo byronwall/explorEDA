@@ -48,11 +48,10 @@ On a workspace with only charts, the user presses a Fields control in the toolba
 
 ## What seems settled
 
-The list is a workspace-level panel owned by the library, so host applications get it without extra wiring. It is nonmodal. It reads `fieldProfiles` and `FieldMetadata` for its rows and `FieldInspector` for full inspection. New charts go through `useCreateCharts`, as the summary table's chart actions do.
+The list is a workspace-level panel owned by the library, so host applications get it without extra wiring. It is nonmodal, floats over the right edge of the workspace without resizing the grid, and stays open until closed. It reads `fieldProfiles` and `FieldMetadata` for its rows and `FieldInspector` for full inspection. New charts go through `useCreateCharts`, as the summary table's chart actions do.
 
 ## Possibilities, not decisions
 
-- The panel may float over the right edge of the workspace or dock beside the grid. Byron said overlays may hide some chart content, which favors floating.
 - The shortcut key, the grouping (by type or source order), and the expanded row's content are design choices.
 - Drag targets could be axis labels only, or also chart bodies and empty grid space.
 
@@ -60,11 +59,10 @@ The list is a workspace-level panel owned by the library, so host applications g
 
 `CompactSummaryTable` and `DataTableHeader` are the only places that open `FieldInspector`. `ChartActions` creates row, bar, scatter, and pivot charts from a field. `getChartFields` and `getChartAxisFields` in `chartAccessibility.ts` map a chart's settings to its fields and axes. `@dnd-kit` is already a dependency, used for sortable field badges. `ChartGridLayout` already creates a chart in empty grid space from a type menu. `docs/ui-defaults.md` says not to add a persistent sidebar for temporary inspection; the field list is a workspace tool rather than one field's inspection, and the shape brief addresses that rule.
 
-## Human questions
+## Decided
 
-- Should the list float over charts (recommended) or dock and narrow the grid?
-- Should the list stay open while the user works with charts until they close it (recommended), or close on an outside click like other popovers?
+- 2026-09-27: Byron chose a floating panel. It overlays the right edge of the workspace, never resizes the grid, and stays open until the user closes it.
 
 ## Next step after confirmation
 
-The shape and plan are ready. Create local tickets for the three milestones and build milestone 1.
+Tickets exist for the three milestones. Build milestone 1.

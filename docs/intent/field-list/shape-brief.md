@@ -33,7 +33,7 @@ Drag uses `@dnd-kit`, which is already installed. Drop targets come from `getCha
 
 ## The persistent-sidebar rule
 
-`docs/ui-defaults.md` says not to add a persistent sidebar for temporary inspection. The field list is a workspace tool, not an inspection of one field, and it overlays rather than takes space from the grid. It stays open because drag and repeated add-chart actions need it open. If Byron prefers, the panel can close on an outside click like other popovers; that change is small and does not alter the rest of the shape. The UI defaults should gain one line about the field list once the behavior is settled.
+`docs/ui-defaults.md` says not to add a persistent sidebar for temporary inspection. The field list is a workspace tool, not an inspection of one field, and it overlays rather than takes space from the grid. It stays open because drag and repeated add-chart actions need it open. Byron chose this floating, stay-open panel on 2026-09-27. The UI defaults should gain one line about the field list once the behavior is settled.
 
 ## Current fit
 

@@ -67,4 +67,6 @@ Read `docs/ui-defaults.md` before editing. Use accessible names and no native `t
 
 ## Tickets
 
-Create local tickets in `.tickets/` for the three milestones once Byron confirms the two human questions in the intent brief.
+- [Open a field list from anywhere](../../../.tickets/exp-kcl7.md) — milestone 1.
+- [Quick field inspection in the list](../../../.tickets/exp-ja94.md) — milestone 2.
+- [Put a field on a chart axis](../../../.tickets/exp-3xyp.md) — milestone 3.

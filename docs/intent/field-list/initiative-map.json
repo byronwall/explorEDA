@@ -112,20 +112,24 @@
         "status": "active"
       }
     ],
-    "themes": ["Field view everywhere", "Field-first actions", "Direct chart editing"],
+    "themes": [
+      "Field view everywhere",
+      "Field-first actions",
+      "Direct chart editing"
+    ],
     "conflicts": [
       {
         "id": "sidebar-rule",
         "text": "UI defaults say not to add a persistent sidebar for temporary inspection; the list stays open as a floating workspace tool.",
-        "claims": ["anywhere", "drag"],
+        "claims": [
+          "anywhere",
+          "drag"
+        ],
         "source": "ui-defaults",
-        "resolution": "Float over the grid without resizing it; offer outside-click close if Byron prefers."
+        "resolution": "Byron chose a floating panel that overlays the grid without resizing it and stays open until closed (2026-09-27)."
       }
     ],
-    "human_questions": [
-      "Float over charts (recommended) or dock and narrow the grid?",
-      "Stay open until closed (recommended) or close on an outside click?"
-    ]
+    "human_questions": []
   },
   "brainstorm": {
     "status": "not-requested",
@@ -153,7 +157,9 @@
       "Drop that changes chart type",
       "Drop targets for multi-field slots"
     ],
-    "open_decisions": ["Panel placement", "Close behavior", "Shortcut key"]
+    "open_decisions": [
+      "Shortcut key"
+    ]
   },
   "implementation": {
     "status": "plan-ready",
@@ -170,10 +176,18 @@
         "useCreateCharts",
         "chartAccessibility"
       ],
-      "test_commands": ["pnpm check:ui", "pnpm check"],
-      "deployment_surfaces": ["exploreda npm package"]
+      "test_commands": [
+        "pnpm check:ui",
+        "pnpm check"
+      ],
+      "deployment_surfaces": [
+        "exploreda npm package"
+      ]
     },
-    "dependencies": ["PR 36 field inspector Values view", "axis-label inspector open path"],
+    "dependencies": [
+      "PR 36 field inspector Values view",
+      "axis-label inspector open path"
+    ],
     "fast_local_loop": {
       "command": "focused component test; pnpm check:ui; browser check",
       "network_required": false,
@@ -209,8 +223,19 @@
       "Multi-field drag or multi-field slot targets",
       "Saving list state in the analysis"
     ],
-    "open_decisions": ["Panel placement", "Close behavior", "Shortcut key"],
-    "tickets": []
+    "open_decisions": [
+      "Shortcut key"
+    ],
+    "tickets": [
+      "exp-kcl7",
+      "exp-ja94",
+      "exp-3xyp"
+    ]
   },
-  "history": []
+  "history": [
+    {
+      "date": "2026-09-27",
+      "event": "Byron chose a floating, stay-open panel; tickets created for M1 to M3."
+    }
+  ]
 }
