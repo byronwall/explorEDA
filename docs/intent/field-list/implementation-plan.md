@@ -8,6 +8,10 @@ last_updated: "2026-09-27"
 
 # Field list — implementation plan
 
+## Status
+
+2026-09-27: All three milestones are built. The inspector path is the one PR 36 added for chart axes: `FieldInspector` takes a field and an `anchor`, and now a `side`, so no separate controller was needed. The summary table and the field list share `useFilteredFieldProfiles`, and the inspector and the expanded row share `useFieldDistribution`. The F key toggles the list. Drag works with a mouse; touch and keyboard use the "Use on chart" menu. Drops on empty grid space are not built.
+
 ## Plan at a glance
 
 Make three visible changes. First, add a field list that opens from the toolbar or a shortcut on any workspace. It offers search, compact field rows, Inspect, and Add chart. This proves the panel, its speed, and the shared inspector path. Second, let a row expand in place for a quick distribution and the charts that use the field. Third, let a user put a field on a chart's axis, first through a "Use on chart" menu and then by dragging. Each step leaves a usable product and can be reviewed alone. Existing profiles, filters, charts, and saved layouts remain the source of truth.

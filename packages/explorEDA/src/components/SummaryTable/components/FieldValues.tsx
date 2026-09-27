@@ -816,6 +816,7 @@ export function FieldValues({
   format,
   formatCategory = categoryLabel,
   failedCount = 0,
+  compact = false,
 }: {
   distribution: FieldDistribution;
   fieldLabel: string;
@@ -824,6 +825,8 @@ export function FieldValues({
     value: CategoryDistribution["categories"][number]["value"]
   ) => string;
   failedCount?: number;
+  /** Show only the chart, without the counts and statistics tables. */
+  compact?: boolean;
 }) {
   const filtered = distribution.filtered !== undefined;
   const excludedLabel =
@@ -886,27 +889,29 @@ export function FieldValues({
           </p>
         )}
       </div>
-      <div className="eda-dist-side">
-        <CountsTable
-          distribution={distribution}
-          excludedLabel={excludedLabel}
-        />
-        {failedCount > 0 && (
-          <p className="eda-dist-note" data-tone="destructive">
-            {count(failedCount)}{" "}
-            {failedCount === 1 ? "value fails" : "values fail"} conversion and
-            {failedCount === 1 ? " counts" : " count"} as missing. The Preview
-            tab lists each failed row.
-          </p>
-        )}
-        {distribution.kind === "numeric" && distribution.summary && (
-          <StatsTable
-            summary={distribution.summary}
-            format={format}
-            filtered={filtered}
+      {!compact && (
+        <div className="eda-dist-side">
+          <CountsTable
+            distribution={distribution}
+            excludedLabel={excludedLabel}
           />
-        )}
-      </div>
+          {failedCount > 0 && (
+            <p className="eda-dist-note" data-tone="destructive">
+              {count(failedCount)}{" "}
+              {failedCount === 1 ? "value fails" : "values fail"} conversion and
+              {failedCount === 1 ? " counts" : " count"} as missing. The Preview
+              tab lists each failed row.
+            </p>
+          )}
+          {distribution.kind === "numeric" && distribution.summary && (
+            <StatsTable
+              summary={distribution.summary}
+              format={format}
+              filtered={filtered}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -42,6 +42,7 @@ Chart settings must keep the chart visible. Prefer space beside the panel, then 
 When no outside space remains, use a compact corner editor with scrollable controls.
 Apply valid chart settings immediately so users can compare the result. Keep a reset action for the current edit session.
 Do not add a persistent sidebar for temporary inspection.
+The field list is the one workspace tool that stays open. It floats over the right edge below the sticky controls, never resizes the chart grid, and becomes a bottom sheet on narrow screens. Fields in the toolbar and the F key open it.
 
 Use a modal only when focus must be protected, such as an expanded chart or a destructive confirmation.
 Expanded charts must close with Escape or an outside click, lock background scrolling, and restore focus.

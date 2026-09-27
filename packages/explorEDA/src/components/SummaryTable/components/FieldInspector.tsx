@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { AlertCircle, Settings2, X } from "lucide-react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import { buildFieldDistribution } from "@/lib/fieldDistribution";
+import { useFieldDistribution } from "@/hooks/useFieldDistribution";
 import {
   resolveFieldProfile,
   typeIcons,
@@ -73,6 +73,8 @@ type Props = {
    * axis label. Focus returns to it on close.
    */
   anchor?: Element | null;
+  /** Which side of the trigger or anchor the inspector opens on. */
+  side?: "top" | "right" | "bottom" | "left";
 };
 
 export function FieldInspector({
@@ -81,6 +83,7 @@ export function FieldInspector({
   open,
   onOpenChange,
   anchor,
+  side = "bottom",
 }: Props) {
   const fieldSettings = useDataLayer((state) => state.fieldSettings);
   const updateFieldSettings = useDataLayer(
@@ -93,9 +96,6 @@ export function FieldInspector({
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const calculations = useDataLayer((state) => state.calculations);
   const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
-  const crossfilterWrapper = useDataLayer((state) => state.crossfilterWrapper);
-  const liveItems = useDataLayer((state) => state.liveItems);
-  const charts = useDataLayer((state) => state.charts);
   const [draft, setDraft] = useState<FieldSettings>({});
   const [showAllFailures, setShowAllFailures] = useState(false);
   const [localOpen, setLocalOpen] = useState(false);
@@ -147,38 +147,7 @@ export function FieldInspector({
         : undefined,
     [field, fieldProfiles, getColumnData]
   );
-  const distribution = useMemo(() => {
-    // liveItems changes whenever chart filters change the remaining rows.
-    void liveItems;
-    if (!isOpen || !field) {
-      return null;
-    }
-    const profile = resolveFieldProfile(
-      field,
-      fieldProfiles ?? [],
-      getColumnData
-    );
-    if (!profile) {
-      return null;
-    }
-    // Chart filters scope the rows; with no charts every row is in scope.
-    const filteredIds = charts.length
-      ? new Set(crossfilterWrapper.getFilteredRowIds())
-      : undefined;
-    return buildFieldDistribution(
-      getColumnData(field),
-      profile.dataType,
-      filteredIds
-    );
-  }, [
-    isOpen,
-    field,
-    fieldProfiles,
-    getColumnData,
-    crossfilterWrapper,
-    charts,
-    liveItems,
-  ]);
+  const distribution = useFieldDistribution(field, isOpen);
   const appliedFailures = useMemo(
     () =>
       isOpen && field && !isCalculated
@@ -239,7 +208,7 @@ export function FieldInspector({
       <PopoverContent
         aria-label={`Inspect field: ${getFieldLabel(field)}`}
         align="start"
-        side="bottom"
+        side={side}
         collisionPadding={12}
         onOpenAutoFocus={(event) => {
           // Start on the active tab, not the close button and its tooltip.

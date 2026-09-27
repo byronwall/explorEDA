@@ -65,4 +65,4 @@ The list is a workspace-level panel owned by the library, so host applications g
 
 ## Next step after confirmation
 
-Tickets exist for the three milestones. Build milestone 1.
+All three milestones are built. See the status in the implementation plan.

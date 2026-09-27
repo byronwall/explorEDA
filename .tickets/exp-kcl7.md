@@ -1,6 +1,6 @@
 ---
 id: exp-kcl7
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-09-27T01:30:00Z
