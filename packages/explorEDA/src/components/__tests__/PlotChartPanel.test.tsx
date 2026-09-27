@@ -400,3 +400,66 @@ it("traces a faceted bar chart's facets, bars and title through one inspector", 
     expect(dialog).toHaveTextContent("Chart title · Categories")
   );
 });
+
+it("opens the field inspector from an axis title with Command-click or its context menu", async () => {
+  const chart = {
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "value"
+    ),
+    title: "Values",
+  };
+  function Panel() {
+    const charts = useDataLayer((s) => s.charts);
+    return (
+      <>
+        <output aria-label="Chart count">{charts.length}</output>
+        <PlotChartPanel
+          settings={charts[0]!}
+          width={500}
+          height={400}
+          onDelete={() => {}}
+          onDuplicate={() => {}}
+        />
+      </>
+    );
+  }
+  render(
+    <DataLayerProvider
+      data={[{ value: 1 }, { value: 2 }, { value: 3 }]}
+      charts={[chart]}
+    >
+      <Panel />
+    </DataLayerProvider>
+  );
+
+  const title = document.querySelector(
+    '[data-field="value"][data-plan-id="x:label"]'
+  )!;
+  expect(title).toBeTruthy();
+  fireEvent.click(title, { metaKey: true });
+  expect(
+    await screen.findByRole("dialog", { name: "Inspect field: value" })
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole("group", { name: /Distribution of value/ })
+  ).toBeInTheDocument();
+  fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+  await waitFor(() =>
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+  );
+
+  fireEvent.contextMenu(title, { clientX: 40, clientY: 60 });
+  fireEvent.click(
+    await screen.findByRole("menuitem", { name: "New chart of value" })
+  );
+  expect(screen.getByLabelText("Chart count")).toHaveTextContent("2");
+
+  fireEvent.contextMenu(title, { clientX: 40, clientY: 60 });
+  fireEvent.click(
+    await screen.findByRole("menuitem", { name: "Inspect value" })
+  );
+  expect(
+    await screen.findByRole("dialog", { name: "Inspect field: value" })
+  ).toBeInTheDocument();
+});

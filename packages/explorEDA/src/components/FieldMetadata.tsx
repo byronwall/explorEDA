@@ -7,15 +7,16 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { useDataLayer } from "@/providers/DataLayerProvider";
 import { CalendarDays, Hash, ToggleLeft, Type } from "lucide-react";
 
-const typeLabels: Record<FieldProfile["dataType"], string> = {
+export const typeLabels: Record<FieldProfile["dataType"], string> = {
   numeric: "Number",
   categorical: "Text",
   datetime: "Date",
   boolean: "Boolean",
 };
-const typeIcons = {
+export const typeIcons = {
   numeric: Hash,
   categorical: Type,
   datetime: CalendarDays,
@@ -46,7 +47,9 @@ export function resolveFieldProfile(
     : undefined;
 }
 
-function dateRange(profile: FieldProfile) {
+type ValueFormat = (value: datum) => string;
+
+function dateRange(profile: FieldProfile, format: ValueFormat) {
   if (profile.dataType !== "datetime") return undefined;
 
   let first: datum | undefined;
@@ -67,17 +70,26 @@ function dateRange(profile: FieldProfile) {
   }
   if (first == null || last == null) return undefined;
 
-  const start = String(first);
-  const end = String(last);
+  const start = format(first);
+  const end = format(last);
   return start === end ? start : `${start}–${end}`;
 }
 
-export function fieldMetadata(profile: FieldProfile) {
+/**
+ * Summarize a profile for field lists. Pass the field's display formatter so
+ * ranges carry the same format and unit as table cells.
+ */
+export function fieldMetadata(
+  profile: FieldProfile,
+  format: ValueFormat = valueLabel
+) {
   const range = profile.statistics
-    ? `${valueLabel(profile.statistics.min)}–${valueLabel(profile.statistics.max)}`
-    : dateRange(profile);
+    ? `${format(profile.statistics.min)}–${format(profile.statistics.max)}`
+    : dateRange(profile, (value) =>
+        format === valueLabel ? String(value) : format(value)
+      );
   const sample = profile.categories?.topValues[0]
-    ? valueLabel(profile.categories.topValues[0].value)
+    ? format(profile.categories.topValues[0].value)
     : undefined;
   return {
     type: typeLabels[profile.dataType],
@@ -105,8 +117,11 @@ export function FieldMetadata({
   className?: string;
   tooltipSide?: "bottom" | "left" | "top";
 }) {
+  const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
   if (!profile) return <span className={className}>{label}</span>;
-  const metadata = fieldMetadata(profile);
+  const metadata = fieldMetadata(profile, (value) =>
+    value == null || value === "" ? "—" : formatFieldValue(profile.name, value)
+  );
   const description = [
     metadata.type,
     metadata.detail,

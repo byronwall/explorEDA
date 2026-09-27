@@ -76,7 +76,10 @@ export function getFieldSettingsError(
   ) {
     return "Precision must be a whole number from 0 to 20.";
   }
-  if (settings.currency !== undefined && !/^[A-Z]{3}$/.test(settings.currency)) {
+  if (
+    settings.currency !== undefined &&
+    !/^[A-Z]{3}$/.test(settings.currency)
+  ) {
     return "Currency must be a three-letter code, such as USD.";
   }
   if (
@@ -129,11 +132,7 @@ function parseDate(value: string, preset: DatePreset = "iso") {
   if (!isoMatch) return NaN;
   const [, yearText, monthText, dayText] = isoMatch;
   if (
-    !validCalendarDate(
-      Number(yearText),
-      Number(monthText),
-      Number(dayText)
-    )
+    !validCalendarDate(Number(yearText), Number(monthText), Number(dayText))
   ) {
     return NaN;
   }
@@ -185,6 +184,56 @@ export function convertFieldValue(
   }
 }
 
+/** The field's display name without its unit, for text that shows units on values. */
+export function getFieldName(field: string, settings: FieldSettings = {}) {
+  return settings.label?.trim() || field;
+}
+
+/**
+ * Format two bounds so they stay distinct. When display rounding would make
+ * different bounds read the same, add precision until they differ.
+ */
+export function formatFieldBounds(
+  field: string,
+  min: datum,
+  max: datum,
+  settings: FieldSettings = {}
+): [string, string] {
+  let low = formatFieldValue(field, min, settings);
+  let high = formatFieldValue(field, max, settings);
+  if (
+    low !== high ||
+    min === max ||
+    typeof min !== "number" ||
+    typeof max !== "number"
+  ) {
+    return [low, high];
+  }
+  const start = (settings.precision ?? 3) + 1;
+  for (let precision = start; precision <= 20 && low === high; precision++) {
+    low = formatFieldValue(field, min, { ...settings, precision });
+    high = formatFieldValue(field, max, { ...settings, precision });
+  }
+  return [low, high];
+}
+
+/** True when the field's display format rounds this number. */
+export function displayRoundsValue(
+  value: number,
+  settings: FieldSettings = {}
+) {
+  const format = settings.format ?? "auto";
+  if (!Number.isFinite(value) || format === "date" || format === "datetime") {
+    return false;
+  }
+  const digits = (settings.precision ?? 3) + (format === "percent" ? 2 : 0);
+  const scale = 10 ** Math.min(20, digits);
+  return (
+    Math.abs(Math.round(value * scale) / scale - value) >
+    1e-9 * Math.max(1, Math.abs(value))
+  );
+}
+
 export function getFieldLabel(field: string, settings: FieldSettings = {}) {
   const label = settings.label?.trim() || field;
   return settings.unit ? `${label} (${settings.unit})` : label;
@@ -231,7 +280,9 @@ export function formatFieldValue(
   }
 
   const numberValue =
-    format === "number" || format === "currency" || format === "percent" ||
+    format === "number" ||
+    format === "currency" ||
+    format === "percent" ||
     (typeof value === "number" && format === "auto")
       ? Number(value)
       : NaN;

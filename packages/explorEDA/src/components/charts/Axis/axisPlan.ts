@@ -86,6 +86,8 @@ export interface AxisGuide {
   ariaLabel: string;
   line?: GuideLine;
   label?: GuideText;
+  /** The field this axis shows, on titles and tick labels. */
+  field?: string;
 }
 
 export interface AxisDomainSource {
@@ -239,6 +241,7 @@ function planAxis(
       role: "tick",
       value: tick,
       source: "scale",
+      field: input.field,
       ariaLabel: `${word} tick ${fullText}`,
       line:
         axis === "x"
@@ -272,6 +275,7 @@ function planAxis(
       axis,
       role: "label",
       source: input.labelSource ?? "chart-setting",
+      field: input.field,
       ariaLabel: `${word} axis label ${input.label}`,
       label:
         axis === "x"
@@ -346,7 +350,10 @@ function planAxis(
           : `${Y_LABEL_HEIGHT} px per label`,
       maxLabelChars,
     },
-    grid: input.grid && !band ? { requested: gridRequested, values: gridValues } : undefined,
+    grid:
+      input.grid && !band
+        ? { requested: gridRequested, values: gridValues }
+        : undefined,
     domainSource: input.domainSource,
     guides,
     gridGuides,

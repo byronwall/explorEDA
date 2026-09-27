@@ -1,6 +1,9 @@
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { categoryIncludes, categoryKey } from "@/lib/categories";
-import { calculatePivotData } from "@/components/charts/PivotTable/utils/calculations";
+import {
+  aggregationUnits,
+  calculatePivotData,
+} from "@/components/charts/PivotTable/utils/calculations";
 import { cn } from "@/lib/utils";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { BaseChartProps } from "@/types/ChartTypes";
@@ -12,7 +15,11 @@ import { PivotCell, PivotHeader, PivotRow, CellKey } from "./types";
 import { applyFilter } from "@/hooks/applyFilter";
 import { PivotTableSettings } from "./definition";
 import { getChartSummary } from "../chartAccessibility";
-import { hasFieldDisplayFormat } from "@/lib/fieldSettings";
+import {
+  formatFieldValue as formatWithSettings,
+  getFieldName,
+  hasFieldDisplayFormat,
+} from "@/lib/fieldSettings";
 import {
   Dialog,
   DialogContent,
@@ -247,9 +254,24 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
   );
 
   const valueLabel = (field: string, aggregation: string, label?: string) =>
-    label || `${getFieldLabel?.(field) ?? field} (${aggregation})`;
+    label ||
+    `${
+      aggregationUnits(aggregation) === "measure"
+        ? (getFieldLabel?.(field) ?? field)
+        : getFieldName(field, fieldSettings[field])
+    } (${aggregation})`;
   const displayPivotCell = (cell: PivotCell) => {
     if (cell.status !== "ok") return displayCellValue(cell);
+    const units = aggregationUnits(cell.aggregation);
+    if (units === "count" && typeof cell.value === "number") {
+      return cell.value.toLocaleString("en-US");
+    }
+    if (units === "none" && typeof cell.value === "number") {
+      // Variance is in squared units, so it keeps precision but not the unit.
+      return formatWithSettings(cell.key.valueField!, cell.value, {
+        precision: fieldSettings[cell.key.valueField!]?.precision,
+      });
+    }
     return hasFieldDisplayFormat(fieldSettings[cell.key.valueField!])
       ? (formatFieldValue?.(cell.key.valueField!, cell.value) ??
           displayCellValue(cell))

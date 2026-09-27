@@ -1,6 +1,8 @@
 import type { AxisGuide, ChartAxesPlan } from "./axisPlan";
 
 const GUIDE_DESCRIPTION = "Alt+Enter to inspect";
+const FIELD_DESCRIPTION =
+  "Command-click or open the context menu to inspect the field";
 
 const activeLine = { stroke: "var(--primary)", strokeWidth: 2.5 };
 
@@ -15,13 +17,28 @@ function interactiveProps(guide: AxisGuide, interactive: boolean) {
     : { "aria-label": guide.ariaLabel };
 }
 
-function GuideShape({
-  guide,
-  active,
-}: {
-  guide: AxisGuide;
-  active: boolean;
-}) {
+/**
+ * Axis titles and tick labels name a field. They take the pointer even on a
+ * chart without guide tracing, so Command-click and the context menu can
+ * open the field inspector.
+ */
+function fieldProps(guide: AxisGuide, interactive: boolean) {
+  if (!guide.label || !guide.field) return {};
+  const props: Record<string, unknown> = { pointerEvents: "auto" };
+  if (guide.role === "label") {
+    props.tabIndex = 0;
+    props["aria-description"] = interactive
+      ? `${GUIDE_DESCRIPTION}. ${FIELD_DESCRIPTION}`
+      : FIELD_DESCRIPTION;
+    if (!interactive) {
+      props.role = "button";
+      props["aria-label"] = guide.ariaLabel;
+    }
+  }
+  return props;
+}
+
+function GuideShape({ guide, active }: { guide: AxisGuide; active: boolean }) {
   const { line, label } = guide;
   return (
     <>
@@ -112,8 +129,10 @@ export function PlannedAxes({
         <g
           key={guide.id}
           data-plan-id={guide.id}
+          data-field={guide.label ? guide.field : undefined}
           className="chart-guide"
           {...interactiveProps(guide, interactive)}
+          {...fieldProps(guide, interactive)}
         >
           <GuideShape guide={guide} active={guide.id === activeId} />
         </g>
