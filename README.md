@@ -105,8 +105,40 @@ pnpm changeset:add patch "Keep bar tooltips inside the panel"
 When a changeset reaches `main`, the Release workflow opens or updates a
 "Version Packages" PR with the new version and changelog. Merging that PR
 runs `pnpm check`, publishes `exploreda` to npm, and tags a GitHub release.
-Commits without a changeset do not start a release. The workflow needs an
-`NPM_TOKEN` repository secret with publish rights to `exploreda`.
+Commits without a changeset do not start a release.
+
+The workflow uses npm trusted publishing through GitHub OIDC. It needs no
+`NPM_TOKEN` secret. The npm connection uses these settings:
+
+- Repository: `byronwall/explorEDA`
+- Workflow filename: `release.yml`
+- Environment: none
+- Allowed actions: `npm publish` and `npm stage publish`
+
+Keep `id-token: write` in the workflow permissions. Use Node 24, which includes
+a compatible npm CLI. Trusted publishing requires npm 11.5.1 or later.
+
+To start a release by hand:
+
+1. Open **Actions → Release → Run workflow** and select `main`.
+2. Review and merge the **Version Packages** PR when changesets are pending.
+3. Wait for the publish run to pass. Check the npm version and GitHub release.
+
+With no pending changesets, the manual run publishes any unpublished package
+version already on `main`. It does not create a new version.
+
+If a run fails, read its logs before retrying. Fix code or workflow problems
+through a PR, then run Release again on `main`. Do not create another version
+just to retry a failed publish. If publishing succeeded but a later step failed,
+check npm before retrying.
+
+Run `pnpm check` with Node 24 before changing the release runtime or test setup.
+The demo test environment retains Node's `AbortController` and `AbortSignal`
+because React Router uses Node's `Request`. Plain jsdom signals fail on Node 24.
+
+npm metadata can lag after publishing. If the run reports success but the
+version is missing, wait and check again. Confirm the `latest` tag and provenance
+before calling the release complete.
 
 ## Inspiration
 

@@ -25,3 +25,6 @@
 - One changeset per PR is usual. Edit it when the PR's scope changes instead of adding another.
 - Skip it for demo-only, docs-only, test-only, or tooling-only PRs.
 - Never run `changeset version` or `changeset publish`, and never edit versions or `CHANGELOG.md` by hand. The Release workflow does that through the "Version Packages" PR.
+- Follow [the release steps](README.md#release). Use `release.yml` on `main` with npm trusted publishing. Do not add `NPM_TOKEN`.
+- Run release checks on Node 24. Preserve Node's `AbortController` and `AbortSignal` in the demo test environment.
+- Confirm the npm version, `latest` tag, provenance, and GitHub release after publishing. Check npm before retrying a partial failure.
