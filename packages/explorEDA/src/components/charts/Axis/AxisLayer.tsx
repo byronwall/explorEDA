@@ -130,6 +130,7 @@ export function PlannedAxes({
           key={guide.id}
           data-plan-id={guide.id}
           data-field={guide.label ? guide.field : undefined}
+          data-axis={guide.label && guide.field ? guide.axis : undefined}
           className="chart-guide"
           {...interactiveProps(guide, interactive)}
           {...fieldProps(guide, interactive)}

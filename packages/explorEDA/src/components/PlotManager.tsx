@@ -17,10 +17,21 @@ import {
   saveRawDataToClipboard,
   saveToClipboard,
 } from "@/utils/saveDataUtils";
-import { Calculator, Copy, Grid, MoreHorizontal, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Calculator,
+  Copy,
+  Grid,
+  ListTree,
+  MoreHorizontal,
+  X,
+} from "lucide-react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ChartGridLayout } from "./ChartGridLayout";
+import { FieldList } from "./FieldList/FieldList";
+import { focusChartInContainer } from "./chartFocus";
+
+export { focusChartInContainer };
 import { PlotChartPanel } from "./PlotChartPanel";
 import { CalculationManager } from "./calculations/CalculationManager";
 import { GridSettingsPanel } from "./settings/GridSettingsPanel";
@@ -39,21 +50,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-
-export function focusChartInContainer(
-  container: HTMLElement | null,
-  id: string
-) {
-  const element = Array.from(
-    container?.querySelectorAll<HTMLElement>("[data-chart-id]") ?? []
-  ).find((candidate) => candidate.dataset.chartId === id);
-  if (!element) {
-    return;
-  }
-
-  element.scrollIntoView({ behavior: "auto", block: "start" });
-  element.focus({ preventScroll: true });
-}
 
 // Add this conversion function
 const gridToPixels = (
@@ -110,6 +106,67 @@ export function PlotManager() {
 
   // Add ref and state for container dimensions
   const containerRef = useRef<HTMLDivElement>(null);
+  const fieldsToggleRef = useRef<HTMLButtonElement>(null);
+  const fieldListId = useId();
+  const [fieldsOpen, setFieldsOpen] = useState(false);
+  const [fieldsOverview, setFieldsOverview] = useState(false);
+  const fieldsAvailable = activeTab === "charts" || activeTab === "rows";
+
+  const closeFields = useCallback(() => {
+    const list = document.getElementById(fieldListId);
+    const hadFocus = list?.contains(document.activeElement) ?? false;
+    setFieldsOpen(false);
+    setFieldsOverview(false);
+    if (hadFocus) fieldsToggleRef.current?.focus({ preventScroll: true });
+  }, [fieldListId]);
+
+  // F toggles the field list and Shift+F its full view, unless the user is
+  // typing.
+  useEffect(() => {
+    if (!fieldsAvailable) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.key.toLowerCase() !== "f" ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey ||
+        event.defaultPrevented
+      ) {
+        return;
+      }
+      const target = event.target;
+      if (
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target.closest("input, textarea, select, [role='combobox']"))
+      ) {
+        return;
+      }
+      // With several workspaces on a page, only the focused one responds.
+      const workspace = containerRef.current;
+      const active = document.activeElement;
+      if (
+        active &&
+        active !== document.body &&
+        !workspace?.contains(active) &&
+        !document.getElementById(fieldListId)?.contains(active)
+      ) {
+        const other = active.closest(".eda-workspace");
+        if (other && other !== workspace) return;
+      }
+      event.preventDefault();
+      if (event.shiftKey) {
+        setFieldsOpen(true);
+        setFieldsOverview((open) => !open);
+      } else if (fieldsOpen) {
+        closeFields();
+      } else {
+        setFieldsOpen(true);
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [fieldsAvailable, fieldsOpen, closeFields, fieldListId]);
   const [containerWidth, setContainerWidth] = useState(0);
 
   // Add useEffect to measure container
@@ -235,7 +292,10 @@ export function PlotManager() {
 
   return (
     <div className="eda-workspace w-full min-w-0 pb-8" ref={containerRef}>
-      <div className="eda-workspace-controls">
+      <div
+        className="eda-workspace-controls"
+        data-fields-open={(fieldsOpen && fieldsAvailable) || undefined}
+      >
         <header className="eda-workspace-toolbar">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
             <Tabs
@@ -260,6 +320,28 @@ export function PlotManager() {
               </TabsList>
             </Tabs>
             {activeTab === "charts" && <ChartCreationButtons />}
+            {fieldsAvailable && (
+              <Button
+                ref={fieldsToggleRef}
+                variant="ghost"
+                size="sm"
+                className="eda-fields-toggle"
+                aria-pressed={fieldsOpen}
+                aria-expanded={fieldsOpen}
+                aria-controls={fieldsOpen ? fieldListId : undefined}
+                tooltip={
+                  fieldsOpen
+                    ? "Hide the field list (F)"
+                    : "Show every field with search, quick stats, and chart actions (F). Shift+F opens every distribution in a full view."
+                }
+                onClick={() =>
+                  fieldsOpen ? closeFields() : setFieldsOpen(true)
+                }
+              >
+                <ListTree className="h-4 w-4" />
+                Fields
+              </Button>
+            )}
           </div>
           <div className="ml-auto flex flex-wrap items-center gap-2">
             {activeTab === "rows" && <div ref={setRowsToolbarTarget} />}
@@ -354,6 +436,15 @@ export function PlotManager() {
           </div>
         </header>
         <ActiveFilterStatus view={activeTab} />
+        {fieldsOpen && fieldsAvailable && (
+          <FieldList
+            id={fieldListId}
+            onClose={closeFields}
+            overview={fieldsOverview}
+            onOverviewChange={setFieldsOverview}
+            workspaceRef={containerRef}
+          />
+        )}
       </div>
 
       <Dialog

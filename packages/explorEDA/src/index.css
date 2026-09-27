@@ -2349,3 +2349,657 @@ html {
   display: flex;
   flex-direction: column;
 }
+
+/* Field list: a nonmodal panel that floats over the right edge of the
+   workspace, below the sticky controls, without resizing the chart grid. */
+.eda-workspace-toolbar .eda-fields-toggle[aria-pressed="true"] {
+  background: var(--muted);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+.eda-field-list {
+  outline: none;
+  position: fixed;
+  top: var(--eda-field-list-top, 8px);
+  right: var(--eda-field-list-right, 8px);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(320px, calc(100vw - 16px));
+  height: var(--eda-field-list-height, calc(100vh - 16px));
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow:
+    0 10px 30px rgb(20 40 70 / 14%),
+    0 1px 3px rgb(20 40 70 / 8%);
+  font-size: 12px;
+  overflow: hidden;
+  animation: eda-field-list-in 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* The panel covers the right of the controls; keep them visible beside it. */
+@media (min-width: 641px) {
+  .eda-workspace-controls[data-fields-open] {
+    padding-right: min(344px, calc(100% - 240px));
+  }
+}
+@keyframes eda-field-list-in {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 12% 0 round 8px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eda-field-list {
+    animation: none;
+  }
+}
+.eda-field-list-head {
+  display: grid;
+  gap: 8px;
+  padding: 10px 10px 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.eda-field-list-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+}
+.eda-field-list-title h2 {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+.eda-field-list-count {
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+.eda-field-list-close {
+  width: 26px;
+  height: 26px;
+  margin-left: auto;
+  color: var(--muted-foreground);
+}
+.eda-field-list-close svg {
+  width: 14px;
+  height: 14px;
+}
+.eda-field-list-search {
+  position: relative;
+  display: block;
+}
+.eda-field-list-search > svg {
+  position: absolute;
+  top: 50%;
+  left: 9px;
+  width: 13px;
+  height: 13px;
+  color: var(--muted-foreground);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.eda-field-list-search input {
+  height: 30px;
+  padding-left: 28px;
+  font-size: 12px;
+}
+.eda-field-list-scope {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.eda-field-list-empty {
+  padding: 16px 12px;
+  color: var(--muted-foreground);
+}
+.eda-field-list-rows {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--muted-foreground) 35%, transparent)
+    transparent;
+}
+.eda-field-row {
+  border-radius: 5px;
+}
+.eda-field-row[data-expanded] {
+  background: color-mix(in oklab, var(--muted) 55%, transparent);
+  margin: 2px 0;
+}
+.eda-field-row[data-dragging] {
+  opacity: 0.55;
+}
+.eda-field-row-line {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 30px;
+  border-radius: 5px;
+}
+.eda-field-row-line:hover {
+  background: var(--muted);
+}
+.eda-field-row-main {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  height: 30px;
+  padding: 0 6px 0 2px;
+  border-radius: 5px;
+  text-align: left;
+  cursor: pointer;
+}
+.eda-field-row-main:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+.eda-field-row-chevron {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+  transition: transform 140ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.eda-field-row[data-expanded] .eda-field-row-chevron {
+  transform: rotate(90deg);
+}
+.eda-field-row-main > [aria-label] {
+  flex: 1 1 auto;
+}
+.eda-field-row-reading {
+  flex: 0 1 auto;
+  max-width: 48%;
+  margin-left: auto;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-field-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding-right: 2px;
+}
+.eda-field-row-actions button {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  color: var(--muted-foreground);
+}
+.eda-field-row-actions button:hover,
+.eda-field-row-actions button[aria-pressed="true"],
+.eda-field-row-actions button[data-state="open"] {
+  color: var(--foreground);
+}
+.eda-field-row-actions button svg {
+  width: 13px;
+  height: 13px;
+}
+@media (hover: hover) and (pointer: fine) {
+  /* Actions replace the reading on hover and focus, so names never move. */
+  .eda-field-row-actions {
+    position: absolute;
+    top: 50%;
+    right: 2px;
+    padding-left: 18px;
+    transform: translateY(-50%);
+    background: linear-gradient(to right, transparent, var(--muted) 16px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms ease-out;
+  }
+  .eda-field-row-line:hover .eda-field-row-actions,
+  .eda-field-row-line:focus-within .eda-field-row-actions,
+  .eda-field-row-actions:has([data-state="open"], [aria-pressed="true"]) {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .eda-field-row-line:focus-within:not(:hover) .eda-field-row-actions {
+    background: linear-gradient(to right, transparent, var(--popover) 16px);
+  }
+  .eda-field-row[data-expanded]
+    .eda-field-row-line:not(:hover)
+    .eda-field-row-actions {
+    background: linear-gradient(
+      to right,
+      transparent,
+      color-mix(in oklab, var(--muted) 55%, var(--popover)) 16px
+    );
+  }
+}
+.eda-field-row-body {
+  padding: 4px 10px 10px 20px;
+}
+.eda-field-row-details {
+  display: grid;
+  gap: 12px;
+}
+.eda-field-row-details .eda-dist-svg {
+  height: 64px;
+}
+.eda-field-used h4 {
+  margin-bottom: 4px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 500;
+}
+.eda-field-used p {
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.eda-field-used ul {
+  display: grid;
+  gap: 1px;
+}
+.eda-field-used button {
+  display: block;
+  width: 100%;
+  padding: 3px 6px;
+  margin-left: -6px;
+  border-radius: 4px;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--foreground);
+}
+.eda-field-used button:hover {
+  background: var(--muted);
+  color: var(--primary);
+}
+.eda-field-used button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+.eda-workspace [data-chart-id][data-field-list-highlight] .eda-panel {
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px color-mix(in oklab, var(--primary) 70%, transparent);
+  transition: box-shadow 120ms ease-out;
+}
+.eda-field-menu-axis {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--muted-foreground);
+  font-size: 10px;
+  font-weight: 600;
+}
+.eda-field-drag-chip {
+  display: inline-grid;
+  gap: 2px;
+  max-width: 260px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: 0 6px 18px rgb(20 40 70 / 18%);
+  font-size: 12px;
+  cursor: grabbing;
+}
+.eda-field-drag-chip[data-state="ready"] {
+  border-color: color-mix(in oklab, var(--primary) 55%, var(--border));
+}
+.eda-field-drag-chip[data-state="refused"] {
+  border-color: color-mix(in oklab, var(--destructive) 55%, var(--border));
+}
+.eda-field-drag-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.eda-field-drag-name svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+.eda-field-drag-name span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.eda-field-drag-hint {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  line-height: 1.4;
+}
+.eda-field-drag-chip[data-state="refused"] .eda-field-drag-hint {
+  color: var(--destructive);
+}
+.eda-field-drop {
+  position: fixed;
+  /* Below the sticky controls and the field list that hangs from them. */
+  z-index: 20;
+  border: 1.5px dashed color-mix(in oklab, var(--primary) 55%, transparent);
+  border-radius: 6px;
+  background: color-mix(in oklab, var(--primary) 6%, transparent);
+  pointer-events: none;
+}
+.eda-field-drop[data-state="refused"] {
+  border-color: color-mix(in oklab, var(--muted-foreground) 35%, transparent);
+  background: transparent;
+}
+.eda-field-drop[data-active] {
+  border-style: solid;
+  background: color-mix(in oklab, var(--primary) 14%, transparent);
+}
+.eda-field-drop[data-state="refused"][data-active] {
+  border-color: var(--destructive);
+  background: color-mix(in oklab, var(--destructive) 8%, transparent);
+}
+/* Narrow screens: a bottom sheet over the charts. */
+@media (max-width: 640px) {
+  .eda-field-list {
+    position: fixed;
+    top: auto;
+    right: 8px;
+    bottom: 8px;
+    left: 8px;
+    width: auto;
+    height: min(62vh, 520px);
+    max-height: none;
+    border-radius: 12px;
+    animation-name: eda-field-sheet-in;
+  }
+  @keyframes eda-field-sheet-in {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+  }
+}
+
+/* Field overview: every field's distribution at once, as small cards. */
+.eda-field-list-expand {
+  width: 26px;
+  height: 26px;
+  margin-left: auto;
+  color: var(--muted-foreground);
+}
+.eda-field-list-expand + .eda-field-list-close {
+  margin-left: 0;
+}
+.eda-field-list-expand svg {
+  width: 13px;
+  height: 13px;
+}
+[data-slot="dialog-content"].eda-overview {
+  inset: 12px;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: auto;
+  max-width: none;
+  padding: 0;
+  overflow: hidden;
+  transform: none;
+  translate: none;
+  border-color: var(--border);
+  border-radius: 10px;
+  background: var(--background);
+  font-size: 12px;
+}
+.eda-overview-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(180px, 320px) auto;
+  grid-template-areas: "title scope search buttons";
+  align-items: center;
+  gap: 8px 16px;
+  padding: 12px 12px 12px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--popover);
+}
+.eda-overview-title {
+  grid-area: title;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.eda-overview-title h2 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.eda-overview-head .eda-field-list-scope {
+  grid-area: scope;
+}
+.eda-overview-search {
+  grid-area: search;
+}
+.eda-overview-buttons {
+  grid-area: buttons;
+  display: flex;
+  gap: 2px;
+}
+.eda-overview-buttons button {
+  width: 30px;
+  height: 30px;
+  color: var(--muted-foreground);
+}
+.eda-overview-buttons svg {
+  width: 15px;
+  height: 15px;
+}
+.eda-overview-grid {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(212px, 1fr));
+  align-content: start;
+  gap: 10px;
+  padding: 16px 20px 24px;
+}
+.eda-overview-card {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 6px;
+  height: 100%;
+  min-height: 168px;
+  padding: 10px 12px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 168px;
+}
+.eda-overview-card:hover,
+.eda-overview-card:focus-within {
+  border-color: color-mix(in oklab, var(--muted-foreground) 40%, var(--border));
+}
+.eda-overview-card-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 24px;
+}
+.eda-overview-card-head > svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+.eda-overview-card-head h3 {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-overview-card-actions {
+  display: flex;
+  gap: 1px;
+  margin-left: auto;
+}
+.eda-overview-card-actions button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  color: var(--muted-foreground);
+}
+.eda-overview-card-actions button svg {
+  width: 13px;
+  height: 13px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .eda-overview-card-actions {
+    opacity: 0;
+    transition: opacity 120ms ease-out;
+  }
+  .eda-overview-card:hover .eda-overview-card-actions,
+  .eda-overview-card:focus-within .eda-overview-card-actions,
+  .eda-overview-card-actions:has([data-state="open"], [aria-pressed="true"]) {
+    opacity: 1;
+  }
+}
+.eda-overview-reading {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+  font-variant-numeric: tabular-nums;
+}
+.eda-overview-reading span {
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.eda-overview-reading strong {
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-overview-chart {
+  display: grid;
+  align-content: end;
+  min-width: 0;
+}
+.eda-overview-histogram {
+  display: block;
+  width: 100%;
+  height: 56px;
+}
+.eda-overview-axis {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 3px;
+  color: var(--muted-foreground);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.eda-overview-axis span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.eda-overview-categories {
+  display: grid;
+  gap: 3px;
+  align-self: start;
+}
+.eda-overview-categories li {
+  display: grid;
+  grid-template-columns: minmax(0, 42%) minmax(0, 1fr) 3.2em;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  line-height: 14px;
+}
+.eda-overview-category-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-overview-category-track {
+  height: 8px;
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--muted-foreground) 12%, transparent);
+  overflow: hidden;
+}
+.eda-overview-category-track span {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--primary) 68%, transparent);
+}
+.eda-overview-category-share {
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.eda-overview-categories li.eda-overview-category-more {
+  display: block;
+  color: var(--muted-foreground);
+}
+.eda-overview-empty {
+  align-self: center;
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.eda-overview-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+}
+.eda-overview-foot [data-tone="warning"] {
+  color: var(--warning, var(--foreground));
+}
+@media (max-width: 760px) {
+  .eda-overview-head {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "title buttons"
+      "search search"
+      "scope scope";
+    padding: 10px 10px 10px 14px;
+  }
+  [data-slot="dialog-content"].eda-overview {
+    inset: 0;
+    top: 0;
+    left: 0;
+    border-radius: 0;
+    border: 0;
+  }
+  .eda-overview-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 8px;
+    padding: 10px 10px 20px;
+  }
+}
+.eda-overview-chart:has(.eda-overview-categories) {
+  align-content: start;
+}

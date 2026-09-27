@@ -65,8 +65,48 @@ function DropdownMenuItem({
   );
 }
 
+function DropdownMenuLabel({
+  className,
+  ...props
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Label>) {
+  return (
+    <DropdownMenuPrimitive.Label
+      data-slot="dropdown-menu-label"
+      className={cn(
+        "px-2 py-1.5 text-xs font-medium text-muted-foreground",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+function DropdownMenuGroup({
+  ...props
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Group>) {
+  return (
+    <DropdownMenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />
+  );
+}
+
+function DropdownMenuSeparator({
+  className,
+  ...props
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Separator>) {
+  return (
+    <DropdownMenuPrimitive.Separator
+      data-slot="dropdown-menu-separator"
+      className={cn("-mx-1 my-1 h-px bg-border", className)}
+      {...props}
+    />
+  );
+}
+
 export {
   DropdownMenu,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,

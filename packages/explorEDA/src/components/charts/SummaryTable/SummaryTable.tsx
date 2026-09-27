@@ -1,13 +1,9 @@
 import { categoryLabel } from "@/lib/categories";
-import { BaseChartProps, datum } from "@/types/ChartTypes";
+import type { BaseChartProps } from "@/types/ChartTypes";
 import { Button } from "@/components/ui/button";
 import { ActionTooltip } from "@/components/ui/tooltip";
-import {
-  buildFieldProfile,
-  emptyFieldProfile,
-  FieldProfile,
-} from "@/lib/fieldProfiles";
-import { useDataLayer } from "@/providers/DataLayerProvider";
+import type { FieldProfile } from "@/lib/fieldProfiles";
+import { useFilteredFieldProfiles } from "@/hooks/useFilteredFieldProfiles";
 import { Download } from "lucide-react";
 import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
@@ -72,69 +68,12 @@ export function SummaryTable({
   settings,
   toolbarTarget,
 }: BaseChartProps<SummaryTableSettings>) {
-  const sourceProfiles = useDataLayer((state) => state.fieldProfiles);
-  const data = useDataLayer((state) => state.data);
-  const calculations = useDataLayer((state) => state.calculations);
-  const fieldSettings = useDataLayer((state) => state.fieldSettings);
-  const getColumnData = useDataLayer((state) => state.getColumnData);
-  const crossfilterWrapper = useDataLayer((state) => state.crossfilterWrapper);
-  const liveItems = useDataLayer((state) => state.liveItems);
-  const chartState = useDataLayer((state) => state.charts);
   const [sortConfig, setSortConfig] = useState<SummarySort>({
     column: null,
     direction: "asc",
   });
 
-  const allProfiles = useMemo(() => {
-    const filteredIds = new Set(
-      chartState.length
-        ? crossfilterWrapper.getFilteredRowIds()
-        : data.map((row) => row.__ID)
-    );
-    const filteredRows = data.filter((row) => filteredIds.has(row.__ID));
-    const profileColumn = (name: string) =>
-      Object.fromEntries(
-        filteredRows.map((row) => [row.__ID, row[name]])
-      ) as Record<number, datum>;
-
-    const source = sourceProfiles.map((profile) =>
-      filteredRows.length === 0
-        ? emptyFieldProfile(profile)
-        : buildFieldProfile(
-            profile.name,
-            profileColumn(profile.name),
-            profile.dataType
-          )
-    );
-    const calculated = calculations.map((calculation) => {
-      const allColumnData = getColumnData(calculation.resultColumnName);
-      const filteredColumnData = Object.fromEntries(
-        filteredRows.map((row) => [row.__ID, allColumnData[row.__ID]])
-      ) as Record<number, datum>;
-      const profile = buildFieldProfile(
-        calculation.resultColumnName,
-        allColumnData
-      );
-      return filteredRows.length === 0
-        ? emptyFieldProfile(profile)
-        : buildFieldProfile(
-            calculation.resultColumnName,
-            filteredColumnData,
-            profile.dataType
-          );
-    });
-
-    return [...source, ...calculated];
-  }, [
-    sourceProfiles,
-    data,
-    calculations,
-    getColumnData,
-    crossfilterWrapper,
-    chartState,
-    liveItems,
-    fieldSettings,
-  ]);
+  const allProfiles = useFilteredFieldProfiles();
 
   const sortedProfiles = useMemo(() => {
     if (!sortConfig.column) {
