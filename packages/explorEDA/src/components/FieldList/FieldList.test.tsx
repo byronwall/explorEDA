@@ -211,4 +211,14 @@ describe("FieldList", () => {
     expect(screen.getByRole("complementary")).toBeInTheDocument();
     expect(saved()).toBe(before);
   });
+
+  it("opens the full view with Shift+F", () => {
+    renderWorkspace([]);
+    fireEvent.keyDown(document.body, { key: "F", shiftKey: true });
+    expect(screen.getByRole("dialog", { name: "Fields" })).toBeInTheDocument();
+    expect(screen.getByRole("complementary")).toBeInTheDocument();
+    fireEvent.keyDown(document.body, { key: "F", shiftKey: true });
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByRole("complementary")).toBeInTheDocument();
+  });
 });

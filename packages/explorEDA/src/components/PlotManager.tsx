@@ -106,20 +106,22 @@ export function PlotManager() {
 
   // Add ref and state for container dimensions
   const containerRef = useRef<HTMLDivElement>(null);
-  const controlsRef = useRef<HTMLDivElement>(null);
   const fieldsToggleRef = useRef<HTMLButtonElement>(null);
   const fieldListId = useId();
   const [fieldsOpen, setFieldsOpen] = useState(false);
+  const [fieldsOverview, setFieldsOverview] = useState(false);
   const fieldsAvailable = activeTab === "charts" || activeTab === "rows";
 
   const closeFields = useCallback(() => {
     const list = document.getElementById(fieldListId);
     const hadFocus = list?.contains(document.activeElement) ?? false;
     setFieldsOpen(false);
+    setFieldsOverview(false);
     if (hadFocus) fieldsToggleRef.current?.focus({ preventScroll: true });
   }, [fieldListId]);
 
-  // F toggles the field list unless the user is typing.
+  // F toggles the field list and Shift+F its full view, unless the user is
+  // typing.
   useEffect(() => {
     if (!fieldsAvailable) return;
     const onKeyDown = (event: KeyboardEvent) => {
@@ -153,7 +155,10 @@ export function PlotManager() {
         if (other && other !== workspace) return;
       }
       event.preventDefault();
-      if (fieldsOpen) {
+      if (event.shiftKey) {
+        setFieldsOpen(true);
+        setFieldsOverview((open) => !open);
+      } else if (fieldsOpen) {
         closeFields();
       } else {
         setFieldsOpen(true);
@@ -287,7 +292,10 @@ export function PlotManager() {
 
   return (
     <div className="eda-workspace w-full min-w-0 pb-8" ref={containerRef}>
-      <div className="eda-workspace-controls" ref={controlsRef}>
+      <div
+        className="eda-workspace-controls"
+        data-fields-open={(fieldsOpen && fieldsAvailable) || undefined}
+      >
         <header className="eda-workspace-toolbar">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
             <Tabs
@@ -324,7 +332,7 @@ export function PlotManager() {
                 tooltip={
                   fieldsOpen
                     ? "Hide the field list (F)"
-                    : "Show every field with search, quick stats, and chart actions (F)"
+                    : "Show every field with search, quick stats, and chart actions (F). Shift+F opens every distribution in a full view."
                 }
                 onClick={() =>
                   fieldsOpen ? closeFields() : setFieldsOpen(true)
@@ -432,7 +440,8 @@ export function PlotManager() {
           <FieldList
             id={fieldListId}
             onClose={closeFields}
-            controlsRef={controlsRef}
+            overview={fieldsOverview}
+            onOverviewChange={setFieldsOverview}
             workspaceRef={containerRef}
           />
         )}

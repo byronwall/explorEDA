@@ -4,6 +4,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type RefObject,
 } from "react";
 import { Maximize2, Search, X } from "lucide-react";
@@ -25,19 +26,29 @@ export function matchesField(query: string, name: string, label: string) {
 }
 
 /**
- * Keeps the panel inside the viewport below the sticky workspace controls,
- * so the list scrolls instead of the page.
+ * Places the panel against the right edge of the workspace, from the top of
+ * the viewport (or the workspace, when it starts lower) to the bottom, so
+ * the list scrolls instead of the page.
  */
-function useAvailableHeight(anchor: RefObject<HTMLElement | null>) {
-  const [height, setHeight] = useState<number>();
+function usePanelBox(workspace: RefObject<HTMLElement | null>) {
+  const [box, setBox] = useState<{
+    top: number;
+    right: number;
+    height: number;
+  }>();
   useEffect(() => {
     let frame = 0;
     const measure = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
-        const box = anchor.current?.getBoundingClientRect();
-        if (!box) return;
-        setHeight(Math.max(240, window.innerHeight - box.bottom - 16));
+        const rect = workspace.current?.getBoundingClientRect();
+        if (!rect) return;
+        const top = Math.max(8, rect.top);
+        setBox({
+          top,
+          right: Math.max(8, window.innerWidth - rect.right),
+          height: Math.max(240, window.innerHeight - top - 8),
+        });
       });
     };
     measure();
@@ -48,8 +59,8 @@ function useAvailableHeight(anchor: RefObject<HTMLElement | null>) {
       window.removeEventListener("resize", measure);
       window.removeEventListener("scroll", measure, true);
     };
-  }, [anchor]);
-  return height;
+  }, [workspace]);
+  return box;
 }
 
 /** Below this width the list is a bottom sheet over the charts. */
@@ -74,13 +85,15 @@ function useSheetLayout() {
 export function FieldList({
   id,
   onClose,
-  controlsRef,
+  overview,
+  onOverviewChange,
   workspaceRef,
 }: {
   id: string;
   onClose: (reason: "button" | "escape") => void;
-  /** The sticky controls the panel hangs from. */
-  controlsRef: RefObject<HTMLElement | null>;
+  /** Whether the full view of every field's distribution is open. */
+  overview: boolean;
+  onOverviewChange: (overview: boolean) => void;
   /** The workspace whose charts "Used in" entries point at. */
   workspaceRef: RefObject<HTMLElement | null>;
 }) {
@@ -89,11 +102,10 @@ export function FieldList({
   const data = useDataLayer((state) => state.data);
   const [query, setQuery] = useState("");
   const [expanded, setExpanded] = useState<string>();
-  const [overview, setOverview] = useState(false);
   const searchRef = useRef<HTMLLabelElement>(null);
   const panelRef = useRef<HTMLElement>(null);
   const headingId = useId();
-  const height = useAvailableHeight(controlsRef);
+  const box = usePanelBox(workspaceRef);
   const sheet = useSheetLayout();
 
   useEffect(() => {
@@ -115,7 +127,7 @@ export function FieldList({
   const scopeRows = profiles[0]?.totalCount ?? data.length;
   const scope = `Values describe ${scopeRows.toLocaleString()} of ${data.length.toLocaleString()} rows after chart filters`;
   const collapse = () => {
-    setOverview(false);
+    onOverviewChange(false);
     requestAnimationFrame(() =>
       panelRef.current
         ?.querySelector<HTMLElement>("[data-field-list-expand]")
@@ -131,7 +143,13 @@ export function FieldList({
       className="eda-field-list"
       aria-labelledby={headingId}
       style={
-        height ? { ["--eda-field-list-height" as string]: `${height}px` } : {}
+        box
+          ? ({
+              "--eda-field-list-top": `${box.top}px`,
+              "--eda-field-list-right": `${box.right}px`,
+              "--eda-field-list-height": `${box.height}px`,
+            } as CSSProperties)
+          : {}
       }
       onKeyDown={(event) => {
         // Nested menus and the inspector handle their own Escape first.
@@ -158,9 +176,9 @@ export function FieldList({
             size="icon"
             className="eda-field-list-expand"
             aria-label="Expand to every field's distribution"
-            tooltip="Show every field's distribution in a full view"
+            tooltip="Show every field's distribution in a full view (Shift+F)"
             data-field-list-expand=""
-            onClick={() => setOverview(true)}
+            onClick={() => onOverviewChange(true)}
           >
             <Maximize2 />
           </Button>

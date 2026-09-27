@@ -2359,15 +2359,14 @@ html {
 }
 .eda-field-list {
   outline: none;
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
+  position: fixed;
+  top: var(--eda-field-list-top, 8px);
+  right: var(--eda-field-list-right, 8px);
   z-index: 1;
   display: flex;
   flex-direction: column;
-  width: min(320px, calc(100% - 16px));
-  height: var(--eda-field-list-height, min(640px, 70vh));
-  max-height: min(760px, var(--eda-field-list-height, 70vh));
+  width: min(320px, calc(100vw - 16px));
+  height: var(--eda-field-list-height, calc(100vh - 16px));
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--popover);
@@ -2378,6 +2377,12 @@ html {
   font-size: 12px;
   overflow: hidden;
   animation: eda-field-list-in 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* The panel covers the right of the controls; keep them visible beside it. */
+@media (min-width: 641px) {
+  .eda-workspace-controls[data-fields-open] {
+    padding-right: min(344px, calc(100% - 240px));
+  }
 }
 @keyframes eda-field-list-in {
   from {
