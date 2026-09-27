@@ -3,30 +3,30 @@ title: "Developer adoption page — shape brief"
 slug: "developer-adoption-page"
 phase: shape
 status: current
-last_updated: "2026-09-21"
+last_updated: "2026-09-23"
 ---
 
 # Developer adoption page — shape brief
 
 ## Recommendation
 
-Reshape the existing landing view, not the product architecture. Lead with a precise statement that this is an interactive analysis workspace and an embeddable React package. Place one guided example ahead of import and restore. Follow it with a real integration example and a short explanation of what the host supplies and saves. Keep the existing tools accessible as secondary paths. This preserves Byron's application while making the package boundary legible.
+Rebuild the existing landing view around one real analytical question and its linked result. Lead with a precise statement that this is an interactive analysis workspace and an embeddable React package. Put a real preview and a launch action before import and restore. Follow with a reproducible integration route, a compact chart preview, and the existing file tools. Use the [comparison research](comparative-research.md) for presentation patterns, without copying competitors' claims or building a separate landing renderer.
 
 ## Problem and appetite
 
 - **Problem:** A first-time developer sees file operations before a product explanation or proof.
 - **Outcome:** They can understand, try, and assess the React integration within a short visit.
-- **Appetite:** Small page and content changes first; no new chart or documentation system.
-- **Not in this shape:** New framework adapters, claims of scale, or a full marketing redesign.
+- **Appetite:** One focused page rebuild using current examples and components.
+- **Not in this shape:** New charts, framework adapters, performance claims, or a separate marketing application.
 
 ## Core shape
 
-The page reads: product identity → featured example with one action → complete integration route → why the workspace saves application work → additional examples and file tools. The example runs through the existing `?example=` route. The package remains the source of workspace behavior; the demo owns routing, file import, and explanatory content. The host owns durable storage. The saved configuration is a restore input, not a controlled-state loop.
+The page reads: product identity → visual proof and one guided action → two routes (“Explore your data” and “Embed in React”) → chart breadth and docs → file tools. The example runs through the existing `?example=` route. Use an actual workspace capture or a live existing example as the preview. The package remains the source of workspace behavior; the demo owns routing and explanation. The host owns durable storage.
 
 ## Current fit
 
 - **Reuse:** `LandingPage`, `ExampleSelector`, existing order examples, README integration guidance, and the public package entry.
-- **Add:** Focused copy, one guided action, and a linked full example with its actual saved settings.
+- **Add:** A deliberate hero composition, a real preview, one guided action, a short chart path, and a linked full example with its actual saved settings.
 - **Avoid or replace:** The current import-first hierarchy and the coverage page as the main learning route.
 
 ## How to make this go better
@@ -35,20 +35,22 @@ The page reads: product identity → featured example with one action → comple
 - **Show the complete boundary.** Keep the mount snippet short, but link its actual data and saved configuration.
 - **Separate audiences without a new app.** Keep “Try your data” nearby for analysts; explain React integration for developers.
 - **State limits plainly.** Use only current package and runtime facts. Measure before adding performance language.
+- **Design from actual output.** Capture the existing workspace at three widths before choosing crop, type size, and section layout.
 
 ## First proof
 
 - **Question:** Does the first visit make the product and one linked interaction clear?
-- **Proof:** Reorder the existing landing page and feature one current example.
+- **Proof:** Prototype the first screen with one real example preview and a direct launch action.
 - **Observe:** At wide, intermediate, and narrow widths, a new visitor can open it, select, see linked records, reset, and reach the integration source.
 - **Pass / fail:** Each action works without instructions that contradict the UI. If not, repair the example path before adding more copy.
-- **Deliberately excludes:** Inline mini-demo, new charts, and a new documentation site.
+- **Deliberately excludes:** A second chart renderer, new charts, and the docs build.
 
 ## Rabbit holes and no-gos
 
 - Do not promise a configured dashboard from a bare `<ExplorEda data={orders} />` call.
 - Do not turn source-level findings into runtime, performance, or privacy claims.
 - Do not treat Pro's developer-adoption framing as a decision to demote Byron's analysis app.
+- Do not use static chart decoration as proof of linked filtering. Show the result in the real workspace.
 
 ## Plan handoff
 

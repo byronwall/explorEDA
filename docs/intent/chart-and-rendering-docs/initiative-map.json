@@ -1,0 +1,217 @@
+{
+  "schema_version": "0.4.0",
+  "initiative": {
+    "title": "Chart and rendering documentation",
+    "slug": "chart-and-rendering-docs",
+    "scale": "capability",
+    "current_phase": "plan",
+    "last_updated": "2026-09-23",
+    "summary": "Create task-led pages for all registered views and an accurate current-state rendering guide."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-23"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-23"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-09-23"
+    }
+  },
+  "sources": [
+    {
+      "id": "request",
+      "type": "direct-user-input",
+      "location": "2026-09-23 user request",
+      "anchor": "Separate plan for chart-type and rendering-system docs",
+      "authority": "direct intent"
+    },
+    {
+      "id": "registry",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/charts/registerAllCharts.ts",
+      "anchor": "Eleven registered chart definitions",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "inventory",
+      "type": "repository-document",
+      "location": "../../application-feature-inventory.md",
+      "anchor": "Chart and view catalogue",
+      "authority": "source draft, verify against runtime"
+    },
+    {
+      "id": "research",
+      "type": "primary-web-research",
+      "location": "comparative-research.md",
+      "anchor": "Nivo, ECharts, dc.js, Vega-Lite, Observable Plot",
+      "authority": "documentation patterns, not intent"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "c1",
+        "type": "outcome",
+        "statement": "Plan a page for each chart type and the overall rendering system",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "request"
+        ]
+      },
+      {
+        "id": "c2",
+        "type": "derived implication",
+        "statement": "Cover all eleven registered views, including tables and supporting views",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "registry"
+        ]
+      },
+      {
+        "id": "c3",
+        "type": "constraint",
+        "statement": "Separate current rendering behavior from planned deterministic rendering work",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "inventory"
+        ]
+      }
+    ],
+    "themes": [
+      "task-led chart guidance",
+      "shared rendering model",
+      "live examples"
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "small docs section in existing demo, then eleven concise pages",
+    "problem": "Chart guidance is spread across internal inventory, README, source, and demos",
+    "recommended_shape": "Task-led index, one page per registered type, one shared current-state rendering guide",
+    "success_moves": [
+      "Prove scatter and bar first",
+      "Check source and runtime together",
+      "Explain shared scope once",
+      "Use hand-authored pages until generation has clear value"
+    ],
+    "first_proof": {
+      "question": "Can two unlike pages explain use, filtering, and limits clearly?",
+      "artifact": "Scatter and bar guides plus shared rendering guide",
+      "decision_rule": "Proceed when both examples and direct URLs work and claims match runtime"
+    },
+    "rabbit_holes": [
+      "new docs framework",
+      "generated reference before first pages",
+      "future renderer described as shipped"
+    ],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "current",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/Projects/explorEDA",
+      "revision": "a15e79a",
+      "worktree_status": "main, clean at start of planning turn",
+      "subsystems": [
+        "apps/demo/src/main.tsx",
+        "apps/demo/src/LandingPage.tsx",
+        "apps/demo/src/demos/examples.ts",
+        "packages/explorEDA/src/charts/registerAllCharts.ts",
+        "packages/explorEDA/src/providers/DataLayerProvider.tsx"
+      ],
+      "test_commands": [
+        "pnpm --filter demo dev",
+        "pnpm check:ui",
+        "pnpm check"
+      ],
+      "deployment_surfaces": [
+        "GitHub Pages static Vite demo"
+      ]
+    },
+    "dependencies": [],
+    "fast_local_loop": {
+      "command": "pnpm --filter demo dev",
+      "network_required": false,
+      "shared_infrastructure_required": false
+    },
+    "milestones": [
+      {
+        "id": "M1",
+        "outcome": "Two chart guides and system guide work",
+        "proof": "Direct URLs and linked demo gestures work at three widths",
+        "valid_intermediate_state": "Landing and examples remain available",
+        "rollback": "Remove docs query view"
+      },
+      {
+        "id": "M2",
+        "outcome": "All eleven registered types documented",
+        "proof": "Index matches registry and every guide has a working example link",
+        "valid_intermediate_state": "Existing docs routes stay useful",
+        "rollback": "Revise individual pages"
+      },
+      {
+        "id": "M3",
+        "outcome": "Landing and docs form one learning path",
+        "proof": "Links work and guide matches current implementation",
+        "valid_intermediate_state": "Demo and docs coexist",
+        "rollback": "Remove landing links"
+      }
+    ],
+    "cut_line": [
+      "new documentation framework",
+      "property playground",
+      "generated API pipeline",
+      "chart behavior changes only for docs"
+    ],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-09-23",
+      "change": "Created a separate documentation initiative with competitor research and a proof-first plan."
+    }
+  ],
+  "catalogue": [
+    "row",
+    "bar",
+    "scatter",
+    "line",
+    "boxplot",
+    "3d-scatter",
+    "pivot",
+    "data-table",
+    "summary",
+    "color-legend",
+    "markdown"
+  ]
+}

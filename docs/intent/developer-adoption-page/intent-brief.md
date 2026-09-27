@@ -3,7 +3,7 @@ title: "Developer adoption page"
 slug: "developer-adoption-page"
 phase: intent
 status: current
-last_updated: "2026-09-21"
+last_updated: "2026-09-23"
 ---
 
 # Developer adoption page
@@ -14,7 +14,7 @@ The public entry page should help a developer understand what explorEDA is, see 
 
 The broader project intent gives this page an important tension. Byron builds the analysis application primarily for his own use. The React package is a complete workspace that other developers can mount. The page can explain that integration honestly without making external adoption the only product goal. Its first screen should identify both the usable demo and the reusable React boundary. It should let an interested visitor make one selection, see linked consequences, inspect records, and then find the code that produces that experience.
 
-The near-term outcome is not a marketing site or a new chart. It is a clear route from claim to working example to reproducible integration. This is a separate purpose from expanding chart coverage.
+Byron now wants a better landing page, not only revised copy. The outcome is a clear route from claim to working example to reproducible integration, supported by stronger visual hierarchy. This is separate from the chart documentation plan.
 
 ## What matters most
 
@@ -22,6 +22,7 @@ The near-term outcome is not a marketing site or a new chart. It is a clear rout
 - Show a real interaction before asking visitors to supply data.
 - Show the actual host boundary and the configuration needed for the demonstrated result.
 - Keep import and restore available for people who need them.
+- Make the first screen visually explain the linked workspace, rather than relying on prose or a chart count.
 
 ## The experience or behavior you appear to want
 
@@ -59,4 +60,4 @@ A visitor lands on a concise explanation, opens one featured order example, make
 
 ## Next step after confirmation
 
-Prove the new reading order and one working interaction in the current demo. Then add the exact integration example and facts that the code supports.
+Prove the featured interaction in the current demo. Then build the new landing composition around that proof and link to the chart documentation.
