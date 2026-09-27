@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { AlertCircle, Settings2 } from "lucide-react";
+import { AlertCircle, Settings2, X } from "lucide-react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { buildFieldDistribution } from "@/lib/fieldDistribution";
-import { resolveFieldProfile } from "@/components/FieldMetadata";
+import {
+  resolveFieldProfile,
+  typeIcons,
+  typeLabels,
+} from "@/components/FieldMetadata";
 import type { datum } from "@/types/ChartTypes";
 import {
   buildConversionPreview,
@@ -41,6 +45,23 @@ const formats = [
   "date",
   "datetime",
 ] as const;
+
+/** Compare settings, treating blank text and unset values as the same. */
+function sameSettings(left: FieldSettings, right: FieldSettings) {
+  const clean = (settings: FieldSettings) =>
+    Object.fromEntries(
+      Object.entries(settings)
+        .filter(
+          ([key, value]) =>
+            value !== undefined &&
+            value !== "" &&
+            !(key === "format" && value === "auto") &&
+            !(Array.isArray(value) && value.length === 0)
+        )
+        .sort(([a], [b]) => a.localeCompare(b))
+    );
+  return JSON.stringify(clean(left)) === JSON.stringify(clean(right));
+}
 
 type Props = {
   field: string | null;
@@ -118,6 +139,14 @@ export function FieldInspector({
     isOpen,
     draft,
   ]);
+  const distributionType = useMemo(
+    () =>
+      field
+        ? resolveFieldProfile(field, fieldProfiles ?? [], getColumnData)
+            ?.dataType
+        : undefined,
+    [field, fieldProfiles, getColumnData]
+  );
   const distribution = useMemo(() => {
     // liveItems changes whenever chart filters change the remaining rows.
     void liveItems;
@@ -160,6 +189,9 @@ export function FieldInspector({
     [isOpen, field, isCalculated, getFieldConversionPreview, fieldSettings]
   );
   const settingsError = getFieldSettingsError(draft);
+  const changed = !sameSettings(draft, applied);
+  const typeName = typeLabels[distributionType ?? "categorical"];
+  const TypeIcon = typeIcons[distributionType ?? "categorical"];
   const conversionChanged =
     !isCalculated &&
     (draft.type !== applied.type ||
@@ -209,6 +241,16 @@ export function FieldInspector({
         align="start"
         side="bottom"
         collisionPadding={12}
+        onOpenAutoFocus={(event) => {
+          // Start on the active tab, not the close button and its tooltip.
+          const tab = (
+            event.currentTarget as HTMLElement | null
+          )?.querySelector<HTMLElement>('[role="tab"][data-state="active"]');
+          if (tab) {
+            event.preventDefault();
+            tab.focus({ preventScroll: true });
+          }
+        }}
         onCloseAutoFocus={(event) => {
           if (anchor instanceof HTMLElement || anchor instanceof SVGElement) {
             event.preventDefault();
@@ -221,23 +263,47 @@ export function FieldInspector({
           defaultValue="values"
           className="flex min-h-0 flex-1 flex-col gap-0"
         >
-          <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-b border-border px-3 pt-3 pb-2">
-            <div className="min-w-0 space-y-0.5">
-              <div className="flex min-w-0 items-center gap-2 text-sm font-semibold">
-                <Settings2 className="h-4 w-4 shrink-0" aria-hidden="true" />
-                <span className="truncate">
-                  Inspect field: {getFieldLabel(field)}
-                </span>
+          <div className="space-y-2.5 border-b border-border px-4 pt-3 pb-2.5">
+            <div className="flex min-w-0 items-start gap-2.5">
+              <span
+                className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground"
+                aria-hidden="true"
+              >
+                <TypeIcon className="h-4 w-4" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <h2 className="truncate text-lg leading-tight font-semibold tracking-tight">
+                  <span className="sr-only">Inspect field: </span>
+                  {getFieldLabel(field)}
+                </h2>
+                <p className="flex min-w-0 flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
+                  <span className="font-medium text-foreground/80">
+                    {isCalculated
+                      ? `Calculated ${typeName.toLowerCase()}`
+                      : typeName}
+                  </span>
+                  {field !== getFieldLabel(field) && (
+                    <span className="min-w-0 truncate">
+                      Source name <code>{field}</code>
+                    </span>
+                  )}
+                  {applied.description && (
+                    <span className="min-w-0 truncate">
+                      {applied.description}
+                    </span>
+                  )}
+                </p>
               </div>
-              <p className="truncate text-xs text-muted-foreground">
-                {field !== getFieldLabel(field) ? (
-                  <>
-                    Source name: <code>{field}</code>
-                  </>
-                ) : (
-                  "Field settings for this analysis"
-                )}
-              </p>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="-mt-1 -mr-2 shrink-0"
+                aria-label="Close inspector"
+                tooltip="Close inspector"
+                onClick={() => setOpen(false)}
+              >
+                <X />
+              </Button>
             </div>
             <TabsList className="grid h-8 w-full grid-cols-4">
               <TabsTrigger value="values" className="text-xs">
@@ -540,26 +606,36 @@ export function FieldInspector({
           </div>
         </Tabs>
 
-        <div className="flex items-center justify-end gap-2 border-t border-border px-3 py-2">
-          {settingsError && (
-            <p role="alert" className="mr-auto text-xs text-destructive">
-              {settingsError}
-            </p>
-          )}
-          <Button variant="outline" size="sm" onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
-          <Button
-            size="sm"
-            disabled={Boolean(settingsError)}
-            onClick={() => {
-              updateFieldSettings(field, draft);
-              setOpen(false);
-            }}
-          >
-            Apply field settings
-          </Button>
-        </div>
+        {(changed || settingsError) && (
+          <div className="flex flex-wrap items-center justify-end gap-x-2 gap-y-1.5 border-t border-border px-4 py-2">
+            {settingsError ? (
+              <p role="alert" className="mr-auto min-w-0 text-xs text-destructive">
+                {settingsError}
+              </p>
+            ) : (
+              <p className="mr-auto shrink-0 text-xs text-muted-foreground">
+                Unapplied changes
+              </p>
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setDraft(applied)}
+            >
+              Discard changes
+            </Button>
+            <Button
+              size="sm"
+              disabled={Boolean(settingsError)}
+              onClick={() => {
+                updateFieldSettings(field, draft);
+                setOpen(false);
+              }}
+            >
+              Apply field settings
+            </Button>
+          </div>
+        )}
       </PopoverContent>
     </Popover>
   );

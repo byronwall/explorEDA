@@ -10,13 +10,13 @@ import { cn } from "@/lib/utils";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { CalendarDays, Hash, ToggleLeft, Type } from "lucide-react";
 
-const typeLabels: Record<FieldProfile["dataType"], string> = {
+export const typeLabels: Record<FieldProfile["dataType"], string> = {
   numeric: "Number",
   categorical: "Text",
   datetime: "Date",
   boolean: "Boolean",
 };
-const typeIcons = {
+export const typeIcons = {
   numeric: Hash,
   categorical: Type,
   datetime: CalendarDays,

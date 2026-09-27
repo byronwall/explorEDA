@@ -60,6 +60,31 @@ describe("FieldInspector", () => {
       screen.getByText(/Invalid values become missing/)
     ).toBeInTheDocument();
   });
+
+  it("offers to apply only after a setting changes", () => {
+    render(
+      <DataLayerProvider data={[{ weight: 3 }]} charts={[]}>
+        <FieldInspector field="weight" open onOpenChange={vi.fn()} />
+      </DataLayerProvider>
+    );
+    expect(
+      screen.getByRole("heading", { name: "Inspect field: weight" })
+    ).toBeInTheDocument();
+    const apply = () =>
+      screen.queryByRole("button", { name: "Apply field settings" });
+    expect(apply()).not.toBeInTheDocument();
+
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "Display" }), {
+      button: 0,
+      ctrlKey: false,
+    });
+    const label = screen.getByLabelText("Display label");
+    fireEvent.change(label, { target: { value: "Weight" } });
+    expect(apply()).toBeInTheDocument();
+
+    fireEvent.change(label, { target: { value: "" } });
+    expect(apply()).not.toBeInTheDocument();
+  });
 });
 
 describe("FieldInspector values", () => {

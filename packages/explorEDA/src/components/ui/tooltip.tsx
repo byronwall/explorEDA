@@ -53,15 +53,17 @@ function TooltipContent({
 function ActionTooltip({
   children,
   content,
+  side,
 }: {
   children: React.ReactElement;
   content: React.ReactNode;
+  side?: React.ComponentProps<typeof TooltipPrimitive.Content>["side"];
 }) {
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
-        <TooltipContent>{content}</TooltipContent>
+        <TooltipContent side={side}>{content}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );

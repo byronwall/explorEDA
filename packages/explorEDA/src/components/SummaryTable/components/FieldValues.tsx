@@ -5,6 +5,7 @@ import type {
   CategoryDistribution,
   DistributionBin,
   FieldDistribution,
+  NumericDistribution,
   NumericSummary,
   OutlierTail,
   PopulationCounts,
@@ -13,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { ActionTooltip } from "@/components/ui/tooltip";
 
 const WIDTH = 360;
 const HEIGHT = 84;
@@ -54,7 +56,13 @@ function Toggle<T extends string>({
   label: string;
   value: T;
   onChange: (value: T) => void;
-  options: Array<{ value: T; text: string; description: string }>;
+  options: Array<{
+    value: T;
+    text: string;
+    description: string;
+    /** Hover and focus help that explains how this option differs. */
+    tooltip: React.ReactNode;
+  }>;
 }) {
   return (
     <ToggleGroup
@@ -66,14 +74,23 @@ function Toggle<T extends string>({
       aria-label={label}
     >
       {options.map((option) => (
-        <ToggleGroupItem
+        // The wrapper takes the tooltip so the item keeps its own ref-free
+        // rendering on React 18.
+        <ActionTooltip
           key={option.value}
-          value={option.value}
-          aria-label={option.description}
-          className="h-6 px-2 text-[11px]"
+          content={option.tooltip}
+          side="bottom"
         >
-          {option.text}
-        </ToggleGroupItem>
+          <span className="inline-flex">
+            <ToggleGroupItem
+              value={option.value}
+              aria-label={option.description}
+              className="h-6 px-2 text-[11px]"
+            >
+              {option.text}
+            </ToggleGroupItem>
+          </span>
+        </ActionTooltip>
       ))}
     </ToggleGroup>
   );
@@ -85,13 +102,21 @@ function Header({
   onScaleChange,
   range,
   onRangeChange,
+  core,
+  format,
 }: {
   filtered: boolean;
   scale?: Scale;
   onScaleChange: (scale: Scale) => void;
   range?: Range;
   onRangeChange: (range: Range) => void;
+  core?: NonNullable<NumericDistribution["core"]>;
+  format: Format;
 }) {
+  const outliers = core ? core.below.all + core.above.all : 0;
+  const outlierText = `${count(outliers)} far ${
+    outliers === 1 ? "outlier" : "outliers"
+  }`;
   if (!filtered && !range) {
     return null;
   }
@@ -122,11 +147,33 @@ function Header({
                 value: "core",
                 text: "Core",
                 description: "Show the core range without far outliers",
+                tooltip: core && (
+                  <div className="max-w-64 space-y-1">
+                    <p className="font-medium">
+                      Core: {format(core.min)} to {format(core.max)}
+                    </p>
+                    <p>
+                      Sets aside {outlierText}, values more than three
+                      interquartile ranges beyond the middle half. The typical
+                      values fill the chart. Statistics still use every value.
+                    </p>
+                  </div>
+                ),
               },
               {
                 value: "full",
                 text: "Full",
                 description: "Show the full range",
+                tooltip: (
+                  <div className="max-w-64 space-y-1">
+                    <p className="font-medium">Full: every value</p>
+                    <p>
+                      Bins span the minimum to the maximum, including the{" "}
+                      {outlierText}. Those extremes can squeeze most values into
+                      a few bars.
+                    </p>
+                  </div>
+                ),
               },
             ]}
           />
@@ -141,11 +188,31 @@ function Header({
                 value: "count",
                 text: "Rows",
                 description: "Bar height by row count",
+                tooltip: (
+                  <div className="max-w-64 space-y-1">
+                    <p className="font-medium">Rows: bar height is a count</p>
+                    <p>
+                      Filtered and all-row bars share one scale, so a small
+                      filter draws short bars.
+                    </p>
+                  </div>
+                ),
               },
               {
                 value: "share",
                 text: "Share",
                 description: "Bar height by share of each population",
+                tooltip: (
+                  <div className="max-w-64 space-y-1">
+                    <p className="font-medium">
+                      Share: bar height is a percentage
+                    </p>
+                    <p>
+                      Each population scales to its own total, so you can
+                      compare shapes even when a filter keeps few rows.
+                    </p>
+                  </div>
+                ),
               },
             ]}
           />
@@ -785,6 +852,8 @@ export function FieldValues({
           onScaleChange={setScale}
           range={core ? range : undefined}
           onRangeChange={setRange}
+          core={core}
+          format={format}
         />
         {noValues ? (
           <p className="eda-dist-note">
