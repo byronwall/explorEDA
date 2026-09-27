@@ -778,57 +778,66 @@ export function FieldValues({
 
   return (
     <div className="eda-dist">
-      <Header
-        filtered={filtered}
-        scale={histogram ? scale : undefined}
-        onScaleChange={setScale}
-        range={core ? range : undefined}
-        onRangeChange={setRange}
-      />
-      {noValues ? (
-        <p className="eda-dist-note">
-          This field has no values to chart. Every row is missing or excluded.
-        </p>
-      ) : distribution.kind === "category" ? (
-        <CategoryList
+      <div className="eda-dist-main">
+        <Header
+          filtered={filtered}
+          scale={histogram ? scale : undefined}
+          onScaleChange={setScale}
+          range={core ? range : undefined}
+          onRangeChange={setRange}
+        />
+        {noValues ? (
+          <p className="eda-dist-note">
+            This field has no values to chart. Every row is missing or excluded.
+          </p>
+        ) : distribution.kind === "category" ? (
+          <CategoryList
+            distribution={distribution}
+            formatCategory={formatCategory}
+          />
+        ) : (
+          <Histogram
+            bins={useCore ? core.bins : distribution.bins}
+            tails={
+              useCore ? { below: core.below, above: core.above } : undefined
+            }
+            format={format}
+            fieldLabel={fieldLabel}
+            filtered={filtered}
+            totals={totals}
+            scale={scale}
+            summary={
+              distribution.kind === "numeric" ? distribution.summary : undefined
+            }
+          />
+        )}
+        {noFilteredRows && (
+          <p className="eda-dist-note">
+            No rows remain after chart filters. Bars show all rows.
+          </p>
+        )}
+      </div>
+      <div className="eda-dist-side">
+        <CountsTable
           distribution={distribution}
-          formatCategory={formatCategory}
+          excludedLabel={excludedLabel}
         />
-      ) : (
-        <Histogram
-          bins={useCore ? core.bins : distribution.bins}
-          tails={useCore ? { below: core.below, above: core.above } : undefined}
-          format={format}
-          fieldLabel={fieldLabel}
-          filtered={filtered}
-          totals={totals}
-          scale={scale}
-          summary={
-            distribution.kind === "numeric" ? distribution.summary : undefined
-          }
-        />
-      )}
-      {noFilteredRows && (
-        <p className="eda-dist-note">
-          No rows remain after chart filters. Bars show all rows.
-        </p>
-      )}
-      <CountsTable distribution={distribution} excludedLabel={excludedLabel} />
-      {failedCount > 0 && (
-        <p className="eda-dist-note" data-tone="destructive">
-          {count(failedCount)}{" "}
-          {failedCount === 1 ? "value fails" : "values fail"} conversion and
-          {failedCount === 1 ? " counts" : " count"} as missing. The Preview tab
-          lists each failed row.
-        </p>
-      )}
-      {distribution.kind === "numeric" && distribution.summary && (
-        <StatsTable
-          summary={distribution.summary}
-          format={format}
-          filtered={filtered}
-        />
-      )}
+        {failedCount > 0 && (
+          <p className="eda-dist-note" data-tone="destructive">
+            {count(failedCount)}{" "}
+            {failedCount === 1 ? "value fails" : "values fail"} conversion and
+            {failedCount === 1 ? " counts" : " count"} as missing. The Preview
+            tab lists each failed row.
+          </p>
+        )}
+        {distribution.kind === "numeric" && distribution.summary && (
+          <StatsTable
+            summary={distribution.summary}
+            format={format}
+            filtered={filtered}
+          />
+        )}
+      </div>
     </div>
   );
 }

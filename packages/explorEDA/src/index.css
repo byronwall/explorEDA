@@ -1101,11 +1101,71 @@ html {
 }
 /* Field inspector value distributions. Filtered rows draw in the primary
    color over a quiet silhouette of all rows, sharing bins and scale. */
-.eda-dist {
+.eda-dist,
+.eda-dist-main,
+.eda-dist-side {
   display: grid;
+  align-content: start;
   gap: 12px;
+  min-width: 0;
+}
+.eda-dist {
   font-size: 12px;
   font-variant-numeric: tabular-nums;
+}
+/* The inspector body is a size container, so the Values tab sets the
+   distribution beside its tables whenever the popover has room. */
+.eda-inspector-body {
+  container-type: inline-size;
+  background:
+    linear-gradient(var(--popover) 30%, transparent) center top,
+    linear-gradient(transparent, var(--popover) 70%) center bottom,
+    radial-gradient(
+        farthest-side at 50% 0,
+        color-mix(in oklab, var(--foreground) 14%, transparent),
+        transparent
+      )
+      center top,
+    radial-gradient(
+        farthest-side at 50% 100%,
+        color-mix(in oklab, var(--foreground) 14%, transparent),
+        transparent
+      )
+      center bottom;
+  background-repeat: no-repeat;
+  background-size:
+    100% 28px,
+    100% 28px,
+    100% 10px,
+    100% 10px;
+  background-attachment: local, local, scroll, scroll;
+  overscroll-behavior: contain;
+}
+@container (min-width: 600px) {
+  .eda-dist {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    column-gap: 24px;
+  }
+  .eda-dist-side {
+    padding-left: 24px;
+    border-left: 1px solid var(--border);
+  }
+  .eda-inspector-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+/* Axis titles name a field: they hint that the context menu inspects it. */
+.chart-guide[data-field][data-plan-id$=":label"] {
+  cursor: context-menu;
+}
+.chart-guide[data-field][data-plan-id$=":label"]:hover text {
+  fill: var(--foreground);
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+.chart-guide[data-field]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }
 .eda-dist-toggles {
   display: flex;

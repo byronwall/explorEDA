@@ -33,6 +33,7 @@ import {
 import { ChartTracePanel } from "./charts/trace/ChartTracePanel";
 import type { TraceSource } from "./charts/trace/traceTypes";
 import { FacetContainer } from "./charts/FacetRelated/FacetContainer";
+import { useAxisFieldActions } from "./charts/AxisFieldActions";
 import { ChartSettingsContent } from "./ChartSettingsContent";
 import { Button } from "./ui/button";
 import {
@@ -169,6 +170,7 @@ export function PlotChartPanel({
   const [expanded, setExpanded] = useState(false);
   const [dataOpen, setDataOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
+  const axisFieldActions = useAxisFieldActions();
   const settingsRef = useRef<HTMLButtonElement>(null);
   const settingsAnchor = useRef<HTMLElement | null>(null);
   const actionsRef = useRef<HTMLButtonElement>(null);
@@ -271,6 +273,7 @@ export function PlotChartPanel({
         margin: expanded ? 0 : 6,
       }}
       role="region"
+      {...axisFieldActions.handlers}
       onKeyDown={(event) => {
         // A tooltip can consume Escape. Nested portalled editors close first.
         if (
@@ -455,6 +458,7 @@ export function PlotChartPanel({
       <p id={descriptionId} className="sr-only">
         {chartSummary}
       </p>
+      {axisFieldActions.overlay}
       <div className="eda-chart-content flex min-h-0 flex-1 flex-col">
         {autoLegendHeight > 0 && (
           <ChartColorLegend
@@ -487,26 +491,26 @@ export function PlotChartPanel({
   );
   return (
     <ChartTraceScope>
-        <Dialog open={expanded} onOpenChange={setExpanded}>
-          {expanded ? (
-            <DialogContent
-              showCloseButton={false}
-              className="max-w-none w-auto border-0 bg-transparent p-0 shadow-none"
-              onCloseAutoFocus={(event) => {
-                event.preventDefault();
-                requestAnimationFrame(() => expandRef.current?.focus());
-              }}
-            >
-              <DialogTitle className="sr-only">{chartTitle}</DialogTitle>
-              <DialogDescription className="sr-only">
-                {chartSummary}
-              </DialogDescription>
-              {panel}
-            </DialogContent>
-          ) : (
-            panel
-          )}
-        </Dialog>
+      <Dialog open={expanded} onOpenChange={setExpanded}>
+        {expanded ? (
+          <DialogContent
+            showCloseButton={false}
+            className="max-w-none w-auto border-0 bg-transparent p-0 shadow-none"
+            onCloseAutoFocus={(event) => {
+              event.preventDefault();
+              requestAnimationFrame(() => expandRef.current?.focus());
+            }}
+          >
+            <DialogTitle className="sr-only">{chartTitle}</DialogTitle>
+            <DialogDescription className="sr-only">
+              {chartSummary}
+            </DialogDescription>
+            {panel}
+          </DialogContent>
+        ) : (
+          panel
+        )}
+      </Dialog>
     </ChartTraceScope>
   );
 }
