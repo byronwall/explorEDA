@@ -345,8 +345,11 @@ export function planBarChart({
     const all = finiteNumbers(snapshot.allValues);
     const low = Math.min(...all);
     const high = Math.max(...all);
-    const min = low === high ? low - 0.5 : low;
-    const max = low === high ? high + 0.5 : high;
+    // Span the bins themselves, which can extend past the data for integers.
+    const first = rows[0]?.bin;
+    const last = rows.at(-1)?.bin;
+    const min = first ? first.start : low === high ? low - 0.5 : low;
+    const max = last ? last.end : low === high ? high + 0.5 : high;
     const pad = (max - min) * X_SCALE_PADDING;
     xScale = numericScale(settings.xAxis)
       .domain([min - pad, max + pad])

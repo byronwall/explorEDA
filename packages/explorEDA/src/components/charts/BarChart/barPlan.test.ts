@@ -130,7 +130,7 @@ describe("planBarChart", () => {
   });
 
   it("bins finite values only and lists each bin's source rows", () => {
-    const values: datum[] = [1, 2, "", "  ", Infinity, "NaN", 10, null];
+    const values: datum[] = [1, 1.5, "", "  ", Infinity, "NaN", 10, null];
     const bins = plan("value", values, { extra: { binCount: 3 } });
     expect(bins.mode).toBe("bin");
     expect(bins.bars.map((bar) => bar.row.contributors.map((c) => c.sourceId)))
