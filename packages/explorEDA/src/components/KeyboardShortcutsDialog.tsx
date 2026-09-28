@@ -1,0 +1,121 @@
+import { Fragment } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+type Shortcut = {
+  /** Each entry is one key; alternatives are separated by "or". */
+  keys: string[][];
+  action: string;
+};
+
+type ShortcutGroup = {
+  title: string;
+  shortcuts: Shortcut[];
+};
+
+const modifierKey =
+  typeof navigator !== "undefined" &&
+  /Mac|iP(hone|ad|od)/.test(navigator.platform)
+    ? "⌘"
+    : "Ctrl";
+
+export const shortcutGroups: ShortcutGroup[] = [
+  {
+    title: "Workspace",
+    shortcuts: [
+      { keys: [["?"]], action: "Show keyboard shortcuts" },
+      { keys: [["F"]], action: "Open or close the field list" },
+      { keys: [["Shift", "F"]], action: "Show every field's distribution" },
+      {
+        keys: [["Esc"]],
+        action: "Close the open editor, popover, or expanded chart",
+      },
+    ],
+  },
+  {
+    title: "Charts",
+    shortcuts: [
+      { keys: [["Tab"]], action: "Move between charts and their controls" },
+      {
+        keys: [["Enter"], ["Space"]],
+        action: "Filter by the focused bar or category",
+      },
+      {
+        keys: [["Alt", "Enter"]],
+        action: "Trace the focused title, facet, or color scale",
+      },
+      {
+        keys: [[modifierKey, "Enter"]],
+        action: "Inspect the field behind the focused axis label",
+      },
+    ],
+  },
+  {
+    title: "Calculations",
+    shortcuts: [
+      {
+        keys: [[modifierKey, "Enter"]],
+        action: "Apply the calculation you are editing",
+      },
+    ],
+  },
+];
+
+function Keys({ keys }: { keys: string[][] }) {
+  return (
+    <span className="eda-shortcut-keys">
+      {keys.map((combo, index) => (
+        <Fragment key={combo.join("+")}>
+          {index > 0 && <span className="eda-shortcut-or">or</span>}
+          {combo.map((key) => (
+            <kbd key={key}>{key}</kbd>
+          ))}
+        </Fragment>
+      ))}
+    </span>
+  );
+}
+
+export function KeyboardShortcutsDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="eda-shortcuts max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Keyboard shortcuts</DialogTitle>
+          <DialogDescription>
+            Letter shortcuts work while focus is in the workspace and you are
+            not typing in a field.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="eda-shortcut-groups">
+          {shortcutGroups.map((group) => (
+            <section key={group.title} aria-label={group.title}>
+              <h3>{group.title}</h3>
+              <dl>
+                {group.shortcuts.map((shortcut) => (
+                  <div key={shortcut.action}>
+                    <dt>{shortcut.action}</dt>
+                    <dd>
+                      <Keys keys={shortcut.keys} />
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          ))}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
