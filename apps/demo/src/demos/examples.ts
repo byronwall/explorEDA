@@ -121,8 +121,8 @@ export const examples: ExampleData[] = [
   },
   {
     id: "box-plot",
-    title: "Box Plot with Beeswarm",
-    description: "Compare distributions with sampled individual observations.",
+    title: "Box Plot with Violin",
+    description: "Compare quartiles and the shape of each distribution.",
     icon: BarChart,
     data: "/correlated_medium.csv",
     savedData: boxPlotSettings,

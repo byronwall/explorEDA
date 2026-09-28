@@ -103,7 +103,6 @@ const box = (
   whiskerType: "tukey",
   showOutliers: true,
   violinOverlay: false,
-  beeSwarmOverlay: false,
   sortBy: "label",
   violinBandwidth: 0.3,
   autoBandwidth: true,

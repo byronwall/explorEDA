@@ -1,6 +1,6 @@
 # Beeswarm performance
 
-Measured locally on 2026-09-20. The box-plot example now enables beeswarm by default.
+Measured locally on 2026-09-20. At that time the box-plot example enabled beeswarm by default. Box plots no longer offer the beeswarm overlay; the layout function remains for future categorical-axis layouts.
 
 Each point previously scanned earlier points up to 100 times. Each comparison also recalculated both screen-space Y positions. Large groups therefore caused much more work than their SVG count suggested.
 

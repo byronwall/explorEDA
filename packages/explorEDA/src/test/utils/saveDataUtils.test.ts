@@ -9,6 +9,7 @@ import {
   migrateDataVersion,
 } from "@/utils/saveDataUtils";
 import { SavedDataStructure } from "@/types/SavedDataStructure";
+import { boxPlotDefinition } from "@/components/charts/BoxPlot/definition";
 import type { SavedRow } from "@/types/SavedDataStructure";
 
 describe("saveDataUtils", () => {
@@ -64,6 +65,22 @@ describe("saveDataUtils", () => {
   describe("validateSavedData", () => {
     it("should return true for valid data", () => {
       expect(validateSavedData(mockValidData)).toBe(true);
+    });
+
+    it("accepts box plots saved with or without the retired bee swarm setting", () => {
+      const boxPlot = boxPlotDefinition.createDefaultSettings(
+        { x: 0, y: 0, w: 6, h: 4 },
+        "value"
+      );
+      expect(validateSavedData({ ...mockValidData, charts: [boxPlot] })).toBe(
+        true
+      );
+      expect(
+        validateSavedData({
+          ...mockValidData,
+          charts: [{ ...boxPlot, beeSwarmOverlay: true }],
+        })
+      ).toBe(true);
     });
 
     it("should return false for null or undefined", () => {

@@ -24,7 +24,6 @@ export interface BoxPlotSettings extends BaseChartSettings {
   whiskerType: "tukey" | "minmax" | "stdDev";
   showOutliers: boolean;
   violinOverlay: boolean;
-  beeSwarmOverlay: boolean;
   styles: BoxPlotStyleSettings;
   filters: Filter[];
   sortBy: "median" | "label";
@@ -51,7 +50,6 @@ export const boxPlotDefinition: ChartDefinition<BoxPlotSettings> = {
     whiskerType: "tukey",
     showOutliers: true,
     violinOverlay: false,
-    beeSwarmOverlay: false,
     sortBy: "label",
     violinBandwidth: 0.3,
     autoBandwidth: true,

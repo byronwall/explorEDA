@@ -453,7 +453,7 @@ export const exampleCoverage = [
   },
   {
     exampleId: "box-plot",
-    intent: "Compare a box plot with a beeswarm, histogram, and summary table.",
+    intent: "Compare a box plot with a violin overlay, histogram, and summary table.",
     features: {
       "chart:bar": "shown",
       "chart:boxplot": "shown",
