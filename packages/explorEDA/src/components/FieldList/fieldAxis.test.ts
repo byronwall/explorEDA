@@ -74,19 +74,26 @@ describe("axisRefusal", () => {
   const [lineX] = axisTargets([line]);
 
   it("accepts numbers on numeric axes", () => {
-    expect(axisRefusal(scatterX!, facts("units", "numeric"))).toBeUndefined();
+    expect(axisRefusal(lineY!, facts("units", "numeric"))).toBeUndefined();
   });
 
   it("refuses text, dates, and fields without finite numbers", () => {
-    expect(axisRefusal(scatterX!, facts("region", "categorical"))).toBe(
+    expect(axisRefusal(lineY!, facts("region", "categorical"))).toBe(
       "This axis needs numbers, and region is text"
     );
     expect(axisRefusal(lineY!, facts("date", "datetime"))).toBe(
       "This axis needs numbers, and date is a date"
     );
-    expect(axisRefusal(scatterX!, facts("blank", "numeric", false))).toBe(
+    expect(axisRefusal(lineY!, facts("blank", "numeric", false))).toBe(
       "blank has no finite numbers"
     );
+  });
+
+  it("lets a scatter axis take numbers or categories", () => {
+    expect(axisRefusal(scatterX!, facts("units", "numeric"))).toBeUndefined();
+    expect(
+      axisRefusal(scatterX!, facts("region", "categorical"))
+    ).toBeUndefined();
   });
 
   it("lets a line's x axis take dates", () => {
