@@ -180,7 +180,9 @@ export function PlotChartPanel({
     "left" | "right" | "top" | "bottom"
   >("right");
   const [settingsHeight, setSettingsHeight] = useState(460);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const placeSettings = (open: boolean) => {
+    setSettingsOpen(open);
     if (!open || !panelRef.current) return;
     settingsAnchor.current = panelRef.current;
     const rect = panelRef.current.getBoundingClientRect();
@@ -267,6 +269,8 @@ export function PlotChartPanel({
     <div
       ref={panelRef}
       className={`eda-panel bg-card border rounded-lg flex min-w-0 flex-col overflow-hidden ${expanded ? "eda-panel-expanded" : ""}`}
+      // Ring the chart while its settings are open so the editor has a clear owner.
+      data-settings-open={settingsOpen || undefined}
       style={{
         width: widthWithPadding,
         height: heightWithPadding,

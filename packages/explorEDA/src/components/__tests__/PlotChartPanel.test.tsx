@@ -90,6 +90,36 @@ it("previews filtered rows without adding a chart and clears the chart filter fr
   ).not.toBeInTheDocument();
 });
 
+it("marks the chart whose settings are open", async () => {
+  const chart = {
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "value"
+    ),
+    title: "Values",
+  };
+  render(
+    <DataLayerProvider data={[{ value: 1 }, { value: 2 }]} charts={[chart]}>
+      <PlotChartPanel
+        settings={chart}
+        width={500}
+        height={400}
+        onDelete={() => {}}
+        onDuplicate={() => {}}
+      />
+    </DataLayerProvider>
+  );
+  const panel = screen.getByRole("region", { name: "Values" });
+  expect(panel).not.toHaveAttribute("data-settings-open");
+  fireEvent.click(screen.getByRole("button", { name: "Configure Values" }));
+  await screen.findByRole("dialog", { name: "Settings for Values" });
+  expect(panel).toHaveAttribute("data-settings-open", "true");
+  fireEvent.keyDown(document.activeElement ?? document.body, {
+    key: "Escape",
+  });
+  await waitFor(() => expect(panel).not.toHaveAttribute("data-settings-open"));
+});
+
 it("applies a chart type change together and can reset the edit session", async () => {
   const chart = {
     ...barChartDefinition.createDefaultSettings(
