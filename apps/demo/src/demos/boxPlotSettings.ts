@@ -40,7 +40,7 @@ export const boxPlotSettings: SavedDataStructure = {
       colorField: undefined,
     },
     {
-      title: "Box Plot with Beeswarm",
+      title: "Box Plot with Violin",
       type: "boxplot",
       field: "Water Consumption (L)",
       layout: { x: 6, y: 0, w: 6, h: 4 },
@@ -58,8 +58,7 @@ export const boxPlotSettings: SavedDataStructure = {
       id: "384f8bd5-0c6f-4997-86ef-822749431aff",
       whiskerType: "tukey",
       showOutliers: true,
-      violinOverlay: false,
-      beeSwarmOverlay: true,
+      violinOverlay: true,
       sortBy: "median",
       violinBandwidth: 0.3,
       autoBandwidth: true,

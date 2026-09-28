@@ -127,17 +127,6 @@ export function BoxPlotSettingsPanel({
           )}
         </>
       )}
-
-      <div className="grid grid-cols-[120px_1fr] items-center gap-4">
-        <Label htmlFor="beeSwarmOverlay">Bee Swarm</Label>
-        <Switch
-          id="beeSwarmOverlay"
-          checked={settings.beeSwarmOverlay}
-          onCheckedChange={(checked) =>
-            onSettingsChange({ ...settings, beeSwarmOverlay: checked })
-          }
-        />
-      </div>
     </div>
   );
 }

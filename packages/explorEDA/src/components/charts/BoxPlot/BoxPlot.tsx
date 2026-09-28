@@ -19,10 +19,8 @@ import { getChartAxisFields, getChartAxisLabel } from "../chartAccessibility";
 import { useGetColumnDataForIds } from "../useGetColumnData";
 import { useGetLiveData } from "../useGetLiveData";
 import {
-  calculateBeeSwarmPositions,
   calculateBoxPlotStats,
   calculateKernelDensity,
-  MAX_BEE_SWARM_POINTS_PER_GROUP,
 } from "./boxPlotCalculations";
 import { BoxPlotSettings } from "./definition";
 
@@ -230,30 +228,6 @@ export function BoxPlot({
     return scale;
   }, [allData, innerHeight, settings.yAxis]) as ScaleLinear<number, number>;
 
-  // Calculate bee swarm positions in screen space so ranges keep one meaning.
-  const groupBeeSwarmPositions = useMemo(() => {
-    if (!settings.beeSwarmOverlay) {
-      return null;
-    }
-
-    return groupedData.map(({ group, data }) => ({
-      group,
-      positions: calculateBeeSwarmPositions(
-        data,
-        xScale.bandwidth(),
-        MAX_BEE_SWARM_POINTS_PER_GROUP,
-        0,
-        yScale
-      ),
-    }));
-  }, [groupedData, settings.beeSwarmOverlay, xScale, yScale]);
-
-  const beeSwarmIsSampled =
-    settings.beeSwarmOverlay &&
-    groupedData.some(
-      ({ data }) => data.length > MAX_BEE_SWARM_POINTS_PER_GROUP
-    );
-
   const activeFilter = useMemo(() => {
     return settings.filters.find(
       (f: Filter) => f.field === settings.colorField
@@ -345,18 +319,6 @@ export function BoxPlot({
         brushingMode="none"
         settings={{ ...settings, margin }}
       >
-        {beeSwarmIsSampled && (
-          <text
-            x={innerWidth}
-            y={14}
-            textAnchor="end"
-            fontSize={10}
-            className="fill-muted-foreground"
-            pointerEvents="none"
-          >
-            Sample ≤{MAX_BEE_SWARM_POINTS_PER_GROUP}/group · boxes use all rows
-          </text>
-        )}
         {/* Main content */}
         {groupStats
           .filter(({ stats }) => stats.totalCount > 0)
@@ -376,11 +338,6 @@ export function BoxPlot({
             const kde = groupKDEs?.find((g) => g.group === group)?.kde;
             const firstKde = kde?.[0];
             const lastKde = kde?.at(-1);
-
-            // Get bee swarm positions for this group if enabled
-            const beeSwarmPositions = groupBeeSwarmPositions?.find(
-              (g) => g.group === group
-            )?.positions;
 
             const format = (value: number) =>
               formatFieldValue(settings.field, value);
@@ -506,78 +463,31 @@ export function BoxPlot({
                 {settings.violinOverlay && kde && firstKde && lastKde && (
                   <g>
                     <path
-                      d={createPath(
-                        settings.beeSwarmOverlay
-                          ? // If bee swarm is enabled, only show left half of violin
-                            [
-                              [boxWidth / 2, yScale(firstKde[0])] as [
-                                number,
-                                number,
-                              ],
-                              ...kde.map(
-                                ([x, y]) =>
-                                  [
-                                    boxWidth / 2 - y * boxWidth * 0.4,
-                                    yScale(x),
-                                  ] as [number, number]
-                              ),
-                              [boxWidth / 2, yScale(lastKde[0])] as [
-                                number,
-                                number,
-                              ],
+                      d={createPath([
+                        [boxWidth / 2, yScale(firstKde[0])],
+                        ...kde.map(
+                          ([x, y]) =>
+                            [boxWidth / 2 + y * boxWidth * 0.4, yScale(x)] as [
+                              number,
+                              number,
                             ]
-                          : // Otherwise show full violin
-                            [
-                              [boxWidth / 2, yScale(firstKde[0])] as [
-                                number,
-                                number,
-                              ],
-                              ...kde.map(
-                                ([x, y]) =>
-                                  [
-                                    boxWidth / 2 + y * boxWidth * 0.4,
-                                    yScale(x),
-                                  ] as [number, number]
-                              ),
-                              ...[...kde]
-                                .reverse()
-                                .map(
-                                  ([x, y]) =>
-                                    [
-                                      boxWidth / 2 - y * boxWidth * 0.4,
-                                      yScale(x),
-                                    ] as [number, number]
-                                ),
-                            ]
-                      )}
+                        ),
+                        ...[...kde]
+                          .reverse()
+                          .map(
+                            ([x, y]) =>
+                              [
+                                boxWidth / 2 - y * boxWidth * 0.4,
+                                yScale(x),
+                              ] as [number, number]
+                          ),
+                      ])}
                       fill={boxColor}
                       fillOpacity={0.2}
                       stroke={boxColor}
                       strokeWidth={1}
                       pointerEvents="none"
                     />
-                  </g>
-                )}
-
-                {/* Bee swarm overlay */}
-                {settings.beeSwarmOverlay && beeSwarmPositions && (
-                  <g>
-                    {beeSwarmPositions.map(([x, y], i) => (
-                      <circle
-                        key={i}
-                        cx={
-                          settings.violinOverlay
-                            ? boxWidth / 2 + Math.abs(x)
-                            : boxWidth / 2 + x
-                        }
-                        cy={yScale(y)}
-                        r={2}
-                        fill={boxColor}
-                        fillOpacity={0.5}
-                        stroke="none"
-                        pointerEvents="none"
-                      />
-                    ))}
                   </g>
                 )}
               </g>
