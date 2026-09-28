@@ -1,14 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { ActionTooltip } from "./ui/tooltip";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { ColorScaleManager } from "./ColorScaleManager";
 import { ChartCreationButtons } from "./plot/ChartCreationButtons";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import { RowsView } from "./RowsView";
+import { RowsPeek } from "./RowsPeek";
 import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { ActiveFilterStatus } from "./ActiveFilterStatus";
 import type { ChartLayout } from "@/types/ChartTypes";
@@ -26,6 +24,7 @@ import {
   Keyboard,
   ListTree,
   MoreHorizontal,
+  Rows3,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
@@ -53,12 +52,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-
-// Add this conversion function
-// The workspace panels are large surfaces reached through the view tabs, so they
-// stay out of the tab order and never draw a focus ring around the whole grid.
-const workspacePanelClassName =
-  "mt-0 outline-none focus-visible:outline-none focus-visible:ring-0";
 
 const gridToPixels = (
   layout: ChartLayout,
@@ -102,10 +95,8 @@ export function PlotManager() {
   const data = useDataLayer((state) => state.data);
   const showAlert = useAlertStore((state) => state.showAlert);
 
-  const [activeTab, setActiveTab] = useState("charts");
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
-  const [rowsToolbarTarget, setRowsToolbarTarget] =
-    useState<HTMLDivElement | null>(null);
+  const [calculationsOpen, setCalculationsOpen] = useState(false);
   const knownChartIds = useRef(new Set<string>());
   const [announcement, setAnnouncement] = useState("");
   const [jsonDialogOpen, setJsonDialogOpen] = useState(false);
@@ -115,11 +106,14 @@ export function PlotManager() {
 
   // Add ref and state for container dimensions
   const containerRef = useRef<HTMLDivElement>(null);
+  const controlsRef = useRef<HTMLDivElement>(null);
   const fieldsToggleRef = useRef<HTMLButtonElement>(null);
+  const rowsToggleRef = useRef<HTMLButtonElement>(null);
   const fieldListId = useId();
+  const rowsPeekId = useId();
   const [fieldsOpen, setFieldsOpen] = useState(false);
   const [fieldsOverview, setFieldsOverview] = useState(false);
-  const fieldsAvailable = activeTab === "charts" || activeTab === "rows";
+  const [rowsOpen, setRowsOpen] = useState(false);
 
   const closeFields = useCallback(() => {
     const list = document.getElementById(fieldListId);
@@ -128,6 +122,13 @@ export function PlotManager() {
     setFieldsOverview(false);
     if (hadFocus) fieldsToggleRef.current?.focus({ preventScroll: true });
   }, [fieldListId]);
+
+  const closeRows = useCallback(() => {
+    const peek = document.getElementById(rowsPeekId);
+    const hadFocus = peek?.contains(document.activeElement) ?? false;
+    setRowsOpen(false);
+    if (hadFocus) rowsToggleRef.current?.focus({ preventScroll: true });
+  }, [rowsPeekId]);
 
   // Letter shortcuts respond unless the user is typing. With several
   // workspaces on a page, only the focused one responds.
@@ -165,6 +166,25 @@ export function PlotManager() {
     [fieldListId]
   );
 
+  // R peeks at the live rows.
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.key.toLowerCase() !== "r" ||
+        event.shiftKey ||
+        !acceptsShortcut(event) ||
+        document.querySelector("[role='dialog']")
+      ) {
+        return;
+      }
+      event.preventDefault();
+      if (rowsOpen) closeRows();
+      else setRowsOpen(true);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [rowsOpen, closeRows, acceptsShortcut]);
+
   // ? opens the keyboard shortcuts.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -180,7 +200,6 @@ export function PlotManager() {
 
   // F toggles the field list and Shift+F its full view.
   useEffect(() => {
-    if (!fieldsAvailable) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key.toLowerCase() !== "f" || !acceptsShortcut(event)) return;
       event.preventDefault();
@@ -195,7 +214,7 @@ export function PlotManager() {
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [fieldsAvailable, fieldsOpen, closeFields, acceptsShortcut]);
+  }, [fieldsOpen, closeFields, acceptsShortcut]);
   const [containerWidth, setContainerWidth] = useState(0);
 
   // Add useEffect to measure container
@@ -234,7 +253,7 @@ export function PlotManager() {
     highlightChartInContainer(containerRef.current, id);
   }, []);
   const showChart = useCallback((id: string) => {
-    setActiveTab("charts");
+    setRowsOpen(false);
     requestAnimationFrame(() => {
       focusChartInContainer(containerRef.current, id);
       highlightChartInContainer(containerRef.current, id);
@@ -263,7 +282,7 @@ export function PlotManager() {
 
     const title = addedChart.title || "New chart";
     setAnnouncement(`${title} added`);
-    setActiveTab("charts");
+    setRowsOpen(false);
     requestAnimationFrame(() => focusChartElement(addedChart.id));
   }, [charts, focusChartElement]);
 
@@ -342,164 +361,172 @@ export function PlotManager() {
   return (
     <div className="eda-workspace w-full min-w-0 pb-8" ref={containerRef}>
       <div
+        ref={controlsRef}
         className="eda-workspace-controls"
-        data-fields-open={(fieldsOpen && fieldsAvailable) || undefined}
+        data-fields-open={fieldsOpen || undefined}
       >
         <header className="eda-workspace-toolbar">
-          <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="shrink-0"
+          <div
+            role="group"
+            aria-label="Inspect data"
+            className="eda-toolbar-group"
+          >
+            <Button
+              ref={fieldsToggleRef}
+              variant="ghost"
+              size="icon"
+              className="eda-fields-toggle"
+              aria-label="Fields"
+              aria-pressed={fieldsOpen}
+              aria-expanded={fieldsOpen}
+              aria-controls={fieldsOpen ? fieldListId : undefined}
+              tooltip={
+                fieldsOpen
+                  ? "Hide the field list (F)"
+                  : "Fields: every field with search, quick stats, and chart actions (F). Shift+F opens every distribution in a full view."
+              }
+              onClick={() => (fieldsOpen ? closeFields() : setFieldsOpen(true))}
             >
-              <TabsList>
-                <TabsTrigger value="charts" className="flex items-center gap-2">
-                  Charts
-                </TabsTrigger>
-                <TabsTrigger value="rows" className="flex items-center gap-2">
-                  Rows
-                </TabsTrigger>
-                <TabsTrigger
-                  value="calculations"
+              <ListTree aria-hidden="true" />
+            </Button>
+            <Button
+              ref={rowsToggleRef}
+              variant="ghost"
+              size="icon"
+              aria-label="Rows"
+              aria-pressed={rowsOpen}
+              aria-expanded={rowsOpen}
+              aria-controls={rowsOpen ? rowsPeekId : undefined}
+              tooltip={
+                rowsOpen
+                  ? "Close the rows (R or Esc)"
+                  : "Rows: peek at the rows that pass every chart filter (R)"
+              }
+              onClick={() => (rowsOpen ? closeRows() : setRowsOpen(true))}
+            >
+              <Rows3 aria-hidden="true" />
+            </Button>
+          </div>
+          <span className="eda-toolbar-divider" aria-hidden="true" />
+          <ChartCreationButtons />
+          <ActiveFilterStatus
+            view={rowsOpen ? "rows" : "charts"}
+            onShowChart={showChart}
+            onHighlightChart={highlightChart}
+          />
+          <div
+            role="group"
+            aria-label="Configure workspace"
+            className="eda-toolbar-group"
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Calculations"
+              tooltip="Calculations: create and edit calculated fields"
+              onClick={() => setCalculationsOpen(true)}
+            >
+              <Calculator aria-hidden="true" />
+            </Button>
+            <ColorScaleManager />
+            <Popover>
+              <ActionTooltip content="Grid settings: columns, row height, and spacing">
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Grid settings"
+                  >
+                    <Grid aria-hidden="true" />
+                  </Button>
+                </PopoverTrigger>
+              </ActionTooltip>
+              <PopoverContent
+                align="end"
+                aria-label="Grid settings"
+                className="w-72 space-y-4"
+              >
+                <h3 className="text-sm font-semibold">Grid settings</h3>
+                <GridSettingsPanel />
+              </PopoverContent>
+            </Popover>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Workspace actions"
+                  tooltip="Workspace actions: save, open, copy data, and shortcuts"
+                >
+                  <MoreHorizontal aria-hidden="true" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={copyChartsToClipboard}
                   className="flex items-center gap-2"
                 >
-                  <Calculator className="h-4 w-4" />
-                  Calculations
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-            {activeTab === "charts" && <ChartCreationButtons />}
-            {fieldsAvailable && (
-              <Button
-                ref={fieldsToggleRef}
-                variant="ghost"
-                size="sm"
-                className="eda-fields-toggle"
-                aria-pressed={fieldsOpen}
-                aria-expanded={fieldsOpen}
-                aria-controls={fieldsOpen ? fieldListId : undefined}
-                tooltip={
-                  fieldsOpen
-                    ? "Hide the field list (F)"
-                    : "Show every field with search, quick stats, and chart actions (F). Shift+F opens every distribution in a full view."
-                }
-                onClick={() =>
-                  fieldsOpen ? closeFields() : setFieldsOpen(true)
-                }
-              >
-                <ListTree className="h-4 w-4" />
-                Fields
-              </Button>
-            )}
-          </div>
-          <div className="ml-auto flex flex-wrap items-center gap-2">
-            {activeTab === "rows" && <div ref={setRowsToolbarTarget} />}
-            {(activeTab === "charts" || activeTab === "rows") && (
-              <>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      aria-label="Workspace actions"
-                      tooltip="Workspace actions"
-                    >
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem
-                      onClick={copyChartsToClipboard}
-                      className="flex items-center gap-2"
-                    >
-                      <Copy className="h-4 w-4" />
-                      Copy settings JSON
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => {
-                        openJsonDialog("settings");
-                      }}
-                      className="flex items-center gap-2"
-                    >
-                      Open settings JSON
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={copyAnalysisToClipboard}
-                      className="flex items-center gap-2"
-                    >
-                      <Copy className="h-4 w-4" />
-                      Copy full analysis JSON
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => {
-                        openJsonDialog("analysis");
-                      }}
-                      className="flex items-center gap-2"
-                    >
-                      Open full analysis JSON
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={copyDataToClipboard}
-                      className="flex items-center gap-2"
-                    >
-                      <Copy className="h-4 w-4" />
-                      Copy Data
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setShortcutsOpen(true)}
-                      className="flex items-center gap-2"
-                    >
-                      <Keyboard className="h-4 w-4" />
-                      Keyboard shortcuts
-                      <kbd className="ml-auto text-xs text-muted-foreground">
-                        ?
-                      </kbd>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={handleRemoveAllCharts}
-                      className="flex items-center gap-2 text-destructive"
-                    >
-                      <X className="h-4 w-4" />
-                      Remove All Charts
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </>
-            )}
-            {activeTab === "charts" && (
-              <>
-                <ColorScaleManager />
-                <Popover>
-                  <ActionTooltip content="Grid settings">
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label="Grid settings"
-                      >
-                        <Grid className="h-4 w-4" />
-                      </Button>
-                    </PopoverTrigger>
-                  </ActionTooltip>
-                  <PopoverContent
-                    align="end"
-                    aria-label="Grid settings"
-                    className="w-72 space-y-4"
-                  >
-                    <h3 className="text-sm font-semibold">Grid settings</h3>
-                    <GridSettingsPanel />
-                  </PopoverContent>
-                </Popover>
-              </>
-            )}
+                  <Copy className="h-4 w-4" />
+                  Copy settings JSON
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    openJsonDialog("settings");
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  Open settings JSON
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={copyAnalysisToClipboard}
+                  className="flex items-center gap-2"
+                >
+                  <Copy className="h-4 w-4" />
+                  Copy full analysis JSON
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    openJsonDialog("analysis");
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  Open full analysis JSON
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={copyDataToClipboard}
+                  className="flex items-center gap-2"
+                >
+                  <Copy className="h-4 w-4" />
+                  Copy Data
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setShortcutsOpen(true)}
+                  className="flex items-center gap-2"
+                >
+                  <Keyboard className="h-4 w-4" />
+                  Keyboard shortcuts
+                  <kbd className="ml-auto text-xs text-muted-foreground">?</kbd>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleRemoveAllCharts}
+                  className="flex items-center gap-2 text-destructive"
+                >
+                  <X className="h-4 w-4" />
+                  Remove All Charts
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
-        <ActiveFilterStatus
-          view={activeTab}
-          onShowChart={showChart}
-          onHighlightChart={highlightChart}
-        />
-        {fieldsOpen && fieldsAvailable && (
+        {rowsOpen && (
+          <RowsPeek
+            id={rowsPeekId}
+            width={containerWidth}
+            containerRef={controlsRef}
+            onClose={closeRows}
+          />
+        )}
+        {fieldsOpen && (
           <FieldList
             id={fieldListId}
             onClose={closeFields}
@@ -566,85 +593,60 @@ export function PlotManager() {
         {announcement}
       </div>
 
-      <Tabs value={activeTab} className="w-full">
-        <TabsContent
-          value="charts"
-          tabIndex={-1}
-          className={workspacePanelClassName}
-        >
-          <h2 className="sr-only">Charts</h2>
-          {charts.length === 0 ? (
-            <Card>
-              <CardContent className="space-y-2 pt-6">
-                <h3 className="font-medium">No charts yet</h3>
-                <p className="text-sm text-muted-foreground">
-                  Add a chart to begin exploring this data.
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            containerWidth > 0 && (
-              <ChartGridLayout charts={charts} containerWidth={containerWidth}>
-                {charts.map((chart) => {
-                  if (!chart.layout) {
-                    return null;
-                  }
-                  const size = gridToPixels(
-                    chart.layout,
-                    containerWidth,
-                    chartGridSettings
-                  );
-                  return (
-                    <div key={chart.id} data-chart-id={chart.id} tabIndex={-1}>
-                      <PlotChartPanel
-                        settings={chart}
-                        onDelete={() => removeChart(chart)}
-                        onDuplicate={() => {
-                          const chartWithoutId = Object.fromEntries(
-                            Object.entries(chart).filter(
-                              ([key]) => key !== "id"
-                            )
-                          ) as Omit<typeof chart, "id">;
-                          addChart(chartWithoutId);
-                        }}
-                        width={size.width}
-                        height={size.height}
-                      />
-                    </div>
-                  );
-                })}
-              </ChartGridLayout>
-            )
-          )}
-        </TabsContent>
-        <TabsContent
-          forceMount
-          value="rows"
-          tabIndex={-1}
-          className={cn(
-            workspacePanelClassName,
-            "data-[state=inactive]:hidden"
-          )}
-        >
-          <h2 className="sr-only">Rows</h2>
-          <RowsView
-            width={containerWidth}
-            active={activeTab === "rows"}
-            toolbarTarget={rowsToolbarTarget}
-          />
-        </TabsContent>
-        <TabsContent
-          value="calculations"
-          tabIndex={-1}
-          className={workspacePanelClassName}
-        >
+      <main className="eda-chart-area">
+        <h2 className="sr-only">Charts</h2>
+        {charts.length === 0 ? (
           <Card>
-            <CardContent className="pt-6">
-              <CalculationManager />
+            <CardContent className="space-y-2 pt-6">
+              <h3 className="font-medium">No charts yet</h3>
+              <p className="text-sm text-muted-foreground">
+                Add a chart to begin exploring this data.
+              </p>
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+        ) : (
+          containerWidth > 0 && (
+            <ChartGridLayout charts={charts} containerWidth={containerWidth}>
+              {charts.map((chart) => {
+                if (!chart.layout) {
+                  return null;
+                }
+                const size = gridToPixels(
+                  chart.layout,
+                  containerWidth,
+                  chartGridSettings
+                );
+                return (
+                  <div key={chart.id} data-chart-id={chart.id} tabIndex={-1}>
+                    <PlotChartPanel
+                      settings={chart}
+                      onDelete={() => removeChart(chart)}
+                      onDuplicate={() => {
+                        const chartWithoutId = Object.fromEntries(
+                          Object.entries(chart).filter(([key]) => key !== "id")
+                        ) as Omit<typeof chart, "id">;
+                        addChart(chartWithoutId);
+                      }}
+                      width={size.width}
+                      height={size.height}
+                    />
+                  </div>
+                );
+              })}
+            </ChartGridLayout>
+          )
+        )}
+      </main>
+
+      <Dialog open={calculationsOpen} onOpenChange={setCalculationsOpen}>
+        <DialogContent
+          className="eda-calculations-dialog max-h-[88vh] overflow-y-auto sm:max-w-4xl"
+          aria-describedby={undefined}
+        >
+          <DialogTitle className="sr-only">Calculations</DialogTitle>
+          <CalculationManager />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

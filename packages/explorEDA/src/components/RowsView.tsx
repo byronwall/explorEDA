@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, useLayoutEffect } from "react";
+import { useMemo } from "react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { DataTable } from "./charts/DataTable/DataTable";
 import {
@@ -8,11 +8,11 @@ import {
 
 export function RowsView({
   width,
-  active,
+  height,
   toolbarTarget,
 }: {
   width: number;
-  active: boolean;
+  height: number;
   toolbarTarget: HTMLElement | null;
 }) {
   const data = useDataLayer((state) => state.data);
@@ -32,41 +32,13 @@ export function RowsView({
     const ids = new Set(crossfilter.getFilteredRowIds());
     return data.filter((row) => ids.has(row.__ID));
   }, [data, crossfilter, liveItems]);
-  const ref = useRef<HTMLDivElement>(null);
-  const [height, setHeight] = useState(600);
-  useLayoutEffect(() => {
-    if (!active || !ref.current) return;
-    const measure = () =>
-      setHeight(
-        Math.max(
-          280,
-          window.innerHeight -
-            (ref.current?.getBoundingClientRect().top ?? 180) -
-            16
-        )
-      );
-    measure();
-    // Radix removes the previous tab after the first layout pass.
-    const frame = requestAnimationFrame(measure);
-    const observer = new ResizeObserver(measure);
-    observer.observe(ref.current.parentElement!.parentElement!);
-    window.addEventListener("resize", measure);
-    return () => {
-      cancelAnimationFrame(frame);
-      observer.disconnect();
-      window.removeEventListener("resize", measure);
-    };
-  }, [active]);
   return (
-    <div
-      ref={ref}
-      className="eda-rows-view overflow-hidden rounded-md border bg-card"
-    >
+    <div className="eda-rows-view overflow-hidden">
       <DataTable
         settings={settings}
         toolbarTarget={toolbarTarget}
         rows={rows}
-        width={width - 2}
+        width={width}
         height={height}
         onSettingsChange={(next) => updateRowsSettings(next)}
       />
