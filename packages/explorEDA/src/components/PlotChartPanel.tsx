@@ -64,6 +64,8 @@ interface PlotChartPanelProps {
   height: number;
 }
 
+const CATEGORY_LABELED_CHART_TYPES = new Set(["row", "boxplot"]);
+
 const TRACE_COPY = {
   scatter: {
     heading: "Scatter trace",
@@ -241,9 +243,12 @@ export function PlotChartPanel({
       );
   const fieldStripHeight =
     settings.type !== "scatter" && calculatedFields.length ? 28 : 0;
-  // Row charts color bars by their own labeled category, so a legend repeats them.
+  // Row charts and box plots color marks by their own labeled category, so a
+  // legend repeats them.
   const autoLegendHeight =
-    settings.colorField && settings.colorScaleId && settings.type !== "row"
+    settings.colorField &&
+    settings.colorScaleId &&
+    !CATEGORY_LABELED_CHART_TYPES.has(settings.type)
       ? 36
       : 0;
 

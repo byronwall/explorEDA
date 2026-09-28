@@ -9,6 +9,7 @@ import { beforeAll, expect, it, vi } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import { barChartDefinition } from "../charts/BarChart/definition";
+import { boxPlotDefinition } from "../charts/BoxPlot/definition";
 import { rowChartDefinition } from "../charts/RowChart/definition";
 import { PlotChartPanel } from "../PlotChartPanel";
 
@@ -257,7 +258,7 @@ it("clears a selected bar when another chart changes its filter scope", async ()
   ).toHaveTextContent("Alt-click a bar");
 });
 
-it("omits the color legend on row charts, whose bars already label each color", async () => {
+it("omits the color legend on row charts and box plots, whose marks already label each color", async () => {
   const colorScale = {
     id: "category-colors",
     name: "category",
@@ -289,6 +290,14 @@ it("omits the color legend on row charts, whose bars already label each color", 
     ...colored,
     title: "Values by category",
   };
+  const boxPlot = {
+    ...boxPlotDefinition.createDefaultSettings(
+      { x: 0, y: 4, w: 6, h: 4 },
+      "value"
+    ),
+    ...colored,
+    title: "Value spread by category",
+  };
   function Panels() {
     const charts = useDataLayer((s) => s.charts);
     return (
@@ -313,7 +322,7 @@ it("omits the color legend on row charts, whose bars already label each color", 
         { category: "B", value: 2 },
       ]}
       savedData={{
-        charts: [rowChart, barChart],
+        charts: [rowChart, barChart, boxPlot],
         calculations: [],
         gridSettings: {
           columnCount: 12,
@@ -343,6 +352,11 @@ it("omits the color legend on row charts, whose bars already label each color", 
   expect(
     within(
       screen.getByRole("region", { name: "Rows by category" })
+    ).queryByRole("button", legendItem)
+  ).not.toBeInTheDocument();
+  expect(
+    within(
+      screen.getByRole("region", { name: "Value spread by category" })
     ).queryByRole("button", legendItem)
   ).not.toBeInTheDocument();
 });
