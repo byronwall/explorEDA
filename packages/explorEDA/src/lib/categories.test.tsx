@@ -341,7 +341,7 @@ it("keeps a numeric bin range filter when Alt-clicking a bar", async () => {
       { x: 0, y: 0, w: 6, h: 6 },
       "value"
     ),
-    filters: [{ type: "range" as const, field: "value", min: 1, max: 2 }],
+    filters: [{ type: "range" as const, field: "value", min: 0.5, max: 2.5 }],
   };
   const view = render(
     <DataLayerProvider data={[{ value: 1 }, { value: 2 }]} charts={[chart]}>
@@ -380,7 +380,33 @@ it("keeps a numeric bin range filter when Alt-clicking a bar", async () => {
   expect(
     await screen.findByRole("dialog", { name: "Bar trace inspector" })
   ).toHaveTextContent("Bin interval");
-  expect(screen.getByTestId("range-filter")).toHaveTextContent("value:1-2");
+  expect(screen.getByTestId("range-filter")).toHaveTextContent(
+    "value:0.5-2.5"
+  );
+});
+
+it("moves a range filter onto the current bin edges", async () => {
+  const chart = {
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 6 },
+      "value"
+    ),
+    filters: [{ type: "range" as const, field: "value", min: 1.2, max: 2 }],
+  };
+  render(
+    <DataLayerProvider data={[{ value: 1 }, { value: 2 }]} charts={[chart]}>
+      <RangeProbe chartId={chart.id} />
+      <CategoryChart chartId={chart.id} />
+    </DataLayerProvider>
+  );
+
+  // Whole-number bins edge at the half values: 1.2 moves to 1.5 and the
+  // halfway 2 moves outward to 2.5, so the bar for 2 stays whole.
+  await waitFor(() =>
+    expect(screen.getByTestId("range-filter")).toHaveTextContent(
+      "value:1.5-2.5"
+    )
+  );
 });
 
 it("finds only live numeric source rows and uses half-open bins", async () => {
