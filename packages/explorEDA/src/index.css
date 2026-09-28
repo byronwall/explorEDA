@@ -2631,7 +2631,7 @@ html {
   outline: 2px solid var(--ring);
   outline-offset: -2px;
 }
-.eda-workspace [data-chart-id][data-field-list-highlight] .eda-panel {
+.eda-workspace [data-chart-id][data-chart-highlight] .eda-panel {
   box-shadow:
     0 0 0 2px var(--background),
     0 0 0 4px color-mix(in oklab, var(--primary) 70%, transparent);

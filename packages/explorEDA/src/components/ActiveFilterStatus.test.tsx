@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { DataLayerProvider } from "@/providers/DataLayerProvider";
 import {
@@ -182,6 +182,33 @@ describe("ActiveFilterStatus", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Remove z: ≥ $12.50 from Data Table" })
+    ).toBeInTheDocument();
+  });
+
+  it("shows the owning chart from the label and removes only from the X", () => {
+    const chart = makeChart([
+      { type: "value", field: "category", values: ["x"] },
+    ]);
+    const onShowChart = vi.fn();
+
+    render(
+      <DataLayerProvider data={data} charts={[chart]}>
+        <ActiveFilterStatus onShowChart={onShowChart} />
+      </DataLayerProvider>
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Show Data Table, the chart with filter category: x",
+      })
+    );
+
+    expect(onShowChart).toHaveBeenCalledWith("table");
+    expect(screen.getByRole("status")).toHaveTextContent("Showing 2 of 3 rows");
+    expect(
+      screen.getByRole("button", {
+        name: "Remove category: x from Data Table",
+      })
     ).toBeInTheDocument();
   });
 });
