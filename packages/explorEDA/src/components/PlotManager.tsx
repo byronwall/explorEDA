@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { RowsView } from "./RowsView";
+import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { ActiveFilterStatus } from "./ActiveFilterStatus";
 import type { ChartLayout } from "@/types/ChartTypes";
 import {
@@ -22,6 +23,7 @@ import {
   Calculator,
   Copy,
   Grid,
+  Keyboard,
   ListTree,
   MoreHorizontal,
   X,
@@ -101,6 +103,7 @@ export function PlotManager() {
   const showAlert = useAlertStore((state) => state.showAlert);
 
   const [activeTab, setActiveTab] = useState("charts");
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [rowsToolbarTarget, setRowsToolbarTarget] =
     useState<HTMLDivElement | null>(null);
   const knownChartIds = useRef(new Set<string>());
@@ -126,19 +129,17 @@ export function PlotManager() {
     if (hadFocus) fieldsToggleRef.current?.focus({ preventScroll: true });
   }, [fieldListId]);
 
-  // F toggles the field list and Shift+F its full view, unless the user is
-  // typing.
-  useEffect(() => {
-    if (!fieldsAvailable) return;
-    const onKeyDown = (event: KeyboardEvent) => {
+  // Letter shortcuts respond unless the user is typing. With several
+  // workspaces on a page, only the focused one responds.
+  const acceptsShortcut = useCallback(
+    (event: KeyboardEvent) => {
       if (
-        event.key.toLowerCase() !== "f" ||
         event.metaKey ||
         event.ctrlKey ||
         event.altKey ||
         event.defaultPrevented
       ) {
-        return;
+        return false;
       }
       const target = event.target;
       if (
@@ -146,9 +147,8 @@ export function PlotManager() {
         (target.isContentEditable ||
           target.closest("input, textarea, select, [role='combobox']"))
       ) {
-        return;
+        return false;
       }
-      // With several workspaces on a page, only the focused one responds.
       const workspace = containerRef.current;
       const active = document.activeElement;
       if (
@@ -158,8 +158,31 @@ export function PlotManager() {
         !document.getElementById(fieldListId)?.contains(active)
       ) {
         const other = active.closest(".eda-workspace");
-        if (other && other !== workspace) return;
+        if (other && other !== workspace) return false;
       }
+      return true;
+    },
+    [fieldListId]
+  );
+
+  // ? opens the keyboard shortcuts.
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "?" || !acceptsShortcut(event)) return;
+      // The dialog itself sits outside the workspace; let it keep focus.
+      if (document.querySelector("[role='dialog']")) return;
+      event.preventDefault();
+      setShortcutsOpen(true);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [acceptsShortcut]);
+
+  // F toggles the field list and Shift+F its full view.
+  useEffect(() => {
+    if (!fieldsAvailable) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() !== "f" || !acceptsShortcut(event)) return;
       event.preventDefault();
       if (event.shiftKey) {
         setFieldsOpen(true);
@@ -172,7 +195,7 @@ export function PlotManager() {
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [fieldsAvailable, fieldsOpen, closeFields, fieldListId]);
+  }, [fieldsAvailable, fieldsOpen, closeFields, acceptsShortcut]);
   const [containerWidth, setContainerWidth] = useState(0);
 
   // Add useEffect to measure container
@@ -423,6 +446,16 @@ export function PlotManager() {
                       Copy Data
                     </DropdownMenuItem>
                     <DropdownMenuItem
+                      onClick={() => setShortcutsOpen(true)}
+                      className="flex items-center gap-2"
+                    >
+                      <Keyboard className="h-4 w-4" />
+                      Keyboard shortcuts
+                      <kbd className="ml-auto text-xs text-muted-foreground">
+                        ?
+                      </kbd>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
                       onClick={handleRemoveAllCharts}
                       className="flex items-center gap-2 text-destructive"
                     >
@@ -523,6 +556,11 @@ export function PlotManager() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <KeyboardShortcutsDialog
+        open={shortcutsOpen}
+        onOpenChange={setShortcutsOpen}
+      />
 
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {announcement}
