@@ -1800,12 +1800,15 @@ html {
   min-height: 24px;
   padding: 2px 4px;
 }
+/* left/top is the end of the axis title; the badge starts there. */
 .eda-scatter-axis-calc {
   position: absolute;
   z-index: 1;
+  transform: translateY(-50%);
 }
 .eda-scatter-axis-calc-y {
-  transform: rotate(-90deg);
+  transform-origin: top left;
+  transform: rotate(-90deg) translateY(-50%);
 }
 .eda-calc-peek {
   width: min(340px, calc(100vw - 24px));

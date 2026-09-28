@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -23,6 +24,7 @@ import {
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
 import {
+  BADGE_GAP,
   brushFilters,
   planScatter,
   scatterHoverReadout,
@@ -196,6 +198,35 @@ export function ScatterPlot({
     }
   }, [plan, width, height]);
 
+  // Title glyph widths vary by font, so move each badge to the rendered end.
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [badgeAnchors, setBadgeAnchors] = useState<
+    Record<string, { x: number; y: number }>
+  >({});
+  useLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const origin = root.getBoundingClientRect();
+    const next: Record<string, { x: number; y: number }> = {};
+    for (const badge of plan.calculatedBadges) {
+      const axis = badge.rotation ? "y" : "x";
+      const box = root
+        .querySelector(`[data-plan-id="${axis}:label"] text`)
+        ?.getBoundingClientRect();
+      if (!box?.width || !box.height) continue;
+      next[badge.id] = badge.rotation
+        ? {
+            x: box.left + box.width / 2 - origin.left,
+            y: box.top - origin.top - BADGE_GAP,
+          }
+        : {
+            x: box.right - origin.left + BADGE_GAP,
+            y: box.top + box.height / 2 - origin.top,
+          };
+    }
+    setBadgeAnchors(next);
+  }, [plan]);
+
   const handleBrushChange = useCallback(
     (extent: Extent | null) => {
       const filters = settings.filters.filter(
@@ -224,6 +255,7 @@ export function ScatterPlot({
 
   return (
     <div
+      ref={rootRef}
       style={{ width, height }}
       className="relative"
       onPointerLeave={() => setHoveredId(null)}
@@ -274,7 +306,10 @@ export function ScatterPlot({
             <span
               key={badge.id}
               className={`eda-scatter-axis-calc ${badge.rotation ? "eda-scatter-axis-calc-y" : ""}`}
-              style={{ left: badge.x, top: badge.y }}
+              style={{
+                left: badgeAnchors[badge.id]?.x ?? badge.x,
+                top: badgeAnchors[badge.id]?.y ?? badge.y,
+              }}
               onClickCapture={(event) => {
                 if (!event.altKey) return;
                 event.stopPropagation();

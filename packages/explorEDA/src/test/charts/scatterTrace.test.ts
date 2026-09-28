@@ -110,6 +110,16 @@ it("resolves source, calculation, and guide inputs from one scatter plan", () =>
     { id: "calculation:y", field: "net", rotation: -90 },
   ]);
   expect(badgePlan.pixelRatio).toBe(2);
+  // The badge follows the whole title, including the scale suffix.
+  const symlogBadgePlan = planScatter(
+    { ...settings, yAxis: { ...settings.yAxis, scaleType: "symlog" } },
+    { ...snapshot, calculatedFields: ["net"] },
+    400,
+    300
+  );
+  expect(
+    badgePlan.calculatedBadges[0]!.y - symlogBadgePlan.calculatedBadges[0]!.y
+  ).toBeGreaterThanOrEqual((" · symlog".length * 6) / 2);
 
   settings.filters = [{ type: "range", field: "price", min: 15, max: 25 }];
   const dimmedPlan = planScatter(settings, snapshot, 400, 300);
