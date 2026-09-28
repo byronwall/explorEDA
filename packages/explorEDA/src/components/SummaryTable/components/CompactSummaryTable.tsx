@@ -5,10 +5,16 @@ import { ArrowDown, ArrowUp, ArrowUpDown, Settings2 } from "lucide-react";
 import { FieldMetadata } from "@/components/FieldMetadata";
 import { ChartActions } from "./ChartActions";
 import { FieldInspector } from "./FieldInspector";
-import { summarizeField, type FieldSummary } from "./FieldDistribution";
+import {
+  summarizeField,
+  type FieldSummary,
+  type SparkFilter,
+} from "./FieldDistribution";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { FieldProfile } from "@/lib/fieldProfiles";
 import type { datum } from "@/types/ChartTypes";
+import type { Filter } from "@/types/FilterTypes";
+import isEqual from "react-fast-compare";
 import { cn } from "@/lib/utils";
 import { getChartSummary } from "../../charts/chartAccessibility";
 import type { SummaryTableSettings } from "../../charts/SummaryTable/definition";
@@ -107,13 +113,24 @@ export function CompactSummaryTable({
 }: CompactSummaryTableProps) {
   const formatValue = useDataLayer((state) => state.formatFieldValue);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
+  const updateChart = useDataLayer((state) => state.updateChart);
   const label = getFieldLabel ?? ((field: string) => field);
+  // A sparkline click replaces the field's filter; clicking it again clears it.
+  const filterField = (field: string, spark: SparkFilter) => {
+    const filter = { ...spark, field } as Filter;
+    const others = settings.filters.filter((item) => item.field !== field);
+    const same = settings.filters.some((item) => isEqual(item, filter));
+    updateChart(settings.id, {
+      filters: same ? others : [...others, filter],
+    });
+  };
   const rows = data.map((profile) => ({
     profile,
     summary: summarizeField(
       profile,
       (value) => formatValue(profile.name, value as datum),
-      label(profile.name)
+      label(profile.name),
+      (filter) => filterField(profile.name, filter)
     ),
   }));
   return (
