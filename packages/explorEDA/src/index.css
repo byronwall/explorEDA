@@ -144,6 +144,15 @@
 .eda-panel-expanded {
   box-shadow: none;
 }
+.eda-panel[data-settings-open] {
+  border-color: var(--ring);
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.eda-panel-actions button[data-state="open"] {
+  color: var(--primary);
+  background: var(--muted);
+}
 .eda-panel svg text {
   font-family: inherit;
   font-variant-numeric: tabular-nums;
@@ -437,7 +446,7 @@ html {
 }
 
 .eda-settings-popover {
-  border-color: var(--border);
+  border-color: var(--ring);
   box-shadow: 0 8px 28px rgb(20 40 70 / 13%);
 }
 @media (max-width: 640px) {
