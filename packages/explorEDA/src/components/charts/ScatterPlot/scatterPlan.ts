@@ -193,6 +193,31 @@ function bounds(ids: IdType[], data: Record<IdType, datum>): [number, number] {
   return min === Infinity ? [0, 1] : [min, max];
 }
 
+const DOMAIN_PADDING = 0.1;
+
+// d3's symlog transform with its default constant of 1.
+const symlog = (value: number) =>
+  Math.sign(value) * Math.log1p(Math.abs(value));
+const symexp = (value: number) =>
+  Math.sign(value) * Math.expm1(Math.abs(value));
+
+/**
+ * Pads a data extent by 10% of its on-screen span on each side, so points at
+ * the minimum and maximum sit fully inside the plot. A constant field gets half
+ * a unit on each side instead of an empty domain.
+ */
+export function paddedDomain(
+  [min, max]: [number, number],
+  scaleType: "linear" | "symlog"
+): [number, number] {
+  const to = scaleType === "symlog" ? symlog : (value: number) => value;
+  const from = scaleType === "symlog" ? symexp : (value: number) => value;
+  const low = to(min);
+  const high = to(max);
+  const pad = high > low ? (high - low) * DOMAIN_PADDING : 0.5;
+  return [from(low - pad), from(high + pad)];
+}
+
 function fieldLabel(field: string, settings: FieldSettingsMap) {
   return field === "__ID"
     ? "Row sequence"
@@ -217,32 +242,25 @@ export function planScatter(
     settings.yAxisLabel || fieldLabel(settings.yField, snapshot.fieldSettings);
   const [xMin, xMax] = bounds(snapshot.allIds, snapshot.xData);
   const [yMin, yMax] = bounds(snapshot.allIds, snapshot.yData);
-  const xBuffer = (xMax - xMin) * 0.1;
-  const yBuffer = (yMax - yMin) * 0.1;
-  const yDomain: [number, number] = [yMin - yBuffer, yMax + yBuffer];
+  const xType = settings.xAxis.scaleType === "symlog" ? "symlog" : "linear";
+  const yType = settings.yAxis.scaleType === "symlog" ? "symlog" : "linear";
+  const xDomain = paddedDomain([xMin, xMax], xType);
+  const actualYDomain = paddedDomain([yMin, yMax], yType);
   const { margin, policy: marginPolicy } = planChartMargin({
     margin: settings.margin,
     width,
-    yDomain,
+    yDomain: actualYDomain,
     hasXLabel: Boolean(xLabel),
     hasYLabel: Boolean(yLabel),
   });
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
-  const xDomain: [number, number] = [
-    settings.xAxis.scaleType === "symlog" ? xMin : xMin - xBuffer,
-    xMax + xBuffer,
-  ];
-  const actualYDomain: [number, number] =
-    settings.yAxis.scaleType === "symlog" ? [yMin, yDomain[1]] : yDomain;
   const xScale = numericScale(settings.xAxis)
     .domain(xDomain)
     .range([0, plotWidth]);
   const yScale = numericScale(settings.yAxis)
     .domain(actualYDomain)
     .range([plotHeight, 0]);
-  const xType = settings.xAxis.scaleType === "symlog" ? "symlog" : "linear";
-  const yType = settings.yAxis.scaleType === "symlog" ? "symlog" : "linear";
   const facetSet = new Set(snapshot.facetIds);
   // Preserve the current helper's rule: an empty facet list means unrestricted.
   const ids = snapshot.facetIds?.length
@@ -316,7 +334,7 @@ export function planScatter(
         population: "all source rows",
         rows: snapshot.allIds.length,
         bounds: [xMin, xMax],
-        padding: xType === "symlog" ? "10% above" : "10% on each side",
+        padding: "10% on each side",
       },
     },
     y: {
@@ -334,7 +352,7 @@ export function planScatter(
         population: "all source rows",
         rows: snapshot.allIds.length,
         bounds: [yMin, yMax],
-        padding: yType === "symlog" ? "10% above" : "10% on each side",
+        padding: "10% on each side",
       },
     },
   });
@@ -452,7 +470,7 @@ export function planScatter(
     domainInputs: {
       x: [xMin, xMax],
       y: [yMin, yMax],
-      buffer: 0.1,
+      buffer: DOMAIN_PADDING,
       population: "all",
     },
     legend,
