@@ -5,13 +5,14 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import { BaseChartProps } from "@/types/ChartTypes";
 import { ValueFilter } from "@/types/FilterTypes";
 import type { ScaleLinear } from "d3-scale";
-import { useCallback, useId, useMemo, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import { BaseChart } from "../BaseChart";
 import { buildScale, findAxisGuide } from "../Axis/axisPlan";
 import { useGetColumnData, useGetColumnDataForIds } from "../useGetColumnData";
 import { useGetLiveIds } from "../useGetLiveData";
 import { displayAggregateValue, type AggregateResult } from "@/lib/aggregates";
 import { barAt, planBarChart, type BarChartPlan } from "./barPlan";
+import { sameRange, snapRangeToBins } from "./bins";
 import { barTraceTargets, findBarTraceRow, resolveBarTrace } from "./barTrace";
 import { BarChartSettings } from "./definition";
 import {
@@ -194,19 +195,51 @@ export function BarChart({
       );
       if (extent && plan.mode === "bin") {
         const linear = xScale as ScaleLinear<number, number>;
-        newFilters.push({
-          type: "range",
-          field: settings.field,
+        const { min, max } = snapRangeToBins(plan.binEdges, {
           min: linear.invert(extent[0][0]),
           max: linear.invert(extent[1][0]),
         });
+        newFilters.push({ type: "range", field: settings.field, min, max });
       } else if (extent) {
         return;
       }
       updateChart(settings.id, { filters: newFilters });
     },
-    [plan.mode, settings.field, settings.filters, settings.id, updateChart, xScale]
+    [
+      plan.mode,
+      plan.binEdges,
+      settings.field,
+      settings.filters,
+      settings.id,
+      updateChart,
+      xScale,
+    ]
   );
+
+  // When the bins change under a range filter, move its bounds to the nearest
+  // new edges so the filter still covers whole bars.
+  useEffect(() => {
+    if (plan.mode !== "bin" || plan.binEdges.length < 2) return;
+    const index = settings.filters.findIndex(
+      (f) => f.type === "range" && f.field === settings.field
+    );
+    const filter = settings.filters[index];
+    if (!filter || filter.type !== "range") return;
+    const snapped = snapRangeToBins(plan.binEdges, filter);
+    if (sameRange(snapped, filter, plan.binEdges)) return;
+    updateChart(settings.id, {
+      filters: settings.filters.map((f, i) =>
+        i === index ? { ...filter, ...snapped } : f
+      ),
+    });
+  }, [
+    plan.mode,
+    plan.binEdges,
+    settings.field,
+    settings.filters,
+    settings.id,
+    updateChart,
+  ]);
 
   const isCount = plan.mode === "count";
   const isAggregate = plan.mode === "aggregate";

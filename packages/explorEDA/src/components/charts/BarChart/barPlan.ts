@@ -31,7 +31,7 @@ import {
 } from "../Axis/axisPlan";
 import { numericScale } from "../Axis/numericScale";
 import { getChartAxisLabel } from "../chartAccessibility";
-import { numericBins } from "./bins";
+import { binInRange, numericBins } from "./bins";
 import type { BarChartSettings } from "./definition";
 
 /** Grouped aggregate, count per category, or count per numeric bin. */
@@ -117,6 +117,8 @@ export interface BarChartPlan {
   xScale: ScaleDescriptor;
   yScale: ScaleDescriptor;
   bars: BarMark[];
+  /** Bin boundaries in bin mode, lowest first. Range filters snap to them. */
+  binEdges: number[];
   groupOrder: string[];
   /** Rows without a finite value have no bar. */
   unplotted: { row: AggregateResultRow; reason: string }[];
@@ -427,6 +429,9 @@ export function planBarChart({
     mode === "bin"
       ? getRangeFilterForField(settings.filters, settings.field)
       : undefined;
+  const binEdges = rows.flatMap((row, index) =>
+    row.bin ? (index === 0 ? [row.bin.start, row.bin.end] : [row.bin.end]) : []
+  );
   const bars: BarMark[] = [];
   const unplotted: BarChartPlan["unplotted"] = [];
   rows.forEach((row, order) => {
@@ -454,9 +459,13 @@ export function planBarChart({
     }
     const valuePosition = yScale(row.value);
     const baseFill = getColor(row.groupValue) || DEFAULT_FILL;
+    // A bin passes only when the range covers all of it, which snapped
+    // filters always do.
     const passes =
       rangeFilter
-        ? applyFilter(row.groupValue, rangeFilter)
+        ? row.bin
+          ? binInRange(row.bin, rangeFilter, binEdges)
+          : applyFilter(row.groupValue, rangeFilter)
         : valueFilter
           ? applyFilter(row.groupValue, valueFilter)
           : true;
@@ -505,6 +514,7 @@ export function planBarChart({
     xScale: describeScale(xScale, settings.xAxis.scaleType),
     yScale: describeScale(yScale, settings.yAxis.scaleType),
     bars,
+    binEdges,
     groupOrder: rows.map((row) => row.groupLabel),
     unplotted,
     domain: {

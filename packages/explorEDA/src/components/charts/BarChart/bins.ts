@@ -37,3 +37,67 @@ export function numericBins(all: number[], values: number[], count: number) {
   }
   return bins;
 }
+
+/** Tolerance for comparing a bound to a bin edge after float arithmetic. */
+function edgeTolerance(edges: number[]) {
+  const span = Math.abs(edges.at(-1)! - edges[0]!) || 1;
+  return span * 1e-9;
+}
+
+/** True when a bin lies entirely within a range. */
+export function binInRange(
+  bin: { start: number; end: number },
+  range: { min?: number; max?: number },
+  edges: number[]
+) {
+  const tolerance = edges.length > 1 ? edgeTolerance(edges) : 0;
+  return (
+    (range.min === undefined || bin.start >= range.min - tolerance) &&
+    (range.max === undefined || bin.end <= range.max + tolerance)
+  );
+}
+
+/**
+ * Moves each bound of a range to its nearest bin edge, so a filter never
+ * splits a bar. A range narrower than one bin covers the bin under its middle.
+ */
+export function snapRangeToBins(
+  edges: number[],
+  range: { min?: number; max?: number }
+): { min?: number; max?: number } {
+  if (edges.length < 2) return range;
+  // A bound halfway between two edges moves outward, so the filter keeps
+  // every value it already covered.
+  const nearest = (value: number, outward: 1 | -1) =>
+    edges.reduce((best, edge) => {
+      const gap = Math.abs(edge - value) - Math.abs(best - value);
+      return gap < 0 || (gap === 0 && (edge - best) * outward > 0)
+        ? edge
+        : best;
+    });
+  let min = range.min === undefined ? undefined : nearest(range.min, -1);
+  let max = range.max === undefined ? undefined : nearest(range.max, 1);
+  if (min !== undefined && max !== undefined && max <= min) {
+    const middle = (range.min! + range.max!) / 2;
+    const above = edges.findIndex((edge) => edge > middle);
+    const bin =
+      above === -1
+        ? edges.length - 2
+        : Math.min(edges.length - 2, Math.max(0, above - 1));
+    min = edges[bin]!;
+    max = edges[bin + 1]!;
+  }
+  return { min, max };
+}
+
+/** True when two ranges have the same bounds within bin-edge tolerance. */
+export function sameRange(
+  a: { min?: number; max?: number },
+  b: { min?: number; max?: number },
+  edges: number[]
+) {
+  const tolerance = edges.length > 1 ? edgeTolerance(edges) : 0;
+  const same = (x?: number, y?: number) =>
+    x === undefined || y === undefined ? x === y : Math.abs(x - y) <= tolerance;
+  return same(a.min, b.min) && same(a.max, b.max);
+}
