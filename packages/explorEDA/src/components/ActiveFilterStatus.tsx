@@ -91,6 +91,68 @@ export function isActiveFilter(filter: Filter) {
   }
 }
 
+/**
+ * One active filter: the label jumps to the chart that set it, and only the X
+ * removes it. Filters without a chart show a plain label.
+ */
+function FilterChip({
+  label,
+  showLabel,
+  showTooltip,
+  onShow,
+  onHighlight,
+  removeLabel,
+  removeTooltip,
+  onRemove,
+}: {
+  label: string;
+  showLabel?: string;
+  showTooltip?: string;
+  onShow?: () => void;
+  onHighlight?: (active: boolean) => void;
+  removeLabel: string;
+  removeTooltip: string;
+  onRemove: () => void;
+}) {
+  return (
+    <li className="eda-filter-chip flex h-7 max-w-full items-center rounded-md border border-input bg-background shadow-xs">
+      {onShow ? (
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="h-full min-w-0 rounded-r-none px-2 font-normal"
+          tooltip={showTooltip}
+          aria-label={showLabel}
+          onClick={onShow}
+          onPointerEnter={() => onHighlight?.(true)}
+          onPointerLeave={() => onHighlight?.(false)}
+          onFocus={() => onHighlight?.(true)}
+          onBlur={() => onHighlight?.(false)}
+        >
+          <span className="truncate">{label}</span>
+        </Button>
+      ) : (
+        <span className="min-w-0 truncate px-2 text-sm">{label}</span>
+      )}
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        className="size-7 shrink-0 rounded-l-none border-l border-border text-muted-foreground hover:text-foreground"
+        tooltip={removeTooltip}
+        aria-label={removeLabel}
+        onClick={() => {
+          onHighlight?.(false);
+          onRemove();
+        }}
+      >
+        <X aria-hidden="true" />
+      </Button>
+    </li>
+  );
+}
+
 function getActiveFilters(charts: ChartSettings[]) {
   return charts.flatMap((chart) =>
     chart.filters
@@ -99,7 +161,17 @@ function getActiveFilters(charts: ChartSettings[]) {
   );
 }
 
-export function ActiveFilterStatus({ view = "charts" }: { view?: string }) {
+export function ActiveFilterStatus({
+  view = "charts",
+  onShowChart,
+  onHighlightChart,
+}: {
+  view?: string;
+  /** Scrolls to and focuses the chart that owns a filter. */
+  onShowChart?: (id: string) => void;
+  /** Marks the chart that owns a filter while its chip has hover or focus. */
+  onHighlightChart?: (id: string | undefined) => void;
+}) {
   const charts = useDataLayer((state) => state.charts);
   const data = useDataLayer((state) => state.data);
   const remainingRows = useDataLayer((state) =>
@@ -165,71 +237,74 @@ export function ActiveFilterStatus({ view = "charts" }: { view?: string }) {
             aria-label="Active filters"
           >
             {localFilters.map((filter, index) => (
-              <li key={`rows-${index}`}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  aria-label={`Remove Rows filter: ${filterLabel(filter)}`}
-                  onClick={() =>
-                    updateRowsSettings({
-                      filters: rowsSettings.filters.filter(
-                        (item) => item !== filter
-                      ),
-                    })
-                  }
-                >
-                  <span className="truncate">Rows · {filterLabel(filter)}</span>
-                  <X aria-hidden="true" />
-                </Button>
-              </li>
+              <FilterChip
+                key={`rows-${index}`}
+                label={`Rows · ${filterLabel(filter)}`}
+                removeLabel={`Remove Rows filter: ${filterLabel(filter)}`}
+                removeTooltip="Remove this Rows filter. It was set in the Rows view, not by a chart, and applies only there."
+                onRemove={() =>
+                  updateRowsSettings({
+                    filters: rowsSettings.filters.filter(
+                      (item) => item !== filter
+                    ),
+                  })
+                }
+              />
             ))}
-            {searches.map((search) => (
-              <li key={`search-${search.id}`}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  aria-label={`Clear ${search.title} search: ${search.text}`}
-                  onClick={() =>
-                    search.id === "rows"
-                      ? updateRowsSettings({ globalSearch: "" })
-                      : updateChart(search.id, { globalSearch: "" })
+            {searches.map((search) => {
+              const chartId = search.id === "rows" ? undefined : search.id;
+              return (
+                <FilterChip
+                  key={`search-${search.id}`}
+                  label={`${search.title} search · ${search.text}`}
+                  showLabel={`Show ${search.title}, the table with this search`}
+                  showTooltip={`Show ${search.title}, the table with this search. Use × to clear it.`}
+                  onShow={
+                    chartId && onShowChart
+                      ? () => onShowChart(chartId)
+                      : undefined
                   }
-                >
-                  <span className="truncate">
-                    {search.title} search · {search.text}
-                  </span>
-                  <X aria-hidden="true" />
-                </Button>
-              </li>
-            ))}
+                  onHighlight={(active) =>
+                    onHighlightChart?.(active ? chartId : undefined)
+                  }
+                  removeLabel={`Clear ${search.title} search: ${search.text}`}
+                  removeTooltip={
+                    chartId
+                      ? `Clear this search from ${search.title}`
+                      : "Clear this Rows search. It was set in the Rows view, not by a chart, and applies only there."
+                  }
+                  onRemove={() =>
+                    chartId
+                      ? updateChart(chartId, { globalSearch: "" })
+                      : updateRowsSettings({ globalSearch: "" })
+                  }
+                />
+              );
+            })}
             {activeFilters.map(({ chart, filter, index }) => {
               const label = formatFilterLabel(filter, formatting);
               const exact = exactBounds(filter, formatting);
+              const owner = chart.title || chart.type;
               return (
-                <li key={`${chart.id}-${index}`}>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="h-7 max-w-full"
-                    tooltip={
-                      exact
-                        ? `Remove ${label} from ${chart.title || chart.type}. ${exact}.`
-                        : `Remove ${label} from ${chart.title || chart.type}`
-                    }
-                    aria-label={`Remove ${label} from ${chart.title || chart.type}`}
-                    onClick={() =>
-                      updateChart(chart.id, {
-                        filters: chart.filters.filter(
-                          (_, filterIndex) => filterIndex !== index
-                        ),
-                      })
-                    }
-                  >
-                    <span className="truncate">{label}</span>
-                    <X aria-hidden="true" />
-                  </Button>
-                </li>
+                <FilterChip
+                  key={`${chart.id}-${index}`}
+                  label={label}
+                  showLabel={`Show ${owner}, the chart with filter ${label}`}
+                  showTooltip={`Show ${owner}, the chart that set this filter. Use × to remove it.${exact ? ` ${exact}.` : ""}`}
+                  onShow={onShowChart ? () => onShowChart(chart.id) : undefined}
+                  onHighlight={(active) =>
+                    onHighlightChart?.(active ? chart.id : undefined)
+                  }
+                  removeLabel={`Remove ${label} from ${owner}`}
+                  removeTooltip={`Remove this filter from ${owner}`}
+                  onRemove={() =>
+                    updateChart(chart.id, {
+                      filters: chart.filters.filter(
+                        (_, filterIndex) => filterIndex !== index
+                      ),
+                    })
+                  }
+                />
               );
             })}
           </ul>

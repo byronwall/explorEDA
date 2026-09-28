@@ -10,7 +10,10 @@ import {
   getChartFields,
   getChartTitle,
 } from "@/components/charts/chartAccessibility";
-import { focusChartInContainer } from "@/components/chartFocus";
+import {
+  focusChartInContainer,
+  highlightChartInContainer as highlightChart,
+} from "@/components/chartFocus";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -37,18 +40,6 @@ import {
 } from "./fieldAxis";
 import { useApplyAxisField, useFieldFacts } from "./useAxisField";
 import { useFieldDrag } from "./FieldDragContext";
-
-/** Marks one chart while a "Used in" entry has pointer or keyboard focus. */
-function highlightChart(workspace: HTMLElement | null, id: string | undefined) {
-  workspace
-    ?.querySelectorAll<HTMLElement>("[data-field-list-highlight]")
-    .forEach((element) => element.removeAttribute("data-field-list-highlight"));
-  if (!id) return;
-  const element = Array.from(
-    workspace?.querySelectorAll<HTMLElement>("[data-chart-id]") ?? []
-  ).find((candidate) => candidate.dataset.chartId === id);
-  element?.setAttribute("data-field-list-highlight", "");
-}
 
 function UseOnChartMenu({ field, label }: { field: string; label: string }) {
   const charts = useDataLayer((state) => state.charts);

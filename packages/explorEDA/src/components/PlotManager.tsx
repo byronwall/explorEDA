@@ -30,7 +30,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ChartGridLayout } from "./ChartGridLayout";
 import { FieldList } from "./FieldList/FieldList";
-import { focusChartInContainer } from "./chartFocus";
+import { focusChartInContainer, highlightChartInContainer } from "./chartFocus";
 
 export { focusChartInContainer };
 import { PlotChartPanel } from "./PlotChartPanel";
@@ -203,6 +203,26 @@ export function PlotManager() {
       focusChartInContainer(containerRef.current, id)
     );
   }, []);
+
+  const highlightTimer = useRef<number>(undefined);
+  const highlightChart = useCallback((id: string | undefined) => {
+    // A chart just shown from the filter bar keeps its mark until it fades.
+    if (highlightTimer.current !== undefined) return;
+    highlightChartInContainer(containerRef.current, id);
+  }, []);
+  const showChart = useCallback((id: string) => {
+    setActiveTab("charts");
+    requestAnimationFrame(() => {
+      focusChartInContainer(containerRef.current, id);
+      highlightChartInContainer(containerRef.current, id);
+      window.clearTimeout(highlightTimer.current);
+      highlightTimer.current = window.setTimeout(() => {
+        highlightTimer.current = undefined;
+        highlightChartInContainer(containerRef.current, undefined);
+      }, 1200);
+    });
+  }, []);
+  useEffect(() => () => window.clearTimeout(highlightTimer.current), []);
 
   useEffect(() => {
     if (knownChartIds.current.size === 0) {
@@ -441,7 +461,11 @@ export function PlotManager() {
             )}
           </div>
         </header>
-        <ActiveFilterStatus view={activeTab} />
+        <ActiveFilterStatus
+          view={activeTab}
+          onShowChart={showChart}
+          onHighlightChart={highlightChart}
+        />
         {fieldsOpen && fieldsAvailable && (
           <FieldList
             id={fieldListId}
