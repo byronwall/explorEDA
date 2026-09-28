@@ -29,9 +29,9 @@ describe("binValues", () => {
 describe("labelBins", () => {
   it("names one-value bins by their value and wider bins by their range", () => {
     expect(labelBins([2, 0, 1], 1, 3, String)).toEqual([
-      { label: "1", count: 2 },
-      { label: "2", count: 0 },
-      { label: "3", count: 1 },
+      { label: "1", count: 2, range: [1, 1] },
+      { label: "2", count: 0, range: [2, 2] },
+      { label: "3", count: 1, range: [3, 3] },
     ]);
     const wide = labelBins(new Array(24).fill(1), 0, 24, String);
     expect(wide[0]!.label).toBe("0 – 1");
@@ -90,5 +90,33 @@ describe("summarizeField", () => {
       "categorical"
     );
     expect(summarizeField(profile, format)).toBeUndefined();
+  });
+});
+
+describe("sparkline filters", () => {
+  it("filters each bin to its half-open range and closes the last bin", () => {
+    const values = Array.from({ length: 50 }, (_, index) => index / 2);
+    const profile = buildFieldProfile("x", column(values), "numeric");
+    const bars = summarizeField(profile, format)!.bars;
+    const first = bars[0]!.filter;
+    const last = bars.at(-1)!.filter;
+    expect(first?.type).toBe("range");
+    if (first?.type !== "range" || last?.type !== "range") return;
+    expect(first.min).toBe(0);
+    // The first bin stops just short of where the second begins.
+    const second = bars[1]!.filter;
+    expect(second?.type === "range" && first.max < second.min).toBe(true);
+    expect(last.max).toBe(24.5);
+  });
+
+  it("filters top values but not the remainder", () => {
+    const profile = buildFieldProfile(
+      "kind",
+      column(["a", "a", "b", "c", "d", "e", "f", "g"]),
+      "categorical"
+    );
+    const bars = summarizeField(profile, format)!.bars;
+    expect(bars[0]!.filter).toEqual({ type: "value", values: ["a"] });
+    expect(bars.at(-1)!.filter).toBeUndefined();
   });
 });

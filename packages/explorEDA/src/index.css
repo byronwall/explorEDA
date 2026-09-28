@@ -1098,6 +1098,9 @@ html {
   padding: 4px 0;
   cursor: crosshair;
 }
+.eda-summary-spark-hit[data-filterable] {
+  cursor: pointer;
+}
 .eda-summary-spark-focus {
   fill: var(--muted);
 }

@@ -1,3 +1,5 @@
+import { applyFilter } from "@/hooks/applyFilter";
+import type { IdType } from "@/providers/DataLayerProvider";
 import { BaseChartSettings, ChartDefinition } from "@/types/ChartTypes";
 import { DEFAULT_CHART_SETTINGS } from "@/utils/defaultSettings";
 import { Info } from "lucide-react";
@@ -34,8 +36,12 @@ export const summaryTableDefinition: ChartDefinition<SummaryTableSettings> = {
     return true;
   },
 
-  getFilterFunction: () => {
-    // Summary table doesn't support filtering
-    return () => true;
+  // Clicking a sparkline bar filters its field; a row passes every filter.
+  getFilterFunction: (settings, fieldGetter) => {
+    const checks = settings.filters.map((filter) => {
+      const values = fieldGetter(filter.field);
+      return (id: IdType) => applyFilter(values[id], filter);
+    });
+    return (id: IdType) => checks.every((check) => check(id));
   },
 };

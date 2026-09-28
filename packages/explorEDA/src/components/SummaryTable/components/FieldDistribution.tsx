@@ -1,5 +1,6 @@
 import { useState, type PointerEvent } from "react";
 import { categoryLabel } from "@/lib/categories";
+import type { datum } from "@/types/ChartTypes";
 import type { FieldProfile } from "@/lib/fieldProfiles";
 import {
   Tooltip,
@@ -14,8 +15,19 @@ const HEIGHT = 20;
 const SHARE_SEGMENTS = 5;
 const OTHER_LABEL = "Other values";
 
+/** The rows one sparkline mark stands for, as a filter without its field. */
+export type SparkFilter =
+  | { type: "range"; min: number; max: number }
+  | { type: "value"; values: datum[] };
+
 /** One mark in a sparkline: a histogram bin or a category share. */
-export type SparkBar = { label: string; count: number; muted?: boolean };
+export type SparkBar = {
+  label: string;
+  count: number;
+  muted?: boolean;
+  /** Present when clicking the mark can filter to its rows. */
+  filter?: SparkFilter;
+};
 
 export type FieldSummary = {
   /** Visual shape of the values. Hidden from assistive technology. */
@@ -49,16 +61,19 @@ function SparkDetails({
   total,
   fieldLabel,
   locate,
+  onFilter,
   children,
 }: {
   bars: SparkBar[];
   total: number;
   fieldLabel: string;
   locate: (fraction: number) => number;
+  onFilter?: (filter: SparkFilter) => void;
   children: (active: number | undefined) => React.ReactNode;
 }) {
   const [active, setActive] = useState<number>();
   const bar = active === undefined ? undefined : bars[active];
+  const filter = onFilter ? bar?.filter : undefined;
   const onPointerMove = (event: PointerEvent<HTMLSpanElement>) => {
     const box = event.currentTarget.getBoundingClientRect();
     if (box.width <= 0) return;
@@ -72,7 +87,9 @@ function SparkDetails({
         <TooltipTrigger asChild>
           <span
             className="eda-summary-spark-hit"
+            data-filterable={filter ? "" : undefined}
             aria-hidden="true"
+            onClick={() => filter && onFilter?.(filter)}
             onPointerMove={onPointerMove}
             onPointerLeave={() => setActive(undefined)}
           >
@@ -92,6 +109,11 @@ function SparkDetails({
                 </span>
               )}
             </p>
+            {filter && (
+              <p className="text-muted-foreground">
+                Click to filter to these rows
+              </p>
+            )}
           </TooltipContent>
         )}
       </Tooltip>
@@ -99,9 +121,14 @@ function SparkDetails({
   );
 }
 
-type SparkProps = { bars: SparkBar[]; total: number; fieldLabel: string };
+type SparkProps = {
+  bars: SparkBar[];
+  total: number;
+  fieldLabel: string;
+  onFilter?: (filter: SparkFilter) => void;
+};
 
-function Histogram({ bars, total, fieldLabel }: SparkProps) {
+function Histogram({ bars, total, fieldLabel, onFilter }: SparkProps) {
   const peak = Math.max(...bars.map((bar) => bar.count), 1);
   const step = WIDTH / Math.max(1, bars.length);
   const gap = bars.length > 1 ? Math.min(1, step * 0.2) : 0;
@@ -111,6 +138,7 @@ function Histogram({ bars, total, fieldLabel }: SparkProps) {
       total={total}
       fieldLabel={fieldLabel}
       locate={(fraction) => Math.floor(fraction * bars.length)}
+      onFilter={onFilter}
     >
       {(active) => (
         <svg
@@ -156,7 +184,7 @@ function Histogram({ bars, total, fieldLabel }: SparkProps) {
   );
 }
 
-function ShareBar({ bars, total, fieldLabel }: SparkProps) {
+function ShareBar({ bars, total, fieldLabel, onFilter }: SparkProps) {
   const shares = bars.map((bar) => (total > 0 ? bar.count / total : 0));
   const starts = shares.map((_, index) =>
     shares.slice(0, index).reduce((sum, share) => sum + share, 0)
@@ -172,6 +200,7 @@ function ShareBar({ bars, total, fieldLabel }: SparkProps) {
             fraction >= start && fraction < start + shares[index]!
         )
       }
+      onFilter={onFilter}
     >
       {(active) => (
         <svg
@@ -228,7 +257,7 @@ export function labelBins(
   min: number,
   max: number,
   label: (value: number) => string
-): SparkBar[] {
+): Array<SparkBar & { range: [number, number] }> {
   // binValues gives small integer ranges fewer bins, one per value.
   const oneBinPerValue =
     bins.length === 1 ||
@@ -237,13 +266,29 @@ export function labelBins(
       bins.length === max - min + 1);
   const width = (max - min) / Math.max(1, bins.length);
   return bins.map((count, index) => {
-    if (oneBinPerValue) return { label: label(min + index), count };
-    const start = label(min + index * width);
-    const end = label(
-      index === bins.length - 1 ? max : min + (index + 1) * width
-    );
-    return { label: start === end ? start : `${start} – ${end}`, count };
+    if (oneBinPerValue) {
+      const value = min + index;
+      return { label: label(value), count, range: [value, value] };
+    }
+    const low = min + index * width;
+    const high = index === bins.length - 1 ? max : min + (index + 1) * width;
+    const start = label(low);
+    const end = label(high);
+    return {
+      label: start === end ? start : `${start} – ${end}`,
+      count,
+      range: [low, high],
+    };
   });
+}
+
+/** The largest double below a value, so an inclusive bound excludes it. */
+function nextBelow(value: number) {
+  if (value === 0) return -Number.MIN_VALUE;
+  const buffer = new Float64Array([value]);
+  const bits = new BigInt64Array(buffer.buffer);
+  bits[0] += value > 0 ? -1n : 1n;
+  return buffer[0]!;
 }
 
 const isoDate = (time: number) => new Date(time).toISOString().slice(0, 10);
@@ -251,7 +296,9 @@ const isoDate = (time: number) => new Date(time).toISOString().slice(0, 10);
 export function summarizeField(
   profile: FieldProfile,
   format: (value: unknown) => string,
-  fieldLabel = profile.name
+  fieldLabel = profile.name,
+  /** Lets numeric bins and top values filter to their rows on click. */
+  onFilter?: (filter: SparkFilter) => void
 ): FieldSummary | undefined {
   const present =
     profile.totalCount - profile.nullCount - (profile.excludedCount ?? 0);
@@ -261,9 +308,28 @@ export function summarizeField(
     const { min, max, median, bins = [] } = profile.statistics;
     const low = format(min);
     const high = format(max);
-    const bars = labelBins(bins, min, max, format);
+    // Bins are half-open except the last, so each bar's filter stops just
+    // short of the next bin's start.
+    const bars: SparkBar[] = labelBins(bins, min, max, format).map(
+      ({ range, ...bar }, index, all) => ({
+        ...bar,
+        filter: {
+          type: "range",
+          min: range[0],
+          max:
+            index === all.length - 1 || range[0] === range[1]
+              ? range[1]
+              : nextBelow(range[1]),
+        },
+      })
+    );
     const graphic = (
-      <Histogram bars={bars} total={present} fieldLabel={fieldLabel} />
+      <Histogram
+        bars={bars}
+        total={present}
+        fieldLabel={fieldLabel}
+        onFilter={onFilter}
+      />
     );
     if (min === max) {
       return { graphic, bars, low, description: `Every value is ${low}` };
@@ -319,13 +385,24 @@ export function summarizeField(
 
   const bars: SparkBar[] = top
     .slice(0, SHARE_SEGMENTS)
-    .map(({ value, count }) => ({ label: categoryLabel(value), count }));
+    .map(({ value, count }) => ({
+      label: categoryLabel(value),
+      count,
+      filter: { type: "value", values: [value as datum] },
+    }));
   const rest = present - bars.reduce((sum, bar) => sum + bar.count, 0);
   if (rest > 0) bars.push({ label: OTHER_LABEL, count: rest, muted: true });
   const leader = categoryLabel(top[0].value);
   const share = percent(top[0].count / present);
   return {
-    graphic: <ShareBar bars={bars} total={present} fieldLabel={fieldLabel} />,
+    graphic: (
+      <ShareBar
+        bars={bars}
+        total={present}
+        fieldLabel={fieldLabel}
+        onFilter={onFilter}
+      />
+    ),
     bars,
     label: leader,
     statLabel: "share",
