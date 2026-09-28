@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { ActionTooltip } from "./ui/tooltip";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { ColorScaleManager } from "./ColorScaleManager";
@@ -52,6 +53,11 @@ import {
 } from "./ui/dropdown-menu";
 
 // Add this conversion function
+// The workspace panels are large surfaces reached through the view tabs, so they
+// stay out of the tab order and never draw a focus ring around the whole grid.
+const workspacePanelClassName =
+  "mt-0 outline-none focus-visible:outline-none focus-visible:ring-0";
+
 const gridToPixels = (
   layout: ChartLayout,
   containerWidth: number,
@@ -499,7 +505,11 @@ export function PlotManager() {
       </div>
 
       <Tabs value={activeTab} className="w-full">
-        <TabsContent value="charts" className="mt-0">
+        <TabsContent
+          value="charts"
+          tabIndex={-1}
+          className={workspacePanelClassName}
+        >
           <h2 className="sr-only">Charts</h2>
           {charts.length === 0 ? (
             <Card>
@@ -548,7 +558,11 @@ export function PlotManager() {
         <TabsContent
           forceMount
           value="rows"
-          className="mt-0 data-[state=inactive]:hidden"
+          tabIndex={-1}
+          className={cn(
+            workspacePanelClassName,
+            "data-[state=inactive]:hidden"
+          )}
         >
           <h2 className="sr-only">Rows</h2>
           <RowsView
@@ -557,7 +571,11 @@ export function PlotManager() {
             toolbarTarget={rowsToolbarTarget}
           />
         </TabsContent>
-        <TabsContent value="calculations" className="mt-0">
+        <TabsContent
+          value="calculations"
+          tabIndex={-1}
+          className={workspacePanelClassName}
+        >
           <Card>
             <CardContent className="pt-6">
               <CalculationManager />
