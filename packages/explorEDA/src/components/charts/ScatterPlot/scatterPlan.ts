@@ -27,6 +27,11 @@ import { getChartTitle } from "../chartAccessibility";
 import { planScatterPoints, type ScatterPointStyle } from "./planScatterPoints";
 import type { ScatterPlotSettings } from "./definition";
 
+/** Estimated axis title glyph width; ScatterPlot measures the rendered title. */
+const TITLE_CHAR_WIDTH = 6.5;
+/** Space between an axis title and its calculated-field badge. */
+export const BADGE_GAP = 4;
+
 export type Extent = [[number, number], [number, number]];
 type ScatterPoint = ReturnType<typeof planScatterPoints>[number] & {
   passesAllFilters: boolean;
@@ -113,6 +118,7 @@ export interface ScatterPlan {
   clipWidth: number;
   clipHeight: number;
   pixelRatio: number;
+  /** Each badge anchors just past the end of its axis title, on the title's midline. */
   calculatedBadges: {
     id: string;
     field: string;
@@ -356,21 +362,34 @@ export function planScatter(
     fieldLabel(field, snapshot.fieldSettings)
   );
   const calculatedBadges: ScatterPlan["calculatedBadges"] = [];
-  if (snapshot.calculatedFields?.includes(settings.xField)) {
+  const axisTitle = (axis: "x" | "y") =>
+    axes[axis].guides.find((guide) => guide.role === "label")?.label;
+  const xTitle = axisTitle("x");
+  if (xTitle && snapshot.calculatedFields?.includes(settings.xField)) {
     calculatedBadges.push({
       id: "calculation:x",
       field: settings.xField,
-      x: margin.left + plotWidth / 2 + Math.min(90, xLabel.length * 3.2) + 8,
-      y: margin.top + plotHeight + Math.max(30, margin.bottom - 10) - 12,
+      x:
+        margin.left +
+        xTitle.x +
+        (xTitle.fullText.length * TITLE_CHAR_WIDTH) / 2 +
+        BADGE_GAP,
+      y: margin.top + xTitle.y - xTitle.fontSize * 0.35,
       rotation: 0,
     });
   }
-  if (snapshot.calculatedFields?.includes(settings.yField)) {
+  const yTitle = axisTitle("y");
+  if (yTitle && snapshot.calculatedFields?.includes(settings.yField)) {
+    // The title is rotated -90°, so its end is above its centre.
     calculatedBadges.push({
       id: "calculation:y",
       field: settings.yField,
-      x: 0,
-      y: margin.top + plotHeight / 2 - Math.min(90, yLabel.length * 3.2) - 30,
+      x: margin.left + yTitle.y - yTitle.fontSize * 0.35,
+      y:
+        margin.top -
+        yTitle.x -
+        (yTitle.fullText.length * TITLE_CHAR_WIDTH) / 2 -
+        BADGE_GAP,
       rotation: -90,
     });
   }
