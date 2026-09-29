@@ -474,6 +474,14 @@ html {
   gap: 2px;
   pointer-events: none;
 }
+/* Keep the sort arrow at the right edge, clear of the hover actions. */
+.eda-column-heading > button > svg {
+  flex-shrink: 0;
+  color: var(--primary);
+}
+.eda-column-heading[data-sorted] .eda-column-actions {
+  right: 18px;
+}
 .eda-column-actions button {
   width: 24px;
   height: 24px;
