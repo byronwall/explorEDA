@@ -31,7 +31,7 @@ type BarChartProps = BaseChartProps<BarChartSettings> & {
 function HoverReadout({ plan, id }: { plan: BarChartPlan; id: string }) {
   const bar = plan.bars.find((item) => item.id === id);
   const guide = bar ? undefined : findAxisGuide(plan.axes, id)?.guide;
-  if (!bar && !guide) return null;
+  if (!bar && (!guide || guide.role === "grid")) return null;
   return (
     <div
       className="pointer-events-none absolute left-2 top-2 max-w-[min(16rem,70%)] rounded border border-border bg-card/95 px-2 py-1 text-xs text-card-foreground shadow-sm"
