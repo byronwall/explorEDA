@@ -9,6 +9,7 @@ import { Plus } from "lucide-react";
 import { useCreateCharts } from "@/hooks/useCreateCharts";
 import { chartRegistry } from "@/charts/registry";
 import type { ChartType } from "@/types/ChartTypes";
+import { useChartDraft } from "./ChartDraftContext";
 
 /** The chart type choices shared by the toolbar and the grid's add control. */
 export function ChartTypeMenuItems({
@@ -37,6 +38,23 @@ export function ChartTypeMenuItems({
 
 export function ChartCreationButtons() {
   const { createChart } = useCreateCharts();
+  const chartDraft = useChartDraft();
+  // Inside a workspace, Add chart opens a dialog that previews the chart
+  // before the user places it.
+  if (chartDraft) {
+    return (
+      <Button
+        variant="outline"
+        size="sm"
+        className="flex items-center gap-2"
+        aria-haspopup="dialog"
+        onClick={() => chartDraft.openDraft()}
+      >
+        <Plus className="h-4 w-4" />
+        Add chart
+      </Button>
+    );
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

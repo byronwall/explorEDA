@@ -7,7 +7,8 @@ export function useCreateCharts() {
   const charts = useDataLayer((s) => s.charts);
   const addChart = useDataLayer((s) => s.addChart);
 
-  const createChart = (
+  /** Default settings for a new chart, without adding it to the grid. */
+  const buildChart = (
     type: ChartType,
     field: string,
     initialLayout?: ChartLayout
@@ -69,8 +70,16 @@ export function useCreateCharts() {
     }
     if (settings.type === "boxplot") settings.yAxisLabel = "";
     settings.title = "";
-    addChart(settings);
+    return settings;
   };
 
-  return { createChart };
+  const createChart = (
+    type: ChartType,
+    field: string,
+    initialLayout?: ChartLayout
+  ) => {
+    addChart(buildChart(type, field, initialLayout));
+  };
+
+  return { buildChart, createChart };
 }

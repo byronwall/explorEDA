@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { GridBackground } from "./GridBackground";
 import { ChartTypeMenuItems } from "./plot/ChartCreationButtons";
+import { useChartDraft } from "./plot/ChartDraftContext";
+import { ChartPlacementLayer } from "./plot/ChartPlacementLayer";
 import {
   findEmptyPlacement,
   GridCell,
@@ -44,7 +46,11 @@ export function ChartGridLayout({
   const gridSettings = useDataLayer((s) => s.gridSettings);
   const updateChartLayouts = useDataLayer((s) => s.updateChartLayouts);
   const { createChart } = useCreateCharts();
+  const chartDraft = useChartDraft();
   const isNarrow = containerWidth > 0 && containerWidth < 960;
+  const placing = chartDraft?.draft?.phase === "placing";
+  const setSkipPlacement = chartDraft?.setSkipPlacement;
+  useEffect(() => setSkipPlacement?.(isNarrow), [isNarrow, setSkipPlacement]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const pendingCell = useRef<string | null>(null);
@@ -115,6 +121,10 @@ export function ChartGridLayout({
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     if (menuOpenRef.current) return;
+    if (placing) {
+      clearHover();
+      return;
+    }
     const target = event.target as Element;
     if (target.closest("[data-grid-add-control]")) return;
     if (
@@ -167,7 +177,9 @@ export function ChartGridLayout({
       charts.map((chart) => chart.layout),
       gridSettings.columnCount
     );
-    createChart(type, "", placement ?? undefined);
+    // The add chart dialog previews the chart before it joins the grid.
+    if (chartDraft) chartDraft.openDraft(type, placement ?? undefined);
+    else createChart(type, "", placement ?? undefined);
     // The new chart takes focus, so the menu must not return it to the plus.
     createdChart.current = true;
     clearHover();
@@ -293,6 +305,15 @@ export function ChartGridLayout({
       >
         {children}
       </GridLayout>
+      {placing && (
+        <ChartPlacementLayer
+          charts={charts}
+          columnCount={gridSettings.columnCount}
+          columnWidth={columnWidth}
+          rowHeight={gridSettings.rowHeight}
+          padding={gridSettings.containerPadding}
+        />
+      )}
       {addTarget && (
         <DropdownMenu
           open={menuOpen}

@@ -3417,6 +3417,184 @@ html {
   border-top: 1px solid var(--border);
 }
 
+/* Add chart: pick a type and fields beside a live preview, then place it. */
+.eda-add-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(64rem, calc(100vw - 2rem));
+  max-width: none;
+  height: min(42rem, calc(100vh - 2rem));
+  padding: 16px;
+}
+.eda-add-chart-header {
+  display: grid;
+  gap: 2px;
+  padding-right: 32px;
+}
+.eda-add-chart-header p {
+  font-size: 13px;
+}
+.eda-add-chart-body {
+  display: grid;
+  grid-template-columns: minmax(15rem, 19rem) minmax(0, 1fr);
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+}
+.eda-add-chart-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.eda-add-chart-types {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+}
+.eda-add-chart-types button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+  text-align: left;
+}
+.eda-add-chart-types button span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-add-chart-types button svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+.eda-add-chart-types button:hover {
+  background: var(--muted);
+}
+.eda-add-chart-types button[aria-pressed="true"] {
+  border-color: var(--primary);
+  background: var(--accent);
+  color: var(--primary);
+  font-weight: 600;
+}
+.eda-add-chart-types button[aria-pressed="true"] svg {
+  color: var(--primary);
+}
+.eda-add-chart-types button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.eda-add-chart-fields {
+  display: grid;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.eda-add-chart-fields > h3 {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.eda-add-chart-preview {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+}
+.eda-add-chart-canvas {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.eda-add-chart-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+@media (max-width: 720px) {
+  .eda-add-chart {
+    height: calc(100vh - 2rem);
+  }
+  .eda-add-chart-body {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(14rem, 1fr) auto;
+  }
+  .eda-add-chart-preview {
+    order: -1;
+  }
+  .eda-add-chart-controls {
+    max-height: 40vh;
+  }
+}
+.eda-placement-layer {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 6;
+  cursor: copy;
+}
+.eda-placement-ghost {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border: 2px dashed var(--primary);
+  border-radius: var(--radius, 8px);
+  background: color-mix(in oklab, var(--primary) 10%, transparent);
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 600;
+  pointer-events: none;
+  transition:
+    left 80ms ease-out,
+    top 80ms ease-out,
+    width 80ms ease-out,
+    height 80ms ease-out;
+}
+.eda-placement-ghost[data-invalid] {
+  border-color: var(--destructive);
+  background: color-mix(in oklab, var(--destructive) 8%, transparent);
+  color: var(--destructive);
+}
+.eda-placement-bar {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+  padding: 8px 8px 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--popover, var(--card));
+  color: var(--popover-foreground, var(--foreground));
+  font-size: 13px;
+  box-shadow: 0 8px 24px rgb(20 40 70 / 16%);
+  transform: translateX(-50%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .eda-placement-ghost {
+    transition: none;
+  }
+}
+
 /* Missing table cells read as a quiet monospace "null", centered so it is
    clear which column is empty. */
 .eda-null {
