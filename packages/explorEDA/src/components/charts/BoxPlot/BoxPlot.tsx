@@ -455,7 +455,6 @@ export function BoxPlot({
                       cy={yScale(value)}
                       r={settings.styles.outlierSize}
                       fill={boxColor}
-                      stroke={settings.styles.outlierStroke}
                     />
                   ))}
 
