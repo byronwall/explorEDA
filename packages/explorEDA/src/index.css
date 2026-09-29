@@ -1004,6 +1004,26 @@ html {
 .eda-pivot-table tbody tr:hover .eda-pivot-row-label {
   background: color-mix(in srgb, var(--primary) 7%, var(--card));
 }
+/* The value itself opens the contributor inspector. */
+.eda-pivot-cell {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
+  font: inherit;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.eda-pivot-cell:hover {
+  color: var(--primary);
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+.eda-pivot-cell:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
 .eda-pivot-table td.is-selected {
   background: color-mix(in srgb, var(--primary) 7%, var(--card));
 }
