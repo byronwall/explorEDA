@@ -141,12 +141,9 @@ it("previews filtered rows without adding a chart and clears the chart filter fr
   expect(
     screen.getByRole("button", { name: "Clear filters for Values" })
   ).toBeInTheDocument();
-  fireEvent.keyDown(
-    screen.getByRole("button", { name: "More actions for Values" }),
-    { key: "ArrowDown" }
-  );
+  fireEvent.click(screen.getByRole("button", { name: "Configure Values" }));
   fireEvent.click(
-    await screen.findByRole("menuitem", { name: "View data for Values" })
+    await screen.findByRole("button", { name: "View data for Values" })
   );
   const preview = await screen.findByRole("dialog", {
     name: "Data for Values",

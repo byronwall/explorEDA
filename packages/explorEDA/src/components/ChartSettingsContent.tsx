@@ -10,12 +10,25 @@ import { LabelsSettingsTab } from "./settings/LabelsSettingsTab";
 import { MainSettingsTab } from "./settings/MainSettingsTab";
 import { TabContainer } from "./settings/TabContainer";
 import { Button } from "./ui/button";
+import { Copy, FilterX, Table2, Trash2 } from "lucide-react";
 
 interface ChartSettingsContentProps {
   settings: ChartSettings;
+  chartTitle: string;
+  onDuplicate: () => void;
+  onViewData?: () => void;
+  onClearFilters?: () => void;
+  onDelete: () => void;
 }
 
-export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
+export function ChartSettingsContent({
+  settings,
+  chartTitle,
+  onDuplicate,
+  onViewData,
+  onClearFilters,
+  onDelete,
+}: ChartSettingsContentProps) {
   // Local state for settings
   const [localSettings, setLocalSettings] = useState<ChartSettings>(
     mergeWithDefaultSettings(settings)
@@ -99,6 +112,53 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
         <p className="text-xs text-muted-foreground">
           Changes update the chart immediately.
         </p>
+      </div>
+      <div
+        className="eda-settings-actions"
+        role="group"
+        aria-label={`Actions for ${chartTitle}`}
+      >
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label={`Duplicate ${chartTitle}`}
+          onClick={onDuplicate}
+        >
+          <Copy />
+          Duplicate
+        </Button>
+        {onViewData && (
+          <Button
+            variant="ghost"
+            size="sm"
+            aria-label={`View data for ${chartTitle}`}
+            tooltip="Preview the rows behind this chart. The grid does not change."
+            onClick={onViewData}
+          >
+            <Table2 />
+            View data
+          </Button>
+        )}
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label={`Clear filters set by ${chartTitle}`}
+          disabled={!onClearFilters}
+          onClick={onClearFilters}
+        >
+          <FilterX />
+          Clear filters
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="eda-settings-delete"
+          aria-label={`Delete ${chartTitle}`}
+          tooltip="Delete this chart"
+          onClick={onDelete}
+        >
+          <Trash2 />
+        </Button>
       </div>
       <TabContainer tabs={tabs}>
         {{

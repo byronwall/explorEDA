@@ -200,14 +200,19 @@ export function DataTableHeader({
                     : "none"
                 }
               >
-                <div className="eda-column-heading">
+                <div
+                  className="eda-column-heading"
+                  data-sorted={sortBy === column.field || undefined}
+                >
                   <button
                     type="button"
                     className="flex min-w-0 flex-1 items-center gap-1 text-left"
                     aria-label={`Sort by ${column.field}`}
                     onClick={() => handleSort(column.field)}
                   >
-                    <span className="truncate">{label(column.field)}</span>
+                    <span className="min-w-0 flex-1 truncate">
+                      {label(column.field)}
+                    </span>
                     {sortBy === column.field &&
                       (sortDirection === "asc" ? (
                         <ChevronUp className="h-4 w-4" />

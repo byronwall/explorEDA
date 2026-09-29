@@ -11,14 +11,12 @@ import {
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { ChartSettings } from "@/types/ChartTypes";
 import {
-  Copy,
   FilterX,
   GripVertical,
-  MoreHorizontal,
   Maximize2,
   Minimize2,
+  Search,
   Settings2,
-  Table2,
   X,
 } from "lucide-react";
 import { ChartRenderer } from "./charts/ChartRenderer";
@@ -49,12 +47,6 @@ import {
   getChartSummary,
   getChartTitle,
 } from "./charts/chartAccessibility";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
 
 interface PlotChartPanelProps {
   settings: ChartSettings;
@@ -175,8 +167,7 @@ export function PlotChartPanel({
   const axisFieldActions = useAxisFieldActions();
   const settingsRef = useRef<HTMLButtonElement>(null);
   const settingsAnchor = useRef<HTMLElement | null>(null);
-  const actionsRef = useRef<HTMLButtonElement>(null);
-  const previewAfterMenu = useRef(false);
+  const previewAfterSettings = useRef(false);
   const expandRef = useRef<HTMLButtonElement>(null);
   const [settingsSide, setSettingsSide] = useState<
     "left" | "right" | "top" | "bottom"
@@ -212,6 +203,7 @@ export function PlotChartPanel({
     null
   );
   const clearFilter = useDataLayer((state) => state.clearFilter);
+  const updateChart = useDataLayer((state) => state.updateChart);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const fieldSettings = useDataLayer((state) => state.fieldSettings);
   void fieldSettings;
@@ -253,6 +245,10 @@ export function PlotChartPanel({
     !CATEGORY_LABELED_CHART_TYPES.has(settings.type)
       ? 36
       : 0;
+
+  const tableSearch =
+    settings.type === "data-table" ? settings.globalSearch : "";
+  const hasFilter = settings.filters.some(isActiveFilter);
 
   const handleDelete = async () => {
     const confirmed = await showAlert(
@@ -364,7 +360,26 @@ export function PlotChartPanel({
             </h3>
           )}
         </div>
-        {settings.filters.some(isActiveFilter) && (
+        {tableSearch && (
+          <div
+            className="eda-chart-search"
+            role="group"
+            aria-label={`Active table search in ${chartTitle}`}
+          >
+            <Search className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            <span className="truncate">{tableSearch}</span>
+            <ActionTooltip content="Clear this table’s search">
+              <button
+                type="button"
+                aria-label={`Clear search “${tableSearch}” in ${chartTitle}`}
+                onClick={() => updateChart(settings.id, { globalSearch: "" })}
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </ActionTooltip>
+          </div>
+        )}
+        {hasFilter && (
           <ActionTooltip content="Clear this chart’s filters">
             <Button
               variant="ghost"
@@ -400,68 +415,13 @@ export function PlotChartPanel({
             </Button>
           </ActionTooltip>
           <Popover open={dataOpen} onOpenChange={setDataOpen}>
-            <DropdownMenu modal={false}>
-              <PopoverAnchor asChild>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    ref={actionsRef}
-                    aria-label={`More actions for ${chartTitle}`}
-                    tooltip="More chart actions"
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-              </PopoverAnchor>
-              <DropdownMenuContent
-                align="end"
-                onCloseAutoFocus={(event) => {
-                  if (previewAfterMenu.current) {
-                    event.preventDefault();
-                    previewAfterMenu.current = false;
-                    setDataOpen(true);
-                  }
-                }}
-              >
-                <DropdownMenuItem
-                  onSelect={handleDelete}
-                  className="text-destructive"
-                >
-                  <X />
-                  Delete chart
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onSelect={onDuplicate}
-                  aria-label={`Duplicate ${chartTitle}`}
-                >
-                  <Copy />
-                  Duplicate chart
-                </DropdownMenuItem>
-                {!isTableLike && dataFields.length > 0 && (
-                  <DropdownMenuItem
-                    onSelect={() => {
-                      previewAfterMenu.current = true;
-                    }}
-                    aria-label={`View data for ${chartTitle}`}
-                  >
-                    <Table2 />
-                    View chart data
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem
-                  onSelect={() => clearFilter(settings)}
-                  aria-label={`Clear filters for ${chartTitle}`}
-                >
-                  <FilterX />
-                  Clear chart filters
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <PopoverAnchor
+              virtualRef={settingsRef as React.RefObject<HTMLElement>}
+            />
             <PopoverContent
               onCloseAutoFocus={(event) => {
                 event.preventDefault();
-                actionsRef.current?.focus();
+                settingsRef.current?.focus();
               }}
               aria-label={`Data for ${chartTitle}`}
               className="w-[min(36rem,calc(100vw-1.5rem))]"
@@ -470,7 +430,7 @@ export function PlotChartPanel({
               <ChartDataPreview settings={settings} />
             </PopoverContent>
           </Popover>
-          <Popover onOpenChange={placeSettings}>
+          <Popover open={settingsOpen} onOpenChange={placeSettings}>
             <PopoverAnchor
               virtualRef={settingsAnchor as React.RefObject<HTMLElement>}
             />
@@ -502,8 +462,38 @@ export function PlotChartPanel({
               }
               align="start"
               collisionPadding={12}
+              onCloseAutoFocus={(event) => {
+                // View data swaps the settings editor for the data preview.
+                if (previewAfterSettings.current) {
+                  event.preventDefault();
+                  previewAfterSettings.current = false;
+                  setDataOpen(true);
+                }
+              }}
             >
-              <ChartSettingsContent settings={settings} />
+              <ChartSettingsContent
+                settings={settings}
+                chartTitle={chartTitle}
+                onDuplicate={() => {
+                  setSettingsOpen(false);
+                  onDuplicate();
+                }}
+                onViewData={
+                  !isTableLike && dataFields.length > 0
+                    ? () => {
+                        previewAfterSettings.current = true;
+                        setSettingsOpen(false);
+                      }
+                    : undefined
+                }
+                onClearFilters={
+                  hasFilter ? () => clearFilter(settings) : undefined
+                }
+                onDelete={() => {
+                  setSettingsOpen(false);
+                  void handleDelete();
+                }}
+              />
             </PopoverContent>
           </Popover>
         </div>

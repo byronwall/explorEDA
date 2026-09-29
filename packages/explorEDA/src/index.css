@@ -355,6 +355,7 @@
   overflow: hidden;
 }
 .eda-settings [role="tablist"],
+.eda-settings-actions,
 .eda-settings-footer,
 .eda-settings > div:first-child {
   flex-shrink: 0;
@@ -472,6 +473,14 @@ html {
   height: 24px;
   gap: 2px;
   pointer-events: none;
+}
+/* Keep the sort arrow at the right edge, clear of the hover actions. */
+.eda-column-heading > button > svg {
+  flex-shrink: 0;
+  color: var(--primary);
+}
+.eda-column-heading[data-sorted] .eda-column-actions {
+  right: 18px;
 }
 .eda-column-actions button {
   width: 24px;
@@ -994,6 +1003,26 @@ html {
 }
 .eda-pivot-table tbody tr:hover .eda-pivot-row-label {
   background: color-mix(in srgb, var(--primary) 7%, var(--card));
+}
+/* The value itself opens the contributor inspector. */
+.eda-pivot-cell {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
+  font: inherit;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.eda-pivot-cell:hover {
+  color: var(--primary);
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+.eda-pivot-cell:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
 }
 .eda-pivot-table td.is-selected {
   background: color-mix(in srgb, var(--primary) 7%, var(--card));
@@ -2458,6 +2487,63 @@ html {
   height: 28px;
   color: var(--primary);
   background: var(--accent);
+}
+/* An active table search stays visible while the header actions are quiet. */
+.eda-chart-search {
+  display: flex;
+  align-items: center;
+  flex-shrink: 1;
+  gap: 4px;
+  min-width: 0;
+  max-width: 11rem;
+  height: 24px;
+  padding: 0 2px 0 7px;
+  border-radius: 999px;
+  color: var(--primary);
+  background: var(--accent);
+  font-size: 12px;
+  font-weight: 500;
+}
+.eda-chart-search button {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+}
+.eda-chart-search button:hover,
+.eda-chart-search button:focus-visible {
+  background: var(--background);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ring);
+}
+.eda-settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.eda-settings-actions button[data-slot="button"] {
+  height: 28px;
+  gap: 5px;
+  padding: 0 6px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+.eda-settings-actions button svg {
+  width: 14px;
+  height: 14px;
+}
+.eda-settings-actions .eda-settings-delete {
+  width: 28px;
+  margin-left: auto;
+  padding: 0;
+}
+.eda-settings-actions .eda-settings-delete:hover {
+  color: var(--destructive);
 }
 .eda-settings [role="tablist"] {
   display: flex;

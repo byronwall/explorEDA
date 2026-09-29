@@ -395,27 +395,28 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
                     isCellFiltered(row.headers, cell.key) && "is-selected"
                   )}
                 >
-                  <div className="flex items-center justify-end gap-2">
-                    <ActionTooltip
-                      content={cell.error ?? cellName(cell, row.headers)}
-                    >
-                      <span tabIndex={cell.error ? 0 : undefined}>
-                        {displayPivotCell(cell)}
-                      </span>
-                    </ActionTooltip>
+                  <ActionTooltip
+                    content={
+                      <>
+                        {cell.error ?? cellName(cell, row.headers)}
+                        <br />
+                        Click to inspect the source rows.
+                      </>
+                    }
+                  >
                     <button
                       type="button"
-                      className="rounded px-1 text-[10px] text-muted-foreground underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="eda-pivot-cell"
                       aria-haspopup="dialog"
-                      aria-label={`Inspect ${cellName(cell, row.headers)}`}
+                      aria-label={`${displayPivotCell(cell)}, inspect ${cellName(cell, row.headers)}`}
                       onClick={(event) => {
                         lastTrigger.current = event.currentTarget;
                         setSelectedCell({ cell, rowHeaders: row.headers });
                       }}
                     >
-                      Inspect
+                      {displayPivotCell(cell)}
                     </button>
-                  </div>
+                  </ActionTooltip>
                 </td>
               ))}
             </tr>
