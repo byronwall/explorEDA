@@ -1,5 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { ActionTooltip } from "./ui/tooltip";
+import {
+  ActionTooltip,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { ColorScaleManager } from "./ColorScaleManager";
 import { ChartCreationButtons } from "./plot/ChartCreationButtons";
@@ -115,12 +121,19 @@ export function PlotManager() {
   const [fieldsOverview, setFieldsOverview] = useState(false);
   const [rowsOpen, setRowsOpen] = useState(false);
 
+  const [fieldsTipOpen, setFieldsTipOpen] = useState(false);
+  const quietFieldsTip = useRef(false);
+
   const closeFields = useCallback(() => {
     const list = document.getElementById(fieldListId);
     const hadFocus = list?.contains(document.activeElement) ?? false;
+    const toggle = fieldsToggleRef.current;
     setFieldsOpen(false);
     setFieldsOverview(false);
-    if (hadFocus) fieldsToggleRef.current?.focus({ preventScroll: true });
+    setFieldsTipOpen(false);
+    // Returning focus or a resting pointer must not pop the toggle's tooltip.
+    quietFieldsTip.current = hadFocus || Boolean(toggle?.matches(":hover"));
+    if (hadFocus) toggle?.focus({ preventScroll: true });
   }, [fieldListId]);
 
   const closeRows = useCallback(() => {
@@ -371,24 +384,43 @@ export function PlotManager() {
             aria-label="Inspect data"
             className="eda-toolbar-group"
           >
-            <Button
-              ref={fieldsToggleRef}
-              variant="ghost"
-              size="icon"
-              className="eda-fields-toggle"
-              aria-label="Fields"
-              aria-pressed={fieldsOpen}
-              aria-expanded={fieldsOpen}
-              aria-controls={fieldsOpen ? fieldListId : undefined}
-              tooltip={
-                fieldsOpen
-                  ? "Hide the field list (F)"
-                  : "Fields: every field with search, quick stats, and chart actions (F). Shift+F opens every distribution in a full view."
-              }
-              onClick={() => (fieldsOpen ? closeFields() : setFieldsOpen(true))}
-            >
-              <ListTree aria-hidden="true" />
-            </Button>
+            <TooltipProvider>
+              <Tooltip
+                open={fieldsTipOpen}
+                onOpenChange={(open) =>
+                  setFieldsTipOpen(open && !quietFieldsTip.current)
+                }
+              >
+                <TooltipTrigger asChild>
+                  <Button
+                    ref={fieldsToggleRef}
+                    variant="ghost"
+                    size="icon"
+                    className="eda-fields-toggle"
+                    aria-label="Fields"
+                    aria-pressed={fieldsOpen}
+                    aria-expanded={fieldsOpen}
+                    aria-controls={fieldsOpen ? fieldListId : undefined}
+                    onClick={() =>
+                      fieldsOpen ? closeFields() : setFieldsOpen(true)
+                    }
+                    onPointerLeave={() => {
+                      quietFieldsTip.current = false;
+                    }}
+                    onBlur={() => {
+                      quietFieldsTip.current = false;
+                    }}
+                  >
+                    <ListTree aria-hidden="true" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {fieldsOpen
+                    ? "Hide the field list (F)"
+                    : "Fields: every field with search, quick stats, and chart actions (F). Shift+F opens every distribution in a full view."}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <Button
               ref={rowsToggleRef}
               variant="ghost"
