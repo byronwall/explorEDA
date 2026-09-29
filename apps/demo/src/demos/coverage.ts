@@ -286,8 +286,7 @@ export const coverageFeatures = [
     family: "Tables",
     description: "Filter rows with a visible query or field control.",
     required: true,
-    status: "not-checked",
-    gaps: ["No example is the declared reference for table filtering."],
+    status: "supported",
   },
   {
     id: "table:virtualization",
@@ -367,6 +366,96 @@ export type ExampleCoverage = {
 
 export const exampleCoverage = [
   {
+    exampleId: "shop-operations",
+    intent:
+      "Click one channel and watch every linked view and the orders table narrow.",
+    features: {
+      "chart:scatter": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:boxplot": "shown",
+      "chart:data-table": "shown",
+      "color:categorical": "shown",
+      "interaction:cross-filter": "shown",
+      "layout:dashboard": "shown",
+    },
+  },
+  {
+    exampleId: "palmer-penguins",
+    intent:
+      "Separate three penguin species with one shared color key across linked views.",
+    features: {
+      "chart:scatter": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:boxplot": "shown",
+      "chart:data-table": "shown",
+      "color:categorical": "shown",
+      "interaction:brushing": "shown",
+      "interaction:cross-filter": "shown",
+      "layout:dashboard": "shown",
+    },
+  },
+  {
+    exampleId: "nba-stats",
+    intent:
+      "Summarize a real season, compare positions in a pivot, and rank players in a sorted table.",
+    features: {
+      "chart:summary": "shown",
+      "chart:scatter": "shown",
+      "chart:color-legend": "shown",
+      "chart:pivot": "shown",
+      "chart:data-table": "shown",
+      "color:categorical": "shown",
+      "color:legend": "shown",
+      "table:sorting": "shown",
+      "table:virtualization": "shown",
+    },
+  },
+  {
+    exampleId: "categorical-charts",
+    intent:
+      "Break down a categorical catalog with counts, a pivot, a facet grid, and a table search.",
+    features: {
+      "chart:row": "shown",
+      "chart:pivot": "shown",
+      "chart:data-table": "shown",
+      "color:categorical": "shown",
+      "facet:grid": "shown",
+      "table:filtering": "shown",
+      "table:sorting": "shown",
+    },
+  },
+  {
+    exampleId: "box-plot",
+    intent:
+      "Carry a numeric color scale across a scatter, a legend, and violin box plots.",
+    features: {
+      "chart:summary": "shown",
+      "chart:scatter": "shown",
+      "chart:color-legend": "shown",
+      "chart:boxplot": "shown",
+      "chart:bar": "shown",
+      "color:numerical": "shown",
+      "color:legend": "shown",
+      "interaction:brushing": "shown",
+    },
+  },
+  {
+    exampleId: "product-activity",
+    intent:
+      "Explore linked product traffic, conversion, and response-time views.",
+    features: {
+      "chart:line": "shown",
+      "chart:row": "shown",
+      "chart:scatter": "shown",
+      "chart:bar": "shown",
+      "chart:boxplot": "shown",
+      "chart:data-table": "shown",
+      "color:legend": "shown",
+    },
+  },
+  {
     exampleId: "scatter-trace",
     intent:
       "Trace one scatter point from source values through calculations, filters, scales, and color.",
@@ -411,32 +500,9 @@ export const exampleCoverage = [
       "chart:line": "shown",
       "facet:wrap": "shown",
       "facet:shared-scales": "shown",
+      "table:virtualization": "shown",
       "layout:dashboard": "shown",
     },
-  },
-  {
-    exampleId: "product-activity",
-    intent:
-      "Explore linked product traffic, conversion, and response-time views.",
-    features: {
-      "chart:line": "shown",
-      "chart:row": "shown",
-      "chart:scatter": "shown",
-      "chart:bar": "shown",
-      "chart:boxplot": "shown",
-      "chart:data-table": "shown",
-      "color:legend": "shown",
-    },
-  },
-  {
-    exampleId: "palmer-penguins",
-    intent: "Start an unsaved exploration with a familiar mixed dataset.",
-    features: {},
-  },
-  {
-    exampleId: "shop-operations",
-    intent: "Start an unsaved exploration with operational measures.",
-    features: {},
   },
   {
     exampleId: "lorenz-3d",
@@ -445,74 +511,12 @@ export const exampleCoverage = [
       "chart:scatter": "shown",
       "chart:3d-scatter": "shown",
       "chart:markdown": "shown",
+      "color:numerical": "shown",
       "facet:wrap": "shown",
       "interaction:brushing": "shown",
       "interaction:cross-filter": "shown",
       "layout:dashboard": "shown",
     },
-  },
-  {
-    exampleId: "box-plot",
-    intent: "Compare a box plot with a violin overlay, histogram, and summary table.",
-    features: {
-      "chart:bar": "shown",
-      "chart:boxplot": "shown",
-      "color:numerical": "shown",
-    },
-  },
-  {
-    exampleId: "categorical-charts",
-    intent: "Compare categorical totals and a two-variable facet grid.",
-    features: {
-      "chart:row": "shown",
-      "chart:pivot": "shown",
-      "color:categorical": "shown",
-      "facet:grid": "shown",
-    },
-  },
-  {
-    exampleId: "color-legend",
-    intent: "Show categorical and numerical color beside a shared legend.",
-    features: {
-      "chart:color-legend": "shown",
-      "color:categorical": "shown",
-      "color:numerical": "shown",
-      "color:legend": "shown",
-    },
-  },
-  {
-    exampleId: "line-chart",
-    intent: "Show several numerical series on one line chart.",
-    features: {
-      "chart:line": "shown",
-      "guides:grids": "shown",
-      "color:legend": "shown",
-    },
-  },
-  {
-    exampleId: "tables",
-    intent: "Show source rows beside field summaries.",
-    features: {
-      "chart:summary": "shown",
-      "chart:data-table": "shown",
-      "table:sorting": "shown",
-      "table:virtualization": "shown",
-    },
-  },
-  {
-    exampleId: "fifa",
-    intent: "Explore a large categorical player dataset.",
-    features: {},
-  },
-  {
-    exampleId: "world-bank-population",
-    intent: "Compare country trends in a wrapped line-chart layout.",
-    features: { "facet:wrap": "shown" },
-  },
-  {
-    exampleId: "nba-stats",
-    intent: "Compare player measures across charts and tables.",
-    features: {},
   },
 ] as const satisfies readonly ExampleCoverage[];
 

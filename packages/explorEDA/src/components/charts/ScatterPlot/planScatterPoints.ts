@@ -1,15 +1,22 @@
-import { finiteNumber } from "@/lib/numeric";
 import { applyFilter } from "@/hooks/applyFilter";
-import { getRangeFilterForField } from "@/hooks/getAxisFilter";
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { datum } from "@/types/ChartTypes";
 import type { ScatterPlotSettings } from "./definition";
+import {
+  passesAxisFilters,
+  scatterPosition,
+  type ScatterAxisScale,
+} from "./scatterAxis";
 
 export interface ScatterPointStyle {
   radius: { value: number; source: "chart-setting" | "scatter-default" };
   opacity: { value: number; source: "chart-setting" | "scatter-default" };
   dimmedOpacity: { value: number; source: "own-filter-rule" };
 }
+
+/** Jitter salts, so a row spreads differently across X and Y bands. */
+const X_SALT = 1;
+const Y_SALT = 2;
 
 export function planScatterPoints({
   settings,
@@ -18,8 +25,8 @@ export function planScatterPoints({
   xData,
   yData,
   colorData,
-  xScale,
-  yScale,
+  xAxis,
+  yAxis,
   getColor,
 }: {
   settings: ScatterPlotSettings;
@@ -28,46 +35,36 @@ export function planScatterPoints({
   xData: Record<IdType, datum>;
   yData: Record<IdType, datum>;
   colorData: Record<IdType, datum>;
-  xScale: (value: number) => number;
-  yScale: (value: number) => number;
+  xAxis: ScatterAxisScale;
+  yAxis: ScatterAxisScale;
   getColor: (value: datum) => string;
 }) {
-  const xFilter = getRangeFilterForField(settings.filters, settings.xField);
-  const yFilter = getRangeFilterForField(settings.filters, settings.yField);
   const colorFilters = settings.filters.filter(
     (filter) => filter.field === settings.colorField
   );
   const points = [];
 
   for (const sourceId of ids) {
-    const rawX = xData[sourceId];
-    const rawY = yData[sourceId];
-    const xValue = finiteNumber(rawX) ?? NaN;
-    const yValue = finiteNumber(rawY) ?? NaN;
-    if (!Number.isFinite(xValue) || !Number.isFinite(yValue)) {
-      continue;
-    }
-
-    const x = xScale(xValue);
-    const y = yScale(yValue);
-    if (!Number.isFinite(x) || !Number.isFinite(y)) {
+    const x = scatterPosition(xAxis, xData[sourceId], sourceId, X_SALT);
+    const y = scatterPosition(yAxis, yData[sourceId], sourceId, Y_SALT);
+    if (!x || !y) {
       continue;
     }
 
     const passesOwnFilter =
-      (!xFilter || applyFilter(xValue, xFilter)) &&
-      (!yFilter || applyFilter(yValue, yFilter)) &&
+      passesAxisFilters(xAxis, settings.filters, settings.xField, x.value) &&
+      passesAxisFilters(yAxis, settings.filters, settings.yField, y.value) &&
       colorFilters.every((filter) => applyFilter(colorData[sourceId], filter));
     const mappedColor = getColor(colorData[sourceId]);
     points.push({
       id: `${settings.id}:point:${sourceId}`,
       sourceId,
-      xValue,
-      yValue,
+      xValue: x.value,
+      yValue: y.value,
       colorValue: colorData[sourceId],
       mappedColor,
-      x,
-      y,
+      x: x.pixel,
+      y: y.pixel,
       color: passesOwnFilter ? mappedColor : "rgb(156 163 175)",
       opacity: passesOwnFilter
         ? style.opacity.value

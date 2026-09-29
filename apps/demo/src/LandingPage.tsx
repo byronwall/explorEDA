@@ -267,10 +267,12 @@ export function LandingPage() {
                       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
                         <SectionHeading
                           id="examples-heading"
-                          heading="More examples"
+                          heading="Examples"
                         >
-                          Open another linked dashboard, or browse focused
-                          component examples.
+                          Each example pairs a dataset with the views that
+                          answer its question. Start at the top for a quick
+                          tour; lower examples go deeper into calculations,
+                          tracing, scale, and 3D.
                         </SectionHeading>
                         <Button
                           variant="link"
@@ -280,26 +282,7 @@ export function LandingPage() {
                           Project status: feature coverage
                         </Button>
                       </div>
-                      <ExampleSelector
-                        examplesToShow={examples.filter(
-                          (item) =>
-                            item.dashboard && item.id !== FEATURED_EXAMPLE_ID
-                        )}
-                        onSelect={handleExampleSelect}
-                      />
-                      <details className="mt-6 rounded-xl border border-border bg-card px-5">
-                        <summary className="cursor-pointer py-3 font-medium">
-                          Show all examples
-                        </summary>
-                        <div className="pb-4">
-                          <ExampleSelector
-                            examplesToShow={examples.filter(
-                              (item) => !item.dashboard
-                            )}
-                            onSelect={handleExampleSelect}
-                          />
-                        </div>
-                      </details>
+                      <ExampleSelector onSelect={handleExampleSelect} />
                     </section>
                     <section
                       aria-labelledby="your-data-heading"

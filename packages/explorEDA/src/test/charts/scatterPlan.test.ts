@@ -119,9 +119,12 @@ it("plans scatter points, guides, and brush from distinct row populations", () =
     [20, 30],
     [100, 130],
   ] as [[number, number], [number, number]];
-  const filter = brushFilters(plan, extent);
-  expect(filter.x[0]).toBeLessThan(filter.x[1]);
-  expect(filter.y[0]).toBeLessThan(filter.y[1]);
+  const [xFilter, yFilter] = brushFilters(plan, extent);
+  expect(xFilter).toMatchObject({ type: "range", field: "x" });
+  expect(yFilter).toMatchObject({ type: "range", field: "y" });
+  if (xFilter?.type !== "range" || yFilter?.type !== "range") throw xFilter;
+  expect(xFilter.min!).toBeLessThan(xFilter.max!);
+  expect(yFilter.min!).toBeLessThan(yFilter.max!);
   const overlay = planScatterOverlay(plan, extent, plan.points[1]!.id);
   expect(overlay.brush).toHaveLength(5);
   expect(overlay.readout).toHaveLength(8);
