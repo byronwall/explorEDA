@@ -2,6 +2,7 @@ import { useId, useMemo, useState, type KeyboardEvent } from "react";
 import { Search } from "lucide-react";
 import { categoryLabel } from "@/lib/categories";
 import type {
+  CalendarUnit,
   CategoryDistribution,
   DistributionBin,
   FieldDistribution,
@@ -10,6 +11,7 @@ import type {
   OutlierTail,
   PopulationCounts,
 } from "@/lib/fieldDistribution";
+import { calendarLabel, calendarUnitName } from "@/lib/fieldDistribution";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -315,7 +317,10 @@ function CountsTable({
   );
 }
 
-function binLabel(bin: DistributionBin, format: Format) {
+function binLabel(bin: DistributionBin, format: Format, unit?: CalendarUnit) {
+  if (unit) {
+    return calendarLabel(bin.start, unit);
+  }
   if (bin.single) {
     return format(bin.start);
   }
@@ -338,8 +343,11 @@ function Histogram({
   summary,
   scale,
   tails,
+  unit,
 }: {
   scale: Scale;
+  /** The calendar period of each date bin, which names the bins. */
+  unit?: CalendarUnit;
   tails?: { below: OutlierTail; above: OutlierTail };
   bins: DistributionBin[];
   format: Format;
@@ -540,14 +548,22 @@ function Histogram({
           </svg>
         )}
         <div className="eda-dist-axis" aria-hidden="true">
-          <span>{first ? format(low) : ""}</span>
-          <span>{last && high !== low ? format(high) : ""}</span>
+          <span>
+            {first ? (unit ? binLabel(first, format, unit) : format(low)) : ""}
+          </span>
+          <span>
+            {last && high !== low
+              ? unit
+                ? binLabel(last, format, unit)
+                : format(high)
+              : ""}
+          </span>
         </div>
       </div>
       <p id={readoutId} className="eda-dist-readout" aria-live="polite">
         {bin ? (
           <>
-            <strong>{binLabel(bin, format)}</strong>
+            <strong>{binLabel(bin, format, unit)}</strong>
             {filtered ? (
               <>
                 <span>
@@ -573,9 +589,11 @@ function Histogram({
           <span className="text-muted-foreground">
             {bins.length === 1
               ? `One value: ${binLabel(bins[0]!, format)}`
-              : single
-                ? `${bins.length} values from ${format(low)} to ${format(high)}`
-                : `${bins.length} bins of ${format(binWidth!)} from ${format(low)} to ${format(high)}`}
+              : unit
+                ? `${bins.length} ${calendarUnitName(unit)} from ${binLabel(first!, format, unit)} to ${binLabel(last!, format, unit)}`
+                : single
+                  ? `${bins.length} values from ${format(low)} to ${format(high)}`
+                  : `${bins.length} bins of ${format(binWidth!)} from ${format(low)} to ${format(high)}`}
             {hiddenAll > 0 &&
               `. ${count(hiddenAll)} far ${
                 hiddenAll === 1 ? "outlier sits" : "outliers sit"
@@ -881,6 +899,7 @@ export function FieldValues({
             summary={
               distribution.kind === "numeric" ? distribution.summary : undefined
             }
+            unit={distribution.kind === "date" ? distribution.unit : undefined}
           />
         )}
         {noFilteredRows && (

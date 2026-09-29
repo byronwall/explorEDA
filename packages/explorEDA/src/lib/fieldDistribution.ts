@@ -78,6 +78,8 @@ export interface NumericDistribution extends DistributionBase {
 export interface DateDistribution extends DistributionBase {
   kind: "date";
   bins: DistributionBin[];
+  /** The calendar period each bin covers, when bins follow the calendar. */
+  unit?: CalendarUnit;
   range?: {
     all: { first: number; last: number };
     filtered?: { first: number; last: number };
@@ -213,6 +215,190 @@ export function binPopulations(
   return bins;
 }
 
+/** A calendar period in UTC, such as one month or five years. */
+export interface CalendarUnit {
+  unit: "hour" | "day" | "week" | "month" | "quarter" | "year";
+  step: number;
+}
+
+/** Periods from finest to coarsest. Dates take the finest that fits. */
+const CALENDAR_UNITS: CalendarUnit[] = [
+  { unit: "hour", step: 1 },
+  { unit: "hour", step: 6 },
+  { unit: "day", step: 1 },
+  { unit: "week", step: 1 },
+  { unit: "month", step: 1 },
+  { unit: "quarter", step: 1 },
+  { unit: "year", step: 1 },
+  { unit: "year", step: 2 },
+  { unit: "year", step: 5 },
+  { unit: "year", step: 10 },
+  { unit: "year", step: 25 },
+  { unit: "year", step: 50 },
+  { unit: "year", step: 100 },
+];
+
+/** The most calendar bins a date distribution draws. */
+export const MAX_CALENDAR_BINS = 40;
+
+const HOUR = 60 * 60 * 1000;
+const DAY = 24 * HOUR;
+
+/** A UTC time from calendar parts, including years before 100. */
+function utc(year: number, month = 0, day = 1, hour = 0) {
+  const date = new Date(0);
+  date.setUTCFullYear(year, month, day);
+  date.setUTCHours(hour, 0, 0, 0);
+  return date.getTime();
+}
+
+const floorTo = (value: number, step: number) =>
+  value - (((value % step) + step) % step);
+
+/** The start of the period that holds a time. Weeks start on Monday. */
+export function calendarFloor(time: number, { unit, step }: CalendarUnit) {
+  const date = new Date(time);
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth();
+  const day = date.getUTCDate();
+  switch (unit) {
+    case "hour":
+      return utc(year, month, day, floorTo(date.getUTCHours(), step));
+    case "day":
+      return utc(year, month, day);
+    case "week":
+      return utc(year, month, day - ((date.getUTCDay() + 6) % 7));
+    case "month":
+      return utc(year, floorTo(month, step));
+    case "quarter":
+      return utc(year, floorTo(month, 3 * step));
+    case "year":
+      return utc(floorTo(year, step));
+  }
+}
+
+/** The start of the period after the one that starts at a time. */
+export function calendarNext(start: number, { unit, step }: CalendarUnit) {
+  const date = new Date(start);
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth();
+  switch (unit) {
+    case "hour":
+      return start + step * HOUR;
+    case "day":
+      return start + step * DAY;
+    case "week":
+      return start + step * 7 * DAY;
+    case "month":
+      return utc(year, month + step);
+    case "quarter":
+      return utc(year, month + 3 * step);
+    case "year":
+      return utc(year + step);
+  }
+}
+
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+/** Name the period a calendar bin covers, such as "Mar 2024" or "Q1 2024". */
+export function calendarLabel(start: number, unit: CalendarUnit) {
+  const iso = new Date(start).toISOString();
+  const date = new Date(start);
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth();
+  switch (unit.unit) {
+    case "hour":
+      return `${iso.slice(0, 10)} ${iso.slice(11, 16)}`;
+    case "day":
+      return iso.slice(0, 10);
+    case "week":
+      return `Week of ${iso.slice(0, 10)}`;
+    case "month":
+      return `${MONTHS[month]} ${year}`;
+    case "quarter":
+      return `Q${Math.floor(month / 3) + 1} ${year}`;
+    case "year":
+      return unit.step === 1 ? String(year) : `${year}–${year + unit.step - 1}`;
+  }
+}
+
+/** The plural name of a calendar unit, for sentences such as "12 months". */
+export function calendarUnitName({ unit, step }: CalendarUnit) {
+  return step === 1 ? `${unit}s` : `${step}-${unit} periods`;
+}
+
+/**
+ * Bin dates by whole calendar periods in UTC: the finest of hours, days,
+ * weeks, months, quarters, or years that needs no more than
+ * MAX_CALENDAR_BINS bins. Both populations share the bins. Returns undefined
+ * when every date falls inside one hour, so the caller can bin by time.
+ */
+export function calendarBins(
+  all: number[],
+  filtered: number[] | undefined
+): { bins: DistributionBin[]; unit: CalendarUnit } | undefined {
+  const range = extent(all);
+  if (!range || range.first === range.last) {
+    return undefined;
+  }
+  for (const unit of CALENDAR_UNITS) {
+    const edges = [calendarFloor(range.first, unit)];
+    while (
+      edges.at(-1)! <= range.last &&
+      edges.length <= MAX_CALENDAR_BINS + 1
+    ) {
+      edges.push(calendarNext(edges.at(-1)!, unit));
+    }
+    const count = edges.length - 1;
+    if (count > MAX_CALENDAR_BINS) {
+      continue;
+    }
+    if (count < 2 && unit === CALENDAR_UNITS[0]) {
+      return undefined;
+    }
+    const bins: DistributionBin[] = edges.slice(0, -1).map((start, index) => ({
+      start,
+      end: edges[index + 1]!,
+      single: false,
+      all: 0,
+      filtered: 0,
+    }));
+    const indexOf = (value: number) => {
+      let low = 0;
+      let high = count - 1;
+      while (low < high) {
+        const middle = Math.ceil((low + high) / 2);
+        if (edges[middle]! <= value) low = middle;
+        else high = middle - 1;
+      }
+      return low;
+    };
+    for (const value of all) {
+      bins[indexOf(value)]!.all += 1;
+    }
+    for (const value of filtered ?? []) {
+      if (value >= range.first && value <= range.last) {
+        bins[indexOf(value)]!.filtered += 1;
+      }
+    }
+    return { bins, unit };
+  }
+  return undefined;
+}
+
 /** Values far outside the middle half: beyond three interquartile ranges. */
 export function farOutlierFences(summary: NumericSummary) {
   const spread = summary.q3 - summary.q1;
@@ -344,10 +530,15 @@ export function buildFieldDistribution(
     const filtered = hasFilter ? read(filteredEntries) : undefined;
     const filteredNumbers = filtered?.numbers ?? all.numbers;
     const numeric = dataType === "numeric";
-    const bins = binPopulations(all.numbers, filteredNumbers, {
-      integerBins: numeric,
-      roundEdges: numeric,
-    });
+    const calendar = numeric
+      ? undefined
+      : calendarBins(all.numbers, filteredNumbers);
+    const bins =
+      calendar?.bins ??
+      binPopulations(all.numbers, filteredNumbers, {
+        integerBins: numeric,
+        roundEdges: numeric,
+      });
 
     if (numeric) {
       const allSummary = summarizeNumbers(all.numbers);
@@ -369,6 +560,7 @@ export function buildFieldDistribution(
       all: all.counts,
       filtered: filtered?.counts,
       bins,
+      unit: calendar?.unit,
       range: allRange && {
         all: allRange,
         filtered: filtered && extent(filtered.numbers),

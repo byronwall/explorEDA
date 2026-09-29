@@ -1,6 +1,8 @@
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
 import { getChartFields } from "./charts/chartAccessibility";
+import { NullValue } from "./NullValue";
+import { isMissingValue } from "@/lib/numeric";
 
 export function ChartDataPreview({ settings }: { settings: ChartSettings }) {
   const crossfilter = useDataLayer((s) => s.crossfilterWrapper);
@@ -26,7 +28,7 @@ export function ChartDataPreview({ settings }: { settings: ChartSettings }) {
       ]
     : fields.map(getFieldLabel);
   const count = result?.rows.length ?? ids.length;
-  const rows = result
+  const rows: React.ReactNode[][] = result
     ? result.rows
         .slice(0, 100)
         .map((row) => [
@@ -39,11 +41,12 @@ export function ChartDataPreview({ settings }: { settings: ChartSettings }) {
               ),
           String(row.rowCount),
         ])
-    : ids
-        .slice(0, 100)
-        .map((id) =>
-          fields.map((field, index) => format(field, columns[index]?.[id]))
-        );
+    : ids.slice(0, 100).map((id) =>
+        fields.map((field, index) => {
+          const value = columns[index]?.[id];
+          return isMissingValue(value) ? <NullValue /> : format(field, value);
+        })
+      );
 
   return (
     <div className="space-y-3">
@@ -77,7 +80,11 @@ export function ChartDataPreview({ settings }: { settings: ChartSettings }) {
             {rows.map((row, index) => (
               <tr key={index} className="border-t border-border">
                 {row.map((value, index) => (
-                  <td key={index} className="whitespace-nowrap px-3 py-2">
+                  <td
+                    key={index}
+                    className="whitespace-nowrap px-3 py-2"
+                    data-null={typeof value === "object" || undefined}
+                  >
                     {value}
                   </td>
                 ))}

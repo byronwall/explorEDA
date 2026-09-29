@@ -10,7 +10,11 @@ import {
 import { Maximize2, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useFilteredFieldProfiles } from "@/hooks/useFilteredFieldProfiles";
+import {
+  useFilteredFieldProfiles,
+  useFilteredRowCount,
+} from "@/hooks/useFilteredFieldProfiles";
+import { useFieldFilter } from "@/hooks/useFieldFilter";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { FieldDragProvider } from "./FieldDragContext";
 import { FieldListRow } from "./FieldListRow";
@@ -97,7 +101,10 @@ export function FieldList({
   /** The workspace whose charts "Used in" entries point at. */
   workspaceRef: RefObject<HTMLElement | null>;
 }) {
-  const profiles = useFilteredFieldProfiles();
+  // Fields the list filters keep their full shape, with the filter marked.
+  const { target } = useFieldFilter();
+  const profiles = useFilteredFieldProfiles(target);
+  const scopeRows = useFilteredRowCount();
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const data = useDataLayer((state) => state.data);
   const [query, setQuery] = useState("");
@@ -124,7 +131,6 @@ export function FieldList({
       ),
     [profiles, query, getFieldLabel]
   );
-  const scopeRows = profiles[0]?.totalCount ?? data.length;
   const scope = `Values describe ${scopeRows.toLocaleString()} of ${data.length.toLocaleString()} rows after chart filters`;
   const collapse = () => {
     onOverviewChange(false);
@@ -211,6 +217,14 @@ export function FieldList({
         </p>
       ) : (
         <FieldDragProvider workspaceRef={workspaceRef}>
+          <div className="eda-field-list-columns" aria-hidden="true">
+            <span>Field</span>
+            <span className="eda-field-row-count">Distinct</span>
+            <span className="eda-field-row-count" data-missing-column="">
+              Missing
+            </span>
+            <span className="eda-field-row-spark">Values</span>
+          </div>
           <ul className="eda-field-list-rows" aria-label="Fields">
             {shown.map((profile) => (
               <FieldListRow

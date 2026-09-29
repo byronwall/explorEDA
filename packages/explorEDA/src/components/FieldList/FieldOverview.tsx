@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { useFieldDistributions } from "@/hooks/useFieldDistribution";
 import { categoryLabel } from "@/lib/categories";
+import { calendarLabel } from "@/lib/fieldDistribution";
 import type {
   DistributionBin,
   FieldDistribution,
@@ -262,8 +263,24 @@ function FieldCard({
               <MiniHistogram bins={histogram.bins} filtered={filtered} />
               {histogram.min !== undefined && histogram.max !== undefined && (
                 <p className="eda-overview-axis">
-                  <span>{format(histogram.min)}</span>
-                  <span>{format(histogram.max)}</span>
+                  {distribution.kind === "date" && distribution.unit ? (
+                    <>
+                      <span>
+                        {calendarLabel(histogram.min, distribution.unit)}
+                      </span>
+                      <span>
+                        {calendarLabel(
+                          histogram.bins.at(-1)!.start,
+                          distribution.unit
+                        )}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span>{format(histogram.min)}</span>
+                      <span>{format(histogram.max)}</span>
+                    </>
+                  )}
                 </p>
               )}
             </>
