@@ -1,5 +1,7 @@
 # explorEDA
 
+![explorEDA icon and wordmark](apps/demo/public/brand/logo.svg)
+
 **Embed an interactive analysis workspace in your React app.**
 
 Give users linked charts, record-level tables, and editable calculated fields
