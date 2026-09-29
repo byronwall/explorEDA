@@ -84,7 +84,10 @@ export function BarChart({
   const trace = useChartTrace();
   const traceApi = useChartTraceApi();
   const owner = useId();
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [hovered, setHovered] = useState<{ id: string | null; altKey: boolean }>({
+    id: null,
+    altKey: false,
+  });
 
   const resolvedAggregate = useMemo(() => {
     void aggregates;
@@ -256,12 +259,14 @@ export function BarChart({
         onBrushChange={handleBrushChange}
         settings={settings}
         onInspectGuide={(id) => inspect("guide", id)}
-        onHoverTarget={setHoveredId}
+        onHoverTarget={(id, altKey) => setHovered({ id, altKey })}
         onInspectPlot={([x, y]) => {
           const bar = barAt(plan, x, y);
           return bar ? Boolean(inspect("bar", bar.id)) : false;
         }}
-        activeGuideId={selected?.kind === "guide" ? selected.id : hoveredId}
+        activeGuideId={
+          selected?.kind === "guide" ? selected.id : hovered.altKey ? hovered.id : null
+        }
       >
         <g>
           {plan.bars.map((bar) => {
@@ -314,7 +319,7 @@ export function BarChart({
           })}
         </g>
       </BaseChart>
-      {hoveredId && <HoverReadout plan={plan} id={hoveredId} />}
+      {hovered.id && <HoverReadout plan={plan} id={hovered.id} />}
     </div>
   );
 }
