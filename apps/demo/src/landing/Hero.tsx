@@ -14,7 +14,10 @@ export function Hero({ onOpenFeatured }: { onOpenFeatured: () => void }) {
         aria-label="Site"
         className="mx-auto flex max-w-6xl items-center justify-between gap-4 pt-3"
       >
-        <span className="text-lg font-bold tracking-tight">explorEDA</span>
+        <a href="/" className="flex shrink-0 items-center gap-2" aria-label="explorEDA home">
+          <img src="/brand/icon.svg" alt="" className="size-7" />
+          <img src="/brand/wordmark.svg" alt="" className="h-6 w-auto" />
+        </a>
         <div className="flex items-center gap-1 text-sm">
           <a className={navLinkClass} href="#integration">
             Docs
