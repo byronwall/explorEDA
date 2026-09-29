@@ -293,7 +293,7 @@ describe("PivotTable rendering", () => {
       )
     );
 
-    const inspectButton = screen.getByRole("button", { name: /Inspect A/ });
+    const inspectButton = screen.getByRole("button", { name: /inspect A/ });
     fireEvent.click(inspectButton);
     const dialog = screen.getByRole("dialog");
     expect(within(dialog).getByText("3.23456789")).toBeInTheDocument();
@@ -373,7 +373,7 @@ describe("PivotTable units", () => {
     const row = within(table).getAllByRole("row")[1]!;
     const cells = within(row)
       .getAllByRole("cell")
-      .map((cell) => cell.textContent?.replace(/Inspect.*$/, ""));
+      .map((cell) => cell.textContent);
     expect(cells).toEqual(["$4,000.00 net", "2", "1,000,000.00"]);
   });
 });
