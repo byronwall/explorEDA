@@ -1,4 +1,5 @@
 import {
+  act,
   fireEvent,
   render,
   screen,
@@ -12,6 +13,7 @@ import { barChartDefinition } from "../charts/BarChart/definition";
 import { boxPlotDefinition } from "../charts/BoxPlot/definition";
 import { rowChartDefinition } from "../charts/RowChart/definition";
 import { PlotChartPanel } from "../PlotChartPanel";
+import { useAlertStore } from "@/stores/alertStore";
 
 beforeAll(() => {
   registerAllCharts();
@@ -24,6 +26,84 @@ beforeAll(() => {
     }
   );
   Element.prototype.scrollIntoView = vi.fn();
+});
+
+it("runs chart actions with keys while the pointer is over the chart", async () => {
+  const chart = {
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "value"
+    ),
+    title: "Values",
+    filters: [{ type: "range" as const, field: "value", min: 2 }],
+  };
+  const onDelete = vi.fn();
+  const onDuplicate = vi.fn();
+  function Panel() {
+    const charts = useDataLayer((s) => s.charts);
+    return (
+      <PlotChartPanel
+        settings={charts[0]!}
+        width={500}
+        height={400}
+        onDelete={onDelete}
+        onDuplicate={onDuplicate}
+      />
+    );
+  }
+  render(
+    <DataLayerProvider data={[{ value: 1 }, { value: 2 }]} charts={[chart]}>
+      <Panel />
+    </DataLayerProvider>
+  );
+  const panel = screen.getByRole("region", { name: "Values" });
+  fireEvent.pointerEnter(panel);
+  fireEvent.keyDown(document, { key: "d" });
+  expect(onDuplicate).toHaveBeenCalledOnce();
+  fireEvent.pointerLeave(panel);
+  fireEvent.keyDown(document, { key: "d" });
+  expect(onDuplicate).toHaveBeenCalledOnce();
+  const settingsButton = screen.getByRole("button", {
+    name: "Configure Values",
+  });
+  act(() => settingsButton.focus());
+  fireEvent.keyDown(settingsButton, { key: "d" });
+  expect(onDuplicate).toHaveBeenCalledTimes(2);
+  act(() => settingsButton.blur());
+  fireEvent.pointerEnter(panel);
+
+  fireEvent.keyDown(document, { key: "v" });
+  expect(
+    await screen.findByRole("dialog", { name: "Data for Values" })
+  ).toBeInTheDocument();
+  fireEvent.keyDown(document, { key: "d" });
+  expect(onDuplicate).toHaveBeenCalledTimes(2);
+  fireEvent.keyDown(document.activeElement ?? document.body, { key: "Escape" });
+  await waitFor(() =>
+    expect(
+      screen.queryByRole("dialog", { name: "Data for Values" })
+    ).not.toBeInTheDocument()
+  );
+
+  fireEvent.keyDown(document, { key: "s" });
+  expect(
+    await screen.findByRole("dialog", { name: "Settings for Values" })
+  ).toBeInTheDocument();
+  fireEvent.keyDown(document.activeElement ?? document.body, { key: "Escape" });
+  await waitFor(() =>
+    expect(
+      screen.queryByRole("dialog", { name: "Settings for Values" })
+    ).not.toBeInTheDocument()
+  );
+
+  fireEvent.keyDown(document, { key: "c" });
+  expect(
+    screen.queryByRole("button", { name: "Clear filters for Values" })
+  ).not.toBeInTheDocument();
+  fireEvent.keyDown(document, { key: "x" });
+  expect(useAlertStore.getState().isOpen).toBe(true);
+  await act(async () => useAlertStore.getState().closeAlert(true));
+  expect(onDelete).toHaveBeenCalledOnce();
 });
 
 it("previews filtered rows without adding a chart and clears the chart filter from its header", async () => {
