@@ -11,7 +11,7 @@ export interface MarkdownSettings extends BaseChartSettings {
 export const markdownDefinition: ChartDefinition<MarkdownSettings> = {
   type: "markdown",
   name: "Markdown",
-  description: "A markdown editor for rich text content",
+  description: "Notes with headings, lists, and quotes. Type / to add a block.",
   icon: FileText,
 
   component: Markdown,

@@ -18,7 +18,7 @@ type ShortcutGroup = {
   shortcuts: Shortcut[];
 };
 
-const modifierKey =
+export const modifierKey =
   typeof navigator !== "undefined" &&
   /Mac|iP(hone|ad|od)/.test(navigator.platform)
     ? "⌘"
@@ -63,6 +63,18 @@ export const shortcutGroups: ShortcutGroup[] = [
         keys: [[modifierKey, "Enter"]],
         action: "Apply the calculation you are editing",
       },
+    ],
+  },
+  {
+    title: "Notes",
+    shortcuts: [
+      { keys: [["/"]], action: "Insert a heading, list, quote, or divider" },
+      {
+        keys: [["#"], ["-"], [">"]],
+        action: "Start a heading, list, or quote",
+      },
+      { keys: [[modifierKey, "B"]], action: "Bold the selected text" },
+      { keys: [[modifierKey, "I"]], action: "Italicize the selected text" },
     ],
   },
 ];
