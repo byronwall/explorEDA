@@ -30,7 +30,7 @@ const linkClass =
 export function FeaturedExample({ example, onOpen }: FeaturedExampleProps) {
   return (
     <section aria-labelledby="featured-heading" className="scroll-mt-8">
-      <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+      <div className="max-w-3xl">
         <div>
           <SectionHeading id="featured-heading" heading={example.title}>
             {example.description}
@@ -78,21 +78,6 @@ export function FeaturedExample({ example, onOpen }: FeaturedExampleProps) {
             </a>
           </div>
         </div>
-        <figure className="min-w-0">
-          <div className="landing-shot overflow-hidden rounded-xl border border-border bg-card">
-            <img
-              src="/landing/order-book-web.jpg"
-              alt="The order book after selecting Web: a Channel: Web filter chip, 167 of 500 rows, and every chart narrowed to web orders."
-              width={2040}
-              height={1230}
-              loading="lazy"
-              className="block h-auto w-full"
-            />
-          </div>
-          <figcaption className="mt-3 text-center text-sm text-muted-foreground">
-            After step 2: one click filters every view to 167 of 500 orders.
-          </figcaption>
-        </figure>
       </div>
     </section>
   );
