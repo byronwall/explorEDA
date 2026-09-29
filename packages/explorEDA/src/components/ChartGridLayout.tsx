@@ -62,9 +62,8 @@ export function ChartGridLayout({
   const [previewVisible, setPreviewVisible] = useState(false);
   const [dragging, setDragging] = useState(false);
   const createdChart = useRef(false);
-  // Growing a chart into its neighbor stops at the neighbor instead of
-  // pushing it down and leaving a hole. Only a bottom-edge resize may push
-  // the charts below it further down.
+  // Top and left edges stop at neighbors. Right and bottom edges can move
+  // neighbors down when there is no free space.
   const [activeResize, setActiveResize] = useState<{
     id: string;
     axis: string;
@@ -213,8 +212,7 @@ export function ChartGridLayout({
       ...resizeLimits(
         item,
         axis,
-        currentLayout.filter((other) => other.i !== item.i),
-        gridSettings.columnCount
+        currentLayout.filter((other) => other.i !== item.i)
       ),
     });
     startInteraction();
@@ -268,9 +266,11 @@ export function ChartGridLayout({
         // the opposite edge fixed. A move closes the gaps it leaves, and the
         // narrow layout stays a simple stack.
         compactType={isNarrow || dragging ? "vertical" : null}
-        // A backstop for corner resizes that meet a chart diagonally.
+        // Top and left resizes keep neighbors in place.
         preventCollision={
-          activeResize !== null && !activeResize.axis.includes("s")
+          activeResize !== null &&
+          !activeResize.axis.includes("s") &&
+          !activeResize.axis.includes("e")
         }
         onLayoutChange={isNarrow ? undefined : handleLayoutChange}
         onDragStart={startInteraction}

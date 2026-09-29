@@ -149,6 +149,18 @@ describe("ChartGridLayout resizing", () => {
       Target: { x: 4, y: 0, w: 8, h: 4 },
     });
   });
+
+  it("grows from the right edge when another chart touches it", () => {
+    renderGrid({
+      Target: { x: 0, y: 0, w: 6, h: 4 },
+      Neighbor: { x: 6, y: 0, w: 6, h: 4 },
+    });
+
+    dragHandle("Target", "e", CELL, 0);
+
+    expect(readLayouts().Target).toEqual({ x: 0, y: 0, w: 7, h: 4 });
+    expect(readLayouts().Neighbor?.y).toBeGreaterThan(0);
+  });
 });
 
 describe("closing gaps", () => {

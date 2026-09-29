@@ -212,4 +212,25 @@ describe("DataTableBody", () => {
       screen.getByText("No rows match the current filters.")
     ).toBeInTheDocument();
   });
+  it("shows a centered null placeholder for missing values", () => {
+    mockUseDataLayer.mockImplementation(
+      (selector: (state: unknown) => unknown) => {
+        if (selector.toString().includes("data")) {
+          return [{ __ID: 1, name: "", age: null }];
+        }
+        if (selector.toString().includes("getLiveItems")) {
+          return { items: [{ key: 1, value: 1 }] };
+        }
+        return null;
+      }
+    );
+    renderBody(mockSettings);
+    const cells = screen.getAllByRole("cell");
+    expect(cells.map((cell) => cell.textContent)).toEqual([
+      "nullMissing",
+      "nullMissing",
+    ]);
+    expect(cells[1]).toHaveStyle({ textAlign: "center" });
+    expect(screen.queryByText("—")).not.toBeInTheDocument();
+  });
 });

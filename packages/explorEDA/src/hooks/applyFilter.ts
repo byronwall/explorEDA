@@ -1,11 +1,16 @@
 import { dateTimestamp } from "@/lib/dateTime";
 import { categoryIncludes } from "@/lib/categories";
+import { isMissingValue } from "@/lib/numeric";
 import { datum, Filter } from "@/types/FilterTypes";
 
 export function applyFilter(value: datum, filter: Filter): boolean {
   switch (filter.type) {
     case "value":
-      return categoryIncludes(filter.values, value);
+      // A missing entry matches every missing value, blank text included.
+      return (
+        categoryIncludes(filter.values, value) ||
+        (isMissingValue(value) && filter.values.some((item) => item == null))
+      );
     case "range":
       if (
         typeof value === "number" ||

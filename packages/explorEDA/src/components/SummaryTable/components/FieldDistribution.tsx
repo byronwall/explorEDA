@@ -1,6 +1,9 @@
 import { useState, type PointerEvent } from "react";
-import { categoryLabel } from "@/lib/categories";
+import { categoryIncludes, categoryLabel } from "@/lib/categories";
+import { dateTimestamp } from "@/lib/dateTime";
+import { calendarBins, calendarLabel } from "@/lib/fieldDistribution";
 import type { datum } from "@/types/ChartTypes";
+import type { Filter } from "@/types/FilterTypes";
 import type { FieldProfile } from "@/lib/fieldProfiles";
 import {
   Tooltip,
@@ -18,6 +21,7 @@ const OTHER_LABEL = "Other values";
 /** The rows one sparkline mark stands for, as a filter without its field. */
 export type SparkFilter =
   | { type: "range"; min: number; max: number }
+  | { type: "date-range"; min: string; max: string }
   | { type: "value"; values: datum[] };
 
 /** One mark in a sparkline: a histogram bin or a category share. */
@@ -27,6 +31,10 @@ export type SparkBar = {
   muted?: boolean;
   /** Present when clicking the mark can filter to its rows. */
   filter?: SparkFilter;
+  /** Labels of the bin's two edges, used to name a brushed range. */
+  edges?: [string, string];
+  /** True when the field's active filter keeps this mark's rows. */
+  selected?: boolean;
 };
 
 export type FieldSummary = {
@@ -51,10 +59,29 @@ export type FieldSummary = {
 const percent = (share: number) =>
   share > 0 && share < 0.01 ? "<1%" : `${Math.round(share * 100)}%`;
 
+/** One filter for the bins from `from` to `to`, when their filters join. */
+export function joinSparkFilters(
+  bars: SparkBar[],
+  from: number,
+  to: number
+): SparkFilter | undefined {
+  const low = bars[Math.min(from, to)]?.filter;
+  const high = bars[Math.max(from, to)]?.filter;
+  if (!low || !high || from === to) return from === to ? low : undefined;
+  if (low.type === "range" && high.type === "range") {
+    return { type: "range", min: low.min, max: high.max };
+  }
+  if (low.type === "date-range" && high.type === "date-range") {
+    return { type: "date-range", min: low.min, max: high.max };
+  }
+  return undefined;
+}
+
 /**
  * Wraps a sparkline so hovering a mark names its values and row count.
- * The marks stay hidden from assistive technology; the row already reads the
- * same summary aloud.
+ * Clicking a mark filters to its rows. On a histogram, dragging across bars
+ * filters to the whole range. The marks stay hidden from assistive
+ * technology; the row already reads the same summary aloud.
  */
 function SparkDetails({
   bars,
@@ -62,6 +89,7 @@ function SparkDetails({
   fieldLabel,
   locate,
   onFilter,
+  brushable = false,
   children,
 }: {
   bars: SparkBar[];
@@ -69,31 +97,81 @@ function SparkDetails({
   fieldLabel: string;
   locate: (fraction: number) => number;
   onFilter?: (filter: SparkFilter) => void;
-  children: (active: number | undefined) => React.ReactNode;
+  /** Lets a drag across bars filter to their joined range. */
+  brushable?: boolean;
+  children: (
+    active: number | undefined,
+    brush: [number, number] | undefined
+  ) => React.ReactNode;
 }) {
   const [active, setActive] = useState<number>();
-  const bar = active === undefined ? undefined : bars[active];
+  const [brush, setBrush] = useState<{ from: number; to: number }>();
+  const span: [number, number] | undefined = brush
+    ? [Math.min(brush.from, brush.to), Math.max(brush.from, brush.to)]
+    : undefined;
+  const brushing = span !== undefined && span[0] !== span[1];
+  const brushed = brushing
+    ? {
+        label: `${bars[span[0]]!.edges?.[0] ?? bars[span[0]]!.label} – ${
+          bars[span[1]]!.edges?.[1] ?? bars[span[1]]!.label
+        }`,
+        count: bars
+          .slice(span[0], span[1] + 1)
+          .reduce((sum, bar) => sum + bar.count, 0),
+        filter: joinSparkFilters(bars, span[0], span[1]),
+      }
+    : undefined;
+  const bar = brushed ?? (active === undefined ? undefined : bars[active]);
   const filter = onFilter ? bar?.filter : undefined;
-  const onPointerMove = (event: PointerEvent<HTMLSpanElement>) => {
+  const indexAt = (event: PointerEvent<HTMLSpanElement>) => {
     const box = event.currentTarget.getBoundingClientRect();
-    if (box.width <= 0) return;
+    if (box.width <= 0) return undefined;
     const fraction = (event.clientX - box.left) / box.width;
     const index = locate(Math.min(0.9999, Math.max(0, fraction)));
-    setActive(index >= 0 && index < bars.length ? index : undefined);
+    return index >= 0 && index < bars.length ? index : undefined;
   };
+  const canBrush = brushable && Boolean(onFilter);
   return (
     <TooltipProvider>
       <Tooltip open={bar !== undefined}>
         <TooltipTrigger asChild>
           <span
             className="eda-summary-spark-hit"
-            data-filterable={filter ? "" : undefined}
+            data-filterable={
+              onFilter && bars.some((b) => b.filter) ? "" : undefined
+            }
+            data-brushing={brushing || undefined}
             aria-hidden="true"
-            onClick={() => filter && onFilter?.(filter)}
-            onPointerMove={onPointerMove}
-            onPointerLeave={() => setActive(undefined)}
+            onClick={() => {
+              if (!canBrush && filter) onFilter?.(filter);
+            }}
+            onPointerDown={(event) => {
+              if (!canBrush || event.button !== 0) return;
+              const index = indexAt(event);
+              if (index === undefined || !bars[index]?.filter) return;
+              event.preventDefault();
+              event.currentTarget.setPointerCapture?.(event.pointerId);
+              setBrush({ from: index, to: index });
+            }}
+            onPointerMove={(event) => {
+              const index = indexAt(event);
+              setActive(index);
+              if (brush && index !== undefined) {
+                setBrush({ from: brush.from, to: index });
+              }
+            }}
+            onPointerUp={() => {
+              if (!span) return;
+              setBrush(undefined);
+              const next = joinSparkFilters(bars, span[0], span[1]);
+              if (next) onFilter?.(next);
+            }}
+            onPointerCancel={() => setBrush(undefined)}
+            onPointerLeave={() => {
+              if (!brush) setActive(undefined);
+            }}
           >
-            {children(active)}
+            {children(active, span)}
           </span>
         </TooltipTrigger>
         {bar && (
@@ -111,7 +189,11 @@ function SparkDetails({
             </p>
             {filter && (
               <p className="text-muted-foreground">
-                Click to filter to these rows
+                {brushing
+                  ? "Release to filter to this range"
+                  : canBrush
+                    ? "Click to filter, or drag across bars for a range"
+                    : "Click to filter to these rows"}
               </p>
             )}
           </TooltipContent>
@@ -132,6 +214,7 @@ function Histogram({ bars, total, fieldLabel, onFilter }: SparkProps) {
   const peak = Math.max(...bars.map((bar) => bar.count), 1);
   const step = WIDTH / Math.max(1, bars.length);
   const gap = bars.length > 1 ? Math.min(1, step * 0.2) : 0;
+  const hasSelection = bars.some((bar) => bar.selected);
   return (
     <SparkDetails
       bars={bars}
@@ -139,22 +222,33 @@ function Histogram({ bars, total, fieldLabel, onFilter }: SparkProps) {
       fieldLabel={fieldLabel}
       locate={(fraction) => Math.floor(fraction * bars.length)}
       onFilter={onFilter}
+      brushable
     >
-      {(active) => (
+      {(active, brush) => (
         <svg
           className="eda-summary-spark"
           viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
           preserveAspectRatio="none"
           focusable="false"
         >
-          {active !== undefined && (
+          {brush ? (
             <rect
-              className="eda-summary-spark-focus"
-              x={active * step}
+              className="eda-summary-spark-brush"
+              x={brush[0] * step}
               y={0}
-              width={step}
+              width={(brush[1] - brush[0] + 1) * step}
               height={HEIGHT}
             />
+          ) : (
+            active !== undefined && (
+              <rect
+                className="eda-summary-spark-focus"
+                x={active * step}
+                y={0}
+                width={step}
+                height={HEIGHT}
+              />
+            )
           )}
           <line
             className="eda-summary-spark-base"
@@ -163,14 +257,19 @@ function Histogram({ bars, total, fieldLabel, onFilter }: SparkProps) {
             y1={HEIGHT - 0.5}
             y2={HEIGHT - 0.5}
           />
-          {bars.map(({ count }, index) => {
+          {bars.map(({ count, selected }, index) => {
             if (count === 0) return null;
             const height = Math.max(1.5, (count / peak) * (HEIGHT - 1));
+            const inBrush =
+              brush !== undefined && index >= brush[0] && index <= brush[1];
             return (
               <rect
                 key={index}
                 className="eda-summary-spark-bar"
-                data-active={index === active || undefined}
+                data-active={index === active || inBrush || undefined}
+                data-dimmed={
+                  (brush ? !inBrush : hasSelection && !selected) || undefined
+                }
                 x={index * step + gap / 2}
                 y={HEIGHT - height}
                 width={Math.max(0.5, step - gap)}
@@ -189,6 +288,7 @@ function ShareBar({ bars, total, fieldLabel, onFilter }: SparkProps) {
   const starts = shares.map((_, index) =>
     shares.slice(0, index).reduce((sum, share) => sum + share, 0)
   );
+  const hasSelection = bars.some((bar) => bar.selected);
   return (
     <SparkDetails
       bars={bars}
@@ -217,6 +317,7 @@ function ShareBar({ bars, total, fieldLabel, onFilter }: SparkProps) {
               }
               data-rank={index}
               data-active={index === active || undefined}
+              data-dimmed={(hasSelection && !bar.selected) || undefined}
               x={starts[index]! * WIDTH}
               y={5}
               width={Math.max(0.5, shares[index]! * WIDTH - 1)}
@@ -234,7 +335,10 @@ function dateBins(profile: FieldProfile) {
   let first: { time: number; value: unknown } | undefined;
   let last: { time: number; value: unknown } | undefined;
   for (const { value, count } of profile.categories?.distribution ?? []) {
-    const time = Date.parse(String(value));
+    const time =
+      typeof value === "string"
+        ? dateTimestamp(value)
+        : Date.parse(String(value));
     if (!Number.isFinite(time)) continue;
     for (let i = 0; i < count; i += 1) times.push(time);
     if (!first || time < first.time) first = { time, value };
@@ -247,8 +351,79 @@ function dateBins(profile: FieldProfile) {
     last: last.value,
     firstTime: first.time,
     lastTime: last.time,
-    bins: binValues(times, first.time, last.time),
+    times,
   };
+}
+
+const isoTime = (time: number) => new Date(time).toISOString();
+
+/**
+ * Date sparkline bars on whole calendar periods, like the field inspector.
+ * Each bar filters to its period: whole days by date, hours by time.
+ */
+function dateBars(
+  times: number[],
+  firstTime: number,
+  lastTime: number
+): SparkBar[] {
+  const calendar = calendarBins(times, undefined);
+  if (!calendar) {
+    const bins = binValues(times, firstTime, lastTime);
+    return labelBins(bins, firstTime, lastTime, isoDate).map(
+      ({ range, ...bar }, index, all) => ({
+        ...bar,
+        filter: {
+          type: "date-range",
+          min: isoTime(range[0]),
+          max: isoTime(
+            index === all.length - 1
+              ? range[1]
+              : Math.max(range[0], range[1] - 1)
+          ),
+        },
+      })
+    );
+  }
+  const byDay = calendar.unit.unit !== "hour";
+  const bound = (time: number) => (byDay ? isoDate(time) : isoTime(time));
+  return calendar.bins.map((bin) => ({
+    label: calendarLabel(bin.start, calendar.unit),
+    count: bin.all,
+    filter: {
+      type: "date-range",
+      min: bound(bin.start),
+      max: bound(bin.end - 1),
+    },
+  }));
+}
+
+/** Whether a field's active filter keeps the rows a mark stands for. */
+function keeps(active: Filter | undefined, filter: SparkFilter | undefined) {
+  if (!active || !filter) return false;
+  if (active.type === "value" && filter.type === "value") {
+    return filter.values.some((value) =>
+      categoryIncludes(active.values, value)
+    );
+  }
+  if (active.type === "range" && filter.type === "range") {
+    return (
+      (active.max === undefined || filter.min <= active.max) &&
+      (active.min === undefined || filter.max >= active.min)
+    );
+  }
+  if (active.type === "date-range" && filter.type === "date-range") {
+    const time = (value: string, end: boolean) =>
+      dateTimestamp(
+        value.length === 10 && end ? `${value}T23:59:59.999Z` : value
+      );
+    return (
+      (active.max === undefined ||
+        time(filter.min, false) <= time(active.max, true)) &&
+      (active.min === undefined ||
+        time(filter.max, true) >= time(active.min, false))
+    );
+  }
+  return false;
 }
 
 /** Name each bin by the values it covers. */
@@ -297,9 +472,15 @@ export function summarizeField(
   profile: FieldProfile,
   format: (value: unknown) => string,
   fieldLabel = profile.name,
-  /** Lets numeric bins and top values filter to their rows on click. */
-  onFilter?: (filter: SparkFilter) => void
+  /** Lets bins and top values filter to their rows on click or drag. */
+  onFilter?: (filter: SparkFilter) => void,
+  /** The field's current filter, whose marks stay highlighted. */
+  active?: Filter
 ): FieldSummary | undefined {
+  const mark = (bars: SparkBar[]) =>
+    active
+      ? bars.map((bar) => ({ ...bar, selected: keeps(active, bar.filter) }))
+      : bars;
   const present =
     profile.totalCount - profile.nullCount - (profile.excludedCount ?? 0);
   if (present <= 0) return undefined;
@@ -310,18 +491,21 @@ export function summarizeField(
     const high = format(max);
     // Bins are half-open except the last, so each bar's filter stops just
     // short of the next bin's start.
-    const bars: SparkBar[] = labelBins(bins, min, max, format).map(
-      ({ range, ...bar }, index, all) => ({
-        ...bar,
-        filter: {
-          type: "range",
-          min: range[0],
-          max:
-            index === all.length - 1 || range[0] === range[1]
-              ? range[1]
-              : nextBelow(range[1]),
-        },
-      })
+    const bars: SparkBar[] = mark(
+      labelBins(bins, min, max, format).map(
+        ({ range, ...bar }, index, all) => ({
+          ...bar,
+          edges: [format(range[0]), format(range[1])],
+          filter: {
+            type: "range",
+            min: range[0],
+            max:
+              index === all.length - 1 || range[0] === range[1]
+                ? range[1]
+                : nextBelow(range[1]),
+          },
+        })
+      )
     );
     const graphic = (
       <Histogram
@@ -350,15 +534,15 @@ export function summarizeField(
     if (dates) {
       const first = format(dates.first);
       const last = format(dates.last);
-      const bars = labelBins(
-        dates.bins,
-        dates.firstTime,
-        dates.lastTime,
-        isoDate
-      );
+      const bars = mark(dateBars(dates.times, dates.firstTime, dates.lastTime));
       return {
         graphic: (
-          <Histogram bars={bars} total={present} fieldLabel={fieldLabel} />
+          <Histogram
+            bars={bars}
+            total={present}
+            fieldLabel={fieldLabel}
+            onFilter={onFilter}
+          />
         ),
         bars,
         low: first,
@@ -383,13 +567,13 @@ export function summarizeField(
     };
   }
 
-  const bars: SparkBar[] = top
-    .slice(0, SHARE_SEGMENTS)
-    .map(({ value, count }) => ({
+  const bars: SparkBar[] = mark(
+    top.slice(0, SHARE_SEGMENTS).map(({ value, count }) => ({
       label: categoryLabel(value),
       count,
       filter: { type: "value", values: [value as datum] },
-    }));
+    }))
+  );
   const rest = present - bars.reduce((sum, bar) => sum + bar.count, 0);
   if (rest > 0) bars.push({ label: OTHER_LABEL, count: rest, muted: true });
   const leader = categoryLabel(top[0].value);

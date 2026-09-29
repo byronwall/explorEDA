@@ -69,14 +69,13 @@ export function findEmptyPlacement(
 
 /**
  * Returns the largest size a chart may reach while one handle is dragged, so
- * a top, left or right resize stops at the nearest chart instead of pushing
- * it. A bottom-edge resize may still push the charts below it down.
+ * a top or left resize stops at the nearest chart instead of pushing it.
+ * Right and bottom edges may push neighboring charts down.
  */
 export function resizeLimits(
   item: ChartLayout,
   axis: string,
-  others: ChartLayout[],
-  columnCount: number
+  others: ChartLayout[]
 ): { maxW?: number; maxH?: number } {
   const inRows = others.filter(
     (other) => other.y < item.y + item.h && item.y < other.y + other.h
@@ -94,14 +93,6 @@ export function resizeLimits(
         .map((other) => other.x + other.w)
     );
     limits.maxW = item.x + item.w - edge;
-  } else if (axis.includes("e")) {
-    const edge = Math.min(
-      columnCount,
-      ...inRows
-        .filter((other) => other.x >= item.x + item.w)
-        .map((other) => other.x)
-    );
-    limits.maxW = edge - item.x;
   }
 
   if (axis.includes("n")) {

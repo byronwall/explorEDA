@@ -3,6 +3,7 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { rowChartDefinition } from "@/components/charts/RowChart/definition";
 import { scatterPlotDefinition } from "@/components/charts/ScatterPlot/definition";
+import { summaryTableDefinition } from "@/components/charts/SummaryTable/definition";
 import { PlotManager } from "@/components/PlotManager";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
@@ -23,9 +24,12 @@ function SavedLayout() {
   return null;
 }
 
-function renderWorkspace(charts: ChartSettings[]) {
+function renderWorkspace(
+  charts: ChartSettings[],
+  rows: Array<Record<string, string | number | null>> = data
+) {
   return render(
-    <DataLayerProvider data={data} charts={charts}>
+    <DataLayerProvider data={rows} charts={charts}>
       <PlotManager />
       <SavedLayout />
     </DataLayerProvider>
@@ -117,10 +121,51 @@ describe("FieldList", () => {
     expect(
       within(list).getByText("Values describe 2 of 4 rows after chart filters")
     ).toBeInTheDocument();
-    const revenue = within(list).getByRole("button", { name: /^revenue/ });
-    expect(revenue).toHaveTextContent("10–20");
-    const region = within(list).getByRole("button", { name: /^region/ });
-    expect(region).toHaveTextContent("1 distinct");
+    const line = (name: RegExp) =>
+      within(list)
+        .getByRole("button", { name })
+        .closest(".eda-field-row-line") as HTMLElement;
+    expect(line(/^revenue/)).toHaveTextContent("10–20");
+    expect(line(/^region/)).toHaveTextContent(/Distinct values: 1/);
+  });
+
+  it("keeps a field's full shape when the list filters it", () => {
+    const summary = {
+      ...summaryTableDefinition.createDefaultSettings(layout),
+      filters: [{ type: "range", field: "revenue", min: 10, max: 20 }],
+    } as ChartSettings;
+    renderWorkspace([summary]);
+    const list = openList();
+    const line = (name: RegExp) =>
+      within(list)
+        .getByRole("button", { name })
+        .closest(".eda-field-row-line") as HTMLElement;
+    expect(
+      within(list).getByText("Values describe 2 of 4 rows after chart filters")
+    ).toBeInTheDocument();
+    // Revenue reads every row; other fields read the two filtered rows.
+    expect(line(/^revenue/)).toHaveTextContent("10–40");
+    expect(line(/^units/)).toHaveTextContent("1–2");
+  });
+
+  it("filters to missing rows from a field's missing count", () => {
+    const summary = summaryTableDefinition.createDefaultSettings(layout);
+    renderWorkspace(
+      [summary],
+      [
+        { region: "North", revenue: 10 },
+        { region: "South", revenue: null },
+      ]
+    );
+    const list = openList();
+    fireEvent.click(
+      within(list).getByRole("button", {
+        name: "1 missing. Show only rows missing revenue",
+      })
+    );
+    expect(
+      within(list).getByText("Values describe 1 of 2 rows after chart filters")
+    ).toBeInTheDocument();
   });
 
   it("lists the charts that use an expanded field", () => {

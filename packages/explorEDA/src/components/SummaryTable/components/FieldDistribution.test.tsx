@@ -1,8 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { fireEvent, render } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { buildFieldProfile } from "@/lib/fieldProfiles";
 import type { datum } from "@/types/ChartTypes";
 import { binValues } from "../utils/statisticsCalculator";
-import { labelBins, summarizeField } from "./FieldDistribution";
+import {
+  joinSparkFilters,
+  labelBins,
+  summarizeField,
+} from "./FieldDistribution";
 
 const column = (values: datum[]) =>
   Object.fromEntries(values.map((value, index) => [index, value])) as Record<
@@ -118,5 +123,75 @@ describe("sparkline filters", () => {
     const bars = summarizeField(profile, format)!.bars;
     expect(bars[0]!.filter).toEqual({ type: "value", values: ["a"] });
     expect(bars.at(-1)!.filter).toBeUndefined();
+  });
+});
+
+describe("sparkline brushing", () => {
+  // 0 to 48 in 24 bins two units wide: bin 2 starts at 4, bin 5 ends at 12.
+  const values = Array.from({ length: 49 }, (_, index) => index);
+  const profile = buildFieldProfile("x", column(values), "numeric");
+
+  it("joins the filters of neighboring bins into one range", () => {
+    const bars = summarizeField(profile, format)!.bars;
+    expect(joinSparkFilters(bars, 5, 2)).toEqual({
+      type: "range",
+      min: 4,
+      max: (bars[5]!.filter as { max: number }).max,
+    });
+    expect(joinSparkFilters(bars, 3, 3)).toEqual(bars[3]!.filter);
+  });
+
+  it("filters to the dragged range on release", () => {
+    // jsdom has no PointerEvent, so pointer coordinates need MouseEvent.
+    globalThis.PointerEvent ??= class extends MouseEvent {
+      pointerId: number;
+      constructor(type: string, init: PointerEventInit = {}) {
+        super(type, init);
+        this.pointerId = init.pointerId ?? 0;
+      }
+    } as unknown as typeof PointerEvent;
+    const onFilter = vi.fn();
+    const summary = summarizeField(profile, format, "x", onFilter)!;
+    const { container } = render(<>{summary.graphic}</>);
+    const hit = container.querySelector(".eda-summary-spark-hit")!;
+    hit.getBoundingClientRect = () =>
+      ({ left: 0, width: 240, top: 0, height: 20 }) as DOMRect;
+    // 24 bins of 10px: drag from the third bin to the sixth.
+    fireEvent.pointerDown(hit, { button: 0, clientX: 25, pointerId: 1 });
+    fireEvent.pointerMove(hit, { clientX: 55, pointerId: 1 });
+    fireEvent.pointerUp(hit, { clientX: 55, pointerId: 1 });
+    expect(onFilter).toHaveBeenCalledTimes(1);
+    expect(onFilter.mock.calls[0]![0]).toMatchObject({
+      type: "range",
+      min: 4,
+    });
+    expect(onFilter.mock.calls[0]![0].max).toBeLessThan(12);
+    expect(onFilter.mock.calls[0]![0].max).toBeGreaterThan(11);
+  });
+
+  it("marks the bars the field's filter keeps", () => {
+    const bars = summarizeField(profile, format, "x", undefined, {
+      type: "range",
+      field: "x",
+      min: 10,
+      max: 19,
+    })!.bars;
+    expect(bars.filter((bar) => bar.selected)).toHaveLength(5);
+    expect(bars[4]!.selected).toBe(false);
+    expect(bars[5]!.selected).toBe(true);
+  });
+
+  it("filters date bars to whole calendar months", () => {
+    const dates = buildFieldProfile(
+      "ordered",
+      column(["2024-01-05", "2024-02-10", "2024-02-29", "2025-06-01"]),
+      "datetime"
+    );
+    const bars = summarizeField(dates, format, "ordered", vi.fn())!.bars;
+    expect(bars[1]).toMatchObject({
+      label: "Feb 2024",
+      count: 2,
+      filter: { type: "date-range", min: "2024-02-01", max: "2024-02-29" },
+    });
   });
 });

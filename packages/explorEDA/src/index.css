@@ -1131,6 +1131,26 @@ html {
 .eda-summary-missing {
   color: var(--warning);
 }
+.eda-summary-missing-filter {
+  margin: -2px -4px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.eda-summary-missing-filter:hover {
+  background: color-mix(in oklab, var(--warning) 14%, transparent);
+}
+.eda-summary-missing-filter:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.eda-summary-missing-filter[aria-pressed="true"] {
+  background: color-mix(in oklab, var(--warning) 22%, transparent);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in oklab, var(--warning) 55%, transparent);
+}
 .eda-summary-share-label {
   display: inline-block;
   min-width: 3ch;
@@ -1229,6 +1249,8 @@ html {
 }
 .eda-summary-spark-hit[data-filterable] {
   cursor: pointer;
+  /* Vertical swipes still scroll; horizontal drags brush a range. */
+  touch-action: pan-y;
 }
 .eda-summary-spark-focus {
   fill: var(--muted);
@@ -1239,6 +1261,18 @@ html {
 }
 .eda-summary-share-rest[data-active] {
   fill: color-mix(in oklab, var(--muted-foreground) 40%, transparent);
+}
+/* Marks outside the field's filter, or outside a drag in progress, fade so
+   the kept range reads inside the full distribution. */
+.eda-summary-spark-bar[data-dimmed],
+.eda-summary-share[data-dimmed] {
+  fill: color-mix(in oklab, var(--muted-foreground) 26%, transparent);
+}
+.eda-summary-spark-brush {
+  fill: color-mix(in oklab, var(--primary) 12%, transparent);
+}
+.eda-summary-spark-hit[data-brushing] {
+  cursor: ew-resize;
 }
 /* Field inspector value distributions. Filtered rows draw in the primary
    color over a quiet silhouette of all rows, sharing bins and scale. */
@@ -2536,7 +2570,7 @@ html {
   z-index: 1;
   display: flex;
   flex-direction: column;
-  width: min(320px, calc(100vw - 16px));
+  width: min(440px, calc(100vw - 16px));
   height: var(--eda-field-list-height, calc(100vh - 16px));
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -2552,7 +2586,22 @@ html {
 /* The panel covers the right of the controls; keep them visible beside it. */
 @media (min-width: 641px) {
   .eda-workspace-controls[data-fields-open] {
-    padding-right: min(344px, calc(100% - 240px));
+    padding-right: min(464px, calc(100% - 240px));
+  }
+}
+/* Beside the open panel, a mid-width toolbar keeps its icons on the first
+   line and moves the row count and filter chips to a second line. */
+@media (min-width: 641px) and (max-width: 1100px) {
+  .eda-workspace-controls[data-fields-open] .eda-workspace-toolbar {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .eda-workspace-controls[data-fields-open]
+    .eda-workspace-toolbar
+    > .eda-filter-status {
+    order: 1;
+    flex-basis: 100%;
+    padding-left: 0;
   }
 }
 @keyframes eda-field-list-in {
@@ -2685,16 +2734,60 @@ html {
 .eda-field-row-main > [aria-label] {
   flex: 1 1 auto;
 }
+/* Rows read like the Summary Table: counts, then the distribution and its
+   range. Hover actions cover only the reading, so the sparkline stays
+   available to click or brush. */
+.eda-field-list-columns {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px 2px 24px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 500;
+}
+.eda-field-list-columns > :first-child {
+  flex: 1;
+}
+.eda-field-list-columns .eda-field-row-spark {
+  flex-basis: calc(56px + 8px + 112px);
+  padding-left: 8px;
+}
+.eda-field-row-count {
+  flex: 0 0 52px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.eda-field-row-count[data-missing] {
+  color: var(--warning);
+}
+.eda-field-row-spark {
+  display: flex;
+  flex: 0 0 56px;
+  align-items: center;
+  margin-left: 8px;
+}
+.eda-field-row-spark .eda-summary-spark {
+  flex-basis: 56px;
+  width: 56px;
+  height: 16px;
+}
 .eda-field-row-reading {
-  flex: 0 1 auto;
-  max-width: 48%;
-  margin-left: auto;
+  flex: 0 0 112px;
+  width: 112px;
+  padding: 0 6px 0 8px;
   overflow: hidden;
   color: var(--muted-foreground);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
+  text-align: right;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.eda-field-row-reading[data-filtered] {
+  color: var(--primary);
 }
 .eda-field-row-actions {
   display: flex;
@@ -3322,4 +3415,48 @@ html {
   gap: 6px;
   padding-top: 8px;
   border-top: 1px solid var(--border);
+}
+
+/* Missing table cells read as a quiet monospace "null", centered so it is
+   clear which column is empty. */
+.eda-null {
+  display: inline-block;
+  padding: 0 4px;
+  border-radius: 3px;
+  background: color-mix(in oklab, var(--muted) 70%, transparent);
+  color: var(--muted-foreground);
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 10px;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+}
+td[data-null] {
+  text-align: center;
+}
+/* In the bottom sheet, names keep their room: distinct counts move to the
+   field details, and touch screens, whose row actions sit inline, drop the
+   range reading too. */
+@media (max-width: 640px) {
+  .eda-field-list .eda-field-row-count:not([data-missing-column]) {
+    display: none;
+  }
+  .eda-field-list .eda-field-row-count {
+    flex-basis: 44px;
+  }
+  .eda-field-list .eda-field-row-reading {
+    flex-basis: 96px;
+    width: 96px;
+  }
+  .eda-field-list-columns .eda-field-row-spark {
+    flex-basis: calc(56px + 8px + 96px);
+  }
+}
+@media (max-width: 640px) and (not ((hover: hover) and (pointer: fine))) {
+  .eda-field-list .eda-field-row-reading {
+    display: none;
+  }
+  .eda-field-list-columns .eda-field-row-spark {
+    flex-basis: calc(56px + 8px + 80px);
+  }
 }

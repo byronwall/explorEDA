@@ -114,7 +114,7 @@ describe("ColumnFilter", () => {
       />
     );
 
-    fireEvent.click(screen.getByLabelText("Missing"));
+    fireEvent.click(screen.getByLabelText(/Missing ·/));
     expect(onChange).toHaveBeenCalledWith("species", {
       type: "value",
       field: "species",
@@ -165,5 +165,56 @@ describe("ColumnFilter", () => {
       screen.getByRole("button", { name: "Clear filter for Name" })
     );
     expect(onClear).toHaveBeenCalled();
+  });
+  it("offers only missing values for numeric fields and locks the range", () => {
+    const onChange = vi.fn();
+    const numeric = profile({
+      name: "price",
+      dataType: "numeric",
+      nullCount: 4,
+      categories: undefined,
+    });
+    const { rerender } = render(
+      <ColumnFilter
+        columnId="price"
+        columnLabel="Price"
+        profile={numeric}
+        onChange={onChange}
+        onClear={vi.fn()}
+      />
+    );
+
+    fireEvent.click(screen.getByLabelText(/Only missing values/));
+    expect(onChange).toHaveBeenCalledWith("price", {
+      type: "value",
+      field: "price",
+      values: [null],
+    });
+
+    rerender(
+      <ColumnFilter
+        columnId="price"
+        columnLabel="Price"
+        profile={numeric}
+        filter={{ type: "value", field: "price", values: [null] }}
+        onChange={onChange}
+        onClear={vi.fn()}
+      />
+    );
+    expect(screen.getByLabelText(/Only missing values/)).toBeChecked();
+    expect(screen.getByLabelText("Minimum Price")).toBeDisabled();
+  });
+
+  it("disables only missing values when a field has none", () => {
+    render(
+      <ColumnFilter
+        columnId="name"
+        columnLabel="Name"
+        profile={profile({ uniqueCount: 20 })}
+        onChange={vi.fn()}
+        onClear={vi.fn()}
+      />
+    );
+    expect(screen.getByLabelText(/Only missing values/)).toBeDisabled();
   });
 });
