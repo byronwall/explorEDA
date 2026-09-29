@@ -3322,6 +3322,101 @@ html {
   font-size: 11px;
 }
 
+/* Trace popover: subject first, then filters, data, encodings, and details. */
+.eda-trace-header {
+  display: grid;
+  gap: 2px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.eda-trace-subject {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+}
+.eda-trace-section {
+  display: grid;
+  gap: 4px;
+}
+.eda-trace-section > h4,
+.eda-trace-finder > h4 {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.eda-trace-readout {
+  display: grid;
+  grid-template-columns: minmax(5.5rem, auto) minmax(0, 1fr);
+  gap: 8px;
+}
+.eda-trace-filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+}
+.eda-trace-filters > div {
+  display: grid;
+  gap: 1px;
+  padding: 4px 6px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.eda-trace-filters dt {
+  color: var(--muted-foreground);
+  font-size: 10px;
+}
+.eda-trace-filters dd {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.eda-trace-filters > div:not([data-ok]) dd {
+  color: var(--warning, var(--destructive));
+}
+.eda-trace-encoding {
+  display: grid;
+  grid-template-columns: 3.75rem minmax(0, 1fr);
+  gap: 8px;
+  padding: 3px 0;
+  border-top: 1px solid var(--border);
+}
+.eda-trace-encoding:first-of-type {
+  border-top: 0;
+}
+.eda-trace-channel {
+  color: var(--muted-foreground);
+  font-weight: 500;
+}
+.eda-trace-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 4px;
+  border-radius: 2px;
+  vertical-align: -1px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--foreground) 15%, transparent);
+}
+.eda-trace-more > summary {
+  cursor: pointer;
+  color: var(--muted-foreground);
+  font-weight: 500;
+}
+.eda-trace-more > summary:hover {
+  color: var(--foreground);
+}
+.eda-trace-more[open] > summary {
+  margin-bottom: 4px;
+}
+.eda-trace-finder {
+  display: grid;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
 /* Missing table cells read as a quiet monospace "null", centered so it is
    clear which column is empty. */
 .eda-null {
