@@ -43,7 +43,7 @@ import {
   PopoverTrigger,
 } from "./ui/popover";
 import { useAlertStore } from "@/stores/alertStore";
-import { useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   getChartFields,
   getChartSummary,
@@ -264,6 +264,54 @@ export function PlotChartPanel({
     }
   };
 
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.repeat ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.shiftKey ||
+        document.querySelector("[role='menu']") ||
+        Array.from(document.querySelectorAll("[role='dialog']")).some(
+          (dialog) => !dialog.contains(panelRef.current)
+        )
+      )
+        return;
+      const target = event.target;
+      if (
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target.closest("input, textarea, select, [role='combobox']"))
+      )
+        return;
+      const hoveredPanel = document.querySelector(
+        ".eda-panel[data-shortcut-hovered]"
+      );
+      const focusedChart = panelRef.current?.closest("[data-chart-id]");
+      if (
+        hoveredPanel
+          ? hoveredPanel !== panelRef.current
+          : !focusedChart?.contains(document.activeElement) &&
+            !panelRef.current?.contains(document.activeElement)
+      )
+        return;
+
+      const key = event.key.toLowerCase();
+      if (!["s", "d", "x", "v", "c"].includes(key)) return;
+      if (key === "v" && (isTableLike || dataFields.length === 0)) return;
+      event.preventDefault();
+      if (key === "s") settingsRef.current?.click();
+      else if (key === "d") onDuplicate();
+      else if (key === "x") void handleDelete();
+      else if (key === "v") setDataOpen(true);
+      else clearFilter(settings);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  });
+
   // shrink the panel by 8px on each side to account for the border
   const panelWidth = expanded ? window.innerWidth - 40 : width;
   const panelHeight = expanded ? window.innerHeight - 40 : height;
@@ -276,6 +324,12 @@ export function PlotChartPanel({
       className={`eda-panel bg-card border rounded-lg flex min-w-0 flex-col overflow-hidden ${expanded ? "eda-panel-expanded" : ""}`}
       // Ring the chart while its settings are open so the editor has a clear owner.
       data-settings-open={settingsOpen || undefined}
+      onPointerEnter={(event) =>
+        event.currentTarget.setAttribute("data-shortcut-hovered", "")
+      }
+      onPointerLeave={(event) =>
+        event.currentTarget.removeAttribute("data-shortcut-hovered")
+      }
       style={{
         width: widthWithPadding,
         height: heightWithPadding,

@@ -42,6 +42,11 @@ export const shortcutGroups: ShortcutGroup[] = [
     title: "Charts",
     shortcuts: [
       { keys: [["Tab"]], action: "Move between charts and their controls" },
+      { keys: [["S"]], action: "Open chart settings" },
+      { keys: [["D"]], action: "Duplicate chart" },
+      { keys: [["X"]], action: "Delete chart after confirmation" },
+      { keys: [["V"]], action: "View chart data" },
+      { keys: [["C"]], action: "Clear chart filters" },
       {
         keys: [["Enter"], ["Space"]],
         action: "Filter by the focused bar or category",
@@ -107,8 +112,8 @@ export function KeyboardShortcutsDialog({
         <DialogHeader>
           <DialogTitle>Keyboard shortcuts</DialogTitle>
           <DialogDescription>
-            Letter shortcuts work while focus is in the workspace and you are
-            not typing in a field.
+            Letter shortcuts work while focus is in the workspace or the pointer
+            is over a chart. They pause while you type in a field.
           </DialogDescription>
         </DialogHeader>
         <div className="eda-shortcut-groups">
