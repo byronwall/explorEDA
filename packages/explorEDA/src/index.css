@@ -2425,6 +2425,36 @@ html {
   color: var(--primary);
   background: var(--accent);
 }
+/* An active table search stays visible while the header actions are quiet. */
+.eda-chart-search {
+  display: flex;
+  align-items: center;
+  flex-shrink: 1;
+  gap: 4px;
+  min-width: 0;
+  max-width: 11rem;
+  height: 24px;
+  padding: 0 2px 0 7px;
+  border-radius: 999px;
+  color: var(--primary);
+  background: var(--accent);
+  font-size: 12px;
+  font-weight: 500;
+}
+.eda-chart-search button {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+}
+.eda-chart-search button:hover,
+.eda-chart-search button:focus-visible {
+  background: var(--background);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ring);
+}
 .eda-settings [role="tablist"] {
   display: flex;
   flex-wrap: wrap;

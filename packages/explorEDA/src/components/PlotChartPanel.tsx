@@ -17,6 +17,7 @@ import {
   MoreHorizontal,
   Maximize2,
   Minimize2,
+  Search,
   Settings2,
   Table2,
   X,
@@ -212,6 +213,7 @@ export function PlotChartPanel({
     null
   );
   const clearFilter = useDataLayer((state) => state.clearFilter);
+  const updateChart = useDataLayer((state) => state.updateChart);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const fieldSettings = useDataLayer((state) => state.fieldSettings);
   void fieldSettings;
@@ -253,6 +255,9 @@ export function PlotChartPanel({
     !CATEGORY_LABELED_CHART_TYPES.has(settings.type)
       ? 36
       : 0;
+
+  const tableSearch =
+    settings.type === "data-table" ? settings.globalSearch : "";
 
   const handleDelete = async () => {
     const confirmed = await showAlert(
@@ -310,6 +315,25 @@ export function PlotChartPanel({
             </h3>
           )}
         </div>
+        {tableSearch && (
+          <div
+            className="eda-chart-search"
+            role="group"
+            aria-label={`Active table search in ${chartTitle}`}
+          >
+            <Search className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            <span className="truncate">{tableSearch}</span>
+            <ActionTooltip content="Clear this table’s search">
+              <button
+                type="button"
+                aria-label={`Clear search “${tableSearch}” in ${chartTitle}`}
+                onClick={() => updateChart(settings.id, { globalSearch: "" })}
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </ActionTooltip>
+          </div>
+        )}
         {settings.filters.some(isActiveFilter) && (
           <ActionTooltip content="Clear this chart’s filters">
             <Button
