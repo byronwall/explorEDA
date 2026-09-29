@@ -24,7 +24,8 @@ function axisNeed(chart: ChartSettings, axis: AxisName): AxisNeed | undefined {
     case "row":
       return axis === "y" ? "groups" : undefined;
     case "scatter":
-      return "numbers";
+      // Categorical fields plot as bands with jittered points.
+      return "any";
     case "line":
       if (axis === "x") return "numbers-or-dates";
       return chart.seriesField.length === 1 ? "numbers" : undefined;

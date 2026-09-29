@@ -1,6 +1,16 @@
 import { expect, it } from "vitest";
 import { scatterPlotDefinition } from "../../components/charts/ScatterPlot/definition";
 import { planScatterPoints } from "../../components/charts/ScatterPlot/planScatterPoints";
+import type { ScatterAxisScale } from "../../components/charts/ScatterPlot/scatterAxis";
+import { scaleLinear } from "d3-scale";
+
+const linear = (factor: number): ScatterAxisScale => ({
+  kind: "numeric",
+  type: "linear",
+  scale: scaleLinear().domain([0, 1]).range([0, factor]),
+  bounds: [0, 1],
+  domain: [0, 1],
+});
 
 it("plans stable source-linked glyphs and dims a chart's own filtered rows", () => {
   const settings = scatterPlotDefinition.createDefaultSettings({
@@ -24,8 +34,8 @@ it("plans stable source-linked glyphs and dims a chart's own filtered rows", () 
     xData: { 10: 1, 11: 3, 12: null },
     yData: { 10: 2, 11: 4, 12: 6 },
     colorData: { 10: "a", 11: "b", 12: "c" },
-    xScale: (value: number) => value * 10,
-    yScale: (value: number) => value * 5,
+    xAxis: linear(10),
+    yAxis: linear(5),
     getColor: () => "blue",
   };
 

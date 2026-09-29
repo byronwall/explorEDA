@@ -152,6 +152,8 @@ export interface AxisInput {
   labelSource?: GuideSource;
   rule?: boolean;
   zero?: boolean;
+  /** Keeps the title on a band Y axis, where tick labels alone do not name the field. */
+  bandTitle?: boolean;
   domainSource?: AxisDomainSource;
 }
 
@@ -269,7 +271,7 @@ function planAxis(
     });
   }
   // A band Y axis names its categories in the tick labels, so it has no title.
-  if (input.label && !(axis === "y" && band)) {
+  if (input.label && !(axis === "y" && band && !input.bandTitle)) {
     guides.push({
       id: `${axis}:label`,
       axis,
@@ -393,19 +395,21 @@ export function planChartMargin({
   yDomain,
   hasXLabel,
   hasYLabel,
+  yLabels,
 }: {
   margin: MarginSettings;
   width: number;
   yDomain: [number, number];
   hasXLabel: boolean;
   hasYLabel: boolean;
+  /** Tick labels of a band Y axis, which replace the numeric ticks. */
+  yLabels?: string[];
 }): { margin: MarginSettings; policy: MarginPolicy } {
+  const labels =
+    yLabels ?? scaleLinear().domain(yDomain).ticks(5).map(String);
   const labelLeftMargin = Math.max(
     margin.left,
-    ...scaleLinear()
-      .domain(yDomain)
-      .ticks(5)
-      .map((tick) => String(tick).length * 7 + (hasYLabel ? 38 : 18))
+    ...labels.map((label) => label.length * 7 + (hasYLabel ? 38 : 18))
   );
   const minPlotWidth = Math.min(
     80,

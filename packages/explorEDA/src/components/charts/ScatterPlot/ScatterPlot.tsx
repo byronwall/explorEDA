@@ -72,6 +72,8 @@ export function ScatterPlot({
     // The data layer replaces cached columns after edits; old maps stay stable.
     const column = (field: string | undefined) =>
       field ? getColumnData(field) : {};
+    const profileType = (field: string) =>
+      profiles.find((profile) => profile.name === field)?.dataType;
     return {
       revision: `${nonce}:${chartItems?.nonce ?? 0}`,
       allIds,
@@ -81,6 +83,8 @@ export function ScatterPlot({
       xData: column(settings.xField),
       yData: column(settings.yField),
       colorData: column(settings.colorField),
+      xType: profileType(settings.xField),
+      yType: profileType(settings.yField),
       facetRowData: settings.facet.enabled
         ? column(settings.facet.rowVariable)
         : undefined,
@@ -111,6 +115,7 @@ export function ScatterPlot({
     chartItems,
     crossfilter,
     getColumnData,
+    profiles,
     fieldSettings,
     colorScale,
     calculations,
@@ -234,19 +239,7 @@ export function ScatterPlot({
           filter.field !== settings.xField && filter.field !== settings.yField
       );
       if (extent) {
-        const next = brushFilters(plan, extent);
-        filters.push({
-          type: "range",
-          field: settings.xField,
-          min: next.x[0],
-          max: next.x[1],
-        });
-        filters.push({
-          type: "range",
-          field: settings.yField,
-          min: next.y[0],
-          max: next.y[1],
-        });
+        filters.push(...brushFilters(plan, extent));
       }
       updateChart(settings.id, { filters });
     },
@@ -323,6 +316,27 @@ export function ScatterPlot({
               />
             </span>
           ))}
+          {plan.emptyMessage && (
+            <div
+              className="pointer-events-none absolute flex items-center justify-center p-3 text-center"
+              style={{
+                left: plan.margin.left,
+                top: plan.margin.top,
+                width: plan.plotWidth,
+                height: plan.plotHeight,
+              }}
+            >
+              <div
+                className="max-w-[18rem] text-xs text-muted-foreground"
+                role="status"
+              >
+                <div className="font-medium text-foreground">
+                  No points to plot
+                </div>
+                {plan.emptyMessage}
+              </div>
+            </div>
+          )}
           {hoveredPoint && (
             <div
               className="pointer-events-none absolute left-2 top-2 max-w-[min(16rem,70%)] rounded border border-border bg-card/95 px-2 py-1 text-xs text-card-foreground shadow-sm"
@@ -352,7 +366,9 @@ export function ScatterPlot({
         </>
       ) : (
         <div className="flex items-center justify-center h-full text-muted-foreground">
-          No data available
+          {plan.populations.all > 0
+            ? "No rows match the current filters"
+            : "No data available"}
         </div>
       )}
     </div>
