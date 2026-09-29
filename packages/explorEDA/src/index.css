@@ -355,6 +355,7 @@
   overflow: hidden;
 }
 .eda-settings [role="tablist"],
+.eda-settings-actions,
 .eda-settings-footer,
 .eda-settings > div:first-child {
   flex-shrink: 0;
@@ -2488,6 +2489,33 @@ html {
   background: var(--background);
   outline: none;
   box-shadow: 0 0 0 2px var(--ring);
+}
+.eda-settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.eda-settings-actions button[data-slot="button"] {
+  height: 28px;
+  gap: 5px;
+  padding: 0 6px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+.eda-settings-actions button svg {
+  width: 14px;
+  height: 14px;
+}
+.eda-settings-actions .eda-settings-delete {
+  width: 28px;
+  margin-left: auto;
+  padding: 0;
+}
+.eda-settings-actions .eda-settings-delete:hover {
+  color: var(--destructive);
 }
 .eda-settings [role="tablist"] {
   display: flex;
