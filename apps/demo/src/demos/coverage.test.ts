@@ -52,9 +52,7 @@ describe("example coverage manifest", () => {
   });
 
   it("keeps implementation, review, usage, and gaps distinct", () => {
-    expect(getExampleUsageStatus("chart:row", "palmer-penguins")).toBe(
-      "not-used"
-    );
+    expect(getExampleUsageStatus("chart:row", "box-plot")).toBe("not-used");
     expect(getExampleUsageStatus("chart:row", "categorical-charts")).toBe(
       "shown"
     );
@@ -62,11 +60,13 @@ describe("example coverage manifest", () => {
     expect(getImplementationStatus("scale:log")).toBe("not-checked");
     expect(getFeatureReviewStatus("chart:row")).toBe("not-reviewed");
     expect(getExamplesUsingFeature("chart:row")).toEqual([
+      "shop-operations",
+      "palmer-penguins",
+      "categorical-charts",
+      "product-activity",
       "scatter-trace",
       "calculated-orders",
       "shop-10000",
-      "product-activity",
-      "categorical-charts",
     ]);
     expect(getFeatureGapCount("scale:log")).toBe(1);
     expect(getOpenGapCount()).toBeGreaterThan(0);

@@ -4,10 +4,12 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from "@testing-library/react";
 import { useState } from "react";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { examples } from "./demos/examples";
 import { LandingPage } from "./LandingPage";
 
 // The hero's live embed has its own test; keep these tests to one workspace.
@@ -114,6 +116,7 @@ describe("LandingPage routing", () => {
 
     render(<RouterProvider router={router} />);
     const featured = screen.getByRole("heading", {
+      level: 2,
       name: "Inside the order book",
     });
     const integration = screen.getByRole("heading", {
@@ -129,6 +132,42 @@ describe("LandingPage routing", () => {
     expect(
       screen.getByRole("textbox", { name: "Full analysis JSON" })
     ).toBeInTheDocument();
+  });
+
+  it("lists every example with its data, views, and features", () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        text: () => Promise.resolve("species\nAdelie"),
+      })
+    );
+    const router = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
+    );
+
+    render(<RouterProvider router={router} />);
+    const section = screen
+      .getByRole("heading", { name: "Examples" })
+      .closest("section") as HTMLElement;
+    const list = within(section).getByRole("list");
+    const items = within(list).getAllByRole("listitem");
+
+    expect(items).toHaveLength(examples.length);
+    expect(within(section).queryByText("Show all examples")).toBeNull();
+    const penguins = items.find((item) =>
+      within(item).queryByRole("button", { name: "Penguin field notes" })
+    ) as HTMLElement;
+    expect(penguins).toHaveTextContent("344 penguins");
+    expect(penguins).toHaveTextContent("real data");
+    expect(penguins).toHaveTextContent("7 views · scatter, row, box plot");
+    expect(penguins).toHaveTextContent("Shared color key");
+
+    fireEvent.click(
+      within(penguins).getByRole("button", { name: "Penguin field notes" })
+    );
+    expect(router.state.location.search).toBe("?example=palmer-penguins");
   });
 
   it("shows the featured guide above the workspace and opens it from the hero", async () => {
