@@ -10,7 +10,7 @@ export function LandingFooter() {
   return (
     <footer className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-border py-8 text-sm text-muted-foreground">
       <p>
-        <span className="font-semibold text-foreground">explorEDA</span> · A
+        <img src="/brand/wordmark.svg" alt="explorEDA" className="inline h-4 w-auto align-[-2px]" /> · A
         React workspace for exploratory data analysis
       </p>
       <nav aria-label="Project links" className="flex gap-5">

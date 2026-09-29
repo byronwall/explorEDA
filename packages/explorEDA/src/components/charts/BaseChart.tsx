@@ -34,8 +34,8 @@ interface BaseChartProps {
   yTickFormatter?: (value: string | number) => string;
   /** Receives the planned id of an Alt-clicked axis guide. */
   onInspectGuide?: (id: string) => void;
-  /** Receives the planned id under the pointer, or null. */
-  onHoverTarget?: (id: string | null) => void;
+  /** Receives the planned id under the pointer, or null, and the Alt state. */
+  onHoverTarget?: (id: string | null, altKey: boolean) => void;
   onInspectPlot?: (point: [number, number], anchor: DOMRect) => boolean;
   activeGuideId?: string | null;
 }
@@ -261,7 +261,7 @@ export function BaseChart({
         }
       }}
       onPointerDownCapture={(event) => {
-        onHoverTarget?.(null);
+        onHoverTarget?.(null, false);
         setAltHover(false);
         if (interactive && guideAt(event.target)) {
           // Guide clicks inspect or select the guide. They never start a brush.
@@ -279,25 +279,25 @@ export function BaseChart({
       onPointerMoveCapture={(event) => {
         brush.handlePointerMove(event);
         const id = planIdFromTarget(event.target);
-        onHoverTarget?.(id ?? null);
+        onHoverTarget?.(id ?? null, event.altKey);
         setAltHover(Boolean(event.altKey && interactive && id));
       }}
       onPointerUpCapture={brush.handlePointerUp}
       onPointerCancel={() => {
         setAltPointer(false);
         setAltHover(false);
-        onHoverTarget?.(null);
+        onHoverTarget?.(null, false);
         brush.cancel();
       }}
       onLostPointerCapture={() => {
         setAltPointer(false);
         setAltHover(false);
-        onHoverTarget?.(null);
+        onHoverTarget?.(null, false);
         brush.cancel();
       }}
       onPointerLeave={() => {
         setAltHover(false);
-        onHoverTarget?.(null);
+        onHoverTarget?.(null, false);
       }}
       onClick={(event) => {
         if (inspectedByBrush.current) inspectedByBrush.current = false;

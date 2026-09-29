@@ -11,10 +11,10 @@ import {
   type SparkFilter,
 } from "./FieldDistribution";
 import { useDataLayer } from "@/providers/DataLayerProvider";
+import { useFieldFilter } from "@/hooks/useFieldFilter";
 import type { FieldProfile } from "@/lib/fieldProfiles";
 import type { datum } from "@/types/ChartTypes";
-import type { Filter } from "@/types/FilterTypes";
-import isEqual from "react-fast-compare";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { getChartSummary } from "../../charts/chartAccessibility";
 import type { SummaryTableSettings } from "../../charts/SummaryTable/definition";
@@ -113,24 +113,18 @@ export function CompactSummaryTable({
 }: CompactSummaryTableProps) {
   const formatValue = useDataLayer((state) => state.formatFieldValue);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
-  const updateChart = useDataLayer((state) => state.updateChart);
   const label = getFieldLabel ?? ((field: string) => field);
-  // A sparkline click replaces the field's filter; clicking it again clears it.
-  const filterField = (field: string, spark: SparkFilter) => {
-    const filter = { ...spark, field } as Filter;
-    const others = settings.filters.filter((item) => item.field !== field);
-    const same = settings.filters.some((item) => isEqual(item, filter));
-    updateChart(settings.id, {
-      filters: same ? others : [...others, filter],
-    });
-  };
+  // A sparkline click or brush replaces the field's filter; the same filter
+  // again clears it.
+  const { filterFor, toggleFilter } = useFieldFilter(settings);
   const rows = data.map((profile) => ({
     profile,
     summary: summarizeField(
       profile,
       (value) => formatValue(profile.name, value as datum),
       label(profile.name),
-      (filter) => filterField(profile.name, filter)
+      (filter: SparkFilter) => toggleFilter(profile.name, filter),
+      filterFor(profile.name)
     ),
   }));
   return (
@@ -174,6 +168,11 @@ export function CompactSummaryTable({
           const fieldLabel = label(profile.name);
           const missingShare =
             profile.totalCount > 0 ? profile.nullCount / profile.totalCount : 0;
+          const active = filterFor(profile.name);
+          const missingOnly =
+            active?.type === "value" &&
+            active.values.length === 1 &&
+            active.values[0] == null;
           return (
             <tr key={profile.name}>
               <th scope="row" className="eda-summary-field">
@@ -198,14 +197,33 @@ export function CompactSummaryTable({
                 )}
               >
                 {profile.nullCount > 0 ? (
-                  <>
-                    {profile.nullCount.toLocaleString()}
-                    <span className="eda-summary-share-label">
-                      {missingShare < 0.01
-                        ? "<1%"
-                        : `${Math.round(missingShare * 100)}%`}
-                    </span>
-                  </>
+                  <ActionTooltip
+                    content={
+                      missingOnly
+                        ? `Stop showing only rows missing ${fieldLabel}`
+                        : `Show only rows missing ${fieldLabel}`
+                    }
+                  >
+                    <button
+                      type="button"
+                      className="eda-summary-missing-filter"
+                      aria-pressed={missingOnly}
+                      aria-label={`${profile.nullCount.toLocaleString()} missing. Show only rows missing ${fieldLabel}`}
+                      onClick={() =>
+                        toggleFilter(profile.name, {
+                          type: "value",
+                          values: [null],
+                        })
+                      }
+                    >
+                      {profile.nullCount.toLocaleString()}
+                      <span className="eda-summary-share-label">
+                        {missingShare < 0.01
+                          ? "<1%"
+                          : `${Math.round(missingShare * 100)}%`}
+                      </span>
+                    </button>
+                  </ActionTooltip>
                 ) : (
                   <>
                     <span aria-hidden="true" className="text-muted-foreground">

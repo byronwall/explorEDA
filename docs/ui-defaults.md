@@ -29,6 +29,8 @@ Run `pnpm check:ui` to reject native title attributes, SVG `<title>` elements, a
 - Keep field metadata based on the correct data scope. A filtered summary must describe filtered rows.
 - Keep field controls on one line. Put the type icon before the name and move details into the tooltip.
 - Keep table headers on one line. Show actions on the right without moving the name. Keep active filters visible.
+- Show a missing table cell as a small, centered monospace `null`, never a dash or a blank.
+- Let every filter reach missing values: a Missing count filters to its rows, and column filters offer Only missing values.
 - Keep row actions horizontal. Show them on hover and keyboard focus, and keep them available on touch screens.
 
 ## Popovers and dialogs

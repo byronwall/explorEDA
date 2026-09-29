@@ -326,7 +326,7 @@ function planAxis(
       role: "grid",
       value: tick,
       source: "scale",
-      ariaLabel: `${axis === "x" ? "Horizontal" : "Vertical"} grid line ${tick}`,
+      ariaLabel: `${input.label || input.fieldLabel || `${axis.toUpperCase()} axis`} grid line at ${input.format(tick)}`,
       line:
         axis === "x"
           ? { x1: at, y1: 0, x2: at, y2: plotHeight }
