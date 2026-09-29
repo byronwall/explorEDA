@@ -161,7 +161,7 @@ describe("LandingPage routing", () => {
     ) as HTMLElement;
     expect(penguins).toHaveTextContent("344 penguins");
     expect(penguins).toHaveTextContent("real data");
-    expect(penguins).toHaveTextContent("7 · scatter, row, box plot");
+    expect(penguins).toHaveTextContent("7 views · scatter, row, box plot");
     expect(penguins).toHaveTextContent("Shared color key");
 
     fireEvent.click(

@@ -1,6 +1,9 @@
 import { ArrowRight } from "lucide-react";
 import { describeViews, ExampleData, examples } from "./demos/examples";
 
+const labelClass =
+  "text-xs font-medium uppercase tracking-wide text-muted-foreground";
+
 interface ExampleSelectorProps {
   onSelect: (exampleId: string) => void;
   examplesToShow?: ExampleData[];
@@ -41,29 +44,27 @@ export function ExampleSelector({
                 </p>
               </div>
             </div>
-            <dl className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-x-3 gap-y-2 pl-8 text-sm lg:pl-0">
-              <dt className="text-muted-foreground">Data</dt>
-              <dd className="min-w-0">
-                <span className="tabular-nums">{rows}</span>
-                <span className="text-muted-foreground">
-                  {" · "}
-                  <span className="tabular-nums">{fields}</span> fields ·{" "}
-                  {source === "Real" ? "real data" : "synthetic"}
-                </span>
+            <dl className="ml-8 grid grid-cols-[3.5rem_minmax(0,1fr)] items-baseline gap-x-4 gap-y-2.5 border-t border-border pt-4 text-sm lg:ml-0 lg:self-stretch lg:content-center lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+              <dt className={labelClass}>Data</dt>
+              <dd className="min-w-0 text-foreground">
+                <span className="font-medium tabular-nums">{rows}</span>
+                {" · "}
+                <span className="tabular-nums">{fields}</span> fields ·{" "}
+                {source === "Real" ? "real data" : "synthetic"}
               </dd>
               {views.count > 0 && (
                 <>
-                  <dt className="text-muted-foreground">Views</dt>
-                  <dd className="min-w-0">
-                    <span className="tabular-nums">{views.count}</span>
-                    <span className="text-muted-foreground">
-                      {" · "}
-                      {views.types.join(", ")}
+                  <dt className={labelClass}>Views</dt>
+                  <dd className="min-w-0 text-foreground">
+                    <span className="font-medium tabular-nums">
+                      {views.count} {views.count === 1 ? "view" : "views"}
                     </span>
+                    {" · "}
+                    {views.types.join(", ")}
                   </dd>
                 </>
               )}
-              <dt className="text-muted-foreground">Shows</dt>
+              <dt className={labelClass}>Shows</dt>
               <dd className="flex min-w-0 flex-wrap gap-1.5">
                 {example.shows.map((feature) => (
                   <span
