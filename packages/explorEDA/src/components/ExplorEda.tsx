@@ -1,3 +1,4 @@
+import { ChartDraftProvider } from "./plot/ChartDraftContext";
 import type { DatumObject } from "@/providers/DataLayerProvider";
 import { DataLayerProvider } from "@/providers/DataLayerProvider";
 import {
@@ -63,7 +64,9 @@ export function ExplorEda({
     >
       <div className="bg-background text-foreground">
         <CalculationEditorProvider>
-          <PlotManager />
+          <ChartDraftProvider>
+            <PlotManager />
+          </ChartDraftProvider>
         </CalculationEditorProvider>
         <GlobalAlertDialog />
         <Toaster />
