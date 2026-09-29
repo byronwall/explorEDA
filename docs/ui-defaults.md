@@ -50,8 +50,9 @@ Escape closes an active nested editor before it closes the expanded chart.
 
 ## Scope and layout
 
-- Keep view controls and active filter scope together in one sticky area.
-- Let filter chips wrap without hiding the row count or clear action.
+- Keep view controls and active filter scope together in one sticky line. Group inspection tools (Fields, Rows) on the left and configuration (Calculations, colors, grid, workspace actions) on the right, as icon buttons with tooltips.
+- Keep filter chips on that line. Show the ones that fit, then a "+N more" popover that lists every filter, beside the row count and clear action.
+- Rows is a quick peek over the charts, not a separate view. R, Escape, or a click on the charts dismisses it. Calculations open in a dialog.
 - Label local Rows filters and table searches separately from chart filters.
 - Keep a clear-filter control visible on every chart with an active filter.
 - Label filter bounds with their meaning and state where the filter applies.

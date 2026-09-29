@@ -858,7 +858,7 @@ describe("DataLayerProvider", () => {
             hide name
           </button>
           <button onClick={clearAllFilters}>clear all</button>
-          <RowsView width={800} active={false} toolbarTarget={null} />
+          <RowsView width={800} height={600} toolbarTarget={null} />
         </>
       );
     }
@@ -895,7 +895,7 @@ describe("DataLayerProvider", () => {
     let state!: ReturnType<typeof useStateLayer>;
     function RowsProbe() {
       state = useStateLayer();
-      return <RowsView width={800} active={false} toolbarTarget={null} />;
+      return <RowsView width={800} height={600} toolbarTarget={null} />;
     }
 
     render(

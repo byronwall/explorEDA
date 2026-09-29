@@ -211,4 +211,58 @@ describe("ActiveFilterStatus", () => {
       })
     ).toBeInTheDocument();
   });
+
+  it("keeps chips on one line and lists the rest in a popover", async () => {
+    // Only the first chip fits in the 100px list.
+    const rect = vi
+      .spyOn(Element.prototype, "getBoundingClientRect")
+      .mockImplementation(function (this: Element) {
+        const right = this.classList.contains("eda-filter-chips")
+          ? 100
+          : this.classList.contains("eda-filter-chip")
+            ? 90 * (Array.from(this.parentElement!.children).indexOf(this) + 1)
+            : 0;
+        return { right } as DOMRect;
+      });
+    const chart = makeChart([
+      { type: "value", field: "category", values: ["x"] },
+      { type: "value", field: "name", values: ["A"] },
+      { type: "range", field: "z", min: 10 },
+    ]);
+
+    render(
+      <DataLayerProvider data={data} charts={[chart]}>
+        <ActiveFilterStatus />
+      </DataLayerProvider>
+    );
+
+    const list = screen.getByRole("list", { name: "Active filters" });
+    const chips = list.querySelectorAll("li");
+    expect(chips[0]).not.toHaveAttribute("data-overflow");
+    expect(chips[1]).toHaveAttribute("data-overflow");
+    expect(chips[2]).toHaveAttribute("data-overflow");
+
+    const more = screen.getByRole("button", {
+      name: "Show all 3 active filters",
+    });
+    expect(more).toHaveTextContent("+2 more");
+    fireEvent.click(more);
+
+    const all = await screen.findByRole("list", { name: "All active filters" });
+    expect(all.querySelectorAll("li")).toHaveLength(3);
+    rect.mockRestore();
+  });
+
+  it("hides the clear action when nothing is filtered", () => {
+    render(
+      <DataLayerProvider data={data} charts={[makeChart([])]}>
+        <ActiveFilterStatus />
+      </DataLayerProvider>
+    );
+
+    expect(screen.getByRole("status")).toHaveTextContent("Showing 3 of 3 rows");
+    expect(
+      screen.queryByRole("button", { name: "Clear all filters" })
+    ).not.toBeInTheDocument();
+  });
 });

@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from "react";
 import { categoryLabel } from "@/lib/categories";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
@@ -8,8 +9,11 @@ import {
   formatFieldValue,
   getFieldName,
 } from "@/lib/fieldSettings";
-import { FilterX, X } from "lucide-react";
+import { FilterX, ListFilter, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { ActionTooltip } from "./ui/tooltip";
 
 type FieldFormatting = {
   name: (field: string) => string;
@@ -104,6 +108,7 @@ function FilterChip({
   removeLabel,
   removeTooltip,
   onRemove,
+  overflow,
 }: {
   label: string;
   showLabel?: string;
@@ -113,9 +118,14 @@ function FilterChip({
   removeLabel: string;
   removeTooltip: string;
   onRemove: () => void;
+  /** Hidden in place because it does not fit; the overflow popover lists it. */
+  overflow?: boolean;
 }) {
   return (
-    <li className="eda-filter-chip flex h-7 max-w-full items-center rounded-md border border-input bg-background shadow-xs">
+    <li
+      className="eda-filter-chip flex h-7 max-w-full shrink-0 items-center rounded-md border border-input bg-background shadow-xs"
+      data-overflow={overflow || undefined}
+    >
       {onShow ? (
         <Button
           type="button"
@@ -165,8 +175,10 @@ export function ActiveFilterStatus({
   view = "charts",
   onShowChart,
   onHighlightChart,
+  className,
 }: {
   view?: string;
+  className?: string;
   /** Scrolls to and focuses the chart that owns a filter. */
   onShowChart?: (id: string) => void;
   /** Marks the chart that owns a filter while its chip has hover or focus. */
@@ -211,116 +223,181 @@ export function ActiveFilterStatus({
             : []
         );
 
+  type ChipProps = Omit<Parameters<typeof FilterChip>[0], "overflow"> & {
+    key: string;
+  };
+  const chips: ChipProps[] = [
+    ...localFilters.map((filter, index) => ({
+      key: `rows-${index}`,
+      label: `Rows · ${filterLabel(filter)}`,
+      removeLabel: `Remove Rows filter: ${filterLabel(filter)}`,
+      removeTooltip:
+        "Remove this Rows filter. It was set in the Rows view, not by a chart, and applies only there.",
+      onRemove: () =>
+        updateRowsSettings({
+          filters: rowsSettings.filters.filter((item) => item !== filter),
+        }),
+    })),
+    ...searches.map((search) => {
+      const chartId = search.id === "rows" ? undefined : search.id;
+      return {
+        key: `search-${search.id}`,
+        label: `${search.title} search · ${search.text}`,
+        showLabel: `Show ${search.title}, the table with this search`,
+        showTooltip: `Show ${search.title}, the table with this search. Use × to clear it.`,
+        onShow: chartId && onShowChart ? () => onShowChart(chartId) : undefined,
+        onHighlight: (active: boolean) =>
+          onHighlightChart?.(active ? chartId : undefined),
+        removeLabel: `Clear ${search.title} search: ${search.text}`,
+        removeTooltip: chartId
+          ? `Clear this search from ${search.title}`
+          : "Clear this Rows search. It was set in the Rows view, not by a chart, and applies only there.",
+        onRemove: () =>
+          chartId
+            ? updateChart(chartId, { globalSearch: "" })
+            : updateRowsSettings({ globalSearch: "" }),
+      };
+    }),
+    ...activeFilters.map(({ chart, filter, index }) => {
+      const label = formatFilterLabel(filter, formatting);
+      const exact = exactBounds(filter, formatting);
+      const owner = chart.title || chart.type;
+      return {
+        key: `${chart.id}-${index}`,
+        label,
+        showLabel: `Show ${owner}, the chart with filter ${label}`,
+        showTooltip: `Show ${owner}, the chart that set this filter. Use × to remove it.${exact ? ` ${exact}.` : ""}`,
+        onShow: onShowChart ? () => onShowChart(chart.id) : undefined,
+        onHighlight: (active: boolean) =>
+          onHighlightChart?.(active ? chart.id : undefined),
+        removeLabel: `Remove ${label} from ${owner}`,
+        removeTooltip: `Remove this filter from ${owner}`,
+        onRemove: () =>
+          updateChart(chart.id, {
+            filters: chart.filters.filter(
+              (_, filterIndex) => filterIndex !== index
+            ),
+          }),
+      };
+    }),
+  ];
+  // Chips stay on one line. Those that do not fit are hidden in place and
+  // listed in the "+N more" popover instead.
+  const listRef = useRef<HTMLUListElement>(null);
+  const [fitCount, setFitCount] = useState(chips.length);
+  const chipSignature = chips.map((chip) => chip.key + chip.label).join("|");
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    const measure = () => {
+      const right = list.getBoundingClientRect().right + 0.5;
+      let count = 0;
+      for (const item of Array.from(list.children)) {
+        if (item.getBoundingClientRect().right > right) break;
+        count += 1;
+      }
+      setFitCount(count);
+    };
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(list);
+    return () => observer.disconnect();
+  }, [chipSignature]);
+  const shownCount = Math.min(fitCount, chips.length);
+  const hiddenCount = chips.length - shownCount;
+
   return (
     <section
       aria-label="Active chart filters"
-      className="eda-filter-status mb-2 flex h-11 items-center gap-3 rounded-md border border-border bg-card px-3 py-2"
+      className={cn("eda-filter-status", className)}
     >
-      <p
-        role="status"
-        aria-live="polite"
-        className="shrink-0 text-xs text-muted-foreground tabular-nums"
+      <ActionTooltip
+        content={
+          <>
+            Rows that pass every chart filter. Table searches and Rows filters
+            apply only to their own table.
+          </>
+        }
       >
-        Showing <strong className="text-foreground">{remainingRows}</strong> of{" "}
-        <strong className="text-foreground">{data.length}</strong> rows
-        <span className="filter-context"> after chart filters.</span>
-      </p>
-      {activeFilters.length + localFilters.length + searches.length === 0 && (
-        <span className="ml-auto hidden whitespace-nowrap text-xs text-muted-foreground sm:inline">
-          Table searches and Rows filters apply locally
-        </span>
+        <p
+          role="status"
+          aria-live="polite"
+          tabIndex={0}
+          className="eda-row-count shrink-0 tabular-nums"
+        >
+          <span className="eda-row-count-lead">Showing </span>
+          <strong>{remainingRows.toLocaleString()}</strong> of{" "}
+          <strong>{data.length.toLocaleString()}</strong> rows
+          <span className="sr-only"> after chart filters.</span>
+        </p>
+      </ActionTooltip>
+      {chips.length > 0 && (
+        <ul
+          ref={listRef}
+          className="eda-filter-chips"
+          aria-label="Active filters"
+        >
+          {chips.map(({ key, ...chip }, index) => (
+            <FilterChip key={key} {...chip} overflow={index >= shownCount} />
+          ))}
+        </ul>
       )}
-      {activeFilters.length + localFilters.length + searches.length > 0 && (
-        <>
-          <ul
-            className="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto whitespace-nowrap"
+      {hiddenCount > 0 && (
+        <Popover>
+          <ActionTooltip content="Show every active filter and search">
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="eda-filter-more"
+                aria-label={`Show all ${chips.length} active filters`}
+              >
+                <ListFilter aria-hidden="true" />
+                {shownCount > 0 ? `+${hiddenCount}` : chips.length}
+                <span className="eda-filter-more-label">
+                  {shownCount > 0
+                    ? " more"
+                    : chips.length === 1
+                      ? " filter"
+                      : " filters"}
+                </span>
+              </Button>
+            </PopoverTrigger>
+          </ActionTooltip>
+          <PopoverContent
+            align="start"
             aria-label="Active filters"
+            className="eda-filter-popover w-80 max-w-[calc(100vw-2rem)] p-2"
           >
-            {localFilters.map((filter, index) => (
-              <FilterChip
-                key={`rows-${index}`}
-                label={`Rows · ${filterLabel(filter)}`}
-                removeLabel={`Remove Rows filter: ${filterLabel(filter)}`}
-                removeTooltip="Remove this Rows filter. It was set in the Rows view, not by a chart, and applies only there."
-                onRemove={() =>
-                  updateRowsSettings({
-                    filters: rowsSettings.filters.filter(
-                      (item) => item !== filter
-                    ),
-                  })
-                }
-              />
-            ))}
-            {searches.map((search) => {
-              const chartId = search.id === "rows" ? undefined : search.id;
-              return (
-                <FilterChip
-                  key={`search-${search.id}`}
-                  label={`${search.title} search · ${search.text}`}
-                  showLabel={`Show ${search.title}, the table with this search`}
-                  showTooltip={`Show ${search.title}, the table with this search. Use × to clear it.`}
-                  onShow={
-                    chartId && onShowChart
-                      ? () => onShowChart(chartId)
-                      : undefined
-                  }
-                  onHighlight={(active) =>
-                    onHighlightChart?.(active ? chartId : undefined)
-                  }
-                  removeLabel={`Clear ${search.title} search: ${search.text}`}
-                  removeTooltip={
-                    chartId
-                      ? `Clear this search from ${search.title}`
-                      : "Clear this Rows search. It was set in the Rows view, not by a chart, and applies only there."
-                  }
-                  onRemove={() =>
-                    chartId
-                      ? updateChart(chartId, { globalSearch: "" })
-                      : updateRowsSettings({ globalSearch: "" })
-                  }
-                />
-              );
-            })}
-            {activeFilters.map(({ chart, filter, index }) => {
-              const label = formatFilterLabel(filter, formatting);
-              const exact = exactBounds(filter, formatting);
-              const owner = chart.title || chart.type;
-              return (
-                <FilterChip
-                  key={`${chart.id}-${index}`}
-                  label={label}
-                  showLabel={`Show ${owner}, the chart with filter ${label}`}
-                  showTooltip={`Show ${owner}, the chart that set this filter. Use × to remove it.${exact ? ` ${exact}.` : ""}`}
-                  onShow={onShowChart ? () => onShowChart(chart.id) : undefined}
-                  onHighlight={(active) =>
-                    onHighlightChart?.(active ? chart.id : undefined)
-                  }
-                  removeLabel={`Remove ${label} from ${owner}`}
-                  removeTooltip={`Remove this filter from ${owner}`}
-                  onRemove={() =>
-                    updateChart(chart.id, {
-                      filters: chart.filters.filter(
-                        (_, filterIndex) => filterIndex !== index
-                      ),
-                    })
-                  }
-                />
-              );
-            })}
-          </ul>
-        </>
+            <h3 className="px-1 pb-2 text-xs font-medium text-muted-foreground">
+              {chips.length} active {chips.length === 1 ? "filter" : "filters"}
+            </h3>
+            <ul
+              aria-label="All active filters"
+              className="flex max-h-[min(60vh,360px)] flex-col gap-1.5 overflow-y-auto"
+            >
+              {chips.map(({ key, ...chip }) => (
+                <FilterChip key={key} {...chip} />
+              ))}
+            </ul>
+          </PopoverContent>
+        </Popover>
       )}
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        className="ml-auto shrink-0"
-        tooltip="Clear chart filters, all table searches, and Rows filters"
-        onClick={clearAllFilters}
-      >
-        <FilterX aria-hidden="true" />
-        Clear all filters
-      </Button>
+      {chips.length > 0 && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="eda-filter-clear shrink-0"
+          aria-label="Clear all filters"
+          tooltip="Clear all filters: chart filters, table searches, and Rows filters"
+          onClick={clearAllFilters}
+        >
+          <FilterX aria-hidden="true" />
+        </Button>
+      )}
     </section>
   );
 }

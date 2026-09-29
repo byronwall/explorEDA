@@ -31,6 +31,7 @@ export const shortcutGroups: ShortcutGroup[] = [
       { keys: [["?"]], action: "Show keyboard shortcuts" },
       { keys: [["F"]], action: "Open or close the field list" },
       { keys: [["Shift", "F"]], action: "Show every field's distribution" },
+      { keys: [["R"]], action: "Peek at the rows that pass every filter" },
       {
         keys: [["Esc"]],
         action: "Close the open editor, popover, or expanded chart",

@@ -114,7 +114,7 @@
   border-bottom: 1px solid var(--border);
 }
 .eda-workspace [data-chart-id] {
-  scroll-margin-top: 110px;
+  scroll-margin-top: 64px;
 }
 .eda-panel {
   border-color: var(--border);
@@ -391,20 +391,6 @@ html {
 .eda-panel:fullscreen {
   background: var(--card);
 }
-@media (max-width: 640px) {
-  .eda-filter-status {
-    font-size: 11px;
-  }
-  .eda-filter-status > p {
-    max-width: 46%;
-  }
-  .eda-filter-status > button {
-    font-size: 0;
-    width: 30px;
-    padding: 4px;
-  }
-}
-
 .eda-tooltip {
   position: absolute;
   z-index: 2;
@@ -432,14 +418,6 @@ html {
 .eda-workspace .react-grid-item {
   transition: none;
 }
-.eda-filter-status > span {
-  display: inline;
-}
-@media (max-width: 640px) {
-  .eda-filter-status > span {
-    display: none;
-  }
-}
 .eda-panel:has(svg:focus-visible) h3 {
   text-decoration: underline;
   text-underline-offset: 4px;
@@ -450,13 +428,6 @@ html {
   box-shadow: 0 8px 28px rgb(20 40 70 / 13%);
 }
 @media (max-width: 640px) {
-  .eda-filter-status > p {
-    white-space: nowrap;
-    max-width: none;
-  }
-  .eda-filter-status .filter-context {
-    display: none;
-  }
   .eda-settings-popover {
     padding: 12px;
   }
@@ -576,14 +547,23 @@ html {
 .eda-workspace-toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  min-height: 36px;
-  flex-wrap: wrap;
-  margin-bottom: 6px;
+  gap: 6px;
+  min-height: 34px;
 }
-.eda-workspace-toolbar button,
-.eda-workspace-toolbar summary {
+.eda-toolbar-group {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 2px;
+}
+.eda-toolbar-divider {
+  flex-shrink: 0;
+  width: 1px;
+  height: 18px;
+  margin: 0 2px;
+  background: var(--border);
+}
+.eda-workspace-toolbar button {
   height: 30px;
   font-size: 12px;
   padding: 0 10px;
@@ -593,48 +573,179 @@ html {
   background: transparent;
   color: var(--muted-foreground);
 }
+.eda-toolbar-group button {
+  width: 30px;
+  padding: 0;
+}
 .eda-workspace-toolbar button:hover,
-.eda-workspace-toolbar summary:hover,
-.eda-workspace-toolbar details[open] > summary {
+.eda-workspace-toolbar button[aria-expanded="true"] {
   background: var(--muted);
   color: var(--foreground);
 }
-.eda-workspace-toolbar [role="tablist"] {
-  height: 32px;
-  padding: 2px;
-  background: transparent;
-}
-.eda-workspace-toolbar [role="tab"] {
-  padding: 0 10px;
-  height: 30px;
-  font-size: 12px;
-}
-.eda-workspace-toolbar [role="tab"][data-state="active"] {
+.eda-workspace-toolbar button[aria-pressed="true"] {
   background: var(--muted);
   color: var(--foreground);
-  box-shadow: none;
+  border-color: var(--border);
 }
 .eda-filter-status {
-  min-height: 34px;
-  height: auto;
-  flex-wrap: wrap;
-  padding: 3px 10px;
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding-left: 4px;
+}
+.eda-row-count {
+  font-size: 11px;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+  border-radius: 4px;
+  outline: none;
+}
+.eda-row-count strong {
+  color: var(--foreground);
+  font-weight: 600;
+}
+.eda-row-count:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+.eda-filter-chips {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.eda-filter-chip[data-overflow] {
+  visibility: hidden;
+}
+.eda-filter-chips .eda-filter-chip {
+  max-width: 240px;
+}
+.eda-workspace-toolbar .eda-filter-chip button,
+.eda-filter-popover .eda-filter-chip button {
+  height: 100%;
+  font-size: 11px;
+  border: 0;
+  border-radius: 0;
+}
+.eda-workspace-toolbar .eda-filter-chip button:first-child {
+  width: auto;
+  padding: 0 8px;
+  color: var(--foreground);
+}
+.eda-workspace-toolbar .eda-filter-chip button:last-child {
+  width: 26px;
+  padding: 0;
+  border-left: 1px solid var(--border);
+}
+.eda-filter-popover .eda-filter-chip {
+  max-width: none;
+}
+.eda-filter-popover .eda-filter-chip button:first-child {
+  flex: 1 1 auto;
+  justify-content: flex-start;
+}
+.eda-workspace-toolbar .eda-filter-more {
+  flex-shrink: 0;
+  width: auto;
+  height: 26px;
+  gap: 4px;
+  padding: 0 8px;
+  font-size: 11px;
+  color: var(--foreground);
+  border-color: var(--input);
+}
+.eda-workspace-toolbar .eda-filter-clear {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+}
+
+/* Rows peek: floats below the controls over the charts. */
+.eda-rows-peek {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  box-shadow:
+    0 12px 32px rgb(20 40 70 / 14%),
+    0 1px 3px rgb(20 40 70 / 8%);
+  overflow: hidden;
+  outline: none;
+  animation: eda-rows-peek-in 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.eda-rows-peek-header {
+  display: flex;
+  align-items: center;
   gap: 8px;
-  border-color: transparent;
-  background: transparent;
+  min-height: 40px;
+  padding: 4px 6px 4px 12px;
+  border-bottom: 1px solid var(--border);
 }
-.eda-filter-status button {
-  height: 25px;
-  padding: 0 7px;
+.eda-rows-peek-header h2 {
+  font-size: 13px;
+  font-weight: 600;
+}
+.eda-rows-peek-header p {
   font-size: 11px;
+  color: var(--muted-foreground);
+  white-space: nowrap;
 }
-.eda-filter-status p {
-  font-size: 11px;
+.eda-rows-peek-tools {
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  min-width: 0;
 }
-.eda-filter-status ul {
-  flex-wrap: wrap;
-  white-space: normal;
+.eda-rows-peek-tools .eda-table-toolbar {
+  height: auto;
+  padding: 0;
 }
+.eda-rows-peek-header > button {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+}
+@keyframes eda-rows-peek-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eda-rows-peek {
+    animation: none;
+  }
+}
+@media (max-width: 640px) {
+  .eda-workspace-toolbar {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .eda-workspace-toolbar > .eda-filter-status {
+    order: 1;
+    flex-basis: 100%;
+    padding-left: 0;
+  }
+  .eda-row-count-lead,
+  .eda-filter-more-label {
+    display: none;
+  }
+  .eda-rows-peek-header p {
+    display: none;
+  }
+}
+
 .eda-table-toolbar {
   display: flex;
   align-items: center;
@@ -695,17 +806,6 @@ html {
   outline: none;
   box-shadow: inset 0 2px var(--primary);
 }
-@media (max-width: 640px) {
-  .eda-workspace-toolbar {
-    gap: 4px;
-    flex-wrap: wrap;
-  }
-  .eda-workspace-toolbar button,
-  .eda-workspace-toolbar summary {
-    padding: 0 7px;
-  }
-}
-
 .eda-line-legend {
   position: absolute;
   display: flex;
@@ -1546,12 +1646,6 @@ html {
   }
 }
 
-@media (max-width: 640px) {
-  .eda-workspace-toolbar {
-    flex-wrap: wrap;
-  }
-}
-
 .eda-summary-actions button {
   width: 24px;
   height: 24px;
@@ -1560,25 +1654,6 @@ html {
 .eda-summary-actions button svg {
   width: 12px;
   height: 12px;
-}
-
-@media (max-width: 640px) {
-  .eda-filter-status {
-    align-items: flex-start;
-  }
-  .eda-filter-status > p {
-    flex: 1 1 100%;
-    max-width: none;
-    white-space: normal;
-  }
-  .eda-filter-status > ul {
-    flex: 1 1 100%;
-  }
-  .eda-filter-status > button {
-    width: auto;
-    max-width: 100%;
-    font-size: 11px;
-  }
 }
 
 .eda-color-legend {
@@ -2367,11 +2442,6 @@ html {
 
 /* Field list: a nonmodal panel that floats over the right edge of the
    workspace, below the sticky controls, without resizing the chart grid. */
-.eda-workspace-toolbar .eda-fields-toggle[aria-pressed="true"] {
-  background: var(--muted);
-  color: var(--foreground);
-  border-color: var(--border);
-}
 .eda-field-list {
   outline: none;
   position: fixed;
