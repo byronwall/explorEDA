@@ -1,5 +1,4 @@
-import { finiteNumber } from "@/lib/numeric";
-import { getRangeFilterForField } from "@/hooks/getAxisFilter";
+import { finiteNumber, isMissingValue } from "@/lib/numeric";
 import {
   getFieldLabel,
   formatFieldValue,
@@ -16,16 +15,29 @@ import {
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { datum, MarginSettings } from "@/types/ChartTypes";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";
-import type { ValueFilter } from "@/types/FilterTypes";
-import { numericScale } from "../Axis/numericScale";
+import type { Filter, ValueFilter } from "@/types/FilterTypes";
+import type { DataType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import {
+  buildScale,
+  describeScale,
   planAxes,
   planChartMargin,
   type ChartAxesPlan,
+  type ScaleDescriptor,
 } from "../Axis/axisPlan";
 import { getChartTitle } from "../chartAccessibility";
 import { planScatterPoints, type ScatterPointStyle } from "./planScatterPoints";
 import type { ScatterPlotSettings } from "./definition";
+import {
+  DOMAIN_PADDING,
+  filterSpan,
+  planScatterAxis,
+  spanFilter,
+  type ScatterAxisScale,
+  type ScatterCategory,
+} from "./scatterAxis";
+
+export { paddedDomain } from "./scatterAxis";
 
 /** Estimated axis title glyph width; ScatterPlot measures the rendered title. */
 const TITLE_CHAR_WIDTH = 6.5;
@@ -100,6 +112,9 @@ export interface ScatterSnapshot {
   xData: Record<IdType, datum>;
   yData: Record<IdType, datum>;
   colorData: Record<IdType, datum>;
+  /** Detected field types; omitted types are detected from the column. */
+  xType?: DataType;
+  yType?: DataType;
   facetRowData?: Record<IdType, datum>;
   facetColumnData?: Record<IdType, datum>;
   fieldSettings: FieldSettingsMap;
@@ -126,22 +141,17 @@ export interface ScatterPlan {
     y: number;
     rotation: number;
   }[];
-  xScale: {
-    type: "linear" | "symlog";
-    domain: [number, number];
-    range: [number, number];
-  };
-  yScale: {
-    type: "linear" | "symlog";
-    domain: [number, number];
-    range: [number, number];
-  };
+  xScale: ScaleDescriptor;
+  yScale: ScaleDescriptor;
+  /** Band categories in axis order, for a categorical axis. */
+  xCategories?: ScatterCategory[];
+  yCategories?: ScatterCategory[];
   title: string;
   description: string;
   axes: ChartAxesPlan;
   domainInputs: {
-    x: [number, number];
-    y: [number, number];
+    x?: [number, number];
+    y?: [number, number];
     buffer: number;
     population: "all";
   };
@@ -167,6 +177,8 @@ export interface ScatterPlan {
     sourceId: IdType;
     reason: "invalid-x" | "invalid-y" | "nonfinite-position";
   }[];
+  /** Why nothing is drawn when rows remain but none has a position. */
+  emptyMessage?: string;
   populations: { all: number; chart: number; filtered: number; facet: number };
   rowSets: {
     all: IdType[];
@@ -181,59 +193,60 @@ export interface ScatterPlan {
   fieldSettings: FieldSettingsMap;
 }
 
-function numeric(value: datum) {
-  return finiteNumber(value) ?? NaN;
-}
-
-function bounds(ids: IdType[], data: Record<IdType, datum>): [number, number] {
-  let min = Infinity;
-  let max = -Infinity;
-  for (const id of ids) {
-    const value = numeric(data[id]);
-    if (!Number.isFinite(value)) {
-      continue;
-    }
-    min = Math.min(min, value);
-    max = Math.max(max, value);
-  }
-  return min === Infinity ? [0, 1] : [min, max];
-}
-
-const DOMAIN_PADDING = 0.1;
-
-// d3's symlog transform with its default constant of 1.
-const symlog = (value: number) =>
-  Math.sign(value) * Math.log1p(Math.abs(value));
-const symexp = (value: number) =>
-  Math.sign(value) * Math.expm1(Math.abs(value));
-
-/**
- * Pads a data extent by 10% of its on-screen span on each side, so points at
- * the minimum and maximum sit fully inside the plot. A constant field gets half
- * a unit on each side instead of an empty domain.
- */
-export function paddedDomain(
-  [min, max]: [number, number],
-  scaleType: "linear" | "symlog"
-): [number, number] {
-  const to = scaleType === "symlog" ? symlog : (value: number) => value;
-  const from = scaleType === "symlog" ? symexp : (value: number) => value;
-  const low = to(min);
-  const high = to(max);
-  const pad = high > low ? (high - low) * DOMAIN_PADDING : 0.5;
-  return [from(low - pad), from(high + pad)];
-}
-
 function fieldLabel(field: string, settings: FieldSettingsMap) {
   return field === "__ID"
     ? "Row sequence"
     : getFieldLabel(field, settings[field]);
 }
 
-function display(field: string, value: number, settings: FieldSettingsMap) {
+function display(field: string, value: datum, settings: FieldSettingsMap) {
   return hasFieldDisplayFormat(settings[field])
     ? formatFieldValue(field, value, settings[field])
-    : String(value);
+    : typeof value === "number"
+      ? String(value)
+      : categoryLabel(value);
+}
+
+/** Longest band label that widens the left margin; longer labels truncate. */
+const MAX_MARGIN_LABEL_CHARS = 18;
+
+/** Rebuilds a planned axis so brushing reads the same scale the plan drew. */
+function planAxisScale(
+  descriptor: ScaleDescriptor,
+  categories?: ScatterCategory[]
+): ScatterAxisScale {
+  const scale = buildScale(descriptor);
+  if ("bandwidth" in scale) {
+    return { kind: "band", type: "band", scale, categories: categories ?? [] };
+  }
+  const domain = descriptor.domain as [number, number];
+  return {
+    kind: "numeric",
+    type: descriptor.type === "symlog" ? "symlog" : "linear",
+    scale,
+    bounds: domain,
+    domain,
+  };
+}
+
+function emptyMessage(
+  exclusions: ScatterPlan["exclusions"],
+  snapshot: ScatterSnapshot,
+  xLabel: string,
+  yLabel: string
+) {
+  const empty = (data: Record<IdType, datum>) =>
+    snapshot.allIds.every((id) => isMissingValue(data[id]));
+  const xEmpty = empty(snapshot.xData);
+  const yEmpty = empty(snapshot.yData);
+  if (xEmpty && yEmpty) return `${xLabel} and ${yLabel} have no values.`;
+  if (xEmpty) return `${xLabel} has no values.`;
+  if (yEmpty) return `${yLabel} has no values.`;
+  const x = exclusions.some((item) => item.reason === "invalid-x");
+  const y = exclusions.some((item) => item.reason === "invalid-y");
+  if (x && !y) return `${xLabel} has no numeric values in these rows.`;
+  if (y && !x) return `${yLabel} has no numeric values in these rows.`;
+  return `No row has a plottable value for both ${xLabel} and ${yLabel}.`;
 }
 
 export function planScatter(
@@ -246,27 +259,48 @@ export function planScatter(
     settings.xAxisLabel || fieldLabel(settings.xField, snapshot.fieldSettings);
   const yLabel =
     settings.yAxisLabel || fieldLabel(settings.yField, snapshot.fieldSettings);
-  const [xMin, xMax] = bounds(snapshot.allIds, snapshot.xData);
-  const [yMin, yMax] = bounds(snapshot.allIds, snapshot.yData);
-  const xType = settings.xAxis.scaleType === "symlog" ? "symlog" : "linear";
-  const yType = settings.yAxis.scaleType === "symlog" ? "symlog" : "linear";
-  const xDomain = paddedDomain([xMin, xMax], xType);
-  const actualYDomain = paddedDomain([yMin, yMax], yType);
+  const axisFor = (
+    data: Record<IdType, datum>,
+    dataType: DataType | undefined,
+    axis: ScatterPlotSettings["xAxis"],
+    range: [number, number]
+  ) =>
+    planScatterAxis({ ids: snapshot.allIds, data, dataType, axis, range });
+  // Plan Y once without pixels to size the left margin from its labels.
+  const yShape = axisFor(snapshot.yData, snapshot.yType, settings.yAxis, [
+    0, 1,
+  ]);
   const { margin, policy: marginPolicy } = planChartMargin({
     margin: settings.margin,
     width,
-    yDomain: actualYDomain,
+    yDomain: yShape.kind === "numeric" ? yShape.domain : [0, 1],
     hasXLabel: Boolean(xLabel),
     hasYLabel: Boolean(yLabel),
+    yLabels:
+      yShape.kind === "band"
+        ? yShape.categories.map((item) =>
+            display(settings.yField, item.value, snapshot.fieldSettings).slice(
+              0,
+              MAX_MARGIN_LABEL_CHARS
+            )
+          )
+        : undefined,
   });
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
-  const xScale = numericScale(settings.xAxis)
-    .domain(xDomain)
-    .range([0, plotWidth]);
-  const yScale = numericScale(settings.yAxis)
-    .domain(actualYDomain)
-    .range([plotHeight, 0]);
+  const xAxis = axisFor(snapshot.xData, snapshot.xType, settings.xAxis, [
+    0,
+    plotWidth,
+  ]);
+  // Bands list top to bottom; numbers grow upward.
+  const yAxis = axisFor(
+    snapshot.yData,
+    snapshot.yType,
+    settings.yAxis,
+    yShape.kind === "band" ? [0, plotHeight] : [plotHeight, 0]
+  );
+  const xScale = xAxis.scale;
+  const yScale = yAxis.scale;
   const facetSet = new Set(snapshot.facetIds);
   // Preserve the current helper's rule: an empty facet list means unrestricted.
   const ids = snapshot.facetIds?.length
@@ -308,17 +342,47 @@ export function planScatter(
     xData: snapshot.xData,
     yData: snapshot.yData,
     colorData: snapshot.colorData,
-    xScale,
-    yScale,
+    xAxis,
+    yAxis,
     getColor,
   }).map((point) => ({
     ...point,
     passesAllFilters: filteredSet.has(point.sourceId),
   }));
   const included = new Set(points.map((point) => point.sourceId));
+  const unplotted = (axis: ScatterAxisScale, value: datum) =>
+    axis.kind === "numeric" && finiteNumber(value) === undefined;
+  const exclusions: ScatterPlan["exclusions"] = ids
+    .filter((id) => !included.has(id))
+    .map((sourceId) => ({
+      sourceId,
+      reason: unplotted(xAxis, snapshot.xData[sourceId])
+        ? ("invalid-x" as const)
+        : unplotted(yAxis, snapshot.yData[sourceId])
+          ? ("invalid-y" as const)
+          : ("nonfinite-position" as const),
+    }));
 
-  const format = (field: string) => (value: string | number) =>
-    formatFieldValue(field, value, snapshot.fieldSettings[field]);
+  const format =
+    (field: string, axis: ScatterAxisScale) => (value: string | number) => {
+      if (axis.kind === "numeric")
+        return formatFieldValue(field, value, snapshot.fieldSettings[field]);
+      const category = axis.categories.find((item) => item.label === value);
+      return category
+        ? display(field, category.value, snapshot.fieldSettings)
+        : String(value);
+    };
+  const domainSource = (axis: ScatterAxisScale) =>
+    axis.kind === "numeric"
+      ? {
+          population: "all source rows",
+          rows: snapshot.allIds.length,
+          bounds: axis.bounds,
+          padding: "10% on each side",
+        }
+      : undefined;
+  const axisLabel = (label: string, axis: ScatterAxisScale) =>
+    [label, axis.type === "symlog" && "symlog"].filter(Boolean).join(" · ");
   const labelSource = (local: string) =>
     local ? ("chart-setting" as const) : ("field-label" as const);
   const axes = planAxes({
@@ -328,52 +392,40 @@ export function planScatter(
     marginPolicy,
     x: {
       scale: xScale,
-      scaleType: xType,
+      scaleType: xAxis.type,
       field: settings.xField,
       fieldLabel: xLabel,
       density: settings.xGridLines,
       grid: settings.xAxis.grid,
-      format: format(settings.xField),
-      label: [xLabel, xType === "symlog" && "symlog"].filter(Boolean).join(" · "),
+      format: format(settings.xField, xAxis),
+      label: axisLabel(xLabel, xAxis),
       labelSource: labelSource(settings.xAxisLabel),
-      domainSource: {
-        population: "all source rows",
-        rows: snapshot.allIds.length,
-        bounds: [xMin, xMax],
-        padding: "10% on each side",
-      },
+      domainSource: domainSource(xAxis),
     },
     y: {
       scale: yScale,
-      scaleType: yType,
+      scaleType: yAxis.type,
       field: settings.yField,
       fieldLabel: yLabel,
       density: settings.yGridLines,
       grid: settings.yAxis.grid,
-      format: format(settings.yField),
-      label: [yLabel, yType === "symlog" && "symlog"].filter(Boolean).join(" · "),
+      format: format(settings.yField, yAxis),
+      label: axisLabel(yLabel, yAxis),
       labelSource: labelSource(settings.yAxisLabel),
       rule: false,
-      domainSource: {
-        population: "all source rows",
-        rows: snapshot.allIds.length,
-        bounds: [yMin, yMax],
-        padding: "10% on each side",
-      },
+      bandTitle: true,
+      domainSource: domainSource(yAxis),
     },
   });
 
-  const xFilter = getRangeFilterForField(settings.filters, settings.xField);
-  const yFilter = getRangeFilterForField(settings.filters, settings.yField);
+  const xSpan = filterSpan(xAxis, settings.filters, settings.xField);
+  const ySpan = filterSpan(yAxis, settings.filters, settings.yField);
   const round = (value: number) => Math.round(value * 10000) / 10000;
   const brushExtent: Extent | null =
-    xFilter?.min !== undefined &&
-    xFilter.max !== undefined &&
-    yFilter?.min !== undefined &&
-    yFilter.max !== undefined
+    xSpan && ySpan
       ? [
-          [round(xScale(xFilter.min)), round(yScale(yFilter.max))],
-          [round(xScale(xFilter.max)), round(yScale(yFilter.min))],
+          [round(xSpan[0]), round(ySpan[0])],
+          [round(xSpan[1]), round(ySpan[1])],
         ]
       : null;
   const title = getChartTitle(settings, (field) =>
@@ -475,8 +527,10 @@ export function planScatter(
     clipHeight: Math.max(0, plotHeight),
     pixelRatio: snapshot.pixelRatio ?? 1,
     calculatedBadges,
-    xScale: { type: xType, domain: xDomain, range: [0, plotWidth] },
-    yScale: { type: yType, domain: actualYDomain, range: [plotHeight, 0] },
+    xScale: describeScale(xScale, xAxis.type),
+    yScale: describeScale(yScale, yAxis.type),
+    xCategories: xAxis.kind === "band" ? xAxis.categories : undefined,
+    yCategories: yAxis.kind === "band" ? yAxis.categories : undefined,
     title,
     description: [
       `Interactive scatter chart.`,
@@ -487,8 +541,8 @@ export function planScatter(
       .join(" "),
     axes,
     domainInputs: {
-      x: [xMin, xMax],
-      y: [yMin, yMax],
+      x: xAxis.kind === "numeric" ? xAxis.bounds : undefined,
+      y: yAxis.kind === "numeric" ? yAxis.bounds : undefined,
       buffer: DOMAIN_PADDING,
       population: "all",
     },
@@ -496,16 +550,11 @@ export function planScatter(
     brushExtent,
     pointStyle,
     points,
-    exclusions: ids
-      .filter((id) => !included.has(id))
-      .map((sourceId) => ({
-        sourceId,
-        reason: !Number.isFinite(numeric(snapshot.xData[sourceId]))
-          ? ("invalid-x" as const)
-          : !Number.isFinite(numeric(snapshot.yData[sourceId]))
-            ? ("invalid-y" as const)
-            : ("nonfinite-position" as const),
-      })),
+    exclusions,
+    emptyMessage:
+      ids.length > 0 && points.length === 0
+        ? emptyMessage(exclusions, snapshot, xLabel, yLabel)
+        : undefined,
     populations: {
       all: snapshot.allIds.length,
       chart: snapshot.chartIds.length,
@@ -564,23 +613,14 @@ export function scatterHoverReadout(
   };
 }
 
-export function brushFilters(plan: ScatterPlan, extent: Extent) {
-  const xScale = numericScale({ scaleType: plan.xScale.type })
-    .domain(plan.xScale.domain)
-    .range(plan.xScale.range);
-  const yScale = numericScale({ scaleType: plan.yScale.type })
-    .domain(plan.yScale.domain)
-    .range(plan.yScale.range);
-  return {
-    x: [
-      Math.min(xScale.invert(extent[0][0]), xScale.invert(extent[1][0])),
-      Math.max(xScale.invert(extent[0][0]), xScale.invert(extent[1][0])),
-    ] as [number, number],
-    y: [
-      Math.min(yScale.invert(extent[0][1]), yScale.invert(extent[1][1])),
-      Math.max(yScale.invert(extent[0][1]), yScale.invert(extent[1][1])),
-    ] as [number, number],
-  };
+/** The chart's own filters for a brushed rectangle, one per axis field. */
+export function brushFilters(plan: ScatterPlan, extent: Extent): Filter[] {
+  const xAxis = planAxisScale(plan.xScale, plan.xCategories);
+  const yAxis = planAxisScale(plan.yScale, plan.yCategories);
+  return [
+    spanFilter(xAxis, plan.xField, [extent[0][0], extent[1][0]]),
+    spanFilter(yAxis, plan.yField, [extent[0][1], extent[1][1]]),
+  ];
 }
 
 export function planScatterOverlay(
