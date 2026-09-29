@@ -57,14 +57,18 @@ export function ChartTraceControl({
             : "left"
         }
         collisionPadding={12}
-        className="w-[min(18rem,calc(100vw-1.5rem))] max-h-[min(70vh,var(--radix-popover-content-available-height))] overflow-y-auto"
+        className="eda-trace-popover w-[min(20rem,calc(100vw-1.5rem))] max-h-[min(70vh,var(--radix-popover-content-available-height))] overflow-y-auto"
         aria-label={ariaLabel}
       >
         <div className="space-y-3 text-xs">
-          <div>
+          <header className="eda-trace-header">
             <h3 className="text-sm font-semibold">{heading}</h3>
-            {!selection && <p className="text-muted-foreground">{emptyText}</p>}
-          </div>
+            <p className="text-muted-foreground">
+              {selection
+                ? "How this object comes from your data and settings."
+                : emptyText}
+            </p>
+          </header>
           {children}
         </div>
       </PopoverContent>

@@ -29,9 +29,13 @@ export function TraceSection({
   muted?: boolean;
 }) {
   return (
-    <section className="space-y-1 border-t border-border pt-2">
-      {heading && <h4 className="font-medium">{heading}</h4>}
-      <div className={muted ? "text-muted-foreground" : undefined}>
+    <section className="eda-trace-section">
+      {heading && <h4>{heading}</h4>}
+      <div
+        className={
+          muted ? "space-y-1 text-muted-foreground" : "space-y-1 leading-snug"
+        }
+      >
         {children}
       </div>
     </section>
@@ -46,10 +50,74 @@ export function TraceReadout({
   children: ReactNode;
 }) {
   return (
-    <div>
-      <span className="text-muted-foreground">{label}: </span>
-      {children}
+    <div className="eda-trace-readout">
+      <span className="text-muted-foreground">
+        {label}
+        <span className="sr-only">: </span>
+      </span>
+      <span className="min-w-0 break-words">{children}</span>
     </div>
+  );
+}
+
+/** Pass or exclude states for the filters that decide whether a mark shows. */
+export function TraceFilterStatus({
+  steps,
+}: {
+  steps: { label: string; state: string; ok: boolean }[];
+}) {
+  return (
+    <dl className="eda-trace-filters" aria-label="Filter status">
+      {steps.map((step) => (
+        <div key={step.label} data-ok={step.ok || undefined}>
+          <dt>{step.label}</dt>
+          <dd>{step.state}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+/** One visual channel: which field value sets it and what the chart drew. */
+export function TraceEncoding({
+  channel,
+  input,
+  output,
+  note,
+}: {
+  channel: string;
+  input?: ReactNode;
+  output: ReactNode;
+  note?: ReactNode;
+}) {
+  return (
+    <div className="eda-trace-encoding">
+      <span className="eda-trace-channel">
+        {channel}
+        <span className="sr-only">: </span>
+      </span>
+      <span className="min-w-0 break-words">
+        {input !== undefined && (
+          <>
+            <span className="text-muted-foreground">{input}</span>
+            <span aria-hidden="true"> → </span>
+            <span className="sr-only"> maps to </span>
+          </>
+        )}
+        <span className="font-medium">{output}</span>
+        {note && <span className="block text-muted-foreground">{note}</span>}
+      </span>
+    </div>
+  );
+}
+
+export function TraceSwatch({ color }: { color: string }) {
+  return (
+    <span
+      className="eda-trace-swatch"
+      style={{ background: color }}
+      aria-hidden="true"
+    />
   );
 }
 
@@ -87,13 +155,13 @@ export function ChartTraceRowSteps({
   }
   return (
     <TraceSection heading="Source row">
-      <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-2">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-0.5">
         {[...sources].map(([field, value]) => (
           <div className="contents" key={field}>
             <span className="min-w-0 break-words text-muted-foreground">
               {field}
             </span>
-            <span className="text-right">
+            <span className="text-right font-medium tabular-nums">
               {showTraceValue(value.raw)}
               {value.raw !== value.prepared &&
                 ` → ${showTraceValue(value.prepared)}`}
@@ -103,8 +171,8 @@ export function ChartTraceRowSteps({
         ))}
       </div>
       {calculations.size > 0 && (
-        <div className="border-t border-border pt-2">
-          <h4 className="font-medium">Calculations</h4>
+        <div className="pt-1">
+          <h5 className="font-medium">Calculations</h5>
           {[...calculations.values()].map((calc) => (
             <details key={calc.field} className="group">
               <summary className="cursor-pointer py-0.5 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
@@ -143,7 +211,9 @@ export function TraceScaleReadout({
   range: readonly unknown[];
 }) {
   const show = (value: unknown) =>
-    typeof value === "number" ? String(Math.round(value * 100) / 100) : String(value);
+    typeof value === "number"
+      ? String(Math.round(value * 100) / 100)
+      : String(value);
   const domainText =
     type === "band"
       ? `${domain.slice(0, 12).map(show).join(", ")}${domain.length > 12 ? `, … (${domain.length} bands)` : ""}`
