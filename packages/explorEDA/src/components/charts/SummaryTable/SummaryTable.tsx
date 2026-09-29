@@ -3,7 +3,10 @@ import type { BaseChartProps } from "@/types/ChartTypes";
 import { Button } from "@/components/ui/button";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import type { FieldProfile } from "@/lib/fieldProfiles";
-import { useFilteredFieldProfiles } from "@/hooks/useFilteredFieldProfiles";
+import {
+  useFilteredFieldProfiles,
+  useFilteredRowCount,
+} from "@/hooks/useFilteredFieldProfiles";
 import { Download } from "lucide-react";
 import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
@@ -73,7 +76,9 @@ export function SummaryTable({
     direction: "asc",
   });
 
-  const allProfiles = useFilteredFieldProfiles();
+  // A field this table filters keeps its full shape, with the filter marked.
+  const allProfiles = useFilteredFieldProfiles(settings);
+  const rowCount = useFilteredRowCount();
 
   const sortedProfiles = useMemo(() => {
     if (!sortConfig.column) {
@@ -112,7 +117,7 @@ export function SummaryTable({
   const toolbar = (
     <div className="eda-table-toolbar-compact">
       <span className="text-muted-foreground tabular-nums">
-        {(allProfiles[0]?.totalCount ?? 0).toLocaleString()} rows
+        {rowCount.toLocaleString()} rows
       </span>
       <ActionTooltip content="Export summary as CSV">
         <Button

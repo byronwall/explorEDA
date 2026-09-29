@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import { buildFieldProfile } from "@/lib/fieldProfiles";
 import {
   binPopulations,
+  calendarBins,
+  calendarFloor,
+  calendarLabel,
   buildFieldDistribution,
   quantile,
   summarizeNumbers,
@@ -184,5 +187,79 @@ describe("summarizeNumbers", () => {
       max: 4,
       mean: 2.5,
     });
+  });
+});
+
+describe("calendarBins", () => {
+  const days = (...values: string[]) =>
+    values.map((value) => Date.parse(value));
+
+  it("bins a few weeks of dates by day", () => {
+    const result = calendarBins(
+      days("2026-03-03", "2026-03-05", "2026-03-20"),
+      undefined
+    );
+    expect(result?.unit).toEqual({ unit: "day", step: 1 });
+    expect(result?.bins).toHaveLength(18);
+    expect(result?.bins[0]?.start).toBe(Date.parse("2026-03-03"));
+  });
+
+  it("bins a year of dates by whole months", () => {
+    const all = days("2024-01-15", "2024-02-29", "2024-02-01", "2024-12-31");
+    const result = calendarBins(all, days("2024-02-29"));
+    expect(result?.unit).toEqual({ unit: "month", step: 1 });
+    expect(result?.bins).toHaveLength(12);
+    expect(result?.bins[1]).toMatchObject({
+      start: Date.parse("2024-02-01"),
+      end: Date.parse("2024-03-01"),
+      all: 2,
+      filtered: 1,
+    });
+    expect(result?.bins.reduce((sum, bin) => sum + bin.all, 0)).toBe(4);
+    expect(calendarLabel(result!.bins[1]!.start, result!.unit)).toBe(
+      "Feb 2024"
+    );
+  });
+
+  it("starts weeks on Monday and names them by that day", () => {
+    const monday = calendarFloor(Date.parse("2026-03-08"), {
+      unit: "week",
+      step: 1,
+    });
+    expect(new Date(monday).toISOString().slice(0, 10)).toBe("2026-03-02");
+    expect(calendarLabel(monday, { unit: "week", step: 1 })).toBe(
+      "Week of 2026-03-02"
+    );
+  });
+
+  it("uses multi-year periods for long spans", () => {
+    const result = calendarBins(days("1900-06-01", "2020-01-01"), undefined);
+    expect(result?.unit).toEqual({ unit: "year", step: 5 });
+    expect(result?.bins[0]?.start).toBe(Date.parse("1900-01-01"));
+    expect(calendarLabel(result!.bins[0]!.start, result!.unit)).toBe(
+      "1900–1904"
+    );
+  });
+
+  it("leaves dates inside one hour to time bins", () => {
+    expect(
+      calendarBins(
+        days("2026-03-03T10:05:00Z", "2026-03-03T10:40:00Z"),
+        undefined
+      )
+    ).toBeUndefined();
+  });
+
+  it("gives field distributions calendar bins and counts every date", () => {
+    const distribution = buildFieldDistribution(
+      column(["2023-01-15", "2023-03-02", "2024-06-30", null]),
+      "datetime"
+    );
+    if (distribution.kind !== "date") throw new Error("date expected");
+    expect(distribution.unit).toEqual({ unit: "month", step: 1 });
+    const counts = distribution.bins.map((bin) => bin.all);
+    expect(counts).toHaveLength(18);
+    expect([counts[0], counts[2], counts[17]]).toEqual([1, 1, 1]);
+    expect(counts.reduce((sum, value) => sum + value, 0)).toBe(3);
   });
 });

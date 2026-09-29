@@ -2,6 +2,8 @@ import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldB
 import { useMemo } from "react";
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useDataLayer } from "@/providers/DataLayerProvider";
+import { isMissingValue } from "@/lib/numeric";
+import { cellValue } from "@/components/NullValue";
 
 import { DataTableSettings } from "./definition";
 import { DataTableRow, getFilteredRows } from "./filteredRows";
@@ -71,8 +73,11 @@ export function DataTableBody({
                 }
                 style={{
                   width: column.width,
-                  textAlign:
-                    typeof row[column.field] === "number" ? "right" : "left",
+                  textAlign: isMissingValue(row[column.field])
+                    ? "center"
+                    : typeof row[column.field] === "number"
+                      ? "right"
+                      : "left",
                 }}
               >
                 {calculations.some(
@@ -81,10 +86,14 @@ export function DataTableBody({
                   <CalculatedFieldBadge field={column.field} rowId={row.__ID}>
                     {manager?.getErrors(column.field).has(row.__ID)
                       ? "Error"
-                      : format(column.field, row[column.field])}
+                      : cellValue(row[column.field], (value) =>
+                          format(column.field, value)
+                        )}
                   </CalculatedFieldBadge>
                 ) : (
-                  format(column.field, row[column.field])
+                  cellValue(row[column.field], (value) =>
+                    format(column.field, value)
+                  )
                 )}
               </TableCell>
             ))}

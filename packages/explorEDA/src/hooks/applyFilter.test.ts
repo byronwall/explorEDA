@@ -21,6 +21,14 @@ describe("applyFilter", () => {
     expect(applyFilter("b", filter)).toBe(false);
   });
 
+  it("matches blank text when the missing bucket is selected", () => {
+    const missing = { type: "value" as const, field: "value", values: [null] };
+    expect(applyFilter("", missing)).toBe(true);
+    expect(applyFilter("  ", missing)).toBe(true);
+    expect(applyFilter(0, missing)).toBe(false);
+    expect(applyFilter("", { ...missing, values: ["a"] })).toBe(false);
+  });
+
   it("uses SameValueZero for selected values while keeping missing values grouped", () => {
     const filter = {
       type: "value" as const,

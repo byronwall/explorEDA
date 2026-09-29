@@ -80,6 +80,14 @@ export function ColumnFilter({
       profile.uniqueCount <= MAX_VALUE_FILTER_OPTIONS);
   const updateText = (next: TextFilter) =>
     onChange(columnId, next.value === "" ? undefined : next);
+  // "Only missing" keeps the rows with no value, whatever the field type.
+  const missingOnly =
+    filter?.type === "value" &&
+    filter.values.length === 1 &&
+    filter.values[0] == null;
+  const missingCount = `${profile.nullCount.toLocaleString()} ${
+    profile.nullCount === 1 ? "row" : "rows"
+  }`;
 
   return (
     <div
@@ -128,12 +136,20 @@ export function ColumnFilter({
                   updateValues(null, event.currentTarget.checked)
                 }
               />
-              Missing
+              <span className="eda-null" aria-hidden="true">
+                null
+              </span>
+              <span className="text-muted-foreground">
+                Missing · {missingCount}
+              </span>
             </label>
           )}
         </div>
       ) : profile.dataType === "numeric" ? (
-        <div className="grid gap-3">
+        <fieldset
+          className="m-0 grid min-w-0 gap-3 border-0 p-0 disabled:opacity-50"
+          disabled={missingOnly}
+        >
           <label className="grid gap-1 text-xs">
             Minimum (inclusive)
             <Input
@@ -160,9 +176,12 @@ export function ColumnFilter({
               className="h-8 w-full"
             />
           </label>
-        </div>
+        </fieldset>
       ) : profile.dataType === "datetime" ? (
-        <div className="grid gap-3">
+        <fieldset
+          className="m-0 grid min-w-0 gap-3 border-0 p-0 disabled:opacity-50"
+          disabled={missingOnly}
+        >
           <label className="grid gap-1 text-xs">
             From (inclusive)
             <Input
@@ -187,9 +206,12 @@ export function ColumnFilter({
               className="h-8 w-full"
             />
           </label>
-        </div>
+        </fieldset>
       ) : (
-        <>
+        <fieldset
+          className="m-0 grid min-w-0 gap-3 border-0 p-0 disabled:opacity-50"
+          disabled={missingOnly}
+        >
           <label className="grid gap-1 text-xs">
             Match
             <select
@@ -221,7 +243,30 @@ export function ColumnFilter({
               className="h-8 w-full"
             />
           </label>
-        </>
+        </fieldset>
+      )}
+      {!lowCardinality && (
+        <label className="flex items-center gap-2 border-t border-border pt-3 text-sm has-[:disabled]:opacity-60">
+          <input
+            type="checkbox"
+            checked={missingOnly}
+            disabled={profile.nullCount === 0 && !missingOnly}
+            onChange={(event) =>
+              onChange(
+                columnId,
+                event.currentTarget.checked
+                  ? { type: "value", field: profile.name, values: [null] }
+                  : undefined
+              )
+            }
+          />
+          <span>
+            Only missing values{" "}
+            <span className="text-muted-foreground">
+              {profile.nullCount > 0 ? `· ${missingCount}` : "· none"}
+            </span>
+          </span>
+        </label>
       )}
       <Button
         variant="ghost"
