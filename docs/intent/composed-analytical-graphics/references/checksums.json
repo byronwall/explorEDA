@@ -1,0 +1,80 @@
+{
+  "retrieved_at": "2026-09-29",
+  "files": [
+    {
+      "file": "causes-of-death.png",
+      "bytes": 50476,
+      "sha256": "f03b04d054da7b6216267b1061368600f5cad2efe948a6477b1bc7d42b1ace2c"
+    },
+    {
+      "file": "driving-recreation.jpg",
+      "bytes": 23921,
+      "sha256": "3ef5fc49120efd3f9dd163f4af0a245e963371e05d3e17c188db0dfaf1721941"
+    },
+    {
+      "file": "driving-recreation.svg",
+      "bytes": 8884,
+      "sha256": "887d818b42ccc4f9b5c266db72c3056bea9b1a222dbaff0e4a46a7eaa4033669"
+    },
+    {
+      "file": "driving.parquet",
+      "bytes": 1658,
+      "sha256": "6ceb41019f6cc865bbaca431dcd26ec0de04f7a273ef933d77f655a5315ce883"
+    },
+    {
+      "file": "email-correspondents-reconstructed.tsv",
+      "bytes": 645,
+      "sha256": "6cbcd3157607adf3a75834a228d5e235be6fc81b7362f4e513643c006ce1132c"
+    },
+    {
+      "file": "email-months-reconstructed.tsv",
+      "bytes": 53320,
+      "sha256": "4412115ac8dc9f4028ad5059c498e8fc612bb3b4d98bfea655dcec1202864866"
+    },
+    {
+      "file": "email-strip.png",
+      "bytes": 100686,
+      "sha256": "e98ce602d3758c03ef098a6690bb3ae055aa01bd7184cec9c2909788389ba019"
+    },
+    {
+      "file": "ev-models-source-extract.tsv",
+      "bytes": 12559,
+      "sha256": "b662b899071445357f4ddacf36b3ca8cb61c24f7572b00620d20bcc218adbc79"
+    },
+    {
+      "file": "ev-price-range.png",
+      "bytes": 61810,
+      "sha256": "0ca5ed59d59598667f1749b9f8ba0c189c17ae2210e91c9af235d93a238a0b69"
+    },
+    {
+      "file": "inflation-fan-data.xlsx",
+      "bytes": 33981,
+      "sha256": "ca8076d3799619d9e5d3b1bad865eb58250d74743487f91cb8b96749727bc771"
+    },
+    {
+      "file": "inflation-fan.jpg",
+      "bytes": 32652,
+      "sha256": "38c8519c94dec80544af2f4d873495e595d1b8eaa5d73f2a9d724c6c5bdc81b6"
+    },
+    {
+      "file": "state-comparison.png",
+      "bytes": 69808,
+      "sha256": "1c19478f3250786aa9fb88c337f0aa5013624922b79197a17f13b0a2332e503b"
+    },
+    {
+      "file": "time-use-decreased.png",
+      "bytes": 20233,
+      "sha256": "8d7aad0fb258553c3da20a0fe080f0a61cd7e6854209beacbc1993a430b4a38d"
+    },
+    {
+      "file": "time-use-increased.png",
+      "bytes": 40227,
+      "sha256": "dc7c17740f6f28ffb088603efc4d85edbe57a9dd75e87f060367b03e950f1b10"
+    },
+    {
+      "file": "time-use-legend.png",
+      "bytes": 3282,
+      "sha256": "2d652ebed1845059f342b2e34a8afabac83cec917004ff98a0ce0519a4c1e44b"
+    }
+  ]
+}

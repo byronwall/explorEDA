@@ -1,0 +1,12 @@
+order	contact_id	name	role	sent_received_ratio	total_emails
+1	ruemmler	Kathryn Ruemmler	Former White House Counsel	0.7	11265
+2	krauss	Lawrence Krauss	Physicist	1.2	7593
+3	rothschild	Ariane de Rothschild	Banker	2.7	5532
+4	pritzker	Thomas Pritzker	Hyatt Hotels chairman	0.6	5029
+5	wolff	Michael Wolff	Journalist	0.8	4831
+6	chomsky	Noam and Valeria Chomsky	Linguist; Translator	0.5	4431
+7	summers	Larry Summers	Former US treasury secretary	0.6	4294
+8	bannon	Steve Bannon	Former White House strategist	0.6	1974
+9	hoffman	Reid Hoffman	LinkedIn founder	0.3	1737
+10	gates	Bill Gates	Microsoft founder	0.1	542
+11	musk	Elon Musk	Tesla/SpaceX CEO	0.7	447

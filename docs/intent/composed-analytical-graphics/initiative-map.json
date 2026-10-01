@@ -1,0 +1,704 @@
+{
+  "schema_version": "0.4.0",
+  "initiative": {
+    "title": "Composed analytical graphics",
+    "slug": "composed-analytical-graphics",
+    "scale": "capability",
+    "current_phase": "plan",
+    "last_updated": "2026-09-29",
+    "summary": "Author polished report graphics from a blank page using primitives, repeated templates, scoped calculations, group placement, and instance overrides."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-29"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-29"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-09-29"
+    },
+    "reference_study": {
+      "path": "reference-study.md",
+      "status": "current",
+      "updated_at": "2026-09-29"
+    },
+    "reference_assets": {
+      "path": "references/README.md",
+      "status": "current",
+      "updated_at": "2026-09-29"
+    }
+  },
+  "sources": [
+    {
+      "id": "dictation",
+      "type": "direct-user-input",
+      "location": "2026-09-29 current conversation",
+      "anchor": "single small template, repeat rule, global items, inspectable data, intuitive editing",
+      "authority": "direct intent"
+    },
+    {
+      "id": "prior-spec-notes",
+      "type": "transcript",
+      "location": "../../transcripts/2026-08-04-chart-specs-grouping-and-derived-layers.txt",
+      "anchor": "facet-local and global calculations, grouped regression and derived layers",
+      "authority": "earlier direct intent"
+    },
+    {
+      "id": "prior-workspace",
+      "type": "intent",
+      "location": "../interactive-eda-workspace/intent-brief.md",
+      "anchor": "visualization specification and traceability work packages",
+      "authority": "accepted initiative context"
+    },
+    {
+      "id": "prior-trace",
+      "type": "intent",
+      "location": "../deterministic-rendering-and-data-traceability/intent-brief.md",
+      "anchor": "select a mark, label, or annotation and follow its inputs",
+      "authority": "accepted initiative context"
+    },
+    {
+      "id": "old-example",
+      "type": "local-reference",
+      "location": "/Users/byronwall/Projects/data-and-glyphs/docs/flowingdata-epstein-email-network-2026-work-summary.md",
+      "anchor": "repeated correspondent rows and monthly strip marks",
+      "authority": "example implementation, not product requirement"
+    },
+    {
+      "id": "flowingdata",
+      "type": "external-reference",
+      "location": "https://flowingdata.com/2026/02/17/jeffrey-epsteins-network-via-1-4m-emails/",
+      "anchor": "monthly strip plot",
+      "authority": "visual reference, not product requirement"
+    },
+    {
+      "id": "repo",
+      "type": "repository",
+      "location": "../../packages/explorEDA/src/components/charts/ChartRenderer.tsx",
+      "anchor": "one component per chart type",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "product-feedback",
+      "type": "direct-user-input",
+      "location": "2026-09-29 current conversation response annotations 1\u201310",
+      "anchor": "polished output; blank page; primitives and templates; repeat layouts; overrides; ad hoc calculations; modes; filter-independent inputs; group placement; representative size",
+      "authority": "latest direct intent"
+    },
+    {
+      "id": "product-feedback-2",
+      "type": "direct-user-input",
+      "location": "2026-09-29 current conversation follow-up annotations 1\u20135",
+      "anchor": "PNG clipboard output; visual overrides; common scales; data/frame/page anchors; separate recurring-report project",
+      "authority": "latest direct intent"
+    },
+    {
+      "id": "reference-research",
+      "type": "external-reference",
+      "location": "reference-study.md",
+      "anchor": "Five charts, shared composition elements, and distinct capability proofs",
+      "authority": "Agent research and proposed implementation order"
+    },
+    {
+      "id": "asset-request",
+      "type": "direct-user-input",
+      "location": "2026-09-29 current conversation",
+      "anchor": "Store reference images and available datasets for all discovered examples",
+      "authority": "direct intent"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "c1",
+        "type": "outcome",
+        "statement": "Users can make one coherent analytical graphic from several simple visual parts",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "dictation:single chart rather than panel charts"
+        ]
+      },
+      {
+        "id": "c2",
+        "type": "required behavior",
+        "statement": "Define a small visual unit once and repeat it for selected groups",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "dictation:small template and repeat rule"
+        ]
+      },
+      {
+        "id": "c3",
+        "type": "required behavior",
+        "statement": "Global title, subtitle, guides, and scales can frame repeated content",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "dictation:global items and global time scale"
+        ]
+      },
+      {
+        "id": "c4",
+        "type": "required behavior",
+        "statement": "A selected mark or derived value reveals the data and calculation that produced it",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "dictation:click on a data point and see exactly how it got there",
+          "prior-trace:select a mark"
+        ]
+      },
+      {
+        "id": "c5",
+        "type": "desired experience",
+        "statement": "Users refine text, color, size, position, data bindings, and annotations with immediate visual feedback",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "dictation:control over text size selection color and annotations"
+        ]
+      },
+      {
+        "id": "c6",
+        "type": "required behavior",
+        "statement": "Calculations can use repeated-subset or composition-wide populations, with an explicit policy for active filters",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "dictation:average line for each chart or global data",
+          "prior-spec-notes:facet-local and global calculations",
+          "product-feedback:annotation 8"
+        ]
+      },
+      {
+        "id": "c7",
+        "type": "example",
+        "statement": "The email-strip graphic illustrates repeated rows with labels, totals, and a shared time scale",
+        "commitment": "illustrative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "dictation:Epstein emails example",
+          "old-example:monthly strip marks"
+        ]
+      },
+      {
+        "id": "c8",
+        "type": "example",
+        "statement": "The EV price and range comparison illustrates coordinated panels, trend lines, and editorial text",
+        "commitment": "illustrative",
+        "importance": "peripheral",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          "dictation:side by side progression",
+          "old-example:EV gallery spec"
+        ]
+      },
+      {
+        "id": "c9",
+        "type": "implementation hypothesis",
+        "statement": "A nested chart object or general visualization grammar might represent composed output",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          "dictation:large chart container object"
+        ]
+      },
+      {
+        "id": "c10",
+        "type": "future possibility",
+        "statement": "Some elements may support free placement or drag adjustment",
+        "commitment": "tentative",
+        "importance": "peripheral",
+        "status": "superseded",
+        "time_horizon": "later",
+        "source_anchors": [
+          "dictation:absolutely positioned and drag"
+        ],
+        "superseded_by": [
+          "c21"
+        ],
+        "notes": "Group placement and instance nudges are now explicit needs. Individual annotation dragging remains less specific."
+      },
+      {
+        "id": "c11",
+        "type": "constraint",
+        "statement": "Normal authoring should feel intuitive and should not require writing a chart specification",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "dictation:intuitive editing interface"
+        ],
+        "notes": "The product must support blank-page construction through visible primitive controls."
+      },
+      {
+        "id": "c12",
+        "type": "current repository reality",
+        "statement": "Current charts are separate registry components, while facets and tracing cover only parts of the desired composition",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "repo:ChartRenderer",
+          "prior-workspace:visualization specification"
+        ]
+      },
+      {
+        "id": "c13",
+        "type": "outcome",
+        "statement": "Composition mode produces durable polished graphics for reports and presentations",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback:annotation 1"
+        ]
+      },
+      {
+        "id": "c14",
+        "type": "required behavior",
+        "statement": "Authoring starts from a blank page where the user chooses primitives",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback:annotation 2"
+        ]
+      },
+      {
+        "id": "c15",
+        "type": "required behavior",
+        "statement": "Text, frames or scales, and data-bound mark definitions form a single template that repeats over subsets",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback:annotation 3"
+        ]
+      },
+      {
+        "id": "c16",
+        "type": "required behavior",
+        "statement": "Repeat layouts include comparison panels, stacked rows, and facet grids without decorative cards",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback:annotation 4"
+        ]
+      },
+      {
+        "id": "c17",
+        "type": "required behavior",
+        "statement": "An individual instance override combines with the original template to produce the final result",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback:annotation 5"
+        ]
+      },
+      {
+        "id": "c18",
+        "type": "desired experience",
+        "statement": "Calculations are usually created on the spot after applying the relevant filters or aggregation",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback:annotation 6"
+        ]
+      },
+      {
+        "id": "c19",
+        "type": "implementation hypothesis",
+        "statement": "Editing and viewing have distinct modes; editing clicks select and viewing clicks support drilldown",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback:annotation 7"
+        ]
+      },
+      {
+        "id": "c20",
+        "type": "future possibility",
+        "statement": "Alt-click may open full tracing in viewing mode",
+        "commitment": "tentative",
+        "importance": "peripheral",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback:annotation 7"
+        ]
+      },
+      {
+        "id": "c21",
+        "type": "required behavior",
+        "statement": "Automatic repeat placement combines with user placement of groups and instance nudges",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback:annotation 9"
+        ]
+      },
+      {
+        "id": "c22",
+        "type": "rough estimate",
+        "statement": "The representative graphic uses about 10000 source rows, 10\u201315 repeated units, and 1000\u20132000 glyphs",
+        "commitment": "illustrative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "product-feedback:annotation 10"
+        ]
+      },
+      {
+        "id": "c23",
+        "type": "implementation hypothesis",
+        "statement": "Instance overrides attach to subset identity rather than display position",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "product-feedback:annotation 5"
+        ],
+        "notes": "Agent recommendation; identity behavior has not yet been selected by the user."
+      },
+      {
+        "id": "c24",
+        "type": "decision",
+        "statement": "PNG output with a Copy to clipboard action is sufficient initially",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-2:annotation 1"
+        ]
+      },
+      {
+        "id": "c25",
+        "type": "decision",
+        "statement": "Initial instance overrides change position and visual properties",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-2:annotation 2"
+        ]
+      },
+      {
+        "id": "c26",
+        "type": "preference",
+        "statement": "Repeated charts use common scales by default wherever possible",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-2:annotation 3"
+        ]
+      },
+      {
+        "id": "c27",
+        "type": "required behavior",
+        "statement": "Annotations support data, frame, and page anchors; data-bound annotations can follow moving marks",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-2:annotation 4"
+        ]
+      },
+      {
+        "id": "c28",
+        "type": "anti-goal",
+        "statement": "Recurring reports and parameterized dashboards belong to a separate project and are outside the current scope",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-2:annotation 5"
+        ]
+      }
+    ],
+    "themes": [
+      "polished report output",
+      "blank-page primitive authoring",
+      "repeat templates and instance overrides",
+      "scoped calculations and tracing",
+      "group placement"
+    ],
+    "conflicts": [],
+    "human_questions": [
+      {
+        "id": "output",
+        "status": "resolved",
+        "question": "Which report export format and degree of PowerPoint editability are required?",
+        "resolution": "PNG and Copy to clipboard are sufficient initially."
+      },
+      {
+        "id": "override-powers",
+        "status": "resolved",
+        "question": "How far can an individual instance override alter its appearance, data binding, or calculation?",
+        "resolution": "Position and visual details only initially."
+      },
+      {
+        "id": "authoring-detail",
+        "status": "resolved",
+        "question": "Which scale defaults and annotation anchors are needed, and should a saved composition accept replacement data for recurring reports?",
+        "resolution": "Common scales by default; data, frame, and page anchors; recurring reports outside scope."
+      }
+    ]
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "One complete authoring and output flow plus a small layout check; five staged capability extensions",
+    "problem": "The workspace cannot author polished graphics from primitives, repeated units, scoped calculations, and individual refinements",
+    "recommended_shape": "Blank composition editor with repeated templates, common scales, visual instance overrides, group placement, three annotation anchor types, editing/viewing modes, and PNG clipboard output",
+    "success_moves": [
+      "Test authoring from blank",
+      "Distinguish template and instance edits",
+      "Separate population from filter policy",
+      "Prove group placement and nudges",
+      "Check report output early"
+    ],
+    "first_proof": {
+      "question": "Can the author build and finish a repeated graphic from blank while keeping its inputs and exceptions understandable?",
+      "artifact": "A graphic authored from blank, saved and reloaded, with shared scales, visual overrides, scoped calculations, tracing, annotation anchors, and PNG clipboard output",
+      "decision_rule": "Proceed when blank authoring, save/reload, correct tracing, visual override retention, anchor behavior, and pasted PNG appearance work; check a second repeat arrangement before widening mark coverage"
+    },
+    "rabbit_holes": [
+      "Preset-only authoring proof",
+      "Full compiler adoption",
+      "Copied instance definitions",
+      "Arbitrary nested repeats",
+      "Editable PPTX export",
+      "Recurring reports and parameterized dashboards"
+    ],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "planned",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/e44a8c8b-4922-4374-8cda-5b028b88b70d/explorEDA",
+      "revision": "6762dfd1ea96d45d80ec86feb130a23fe92c4fdf",
+      "worktree_status": "Detached HEAD; initiative documents are untracked; application code unchanged",
+      "subsystems": [
+        "Chart registry and settings",
+        "SavedDataStructure and save validation",
+        "DataLayerProvider and aggregates",
+        "Facet layout and scatter render plan",
+        "ChartTraceScope and trace panel"
+      ],
+      "test_commands": [
+        "pnpm --filter exploreda test <test-file>",
+        "pnpm check"
+      ],
+      "deployment_surfaces": [
+        "Published exploreda library",
+        "Local Vite demo"
+      ]
+    },
+    "dependencies": [
+      {
+        "id": "png-clipboard",
+        "name": "Browser PNG clipboard",
+        "material": true,
+        "application_seam": "Composition Copy action writes PNG blob from resolved SVG",
+        "first_proof_role": {
+          "mode": "real platform in milestone 1",
+          "rationale": "Rasterization can be checked locally; real paste is required to prove report output"
+        },
+        "failure_modes": [
+          "Insecure context or rejected clipboard permission",
+          "Missing fonts or incorrect raster dimensions",
+          "Unsupported paste target"
+        ],
+        "proof_rungs": [
+          "Resolved SVG and raster blob",
+          "Focused rejected-write handling",
+          "Real browser clipboard and report/slide paste"
+        ],
+        "local_proof": "Known local fixture; compare raster dimensions and SVG appearance",
+        "live_proof": "Copy on user gesture in supported browser; paste into report or slide",
+        "rollout": "Ship with first composition type; preserve edits and show retryable failure"
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter demo dev -- --host 127.0.0.1",
+      "proof": "Author local fixtures from blank; focused resolver tests without remote dataset fetches"
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Finish an email-style graphic from blank",
+        "outcome": "Finish an email-style graphic from blank",
+        "depends_on": [],
+        "proof": "Blank authoring, inspection, save/reload, retained override identities, three anchors, and pasted PNG",
+        "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
+        "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
+        "dependencies_introduced": []
+      },
+      {
+        "id": "m2",
+        "title": "Connect observations in declared order",
+        "outcome": "Connect observations in declared order",
+        "depends_on": [
+          "m1"
+        ],
+        "proof": "Shuffled input retains year order; missing coordinates break the path; segment contributors inspect correctly",
+        "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
+        "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
+        "dependencies_introduced": []
+      },
+      {
+        "id": "m3",
+        "title": "Layer supplied interval bands",
+        "outcome": "Layer supplied interval bands",
+        "depends_on": [
+          "m2"
+        ],
+        "proof": "Nested bounds, gaps, clipping, layer order, and matching output",
+        "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
+        "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
+        "dependencies_introduced": []
+      },
+      {
+        "id": "m4",
+        "title": "Repeat paired distribution summaries",
+        "outcome": "Repeat paired distribution summaries",
+        "depends_on": [
+          "m3"
+        ],
+        "proof": "Known quartiles, paired cohorts, filter updates, zero-base change, and explicit domain policy",
+        "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
+        "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
+        "dependencies_introduced": []
+      },
+      {
+        "id": "m5",
+        "title": "Stack normalized category shares",
+        "outcome": "Stack normalized category shares",
+        "depends_on": [
+          "m4"
+        ],
+        "proof": "100% totals, numerator/denominator trace, stable order, and zero-total gaps",
+        "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
+        "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
+        "dependencies_introduced": []
+      },
+      {
+        "id": "m6",
+        "title": "Combine detail and overview frames",
+        "outcome": "Combine detail and overview frames",
+        "depends_on": [
+          "m5"
+        ],
+        "proof": "Distinct sibling windows, subset/global inputs, filter policies, and group movement",
+        "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
+        "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
+        "dependencies_introduced": []
+      }
+    ],
+    "cut_line": [
+      "General compiler and recursive repeats",
+      "Exact source-data parity",
+      "Forecast generation and survey weighting",
+      "Automatic label solver",
+      "Additional export formats and recurring reports"
+    ],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-09-29",
+      "event": "Captured dictation and shaped first composed-chart proof"
+    },
+    {
+      "date": "2026-09-29",
+      "event": "Replaced the preset-first, row-only shape after ten product answers. Promoted polished output, blank authoring, instance overrides, filter-independent calculations, and group placement. No implementation plan exists to invalidate.",
+      "annotations_addressed": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "date": "2026-09-29",
+      "event": "Resolved output, override, scale, annotation anchor, and recurring-report scope decisions. Updated both briefs; no implementation plan exists to invalidate.",
+      "annotations_addressed": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "date": "2026-09-29",
+      "event": "Researched five additional references; added distinct capability ladder and repository-grounded plan. Stored seven reference image sets and available datasets with source provenance."
+    }
+  ]
+}
