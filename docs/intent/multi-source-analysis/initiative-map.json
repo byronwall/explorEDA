@@ -1,0 +1,287 @@
+{
+  "schema_version": "0.4.0",
+  "initiative": {
+    "title": "Multiple sources and lookups",
+    "slug": "multi-source-analysis",
+    "scale": "capability",
+    "current_phase": "shape",
+    "last_updated": "2026-09-29",
+    "summary": "Separate future initiative for related source tables and explicit lookups, initially feeding one working dataset per view."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-29"
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "provisional",
+      "updated_at": "2026-09-29"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-requested",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "dictation-2026-09-29",
+      "type": "direct-user-input",
+      "location": "2026-09-29 user dictation in this task",
+      "anchor": "runtime configuration, project views, and in-app agent",
+      "authority": "direct intent"
+    },
+    {
+      "id": "workspace-intent",
+      "type": "accepted-project-context",
+      "location": "../interactive-eda-workspace/intent-brief.md",
+      "anchor": "dashboard views and persistence; product and package split",
+      "authority": "earlier intent, refined by current dictation"
+    },
+    {
+      "id": "landing-intent",
+      "type": "accepted-project-context",
+      "location": "../developer-adoption-page/intent-brief.md",
+      "anchor": "current landing scope and product ownership",
+      "authority": "earlier intent, refined by current dictation"
+    },
+    {
+      "id": "repo-2026-09-29",
+      "type": "repository",
+      "location": "packages/explorEDA/src/types/SavedDataStructure.ts; packages/explorEDA/src/components/ExplorEda.tsx; apps/demo/src/landing/Hero.tsx",
+      "anchor": "HEAD 6762dfd",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "split-request",
+      "type": "direct-user-input",
+      "location": "2026-09-29 follow-up in this task",
+      "anchor": "dedicated intent folders; intent and shape for each; no implementation",
+      "authority": "direct scope instruction"
+    },
+    {
+      "id": "product-feedback-8",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 8",
+      "anchor": "Comparing analyses is less relevant.  The other 2 are quite importnat.",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-9",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 9",
+      "anchor": "I am imaginge an example where we haev products, orders and customers.  It's much easier to do that with multuple source tbale.s. THis also allows folks to play with queries over data sets with varying lengths.",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-10",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 10",
+      "anchor": "idk yet",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-11",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 11",
+      "anchor": "Filters are often used to filter out bad data or to focus on a region of interst.  It's the field names + threadshols and selected values that is importnat.  The filters can be applied to other views if the same fields are involved (or even if they are not... we should be able to just apply random filters if we want )",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-12",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 12",
+      "anchor": "They should probably update immediately.  If we allow old and new, it will be a mess to determine how to change each on its own (or how to udpate the snapshot)",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-13",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 13",
+      "anchor": "Reuse or keep open.  either is fine.  Probably make it easy for the user to \"duplciate\" a view. Comparison is harder isnce it probalbe requires side by side.  don't worry about that for now,",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-14",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 14",
+      "anchor": "Choose and build their own.  Also devs can create htem too",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "lookup-followup",
+      "type": "direct-user-input",
+      "location": "2026-09-29 follow-up answer in this task",
+      "anchor": "Combine tables via lookups",
+      "authority": "direct product clarification"
+    },
+    {
+      "id": "filters-followup",
+      "type": "direct-user-input",
+      "location": "2026-09-29 follow-up answer in this task",
+      "anchor": "We should realistically have a dedicated \"filters\" section to show these things whcih are not visible on charts otherwise.",
+      "authority": "direct product clarification"
+    },
+    {
+      "id": "bridge-feedback-1",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 1 on integration review",
+      "anchor": "I guess suggest 5 tangible things here.  I am struggling to see what htis would be.",
+      "authority": "direct request for concrete examples"
+    },
+    {
+      "id": "bridge-feedback-2",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 2 on integration review",
+      "anchor": "Given all this, let's assume taht everything stays \"single source\" for now.  Clearly multiple sources is its own project.  Maybe we cna go ahead adn run $sleuth to get that separate intent/shape built.",
+      "authority": "direct scope correction"
+    },
+    {
+      "id": "bridge-feedback-3",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 3 on integration review",
+      "anchor": "It seems we should be able to store snapshots of the settings as changes are made.  We could diff that and show it.  Or just undo.  It's not clear to me why undo is difficult if state is fully determined by the settings?  What am i missing?",
+      "authority": "direct feedback on history shape"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "feedback-9",
+        "type": "desired experience",
+        "statement": "The representative project contains products, orders, and customers as separate sources with different row counts.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          "product-feedback-9"
+        ],
+        "notes": "Moved from project-task-views after the single-source scope correction."
+      },
+      {
+        "id": "lookup-followup",
+        "type": "required behavior",
+        "statement": "Views combine source tables through lookups.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          "lookup-followup"
+        ],
+        "notes": "Moved from project-task-views after the single-source scope correction."
+      },
+      {
+        "id": "separate-initiative",
+        "type": "decision",
+        "statement": "Multiple sources are a separate initiative while current work remains single-source.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "bridge-feedback-2"
+        ]
+      },
+      {
+        "id": "working-population",
+        "type": "derived implication",
+        "statement": "Lookups need an explicit base population and visible source field origin.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          "lookup-followup"
+        ]
+      },
+      {
+        "id": "mixed-populations-open",
+        "type": "open question",
+        "statement": "Different base populations within one dashboard and relationship-based filter propagation are not decided.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          "bridge-feedback-2"
+        ]
+      }
+    ],
+    "themes": [
+      "source identities",
+      "explicit lookups",
+      "field origin",
+      "trustworthy row populations"
+    ],
+    "conflicts": [],
+    "human_questions": [
+      {
+        "question": "Should one dashboard contain charts with different base populations?",
+        "status": "deferred"
+      },
+      {
+        "question": "Should filters propagate through source relationships?",
+        "status": "deferred"
+      }
+    ]
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "provisional",
+    "appetite": "One orders-based view enriched through customer and product lookups.",
+    "recommended_shape": "Propose one base source per task view, enriched through explicit lookups. Keep orders, customers, and products distinct in the project definition. Resolve lookup fields before giving a single working dataset to the existing chart engine.",
+    "success_moves": [
+      "Preserve base row counts",
+      "Use asymmetric local tables",
+      "Retain field origin",
+      "Prepare rows once per view",
+      "Separate source loading"
+    ],
+    "first_proof": {
+      "question": "Can lookups enrich orders without corrupting counts or field meaning?",
+      "artifact": "A deterministic orders/customer/product example with matched, missing, and ambiguous keys",
+      "decision_rule": "Base row totals remain correct, ambiguity is visible, and fields trace to their sources"
+    },
+    "open_decisions": [
+      "Different base populations within one dashboard",
+      "Relationship-based filter propagation"
+    ],
+    "rabbit_holes": [
+      "general relational query engine",
+      "remote query providers",
+      "per-chart lookup copies"
+    ],
+    "proposed_rules": [
+      "One base record yields one working row",
+      "Unique match supplies lookup values",
+      "Missing match yields missing values",
+      "Duplicate target keys report ambiguity"
+    ]
+  },
+  "implementation": {
+    "status": "not-requested",
+    "dependencies": [],
+    "milestones": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-09-29",
+      "event": "Created a separate intent and provisional shape from prior source/lookup feedback and latest scope correction; no implementation plan"
+    }
+  ]
+}
