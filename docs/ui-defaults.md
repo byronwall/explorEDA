@@ -22,6 +22,7 @@ Run `pnpm check:ui` to reject native title attributes, SVG `<title>` elements, a
 
 - Give each icon button an accessible action name.
 - Use `ActionTooltip` or `Button tooltip` for important icon actions. The shared delay is 140 ms.
+- Open tooltips on pointer hover only. Focus return must not open them. Keep accessible names and keyboard focus indicators.
 - Omit hover text that only repeats visible text.
 - Explain toggles, abbreviated options, and settings that differ subtly with a real tooltip that says what each choice does and why it differs. Never use a `title` attribute.
 - Identify a statistic by field and meaning. Never show an unexplained duplicate number.

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { PlotManager } from "@/components/PlotManager";
@@ -31,7 +31,7 @@ function renderWorkspace() {
 }
 
 describe("workspace toolbar", () => {
-  it("peeks at the rows with R and closes with Escape", () => {
+  it("peeks at the rows with R and closes without opening hover help", async () => {
     renderWorkspace();
     const toggle = screen.getByRole("button", { name: "Rows" });
     expect(screen.queryByRole("region", { name: "Rows" })).toBeNull();
@@ -44,6 +44,12 @@ describe("workspace toolbar", () => {
     fireEvent.keyDown(peek, { key: "Escape" });
     expect(screen.queryByRole("region", { name: "Rows" })).toBeNull();
     expect(toggle).toHaveFocus();
+    expect(screen.queryByRole("tooltip")).toBeNull();
+
+    fireEvent.pointerMove(toggle, { pointerType: "mouse" });
+    await waitFor(() =>
+      expect(screen.getByRole("tooltip")).toHaveTextContent("Rows: peek")
+    );
   });
 
   it("closes the rows peek on a click outside the controls", () => {
