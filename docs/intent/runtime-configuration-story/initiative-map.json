@@ -1,0 +1,448 @@
+{
+  "schema_version": "0.4.0",
+  "initiative": {
+    "title": "Runtime configuration story",
+    "slug": "runtime-configuration-story",
+    "scale": "capability",
+    "current_phase": "shape",
+    "last_updated": "2026-09-29",
+    "summary": "Explain the single-source embeddable workspace with chart work and readable current settings."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-29"
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-29"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-requested",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "dictation-2026-09-29",
+      "type": "direct-user-input",
+      "location": "2026-09-29 user dictation in this task",
+      "anchor": "runtime configuration, project views, and in-app agent",
+      "authority": "direct intent"
+    },
+    {
+      "id": "workspace-intent",
+      "type": "accepted-project-context",
+      "location": "../interactive-eda-workspace/intent-brief.md",
+      "anchor": "dashboard views and persistence; product and package split",
+      "authority": "earlier intent, refined by current dictation"
+    },
+    {
+      "id": "landing-intent",
+      "type": "accepted-project-context",
+      "location": "../developer-adoption-page/intent-brief.md",
+      "anchor": "current landing scope and product ownership",
+      "authority": "earlier intent, refined by current dictation"
+    },
+    {
+      "id": "repo-2026-09-29",
+      "type": "repository",
+      "location": "packages/explorEDA/src/types/SavedDataStructure.ts; packages/explorEDA/src/components/ExplorEda.tsx; apps/demo/src/landing/Hero.tsx",
+      "anchor": "HEAD 6762dfd",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "split-request",
+      "type": "direct-user-input",
+      "location": "2026-09-29 follow-up in this task",
+      "anchor": "dedicated intent folders; intent and shape for each; no implementation",
+      "authority": "direct scope instruction"
+    },
+    {
+      "id": "product-feedback-1",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 1",
+      "anchor": "I want the landing page to speak to a developer who might embed my comp in their existing data analysis tool.  Or they are makign their own analysis platform and want my stuff as a primtive.",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-2",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 2",
+      "anchor": "I think explore an example",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-3",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 3",
+      "anchor": "It will become major once it is working.  Agent driven BI and data viz is powerful stuff",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-4",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 4",
+      "anchor": "THe add and edit on charts is most important. That action is done countless times a day by people.  Calcs are important but less critical since they tend to be \"Set nad forget\" when things are saved well.",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-5",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 5",
+      "anchor": "I think they start with an example.  If they offer their own data, they likelyl start from scratch on that",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-6",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 6",
+      "anchor": "Probably start fresh?  Not a strong opinion.  If we store it, we need to make it easy to reset.",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-7",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 7",
+      "anchor": "I think very minimal.  Waht we really need is a detailed \"chart spec\" screen that list all teh charts, their positions, tehir config.  That way users can see all teh details without seeing JSON.  They could even tweak things there.  But mainly they can see that charts are driven by config.",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "bridge-feedback-1",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 1 on integration review",
+      "anchor": "I guess suggest 5 tangible things here.  I am struggling to see what htis would be.",
+      "authority": "direct request for concrete examples"
+    },
+    {
+      "id": "bridge-feedback-2",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 2 on integration review",
+      "anchor": "Given all this, let's assume taht everything stays \"single source\" for now.  Clearly multiple sources is its own project.  Maybe we cna go ahead adn run $sleuth to get that separate intent/shape built.",
+      "authority": "direct scope correction"
+    },
+    {
+      "id": "bridge-feedback-3",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 3 on integration review",
+      "anchor": "It seems we should be able to store snapshots of the settings as changes are made.  We could diff that and show it.  Or just undo.  It's not clear to me why undo is difficult if state is fully determined by the settings?  What am i missing?",
+      "authority": "direct feedback on history shape"
+    },
+    {
+      "id": "final-inspection-1",
+      "type": "direct-user-input",
+      "location": "2026-09-29 final response annotation 1",
+      "anchor": "The first 3 are great and would be nice additions.",
+      "authority": "direct acceptance of chart inventory, details, and referenced definitions"
+    },
+    {
+      "id": "final-inspection-2",
+      "type": "direct-user-input",
+      "location": "2026-09-29 final response annotation 2",
+      "anchor": "I am OK with this one eventualyl but would not add it now.",
+      "authority": "direct deferral of change-comparison UI"
+    },
+    {
+      "id": "final-inspection-3",
+      "type": "direct-user-input",
+      "location": "2026-09-29 final response annotation 3",
+      "anchor": "I assume we will need this as well.",
+      "authority": "direct acceptance of host settings access"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "c1",
+        "type": "outcome",
+        "statement": "People can create and revise analysis through runtime configuration",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "dictation-2026-09-29:fully runtime configurable"
+        ]
+      },
+      {
+        "id": "c2",
+        "type": "desired experience",
+        "statement": "An agent can prepare an initial settings draft and people can continue editing it",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "dictation-2026-09-29:agent scaffold and users make changes"
+        ]
+      },
+      {
+        "id": "feedback-1",
+        "type": "audience",
+        "statement": "The landing page primarily serves developers embedding the component or building an analysis platform.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-1"
+        ]
+      },
+      {
+        "id": "feedback-2",
+        "type": "preference",
+        "statement": "Explore an example is the primary landing action.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-2"
+        ]
+      },
+      {
+        "id": "feedback-3",
+        "type": "sequence",
+        "statement": "The agent story becomes major once integrated assistance works.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          "product-feedback-3"
+        ]
+      },
+      {
+        "id": "feedback-4",
+        "type": "preference",
+        "statement": "Adding and editing charts have greater demonstration value than calculations.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-4"
+        ]
+      },
+      {
+        "id": "feedback-5",
+        "type": "desired experience",
+        "statement": "Visitors start with an example; personal data starts a fresh analysis.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-5"
+        ]
+      },
+      {
+        "id": "feedback-6",
+        "type": "preference",
+        "statement": "Example visits probably start fresh; retained edits require easy Reset.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-6"
+        ]
+      },
+      {
+        "id": "feedback-7",
+        "type": "required behavior",
+        "statement": "A readable chart spec screen lists all charts, positions, and configuration, with minimal JSON exposure.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-7"
+        ]
+      },
+      {
+        "id": "spec-editing",
+        "type": "future possibility",
+        "statement": "The chart spec screen may support edits; inspection is the primary requirement.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          "product-feedback-7"
+        ]
+      },
+      {
+        "id": "single-source-scope",
+        "type": "constraint",
+        "statement": "This initiative remains single-source; multiple sources have a separate scope.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "bridge-feedback-2"
+        ]
+      },
+      {
+        "id": "concrete-read-uses",
+        "type": "derived implication",
+        "statement": "Provide five concrete examples of live-settings inspection: inventory, details, referenced definitions, snapshot comparison, and host access.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "superseded",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "bridge-feedback-1"
+        ],
+        "notes": "Five suggested uses requested for clarification; these are not five mandatory new features.",
+        "superseded_by": [
+          "accepted-inspection",
+          "host-settings-access",
+          "defer-change-comparison"
+        ]
+      },
+      {
+        "id": "accepted-inspection",
+        "type": "required behavior",
+        "statement": "Include chart inventory, detailed settings, and expandable referenced calculation and color-scale definitions.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "final-inspection-1"
+        ]
+      },
+      {
+        "id": "host-settings-access",
+        "type": "required behavior",
+        "statement": "Embedding hosts can read the same current analysis settings for their own inspector or agent.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "final-inspection-3"
+        ]
+      },
+      {
+        "id": "defer-change-comparison",
+        "type": "decision",
+        "statement": "Defer settings change-comparison UI. Snapshot Undo does not require it.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          "final-inspection-2"
+        ]
+      }
+    ],
+    "themes": [
+      "runtime configuration",
+      "product explanation",
+      "human and agent drafts"
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "Focused developer landing journey plus chart spec inspection; spec editing optional.",
+    "recommended_shape": "Use the existing live example as the primary entry for developers evaluating the component. Demonstrate adding and editing charts. Provide chart inventory, detailed settings, and expandable referenced definitions in a readable chart spec screen. Expose the same current settings to embedding hosts. Keep JSON in optional integration detail.",
+    "success_moves": [
+      "Demonstrate chart creation and editing",
+      "Read live settings in the spec screen",
+      "Start with inspection",
+      "Keep example recovery clear"
+    ],
+    "first_proof": {
+      "question": "Can developers inspect runtime configuration without reading JSON?",
+      "artifact": "A reviewed chart add/edit and specification journey",
+      "decision_rule": "Chart inventory, details, and referenced definitions match runtime state; host reads agree initially and after edits."
+    },
+    "open_decisions": [],
+    "review": {
+      "remaining_weaknesses": "The readable spec screen is new scope. A partial summary that omits positions or configuration would miss its purpose. Spec editing is a possibility, not an acceptance requirement. Example persistence remains a reversible choice with a reset requirement if retained.",
+      "most_likely_bad_outcome": "A polished landing page shows fixed examples and a JSON dump, while developers still cannot see how users create and revise charts."
+    },
+    "cut_line": [
+      "settings change-comparison UI"
+    ]
+  },
+  "implementation": {
+    "status": "not-requested",
+    "dependencies": [],
+    "milestones": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-09-29",
+      "event": "Split from runtime-analysis-workspace at user request; retained intent and shape only"
+    },
+    {
+      "date": "2026-09-29",
+      "event": "Updated intent and regenerated shape after product-question answers",
+      "changes": [
+        "Developer audience and example entry confirmed",
+        "Chart spec inspection added as product scope",
+        "Example retention remains a weak preference",
+        "Agent emphasis becomes major after it works"
+      ]
+    },
+    {
+      "date": "2026-09-29",
+      "event": "Incorporated feedback on integration review",
+      "changes": [
+        "Added five tangible inspection examples",
+        "Kept current initiative single-source"
+      ],
+      "superseded_shape": {
+        "status": "current",
+        "appetite": "Focused developer landing journey plus chart spec inspection; spec editing optional.",
+        "recommended_shape": "Use the existing live example as the primary entry for developers evaluating the component. Demonstrate adding and editing charts. Provide a readable chart spec screen that lists chart positions and configuration. Keep JSON in optional integration detail.",
+        "success_moves": [
+          "Demonstrate chart creation and editing",
+          "Read live configuration in the spec screen",
+          "Start with inspection",
+          "Keep the example recoverable"
+        ],
+        "first_proof": {
+          "question": "Can a developer understand runtime configuration through charts and readable specs?",
+          "artifact": "A reviewed add, edit, and chart spec journey",
+          "decision_rule": "Changed charts and positions match their readable definitions without JSON"
+        },
+        "open_decisions": [],
+        "review": {
+          "remaining_weaknesses": "The readable spec screen is new scope. A partial summary that omits positions or configuration would miss its purpose. Spec editing is a possibility, not an acceptance requirement. Example persistence remains a reversible choice with a reset requirement if retained.",
+          "most_likely_bad_outcome": "A polished landing page shows fixed examples and a JSON dump, while developers still cannot see how users create and revise charts."
+        }
+      }
+    },
+    {
+      "date": "2026-09-29",
+      "event": "Applied final inspection scope comments",
+      "changes": [
+        "Chart inventory, details, and referenced definitions included",
+        "Host settings access included",
+        "Change-comparison UI deferred"
+      ]
+    }
+  ]
+}

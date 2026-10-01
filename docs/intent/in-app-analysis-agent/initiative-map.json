@@ -1,0 +1,457 @@
+{
+  "schema_version": "0.4.0",
+  "initiative": {
+    "title": "Agent inside the analysis application",
+    "slug": "in-app-analysis-agent",
+    "scale": "capability",
+    "current_phase": "shape",
+    "last_updated": "2026-09-29",
+    "summary": "Single-source agent dashboard creation through a server API, with direct application, settings-checkpoint Undo, and reconciliation."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-29"
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-09-29"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-requested",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "dictation-2026-09-29",
+      "type": "direct-user-input",
+      "location": "2026-09-29 user dictation in this task",
+      "anchor": "runtime configuration, project views, and in-app agent",
+      "authority": "direct intent"
+    },
+    {
+      "id": "workspace-intent",
+      "type": "accepted-project-context",
+      "location": "../interactive-eda-workspace/intent-brief.md",
+      "anchor": "dashboard views and persistence; product and package split",
+      "authority": "earlier intent, refined by current dictation"
+    },
+    {
+      "id": "landing-intent",
+      "type": "accepted-project-context",
+      "location": "../developer-adoption-page/intent-brief.md",
+      "anchor": "current landing scope and product ownership",
+      "authority": "earlier intent, refined by current dictation"
+    },
+    {
+      "id": "repo-2026-09-29",
+      "type": "repository",
+      "location": "packages/explorEDA/src/types/SavedDataStructure.ts; packages/explorEDA/src/components/ExplorEda.tsx; apps/demo/src/landing/Hero.tsx",
+      "anchor": "HEAD 6762dfd",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "split-request",
+      "type": "direct-user-input",
+      "location": "2026-09-29 follow-up in this task",
+      "anchor": "dedicated intent folders; intent and shape for each; no implementation",
+      "authority": "direct scope instruction"
+    },
+    {
+      "id": "product-feedback-15",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 15",
+      "anchor": "Createing a dashboard from scratch: \"Please create a dashboard that explains orders\" is a valid request.  Explaining results is less critical,  let's focus on charts.  Defining calcs would be \"create a calc for net sales or gross profit\" or something like that.",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-16",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 16",
+      "anchor": "It should have rich and robust context.  This includes schema, sample values, current chart defs, curent visuasls",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-17",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 17",
+      "anchor": "I generally like \"apply now\" with a quick undo if needed.  Approving to see changes gets old in fast itertaive loops",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-18",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 18",
+      "anchor": "The agent should probably return and then do a final reconilation.  If fails, then it does another pass to sort it out.",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-19",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 19",
+      "anchor": "Accepted changes are most importnat.  I don't think chat history will be a key piece of this offering.  The charts are what matters.  We're building dashboards and views at the start.",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-20",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 20",
+      "anchor": "Let's assume there's an expectation of a server that can respond to a given API.  This will let me do a hsoted thing.  Or someone else can run their own server with their own key.",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-21",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 21",
+      "anchor": "Dashboard should be made in less than 60s.  Smaller edits shoudl be done in 15-20s, ideally faster.",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "bridge-feedback-1",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 1 on integration review",
+      "anchor": "I guess suggest 5 tangible things here.  I am struggling to see what htis would be.",
+      "authority": "direct request for concrete examples"
+    },
+    {
+      "id": "bridge-feedback-2",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 2 on integration review",
+      "anchor": "Given all this, let's assume taht everything stays \"single source\" for now.  Clearly multiple sources is its own project.  Maybe we cna go ahead adn run $sleuth to get that separate intent/shape built.",
+      "authority": "direct scope correction"
+    },
+    {
+      "id": "bridge-feedback-3",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 3 on integration review",
+      "anchor": "It seems we should be able to store snapshots of the settings as changes are made.  We could diff that and show it.  Or just undo.  It's not clear to me why undo is difficult if state is fully determined by the settings?  What am i missing?",
+      "authority": "direct feedback on history shape"
+    },
+    {
+      "id": "final-inspection-2",
+      "type": "direct-user-input",
+      "location": "2026-09-29 final response annotation 2",
+      "anchor": "I am OK with this one eventualyl but would not add it now.",
+      "authority": "direct deferral of change-comparison UI"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "c1",
+        "type": "outcome",
+        "statement": "People can create and revise analysis through runtime configuration",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "dictation-2026-09-29:fully runtime configurable"
+        ]
+      },
+      {
+        "id": "c2",
+        "type": "desired experience",
+        "statement": "An agent can prepare an initial settings draft and people can continue editing it",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "dictation-2026-09-29:agent scaffold and users make changes"
+        ]
+      },
+      {
+        "id": "c5",
+        "type": "desired experience",
+        "statement": "An in-app agent can use selected charts and results as context for chart requests and explanations",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "dictation-2026-09-29:chat box and charts in context"
+        ]
+      },
+      {
+        "id": "c6",
+        "type": "constraint",
+        "statement": "The analysis workflow stays useful without an active agent",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "dictation-2026-09-29:users make changes after agent draft"
+        ]
+      },
+      {
+        "id": "c8",
+        "type": "future possibility",
+        "statement": "Project skills can give the agent extra context",
+        "commitment": "tentative",
+        "importance": "peripheral",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "dictation-2026-09-29:context from skills"
+        ]
+      },
+      {
+        "id": "c9",
+        "type": "current repository reality",
+        "statement": "The package accepts one row array and one saved settings object per mounted workspace",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "repo-2026-09-29:ExplorEda props and SavedDataStructure"
+        ]
+      },
+      {
+        "id": "feedback-15",
+        "type": "preference",
+        "statement": "Creating an orders dashboard from scratch is the primary agent request; calculations support it and explanations are secondary.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-15"
+        ]
+      },
+      {
+        "id": "feedback-16",
+        "type": "required behavior",
+        "statement": "Agent context includes schema, sample values, current chart definitions, and current visuals.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-16"
+        ]
+      },
+      {
+        "id": "feedback-17",
+        "type": "preference",
+        "statement": "Apply agent changes directly with quick Undo rather than repeated preview approval.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-17"
+        ]
+      },
+      {
+        "id": "feedback-18",
+        "type": "preference",
+        "statement": "Reconcile returned agent work with current state and make another pass if reconciliation fails.",
+        "commitment": "tentative",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-18"
+        ]
+      },
+      {
+        "id": "feedback-19",
+        "type": "preference",
+        "statement": "Applied charts and views are the important persistent output; chat history is lower priority.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-19"
+        ]
+      },
+      {
+        "id": "feedback-20",
+        "type": "constraint",
+        "statement": "Use an application-facing server API supporting Byron-hosted and independently operated services with server-owned credentials.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-20"
+        ]
+      },
+      {
+        "id": "feedback-21",
+        "type": "required behavior",
+        "statement": "Target useful dashboards in under 60 seconds and smaller edits in 15\u201320 seconds, preferably faster.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-feedback-21"
+        ]
+      },
+      {
+        "id": "single-source-scope",
+        "type": "constraint",
+        "statement": "The current agent workflow uses one source; multiple sources are a separate initiative.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "bridge-feedback-2"
+        ]
+      },
+      {
+        "id": "snapshot-history",
+        "type": "implementation hypothesis",
+        "statement": "Record settings snapshots for ordinary Undo; differences can optionally show readable changes.",
+        "commitment": "tentative",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "bridge-feedback-3"
+        ]
+      },
+      {
+        "id": "selective-undo-deferred",
+        "type": "decision",
+        "statement": "Remove the agent-authored requirement to selectively undo an older agent operation while preserving later edits. Use ordinary chronological Undo.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "bridge-feedback-3"
+        ]
+      },
+      {
+        "id": "defer-change-comparison",
+        "type": "decision",
+        "statement": "Defer settings change-comparison UI. Snapshot Undo does not require it.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          "final-inspection-2"
+        ]
+      }
+    ],
+    "themes": [
+      "contextual assistance",
+      "editable agent output",
+      "grounded explanations"
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "Dashboard creation, rapid chart edits, and useful calculations; explanations and chat history secondary.",
+    "recommended_shape": "Shape the first integrated agent around single-source dashboard creation from an empty analysis, followed by fast chart edits. Supply rich schema, sample, configuration, and visual context. Apply valid changes immediately and provide Undo. Use a server API that Byron can host or another developer can serve with their own credentials.",
+    "success_moves": [
+      "Prove an orders dashboard request",
+      "Include schema, samples, definitions, and visuals",
+      "Reconcile before applying",
+      "Use settings snapshots for chronological Undo",
+      "Measure useful results against time targets"
+    ],
+    "first_proof": {
+      "question": "Can users generate dashboards with ordinary Undo and reconciliation?",
+      "artifact": "A reviewed dashboard, edit, checkpoint restore, and concurrent-response flow",
+      "decision_rule": "Editable output restores coherently and applies without overwriting intervening work"
+    },
+    "open_decisions": [],
+    "review": {
+      "remaining_weaknesses": "Rich context may compete with the response budgets, especially for large data or visuals. The useful dashboard criterion must include suitable charts and layout, not a chart count. Reconciliation retries may exceed the time target; failure must leave current work intact and allow another request. Review chronological Undo checkpoints. A timestamp-only change should not become a visible edit. Grouping a chart drag or one agent response must produce understandable history steps.",
+      "most_likely_bad_outcome": "A technically valid agent creates weak dashboards slowly, or applies a stale result that overwrites edits made during the request."
+    },
+    "cut_line": [
+      "settings change-comparison UI"
+    ]
+  },
+  "implementation": {
+    "status": "not-requested",
+    "dependencies": [],
+    "milestones": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-09-29",
+      "event": "Split from runtime-analysis-workspace at user request; retained intent and shape only"
+    },
+    {
+      "date": "2026-09-29",
+      "event": "Updated intent and regenerated shape after product-question answers",
+      "changes": [
+        "Single-chart/explanation-first proof superseded by dashboard creation",
+        "Preview-and-Apply recommendation superseded by direct application with Undo",
+        "Rich context required",
+        "Final reconciliation preferred",
+        "Server API boundary confirmed",
+        "Applied state prioritized over chat history",
+        "Dashboard and edit latency targets recorded"
+      ]
+    },
+    {
+      "date": "2026-09-29",
+      "event": "Incorporated feedback on integration review",
+      "changes": [
+        "Replaced selective Undo recommendation with ordinary settings checkpoint history",
+        "Separated stale-response reconciliation from Undo",
+        "Recorded restore callback behavior as a host-history integration detail",
+        "Kept agent single-source"
+      ],
+      "superseded_shape": {
+        "status": "current",
+        "appetite": "Dashboard creation, rapid chart edits, and useful calculations; explanations and chat history secondary.",
+        "recommended_shape": "Shape the first integrated agent around dashboard creation from an empty analysis, followed by fast chart edits. Supply rich schema, sample, configuration, and visual context. Apply valid changes immediately and provide Undo. Use a server API that Byron can host or another developer can serve with their own credentials.",
+        "success_moves": [
+          "Prove a full orders dashboard request",
+          "Include schema, samples, definitions, and visuals",
+          "Reconcile against current edits",
+          "Keep Undo scoped to the agent operation",
+          "Measure useful results against response targets"
+        ],
+        "first_proof": {
+          "question": "Can users build dashboards through direct changes while retaining control?",
+          "artifact": "A reviewed dashboard, small edit, Undo, and concurrent-edit flow",
+          "decision_rule": "Useful editable output preserves human work and meets the stated response budgets"
+        },
+        "open_decisions": [],
+        "review": {
+          "remaining_weaknesses": "Rich context may compete with the response budgets, especially for large data or visuals. The useful dashboard criterion must include suitable charts and layout, not a chart count. Reconciliation retries may exceed the time target; failure must leave current work intact and allow another request. Review mixed human and agent edits to establish the intended Undo boundary.",
+          "most_likely_bad_outcome": "A technically valid agent creates weak dashboards slowly, and stale results or broad Undo erase the user's intervening work."
+        }
+      }
+    },
+    {
+      "date": "2026-09-29",
+      "event": "Applied final inspection scope comments",
+      "changes": [
+        "Change-comparison UI deferred; snapshot Undo remains in scope"
+      ]
+    }
+  ]
+}
