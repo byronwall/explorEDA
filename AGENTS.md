@@ -17,6 +17,13 @@
 - Verify changed flows in the browser at wide, intermediate, and narrow widths.
 - Keep existing user edits. Do not commit on `main` without an explicit request.
 
+## Pull requests
+
+- Include screenshots in the PR description for every visible fix or UI change.
+- Upload them with `gh pr create --attach` or `gh pr edit --attach`. Repeat the flag for each image and add alt text after `#`, as in `--attach 'tmp/shot.png#Rows drawer at 390px'`.
+- To place an image beside the change it shows, reference the local file in the body, such as `![alt](./shot.png)`, and attach the same path. `gh` rewrites the reference to the uploaded URL.
+- Keep screenshots under `tmp/`. Do not commit them, and do not push them to a separate assets branch.
+
 ## Changesets
 
 - Every PR that changes what `exploreda` users get (anything under `packages/explorEDA` except tests, or its build output) includes a changeset. Write it yourself; nobody adds them later.
