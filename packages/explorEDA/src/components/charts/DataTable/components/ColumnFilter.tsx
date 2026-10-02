@@ -10,6 +10,12 @@ import type { FieldProfile } from "@/lib/fieldProfiles";
 import type { datum } from "@/types/ChartTypes";
 import type { Filter, TextFilter } from "@/types/FilterTypes";
 import { FilterX } from "lucide-react";
+import isEqual from "react-fast-compare";
+import { Slider } from "@/components/ui/slider";
+import {
+  summarizeField,
+  type SparkFilter,
+} from "@/components/SummaryTable/components/FieldDistribution";
 
 const MAX_VALUE_FILTER_OPTIONS = 10;
 
@@ -21,6 +27,32 @@ interface ColumnFilterProps {
   onChange: (columnId: string, filter?: Filter) => void;
   onClear: () => void;
   local?: boolean;
+  /**
+   * The field's profile over the rows this table can show. Number and date
+   * fields draw it as a histogram that filters on click or drag, and number
+   * fields add a range slider under it.
+   */
+  distribution?: FieldProfile;
+  /** Formats the distribution's values like the column's cells. */
+  format?: (value: unknown) => string;
+}
+
+/** A slider step that gives about 200 stops, or whole numbers for integers. */
+function sliderStep(min: number, max: number) {
+  if (Number.isInteger(min) && Number.isInteger(max) && max - min <= 1000) {
+    return 1;
+  }
+  return 10 ** Math.floor(Math.log10((max - min) / 200));
+}
+
+/** A bound as typed text, without the float tail of a bin's open edge. */
+const boundText = (value: number | undefined) =>
+  value === undefined ? "" : String(Number(value.toPrecision(12)));
+
+/** Rounds a slider value to its step, without floating-point tails. */
+function roundToStep(value: number, step: number) {
+  const digits = Math.max(0, -Math.floor(Math.log10(step)));
+  return Number(value.toFixed(Math.min(100, digits)));
 }
 
 export function ColumnFilter({
@@ -31,6 +63,8 @@ export function ColumnFilter({
   onChange,
   onClear,
   local = false,
+  distribution,
+  format = String,
 }: ColumnFilterProps) {
   const updateRange = (
     type: "range" | "date-range",
@@ -88,6 +122,81 @@ export function ColumnFilter({
   const missingCount = `${profile.nullCount.toLocaleString()} ${
     profile.nullCount === 1 ? "row" : "rows"
   }`;
+
+  const ranged =
+    !lowCardinality &&
+    (profile.dataType === "numeric" || profile.dataType === "datetime");
+  // A mark filters to its rows; the same mark again clears the filter.
+  const summary =
+    ranged && distribution
+      ? summarizeField(
+          distribution,
+          format,
+          columnLabel,
+          (spark: SparkFilter) => {
+            const next = { ...spark, field: profile.name } as Filter;
+            onChange(columnId, isEqual(filter, next) ? undefined : next);
+          },
+          filter
+        )
+      : undefined;
+  const stats =
+    profile.dataType === "numeric" ? distribution?.statistics : undefined;
+  const slider =
+    stats && stats.max > stats.min
+      ? { ...stats, step: sliderStep(stats.min, stats.max) }
+      : undefined;
+  const clamp = (value: number | undefined, fallback: number) =>
+    slider
+      ? Math.min(slider.max, Math.max(slider.min, value ?? fallback))
+      : fallback;
+  const histogram = summary && (
+    <div className="eda-filter-dist">
+      <div className="eda-filter-dist-plot">
+        {summary.graphic}
+        <span className="sr-only">{summary.description}</span>
+      </div>
+      {slider && (
+        <Slider
+          className="eda-filter-slider"
+          min={slider.min}
+          max={slider.max}
+          step={slider.step}
+          minStepsBetweenThumbs={0}
+          disabled={missingOnly}
+          thumbLabels={[
+            `Lower bound of ${columnLabel}`,
+            `Upper bound of ${columnLabel}`,
+          ]}
+          value={[
+            clamp(rangeFilter?.min, slider.min),
+            clamp(rangeFilter?.max, slider.max),
+          ]}
+          onValueChange={([low, high]) => {
+            // A thumb at the end of the track leaves that side open.
+            const min =
+              low === undefined || low <= slider.min
+                ? undefined
+                : roundToStep(low, slider.step);
+            const max =
+              high === undefined || high >= slider.max
+                ? undefined
+                : roundToStep(high, slider.step);
+            onChange(
+              columnId,
+              min === undefined && max === undefined
+                ? undefined
+                : { type: "range", field: profile.name, min, max }
+            );
+          }}
+        />
+      )}
+      <div className="eda-filter-dist-ends" aria-hidden="true">
+        <span>{summary.low}</span>
+        <span>{summary.high}</span>
+      </div>
+    </div>
+  );
 
   return (
     <div
@@ -150,13 +259,14 @@ export function ColumnFilter({
           className="m-0 grid min-w-0 gap-3 border-0 p-0 disabled:opacity-50"
           disabled={missingOnly}
         >
+          {histogram}
           <label className="grid gap-1 text-xs">
             Minimum (inclusive)
             <Input
               type="number"
               aria-label={`Minimum ${columnLabel}`}
               placeholder="Min"
-              value={rangeFilter?.min ?? ""}
+              value={boundText(rangeFilter?.min)}
               onChange={(event) =>
                 updateRange("range", "min", event.target.value)
               }
@@ -169,7 +279,7 @@ export function ColumnFilter({
               type="number"
               aria-label={`Maximum ${columnLabel}`}
               placeholder="Max"
-              value={rangeFilter?.max ?? ""}
+              value={boundText(rangeFilter?.max)}
               onChange={(event) =>
                 updateRange("range", "max", event.target.value)
               }
@@ -182,6 +292,7 @@ export function ColumnFilter({
           className="m-0 grid min-w-0 gap-3 border-0 p-0 disabled:opacity-50"
           disabled={missingOnly}
         >
+          {histogram}
           <label className="grid gap-1 text-xs">
             From (inclusive)
             <Input

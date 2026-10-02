@@ -217,4 +217,77 @@ describe("ColumnFilter", () => {
     );
     expect(screen.getByLabelText(/Only missing values/)).toBeDisabled();
   });
+
+  it("draws a number field's distribution over a range slider", () => {
+    const onChange = vi.fn();
+    const numeric = profile({
+      name: "age",
+      dataType: "numeric",
+      uniqueCount: 30,
+      totalCount: 40,
+      categories: undefined,
+      statistics: {
+        min: 20,
+        max: 60,
+        mean: 40,
+        median: 40,
+        stdDev: 5,
+        bins: [10, 20, 10],
+      },
+    });
+    render(
+      <ColumnFilter
+        columnId="age"
+        columnLabel="Age"
+        profile={numeric}
+        distribution={numeric}
+        filter={{ type: "range", field: "age", min: 30 }}
+        onChange={onChange}
+        onClear={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText("Range 20 to 60, median 40")).toBeInTheDocument();
+    const lower = screen.getByRole("slider", { name: "Lower bound of Age" });
+    const upper = screen.getByRole("slider", { name: "Upper bound of Age" });
+    expect(lower).toHaveAttribute("aria-valuenow", "30");
+    expect(upper).toHaveAttribute("aria-valuenow", "60");
+
+    fireEvent.focus(upper);
+    fireEvent.keyDown(upper, { key: "ArrowLeft" });
+    expect(onChange).toHaveBeenLastCalledWith("age", {
+      type: "range",
+      field: "age",
+      min: 30,
+      max: 59,
+    });
+  });
+
+  it("leaves a side open when its thumb reaches the end of the range", () => {
+    const onChange = vi.fn();
+    const numeric = profile({
+      name: "age",
+      dataType: "numeric",
+      uniqueCount: 30,
+      categories: undefined,
+      statistics: { min: 20, max: 60, mean: 40, median: 40, stdDev: 5 },
+    });
+    render(
+      <ColumnFilter
+        columnId="age"
+        columnLabel="Age"
+        profile={numeric}
+        distribution={numeric}
+        filter={{ type: "range", field: "age", min: 21 }}
+        onChange={onChange}
+        onClear={vi.fn()}
+      />
+    );
+
+    fireEvent.keyDown(
+      screen.getByRole("slider", { name: "Lower bound of Age" }),
+      { key: "ArrowLeft" }
+    );
+    expect(onChange).toHaveBeenLastCalledWith("age", undefined);
+  });
 });

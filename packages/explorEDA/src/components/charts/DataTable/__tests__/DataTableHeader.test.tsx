@@ -90,11 +90,24 @@ vi.mock("@/components/SummaryTable/components/FieldInspector", () => ({
 
 const mockUseDataLayer = vi.fn();
 
+// State every test shares; a test's own mock answers first.
+const baseState = {
+  formatFieldValue: (_field: string, value: unknown) => String(value),
+  getColumnData: () => ({}),
+  data: [],
+  fieldProfiles: [],
+  charts: [],
+  calculations: [],
+  liveItems: {},
+  fieldSettings: {},
+};
+
 vi.mock("@/providers/DataLayerProvider", () => ({
-  useDataLayer: (selector: (state: unknown) => unknown) =>
-    selector.toString().includes("formatFieldValue")
-      ? (_field: string, value: unknown) => String(value)
-      : mockUseDataLayer(selector),
+  useDataLayer: (selector: (state: unknown) => unknown) => {
+    const source = selector.toString();
+    if (source.includes("formatFieldValue")) return baseState.formatFieldValue;
+    return mockUseDataLayer(selector) ?? selector(baseState) ?? null;
+  },
 }));
 
 const renderHeader = (settings: DataTableSettings) =>
@@ -182,6 +195,21 @@ describe("DataTableHeader", () => {
         expect.objectContaining({ type: "range", field: "age", min: 25 }),
       ],
     });
+  });
+
+  it("moves one filter popover between columns", () => {
+    renderHeader(mockSettings);
+
+    fireEvent.click(screen.getByRole("button", { name: "Filter name" }));
+    expect(screen.getByRole("dialog", { name: "Filter name" })).toBeVisible();
+
+    fireEvent.click(screen.getByRole("button", { name: "Filter age" }));
+    expect(screen.getAllByRole("dialog")).toHaveLength(1);
+    expect(screen.getByRole("dialog", { name: "Filter age" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Filter age" })).toHaveAttribute(
+      "aria-expanded",
+      "true"
+    );
   });
 
   it("handles column sorting", () => {

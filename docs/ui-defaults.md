@@ -34,6 +34,8 @@ Run `pnpm check:ui` to reject native title attributes, SVG `<title>` elements, a
 - Show each column's type with the type icon before its name.
 - The Rows view draws each field's distribution under its column name, from the rows that pass the chart filters. A click or drag on it filters that column. A data table chart offers the same as a setting.
 - Mark the text a table search matched in every cell that matched.
+- A number or date column filter shows the field's distribution above its bounds. A click or drag on it sets the range, and a number field adds a range slider under it. A thumb at the end of the track leaves that side open.
+- One filter popover serves a table's columns. Opening another column's filter moves it; it never shows two at once. Popovers close without an exit animation.
 - Show a missing table cell as a small, centered monospace `null`, never a dash or a blank.
 - Let every filter reach missing values: a Missing count filters to its rows, and column filters offer Only missing values.
 - Keep row actions horizontal. Show them on hover and keyboard focus, and keep them available on touch screens.

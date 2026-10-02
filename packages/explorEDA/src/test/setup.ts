@@ -9,3 +9,10 @@ expect.extend(matchers);
 afterEach(() => {
   cleanup();
 });
+
+// jsdom has no ResizeObserver, which sliders and anchored popovers measure with.
+globalThis.ResizeObserver ??= class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
