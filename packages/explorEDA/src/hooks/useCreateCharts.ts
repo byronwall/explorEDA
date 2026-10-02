@@ -69,6 +69,10 @@ export function useCreateCharts() {
       settings.yAxisLabel = settings.type === "bar" ? "Records" : "";
     }
     if (settings.type === "boxplot") settings.yAxisLabel = "";
+    if (settings.type === "calendar" && !field)
+      settings.field =
+        profiles.find((profile) => profile.dataType === "datetime")?.name ??
+        settings.field;
     settings.title = "";
     return settings;
   };

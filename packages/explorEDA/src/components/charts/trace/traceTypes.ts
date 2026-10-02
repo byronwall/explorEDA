@@ -9,6 +9,7 @@ import {
 } from "../Axis/axisPlan";
 import type { FacetLayoutPlan } from "../FacetRelated/facetLayout";
 import type { BarTrace } from "../BarChart/barTrace";
+import type { CalendarTrace } from "../Calendar/calendarTrace";
 import type { ScatterTrace } from "../ScatterPlot/scatterTrace";
 
 /** A selected object. The owner's source resolves it against its current plan. */
@@ -88,6 +89,7 @@ export interface LegendTrace {
 export type ChartTrace =
   | ScatterTrace
   | BarTrace
+  | CalendarTrace
   | GuideTrace
   | TitleTrace
   | FacetTrace

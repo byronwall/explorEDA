@@ -119,6 +119,15 @@ export const coverageFeatures = [
     chartType: "line",
   },
   {
+    id: "chart:calendar",
+    label: "Calendar heatmap",
+    family: "Chart types",
+    description: "Show a count or measure for each day of a year.",
+    required: true,
+    status: "supported",
+    chartType: "calendar",
+  },
+  {
     id: "labels:meaningful-title",
     label: "Meaningful titles",
     family: "Labels and guides",
@@ -490,7 +499,7 @@ export const exampleCoverage = [
   {
     exampleId: "shop-10000",
     intent:
-      "Explore 10,000 orders through 15 linked views and comparable regional facets.",
+      "Explore 10,000 orders through 16 linked views, a daily revenue calendar, and comparable regional facets.",
     features: {
       "chart:row": "shown",
       "chart:bar": "shown",
@@ -498,6 +507,7 @@ export const exampleCoverage = [
       "chart:boxplot": "shown",
       "chart:data-table": "shown",
       "chart:line": "shown",
+      "chart:calendar": "shown",
       "facet:wrap": "shown",
       "facet:shared-scales": "shown",
       "table:virtualization": "shown",

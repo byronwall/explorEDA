@@ -75,6 +75,12 @@ const TRACE_COPY = {
       "Alt-click a bar, axis object, or zero baseline to trace it. Normal clicks keep chart interactions. You can also find a source row below.",
     ariaLabel: "Bar trace inspector",
   },
+  calendar: {
+    heading: "Day trace",
+    emptyText:
+      "Alt-click a day to trace it. Normal clicks keep selecting days. You can also find a source row below.",
+    ariaLabel: "Calendar trace inspector",
+  },
 } as const;
 
 function isTraceable(type: string): type is keyof typeof TRACE_COPY {

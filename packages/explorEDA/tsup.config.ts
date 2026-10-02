@@ -7,6 +7,7 @@ export default defineConfig({
     calculations: "src/lib/calculations/parser/semantics.ts",
     "charts/bar": "src/components/charts/BarChart/definition.ts",
     "charts/box-plot": "src/components/charts/BoxPlot/definition.ts",
+    "charts/calendar": "src/components/charts/Calendar/definition.ts",
     "charts/color-legend": "src/components/charts/ColorLegend/definition.ts",
     "charts/data-table": "src/components/charts/DataTable/definition.ts",
     "charts/line": "src/components/charts/LineChart/definition.ts",

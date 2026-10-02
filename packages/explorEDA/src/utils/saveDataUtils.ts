@@ -434,6 +434,14 @@ function isChart(value: unknown): boolean {
         isFiniteNumber(value.numericalBreakpoints) &&
         typeof value.wrap === "boolean"
       );
+    case "calendar":
+      return (
+        ["count", "sum", "average"].includes(value.aggregation as string) &&
+        (value.measureField === undefined ||
+          typeof value.measureField === "string") &&
+        ["monday", "sunday"].includes(value.weekStart as string) &&
+        (value.year === undefined || isFiniteNumber(value.year))
+      );
     case "line":
       return (
         typeof value.xField === "string" &&

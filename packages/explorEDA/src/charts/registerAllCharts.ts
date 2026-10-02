@@ -1,5 +1,6 @@
 import { barChartDefinition } from "@/components/charts/BarChart/definition";
 import { boxPlotDefinition } from "@/components/charts/BoxPlot/definition";
+import { calendarDefinition } from "@/components/charts/Calendar/definition";
 import { colorLegendDefinition } from "@/components/charts/ColorLegend/definition";
 import { dataTableDefinition } from "@/components/charts/DataTable/definition";
 import { lineChartDefinition } from "@/components/charts/LineChart/definition";
@@ -23,4 +24,5 @@ export function registerAllCharts() {
   chartRegistry.register(boxPlotDefinition);
   chartRegistry.register(colorLegendDefinition);
   chartRegistry.register(lineChartDefinition);
+  chartRegistry.register(calendarDefinition);
 }

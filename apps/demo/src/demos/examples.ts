@@ -49,6 +49,7 @@ export interface ExampleData {
 const viewNames: Record<string, string> = {
   "3d-scatter": "3D scatter",
   bar: "histogram",
+  calendar: "calendar",
   boxplot: "box plot",
   "color-legend": "legend",
   "data-table": "table",
@@ -163,11 +164,11 @@ export const examples: ExampleData[] = [
   },
   {
     id: "shop-10000",
-    title: "10,000 orders · 15 linked views",
+    title: "10,000 orders · 16 linked views",
     description:
-      "The order book at full size. Every chart, table, and regional facet stays linked, so a filter anywhere updates all 15 views.",
+      "The order book at full size. Every chart, table, and regional facet stays linked, so a filter anywhere, including a day on the revenue calendar, updates all 16 views.",
     dataset: { rows: "10,000 orders", fields: 16, source: "Synthetic" },
-    shows: ["15 linked views", "Shared facet scales", "Large table"],
+    shows: ["16 linked views", "Calendar heatmap", "Shared facet scales"],
     icon: ShoppingCart,
     data: "/datasets/shop-10000.csv",
     savedData: largeShopDashboard,

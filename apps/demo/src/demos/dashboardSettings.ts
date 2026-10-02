@@ -427,7 +427,7 @@ for (const chart of shopDashboard.charts) {
 }
 
 export const largeShopDashboard = dashboard(
-  "10,000 orders · 15 linked views",
+  "10,000 orders · 16 linked views",
   [
     ...shopDashboard.charts,
     histogram("large-units", "Units per order", "Units", layout(0, 14, 4)),
@@ -486,6 +486,18 @@ export const largeShopDashboard = dashboard(
         columnCount: 2,
       },
     } as Chart,
+    {
+      ...base,
+      id: "large-daily-revenue",
+      type: "calendar",
+      title: "Daily revenue through 2024",
+      field: "Order Date",
+      aggregation: "sum",
+      measureField: "Revenue",
+      weekStart: "monday",
+      layout: layout(0, 33, 12, 4),
+      margin: { top: 8, right: 16, bottom: 8, left: 8 },
+    },
   ],
   shopDashboard.colorScales
 );

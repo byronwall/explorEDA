@@ -13,6 +13,7 @@ const chartNames: Record<string, string> = {
   summary: "Summary table",
   "color-legend": "Color legend",
   markdown: "Markdown note",
+  calendar: "Calendar heatmap",
 };
 
 export function getChartTitle(
@@ -34,7 +35,8 @@ export function getChartTitle(
   const field =
     settings.type === "bar" ||
     settings.type === "row" ||
-    settings.type === "boxplot"
+    settings.type === "boxplot" ||
+    settings.type === "calendar"
       ? settings.field
       : settings.type === "scatter" || settings.type === "3d-scatter"
         ? settings.yField
@@ -50,6 +52,9 @@ export function getChartTitle(
   }
   if (settings.type === "row") {
     return `Rows by ${label}`;
+  }
+  if (settings.type === "calendar") {
+    return `${label} by day`;
   }
   return `${getChartDefinition(settings.type).name} · ${label}`;
 }
@@ -79,6 +84,8 @@ export function getChartFields(settings: ChartSettings): string[] {
         return settings.columns.map((column) => column.field);
       case "color-legend":
         return settings.fields;
+      case "calendar":
+        return [settings.field, settings.measureField];
       default:
         return [settings.field, settings.colorField];
     }

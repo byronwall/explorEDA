@@ -10,6 +10,7 @@ import { SummaryTableSettings } from "@/components/charts/SummaryTable/definitio
 import { ThreeDScatterSettings } from "@/components/charts/ThreeDScatter/types";
 import { BoxPlotSettings } from "@/components/charts/BoxPlot/definition";
 import { LineChartSettings } from "@/components/charts/LineChart/definition";
+import type { CalendarSettings } from "@/components/charts/Calendar/definition";
 import type { ColorLegendSettings } from "@/components/charts/ColorLegend/definition";
 
 export interface ChartLayout {
@@ -97,6 +98,7 @@ export type ChartSettings =
   | MarkdownSettings
   | BoxPlotSettings
   | LineChartSettings
+  | CalendarSettings
   | ColorLegendSettings;
 
 export type ChartType = ChartSettings["type"];
