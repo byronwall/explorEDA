@@ -1,6 +1,6 @@
 ---
 id: exp-7ci4
-status: in_progress
+status: closed
 deps: [exp-3sen, exp-rjh4]
 links: []
 created: 2026-10-02T03:58:32Z
@@ -47,7 +47,8 @@ Owned boundary: demo landing page, featured example guidance, React integration 
 
 ## Acceptance
 - Existing prepared example and Reset regression test pass.
-- A focused demo test checks example guidance, direct integration navigation, and the integration code/copy for initial and later reads plus edit-only callback semantics.
+- Existing demo tests check example guidance and the integration link. Browser proof checks the initial and later read explanation.
+- Focused package tests protect initial and edited reads and edit-only callback behavior.
 - Browser proof completes Add, Chart details edit, Chart spec inspect, integration guide, and Reset by pointer and keyboard at 1280, 783, and 390 px.
 - Keep desktop support claims accurate. Do not claim global mobile support.
 
@@ -61,3 +62,11 @@ Implementation checkpoint: demo guidance connects Add chart â†’ Chart details â†
 **2026-10-02T04:55:20Z**
 
 Root review: native integration link avoids transition timing state. Removed the new static IntegrationGuide test because it only asserted copied source strings. Existing routing/Reset regression tests remain; focused package tests already prove getSettings behavior. Required browser guide and journey proof remains open. Final full pnpm check is running against combined source.
+
+**2026-10-02T04:56:53Z**
+
+Final combined project gate passed at 0cb8dcb on Node24.21.0: pnpm check includes UI conventions, all builds/types, 378 package tests and 18 demo tests. Static source-only test removal supersedes earlier19-test count. Existing act and chunk-size warnings are non-fatal. Required browser journey at1280/783/390 remains unfinished.
+
+**2026-10-02T05:03:37Z**
+
+Accepted at 85916e9. Independent browser pass at1280/783/390 started fresh from the landing primary action. Prepared shop inventory had7 charts; adding Distribution of Units made8; keyboard-opened Chart details changed title to Units by count edited; Chart spec showed edited title, field and x0/y14/w6/h4. Reset restored7 original entries, titles and bounds. React integration guide link reached /#integration; readable guide and TSX example show initial and on-demand getSettings reads with edit-only callback. Enter placed/opened controls and Escape closed details. Screenshots tmp/journey-1280.png, journey-783.png, journey-390.png show restored7-chart state; earlier browser snapshots and root review saw edited8-chart state. No blocking discovery issues. Final pnpm check passed on Node24.21.0 at85916e9:378 package tests and18 demo tests, builds/types/UI checks. No source changes remain pending.

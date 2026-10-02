@@ -4,11 +4,11 @@
     "title": "Runtime configuration story",
     "slug": "runtime-configuration-story",
     "scale": "capability",
-    "current_phase": "plan",
-    "last_updated": "2026-10-01",
+    "current_phase": "execution",
+    "last_updated": "2026-10-02",
     "summary": "Explain the single-source embeddable workspace with chart work and readable current settings.",
-    "status": "planned",
-    "next_action": "Refine the chart spec inspector and host read frontier tickets before implementation."
+    "status": "completed",
+    "next_action": "See .tickets/exp-b6fo.md for accepted implementation and verification evidence."
   },
   "artifacts": {
     "intent_brief": {
@@ -395,7 +395,7 @@
     ]
   },
   "implementation": {
-    "status": "plan-ready",
+    "status": "completed",
     "repository_snapshot": {
       "root": "/Users/byronwall/.codex/worktrees/runtime-config-tickets/explorEDA",
       "revision": "22a9bd3694cf208c63911291a5926c3c5a367be0",
@@ -432,27 +432,36 @@
     "milestones": [
       {
         "id": "M1",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Readable current chart specifications",
         "proof": "Add and edit a chart, move or resize it, and inspect all current charts plus referenced definitions at three widths",
         "valid_intermediate_state": "Existing Chart details editor and workspace remain usable",
-        "rollback": "Remove inspector; saved analyses stay valid"
+        "rollback": "Remove inspector; saved analyses stay valid",
+        "evidence": [
+          "../../../.tickets/exp-3sen.md"
+        ]
       },
       {
         "id": "M2",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Host reads initial and edited settings",
         "proof": "Host reads a snapshot after mount and after an edit; snapshots agree with the workspace",
         "valid_intermediate_state": "Existing edit notifications and restore still work",
-        "rollback": "Remove focused read access without changing saved settings"
+        "rollback": "Remove focused read access without changing saved settings",
+        "evidence": [
+          "../../../.tickets/exp-rjh4.md"
+        ]
       },
       {
         "id": "M3",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Developer add, edit, inspect, and integrate journey",
         "proof": "Complete the example journey by pointer and keyboard at 1280, 783, and 390 pixels; Reset restores the prepared example",
         "valid_intermediate_state": "Existing example entry and integration guide stay usable",
-        "rollback": "Revert demo journey links or copy"
+        "rollback": "Revert demo journey links or copy",
+        "evidence": [
+          "../../../.tickets/exp-7ci4.md"
+        ]
       }
     ],
     "cut_line": [
@@ -526,6 +535,91 @@
     {
       "date": "2026-10-01",
       "event": "Added repository-grounded plan from current source; landing example and Chart details editor already ship; initial host read and readable chart specs remain."
+    },
+    {
+      "date": "2026-10-02",
+      "event": "Implemented the chart inspector, public host settings read, and example journey on codex/runtime-configuration. Acceptance evidence lives in exp-b6fo and its child tickets. The repository snapshot above records the planning baseline."
     }
-  ]
+  ],
+  "closure": {
+    "summary": "Completed the three approved runtime configuration milestones. The epic and child tickets contain the acceptance record.",
+    "evidence": [
+      "../../../.tickets/exp-b6fo.md",
+      "Node 24.21.0 pnpm check passed at 85916e9: builds, types, UI checks, 378 package tests, and 18 demo tests.",
+      "Independent browser proof at 1280, 783, and 390 pixels covered add, edit, inspect, layout changes, references, integration, keyboard use, and Reset."
+    ],
+    "reconciliation": [
+      {
+        "claim_id": "c1",
+        "disposition": "delivered",
+        "evidence": "exp-3sen and exp-7ci4: add, edit, inspect, move, resize, and Reset passed in the browser."
+      },
+      {
+        "claim_id": "c2",
+        "disposition": "changed",
+        "evidence": "Existing savedData restore accepts a prepared settings draft. exp-rjh4 adds current host reads. Integrated agent assistance remains outside the approved plan."
+      },
+      {
+        "claim_id": "feedback-1",
+        "disposition": "delivered",
+        "evidence": "Existing developer landing remains the entry. exp-7ci4 connects the example to host integration."
+      },
+      {
+        "claim_id": "feedback-2",
+        "disposition": "delivered",
+        "evidence": "exp-7ci4 browser proof starts from the primary Explore the order book action at all three widths."
+      },
+      {
+        "claim_id": "feedback-3",
+        "disposition": "omitted",
+        "evidence": "The approved plan excludes agent services. No integrated assistance claim was added to the landing page."
+      },
+      {
+        "claim_id": "feedback-4",
+        "disposition": "delivered",
+        "evidence": "exp-7ci4 adds Add chart, Chart details, and Chart spec guidance. The full journey passed."
+      },
+      {
+        "claim_id": "feedback-5",
+        "disposition": "delivered",
+        "evidence": "Prepared examples and fresh personal-data imports remain unchanged. Existing demo import tests pass in pnpm check."
+      },
+      {
+        "claim_id": "feedback-6",
+        "disposition": "delivered",
+        "evidence": "exp-7ci4: fresh visits show seven prepared charts; Reset restores them after add and edit at all three widths."
+      },
+      {
+        "claim_id": "feedback-7",
+        "disposition": "delivered",
+        "evidence": "exp-3sen: the inspector lists current charts, settings, position, size, and referenced definitions without a JSON dump."
+      },
+      {
+        "claim_id": "spec-editing",
+        "disposition": "omitted",
+        "evidence": "The approved plan excludes editing in Chart spec. Chart details remains the edit path."
+      },
+      {
+        "claim_id": "single-source-scope",
+        "disposition": "delivered",
+        "evidence": "The implementation uses one existing DataLayerProvider. No source, service, or saved format was added."
+      },
+      {
+        "claim_id": "accepted-inspection",
+        "disposition": "delivered",
+        "evidence": "exp-3sen: calculation and color references expanded by pointer and keyboard. Missing references have focused test proof."
+      },
+      {
+        "claim_id": "host-settings-access",
+        "disposition": "delivered",
+        "evidence": "exp-rjh4: initial and edited getSettings reads match rendered state, Chart spec, and callback snapshots."
+      },
+      {
+        "claim_id": "defer-change-comparison",
+        "disposition": "delivered",
+        "evidence": "The approved plan excludes comparison UI. Existing workspace behavior remains the basis for edits and Reset."
+      }
+    ],
+    "follow_ups": []
+  }
 }
