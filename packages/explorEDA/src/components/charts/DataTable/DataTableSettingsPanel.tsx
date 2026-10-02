@@ -1,5 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import MultiSelect, { Option } from "@/components/ui/multi-select";
 import { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import { useColumnNames } from "../PivotTable/useColumnNames";
@@ -40,6 +42,19 @@ export function DataTableSettingsPanel({
           }
         />
       </div>
+
+      <ActionTooltip content="Draws each field’s distribution under its column name. Click or drag a distribution to filter the column.">
+        <div className="flex items-center justify-between gap-3">
+          <Label htmlFor="showDistributions">Distributions in headers</Label>
+          <Switch
+            id="showDistributions"
+            checked={Boolean(settings.showDistributions)}
+            onCheckedChange={(showDistributions) =>
+              onSettingsChange({ ...settings, showDistributions })
+            }
+          />
+        </div>
+      </ActionTooltip>
 
       <div className="space-y-2">
         <Label>Global Search</Label>

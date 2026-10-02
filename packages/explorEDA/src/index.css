@@ -533,6 +533,60 @@ html {
 .eda-column-heading > button {
   min-height: 24px;
 }
+.eda-column-sort {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  text-align: left;
+}
+.eda-column-name {
+  flex: 0 1 auto;
+}
+/* Number columns read from the right edge, in line with their cells. The
+   hover actions move to the left so they never cover the name. */
+.eda-column-heading[data-align="right"] .eda-column-sort {
+  flex-direction: row-reverse;
+}
+.eda-column-heading[data-align="right"] .eda-column-actions,
+.eda-column-heading[data-align="right"][data-sorted] .eda-column-actions {
+  right: auto;
+  left: 0;
+}
+/* A field's distribution under its name. It fills the column up to the
+   summary table's width, and follows the name's alignment. */
+.eda-data-table[data-distributions] th {
+  height: 62px;
+}
+.eda-column-spark {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  height: 26px;
+  font-size: 11px;
+  font-weight: 400;
+}
+.eda-column-heading[data-align="right"] + .eda-column-spark {
+  justify-content: flex-end;
+}
+.eda-column-spark .eda-summary-spark-hit {
+  flex: 0 1 96px;
+  min-width: 0;
+  padding: 3px 0;
+}
+.eda-column-spark .eda-summary-spark {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+}
+/* Text a table search matched. */
+.eda-search-hit {
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--warning) 34%, transparent);
+  color: inherit;
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--warning) 34%, transparent);
+}
 .eda-column-actions {
   display: flex;
   align-items: center;
@@ -3579,7 +3633,8 @@ html {
   margin-right: 4px;
   border-radius: 2px;
   vertical-align: -1px;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--foreground) 15%, transparent);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--foreground) 15%, transparent);
 }
 .eda-trace-more > summary {
   cursor: pointer;

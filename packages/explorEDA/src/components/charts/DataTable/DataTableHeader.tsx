@@ -20,12 +20,28 @@ import {
 import { ColumnFilter } from "./components/ColumnFilter";
 import { DataTableSettings } from "./definition";
 import { FieldInspector } from "@/components/SummaryTable/components/FieldInspector";
+import {
+  summarizeField,
+  type SparkFilter,
+} from "@/components/SummaryTable/components/FieldDistribution";
+import { FieldMetadata } from "@/components/FieldMetadata";
+import type { datum } from "@/types/ChartTypes";
+import isEqual from "react-fast-compare";
+
+/** Header height in pixels: one line of names, or names over distributions. */
+export const HEADER_HEIGHT = 36;
+export const HEADER_HEIGHT_WITH_DISTRIBUTIONS = 62;
 
 interface DataTableHeaderProps {
   settings: DataTableSettings;
   onSettingsChange?: (settings: Partial<DataTableSettings>) => void;
   localFilters?: boolean;
   onColumnResize?: (id: string, width: number | null) => void;
+  /**
+   * Profiles of the rows this table can show. When set, each header draws
+   * its field's distribution under the name.
+   */
+  distributionProfiles?: FieldProfile[];
 }
 
 export function DataTableHeader({
@@ -33,6 +49,7 @@ export function DataTableHeader({
   onSettingsChange,
   onColumnResize,
   localFilters = false,
+  distributionProfiles,
 }: DataTableHeaderProps) {
   const { columns, sortBy, sortDirection, filters } = settings;
   const updateChart = useDataLayer((state) => state.updateChart);
@@ -44,6 +61,7 @@ export function DataTableHeader({
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const fieldSettings = useDataLayer((state) => state.fieldSettings);
   const label = getFieldLabel ?? ((field: string) => field);
+  const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const nonce = useDataLayer((state) => state.nonce);
   const profiles = useMemo(
@@ -181,6 +199,30 @@ export function DataTableHeader({
             const filter = filters.find(
               (f: Filter) => f.field === column.field
             );
+            // Numbers sit against the right edge, like their cells.
+            const alignRight = profile.dataType === "numeric";
+            const scoped = distributionProfiles?.find(
+              (fieldProfile) => fieldProfile.name === column.field
+            );
+            // A mark filters to its rows; the same mark again clears it.
+            const summary =
+              scoped &&
+              summarizeField(
+                scoped,
+                (value) =>
+                  formatFieldValue
+                    ? formatFieldValue(column.field, value as datum)
+                    : String(value),
+                label(column.field),
+                (next: SparkFilter) => {
+                  const nextFilter = { ...next, field: column.field } as Filter;
+                  handleFilterChange(
+                    column.id,
+                    isEqual(filter, nextFilter) ? undefined : nextFilter
+                  );
+                },
+                filter
+              );
 
             return (
               <TableHead
@@ -203,16 +245,20 @@ export function DataTableHeader({
                 <div
                   className="eda-column-heading"
                   data-sorted={sortBy === column.field || undefined}
+                  data-align={alignRight ? "right" : undefined}
                 >
                   <button
                     type="button"
-                    className="flex min-w-0 flex-1 items-center gap-1 text-left"
+                    className="eda-column-sort"
                     aria-label={`Sort by ${column.field}`}
                     onClick={() => handleSort(column.field)}
                   >
-                    <span className="min-w-0 flex-1 truncate">
-                      {label(column.field)}
-                    </span>
+                    <FieldMetadata
+                      profile={scoped ?? profile}
+                      label={label(column.field)}
+                      compact
+                      className="eda-column-name"
+                    />
                     {sortBy === column.field &&
                       (sortDirection === "asc" ? (
                         <ChevronUp className="h-4 w-4" />
@@ -275,6 +321,18 @@ export function DataTableHeader({
                     </Popover>
                   </div>
                 </div>
+                {distributionProfiles && (
+                  <div className="eda-column-spark">
+                    {summary ? (
+                      <>
+                        {summary.graphic}
+                        <span className="sr-only">{summary.description}</span>
+                      </>
+                    ) : (
+                      <span className="text-muted-foreground">No values</span>
+                    )}
+                  </div>
+                )}
                 <div
                   role="separator"
                   aria-orientation="vertical"

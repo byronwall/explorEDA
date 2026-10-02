@@ -29,7 +29,11 @@ Run `pnpm check:ui` to reject native title attributes, SVG `<title>` elements, a
 - Use `FieldMetadata` for type, range or sample, distinct values, and null counts.
 - Keep field metadata based on the correct data scope. A filtered summary must describe filtered rows.
 - Keep field controls on one line. Put the type icon before the name and move details into the tooltip.
-- Keep table headers on one line. Show actions on the right without moving the name. Keep active filters visible.
+- Keep table header names on one line. Show actions beside the name without moving it. Keep active filters visible.
+- Align a column's header with its cells: numbers right, everything else left. A number column shows its hover actions on the left.
+- Show each column's type with the type icon before its name.
+- The Rows view draws each field's distribution under its column name, from the rows that pass the chart filters. A click or drag on it filters that column. A data table chart offers the same as a setting.
+- Mark the text a table search matched in every cell that matched.
 - Show a missing table cell as a small, centered monospace `null`, never a dash or a blank.
 - Let every filter reach missing values: a Missing count filters to its rows, and column filters offer Only missing values.
 - Keep row actions horizontal. Show them on hover and keyboard focus, and keep them available on touch screens.

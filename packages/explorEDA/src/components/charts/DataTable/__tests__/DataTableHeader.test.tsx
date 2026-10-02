@@ -92,7 +92,9 @@ const mockUseDataLayer = vi.fn();
 
 vi.mock("@/providers/DataLayerProvider", () => ({
   useDataLayer: (selector: (state: unknown) => unknown) =>
-    mockUseDataLayer(selector),
+    selector.toString().includes("formatFieldValue")
+      ? (_field: string, value: unknown) => String(value)
+      : mockUseDataLayer(selector),
 }));
 
 const renderHeader = (settings: DataTableSettings) =>
@@ -128,6 +130,58 @@ describe("DataTableHeader", () => {
 
     expect(screen.getByText("name")).toBeInTheDocument();
     expect(screen.getByText("age")).toBeInTheDocument();
+  });
+
+  it("aligns number headers right, with the type icon before the name", () => {
+    renderHeader(mockSettings);
+
+    const heading = (name: string) =>
+      screen.getByText(name).closest(".eda-column-heading");
+    expect(heading("age")).toHaveAttribute("data-align", "right");
+    expect(heading("name")).not.toHaveAttribute("data-align");
+    expect(heading("age")?.querySelector("svg")).toBeInTheDocument();
+  });
+
+  it("draws a distribution under each name and filters from it", () => {
+    // jsdom has no PointerEvent, so pointer coordinates need MouseEvent.
+    globalThis.PointerEvent ??= class extends MouseEvent {
+      pointerId: number;
+      constructor(type: string, init: PointerEventInit = {}) {
+        super(type, init);
+        this.pointerId = init.pointerId ?? 0;
+      }
+    } as unknown as typeof PointerEvent;
+    const onSettingsChange = vi.fn();
+    const ageProfile = {
+      ...mockFieldProfiles[1]!,
+      statistics: { ...mockFieldProfiles[1]!.statistics!, bins: [1, 1, 1] },
+    };
+    render(
+      <table>
+        <DataTableHeader
+          settings={mockSettings}
+          onSettingsChange={onSettingsChange}
+          distributionProfiles={[mockFieldProfiles[0]!, ageProfile]}
+        />
+      </table>
+    );
+
+    expect(screen.getByText("Range 25 to 35, median 30")).toBeInTheDocument();
+    const spark = screen
+      .getByText("Range 25 to 35, median 30")
+      .closest(".eda-column-spark")!
+      .querySelector(".eda-summary-spark-hit")!;
+    spark.getBoundingClientRect = () =>
+      ({ left: 0, width: 90, top: 0, height: 20 }) as DOMRect;
+    fireEvent.pointerDown(spark, { button: 0, clientX: 5, pointerId: 1 });
+    fireEvent.pointerMove(spark, { clientX: 5, pointerId: 1 });
+    fireEvent.pointerUp(spark, { clientX: 5, pointerId: 1 });
+
+    expect(onSettingsChange).toHaveBeenCalledWith({
+      filters: [
+        expect.objectContaining({ type: "range", field: "age", min: 25 }),
+      ],
+    });
   });
 
   it("handles column sorting", () => {
