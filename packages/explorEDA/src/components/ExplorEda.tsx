@@ -56,7 +56,7 @@ export const ExplorEda = forwardRef<
   ExplorEdaHandle,
   {
     data: DatumObject[];
-    savedData: SavedDataStructure | undefined;
+    savedData?: SavedDataStructure;
     onStateChange?: (state: SavedDataStructure) => void;
   }
 >(function ExplorEda({ data, savedData, onStateChange }, ref) {

@@ -58,7 +58,6 @@ it("reads initial and edited chart settings from the same rendered state", async
     <ExplorEda
       ref={workspace}
       data={data}
-      savedData={undefined}
       onStateChange={onStateChange}
     />
   );

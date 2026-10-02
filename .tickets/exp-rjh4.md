@@ -90,3 +90,7 @@ Root review accepted at 36ed832. Public ExplorEda handle reads saveToStructure f
 **2026-10-02T04:35:02Z**
 
 Combined gate passed on Node 24.21.0 at 36ed832: pnpm check, including 378 package and 18 demo tests. Existing demo act warnings and build chunk size warning remain non-fatal.
+
+**2026-10-02T05:02:12Z**
+
+Final type review corrected savedData to an optional public prop, matching documented initial reads without saved settings. The focused host test now omits savedData and passes on Node24.21.0; package typecheck also passes. Runtime logic is unchanged. Final combined gate is rerunning to verify emitted declarations and demo consumers.
