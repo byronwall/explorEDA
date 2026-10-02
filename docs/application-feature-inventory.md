@@ -1,14 +1,14 @@
 # explorEDA application feature inventory
 
-Updated after the 2026-09-20 field, chart, and grouped-summary implementation and task-history reconciliation. See the [current gaps and verification](transcript-gap-analysis.md).
+Updated with bounded initiative retirement findings on 2026-10-02. See the [current gaps and verification](transcript-gap-analysis.md).
 
-Original audit: 2026-09-17, commit `a168f1b`. Current reviewed implementation: `f04e790` on `main`.
+Original audit: 2026-09-17, commit `a168f1b`. Retirement sections reviewed against `22a9bd3`; the full inventory was not re-audited.
 
 This document describes the current reviewed implementation. It covers the demo application and the public `exploreda` package. The companion [transcript gap analysis](transcript-gap-analysis.md) compares this behavior with the recorded product intent.
 
 The application is a desktop workspace for one in-memory table. Users can inspect fields, create linked views, filter rows, define calculated columns, and arrange a dashboard. Eleven registered view types share one data store and one Crossfilter instance per workspace.
 
-The strongest existing path is scalar data → field summary → charts and rows → linked filters. Field settings now preserve source values while applying runtime overrides and shared display rules. Saved workspace structures and a host callback exist. Named grouped summaries can feed read-only bar and table views. Durable saved views and general mark-level provenance do not exist.
+The strongest existing path is scalar data → field summary → charts and rows → linked filters. Field settings now preserve source values while applying runtime overrides and shared display rules. Saved workspace structures and a host callback exist. Named grouped summaries can feed read-only bar and table views. Durable saved views do not exist. Scatter and bar have planned, inspectable marks; other chart types do not yet have that trace path.
 
 ## Contents
 
@@ -87,7 +87,7 @@ Keep the fixed-seed shop generator. Dataset sources and licenses belong in the [
 | Multiple sources, relationships, joins, lookups, and source inspection | [Multi-source analysis](intent/multi-source-analysis/intent-brief.md). The retired slice accepts one in-memory table. |
 | Named analysis views, durable saves, and application navigation | [Project task views](intent/project-task-views/intent-brief.md). Package restore works; host storage remains separate. |
 | Runtime control of the complete workspace | [Runtime configuration](intent/runtime-configuration-story/intent-brief.md). Keep the public package and primary application aligned. |
-| Inspectable source-to-mark transformations and contributors | [Rendering and traceability](intent/deterministic-rendering-and-data-traceability/intent-brief.md). Scatter and bar trace paths now exist; a general trace graph remains broader scope. |
+| Inspectable source-to-mark transformations and contributors | [Traceability](#traceability-and-reproducibility). Scatter and bar have trace paths; other chart types and source-data filter flow remain future scope. |
 | Composable visualization definitions, derived layers, and advanced chart construction | [Composed analytical graphics](intent/composed-analytical-graphics/intent-brief.md). Per-chart settings remain the current model. |
 | Agent-created deterministic analysis views | [In-app analysis agent](intent/in-app-analysis-agent/intent-brief.md). This remains separate from the delivered inspection slice. |
 | Adaptive table controls, rich cells, grouping, selection, chart defaults, and facet quality | [Transcript gap analysis](transcript-gap-analysis.md). Column order and virtual rows now exist; do not reuse the old missing-feature list. |
@@ -174,7 +174,7 @@ These modes do not represent multiple named dashboards or independent analysis s
 
 ### Panel operations
 
-Users can add a registered chart, drag its header, resize its panel, duplicate it, delete it, expand it, or open its settings. New charts receive field defaults and appear below existing panels. The workspace scrolls to and focuses the new panel.
+Users can add a registered chart, drag its header, resize it from any edge or corner, duplicate it, delete it, expand it, or open its settings. Toolbar creation adds a chart below the existing panels. On a wide grid, a plus appears after 500 ms over free space and opens chart choices. The new chart uses that free region when it fits. Both paths use the same chart defaults and saved layout fields.
 
 Duplication copies settings and active filters into a chart with a new ID. The copy becomes another filter owner. Deleting a chart removes its filter dimension as well as its panel. Removing every chart clears their dimensions. Destructive chart removal has confirmation controls.
 
@@ -188,7 +188,7 @@ Chart settings use a local draft. Apply commits the draft; Reset discards draft 
 
 Data and Labels settings are common. Facets, Axes, and Spacing are exposed for row, bar, scatter, line, and box plots. Select settings expose numeric filter bounds for scatter, line, and bar charts. Those bounds define filters, not axis zoom limits.
 
-Summary field actions can create charts directly. Numeric fields offer distribution and relationship views. Categorical fields offer count and pivot views. Date fields offer a pivot route. Chart defaults still choose other fields heuristically; the action is not a general field-role assignment workflow.
+The floating Fields list opens from the toolbar or F key without adding a table or changing the saved layout. It shows filtered field facts, supports search and quick distribution inspection, and opens the shared field inspector. A field can create a chart or replace one chart axis through a menu or drag; the menu is the keyboard and touch path. Summary field actions can also create charts directly. Numeric fields offer distribution and relationship views. Categorical fields offer count and pivot views. Date fields offer a pivot route. Chart defaults still choose other fields heuristically; the action is not a general field-role assignment workflow.
 
 **View chart data** creates a data-table panel containing the fields used by a chart. It copies applicable field filters. It does not show the selected mark's contributing records or the chart's aggregated output. Because the new table is a chart, copied filters can themselves constrain the dashboard.
 
@@ -300,7 +300,7 @@ Faceting is exposed for row, bar, scatter, line, and box plots. The panel repeat
 
 Groups come from the full loaded source. They do not disappear merely because another chart filters out their records. Both layouts follow group discovery unless visible facets are selected and reordered. Facet headers can filter a facet value. Wrap and grid layouts page crowded groups, and each facet can open in a focused view. There is no top-N, pin, or nested facet control.
 
-The settings panel can select visible groups and reorder the selected chips. `visibleFacetIds` stores that ordered subset for both layouts. Wrap and grid pages fit their minimum cell dimensions, so a large facet set uses paging instead of internal facet scrolling. Layouts reserve space for headers, paging controls, and axis labels.
+A picker between facet paging actions selects visible groups without opening settings. It remains available with one page. The settings panel can also select visible groups and reorder the selected chips. `visibleFacetIds` stores that ordered subset for both layouts. Wrap and grid pages fit their minimum cell dimensions, so a large facet set uses paging instead of internal facet scrolling. Layouts reserve space for headers, paging controls, and axis labels.
 
 Facet keys preserve source types and both grid coordinates. Values containing `__` remain intact. Null and undefined share `(missing)`. Ambiguous text labels use quotes, so number `1` and text `"1"` remain distinct.
 
@@ -316,7 +316,7 @@ All supported facet families derive domains directly from the current full sourc
 | Box     | Full-source group categories and numeric Y.   |
 | Line    | Full-source X and left/right Y domains.       |
 
-The facet header states the scale population and cross-facet selection scope. Header values can toggle the parent chart filter. A Focus action opens one facet at a larger view, and Back returns to the layout. Field changes recompute their source extents.
+Facet labels can toggle the parent chart filter. A compact focus control beside a wrap label, or in a grid cell, opens one facet at a larger view. Back returns to the layout. Field changes recompute their source extents.
 
 All cells edit the parent chart's filters. A scatter brush selects its X/Y range across the dataset. It does not automatically add the row and column facet keys. There is no switch between “this facet only” and “all facets.” Header selection filters the chosen facet field, while focus changes the display view only.
 
@@ -527,7 +527,7 @@ Its toolbar supports paragraphs, six heading levels, bold, italic, strikethrough
 
 Content edits update workspace state. The panel scrolls as needed. It has no data-bound interpolation, generated analytical summary, chart annotations, or relationship to selected records.
 
-Source: [editor](../packages/explorEDA/src/components/charts/Markdown/Markdown.tsx), [toolbar](../packages/explorEDA/src/components/charts/Markdown/MenuBar.tsx).
+Source: [editor](../packages/explorEDA/src/components/charts/Markdown/Markdown.tsx), [toolbar](../packages/explorEDA/src/components/charts/Markdown/Markdown.tsx).
 
 ## Saved state, exports, and host integration
 
@@ -591,7 +591,9 @@ Sources: [table body][tablebody], [Crossfilter wrapper][crossfilter], [provider]
 
 The application preserves useful configuration evidence: field names, calculation text and dependencies, active chart filters, layouts, color choices, and saved chart settings. Tooltips expose some computed values. Raw rows can be viewed and exported.
 
-Scalar calculations expose source-row inputs, saved and draft values, dependency trees, and downstream uses. Pivot cells and named grouped summaries expose exact inputs and positional source IDs. IDs remain valid within the loaded snapshot. Complete mark provenance remains absent for ordinary bars, boxes, violins, and lines. There is no source checksum or data-version binding.
+Scalar calculations expose source-row inputs, saved and draft values, dependency trees, and downstream uses. Pivot cells and named grouped summaries expose exact inputs and positional source IDs. IDs remain valid within the loaded snapshot. Scatter points, guides, legends, facets, hover values, and badges resolve through a repeatable plan and chart trace. Bar marks use a bar plan with contributors, numeric exclusions, domains, baseline, and geometry. Both use a shared axis plan and chart trace scope. Boxes, violins, and lines do not yet have the same mark trace. There is no source checksum or data-version binding.
+
+The trace inspector resolves selected scatter and bar objects from current plans. Plan revisions clear stale selections. Rows removed by another chart have no scatter glyph to select; a source-data filter-flow view remains future scope. A full visual baseline, 10,000-row trace benchmark, and atomic mixed-render check were deferred by the accepted slice.
 
 **View chart data** is a field-oriented raw table shortcut for ordinary charts. It does not materialize bins, pivot outputs, density samples, line reduction buckets, or the records that produced one selected mark. A data-table chart with an aggregate ID uses the separate named grouped-summary path.
 
