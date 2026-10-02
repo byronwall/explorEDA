@@ -1,6 +1,6 @@
 ---
 id: exp-3sen
-status: partially_implemented
+status: closed
 deps: []
 links: []
 created: 2026-10-02T03:58:32Z
@@ -85,3 +85,11 @@ Additional proof: focused ChartSpecPanel tests now cover a valid aggregate with 
 | Browser add/edit/move/resize, keyboard, and 1280/783/390 widths | Independent browser pass in progress | blocked | Required visual proof not yet recorded |
 
 Focused tests, package typecheck, UI convention check, provider callback tests, and `git diff --check` pass on the current shared worktree. Root owns final review and browser acceptance.
+
+**2026-10-02T04:35:02Z**
+
+Combined gate passed on Node 24.21.0 against 36ed832: pnpm check includes UI check, package/demo build, type checks, 378 package tests and 18 demo tests. Warnings: existing demo act warnings and build chunk size warning. Browser first pass proved chart add/edit/move/resize but did not activate Chart spec or check 783/390; these criteria remain unfinished for the repeat pass. No missing required proof was relabeled.
+
+**2026-10-02T04:46:25Z**
+
+Accepted on 36ed832 after corrected independent Playwright pass. Chart spec opens current inventory: shop example 7 charts, calculation example 14. Add and rename Distribution of Order QA changed count to15; pointer move changed column0 to6 and resize changed height4 to5, inspector showed x6/y30/w6/h5. Expanded Category scale shows source/palette/mapping; Contribution shows formula and dependencies. Enter selects and expands; Escape closes and restores focus to Chart spec. At1280/783/390 document width equals viewport and inspector content remains readable. Evidence tmp/inspector-chart-spec-1280.png, inspector-color-reference-1280.png, inspector-calculation-reference-1280.png, inspector-1280-selected.png, inspector-783-selected.png, inspector-390-selected.png. Earlier missing-inspector claim was invalid because Chart spec had not been activated; repeat pass supersedes it. Full pnpm check passed on Node24.21.0.

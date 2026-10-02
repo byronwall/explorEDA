@@ -1,6 +1,6 @@
 ---
 id: exp-rjh4
-status: partially_implemented
+status: closed
 deps: []
 links: []
 created: 2026-10-02T03:58:32Z
@@ -82,3 +82,11 @@ This checkpoint supersedes the earlier public API test detail. The public ref te
 | Browser journey at required widths | Independent browser pass in progress | blocked | Required visual proof not yet recorded |
 
 Focused tests, package typecheck, UI convention check, provider callback tests, and `git diff --check` pass on the current shared worktree. Root owns final review and browser acceptance.
+
+**2026-10-02T04:30:05Z**
+
+Root review accepted at 36ed832. Public ExplorEda handle reads saveToStructure from the live provider. Focused test compares initial read and edited title/layout with rendered state, Chart spec inventory, and callback snapshot. Existing restore and edit-only callback tests pass. README documents mount timing and savedData absence. Host-read criteria pass; combined project gate and example journey remain under the epic.
+
+**2026-10-02T04:35:02Z**
+
+Combined gate passed on Node 24.21.0 at 36ed832: pnpm check, including 378 package and 18 demo tests. Existing demo act warnings and build chunk size warning remain non-fatal.

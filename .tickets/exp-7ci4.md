@@ -26,3 +26,9 @@ Complete add/edit/inspect/integrate and Reset from a fresh example. Keep persona
 
 ## Provenance
 Intent claims feedback-1 through feedback-6, final-inspection-1, final-inspection-3; selected shape in docs/intent/runtime-configuration-story/shape-brief.md; milestone M3 in docs/intent/runtime-configuration-story/implementation-plan.md. Repository baseline 22a9bd3694cf208c63911291a5926c3c5a367be0.
+
+## Notes
+
+**2026-10-02T04:39:19Z**
+
+Next packet review: existing hero opens shop-operations; Reset remounts original props and has a regression test. IntegrationGuide currently documents data/savedData/onStateChange and two typed examples. Owned next boundary is demo journey guidance and a direct route to integration, plus a working getSettings ref example. Must preserve primary example action, prepared initial state, add/edit controls and Reset. Acceptance: fresh example add/edit/Chart spec/integration/Reset by pointer and keyboard at 1280/783/390; guide explains initial and later getSettings reads with edit-only callback semantics. Exclude spec editing or extra persistence. Dependencies remain enforced; no demo implementation started.
