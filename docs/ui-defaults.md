@@ -22,6 +22,7 @@ Run `pnpm check:ui` to reject native title attributes, SVG `<title>` elements, a
 
 - Give each icon button an accessible action name.
 - Use `ActionTooltip` or `Button tooltip` for important icon actions. The shared delay is 140 ms.
+- Open tooltips on pointer hover only. Focus return must not open them. Keep accessible names and keyboard focus indicators.
 - Omit hover text that only repeats visible text.
 - Explain toggles, abbreviated options, and settings that differ subtly with a real tooltip that says what each choice does and why it differs. Never use a `title` attribute.
 - Identify a statistic by field and meaning. Never show an unexplained duplicate number.
@@ -35,7 +36,7 @@ Run `pnpm check:ui` to reject native title attributes, SVG `<title>` elements, a
 
 ## Popovers and dialogs
 
-Use compact, nonmodal popovers for field details, filters, chart data, colors, and grid settings.
+Use compact, nonmodal popovers for local work: field details, filters, chart data, and one chart's settings.
 Anchor them to the control or relevant panel. Bound their width and height to the viewport.
 Use short tabs when one editor has several distinct tasks. Keep primary actions reachable while content scrolls.
 Use a labeled search field and bounded lists for many fields or categories.
@@ -44,17 +45,25 @@ Chart settings must keep the chart visible. Prefer space beside the panel, then 
 When no outside space remains, use a compact corner editor with scrollable controls.
 Apply valid chart settings immediately so users can compare the result. Keep a reset action for the current edit session.
 Do not add a persistent sidebar for temporary inspection.
+Keep a chart's actions in its header: View data, Duplicate, details, settings, and Delete, each an icon with a tooltip. Clear filters stays visible there while the chart filters. Chart settings hold settings only.
+Hidden header actions take no room, so the chart name keeps the full header until the pointer or focus reaches it.
 The field list is the one workspace tool that stays open. It floats over the right edge from the top of the viewport, never resizes the chart grid, and becomes a bottom sheet on narrow screens. Controls it covers move beside it. Fields in the toolbar and the F key open it, and Shift+F opens every field's distribution in a full view.
 
-Use a modal only when focus must be protected, such as an expanded chart or a destructive confirmation.
-Expanded charts must close with Escape or an outside click, lock background scrolling, and restore focus.
-Escape closes an active nested editor before it closes the expanded chart.
+Workspace settings (calculations, colors, and grid) share one panel that floats over the right edge in the field list's place. Each toolbar button opens its tab and closes the panel when pressed again. Every tab stays mounted, so unsaved edits survive a switch. The panel has a narrow and a wide width, and becomes a full sheet on narrow screens. Escape closes it and returns focus to its toolbar button.
+The right edge shows one panel at a time. Rows and workspace settings replace each other. Both cover the field list, which returns when they close.
+
+Use a modal only when focus must be protected, such as chart details or a destructive confirmation.
+Chart details fill the viewport with the chart on the left and its controls on the right, with Settings open first and Chart data in a second tab. Below 900 px the chart sits above the controls. The grid shows no second copy of the chart, and settings stay live with the same reset action.
+Chart details must close with Escape or the close action, lock background scrolling, and restore focus.
+Escape closes an active nested editor before it closes chart details. A hover tooltip must not swallow it.
+Keep a confirmation small and centered: a short question, one sentence that names what is affected, Cancel, and a confirm button that names the action.
 
 ## Scope and layout
 
 - Keep view controls and active filter scope together in one sticky line. Group inspection tools (Fields, Rows) on the left and configuration (Calculations, colors, grid, workspace actions) on the right, as icon buttons with tooltips.
 - Keep filter chips on that line. Show the ones that fit, then a "+N more" popover that lists every filter, beside the row count and clear action.
-- Rows is a quick peek over the charts, not a separate view. R, Escape, or a click on the charts dismisses it. Calculations open in a dialog.
+- Rows is a drawer over the right of the viewport at full height, not a separate view. It leaves a strip of charts visible on the left at wide widths and takes the full width on narrow screens. R, Escape, or a click on the charts dismisses it. It must not resize the chart grid.
+- The Rows drawer covers the toolbar, so its header carries the row count and active filters. Table tools and the close action stay in that header while rows scroll.
 - Label local Rows filters and table searches separately from chart filters.
 - Keep a clear-filter control visible on every chart with an active filter.
 - Label filter bounds with their meaning and state where the filter applies.
@@ -62,6 +71,7 @@ Escape closes an active nested editor before it closes the expanded chart.
 - Start new source imports with summary and data tables. Let users choose their first chart.
 - Preserve the order and layout in saved analyses.
 - “View chart data” opens a temporary preview. It must not add a chart or move existing charts.
+- Placing a new chart on an occupied spot proposes moving the charts in its way down. Show them at their proposed positions before the user accepts. Apply the new chart and the moves together on accept. Back and Cancel leave every chart where it was.
 - Preview limits must be visible, such as “first 100 shown.”
 - Use a compact Columns trigger. Show selected columns inside a searchable popover, not a shelf of pills.
 

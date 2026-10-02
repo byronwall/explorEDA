@@ -30,8 +30,11 @@ interface ChartDraftApi {
   startPlacing: () => void;
   /** Returns from placement to the dialog with the draft intact. */
   backToEditing: () => void;
-  /** Adds the draft to the grid at this layout. */
-  place: (layout: ChartLayout) => void;
+  /**
+   * Adds the draft to the grid at this layout. `moves` holds the new
+   * positions of charts that shift to make room.
+   */
+  place: (layout: ChartLayout, moves?: Record<string, ChartLayout>) => void;
   cancel: () => void;
   /** Narrow grids stack charts, so they skip placement. */
   setSkipPlacement: (skip: boolean) => void;
@@ -49,6 +52,7 @@ export function ChartDraftProvider({ children }: { children: ReactNode }) {
   const { buildChart } = useCreateCharts();
   const addChart = useDataLayer((state) => state.addChart);
   const charts = useDataLayer((state) => state.charts);
+  const updateChartLayouts = useDataLayer((state) => state.updateChartLayouts);
   const [draft, setDraft] = useState<ChartDraftState | null>(null);
   const [skipPlacement, setSkipPlacement] = useState(false);
 
@@ -64,11 +68,14 @@ export function ChartDraftProvider({ children }: { children: ReactNode }) {
   );
 
   const place = useCallback(
-    (layout: ChartLayout) => {
-      if (draft) addChart({ ...draft.settings, layout } as DraftSettings);
+    (layout: ChartLayout, moves?: Record<string, ChartLayout>) => {
+      if (draft) {
+        if (moves && Object.keys(moves).length > 0) updateChartLayouts(moves);
+        addChart({ ...draft.settings, layout } as DraftSettings);
+      }
       setDraft(null);
     },
-    [addChart, draft]
+    [addChart, draft, updateChartLayouts]
   );
 
   const startPlacing = useCallback(() => {

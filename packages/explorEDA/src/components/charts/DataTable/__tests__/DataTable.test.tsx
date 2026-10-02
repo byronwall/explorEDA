@@ -65,7 +65,7 @@ it("searches and clears rows from the header without adding a table toolbar row"
   expect(screen.getAllByRole("row")).toHaveLength(3);
 });
 
-it("closes table search with Escape without restoring the expanded panel", async () => {
+it("closes table search with Escape without closing the details view", async () => {
   const settings = {
     ...dataTableDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 6 }),
     title: "Observations",
@@ -82,7 +82,9 @@ it("closes table search with Escape without restoring the expanded panel", async
       />
     </DataLayerProvider>
   );
-  fireEvent.click(screen.getByRole("button", { name: "Expand Observations" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Open details for Observations" })
+  );
   fireEvent.click(screen.getByRole("button", { name: "Search rows" }));
   fireEvent.keyDown(screen.getByRole("textbox", { name: "Search table" }), {
     key: "Escape",
@@ -93,13 +95,13 @@ it("closes table search with Escape without restoring the expanded panel", async
     ).not.toBeInTheDocument()
   );
   expect(
-    screen.getByRole("button", { name: "Restore Observations" })
+    screen.getByRole("button", { name: "Close details for Observations" })
   ).toBeInTheDocument();
   fireEvent.keyDown(
-    screen.getByRole("button", { name: "Restore Observations" }),
+    screen.getByRole("button", { name: "Close details for Observations" }),
     { key: "Escape" }
   );
   expect(
-    await screen.findByRole("button", { name: "Expand Observations" })
+    await screen.findByRole("button", { name: "Open details for Observations" })
   ).toBeInTheDocument();
 });

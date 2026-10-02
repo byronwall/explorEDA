@@ -27,7 +27,17 @@ function Tooltip({
 function TooltipTrigger({
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
+  return (
+    <TooltipPrimitive.Trigger
+      data-slot="tooltip-trigger"
+      {...props}
+      onFocus={(event) => {
+        props.onFocus?.(event);
+        // Focus return after closing an inspector must not open hover help.
+        event.preventDefault();
+      }}
+    />
+  );
 }
 
 function TooltipContent({

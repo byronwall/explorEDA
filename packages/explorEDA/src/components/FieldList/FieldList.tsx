@@ -34,7 +34,7 @@ export function matchesField(query: string, name: string, label: string) {
  * the viewport (or the workspace, when it starts lower) to the bottom, so
  * the list scrolls instead of the page.
  */
-function usePanelBox(workspace: RefObject<HTMLElement | null>) {
+export function usePanelBox(workspace: RefObject<HTMLElement | null>) {
   const [box, setBox] = useState<{
     top: number;
     right: number;
