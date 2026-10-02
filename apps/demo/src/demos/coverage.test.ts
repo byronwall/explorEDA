@@ -11,7 +11,6 @@ import {
   getFeatureGapCount,
   getFeatureReviewStatus,
   getImplementationStatus,
-  getOpenGapCount,
   type ExampleCoverage,
 } from "./coverage";
 import { examples } from "./examples";
@@ -57,8 +56,14 @@ describe("example coverage manifest", () => {
       "shown"
     );
     expect(getImplementationStatus("chart:row")).toBe("supported");
-    expect(getImplementationStatus("scale:log")).toBe("not-checked");
+    expect(getImplementationStatus("scale:log")).toBe("not-supported");
+    expect(getImplementationStatus("scale:time")).toBe("not-supported");
+    expect(getImplementationStatus("scale:symlog")).toBe("supported");
     expect(getFeatureReviewStatus("chart:row")).toBe("not-reviewed");
+    expect(getFeatureReviewStatus("scale:symlog")).toBe("reviewed");
+    expect(getExampleUsageStatus("scale:symlog", "shop-operations")).toBe(
+      "reviewed"
+    );
     expect(getExamplesUsingFeature("chart:row")).toEqual([
       "shop-operations",
       "palmer-penguins",
@@ -68,8 +73,25 @@ describe("example coverage manifest", () => {
       "calculated-orders",
       "shop-10000",
     ]);
-    expect(getFeatureGapCount("scale:log")).toBe(1);
-    expect(getOpenGapCount()).toBeGreaterThan(0);
+    expect(getFeatureGapCount("scale:log")).toBe(0);
+
+    const missingEvidence = exampleCoverage.map((example) =>
+      example.exampleId === "shop-operations"
+        ? {
+            ...example,
+            review: {
+              ...example.review!,
+              evidence: {
+                ...example.review!.evidence,
+                "chart:scatter": "",
+              },
+            },
+          }
+        : example
+    );
+    expect(findCoverageErrors(missingEvidence)).toContain(
+      "Missing review evidence: shop-operations/chart:scatter"
+    );
 
     const reviewed = [
       {

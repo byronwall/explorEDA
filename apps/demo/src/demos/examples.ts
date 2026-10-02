@@ -77,7 +77,7 @@ export const examples: ExampleData[] = [
     description:
       "Follow orders from revenue and margin to delivery, channels, and individual records. Click any bar and every other view narrows to match.",
     dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
-    shows: ["Click to filter", "Filter chips", "Log scales"],
+    shows: ["Click to filter", "Filter chips", "Symmetric log scales"],
     guide:
       "Try this: click Web in Sales channels. The other charts and the orders table narrow to web orders. Click Web again, or use Reset workspace, to start over.",
     icon: ShoppingCart,
@@ -113,6 +113,8 @@ export const examples: ExampleData[] = [
       "A catalog with no numbers worth plotting. Count categories, cross them in a pivot, and split material by stock and size in a facet grid, while the table searches for Sports.",
     dataset: { rows: "10,000 products", fields: 12, source: "Synthetic" },
     shows: ["Grid facets", "Pivot table", "Table search"],
+    guide:
+      "Try this: search Sports products for text with no matches. Clear the search to restore rows.",
     icon: Tags,
     data: "/categorical_medium.csv",
     savedData: categoricalChartSettings,
@@ -157,6 +159,8 @@ export const examples: ExampleData[] = [
       "14 calculated fields turn raw orders into contribution, dates, and service rules. Inspect the chains, preview a rule change, and apply it across linked views.",
     dataset: { rows: "10,000 orders", fields: 16, source: "Synthetic" },
     shows: ["Calculated fields", "Formula preview", "Wrap facets"],
+    guide:
+      "Try this: open Calculations, start a calculation, and enter an invalid formula. Check the parse error, then discard the draft.",
     icon: Calculator,
     data: "/datasets/shop-10000.csv",
     savedData: calculationDashboard,

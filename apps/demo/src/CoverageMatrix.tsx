@@ -10,6 +10,7 @@ import {
   getOpenGapCount,
 } from "@/demos/coverage";
 import type {
+  CoverageFeature,
   ExampleUsageStatus,
   ImplementationStatus,
   ReviewStatus,
@@ -74,8 +75,8 @@ function Status({ label, className }: { label: string; className?: string }) {
   );
 }
 
-function featureGapText(feature: (typeof coverageFeatures)[number]) {
-  return "gaps" in feature ? feature.gaps : [];
+function featureGapText(feature: CoverageFeature) {
+  return feature.gaps ?? [];
 }
 
 function getExampleCheckStatus(
@@ -89,7 +90,7 @@ function getExampleCheckStatus(
     : { label: "Example check pending", className: "text-muted-foreground" };
 }
 
-function hasAttention(feature: (typeof coverageFeatures)[number]) {
+function hasAttention(feature: CoverageFeature) {
   return (
     featureGapText(feature).length > 0 ||
     getImplementationStatus(feature.id) !== "supported" ||
@@ -101,7 +102,7 @@ function hasAttention(feature: (typeof coverageFeatures)[number]) {
 function FeatureRow({
   feature,
 }: {
-  feature: (typeof coverageFeatures)[number];
+  feature: CoverageFeature;
 }) {
   const implementation =
     implementationLabels[getImplementationStatus(feature.id)];
@@ -348,6 +349,7 @@ function AdvancedExampleMatrix() {
         <div
           role="region"
           aria-label="Scrollable example usage matrix"
+          tabIndex={0}
           className="overflow-auto"
         >
           <table
@@ -464,7 +466,7 @@ export function CoverageMatrix() {
       </p>
       <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
         Implemented means product support. Evidence means a declared example.
-        Feature reviewed and Example checked are separate review records.
+        Feature review summarizes reviewed example evidence. Example check belongs to one feature in one example.
       </p>
       <nav aria-label="Coverage views" className="mt-6 flex flex-wrap gap-2">
         <Button

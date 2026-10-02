@@ -3,7 +3,7 @@ import { SavedDataStructure } from "exploreda";
 export const demoSettings: SavedDataStructure = {
   charts: [
     {
-      title: "Where does Z change within the selected time window?",
+      title: "Where does Z change over time?",
       type: "scatter",
       field: "Run ID",
       layout: { x: 8, y: 0, w: 4, h: 3 },
@@ -36,7 +36,7 @@ export const demoSettings: SavedDataStructure = {
       id: "5cc180fb-d35e-4249-a46c-cba04f13b6a8",
     },
     {
-      title: "How does each run trace the Lorenz attractor?",
+      title: "How do runs trace the attractor?",
       type: "3d-scatter",
       field: "Run ID",
       layout: { x: 4, y: 3, w: 8, h: 7 },
@@ -163,7 +163,7 @@ export const demoSettings: SavedDataStructure = {
       colorField: "",
       colorScaleId: undefined,
       content:
-        '<h1 class="heading-node">How quickly do nearby Lorenz runs diverge?</h1><p class="text-node">The saved brush selects Time 0.20–1.00 seconds and Z 10–30. It shows 159 of 1,000 rows in both 3D views. Remove either filter above to expand the scope.</p><p class="text-node">The 3D axes use red for X, green for Y, and blue for Z. Rotate any faceted run to synchronize every 3D camera.</p>',
+        '<h1 class="heading-node">How quickly do nearby Lorenz runs diverge?</h1><p class="text-node">The saved brush selects Time 0.20–1.00 seconds and Z 10–30. It shows 164 of 1,000 rows in both 3D views. Remove either filter above to expand the scope.</p><p class="text-node">The 3D axes use red for X, green for Y, and blue for Z. Rotate any faceted run to synchronize every 3D camera.</p>',
     },
   ],
   calculations: [],
@@ -184,7 +184,7 @@ export const demoSettings: SavedDataStructure = {
       name: "Run ID",
       sourceField: "Run ID",
       type: "numerical",
-      palette: "Viridis",
+      palette: "Cool",
       min: 1,
       max: 5,
       id: "b9b0fa64-5d7b-4fdc-b191-daeb7920ecb3",

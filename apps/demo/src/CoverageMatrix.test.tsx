@@ -2,11 +2,11 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 import { CoverageMatrix } from "./CoverageMatrix";
-import { coverageFeatures, getOpenGapCount } from "./demos/coverage";
+import { coverageFeatures } from "./demos/coverage";
 import { examples } from "./demos/examples";
 
 describe("CoverageMatrix", () => {
-  it("defaults to an attention queue with exact gaps and explicit review terms", () => {
+  it("defaults to an attention queue and explains review terms", () => {
     render(
       <MemoryRouter initialEntries={["/?view=coverage"]}>
         <CoverageMatrix />
@@ -16,15 +16,12 @@ describe("CoverageMatrix", () => {
     expect(
       screen.getByRole("heading", { name: "Needs attention" })
     ).toBeInTheDocument();
-    expect(
-      screen.getByText(`${getOpenGapCount()} open gaps`)
-    ).toBeInTheDocument();
+    expect(screen.getAllByText("Implemented").length).toBeGreaterThan(0);
     expect(
       screen.getByText(
-        "No example is the declared reference for question-led titles."
+        /Feature review summarizes reviewed example evidence\. Example check belongs to one feature in one example\./
       )
     ).toBeInTheDocument();
-    expect(screen.getAllByText("Implemented").length).toBeGreaterThan(0);
     expect(
       screen.getAllByText("Feature review pending").length
     ).toBeGreaterThan(0);
@@ -32,11 +29,11 @@ describe("CoverageMatrix", () => {
       0
     );
     expect(screen.queryByRole("table")).not.toBeInTheDocument();
-    const featureSummary = screen.getByText("Meaningful titles");
+    const featureSummary = screen.getByText("Row chart");
     expect(featureSummary.closest("details")).not.toHaveAttribute("open");
     fireEvent.click(featureSummary);
     expect(
-      screen.getByText("State the question or finding that a view answers.")
+      screen.getByText("Compare category counts in horizontal rows.")
     ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Example usage" })).toHaveAttribute(
       "href",
@@ -66,6 +63,9 @@ describe("CoverageMatrix", () => {
     const table = screen.getByRole("table", {
       name: "Full example usage matrix",
     });
+    expect(
+      screen.getByRole("region", { name: "Scrollable example usage matrix" })
+    ).toHaveAttribute("tabindex", "0");
     const feature = coverageFeatures[0];
     const example = examples[0]!;
 
@@ -77,6 +77,11 @@ describe("CoverageMatrix", () => {
     expect(
       within(table).getByRole("columnheader", { name: example.title })
     ).toHaveClass("sticky", "top-0");
+    expect(
+      within(table).getByRole("link", {
+        name: "How quickly do nearby Lorenz runs diverge?: Dashboard layout — Example shown",
+      })
+    ).toHaveAttribute("href", "/?example=lorenz-3d");
     expect(
       screen.getAllByText("How quickly do nearby Lorenz runs diverge?")
     ).not.toHaveLength(0);

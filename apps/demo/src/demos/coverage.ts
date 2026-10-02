@@ -124,8 +124,7 @@ export const coverageFeatures = [
     family: "Labels and guides",
     description: "State the question or finding that a view answers.",
     required: true,
-    status: "not-checked",
-    gaps: ["No example is the declared reference for question-led titles."],
+    status: "supported",
   },
   {
     id: "labels:axes",
@@ -133,8 +132,7 @@ export const coverageFeatures = [
     family: "Labels and guides",
     description: "Name axes and include units when they affect meaning.",
     required: true,
-    status: "not-checked",
-    gaps: ["No example is the declared reference for axis labels and units."],
+    status: "supported",
   },
   {
     id: "guides:ticks",
@@ -142,8 +140,7 @@ export const coverageFeatures = [
     family: "Labels and guides",
     description: "Use readable tick values at a useful density.",
     required: true,
-    status: "not-checked",
-    gaps: ["No example intentionally demonstrates readable tick choices."],
+    status: "supported",
   },
   {
     id: "guides:grids",
@@ -157,37 +154,41 @@ export const coverageFeatures = [
     id: "scale:linear",
     label: "Linear scale",
     family: "Scales",
-    description: "Demonstrate a deliberate linear numerical scale.",
+    description: "Use a linear numerical scale.",
     required: true,
-    status: "not-checked",
-    gaps: ["No example intentionally demonstrates a deliberate linear scale."],
+    status: "supported",
   },
   {
     id: "scale:log",
     label: "Log scale",
     family: "Scales",
-    description: "Demonstrate a logarithmic numerical scale.",
+    description: "Use a logarithmic numerical scale.",
     required: true,
-    status: "not-checked",
-    gaps: ["No example intentionally demonstrates a logarithmic scale."],
+    status: "not-supported",
   },
   {
     id: "scale:time",
     label: "Time scale",
     family: "Scales",
-    description: "Demonstrate a scale that interprets values as dates.",
+    description: "Interpret values as dates on a time scale.",
     required: true,
-    status: "not-checked",
-    gaps: ["No example intentionally demonstrates a time scale."],
+    status: "not-supported",
   },
   {
     id: "scale:band",
     label: "Band scale",
     family: "Scales",
-    description: "Demonstrate a categorical position scale.",
+    description: "Position categories on a band scale.",
     required: true,
-    status: "not-checked",
-    gaps: ["No example intentionally demonstrates a band scale."],
+    status: "supported",
+  },
+  {
+    id: "scale:symlog",
+    label: "Symmetric log scale",
+    family: "Scales",
+    description: "Use a symmetric log scale for numerical values.",
+    required: true,
+    status: "supported",
   },
   {
     id: "color:categorical",
@@ -235,8 +236,7 @@ export const coverageFeatures = [
     family: "Facets",
     description: "Keep repeated views comparable with shared domains.",
     required: true,
-    status: "not-checked",
-    gaps: ["No example verifies shared facet domains."],
+    status: "supported",
   },
   {
     id: "interaction:brushing",
@@ -260,8 +260,7 @@ export const coverageFeatures = [
     family: "Interaction",
     description: "Keep the current filter state visible and removable.",
     required: true,
-    status: "not-checked",
-    gaps: ["No example opens with a visible active-filter display."],
+    status: "supported",
   },
   {
     id: "interaction:saved-filter-state",
@@ -269,8 +268,7 @@ export const coverageFeatures = [
     family: "Interaction",
     description: "Open an example with a deliberate filter already active.",
     required: true,
-    status: "not-checked",
-    gaps: ["No example restores with a deliberate filter already active."],
+    status: "supported",
   },
   {
     id: "table:sorting",
@@ -302,8 +300,7 @@ export const coverageFeatures = [
     family: "Tables",
     description: "Format values and widths for fast scanning.",
     required: true,
-    status: "not-checked",
-    gaps: ["No example is the declared reference for table formatting."],
+    status: "supported",
   },
   {
     id: "layout:dashboard",
@@ -319,8 +316,7 @@ export const coverageFeatures = [
     family: "States",
     description: "Explain when no rows or results are available.",
     required: true,
-    status: "not-checked",
-    gaps: ["No example demonstrates a useful empty state."],
+    status: "supported",
   },
   {
     id: "state:invalid",
@@ -328,8 +324,7 @@ export const coverageFeatures = [
     family: "States",
     description: "Explain invalid data or chart settings without data loss.",
     required: true,
-    status: "not-checked",
-    gaps: ["No example demonstrates recovery from invalid data or settings."],
+    status: "supported",
   },
   {
     id: "accessibility:naming",
@@ -337,8 +332,7 @@ export const coverageFeatures = [
     family: "Accessibility",
     description: "Give charts and controls useful accessible names.",
     required: true,
-    status: "not-checked",
-    gaps: ["No example has a recorded accessible-name review."],
+    status: "supported",
   },
   {
     id: "responsive:desktop-resize",
@@ -346,22 +340,30 @@ export const coverageFeatures = [
     family: "Responsive behavior",
     description: "Remain usable across supported desktop widths.",
     required: true,
-    status: "not-checked",
-    gaps: ["No example has a recorded desktop resize review."],
+    status: "supported",
   },
 ] as const satisfies readonly FeatureDefinition[];
 
-export type CoverageFeature = (typeof coverageFeatures)[number];
+export type CoverageFeature = (typeof coverageFeatures)[number] &
+  Pick<FeatureDefinition, "gaps">;
 export type CoverageFeatureId = CoverageFeature["id"];
+const typedCoverageFeatures: readonly CoverageFeature[] = coverageFeatures;
 export type DemonstrationStatus = Extract<
   ExampleUsageStatus,
   "shown" | "reviewed"
 >;
 
+export type ExampleReview = {
+  date: string;
+  report: string;
+  evidence: Partial<Record<CoverageFeatureId, string>>;
+};
+
 export type ExampleCoverage = {
   exampleId: string;
   intent: string;
   features: Partial<Record<CoverageFeatureId, DemonstrationStatus>>;
+  review?: ExampleReview;
 };
 
 export const exampleCoverage = [
@@ -370,14 +372,38 @@ export const exampleCoverage = [
     intent:
       "Click one channel and watch every linked view and the orders table narrow.",
     features: {
-      "chart:scatter": "shown",
+      "chart:scatter": "reviewed",
       "chart:row": "shown",
       "chart:bar": "shown",
       "chart:boxplot": "shown",
       "chart:data-table": "shown",
-      "color:categorical": "shown",
-      "interaction:cross-filter": "shown",
-      "layout:dashboard": "shown",
+      "labels:meaningful-title": "reviewed",
+      "labels:axes": "reviewed",
+      "guides:ticks": "reviewed",
+      "scale:symlog": "reviewed",
+      "color:categorical": "reviewed",
+      "color:legend": "reviewed",
+      "interaction:cross-filter": "reviewed",
+      "layout:dashboard": "reviewed",
+      "responsive:desktop-resize": "reviewed",
+      "accessibility:naming": "reviewed",
+    },
+    review: {
+      date: "2026-10-02",
+      report: "docs/reviews/2026-10-02-example-coverage.md#shop-operations",
+      evidence: {
+        "chart:scatter": "Revenue and margin scatter responds to channel filtering.",
+        "labels:meaningful-title": "Dashboard titles state the question each view answers.",
+        "labels:axes": "Scatter axes name Revenue and Margin with units.",
+        "guides:ticks": "Scatter ticks remain readable at the reviewed desktop width.",
+        "scale:symlog": "Revenue and Margin axes use symmetric-log scales.",
+        "color:categorical": "Channel categories use distinct, named colors.",
+        "color:legend": "The channel legend identifies each plotted category.",
+        "interaction:cross-filter": "Selecting Web narrows all linked views to 167 of 500 orders.",
+        "layout:dashboard": "The order book and linked charts remain readable together.",
+        "responsive:desktop-resize": "The dashboard fits at 1280 and 1024 pixels.",
+        "accessibility:naming": "Chart names and filter controls are exposed to assistive technology.",
+      },
     },
   },
   {
@@ -401,15 +427,34 @@ export const exampleCoverage = [
     intent:
       "Summarize a real season, compare positions in a pivot, and rank players in a sorted table.",
     features: {
-      "chart:summary": "shown",
+      "chart:summary": "reviewed",
       "chart:scatter": "shown",
       "chart:color-legend": "shown",
-      "chart:pivot": "shown",
-      "chart:data-table": "shown",
-      "color:categorical": "shown",
-      "color:legend": "shown",
-      "table:sorting": "shown",
+      "chart:pivot": "reviewed",
+      "chart:data-table": "reviewed",
+      "labels:meaningful-title": "shown",
+      "labels:axes": "shown",
+      "guides:ticks": "shown",
+      "color:categorical": "reviewed",
+      "color:legend": "reviewed",
+      "table:sorting": "reviewed",
+      "table:formatting": "reviewed",
       "table:virtualization": "shown",
+      "accessibility:naming": "reviewed",
+    },
+    review: {
+      date: "2026-10-02",
+      report: "docs/reviews/2026-10-02-example-coverage.md#nba-stats",
+      evidence: {
+        "chart:summary": "Summary table shows season field counts and distributions.",
+        "chart:pivot": "Pivot compares player positions and season statistics.",
+        "chart:data-table": "Data table lists player rows and selected fields.",
+        "color:categorical": "Position groups use distinct colors.",
+        "color:legend": "Legend names the position groups used by the scatter plot.",
+        "table:sorting": "Scoring table sorts players from highest to lowest points.",
+        "table:formatting": "Point totals use grouped thousands separators.",
+        "accessibility:naming": "Summary, pivot, scatter, and table regions have useful names.",
+      },
     },
   },
   {
@@ -420,10 +465,29 @@ export const exampleCoverage = [
       "chart:row": "shown",
       "chart:pivot": "shown",
       "chart:data-table": "shown",
+      "labels:meaningful-title": "shown",
+      "labels:axes": "shown",
+      "guides:ticks": "shown",
+      "scale:band": "reviewed",
       "color:categorical": "shown",
-      "facet:grid": "shown",
-      "table:filtering": "shown",
+      "facet:grid": "reviewed",
+      "interaction:active-filter": "reviewed",
+      "table:filtering": "reviewed",
+      "state:empty": "reviewed",
       "table:sorting": "shown",
+      "accessibility:naming": "reviewed",
+    },
+    review: {
+      date: "2026-10-02",
+      report: "docs/reviews/2026-10-02-example-coverage.md#categorical-charts",
+      evidence: {
+        "scale:band": "Product categories occupy discrete bands in the row chart.",
+        "facet:grid": "The material-by-size grid repeats the same measure across categories.",
+        "interaction:active-filter": "The table displays a removable Sports filter chip.",
+        "table:filtering": "Text search narrows matching product rows.",
+        "state:empty": "An unmatched search shows a no-rows message; clearing it restores rows.",
+        "accessibility:naming": "Chart and search controls expose useful accessible names.",
+      },
     },
   },
   {
@@ -446,13 +510,26 @@ export const exampleCoverage = [
     intent:
       "Explore linked product traffic, conversion, and response-time views.",
     features: {
-      "chart:line": "shown",
+      "chart:line": "reviewed",
       "chart:row": "shown",
       "chart:scatter": "shown",
       "chart:bar": "shown",
       "chart:boxplot": "shown",
       "chart:data-table": "shown",
+      "labels:meaningful-title": "shown",
+      "labels:axes": "shown",
+      "guides:ticks": "shown",
+      "scale:linear": "reviewed",
       "color:legend": "shown",
+      "accessibility:naming": "shown",
+    },
+    review: {
+      date: "2026-10-02",
+      report: "docs/reviews/2026-10-02-example-coverage.md#product-activity",
+      evidence: {
+        "chart:line": "Visitors per day is drawn across the ordered 0–90 study-day field.",
+        "scale:linear": "Study day and visitor values use numeric linear scales.",
+      },
     },
   },
   {
@@ -485,6 +562,14 @@ export const exampleCoverage = [
       "chart:pivot": "shown",
       "chart:markdown": "shown",
       "facet:wrap": "shown",
+      "state:invalid": "reviewed",
+    },
+    review: {
+      date: "2026-10-02",
+      report: "docs/reviews/2026-10-02-example-coverage.md#calculated-orders",
+      evidence: {
+        "state:invalid": "Invalid formula shows a parse error and disabled save; discarding preserves saved rows.",
+      },
     },
   },
   {
@@ -498,24 +583,56 @@ export const exampleCoverage = [
       "chart:boxplot": "shown",
       "chart:data-table": "shown",
       "chart:line": "shown",
+      "labels:meaningful-title": "shown",
+      "labels:axes": "shown",
+      "guides:ticks": "shown",
+      "scale:symlog": "shown",
       "facet:wrap": "shown",
-      "facet:shared-scales": "shown",
+      "facet:shared-scales": "reviewed",
       "table:virtualization": "shown",
       "layout:dashboard": "shown",
+      "accessibility:naming": "shown",
+    },
+    review: {
+      date: "2026-10-02",
+      report: "docs/reviews/2026-10-02-example-coverage.md#shop-10000",
+      evidence: {
+        "facet:shared-scales": "North and South facets use matching order and revenue ticks.",
+      },
     },
   },
   {
     exampleId: "lorenz-3d",
     intent: "Show coordinated brushing across 2D and 3D views.",
     features: {
-      "chart:scatter": "shown",
-      "chart:3d-scatter": "shown",
+      "chart:scatter": "reviewed",
+      "chart:3d-scatter": "reviewed",
       "chart:markdown": "shown",
-      "color:numerical": "shown",
-      "facet:wrap": "shown",
-      "interaction:brushing": "shown",
-      "interaction:cross-filter": "shown",
+      "labels:meaningful-title": "shown",
+      "labels:axes": "shown",
+      "guides:ticks": "shown",
+      "scale:linear": "shown",
+      "color:numerical": "reviewed",
+      "facet:wrap": "reviewed",
+      "interaction:brushing": "reviewed",
+      "interaction:cross-filter": "reviewed",
+      "interaction:saved-filter-state": "reviewed",
       "layout:dashboard": "shown",
+      "accessibility:naming": "reviewed",
+    },
+    review: {
+      date: "2026-10-02",
+      report: "docs/reviews/2026-10-02-example-coverage.md#lorenz-3d",
+      evidence: {
+        "chart:scatter": "2D scatter shows the selected Lorenz runs and filters.",
+        "chart:3d-scatter": "3D scatter shows the same runs on the Z axis.",
+        "color:numerical": "Numerical Run ID uses a visible Cool palette on the 3D view.",
+        "facet:wrap": "Run facets preserve shared scales across panels.",
+        "interaction:brushing": "A time-range brush changes the selected data.",
+        "interaction:cross-filter": "The range filters linked 2D and 3D views.",
+        "interaction:saved-filter-state": "The example opens with Time and Z filters active.",
+        "accessibility:naming": "Dashboard regions and filtering controls have accessible names.",
+      },
     },
   },
 ] as const satisfies readonly ExampleCoverage[];
@@ -525,7 +642,7 @@ export const coverageFamilies = [
 ] as [CoverageFeature["family"], ...CoverageFeature["family"][]];
 
 const featureById = new Map(
-  coverageFeatures.map((feature) => [feature.id, feature])
+  typedCoverageFeatures.map((feature) => [feature.id, feature] as const)
 );
 const exampleById = new Map<string, ExampleCoverage>(
   exampleCoverage.map((example) => [example.exampleId, example])
@@ -564,12 +681,12 @@ export function getExamplesUsingFeature(
 
 export function getFeatureGapCount(featureId: CoverageFeatureId): number {
   const feature = featureById.get(featureId);
-  return feature && "gaps" in feature ? feature.gaps.length : 0;
+  return feature?.gaps?.length ?? 0;
 }
 
 export function getOpenGapCount(): number {
-  return coverageFeatures.reduce(
-    (total, feature) => total + ("gaps" in feature ? feature.gaps.length : 0),
+  return typedCoverageFeatures.reduce(
+    (total, feature) => total + (feature.gaps?.length ?? 0),
     0
   );
 }
@@ -593,13 +710,35 @@ export function findCoverageErrors(
       }
       declaredFeatures.add(id);
     }
+
+    const reviewed = Object.entries(entry.features)
+      .filter(([, status]) => status === "reviewed")
+      .map(([id]) => id);
+    if (reviewed.length > 0) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(entry.review?.date ?? "")) {
+        errors.push(`Missing review date: ${entry.exampleId}`);
+      }
+      if (!entry.review?.report?.startsWith("docs/reviews/")) {
+        errors.push(`Missing review report: ${entry.exampleId}`);
+      }
+    }
+    for (const id of reviewed) {
+      if (!entry.review?.evidence[id as CoverageFeatureId]?.trim()) {
+        errors.push(`Missing review evidence: ${entry.exampleId}/${id}`);
+      }
+    }
+    for (const id of Object.keys(entry.review?.evidence ?? {})) {
+      if (!reviewed.includes(id)) {
+        errors.push(`Review evidence without reviewed assignment: ${entry.exampleId}/${id}`);
+      }
+    }
   }
 
-  for (const feature of coverageFeatures) {
+  for (const feature of typedCoverageFeatures) {
     if (
       feature.required &&
       getImplementationStatus(feature.id) !== "not-supported" &&
-      !("gaps" in feature && feature.gaps.length > 0) &&
+      !feature.gaps?.length &&
       !declaredFeatures.has(feature.id)
     ) {
       errors.push(`Required feature has no example: ${feature.id}`);
