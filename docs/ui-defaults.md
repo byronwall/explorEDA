@@ -80,6 +80,9 @@ Keep a confirmation small and centered: a short question, one sentence that name
 - Placing a new chart on an occupied spot proposes moving the charts in its way down. Show them at their proposed positions before the user accepts. Apply the new chart and the moves together on accept. Back and Cancel leave every chart where it was.
 - Preview limits must be visible, such as “first 100 shown.”
 - Use a compact Columns trigger. Show selected columns inside a searchable popover, not a shelf of pills.
+- Pick sets of fields with the shared `FieldPicker`. It shows the field list's rows (type, name, distinct, missing, and distribution) with a checkbox, and drops readings in narrow containers.
+- Drag a column by its name: sideways to reorder it, or away from the header to hide it. A line marks the drop position and a chip names the column. The column menu offers the same moves for keyboard and touch.
+- Right-click a table header or cell for its menu. A header offers filter, sort, move, hide, and copy name. A cell offers copy, filters built from its value, sort, and hide. Shift+right-click keeps the browser menu.
 
 ## Verification
 

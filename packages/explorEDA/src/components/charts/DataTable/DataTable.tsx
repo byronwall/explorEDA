@@ -9,6 +9,11 @@ import {
   HEADER_HEIGHT_WITH_DISTRIBUTIONS,
 } from "./DataTableHeader";
 import { useFilteredFieldProfiles } from "@/hooks/useFilteredFieldProfiles";
+import type { DataTableHeaderApi } from "./DataTableHeader";
+import {
+  DataTableContextMenu,
+  type TableMenuTarget,
+} from "./DataTableContextMenu";
 import { DataTableToolbar } from "./DataTableToolbar";
 import { DataTableSettings } from "./definition";
 import { getFilteredRows, DataTableRow } from "./filteredRows";
@@ -67,6 +72,8 @@ export function DataTable({
     columnWidths[column.id] ??
     column.width ??
     Math.max(110, column.field.length * 7 + 58);
+  const headerApi = useRef<DataTableHeaderApi>(null);
+  const [menu, setMenu] = useState<TableMenuTarget>();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [scrollTop, setScrollTop] = useState(0);
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
@@ -129,6 +136,28 @@ export function DataTable({
         <table
           className="eda-data-table border-collapse"
           data-distributions={showDistributions || undefined}
+          onContextMenu={(event) => {
+            // Shift keeps the browser's own menu within reach.
+            if (event.shiftKey || !(event.target instanceof Element)) return;
+            const cell = event.target.closest<HTMLElement>("[data-column-id]");
+            if (!cell || event.target.closest("input, textarea")) return;
+            const rowId = cell.closest("tr")?.dataset.rowId;
+            const row =
+              rowId === undefined
+                ? undefined
+                : filteredRows.find((item) => String(item.__ID) === rowId);
+            if (cell.tagName === "TD" && !row) return;
+            event.preventDefault();
+            // A keyboard-opened menu has no pointer position.
+            const box = cell.getBoundingClientRect();
+            const keyboard = event.clientX === 0 && event.clientY === 0;
+            setMenu({
+              x: keyboard ? box.left + 12 : event.clientX,
+              y: keyboard ? box.bottom - 4 : event.clientY,
+              columnId: cell.dataset.columnId!,
+              row,
+            });
+          }}
           aria-rowcount={filteredRows.length + 1}
           style={{
             tableLayout: "fixed",
@@ -148,6 +177,8 @@ export function DataTable({
             ))}
           </colgroup>
           <DataTableHeader
+            apiRef={headerApi}
+            quiet={menu !== undefined}
             localFilters={rows !== undefined}
             settings={settings}
             onSettingsChange={update}
@@ -175,6 +206,14 @@ export function DataTable({
           />
         </table>
       </div>
+      <DataTableContextMenu
+        key={menu ? `${menu.x}:${menu.y}` : "closed"}
+        target={menu}
+        onClose={() => setMenu(undefined)}
+        settings={settings}
+        onSettingsChange={update}
+        onOpenFilter={(columnId) => headerApi.current?.openFilter(columnId)}
+      />
     </div>
   );
 }

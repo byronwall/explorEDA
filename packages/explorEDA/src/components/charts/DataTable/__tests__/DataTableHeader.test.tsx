@@ -212,6 +212,62 @@ describe("DataTableHeader", () => {
     );
   });
 
+  it("hides a column dragged away from the header and skips the sort", () => {
+    globalThis.PointerEvent ??= class extends MouseEvent {
+      pointerId: number;
+      constructor(type: string, init: PointerEventInit = {}) {
+        super(type, init);
+        this.pointerId = init.pointerId ?? 0;
+      }
+    } as unknown as typeof PointerEvent;
+    const onSettingsChange = vi.fn();
+    render(
+      <table>
+        <DataTableHeader
+          settings={mockSettings}
+          onSettingsChange={onSettingsChange}
+        />
+      </table>
+    );
+
+    const name = screen.getByRole("button", { name: "Sort by name" });
+    fireEvent.pointerDown(name, { button: 0, clientX: 10, clientY: 10 });
+    fireEvent.pointerMove(window, { clientX: 20, clientY: 200 });
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Release to hide name"
+    );
+    fireEvent.pointerUp(window, { clientX: 20, clientY: 200 });
+    fireEvent.click(name);
+
+    expect(onSettingsChange).toHaveBeenCalledTimes(1);
+    expect(onSettingsChange).toHaveBeenCalledWith({
+      columns: [mockSettings.columns[1]],
+    });
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  });
+
+  it("reorders a column dragged along the header", () => {
+    const onSettingsChange = vi.fn();
+    render(
+      <table>
+        <DataTableHeader
+          settings={mockSettings}
+          onSettingsChange={onSettingsChange}
+        />
+      </table>
+    );
+
+    // jsdom lays nothing out, so every drop lands after the last column.
+    const name = screen.getByRole("button", { name: "Sort by name" });
+    fireEvent.pointerDown(name, { button: 0, clientX: 10, clientY: 10 });
+    fireEvent.pointerMove(window, { clientX: 60, clientY: 12 });
+    fireEvent.pointerUp(window, { clientX: 60, clientY: 12 });
+
+    expect(onSettingsChange).toHaveBeenCalledWith({
+      columns: [mockSettings.columns[1], mockSettings.columns[0]],
+    });
+  });
+
   it("handles column sorting", () => {
     const updateChart = vi.fn();
     mockUseDataLayer.mockImplementation(

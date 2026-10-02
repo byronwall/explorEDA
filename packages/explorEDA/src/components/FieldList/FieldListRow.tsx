@@ -44,6 +44,7 @@ import {
 } from "./fieldAxis";
 import { useApplyAxisField, useFieldFacts } from "./useAxisField";
 import { useFieldDrag } from "./FieldDragContext";
+import { FieldRowReadings } from "./FieldRowReadings";
 
 function UseOnChartMenu({ field, label }: { field: string; label: string }) {
   const charts = useDataLayer((state) => state.charts);
@@ -284,17 +285,6 @@ export function FieldListRow({
     (filter: SparkFilter) => toggleFilter(profile.name, filter),
     active
   );
-  const reading = summary
-    ? summary.label !== undefined
-      ? [summary.label, summary.stat].filter(Boolean).join(" ")
-      : summary.high !== undefined
-        ? `${summary.low}–${summary.high}`
-        : summary.low
-    : profile.totalCount === 0
-      ? "No rows"
-      : "No values";
-  const missingShare =
-    profile.totalCount > 0 ? profile.nullCount / profile.totalCount : 0;
   const missingOnly =
     active?.type === "value" &&
     active.values.length === 1 &&
@@ -325,56 +315,16 @@ export function FieldListRow({
             className="min-w-0"
           />
         </button>
-        <span className="eda-field-row-count">
-          <span className="sr-only">Distinct values: </span>
-          {profile.uniqueCount.toLocaleString()}
-        </span>
-        <span
-          className="eda-field-row-count"
-          data-missing-column=""
-          data-missing={profile.nullCount > 0 || undefined}
-        >
-          {profile.nullCount > 0 ? (
-            <ActionTooltip
-              content={`${profile.nullCount.toLocaleString()} missing (${
-                missingShare < 0.01
-                  ? "<1%"
-                  : `${Math.round(missingShare * 100)}%`
-              }). ${missingOnly ? "Click to stop showing only these rows." : "Click to show only these rows."}`}
-            >
-              <button
-                type="button"
-                className="eda-summary-missing-filter"
-                aria-pressed={missingOnly}
-                aria-label={`${profile.nullCount.toLocaleString()} missing. Show only rows missing ${label}`}
-                onClick={() =>
-                  toggleFilter(profile.name, { type: "value", values: [null] })
-                }
-              >
-                {profile.nullCount.toLocaleString()}
-              </button>
-            </ActionTooltip>
-          ) : (
-            <>
-              <span aria-hidden="true">–</span>
-              <span className="sr-only">No missing values</span>
-            </>
-          )}
-        </span>
-        <span className="eda-field-row-spark">
-          {summary && (
-            <>
-              {summary.graphic}
-              <span className="sr-only">{summary.description}</span>
-            </>
-          )}
-        </span>
-        <span
-          className="eda-field-row-reading"
-          data-filtered={active ? "" : undefined}
-        >
-          {reading}
-        </span>
+        <FieldRowReadings
+          profile={profile}
+          label={label}
+          summary={summary}
+          filtered={Boolean(active)}
+          missingOnly={missingOnly}
+          onMissingFilter={() =>
+            toggleFilter(profile.name, { type: "value", values: [null] })
+          }
+        />
         <CalculatedFieldBadge field={profile.name} side="left" />
         <div className="eda-field-row-actions">
           <ActionTooltip content="Inspect field">

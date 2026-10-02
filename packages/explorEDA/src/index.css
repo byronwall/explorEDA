@@ -612,6 +612,141 @@ html {
   font-size: 11px;
   font-variant-numeric: tabular-nums;
 }
+/* Field picker: the field list's rows with a checkbox, for choosing a set
+   of fields. Narrow containers drop the range, then the counts. */
+.eda-field-picker {
+  container-type: inline-size;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  font-size: 13px;
+}
+.eda-field-picker-popover {
+  width: min(31rem, calc(100vw - 1.5rem));
+}
+.eda-field-picker-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+}
+.eda-field-picker-head h3 {
+  font-size: 13px;
+  font-weight: 600;
+}
+.eda-field-picker-head button {
+  height: 26px;
+  margin-left: auto;
+  padding: 0 8px;
+  font-size: 12px;
+}
+.eda-field-picker .eda-field-list-columns {
+  padding: 0 0 0 28px;
+}
+.eda-field-picker .eda-field-list-rows {
+  max-height: min(19rem, 45vh);
+  margin: 0 -4px;
+  padding: 0 4px;
+}
+.eda-field-pick {
+  gap: 2px;
+  padding-left: 6px;
+  cursor: pointer;
+}
+.eda-field-pick > input {
+  flex-shrink: 0;
+  margin-right: 6px;
+}
+.eda-field-pick-name {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.eda-field-pick:has(input:focus-visible) {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+@container (max-width: 400px) {
+  .eda-field-picker .eda-field-row-reading {
+    display: none;
+  }
+  .eda-field-picker .eda-field-list-columns .eda-field-row-spark {
+    flex-basis: 56px;
+  }
+}
+@container (max-width: 300px) {
+  .eda-field-picker .eda-field-row-count {
+    display: none;
+  }
+}
+/* Dragging a column by its name: a line marks where it lands, and a chip
+   follows the pointer. Away from the header, the drop hides the column. */
+.eda-data-table th[data-dragging] {
+  opacity: 0.45;
+}
+.eda-column-drop {
+  position: fixed;
+  z-index: 60;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--primary);
+  pointer-events: none;
+}
+.eda-column-drag-chip {
+  position: fixed;
+  z-index: 61;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 18rem;
+  padding: 4px 8px 4px 5px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: 0 4px 14px rgb(20 40 70 / 14%);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+.eda-column-drag-chip svg {
+  flex-shrink: 0;
+  width: 13px;
+  height: 13px;
+  color: var(--muted-foreground);
+}
+.eda-column-drag-chip[data-remove] {
+  border-color: var(--destructive);
+  color: var(--destructive);
+}
+.eda-column-drag-chip[data-remove] svg {
+  color: inherit;
+}
+/* Right-click menu for table headers and cells, opened at the pointer. */
+.eda-table-menu-anchor {
+  position: fixed;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.eda-table-menu {
+  max-width: min(22rem, calc(100vw - 24px));
+  max-height: var(--radix-dropdown-menu-content-available-height);
+  overflow-y: auto;
+  font-size: 13px;
+}
+.eda-table-menu [role="menuitem"] svg {
+  width: 14px;
+  height: 14px;
+  color: var(--muted-foreground);
+}
+/* The pinned first header stays above the resize handles that scroll
+   under it. */
+.eda-data-table thead th:first-child {
+  z-index: 31;
+}
 /* Text a table search matched. */
 .eda-search-hit {
   border-radius: 2px;

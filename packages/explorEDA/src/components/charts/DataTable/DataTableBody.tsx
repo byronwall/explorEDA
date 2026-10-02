@@ -87,10 +87,15 @@ export function DataTableBody({
       {spacer(start, "before")}
       {visibleRows.length > 0 ? (
         visibleRows.map((row, index) => (
-          <TableRow key={String(row.__ID)} aria-rowindex={start + index + 2}>
+          <TableRow
+            key={String(row.__ID)}
+            aria-rowindex={start + index + 2}
+            data-row-id={String(row.__ID)}
+          >
             {settings.columns.map((column, index) => (
               <TableCell
                 key={column.id}
+                data-column-id={column.id}
                 className={
                   index === 0 ? "sticky left-0 z-10 bg-background" : ""
                 }

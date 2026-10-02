@@ -11,13 +11,25 @@ import {
   Filter as FilterIcon,
   Settings2,
 } from "lucide-react";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Popover,
   PopoverAnchor,
   PopoverContent,
 } from "@/components/ui/popover";
 import { useFilteredFieldProfiles } from "@/hooks/useFilteredFieldProfiles";
+import { useColumnDrag } from "./useColumnDrag";
+
+/** What the table's context menu can ask the header to do. */
+export type DataTableHeaderApi = {
+  openFilter: (columnId: string) => void;
+};
 import { ColumnFilter } from "./components/ColumnFilter";
 import { DataTableSettings } from "./definition";
 import { FieldInspector } from "@/components/SummaryTable/components/FieldInspector";
@@ -43,6 +55,9 @@ interface DataTableHeaderProps {
    * its field's distribution under the name.
    */
   distributionProfiles?: FieldProfile[];
+  apiRef?: React.Ref<DataTableHeaderApi>;
+  /** True while a menu covers the header, so hover details stay closed. */
+  quiet?: boolean;
 }
 
 export function DataTableHeader({
@@ -51,6 +66,8 @@ export function DataTableHeader({
   onColumnResize,
   localFilters = false,
   distributionProfiles,
+  apiRef,
+  quiet = false,
 }: DataTableHeaderProps) {
   const { columns, sortBy, sortDirection, filters } = settings;
   const updateChart = useDataLayer((state) => state.updateChart);
@@ -95,6 +112,24 @@ export function DataTableHeader({
       uniqueCount: 11,
       nullCount: 0,
     };
+  const headRef = useRef<HTMLTableSectionElement>(null);
+  useImperativeHandle(apiRef, () => ({
+    openFilter: (columnId) => {
+      const button = Array.from(
+        headRef.current?.querySelectorAll<HTMLElement>("th") ?? []
+      )
+        .find((cell) => cell.dataset.columnId === columnId)
+        ?.querySelector<HTMLElement>(".eda-column-filter");
+      if (!button) return;
+      filterAnchor.current = button;
+      setActiveFilter(columnId);
+    },
+  }));
+  const columnDrag = useColumnDrag({
+    columns,
+    label,
+    onChange: (next) => update({ columns: next }),
+  });
   useEffect(() => {
     if (!activeFilter) return;
     // Moving to another column replaces the controls; keep focus inside.
@@ -112,6 +147,7 @@ export function DataTableHeader({
   useEffect(() => () => resizeCleanup.current?.(), []);
 
   const handleSort = (field: string) => {
+    if (columnDrag.consumeClick()) return;
     if (sortBy === field) {
       // Toggle sort direction
       update({
@@ -208,7 +244,7 @@ export function DataTableHeader({
 
   return (
     <>
-      <TableHeader>
+      <TableHeader ref={headRef}>
         <TableRow>
           {columns.map((column, index) => {
             const profile = profileFor(column.field);
@@ -243,6 +279,8 @@ export function DataTableHeader({
             return (
               <TableHead
                 key={column.id}
+                data-column-id={column.id}
+                data-dragging={columnDrag.draggingId === column.id || undefined}
                 className={`relative select-none ${index === 0 ? "sticky left-0 z-20 bg-background" : ""}`}
                 style={{
                   width:
@@ -268,11 +306,13 @@ export function DataTableHeader({
                     className="eda-column-sort"
                     aria-label={`Sort by ${column.field}`}
                     onClick={() => handleSort(column.field)}
+                    {...columnDrag.handleProps(column.id)}
                   >
                     <FieldMetadata
                       profile={scoped ?? profile}
                       label={label(column.field)}
                       compact
+                      showTooltip={!quiet && !columnDrag.draggingId}
                       className="eda-column-name"
                     />
                     {sortBy === column.field &&
@@ -362,6 +402,7 @@ export function DataTableHeader({
           })}
         </TableRow>
       </TableHeader>
+      {columnDrag.overlay}
       <Popover
         open={activeColumn !== undefined}
         onOpenChange={(open) => {
