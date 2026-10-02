@@ -1,14 +1,24 @@
 ---
 title: "Data visualization review and example coverage — implementation plan"
 slug: "data-viz-review-and-example-coverage"
-phase: plan
+phase: execution
 status: current
-last_updated: "2026-10-01"
+last_updated: "2026-10-02"
 ---
 
 # Data visualization review and example coverage — implementation plan
 
+## Execution record
+
+Implementation started on `codex/example-coverage-tickets` from `60edb84`. Tickets own current acceptance and remaining proof. The sections below record the planning baseline from 2026-10-01.
+
+Coverage implementation is accepted at `daa5165`. All four coverage milestones are complete. Current [matrix proof](../../reviews/2026-10-02-feature-coverage-matrix.md) and [example reviews](../../reviews/2026-10-02-example-coverage.md) record browser acceptance. The manifest has 39 features, 37 with usage, two explicitly unsupported scales, and 37 reviewed assignments. All 11 chart types remain declared.
+
+The drawer fixes are committed at `c0dd3ad`. The rapid Escape regression fails with the original handler and passes with the fix. Final `pnpm check` passes on Node 24: 375 package tests and 18 demo tests. Separate drawer edge-case and saved-layout browser proof remains in progress.
+
 ## Plan at a glance
+
+The following sections preserve the planning baseline from 2026-10-01. Use the execution record above for current acceptance.
 
 The initiative is active. The review skill, coverage manifest, checks, and demo matrix exist. The remaining work is to reconcile coverage declarations, review current examples, and close confirmed gaps.
 
@@ -23,7 +33,7 @@ The manifest contains 38 feature rows and 10 examples. All 11 registered chart t
 
 These are manifest counts, not a count of missing product features. Current configurations already contain meaningful titles, axis labels, and a saved Lorenz brush. Some declarations have fallen behind the code.
 
-## Open tickets
+## Ticket links
 
 - [exp-9e6a](../../../.tickets/exp-9e6a.md): Prove the feature matrix in the browser (milestone 3; independent root).
 - [exp-2g7e](../../../.tickets/exp-2g7e.md): Reconcile example coverage with current evidence (milestone 4; independent root).

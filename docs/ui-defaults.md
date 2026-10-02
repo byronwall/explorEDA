@@ -77,6 +77,9 @@ Keep a confirmation small and centered: a short question, one sentence that name
 
 ## Verification
 
+Build the package with `pnpm --filter exploreda build` before browser checks. The demo uses built package exports.
+Use a frozen production preview during concurrent source edits. Vite can reload the page when test files change.
+
 Check changed flows at 1280 px, 783 px, and 390 px widths. Use real pointer and keyboard input.
 Check long field names, null values, active filters, many categories, and empty results.
 Check that popovers remain within the viewport and leave primary actions reachable.

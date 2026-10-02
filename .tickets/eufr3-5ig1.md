@@ -83,3 +83,15 @@ Review of existing behavior found no source defect to fix for item 5: `DataTable
 | 6. Saved-layout reload | Accept placement and reload in browser. | blocked | Browser verifier pending. |
 
 Next action: root builds the package and coordinates independent browser verification at 1280px, 783px, and 390px. Keep this ticket in progress until all browser criteria pass.
+
+**2026-10-02T05:11:53Z**
+
+Owner checkpoint: source fixes are committed at c0dd3ad with passing focused regression and UI conventions. Independent browser verification has not returned evidence after about 50 minutes. Requested its completed-step checkpoint and exact blocker, then interrupted and resumed the same worker to recover evidence. Browser criteria remain unfinished. Next: review that checkpoint and continue only remaining flows on the isolated :5188 server.
+
+**2026-10-02T05:22:16Z**
+
+Owner checkpoint: independent browser proves rapid Escape, focus return, calculation readability at three widths, Fields return after settings and Rows, placement preview cancellation, and accepted placement. Repeated Vite page reloads from shared watched files interrupted imported fixture proof. Frozen production preview at :5190 now isolates final edge-case and saved-analysis reopen checks. Remaining proof stays open; next action finish static preview checks.
+
+**2026-10-02T05:30:20Z**
+
+Owner combined-check checkpoint: final pnpm check passed on Node 24 after type repair, including UI checks, package/demo builds, both type checks, 375 package tests and 18 demo tests. Coverage accepted at daa5165. The isolated :5190 preview remains unchanged while final drawer browser proof continues. Keep this ticket in progress until edge cases and actual saved-layout reopen pass.
