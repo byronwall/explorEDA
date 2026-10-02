@@ -35,6 +35,13 @@ interface ColumnFilterProps {
   distribution?: FieldProfile;
   /** Formats the distribution's values like the column's cells. */
   format?: (value: unknown) => string;
+  /**
+   * Inside a settings panel: the field name is the group's legend, the
+   * control fills the panel, and Clear shows only while a filter is set.
+   */
+  embedded?: boolean;
+  /** Always list values to check, for charts that filter by category. */
+  valuesOnly?: boolean;
 }
 
 /** A slider step that gives about 200 stops, or whole numbers for integers. */
@@ -65,6 +72,8 @@ export function ColumnFilter({
   local = false,
   distribution,
   format = String,
+  embedded = false,
+  valuesOnly = false,
 }: ColumnFilterProps) {
   const updateRange = (
     type: "range" | "date-range",
@@ -109,6 +118,7 @@ export function ColumnFilter({
   const rangeFilter = filter?.type === "range" ? filter : undefined;
   const dateFilter = filter?.type === "date-range" ? filter : undefined;
   const lowCardinality =
+    valuesOnly ||
     profile.dataType === "boolean" ||
     (profile.dataType === "categorical" &&
       profile.uniqueCount <= MAX_VALUE_FILTER_OPTIONS);
@@ -123,6 +133,16 @@ export function ColumnFilter({
     profile.nullCount === 1 ? "row" : "rows"
   }`;
 
+  // Checked values stay listed even when the profile has no such category.
+  const listed = (profile.categories?.distribution ?? []).map(
+    ({ value }) => value as datum
+  );
+  const valueOptions = [
+    ...listed,
+    ...(filter?.type === "value" ? filter.values : []).filter(
+      (value) => value != null && !categoryIncludes(listed, value)
+    ),
+  ];
   const ranged =
     !lowCardinality &&
     (profile.dataType === "numeric" || profile.dataType === "datetime");
@@ -198,21 +218,32 @@ export function ColumnFilter({
     </div>
   );
 
+  const Group = embedded ? "fieldset" : "div";
   return (
-    <div
-      className="grid w-64 max-w-full gap-3 text-sm"
+    <Group
+      className={
+        embedded
+          ? "eda-chart-filter-field"
+          : "grid w-64 max-w-full gap-3 text-sm"
+      }
       onClick={(event) => event.stopPropagation()}
     >
-      <div>
-        <h3 className="font-semibold">Filter {columnLabel}</h3>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {local ? "Filters only this table." : "Filters all charts and rows."}{" "}
-          Changes apply immediately.
-        </p>
-      </div>
+      {embedded ? (
+        <legend>{columnLabel}</legend>
+      ) : (
+        <div>
+          <h3 className="font-semibold">Filter {columnLabel}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {local
+              ? "Filters only this table."
+              : "Filters all charts and rows."}{" "}
+            Changes apply immediately.
+          </p>
+        </div>
+      )}
       {lowCardinality ? (
         <div className="flex max-h-56 flex-col gap-2 overflow-auto py-1">
-          {(profile.categories?.distribution ?? []).map(({ value }) => {
+          {valueOptions.map((value) => {
             const label = categoryLabel(value);
             return (
               <label
@@ -379,15 +410,22 @@ export function ColumnFilter({
           </span>
         </label>
       )}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="justify-self-start"
-        aria-label={`Clear filter for ${columnLabel}`}
-        onClick={onClear}
-      >
-        <FilterX className="h-4 w-4" /> Clear filter
-      </Button>
-    </div>
+      {(!embedded || filter) && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="justify-self-start"
+          aria-label={`Clear filter for ${columnLabel}`}
+          onClick={onClear}
+        >
+          <FilterX className="h-4 w-4" /> Clear filter
+        </Button>
+      )}
+      {lowCardinality && valueOptions.length === 0 && (
+        <p className="text-xs text-muted-foreground">
+          Select on the chart to filter this field.
+        </p>
+      )}
+    </Group>
   );
 }
