@@ -51,6 +51,11 @@ export function ChartGridLayout({
   const placing = chartDraft?.draft?.phase === "placing";
   const setSkipPlacement = chartDraft?.setSkipPlacement;
   useEffect(() => setSkipPlacement?.(isNarrow), [isNarrow, setSkipPlacement]);
+  // While a new chart is being placed, charts in its way are shown where
+  // they would move. The store keeps their saved positions until it lands.
+  const [proposedMoves, setProposedMoves] = useState<
+    Record<string, ChartLayout>
+  >({});
 
   const containerRef = useRef<HTMLDivElement>(null);
   const pendingCell = useRef<string | null>(null);
@@ -79,6 +84,7 @@ export function ChartGridLayout({
 
   const layout: Layout[] = charts.map((chart, index) => ({
     ...chart.layout,
+    ...(placing ? proposedMoves[chart.id] : undefined),
     ...(isNarrow ? { x: 0, y: index, w: 1 } : {}),
     ...(activeResize?.id === chart.id
       ? { maxW: activeResize.maxW, maxH: activeResize.maxH }
@@ -284,7 +290,7 @@ export function ChartGridLayout({
           !activeResize.axis.includes("s") &&
           !activeResize.axis.includes("e")
         }
-        onLayoutChange={isNarrow ? undefined : handleLayoutChange}
+        onLayoutChange={isNarrow || placing ? undefined : handleLayoutChange}
         onDragStart={startInteraction}
         onDrag={moveDrag}
         onDragStop={stopInteraction}
@@ -312,6 +318,7 @@ export function ChartGridLayout({
           columnWidth={columnWidth}
           rowHeight={gridSettings.rowHeight}
           padding={gridSettings.containerPadding}
+          onProposal={setProposedMoves}
         />
       )}
       {addTarget && (

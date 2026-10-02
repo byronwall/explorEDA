@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button";
 import {
-  ActionTooltip,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { ColorScaleManager } from "./ColorScaleManager";
+import {
+  WorkspaceSettingsDrawer,
+  type WorkspaceSettingsTab,
+} from "./WorkspaceSettingsDrawer";
 import { ChartCreationButtons } from "./plot/ChartCreationButtons";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -30,6 +31,7 @@ import {
   Keyboard,
   ListTree,
   MoreHorizontal,
+  Palette,
   Rows3,
   X,
 } from "lucide-react";
@@ -41,8 +43,6 @@ import { focusChartInContainer, highlightChartInContainer } from "./chartFocus";
 
 export { focusChartInContainer };
 import { PlotChartPanel } from "./PlotChartPanel";
-import { CalculationManager } from "./calculations/CalculationManager";
-import { GridSettingsPanel } from "./settings/GridSettingsPanel";
 import { useAlertStore } from "@/stores/alertStore";
 import {
   Dialog,
@@ -99,10 +99,10 @@ export function PlotManager() {
     (state) => state.restoreAnalysisFromStructure
   );
   const data = useDataLayer((state) => state.data);
+  const calculationCount = useDataLayer((state) => state.calculations.length);
   const showAlert = useAlertStore((state) => state.showAlert);
 
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
-  const [calculationsOpen, setCalculationsOpen] = useState(false);
   const knownChartIds = useRef(new Set<string>());
   const [announcement, setAnnouncement] = useState("");
   const [jsonDialogOpen, setJsonDialogOpen] = useState(false);
@@ -119,7 +119,39 @@ export function PlotManager() {
   const rowsPeekId = useId();
   const [fieldsOpen, setFieldsOpen] = useState(false);
   const [fieldsOverview, setFieldsOverview] = useState(false);
-  const [rowsOpen, setRowsOpen] = useState(false);
+  const [rowsOpen, setRowsOpenState] = useState(false);
+  const settingsDrawerId = useId();
+  const settingsToggles = useRef<
+    Partial<Record<WorkspaceSettingsTab, HTMLButtonElement | null>>
+  >({});
+  const [settingsTab, setSettingsTab] = useState<WorkspaceSettingsTab>();
+  const [settingsWide, setSettingsWide] = useState(false);
+
+  // Rows and workspace settings share the right edge, so one replaces the
+  // other. Both cover the field list, which returns when they close.
+  const setRowsOpen = useCallback((open: boolean) => {
+    if (open) setSettingsTab(undefined);
+    setRowsOpenState(open);
+  }, []);
+  const closeSettings = useCallback(() => {
+    const drawer = document.getElementById(settingsDrawerId);
+    const hadFocus = drawer?.contains(document.activeElement) ?? false;
+    const toggle = settingsTab && settingsToggles.current[settingsTab];
+    setSettingsTab(undefined);
+    if (hadFocus) toggle?.focus({ preventScroll: true });
+  }, [settingsDrawerId, settingsTab]);
+  const toggleSettings = (tab: WorkspaceSettingsTab) => {
+    if (settingsTab === tab) {
+      closeSettings();
+      return;
+    }
+    // The calculation list is a table, so it opens with room to read it.
+    if (!settingsTab) {
+      setSettingsWide(tab === "calculations" && calculationCount > 0);
+    }
+    setRowsOpenState(false);
+    setSettingsTab(tab);
+  };
 
   const [fieldsTipOpen, setFieldsTipOpen] = useState(false);
   const quietFieldsTip = useRef(false);
@@ -141,7 +173,7 @@ export function PlotManager() {
     const hadFocus = peek?.contains(document.activeElement) ?? false;
     setRowsOpen(false);
     if (hadFocus) rowsToggleRef.current?.focus({ preventScroll: true });
-  }, [rowsPeekId]);
+  }, [rowsPeekId, setRowsOpen]);
 
   // Letter shortcuts respond unless the user is typing. With several
   // workspaces on a page, only the focused one responds.
@@ -196,7 +228,7 @@ export function PlotManager() {
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [rowsOpen, closeRows, acceptsShortcut]);
+  }, [rowsOpen, closeRows, setRowsOpen, acceptsShortcut]);
 
   // ? opens the keyboard shortcuts.
   useEffect(() => {
@@ -265,18 +297,21 @@ export function PlotManager() {
     if (highlightTimer.current !== undefined) return;
     highlightChartInContainer(containerRef.current, id);
   }, []);
-  const showChart = useCallback((id: string) => {
-    setRowsOpen(false);
-    requestAnimationFrame(() => {
-      focusChartInContainer(containerRef.current, id);
-      highlightChartInContainer(containerRef.current, id);
-      window.clearTimeout(highlightTimer.current);
-      highlightTimer.current = window.setTimeout(() => {
-        highlightTimer.current = undefined;
-        highlightChartInContainer(containerRef.current, undefined);
-      }, 1200);
-    });
-  }, []);
+  const showChart = useCallback(
+    (id: string) => {
+      setRowsOpen(false);
+      requestAnimationFrame(() => {
+        focusChartInContainer(containerRef.current, id);
+        highlightChartInContainer(containerRef.current, id);
+        window.clearTimeout(highlightTimer.current);
+        highlightTimer.current = window.setTimeout(() => {
+          highlightTimer.current = undefined;
+          highlightChartInContainer(containerRef.current, undefined);
+        }, 1200);
+      });
+    },
+    [setRowsOpen]
+  );
   useEffect(() => () => window.clearTimeout(highlightTimer.current), []);
 
   useEffect(() => {
@@ -297,7 +332,7 @@ export function PlotManager() {
     setAnnouncement(`${title} added`);
     setRowsOpen(false);
     requestAnimationFrame(() => focusChartElement(addedChart.id));
-  }, [charts, focusChartElement]);
+  }, [charts, focusChartElement, setRowsOpen]);
 
   const copyChartsToClipboard = async () => {
     try {
@@ -361,8 +396,9 @@ export function PlotManager() {
 
   const handleRemoveAllCharts = async () => {
     const confirmed = await showAlert(
-      "Remove All Charts",
-      "Are you sure you want to remove all charts? This action cannot be undone."
+      "Remove all charts?",
+      "Every chart will be removed from the workspace.",
+      { confirmLabel: "Remove all", destructive: true }
     );
 
     if (confirmed) {
@@ -377,6 +413,7 @@ export function PlotManager() {
         ref={controlsRef}
         className="eda-workspace-controls"
         data-fields-open={fieldsOpen || undefined}
+        data-settings-open={(settingsTab && !settingsWide) || undefined}
       >
         <header className="eda-workspace-toolbar">
           <div
@@ -441,47 +478,54 @@ export function PlotManager() {
           </div>
           <span className="eda-toolbar-divider" aria-hidden="true" />
           <ChartCreationButtons />
-          <ActiveFilterStatus
-            view={rowsOpen ? "rows" : "charts"}
-            onShowChart={showChart}
-            onHighlightChart={highlightChart}
-          />
+          {rowsOpen ? (
+            // The Rows drawer covers this line and shows the scope itself.
+            <span className="eda-filter-status" aria-hidden="true" />
+          ) : (
+            <ActiveFilterStatus
+              onShowChart={showChart}
+              onHighlightChart={highlightChart}
+            />
+          )}
           <div
             role="group"
             aria-label="Configure workspace"
             className="eda-toolbar-group"
           >
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Calculations"
-              tooltip="Calculations: create and edit calculated fields"
-              onClick={() => setCalculationsOpen(true)}
-            >
-              <Calculator aria-hidden="true" />
-            </Button>
-            <ColorScaleManager />
-            <Popover>
-              <ActionTooltip content="Grid settings: columns, row height, and spacing">
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label="Grid settings"
-                  >
-                    <Grid aria-hidden="true" />
-                  </Button>
-                </PopoverTrigger>
-              </ActionTooltip>
-              <PopoverContent
-                align="end"
-                aria-label="Grid settings"
-                className="w-72 space-y-4"
+            {(
+              [
+                [
+                  "calculations",
+                  "Calculations",
+                  "Calculations: create and edit calculated fields",
+                  Calculator,
+                ],
+                ["colors", "Colors", "Colors: adjust color scales", Palette],
+                [
+                  "grid",
+                  "Grid",
+                  "Grid: columns, row height, and spacing",
+                  Grid,
+                ],
+              ] as const
+            ).map(([tab, label, tooltip, Icon]) => (
+              <Button
+                key={tab}
+                ref={(element) => {
+                  settingsToggles.current[tab] = element;
+                }}
+                variant="ghost"
+                size="icon"
+                aria-label={label}
+                aria-pressed={settingsTab === tab}
+                aria-expanded={settingsTab === tab}
+                aria-controls={settingsTab ? settingsDrawerId : undefined}
+                tooltip={tooltip}
+                onClick={() => toggleSettings(tab)}
               >
-                <h3 className="text-sm font-semibold">Grid settings</h3>
-                <GridSettingsPanel />
-              </PopoverContent>
-            </Popover>
+                <Icon aria-hidden="true" />
+              </Button>
+            ))}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -553,9 +597,26 @@ export function PlotManager() {
         {rowsOpen && (
           <RowsPeek
             id={rowsPeekId}
-            width={containerWidth}
+            scope={
+              <ActiveFilterStatus
+                view="rows"
+                onShowChart={showChart}
+                onHighlightChart={highlightChart}
+              />
+            }
             containerRef={controlsRef}
             onClose={closeRows}
+          />
+        )}
+        {settingsTab && (
+          <WorkspaceSettingsDrawer
+            id={settingsDrawerId}
+            tab={settingsTab}
+            onTabChange={setSettingsTab}
+            wide={settingsWide}
+            onWideChange={setSettingsWide}
+            onClose={closeSettings}
+            workspaceRef={containerRef}
           />
         )}
         {fieldsOpen && (
@@ -669,16 +730,6 @@ export function PlotManager() {
           )
         )}
       </main>
-
-      <Dialog open={calculationsOpen} onOpenChange={setCalculationsOpen}>
-        <DialogContent
-          className="eda-calculations-dialog max-h-[88vh] overflow-y-auto sm:max-w-4xl"
-          aria-describedby={undefined}
-        >
-          <DialogTitle className="sr-only">Calculations</DialogTitle>
-          <CalculationManager />
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

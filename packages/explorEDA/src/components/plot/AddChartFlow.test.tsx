@@ -25,6 +25,7 @@ function Grid() {
   const liveCount = useDataLayer(
     (state) => Object.keys(state.liveItems).length
   );
+  const saveToStructure = useDataLayer((state) => state.saveToStructure);
   const placing = useChartDraft()?.draft?.phase === "placing";
   return (
     <>
@@ -34,6 +35,11 @@ function Grid() {
           .join(" ")}
       </output>
       <output aria-label="Live charts">{liveCount}</output>
+      <output aria-label="Saved layout">
+        {saveToStructure()
+          .charts.map((chart) => `${chart.layout.x},${chart.layout.y}`)
+          .join(" ")}
+      </output>
       {placing && (
         <ChartPlacementLayer
           charts={charts}
@@ -108,4 +114,57 @@ it("returns to the dialog from placement with Escape", async () => {
     await screen.findByRole("dialog", { name: "Add a chart" })
   ).toBeInTheDocument();
   expect(screen.getByLabelText("Charts")).toHaveTextContent(/^bar@0,0$/);
+});
+
+it("proposes moving a chart out of the way and applies it only on accept", async () => {
+  renderWorkspace();
+  fireEvent.click(screen.getByRole("button", { name: "Add chart" }));
+  fireEvent.click(
+    within(
+      await screen.findByRole("dialog", { name: "Add a chart" })
+    ).getByRole("button", { name: "Add to grid" })
+  );
+  const bar = await screen.findByRole("dialog", {
+    name: "Place the new Bar Chart",
+  });
+  // Move from the free spot onto the existing chart.
+  for (let step = 0; step < 6; step++) {
+    fireEvent.keyDown(document.body, { key: "ArrowLeft" });
+  }
+  expect(bar).toHaveTextContent("1 chart moves down to make room.");
+  expect(screen.getByText("Moves here")).toBeInTheDocument();
+  // The proposal is a preview. The saved layout has not changed.
+  expect(screen.getByLabelText("Charts")).toHaveTextContent(/^bar@0,0$/);
+
+  fireEvent.click(within(bar).getByRole("button", { name: "Place chart" }));
+  expect(screen.getByLabelText("Charts")).toHaveTextContent("bar@0,4 bar@0,0");
+  // The moved chart keeps its new position in a saved layout.
+  expect(screen.getByLabelText("Saved layout")).toHaveTextContent("0,4 0,0");
+});
+
+it("leaves every chart in place when a proposed move is canceled", async () => {
+  renderWorkspace();
+  fireEvent.click(screen.getByRole("button", { name: "Add chart" }));
+  fireEvent.click(
+    within(
+      await screen.findByRole("dialog", { name: "Add a chart" })
+    ).getByRole("button", { name: "Add to grid" })
+  );
+  const bar = await screen.findByRole("dialog", {
+    name: "Place the new Bar Chart",
+  });
+  for (let step = 0; step < 6; step++) {
+    fireEvent.keyDown(document.body, { key: "ArrowLeft" });
+  }
+  expect(bar).toHaveTextContent("1 chart moves down to make room.");
+
+  fireEvent.keyDown(document.body, { key: "Escape" });
+  fireEvent.click(
+    within(
+      await screen.findByRole("dialog", { name: "Add a chart" })
+    ).getByRole("button", { name: "Cancel" })
+  );
+  expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  expect(screen.getByLabelText("Charts")).toHaveTextContent(/^bar@0,0$/);
+  expect(screen.getByLabelText("Live charts")).toHaveTextContent("1");
 });

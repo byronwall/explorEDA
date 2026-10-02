@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ActionTooltip } from "@/components/ui/tooltip";
 import {
   Popover,
   PopoverContent,
@@ -23,7 +22,7 @@ import {
   schemeCategory10,
   schemeSet3,
 } from "d3-scale-chromatic";
-import { Hash, Palette, Shapes } from "lucide-react";
+import { Hash, Shapes } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 
@@ -323,7 +322,8 @@ function ScaleListItem({
   );
 }
 
-export function ColorScaleManager() {
+/** Lists the workspace color scales and edits the selected one. */
+export function ColorScalePanel() {
   const { colorScales, updateColorScale } = useColorScales();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedScaleId, setSelectedScaleId] = useState<string | null>(
@@ -386,110 +386,90 @@ export function ColorScaleManager() {
   };
 
   return (
-    <Popover>
-      <ActionTooltip content="Manage color scales">
-        <PopoverTrigger asChild>
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            aria-label="Manage color scales"
-          >
-            <Palette aria-hidden="true" />
-          </Button>
-        </PopoverTrigger>
-      </ActionTooltip>
-      <PopoverContent
-        align="end"
-        aria-label="Color scale manager"
-        className="max-h-[min(80vh,640px)] w-[min(360px,calc(100vw-24px))] space-y-3 overflow-y-auto p-3"
-      >
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className="truncate text-sm font-semibold">Color scales</h2>
-            <p className="text-xs text-muted-foreground">
-              Choose a scale, then adjust its palette.
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Input
-            aria-label="Search color scales"
-            placeholder="Search scales"
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-          />
-          <div className="max-h-32 space-y-0.5 overflow-y-auto rounded-md border p-1">
-            {filteredScales.length > 0 ? (
-              filteredScales.map((scale) => (
-                <ScaleListItem
-                  key={scale.id}
-                  scale={scale}
-                  isSelected={scale.id === selectedScaleId}
-                  onClick={() => setSelectedScaleId(scale.id)}
-                />
-              ))
-            ) : (
-              <p className="px-2 py-3 text-center text-xs text-muted-foreground">
-                No matching scales
-              </p>
-            )}
-          </div>
-        </div>
-
-        {selectedScale ? (
-          <div className="space-y-3 border-t pt-3">
-            {selectedScale.type === "numerical" ? (
-              <NumericalScaleEditor
-                scale={selectedScale}
-                onUpdate={handleScaleUpdate}
-              />
-            ) : (
-              <CategoricalScaleEditor
-                key={selectedScale.id}
-                scale={selectedScale}
-                onUpdate={handleScaleUpdate}
-              />
-            )}
-            {selectedScale.type === "numerical" ? (
-              <NumericalScalePreview palette={selectedScale.palette} />
-            ) : (
-              <CategoricalScalePreview colors={selectedScale.palette} />
-            )}
-            {selectedNumericalScaleError && (
-              <p className="text-xs text-destructive" role="alert">
-                Enter finite values with a minimum below the maximum.
-              </p>
-            )}
-            <div className="sticky bottom-0 -mx-3 -mb-3 flex justify-end gap-2 border-t bg-popover px-3 py-3">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setState({ scales: colorScales, isDirty: false })
-                }
-                disabled={!state.isDirty}
-              >
-                Reset
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                onClick={handleSave}
-                disabled={!state.isDirty || Boolean(invalidNumericalScale)}
-              >
-                Save changes
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <p className="border-t pt-3 text-sm text-muted-foreground">
-            Choose a color field in chart settings to create its color scale.
+    <div className="space-y-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h2 className="truncate text-sm font-semibold">Color scales</h2>
+          <p className="text-xs text-muted-foreground">
+            Choose a scale, then adjust its palette.
           </p>
-        )}
-      </PopoverContent>
-    </Popover>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Input
+          aria-label="Search color scales"
+          placeholder="Search scales"
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.target.value)}
+        />
+        <div className="max-h-32 space-y-0.5 overflow-y-auto rounded-md border p-1">
+          {filteredScales.length > 0 ? (
+            filteredScales.map((scale) => (
+              <ScaleListItem
+                key={scale.id}
+                scale={scale}
+                isSelected={scale.id === selectedScaleId}
+                onClick={() => setSelectedScaleId(scale.id)}
+              />
+            ))
+          ) : (
+            <p className="px-2 py-3 text-center text-xs text-muted-foreground">
+              No matching scales
+            </p>
+          )}
+        </div>
+      </div>
+
+      {selectedScale ? (
+        <div className="space-y-3 border-t pt-3">
+          {selectedScale.type === "numerical" ? (
+            <NumericalScaleEditor
+              scale={selectedScale}
+              onUpdate={handleScaleUpdate}
+            />
+          ) : (
+            <CategoricalScaleEditor
+              key={selectedScale.id}
+              scale={selectedScale}
+              onUpdate={handleScaleUpdate}
+            />
+          )}
+          {selectedScale.type === "numerical" ? (
+            <NumericalScalePreview palette={selectedScale.palette} />
+          ) : (
+            <CategoricalScalePreview colors={selectedScale.palette} />
+          )}
+          {selectedNumericalScaleError && (
+            <p className="text-xs text-destructive" role="alert">
+              Enter finite values with a minimum below the maximum.
+            </p>
+          )}
+          <div className="sticky bottom-0 -mx-3 -mb-3 flex justify-end gap-2 border-t bg-popover px-3 py-3">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setState({ scales: colorScales, isDirty: false })}
+              disabled={!state.isDirty}
+            >
+              Reset
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              onClick={handleSave}
+              disabled={!state.isDirty || Boolean(invalidNumericalScale)}
+            >
+              Save changes
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <p className="border-t pt-3 text-sm text-muted-foreground">
+          Choose a color field in chart settings to create its color scale.
+        </p>
+      )}
+    </div>
   );
 }

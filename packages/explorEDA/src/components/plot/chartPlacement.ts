@@ -37,3 +37,32 @@ export function clampLayout(layout: ChartLayout, columnCount: number) {
     y: Math.max(0, layout.y),
   };
 }
+
+/**
+ * Proposes new positions for the charts a placement would cover. Each one
+ * moves straight down past whatever it now overlaps, and charts below it
+ * follow. Charts that are clear of the new chart stay where they are.
+ */
+export function shiftForPlacement(
+  spot: ChartLayout,
+  charts: { id: string; layout: ChartLayout }[]
+): Record<string, ChartLayout> {
+  const placed = [spot];
+  const moves: Record<string, ChartLayout> = {};
+  const ordered = [...charts].sort(
+    (a, b) => a.layout.y - b.layout.y || a.layout.x - b.layout.x
+  );
+  for (const { id, layout } of ordered) {
+    let next = layout;
+    for (
+      let blocker = placed.find((other) => overlaps(next, other));
+      blocker;
+      blocker = placed.find((other) => overlaps(next, other))
+    ) {
+      next = { ...next, y: blocker.y + blocker.h };
+    }
+    if (next.y !== layout.y) moves[id] = next;
+    placed.push(next);
+  }
+  return moves;
+}

@@ -4,7 +4,14 @@ import { getChartFields } from "./charts/chartAccessibility";
 import { NullValue } from "./NullValue";
 import { isMissingValue } from "@/lib/numeric";
 
-export function ChartDataPreview({ settings }: { settings: ChartSettings }) {
+export function ChartDataPreview({
+  settings,
+  fill = false,
+}: {
+  settings: ChartSettings;
+  /** Fills the height of its container instead of a fixed preview height. */
+  fill?: boolean;
+}) {
   const crossfilter = useDataLayer((s) => s.crossfilterWrapper);
   useDataLayer((s) => s.liveItems);
   const ids = crossfilter.getFilteredRowIds();
@@ -49,7 +56,7 @@ export function ChartDataPreview({ settings }: { settings: ChartSettings }) {
       );
 
   return (
-    <div className="space-y-3">
+    <div className={fill ? "flex h-full min-h-0 flex-col gap-3" : "space-y-3"}>
       <div>
         <h3 className="text-sm font-semibold">Chart data</h3>
         <p className="mt-1 text-xs text-muted-foreground">
@@ -61,7 +68,7 @@ export function ChartDataPreview({ settings }: { settings: ChartSettings }) {
       <div
         tabIndex={0}
         aria-label="Chart data rows"
-        className="max-h-72 overflow-auto overscroll-contain rounded border border-border"
+        className={`${fill ? "min-h-0 flex-1" : "max-h-72"} overflow-auto overscroll-contain rounded border border-border`}
       >
         <table className="w-full text-left text-xs tabular-nums">
           <thead className="sticky top-0 bg-muted">

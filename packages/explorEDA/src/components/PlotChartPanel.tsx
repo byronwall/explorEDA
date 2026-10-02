@@ -11,12 +11,15 @@ import {
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { ChartSettings } from "@/types/ChartTypes";
 import {
+  Copy,
   FilterX,
   GripVertical,
   Maximize2,
   Minimize2,
   Search,
   Settings2,
+  Table2,
+  Trash2,
   X,
 } from "lucide-react";
 import { ChartRenderer } from "./charts/ChartRenderer";
@@ -34,6 +37,7 @@ import { FacetContainer } from "./charts/FacetRelated/FacetContainer";
 import { useAxisFieldActions } from "./charts/AxisFieldActions";
 import { ChartSettingsContent } from "./ChartSettingsContent";
 import { Button } from "./ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import {
   Popover,
   PopoverAnchor,
@@ -154,6 +158,58 @@ function TraceTitle({
   );
 }
 
+/** Layers that own Escape before the details view does. Tooltips do not. */
+const NESTED_LAYERS =
+  "[data-radix-popper-content-wrapper], [role='listbox'], [role='menu'], [role='alertdialog'], [role='dialog']";
+
+function hasNestedLayer(details: HTMLElement | null) {
+  return Array.from(document.querySelectorAll(NESTED_LAYERS)).some(
+    (layer) =>
+      !layer.querySelector("[data-slot='tooltip-content']") &&
+      !layer.contains(details) &&
+      !details?.contains(layer)
+  );
+}
+
+function useViewport(active: boolean) {
+  const [size, setSize] = useState(() => ({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  }));
+  useEffect(() => {
+    if (!active) return;
+    const update = () =>
+      setSize({ width: window.innerWidth, height: window.innerHeight });
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [active]);
+  return size;
+}
+
+/**
+ * Sizes the details view: the chart beside its controls, or above them when
+ * the viewport is too narrow for both.
+ */
+function detailsLayout(viewport: { width: number; height: number }) {
+  const width = viewport.width - 24;
+  const height = viewport.height - 24;
+  if (viewport.width < 900) {
+    const chartHeight = Math.round(Math.min(420, Math.max(200, height * 0.42)));
+    return {
+      stacked: true,
+      chart: { width, height: chartHeight },
+      side: { width, height: height - chartHeight - 8 },
+    };
+  }
+  const sideWidth = Math.round(Math.min(420, Math.max(344, width * 0.3)));
+  return {
+    stacked: false,
+    chart: { width: width - sideWidth - 8, height },
+    side: { width: sideWidth, height },
+  };
+}
+
 export function PlotChartPanel({
   settings,
   onDelete,
@@ -161,19 +217,30 @@ export function PlotChartPanel({
   width,
   height,
 }: PlotChartPanelProps) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpandedState] = useState(false);
+  const [detailsTab, setDetailsTab] = useState("settings");
   const [dataOpen, setDataOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
+  const detailsRef = useRef<HTMLDivElement>(null);
+  const details = detailsLayout(useViewport(expanded));
   const axisFieldActions = useAxisFieldActions();
   const settingsRef = useRef<HTMLButtonElement>(null);
   const settingsAnchor = useRef<HTMLElement | null>(null);
-  const previewAfterSettings = useRef(false);
   const expandRef = useRef<HTMLButtonElement>(null);
   const [settingsSide, setSettingsSide] = useState<
     "left" | "right" | "top" | "bottom"
   >("right");
   const [settingsHeight, setSettingsHeight] = useState(460);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  // The details view opens on its settings and replaces the grid popovers.
+  const setExpanded = (open: boolean) => {
+    if (open) {
+      setSettingsOpen(false);
+      setDataOpen(false);
+      setDetailsTab("settings");
+    }
+    setExpandedState(open);
+  };
   const placeSettings = (open: boolean) => {
     setSettingsOpen(open);
     if (!open || !panelRef.current) return;
@@ -246,14 +313,16 @@ export function PlotChartPanel({
       ? 36
       : 0;
 
+  const canViewData = !isTableLike && dataFields.length > 0;
   const tableSearch =
     settings.type === "data-table" ? settings.globalSearch : "";
   const hasFilter = settings.filters.some(isActiveFilter);
 
   const handleDelete = async () => {
     const confirmed = await showAlert(
-      "Delete Chart",
-      "Are you sure you want to delete this chart? This action cannot be undone."
+      "Delete chart?",
+      `“${chartTitle}” will be removed from the workspace.`,
+      { confirmLabel: "Delete", destructive: true }
     );
     if (confirmed) {
       onDelete();
@@ -296,21 +365,27 @@ export function PlotChartPanel({
 
       const key = event.key.toLowerCase();
       if (!["s", "d", "x", "v", "c"].includes(key)) return;
-      if (key === "v" && (isTableLike || dataFields.length === 0)) return;
+      if (key === "v" && !canViewData) return;
+      // Duplicating would move focus to the copy behind the details view.
+      if (key === "d" && expanded) return;
       event.preventDefault();
-      if (key === "s") settingsRef.current?.click();
-      else if (key === "d") onDuplicate();
+      if (key === "s") {
+        if (expanded) setDetailsTab("settings");
+        else settingsRef.current?.click();
+      } else if (key === "d") onDuplicate();
       else if (key === "x") void handleDelete();
-      else if (key === "v") setDataOpen(true);
-      else clearFilter(settings);
+      else if (key === "v") {
+        if (expanded) setDetailsTab("data");
+        else setDataOpen(true);
+      } else clearFilter(settings);
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
   });
 
   // shrink the panel by 8px on each side to account for the border
-  const panelWidth = expanded ? window.innerWidth - 40 : width;
-  const panelHeight = expanded ? window.innerHeight - 40 : height;
+  const panelWidth = expanded ? details.chart.width + 12 : width;
+  const panelHeight = expanded ? details.chart.height + 12 : height;
   const widthWithPadding = panelWidth - 12;
   const heightWithPadding = panelHeight - 12;
 
@@ -319,7 +394,7 @@ export function PlotChartPanel({
       ref={panelRef}
       className={`eda-panel bg-card border rounded-lg flex min-w-0 flex-col overflow-hidden ${expanded ? "eda-panel-expanded" : ""}`}
       // Ring the chart while its settings are open so the editor has a clear owner.
-      data-settings-open={settingsOpen || undefined}
+      data-settings-open={(settingsOpen && !expanded) || undefined}
       onPointerEnter={(event) =>
         event.currentTarget.setAttribute("data-shortcut-hovered", "")
       }
@@ -333,16 +408,6 @@ export function PlotChartPanel({
       }}
       role="region"
       {...axisFieldActions.handlers}
-      onKeyDown={(event) => {
-        // A tooltip can consume Escape. Nested portalled editors close first.
-        if (
-          expanded &&
-          event.key === "Escape" &&
-          event.currentTarget.contains(event.target as Node)
-        ) {
-          setExpanded(false);
-        }
-      }}
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
     >
@@ -379,6 +444,114 @@ export function PlotChartPanel({
             </ActionTooltip>
           </div>
         )}
+        <div className="eda-panel-actions flex shrink-0 items-center gap-0">
+          {isTableLike && <div ref={setToolbarTarget} />}
+          {isTraceable(settings.type) && (
+            <ChartTraceInspector type={settings.type} />
+          )}
+          {!expanded && canViewData && (
+            <Popover open={dataOpen} onOpenChange={setDataOpen}>
+              <ActionTooltip content="View data: preview the rows behind this chart (V)">
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`View data for ${chartTitle}`}
+                  >
+                    <Table2 className="h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+              </ActionTooltip>
+              <PopoverContent
+                aria-label={`Data for ${chartTitle}`}
+                className="w-[min(36rem,calc(100vw-1.5rem))]"
+                align="end"
+              >
+                <ChartDataPreview settings={settings} />
+              </PopoverContent>
+            </Popover>
+          )}
+          {!expanded && (
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={`Duplicate ${chartTitle}`}
+              tooltip="Duplicate chart (D)"
+              onClick={onDuplicate}
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+          )}
+          <ActionTooltip
+            content={
+              expanded
+                ? "Close details (Esc)"
+                : "Open details: the chart beside its settings and data"
+            }
+          >
+            <Button
+              ref={expandRef}
+              variant="ghost"
+              size="icon"
+              aria-label={`${expanded ? "Close" : "Open"} details for ${chartTitle}`}
+              onClick={() => setExpanded(!expanded)}
+            >
+              {expanded ? (
+                <Minimize2 className="h-4 w-4" />
+              ) : (
+                <Maximize2 className="h-4 w-4" />
+              )}
+            </Button>
+          </ActionTooltip>
+          {!expanded && (
+            <Popover open={settingsOpen} onOpenChange={placeSettings}>
+              <PopoverAnchor
+                virtualRef={settingsAnchor as React.RefObject<HTMLElement>}
+              />
+              <ActionTooltip content="Chart settings (S)">
+                <PopoverTrigger asChild>
+                  <Button
+                    ref={settingsRef}
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`Configure ${chartTitle}`}
+                  >
+                    <Settings2 className="h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+              </ActionTooltip>
+              <PopoverContent
+                aria-label={`Settings for ${chartTitle}`}
+                className="eda-settings-popover w-[min(21rem,calc(100vw-1.5rem))]"
+                style={
+                  {
+                    maxHeight: settingsHeight,
+                    "--eda-settings-height": `${settingsHeight - 26}px`,
+                    overflow: "hidden",
+                  } as React.CSSProperties
+                }
+                side={settingsSide}
+                sideOffset={
+                  settingsSide === "right" || settingsSide === "left" ? -44 : 4
+                }
+                align="start"
+                collisionPadding={12}
+              >
+                <ChartSettingsContent settings={settings} />
+              </PopoverContent>
+            </Popover>
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="eda-panel-delete"
+            aria-label={`Delete ${chartTitle}`}
+            tooltip="Delete chart (X)"
+            onClick={() => void handleDelete()}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
         {hasFilter && (
           <ActionTooltip content="Clear this chart’s filters">
             <Button
@@ -392,111 +565,6 @@ export function PlotChartPanel({
             </Button>
           </ActionTooltip>
         )}
-        <div className="eda-panel-actions flex shrink-0 items-center gap-0">
-          {isTableLike && <div ref={setToolbarTarget} />}
-          {isTraceable(settings.type) && (
-            <ChartTraceInspector type={settings.type} />
-          )}
-          <ActionTooltip
-            content={expanded ? "Close expanded chart" : "Expand chart"}
-          >
-            <Button
-              ref={expandRef}
-              variant="ghost"
-              size="icon"
-              aria-label={`${expanded ? "Restore" : "Expand"} ${chartTitle}`}
-              onClick={() => setExpanded(!expanded)}
-            >
-              {expanded ? (
-                <Minimize2 className="h-4 w-4" />
-              ) : (
-                <Maximize2 className="h-4 w-4" />
-              )}
-            </Button>
-          </ActionTooltip>
-          <Popover open={dataOpen} onOpenChange={setDataOpen}>
-            <PopoverAnchor
-              virtualRef={settingsRef as React.RefObject<HTMLElement>}
-            />
-            <PopoverContent
-              onCloseAutoFocus={(event) => {
-                event.preventDefault();
-                settingsRef.current?.focus();
-              }}
-              aria-label={`Data for ${chartTitle}`}
-              className="w-[min(36rem,calc(100vw-1.5rem))]"
-              align="end"
-            >
-              <ChartDataPreview settings={settings} />
-            </PopoverContent>
-          </Popover>
-          <Popover open={settingsOpen} onOpenChange={placeSettings}>
-            <PopoverAnchor
-              virtualRef={settingsAnchor as React.RefObject<HTMLElement>}
-            />
-            <ActionTooltip content="Chart settings">
-              <PopoverTrigger asChild>
-                <Button
-                  ref={settingsRef}
-                  variant="ghost"
-                  size="icon"
-                  aria-label={`Configure ${chartTitle}`}
-                >
-                  <Settings2 className="h-4 w-4" />
-                </Button>
-              </PopoverTrigger>
-            </ActionTooltip>
-            <PopoverContent
-              aria-label={`Settings for ${chartTitle}`}
-              className="eda-settings-popover w-[min(21rem,calc(100vw-1.5rem))]"
-              style={
-                {
-                  maxHeight: settingsHeight,
-                  "--eda-settings-height": `${settingsHeight - 26}px`,
-                  overflow: "hidden",
-                } as React.CSSProperties
-              }
-              side={settingsSide}
-              sideOffset={
-                settingsSide === "right" || settingsSide === "left" ? -44 : 4
-              }
-              align="start"
-              collisionPadding={12}
-              onCloseAutoFocus={(event) => {
-                // View data swaps the settings editor for the data preview.
-                if (previewAfterSettings.current) {
-                  event.preventDefault();
-                  previewAfterSettings.current = false;
-                  setDataOpen(true);
-                }
-              }}
-            >
-              <ChartSettingsContent
-                settings={settings}
-                chartTitle={chartTitle}
-                onDuplicate={() => {
-                  setSettingsOpen(false);
-                  onDuplicate();
-                }}
-                onViewData={
-                  !isTableLike && dataFields.length > 0
-                    ? () => {
-                        previewAfterSettings.current = true;
-                        setSettingsOpen(false);
-                      }
-                    : undefined
-                }
-                onClearFilters={
-                  hasFilter ? () => clearFilter(settings) : undefined
-                }
-                onDelete={() => {
-                  setSettingsOpen(false);
-                  void handleDelete();
-                }}
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
       </div>
       {settings.type !== "scatter" && calculatedFields.length > 0 && (
         <div
@@ -542,13 +610,34 @@ export function PlotChartPanel({
       </div>
     </div>
   );
+  // Escape closes a nested editor first, and a tooltip must not swallow it.
+  useEffect(() => {
+    if (!expanded) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !hasNestedLayer(detailsRef.current)) {
+        setExpandedState(false);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown, true);
+    return () => window.removeEventListener("keydown", onKeyDown, true);
+  }, [expanded]);
+
   return (
     <ChartTraceScope>
       <Dialog open={expanded} onOpenChange={setExpanded}>
         {expanded ? (
           <DialogContent
+            ref={detailsRef}
             showCloseButton={false}
-            className="max-w-none w-auto border-0 bg-transparent p-0 shadow-none"
+            className="eda-details max-w-none w-auto border-0 bg-transparent p-0 shadow-none"
+            onOpenAutoFocus={(event) => {
+              event.preventDefault();
+              detailsRef.current
+                ?.querySelector<HTMLElement>(
+                  ".eda-details-tabs [role='tab'][data-state='active']"
+                )
+                ?.focus({ preventScroll: true });
+            }}
             onCloseAutoFocus={(event) => {
               event.preventDefault();
               requestAnimationFrame(() => expandRef.current?.focus());
@@ -558,7 +647,42 @@ export function PlotChartPanel({
             <DialogDescription className="sr-only">
               {chartSummary}
             </DialogDescription>
-            {panel}
+            <div
+              className="eda-details-body"
+              data-stacked={details.stacked || undefined}
+            >
+              {panel}
+              <aside
+                className="eda-details-side"
+                aria-label={`Controls for ${chartTitle}`}
+                style={details.side}
+              >
+                <Tabs
+                  value={canViewData ? detailsTab : "settings"}
+                  onValueChange={setDetailsTab}
+                  className="eda-details-tabs"
+                >
+                  <TabsList className="w-full">
+                    <TabsTrigger value="settings" className="flex-1">
+                      Settings
+                    </TabsTrigger>
+                    {canViewData && (
+                      <TabsTrigger value="data" className="flex-1">
+                        Chart data
+                      </TabsTrigger>
+                    )}
+                  </TabsList>
+                  <TabsContent value="settings">
+                    <ChartSettingsContent settings={settings} />
+                  </TabsContent>
+                  {canViewData && (
+                    <TabsContent value="data">
+                      <ChartDataPreview settings={settings} fill />
+                    </TabsContent>
+                  )}
+                </Tabs>
+              </aside>
+            </div>
           </DialogContent>
         ) : (
           panel

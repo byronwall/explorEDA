@@ -1,11 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { getChartDefinition } from "@/charts/registry";
 import type { ChartLayout, ChartSettings } from "@/types/ChartTypes";
 import { Button } from "../ui/button";
 import { findEmptyPlacement } from "../chartGridPlacement";
 import { useChartDraft } from "./ChartDraftContext";
-import { clampLayout, firstFreeSpot, overlapsAny } from "./chartPlacement";
+import {
+  clampLayout,
+  firstFreeSpot,
+  overlapsAny,
+  shiftForPlacement,
+} from "./chartPlacement";
 
 interface ChartPlacementLayerProps {
   charts: ChartSettings[];
@@ -13,6 +18,8 @@ interface ChartPlacementLayerProps {
   columnWidth: number;
   rowHeight: number;
   padding: number;
+  /** Reports the charts that would move, so the grid can preview them. */
+  onProposal?: (moves: Record<string, ChartLayout>) => void;
 }
 
 const MOVES: Record<string, { x: number; y: number }> = {
@@ -23,8 +30,11 @@ const MOVES: Record<string, { x: number; y: number }> = {
 };
 
 /**
- * Shows where a new chart will go. The pointer snaps it to free space, arrow
- * keys move it, Enter or a click places it, and Escape returns to the dialog.
+ * Shows where a new chart will go. The pointer snaps it to free space or
+ * offers the place of the chart under it, arrow keys move it, Enter or a
+ * click places it, and Escape returns to the dialog. Charts in the way are
+ * shown in the positions they would move to. Nothing changes until the user
+ * accepts.
  */
 export function ChartPlacementLayer({
   charts,
@@ -32,6 +42,7 @@ export function ChartPlacementLayer({
   columnWidth,
   rowHeight,
   padding,
+  onProposal,
 }: ChartPlacementLayerProps) {
   const api = useChartDraft();
   const ghostRef = useRef<HTMLDivElement>(null);
@@ -41,7 +52,13 @@ export function ChartPlacementLayer({
   const [spot, setSpot] = useState<ChartLayout>(() =>
     firstFreeSpot(size, occupied, columnCount)
   );
-  const valid = !overlapsAny(spot, occupied);
+  const moves = useMemo(
+    () => shiftForPlacement(spot, charts),
+    // Only positions matter, and the chart list changes identity on rerender.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [spot.x, spot.y, spot.w, spot.h, JSON.stringify(occupied)]
+  );
+  const movedCount = Object.keys(moves).length;
   const name = api?.draft
     ? (getChartDefinition(api.draft.settings.type)?.name ?? "chart")
     : "chart";
@@ -53,9 +70,12 @@ export function ChartPlacementLayer({
     ghostRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }, [spot.x, spot.y]);
 
-  const accept = () => {
-    if (valid) api?.place(spot);
-  };
+  useEffect(() => {
+    onProposal?.(moves);
+  }, [moves, onProposal]);
+  useEffect(() => () => onProposal?.({}), [onProposal]);
+
+  const accept = () => api?.place(spot, moves);
 
   // Keys work wherever focus sits so Enter places the chart right away.
   useEffect(() => {
@@ -67,7 +87,7 @@ export function ChartPlacementLayer({
         api?.backToEditing();
       } else if (event.key === "Enter" && target?.tagName !== "BUTTON") {
         event.preventDefault();
-        if (!overlapsAny(spot, occupied)) api?.place(spot);
+        accept();
       } else if (MOVES[event.key]) {
         event.preventDefault();
         const move = MOVES[event.key]!;
@@ -95,10 +115,34 @@ export function ChartPlacementLayer({
     // Keep the chosen size where it fits, then fall back to a smaller one.
     const exact = clampLayout({ ...size, ...cell }, columnCount);
     if (!overlapsAny(exact, occupied)) return exact;
-    return findEmptyPlacement(cell, occupied, columnCount);
+    const free = findEmptyPlacement(cell, occupied, columnCount);
+    if (free) return free;
+    // Over a chart, offer its place. It and the charts below move down.
+    const under = occupied.find(
+      (layout) =>
+        cell.x >= layout.x &&
+        cell.x < layout.x + layout.w &&
+        cell.y >= layout.y &&
+        cell.y < layout.y + layout.h
+    );
+    return under
+      ? clampLayout({ ...size, x: under.x, y: under.y }, columnCount)
+      : exact;
   };
 
-  const bottom = Math.max(spot.y + spot.h, ...occupied.map((l) => l.y + l.h));
+  const bottom = Math.max(
+    spot.y + spot.h,
+    ...charts.map((chart) => {
+      const layout = moves[chart.id] ?? chart.layout;
+      return layout.y + layout.h;
+    })
+  );
+  const moveStatus =
+    movedCount === 0
+      ? ""
+      : movedCount === 1
+        ? "1 chart moves down to make room."
+        : `${movedCount} charts move down to make room.`;
 
   return (
     <>
@@ -106,19 +150,29 @@ export function ChartPlacementLayer({
         className="eda-placement-layer"
         style={{ height: bottom * rowHeight + padding * 2 + rowHeight }}
         aria-hidden="true"
-        onPointerMove={(event) => {
-          const next = snap(event);
-          if (next) setSpot(next);
-        }}
+        onPointerMove={(event) => setSpot(snap(event))}
         onClick={(event) => {
           const next = snap(event);
-          if (next) api?.place(next);
+          api?.place(next, shiftForPlacement(next, charts));
         }}
       >
+        {Object.entries(moves).map(([id, layout]) => (
+          <div
+            key={id}
+            className="eda-placement-move"
+            style={{
+              left: padding + layout.x * columnWidth,
+              top: padding + layout.y * rowHeight,
+              width: layout.w * columnWidth,
+              height: layout.h * rowHeight,
+            }}
+          >
+            <span>Moves here</span>
+          </div>
+        ))}
         <div
           ref={ghostRef}
           className="eda-placement-ghost"
-          data-invalid={!valid || undefined}
           style={{
             left: padding + spot.x * columnWidth,
             top: padding + spot.y * rowHeight,
@@ -126,7 +180,7 @@ export function ChartPlacementLayer({
             height: spot.h * rowHeight,
           }}
         >
-          <span>{valid ? `New ${name}` : "This spot overlaps a chart"}</span>
+          <span>New {name}</span>
         </div>
       </div>
       {createPortal(
@@ -136,11 +190,10 @@ export function ChartPlacementLayer({
           aria-label={`Place the new ${name}`}
         >
           <p aria-live="polite">
-            Click a free spot or move with the arrow keys.{" "}
+            {moveStatus ||
+              "Click a spot or move with the arrow keys. Charts in the way move down."}{" "}
             <span className="sr-only">
-              {valid
-                ? `Column ${spot.x + 1}, row ${spot.y + 1}.`
-                : "This spot overlaps a chart."}
+              Column {spot.x + 1}, row {spot.y + 1}.
             </span>
           </p>
           <div className="flex shrink-0 gap-2">
@@ -155,7 +208,6 @@ export function ChartPlacementLayer({
             <Button
               ref={placeRef}
               size="sm"
-              disabled={!valid}
               tooltip="Place the chart at the highlighted spot (Enter)"
               onClick={accept}
             >

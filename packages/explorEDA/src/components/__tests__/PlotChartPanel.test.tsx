@@ -141,10 +141,7 @@ it("previews filtered rows without adding a chart and clears the chart filter fr
   expect(
     screen.getByRole("button", { name: "Clear filters for Values" })
   ).toBeInTheDocument();
-  fireEvent.click(screen.getByRole("button", { name: "Configure Values" }));
-  fireEvent.click(
-    await screen.findByRole("button", { name: "View data for Values" })
-  );
+  fireEvent.click(screen.getByRole("button", { name: "View data for Values" }));
   const preview = await screen.findByRole("dialog", {
     name: "Data for Values",
   });
@@ -583,4 +580,166 @@ it("opens the field inspector from an axis title with Command-click or its conte
   expect(
     await screen.findByRole("dialog", { name: "Inspect field: value" })
   ).toBeInTheDocument();
+});
+
+it("keeps chart actions in the header and settings free of them", async () => {
+  const chart = {
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "value"
+    ),
+    title: "Values",
+  };
+  const onDuplicate = vi.fn();
+  render(
+    <DataLayerProvider data={[{ value: 1 }, { value: 2 }]} charts={[chart]}>
+      <PlotChartPanel
+        settings={chart}
+        width={500}
+        height={400}
+        onDelete={() => {}}
+        onDuplicate={onDuplicate}
+      />
+    </DataLayerProvider>
+  );
+  const header = screen
+    .getByRole("heading", { name: "Values" })
+    .closest(".eda-panel-header") as HTMLElement;
+  for (const name of [
+    "View data for Values",
+    "Duplicate Values",
+    "Open details for Values",
+    "Configure Values",
+    "Delete Values",
+  ]) {
+    expect(within(header).getByRole("button", { name })).toBeInTheDocument();
+  }
+  fireEvent.click(
+    within(header).getByRole("button", { name: "Duplicate Values" })
+  );
+  expect(onDuplicate).toHaveBeenCalledOnce();
+
+  fireEvent.click(screen.getByRole("button", { name: "Configure Values" }));
+  const settings = await screen.findByRole("dialog", {
+    name: "Settings for Values",
+  });
+  expect(
+    within(settings).queryByRole("button", {
+      name: /Duplicate|Delete|View data/,
+    })
+  ).not.toBeInTheDocument();
+});
+
+it("keeps the chart when its delete confirmation is canceled", async () => {
+  const chart = {
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "value"
+    ),
+    title: "Values",
+  };
+  const onDelete = vi.fn();
+  render(
+    <DataLayerProvider data={[{ value: 1 }, { value: 2 }]} charts={[chart]}>
+      <PlotChartPanel
+        settings={chart}
+        width={500}
+        height={400}
+        onDelete={onDelete}
+        onDuplicate={() => {}}
+      />
+    </DataLayerProvider>
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Delete Values" }));
+  expect(useAlertStore.getState()).toMatchObject({
+    isOpen: true,
+    title: "Delete chart?",
+    confirmLabel: "Delete",
+    destructive: true,
+  });
+  await act(async () => useAlertStore.getState().closeAlert(false));
+  expect(onDelete).not.toHaveBeenCalled();
+});
+
+it("opens details with settings ready and data in a tab, without changing the charts", async () => {
+  const chart = {
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "value"
+    ),
+    title: "Values",
+    filters: [{ type: "range" as const, field: "value", min: 2 }],
+  };
+  function Panel() {
+    const charts = useDataLayer((s) => s.charts);
+    return (
+      <>
+        <output aria-label="Charts">
+          {charts.map((item) => JSON.stringify(item.layout)).join(" ")}
+        </output>
+        <PlotChartPanel
+          settings={charts[0]!}
+          width={500}
+          height={400}
+          onDelete={() => {}}
+          onDuplicate={() => {}}
+        />
+      </>
+    );
+  }
+  render(
+    <DataLayerProvider
+      data={[{ value: 1 }, { value: 2 }, { value: 3 }]}
+      charts={[chart]}
+    >
+      <Panel />
+    </DataLayerProvider>
+  );
+  const layouts = screen.getByLabelText("Charts").textContent;
+  fireEvent.click(
+    screen.getByRole("button", { name: "Open details for Values" })
+  );
+  const details = await screen.findByRole("dialog", { name: "Values" });
+  // One chart renders, and its settings are already open beside it.
+  expect(
+    within(details).getAllByRole("region", { name: "Values" })
+  ).toHaveLength(1);
+  expect(screen.getAllByRole("region", { name: "Values" })).toHaveLength(1);
+  expect(
+    within(details).getByRole("tab", { name: "Settings" })
+  ).toHaveAttribute("aria-selected", "true");
+  expect(
+    within(details).getByRole("combobox", { name: "Chart type" })
+  ).toBeInTheDocument();
+  expect(
+    within(details).getByRole("button", { name: "Reset changes" })
+  ).toBeInTheDocument();
+
+  fireEvent.mouseDown(
+    within(details).getByRole("tab", { name: "Chart data" }),
+    {
+      button: 0,
+      ctrlKey: false,
+    }
+  );
+  expect(
+    within(details)
+      .getAllByRole("cell")
+      .map((cell) => cell.textContent)
+  ).toEqual(["2", "3"]);
+  expect(screen.getByLabelText("Charts")).toHaveTextContent(layouts!);
+
+  fireEvent.keyDown(document.activeElement ?? document.body, { key: "Escape" });
+  await waitFor(() =>
+    expect(
+      screen.queryByRole("dialog", { name: "Values" })
+    ).not.toBeInTheDocument()
+  );
+  expect(screen.getByLabelText("Charts")).toHaveTextContent(layouts!);
+  await waitFor(() =>
+    expect(
+      screen.getByRole("button", { name: "Open details for Values" })
+    ).toHaveFocus()
+  );
+  expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
 });
