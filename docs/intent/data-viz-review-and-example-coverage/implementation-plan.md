@@ -3,137 +3,111 @@ title: "Data visualization review and example coverage — implementation plan"
 slug: "data-viz-review-and-example-coverage"
 phase: plan
 status: current
-last_updated: "2026-09-15"
+last_updated: "2026-10-01"
 ---
 
 # Data visualization review and example coverage — implementation plan
 
 ## Plan at a glance
 
-Build the judgment tool before building more samples. The first milestone creates the repository skill and tests it against three existing examples with different visual demands. That proof determines whether the rubric is specific enough to guide repairs.
+The initiative is active. The review skill, coverage manifest, checks, and demo matrix exist. The remaining work is to reconcile coverage declarations, review current examples, and close confirmed gaps.
 
-The second milestone inventories current chart and feature support. It adds one typed coverage manifest beside the demo definitions. The manifest records why each example exists and which stable feature IDs it intentionally demonstrates. A small test checks that every registered chart type and every required feature has a declared example. This is semantic coverage, not source-code coverage.
+| Milestone | Status | Remaining work |
+| --- | --- | --- |
+| 1. Useful chart-first reviews | Completed | Repeat reviews for current examples during milestone 4. |
+| 2. Explicit and checked coverage | Completed | Update stale declarations during milestone 4. |
+| 3. Rendered feature matrix | Implemented; proof incomplete | Verify the current matrix in the browser. |
+| 4. Minimal example basis | Partly implemented | Reconcile the manifest, close gaps, and record passing reviews. |
 
-The third milestone renders the manifest as a feature matrix in the demo. Only then should the fourth milestone add or revise examples to close gaps. This order prevents speculative sample creation and keeps the matrix honest. Existing examples remain usable throughout. Removing the new matrix route or manifest import returns the demo to its current behavior.
+The manifest contains 38 feature rows and 10 examples. All 11 registered chart types have declared examples. Twenty-four feature rows have declared usage. Fourteen have none. Fifteen gap notes remain, including a shared-scale gap on a feature that now has a declared example. No feature/example assignment is marked `reviewed`.
+
+These are manifest counts, not a count of missing product features. Current configurations already contain meaningful titles, axis labels, and a saved Lorenz brush. Some declarations have fallen behind the code.
 
 ## Implementation strategy
 
-- **First proof:** Three evidence-based reviews produced by the new skill.
-- **Primary seam:** The coverage manifest connects registered capabilities to examples without changing chart runtime code.
-- **Fast local loop:** `pnpm --filter demo test && pnpm --filter demo build`
-- **Local dependencies:** Existing saved settings, datasets, registry, and Vitest. No network service is required.
-- **Provider/live confirmation:** None. Final proof is local browser review of the demo matrix and representative examples.
-- **Rollout and rollback:** Add the matrix as an additive demo view. Existing example URLs and configurations remain unchanged until a reviewed replacement is ready.
+Keep the existing skill, manifest, and matrix. Review current examples before adding samples or changing chart runtime code.
+
+- **Primary seam:** `apps/demo/src/demos/coverage.ts` connects features to examples.
+- **Fast local loop:** `pnpm --filter demo test` and `pnpm --filter demo build`.
+- **Local dependencies:** Saved settings, bundled datasets, chart registry, and Vitest. No external service is required.
+- **Proof:** Use tests for manifest integrity. Use rendered examples for visual quality, filter behavior, accessibility, and resize checks.
+- **Rollback:** Keep repairs separate. Revert individual manifest, example, or matrix changes without changing unrelated examples.
 
 ## Milestone 1: The skill gives useful chart-first reviews
 
-Create the smallest complete review skill. Keep the rubric in `SKILL.md` unless it becomes difficult to scan.
+**Status: completed.**
 
-- **Change — Add `.agents/skills/data-viz-review/SKILL.md`.**
-  - Define accepted inputs: screenshot, rendered page, chart, table, or dashboard.
-  - Require visual inspection before source inspection.
-  - Use critical gates for unclear purpose, misleading scales, unlabeled encodings, hidden state, and unreadable output.
-  - Review these sections when applicable: purpose and title; hierarchy and layout; typography and spacing; marks and ink; axes, scales, ticks, and grids; labels and annotations; color and legends; tables; dashboard relationships; filters and interaction; accessibility and viewport behavior.
-  - Require a compact output: verdict, blockers, section findings, three priority fixes, then secondary notes.
-  - Include chart-family prompts for categorical comparisons, trends, distributions, relationships, facets, tables, and coordinated dashboards.
-- **Proof — Run three review trials.**
-  - Review line-chart, categorical-charts, and Lorenz without reading their source during the visual pass.
-  - Confirm that findings cite visible evidence and differ by example.
-  - Revise the skill once if any section produces generic or repeated advice.
+The repository skill exists at `.agents/skills/data-viz-review/SKILL.md`. It covers critical gates, visual quality, semantics, tables, dashboards, interactions, and chart-family prompts. It cites local transcripts and requires visual inspection before source inspection.
+
+[Baseline reviews](../../reviews/data-viz-example-baseline.md) cover line-chart, categorical-charts, and Lorenz at 1280 × 720. Each has a verdict, visible blockers, section judgments, and three fixes. All three failed. That result proves the skill found useful defects; it does not prove example quality.
 
 ### Desired end state
 
-- The repository has one usable review skill based on Byron's transcript themes.
-- A simple chart, faceted view, and coordinated dashboard each receive a decisive review.
-- The rubric does not award quality for interaction count.
+A reusable skill gives specific chart-first findings across simple, faceted, and coordinated views. This outcome is delivered.
 
 ## Milestone 2: Feature coverage becomes explicit and checked
 
-Define coverage only after the first reviews reveal which distinctions matter.
+**Status: completed.**
 
-- **Change — Add a typed coverage manifest near `apps/demo/src/demos/examples.ts`.**
-  - Reuse existing example IDs.
-  - Give each feature a stable ID, label, family, and short review intent.
-  - Give each example a list of intentionally demonstrated feature IDs.
-  - Start with current features: 11 chart types; titles and axis labels; linear, log, time, and band scales where truly supported; ticks and grids; categorical and numerical color; legends; wrap and grid facets; shared scales; brushing; cross-chart filtering; active filter display; table sorting, filtering, paging, and formatting; dashboard layout; empty and invalid states; accessibility naming; and desktop resize behavior.
-  - Do not mark a feature covered because its default setting exists. The example must make it visible and reviewable.
-- **Change — Add one completeness test.**
-  - Compare all registered chart types with declared type coverage.
-  - Check that each required feature maps to at least one example.
-  - Reject unknown example IDs and unknown feature IDs.
-  - Allow explicit `not-demonstrated` gaps so the matrix can land before all examples are complete.
-- **Proof — Generate the first gap report.**
-  - Confirm that every chart type is nominally present.
-  - Confirm that weak areas such as meaningful titles, axis labels, saved filter state, scale variants, and failure states remain visible as gaps.
+`coverage.ts` defines feature IDs, families, descriptions, implementation status, example intent, declared usage, and explicit gaps. `coverage.test.ts` checks registry agreement, example IDs, feature IDs, and required coverage or declared gaps.
+
+The checks permit gaps. A passing test proves manifest integrity, not complete demonstration or visual quality. The registry still has 11 chart types, all represented in the manifest and example declarations.
 
 ### Desired end state
 
-- One manifest states what the sample set is meant to prove.
-- One test catches registry or manifest drift.
-- The first result is an honest backlog, not a forced green matrix.
+One manifest and its checks expose coverage and drift. This outcome is delivered. Current declaration accuracy belongs to milestone 4.
 
 ## Milestone 3: The demo renders the feature matrix
 
-Make coverage legible without requiring a maintainer to read TypeScript.
+**Status: active. The view and tests exist; browser proof remains.**
 
-- **Change — Add one matrix view to the demo.**
-  - Render feature families as grouped rows and examples as columns.
-  - Show `supported`, `shown`, `reviewed`, and `gap` with text or icons, not color alone.
-  - Link each example cell to its existing example URL.
-  - Include a short definition for each feature and summary counts by family.
-  - Keep the page useful as a standalone reference that can later support article content.
-- **Change — Add one focused view test.**
-  - Check grouping, status labels, links, and accessible names.
-  - Do not snapshot the full matrix markup.
-- **Proof — Browser review at supported desktop widths.**
-  - Confirm the table remains scannable, horizontal overflow is obvious and usable if required, and gaps are not hidden.
+`CoverageMatrix.tsx` is connected through `LandingPage.tsx` at `/?view=coverage`. It offers Needs attention, All features, and Example usage. The full matrix is available through an expandable section. Features have descriptions, family grouping, text status labels, and links to examples.
+
+`CoverageMatrix.test.tsx` checks status text, gap visibility, detail disclosure, example navigation, and the advanced matrix. The recorded [example verification](../../reviews/data-viz-example-verification.md) explicitly excluded the matrix after concurrent changes broke that review session. No complete matrix browser proof was found in the inspected reports.
+
+Remaining proof:
+
+- Check the current views at wide, intermediate, and narrow widths.
+- Check keyboard navigation, example links, detail controls, and matrix overflow.
+- Correct or clarify the claim that feature and example reviews are separate records. Both currently derive from the same `reviewed` assignment.
 
 ### Desired end state
 
-- A maintainer can see type and feature coverage in one view.
-- Every shown feature links to the example that proves it.
-- The matrix remains derived from one manifest.
+A maintainer can inspect coverage and reach its evidence examples. Tests establish the view structure; browser checks must establish usability.
 
 ## Milestone 4: A minimal example basis closes material gaps
 
-Revise existing samples before adding new ones. Add a new example only when no current example can demonstrate the feature clearly.
+**Status: active. Example repairs exist; coverage and passing reviews remain incomplete.**
 
-- **Change — Improve example intent and static clarity.**
-  - Replace blank and generic titles with question-led titles.
-  - Add axis labels and units where they change interpretation.
-  - Keep configuration controls closed until requested.
-- **Change — Close uncovered feature families.**
-  - Add or revise one scale-focused example.
-  - Add one clear active-filter and cross-chart relationship example.
-  - Add one table-focused example that makes sorting, filtering, paging, truncation, and formatting reviewable.
-  - Add one state example for empty, missing, or invalid data if current runtime support exists.
-- **Proof — Review each changed example with the skill.**
-  - Mark `reviewed` only after the review has no critical blocker.
-  - Record short review metadata in the manifest, not the full prose report.
+Current examples have descriptive titles, dataset summaries, and stated capabilities. Saved configurations contain axis labels and units. Lorenz has saved Time and Z filters. Shop operations uses symlog scales. The large shop example declares shared facet scales.
+
+The old `line-chart` and `tables` example IDs are absent from the current catalog. Use product-activity for the trend review and categorical-charts or NBA for the table review. Do not recreate removed samples only to match the old plan.
+
+Work in this order:
+
+1. **Reconcile existing evidence.** Review titles, axes, ticks, linear and categorical scales, saved filters, table formatting, shared scales, accessible names, and resize behavior. Add declarations only after the rendered example makes the feature clear. Remove obsolete gap notes.
+2. **Correct scale vocabulary.** The manifest lists log and time, but the shared numerical scale uses linear or symlog. Shop's advertised log scales are symlog. Product activity uses a numerical day field. Confirm the relevant renderer before declaring true log or date-scale support. Add symlog coverage rather than crediting it as log.
+3. **Close actual gaps.** Reuse examples for empty and invalid states where runtime support exists. Declare unsupported capabilities or explicit deferrals. Do not add new runtime features solely to complete the matrix.
+4. **Run passing reviews.** Review at least one example from each feature family. Clear critical blockers before changing usage to `reviewed`. Keep a review date and short evidence note with each recorded result; these fields do not exist yet.
+
+The [September verification](../../reviews/data-viz-example-verification.md) reported clipped text, contradictory Lorenz totals, restore problems, and hidden table columns. Later [workspace polish](../../reviews/chart-workspace-polish.md) reports repairs to brushes, tables, layouts, and interactions. Current Lorenz prose also uses the corrected 159-row count. Treat old failures as historical evidence. Reproduce them before calling them current defects.
 
 ### Desired end state
 
-- Every registered chart type and required feature is intentionally shown or explicitly deferred.
-- The smallest useful example set covers the current product surface.
-- Each reviewed example is a good chart first and an interactive example second.
+Every required feature is intentionally shown or explicitly deferred. Each reviewed feature has current rendered evidence and no critical blocker. New examples exist only for confirmed gaps.
 
 ## Cross-cutting verification
 
-- Run `pnpm --filter demo test` after manifest or matrix changes.
-- Run `pnpm --filter demo build` after route or view changes.
-- Run the repository skill on at least one example from each feature family before declaring full review coverage.
-- Use browser inspection for visual quality. Unit tests only protect manifest integrity and matrix behavior.
+On 2026-10-01, all 18 demo tests passed, including the manifest and matrix checks. The command ran with `pnpm_config_verify_deps_before_run=false` to use installed dependencies. The first attempt triggered an automatic install and stopped before tests ran. The passing run reported an existing React `act(...)` warning in the landing-page suite.
+
+This audit inspected code and existing reports. It did not run a new browser review or production build. Neither milestone 3's browser proof nor milestone 4's visual acceptance is complete.
+
+After implementation changes, run the relevant tests and build. Run `pnpm check` after broad changes. Keep visual acceptance separate from test success.
 
 ## Open decisions and spikes
 
-- **Where the matrix lives:** Start inside the demo because it already owns examples and routes. Move it to docs only if publication needs diverge.
-- **Review persistence:** Start with `reviewed`, review date, and a short note in the manifest. Add separate reports only if repeated review history becomes useful.
+No human decision blocks the next step. Reconcile the existing manifest against rendered examples first. Keep the matrix in the demo. Use compact review metadata with links to evidence.
 
 ## Below the cut line
 
-- Screenshot contact sheets and visual regression tests.
-- Automated scoring from screenshots or DOM measurements.
-- Pairwise or combinatorial example generation.
-- New chart types added only for coverage breadth.
-- A public article generated from the matrix.
-- Mobile support, which the project currently excludes.
+Screenshot regression infrastructure, automated visual scoring, combinatorial example generation, new chart types for breadth, and public article generation remain deferred. A separate mobile product expansion remains outside scope. Narrow-width checks still apply to changed flows under current project rules.

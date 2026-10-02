@@ -1,0 +1,47 @@
+[
+  {
+    "title": "Interactive EDA workspace",
+    "slug": "interactive-eda-workspace",
+    "outcome": "completed",
+    "retired_at": "2026-10-01",
+    "summary": "Completed the bounded single-source inspection slice: shared profiles, default Summary/table, typed linked filters, and public host restore. Broader program goals remain follow-ups. Reconciled against 5c92e32a9d7d3e61b7cbf422897cd38555c9a7cd and 75 passing tests (66 package and 9 demo; one React act warning). Only retirement documentation edits were relevant uncommitted changes; pre-existing feedback files were excluded. Historical browser evidence was retained; no new browser or capacity check ran.",
+    "reason": "Byron explicitly requested retirement and transfer to durable docs on 2026-10-01. The accepted shape and plan bounded implementation to default inspection, typed filters, and host state restore.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "docs/transcript-gap-analysis.md",
+      "packages/explorEDA/README.md",
+      "apps/demo/public/datasets/README.md"
+    ],
+    "revision": "5c92e32a9d7d3e61b7cbf422897cd38555c9a7cd",
+    "follow_ups": [
+      {
+        "scope": "Multiple sources and joins",
+        "destination": "docs/intent/multi-source-analysis/intent-brief.md"
+      },
+      {
+        "scope": "Named views and durable host storage",
+        "destination": "docs/intent/project-task-views/intent-brief.md"
+      },
+      {
+        "scope": "Runtime workspace configuration",
+        "destination": "docs/intent/runtime-configuration-story/intent-brief.md"
+      },
+      {
+        "scope": "General transformation and mark provenance",
+        "destination": "docs/intent/deterministic-rendering-and-data-traceability/intent-brief.md"
+      },
+      {
+        "scope": "Composable chart specifications",
+        "destination": "docs/intent/composed-analytical-graphics/intent-brief.md"
+      },
+      {
+        "scope": "Analysis agent",
+        "destination": "docs/intent/in-app-analysis-agent/intent-brief.md"
+      },
+      {
+        "scope": "Remaining table, defaults, facet, and capacity gaps",
+        "destination": "docs/transcript-gap-analysis.md"
+      }
+    ]
+  }
+]

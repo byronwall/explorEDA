@@ -41,7 +41,7 @@
     {
       "id": "workspace-intent",
       "type": "accepted-project-context",
-      "location": "../interactive-eda-workspace/intent-brief.md",
+      "location": "../../application-feature-inventory.md#product-direction-and-package-boundary",
       "anchor": "dashboard views and persistence; product and package split",
       "authority": "earlier intent, refined by current dictation"
     },
