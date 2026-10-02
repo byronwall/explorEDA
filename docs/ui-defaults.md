@@ -68,8 +68,9 @@ Keep a confirmation small and centered: a short question, one sentence that name
 
 - Keep view controls and active filter scope together in one sticky line. Group inspection tools (Fields, Rows) on the left and configuration (Calculations, colors, grid, workspace actions) on the right, as icon buttons with tooltips.
 - Keep filter chips on that line. Show the ones that fit, then a "+N more" popover that lists every filter, beside the row count and clear action.
-- Rows is a drawer over the right of the viewport at full height, not a separate view. It leaves a strip of charts visible on the left at wide widths and takes the full width on narrow screens. R, Escape, or a click on the charts dismisses it. It must not resize the chart grid.
-- The Rows drawer covers the toolbar, so its header carries the row count and active filters. Table tools and the close action stay in that header while rows scroll.
+- Rows is a drawer over the right of the viewport at full height, not a separate view. It has two sizes, switched from its header. Expanded leaves a strip of charts visible on the left, and a click there dismisses it. Narrow sits beside the charts, which stay in use, so a click on them does not dismiss it. R and Escape dismiss either size. It takes the full width on narrow screens and must not resize the chart grid.
+- The expanded Rows drawer covers the toolbar, so its header carries the row count and active filters. Beside the narrow drawer the toolbar keeps its own, and the controls it would cover move beside it. Table tools and the close action stay in the drawer header while rows scroll.
+- Give every side inspector a narrow and a wide size: the field list and its full view, workspace settings, and Rows.
 - Label local Rows filters and table searches separately from chart filters.
 - Keep a clear-filter control visible on every chart with an active filter.
 - Label filter bounds with their meaning and state where the filter applies.

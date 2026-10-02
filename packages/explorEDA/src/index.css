@@ -1024,6 +1024,28 @@ html {
   overflow: hidden;
   overscroll-behavior: contain;
 }
+/* Narrow: the rows sit beside the charts, which stay in use. The header
+   gives the scope its own line. */
+.eda-rows-peek[data-narrow] {
+  left: auto;
+  width: min(34rem, calc(100vw - 96px));
+}
+.eda-rows-peek[data-narrow] .eda-rows-peek-header {
+  flex-wrap: wrap;
+}
+.eda-rows-peek[data-narrow] .eda-rows-peek-header h2 {
+  flex: 1;
+}
+.eda-rows-peek[data-narrow] .eda-rows-peek-scope {
+  order: 1;
+  flex-basis: 100%;
+}
+.eda-rows-peek[data-narrow] .eda-rows-peek-tools {
+  flex: 0 0 auto;
+}
+.eda-rows-peek-header > .eda-rows-peek-size {
+  color: var(--muted-foreground);
+}
 @keyframes eda-rows-peek-in {
   from {
     opacity: 0;
@@ -1040,11 +1062,16 @@ html {
     left: 32px;
   }
 }
-/* Narrow screens give the table the full width. */
+/* Narrow screens give the table the full width, at either size. */
 @media (max-width: 640px) {
-  .eda-rows-peek {
+  .eda-rows-peek,
+  .eda-rows-peek[data-narrow] {
     left: 0;
+    width: auto;
     border-left: 0;
+  }
+  .eda-rows-peek-header > .eda-rows-peek-size {
+    display: none;
   }
   .eda-rows-peek-header {
     flex-wrap: wrap;
@@ -2890,16 +2917,27 @@ html {
   .eda-workspace-controls[data-settings-open] {
     padding-right: min(464px, calc(100% - 240px));
   }
+  .eda-workspace-controls[data-rows-narrow] {
+    padding-right: min(34.5rem, calc(100% - 240px));
+  }
 }
 /* Beside the open panel, a mid-width toolbar keeps its icons on the first
    line and moves the row count and filter chips to a second line. */
 @media (min-width: 641px) and (max-width: 1100px) {
-  .eda-workspace-controls:is([data-fields-open], [data-settings-open])
+  .eda-workspace-controls:is(
+      [data-fields-open],
+      [data-settings-open],
+      [data-rows-narrow]
+    )
     .eda-workspace-toolbar {
     flex-wrap: wrap;
     gap: 4px;
   }
-  .eda-workspace-controls:is([data-fields-open], [data-settings-open])
+  .eda-workspace-controls:is(
+      [data-fields-open],
+      [data-settings-open],
+      [data-rows-narrow]
+    )
     .eda-workspace-toolbar
     > .eda-filter-status {
     order: 1;

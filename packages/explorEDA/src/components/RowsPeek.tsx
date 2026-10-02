@@ -5,7 +5,7 @@ import {
   type ReactNode,
   type RefObject,
 } from "react";
-import { X } from "lucide-react";
+import { Maximize2, Minimize2, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { RowsView } from "./RowsView";
 
@@ -15,13 +15,16 @@ const layerSelector =
 
 /**
  * The rows that pass every chart filter, in a drawer over the right of the
- * viewport. A strip of charts stays visible beside it. It closes with R,
- * Escape, the close button, or a click on the charts.
+ * viewport. Expanded, it leaves a strip of charts and a click there closes
+ * it. Narrow, it sits beside the charts, which stay in use while it is open.
+ * R, Escape, and the close button close either size.
  */
 export function RowsPeek({
   id,
   scope,
   containerRef,
+  narrow,
+  onNarrowChange,
   onClose,
 }: {
   id: string;
@@ -29,6 +32,9 @@ export function RowsPeek({
   scope?: ReactNode;
   /** The sticky controls; clicks there keep the drawer open. */
   containerRef: RefObject<HTMLElement | null>;
+  /** The narrow size keeps the charts visible and in use beside the rows. */
+  narrow: boolean;
+  onNarrowChange: (narrow: boolean) => void;
   onClose: () => void;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -63,6 +69,8 @@ export function RowsPeek({
   }, []);
 
   useLayoutEffect(() => {
+    // Beside the narrow drawer, a click on a chart filters; it must not close.
+    if (narrow) return;
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
@@ -72,7 +80,7 @@ export function RowsPeek({
     };
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [containerRef, onClose]);
+  }, [containerRef, onClose, narrow]);
 
   return (
     <div
@@ -82,6 +90,7 @@ export function RowsPeek({
       aria-label="Rows"
       tabIndex={-1}
       className="eda-rows-peek"
+      data-narrow={narrow || undefined}
       onKeyDown={(event) => {
         // Escape inside a column filter or menu closes that layer first.
         if (
@@ -100,6 +109,26 @@ export function RowsPeek({
         <h2>Rows</h2>
         <div className="eda-rows-peek-scope eda-workspace-toolbar">{scope}</div>
         <div ref={setToolbarTarget} className="eda-rows-peek-tools" />
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="eda-rows-peek-size"
+          aria-label={narrow ? "Expand the rows" : "Narrow the rows"}
+          aria-pressed={!narrow}
+          tooltip={
+            narrow
+              ? "Expand the rows across the workspace"
+              : "Narrow the rows to keep the charts in use beside them"
+          }
+          onClick={() => onNarrowChange(!narrow)}
+        >
+          {narrow ? (
+            <Maximize2 aria-hidden="true" />
+          ) : (
+            <Minimize2 aria-hidden="true" />
+          )}
+        </Button>
         <Button
           type="button"
           variant="ghost"
