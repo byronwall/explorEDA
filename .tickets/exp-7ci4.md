@@ -1,6 +1,6 @@
 ---
 id: exp-7ci4
-status: open
+status: in_progress
 deps: [exp-3sen, exp-rjh4]
 links: []
 created: 2026-10-02T03:58:32Z
@@ -32,3 +32,32 @@ Intent claims feedback-1 through feedback-6, final-inspection-1, final-inspectio
 **2026-10-02T04:39:19Z**
 
 Next packet review: existing hero opens shop-operations; Reset remounts original props and has a regression test. IntegrationGuide currently documents data/savedData/onStateChange and two typed examples. Owned next boundary is demo journey guidance and a direct route to integration, plus a working getSettings ref example. Must preserve primary example action, prepared initial state, add/edit controls and Reset. Acceptance: fresh example add/edit/Chart spec/integration/Reset by pointer and keyboard at 1280/783/390; guide explains initial and later getSettings reads with edit-only callback semantics. Exclude spec editing or extra persistence. Dependencies remain enforced; no demo implementation started.
+
+## Readiness and ownership
+Base: `36ed832` with `exp-3sen` and `exp-rjh4` accepted and closed. Dependencies are satisfied. Ticket viewer and demo server are already running at `http://127.0.0.1:7412` and `http://127.0.0.1:5178`. Owner: continuous writer; root owns final acceptance and commits.
+
+Owned boundary: demo landing page, featured example guidance, React integration guide and example source, and focused demo tests. The package inspector, ref API, existing example data, `onStateChange`, and Reset implementation are accepted dependencies.
+
+## Decisions
+- Must: keep the order-book example as the primary action and preserve its prepared startup state and Reset flow.
+- Must: explain the path from Add chart, to Chart details edits, to Chart spec inspection. Give the example workspace a direct route back to the integration guide.
+- Must: show `ExplorEdaHandle.getSettings()` for an initial host read and a later read, while `onStateChange` remains the edit callback.
+- Prefer: reuse current page routing, workspace header, CodePanel, and example files. Keep integration content in the current guide.
+- Exclude: spec editing, persistent settings changes, agent flows, or changes to package behavior.
+
+## Acceptance
+- Existing prepared example and Reset regression test pass.
+- A focused demo test checks example guidance, direct integration navigation, and the integration code/copy for initial and later reads plus edit-only callback semantics.
+- Browser proof completes Add, Chart details edit, Chart spec inspect, integration guide, and Reset by pointer and keyboard at 1280, 783, and 390 px.
+- Keep desktop support claims accurate. Do not claim global mobile support.
+
+## Provenance
+Runtime configuration story milestone 3: `docs/intent/runtime-configuration-story/implementation-plan.md`; scope from this ticket and the accepted root dependencies.
+
+**2026-10-02T04:53:59Z**
+
+Implementation checkpoint: demo guidance connects Add chart → Chart details → Chart spec; a native /#integration link returns from the example to the guide. OrdersExplorer.example reads ref.current.getSettings() after mount and on demand; onStateChange remains the edit callback. Focused demo tests pass (19 tests), demo typecheck, UI convention check, demo lint, and git diff --check pass. Browser proof at 1280/783/390 remains pending; leave ticket in progress for root acceptance.
+
+**2026-10-02T04:55:20Z**
+
+Root review: native integration link avoids transition timing state. Removed the new static IntegrationGuide test because it only asserted copied source strings. Existing routing/Reset regression tests remain; focused package tests already prove getSettings behavior. Required browser guide and journey proof remains open. Final full pnpm check is running against combined source.

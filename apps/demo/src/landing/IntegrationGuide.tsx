@@ -23,6 +23,12 @@ const boundaries = [
     meaning:
       "Called after meaningful edits with JSON settings, never raw rows. Your app decides where to keep them; do not feed each result back into savedData.",
   },
+  {
+    name: "ref.current.getSettings()",
+    role: "Read",
+    meaning:
+      "Read current settings after the workspace mounts, then call it again whenever your app needs a fresh snapshot. It does not replace the edit callback.",
+  },
 ];
 
 const facts = [
@@ -52,6 +58,7 @@ export function IntegrationGuide() {
     <section
       aria-labelledby="integration-heading"
       id="integration"
+      tabIndex={-1}
       className="scroll-mt-8"
     >
       <SectionHeading
@@ -60,6 +67,8 @@ export function IntegrationGuide() {
       >
         The order book is the published <code>ExplorEda</code> component. This
         site adds the page around it: routing, file import, and a reset button.
+        Use <code>getSettings()</code> for an initial or on-demand read;
+        <code> onStateChange</code> still fires after edits.
       </SectionHeading>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
@@ -69,7 +78,7 @@ export function IntegrationGuide() {
               {
                 name: "OrdersExplorer.tsx",
                 code: ordersExplorerSource,
-                note: "Without savedData, this opens a workspace with summary and row views. See OrderBook.tsx for the featured dashboard.",
+                note: "It reads the initial settings after mount and offers a later read on demand. onStateChange still reports edits. Without savedData, this opens summary and row views.",
               },
               {
                 name: "OrderBook.tsx",
@@ -98,7 +107,7 @@ export function IntegrationGuide() {
         </div>
 
         <div className="min-w-0">
-          <h3 className="text-sm font-semibold">Three props, one boundary</h3>
+          <h3 className="text-sm font-semibold">Settings in and out</h3>
           <dl className="mt-3 divide-y divide-border border-y border-border">
             {boundaries.map((item) => (
               <div key={item.name} className="py-4">

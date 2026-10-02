@@ -400,11 +400,25 @@ export function LandingPage() {
                   <RotateCcw className="h-4 w-4" />
                 </Button>
               </header>
+              <div className="mb-3 flex justify-end">
+                <a
+                  className="inline-flex h-9 items-center justify-center rounded-md px-4 text-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  href="/#integration"
+                >
+                  React integration guide
+                </a>
+              </div>
               {example?.guide && (
                 <p
                   role="note"
                   className="mb-3 rounded-md border border-border bg-primary/5 px-3 py-2 text-sm"
                 >
+                  {example.id === FEATURED_EXAMPLE_ID && (
+                    <span className="mb-1 block font-medium">
+                      Add a chart, open Chart details to edit it, then open
+                      Chart spec to inspect its settings.
+                    </span>
+                  )}
                   {example.guide}
                 </p>
               )}
