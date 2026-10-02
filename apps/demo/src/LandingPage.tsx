@@ -21,6 +21,7 @@ import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { CsvUpload } from "./CsvUpload";
 import { CoverageMatrix } from "./CoverageMatrix";
+import { ChartDocs } from "./ChartDocs";
 import { ExampleSelector } from "./ExampleSelector";
 import { FeaturedExample } from "./landing/FeaturedExample";
 import { IntegrationGuide } from "./landing/IntegrationGuide";
@@ -55,6 +56,7 @@ export function LandingPage() {
 
   const exampleId = searchParams.get("example");
   const showCoverage = searchParams.get("view") === "coverage";
+  const showDocs = searchParams.get("view") === "docs";
 
   const [example, setExample] = useState<ExampleData | null>(null);
   const [isCsvMode, setIsCsvMode] = useState(false);
@@ -221,12 +223,14 @@ export function LandingPage() {
               exit={{ opacity: 0, y: -motionY }}
               transition={shouldReduceMotion ? { duration: 0 } : undefined}
               className={
-                showCoverage
+                showCoverage || showDocs
                   ? "mx-auto w-full max-w-[calc(100vw-3rem)]"
                   : "landing mx-auto w-full max-w-6xl"
               }
             >
-              {showCoverage ? (
+              {showDocs ? (
+                <ChartDocs />
+              ) : showCoverage ? (
                 <CoverageMatrix />
               ) : (
                 <>
