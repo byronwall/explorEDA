@@ -13,6 +13,7 @@ The strongest existing path is scalar data → field summary → charts and rows
 ## Contents
 
 - [Scope and evidence](#scope-and-evidence)
+- [Product direction and package boundary](#product-direction-and-package-boundary)
 - [System structure](#system-structure)
 - [Input data and field profiles](#input-data-and-field-profiles)
 - [Dashboard workspace](#dashboard-workspace)
@@ -36,6 +37,63 @@ Evidence comes from active components, their data paths, chart definitions, pars
 Historical records describe baseline package checks and browser evidence. Current automated validation passed: package tests (198), demo tests (11), both builds and type checks, and `verify:lean` (742,700 bytes; 162,129 bytes gzip). Focused browser evidence appears in the [gap audit](transcript-gap-analysis.md#audit-limits). The [repair record](transcript-trust-fixes.md) and [calculation workflow](calculation-workflow.md) separate historical evidence from current status.
 
 The audit covers all eleven registered view types. It also covers common settings, data ingestion, the separate Rows and Calculations modes, serialization, and source-derived performance limits. It does not claim that every combination of settings was exercised in a browser.
+
+## Product direction and package boundary
+
+The primary product serves Byron's desktop analysis work. The public React package supplies the complete analysis workspace.
+The application consumes the same package entry point as other React hosts. Keep analysis behavior in the package.
+The host owns source acquisition, routes, examples, storage, and any account features.
+
+Favor one connected exploration loop: inspect fields and rows, create a view, filter data, and compare related views.
+Use shared field facts and row state. Keep field names, filter scope, remaining rows, and reset actions clear.
+Choose useful defaults from field types. Show advanced controls only when the data or task needs them.
+Comparison views should use deliberate shared scales, legends, and headers.
+
+Preserve analysis settings without copying source rows into each view. Keep storage outside the package.
+During current development, breaking API changes are acceptable. Do not add compatibility layers without a concrete need.
+
+### Retired workspace initiative
+
+The **Interactive EDA workspace** initiative retired on 2026-10-01. Its completed scope is the three-milestone, single-source inspection slice.
+The broader program goals remain product direction and follow-up scope. Retirement does not claim that every transcript goal is complete.
+
+Current source at `5c92e32` supports the following behavior:
+
+- Nonempty scalar rows open Summary and a source table when no saved state is supplied. Saved charts take precedence.
+- One shared profile discovers the union of source fields and records types, missing counts, distinct counts, and suitable statistics.
+- Numeric, date, category, boolean, and text filters use field-aware controls. Active filters and row counts remain visible.
+- Chart filters share Crossfilter state. Local Rows controls have a separate scope; their labels must explain it.
+- `onStateChange` emits serializable settings after meaningful edits. Mount and input replacement do not echo callbacks.
+- The host can restore settings against the same rows. The callback does not turn `savedData` into a controlled value.
+
+Implementation commits were `f35c80e`, `f298e37`, `180089f`, and `14e4f5e`.
+The original completion record reports browser checks and a restore with 500 rows and two filters.
+Retirement checks passed 66 package tests across profiles, filters, filter status, column controls, provider state, and saved settings.
+Nine demo tests also passed, including host capture and remount restore. One demo test emitted a React `act` warning.
+No new browser, performance, or deployment check ran for this documentation change.
+
+The old date-inference question now has a concrete rule: skip missing values, then test booleans, numbers, and dates in that order.
+Every remaining value must parse with `Date.parse` for inferred datetime type. This is broader than ISO-only detection.
+Profiles scan the full source. Sampling, background work, and a capacity guarantee remain unproven.
+
+Use small fixtures with distinct purposes: Penguins for mixed fields and missing values, red wine for numeric distributions,
+shop operations for repeatable dates and edge cases, and Lorenz for dense linked views and facets.
+Keep the fixed-seed shop generator. Dataset sources and licenses belong in the [dataset notes](../apps/demo/public/datasets/README.md).
+
+### Follow-up scope
+
+| Lasting goal | Destination and boundary |
+| --- | --- |
+| Multiple sources, relationships, joins, lookups, and source inspection | [Multi-source analysis](intent/multi-source-analysis/intent-brief.md). The retired slice accepts one in-memory table. |
+| Named analysis views, durable saves, and application navigation | [Project task views](intent/project-task-views/intent-brief.md). Package restore works; host storage remains separate. |
+| Runtime control of the complete workspace | [Runtime configuration](intent/runtime-configuration-story/intent-brief.md). Keep the public package and primary application aligned. |
+| Inspectable source-to-mark transformations and contributors | [Rendering and traceability](intent/deterministic-rendering-and-data-traceability/intent-brief.md). Scatter and bar trace paths now exist; a general trace graph remains broader scope. |
+| Composable visualization definitions, derived layers, and advanced chart construction | [Composed analytical graphics](intent/composed-analytical-graphics/intent-brief.md). Per-chart settings remain the current model. |
+| Agent-created deterministic analysis views | [In-app analysis agent](intent/in-app-analysis-agent/intent-brief.md). This remains separate from the delivered inspection slice. |
+| Adaptive table controls, rich cells, grouping, selection, chart defaults, and facet quality | [Transcript gap analysis](transcript-gap-analysis.md). Column order and virtual rows now exist; do not reuse the old missing-feature list. |
+| Large-source profile cost and desktop capacity | [Performance evidence](#performance-and-resource-use). Measure representative sources before changing the full-source profile path. |
+
+The [initiative history](initiative-history.json) records closure. Source transcripts remain in [the transcript archive](transcripts/README.md).
 
 ## System structure
 

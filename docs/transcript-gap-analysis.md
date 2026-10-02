@@ -50,7 +50,7 @@ The transcripts are voice notes. They contain examples, alternatives, unresolved
 
 Each section below separates the desired outcome from its proposed implementation. The source ledger provides a file and distinctive phrase for retrieval. The transcript files have no useful internal timestamps, so this report does not invent timecodes.
 
-Current behavior was traced through the active package and demo paths. Existing plans and the demo coverage manifest were used as context. They were not treated as proof of implementation. The [September shape brief](intent/interactive-eda-workspace/shape-brief.md) is a scope decision, not evidence that every item in its “Add” list remains missing.
+Current behavior was traced through the active package and demo paths. Existing plans and the demo coverage manifest were used as context. They were not treated as proof of implementation. The [September scope decision](application-feature-inventory.md#retired-workspace-initiative) defines the delivered slice. It does not describe every current feature gap.
 
 This reconciliation retains that transcript ledger and reviews the recent implementation and source paths. It checks user decisions, completed task reports, commits, and current source. Fresh automated checks and direct probes appear under Audit limits. Browser evidence comes from the linked task; this review did not repeat those browser passes or ingest new transcripts.
 

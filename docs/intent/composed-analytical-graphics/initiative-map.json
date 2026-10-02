@@ -58,7 +58,7 @@
     {
       "id": "prior-workspace",
       "type": "intent",
-      "location": "../interactive-eda-workspace/intent-brief.md",
+      "location": "../../application-feature-inventory.md#product-direction-and-package-boundary",
       "anchor": "visualization specification and traceability work packages",
       "authority": "accepted initiative context"
     },
