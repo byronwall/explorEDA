@@ -1,56 +1,56 @@
 ---
-title: "Developer adoption page — implementation plan"
+title: "Developer adoption page — remaining implementation plan"
 slug: "developer-adoption-page"
 phase: plan
 status: current
-last_updated: "2026-09-23"
+last_updated: "2026-10-02"
 ---
 
-# Landing page rebuild — implementation plan
+# Developer adoption page — remaining work
 
 ## Plan at a glance
 
-Build one strong first-visit path with the existing order example. The first proof is that a visitor can understand the product, open the example, change one filter, see linked views and matching rows respond, and reset. Capture that real state for the new hero. Then add the React integration path, chart-docs links, and lower-priority file tools. [Comparison research](comparative-research.md) supports the choice of a concrete question and direct chart learning paths. It does not justify new capabilities or claims.
+The example-first landing and React integration paths are delivered. The remaining outcome connects existing task-labelled examples to chart guidance. The chart index and rendering-guide routes do not exist at baseline `d720f1f6b99d0a54564da5486da94208a563c71e`. Their minimal first slice belongs to the separate chart documentation initiative.
+
+This pass prepares tickets only. Byron will review them and decide when to implement. Historical PR #27 evidence supports completed work; no fresh browser proof ran during this planning pass.
 
 ## Implementation strategy
 
-- **First proof:** A clear hero preview launches the order workspace and names one verified gesture.
-- **Primary seam:** `apps/demo/src/LandingPage.tsx` owns presentation; `ExplorEda` owns analysis behavior.
-- **Fast local loop:** `pnpm --filter demo dev` with the existing local order data. Use the focused landing test during edits.
-- **External dependency:** None for the first proof. The demo CSV and saved settings are local assets.
-- **Rollout and rollback:** Keep import and restore in the page. Revert landing presentation without changing the package API or saved data.
+- **First remaining proof:** Follow landing → chart index → scatter or bar guide → matching example, and open the rendering guide.
+- **Primary seam:** The demo owns landing navigation and documentation routes. The package owns chart behavior.
+- **Reuse:** LandingPage, ExampleSelector, current examples, and the accepted documentation first proof. Confirm whether existing task-labelled breadth already meets M3 before adding previews.
+- **Local loop:** `pnpm --filter demo dev` with current fixtures; run focused demo tests and `pnpm check:ui`. Run `pnpm check` after broad changes.
+- **Dependency:** Documentation routes and content must exist before landing links ship. No server or external provider is required by this accepted outcome.
+- **Checks:** Verify direct guide URLs, refresh, links, pointer and keyboard use, three widths, and light/dark appearance. Recheck current example IDs and hosting paths; old plan candidates are historical.
+- **Failure boundary:** Missing routes, wrong example IDs, inaccurate guide claims, and broken refresh prevent completion.
+- **Rollback:** Remove new learning links. Existing landing and example paths remain useful while documentation work proceeds.
 
-## Milestone 1: The first screen proves the product
+## Milestone 1: First screen proves the product — delivered
 
-- **Inspect:** Run the order example. Confirm its control labels, linked effects, row view, reset action, and useful viewport crops.
-- **Change:** Rebuild the landing hero around a plain product category, one analytical question, real workspace imagery, and a primary “Explore the example” action.
-- **Verify:** Open the page and example at 1280, 783, and 390 px. Check heading order, keyboard access, image text alternative, gesture, result, and reset.
-
-### Desired end state
-
-- A new visitor can identify the React analysis workspace and reach a working linked example without a file.
-- The preview and instruction match actual behavior.
-
-## Milestone 2: Two clear routes from proof to use
-
-- **Change:** Add concise “Explore your data” and “Embed in React” paths. Move CSV import and saved-analysis restore after the proof; preserve both flows.
-- **Change:** Show the public install, component, and CSS boundary. Link to a complete example with its data and saved settings. Explain `data`, `savedData`, and `onStateChange` using current API behavior.
-- **Verify:** Build the displayed snippet. Test import and restore. Check that the short snippet makes no configured-dashboard claim. Run `pnpm check` and `pnpm check:ui`.
+The featured real example, linked interaction, and Reset exist. Merged PR #27 records historical browser evidence. Do not create new implementation tickets for this delivered scope.
 
 ### Desired end state
 
-- An analyst can try their own data. A developer can reproduce the integration and see what the host must provide.
-- Existing file workflows still work.
+Visitors can identify the component, open its featured example, and reset the workspace.
 
-## Milestone 3: Chart breadth and learning path
+## Milestone 2: Two use paths — delivered
 
-- **Change:** Add a small group of real example previews with task labels. Link to the chart index and rendering guide from the separate docs initiative when those routes exist.
-- **Verify:** Open every card and docs link locally. Check wide, intermediate, and narrow layouts and light/dark appearance.
+React integration, CSV import, and saved-analysis restore exist. PR #27 records historical integration and browser checks. Retain these paths.
 
 ### Desired end state
 
-- Visitors can see the range of analytical tasks and move into a chart-specific guide.
+Visitors can try their data or inspect the React integration boundary.
+
+## Milestone 3: Chart breadth and learning path — remaining
+
+First provide the chart documentation initiative's accepted index, scatter/bar guides, rendering guide, and real-example links. Then connect the landing to those routes. Do not substitute coverage status for user guidance.
+
+The documentation prerequisite is [exp-72ve](../../../.tickets/exp-72ve.md). The remaining landing outcome is [exp-4ak2](../../../.tickets/exp-4ak2.md), which depends on it. Both stay open for review and later frontier refinement. No epic is needed for this small remainder.
+
+### Desired end state
+
+Visitors reach accurate chart-specific guidance and the shared rendering explanation from existing examples. Changed links and direct refresh work at three widths by pointer and keyboard.
 
 ## Below the cut line
 
-- A second interactive hero renderer, a full chart gallery on the home page, framework adapters, unmeasured performance claims, and new charts.
+A new landing rebuild, full chart gallery, new charts, framework adapters, generated API reference, new chart renderer, and unmeasured performance claims. The rest of the documentation catalogue remains in its own initiative. No implementation, remote issues, push, or deployment occurs in this pass.

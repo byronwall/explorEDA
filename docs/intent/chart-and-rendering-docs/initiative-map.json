@@ -1,12 +1,14 @@
 {
-  "schema_version": "0.4.0",
+  "schema_version": "0.5.0",
   "initiative": {
     "title": "Chart and rendering documentation",
     "slug": "chart-and-rendering-docs",
     "scale": "capability",
     "current_phase": "plan",
-    "last_updated": "2026-09-23",
-    "summary": "Create task-led pages for all registered views and an accurate current-state rendering guide."
+    "last_updated": "2026-10-02",
+    "summary": "Create task-led pages for all registered views and an accurate current-state rendering guide.",
+    "status": "planned",
+    "next_action": "Review the first-guide prerequisite ticket; refine before implementation."
   },
   "artifacts": {
     "intent_brief": {
@@ -27,7 +29,7 @@
     "implementation_plan": {
       "path": "implementation-plan.md",
       "status": "current",
-      "updated_at": "2026-09-23"
+      "updated_at": "2026-10-02"
     }
   },
   "sources": [
@@ -170,21 +172,26 @@
         "outcome": "Two chart guides and system guide work",
         "proof": "Direct URLs and linked demo gestures work at three widths",
         "valid_intermediate_state": "Landing and examples remain available",
-        "rollback": "Remove docs query view"
+        "rollback": "Remove docs query view",
+        "ticket": "exp-72ve",
+        "status": "planned"
       },
       {
         "id": "M2",
         "outcome": "All eleven registered types documented",
         "proof": "Index matches registry and every guide has a working example link",
         "valid_intermediate_state": "Existing docs routes stay useful",
-        "rollback": "Revise individual pages"
+        "rollback": "Revise individual pages",
+        "status": "planned"
       },
       {
         "id": "M3",
         "outcome": "Landing and docs form one learning path",
         "proof": "Links work and guide matches current implementation",
         "valid_intermediate_state": "Demo and docs coexist",
-        "rollback": "Remove landing links"
+        "rollback": "Remove landing links",
+        "landing_bridge_ticket": "exp-4ak2",
+        "status": "planned"
       }
     ],
     "cut_line": [
@@ -193,12 +200,23 @@
       "generated API pipeline",
       "chart behavior changes only for docs"
     ],
-    "open_decisions": []
+    "open_decisions": [],
+    "tickets": [
+      {
+        "id": "exp-72ve",
+        "milestone": "M1",
+        "role": "minimal landing documentation prerequisite"
+      }
+    ]
   },
   "history": [
     {
       "date": "2026-09-23",
       "change": "Created a separate documentation initiative with competitor research and a proof-first plan."
+    },
+    {
+      "date": "2026-10-02",
+      "change": "Recorded first-proof prerequisite exp-72ve for adoption remainder. Landing link ownership is in exp-4ak2; avoid duplicate bridge work. No implementation authorized."
     }
   ],
   "catalogue": [
