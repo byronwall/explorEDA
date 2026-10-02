@@ -17,7 +17,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { CsvUpload } from "./CsvUpload";
 import { CoverageMatrix } from "./CoverageMatrix";
@@ -286,6 +286,23 @@ export function LandingPage() {
                           Project status: feature coverage
                         </Button>
                       </div>
+                      <nav
+                        aria-label="Learning guides"
+                        className="mb-6 flex flex-wrap gap-x-5 gap-y-2 text-sm"
+                      >
+                        <Link
+                          className="rounded-sm font-medium text-primary underline underline-offset-4 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                          to="?view=docs"
+                        >
+                          Browse chart guides
+                        </Link>
+                        <Link
+                          className="rounded-sm font-medium text-primary underline underline-offset-4 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                          to="?view=docs&topic=rendering"
+                        >
+                          How rendering works
+                        </Link>
+                      </nav>
                       <ExampleSelector onSelect={handleExampleSelect} />
                     </section>
                     <section

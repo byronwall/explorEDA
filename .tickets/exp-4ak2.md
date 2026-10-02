@@ -1,6 +1,6 @@
 ---
 id: exp-4ak2
-status: open
+status: in_progress
 deps: [exp-72ve]
 links: []
 created: 2026-10-02T04:13:16Z
@@ -13,17 +13,37 @@ tags: [adoption-page, landing, chart-docs]
 # Connect the landing examples to chart and rendering guides
 
 ## Outcome
-A visitor reaches the chart index and rendering guide from the landing page, then opens a chart guide and its matching example. The primary example remains first.
+Add two clear links from the existing landing examples section to the accepted chart index and rendering guide. Keep the featured order-book path first. Readers can continue from the chart index to a guide and its current example.
 
-## Likely Steps
-Reuse the current example catalogue and integration sections. Add the missing learning links once the documentation routes exist. Check whether existing task-labelled examples satisfy the planned breadth before adding any preview content. Keep the shipped example, import, restore, and integration flows.
+## Readiness and verified boundary
+- Prerequisite `exp-72ve` is closed at `e0713af`; the index, scatter/bar guides, rendering guide, example routes, captures, and route-focus repair are integrated in this branch.
+- The current `LandingPage` keeps its hero and featured `shop-operations` example above Integration and Examples. The Examples section has all ten task-labelled entries, plus the existing feature-coverage link. It has no chart-docs links yet.
+- `ExampleSelector` positions an example button across its list row. Put learning links before the list, outside the row overlays; do not add links inside each example row.
+- Docs URLs are `/?view=docs` and `/?view=docs&topic=rendering`. Guide pages already link to `?example=scatter-trace` and `?example=shop-operations`.
+- Vite uses `base: "/"`; Pages uploads `apps/demo/dist`, and README names `https://exploreda.dev`. Use same-origin query links. New routes and refresh were verified on the local built preview; production deployment is excluded.
+- Browser target: built preview on port 5196. Reuse it; do not start another preview or ticket viewer. A local dark proof fixture may need restore after a build clears ignored `dist/` content.
+- Accountable owner: Byron Wall. Current writer: guides_writer. Root coordinates independent browser proof and acceptance.
 
-## Ready Gate
-The documentation prerequisite must provide real routes and content. Confirm current landing controls, example IDs, static URL behavior, and the runnable browser target before refinement. This open ticket is for review, not implementation authorization.
+## Scope
+Add semantic links labelled `Browse chart guides` and `How rendering works` just before the existing `ExampleSelector` within the Examples section. Keep the visible feature-coverage link. Preserve ordering and all current hero, example, integration, import, restore, and Reset paths.
 
-## Proof and Cut Line
-Follow every changed example and documentation link with pointer and keyboard at wide, intermediate, and narrow widths, in light and dark appearance. Refresh the guide URLs. Run focused landing checks and pnpm check:ui; run pnpm check after a broad change. Do not rebuild the hero, invent another renderer, create new charts, or duplicate documentation content.
+## Acceptance and proof
+- Both links use the existing docs query routes and work by pointer and keyboard.
+- The current example list still contains all ten entries, with the featured shop example and hero path unchanged.
+- Links remain visible and usable at 1280, 783, and 390 px, in light and dark views. They sit outside the example row overlays and have visible focus styling.
+- Direct docs and rendering-guide refreshes remain working; the rendering guide links to its chart pages and their real examples.
+- Run the focused landing tests, `pnpm check:ui`, and `pnpm check`. Save the full check log at `tmp/exp-4ak2-pnpm-check.log`.
+- Keep this ticket in progress until root's independent browser pass accepts the combined state. Production smoke, deployment, push, and PR are excluded.
+
+## Cut line
+No landing rebuild, new preview, chart/catalogue page, example, tooltip, package change, chart behavior, framework, dependency, changeset, or deployment edit. Do not modify `exp-72ve` or unrelated tickets.
 
 ## Provenance
 Developer adoption page: accepted shape and M3, chart breadth and learning path. Baseline d720f1f6b99d0a54564da5486da94208a563c71e. M1 and M2 are delivered with historical PR #27 evidence. Current ExampleSelector supplies task-labelled breadth; chart-index and rendering-guide links are absent.
 
+
+
+## Checkpoint
+Implemented the two guide links before the example list. The focused landing test verifies both query targets and the existing test still verifies all ten task-labelled examples and their selection path. `pnpm check` passes: 61 package test files/374 tests and 6 demo test files/20 tests, plus builds, type checks, and `check:ui`. The full log is `tmp/exp-4ak2-pnpm-check.log`; the focused landing test also passes (9 tests).
+
+Next: root's independent browser pass checks both links by pointer and keyboard at 1280, 783, and 390 px in light and dark views. Keep this ticket in progress until that pass is accepted. The build clears the local ignored dark preview fixture, so restore it before visual proof. No deployment is authorized.
