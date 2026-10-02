@@ -8,7 +8,7 @@
     "last_updated": "2026-10-01",
     "summary": "Review skill, coverage manifest, checks, and matrix exist. Current declarations and visual acceptance remain incomplete.",
     "status": "active",
-    "next_action": "Reconcile current example declarations, verify the matrix in the browser, and record passing feature reviews."
+    "next_action": "Refine the matrix proof and coverage reconciliation roots; then close confirmed example gaps and reviews. Track feedback-round-2 cleanup separately."
   },
   "artifacts": {
     "intent_brief": {
@@ -431,6 +431,24 @@
     "decisions": [
       "Keep the existing matrix in the demo.",
       "Use compact review metadata with date and evidence note; avoid a new review-history system."
+    ],
+    "ticket_links": [
+      {
+        "id": "exp-9e6a",
+        "milestone": "m3"
+      },
+      {
+        "id": "exp-2g7e",
+        "milestone": "m4"
+      },
+      {
+        "id": "exp-3qd5",
+        "milestone": "m4"
+      },
+      {
+        "id": "eufr3-5ig1",
+        "scope": "separate bounded feedback-round-2 cleanup"
+      }
     ]
   },
   "history": [
@@ -447,6 +465,16 @@
         "example-verification",
         "workspace-polish",
         "All 18 demo tests passed."
+      ]
+    },
+    {
+      "date": "2026-10-01",
+      "event": "Prepared three open local tickets for remaining matrix and example-coverage work. Kept the six feedback-round-2 follow-ups in their existing ticket. No implementation started.",
+      "evidence": [
+        "exp-9e6a",
+        "exp-2g7e",
+        "exp-3qd5",
+        "eufr3-5ig1"
       ]
     }
   ]

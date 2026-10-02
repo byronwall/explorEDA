@@ -23,6 +23,14 @@ The manifest contains 38 feature rows and 10 examples. All 11 registered chart t
 
 These are manifest counts, not a count of missing product features. Current configurations already contain meaningful titles, axis labels, and a saved Lorenz brush. Some declarations have fallen behind the code.
 
+## Open tickets
+
+- [exp-9e6a](../../../.tickets/exp-9e6a.md): Prove the feature matrix in the browser (milestone 3; independent root).
+- [exp-2g7e](../../../.tickets/exp-2g7e.md): Reconcile example coverage with current evidence (milestone 4; independent root).
+- [exp-3qd5](../../../.tickets/exp-3qd5.md): Close confirmed example gaps and record current reviews (milestone 4; waits for exp-2g7e).
+
+The existing [eufr3-5ig1](../../../.tickets/eufr3-5ig1.md) is a separate, bounded feedback-round-2 cleanup root. Its six drawer, details, and placement follow-ups remain in that ticket. Each needs a current fix and proof or a supported recorded decision. It does not expand the example-coverage scope.
+
 ## Implementation strategy
 
 Keep the existing skill, manifest, and matrix. Review current examples before adding samples or changing chart runtime code.

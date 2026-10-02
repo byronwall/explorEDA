@@ -24,3 +24,9 @@ Gaps left after implementing feedback round 2 (placement that moves charts, char
 
 Each item is either fixed with a test or closed with a recorded decision.
 
+
+## Notes
+
+**2026-10-02T03:57:11Z**
+
+Planning pass 2026-10-01: Keep these six recorded follow-ups as one bounded cleanup ticket. Reproduce current behavior before fixing or recording a supported decision for each item. Check changed drawer/details/placement flows in the browser at wide, intermediate, and narrow widths. Do not expand this ticket into a general UI sweep. It is an independent frontier root beside the example-coverage initiative.
