@@ -14,17 +14,19 @@ Start with two unlike chart pages and a small rendering guide. This tests the co
 
 ## Ticket handoff
 
-[exp-72ve](../../../.tickets/exp-72ve.md) covers the existing first-proof milestone needed by the landing remainder. It stays open for later refinement. This pass does not fan out the full catalogue. Existing example candidates below are historical; confirm current IDs and chart modes before execution. Review any docs-system research available at that frontier.
+The first slice is accepted on 2026-10-02: `?view=docs` and the `scatter`, `bar`, and `rendering` topics. `apps/demo/src/ChartDocs.tsx` owns the pages. The broader milestones below retain their original scope. Only M1 is accepted by this execution.
+
+[exp-72ve](../../../.tickets/exp-72ve.md) covers the existing first-proof milestone needed by the landing remainder. It is accepted and closed with source, check, browser, and screenshot evidence. This execution did not fan out the full catalogue. Existing example candidates below are historical; confirm current IDs and chart modes before execution. Review any docs-system research available at that frontier.
 
 ## Implementation strategy
 
 - **First proof:** From a chart index, open scatter and bar guides, then launch each matching live example.
 - **Primary seam:** Docs content and navigation live in `apps/demo`; the library owns chart behavior and public types.
-- **Fast local loop:** `pnpm --filter demo dev`; use existing demo fixtures and focused tests.
+- **Fast local loop:** `pnpm --filter demo dev`; use existing demo fixtures and focused tests. Build and use `pnpm --filter demo preview` for static query refresh. A temporary host HTML fixture with `.dark` can verify dark tokens when the demo has no appearance control.
 - **External dependency:** None for local docs. The static GitHub Pages deployment confirms deep links and asset paths after local proof.
 - **Rollout and rollback:** Add `?view=docs&topic=...` (or a similarly small query route). Keep the current landing, example, and coverage routes. Removing docs routes leaves saved analyses untouched.
 
-## Milestone 1: Two guides can be used from the live demo
+## Milestone 1: Two guides can be used from the live demo — accepted
 
 - **Change — navigation:** Add a docs index and stable query routes in the existing demo. Link back to the landing page and specific `?example=` states. Use semantic links and headings.
 - **Change — content:** Write scatter and bar pages with purpose, fields, computations, interactions, row scope, key settings, limits, one real image, and a matching demo action. Use the [feature inventory](../../application-feature-inventory.md) as a source, then verify live labels and effects.

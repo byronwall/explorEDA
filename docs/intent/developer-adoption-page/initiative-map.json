@@ -4,11 +4,11 @@
     "title": "Developer adoption page",
     "slug": "developer-adoption-page",
     "scale": "capability",
-    "current_phase": "plan",
+    "current_phase": "execute",
     "last_updated": "2026-10-02",
     "summary": "Rebuild the landing page around a real linked example, clear visual proof, and two use paths.",
     "status": "active",
-    "next_action": "Byron reviews the remaining-work tickets; implementation is not authorized."
+    "next_action": "All three implementation milestones are accepted. No further build scope is authorized."
   },
   "artifacts": {
     "intent_brief": {
@@ -173,11 +173,11 @@
     "open_decisions": []
   },
   "implementation": {
-    "status": "current",
+    "status": "accepted",
     "repository_snapshot": {
       "root": "/Users/byronwall/.codex/worktrees/adoption-page-tickets/explorEDA",
-      "revision": "d720f1f6b99d0a54564da5486da94208a563c71e",
-      "worktree_status": "Isolated planning branch; no application changes",
+      "revision": "33602bc",
+      "worktree_status": "Accepted two-ticket slice; runtime source checked at 33602bc. Evidence is in exp-72ve and exp-4ak2.",
       "subsystems": [
         "apps/demo/src/LandingPage.tsx",
         "apps/demo/src/ExampleSelector.tsx",
@@ -237,9 +237,10 @@
         "proof": "Preview and docs links open at three widths",
         "valid_intermediate_state": "Existing examples and landing remain usable",
         "rollback": "Remove the new landing learning links",
-        "status": "planned",
+        "status": "completed",
         "evidence": [
-          "ExampleSelector.tsx shows example breadth; chart index and rendering-guide links are absent because those routes do not exist."
+          "Planning baseline: examples existed while documentation routes and landing learning links were absent.",
+          "Accepted exp-72ve and exp-4ak2 record current query routes, real examples, pointer/keyboard activation at three widths, light and dark host appearance, and passing repository checks."
         ],
         "ticket": "exp-4ak2"
       }
@@ -292,6 +293,10 @@
     {
       "date": "2026-10-02",
       "change": "Prepared two coarse open tickets for remaining landing scope and its documentation prerequisite. No implementation authorized."
+    },
+    {
+      "date": "2026-10-02",
+      "change": "Executed only exp-72ve and exp-4ak2 after refinement. Both accepted locally. Full catalogue, publishing, and deployment remain outside this execution; native tickets hold proof and limits."
     }
   ]
 }

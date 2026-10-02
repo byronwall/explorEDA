@@ -1,25 +1,25 @@
 ---
-title: "Developer adoption page — remaining implementation plan"
+title: "Developer adoption page — accepted implementation plan"
 slug: "developer-adoption-page"
 phase: plan
 status: current
 last_updated: "2026-10-02"
 ---
 
-# Developer adoption page — remaining work
+# Developer adoption page — accepted work
 
 ## Plan at a glance
 
-The example-first landing and React integration paths are delivered. The remaining outcome connects existing task-labelled examples to chart guidance. The chart index and rendering-guide routes do not exist at baseline `d720f1f6b99d0a54564da5486da94208a563c71e`. Their minimal first slice belongs to the separate chart documentation initiative.
+The example-first landing, React integration, and learning path are delivered. Existing task-labelled examples now connect to the chart index and rendering guide. The minimal documentation slice provides scatter and bar guides with matching examples. The broader catalogue remains in the separate chart documentation initiative.
 
-This pass prepares tickets only. Byron will review them and decide when to implement. Historical PR #27 evidence supports completed work; no fresh browser proof ran during this planning pass.
+The original planning pass created the two tickets at `873a21a`. The authorized execution accepted both tickets on 2026-10-02. Tickets own current status and evidence. Historical PR #27 evidence remains valid for the earlier landing and integration work.
 
 ## Implementation strategy
 
-- **First remaining proof:** Follow landing → chart index → scatter or bar guide → matching example, and open the rendering guide.
+- **Accepted first proof:** Follow landing → chart index → scatter or bar guide → matching example, and open the rendering guide.
 - **Primary seam:** The demo owns landing navigation and documentation routes. The package owns chart behavior.
-- **Reuse:** LandingPage, ExampleSelector, current examples, and the accepted documentation first proof. Confirm whether existing task-labelled breadth already meets M3 before adding previews.
-- **Local loop:** `pnpm --filter demo dev` with current fixtures; run focused demo tests and `pnpm check:ui`. Run `pnpm check` after broad changes.
+- **Reuse:** LandingPage, ExampleSelector, current examples, and the accepted documentation first proof. The existing ten task-labelled examples meet M3; no previews were added.
+- **Local loop:** `pnpm --filter demo dev` with current fixtures; run focused demo tests and `pnpm check:ui`. Run `pnpm check` after broad changes. Use the built Vite preview for static query refresh. A temporary host HTML fixture with `.dark` can verify dark tokens without adding a product control.
 - **Dependency:** Documentation routes and content must exist before landing links ship. No server or external provider is required by this accepted outcome.
 - **Checks:** Verify direct guide URLs, refresh, links, pointer and keyboard use, three widths, and light/dark appearance. Recheck current example IDs and hosting paths; old plan candidates are historical.
 - **Failure boundary:** Missing routes, wrong example IDs, inaccurate guide claims, and broken refresh prevent completion.
@@ -41,11 +41,11 @@ React integration, CSV import, and saved-analysis restore exist. PR #27 records 
 
 Visitors can try their data or inspect the React integration boundary.
 
-## Milestone 3: Chart breadth and learning path — remaining
+## Milestone 3: Chart breadth and learning path — delivered
 
-First provide the chart documentation initiative's accepted index, scatter/bar guides, rendering guide, and real-example links. Then connect the landing to those routes. Do not substitute coverage status for user guidance.
+The chart documentation initiative now supplies the index, scatter/bar guides, rendering guide, and real-example links. The landing links to the index and rendering guide beside the existing Examples section. The featured example and current catalogue remain intact.
 
-The documentation prerequisite is [exp-72ve](../../../.tickets/exp-72ve.md). The remaining landing outcome is [exp-4ak2](../../../.tickets/exp-4ak2.md), which depends on it. Both stay open for review and later frontier refinement. No epic is needed for this small remainder.
+The documentation prerequisite is [exp-72ve](../../../.tickets/exp-72ve.md). The remaining landing outcome is [exp-4ak2](../../../.tickets/exp-4ak2.md), which depends on it. Both tickets are accepted and closed. Their records contain the source revisions, checks, browser steps, screenshots, and proof limits.
 
 ### Desired end state
 
@@ -53,4 +53,4 @@ Visitors reach accurate chart-specific guidance and the shared rendering explana
 
 ## Below the cut line
 
-A new landing rebuild, full chart gallery, new charts, framework adapters, generated API reference, new chart renderer, and unmeasured performance claims. The rest of the documentation catalogue remains in its own initiative. No implementation, remote issues, push, or deployment occurs in this pass.
+A new landing rebuild, full chart gallery, new charts, framework adapters, generated API reference, new chart renderer, and unmeasured performance claims. The rest of the documentation catalogue remains in its own initiative. The execution did not expand the catalogue or change library behavior. Publishing and deployment remain outside this scope.
