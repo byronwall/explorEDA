@@ -3,7 +3,7 @@ title: "Runtime configuration story"
 slug: "runtime-configuration-story"
 phase: intent
 status: current
-last_updated: "2026-09-29"
+last_updated: "2026-10-01"
 ---
 
 # Runtime configuration story
@@ -46,7 +46,7 @@ The primary audience is developers. Explore an example is the main action. Chart
 
 ## Current reality that matters
 
-The landing page already offers a live order example and React integration guidance. `Hero`, `WhyWorkspace`, and `IntegrationGuide` contain much of the current explanation. The workspace stores chart definitions and layout in settings. The proposed chart spec screen is not a current landing feature.
+The landing page already offers a live order example, Reset, and React integration guidance. The workspace supports chart creation, editing, and Chart details. It stores chart definitions and layout in settings. The readable chart spec screen has not shipped. The host callback reports edits but does not supply initial settings.
 
 This refines the [earlier landing scope](../developer-adoption-page/intent-brief.md). It connects to [project views](../project-task-views/intent-brief.md) and [integrated agents](../in-app-analysis-agent/intent-brief.md).
 

@@ -3,7 +3,7 @@ title: "Runtime configuration story — shape brief"
 slug: "runtime-configuration-story"
 phase: shape
 status: current
-last_updated: "2026-09-29"
+last_updated: "2026-10-01"
 ---
 
 # Runtime configuration story — shape brief
@@ -31,7 +31,7 @@ The integration section connects the demonstration to host-owned data and saved 
 
 ## Current fit
 
-Reuse the live example, chart controls, saved settings, layout state, and integration explanation. The package should supply chart spec inspection so an embedding host can expose it too. All current initiatives remain single-source. Its placement and public entry need later review. A demo-only explanation would not satisfy the product need for inspecting the current analysis.
+Reuse the live example, Chart details editor, saved settings, layout state, and integration explanation. The example already has Reset. The package should supply chart spec inspection so an embedding host can expose it too. Its placement and public entry need later review. The current edit callback does not supply initial settings. A demo-only explanation would not satisfy the product need for inspecting the current analysis.
 
 ## Included inspection capabilities
 
@@ -64,7 +64,7 @@ Do not create a separate spec format or duplicate settings state. Keep change-co
 
 ## Plan handoff
 
-Intent and shape only. Review the chart spec screen and example journey before requesting implementation planning.
+The [implementation plan](implementation-plan.md) starts with the readable chart spec screen. Host settings access and the example journey follow.
 
 ## Weakest or least-clear parts
 

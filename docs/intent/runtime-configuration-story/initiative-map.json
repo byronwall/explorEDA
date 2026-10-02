@@ -1,23 +1,25 @@
 {
-  "schema_version": "0.4.0",
+  "schema_version": "0.5.0",
   "initiative": {
     "title": "Runtime configuration story",
     "slug": "runtime-configuration-story",
     "scale": "capability",
-    "current_phase": "shape",
-    "last_updated": "2026-09-29",
-    "summary": "Explain the single-source embeddable workspace with chart work and readable current settings."
+    "current_phase": "plan",
+    "last_updated": "2026-10-01",
+    "summary": "Explain the single-source embeddable workspace with chart work and readable current settings.",
+    "status": "planned",
+    "next_action": "Refine the chart spec inspector and host read frontier tickets before implementation."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-09-29"
+      "updated_at": "2026-10-01"
     },
     "shape_brief": {
       "path": "shape-brief.md",
       "status": "current",
-      "updated_at": "2026-09-29"
+      "updated_at": "2026-10-01"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -26,8 +28,8 @@
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-requested",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-01"
     }
   },
   "sources": [
@@ -156,6 +158,13 @@
       "location": "2026-09-29 final response annotation 3",
       "anchor": "I assume we will need this as well.",
       "authority": "direct acceptance of host settings access"
+    },
+    {
+      "id": "repo-2026-10-01",
+      "type": "repository",
+      "location": "packages/explorEDA/src/components/ExplorEda.tsx; packages/explorEDA/src/providers/DataLayerProvider.tsx; packages/explorEDA/src/components/PlotChartPanel.tsx; apps/demo/src/LandingPage.tsx",
+      "anchor": "HEAD 22a9bd3694cf208c63911291a5926c3c5a367be0",
+      "authority": "current implementation reality"
     }
   ],
   "intent": {
@@ -386,10 +395,80 @@
     ]
   },
   "implementation": {
-    "status": "not-requested",
+    "status": "plan-ready",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/runtime-config-tickets/explorEDA",
+      "revision": "22a9bd3694cf208c63911291a5926c3c5a367be0",
+      "worktree_status": "clean at planning start; isolated worktree on codex/runtime-config-tickets",
+      "subsystems": [
+        "DataLayerProvider",
+        "SavedDataStructure",
+        "PlotManager",
+        "PlotChartPanel",
+        "ChartSettingsContent",
+        "ChartGridLayout",
+        "LandingPage",
+        "LiveOrderBook",
+        "IntegrationGuide"
+      ],
+      "test_commands": [
+        "pnpm check:ui",
+        "pnpm check",
+        "pnpm --filter demo dev"
+      ],
+      "deployment_surfaces": [
+        "demo site; no deployment requested"
+      ]
+    },
     "dependencies": [],
-    "milestones": [],
-    "open_decisions": []
+    "fast_local_loop": {
+      "command": "focused package/demo tests; pnpm --filter demo dev",
+      "network_required": false,
+      "shared_infrastructure_required": false,
+      "failure_injection": [
+        "missing referenced calculation or color scale in a controlled saved-settings fixture"
+      ]
+    },
+    "milestones": [
+      {
+        "id": "M1",
+        "status": "planned",
+        "outcome": "Readable current chart specifications",
+        "proof": "Add and edit a chart, move or resize it, and inspect all current charts plus referenced definitions at three widths",
+        "valid_intermediate_state": "Existing Chart details editor and workspace remain usable",
+        "rollback": "Remove inspector; saved analyses stay valid"
+      },
+      {
+        "id": "M2",
+        "status": "planned",
+        "outcome": "Host reads initial and edited settings",
+        "proof": "Host reads a snapshot after mount and after an edit; snapshots agree with the workspace",
+        "valid_intermediate_state": "Existing edit notifications and restore still work",
+        "rollback": "Remove focused read access without changing saved settings"
+      },
+      {
+        "id": "M3",
+        "status": "planned",
+        "outcome": "Developer add, edit, inspect, and integrate journey",
+        "proof": "Complete the example journey by pointer and keyboard at 1280, 783, and 390 pixels; Reset restores the prepared example",
+        "valid_intermediate_state": "Existing example entry and integration guide stay usable",
+        "rollback": "Revert demo journey links or copy"
+      }
+    ],
+    "cut_line": [
+      "spec-screen editing",
+      "settings change-comparison UI",
+      "agent service or task views",
+      "multiple sources or lookups",
+      "new personal-data persistence policy"
+    ],
+    "open_decisions": [],
+    "tickets": [
+      "exp-b6fo",
+      "exp-3sen",
+      "exp-rjh4",
+      "exp-7ci4"
+    ]
   },
   "history": [
     {
@@ -443,6 +522,10 @@
         "Host settings access included",
         "Change-comparison UI deferred"
       ]
+    },
+    {
+      "date": "2026-10-01",
+      "event": "Added repository-grounded plan from current source; landing example and Chart details editor already ship; initial host read and readable chart specs remain."
     }
   ]
 }
