@@ -75,6 +75,12 @@ const TRACE_COPY = {
       "Alt-click a bar, axis object, or zero baseline to trace it. Normal clicks keep chart interactions. You can also find a source row below.",
     ariaLabel: "Bar trace inspector",
   },
+  heatmap: {
+    heading: "Cell trace",
+    emptyText:
+      "Alt-click a cell to trace it. Normal clicks keep selecting cells. You can also find a source row below.",
+    ariaLabel: "Heatmap trace inspector",
+  },
 } as const;
 
 function isTraceable(type: string): type is keyof typeof TRACE_COPY {

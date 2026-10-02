@@ -119,6 +119,15 @@ export const coverageFeatures = [
     chartType: "line",
   },
   {
+    id: "chart:heatmap",
+    label: "Heatmap",
+    family: "Chart types",
+    description: "Compare a count or measure across two categories.",
+    required: true,
+    status: "supported",
+    chartType: "heatmap",
+  },
+  {
     id: "labels:meaningful-title",
     label: "Meaningful titles",
     family: "Labels and guides",
@@ -375,6 +384,7 @@ export const exampleCoverage = [
       "chart:bar": "shown",
       "chart:boxplot": "shown",
       "chart:data-table": "shown",
+      "chart:heatmap": "shown",
       "color:categorical": "shown",
       "interaction:cross-filter": "shown",
       "layout:dashboard": "shown",

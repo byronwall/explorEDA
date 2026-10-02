@@ -52,6 +52,7 @@ const viewNames: Record<string, string> = {
   boxplot: "box plot",
   "color-legend": "legend",
   "data-table": "table",
+  heatmap: "heatmap",
   line: "line",
   markdown: "notes",
   pivot: "pivot",

@@ -490,6 +490,23 @@ export const largeShopDashboard = dashboard(
   shopDashboard.colorScales
 );
 
+// Only the 500-order book gets the heatmap; the large book fills this row.
+shopDashboard.charts.push({
+  ...base,
+  id: "shop-category-region",
+  type: "heatmap",
+  title: "Where does revenue come from?",
+  field: "Category",
+  columnField: "Region",
+  aggregation: "sum",
+  measureField: "Revenue",
+  maxCategories: 20,
+  sortBy: "count",
+  showValues: true,
+  layout: layout(0, 14, 12, 5),
+  margin: { top: 8, right: 16, bottom: 8, left: 8 },
+});
+
 export const scatterTraceDashboard: SavedDataStructure = {
   ...dashboard(
     "Trace a scatter point",

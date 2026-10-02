@@ -33,7 +33,7 @@ export function useCreateCharts() {
       .map((profile) => profile.name);
     const selectedField =
       field ||
-      (type === "row" ? categories[0] : numeric[0]) ||
+      (type === "row" || type === "heatmap" ? categories[0] : numeric[0]) ||
       profiles[0]?.name ||
       "";
     const settings = definition.createDefaultSettings(layout, selectedField);
@@ -69,6 +69,9 @@ export function useCreateCharts() {
       settings.yAxisLabel = settings.type === "bar" ? "Records" : "";
     }
     if (settings.type === "boxplot") settings.yAxisLabel = "";
+    if (settings.type === "heatmap")
+      settings.columnField =
+        categories.find((name) => name !== settings.field) ?? "";
     settings.title = "";
     return settings;
   };

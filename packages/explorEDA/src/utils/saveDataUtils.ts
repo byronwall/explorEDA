@@ -434,6 +434,16 @@ function isChart(value: unknown): boolean {
         isFiniteNumber(value.numericalBreakpoints) &&
         typeof value.wrap === "boolean"
       );
+    case "heatmap":
+      return (
+        typeof value.columnField === "string" &&
+        ["count", "sum", "average"].includes(value.aggregation as string) &&
+        (value.measureField === undefined ||
+          typeof value.measureField === "string") &&
+        isFiniteNumber(value.maxCategories) &&
+        ["count", "label"].includes(value.sortBy as string) &&
+        typeof value.showValues === "boolean"
+      );
     case "line":
       return (
         typeof value.xField === "string" &&
