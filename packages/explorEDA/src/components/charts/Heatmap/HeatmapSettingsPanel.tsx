@@ -2,6 +2,7 @@ import { FieldSelector } from "@/components/FieldSelector";
 import { NumericInputEnter } from "@/components/NumericInputEnter";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import type { AggregateAggregation } from "@/lib/aggregates";
 import { finiteNumber } from "@/lib/numeric";
@@ -120,7 +121,17 @@ export function HeatmapSettingsPanel({
         />
 
         <Label>Order</Label>
-        <div className="flex gap-1" role="group" aria-label="Order">
+        <ToggleGroup
+          type="single"
+          size="sm"
+          variant="outline"
+          value={settings.sortBy}
+          onValueChange={(next) =>
+            next && change({ sortBy: next as HeatmapSettings["sortBy"] })
+          }
+          aria-label="Order"
+          className="justify-start"
+        >
           {(
             [
               ["count", "Most rows", "Put the values with the most rows first on each axis."],
@@ -128,17 +139,14 @@ export function HeatmapSettingsPanel({
             ] as const
           ).map(([value, text, help]) => (
             <ActionTooltip key={value} content={help}>
-              <button
-                type="button"
-                aria-pressed={settings.sortBy === value}
-                className="h-8 rounded-md border border-input px-2 text-sm aria-pressed:bg-accent aria-pressed:font-medium"
-                onClick={() => change({ sortBy: value })}
-              >
-                {text}
-              </button>
+              <span className="inline-flex">
+                <ToggleGroupItem value={value} className="px-2">
+                  {text}
+                </ToggleGroupItem>
+              </span>
             </ActionTooltip>
           ))}
-        </div>
+        </ToggleGroup>
 
         <div className="col-start-2">
           <ActionTooltip content="Print each cell's value inside it when the cells are large enough to fit the text.">
