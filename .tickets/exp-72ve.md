@@ -1,6 +1,6 @@
 ---
 id: exp-72ve
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-10-02T04:13:16Z
@@ -47,3 +47,24 @@ The browser pass found that changing guide routes kept scroll position at 592 px
 
 ## Provenance
 Chart and rendering documentation: first proof and M1. Developer adoption page: M3 prerequisite. Baseline d720f1f6b99d0a54564da5486da94208a563c71e. Existing landing example and integration paths are delivered. Documentation routes are absent. This ticket supplies only the prerequisite slice, not the full documentation initiative.
+
+## Notes
+
+**2026-10-02T04:45:14Z**
+
+Accepted by root on source revision 690d5b8 after independent browser verification at http://127.0.0.1:5196/.
+
+| Criterion | Evidence | Result |
+| --- | --- | --- |
+| Four stable docs routes and refresh | Index, scatter, bar, rendering direct URLs refreshed at 1280, 783, 390 px; correct H1, scroll 0, no horizontal overflow | pass |
+| Pointer and keyboard links | Tab/Enter and pointer open guides, Home and index; matching examples load 18 scatter rows and 500 orders | pass |
+| Navigation discovery | Lower scatter link to rendering resets scroll and focuses destination H1 after repair; tested at all widths | pass |
+| Runtime claims | T-001 raw values produce Gross sales 80, Net sales 75, Contribution 30; missing numeric input has no glyph; scatter brush yields 2/18, histogram drag 265/500; clear/Reset restore fixture | pass |
+| Appearance | Light pages at three widths; dark tokens at three widths through ignored local proof-dark.html host fixture using identical built JS/CSS | pass |
+| Repository checks | pnpm check passed initial broad change; repaired demo build, check:ui and focused route/focus tests passed | pass |
+
+Owner reviewed source diff and representative images. Screenshots: tmp/exp-72ve-final-index-wide.png, tmp/exp-72ve-final-scatter-wide.png, tmp/exp-72ve-final-rendering-wide.png, tmp/exp-72ve-final-index-390.png, tmp/exp-72ve-final-dark-index-wide.png, tmp/exp-72ve-final-dark-scatter-390.png.
+
+Dark proof tests the host .dark class, not a shipped theme switch. Production smoke is excluded by the no-deploy request. Existing numeric histogram single-click only focuses; drag selection is verified and documented. No package source changes; no changeset required.
+
+All acceptance criteria pass. Next: close this prerequisite, refine exp-4ak2, and connect landing learning links without changing delivered paths.
