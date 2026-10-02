@@ -2487,6 +2487,53 @@ html {
 .eda-calculation-list td:nth-child(4) {
   white-space: nowrap;
 }
+@container settings-drawer (max-width: 560px) {
+  .eda-calculation-list,
+  .eda-calculation-list tbody,
+  .eda-calculation-list tr,
+  .eda-calculation-list td {
+    display: block;
+    width: 100%;
+  }
+  .eda-calculation-list thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+  .eda-calculation-list tr {
+    position: relative;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .eda-calculation-list td {
+    padding: 6px 12px;
+    border: 0;
+    white-space: normal;
+  }
+  .eda-calculation-list td::before {
+    display: block;
+    margin-bottom: 3px;
+    color: var(--muted-foreground);
+    font-size: 11px;
+    content: attr(data-label);
+  }
+  .eda-calculation-list td:first-child {
+    min-width: 0;
+    padding-right: 52px;
+  }
+  .eda-calculation-list td:last-child {
+    position: absolute;
+    top: 8px;
+    right: 0;
+    width: auto;
+  }
+  .eda-calculation-list td:last-child::before {
+    content: none;
+  }
+}
 .eda-calc-field-name {
   font-size: 13px;
   font-weight: 600;
@@ -2690,6 +2737,8 @@ html {
    floats over the right edge, in the field list's place. */
 .eda-settings-drawer {
   outline: none;
+  container-name: settings-drawer;
+  container-type: inline-size;
   position: fixed;
   top: var(--eda-field-list-top, 8px);
   right: var(--eda-field-list-right, 8px);
@@ -3579,7 +3628,8 @@ html {
   margin-right: 4px;
   border-radius: 2px;
   vertical-align: -1px;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--foreground) 15%, transparent);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--foreground) 15%, transparent);
 }
 .eda-trace-more > summary {
   cursor: pointer;
