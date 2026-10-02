@@ -1,6 +1,6 @@
 import { ChartDraftProvider } from "./plot/ChartDraftContext";
 import type { DatumObject } from "@/providers/DataLayerProvider";
-import { DataLayerProvider } from "@/providers/DataLayerProvider";
+import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import {
   SavedAnalysisStructure,
   SavedCalculation,
@@ -44,36 +44,49 @@ import { GlobalAlertDialog } from "./GlobalAlertDialog";
 
 import "../index.css";
 import { CalculationEditorProvider } from "./calculations/CalculationEditor";
+import { forwardRef, useImperativeHandle } from "react";
 
 registerAllCharts();
 
-export function ExplorEda({
-  data,
-  savedData,
-  onStateChange,
-}: {
-  data: DatumObject[];
-  savedData: SavedDataStructure | undefined;
-  onStateChange?: (state: SavedDataStructure) => void;
-}) {
+export interface ExplorEdaHandle {
+  getSettings: () => SavedDataStructure;
+}
+
+export const ExplorEda = forwardRef<
+  ExplorEdaHandle,
+  {
+    data: DatumObject[];
+    savedData: SavedDataStructure | undefined;
+    onStateChange?: (state: SavedDataStructure) => void;
+  }
+>(function ExplorEda({ data, savedData, onStateChange }, ref) {
   return (
     <DataLayerProvider
       data={data}
       savedData={savedData}
       onStateChange={onStateChange}
     >
-      <div className="bg-background text-foreground">
-        <CalculationEditorProvider>
-          <ChartDraftProvider>
-            <PlotManager />
-          </ChartDraftProvider>
-        </CalculationEditorProvider>
-        <GlobalAlertDialog />
-        <Toaster />
-      </div>
+      <Workspace ref={ref} />
     </DataLayerProvider>
   );
-}
+});
+
+const Workspace = forwardRef<ExplorEdaHandle>(function Workspace(_props, ref) {
+  const getSettings = useDataLayer((state) => state.saveToStructure);
+  useImperativeHandle(ref, () => ({ getSettings }), [getSettings]);
+
+  return (
+    <div className="bg-background text-foreground">
+      <CalculationEditorProvider>
+        <ChartDraftProvider>
+          <PlotManager />
+        </ChartDraftProvider>
+      </CalculationEditorProvider>
+      <GlobalAlertDialog />
+      <Toaster />
+    </div>
+  );
+});
 
 export type { SavedDataStructure };
 export type {

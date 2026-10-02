@@ -26,6 +26,7 @@ import {
 } from "@/utils/saveDataUtils";
 import {
   Calculator,
+  ChartNoAxesColumnIncreasing,
   Copy,
   Grid,
   Keyboard,
@@ -147,7 +148,9 @@ export function PlotManager() {
     }
     // The calculation list is a table, so it opens with room to read it.
     if (!settingsTab) {
-      setSettingsWide(tab === "calculations" && calculationCount > 0);
+      setSettingsWide(
+        (tab === "calculations" && calculationCount > 0) || tab === "spec"
+      );
     }
     setRowsOpenState(false);
     setSettingsTab(tab);
@@ -506,6 +509,12 @@ export function PlotManager() {
                   "Grid",
                   "Grid: columns, row height, and spacing",
                   Grid,
+                ],
+                [
+                  "spec",
+                  "Chart spec",
+                  "Chart spec: inspect current chart settings and layout",
+                  ChartNoAxesColumnIncreasing,
                 ],
               ] as const
             ).map(([tab, label, tooltip, Icon]) => (

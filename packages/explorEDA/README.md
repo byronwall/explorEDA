@@ -5,30 +5,46 @@ React components for interactive exploratory data analysis.
 ```tsx
 import {
   ExplorEda,
+  type ExplorEdaHandle,
   stringifySavedData,
   type SavedDataStructure,
 } from "exploreda";
+import { createRef } from "react";
 import "exploreda/dist/ExplorEda.css";
 
 const data = [{ category: "A", value: 1 }];
 // Paste the copied settings JSON here.
 const savedData: SavedDataStructure = {
-  "charts": [],
-  "calculations": [],
-  "gridSettings": {"columnCount": 1, "rowHeight": 300, "containerPadding": 10, "showBackgroundMarkers": false},
-  "metadata": {"name": "Embedded view", "version": 1, "createdAt": "2026-01-01T00:00:00.000Z", "modifiedAt": "2026-01-01T00:00:00.000Z"},
-  "colorScales": []
+  charts: [],
+  calculations: [],
+  gridSettings: {
+    columnCount: 1,
+    rowHeight: 300,
+    containerPadding: 10,
+    showBackgroundMarkers: false,
+  },
+  metadata: {
+    name: "Embedded view",
+    version: 1,
+    createdAt: "2026-01-01T00:00:00.000Z",
+    modifiedAt: "2026-01-01T00:00:00.000Z",
+  },
+  colorScales: [],
 };
 const handleStateChange = (next: SavedDataStructure) => {
   console.log(stringifySavedData(next));
   // Copy this JSON into source or store it in the host.
 };
+const workspace = createRef<ExplorEdaHandle>();
 
 <ExplorEda
+  ref={workspace}
   data={data}
   savedData={savedData}
   onStateChange={handleStateChange}
 />;
+// Call from a host event after React mounts the workspace.
+const readCurrentSettings = () => workspace.current?.getSettings();
 ```
 
 The package entry point exports `ExplorEda` and the `SavedDataStructure` type.
@@ -36,6 +52,9 @@ The CSS file is available at `exploreda/dist/ExplorEda.css`.
 
 `onStateChange` runs after meaningful workspace changes. It does not run on
 initial mount, and replacing `data` or `savedData` does not echo a callback.
+`ref.current.getSettings()` reads the current `SavedDataStructure` after mount,
+including initial settings when `savedData` is omitted. It reflects later edits
+when called again. It does not change the edit-only callback behavior.
 `savedData` is an input for initial or replacement restore, not a controlled
 value; do not feed every callback result back into it. Callback snapshots are
 storage-neutral JSON settings. They include Rows filters, search, sort, column

@@ -1,6 +1,7 @@
 import { useEffect, useRef, type CSSProperties, type RefObject } from "react";
 import {
   Calculator,
+  ChartNoAxesColumnIncreasing,
   Grid,
   Maximize2,
   Minimize2,
@@ -13,13 +14,15 @@ import { CalculationManager } from "./calculations/CalculationManager";
 import { ColorScalePanel } from "./ColorScaleManager";
 import { usePanelBox } from "./FieldList/FieldList";
 import { GridSettingsPanel } from "./settings/GridSettingsPanel";
+import { ChartSpecPanel } from "./ChartSpecPanel";
 
-export type WorkspaceSettingsTab = "calculations" | "colors" | "grid";
+export type WorkspaceSettingsTab = "calculations" | "colors" | "grid" | "spec";
 
 const TABS = [
   { value: "calculations", label: "Calculations", icon: Calculator },
   { value: "colors", label: "Colors", icon: Palette },
   { value: "grid", label: "Grid", icon: Grid },
+  { value: "spec", label: "Chart spec", icon: ChartNoAxesColumnIncreasing },
 ] as const;
 
 /**
@@ -132,6 +135,9 @@ export function WorkspaceSettingsDrawer({
         </TabsContent>
         <TabsContent value="grid" forceMount>
           <GridSettingsPanel />
+        </TabsContent>
+        <TabsContent value="spec" forceMount>
+          <ChartSpecPanel />
         </TabsContent>
       </Tabs>
     </aside>
