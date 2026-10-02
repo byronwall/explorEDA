@@ -1,73 +1,453 @@
 {
-  "schema_version": "0.4.0",
+  "schema_version": "0.5.0",
   "initiative": {
     "title": "Data visualization review and example coverage",
     "slug": "data-viz-review-and-example-coverage",
     "scale": "capability",
-    "current_phase": "plan",
-    "last_updated": "2026-09-15",
-    "summary": "Create a transcript-grounded chart review skill, then make chart and feature example coverage explicit, rendered, and checked."
+    "current_phase": "execution",
+    "last_updated": "2026-10-01",
+    "summary": "Review skill, coverage manifest, checks, and matrix exist. Current declarations and visual acceptance remain incomplete.",
+    "status": "active",
+    "next_action": "Reconcile current example declarations, verify the matrix in the browser, and record passing feature reviews."
   },
   "artifacts": {
-    "intent_brief": {"path": "intent-brief.md", "status": "current", "updated_at": "2026-09-15"},
-    "brainstorm": {"path": "brainstorm.md", "status": "not-requested", "updated_at": null},
-    "shape_brief": {"path": "shape-brief.md", "status": "current", "updated_at": "2026-09-15"},
-    "implementation_plan": {"path": "implementation-plan.md", "status": "current", "updated_at": "2026-09-15"}
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-01"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-01"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-10-01"
+    }
   },
   "sources": [
-    {"id": "current-request", "type": "dictation", "location": "current conversation", "anchor": "full request", "authority": "current explicit instruction"},
-    {"id": "viz-system", "type": "transcript", "location": "docs/transcripts/2026-07-26-data-visualization-system-design.txt", "anchor": "chart types, defaults, transformations, and auditability", "authority": "direct first-party transcript"},
-    {"id": "dashboarding", "type": "transcript", "location": "docs/transcripts/2026-07-28-dashboarding-filtering-and-chart-defaults.txt", "anchor": "dashboards, controls, filters, and chart defaults", "authority": "direct first-party transcript"},
-    {"id": "source-tables", "type": "transcript", "location": "docs/transcripts/2026-07-28-data-transforms-loading-and-source-tables.txt", "anchor": "data transformation, source tables, and visible data", "authority": "direct first-party transcript"},
-    {"id": "faceting", "type": "transcript", "location": "docs/transcripts/2026-07-29-faceting-and-shared-scales.txt", "anchor": "shared scales, legends, labels, chart ink, density, and faceting", "authority": "direct first-party transcript"},
-    {"id": "traceability", "type": "transcript", "location": "docs/transcripts/2026-08-02-visualization-traceability-and-dataflow.txt", "anchor": "traceability from data to rendered glyphs", "authority": "direct first-party transcript"},
-    {"id": "spec-driven", "type": "transcript", "location": "docs/transcripts/2026-08-03-spec-driven-interactive-visualization.txt", "anchor": "chart, filter, grouping, and repetition semantics", "authority": "direct first-party transcript"},
-    {"id": "advanced-specs", "type": "transcript", "location": "docs/transcripts/2026-08-04-advanced-chart-specs-and-transforms.txt", "anchor": "stacking, ordering, treemaps, and positional transforms", "authority": "direct first-party transcript"},
-    {"id": "tables", "type": "transcript", "location": "docs/transcripts/2026-06-29-data-table-defaults-and-schemas.txt", "anchor": "table defaults, sorting, filtering, and formatting", "authority": "direct first-party transcript"},
-    {"id": "reusable-requirements", "type": "transcript", "location": "docs/transcripts/2026-07-13-reusable-interactive-component-requirements.txt", "anchor": "source-backed reusable review requirements", "authority": "direct first-party transcript"},
-    {"id": "registry", "type": "repository", "location": "packages/explorEDA/src/charts/registerAllCharts.ts", "anchor": "registered chart types", "authority": "current repository reality"},
-    {"id": "examples", "type": "repository", "location": "apps/demo/src/demos/examples.ts", "anchor": "current example catalog", "authority": "current repository reality"}
+    {
+      "id": "current-request",
+      "type": "dictation",
+      "location": "current conversation",
+      "anchor": "full request",
+      "authority": "current explicit instruction"
+    },
+    {
+      "id": "viz-system",
+      "type": "transcript",
+      "location": "docs/transcripts/2026-07-26-data-visualization-system-design.txt",
+      "anchor": "chart types, defaults, transformations, and auditability",
+      "authority": "direct first-party transcript"
+    },
+    {
+      "id": "dashboarding",
+      "type": "transcript",
+      "location": "docs/transcripts/2026-07-28-dashboarding-filtering-and-chart-defaults.txt",
+      "anchor": "dashboards, controls, filters, and chart defaults",
+      "authority": "direct first-party transcript"
+    },
+    {
+      "id": "source-tables",
+      "type": "transcript",
+      "location": "docs/transcripts/2026-07-28-data-transforms-loading-and-source-tables.txt",
+      "anchor": "data transformation, source tables, and visible data",
+      "authority": "direct first-party transcript"
+    },
+    {
+      "id": "faceting",
+      "type": "transcript",
+      "location": "docs/transcripts/2026-07-29-faceting-and-shared-scales.txt",
+      "anchor": "shared scales, legends, labels, chart ink, density, and faceting",
+      "authority": "direct first-party transcript"
+    },
+    {
+      "id": "traceability",
+      "type": "transcript",
+      "location": "docs/transcripts/2026-08-02-visualization-traceability-and-dataflow.txt",
+      "anchor": "traceability from data to rendered glyphs",
+      "authority": "direct first-party transcript"
+    },
+    {
+      "id": "spec-driven",
+      "type": "transcript",
+      "location": "docs/transcripts/2026-08-03-spec-driven-interactive-visualization.txt",
+      "anchor": "chart, filter, grouping, and repetition semantics",
+      "authority": "direct first-party transcript"
+    },
+    {
+      "id": "advanced-specs",
+      "type": "transcript",
+      "location": "docs/transcripts/2026-08-04-advanced-chart-specs-and-transforms.txt",
+      "anchor": "stacking, ordering, treemaps, and positional transforms",
+      "authority": "direct first-party transcript"
+    },
+    {
+      "id": "tables",
+      "type": "transcript",
+      "location": "docs/transcripts/2026-06-29-data-table-defaults-and-schemas.txt",
+      "anchor": "table defaults, sorting, filtering, and formatting",
+      "authority": "direct first-party transcript"
+    },
+    {
+      "id": "reusable-requirements",
+      "type": "transcript",
+      "location": "docs/transcripts/2026-07-13-reusable-interactive-component-requirements.txt",
+      "anchor": "source-backed reusable review requirements",
+      "authority": "direct first-party transcript"
+    },
+    {
+      "id": "registry",
+      "type": "repository",
+      "location": "packages/explorEDA/src/charts/registerAllCharts.ts",
+      "anchor": "registered chart types",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "examples",
+      "type": "repository",
+      "location": "apps/demo/src/demos/examples.ts",
+      "anchor": "current example catalog",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "status-audit-2026-10-01",
+      "type": "repository",
+      "location": "current checkout at 172c2ad6f29b0ca2109a98211fd3541e931797da",
+      "anchor": "skill, coverage manifest, matrix, current examples, and demo tests",
+      "authority": "inspected repository evidence"
+    },
+    {
+      "id": "baseline-reviews",
+      "type": "review",
+      "location": "docs/reviews/data-viz-example-baseline.md",
+      "anchor": "three rendered trials at 1280 \u00d7 720 on 2026-09-15",
+      "authority": "recorded visual evidence"
+    },
+    {
+      "id": "example-verification",
+      "type": "review",
+      "location": "docs/reviews/data-viz-example-verification.md",
+      "anchor": "follow-up blockers; matrix review explicitly excluded",
+      "authority": "recorded visual evidence"
+    },
+    {
+      "id": "workspace-polish",
+      "type": "review",
+      "location": "docs/reviews/chart-workspace-polish.md",
+      "anchor": "later repairs and interaction checks; not full initiative acceptance",
+      "authority": "recorded verification evidence"
+    }
   ],
   "intent": {
     "claims": [
-      {"id": "chart-first", "type": "outcome", "statement": "Interactive views must be good charts before rich interaction earns credit.", "commitment": "explicit", "importance": "core", "status": "active", "time_horizon": "proof", "sources": ["current-request", "dashboarding"]},
-      {"id": "review-skill", "type": "required behavior", "statement": "A repository skill must review charts, tables, and dashboards with a consistent rubric.", "commitment": "explicit", "importance": "core", "status": "active", "time_horizon": "first release", "sources": ["current-request", "reusable-requirements"]},
-      {"id": "rubric-surface", "type": "required behavior", "statement": "The rubric must cover titles, hierarchy, spacing, typography, ink, color, axes, ticks, labels, tables, filtering, and multi-view relationships.", "commitment": "explicit", "importance": "core", "status": "active", "time_horizon": "first release", "sources": ["current-request", "faceting", "tables"]},
-      {"id": "coverage", "type": "outcome", "statement": "The example set must intentionally cover each chart type and material feature.", "commitment": "explicit", "importance": "core", "status": "active", "time_horizon": "first release", "sources": ["current-request"]},
-      {"id": "feature-matrix", "type": "implementation hypothesis", "statement": "A rendered feature matrix can make coverage and gaps visible and can support later article content.", "commitment": "tentative", "importance": "supporting", "status": "active", "time_horizon": "first release", "sources": ["current-request"]},
-      {"id": "no-cartesian", "type": "derived implication", "statement": "Coverage should use a representative basis set instead of every chart-feature combination.", "commitment": "derived", "importance": "supporting", "status": "active", "time_horizon": "first release", "sources": ["current-request", "registry", "examples"]},
-      {"id": "traceable-semantics", "type": "desired experience", "statement": "A review should detect when the visible result obscures its data, transformation, scope, or active filter state.", "commitment": "repeated", "importance": "supporting", "status": "active", "time_horizon": "first release", "sources": ["viz-system", "traceability", "spec-driven"]}
+      {
+        "id": "chart-first",
+        "type": "outcome",
+        "statement": "Interactive views must be good charts before rich interaction earns credit.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "current-request",
+          "dashboarding"
+        ]
+      },
+      {
+        "id": "review-skill",
+        "type": "required behavior",
+        "statement": "A repository skill must review charts, tables, and dashboards with a consistent rubric.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "current-request",
+          "reusable-requirements"
+        ]
+      },
+      {
+        "id": "rubric-surface",
+        "type": "required behavior",
+        "statement": "The rubric must cover titles, hierarchy, spacing, typography, ink, color, axes, ticks, labels, tables, filtering, and multi-view relationships.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "current-request",
+          "faceting",
+          "tables"
+        ]
+      },
+      {
+        "id": "coverage",
+        "type": "outcome",
+        "statement": "The example set must intentionally cover each chart type and material feature.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "current-request"
+        ]
+      },
+      {
+        "id": "feature-matrix",
+        "type": "implementation hypothesis",
+        "statement": "A rendered feature matrix can make coverage and gaps visible and can support later article content.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "current-request"
+        ]
+      },
+      {
+        "id": "no-cartesian",
+        "type": "derived implication",
+        "statement": "Coverage should use a representative basis set instead of every chart-feature combination.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "current-request",
+          "registry",
+          "examples"
+        ]
+      },
+      {
+        "id": "traceable-semantics",
+        "type": "desired experience",
+        "statement": "A review should detect when the visible result obscures its data, transformation, scope, or active filter state.",
+        "commitment": "repeated",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "viz-system",
+          "traceability",
+          "spec-driven"
+        ]
+      }
     ],
-    "themes": ["chart-first quality", "visual hierarchy", "semantic clarity", "visible interaction state", "intentional example coverage", "source-backed reusable review"],
+    "themes": [
+      "chart-first quality",
+      "visual hierarchy",
+      "semantic clarity",
+      "visible interaction state",
+      "intentional example coverage",
+      "source-backed reusable review"
+    ],
     "conflicts": [],
     "human_questions": []
   },
-  "brainstorm": {"status": "not-requested", "requested_count": 7, "options": [], "selected_option": null},
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
   "shape": {
     "status": "current",
     "appetite": "One small skill, one coverage source, one rendered matrix, one completeness test, and the minimum examples needed to close material gaps.",
-    "problem": "Current demos prove that chart components render, but they do not prove visual quality or intentional feature coverage.",
-    "recommended_shape": {"skill": "One chart-first rubric with chart-family addenda", "coverage": "One typed example coverage manifest", "view": "One rendered feature matrix", "verification": "One completeness test plus visual reviews"},
-    "success_moves": ["Prove the rubric on three contrasting current examples", "Separate implemented support from intentional demonstration", "Use a representative basis set instead of a Cartesian product", "Keep visual judgment in the skill and structural integrity in tests", "Improve existing examples before adding new ones"],
-    "first_proof": {"question": "Does the rubric produce specific and useful findings across simple, faceted, and coordinated views?", "artifact": "Three reviews from the initial repository skill", "decision_rule": "Keep the shape if each review has a clear verdict, blockers, section findings, and three priority fixes."},
-    "rabbit_holes": ["automated visual scoring", "exhaustive feature combinations", "new documentation platform", "screenshot regression infrastructure"],
+    "problem": "Coverage declarations lag example repairs. Structural checks pass, but current visual acceptance is incomplete.",
+    "recommended_shape": {
+      "skill": "One chart-first rubric with chart-family addenda",
+      "coverage": "One typed example coverage manifest",
+      "view": "One rendered feature matrix",
+      "verification": "One completeness test plus visual reviews"
+    },
+    "success_moves": [
+      "Use the existing rubric and baseline findings to review current examples before adding samples.",
+      "Separate implemented support from intentional demonstration",
+      "Use a representative basis set instead of a Cartesian product",
+      "Keep visual judgment in the skill and structural integrity in tests",
+      "Improve existing examples before adding new ones"
+    ],
+    "first_proof": {
+      "question": "Does the rubric produce specific and useful findings across simple, faceted, and coordinated views?",
+      "artifact": "Three reviews from the initial repository skill",
+      "decision_rule": "Keep the shape if each review has a clear verdict, blockers, section findings, and three priority fixes.",
+      "evidence": [
+        ".agents/skills/data-viz-review/SKILL.md",
+        "docs/reviews/data-viz-example-baseline.md: three specific failing reviews meet the rubric trial gate."
+      ]
+    },
+    "rabbit_holes": [
+      "automated visual scoring",
+      "exhaustive feature combinations",
+      "new documentation platform",
+      "screenshot regression infrastructure"
+    ],
     "open_decisions": []
   },
   "implementation": {
     "status": "current",
-    "repository_snapshot": {"root": "/Users/byronwall/Projects/explorEDA", "revision": "af4d35b", "worktree_status": "clean before planning artifacts", "subsystems": ["chart registry", "chart settings and renderers", "saved demo configurations", "demo example selector", "Vitest suites"], "test_commands": ["pnpm --filter demo test", "pnpm --filter demo build"], "deployment_surfaces": ["Vite demo application"]},
+    "repository_snapshot": {
+      "root": "/Users/byronwall/Projects/explorEDA",
+      "revision": "172c2ad6f29b0ca2109a98211fd3541e931797da",
+      "worktree_status": "Unrelated untracked documentation and tmp evidence present before audit; preserved.",
+      "subsystems": [
+        "chart registry",
+        "chart settings and renderers",
+        "saved demo configurations",
+        "demo example selector",
+        "Vitest suites"
+      ],
+      "test_commands": [
+        "pnpm --filter demo test",
+        "pnpm --filter demo build",
+        "pnpm check"
+      ],
+      "deployment_surfaces": [
+        "Vite demo application"
+      ]
+    },
     "dependencies": [],
-    "fast_local_loop": {"command": "pnpm --filter demo test && pnpm --filter demo build", "network_required": false, "fixtures": "Existing local datasets and saved demo settings", "failure_control": "Manifest test reports unknown and uncovered feature IDs"},
+    "fast_local_loop": {
+      "command": "pnpm --filter demo test && pnpm --filter demo build",
+      "network_required": false,
+      "fixtures": "Existing local datasets and saved demo settings",
+      "failure_control": "Manifest checks reject unknown IDs and require declarations or explicit gaps."
+    },
     "milestones": [
-      {"id": "m1", "title": "The skill gives useful chart-first reviews", "outcome": "A repository skill produces decisive reviews for three current examples.", "dependencies_introduced": [], "proof": "Review line-chart, categorical-charts, and Lorenz examples.", "valid_intermediate_state": "The skill is useful even without the matrix.", "rollback": "Remove the new skill directory.", "status": "planned"},
-      {"id": "m2", "title": "Feature coverage becomes explicit and checked", "outcome": "A typed manifest and one test expose current coverage gaps.", "dependencies_introduced": [], "proof": "All registry types map to examples and uncovered required features remain explicit.", "valid_intermediate_state": "The manifest and test work without a rendered matrix.", "rollback": "Remove the additive manifest and test imports.", "status": "planned"},
-      {"id": "m3", "title": "The demo renders the feature matrix", "outcome": "A maintainer can inspect and navigate coverage in the demo.", "dependencies_introduced": [], "proof": "Desktop browser review plus focused view test.", "valid_intermediate_state": "Existing example routes remain unchanged.", "rollback": "Remove the additive matrix route or view.", "status": "planned"},
-      {"id": "m4", "title": "A minimal example basis closes material gaps", "outcome": "Required features are intentionally demonstrated or explicitly deferred.", "dependencies_introduced": [], "proof": "Run the skill on each changed example and mark reviewed only after blockers are cleared.", "valid_intermediate_state": "Each revised example improves the current catalog independently.", "rollback": "Revert individual example configuration changes.", "status": "planned"}
+      {
+        "id": "m1",
+        "title": "The skill gives useful chart-first reviews",
+        "outcome": "A repository skill produces decisive reviews for three current examples.",
+        "dependencies_introduced": [],
+        "proof": "Review line-chart, categorical-charts, and Lorenz examples.",
+        "valid_intermediate_state": "The skill is useful even without the matrix.",
+        "rollback": "Remove the new skill directory.",
+        "status": "completed",
+        "evidence": [
+          ".agents/skills/data-viz-review/SKILL.md implements the rubric and cites transcripts.",
+          "docs/reviews/data-viz-example-baseline.md records line-chart, categorical-charts, and Lorenz trials with visible evidence, blockers, section judgments, and three fixes."
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Feature coverage becomes explicit and checked",
+        "outcome": "A typed manifest and one test expose current coverage gaps.",
+        "dependencies_introduced": [],
+        "proof": "All registry types map to examples and uncovered required features remain explicit.",
+        "valid_intermediate_state": "The manifest and test work without a rendered matrix.",
+        "rollback": "Remove the additive manifest and test imports.",
+        "status": "completed",
+        "evidence": [
+          "apps/demo/src/demos/coverage.ts defines 38 features and 10 example declarations, including all 11 registered chart types.",
+          "apps/demo/src/demos/coverage.test.ts checks registry agreement, IDs, declarations, and gaps; passed on 2026-10-01."
+        ]
+      },
+      {
+        "id": "m3",
+        "title": "The demo renders the feature matrix",
+        "outcome": "A maintainer can inspect and navigate coverage in the demo.",
+        "dependencies_introduced": [],
+        "proof": "Desktop browser review plus focused view test.",
+        "valid_intermediate_state": "Existing example routes remain unchanged.",
+        "rollback": "Remove the additive matrix route or view.",
+        "status": "active",
+        "evidence": [
+          "apps/demo/src/CoverageMatrix.tsx and LandingPage.tsx implement /?view=coverage with attention, all-feature, example-usage, and expandable matrix views.",
+          "apps/demo/src/CoverageMatrix.test.tsx passed on 2026-10-01.",
+          "docs/reviews/data-viz-example-verification.md explicitly excludes matrix review. No complete matrix browser proof found in inspected reports."
+        ],
+        "remaining": [
+          "Browser verification at wide, intermediate, and narrow widths, including keyboard use and overflow.",
+          "Clarify separate review-record wording: feature and example review status currently share one reviewed assignment."
+        ]
+      },
+      {
+        "id": "m4",
+        "title": "A minimal example basis closes material gaps",
+        "outcome": "Required features are intentionally demonstrated or explicitly deferred.",
+        "dependencies_introduced": [],
+        "proof": "Run the skill on each changed example and mark reviewed only after blockers are cleared.",
+        "valid_intermediate_state": "Each revised example improves the current catalog independently.",
+        "rollback": "Revert individual example configuration changes.",
+        "status": "active",
+        "evidence": [
+          "apps/demo/src/demos/examples.ts contains descriptive titles, purposes, dataset summaries, and advertised capabilities.",
+          "dashboardSettings.ts, categoricalChartSettings.ts, boxPlotSettings.ts, nbaStatsSettings.ts, and lorenz.ts contain labels, units, and example repairs.",
+          "lorenz.ts saves Time and Z ranges; dashboardSettings.ts uses symlog; shop-10000 declares shared scales.",
+          "No reviewed assignments exist. Fourteen features have no declared usage. Fifteen gap notes remain, including a stale shared-scale note."
+        ],
+        "remaining": [
+          "Reconcile stale gap notes and undeclared existing examples.",
+          "Distinguish linear, symlog, categorical, and date-scale support before changing scale declarations.",
+          "Close confirmed empty/invalid-state and other feature gaps or explicitly defer them.",
+          "Record passing current reviews with dates and short evidence notes."
+        ]
+      }
     ],
-    "cut_line": ["screenshot contact sheets", "automated screenshot scoring", "pairwise generation", "new chart types for breadth", "public article generation", "mobile support"],
-    "open_decisions": ["Keep the first matrix inside the demo", "Store only compact review metadata until review history proves useful"]
+    "cut_line": [
+      "screenshot contact sheets",
+      "automated screenshot scoring",
+      "pairwise generation",
+      "new chart types for breadth",
+      "public article generation",
+      "Separate mobile product expansion; narrow-width verification remains required for changed flows."
+    ],
+    "open_decisions": [],
+    "coverage_snapshot": {
+      "date": "2026-10-01",
+      "features": 38,
+      "examples": 10,
+      "registered_chart_types": 11,
+      "chart_types_declared": 11,
+      "features_with_usage": 24,
+      "features_without_usage": 14,
+      "gap_notes": 15,
+      "reviewed_assignments": 0,
+      "interpretation": "Counts describe the manifest. They do not establish missing runtime support or visual acceptance."
+    },
+    "verification": {
+      "date": "2026-10-01",
+      "passed": [
+        "All 18 demo tests across five files, including coverage manifest and matrix tests. Command: pnpm_config_verify_deps_before_run=false pnpm --filter demo test -- src/demos/coverage.test.ts src/CoverageMatrix.test.tsx. The script ran the full demo suite."
+      ],
+      "warnings": [
+        "Existing React act(...) warning in LandingPage.test.tsx."
+      ],
+      "not_run": [
+        "Fresh browser review",
+        "Production build",
+        "Full pnpm check"
+      ],
+      "environment_note": "Initial pnpm command triggered automatic dependency installation and failed before tests. The retry disabled dependency verification for this command and used installed dependencies."
+    },
+    "decisions": [
+      "Keep the existing matrix in the demo.",
+      "Use compact review metadata with date and evidence note; avoid a new review-history system."
+    ]
   },
   "history": [
-    {"date": "2026-09-15", "event": "Created intent, shape, and implementation plan from current dictation, repository evidence, and the local transcript set."}
+    {
+      "date": "2026-09-15",
+      "event": "Created intent, shape, and implementation plan from current dictation, repository evidence, and the local transcript set."
+    },
+    {
+      "date": "2026-10-01",
+      "event": "Reconciled planning documents with current code and recorded reviews. Migrated schema to 0.5.0. Set initiative active in execution; milestones 1 and 2 completed, milestones 3 and 4 active. No new product scope or retirement authorized.",
+      "evidence": [
+        "status-audit-2026-10-01",
+        "baseline-reviews",
+        "example-verification",
+        "workspace-polish",
+        "All 18 demo tests passed."
+      ]
+    }
   ]
 }

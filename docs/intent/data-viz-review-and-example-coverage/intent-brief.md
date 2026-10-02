@@ -3,7 +3,7 @@ title: "Data visualization review and example coverage"
 slug: "data-viz-review-and-example-coverage"
 phase: intent
 status: current
-last_updated: "2026-09-15"
+last_updated: "2026-10-01"
 ---
 
 # Data visualization review and example coverage
@@ -12,9 +12,9 @@ last_updated: "2026-09-15"
 
 explorEDA needs a reusable review skill that answers a simple question: is this a good chart or dashboard? The review must start with the static visual. A chart must explain itself before its interactive controls, filters, settings, and rich behavior get credit. The skill should use Byron's stated preferences, not a generic design-system audit. It should check purpose, title, hierarchy, spacing, typography, ink, color, axes, ticks, labels, tables, multi-chart relationships, and visible filter state. It should also detect when permanent controls overwhelm the information.
 
-The second outcome is evidence that the repository can exercise what the skill reviews. Existing demos cover every registered chart type at least once, but that is nominal coverage. They do not yet form an intentional review set. Many titles are blank or generic. Axis labels are rare. Saved filters are empty. Feature combinations are incidental. The repository needs a compact feature matrix that distinguishes implementation support, example coverage, and reviewed quality. A small set of deliberate examples should close important gaps without creating the full Cartesian product of chart types and settings.
+The second outcome is evidence that the repository can exercise what the skill reviews. The skill, typed coverage manifest, tests, and rendered matrix now exist. Current examples have clearer titles, axis labels, and stated purposes. The manifest still understates that work. It records 38 features across 10 examples, with 24 feature rows shown and none marked reviewed.
 
-The immediate work is planning. The next implementation should first create and test the review skill against a few contrasting existing examples. It should then define the feature inventory and render the matrix. Only after that evidence exists should new examples be added.
+The initiative remains active. The next work is to reconcile declarations against rendered examples, close confirmed gaps, and record passing reviews. Baseline trials proved that the skill produces useful findings. They did not establish that the example set passes review.
 
 ## What matters most
 
@@ -57,18 +57,20 @@ A maintainer can then open a feature matrix and see which chart types and capabi
 
 ## Possibilities, not decisions
 
-- The feature matrix may render inside the demo application or from a documentation route.
-- Review results may later be stored beside examples.
+- The existing demo matrix may later become a published reference.
+- Review history may later expand beyond a date and short evidence note.
 - Screenshot automation may later create a visual contact sheet.
 
 ## Current reality that matters
 
-- The registry contains 11 chart types: row, bar, line, scatter, 3D scatter, box plot, pivot table, data table, summary table, markdown, and color legend.
-- Existing demo configurations contain every type, but coverage is not declared or checked.
-- Examples already exercise categorical and numerical color, wrap and grid facets, coordinated views, and tables.
-- Most saved examples use empty filters. Most axis labels are blank. Titles are often blank or generic.
-- The project uses pnpm, React, TypeScript, Vitest, and a Vite demo application.
+- The registry contains 11 chart types, all represented in the manifest and declared examples.
+- The demo contains 10 examples. The former line-chart and tables example IDs are absent.
+- The matrix separates implementation status, declared usage, and reviewed usage. No usage assignment is reviewed yet.
+- Fourteen feature rows have no declared example. Fifteen gap notes remain; several lag current configurations.
+- Titles, axis labels, saved Lorenz filters, symlog settings, and shared-scale examples already exist.
+- Baseline and follow-up reports document failures. Later polish reports document repairs, but do not complete this initiative's review coverage.
+- The project uses pnpm, React, TypeScript, Vitest, and Vite. All 18 demo tests passed during this audit.
 
 ## Next step after confirmation
 
-Implement the skill and run it against three existing examples: one simple chart, one faceted view, and one coordinated dashboard. Use those reviews to refine the rubric before adding the feature matrix and new examples.
+No further confirmation is needed for the next implementation step. Reconcile the manifest against current rendered examples. Then close confirmed gaps and record passing reviews. Verify the matrix at wide, intermediate, and narrow widths.
