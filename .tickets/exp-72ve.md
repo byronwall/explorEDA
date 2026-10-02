@@ -39,11 +39,11 @@ Create a short index; scatter and bar pages with purpose, fields, computation, r
 No remaining catalogue pages, landing-page bridge, API additions, package/chart behavior changes, generated reference, docs framework, deployment edit, push, or PR. `exp-4ak2` remains separate and must not start here.
 
 ## Checkpoint
-Source implementation is complete; ticket remains in progress for independent guide-route proof and owner acceptance. Added query routes and content in `apps/demo`, with real 1280×720 JPEG captures from the existing scatter and order-book examples. Focused route test passes. `pnpm check` passes, including build, type checks, demo and package tests, and `check:ui`; final demo rebuild after wording and image URL corrections passes.
+Source implementation is complete; ticket remains in progress for independent guide-route proof and owner acceptance. Added query routes and content in `apps/demo`, with real 1280×720 JPEG captures from the existing scatter and order-book examples. Focused route and focus tests pass. `pnpm check` passed before the navigation repair; the repaired demo builds, `check:ui` passes, and both focused route tests pass.
 
 The separate example walkthrough confirmed scatter drag filters Net sales $68–$104 and Contribution $22–$40 to 2/18 rows, then clear restores 18. The order-book delivery histogram drag filters Delivery Days 1.5–4.5 to 265/500; clear restores 500. These are observed example baselines, not guarantees. A single numeric bin click/Enter does not filter; the guide correctly describes dragging across bins.
 
-Next: verify all docs query URLs and direct refresh on the freshly built local Vite preview at 1280, 783, and 390 px by pointer and keyboard. Production smoke remains deferred; no deployment is authorized. Owner controls acceptance and closure.
+The browser pass found that changing guide routes kept scroll position at 592 px and focus on BODY. A shared docs-route layout effect now resets scroll and focuses the new heading, including when docs first opens. The focused regression proof passes. Next: retest this repair, then finish direct refresh and layout proof at 1280, 783, and 390 px on the local Vite preview. Production smoke remains deferred; no deployment is authorized. Owner controls acceptance and closure.
 
 ## Provenance
 Chart and rendering documentation: first proof and M1. Developer adoption page: M3 prerequisite. Baseline d720f1f6b99d0a54564da5486da94208a563c71e. Existing landing example and integration paths are delivered. Documentation routes are absent. This ticket supplies only the prerequisite slice, not the full documentation initiative.

@@ -1,6 +1,13 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { afterEach, beforeEach, vi } from "vitest";
 import { ChartDocs } from "./ChartDocs";
+
+beforeEach(() => {
+  vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+});
+
+afterEach(() => vi.restoreAllMocks());
 
 describe("chart documentation routes", () => {
   it("keeps the first guides linked to their current examples and trace limits", () => {
@@ -53,5 +60,28 @@ describe("chart documentation routes", () => {
     expect(
       screen.getByText(/full scope is every loaded source row/)
     ).toBeInTheDocument();
+  });
+});
+
+describe("chart documentation focus", () => {
+  it("scrolls to and focuses the next guide heading after navigation", () => {
+    const scrollTo = vi.mocked(window.scrollTo);
+    render(
+      <MemoryRouter initialEntries={["/?view=docs&topic=bar"]}>
+        <ChartDocs />
+      </MemoryRouter>
+    );
+    scrollTo.mockClear();
+
+    fireEvent.click(
+      screen.getByRole("link", {
+        name: "Read how rows and chart plans flow through the renderer",
+      })
+    );
+
+    expect(
+      screen.getByRole("heading", { name: "How rendering works" })
+    ).toHaveFocus();
+    expect(scrollTo).toHaveBeenCalledWith(0, 0);
   });
 });

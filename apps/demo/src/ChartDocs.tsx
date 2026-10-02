@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useLayoutEffect, useRef, type ReactNode, type RefObject } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
 const routes = [
@@ -32,9 +32,11 @@ function DocsLink({
 
 function Header({
   heading,
+  headingRef,
   children,
 }: {
   heading: string;
+  headingRef: RefObject<HTMLHeadingElement | null>;
   children?: ReactNode;
 }) {
   return (
@@ -45,16 +47,26 @@ function Header({
         </Link>
         <DocsLink topic="index">Chart guides</DocsLink>
       </nav>
-      <h1 className="text-3xl font-semibold tracking-tight">{heading}</h1>
+      <h1
+        ref={headingRef}
+        tabIndex={-1}
+        className="text-3xl font-semibold tracking-tight"
+      >
+        {heading}
+      </h1>
       {children && <p className={textClass}>{children}</p>}
     </header>
   );
 }
 
-function IndexPage() {
+function IndexPage({
+  headingRef,
+}: {
+  headingRef: RefObject<HTMLHeadingElement | null>;
+}) {
   return (
     <main className={pageClass}>
-      <Header heading="Chart guides">
+      <Header headingRef={headingRef} heading="Chart guides">
         Choose a view for your question, then open its matching workspace
         example.
       </Header>
@@ -120,10 +132,14 @@ function ExampleImage({
   );
 }
 
-function ScatterPage() {
+function ScatterPage({
+  headingRef,
+}: {
+  headingRef: RefObject<HTMLHeadingElement | null>;
+}) {
   return (
     <main className={pageClass}>
-      <Header heading="Scatter plot">
+      <Header headingRef={headingRef} heading="Scatter plot">
         Compare two fields across rows. Use the pattern to spot relationships,
         clusters, and unusual records.
       </Header>
@@ -179,10 +195,14 @@ function ScatterPage() {
   );
 }
 
-function BarPage() {
+function BarPage({
+  headingRef,
+}: {
+  headingRef: RefObject<HTMLHeadingElement | null>;
+}) {
   return (
     <main className={pageClass}>
-      <Header heading="Bar chart">
+      <Header headingRef={headingRef} heading="Bar chart">
         Compare categories or group a numeric measure. The selected operation
         determines what each bar means.
       </Header>
@@ -238,7 +258,11 @@ function BarPage() {
   );
 }
 
-function RenderingPage() {
+function RenderingPage({
+  headingRef,
+}: {
+  headingRef: RefObject<HTMLHeadingElement | null>;
+}) {
   const steps = [
     ["Demo host", "Loads CSV rows and the saved workspace settings"],
     ["Data layer", "Keeps source rows, effective fields, and calculations"],
@@ -255,7 +279,7 @@ function RenderingPage() {
   ];
   return (
     <main className={pageClass}>
-      <Header heading="How rendering works">
+      <Header headingRef={headingRef} heading="How rendering works">
         Follow one order through the demo, data layer, chart definitions, and
         saved settings.
       </Header>
@@ -359,8 +383,15 @@ function RenderingPage() {
 export function ChartDocs() {
   const [searchParams] = useSearchParams();
   const topic = searchParams.get("topic");
-  if (topic === "scatter") return <ScatterPage />;
-  if (topic === "bar") return <BarPage />;
-  if (topic === "rendering") return <RenderingPage />;
-  return <IndexPage />;
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+    headingRef.current?.focus({ preventScroll: true });
+  }, [topic]);
+
+  if (topic === "scatter") return <ScatterPage headingRef={headingRef} />;
+  if (topic === "bar") return <BarPage headingRef={headingRef} />;
+  if (topic === "rendering") return <RenderingPage headingRef={headingRef} />;
+  return <IndexPage headingRef={headingRef} />;
 }
