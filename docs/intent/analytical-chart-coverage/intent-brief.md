@@ -3,14 +3,14 @@ title: "Analytical chart coverage"
 slug: "analytical-chart-coverage"
 phase: intent
 status: current
-last_updated: "2026-09-23"
+last_updated: "2026-10-02"
 ---
 
 # Analytical chart coverage
 
 ## My read
 
-Byron wants a deeper evaluation of the chart types and interactions in explorEDA. The desired experience is a workspace where a useful next question has a direct answer. He calls out conspicuously missing primitives and wants future users to feel that the toolkit is complete and pleasant. Calendar heatmap, maps, Sankey, and parallel coordinates now matter to him soon. Their implementation order and first datasets remain open.
+Byron wants a deeper evaluation of the chart types and interactions in explorEDA. The desired experience is a workspace where a useful next question has a direct answer. He calls out conspicuously missing primitives and wants future users to feel that the toolkit is complete and pleasant. Calendar heatmap, maps, Sankey, and parallel coordinates now matter to him soon. On 2026-10-02 he asked to start implementation: three meaningful new charts or upgrades, each in its own pull request with screenshots. Map and Sankey order still depends on their first datasets.
 
 The Pro review gives a strong candidate sequence: close the discontinuity between category bars, grouped measures, selection, and source inspection; then add a heatmap, calendar-aware time series, and metric cards. It also names reference marks, relationship views, cumulative distributions, comparison, and selection history. Its linked 21-item backlog and acceptance checklist are now available. They add exact tests and two useful near-term tasks: expose hidden Histogram and Distribution modes, and make the Row Chart's Other bucket inspectable. These remain Pro recommendations, not an approved feature backlog.
 
@@ -56,8 +56,8 @@ An analyst opens orders, groups revenue by region, selects a segment, and sees o
 
 ## Current reality that matters
 
-At commit `593ca2e`, `calculateGroupedAggregate` has one group field and count, sum, or average. It retains contributors and exclusion reasons. `BarChart` uses that result and an inspector; `RowChart` counts categories and forms a height-dependent Other bucket. The public chart registry has eleven view types, including Markdown and Color Legend. The ZIP pins this same commit and supplies acceptance checks, but no live visual or performance test.
+At `main` `22a9bd3`, `calculateGroupedAggregate` has one group field and count, sum, or average, with contributors and exclusion reasons. A grouped bar still only inspects on click; `RowChart` still forms a height-dependent Other bucket. The registry has eleven view types. Three slices are now in review: grouped bars select their group (byronwall/explorEDA#105), a categorical heatmap (byronwall/explorEDA#103), and a calendar heatmap over a shared UTC daily rollup (byronwall/explorEDA#104).
 
 ## Next step after confirmation
 
-Prove the grouped revenue → linked selection → source inspection path on existing order data. Use that contract for the near-term views. The [focused research](calendar-map-sankey-parallel-research.md) defines their settings, trace, and first proofs.
+Review and merge the three slices. Then decide the next one from real data: the Row Chart Other repair and distribution presets, a metric card, or the first map, Sankey, or parallel-coordinates proof.
