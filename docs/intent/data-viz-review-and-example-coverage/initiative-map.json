@@ -6,9 +6,9 @@
     "scale": "capability",
     "current_phase": "execution",
     "last_updated": "2026-10-02",
-    "summary": "All four coverage milestones are accepted. The separate drawer follow-up awaits final independent edge-case and saved-layout proof.",
+    "summary": "All four coverage milestones and the separate six-item drawer follow-up are accepted.",
     "status": "active",
-    "next_action": "Complete the separate drawer proof; initiative retirement remains outside this execution request."
+    "next_action": "Requested execution is complete. Initiative retirement requires a separate instruction."
   },
   "artifacts": {
     "intent_brief": {
@@ -261,7 +261,7 @@
   "shape": {
     "status": "current",
     "appetite": "One small skill, one coverage source, one rendered matrix, one completeness test, and the minimum examples needed to close material gaps.",
-    "problem": "Coverage declarations lag example repairs. Structural checks pass, but current visual acceptance is incomplete.",
+    "problem": "Coverage declarations now match supported examples. Current browser reviews establish accepted coverage; unsupported scales remain explicit.",
     "recommended_shape": {
       "skill": "One chart-first rubric with chart-family addenda",
       "coverage": "One typed example coverage manifest",
@@ -295,9 +295,9 @@
   "implementation": {
     "status": "current",
     "repository_snapshot": {
-      "root": "/Users/byronwall/Projects/explorEDA",
-      "revision": "172c2ad6f29b0ca2109a98211fd3541e931797da",
-      "worktree_status": "Unrelated untracked documentation and tmp evidence present before audit; preserved.",
+      "root": "/Users/byronwall/.codex/worktrees/example-coverage-tickets/explorEDA",
+      "revision": "daa5165",
+      "worktree_status": "Accepted source commits c0dd3ad and daa5165. Independent drawer report and final execution records complete the requested scope.",
       "subsystems": [
         "chart registry",
         "chart settings and renderers",
@@ -346,7 +346,7 @@
         "rollback": "Remove the additive manifest and test imports.",
         "status": "completed",
         "evidence": [
-          "apps/demo/src/demos/coverage.ts defines 38 features and 10 example declarations, including all 11 registered chart types.",
+          "Initial manifest (2026-10-01): 38 features and 10 examples, including all 11 chart types. Current accepted manifest has 39 features; scale:symlog is separate from true log.",
           "apps/demo/src/demos/coverage.test.ts checks registry agreement, IDs, declarations, and gaps; passed on 2026-10-01."
         ]
       },
@@ -362,7 +362,7 @@
         "evidence": [
           "apps/demo/src/CoverageMatrix.tsx and LandingPage.tsx implement /?view=coverage with attention, all-feature, example-usage, and expandable matrix views.",
           "apps/demo/src/CoverageMatrix.test.tsx passed on 2026-10-01.",
-          "docs/reviews/data-viz-example-verification.md explicitly excludes matrix review. No complete matrix browser proof found in inspected reports.",
+          "Historical 2026-10-01 inspection: September example verification excluded the matrix and no complete matrix browser proof was found. The current report below supersedes that gap.",
           "docs/reviews/2026-10-02-feature-coverage-matrix.md: all views and expanded matrix passed at 1280, 783, and 390 pixels, including keyboard scrolling and example navigation.",
           "Combined pnpm check passed on Node 24 on 2026-10-02: UI checks, builds, type checks, 375 package tests and 18 demo tests. Accepted coverage commit daa5165."
         ],
@@ -381,7 +381,7 @@
           "apps/demo/src/demos/examples.ts contains descriptive titles, purposes, dataset summaries, and advertised capabilities.",
           "dashboardSettings.ts, categoricalChartSettings.ts, boxPlotSettings.ts, nbaStatsSettings.ts, and lorenz.ts contain labels, units, and example repairs.",
           "lorenz.ts saves Time and Z ranges; dashboardSettings.ts uses symlog; shop-10000 declares shared scales.",
-          "No reviewed assignments exist. Fourteen features have no declared usage. Fifteen gap notes remain, including a stale shared-scale note.",
+          "Historical 2026-10-01 manifest: no reviewed assignments, fourteen undeclared features, and fifteen gap notes. Current acceptance supersedes those counts.",
           "docs/reviews/2026-10-02-example-coverage.md: seven current examples cover every feature family. Lorenz titles, palette, and 164-row explanation were corrected. Existing examples demonstrate empty results and invalid formulas.",
           "Combined pnpm check passed on Node 24 on 2026-10-02: UI checks, builds, type checks, 375 package tests and 18 demo tests. Accepted coverage commit daa5165."
         ],
@@ -414,14 +414,15 @@
       "passed": [
         "pnpm check on Node 24: UI checks, package and demo builds, both type checks, 375 package tests and 18 demo tests.",
         "Matrix browser proof at 1280, 783, and 390 pixels, including expanded matrix and keyboard interactions.",
-        "Current example reviews from every feature family; changed Lorenz, empty-search, and invalid-formula flows checked at all three widths."
+        "Current example reviews from every feature family; changed Lorenz, empty-search, and invalid-formula flows checked at all three widths.",
+        "Independent drawer report proves all six follow-ups, including actual browser reload/reopen and many-category, all-null, empty Rows, and empty Details recovery at 1280, 783, and 390 pixels."
       ],
       "warnings": [
         "Existing demo chunk-size and mixed import warnings.",
         "Existing React act(...) warning in LandingPage.test.tsx."
       ],
       "not_run": [],
-      "environment_note": "Drawer proof continues on a frozen production preview to prevent Vite reloads from concurrent watched-file edits."
+      "environment_note": "Final drawer proof used a frozen production preview at :5190. Shared Vite watchers caused earlier reloads; the reset did not reproduce on the frozen build. Empty Details rendering was verified through saved conflicting filters; the report retains the separate zero-count pointer interaction observation."
     },
     "decisions": [
       "Keep the existing matrix in the demo.",
@@ -479,6 +480,16 @@
         "c0dd3ad",
         "docs/reviews/2026-10-02-example-coverage.md",
         "docs/reviews/2026-10-02-feature-coverage-matrix.md"
+      ]
+    },
+    {
+      "date": "2026-10-02",
+      "event": "Accepted the combined execution after all four scoped tickets passed their required proof. Coverage milestones 3 and 4 are completed. Independent drawer proof passed on the frozen preview. Initiative remains active; no retirement, push, or deployment was requested.",
+      "evidence": [
+        "c0dd3ad",
+        "daa5165",
+        "docs/reviews/drawer-details-placement-verification.md",
+        "pnpm check: 375 package tests and 18 demo tests passed on Node 24."
       ]
     }
   ]

@@ -1,6 +1,6 @@
 ---
 id: eufr3-5ig1
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-10-01T21:13:23Z
@@ -95,3 +95,7 @@ Owner checkpoint: independent browser proves rapid Escape, focus return, calcula
 **2026-10-02T05:30:20Z**
 
 Owner combined-check checkpoint: final pnpm check passed on Node 24 after type repair, including UI checks, package/demo builds, both type checks, 375 package tests and 18 demo tests. Coverage accepted at daa5165. The isolated :5190 preview remains unchanged while final drawer browser proof continues. Keep this ticket in progress until edge cases and actual saved-layout reopen pass.
+
+**2026-10-02T05:48:45Z**
+
+Final acceptance: independent black-box report docs/reviews/drawer-details-placement-verification.md proves all six criteria. Placement preview/cancel/accept and actual browser reload/reopen retain all eight layouts. Calculations fit narrow/wide settings; rapid Escape closes confirmation then details and returns focus; Fields returns after Rows/settings. Many-category, all-null, empty Rows, and saved-filter empty Details states plus clear-filter recovery pass at 1280, 783, and 390 pixels. The empty Details fixture places each filter on its matching chart and inspects a third unfiltered chart. Report preserves the distinct zero-count pointer click observation; this ticket verifies empty rendering and recovery, not a broader chart interaction redesign. Root reviewed screenshots and report. Final pnpm check on Node 24 passed 375 package tests and 18 demo tests, builds/types/UI checks. Package patch changeset included. No required proof remains.

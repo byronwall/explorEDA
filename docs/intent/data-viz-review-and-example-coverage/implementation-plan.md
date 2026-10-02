@@ -14,7 +14,7 @@ Implementation started on `codex/example-coverage-tickets` from `60edb84`. Ticke
 
 Coverage implementation is accepted at `daa5165`. All four coverage milestones are complete. Current [matrix proof](../../reviews/2026-10-02-feature-coverage-matrix.md) and [example reviews](../../reviews/2026-10-02-example-coverage.md) record browser acceptance. The manifest has 39 features, 37 with usage, two explicitly unsupported scales, and 37 reviewed assignments. All 11 chart types remain declared.
 
-The drawer fixes are committed at `c0dd3ad`. The rapid Escape regression fails with the original handler and passes with the fix. Final `pnpm check` passes on Node 24: 375 package tests and 18 demo tests. Separate drawer edge-case and saved-layout browser proof remains in progress.
+The drawer fixes are committed at `c0dd3ad`. The rapid Escape regression fails with the original handler and passes with the fix. Final `pnpm check` passes on Node 24: 375 package tests and 18 demo tests. The separate drawer ticket is also accepted. Its [independent report](../../reviews/drawer-details-placement-verification.md) proves all six criteria, including saved-layout reopen and empty-state recovery at 1280, 783, and 390 pixels. The report retains the zero-count pointer interaction observation. No required proof remains in this execution scope.
 
 ## Plan at a glance
 
