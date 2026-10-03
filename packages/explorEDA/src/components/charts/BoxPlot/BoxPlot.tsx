@@ -1,26 +1,32 @@
 import { finiteNumber, finiteNumbers } from "@/lib/numeric";
 import {
-  categoryEqual,
   categoryIncludes,
   categoryLabel,
   categoryValue,
 } from "@/lib/categories";
 import { numericScale } from "../Axis/numericScale";
-import { applyFilter } from "@/hooks/applyFilter";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { BaseChartProps } from "@/types/ChartTypes";
 import { Filter, datum } from "@/types/FilterTypes";
 import { ScaleLinear, scaleBand } from "d3-scale";
 import natsort from "natsort";
-import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { BaseChart } from "../BaseChart";
+import { ChartReadout } from "../ChartReadout";
+import {
+  ChartStatusLine,
+  STATUS_HINT_MIN_WIDTH,
+  STATUS_LINE_HEIGHT,
+} from "../ChartStatusLine";
 import { getChartAxisFields, getChartAxisLabel } from "../chartAccessibility";
 import { useGetColumnDataForIds } from "../useGetColumnData";
 import { useGetLiveData } from "../useGetLiveData";
 import {
   calculateBoxPlotStats,
   calculateKernelDensity,
+  medianRange,
+  selectBoxGroup,
 } from "./boxPlotCalculations";
 import { BoxPlotSettings } from "./definition";
 
@@ -33,7 +39,7 @@ export function BoxPlot({
   height,
   facetIds,
 }: BaseChartProps<BoxPlotSettings>) {
-  const [tooltip, setTooltip] = useState<ReactNode>(null);
+  const [hoveredGroup, setHoveredGroup] = useState<string | null>(null);
   const updateChart = useDataLayer((s) => s.updateChart);
   const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
   const fieldSettings = useDataLayer((s) => s.fieldSettings);
@@ -72,7 +78,9 @@ export function BoxPlot({
   const margin = {
     ...settings.margin,
     left: Math.max(settings.margin.left, yAxisLabel ? 64 : 42),
-    bottom: Math.max(settings.margin.bottom, xAxisLabel ? 44 : 28),
+    bottom:
+      Math.max(settings.margin.bottom, xAxisLabel ? 44 : 28) +
+      STATUS_LINE_HEIGHT,
   };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
@@ -233,83 +241,100 @@ export function BoxPlot({
       (f: Filter) => f.field === settings.colorField
     );
   }, [settings.filters, settings.colorField]);
+  const selectedGroups =
+    settings.colorField && activeFilter?.type === "value"
+      ? activeFilter.values
+      : [];
 
   const handleBoxClick = useCallback(
-    (group: datum) => {
-      if (!settings.colorField) {
-        return;
-      }
-
-      let newValues: datum[] = [];
-      if (activeFilter && activeFilter.type === "value") {
-        // If group is already in filter, remove it
-        if (categoryIncludes(activeFilter.values, group)) {
-          newValues = activeFilter.values.filter(
-            (v) => !categoryEqual(v, group)
-          );
-        } else {
-          // Add group to existing filter
-          newValues = [...activeFilter.values, group];
-        }
-      } else {
-        // Create new filter with just this group
-        newValues = [group];
-      }
-
-      // Create a new filter for the color field
-      const newFilters = settings.filters.filter(
-        (f: Filter) => f.field !== settings.colorField
-      );
-
-      if (newValues.length > 0) {
-        newFilters.push({
-          type: "value",
-          field: settings.colorField,
-          values: newValues,
-        });
-      }
-
-      updateChart(settings.id, { filters: newFilters });
+    (group: datum, add: boolean) => {
+      if (!settings.colorField) return;
+      updateChart(settings.id, {
+        filters: selectBoxGroup(
+          settings.filters,
+          settings.colorField,
+          group,
+          add
+        ),
+      });
     },
-    [
-      settings.colorField,
-      settings.filters,
-      settings.id,
-      activeFilter,
-      updateChart,
-    ]
+    [settings.colorField, settings.filters, settings.id, updateChart]
   );
 
-  // Helper function to check if a group matches the current filter
-  const isGroupFiltered = useCallback(
-    (group: datum) => {
-      if (!settings.colorField) {
-        return true;
-      }
-
-      if (
-        !activeFilter ||
-        activeFilter.type !== "value" ||
-        !activeFilter.values
-      ) {
-        return true;
-      }
-
-      return applyFilter(group, activeFilter);
-    },
-    [settings.colorField, activeFilter]
+  const format = (value: number) => formatFieldValue(settings.field, value);
+  const formatGroup = (value: datum) =>
+    settings.colorField
+      ? formatFieldValue(settings.colorField, value)
+      : categoryLabel(value);
+  const groupName = settings.colorField
+    ? getFieldLabel(settings.colorField)
+    : "Group";
+  const shown = groupStats.filter(({ stats }) => stats.totalCount > 0);
+  const hovered = shown.find(
+    ({ group }) => categoryLabel(group) === hoveredGroup
   );
+  const range = medianRange(shown);
+  const showHints = width >= STATUS_HINT_MIN_WIDTH && !facetIds;
+  const statusParts = [
+    selectedGroups.length > 0
+      ? `${selectedGroups.length} of ${xScale.domain().length} ${groupName} groups selected`
+      : range &&
+        showHints &&
+        `Medians ${format(range.low.stats.median)} (${groupName} ${formatGroup(range.low.group)}) to ${format(range.high.stats.median)} (${groupName} ${formatGroup(range.high.group)})`,
+    settings.colorField &&
+      showHints &&
+      (selectedGroups.length > 0
+        ? "Shift-click to add or remove a group"
+        : "Click a group to select it, Shift-click to add"),
+  ];
+
+  const boxStroke =
+    // The original default follows the theme so boxes keep an edge in dark mode.
+    settings.styles.boxStroke === "black"
+      ? "var(--eda-box-stroke)"
+      : settings.styles.boxStroke;
+  const boxWidth = xScale.bandwidth();
+  // A violin carries the shape, so the box narrows to a summary inside it.
+  const boxShare = settings.violinOverlay ? 0.24 : 0.7;
+  const boxPixels = Math.max(6, boxWidth * boxShare);
+  const boxX = (boxWidth - boxPixels) / 2;
 
   return (
     <div
       className="relative"
       style={{ width, height }}
-      onPointerLeave={() => setTooltip(null)}
+      onPointerLeave={() => setHoveredGroup(null)}
     >
-      {tooltip && (
-        <div role="tooltip" className="eda-tooltip">
-          {tooltip}
-        </div>
+      {hovered && (
+        <ChartReadout fallbackClassName="eda-chart-readout-inline">
+          {(
+            [
+              [groupName, formatGroup(hovered.group)],
+              ["Median", format(hovered.stats.median)],
+              [
+                "Middle 50%",
+                `${format(hovered.stats.q1)} to ${format(hovered.stats.q3)}`,
+              ],
+              ["Rows", hovered.stats.totalCount.toLocaleString()],
+              [
+                "Whiskers",
+                `${format(hovered.stats.whiskerLow)} to ${format(hovered.stats.whiskerHigh)}`,
+              ],
+              hovered.stats.outliers.length > 0 && [
+                "Outliers",
+                hovered.stats.outliers.length.toLocaleString(),
+              ],
+            ] as Array<false | [string, string]>
+          ).map(
+            (item) =>
+              item && (
+                <span key={item[0]} className="eda-readout-item">
+                  <span>{item[0]}</span>
+                  <b>{item[1]}</b>
+                </span>
+              )
+          )}
+        </ChartReadout>
       )}
       <BaseChart
         width={width}
@@ -318,181 +343,173 @@ export function BoxPlot({
         yScale={yScale}
         brushingMode="none"
         settings={{ ...settings, margin }}
-      >
-        {/* Main content */}
-        {groupStats
-          .filter(({ stats }) => stats.totalCount > 0)
-          .map(({ group, stats }) => {
-            const isFiltered = isGroupFiltered(group);
-            const boxColor = isFiltered
-              ? getColorForValue(
-                  settings.colorScaleId,
-                  group,
-                  settings.styles.boxFill
-                )
-              : "rgb(156 163 175)";
-            const xPos = xScale(categoryLabel(group)) ?? 0;
-            const boxWidth = xScale.bandwidth();
-
-            // Get KDE for this group if violin overlay is enabled
-            const kde = groupKDEs?.find((g) => g.group === group)?.kde;
-            const firstKde = kde?.[0];
-            const lastKde = kde?.at(-1);
-
-            const format = (value: number) =>
-              formatFieldValue(settings.field, value);
-            const formatGroup = (value: datum) =>
-              settings.colorField
-                ? formatFieldValue(settings.colorField, value)
-                : categoryLabel(value);
-            const boxTooltipContent = (
-              <div>
-                <p className="font-medium">
-                  {formatGroup(group)}{" "}
-                  <span className="font-normal text-muted-foreground">
-                    · {stats.totalCount} rows
-                  </span>
-                </p>
-                <dl className="grid grid-cols-[auto_auto] gap-x-3">
-                  <dt>Median</dt>
-                  <dd className="text-right tabular-nums">
-                    {format(stats.median)}
-                  </dd>
-                  <dt>Middle 50%</dt>
-                  <dd className="text-right tabular-nums">
-                    {format(stats.q1)}–{format(stats.q3)}
-                  </dd>
-                  {stats.outliers.length > 0 && (
-                    <>
-                      <dt>Outliers</dt>
-                      <dd className="text-right">{stats.outliers.length}</dd>
-                    </>
-                  )}
-                </dl>
-              </div>
-            );
-            const whiskerTooltipContent = (
-              <div>
-                <p className="font-medium">{formatGroup(group)}</p>
-                <p>
-                  Whiskers {format(stats.whiskerLow)}–
-                  {format(stats.whiskerHigh)}
-                </p>
-              </div>
-            );
-
-            return (
-              <g key={categoryLabel(group)} transform={`translate(${xPos}, 0)`}>
-                {/* Whiskers */}
-                <line
-                  onPointerEnter={() => setTooltip(whiskerTooltipContent)}
-                  onPointerLeave={() => setTooltip(null)}
-                  x1={boxWidth / 2}
-                  x2={boxWidth / 2}
-                  y1={yScale(stats.whiskerHigh)}
-                  y2={yScale(stats.whiskerLow)}
-                  stroke={boxColor}
-                  strokeWidth={settings.styles.whiskerStrokeWidth}
-                />
-
-                {/* Box */}
+        footer={STATUS_LINE_HEIGHT}
+        overlay={
+          // Each group's column, including its axis label, is one target.
+          <g>
+            {shown.map(({ group, stats }) => {
+              const label = categoryLabel(group);
+              const selected = categoryIncludes(selectedGroups, group);
+              return (
                 <rect
-                  onPointerEnter={() => setTooltip(boxTooltipContent)}
-                  onPointerMove={() => setTooltip(boxTooltipContent)}
-                  onPointerLeave={() => setTooltip(null)}
-                  onFocus={() => setTooltip(boxTooltipContent)}
-                  onBlur={() => setTooltip(null)}
+                  key={label}
+                  data-box-group={label}
+                  className="eda-box-hit"
+                  x={xScale(label) ?? 0}
+                  y={0}
+                  width={boxWidth}
+                  height={innerHeight + 22}
+                  fill="var(--foreground)"
+                  fillOpacity={label === hoveredGroup ? 0.04 : 0}
                   role={settings.colorField ? "button" : undefined}
                   tabIndex={settings.colorField ? 0 : undefined}
-                  aria-label={`${group}: median ${stats.median.toFixed(2)}, ${stats.totalCount} records`}
-                  aria-pressed={
-                    activeFilter?.type === "value"
-                      ? categoryIncludes(activeFilter.values, group)
-                      : false
-                  }
+                  aria-label={`${formatGroup(group)}: median ${format(stats.median)}, ${stats.totalCount} rows`}
+                  aria-pressed={settings.colorField ? selected : undefined}
+                  onPointerEnter={() => setHoveredGroup(label)}
+                  onFocus={() => setHoveredGroup(label)}
+                  onBlur={() => setHoveredGroup(null)}
+                  onClick={(event) => handleBoxClick(group, event.shiftKey)}
                   onKeyDown={(event) => {
                     if (event.key === "Enter" || event.key === " ") {
                       event.preventDefault();
-                      handleBoxClick(group);
+                      handleBoxClick(group, event.shiftKey);
                     }
                   }}
-                  className="chart-mark"
-                  rx={2}
-                  x={boxWidth * 0.15}
-                  y={yScale(stats.q3)}
-                  width={boxWidth * 0.7}
-                  height={yScale(stats.q1) - yScale(stats.q3)}
-                  fill={boxColor}
-                  stroke={settings.styles.boxStroke}
-                  strokeWidth={settings.styles.boxStrokeWidth}
-                  onClick={() => handleBoxClick(group)}
                   style={{
                     cursor: settings.colorField ? "pointer" : "default",
                   }}
                 />
+              );
+            })}
+          </g>
+        }
+      >
+        {shown.map(({ group, stats }) => {
+          const label = categoryLabel(group);
+          const dimmed =
+            selectedGroups.length > 0 &&
+            !categoryIncludes(selectedGroups, group);
+          const outlined =
+            label === hoveredGroup || (selectedGroups.length === 1 && !dimmed);
+          const boxColor = getColorForValue(
+            settings.colorScaleId,
+            group,
+            settings.styles.boxFill
+          );
+          const xPos = xScale(label) ?? 0;
+          const kde = groupKDEs?.find((g) => g.group === group)?.kde;
+          const firstKde = kde?.[0];
+          const lastKde = kde?.at(-1);
+          const medianY = yScale(stats.median);
 
-                {/* Median line */}
-                <line
-                  pointerEvents="none"
-                  x1={0}
-                  x2={boxWidth}
-                  y1={yScale(stats.median)}
-                  y2={yScale(stats.median)}
-                  stroke={settings.styles.medianStroke}
-                  strokeWidth={settings.styles.medianStrokeWidth}
+          return (
+            <g
+              key={label}
+              transform={`translate(${xPos}, 0)`}
+              className="eda-box-group"
+              opacity={dimmed && label !== hoveredGroup ? 0.3 : 1}
+              pointerEvents="none"
+            >
+              {/* The violin sits behind the box so the box keeps its color. */}
+              {settings.violinOverlay && kde && firstKde && lastKde && (
+                <path
+                  d={createPath([
+                    [boxWidth / 2, yScale(firstKde[0])],
+                    ...kde.map(
+                      ([x, y]) =>
+                        [boxWidth / 2 + y * boxWidth * 0.45, yScale(x)] as [
+                          number,
+                          number,
+                        ]
+                    ),
+                    ...[...kde]
+                      .reverse()
+                      .map(
+                        ([x, y]) =>
+                          [boxWidth / 2 - y * boxWidth * 0.45, yScale(x)] as [
+                            number,
+                            number,
+                          ]
+                      ),
+                  ])}
+                  fill={boxColor}
+                  style={{ fillOpacity: "var(--eda-violin-opacity)" }}
+                  stroke={boxColor}
+                  strokeWidth={1}
                 />
-
-                {/* Outliers */}
-                {settings.showOutliers &&
-                  stats.outliers.map((value: number, i: number) => (
-                    <circle
-                      key={i}
-                      onPointerEnter={() =>
-                        setTooltip(<span>Outlier: {format(value)}</span>)
-                      }
-                      onPointerLeave={() => setTooltip(null)}
-                      cx={boxWidth / 2}
-                      cy={yScale(value)}
-                      r={settings.styles.outlierSize}
-                      fill={boxColor}
-                    />
-                  ))}
-
-                {/* Violin plot overlay */}
-                {settings.violinOverlay && kde && firstKde && lastKde && (
-                  <g>
-                    <path
-                      d={createPath([
-                        [boxWidth / 2, yScale(firstKde[0])],
-                        ...kde.map(
-                          ([x, y]) =>
-                            [boxWidth / 2 + y * boxWidth * 0.4, yScale(x)] as [
-                              number,
-                              number,
-                            ]
-                        ),
-                        ...[...kde]
-                          .reverse()
-                          .map(
-                            ([x, y]) =>
-                              [
-                                boxWidth / 2 - y * boxWidth * 0.4,
-                                yScale(x),
-                              ] as [number, number]
-                          ),
-                      ])}
-                      fill={boxColor}
-                      fillOpacity={0.2}
-                      stroke={boxColor}
-                      strokeWidth={1}
-                      pointerEvents="none"
-                    />
-                  </g>
-                )}
-              </g>
-            );
-          })}
+              )}
+              <line
+                x1={boxWidth / 2}
+                x2={boxWidth / 2}
+                y1={yScale(stats.whiskerHigh)}
+                y2={yScale(stats.whiskerLow)}
+                stroke={settings.violinOverlay ? boxStroke : boxColor}
+                strokeWidth={settings.styles.whiskerStrokeWidth}
+              />
+              {!settings.violinOverlay && (
+                <g stroke={boxColor} strokeWidth={1}>
+                  <line
+                    x1={boxWidth / 2 - boxPixels / 4}
+                    x2={boxWidth / 2 + boxPixels / 4}
+                    y1={yScale(stats.whiskerHigh)}
+                    y2={yScale(stats.whiskerHigh)}
+                  />
+                  <line
+                    x1={boxWidth / 2 - boxPixels / 4}
+                    x2={boxWidth / 2 + boxPixels / 4}
+                    y1={yScale(stats.whiskerLow)}
+                    y2={yScale(stats.whiskerLow)}
+                  />
+                </g>
+              )}
+              <rect
+                rx={2}
+                x={boxX}
+                y={yScale(stats.q3)}
+                width={boxPixels}
+                height={Math.max(1, yScale(stats.q1) - yScale(stats.q3))}
+                fill={boxColor}
+                stroke={outlined ? "var(--foreground)" : boxStroke}
+                strokeWidth={outlined ? 2 : settings.styles.boxStrokeWidth}
+              />
+              {/* A dark halo keeps the median readable on light and dark fills. */}
+              <line
+                x1={boxX}
+                x2={boxX + boxPixels}
+                y1={medianY}
+                y2={medianY}
+                stroke="rgb(0 0 0 / 0.55)"
+                strokeWidth={settings.styles.medianStrokeWidth + 2}
+              />
+              <line
+                x1={boxX + 1}
+                x2={boxX + boxPixels - 1}
+                y1={medianY}
+                y2={medianY}
+                stroke={settings.styles.medianStroke}
+                strokeWidth={settings.styles.medianStrokeWidth}
+              />
+              {settings.showOutliers &&
+                stats.outliers.map((value: number, i: number) => (
+                  <circle
+                    key={i}
+                    cx={boxWidth / 2}
+                    cy={yScale(value)}
+                    r={settings.styles.outlierSize}
+                    fill={boxColor}
+                    fillOpacity={0.5}
+                    stroke={boxColor}
+                  />
+                ))}
+            </g>
+          );
+        })}
       </BaseChart>
+      <ChartStatusLine
+        parts={statusParts}
+        left={margin.left}
+        right={margin.right}
+      />
     </div>
   );
 }

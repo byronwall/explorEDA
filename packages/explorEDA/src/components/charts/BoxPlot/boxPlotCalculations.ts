@@ -1,3 +1,5 @@
+import { categoryEqual, categoryIncludes } from "@/lib/categories";
+import type { Filter, datum } from "@/types/FilterTypes";
 import { BoxPlotSettings } from "./definition";
 
 export interface BoxPlotStats {
@@ -204,4 +206,38 @@ function calculateBeeSwarmPositionsForData(
   }
 
   return positions;
+}
+
+/**
+ * Selects one group, or clears the selection when that group is already its
+ * only member. With `add`, toggles the group within the selection.
+ */
+export function selectBoxGroup(
+  filters: Filter[],
+  field: string,
+  group: datum,
+  add = false
+): Filter[] {
+  const current = filters.find((filter) => filter.field === field);
+  const selected = current?.type === "value" ? current.values : [];
+  const isSelected = categoryIncludes(selected, group);
+  const next = add
+    ? isSelected
+      ? selected.filter((value) => !categoryEqual(value, group))
+      : [...selected, group]
+    : isSelected && selected.length === 1
+      ? []
+      : [group];
+  const rest = filters.filter((filter) => filter.field !== field);
+  return next.length > 0
+    ? [...rest, { type: "value", field, values: next }]
+    : rest;
+}
+
+/** The groups with the lowest and highest medians, for the status line. */
+export function medianRange<T extends { stats: BoxPlotStats }>(groups: T[]) {
+  const counted = groups.filter((group) => group.stats.totalCount > 0);
+  if (counted.length < 2) return undefined;
+  const sorted = [...counted].sort((a, b) => a.stats.median - b.stats.median);
+  return { low: sorted[0]!, high: sorted.at(-1)! };
 }
