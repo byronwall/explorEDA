@@ -121,7 +121,12 @@ export function getChartFields(settings: ChartSettings): string[] {
             ]
           : [settings.xField, ...settings.seriesField];
       case "scatter":
-        return [settings.xField, settings.yField, settings.colorField];
+        return [
+          settings.xField,
+          settings.yField,
+          settings.colorField,
+          settings.sizeField,
+        ];
       case "3d-scatter":
         return [
           settings.xField,

@@ -44,6 +44,12 @@ bar supports linked selection and source tracing for its category–series pair.
 Choose **Stacked** to add counts or sums, or **100%** to compare nonnegative
 shares. Tracing includes each category denominator and its source records.
 
+Use **Size by** in Scatter Plot to draw bubbles with area proportional to a
+nonnegative field. The size scale stays fixed during filtering. Click a bubble
+to select its source row, or choose **Inspect bubble** to see its size calculation.
+Zero uses a hollow marker. Missing, invalid, and negative sizes remain available
+through the source trace.
+
 ## Install
 
 ```sh

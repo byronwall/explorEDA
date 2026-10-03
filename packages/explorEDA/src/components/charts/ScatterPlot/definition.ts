@@ -12,6 +12,8 @@ export interface ScatterPlotSettings extends BaseChartSettings {
   type: "scatter";
   pointSize?: number;
   pointOpacity?: number;
+  sizeField?: string;
+  maxBubbleRadius?: number;
   xField: string;
   yField: string;
   filters: Filter[];

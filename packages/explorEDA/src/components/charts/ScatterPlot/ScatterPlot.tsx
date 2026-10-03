@@ -12,6 +12,7 @@ import {
 import type { ScatterPlotSettings } from "./definition";
 import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
 import { ScatterSvg } from "./ScatterSvg";
+import { BubbleLegend } from "./BubbleLegend";
 import { ChartReadout } from "../ChartReadout";
 import {
   findScatterTraceRow,
@@ -29,6 +30,7 @@ import {
   brushFilters,
   planScatter,
   scatterHoverReadout,
+  scatterPointAt,
   type Extent,
   type ScatterSnapshot,
 } from "./scatterPlan";
@@ -87,6 +89,7 @@ export function ScatterPlot({
       xData: column(settings.xField),
       yData: column(settings.yField),
       colorData: column(settings.colorField),
+      sizeData: column(settings.sizeField),
       xType: profileType(settings.xField),
       yType: profileType(settings.yField),
       facetRowData: settings.facet.enabled
@@ -127,6 +130,7 @@ export function ScatterPlot({
     settings.xField,
     settings.yField,
     settings.colorField,
+    settings.sizeField,
     settings.facet,
     facetIds,
   ]);
@@ -162,21 +166,26 @@ export function ScatterPlot({
     traceApi?.inspect(owner, kind, id);
   const activeSelection =
     trace?.selection?.owner === owner ? trace.selection : null;
-  const pointAt = (x: number, y: number) => {
-    let nearest: (typeof plan.points)[number] | undefined;
-    let distance = 100;
-    for (const point of plan.points) {
-      const dx = point.x - x;
-      const dy = point.y - y;
-      const squared = dx * dx + dy * dy;
-      if (squared < distance) {
-        nearest = point;
-        distance = squared;
-      }
-    }
-    return nearest;
+  const pointAt = (x: number, y: number) => scatterPointAt(plan, x, y);
+  const selectPoint = (id: string) => {
+    const point = plan.points.find((point) => point.id === id);
+    if (!point) return;
+    const selected =
+      settings.filters.length === 1 &&
+      settings.filters[0]?.type === "value" &&
+      settings.filters[0].field === "__ID" &&
+      settings.filters[0].values[0] === point.sourceId;
+    updateChart(settings.id, {
+      filters: selected
+        ? []
+        : [{ type: "value", field: "__ID", values: [point.sourceId] }],
+    });
   };
   const hoveredPoint = plan.points.find((point) => point.id === hoveredId);
+  const inspectPoint =
+    hoveredPoint ??
+    plan.points.find((point) => point.passesOwnFilter) ??
+    plan.points[0];
   const hoveredText =
     hoveredPoint && scatterHoverReadout(plan, snapshot, settings, hoveredPoint);
 
@@ -203,7 +212,11 @@ export function ScatterPlot({
       ctx.globalAlpha = point.opacity;
       ctx.beginPath();
       ctx.arc(point.x, point.y, point.radius, 0, Math.PI * 2);
-      ctx.fill();
+      if (plan.size && point.sizeValue === 0) {
+        ctx.strokeStyle = point.color;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      } else ctx.fill();
     }
   }, [plan, width, height]);
 
@@ -240,7 +253,10 @@ export function ScatterPlot({
     (extent: Extent | null) => {
       const filters = settings.filters.filter(
         (filter) =>
-          filter.field !== settings.xField && filter.field !== settings.yField
+          filter.field !== settings.xField &&
+          filter.field !== settings.yField &&
+          (!settings.sizeField ||
+            (filter.field !== "__ID" && filter.field !== settings.sizeField))
       );
       if (extent) {
         filters.push(...brushFilters(plan, extent));
@@ -286,7 +302,20 @@ export function ScatterPlot({
           />
           <ScatterSvg
             plan={plan}
-            hoveredId={hoveredId}
+            hoveredId={
+              hoveredId ??
+              (activeSelection?.kind === "point" ? activeSelection.id : null)
+            }
+            onHoverPoint={setHoveredId}
+            onActivatePoint={(id, inspect) =>
+              inspect ? choose("point", id) : selectPoint(id)
+            }
+            onSelectPoint={(x, y) => {
+              const point = pointAt(x, y);
+              if (!point) return false;
+              selectPoint(point.id);
+              return true;
+            }}
             onBrushChange={handleBrushChange}
             onInspectPoint={(x, y) => {
               const point = pointAt(x, y);
@@ -299,6 +328,17 @@ export function ScatterPlot({
               activeSelection?.kind === "guide" ? activeSelection.id : undefined
             }
           />
+          {plan.size && (
+            <BubbleLegend
+              size={plan.size}
+              points={plan.points.length}
+              exclusions={plan.exclusions.filter(
+                (item) => item.reason === "invalid-size"
+              )}
+              onInspect={() => choose("point", inspectPoint!.id)}
+              onInspectExcluded={(id) => choose("excluded", String(id))}
+            />
+          )}
           {plan.calculatedBadges.map((badge) => (
             <span
               key={badge.id}
@@ -349,6 +389,10 @@ export function ScatterPlot({
                 [
                   [plan.xDisplay, hoveredText?.xText],
                   [plan.yDisplay, hoveredText?.yText],
+                  settings.sizeField && [
+                    getFieldLabel(settings.sizeField),
+                    hoveredText?.sizeText,
+                  ],
                   settings.colorField && [
                     getFieldLabel(settings.colorField),
                     hoveredText?.colorText,
@@ -363,16 +407,24 @@ export function ScatterPlot({
                       hoveredText?.facetColumnText,
                     ],
                 ] as Array<false | "" | undefined | [string, string?]>
-              ).map(
-                (item) =>
-                  item && (
-                    // Short of room, the name gives way before the value.
-                    <span key={item[0]} className="eda-readout-item">
-                      <span>{item[0]}</span>
-                      <b>{item[1]}</b>
-                    </span>
-                  )
-              )}
+              )
+                .filter(
+                  (item, index, items) =>
+                    item &&
+                    items.findIndex(
+                      (other) => other && other[0] === item[0]
+                    ) === index
+                )
+                .map(
+                  (item) =>
+                    item && (
+                      // Short of room, the name gives way before the value.
+                      <span key={item[0]} className="eda-readout-item">
+                        <span>{item[0]}</span>
+                        <b>{item[1]}</b>
+                      </span>
+                    )
+                )}
             </ChartReadout>
           )}
         </>

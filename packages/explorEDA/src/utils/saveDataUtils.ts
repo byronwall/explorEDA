@@ -364,7 +364,15 @@ function isChart(value: unknown): boolean {
       );
     case "scatter":
       return (
-        typeof value.xField === "string" && typeof value.yField === "string"
+        typeof value.xField === "string" &&
+        typeof value.yField === "string" &&
+        (value.sizeField === undefined ||
+          (typeof value.sizeField === "string" &&
+            value.sizeField.length > 0)) &&
+        (value.maxBubbleRadius === undefined ||
+          (isFiniteNumber(value.maxBubbleRadius) &&
+            value.maxBubbleRadius >= 6 &&
+            value.maxBubbleRadius <= 32))
       );
     case "pivot":
       return (
