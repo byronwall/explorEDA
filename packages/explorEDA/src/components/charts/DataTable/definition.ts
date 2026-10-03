@@ -20,6 +20,8 @@ export interface DataTableSettings extends BaseChartSettings {
   sortDirection: "asc" | "desc";
   filters: Filter[];
   globalSearch: string;
+  /** Draws each field's distribution under its column name. */
+  showDistributions?: boolean;
 }
 
 export const dataTableDefinition: ChartDefinition<DataTableSettings> = {

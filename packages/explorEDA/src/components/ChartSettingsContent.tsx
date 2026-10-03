@@ -1,4 +1,7 @@
-import { SelectionSettingsTab } from "./settings/SelectionSettingsTab";
+import {
+  chartFilterFields,
+  FiltersSettingsTab,
+} from "./settings/FiltersSettingsTab";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { ChartSettings } from "@/types/ChartTypes";
 import { mergeWithDefaultSettings } from "@/utils/defaultSettings";
@@ -23,6 +26,11 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
 
   const resetValues = useRef<Partial<ChartSettings>>({});
   const updateChart = useDataLayer((s) => s.updateChart);
+  const aggregate = useDataLayer((state) =>
+    settings.type === "bar" && settings.aggregateId
+      ? state.getAggregate(settings.aggregateId)
+      : undefined
+  );
 
   // Update local settings when prop changes
   useEffect(() => {
@@ -73,8 +81,8 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
           { value: "axis", label: "Axes" },
         ]
       : []),
-    ...(["scatter", "line", "bar"].includes(localSettings.type)
-      ? [{ value: "selection", label: "Select" }]
+    ...(chartFilterFields(localSettings, aggregate).length > 0
+      ? [{ value: "filters", label: "Filters" }]
       : []),
     { value: "labels", label: "Labels" },
     ...(hasAxes ? [{ value: "advanced", label: "Spacing" }] : []),
@@ -102,8 +110,8 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
       </div>
       <TabContainer tabs={tabs}>
         {{
-          selection: (
-            <SelectionSettingsTab
+          filters: (
+            <FiltersSettingsTab
               settings={localSettings}
               onSettingChange={handleSettingChange}
             />

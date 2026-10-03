@@ -9,9 +9,9 @@ import {
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { DataTableSettings } from "./definition";
 import { DataTableRow, getFilteredRows } from "./filteredRows";
-import { useState } from "react";
 import { ActionTooltip } from "@/components/ui/tooltip";
-import { FieldMetadata, resolveFieldProfile } from "@/components/FieldMetadata";
+import { FieldPicker } from "@/components/FieldList/FieldPicker";
+import { pickColumns } from "./columnOps";
 
 interface DataTableToolbarProps {
   settings: DataTableSettings;
@@ -28,14 +28,9 @@ export function DataTableToolbar({
   compact = false,
   localFilters = false,
 }: DataTableToolbarProps) {
-  const [fieldSearch, setFieldSearch] = useState("");
-  const getColumnData = useDataLayer((state) => state.getColumnData);
-  const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
-  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const updateChart = useDataLayer((state) => state.updateChart);
   const data = useDataLayer((state) => state.data);
   const liveItems = useDataLayer((state) => state.getLiveItems(settings));
-  const getColumnNames = useDataLayer((state) => state.getColumnNames);
 
   const filteredData = rows ?? getFilteredRows(data, liveItems, settings);
   const handleSearch = (globalSearch: string) => {
@@ -107,78 +102,17 @@ export function DataTableToolbar({
           <PopoverContent
             align="end"
             aria-label="Visible columns"
-            className="w-96 space-y-3"
+            className="eda-field-picker-popover"
           >
-            <div className="flex items-center justify-between gap-2">
-              <h3 className="text-sm font-semibold">Visible columns</h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() =>
-                  onSettingsChange?.({
-                    columns: getColumnNames()
-                      .filter((field) => field !== "__ID")
-                      .map(
-                        (field) =>
-                          settings.columns.find(
-                            (column) => column.field === field
-                          ) ?? { id: field, field }
-                      ),
-                  })
-                }
-              >
-                Show all
-              </Button>
-            </div>
-            <Input
-              aria-label="Find columns"
-              placeholder="Find a column…"
-              value={fieldSearch}
-              onChange={(event) => setFieldSearch(event.target.value)}
+            <FieldPicker
+              heading="Visible columns"
+              selected={settings.columns.map((column) => column.field)}
+              onChange={(fields) =>
+                onSettingsChange?.({
+                  columns: pickColumns(settings.columns, fields),
+                })
+              }
             />
-            <div className="grid max-h-72 gap-1 overflow-y-auto">
-              {getColumnNames()
-                .filter(
-                  (field) =>
-                    field !== "__ID" &&
-                    field.toLowerCase().includes(fieldSearch.toLowerCase())
-                )
-                .map((field) => {
-                  const checked = settings.columns.some(
-                    (column) => column.field === field
-                  );
-                  return (
-                    <label
-                      key={field}
-                      className="flex min-w-0 cursor-pointer items-center gap-2 rounded px-2 py-2 hover:bg-muted"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        aria-label={getFieldLabel(field)}
-                        onChange={(event) =>
-                          onSettingsChange?.({
-                            columns: event.target.checked
-                              ? [...settings.columns, { id: field, field }]
-                              : settings.columns.filter(
-                                  (column) => column.field !== field
-                                ),
-                          })
-                        }
-                      />
-                      <FieldMetadata
-                        profile={resolveFieldProfile(
-                          field,
-                          fieldProfiles,
-                          getColumnData
-                        )}
-                        label={getFieldLabel(field)}
-                        compact
-                      />
-                    </label>
-                  );
-                })}
-            </div>
           </PopoverContent>
         </Popover>
       )}

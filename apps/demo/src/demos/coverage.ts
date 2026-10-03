@@ -128,6 +128,33 @@ export const coverageFeatures = [
     chartType: "parallel-coordinates",
   },
   {
+    id: "chart:calendar",
+    label: "Calendar heatmap",
+    family: "Chart types",
+    description: "Show a count or measure for each day of a year.",
+    required: true,
+    status: "supported",
+    chartType: "calendar",
+  },
+  {
+    id: "chart:heatmap",
+    label: "Heatmap",
+    family: "Chart types",
+    description: "Compare a count or measure across two categories.",
+    required: true,
+    status: "supported",
+    chartType: "heatmap",
+  },
+  {
+    id: "chart:ecdf",
+    label: "ECDF",
+    family: "Chart types",
+    description: "Read the share of values at or below any threshold, without bins.",
+    required: true,
+    status: "supported",
+    chartType: "ecdf",
+  },
+  {
     id: "labels:meaningful-title",
     label: "Meaningful titles",
     family: "Labels and guides",
@@ -384,6 +411,7 @@ export const exampleCoverage = [
       "chart:bar": "shown",
       "chart:boxplot": "shown",
       "chart:data-table": "shown",
+      "chart:heatmap": "shown",
       "color:categorical": "shown",
       "interaction:cross-filter": "shown",
       "layout:dashboard": "shown",
@@ -456,6 +484,7 @@ export const exampleCoverage = [
     intent:
       "Explore linked product traffic, conversion, and response-time views.",
     features: {
+      "chart:ecdf": "shown",
       "chart:line": "shown",
       "chart:row": "shown",
       "chart:scatter": "shown",
@@ -500,7 +529,7 @@ export const exampleCoverage = [
   {
     exampleId: "shop-10000",
     intent:
-      "Explore 10,000 orders through 15 linked views and comparable regional facets.",
+      "Explore 10,000 orders through 16 linked views, a daily revenue calendar, and comparable regional facets.",
     features: {
       "chart:row": "shown",
       "chart:bar": "shown",
@@ -508,6 +537,7 @@ export const exampleCoverage = [
       "chart:boxplot": "shown",
       "chart:data-table": "shown",
       "chart:line": "shown",
+      "chart:calendar": "shown",
       "facet:wrap": "shown",
       "facet:shared-scales": "shown",
       "table:virtualization": "shown",

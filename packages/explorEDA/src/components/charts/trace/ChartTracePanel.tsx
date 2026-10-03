@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { BarTraceBody } from "../BarChart/BarTraceBody";
 import { ParallelTraceBody } from "../ParallelCoordinates/ParallelTraceBody";
+import { CalendarTraceBody } from "../Calendar/CalendarTraceBody";
+import { HeatmapTraceBody } from "../Heatmap/HeatmapTraceBody";
+import { EcdfTraceBody } from "../Ecdf/EcdfTraceBody";
 import { ScatterTraceBody } from "../ScatterPlot/ScatterTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
 import {
@@ -18,6 +21,12 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
     case "polyline":
     case "pc-axis":
       return <ParallelTraceBody trace={trace} />;
+    case "day":
+      return <CalendarTraceBody trace={trace} />;
+    case "cell":
+      return <HeatmapTraceBody trace={trace} />;
+    case "ecdf-step":
+      return <EcdfTraceBody trace={trace} />;
     case "guide":
       return <GuideTraceBody trace={trace} />;
     case "title":
