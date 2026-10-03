@@ -10,6 +10,7 @@ import {
   stackedBarsDashboard,
   areaDashboard,
   bubbleDashboard,
+  densityDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import { SavedDataStructure } from "exploreda";
@@ -83,6 +84,17 @@ export const FEATURED_EXAMPLE_ID = "shop-operations";
 
 /** Every example, in the order the landing page lists them. */
 export const examples: ExampleData[] = [
+  {
+    id: "scatter-density",
+    title: "Where daily observations cluster",
+    description: "Count 10,000 daily observations in temperature and sales bins. Darker cells show where more days share similar values.",
+    dataset: { rows: "10,000 days", fields: 12, source: "Synthetic" },
+    shows: ["Density bins", "Exact bin selection", "Source tracing"],
+    guide: "Try this: click a dark bin. The count and records show its days. Inspect bin shows exact boundaries. Change Display to Points to compare individual rows.",
+    icon: ScatterChart,
+    data: "/correlated_medium.csv",
+    savedData: densityDashboard,
+  },
   {
     id: "bubble-scatter",
     title: "Trial volume, speed, and conversion",

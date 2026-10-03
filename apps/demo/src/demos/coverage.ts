@@ -20,6 +20,14 @@ type FeatureDefinition = {
 
 export const coverageFeatures = [
   {
+    id: "mode:scatter-density",
+    label: "Binned scatter density",
+    family: "Chart modes",
+    description: "Count numeric coordinate pairs in fixed rectangular bins and inspect exact membership.",
+    required: true,
+    status: "supported",
+  },
+  {
     id: "mode:bubble-scatter",
     label: "Bubble scatter",
     family: "Chart modes",
@@ -461,6 +469,18 @@ export type ExampleCoverage = {
 };
 
 export const exampleCoverage = [
+  {
+    exampleId: "scatter-density",
+    intent: "Resolve overlap in 10,000 daily observations and reconcile each bin with its source rows.",
+    features: {
+      "mode:scatter-density": "shown",
+      "chart:scatter": "shown",
+      "chart:bar": "shown",
+      "chart:metric-card": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
   {
     exampleId: "bubble-scatter",
     intent: "Compare response time, conversion, and trial volume, with exact source rows and size tracing.",
