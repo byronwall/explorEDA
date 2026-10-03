@@ -64,6 +64,12 @@ interface PlotChartPanelProps {
 const CATEGORY_LABELED_CHART_TYPES = new Set(["row", "boxplot"]);
 
 const TRACE_COPY = {
+  "metric-card": {
+    heading: "Metric trace",
+    emptyText:
+      "Choose Inspect records on the card to see its calculation and source rows. You can also find a source row below.",
+    ariaLabel: "Metric card trace inspector",
+  },
   scatter: {
     heading: "Scatter trace",
     emptyText:
@@ -112,7 +118,11 @@ function isTraceable(type: string): type is keyof typeof TRACE_COPY {
   return type in TRACE_COPY;
 }
 
-function ChartTraceInspector({ type }: { type: keyof typeof TRACE_COPY }) {
+export function ChartTraceInspector({
+  type,
+}: {
+  type: keyof typeof TRACE_COPY;
+}) {
   const trace = useChartTrace();
   const api = useChartTraceApi();
   if (!trace || !api) return null;
@@ -350,7 +360,8 @@ export function PlotChartPanel({
       ? 36
       : 0;
 
-  const canViewData = !isTableLike && dataFields.length > 0;
+  const canViewData =
+    !isTableLike && (dataFields.length > 0 || settings.type === "metric-card");
   const tableSearch =
     settings.type === "data-table" ? settings.globalSearch : "";
   const hasFilter = settings.filters.some(isActiveFilter);

@@ -8,6 +8,7 @@ import { ecdfDefinition } from "@/components/charts/Ecdf/definition";
 import { lineChartDefinition } from "@/components/charts/LineChart/definition";
 import { parallelCoordinatesDefinition } from "@/components/charts/ParallelCoordinates/definition";
 import { markdownDefinition } from "@/components/charts/Markdown/definition";
+import { metricCardDefinition } from "@/components/charts/MetricCard/definition";
 import { pivotTableDefinition } from "@/components/charts/PivotTable/definition";
 import { rowChartDefinition } from "@/components/charts/RowChart/definition";
 import { sankeyDefinition } from "@/components/charts/Sankey/definition";
@@ -33,4 +34,5 @@ export function registerAllCharts() {
   chartRegistry.register(calendarDefinition);
   chartRegistry.register(heatmapDefinition);
   chartRegistry.register(ecdfDefinition);
+  chartRegistry.register(metricCardDefinition);
 }

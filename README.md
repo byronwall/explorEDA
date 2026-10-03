@@ -27,7 +27,10 @@ charts: configuration, record inspection, formulas, and restorable settings.
   receives the settings as JSON and restores them later through `savedData`.
 
 Chart types include row, bar, line, scatter, 3D scatter, box plot, pivot
-table, data table, summary table, markdown, and color legend.
+table, data table, summary table, metric card, markdown, and color legend.
+
+Metric cards show a count, sum, or average for rows that match the chart
+filters. Choose **Inspect records** to see the inputs and excluded values.
 
 ## Install
 

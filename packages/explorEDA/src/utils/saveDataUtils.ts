@@ -457,6 +457,13 @@ function isChart(value: unknown): boolean {
         isFiniteNumber(value.lineOpacity) &&
         isFiniteNumber(value.lineWidth)
       );
+    case "metric-card":
+      return (
+        ["count", "sum", "average"].includes(value.aggregation as string) &&
+        (value.measureField === undefined ||
+          typeof value.measureField === "string") &&
+        (value.aggregation === "count" || Boolean(value.measureField))
+      );
     case "calendar":
       return (
         ["count", "sum", "average"].includes(value.aggregation as string) &&

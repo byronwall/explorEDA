@@ -5,6 +5,7 @@ import { ParallelTraceBody } from "../ParallelCoordinates/ParallelTraceBody";
 import { CalendarTraceBody } from "../Calendar/CalendarTraceBody";
 import { HeatmapTraceBody } from "../Heatmap/HeatmapTraceBody";
 import { EcdfTraceBody } from "../Ecdf/EcdfTraceBody";
+import { MetricCardTraceBody } from "../MetricCard/MetricCardTraceBody";
 import { ScatterTraceBody } from "../ScatterPlot/ScatterTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
 import {
@@ -17,6 +18,8 @@ import type { ChartTrace } from "./traceTypes";
 
 function TraceBody({ trace }: { trace: ChartTrace }) {
   switch (trace.kind) {
+    case "metric-card":
+      return <MetricCardTraceBody trace={trace} />;
     case "bar":
       return <BarTraceBody trace={trace} />;
     case "sankey-node":

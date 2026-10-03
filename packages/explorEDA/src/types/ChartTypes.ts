@@ -15,6 +15,7 @@ import type { ParallelCoordinatesSettings } from "@/components/charts/ParallelCo
 import type { CalendarSettings } from "@/components/charts/Calendar/definition";
 import type { HeatmapSettings } from "@/components/charts/Heatmap/definition";
 import type { EcdfSettings } from "@/components/charts/Ecdf/definition";
+import type { MetricCardSettings } from "@/components/charts/MetricCard/definition";
 import type { ColorLegendSettings } from "@/components/charts/ColorLegend/definition";
 
 export interface ChartLayout {
@@ -107,6 +108,7 @@ export type ChartSettings =
   | CalendarSettings
   | HeatmapSettings
   | EcdfSettings
+  | MetricCardSettings
   | ColorLegendSettings;
 
 export type ChartType = ChartSettings["type"];
