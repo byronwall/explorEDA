@@ -48,6 +48,8 @@ export function useMapData(settings: MapSettings, facetIds?: number[]) {
           settings.labelField,
           settings.colorField,
           settings.sizeField,
+          settings.regionField,
+          settings.measureField,
         ]
           .filter((field): field is string => Boolean(field))
           .map((field) => [field, column(field)])
@@ -66,6 +68,8 @@ export function useMapData(settings: MapSettings, facetIds?: number[]) {
       settings.labelField,
       settings.colorField,
       settings.sizeField,
+      settings.regionField,
+      settings.measureField,
       colorScale,
     ]
   );

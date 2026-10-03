@@ -12,6 +12,7 @@ import {
   bubbleDashboard,
   densityDashboard,
   pointMapDashboard,
+  regionMapDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import { SavedDataStructure } from "exploreda";
@@ -87,6 +88,17 @@ export const FEATURED_EXAMPLE_ID = "shop-operations";
 
 /** Every example, in the order the landing page lists them. */
 export const examples: ExampleData[] = [
+  {
+    id: "region-map",
+    title: "Requests across service districts",
+    description: "Join 15 synthetic records to six service districts. Compare totals, inspect the joined records, and see zero values, missing measures, and regions with no rows.",
+    dataset: {rows:"15 records",fields:3,source:"Synthetic"},
+    shows:["Region map","Typed region joins","Metric tracing"],
+    guide:"Try this: select Central and compare its 500 requests with the pivot. Inspect joins shows unassigned rows. Inspect East shows two features joined as one region.",
+    icon:MapPin,
+    data:"/region-requests.csv",
+    savedData:regionMapDashboard,
+  },
   {
     id: "point-map",
     title: "Where service requests originate",

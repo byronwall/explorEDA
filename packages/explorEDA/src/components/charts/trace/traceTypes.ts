@@ -1,3 +1,4 @@
+import type { RegionTrace } from "../Map/regionTrace";
 import type { MapTrace } from "../Map/mapTrace";
 import type { RowCalculationTrace } from "@/lib/calculations/CalculationState";
 import type { planNumericalLegend } from "@/lib/colorScaleMath";
@@ -95,6 +96,7 @@ export interface LegendTrace {
 }
 
 export type ChartTrace =
+  | RegionTrace
   | MapTrace
   | DensityTrace
   | ScatterTrace

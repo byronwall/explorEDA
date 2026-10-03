@@ -12,7 +12,7 @@ Byron approved this sequence after Metric Card PR #114. Each branch starts from 
 | 6 | Bubble scatter | `codex/bubble-scatter` | #119 | In review |
 | 7 | Binned scatter density | `codex/scatter-density` | #120 | In review |
 | 8 | Point map | `codex/point-map` | #121 | In review |
-| 9 | Region map | | | Pending |
+| 9 | Region map | `codex/region-map` | #122 | In review |
 | 10 | Histogram, Distribution, and Other discovery | | | Pending |
 
 Each PR needs a worked example, exact source tracing, linked selection where meaningful, keyboard controls, saved settings, and a changeset. Check the browser at 1280, 783, and 390 px. Run `pnpm check` on Node 24. Upload screenshots of the chart, trace inspector, and configuration menu with `gh --attach`.
@@ -46,3 +46,7 @@ PR #120 adds rectangular count bins to Scatter Plot. Traces show exact intervals
 ## Point map evidence
 
 PR #121 adds maps with explicit latitude and longitude fields, point area, and color. Traces show raw and prepared inputs, source rows, projection settings, size calculations, omissions, and points outside the view. Pan and zoom preserve row selection. All 509 tests passed on Node 24. Browser checks covered 1280, 783, and 390 px, chart creation, preview edits, pointer and keyboard selection, overlapping points, linked filters, facets, pan, zoom, and reset. Dark fixtures checked zero, invalid values, negative sizes, poles, and the date line. Six screenshots are attached to the PR.
+
+## Region map evidence
+
+PR #122 adds Region mode with shared GeoJSON assets and typed joins. Counts, sums, and averages retain source contributors and exclusion reasons. Duplicate feature keys form one region. Patterns distinguish invalid measures from regions with no rows. All 511 tests passed on Node 24. Tests cover polygon holes, multipart date-line geometry, typed keys, stable color bounds, exact facet selection, and geometry save/restore. Browser checks covered 1280, 783, and 390 px, GeoJSON import, chart placement, metric changes, keyboard and pointer selection, facets, pan, reset, and empty filtered results. Region totals matched the pivot. A dark fixture checked negative, zero, invalid, and empty regions. Six screenshots are attached to the PR.

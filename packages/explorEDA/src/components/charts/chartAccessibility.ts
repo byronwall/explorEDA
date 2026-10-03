@@ -122,7 +122,7 @@ export function getChartFields(settings: ChartSettings): string[] {
             ]
           : [settings.xField, ...settings.seriesField];
       case "map":
-        return [settings.latitudeField, settings.longitudeField, settings.labelField, settings.colorField, settings.sizeField];
+        return [settings.latitudeField, settings.longitudeField, settings.labelField, settings.colorField, settings.sizeField, settings.regionField, settings.measureField];
       case "scatter":
         return [
           settings.xField,
