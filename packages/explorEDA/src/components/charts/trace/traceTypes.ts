@@ -10,6 +10,8 @@ import {
 import type { FacetLayoutPlan } from "../FacetRelated/facetLayout";
 import type { BarTrace } from "../BarChart/barTrace";
 import type { CalendarTrace } from "../Calendar/calendarTrace";
+import type { HeatmapTrace } from "../Heatmap/heatmapTrace";
+import type { EcdfTrace } from "../Ecdf/ecdfTrace";
 import type { ScatterTrace } from "../ScatterPlot/scatterTrace";
 
 /** A selected object. The owner's source resolves it against its current plan. */
@@ -90,6 +92,8 @@ export type ChartTrace =
   | ScatterTrace
   | BarTrace
   | CalendarTrace
+  | HeatmapTrace
+  | EcdfTrace
   | GuideTrace
   | TitleTrace
   | FacetTrace

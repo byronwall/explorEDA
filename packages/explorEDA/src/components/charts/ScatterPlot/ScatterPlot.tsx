@@ -12,6 +12,7 @@ import {
 import type { ScatterPlotSettings } from "./definition";
 import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
 import { ScatterSvg } from "./ScatterSvg";
+import { ChartReadout } from "../ChartReadout";
 import {
   findScatterTraceRow,
   resolveScatterTrace,
@@ -61,6 +62,9 @@ export function ScatterPlot({
     state.colorScales.find((item) => item.id === settings.colorScaleId)
   );
   const updateChart = useDataLayer((state) => state.updateChart);
+  const fieldLabel = useDataLayer((state) => state.getFieldLabel);
+  const getFieldLabel = (field: string) =>
+    fieldLabel ? fieldLabel(field) : field;
   const allIds = useMemo(() => data.map((row) => row.__ID), [data]);
 
   const snapshot = useMemo((): ScatterSnapshot => {
@@ -338,30 +342,38 @@ export function ScatterPlot({
             </div>
           )}
           {hoveredPoint && (
-            <div
-              className="pointer-events-none absolute left-2 top-2 max-w-[min(16rem,70%)] rounded border border-border bg-card/95 px-2 py-1 text-xs text-card-foreground shadow-sm"
-              role="status"
-            >
-              <div>
-                {plan.xDisplay}: {hoveredText?.xText}
-              </div>
-              <div>
-                {plan.yDisplay}: {hoveredText?.yText}
-              </div>
-              {settings.colorField && (
-                <div>
-                  Color · {settings.colorField}: {hoveredText?.colorText}
-                </div>
+            // The crosshair marks the point; its values read in one line
+            // outside the plot.
+            <ChartReadout fallbackClassName="eda-chart-readout-inline">
+              {(
+                [
+                  [plan.xDisplay, hoveredText?.xText],
+                  [plan.yDisplay, hoveredText?.yText],
+                  settings.colorField && [
+                    getFieldLabel(settings.colorField),
+                    hoveredText?.colorText,
+                  ],
+                  settings.facet.enabled && [
+                    getFieldLabel(settings.facet.rowVariable),
+                    hoveredText?.facetRowText,
+                  ],
+                  settings.facet.enabled &&
+                    settings.facet.type === "grid" && [
+                      getFieldLabel(settings.facet.columnVariable),
+                      hoveredText?.facetColumnText,
+                    ],
+                ] as Array<false | "" | undefined | [string, string?]>
+              ).map(
+                (item) =>
+                  item && (
+                    // Short of room, the name gives way before the value.
+                    <span key={item[0]} className="eda-readout-item">
+                      <span>{item[0]}</span>
+                      <b>{item[1]}</b>
+                    </span>
+                  )
               )}
-              {settings.facet.enabled && (
-                <div>
-                  Facet {settings.facet.rowVariable}:{" "}
-                  {hoveredText?.facetRowText}
-                  {settings.facet.type === "grid" &&
-                    ` · ${settings.facet.columnVariable}: ${hoveredText?.facetColumnText}`}
-                </div>
-              )}
-            </div>
+            </ChartReadout>
           )}
         </>
       ) : (

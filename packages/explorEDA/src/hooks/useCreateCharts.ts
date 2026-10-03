@@ -33,7 +33,7 @@ export function useCreateCharts() {
       .map((profile) => profile.name);
     const selectedField =
       field ||
-      (type === "row" ? categories[0] : numeric[0]) ||
+      (type === "row" || type === "heatmap" ? categories[0] : numeric[0]) ||
       profiles[0]?.name ||
       "";
     const settings = definition.createDefaultSettings(layout, selectedField);
@@ -73,6 +73,11 @@ export function useCreateCharts() {
       settings.field =
         profiles.find((profile) => profile.dataType === "datetime")?.name ??
         settings.field;
+    if (settings.type === "heatmap")
+      settings.columnField =
+        categories.find((name) => name !== settings.field) ?? "";
+    if (settings.type === "ecdf" && !numeric.includes(settings.field))
+      settings.field = numeric[0] ?? settings.field;
     settings.title = "";
     return settings;
   };

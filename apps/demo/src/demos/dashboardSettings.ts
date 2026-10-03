@@ -387,7 +387,7 @@ export const activityDashboard = dashboard(
       "Conversion by release phase",
       "Conversion (%)",
       "Phase",
-      layout(0, 9, 4),
+      layout(0, 9, 4, 5),
       "phase-colors"
     ),
     table(
@@ -404,6 +404,21 @@ export const activityDashboard = dashboard(
       ],
       layout(4, 9, 8, 5)
     ),
+    {
+      ...base,
+      id: "activity-speed-share",
+      type: "ecdf",
+      title: "How many days stay under a response time?",
+      field: "Response time (ms)",
+      colorField: "Phase",
+      colorScaleId: "phase-colors",
+      direction: "below",
+      logX: false,
+      showQuantiles: true,
+      showOverall: false,
+      layout: layout(0, 14, 12, 5),
+      margin: { top: 8, right: 16, bottom: 8, left: 8 },
+    },
   ],
   [
     categoricalScale("phase-colors", "Phase", [
@@ -501,6 +516,23 @@ export const largeShopDashboard = dashboard(
   ],
   shopDashboard.colorScales
 );
+
+// Only the 500-order book gets the heatmap; the large book fills this row.
+shopDashboard.charts.push({
+  ...base,
+  id: "shop-category-region",
+  type: "heatmap",
+  title: "Where does revenue come from?",
+  field: "Category",
+  columnField: "Region",
+  aggregation: "sum",
+  measureField: "Revenue",
+  maxCategories: 20,
+  sortBy: "count",
+  showValues: true,
+  layout: layout(0, 14, 12, 5),
+  margin: { top: 8, right: 16, bottom: 8, left: 8 },
+});
 
 export const scatterTraceDashboard: SavedDataStructure = {
   ...dashboard(

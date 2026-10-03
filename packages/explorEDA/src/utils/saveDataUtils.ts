@@ -442,6 +442,23 @@ function isChart(value: unknown): boolean {
         ["monday", "sunday"].includes(value.weekStart as string) &&
         (value.year === undefined || isFiniteNumber(value.year))
       );
+    case "heatmap":
+      return (
+        typeof value.columnField === "string" &&
+        ["count", "sum", "average"].includes(value.aggregation as string) &&
+        (value.measureField === undefined ||
+          typeof value.measureField === "string") &&
+        isFiniteNumber(value.maxCategories) &&
+        ["count", "label"].includes(value.sortBy as string) &&
+        typeof value.showValues === "boolean"
+      );
+    case "ecdf":
+      return (
+        ["below", "above"].includes(value.direction as string) &&
+        typeof value.logX === "boolean" &&
+        typeof value.showQuantiles === "boolean" &&
+        typeof value.showOverall === "boolean"
+      );
     case "line":
       return (
         typeof value.xField === "string" &&
