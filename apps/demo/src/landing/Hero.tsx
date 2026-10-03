@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { InstallCommand } from "./CodePanel";
 import { REPO_URL } from "./links";
 import { LiveOrderBook } from "./LiveOrderBook";
@@ -14,7 +15,11 @@ export function Hero({ onOpenFeatured }: { onOpenFeatured: () => void }) {
         aria-label="Site"
         className="mx-auto flex max-w-6xl items-center justify-between gap-4 pt-3"
       >
-        <a href="/" className="flex shrink-0 items-center gap-2" aria-label="explorEDA home">
+        <a
+          href="/"
+          className="flex shrink-0 items-center gap-2"
+          aria-label="explorEDA home"
+        >
           <img src="/brand/icon.svg" alt="" className="size-7" />
           <img src="/brand/wordmark.svg" alt="" className="h-6 w-auto" />
         </a>
@@ -25,6 +30,9 @@ export function Hero({ onOpenFeatured }: { onOpenFeatured: () => void }) {
           <a className={navLinkClass} href="#examples-heading">
             Examples
           </a>
+          <Link className={`${navLinkClass} hidden sm:block`} to="?view=docs">
+            Guides
+          </Link>
           <a className={navLinkClass} href={REPO_URL}>
             GitHub
           </a>

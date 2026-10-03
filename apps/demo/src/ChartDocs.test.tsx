@@ -38,7 +38,7 @@ describe("chart documentation routes", () => {
       screen.getByRole("link", { name: "Open the scatter trace example" })
     ).toHaveAttribute("href", "/?example=scatter-trace");
     expect(
-      screen.getByText(/mark trace is implemented for scatter and bar/)
+      screen.getByText(/Mark trace is available for scatter and bar charts/)
     ).toBeInTheDocument();
     scatter.unmount();
 
@@ -57,8 +57,9 @@ describe("chart documentation routes", () => {
       </MemoryRouter>
     );
     expect(screen.getByText(/T-001 has Units 2/)).toBeInTheDocument();
+    expect(screen.getByText("Every loaded source row.")).toBeInTheDocument();
     expect(
-      screen.getByText(/full scope is every loaded source row/)
+      screen.getByText(/named grouped summaries use globally filtered rows/i)
     ).toBeInTheDocument();
   });
 });
