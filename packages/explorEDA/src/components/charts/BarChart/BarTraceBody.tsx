@@ -18,7 +18,9 @@ export function BarTraceBody({ trace }: { trace: BarTrace }) {
     <div className="space-y-2" aria-label="Bar trace">
       <TraceSection heading={`Bar · ${mark.label}`}>
         <TraceReadout label="Field">{trace.fieldLabel}</TraceReadout>
-        <TraceReadout label="Value">{displayAggregateValue(mark.value)}</TraceReadout>
+        <TraceReadout label="Value">
+          {displayAggregateValue(mark.value)}
+        </TraceReadout>
         <TraceReadout label="Aggregation">{trace.aggregation}</TraceReadout>
         {mark.bin && (
           <TraceReadout label="Bin interval">
@@ -42,7 +44,7 @@ export function BarTraceBody({ trace }: { trace: BarTrace }) {
           />{" "}
           {mark.fill}
           {mark.fillSource.kind === "own-filter"
-            ? ` ← outside this chart's filter (color scale gives ${mark.fillSource.baseFill})`
+            ? ` at ${Math.round(mark.opacity * 100)}% opacity ← outside this chart's filter`
             : mark.fillSource.scaleId
               ? ` ← color scale ${mark.fillSource.scaleId}`
               : " ← default bar color"}

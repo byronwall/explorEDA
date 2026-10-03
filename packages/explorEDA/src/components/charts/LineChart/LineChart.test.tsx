@@ -5,7 +5,7 @@ import { DataLayerProvider } from "@/providers/DataLayerProvider";
 import { LineChart } from "./LineChart";
 import { DEFAULT_SERIES_SETTINGS, lineChartDefinition } from "./definition";
 
-it("reads the nearest series on its own axis and clears during brushing or missing observations", () => {
+it("reads every series at the hovered x and clears during brushing or missing observations", () => {
   window.PointerEvent = MouseEvent as typeof PointerEvent;
   registerAllCharts();
   const settings = {
@@ -40,16 +40,15 @@ it("reads the nearest series on its own axis and clears during brushing or missi
   );
   const chart = container.firstElementChild!;
   fireEvent.pointerMove(chart, { clientX: 200, clientY: 208 });
-  expect(
-    screen.getByRole("img", { name: "day: 5; visitors: 2.5" })
-  ).toBeInTheDocument();
+  // Both series read at the hovered x, top of the plot first.
+  expect(screen.getByRole("status")).toHaveTextContent(
+    "day5cost1,000visitors2.5"
+  );
   fireEvent.pointerMove(chart, { clientX: 200, clientY: 21 });
-  expect(
-    screen.getByRole("img", { name: "day: 5; cost: 1000" })
-  ).toBeInTheDocument();
+  expect(screen.getByRole("status")).toHaveTextContent("day5");
   expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
   fireEvent.keyDown(chart.querySelector("svg")!, { key: "Escape" });
-  expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  expect(screen.queryByRole("status")).not.toBeInTheDocument();
   fireEvent.pointerMove(chart, { clientX: 200, clientY: 208 });
   fireEvent.pointerDown(chart.querySelector("svg")!, {
     clientX: 200,
@@ -57,14 +56,12 @@ it("reads the nearest series on its own axis and clears during brushing or missi
     button: 0,
   });
   fireEvent.pointerMove(chart, { clientX: 201, clientY: 208, buttons: 1 });
-  expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  expect(screen.queryByRole("status")).not.toBeInTheDocument();
   fireEvent.pointerUp(document.body, { clientX: 500, clientY: 208 });
   fireEvent.pointerMove(chart, { clientX: 200, clientY: 208 });
-  expect(
-    screen.getByRole("img", { name: "day: 5; visitors: 2.5" })
-  ).toBeInTheDocument();
+  expect(screen.getByRole("status")).toHaveTextContent("visitors2.5");
   fireEvent.pointerMove(chart, { clientX: 256, clientY: 208 });
-  expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  expect(screen.queryByRole("status")).not.toBeInTheDocument();
 });
 
 it("sorts X values while retaining a missing-value line gap", () => {
