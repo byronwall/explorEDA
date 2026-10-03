@@ -11,21 +11,53 @@ import {
   Filter as FilterIcon,
   Settings2,
 } from "lucide-react";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Popover,
+  PopoverAnchor,
   PopoverContent,
-  PopoverTrigger,
 } from "@/components/ui/popover";
+import { useFilteredFieldProfiles } from "@/hooks/useFilteredFieldProfiles";
+import { useColumnDrag } from "./useColumnDrag";
+
+/** What the table's context menu can ask the header to do. */
+export type DataTableHeaderApi = {
+  openFilter: (columnId: string) => void;
+};
 import { ColumnFilter } from "./components/ColumnFilter";
 import { DataTableSettings } from "./definition";
 import { FieldInspector } from "@/components/SummaryTable/components/FieldInspector";
+import {
+  summarizeField,
+  type SparkFilter,
+} from "@/components/SummaryTable/components/FieldDistribution";
+import { FieldMetadata } from "@/components/FieldMetadata";
+import type { datum } from "@/types/ChartTypes";
+import isEqual from "react-fast-compare";
+
+/** Header height in pixels: one line of names, or names over distributions. */
+export const HEADER_HEIGHT = 36;
+export const HEADER_HEIGHT_WITH_DISTRIBUTIONS = 62;
 
 interface DataTableHeaderProps {
   settings: DataTableSettings;
   onSettingsChange?: (settings: Partial<DataTableSettings>) => void;
   localFilters?: boolean;
   onColumnResize?: (id: string, width: number | null) => void;
+  /**
+   * Profiles of the rows this table can show. When set, each header draws
+   * its field's distribution under the name.
+   */
+  distributionProfiles?: FieldProfile[];
+  apiRef?: React.Ref<DataTableHeaderApi>;
+  /** True while a menu covers the header, so hover details stay closed. */
+  quiet?: boolean;
 }
 
 export function DataTableHeader({
@@ -33,6 +65,9 @@ export function DataTableHeader({
   onSettingsChange,
   onColumnResize,
   localFilters = false,
+  distributionProfiles,
+  apiRef,
+  quiet = false,
 }: DataTableHeaderProps) {
   const { columns, sortBy, sortDirection, filters } = settings;
   const updateChart = useDataLayer((state) => state.updateChart);
@@ -44,6 +79,7 @@ export function DataTableHeader({
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const fieldSettings = useDataLayer((state) => state.fieldSettings);
   const label = getFieldLabel ?? ((field: string) => field);
+  const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const nonce = useDataLayer((state) => state.nonce);
   const profiles = useMemo(
@@ -62,7 +98,48 @@ export function DataTableHeader({
     ],
     [fieldProfiles, calculations, columns, getColumnData, nonce, fieldSettings]
   );
+  // One popover serves every column. It moves to the column whose filter
+  // opens, so switching columns never shows two popovers at once.
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const filterAnchor = useRef<HTMLElement | null>(null);
+  const filterContent = useRef<HTMLDivElement>(null);
+  const activeColumn = columns.find((column) => column.id === activeFilter);
+  const profileFor = (field: string): FieldProfile =>
+    profiles.find((fieldProfile) => fieldProfile.name === field) ?? {
+      name: field,
+      dataType: "categorical" as const,
+      totalCount: 0,
+      uniqueCount: 11,
+      nullCount: 0,
+    };
+  const headRef = useRef<HTMLTableSectionElement>(null);
+  useImperativeHandle(apiRef, () => ({
+    openFilter: (columnId) => {
+      const button = Array.from(
+        headRef.current?.querySelectorAll<HTMLElement>("th") ?? []
+      )
+        .find((cell) => cell.dataset.columnId === columnId)
+        ?.querySelector<HTMLElement>(".eda-column-filter");
+      if (!button) return;
+      filterAnchor.current = button;
+      setActiveFilter(columnId);
+    },
+  }));
+  const columnDrag = useColumnDrag({
+    columns,
+    label,
+    onChange: (next) => update({ columns: next }),
+  });
+  useEffect(() => {
+    if (!activeFilter) return;
+    // Moving to another column replaces the controls; keep focus inside.
+    const content = filterContent.current;
+    if (content && !content.contains(document.activeElement)) {
+      content
+        .querySelector<HTMLElement>("input, select, button")
+        ?.focus({ preventScroll: true });
+    }
+  }, [activeFilter]);
   const [resizingColumn, setResizingColumn] = useState<string | null>(null);
   const [tempWidths, setTempWidths] = useState<Record<string, number>>({});
   const resizeCleanup = useRef<(() => void) | null>(null);
@@ -70,6 +147,7 @@ export function DataTableHeader({
   useEffect(() => () => resizeCleanup.current?.(), []);
 
   const handleSort = (field: string) => {
+    if (columnDrag.consumeClick()) return;
     if (sortBy === field) {
       // Toggle sort direction
       update({
@@ -166,25 +244,43 @@ export function DataTableHeader({
 
   return (
     <>
-      <TableHeader>
+      <TableHeader ref={headRef}>
         <TableRow>
           {columns.map((column, index) => {
-            const profile = profiles.find(
-              (fieldProfile: FieldProfile) => fieldProfile.name === column.field
-            ) ?? {
-              name: column.field,
-              dataType: "categorical" as const,
-              totalCount: 0,
-              uniqueCount: 11,
-              nullCount: 0,
-            };
+            const profile = profileFor(column.field);
             const filter = filters.find(
               (f: Filter) => f.field === column.field
             );
+            // Numbers sit against the right edge, like their cells.
+            const alignRight = profile.dataType === "numeric";
+            const scoped = distributionProfiles?.find(
+              (fieldProfile) => fieldProfile.name === column.field
+            );
+            // A mark filters to its rows; the same mark again clears it.
+            const summary =
+              scoped &&
+              summarizeField(
+                scoped,
+                (value) =>
+                  formatFieldValue
+                    ? formatFieldValue(column.field, value as datum)
+                    : String(value),
+                label(column.field),
+                (next: SparkFilter) => {
+                  const nextFilter = { ...next, field: column.field } as Filter;
+                  handleFilterChange(
+                    column.id,
+                    isEqual(filter, nextFilter) ? undefined : nextFilter
+                  );
+                },
+                filter
+              );
 
             return (
               <TableHead
                 key={column.id}
+                data-column-id={column.id}
+                data-dragging={columnDrag.draggingId === column.id || undefined}
                 className={`relative select-none ${index === 0 ? "sticky left-0 z-20 bg-background" : ""}`}
                 style={{
                   width:
@@ -203,16 +299,22 @@ export function DataTableHeader({
                 <div
                   className="eda-column-heading"
                   data-sorted={sortBy === column.field || undefined}
+                  data-align={alignRight ? "right" : undefined}
                 >
                   <button
                     type="button"
-                    className="flex min-w-0 flex-1 items-center gap-1 text-left"
+                    className="eda-column-sort"
                     aria-label={`Sort by ${column.field}`}
                     onClick={() => handleSort(column.field)}
+                    {...columnDrag.handleProps(column.id)}
                   >
-                    <span className="min-w-0 flex-1 truncate">
-                      {label(column.field)}
-                    </span>
+                    <FieldMetadata
+                      profile={scoped ?? profile}
+                      label={label(column.field)}
+                      compact
+                      showTooltip={!quiet && !columnDrag.draggingId}
+                      className="eda-column-name"
+                    />
                     {sortBy === column.field &&
                       (sortDirection === "asc" ? (
                         <ChevronUp className="h-4 w-4" />
@@ -232,49 +334,39 @@ export function DataTableHeader({
                         <Settings2 className="h-3.5 w-3.5" />
                       </Button>
                     </FieldInspector>
-                    <Popover
-                      open={activeFilter === column.id}
-                      onOpenChange={(open) =>
-                        setActiveFilter(open ? column.id : null)
-                      }
-                    >
-                      <ActionTooltip content={`Filter ${label(column.field)}`}>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className={`eda-column-filter ${filter ? "is-active" : ""}`}
-                            aria-label={`Filter ${column.field}`}
-                            aria-expanded={activeFilter === column.id}
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              setActiveFilter(
-                                activeFilter === column.id ? null : column.id
-                              );
-                            }}
-                          >
-                            <FilterIcon className="h-4 w-4" />
-                          </Button>
-                        </PopoverTrigger>
-                      </ActionTooltip>
-                      <PopoverContent
-                        className="w-auto max-w-[calc(100vw-24px)]"
-                        align="start"
-                        collisionPadding={12}
+                    <ActionTooltip content={`Filter ${label(column.field)}`}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={`eda-column-filter ${filter ? "is-active" : ""}`}
+                        aria-label={`Filter ${column.field}`}
+                        aria-haspopup="dialog"
+                        aria-expanded={activeFilter === column.id}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          filterAnchor.current = event.currentTarget;
+                          setActiveFilter(
+                            activeFilter === column.id ? null : column.id
+                          );
+                        }}
                       >
-                        <ColumnFilter
-                          local={localFilters}
-                          columnId={column.id}
-                          columnLabel={label(column.field)}
-                          profile={profile}
-                          filter={filter}
-                          onChange={handleFilterChange}
-                          onClear={() => handleFilterClear(column.id)}
-                        />
-                      </PopoverContent>
-                    </Popover>
+                        <FilterIcon className="h-4 w-4" />
+                      </Button>
+                    </ActionTooltip>
                   </div>
                 </div>
+                {distributionProfiles && (
+                  <div className="eda-column-spark">
+                    {summary ? (
+                      <>
+                        {summary.graphic}
+                        <span className="sr-only">{summary.description}</span>
+                      </>
+                    ) : (
+                      <span className="text-muted-foreground">No values</span>
+                    )}
+                  </div>
+                )}
                 <div
                   role="separator"
                   aria-orientation="vertical"
@@ -310,6 +402,95 @@ export function DataTableHeader({
           })}
         </TableRow>
       </TableHeader>
+      {columnDrag.overlay}
+      <Popover
+        open={activeColumn !== undefined}
+        onOpenChange={(open) => {
+          if (!open) setActiveFilter(null);
+        }}
+      >
+        <PopoverAnchor
+          virtualRef={filterAnchor as React.RefObject<HTMLElement>}
+        />
+        {activeColumn && (
+          <PopoverContent
+            ref={filterContent}
+            className="w-auto max-w-[calc(100vw-24px)]"
+            align="start"
+            collisionPadding={12}
+            aria-label={`Filter ${label(activeColumn.field)}`}
+            // Another column's filter button moves this popover instead.
+            onInteractOutside={(event) => {
+              const target = event.target;
+              if (
+                target instanceof Element &&
+                target.closest(".eda-column-filter")
+              ) {
+                event.preventDefault();
+              }
+            }}
+            // A hover tooltip on the distribution must not swallow Escape.
+            onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                event.stopPropagation();
+                setActiveFilter(null);
+              }
+            }}
+            onCloseAutoFocus={(event) => {
+              event.preventDefault();
+              filterAnchor.current?.focus({ preventScroll: true });
+            }}
+          >
+            <ScopedColumnFilter
+              key={activeColumn.id}
+              own={localFilters ? undefined : settings}
+              scopedProfiles={distributionProfiles}
+              local={localFilters}
+              columnId={activeColumn.id}
+              columnLabel={label(activeColumn.field)}
+              profile={profileFor(activeColumn.field)}
+              filter={filters.find(
+                (f: Filter) => f.field === activeColumn.field
+              )}
+              onChange={handleFilterChange}
+              onClear={() => handleFilterClear(activeColumn.id)}
+            />
+          </PopoverContent>
+        )}
+      </Popover>
     </>
+  );
+}
+
+/**
+ * A column filter with the field's distribution from the rows the table can
+ * show. The header passes those profiles when it already has them; otherwise
+ * they are built while the popover is open.
+ */
+function ScopedColumnFilter({
+  own,
+  scopedProfiles,
+  ...props
+}: Omit<
+  React.ComponentProps<typeof ColumnFilter>,
+  "distribution" | "format"
+> & {
+  own?: DataTableSettings;
+  scopedProfiles?: FieldProfile[];
+}) {
+  const built = useFilteredFieldProfiles(own, scopedProfiles === undefined);
+  const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
+  return (
+    <ColumnFilter
+      {...props}
+      format={(value) =>
+        formatFieldValue
+          ? formatFieldValue(props.profile.name, value as datum)
+          : String(value)
+      }
+      distribution={(scopedProfiles ?? built).find(
+        (profile) => profile.name === props.profile.name
+      )}
+    />
   );
 }

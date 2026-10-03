@@ -267,6 +267,25 @@ export const penguinDashboard = dashboard(
       ],
       layout(0, 9, 12, 5)
     ),
+    {
+      ...base,
+      id: "penguin-profile",
+      type: "parallel-coordinates",
+      title: "Four measurements, one line per penguin",
+      colorField: "species",
+      colorScaleId: "species-colors",
+      axes: [
+        { field: "bill_length_mm", inverted: false },
+        { field: "bill_depth_mm", inverted: false },
+        { field: "flipper_length_mm", inverted: false },
+        { field: "body_mass_g", inverted: false },
+        { field: "island", inverted: false },
+      ],
+      lineOpacity: 0.45,
+      lineWidth: 1.25,
+      layout: layout(0, 14, 12, 6),
+      margin: { top: 8, right: 8, bottom: 8, left: 8 },
+    },
   ],
   [
     categoricalScale("species-colors", "species", [
@@ -387,7 +406,7 @@ export const activityDashboard = dashboard(
       "Conversion by release phase",
       "Conversion (%)",
       "Phase",
-      layout(0, 9, 4),
+      layout(0, 9, 4, 5),
       "phase-colors"
     ),
     table(
@@ -404,6 +423,21 @@ export const activityDashboard = dashboard(
       ],
       layout(4, 9, 8, 5)
     ),
+    {
+      ...base,
+      id: "activity-speed-share",
+      type: "ecdf",
+      title: "How many days stay under a response time?",
+      field: "Response time (ms)",
+      colorField: "Phase",
+      colorScaleId: "phase-colors",
+      direction: "below",
+      logX: false,
+      showQuantiles: true,
+      showOverall: false,
+      layout: layout(0, 14, 12, 5),
+      margin: { top: 8, right: 16, bottom: 8, left: 8 },
+    },
   ],
   [
     categoricalScale("phase-colors", "Phase", [
@@ -427,7 +461,7 @@ for (const chart of shopDashboard.charts) {
 }
 
 export const largeShopDashboard = dashboard(
-  "10,000 orders · 15 linked views",
+  "10,000 orders · 16 linked views",
   [
     ...shopDashboard.charts,
     histogram("large-units", "Units per order", "Units", layout(0, 14, 4)),
@@ -486,9 +520,38 @@ export const largeShopDashboard = dashboard(
         columnCount: 2,
       },
     } as Chart,
+    {
+      ...base,
+      id: "large-daily-revenue",
+      type: "calendar",
+      title: "Daily revenue through 2024",
+      field: "Order Date",
+      aggregation: "sum",
+      measureField: "Revenue",
+      weekStart: "monday",
+      layout: layout(0, 33, 12, 4),
+      margin: { top: 8, right: 16, bottom: 8, left: 8 },
+    },
   ],
   shopDashboard.colorScales
 );
+
+// Only the 500-order book gets the heatmap; the large book fills this row.
+shopDashboard.charts.push({
+  ...base,
+  id: "shop-category-region",
+  type: "heatmap",
+  title: "Where does revenue come from?",
+  field: "Category",
+  columnField: "Region",
+  aggregation: "sum",
+  measureField: "Revenue",
+  maxCategories: 20,
+  sortBy: "count",
+  showValues: true,
+  layout: layout(0, 14, 12, 5),
+  margin: { top: 8, right: 16, bottom: 8, left: 8 },
+});
 
 export const scatterTraceDashboard: SavedDataStructure = {
   ...dashboard(

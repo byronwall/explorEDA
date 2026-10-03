@@ -68,6 +68,31 @@ describe("workspace toolbar", () => {
     expect(screen.queryByRole("region", { name: "Rows" })).toBeNull();
   });
 
+  it("keeps the narrow rows open beside the charts until closed", () => {
+    renderWorkspace();
+    fireEvent.click(screen.getByRole("button", { name: "Rows" }));
+    const rows = screen.getByRole("region", { name: "Rows" });
+    // Expanded, the drawer covers the toolbar and carries the only scope.
+    expect(screen.getAllByRole("status")).toHaveLength(1);
+
+    fireEvent.click(
+      within(rows).getByRole("button", { name: "Narrow the rows" })
+    );
+    expect(rows).toHaveAttribute("data-narrow");
+    // The toolbar is back in view, with its own row count and filters.
+    expect(screen.getAllByRole("status")).toHaveLength(2);
+
+    fireEvent.pointerDown(document.body);
+    expect(screen.getByRole("region", { name: "Rows" })).toBeInTheDocument();
+
+    fireEvent.click(
+      within(rows).getByRole("button", { name: "Expand the rows" })
+    );
+    expect(rows).not.toHaveAttribute("data-narrow");
+    fireEvent.pointerDown(document.body);
+    expect(screen.queryByRole("region", { name: "Rows" })).toBeNull();
+  });
+
   it("scopes the open rows to chart filters and keeps Rows filters separate", () => {
     const chart = {
       ...barChartDefinition.createDefaultSettings(

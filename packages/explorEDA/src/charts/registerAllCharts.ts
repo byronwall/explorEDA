@@ -1,8 +1,12 @@
 import { barChartDefinition } from "@/components/charts/BarChart/definition";
 import { boxPlotDefinition } from "@/components/charts/BoxPlot/definition";
+import { calendarDefinition } from "@/components/charts/Calendar/definition";
 import { colorLegendDefinition } from "@/components/charts/ColorLegend/definition";
 import { dataTableDefinition } from "@/components/charts/DataTable/definition";
+import { heatmapDefinition } from "@/components/charts/Heatmap/definition";
+import { ecdfDefinition } from "@/components/charts/Ecdf/definition";
 import { lineChartDefinition } from "@/components/charts/LineChart/definition";
+import { parallelCoordinatesDefinition } from "@/components/charts/ParallelCoordinates/definition";
 import { markdownDefinition } from "@/components/charts/Markdown/definition";
 import { pivotTableDefinition } from "@/components/charts/PivotTable/definition";
 import { rowChartDefinition } from "@/components/charts/RowChart/definition";
@@ -25,4 +29,8 @@ export function registerAllCharts() {
   chartRegistry.register(colorLegendDefinition);
   chartRegistry.register(lineChartDefinition);
   chartRegistry.register(sankeyDefinition);
+  chartRegistry.register(parallelCoordinatesDefinition);
+  chartRegistry.register(calendarDefinition);
+  chartRegistry.register(heatmapDefinition);
+  chartRegistry.register(ecdfDefinition);
 }
