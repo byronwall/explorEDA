@@ -154,6 +154,12 @@ describe("LandingPage routing", () => {
     const list = within(section).getByRole("list");
     const items = within(list).getAllByRole("listitem");
 
+    expect(
+      within(section).getByRole("link", { name: "Browse chart guides" })
+    ).toHaveAttribute("href", "/?view=docs");
+    expect(
+      within(section).getByRole("link", { name: "How rendering works" })
+    ).toHaveAttribute("href", "/?view=docs&topic=rendering");
     expect(items).toHaveLength(examples.length);
     expect(within(section).queryByText("Show all examples")).toBeNull();
     const penguins = items.find((item) =>

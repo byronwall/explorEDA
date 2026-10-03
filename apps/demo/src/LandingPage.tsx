@@ -21,9 +21,11 @@ import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { CsvUpload } from "./CsvUpload";
 import { CoverageMatrix } from "./CoverageMatrix";
+import { ChartDocs } from "./ChartDocs";
 import { ExampleSelector } from "./ExampleSelector";
 import { FeaturedExample } from "./landing/FeaturedExample";
 import { IntegrationGuide } from "./landing/IntegrationGuide";
+import { LearningLinks } from "./landing/LearningLinks";
 import { WhyWorkspace } from "./landing/WhyWorkspace";
 import { Hero } from "./landing/Hero";
 import { LandingFooter } from "./landing/LandingFooter";
@@ -55,6 +57,7 @@ export function LandingPage() {
 
   const exampleId = searchParams.get("example");
   const showCoverage = searchParams.get("view") === "coverage";
+  const showDocs = searchParams.get("view") === "docs";
 
   const [example, setExample] = useState<ExampleData | null>(null);
   const [isCsvMode, setIsCsvMode] = useState(false);
@@ -226,7 +229,9 @@ export function LandingPage() {
                   : "landing mx-auto w-full max-w-6xl"
               }
             >
-              {showCoverage ? (
+              {showDocs ? (
+                <ChartDocs />
+              ) : showCoverage ? (
                 <CoverageMatrix />
               ) : (
                 <>
@@ -282,6 +287,7 @@ export function LandingPage() {
                           Project status: feature coverage
                         </Button>
                       </div>
+                      <LearningLinks />
                       <ExampleSelector onSelect={handleExampleSelect} />
                     </section>
                     <section

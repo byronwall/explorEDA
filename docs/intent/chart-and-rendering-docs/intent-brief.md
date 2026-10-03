@@ -41,7 +41,7 @@ A visitor starts at a chart index organized by analytical task. They open a char
 
 ## Current reality
 
-`registerAllCharts.ts` registers eleven types. `docs/application-feature-inventory.md` already records behavior and limits for each. The demo has reusable examples and a `?example=` path. The demo has no docs route today; `main.tsx` mounts `LandingPage` directly. The ongoing [traceability plan](../deterministic-rendering-and-data-traceability/implementation-plan.md) has a live scatter proof and proposes a bar comparison next.
+`registerAllCharts.ts` registers eleven types. `docs/application-feature-inventory.md` already records behavior and limits for each. The demo has reusable examples and a `?example=` path. The demo has no docs route today; `main.tsx` mounts `LandingPage` directly. The [traceability inventory](../../application-feature-inventory.md#traceability-and-reproducibility) records completed scatter and bar proofs. Other chart types remain future scope.
 
 ## Next step after confirmation
 

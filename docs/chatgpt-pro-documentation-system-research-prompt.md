@@ -36,7 +36,7 @@ Read these files in order, then discover related files as needed:
 4. `.github/workflows/deploy.yml`, `apps/demo/vite.config.ts`, `apps/demo/src/main.tsx`, `apps/demo/src/LandingPage.tsx`.
 5. `apps/demo/src/demos/examples.ts`, `apps/demo/src/demos/dashboardSettings.ts`, `apps/demo/src/landing/LiveOrderBook.tsx`, `apps/demo/public/landing/order-book-web.jpg`.
 6. `packages/explorEDA/src/charts/registerAllCharts.ts`, `packages/explorEDA/src/components/charts/ChartRenderer.tsx`, `packages/explorEDA/src/providers/DataLayerProvider.tsx`.
-7. Relevant sections of `docs/application-feature-inventory.md` and `docs/intent/deterministic-rendering-and-data-traceability/scatter-tracing-status.md`.
+7. Relevant sections of `docs/application-feature-inventory.md`, including traceability and reproducibility.
 8. `apps/demo/src/LandingPage.test.tsx`, `apps/demo/src/demos/coverage.test.ts`, and `apps/demo/src/landing/LiveOrderBook.test.tsx` for existing validation patterns.
 
 Verified local facts to recheck at the selected ref:
