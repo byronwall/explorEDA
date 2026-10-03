@@ -190,9 +190,10 @@ function AddChartDialogContent({
             <div ref={previewRef} className="eda-add-chart-canvas relative">
               {previewSize.width > 0 && previewSize.height > 0 && (
                 <ChartTraceScope>
-                  {settings.type === "metric-card" && (
+                  {(preview.type === "metric-card" ||
+                    (preview.type === "line" && preview.time)) && (
                     <div className="absolute right-2 top-2 z-10">
-                      <ChartTraceInspector type="metric-card" />
+                      <ChartTraceInspector type={preview.type} />
                     </div>
                   )}
                   <ChartRenderer

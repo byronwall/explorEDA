@@ -3,6 +3,8 @@ import { ScaleLinear } from "d3-scale";
 import { useCallback, useMemo } from "react";
 import { getRangeFilterForField } from "./getAxisFilter";
 import { RangeFilter } from "@/types/FilterTypes";
+import { dateTimestamp } from "@/lib/dateTime";
+import { DAY_MS } from "@/lib/dailyRollup";
 
 interface UseFilterExtentProps {
   settings: ChartSettings;
@@ -65,6 +67,25 @@ export function useFilterExtent({
       case "bar": {
         if ("bandwidth" in xScale) {
           return null;
+        }
+
+        if (settings.type === "line" && settings.time) {
+          const filter = settings.filters.find(
+            (filter) =>
+              filter.type === "date-range" && filter.field === settings.xField
+          );
+          if (!filter || filter.type !== "date-range") return null;
+          const domain = xScale.domain();
+          const min = filter.min ? dateTimestamp(filter.min) : domain[0]!;
+          const max = filter.max
+            ? dateTimestamp(filter.max) +
+              (filter.max.length === 10 ? DAY_MS : 0)
+            : domain[1]!;
+          if (!Number.isFinite(min) || !Number.isFinite(max)) return null;
+          return [
+            [xScale(min), 0],
+            [xScale(max), innerHeight],
+          ] as [[number, number], [number, number]];
         }
 
         const rangeFilter = getRangeFilterForField(

@@ -5,6 +5,7 @@ import {
   calculationDashboard,
   scatterTraceDashboard,
   activityDashboard,
+  timeSeriesDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import { SavedDataStructure } from "exploreda";
@@ -89,6 +90,17 @@ export const examples: ExampleData[] = [
     icon: ShoppingCart,
     data: "/datasets/shop-operations.csv",
     savedData: shopDashboard,
+  },
+  {
+    id: "calendar-series",
+    title: "Orders through the calendar",
+    description: "Compare monthly revenue by channel, weekly order counts, and daily activity. Every period links to the orders behind it.",
+    dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
+    shows: ["Calendar summaries", "Period selection", "Source tracing"],
+    guide: "Try this: click a point in Monthly revenue by channel. Inspect period explains the result. Open its settings to change Day, Week, or Month.",
+    icon: LineChart,
+    data: "/datasets/shop-operations.csv",
+    savedData: timeSeriesDashboard,
   },
   {
     id: "palmer-penguins",

@@ -11,6 +11,10 @@ import {
 import { SavedDataStructure } from "@/types/SavedDataStructure";
 import { boxPlotDefinition } from "@/components/charts/BoxPlot/definition";
 import { metricCardDefinition } from "@/components/charts/MetricCard/definition";
+import {
+  lineChartDefinition,
+  DEFAULT_TIME_SERIES,
+} from "@/components/charts/LineChart/definition";
 import type { SavedRow } from "@/types/SavedDataStructure";
 
 describe("saveDataUtils", () => {
@@ -64,6 +68,41 @@ describe("saveDataUtils", () => {
   };
 
   describe("validateSavedData", () => {
+    it("restores calendar summaries and rejects unknown intervals or zero-filled averages", () => {
+      const chart = {
+        ...lineChartDefinition.createDefaultSettings({
+          x: 0,
+          y: 0,
+          w: 8,
+          h: 5,
+        }),
+        xField: "Date",
+        time: {
+          ...DEFAULT_TIME_SERIES,
+          aggregation: "average" as const,
+          measureField: "Revenue",
+          splitField: "Channel",
+        },
+      };
+      for (const interval of ["day", "week", "month"] as const) {
+        const saved = {
+          ...mockValidData,
+          charts: [{ ...chart, time: { ...chart.time, interval } }],
+        };
+        const restored = JSON.parse(stringifySavedData(saved));
+        expect(validateSavedData(restored)).toBe(true);
+        expect(restored.charts[0].time).toEqual(saved.charts[0]!.time);
+      }
+      for (const time of [
+        { ...chart.time, interval: "quarter" },
+        { ...chart.time, measureField: undefined },
+        { ...chart.time, missingPeriods: "zero" },
+      ]) {
+        expect(
+          validateSavedData({ ...mockValidData, charts: [{ ...chart, time }] })
+        ).toBe(false);
+      }
+    });
     it("round-trips metric choices and rejects missing measures and unknown operations", () => {
       const card = metricCardDefinition.createDefaultSettings({
         x: 2,

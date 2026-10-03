@@ -37,6 +37,14 @@ export function getChartTitle(
     return title;
   }
 
+  if (settings.type === "line" && settings.time) {
+    const metric =
+      settings.time.aggregation === "count"
+        ? "Rows"
+        : `${settings.time.aggregation === "sum" ? "Sum" : "Average"} of ${getFieldLabel(settings.time.measureField ?? "")}`;
+    return `${metric} by ${settings.time.interval}`;
+  }
+
   if (settings.type === "metric-card") {
     if (settings.aggregation === "count") return "Matching rows";
     const metric = settings.aggregation === "sum" ? "Sum" : "Average";
@@ -101,7 +109,15 @@ export function getChartFields(settings: ChartSettings): string[] {
   const fields = (() => {
     switch (settings.type) {
       case "line":
-        return [settings.xField, ...settings.seriesField];
+        return settings.time
+          ? [
+              settings.xField,
+              settings.time.aggregation === "count"
+                ? undefined
+                : settings.time.measureField,
+              settings.time.splitField,
+            ]
+          : [settings.xField, ...settings.seriesField];
       case "scatter":
         return [settings.xField, settings.yField, settings.colorField];
       case "3d-scatter":
@@ -125,7 +141,10 @@ export function getChartFields(settings: ChartSettings): string[] {
       case "sankey":
         return [...settings.stages, settings.measureField];
       case "parallel-coordinates":
-        return [...settings.axes.map((axis) => axis.field), settings.colorField];
+        return [
+          ...settings.axes.map((axis) => axis.field),
+          settings.colorField,
+        ];
       case "calendar":
         return [settings.field, settings.measureField];
       case "heatmap":
@@ -156,8 +175,9 @@ export function getChartAxisFields(settings: ChartSettings): {
     case "line":
       return {
         x: settings.xField,
-        y:
-          settings.seriesField.length === 1
+        y: settings.time
+          ? settings.time.measureField
+          : settings.seriesField.length === 1
             ? settings.seriesField[0]
             : undefined,
       };

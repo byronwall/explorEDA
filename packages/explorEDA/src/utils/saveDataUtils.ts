@@ -491,6 +491,21 @@ function isChart(value: unknown): boolean {
       );
     case "line":
       return (
+        (value.time === undefined ||
+          (isRecord(value.time) &&
+            ["day", "week", "month"].includes(value.time.interval as string) &&
+            ["monday", "sunday"].includes(value.time.weekStart as string) &&
+            ["count", "sum", "average"].includes(
+              value.time.aggregation as string
+            ) &&
+            (value.time.aggregation === "count" ||
+              (typeof value.time.measureField === "string" &&
+                Boolean(value.time.measureField))) &&
+            (value.time.splitField === undefined ||
+              typeof value.time.splitField === "string") &&
+            ["gap", "zero"].includes(value.time.missingPeriods as string) &&
+            (value.time.aggregation !== "average" ||
+              value.time.missingPeriods === "gap"))) &&
         typeof value.xField === "string" &&
         isStringArray(value.seriesField) &&
         isRecord(value.seriesSettings) &&
