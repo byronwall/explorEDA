@@ -434,6 +434,18 @@ function isChart(value: unknown): boolean {
         isFiniteNumber(value.numericalBreakpoints) &&
         typeof value.wrap === "boolean"
       );
+    case "parallel-coordinates":
+      return (
+        Array.isArray(value.axes) &&
+        value.axes.every(
+          (axis) =>
+            isRecord(axis) &&
+            typeof axis.field === "string" &&
+            typeof axis.inverted === "boolean"
+        ) &&
+        isFiniteNumber(value.lineOpacity) &&
+        isFiniteNumber(value.lineWidth)
+      );
     case "line":
       return (
         typeof value.xField === "string" &&

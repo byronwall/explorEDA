@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BarTraceBody } from "../BarChart/BarTraceBody";
+import { ParallelTraceBody } from "../ParallelCoordinates/ParallelTraceBody";
 import { ScatterTraceBody } from "../ScatterPlot/ScatterTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
 import {
@@ -14,6 +15,9 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
   switch (trace.kind) {
     case "bar":
       return <BarTraceBody trace={trace} />;
+    case "polyline":
+    case "pc-axis":
+      return <ParallelTraceBody trace={trace} />;
     case "guide":
       return <GuideTraceBody trace={trace} />;
     case "title":

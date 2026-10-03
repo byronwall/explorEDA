@@ -13,6 +13,7 @@ const chartNames: Record<string, string> = {
   summary: "Summary table",
   "color-legend": "Color legend",
   markdown: "Markdown note",
+  "parallel-coordinates": "Parallel coordinates",
 };
 
 export function getChartTitle(
@@ -31,6 +32,16 @@ export function getChartTitle(
     return title;
   }
 
+  if (settings.type === "parallel-coordinates") {
+    const labels = settings.axes
+      .filter((axis) => axis.field)
+      .map((axis) => getFieldLabel(axis.field));
+    return labels.length
+      ? labels.length > 3
+        ? `${labels.slice(0, 3).join(", ")} and ${labels.length - 3} more`
+        : labels.join(", ")
+      : getChartDefinition(settings.type).name;
+  }
   const field =
     settings.type === "bar" ||
     settings.type === "row" ||
@@ -79,6 +90,8 @@ export function getChartFields(settings: ChartSettings): string[] {
         return settings.columns.map((column) => column.field);
       case "color-legend":
         return settings.fields;
+      case "parallel-coordinates":
+        return [...settings.axes.map((axis) => axis.field), settings.colorField];
       default:
         return [settings.field, settings.colorField];
     }

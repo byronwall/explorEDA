@@ -119,6 +119,15 @@ export const coverageFeatures = [
     chartType: "line",
   },
   {
+    id: "chart:parallel-coordinates",
+    label: "Parallel coordinates",
+    family: "Chart types",
+    description: "Follow each row across several fields and brush ranges on any axis.",
+    required: true,
+    status: "supported",
+    chartType: "parallel-coordinates",
+  },
+  {
     id: "labels:meaningful-title",
     label: "Meaningful titles",
     family: "Labels and guides",
@@ -390,6 +399,7 @@ export const exampleCoverage = [
       "chart:bar": "shown",
       "chart:boxplot": "shown",
       "chart:data-table": "shown",
+      "chart:parallel-coordinates": "shown",
       "color:categorical": "shown",
       "interaction:brushing": "shown",
       "interaction:cross-filter": "shown",

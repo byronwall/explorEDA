@@ -69,6 +69,12 @@ export function useCreateCharts() {
       settings.yAxisLabel = settings.type === "bar" ? "Records" : "";
     }
     if (settings.type === "boxplot") settings.yAxisLabel = "";
+    if (settings.type === "parallel-coordinates") {
+      const start = numeric.includes(selectedField) ? [selectedField] : [];
+      settings.axes = [...new Set([...start, ...numeric])]
+        .slice(0, 5)
+        .map((name) => ({ field: name, inverted: false }));
+    }
     settings.title = "";
     return settings;
   };

@@ -11,6 +11,8 @@ export default defineConfig({
     "charts/data-table": "src/components/charts/DataTable/definition.ts",
     "charts/line": "src/components/charts/LineChart/definition.ts",
     "charts/markdown": "src/components/charts/Markdown/definition.ts",
+    "charts/parallel-coordinates":
+      "src/components/charts/ParallelCoordinates/definition.ts",
     "charts/pivot-table": "src/components/charts/PivotTable/definition.ts",
     "charts/row": "src/components/charts/RowChart/definition.ts",
     "charts/scatter": "src/components/charts/ScatterPlot/definition.ts",
