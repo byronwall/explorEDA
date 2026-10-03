@@ -1,4 +1,5 @@
 import { applyFilter } from "@/hooks/applyFilter";
+import { finiteNumber } from "@/lib/numeric";
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { datum } from "@/types/ChartTypes";
 import type { ScatterPlotSettings } from "./definition";
@@ -25,6 +26,8 @@ export function planScatterPoints({
   xData,
   yData,
   colorData,
+  sizeData = {},
+  sizeScale,
   xAxis,
   yAxis,
   getColor,
@@ -35,6 +38,8 @@ export function planScatterPoints({
   xData: Record<IdType, datum>;
   yData: Record<IdType, datum>;
   colorData: Record<IdType, datum>;
+  sizeData?: Record<IdType, datum>;
+  sizeScale?: { max: number; radius: number };
   xAxis: ScatterAxisScale;
   yAxis: ScatterAxisScale;
   getColor: (value: datum) => string;
@@ -54,7 +59,22 @@ export function planScatterPoints({
     const passesOwnFilter =
       passesAxisFilters(xAxis, settings.filters, settings.xField, x.value) &&
       passesAxisFilters(yAxis, settings.filters, settings.yField, y.value) &&
-      colorFilters.every((filter) => applyFilter(colorData[sourceId], filter));
+      colorFilters.every((filter) =>
+        applyFilter(colorData[sourceId], filter)
+      ) &&
+      settings.filters
+        .filter((filter) => filter.field === "__ID")
+        .every((filter) => applyFilter(sourceId, filter)) &&
+      (!settings.sizeField ||
+        settings.filters
+          .filter((filter) => filter.field === settings.sizeField)
+          .every((filter) => applyFilter(sizeData[sourceId], filter)));
+    const sizeValue = sizeScale ? finiteNumber(sizeData[sourceId]) : undefined;
+    if (sizeScale && (sizeValue === undefined || sizeValue < 0)) continue;
+    const dataRadius =
+      sizeScale && sizeScale.max > 0
+        ? sizeScale.radius * Math.sqrt(sizeValue! / sizeScale.max)
+        : 0;
     const mappedColor = getColor(colorData[sourceId]);
     points.push({
       id: `${settings.id}:point:${sourceId}`,
@@ -69,7 +89,12 @@ export function planScatterPoints({
       opacity: passesOwnFilter
         ? style.opacity.value
         : style.dimmedOpacity.value,
-      radius: style.radius.value,
+      radius: sizeScale
+        ? sizeValue === 0
+          ? 2
+          : dataRadius
+        : style.radius.value,
+      sizeValue,
       passesOwnFilter,
     });
   }
