@@ -31,6 +31,8 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
       ? state.getAggregate(settings.aggregateId)
       : undefined
   );
+  const resetAggregate = useRef(aggregate);
+  const updateAggregate = useDataLayer((state) => state.updateAggregate);
 
   // Update local settings when prop changes
   useEffect(() => {
@@ -94,11 +96,16 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
       filter.max !== undefined &&
       filter.min > filter.max
   );
-  const dirty = Object.entries(resetValues.current).some(
-    ([key, value]) =>
-      JSON.stringify(localSettings[key as keyof ChartSettings]) !==
-      JSON.stringify(value)
-  );
+  const aggregateDirty =
+    resetAggregate.current &&
+    JSON.stringify(aggregate) !== JSON.stringify(resetAggregate.current);
+  const dirty =
+    aggregateDirty ||
+    Object.entries(resetValues.current).some(
+      ([key, value]) =>
+        JSON.stringify(localSettings[key as keyof ChartSettings]) !==
+        JSON.stringify(value)
+    );
 
   return (
     <div className="eda-settings space-y-3">
@@ -160,6 +167,11 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
           size="sm"
           disabled={!dirty}
           onClick={() => {
+            if (resetAggregate.current)
+              updateAggregate(
+                resetAggregate.current.id,
+                resetAggregate.current
+              );
             const next = {
               ...settings,
               ...resetValues.current,

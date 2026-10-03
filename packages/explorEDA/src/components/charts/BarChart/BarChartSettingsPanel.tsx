@@ -47,9 +47,7 @@ export function BarChartSettingsPanel({
     );
     calculations.forEach((calculation) => {
       const values = Object.values(getColumnData(calculation.resultColumnName));
-      if (
-values.some((value) => finiteNumber(value) !== undefined)
-      ) {
+      if (values.some((value) => finiteNumber(value) !== undefined)) {
         numeric.push(calculation.resultColumnName);
       }
     });
@@ -65,6 +63,31 @@ values.some((value) => finiteNumber(value) !== undefined)
     getColumnData,
   ]);
   const [error, setError] = useState<string>();
+  const seriesControl = (
+    <>
+      <Label>Split by</Label>
+      <FieldSelector
+        label=""
+        placeholder="Series field"
+        value={settings.seriesField ?? ""}
+        allowClear
+        fields={fieldNames.filter(
+          (field) => field !== (aggregate?.groupField ?? settings.field)
+        )}
+        onChange={(field) =>
+          onSettingsChange({
+            ...settings,
+            seriesField: field || undefined,
+            colorField: field || undefined,
+            colorScaleId: field ? getOrCreateScaleForField(field) : undefined,
+            filters: settings.filters.filter(
+              (filter) => filter.field !== settings.seriesField
+            ),
+          })
+        }
+      />
+    </>
+  );
 
   const createAggregate = (aggregation: AggregateAggregation) => {
     const measureField = measureFields[0];
@@ -117,6 +140,9 @@ values.some((value) => finiteNumber(value) !== undefined)
               ? next.groupField
               : (next.measureField ?? next.groupField),
           ...(settings.title === aggregate.name ? { title: name } : {}),
+          ...(next.aggregation !== aggregate.aggregation || next.measureField !== aggregate.measureField
+            ? { yAxisLabel: "" }
+            : {}),
           // A new group field makes the old group selection meaningless.
           ...(next.groupField !== aggregate.groupField
             ? {
@@ -176,7 +202,7 @@ values.some((value) => finiteNumber(value) !== undefined)
               });
             }}
           >
-            <option value="category">Category counts / bins</option>
+            {!settings.seriesField && <option value="category">Category counts / bins</option>}
             <option value="count">Count rows</option>
             <option value="sum" disabled={!measureFields.length}>
               Sum
@@ -198,7 +224,14 @@ values.some((value) => finiteNumber(value) !== undefined)
               />
             </>
           )}
+          {seriesControl}
         </div>
+        {settings.seriesField && (
+          <p className="text-xs text-muted-foreground">
+            Compare series side by side. Select a bar to filter its category and
+            series.
+          </p>
+        )}
       </div>
     );
   }
@@ -239,54 +272,65 @@ values.some((value) => finiteNumber(value) !== undefined)
           </option>
         </select>
 
-        <Label>Bins · {settings.binCount ?? 10}</Label>
-        <Slider
-          aria-label="Histogram bin count"
-          value={[settings.binCount ?? 10]}
-          min={2}
-          max={50}
-          step={1}
-          onValueChange={([value]) =>
-            onSettingsChange({ ...settings, binCount: value })
-          }
-        />
-
-        <div className="col-start-2">
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="forceString"
-              checked={settings.forceString}
-              onCheckedChange={(checked) =>
-                onSettingsChange({
-                  ...settings,
-                  forceString: checked,
-                })
+        {seriesControl}
+        {!settings.seriesField && (
+          <>
+            <Label>Bins · {settings.binCount ?? 10}</Label>
+            <Slider
+              aria-label="Histogram bin count"
+              value={[settings.binCount ?? 10]}
+              min={2}
+              max={50}
+              step={1}
+              onValueChange={([value]) =>
+                onSettingsChange({ ...settings, binCount: value })
               }
             />
-            <Label htmlFor="forceString">Treat values as categories</Label>
-          </div>
-        </div>
 
-        <div className="col-start-2">
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="colorField"
-              checked={settings.field === settings.colorField}
-              onCheckedChange={(checked) =>
-                onSettingsChange({
-                  ...settings,
-                  colorField: checked ? settings.field : undefined,
-                  colorScaleId:
-                    checked && settings.field
-                      ? getOrCreateScaleForField(settings.field)
-                      : undefined,
-                })
-              }
-            />
-            <Label htmlFor="colorField">Use as color field</Label>
-          </div>
-        </div>
+            <div className="col-start-2">
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="forceString"
+                  checked={settings.forceString}
+                  onCheckedChange={(checked) =>
+                    onSettingsChange({
+                      ...settings,
+                      forceString: checked,
+                    })
+                  }
+                />
+                <Label htmlFor="forceString">Treat values as categories</Label>
+              </div>
+            </div>
+
+            <div className="col-start-2">
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="colorField"
+                  checked={settings.field === settings.colorField}
+                  onCheckedChange={(checked) =>
+                    onSettingsChange({
+                      ...settings,
+                      colorField: checked ? settings.field : undefined,
+                      colorScaleId:
+                        checked && settings.field
+                          ? getOrCreateScaleForField(settings.field)
+                          : undefined,
+                    })
+                  }
+                />
+                <Label htmlFor="colorField">Use as color field</Label>
+              </div>
+            </div>
+          </>
+        )}
       </div>
+      {settings.seriesField && (
+        <p className="text-xs text-muted-foreground">
+          Compare series side by side. Group values are categories. Select a bar
+          to filter its category and series.
+        </p>
+      )}
     </div>
   );
 }
