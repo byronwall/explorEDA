@@ -466,7 +466,7 @@ export function PlotChartPanel({
       aria-describedby={descriptionId}
     >
       <div className="eda-panel-header flex min-h-10 items-center justify-between gap-1 select-none px-3 py-1">
-        <div className="drag-handle flex min-w-0 flex-1 cursor-move items-center gap-2">
+        <div className="drag-handle flex min-w-0 flex-[1_1_35%] cursor-move items-center gap-2">
           <GripVertical
             className="eda-drag h-3 w-3 shrink-0 text-muted-foreground"
             aria-hidden="true"

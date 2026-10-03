@@ -500,6 +500,12 @@ function isChart(value: unknown): boolean {
       return (
         (value.time === undefined ||
           (isRecord(value.time) &&
+            (value.time.display === undefined ||
+              ["line", "area", "stacked-area"].includes(
+                value.time.display as string
+              )) &&
+            (value.time.display !== "stacked-area" ||
+              value.time.aggregation !== "average") &&
             ["day", "week", "month"].includes(value.time.interval as string) &&
             ["monday", "sunday"].includes(value.time.weekStart as string) &&
             ["count", "sum", "average"].includes(

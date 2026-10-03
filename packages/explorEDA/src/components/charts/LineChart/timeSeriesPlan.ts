@@ -11,7 +11,7 @@ import type { datum } from "@/types/ChartTypes";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import type { Filter } from "@/types/FilterTypes";
 import { scaleLinear } from "d3-scale";
-import { curveLinear, curveStepAfter, line } from "d3-shape";
+import { area, curveLinear, curveStepAfter, line } from "d3-shape";
 import { numericScale } from "../Axis/numericScale";
 import type { LineChartSettings } from "./definition";
 
@@ -41,6 +41,7 @@ export interface TimePoint extends TimeBucket {
   x: number;
   y: number;
   color: string;
+  band?: { lower: number; upper: number; complete: boolean };
 }
 
 export function periodFilter(field: string, start: number, end: number) {
@@ -92,6 +93,8 @@ export function planTimeSeries(
   format: (field: string, value: datum) => string
 ) {
   const time = settings.time!;
+  const filled = time.display === "area" || time.display === "stacked-area";
+  const stacked = time.display === "stacked-area";
   const facetFilters: Filter[] = Object.entries(snapshot.facetData ?? {}).map(
     ([field, data]) => ({
       type: "value",
@@ -248,11 +251,47 @@ export function planTimeSeries(
           points.push(point);
           seriesPoints.push(point);
         }
-      return { key, label, color: seriesColor, points: seriesPoints, path: "" };
+      return {
+        key,
+        label,
+        color: seriesColor,
+        points: seriesPoints,
+        path: "",
+        areaPath: "",
+      };
     })
     .filter((series) => series.points.length > 0);
+  let incompletePeriods = 0;
+  if (filled) {
+    for (let i = 0; i < periods.length; i++) {
+      const complete = series.every(
+        (item) => item.points[i]?.value !== undefined
+      );
+      if (stacked && !complete) incompletePeriods++;
+      let lower = 0;
+      for (const item of series) {
+        const point = item.points[i];
+        if (!point) continue;
+        point.band = {
+          lower: stacked ? lower : 0,
+          upper: (stacked ? lower : 0) + (point.value ?? 0),
+          complete: stacked ? complete : point.value !== undefined,
+        };
+        lower = point.band.upper;
+      }
+    }
+  }
+  const notice =
+    tooMany ??
+    (stacked && time.aggregation === "average"
+      ? "Choose count or sum to stack series. Use Area to compare averages."
+      : stacked && points.some((point) => (point.value ?? 0) < 0)
+        ? "Stacked areas need nonnegative period totals. Use Area or Line to compare signed totals."
+        : undefined);
   const values = points.flatMap((point) =>
-    point.value === undefined ? [] : [point.value]
+    point.value === undefined || point.band?.complete === false
+      ? []
+      : [point.band?.upper ?? point.value]
   );
   const yLow = Math.min(0, ...values);
   const yHigh = Math.max(0, ...values);
@@ -280,23 +319,39 @@ export function planTimeSeries(
   const xScale = scaleLinear()
     .domain(Number.isFinite(start) ? [start, end] : [0, DAY_MS])
     .range([0, plotWidth]);
-  const yScale = numericScale(settings.yAxis)
+  const yScaleType = filled ? "linear" : settings.yAxis.scaleType;
+  const yScale = numericScale({ ...settings.yAxis, scaleType: yScaleType })
     .domain(yHigh === yLow ? [yLow, yLow + 1] : [yLow, yHigh])
     .range([plotHeight, 0])
     .nice();
   for (const point of points) {
     point.x = xScale((point.start + point.end) / 2);
-    point.y = yScale(point.value ?? 0);
+    point.y = yScale(
+      point.band?.complete === false
+        ? 0
+        : (point.band?.upper ?? point.value ?? 0)
+    );
   }
-  for (const item of series)
+  const curve =
+    settings.styles.curveType === "step" ? curveStepAfter : curveLinear;
+  const defined = (point: TimePoint) =>
+    point.value !== undefined && point.band?.complete !== false;
+  for (const item of series) {
     item.path =
       line<TimePoint>()
-        .defined((point) => point.value !== undefined)
+        .defined(defined)
         .x((point) => point.x)
         .y((point) => point.y)
-        .curve(
-          settings.styles.curveType === "step" ? curveStepAfter : curveLinear
-        )(item.points) ?? "";
+        .curve(curve)(item.points) ?? "";
+    if (filled)
+      item.areaPath =
+        area<TimePoint>()
+          .defined(defined)
+          .x((point) => point.x)
+          .y0((point) => yScale(point.band!.lower))
+          .y1((point) => point.y)
+          .curve(curve)(item.points) ?? "";
+  }
   return {
     revision: snapshot.revision,
     aggregation: time.aggregation,
@@ -307,6 +362,12 @@ export function planTimeSeries(
     series,
     invalidDateIds,
     tooMany,
+    notice,
+    filled,
+    stacked,
+    incompletePeriods,
+    yScaleType,
+    curveType: settings.styles.curveType,
     margin,
     plotWidth,
     plotHeight,
@@ -319,3 +380,21 @@ export function planTimeSeries(
   };
 }
 export type TimeSeriesPlan = ReturnType<typeof planTimeSeries>;
+
+/** Match the painted band, then trace the closest period that defines it. */
+export function timeAreaAt(plan: TimeSeriesPlan, x: number, y: number) {
+  for (const series of [...plan.series].reverse()) {
+    const right = series.points.findIndex((point) => point.x >= x);
+    if (right < 0) continue;
+    const a = series.points[Math.max(0, right - 1)]!;
+    const b = series.points[right]!;
+    if (!a.band?.complete || !b.band?.complete || x < a.x) continue;
+    const fraction = a.x === b.x ? 0 : (x - a.x) / (b.x - a.x);
+    const t = plan.curveType === "step" && fraction < 1 ? 0 : fraction;
+    const lower = plan.yScale(a.band.lower + (b.band.lower - a.band.lower) * t);
+    const upper = plan.yScale(a.band.upper + (b.band.upper - a.band.upper) * t);
+    if (y >= Math.min(lower, upper) && y <= Math.max(lower, upper))
+      return (plan.curveType === "step" ? t : fraction) < 0.5 ? a : b;
+  }
+  return undefined;
+}

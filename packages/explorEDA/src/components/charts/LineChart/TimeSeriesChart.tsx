@@ -9,6 +9,7 @@ import { ChartReadout } from "../ChartReadout";
 import { planAxes } from "../Axis/axisPlan";
 import {
   useChartTraceApi,
+  useChartTrace,
   useTraceRevision,
   useTraceSource,
 } from "../trace/ChartTraceScope";
@@ -19,6 +20,7 @@ import type { LineChartSettings } from "./definition";
 import {
   periodFilter,
   planTimeSeries,
+  timeAreaAt,
   timePointFilters,
   type TimePoint,
 } from "./timeSeriesPlan";
@@ -33,6 +35,7 @@ export function TimeSeriesChart({
   const time = settings.time!;
   const owner = useId();
   const api = useChartTraceApi();
+  const trace = useChartTrace();
   const revision = useTraceRevision(settings);
   const allIds = useGetAllIds();
   const liveIds = useGetLiveIds(settings);
@@ -154,7 +157,7 @@ export function TimeSeriesChart({
       },
       y: {
         scale: plan.yScale,
-        scaleType: settings.yAxis.scaleType,
+        scaleType: plan.yScaleType,
         label: settings.yAxisLabel || plan.metricLabel,
         grid: settings.yAxis.grid ?? true,
         density: settings.yGridLines,
@@ -182,7 +185,9 @@ export function TimeSeriesChart({
       filters: timePointFilters(settings, point, plan.facetFilters),
     });
   const marks = plan.points.filter(
-    (point) => point.value !== undefined || point.rowCount > 0
+    (point) =>
+      (point.value !== undefined || point.rowCount > 0) &&
+      (!plan.stacked || point.band?.complete)
   );
   const periodText =
     time.interval === "day"
@@ -214,12 +219,14 @@ export function TimeSeriesChart({
             </span>
           ))}
       </div>
-      {plan.tooMany || !marks.length ? (
+      {plan.notice || !marks.length ? (
         <div className="flex h-full items-center justify-center px-6 text-center text-sm text-muted-foreground">
-          {plan.tooMany ??
-            (plan.snapshot.liveIds.length
-              ? "No readable dates for these rows"
-              : "No rows match the current filters")}
+          {plan.notice ??
+            (plan.stacked && plan.points.length
+              ? "No complete periods to stack. Choose Zero for missing periods, or inspect the source records."
+              : plan.snapshot.liveIds.length
+                ? "No readable dates for these rows"
+                : "No rows match the current filters")}
         </div>
       ) : (
         <BaseChart
@@ -236,6 +243,11 @@ export function TimeSeriesChart({
           brushingMode="horizontal"
           onInspectGuide={(id) => api?.inspect(owner, "guide", id)}
           onInspectPlot={([x, y]) => {
+            if (plan.filled) {
+              const band = timeAreaAt(plan, x, y);
+              if (band)
+                return Boolean(api?.inspect(owner, "time-bucket", band.id));
+            }
             const point = marks.reduce((best, point) =>
               Math.hypot(point.x - x, point.y - y) <
               Math.hypot(best.x - x, best.y - y)
@@ -294,13 +306,21 @@ export function TimeSeriesChart({
                       : point.color
                   }
                   stroke={
-                    activeId === point.id ? "var(--foreground)" : point.color
+                    activeId === point.id ||
+                    (trace?.selection?.owner === owner &&
+                      trace.selection.id === point.id)
+                      ? "var(--foreground)"
+                      : point.color
                   }
                   strokeWidth={2}
                   opacity={point.selected ? 1 : 0.3}
                   role="button"
                   tabIndex={
-                    activeId === point.id || (!activeId && index === 0) ? 0 : -1
+                    active?.id === point.id ||
+                    (!marks.some((mark) => mark.id === active?.id) &&
+                      index === 0)
+                      ? 0
+                      : -1
                   }
                   aria-label={`${point.seriesLabel} · ${point.label}: ${point.valueText}`}
                   aria-pressed={settings.filters.length > 0 && point.selected}
@@ -357,22 +377,32 @@ export function TimeSeriesChart({
           }
         >
           {plan.series.map((series) => (
-            <path
-              key={series.key}
-              d={series.path}
-              fill="none"
-              stroke={series.color}
-              strokeWidth={2}
-              strokeLinejoin="round"
-            />
+            <g key={series.key}>
+              {plan.filled && (
+                <path
+                  d={series.areaPath}
+                  fill={series.color}
+                  fillOpacity={plan.stacked ? 0.65 : 0.25}
+                />
+              )}
+              <path
+                d={series.path}
+                fill="none"
+                stroke={series.color}
+                strokeWidth={2}
+                strokeLinejoin="round"
+              />
+            </g>
           ))}
         </BaseChart>
       )}
       <div className="absolute inset-x-2 bottom-0 flex items-center justify-between gap-2 text-xs text-muted-foreground">
         <span className="min-w-0 truncate">
-          {time.aggregation === "average" || time.missingPeriods === "gap"
-            ? "Missing periods are gaps"
-            : "Missing periods are zero"}
+          {plan.stacked && plan.incompletePeriods
+            ? `${plan.incompletePeriods} incomplete ${plan.incompletePeriods === 1 ? "period breaks" : "periods break"} the stack`
+            : time.aggregation === "average" || time.missingPeriods === "gap"
+              ? "Missing periods are gaps"
+              : "Missing periods are zero"}
         </span>
         {plan.invalidDateIds.length > 0 && (
           <Button
@@ -388,16 +418,26 @@ export function TimeSeriesChart({
           size="sm"
           variant="ghost"
           className="h-7 shrink-0 px-1 text-xs"
-          disabled={!active && !marks[0]}
-          onClick={() => inspect(active ?? marks[0]!)}
+          disabled={!plan.points.length}
+          onClick={() => inspect(active ?? plan.points[0]!)}
         >
           Inspect period
         </Button>
       </div>
       {active && (
         <ChartReadout fallbackClassName="sr-only">
-          {active.seriesLabel} · {active.label} · {active.valueText} ·{" "}
-          {active.rowCount} rows
+          {width < 500 ? (
+            <span
+              aria-label={`${active.seriesLabel} · ${active.label} · ${active.valueText} · ${active.rowCount} rows`}
+            >
+              {active.seriesLabel} · {active.valueText}
+            </span>
+          ) : (
+            <>
+              {active.seriesLabel} · {active.label} · {active.valueText} ·{" "}
+              {active.rowCount} rows
+            </>
+          )}
         </ChartReadout>
       )}
     </div>
