@@ -1,3 +1,4 @@
+import type { MapSettings } from "@/components/charts/Map/definition";
 import { IdType } from "@/providers/DataLayerProvider";
 import { Filter } from "./FilterTypes";
 
@@ -108,6 +109,7 @@ export type ChartSettings =
   | CalendarSettings
   | HeatmapSettings
   | EcdfSettings
+  | MapSettings
   | MetricCardSettings
   | ColorLegendSettings;
 

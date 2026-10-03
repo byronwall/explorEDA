@@ -77,6 +77,7 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
   );
   const tabs = [
     { value: "main", label: "Data" },
+    ...(localSettings.type === "map" ? [{value: "facet", label: "Facets"}] : []),
     ...(hasAxes
       ? [
           { value: "facet", label: "Facets" },

@@ -1,3 +1,4 @@
+import { MapTraceBody } from "../Map/MapTraceBody";
 import { useState } from "react";
 import { BarTraceBody } from "../BarChart/BarTraceBody";
 import { SankeyTraceBody } from "../Sankey/SankeyTraceBody";
@@ -20,6 +21,11 @@ import type { ChartTrace } from "./traceTypes";
 
 function TraceBody({ trace }: { trace: ChartTrace }) {
   switch (trace.kind) {
+    case "map-point":
+    case "map-exclusions":
+    case "map-offscreen":
+    case "map-background":
+      return <MapTraceBody key={trace.id} trace={trace} />;
     case "density-bin":
     case "density-omissions":
     case "density-row":
