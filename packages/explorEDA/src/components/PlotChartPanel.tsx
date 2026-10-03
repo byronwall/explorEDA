@@ -76,6 +76,30 @@ const TRACE_COPY = {
       "Alt-click a bar, axis object, or zero baseline to trace it. Normal clicks keep chart interactions. You can also find a source row below.",
     ariaLabel: "Bar trace inspector",
   },
+  sankey: {
+    heading: "Flow trace",
+    emptyText:
+      "Alt-click a node or link to trace it. Normal clicks keep selecting. You can also find a source row below.",
+    ariaLabel: "Sankey trace inspector",
+  },
+  "parallel-coordinates": {
+    heading: "Line trace",
+    emptyText:
+      "Click a line, or Alt-click an axis name, to trace it. Dragging along an axis still selects. You can also find a source row below.",
+    ariaLabel: "Parallel coordinates trace inspector",
+  },
+  calendar: {
+    heading: "Day trace",
+    emptyText:
+      "Alt-click a day to trace it. Normal clicks keep selecting days. You can also find a source row below.",
+    ariaLabel: "Calendar trace inspector",
+  },
+  heatmap: {
+    heading: "Cell trace",
+    emptyText:
+      "Alt-click a cell to trace it. Normal clicks keep selecting cells. You can also find a source row below.",
+    ariaLabel: "Heatmap trace inspector",
+  },
   ecdf: {
     heading: "Step trace",
     emptyText:

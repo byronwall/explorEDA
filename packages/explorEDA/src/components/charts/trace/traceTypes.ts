@@ -9,6 +9,10 @@ import {
 } from "../Axis/axisPlan";
 import type { FacetLayoutPlan } from "../FacetRelated/facetLayout";
 import type { BarTrace } from "../BarChart/barTrace";
+import type { SankeyTrace } from "../Sankey/sankeyTrace";
+import type { ParallelTrace } from "../ParallelCoordinates/parallelTrace";
+import type { CalendarTrace } from "../Calendar/calendarTrace";
+import type { HeatmapTrace } from "../Heatmap/heatmapTrace";
 import type { EcdfTrace } from "../Ecdf/ecdfTrace";
 import type { ScatterTrace } from "../ScatterPlot/scatterTrace";
 
@@ -89,6 +93,10 @@ export interface LegendTrace {
 export type ChartTrace =
   | ScatterTrace
   | BarTrace
+  | SankeyTrace
+  | ParallelTrace
+  | CalendarTrace
+  | HeatmapTrace
   | EcdfTrace
   | GuideTrace
   | TitleTrace

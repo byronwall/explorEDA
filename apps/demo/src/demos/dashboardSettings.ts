@@ -267,6 +267,25 @@ export const penguinDashboard = dashboard(
       ],
       layout(0, 9, 12, 5)
     ),
+    {
+      ...base,
+      id: "penguin-profile",
+      type: "parallel-coordinates",
+      title: "Four measurements, one line per penguin",
+      colorField: "species",
+      colorScaleId: "species-colors",
+      axes: [
+        { field: "bill_length_mm", inverted: false },
+        { field: "bill_depth_mm", inverted: false },
+        { field: "flipper_length_mm", inverted: false },
+        { field: "body_mass_g", inverted: false },
+        { field: "island", inverted: false },
+      ],
+      lineOpacity: 0.45,
+      lineWidth: 1.25,
+      layout: layout(0, 14, 12, 6),
+      margin: { top: 8, right: 8, bottom: 8, left: 8 },
+    },
   ],
   [
     categoricalScale("species-colors", "species", [
@@ -442,7 +461,7 @@ for (const chart of shopDashboard.charts) {
 }
 
 export const largeShopDashboard = dashboard(
-  "10,000 orders · 15 linked views",
+  "10,000 orders · 16 linked views",
   [
     ...shopDashboard.charts,
     histogram("large-units", "Units per order", "Units", layout(0, 14, 4)),
@@ -501,9 +520,38 @@ export const largeShopDashboard = dashboard(
         columnCount: 2,
       },
     } as Chart,
+    {
+      ...base,
+      id: "large-daily-revenue",
+      type: "calendar",
+      title: "Daily revenue through 2024",
+      field: "Order Date",
+      aggregation: "sum",
+      measureField: "Revenue",
+      weekStart: "monday",
+      layout: layout(0, 33, 12, 4),
+      margin: { top: 8, right: 16, bottom: 8, left: 8 },
+    },
   ],
   shopDashboard.colorScales
 );
+
+// Only the 500-order book gets the heatmap; the large book fills this row.
+shopDashboard.charts.push({
+  ...base,
+  id: "shop-category-region",
+  type: "heatmap",
+  title: "Where does revenue come from?",
+  field: "Category",
+  columnField: "Region",
+  aggregation: "sum",
+  measureField: "Revenue",
+  maxCategories: 20,
+  sortBy: "count",
+  showValues: true,
+  layout: layout(0, 14, 12, 5),
+  margin: { top: 8, right: 16, bottom: 8, left: 8 },
+});
 
 export const scatterTraceDashboard: SavedDataStructure = {
   ...dashboard(
@@ -727,3 +775,24 @@ export const calculationDashboard: SavedDataStructure = {
   ]),
   calculations: orderCalculations,
 };
+
+// Placed below whatever the order book already holds.
+shopDashboard.charts.push({
+  ...base,
+  id: "shop-flow",
+  type: "sankey",
+  title: "Which channels and categories lead to returns?",
+  stages: ["Channel", "Category", "Returned"],
+  aggregation: "count",
+  missingStages: "omit",
+  maxNodesPerStage: 8,
+  nodeOrder: "value",
+  flowColor: "first",
+  layout: layout(
+    0,
+    Math.max(...shopDashboard.charts.map((chart) => chart.layout.y + chart.layout.h)),
+    12,
+    6
+  ),
+  margin: { top: 8, right: 12, bottom: 8, left: 12 },
+});

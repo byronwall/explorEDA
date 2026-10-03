@@ -13,6 +13,10 @@ const chartNames: Record<string, string> = {
   summary: "Summary table",
   "color-legend": "Color legend",
   markdown: "Markdown note",
+  sankey: "Sankey diagram",
+  "parallel-coordinates": "Parallel coordinates",
+  calendar: "Calendar heatmap",
+  heatmap: "Heatmap",
   ecdf: "Cumulative distribution",
 };
 
@@ -32,10 +36,28 @@ export function getChartTitle(
     return title;
   }
 
+  if (settings.type === "sankey") {
+    const labels = settings.stages.filter(Boolean).map(getFieldLabel);
+    return labels.length > 1
+      ? `${labels.join(" → ")}`
+      : getChartDefinition(settings.type).name;
+  }
+  if (settings.type === "parallel-coordinates") {
+    const labels = settings.axes
+      .filter((axis) => axis.field)
+      .map((axis) => getFieldLabel(axis.field));
+    return labels.length
+      ? labels.length > 3
+        ? `${labels.slice(0, 3).join(", ")} and ${labels.length - 3} more`
+        : labels.join(", ")
+      : getChartDefinition(settings.type).name;
+  }
   const field =
     settings.type === "bar" ||
     settings.type === "row" ||
     settings.type === "boxplot" ||
+    settings.type === "calendar" ||
+    settings.type === "heatmap" ||
     settings.type === "ecdf"
       ? settings.field
       : settings.type === "scatter" || settings.type === "3d-scatter"
@@ -52,6 +74,14 @@ export function getChartTitle(
   }
   if (settings.type === "row") {
     return `Rows by ${label}`;
+  }
+  if (settings.type === "calendar") {
+    return `${label} by day`;
+  }
+  if (settings.type === "heatmap") {
+    return settings.columnField
+      ? `${label} by ${getFieldLabel(settings.columnField)}`
+      : `Heatmap · ${label}`;
   }
   if (settings.type === "ecdf") {
     return `Cumulative share of ${label}`;
@@ -84,6 +114,14 @@ export function getChartFields(settings: ChartSettings): string[] {
         return settings.columns.map((column) => column.field);
       case "color-legend":
         return settings.fields;
+      case "sankey":
+        return [...settings.stages, settings.measureField];
+      case "parallel-coordinates":
+        return [...settings.axes.map((axis) => axis.field), settings.colorField];
+      case "calendar":
+        return [settings.field, settings.measureField];
+      case "heatmap":
+        return [settings.field, settings.columnField, settings.measureField];
       default:
         return [settings.field, settings.colorField];
     }
