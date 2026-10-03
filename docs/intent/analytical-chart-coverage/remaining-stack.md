@@ -7,7 +7,7 @@ Byron approved this sequence after Metric Card PR #114. Each branch starts from 
 | 1 | Metric card | `codex/metric-card` | #114 | In review |
 | 2 | Calendar time series | `codex/calendar-time-series` | #115 | In review |
 | 3 | Grouped bars | `codex/grouped-bars` | #116 | In review |
-| 4 | Stacked and 100% bars | `codex/stacked-bars` | | In progress |
+| 4 | Stacked and 100% bars | `codex/stacked-bars` | #117 | In review |
 | 5 | Area and stacked area | | | Pending |
 | 6 | Bubble scatter | | | Pending |
 | 7 | Binned scatter density | | | Pending |
@@ -26,3 +26,7 @@ PR #115 adds UTC day, week, and month summaries to Line Chart. It includes sourc
 ## Grouped bars evidence
 
 PR #116 adds series within each category to Bar Chart. It includes exact pair and facet selection, source tracing, saved settings, and a worked example. All 498 tests passed on Node 24. Browser checks covered 1280, 783, and 390 px, keyboard selection, counts, sums, averages, and reset. A dark fixture checked signed values, typed and missing categories, invalid inputs, and long labels. Five screenshots are attached to the PR.
+
+## Stacked bars evidence
+
+PR #117 adds stacked counts and sums, plus percentage shares, to split Bar Charts. Traces show segment records and category denominator records. All 500 tests passed on Node 24. Browser checks covered 1280, 783, and 390 px, keyboard selection, reset, signed totals, zero totals, invalid inputs, and dark mode. Six screenshots are attached to the PR.
