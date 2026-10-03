@@ -1,6 +1,7 @@
 import { detectColumnType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import { Button } from "@/components/ui/button";
 import { ActionTooltip } from "@/components/ui/tooltip";
+import { categoryKey, categoryValue } from "@/lib/categories";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps, datum } from "@/types/ChartTypes";
 import { ArrowDownUp, X } from "lucide-react";
@@ -21,6 +22,7 @@ import {
   useTraceSource,
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
+import { ChartReadout } from "../ChartReadout";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import type { ParallelCoordinatesSettings } from "./definition";
 import {
@@ -28,6 +30,7 @@ import {
   findNearestLine,
   moveAxis,
   planParallelCoordinates,
+  toggleAxisCategory,
   withAxisFilter,
   type ParallelAxis,
   type ParallelAxisKind,
@@ -77,54 +80,36 @@ function HoverReadout({
   snapshot,
   format,
   colorLabel,
-  side,
 }: {
-  side: "left" | "right";
   line: ParallelLine;
   plan: ParallelPlan;
   snapshot: ParallelSnapshot;
   format: (field: string, value: datum) => string;
   colorLabel?: { label: string; value: string };
 }) {
+  const items: [string, string][] = [];
+  if (colorLabel) {
+    items.push([colorLabel.label, colorLabel.value]);
+  }
+  for (const axis of plan.axes) {
+    items.push([
+      axis.label,
+      format(axis.field, snapshot.columns[axis.field]?.[line.id]),
+    ]);
+  }
+  items.push(["Row", line.id.toLocaleString()]);
+  if (plan.hasSelection && !line.selected) {
+    items.push(["Selection", "Outside"]);
+  }
   return (
-    <div
-      className={`pointer-events-none absolute z-10 max-w-[min(17rem,70%)] rounded border border-border bg-card/95 px-2 py-1 text-xs text-card-foreground shadow-sm ${side === "left" ? "left-2" : "right-2"}`}
-      style={{ top: plan.margin.top - 4 }}
-      role="status"
-    >
-      <div className="mb-0.5 flex items-center gap-1.5 font-medium">
-        <span
-          className="inline-block h-2 w-3 rounded-sm"
-          style={{ background: line.color }}
-          aria-hidden="true"
-        />
-        Row {line.id}
-        {plan.hasSelection && !line.selected && (
-          <span className="font-normal text-muted-foreground">
-            · not selected
-          </span>
-        )}
-      </div>
-      {plan.axes.map((axis) => (
-        <div key={axis.id} className="flex justify-between gap-3">
-          <span className="truncate text-muted-foreground">{axis.label}</span>
-          <span className="tabular-nums">
-            {format(axis.field, snapshot.columns[axis.field]?.[line.id])}
-          </span>
-        </div>
+    <ChartReadout fallbackClassName="eda-chart-readout-inline">
+      {items.map(([name, value]) => (
+        <span key={name} className="eda-readout-item">
+          <span>{name}</span>
+          <b>{value}</b>
+        </span>
       ))}
-      {colorLabel && (
-        <div className="flex justify-between gap-3">
-          <span className="truncate text-muted-foreground">
-            {colorLabel.label}
-          </span>
-          <span>{colorLabel.value}</span>
-        </div>
-      )}
-      <div className="mt-0.5 text-muted-foreground">
-        Click to trace this row
-      </div>
-    </div>
+    </ChartReadout>
   );
 }
 
@@ -153,7 +138,6 @@ export function ParallelCoordinates({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [hovered, setHovered] = useState<number | null>(null);
-  const [readoutSide, setReadoutSide] = useState<"left" | "right">("right");
   const [drag, setDrag] = useState<BrushDrag | null>(null);
   const [reorder, setReorder] = useState<{ index: number; dx: number } | null>(
     null
@@ -517,6 +501,11 @@ export function ParallelCoordinates({
     tracedRow === undefined
       ? undefined
       : plan.lines.find((line) => line.id === tracedRow);
+  // Values sit beside the dots of one line, so a reading never needs the readout.
+  const labeledLine = hoveredLine ?? tracedLine;
+  const lineCategory = (axis: ParallelAxis) =>
+    labeledLine &&
+    categoryKey(categoryValue(snapshot.columns[axis.field]?.[labeledLine.id]));
   const headerWidth = Math.min(HEADER_WIDTH, Math.max(56, spacing - 8));
   const narrow = width < 520;
   const statusParts = [
@@ -567,8 +556,6 @@ export function ParallelCoordinates({
               const x = plotX(event);
               const line = findNearestLine(plan, x, plotY(event));
               setHovered(line?.id ?? null);
-              // Keep the readout on the side away from the pointer.
-              setReadoutSide(x > plan.plotWidth / 2 ? "left" : "right");
             }}
             onClick={(event) => {
               const line = findNearestLine(plan, plotX(event), plotY(event));
@@ -611,6 +598,28 @@ export function ParallelCoordinates({
                         strokeWidth={1.5}
                       />
                     ))}
+                    {line === labeledLine &&
+                      plan.axes.map((axis, index) => {
+                        if (axis.kind !== "numeric") {
+                          return null;
+                        }
+                        const last = index === plan.axes.length - 1;
+                        return (
+                          <text
+                            key={`${axis.id}-value`}
+                            className="eda-pc-value"
+                            x={axis.x + (last ? -8 : 8)}
+                            y={line.ys[index]}
+                            textAnchor={last ? "end" : "start"}
+                            dominantBaseline="central"
+                          >
+                            {format(
+                              axis.field,
+                              snapshot.columns[axis.field]?.[line.id]
+                            )}
+                          </text>
+                        );
+                      })}
                   </g>
                 ))}
             </g>
@@ -656,38 +665,6 @@ export function ParallelCoordinates({
                   fontSize={10}
                   aria-hidden="true"
                 >
-                  {axis.kind === "categorical" &&
-                    axis.categories.map((category) => {
-                      const text = truncate(category.label, labelRoom);
-                      const pill = text.length * 5.6 + 10;
-                      return (
-                        <g
-                          key={category.key}
-                          transform={`translate(${axis.index === plan.axes.length - 1 ? -pill - 6 : 6},${category.center})`}
-                        >
-                          <rect
-                            y={-8}
-                            width={pill}
-                            height={16}
-                            rx={8}
-                            fill="var(--card)"
-                            fillOpacity={0.92}
-                            stroke="var(--border)"
-                          />
-                          <text
-                            x={pill / 2}
-                            dominantBaseline="central"
-                            textAnchor="middle"
-                            className={
-                              category.selected ? "fill-foreground" : undefined
-                            }
-                            fontWeight={category.selected ? 600 : 400}
-                          >
-                            {text}
-                          </text>
-                        </g>
-                      );
-                    })}
                   {axis.kind === "numeric" &&
                     axis.ticks.map((tick, index) => (
                       <g
@@ -788,6 +765,46 @@ export function ParallelCoordinates({
                   onPointerEnter={() => setHovered(null)}
                   onKeyDown={(event) => brushKey(event, axis)}
                 />
+                {axis.kind === "categorical" && (
+                  <g fontSize={10} aria-hidden="true">
+                    {axis.categories.map((category) => {
+                      const text = truncate(category.label, labelRoom);
+                      // Bold text runs wider, so selected pills get more room.
+                      const pill =
+                        text.length * (category.selected ? 6.2 : 5.6) + 10;
+                      const onLine = lineCategory(axis) === category.key;
+                      return (
+                        <g
+                          key={category.key}
+                          className="eda-pc-pill"
+                          data-selected={category.selected || undefined}
+                          data-on-line={onLine || undefined}
+                          transform={`translate(${axis.index === plan.axes.length - 1 ? -pill - 6 : 6},${category.center})`}
+                          onPointerEnter={() => setHovered(null)}
+                          onClick={(event) =>
+                            updateChart(settings.id, {
+                              filters: toggleAxisCategory(
+                                settings.filters,
+                                axis,
+                                category,
+                                event.shiftKey || event.metaKey || event.ctrlKey
+                              ),
+                            })
+                          }
+                        >
+                          <rect y={-8} width={pill} height={16} rx={8} />
+                          <text
+                            x={pill / 2}
+                            dominantBaseline="central"
+                            textAnchor="middle"
+                          >
+                            {text}
+                          </text>
+                        </g>
+                      );
+                    })}
+                  </g>
+                )}
               </g>
             );
           })}
@@ -941,11 +958,12 @@ export function ParallelCoordinates({
         {statusParts.join(" · ")}
         {!plan.hasSelection &&
           !narrow &&
-          " · Drag along an axis to select a range"}
+          (plan.axes.some((axis) => axis.kind === "categorical")
+            ? " · Drag along an axis or click a value to select"
+            : " · Drag along an axis to select a range")}
       </div>
       {hoveredLine && !drag && !reorder && (
         <HoverReadout
-          side={readoutSide}
           line={hoveredLine}
           plan={plan}
           snapshot={snapshot}

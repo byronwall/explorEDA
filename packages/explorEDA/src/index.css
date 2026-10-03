@@ -35,6 +35,11 @@
   --eda-heat-high: oklch(0.43 0.14 257);
   --eda-heat-mid: oklch(0.96 0.004 250);
   --eda-heat-negative: oklch(0.53 0.17 28);
+  /* Sankey flow opacity: resting, hovered, dimmed, and context under a selection. */
+  --eda-flow: 0.48;
+  --eda-flow-strong: 0.82;
+  --eda-flow-faint: 0.2;
+  --eda-flow-context: 0.16;
   --eda-heat-text-strong: hsl(0 0% 100%);
   --eda-heat-text-weak: var(--foreground);
   --radius: 0.6rem;
@@ -71,6 +76,11 @@
   --eda-heat-high: oklch(0.82 0.12 228);
   --eda-heat-mid: oklch(0.26 0.006 250);
   --eda-heat-negative: oklch(0.74 0.15 32);
+  /* Flows sit on a dark card, so they need more opacity to keep their hue. */
+  --eda-flow: 0.66;
+  --eda-flow-strong: 0.92;
+  --eda-flow-faint: 0.26;
+  --eda-flow-context: 0.2;
   --eda-heat-text-strong: oklch(0.2 0.02 250);
   --eda-heat-text-weak: var(--foreground);
 }
@@ -304,6 +314,49 @@
 }
 .eda-heat-label[data-selected="true"] {
   font-weight: 600;
+}
+/* Parallel coordinates: category values on an axis select like a label. */
+.eda-pc-pill {
+  cursor: pointer;
+}
+.eda-pc-pill rect {
+  fill: var(--card);
+  fill-opacity: 0.92;
+  stroke: var(--border);
+}
+.eda-pc-pill text {
+  fill: var(--muted-foreground);
+}
+.eda-pc-pill:hover rect,
+.eda-pc-pill[data-on-line] rect {
+  stroke: var(--foreground);
+}
+.eda-pc-pill:hover text,
+.eda-pc-pill[data-on-line] text {
+  fill: var(--foreground);
+}
+.eda-pc-pill[data-selected] rect {
+  fill: color-mix(in oklab, var(--primary) 14%, var(--card));
+  fill-opacity: 1;
+  stroke: var(--primary);
+}
+.eda-pc-pill[data-selected] text {
+  fill: var(--foreground);
+  font-weight: 600;
+}
+/* Sankey node labels select their node, like the node itself. */
+.eda-sankey-label {
+  cursor: pointer;
+}
+/* The hovered line's value on each numeric axis. */
+.eda-pc-value {
+  fill: var(--foreground);
+  font-size: 10px;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--background);
+  stroke-width: 3px;
+  stroke-linejoin: round;
 }
 /* The details view enlarges the chart, so its title grows to match. */
 .eda-panel-expanded .eda-panel-header {

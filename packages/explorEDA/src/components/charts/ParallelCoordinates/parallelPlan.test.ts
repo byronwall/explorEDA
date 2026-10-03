@@ -11,6 +11,7 @@ import {
   moveAxis,
   planParallelCoordinates,
   stableJitter,
+  toggleAxisCategory,
   withAxisFilter,
   type ParallelSnapshot,
 } from "./parallelPlan";
@@ -259,6 +260,38 @@ describe("axis helpers", () => {
     expect(
       withAxisFilter(filters, "a", { type: "range", field: "a", min: 3 })
     ).toEqual([filters[1], { type: "range", field: "a", min: 3 }]);
+  });
+
+  it("selects, adds, and clears a value on a category axis", () => {
+    const axisOf = (filters: Filter[]) =>
+      plan(filters).axes.find((axis) => axis.field === "kind")!;
+    const pick = (filters: Filter[], label: string, add = false) => {
+      const axis = axisOf(filters);
+      const category = axis.categories.find((item) => item.label === label)!;
+      return toggleAxisCategory(filters, axis, category, add);
+    };
+    const other: Filter = { type: "range", field: "a", min: 1, max: 3 };
+    const one = pick([other], "y");
+    expect(one).toEqual([
+      other,
+      { type: "value", field: "kind", values: ["y"] },
+    ]);
+    // A plain click on another value replaces the selection.
+    expect(pick(one, "x")).toEqual([
+      other,
+      { type: "value", field: "kind", values: ["x"] },
+    ]);
+    const two = pick(one, "z", true);
+    expect(two).toEqual([
+      other,
+      { type: "value", field: "kind", values: ["y", "z"] },
+    ]);
+    expect(pick(two, "y", true)).toEqual([
+      other,
+      { type: "value", field: "kind", values: ["z"] },
+    ]);
+    // Clicking the only selected value clears the axis.
+    expect(pick(one, "y")).toEqual([other]);
   });
 
   it("moves an axis and clamps the target", () => {
