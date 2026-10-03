@@ -11,10 +11,12 @@ import {
   areaDashboard,
   bubbleDashboard,
   densityDashboard,
+  pointMapDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import { SavedDataStructure } from "exploreda";
 import {
+  MapPin,
   Bird,
   BarChart3,
   Calculator,
@@ -65,6 +67,7 @@ const viewNames: Record<string, string> = {
   line: "line",
   markdown: "notes",
   "metric-card": "metric card",
+  map: "map",
   "parallel-coordinates": "parallel coordinates",
   pivot: "pivot",
   row: "row",
@@ -84,6 +87,17 @@ export const FEATURED_EXAMPLE_ID = "shop-operations";
 
 /** Every example, in the order the landing page lists them. */
 export const examples: ExampleData[] = [
+  {
+    id: "point-map",
+    title: "Where service requests originate",
+    description: "Compare 30 synthetic service sites. Point area shows requests; color shows region. Inspect any site to follow its coordinates and size.",
+    dataset: { rows: "30 sites", fields: 5, source: "Synthetic" },
+    shows: ["Point map", "Geographic view", "Source tracing"],
+    guide: "Try this: click a site to select its source row. Inspect point shows its coordinates. Drag to pan, then choose Reset view. Omitted rows explains the unlocated site.",
+    icon: MapPin,
+    data: "/map-sites.csv",
+    savedData: pointMapDashboard,
+  },
   {
     id: "scatter-density",
     title: "Where daily observations cluster",

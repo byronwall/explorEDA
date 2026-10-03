@@ -1,0 +1,31 @@
+Site,Latitude,Longitude,Region,Requests
+Vancouver,49.28,-123.12,Americas,320
+San Francisco,37.77,-122.42,Americas,480
+Chicago,41.88,-87.63,Americas,280
+New York,40.71,-74.01,Americas,620
+Mexico City,19.43,-99.13,Americas,350
+Bogota,4.71,-74.07,Americas,160
+Lima,-12.05,-77.04,Americas,210
+Sao Paulo,-23.55,-46.63,Americas,470
+Santiago,-33.45,-70.67,Americas,180
+London,51.51,-0.13,Europe,580
+London annex,51.51,-0.13,Europe,90
+Paris,48.86,2.35,Europe,420
+Berlin,52.52,13.4,Europe,310
+Madrid,40.42,-3.7,Europe,230
+Helsinki,60.17,24.94,Europe,120
+Cairo,30.04,31.24,Africa,190
+Lagos,6.52,3.38,Africa,260
+Nairobi,-1.29,36.82,Africa,170
+Cape Town,-33.92,18.42,Africa,240
+Dubai,25.2,55.27,Asia-Pacific,380
+Mumbai,19.08,72.88,Asia-Pacific,520
+Singapore,1.35,103.82,Asia-Pacific,460
+Tokyo,35.68,139.69,Asia-Pacific,650
+Seoul,37.57,126.98,Asia-Pacific,440
+Sydney,-33.87,151.21,Asia-Pacific,330
+Auckland,-36.85,174.76,Asia-Pacific,150
+Suva,-18.12,178.45,Asia-Pacific,80
+Apia,-13.83,-171.77,Asia-Pacific,60
+Reykjavik,64.15,-21.94,Europe,0
+Unlocated site,,,Americas,45

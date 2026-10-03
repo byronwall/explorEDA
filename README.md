@@ -55,6 +55,13 @@ bins. Set the X and Y bin counts, then select a bin to filter its exact source r
 **Inspect bin** shows intervals, counts, color scale, and source records. Bin edges
 and the automatic color scale use all source rows, so linked filters keep a stable reference.
 
+Choose **Map** to place rows by latitude and longitude in WGS 84 decimal degrees.
+Add color and size fields, then click a point to select its source row.
+**Inspect point** shows source values, coordinate preparation, size, and projection.
+Drag to pan, use **Fit data** for all source coordinates, or **Reset view** for the world.
+Views persist in geographic units. Omitted and offscreen rows remain available in the trace.
+The bundled [World Atlas land outline](https://github.com/topojson/world-atlas) supplies context without a tile service.
+
 ## Install
 
 ```sh

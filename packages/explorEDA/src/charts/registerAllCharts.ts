@@ -1,3 +1,4 @@
+import { mapDefinition } from "@/components/charts/Map/definition";
 import { barChartDefinition } from "@/components/charts/BarChart/definition";
 import { boxPlotDefinition } from "@/components/charts/BoxPlot/definition";
 import { calendarDefinition } from "@/components/charts/Calendar/definition";
@@ -35,4 +36,5 @@ export function registerAllCharts() {
   chartRegistry.register(heatmapDefinition);
   chartRegistry.register(ecdfDefinition);
   chartRegistry.register(metricCardDefinition);
+  chartRegistry.register(mapDefinition);
 }

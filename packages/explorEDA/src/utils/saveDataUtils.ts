@@ -480,6 +480,18 @@ function isChart(value: unknown): boolean {
         isFiniteNumber(value.lineOpacity) &&
         isFiniteNumber(value.lineWidth)
       );
+    case "map":
+      return value.mode === "point" &&
+        typeof value.latitudeField === "string" && typeof value.longitudeField === "string" &&
+        (value.labelField === undefined || typeof value.labelField === "string") &&
+        (value.sizeField === undefined || typeof value.sizeField === "string") &&
+        ["equal-earth", "equirectangular"].includes(value.projection as string) &&
+        isFiniteNumber(value.pointRadius) && value.pointRadius >= 2 && value.pointRadius <= 32 &&
+        isFiniteNumber(value.pointOpacity) && value.pointOpacity >= 0.1 && value.pointOpacity <= 1 &&
+        (value.view === undefined || (isRecord(value.view) && Array.isArray(value.view.center) &&
+          value.view.center.length === 2 && value.view.center.every(isFiniteNumber) &&
+          Math.abs(value.view.center[0]!) <= 180 && Math.abs(value.view.center[1]!) <= 90 &&
+          isFiniteNumber(value.view.zoom) && value.view.zoom >= 1 && value.view.zoom <= 64));
     case "metric-card":
       return (
         ["count", "sum", "average"].includes(value.aggregation as string) &&
