@@ -13,9 +13,14 @@ import { interpolateViridis } from "d3-scale-chromatic";
 import { scaleSequential } from "d3-scale";
 import type { ScaleOrdinal, ScaleSequential } from "d3-scale";
 import {
-  defaultCategoricalColors,
+  assignCategoryColors,
+  makeColorScale,
   makeD3ColorScale,
 } from "@/lib/colorScaleMath";
+import {
+  DEFAULT_CATEGORICAL_PALETTE,
+  DEFAULT_SEQUENTIAL_PALETTE,
+} from "@/lib/colorPalettes";
 
 import { useCallback, useMemo } from "react";
 
@@ -28,7 +33,12 @@ export function useColorScales(): UseColorScalesReturn {
   const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
   const charts = useDataLayer((state) => state.charts);
 
-  // Memoized d3 scale objects
+  // One color function per scale, shared with the chart plans.
+  const colorFunctions = useMemo(
+    () =>
+      new Map(colorScales.map((scale) => [scale.id, makeColorScale(scale)])),
+    [colorScales]
+  );
   const d3Scales = useMemo(() => {
     const scales = new Map<
       string,
@@ -52,27 +62,18 @@ export function useColorScales(): UseColorScalesReturn {
         return defaultColor;
       }
 
-      const scale = colorScales.find((s) => s.id === scaleId);
-      if (!scale) {
-        // console.warn(`Color scale ${scaleId} not found`);
-        return "#000000";
-      }
-
-      const d3Scale = d3Scales.get(scaleId);
-      if (!d3Scale) {
+      const color = colorFunctions.get(scaleId);
+      if (!color) {
         return "#000000";
       }
 
       try {
-        if (scale.type === "numerical") {
-          return (d3Scale as ScaleSequential<string>)(Number(value));
-        }
-        return (d3Scale as ScaleOrdinal<string, string>)(categoryLabel(value));
+        return color(value);
       } catch {
         return "#000000";
       }
     },
-    [colorScales, d3Scales]
+    [colorFunctions]
   );
 
   const getScaleById = (id: string): ColorScaleType | undefined => {
@@ -88,7 +89,7 @@ export function useColorScales(): UseColorScalesReturn {
     const scale: Omit<NumericalColorScale, "id"> = {
       name,
       type: "numerical",
-      palette: "Viridis",
+      palette: DEFAULT_SEQUENTIAL_PALETTE,
       min,
       max,
       sourceField,
@@ -99,23 +100,29 @@ export function useColorScales(): UseColorScalesReturn {
   const createDefaultCategoricalScale = (
     name: string,
     values: string[],
-    sourceField?: string
+    sourceField?: string,
+    counts?: ReadonlyMap<string, number>
   ): ColorScaleType => {
-    const defaultPalette = defaultCategoricalColors;
-    const mapping = new Map<string, string>();
-    values.forEach((value, i) => {
-      mapping.set(
-        value,
-        defaultPalette[i % defaultPalette.length] ?? "#000000"
-      );
-    });
+    // The largest groups take the most distinct colors; the smallest past the
+    // palette's end share a neutral gray.
+    const assignment = {
+      paletteId: DEFAULT_CATEGORICAL_PALETTE,
+      order: counts ? ("frequency" as const) : ("data" as const),
+      overflow: "other" as const,
+    };
+    const { mapping, palette } = assignCategoryColors(
+      values,
+      assignment,
+      counts
+    );
 
     const scale: Omit<CategoricalColorScale, "id"> = {
       name,
       type: "categorical",
-      palette: Array.from(mapping.values()),
+      palette,
       mapping,
       sourceField,
+      ...assignment,
     };
     return addColorScale(scale);
   };
@@ -174,11 +181,16 @@ export function useColorScales(): UseColorScalesReturn {
       const max = Math.max(...numericValues);
       newScale = createDefaultNumericalScale(name ?? field, min, max, field);
     } else {
-      const uniqueValues = Array.from(new Set(values.map(categoryLabel)));
+      const counts = new Map<string, number>();
+      values.forEach((value) => {
+        const label = categoryLabel(value);
+        counts.set(label, (counts.get(label) ?? 0) + 1);
+      });
       newScale = createDefaultCategoricalScale(
         name ?? field,
-        uniqueValues,
-        field
+        Array.from(counts.keys()),
+        field,
+        counts
       );
     }
 

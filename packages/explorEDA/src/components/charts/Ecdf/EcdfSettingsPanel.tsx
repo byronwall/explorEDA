@@ -9,6 +9,7 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import { useMemo } from "react";
 import type { EcdfSettings } from "./definition";
+import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
 
 function Toggle({
   id,
@@ -104,6 +105,11 @@ export function EcdfSettingsPanel({
             })
           }
         />
+        {settings.colorScaleId && (
+          <div className="col-start-2 -mt-2">
+            <ColorScaleControl scaleId={settings.colorScaleId} />
+          </div>
+        )}
 
         <Label>Read as</Label>
         <ToggleGroup

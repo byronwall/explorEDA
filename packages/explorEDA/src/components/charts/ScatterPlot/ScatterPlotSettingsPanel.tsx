@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FieldSelector } from "@/components/FieldSelector";
 import { useColorScales } from "@/hooks/useColorScales";
+import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
 
 export function ScatterPlotSettingsPanel({
   settings,
@@ -41,6 +42,11 @@ export function ScatterPlotSettingsPanel({
             })
           }
         />
+        {settings.colorScaleId && (
+          <div className="col-start-2 -mt-2">
+            <ColorScaleControl scaleId={settings.colorScaleId} />
+          </div>
+        )}
         <Label htmlFor="scatter-point-size">Point size</Label>
         <Input
           id="scatter-point-size"

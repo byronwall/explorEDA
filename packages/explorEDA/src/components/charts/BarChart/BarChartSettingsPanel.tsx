@@ -9,6 +9,7 @@ import type { AggregateAggregation } from "@/lib/aggregates";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useMemo, useState } from "react";
+import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
 
 function getAggregateName(
   aggregation: AggregateAggregation,
@@ -286,6 +287,11 @@ values.some((value) => finiteNumber(value) !== undefined)
             <Label htmlFor="colorField">Use as color field</Label>
           </div>
         </div>
+        {settings.colorField && settings.colorScaleId && (
+          <div className="col-start-2">
+            <ColorScaleControl scaleId={settings.colorScaleId} />
+          </div>
+        )}
       </div>
     </div>
   );
