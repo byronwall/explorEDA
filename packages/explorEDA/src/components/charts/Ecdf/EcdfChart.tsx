@@ -1,6 +1,11 @@
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import {
+  ChartStatusLine,
+  STATUS_HINT_MIN_WIDTH,
+} from "../ChartStatusLine";
+import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
+import {
   useCallback,
   useId,
   useMemo,
@@ -166,24 +171,18 @@ export function EcdfChart({
 
   if (!settings.field) {
     return (
-      <div
-        className="flex items-center justify-center p-4 text-center text-sm text-muted-foreground"
-        style={{ width, height }}
-      >
+      <ChartMessage width={width} height={height}>
         Choose a numeric field in chart settings.
-      </div>
+      </ChartMessage>
     );
   }
   if (plan.validCount === 0) {
     return (
-      <div
-        className="flex items-center justify-center p-4 text-center text-sm text-muted-foreground"
-        style={{ width, height }}
-      >
+      <ChartMessage width={width} height={height}>
         {plan.liveCount > 0
-          ? `No numeric values in ${plan.fieldLabel} for these rows`
-          : "No rows match the current filters"}
-      </div>
+          ? `No numeric values in ${plan.fieldLabel} for these rows.`
+          : NO_MATCHING_ROWS}
+      </ChartMessage>
     );
   }
 
@@ -376,7 +375,7 @@ export function EcdfChart({
           )
           .join(", ")}`
       : medians.length > 0 &&
-        width >= 520 &&
+        width >= STATUS_HINT_MIN_WIDTH &&
         (medians.length === 1
           ? `Median ${medians[0]!.text}`
           : `Median: ${medians.map((item) => `${item.label} ${item.text}`).join(", ")}`),
@@ -385,7 +384,8 @@ export function EcdfChart({
     plan.otherGroups > 0 && `${plan.otherGroups} smaller groups in Other`,
     plan.logUnavailable && "Log scale needs values above zero",
     !selected &&
-      width >= 520 &&
+      !facetIds &&
+      width >= STATUS_HINT_MIN_WIDTH &&
       `Click to select ${plan.direction === "below" ? "up to" : "from"} a value, drag for a span`,
   ].filter(Boolean);
   const selection = dragSpan
@@ -705,19 +705,12 @@ export function EcdfChart({
         </g>
       </svg>
       {readout && <Readout {...readout} />}
-      {statusParts.length > 0 && (
-        <div
-          className="pointer-events-none absolute truncate text-xs text-muted-foreground"
-          style={{
-            left: settings.margin.left,
-            right: settings.margin.right,
-            bottom: settings.margin.bottom,
-          }}
-          role="status"
-        >
-          {statusParts.join(" · ")}
-        </div>
-      )}
+      <ChartStatusLine
+        parts={statusParts}
+        left={settings.margin.left}
+        right={settings.margin.right}
+        bottom={settings.margin.bottom}
+      />
     </div>
   );
 }

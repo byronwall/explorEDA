@@ -1,5 +1,6 @@
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
+import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import { formatFieldValue as formatValue } from "@/lib/fieldSettings";
 import { useCallback, useId, useMemo, useRef, useState } from "react";
 import { ChartReadout } from "../ChartReadout";
@@ -139,16 +140,16 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
 
   if (!settings.field || !settings.columnField || settings.field === settings.columnField) {
     return (
-      <div className="flex items-center justify-center p-4 text-center text-sm text-muted-foreground" style={{ width, height }}>
+      <ChartMessage width={width} height={height}>
         Choose two different fields for the rows and columns in chart settings.
-      </div>
+      </ChartMessage>
     );
   }
   if (plan.rows.length === 0 || plan.columns.length === 0) {
     return (
-      <div className="flex items-center justify-center text-sm text-muted-foreground" style={{ width, height }}>
-        No rows to display
-      </div>
+      <ChartMessage width={width} height={height}>
+        {allIds.length > 0 ? NO_MATCHING_ROWS : "No rows to show."}
+      </ChartMessage>
     );
   }
 

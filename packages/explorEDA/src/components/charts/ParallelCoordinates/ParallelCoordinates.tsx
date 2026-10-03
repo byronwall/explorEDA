@@ -1,5 +1,10 @@
 import { detectColumnType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import { Button } from "@/components/ui/button";
+import {
+  ChartStatusLine,
+  STATUS_HINT_MIN_WIDTH,
+} from "../ChartStatusLine";
+import { ChartMessage } from "../ChartMessage";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { categoryKey, categoryValue } from "@/lib/categories";
 import { useDataLayer } from "@/providers/DataLayerProvider";
@@ -480,12 +485,9 @@ export function ParallelCoordinates({
 
   if (settings.axes.filter((axis) => axis.field).length < 2) {
     return (
-      <div
-        className="flex items-center justify-center p-4 text-center text-sm text-muted-foreground"
-        style={{ width, height }}
-      >
+      <ChartMessage width={width} height={height}>
         Choose at least two fields for the axes in chart settings.
-      </div>
+      </ChartMessage>
     );
   }
 
@@ -507,7 +509,7 @@ export function ParallelCoordinates({
     labeledLine &&
     categoryKey(categoryValue(snapshot.columns[axis.field]?.[labeledLine.id]));
   const headerWidth = Math.min(HEADER_WIDTH, Math.max(56, spacing - 8));
-  const narrow = width < 520;
+  const narrow = width < STATUS_HINT_MIN_WIDTH;
   const statusParts = [
     plan.hasSelection
       ? `${plan.selectedCount.toLocaleString()} of ${plan.lines.length.toLocaleString()} ${narrow ? "selected" : "lines selected"}`
@@ -519,7 +521,13 @@ export function ParallelCoordinates({
     ...plan.rejected.map(
       (item) => `${item.label} has ${item.count} values, too many for an axis`
     ),
-  ].filter(Boolean);
+    !plan.hasSelection &&
+      !narrow &&
+      !facetIds &&
+      (plan.axes.some((axis) => axis.kind === "categorical")
+        ? "Drag along an axis or click a value to select"
+        : "Drag along an axis to select a range"),
+  ];
 
   return (
     <div
@@ -946,22 +954,12 @@ export function ParallelCoordinates({
           </div>
         );
       })}
-      <div
-        className="pointer-events-none absolute truncate text-xs text-muted-foreground"
-        style={{
-          left: settings.margin.left,
-          right: settings.margin.right,
-          bottom: settings.margin.bottom,
-        }}
-        role="status"
-      >
-        {statusParts.join(" · ")}
-        {!plan.hasSelection &&
-          !narrow &&
-          (plan.axes.some((axis) => axis.kind === "categorical")
-            ? " · Drag along an axis or click a value to select"
-            : " · Drag along an axis to select a range")}
-      </div>
+      <ChartStatusLine
+        parts={statusParts}
+        left={settings.margin.left}
+        right={settings.margin.right}
+        bottom={settings.margin.bottom}
+      />
       {hoveredLine && !drag && !reorder && (
         <HoverReadout
           line={hoveredLine}

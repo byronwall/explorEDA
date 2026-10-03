@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useDataLayer } from "@/providers/DataLayerProvider";
+import { ChartMessage } from "../ChartMessage";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { formatFieldValue as formatValue } from "@/lib/fieldSettings";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -117,16 +118,16 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
 
   if (!settings.field) {
     return (
-      <div className="flex items-center justify-center p-4 text-center text-sm text-muted-foreground" style={{ width, height }}>
+      <ChartMessage width={width} height={height}>
         Choose a date field in chart settings.
-      </div>
+      </ChartMessage>
     );
   }
   if (plan.years.length === 0) {
     return (
-      <div className="flex items-center justify-center p-4 text-center text-sm text-muted-foreground" style={{ width, height }}>
+      <ChartMessage width={width} height={height}>
         {plan.fieldLabel} has no readable dates.
-      </div>
+      </ChartMessage>
     );
   }
 

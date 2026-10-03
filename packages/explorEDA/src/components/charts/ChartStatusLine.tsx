@@ -15,10 +15,12 @@ export function ChartStatusLine({
   parts,
   left,
   right,
+  bottom = 2,
 }: {
   parts: (string | false | null | undefined)[];
   left: number;
   right: number;
+  bottom?: number;
 }) {
   const text = parts.filter(Boolean).join(" · ");
   if (!text) {
@@ -27,7 +29,8 @@ export function ChartStatusLine({
   return (
     <div
       className="eda-chart-status pointer-events-none absolute truncate text-xs text-muted-foreground"
-      style={{ left, right, bottom: 2 }}
+      style={{ left, right, bottom }}
+      role="status"
     >
       {text}
     </div>

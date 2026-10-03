@@ -6,6 +6,7 @@ import {
   categoryValue,
 } from "@/lib/categories";
 import { numericScale } from "../Axis/numericScale";
+import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import { BaseChartProps, RowChartSettings } from "@/types/ChartTypes";
 
 import { useColorScales } from "@/hooks/useColorScales";
@@ -208,14 +209,11 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
 
   if (displayCounts.length === 0) {
     return (
-      <div
-        className="flex items-center justify-center p-4 text-center text-sm text-muted-foreground"
-        style={{ width, height }}
-      >
+      <ChartMessage width={width} height={height}>
         {settings.field
-          ? "No rows match the current filters"
+          ? NO_MATCHING_ROWS
           : "Choose a field in chart settings."}
-      </div>
+      </ChartMessage>
     );
   }
 
