@@ -76,6 +76,12 @@ const TRACE_COPY = {
       "Alt-click a bar, axis object, or zero baseline to trace it. Normal clicks keep chart interactions. You can also find a source row below.",
     ariaLabel: "Bar trace inspector",
   },
+  ecdf: {
+    heading: "Step trace",
+    emptyText:
+      "Alt-click a curve to trace the share at that value. Normal clicks keep selecting. You can also find a source row below.",
+    ariaLabel: "ECDF trace inspector",
+  },
 } as const;
 
 function isTraceable(type: string): type is keyof typeof TRACE_COPY {

@@ -119,6 +119,15 @@ export const coverageFeatures = [
     chartType: "line",
   },
   {
+    id: "chart:ecdf",
+    label: "ECDF",
+    family: "Chart types",
+    description: "Read the share of values at or below any threshold, without bins.",
+    required: true,
+    status: "supported",
+    chartType: "ecdf",
+  },
+  {
     id: "labels:meaningful-title",
     label: "Meaningful titles",
     family: "Labels and guides",
@@ -446,6 +455,7 @@ export const exampleCoverage = [
     intent:
       "Explore linked product traffic, conversion, and response-time views.",
     features: {
+      "chart:ecdf": "shown",
       "chart:line": "shown",
       "chart:row": "shown",
       "chart:scatter": "shown",

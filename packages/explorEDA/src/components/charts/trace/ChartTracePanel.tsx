@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BarTraceBody } from "../BarChart/BarTraceBody";
+import { EcdfTraceBody } from "../Ecdf/EcdfTraceBody";
 import { ScatterTraceBody } from "../ScatterPlot/ScatterTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
 import {
@@ -14,6 +15,8 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
   switch (trace.kind) {
     case "bar":
       return <BarTraceBody trace={trace} />;
+    case "ecdf-step":
+      return <EcdfTraceBody trace={trace} />;
     case "guide":
       return <GuideTraceBody trace={trace} />;
     case "title":

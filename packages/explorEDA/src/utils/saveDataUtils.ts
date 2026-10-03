@@ -434,6 +434,13 @@ function isChart(value: unknown): boolean {
         isFiniteNumber(value.numericalBreakpoints) &&
         typeof value.wrap === "boolean"
       );
+    case "ecdf":
+      return (
+        ["below", "above"].includes(value.direction as string) &&
+        typeof value.logX === "boolean" &&
+        typeof value.showQuantiles === "boolean" &&
+        typeof value.showOverall === "boolean"
+      );
     case "line":
       return (
         typeof value.xField === "string" &&
