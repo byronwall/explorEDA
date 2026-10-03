@@ -35,7 +35,7 @@ import {
   type Extent,
 } from "./scatterPlan";
 
-interface ScatterPlotProps extends BaseChartProps {
+interface ScatterPlotProps extends BaseChartProps<ScatterPlotSettings> {
   settings: ScatterPlotSettings;
 }
 

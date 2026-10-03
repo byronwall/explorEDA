@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { useState } from "react";
 import { beforeAll, expect, it } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
@@ -145,4 +146,51 @@ it("selects exact overlapping rows, traces exclusions, and keeps selection throu
   fireEvent.click(screen.getByRole("button", { name: "Check saved map" }));
   fireEvent.keyDown(point, { key: "Escape" });
   expect(screen.getByLabelText("Selected IDs").textContent).toBe(ids.join(","));
+});
+
+function DraftMap() {
+  const [draft, setDraft] = useState({ ...settings, id: "preview" });
+  const charts = useDataLayer((state) => state.charts);
+  const wrapper = useDataLayer((state) => state.crossfilterWrapper);
+  return (
+    <>
+      <output aria-label="Draft view">{draft.view?.zoom ?? 1}</output>
+      <output aria-label="Saved charts">
+        {charts.length}:{JSON.stringify(charts[0])}
+      </output>
+      <output aria-label="Workspace rows">
+        {wrapper.getFilteredRowIds().join(",")}
+      </output>
+      <ChartTraceScope>
+        <PointMap
+          settings={draft}
+          width={800}
+          height={500}
+          onSettingsChange={(updates) => setDraft({ ...draft, ...updates })}
+        />
+        <ChartTracePanel />
+      </ChartTraceScope>
+    </>
+  );
+}
+it("edits a map preview without changing saved charts or filtering workspace rows", () => {
+  render(
+    <DataLayerProvider data={rows} charts={[settings]}>
+      <DraftMap />
+    </DataLayerProvider>
+  );
+  const saved = screen.getByLabelText("Saved charts").textContent;
+  fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
+  expect(screen.getByLabelText("Draft view")).toHaveTextContent("1.5");
+  fireEvent.click(screen.getByRole("button", { name: "Reset view" }));
+  fireEvent.click(
+    screen.getByRole("button", {
+      name: "East; row 0; latitude 10°; longitude 179°",
+    })
+  );
+  expect(screen.getByLabelText("Map trace")).toHaveTextContent("Source row 0");
+  expect(screen.getByLabelText("Workspace rows").textContent).toBe(
+    ids.join(",")
+  );
+  expect(screen.getByLabelText("Saved charts").textContent).toBe(saved);
 });

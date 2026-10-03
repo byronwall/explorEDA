@@ -18,6 +18,7 @@ export function PointMap({
   width,
   height,
   facetIds,
+  onSettingsChange,
 }: BaseChartProps<MapSettings>) {
   const owner = useId();
   const { snapshot, updateChart, getFieldLabel, traceField } = useMapData(
@@ -121,9 +122,14 @@ export function PointMap({
   const stableSource = useMemo(() => source, [plan, settings, snapshot]);
   useTraceSource(owner, stableSource);
   const inspect = (id: number) => api?.inspect(owner, "map-point", String(id));
-  const saveView = (view: MapView) => updateChart(settings.id, { view });
+  const saveView = (view: MapView) =>
+    onSettingsChange
+      ? onSettingsChange({ view })
+      : updateChart(settings.id, { view });
   const select = (id: number) =>
-    updateChart(settings.id, { filters: mapPointFilters(settings, id) });
+    onSettingsChange
+      ? inspect(id)
+      : updateChart(settings.id, { filters: mapPointFilters(settings, id) });
   const active = plan.points.find((point) => point.sourceId === activeId);
   const tracedId =
     trace?.selection?.owner === owner && trace.trace?.kind === "map-point"
@@ -145,7 +151,11 @@ export function PointMap({
         className="block shrink-0 touch-none select-none rounded"
         role="group"
         aria-label="Point map"
-        aria-description="Drag to pan. Click a point or press Enter to select its source row. Arrow keys move between visible points. Alt-Enter inspects. Escape clears selection."
+        aria-description={
+          onSettingsChange
+            ? "Drag to pan. Click a point or press Enter to inspect its source row. Arrow keys move between visible points."
+            : "Drag to pan. Click a point or press Enter to select its source row. Arrow keys move between visible points. Alt-Enter inspects. Escape clears selection."
+        }
         onPointerDown={(event) => {
           if (event.button !== 0) return;
           suppressClick.current = false;
@@ -330,6 +340,7 @@ export function PointMap({
         activeId={activeId}
         owner={owner}
         getFieldLabel={getFieldLabel}
+        onViewChange={saveView}
       />
       {active && (
         <ChartReadout fallbackClassName="eda-chart-readout-inline">

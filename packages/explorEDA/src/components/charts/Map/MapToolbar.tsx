@@ -1,6 +1,5 @@
 import { Globe, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useChartTraceApi } from "../trace/ChartTraceScope";
 import type { MapSettings, MapView } from "./definition";
 import type { PointMapPlan } from "./pointMapPlan";
@@ -12,16 +11,17 @@ export function MapToolbar({
   activeId,
   owner,
   getFieldLabel,
+  onViewChange,
 }: {
   settings: MapSettings;
   plan: PointMapPlan;
   activeId?: number;
   owner: string;
   getFieldLabel: (field: string) => string;
+  onViewChange: (view: MapView) => void;
 }) {
   const api = useChartTraceApi();
-  const updateChart = useDataLayer((state) => state.updateChart);
-  const saveView = (view: MapView) => updateChart(settings.id, { view });
+  const saveView = onViewChange;
   const inspect = (id: number) => api?.inspect(owner, "map-point", String(id));
   const active = plan.points.find((point) => point.sourceId === activeId);
   const width = plan.width;
@@ -127,7 +127,8 @@ export function MapToolbar({
             className="h-5 px-0 text-xs"
             onClick={() => api?.inspect(owner, "map-exclusions", "excluded")}
           >
-            {plan.excluded.length} omitted {plan.excluded.length === 1 ? "row" : "rows"}
+            {plan.excluded.length} omitted{" "}
+            {plan.excluded.length === 1 ? "row" : "rows"}
           </Button>
         )}
         {plan.offscreen.length > 0 && (
@@ -143,7 +144,7 @@ export function MapToolbar({
       </div>
       {settings.sizeField && (
         <div
-          className="flex items-center gap-2 overflow-x-auto whitespace-nowrap"
+          className="flex flex-wrap items-center gap-x-2 gap-y-0.5"
           aria-label={`Point area: ${getFieldLabel(settings.sizeField)}, maximum ${plan.maxSize}`}
         >
           <span>Area: {getFieldLabel(settings.sizeField)}</span>

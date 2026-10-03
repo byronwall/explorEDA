@@ -131,6 +131,8 @@ export interface BaseChartProps<
   height: number;
   facetIds?: IdType[];
   toolbarTarget?: HTMLElement | null;
+  /** Draft previews can edit settings without changing a saved chart. */
+  onSettingsChange?: (settings: Partial<TSettings>) => void;
 }
 
 export type datum = string | number | boolean | null | undefined;

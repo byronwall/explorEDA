@@ -30,7 +30,7 @@ export interface MapPoint {
   offscreen: boolean;
   reason?: string;
 }
-export const MAP_FOOTER = 64;
+export const MAP_FOOTER = 72;
 export function coordinateReason(
   latitude: number | undefined,
   longitude: number | undefined
@@ -133,7 +133,10 @@ export function planPointMap(
     mapHeight,
     width,
     maxSize,
-    excluded: scope.filter((row) => row.reason),
+    excluded:
+      settings.latitudeField && settings.longitudeField
+        ? scope.filter((row) => row.reason)
+        : [],
     offscreen: scope.filter((row) => row.offscreen),
     scopeCount: scope.length,
     hasSelection: settings.filters.length > 0,
