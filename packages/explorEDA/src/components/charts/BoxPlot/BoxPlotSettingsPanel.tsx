@@ -45,6 +45,7 @@ export function BoxPlotSettingsPanel({
       <div className="grid grid-cols-[120px_1fr] items-center gap-4">
         <Label htmlFor="whiskerType">Whisker Type</Label>
         <ComboBox
+          aria-label="Whisker type"
           value={settings.whiskerType}
           options={["tukey", "minmax", "stdDev"]}
           onChange={(value) =>
@@ -61,19 +62,22 @@ export function BoxPlotSettingsPanel({
       <div className="grid grid-cols-[120px_1fr] items-center gap-4">
         <Label htmlFor="showOutliers">Show Outliers</Label>
         <ActionTooltip content="Show values beyond the whiskers as separate points.">
-          <Switch
-            id="showOutliers"
-            checked={settings.showOutliers}
-            onCheckedChange={(checked) =>
-              onSettingsChange({ ...settings, showOutliers: checked })
-            }
-          />
+          <span className="inline-flex w-fit">
+            <Switch
+              id="showOutliers"
+              checked={settings.showOutliers}
+              onCheckedChange={(checked) =>
+                onSettingsChange({ ...settings, showOutliers: checked })
+              }
+            />
+          </span>
         </ActionTooltip>
       </div>
 
       <div className="grid grid-cols-[120px_1fr] items-center gap-4">
         <Label htmlFor="sortBy">Sort By</Label>
         <ComboBox
+          aria-label="Sort by"
           value={settings.sortBy}
           options={["median", "label"]}
           onChange={(value) =>
@@ -106,14 +110,16 @@ export function BoxPlotSettingsPanel({
           </select>
         </ActionTooltip>
         <Label htmlFor="distribution-observations">Observations</Label>
-        <ActionTooltip content="Show individual numeric values over the summary. The first 300 source rows per group are shown.">
-          <Switch
-            id="distribution-observations"
-            checked={settings.showObservations ?? false}
-            onCheckedChange={(showObservations) =>
-              onSettingsChange({ ...settings, showObservations })
-            }
-          />
+        <ActionTooltip content="Show individual numeric values over the summary. The first 300 valid source rows per group are shown.">
+          <span className="inline-flex w-fit">
+            <Switch
+              id="distribution-observations"
+              checked={settings.showObservations ?? false}
+              onCheckedChange={(showObservations) =>
+                onSettingsChange({ ...settings, showObservations })
+              }
+            />
+          </span>
         </ActionTooltip>
       </div>
 
@@ -122,13 +128,15 @@ export function BoxPlotSettingsPanel({
           <div className="grid grid-cols-[120px_1fr] items-center gap-4">
             <Label htmlFor="autoBandwidth">Auto Bandwidth</Label>
             <ActionTooltip content="Use the group spread and row count to choose density smoothing.">
-              <Switch
-                id="autoBandwidth"
-                checked={settings.autoBandwidth}
-                onCheckedChange={(checked) =>
-                  onSettingsChange({ ...settings, autoBandwidth: checked })
-                }
-              />
+              <span className="inline-flex w-fit">
+                <Switch
+                  id="autoBandwidth"
+                  checked={settings.autoBandwidth}
+                  onCheckedChange={(checked) =>
+                    onSettingsChange({ ...settings, autoBandwidth: checked })
+                  }
+                />
+              </span>
             </ActionTooltip>
           </div>
           {!settings.autoBandwidth && (

@@ -377,28 +377,29 @@ export function BarChartSettingsPanel({
                   onSettingsChange({ ...settings, binCount: value })
                 }
               />
-
-              <div className="col-start-2">
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="colorField"
-                    checked={settings.field === settings.colorField}
-                    onCheckedChange={(checked) =>
-                      onSettingsChange({
-                        ...settings,
-                        colorField: checked ? settings.field : undefined,
-                        colorScaleId:
-                          checked && settings.field
-                            ? getOrCreateScaleForField(settings.field)
-                            : undefined,
-                      })
-                    }
-                  />
-                  <Label htmlFor="colorField">Use as color field</Label>
-                </div>
-              </div>
             </>
           )}
+        {!settings.seriesField && (
+          <div className="col-start-2">
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="colorField"
+                checked={settings.field === settings.colorField}
+                onCheckedChange={(checked) =>
+                  onSettingsChange({
+                    ...settings,
+                    colorField: checked ? settings.field : undefined,
+                    colorScaleId:
+                      checked && settings.field
+                        ? getOrCreateScaleForField(settings.field)
+                        : undefined,
+                  })
+                }
+              />
+              <Label htmlFor="colorField">Use as color field</Label>
+            </div>
+          </div>
+        )}
       </div>
       {settings.seriesField && (
         <p className="text-xs text-muted-foreground">

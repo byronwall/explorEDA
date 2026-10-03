@@ -29,7 +29,7 @@ const row = (
   field: string,
   position: ReturnType<typeof layout>,
   colorScaleId?: string
-): Chart => ({
+): Extract<Chart, { type: "row" }> => ({
   ...base,
   id,
   type: "row",
@@ -50,7 +50,7 @@ const histogram = (
   field: string,
   position: ReturnType<typeof layout>,
   label = field
-): Chart => ({
+): Extract<Chart, { type: "bar" }> => ({
   ...base,
   id,
   type: "bar",
@@ -91,7 +91,7 @@ const box = (
   position: ReturnType<typeof layout>,
   colorScaleId?: string,
   label = field
-): Chart => ({
+): Extract<Chart, { type: "boxplot" }> => ({
   ...base,
   id,
   type: "boxplot",
@@ -973,3 +973,13 @@ export const regionMapDashboard: SavedDataStructure = {
   geometryAssets:[serviceDistricts],
   fieldSettings:{Requests:{type:"numeric"}},
 };
+
+
+export const distributionDashboard = dashboard("Delivery times and smaller routes", [
+  { ...histogram("delivery-histogram", "Delivery time histogram", "Hours", layout(0, 0, 7, 5), "Delivery time (hours)"), binCount: 12, forceString: false },
+  { ...row("delivery-routes", "Shipments by route", "Route", layout(7, 0, 5, 5)), minRowHeight: 36, maxRowHeight: 42 },
+  { ...box("delivery-distribution", "Delivery time by service", "Hours", "Service", layout(0, 5, 8, 6)), violinOverlay: true, showObservations: true },
+  { ...base, id: "delivery-count", type: "metric-card", title: "Matching shipments", aggregation: "count", layout: layout(8, 5, 4, 2) },
+  table("delivery-records", "Shipment source records", ["Route", "Service", "Hours"], layout(8, 7, 4, 4)),
+]);
+distributionDashboard.fieldSettings = { Hours: { type: "numeric" } };

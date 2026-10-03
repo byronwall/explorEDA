@@ -56,11 +56,11 @@ it("inspects typed Other members and saves exact category selections across resi
     screen.getByRole("checkbox", { name: 'Select "1"' })
   ).toBeInTheDocument();
   fireEvent.click(
-    screen.getByRole("checkbox", { name: "Select 1", exact: true })
+    screen.getByRole("checkbox", { name: "Select 1" })
   );
   expect(screen.getByLabelText("Matching IDs")).toHaveTextContent(/^3$/);
   expect(
-    screen.getByRole("checkbox", { name: "Select 1", exact: true })
+    screen.getByRole("checkbox", { name: "Select 1" })
   ).toBeChecked();
   fireEvent.click(screen.getByRole("button", { name: "Resize" }));
   expect(

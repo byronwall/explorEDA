@@ -20,6 +20,9 @@ export function RowTraceBody({ trace }: { trace: RowTrace }) {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const api = useChartTraceApi();
+  const rawData = useDataLayer((state) => state.rawData);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
+  const inputs = getColumnData(trace.field);
   const settings = useDataLayer((state) =>
     state.charts.find((chart) => chart.id === trace.chartId)
   );
@@ -62,7 +65,8 @@ export function RowTraceBody({ trace }: { trace: RowTrace }) {
           {ids.length.toLocaleString()}
         </TraceReadout>
         <TraceReadout label="Members">
-          {trace.categories.length.toLocaleString()} categories
+          {trace.categories.length.toLocaleString()}{" "}
+          {trace.categories.length === 1 ? "category" : "categories"}
         </TraceReadout>
         <p className="text-muted-foreground">
           Counts follow other chart filters. Selection stores category values
@@ -88,7 +92,8 @@ export function RowTraceBody({ trace }: { trace: RowTrace }) {
           disabled={!settings || !matching.length}
           onClick={() => select(matching)}
         >
-          Select {matching.length} categories
+          Select {matching.length}{" "}
+          {matching.length === 1 ? "category" : "categories"}
         </button>
         <div className="space-y-1">
           {matching.slice(page * 25, (page + 1) * 25).map((item) => (
@@ -149,7 +154,8 @@ export function RowTraceBody({ trace }: { trace: RowTrace }) {
               rowCount: ids.length,
               contributors: ids.map((sourceId) => ({
                 sourceId,
-                input: trace.categories[0]?.value,
+                input: inputs[sourceId],
+                rawInput: rawData[sourceId]?.[trace.field],
                 included: true,
               })),
             }}

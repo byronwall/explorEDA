@@ -177,7 +177,7 @@ it("discovers Histogram and Distribution without adding a preview to the saved l
     within(dialog).getByRole("button", { name: "Histogram" })
   ).toHaveAttribute("aria-pressed", "true");
   fireEvent.click(
-    within(dialog).getByRole("button", { name: "Bar Chart", exact: true })
+    within(dialog).getByRole("button", { name: "Bar Chart" })
   );
   expect(within(dialog).getByLabelText("Data mode")).toHaveValue("category");
   fireEvent.click(within(dialog).getByRole("button", { name: "Histogram" }));

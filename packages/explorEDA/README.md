@@ -166,3 +166,18 @@ const calculation: SavedCalculation = {
 ```
 
 See [the calculation workflow](../../docs/calculation-workflow.md) and the demo's `calculated-orders` example.
+
+
+### Histogram and Distribution
+
+Add chart lists Histogram for numeric fields and Distribution for box plots.
+Distribution offers Box, Violin, and an Observations overlay. These use the existing
+`bar` and `boxplot` saved types. Set `showObservations: true` on a box plot to draw
+the first 300 valid source rows in each group. Statistics use all valid values.
+Inspect a point to see its source ID and value. Inspect the distribution to see
+quartiles, whiskers, density bandwidth, and excluded rows.
+
+Row Chart groups categories that do not fit under Other categories. Inspect this
+bar to search its members, inspect source rows, or select categories. The saved
+filter contains exact category values. Resizing changes the displayed groups and
+keeps the selection. A literal “Other categories” value remains a separate category.

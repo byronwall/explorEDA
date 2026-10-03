@@ -219,10 +219,19 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
       .domain(displayCounts.map((d) => d.key))
       .range([
         0,
-        Math.min(innerHeight, displayCounts.length * settings.maxRowHeight),
+        Math.min(
+          innerHeight,
+          displayCounts.length *
+            Math.max(settings.minRowHeight, settings.maxRowHeight)
+        ),
       ])
       .padding(0.3);
-  }, [displayCounts, innerHeight, settings.maxRowHeight]);
+  }, [
+    displayCounts,
+    innerHeight,
+    settings.minRowHeight,
+    settings.maxRowHeight,
+  ]);
 
   if (displayCounts.length === 0) {
     return <div style={{ width, height }}>No data to display</div>;
@@ -295,7 +304,17 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
                 tabIndex={0}
                 aria-label={`${label}: ${count.toLocaleString()} rows`}
                 aria-pressed={
-                  other ? undefined : categoryIncludes(filterValues, value)
+                  other
+                    ? members.every((item) =>
+                        categoryIncludes(filterValues, item.value)
+                      )
+                      ? true
+                      : members.some((item) =>
+                            categoryIncludes(filterValues, item.value)
+                          )
+                        ? "mixed"
+                        : false
+                    : categoryIncludes(filterValues, value)
                 }
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
