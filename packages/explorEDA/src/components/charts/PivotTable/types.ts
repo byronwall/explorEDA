@@ -52,11 +52,15 @@ export interface PivotRow {
   keys: RowKey[];
   headers: PivotHeader[];
   cells: PivotCell[];
+  /** The row across every column value, when the table shows totals. */
+  total?: PivotCell[];
 }
 
 export interface PivotTableData {
   headers: PivotHeader[];
   rows: PivotRow[];
+  /** Each column across every row, and the grand total. */
+  totals?: { cells: PivotCell[]; total?: PivotCell[] };
 }
 
 export interface FilterState {

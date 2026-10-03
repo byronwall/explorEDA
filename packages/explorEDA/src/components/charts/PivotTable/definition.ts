@@ -28,6 +28,10 @@ export interface PivotTableSettings extends BaseChartSettings {
       | "singleValue";
     label?: string;
   }>;
+  /** Adds a Total row and, with a column field, a Total column. On by default. */
+  showTotals?: boolean;
+  /** Tints each value cell by its size within its measure. On by default. */
+  shadeCells?: boolean;
 }
 
 const VALID_AGGREGATIONS: ReadonlySet<

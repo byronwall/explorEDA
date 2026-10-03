@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ColorScale } from "./ColorScale";
 import { planNumericalLegend } from "@/lib/colorScaleMath";
+import { categoryKey } from "@/lib/categories";
 
 describe("ColorScale modifier interaction", () => {
   it("filters by default and traces only with Alt", () => {
@@ -84,4 +85,36 @@ it("renders the same numeric stops that the scatter trace receives", () => {
   expect(screen.getByText("0%")).toBeInTheDocument();
   expect(screen.getByText("100%")).toBeInTheDocument();
   expect(screen.getByRole("img")).toHaveStyle({ background: plan.background });
+});
+
+it("lists each value with its share of the rows on show", () => {
+  render(
+    <ColorScale
+      layout="list"
+      scale={{
+        id: "colors",
+        name: "Channel",
+        type: "categorical",
+        sourceField: "Channel",
+        mapping: new Map(),
+        palette: ["#123456"],
+      }}
+      width={240}
+      wrap={false}
+      numericalBreakpoints={5}
+      getColorForValue={() => "#123456"}
+      counts={
+        new Map([
+          [categoryKey("Online"), 3],
+          [categoryKey("Store"), 1],
+        ])
+      }
+      countWidth={1}
+      categories={["Online", "Store"]}
+      selected={[]}
+      onToggle={() => {}}
+    />
+  );
+  expect(screen.getByText("75%")).toBeInTheDocument();
+  expect(screen.getByText("25%")).toBeInTheDocument();
 });
