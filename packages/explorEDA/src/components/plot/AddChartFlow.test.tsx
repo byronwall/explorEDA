@@ -168,3 +168,29 @@ it("leaves every chart in place when a proposed move is canceled", async () => {
   expect(screen.getByLabelText("Charts")).toHaveTextContent(/^bar@0,0$/);
   expect(screen.getByLabelText("Live charts")).toHaveTextContent("1");
 });
+
+it("discovers Histogram and Distribution without adding a preview to the saved layout", async () => {
+  renderWorkspace();
+  fireEvent.click(screen.getByRole("button", { name: "Add chart" }));
+  const dialog = await screen.findByRole("dialog", { name: "Add a chart" });
+  expect(
+    within(dialog).getByRole("button", { name: "Histogram" })
+  ).toHaveAttribute("aria-pressed", "true");
+  fireEvent.click(
+    within(dialog).getByRole("button", { name: "Bar Chart", exact: true })
+  );
+  expect(within(dialog).getByLabelText("Data mode")).toHaveValue("category");
+  fireEvent.click(within(dialog).getByRole("button", { name: "Histogram" }));
+  expect(within(dialog).getByLabelText("Data mode")).toHaveValue("histogram");
+  fireEvent.click(within(dialog).getByRole("button", { name: "Distribution" }));
+  fireEvent.change(within(dialog).getByLabelText("Display"), {
+    target: { value: "violin" },
+  });
+  fireEvent.click(within(dialog).getByRole("switch", { name: "Observations" }));
+  expect(screen.getByLabelText("Charts")).toHaveTextContent(/^bar@0,0$/);
+  fireEvent.click(within(dialog).getByRole("button", { name: "Add to grid" }));
+  fireEvent.keyDown(document.body, { key: "Enter" });
+  expect(screen.getByLabelText("Charts")).toHaveTextContent(
+    "bar@0,0 boxplot@6,0"
+  );
+});

@@ -1,3 +1,4 @@
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { ComboBox } from "@/components/ComboBox";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
@@ -15,18 +16,20 @@ export function BoxPlotSettingsPanel({
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-[120px_1fr] items-center gap-4">
-        <Label htmlFor="field">Field</Label>
+        <Label>Numeric field</Label>
         <FieldSelector
           label=""
+          placeholder="Numeric field"
           value={settings.field}
           onChange={(value) => onSettingsChange({ ...settings, field: value })}
         />
       </div>
 
       <div className="grid grid-cols-[120px_1fr] items-center gap-4">
-        <Label htmlFor="colorField">Color Field</Label>
+        <Label htmlFor="colorField">Group by</Label>
         <FieldSelector
           label=""
+          placeholder="Group by"
           value={settings.colorField ?? ""}
           allowClear
           onChange={(value) =>
@@ -57,13 +60,15 @@ export function BoxPlotSettingsPanel({
 
       <div className="grid grid-cols-[120px_1fr] items-center gap-4">
         <Label htmlFor="showOutliers">Show Outliers</Label>
-        <Switch
-          id="showOutliers"
-          checked={settings.showOutliers}
-          onCheckedChange={(checked) =>
-            onSettingsChange({ ...settings, showOutliers: checked })
-          }
-        />
+        <ActionTooltip content="Show values beyond the whiskers as separate points.">
+          <Switch
+            id="showOutliers"
+            checked={settings.showOutliers}
+            onCheckedChange={(checked) =>
+              onSettingsChange({ ...settings, showOutliers: checked })
+            }
+          />
+        </ActionTooltip>
       </div>
 
       <div className="grid grid-cols-[120px_1fr] items-center gap-4">
@@ -83,27 +88,48 @@ export function BoxPlotSettingsPanel({
       </div>
 
       <div className="grid grid-cols-[120px_1fr] items-center gap-4">
-        <Label htmlFor="violinOverlay">Violin Overlay</Label>
-        <Switch
-          id="violinOverlay"
-          checked={settings.violinOverlay}
-          onCheckedChange={(checked) =>
-            onSettingsChange({ ...settings, violinOverlay: checked })
-          }
-        />
+        <Label htmlFor="distribution-display">Display</Label>
+        <ActionTooltip content="Box shows quartiles and whiskers. Violin adds a density shape around the box.">
+          <select
+            id="distribution-display"
+            className="h-9 min-w-0 rounded border border-input bg-background px-2 text-sm"
+            value={settings.violinOverlay ? "violin" : "box"}
+            onChange={(event) =>
+              onSettingsChange({
+                ...settings,
+                violinOverlay: event.target.value === "violin",
+              })
+            }
+          >
+            <option value="box">Box</option>
+            <option value="violin">Violin</option>
+          </select>
+        </ActionTooltip>
+        <Label htmlFor="distribution-observations">Observations</Label>
+        <ActionTooltip content="Show individual numeric values over the summary. The first 300 source rows per group are shown.">
+          <Switch
+            id="distribution-observations"
+            checked={settings.showObservations ?? false}
+            onCheckedChange={(showObservations) =>
+              onSettingsChange({ ...settings, showObservations })
+            }
+          />
+        </ActionTooltip>
       </div>
 
       {settings.violinOverlay && (
         <>
           <div className="grid grid-cols-[120px_1fr] items-center gap-4">
             <Label htmlFor="autoBandwidth">Auto Bandwidth</Label>
-            <Switch
-              id="autoBandwidth"
-              checked={settings.autoBandwidth}
-              onCheckedChange={(checked) =>
-                onSettingsChange({ ...settings, autoBandwidth: checked })
-              }
-            />
+            <ActionTooltip content="Use the group spread and row count to choose density smoothing.">
+              <Switch
+                id="autoBandwidth"
+                checked={settings.autoBandwidth}
+                onCheckedChange={(checked) =>
+                  onSettingsChange({ ...settings, autoBandwidth: checked })
+                }
+              />
+            </ActionTooltip>
           </div>
           {!settings.autoBandwidth && (
             <div className="grid grid-cols-[120px_1fr] items-center gap-4">

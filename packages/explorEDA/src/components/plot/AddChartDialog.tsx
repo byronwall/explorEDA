@@ -1,6 +1,6 @@
 import { useContext, useEffect, useId, useMemo, useRef, useState } from "react";
 import { chartRegistry, useChartDefinition } from "@/charts/registry";
-import { DataLayerContext } from "@/providers/DataLayerProvider";
+import { DataLayerContext, useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
 import { mergeWithDefaultSettings } from "@/utils/defaultSettings";
 import { useCreateCharts } from "@/hooks/useCreateCharts";
@@ -100,7 +100,26 @@ function AddChartDialogContent({
 
   const chartTypes = chartRegistry
     .getAll()
+    .flatMap((definition) => {
+      const option = { ...definition, key: definition.type };
+      if (definition.type === "bar")
+        return [option, { ...option, key: "histogram", name: "Histogram" }];
+      if (definition.type === "boxplot")
+        return [{ ...option, name: "Distribution" }];
+      return [option];
+    })
     .sort((a, b) => a.name.localeCompare(b.name));
+  const numericFields = useDataLayer((state) => state.fieldProfiles)
+    .filter((field) => field.dataType === "numeric")
+    .map((field) => field.name);
+  const selectedType =
+    preview.type === "bar" &&
+    !preview.aggregateId &&
+    !preview.seriesField &&
+    !preview.forceString &&
+    numericFields.includes(settings.field)
+      ? "histogram"
+      : settings.type;
   const SettingsPanel = definition.settingsPanel;
 
   return (
@@ -144,17 +163,21 @@ function AddChartDialogContent({
                 const Icon = option.icon;
                 return (
                   <button
-                    key={option.type}
+                    key={option.key}
                     type="button"
-                    aria-pressed={option.type === settings.type}
+                    aria-pressed={option.key === selectedType}
+                    disabled={
+                      option.key === "histogram" && !numericFields.length
+                    }
                     onClick={() => {
-                      if (option.type === settings.type) return;
-                      updateDraft(
-                        buildChart(option.type, "", draft.target) as Omit<
-                          ChartSettings,
-                          "id"
-                        >
-                      );
+                      if (option.key === selectedType) return;
+                      const next = buildChart(option.type, "", draft.target);
+                      if (next.type === "bar") {
+                        next.forceString = option.key !== "histogram";
+                        if (option.key === "histogram")
+                          next.field = numericFields[0]!;
+                      }
+                      updateDraft(next);
                     }}
                   >
                     <Icon aria-hidden="true" />
@@ -192,6 +215,9 @@ function AddChartDialogContent({
                 <ChartTraceScope>
                   {(preview.type === "metric-card" ||
                     preview.type === "map" ||
+                    preview.type === "bar" ||
+                    preview.type === "row" ||
+                    preview.type === "boxplot" ||
                     (preview.type === "line" && preview.time)) && (
                     <div className="absolute right-2 top-2 z-10">
                       <ChartTraceInspector type={preview.type} />
