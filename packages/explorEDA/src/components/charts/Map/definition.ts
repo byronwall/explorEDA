@@ -2,7 +2,7 @@ import { Map as MapIcon } from "lucide-react";
 import { applyFilter } from "@/hooks/applyFilter";
 import type { BaseChartSettings, ChartDefinition } from "@/types/ChartTypes";
 import { DEFAULT_CHART_SETTINGS } from "@/utils/defaultSettings";
-import { PointMap } from "./PointMap";
+import { MapChart } from "./MapChart";
 import { MapSettingsPanel } from "./MapSettingsPanel";
 
 export interface MapView {
@@ -12,7 +12,14 @@ export interface MapView {
 }
 export interface MapSettings extends BaseChartSettings {
   type: "map";
-  mode: "point";
+  mode: "point" | "region";
+  geometryAssetId?: string;
+  regionField?: string;
+  featureKey?: string;
+  aggregation?: "count" | "sum" | "average";
+  measureField?: string;
+  showRegionLabels?: boolean;
+  outlineWidth?: number;
   latitudeField: string;
   longitudeField: string;
   labelField?: string;
@@ -25,9 +32,9 @@ export interface MapSettings extends BaseChartSettings {
 export const mapDefinition: ChartDefinition<MapSettings> = {
   type: "map",
   name: "Map",
-  description: "Locate records by latitude and longitude",
+  description: "Locate records or compare measures across regions",
   icon: MapIcon,
-  component: PointMap,
+  component: MapChart,
   settingsPanel: MapSettingsPanel,
   createDefaultSettings: (layout) => ({
     ...DEFAULT_CHART_SETTINGS,
@@ -45,7 +52,14 @@ export const mapDefinition: ChartDefinition<MapSettings> = {
     filters: [],
   }),
   validateSettings: (settings) =>
-    Boolean(settings.latitudeField && settings.longitudeField),
+    settings.mode === "region"
+      ? Boolean(
+          settings.geometryAssetId &&
+            settings.regionField &&
+            settings.featureKey &&
+            (settings.aggregation === "count" || settings.measureField)
+        )
+      : Boolean(settings.latitudeField && settings.longitudeField),
   getFilterFunction: (settings, getColumn) => {
     const filters = settings.filters.map((filter) => ({
       filter,

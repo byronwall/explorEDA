@@ -23,7 +23,7 @@ export function chartFilterFields(
   const own: ChartFilterField[] = (() => {
     switch (settings.type) {
       case "map":
-        return [{field: settings.latitudeField}, {field: settings.longitudeField}];
+        return settings.mode === "region" ? [{field: settings.regionField ?? ""}] : [{field: settings.latitudeField}, {field: settings.longitudeField}];
       case "scatter":
         return [{ field: settings.xField }, { field: settings.yField }];
       case "line":

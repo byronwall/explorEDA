@@ -66,7 +66,7 @@ const CATEGORY_LABELED_CHART_TYPES = new Set(["row", "boxplot"]);
 const TRACE_COPY = {
   map: {
     heading: "Map trace",
-    emptyText: "Choose Inspect point, or Alt-click a point, to see its source coordinates and projection. Find any source row below.",
+    emptyText: "Choose Inspect point or Inspect region to see its source records and projection. Alt-click a mark, or find any source row below.",
     ariaLabel: "Map trace inspector",
   },
   line: {

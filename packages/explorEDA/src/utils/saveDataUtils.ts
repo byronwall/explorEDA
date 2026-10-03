@@ -1,3 +1,4 @@
+import { isGeometryAsset } from "@/lib/geometryAssets";
 import type {
   SavedAnalysisStructure,
   SavedDataStructure,
@@ -481,7 +482,12 @@ function isChart(value: unknown): boolean {
         isFiniteNumber(value.lineWidth)
       );
     case "map":
-      return value.mode === "point" &&
+      return ["point", "region"].includes(value.mode as string) &&
+        (value.mode !== "region" || (typeof value.geometryAssetId === "string" &&
+          typeof value.regionField === "string" && typeof value.featureKey === "string" &&
+          ["count", "sum", "average"].includes(value.aggregation as string) &&
+          (value.aggregation === "count" || typeof value.measureField === "string") &&
+          typeof value.showRegionLabels === "boolean" && isFiniteNumber(value.outlineWidth) && value.outlineWidth >= 0 && value.outlineWidth <= 4)) &&
         typeof value.latitudeField === "string" && typeof value.longitudeField === "string" &&
         (value.labelField === undefined || typeof value.labelField === "string") &&
         (value.sizeField === undefined || typeof value.sizeField === "string") &&
@@ -655,6 +661,13 @@ export function validateSavedData(data: unknown): data is SavedDataStructure {
   ) {
     return false;
   }
+
+  if (data.geometryAssets !== undefined &&
+    (!Array.isArray(data.geometryAssets) || !data.geometryAssets.every(isGeometryAsset) ||
+      new Set(data.geometryAssets.map((asset) => asset.id)).size !== data.geometryAssets.length)) return false;
+
+  if (charts.some((chart) => chart.type === "map" && chart.mode === "region" && chart.geometryAssetId &&
+    !(data.geometryAssets as {id:string}[] | undefined)?.some((asset) => asset.id === chart.geometryAssetId))) return false;
 
   if (data.rowsSettings !== undefined) {
     const rowsSettings = data.rowsSettings;

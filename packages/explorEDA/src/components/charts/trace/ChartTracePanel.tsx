@@ -1,3 +1,4 @@
+import { RegionTraceBody } from "../Map/RegionTraceBody";
 import { MapTraceBody } from "../Map/MapTraceBody";
 import { useState } from "react";
 import { BarTraceBody } from "../BarChart/BarTraceBody";
@@ -21,6 +22,10 @@ import type { ChartTrace } from "./traceTypes";
 
 function TraceBody({ trace }: { trace: ChartTrace }) {
   switch (trace.kind) {
+    case "map-region":
+    case "map-region-row":
+    case "map-joins":
+      return <RegionTraceBody trace={trace} />;
     case "map-point":
     case "map-exclusions":
     case "map-offscreen":
