@@ -149,6 +149,7 @@ export function CalculationManager() {
                           variant="ghost"
                           size="icon"
                           aria-label={"Delete " + name}
+                          tooltip="Delete calculation"
                           onClick={() => {
                             try {
                               removeCalculation(name);

@@ -1,0 +1,686 @@
+/* Feature coverage (development view). Status colors are semantic tokens
+   so light and dark themes stay legible. */
+:root {
+  --success: hsl(152 60% 30%);
+  --info: hsl(215 72% 46%);
+  --danger: hsl(0 70% 45%);
+}
+.dark {
+  --success: hsl(150 50% 58%);
+  --info: hsl(212 85% 70%);
+  --danger: hsl(0 85% 72%);
+}
+
+.coverage {
+  --coverage-tone: var(--muted-foreground);
+  font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+}
+.coverage [data-tone="success"] {
+  --coverage-tone: var(--success);
+}
+.coverage [data-tone="info"] {
+  --coverage-tone: var(--info);
+}
+.coverage [data-tone="danger"] {
+  --coverage-tone: var(--danger);
+}
+
+.coverage-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: -8px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--muted-foreground);
+  font-size: 13px;
+}
+.coverage-back svg {
+  width: 15px;
+  height: 15px;
+}
+.coverage-back:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+.coverage-link {
+  text-decoration: underline;
+  text-decoration-color: var(--border);
+  text-underline-offset: 3px;
+}
+.coverage-link:hover {
+  text-decoration-color: currentColor;
+}
+.coverage a:focus-visible,
+.coverage summary:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.coverage-matrix-scroll:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.coverage-panel {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  overflow: hidden;
+}
+
+/* Summary */
+.coverage-stat {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  padding: 12px 14px;
+}
+.coverage-stat-label {
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 500;
+}
+.coverage-stat-value {
+  margin-top: 2px;
+  font-size: 24px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.coverage-stat[data-tone="danger"] .coverage-stat-value {
+  color: var(--danger);
+}
+.coverage-stat-total {
+  color: var(--muted-foreground);
+  font-size: 14px;
+  font-weight: 500;
+}
+.coverage-meter {
+  height: 4px;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: var(--muted);
+  overflow: hidden;
+}
+.coverage-meter span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--coverage-tone);
+}
+.coverage-stat-hint {
+  margin-top: 8px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.coverage-terms {
+  display: grid;
+  gap: 6px 24px;
+  margin: 16px 0 24px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.coverage-terms dt {
+  display: inline;
+  color: var(--foreground);
+  font-weight: 600;
+}
+.coverage-terms dt::after {
+  content: " — ";
+  color: var(--muted-foreground);
+  font-weight: 400;
+}
+.coverage-terms dd {
+  display: inline;
+}
+@media (min-width: 900px) {
+  .coverage-terms {
+    grid-template-columns: 1fr 1fr 1.6fr;
+  }
+}
+
+/* View tabs */
+.coverage-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.coverage-tabs a {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-bottom: 2px solid transparent;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.coverage-tabs a:hover {
+  color: var(--foreground);
+}
+.coverage-tabs a[aria-current="page"] {
+  border-bottom-color: var(--primary);
+  color: var(--foreground);
+}
+.coverage-tabs a:focus-visible {
+  outline-offset: -2px;
+}
+.coverage-tab-count {
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  line-height: 18px;
+  text-align: center;
+}
+
+/* Status chip */
+.coverage-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 8px;
+  border: 1px solid color-mix(in oklab, var(--coverage-tone) 35%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--coverage-tone) 9%, transparent);
+  color: var(--coverage-tone);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 18px;
+  white-space: nowrap;
+}
+.coverage-chip[data-tone="muted"] {
+  border-style: dashed;
+  border-color: var(--border);
+  background: transparent;
+}
+.coverage-chip svg {
+  width: 11px;
+  height: 11px;
+}
+
+/* Usage mark: checked, shown, or not recorded */
+.coverage-mark {
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+}
+.coverage-mark[data-status="reviewed"] {
+  background: var(--success);
+  color: var(--background);
+}
+.coverage-mark[data-status="reviewed"] svg {
+  width: 10px;
+  height: 10px;
+}
+.coverage-mark[data-status="shown"]::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--info);
+}
+.coverage-mark[data-status="not-used"]::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--muted-foreground) 45%, transparent);
+}
+
+.coverage-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+.coverage-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Feature list */
+.coverage-feature-head,
+.coverage-feature-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+.coverage-feature-head {
+  display: none;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.coverage-family {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in oklab, var(--muted) 55%, var(--card));
+}
+.coverage-family h3 {
+  font-size: 13px;
+  font-weight: 600;
+}
+.coverage-family span {
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+.coverage-feature {
+  border-bottom: 1px solid var(--border);
+}
+.coverage-panel > section:last-child .coverage-feature:last-child {
+  border-bottom: 0;
+}
+.coverage-feature-summary {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  list-style: none;
+}
+.coverage-feature-summary::-webkit-details-marker {
+  display: none;
+}
+.coverage-feature-summary:hover {
+  background: color-mix(in oklab, var(--muted) 60%, var(--card));
+}
+.coverage-feature-summary:focus-visible {
+  outline-offset: -2px;
+}
+.coverage-feature-name {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+.coverage-chevron {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+  color: var(--muted-foreground);
+  transition: transform 120ms ease;
+}
+.coverage-feature-description {
+  display: block;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+details[open] .coverage-feature-description {
+  white-space: normal;
+}
+.coverage-cell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.coverage-strip {
+  display: inline-flex;
+  gap: 3px;
+}
+.coverage-strip .coverage-mark {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+}
+.coverage-strip .coverage-mark[data-status="reviewed"] svg {
+  width: 8px;
+  height: 8px;
+}
+.coverage-strip .coverage-mark[data-status="shown"]::before {
+  width: 7px;
+  height: 7px;
+}
+.coverage-count {
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.coverage-gap-line {
+  color: var(--danger);
+  font-size: 12px;
+  font-weight: 500;
+}
+.coverage-feature-detail {
+  display: grid;
+  gap: 14px;
+  padding: 12px 14px 14px 34px;
+  border-top: 1px dashed var(--border);
+  background: color-mix(in oklab, var(--muted) 40%, var(--card));
+  font-size: 13px;
+}
+.coverage-detail-heading {
+  margin-bottom: 6px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.coverage-gap-list {
+  padding-left: 18px;
+  color: var(--danger);
+  list-style: disc;
+}
+.coverage-evidence-list {
+  display: grid;
+  gap: 6px;
+}
+.coverage-evidence-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+.coverage-evidence-status {
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+@media (min-width: 900px) {
+  .coverage-feature-head,
+  .coverage-feature-summary {
+    grid-template-columns:
+      minmax(14rem, 1.6fr) minmax(8rem, 0.6fr) minmax(12rem, 1fr)
+      minmax(8rem, 0.6fr);
+    align-items: center;
+    gap: 16px;
+  }
+  .coverage-feature-head {
+    display: grid;
+    padding-left: 34px;
+  }
+  .coverage-gap-line {
+    grid-column: 1 / -1;
+    padding-left: 20px;
+  }
+  .coverage-feature-detail {
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  }
+}
+/* Below 900px each status gets its own labelled line under the name. */
+@media (max-width: 899px) {
+  .coverage-feature-summary {
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    column-gap: 8px;
+    row-gap: 6px;
+  }
+  .coverage-feature-name,
+  .coverage-gap-line {
+    grid-column: 1 / -1;
+  }
+  .coverage-gap-line {
+    padding-left: 20px;
+  }
+  .coverage-cell {
+    display: contents;
+  }
+  .coverage-cell::before {
+    content: attr(data-label);
+    align-self: center;
+    padding-left: 20px;
+    color: var(--muted-foreground);
+    font-size: 12px;
+  }
+  .coverage-cell > * {
+    justify-self: start;
+    align-self: center;
+  }
+  .coverage-cell > .coverage-count {
+    display: none;
+  }
+  .coverage-feature-detail {
+    padding-left: 34px;
+  }
+}
+
+/* Example matrix */
+.coverage-matrix-scroll {
+  width: fit-content;
+  max-width: 100%;
+  max-height: min(78vh, 900px);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.coverage-matrix {
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 12px;
+}
+.coverage-matrix th,
+.coverage-matrix td {
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+}
+.coverage-matrix thead th {
+  z-index: 2;
+  background: var(--muted);
+  vertical-align: bottom;
+}
+.coverage-matrix thead .coverage-matrix-corner {
+  left: 0;
+  z-index: 4;
+  padding: 8px 12px;
+  border-right: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: left;
+  text-transform: uppercase;
+}
+.coverage-matrix-example {
+  width: 52px;
+  min-width: 52px;
+  padding: 10px 4px 8px;
+}
+.coverage-matrix-example + .coverage-matrix-example {
+  border-left: 1px solid color-mix(in oklab, var(--border) 55%, transparent);
+}
+.coverage-matrix-example a {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 8px;
+  color: var(--foreground);
+  font-weight: 500;
+}
+.coverage-matrix-example a:hover {
+  color: var(--primary);
+}
+.coverage-matrix-example svg {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  color: var(--muted-foreground);
+}
+.coverage-matrix-example span {
+  display: -webkit-box;
+  max-height: 11rem;
+  overflow: hidden;
+  font-size: 11px;
+  line-height: 1.25;
+  text-align: left;
+  transform: rotate(180deg);
+  writing-mode: vertical-rl;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.coverage-matrix-feature {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 12rem;
+  max-width: 16rem;
+  padding: 6px 12px;
+  border-right: 1px solid var(--border);
+  font-weight: 500;
+  text-align: left;
+}
+.coverage-matrix-feature .coverage-chip {
+  margin-left: 6px;
+  vertical-align: 1px;
+}
+@media (max-width: 640px) {
+  .coverage-matrix-feature {
+    min-width: 8.5rem;
+    max-width: 10rem;
+    padding: 6px 8px;
+  }
+  .coverage-matrix-feature .coverage-chip {
+    display: flex;
+    width: fit-content;
+    margin: 2px 0 0;
+  }
+}
+.coverage-matrix-family th {
+  padding: 0;
+  text-align: left;
+  background: color-mix(in oklab, var(--muted) 55%, var(--card));
+}
+.coverage-matrix-family th span {
+  position: sticky;
+  left: 0;
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.coverage-matrix-cell {
+  height: 30px;
+  padding: 0;
+  text-align: center;
+}
+.coverage-matrix-feature + .coverage-matrix-cell {
+  border-left: 0;
+}
+.coverage-matrix-cell + .coverage-matrix-cell {
+  border-left: 1px solid color-mix(in oklab, var(--border) 55%, transparent);
+}
+.coverage-matrix-cell > a {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 29px;
+}
+.coverage-matrix-cell > .coverage-mark {
+  vertical-align: middle;
+}
+.coverage-matrix-cell > a:hover .coverage-mark {
+  transform: scale(1.2);
+}
+.coverage-matrix tbody tr:not(.coverage-matrix-family):hover > * {
+  background: color-mix(in oklab, var(--muted) 70%, var(--card));
+}
+.coverage-matrix-total {
+  min-width: 64px;
+  padding: 6px 10px;
+  border-left: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+thead .coverage-matrix-total {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.coverage-matrix-total[data-empty] {
+  color: var(--danger);
+  font-weight: 600;
+}
+.coverage-matrix tfoot th,
+.coverage-matrix tfoot td {
+  position: sticky;
+  bottom: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 0;
+  background: var(--muted);
+  font-weight: 600;
+}
+.coverage-matrix tfoot th {
+  z-index: 3;
+}
+.coverage-matrix tfoot td {
+  z-index: 2;
+  min-width: 0;
+  border-left: 0;
+  color: var(--foreground);
+  text-align: center;
+}
+
+/* Example usage cards */
+.coverage-example {
+  padding: 14px;
+}
+.coverage-example-icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+.coverage-example-icon svg {
+  width: 16px;
+  height: 16px;
+}
+.coverage-example-counts {
+  margin: 12px 0 8px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+.coverage-pill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.coverage-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px 2px 4px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+}
+.coverage-pill[data-status="reviewed"] {
+  border-color: color-mix(in oklab, var(--success) 35%, transparent);
+  background: color-mix(in oklab, var(--success) 7%, transparent);
+}

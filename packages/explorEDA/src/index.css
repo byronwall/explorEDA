@@ -2487,11 +2487,26 @@ html {
 .eda-calculation-list td:nth-child(4) {
   white-space: nowrap;
 }
+/* The host app may load its own Tailwind after this sheet, so keep the
+   search icon's room here instead of relying on a padding utility. */
+.eda-calculations-toolbar input {
+  padding-left: 36px;
+}
+/* A narrow settings panel turns each calculation into a compact card:
+   name and delete on top, the formula in a code block, then usage and
+   row checks side by side. */
 @container settings-drawer (max-width: 560px) {
+  .eda-calculations-toolbar {
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    margin-bottom: 8px;
+  }
+  .eda-calculations-toolbar > div {
+    flex: 1 1 100%;
+    width: auto;
+  }
   .eda-calculation-list,
-  .eda-calculation-list tbody,
-  .eda-calculation-list tr,
-  .eda-calculation-list td {
+  .eda-calculation-list tbody {
     display: block;
     width: 100%;
   }
@@ -2504,34 +2519,67 @@ html {
     white-space: nowrap;
   }
   .eda-calculation-list tr {
+    display: grid;
     position: relative;
-    padding: 8px 0;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px 12px;
+    padding: 12px 0;
     border-bottom: 1px solid var(--border);
   }
   .eda-calculation-list td {
-    padding: 6px 12px;
+    display: block;
+    min-width: 0;
+    padding: 0;
     border: 0;
     white-space: normal;
   }
   .eda-calculation-list td::before {
     display: block;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
     color: var(--muted-foreground);
     font-size: 11px;
     content: attr(data-label);
   }
+  .eda-calculation-list td:first-child,
+  .eda-calculation-list td:nth-child(2) {
+    grid-column: 1 / -1;
+  }
   .eda-calculation-list td:first-child {
     min-width: 0;
-    padding-right: 52px;
+    padding-right: 36px;
+  }
+  .eda-calculation-list td:first-child::before,
+  .eda-calculation-list td:nth-child(2)::before,
+  .eda-calculation-list td:last-child::before {
+    content: none;
+  }
+  .eda-calculation-list .eda-calc-formula-link {
+    display: block;
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: color-mix(in oklab, var(--muted) 60%, transparent);
+    font-size: 11.5px;
+    line-height: 1.45;
+  }
+  .eda-calculation-list .eda-calc-formula-link:hover {
+    border-color: color-mix(in oklab, var(--primary) 45%, var(--border));
+  }
+  .eda-calculation-list .eda-calc-input-list {
+    margin-top: 6px;
   }
   .eda-calculation-list td:last-child {
     position: absolute;
-    top: 8px;
-    right: 0;
+    top: 6px;
+    right: -6px;
     width: auto;
   }
-  .eda-calculation-list td:last-child::before {
-    content: none;
+  .eda-calculation-list td:last-child button {
+    color: var(--muted-foreground);
+  }
+  .eda-calculation-list td:last-child button:hover {
+    color: var(--destructive);
   }
 }
 .eda-calc-field-name {
