@@ -40,7 +40,61 @@ describe("calculatePivotData", () => {
     );
 
     expect(result.rows).toHaveLength(4);
-    expect(result.rows.map((row) => row.cells[0]!.value)).toEqual([1, 2, 3, 4]);
+    // Rows sort by their grouping values: numbers first, then text.
+    expect(result.rows.map((row) => row.cells[0]!.value)).toEqual([3, 4, 2, 1]);
+  });
+
+  it("sorts groups naturally and recomputes totals from the rows they cover", () => {
+    const result = calculatePivotData(
+      [
+        { group: "b", size: "10", amount: 1 },
+        { group: "a", size: "2", amount: 3 },
+        { group: "b", size: "2", amount: 5 },
+        { group: null, size: "10", amount: 7 },
+      ],
+      settings({
+        rowFields: ["group"],
+        columnField: "size",
+        valueFields: [{ field: "amount", aggregation: "median" }],
+      })
+    );
+
+    expect(result.headers.map((header) => header.value)).toEqual(["2", "10"]);
+    expect(result.rows.map((row) => row.keys[0]!.value)).toEqual([
+      "a",
+      "b",
+      null,
+    ]);
+    // Row b across both sizes: the median of 1 and 5, not a sum of medians.
+    expect(result.rows[1]!.total!.map((cell) => cell.value)).toEqual([3]);
+    expect(result.totals!.cells.map((cell) => cell.value)).toEqual([4, 4]);
+    expect(result.totals!.total!.map((cell) => cell.value)).toEqual([4]);
+  });
+
+  it("leaves totals out when they are off or meaningless", () => {
+    const rows = [
+      { group: "a", amount: 1 },
+      { group: "b", amount: 2 },
+    ];
+    expect(
+      calculatePivotData(
+        rows,
+        settings({
+          rowFields: ["group"],
+          valueFields: [{ field: "amount", aggregation: "sum" }],
+          showTotals: false,
+        })
+      ).totals
+    ).toBeUndefined();
+    expect(
+      calculatePivotData(
+        rows,
+        settings({
+          rowFields: ["group"],
+          valueFields: [{ field: "amount", aggregation: "singleValue" }],
+        })
+      ).totals
+    ).toBeUndefined();
   });
 
   it("ignores invalid numeric values instead of treating them as zero", () => {
@@ -296,7 +350,8 @@ describe("PivotTable rendering", () => {
     const inspectButton = screen.getByRole("button", { name: /inspect A/ });
     fireEvent.click(inspectButton);
     const dialog = screen.getByRole("dialog");
-    expect(within(dialog).getByText("3.23456789")).toBeInTheDocument();
+    expect(within(dialog).getByText("3.235")).toBeInTheDocument();
+    expect(within(dialog).getByText("Exact 3.23456789")).toBeInTheDocument();
     expect(
       within(dialog).getByText("Source row ID (zero-based)")
     ).toBeInTheDocument();

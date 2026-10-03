@@ -18,6 +18,8 @@ interface ColorScaleProps {
   traceId?: string;
   formatValue?: (value: datum) => string;
   numericalPlan?: ReturnType<typeof planNumericalLegend>;
+  /** A list gives each value a row with its share of the rows on show. */
+  layout?: "row" | "list";
 }
 
 export function ColorScale({
@@ -35,6 +37,7 @@ export function ColorScale({
   traceId,
   formatValue = categoryLabel,
   numericalPlan,
+  layout = "row",
 }: ColorScaleProps) {
   if (scale.type === "numerical") {
     const plan =
@@ -78,11 +81,21 @@ export function ColorScale({
     );
   }
 
+  const list = layout === "list";
+  let total = 0;
+  let most = 0;
+  counts.forEach((count) => {
+    total += count;
+    most = Math.max(most, count);
+  });
   return (
-    <div className={`eda-legend-items ${wrap ? "is-wrapped" : ""}`}>
+    <div
+      className={`eda-legend-items ${wrap ? "is-wrapped" : ""} ${list ? "is-list" : ""}`}
+    >
       {categories.map((value) => {
         const active = categoryIncludes(selected, value);
         const count = counts.get(categoryKey(value)) ?? 0;
+        const share = total > 0 ? count / total : 0;
         return (
           <button
             key={categoryKey(value)}
@@ -105,12 +118,30 @@ export function ColorScale({
               aria-hidden="true"
             />
             <span className="eda-legend-value">{formatValue(value)}</span>
+            {list && (
+              <span className="eda-legend-share" aria-hidden="true">
+                <span
+                  style={{
+                    // The most common value fills the track; text gives the share.
+                    width: `${most > 0 ? (count / most) * 100 : 0}%`,
+                    background: getColorForValue(scale.id, value),
+                  }}
+                />
+              </span>
+            )}
             <span
               className="eda-legend-count"
               style={{ width: `${countWidth}ch` }}
             >
               {count.toLocaleString()}
             </span>
+            {list && (
+              <span className="eda-legend-percent">
+                {share > 0 && share < 0.01
+                  ? "<1%"
+                  : `${Math.round(share * 100)}%`}
+              </span>
+            )}
           </button>
         );
       })}

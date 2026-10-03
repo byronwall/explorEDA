@@ -127,3 +127,23 @@
     0 4px 12px -2px color-mix(in oklab, var(--foreground) 14%, transparent),
     0 1px 3px color-mix(in oklab, var(--foreground) 8%, transparent);
 }
+
+/* Long lines are hard to follow, so text keeps a reading measure in a wide
+   panel, and headings step down in a narrow one. */
+.eda-note {
+  container-type: inline-size;
+}
+
+.eda-note-content > :is(p, ul, ol, blockquote, h1, h2, h3, h4, h5, h6) {
+  max-width: 72ch;
+}
+
+@container (max-width: 420px) {
+  .eda-note-content h1 {
+    font-size: 1.125rem;
+  }
+
+  .eda-note-content h2 {
+    font-size: 1rem;
+  }
+}
