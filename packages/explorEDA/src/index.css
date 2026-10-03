@@ -301,8 +301,16 @@
   white-space: nowrap;
   pointer-events: none;
 }
-/* Heat cells mark hover with an outline; dimming would read as a new value. */
-.eda-panel svg .chart-mark.eda-heat-cell:hover {
+/* The field name above a row chart's category labels. */
+.eda-row-field-title {
+  fill: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 500;
+}
+/* Heat cells and bars mark hover with an outline; a darker shade would read
+   as a new value. */
+.eda-panel svg .chart-mark.eda-heat-cell:hover,
+.eda-panel svg .chart-mark.eda-bar:hover {
   filter: none;
 }
 .eda-heat-label {
@@ -1459,6 +1467,13 @@ html {
 }
 .eda-line-legend-item svg {
   flex-shrink: 0;
+}
+/* Hovering one series in the legend fades the others, here and on the plot. */
+.eda-line-legend-item {
+  transition: opacity 140ms ease-out;
+}
+.eda-line-legend-item[data-muted] {
+  opacity: 0.45;
 }
 
 .eda-table-search input[aria-label="Search table"] {

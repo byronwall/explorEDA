@@ -195,7 +195,8 @@ function planAxis(
   input: AxisInput,
   plotWidth: number,
   plotHeight: number,
-  margin: MarginSettings
+  margin: MarginSettings,
+  footer = 0
 ): AxisPlan {
   const { scale, format } = input;
   const band = "bandwidth" in scale;
@@ -285,7 +286,7 @@ function planAxis(
               text: input.label,
               fullText: input.label,
               x: plotWidth / 2,
-              y: plotHeight + Math.max(32, margin.bottom - 8),
+              y: plotHeight + Math.max(32, margin.bottom - footer - 8),
               anchor: "middle",
               fontSize: 11,
             }
@@ -370,6 +371,7 @@ export function planAxes({
   plotHeight,
   margin,
   marginPolicy,
+  footer = 0,
 }: {
   x: AxisInput;
   y: AxisInput;
@@ -377,9 +379,11 @@ export function planAxes({
   plotHeight: number;
   margin: MarginSettings;
   marginPolicy?: MarginPolicy;
+  /** Bottom margin kept below the axis title, such as for a status line. */
+  footer?: number;
 }): ChartAxesPlan {
   return {
-    x: planAxis("x", x, plotWidth, plotHeight, margin),
+    x: planAxis("x", x, plotWidth, plotHeight, margin, footer),
     y: planAxis("y", y, plotWidth, plotHeight, margin),
     plotWidth,
     plotHeight,
@@ -405,8 +409,7 @@ export function planChartMargin({
   /** Tick labels of a band Y axis, which replace the numeric ticks. */
   yLabels?: string[];
 }): { margin: MarginSettings; policy: MarginPolicy } {
-  const labels =
-    yLabels ?? scaleLinear().domain(yDomain).ticks(5).map(String);
+  const labels = yLabels ?? scaleLinear().domain(yDomain).ticks(5).map(String);
   const labelLeftMargin = Math.max(
     margin.left,
     ...labels.map((label) => label.length * 7 + (hasYLabel ? 38 : 18))
