@@ -63,6 +63,23 @@ export function RegionTraceBody({ trace }: { trace: RegionTrace }) {
                 )
                 .join(", ")}
             </TraceReadout>
+            <details>
+              <summary className="cursor-pointer">
+                Feature geometry and properties
+              </summary>
+              <pre className="mt-2 max-h-48 overflow-auto rounded border border-border p-2 text-xs">
+                {JSON.stringify(
+                  {
+                    type: "FeatureCollection",
+                    features: region.features.map(
+                      (index) => plan.asset?.geometry.features[index]
+                    ),
+                  },
+                  null,
+                  2
+                )}
+              </pre>
+            </details>
             {region.features.length > 1 && (
               <p>
                 These features share one typed key. They form one region; each
@@ -70,7 +87,7 @@ export function RegionTraceBody({ trace }: { trace: RegionTrace }) {
               </p>
             )}
             <TraceReadout label="Matching rows">{region.rowCount}</TraceReadout>
-            <TraceReadout label="All source rows">
+            <TraceReadout label="Joined source rows">
               {region.sourceIds.length}
             </TraceReadout>
             <TraceReadout label="Result">
@@ -142,6 +159,12 @@ export function RegionTraceBody({ trace }: { trace: RegionTrace }) {
                 ? `${region.path.length} characters · D3 geographic path`
                 : "Outside the view"}
             </TraceReadout>
+            <details>
+              <summary className="cursor-pointer">Projected path</summary>
+              <code className="mt-2 block max-h-32 overflow-auto break-all rounded border border-border p-2">
+                {region.path || "Outside the view"}
+              </code>
+            </details>
             {region.path && (
               <TraceReadout label="Projected bounds">
                 {region.bounds

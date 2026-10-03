@@ -22,6 +22,9 @@ export function featureValue(
     key === "@id" ? feature.id : key ? feature.properties?.[key] : undefined;
   return regionKey(value) ? value : undefined;
 }
+export const regionMapHeight = (width: number, height: number) =>
+  Math.max(40, height - (width < 300 ? 160 : width < 480 ? 128 : 96));
+
 export function planRegionMap(
   settings: MapSettings,
   snapshot: MapSnapshot,
@@ -29,7 +32,7 @@ export function planRegionMap(
   width: number,
   height: number
 ) {
-  const mapHeight = Math.max(40, height - 96);
+  const mapHeight = regionMapHeight(width, height);
   const view = settings.view ?? WORLD_VIEW;
   const projection = mapProjection(settings.projection, view, width, mapHeight);
   const geometry = asset ? regionGeometry(asset.geometry) : undefined;

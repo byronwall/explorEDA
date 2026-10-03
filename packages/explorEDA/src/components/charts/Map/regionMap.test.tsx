@@ -217,13 +217,21 @@ function Workspace() {
   const save = useDataLayer((state) => state.saveToStructure);
   const restore = useDataLayer((state) => state.restoreFromStructure);
   const add = useDataLayer((state) => state.addGeometryAsset);
+  const updateField = useDataLayer((state) => state.updateFieldSettings);
   void nonce;
   return (
     <>
       <output aria-label="Selected rows">
         {wrapper.getFilteredRowIds().join(",")}
       </output>
-      <button onClick={() => add(asset)}>Load geometry</button>
+      <button
+        onClick={() => {
+          add(asset);
+          updateField("value", { type: "numeric" });
+        }}
+      >
+        Load geometry
+      </button>
       <button
         onClick={() => {
           const saved = JSON.parse(stringifySavedData(save()));
@@ -278,4 +286,11 @@ it("selects exact joined rows, traces unmatched inputs, and restores shared geom
   expect(screen.getByLabelText("Region map trace")).toHaveTextContent(
     "No matching feature key"
   );
+  fireEvent.change(screen.getByRole("spinbutton", { name: "Source row ID" }), {
+    target: { value: "3" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Find row" }));
+  expect(
+    screen.getByRole("table", { name: "Aggregate source contributors" })
+  ).toHaveTextContent("Not a finite number");
 });

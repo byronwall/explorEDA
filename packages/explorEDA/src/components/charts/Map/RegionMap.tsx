@@ -13,7 +13,7 @@ import type { TraceSource } from "../trace/traceTypes";
 import type { MapSettings, MapView } from "./definition";
 import { mapPaths, WORLD_VIEW } from "./mapGeometry";
 import { fitRegionGeometry } from "./regionGeometry";
-import { planRegionMap, regionFilters } from "./regionMapPlan";
+import { planRegionMap, regionFilters, regionMapHeight } from "./regionMapPlan";
 import { useMapData } from "./useMapData";
 import { useMapPan } from "./useMapPan";
 
@@ -43,7 +43,7 @@ export function RegionMap({
   const { draftView, events, suppressClick } = useMapPan(
     settings,
     width,
-    Math.max(40, height - 96),
+    regionMapHeight(width, height),
     saveView
   );
   const plan = useMemo(
@@ -90,12 +90,18 @@ export function RegionMap({
           fields,
           region: region && {
             ...region,
-            contributors: region.contributors.map((item) => ({
-              ...item,
-              rawInput: settings.measureField
-                ? traceField(settings.measureField, item.sourceId).raw
-                : undefined,
-            })),
+            contributors: region.contributors.map((item) => {
+              const field = settings.measureField
+                ? traceField(settings.measureField, item.sourceId)
+                : undefined;
+              return {
+                ...item,
+                rawInput: field?.raw,
+                exclusionReason: item.included
+                  ? undefined
+                  : (field?.conversion?.error ?? item.exclusionReason),
+              };
+            }),
           },
         };
       },
@@ -238,7 +244,7 @@ export function RegionMap({
                     ? 0
                     : -1
                 }
-                aria-label={`${region.label}; ${region.state === "value" ? `${metricLabel}: ${format(region.value!)}` : region.state === "empty" ? "No rows" : "No valid measure"}; ${region.rowCount} rows`}
+                aria-label={`${region.label}; ${region.state === "value" ? `${metricLabel}: ${format(region.value!)}` : region.state === "empty" ? "No rows" : "No valid measure"}; ${region.rowCount} ${region.rowCount === 1 ? "row" : "rows"}`}
                 aria-pressed={region.selected}
                 onFocus={() => setActiveId(region.id)}
                 onPointerEnter={() => {
@@ -404,17 +410,23 @@ export function RegionMap({
           ))}
         </svg>
         <span>{format(plan.domain[1])}</span>
-        <svg width={10} height={10} aria-hidden="true">
-          <rect width={10} height={10} fill={`url(#${owner}-empty)`} />
-        </svg>
-        <span>No rows</span>
-        <svg width={10} height={10} aria-hidden="true">
-          <rect width={10} height={10} fill={`url(#${owner}-invalid)`} />
-        </svg>
-        <span>Invalid measure</span>
+        <span className="inline-flex items-center gap-1">
+          <svg width={10} height={10} aria-hidden="true">
+            <rect width={10} height={10} fill={`url(#${owner}-empty)`} />
+          </svg>
+          No rows
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <svg width={10} height={10} aria-hidden="true">
+            <rect width={10} height={10} fill={`url(#${owner}-invalid)`} />
+          </svg>
+          Invalid measure
+        </span>
       </div>
       <p className="mt-1 text-xs text-muted-foreground">
-        {plan.regions.length} regions · {plan.unmatched.length} unmatched rows
+        {plan.regions.length} {plan.regions.length === 1 ? "region" : "regions"}{" "}
+        · {plan.unmatched.length} unmatched{" "}
+        {plan.unmatched.length === 1 ? "row" : "rows"}
       </p>
       {activeId && active && (
         <ChartReadout fallbackClassName="eda-chart-readout-inline">

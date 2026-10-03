@@ -249,14 +249,15 @@ export function RegionMapSettings({
           </summary>
           <div className="mt-2 space-y-2 text-xs">
             <p>
-              Exact value and type. {plan.unmatched.length} unmatched rows ·{" "}
+              Exact value and type. Unmatched rows: {plan.unmatched.length} ·
+              Unmatched regions:{" "}
               {plan.regions.filter((region) => !region.sourceIds.length).length}{" "}
-              unmatched regions ·{" "}
+              · Duplicate feature keys:{" "}
               {
                 plan.regions.filter((region) => region.features.length > 1)
                   .length
-              }{" "}
-              duplicate feature keys.
+              }
+              .
             </p>
             <div className="overflow-auto rounded border border-border">
               <table className="w-full text-left">
