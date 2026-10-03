@@ -9,6 +9,7 @@ import {
   groupedBarsDashboard,
   stackedBarsDashboard,
   areaDashboard,
+  bubbleDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import { SavedDataStructure } from "exploreda";
@@ -82,6 +83,17 @@ export const FEATURED_EXAMPLE_ID = "shop-operations";
 
 /** Every example, in the order the landing page lists them. */
 export const examples: ExampleData[] = [
+  {
+    id: "bubble-scatter",
+    title: "Trial volume, speed, and conversion",
+    description: "Compare daily response time and conversion. Bubble area shows trial volume, and color marks each release phase.",
+    dataset: { rows: "90 days", fields: 7, source: "Synthetic" },
+    shows: ["Bubble area", "Row selection", "Size tracing"],
+    guide: "Try this: click a bubble to select its day. Inspect bubble shows its size calculation. Change Size by in settings to compare another measure.",
+    icon: ScatterChart,
+    data: "/datasets/product-activity.csv",
+    savedData: bubbleDashboard,
+  },
   {
     id: "shop-operations",
     title: "Inside the order book",

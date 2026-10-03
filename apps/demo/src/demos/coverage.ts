@@ -20,6 +20,14 @@ type FeatureDefinition = {
 
 export const coverageFeatures = [
   {
+    id: "mode:bubble-scatter",
+    label: "Bubble scatter",
+    family: "Chart modes",
+    description: "Map a nonnegative value to point area, select source rows, and inspect the size calculation.",
+    required: true,
+    status: "supported",
+  },
+  {
     id: "mode:area",
     label: "Area and stacked area",
     family: "Chart modes",
@@ -453,6 +461,18 @@ export type ExampleCoverage = {
 };
 
 export const exampleCoverage = [
+  {
+    exampleId: "bubble-scatter",
+    intent: "Compare response time, conversion, and trial volume, with exact source rows and size tracing.",
+    features: {
+      "mode:bubble-scatter": "shown",
+      "chart:scatter": "shown",
+      "chart:metric-card": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
   {
     exampleId: "area-charts",
     intent: "Compare monthly revenue layers and inspect each period's stack bounds and source rows.",

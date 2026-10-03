@@ -9,7 +9,7 @@ Byron approved this sequence after Metric Card PR #114. Each branch starts from 
 | 3 | Grouped bars | `codex/grouped-bars` | #116 | In review |
 | 4 | Stacked and 100% bars | `codex/stacked-bars` | #117 | In review |
 | 5 | Area and stacked area | `codex/area-charts` | #118 | In review |
-| 6 | Bubble scatter | | | Pending |
+| 6 | Bubble scatter | `codex/bubble-scatter` | | In progress |
 | 7 | Binned scatter density | | | Pending |
 | 8 | Point map | | | Pending |
 | 9 | Region map | | | Pending |

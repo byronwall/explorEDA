@@ -65,6 +65,7 @@ describe("example coverage manifest", () => {
       "reviewed"
     );
     expect(getExamplesUsingFeature("chart:row")).toEqual([
+      "bubble-scatter",
       "area-charts",
       "stacked-bars",
       "grouped-bars",

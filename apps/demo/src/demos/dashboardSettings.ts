@@ -458,6 +458,44 @@ export const activityDashboard = dashboard(
   ]
 );
 
+export const bubbleDashboard: SavedDataStructure = {
+  ...activityDashboard,
+  metadata: { ...activityDashboard.metadata, name: "Trial volume, speed, and conversion" },
+  charts: [
+    {
+      ...scatter(
+        "bubble-trials",
+        "Speed, conversion, and trial volume",
+        "Response time (ms)",
+        "Conversion (%)",
+        layout(0, 0, 8, 6),
+        ["Response time (ms)", "Conversion (%)"],
+        "Phase",
+        "phase-colors"
+      ),
+      sizeField: "Trials",
+      maxBubbleRadius: 20,
+      pointOpacity: 0.5,
+    },
+    {
+      ...base,
+      id: "bubble-total",
+      type: "metric-card",
+      title: "Trials in this selection",
+      aggregation: "sum",
+      measureField: "Trials",
+      layout: layout(8, 0, 4, 2),
+    },
+    row("bubble-phase", "Days by release phase", "Phase", layout(8, 2, 4, 4), "phase-colors"),
+    table(
+      "bubble-records",
+      "Daily observations",
+      ["Day", "Phase", "Visitors", "Returning visitors", "Trials", "Conversion (%)", "Response time (ms)"],
+      layout(0, 6, 12, 5)
+    ),
+  ],
+};
+
 // Region bars sum revenue; clicking one selects that region everywhere.
 const revenueByRegion: NonNullable<SavedDataStructure["aggregates"]> = [
   {
