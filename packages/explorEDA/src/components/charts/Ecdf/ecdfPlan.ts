@@ -273,10 +273,12 @@ export function planEcdf({
     }
   }
 
+  // Quantile names sit in a right gutter so they never cross a curve, and
+  // a status line sits under the axis title.
   const margin = {
     top: settings.margin.top + 6,
-    right: settings.margin.right,
-    bottom: settings.margin.bottom + 42,
+    right: settings.margin.right + (settings.showQuantiles ? 34 : 0),
+    bottom: settings.margin.bottom + 58,
     left: settings.margin.left + 40,
   };
   const plotWidth = Math.max(0, width - margin.left - margin.right);

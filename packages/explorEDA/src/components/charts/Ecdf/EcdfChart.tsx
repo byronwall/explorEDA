@@ -17,6 +17,7 @@ import {
 import type { TraceSource } from "../trace/traceTypes";
 import { useGetColumnData } from "../useGetColumnData";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
+import { ChartReadout } from "../ChartReadout";
 import type { EcdfSettings } from "./definition";
 import {
   countInRange,
@@ -37,58 +38,71 @@ import {
 const pct = (share: number) =>
   share.toLocaleString("en-US", { style: "percent", maximumFractionDigits: 1 });
 
-function Summary({
-  plan,
-  heading,
+type ReadoutRow = {
+  key: string;
+  label: string;
+  color: string;
+  share: number;
+  count: number;
+  total: number;
+};
+
+/** The hovered value or dragged span, then each curve's share, in the panel header. */
+function Readout({
+  label,
+  value,
   rows,
-  corner,
 }: {
-  plan: EcdfPlan;
-  heading: string;
-  rows: {
-    key: string;
-    label: string;
-    color: string;
-    share: number;
-    count: number;
-    total: number;
-    dashed: boolean;
-  }[];
-  corner: "left" | "right";
+  label: string;
+  value: string;
+  rows: ReadoutRow[];
 }) {
   return (
-    <div
-      className="pointer-events-none absolute z-10 max-w-[min(17rem,70%)] rounded border border-border bg-card/95 px-2 py-1 text-xs text-card-foreground shadow-sm"
-      style={{
-        top: plan.margin.top + 4,
-        ...(corner === "left"
-          ? { left: plan.margin.left + 8 }
-          : { right: plan.width - plan.margin.left - plan.plotWidth + 8 }),
-      }}
-      role="status"
-    >
-      <div className="mb-0.5 font-medium">{heading}</div>
+    <ChartReadout fallbackClassName="eda-chart-readout-inline">
+      <span className="eda-readout-item">
+        <span>{label}</span>
+        <b>{value}</b>
+      </span>
       {rows.map((row) => (
-        <div key={row.key} className="flex items-center gap-1.5">
-          <svg width={14} height={8} aria-hidden="true" className="shrink-0">
-            <line
-              x1={0}
-              x2={14}
-              y1={4}
-              y2={4}
-              stroke={row.color}
-              strokeWidth={2.5}
-              strokeDasharray={row.dashed ? "4 2" : undefined}
-            />
-          </svg>
-          <span className="min-w-0 flex-1 truncate">{row.label}</span>
-          <span className="font-medium tabular-nums">{pct(row.share)}</span>
-          <span className="tabular-nums text-muted-foreground">
-            {row.count.toLocaleString()}/{row.total.toLocaleString()}
-          </span>
-        </div>
+        <span key={row.key} className="eda-readout-item">
+          <span>{row.label}</span>
+          <b>
+            {pct(row.share)} ({row.count.toLocaleString()}/
+            {row.total.toLocaleString()})
+          </b>
+        </span>
       ))}
-    </div>
+    </ChartReadout>
+  );
+}
+
+/** Spreads labels apart vertically so none overlap, keeping their order. */
+function spread(ys: number[], gap: number, min: number, max: number) {
+  const order = ys.map((y, index) => ({ y, index })).sort((a, b) => a.y - b.y);
+  order.forEach((item, i) => {
+    item.y = Math.max(item.y, i ? order[i - 1]!.y + gap : min);
+  });
+  for (let i = order.length - 1; i >= 0; i--) {
+    order[i]!.y = Math.min(
+      order[i]!.y,
+      i < order.length - 1 ? order[i + 1]!.y - gap : max
+    );
+  }
+  const out = [...ys];
+  order.forEach((item) => (out[item.index] = item.y));
+  return out;
+}
+
+/** A value on the x axis under the crosshair or a span edge. */
+function AxisValue({ x, y, text }: { x: number; y: number; text: string }) {
+  const width = text.length * 6.2 + 10;
+  return (
+    <g transform={`translate(${x},${y})`} className="eda-ecdf-axis-value">
+      <rect x={-width / 2} y={-1} width={width} height={16} rx={3} />
+      <text y={11} textAnchor="middle">
+        {text}
+      </text>
+    </g>
   );
 }
 
@@ -293,59 +307,113 @@ export function EcdfChart({
     drag?.moved && drag.start !== drag.end
       ? [Math.min(drag.start, drag.end), Math.max(drag.start, drag.end)]
       : undefined;
+  // Rows read top to bottom in the order the curves stack at the value.
   const readoutRows = (
     share: (curve: EcdfPlan["curves"][number]) => number,
     count: (curve: EcdfPlan["curves"][number]) => number
-  ) =>
+  ): ReadoutRow[] =>
     plan.curves
       .filter((curve) => curve.count > 0)
       .map((curve) => ({
         key: curve.key,
-        label: curve.label,
+        // One curve has no group to name, so its share reads as Share.
+        label: plan.curves.length === 1 ? "Share" : curve.label,
         color: curve.color,
         share: share(curve),
         count: count(curve),
         total: curve.count,
-        dashed: curve.overall && plan.curves.length > 1,
-      }));
-  let summary:
-    | { heading: string; rows: ReturnType<typeof readoutRows> }
-    | undefined;
+      }))
+      .sort((a, b) => b.share - a.share);
+  const spanRows = (min?: number, max?: number) =>
+    readoutRows(
+      (curve) => countInRange(curve, min, max) / curve.count,
+      (curve) => countInRange(curve, min, max)
+    );
+  let readout: { label: string; value: string; rows: ReadoutRow[] } | undefined;
   if (dragSpan) {
-    summary = {
-      heading: `${format(dragSpan[0]!)} to ${format(dragSpan[1]!)}`,
-      rows: readoutRows(
-        (curve) => countInRange(curve, dragSpan[0], dragSpan[1]) / curve.count,
-        (curve) => countInRange(curve, dragSpan[0], dragSpan[1])
-      ),
+    readout = {
+      label: plan.fieldLabel,
+      value: `${format(dragSpan[0]!)} to ${format(dragSpan[1]!)}`,
+      rows: spanRows(dragSpan[0], dragSpan[1]),
     };
   } else if (hoverValue !== null) {
-    summary = {
-      heading: `${comparator} ${format(hoverValue)}`,
+    readout = {
+      label: plan.fieldLabel,
+      value: `${comparator} ${format(hoverValue)}`,
       rows: readoutRows(
         (curve) => shareAt(curve, hoverValue, plan.direction),
         (curve) =>
           Math.round(shareAt(curve, hoverValue, plan.direction) * curve.count)
       ),
     };
-  } else if (plan.selection) {
-    const { min, max } = plan.selection.filter;
-    summary = {
-      heading:
-        min !== undefined && max !== undefined
-          ? `Selected: ${format(min)} to ${format(max)}`
-          : `Selected: ${min !== undefined ? `≥ ${format(min)}` : `≤ ${format(max!)}`}`,
-      rows: readoutRows(
-        (curve) => countInRange(curve, min, max) / curve.count,
-        (curve) => countInRange(curve, min, max)
-      ),
-    };
   }
-  const notes = [
+  // Each curve's share beside its dot, so a clipped header loses nothing.
+  const hoverDots =
+    hoverValue !== null && !dragSpan
+      ? plan.curves
+          .filter((curve) => curve.count)
+          .map((curve) => {
+            const share = shareAt(curve, hoverValue, plan.direction);
+            return { curve, share, y: plan.py(share) };
+          })
+      : [];
+  // Curves that meet at the value share one label.
+  const hoverLabels = hoverDots.filter(
+    (dot, index) =>
+      hoverDots.findIndex((other) => pct(other.share) === pct(dot.share)) ===
+      index
+  );
+  const labelYs = spread(
+    hoverLabels.map((dot) => dot.y),
+    13,
+    6,
+    plan.plotHeight - 6
+  );
+  const hoverX = hoverValue === null ? 0 : plan.px(hoverValue);
+  const labelsLeft = hoverX > plan.plotWidth - 56;
+  const axisValueX = (x: number, text: string) => {
+    const half = (text.length * 6.2 + 10) / 2;
+    return Math.max(half - 4, Math.min(plan.plotWidth - half + 4, x));
+  };
+
+  const selected = plan.selection?.filter;
+  const selectedRows = selected ? spanRows(selected.min, selected.max) : [];
+  const selectedText = selected
+    ? selected.min !== undefined && selected.max !== undefined
+      ? `${format(selected.min)} to ${format(selected.max)}`
+      : selected.min !== undefined
+        ? `≥ ${format(selected.min)}`
+        : `≤ ${format(selected.max!)}`
+    : "";
+  // Medians read from lowest to highest, the order the curves cross 50%.
+  const medians = plan.curves
+    .flatMap((curve) => {
+      const median = curve.quantiles.find((item) => item.level === 0.5);
+      return median ? [{ label: curve.label, x: median.x }] : [];
+    })
+    .sort((a, b) => a.x - b.x)
+    .map((item) => ({ label: item.label, text: format(item.x) }));
+  const statusParts = [
+    selected
+      ? `Selected ${selectedText}: ${selectedRows
+          .map((row) =>
+            selectedRows.length === 1
+              ? pct(row.share)
+              : `${row.label} ${pct(row.share)}`
+          )
+          .join(", ")}`
+      : medians.length > 0 &&
+        width >= 520 &&
+        (medians.length === 1
+          ? `Median ${medians[0]!.text}`
+          : `Median: ${medians.map((item) => `${item.label} ${item.text}`).join(", ")}`),
     plan.excluded.length > 0 &&
       `${plan.excluded.reduce((total, item) => total + item.count, 0).toLocaleString()} rows without a number left out`,
     plan.otherGroups > 0 && `${plan.otherGroups} smaller groups in Other`,
     plan.logUnavailable && "Log scale needs values above zero",
+    !selected &&
+      width >= 520 &&
+      `Click to select ${plan.direction === "below" ? "up to" : "from"} a value, drag for a span`,
   ].filter(Boolean);
   const selection = dragSpan
     ? { x0: plan.px(dragSpan[0]!), x1: plan.px(dragSpan[1]!) }
@@ -454,17 +522,17 @@ export function EcdfChart({
               {[0.5, 0.9].map((level) => (
                 <text
                   key={level}
-                  x={plan.plotWidth - 2}
-                  y={plan.py(level) - 4}
-                  textAnchor="end"
+                  x={plan.plotWidth + 6}
+                  y={plan.py(level)}
+                  dominantBaseline="middle"
                   fontSize={10}
                   className="fill-muted-foreground"
                 >
                   {level === 0.5
                     ? "median"
                     : plan.direction === "below"
-                      ? "90th pct"
-                      : "10th pct"}
+                      ? "p90"
+                      : "p10"}
                 </text>
               ))}
             </g>
@@ -498,28 +566,59 @@ export function EcdfChart({
           </g>
           {hoverValue !== null && (
             <g pointerEvents="none" aria-hidden="true">
-              <line
-                x1={plan.px(hoverValue)}
-                x2={plan.px(hoverValue)}
-                y1={0}
-                y2={plan.plotHeight}
-                stroke="var(--foreground)"
-                strokeOpacity={0.4}
-                strokeDasharray="3 3"
-              />
-              {plan.curves.map((curve) =>
-                curve.count ? (
-                  <circle
-                    key={curve.key}
-                    cx={plan.px(hoverValue)}
-                    cy={plan.py(shareAt(curve, hoverValue, plan.direction))}
-                    r={3.5}
-                    fill={curve.color}
-                    stroke="var(--background)"
-                    strokeWidth={1.5}
-                  />
-                ) : null
+              {!dragSpan && (
+                <line
+                  x1={hoverX}
+                  x2={hoverX}
+                  y1={0}
+                  y2={plan.plotHeight}
+                  stroke="var(--foreground)"
+                  strokeOpacity={0.4}
+                  strokeDasharray="3 3"
+                />
               )}
+              {hoverDots.map(({ curve, y }) => (
+                <circle
+                  key={curve.key}
+                  cx={hoverX}
+                  cy={y}
+                  r={3.5}
+                  fill={curve.color}
+                  stroke="var(--background)"
+                  strokeWidth={1.5}
+                />
+              ))}
+              {hoverLabels.map(({ curve, share }, index) => (
+                <text
+                  key={curve.key}
+                  x={hoverX + (labelsLeft ? -8 : 8)}
+                  y={labelYs[index]}
+                  textAnchor={labelsLeft ? "end" : "start"}
+                  dominantBaseline="middle"
+                  className="eda-ecdf-value"
+                >
+                  {pct(share)}
+                </text>
+              ))}
+              {!dragSpan && (
+                <AxisValue
+                  x={axisValueX(hoverX, format(hoverValue))}
+                  y={plan.plotHeight + 3}
+                  text={format(hoverValue)}
+                />
+              )}
+            </g>
+          )}
+          {dragSpan && (
+            <g pointerEvents="none" aria-hidden="true">
+              {dragSpan.map((value, index) => (
+                <AxisValue
+                  key={index}
+                  x={axisValueX(plan.px(value), format(value))}
+                  y={plan.plotHeight + 3}
+                  text={format(value)}
+                />
+              ))}
             </g>
           )}
           {traced && (
@@ -632,24 +731,18 @@ export function EcdfChart({
           />
         </g>
       </svg>
-      {summary && (
-        <Summary
-          plan={plan}
-          heading={summary.heading}
-          rows={summary.rows}
-          corner={plan.direction === "below" ? "left" : "right"}
-        />
-      )}
-      {notes.length > 0 && (
+      {readout && <Readout {...readout} />}
+      {statusParts.length > 0 && (
         <div
-          className="pointer-events-none absolute truncate text-right text-xs text-muted-foreground"
+          className="pointer-events-none absolute truncate text-xs text-muted-foreground"
           style={{
+            left: settings.margin.left,
             right: settings.margin.right,
             bottom: settings.margin.bottom,
-            maxWidth: "45%",
           }}
+          role="status"
         >
-          {notes.join(" · ")}
+          {statusParts.join(" · ")}
         </div>
       )}
     </div>

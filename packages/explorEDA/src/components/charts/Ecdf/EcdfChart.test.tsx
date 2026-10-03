@@ -36,9 +36,15 @@ it("steps through observed values with the keyboard and selects a threshold", ()
   fireEvent.keyDown(slider, { key: "Home" });
   fireEvent.keyDown(slider, { key: "ArrowRight" });
   expect(slider).toHaveAttribute("aria-valuetext", "≤ 2: Wait 75%");
+  // The share reads in the readout and beside the curve.
+  expect(screen.getByText("75% (3/4)")).toBeInTheDocument();
+  expect(
+    screen.getByText("75%", { selector: ".eda-ecdf-value" })
+  ).toBeInTheDocument();
   fireEvent.keyDown(slider, { key: "Enter" });
   expect(filters()).toEqual([{ type: "range", field: "Wait", max: 2 }]);
   expect(screen.getByText("≤ 2")).toBeInTheDocument();
+  expect(screen.getByText("Selected ≤ 2: 75%")).toBeInTheDocument();
   fireEvent.keyDown(slider, { key: "Delete" });
   expect(filters()).toEqual([]);
 });
