@@ -9,7 +9,7 @@ Byron approved this sequence after Metric Card PR #114. Each branch starts from 
 | 3 | Grouped bars | `codex/grouped-bars` | #116 | In review |
 | 4 | Stacked and 100% bars | `codex/stacked-bars` | #117 | In review |
 | 5 | Area and stacked area | `codex/area-charts` | #118 | In review |
-| 6 | Bubble scatter | `codex/bubble-scatter` | | In progress |
+| 6 | Bubble scatter | `codex/bubble-scatter` | #119 | In review |
 | 7 | Binned scatter density | | | Pending |
 | 8 | Point map | | | Pending |
 | 9 | Region map | | | Pending |
@@ -34,3 +34,7 @@ PR #117 adds stacked counts and sums, plus percentage shares, to split Bar Chart
 ## Area charts evidence
 
 PR #118 adds area and stacked-area display to calendar summaries. Traces show band bounds and the source records for each contributing series. All 502 tests passed on Node 24. Browser checks covered 1280, 783, and 390 px, keyboard selection, counts, sums, averages, reset, signed areas, gaps, zero fill, invalid inputs, and dark mode. Six screenshots are attached to the PR.
+
+## Bubble scatter evidence
+
+PR #119 maps a numeric field to bubble area in Scatter Plot. Traces show source values, the full-source size domain, and the radius calculation. All 504 tests passed on Node 24. Browser checks covered 1280, 783, and 390 px, keyboard and pointer selection, overlap, linked filtering, size changes, reset, zero, invalid inputs, and dark mode. Six screenshots are attached to the PR.
