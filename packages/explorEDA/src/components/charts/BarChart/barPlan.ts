@@ -89,6 +89,8 @@ export interface BarMark {
   baseline: number;
   fill: string;
   fillSource: BarFillSource;
+  /** The value as the readout and accessible name show it. */
+  valueText: string;
   /** Whether this chart's value filter includes the bar, when one exists. */
   selected?: boolean;
   /** The aggregate, count or bin row that sets the bar's value. */
@@ -253,7 +255,7 @@ export function planBarChart({
   getColor,
   getFieldLabel,
   formatFieldValue,
-  aggregateScope = "This result uses the current globally filtered source rows",
+  aggregateScope = "Rows after other chart filters; this chart's selected groups are shown in color",
 }: BarPlanInput): BarChartPlan {
   const numeric = isNumericBarField(settings, snapshot);
   const mode: BarMode = settings.aggregateId
@@ -418,13 +420,14 @@ export function planBarChart({
     },
   });
 
-  const valueFilter =
-    mode === "aggregate"
-      ? undefined
-      : settings.filters.find(
-          (filter): filter is ValueFilter =>
-            filter.type === "value" && filter.field === settings.field
-        );
+  // A grouped bar selects its group, so its value filter names the group field.
+  const selectField = mode === "aggregate" ? spec?.groupField : settings.field;
+  const valueFilter = selectField
+    ? settings.filters.find(
+        (filter): filter is ValueFilter =>
+          filter.type === "value" && filter.field === selectField
+      )
+    : undefined;
   const rangeFilter =
     mode === "bin"
       ? getRangeFilterForField(settings.filters, settings.field)
@@ -476,6 +479,7 @@ export function planBarChart({
       groupValue: row.groupValue,
       bin,
       value: row.value,
+      valueText: format(yField)(row.value),
       x,
       y: Math.min(baseline, valuePosition),
       width: barWidth,
@@ -491,7 +495,7 @@ export function planBarChart({
             baseFill,
           },
       selected:
-        mode === "count" && valueFilter
+        mode !== "bin" && valueFilter
           ? applyFilter(row.groupValue, valueFilter)
           : undefined,
       row,

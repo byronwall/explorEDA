@@ -10,7 +10,7 @@ import { BaseChart } from "../BaseChart";
 import { buildScale, findAxisGuide } from "../Axis/axisPlan";
 import { useGetColumnData, useGetColumnDataForIds } from "../useGetColumnData";
 import { useGetLiveIds } from "../useGetLiveData";
-import { displayAggregateValue, type AggregateResult } from "@/lib/aggregates";
+import type { AggregateResult } from "@/lib/aggregates";
 import { barAt, planBarChart, type BarChartPlan } from "./barPlan";
 import { sameRange, snapRangeToBins } from "./bins";
 import { barTraceTargets, findBarTraceRow, resolveBarTrace } from "./barTrace";
@@ -43,8 +43,13 @@ function HoverReadout({ plan, id }: { plan: BarChartPlan; id: string }) {
           <div>
             {bar.bin
               ? `Bin interval: ${bar.bin.start} to ${bar.bin.end}`
-              : `Value: ${bar.value}`}
+              : `Value: ${bar.valueText}`}
           </div>
+          {plan.mode !== "bin" && (
+            <div className="text-muted-foreground">
+              Click to select · Alt-click to inspect
+            </div>
+          )}
         </>
       ) : (
         <>
@@ -166,8 +171,11 @@ export function BarChart({
   const selected =
     trace?.selection?.owner === owner ? trace.selection : undefined;
 
+  // A grouped bar selects its group field; a count bar selects its own field.
+  const selectField =
+    plan.mode === "aggregate" ? plan.field : settings.field;
   const valueFilter = settings.filters.find(
-    (f): f is ValueFilter => f.type === "value" && f.field === settings.field
+    (f): f is ValueFilter => f.type === "value" && f.field === selectField
   );
 
   const toggleCategory = useCallback(
@@ -177,18 +185,18 @@ export function BarChart({
         ? filterValues.filter((f) => !categoryEqual(f, label))
         : [...filterValues, label];
       const newFilters = settings.filters.filter(
-        (f) => f.type !== "value" || f.field !== settings.field
+        (f) => f.type !== "value" || f.field !== selectField
       );
       if (newValues.length > 0) {
         newFilters.push({
           type: "value",
-          field: settings.field,
+          field: selectField,
           values: newValues,
         });
       }
       updateChart(settings.id, { filters: newFilters });
     },
-    [settings.id, settings.field, settings.filters, updateChart, valueFilter]
+    [settings.id, selectField, settings.filters, updateChart, valueFilter]
   );
 
   const handleBrushChange = useCallback(
@@ -271,9 +279,10 @@ export function BarChart({
         <g>
           {plan.bars.map((bar) => {
             const measureLabel = isAggregate
-              ? displayAggregateValue(bar.value)
+              ? bar.valueText
               : `${bar.value} records`;
-            const clickable = isCount || plan.mode === "bin";
+            const selectable = isCount || isAggregate;
+            const clickable = selectable || plan.mode === "bin";
             return (
               <rect
                 key={bar.id}
@@ -300,7 +309,7 @@ export function BarChart({
                   if (event.altKey && event.key === "Enter") {
                     event.preventDefault();
                     inspect("bar", bar.id);
-                  } else if (isCount && !event.altKey) {
+                  } else if (selectable && !event.altKey) {
                     event.preventDefault();
                     toggleCategory(bar.groupValue);
                   }
@@ -310,7 +319,7 @@ export function BarChart({
                     event.preventDefault();
                     event.stopPropagation();
                     inspect("bar", bar.id);
-                  } else if (isCount) {
+                  } else if (selectable) {
                     toggleCategory(bar.groupValue);
                   }
                 }}

@@ -332,7 +332,17 @@ export const shopDashboard = dashboard(
       layout(4, 5, 4),
       "category-colors"
     ),
-    row("shop-region", "Regional order mix", "Region", layout(8, 5, 4)),
+    {
+      ...base,
+      id: "shop-region",
+      type: "bar",
+      title: "Revenue by region",
+      field: "Revenue",
+      aggregateId: "revenue-by-region",
+      layout: layout(8, 5, 4),
+      xAxisLabel: "Region",
+      yAxisLabel: "Revenue ($)",
+    },
     table(
       "shop-orders",
       "Orders in this selection",
@@ -448,6 +458,18 @@ export const activityDashboard = dashboard(
   ]
 );
 
+// Region bars sum revenue; clicking one selects that region everywhere.
+const revenueByRegion: NonNullable<SavedDataStructure["aggregates"]> = [
+  {
+    id: "revenue-by-region",
+    name: "Revenue by region",
+    groupField: "Region",
+    measureField: "Revenue",
+    aggregation: "sum",
+  },
+];
+shopDashboard.aggregates = revenueByRegion;
+
 // Wide order values include genuine outliers; keep them visible without flattening the main population.
 for (const chart of shopDashboard.charts) {
   if (chart.type === "scatter") {
@@ -535,6 +557,7 @@ export const largeShopDashboard = dashboard(
   ],
   shopDashboard.colorScales
 );
+largeShopDashboard.aggregates = revenueByRegion;
 
 // Only the 500-order book gets the heatmap; the large book fills this row.
 shopDashboard.charts.push({

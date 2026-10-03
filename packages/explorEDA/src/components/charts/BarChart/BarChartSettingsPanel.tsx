@@ -117,6 +117,16 @@ values.some((value) => finiteNumber(value) !== undefined)
               ? next.groupField
               : (next.measureField ?? next.groupField),
           ...(settings.title === aggregate.name ? { title: name } : {}),
+          // A new group field makes the old group selection meaningless.
+          ...(next.groupField !== aggregate.groupField
+            ? {
+                filters: settings.filters.filter(
+                  (filter) =>
+                    filter.type !== "value" ||
+                    filter.field !== aggregate.groupField
+                ),
+              }
+            : {}),
         });
         setError(undefined);
       } catch (cause) {
