@@ -148,6 +148,35 @@ function aggregate(name: string, values: datum[]): AggregateResult {
   };
 }
 
+/**
+ * Orders grouping values so a pivot reads like a sorted report: numbers by
+ * size, text in natural order ("2" before "10"), and missing values last.
+ */
+export function compareCategories(left: datum, right: datum): number {
+  const leftMissing = left == null || left === "";
+  const rightMissing = right == null || right === "";
+  if (leftMissing || rightMissing) {
+    return Number(leftMissing) - Number(rightMissing);
+  }
+  if (
+    typeof left === "number" &&
+    typeof right === "number" &&
+    !Number.isNaN(left) &&
+    !Number.isNaN(right)
+  ) {
+    return left - right;
+  }
+  const byLabel = String(left).localeCompare(String(right), undefined, {
+    numeric: true,
+  });
+  if (byLabel !== 0) return byLabel;
+  // The same label in two types, such as 1 and "1", stays two groups, with
+  // the number first.
+  const byType =
+    Number(typeof left !== "number") - Number(typeof right !== "number");
+  return byType || categoryKey(left).localeCompare(categoryKey(right));
+}
+
 function generateHeaders(data: PivotInputRow[], field: string): PivotHeader[] {
   if (!field) {
     return [];
@@ -161,7 +190,7 @@ function generateHeaders(data: PivotInputRow[], field: string): PivotHeader[] {
     }
   });
   return Array.from(uniqueValues.values())
-    .sort((left, right) => categoryKey(left).localeCompare(categoryKey(right)))
+    .sort(compareCategories)
     .map((value) => ({
       label: categoryLabel(value),
       field,
@@ -295,7 +324,8 @@ function generateRows(
   data: PivotInputRow[],
   rowFields: string[],
   columnField: string,
-  valueFields: PivotTableSettings["valueFields"]
+  valueFields: PivotTableSettings["valueFields"],
+  withTotals: boolean
 ): PivotRow[] {
   const rows: PivotRow[] = [];
   const columnHeaders = generateHeaders(data, columnField);
@@ -331,24 +361,69 @@ function generateRows(
         Boolean(columnField),
         valueFields
       ),
+      total:
+        withTotals && columnField && columnHeaders.length > 1
+          ? generateCells(groupData, [], keys, false, valueFields)
+          : undefined,
     });
   });
-  return rows;
+  // Rows group by their first field, then the next, so outer values cluster.
+  return rows.sort((left, right) => {
+    for (let index = 0; index < left.keys.length; index += 1) {
+      const order = compareCategories(
+        left.keys[index]!.value,
+        right.keys[index]!.value
+      );
+      if (order !== 0) return order;
+    }
+    return 0;
+  });
+}
+
+/**
+ * Totals recompute each aggregate over the rows they cover, so a median or an
+ * average total is the real one, not a sum of the cells above it. A single
+ * value has no meaningful total.
+ */
+function canTotal(valueFields: PivotTableSettings["valueFields"]) {
+  return (
+    valueFields.length > 0 &&
+    valueFields.every((field) => field.aggregation !== "singleValue")
+  );
 }
 
 export function calculatePivotData(
   data: PivotInputRow[],
   settings: PivotTableSettings
 ): PivotTableData {
-  return {
-    headers: generateHeaders(data, settings.columnField),
-    rows: generateRows(
-      data,
-      settings.rowFields,
-      settings.columnField,
-      settings.valueFields
-    ),
-  };
+  const headers = generateHeaders(data, settings.columnField);
+  const withTotals =
+    settings.showTotals !== false && canTotal(settings.valueFields);
+  const rows = generateRows(
+    data,
+    settings.rowFields,
+    settings.columnField,
+    settings.valueFields,
+    withTotals
+  );
+  // One row already is its own total.
+  const totals =
+    withTotals && rows.length > 1
+      ? {
+          cells: generateCells(
+            data,
+            headers,
+            [],
+            Boolean(settings.columnField),
+            settings.valueFields
+          ),
+          total:
+            settings.columnField && headers.length > 1
+              ? generateCells(data, [], [], false, settings.valueFields)
+              : undefined,
+        }
+      : undefined;
+  return { headers, rows, totals };
 }
 
 /**

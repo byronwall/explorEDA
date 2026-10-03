@@ -5,6 +5,10 @@ import { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import { PivotTableSettings } from "./definition";
 import { useColumnNames } from "./useColumnNames";
 import { FieldSelector } from "@/components/FieldSelector";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { ActionTooltip } from "@/components/ui/tooltip";
+import { X } from "lucide-react";
 
 const AGGREGATION_OPTIONS: Array<{
   label: string;
@@ -113,8 +117,12 @@ export function PivotTableSettingsPanel({
                   optionToString={(option) => option.label}
                 />
               </div>
-              <button
-                className="p-2 hover:bg-accent rounded"
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 shrink-0"
+                aria-label={`Remove ${valueField.label || valueField.field} value`}
+                tooltip="Remove this value column"
                 onClick={() => {
                   const newValueFields = settings.valueFields.filter(
                     (_, i) => i !== index
@@ -125,8 +133,8 @@ export function PivotTableSettingsPanel({
                   });
                 }}
               >
-                ×
-              </button>
+                <X className="h-4 w-4" />
+              </Button>
             </div>
           ))}
           <button
@@ -152,6 +160,33 @@ export function PivotTableSettingsPanel({
             + Add Value Field
           </button>
         </div>
+      </div>
+
+      <div className="max-w-[400px] space-y-3">
+        <ActionTooltip content="Adds a Total row, and a Total column when a column field is set. Each total recomputes its aggregate over every row it covers.">
+          <div className="flex items-center justify-between gap-3">
+            <Label htmlFor="pivotTotals">Totals</Label>
+            <Switch
+              id="pivotTotals"
+              checked={settings.showTotals !== false}
+              onCheckedChange={(showTotals) =>
+                onSettingsChange({ ...settings, showTotals })
+              }
+            />
+          </div>
+        </ActionTooltip>
+        <ActionTooltip content="Tints each value cell by its size among the cells of the same value column, so high and low values stand out. Totals stay unshaded.">
+          <div className="flex items-center justify-between gap-3">
+            <Label htmlFor="pivotShade">Shade cells by value</Label>
+            <Switch
+              id="pivotShade"
+              checked={settings.shadeCells !== false}
+              onCheckedChange={(shadeCells) =>
+                onSettingsChange({ ...settings, shadeCells })
+              }
+            />
+          </div>
+        </ActionTooltip>
       </div>
     </div>
   );
