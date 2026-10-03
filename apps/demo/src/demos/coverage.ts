@@ -20,6 +20,14 @@ type FeatureDefinition = {
 
 export const coverageFeatures = [
   {
+    id: "mode:stacked-bars",
+    label: "Stacked and 100% bars",
+    family: "Chart modes",
+    description: "Compare signed totals or nonnegative shares and inspect each category denominator.",
+    required: true,
+    status: "supported",
+  },
+  {
     id: "mode:grouped-bars",
     label: "Grouped bars",
     family: "Chart modes",
@@ -437,6 +445,18 @@ export type ExampleCoverage = {
 };
 
 export const exampleCoverage = [
+  {
+    exampleId: "stacked-bars",
+    intent: "Compare regional totals and channel shares, with source records for each denominator.",
+    features: {
+      "mode:stacked-bars": "shown",
+      "chart:bar": "shown",
+      "chart:metric-card": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
   {
     exampleId: "grouped-bars",
     intent: "Compare regional revenue by channel and inspect an exact category–series pair.",
