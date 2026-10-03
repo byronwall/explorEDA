@@ -64,6 +64,8 @@ interface PlotChartPanelProps {
 const CATEGORY_LABELED_CHART_TYPES = new Set(["row", "boxplot"]);
 
 const TRACE_COPY = {
+  row: { heading: "Category trace", emptyText: "Choose Inspect Other categories, or Alt-click a bar, to inspect its members and source rows.", ariaLabel: "Row chart trace inspector" },
+  boxplot: { heading: "Distribution trace", emptyText: "Alt-click a box, or choose a group below, to inspect its statistics and source rows.", ariaLabel: "Distribution trace inspector" },
   map: {
     heading: "Map trace",
     emptyText: "Choose Inspect point or Inspect region to see its source records and projection. Alt-click a mark, or find any source row below.",

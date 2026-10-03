@@ -13,6 +13,7 @@ import {
   densityDashboard,
   pointMapDashboard,
   regionMapDashboard,
+  distributionDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import { SavedDataStructure } from "exploreda";
@@ -88,6 +89,17 @@ export const FEATURED_EXAMPLE_ID = "shop-operations";
 
 /** Every example, in the order the landing page lists them. */
 export const examples: ExampleData[] = [
+  {
+    id: "distribution-discovery",
+    title: "Delivery times and smaller routes",
+    description: "Compare 78 synthetic shipments with a histogram and distributions. Inspect smaller routes together, then select their exact categories.",
+    dataset: { rows: "78 shipments", fields: 3, source: "Synthetic" },
+    shows: ["Histogram", "Distribution", "Other categories", "Source tracing"],
+    guide: "Try this: inspect Other categories and select a route. Open Distribution settings to compare Box, Violin, and Observations. Add chart lists Histogram and Distribution by name.",
+    icon: BarChart3,
+    data: "/delivery-times.csv",
+    savedData: distributionDashboard,
+  },
   {
     id: "region-map",
     title: "Requests across service districts",

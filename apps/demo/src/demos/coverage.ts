@@ -470,6 +470,7 @@ export type ExampleCoverage = {
 };
 
 export const exampleCoverage = [
+  { exampleId: "distribution-discovery", intent: "Discover distributions and inspect exact category members behind Other.", features: { "chart:bar": "shown", "chart:boxplot": "shown", "chart:row": "shown", "chart:metric-card": "shown", "chart:data-table": "shown", "interaction:cross-filter": "shown" } },
   { exampleId: "region-map", intent: "Join geographic regions to records and inspect each metric and join.", features: { "chart:map": "shown", "chart:pivot": "shown", "chart:metric-card": "shown", "chart:data-table": "shown", "interaction:cross-filter": "shown" } },
   { exampleId: "point-map", intent: "Locate service sites, inspect their coordinates, and select exact source rows.", features: { "chart:map": "shown", "chart:bar": "shown", "chart:metric-card": "shown", "chart:data-table": "shown", "interaction:cross-filter": "shown" } },
   {

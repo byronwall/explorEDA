@@ -1,9 +1,7 @@
 import {
   categoryEqual,
   categoryIncludes,
-  categoryKey,
   categoryLabel,
-  categoryValue,
 } from "@/lib/categories";
 import { numericScale } from "../Axis/numericScale";
 import { BaseChartProps, RowChartSettings } from "@/types/ChartTypes";
@@ -13,18 +11,31 @@ import { applyFilter } from "@/hooks/applyFilter";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { datum, Filter, ValueFilter } from "@/types/FilterTypes";
 import { scaleBand } from "d3-scale";
-import { useMemo } from "react";
-import { useGetColumnDataForIds } from "../useGetColumnData";
+import { useId, useMemo } from "react";
+import { useGetColumnData } from "../useGetColumnData";
 import { BaseChart } from "../BaseChart";
 import { getChartAxisFields, getChartAxisLabel } from "../chartAccessibility";
-import { useGetLiveData } from "../useGetLiveData";
+import { useGetLiveIds } from "../useGetLiveData";
 import { hasFieldDisplayFormat } from "@/lib/fieldSettings";
+
+import { planRowCategories } from "./rowChartPlan";
+import {
+  useChartTraceApi,
+  useTraceRevision,
+  useTraceSource,
+} from "../trace/ChartTraceScope";
+import type { TraceSource } from "../trace/traceTypes";
+import { Button } from "@/components/ui/button";
 
 type RowChartProps = BaseChartProps<RowChartSettings>;
 
 export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
-  const allData = useGetColumnDataForIds(settings.field);
-  const data = useGetLiveData(settings, settings.field, facetIds);
+  const column = useGetColumnData(settings.field);
+  const liveIds = useGetLiveIds(settings, facetIds);
+  const owner = useId();
+  const api = useChartTraceApi();
+  const revision = useTraceRevision(settings);
+  const chartHeight = Math.max(40, height - 32);
 
   const { getColorForValue } = useColorScales();
 
@@ -66,85 +77,105 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   // Chart dimensions
   const baseMargin = settings.margin;
 
-  // Calculate counts and handle overflow
-  const { displayCounts } = useMemo(() => {
-    const countMap = new Map<datum, number>();
-    allData.forEach((value) => {
-      const key = categoryValue(value);
-      countMap.set(key, (countMap.get(key) || 0) + 1);
-    });
-
-    // Convert to array and sort by count descending
-    const sortedCounts = Array.from(countMap.entries())
-      .map(([value, count]) => ({
-        value,
-        key: categoryKey(value),
-        label:
-          value != null && hasFieldDisplayFormat(fieldSettings[settings.field])
-            ? (formatFieldValue?.(settings.field, value) ??
-              categoryLabel(value))
-            : categoryLabel(value),
-        count,
-        other: false,
-      }))
-      .sort((a, b) => b.count - a.count);
-
-    // Calculate how many rows we can fit based on min and max row height constraints
-    const availableHeight = height - baseMargin.top - baseMargin.bottom;
-    const rowHeight = Math.max(
-      settings.minRowHeight,
-      Math.min(settings.maxRowHeight, availableHeight / sortedCounts.length)
+  const plan = useMemo(() => {
+    const available =
+      chartHeight - baseMargin.top - Math.max(baseMargin.bottom, 42);
+    const maxRows = Math.max(
+      2,
+      Math.floor(available / Math.max(1, settings.minRowHeight))
     );
-    const maxRows = Math.max(2, Math.floor(availableHeight / rowHeight));
-    const liveCounts = new Map<datum, number>();
-    data.forEach((value) => {
-      const key = categoryValue(value);
-      liveCounts.set(key, (liveCounts.get(key) ?? 0) + 1);
-    });
-    const visible = sortedCounts.map((item) => ({
-      ...item,
-      total: item.count,
-      count: liveCounts.get(item.value) ?? 0,
-    }));
-
-    // If we have more items than we can display, create an "Others" category
-    if (sortedCounts.length > maxRows) {
-      const visibleCounts = visible.slice(0, maxRows - 1);
-      const otherSum = visible
-        .slice(maxRows - 1)
-        .reduce((sum, item) => sum + item.count, 0);
-
-      return {
-        displayCounts: [
-          ...visibleCounts,
-          {
-            key: "__other",
-            label: "Other categories",
-            value: undefined,
-            other: true,
-            count: otherSum,
-            total: visible
-              .slice(maxRows - 1)
-              .reduce((sum, item) => sum + item.total, 0),
-          },
-        ],
-      };
-    }
-
-    return {
-      displayCounts: visible,
-    };
+    return planRowCategories(column, liveIds, maxRows);
   }, [
-    data,
-    allData,
-    height,
+    column,
+    liveIds,
+    chartHeight,
     baseMargin.top,
     baseMargin.bottom,
     settings.minRowHeight,
-    settings.maxRowHeight,
-    formatFieldValue,
-    fieldSettings,
   ]);
+  const displayCounts = useMemo(
+    () => [
+      ...plan.visible.map((item) => ({
+        ...item,
+        label:
+          item.value != null &&
+          hasFieldDisplayFormat(fieldSettings[settings.field])
+            ? formatFieldValue(settings.field, item.value)
+            : categoryLabel(item.value),
+        count: item.sourceIds.length,
+        other: false,
+        members: [item],
+      })),
+      ...(plan.other.length
+        ? [
+            {
+              key: "__other",
+              value: undefined,
+              label: "Other categories",
+              count: plan.other.reduce(
+                (sum, item) => sum + item.sourceIds.length,
+                0
+              ),
+              total: plan.other.reduce((sum, item) => sum + item.total, 0),
+              other: true,
+              members: plan.other,
+            },
+          ]
+        : []),
+    ],
+    [plan, fieldSettings, settings.field, formatFieldValue]
+  );
+  const source = useMemo((): TraceSource => {
+    const currentRevision = `${revision.split(":")[0]}:${settings.field}:${chartHeight}:${plan.other.length}:${plan.categories.map((item) => item.sourceIds.join(",")).join(";")}`;
+    return {
+      role: "chart",
+      revision: currentRevision,
+      resolve: (kind, id) => {
+        if (kind !== "row-category") return;
+        const categories =
+          id === "__other"
+            ? plan.other
+            : plan.categories.filter((item) => item.key === id);
+        if (!categories.length) return;
+        return {
+          kind: "row-category",
+          id,
+          revision: currentRevision,
+          owner,
+          chartId: settings.id,
+          field: settings.field,
+          other: id === "__other",
+          categories,
+        };
+      },
+      findRow: (id) => {
+        const category = plan.categories.find((item) =>
+          item.sourceIds.includes(id)
+        );
+        return category && { kind: "row-category", id: category.key };
+      },
+      targets: () => [
+        ...(plan.other.length
+          ? [{ kind: "row-category", id: "__other", label: "Other categories" }]
+          : []),
+        ...plan.categories.map((item) => ({
+          kind: "row-category",
+          id: item.key,
+          label: item.label,
+        })),
+      ],
+    };
+  }, [
+    revision,
+    settings.field,
+    settings.id,
+    settings.filters,
+    chartHeight,
+    plan,
+    owner,
+  ]);
+  useTraceSource(owner, source);
+  const inspect = (key: string) => api?.inspect(owner, "row-category", key);
 
   const yLabels = displayCounts.map((d) => d.label);
   const axisFields = getChartAxisFields(settings);
@@ -170,7 +201,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
     bottom: Math.max(baseMargin.bottom, xAxisLabel ? 42 : 26),
   };
   const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
+  const innerHeight = chartHeight - margin.top - margin.bottom;
   const chartSettings = { ...settings, margin };
 
   // Create scales with synchronized limits if in a facet
@@ -186,9 +217,21 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   const yScale = useMemo(() => {
     return scaleBand()
       .domain(displayCounts.map((d) => d.key))
-      .range([0, innerHeight])
+      .range([
+        0,
+        Math.min(
+          innerHeight,
+          displayCounts.length *
+            Math.max(settings.minRowHeight, settings.maxRowHeight)
+        ),
+      ])
       .padding(0.3);
-  }, [displayCounts, innerHeight]);
+  }, [
+    displayCounts,
+    innerHeight,
+    settings.minRowHeight,
+    settings.maxRowHeight,
+  ]);
 
   if (displayCounts.length === 0) {
     return <div style={{ width, height }}>No data to display</div>;
@@ -202,7 +245,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
     <div style={{ width, height }}>
       <BaseChart
         width={width}
-        height={height}
+        height={chartHeight}
         xScale={xScale}
         yScale={yScale}
         settings={chartSettings}
@@ -230,10 +273,12 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
       >
         <g className="select-none">
           {/* Bars */}
-          {displayCounts.map(({ key, label, value, count, other }) => {
+          {displayCounts.map(({ key, label, value, count, other, members }) => {
             let isFiltered = true;
             if (valueFilter) {
-              isFiltered = applyFilter(value, valueFilter);
+              isFiltered = members.some((item) =>
+                applyFilter(item.value, valueFilter)
+              );
             }
 
             const color =
@@ -255,14 +300,27 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
                 y={yScale(key)}
                 width={Math.max(0, barWidth)}
                 rx={2}
-                role={other ? undefined : "button"}
-                tabIndex={other ? undefined : 0}
+                role="button"
+                tabIndex={0}
                 aria-label={`${label}: ${count.toLocaleString()} rows`}
-                aria-pressed={categoryIncludes(filterValues, value)}
+                aria-pressed={
+                  other
+                    ? members.every((item) =>
+                        categoryIncludes(filterValues, item.value)
+                      )
+                      ? true
+                      : members.some((item) =>
+                            categoryIncludes(filterValues, item.value)
+                          )
+                        ? "mixed"
+                        : false
+                    : categoryIncludes(filterValues, value)
+                }
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault();
-                    if (!other) handleBarClick(value);
+                    if (other || event.altKey) inspect(key);
+                    else handleBarClick(value);
                   }
                 }}
                 height={barHeight}
@@ -273,14 +331,24 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
                   fill: color,
                   opacity: valueFilter && !isFiltered ? 0.3 : 1,
                 }}
-                onClick={() => {
-                  if (!other) handleBarClick(value);
+                onClick={(event) => {
+                  if (other || event.altKey) inspect(key);
+                  else handleBarClick(value);
                 }}
               />
             );
           })}
         </g>
       </BaseChart>
+      {plan.other.length > 0 && (
+        <Button
+          variant="ghost"
+          className="h-7 px-2 text-xs"
+          onClick={() => inspect("__other")}
+        >
+          Inspect {plan.other.length} Other categories
+        </Button>
+      )}
     </div>
   );
 }
