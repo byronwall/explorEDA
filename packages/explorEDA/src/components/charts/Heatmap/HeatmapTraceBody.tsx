@@ -1,3 +1,4 @@
+import { describeHeatPosition } from "../heatScale";
 import { AggregateContributorTable } from "../BarChart/GroupedAggregateInspector";
 import {
   TraceMarkGeometry,
@@ -5,9 +6,6 @@ import {
   TraceSection,
 } from "../ChartTraceDetails";
 import type { HeatmapTrace } from "./heatmapTrace";
-
-const round = (value: number) =>
-  value.toLocaleString("en-US", { maximumFractionDigits: 3 });
 
 const STATE_TEXT = {
   value: "Value",
@@ -40,8 +38,7 @@ export function HeatmapTraceBody({ trace }: { trace: HeatmapTrace }) {
                 className="inline-block h-3 w-3 align-middle"
                 style={{ background: cell.fill }}
               />{" "}
-              {cell.fill} ← {scale.kind} scale over {round(scale.domain[0])}{" "}
-              to {round(scale.domain[1])}
+              {describeHeatPosition(cell.position, scale)}
             </>
           ) : (
             "No fill; the cell has no valid value"

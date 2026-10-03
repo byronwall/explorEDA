@@ -250,7 +250,9 @@ export function hasFieldDisplayFormat(settings: FieldSettings = {}) {
 export function formatFieldValue(
   field: string,
   value: datum,
-  settings: FieldSettings = {}
+  settings: FieldSettings = {},
+  /** Short numbers such as $46.5K, for legends and other tight labels. */
+  { compact = false }: { compact?: boolean } = {}
 ): string {
   void field;
   if (value == null) {
@@ -294,10 +296,13 @@ export function formatFieldValue(
       settings.precision <= 20
         ? settings.precision
         : undefined;
-    const options: Intl.NumberFormatOptions = {
-      maximumFractionDigits: precision ?? 3,
-      minimumFractionDigits: precision,
-    };
+    const short = compact && Math.abs(numberValue) >= 10_000;
+    const options: Intl.NumberFormatOptions = short
+      ? { notation: "compact", maximumFractionDigits: 1 }
+      : {
+          maximumFractionDigits: precision ?? (compact ? 2 : 3),
+          minimumFractionDigits: precision,
+        };
     if (format === "currency") {
       options.style = "currency";
       options.currency = /^[A-Z]{3}$/.test(settings.currency ?? "")

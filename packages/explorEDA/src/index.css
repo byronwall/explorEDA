@@ -30,6 +30,13 @@
   --chart-3: hsl(197 37% 24%);
   --chart-4: hsl(43 74% 66%);
   --chart-5: hsl(27 87% 67%);
+  /* Heatmap ramps: low to high, and negative to mid to high around 0. */
+  --eda-heat-low: oklch(0.94 0.03 250);
+  --eda-heat-high: oklch(0.43 0.14 257);
+  --eda-heat-mid: oklch(0.96 0.004 250);
+  --eda-heat-negative: oklch(0.53 0.17 28);
+  --eda-heat-text-strong: hsl(0 0% 100%);
+  --eda-heat-text-weak: var(--foreground);
   --radius: 0.6rem;
 }
 
@@ -59,6 +66,13 @@
   --chart-3: hsl(30 80% 55%);
   --chart-4: hsl(280 65% 60%);
   --chart-5: hsl(340 75% 55%);
+  /* Dark cells recede, so the strongest value is the brightest. */
+  --eda-heat-low: oklch(0.27 0.035 250);
+  --eda-heat-high: oklch(0.82 0.12 228);
+  --eda-heat-mid: oklch(0.26 0.006 250);
+  --eda-heat-negative: oklch(0.74 0.15 32);
+  --eda-heat-text-strong: oklch(0.2 0.02 250);
+  --eda-heat-text-weak: var(--foreground);
 }
 
 @theme inline {
@@ -167,7 +181,9 @@
   display: flex;
   flex: 0 1 auto;
   gap: 4px;
-  min-width: 0;
+  /* An item never shrinks past its value, so values never overlap. Items
+     that still do not fit are cut at the readout's edge. */
+  min-width: auto;
 }
 .eda-readout-item > span {
   flex: 0 1 auto;
@@ -197,6 +213,97 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   pointer-events: none;
+}
+/* Heatmap legend: the metric, its scale, and keys for uncolored cells. */
+.eda-heat-legend {
+  container-type: inline-size;
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.eda-heat-legend-metric {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--foreground);
+  font-weight: 500;
+}
+.eda-heat-legend-scale {
+  display: inline-flex;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.eda-heat-legend-ramp {
+  flex: 0 1 auto;
+  width: 72px;
+  min-width: 24px;
+  height: 10px;
+  border-radius: 2px;
+}
+/* Short of room, the scale keeps its ends and the metric name goes; the
+   panel header names it while a cell is under the pointer. */
+@container (max-width: 240px) {
+  .eda-heat-legend-metric {
+    display: none;
+  }
+}
+.eda-heat-legend-key {
+  display: inline-flex;
+  /* Keys give way before the metric name. */
+  flex: 0 1000 auto;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  overflow: hidden;
+}
+.eda-heat-swatch {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border: 1px dashed var(--border);
+  border-radius: 2px;
+}
+.eda-heat-swatch[data-state="invalid"] {
+  border-style: solid;
+  background: repeating-linear-gradient(
+    45deg,
+    color-mix(in oklab, var(--muted-foreground) 55%, transparent) 0 1px,
+    transparent 1px 4px
+  );
+}
+/* Field names that title a heatmap's rows and columns. */
+.eda-heat-axis-title {
+  overflow: hidden;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+}
+/* Heat cells mark hover with an outline; dimming would read as a new value. */
+.eda-panel svg .chart-mark.eda-heat-cell:hover {
+  filter: none;
+}
+.eda-heat-label {
+  cursor: pointer;
+}
+.eda-heat-label:hover,
+.eda-heat-label[data-selected="true"] {
+  fill: var(--foreground);
+}
+.eda-heat-label[data-selected="true"] {
+  font-weight: 600;
 }
 /* The details view enlarges the chart, so its title grows to match. */
 .eda-panel-expanded .eda-panel-header {

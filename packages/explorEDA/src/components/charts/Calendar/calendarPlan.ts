@@ -2,7 +2,7 @@ import type { AggregateContributor } from "@/lib/aggregates";
 import { DAY_MS, rollupByDay, utcDay } from "@/lib/dailyRollup";
 import type { datum } from "@/types/ChartTypes";
 import type { DateRangeFilter } from "@/types/FilterTypes";
-import { interpolateBlues, interpolateRdBu } from "d3-scale-chromatic";
+import { heatFill, heatText, planHeatScale } from "../heatScale";
 import type { CalendarSettings } from "./definition";
 
 export interface CalendarSnapshot {
@@ -38,6 +38,8 @@ export interface CalendarDay {
   y: number;
   size: number;
   height: number;
+  /** Where the value sits on the color scale: 0 to 1, or -1 to 1 when diverging. */
+  position: number;
   fill: string;
   textFill: string;
   selected: boolean | undefined;
@@ -54,7 +56,9 @@ export interface CalendarPlan {
   height: number;
   margin: { top: number; right: number; bottom: number; left: number };
   days: CalendarDay[];
-  monthLabels: { label: string; x: number }[];
+  monthLabels: { label: string; x: number; month: number; first: string; last: string }[];
+  /** Year view: lines between months, in plot coordinates. */
+  monthBoundaries: string[];
   weekdayLabels: { label: string; position: number }[];
   /** Columns in the grid, used for keyboard movement. */
   columns: number;
@@ -97,11 +101,6 @@ const dateLabel = new Intl.DateTimeFormat("en-US", {
   day: "numeric",
   year: "numeric",
 });
-
-export function textOn(fill: string) {
-  const [r = 255, g = 255, b = 255] = (fill.match(/\d+(\.\d+)?/g) ?? []).map(Number);
-  return (0.299 * r + 0.587 * g + 0.114 * b) / 255 < 0.55 ? "#ffffff" : "#1f2937";
-}
 
 export function planCalendar({
   settings,
@@ -200,14 +199,7 @@ export function planCalendar({
   const values = buckets.flatMap((bucket) =>
     bucket && typeof bucket.value === "number" && Number.isFinite(bucket.value) ? [bucket.value] : []
   );
-  const low = values.length ? Math.min(...values) : 0;
-  const high = values.length ? Math.max(...values) : 0;
-  const diverging = low < 0 && high > 0;
-  const span = Math.max(Math.abs(low), Math.abs(high)) || 1;
-  const colorFor = (value: number) =>
-    diverging
-      ? interpolateRdBu(0.5 + value / (2 * span))
-      : interpolateBlues(0.12 + (high === low ? 0.6 : (value - low) / (high - low)) * 0.8);
+  const scale = planHeatScale(values);
   const format = (value: number) =>
     measureField && formatFieldValue
       ? formatFieldValue(measureField, value)
@@ -230,7 +222,8 @@ export function planCalendar({
       : typeof bucket.value === "number" && Number.isFinite(bucket.value)
         ? "value"
         : "invalid";
-    const fill = state === "value" ? colorFor(bucket!.value!) : "transparent";
+    const position = state === "value" ? scale.position(bucket!.value!) : 0;
+    const fill = state === "value" ? heatFill(position, scale.kind) : "transparent";
     const { column, row } = place(start, index);
     return {
       id: `day:${day}`,
@@ -250,8 +243,9 @@ export function planCalendar({
       y: row * cellHeight,
       size: cellWidth,
       height: cellHeight,
+      position,
       fill,
-      textFill: state === "value" ? textOn(fill) : "currentColor",
+      textFill: state === "value" ? heatText(position) : "currentColor",
       selected: filter ? inFilter(day) : undefined,
     };
   });
@@ -260,8 +254,25 @@ export function planCalendar({
     view === "year"
       ? MONTHS.map((label, index) => ({
           label,
+          month: index,
+          first: new Date(Date.UTC(year, index, 1)).toISOString().slice(0, 10),
+          last: new Date(Date.UTC(year, index + 1, 0)).toISOString().slice(0, 10),
           x: place(Date.UTC(year, index, 1), (Date.UTC(year, index, 1) - yearStart) / DAY_MS).column * cellWidth,
         }))
+      : [];
+  // Each month after January starts with a step: down its first week's
+  // column, across, then down the next column to the bottom.
+  const monthBoundaries =
+    view === "year"
+      ? MONTHS.slice(1).map((_, index) => {
+          const first = Date.UTC(year, index + 1, 1);
+          const { column, row } = place(first, (first - yearStart) / DAY_MS);
+          const x = column * cellWidth;
+          const bottom = 7 * cellHeight;
+          return row === 0
+            ? `M${x},0V${bottom}`
+            : `M${x + cellWidth},0V${row * cellHeight}H${x}V${bottom}`;
+        })
       : [];
   const weekdayOrder = Array.from({ length: 7 }, (_, row) => WEEKDAYS[(row + weekStartDay) % 7]!);
   const weekdayLabels =
@@ -282,6 +293,7 @@ export function planCalendar({
     margin: { top, right, bottom, left: marginLeft },
     days,
     monthLabels,
+    monthBoundaries,
     weekdayLabels,
     columns,
     metricLabel:
@@ -290,8 +302,8 @@ export function planCalendar({
         : `${settings.aggregation === "sum" ? "Sum" : "Average"} of ${getFieldLabel(measureField ?? "")}`,
     fieldLabel: getFieldLabel(settings.field),
     scale: {
-      kind: diverging ? "diverging" : "sequential",
-      domain: [low, high],
+      kind: scale.kind,
+      domain: scale.domain,
       population: `days in ${year} after other chart filters`,
     },
     hasEmpty: days.some((day) => day.state === "empty"),
@@ -310,4 +322,35 @@ export function toggleDayFilter(settings: CalendarSettings, plan: CalendarPlan, 
   const current = plan.selection;
   if (current?.min === day.day && current?.max === day.day) {return rest;}
   return [...rest, { type: "date-range" as const, field: settings.field, min: day.day, max: day.day }];
+}
+
+/**
+ * The filter change that stretches the selection to take in a day, as a
+ * Shift-click does. Without a selection it selects the day.
+ */
+export function extendDayFilter(settings: CalendarSettings, plan: CalendarPlan, day: CalendarDay) {
+  const current = plan.selection;
+  if (!current?.min || !current.max) {return toggleDayFilter(settings, plan, day);}
+  const min = current.min.slice(0, 10);
+  const max = current.max.slice(0, 10);
+  return selectDayRange(settings, day.day < min ? day.day : min, day.day > max ? day.day : max);
+}
+
+/** The filter change that selects a run of days, or clears it when it is already the selection. */
+export function toggleDayRange(settings: CalendarSettings, plan: CalendarPlan, min: string, max: string) {
+  if (plan.selection?.min === min && plan.selection?.max === max) {
+    return settings.filters.filter(
+      (item) => item.type !== "date-range" || item.field !== settings.field
+    );
+  }
+  return selectDayRange(settings, min, max);
+}
+
+function selectDayRange(settings: CalendarSettings, min: string, max: string) {
+  return [
+    ...settings.filters.filter(
+      (item) => item.type !== "date-range" || item.field !== settings.field
+    ),
+    { type: "date-range" as const, field: settings.field, min, max },
+  ];
 }
