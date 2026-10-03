@@ -17,6 +17,17 @@ export function BarTraceBody({ trace }: { trace: BarTrace }) {
   const geometry = (
     <TraceSection heading="Rendered bar">
       <TraceMarkGeometry label="Bar geometry" geometry={mark} />
+      {mark.stack && (
+        <>
+          <TraceReadout label="Stack interval">
+            {mark.stack.start} to {mark.stack.end}
+            {mark.stack.mode === "percent" ? "%" : ""}
+          </TraceReadout>
+          <TraceReadout label="Category total before formatting">
+            {mark.stack.total}
+          </TraceReadout>
+        </>
+      )}
       <TraceReadout label="Zero baseline">
         {Math.round(mark.baseline)} px
       </TraceReadout>
@@ -68,6 +79,30 @@ export function BarTraceBody({ trace }: { trace: BarTrace }) {
             {mark.bin.closed ? " (closed)" : " (end excluded)"}
           </TraceReadout>
         )}
+        {mark.stack && (
+          <>
+            {mark.stack.mode === "percent" && (
+              <TraceReadout label="Segment total">
+                {mark.stack.valueText}
+              </TraceReadout>
+            )}
+            <TraceReadout
+              label={
+                mark.stack.mode === "percent" ? "Denominator" : "Category total"
+              }
+            >
+              {mark.stack.totalText} · sum of {mark.stack.parts.length} series
+              totals
+            </TraceReadout>
+            {mark.stack.mode === "percent" && (
+              <TraceReadout label="Share">
+                {mark.stack.share === undefined
+                  ? "No share: no valid numerator or the category total is zero."
+                  : `${mark.stack.valueText} ÷ ${mark.stack.totalText} × 100 = ${(mark.stack.share * 100).toFixed(1)}%`}
+              </TraceReadout>
+            )}
+          </>
+        )}
         <TraceReadout label="Order">
           {mark.order + 1} of {trace.groupOrder.length}
         </TraceReadout>
@@ -87,6 +122,35 @@ export function BarTraceBody({ trace }: { trace: BarTrace }) {
           compact={Boolean(mark.series)}
         />
       </TraceSection>
+      {mark.stack && (
+        <details>
+          <summary className="cursor-pointer text-muted-foreground">
+            Category total records ·{" "}
+            {mark.stack.parts.reduce(
+              (count, part) => count + part.row.contributors.length,
+              0
+            )}{" "}
+            rows
+          </summary>
+          <p className="py-1">
+            The category total adds these series totals from the current scope.
+            Excluded inputs do not contribute.
+          </p>
+          {mark.stack.parts.map((part) => (
+            <details key={part.label} className="py-1">
+              <summary className="cursor-pointer">
+                {part.label} · {part.row.value ?? "No valid values"} ·{" "}
+                {part.row.rowCount} {part.row.rowCount === 1 ? "row" : "rows"}
+              </summary>
+              <AggregateContributorTable
+                row={part.row}
+                compact
+                showInputs={!trace.aggregation.startsWith("count")}
+              />
+            </details>
+          ))}
+        </details>
+      )}
       {mark.series && (
         <details>
           <summary className="cursor-pointer text-muted-foreground">

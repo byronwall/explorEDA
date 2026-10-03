@@ -38,6 +38,8 @@ or month. Select a period and series to filter linked views, then choose
 
 Use **Split by** in Bar Chart to compare series within each category. Each
 bar supports linked selection and source tracing for its category–series pair.
+Choose **Stacked** to add counts or sums, or **100%** to compare nonnegative
+shares. Tracing includes each category denominator and its source records.
 
 ## Install
 
