@@ -8,7 +8,7 @@ Byron approved this sequence after Metric Card PR #114. Each branch starts from 
 | 2 | Calendar time series | `codex/calendar-time-series` | #115 | In review |
 | 3 | Grouped bars | `codex/grouped-bars` | #116 | In review |
 | 4 | Stacked and 100% bars | `codex/stacked-bars` | #117 | In review |
-| 5 | Area and stacked area | | | Pending |
+| 5 | Area and stacked area | `codex/area-charts` | #118 | In review |
 | 6 | Bubble scatter | | | Pending |
 | 7 | Binned scatter density | | | Pending |
 | 8 | Point map | | | Pending |
@@ -30,3 +30,7 @@ PR #116 adds series within each category to Bar Chart. It includes exact pair an
 ## Stacked bars evidence
 
 PR #117 adds stacked counts and sums, plus percentage shares, to split Bar Charts. Traces show segment records and category denominator records. All 500 tests passed on Node 24. Browser checks covered 1280, 783, and 390 px, keyboard selection, reset, signed totals, zero totals, invalid inputs, and dark mode. Six screenshots are attached to the PR.
+
+## Area charts evidence
+
+PR #118 adds area and stacked-area display to calendar summaries. Traces show band bounds and the source records for each contributing series. All 502 tests passed on Node 24. Browser checks covered 1280, 783, and 390 px, keyboard selection, counts, sums, averages, reset, signed areas, gaps, zero fill, invalid inputs, and dark mode. Six screenshots are attached to the PR.
