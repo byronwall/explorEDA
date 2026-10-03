@@ -69,6 +69,8 @@ export function useCreateCharts() {
       settings.yAxisLabel = settings.type === "bar" ? "Records" : "";
     }
     if (settings.type === "boxplot") settings.yAxisLabel = "";
+    if (settings.type === "ecdf" && !numeric.includes(settings.field))
+      settings.field = numeric[0] ?? settings.field;
     settings.title = "";
     return settings;
   };

@@ -13,6 +13,7 @@ const chartNames: Record<string, string> = {
   summary: "Summary table",
   "color-legend": "Color legend",
   markdown: "Markdown note",
+  ecdf: "Cumulative distribution",
 };
 
 export function getChartTitle(
@@ -34,7 +35,8 @@ export function getChartTitle(
   const field =
     settings.type === "bar" ||
     settings.type === "row" ||
-    settings.type === "boxplot"
+    settings.type === "boxplot" ||
+    settings.type === "ecdf"
       ? settings.field
       : settings.type === "scatter" || settings.type === "3d-scatter"
         ? settings.yField
@@ -50,6 +52,9 @@ export function getChartTitle(
   }
   if (settings.type === "row") {
     return `Rows by ${label}`;
+  }
+  if (settings.type === "ecdf") {
+    return `Cumulative share of ${label}`;
   }
   return `${getChartDefinition(settings.type).name} · ${label}`;
 }
@@ -110,6 +115,8 @@ export function getChartAxisFields(settings: ChartSettings): {
       };
     case "boxplot":
       return { y: settings.field };
+    case "ecdf":
+      return { x: settings.field };
     case "3d-scatter":
       return { x: settings.xField, y: settings.yField };
     default:

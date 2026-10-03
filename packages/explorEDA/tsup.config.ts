@@ -9,6 +9,7 @@ export default defineConfig({
     "charts/box-plot": "src/components/charts/BoxPlot/definition.ts",
     "charts/color-legend": "src/components/charts/ColorLegend/definition.ts",
     "charts/data-table": "src/components/charts/DataTable/definition.ts",
+    "charts/ecdf": "src/components/charts/Ecdf/definition.ts",
     "charts/line": "src/components/charts/LineChart/definition.ts",
     "charts/markdown": "src/components/charts/Markdown/definition.ts",
     "charts/pivot-table": "src/components/charts/PivotTable/definition.ts",
