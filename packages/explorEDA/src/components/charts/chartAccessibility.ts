@@ -214,6 +214,9 @@ export function getChartSummary(
   settings: ChartSettings,
   getFieldLabel: (field: string) => string = (field) => field
 ): string {
+  if (settings.type === "scatter" && settings.display === "density") {
+    return `Density bins count rows by ${getFieldLabel(settings.xField)} and ${getFieldLabel(settings.yField)}.`;
+  }
   const name = chartNames[settings.type] ?? "Chart";
   if (settings.type === "summary") {
     return `${name} of all data columns.`;

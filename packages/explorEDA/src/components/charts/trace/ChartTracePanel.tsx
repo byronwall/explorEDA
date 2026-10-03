@@ -8,6 +8,7 @@ import { EcdfTraceBody } from "../Ecdf/EcdfTraceBody";
 import { MetricCardTraceBody } from "../MetricCard/MetricCardTraceBody";
 import { TimeSeriesTraceBody } from "../LineChart/TimeSeriesTraceBody";
 import { ScatterTraceBody } from "../ScatterPlot/ScatterTraceBody";
+import { DensityTraceBody } from "../ScatterPlot/DensityTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
 import {
   FacetTraceBody,
@@ -19,6 +20,10 @@ import type { ChartTrace } from "./traceTypes";
 
 function TraceBody({ trace }: { trace: ChartTrace }) {
   switch (trace.kind) {
+    case "density-bin":
+    case "density-omissions":
+    case "density-row":
+      return <DensityTraceBody key={trace.id} trace={trace} />;
     case "time-bucket":
     case "time-omissions":
       return <TimeSeriesTraceBody key={trace.id} trace={trace} />;
