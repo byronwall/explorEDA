@@ -3166,14 +3166,34 @@ html {
   border-bottom: 1px solid var(--border);
 }
 .eda-settings-drawer-head [role="tablist"] {
-  flex: 0 1 22rem;
+  flex: 0 1 auto;
   min-width: 0;
   margin-right: auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.eda-settings-tab {
+  display: inline-flex;
+  height: 100%;
 }
 .eda-settings-drawer-head [role="tab"] {
   flex: 1 1 auto;
   min-width: 0;
+  height: 100%;
   font-size: 12px;
+  gap: 6px;
+}
+/* In the narrow panel, inactive tabs show only their icon so all four fit. */
+.eda-settings-drawer:not([data-wide])
+  .eda-settings-drawer-head
+  [role="tab"][data-state="inactive"]
+  .eda-settings-tab-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 .eda-settings-drawer .eda-calculations-header {
   gap: 12px;
@@ -3224,6 +3244,16 @@ html {
   }
   .eda-settings-drawer-wide {
     display: none;
+  }
+  .eda-settings-drawer-head
+    [role="tab"][data-state="inactive"]
+    .eda-settings-tab-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }
 @keyframes eda-field-list-in {

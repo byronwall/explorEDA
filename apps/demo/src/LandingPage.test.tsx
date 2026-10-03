@@ -200,6 +200,12 @@ describe("LandingPage routing", () => {
     expect(screen.getByRole("note")).toHaveTextContent(
       "click Web in Sales channels"
     );
+    expect(screen.getByRole("note")).toHaveTextContent(
+      "Inspect it in Chart spec"
+    );
+    expect(
+      screen.getByRole("link", { name: "React integration guide" })
+    ).toHaveAttribute("href", "/#integration");
   });
 
   it("opens bundled sample data as a new import", async () => {

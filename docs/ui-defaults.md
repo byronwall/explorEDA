@@ -61,6 +61,7 @@ The right edge shows one panel at a time. Rows and workspace settings replace ea
 Use a modal only when focus must be protected, such as chart details or a destructive confirmation.
 Chart details fill the viewport with the chart on the left and its controls on the right, with Settings open first and Chart data in a second tab. Below 900 px the chart sits above the controls. The grid shows no second copy of the chart, and settings stay live with the same reset action.
 Chart details must close with Escape or the close action, lock background scrolling, and restore focus.
+Chart spec is read-only. Read its chart inventory, saved layout, and referenced definitions from current workspace state. Keep edits in Chart details.
 Escape closes an active nested editor before it closes chart details. A hover tooltip must not swallow it.
 Keep a confirmation small and centered: a short question, one sentence that names what is affected, Cancel, and a confirm button that names the action.
 

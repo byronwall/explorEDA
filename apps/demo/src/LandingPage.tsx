@@ -8,7 +8,7 @@ import {
 
 import { parseCsvData } from "./csvParser";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft, RotateCcw } from "lucide-react";
+import { ArrowLeft, Code2, Lightbulb, RotateCcw } from "lucide-react";
 import {
   lazy,
   Suspense,
@@ -402,6 +402,20 @@ export function LandingPage() {
                     {example?.description}
                   </p>
                 </div>
+                <a
+                  className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-border bg-background px-2.5 text-xs font-medium text-foreground shadow-xs transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  href="/#integration"
+                  aria-label="React integration guide"
+                >
+                  <Code2
+                    className="h-3.5 w-3.5 text-muted-foreground"
+                    aria-hidden="true"
+                  />
+                  <span className="sm:hidden">Guide</span>
+                  <span className="hidden sm:inline">
+                    React integration guide
+                  </span>
+                </a>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -413,12 +427,46 @@ export function LandingPage() {
                 </Button>
               </header>
               {example?.guide && (
-                <p
+                <div
                   role="note"
-                  className="mb-3 rounded-md border border-border bg-primary/5 px-3 py-2 text-sm"
+                  className="mb-3 flex gap-3 rounded-lg border border-border bg-card px-3 py-2.5 text-sm shadow-xs"
                 >
-                  {example.guide}
-                </p>
+                  <Lightbulb
+                    className="mt-0.5 h-4 w-4 shrink-0 text-primary"
+                    aria-hidden="true"
+                  />
+                  <div className="grid min-w-0 gap-2">
+                    <p className="leading-relaxed">{example.guide}</p>
+                    {example.id === FEATURED_EXAMPLE_ID && (
+                      <ol
+                        aria-label="Inspect a chart's settings"
+                        className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-muted-foreground"
+                      >
+                        {[
+                          "Add a chart",
+                          "Edit it in Chart details",
+                          "Inspect it in Chart spec",
+                        ].map((step, index) => (
+                          <li key={step} className="flex items-center gap-1.5">
+                            {index > 0 && (
+                              <span
+                                aria-hidden="true"
+                                className="mr-0.5 h-px w-3 bg-border"
+                              />
+                            )}
+                            <span
+                              aria-hidden="true"
+                              className="grid h-4 w-4 place-items-center rounded-full border border-border bg-background font-mono text-[10px] text-foreground"
+                            >
+                              {index + 1}
+                            </span>
+                            {step}
+                          </li>
+                        ))}
+                      </ol>
+                    )}
+                  </div>
+                </div>
               )}
               <Suspense
                 fallback={
