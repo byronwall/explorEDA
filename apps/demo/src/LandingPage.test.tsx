@@ -162,6 +162,7 @@ describe("LandingPage routing", () => {
     ).toHaveAttribute("href", "/?view=docs&topic=rendering");
     expect(items).toHaveLength(examples.length);
     expect(within(section).queryByText("Show all examples")).toBeNull();
+    expect(screen.queryByText(/feature coverage/i)).toBeNull();
     const penguins = items.find((item) =>
       within(item).queryByRole("button", { name: "Penguin field notes" })
     ) as HTMLElement;

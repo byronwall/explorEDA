@@ -20,7 +20,6 @@ import {
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { CsvUpload } from "./CsvUpload";
-import { CoverageMatrix } from "./CoverageMatrix";
 import { ChartDocs } from "./ChartDocs";
 import { ExampleSelector } from "./ExampleSelector";
 import { FeaturedExample } from "./landing/FeaturedExample";
@@ -36,6 +35,15 @@ import { SectionHeading } from "./landing/SectionHeading";
 const featuredExample = examples.find(
   (item) => item.id === FEATURED_EXAMPLE_ID
 );
+
+// Feature coverage is a development tool. Production builds drop it.
+const CoverageMatrix = import.meta.env.DEV
+  ? lazy(() =>
+      import("./CoverageMatrix").then(({ CoverageMatrix: Matrix }) => ({
+        default: Matrix,
+      }))
+    )
+  : null;
 
 const ExplorEda = lazy(() =>
   import("exploreda").then(({ ExplorEda: Workspace }) => ({
@@ -56,7 +64,8 @@ export function LandingPage() {
   const [retryCount, setRetryCount] = useState(0);
 
   const exampleId = searchParams.get("example");
-  const showCoverage = searchParams.get("view") === "coverage";
+  const showCoverage =
+    CoverageMatrix !== null && searchParams.get("view") === "coverage";
   const showDocs = searchParams.get("view") === "docs";
 
   const [example, setExample] = useState<ExampleData | null>(null);
@@ -225,14 +234,18 @@ export function LandingPage() {
               transition={shouldReduceMotion ? { duration: 0 } : undefined}
               className={
                 showCoverage
-                  ? "mx-auto w-full max-w-[calc(100vw-3rem)]"
-                  : "landing mx-auto w-full max-w-6xl"
+                  ? "mx-auto w-full min-w-0 px-1 pt-2 sm:px-0"
+                  : showDocs
+                    ? "mx-auto w-full max-w-[calc(100vw-3rem)]"
+                    : "landing mx-auto w-full max-w-6xl"
               }
             >
               {showDocs ? (
                 <ChartDocs />
-              ) : showCoverage ? (
-                <CoverageMatrix />
+              ) : showCoverage && CoverageMatrix ? (
+                <Suspense fallback={null}>
+                  <CoverageMatrix />
+                </Suspense>
               ) : (
                 <>
                   <PageFileDrop onImport={handleCsvImport} />
@@ -269,7 +282,7 @@ export function LandingPage() {
                     <IntegrationGuide />
                     <WhyWorkspace />
                     <section aria-labelledby="examples-heading">
-                      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+                      <div className="mb-8">
                         <SectionHeading
                           id="examples-heading"
                           heading="Examples"
@@ -279,13 +292,6 @@ export function LandingPage() {
                           tour; lower examples go deeper into calculations,
                           tracing, scale, and 3D.
                         </SectionHeading>
-                        <Button
-                          variant="link"
-                          className="px-0"
-                          onClick={() => setSearchParams({ view: "coverage" })}
-                        >
-                          Project status: feature coverage
-                        </Button>
                       </div>
                       <LearningLinks />
                       <ExampleSelector onSelect={handleExampleSelect} />

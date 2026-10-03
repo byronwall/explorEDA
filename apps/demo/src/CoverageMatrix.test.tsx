@@ -2,70 +2,76 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 import { CoverageMatrix } from "./CoverageMatrix";
-import { coverageFeatures, getOpenGapCount } from "./demos/coverage";
+import { coverageFeatures } from "./demos/coverage";
 import { examples } from "./demos/examples";
 
+function renderAt(url: string) {
+  return render(
+    <MemoryRouter initialEntries={[url]}>
+      <CoverageMatrix />
+    </MemoryRouter>
+  );
+}
+
 describe("CoverageMatrix", () => {
-  it("defaults to an attention queue with exact gaps and explicit review terms", () => {
-    render(
-      <MemoryRouter initialEntries={["/?view=coverage"]}>
-        <CoverageMatrix />
-      </MemoryRouter>
-    );
+  it("defaults to an attention queue with a summary and review terms", () => {
+    renderAt("/?view=coverage");
 
     expect(
       screen.getByRole("heading", { name: "Needs attention" })
     ).toBeInTheDocument();
+    const summary = screen.getByRole("region", { name: "Coverage summary" });
+    expect(within(summary).getByText("Implemented")).toBeInTheDocument();
+    expect(within(summary).getByText("Reviewed")).toBeInTheDocument();
     expect(
-      screen.getByText(`${getOpenGapCount()} open gaps`)
+      screen.getByText(/A feature counts as reviewed once any example checks it\./)
     ).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        "No example is the declared reference for question-led titles."
-      )
-    ).toBeInTheDocument();
-    expect(screen.getAllByText("Implemented").length).toBeGreaterThan(0);
-    expect(
-      screen.getAllByText("Feature review pending").length
-    ).toBeGreaterThan(0);
-    expect(screen.getAllByText("Example check pending").length).toBeGreaterThan(
-      0
-    );
+    expect(screen.getAllByText("Review pending").length).toBeGreaterThan(0);
     expect(screen.queryByRole("table")).not.toBeInTheDocument();
-    const featureSummary = screen.getByText("Meaningful titles");
+
+    const featureSummary = screen.getByText("Row chart");
     expect(featureSummary.closest("details")).not.toHaveAttribute("open");
     fireEvent.click(featureSummary);
+    expect(featureSummary.closest("details")).toHaveAttribute("open");
     expect(
-      screen.getByText("State the question or finding that a view answers.")
+      screen.getByText("Compare category counts in horizontal rows.")
     ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Example usage" })).toHaveAttribute(
-      "href",
-      "/?view=coverage&coverage=examples"
-    );
+
+    const views = screen.getByRole("navigation", { name: "Coverage views" });
+    expect(
+      within(views).getByRole("link", { name: "Needs attention" })
+    ).toHaveAttribute("aria-current", "page");
+    expect(
+      within(views).getByRole("link", { name: "Example usage" })
+    ).toHaveAttribute("href", "/?view=coverage&coverage=examples");
+    expect(
+      within(views).getByRole("link", { name: "Example matrix" })
+    ).toHaveAttribute("href", "/?view=coverage&coverage=matrix");
   });
 
-  it("reveals row detail on demand and provides a positive-only example view", () => {
-    render(
-      <MemoryRouter initialEntries={["/?view=coverage&coverage=examples"]}>
-        <CoverageMatrix />
-      </MemoryRouter>
-    );
+  it("lists only positive usage per example", () => {
+    renderAt("/?view=coverage&coverage=examples");
 
     expect(
       screen.getByRole("heading", { name: "Example usage" })
     ).toBeInTheDocument();
+    expect(screen.queryByText("Not recorded")).not.toBeInTheDocument();
     expect(
-      screen.getByText(
-        "Positive coverage only: examples that show or check a feature. Empty cells are omitted."
-      )
-    ).toBeInTheDocument();
-    expect(screen.queryByText("Not used")).not.toBeInTheDocument();
+      screen.getByRole("link", {
+        name: "How quickly do nearby Lorenz runs diverge?",
+      })
+    ).toHaveAttribute("href", "/?example=lorenz-3d");
+  });
 
-    const advanced = screen.getByText("Advanced: full example matrix");
-    fireEvent.click(advanced);
+  it("shows a scrollable matrix with sticky headers and linked marks", () => {
+    renderAt("/?view=coverage&coverage=matrix");
+
     const table = screen.getByRole("table", {
       name: "Full example usage matrix",
     });
+    expect(
+      screen.getByRole("region", { name: "Scrollable example usage matrix" })
+    ).toHaveAttribute("tabindex", "0");
     const feature = coverageFeatures[0];
     const example = examples[0]!;
 
@@ -78,10 +84,16 @@ describe("CoverageMatrix", () => {
       within(table).getByRole("columnheader", { name: example.title })
     ).toHaveClass("sticky", "top-0");
     expect(
-      screen.getAllByText("How quickly do nearby Lorenz runs diverge?")
-    ).not.toHaveLength(0);
+      within(table).getByRole("link", {
+        name: "How quickly do nearby Lorenz runs diverge?: Dashboard layout — Example shown",
+      })
+    ).toHaveAttribute("href", "/?example=lorenz-3d");
+    expect(
+      within(table).getByRole("rowheader", { name: /Log scale/ })
+    ).toHaveTextContent("Not implemented");
 
-    const attentionLink = screen.getByRole("link", { name: "Needs attention" });
-    expect(attentionLink).toHaveAttribute("href", "/?view=coverage");
+    expect(
+      screen.getByRole("link", { name: "Needs attention" })
+    ).toHaveAttribute("href", "/?view=coverage");
   });
 });

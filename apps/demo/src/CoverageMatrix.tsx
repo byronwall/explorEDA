@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   coverageFamilies,
   coverageFeatures,
@@ -7,56 +6,36 @@ import {
   getExamplesUsingFeature,
   getFeatureReviewStatus,
   getImplementationStatus,
-  getOpenGapCount,
 } from "@/demos/coverage";
 import type {
+  CoverageFeature,
   ExampleUsageStatus,
   ImplementationStatus,
-  ReviewStatus,
 } from "@/demos/coverage";
 import { examples } from "@/demos/examples";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Check, ChevronRight } from "lucide-react";
+import type { ReactNode } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import "./CoverageMatrix.css";
 
-const implementationLabels: Record<
+type Tone = "success" | "info" | "danger" | "muted";
+
+const implementationDisplay: Record<
   ImplementationStatus,
-  { label: string; className: string }
+  { label: string; tone: Tone }
 > = {
-  supported: { label: "Implemented", className: "text-green-700" },
-  "not-supported": {
-    label: "Not implemented",
-    className: "text-destructive",
-  },
-  "not-checked": {
-    label: "Implementation not checked",
-    className: "text-muted-foreground",
-  },
+  supported: { label: "Implemented", tone: "success" },
+  "not-supported": { label: "Not implemented", tone: "danger" },
+  "not-checked": { label: "Not checked", tone: "muted" },
 };
 
-const reviewLabels: Record<ReviewStatus, { label: string; className: string }> =
-  {
-    reviewed: { label: "Feature reviewed", className: "text-green-700" },
-    "not-reviewed": {
-      label: "Feature review pending",
-      className: "text-muted-foreground",
-    },
-  };
-
-const usageLabels: Record<
+const usageDisplay: Record<
   ExampleUsageStatus,
-  { label: string; symbol: string; className: string }
+  { label: string; tone: Tone }
 > = {
-  shown: { label: "Example shown", symbol: "●", className: "text-blue-700" },
-  reviewed: {
-    label: "Example checked",
-    symbol: "✓",
-    className: "text-green-700",
-  },
-  "not-used": {
-    label: "No recorded usage",
-    symbol: "—",
-    className: "text-muted-foreground",
-  },
+  reviewed: { label: "Example checked", tone: "success" },
+  shown: { label: "Example shown", tone: "info" },
+  "not-used": { label: "No recorded usage", tone: "muted" },
 };
 
 const exampleById = new Map(examples.map((example) => [example.id, example]));
@@ -64,91 +43,208 @@ const featureById = new Map(
   coverageFeatures.map((feature) => [feature.id, feature])
 );
 
-function Status({ label, className }: { label: string; className?: string }) {
+function exampleHref(exampleId: string) {
+  return `/?example=${exampleId}`;
+}
+
+function plural(count: number, one: string, many = `${one}s`) {
+  return `${count} ${count === 1 ? one : many}`;
+}
+
+function Chip({
+  tone,
+  children,
+}: {
+  tone: Tone;
+  children: ReactNode;
+}) {
   return (
-    <span
-      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${className ?? ""}`}
-    >
-      {label}
+    <span className="coverage-chip" data-tone={tone}>
+      {children}
     </span>
   );
 }
 
-function featureGapText(feature: (typeof coverageFeatures)[number]) {
-  return "gaps" in feature ? feature.gaps : [];
-}
-
-function getExampleCheckStatus(
-  featureId: (typeof coverageFeatures)[number]["id"]
-): { label: string; className: string } {
-  const checked = examples.some(
-    (example) => getExampleUsageStatus(featureId, example.id) === "reviewed"
-  );
-  return checked
-    ? { label: "Example checked", className: "text-green-700" }
-    : { label: "Example check pending", className: "text-muted-foreground" };
-}
-
-function hasAttention(feature: (typeof coverageFeatures)[number]) {
+/** One square per example: checked, shown, or not recorded. */
+function UsageMark({ status }: { status: ExampleUsageStatus }) {
+  if (status === "reviewed") {
+    return (
+      <span className="coverage-mark" data-status="reviewed" aria-hidden="true">
+        <Check strokeWidth={3} />
+      </span>
+    );
+  }
   return (
-    featureGapText(feature).length > 0 ||
+    <span className="coverage-mark" data-status={status} aria-hidden="true" />
+  );
+}
+
+function featureGaps(feature: CoverageFeature) {
+  return feature.gaps ?? [];
+}
+
+function reviewedExampleCount(feature: CoverageFeature) {
+  return examples.filter(
+    (example) => getExampleUsageStatus(feature.id, example.id) === "reviewed"
+  ).length;
+}
+
+function hasAttention(feature: CoverageFeature) {
+  return (
+    featureGaps(feature).length > 0 ||
     getImplementationStatus(feature.id) !== "supported" ||
     getExamplesUsingFeature(feature.id).length === 0 ||
     getFeatureReviewStatus(feature.id) !== "reviewed"
   );
 }
 
-function FeatureRow({
-  feature,
+function getSummary() {
+  const total = coverageFeatures.length;
+  const implemented = coverageFeatures.filter(
+    (feature) => getImplementationStatus(feature.id) === "supported"
+  ).length;
+  const withEvidence = coverageFeatures.filter(
+    (feature) => getExamplesUsingFeature(feature.id).length > 0
+  ).length;
+  const reviewed = coverageFeatures.filter(
+    (feature) => getFeatureReviewStatus(feature.id) === "reviewed"
+  ).length;
+  const attention = coverageFeatures.filter(hasAttention).length;
+  return { total, implemented, withEvidence, reviewed, attention };
+}
+
+function StatTile({
+  label,
+  value,
+  total,
+  tone,
+  hint,
 }: {
-  feature: (typeof coverageFeatures)[number];
+  label: string;
+  value: number;
+  total?: number;
+  tone: Tone;
+  hint: string;
 }) {
+  return (
+    <div className="coverage-stat" data-tone={tone}>
+      <div className="coverage-stat-label">{label}</div>
+      <div className="coverage-stat-value">
+        {value}
+        {total !== undefined && (
+          <span className="coverage-stat-total"> / {total}</span>
+        )}
+      </div>
+      {total !== undefined && (
+        <div className="coverage-meter" aria-hidden="true">
+          <span style={{ width: `${(value / total) * 100}%` }} />
+        </div>
+      )}
+      <p className="coverage-stat-hint">{hint}</p>
+    </div>
+  );
+}
+
+function SummaryStrip() {
+  const summary = getSummary();
+  return (
+    <section
+      aria-label="Coverage summary"
+      className="grid grid-cols-2 gap-3 lg:grid-cols-4"
+    >
+      <StatTile
+        label="Implemented"
+        value={summary.implemented}
+        total={summary.total}
+        tone="success"
+        hint="Product support exists."
+      />
+      <StatTile
+        label="With evidence"
+        value={summary.withEvidence}
+        total={summary.total}
+        tone="info"
+        hint="At least one example declares it."
+      />
+      <StatTile
+        label="Reviewed"
+        value={summary.reviewed}
+        total={summary.total}
+        tone="success"
+        hint="Checked in at least one example."
+      />
+      <StatTile
+        label="Needs attention"
+        value={summary.attention}
+        tone={summary.attention ? "danger" : "success"}
+        hint="Missing support, evidence, or review."
+      />
+    </section>
+  );
+}
+
+function FeatureRow({ feature }: { feature: CoverageFeature }) {
   const implementation =
-    implementationLabels[getImplementationStatus(feature.id)];
-  const review = reviewLabels[getFeatureReviewStatus(feature.id)];
-  const exampleCheck = getExampleCheckStatus(feature.id);
+    implementationDisplay[getImplementationStatus(feature.id)];
   const exampleIds = getExamplesUsingFeature(feature.id);
-  const gaps = featureGapText(feature);
+  const reviewedCount = reviewedExampleCount(feature);
+  const gaps = featureGaps(feature);
 
   return (
-    <li className="border-t first:border-t-0">
+    <li className="coverage-feature">
       <details className="group">
-        <summary className="cursor-pointer list-none px-3 py-3 outline-none transition-colors hover:bg-muted/40 focus-visible:bg-muted/40 [&::-webkit-details-marker]:hidden">
-          <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
-            <span className="font-medium">{feature.label}</span>
-            <span className="text-xs text-muted-foreground group-open:text-foreground">
-              Details
-            </span>
-          </div>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            <Status {...implementation} />
-            <Status
-              label={
-                exampleIds.length
-                  ? `${exampleIds.length} evidence ${exampleIds.length === 1 ? "example" : "examples"}`
-                  : "No evidence"
-              }
-              className={
-                exampleIds.length ? "text-blue-700" : "text-muted-foreground"
-              }
+        <summary className="coverage-feature-summary">
+          <span className="coverage-feature-name">
+            <ChevronRight
+              aria-hidden="true"
+              className="coverage-chevron group-open:rotate-90"
             />
-            <Status {...review} />
-            <Status {...exampleCheck} />
-          </div>
-          {gaps.length > 0 && (
-            <ul className="mt-2 space-y-1 text-sm text-destructive">
-              {gaps.map((gap) => (
-                <li key={gap}>Gap: {gap}</li>
+            <span className="min-w-0">
+              <span className="block font-medium">{feature.label}</span>
+              <span className="coverage-feature-description">
+                {feature.description}
+              </span>
+            </span>
+          </span>
+          <span className="coverage-cell" data-label="Implementation">
+            <Chip tone={implementation.tone}>{implementation.label}</Chip>
+          </span>
+          <span className="coverage-cell" data-label="Evidence">
+            <span className="coverage-strip" aria-hidden="true">
+              {examples.map((example) => (
+                <UsageMark
+                  key={example.id}
+                  status={getExampleUsageStatus(feature.id, example.id)}
+                />
               ))}
-            </ul>
+            </span>
+            <span className="coverage-count">
+              {exampleIds.length
+                ? plural(exampleIds.length, "example")
+                : "No evidence"}
+            </span>
+          </span>
+          <span className="coverage-cell" data-label="Review">
+            {reviewedCount ? (
+              <Chip tone="success">
+                <Check aria-hidden="true" strokeWidth={3} />
+                Checked in {reviewedCount}
+              </Chip>
+            ) : (
+              <Chip tone="muted">Review pending</Chip>
+            )}
+          </span>
+          {gaps.length > 0 && (
+            <span className="coverage-gap-line">
+              {plural(gaps.length, "open gap")}
+            </span>
           )}
         </summary>
-        <div className="space-y-3 border-t bg-muted/20 px-3 py-3 text-sm">
-          <p className="text-muted-foreground">{feature.description}</p>
+        <div className="coverage-feature-detail">
           {gaps.length > 0 && (
             <div>
-              <h4 className="font-medium">Notes</h4>
-              <ul className="mt-1 list-disc space-y-1 pl-5">
+              <h4 className="coverage-detail-heading">Open gaps</h4>
+              <ul className="coverage-gap-list">
                 {gaps.map((gap) => (
                   <li key={gap}>{gap}</li>
                 ))}
@@ -156,27 +252,25 @@ function FeatureRow({
             </div>
           )}
           <div>
-            <h4 className="font-medium">Evidence and example checks</h4>
+            <h4 className="coverage-detail-heading">Example evidence</h4>
             {exampleIds.length === 0 ? (
-              <p className="mt-1 text-muted-foreground">
-                No example evidence is recorded for this feature.
+              <p className="text-muted-foreground">
+                No example declares this feature.
               </p>
             ) : (
-              <ul className="mt-1 space-y-1">
+              <ul className="coverage-evidence-list">
                 {exampleIds.map((exampleId) => {
                   const example = exampleById.get(exampleId);
                   const status = getExampleUsageStatus(feature.id, exampleId);
-                  const display = usageLabels[status];
+                  const display = usageDisplay[status];
                   return (
                     <li key={exampleId}>
-                      <Link
-                        to={`?example=${exampleId}`}
-                        className="underline decoration-border underline-offset-4 hover:decoration-foreground"
-                      >
+                      <UsageMark status={status} />
+                      <Link to={exampleHref(exampleId)} className="coverage-link">
                         {example?.title ?? exampleId}
-                      </Link>{" "}
-                      <span className={display.className}>
-                        ({display.label})
+                      </Link>
+                      <span className="coverage-evidence-status">
+                        {display.label}
                       </span>
                     </li>
                   );
@@ -190,214 +284,144 @@ function FeatureRow({
   );
 }
 
-function AttentionQueue({ showAll }: { showAll: boolean }) {
+function FeatureList({ showAll }: { showAll: boolean }) {
   const features = showAll
     ? coverageFeatures
     : coverageFeatures.filter(hasAttention);
-  const reviewedCount = coverageFeatures.filter(
-    (feature) => getFeatureReviewStatus(feature.id) === "reviewed"
-  ).length;
-  const evidenceCount = coverageFeatures.filter(
-    (feature) => getExamplesUsingFeature(feature.id).length > 0
-  ).length;
 
   return (
-    <section aria-labelledby="feature-review-title" className="mt-8">
-      <div className="max-w-3xl">
-        <h2 id="feature-review-title" className="text-2xl font-semibold">
-          {showAll ? "All features" : "Needs attention"}
-        </h2>
-        <p className="mt-2 text-muted-foreground">
-          {showAll
-            ? "Review implementation, evidence, component review, and example checks for every feature."
-            : "Start with known gaps, missing evidence, and unfinished feature or example checks."}
+    <section aria-labelledby="coverage-view-title">
+      <ViewHeading
+        heading={showAll ? "All features" : "Needs attention"}
+        description={
+          showAll
+            ? "Every feature with its implementation, example evidence, and review."
+            : "Features with missing support, no example evidence, or no reviewed example."
+        }
+      />
+      {features.length === 0 ? (
+        <p className="coverage-panel p-6 text-muted-foreground">
+          Every feature is implemented, has evidence, and is reviewed.
         </p>
-        <p className="mt-3 text-sm">
-          <strong>{getOpenGapCount()} open gaps</strong>
-          <span className="text-muted-foreground">
-            {" "}
-            · {reviewedCount} of {coverageFeatures.length} features reviewed ·{" "}
-            {evidenceCount} with evidence
-          </span>
-        </p>
-      </div>
-
-      <div className="mt-6 overflow-hidden rounded-lg border">
-        {coverageFamilies.map((family) => {
-          const familyFeatures = features.filter(
-            (feature) => feature.family === family
-          );
-          if (familyFeatures.length === 0) {
-            return null;
-          }
-
-          return (
-            <section key={family} aria-labelledby={`family-${family}`}>
-              <div className="flex flex-wrap items-baseline justify-between gap-2 bg-muted/70 px-3 py-2">
-                <h3 id={`family-${family}`} className="font-semibold">
-                  {family}
-                </h3>
-                <span className="text-sm text-muted-foreground">
-                  {familyFeatures.length}{" "}
-                  {familyFeatures.length === 1 ? "feature" : "features"}
-                </span>
-              </div>
-              <ul aria-label={`${family} features`}>
-                {familyFeatures.map((feature) => (
-                  <FeatureRow key={feature.id} feature={feature} />
-                ))}
-              </ul>
-            </section>
-          );
-        })}
-      </div>
+      ) : (
+        <div className="coverage-panel">
+          <div className="coverage-feature-head" aria-hidden="true">
+            <span>Feature</span>
+            <span>Implementation</span>
+            <span>Evidence by example</span>
+            <span>Review</span>
+          </div>
+          {coverageFamilies.map((family) => {
+            const familyFeatures = features.filter(
+              (feature) => feature.family === family
+            );
+            if (familyFeatures.length === 0) {
+              return null;
+            }
+            const familyId = `family-${family.replace(/\W+/g, "-")}`;
+            return (
+              <section key={family} aria-labelledby={familyId}>
+                <div className="coverage-family">
+                  <h3 id={familyId}>{family}</h3>
+                  <span>{plural(familyFeatures.length, "feature")}</span>
+                </div>
+                <ul aria-label={`${family} features`}>
+                  {familyFeatures.map((feature) => (
+                    <FeatureRow key={feature.id} feature={feature} />
+                  ))}
+                </ul>
+              </section>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }
 
-function PositiveExampleUsage() {
-  const entries = exampleCoverage
-    .map((entry) => ({
-      ...entry,
-      features: coverageFeatures.flatMap((feature) => {
-        const status = getExampleUsageStatus(feature.id, entry.exampleId);
-        return status === "not-used" ? [] : ([[feature.id, status]] as const);
-      }),
-    }))
-    .filter((entry) => entry.features.length > 0);
-
+function Legend({ showEmpty = true }: { showEmpty?: boolean }) {
   return (
-    <section aria-labelledby="example-usage-title" className="mt-8">
-      <div className="max-w-3xl">
-        <h2 id="example-usage-title" className="text-2xl font-semibold">
-          Example usage
-        </h2>
-        <p className="mt-2 text-muted-foreground">
-          Positive coverage only: examples that show or check a feature. Empty
-          cells are omitted.
-        </p>
-      </div>
-
-      <div className="mt-6 space-y-6">
-        {entries.map((entry) => {
-          const example = exampleById.get(entry.exampleId);
-          return (
-            <section
-              key={entry.exampleId}
-              aria-labelledby={`example-${entry.exampleId}`}
-            >
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h3 id={`example-${entry.exampleId}`} className="font-semibold">
-                  <Link
-                    to={`?example=${entry.exampleId}`}
-                    className="underline decoration-border underline-offset-4 hover:decoration-foreground"
-                  >
-                    {example?.title ?? entry.exampleId}
-                  </Link>
-                </h3>
-                <span className="text-sm text-muted-foreground">
-                  {entry.features.length}{" "}
-                  {entry.features.length === 1 ? "feature" : "features"}
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {entry.intent}
-              </p>
-              <ul className="mt-3 divide-y rounded-lg border">
-                {entry.features.map(([featureId, status]) => {
-                  const feature = featureById.get(featureId);
-                  if (!feature || !status) {
-                    return null;
-                  }
-                  const display = usageLabels[status];
-                  return (
-                    <li
-                      key={featureId}
-                      className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-sm"
-                    >
-                      <span>{feature.label}</span>
-                      <Status
-                        label={display.label}
-                        className={display.className}
-                      />
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          );
-        })}
-      </div>
-
-      <AdvancedExampleMatrix />
-    </section>
+    <ul className="coverage-legend" aria-label="Matrix legend">
+      <li>
+        <UsageMark status="reviewed" />
+        Example checked
+      </li>
+      <li>
+        <UsageMark status="shown" />
+        Example shown
+      </li>
+      {showEmpty && (
+        <li>
+          <UsageMark status="not-used" />
+          Not recorded
+        </li>
+      )}
+    </ul>
   );
 }
 
-function AdvancedExampleMatrix() {
+function ExampleMatrix() {
   return (
-    <details className="mt-8 rounded-lg border">
-      <summary className="cursor-pointer px-3 py-3 font-medium outline-none focus-visible:bg-muted/40">
-        Advanced: full example matrix
-      </summary>
-      <div className="border-t p-3">
-        <p className="mb-3 text-sm text-muted-foreground">
-          Blank cells mean no usage is recorded. Only positive coverage links to
-          the example.
-        </p>
-        <div
-          role="region"
-          aria-label="Scrollable example usage matrix"
-          className="overflow-auto"
-        >
-          <table
-            aria-label="Full example usage matrix"
-            className="min-w-[960px] border-separate border-spacing-0 text-sm"
-          >
-            <thead>
-              <tr>
-                <th
-                  scope="col"
-                  className="sticky top-0 z-10 border-b bg-background p-3 text-left"
-                >
-                  Feature
-                </th>
-                {examples.map((example) => (
+    <section aria-labelledby="coverage-view-title">
+      <ViewHeading
+        heading="Example matrix"
+        description="Each column is an example. Select a mark to open that example."
+      >
+        <Legend />
+      </ViewHeading>
+      <div
+        role="region"
+        aria-label="Scrollable example usage matrix"
+        tabIndex={0}
+        className="coverage-panel coverage-matrix-scroll"
+      >
+        <table aria-label="Full example usage matrix" className="coverage-matrix">
+          <thead>
+            <tr>
+              <th scope="col" className="coverage-matrix-corner sticky top-0">
+                Feature
+              </th>
+              {examples.map((example) => {
+                const Icon = example.icon;
+                return (
                   <th
                     key={example.id}
                     scope="col"
-                    className="sticky top-0 z-10 w-32 border-b bg-background p-3 text-center align-bottom"
+                    className="coverage-matrix-example sticky top-0"
                   >
-                    <Link
-                      to={`?example=${example.id}`}
-                      className="underline decoration-border underline-offset-4 hover:decoration-foreground"
-                    >
-                      {example.title}
+                    <Link to={exampleHref(example.id)}>
+                      <Icon aria-hidden="true" />
+                      <span>{example.title}</span>
                     </Link>
                   </th>
-                ))}
+                );
+              })}
+              <th scope="col" className="coverage-matrix-total sticky top-0">
+                Examples
+              </th>
+            </tr>
+          </thead>
+          {coverageFamilies.map((family) => (
+            <tbody key={family}>
+              <tr className="coverage-matrix-family">
+                <th scope="rowgroup" colSpan={examples.length + 2}>
+                  <span>{family}</span>
+                </th>
               </tr>
-            </thead>
-            {coverageFamilies.map((family) => (
-              <tbody key={family}>
-                <tr>
-                  <th
-                    scope="rowgroup"
-                    colSpan={examples.length + 1}
-                    className="border-b bg-muted/70 px-3 py-2 text-left"
-                  >
-                    {family}
-                  </th>
-                </tr>
-                {coverageFeatures
-                  .filter((feature) => feature.family === family)
-                  .map((feature) => (
+              {coverageFeatures
+                .filter((feature) => feature.family === family)
+                .map((feature) => {
+                  const implementation = getImplementationStatus(feature.id);
+                  const count = getExamplesUsingFeature(feature.id).length;
+                  return (
                     <tr key={feature.id}>
-                      <th
-                        scope="row"
-                        className="border-b p-3 text-left align-top font-medium"
-                      >
-                        {feature.label}
+                      <th scope="row" className="coverage-matrix-feature">
+                        <span>{feature.label}</span>
+                        {implementation !== "supported" && (
+                          <Chip tone={implementationDisplay[implementation].tone}>
+                            {implementationDisplay[implementation].label}
+                          </Chip>
+                        )}
                       </th>
                       {examples.map((example) => {
                         const status = getExampleUsageStatus(
@@ -409,82 +433,255 @@ function AdvancedExampleMatrix() {
                             <td
                               key={example.id}
                               aria-label={`${example.title}: no recorded usage`}
-                              className="border-b p-3"
-                            />
+                              className="coverage-matrix-cell"
+                            >
+                              <UsageMark status="not-used" />
+                            </td>
                           );
                         }
-                        const display = usageLabels[status];
                         return (
-                          <td
-                            key={example.id}
-                            className="border-b p-1 text-center"
-                          >
+                          <td key={example.id} className="coverage-matrix-cell">
                             <Link
-                              to={`?example=${example.id}`}
-                              aria-label={`${example.title}: ${feature.label} — ${display.label}`}
-                              className={`block rounded px-2 py-3 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${display.className}`}
+                              to={exampleHref(example.id)}
+                              aria-label={`${example.title}: ${feature.label} — ${usageDisplay[status].label}`}
                             >
-                              <span aria-hidden="true" className="font-bold">
-                                {display.symbol}
-                              </span>{" "}
-                              {display.label}
+                              <UsageMark status={status} />
                             </Link>
                           </td>
                         );
                       })}
+                      <td
+                        className="coverage-matrix-total"
+                        data-empty={count === 0 || undefined}
+                      >
+                        {count}
+                      </td>
                     </tr>
-                  ))}
-              </tbody>
-            ))}
-          </table>
-        </div>
+                  );
+                })}
+            </tbody>
+          ))}
+          <tfoot>
+            <tr>
+              <th scope="row" className="coverage-matrix-feature">
+                Features
+              </th>
+              {examples.map((example) => (
+                <td key={example.id} className="coverage-matrix-total">
+                  {
+                    coverageFeatures.filter(
+                      (feature) =>
+                        getExampleUsageStatus(feature.id, example.id) !==
+                        "not-used"
+                    ).length
+                  }
+                </td>
+              ))}
+              <td className="coverage-matrix-total" />
+            </tr>
+          </tfoot>
+        </table>
       </div>
-    </details>
+    </section>
   );
+}
+
+function ExampleUsage() {
+  const entries = exampleCoverage
+    .map((entry) => ({
+      ...entry,
+      features: coverageFeatures.flatMap((feature) => {
+        const status = getExampleUsageStatus(feature.id, entry.exampleId);
+        return status === "not-used" ? [] : ([[feature.id, status]] as const);
+      }),
+    }))
+    .filter((entry) => entry.features.length > 0);
+
+  return (
+    <section aria-labelledby="coverage-view-title">
+      <ViewHeading
+        heading="Example usage"
+        description="What each example shows or has checked. Features it does not use are left out."
+      >
+        <Legend showEmpty={false} />
+      </ViewHeading>
+      <div className="grid gap-3 md:grid-cols-2">
+        {entries.map((entry) => {
+          const example = exampleById.get(entry.exampleId);
+          const Icon = example?.icon;
+          const checked = entry.features.filter(
+            ([, status]) => status === "reviewed"
+          ).length;
+          return (
+            <section
+              key={entry.exampleId}
+              aria-labelledby={`example-${entry.exampleId}`}
+              className="coverage-panel coverage-example"
+            >
+              <header className="flex items-start gap-3">
+                {Icon && (
+                  <span className="coverage-example-icon" aria-hidden="true">
+                    <Icon />
+                  </span>
+                )}
+                <div className="min-w-0 flex-1">
+                  <h3
+                    id={`example-${entry.exampleId}`}
+                    className="font-semibold leading-snug"
+                  >
+                    <Link
+                      to={exampleHref(entry.exampleId)}
+                      className="coverage-link"
+                    >
+                      {example?.title ?? entry.exampleId}
+                    </Link>
+                  </h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {entry.intent}
+                  </p>
+                </div>
+              </header>
+              <p className="coverage-example-counts">
+                {plural(entry.features.length, "feature")} ·{" "}
+                {checked} checked
+              </p>
+              <ul className="coverage-pill-list">
+                {entry.features.map(([featureId, status]) => {
+                  const feature = featureById.get(featureId);
+                  if (!feature) {
+                    return null;
+                  }
+                  return (
+                    <li
+                      key={featureId}
+                      className="coverage-pill"
+                      data-status={status}
+                    >
+                      <UsageMark status={status} />
+                      {feature.label}
+                      <span className="sr-only">
+                        {" "}
+                        — {usageDisplay[status].label}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function ViewHeading({
+  heading,
+  description,
+  children,
+}: {
+  heading: string;
+  description: string;
+  children?: ReactNode;
+}) {
+  return (
+    <div className="mb-4 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+      <div className="max-w-2xl">
+        <h2 id="coverage-view-title" className="text-lg font-semibold">
+          {heading}
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+const VIEWS = [
+  { id: "attention", label: "Needs attention" },
+  { id: "all", label: "All features" },
+  { id: "matrix", label: "Example matrix" },
+  { id: "examples", label: "Example usage" },
+] as const;
+
+type CoverageView = (typeof VIEWS)[number]["id"];
+
+function viewHref(view: CoverageView) {
+  return view === "attention"
+    ? "?view=coverage"
+    : `?view=coverage&coverage=${view}`;
 }
 
 export function CoverageMatrix() {
   const [searchParams] = useSearchParams();
-  const coverageView = searchParams.get("coverage") ?? "attention";
-  const showExamples = coverageView === "examples";
-  const showAll = coverageView === "all";
+  const requested = searchParams.get("coverage");
+  const view: CoverageView =
+    VIEWS.find(({ id }) => id === requested)?.id ?? "attention";
+  const summary = getSummary();
+  const counts: Partial<Record<CoverageView, number>> = {
+    attention: summary.attention,
+    all: summary.total,
+  };
 
   return (
-    <main className="mx-auto max-w-[1600px]">
-      <Button asChild variant="ghost" className="mb-4">
-        <Link to="?">
-          <ArrowLeft aria-hidden="true" />
-          Return to examples
-        </Link>
-      </Button>
-      <h1 className="text-3xl font-bold">Feature coverage</h1>
-      <p className="mt-2 max-w-3xl text-muted-foreground">
-        Track what is implemented, what has evidence, and which component and
-        example checks remain.
-      </p>
-      <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-        Implemented means product support. Evidence means a declared example.
-        Feature reviewed and Example checked are separate review records.
-      </p>
-      <nav aria-label="Coverage views" className="mt-6 flex flex-wrap gap-2">
-        <Button
-          asChild
-          variant={!showExamples && !showAll ? "default" : "outline"}
-        >
-          <Link to="?view=coverage">Needs attention</Link>
-        </Button>
-        <Button asChild variant={showAll ? "default" : "outline"}>
-          <Link to="?view=coverage&coverage=all">All features</Link>
-        </Button>
-        <Button asChild variant={showExamples ? "default" : "outline"}>
-          <Link to="?view=coverage&coverage=examples">Example usage</Link>
-        </Button>
+    <main className="coverage mx-auto w-full max-w-[1400px] pb-16">
+      <Link to="/" className="coverage-back">
+        <ArrowLeft aria-hidden="true" />
+        Examples
+      </Link>
+      <header className="mt-3 mb-6">
+        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+          Feature coverage
+        </h1>
+        <p className="mt-2 max-w-3xl text-muted-foreground">
+          Which features the product implements, which examples show them, and
+          which of those have been checked.
+        </p>
+      </header>
+
+      <SummaryStrip />
+
+      <dl className="coverage-terms">
+        <div>
+          <dt>Implemented</dt>
+          <dd>The product supports the feature.</dd>
+        </div>
+        <div>
+          <dt>Evidence</dt>
+          <dd>An example declares that it shows the feature.</dd>
+        </div>
+        <div>
+          <dt>Checked</dt>
+          <dd>
+            One feature was reviewed in one example. A feature counts as
+            reviewed once any example checks it.
+          </dd>
+        </div>
+      </dl>
+
+      <nav aria-label="Coverage views" className="coverage-tabs">
+        {VIEWS.map(({ id, label }) => (
+          <Link
+            key={id}
+            to={viewHref(id)}
+            aria-current={view === id ? "page" : undefined}
+          >
+            {label}
+            {counts[id] !== undefined && (
+              <span className="coverage-tab-count" aria-hidden="true">
+                {counts[id]}
+              </span>
+            )}
+          </Link>
+        ))}
       </nav>
 
-      {showExamples ? (
-        <PositiveExampleUsage />
+      {view === "matrix" ? (
+        <ExampleMatrix />
+      ) : view === "examples" ? (
+        <ExampleUsage />
       ) : (
-        <AttentionQueue showAll={showAll} />
+        <FeatureList showAll={view === "all"} />
       )}
     </main>
   );

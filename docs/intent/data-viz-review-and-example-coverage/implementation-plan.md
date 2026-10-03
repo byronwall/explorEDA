@@ -1,14 +1,24 @@
 ---
 title: "Data visualization review and example coverage — implementation plan"
 slug: "data-viz-review-and-example-coverage"
-phase: plan
+phase: execution
 status: current
-last_updated: "2026-10-01"
+last_updated: "2026-10-02"
 ---
 
 # Data visualization review and example coverage — implementation plan
 
+## Execution record
+
+Implementation started on `codex/example-coverage-tickets` from `60edb84`. Tickets own current acceptance and remaining proof. The sections below record the planning baseline from 2026-10-01.
+
+Coverage implementation is accepted at `daa5165`. All four coverage milestones are complete. Current [matrix proof](../../reviews/2026-10-02-feature-coverage-matrix.md) and [example reviews](../../reviews/2026-10-02-example-coverage.md) record browser acceptance. The manifest has 39 features, 37 with usage, two explicitly unsupported scales, and 37 reviewed assignments. All 11 chart types remain declared.
+
+The drawer fixes are committed at `c0dd3ad`. The rapid Escape regression fails with the original handler and passes with the fix. Final `pnpm check` passes on Node 24: 375 package tests and 18 demo tests. The separate drawer ticket is also accepted. Its [independent report](../../reviews/drawer-details-placement-verification.md) proves all six criteria, including saved-layout reopen and empty-state recovery at 1280, 783, and 390 pixels. The report retains the zero-count pointer interaction observation. No required proof remains in this execution scope.
+
 ## Plan at a glance
+
+The following sections preserve the planning baseline from 2026-10-01. Use the execution record above for current acceptance.
 
 The initiative is active. The review skill, coverage manifest, checks, and demo matrix exist. The remaining work is to reconcile coverage declarations, review current examples, and close confirmed gaps.
 
@@ -22,6 +32,14 @@ The initiative is active. The review skill, coverage manifest, checks, and demo 
 The manifest contains 38 feature rows and 10 examples. All 11 registered chart types have declared examples. Twenty-four feature rows have declared usage. Fourteen have none. Fifteen gap notes remain, including a shared-scale gap on a feature that now has a declared example. No feature/example assignment is marked `reviewed`.
 
 These are manifest counts, not a count of missing product features. Current configurations already contain meaningful titles, axis labels, and a saved Lorenz brush. Some declarations have fallen behind the code.
+
+## Ticket links
+
+- [exp-9e6a](../../../.tickets/exp-9e6a.md): Prove the feature matrix in the browser (milestone 3; independent root).
+- [exp-2g7e](../../../.tickets/exp-2g7e.md): Reconcile example coverage with current evidence (milestone 4; independent root).
+- [exp-3qd5](../../../.tickets/exp-3qd5.md): Close confirmed example gaps and record current reviews (milestone 4; waits for exp-2g7e).
+
+The existing [eufr3-5ig1](../../../.tickets/eufr3-5ig1.md) is a separate, bounded feedback-round-2 cleanup root. Its six drawer, details, and placement follow-ups remain in that ticket. Each needs a current fix and proof or a supported recorded decision. It does not expand the example-coverage scope.
 
 ## Implementation strategy
 

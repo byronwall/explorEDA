@@ -81,7 +81,7 @@ export function CalculationManager() {
                   const errors = manager.getErrors(name);
                   return (
                     <tr key={name}>
-                      <td>
+                      <td data-label="Calculated field">
                         <div className="flex items-center gap-2">
                           <CalculatedFieldBadge field={name} />
                           <button
@@ -93,7 +93,7 @@ export function CalculationManager() {
                           </button>
                         </div>
                       </td>
-                      <td>
+                      <td data-label="Formula / inputs">
                         <button
                           className="eda-calc-formula-link"
                           type="button"
@@ -125,11 +125,11 @@ export function CalculationManager() {
                             : "Constant value"}
                         </div>
                       </td>
-                      <td>
+                      <td data-label="Used by">
                         {dependentCalculations(calculations, name).length}{" "}
                         calculations
                       </td>
-                      <td>
+                      <td data-label="Row checks">
                         <button
                           type="button"
                           className={
@@ -149,6 +149,7 @@ export function CalculationManager() {
                           variant="ghost"
                           size="icon"
                           aria-label={"Delete " + name}
+                          tooltip="Delete calculation"
                           onClick={() => {
                             try {
                               removeCalculation(name);

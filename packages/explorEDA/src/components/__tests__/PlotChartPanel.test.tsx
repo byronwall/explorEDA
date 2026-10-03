@@ -13,6 +13,7 @@ import { barChartDefinition } from "../charts/BarChart/definition";
 import { boxPlotDefinition } from "../charts/BoxPlot/definition";
 import { rowChartDefinition } from "../charts/RowChart/definition";
 import { PlotChartPanel } from "../PlotChartPanel";
+import { GlobalAlertDialog } from "../GlobalAlertDialog";
 import { useAlertStore } from "@/stores/alertStore";
 
 beforeAll(() => {
@@ -659,6 +660,64 @@ it("keeps the chart when its delete confirmation is canceled", async () => {
   });
   await act(async () => useAlertStore.getState().closeAlert(false));
   expect(onDelete).not.toHaveBeenCalled();
+});
+
+it("closes details on a second Escape while the confirmation exits", async () => {
+  const chart = {
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "value"
+    ),
+    title: "Values",
+  };
+  render(
+    <DataLayerProvider data={[{ value: 1 }]} charts={[chart]}>
+      <>
+        <PlotChartPanel
+          settings={chart}
+          width={500}
+          height={400}
+          onDelete={() => {}}
+          onDuplicate={() => {}}
+        />
+        <GlobalAlertDialog />
+      </>
+    </DataLayerProvider>
+  );
+  fireEvent.click(
+    screen.getByRole("button", { name: "Open details for Values" })
+  );
+  expect(
+    await screen.findByRole("dialog", { name: "Values" })
+  ).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Delete Values" }));
+  expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
+
+  fireEvent.keyDown(document.body, { key: "Escape" });
+  await waitFor(() => expect(useAlertStore.getState().isOpen).toBe(false));
+  expect(screen.getByRole("dialog", { name: "Values" })).toBeInTheDocument();
+  // Keep the closed alert layer mounted to model its browser exit animation.
+  const closingAlert = document.createElement("div");
+  closingAlert.setAttribute("role", "alertdialog");
+  closingAlert.setAttribute("data-state", "closed");
+  const focusedAlertAction = document.createElement("button");
+  closingAlert.append(focusedAlertAction);
+  closingAlert.addEventListener("keydown", (event) => event.stopPropagation());
+  document.body.append(closingAlert);
+  const nestedEscape = (event: KeyboardEvent) => {
+    if (event.key === "Escape") event.preventDefault();
+  };
+  window.addEventListener("keydown", nestedEscape, true);
+  expect(closingAlert.isConnected).toBe(true);
+  fireEvent.keyDown(focusedAlertAction, { key: "Escape" });
+  window.removeEventListener("keydown", nestedEscape, true);
+
+  await waitFor(() =>
+    expect(
+      screen.queryByRole("dialog", { name: "Values" })
+    ).not.toBeInTheDocument()
+  );
+  closingAlert.remove();
 });
 
 it("opens details with settings ready and data in a tab, without changing the charts", async () => {

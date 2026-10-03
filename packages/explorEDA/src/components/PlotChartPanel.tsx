@@ -196,6 +196,7 @@ const NESTED_LAYERS =
 function hasNestedLayer(details: HTMLElement | null) {
   return Array.from(document.querySelectorAll(NESTED_LAYERS)).some(
     (layer) =>
+      !layer.matches("[role='alertdialog'][data-state='closed']") &&
       !layer.querySelector("[data-slot='tooltip-content']") &&
       !layer.contains(details) &&
       !details?.contains(layer)
