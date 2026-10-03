@@ -245,7 +245,7 @@ it("previews a bar on hover and marks its Alt-hover target", () => {
   const bar = screen.getByRole("button", { name: "A: 2 records" });
   const svg = view.container.querySelector("svg")!;
   fireEvent.pointerMove(bar, { buttons: 0 });
-  expect(screen.getByRole("status")).toHaveTextContent("Bar · A");
+  expect(screen.getByRole("status")).toHaveTextContent("categoryARows2");
   const altMove = createEvent.pointerMove(bar, { buttons: 0 });
   Object.defineProperty(altMove, "altKey", { value: true });
   fireEvent(bar, altMove);

@@ -13,6 +13,7 @@ import type { ScatterPlotSettings } from "./definition";
 import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
 import { ScatterSvg } from "./ScatterSvg";
 import { ChartReadout } from "../ChartReadout";
+import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
 import {
   findScatterTraceRow,
   resolveScatterTrace,
@@ -236,6 +237,24 @@ export function ScatterPlot({
     setBadgeAnchors(next);
   }, [plan]);
 
+  const brushed = plan.brushExtent
+    ? plan.points.filter((point) => point.passesOwnFilter).length
+    : 0;
+  const showHints = width >= STATUS_HINT_MIN_WIDTH && !facetIds;
+  const statusParts = facetIds
+    ? []
+    : [
+        plan.brushExtent &&
+          `${brushed.toLocaleString()} of ${plan.points.length.toLocaleString()} points selected`,
+        plan.exclusions.length > 0 &&
+          !plan.emptyMessage &&
+          `${plan.exclusions.length.toLocaleString()} rows without a position left out`,
+        showHints &&
+          (plan.brushExtent
+            ? "Drag the edges to adjust, Esc to clear"
+            : "Drag to select a region, Alt-click a point to trace it"),
+      ];
+
   const handleBrushChange = useCallback(
     (extent: Extent | null) => {
       const filters = settings.filters.filter(
@@ -320,6 +339,11 @@ export function ScatterPlot({
               />
             </span>
           ))}
+          <ChartStatusLine
+            parts={statusParts}
+            left={plan.margin.left}
+            right={plan.margin.right}
+          />
           {plan.emptyMessage && (
             <div
               className="pointer-events-none absolute flex items-center justify-center p-3 text-center"

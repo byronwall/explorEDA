@@ -18,6 +18,11 @@ import type { TraceSource } from "../trace/traceTypes";
 import { useGetColumnData } from "../useGetColumnData";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import { ChartReadout } from "../ChartReadout";
+import {
+  AxisValuePill as AxisValue,
+  pillX,
+  spreadLabels as spread,
+} from "../PlotValueLabels";
 import type { EcdfSettings } from "./definition";
 import {
   countInRange,
@@ -73,36 +78,6 @@ function Readout({
         </span>
       ))}
     </ChartReadout>
-  );
-}
-
-/** Spreads labels apart vertically so none overlap, keeping their order. */
-function spread(ys: number[], gap: number, min: number, max: number) {
-  const order = ys.map((y, index) => ({ y, index })).sort((a, b) => a.y - b.y);
-  order.forEach((item, i) => {
-    item.y = Math.max(item.y, i ? order[i - 1]!.y + gap : min);
-  });
-  for (let i = order.length - 1; i >= 0; i--) {
-    order[i]!.y = Math.min(
-      order[i]!.y,
-      i < order.length - 1 ? order[i + 1]!.y - gap : max
-    );
-  }
-  const out = [...ys];
-  order.forEach((item) => (out[item.index] = item.y));
-  return out;
-}
-
-/** A value on the x axis under the crosshair or a span edge. */
-function AxisValue({ x, y, text }: { x: number; y: number; text: string }) {
-  const width = text.length * 6.2 + 10;
-  return (
-    <g transform={`translate(${x},${y})`} className="eda-ecdf-axis-value">
-      <rect x={-width / 2} y={-1} width={width} height={16} rx={3} />
-      <text y={11} textAnchor="middle">
-        {text}
-      </text>
-    </g>
   );
 }
 
@@ -371,10 +346,8 @@ export function EcdfChart({
   );
   const hoverX = hoverValue === null ? 0 : plan.px(hoverValue);
   const labelsLeft = hoverX > plan.plotWidth - 56;
-  const axisValueX = (x: number, text: string) => {
-    const half = (text.length * 6.2 + 10) / 2;
-    return Math.max(half - 4, Math.min(plan.plotWidth - half + 4, x));
-  };
+  const axisValueX = (x: number, text: string) =>
+    pillX(x, text, plan.plotWidth);
 
   const selected = plan.selection?.filter;
   const selectedRows = selected ? spanRows(selected.min, selected.max) : [];

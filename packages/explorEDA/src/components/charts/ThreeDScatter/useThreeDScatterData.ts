@@ -7,10 +7,18 @@ import { useGetLiveData } from "../useGetLiveData";
 import { datum } from "@/types/ChartTypes";
 import { ThreeDScatterSettings } from "./types";
 
+/** Half the edge of the cube every 3D scatter draws its points inside. */
+export const CUBE_HALF = 10;
+
+export type Domain = [number, number];
+
 export interface ThreeDScatterPoint {
+  /** Position inside the cube. */
   x: number;
   y: number;
   z: number;
+  /** The row's own values, for the readout. */
+  values: { x: number; y: number; z: number; color: datum; size: datum };
   color: string;
   size: number;
 }
@@ -18,6 +26,37 @@ export interface ThreeDScatterPoint {
 export interface ThreeDScatterData {
   points: ThreeDScatterPoint[];
   omitted: number;
+  domains: { x: Domain; y: Domain; z: Domain };
+}
+
+function extent(values: datum[]): Domain {
+  const numbers = finiteNumbers(values);
+  if (!numbers.length) {
+    return [0, 0];
+  }
+  let min = Infinity;
+  let max = -Infinity;
+  for (const value of numbers) {
+    if (value < min) {
+      min = value;
+    }
+    if (value > max) {
+      max = value;
+    }
+  }
+  return [min, max];
+}
+
+/** Maps a value into the cube; a flat domain sits in the middle. */
+export function toCube(value: number, [min, max]: Domain) {
+  return max > min
+    ? ((value - min) / (max - min)) * 2 * CUBE_HALF - CUBE_HALF
+    : 0;
+}
+
+/** Maps a cube position back to a value on the axis. */
+export function fromCube(position: number, [min, max]: Domain) {
+  return min + ((position + CUBE_HALF) / (2 * CUBE_HALF)) * (max - min);
 }
 
 export function buildThreeDScatterData(
@@ -26,8 +65,13 @@ export function buildThreeDScatterData(
   zData: datum[],
   colorData: datum[],
   sizeData: datum[],
-  sizeDomain: [number, number],
-  getColor: (value: datum) => string
+  sizeDomain: Domain,
+  getColor: (value: datum) => string,
+  domains: ThreeDScatterData["domains"] = {
+    x: extent(xData),
+    y: extent(yData),
+    z: extent(zData),
+  }
 ): ThreeDScatterData {
   const [sizeMin, sizeMax] = sizeDomain;
   const sizeRange = sizeMax - sizeMin;
@@ -51,10 +95,17 @@ export function buildThreeDScatterData(
         ? 0.5 + ((rawSize - sizeMin) / sizeRange) * 1.5
         : 1
       : 1;
-    points.push({ x, y, z, color: getColor(colorData[i]), size });
+    points.push({
+      x: toCube(x, domains.x),
+      y: toCube(y, domains.y),
+      z: toCube(z, domains.z),
+      values: { x, y, z, color: colorData[i], size: sizeData[i] },
+      color: getColor(colorData[i]),
+      size,
+    });
   }
 
-  return { points, omitted };
+  return { points, omitted, domains };
 }
 
 export function useThreeDScatterData(
@@ -68,28 +119,34 @@ export function useThreeDScatterData(
   const zData = useGetLiveData(settings, settings.zField, facetIds);
   const colorData = useGetLiveData(settings, settings.colorField, facetIds);
   const sizeData = useGetLiveData(settings, settings.sizeField, facetIds);
+  const allXData = useGetColumnDataForIds(settings.xField);
+  const allYData = useGetColumnDataForIds(settings.yField);
+  const allZData = useGetColumnDataForIds(settings.zField);
   const allSizeData = useGetColumnDataForIds(settings.sizeField);
 
   const { getColorForValue } = useColorScales();
   const colorScaleId = settings.colorScaleId;
 
-  return useMemo(() => {
+  // Axes span every row, so filters and facets move points, not the cube.
+  const domains = useMemo(
+    () => ({ x: extent(allXData), y: extent(allYData), z: extent(allZData) }),
+    [allXData, allYData, allZData]
+  );
+
+  return useMemo((): ThreeDScatterData => {
     if (!is3DScatter) {
-      return { points: [], omitted: 0 };
+      return { points: [], omitted: 0, domains };
     }
 
-    const sizes = finiteNumbers(allSizeData);
-    const sizeDomain: [number, number] = sizes.length
-      ? [Math.min(...sizes), Math.max(...sizes)]
-      : [0, 0];
     return buildThreeDScatterData(
       xData,
       yData,
       zData,
       colorData,
       sizeData,
-      sizeDomain,
-      (value) => getColorForValue(colorScaleId, value, "#ffffff")
+      extent(allSizeData),
+      (value) => getColorForValue(colorScaleId, value, "#3b82f6"),
+      domains
     );
   }, [
     is3DScatter,
@@ -101,5 +158,6 @@ export function useThreeDScatterData(
     colorData,
     sizeData,
     allSizeData,
+    domains,
   ]);
 }

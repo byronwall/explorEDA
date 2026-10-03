@@ -6,6 +6,7 @@ import {
   type FieldSettingsMap,
 } from "@/lib/fieldSettings";
 import { makeColorScale } from "@/lib/colorScaleMath";
+import { STATUS_LINE_HEIGHT } from "../ChartStatusLine";
 import {
   categoryIncludes,
   categoryKey,
@@ -286,6 +287,9 @@ export function planScatter(
           )
         : undefined,
   });
+  // A lone chart keeps a line under its axis title for the status line.
+  const footer = snapshot.facetIds ? 0 : STATUS_LINE_HEIGHT;
+  margin.bottom += footer;
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
   const xAxis = axisFor(snapshot.xData, snapshot.xType, settings.xAxis, [
@@ -323,13 +327,16 @@ export function planScatter(
     }
   };
   const filteredSet = new Set(snapshot.filteredIds);
+  // Without a saved size, dense clouds get smaller, lighter points so
+  // overlaps read as density instead of one solid shape.
+  const density = ids.length > 5000 ? 2 : ids.length > 1000 ? 1 : 0;
   const pointStyle: ScatterPointStyle = {
     radius: {
-      value: settings.pointSize ?? 3,
+      value: settings.pointSize ?? [3, 2.5, 2][density]!,
       source: settings.pointSize == null ? "scatter-default" : "chart-setting",
     },
     opacity: {
-      value: settings.pointOpacity ?? 0.7,
+      value: settings.pointOpacity ?? [0.7, 0.55, 0.4][density]!,
       source:
         settings.pointOpacity == null ? "scatter-default" : "chart-setting",
     },
@@ -390,6 +397,7 @@ export function planScatter(
     plotHeight,
     margin,
     marginPolicy,
+    footer,
     x: {
       scale: xScale,
       scaleType: xAxis.type,
@@ -678,8 +686,8 @@ export function planScatterOverlay(
     const { x, y, color } = point;
     const { xText, yText } = scatterPointReadout(plan, point);
     readoutLabel = `Source row ${point.sourceId}; ${plan.xDisplay}: ${xText}; ${plan.yDisplay}: ${yText}`;
-    const xWidth = xText.length * 6 + 12;
-    const yWidth = yText.length * 6 + 12;
+    const xWidth = xText.length * 6.2 + 10;
+    const yWidth = yText.length * 6.2 + 10;
     const labelX = Math.max(
       xWidth / 2,
       Math.min(plan.plotWidth - xWidth / 2, x)
@@ -714,37 +722,41 @@ export function planScatterOverlay(
         id: "readout:ring",
         cx: x,
         cy: y,
-        r: point.radius + 5,
+        r: point.radius + 4,
         fill: "none",
-        stroke: "var(--primary)",
-        strokeWidth: 2.5,
+        stroke: "var(--foreground)",
+        strokeWidth: 2,
       },
       { kind: "circle", id: "readout:center", cx: x, cy: y, r: 2, fill: color },
+      // Hovered values sit on the axes in dark pills, as on the ECDF and
+      // line charts.
       {
         kind: "rect",
         id: "readout:x-bg",
         x: labelX - xWidth / 2,
-        y: plan.plotHeight + 5,
+        y: plan.plotHeight + 4,
         width: xWidth,
-        height: 20,
-        fill: "var(--card)",
+        height: 16,
+        rx: 3,
+        fill: "var(--foreground)",
       },
       {
         kind: "rect",
         id: "readout:y-bg",
-        x: -yWidth - 3,
-        y: y - 10,
+        x: -yWidth - 4,
+        y: y - 8,
         width: yWidth,
-        height: 20,
-        fill: "var(--card)",
+        height: 16,
+        rx: 3,
+        fill: "var(--foreground)",
       },
       {
         kind: "text",
         id: "readout:x-text",
         x: labelX,
-        y: plan.plotHeight + 18,
+        y: plan.plotHeight + 15,
         text: xText,
-        fill: color,
+        fill: "var(--background)",
         fontSize: 10,
         fontWeight: 600,
         textAnchor: "middle",
@@ -752,14 +764,14 @@ export function planScatterOverlay(
       {
         kind: "text",
         id: "readout:y-text",
-        x: -8,
+        x: -4 - yWidth / 2,
         y,
         dy: ".32em",
         text: yText,
-        fill: color,
+        fill: "var(--background)",
         fontSize: 10,
         fontWeight: 600,
-        textAnchor: "end",
+        textAnchor: "middle",
       }
     );
   }
