@@ -948,3 +948,15 @@ export const densityDashboard = dashboard(
     table("density-records", "Daily source records", ["Temperature (°C)", "Ice Cream Sales", "Humidity (%)", "Beach Visitors", "Mood Index"], layout(0, 6, 12, 5)),
   ]
 );
+
+
+export const pointMapDashboard = dashboard(
+  "Where service requests originate",
+  [
+    { ...base, id: "map-sites", type: "map", mode: "point", title: "Service sites around the world", latitudeField: "Latitude", longitudeField: "Longitude", labelField: "Site", colorField: "Region", colorScaleId: "map-regions", sizeField: "Requests", pointRadius: 18, pointOpacity: 0.75, projection: "equal-earth", layout: layout(0, 0, 8, 7) },
+    { ...base, id: "map-count", type: "metric-card", title: "Sites in this selection", aggregation: "count", layout: layout(8, 0, 4, 2) },
+    { ...base, id: "map-regions", type: "bar", title: "Sites by region", field: "Region", layout: layout(8, 2, 4, 5), binCount: 20, yAxisLabel: "Sites" },
+    table("map-records", "Site source records", ["Site", "Latitude", "Longitude", "Region", "Requests"], layout(0, 7, 12, 5)),
+  ],
+  [categoricalScale("map-regions", "Region", ["Americas", "Europe", "Africa", "Asia-Pacific"])]
+);
