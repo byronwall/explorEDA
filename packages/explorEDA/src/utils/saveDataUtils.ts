@@ -352,7 +352,13 @@ function isChart(value: unknown): boolean {
         (value.binCount === undefined || isFiniteNumber(value.binCount)) &&
         (value.forceString === undefined ||
           typeof value.forceString === "boolean") &&
-        (value.seriesField === undefined || (typeof value.seriesField === "string" && value.seriesField.length > 0)) &&
+        (value.seriesField === undefined ||
+          (typeof value.seriesField === "string" &&
+            value.seriesField.length > 0)) &&
+        (value.seriesLayout === undefined ||
+          ["grouped", "stacked", "percent"].includes(
+            value.seriesLayout as string
+          )) &&
         (value.aggregateId === undefined ||
           typeof value.aggregateId === "string")
       );
@@ -663,12 +669,21 @@ export function validateSavedData(data: unknown): data is SavedDataStructure {
   const aggregateIds = new Set(
     (data.aggregates ?? []).map((aggregate) => aggregate.id)
   );
+  const averageIds = new Set(
+    (data.aggregates ?? [])
+      .filter((aggregate) => aggregate.aggregation === "average")
+      .map((aggregate) => aggregate.id)
+  );
   if (
     (data.charts as unknown[]).some(
       (chart: unknown) =>
         isRecord(chart) &&
-        chart.aggregateId !== undefined &&
-        !aggregateIds.has(chart.aggregateId as string)
+        ((chart.aggregateId !== undefined &&
+          !aggregateIds.has(chart.aggregateId as string)) ||
+          (chart.type === "bar" &&
+            chart.seriesField &&
+            ["stacked", "percent"].includes(chart.seriesLayout as string) &&
+            averageIds.has(chart.aggregateId as string)))
     )
   ) {
     return false;

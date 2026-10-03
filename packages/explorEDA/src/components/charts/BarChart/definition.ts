@@ -13,6 +13,7 @@ export interface BarChartSettings extends BaseChartSettings {
   forceString?: boolean;
   aggregateId?: string;
   seriesField?: string;
+  seriesLayout?: "grouped" | "stacked" | "percent";
   filters: Filter[];
 }
 
