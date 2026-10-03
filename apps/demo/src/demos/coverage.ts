@@ -20,6 +20,14 @@ type FeatureDefinition = {
 
 export const coverageFeatures = [
   {
+    id: "mode:grouped-bars",
+    label: "Grouped bars",
+    family: "Chart modes",
+    description: "Compare category–series pairs and inspect each bar's source rows.",
+    required: true,
+    status: "supported",
+  },
+  {
     id: "mode:calendar-series",
     label: "Calendar time series",
     family: "Chart modes",
@@ -429,6 +437,18 @@ export type ExampleCoverage = {
 };
 
 export const exampleCoverage = [
+  {
+    exampleId: "grouped-bars",
+    intent: "Compare regional revenue by channel and inspect an exact category–series pair.",
+    features: {
+      "mode:grouped-bars": "shown",
+      "chart:bar": "shown",
+      "chart:metric-card": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
   {
     exampleId: "calendar-series",
     intent: "Compare monthly channel revenue, select a period, and inspect its source rows.",

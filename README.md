@@ -36,6 +36,9 @@ Line Chart's **Calendar summaries** mode groups dated rows by UTC day, week,
 or month. Select a period and series to filter linked views, then choose
 **Inspect period** to see its calculation, date boundaries, and source rows.
 
+Use **Split by** in Bar Chart to compare series within each category. Each
+bar supports linked selection and source tracing for its category–series pair.
+
 ## Install
 
 ```sh

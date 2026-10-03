@@ -6,7 +6,7 @@ Byron approved this sequence after Metric Card PR #114. Each branch starts from 
 | --- | --- | --- | --- | --- |
 | 1 | Metric card | `codex/metric-card` | #114 | In review |
 | 2 | Calendar time series | `codex/calendar-time-series` | #115 | In review |
-| 3 | Grouped bars | | | Pending |
+| 3 | Grouped bars | `codex/grouped-bars` | | In progress |
 | 4 | Stacked and 100% bars | | | Pending |
 | 5 | Area and stacked area | | | Pending |
 | 6 | Bubble scatter | | | Pending |
