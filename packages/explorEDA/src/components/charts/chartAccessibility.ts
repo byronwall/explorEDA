@@ -108,6 +108,8 @@ export function getChartTitle(
 export function getChartFields(settings: ChartSettings): string[] {
   const fields = (() => {
     switch (settings.type) {
+      case "bar":
+        return [settings.field, settings.seriesField, settings.colorField];
       case "line":
         return settings.time
           ? [

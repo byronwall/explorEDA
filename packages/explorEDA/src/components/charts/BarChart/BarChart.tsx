@@ -15,6 +15,7 @@ import { barAt, planBarChart, type BarChartPlan } from "./barPlan";
 import { sameRange, snapRangeToBins } from "./bins";
 import { barTraceTargets, findBarTraceRow, resolveBarTrace } from "./barTrace";
 import { BarChartSettings } from "./definition";
+import { SeriesBarChart } from "./SeriesBarChart";
 import {
   useChartTrace,
   useChartTraceApi,
@@ -66,7 +67,11 @@ function HoverReadout({ plan, id }: { plan: BarChartPlan; id: string }) {
   );
 }
 
-export function BarChart({
+export function BarChart(props: BarChartProps) {
+  return props.settings.seriesField ? <SeriesBarChart {...props} /> : <SingleBarChart {...props} />;
+}
+
+function SingleBarChart({
   settings,
   width,
   height,

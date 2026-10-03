@@ -352,6 +352,7 @@ function isChart(value: unknown): boolean {
         (value.binCount === undefined || isFiniteNumber(value.binCount)) &&
         (value.forceString === undefined ||
           typeof value.forceString === "boolean") &&
+        (value.seriesField === undefined || (typeof value.seriesField === "string" && value.seriesField.length > 0)) &&
         (value.aggregateId === undefined ||
           typeof value.aggregateId === "string")
       );

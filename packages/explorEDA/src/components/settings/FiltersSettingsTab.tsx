@@ -32,6 +32,10 @@ export function chartFilterFields(
             : []),
         ];
       case "bar":
+        if (settings.seriesField) return [
+          { field: aggregate?.groupField ?? settings.field, valuesOnly: true },
+          { field: settings.seriesField, valuesOnly: true },
+        ].filter((item, index, items) => items.findIndex((other) => other.field === item.field) === index);
         return [
           {
             field:
