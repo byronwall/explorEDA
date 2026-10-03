@@ -18,27 +18,33 @@ export function AxisSettingsTab({ settings, onSettingChange }: Props) {
           <legend className="px-1 text-sm font-medium">
             {axis === "x" ? "Horizontal axis" : "Vertical axis"}
           </legend>
-          <label className="flex items-center justify-between gap-4">
-            Numeric scale
-            <select
-              className="h-8 rounded-md border bg-background px-2 text-xs"
-              aria-label={`${axis.toUpperCase()} numeric scale`}
-              value={
-                settings[`${axis}Axis`]?.scaleType === "symlog"
-                  ? "symlog"
-                  : "linear"
-              }
-              onChange={(event) =>
-                onSettingChange(`${axis}Axis`, {
-                  ...settings[`${axis}Axis`],
-                  scaleType: event.target.value,
-                })
-              }
-            >
-              <option value="linear">Linear</option>
-              <option value="symlog">Symmetric log</option>
-            </select>
-          </label>
+          {settings.type === "line" && settings.time && axis === "x" ? (
+            <p className="text-xs text-muted-foreground">
+              Dates use a UTC calendar scale.
+            </p>
+          ) : (
+            <label className="flex items-center justify-between gap-4">
+              Numeric scale
+              <select
+                className="h-8 rounded-md border bg-background px-2 text-xs"
+                aria-label={`${axis.toUpperCase()} numeric scale`}
+                value={
+                  settings[`${axis}Axis`]?.scaleType === "symlog"
+                    ? "symlog"
+                    : "linear"
+                }
+                onChange={(event) =>
+                  onSettingChange(`${axis}Axis`, {
+                    ...settings[`${axis}Axis`],
+                    scaleType: event.target.value,
+                  })
+                }
+              >
+                <option value="linear">Linear</option>
+                <option value="symlog">Symmetric log</option>
+              </select>
+            </label>
+          )}
           <label className="flex items-center justify-between gap-4">
             Grid lines
             <Switch

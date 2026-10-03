@@ -17,6 +17,7 @@ import {
 } from "../useGetColumnData";
 import { useGetLiveIds } from "../useGetLiveData";
 import { type LineChartSettings, DEFAULT_SERIES_SETTINGS } from "./definition";
+import { TimeSeriesChart } from "./TimeSeriesChart";
 
 const curveTypes = {
   linear: curveLinear,
@@ -42,7 +43,14 @@ const COLOR_PALETTES = {
   ],
 } as const;
 
-export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
+export const LineChart: FC<BaseChartProps<LineChartSettings>> = (props) =>
+  props.settings.time ? (
+    <TimeSeriesChart {...props} />
+  ) : (
+    <ObservationLineChart {...props} />
+  );
+
+const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
   settings,
   width,
   height,

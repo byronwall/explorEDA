@@ -15,6 +15,7 @@ import type { CalendarTrace } from "../Calendar/calendarTrace";
 import type { HeatmapTrace } from "../Heatmap/heatmapTrace";
 import type { EcdfTrace } from "../Ecdf/ecdfTrace";
 import type { MetricCardTrace } from "../MetricCard/metricCardTrace";
+import type { TimeSeriesTrace } from "../LineChart/timeSeriesTrace";
 import type { ScatterTrace } from "../ScatterPlot/scatterTrace";
 
 /** A selected object. The owner's source resolves it against its current plan. */
@@ -100,6 +101,7 @@ export type ChartTrace =
   | HeatmapTrace
   | EcdfTrace
   | MetricCardTrace
+  | TimeSeriesTrace
   | GuideTrace
   | TitleTrace
   | FacetTrace

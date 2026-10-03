@@ -12,8 +12,25 @@ import { LineSeriesSettings } from "./LineSeriesSettings";
 import { ComboBox } from "@/components/ComboBox";
 import MultiSelect, { type Option } from "@/components/ui/multi-select";
 import { useColumnNames } from "@/components/charts/PivotTable/useColumnNames";
+import {
+  LineDataMode,
+  TimeSeriesSettingsPanel,
+} from "./TimeSeriesSettingsPanel";
 
 export const LineChartSettingsPanel: FC<
+  ChartSettingsPanelProps<LineChartSettings>
+> = (props) => (
+  <div className="space-y-4">
+    <LineDataMode {...props} />
+    {props.settings.time ? (
+      <TimeSeriesSettingsPanel {...props} />
+    ) : (
+      <ObservationLineSettingsPanel {...props} />
+    )}
+  </div>
+);
+
+const ObservationLineSettingsPanel: FC<
   ChartSettingsPanelProps<LineChartSettings>
 > = ({ settings, onSettingsChange }) => {
   const updateSettings = (updates: Partial<LineChartSettings>) => {

@@ -6,6 +6,7 @@ import { CalendarTraceBody } from "../Calendar/CalendarTraceBody";
 import { HeatmapTraceBody } from "../Heatmap/HeatmapTraceBody";
 import { EcdfTraceBody } from "../Ecdf/EcdfTraceBody";
 import { MetricCardTraceBody } from "../MetricCard/MetricCardTraceBody";
+import { TimeSeriesTraceBody } from "../LineChart/TimeSeriesTraceBody";
 import { ScatterTraceBody } from "../ScatterPlot/ScatterTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
 import {
@@ -18,6 +19,9 @@ import type { ChartTrace } from "./traceTypes";
 
 function TraceBody({ trace }: { trace: ChartTrace }) {
   switch (trace.kind) {
+    case "time-bucket":
+    case "time-omissions":
+      return <TimeSeriesTraceBody key={trace.id} trace={trace} />;
     case "metric-card":
       return <MetricCardTraceBody trace={trace} />;
     case "bar":
