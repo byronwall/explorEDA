@@ -90,9 +90,24 @@ vi.mock("@/components/SummaryTable/components/FieldInspector", () => ({
 
 const mockUseDataLayer = vi.fn();
 
+// State every test shares; a test's own mock answers first.
+const baseState = {
+  formatFieldValue: (_field: string, value: unknown) => String(value),
+  getColumnData: () => ({}),
+  data: [],
+  fieldProfiles: [],
+  charts: [],
+  calculations: [],
+  liveItems: {},
+  fieldSettings: {},
+};
+
 vi.mock("@/providers/DataLayerProvider", () => ({
-  useDataLayer: (selector: (state: unknown) => unknown) =>
-    mockUseDataLayer(selector),
+  useDataLayer: (selector: (state: unknown) => unknown) => {
+    const source = selector.toString();
+    if (source.includes("formatFieldValue")) return baseState.formatFieldValue;
+    return mockUseDataLayer(selector) ?? selector(baseState) ?? null;
+  },
 }));
 
 const renderHeader = (settings: DataTableSettings) =>
@@ -128,6 +143,129 @@ describe("DataTableHeader", () => {
 
     expect(screen.getByText("name")).toBeInTheDocument();
     expect(screen.getByText("age")).toBeInTheDocument();
+  });
+
+  it("aligns number headers right, with the type icon before the name", () => {
+    renderHeader(mockSettings);
+
+    const heading = (name: string) =>
+      screen.getByText(name).closest(".eda-column-heading");
+    expect(heading("age")).toHaveAttribute("data-align", "right");
+    expect(heading("name")).not.toHaveAttribute("data-align");
+    expect(heading("age")?.querySelector("svg")).toBeInTheDocument();
+  });
+
+  it("draws a distribution under each name and filters from it", () => {
+    // jsdom has no PointerEvent, so pointer coordinates need MouseEvent.
+    globalThis.PointerEvent ??= class extends MouseEvent {
+      pointerId: number;
+      constructor(type: string, init: PointerEventInit = {}) {
+        super(type, init);
+        this.pointerId = init.pointerId ?? 0;
+      }
+    } as unknown as typeof PointerEvent;
+    const onSettingsChange = vi.fn();
+    const ageProfile = {
+      ...mockFieldProfiles[1]!,
+      statistics: { ...mockFieldProfiles[1]!.statistics!, bins: [1, 1, 1] },
+    };
+    render(
+      <table>
+        <DataTableHeader
+          settings={mockSettings}
+          onSettingsChange={onSettingsChange}
+          distributionProfiles={[mockFieldProfiles[0]!, ageProfile]}
+        />
+      </table>
+    );
+
+    expect(screen.getByText("Range 25 to 35, median 30")).toBeInTheDocument();
+    const spark = screen
+      .getByText("Range 25 to 35, median 30")
+      .closest(".eda-column-spark")!
+      .querySelector(".eda-summary-spark-hit")!;
+    spark.getBoundingClientRect = () =>
+      ({ left: 0, width: 90, top: 0, height: 20 }) as DOMRect;
+    fireEvent.pointerDown(spark, { button: 0, clientX: 5, pointerId: 1 });
+    fireEvent.pointerMove(spark, { clientX: 5, pointerId: 1 });
+    fireEvent.pointerUp(spark, { clientX: 5, pointerId: 1 });
+
+    expect(onSettingsChange).toHaveBeenCalledWith({
+      filters: [
+        expect.objectContaining({ type: "range", field: "age", min: 25 }),
+      ],
+    });
+  });
+
+  it("moves one filter popover between columns", () => {
+    renderHeader(mockSettings);
+
+    fireEvent.click(screen.getByRole("button", { name: "Filter name" }));
+    expect(screen.getByRole("dialog", { name: "Filter name" })).toBeVisible();
+
+    fireEvent.click(screen.getByRole("button", { name: "Filter age" }));
+    expect(screen.getAllByRole("dialog")).toHaveLength(1);
+    expect(screen.getByRole("dialog", { name: "Filter age" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Filter age" })).toHaveAttribute(
+      "aria-expanded",
+      "true"
+    );
+  });
+
+  it("hides a column dragged away from the header and skips the sort", () => {
+    globalThis.PointerEvent ??= class extends MouseEvent {
+      pointerId: number;
+      constructor(type: string, init: PointerEventInit = {}) {
+        super(type, init);
+        this.pointerId = init.pointerId ?? 0;
+      }
+    } as unknown as typeof PointerEvent;
+    const onSettingsChange = vi.fn();
+    render(
+      <table>
+        <DataTableHeader
+          settings={mockSettings}
+          onSettingsChange={onSettingsChange}
+        />
+      </table>
+    );
+
+    const name = screen.getByRole("button", { name: "Sort by name" });
+    fireEvent.pointerDown(name, { button: 0, clientX: 10, clientY: 10 });
+    fireEvent.pointerMove(window, { clientX: 20, clientY: 200 });
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Release to hide name"
+    );
+    fireEvent.pointerUp(window, { clientX: 20, clientY: 200 });
+    fireEvent.click(name);
+
+    expect(onSettingsChange).toHaveBeenCalledTimes(1);
+    expect(onSettingsChange).toHaveBeenCalledWith({
+      columns: [mockSettings.columns[1]],
+    });
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  });
+
+  it("reorders a column dragged along the header", () => {
+    const onSettingsChange = vi.fn();
+    render(
+      <table>
+        <DataTableHeader
+          settings={mockSettings}
+          onSettingsChange={onSettingsChange}
+        />
+      </table>
+    );
+
+    // jsdom lays nothing out, so every drop lands after the last column.
+    const name = screen.getByRole("button", { name: "Sort by name" });
+    fireEvent.pointerDown(name, { button: 0, clientX: 10, clientY: 10 });
+    fireEvent.pointerMove(window, { clientX: 60, clientY: 12 });
+    fireEvent.pointerUp(window, { clientX: 60, clientY: 12 });
+
+    expect(onSettingsChange).toHaveBeenCalledWith({
+      columns: [mockSettings.columns[1], mockSettings.columns[0]],
+    });
   });
 
   it("handles column sorting", () => {

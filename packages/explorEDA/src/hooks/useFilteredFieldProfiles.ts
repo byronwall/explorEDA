@@ -18,7 +18,11 @@ import type { ChartSettings, datum } from "@/types/ChartTypes";
  * their own filter. Its distribution keeps its shape, and the filtered part
  * can be highlighted inside it. Every other field reads the filtered rows.
  */
-export function useFilteredFieldProfiles(own?: ChartSettings): FieldProfile[] {
+export function useFilteredFieldProfiles(
+  own?: ChartSettings,
+  /** False skips the work and returns no profiles. */
+  enabled = true
+): FieldProfile[] {
   const sourceProfiles = useDataLayer((state) => state.fieldProfiles);
   const data = useDataLayer((state) => state.data);
   const calculations = useDataLayer((state) => state.calculations);
@@ -31,6 +35,7 @@ export function useFilteredFieldProfiles(own?: ChartSettings): FieldProfile[] {
   const ownFilters = own?.filters;
 
   return useMemo(() => {
+    if (!enabled) return [];
     // liveItems and fieldSettings change when filters or conversions change
     // the values these profiles describe.
     void fieldSettings;
@@ -113,6 +118,7 @@ export function useFilteredFieldProfiles(own?: ChartSettings): FieldProfile[] {
     fieldSettings,
     ownId,
     ownFilters,
+    enabled,
   ]);
 }
 

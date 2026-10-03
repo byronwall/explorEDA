@@ -23,6 +23,7 @@ import {
   X,
 } from "lucide-react";
 import { ChartRenderer } from "./charts/ChartRenderer";
+import { ChartReadoutProvider } from "./charts/ChartReadout";
 import { ChartColorLegend } from "./charts/ColorLegend/ChartColorLegend";
 import { ChartTraceControl } from "./charts/ChartTraceControl";
 import {
@@ -80,6 +81,12 @@ const TRACE_COPY = {
     emptyText:
       "Alt-click a cell to trace it. Normal clicks keep selecting cells. You can also find a source row below.",
     ariaLabel: "Heatmap trace inspector",
+  },
+  ecdf: {
+    heading: "Step trace",
+    emptyText:
+      "Alt-click a curve to trace the share at that value. Normal clicks keep selecting. You can also find a source row below.",
+    ariaLabel: "ECDF trace inspector",
   },
 } as const;
 
@@ -275,6 +282,11 @@ export function PlotChartPanel({
   const [toolbarTarget, setToolbarTarget] = useState<HTMLDivElement | null>(
     null
   );
+  const [readoutTarget, setReadoutTarget] = useState<HTMLDivElement | null>(
+    null
+  );
+  // The details view gives the title more room, so the chart starts lower.
+  const headerExtra = expanded ? 14 : 0;
   const clearFilter = useDataLayer((state) => state.clearFilter);
   const updateChart = useDataLayer((state) => state.updateChart);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
@@ -431,6 +443,12 @@ export function PlotChartPanel({
             </h3>
           )}
         </div>
+        {/* Values under the pointer, beside the title and off the plot. */}
+        <div
+          ref={setReadoutTarget}
+          className="eda-panel-readout"
+          role="status"
+        />
         {tableSearch && (
           <div
             className="eda-chart-search"
@@ -586,34 +604,44 @@ export function PlotChartPanel({
         {chartSummary}
       </p>
       {axisFieldActions.overlay}
-      <div className="eda-chart-content flex min-h-0 flex-1 flex-col">
-        {autoLegendHeight > 0 && (
-          <ChartColorLegend
-            settings={settings}
-            width={Math.max(1, panelWidth - 24)}
-          />
-        )}
-        {settings.facet?.enabled && !aggregate ? (
-          <FacetContainer
-            settings={settings}
-            width={Math.max(1, panelWidth - 24)}
-            height={Math.max(
-              1,
-              panelHeight - 58 - fieldStripHeight - autoLegendHeight
-            )}
-          />
-        ) : (
-          <ChartRenderer
-            settings={settings}
-            toolbarTarget={isTableLike ? toolbarTarget : undefined}
-            width={Math.max(1, panelWidth - 24)}
-            height={Math.max(
-              1,
-              panelHeight - 58 - fieldStripHeight - autoLegendHeight
-            )}
-          />
-        )}
-      </div>
+      <ChartReadoutProvider value={readoutTarget}>
+        <div className="eda-chart-content flex min-h-0 flex-1 flex-col">
+          {autoLegendHeight > 0 && (
+            <ChartColorLegend
+              settings={settings}
+              width={Math.max(1, panelWidth - 24)}
+            />
+          )}
+          {settings.facet?.enabled && !aggregate ? (
+            <FacetContainer
+              settings={settings}
+              width={Math.max(1, panelWidth - 24)}
+              height={Math.max(
+                1,
+                panelHeight -
+                  58 -
+                  headerExtra -
+                  fieldStripHeight -
+                  autoLegendHeight
+              )}
+            />
+          ) : (
+            <ChartRenderer
+              settings={settings}
+              toolbarTarget={isTableLike ? toolbarTarget : undefined}
+              width={Math.max(1, panelWidth - 24)}
+              height={Math.max(
+                1,
+                panelHeight -
+                  58 -
+                  headerExtra -
+                  fieldStripHeight -
+                  autoLegendHeight
+              )}
+            />
+          )}
+        </div>
+      </ChartReadoutProvider>
     </div>
   );
   // Escape closes a nested editor first, and a tooltip must not swallow it.

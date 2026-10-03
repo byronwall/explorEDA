@@ -11,6 +11,7 @@ import { ThreeDScatterSettings } from "@/components/charts/ThreeDScatter/types";
 import { BoxPlotSettings } from "@/components/charts/BoxPlot/definition";
 import { LineChartSettings } from "@/components/charts/LineChart/definition";
 import type { HeatmapSettings } from "@/components/charts/Heatmap/definition";
+import type { EcdfSettings } from "@/components/charts/Ecdf/definition";
 import type { ColorLegendSettings } from "@/components/charts/ColorLegend/definition";
 
 export interface ChartLayout {
@@ -99,6 +100,7 @@ export type ChartSettings =
   | BoxPlotSettings
   | LineChartSettings
   | HeatmapSettings
+  | EcdfSettings
   | ColorLegendSettings;
 
 export type ChartType = ChartSettings["type"];

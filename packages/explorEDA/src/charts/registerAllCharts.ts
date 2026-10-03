@@ -3,6 +3,7 @@ import { boxPlotDefinition } from "@/components/charts/BoxPlot/definition";
 import { colorLegendDefinition } from "@/components/charts/ColorLegend/definition";
 import { dataTableDefinition } from "@/components/charts/DataTable/definition";
 import { heatmapDefinition } from "@/components/charts/Heatmap/definition";
+import { ecdfDefinition } from "@/components/charts/Ecdf/definition";
 import { lineChartDefinition } from "@/components/charts/LineChart/definition";
 import { markdownDefinition } from "@/components/charts/Markdown/definition";
 import { pivotTableDefinition } from "@/components/charts/PivotTable/definition";
@@ -25,4 +26,5 @@ export function registerAllCharts() {
   chartRegistry.register(colorLegendDefinition);
   chartRegistry.register(lineChartDefinition);
   chartRegistry.register(heatmapDefinition);
+  chartRegistry.register(ecdfDefinition);
 }

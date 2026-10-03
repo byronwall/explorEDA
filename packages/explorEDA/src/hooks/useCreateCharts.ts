@@ -72,6 +72,8 @@ export function useCreateCharts() {
     if (settings.type === "heatmap")
       settings.columnField =
         categories.find((name) => name !== settings.field) ?? "";
+    if (settings.type === "ecdf" && !numeric.includes(settings.field))
+      settings.field = numeric[0] ?? settings.field;
     settings.title = "";
     return settings;
   };

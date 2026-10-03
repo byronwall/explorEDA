@@ -444,6 +444,13 @@ function isChart(value: unknown): boolean {
         ["count", "label"].includes(value.sortBy as string) &&
         typeof value.showValues === "boolean"
       );
+    case "ecdf":
+      return (
+        ["below", "above"].includes(value.direction as string) &&
+        typeof value.logX === "boolean" &&
+        typeof value.showQuantiles === "boolean" &&
+        typeof value.showOverall === "boolean"
+      );
     case "line":
       return (
         typeof value.xField === "string" &&

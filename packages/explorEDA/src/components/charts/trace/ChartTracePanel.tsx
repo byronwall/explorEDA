@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { BarTraceBody } from "../BarChart/BarTraceBody";
 import { HeatmapTraceBody } from "../Heatmap/HeatmapTraceBody";
+import { EcdfTraceBody } from "../Ecdf/EcdfTraceBody";
 import { ScatterTraceBody } from "../ScatterPlot/ScatterTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
 import {
@@ -17,6 +18,8 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
       return <BarTraceBody trace={trace} />;
     case "cell":
       return <HeatmapTraceBody trace={trace} />;
+    case "ecdf-step":
+      return <EcdfTraceBody trace={trace} />;
     case "guide":
       return <GuideTraceBody trace={trace} />;
     case "title":
