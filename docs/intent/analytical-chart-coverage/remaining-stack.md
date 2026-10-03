@@ -4,7 +4,7 @@ Byron approved this sequence after Metric Card PR #114. Each branch starts from 
 
 | Step | Addition | Branch | PR | Status |
 | --- | --- | --- | --- | --- |
-| 1 | Metric card | `codex/metric-card` | #114 | In review |
+| 1 | Metric card | `codex/metric-card` | #114 | Merged |
 | 2 | Calendar time series | `codex/calendar-time-series` | #115 | In review |
 | 3 | Grouped bars | `codex/grouped-bars` | #116 | In review |
 | 4 | Stacked and 100% bars | `codex/stacked-bars` | #117 | In review |
@@ -13,7 +13,7 @@ Byron approved this sequence after Metric Card PR #114. Each branch starts from 
 | 7 | Binned scatter density | `codex/scatter-density` | #120 | In review |
 | 8 | Point map | `codex/point-map` | #121 | In review |
 | 9 | Region map | `codex/region-map` | #122 | In review |
-| 10 | Histogram, Distribution, and Other discovery | | | Pending |
+| 10 | Histogram, Distribution, and Other discovery | `codex/chart-discovery` | #123 | In review |
 
 Each PR needs a worked example, exact source tracing, linked selection where meaningful, keyboard controls, saved settings, and a changeset. Check the browser at 1280, 783, and 390 px. Run `pnpm check` on Node 24. Upload screenshots of the chart, trace inspector, and configuration menu with `gh --attach`.
 
@@ -50,3 +50,22 @@ PR #121 adds maps with explicit latitude and longitude fields, point area, and c
 ## Region map evidence
 
 PR #122 adds Region mode with shared GeoJSON assets and typed joins. Counts, sums, and averages retain source contributors and exclusion reasons. Duplicate feature keys form one region. Patterns distinguish invalid measures from regions with no rows. All 511 tests passed on Node 24. Tests cover polygon holes, multipart date-line geometry, typed keys, stable color bounds, exact facet selection, and geometry save/restore. Browser checks covered 1280, 783, and 390 px, GeoJSON import, chart placement, metric changes, keyboard and pointer selection, facets, pan, reset, and empty filtered results. Region totals matched the pivot. A dark fixture checked negative, zero, invalid, and empty regions. Six screenshots are attached to the PR.
+
+
+## Histogram, Distribution, and Other discovery evidence
+
+PR #123 exposes Histogram and Distribution in Add chart while preserving the `bar` and `boxplot` saved types.
+Distribution adds an observations overlay and traces for quartiles, whiskers, density bandwidth, exclusions, and individual source rows.
+Row Chart’s Other group supports search, paging, exact member selection, and raw source inspection.
+Selected values survive resize, including typed values, missing values, and a literal “Other categories” category.
+All 514 tests passed on Node 24. Browser checks covered 1280, 783, and 390 px, display changes, reset, preview isolation, keyboard tracing, linked filters, and resize.
+The delivery CSV independently confirmed 29 valid Express values with median 24.6 and 47 valid Standard values with median 45.8.
+Airport plus missing routes selected seven rows. The smaller Forest route selected three rows.
+A dark fixture checked negative and zero values, invalid-only results, long labels, and 40 paginated Other members.
+Nine screenshots show creation, charts, traces, settings, phone layouts, and dark mode.
+
+## Stack completion
+
+All ten additions have PRs with screenshots and changesets. PR #114 has merged.
+PRs #115–#123 remain open and retain the branch sequence above.
+The final code passed `pnpm check` with 493 library tests and 21 demo tests.
