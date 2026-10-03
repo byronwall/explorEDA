@@ -13,6 +13,7 @@ const chartNames: Record<string, string> = {
   summary: "Summary table",
   "color-legend": "Color legend",
   markdown: "Markdown note",
+  sankey: "Sankey diagram",
 };
 
 export function getChartTitle(
@@ -31,6 +32,12 @@ export function getChartTitle(
     return title;
   }
 
+  if (settings.type === "sankey") {
+    const labels = settings.stages.filter(Boolean).map(getFieldLabel);
+    return labels.length > 1
+      ? `${labels.join(" → ")}`
+      : getChartDefinition(settings.type).name;
+  }
   const field =
     settings.type === "bar" ||
     settings.type === "row" ||
@@ -79,6 +86,8 @@ export function getChartFields(settings: ChartSettings): string[] {
         return settings.columns.map((column) => column.field);
       case "color-legend":
         return settings.fields;
+      case "sankey":
+        return [...settings.stages, settings.measureField];
       default:
         return [settings.field, settings.colorField];
     }

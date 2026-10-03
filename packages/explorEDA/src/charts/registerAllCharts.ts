@@ -6,6 +6,7 @@ import { lineChartDefinition } from "@/components/charts/LineChart/definition";
 import { markdownDefinition } from "@/components/charts/Markdown/definition";
 import { pivotTableDefinition } from "@/components/charts/PivotTable/definition";
 import { rowChartDefinition } from "@/components/charts/RowChart/definition";
+import { sankeyDefinition } from "@/components/charts/Sankey/definition";
 import { scatterPlotDefinition } from "@/components/charts/ScatterPlot/definition";
 import { summaryTableDefinition } from "@/components/charts/SummaryTable/definition";
 import { threeDScatterDefinition } from "@/components/charts/ThreeDScatter/definition";
@@ -23,4 +24,5 @@ export function registerAllCharts() {
   chartRegistry.register(boxPlotDefinition);
   chartRegistry.register(colorLegendDefinition);
   chartRegistry.register(lineChartDefinition);
+  chartRegistry.register(sankeyDefinition);
 }

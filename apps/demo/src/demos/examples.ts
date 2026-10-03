@@ -56,6 +56,7 @@ const viewNames: Record<string, string> = {
   markdown: "notes",
   pivot: "pivot",
   row: "row",
+  sankey: "sankey",
   scatter: "scatter",
   summary: "summary",
 };
@@ -75,9 +76,9 @@ export const examples: ExampleData[] = [
     id: "shop-operations",
     title: "Inside the order book",
     description:
-      "Follow orders from revenue and margin to delivery, channels, and individual records. Click any bar and every other view narrows to match.",
+      "Follow orders from revenue and margin to delivery, channels, and individual records. Click any bar and every other view narrows to match, or follow orders from channel to category to returns in the flow at the bottom.",
     dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
-    shows: ["Click to filter", "Filter chips", "Log scales"],
+    shows: ["Click to filter", "Sankey flow", "Filter chips"],
     guide:
       "Try this: click Web in Sales channels. The other charts and the orders table narrow to web orders. Click Web again, or use Reset workspace, to start over.",
     icon: ShoppingCart,

@@ -69,6 +69,14 @@ export function useCreateCharts() {
       settings.yAxisLabel = settings.type === "bar" ? "Records" : "";
     }
     if (settings.type === "boxplot") settings.yAxisLabel = "";
+    if (settings.type === "sankey") {
+      // Few-valued categories make readable stages.
+      const stages = profiles
+        .filter((profile) => profile.dataType !== "numeric" && profile.uniqueCount <= 12)
+        .map((profile) => profile.name);
+      const start = stages.includes(selectedField) ? [selectedField] : [];
+      settings.stages = [...new Set([...start, ...stages])].slice(0, 3);
+    }
     settings.title = "";
     return settings;
   };

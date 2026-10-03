@@ -712,3 +712,24 @@ export const calculationDashboard: SavedDataStructure = {
   ]),
   calculations: orderCalculations,
 };
+
+// Placed below whatever the order book already holds.
+shopDashboard.charts.push({
+  ...base,
+  id: "shop-flow",
+  type: "sankey",
+  title: "Which channels and categories lead to returns?",
+  stages: ["Channel", "Category", "Returned"],
+  aggregation: "count",
+  missingStages: "omit",
+  maxNodesPerStage: 8,
+  nodeOrder: "value",
+  flowColor: "first",
+  layout: layout(
+    0,
+    Math.max(...shopDashboard.charts.map((chart) => chart.layout.y + chart.layout.h)),
+    12,
+    6
+  ),
+  margin: { top: 8, right: 12, bottom: 8, left: 12 },
+});

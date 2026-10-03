@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BarTraceBody } from "../BarChart/BarTraceBody";
+import { SankeyTraceBody } from "../Sankey/SankeyTraceBody";
 import { ScatterTraceBody } from "../ScatterPlot/ScatterTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
 import {
@@ -14,6 +15,9 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
   switch (trace.kind) {
     case "bar":
       return <BarTraceBody trace={trace} />;
+    case "sankey-node":
+    case "sankey-link":
+      return <SankeyTraceBody trace={trace} />;
     case "guide":
       return <GuideTraceBody trace={trace} />;
     case "title":

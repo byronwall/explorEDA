@@ -75,6 +75,12 @@ const TRACE_COPY = {
       "Alt-click a bar, axis object, or zero baseline to trace it. Normal clicks keep chart interactions. You can also find a source row below.",
     ariaLabel: "Bar trace inspector",
   },
+  sankey: {
+    heading: "Flow trace",
+    emptyText:
+      "Alt-click a node or link to trace it. Normal clicks keep selecting. You can also find a source row below.",
+    ariaLabel: "Sankey trace inspector",
+  },
 } as const;
 
 function isTraceable(type: string): type is keyof typeof TRACE_COPY {

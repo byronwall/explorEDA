@@ -119,6 +119,15 @@ export const coverageFeatures = [
     chartType: "line",
   },
   {
+    id: "chart:sankey",
+    label: "Sankey diagram",
+    family: "Chart types",
+    description: "Follow rows through ordered category stages and select a node or link.",
+    required: true,
+    status: "supported",
+    chartType: "sankey",
+  },
+  {
     id: "labels:meaningful-title",
     label: "Meaningful titles",
     family: "Labels and guides",
@@ -375,6 +384,7 @@ export const exampleCoverage = [
       "chart:bar": "shown",
       "chart:boxplot": "shown",
       "chart:data-table": "shown",
+      "chart:sankey": "shown",
       "color:categorical": "shown",
       "interaction:cross-filter": "shown",
       "layout:dashboard": "shown",

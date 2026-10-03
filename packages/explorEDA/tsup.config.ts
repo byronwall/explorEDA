@@ -13,6 +13,7 @@ export default defineConfig({
     "charts/markdown": "src/components/charts/Markdown/definition.ts",
     "charts/pivot-table": "src/components/charts/PivotTable/definition.ts",
     "charts/row": "src/components/charts/RowChart/definition.ts",
+    "charts/sankey": "src/components/charts/Sankey/definition.ts",
     "charts/scatter": "src/components/charts/ScatterPlot/definition.ts",
     "charts/summary-table": "src/components/charts/SummaryTable/definition.ts",
     "charts/three-d-scatter":

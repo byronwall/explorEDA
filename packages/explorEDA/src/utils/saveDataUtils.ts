@@ -434,6 +434,17 @@ function isChart(value: unknown): boolean {
         isFiniteNumber(value.numericalBreakpoints) &&
         typeof value.wrap === "boolean"
       );
+    case "sankey":
+      return (
+        isStringArray(value.stages) &&
+        ["count", "sum"].includes(value.aggregation as string) &&
+        (value.measureField === undefined ||
+          typeof value.measureField === "string") &&
+        ["omit", "show"].includes(value.missingStages as string) &&
+        isFiniteNumber(value.maxNodesPerStage) &&
+        ["value", "label"].includes(value.nodeOrder as string) &&
+        ["first", "source", "none"].includes(value.flowColor as string)
+      );
     case "line":
       return (
         typeof value.xField === "string" &&
