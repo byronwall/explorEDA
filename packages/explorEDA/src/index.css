@@ -348,8 +348,10 @@
 .eda-sankey-label {
   cursor: pointer;
 }
-/* The hovered line's value on each numeric axis. */
-.eda-pc-value {
+/* The hovered line's value on each numeric axis, and each ECDF curve's
+   share at the hovered value. */
+.eda-pc-value,
+.eda-ecdf-value {
   fill: var(--foreground);
   font-size: 10px;
   font-weight: 600;
@@ -357,6 +359,34 @@
   stroke: var(--background);
   stroke-width: 3px;
   stroke-linejoin: round;
+}
+/* The ECDF's hovered value, or a dragged span's edges, on the x axis. */
+.eda-ecdf-axis-value rect {
+  fill: var(--foreground);
+}
+.eda-ecdf-axis-value text {
+  fill: var(--background);
+  font-size: 10px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+/* A filtered metric card's share of the same metric over every row. */
+.eda-metric-bar {
+  flex: none;
+  width: 48px;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--muted);
+}
+.eda-metric-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+}
+.eda-metric b {
+  color: var(--foreground);
+  font-weight: 600;
 }
 /* The details view enlarges the chart, so its title grows to match. */
 .eda-panel-expanded .eda-panel-header {

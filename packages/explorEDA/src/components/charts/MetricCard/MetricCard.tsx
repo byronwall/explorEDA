@@ -1,3 +1,4 @@
+import { ListTree } from "lucide-react";
 import { useId, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { convertFieldValue } from "@/lib/fieldSettings";
@@ -9,6 +10,7 @@ import {
   useTraceSource,
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
+import { useGetAllIds } from "../useGetLiveData";
 import type { MetricCardSettings } from "./definition";
 import { planMetricCard } from "./metricCardPlan";
 import { makeMetricCardTraceSource } from "./metricCardTrace";
@@ -30,6 +32,7 @@ export function MetricCard({
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
+  const allIds = useGetAllIds();
 
   const plan = useMemo(() => {
     const liveIds = crossfilter.getFilteredRowIds();
@@ -60,6 +63,7 @@ export function MetricCard({
       {
         revision: `${revision}:${settings.aggregation}:${field ?? ""}:${JSON.stringify(fieldSettings)}`,
         liveIds,
+        allIds,
         measureData,
         rawInputs,
         exclusionReasons,
@@ -71,6 +75,7 @@ export function MetricCard({
     settings,
     revision,
     liveItems,
+    allIds,
     crossfilter,
     rawData,
     fieldSettings,
@@ -99,43 +104,107 @@ export function MetricCard({
             22,
             ((width - 40) / Math.max(4, plan.valueText.length)) * 1.5
           ),
-          Math.max(24, height * 0.3)
+          // A comparison line takes room from the value.
+          Math.max(24, height * (plan.comparison ? 0.24 : 0.3))
         )
       : Math.min(28, Math.max(18, width / 15));
 
+  const comparison = plan.comparison;
+  const percent = (share: number) =>
+    share.toLocaleString("en-US", {
+      style: "percent",
+      maximumFractionDigits: share < 0.1 ? 1 : 0,
+    });
+
+  // The top line counts rows; a filtered card says it under the value.
+  const rowsText = comparison
+    ? ""
+    : `${plan.rowCount.toLocaleString()} ${plan.rowCount === 1 ? "row" : "rows"}`;
+  const filteredRows =
+    comparison && plan.aggregation !== "count" && plan.totalRows !== undefined
+      ? `${plan.rowCount.toLocaleString()} of ${plan.totalRows.toLocaleString()} rows`
+      : "";
+  const excludedText =
+    plan.excludedCount > 0
+      ? `${plan.excludedCount.toLocaleString()} excluded`
+      : "";
+
   return (
     <div
-      className="flex h-full min-h-0 flex-col gap-1 overflow-auto px-4 py-2"
+      className="eda-metric flex h-full min-h-0 flex-col gap-1 overflow-auto px-4 py-1.5"
       style={{ justifyContent: "safe center" }}
       aria-label={plan.metricLabel}
     >
-      <p className="break-words text-sm text-muted-foreground">
-        {plan.metricLabel}
-      </p>
+      <div className="flex items-center justify-between gap-x-3">
+        <p className="min-w-0 text-sm text-muted-foreground">
+          {plan.metricLabel}
+          {(rowsText || excludedText) && (
+            <span className="text-xs tabular-nums">
+              {" · "}
+              {[rowsText, excludedText].filter(Boolean).join(" · ")}
+            </span>
+          )}
+        </p>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="-mr-2 h-6 shrink-0 gap-1.5 px-2 text-xs"
+          tooltip="List the rows behind this value and how each one counts"
+          onClick={() =>
+            traceApi?.inspect(owner, "metric-card", "metric-card:total")
+          }
+        >
+          <ListTree className="size-3.5" aria-hidden="true" />
+          Inspect records
+        </Button>
+      </div>
       <p
         className="break-words font-semibold leading-tight tabular-nums"
         style={{ fontSize }}
       >
         {plan.valueText}
       </p>
-      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-        <p className="text-xs text-muted-foreground">
-          {plan.rowCount.toLocaleString()} matching{" "}
-          {plan.rowCount === 1 ? "row" : "rows"}
-          {plan.excludedCount > 0 &&
-            ` · ${plan.excludedCount.toLocaleString()} excluded`}
+      {comparison && (
+        <p className="flex min-w-0 items-center gap-1.5 text-xs leading-tight text-muted-foreground tabular-nums">
+          {comparison.kind === "share" && (
+            <>
+              <span className="eda-metric-bar" aria-hidden="true">
+                <span
+                  style={{ width: `${Math.min(1, comparison.share) * 100}%` }}
+                />
+              </span>
+              <span>
+                <b>{percent(comparison.share)}</b>{" "}
+                {plan.aggregation === "count"
+                  ? `of all ${comparison.baselineText} rows`
+                  : `of the ${comparison.baselineText} total`}
+                {filteredRows && (
+                  <span className="whitespace-nowrap"> · {filteredRows}</span>
+                )}
+              </span>
+            </>
+          )}
+          {comparison.kind === "delta" &&
+            (comparison.delta === 0 ? (
+              <span>
+                Same as all rows
+                {filteredRows && (
+                  <span className="whitespace-nowrap"> · {filteredRows}</span>
+                )}
+              </span>
+            ) : (
+              <>
+                <span>
+                  <b>{comparison.deltaText}</b> vs {comparison.baselineText} for
+                  all rows
+                  {filteredRows && (
+                    <span className="whitespace-nowrap"> · {filteredRows}</span>
+                  )}
+                </span>
+              </>
+            ))}
         </p>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-7 shrink-0 px-2 text-xs"
-          onClick={() =>
-            traceApi?.inspect(owner, "metric-card", "metric-card:total")
-          }
-        >
-          Inspect records
-        </Button>
-      </div>
+      )}
     </div>
   );
 }
