@@ -1,9 +1,7 @@
+import { describeHeatPosition } from "../heatScale";
 import { AggregateContributorTable } from "../BarChart/GroupedAggregateInspector";
 import { TraceMarkGeometry, TraceReadout, TraceSection } from "../ChartTraceDetails";
 import type { CalendarTrace } from "./calendarTrace";
-
-const round = (value: number) =>
-  value.toLocaleString("en-US", { maximumFractionDigits: 3 });
 
 export function CalendarTraceBody({ trace }: { trace: CalendarTrace }) {
   const { day, scale, omitted } = trace;
@@ -26,8 +24,7 @@ export function CalendarTraceBody({ trace }: { trace: CalendarTrace }) {
           {day.state === "value" ? (
             <>
               <span className="inline-block h-3 w-3 align-middle" style={{ background: day.fill }} />{" "}
-              {day.fill} ← {scale.kind} scale over {round(scale.domain[0])} to{" "}
-              {round(scale.domain[1])}
+              {describeHeatPosition(day.position, scale)}
             </>
           ) : (
             "No fill; the day has no valid value"
