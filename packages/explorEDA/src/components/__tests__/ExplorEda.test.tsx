@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { beforeAll, expect, it, vi } from "vitest";
 
 vi.mock("../PlotManager", async () => {
@@ -55,11 +61,7 @@ it("reads initial and edited chart settings from the same rendered state", async
   const onStateChange = vi.fn();
   const data = [{ value: 1 }, { value: 2 }];
   render(
-    <ExplorEda
-      ref={workspace}
-      data={data}
-      onStateChange={onStateChange}
-    />
+    <ExplorEda ref={workspace} data={data} onStateChange={onStateChange} />
   );
 
   const initial = workspace.current!.getSettings();
@@ -76,8 +78,11 @@ it("reads initial and edited chart settings from the same rendered state", async
   expect(edited.title).toBe("Edited chart");
   expect(edited.layout).toMatchObject({ x: 3, y: 4 });
   expect(
-    screen.getByRole("button", { name: /Edited chart/ })
-  ).toHaveTextContent("x 3, y 4");
+    within(screen.getByRole("navigation", { name: "Charts" })).getByRole(
+      "button",
+      { name: /Edited chart/ }
+    )
+  ).toHaveTextContent("x 3 · y 4");
   expect(onStateChange).toHaveBeenCalledTimes(1);
   expect(onStateChange.mock.calls[0]![0].charts[0]).toMatchObject({
     title: "Edited chart",

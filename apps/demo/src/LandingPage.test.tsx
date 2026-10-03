@@ -194,7 +194,7 @@ describe("LandingPage routing", () => {
       "click Web in Sales channels"
     );
     expect(screen.getByRole("note")).toHaveTextContent(
-      "Add a chart, open Chart details to edit it, then open Chart spec to inspect its settings."
+      "Inspect it in Chart spec"
     );
     expect(
       screen.getByRole("link", { name: "React integration guide" })

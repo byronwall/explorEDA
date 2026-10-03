@@ -15,7 +15,7 @@ import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { ActionTooltip } from "./ui/tooltip";
 
-type FieldFormatting = {
+export type FieldFormatting = {
   name: (field: string) => string;
   bounds: (field: string, min: datum, max: datum) => [string, string];
   value: (field: string, value: datum) => string;
@@ -51,7 +51,7 @@ function assertNever(value: never): never {
  * Name a filter the way the field reads everywhere else: its display label,
  * with bounds in the field's format and unit.
  */
-function formatFilterLabel(
+export function formatFilterLabel(
   filter: Filter,
   format: FieldFormatting = plainFormatting
 ): string {

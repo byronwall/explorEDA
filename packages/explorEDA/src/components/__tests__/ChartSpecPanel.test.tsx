@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeAll, expect, it } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { ChartSpecPanel } from "../ChartSpecPanel";
@@ -10,6 +10,15 @@ import { parseExpression } from "@/lib/calculations/parser/semantics";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";
 
 beforeAll(registerAllCharts);
+
+const isReference =
+  (text: string) => (_content: string, element: Element | null) =>
+    element?.tagName === "SUMMARY" &&
+    element.textContent?.replace(/\s+/g, " ").trim() === text;
+
+/** A reference's one-line summary, such as "Calculation: double". */
+const reference = (text: string) => screen.getByText(isReference(text));
+const queryReference = (text: string) => screen.queryByText(isReference(text));
 
 function Setup() {
   const addCalculation = useDataLayer((state) => state.addCalculation);
@@ -73,24 +82,32 @@ it("shows current chart layout and expands the definitions used by its fields", 
   );
 
   expect(
-    screen.getByRole("button", { name: /Revenue by group/ })
-  ).toHaveTextContent("x 0, y 0, 6 × 4");
+    within(screen.getByRole("navigation", { name: "Charts" })).getByRole(
+      "button",
+      {
+        name: /Revenue by group/,
+      }
+    )
+  ).toHaveTextContent("x 0 · y 0 · 6 × 4");
   fireEvent.click(screen.getByRole("button", { name: "Use calculation" }));
   expect(await screen.findByText("value * 2")).toBeInTheDocument();
-  fireEvent.click(screen.getByText("Calculation: double"));
+  fireEvent.click(reference("Calculation: double"));
   expect(screen.getByText("Dependencies")).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole("button", { name: "Use color scale" }));
-  expect(
-    await screen.findByText("Color scale: Group colors")
-  ).toBeInTheDocument();
-  fireEvent.click(screen.getByText("Color scale: Group colors"));
-  expect(screen.getByText("A")).toBeInTheDocument();
+  await screen.findByText("Group colors");
+  fireEvent.click(reference("Color scale: Group colors"));
+  expect(screen.getByText("#123456")).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole("button", { name: "Move chart" }));
   expect(
-    screen.getByRole("button", { name: /Revenue by group/ })
-  ).toHaveTextContent("x 3, y 4, 6 × 4");
+    within(screen.getByRole("navigation", { name: "Charts" })).getByRole(
+      "button",
+      {
+        name: /Revenue by group/,
+      }
+    )
+  ).toHaveTextContent("x 3 · y 4 · 6 × 4");
 });
 
 it("makes unavailable explicit references understandable", () => {
@@ -106,11 +123,9 @@ it("makes unavailable explicit references understandable", () => {
     </DataLayerProvider>
   );
 
-  expect(screen.getByText("Missing field: missing-field")).toBeInTheDocument();
-  expect(
-    screen.getByText("Grouped summary: removed-summary")
-  ).toBeInTheDocument();
-  fireEvent.click(screen.getByText("Color scale: removed-scale"));
+  expect(reference("Missing field: missing-field")).toBeInTheDocument();
+  expect(reference("Grouped summary: removed-summary")).toBeInTheDocument();
+  fireEvent.click(reference("Color scale: removed-scale"));
   expect(screen.getAllByText(/definition that is not available/)).toHaveLength(
     3
   );
@@ -208,26 +223,23 @@ it("resolves calculated facet and aggregate fields plus implicit legend scales",
   fireEvent.click(
     screen.getByRole("button", { name: "Build reference branches" })
   );
-  expect(await screen.findByText("Calculation: quad")).toBeInTheDocument();
-  expect(screen.getByText("Calculation: double")).toBeInTheDocument();
-  expect(
-    screen.getByText("Grouped summary: Revenue total")
-  ).toBeInTheDocument();
+  await screen.findByText("quad", { selector: "summary span" });
+  expect(reference("Calculation: quad")).toBeInTheDocument();
+  expect(reference("Calculation: double")).toBeInTheDocument();
+  expect(reference("Grouped summary: Revenue total")).toBeInTheDocument();
   expect(screen.getByText("Row Variable")).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole("button", { name: /Groups and segments/ }));
-  expect(screen.getByText("Color scale: group colors")).toBeInTheDocument();
-  expect(screen.getByText("Color scale: segment colors")).toBeInTheDocument();
+  expect(reference("Color scale: group colors")).toBeInTheDocument();
+  expect(reference("Color scale: segment colors")).toBeInTheDocument();
   expect(
-    screen.queryByText("Color scale: alternate group colors")
+    queryReference("Color scale: alternate group colors")
   ).not.toBeInTheDocument();
-  expect(
-    screen.queryByText("Color scale: unused colors")
-  ).not.toBeInTheDocument();
+  expect(queryReference("Color scale: unused colors")).not.toBeInTheDocument();
 
   fireEvent.click(screen.getByRole("button", { name: /Summary Table/ }));
-  expect(screen.getByText("Calculation: quad")).toBeInTheDocument();
-  expect(screen.getByLabelText("Chart details")).toHaveTextContent(
-    "value, group, segment, unused, double, quad"
-  );
+  expect(reference("Calculation: quad")).toBeInTheDocument();
+  const fields = within(screen.getByRole("region", { name: "Fields" }));
+  for (const field of ["value", "group", "segment", "unused", "double", "quad"])
+    expect(fields.getByText(field)).toBeInTheDocument();
 });

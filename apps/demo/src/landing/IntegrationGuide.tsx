@@ -1,35 +1,51 @@
 import orderBookSource from "./OrderBook.example.tsx?raw";
 import ordersExplorerSource from "./OrdersExplorer.example.tsx?raw";
+import { ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
 import { CodePanel } from "./CodePanel";
 import { PACKAGE_README_URL, REPO_URL } from "./links";
 import { SectionHeading } from "./SectionHeading";
 
 const boundaries = [
   {
-    name: "data",
-    role: "Input",
-    meaning:
-      "The rows your app supplies. Pass a new array when the rows change; in-place mutations are not observed.",
+    direction: "Into the workspace",
+    icon: ArrowDownToLine,
+    items: [
+      {
+        name: "data",
+        role: "Input",
+        meaning:
+          "The rows your app supplies. Pass a new array when the rows change; in-place mutations are not observed.",
+      },
+      {
+        name: "savedData",
+        role: "Restore",
+        meaning:
+          "Optional settings that restore charts, calculations, Rows filters, and layout. It is read on mount or replacement, not kept in sync.",
+      },
+    ],
   },
   {
-    name: "savedData",
-    role: "Restore",
-    meaning:
-      "Optional settings that restore charts, calculations, Rows filters, and layout. It is read on mount or replacement, not kept in sync.",
-  },
-  {
-    name: "onStateChange",
-    role: "Callback",
-    meaning:
-      "Called after meaningful edits with JSON settings, never raw rows. Your app decides where to keep them; do not feed each result back into savedData.",
-  },
-  {
-    name: "ref.current.getSettings()",
-    role: "Read",
-    meaning:
-      "Read current settings after the workspace mounts, then call it again whenever your app needs a fresh snapshot. It does not replace the edit callback.",
+    direction: "Out to your app",
+    icon: ArrowUpFromLine,
+    items: [
+      {
+        name: "onStateChange",
+        role: "Callback",
+        meaning:
+          "Called after meaningful edits with JSON settings, never raw rows. Your app decides where to keep them; do not feed each result back into savedData.",
+      },
+      {
+        name: "ref.current.getSettings()",
+        role: "Read",
+        meaning:
+          "Returns the current settings whenever your app asks, starting right after mount. Use it for an initial snapshot or an on-demand save; edits still arrive through onStateChange.",
+      },
+    ],
   },
 ];
+
+const inlineCode =
+  "rounded bg-muted px-[0.3em] py-0.5 font-mono text-[0.9em] text-foreground";
 
 const facts = [
   {
@@ -59,16 +75,18 @@ export function IntegrationGuide() {
       aria-labelledby="integration-heading"
       id="integration"
       tabIndex={-1}
-      className="scroll-mt-8"
+      className="scroll-mt-8 focus:outline-none"
     >
       <SectionHeading
         id="integration-heading"
         heading="Use it in your React app"
       >
-        The order book is the published <code>ExplorEda</code> component. This
-        site adds the page around it: routing, file import, and a reset button.
-        Use <code>getSettings()</code> for an initial or on-demand read;
-        <code> onStateChange</code> still fires after edits.
+        The order book is the published{" "}
+        <code className={inlineCode}>ExplorEda</code> component. This site adds
+        the page around it: routing, file import, and a reset button. Edits
+        arrive through <code className={inlineCode}>onStateChange</code>, and{" "}
+        <code className={inlineCode}>getSettings()</code> reads the current
+        settings whenever your app asks.
       </SectionHeading>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
@@ -106,23 +124,44 @@ export function IntegrationGuide() {
           </p>
         </div>
 
-        <div className="min-w-0">
-          <h3 className="text-sm font-semibold">Settings in and out</h3>
-          <dl className="mt-3 divide-y divide-border border-y border-border">
-            {boundaries.map((item) => (
-              <div key={item.name} className="py-4">
-                <dt className="flex items-baseline justify-between gap-3">
-                  <code className="text-sm font-semibold">{item.name}</code>
-                  <span className="text-xs text-muted-foreground">
-                    {item.role}
-                  </span>
-                </dt>
-                <dd className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                  {item.meaning}
-                </dd>
-              </div>
+        <div className="min-w-0 lg:sticky lg:top-6 lg:self-start">
+          <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+            <div className="border-b border-border bg-muted/40 px-5 py-3">
+              <h3 className="text-sm font-semibold">Settings in and out</h3>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Three props and one ref method. Settings are JSON your app owns.
+              </p>
+            </div>
+            {boundaries.map((group) => (
+              <section
+                key={group.direction}
+                aria-label={group.direction}
+                className="border-b border-border px-5 py-4 last:border-b-0"
+              >
+                <h4 className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                  <group.icon className="h-3.5 w-3.5" aria-hidden="true" />
+                  {group.direction}
+                </h4>
+                <dl className="mt-3 grid gap-4">
+                  {group.items.map((item) => (
+                    <div key={item.name}>
+                      <dt className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                        <code className="break-all font-mono text-[13px] font-semibold">
+                          {item.name}
+                        </code>
+                        <span className="rounded-full border border-border bg-background px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                          {item.role}
+                        </span>
+                      </dt>
+                      <dd className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                        {item.meaning}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </section>
             ))}
-          </dl>
+          </div>
         </div>
       </div>
 

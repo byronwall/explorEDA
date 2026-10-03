@@ -1,7 +1,7 @@
 import { useEffect, useRef, type CSSProperties, type RefObject } from "react";
 import {
   Calculator,
-  ChartNoAxesColumnIncreasing,
+  Braces,
   Grid,
   Maximize2,
   Minimize2,
@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { ActionTooltip } from "./ui/tooltip";
 import { CalculationManager } from "./calculations/CalculationManager";
 import { ColorScalePanel } from "./ColorScaleManager";
 import { usePanelBox } from "./FieldList/FieldList";
@@ -19,10 +20,30 @@ import { ChartSpecPanel } from "./ChartSpecPanel";
 export type WorkspaceSettingsTab = "calculations" | "colors" | "grid" | "spec";
 
 const TABS = [
-  { value: "calculations", label: "Calculations", icon: Calculator },
-  { value: "colors", label: "Colors", icon: Palette },
-  { value: "grid", label: "Grid", icon: Grid },
-  { value: "spec", label: "Chart spec", icon: ChartNoAxesColumnIncreasing },
+  {
+    value: "calculations",
+    label: "Calculations",
+    icon: Calculator,
+    tooltip: "Create and edit calculated fields",
+  },
+  {
+    value: "colors",
+    label: "Colors",
+    icon: Palette,
+    tooltip: "Adjust the color scales charts share",
+  },
+  {
+    value: "grid",
+    label: "Grid",
+    icon: Grid,
+    tooltip: "Set grid columns, row height, and spacing",
+  },
+  {
+    value: "spec",
+    label: "Chart spec",
+    icon: Braces,
+    tooltip: "Inspect what each chart saves: fields, layout, and settings",
+  },
 ] as const;
 
 /**
@@ -93,11 +114,17 @@ export function WorkspaceSettingsDrawer({
       >
         <div className="eda-settings-drawer-head">
           <TabsList aria-label="Workspace settings">
-            {TABS.map(({ value, label, icon: Icon }) => (
-              <TabsTrigger key={value} value={value}>
-                <Icon aria-hidden="true" />
-                {label}
-              </TabsTrigger>
+            {TABS.map(({ value, label, icon: Icon, tooltip }) => (
+              // The wrapper takes the tooltip so the trigger keeps its own
+              // ref-free rendering on React 18.
+              <ActionTooltip key={value} content={tooltip} side="bottom">
+                <span className="eda-settings-tab">
+                  <TabsTrigger value={value} aria-label={label}>
+                    <Icon aria-hidden="true" />
+                    <span className="eda-settings-tab-label">{label}</span>
+                  </TabsTrigger>
+                </span>
+              </ActionTooltip>
             ))}
           </TabsList>
           <Button

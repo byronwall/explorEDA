@@ -26,7 +26,7 @@ import {
 } from "@/utils/saveDataUtils";
 import {
   Calculator,
-  ChartNoAxesColumnIncreasing,
+  Braces,
   Copy,
   Grid,
   Keyboard,
@@ -513,8 +513,8 @@ export function PlotManager() {
                 [
                   "spec",
                   "Chart spec",
-                  "Chart spec: inspect current chart settings and layout",
-                  ChartNoAxesColumnIncreasing,
+                  "Chart spec: inspect what each chart saves",
+                  Braces,
                 ],
               ] as const
             ).map(([tab, label, tooltip, Icon]) => (
