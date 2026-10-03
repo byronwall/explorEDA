@@ -14,6 +14,7 @@ import {
   type ParallelCoordinatesSettings,
 } from "./definition";
 import { MAX_AXIS_CATEGORIES, moveAxis, withAxisFilter } from "./parallelPlan";
+import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
 
 export function ParallelCoordinatesSettingsPanel({
   settings,
@@ -199,6 +200,11 @@ export function ParallelCoordinatesSettingsPanel({
             })
           }
         />
+        {settings.colorScaleId && (
+          <div className="col-start-2 -mt-2">
+            <ColorScaleControl scaleId={settings.colorScaleId} />
+          </div>
+        )}
 
         <Label htmlFor="pc-opacity">Line opacity</Label>
         <NumericInputEnter

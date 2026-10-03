@@ -5,6 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { useColorScales } from "@/hooks/useColorScales";
 import { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import { BoxPlotSettings } from "./definition";
+import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
 
 export function BoxPlotSettingsPanel({
   settings,
@@ -37,6 +38,11 @@ export function BoxPlotSettingsPanel({
             })
           }
         />
+        {settings.colorScaleId && (
+          <div className="col-start-2 -mt-2">
+            <ColorScaleControl scaleId={settings.colorScaleId} />
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-[120px_1fr] items-center gap-4">

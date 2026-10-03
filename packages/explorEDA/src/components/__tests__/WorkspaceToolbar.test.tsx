@@ -9,7 +9,9 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { PlotManager } from "@/components/PlotManager";
 import { CalculationEditorProvider } from "@/components/calculations/CalculationEditor";
-import { DataLayerProvider } from "@/providers/DataLayerProvider";
+import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
+import { useEffect } from "react";
+import type { CategoricalColorScale } from "@/types/ColorScaleTypes";
 import { barChartDefinition } from "@/components/charts/BarChart/definition";
 
 const data = [
@@ -27,9 +29,26 @@ beforeAll(() => {
   Element.prototype.scrollIntoView = vi.fn();
 });
 
-function renderWorkspace() {
+/** Adds enough color scales for the Colors tab to offer a search. */
+function SeedColorScales({ count }: { count: number }) {
+  const addColorScale = useDataLayer((state) => state.addColorScale);
+  useEffect(() => {
+    for (let index = 0; index < count; index += 1) {
+      addColorScale({
+        name: `Region ${index}`,
+        type: "categorical",
+        palette: ["#2a78d6"],
+        mapping: new Map([["North", "#2a78d6"]]),
+      } as Omit<CategoricalColorScale, "id">);
+    }
+  }, [addColorScale, count]);
+  return null;
+}
+
+function renderWorkspace({ colorScales = 0 } = {}) {
   return render(
     <DataLayerProvider data={data} charts={[]}>
+      <SeedColorScales count={colorScales} />
       <CalculationEditorProvider>
         <PlotManager />
       </CalculationEditorProvider>
@@ -157,7 +176,7 @@ describe("workspace toolbar", () => {
   });
 
   it("keeps unsaved edits in one settings tab while another is shown", () => {
-    renderWorkspace();
+    renderWorkspace({ colorScales: 6 });
     fireEvent.click(screen.getByRole("button", { name: "Grid" }));
     const panel = screen.getByRole("complementary", {
       name: "Workspace settings",
