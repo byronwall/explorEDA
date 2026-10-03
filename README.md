@@ -35,6 +35,9 @@ filters. Choose **Inspect records** to see the inputs and excluded values.
 Line Chart's **Calendar summaries** mode groups dated rows by UTC day, week,
 or month. Select a period and series to filter linked views, then choose
 **Inspect period** to see its calculation, date boundaries, and source rows.
+Choose **Area** to fill each series from zero. **Stacked area** adds nonnegative
+counts or sums. Incomplete periods break the stack. Traces show each band's
+bounds and the series that establish its baseline.
 
 Use **Split by** in Bar Chart to compare series within each category. Each
 bar supports linked selection and source tracing for its category–series pair.

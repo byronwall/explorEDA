@@ -885,3 +885,14 @@ export const stackedBarsDashboard: SavedDataStructure = {
     yAxisLabel: chart.aggregateId ? "Revenue ($)" : "Share of regional orders (%)",
   } : chart),
 };
+
+
+export const areaDashboard: SavedDataStructure = {
+  ...timeSeriesDashboard,
+  metadata: { ...timeSeriesDashboard.metadata, name: "Revenue layers through the year" },
+  charts: timeSeriesDashboard.charts.map((chart) => chart.type === "line" && chart.time ? {
+    ...chart,
+    title: chart.id === "time-revenue" ? "Monthly revenue layers" : "Weekly orders as an area",
+    time: { ...chart.time, display: chart.id === "time-revenue" ? "stacked-area" : "area" },
+  } : chart),
+};

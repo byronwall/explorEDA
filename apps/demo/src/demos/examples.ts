@@ -8,6 +8,7 @@ import {
   timeSeriesDashboard,
   groupedBarsDashboard,
   stackedBarsDashboard,
+  areaDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import { SavedDataStructure } from "exploreda";
@@ -115,6 +116,17 @@ export const examples: ExampleData[] = [
     icon: BarChart3,
     data: "/datasets/shop-operations.csv",
     savedData: groupedBarsDashboard,
+  },
+  {
+    id: "area-charts",
+    title: "Revenue layers through the year",
+    description: "Follow monthly revenue totals and the channels that contribute to them. Compare the stack with separate areas and inspect each period.",
+    dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
+    shows: ["Area charts", "Stacked areas", "Period tracing"],
+    guide: "Try this: inspect a point in Monthly revenue layers. The trace shows its band bounds and source records. Change Display to Area to compare each channel from zero.",
+    icon: LineChart,
+    data: "/datasets/shop-operations.csv",
+    savedData: areaDashboard,
   },
   {
     id: "stacked-bars",

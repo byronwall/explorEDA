@@ -8,7 +8,7 @@ Byron approved this sequence after Metric Card PR #114. Each branch starts from 
 | 2 | Calendar time series | `codex/calendar-time-series` | #115 | In review |
 | 3 | Grouped bars | `codex/grouped-bars` | #116 | In review |
 | 4 | Stacked and 100% bars | `codex/stacked-bars` | #117 | In review |
-| 5 | Area and stacked area | | | Pending |
+| 5 | Area and stacked area | `codex/area-charts` | | In progress |
 | 6 | Bubble scatter | | | Pending |
 | 7 | Binned scatter density | | | Pending |
 | 8 | Point map | | | Pending |

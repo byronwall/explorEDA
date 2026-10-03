@@ -20,6 +20,14 @@ type FeatureDefinition = {
 
 export const coverageFeatures = [
   {
+    id: "mode:area",
+    label: "Area and stacked area",
+    family: "Chart modes",
+    description: "Fill calendar summaries from zero or add nonnegative period totals, with exact band and source tracing.",
+    required: true,
+    status: "supported",
+  },
+  {
     id: "mode:stacked-bars",
     label: "Stacked and 100% bars",
     family: "Chart modes",
@@ -445,6 +453,20 @@ export type ExampleCoverage = {
 };
 
 export const exampleCoverage = [
+  {
+    exampleId: "area-charts",
+    intent: "Compare monthly revenue layers and inspect each period's stack bounds and source rows.",
+    features: {
+      "mode:area": "shown",
+      "mode:calendar-series": "shown",
+      "chart:line": "shown",
+      "chart:row": "shown",
+      "chart:metric-card": "shown",
+      "chart:calendar": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
   {
     exampleId: "stacked-bars",
     intent: "Compare regional totals and channel shares, with source records for each denominator.",
