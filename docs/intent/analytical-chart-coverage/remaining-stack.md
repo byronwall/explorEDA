@@ -10,7 +10,7 @@ Byron approved this sequence after Metric Card PR #114. Each branch starts from 
 | 4 | Stacked and 100% bars | `codex/stacked-bars` | #117 | In review |
 | 5 | Area and stacked area | `codex/area-charts` | #118 | In review |
 | 6 | Bubble scatter | `codex/bubble-scatter` | #119 | In review |
-| 7 | Binned scatter density | | | Pending |
+| 7 | Binned scatter density | `codex/scatter-density` | #120 | In review |
 | 8 | Point map | | | Pending |
 | 9 | Region map | | | Pending |
 | 10 | Histogram, Distribution, and Other discovery | | | Pending |
@@ -38,3 +38,7 @@ PR #118 adds area and stacked-area display to calendar summaries. Traces show ba
 ## Bubble scatter evidence
 
 PR #119 maps a numeric field to bubble area in Scatter Plot. Traces show source values, the full-source size domain, and the radius calculation. All 504 tests passed on Node 24. Browser checks covered 1280, 783, and 390 px, keyboard and pointer selection, overlap, linked filtering, size changes, reset, zero, invalid inputs, and dark mode. Six screenshots are attached to the PR.
+
+## Binned scatter density evidence
+
+PR #120 adds rectangular count bins to Scatter Plot. Traces show exact intervals, source rows, omitted coordinates, and color values. Bin edges and the automatic color maximum stay fixed across filters and facets. All 506 tests passed on Node 24. Browser checks covered 1280, 783, and 390 px, keyboard and pointer selection, row tracing, linked filters, controls, and reset. A separate CSV count confirmed the selected bin and filtered result. Dark fixtures checked shared boundaries, invalid inputs, empty results, and exact facet selection. Six screenshots are attached to the PR.

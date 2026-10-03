@@ -17,6 +17,7 @@ import type { EcdfTrace } from "../Ecdf/ecdfTrace";
 import type { MetricCardTrace } from "../MetricCard/metricCardTrace";
 import type { TimeSeriesTrace } from "../LineChart/timeSeriesTrace";
 import type { ScatterTrace } from "../ScatterPlot/scatterTrace";
+import type { DensityTrace } from "../ScatterPlot/densityPlan";
 
 /** A selected object. The owner's source resolves it against its current plan. */
 export interface TraceSelection {
@@ -93,6 +94,7 @@ export interface LegendTrace {
 }
 
 export type ChartTrace =
+  | DensityTrace
   | ScatterTrace
   | BarTrace
   | SankeyTrace

@@ -362,6 +362,7 @@ export function PlotChartPanel({
   const autoLegendHeight =
     settings.colorField &&
     settings.colorScaleId &&
+    !(settings.type === "scatter" && settings.display === "density") &&
     !CATEGORY_LABELED_CHART_TYPES.has(settings.type)
       ? 36
       : 0;

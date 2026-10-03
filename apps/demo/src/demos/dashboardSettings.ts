@@ -934,3 +934,17 @@ export const areaDashboard: SavedDataStructure = {
     time: { ...chart.time, display: chart.id === "time-revenue" ? "stacked-area" : "area" },
   } : chart),
 };
+
+export const densityDashboard = dashboard(
+  "Where daily observations cluster",
+  [
+    {
+      ...scatter("density-days", "Temperature and ice cream sales", "Temperature (°C)", "Ice Cream Sales", layout(0, 0, 8, 6), ["Temperature (°C)", "Ice cream sales"]),
+      display: "density",
+      density: { xBins: 24, yBins: 20 },
+    },
+    { ...base, id: "density-count", type: "metric-card", title: "Days in this selection", aggregation: "count", layout: layout(8, 0, 4, 2) },
+    histogram("density-humidity", "Humidity of matching days", "Humidity (%)", layout(8, 2, 4, 4), "Humidity (%)"),
+    table("density-records", "Daily source records", ["Temperature (°C)", "Ice Cream Sales", "Humidity (%)", "Beach Visitors", "Mood Index"], layout(0, 6, 12, 5)),
+  ]
+);

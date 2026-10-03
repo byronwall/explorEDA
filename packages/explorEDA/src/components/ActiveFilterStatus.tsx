@@ -58,6 +58,9 @@ export function formatFilterLabel(
   const name = filter.field === "__ID" ? "Source row" : format.name(filter.field);
   switch (filter.type) {
     case "value":
+      if (filter.field === "__ID" && filter.values.length > 1) {
+        return `${filter.values.length.toLocaleString()} source rows`;
+      }
       return `${name}: ${filter.values.map(categoryLabel).join(", ")}`;
     case "range":
     case "date-range": {

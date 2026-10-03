@@ -366,6 +366,14 @@ function isChart(value: unknown): boolean {
       return (
         typeof value.xField === "string" &&
         typeof value.yField === "string" &&
+        (value.display === undefined || ["points", "density"].includes(value.display as string)) &&
+        (value.density === undefined ||
+          (isRecord(value.density) &&
+            [value.density.xBins, value.density.yBins].every((count) =>
+              count === undefined || (isFiniteNumber(count) && Number.isInteger(count) && count >= 2 && count <= 60)
+            ) &&
+            (value.density.colorMax === undefined ||
+              (isFiniteNumber(value.density.colorMax) && value.density.colorMax >= 1)))) &&
         (value.sizeField === undefined ||
           (typeof value.sizeField === "string" &&
             value.sizeField.length > 0)) &&
