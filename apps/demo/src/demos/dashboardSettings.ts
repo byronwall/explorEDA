@@ -845,3 +845,21 @@ shopDashboard.fieldSettings = {
   ...shopDashboard.fieldSettings,
   Revenue: { format: "currency", currency: "USD", precision: 2 },
 };
+
+export const timeSeriesDashboard = dashboard("Orders through the calendar", [
+  {
+    ...line("time-revenue", "Monthly revenue by channel", [], layout(0, 0, 8, 6), "Revenue ($)"),
+    xField: "Order Date", xAxisLabel: "Order date · UTC", colorField: "Channel", colorScaleId: "time-channel",
+    time: { interval: "month", weekStart: "monday", aggregation: "sum", measureField: "Revenue", splitField: "Channel", missingPeriods: "gap" },
+  },
+  { ...base, id: "time-count", type: "metric-card", title: "Matching orders", aggregation: "count", layout: layout(8, 0, 4, 2) },
+  row("time-channels", "Sales channels", "Channel", layout(8, 2, 4, 4), "time-channel"),
+  {
+    ...line("time-weekly", "Weekly order count", [], layout(0, 6, 6, 5), "Orders"),
+    xField: "Order Date", xAxisLabel: "Order date · UTC",
+    time: { interval: "week", weekStart: "monday", aggregation: "count", missingPeriods: "zero" },
+  },
+  { ...base, id: "time-calendar", type: "calendar", title: "Daily orders", field: "Order Date", aggregation: "count", weekStart: "monday", layout: layout(6, 6, 6, 5) },
+  table("time-records", "Matching source records", ["Order Date", "Channel", "Revenue", "Region"], layout(0, 11, 12, 5)),
+], [categoricalScale("time-channel", "Channel", ["Web", "Store", "Wholesale"])]);
+timeSeriesDashboard.fieldSettings = { Revenue: { type: "numeric", format: "currency", currency: "USD", precision: 2 } };

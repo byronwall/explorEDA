@@ -39,6 +39,10 @@ export function TimeSeriesChart({
   const dates = useGetColumnData(settings.xField);
   const measures = useGetColumnData(time.measureField);
   const groups = useGetColumnData(time.splitField);
+  const facetRows = useGetColumnData(settings.facet.rowVariable);
+  const facetColumns = useGetColumnData(
+    settings.facet.type === "grid" ? settings.facet.columnVariable : undefined
+  );
   const rawData = useDataLayer((s) => s.rawData);
   const fields = useDataLayer((s) => s.fieldSettings);
   const profiles = useDataLayer((s) => s.fieldProfiles);
@@ -79,7 +83,7 @@ export function TimeSeriesChart({
     return planTimeSeries(
       settings,
       {
-        revision: `${revision}:${JSON.stringify(time)}:${settings.xField}:${JSON.stringify(fields)}`,
+        revision: `${revision}:${JSON.stringify(time)}:${settings.xField}:${JSON.stringify(fields)}:${JSON.stringify(settings.facet)}`,
         allIds: scopeIds,
         liveIds: liveIds.filter((id) => !facetSet || facetSet.has(id)),
         dates,
@@ -89,6 +93,17 @@ export function TimeSeriesChart({
         rawInputs,
         exclusionReasons,
         colorScale,
+        facetData: facetIds
+          ? {
+              ...(settings.facet.rowVariable
+                ? { [settings.facet.rowVariable]: facetRows }
+                : {}),
+              ...(settings.facet.type === "grid" &&
+              settings.facet.columnVariable
+                ? { [settings.facet.columnVariable]: facetColumns }
+                : {}),
+            }
+          : undefined,
       },
       width,
       Math.max(1, height - 28),
@@ -105,6 +120,8 @@ export function TimeSeriesChart({
     dates,
     measures,
     groups,
+    facetRows,
+    facetColumns,
     rawData,
     fields,
     profiles,
@@ -161,7 +178,9 @@ export function TimeSeriesChart({
   const inspect = (point: TimePoint) =>
     api?.inspect(owner, "time-bucket", point.id);
   const select = (point: TimePoint) =>
-    updateChart(settings.id, { filters: timePointFilters(settings, point) });
+    updateChart(settings.id, {
+      filters: timePointFilters(settings, point, plan.facetFilters),
+    });
   const marks = plan.points.filter(
     (point) => point.value !== undefined || point.rowCount > 0
   );
@@ -229,7 +248,8 @@ export function TimeSeriesChart({
             const rest = settings.filters.filter(
               (filter) =>
                 filter.field !== settings.xField &&
-                filter.field !== time.splitField
+                filter.field !== time.splitField &&
+                !plan.facetFilters.some((facet) => facet.field === filter.field)
             );
             const first =
               extent &&
@@ -251,6 +271,7 @@ export function TimeSeriesChart({
                   ? [
                       ...rest,
                       periodFilter(settings.xField, first.start, last.end),
+                      ...plan.facetFilters,
                     ]
                   : rest,
             });

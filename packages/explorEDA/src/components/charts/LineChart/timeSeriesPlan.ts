@@ -26,6 +26,7 @@ export interface TimeSeriesSnapshot {
   rawInputs: Record<number, datum>;
   exclusionReasons: Record<number, string>;
   colorScale?: ColorScaleType;
+  facetData?: Record<string, Record<number, datum>>;
 }
 
 export interface TimePoint extends TimeBucket {
@@ -53,13 +54,15 @@ export function periodFilter(field: string, start: number, end: number) {
 
 export function timePointFilters(
   settings: LineChartSettings,
-  point: TimePoint
+  point: TimePoint,
+  facetFilters: Filter[] = []
 ): Filter[] {
-  const rest = settings.filters.filter(
-    (filter) =>
-      filter.field !== settings.xField &&
-      filter.field !== settings.time?.splitField
-  );
+  const fields = new Set([
+    settings.xField,
+    settings.time?.splitField,
+    ...facetFilters.map((filter) => filter.field),
+  ]);
+  const rest = settings.filters.filter((filter) => !fields.has(filter.field));
   const next: Filter[] = [
     periodFilter(settings.xField, point.start, point.end),
   ];
@@ -69,11 +72,12 @@ export function timePointFilters(
       field: settings.time.splitField,
       values: [point.seriesValue],
     });
-  const own = settings.filters.filter(
-    (filter) =>
-      filter.field === settings.xField ||
-      filter.field === settings.time?.splitField
+  next.push(
+    ...facetFilters.filter(
+      (filter) => !next.some((item) => item.field === filter.field)
+    )
   );
+  const own = settings.filters.filter((filter) => fields.has(filter.field));
   return JSON.stringify(own) === JSON.stringify(next)
     ? rest
     : [...rest, ...next];
@@ -88,6 +92,20 @@ export function planTimeSeries(
   format: (field: string, value: datum) => string
 ) {
   const time = settings.time!;
+  const facetFilters: Filter[] = Object.entries(snapshot.facetData ?? {}).map(
+    ([field, data]) => ({
+      type: "value",
+      field,
+      values: [
+        ...new Map(
+          snapshot.allIds.map((id) => [
+            categoryKey(categoryValue(data[id])),
+            categoryValue(data[id]),
+          ])
+        ).values(),
+      ],
+    })
+  );
   const metricLabel =
     time.aggregation === "count"
       ? "Row count"
@@ -194,6 +212,11 @@ export function planTimeSeries(
                     return applyFilter(snapshot.dates[row.sourceId], filter);
                   if (filter.field === time.splitField)
                     return applyFilter(snapshot.groups[row.sourceId], filter);
+                  if (snapshot.facetData?.[filter.field])
+                    return applyFilter(
+                      snapshot.facetData[filter.field]![row.sourceId],
+                      filter
+                    );
                   return true;
                 })
               )
@@ -277,6 +300,7 @@ export function planTimeSeries(
   return {
     revision: snapshot.revision,
     aggregation: time.aggregation,
+    facetFilters,
     metricLabel,
     snapshot,
     points,

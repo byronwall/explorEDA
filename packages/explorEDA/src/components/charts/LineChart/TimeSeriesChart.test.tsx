@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeAll, expect, it } from "vitest";
+import { useState } from "react";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import { rowChartDefinition } from "../RowChart/definition";
@@ -26,6 +27,7 @@ const chart: LineChartSettings = {
   },
 };
 function Workspace() {
+  const [facet, setFacet] = useState(false);
   const settings = useDataLayer((s) => s.charts[0]) as LineChartSettings;
   const update = useDataLayer((s) => s.updateChart);
   const data = useDataLayer((s) => s.liveItems);
@@ -45,8 +47,26 @@ function Workspace() {
       <output aria-label="Selected IDs">
         {wrapper.getFilteredRowIds().join(",")}
       </output>
+      <button onClick={() => setFacet(true)}>North facet</button>
       <ChartTraceScope>
-        <LineChart settings={settings} width={650} height={340} />
+        <LineChart
+          settings={
+            facet
+              ? {
+                  ...settings,
+                  facet: {
+                    enabled: true,
+                    type: "wrap",
+                    rowVariable: "Region",
+                    columnCount: 2,
+                  },
+                }
+              : settings
+          }
+          facetIds={facet ? [0, 4] : undefined}
+          width={650}
+          height={340}
+        />
         <ChartTracePanel />
       </ChartTraceScope>
     </>
@@ -56,11 +76,16 @@ it("selects exact period and series IDs, traces inputs, and follows another char
   render(
     <DataLayerProvider
       data={[
-        { Date: "2024-01-01", Amount: 10, Channel: "Web" },
-        { Date: "2024-01-31T23:59:59.999Z", Amount: 20, Channel: "Web" },
-        { Date: "2024-01-05", Amount: 90, Channel: "Store" },
-        { Date: "2024-02-01", Amount: 30, Channel: "Web" },
-        { Date: "bad", Amount: 15, Channel: "Web" },
+        { Date: "2024-01-01", Amount: 10, Channel: "Web", Region: "North" },
+        {
+          Date: "2024-01-31T23:59:59.999Z",
+          Amount: 20,
+          Channel: "Web",
+          Region: "South",
+        },
+        { Date: "2024-01-05", Amount: 90, Channel: "Store", Region: "South" },
+        { Date: "2024-02-01", Amount: 30, Channel: "Web", Region: "South" },
+        { Date: "bad", Amount: 15, Channel: "Web", Region: "North" },
       ]}
       charts={[
         chart,
@@ -98,6 +123,11 @@ it("selects exact period and series IDs, traces inputs, and follows another char
   ).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: "1 unreadable dates" }));
   expect(screen.getByLabelText("Time series trace")).toHaveTextContent('"bad"');
+  fireEvent.click(screen.getByRole("button", { name: "North facet" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Web · 2024-01-01 – 2024-01-31: 10" })
+  );
+  expect(screen.getByLabelText("Selected IDs").textContent).toBe("0");
 });
 
 it("separates zero, missing periods, and invalid measures without averaging daily averages", () => {

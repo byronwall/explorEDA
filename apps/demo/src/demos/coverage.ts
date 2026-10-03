@@ -20,6 +20,14 @@ type FeatureDefinition = {
 
 export const coverageFeatures = [
   {
+    id: "mode:calendar-series",
+    label: "Calendar time series",
+    family: "Chart modes",
+    description: "Summarize dated rows by UTC day, week, or month and inspect each period.",
+    required: true,
+    status: "supported",
+  },
+  {
     id: "chart:metric-card",
     label: "Metric card",
     family: "Chart types",
@@ -224,9 +232,9 @@ export const coverageFeatures = [
     id: "scale:time",
     label: "Time scale",
     family: "Scales",
-    description: "Interpret values as dates on a time scale.",
+    description: "Use UTC dates in Line Chart calendar summaries.",
     required: true,
-    status: "not-supported",
+    status: "supported",
   },
   {
     id: "scale:band",
@@ -421,6 +429,20 @@ export type ExampleCoverage = {
 };
 
 export const exampleCoverage = [
+  {
+    exampleId: "calendar-series",
+    intent: "Compare monthly channel revenue, select a period, and inspect its source rows.",
+    features: {
+      "mode:calendar-series": "shown",
+      "scale:time": "shown",
+      "chart:line": "shown",
+      "chart:calendar": "shown",
+      "chart:metric-card": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
   {
     exampleId: "shop-operations",
     intent:

@@ -283,7 +283,7 @@ function planAxis(
       label:
         axis === "x"
           ? {
-              text: input.label,
+              text: truncate(input.label, Math.max(3, Math.floor(plotWidth / 6))),
               fullText: input.label,
               x: plotWidth / 2,
               y: plotHeight + Math.max(32, margin.bottom - 8),
@@ -291,7 +291,7 @@ function planAxis(
               fontSize: 11,
             }
           : {
-              text: input.label,
+              text: truncate(input.label, Math.max(3, Math.floor(plotHeight / 6))),
               fullText: input.label,
               x: -plotHeight / 2,
               y: -(margin.left - 12),
