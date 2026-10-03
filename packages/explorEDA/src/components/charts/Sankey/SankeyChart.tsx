@@ -1,6 +1,11 @@
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import {
+  ChartStatusLine,
+  STATUS_HINT_MIN_WIDTH,
+} from "../ChartStatusLine";
+import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
+import {
   useCallback,
   useId,
   useMemo,
@@ -202,24 +207,18 @@ export function SankeyChart({
 
   if (settings.stages.filter(Boolean).length < 2) {
     return (
-      <div
-        className="flex items-center justify-center p-4 text-center text-sm text-muted-foreground"
-        style={{ width, height }}
-      >
+      <ChartMessage width={width} height={height}>
         Choose at least two category fields for the stages in chart settings.
-      </div>
+      </ChartMessage>
     );
   }
   if (plan.drawnRows === 0) {
     return (
-      <div
-        className="flex items-center justify-center p-4 text-center text-sm text-muted-foreground"
-        style={{ width, height }}
-      >
+      <ChartMessage width={width} height={height}>
         {plan.liveCount > 0
           ? "Every row is missing at least one stage. Show missing values as a node in chart settings."
-          : "No rows match the current filters"}
-      </div>
+          : NO_MATCHING_ROWS}
+      </ChartMessage>
     );
   }
 
@@ -326,7 +325,11 @@ export function SankeyChart({
       (item) =>
         `${item.count.toLocaleString()} rows left out: ${item.reason.toLowerCase()}`
     ),
-  ].filter(Boolean);
+    !plan.hasSelection &&
+      !facetIds &&
+      width >= STATUS_HINT_MIN_WIDTH &&
+      "Click a value or flow to select",
+  ];
 
   return (
     <div
@@ -630,20 +633,12 @@ export function SankeyChart({
           </g>
         </g>
       </svg>
-      <div
-        className="pointer-events-none absolute truncate text-xs text-muted-foreground"
-        style={{
-          left: settings.margin.left,
-          right: settings.margin.right,
-          bottom: settings.margin.bottom,
-        }}
-        role="status"
-      >
-        {statusParts.join(" · ")}
-        {!plan.hasSelection &&
-          width >= 520 &&
-          " · Click a value or flow to select"}
-      </div>
+      <ChartStatusLine
+        parts={statusParts}
+        left={settings.margin.left}
+        right={settings.margin.right}
+        bottom={settings.margin.bottom}
+      />
       {(hoveredNode || hoveredLink) && (
         <Readout
           plan={plan}

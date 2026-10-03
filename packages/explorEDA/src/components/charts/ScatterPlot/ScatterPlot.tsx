@@ -1,5 +1,6 @@
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
+import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import {
   useCallback,
   useEffect,
@@ -401,11 +402,11 @@ export function ScatterPlot({
           )}
         </>
       ) : (
-        <div className="flex items-center justify-center h-full text-muted-foreground">
+        <ChartMessage>
           {plan.populations.all > 0
-            ? "No rows match the current filters"
-            : "No data available"}
-        </div>
+            ? NO_MATCHING_ROWS
+            : "No rows to show."}
+        </ChartMessage>
       )}
     </div>
   );

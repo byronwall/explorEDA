@@ -1,5 +1,11 @@
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
+import {
+  ChartStatusLine,
+  STATUS_HINT_MIN_WIDTH,
+  STATUS_LINE_HEIGHT,
+} from "../ChartStatusLine";
+import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import { formatFieldValue as formatValue } from "@/lib/fieldSettings";
 import { useCallback, useId, useMemo, useRef, useState } from "react";
 import { ChartReadout } from "../ChartReadout";
@@ -139,16 +145,16 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
 
   if (!settings.field || !settings.columnField || settings.field === settings.columnField) {
     return (
-      <div className="flex items-center justify-center p-4 text-center text-sm text-muted-foreground" style={{ width, height }}>
+      <ChartMessage width={width} height={height}>
         Choose two different fields for the rows and columns in chart settings.
-      </div>
+      </ChartMessage>
     );
   }
   if (plan.rows.length === 0 || plan.columns.length === 0) {
     return (
-      <div className="flex items-center justify-center text-sm text-muted-foreground" style={{ width, height }}>
-        No rows to display
-      </div>
+      <ChartMessage width={width} height={height}>
+        {allIds.length > 0 ? NO_MATCHING_ROWS : "No rows to show."}
+      </ChartMessage>
     );
   }
 
@@ -178,9 +184,36 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
     plan.omitted.rows > 0 && `${plan.rows.length} of ${plan.rows.length + plan.omitted.rows} ${plan.rowFieldLabel}`,
     plan.omitted.columns > 0 && `${plan.columns.length} of ${plan.columns.length + plan.omitted.columns} ${plan.columnFieldLabel}`,
   ].filter(Boolean);
+  const rowsIn = (cells: HeatmapCell[]) =>
+    cells.reduce((total, cell) => total + cell.rowCount, 0);
+  const selectedCells = plan.cells.filter((cell) => cell.selected);
+  const { rows: selectedRowKeys, columns: selectedColumnKeys } = plan.selectedKeys;
+  const listNames = (names: string[]) =>
+    names.length > 3
+      ? `${names.slice(0, 3).join(", ")} and ${names.length - 3} more`
+      : names.join(", ");
+  const selectionText =
+    selectedCells.length === 0
+      ? ""
+      : selectedRowKeys && !selectedColumnKeys
+        ? listNames(plan.rows.filter((row) => selectedRowKeys.has(row.key)).map((row) => row.label))
+        : selectedColumnKeys && !selectedRowKeys
+          ? listNames(plan.columns.filter((column) => selectedColumnKeys.has(column.key)).map((column) => column.label))
+          : selectedCells.length === 1
+            ? `${selectedCells[0]!.row.label}, ${selectedCells[0]!.column.label}`
+            : `${selectedCells.length} cells`;
+  const statusParts = [
+    // Counts lead, so a narrow chart that cuts the line keeps them.
+    selectionText &&
+      `${rowsIn(selectedCells).toLocaleString()} of ${rowsIn(plan.cells).toLocaleString()} rows selected: ${selectionText}`,
+    !selectionText &&
+      !facetIds &&
+      width >= STATUS_HINT_MIN_WIDTH &&
+      "Click a cell or label to select · Alt-click to inspect",
+  ];
   const bandTop = plan.margin.top - LEGEND_HEIGHT;
   // The column labels end 16px above the bottom margin; their field name fills that gap.
-  const columnTitleTop = height - settings.margin.bottom - 16;
+  const columnTitleTop = height - settings.margin.bottom - 16 - STATUS_LINE_HEIGHT;
 
   return (
     <div className="relative" style={{ width, height }}>
@@ -350,6 +383,11 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
         </g>
       </svg>
       {hoveredCell && <Readout cell={hoveredCell} plan={plan} />}
+      <ChartStatusLine
+        parts={statusParts}
+        left={plan.margin.left}
+        right={plan.margin.right}
+      />
     </div>
   );
 }
