@@ -120,6 +120,7 @@ export function PlotManager() {
   const [fieldsOpen, setFieldsOpen] = useState(false);
   const [fieldsOverview, setFieldsOverview] = useState(false);
   const [rowsOpen, setRowsOpenState] = useState(false);
+  const [rowsNarrow, setRowsNarrow] = useState(false);
   const settingsDrawerId = useId();
   const settingsToggles = useRef<
     Partial<Record<WorkspaceSettingsTab, HTMLButtonElement | null>>
@@ -414,6 +415,7 @@ export function PlotManager() {
         className="eda-workspace-controls"
         data-fields-open={fieldsOpen || undefined}
         data-settings-open={(settingsTab && !settingsWide) || undefined}
+        data-rows-narrow={(rowsOpen && rowsNarrow) || undefined}
       >
         <header className="eda-workspace-toolbar">
           <div
@@ -478,8 +480,8 @@ export function PlotManager() {
           </div>
           <span className="eda-toolbar-divider" aria-hidden="true" />
           <ChartCreationButtons />
-          {rowsOpen ? (
-            // The Rows drawer covers this line and shows the scope itself.
+          {rowsOpen && !rowsNarrow ? (
+            // The expanded Rows drawer covers this line and shows the scope.
             <span className="eda-filter-status" aria-hidden="true" />
           ) : (
             <ActiveFilterStatus
@@ -605,6 +607,8 @@ export function PlotManager() {
               />
             }
             containerRef={controlsRef}
+            narrow={rowsNarrow}
+            onNarrowChange={setRowsNarrow}
             onClose={closeRows}
           />
         )}
