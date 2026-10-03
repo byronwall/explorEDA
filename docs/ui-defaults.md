@@ -29,7 +29,13 @@ Run `pnpm check:ui` to reject native title attributes, SVG `<title>` elements, a
 - Use `FieldMetadata` for type, range or sample, distinct values, and null counts.
 - Keep field metadata based on the correct data scope. A filtered summary must describe filtered rows.
 - Keep field controls on one line. Put the type icon before the name and move details into the tooltip.
-- Keep table headers on one line. Show actions on the right without moving the name. Keep active filters visible.
+- Keep table header names on one line. Show actions beside the name without moving it. Keep active filters visible.
+- Align a column's header with its cells: numbers right, everything else left. A number column shows its hover actions on the left.
+- Show each column's type with the type icon before its name.
+- The Rows view draws each field's distribution under its column name, from the rows that pass the chart filters. A click or drag on it filters that column. A data table chart offers the same as a setting.
+- Mark the text a table search matched in every cell that matched.
+- A number or date column filter shows the field's distribution above its bounds. A click or drag on it sets the range, and a number field adds a range slider under it. A thumb at the end of the track leaves that side open.
+- One filter popover serves a table's columns. Opening another column's filter moves it; it never shows two at once. Popovers close without an exit animation.
 - Show a missing table cell as a small, centered monospace `null`, never a dash or a blank.
 - Let every filter reach missing values: a Missing count filters to its rows, and column filters offer Only missing values.
 - Keep row actions horizontal. Show them on hover and keyboard focus, and keep them available on touch screens.
@@ -62,10 +68,14 @@ Keep a confirmation small and centered: a short question, one sentence that name
 
 - Keep view controls and active filter scope together in one sticky line. Group inspection tools (Fields, Rows) on the left and configuration (Calculations, colors, grid, workspace actions) on the right, as icon buttons with tooltips.
 - Keep filter chips on that line. Show the ones that fit, then a "+N more" popover that lists every filter, beside the row count and clear action.
-- Rows is a drawer over the right of the viewport at full height, not a separate view. It leaves a strip of charts visible on the left at wide widths and takes the full width on narrow screens. R, Escape, or a click on the charts dismisses it. It must not resize the chart grid.
-- The Rows drawer covers the toolbar, so its header carries the row count and active filters. Table tools and the close action stay in that header while rows scroll.
+- Rows is a drawer over the right of the viewport at full height, not a separate view. It has two sizes, switched from its header. Expanded leaves a strip of charts visible on the left, and a click there dismisses it. Narrow sits beside the charts, which stay in use, so a click on them does not dismiss it. R and Escape dismiss either size. It takes the full width on narrow screens and must not resize the chart grid.
+- The expanded Rows drawer covers the toolbar, so its header carries the row count and active filters. Beside the narrow drawer the toolbar keeps its own, and the controls it would cover move beside it. Table tools and the close action stay in the drawer header while rows scroll.
+- Give every side inspector a narrow and a wide size: the field list and its full view, workspace settings, and Rows.
 - Label local Rows filters and table searches separately from chart filters.
 - Keep a clear-filter control visible on every chart with an active filter.
+- Chart settings have a Filters tab with a manual control for every filter the chart sets: the fields its marks select, then any other filtered field. Each control matches the field's type and shows its distribution. A selection on the chart and the control stay in step.
+- Show the values under the pointer in the chart panel header, beside the title, in one line. A crosshair or highlight marks the point. Do not float a readout over the plot.
+- The chart details view enlarges the chart title with the chart.
 - Label filter bounds with their meaning and state where the filter applies.
 - Use stacked filter controls at narrow widths. State when changes apply.
 - Start new source imports with summary and data tables. Let users choose their first chart.
@@ -74,6 +84,9 @@ Keep a confirmation small and centered: a short question, one sentence that name
 - Placing a new chart on an occupied spot proposes moving the charts in its way down. Show them at their proposed positions before the user accepts. Apply the new chart and the moves together on accept. Back and Cancel leave every chart where it was.
 - Preview limits must be visible, such as “first 100 shown.”
 - Use a compact Columns trigger. Show selected columns inside a searchable popover, not a shelf of pills.
+- Pick sets of fields with the shared `FieldPicker`. It shows the field list's rows (type, name, distinct, missing, and distribution) with a checkbox, and drops readings in narrow containers.
+- Drag a column by its name: sideways to reorder it, or away from the header to hide it. A line marks the drop position and a chip names the column. The column menu offers the same moves for keyboard and touch.
+- Right-click a table header or cell for its menu. A header offers filter, sort, move, hide, and copy name. A cell offers copy, filters built from its value, sort, and hide. Shift+right-click keeps the browser menu.
 
 ## Verification
 

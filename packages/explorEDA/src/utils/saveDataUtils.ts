@@ -434,6 +434,54 @@ function isChart(value: unknown): boolean {
         isFiniteNumber(value.numericalBreakpoints) &&
         typeof value.wrap === "boolean"
       );
+    case "sankey":
+      return (
+        isStringArray(value.stages) &&
+        ["count", "sum"].includes(value.aggregation as string) &&
+        (value.measureField === undefined ||
+          typeof value.measureField === "string") &&
+        ["omit", "show"].includes(value.missingStages as string) &&
+        isFiniteNumber(value.maxNodesPerStage) &&
+        ["value", "label"].includes(value.nodeOrder as string) &&
+        ["first", "source", "none"].includes(value.flowColor as string)
+      );
+    case "parallel-coordinates":
+      return (
+        Array.isArray(value.axes) &&
+        value.axes.every(
+          (axis) =>
+            isRecord(axis) &&
+            typeof axis.field === "string" &&
+            typeof axis.inverted === "boolean"
+        ) &&
+        isFiniteNumber(value.lineOpacity) &&
+        isFiniteNumber(value.lineWidth)
+      );
+    case "calendar":
+      return (
+        ["count", "sum", "average"].includes(value.aggregation as string) &&
+        (value.measureField === undefined ||
+          typeof value.measureField === "string") &&
+        ["monday", "sunday"].includes(value.weekStart as string) &&
+        (value.year === undefined || isFiniteNumber(value.year))
+      );
+    case "heatmap":
+      return (
+        typeof value.columnField === "string" &&
+        ["count", "sum", "average"].includes(value.aggregation as string) &&
+        (value.measureField === undefined ||
+          typeof value.measureField === "string") &&
+        isFiniteNumber(value.maxCategories) &&
+        ["count", "label"].includes(value.sortBy as string) &&
+        typeof value.showValues === "boolean"
+      );
+    case "ecdf":
+      return (
+        ["below", "above"].includes(value.direction as string) &&
+        typeof value.logX === "boolean" &&
+        typeof value.showQuantiles === "boolean" &&
+        typeof value.showOverall === "boolean"
+      );
     case "line":
       return (
         typeof value.xField === "string" &&

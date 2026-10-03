@@ -1,12 +1,14 @@
 {
-  "schema_version": "0.4.0",
+  "schema_version": "0.5.0",
   "initiative": {
     "title": "Chart and rendering documentation",
     "slug": "chart-and-rendering-docs",
     "scale": "capability",
-    "current_phase": "plan",
-    "last_updated": "2026-09-23",
-    "summary": "Create task-led pages for all registered views and an accurate current-state rendering guide."
+    "current_phase": "execute",
+    "last_updated": "2026-10-02",
+    "summary": "Create task-led pages for all registered views and an accurate current-state rendering guide.",
+    "status": "active",
+    "next_action": "The full catalogue and expanded rendering guide remain outside this two-ticket execution."
   },
   "artifacts": {
     "intent_brief": {
@@ -27,7 +29,7 @@
     "implementation_plan": {
       "path": "implementation-plan.md",
       "status": "current",
-      "updated_at": "2026-09-23"
+      "updated_at": "2026-10-02"
     }
   },
   "sources": [
@@ -139,9 +141,9 @@
   "implementation": {
     "status": "current",
     "repository_snapshot": {
-      "root": "/Users/byronwall/Projects/explorEDA",
-      "revision": "a15e79a",
-      "worktree_status": "main, clean at start of planning turn",
+      "root": "/Users/byronwall/.codex/worktrees/adoption-page-tickets/explorEDA",
+      "revision": "33602bc",
+      "worktree_status": "Accepted two-ticket slice; runtime source checked at 33602bc. Evidence is in exp-72ve and exp-4ak2.",
       "subsystems": [
         "apps/demo/src/main.tsx",
         "apps/demo/src/LandingPage.tsx",
@@ -170,21 +172,33 @@
         "outcome": "Two chart guides and system guide work",
         "proof": "Direct URLs and linked demo gestures work at three widths",
         "valid_intermediate_state": "Landing and examples remain available",
-        "rollback": "Remove docs query view"
+        "rollback": "Remove docs query view",
+        "ticket": "exp-72ve",
+        "status": "completed",
+        "evidence": [
+          "Accepted exp-72ve records index, scatter/bar guides, rendering guide, real captures, query refresh, runtime claims, and independent browser proof."
+        ]
       },
       {
         "id": "M2",
         "outcome": "All eleven registered types documented",
         "proof": "Index matches registry and every guide has a working example link",
         "valid_intermediate_state": "Existing docs routes stay useful",
-        "rollback": "Revise individual pages"
+        "rollback": "Revise individual pages",
+        "status": "planned"
       },
       {
         "id": "M3",
-        "outcome": "Landing and docs form one learning path",
+        "outcome": "Integration and rendering story is complete",
         "proof": "Links work and guide matches current implementation",
         "valid_intermediate_state": "Demo and docs coexist",
-        "rollback": "Remove landing links"
+        "rollback": "Remove landing links",
+        "landing_bridge_ticket": "exp-4ak2",
+        "status": "planned",
+        "landing_bridge_status": "completed",
+        "evidence": [
+          "The landing bridge is accepted in exp-4ak2. The expanded integration and rendering story remains planned; this execution supplied the current M1 guide only."
+        ]
       }
     ],
     "cut_line": [
@@ -193,12 +207,27 @@
       "generated API pipeline",
       "chart behavior changes only for docs"
     ],
-    "open_decisions": []
+    "open_decisions": [],
+    "tickets": [
+      {
+        "id": "exp-72ve",
+        "milestone": "M1",
+        "role": "minimal landing documentation prerequisite"
+      }
+    ]
   },
   "history": [
     {
       "date": "2026-09-23",
       "change": "Created a separate documentation initiative with competitor research and a proof-first plan."
+    },
+    {
+      "date": "2026-10-02",
+      "change": "Recorded first-proof prerequisite exp-72ve for adoption remainder. Landing link ownership is in exp-4ak2; avoid duplicate bridge work. No implementation authorized."
+    },
+    {
+      "date": "2026-10-02",
+      "change": "Executed only exp-72ve and exp-4ak2 after refinement. Both accepted locally. Full catalogue, publishing, and deployment remain outside this execution; native tickets hold proof and limits."
     }
   ],
   "catalogue": [

@@ -44,6 +44,36 @@ function plan(
 }
 
 describe("planBarChart", () => {
+  it("marks selected groups of a grouped result and fades the rest", () => {
+    const result = calculateGroupedAggregate(
+      [
+        { __ID: 1, group: "Z", amount: 6 },
+        { __ID: 2, group: "A", amount: 2 },
+      ],
+      {
+        id: "sales",
+        name: "Sales",
+        groupField: "group",
+        measureField: "amount",
+        aggregation: "sum",
+      }
+    );
+    const bars = plan("amount", [6, 2], {
+      aggregate: result,
+      extra: {
+        aggregateId: "sales",
+        filters: [{ type: "value", field: "group", values: ["A"] }],
+      },
+    });
+
+    expect(bars.bars.map((bar) => [bar.label, bar.selected])).toEqual([
+      ["Z", false],
+      ["A", true],
+    ]);
+    expect(bars.bars[0]!.fillSource.kind).toBe("own-filter");
+    expect(bars.bars[1]!.fillSource.kind).toBe("color-scale");
+  });
+
   it("plans aggregate bars with contributors, exclusions, domain setters and geometry", () => {
     const result = calculateGroupedAggregate(
       [

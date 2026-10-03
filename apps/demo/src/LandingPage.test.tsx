@@ -154,6 +154,12 @@ describe("LandingPage routing", () => {
     const list = within(section).getByRole("list");
     const items = within(list).getAllByRole("listitem");
 
+    expect(
+      within(section).getByRole("link", { name: "Browse chart guides" })
+    ).toHaveAttribute("href", "/?view=docs");
+    expect(
+      within(section).getByRole("link", { name: "How rendering works" })
+    ).toHaveAttribute("href", "/?view=docs&topic=rendering");
     expect(items).toHaveLength(examples.length);
     expect(within(section).queryByText("Show all examples")).toBeNull();
     expect(screen.queryByText(/feature coverage/i)).toBeNull();
@@ -162,7 +168,7 @@ describe("LandingPage routing", () => {
     ) as HTMLElement;
     expect(penguins).toHaveTextContent("344 penguins");
     expect(penguins).toHaveTextContent("real data");
-    expect(penguins).toHaveTextContent("7 views · scatter, row, box plot");
+    expect(penguins).toHaveTextContent("8 views · scatter, row, box plot");
     expect(penguins).toHaveTextContent("Shared color key");
 
     fireEvent.click(

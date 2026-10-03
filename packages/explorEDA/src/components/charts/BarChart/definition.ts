@@ -44,13 +44,22 @@ export const barChartDefinition: ChartDefinition<BarChartSettings> = {
     settings: BarChartSettings,
     fieldGetter: (name: string) => Record<IdType, datum>
   ) => {
-    const filter = settings.aggregateId
-      ? [...settings.filters]
-          .reverse()
-          .find(
-            (f): f is Filter => f.type === "range" || f.type === "date-range"
-          )
-      : settings.filters.find((f): f is Filter => f.field === settings.field);
+    if (settings.aggregateId) {
+      // A grouped bar selects groups with a value filter on its group field
+      // and keeps an optional measure range from the Selection tab.
+      const range = [...settings.filters]
+        .reverse()
+        .find((f) => f.type === "range" || f.type === "date-range");
+      const active = [
+        ...settings.filters.filter((f) => f.type === "value"),
+        ...(range ? [range] : []),
+      ].map((filter) => ({ filter, data: fieldGetter(filter.field) }));
+      return (d: IdType) =>
+        active.every(({ filter, data }) => applyFilter(data[d], filter));
+    }
+    const filter = settings.filters.find(
+      (f): f is Filter => f.field === settings.field
+    );
     const dataHash = fieldGetter(filter?.field ?? settings.field);
 
     return (d: IdType) => {

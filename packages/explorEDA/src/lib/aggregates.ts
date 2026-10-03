@@ -109,6 +109,35 @@ function aggregateValues(
   };
 }
 
+/** Reduces one group of source rows and records why any row was left out. */
+export function summarizeGroup(
+  group: AggregateInputRow[],
+  spec: Pick<AggregateSpec, "aggregation" | "measureField">,
+  rawInputs: Record<number, datum> = {},
+  exclusionReasons: Record<number, string> = {}
+): Pick<AggregateResultRow, "value" | "rowCount" | "contributors"> {
+  const values = group.map((row) =>
+    spec.measureField ? row[spec.measureField] : undefined
+  );
+  const result = aggregateValues(spec.aggregation, values);
+  const exclusionByIndex = new Map(
+    result.exclusions.map((exclusion) => [exclusion.index, exclusion.reason])
+  );
+  return {
+    value: result.value,
+    rowCount: group.length,
+    contributors: group.map((row, index) => ({
+      sourceId: row.__ID,
+      input: values[index],
+      rawInput: rawInputs[row.__ID],
+      included: result.included.has(index),
+      exclusionReason: result.included.has(index)
+        ? undefined
+        : (exclusionReasons[row.__ID] ?? exclusionByIndex.get(index)),
+    })),
+  };
+}
+
 export function calculateGroupedAggregate(
   rows: AggregateInputRow[],
   spec: AggregateSpec,
@@ -131,31 +160,12 @@ export function calculateGroupedAggregate(
     }
   });
 
-  const resultRows = Array.from(groups, ([key, group]) => {
-    const values = group.map((row) =>
-      spec.measureField ? row[spec.measureField] : undefined
-    );
-    const result = aggregateValues(spec.aggregation, values);
-    const exclusionByIndex = new Map(
-      result.exclusions.map((exclusion) => [exclusion.index, exclusion.reason])
-    );
-    return {
-      id: `${spec.id}:${key}`,
-      groupValue: categoryValue(group[0]?.[spec.groupField]),
-      groupLabel: categoryLabel(categoryValue(group[0]?.[spec.groupField])),
-      value: result.value,
-      rowCount: group.length,
-      contributors: group.map((row, index) => ({
-        sourceId: row.__ID,
-        input: values[index],
-        rawInput: rawInputs[row.__ID],
-        included: result.included.has(index),
-        exclusionReason: result.included.has(index)
-          ? undefined
-          : (exclusionReasons[row.__ID] ?? exclusionByIndex.get(index)),
-      })),
-    } satisfies AggregateResultRow;
-  });
+  const resultRows = Array.from(groups, ([key, group]) => ({
+    id: `${spec.id}:${key}`,
+    groupValue: categoryValue(group[0]?.[spec.groupField]),
+    groupLabel: categoryLabel(categoryValue(group[0]?.[spec.groupField])),
+    ...summarizeGroup(group, spec, rawInputs, exclusionReasons),
+  })) satisfies AggregateResultRow[];
 
   return { spec, rows: resultRows, sourceRowCount: rows.length };
 }

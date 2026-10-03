@@ -28,7 +28,7 @@
       },
       {
         "scope": "General transformation and mark provenance",
-        "destination": "docs/intent/deterministic-rendering-and-data-traceability/intent-brief.md"
+        "destination": "docs/application-feature-inventory.md"
       },
       {
         "scope": "Composable chart specifications",
@@ -41,6 +41,89 @@
       {
         "scope": "Remaining table, defaults, facet, and capacity gaps",
         "destination": "docs/transcript-gap-analysis.md"
+      }
+    ]
+  },
+  {
+    "title": "Field list",
+    "slug": "field-list",
+    "outcome": "completed",
+    "retired_at": "2026-10-02",
+    "summary": "The workspace field list opens without a table, shows filtered field facts, inspects fields, creates charts, and swaps chart axes by menu or drag. Reconciled against 22a9bd3694cf208c63911291a5926c3c5a367be0; no fresh browser or package checks ran in this isolated retirement worktree.",
+    "reason": "Byron requested retirement of completed initiative scopes on 2026-10-01.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "docs/ui-defaults.md"
+    ],
+    "revision": "22a9bd3694cf208c63911291a5926c3c5a367be0",
+    "follow_ups": [],
+    "evidence": [
+      {
+        "source": "https://github.com/byronwall/explorEDA/pull/42",
+        "result": "The merged PR reports pnpm check and browser review at 1280, 783, and 390 px."
+      }
+    ]
+  },
+  {
+    "title": "Chart grid direct manipulation",
+    "slug": "chart-grid-direct-manipulation",
+    "outcome": "completed",
+    "retired_at": "2026-10-02",
+    "summary": "Charts resize from each edge and corner. A delayed plus in free grid space opens chart choices and passes a free layout to normal chart creation. Reconciled against 22a9bd3694cf208c63911291a5926c3c5a367be0; no fresh browser or package checks ran in this isolated retirement worktree.",
+    "reason": "Byron requested retirement of completed initiative scopes on 2026-10-01.",
+    "documentation": [
+      "docs/application-feature-inventory.md"
+    ],
+    "revision": "22a9bd3694cf208c63911291a5926c3c5a367be0",
+    "follow_ups": [],
+    "evidence": [
+      {
+        "source": "https://github.com/byronwall/explorEDA/pull/32",
+        "result": "The merged PR reports pnpm check and real pointer checks at 1280, 783, and 390 px."
+      }
+    ]
+  },
+  {
+    "title": "Facet controls",
+    "slug": "facet-controls",
+    "outcome": "completed",
+    "retired_at": "2026-10-02",
+    "summary": "Wrap and grid facets have compact focus controls. Their paging rows expose a visible-facet picker that edits existing chart settings. Reconciled against 22a9bd3694cf208c63911291a5926c3c5a367be0; no fresh browser or package checks ran in this isolated retirement worktree.",
+    "reason": "Byron requested retirement of completed initiative scopes on 2026-10-01.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "docs/ui-defaults.md"
+    ],
+    "revision": "22a9bd3694cf208c63911291a5926c3c5a367be0",
+    "follow_ups": [],
+    "evidence": [
+      {
+        "source": "https://github.com/byronwall/explorEDA/pull/26",
+        "result": "The merged PR reports pnpm check and pointer and keyboard checks at 1280, 783, and 390 px."
+      }
+    ]
+  },
+  {
+    "title": "Deterministic rendering and data traceability",
+    "slug": "deterministic-rendering-and-data-traceability",
+    "outcome": "completed",
+    "retired_at": "2026-10-02",
+    "summary": "Scatter and bar render from chart plans and expose source and setting traces through a small shared scope. Other chart types remain separate work. Reconciled against 22a9bd3694cf208c63911291a5926c3c5a367be0; no fresh browser or package checks ran in this isolated retirement worktree.",
+    "reason": "Byron requested retirement of completed initiative scopes on 2026-10-01.",
+    "documentation": [
+      "docs/application-feature-inventory.md"
+    ],
+    "revision": "22a9bd3694cf208c63911291a5926c3c5a367be0",
+    "follow_ups": [
+      {
+        "scope": "Trace additional chart types and source-data filter flow only when requested.",
+        "destination": "docs/application-feature-inventory.md"
+      }
+    ],
+    "evidence": [
+      {
+        "source": "https://github.com/byronwall/explorEDA/pull/33",
+        "result": "The merged PR reports pnpm check, pnpm check:ui, and browser checks at 1280, 783, and 390 px. Closed ticket exp-9wuz records the earlier grouped-bar proof."
       }
     ]
   }

@@ -3,7 +3,7 @@ title: "Analytical chart coverage — shape brief"
 slug: "analytical-chart-coverage"
 phase: shape
 status: current
-last_updated: "2026-09-23"
+last_updated: "2026-10-02"
 ---
 
 # Analytical chart coverage — shape brief
@@ -58,4 +58,6 @@ Add a heatmap immediately. It would make the gallery look broader, but it would 
 
 ## Plan handoff
 
-Build and browser-test the grouped-bar path. Keep heatmap and card as separate decisions after the first proof. Use the [focused research](calendar-map-sankey-parallel-research.md) to choose the next calendar, geographic, flow, or multivariate slice from real data.
+The grouped-bar proof, the categorical heatmap, and the calendar heatmap are built and browser-tested as separate pull requests. The calendar came ahead of the card and the Other repair because Byron asked for meaningful new charts and calendar was the lowest-dependency near-term family. Both new charts reuse one reducer (`summarizeGroup`) and the existing value and date filters; neither adds a filter type. Calendar Line mode should consume the same daily rollup next, so the two views cannot disagree.
+
+Use the [focused research](calendar-map-sankey-parallel-research.md) to choose the next geographic, flow, or multivariate slice from real data.

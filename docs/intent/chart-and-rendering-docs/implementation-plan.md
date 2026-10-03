@@ -3,28 +3,34 @@ title: "Chart and rendering documentation — implementation plan"
 slug: "chart-and-rendering-docs"
 phase: plan
 status: current
-last_updated: "2026-09-23"
+last_updated: "2026-10-02"
 ---
 
 # Chart and rendering documentation — implementation plan
 
 ## Plan at a glance
 
-Start with two unlike chart pages and a small rendering guide. This tests the content structure against real behavior before writing eleven pages. Use the demo app and its existing query-based navigation. GitHub Pages serves a static Vite build at `/explorEDA/`; query URLs work on refresh without a new server rewrite. Preserve `?example=` for live examples. After scatter and bar work, add the other nine registered types in short groups. Finish by checking every statement that depends on current controls, filtering, and saved settings.
+Start with two unlike chart pages and a small rendering guide. This tests the content structure against real behavior before writing eleven pages. Use the demo app and its existing query-based navigation. GitHub Pages serves a static Vite build. Confirm the current deployment base and direct refresh before selecting URLs. Preserve `?example=` for live examples. After scatter and bar work, add the other nine registered types in short groups. Finish by checking every statement that depends on current controls, filtering, and saved settings.
+
+## Ticket handoff
+
+The first slice is accepted on 2026-10-02: `?view=docs` and the `scatter`, `bar`, and `rendering` topics. `apps/demo/src/ChartDocs.tsx` owns the pages. The broader milestones below retain their original scope. Only M1 is accepted by this execution.
+
+[exp-72ve](../../../.tickets/exp-72ve.md) covers the existing first-proof milestone needed by the landing remainder. It is accepted and closed with source, check, browser, and screenshot evidence. This execution did not fan out the full catalogue. Existing example candidates below are historical; confirm current IDs and chart modes before execution. Review any docs-system research available at that frontier.
 
 ## Implementation strategy
 
 - **First proof:** From a chart index, open scatter and bar guides, then launch each matching live example.
 - **Primary seam:** Docs content and navigation live in `apps/demo`; the library owns chart behavior and public types.
-- **Fast local loop:** `pnpm --filter demo dev`; use existing demo fixtures and focused tests.
+- **Fast local loop:** `pnpm --filter demo dev`; use existing demo fixtures and focused tests. Build and use `pnpm --filter demo preview` for static query refresh. A temporary host HTML fixture with `.dark` can verify dark tokens when the demo has no appearance control.
 - **External dependency:** None for local docs. The static GitHub Pages deployment confirms deep links and asset paths after local proof.
 - **Rollout and rollback:** Add `?view=docs&topic=...` (or a similarly small query route). Keep the current landing, example, and coverage routes. Removing docs routes leaves saved analyses untouched.
 
-## Milestone 1: Two guides can be used from the live demo
+## Milestone 1: Two guides can be used from the live demo — accepted
 
 - **Change — navigation:** Add a docs index and stable query routes in the existing demo. Link back to the landing page and specific `?example=` states. Use semantic links and headings.
 - **Change — content:** Write scatter and bar pages with purpose, fields, computations, interactions, row scope, key settings, limits, one real image, and a matching demo action. Use the [feature inventory](../../application-feature-inventory.md) as a source, then verify live labels and effects.
-- **Change — shared guide:** Publish a short current-state rendering guide. Trace one selected order example through host records, provider, derived fields, Crossfilter scopes, registry, chart calculation, rendering, and saved configuration. Add a small diagram. Mark scatter planning as current and wider deterministic planning as future work.
+- **Change — shared guide:** Publish a short current-state rendering guide. Trace one selected order example through host records, provider, derived fields, Crossfilter scopes, registry, chart calculation, rendering, and saved configuration. Add a small diagram. Describe scatter and bar planning as current; other chart planners remain future work.
 - **Verify:** Follow both guides with pointer and keyboard. Check direct URL refresh at 1280, 783, and 390 px. Run focused tests and `pnpm check:ui`.
 
 ### Desired end state
@@ -62,7 +68,7 @@ Use these current examples as starting points. Confirm that each saved layout st
 ## Milestone 3: The integration and rendering story is complete
 
 - **Change — system guide:** Explain source versus effective fields; full, peer-filtered, and globally filtered rows; chart-owned versus shared filters; facets; SVG/Canvas/Three.js/HTML boundaries; and host-owned persistence. Link the existing README for exact package API.
-- **Change — landing bridge:** Add chart index and rendering-guide links to the landing page after those routes exist. Keep the primary first-visit example first.
+- **Landing bridge ownership:** [exp-4ak2](../../../.tickets/exp-4ak2.md) in the adoption initiative owns the landing links. Do not duplicate that work here.
 - **Verify:** Read the guide against `DataLayerProvider`, chart registry, representative renderers, saved-state types, and the current traceability status. Build the demo, run `pnpm check`, and smoke-test the deployed static URL only after local checks pass.
 
 ### Desired end state

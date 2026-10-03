@@ -3,12 +3,22 @@ title: "Analytical chart coverage — implementation plan"
 slug: "analytical-chart-coverage"
 phase: plan
 status: current
-last_updated: "2026-09-23"
+last_updated: "2026-10-02"
 ---
 
 # Analytical chart coverage — implementation plan
 
 ## Plan at a glance
+
+| Step | Status | Pull request |
+| --- | --- | --- |
+| 1. Grouped measure selects and explains its records | In review | byronwall/explorEDA#105 |
+| 2. Existing views have no discovery dead ends | Not started | |
+| 3. Metric card | Not started | |
+| 4. Categorical heatmap | In review | byronwall/explorEDA#103 |
+| 5. Calendar heatmap | In review | byronwall/explorEDA#104 |
+
+Implementation began on 2026-10-02 with three slices: milestone 1, milestone 4, and the calendar heatmap. Byron asked for meaningful new charts or upgrades; milestones 2 and 3 polish existing views and wait for the next round. Each slice is a separate PR from `main`. The two new-chart PRs conflict only at additive registration lines.
 
 The first milestone repairs a common journey in the current bar rather than adding a renderer. It validates the grouped summary, selection, and contributor inspection on one order dataset. The ZIP adds a short second step: expose hidden distribution modes and make Other categories inspectable without unstable selection. A small metric card then consumes the same scoped result. The first new family is a categorical heatmap with one exact-cell selection; tuple multiselect waits for a distinct filter design. Calendar-aware lines remain separate because time bucketing and series partitioning need their own proof. Calendar heatmap, maps, Sankey, and parallel coordinates are now near-term candidates with separate first proofs in the [focused research](calendar-map-sankey-parallel-research.md). Each step leaves a useful workspace.
 
@@ -26,6 +36,7 @@ The first milestone repairs a common journey in the current bar rather than addi
 - **Change — `BarChart`:** Give an aggregate mark a linked value-selection action. Keep contributor inspection as an adjacent, keyboard-accessible action.
 - **Change — grouped result:** Use `calculateGroupedAggregate` and its contributor IDs. State the current population and numeric exclusions. Do not add another metric reducer.
 - **Verify:** One fixture checks the metric, included and excluded IDs, and the selected category. In the browser, confirm linked views and records change, then reset. Compare the same value with pivot or export.
+- **Built:** A click or Enter toggles a value filter on the group field; Alt-click still opens contributors. The order demo shows revenue by region as a grouped bar. A pivot comparison is still unchecked.
 
 ### Desired end state
 
@@ -58,20 +69,33 @@ The first milestone repairs a common journey in the current bar rather than addi
 - **Change — categorical heatmap:** Use two category fields, one metric, a legend, explicit empty/zero/invalid states, and one-cell selection plus source inspection. Bound high cardinality with a stated limit.
 - **Change — exact pair:** Represent a single selected pair without broadening it to unrelated combinations. Defer arbitrary multi-cell unions until tuple-aware filter semantics are designed.
 - **Verify:** On a fixed matrix, compare cell values and selected source IDs with the pivot and records. Test keyboard access and restore at three widths.
+- **Built:** The `heatmap` type reuses `summarizeGroup`, selects one exact pair as two value filters, limits each axis by row count, and has a cell trace. The order demo shows revenue by category and region. Saved-layout restore is covered by validation, not a browser round trip.
 
 ### Desired end state
 
 - A user can spot and inspect one unusual pair without manually rebuilding filters.
 - Existing views still load without the new type.
 
+## Milestone 5: One calendar day can be selected and inspected
+
+- **Change — daily rollup:** `rollupByDay` groups rows by UTC day with the existing date parser and reduces each day with `summarizeGroup`. Unreadable dates are counted.
+- **Change — calendar:** The `calendar` type shows one year, or one month on narrow panels. One day selects as a one-day date range; Alt-click opens a day trace.
+- **Verify:** Day bucket IDs equal the one-day filter IDs at the year boundary, the last millisecond, and offset timestamps. Browser checks at three widths confirm linked views narrow to that day.
+
+### Desired end state
+
+- A user can find an unusual day and narrow the workspace to it.
+- Old layouts load without the new type.
+
 ## Open decisions and spikes
 
+- **Next slice after these three:** Row Chart Other and distribution presets (milestone 2), metric card (milestone 3), calendar Line mode, or the first map, Sankey, or parallel-coordinates proof.
 - **Next family after the first proof:** Compare real order-data tasks needing a heatmap versus calendar time series. If time dominates, swap milestone 3 for one day/week/month rollup with an explicit zone and week boundary.
 - **First map and flow inputs:** Use real data to choose Point versus Region map, and stage columns versus edge rows for Sankey. Keep those mode choices explicit in settings.
 
 ## Near-term follow-on proofs
 
-- **Calendar heatmap:** Prove one UTC daily result in Line, then display and select the same day in the calendar. Check year-boundary IDs and zero/missing days.
+- **Calendar Line mode:** Line aggregate-by-time must consume the same `rollupByDay` result and show the same day value and IDs as the calendar.
 - **Map:** Point mode checks invalid coordinates and exact row inspection. Region mode checks a GeoJSON join, unmatched keys, and exact region contributors.
 - **Sankey:** Check each stage link against source IDs, then select one link and confirm linked views. Use a real stage table; an edge list needs a separate input proof.
 - **Parallel coordinates:** Brush two numeric axes, reorder and invert them, then restore a save. The selected source IDs must stay fixed.

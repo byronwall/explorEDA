@@ -20,9 +20,11 @@ import {
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { CsvUpload } from "./CsvUpload";
+import { ChartDocs } from "./ChartDocs";
 import { ExampleSelector } from "./ExampleSelector";
 import { FeaturedExample } from "./landing/FeaturedExample";
 import { IntegrationGuide } from "./landing/IntegrationGuide";
+import { LearningLinks } from "./landing/LearningLinks";
 import { WhyWorkspace } from "./landing/WhyWorkspace";
 import { Hero } from "./landing/Hero";
 import { LandingFooter } from "./landing/LandingFooter";
@@ -64,6 +66,7 @@ export function LandingPage() {
   const exampleId = searchParams.get("example");
   const showCoverage =
     CoverageMatrix !== null && searchParams.get("view") === "coverage";
+  const showDocs = searchParams.get("view") === "docs";
 
   const [example, setExample] = useState<ExampleData | null>(null);
   const [isCsvMode, setIsCsvMode] = useState(false);
@@ -232,10 +235,14 @@ export function LandingPage() {
               className={
                 showCoverage
                   ? "mx-auto w-full min-w-0 px-1 pt-2 sm:px-0"
-                  : "landing mx-auto w-full max-w-6xl"
+                  : showDocs
+                    ? "mx-auto w-full max-w-[calc(100vw-3rem)]"
+                    : "landing mx-auto w-full max-w-6xl"
               }
             >
-              {showCoverage && CoverageMatrix ? (
+              {showDocs ? (
+                <ChartDocs />
+              ) : showCoverage && CoverageMatrix ? (
                 <Suspense fallback={null}>
                   <CoverageMatrix />
                 </Suspense>
@@ -286,6 +293,7 @@ export function LandingPage() {
                           tracing, scale, and 3D.
                         </SectionHeading>
                       </div>
+                      <LearningLinks />
                       <ExampleSelector onSelect={handleExampleSelect} />
                     </section>
                     <section
