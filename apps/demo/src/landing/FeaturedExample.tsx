@@ -12,7 +12,7 @@ interface FeaturedExampleProps {
 const steps = [
   {
     title: "Open the order book",
-    body: "500 synthetic orders in seven linked views.",
+    body: "500 synthetic orders with linked charts, metric cards, and records.",
   },
   {
     title: "Click Web in Sales channels",

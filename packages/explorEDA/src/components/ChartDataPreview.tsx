@@ -23,7 +23,10 @@ export function ChartDataPreview({
     "aggregateId" in settings && settings.aggregateId
       ? getAggregateResult(settings.aggregateId)
       : undefined;
-  const fields = getChartFields(settings);
+  const fields =
+    settings.type === "metric-card"
+      ? ["__ID", ...getChartFields(settings)]
+      : getChartFields(settings);
   const columns = fields.map((field) => getColumnData(field));
   const labels = result
     ? [
@@ -33,7 +36,9 @@ export function ChartDataPreview({
           : getFieldLabel(result.spec.measureField ?? "Value"),
         "Source rows",
       ]
-    : fields.map(getFieldLabel);
+    : fields.map((field) =>
+        field === "__ID" ? "Source row ID" : getFieldLabel(field)
+      );
   const count = result?.rows.length ?? ids.length;
   const rows: React.ReactNode[][] = result
     ? result.rows

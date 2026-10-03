@@ -10,6 +10,7 @@ import {
 } from "@/utils/saveDataUtils";
 import { SavedDataStructure } from "@/types/SavedDataStructure";
 import { boxPlotDefinition } from "@/components/charts/BoxPlot/definition";
+import { metricCardDefinition } from "@/components/charts/MetricCard/definition";
 import type { SavedRow } from "@/types/SavedDataStructure";
 
 describe("saveDataUtils", () => {
@@ -63,6 +64,45 @@ describe("saveDataUtils", () => {
   };
 
   describe("validateSavedData", () => {
+    it("round-trips metric choices and rejects missing measures and unknown operations", () => {
+      const card = metricCardDefinition.createDefaultSettings({
+        x: 2,
+        y: 3,
+        w: 4,
+        h: 2,
+      });
+      for (const aggregation of ["count", "sum", "average"] as const) {
+        const settings = {
+          ...mockValidData,
+          charts: [
+            {
+              ...card,
+              aggregation,
+              measureField: aggregation === "count" ? undefined : "Revenue",
+            },
+          ],
+        };
+        const restored = JSON.parse(stringifySavedData(settings));
+        expect(validateSavedData(restored)).toBe(true);
+        expect(restored.charts[0]).toMatchObject({
+          type: "metric-card",
+          aggregation,
+          layout: card.layout,
+        });
+      }
+      expect(
+        validateSavedData({
+          ...mockValidData,
+          charts: [{ ...card, aggregation: "sum" }],
+        })
+      ).toBe(false);
+      expect(
+        validateSavedData({
+          ...mockValidData,
+          charts: [{ ...card, aggregation: "median" }],
+        })
+      ).toBe(false);
+    });
     it("should return true for valid data", () => {
       expect(validateSavedData(mockValidData)).toBe(true);
     });

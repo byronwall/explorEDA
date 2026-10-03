@@ -14,6 +14,7 @@ import type { ParallelTrace } from "../ParallelCoordinates/parallelTrace";
 import type { CalendarTrace } from "../Calendar/calendarTrace";
 import type { HeatmapTrace } from "../Heatmap/heatmapTrace";
 import type { EcdfTrace } from "../Ecdf/ecdfTrace";
+import type { MetricCardTrace } from "../MetricCard/metricCardTrace";
 import type { ScatterTrace } from "../ScatterPlot/scatterTrace";
 
 /** A selected object. The owner's source resolves it against its current plan. */
@@ -98,6 +99,7 @@ export type ChartTrace =
   | CalendarTrace
   | HeatmapTrace
   | EcdfTrace
+  | MetricCardTrace
   | GuideTrace
   | TitleTrace
   | FacetTrace

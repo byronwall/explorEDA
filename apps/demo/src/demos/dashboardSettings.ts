@@ -819,3 +819,29 @@ shopDashboard.charts.push({
   ),
   margin: { top: 8, right: 12, bottom: 8, left: 12 },
 });
+
+
+// Add the metric row only to this example; the large order book keeps its layout.
+shopDashboard.charts = [
+  ...([
+    ["shop-count", "Matching orders", "count"],
+    ["shop-revenue", "Revenue in this selection", "sum"],
+    ["shop-average", "Average order value", "average"],
+  ] as const).map(([id, title, aggregation], index): Chart => ({
+    ...base,
+    id,
+    type: "metric-card",
+    title,
+    aggregation,
+    measureField: aggregation === "count" ? undefined : "Revenue",
+    layout: layout(index * 4, 0, 4, 2),
+  })),
+  ...shopDashboard.charts.map((chart) => ({
+    ...chart,
+    layout: { ...chart.layout, y: chart.layout.y + 2 },
+  })),
+];
+shopDashboard.fieldSettings = {
+  ...shopDashboard.fieldSettings,
+  Revenue: { format: "currency", currency: "USD", precision: 2 },
+};

@@ -57,6 +57,7 @@ const viewNames: Record<string, string> = {
   ecdf: "ECDF",
   line: "line",
   markdown: "notes",
+  "metric-card": "metric card",
   "parallel-coordinates": "parallel coordinates",
   pivot: "pivot",
   row: "row",
@@ -82,9 +83,9 @@ export const examples: ExampleData[] = [
     description:
       "Follow orders from revenue and margin to delivery, channels, and individual records. Click any bar and every other view narrows to match, or follow orders from channel to category to returns in the flow at the bottom.",
     dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
-    shows: ["Click to filter", "Sankey flow", "Filter chips", "Symmetric log scales"],
+    shows: ["Metric cards", "Click to filter", "Sankey flow", "Filter chips", "Symmetric log scales"],
     guide:
-      "Try this: click Web in Sales channels. The other charts and the orders table narrow to web orders. Click Web again, or use Reset workspace, to start over.",
+      "Try this: click Web in Sales channels. The order count, revenue, and average-order cards update with the charts and table. Choose Inspect records on a card to see its inputs. Click Web again to clear the filter.",
     icon: ShoppingCart,
     data: "/datasets/shop-operations.csv",
     savedData: shopDashboard,

@@ -18,6 +18,7 @@ const chartNames: Record<string, string> = {
   calendar: "Calendar heatmap",
   heatmap: "Heatmap",
   ecdf: "Cumulative distribution",
+  "metric-card": "Metric card",
 };
 
 export function getChartTitle(
@@ -36,6 +37,13 @@ export function getChartTitle(
     return title;
   }
 
+  if (settings.type === "metric-card") {
+    if (settings.aggregation === "count") return "Matching rows";
+    const metric = settings.aggregation === "sum" ? "Sum" : "Average";
+    return settings.measureField
+      ? `${metric} of ${getFieldLabel(settings.measureField)}`
+      : "Metric card";
+  }
   if (settings.type === "sankey") {
     const labels = settings.stages.filter(Boolean).map(getFieldLabel);
     return labels.length > 1
@@ -122,6 +130,8 @@ export function getChartFields(settings: ChartSettings): string[] {
         return [settings.field, settings.measureField];
       case "heatmap":
         return [settings.field, settings.columnField, settings.measureField];
+      case "metric-card":
+        return settings.aggregation === "count" ? [] : [settings.measureField];
       default:
         return [settings.field, settings.colorField];
     }
@@ -183,6 +193,11 @@ export function getChartSummary(
   }
   if (settings.type === "markdown") {
     return `${name}.`;
+  }
+  if (settings.type === "metric-card") {
+    return settings.aggregation === "count"
+      ? "Metric card showing the count of rows that match the chart filters."
+      : `${getChartTitle({ ...settings, title: "" }, getFieldLabel)} for rows that match the chart filters.`;
   }
   const fields = getChartFields(settings);
   return fields.length

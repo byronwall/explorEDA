@@ -14,11 +14,11 @@ last_updated: "2026-10-02"
 | --- | --- | --- |
 | 1. Grouped measure selects and explains its records | In review | byronwall/explorEDA#105 |
 | 2. Existing views have no discovery dead ends | Not started | |
-| 3. Metric card | Not started | |
+| 3. Metric card | In review | byronwall/explorEDA#114 |
 | 4. Categorical heatmap | In review | byronwall/explorEDA#103 |
 | 5. Calendar heatmap | In review | byronwall/explorEDA#104 |
 
-Implementation began on 2026-10-02 with three slices: milestone 1, milestone 4, and the calendar heatmap. Byron asked for meaningful new charts or upgrades; milestones 2 and 3 polish existing views and wait for the next round. Each slice is a separate PR from `main`. The two new-chart PRs conflict only at additive registration lines.
+Implementation began on 2026-10-02 with three slices: milestone 1, milestone 4, and the calendar heatmap. Metric cards followed in PR #114. Milestone 2 remains open. Each slice is a separate PR from `main`.
 
 The first milestone repairs a common journey in the current bar rather than adding a renderer. It validates the grouped summary, selection, and contributor inspection on one order dataset. The ZIP adds a short second step: expose hidden distribution modes and make Other categories inspectable without unstable selection. A small metric card then consumes the same scoped result. The first new family is a categorical heatmap with one exact-cell selection; tuple multiselect waits for a distinct filter design. Calendar-aware lines remain separate because time bucketing and series partitioning need their own proof. Calendar heatmap, maps, Sankey, and parallel coordinates are now near-term candidates with separate first proofs in the [focused research](calendar-map-sankey-parallel-research.md). Each step leaves a useful workspace.
 
@@ -58,6 +58,8 @@ The first milestone repairs a common journey in the current bar rather than addi
 
 - **Change — metric card:** Add one count/sum/mean card using the existing aggregation rules and field formatting. Label its metric and active population; link to contributors.
 - **Verify:** Brush or select elsewhere and compare the card with the grouped result and source records. Restore its saved settings.
+- **Built:** Count, sum, and average cards use `summarizeGroup` and all active chart filters. Cards show matching and excluded rows. Inspect records shows inputs, conversion errors, and source IDs. The order-book demo includes all three metrics.
+- **Checked:** Source totals, linked filters, creation, settings reset, record inspection, and saved analysis restore. Browser checks covered 1280, 783, and 390 px, dark theme, long labels, zero, invalid values, and empty selections. `pnpm check` passed with 490 tests on Node 24.
 
 ### Desired end state
 
@@ -89,7 +91,7 @@ The first milestone repairs a common journey in the current bar rather than addi
 
 ## Open decisions and spikes
 
-- **Next slice after these three:** Row Chart Other and distribution presets (milestone 2), metric card (milestone 3), calendar Line mode, or the first map, Sankey, or parallel-coordinates proof.
+- **Next slice:** Row Chart Other and distribution presets (milestone 2), calendar Line mode, or a map proof.
 - **Next family after the first proof:** Compare real order-data tasks needing a heatmap versus calendar time series. If time dominates, swap milestone 3 for one day/week/month rollup with an explicit zone and week boundary.
 - **First map and flow inputs:** Use real data to choose Point versus Region map, and stage columns versus edge rows for Sankey. Keep those mode choices explicit in settings.
 

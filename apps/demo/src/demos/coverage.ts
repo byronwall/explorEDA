@@ -20,6 +20,15 @@ type FeatureDefinition = {
 
 export const coverageFeatures = [
   {
+    id: "chart:metric-card",
+    label: "Metric card",
+    family: "Chart types",
+    description: "Read the count, sum, or average for matching rows and inspect its inputs.",
+    required: true,
+    status: "supported",
+    chartType: "metric-card",
+  },
+  {
     id: "chart:row",
     label: "Row chart",
     family: "Chart types",
@@ -417,6 +426,7 @@ export const exampleCoverage = [
     intent:
       "Click one channel and watch every linked view and the orders table narrow.",
     features: {
+      "chart:metric-card": "shown",
       "chart:scatter": "reviewed",
       "chart:row": "shown",
       "chart:bar": "shown",
