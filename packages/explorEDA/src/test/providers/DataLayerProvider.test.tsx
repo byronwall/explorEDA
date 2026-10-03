@@ -732,7 +732,7 @@ describe("DataLayerProvider", () => {
       .charts[0]!;
     expect(emittedChart.type).toBe("3d-scatter");
     if (emittedChart.type === "3d-scatter") {
-      expect(emittedChart.cameraPosition).toEqual({ x: 10, y: 10, z: 10 });
+      expect(emittedChart.cameraPosition).toEqual({ x: 20, y: 14, z: 20 });
       expect(emittedChart.cameraTarget).toEqual({ x: 0, y: 0, z: 0 });
     }
   });

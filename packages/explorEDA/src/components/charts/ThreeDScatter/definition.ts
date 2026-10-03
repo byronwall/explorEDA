@@ -27,7 +27,7 @@ export const threeDScatterDefinition: ChartDefinition<ThreeDScatterSettings> = {
     zField: "",
     colorField: undefined,
     sizeField: undefined,
-    pointSize: 5,
+    pointSize: DEFAULT_3D_SCATTER_SETTINGS.pointSize,
     pointOpacity: 0.8,
     showGrid: true,
     showAxes: true,

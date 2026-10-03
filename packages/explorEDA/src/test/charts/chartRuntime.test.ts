@@ -4,7 +4,10 @@ import { lineChartDefinition } from "../../components/charts/LineChart/definitio
 import { calculateBeeSwarmPositions } from "../../components/charts/BoxPlot/boxPlotCalculations";
 import { sampleData } from "../../components/SummaryTable/utils/samplingStrategy";
 import { threeDScatterDefinition } from "../../components/charts/ThreeDScatter/definition";
-import { buildThreeDScatterData } from "../../components/charts/ThreeDScatter/useThreeDScatterData";
+import {
+  buildThreeDScatterData,
+  CUBE_HALF,
+} from "../../components/charts/ThreeDScatter/useThreeDScatterData";
 import { colorLegendDefinition } from "../../components/charts/ColorLegend/definition";
 
 describe("chart runtime", () => {
@@ -108,7 +111,7 @@ describe("chart runtime", () => {
       w: 4,
       h: 4,
     });
-    expect(settings.cameraPosition.toArray()).toEqual([10, 10, 10]);
+    expect(settings.cameraPosition.toArray()).toEqual([20, 14, 20]);
     expect(settings.cameraTarget.toArray()).toEqual([0, 0, 0]);
   });
 
@@ -123,9 +126,28 @@ describe("chart runtime", () => {
       (value) => String(value)
     );
     expect(result.omitted).toBe(1);
-    expect(result.points).toEqual([
-      { x: 1, y: 10, z: 100, color: "a", size: 0.5 },
-      { x: 2, y: 20, z: 200, color: "b", size: 1 },
+    expect(result.points.map(({ color, size }) => ({ color, size }))).toEqual([
+      { color: "a", size: 0.5 },
+      { color: "b", size: 1 },
+    ]);
+    expect(result.points[0]!.values).toMatchObject({ x: 1, y: 10, z: 100 });
+  });
+
+  it("fits 3D points into the cube by each axis's full range", () => {
+    const result = buildThreeDScatterData(
+      [0, 5, 10],
+      [-4, 0, 4],
+      [7, 7, 7],
+      [],
+      [],
+      [0, 0],
+      () => "#000",
+      { x: [0, 10], y: [-4, 4], z: [7, 7] }
+    );
+    expect(result.points.map(({ x, y, z }) => [x, y, z])).toEqual([
+      [-CUBE_HALF, -CUBE_HALF, 0],
+      [0, 0, 0],
+      [CUBE_HALF, CUBE_HALF, 0],
     ]);
   });
 });
