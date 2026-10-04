@@ -343,7 +343,7 @@ export function PlotChartPanel({
   const dataFields = aggregate
     ? Array.from(
         new Set(
-          [aggregate.groupField, aggregate.measureField].filter(
+          [aggregate.groupField, aggregate.measureField, ...(settings.type === "bar" ? [settings.seriesField] : [])].filter(
             (field): field is string => Boolean(field)
           )
         )
@@ -650,7 +650,7 @@ export function PlotChartPanel({
               width={Math.max(1, panelWidth - 24)}
             />
           )}
-          {settings.facet?.enabled && !aggregate ? (
+          {settings.facet?.enabled && (!aggregate || (settings.type === "bar" && settings.seriesField)) ? (
             <FacetContainer
               settings={settings}
               width={Math.max(1, panelWidth - 24)}

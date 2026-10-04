@@ -6,7 +6,7 @@ Byron approved this sequence after Metric Card PR #114. Each branch starts from 
 | --- | --- | --- | --- | --- |
 | 1 | Metric card | `codex/metric-card` | #114 | In review |
 | 2 | Calendar time series | `codex/calendar-time-series` | #115 | In review |
-| 3 | Grouped bars | | | Pending |
+| 3 | Grouped bars | `codex/grouped-bars` | #116 | In review |
 | 4 | Stacked and 100% bars | | | Pending |
 | 5 | Area and stacked area | | | Pending |
 | 6 | Bubble scatter | | | Pending |
@@ -22,3 +22,7 @@ Correlation matrices, waterfall, hierarchy charts, missingness views, and domain
 ## Calendar time series evidence
 
 PR #115 adds UTC day, week, and month summaries to Line Chart. It includes source tracing, exact period and facet selection, saved settings, and a worked example. All 495 tests passed on Node 24. Browser checks covered 1280, 783, and 390 px, keyboard selection, invalid inputs, signed sums, and dark mode. Four screenshots are attached to the PR.
+
+## Grouped bars evidence
+
+PR #116 adds series within each category to Bar Chart. It includes exact pair and facet selection, source tracing, saved settings, and a worked example. All 498 tests passed on Node 24. Browser checks covered 1280, 783, and 390 px, keyboard selection, counts, sums, averages, and reset. A dark fixture checked signed values, typed and missing categories, invalid inputs, and long labels. Five screenshots are attached to the PR.

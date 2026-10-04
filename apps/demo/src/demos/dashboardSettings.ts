@@ -863,3 +863,13 @@ export const timeSeriesDashboard = dashboard("Orders through the calendar", [
   table("time-records", "Matching source records", ["Order Date", "Channel", "Revenue", "Region"], layout(0, 11, 12, 5)),
 ], [categoricalScale("time-channel", "Channel", ["Web", "Store", "Wholesale"])]);
 timeSeriesDashboard.fieldSettings = { Revenue: { type: "numeric", format: "currency", currency: "USD", precision: 2 } };
+
+export const groupedBarsDashboard = dashboard("Sales by region and channel", [
+  { ...base, id: "grouped-revenue", type: "bar", title: "Revenue by region and channel", field: "Revenue", aggregateId: "grouped-sales", seriesField: "Channel", colorField: "Channel", colorScaleId: "grouped-channel", layout: layout(0, 0, 8, 6), yAxisLabel: "Revenue ($)" },
+  { ...base, id: "grouped-total", type: "metric-card", title: "Matching revenue", aggregation: "sum", measureField: "Revenue", layout: layout(8, 0, 4, 2) },
+  row("grouped-categories", "Product categories", "Category", layout(8, 2, 4, 4)),
+  { ...base, id: "grouped-count", type: "bar", title: "Orders by category and channel", field: "Category", seriesField: "Channel", colorField: "Channel", colorScaleId: "grouped-channel", layout: layout(0, 6, 12, 5), yAxisLabel: "Orders" },
+  table("grouped-records", "Matching source records", ["Region", "Channel", "Category", "Revenue"], layout(0, 11, 12, 5)),
+], [categoricalScale("grouped-channel", "Channel", ["Web", "Store", "Wholesale"])]);
+groupedBarsDashboard.aggregates = [{ id: "grouped-sales", name: "Revenue by region", groupField: "Region", measureField: "Revenue", aggregation: "sum" }];
+groupedBarsDashboard.fieldSettings = { Revenue: { type: "numeric", format: "currency", currency: "USD", precision: 2 } };

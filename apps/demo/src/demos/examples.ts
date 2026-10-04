@@ -6,11 +6,13 @@ import {
   scatterTraceDashboard,
   activityDashboard,
   timeSeriesDashboard,
+  groupedBarsDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import { SavedDataStructure } from "exploreda";
 import {
   Bird,
+  BarChart3,
   Calculator,
   LineChart,
   LucideIcon,
@@ -101,6 +103,17 @@ export const examples: ExampleData[] = [
     icon: LineChart,
     data: "/datasets/shop-operations.csv",
     savedData: timeSeriesDashboard,
+  },
+  {
+    id: "grouped-bars",
+    title: "Sales by region and channel",
+    description: "Compare revenue across regions, with one bar for each channel. Select a pair to inspect the matching orders.",
+    dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
+    shows: ["Grouped bars", "Pair selection", "Source tracing"],
+    guide: "Try this: select a region–channel bar. Inspect bar shows its source records. Open settings to compare counts, sums, or averages.",
+    icon: BarChart3,
+    data: "/datasets/shop-operations.csv",
+    savedData: groupedBarsDashboard,
   },
   {
     id: "palmer-penguins",
