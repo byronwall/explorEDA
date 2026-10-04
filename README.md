@@ -137,6 +137,24 @@ pnpm check              # UI rules, build, typecheck, and tests
 pnpm --filter demo dev  # demo site at http://localhost:5173/
 ```
 
+## Local product grid
+
+The explorEDA product grid and its images live in `pgm/data`. The original
+download is `pgm/explorEDA.zip`. The viewer and CLI save edits in `pgm/data`.
+They do not update the hosted project or the ZIP archive.
+
+```bash
+pnpm pgm:view                      # open the local viewer; Ctrl+C stops it
+pnpm pgm project list --json       # inspect local projects
+pnpm pgm node list --roots --compact --json
+```
+
+Run `pnpm install` first. These commands use the packaged PGM CLI in
+`tools/product-grid-cli-0.1.9.tgz`. This build includes the local viewer from
+[PGM PR #38](https://github.com/byronwall/prod-mgmt-grid/pull/38).
+The npm release with the same version does not include that viewer.
+Commit changes in `pgm/data` to save local edits and images in Git.
+
 ## Release
 
 Releases use [Changesets](https://github.com/changesets/changesets). Add a

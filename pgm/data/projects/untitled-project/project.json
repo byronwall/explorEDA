@@ -1,0 +1,3263 @@
+{
+  "id": "untitled-project",
+  "name": "explorEDA",
+  "description": "Blank project ready for grid editing, structure mapping, and future AI-assisted details.",
+  "createdAt": "2026-09-29T01:22:21.210Z",
+  "updatedAt": "2026-10-03T02:44:15.910Z",
+  "operationLog": [
+    {
+      "id": "74d0709d-b334-48f8-819e-c8c1f40c5e04",
+      "kind": "nodes.bulk.updated",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-03T02:44:15.912Z",
+      "summary": "Bulk updated 16 nodes: archived.",
+      "nodeIds": [
+        "page-feedback-10-1",
+        "page-rows-drawer-needs-an-expanded-current-and-small-view",
+        "page-tooltip-for-scatter-is-too-large-and-in-the-way",
+        "page-chart-focus-should-increase-header-size",
+        "page-improve-the-row-view-with-small-distribution-in-col-header",
+        "page-row-display",
+        "page-would-be-nice-to-show-data-type-clearly",
+        "page-missing-a-robust-right-click-menu-on-header-and-cells",
+        "page-column-picker-looks-goofy",
+        "page-search-should-highlight-what-matched",
+        "page-adding-slider-or-distribution-view-to-filter-in-popover",
+        "page-filter-popover-behaves-oddly",
+        "page-would-be-nice-to-drag-columns-left-and-right",
+        "page-would-be-nice-to-drag-columns-to-gutter-to-remove-variable",
+        "page-column-header-should-match-cell-alignment",
+        "page-chart-settings-should-allow-control-of-all-filters-on-chart"
+      ],
+      "metadata": {
+        "clientMutationId": "425294d2-e07e-4144-8625-7faca9592f6d"
+      },
+      "payload": {
+        "state": {
+          "nodeMetadataSchema": [
+            {
+              "key": "purpose",
+              "label": "Purpose",
+              "defaultValue": "Loose context, notes, and markdown content that needs a home in the map."
+            },
+            {
+              "key": "implementation",
+              "label": "Implementation",
+              "defaultValue": "Freeform markdown note stored directly on the node for AI or human editing."
+            }
+          ],
+          "nodeTypeSchema": [
+            {
+              "name": "page",
+              "color": "#92bedd"
+            },
+            {
+              "name": "area",
+              "color": "#92ddb1"
+            },
+            {
+              "name": "assembly",
+              "color": "#ddc692"
+            },
+            {
+              "name": "module",
+              "color": "#dd9c92"
+            },
+            {
+              "name": "component",
+              "color": "#ae92dd"
+            },
+            {
+              "name": "note",
+              "color": "#92d8dd"
+            }
+          ],
+          "spatialMap": {
+            "nodes": [
+              {
+                "id": "page-feedback-rnd-2",
+                "label": "Feedback rnd 2",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "",
+                "rawContext": "",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-delete-confirm-is-massive-and-gross",
+                "label": "Delete confirm is massive and gross",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "implementation": "UI implementation deferred as requested. Opus handoff is ready in docs/opus-feedback-round-2-prompt.md in the explorEDA checkout. It includes requirements, source paths, screenshot references, and acceptance checks. This issue is not implemented."
+                },
+                "context": "",
+                "rawContext": "",
+                "images": [
+                  {
+                    "id": "bb9718e0-1427-4649-b098-0cbd5dfd038f",
+                    "src": "/api/projects/untitled-project/images/page-delete-confirm-is-massive-and-gross/bb9718e0-1427-4649-b098-0cbd5dfd038f.png",
+                    "filename": "bb9718e0-1427-4649-b098-0cbd5dfd038f.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 133859,
+                    "createdAt": "2026-09-29T01:49:21.565Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-add-new-chart-flow-should-propose-moving-existing-charts-too",
+                "label": "Add new chart flow should propose moving existing charts too",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "implementation": "UI implementation deferred as requested. Opus handoff is ready in docs/opus-feedback-round-2-prompt.md in the explorEDA checkout. It includes requirements, source paths, screenshot references, and acceptance checks. This issue is not implemented."
+                },
+                "context": "",
+                "rawContext": "",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-chart-focus-should-really-be-a-details-view-with-settings-already-open",
+                "label": "Chart \"focus\" should really be a details view with settings already open",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "implementation": "UI implementation deferred as requested. Opus handoff is ready in docs/opus-feedback-round-2-prompt.md in the explorEDA checkout. It includes requirements, source paths, screenshot references, and acceptance checks. This issue is not implemented."
+                },
+                "context": "The focus should open a full viewport thing that includes the chart on left and then the settings already open.  Basically a \"control panel\" style split where the left side is chart preview and right side is all the actions.  I am thinkign that settings is good.  If we can figure out how to show the sample data preview also (maybe tabs or somethign) that'd be good too",
+                "rawContext": "The focus should open a full viewport thing that includes the chart on left and then the settings already open.  Basically a \"control panel\" style split where the left side is chart preview and right side is all the actions.  I am thinkign that settings is good.  If we can figure out how to show the sample data preview also (maybe tabs or somethign) that'd be good too",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-expand-rows-data-to-full-viewport-height",
+                "label": "Expand rows/data to full viewport height",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "implementation": "UI implementation deferred as requested. Opus handoff is ready in docs/opus-feedback-round-2-prompt.md in the explorEDA checkout. It includes requirements, source paths, screenshot references, and acceptance checks. This issue is not implemented."
+                },
+                "context": "Feels like it is constrained inside the box and should really be bigger. Maybe a full viewport height with a 80px left side that is misisng so you can still see some charts underneath.  Basically a 90vw right drawer.",
+                "rawContext": "Feels like it is constrained inside the box and should really be bigger. Maybe a full viewport height with a 80px left side that is misisng so you can still see some charts underneath.  Basically a 90vw right drawer.",
+                "images": [
+                  {
+                    "id": "dd6009b3-a85b-465e-9533-9f2dd0edaef8",
+                    "src": "/api/projects/untitled-project/images/page-expand-rows-data-to-full-viewport-height/dd6009b3-a85b-465e-9533-9f2dd0edaef8.png",
+                    "filename": "dd6009b3-a85b-465e-9533-9f2dd0edaef8.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 279536,
+                    "createdAt": "2026-10-01T02:10:54.066Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-rows-tooltip-appears-after-closing",
+                "label": "Rows tooltip appears after closing",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Shared tooltips now open on pointer hover only. Closing Rows with Escape restores focus without showing a tooltip. Regression test and pnpm check passed on Node 24. Browser verified at 1280, 783, and 390 pixels. Changes remain local on main."
+                },
+                "context": "Open rows, hit ESC, the tooltip appears.\r\n\r\nWe basically never want tooltips to appear unless mouse over.",
+                "rawContext": "Open rows, hit ESC, the tooltip appears.\r\n\r\nWe basically never want tooltips to appear unless mouse over.",
+                "images": [
+                  {
+                    "id": "287e7458-f396-45b7-bef9-32b0ed51b2f2",
+                    "src": "/api/projects/untitled-project/images/page-rows-tooltip-appears-after-closing/287e7458-f396-45b7-bef9-32b0ed51b2f2.png",
+                    "filename": "287e7458-f396-45b7-bef9-32b0ed51b2f2.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 43986,
+                    "createdAt": "2026-10-01T02:11:33.536Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-harmonize-disclosure-for-colors-grid-and-calcs",
+                "label": "Harmonize disclosure for colors, grid, and calcs",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "implementation": "UI implementation deferred as requested. Opus handoff is ready in docs/opus-feedback-round-2-prompt.md in the explorEDA checkout. It includes requirements, source paths, screenshot references, and acceptance checks. This issue is not implemented."
+                },
+                "context": "Probably need a right drawer or similar with tabs so I can quickly flip between the different modes.  Maybe it has a narrow view and expanded view.\r\n\r\nThis is starting to feel more and more like a persistence inspector.  But I really want it to float above stuff.\r\n\r\nI think we should use popovers for local things and the drawer for \"global\" things.  Maybe?",
+                "rawContext": "",
+                "images": [
+                  {
+                    "id": "c3161451-9995-420a-97f9-61099e73825e",
+                    "src": "/api/projects/untitled-project/images/page-harmonize-disclosure-for-colors-grid-and-calcs/c3161451-9995-420a-97f9-61099e73825e.png",
+                    "filename": "c3161451-9995-420a-97f9-61099e73825e.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 11840,
+                    "createdAt": "2026-10-01T02:14:07.843Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-move-actions-buttons-into-chart-header",
+                "label": "Move actions buttons into chart header",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "implementation": "UI implementation deferred as requested. Opus handoff is ready in docs/opus-feedback-round-2-prompt.md in the explorEDA checkout. It includes requirements, source paths, screenshot references, and acceptance checks. This issue is not implemented."
+                },
+                "context": "Duplicate, delete, view data.  Just put them in the header.  Remove the action row in the settings.  I want settings to just be settings and not include these actions.",
+                "rawContext": "Duplicate, delete, view data.  Just put them in the header.  Remove the action row in the settings.  I want settings to just be settings and not include these actions.",
+                "images": [
+                  {
+                    "id": "16abdaac-1492-42c1-9d82-e299bacbe85f",
+                    "src": "/api/projects/untitled-project/images/page-move-actions-buttons-into-chart-header/16abdaac-1492-42c1-9d82-e299bacbe85f.png",
+                    "filename": "16abdaac-1492-42c1-9d82-e299bacbe85f.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 55634,
+                    "createdAt": "2026-10-01T02:28:23.964Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-feedback-10-1",
+                "label": "Feedback 10/1",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "All 14 items are implemented in stacked PRs #98 to #102 (merge in order)."
+                },
+                "context": "",
+                "rawContext": "",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-rows-drawer-needs-an-expanded-current-and-small-view",
+                "label": "Rows drawer needs an expanded (current) and small view",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #101: the Rows drawer has a narrow size beside its expanded one; narrow keeps the charts visible and in use."
+                },
+                "context": "I think all inspectors need to have a big and narrow size.",
+                "rawContext": "I think all inspectors need to have a big and narrow size.",
+                "images": [
+                  {
+                    "id": "85df8e48-c3fb-4f97-8d56-0574e3437629",
+                    "src": "/api/projects/untitled-project/images/page-rows-drawer-needs-an-expanded-current-and-small-view/85df8e48-c3fb-4f97-8d56-0574e3437629.png",
+                    "filename": "85df8e48-c3fb-4f97-8d56-0574e3437629.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 281700,
+                    "createdAt": "2026-10-02T01:07:46.967Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-tooltip-for-scatter-is-too-large-and-in-the-way",
+                "label": "tooltip for scatter is too large and \"in the way\"",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #102: hovered scatter values read in one line in the chart header instead of a box over the plot."
+                },
+                "context": "Need to find a way for it to live outside the chart or to be less aggressive.",
+                "rawContext": "Need to find a way for it to live outside the chart or to be less aggressive.",
+                "images": [
+                  {
+                    "id": "99e3a7ec-93cf-4848-8a69-9d1421b03703",
+                    "src": "/api/projects/untitled-project/images/page-tooltip-for-scatter-is-too-large-and-in-the-way/99e3a7ec-93cf-4848-8a69-9d1421b03703.png",
+                    "filename": "99e3a7ec-93cf-4848-8a69-9d1421b03703.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 127999,
+                    "createdAt": "2026-10-02T03:09:34.319Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-chart-focus-should-increase-header-size",
+                "label": "Chart focus should increase header size",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #102: the chart details view shows the title at 20 px in a taller header."
+                },
+                "context": "It seems quite small compared to the enlarged chart.",
+                "rawContext": "It seems quite small compared to the enlarged chart.",
+                "images": [
+                  {
+                    "id": "46409482-c8a2-4785-b0cd-03345f90ff63",
+                    "src": "/api/projects/untitled-project/images/page-chart-focus-should-increase-header-size/46409482-c8a2-4785-b0cd-03345f90ff63.png",
+                    "filename": "46409482-c8a2-4785-b0cd-03345f90ff63.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 66517,
+                    "createdAt": "2026-10-02T03:10:41.826Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-improve-the-row-view-with-small-distribution-in-col-header",
+                "label": "Improve the row view with small distribution in col header",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #98: the Rows view draws each field's distribution under its column name (click or drag to filter). Data table charts can turn it on with Distributions in headers."
+                },
+                "context": "We have similar display available in the summary table.  It would be good to include it the various data table displays.  STart with the large row view.",
+                "rawContext": "We have similar display available in the summary table.  It would be good to include it the various data table displays.  STart with the large row view.",
+                "images": [
+                  {
+                    "id": "346b43de-483c-402d-af47-59135f231213",
+                    "src": "/api/projects/untitled-project/images/page-improve-the-row-view-with-small-distribution-in-col-header/346b43de-483c-402d-af47-59135f231213.png",
+                    "filename": "346b43de-483c-402d-af47-59135f231213.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 183741,
+                    "createdAt": "2026-10-02T03:12:42.519Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-row-display",
+                "label": "row display",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PRs #98, #99, #100 cover all nine row display items."
+                },
+                "context": "",
+                "rawContext": "",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-would-be-nice-to-show-data-type-clearly",
+                "label": "Would be nice to show data type clearly",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #98: every table header shows the field's type icon before its name, with type, range, nulls, and distinct count on hover."
+                },
+                "context": "",
+                "rawContext": "",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-missing-a-robust-right-click-menu-on-header-and-cells",
+                "label": "missing a robust right click menu on header and cells",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #100: right-click menus on headers (filter, sort, move, reset width, hide, show hidden, copy name) and cells (copy value/row, filter to value, at or above/below, sort, hide)."
+                },
+                "context": "Go ahead and get something implemented.  Should probably do some research to see what is common on other tools for right click in table.",
+                "rawContext": "Go ahead and get something implemented.  Should probably do some research to see what is common on other tools for right click in table.",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-column-picker-looks-goofy",
+                "label": "column picker looks goofy",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #100: the column picker reuses the field list's rows (type, name, distinct, missing, distribution) through a shared FieldPicker, also used in data table chart settings."
+                },
+                "context": "needs a refinement pass\r\n\r\nthis thing could really just be the summary table/field list again.  Not sure we need to reinvent this.  Use the same comp everywhere for picking fields (if we have the space)",
+                "rawContext": "needs a refinement pass",
+                "images": [
+                  {
+                    "id": "4808fca3-5e5c-49b6-aa68-4d7f99c577cf",
+                    "src": "/api/projects/untitled-project/images/page-column-picker-looks-goofy/4808fca3-5e5c-49b6-aa68-4d7f99c577cf.png",
+                    "filename": "4808fca3-5e5c-49b6-aa68-4d7f99c577cf.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 128319,
+                    "createdAt": "2026-10-02T03:14:40.754Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-search-should-highlight-what-matched",
+                "label": "search should highlight what matched",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #98: table search marks the matched text in every cell; a match hidden by formatting marks the whole cell."
+                },
+                "context": "this is critical for a good experience",
+                "rawContext": "this is critical for a good experience",
+                "images": [
+                  {
+                    "id": "98eda77c-4e82-48a2-ba05-323966bf26b7",
+                    "src": "/api/projects/untitled-project/images/page-search-should-highlight-what-matched/98eda77c-4e82-48a2-ba05-323966bf26b7.png",
+                    "filename": "98eda77c-4e82-48a2-ba05-323966bf26b7.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 339633,
+                    "createdAt": "2026-10-02T03:15:08.761Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-adding-slider-or-distribution-view-to-filter-in-popover",
+                "label": "Adding slider or distribution view to filter in popover",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #99: number and date column filters show the field's distribution (click or drag to set the range); number fields add a two-thumb range slider."
+                },
+                "context": "",
+                "rawContext": "",
+                "images": [
+                  {
+                    "id": "5fe1146a-114b-4f30-a91c-33a6df4a99e7",
+                    "src": "/api/projects/untitled-project/images/page-adding-slider-or-distribution-view-to-filter-in-popover/5fe1146a-114b-4f30-a91c-33a6df4a99e7.png",
+                    "filename": "5fe1146a-114b-4f30-a91c-33a6df4a99e7.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 78926,
+                    "createdAt": "2026-10-02T03:15:45.888Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-filter-popover-behaves-oddly",
+                "label": "Filter popover behaves oddly",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #99: one filter popover now moves between columns instead of two overlapping for ~80 ms, and popovers close without an exit animation."
+                },
+                "context": "feels like flicker when opening one as another closes.",
+                "rawContext": "feels like flicker when opening one as another closes.",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-would-be-nice-to-drag-columns-left-and-right",
+                "label": "Would be nice to drag columns left and right",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #100: drag a column by its name to reorder it; a line marks the drop position. Move left/right is also in the column menu."
+                },
+                "context": "",
+                "rawContext": "",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-would-be-nice-to-drag-columns-to-gutter-to-remove-variable",
+                "label": "Would be nice to drag columns to gutter to remove variable",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #100: drag a column's name away from the header and release to hide it; Escape cancels."
+                },
+                "context": "I think Excel pivot tables have this",
+                "rawContext": "I think Excel pivot tables have this",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-column-header-should-match-cell-alignment",
+                "label": "Column header should match cell alignment",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #98: number columns right-align their header with their cells; hover actions move to the left of number headers."
+                },
+                "context": "Things feel misaligned when header is left and cell is right.",
+                "rawContext": "Things feel misaligned when header is left and cell is right.",
+                "images": [
+                  {
+                    "id": "cfc8529a-00fd-474f-a472-2e40d2db9419",
+                    "src": "/api/projects/untitled-project/images/page-column-header-should-match-cell-alignment/cfc8529a-00fd-474f-a472-2e40d2db9419.png",
+                    "filename": "cfc8529a-00fd-474f-a472-2e40d2db9419.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 57205,
+                    "createdAt": "2026-10-02T03:22:27.255Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-chart-settings-should-allow-control-of-all-filters-on-chart",
+                "label": "chart settings should allow control of all filters on chart",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #102: chart settings have a Filters tab with a manual control for every filter the chart sets, replacing the range-only Select tab."
+                },
+                "context": "Right now there is no manual input to change filters.",
+                "rawContext": "Right now there is no manual input to change filters.",
+                "images": [
+                  {
+                    "id": "d4a6b444-52dd-448c-956c-4baa4d13c673",
+                    "src": "/api/projects/untitled-project/images/page-chart-settings-should-allow-control-of-all-filters-on-chart/d4a6b444-52dd-448c-956c-4baa4d13c673.png",
+                    "filename": "d4a6b444-52dd-448c-956c-4baa4d13c673.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 367366,
+                    "createdAt": "2026-10-02T03:23:24.885Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-fdbk-10-02",
+                "label": "fdbk 10/02",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "",
+                "rawContext": "",
+                "images": []
+              },
+              {
+                "id": "page-date-filter-could-use-more-options-and-viz",
+                "label": "Date filter could use more options and viz",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "These should be context dependent and include things like years, months, etc.",
+                "rawContext": "These should be context dependent and include things like years, months, etc.",
+                "images": [
+                  {
+                    "id": "ea67f23e-436e-446e-815c-3af8ac799075",
+                    "src": "/api/projects/untitled-project/images/page-date-filter-could-use-more-options-and-viz/ea67f23e-436e-446e-815c-3af8ac799075.png",
+                    "filename": "ea67f23e-436e-446e-815c-3af8ac799075.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 223927,
+                    "createdAt": "2026-10-03T01:06:39.406Z"
+                  }
+                ]
+              },
+              {
+                "id": "page-distribution-toggle-cut-off",
+                "label": "distribution toggle cut off",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "Also, it should be enabled by default and enabled for all the examples too",
+                "rawContext": "Also, it should be enabled by default and enabled for all the examples too",
+                "images": [
+                  {
+                    "id": "fe6a30ed-4b3c-47ea-a618-7601803ad22f",
+                    "src": "/api/projects/untitled-project/images/page-distribution-toggle-cut-off/fe6a30ed-4b3c-47ea-a618-7601803ad22f.png",
+                    "filename": "fe6a30ed-4b3c-47ea-a618-7601803ad22f.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 51408,
+                    "createdAt": "2026-10-03T01:27:45.585Z"
+                  }
+                ]
+              },
+              {
+                "id": "page-tooltips-are-poorly-placed",
+                "label": "Tooltips are poorly placed",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "May need to just get rid of them.  Ideally the tooltip has a way to render in a spot that does not block the chart (maybe below it or something?)",
+                "rawContext": "",
+                "images": [
+                  {
+                    "id": "1226b4ac-97be-417c-b0e6-0139300f4934",
+                    "src": "/api/projects/untitled-project/images/page-tooltips-are-poorly-placed/1226b4ac-97be-417c-b0e6-0139300f4934.png",
+                    "filename": "1226b4ac-97be-417c-b0e6-0139300f4934.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 74285,
+                    "createdAt": "2026-10-03T02:23:50.518Z"
+                  }
+                ]
+              },
+              {
+                "id": "page-hitting-esc-did-not-close-the-colors-popover",
+                "label": "Hitting ESC did not close the colors popover",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "",
+                "rawContext": "",
+                "images": []
+              }
+            ],
+            "links": [
+              {
+                "source": "page-feedback-rnd-2",
+                "target": "page-delete-confirm-is-massive-and-gross",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-rnd-2",
+                "target": "page-add-new-chart-flow-should-propose-moving-existing-charts-too",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-rnd-2",
+                "target": "page-chart-focus-should-really-be-a-details-view-with-settings-already-open",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-rnd-2",
+                "target": "page-expand-rows-data-to-full-viewport-height",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-rnd-2",
+                "target": "page-rows-tooltip-appears-after-closing",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-rnd-2",
+                "target": "page-harmonize-disclosure-for-colors-grid-and-calcs",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-rnd-2",
+                "target": "page-move-actions-buttons-into-chart-header",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-10-1",
+                "target": "page-rows-drawer-needs-an-expanded-current-and-small-view",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-10-1",
+                "target": "page-tooltip-for-scatter-is-too-large-and-in-the-way",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-10-1",
+                "target": "page-chart-focus-should-increase-header-size",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-10-1",
+                "target": "page-row-display",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-improve-the-row-view-with-small-distribution-in-col-header",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-would-be-nice-to-show-data-type-clearly",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-missing-a-robust-right-click-menu-on-header-and-cells",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-column-picker-looks-goofy",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-search-should-highlight-what-matched",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-adding-slider-or-distribution-view-to-filter-in-popover",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-filter-popover-behaves-oddly",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-would-be-nice-to-drag-columns-left-and-right",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-would-be-nice-to-drag-columns-to-gutter-to-remove-variable",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-column-header-should-match-cell-alignment",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-10-1",
+                "target": "page-chart-settings-should-allow-control-of-all-filters-on-chart",
+                "parentChild": true
+              },
+              {
+                "source": "page-fdbk-10-02",
+                "target": "page-date-filter-could-use-more-options-and-viz",
+                "parentChild": true
+              },
+              {
+                "source": "page-fdbk-10-02",
+                "target": "page-distribution-toggle-cut-off",
+                "parentChild": true
+              },
+              {
+                "source": "page-fdbk-10-02",
+                "target": "page-tooltips-are-poorly-placed",
+                "parentChild": true
+              },
+              {
+                "source": "page-fdbk-10-02",
+                "target": "page-hitting-esc-did-not-close-the-colors-popover",
+                "parentChild": true
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "6efde101-97dd-43c3-b908-756a7f9e62ad",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-03T02:25:30.014Z",
+      "summary": "Created \"Hitting ESC did not close the colors popover\" under \"fdbk 10/02\".",
+      "nodeIds": [
+        "page-hitting-esc-did-not-close-the-colors-popover",
+        "page-fdbk-10-02"
+      ],
+      "metadata": {
+        "clientMutationId": "7f701bd5-c923-4b7e-99a3-07a510a12d34"
+      }
+    },
+    {
+      "id": "061c43a5-7067-4801-94a6-2e21754afe1c",
+      "kind": "node.context.updated",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-03T02:24:17.010Z",
+      "summary": "Updated context for \"Tooltips are poorly placed\".",
+      "nodeIds": [
+        "page-tooltips-are-poorly-placed"
+      ],
+      "metadata": {
+        "clientMutationId": "c5ce98e9-88df-448c-8e3d-e4d343bcdde8"
+      }
+    },
+    {
+      "id": "58362551-04c1-4704-b982-fc1fdf1a4231",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-03T02:23:50.520Z",
+      "summary": "Added 1 images to \"Tooltips are poorly placed\".",
+      "nodeIds": [
+        "page-tooltips-are-poorly-placed"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "aa62b1c7-3f1e-4983-88d2-fbe64e010c24"
+      }
+    },
+    {
+      "id": "b0dc7237-492a-492e-9c99-4849aa9fd902",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-03T02:23:49.713Z",
+      "summary": "Created \"Tooltips are poorly placed\" under \"fdbk 10/02\".",
+      "nodeIds": [
+        "page-tooltips-are-poorly-placed",
+        "page-fdbk-10-02"
+      ],
+      "metadata": {
+        "clientMutationId": "6af2a9f4-1ffc-4a02-9665-5c6056cbb404"
+      }
+    },
+    {
+      "id": "7f163b14-0db5-46f6-89bf-47ee3350d9bd",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-03T01:27:45.588Z",
+      "summary": "Added 1 images to \"distribution toggle cut off\".",
+      "nodeIds": [
+        "page-distribution-toggle-cut-off"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "9e9f0fef-b911-4635-80f8-0a0613d8218c"
+      }
+    },
+    {
+      "id": "0797efa0-1ccf-44ee-949d-ff9932d86900",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-03T01:27:44.524Z",
+      "summary": "Created \"distribution toggle cut off\" under \"fdbk 10/02\".",
+      "nodeIds": [
+        "page-distribution-toggle-cut-off",
+        "page-fdbk-10-02"
+      ],
+      "metadata": {
+        "clientMutationId": "cd6ade26-7bde-4820-9340-c06d4a47aa6a"
+      }
+    },
+    {
+      "id": "8ab9fa0c-0e8c-4411-85ab-6edb9f31fbc5",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-03T01:06:39.412Z",
+      "summary": "Added 1 images to \"Date filter could use more options and viz\".",
+      "nodeIds": [
+        "page-date-filter-could-use-more-options-and-viz"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "f5b242c5-2b27-4bcf-945f-92483c23cdce"
+      }
+    },
+    {
+      "id": "65a2a04c-ed2a-4c10-976d-dc394d6b16d9",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-03T01:06:38.610Z",
+      "summary": "Created \"Date filter could use more options and viz\" under \"fdbk 10/02\".",
+      "nodeIds": [
+        "page-date-filter-could-use-more-options-and-viz",
+        "page-fdbk-10-02"
+      ],
+      "metadata": {
+        "clientMutationId": "4a800d19-4551-4f71-8a84-d678fe357e34"
+      }
+    },
+    {
+      "id": "304c8dea-0020-485b-95da-63c7a9507fc7",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-03T01:06:18.642Z",
+      "summary": "Created \"fdbk 10/02\".",
+      "nodeIds": [
+        "page-fdbk-10-02"
+      ],
+      "metadata": {
+        "clientMutationId": "e78cf033-a081-497f-850d-71e3e5dbea5d"
+      }
+    },
+    {
+      "id": "1e7fe64d-6cb2-47da-980d-57357953ffe6",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:33.804Z",
+      "summary": "Updated metadata for \"Feedback 10/1\".",
+      "nodeIds": [
+        "page-feedback-10-1"
+      ]
+    },
+    {
+      "id": "fac41b51-056f-45d1-acbb-0cfd6a6f999f",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:33.658Z",
+      "summary": "Changed \"Feedback 10/1\" status to implemented.",
+      "nodeIds": [
+        "page-feedback-10-1"
+      ]
+    },
+    {
+      "id": "59deb9d3-3492-41c7-b369-3e3c931a120a",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:33.321Z",
+      "summary": "Updated metadata for \"row display\".",
+      "nodeIds": [
+        "page-row-display"
+      ]
+    },
+    {
+      "id": "c78bb969-ac7d-44ce-bfb1-9cb217e6684f",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:33.185Z",
+      "summary": "Changed \"row display\" status to implemented.",
+      "nodeIds": [
+        "page-row-display"
+      ]
+    },
+    {
+      "id": "f9b8f345-f2f1-47bc-9fa7-6c3ffa603fdc",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:32.928Z",
+      "summary": "Updated metadata for \"Chart focus should increase header size\".",
+      "nodeIds": [
+        "page-chart-focus-should-increase-header-size"
+      ]
+    },
+    {
+      "id": "917a0deb-2d56-4ffd-badf-35dc0fc3c365",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:32.795Z",
+      "summary": "Changed \"Chart focus should increase header size\" status to implemented.",
+      "nodeIds": [
+        "page-chart-focus-should-increase-header-size"
+      ]
+    },
+    {
+      "id": "e9862e52-662f-4cb1-bd6a-5658cc3a3fba",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:32.563Z",
+      "summary": "Updated metadata for \"tooltip for scatter is too large and \"in the way\"\".",
+      "nodeIds": [
+        "page-tooltip-for-scatter-is-too-large-and-in-the-way"
+      ]
+    },
+    {
+      "id": "b87ebfab-7965-46f9-939f-9158a97c115a",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:32.432Z",
+      "summary": "Changed \"tooltip for scatter is too large and \"in the way\"\" status to implemented.",
+      "nodeIds": [
+        "page-tooltip-for-scatter-is-too-large-and-in-the-way"
+      ]
+    },
+    {
+      "id": "eef6db94-a7fd-422c-8539-ebe951edfdde",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:32.179Z",
+      "summary": "Updated metadata for \"chart settings should allow control of all filters on chart\".",
+      "nodeIds": [
+        "page-chart-settings-should-allow-control-of-all-filters-on-chart"
+      ]
+    },
+    {
+      "id": "afb942b5-5b78-4658-bf29-daf2d62178b6",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:32.038Z",
+      "summary": "Changed \"chart settings should allow control of all filters on chart\" status to implemented.",
+      "nodeIds": [
+        "page-chart-settings-should-allow-control-of-all-filters-on-chart"
+      ]
+    },
+    {
+      "id": "bf1f48d7-7364-4192-8a20-452ab7ea780f",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:31.805Z",
+      "summary": "Updated metadata for \"Rows drawer needs an expanded (current) and small view\".",
+      "nodeIds": [
+        "page-rows-drawer-needs-an-expanded-current-and-small-view"
+      ]
+    },
+    {
+      "id": "dcc18e61-57b6-436b-9f9d-efcb652496c2",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:31.672Z",
+      "summary": "Changed \"Rows drawer needs an expanded (current) and small view\" status to implemented.",
+      "nodeIds": [
+        "page-rows-drawer-needs-an-expanded-current-and-small-view"
+      ]
+    },
+    {
+      "id": "e66c5b86-bed8-41d2-925a-9f44a7c3ac34",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:31.422Z",
+      "summary": "Updated metadata for \"missing a robust right click menu on header and cells\".",
+      "nodeIds": [
+        "page-missing-a-robust-right-click-menu-on-header-and-cells"
+      ]
+    },
+    {
+      "id": "3d6ea690-e8c1-43b5-b1bb-924c7d3e93d2",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:31.284Z",
+      "summary": "Changed \"missing a robust right click menu on header and cells\" status to implemented.",
+      "nodeIds": [
+        "page-missing-a-robust-right-click-menu-on-header-and-cells"
+      ]
+    },
+    {
+      "id": "4e6088b9-df9a-406d-bb23-c42aef9cbc99",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:31.034Z",
+      "summary": "Updated metadata for \"Would be nice to drag columns to gutter to remove variable\".",
+      "nodeIds": [
+        "page-would-be-nice-to-drag-columns-to-gutter-to-remove-variable"
+      ]
+    },
+    {
+      "id": "85c1db51-26bd-4104-805d-a9d15a6500dd",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:30.887Z",
+      "summary": "Changed \"Would be nice to drag columns to gutter to remove variable\" status to implemented.",
+      "nodeIds": [
+        "page-would-be-nice-to-drag-columns-to-gutter-to-remove-variable"
+      ]
+    },
+    {
+      "id": "ae34e9d4-a2bc-4f56-92cf-4be014459183",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:30.638Z",
+      "summary": "Updated metadata for \"Would be nice to drag columns left and right\".",
+      "nodeIds": [
+        "page-would-be-nice-to-drag-columns-left-and-right"
+      ]
+    },
+    {
+      "id": "96ca2cba-bd18-4a1f-8c95-d332b431a2c1",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:30.501Z",
+      "summary": "Changed \"Would be nice to drag columns left and right\" status to implemented.",
+      "nodeIds": [
+        "page-would-be-nice-to-drag-columns-left-and-right"
+      ]
+    },
+    {
+      "id": "d20126d3-fd53-420c-9616-d29a96e39771",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:30.242Z",
+      "summary": "Updated metadata for \"column picker looks goofy\".",
+      "nodeIds": [
+        "page-column-picker-looks-goofy"
+      ]
+    },
+    {
+      "id": "3d6cf441-a78d-40b3-b2e4-72a83d50e37b",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:30.100Z",
+      "summary": "Changed \"column picker looks goofy\" status to implemented.",
+      "nodeIds": [
+        "page-column-picker-looks-goofy"
+      ]
+    },
+    {
+      "id": "35ff7863-fb56-4b91-be94-ea9ea1aa15fd",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:29.844Z",
+      "summary": "Updated metadata for \"Filter popover behaves oddly\".",
+      "nodeIds": [
+        "page-filter-popover-behaves-oddly"
+      ]
+    },
+    {
+      "id": "1aa25dfa-b2ea-41f2-b595-71a1defd841b",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:29.709Z",
+      "summary": "Changed \"Filter popover behaves oddly\" status to implemented.",
+      "nodeIds": [
+        "page-filter-popover-behaves-oddly"
+      ]
+    },
+    {
+      "id": "38575415-a6d3-4079-a896-4f293e9a6515",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:29.456Z",
+      "summary": "Updated metadata for \"Adding slider or distribution view to filter in popover\".",
+      "nodeIds": [
+        "page-adding-slider-or-distribution-view-to-filter-in-popover"
+      ]
+    },
+    {
+      "id": "b117b7ed-7f40-4fec-87bd-b96b4645bbfb",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:29.320Z",
+      "summary": "Changed \"Adding slider or distribution view to filter in popover\" status to implemented.",
+      "nodeIds": [
+        "page-adding-slider-or-distribution-view-to-filter-in-popover"
+      ]
+    },
+    {
+      "id": "320946b7-c523-48a2-bc38-3a69cedfc87c",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:29.065Z",
+      "summary": "Updated metadata for \"search should highlight what matched\".",
+      "nodeIds": [
+        "page-search-should-highlight-what-matched"
+      ]
+    },
+    {
+      "id": "b9e91587-7e62-46ec-ad13-8ad8f5eb8c20",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:28.930Z",
+      "summary": "Changed \"search should highlight what matched\" status to implemented.",
+      "nodeIds": [
+        "page-search-should-highlight-what-matched"
+      ]
+    },
+    {
+      "id": "52981651-1bb3-47d2-bc73-664e814603df",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:28.626Z",
+      "summary": "Updated metadata for \"Improve the row view with small distribution in col header\".",
+      "nodeIds": [
+        "page-improve-the-row-view-with-small-distribution-in-col-header"
+      ]
+    },
+    {
+      "id": "b71c377e-128b-4d0c-9629-ed5bd6294547",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:28.487Z",
+      "summary": "Changed \"Improve the row view with small distribution in col header\" status to implemented.",
+      "nodeIds": [
+        "page-improve-the-row-view-with-small-distribution-in-col-header"
+      ]
+    },
+    {
+      "id": "ccaa13c7-a584-4dc6-96f7-0e06e8b2e767",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:28.229Z",
+      "summary": "Updated metadata for \"Would be nice to show data type clearly\".",
+      "nodeIds": [
+        "page-would-be-nice-to-show-data-type-clearly"
+      ]
+    },
+    {
+      "id": "d1d922dd-9a69-4187-9b37-e1dc85410119",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:28.092Z",
+      "summary": "Changed \"Would be nice to show data type clearly\" status to implemented.",
+      "nodeIds": [
+        "page-would-be-nice-to-show-data-type-clearly"
+      ]
+    },
+    {
+      "id": "fc90a460-cefa-47c1-b34c-7e7d921928f7",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:27.833Z",
+      "summary": "Updated metadata for \"Column header should match cell alignment\".",
+      "nodeIds": [
+        "page-column-header-should-match-cell-alignment"
+      ]
+    },
+    {
+      "id": "8d2c4bbc-d1ba-44a9-8ca0-dcb0263000dc",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-02T04:30:27.663Z",
+      "summary": "Changed \"Column header should match cell alignment\" status to implemented.",
+      "nodeIds": [
+        "page-column-header-should-match-cell-alignment"
+      ]
+    },
+    {
+      "id": "fa5c090b-91c3-4d3e-b57a-f08d7c3b48ce",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:23:24.886Z",
+      "summary": "Added 1 images to \"chart settings should allow control of all filters on chart\".",
+      "nodeIds": [
+        "page-chart-settings-should-allow-control-of-all-filters-on-chart"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "382095ed-70fc-4ef5-b2b7-a912798ab8f3"
+      }
+    },
+    {
+      "id": "d7433bd0-5d17-4a0d-81ef-a8c63e332030",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:23:24.179Z",
+      "summary": "Created \"chart settings should allow control of all filters on chart\" under \"Feedback 10/1\".",
+      "nodeIds": [
+        "page-chart-settings-should-allow-control-of-all-filters-on-chart",
+        "page-feedback-10-1"
+      ],
+      "metadata": {
+        "clientMutationId": "25eeb7d8-1fc0-4cdf-a2c4-072c10ba77d4"
+      }
+    },
+    {
+      "id": "e421301a-35d4-4429-a2c6-942b0c12ac42",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:22:27.262Z",
+      "summary": "Added 1 images to \"Column header should match cell alignment\".",
+      "nodeIds": [
+        "page-column-header-should-match-cell-alignment"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "7cf3e8e7-8d76-4c3d-89f9-71ee418788a6"
+      }
+    },
+    {
+      "id": "19ac766d-e597-449d-bed2-bdd04d73458f",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:22:26.338Z",
+      "summary": "Created \"Column header should match cell alignment\" under \"row display\".",
+      "nodeIds": [
+        "page-column-header-should-match-cell-alignment",
+        "page-row-display"
+      ],
+      "metadata": {
+        "clientMutationId": "2e20390c-0eab-4f51-b27f-babc52ba58b1"
+      }
+    },
+    {
+      "id": "d8fe0bd8-e269-4716-949a-4ef76c7335d9",
+      "kind": "node.context.updated",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:18:13.449Z",
+      "summary": "Updated context for \"column picker looks goofy\".",
+      "nodeIds": [
+        "page-column-picker-looks-goofy"
+      ],
+      "metadata": {
+        "clientMutationId": "24a9cd8b-43d1-41dd-8021-7c5427967869"
+      }
+    },
+    {
+      "id": "7454d69d-9c4c-4b89-9ec5-47038b666301",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:16:44.120Z",
+      "summary": "Created \"Would be nice to drag columns to gutter to remove variable\" under \"row display\".",
+      "nodeIds": [
+        "page-would-be-nice-to-drag-columns-to-gutter-to-remove-variable",
+        "page-row-display"
+      ],
+      "metadata": {
+        "clientMutationId": "0c30016c-7d64-4da9-acf3-3af0998fdae7"
+      }
+    },
+    {
+      "id": "e09b4d84-71f0-4695-bd6f-d3bb91b9475f",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:16:24.071Z",
+      "summary": "Created \"Would be nice to drag columns left and right\" under \"row display\".",
+      "nodeIds": [
+        "page-would-be-nice-to-drag-columns-left-and-right",
+        "page-row-display"
+      ],
+      "metadata": {
+        "clientMutationId": "541ab718-ac85-41fb-94c7-f970f717bef8"
+      }
+    },
+    {
+      "id": "df670a96-c5c8-4527-8888-db8b7bb7d1ee",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:16:04.457Z",
+      "summary": "Created \"Filter popover behaves oddly\" under \"row display\".",
+      "nodeIds": [
+        "page-filter-popover-behaves-oddly",
+        "page-row-display"
+      ],
+      "metadata": {
+        "clientMutationId": "af9c3864-a365-4c2d-9521-18581dcefeba"
+      }
+    },
+    {
+      "id": "22c7d78c-d2fa-483d-a601-e7c85170925a",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:15:45.889Z",
+      "summary": "Added 1 images to \"Adding slider or distribution view to filter in popover\".",
+      "nodeIds": [
+        "page-adding-slider-or-distribution-view-to-filter-in-popover"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "55fd1d7a-0721-43ca-a222-147943b49789"
+      }
+    },
+    {
+      "id": "4bf135e8-23f8-48f6-90a0-7b20938de11b",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:15:45.136Z",
+      "summary": "Created \"Adding slider or distribution view to filter in popover\" under \"row display\".",
+      "nodeIds": [
+        "page-adding-slider-or-distribution-view-to-filter-in-popover",
+        "page-row-display"
+      ],
+      "metadata": {
+        "clientMutationId": "28096e08-ffd0-48ac-ad12-ffc50c761444"
+      }
+    },
+    {
+      "id": "0bb14531-6806-4e40-a794-3b1759decbac",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:15:08.762Z",
+      "summary": "Added 1 images to \"search should highlight what matched\".",
+      "nodeIds": [
+        "page-search-should-highlight-what-matched"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "f04eed99-7de2-4074-aa8b-1d7141377dd3"
+      }
+    },
+    {
+      "id": "f7d7c43f-3d75-4d8f-9761-ceb363a96864",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:15:08.473Z",
+      "summary": "Created \"search should highlight what matched\" under \"row display\".",
+      "nodeIds": [
+        "page-search-should-highlight-what-matched",
+        "page-row-display"
+      ],
+      "metadata": {
+        "clientMutationId": "b3e479e1-f278-4ca4-b06c-ec90ca22a5b9"
+      }
+    },
+    {
+      "id": "10c7e170-9ffb-4543-aa97-8b6b6ae663f6",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:14:40.756Z",
+      "summary": "Added 1 images to \"column picker looks goofy\".",
+      "nodeIds": [
+        "page-column-picker-looks-goofy"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "15ed340a-bbd7-49e2-8a6c-fee4feec0883"
+      }
+    },
+    {
+      "id": "82f7fbef-bfa8-456d-9d7a-962ae56e97b6",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:14:40.154Z",
+      "summary": "Created \"column picker looks goofy\" under \"row display\".",
+      "nodeIds": [
+        "page-column-picker-looks-goofy",
+        "page-row-display"
+      ],
+      "metadata": {
+        "clientMutationId": "0e68e9f5-3544-43d9-bccd-82594747066c"
+      }
+    },
+    {
+      "id": "145e8f9d-9f87-4a51-bec3-bfa0ce400419",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:14:10.653Z",
+      "summary": "Created \"missing a robust right click menu on header and cells\" under \"row display\".",
+      "nodeIds": [
+        "page-missing-a-robust-right-click-menu-on-header-and-cells",
+        "page-row-display"
+      ],
+      "metadata": {
+        "clientMutationId": "6bfc195a-80d1-4f9b-8e85-604d1c9169ca"
+      }
+    },
+    {
+      "id": "21b0e9b5-2538-4038-8f4e-8403234e677d",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:13:21.273Z",
+      "summary": "Created \"Would be nice to show data type clearly\" under \"row display\".",
+      "nodeIds": [
+        "page-would-be-nice-to-show-data-type-clearly",
+        "page-row-display"
+      ],
+      "metadata": {
+        "clientMutationId": "26e185d7-fb0e-47ce-a307-c038de0c2043"
+      }
+    },
+    {
+      "id": "ab747ff1-1177-4ed7-831b-2a3ed2799bbe",
+      "kind": "node.moved",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:12:58.619Z",
+      "summary": "Moved \"Improve the row view with small distribution in col header\" under \"row display\".",
+      "nodeIds": [
+        "page-improve-the-row-view-with-small-distribution-in-col-header",
+        "page-row-display"
+      ],
+      "metadata": {
+        "clientMutationId": "7ffaaa74-475e-4749-9c50-1665bfd0de94"
+      }
+    },
+    {
+      "id": "1a2fcc24-1329-454a-bced-1de6b65e973a",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:12:56.185Z",
+      "summary": "Created \"row display\" under \"Feedback 10/1\".",
+      "nodeIds": [
+        "page-row-display",
+        "page-feedback-10-1"
+      ],
+      "metadata": {
+        "clientMutationId": "4d90ed33-7506-4250-a567-db79f5e7f4e6"
+      }
+    },
+    {
+      "id": "73bbd62a-85ce-47f3-a3ac-885a6680d70a",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:12:42.522Z",
+      "summary": "Added 1 images to \"Improve the row view with small distribution in col header\".",
+      "nodeIds": [
+        "page-improve-the-row-view-with-small-distribution-in-col-header"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "360b6d3e-0fda-465f-98f7-a77b5683ab99"
+      }
+    },
+    {
+      "id": "2b74c091-f13b-4f3d-942c-43ae6b66ef75",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:12:41.926Z",
+      "summary": "Created \"Improve the row view with small distribution in col header\" under \"Feedback 10/1\".",
+      "nodeIds": [
+        "page-improve-the-row-view-with-small-distribution-in-col-header",
+        "page-feedback-10-1"
+      ],
+      "metadata": {
+        "clientMutationId": "e432cf27-e11e-4e68-9569-9b03d5fdce6c"
+      }
+    },
+    {
+      "id": "f01c73eb-4a78-491b-b044-e33dccab3bd6",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:10:41.828Z",
+      "summary": "Added 1 images to \"Chart focus should increase header size\".",
+      "nodeIds": [
+        "page-chart-focus-should-increase-header-size"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "cb09d7b2-84d2-4b99-b183-bde24f5540b0"
+      }
+    },
+    {
+      "id": "05c53942-2a63-4e07-a9af-ab9f185dbeb4",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:10:41.021Z",
+      "summary": "Created \"Chart focus should increase header size\" under \"Feedback 10/1\".",
+      "nodeIds": [
+        "page-chart-focus-should-increase-header-size",
+        "page-feedback-10-1"
+      ],
+      "metadata": {
+        "clientMutationId": "f5a03e01-113b-4a72-b703-802522c42172"
+      }
+    },
+    {
+      "id": "0974b8b4-8927-4f6c-b04c-b4846c75e999",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:09:34.322Z",
+      "summary": "Added 1 images to \"tooltip for scatter is too large and \"in the way\"\".",
+      "nodeIds": [
+        "page-tooltip-for-scatter-is-too-large-and-in-the-way"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "f87818e5-e394-4a8a-a511-26b84cb9138e"
+      }
+    },
+    {
+      "id": "b0a1351c-3431-4946-8fc3-76eff3abbb6e",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T03:09:33.672Z",
+      "summary": "Created \"tooltip for scatter is too large and \"in the way\"\" under \"Feedback 10/1\".",
+      "nodeIds": [
+        "page-tooltip-for-scatter-is-too-large-and-in-the-way",
+        "page-feedback-10-1"
+      ],
+      "metadata": {
+        "clientMutationId": "a0f11d3b-1c29-4465-a858-6d6addb552e0"
+      }
+    },
+    {
+      "id": "1fb5652c-54b1-43f5-a3fb-770aa4314c13",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T01:07:46.970Z",
+      "summary": "Added 1 images to \"Rows drawer needs an expanded (current) and small view\".",
+      "nodeIds": [
+        "page-rows-drawer-needs-an-expanded-current-and-small-view"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "946b3bea-2124-4f71-a735-8877b4440d70"
+      }
+    },
+    {
+      "id": "5083202e-3133-49ac-808e-eccdfeb450ae",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T01:07:46.178Z",
+      "summary": "Created \"Rows drawer needs an expanded (current) and small view\" under \"Feedback 10/1\".",
+      "nodeIds": [
+        "page-rows-drawer-needs-an-expanded-current-and-small-view",
+        "page-feedback-10-1"
+      ],
+      "metadata": {
+        "clientMutationId": "7258ba65-c0e9-4335-b6c6-bb19ccb7fec5"
+      }
+    },
+    {
+      "id": "fd60657b-383f-4e5c-8b2b-c2cbf61ea88e",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T01:07:27.143Z",
+      "summary": "Created \"Feedback 10/1\".",
+      "nodeIds": [
+        "page-feedback-10-1"
+      ],
+      "metadata": {
+        "clientMutationId": "2ff2a05f-72ef-4aee-b025-4094d27a4b3f"
+      }
+    },
+    {
+      "id": "0107a918-0238-46ce-a6dc-5fdaada80e76",
+      "kind": "nodes.bulk.updated",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-02T01:05:16.818Z",
+      "summary": "Bulk updated 8 nodes: archived.",
+      "nodeIds": [
+        "page-feedback-rnd-2",
+        "page-delete-confirm-is-massive-and-gross",
+        "page-add-new-chart-flow-should-propose-moving-existing-charts-too",
+        "page-chart-focus-should-really-be-a-details-view-with-settings-already-open",
+        "page-expand-rows-data-to-full-viewport-height",
+        "page-rows-tooltip-appears-after-closing",
+        "page-harmonize-disclosure-for-colors-grid-and-calcs",
+        "page-move-actions-buttons-into-chart-header"
+      ],
+      "metadata": {
+        "clientMutationId": "27b5523c-3bfd-4591-b0bc-de972338650b"
+      }
+    },
+    {
+      "id": "1cf0f49c-74bd-4783-90e2-5e7745c41b13",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-01T04:01:09.344Z",
+      "summary": "Updated metadata for \"Move actions buttons into chart header\".",
+      "nodeIds": [
+        "page-move-actions-buttons-into-chart-header"
+      ]
+    },
+    {
+      "id": "296a5c65-ab2d-41f1-a0ce-3cdf0d5920eb",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-01T04:01:09.049Z",
+      "summary": "Changed \"Move actions buttons into chart header\" status to planned.",
+      "nodeIds": [
+        "page-move-actions-buttons-into-chart-header"
+      ]
+    },
+    {
+      "id": "3eebf745-8b15-4e1e-a81a-f633426a1b38",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-01T04:01:06.549Z",
+      "summary": "Updated metadata for \"Harmonize disclosure for colors, grid, and calcs\".",
+      "nodeIds": [
+        "page-harmonize-disclosure-for-colors-grid-and-calcs"
+      ]
+    },
+    {
+      "id": "429c4116-efbb-4066-8200-76bf23eaaf03",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-01T04:01:06.319Z",
+      "summary": "Changed \"Harmonize disclosure for colors, grid, and calcs\" status to planned.",
+      "nodeIds": [
+        "page-harmonize-disclosure-for-colors-grid-and-calcs"
+      ]
+    },
+    {
+      "id": "04bad572-e845-4d6a-a9bf-b44f8a8ace39",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-01T04:01:01.894Z",
+      "summary": "Updated metadata for \"Expand rows/data to full viewport height\".",
+      "nodeIds": [
+        "page-expand-rows-data-to-full-viewport-height"
+      ]
+    },
+    {
+      "id": "69b6a975-1e90-4460-8ce7-7b175481ba54",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-01T04:01:01.672Z",
+      "summary": "Changed \"Expand rows/data to full viewport height\" status to planned.",
+      "nodeIds": [
+        "page-expand-rows-data-to-full-viewport-height"
+      ]
+    },
+    {
+      "id": "b02759c2-8aa4-44f2-bbfb-cf32bb16deb4",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-01T04:00:58.193Z",
+      "summary": "Updated metadata for \"Delete confirm is massive and gross\".",
+      "nodeIds": [
+        "page-delete-confirm-is-massive-and-gross"
+      ]
+    },
+    {
+      "id": "2aa6e0be-c6e4-4b01-8479-a87be44716d1",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-01T04:00:57.928Z",
+      "summary": "Changed \"Delete confirm is massive and gross\" status to planned.",
+      "nodeIds": [
+        "page-delete-confirm-is-massive-and-gross"
+      ]
+    },
+    {
+      "id": "c4e0ebdf-9d71-4aed-a5c0-38a11c2541ed",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-01T04:00:55.381Z",
+      "summary": "Updated metadata for \"Chart \"focus\" should really be a details view with settings already open\".",
+      "nodeIds": [
+        "page-chart-focus-should-really-be-a-details-view-with-settings-already-open"
+      ]
+    },
+    {
+      "id": "8107c531-4afd-4e76-8167-af670d6f65e6",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-01T04:00:55.254Z",
+      "summary": "Changed \"Chart \"focus\" should really be a details view with settings already open\" status to planned.",
+      "nodeIds": [
+        "page-chart-focus-should-really-be-a-details-view-with-settings-already-open"
+      ]
+    },
+    {
+      "id": "6588d1a4-0440-466d-a746-0ba5ae7af777",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-01T04:00:52.487Z",
+      "summary": "Updated metadata for \"Add new chart flow should propose moving existing charts too\".",
+      "nodeIds": [
+        "page-add-new-chart-flow-should-propose-moving-existing-charts-too"
+      ]
+    },
+    {
+      "id": "ed172e5a-fedd-46ef-9cf6-14b0a86ace63",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-01T04:00:52.241Z",
+      "summary": "Changed \"Add new chart flow should propose moving existing charts too\" status to planned.",
+      "nodeIds": [
+        "page-add-new-chart-flow-should-propose-moving-existing-charts-too"
+      ]
+    },
+    {
+      "id": "35f47f4e-4ec4-4513-875f-ff98a797e6fc",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-01T04:00:47.378Z",
+      "summary": "Updated metadata for \"Rows tooltip appears after closing\".",
+      "nodeIds": [
+        "page-rows-tooltip-appears-after-closing"
+      ]
+    },
+    {
+      "id": "75083585-7014-4598-a3d1-347f9d79aadb",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-10-01T04:00:47.114Z",
+      "summary": "Changed \"Rows tooltip appears after closing\" status to implemented.",
+      "nodeIds": [
+        "page-rows-tooltip-appears-after-closing"
+      ]
+    },
+    {
+      "id": "538d2ac7-8a49-4f8d-bd54-b70b5aa383af",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-01T02:28:23.965Z",
+      "summary": "Added 1 images to \"Move actions buttons into chart header\".",
+      "nodeIds": [
+        "page-move-actions-buttons-into-chart-header"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "d32aa87f-33a6-4e1a-bf01-02235e59bcbd"
+      }
+    },
+    {
+      "id": "ad970723-cfe1-409b-bd4f-af1f4098e020",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-01T02:28:23.404Z",
+      "summary": "Created \"Move actions buttons into chart header\" under \"Feedback rnd 2\".",
+      "nodeIds": [
+        "page-move-actions-buttons-into-chart-header",
+        "page-feedback-rnd-2"
+      ],
+      "metadata": {
+        "clientMutationId": "e95eb8e9-1473-4f55-bf35-7c5392702051"
+      }
+    },
+    {
+      "id": "1a0a6901-44d2-4c77-9610-47402ac5acf8",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-01T02:14:07.845Z",
+      "summary": "Added 1 images to \"Harmonize disclosure for colors, grid, and calcs\".",
+      "nodeIds": [
+        "page-harmonize-disclosure-for-colors-grid-and-calcs"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "102e55eb-8957-4eed-b28f-11fe3f7b8405"
+      }
+    },
+    {
+      "id": "1e624d6f-fb68-4b52-a59e-58c33d6e40f1",
+      "kind": "node.context.updated",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-01T02:13:55.528Z",
+      "summary": "Updated context for \"Harmonize disclosure for colors, grid, and calcs\".",
+      "nodeIds": [
+        "page-harmonize-disclosure-for-colors-grid-and-calcs"
+      ],
+      "metadata": {
+        "clientMutationId": "49869f9f-600e-4057-a2c1-eea26f6e5b13"
+      }
+    },
+    {
+      "id": "3fb2093c-dd47-4ea2-98d9-d76529efef53",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-01T02:12:43.753Z",
+      "summary": "Created \"Harmonize disclosure for colors, grid, and calcs\" under \"Feedback rnd 2\".",
+      "nodeIds": [
+        "page-harmonize-disclosure-for-colors-grid-and-calcs",
+        "page-feedback-rnd-2"
+      ],
+      "metadata": {
+        "clientMutationId": "df0d6923-b9c8-4fcf-a5ac-d3505997757f"
+      }
+    },
+    {
+      "id": "174297ba-47ff-4b68-b1aa-fa8ec3d68ecc",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-01T02:11:33.537Z",
+      "summary": "Added 1 images to \"Rows tooltip appears after closing\".",
+      "nodeIds": [
+        "page-rows-tooltip-appears-after-closing"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "018b117b-f4a0-4070-957f-781571e6e097"
+      }
+    },
+    {
+      "id": "37c51820-18f5-4ed5-bc46-23146f9b5221",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-01T02:11:32.996Z",
+      "summary": "Created \"Rows tooltip appears after closing\" under \"Feedback rnd 2\".",
+      "nodeIds": [
+        "page-rows-tooltip-appears-after-closing",
+        "page-feedback-rnd-2"
+      ],
+      "metadata": {
+        "clientMutationId": "c6f55c65-ce69-4b3c-8328-d8415aa56e16"
+      }
+    },
+    {
+      "id": "156058d5-7e65-4684-b662-246a9c65b761",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-01T02:10:54.076Z",
+      "summary": "Added 1 images to \"Expand rows/data to full viewport height\".",
+      "nodeIds": [
+        "page-expand-rows-data-to-full-viewport-height"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "9e5e244f-898c-4ec1-adb2-0cfdd26853e6"
+      }
+    },
+    {
+      "id": "03a42941-3584-4594-9eee-041cdc3c5f7c",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-01T02:10:53.045Z",
+      "summary": "Created \"Expand rows/data to full viewport height\" under \"Feedback rnd 2\".",
+      "nodeIds": [
+        "page-expand-rows-data-to-full-viewport-height",
+        "page-feedback-rnd-2"
+      ],
+      "metadata": {
+        "clientMutationId": "887ed9d8-c3a7-44da-88ba-23a48b8a4f6c"
+      }
+    },
+    {
+      "id": "6edca1b6-c1e1-42d7-9e44-e7366c1c9c73",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-01T02:07:25.186Z",
+      "summary": "Created \"Chart \"focus\" should really be a details view with settings already open\" under \"Feedback rnd 2\".",
+      "nodeIds": [
+        "page-chart-focus-should-really-be-a-details-view-with-settings-already-open",
+        "page-feedback-rnd-2"
+      ],
+      "metadata": {
+        "clientMutationId": "31ffb4b1-2e6a-4d61-9530-58f9ff4cfe41"
+      }
+    },
+    {
+      "id": "114a380f-758f-421a-85a5-e3b76d97b46c",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-30T04:17:07.133Z",
+      "summary": "Created \"Add new chart flow should propose moving existing charts too\" under \"Feedback rnd 2\".",
+      "nodeIds": [
+        "page-add-new-chart-flow-should-propose-moving-existing-charts-too",
+        "page-feedback-rnd-2"
+      ],
+      "metadata": {
+        "clientMutationId": "52c9f860-1c4f-48d2-9b32-e951690324fe"
+      }
+    },
+    {
+      "id": "6106230c-6221-42d8-bdfc-ffca7b636f5a",
+      "kind": "node.deleted",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-30T04:16:47.623Z",
+      "summary": "Deleted \"Box plot blue dot stroke is confusing - no stroke\".",
+      "nodeIds": [
+        "page-box-plot-blue-dot-stroke-is-confusing-no-stroke"
+      ],
+      "metadata": {
+        "clientMutationId": "4a793233-3f9c-419a-bcba-58ea1d0123b2"
+      }
+    },
+    {
+      "id": "00f82d59-9f68-47a2-b8f3-b95d11f4d384",
+      "kind": "node.deleted",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-30T04:16:45.131Z",
+      "summary": "Deleted \"When field list closes it shows tooltip on button? Should just go away\".",
+      "nodeIds": [
+        "page-when-field-list-closes-it-shows-tooltip-on-button-should-just-go-away"
+      ],
+      "metadata": {
+        "clientMutationId": "fc82fd2f-0cee-4343-99f2-d7210eb3a49e"
+      }
+    },
+    {
+      "id": "b75005dd-06b6-483e-8ed7-a509b33eecd6",
+      "kind": "node.deleted",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-30T04:16:28.512Z",
+      "summary": "Deleted \"Some cases when drag on edge does not resize\".",
+      "nodeIds": [
+        "page-some-cases-when-drag-on-edge-does-not-resize"
+      ],
+      "metadata": {
+        "clientMutationId": "03fdd138-5680-4f74-a827-e3095374a666"
+      }
+    },
+    {
+      "id": "7a098d27-a799-42fa-8490-f7befa676a1e",
+      "kind": "node.deleted",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-30T04:15:55.845Z",
+      "summary": "Deleted \"Add more keyboard shortcuts\".",
+      "nodeIds": [
+        "page-add-more-keyboard-shortcuts"
+      ],
+      "metadata": {
+        "clientMutationId": "c856863d-25c6-47ed-8533-8d070ef37e3f"
+      }
+    },
+    {
+      "id": "f13def51-0fa0-41d1-8c8f-cdc725cfd45c",
+      "kind": "node.deleted",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-30T04:15:38.030Z",
+      "summary": "Deleted \"Try new \"add chart\" flow\".",
+      "nodeIds": [
+        "page-try-new-add-chart-flow"
+      ],
+      "metadata": {
+        "clientMutationId": "db6a0c83-377a-4c09-90c7-0c49f56d3f4c"
+      }
+    },
+    {
+      "id": "33093904-a81f-4dcb-abea-ffaa56d16fd1",
+      "kind": "node.deleted",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-30T04:14:51.609Z",
+      "summary": "Deleted \"Pivot table \"inspect\" text is gross\".",
+      "nodeIds": [
+        "page-pivot-table-inspect-text-is-gross"
+      ],
+      "metadata": {
+        "clientMutationId": "b495b3e0-184f-4461-aada-dfd1a6c74481"
+      }
+    },
+    {
+      "id": "19315b0a-8951-40b1-b8b7-d2fc1a01785e",
+      "kind": "node.deleted",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-30T04:13:55.340Z",
+      "summary": "Deleted \"Active search needs to be clearer in chart header\".",
+      "nodeIds": [
+        "page-active-search-needs-to-be-clearer-in-chart-header"
+      ],
+      "metadata": {
+        "clientMutationId": "3661f127-bf47-4a09-bda8-aac9420456fd"
+      }
+    },
+    {
+      "id": "64b7b573-a8f0-4ca4-91e4-b7054f0ca013",
+      "kind": "node.deleted",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-30T04:13:39.656Z",
+      "summary": "Deleted \"Sort indicator should not hide under the other buttons in data table\".",
+      "nodeIds": [
+        "page-sort-indicator-should-not-hide-under-the-other-buttons-in-data-table"
+      ],
+      "metadata": {
+        "clientMutationId": "0192c584-ac18-4839-9249-b274508ca220"
+      }
+    },
+    {
+      "id": "268a9c65-b255-4903-bf5e-82ccda94cf26",
+      "kind": "node.deleted",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-30T04:13:10.823Z",
+      "summary": "Deleted \"Tracing leaks focus and click info; also tooltip is not helpful for a gridline\".",
+      "nodeIds": [
+        "page-tracing-leaks-focus-and-click-info-also-tooltip-is-not-helpful-for-a-gridline"
+      ],
+      "metadata": {
+        "clientMutationId": "1dba189a-5bed-4395-830e-dcf041046463"
+      }
+    },
+    {
+      "id": "38615ec7-3717-4de0-8c90-7ed6e5417b90",
+      "kind": "node.deleted",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-30T04:13:04.422Z",
+      "summary": "Deleted \"Landing page has gross image as example\".",
+      "nodeIds": [
+        "page-landing-page-has-gross-image-as-example"
+      ],
+      "metadata": {
+        "clientMutationId": "d19e9f2c-590d-4d15-8522-b29d60d859b4"
+      }
+    },
+    {
+      "id": "fa4b62e0-a968-49ad-a4c8-c054714195ad",
+      "kind": "node.deleted",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-30T04:13:01.992Z",
+      "summary": "Deleted \"Tracing popover is confusing\".",
+      "nodeIds": [
+        "page-tracing-popover-is-confusing"
+      ],
+      "metadata": {
+        "clientMutationId": "9cebe499-ed4f-476a-96da-cfbbc575c7bd"
+      }
+    },
+    {
+      "id": "bb5a1595-2a3b-4cf2-ace2-43917d711886",
+      "kind": "node.deleted",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-30T04:12:45.703Z",
+      "summary": "Deleted \"Code sample on home page should show all - avoid overflow\".",
+      "nodeIds": [
+        "page-code-sample-on-home-page-should-show-all-avoid-overflow"
+      ],
+      "metadata": {
+        "clientMutationId": "21a534d0-9a93-4d7e-b3c0-93a32461d83c"
+      }
+    },
+    {
+      "id": "73880579-f182-47fe-bb31-3c7a7f610fd3",
+      "kind": "node.deleted",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-30T04:12:41.555Z",
+      "summary": "Deleted \"Chart ... menu should get blended into settings as an action row\".",
+      "nodeIds": [
+        "page-chart-menu-should-get-blended-into-settings-as-an-action-row"
+      ],
+      "metadata": {
+        "clientMutationId": "88134f8f-39af-47ea-aaff-369c4fd98268"
+      }
+    },
+    {
+      "id": "8d808360-9b3d-4b9e-9b59-5357739290ee",
+      "kind": "node.deleted",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T03:48:56.307Z",
+      "summary": "Deleted \"Feedback mon 9/28\".",
+      "nodeIds": [
+        "page-feedback-mon-9-28"
+      ],
+      "metadata": {
+        "clientMutationId": "fa9c6c5d-0c7c-46f2-941c-bd602d2e8295"
+      }
+    },
+    {
+      "id": "ea453cb4-b3df-41fb-9a9c-af3f6b476558",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:48:06.122Z",
+      "summary": "Updated metadata for \"Feedback mon 9/28\".",
+      "nodeIds": [
+        "page-feedback-mon-9-28"
+      ]
+    },
+    {
+      "id": "2572e7de-7194-48ba-87c7-3457fb86aaf1",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:48:05.878Z",
+      "summary": "Changed \"Feedback mon 9/28\" status to implemented.",
+      "nodeIds": [
+        "page-feedback-mon-9-28"
+      ]
+    },
+    {
+      "id": "0e242310-39da-40e7-b1cb-f2b473a957ce",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:39.616Z",
+      "summary": "Updated metadata for \"When field list closes it shows tooltip on button? Should just go away\".",
+      "nodeIds": [
+        "page-when-field-list-closes-it-shows-tooltip-on-button-should-just-go-away"
+      ]
+    },
+    {
+      "id": "e0906a83-b7e9-43f7-a2f7-59fd30f4e94f",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:39.317Z",
+      "summary": "Changed \"When field list closes it shows tooltip on button? Should just go away\" status to implemented.",
+      "nodeIds": [
+        "page-when-field-list-closes-it-shows-tooltip-on-button-should-just-go-away"
+      ]
+    },
+    {
+      "id": "8cf9d1ce-0624-4961-aaa7-5df958425097",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:35.970Z",
+      "summary": "Updated metadata for \"Try new \"add chart\" flow\".",
+      "nodeIds": [
+        "page-try-new-add-chart-flow"
+      ]
+    },
+    {
+      "id": "5f9d9cb5-b4c6-43fb-9fa0-561b0e6d6604",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:35.748Z",
+      "summary": "Changed \"Try new \"add chart\" flow\" status to implemented.",
+      "nodeIds": [
+        "page-try-new-add-chart-flow"
+      ]
+    },
+    {
+      "id": "4dcf3dd6-db5b-4564-904c-0b47c3b037ab",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:31.483Z",
+      "summary": "Updated metadata for \"Tracing popover is confusing\".",
+      "nodeIds": [
+        "page-tracing-popover-is-confusing"
+      ]
+    },
+    {
+      "id": "8d1e6ffc-2d20-4296-ac3c-bd096043f10a",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:31.237Z",
+      "summary": "Changed \"Tracing popover is confusing\" status to implemented.",
+      "nodeIds": [
+        "page-tracing-popover-is-confusing"
+      ]
+    },
+    {
+      "id": "c638e539-d37b-42bd-986e-15e39919b29d",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:27.583Z",
+      "summary": "Updated metadata for \"Tracing leaks focus and click info; also tooltip is not helpful for a gridline\".",
+      "nodeIds": [
+        "page-tracing-leaks-focus-and-click-info-also-tooltip-is-not-helpful-for-a-gridline"
+      ]
+    },
+    {
+      "id": "da33bf38-a318-4737-b638-52165a4b5dd7",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:27.368Z",
+      "summary": "Changed \"Tracing leaks focus and click info; also tooltip is not helpful for a gridline\" status to implemented.",
+      "nodeIds": [
+        "page-tracing-leaks-focus-and-click-info-also-tooltip-is-not-helpful-for-a-gridline"
+      ]
+    },
+    {
+      "id": "979a6e83-329e-47e2-9024-cbda42037d58",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:24.197Z",
+      "summary": "Updated metadata for \"Sort indicator should not hide under the other buttons in data table\".",
+      "nodeIds": [
+        "page-sort-indicator-should-not-hide-under-the-other-buttons-in-data-table"
+      ]
+    },
+    {
+      "id": "5bfa01a9-dd6c-4f78-adb3-b2f7f09a8512",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:23.976Z",
+      "summary": "Changed \"Sort indicator should not hide under the other buttons in data table\" status to implemented.",
+      "nodeIds": [
+        "page-sort-indicator-should-not-hide-under-the-other-buttons-in-data-table"
+      ]
+    },
+    {
+      "id": "b0e5d537-a1d8-410b-9b3d-5aae3a094a3f",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:20.180Z",
+      "summary": "Updated metadata for \"Some cases when drag on edge does not resize\".",
+      "nodeIds": [
+        "page-some-cases-when-drag-on-edge-does-not-resize"
+      ]
+    },
+    {
+      "id": "87f0ff34-058b-4dad-8a29-b62d673ed5d5",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:19.944Z",
+      "summary": "Changed \"Some cases when drag on edge does not resize\" status to implemented.",
+      "nodeIds": [
+        "page-some-cases-when-drag-on-edge-does-not-resize"
+      ]
+    },
+    {
+      "id": "635439a6-a073-425c-b121-da9c101e1d53",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:16.269Z",
+      "summary": "Updated metadata for \"Pivot table \"inspect\" text is gross\".",
+      "nodeIds": [
+        "page-pivot-table-inspect-text-is-gross"
+      ]
+    },
+    {
+      "id": "0f306c3e-2fd5-401e-b375-5b9cbc8bbe27",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:15.965Z",
+      "summary": "Changed \"Pivot table \"inspect\" text is gross\" status to implemented.",
+      "nodeIds": [
+        "page-pivot-table-inspect-text-is-gross"
+      ]
+    },
+    {
+      "id": "5b1b65d4-4f81-4ec7-8da4-6d7929650982",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:10.803Z",
+      "summary": "Updated metadata for \"Landing page has gross image as example\".",
+      "nodeIds": [
+        "page-landing-page-has-gross-image-as-example"
+      ]
+    },
+    {
+      "id": "28a94623-1245-4e1c-95b6-07b5ec139da3",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:10.577Z",
+      "summary": "Changed \"Landing page has gross image as example\" status to implemented.",
+      "nodeIds": [
+        "page-landing-page-has-gross-image-as-example"
+      ]
+    },
+    {
+      "id": "aee5d833-f4b4-4e5f-b393-caec5bdddaa9",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:07.396Z",
+      "summary": "Updated metadata for \"Code sample on home page should show all - avoid overflow\".",
+      "nodeIds": [
+        "page-code-sample-on-home-page-should-show-all-avoid-overflow"
+      ]
+    },
+    {
+      "id": "6908abe3-a5c2-407d-afe5-f210a26abe71",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:07.171Z",
+      "summary": "Changed \"Code sample on home page should show all - avoid overflow\" status to implemented.",
+      "nodeIds": [
+        "page-code-sample-on-home-page-should-show-all-avoid-overflow"
+      ]
+    },
+    {
+      "id": "4ef95d90-b406-4783-a64b-16550694dc5b",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:03.135Z",
+      "summary": "Updated metadata for \"Chart ... menu should get blended into settings as an action row\".",
+      "nodeIds": [
+        "page-chart-menu-should-get-blended-into-settings-as-an-action-row"
+      ]
+    },
+    {
+      "id": "74149df7-1417-4746-959d-cf227e0cc508",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:47:02.813Z",
+      "summary": "Changed \"Chart ... menu should get blended into settings as an action row\" status to implemented.",
+      "nodeIds": [
+        "page-chart-menu-should-get-blended-into-settings-as-an-action-row"
+      ]
+    },
+    {
+      "id": "15ae4757-6473-4853-98b3-225f489c2ba9",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:46:58.288Z",
+      "summary": "Updated metadata for \"Box plot blue dot stroke is confusing - no stroke\".",
+      "nodeIds": [
+        "page-box-plot-blue-dot-stroke-is-confusing-no-stroke"
+      ]
+    },
+    {
+      "id": "53c3024c-ae90-48f1-bcc6-269d66084049",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:46:58.052Z",
+      "summary": "Changed \"Box plot blue dot stroke is confusing - no stroke\" status to implemented.",
+      "nodeIds": [
+        "page-box-plot-blue-dot-stroke-is-confusing-no-stroke"
+      ]
+    },
+    {
+      "id": "cc7f713e-a02d-422c-a063-46a995e508c3",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:46:34.416Z",
+      "summary": "Updated metadata for \"Active search needs to be clearer in chart header\".",
+      "nodeIds": [
+        "page-active-search-needs-to-be-clearer-in-chart-header"
+      ]
+    },
+    {
+      "id": "0892020f-1b43-4e6a-998d-cae86f5fd7e7",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T03:46:34.137Z",
+      "summary": "Changed \"Active search needs to be clearer in chart header\" status to implemented.",
+      "nodeIds": [
+        "page-active-search-needs-to-be-clearer-in-chart-header"
+      ]
+    },
+    {
+      "id": "277f50e1-ee64-4f2d-9076-627d72565e0d",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:esting",
+        "label": "Agent token ...esting"
+      },
+      "createdAt": "2026-09-29T02:32:08.583Z",
+      "summary": "Changed \"Add more keyboard shortcuts\" status to implemented.",
+      "nodeIds": [
+        "page-add-more-keyboard-shortcuts"
+      ]
+    },
+    {
+      "id": "598c6d24-8e94-48ad-aa75-1904dc040b6e",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:49:21.567Z",
+      "summary": "Added 1 images to \"Delete confirm is massive and gross\".",
+      "nodeIds": [
+        "page-delete-confirm-is-massive-and-gross"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "a42595ff-abdd-43c5-8a57-5a228961241b"
+      }
+    },
+    {
+      "id": "cfc64c9d-03bf-4c89-870b-169174d7e005",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:49:19.385Z",
+      "summary": "Created \"Delete confirm is massive and gross\" under \"Feedback rnd 2\".",
+      "nodeIds": [
+        "page-delete-confirm-is-massive-and-gross",
+        "page-feedback-rnd-2"
+      ],
+      "metadata": {
+        "clientMutationId": "8963421c-c0ce-4597-8d36-cd9f8cc097a7"
+      }
+    },
+    {
+      "id": "e185a8ec-20e1-4625-b2b9-914b5157969f",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:49:13.164Z",
+      "summary": "Created \"Feedback rnd 2\".",
+      "nodeIds": [
+        "page-feedback-rnd-2"
+      ],
+      "metadata": {
+        "clientMutationId": "fac1c35f-a43b-4d39-a84a-b7ec21c5b52c"
+      }
+    },
+    {
+      "id": "8ae6815d-b36c-4c40-a1f6-aba8dcd6862e",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:36:13.704Z",
+      "summary": "Added 1 images to \"Try new \"add chart\" flow\".",
+      "nodeIds": [
+        "page-try-new-add-chart-flow"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "34cb1517-9f53-4f16-9c53-1a2a5ee92341"
+      }
+    },
+    {
+      "id": "22323306-6710-400e-bdc8-570ae34ce3eb",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:36:00.637Z",
+      "summary": "Created \"Try new \"add chart\" flow\" under \"Feedback mon 9/28\".",
+      "nodeIds": [
+        "page-try-new-add-chart-flow",
+        "page-feedback-mon-9-28"
+      ],
+      "metadata": {
+        "clientMutationId": "93c873ed-e69c-4064-835a-6092477d041a"
+      }
+    },
+    {
+      "id": "74bcc6bd-c68b-47be-bc7e-aceaffe881c6",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:34:16.787Z",
+      "summary": "Added 1 images to \"Chart ... menu should get blended into settings as an action row\".",
+      "nodeIds": [
+        "page-chart-menu-should-get-blended-into-settings-as-an-action-row"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "da8bf984-d534-4e3b-99d2-6cb72a802f06"
+      }
+    },
+    {
+      "id": "627b96e4-3848-4cd4-be09-bda04fdef5ff",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:34:15.918Z",
+      "summary": "Created \"Chart ... menu should get blended into settings as an action row\" under \"Feedback mon 9/28\".",
+      "nodeIds": [
+        "page-chart-menu-should-get-blended-into-settings-as-an-action-row",
+        "page-feedback-mon-9-28"
+      ],
+      "metadata": {
+        "clientMutationId": "e845f9a9-4312-446d-b784-122a8314fee5"
+      }
+    },
+    {
+      "id": "c8ccfbca-e757-4c98-941c-d414f87c69a6",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:33:25.756Z",
+      "summary": "Added 1 images to \"Some cases when drag on edge does not resize\".",
+      "nodeIds": [
+        "page-some-cases-when-drag-on-edge-does-not-resize"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "ec8ed436-2d68-4947-a61d-8f774c76f815"
+      }
+    },
+    {
+      "id": "51788574-1126-4d9a-adb1-949b2bd4b1a2",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:33:24.782Z",
+      "summary": "Created \"Some cases when drag on edge does not resize\" under \"Feedback mon 9/28\".",
+      "nodeIds": [
+        "page-some-cases-when-drag-on-edge-does-not-resize",
+        "page-feedback-mon-9-28"
+      ],
+      "metadata": {
+        "clientMutationId": "4dfaf3b8-db51-4634-8602-2e64723cb448"
+      }
+    },
+    {
+      "id": "7742b4b0-bd71-4771-b463-791e2353206f",
+      "kind": "node.context.updated",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:32:33.432Z",
+      "summary": "Updated context for \"Add more keyboard shortcuts\".",
+      "nodeIds": [
+        "page-add-more-keyboard-shortcuts"
+      ],
+      "metadata": {
+        "clientMutationId": "13719ea9-b9c9-438b-8883-ac547a3bca3a"
+      }
+    },
+    {
+      "id": "56bad25a-cb2e-4811-b65f-31bebddeab6e",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:32:00.247Z",
+      "summary": "Created \"Add more keyboard shortcuts\" under \"Feedback mon 9/28\".",
+      "nodeIds": [
+        "page-add-more-keyboard-shortcuts",
+        "page-feedback-mon-9-28"
+      ],
+      "metadata": {
+        "clientMutationId": "a771c1b7-06fa-41c4-8d3b-d4bdb6572cd5"
+      }
+    },
+    {
+      "id": "561e4ccf-eb7d-4d0c-81e9-737ea125ddd0",
+      "kind": "node.context.updated",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:31:19.433Z",
+      "summary": "Updated context for \"Pivot table \"inspect\" text is gross\".",
+      "nodeIds": [
+        "page-pivot-table-inspect-text-is-gross"
+      ],
+      "metadata": {
+        "clientMutationId": "3c4a149c-ca18-4f30-bf59-ef273c84b6ae"
+      }
+    },
+    {
+      "id": "d875cbf5-e1cf-44eb-8ca8-95fa93a14cf0",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:30:49.443Z",
+      "summary": "Added 1 images to \"Pivot table \"inspect\" text is gross\".",
+      "nodeIds": [
+        "page-pivot-table-inspect-text-is-gross"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "04835aaa-1181-470f-8b6b-b78666538c1f"
+      }
+    },
+    {
+      "id": "4fe149ce-4723-4f06-ad58-560e8b57bd04",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:30:47.910Z",
+      "summary": "Created \"Pivot table \"inspect\" text is gross\" under \"Feedback mon 9/28\".",
+      "nodeIds": [
+        "page-pivot-table-inspect-text-is-gross",
+        "page-feedback-mon-9-28"
+      ],
+      "metadata": {
+        "clientMutationId": "605c47c0-866d-48d3-abd4-1eb51796ec3e"
+      }
+    },
+    {
+      "id": "e6efb506-7e4d-4e5c-b795-2600ec83c527",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:30:00.825Z",
+      "summary": "Added 1 images to \"Active search needs to be clearer in chart header\".",
+      "nodeIds": [
+        "page-active-search-needs-to-be-clearer-in-chart-header"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "6b7583b4-2b66-4452-a617-b7623254f7a8"
+      }
+    },
+    {
+      "id": "ce979faa-6cda-4596-a6db-cd87f1f9d642",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:29:59.591Z",
+      "summary": "Created \"Active search needs to be clearer in chart header\" under \"Feedback mon 9/28\".",
+      "nodeIds": [
+        "page-active-search-needs-to-be-clearer-in-chart-header",
+        "page-feedback-mon-9-28"
+      ],
+      "metadata": {
+        "clientMutationId": "7c8d4c34-eb6c-4890-a241-038e48f6ae7d"
+      }
+    },
+    {
+      "id": "a161f9e0-453f-48f6-a7ee-64b57dce683d",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:28:46.964Z",
+      "summary": "Added 1 images to \"Landing page has gross image as example\".",
+      "nodeIds": [
+        "page-landing-page-has-gross-image-as-example"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "6f0c9094-3f5f-4246-9340-9edb59f0a770"
+      }
+    },
+    {
+      "id": "acb09543-77b5-4a56-af39-2189b66fe8a9",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:28:45.436Z",
+      "summary": "Created \"Landing page has gross image as example\" under \"Feedback mon 9/28\".",
+      "nodeIds": [
+        "page-landing-page-has-gross-image-as-example",
+        "page-feedback-mon-9-28"
+      ],
+      "metadata": {
+        "clientMutationId": "578bcb1f-9d08-4efe-b9ae-616cf3c0568e"
+      }
+    },
+    {
+      "id": "bde8b0f6-24a3-4f1f-9022-c5416972ce67",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:27:52.245Z",
+      "summary": "Added 1 images to \"Code sample on home page should show all - avoid overflow\".",
+      "nodeIds": [
+        "page-code-sample-on-home-page-should-show-all-avoid-overflow"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "abb4c1fa-285b-4c46-8c50-137f7fd7690f"
+      }
+    },
+    {
+      "id": "dfe907de-cb31-4932-8976-d9984e6988d5",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:27:50.358Z",
+      "summary": "Created \"Code sample on home page should show all - avoid overflow\" under \"Feedback mon 9/28\".",
+      "nodeIds": [
+        "page-code-sample-on-home-page-should-show-all-avoid-overflow",
+        "page-feedback-mon-9-28"
+      ],
+      "metadata": {
+        "clientMutationId": "e82e9e88-7e27-4208-8ba1-00ec5793b6d5"
+      }
+    },
+    {
+      "id": "426ff418-a70b-420a-b142-81aee2b4b1b9",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:26:29.675Z",
+      "summary": "Added 1 images to \"Tracing popover is confusing\".",
+      "nodeIds": [
+        "page-tracing-popover-is-confusing"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "367fbbec-e872-4547-883d-125e93dd0a70"
+      }
+    },
+    {
+      "id": "03970db6-3850-4781-9124-e10355ccd71e",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:26:28.061Z",
+      "summary": "Created \"Tracing popover is confusing\" under \"Feedback mon 9/28\".",
+      "nodeIds": [
+        "page-tracing-popover-is-confusing",
+        "page-feedback-mon-9-28"
+      ],
+      "metadata": {
+        "clientMutationId": "af41db88-779d-4d7a-a389-7471a992f5c5"
+      }
+    },
+    {
+      "id": "be507a9e-5235-4a9e-8862-e415d5cacb07",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:25:12.519Z",
+      "summary": "Added 1 images to \"Sort indicator should not hide under the other buttons in data table\".",
+      "nodeIds": [
+        "page-sort-indicator-should-not-hide-under-the-other-buttons-in-data-table"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "0ee0931e-6a47-4d25-a2f7-a2027a7d1524"
+      }
+    },
+    {
+      "id": "a84cdf35-2902-4876-84d3-bd153279c4c2",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:25:11.854Z",
+      "summary": "Created \"Sort indicator should not hide under the other buttons in data table\" under \"Feedback mon 9/28\".",
+      "nodeIds": [
+        "page-sort-indicator-should-not-hide-under-the-other-buttons-in-data-table",
+        "page-feedback-mon-9-28"
+      ],
+      "metadata": {
+        "clientMutationId": "518781ed-7659-454c-a1c4-24700caa96cc"
+      }
+    },
+    {
+      "id": "0f78c7c8-673f-4f08-8b90-77505171f7bd",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:24:12.725Z",
+      "summary": "Added 1 images to \"When field list closes it shows tooltip on button? Should just go away\".",
+      "nodeIds": [
+        "page-when-field-list-closes-it-shows-tooltip-on-button-should-just-go-away"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "8b9d3f41-8427-4cc6-801f-dd5461891709"
+      }
+    },
+    {
+      "id": "62fbeaf1-16bb-44ec-b5e9-fb12cc1a4e5d",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:24:11.091Z",
+      "summary": "Created \"When field list closes it shows tooltip on button? Should just go away\" under \"Feedback mon 9/28\".",
+      "nodeIds": [
+        "page-when-field-list-closes-it-shows-tooltip-on-button-should-just-go-away",
+        "page-feedback-mon-9-28"
+      ],
+      "metadata": {
+        "clientMutationId": "f470c951-5613-410b-bfe7-03a4e14b6e09"
+      }
+    },
+    {
+      "id": "c334748d-ff4a-4712-bec6-9d089670cf7a",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:23:38.464Z",
+      "summary": "Added 1 images to \"Box plot blue dot stroke is confusing - no stroke\".",
+      "nodeIds": [
+        "page-box-plot-blue-dot-stroke-is-confusing-no-stroke"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "4fb57bf4-7dea-4a10-8178-e227610ac2b0"
+      }
+    },
+    {
+      "id": "a9c19bb6-b13d-4771-a509-624a0861545f",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:23:37.327Z",
+      "summary": "Created \"Box plot blue dot stroke is confusing - no stroke\" under \"Feedback mon 9/28\".",
+      "nodeIds": [
+        "page-box-plot-blue-dot-stroke-is-confusing-no-stroke",
+        "page-feedback-mon-9-28"
+      ],
+      "metadata": {
+        "clientMutationId": "318ae2ac-3c84-4527-bd08-ea5ecc422606"
+      }
+    },
+    {
+      "id": "3618a3f6-6fe1-4648-a4e4-39d50493550f",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:23:08.480Z",
+      "summary": "Added 1 images to \"Tracing leaks focus and click info; also tooltip is not helpful for a gridline\".",
+      "nodeIds": [
+        "page-tracing-leaks-focus-and-click-info-also-tooltip-is-not-helpful-for-a-gridline"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "123a231a-05ef-41d1-ab98-88c75381fbd0"
+      }
+    },
+    {
+      "id": "eafd0df6-80ed-4d9c-a973-1c82f157c32d",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:23:06.959Z",
+      "summary": "Created \"Tracing leaks focus and click info; also tooltip is not helpful for a gridline\" under \"Feedback mon 9/28\".",
+      "nodeIds": [
+        "page-tracing-leaks-focus-and-click-info-also-tooltip-is-not-helpful-for-a-gridline",
+        "page-feedback-mon-9-28"
+      ],
+      "metadata": {
+        "clientMutationId": "0a8b7062-67fd-4135-93c8-890c9184d70a"
+      }
+    },
+    {
+      "id": "d52c364a-327a-4e12-ae47-70ba9709dfb6",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:22:50.550Z",
+      "summary": "Created \"Feedback mon 9/28\".",
+      "nodeIds": [
+        "page-feedback-mon-9-28"
+      ],
+      "metadata": {
+        "clientMutationId": "de17b251-b466-4bad-b5c5-d7ffdac91aff"
+      }
+    },
+    {
+      "id": "621fd7f7-5b24-478d-9ad2-6c19db753657",
+      "kind": "project.schema.updated",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:22:32.170Z",
+      "summary": "Updated project metadata and node type schema.",
+      "nodeIds": [],
+      "metadata": {
+        "clientMutationId": "ff37adb7-a916-4cac-8891-0ed9d2a08a0e"
+      }
+    },
+    {
+      "id": "d4368774-9ef1-4938-973e-9005bfe67ff6",
+      "kind": "project.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-09-29T01:22:21.210Z",
+      "summary": "Created project \"Untitled Project\".",
+      "nodeIds": []
+    }
+  ]
+}

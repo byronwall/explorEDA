@@ -20,6 +20,10 @@ importers:
       typescript:
         specifier: ~5.4.5
         version: 5.4.5
+    devDependencies:
+      '@byronwallrus/product-grid-cli':
+        specifier: file:tools/product-grid-cli-0.1.9.tgz
+        version: file:tools/product-grid-cli-0.1.9.tgz
 
   apps/data-samples:
     dependencies:
@@ -553,6 +557,12 @@ packages:
   '@bcoe/v8-coverage@1.0.2':
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
+
+  '@byronwallrus/product-grid-cli@file:tools/product-grid-cli-0.1.9.tgz':
+    resolution: {integrity: sha512-Qtn78XE2V2FQU326fUZwoSaBjMVf8gf+pOvd4wGU2NBqNayAgNMrhPjT+x75b3AhASdmhKJwEeGxPDU0QhrIGA==, tarball: file:tools/product-grid-cli-0.1.9.tgz}
+    version: 0.1.9
+    engines: {node: '>=22'}
+    hasBin: true
 
   '@changesets/apply-release-plan@7.0.10':
     resolution: {integrity: sha512-wNyeIJ3yDsVspYvHnEz1xQDq18D9ifed3lI+wxRQRK4pArUcuHgCTrHv0QRnnwjhVCQACxZ+CBih3wgOct6UXw==}
@@ -4171,6 +4181,8 @@ snapshots:
       '@babel/helper-validator-identifier': 7.25.9
 
   '@bcoe/v8-coverage@1.0.2': {}
+
+  '@byronwallrus/product-grid-cli@file:tools/product-grid-cli-0.1.9.tgz': {}
 
   '@changesets/apply-release-plan@7.0.10':
     dependencies:
