@@ -1,3 +1,4 @@
+import { isGeometryAsset } from "@/lib/geometryAssets";
 import type {
   SavedAnalysisStructure,
   SavedDataStructure,
@@ -352,12 +353,35 @@ function isChart(value: unknown): boolean {
         (value.binCount === undefined || isFiniteNumber(value.binCount)) &&
         (value.forceString === undefined ||
           typeof value.forceString === "boolean") &&
+        (value.seriesField === undefined ||
+          (typeof value.seriesField === "string" &&
+            value.seriesField.length > 0)) &&
+        (value.seriesLayout === undefined ||
+          ["grouped", "stacked", "percent"].includes(
+            value.seriesLayout as string
+          )) &&
         (value.aggregateId === undefined ||
           typeof value.aggregateId === "string")
       );
     case "scatter":
       return (
-        typeof value.xField === "string" && typeof value.yField === "string"
+        typeof value.xField === "string" &&
+        typeof value.yField === "string" &&
+        (value.display === undefined || ["points", "density"].includes(value.display as string)) &&
+        (value.density === undefined ||
+          (isRecord(value.density) &&
+            [value.density.xBins, value.density.yBins].every((count) =>
+              count === undefined || (isFiniteNumber(count) && Number.isInteger(count) && count >= 2 && count <= 60)
+            ) &&
+            (value.density.colorMax === undefined ||
+              (isFiniteNumber(value.density.colorMax) && value.density.colorMax >= 1)))) &&
+        (value.sizeField === undefined ||
+          (typeof value.sizeField === "string" &&
+            value.sizeField.length > 0)) &&
+        (value.maxBubbleRadius === undefined ||
+          (isFiniteNumber(value.maxBubbleRadius) &&
+            value.maxBubbleRadius >= 6 &&
+            value.maxBubbleRadius <= 32))
       );
     case "pivot":
       return (
@@ -413,6 +437,7 @@ function isChart(value: unknown): boolean {
         ["tukey", "minmax", "stdDev"].includes(value.whiskerType as string) &&
         typeof value.showOutliers === "boolean" &&
         typeof value.violinOverlay === "boolean" &&
+        (value.showObservations === undefined || typeof value.showObservations === "boolean") &&
         ["median", "label"].includes(value.sortBy as string) &&
         isFiniteNumber(value.violinBandwidth) &&
         typeof value.autoBandwidth === "boolean" &&
@@ -457,6 +482,23 @@ function isChart(value: unknown): boolean {
         isFiniteNumber(value.lineOpacity) &&
         isFiniteNumber(value.lineWidth)
       );
+    case "map":
+      return ["point", "region"].includes(value.mode as string) &&
+        (value.mode !== "region" || (typeof value.geometryAssetId === "string" &&
+          typeof value.regionField === "string" && typeof value.featureKey === "string" &&
+          ["count", "sum", "average"].includes(value.aggregation as string) &&
+          (value.aggregation === "count" || typeof value.measureField === "string") &&
+          typeof value.showRegionLabels === "boolean" && isFiniteNumber(value.outlineWidth) && value.outlineWidth >= 0 && value.outlineWidth <= 4)) &&
+        typeof value.latitudeField === "string" && typeof value.longitudeField === "string" &&
+        (value.labelField === undefined || typeof value.labelField === "string") &&
+        (value.sizeField === undefined || typeof value.sizeField === "string") &&
+        ["equal-earth", "equirectangular"].includes(value.projection as string) &&
+        isFiniteNumber(value.pointRadius) && value.pointRadius >= 2 && value.pointRadius <= 32 &&
+        isFiniteNumber(value.pointOpacity) && value.pointOpacity >= 0.1 && value.pointOpacity <= 1 &&
+        (value.view === undefined || (isRecord(value.view) && Array.isArray(value.view.center) &&
+          value.view.center.length === 2 && value.view.center.every(isFiniteNumber) &&
+          Math.abs(value.view.center[0]!) <= 180 && Math.abs(value.view.center[1]!) <= 90 &&
+          isFiniteNumber(value.view.zoom) && value.view.zoom >= 1 && value.view.zoom <= 64));
     case "metric-card":
       return (
         ["count", "sum", "average"].includes(value.aggregation as string) &&
@@ -491,6 +533,27 @@ function isChart(value: unknown): boolean {
       );
     case "line":
       return (
+        (value.time === undefined ||
+          (isRecord(value.time) &&
+            (value.time.display === undefined ||
+              ["line", "area", "stacked-area"].includes(
+                value.time.display as string
+              )) &&
+            (value.time.display !== "stacked-area" ||
+              value.time.aggregation !== "average") &&
+            ["day", "week", "month"].includes(value.time.interval as string) &&
+            ["monday", "sunday"].includes(value.time.weekStart as string) &&
+            ["count", "sum", "average"].includes(
+              value.time.aggregation as string
+            ) &&
+            (value.time.aggregation === "count" ||
+              (typeof value.time.measureField === "string" &&
+                Boolean(value.time.measureField))) &&
+            (value.time.splitField === undefined ||
+              typeof value.time.splitField === "string") &&
+            ["gap", "zero"].includes(value.time.missingPeriods as string) &&
+            (value.time.aggregation !== "average" ||
+              value.time.missingPeriods === "gap"))) &&
         typeof value.xField === "string" &&
         isStringArray(value.seriesField) &&
         isRecord(value.seriesSettings) &&
@@ -600,6 +663,13 @@ export function validateSavedData(data: unknown): data is SavedDataStructure {
     return false;
   }
 
+  if (data.geometryAssets !== undefined &&
+    (!Array.isArray(data.geometryAssets) || !data.geometryAssets.every(isGeometryAsset) ||
+      new Set(data.geometryAssets.map((asset) => asset.id)).size !== data.geometryAssets.length)) return false;
+
+  if (charts.some((chart) => chart.type === "map" && chart.mode === "region" && chart.geometryAssetId &&
+    !(data.geometryAssets as {id:string}[] | undefined)?.some((asset) => asset.id === chart.geometryAssetId))) return false;
+
   if (data.rowsSettings !== undefined) {
     const rowsSettings = data.rowsSettings;
     if (
@@ -647,12 +717,21 @@ export function validateSavedData(data: unknown): data is SavedDataStructure {
   const aggregateIds = new Set(
     (data.aggregates ?? []).map((aggregate) => aggregate.id)
   );
+  const averageIds = new Set(
+    (data.aggregates ?? [])
+      .filter((aggregate) => aggregate.aggregation === "average")
+      .map((aggregate) => aggregate.id)
+  );
   if (
     (data.charts as unknown[]).some(
       (chart: unknown) =>
         isRecord(chart) &&
-        chart.aggregateId !== undefined &&
-        !aggregateIds.has(chart.aggregateId as string)
+        ((chart.aggregateId !== undefined &&
+          !aggregateIds.has(chart.aggregateId as string)) ||
+          (chart.type === "bar" &&
+            chart.seriesField &&
+            ["stacked", "percent"].includes(chart.seriesLayout as string) &&
+            averageIds.has(chart.aggregateId as string)))
     )
   ) {
     return false;

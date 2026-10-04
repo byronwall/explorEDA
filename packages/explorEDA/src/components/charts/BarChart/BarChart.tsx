@@ -7,14 +7,27 @@ import { ValueFilter } from "@/types/FilterTypes";
 import type { ScaleLinear } from "d3-scale";
 import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import { BaseChart } from "../BaseChart";
-import { buildScale, findAxisGuide } from "../Axis/axisPlan";
+import { buildScale } from "../Axis/axisPlan";
+import { ChartReadout } from "../ChartReadout";
+import {
+  ChartStatusLine,
+  STATUS_HINT_MIN_WIDTH,
+  STATUS_LINE_HEIGHT,
+} from "../ChartStatusLine";
+import { formatFieldValue as formatValue } from "@/lib/fieldSettings";
 import { useGetColumnData, useGetColumnDataForIds } from "../useGetColumnData";
 import { useGetLiveIds } from "../useGetLiveData";
 import type { AggregateResult } from "@/lib/aggregates";
-import { barAt, planBarChart, type BarChartPlan } from "./barPlan";
+import {
+  barAt,
+  planBarChart,
+  type BarChartPlan,
+  type BarMark,
+} from "./barPlan";
 import { sameRange, snapRangeToBins } from "./bins";
 import { barTraceTargets, findBarTraceRow, resolveBarTrace } from "./barTrace";
 import { BarChartSettings } from "./definition";
+import { SeriesBarChart } from "./SeriesBarChart";
 import {
   useChartTrace,
   useChartTraceApi,
@@ -28,45 +41,54 @@ type BarChartProps = BaseChartProps<BarChartSettings> & {
   aggregateScope?: string;
 };
 
-function HoverReadout({ plan, id }: { plan: BarChartPlan; id: string }) {
+/** A bin reads as its formatted edges unless it holds whole numbers. */
+function barLabel(bar: BarMark, format: (value: number) => string) {
+  return bar.bin && bar.label.startsWith("[")
+    ? `${format(bar.bin.start)} to ${format(bar.bin.end)}`
+    : bar.label;
+}
+
+/** Field and value pairs for the hovered bar, in the panel header. */
+function HoverReadout({
+  plan,
+  id,
+  format,
+}: {
+  plan: BarChartPlan;
+  id: string;
+  format: (value: number) => string;
+}) {
   const bar = plan.bars.find((item) => item.id === id);
-  const guide = bar ? undefined : findAxisGuide(plan.axes, id)?.guide;
-  if (!bar && (!guide || guide.role === "grid")) return null;
+  if (!bar) return null;
+  const rows = plan.mode === "aggregate" ? bar.row.rowCount : bar.value;
   return (
-    <div
-      className="pointer-events-none absolute left-2 top-2 max-w-[min(16rem,70%)] rounded border border-border bg-card/95 px-2 py-1 text-xs text-card-foreground shadow-sm"
-      role="status"
-    >
-      {bar ? (
-        <>
-          <div>Bar · {bar.label}</div>
-          <div>
-            {bar.bin
-              ? `Bin interval: ${bar.bin.start} to ${bar.bin.end}`
-              : `Value: ${bar.valueText}`}
-          </div>
-          {plan.mode !== "bin" && (
-            <div className="text-muted-foreground">
-              Click to select · Alt-click to inspect
-            </div>
-          )}
-        </>
-      ) : (
-        <>
-          <div>
-            {guide!.axis === "x" ? "Horizontal" : "Vertical"} {guide!.role}
-          </div>
-          {guide!.value !== undefined && <div>Value: {String(guide!.value)}</div>}
-          {guide!.role !== "zero" && guide!.label && (
-            <div>Label: {guide!.label.fullText}</div>
-          )}
-        </>
+    <ChartReadout fallbackClassName="eda-chart-readout-inline">
+      <span className="eda-readout-item">
+        <span>{plan.fieldLabel}</span>
+        <b>{barLabel(bar, format)}</b>
+      </span>
+      {plan.mode === "aggregate" && (
+        <span className="eda-readout-item">
+          <span>{plan.valueLabel}</span>
+          <b>{bar.valueText}</b>
+        </span>
       )}
-    </div>
+      <span className="eda-readout-item">
+        <span>Rows</span>
+        <b>
+          {rows.toLocaleString()}
+          {bar.total ? ` of ${bar.total.value.toLocaleString()}` : ""}
+        </b>
+      </span>
+    </ChartReadout>
   );
 }
 
-export function BarChart({
+export function BarChart(props: BarChartProps) {
+  return props.settings.seriesField ? <SeriesBarChart {...props} /> : <SingleBarChart {...props} />;
+}
+
+function SingleBarChart({
   settings,
   width,
   height,
@@ -89,7 +111,10 @@ export function BarChart({
   const trace = useChartTrace();
   const traceApi = useChartTraceApi();
   const owner = useId();
-  const [hovered, setHovered] = useState<{ id: string | null; altKey: boolean }>({
+  const [hovered, setHovered] = useState<{
+    id: string | null;
+    altKey: boolean;
+  }>({
     id: null,
     altKey: false,
   });
@@ -128,6 +153,18 @@ export function BarChart({
           getColorForValue(settings.colorScaleId, value, "#3479a8"),
         getFieldLabel,
         formatFieldValue,
+        formatAxisValue: (field, value) =>
+          formatValue(
+            field,
+            value,
+            // Zero reads as $0 beside $20K, not $0.00.
+            value === 0
+              ? { ...fieldSettings[field], precision: 0 }
+              : fieldSettings[field],
+            { compact: true }
+          ),
+        footer: STATUS_LINE_HEIGHT,
+        showTotals: !facetIds,
         aggregateScope,
       }),
     // Label and format getters are stable; field settings carry their changes.
@@ -145,6 +182,7 @@ export function BarChart({
       resolvedAggregate,
       getColorForValue,
       aggregateScope,
+      facetIds,
     ]
   );
   const xScale = useMemo(() => buildScale(plan.xScale), [plan.xScale]);
@@ -172,8 +210,7 @@ export function BarChart({
     trace?.selection?.owner === owner ? trace.selection : undefined;
 
   // A grouped bar selects its group field; a count bar selects its own field.
-  const selectField =
-    plan.mode === "aggregate" ? plan.field : settings.field;
+  const selectField = plan.mode === "aggregate" ? plan.field : settings.field;
   const valueFilter = settings.filters.find(
     (f): f is ValueFilter => f.type === "value" && f.field === selectField
   );
@@ -254,6 +291,57 @@ export function BarChart({
 
   const isCount = plan.mode === "count";
   const isAggregate = plan.mode === "aggregate";
+  const selectable = isCount || isAggregate;
+  const formatField = (value: number) =>
+    formatFieldValue(settings.field, value);
+  const margin = plan.axes.margin;
+
+  // One selected bar is outlined; a larger selection reads from the dimming.
+  const selectedBars = plan.bars.filter((bar) =>
+    plan.mode === "bin" ? bar.opacity === 1 : bar.selected
+  );
+  const anyDimmed = plan.bars.some((bar) => bar.opacity < 1);
+  const rowsOf = (bars: BarMark[]) =>
+    bars.reduce(
+      (total, bar) => total + (isAggregate ? bar.row.rowCount : bar.value),
+      0
+    );
+  const rangeFilter = settings.filters.find(
+    (f) => f.type === "range" && f.field === settings.field
+  );
+  let selectionText: string | undefined;
+  if (plan.mode === "bin" && rangeFilter?.type === "range") {
+    const first = selectedBars[0];
+    const last = selectedBars.at(-1);
+    // Whole-number bins name their first and last values, not the half-step edges.
+    selectionText =
+      first && last && !first.label.startsWith("[")
+        ? `${first.label.split("–")[0]} to ${last.label.split("–").at(-1)}`
+        : `${formatField(
+            rangeFilter.min ?? plan.binEdges[0] ?? 0
+          )} to ${formatField(rangeFilter.max ?? plan.binEdges.at(-1) ?? 0)}`;
+  } else if (selectable && valueFilter?.values.length) {
+    const names = selectedBars.map((bar) => bar.label);
+    selectionText = `${
+      names.length > 3
+        ? `${names.slice(0, 3).join(", ")} and ${names.length - 3} more`
+        : names.join(", ")
+    }`;
+  }
+  const statusParts = [
+    // Counts lead, so a narrow chart that cuts the line keeps them.
+    selectionText &&
+      `${rowsOf(selectedBars).toLocaleString()} of ${rowsOf(plan.bars).toLocaleString()} rows selected: ${selectionText}`,
+    plan.unplotted.length > 0 &&
+      `${plan.unplotted.length} ${plan.unplotted.length === 1 ? "group" : "groups"} without a number left out`,
+    !selectionText &&
+      !facetIds &&
+      width >= STATUS_HINT_MIN_WIDTH &&
+      (plan.mode === "bin"
+        ? "Drag across bars to select a range · Alt-click to inspect"
+        : "Click bars or labels to select · Alt-click to inspect"),
+  ];
+  const band = selectable && "bandwidth" in xScale ? xScale : undefined;
 
   return (
     <div className="relative" style={{ width, height }}>
@@ -273,16 +361,74 @@ export function BarChart({
           return bar ? Boolean(inspect("bar", bar.id)) : false;
         }}
         activeGuideId={
-          selected?.kind === "guide" ? selected.id : hovered.altKey ? hovered.id : null
+          selected?.kind === "guide"
+            ? selected.id
+            : hovered.altKey
+              ? hovered.id
+              : null
+        }
+        overlay={
+          band && (
+            // Category labels select their bar. The transparent rects catch
+            // clicks between letters, where SVG text has no hit area.
+            <g>
+              {plan.bars.map((bar) => (
+                <rect
+                  key={bar.id}
+                  x={bar.x}
+                  y={plan.axes.plotHeight + 6}
+                  width={bar.width}
+                  height={16}
+                  fill="transparent"
+                  className="cursor-pointer"
+                  aria-hidden="true"
+                  onPointerEnter={() =>
+                    setHovered({ id: bar.id, altKey: false })
+                  }
+                  onPointerLeave={() => setHovered({ id: null, altKey: false })}
+                  onClick={(event) => {
+                    if (event.altKey) inspect("guide", `x:tick:${bar.label}`);
+                    else toggleCategory(bar.groupValue);
+                  }}
+                />
+              ))}
+            </g>
+          )
         }
       >
+        <g>
+          {plan.bars.map((bar) =>
+            bar.total ? (
+              <rect
+                key={`${bar.id}:total`}
+                x={bar.x}
+                y={bar.total.y}
+                width={bar.width}
+                height={bar.total.height}
+                rx={1.5}
+                pointerEvents="none"
+                aria-hidden="true"
+                style={{
+                  fill: bar.fill,
+                  fillOpacity: "var(--eda-flow-context)",
+                  opacity: bar.opacity,
+                }}
+              />
+            ) : null
+          )}
+        </g>
         <g>
           {plan.bars.map((bar) => {
             const measureLabel = isAggregate
               ? bar.valueText
-              : `${bar.value} records`;
-            const selectable = isCount || isAggregate;
+              : `${bar.value.toLocaleString()} records${bar.total ? ` of ${bar.total.value.toLocaleString()}` : ""}`;
             const clickable = selectable || plan.mode === "bin";
+            const isHovered = hovered.id === bar.id;
+            const outlined =
+              selected?.id === bar.id ||
+              (selectedBars.length === 1 &&
+                selectedBars[0] === bar &&
+                anyDimmed);
             return (
               <rect
                 key={bar.id}
@@ -295,15 +441,21 @@ export function BarChart({
                 rx={1.5}
                 role="button"
                 tabIndex={0}
-                aria-label={`${bar.label}: ${measureLabel}`}
+                aria-label={`${barLabel(bar, formatField)}: ${measureLabel}`}
                 aria-pressed={bar.selected}
-                className={`chart-mark ${clickable ? "cursor-pointer" : ""}`}
+                className={`chart-mark eda-bar ${clickable ? "cursor-pointer" : ""}`}
                 style={{
                   fill: bar.fill,
-                  ...(selected?.id === bar.id
-                    ? { stroke: "var(--primary)", strokeWidth: 2 }
-                    : {}),
+                  opacity: isHovered ? 1 : bar.opacity,
+                  stroke: outlined
+                    ? "var(--foreground)"
+                    : isHovered
+                      ? "var(--foreground)"
+                      : undefined,
+                  strokeWidth: outlined ? 2 : isHovered ? 1.5 : undefined,
                 }}
+                onFocus={() => setHovered({ id: bar.id, altKey: false })}
+                onBlur={() => setHovered({ id: null, altKey: false })}
                 onKeyDown={(event) => {
                   if (event.key !== "Enter" && event.key !== " ") return;
                   if (event.altKey && event.key === "Enter") {
@@ -328,7 +480,14 @@ export function BarChart({
           })}
         </g>
       </BaseChart>
-      {hovered.id && <HoverReadout plan={plan} id={hovered.id} />}
+      {hovered.id && (
+        <HoverReadout plan={plan} id={hovered.id} format={formatField} />
+      )}
+      <ChartStatusLine
+        parts={statusParts}
+        left={margin.left}
+        right={margin.right}
+      />
     </div>
   );
 }

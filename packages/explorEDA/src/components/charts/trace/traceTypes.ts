@@ -1,3 +1,5 @@
+import type { RegionTrace } from "../Map/regionTrace";
+import type { MapTrace } from "../Map/mapTrace";
 import type { RowCalculationTrace } from "@/lib/calculations/CalculationState";
 import type { planNumericalLegend } from "@/lib/colorScaleMath";
 import type { datum } from "@/types/ChartTypes";
@@ -15,7 +17,9 @@ import type { CalendarTrace } from "../Calendar/calendarTrace";
 import type { HeatmapTrace } from "../Heatmap/heatmapTrace";
 import type { EcdfTrace } from "../Ecdf/ecdfTrace";
 import type { MetricCardTrace } from "../MetricCard/metricCardTrace";
+import type { TimeSeriesTrace } from "../LineChart/timeSeriesTrace";
 import type { ScatterTrace } from "../ScatterPlot/scatterTrace";
+import type { DensityTrace } from "../ScatterPlot/densityPlan";
 
 /** A selected object. The owner's source resolves it against its current plan. */
 export interface TraceSelection {
@@ -91,7 +95,15 @@ export interface LegendTrace {
   numericalPlan?: ReturnType<typeof planNumericalLegend>;
 }
 
+import type { RowTrace } from "../RowChart/RowTraceBody";
+import type { DistributionTrace } from "../BoxPlot/DistributionTraceBody";
+
 export type ChartTrace =
+  | RowTrace
+  | DistributionTrace
+  | RegionTrace
+  | MapTrace
+  | DensityTrace
   | ScatterTrace
   | BarTrace
   | SankeyTrace
@@ -100,6 +112,7 @@ export type ChartTrace =
   | HeatmapTrace
   | EcdfTrace
   | MetricCardTrace
+  | TimeSeriesTrace
   | GuideTrace
   | TitleTrace
   | FacetTrace

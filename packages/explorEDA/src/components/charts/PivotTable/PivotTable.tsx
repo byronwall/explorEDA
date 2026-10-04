@@ -1,5 +1,10 @@
 import { ActionTooltip } from "@/components/ui/tooltip";
-import { categoryIncludes, categoryKey } from "@/lib/categories";
+import {
+  categoryEqual,
+  categoryIncludes,
+  categoryKey,
+} from "@/lib/categories";
+import { planHeatScale, type HeatScale } from "../heatScale";
 import {
   aggregationUnits,
   calculatePivotData,
@@ -28,11 +33,38 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-type PivotTableProps = BaseChartProps & {
+type PivotTableProps = BaseChartProps<PivotTableSettings> & {
   settings: PivotTableSettings;
 };
 
 type SelectedCell = { cell: PivotCell; rowHeaders: PivotHeader[] };
+
+/** Aggregates whose values compare by size, so shading them reads. */
+const shadable = new Set([
+  "count",
+  "countUnique",
+  "sum",
+  "avg",
+  "min",
+  "max",
+  "median",
+  "stddev",
+  "variance",
+]);
+
+/**
+ * A light wash of the heat color, layered over the row's own background so
+ * hover and selection still show. It stays faint enough for the text on top.
+ */
+function cellTint(position: number, kind: HeatScale["kind"]) {
+  const end =
+    kind === "diverging" && position < 0
+      ? "--eda-heat-negative"
+      : "--eda-heat-high";
+  const strength = Math.round(4 + Math.abs(position) * 28);
+  const color = `color-mix(in oklab, var(${end}) ${strength}%, transparent)`;
+  return `linear-gradient(${color}, ${color})`;
+}
 
 function displayValue(value: datum): string {
   if (value === undefined || value === null || value === "") {
@@ -83,7 +115,16 @@ function cellName(cell: PivotCell, rowHeaders: PivotHeader[]): string {
     .join(" · ");
 }
 
-export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
+export function PivotTable({
+  settings,
+  width,
+  height,
+  facetIds,
+}: PivotTableProps) {
+  // Narrow panels give the grouping columns less room, so values stay in view.
+  const narrow = width > 0 && width < 520;
+  const labelWidth = narrow ? 96 : 140;
+  const valueWidth = narrow ? 76 : 96;
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
@@ -261,7 +302,7 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
         : getFieldName(field, fieldSettings[field])
     } (${aggregation})`;
   const displayPivotCell = (cell: PivotCell) => {
-    if (cell.status !== "ok") return displayCellValue(cell);
+    if (cell.status !== "ok" || cell.value == null) return displayCellValue(cell);
     const units = aggregationUnits(cell.aggregation);
     if (units === "count" && typeof cell.value === "number") {
       return cell.value.toLocaleString("en-US");
@@ -272,18 +313,15 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
         precision: fieldSettings[cell.key.valueField!]?.precision,
       });
     }
-    return hasFieldDisplayFormat(fieldSettings[cell.key.valueField!])
-      ? (formatFieldValue?.(cell.key.valueField!, cell.value) ??
-          displayCellValue(cell))
-      : displayCellValue(cell);
+    return (
+      formatFieldValue?.(cell.key.valueField!, cell.value) ??
+      displayCellValue(cell)
+    );
   };
 
   const selectedCellName = selectedCell
     ? cellName(selectedCell.cell, selectedCell.rowHeaders)
     : "";
-  const valueColumnCount =
-    settings.valueFields.length *
-    (settings.columnField ? pivotData.headers.length : 1);
   const contributorPageSize = 50;
   const contributorCount = selectedCell?.cell.contributors.length ?? 0;
   const contributorPageCount = Math.max(
@@ -297,6 +335,100 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
       contributorStart + contributorPageSize
     ) ?? [];
 
+  const valueCount = settings.valueFields.length;
+  const columnCount = settings.columnField ? pivotData.headers.length : 1;
+  const hasTotalColumn = pivotData.rows.some((row) => row.total);
+  const valueColumnCount =
+    valueCount * columnCount + (hasTotalColumn ? valueCount : 0);
+  const headerRowCount = settings.columnField ? (valueCount > 1 ? 3 : 2) : 1;
+
+  // Each measure gets its own scale, so a count and a median both read.
+  const shading = useMemo(() => {
+    if (settings.shadeCells === false) return [];
+    return settings.valueFields.map((valueField, valueIndex) => {
+      if (!shadable.has(valueField.aggregation)) return undefined;
+      const values = pivotData.rows.flatMap((row) =>
+        row.cells
+          .filter(
+            (cell, index) =>
+              index % valueCount === valueIndex &&
+              cell.status === "ok" &&
+              typeof cell.value === "number" &&
+              Number.isFinite(cell.value)
+          )
+          .map((cell) => cell.value as number)
+      );
+      return values.length > 1 ? planHeatScale(values) : undefined;
+    });
+  }, [pivotData, settings.shadeCells, settings.valueFields, valueCount]);
+
+  const renderCell = (
+    cell: PivotCell,
+    index: number,
+    rowHeaders: PivotHeader[],
+    total?: "row" | "column"
+  ) => {
+    const scale = total ? undefined : shading[index % valueCount];
+    const tint =
+      scale && cell.status === "ok" && typeof cell.value === "number"
+        ? cellTint(scale.position(cell.value), scale.kind)
+        : undefined;
+    const name = cellName(cell, rowHeaders);
+    return (
+      <td
+        key={`${cell.key.isTotal ? "total" : cell.key.columnField}-${categoryKey(cell.key.columnValue)}-${cell.key.valueField}`}
+        className={cn(
+          total && "eda-pivot-total",
+          total === "column" && index === 0 && "eda-pivot-total-start",
+          !total && isCellFiltered(rowHeaders, cell.key) && "is-selected",
+          cell.status !== "ok" && "eda-pivot-note"
+        )}
+        style={tint ? { backgroundImage: tint } : undefined}
+      >
+        <ActionTooltip
+          content={
+            <>
+              {cell.error ?? name}
+              <br />
+              Click to inspect the source rows.
+            </>
+          }
+        >
+          <button
+            type="button"
+            className="eda-pivot-cell"
+            aria-haspopup="dialog"
+            aria-label={`${displayPivotCell(cell)}, inspect ${name}`}
+            onClick={(event) => {
+              lastTrigger.current = event.currentTarget;
+              setSelectedCell({ cell, rowHeaders });
+            }}
+          >
+            {displayPivotCell(cell)}
+          </button>
+        </ActionTooltip>
+      </td>
+    );
+  };
+
+  const valueHeaders = (keyPrefix: string) =>
+    settings.valueFields.map((valueField) => (
+      <th key={`${keyPrefix}-${valueField.field}-${valueField.aggregation}`} scope="col">
+        {valueLabel(valueField.field, valueField.aggregation, valueField.label)}
+      </th>
+    ));
+  const singleValueLabel =
+    valueCount === 1
+      ? valueLabel(
+          settings.valueFields[0]!.field,
+          settings.valueFields[0]!.aggregation,
+          settings.valueFields[0]!.label
+        )
+      : undefined;
+  const totalRowHeaders: PivotHeader[] = [
+    { label: "All rows", field: "", value: null, span: 1, depth: 0 },
+  ];
+
   return (
     <div
       className="w-full min-h-0 overflow-auto"
@@ -307,13 +439,13 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
       <table
         className="eda-pivot-table"
         style={{
-          minWidth: settings.rowFields.length * 140 + valueColumnCount * 112,
+          minWidth: settings.rowFields.length * labelWidth + valueColumnCount * valueWidth,
         }}
       >
         <caption className="sr-only">{getChartSummary(settings)}</caption>
         <colgroup>
           {settings.rowFields.map((field) => (
-            <col key={field} style={{ width: 140 }} />
+            <col key={field} style={{ width: labelWidth }} />
           ))}
           {Array.from({ length: valueColumnCount }, (_, index) => (
             <col key={index} />
@@ -325,102 +457,113 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
               <th
                 key={field}
                 scope="col"
-                rowSpan={settings.columnField ? 2 : 1}
+                rowSpan={headerRowCount}
                 className="eda-pivot-row-label"
-                style={{ left: index * 140, zIndex: 20 - index }}
+                style={{ left: index * labelWidth, zIndex: 20 - index }}
               >
                 {getFieldLabel?.(field) ?? field}
               </th>
             ))}
-            {settings.columnField
-              ? pivotData.headers.map((header) => (
+            {settings.columnField ? (
+              <>
+                {/* The column field names the values below it, as an axis title. */}
+                <th
+                  scope="colgroup"
+                  colSpan={valueCount * columnCount}
+                  className="eda-pivot-column-field"
+                >
+                  <span className="eda-pivot-column-name">
+                    {getFieldLabel?.(settings.columnField) ??
+                      settings.columnField}
+                  </span>
+                  {singleValueLabel && (
+                    <span className="eda-pivot-measure">
+                      {singleValueLabel}
+                    </span>
+                  )}
+                </th>
+                {hasTotalColumn && (
                   <th
-                    key={`${header.field}-${categoryKey(header.value)}`}
                     scope="colgroup"
-                    colSpan={settings.valueFields.length}
+                    colSpan={valueCount}
+                    rowSpan={2}
+                    className="eda-pivot-total-head"
                   >
-                    {filterButton(header)}
+                    Total
                   </th>
-                ))
-              : settings.valueFields.map((valueField) => (
-                  <th key={valueField.field} scope="col">
-                    {valueLabel(
-                      valueField.field,
-                      valueField.aggregation,
-                      valueField.label
-                    )}
-                  </th>
-                ))}
+                )}
+              </>
+            ) : (
+              valueHeaders("value")
+            )}
           </tr>
           {settings.columnField && (
             <tr>
-              {pivotData.headers.flatMap((header) =>
-                settings.valueFields.map((valueField) => (
-                  <th
-                    key={`${header.field}-${categoryKey(header.value)}-${valueField.field}`}
-                    scope="col"
-                  >
-                    {valueLabel(
-                      valueField.field,
-                      valueField.aggregation,
-                      valueField.label
-                    )}
-                  </th>
-                ))
-              )}
-            </tr>
-          )}
-        </thead>
-        <tbody>
-          {pivotData.rows.map((row: PivotRow) => (
-            <tr
-              key={JSON.stringify(
-                row.keys.map((key) => [key.field, categoryKey(key.value)])
-              )}
-            >
-              {row.headers.map((header, index) => (
+              {pivotData.headers.map((header) => (
                 <th
                   key={`${header.field}-${categoryKey(header.value)}`}
-                  scope="row"
-                  className="eda-pivot-row-label"
-                  style={{ left: index * 140, zIndex: 10 - index }}
+                  scope={valueCount > 1 ? "colgroup" : "col"}
+                  colSpan={valueCount}
                 >
                   {filterButton(header)}
                 </th>
               ))}
-              {row.cells.map((cell: PivotCell) => (
-                <td
-                  key={`${cell.key.isTotal ? "total" : cell.key.columnField}-${categoryKey(cell.key.columnValue)}-${cell.key.valueField}`}
-                  className={cn(
-                    isCellFiltered(row.headers, cell.key) && "is-selected"
-                  )}
-                >
-                  <ActionTooltip
-                    content={
-                      <>
-                        {cell.error ?? cellName(cell, row.headers)}
-                        <br />
-                        Click to inspect the source rows.
-                      </>
-                    }
-                  >
-                    <button
-                      type="button"
-                      className="eda-pivot-cell"
-                      aria-haspopup="dialog"
-                      aria-label={`${displayPivotCell(cell)}, inspect ${cellName(cell, row.headers)}`}
-                      onClick={(event) => {
-                        lastTrigger.current = event.currentTarget;
-                        setSelectedCell({ cell, rowHeaders: row.headers });
-                      }}
-                    >
-                      {displayPivotCell(cell)}
-                    </button>
-                  </ActionTooltip>
-                </td>
-              ))}
             </tr>
-          ))}
+          )}
+          {settings.columnField && valueCount > 1 && (
+            <tr>
+              {pivotData.headers.flatMap((header) =>
+                valueHeaders(`${header.field}-${categoryKey(header.value)}`)
+              )}
+              {hasTotalColumn && valueHeaders("total")}
+            </tr>
+          )}
+        </thead>
+        <tbody>
+          {pivotData.rows.map((row: PivotRow, rowIndex) => {
+            const previous = pivotData.rows[rowIndex - 1];
+            // Outer group values print once, at the top of their group.
+            const repeats = row.keys.map(
+              (_, index) =>
+                index < row.keys.length - 1 &&
+                previous !== undefined &&
+                row.keys
+                  .slice(0, index + 1)
+                  .every((key, at) =>
+                    categoryEqual(key.value, previous.keys[at]!.value)
+                  )
+            );
+            const groupStart =
+              row.keys.length > 1 && rowIndex > 0 && !repeats[0];
+            return (
+              <tr
+                key={JSON.stringify(
+                  row.keys.map((key) => [key.field, categoryKey(key.value)])
+                )}
+                className={cn(groupStart && "eda-pivot-group-start")}
+              >
+                {row.headers.map((header, index) => (
+                  <th
+                    key={`${header.field}-${categoryKey(header.value)}`}
+                    scope="row"
+                    className={cn(
+                      "eda-pivot-row-label",
+                      repeats[index] && "is-repeat"
+                    )}
+                    style={{ left: index * labelWidth, zIndex: 10 - index }}
+                  >
+                    {filterButton(header)}
+                  </th>
+                ))}
+                {row.cells.map((cell, index) =>
+                  renderCell(cell, index, row.headers)
+                )}
+                {row.total?.map((cell, index) =>
+                  renderCell(cell, index, row.headers, "column")
+                )}
+              </tr>
+            );
+          })}
           {pivotData.rows.length === 0 && (
             <tr>
               <td
@@ -432,6 +575,28 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
             </tr>
           )}
         </tbody>
+        {pivotData.totals && (
+          <tfoot>
+            <tr>
+              {settings.rowFields.length > 0 && (
+                <th
+                  scope="row"
+                  colSpan={settings.rowFields.length}
+                  className="eda-pivot-row-label"
+                  style={{ left: 0 }}
+                >
+                  Total
+                </th>
+              )}
+              {pivotData.totals.cells.map((cell, index) =>
+                renderCell(cell, index, totalRowHeaders, "row")
+              )}
+              {pivotData.totals.total?.map((cell, index) =>
+                renderCell(cell, index, totalRowHeaders, "column")
+              )}
+            </tr>
+          </tfoot>
+        )}
       </table>
 
       <Dialog
@@ -461,6 +626,14 @@ export function PivotTable({ settings, height, facetIds }: PivotTableProps) {
                 <div>
                   <div className="text-muted-foreground">Result</div>
                   <div>{displayPivotCell(selectedCell.cell)}</div>
+                  {selectedCell.cell.status === "ok" &&
+                    typeof selectedCell.cell.value === "number" &&
+                    displayPivotCell(selectedCell.cell) !==
+                      String(selectedCell.cell.value) && (
+                      <div className="text-xs text-muted-foreground tabular-nums">
+                        Exact {String(selectedCell.cell.value)}
+                      </div>
+                    )}
                 </div>
                 <div>
                   <div className="text-muted-foreground">Contributors</div>

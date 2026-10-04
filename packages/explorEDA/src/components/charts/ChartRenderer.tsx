@@ -9,6 +9,7 @@ interface ChartRendererProps {
   height: number;
   facetIds?: IdType[];
   toolbarTarget?: HTMLElement | null;
+  onSettingsChange?: (settings: Partial<ChartSettings>) => void;
 }
 
 export function ChartRenderer({
@@ -17,6 +18,7 @@ export function ChartRenderer({
   height,
   facetIds,
   toolbarTarget,
+  onSettingsChange,
 }: ChartRendererProps) {
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
   const definition = useChartDefinition(settings.type);
@@ -56,6 +58,7 @@ export function ChartRenderer({
       height={height}
       facetIds={facetIds}
       toolbarTarget={toolbarTarget}
+      onSettingsChange={onSettingsChange}
     />
   );
 }

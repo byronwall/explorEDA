@@ -88,7 +88,8 @@ export function FieldSelector({
           variant="ghost"
           size="icon"
           className="h-8 w-8"
-          aria-label={`Clear ${label}`}
+          aria-label={`Clear ${label || placeholder}`}
+          tooltip={`Clear ${label || placeholder}`}
           onClick={() => onChange("")}
         >
           <X className="h-4 w-4" />

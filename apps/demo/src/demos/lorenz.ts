@@ -127,9 +127,9 @@ export const demoSettings: SavedDataStructure = {
       filters: [],
       zField: "Z",
       cameraPosition: {
-        x: -4.331613307291414,
-        y: 18.460295875011493,
-        z: -18.640629992563348,
+        x: -5.5,
+        y: 23.6,
+        z: -23.8,
       },
       cameraTarget: { x: 0, y: 0, z: 0 },
       pointSize: 0.4,

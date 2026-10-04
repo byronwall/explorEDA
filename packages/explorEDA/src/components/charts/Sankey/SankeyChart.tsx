@@ -1,6 +1,11 @@
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import {
+  ChartStatusLine,
+  STATUS_HINT_MIN_WIDTH,
+} from "../ChartStatusLine";
+import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
+import {
   useCallback,
   useId,
   useMemo,
@@ -15,6 +20,7 @@ import {
   useTraceSource,
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
+import { ChartReadout } from "../ChartReadout";
 import { useGetColumnData } from "../useGetColumnData";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import type { SankeySettings } from "./definition";
@@ -54,62 +60,47 @@ function Readout({
   format: (value: number) => string;
 }) {
   const { node, link } = item;
+  const items: [string, string][] = [];
+  if (node) {
+    items.push(
+      [plan.stages[node.stage]!.label, node.label],
+      [plan.metricLabel, format(node.weight)],
+      ["Share of flow", percent(node.weight, plan.totalWeight)]
+    );
+    if (plan.hasSelection) {
+      items.push([
+        "Selected",
+        `${format(node.selectedWeight)} (${percent(node.selectedWeight, node.weight)})`,
+      ]);
+    }
+    if (node.kind === "other") {
+      items.push(["Groups", `${node.members.length} values`]);
+    }
+  }
+  if (link) {
+    items.push(
+      [plan.stages[link.source.stage]!.label, link.source.label],
+      [plan.stages[link.target.stage]!.label, link.target.label],
+      [plan.metricLabel, format(link.weight)],
+      [`Of ${link.source.label}`, percent(link.weight, link.source.outWeight)],
+      [`Of ${link.target.label}`, percent(link.weight, link.target.inWeight)]
+    );
+    if (plan.hasSelection) {
+      items.push([
+        "Selected",
+        `${format(link.selectedWeight)} (${percent(link.selectedWeight, link.weight)})`,
+      ]);
+    }
+  }
   return (
-    <div
-      className="pointer-events-none absolute right-2 z-10 max-w-[min(18rem,80%)] rounded border border-border bg-card/95 px-2 py-1 text-xs text-card-foreground shadow-sm"
-      style={{ top: plan.margin.top }}
-      role="status"
-    >
-      {node && (
-        <>
-          <div className="font-medium">
-            {plan.stages[node.stage]!.label}: {node.label}
-          </div>
-          <div>
-            {format(node.weight)} {unitFor(plan, node.weight)} ·{" "}
-            {percent(node.weight, plan.totalWeight)} of all flow
-          </div>
-          {plan.hasSelection && (
-            <div>
-              Selected: {format(node.selectedWeight)} (
-              {percent(node.selectedWeight, node.weight)})
-            </div>
-          )}
-          {node.kind === "other" && (
-            <div className="text-muted-foreground">
-              {node.members.length} smaller values grouped together
-            </div>
-          )}
-          <div className="text-muted-foreground">
-            Click to select · Shift-click to add · Alt-click to inspect
-          </div>
-        </>
-      )}
-      {link && (
-        <>
-          <div className="font-medium">
-            {link.source.label} → {link.target.label}
-          </div>
-          <div>
-            {format(link.weight)} {unitFor(plan, link.weight)}
-          </div>
-          <div className="text-muted-foreground">
-            {percent(link.weight, link.source.outWeight)} of {link.source.label}{" "}
-            · {percent(link.weight, link.target.inWeight)} of{" "}
-            {link.target.label}
-          </div>
-          {plan.hasSelection && (
-            <div>
-              Selected: {format(link.selectedWeight)} (
-              {percent(link.selectedWeight, link.weight)})
-            </div>
-          )}
-          <div className="text-muted-foreground">
-            Click to select this pair · Alt-click to inspect
-          </div>
-        </>
-      )}
-    </div>
+    <ChartReadout fallbackClassName="eda-chart-readout-inline">
+      {items.map(([name, value]) => (
+        <span key={name} className="eda-readout-item">
+          <span>{name}</span>
+          <b>{value}</b>
+        </span>
+      ))}
+    </ChartReadout>
   );
 }
 
@@ -216,24 +207,18 @@ export function SankeyChart({
 
   if (settings.stages.filter(Boolean).length < 2) {
     return (
-      <div
-        className="flex items-center justify-center p-4 text-center text-sm text-muted-foreground"
-        style={{ width, height }}
-      >
+      <ChartMessage width={width} height={height}>
         Choose at least two category fields for the stages in chart settings.
-      </div>
+      </ChartMessage>
     );
   }
   if (plan.drawnRows === 0) {
     return (
-      <div
-        className="flex items-center justify-center p-4 text-center text-sm text-muted-foreground"
-        style={{ width, height }}
-      >
+      <ChartMessage width={width} height={height}>
         {plan.liveCount > 0
           ? "Every row is missing at least one stage. Show missing values as a node in chart settings."
-          : "No rows match the current filters"}
-      </div>
+          : NO_MATCHING_ROWS}
+      </ChartMessage>
     );
   }
 
@@ -340,7 +325,11 @@ export function SankeyChart({
       (item) =>
         `${item.count.toLocaleString()} rows left out: ${item.reason.toLowerCase()}`
     ),
-  ].filter(Boolean);
+    !plan.hasSelection &&
+      !facetIds &&
+      width >= STATUS_HINT_MIN_WIDTH &&
+      "Click a value or flow to select",
+  ];
 
   return (
     <div
@@ -350,8 +339,8 @@ export function SankeyChart({
     >
       <svg width={width} height={height} className="block overflow-visible">
         <g
-          className="fill-muted-foreground"
-          fontSize={11}
+          className="fill-foreground"
+          fontSize={12}
           fontWeight={600}
           aria-hidden="true"
         >
@@ -374,7 +363,7 @@ export function SankeyChart({
               <text
                 key={stage.field}
                 x={x}
-                y={plan.margin.top - 9}
+                y={plan.margin.top - 8}
                 textAnchor={anchor}
               >
                 {stage.label}
@@ -390,12 +379,12 @@ export function SankeyChart({
               const emphasis = linkEmphasis(link);
               const isTraced = traced === link.id;
               const baseOpacity = plan.hasSelection
-                ? 0.16
+                ? "var(--eda-flow-context)"
                 : emphasis === true
-                  ? 0.8
+                  ? "var(--eda-flow-strong)"
                   : emphasis === false
-                    ? 0.2
-                    : 0.48;
+                    ? "var(--eda-flow-faint)"
+                    : "var(--eda-flow)";
               return (
                 <g key={link.id} data-plan-id={link.id}>
                   {link.segments.map((segment) => (
@@ -409,7 +398,7 @@ export function SankeyChart({
                         segment.thickness
                       )}
                       fill={segment.color}
-                      fillOpacity={baseOpacity}
+                      style={{ fillOpacity: baseOpacity }}
                       pointerEvents="none"
                     />
                   ))}
@@ -426,7 +415,12 @@ export function SankeyChart({
                             segment.selectedWeight * plan.scale
                           )}
                           fill={segment.color}
-                          fillOpacity={emphasis === false ? 0.45 : 0.82}
+                          style={{
+                            fillOpacity:
+                              emphasis === false
+                                ? "var(--eda-flow)"
+                                : "var(--eda-flow-strong)",
+                          }}
                           pointerEvents="none"
                         />
                       ) : null
@@ -502,6 +496,8 @@ export function SankeyChart({
                 node.label.length > maxChars
                   ? `${node.label.slice(0, maxChars - 1)}…`
                   : node.label;
+              const labelWidth =
+                (text.length + valueText.length + 1) * LABEL_CHAR;
               return (
                 <g key={node.id} data-plan-id={node.id}>
                   <rect
@@ -534,7 +530,10 @@ export function SankeyChart({
                     rx={3}
                     fill="transparent"
                     stroke={
-                      isTraced || node.selected || focused === node.id
+                      isTraced ||
+                      node.selected ||
+                      focused === node.id ||
+                      hovered === node.id
                         ? "var(--foreground)"
                         : "none"
                     }
@@ -573,30 +572,60 @@ export function SankeyChart({
                     }
                   />
                   {node.height >= 9 && (
-                    <text
-                      x={labelLeft ? node.x - 6 : node.x + node.width + 6}
-                      y={node.y + node.height / 2}
-                      textAnchor={labelLeft ? "end" : "start"}
-                      dominantBaseline="central"
-                      fontSize={11}
-                      className="fill-foreground"
-                      paintOrder="stroke"
-                      stroke="var(--background)"
-                      strokeWidth={3}
-                      strokeLinejoin="round"
-                      pointerEvents="none"
+                    <g
+                      className="eda-sankey-label"
                       aria-hidden="true"
-                      opacity={
-                        plan.hasSelection && !node.selectedWeight ? 0.55 : 1
+                      onPointerEnter={() => setHovered(node.id)}
+                      onPointerLeave={() =>
+                        setHovered((id) => (id === node.id ? null : id))
                       }
+                      onClick={(event) => {
+                        if (event.altKey) {
+                          inspect("sankey-node", node.id);
+                        } else {
+                          selectNode(
+                            node,
+                            event.shiftKey || event.metaKey || event.ctrlKey
+                          );
+                        }
+                      }}
                     >
-                      <tspan fontWeight={node.selected ? 700 : 500}>
-                        {text}
-                      </tspan>
-                      <tspan dx={5} className="fill-muted-foreground">
-                        {valueText}
-                      </tspan>
-                    </text>
+                      {/* Covers the gaps between letters, so a click on the
+                          label never lands on the flow beneath it. */}
+                      <rect
+                        x={
+                          labelLeft
+                            ? node.x - 6 - labelWidth
+                            : node.x + node.width + 6
+                        }
+                        y={node.y + node.height / 2 - 8}
+                        width={labelWidth}
+                        height={16}
+                        fill="transparent"
+                      />
+                      <text
+                        x={labelLeft ? node.x - 6 : node.x + node.width + 6}
+                        y={node.y + node.height / 2}
+                        textAnchor={labelLeft ? "end" : "start"}
+                        dominantBaseline="central"
+                        fontSize={11}
+                        className="fill-foreground"
+                        paintOrder="stroke"
+                        stroke="var(--background)"
+                        strokeWidth={3}
+                        strokeLinejoin="round"
+                        opacity={
+                          plan.hasSelection && !node.selectedWeight ? 0.55 : 1
+                        }
+                      >
+                        <tspan fontWeight={node.selected ? 700 : 500}>
+                          {text}
+                        </tspan>
+                        <tspan dx={5} className="fill-muted-foreground">
+                          {valueText}
+                        </tspan>
+                      </text>
+                    </g>
                   )}
                 </g>
               );
@@ -604,17 +633,12 @@ export function SankeyChart({
           </g>
         </g>
       </svg>
-      <div
-        className="pointer-events-none absolute truncate text-xs text-muted-foreground"
-        style={{
-          left: settings.margin.left,
-          right: settings.margin.right,
-          bottom: settings.margin.bottom,
-        }}
-        role="status"
-      >
-        {statusParts.join(" · ")}
-      </div>
+      <ChartStatusLine
+        parts={statusParts}
+        left={settings.margin.left}
+        right={settings.margin.right}
+        bottom={settings.margin.bottom}
+      />
       {(hoveredNode || hoveredLink) && (
         <Readout
           plan={plan}

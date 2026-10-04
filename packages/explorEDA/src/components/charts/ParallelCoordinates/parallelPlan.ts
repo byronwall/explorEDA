@@ -511,6 +511,39 @@ export function withAxisFilter(
   return next ? [...rest, next] : rest;
 }
 
+/**
+ * Selects one value on a categorical axis, or clears the axis when that value
+ * is already its whole selection. With `add`, toggles the value within the
+ * axis's selection.
+ */
+export function toggleAxisCategory(
+  filters: Filter[],
+  axis: ParallelAxis,
+  category: ParallelCategory,
+  add = false
+): Filter[] {
+  const current = axis.categories.filter((item) => item.selected);
+  const isOnly = current.length === 1 && current[0]!.key === category.key;
+  const next = add
+    ? category.selected
+      ? current.filter((item) => item.key !== category.key)
+      : [...current, category]
+    : isOnly
+      ? []
+      : [category];
+  return withAxisFilter(
+    filters,
+    axis.field,
+    next.length
+      ? {
+          type: "value",
+          field: axis.field,
+          values: next.map((item) => item.value),
+        }
+      : undefined
+  );
+}
+
 /** Moves one axis to a new index; the selection and other axes stay as they are. */
 export function moveAxis<T>(axes: T[], from: number, to: number): T[] {
   const target = Math.max(0, Math.min(axes.length - 1, to));

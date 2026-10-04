@@ -1,7 +1,15 @@
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
-import { interpolateBlues, interpolateRdBu } from "d3-scale-chromatic";
+import {
+  ChartStatusLine,
+  STATUS_HINT_MIN_WIDTH,
+  STATUS_LINE_HEIGHT,
+} from "../ChartStatusLine";
+import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
+import { formatFieldValue as formatValue } from "@/lib/fieldSettings";
 import { useCallback, useId, useMemo, useRef, useState } from "react";
+import { ChartReadout } from "../ChartReadout";
+import { HeatLegend } from "../HeatLegend";
 import {
   useChartTrace,
   useChartTraceApi,
@@ -15,7 +23,9 @@ import type { HeatmapSettings } from "./definition";
 import {
   LEGEND_HEIGHT,
   planHeatmap,
+  toggleAxisFilters,
   toggleCellFilters,
+  type HeatmapCategory,
   type HeatmapCell,
   type HeatmapPlan,
 } from "./heatmapPlan";
@@ -30,131 +40,42 @@ const truncate = (text: string, width: number) => {
   return text.length > max ? `${text.slice(0, Math.max(1, max - 1))}…` : text;
 };
 
-function Legend({ plan, gradientId }: { plan: HeatmapPlan; gradientId: string }) {
-  const [low, high] = plan.scale.domain;
-  const stops = Array.from({ length: 9 }, (_, index) => index / 8);
-  const span = Math.max(Math.abs(low), Math.abs(high)) || 1;
-  const color = (t: number) =>
-    plan.scale.kind === "diverging"
-      ? interpolateRdBu(0.5 + (-span + t * 2 * span) / (2 * span))
-      : interpolateBlues(0.12 + t * 0.8);
-  const format = (value: number) =>
-    value.toLocaleString("en-US", { maximumFractionDigits: 2 });
-  const lowLabel = format(plan.scale.kind === "diverging" ? -span : low);
-  const highLabel = format(plan.scale.kind === "diverging" ? span : high);
-  const barWidth = Math.min(120, Math.max(60, plan.width * 0.25));
-  const scaleWidth = (lowLabel.length + highLabel.length) * 6.5 + barWidth + 12;
-  // Start over the cells, or further left when the scale would not fit there.
-  const left = Math.max(
-    8,
-    Math.min(plan.margin.left, plan.width - plan.margin.right - scaleWidth)
-  );
-  const room = plan.width - plan.margin.right - left;
-  let x = 0;
+/** The hovered cell's values, one line in the panel header. */
+function Readout({ cell, plan }: { cell: HeatmapCell; plan: HeatmapPlan }) {
+  const excluded = cell.contributors.filter((item) => !item.included).length;
+  const items: [string, string][] = [
+    [plan.rowFieldLabel, cell.row.label],
+    [plan.columnFieldLabel, cell.column.label],
+    [plan.metricLabel, cell.valueText],
+  ];
+  if (cell.rowCount > 0) {
+    items.push([
+      "Rows",
+      `${cell.rowCount.toLocaleString()}${excluded ? ` (${excluded.toLocaleString()} without a value)` : ""}`,
+    ]);
+  }
+  if (cell.share !== undefined) {
+    items.push([plan.shareLabel, formatShare(cell.share)]);
+  }
   return (
-    <g
-      transform={`translate(${left},${plan.margin.top - LEGEND_HEIGHT + 6})`}
-      className="fill-muted-foreground"
-      fontSize={11}
-      aria-hidden="true"
-    >
-      <defs>
-        <linearGradient id={gradientId}>
-          {stops.map((t) => (
-            <stop key={t} offset={`${t * 100}%`} stopColor={color(t)} />
-          ))}
-        </linearGradient>
-      </defs>
-      <text x={x} y={10}>
-        {lowLabel}
-      </text>
-      {(() => {
-        x += lowLabel.length * 6.5 + 6;
-        const bar = (
-          <rect
-            x={x}
-            y={1}
-            width={barWidth}
-            height={11}
-            rx={2}
-            fill={`url(#${gradientId})`}
-          />
-        );
-        x += barWidth + 6;
-        return bar;
-      })()}
-      <text x={x} y={10}>
-        {highLabel}
-      </text>
-      {(() => {
-        x += highLabel.length * 6.5 + 14;
-        const items = [];
-        if (plan.hasEmpty && x + 70 < room) {
-          items.push(
-            <g key="empty" transform={`translate(${x},0)`}>
-              <rect
-                x={0.5}
-                y={1.5}
-                width={11}
-                height={10}
-                fill="none"
-                stroke="var(--border)"
-                strokeDasharray="2 2"
-              />
-              <text x={16} y={10}>
-                No rows
-              </text>
-            </g>
-          );
-          x += 70;
-        }
-        if (plan.hasInvalid && x + 110 < room) {
-          items.push(
-            <g key="invalid" transform={`translate(${x},0)`}>
-              <rect
-                x={0.5}
-                y={1.5}
-                width={11}
-                height={10}
-                fill={`url(#${gradientId}-hatch)`}
-                stroke="var(--border)"
-              />
-              <text x={16} y={10}>
-                No valid values
-              </text>
-            </g>
-          );
-        }
-        return items;
-      })()}
-    </g>
+    <ChartReadout fallbackClassName="eda-chart-readout-inline">
+      {items.map(([name, value]) => (
+        <span key={name} className="eda-readout-item">
+          <span>{name}</span>
+          <b>{value}</b>
+        </span>
+      ))}
+    </ChartReadout>
   );
 }
 
-function Readout({ cell, plan }: { cell: HeatmapCell; plan: HeatmapPlan }) {
-  const excluded = cell.contributors.filter((item) => !item.included).length;
-  return (
-    <div
-      className="pointer-events-none absolute right-2 top-2 max-w-[min(18rem,80%)] rounded border border-border bg-card/95 px-2 py-1 text-xs text-card-foreground shadow-sm"
-      role="status"
-    >
-      <div>
-        {plan.rowFieldLabel}: {cell.row.label} · {plan.columnFieldLabel}:{" "}
-        {cell.column.label}
-      </div>
-      <div>
-        {plan.metricLabel}: {cell.valueText}
-        {cell.rowCount > 0 &&
-          ` · ${cell.rowCount.toLocaleString()} rows${excluded ? `, ${excluded} without a valid value` : ""}`}
-      </div>
-      {cell.state !== "empty" && (
-        <div className="text-muted-foreground">
-          Click to select · Alt-click to inspect
-        </div>
-      )}
-    </div>
-  );
-}
+const formatShare = (share: number) =>
+  share > 0 && share < 0.001
+    ? "<0.1%"
+    : share.toLocaleString("en-US", {
+        style: "percent",
+        maximumFractionDigits: share < 0.1 ? 1 : 0,
+      });
 
 export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<HeatmapSettings>) {
   const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
@@ -165,14 +86,14 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
   const allIds = useGetAllIds();
   const rowData = useGetColumnData(settings.field);
   const columnData = useGetColumnData(settings.columnField);
-  const measureData = useGetColumnData(
-    settings.aggregation === "count" ? undefined : settings.measureField
-  );
+  const measureField =
+    settings.aggregation === "count" ? undefined : settings.measureField;
+  const measureData = useGetColumnData(measureField);
   const revision = useTraceRevision(settings);
   const trace = useChartTrace();
   const traceApi = useChartTraceApi();
   const owner = useId();
-  const gradientId = `${useId().replace(/:/g, "")}-heat`;
+  const hatchId = `${useId().replace(/:/g, "")}-hatch`;
   const [hovered, setHovered] = useState<string | null>(null);
   const [focused, setFocused] = useState<string | null>(null);
   const cellRefs = useRef(new Map<string, SVGRectElement>());
@@ -213,19 +134,27 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
     if (cell.state === "empty") {return;}
     updateChart(settings.id, { filters: toggleCellFilters(settings, plan, cell) });
   };
+  const selectAxis = (axis: "row" | "column", category: HeatmapCategory) =>
+    updateChart(settings.id, {
+      filters: toggleAxisFilters(settings, plan, axis, category),
+    });
+  const formatLegend = (value: number) =>
+    measureField
+      ? formatValue(measureField, value, fieldSettings[measureField], { compact: true })
+      : formatValue("", value, {}, { compact: true });
 
   if (!settings.field || !settings.columnField || settings.field === settings.columnField) {
     return (
-      <div className="flex items-center justify-center p-4 text-center text-sm text-muted-foreground" style={{ width, height }}>
+      <ChartMessage width={width} height={height}>
         Choose two different fields for the rows and columns in chart settings.
-      </div>
+      </ChartMessage>
     );
   }
   if (plan.rows.length === 0 || plan.columns.length === 0) {
     return (
-      <div className="flex items-center justify-center text-sm text-muted-foreground" style={{ width, height }}>
-        No rows to display
-      </div>
+      <ChartMessage width={width} height={height}>
+        {allIds.length > 0 ? NO_MATCHING_ROWS : "No rows to show."}
+      </ChartMessage>
     );
   }
 
@@ -249,37 +178,126 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
     setHovered(id);
     cellRefs.current.get(id)?.focus();
   };
+  const singleSelection = plan.cells.filter((cell) => cell.selected).length === 1;
   const hoveredCell = plan.cells.find((cell) => cell.id === hovered);
   const omittedText = [
     plan.omitted.rows > 0 && `${plan.rows.length} of ${plan.rows.length + plan.omitted.rows} ${plan.rowFieldLabel}`,
     plan.omitted.columns > 0 && `${plan.columns.length} of ${plan.columns.length + plan.omitted.columns} ${plan.columnFieldLabel}`,
   ].filter(Boolean);
+  const rowsIn = (cells: HeatmapCell[]) =>
+    cells.reduce((total, cell) => total + cell.rowCount, 0);
+  const selectedCells = plan.cells.filter((cell) => cell.selected);
+  const { rows: selectedRowKeys, columns: selectedColumnKeys } = plan.selectedKeys;
+  const listNames = (names: string[]) =>
+    names.length > 3
+      ? `${names.slice(0, 3).join(", ")} and ${names.length - 3} more`
+      : names.join(", ");
+  const selectionText =
+    selectedCells.length === 0
+      ? ""
+      : selectedRowKeys && !selectedColumnKeys
+        ? listNames(plan.rows.filter((row) => selectedRowKeys.has(row.key)).map((row) => row.label))
+        : selectedColumnKeys && !selectedRowKeys
+          ? listNames(plan.columns.filter((column) => selectedColumnKeys.has(column.key)).map((column) => column.label))
+          : selectedCells.length === 1
+            ? `${selectedCells[0]!.row.label}, ${selectedCells[0]!.column.label}`
+            : `${selectedCells.length} cells`;
+  const statusParts = [
+    // Counts lead, so a narrow chart that cuts the line keeps them.
+    selectionText &&
+      `${rowsIn(selectedCells).toLocaleString()} of ${rowsIn(plan.cells).toLocaleString()} rows selected: ${selectionText}`,
+    !selectionText &&
+      !facetIds &&
+      width >= STATUS_HINT_MIN_WIDTH &&
+      "Click a cell or label to select · Alt-click to inspect",
+  ];
+  const bandTop = plan.margin.top - LEGEND_HEIGHT;
+  // The column labels end 16px above the bottom margin; their field name fills that gap.
+  const columnTitleTop = height - settings.margin.bottom - 16 - STATUS_LINE_HEIGHT;
 
   return (
     <div className="relative" style={{ width, height }}>
+      {/* Field names title the axes; the legend names the metric. */}
+      <div
+        className="absolute flex items-center gap-3"
+        style={{ top: bandTop, left: 8, right: plan.margin.right, height: LEGEND_HEIGHT - 6 }}
+      >
+        <span
+          className="eda-heat-axis-title flex-none text-right"
+          style={{ width: plan.margin.left - 16 }}
+        >
+          {plan.rowFieldLabel}
+        </span>
+        <HeatLegend
+          scale={plan.scale}
+          metricLabel={plan.metricLabel}
+          format={formatLegend}
+          hasEmpty={plan.hasEmpty}
+          hasInvalid={plan.hasInvalid}
+        />
+        {omittedText.length > 0 && (
+          <span className="min-w-0 max-w-[40%] flex-none truncate text-[11px] text-muted-foreground">
+            Top {omittedText.join(" · ")}
+          </span>
+        )}
+      </div>
+      <span
+        className="eda-heat-axis-title absolute text-center"
+        style={{ top: columnTitleTop, left: plan.margin.left, width: plan.plotWidth }}
+      >
+        {plan.columnFieldLabel}
+      </span>
       <svg width={width} height={height} className="block select-none overflow-visible">
         <defs>
-          <pattern id={`${gradientId}-hatch`} width={6} height={6} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <pattern id={hatchId} width={6} height={6} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
             <line x1={0} y1={0} x2={0} y2={6} stroke="var(--muted-foreground)" strokeWidth={1.2} opacity={0.55} />
           </pattern>
         </defs>
-        <Legend plan={plan} gradientId={gradientId} />
         <g transform={`translate(${plan.margin.left},${plan.margin.top})`}>
+          {/* A click on a label selects its whole row or column. */}
           <g className="fill-muted-foreground" fontSize={11} aria-hidden="true">
             {plan.rows.map((row) => (
-              <text key={row.key} x={-8} y={row.position + plan.cellHeight / 2} textAnchor="end" dominantBaseline="middle">
+              <text
+                key={row.key}
+                className="eda-heat-label"
+                data-selected={plan.selectedKeys.rows?.has(row.key) && !plan.selectedKeys.columns}
+                x={-8}
+                y={row.position + plan.cellHeight / 2}
+                textAnchor="end"
+                dominantBaseline="middle"
+                onClick={() => selectAxis("row", row)}
+              >
                 {truncate(row.label, plan.margin.left - 12)}
               </text>
             ))}
             {plan.columns.map((column) => {
               const x = column.position + plan.cellWidth / 2;
               const y = plan.plotHeight + 14;
+              const selected =
+                plan.selectedKeys.columns?.has(column.key) && !plan.selectedKeys.rows;
               return plan.rotateColumnLabels ? (
-                <text key={column.key} x={x} y={y} textAnchor="end" transform={`rotate(-40 ${x} ${y})`}>
+                <text
+                  key={column.key}
+                  className="eda-heat-label"
+                  data-selected={selected}
+                  x={x}
+                  y={y}
+                  textAnchor="end"
+                  transform={`rotate(-40 ${x} ${y})`}
+                  onClick={() => selectAxis("column", column)}
+                >
                   {truncate(column.label, 140)}
                 </text>
               ) : (
-                <text key={column.key} x={x} y={y} textAnchor="middle">
+                <text
+                  key={column.key}
+                  className="eda-heat-label"
+                  data-selected={selected}
+                  x={x}
+                  y={y}
+                  textAnchor="middle"
+                  onClick={() => selectAxis("column", column)}
+                >
                   {column.label}
                 </text>
               );
@@ -287,8 +305,10 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
           </g>
           <g role="group" aria-label={`${plan.metricLabel} by ${plan.rowFieldLabel} and ${plan.columnFieldLabel}`}>
             {plan.cells.map((cell, index) => {
-              const isTraced = traced === cell.id;
+              // One selected cell is outlined; a larger selection reads from the dimming.
+              const active = traced === cell.id || (cell.selected && singleSelection);
               const dimmed = cell.selected === false;
+              const isHovered = hovered === cell.id;
               return (
                 <g key={cell.id}>
                   <rect
@@ -307,16 +327,17 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
                     aria-label={`${cell.row.label}, ${cell.column.label}: ${cell.valueText}`}
                     aria-pressed={cell.selected === true}
                     aria-disabled={cell.state === "empty" || undefined}
-                    className={`chart-mark ${cell.state === "empty" ? "" : "cursor-pointer"}`}
-                    fill={cell.state === "invalid" ? `url(#${gradientId}-hatch)` : cell.fill}
-                    stroke={
-                      isTraced || cell.selected
-                        ? "var(--foreground)"
-                        : cell.state === "value" ? "none" : "var(--border)"
-                    }
-                    strokeWidth={isTraced || cell.selected ? 2 : 1}
-                    strokeDasharray={cell.state === "empty" && !cell.selected ? "3 3" : undefined}
-                    opacity={dimmed ? 0.3 : 1}
+                    className={`chart-mark eda-heat-cell ${cell.state === "empty" ? "" : "cursor-pointer"}`}
+                    style={{
+                      fill: cell.state === "invalid" ? `url(#${hatchId})` : cell.fill,
+                      stroke:
+                        active || (isHovered && cell.state !== "empty")
+                          ? "var(--foreground)"
+                          : cell.state === "value" ? "none" : "var(--border)",
+                    }}
+                    strokeWidth={active ? 2 : isHovered ? 1.5 : 1}
+                    strokeDasharray={cell.state === "empty" && !active ? "3 3" : undefined}
+                    opacity={dimmed && !isHovered ? 0.3 : 1}
                     onPointerEnter={() => setHovered(cell.id)}
                     onPointerLeave={() => setHovered((id) => (id === cell.id ? null : id))}
                     onFocus={() => {
@@ -347,7 +368,7 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
                       textAnchor="middle"
                       dominantBaseline="central"
                       fontSize={11}
-                      fill={cell.textFill}
+                      style={{ fill: cell.textFill, fontVariantNumeric: "tabular-nums" }}
                       opacity={dimmed ? 0.4 : 1}
                       pointerEvents="none"
                       aria-hidden="true"
@@ -360,13 +381,13 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
             })}
           </g>
         </g>
-        {omittedText.length > 0 && (
-          <text x={width - plan.margin.right} y={height - 4} textAnchor="end" fontSize={11} className="fill-muted-foreground">
-            Top {omittedText.join(" · ")} by rows
-          </text>
-        )}
       </svg>
       {hoveredCell && <Readout cell={hoveredCell} plan={plan} />}
+      <ChartStatusLine
+        parts={statusParts}
+        left={plan.margin.left}
+        right={plan.margin.right}
+      />
     </div>
   );
 }

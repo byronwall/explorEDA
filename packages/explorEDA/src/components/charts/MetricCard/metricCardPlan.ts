@@ -21,12 +21,22 @@ export interface MetricCardPlan {
   includedCount: number;
   excludedCount: number;
   contributors: AggregateContributor[];
+  /** Every row, when filters narrow the card. */
+  totalRows?: number;
+  /** How the value compares with the same metric over every row. */
+  comparison?: MetricCardComparison;
   scopeNote: string;
 }
+
+export type MetricCardComparison =
+  | { kind: "share"; share: number; baselineText: string }
+  | { kind: "delta"; delta: number; deltaText: string; baselineText: string };
 
 export interface MetricCardSnapshot {
   revision: string;
   liveIds: number[];
+  /** Every source row. With it, a filtered card compares against all rows. */
+  allIds?: number[];
   measureData: Record<number, datum>;
   rawInputs?: Record<number, datum>;
   exclusionReasons?: Record<number, string>;
@@ -70,6 +80,43 @@ export function planMetricCard(
           ? formatFieldValue(measureField, result.value!)
           : result.value!.toLocaleString("en-US");
 
+  const format = (value: number) =>
+    measureField
+      ? formatFieldValue(measureField, value)
+      : value.toLocaleString("en-US");
+  const filtered =
+    snapshot.allIds !== undefined &&
+    snapshot.liveIds.length < snapshot.allIds.length;
+  let comparison: MetricCardComparison | undefined;
+  if (filtered && state === "value") {
+    const baseline = summarizeGroup(
+      snapshot.allIds!.map((__ID) => ({
+        __ID,
+        ...(measureField ? { [measureField]: snapshot.measureData[__ID] } : {}),
+      })),
+      { aggregation: settings.aggregation, measureField }
+    ).value;
+    if (baseline !== undefined) {
+      const value = result.value!;
+      if (settings.aggregation === "average") {
+        const delta = value - baseline;
+        comparison = {
+          kind: "delta",
+          delta,
+          deltaText: `${delta < 0 ? "−" : "+"}${format(Math.abs(delta))}`,
+          baselineText: format(baseline),
+        };
+      } else if (baseline > 0 && value >= 0) {
+        // A share only reads when every part adds toward a positive whole.
+        comparison = {
+          kind: "share",
+          share: value / baseline,
+          baselineText: format(baseline),
+        };
+      }
+    }
+  }
+
   return {
     revision: snapshot.revision,
     aggregation: settings.aggregation,
@@ -83,6 +130,8 @@ export function planMetricCard(
     includedCount: result.contributors.filter((item) => item.included).length,
     excludedCount: result.contributors.filter((item) => !item.included).length,
     contributors: result.contributors,
+    totalRows: filtered ? snapshot.allIds!.length : undefined,
+    comparison,
     scopeNote:
       "Rows that pass this chart's filters and the other active chart filters.",
   };

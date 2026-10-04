@@ -100,9 +100,10 @@ it("updates from linked filters and field conversion, and inspects the same cont
   fireEvent.click(screen.getByText("Web orders"));
   const card = screen.getByLabelText("Sum of Revenue");
   expect(within(card).getByText("$30.00")).toBeInTheDocument();
-  expect(card).toHaveTextContent("3 matching rows · 1 excluded");
+  expect(card).toHaveTextContent("1 excluded");
+  expect(card).toHaveTextContent("86% of the $35.00 total · 3 of 4 rows");
   fireEvent.click(within(card).getByText("$30.00"));
-  expect(card).toHaveTextContent("3 matching rows");
+  expect(card).toHaveTextContent("3 of 4 rows");
   fireEvent.click(screen.getByRole("button", { name: "Inspect records" }));
   const trace = screen.getByLabelText("Metric card trace");
   const rows = within(trace).getByRole("table");
@@ -114,11 +115,11 @@ it("updates from linked filters and field conversion, and inspects the same cont
   fireEvent.click(screen.getByText("Average", { exact: true }));
   expect(screen.queryByLabelText("Metric card trace")).not.toBeInTheDocument();
   expect(screen.getByLabelText("Average of Revenue")).toHaveTextContent(
-    "$15.00"
+    "$15.00+$3.33 vs $11.67 for all rows · 3 of 4 rows"
   );
   fireEvent.click(screen.getByText("Count", { exact: true }));
   expect(screen.getByLabelText("Row count")).toHaveTextContent(
-    "3 matching rows"
+    "75% of all 4 rows"
   );
   fireEvent.click(screen.getByText("No orders"));
   expect(screen.getByLabelText("Row count")).toHaveTextContent("No rows");
@@ -151,4 +152,48 @@ it("distinguishes no rows, no valid measure, and a valid zero", () => {
     valueText: "0",
     includedCount: 2,
   });
+});
+
+it("compares a filtered card with the same metric over every row", () => {
+  const plan = (aggregation: MetricCardSettings["aggregation"]) =>
+    planMetricCard(
+      { ...metric, aggregation },
+      {
+        revision: "test",
+        liveIds: [0, 1],
+        allIds: [0, 1, 2, 3],
+        measureData: { 0: 10, 1: 30, 2: 20, 3: 40 },
+      },
+      (field) => field,
+      formatFieldValue
+    );
+  expect(plan("count").comparison).toMatchObject({
+    kind: "share",
+    share: 0.5,
+    baselineText: "4",
+  });
+  expect(plan("sum")).toMatchObject({
+    totalRows: 4,
+    comparison: { kind: "share", share: 0.4, baselineText: "100" },
+  });
+  expect(plan("average").comparison).toMatchObject({
+    kind: "delta",
+    delta: -5,
+    deltaText: "−5",
+    baselineText: "25",
+  });
+  // A card over every row has nothing to compare against.
+  expect(
+    planMetricCard(
+      metric,
+      {
+        revision: "test",
+        liveIds: [0, 1],
+        allIds: [0, 1],
+        measureData: { 0: 10, 1: 30 },
+      },
+      (field) => field,
+      formatFieldValue
+    ).comparison
+  ).toBeUndefined();
 });

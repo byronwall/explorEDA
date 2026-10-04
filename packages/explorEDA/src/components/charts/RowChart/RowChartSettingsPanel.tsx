@@ -1,3 +1,4 @@
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { FieldSelector } from "@/components/FieldSelector";
 import { NumericInputEnter } from "@/components/NumericInputEnter";
 import { Label } from "@/components/ui/label";
@@ -24,9 +25,14 @@ export function RowChartSettingsPanel({
 
         <Label htmlFor="minRowHeight">Min Row Height</Label>
         <NumericInputEnter
+          id="minRowHeight"
           value={settings.minRowHeight || 30}
           onChange={(value) =>
-            onSettingsChange({ ...settings, minRowHeight: value })
+            onSettingsChange({
+              ...settings,
+              minRowHeight: value,
+              maxRowHeight: Math.max(value, settings.maxRowHeight),
+            })
           }
           min={20}
           max={100}
@@ -38,9 +44,14 @@ export function RowChartSettingsPanel({
 
         <Label htmlFor="maxRowHeight">Max Row Height</Label>
         <NumericInputEnter
+          id="maxRowHeight"
           value={settings.maxRowHeight || 50}
           onChange={(value) =>
-            onSettingsChange({ ...settings, maxRowHeight: value })
+            onSettingsChange({
+              ...settings,
+              maxRowHeight: value,
+              minRowHeight: Math.min(value, settings.minRowHeight),
+            })
           }
           min={30}
           max={200}
@@ -52,20 +63,24 @@ export function RowChartSettingsPanel({
 
         <div className="col-start-2">
           <div className="flex items-center space-x-2">
-            <Switch
-              id="colorField"
-              checked={settings.field === settings.colorField}
-              onCheckedChange={(checked) => {
-                onSettingsChange({
-                  ...settings,
-                  colorField: checked ? settings.field : undefined,
-                  colorScaleId:
-                    checked && settings.field
-                      ? getOrCreateScaleForField(settings.field)
-                      : undefined,
-                });
-              }}
-            />
+            <ActionTooltip content="Give each category its own color from a shared color scale.">
+              <span className="inline-flex w-fit">
+                <Switch
+                  id="colorField"
+                  checked={settings.field === settings.colorField}
+                  onCheckedChange={(checked) => {
+                    onSettingsChange({
+                      ...settings,
+                      colorField: checked ? settings.field : undefined,
+                      colorScaleId:
+                        checked && settings.field
+                          ? getOrCreateScaleForField(settings.field)
+                          : undefined,
+                    });
+                  }}
+                />
+              </span>
+            </ActionTooltip>
             <Label htmlFor="colorField">Use as color field</Label>
           </div>
         </div>

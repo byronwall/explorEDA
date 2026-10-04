@@ -1,77 +1,128 @@
 import { useEffect, useMemo } from "react";
 import * as THREE from "three";
-import { ThreeDScatterSettings } from "./types";
+import { CUBE_HALF } from "./useThreeDScatterData";
+
+type AxisKey = "x" | "y" | "z";
+
+export interface CubeTicks {
+  x: number[];
+  y: number[];
+  z: number[];
+}
 
 interface ThreeDScatterAxesProps {
   scene: THREE.Scene;
-  settings: ThreeDScatterSettings;
+  /** Tick positions inside the cube, per axis. */
+  ticks: CubeTicks;
+  showGrid: boolean;
+  showAxes: boolean;
+  gridColor: string;
+  edgeColor: string;
   onSceneChange: () => void;
+}
+
+const R = CUBE_HALF;
+const AXES: AxisKey[] = ["x", "y", "z"];
+
+function point(axis: AxisKey, value: number, a: number, b: number) {
+  // `a` and `b` fill the two other axes in x, y, z order.
+  if (axis === "x") {
+    return new THREE.Vector3(value, a, b);
+  }
+  if (axis === "y") {
+    return new THREE.Vector3(a, value, b);
+  }
+  return new THREE.Vector3(a, b, value);
+}
+
+/**
+ * Grid lines for one face of the cube, at each tick of the two axes that lie
+ * in that face.
+ */
+function faceGrid(axis: AxisKey, side: number, ticks: CubeTicks) {
+  const [u, v] = AXES.filter((item) => item !== axis) as [AxisKey, AxisKey];
+  const at = (uValue: number, vValue: number) => {
+    const position = { x: 0, y: 0, z: 0 };
+    position[axis] = side * R;
+    position[u] = uValue;
+    position[v] = vValue;
+    return new THREE.Vector3(position.x, position.y, position.z);
+  };
+  const points: THREE.Vector3[] = [];
+  for (const tick of ticks[u]) {
+    points.push(at(tick, -R), at(tick, R));
+  }
+  for (const tick of ticks[v]) {
+    points.push(at(-R, tick), at(R, tick));
+  }
+  return new THREE.BufferGeometry().setFromPoints(points);
+}
+
+function cubeEdges() {
+  const points: THREE.Vector3[] = [];
+  for (const axis of AXES) {
+    for (const a of [-R, R]) {
+      for (const b of [-R, R]) {
+        points.push(point(axis, -R, a, b), point(axis, R, a, b));
+      }
+    }
+  }
+  return new THREE.BufferGeometry().setFromPoints(points);
 }
 
 export function ThreeDScatterAxes({
   scene,
-  settings,
+  ticks,
+  showGrid,
+  showAxes,
+  gridColor,
+  edgeColor,
   onSceneChange,
 }: ThreeDScatterAxesProps) {
-  // Create axes helper
-  const axesHelper = useMemo(() => {
-    return new THREE.AxesHelper(10);
-  }, []);
+  const group = useMemo(() => {
+    const frame = new THREE.Group();
+    if (showGrid) {
+      const material = new THREE.LineBasicMaterial({
+        color: gridColor,
+        transparent: true,
+        opacity: 0.3,
+      });
+      for (const axis of AXES) {
+        for (const side of [-1, 1]) {
+          const lines = new THREE.LineSegments(
+            faceGrid(axis, side, ticks),
+            material
+          );
+          lines.userData.face = { axis, side };
+          frame.add(lines);
+        }
+      }
+    }
+    if (showAxes) {
+      frame.add(
+        new THREE.LineSegments(
+          cubeEdges(),
+          new THREE.LineBasicMaterial({ color: edgeColor })
+        )
+      );
+    }
+    return frame;
+  }, [ticks, showGrid, showAxes, gridColor, edgeColor]);
 
-  // Create grid helper
-  const gridHelpers = useMemo(() => {
-    const size = 10;
-    const divisions = 10;
-
-    return {
-      xy: new THREE.GridHelper(size, divisions),
-      xz: new THREE.GridHelper(size, divisions),
-      yz: new THREE.GridHelper(size, divisions),
-    };
-  }, []);
-
-  // Setup grid positions and rotations
   useEffect(() => {
-    if (settings.showGrid) {
-      // XY plane (blue)
-      gridHelpers.xy.rotation.x = Math.PI / 2;
-      scene.add(gridHelpers.xy);
-
-      // XZ plane (red)
-      gridHelpers.xz.position.y = 0;
-      scene.add(gridHelpers.xz);
-
-      // YZ plane (green)
-      gridHelpers.yz.rotation.z = Math.PI / 2;
-      scene.add(gridHelpers.yz);
-    }
-
-    if (settings.showAxes) {
-      scene.add(axesHelper);
-    }
-
+    scene.add(group);
     const frame = requestAnimationFrame(() => onSceneChange());
-
     return () => {
       cancelAnimationFrame(frame);
-      scene.remove(gridHelpers.xy);
-      scene.remove(gridHelpers.xz);
-      scene.remove(gridHelpers.yz);
-      scene.remove(axesHelper);
-
-      gridHelpers.xy.dispose();
-      gridHelpers.xz.dispose();
-      gridHelpers.yz.dispose();
-      axesHelper.dispose();
+      scene.remove(group);
+      group.traverse((object) => {
+        if (object instanceof THREE.LineSegments) {
+          object.geometry.dispose();
+          (object.material as THREE.Material).dispose();
+        }
+      });
     };
-  }, [
-    scene,
-    settings.showGrid,
-    settings.showAxes,
-    gridHelpers,
-    axesHelper,
-    onSceneChange,
-  ]);
+  }, [scene, group, onSceneChange]);
 
   return null;
 }

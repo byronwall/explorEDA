@@ -3,11 +3,12 @@ import {
   type AggregateContributor,
   type AggregateInputRow,
 } from "@/lib/aggregates";
+import { STATUS_LINE_HEIGHT } from "../ChartStatusLine";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import { applyFilter } from "@/hooks/applyFilter";
 import type { datum } from "@/types/ChartTypes";
 import type { ValueFilter } from "@/types/FilterTypes";
-import { interpolateBlues, interpolateRdBu } from "d3-scale-chromatic";
+import { heatFill, heatText, planHeatScale } from "../heatScale";
 import type { HeatmapSettings } from "./definition";
 
 export interface HeatmapSnapshot {
@@ -47,6 +48,10 @@ export interface HeatmapCell {
   y: number;
   width: number;
   height: number;
+  /** Where the value sits on the color scale: 0 to 1, or -1 to 1 when diverging. */
+  position: number;
+  /** Part of the shown cells' total, for counts and sums of values at or above 0. */
+  share: number | undefined;
   fill: string;
   textFill: string;
   /** True when this chart's selection includes the cell; undefined without one. */
@@ -72,6 +77,8 @@ export interface HeatmapPlan {
   omitted: { rows: number; columns: number; sourceRows: number };
   cells: HeatmapCell[];
   metricLabel: string;
+  /** Names what a cell's share is a part of. */
+  shareLabel: string;
   scale: {
     kind: "sequential" | "diverging";
     domain: [number, number];
@@ -83,6 +90,8 @@ export interface HeatmapPlan {
   rotateColumnLabels: boolean;
   /** The selected cell's row and column values, when exactly one cell is selected. */
   selection?: { row: datum; column: datum };
+  /** Row and column values this chart's selection covers, by category key. */
+  selectedKeys: { rows: Set<string> | undefined; columns: Set<string> | undefined };
   scopeNote: string;
 }
 
@@ -126,15 +135,6 @@ function rankCategories(
     );
   }
   return { shown, omitted: ranked.slice(shown.length) };
-}
-
-/** Chooses black or white text for a fill such as `rgb(8, 48, 107)`. */
-export function textOn(fill: string) {
-  const [r = 255, g = 255, b = 255] = (fill.match(/\d+(\.\d+)?/g) ?? []).map(
-    Number
-  );
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance < 0.55 ? "#ffffff" : "#1f2937";
 }
 
 export function planHeatmap({
@@ -192,10 +192,15 @@ export function planHeatmap({
     else {groups.set(key, [input]);}
   }
 
-  // Layout: row labels on the left, legend above, column labels below.
+  // Layout: row labels on the left under their field name, legend above,
+  // column labels and their field name below.
   const rowLabelWidth = Math.min(
     width * 0.4,
-    Math.max(32, ...rowRank.shown.map((item) => item.label.length)) *
+    Math.max(
+      4,
+      getFieldLabel(rowField).length,
+      ...rowRank.shown.map((item) => item.label.length)
+    ) *
       LABEL_CHAR_WIDTH +
       12
   );
@@ -211,7 +216,8 @@ export function planHeatmap({
     ? Math.min(110, longestColumnLabel * 0.71 + 18)
     : 22;
   const top = settings.margin.top + LEGEND_HEIGHT;
-  const bottom = settings.margin.bottom + columnLabelHeight + 16;
+  const bottom =
+    settings.margin.bottom + columnLabelHeight + 16 + STATUS_LINE_HEIGHT;
   const plotHeight = Math.max(0, height - top - bottom);
   const cellWidth = naturalColumnWidth;
   const cellHeight = plotHeight / Math.max(1, rowRank.shown.length);
@@ -242,15 +248,10 @@ export function planHeatmap({
       ? [summary.value]
       : []
   );
-  const low = values.length ? Math.min(...values) : 0;
-  const high = values.length ? Math.max(...values) : 0;
-  const diverging = low < 0 && high > 0;
-  const span = Math.max(Math.abs(low), Math.abs(high));
-  const colorFor = (value: number) => {
-    if (diverging) {return interpolateRdBu(0.5 + value / (2 * span || 1));}
-    const t = high === low ? 0.6 : (value - low) / (high - low);
-    return interpolateBlues(0.12 + t * 0.8);
-  };
+  const scale = planHeatScale(values);
+  const total = values.reduce((sum, value) => sum + value, 0);
+  const additive =
+    settings.aggregation !== "average" && scale.domain[0] >= 0 && total > 0;
 
   const rowFilter = settings.filters.find(
     (filter): filter is ValueFilter =>
@@ -275,8 +276,9 @@ export function planHeatmap({
         : typeof summary.value === "number" && Number.isFinite(summary.value)
           ? "value"
           : "invalid";
+      const position = state === "value" ? scale.position(summary!.value!) : 0;
       const fill =
-        state === "value" ? colorFor(summary!.value!) : "transparent";
+        state === "value" ? heatFill(position, scale.kind) : "transparent";
       cells.push({
         id: `cell:${row.key}|${column.key}`,
         row,
@@ -295,8 +297,10 @@ export function planHeatmap({
         y: row.position,
         width: cellWidth,
         height: cellHeight,
+        position,
+        share: additive && state === "value" ? summary!.value! / total : undefined,
         fill,
-        textFill: state === "value" ? textOn(fill) : "currentColor",
+        textFill: state === "value" ? heatText(position) : "currentColor",
         selected: hasSelection
           ? (!rowFilter || applyFilter(row.value, rowFilter)) &&
             (!columnFilter || applyFilter(column.value, columnFilter))
@@ -339,9 +343,13 @@ export function planHeatmap({
     },
     cells,
     metricLabel,
+    shareLabel:
+      rowRank.omitted.length || columnRank.omitted.length
+        ? "Share of shown"
+        : "Share of total",
     scale: {
-      kind: diverging ? "diverging" : "sequential",
-      domain: [low, high],
+      kind: scale.kind,
+      domain: scale.domain,
       population: "shown cells after other chart filters",
     },
     hasEmpty: cells.some((cell) => cell.state === "empty"),
@@ -352,6 +360,14 @@ export function planHeatmap({
       rowFilter?.values.length === 1 && columnFilter?.values.length === 1
         ? { row: rowFilter.values[0], column: columnFilter.values[0] }
         : undefined,
+    selectedKeys: {
+      rows: rowFilter
+        ? new Set(rowFilter.values.map((value) => categoryKey(categoryValue(value))))
+        : undefined,
+      columns: columnFilter
+        ? new Set(columnFilter.values.map((value) => categoryKey(categoryValue(value))))
+        : undefined,
+    },
     scopeNote:
       "Rows after other chart filters; this chart's selected cell is outlined",
   };
@@ -383,4 +399,27 @@ export function toggleCellFilters(
       values: [cell.column.value],
     },
   ];
+}
+
+/**
+ * The settings change that selects a whole row or column, or clears it when
+ * it is already the whole selection.
+ */
+export function toggleAxisFilters(
+  settings: HeatmapSettings,
+  plan: HeatmapPlan,
+  axis: "row" | "column",
+  category: HeatmapCategory
+) {
+  const field = axis === "row" ? settings.field : settings.columnField;
+  const rest = settings.filters.filter(
+    (filter) =>
+      filter.type !== "value" ||
+      (filter.field !== settings.field && filter.field !== settings.columnField)
+  );
+  const own = axis === "row" ? plan.selectedKeys.rows : plan.selectedKeys.columns;
+  const other = axis === "row" ? plan.selectedKeys.columns : plan.selectedKeys.rows;
+  const same = !other && own?.size === 1 && own.has(category.key);
+  if (same) {return rest;}
+  return [...rest, { type: "value" as const, field, values: [category.value] }];
 }

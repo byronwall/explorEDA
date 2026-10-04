@@ -1,6 +1,6 @@
 import { finiteNumber } from "@/lib/numeric";
 import { numericScale } from "../Axis/numericScale";
-import { AxisReadout } from "../Axis/AxisReadout";
+import { ChartMessage } from "../ChartMessage";
 import { reduceDataPoints } from "@/lib/chartUtils";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { hasFieldDisplayFormat } from "@/lib/fieldSettings";
@@ -10,6 +10,13 @@ import { scaleLinear } from "d3-scale";
 import { curveLinear, curveMonotoneX, curveStepAfter, line } from "d3-shape";
 import { useEffect, useMemo, useState, type FC } from "react";
 import { BaseChart } from "../BaseChart";
+import { ChartReadout } from "../ChartReadout";
+import {
+  ChartStatusLine,
+  STATUS_HINT_MIN_WIDTH,
+  STATUS_LINE_HEIGHT,
+} from "../ChartStatusLine";
+import { AxisValuePill, pillX, spreadLabels } from "../PlotValueLabels";
 import { getChartAxisFields, getChartAxisLabel } from "../chartAccessibility";
 import {
   useGetColumnDataForIds,
@@ -17,6 +24,7 @@ import {
 } from "../useGetColumnData";
 import { useGetLiveIds } from "../useGetLiveData";
 import { type LineChartSettings, DEFAULT_SERIES_SETTINGS } from "./definition";
+import { TimeSeriesChart } from "./TimeSeriesChart";
 
 const curveTypes = {
   linear: curveLinear,
@@ -42,17 +50,22 @@ const COLOR_PALETTES = {
   ],
 } as const;
 
-export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
+export const LineChart: FC<BaseChartProps<LineChartSettings>> = (props) =>
+  props.settings.time ? (
+    <TimeSeriesChart {...props} />
+  ) : (
+    <ObservationLineChart {...props} />
+  );
+
+const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
   settings,
   width,
   height,
   facetIds,
 }) => {
-  const [hovered, setHovered] = useState<{
-    x: number;
-    y: number;
-    field: string;
-  } | null>(null);
+  // The x value under the pointer; every series reads its value there.
+  const [hoverX, setHoverX] = useState<number | null>(null);
+  const [legendHover, setLegendHover] = useState<string | null>(null);
   const updateChart = useDataLayer((state) => state.updateChart);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
@@ -61,7 +74,8 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
   const displayValue = (field: string, value: number) =>
     hasFieldDisplayFormat(fieldSettings[field])
       ? (formatFieldValue?.(field, value) ?? String(value))
-      : String(value);
+      : value.toLocaleString("en-US", { maximumFractionDigits: 3 });
+  const seriesLabel = (field: string) => getFieldLabel?.(field) ?? field;
 
   // Get all data for axis limits calculation
   const allXData = useGetColumnDataForIds(settings.xField);
@@ -124,7 +138,8 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
   const margin = {
     ...baseMargin,
     left: Math.min(requestedLabelMargin, maxLabelMargin),
-    bottom: Math.max(baseMargin.bottom, xAxisLabel ? 46 : 28),
+    bottom:
+      Math.max(baseMargin.bottom, xAxisLabel ? 46 : 28) + STATUS_LINE_HEIGHT,
   };
   if (
     settings.seriesField.some(
@@ -276,8 +291,12 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
     updateChart,
   ]);
 
-  if (processedLiveSeriesData.length === 0) {
-    return null;
+  if (processedLiveSeriesData.length === 0 || !settings.xField) {
+    return (
+      <ChartMessage width={width} height={height}>
+        Choose an x field and at least one series in chart settings.
+      </ChartMessage>
+    );
   }
 
   // Process data and create scales
@@ -317,7 +336,7 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
       )
       .curve(curveTypes[settings.styles.curveType as CurveType]);
 
-  const Legend = () => {
+  const renderLegend = () => {
     if (!settings.showLegend) return null;
     const vertical =
       settings.legendPosition === "left" || settings.legendPosition === "right";
@@ -326,7 +345,11 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
       settings.legendPosition === "top"
         ? { top: 0, left: margin.left, right: baseMargin.right }
         : settings.legendPosition === "bottom"
-          ? { bottom: 0, left: margin.left, right: baseMargin.right }
+          ? {
+              bottom: STATUS_LINE_HEIGHT,
+              left: margin.left,
+              right: baseMargin.right,
+            }
           : settings.legendPosition === "left"
             ? { left: 0, top: margin.top, width: sideWidth }
             : { right: 0, top: margin.top, width: sideWidth };
@@ -337,7 +360,15 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
         aria-label="Chart series"
       >
         {settings.seriesField.map((name) => (
-          <span key={name} className="eda-line-legend-item">
+          <span
+            key={name}
+            className="eda-line-legend-item"
+            data-muted={
+              legendHover && legendHover !== name ? "true" : undefined
+            }
+            onPointerEnter={() => setLegendHover(name)}
+            onPointerLeave={() => setLegendHover(null)}
+          >
             <svg width="14" height="6" aria-hidden="true">
               <line
                 x1="0"
@@ -356,8 +387,10 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
               />
             </svg>
             <span>
-              {name}
-              {settings.seriesSettings[name]?.useRightAxis ? " ↗" : ""}
+              {seriesLabel(name)}
+              {settings.seriesSettings[name]?.useRightAxis && (
+                <span className="text-muted-foreground"> · right axis</span>
+              )}
             </span>
           </span>
         ))}
@@ -365,20 +398,85 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
     );
   };
 
-  const hoverX = hovered ? hovered.x : NaN;
-  const hoverY = hovered ? hovered.y : NaN;
-  const hoverRight = hovered
-    ? settings.seriesSettings[hovered.field]?.useRightAxis
-    : false;
+  // Each series' value at the hovered x, top of the plot first.
+  const hoverPoints =
+    hoverX === null
+      ? []
+      : processedLiveSeriesData
+          .flatMap((series) => {
+            const point = series.data.find(
+              (item) => item.x === hoverX && item.y != null
+            );
+            if (!point) return [];
+            const right = settings.seriesSettings[series.name]?.useRightAxis;
+            const y = point.y!;
+            return [
+              {
+                name: series.name,
+                value: y,
+                py: (right ? rightYScale : leftYScale)(y),
+              },
+            ];
+          })
+          .sort((a, b) => a.py - b.py);
+  const labelYs = spreadLabels(
+    hoverPoints.map((point) => point.py),
+    13,
+    6,
+    innerHeight - 6
+  );
+  const hoverPx = hoverX === null ? 0 : xScale(hoverX);
+  const labelsLeft = hoverPx > innerWidth - 64;
+  const xText = hoverX === null ? "" : displayValue(settings.xField, hoverX);
+
+  const range = settings.filters.find(
+    (filter) => filter.type === "range" && filter.field === settings.xField
+  );
+  // A dragged range has arbitrary decimals; show about three significant digits.
+  const spanDigits = Math.max(
+    0,
+    2 - Math.floor(Math.log10(Math.abs(xExtent[1] - xExtent[0]) || 1))
+  );
+  const rangeValue = (value: number) =>
+    hasFieldDisplayFormat(fieldSettings[settings.xField])
+      ? displayValue(settings.xField, value)
+      : value.toLocaleString("en-US", { maximumFractionDigits: spanDigits });
+  const rangeText =
+    range?.type === "range"
+      ? `${rangeValue(range.min ?? xExtent[0])} to ${rangeValue(range.max ?? xExtent[1])}`
+      : undefined;
+  const inRange = (value: number) =>
+    range?.type === "range" &&
+    (range.min === undefined || value >= range.min) &&
+    (range.max === undefined || value <= range.max);
+  const liveRows = liveXData.filter(
+    (value) => finiteNumber(value) !== undefined
+  ).length;
+  const statusParts = [
+    // Counts lead, so a narrow chart that cuts the line keeps them.
+    rangeText &&
+      `${liveXData
+        .filter((value) => {
+          const x = finiteNumber(value);
+          return x !== undefined && inRange(x);
+        })
+        .length.toLocaleString()} of ${liveRows.toLocaleString()} rows selected: ${xAxisLabel || settings.xField} ${rangeText}`,
+    !rangeText &&
+      !facetIds &&
+      width >= STATUS_HINT_MIN_WIDTH &&
+      `Drag across to select a range of ${xAxisLabel || settings.xField}`,
+  ];
+  const seriesOpacity = (name: string) =>
+    legendHover && legendHover !== name ? 0.2 : 1;
 
   return (
     <div
       className="relative"
       style={{ width, height }}
-      onPointerLeave={() => setHovered(null)}
-      onPointerDownCapture={() => setHovered(null)}
+      onPointerLeave={() => setHoverX(null)}
+      onPointerDownCapture={() => setHoverX(null)}
       onKeyDownCapture={(event) => {
-        if (event.key === "Escape") setHovered(null);
+        if (event.key === "Escape") setHoverX(null);
       }}
       onPointerMove={(event) => {
         if (event.buttons) return;
@@ -386,7 +484,7 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
         const x = event.clientX - rect.left - margin.left;
         const y = event.clientY - rect.top - margin.top;
         if (x < 0 || x > innerWidth || y < 0 || y > innerHeight) {
-          setHovered(null);
+          setHoverX(null);
           return;
         }
         const target = xScale.invert(x);
@@ -402,30 +500,11 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
             }
           }
         }
-
-        if (!Number.isFinite(nearestX)) {
-          setHovered(null);
-          return;
-        }
-
-        let field: string | null = null;
-        let valueAtX = NaN;
-        distance = Infinity;
-        for (const series of processedLiveSeriesData) {
-          for (const point of series.data) {
-            if (point.x !== nearestX || point.y == null) continue;
-            const scale = settings.seriesSettings[series.name]?.useRightAxis
-              ? rightYScale
-              : leftYScale;
-            const next = Math.abs(scale(point.y) - y);
-            if (next < distance) {
-              field = series.name;
-              valueAtX = point.y;
-              distance = next;
-            }
-          }
-        }
-        setHovered(field === null ? null : { x: nearestX, y: valueAtX, field });
+        // A gap where no series has a value reads as nothing, not a neighbor.
+        const observed = processedLiveSeriesData.some((series) =>
+          series.data.some((point) => point.x === nearestX && point.y != null)
+        );
+        setHoverX(observed ? nearestX : null);
       }}
     >
       <BaseChart
@@ -455,38 +534,72 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
                     key={tick}
                     transform={`translate(0, ${rightYScale(tick)})`}
                   >
-                    <line x1={0} x2={6} y1={0} y2={0} stroke="currentColor" />
+                    <line
+                      x1={0}
+                      x2={4}
+                      y1={0}
+                      y2={0}
+                      stroke="var(--foreground)"
+                      strokeOpacity={0.45}
+                    />
                     <text
-                      x={9}
+                      x={7}
                       y={0}
                       dy=".32em"
                       fontSize={10}
                       textAnchor="start"
-                      fill="currentColor"
+                      className="fill-muted-foreground"
                     >
-                      {tick}
+                      {displayValue(rightAxisSeries[0]!.name, tick)}
                     </text>
                   </g>
                 ))}
               </g>
             )}
-            {hovered && (
-              <AxisReadout
-                x={xScale(hoverX)}
-                y={(hoverRight ? rightYScale : leftYScale)(hoverY)}
-                xValue={hoverX}
-                yValue={hoverY}
-                width={innerWidth}
-                height={innerHeight}
-                color={seriesColors[hovered.field]!}
-                rightAxis={hoverRight}
-                xFormatter={(value) => displayValue(settings.xField, value)}
-                yFormatter={(value) => displayValue(hovered.field, value)}
-                label={`${getFieldLabel?.(settings.xField) ?? settings.xField}: ${displayValue(settings.xField, hoverX)}; ${getFieldLabel?.(hovered.field) ?? hovered.field}: ${displayValue(hovered.field, hoverY)}`}
-              />
+            {hoverX !== null && (
+              <g pointerEvents="none" aria-hidden="true">
+                <line
+                  x1={hoverPx}
+                  x2={hoverPx}
+                  y1={0}
+                  y2={innerHeight}
+                  stroke="var(--foreground)"
+                  strokeOpacity={0.4}
+                  strokeDasharray="3 3"
+                />
+                {hoverPoints.map((point) => (
+                  <circle
+                    key={point.name}
+                    cx={hoverPx}
+                    cy={point.py}
+                    r={3.5}
+                    fill={seriesColors[point.name]}
+                    stroke="var(--background)"
+                    strokeWidth={1.5}
+                  />
+                ))}
+                {hoverPoints.map((point, index) => (
+                  <text
+                    key={point.name}
+                    x={hoverPx + (labelsLeft ? -8 : 8)}
+                    y={labelYs[index]}
+                    textAnchor={labelsLeft ? "end" : "start"}
+                    dominantBaseline="middle"
+                    className="eda-ecdf-value"
+                  >
+                    {displayValue(point.name, point.value)}
+                  </text>
+                ))}
+                <AxisValuePill
+                  x={pillX(hoverPx, xText, innerWidth)}
+                  y={innerHeight + 3}
+                  text={xText}
+                />
+              </g>
             )}
           </>
         }
+        footer={STATUS_LINE_HEIGHT}
         brushingMode="horizontal"
         onBrushChange={(extent) =>
           updateChart(settings.id, {
@@ -531,7 +644,10 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
                   fill="none"
                   stroke={seriesColor}
                   strokeWidth={seriesSettings.lineWidth}
-                  strokeOpacity={seriesSettings.lineOpacity}
+                  strokeOpacity={
+                    seriesSettings.lineOpacity * seriesOpacity(series.name)
+                  }
+                  style={{ transition: "stroke-opacity 140ms ease-out" }}
                   strokeDasharray={
                     seriesSettings.lineStyle === "dashed"
                       ? "5,5"
@@ -551,7 +667,10 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
                           : leftYScale)(d.y)}
                         r={seriesSettings.pointSize}
                         fill={seriesColor}
-                        fillOpacity={seriesSettings.pointOpacity}
+                        fillOpacity={
+                          seriesSettings.pointOpacity *
+                          seriesOpacity(series.name)
+                        }
                       />
                     )
                   )}
@@ -560,7 +679,26 @@ export const LineChart: FC<BaseChartProps<LineChartSettings>> = ({
           })}
         </g>
       </BaseChart>
-      <Legend />
+      {renderLegend()}
+      {hoverX !== null && hoverPoints.length > 0 && (
+        <ChartReadout fallbackClassName="eda-chart-readout-inline">
+          <span className="eda-readout-item">
+            <span>{xAxisLabel || settings.xField}</span>
+            <b>{xText}</b>
+          </span>
+          {hoverPoints.map((point) => (
+            <span key={point.name} className="eda-readout-item">
+              <span>{seriesLabel(point.name)}</span>
+              <b>{displayValue(point.name, point.value)}</b>
+            </span>
+          ))}
+        </ChartReadout>
+      )}
+      <ChartStatusLine
+        parts={statusParts}
+        left={margin.left}
+        right={baseMargin.right}
+      />
     </div>
   );
 };

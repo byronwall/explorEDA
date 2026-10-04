@@ -152,7 +152,8 @@ describe("planBarChart", () => {
     expect(b).toMatchObject({ value: 0, selected: false });
     expect(c).toMatchObject({
       value: 1,
-      fill: "rgb(156 163 175)",
+      fill: "blue",
+      opacity: 0.3,
       fillSource: { kind: "own-filter", baseFill: "blue" },
     });
     expect(findBarForRow(filtered, 3)?.id).toBe(c!.id);
