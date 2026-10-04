@@ -15,6 +15,8 @@ import { useGetLiveIds } from "../useGetLiveData";
 import { ColorLegendSettings } from "./definition";
 import { ColorScale } from "./ColorScale";
 
+const LIST_ROW_HEIGHT = 22;
+
 export function ColorLegendChart({
   settings,
   width,
@@ -101,26 +103,41 @@ export function ColorLegendChart({
               filter.type === "value" && filter.field === field
           )
           .flatMap((filter) => filter.values.map(categoryValue));
+        const categories = [
+          ...new Map(
+            Object.values(getColumnData(field)).map((value) => [
+              categoryKey(value),
+              categoryValue(value),
+            ])
+          ).values(),
+        ];
+        // A lone categorical field lists its values with their shares once
+        // the panel is tall enough to show every one.
+        const layout =
+          settings.fields.length === 1 &&
+          scale.type !== "numerical" &&
+          !settings.wrap &&
+          categories.length * LIST_ROW_HEIGHT + 24 <= height
+            ? "list"
+            : "row";
         return (
-          <section key={field} aria-label={getFieldLabel(field)}>
-            {settings.fields.length > 1 && (
-              <div className="eda-legend-field">{getFieldLabel(field)}</div>
-            )}
+          <section
+            key={field}
+            aria-label={getFieldLabel(field)}
+            className="eda-legend-section"
+            data-layout={layout}
+          >
+            {/* The field name titles its values, as in a chart's own legend. */}
+            <div className="eda-legend-field">{getFieldLabel(field)}</div>
             <ColorScale
+              layout={layout}
               scale={scale}
               width={width - 24}
               wrap={settings.wrap}
               numericalBreakpoints={settings.numericalBreakpoints}
               getColorForValue={getColorForValue}
               counts={fieldCounts.get(field)!}
-              categories={[
-                ...new Map(
-                  Object.values(getColumnData(field)).map((value) => [
-                    categoryKey(value),
-                    categoryValue(value),
-                  ])
-                ).values(),
-              ]}
+              categories={categories}
               countWidth={rowCount.toLocaleString().length}
               selected={selected}
               formatValue={(value) =>
