@@ -873,3 +873,15 @@ export const groupedBarsDashboard = dashboard("Sales by region and channel", [
 ], [categoricalScale("grouped-channel", "Channel", ["Web", "Store", "Wholesale"])]);
 groupedBarsDashboard.aggregates = [{ id: "grouped-sales", name: "Revenue by region", groupField: "Region", measureField: "Revenue", aggregation: "sum" }];
 groupedBarsDashboard.fieldSettings = { Revenue: { type: "numeric", format: "currency", currency: "USD", precision: 2 } };
+
+export const stackedBarsDashboard: SavedDataStructure = {
+  ...groupedBarsDashboard,
+  metadata: { ...groupedBarsDashboard.metadata, name: "Regional totals and channel shares" },
+  charts: groupedBarsDashboard.charts.map((chart) => chart.type === "bar" ? {
+    ...chart,
+    seriesLayout: chart.aggregateId ? "stacked" : "percent",
+    title: chart.aggregateId ? "Regional revenue by channel" : "Channel share of regional orders",
+    field: chart.aggregateId ? chart.field : "Region",
+    yAxisLabel: chart.aggregateId ? "Revenue ($)" : "Share of regional orders (%)",
+  } : chart),
+};

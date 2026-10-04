@@ -51,7 +51,10 @@ export function planSeriesBars({
   const field = spec?.groupField ?? settings.field;
   const seriesField = settings.seriesField!;
   const operation = spec?.aggregation ?? "count";
-  const valueLabel =
+  const layout = settings.seriesLayout ?? "grouped";
+  const stacked = layout !== "grouped";
+  const percent = layout === "percent";
+  const metricLabel =
     operation === "count"
       ? "Row count"
       : `${operation === "sum" ? "Sum" : "Average"} of ${getLabel(spec?.measureField ?? "")}`;
@@ -59,6 +62,9 @@ export function planSeriesBars({
     operation === "count"
       ? value.toLocaleString("en-US")
       : format(spec?.measureField ?? "", value);
+  const valueLabel = percent ? "Share of category total (%)" : metricLabel;
+  const formatAxis = (value: number) =>
+    percent ? `${Math.round(value * 10) / 10}%` : formatValue(value);
   const liveCategories = new Set(
     summaries.flatMap(({ result }) =>
       result.rows.map((row) => categoryKey(row.groupValue))
@@ -97,14 +103,39 @@ export function planSeriesBars({
       seriesPositions.get(categoryKey(a.seriesValue))! -
         seriesPositions.get(categoryKey(b.seriesValue))!
   );
-  const values = rows.flatMap(({ row, seriesValue }) =>
+  const totals = new Map<string, number>();
+  const parts = new Map<string, NonNullable<BarMark["stack"]>["parts"]>();
+  for (const { row, seriesValue } of rows) {
+    const key = categoryKey(row.groupValue);
+    totals.set(key, (totals.get(key) ?? 0) + (row.value ?? 0));
+    const item = { label: categoryLabel(seriesValue), row };
+    const group = parts.get(key);
+    if (group) group.push(item);
+    else parts.set(key, [item]);
+  }
+  const offsets = new Map<string, { positive: number; negative: number }>();
+  const segments = rows.map(({ row, seriesValue }) => {
+    const key = categoryKey(row.groupValue);
+    const total = totals.get(key)!;
+    const share =
+      total > 0 && row.value !== undefined ? row.value / total : undefined;
+    const value = percent ? (share ?? 0) * 100 : (row.value ?? 0);
+    const offset = offsets.get(key) ?? { positive: 0, negative: 0 };
+    const sign = value < 0 ? "negative" : "positive";
+    const start = stacked ? offset[sign] : 0;
+    const end = start + value;
+    offset[sign] = end;
+    offsets.set(key, offset);
+    return { row, seriesValue, start, end, total, share };
+  });
+  const values = segments.flatMap(({ row, seriesValue, end }) =>
     row.value === undefined
       ? []
       : [
           {
             id: row.id,
             label: `${row.groupLabel} · ${categoryLabel(seriesValue)}`,
-            value: row.value,
+            value: end,
           },
         ]
   );
@@ -117,10 +148,12 @@ export function planSeriesBars({
     { id: "", label: "zero", value: 0 }
   );
   const pad = (high.value - low.value) * 0.1 || 1;
-  const domain: [number, number] = [
-    low.value < 0 ? low.value - pad : 0,
-    high.value > 0 ? high.value + pad : 0,
-  ];
+  const domain: [number, number] = percent
+    ? [0, 100]
+    : [
+        low.value < 0 ? low.value - pad : 0,
+        high.value > 0 ? high.value + pad : 0,
+      ];
   if (domain[0] === domain[1]) domain[1] = 1;
   const margin = {
     ...settings.margin,
@@ -133,8 +166,8 @@ export function planSeriesBars({
         26 +
           6 *
             Math.max(
-              formatValue(low.value).length,
-              formatValue(high.value).length
+              formatAxis(low.value).length,
+              formatAxis(high.value).length
             )
       )
     ),
@@ -150,16 +183,23 @@ export function planSeriesBars({
     .domain(legend.map((item) => item.key))
     .range([0, x.bandwidth()])
     .padding(0.08);
-  const y = numericScale(settings.yAxis).domain(domain).range([plotHeight, 0]);
+  const yScaleType = stacked ? "linear" : settings.yAxis.scaleType;
+  const y = numericScale({ ...settings.yAxis, scaleType: yScaleType })
+    .domain(domain)
+    .range([plotHeight, 0]);
   const notice =
-    categories.size > 30 || legend.length > 20
-      ? "Filter the data to show at most 30 categories and 20 series."
-      : nested.bandwidth() < 2 && rows.length
-        ? "Widen this chart or filter the data to make each bar visible."
-        : undefined;
+    stacked && operation === "average"
+      ? "Choose count or sum to stack series. Compare averages with grouped bars."
+      : percent && rows.some(({ row }) => (row.value ?? 0) < 0)
+        ? "100% bars need nonnegative series totals. Choose stacked bars to compare signed totals."
+        : categories.size > 30 || legend.length > 20
+          ? "Filter the data in another view to show at most 30 categories and 20 series."
+          : (stacked ? x.bandwidth() : nested.bandwidth()) < 2 && rows.length
+            ? "Widen this chart or filter another view to make each bar visible."
+            : undefined;
   const bars: BarMark[] = notice
     ? []
-    : rows.map(({ row, seriesValue }, order) => {
+    : segments.map(({ row, seriesValue, start, end, total, share }, order) => {
         const selection: Filter[] = [
           { type: "value", field, values: [row.groupValue] },
           ...(seriesField === field
@@ -187,6 +227,8 @@ export function planSeriesBars({
         });
         const color = getColor(seriesValue);
         const value = row.value ?? 0;
+        const empty = start === end;
+        const markHeight = empty ? 6 : Math.max(2, Math.abs(y(end) - y(start)));
         return {
           id: JSON.stringify([
             categoryKey(row.groupValue),
@@ -201,14 +243,43 @@ export function planSeriesBars({
             value: seriesValue,
           },
           selection,
+          ...(stacked
+            ? {
+                stack: {
+                  mode: layout,
+                  start,
+                  end,
+                  total,
+                  totalText: formatValue(total),
+                  share,
+                  valueText:
+                    row.value === undefined
+                      ? "No valid values"
+                      : formatValue(row.value),
+                  parts: parts.get(categoryKey(row.groupValue))!,
+                },
+              }
+            : {}),
           value,
           valueText:
-            row.value === undefined ? "No valid values" : formatValue(value),
+            row.value === undefined
+              ? "No valid values"
+              : percent
+                ? share === undefined
+                  ? "No share (zero total)"
+                  : `${(share * 100).toFixed(1)}%`
+                : formatValue(value),
           x:
-            x(categoryKey(row.groupValue))! + nested(categoryKey(seriesValue))!,
-          y: Math.min(y(0), y(value)),
-          width: nested.bandwidth(),
-          height: Math.max(2, Math.abs(y(value) - y(0))),
+            x(categoryKey(row.groupValue))! +
+            (stacked && !empty ? 0 : nested(categoryKey(seriesValue))!),
+          y: empty
+            ? Math.max(
+                0,
+                Math.min(plotHeight - markHeight, y(start) - markHeight / 2)
+              )
+            : Math.min(y(start), y(end)),
+          width: stacked && !empty ? x.bandwidth() : nested.bandwidth(),
+          height: markHeight,
           baseline: y(0),
           fill: color,
           fillSource: {
@@ -235,11 +306,11 @@ export function planSeriesBars({
       scale: y,
       field: spec?.measureField,
       label: settings.yAxisLabel || valueLabel,
-      scaleType: settings.yAxis.scaleType,
+      scaleType: yScaleType,
       density: settings.yGridLines,
       grid: settings.yAxis.grid ?? true,
       zero: true,
-      format: (value) => formatValue(Number(value)),
+      format: (value) => formatAxis(Number(value)),
     },
   });
   const plan: BarChartPlan = {
@@ -256,7 +327,7 @@ export function planSeriesBars({
         : `${operation} of ${getLabel(spec?.measureField ?? "")}`,
     axes,
     xScale: describeScale(x),
-    yScale: describeScale(y, settings.yAxis.scaleType),
+    yScale: describeScale(y, yScaleType),
     bars,
     binEdges: [],
     groupOrder: bars.map((bar) => bar.label),
@@ -269,11 +340,21 @@ export function planSeriesBars({
       upper: high.id
         ? { source: "bar", ...high }
         : { source: "zero", value: 0 },
-      padding: "10% outside the signed value span",
+      padding: percent
+        ? "Fixed 0% to 100%"
+        : "10% outside the signed value span",
       domain,
     },
     scopeNote:
       "Rows after other chart filters and facet selection. This chart's own selection keeps the surrounding bars visible.",
   };
-  return { ...plan, legend, notice, x, y };
+  return {
+    ...plan,
+    legend,
+    notice,
+    x,
+    y,
+    percent,
+    zeroTotals: percent && [...totals.values()].some((total) => total === 0),
+  };
 }

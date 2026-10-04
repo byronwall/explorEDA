@@ -3,6 +3,7 @@ import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import { BarChartSettings } from "./definition";
 import type { AggregateAggregation } from "@/lib/aggregates";
@@ -63,6 +64,11 @@ export function BarChartSettingsPanel({
     getColumnData,
   ]);
   const [error, setError] = useState<string>();
+  const stacked = Boolean(
+    settings.seriesField &&
+      settings.seriesLayout &&
+      settings.seriesLayout !== "grouped"
+  );
   const seriesControl = (
     <>
       <Label>Split by</Label>
@@ -86,6 +92,50 @@ export function BarChartSettingsPanel({
           })
         }
       />
+      {settings.seriesField && (
+        <>
+          <Label htmlFor="bar-series-layout">Display</Label>
+          <ActionTooltip content="Grouped compares separate values. Stacked adds series. 100% shows each series as a share of its category total.">
+            <select
+              id="bar-series-layout"
+              className="h-9 rounded-md border-input bg-background px-2 text-sm"
+              value={settings.seriesLayout ?? "grouped"}
+              onChange={(event) =>
+                onSettingsChange({
+                  ...settings,
+                  seriesLayout: event.target
+                    .value as BarChartSettings["seriesLayout"],
+                  yAxisLabel: "",
+                  yAxis: { ...settings.yAxis, scaleType: "linear" },
+                })
+              }
+            >
+              <option value="grouped">Grouped</option>
+              <option
+                value="stacked"
+                disabled={aggregate?.aggregation === "average"}
+              >
+                Stacked
+              </option>
+              <option
+                value="percent"
+                disabled={aggregate?.aggregation === "average"}
+              >
+                100%
+              </option>
+            </select>
+          </ActionTooltip>
+          <p className="col-span-2 text-xs text-muted-foreground">
+            {aggregate?.aggregation === "average"
+              ? "Choose count or sum to stack series. Compare averages side by side."
+              : settings.seriesLayout === "percent"
+                ? "Each category totals 100%. Shares use its nonnegative series totals after other chart filters."
+                : settings.seriesLayout === "stacked"
+                  ? "Series add within each category. Positive and negative totals stack separately from zero."
+                  : "Compare series side by side. Stacked adds their values; 100% compares their shares."}
+          </p>
+        </>
+      )}
     </>
   );
 
@@ -140,7 +190,8 @@ export function BarChartSettingsPanel({
               ? next.groupField
               : (next.measureField ?? next.groupField),
           ...(settings.title === aggregate.name ? { title: name } : {}),
-          ...(next.aggregation !== aggregate.aggregation || next.measureField !== aggregate.measureField
+          ...(next.aggregation !== aggregate.aggregation ||
+          next.measureField !== aggregate.measureField
             ? { yAxisLabel: "" }
             : {}),
           // A new group field makes the old group selection meaningless.
@@ -202,12 +253,14 @@ export function BarChartSettingsPanel({
               });
             }}
           >
-            {!settings.seriesField && <option value="category">Category counts / bins</option>}
+            {!settings.seriesField && (
+              <option value="category">Category counts / bins</option>
+            )}
             <option value="count">Count rows</option>
             <option value="sum" disabled={!measureFields.length}>
               Sum
             </option>
-            <option value="average" disabled={!measureFields.length}>
+            <option value="average" disabled={!measureFields.length || stacked}>
               Average
             </option>
           </select>
@@ -228,8 +281,7 @@ export function BarChartSettingsPanel({
         </div>
         {settings.seriesField && (
           <p className="text-xs text-muted-foreground">
-            Compare series side by side. Select a bar to filter its category and
-            series.
+            Select a bar to filter its category and series.
           </p>
         )}
       </div>
@@ -267,7 +319,7 @@ export function BarChartSettingsPanel({
           <option value="sum" disabled={!measureFields.length}>
             Sum
           </option>
-          <option value="average" disabled={!measureFields.length}>
+          <option value="average" disabled={!measureFields.length || stacked}>
             Average
           </option>
         </select>
@@ -327,8 +379,8 @@ export function BarChartSettingsPanel({
       </div>
       {settings.seriesField && (
         <p className="text-xs text-muted-foreground">
-          Compare series side by side. Group values are categories. Select a bar
-          to filter its category and series.
+          Group values are categories. Select a bar to filter its category and
+          series.
         </p>
       )}
     </div>

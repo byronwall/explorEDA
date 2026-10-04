@@ -82,6 +82,16 @@ export interface BarMark {
   groupValue: datum;
   series?: { field: string; label: string; value: datum };
   selection?: Filter[];
+  stack?: {
+    mode: "stacked" | "percent";
+    start: number;
+    end: number;
+    total: number;
+    totalText: string;
+    share?: number;
+    valueText: string;
+    parts: { label: string; row: AggregateResultRow }[];
+  };
   bin?: { start: number; end: number; closed: boolean };
   value: number;
   x: number;

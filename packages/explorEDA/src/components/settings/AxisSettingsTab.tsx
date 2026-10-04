@@ -7,6 +7,11 @@ interface Props {
   onSettingChange: (key: string, value: unknown) => void;
 }
 export function AxisSettingsTab({ settings, onSettingChange }: Props) {
+  const stacked =
+    settings.type === "bar" &&
+    settings.seriesField &&
+    settings.seriesLayout &&
+    settings.seriesLayout !== "grouped";
   return (
     <div className="space-y-5">
       <p className="text-xs text-muted-foreground">
@@ -20,12 +25,17 @@ export function AxisSettingsTab({ settings, onSettingChange }: Props) {
           </legend>
           {settings.type === "bar" && settings.seriesField && axis === "x" ? (
             <p className="text-xs text-muted-foreground">
-              Categories share one axis. Series appear side by side within each
-              category.
+              Categories share one axis. Series{" "}
+              {stacked ? "stack" : "appear side by side"} within each category.
             </p>
           ) : (
             <>
-              {settings.type === "line" && settings.time && axis === "x" ? (
+              {stacked && axis === "y" ? (
+                <p className="text-xs text-muted-foreground">
+                  Stacks use a linear scale so segment heights stay
+                  proportional.
+                </p>
+              ) : settings.type === "line" && settings.time && axis === "x" ? (
                 <p className="text-xs text-muted-foreground">
                   Dates use a UTC calendar scale.
                 </p>

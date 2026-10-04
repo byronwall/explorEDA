@@ -7,6 +7,7 @@ import {
   activityDashboard,
   timeSeriesDashboard,
   groupedBarsDashboard,
+  stackedBarsDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import { SavedDataStructure } from "exploreda";
@@ -114,6 +115,17 @@ export const examples: ExampleData[] = [
     icon: BarChart3,
     data: "/datasets/shop-operations.csv",
     savedData: groupedBarsDashboard,
+  },
+  {
+    id: "stacked-bars",
+    title: "Regional totals and channel shares",
+    description: "Compare each region's revenue and channel mix with stacked totals and percentage bars.",
+    dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
+    shows: ["Stacked bars", "100% bars", "Denominator tracing"],
+    guide: "Try this: inspect a revenue segment, then choose 100% in Display. The trace shows its share and category denominator.",
+    icon: BarChart3,
+    data: "/datasets/shop-operations.csv",
+    savedData: stackedBarsDashboard,
   },
   {
     id: "palmer-penguins",

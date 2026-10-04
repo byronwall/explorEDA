@@ -13,6 +13,7 @@ import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import { useGetColumnData } from "../useGetColumnData";
 import {
   useChartTraceApi,
+  useChartTrace,
   useTraceRevision,
   useTraceSource,
 } from "../trace/ChartTraceScope";
@@ -29,6 +30,7 @@ export function SeriesBarChart({
 }: BaseChartProps<BarChartSettings>) {
   const owner = useId();
   const api = useChartTraceApi();
+  const trace = useChartTrace();
   const revision = useTraceRevision(settings);
   const allIds = useGetAllIds();
   const liveIds = useGetLiveIds(settings);
@@ -222,14 +224,29 @@ export function SeriesBarChart({
               height={bar.height}
               rx={1}
               fill={
-                bar.row.value === undefined ? "var(--background)" : bar.fill
+                bar.row.value === undefined ||
+                bar.row.value === 0 ||
+                (bar.stack?.mode === "percent" && bar.stack.share === undefined)
+                  ? "var(--background)"
+                  : bar.fill
               }
-              stroke={bar.fill}
+              stroke={
+                trace?.selection?.owner === owner &&
+                trace.selection.id === bar.id
+                  ? "var(--foreground)"
+                  : bar.fill
+              }
+              strokeWidth={
+                trace?.selection?.owner === owner &&
+                trace.selection.id === bar.id
+                  ? 2
+                  : 1
+              }
               strokeDasharray={bar.row.value === undefined ? "2 2" : undefined}
               opacity={bar.selected === false ? 0.25 : 1}
               role="button"
               tabIndex={
-                bar.id === activeId || (!activeId && index === 0) ? 0 : -1
+                bar.id === active?.id || (!active && index === 0) ? 0 : -1
               }
               aria-label={`${bar.label}: ${bar.valueText}`}
               aria-pressed={bar.selected}
@@ -280,9 +297,13 @@ export function SeriesBarChart({
       )}
       <div className="absolute inset-x-2 bottom-0 flex h-7 items-center justify-between gap-2 text-xs text-muted-foreground">
         <span className="truncate">
-          {plan.bars.some((bar) => bar.row.value === undefined)
-            ? "Outline marks have no valid values"
-            : `${plan.bars.length} category–series pairs`}
+          {plan.zeroTotals
+            ? "Zero-total categories have no share"
+            : plan.percent
+              ? "Share of each category total"
+              : plan.bars.some((bar) => bar.row.value === undefined)
+                ? "Outline marks have no valid values"
+                : `${plan.bars.length} category–series pairs`}
         </span>
         <Button
           size="sm"
