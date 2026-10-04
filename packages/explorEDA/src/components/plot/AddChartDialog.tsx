@@ -191,6 +191,7 @@ function AddChartDialogContent({
               {previewSize.width > 0 && previewSize.height > 0 && (
                 <ChartTraceScope>
                   {(preview.type === "metric-card" ||
+                    preview.type === "map" ||
                     (preview.type === "line" && preview.time)) && (
                     <div className="absolute right-2 top-2 z-10">
                       <ChartTraceInspector type={preview.type} />
@@ -198,6 +199,16 @@ function AddChartDialogContent({
                   )}
                   <ChartRenderer
                     settings={preview}
+                    onSettingsChange={
+                      preview.type === "map"
+                        ? (updates) =>
+                            updateDraft({
+                              ...settings,
+                              ...updates,
+                              layout: settings.layout,
+                            } as Omit<ChartSettings, "id">)
+                        : undefined
+                    }
                     width={previewSize.width}
                     height={previewSize.height}
                   />

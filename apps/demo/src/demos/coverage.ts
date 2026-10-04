@@ -19,6 +19,7 @@ type FeatureDefinition = {
 };
 
 export const coverageFeatures = [
+  { id: "chart:map", label: "Map", family: "Chart types", description: "Locate source rows by latitude and longitude.", chartType: "map", required: true, status: "supported" },
   {
     id: "mode:scatter-density",
     label: "Binned scatter density",
@@ -469,6 +470,7 @@ export type ExampleCoverage = {
 };
 
 export const exampleCoverage = [
+  { exampleId: "point-map", intent: "Locate service sites, inspect their coordinates, and select exact source rows.", features: { "chart:map": "shown", "chart:bar": "shown", "chart:metric-card": "shown", "chart:data-table": "shown", "interaction:cross-filter": "shown" } },
   {
     exampleId: "scatter-density",
     intent: "Resolve overlap in 10,000 daily observations and reconcile each bin with its source rows.",

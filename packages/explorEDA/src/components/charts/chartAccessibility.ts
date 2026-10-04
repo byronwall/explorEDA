@@ -2,6 +2,7 @@ import { ChartSettings } from "@/types/ChartTypes";
 import { getChartDefinition } from "@/charts/registry";
 
 const chartNames: Record<string, string> = {
+  map: "Map",
   row: "Row chart",
   bar: "Bar chart",
   scatter: "Scatter plot",
@@ -120,6 +121,8 @@ export function getChartFields(settings: ChartSettings): string[] {
               settings.time.splitField,
             ]
           : [settings.xField, ...settings.seriesField];
+      case "map":
+        return [settings.latitudeField, settings.longitudeField, settings.labelField, settings.colorField, settings.sizeField];
       case "scatter":
         return [
           settings.xField,

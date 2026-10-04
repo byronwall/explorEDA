@@ -22,6 +22,8 @@ export function chartFilterFields(
 ): ChartFilterField[] {
   const own: ChartFilterField[] = (() => {
     switch (settings.type) {
+      case "map":
+        return [{field: settings.latitudeField}, {field: settings.longitudeField}];
       case "scatter":
         return [{ field: settings.xField }, { field: settings.yField }];
       case "line":
