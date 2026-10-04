@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { datum } from "@/types/ChartTypes";
-import { planCalendar, toggleDayFilter } from "./calendarPlan";
+import {
+  extendDayFilter,
+  planCalendar,
+  toggleDayFilter,
+  toggleDayRange,
+} from "./calendarPlan";
 import { resolveCalendarTrace } from "./calendarTrace";
 import { calendarDefinition, type CalendarSettings } from "./definition";
 
@@ -107,5 +112,35 @@ describe("planCalendar", () => {
     const trace = resolveCalendarTrace(result, "day", "day:2024-01-01");
     expect(trace?.day.contributors.map((item) => item.sourceId)).toEqual([1, 2]);
     expect(trace?.day.start).toBe(Date.UTC(2024, 0, 1));
+  });
+
+  it("stretches a selection with Shift and selects a whole month from its name", () => {
+    const base = settings();
+    const start = plan();
+    const first = toggleDayFilter(base, start, day(start, "2024-02-29"));
+    const selected = plan({ filters: first });
+    expect(extendDayFilter({ ...base, filters: first }, selected, day(selected, "2024-01-01"))).toEqual([
+      { type: "date-range", field: "date", min: "2024-01-01", max: "2024-02-29" },
+    ]);
+    // Without a selection, Shift selects the one day.
+    expect(extendDayFilter(base, start, day(start, "2024-01-01"))).toEqual([
+      { type: "date-range", field: "date", min: "2024-01-01", max: "2024-01-01" },
+    ]);
+    const february = start.monthLabels[1]!;
+    expect(february).toMatchObject({ first: "2024-02-01", last: "2024-02-29" });
+    const month = toggleDayRange(base, start, february.first, february.last);
+    expect(toggleDayRange({ ...base, filters: month }, plan({ filters: month }), february.first, february.last)).toEqual([]);
+  });
+
+  it("draws a line between each pair of months in year view", () => {
+    const result = plan();
+    expect(result.monthBoundaries).toHaveLength(11);
+    // 1 February 2024 was a Thursday, so February's edge steps across its first week.
+    const cell = result.days[0]!;
+    const column = day(result, "2024-02-01").column;
+    expect(result.monthBoundaries[0]).toBe(
+      `M${(column + 1) * cell.size},0V${3 * cell.height}H${column * cell.size}V${7 * cell.height}`
+    );
+    expect(plan({}, 360).monthBoundaries).toEqual([]);
   });
 });

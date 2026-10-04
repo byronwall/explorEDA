@@ -42,6 +42,11 @@ it("selects a day, moves by day with arrow keys, and steps between years", () =>
     { type: "date-range", field: "Date", min: "2024-03-05", max: "2024-03-05" },
   ]);
 
+  fireEvent.click(screen.getByRole("button", { name: "Mon, Mar 4, 2024: 1" }), { shiftKey: true });
+  expect(JSON.parse(screen.getByTestId("filters").textContent!)).toEqual([
+    { type: "date-range", field: "Date", min: "2024-03-04", max: "2024-03-05" },
+  ]);
+
   fireEvent.click(screen.getByRole("button", { name: "Previous year" }));
   expect(screen.getByText("2023")).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Thu, Jun 1, 2023: 1" })).toBeInTheDocument();
