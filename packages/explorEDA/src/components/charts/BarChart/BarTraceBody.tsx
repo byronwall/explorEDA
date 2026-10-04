@@ -38,7 +38,7 @@ export function BarTraceBody({ trace }: { trace: BarTrace }) {
         />{" "}
         {mark.fill}
         {mark.fillSource.kind === "own-filter"
-          ? ` ← outside this chart's filter (color scale gives ${mark.fillSource.baseFill})`
+          ? ` at ${Math.round(mark.opacity * 100)}% opacity ← outside this chart's filter (color scale gives ${mark.fillSource.baseFill})`
           : mark.fillSource.scaleId
             ? ` ← color scale ${mark.fillSource.scaleId}`
             : " ← default bar color"}

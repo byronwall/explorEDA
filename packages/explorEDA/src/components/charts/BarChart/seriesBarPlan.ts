@@ -282,6 +282,7 @@ export function planSeriesBars({
           height: markHeight,
           baseline: y(0),
           fill: color,
+          opacity: settings.filters.length && !selected ? 0.25 : 1,
           fillSource: {
             kind: "color-scale",
             scaleId: settings.colorScaleId,

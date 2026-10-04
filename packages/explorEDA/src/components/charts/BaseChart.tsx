@@ -38,13 +38,16 @@ interface BaseChartProps {
   onHoverTarget?: (id: string | null, altKey: boolean) => void;
   onInspectPlot?: (point: [number, number], anchor: DOMRect) => boolean;
   activeGuideId?: string | null;
+  /** Bottom margin kept below the X axis title, such as for a status line. */
+  footer?: number;
 }
 
 function planIdFromTarget(target: EventTarget | null) {
   if (!(target instanceof Element)) return undefined;
   return (
-    target.closest<SVGElement>("[data-plan-id]")?.getAttribute("data-plan-id") ??
-    undefined
+    target
+      .closest<SVGElement>("[data-plan-id]")
+      ?.getAttribute("data-plan-id") ?? undefined
   );
 }
 
@@ -67,6 +70,7 @@ export function BaseChart({
   onHoverTarget,
   onInspectPlot,
   activeGuideId,
+  footer = 0,
 }: BaseChartProps) {
   const margin = plannedAxes?.margin ?? settings.margin;
 
@@ -108,6 +112,7 @@ export function BaseChart({
         plotWidth: innerWidth,
         plotHeight: innerHeight,
         margin,
+        footer,
         x: {
           scale: xScale,
           scaleType: settings.xAxis.scaleType,
@@ -151,6 +156,7 @@ export function BaseChart({
       xTickFormatter,
       yTickFormatter,
       fieldSettings,
+      footer,
     ]
   );
   const descriptionId = `${chartId}-description`;

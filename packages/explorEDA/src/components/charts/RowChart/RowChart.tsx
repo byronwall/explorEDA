@@ -11,7 +11,7 @@ import { applyFilter } from "@/hooks/applyFilter";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { datum, Filter, ValueFilter } from "@/types/FilterTypes";
 import { scaleBand } from "d3-scale";
-import { useId, useMemo } from "react";
+import { useId, useMemo, useState } from "react";
 import { useGetColumnData } from "../useGetColumnData";
 import { BaseChart } from "../BaseChart";
 import { getChartAxisFields, getChartAxisLabel } from "../chartAccessibility";
@@ -26,6 +26,12 @@ import {
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
 import { Button } from "@/components/ui/button";
+import { ChartReadout } from "../ChartReadout";
+import {
+  ChartStatusLine,
+  STATUS_HINT_MIN_WIDTH,
+  STATUS_LINE_HEIGHT,
+} from "../ChartStatusLine";
 
 type RowChartProps = BaseChartProps<RowChartSettings>;
 
@@ -43,6 +49,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   const formatFieldValue = useDataLayer((s) => s.formatFieldValue);
   const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
   const fieldSettings = useDataLayer((s) => s.fieldSettings);
+  const [hovered, setHovered] = useState<string | null>(null);
   void fieldSettings;
 
   const valueFilter = settings.filters.find(
@@ -72,6 +79,28 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
     updateChart(settings.id, {
       filters: newFilters,
     });
+  };
+  const handleOtherClick = (members: typeof plan.categories) => {
+    const values = members.map((item) => item.value);
+    const allSelected = values.every((value) =>
+      categoryIncludes(filterValues, value)
+    );
+    const next = allSelected
+      ? filterValues.filter(
+          (value) => !values.some((member) => categoryEqual(value, member))
+        )
+      : [
+          ...filterValues.filter(
+            (value) => !values.some((member) => categoryEqual(value, member))
+          ),
+          ...values,
+        ];
+    const filters = settings.filters.filter(
+      (filter) => filter.type !== "value" || filter.field !== settings.field
+    );
+    if (next.length)
+      filters.push({ type: "value", field: settings.field, values: next });
+    updateChart(settings.id, { filters });
   };
 
   // Chart dimensions
@@ -198,7 +227,8 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
     ...baseMargin,
     left: Math.min(labelMargin, width * 0.42),
     right: Math.max(baseMargin.right, 48),
-    bottom: Math.max(baseMargin.bottom, xAxisLabel ? 42 : 26),
+    bottom:
+      Math.max(baseMargin.bottom, xAxisLabel ? 42 : 26) + STATUS_LINE_HEIGHT,
   };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = chartHeight - margin.top - margin.bottom;
@@ -240,9 +270,47 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   const yLabelsByKey = new Map(
     displayCounts.map((item) => [item.key, item.label])
   );
+  const fieldLabel = getFieldLabel(settings.field);
+  const hoveredItem = displayCounts.find((item) => item.key === hovered);
+  const liveRows = liveIds.length;
+  const statusParts = [
+    valueFilter && `${filterValues.length} categories selected`,
+    plan.other.length > 0 &&
+      `${plan.other.length} smaller categories in Other categories`,
+    !valueFilter &&
+      !facetIds &&
+      width >= STATUS_HINT_MIN_WIDTH &&
+      "Click rows or labels to select categories",
+  ];
 
   return (
-    <div style={{ width, height }}>
+    <div className="relative" style={{ width, height }}>
+      {hoveredItem && (
+        <ChartReadout fallbackClassName="eda-chart-readout-inline">
+          <span className="eda-readout-item">
+            <span>{fieldLabel}</span>
+            <b>{hoveredItem.label}</b>
+          </span>
+          <span className="eda-readout-item">
+            <span>Rows</span>
+            <b>
+              {hoveredItem.count.toLocaleString()} of{" "}
+              {hoveredItem.total.toLocaleString()}
+            </b>
+          </span>
+          {liveRows > 0 && (
+            <span className="eda-readout-item">
+              <span>Share</span>
+              <b>
+                {(hoveredItem.count / liveRows).toLocaleString("en-US", {
+                  style: "percent",
+                  maximumFractionDigits: 1,
+                })}
+              </b>
+            </span>
+          )}
+        </ChartReadout>
+      )}
       <BaseChart
         width={width}
         height={chartHeight}
@@ -272,6 +340,31 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
         }
       >
         <g className="select-none">
+          {!facetIds &&
+            displayCounts.map((item) =>
+              item.total > item.count ? (
+                <rect
+                  key={`${item.key}:total`}
+                  x={0}
+                  y={yScale(item.key)}
+                  width={Math.max(0, xScale(item.total))}
+                  height={yScale.bandwidth()}
+                  rx={2}
+                  pointerEvents="none"
+                  aria-hidden="true"
+                  style={{
+                    fill: item.other
+                      ? "var(--muted-foreground)"
+                      : getColorForValue(
+                          settings.colorScaleId,
+                          item.value,
+                          "#3479a8"
+                        ),
+                    fillOpacity: "var(--eda-flow-context)",
+                  }}
+                />
+              ) : null
+            )}
           {/* Bars */}
           {displayCounts.map(({ key, label, value, count, other, members }) => {
             let isFiltered = true;
@@ -319,10 +412,15 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault();
-                    if (other || event.altKey) inspect(key);
+                    if (event.altKey) inspect(key);
+                    else if (other) handleOtherClick(members);
                     else handleBarClick(value);
                   }
                 }}
+                onPointerEnter={() => setHovered(key)}
+                onPointerLeave={() => setHovered(null)}
+                onFocus={() => setHovered(key)}
+                onBlur={() => setHovered(null)}
                 height={barHeight}
                 className={`chart-mark ${
                   other ? "fill-muted/80 hover:fill-muted" : "cursor-pointer"
@@ -332,7 +430,8 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
                   opacity: valueFilter && !isFiltered ? 0.3 : 1,
                 }}
                 onClick={(event) => {
-                  if (other || event.altKey) inspect(key);
+                  if (event.altKey) inspect(key);
+                  else if (other) handleOtherClick(members);
                   else handleBarClick(value);
                 }}
               />
@@ -349,6 +448,12 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
           Inspect {plan.other.length} Other categories
         </Button>
       )}
+      <ChartStatusLine
+        parts={statusParts}
+        left={margin.left}
+        right={margin.right}
+        bottom={34}
+      />
     </div>
   );
 }

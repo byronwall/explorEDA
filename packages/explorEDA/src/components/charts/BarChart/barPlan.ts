@@ -5,11 +5,7 @@ import {
   type AggregateResult,
   type AggregateResultRow,
 } from "@/lib/aggregates";
-import {
-  categoryKey,
-  categoryLabel,
-  categoryValue,
-} from "@/lib/categories";
+import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import {
   finiteNumber,
   finiteNumbers,
@@ -40,7 +36,8 @@ export type BarMode = "aggregate" | "count" | "bin";
 const X_SCALE_PADDING = 0.05;
 const Y_SCALE_PADDING = 0.1;
 const DEFAULT_FILL = "#3479a8";
-const FILTERED_OUT_FILL = "rgb(156 163 175)";
+/** Bars outside this chart's own filter keep their color at this opacity. */
+export const FILTERED_OUT_OPACITY = 0.3;
 
 export interface BarSnapshot {
   revision: string;
@@ -62,6 +59,12 @@ export interface BarPlanInput {
   getColor: (value: datum) => string;
   getFieldLabel: (field: string) => string;
   formatFieldValue?: (field: string, value: datum) => string;
+  /** Formats value-axis ticks, which can be shorter than readout values. */
+  formatAxisValue?: (field: string, value: datum) => string;
+  /** Bottom margin kept under the X axis title for a status line. */
+  footer?: number;
+  /** Whether bars show their count over every source row. Facets do not. */
+  showTotals?: boolean;
   /** Describes the rows an aggregate result uses. */
   aggregateScope?: string;
 }
@@ -100,9 +103,16 @@ export interface BarMark {
   height: number;
   baseline: number;
   fill: string;
+  /** 1, or FILTERED_OUT_OPACITY for a bar outside this chart's filter. */
+  opacity: number;
   fillSource: BarFillSource;
   /** The value as the readout and accessible name show it. */
   valueText: string;
+  /**
+   * The count over every source row, when other charts' filters lower the bar.
+   * The chart draws it as a faint bar behind, so the share left reads at once.
+   */
+  total?: { value: number; y: number; height: number };
   /** Whether this chart's value filter includes the bar, when one exists. */
   selected?: boolean;
   /** The aggregate, count or bin row that sets the bar's value. */
@@ -178,7 +188,10 @@ function countRows(
     result.rows.map((row) => [categoryKey(row.groupValue), row])
   );
   const categories = new Map(
-    snapshot.allValues.map((value) => [categoryKey(value), categoryValue(value)])
+    snapshot.allValues.map((value) => [
+      categoryKey(value),
+      categoryValue(value),
+    ])
   );
   // Categories come from every source row, so a filtered-out category keeps its place.
   const rows = [...categories].map(
@@ -239,18 +252,21 @@ function binRows(settings: BarChartSettings, snapshot: BarSnapshot): BinRow[] {
 
 function extremes(values: BarDomain["values"]) {
   const lower = values.reduce<BarDomain["values"][number] | undefined>(
-    (winner, item) =>
-      item.value < (winner?.value ?? 0) ? item : winner,
+    (winner, item) => (item.value < (winner?.value ?? 0) ? item : winner),
     undefined
   );
   const upper = values.reduce<BarDomain["values"][number] | undefined>(
-    (winner, item) =>
-      item.value > (winner?.value ?? 0) ? item : winner,
+    (winner, item) => (item.value > (winner?.value ?? 0) ? item : winner),
     undefined
   );
   const end = (item: typeof lower) =>
     item
-      ? { source: "bar" as const, id: item.id, label: item.label, value: item.value }
+      ? {
+          source: "bar" as const,
+          id: item.id,
+          label: item.label,
+          value: item.value,
+        }
       : { source: "zero" as const, value: 0 };
   return { lower: end(lower), upper: end(upper) };
 }
@@ -267,6 +283,9 @@ export function planBarChart({
   getColor,
   getFieldLabel,
   formatFieldValue,
+  formatAxisValue,
+  footer = 0,
+  showTotals = false,
   aggregateScope = "Rows after other chart filters; this chart's selected groups are shown in color",
 }: BarPlanInput): BarChartPlan {
   const numeric = isNumericBarField(settings, snapshot);
@@ -297,10 +316,17 @@ export function planBarChart({
   } else if (mode === "bin") {
     const all = finiteNumbers(snapshot.allValues);
     domainValues = numericBins(all, all, settings.binCount || 20).map(
-      (bin) => ({ id: `bin:${bin.start}:${bin.end}`, label: bin.label, value: bin.value })
+      (bin) => ({
+        id: `bin:${bin.start}:${bin.end}`,
+        label: bin.label,
+        value: bin.value,
+      })
     );
   } else {
-    const counts = new Map<string, { id: string; label: string; value: number }>();
+    const counts = new Map<
+      string,
+      { id: string; label: string; value: number }
+    >();
     for (const value of snapshot.allValues) {
       const key = categoryKey(value);
       const item = counts.get(key);
@@ -319,25 +345,26 @@ export function planBarChart({
   let padding: string;
   if (mode === "aggregate") {
     const pad =
-      lower.value === upper.value ? 0.5 : (upper.value - lower.value) * Y_SCALE_PADDING;
+      lower.value === upper.value
+        ? 0.5
+        : (upper.value - lower.value) * Y_SCALE_PADDING;
     yDomain = [lower.value - (lower.value < 0 ? pad : 0), upper.value + pad];
     padding =
-      lower.value === upper.value ? "0.5 above and below" : "10% of the value span";
+      lower.value === upper.value
+        ? "0.5 above and below"
+        : "10% of the value span";
   } else {
     yDomain = [0, Math.max(1, upper.value * (1 + Y_SCALE_PADDING))];
     padding = "10% above the tallest bar";
   }
 
-  const xField = mode === "aggregate" && spec ? spec.groupField : settings.field;
+  const xField =
+    mode === "aggregate" && spec ? spec.groupField : settings.field;
   const yField =
     mode === "aggregate" && spec && spec.aggregation !== "count"
       ? spec.measureField
       : undefined;
-  const xLabel = getChartAxisLabel(
-    xField,
-    settings.xAxisLabel,
-    getFieldLabel
-  );
+  const xLabel = getChartAxisLabel(xField, settings.xAxisLabel, getFieldLabel);
   const yLabel =
     settings.yAxisLabel ||
     (mode === "aggregate" && spec
@@ -352,6 +379,7 @@ export function planBarChart({
     hasXLabel: Boolean(xLabel),
     hasYLabel: Boolean(yLabel),
   });
+  margin.bottom += footer;
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
 
@@ -381,7 +409,10 @@ export function planBarChart({
       mode === "aggregate"
         ? rows.map((row) => row.groupLabel)
         : Array.from(new Set(snapshot.allValues.map(categoryLabel)));
-    xScale = scaleBand<string>().domain(labels).range([0, plotWidth]).padding(0.3);
+    xScale = scaleBand<string>()
+      .domain(labels)
+      .range([0, plotWidth])
+      .padding(0.3);
   }
   const yScale = numericScale(settings.yAxis)
     .domain(yDomain)
@@ -389,7 +420,13 @@ export function planBarChart({
   const baseline = yScale(0);
 
   const format = (field: string | undefined) => (value: string | number) =>
-    field && formatFieldValue ? formatFieldValue(field, value) : formatTick(value);
+    field && formatFieldValue
+      ? formatFieldValue(field, value)
+      : formatTick(value);
+  const formatAxis = (field: string | undefined) =>
+    field && formatAxisValue
+      ? (value: string | number) => formatAxisValue(field, value)
+      : format(field);
   const symlog = (label: string, type?: string) =>
     [label, type === "symlog" && "symlog"].filter(Boolean).join(" · ");
   const axes = planAxes({
@@ -397,6 +434,7 @@ export function planBarChart({
     plotHeight,
     margin,
     marginPolicy: policy,
+    footer,
     x: {
       scale: xScale,
       scaleType: settings.xAxis.scaleType,
@@ -416,18 +454,24 @@ export function planBarChart({
       fieldLabel: yLabel || undefined,
       density: settings.yGridLines,
       grid: settings.yAxis.grid ?? true,
-      format: format(yField),
+      format: formatAxis(yField),
       label: symlog(yLabel, settings.yAxis.scaleType),
       labelSource: settings.yAxisLabel ? "chart-setting" : "field-label",
       zero: true,
       domainSource: {
         population:
-          mode === "aggregate" ? "the current aggregate result" : "all source rows",
+          mode === "aggregate"
+            ? "the current aggregate result"
+            : "all source rows",
         rows: domainValues.length,
         bounds: [lower.value, upper.value],
         padding,
-        lower: lower.label ? { label: lower.label, value: lower.value } : undefined,
-        upper: upper.label ? { label: upper.label, value: upper.value } : undefined,
+        lower: lower.label
+          ? { label: lower.label, value: lower.value }
+          : undefined,
+        upper: upper.label
+          ? { label: upper.label, value: upper.value }
+          : undefined,
       },
     },
   });
@@ -447,6 +491,11 @@ export function planBarChart({
   const binEdges = rows.flatMap((row, index) =>
     row.bin ? (index === 0 ? [row.bin.start, row.bin.end] : [row.bin.end]) : []
   );
+  // Counts over every source row, by bar row id, for the faint bars behind.
+  const totals =
+    mode === "aggregate" || !showTotals
+      ? undefined
+      : new Map(domainValues.map((item) => [item.id, item.value]));
   const bars: BarMark[] = [];
   const unplotted: BarChartPlan["unplotted"] = [];
   rows.forEach((row, order) => {
@@ -473,17 +522,25 @@ export function planBarChart({
       barWidth = band.bandwidth();
     }
     const valuePosition = yScale(row.value);
+    const totalValue = totals?.get(row.id);
+    const total =
+      totalValue !== undefined && totalValue > row.value
+        ? {
+            value: totalValue,
+            y: Math.min(baseline, yScale(totalValue)),
+            height: Math.abs(baseline - yScale(totalValue)),
+          }
+        : undefined;
     const baseFill = getColor(row.groupValue) || DEFAULT_FILL;
     // A bin passes only when the range covers all of it, which snapped
     // filters always do.
-    const passes =
-      rangeFilter
-        ? row.bin
-          ? binInRange(row.bin, rangeFilter, binEdges)
-          : applyFilter(row.groupValue, rangeFilter)
-        : valueFilter
-          ? applyFilter(row.groupValue, valueFilter)
-          : true;
+    const passes = rangeFilter
+      ? row.bin
+        ? binInRange(row.bin, rangeFilter, binEdges)
+        : applyFilter(row.groupValue, rangeFilter)
+      : valueFilter
+        ? applyFilter(row.groupValue, valueFilter)
+        : true;
     bars.push({
       id: `bar:${row.id}`,
       order,
@@ -497,9 +554,15 @@ export function planBarChart({
       width: barWidth,
       height: Math.max(1, Math.abs(baseline - valuePosition)),
       baseline,
-      fill: passes ? baseFill : FILTERED_OUT_FILL,
+      total,
+      fill: baseFill,
+      opacity: passes ? 1 : FILTERED_OUT_OPACITY,
       fillSource: passes
-        ? { kind: "color-scale", scaleId: settings.colorScaleId, value: row.groupValue }
+        ? {
+            kind: "color-scale",
+            scaleId: settings.colorScaleId,
+            value: row.groupValue,
+          }
         : {
             kind: "own-filter",
             scaleId: settings.colorScaleId,
