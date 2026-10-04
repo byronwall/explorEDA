@@ -14,6 +14,7 @@ import type { AggregateAggregation } from "@/lib/aggregates";
 import type { TimeInterval, WeekStart } from "@/lib/dailyRollup";
 
 export interface TimeSeriesSettings {
+  display?: "line" | "area" | "stacked-area";
   interval: TimeInterval;
   weekStart: WeekStart;
   aggregation: AggregateAggregation;

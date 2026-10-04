@@ -85,12 +85,49 @@ export function TimeSeriesSettingsPanel({
   const { getOrCreateScaleForField: getOrCreateScale } = useColorScales();
   const time = settings.time!;
   const change = (next: Partial<TimeSeriesSettings>) =>
-    onSettingsChange({ ...settings, time: { ...time, ...next } });
+    onSettingsChange({
+      ...settings,
+      time: { ...time, ...next },
+      ...(next.aggregation || next.measureField ? { yAxisLabel: "" } : {}),
+    });
   const inputClass =
     "h-9 min-w-0 rounded-md border border-input bg-background px-2 text-sm";
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-4">
+        <Label htmlFor={`${settings.id}-display`}>Display</Label>
+        <ActionTooltip content="Line connects period values. Area fills to zero. Stacked area adds nonnegative counts or sums across series.">
+          <select
+            id={`${settings.id}-display`}
+            className={inputClass}
+            value={time.display ?? "line"}
+            onChange={(event) =>
+              onSettingsChange({
+                ...settings,
+                time: {
+                  ...time,
+                  display: event.target.value as TimeSeriesSettings["display"],
+                },
+                yAxis: { ...settings.yAxis, scaleType: "linear" },
+              })
+            }
+          >
+            <option value="line">Line</option>
+            <option value="area">Area</option>
+            <option
+              value="stacked-area"
+              disabled={time.aggregation === "average"}
+            >
+              Stacked area
+            </option>
+          </select>
+        </ActionTooltip>
+        {time.display === "stacked-area" && (
+          <p className="col-span-2 text-xs text-muted-foreground">
+            Bands add nonnegative period totals. An incomplete period breaks the
+            whole stack. Zero fills absent counts or sums.
+          </p>
+        )}
         <Label>Date</Label>
         <FieldSelector
           label=""
@@ -159,7 +196,12 @@ export function TimeSeriesSettingsPanel({
           <option value="sum" disabled={!fields.measures.length}>
             Sum
           </option>
-          <option value="average" disabled={!fields.measures.length}>
+          <option
+            value="average"
+            disabled={
+              !fields.measures.length || time.display === "stacked-area"
+            }
+          >
             Average
           </option>
         </select>

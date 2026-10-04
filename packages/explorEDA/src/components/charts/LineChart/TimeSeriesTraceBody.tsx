@@ -3,9 +3,12 @@ import { displayAggregateValue } from "@/lib/aggregates";
 import { Button } from "@/components/ui/button";
 import { TraceReadout, TraceSection } from "../ChartTraceDetails";
 import type { TimeSeriesTrace } from "./timeSeriesTrace";
+import { useChartTrace, useChartTraceApi } from "../trace/ChartTraceScope";
 
 export function TimeSeriesTraceBody({ trace }: { trace: TimeSeriesTrace }) {
   const { plan, point } = trace;
+  const state = useChartTrace();
+  const api = useChartTraceApi();
   const [page, setPage] = useState(0);
   const ids = point
     ? point.contributors.map((row) => row.sourceId)
@@ -47,6 +50,24 @@ export function TimeSeriesTraceBody({ trace }: { trace: TimeSeriesTrace }) {
             <TraceReadout label="Before formatting">
               {point.value === undefined ? "No result" : String(point.value)}
             </TraceReadout>
+            {point.band && (
+              <>
+                <TraceReadout label="Area band">
+                  {plan.notice ??
+                    (point.band.complete
+                      ? `${plan.formatValue(point.band.lower)} to ${plan.formatValue(point.band.upper)}`
+                      : "Not drawn: this period has an absent or invalid total.")}
+                </TraceReadout>
+                <TraceReadout label="Band height">
+                  {point.valueText}
+                </TraceReadout>
+                <p className="text-muted-foreground">
+                  {plan.curveType === "step"
+                    ? "The band holds each value until the next period midpoint."
+                    : "The band joins period midpoints with straight lines."}
+                </p>
+              </>
+            )}
             <TraceReadout label="Position">
               {point.x.toFixed(2)}, {point.y.toFixed(2)} px within the plot
             </TraceReadout>
@@ -153,6 +174,42 @@ export function TimeSeriesTraceBody({ trace }: { trace: TimeSeriesTrace }) {
           </div>
         )}
       </TraceSection>
+      {plan.stacked && point && (
+        <details>
+          <summary className="cursor-pointer text-muted-foreground">
+            Series in this stack
+          </summary>
+          <p className="py-1">
+            Bands add in this order. Inspect a series to see its exact inputs.
+          </p>
+          {plan.series.map((series) => {
+            const part = series.points.find(
+              (item) => item.start === point.start
+            )!;
+            return (
+              <div
+                key={series.key}
+                className="flex items-center justify-between gap-2 py-1"
+              >
+                <span>
+                  {series.label} · {part.valueText} · {part.rowCount} rows
+                </span>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  aria-label={`Inspect ${series.label} for this period`}
+                  onClick={() =>
+                    state?.selection &&
+                    api?.inspect(state.selection.owner, "time-bucket", part.id)
+                  }
+                >
+                  Inspect
+                </Button>
+              </div>
+            );
+          })}
+        </details>
+      )}
       <TraceSection muted>{plan.scopeNote}</TraceSection>
     </div>
   );

@@ -12,6 +12,9 @@ export function AxisSettingsTab({ settings, onSettingChange }: Props) {
     settings.seriesField &&
     settings.seriesLayout &&
     settings.seriesLayout !== "grouped";
+  const area =
+    settings.type === "line" &&
+    ["area", "stacked-area"].includes(settings.time?.display ?? "");
   return (
     <div className="space-y-5">
       <p className="text-xs text-muted-foreground">
@@ -30,9 +33,9 @@ export function AxisSettingsTab({ settings, onSettingChange }: Props) {
             </p>
           ) : (
             <>
-              {stacked && axis === "y" ? (
+              {(stacked || area) && axis === "y" ? (
                 <p className="text-xs text-muted-foreground">
-                  Stacks use a linear scale so segment heights stay
+                  {area ? "Areas" : "Stacks"} use a linear scale so heights stay
                   proportional.
                 </p>
               ) : settings.type === "line" && settings.time && axis === "x" ? (
