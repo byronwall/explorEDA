@@ -744,17 +744,27 @@ function ChartDetails({
   );
 }
 
+/** Drops options a scale leaves at their defaults. */
+const definedOnly = (value: Record<string, unknown>) =>
+  Object.fromEntries(
+    Object.entries(value).filter(([, item]) => item !== undefined)
+  );
+
 function ScaleDetails({ scale }: { scale: ColorScaleType }) {
   if (scale.type === "numerical") {
     return (
       <SettingsList
-        value={{
+        value={definedOnly({
           type: scale.type,
           sourceField: scale.sourceField,
           palette: scale.palette,
           min: scale.min,
           max: scale.max,
-        }}
+          midpoint: scale.midpoint,
+          reverse: scale.reverse,
+          transform: scale.transform,
+          steps: scale.steps,
+        })}
       />
     );
   }
@@ -762,7 +772,13 @@ function ScaleDetails({ scale }: { scale: ColorScaleType }) {
   return (
     <div className="grid gap-2">
       <SettingsList
-        value={{ type: scale.type, sourceField: scale.sourceField }}
+        value={definedOnly({
+          type: scale.type,
+          sourceField: scale.sourceField,
+          palette: scale.paletteId,
+          order: scale.order,
+          overflow: scale.overflow,
+        })}
       />
       {entries.length > 0 && (
         <ul className="flex flex-wrap gap-1">

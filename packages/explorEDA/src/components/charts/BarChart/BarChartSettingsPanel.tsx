@@ -10,6 +10,7 @@ import type { AggregateAggregation } from "@/lib/aggregates";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useMemo, useState } from "react";
+import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
 
 function getAggregateName(
   aggregation: AggregateAggregation,
@@ -278,6 +279,11 @@ export function BarChartSettingsPanel({
             </>
           )}
           {seriesControl}
+          {settings.colorScaleId && (
+            <div className="col-start-2">
+              <ColorScaleControl scaleId={settings.colorScaleId} />
+            </div>
+          )}
         </div>
         {settings.seriesField && (
           <p className="text-xs text-muted-foreground">
@@ -362,6 +368,11 @@ export function BarChartSettingsPanel({
         </select>
 
         {seriesControl}
+        {settings.colorScaleId && (
+          <div className="col-start-2">
+            <ColorScaleControl scaleId={settings.colorScaleId} />
+          </div>
+        )}
         {!settings.seriesField &&
           !settings.forceString &&
           measureFields.includes(settings.field) && (

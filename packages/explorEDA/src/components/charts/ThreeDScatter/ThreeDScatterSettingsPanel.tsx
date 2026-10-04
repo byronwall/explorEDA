@@ -5,6 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { NumericInputEnter } from "@/components/NumericInputEnter";
 import { FieldSelector } from "@/components/FieldSelector";
 import { useColorScales } from "@/hooks/useColorScales";
+import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
 
 export function ThreeDScatterSettingsPanel({
   settings,
@@ -61,6 +62,11 @@ export function ThreeDScatterSettingsPanel({
             })
           }
         />
+        {settings.colorScaleId && (
+          <div className="col-start-2 -mt-2">
+            <ColorScaleControl scaleId={settings.colorScaleId} />
+          </div>
+        )}
 
         <Label>Point Size</Label>
         <NumericInputEnter

@@ -8,17 +8,39 @@ export interface BaseColorScale {
   sourceField?: string;
 }
 
+/** How values are spaced along a numerical scale's ramp. */
+export type NumericalScaleTransform = "linear" | "sqrt" | "log";
+
 export interface NumericalColorScale extends BaseColorScale {
   type: "numerical";
-  palette: string; // d3 color scale name
+  /** Ramp palette id from `RAMP_PALETTES`, sequential or diverging. */
+  palette: string;
   min: number;
   max: number;
+  /** Run the ramp from its far end to its near end. */
+  reverse?: boolean;
+  /** Value that takes a diverging ramp's middle color. Defaults to 0 when the
+   * domain crosses it, otherwise to the middle of the domain. */
+  midpoint?: number;
+  transform?: NumericalScaleTransform;
+  /** Number of discrete classes. Omitted or 0 draws a smooth ramp. */
+  steps?: number;
 }
+
+/** The order categories take a palette's colors in. */
+export type CategoryColorOrder = "frequency" | "alphabetical" | "data";
 
 export interface CategoricalColorScale extends BaseColorScale {
   type: "categorical";
   palette: string[]; // array of colors
   mapping: Map<string, string>; // value -> color mapping
+  /** Palette id the colors were assigned from. Custom edits keep it. */
+  paletteId?: string;
+  /** Reverse an ordered palette before assigning it. */
+  reverse?: boolean;
+  order?: CategoryColorOrder;
+  /** Categories past the palette's last color repeat it or turn gray. */
+  overflow?: "repeat" | "other";
 }
 
 export type ColorScaleType = NumericalColorScale | CategoricalColorScale;
@@ -50,7 +72,8 @@ export interface UseColorScalesReturn {
   createDefaultCategoricalScale: (
     name: string,
     values: string[],
-    sourceField?: string
+    sourceField?: string,
+    counts?: ReadonlyMap<string, number>
   ) => ColorScaleType;
 
   // D3 Integration

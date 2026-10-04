@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useColorScales } from "@/hooks/useColorScales";
 import { ChartSettingsPanelProps, RowChartSettings } from "@/types/ChartTypes";
+import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
 
 export function RowChartSettingsPanel({
   settings,
@@ -83,6 +84,11 @@ export function RowChartSettingsPanel({
             <Label htmlFor="colorField">Use as color field</Label>
           </div>
         </div>
+        {settings.colorField && settings.colorScaleId && (
+          <div className="col-start-2">
+            <ColorScaleControl scaleId={settings.colorScaleId} />
+          </div>
+        )}
       </div>
     </div>
   );

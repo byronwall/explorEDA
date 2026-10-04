@@ -7,6 +7,7 @@ import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { DensitySettings } from "./DensitySettings";
+import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
 
 export function ScatterPlotSettingsPanel({
   settings,
@@ -82,6 +83,11 @@ export function ScatterPlotSettingsPanel({
                 })
               }
             />
+            {settings.colorScaleId && (
+              <div className="col-start-2 -mt-2">
+                <ColorScaleControl scaleId={settings.colorScaleId} />
+              </div>
+            )}
             <Label>Size by</Label>
             <FieldSelector
               label=""
