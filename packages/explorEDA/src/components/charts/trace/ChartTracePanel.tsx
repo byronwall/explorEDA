@@ -1,3 +1,5 @@
+import { RowTraceBody } from "../RowChart/RowTraceBody";
+import { DistributionTraceBody } from "../BoxPlot/DistributionTraceBody";
 import { RegionTraceBody } from "../Map/RegionTraceBody";
 import { MapTraceBody } from "../Map/MapTraceBody";
 import { useState } from "react";
@@ -22,6 +24,8 @@ import type { ChartTrace } from "./traceTypes";
 
 function TraceBody({ trace }: { trace: ChartTrace }) {
   switch (trace.kind) {
+    case "row-category": return <RowTraceBody key={trace.id} trace={trace} />;
+    case "distribution": return <DistributionTraceBody trace={trace} />;
     case "map-region":
     case "map-region-row":
     case "map-joins":

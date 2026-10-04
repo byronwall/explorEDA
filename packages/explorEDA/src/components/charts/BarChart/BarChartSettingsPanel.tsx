@@ -296,10 +296,47 @@ export function BarChartSettingsPanel({
         </p>
       )}
       <div className="grid grid-cols-[120px_1fr] items-center gap-4">
-        <Label>Group by</Label>
+        {!settings.seriesField && (
+          <>
+            <Label htmlFor="bar-data-mode">Data mode</Label>
+            <ActionTooltip content="Histogram groups numeric values into intervals. Category count gives each distinct value its own bar.">
+              <select
+                id="bar-data-mode"
+                className="h-9 min-w-0 rounded border border-input bg-background px-2 text-sm"
+                value={
+                  !settings.forceString &&
+                  measureFields.includes(settings.field)
+                    ? "histogram"
+                    : "category"
+                }
+                onChange={(event) =>
+                  onSettingsChange({
+                    ...settings,
+                    forceString: event.target.value === "category",
+                    field:
+                      event.target.value === "histogram" &&
+                      !measureFields.includes(settings.field)
+                        ? measureFields[0]!
+                        : settings.field,
+                  })
+                }
+              >
+                <option value="histogram" disabled={!measureFields.length}>
+                  Histogram
+                </option>
+                <option value="category">Category count</option>
+              </select>
+            </ActionTooltip>
+          </>
+        )}
+        <Label>
+          {!settings.forceString && measureFields.includes(settings.field)
+            ? "Numeric field"
+            : "Group by"}
+        </Label>
         <FieldSelector
           label=""
-          placeholder="Group by"
+          placeholder="Chart field"
           value={settings.field}
           onChange={(value) => onSettingsChange({ ...settings, field: value })}
         />
@@ -325,56 +362,43 @@ export function BarChartSettingsPanel({
         </select>
 
         {seriesControl}
+        {!settings.seriesField &&
+          !settings.forceString &&
+          measureFields.includes(settings.field) && (
+            <>
+              <Label>Bins · {settings.binCount ?? 10}</Label>
+              <Slider
+                aria-label="Histogram bin count"
+                value={[settings.binCount ?? 10]}
+                min={2}
+                max={50}
+                step={1}
+                onValueChange={([value]) =>
+                  onSettingsChange({ ...settings, binCount: value })
+                }
+              />
+            </>
+          )}
         {!settings.seriesField && (
-          <>
-            <Label>Bins · {settings.binCount ?? 10}</Label>
-            <Slider
-              aria-label="Histogram bin count"
-              value={[settings.binCount ?? 10]}
-              min={2}
-              max={50}
-              step={1}
-              onValueChange={([value]) =>
-                onSettingsChange({ ...settings, binCount: value })
-              }
-            />
-
-            <div className="col-start-2">
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="forceString"
-                  checked={settings.forceString}
-                  onCheckedChange={(checked) =>
-                    onSettingsChange({
-                      ...settings,
-                      forceString: checked,
-                    })
-                  }
-                />
-                <Label htmlFor="forceString">Treat values as categories</Label>
-              </div>
+          <div className="col-start-2">
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="colorField"
+                checked={settings.field === settings.colorField}
+                onCheckedChange={(checked) =>
+                  onSettingsChange({
+                    ...settings,
+                    colorField: checked ? settings.field : undefined,
+                    colorScaleId:
+                      checked && settings.field
+                        ? getOrCreateScaleForField(settings.field)
+                        : undefined,
+                  })
+                }
+              />
+              <Label htmlFor="colorField">Use as color field</Label>
             </div>
-
-            <div className="col-start-2">
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="colorField"
-                  checked={settings.field === settings.colorField}
-                  onCheckedChange={(checked) =>
-                    onSettingsChange({
-                      ...settings,
-                      colorField: checked ? settings.field : undefined,
-                      colorScaleId:
-                        checked && settings.field
-                          ? getOrCreateScaleForField(settings.field)
-                          : undefined,
-                    })
-                  }
-                />
-                <Label htmlFor="colorField">Use as color field</Label>
-              </div>
-            </div>
-          </>
+          </div>
         )}
       </div>
       {settings.seriesField && (

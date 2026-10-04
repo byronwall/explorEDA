@@ -95,7 +95,12 @@ export interface LegendTrace {
   numericalPlan?: ReturnType<typeof planNumericalLegend>;
 }
 
+import type { RowTrace } from "../RowChart/RowTraceBody";
+import type { DistributionTrace } from "../BoxPlot/DistributionTraceBody";
+
 export type ChartTrace =
+  | RowTrace
+  | DistributionTrace
   | RegionTrace
   | MapTrace
   | DensityTrace

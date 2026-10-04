@@ -437,6 +437,7 @@ function isChart(value: unknown): boolean {
         ["tukey", "minmax", "stdDev"].includes(value.whiskerType as string) &&
         typeof value.showOutliers === "boolean" &&
         typeof value.violinOverlay === "boolean" &&
+        (value.showObservations === undefined || typeof value.showObservations === "boolean") &&
         ["median", "label"].includes(value.sortBy as string) &&
         isFiniteNumber(value.violinBandwidth) &&
         typeof value.autoBandwidth === "boolean" &&
