@@ -3,36 +3,22 @@
   "name": "explorEDA",
   "description": "Blank project ready for grid editing, structure mapping, and future AI-assisted details.",
   "createdAt": "2026-09-29T01:22:21.210Z",
-  "updatedAt": "2026-10-03T02:44:15.910Z",
+  "updatedAt": "2026-10-04T03:33:51.754Z",
   "operationLog": [
     {
-      "id": "74d0709d-b334-48f8-819e-c8c1f40c5e04",
-      "kind": "nodes.bulk.updated",
+      "id": "c64201e0-58e9-436c-8b2b-1c905df9a060",
+      "kind": "node.images.added",
       "actor": {
         "kind": "human"
       },
-      "createdAt": "2026-10-03T02:44:15.912Z",
-      "summary": "Bulk updated 16 nodes: archived.",
+      "createdAt": "2026-10-04T03:33:51.758Z",
+      "summary": "Added 1 images to \"Add chart list needs some structure and grouping for chart types.\".",
       "nodeIds": [
-        "page-feedback-10-1",
-        "page-rows-drawer-needs-an-expanded-current-and-small-view",
-        "page-tooltip-for-scatter-is-too-large-and-in-the-way",
-        "page-chart-focus-should-increase-header-size",
-        "page-improve-the-row-view-with-small-distribution-in-col-header",
-        "page-row-display",
-        "page-would-be-nice-to-show-data-type-clearly",
-        "page-missing-a-robust-right-click-menu-on-header-and-cells",
-        "page-column-picker-looks-goofy",
-        "page-search-should-highlight-what-matched",
-        "page-adding-slider-or-distribution-view-to-filter-in-popover",
-        "page-filter-popover-behaves-oddly",
-        "page-would-be-nice-to-drag-columns-left-and-right",
-        "page-would-be-nice-to-drag-columns-to-gutter-to-remove-variable",
-        "page-column-header-should-match-cell-alignment",
-        "page-chart-settings-should-allow-control-of-all-filters-on-chart"
+        "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types"
       ],
       "metadata": {
-        "clientMutationId": "425294d2-e07e-4144-8625-7faca9592f6d"
+        "imageCount": "1",
+        "clientMutationId": "88b26159-2c92-4d91-93a2-06fa350e5d6b"
       },
       "payload": {
         "state": {
@@ -605,6 +591,46 @@
                 "context": "",
                 "rawContext": "",
                 "images": []
+              },
+              {
+                "id": "page-remove-inspect-records-on-metric-tiles",
+                "label": "Remove \"inspect records\" on metric tiles",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "WE should basically never show the \"inspect\" button.  update AGENTS to reflect this desire",
+                "rawContext": "",
+                "images": [
+                  {
+                    "id": "91152b85-cfd8-4e8f-a2ea-b088fed25f6c",
+                    "src": "/api/projects/untitled-project/images/page-remove-inspect-records-on-metric-tiles/91152b85-cfd8-4e8f-a2ea-b088fed25f6c.png",
+                    "filename": "91152b85-cfd8-4e8f-a2ea-b088fed25f6c.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 54037,
+                    "createdAt": "2026-10-04T03:31:47.378Z"
+                  }
+                ]
+              },
+              {
+                "id": "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types",
+                "label": "Add chart list needs some structure and grouping for chart types.",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "List of buttons is overwhelming.",
+                "rawContext": "List of buttons is overwhelming.",
+                "images": [
+                  {
+                    "id": "77fdccd9-d3d8-4210-a81e-754d67d040b2",
+                    "src": "/api/projects/untitled-project/images/page-add-chart-list-needs-some-structure-and-grouping-for-chart-types/77fdccd9-d3d8-4210-a81e-754d67d040b2.png",
+                    "filename": "77fdccd9-d3d8-4210-a81e-754d67d040b2.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 134708,
+                    "createdAt": "2026-10-04T03:33:51.754Z"
+                  }
+                ]
               }
             ],
             "links": [
@@ -737,10 +763,173 @@
                 "source": "page-fdbk-10-02",
                 "target": "page-hitting-esc-did-not-close-the-colors-popover",
                 "parentChild": true
+              },
+              {
+                "source": "page-fdbk-10-02",
+                "target": "page-remove-inspect-records-on-metric-tiles",
+                "parentChild": true
+              },
+              {
+                "source": "page-fdbk-10-02",
+                "target": "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types",
+                "parentChild": true
               }
             ]
           }
         }
+      }
+    },
+    {
+      "id": "ad339e72-654d-4a4b-b6d1-8b07e2da0b1f",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T03:33:50.477Z",
+      "summary": "Created \"Add chart list needs some structure and grouping for chart types.\" under \"fdbk 10/02\".",
+      "nodeIds": [
+        "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types",
+        "page-fdbk-10-02"
+      ],
+      "metadata": {
+        "clientMutationId": "1e5b01db-d6ae-4ee8-941c-f7e5e20435a7"
+      }
+    },
+    {
+      "id": "1e42532c-84c7-4f67-b456-adbd4b30e276",
+      "kind": "node.context.updated",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T03:32:25.549Z",
+      "summary": "Updated context for \"Remove \"inspect records\" on metric tiles\".",
+      "nodeIds": [
+        "page-remove-inspect-records-on-metric-tiles"
+      ],
+      "metadata": {
+        "clientMutationId": "3c35d644-45ae-4415-aac0-7d78921d3e8d"
+      }
+    },
+    {
+      "id": "3fa0c2da-5199-4040-8b93-f2f4ac9313f8",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T03:31:47.380Z",
+      "summary": "Added 1 images to \"Remove \"inspect records\" on metric tiles\".",
+      "nodeIds": [
+        "page-remove-inspect-records-on-metric-tiles"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "edb9ebba-e6d8-46ee-9874-0bf28020e2b7"
+      }
+    },
+    {
+      "id": "394d0710-5927-4520-aa77-afdc9d8eb4ec",
+      "kind": "node.moved",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T03:31:31.427Z",
+      "summary": "Moved \"Remove \"inspect records\" on metric tiles\" under \"fdbk 10/02\".",
+      "nodeIds": [
+        "page-remove-inspect-records-on-metric-tiles",
+        "page-fdbk-10-02"
+      ],
+      "metadata": {
+        "clientMutationId": "5c1e5c0a-dbb5-4e98-afa0-84f1a9d68d50"
+      }
+    },
+    {
+      "id": "db8c66af-cb8e-4398-8e15-f4b0a07e8788",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T03:31:23.689Z",
+      "summary": "Created \"Remove \"inspect records\" on metric tiles\".",
+      "nodeIds": [
+        "page-remove-inspect-records-on-metric-tiles"
+      ],
+      "metadata": {
+        "clientMutationId": "bee3322b-e4aa-418c-9862-5c2122d68b4a"
+      }
+    },
+    {
+      "id": "6978fe2e-c6cc-4d7d-abbe-abd7e0e0aee7",
+      "kind": "node.deleted",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T03:04:31.567Z",
+      "summary": "Deleted \"testing-AAA\".",
+      "nodeIds": [
+        "page-testing"
+      ],
+      "metadata": {
+        "clientMutationId": "a10bab14-3c63-45e2-8513-9d1494ab28a9"
+      }
+    },
+    {
+      "id": "2ca3d79e-1d55-4604-ab65-f94a8fd04711",
+      "kind": "node.title.updated",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T03:03:59.845Z",
+      "summary": "Renamed \"testing\" to \"testing-AAA\".",
+      "nodeIds": [
+        "page-testing"
+      ],
+      "metadata": {
+        "clientMutationId": "82b35416-7a03-4a7c-a600-32a9c3b664f3"
+      }
+    },
+    {
+      "id": "2a77d46c-a7ad-410c-b31f-8a74445fd70e",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T03:03:51.964Z",
+      "summary": "Created \"testing\".",
+      "nodeIds": [
+        "page-testing"
+      ],
+      "metadata": {
+        "clientMutationId": "dbb5fe28-04ad-4fa7-8338-144c2e2ec77b"
+      }
+    },
+    {
+      "id": "74d0709d-b334-48f8-819e-c8c1f40c5e04",
+      "kind": "nodes.bulk.updated",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-03T02:44:15.912Z",
+      "summary": "Bulk updated 16 nodes: archived.",
+      "nodeIds": [
+        "page-feedback-10-1",
+        "page-rows-drawer-needs-an-expanded-current-and-small-view",
+        "page-tooltip-for-scatter-is-too-large-and-in-the-way",
+        "page-chart-focus-should-increase-header-size",
+        "page-improve-the-row-view-with-small-distribution-in-col-header",
+        "page-row-display",
+        "page-would-be-nice-to-show-data-type-clearly",
+        "page-missing-a-robust-right-click-menu-on-header-and-cells",
+        "page-column-picker-looks-goofy",
+        "page-search-should-highlight-what-matched",
+        "page-adding-slider-or-distribution-view-to-filter-in-popover",
+        "page-filter-popover-behaves-oddly",
+        "page-would-be-nice-to-drag-columns-left-and-right",
+        "page-would-be-nice-to-drag-columns-to-gutter-to-remove-variable",
+        "page-column-header-should-match-cell-alignment",
+        "page-chart-settings-should-allow-control-of-all-filters-on-chart"
+      ],
+      "metadata": {
+        "clientMutationId": "425294d2-e07e-4144-8625-7faca9592f6d"
       }
     },
     {
