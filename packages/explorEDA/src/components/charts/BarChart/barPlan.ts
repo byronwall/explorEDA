@@ -14,7 +14,7 @@ import {
 } from "@/lib/numeric";
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { datum } from "@/types/ChartTypes";
-import type { ValueFilter } from "@/types/FilterTypes";
+import type { Filter, ValueFilter } from "@/types/FilterTypes";
 import { scaleBand } from "d3-scale";
 import { formatTick } from "../Axis/Axis";
 import {
@@ -83,6 +83,18 @@ export interface BarMark {
   order: number;
   label: string;
   groupValue: datum;
+  series?: { field: string; label: string; value: datum };
+  selection?: Filter[];
+  stack?: {
+    mode: "stacked" | "percent";
+    start: number;
+    end: number;
+    total: number;
+    totalText: string;
+    share?: number;
+    valueText: string;
+    parts: { label: string; row: AggregateResultRow }[];
+  };
   bin?: { start: number; end: number; closed: boolean };
   value: number;
   x: number;

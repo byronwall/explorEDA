@@ -14,6 +14,7 @@ export default defineConfig({
     "charts/ecdf": "src/components/charts/Ecdf/definition.ts",
     "charts/line": "src/components/charts/LineChart/definition.ts",
     "charts/markdown": "src/components/charts/Markdown/definition.ts",
+    "charts/map": "src/components/charts/Map/definition.ts",
     "charts/metric-card": "src/components/charts/MetricCard/definition.ts",
     "charts/parallel-coordinates":
       "src/components/charts/ParallelCoordinates/definition.ts",

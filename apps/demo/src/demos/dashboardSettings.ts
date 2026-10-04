@@ -1,3 +1,4 @@
+import { serviceDistricts } from "./regionMapGeometry";
 import type { SavedDataStructure } from "exploreda";
 
 type Chart = SavedDataStructure["charts"][number];
@@ -28,7 +29,7 @@ const row = (
   field: string,
   position: ReturnType<typeof layout>,
   colorScaleId?: string
-): Chart => ({
+): Extract<Chart, { type: "row" }> => ({
   ...base,
   id,
   type: "row",
@@ -49,7 +50,7 @@ const histogram = (
   field: string,
   position: ReturnType<typeof layout>,
   label = field
-): Chart => ({
+): Extract<Chart, { type: "bar" }> => ({
   ...base,
   id,
   type: "bar",
@@ -90,7 +91,7 @@ const box = (
   position: ReturnType<typeof layout>,
   colorScaleId?: string,
   label = field
-): Chart => ({
+): Extract<Chart, { type: "boxplot" }> => ({
   ...base,
   id,
   type: "boxplot",
@@ -457,6 +458,44 @@ export const activityDashboard = dashboard(
     ]),
   ]
 );
+
+export const bubbleDashboard: SavedDataStructure = {
+  ...activityDashboard,
+  metadata: { ...activityDashboard.metadata, name: "Trial volume, speed, and conversion" },
+  charts: [
+    {
+      ...scatter(
+        "bubble-trials",
+        "Speed, conversion, and trial volume",
+        "Response time (ms)",
+        "Conversion (%)",
+        layout(0, 0, 8, 6),
+        ["Response time (ms)", "Conversion (%)"],
+        "Phase",
+        "phase-colors"
+      ),
+      sizeField: "Trials",
+      maxBubbleRadius: 20,
+      pointOpacity: 0.5,
+    },
+    {
+      ...base,
+      id: "bubble-total",
+      type: "metric-card",
+      title: "Trials in this selection",
+      aggregation: "sum",
+      measureField: "Trials",
+      layout: layout(8, 0, 4, 2),
+    },
+    row("bubble-phase", "Days by release phase", "Phase", layout(8, 2, 4, 4), "phase-colors"),
+    table(
+      "bubble-records",
+      "Daily observations",
+      ["Day", "Phase", "Visitors", "Returning visitors", "Trials", "Conversion (%)", "Response time (ms)"],
+      layout(0, 6, 12, 5)
+    ),
+  ],
+};
 
 // Region bars sum revenue; clicking one selects that region everywhere.
 const revenueByRegion: NonNullable<SavedDataStructure["aggregates"]> = [
@@ -845,3 +884,102 @@ shopDashboard.fieldSettings = {
   ...shopDashboard.fieldSettings,
   Revenue: { format: "currency", currency: "USD", precision: 2 },
 };
+
+export const timeSeriesDashboard = dashboard("Orders through the calendar", [
+  {
+    ...line("time-revenue", "Monthly revenue by channel", [], layout(0, 0, 8, 6), "Revenue ($)"),
+    xField: "Order Date", xAxisLabel: "Order date · UTC", colorField: "Channel", colorScaleId: "time-channel",
+    time: { interval: "month", weekStart: "monday", aggregation: "sum", measureField: "Revenue", splitField: "Channel", missingPeriods: "gap" },
+  },
+  { ...base, id: "time-count", type: "metric-card", title: "Matching orders", aggregation: "count", layout: layout(8, 0, 4, 2) },
+  row("time-channels", "Sales channels", "Channel", layout(8, 2, 4, 4), "time-channel"),
+  {
+    ...line("time-weekly", "Weekly order count", [], layout(0, 6, 6, 5), "Orders"),
+    xField: "Order Date", xAxisLabel: "Order date · UTC",
+    time: { interval: "week", weekStart: "monday", aggregation: "count", missingPeriods: "zero" },
+  },
+  { ...base, id: "time-calendar", type: "calendar", title: "Daily orders", field: "Order Date", aggregation: "count", weekStart: "monday", layout: layout(6, 6, 6, 5) },
+  table("time-records", "Matching source records", ["Order Date", "Channel", "Revenue", "Region"], layout(0, 11, 12, 5)),
+], [categoricalScale("time-channel", "Channel", ["Web", "Store", "Wholesale"])]);
+timeSeriesDashboard.fieldSettings = { Revenue: { type: "numeric", format: "currency", currency: "USD", precision: 2 } };
+
+export const groupedBarsDashboard = dashboard("Sales by region and channel", [
+  { ...base, id: "grouped-revenue", type: "bar", title: "Revenue by region and channel", field: "Revenue", aggregateId: "grouped-sales", seriesField: "Channel", colorField: "Channel", colorScaleId: "grouped-channel", layout: layout(0, 0, 8, 6), yAxisLabel: "Revenue ($)" },
+  { ...base, id: "grouped-total", type: "metric-card", title: "Matching revenue", aggregation: "sum", measureField: "Revenue", layout: layout(8, 0, 4, 2) },
+  row("grouped-categories", "Product categories", "Category", layout(8, 2, 4, 4)),
+  { ...base, id: "grouped-count", type: "bar", title: "Orders by category and channel", field: "Category", seriesField: "Channel", colorField: "Channel", colorScaleId: "grouped-channel", layout: layout(0, 6, 12, 5), yAxisLabel: "Orders" },
+  table("grouped-records", "Matching source records", ["Region", "Channel", "Category", "Revenue"], layout(0, 11, 12, 5)),
+], [categoricalScale("grouped-channel", "Channel", ["Web", "Store", "Wholesale"])]);
+groupedBarsDashboard.aggregates = [{ id: "grouped-sales", name: "Revenue by region", groupField: "Region", measureField: "Revenue", aggregation: "sum" }];
+groupedBarsDashboard.fieldSettings = { Revenue: { type: "numeric", format: "currency", currency: "USD", precision: 2 } };
+
+export const stackedBarsDashboard: SavedDataStructure = {
+  ...groupedBarsDashboard,
+  metadata: { ...groupedBarsDashboard.metadata, name: "Regional totals and channel shares" },
+  charts: groupedBarsDashboard.charts.map((chart) => chart.type === "bar" ? {
+    ...chart,
+    seriesLayout: chart.aggregateId ? "stacked" : "percent",
+    title: chart.aggregateId ? "Regional revenue by channel" : "Channel share of regional orders",
+    field: chart.aggregateId ? chart.field : "Region",
+    yAxisLabel: chart.aggregateId ? "Revenue ($)" : "Share of regional orders (%)",
+  } : chart),
+};
+
+
+export const areaDashboard: SavedDataStructure = {
+  ...timeSeriesDashboard,
+  metadata: { ...timeSeriesDashboard.metadata, name: "Revenue layers through the year" },
+  charts: timeSeriesDashboard.charts.map((chart) => chart.type === "line" && chart.time ? {
+    ...chart,
+    title: chart.id === "time-revenue" ? "Monthly revenue layers" : "Weekly orders as an area",
+    time: { ...chart.time, display: chart.id === "time-revenue" ? "stacked-area" : "area" },
+  } : chart),
+};
+
+export const densityDashboard = dashboard(
+  "Where daily observations cluster",
+  [
+    {
+      ...scatter("density-days", "Temperature and ice cream sales", "Temperature (°C)", "Ice Cream Sales", layout(0, 0, 8, 6), ["Temperature (°C)", "Ice cream sales"]),
+      display: "density",
+      density: { xBins: 24, yBins: 20 },
+    },
+    { ...base, id: "density-count", type: "metric-card", title: "Days in this selection", aggregation: "count", layout: layout(8, 0, 4, 2) },
+    histogram("density-humidity", "Humidity of matching days", "Humidity (%)", layout(8, 2, 4, 4), "Humidity (%)"),
+    table("density-records", "Daily source records", ["Temperature (°C)", "Ice Cream Sales", "Humidity (%)", "Beach Visitors", "Mood Index"], layout(0, 6, 12, 5)),
+  ]
+);
+
+
+export const pointMapDashboard = dashboard(
+  "Where service requests originate",
+  [
+    { ...base, id: "map-sites", type: "map", mode: "point", title: "Service sites around the world", latitudeField: "Latitude", longitudeField: "Longitude", labelField: "Site", colorField: "Region", colorScaleId: "map-regions", sizeField: "Requests", pointRadius: 18, pointOpacity: 0.75, projection: "equal-earth", layout: layout(0, 0, 8, 7) },
+    { ...base, id: "map-count", type: "metric-card", title: "Sites in this selection", aggregation: "count", layout: layout(8, 0, 4, 2) },
+    { ...base, id: "map-regions", type: "bar", title: "Sites by region", field: "Region", layout: layout(8, 2, 4, 5), binCount: 20, yAxisLabel: "Sites" },
+    table("map-records", "Site source records", ["Site", "Latitude", "Longitude", "Region", "Requests"], layout(0, 7, 12, 5)),
+  ],
+  [categoricalScale("map-regions", "Region", ["Americas", "Europe", "Africa", "Asia-Pacific"])]
+);
+
+
+export const regionMapDashboard: SavedDataStructure = {
+  ...dashboard("Requests across service districts", [
+    {...base,id:"district-map",type:"map",mode:"region",title:"Requests by service district",latitudeField:"",longitudeField:"",pointRadius:6,pointOpacity:0.8,projection:"equal-earth",view:{center:[-74.5,41.5],zoom:20},geometryAssetId:"service-districts",regionField:"District",featureKey:"district",aggregation:"sum",measureField:"Requests",showRegionLabels:true,outlineWidth:1,layout:layout(0,0,8,7)},
+    {...base,id:"district-total",type:"metric-card",title:"Requests in this selection",aggregation:"sum",measureField:"Requests",layout:layout(8,0,4,2)},
+    {...base,id:"district-pivot",type:"pivot",title:"Check the region totals",rowFields:["District"],columnField:"",valueFields:[{field:"Requests",aggregation:"sum",label:"Requests"}],layout:layout(8,2,4,5)},
+    table("district-rows","Request source records",["District","Team","Requests"],layout(0,7,12,4)),
+  ]),
+  geometryAssets:[serviceDistricts],
+  fieldSettings:{Requests:{type:"numeric"}},
+};
+
+
+export const distributionDashboard = dashboard("Delivery times and smaller routes", [
+  { ...histogram("delivery-histogram", "Delivery time histogram", "Hours", layout(0, 0, 7, 5), "Delivery time (hours)"), binCount: 12, forceString: false },
+  { ...row("delivery-routes", "Shipments by route", "Route", layout(7, 0, 5, 5)), minRowHeight: 36, maxRowHeight: 42 },
+  { ...box("delivery-distribution", "Delivery time by service", "Hours", "Service", layout(0, 5, 8, 6)), violinOverlay: true, showObservations: true },
+  { ...base, id: "delivery-count", type: "metric-card", title: "Matching shipments", aggregation: "count", layout: layout(8, 5, 4, 2) },
+  table("delivery-records", "Shipment source records", ["Route", "Service", "Hours"], layout(8, 7, 4, 4)),
+]);
+distributionDashboard.fieldSettings = { Hours: { type: "numeric" } };

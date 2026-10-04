@@ -22,11 +22,22 @@ export function chartFilterFields(
 ): ChartFilterField[] {
   const own: ChartFilterField[] = (() => {
     switch (settings.type) {
+      case "map":
+        return settings.mode === "region" ? [{field: settings.regionField ?? ""}] : [{field: settings.latitudeField}, {field: settings.longitudeField}];
       case "scatter":
         return [{ field: settings.xField }, { field: settings.yField }];
       case "line":
-        return [{ field: settings.xField }];
+        return [
+          { field: settings.xField },
+          ...(settings.time?.splitField
+            ? [{ field: settings.time.splitField, valuesOnly: true }]
+            : []),
+        ];
       case "bar":
+        if (settings.seriesField) return [
+          { field: aggregate?.groupField ?? settings.field, valuesOnly: true },
+          { field: settings.seriesField, valuesOnly: true },
+        ].filter((item, index, items) => items.findIndex((other) => other.field === item.field) === index);
         return [
           {
             field:

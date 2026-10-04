@@ -89,6 +89,7 @@ const Workspace = forwardRef<ExplorEdaHandle>(function Workspace(_props, ref) {
 });
 
 export type { SavedDataStructure };
+export type { GeometryAsset, RegionGeometry } from "@/lib/geometryAssets";
 export type {
   SavedAnalysisStructure,
   SavedCalculation,

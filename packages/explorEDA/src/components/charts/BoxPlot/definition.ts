@@ -24,6 +24,7 @@ export interface BoxPlotSettings extends BaseChartSettings {
   whiskerType: "tukey" | "minmax" | "stdDev";
   showOutliers: boolean;
   violinOverlay: boolean;
+  showObservations?: boolean;
   styles: BoxPlotStyleSettings;
   filters: Filter[];
   sortBy: "median" | "label";

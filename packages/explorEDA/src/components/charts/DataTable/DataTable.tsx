@@ -19,7 +19,7 @@ import { DataTableSettings } from "./definition";
 import { getFilteredRows, DataTableRow } from "./filteredRows";
 import { getChartSummary } from "../chartAccessibility";
 
-interface DataTableProps extends BaseChartProps {
+interface DataTableProps extends BaseChartProps<DataTableSettings> {
   settings: DataTableSettings;
   rows?: DataTableRow[];
   onSettingsChange?: (settings: Partial<DataTableSettings>) => void;

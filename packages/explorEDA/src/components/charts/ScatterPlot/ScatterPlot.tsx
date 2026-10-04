@@ -1,4 +1,3 @@
-import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import {
@@ -13,6 +12,9 @@ import {
 import type { ScatterPlotSettings } from "./definition";
 import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
 import { ScatterSvg } from "./ScatterSvg";
+import { BubbleLegend } from "./BubbleLegend";
+import { DensityScatter } from "./DensityScatter";
+import { useScatterData } from "./useScatterData";
 import { ChartReadout } from "../ChartReadout";
 import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
 import {
@@ -31,15 +33,23 @@ import {
   brushFilters,
   planScatter,
   scatterHoverReadout,
+  scatterPointAt,
   type Extent,
-  type ScatterSnapshot,
 } from "./scatterPlan";
 
-interface ScatterPlotProps extends BaseChartProps {
+interface ScatterPlotProps extends BaseChartProps<ScatterPlotSettings> {
   settings: ScatterPlotSettings;
 }
 
-export function ScatterPlot({
+export function ScatterPlot(props: ScatterPlotProps) {
+  return props.settings.display === "density" ? (
+    <DensityScatter {...props} />
+  ) : (
+    <ScatterPoints {...props} />
+  );
+}
+
+function ScatterPoints({
   settings,
   width,
   height,
@@ -50,88 +60,15 @@ export function ScatterPlot({
   const traceApi = useChartTraceApi();
   const owner = useId();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const data = useDataLayer((state) => state.data);
-  const rawData = useDataLayer((state) => state.rawData);
-  const profiles = useDataLayer((state) => state.fieldProfiles);
-  const manager = useDataLayer((state) => state.calculationManager);
-  const calculations = useDataLayer((state) => state.calculations);
-  const nonce = useDataLayer((state) => state.nonce);
-  const chartItems = useDataLayer((state) => state.liveItems[settings.id]);
-  const crossfilter = useDataLayer((state) => state.crossfilterWrapper);
-  const getColumnData = useDataLayer((state) => state.getColumnData);
-  const fieldSettings = useDataLayer((state) => state.fieldSettings);
-  const colorScale = useDataLayer((state) =>
-    state.colorScales.find((item) => item.id === settings.colorScaleId)
-  );
-  const updateChart = useDataLayer((state) => state.updateChart);
-  const fieldLabel = useDataLayer((state) => state.getFieldLabel);
-  const getFieldLabel = (field: string) =>
-    fieldLabel ? fieldLabel(field) : field;
-  const allIds = useMemo(() => data.map((row) => row.__ID), [data]);
-
-  const snapshot = useMemo((): ScatterSnapshot => {
-    // Chart and global filter populations come from the same store update.
-    const chartIds =
-      chartItems?.items
-        .filter((item) => item.value > 0)
-        .map((item) => item.key) ?? [];
-    // The data layer replaces cached columns after edits; old maps stay stable.
-    const column = (field: string | undefined) =>
-      field ? getColumnData(field) : {};
-    const profileType = (field: string) =>
-      profiles.find((profile) => profile.name === field)?.dataType;
-    return {
-      revision: `${nonce}:${chartItems?.nonce ?? 0}`,
-      allIds,
-      chartIds,
-      filteredIds: crossfilter.getFilteredRowIds(),
-      facetIds: facetIds?.slice(),
-      xData: column(settings.xField),
-      yData: column(settings.yField),
-      colorData: column(settings.colorField),
-      xType: profileType(settings.xField),
-      yType: profileType(settings.yField),
-      facetRowData: settings.facet.enabled
-        ? column(settings.facet.rowVariable)
-        : undefined,
-      facetColumnData:
-        settings.facet.enabled && settings.facet.type === "grid"
-          ? column(settings.facet.columnVariable)
-          : undefined,
-      fieldSettings: Object.fromEntries(
-        Object.entries(fieldSettings).map(([field, value]) => [
-          field,
-          { ...value },
-        ])
-      ),
-      colorScale:
-        colorScale?.type === "categorical"
-          ? {
-              ...colorScale,
-              mapping: new Map(colorScale.mapping),
-              palette: [...colorScale.palette],
-            }
-          : colorScale && { ...colorScale },
-      calculatedFields: calculations.map((calc) => calc.resultColumnName),
-      pixelRatio:
-        typeof window === "undefined" ? 1 : window.devicePixelRatio || 1,
-    };
-  }, [
-    allIds,
-    chartItems,
-    crossfilter,
-    getColumnData,
+  const {
+    snapshot,
+    data,
+    rawData,
     profiles,
-    fieldSettings,
-    colorScale,
-    calculations,
-    nonce,
-    settings.xField,
-    settings.yField,
-    settings.colorField,
-    settings.facet,
-    facetIds,
-  ]);
+    manager,
+    updateChart,
+    getFieldLabel,
+  } = useScatterData(settings, facetIds);
 
   const plan = useMemo(
     () => planScatter(settings, snapshot, width, height),
@@ -164,21 +101,26 @@ export function ScatterPlot({
     traceApi?.inspect(owner, kind, id);
   const activeSelection =
     trace?.selection?.owner === owner ? trace.selection : null;
-  const pointAt = (x: number, y: number) => {
-    let nearest: (typeof plan.points)[number] | undefined;
-    let distance = 100;
-    for (const point of plan.points) {
-      const dx = point.x - x;
-      const dy = point.y - y;
-      const squared = dx * dx + dy * dy;
-      if (squared < distance) {
-        nearest = point;
-        distance = squared;
-      }
-    }
-    return nearest;
+  const pointAt = (x: number, y: number) => scatterPointAt(plan, x, y);
+  const selectPoint = (id: string) => {
+    const point = plan.points.find((point) => point.id === id);
+    if (!point) return;
+    const selected =
+      settings.filters.length === 1 &&
+      settings.filters[0]?.type === "value" &&
+      settings.filters[0].field === "__ID" &&
+      settings.filters[0].values[0] === point.sourceId;
+    updateChart(settings.id, {
+      filters: selected
+        ? []
+        : [{ type: "value", field: "__ID", values: [point.sourceId] }],
+    });
   };
   const hoveredPoint = plan.points.find((point) => point.id === hoveredId);
+  const inspectPoint =
+    hoveredPoint ??
+    plan.points.find((point) => point.passesOwnFilter) ??
+    plan.points[0];
   const hoveredText =
     hoveredPoint && scatterHoverReadout(plan, snapshot, settings, hoveredPoint);
 
@@ -205,7 +147,11 @@ export function ScatterPlot({
       ctx.globalAlpha = point.opacity;
       ctx.beginPath();
       ctx.arc(point.x, point.y, point.radius, 0, Math.PI * 2);
-      ctx.fill();
+      if (plan.size && point.sizeValue === 0) {
+        ctx.strokeStyle = point.color;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      } else ctx.fill();
     }
   }, [plan, width, height]);
 
@@ -260,7 +206,10 @@ export function ScatterPlot({
     (extent: Extent | null) => {
       const filters = settings.filters.filter(
         (filter) =>
-          filter.field !== settings.xField && filter.field !== settings.yField
+          filter.field !== settings.xField &&
+          filter.field !== settings.yField &&
+          (!settings.sizeField ||
+            (filter.field !== "__ID" && filter.field !== settings.sizeField))
       );
       if (extent) {
         filters.push(...brushFilters(plan, extent));
@@ -306,7 +255,20 @@ export function ScatterPlot({
           />
           <ScatterSvg
             plan={plan}
-            hoveredId={hoveredId}
+            hoveredId={
+              hoveredId ??
+              (activeSelection?.kind === "point" ? activeSelection.id : null)
+            }
+            onHoverPoint={setHoveredId}
+            onActivatePoint={(id, inspect) =>
+              inspect ? choose("point", id) : selectPoint(id)
+            }
+            onSelectPoint={(x, y) => {
+              const point = pointAt(x, y);
+              if (!point) return false;
+              selectPoint(point.id);
+              return true;
+            }}
             onBrushChange={handleBrushChange}
             onInspectPoint={(x, y) => {
               const point = pointAt(x, y);
@@ -319,6 +281,17 @@ export function ScatterPlot({
               activeSelection?.kind === "guide" ? activeSelection.id : undefined
             }
           />
+          {plan.size && (
+            <BubbleLegend
+              size={plan.size}
+              points={plan.points.length}
+              exclusions={plan.exclusions.filter(
+                (item) => item.reason === "invalid-size"
+              )}
+              onInspect={() => choose("point", inspectPoint!.id)}
+              onInspectExcluded={(id) => choose("excluded", String(id))}
+            />
+          )}
           {plan.calculatedBadges.map((badge) => (
             <span
               key={badge.id}
@@ -374,6 +347,10 @@ export function ScatterPlot({
                 [
                   [plan.xDisplay, hoveredText?.xText],
                   [plan.yDisplay, hoveredText?.yText],
+                  settings.sizeField && [
+                    getFieldLabel(settings.sizeField),
+                    hoveredText?.sizeText,
+                  ],
                   settings.colorField && [
                     getFieldLabel(settings.colorField),
                     hoveredText?.colorText,
@@ -388,16 +365,24 @@ export function ScatterPlot({
                       hoveredText?.facetColumnText,
                     ],
                 ] as Array<false | "" | undefined | [string, string?]>
-              ).map(
-                (item) =>
-                  item && (
-                    // Short of room, the name gives way before the value.
-                    <span key={item[0]} className="eda-readout-item">
-                      <span>{item[0]}</span>
-                      <b>{item[1]}</b>
-                    </span>
-                  )
-              )}
+              )
+                .filter(
+                  (item, index, items) =>
+                    item &&
+                    items.findIndex(
+                      (other) => other && other[0] === item[0]
+                    ) === index
+                )
+                .map(
+                  (item) =>
+                    item && (
+                      // Short of room, the name gives way before the value.
+                      <span key={item[0]} className="eda-readout-item">
+                        <span>{item[0]}</span>
+                        <b>{item[1]}</b>
+                      </span>
+                    )
+                )}
             </ChartReadout>
           )}
         </>

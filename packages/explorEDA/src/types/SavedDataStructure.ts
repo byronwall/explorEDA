@@ -8,6 +8,8 @@ import {
 import type { FieldSettingsMap } from "@/lib/fieldSettings";
 import type { AggregateSpec } from "@/lib/aggregates";
 
+import type { GeometryAsset } from "@/lib/geometryAssets";
+
 export interface SavedCalculation {
   resultColumnName: string;
   expression: string;
@@ -39,6 +41,9 @@ export interface SavedDataStructure {
 
   // Bar chart aggregates. Charts store only an aggregateId reference.
   aggregates?: AggregateSpec[];
+
+  // Shared GeoJSON sources. Map charts reference an asset by ID.
+  geometryAssets?: GeometryAsset[];
 }
 
 export interface SavedAnalysisStructure {

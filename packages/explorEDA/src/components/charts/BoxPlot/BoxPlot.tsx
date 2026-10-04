@@ -1,5 +1,11 @@
-import { finiteNumber, finiteNumbers } from "@/lib/numeric";
 import {
+  finiteNumber,
+  finiteNumbers,
+  numericExclusionReason,
+} from "@/lib/numeric";
+import {
+  categoryEqual,
+  categoryKey,
   categoryIncludes,
   categoryLabel,
   categoryValue,
@@ -11,8 +17,9 @@ import { BaseChartProps } from "@/types/ChartTypes";
 import { Filter, datum } from "@/types/FilterTypes";
 import { ScaleLinear, scaleBand } from "d3-scale";
 import natsort from "natsort";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useId, useMemo, useState } from "react";
 import { BaseChart } from "../BaseChart";
+import { Button } from "@/components/ui/button";
 import { ChartReadout } from "../ChartReadout";
 import {
   ChartStatusLine,
@@ -21,7 +28,13 @@ import {
 } from "../ChartStatusLine";
 import { getChartAxisFields, getChartAxisLabel } from "../chartAccessibility";
 import { useGetColumnDataForIds } from "../useGetColumnData";
-import { useGetLiveData } from "../useGetLiveData";
+import { useGetLiveData, useGetLiveIds } from "../useGetLiveData";
+import {
+  useChartTraceApi,
+  useTraceRevision,
+  useTraceSource,
+} from "../trace/ChartTraceScope";
+import type { TraceSource } from "../trace/traceTypes";
 import {
   calculateBoxPlotStats,
   calculateKernelDensity,
@@ -39,6 +52,12 @@ export function BoxPlot({
   height,
   facetIds,
 }: BaseChartProps<BoxPlotSettings>) {
+  const owner = useId();
+  const api = useChartTraceApi();
+  const revision = useTraceRevision(settings);
+  const liveIds = useGetLiveIds(settings, facetIds);
+  const rawData = useDataLayer((state) => state.rawData);
+  const chartHeight = Math.max(40, height - 32);
   const [hoveredGroup, setHoveredGroup] = useState<string | null>(null);
   const updateChart = useDataLayer((s) => s.updateChart);
   const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
@@ -83,7 +102,7 @@ export function BoxPlot({
       STATUS_LINE_HEIGHT,
   };
   const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
+  const innerHeight = chartHeight - margin.top - margin.bottom;
 
   // Group data by color field if specified
   const groupedData = useMemo(() => {
@@ -150,6 +169,7 @@ export function BoxPlot({
 
       return {
         group,
+        bandwidth,
         kde: calculateKernelDensity(data, bandwidth),
       };
     });
@@ -235,6 +255,101 @@ export function BoxPlot({
 
     return scale;
   }, [allData, innerHeight, settings.yAxis]) as ScaleLinear<number, number>;
+
+  const traceGroups = useMemo(() => {
+    const groups = new Map<
+      string,
+      {
+        group: datum;
+        contributors: {
+          sourceId: number;
+          input: datum;
+          rawInput: datum;
+          included: boolean;
+          exclusionReason?: string;
+        }[];
+      }
+    >();
+    liveIds.forEach((sourceId, index) => {
+      const group = hasColorField
+        ? categoryValue(colorFieldData[index])
+        : "All Data";
+      const key = categoryKey(group);
+      const item = groups.get(key) ?? { group, contributors: [] };
+      const input = liveData[index];
+      const rawInput = rawData[sourceId]?.[settings.field];
+      const included = finiteNumber(input) !== undefined;
+      item.contributors.push({
+        sourceId,
+        input,
+        rawInput,
+        included,
+        exclusionReason: included
+          ? undefined
+          : (numericExclusionReason(rawInput) ?? numericExclusionReason(input)),
+      });
+      groups.set(key, item);
+    });
+    return groups;
+  }, [
+    liveIds,
+    liveData,
+    colorFieldData,
+    hasColorField,
+    rawData,
+    settings.field,
+  ]);
+  const source = useMemo((): TraceSource => {
+    const currentRevision = `${revision}:${JSON.stringify(settings)}:${facetIds?.join(",") ?? ""}`;
+    return {
+      role: "chart",
+      revision: currentRevision,
+      resolve: (kind, id) => {
+        if (kind !== "distribution") return;
+        const sourceId = id.startsWith("row:")
+          ? Number(id.slice(4))
+          : undefined;
+        const entry =
+          sourceId === undefined
+            ? traceGroups.get(id)
+            : [...traceGroups.values()].find((item) =>
+                item.contributors.some((row) => row.sourceId === sourceId)
+              );
+        if (!entry) return;
+        return {
+          kind: "distribution",
+          id,
+          revision: currentRevision,
+          label: categoryLabel(entry.group),
+          field: settings.field,
+          sourceId,
+          contributors: entry.contributors,
+          stats: calculateBoxPlotStats(
+            entry.contributors
+              .filter((item) => item.included)
+              .map((item) => Number(item.input)),
+            settings.whiskerType
+          ),
+          whiskerType: settings.whiskerType,
+          bandwidth: groupKDEs?.find((item) =>
+            categoryEqual(item.group, entry.group)
+          )?.bandwidth,
+        };
+      },
+      findRow: (id) =>
+        liveIds.includes(id)
+          ? { kind: "distribution", id: `row:${id}` }
+          : undefined,
+      targets: () =>
+        [...traceGroups].map(([id, item]) => ({
+          kind: "distribution",
+          id,
+          label: categoryLabel(item.group),
+        })),
+    };
+  }, [revision, settings, facetIds, traceGroups, groupKDEs, liveIds]);
+  useTraceSource(owner, source);
+  const inspect = (id: string) => api?.inspect(owner, "distribution", id);
 
   const activeFilter = useMemo(() => {
     return settings.filters.find(
@@ -338,7 +453,7 @@ export function BoxPlot({
       )}
       <BaseChart
         width={width}
-        height={height}
+        height={chartHeight}
         xScale={xScale}
         yScale={yScale}
         brushingMode="none"
@@ -368,11 +483,17 @@ export function BoxPlot({
                   onPointerEnter={() => setHoveredGroup(label)}
                   onFocus={() => setHoveredGroup(label)}
                   onBlur={() => setHoveredGroup(null)}
-                  onClick={(event) => handleBoxClick(group, event.shiftKey)}
+                  onClick={(event) =>
+                    event.altKey || !settings.colorField
+                      ? inspect(categoryKey(group))
+                      : handleBoxClick(group, event.shiftKey)
+                  }
                   onKeyDown={(event) => {
                     if (event.key === "Enter" || event.key === " ") {
                       event.preventDefault();
-                      handleBoxClick(group, event.shiftKey);
+                      if (event.altKey || !settings.colorField)
+                        inspect(categoryKey(group));
+                      else handleBoxClick(group, event.shiftKey);
                     }
                   }}
                   style={{
@@ -381,6 +502,47 @@ export function BoxPlot({
                 />
               );
             })}
+            {settings.showObservations &&
+              shown.flatMap(({ group }) => {
+                const x = xScale(categoryLabel(group)) ?? 0;
+                const color = getColorForValue(
+                  settings.colorScaleId,
+                  group,
+                  settings.styles.boxFill
+                );
+                return (traceGroups.get(categoryKey(group))?.contributors ?? [])
+                  .filter((item) => item.included)
+                  .slice(0, 300)
+                  .map((item) => (
+                    <circle
+                      key={`observation:${item.sourceId}`}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Inspect source row ${item.sourceId}: ${item.input}`}
+                      className="chart-mark cursor-pointer"
+                      cx={
+                        x +
+                        boxWidth *
+                          (0.2 +
+                            ((((item.sourceId * 2654435761) >>> 0) % 997) /
+                              997) *
+                              0.6)
+                      }
+                      cy={yScale(Number(item.input))}
+                      r={3}
+                      fill="var(--background)"
+                      stroke={color}
+                      strokeWidth={1.5}
+                      onClick={() => inspect(`row:${item.sourceId}`)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          inspect(`row:${item.sourceId}`);
+                        }
+                      }}
+                    />
+                  ));
+              })}
           </g>
         }
       >
@@ -505,10 +667,27 @@ export function BoxPlot({
           );
         })}
       </BaseChart>
+      <div className="absolute bottom-0 left-0 flex h-8 items-center gap-2 overflow-hidden px-2 text-xs text-muted-foreground">
+        <Button
+          variant="ghost"
+          className="h-7 shrink-0 px-1 text-xs"
+          disabled={!traceGroups.size}
+          onClick={() => {
+            const key = traceGroups.keys().next().value;
+            if (key) inspect(key);
+          }}
+        >
+          Inspect distribution
+        </Button>
+        {settings.showObservations && (
+          <span>Observations: first 300 per group</span>
+        )}
+      </div>
       <ChartStatusLine
         parts={statusParts}
         left={margin.left}
         right={margin.right}
+        bottom={34}
       />
     </div>
   );

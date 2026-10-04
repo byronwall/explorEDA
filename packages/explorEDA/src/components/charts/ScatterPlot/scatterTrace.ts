@@ -44,6 +44,7 @@ export type ScatterTrace =
       x: FieldTrace & { pixel: number };
       y: FieldTrace & { pixel: number };
       color?: FieldTrace & { mapped: string; rendered: string };
+      size?: FieldTrace;
       facet?: {
         type: "grid" | "wrap";
         row: FieldTrace;
@@ -71,6 +72,7 @@ export type ScatterTrace =
       reason: string;
       x: FieldTrace;
       y: FieldTrace;
+      size?: FieldTrace;
     }
   | {
       kind: "overlay";
@@ -193,6 +195,9 @@ export function resolveScatterTrace(
             rendered: point.color,
           }
         : undefined,
+      size: settings.sizeField
+        ? fieldTrace(settings.sizeField, point.sizeValue, point.sourceId)
+        : undefined,
       facet:
         settings.facet.enabled && snapshot.facetIds?.length
           ? {
@@ -235,6 +240,13 @@ export function resolveScatterTrace(
       reason: exclusion.reason,
       x: fieldTrace(settings.xField, snapshot.xData[sourceId], sourceId),
       y: fieldTrace(settings.yField, snapshot.yData[sourceId], sourceId),
+      size: settings.sizeField
+        ? fieldTrace(
+            settings.sizeField,
+            snapshot.sizeData?.[sourceId],
+            sourceId
+          )
+        : undefined,
     };
   }
   return undefined;
