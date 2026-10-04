@@ -5,5 +5,8 @@ packages:
 allowBuilds:
   esbuild: true
 
+minimumReleaseAgeExclude:
+  - '@byronwallrus/product-grid-cli@0.2.0'
+
 patchedDependencies:
   use-custom-compare@1.4.0: packages/explorEDA/patches/use-custom-compare@1.4.0.patch

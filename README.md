@@ -149,10 +149,8 @@ pnpm pgm project list --json       # inspect local projects
 pnpm pgm node list --roots --compact --json
 ```
 
-Run `pnpm install` first. These commands use the packaged PGM CLI in
-`tools/product-grid-cli-0.1.9.tgz`. This build includes the local viewer from
-[PGM PR #38](https://github.com/byronwall/prod-mgmt-grid/pull/38).
-The npm release with the same version does not include that viewer.
+Run `pnpm install` first. These commands use the pinned npm release of
+`@byronwallrus/product-grid-cli`, which includes the local viewer.
 Commit changes in `pgm/data` to save local edits and images in Git.
 
 ## Release

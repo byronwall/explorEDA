@@ -18,6 +18,6 @@
   },
   "packageManager": "pnpm@11.9.0",
   "devDependencies": {
-    "@byronwallrus/product-grid-cli": "file:tools/product-grid-cli-0.1.9.tgz"
+    "@byronwallrus/product-grid-cli": "0.2.0"
   }
 }
