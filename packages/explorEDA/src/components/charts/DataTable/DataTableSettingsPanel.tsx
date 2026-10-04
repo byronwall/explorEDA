@@ -13,23 +13,12 @@ export function DataTableSettingsPanel({
 }: ChartSettingsPanelProps<DataTableSettings>) {
   return (
     <div className="space-y-4">
-      <FieldPicker
-        heading="Columns"
-        selected={settings.columns.map((column) => column.field)}
-        onChange={(fields) =>
-          onSettingsChange({
-            ...settings,
-            columns: pickColumns(settings.columns, fields),
-          })
-        }
-      />
-
       <ActionTooltip content="Draws each field’s distribution under its column name. Click or drag a distribution to filter the column.">
         <div className="flex items-center justify-between gap-3">
           <Label htmlFor="showDistributions">Distributions in headers</Label>
           <Switch
             id="showDistributions"
-            checked={Boolean(settings.showDistributions)}
+            checked={settings.showDistributions !== false}
             onCheckedChange={(showDistributions) =>
               onSettingsChange({ ...settings, showDistributions })
             }
@@ -50,6 +39,17 @@ export function DataTableSettingsPanel({
           }
         />
       </div>
+
+      <FieldPicker
+        heading="Columns"
+        selected={settings.columns.map((column) => column.field)}
+        onChange={(fields) =>
+          onSettingsChange({
+            ...settings,
+            columns: pickColumns(settings.columns, fields),
+          })
+        }
+      />
     </div>
   );
 }

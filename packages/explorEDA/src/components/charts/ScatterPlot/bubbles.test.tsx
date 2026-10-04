@@ -154,8 +154,14 @@ it("selects exact source rows by keyboard and pointer, traces sizes, and replace
   fireEvent.pointerUp(svg, { clientX: x, clientY: y });
   fireEvent.click(svg, { clientX: x, clientY: y });
   expect(screen.getByLabelText("Selected IDs").textContent).toBe("0");
-  fireEvent.pointerLeave(svg.parentElement!);
-  fireEvent.click(screen.getByRole("button", { name: "Inspect bubble" }));
+  fireEvent.pointerDown(svg, {
+    clientX: x,
+    clientY: y,
+    button: 0,
+    altKey: true,
+  });
+  fireEvent.pointerUp(svg, { clientX: x, clientY: y, altKey: true });
+  fireEvent.click(svg, { clientX: x, clientY: y, altKey: true });
   expect(screen.getByLabelText("Scatter trace")).toHaveTextContent(
     "Radius = 20 × √(10 / 40)"
   );

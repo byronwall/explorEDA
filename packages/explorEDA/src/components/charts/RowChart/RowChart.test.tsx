@@ -50,7 +50,8 @@ it("inspects typed Other members and saves exact category selections across resi
     </DataLayerProvider>
   );
   fireEvent.click(
-    screen.getByRole("button", { name: "Inspect 4 Other categories" })
+    screen.getByRole("button", { name: "Other categories: 4 rows" }),
+    { altKey: true }
   );
   expect(
     screen.getByRole("checkbox", { name: 'Select "1"' })
@@ -64,7 +65,7 @@ it("inspects typed Other members and saves exact category selections across resi
   ).toBeChecked();
   fireEvent.click(screen.getByRole("button", { name: "Resize" }));
   expect(
-    screen.queryByRole("button", { name: /Inspect .* Other categories/ })
+    screen.queryByRole("button", { name: "Other categories: 4 rows" })
   ).not.toBeInTheDocument();
   expect(screen.getByLabelText("Matching IDs")).toHaveTextContent(/^3$/);
   const saved = JSON.parse(

@@ -19,7 +19,6 @@ import { ScaleLinear, scaleBand } from "d3-scale";
 import natsort from "natsort";
 import { useCallback, useId, useMemo, useState } from "react";
 import { BaseChart } from "../BaseChart";
-import { Button } from "@/components/ui/button";
 import { ChartReadout } from "../ChartReadout";
 import {
   ChartStatusLine,
@@ -668,17 +667,6 @@ export function BoxPlot({
         })}
       </BaseChart>
       <div className="absolute bottom-0 left-0 flex h-8 items-center gap-2 overflow-hidden px-2 text-xs text-muted-foreground">
-        <Button
-          variant="ghost"
-          className="h-7 shrink-0 px-1 text-xs"
-          disabled={!traceGroups.size}
-          onClick={() => {
-            const key = traceGroups.keys().next().value;
-            if (key) inspect(key);
-          }}
-        >
-          Inspect distribution
-        </Button>
         {settings.showObservations && (
           <span>Observations: first 300 per group</span>
         )}

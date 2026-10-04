@@ -77,6 +77,39 @@ function useElementSize() {
   return [setElement, size] as const;
 }
 
+/** Chart types grouped by the question they answer, in display order. */
+const CHART_GROUPS: Array<{ label: string; keys: string[] }> = [
+  { label: "Compare categories", keys: ["row", "bar", "pivot", "heatmap"] },
+  { label: "Distribution", keys: ["histogram", "boxplot", "ecdf"] },
+  {
+    label: "Relationships",
+    keys: ["scatter", "3d-scatter", "parallel-coordinates"],
+  },
+  { label: "Over time", keys: ["line", "calendar"] },
+  { label: "Flow and place", keys: ["sankey", "map"] },
+  {
+    label: "Tables and notes",
+    keys: ["data-table", "summary", "metric-card", "markdown", "color-legend"],
+  },
+];
+
+function groupChartTypes<T extends { key: string; name: string }>(
+  options: T[]
+) {
+  const grouped = CHART_GROUPS.map(({ label, keys }) => ({
+    label,
+    options: keys.flatMap((key) =>
+      options.filter((option) => option.key === key)
+    ),
+  }));
+  const placed = new Set(CHART_GROUPS.flatMap(({ keys }) => keys));
+  const other = options
+    .filter((option) => !placed.has(option.key))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  if (other.length) grouped.push({ label: "Other", options: other });
+  return grouped.filter((group) => group.options.length);
+}
+
 export function AddChartDialog() {
   const api = useChartDraft();
   if (!api?.draft) return null;
@@ -97,18 +130,17 @@ function AddChartDialogContent({
   const preview = usePreviewChart(settings);
   const [previewRef, previewSize] = useElementSize();
   const contentRef = useRef<HTMLDivElement>(null);
+  const contentId = useId().replace(/:/g, "");
 
-  const chartTypes = chartRegistry
-    .getAll()
-    .flatMap((definition) => {
-      const option = { ...definition, key: definition.type };
-      if (definition.type === "bar")
-        return [option, { ...option, key: "histogram", name: "Histogram" }];
-      if (definition.type === "boxplot")
-        return [{ ...option, name: "Distribution" }];
-      return [option];
-    })
-    .sort((a, b) => a.name.localeCompare(b.name));
+  const chartTypes = chartRegistry.getAll().flatMap((definition) => {
+    const option = { ...definition, key: definition.type };
+    if (definition.type === "bar")
+      return [option, { ...option, key: "histogram", name: "Histogram" }];
+    if (definition.type === "boxplot")
+      return [{ ...option, name: "Distribution" }];
+    return [option];
+  });
+  const chartGroups = groupChartTypes(chartTypes);
   const numericFields = useDataLayer((state) => state.fieldProfiles)
     .filter((field) => field.dataType === "numeric")
     .map((field) => field.name);
@@ -159,32 +191,48 @@ function AddChartDialogContent({
               role="group"
               aria-label="Chart type"
             >
-              {chartTypes.map((option) => {
-                const Icon = option.icon;
-                return (
-                  <button
-                    key={option.key}
-                    type="button"
-                    aria-pressed={option.key === selectedType}
-                    disabled={
-                      option.key === "histogram" && !numericFields.length
-                    }
-                    onClick={() => {
-                      if (option.key === selectedType) return;
-                      const next = buildChart(option.type, "", draft.target);
-                      if (next.type === "bar") {
-                        next.forceString = option.key !== "histogram";
-                        if (option.key === "histogram")
-                          next.field = numericFields[0]!;
-                      }
-                      updateDraft(next);
-                    }}
-                  >
-                    <Icon aria-hidden="true" />
-                    <span>{option.name}</span>
-                  </button>
-                );
-              })}
+              {chartGroups.map((group, index) => (
+                <div
+                  key={group.label}
+                  className="eda-add-chart-type-group"
+                  role="group"
+                  aria-labelledby={`${contentId}-group-${index}`}
+                >
+                  <h3 id={`${contentId}-group-${index}`}>{group.label}</h3>
+                  <div className="eda-add-chart-type-options">
+                    {group.options.map((option) => {
+                      const Icon = option.icon;
+                      return (
+                        <button
+                          key={option.key}
+                          type="button"
+                          aria-pressed={option.key === selectedType}
+                          disabled={
+                            option.key === "histogram" && !numericFields.length
+                          }
+                          onClick={() => {
+                            if (option.key === selectedType) return;
+                            const next = buildChart(
+                              option.type,
+                              "",
+                              draft.target
+                            );
+                            if (next.type === "bar") {
+                              next.forceString = option.key !== "histogram";
+                              if (option.key === "histogram")
+                                next.field = numericFields[0]!;
+                            }
+                            updateDraft(next);
+                          }}
+                        >
+                          <Icon aria-hidden="true" />
+                          <span>{option.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
             <section
               className="eda-add-chart-fields"

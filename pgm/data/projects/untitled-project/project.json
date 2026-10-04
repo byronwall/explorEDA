@@ -3,23 +3,21 @@
   "name": "explorEDA",
   "description": "Blank project ready for grid editing, structure mapping, and future AI-assisted details.",
   "createdAt": "2026-09-29T01:22:21.210Z",
-  "updatedAt": "2026-10-04T03:33:51.754Z",
+  "updatedAt": "2026-10-04T04:42:43.231Z",
   "operationLog": [
     {
-      "id": "c64201e0-58e9-436c-8b2b-1c905df9a060",
-      "kind": "node.images.added",
+      "id": "bf6b1063-f6e5-4b0d-a901-db0c2ee559ba",
+      "kind": "node.metadata.updated",
       "actor": {
-        "kind": "human"
+        "kind": "agent",
+        "id": "token:8ce3a8",
+        "label": "Agent token ...8ce3a8"
       },
-      "createdAt": "2026-10-04T03:33:51.758Z",
-      "summary": "Added 1 images to \"Add chart list needs some structure and grouping for chart types.\".",
+      "createdAt": "2026-10-04T04:42:43.231Z",
+      "summary": "Updated metadata for \"Tooltips are poorly placed\".",
       "nodeIds": [
-        "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types"
+        "page-tooltips-are-poorly-placed"
       ],
-      "metadata": {
-        "imageCount": "1",
-        "clientMutationId": "88b26159-2c92-4d91-93a2-06fa350e5d6b"
-      },
       "payload": {
         "state": {
           "nodeMetadataSchema": [
@@ -526,8 +524,10 @@
                 "id": "page-date-filter-could-use-more-options-and-viz",
                 "label": "Date filter could use more options and viz",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Date column filters show quick ranges chosen from the field's span: latest 7/30/90/365 days, years, quarters, or months, under the histogram, which highlights the chosen span."
+                },
                 "context": "These should be context dependent and include things like years, months, etc.",
                 "rawContext": "These should be context dependent and include things like years, months, etc.",
                 "images": [
@@ -546,8 +546,10 @@
                 "id": "page-distribution-toggle-cut-off",
                 "label": "distribution toggle cut off",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Moved the Distributions in headers toggle and search above the column list so a long field list cannot push it below the fold. Distributions are on by default for new and existing tables, including every example."
+                },
                 "context": "Also, it should be enabled by default and enabled for all the examples too",
                 "rawContext": "Also, it should be enabled by default and enabled for all the examples too",
                 "images": [
@@ -566,8 +568,10 @@
                 "id": "page-tooltips-are-poorly-placed",
                 "label": "Tooltips are poorly placed",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Hover values read in the chart panel header for every chart, including ECDF, so nothing floats over the plot. Verified in the browser."
+                },
                 "context": "May need to just get rid of them.  Ideally the tooltip has a way to render in a spot that does not block the chart (maybe below it or something?)",
                 "rawContext": "",
                 "images": [
@@ -586,8 +590,10 @@
                 "id": "page-hitting-esc-did-not-close-the-colors-popover",
                 "label": "Hitting ESC did not close the colors popover",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Escape closed the Colors panel only while focus was inside it. After a click on a chart it did nothing. Escape now closes workspace settings (and the narrow Rows drawer) from anywhere, before the chart's own Escape."
+                },
                 "context": "",
                 "rawContext": "",
                 "images": []
@@ -596,8 +602,10 @@
                 "id": "page-remove-inspect-records-on-metric-tiles",
                 "label": "Remove \"inspect records\" on metric tiles",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Removed every on-chart Inspect button (metric card, period, Other categories, point, region, joins, land, bin, bubble, bar, distribution). Alt-click or Alt-Enter opens the trace. AGENTS.md and ui-defaults now forbid Inspect buttons."
+                },
                 "context": "WE should basically never show the \"inspect\" button.  update AGENTS to reflect this desire",
                 "rawContext": "",
                 "images": [
@@ -616,8 +624,10 @@
                 "id": "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types",
                 "label": "Add chart list needs some structure and grouping for chart types.",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Add chart groups chart types under headings (Compare categories, Distribution, Relationships, Over time, Flow and place, Tables and notes) as compact wrapping chips."
+                },
                 "context": "List of buttons is overwhelming.",
                 "rawContext": "List of buttons is overwhelming.",
                 "images": [
@@ -777,6 +787,176 @@
             ]
           }
         }
+      }
+    },
+    {
+      "id": "dc33bd14-d953-4edb-b742-dd21d749c184",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:8ce3a8",
+        "label": "Agent token ...8ce3a8"
+      },
+      "createdAt": "2026-10-04T04:42:43.203Z",
+      "summary": "Changed \"Tooltips are poorly placed\" status to implemented.",
+      "nodeIds": [
+        "page-tooltips-are-poorly-placed"
+      ]
+    },
+    {
+      "id": "278857b7-71fb-40b0-98d6-2f54efe9f8d3",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:c17f8f",
+        "label": "Agent token ...c17f8f"
+      },
+      "createdAt": "2026-10-04T04:42:41.715Z",
+      "summary": "Updated metadata for \"Remove \"inspect records\" on metric tiles\".",
+      "nodeIds": [
+        "page-remove-inspect-records-on-metric-tiles"
+      ]
+    },
+    {
+      "id": "7316140e-7c0d-447b-8118-7071de61438c",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:c17f8f",
+        "label": "Agent token ...c17f8f"
+      },
+      "createdAt": "2026-10-04T04:42:41.681Z",
+      "summary": "Changed \"Remove \"inspect records\" on metric tiles\" status to implemented.",
+      "nodeIds": [
+        "page-remove-inspect-records-on-metric-tiles"
+      ]
+    },
+    {
+      "id": "927bd5ed-2957-4c61-a16e-f4ebb8b3478a",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:e87dcb",
+        "label": "Agent token ...e87dcb"
+      },
+      "createdAt": "2026-10-04T04:42:40.205Z",
+      "summary": "Updated metadata for \"Hitting ESC did not close the colors popover\".",
+      "nodeIds": [
+        "page-hitting-esc-did-not-close-the-colors-popover"
+      ]
+    },
+    {
+      "id": "7db9d4be-563d-4d53-b1c8-c8668ef27db7",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:e87dcb",
+        "label": "Agent token ...e87dcb"
+      },
+      "createdAt": "2026-10-04T04:42:40.178Z",
+      "summary": "Changed \"Hitting ESC did not close the colors popover\" status to implemented.",
+      "nodeIds": [
+        "page-hitting-esc-did-not-close-the-colors-popover"
+      ]
+    },
+    {
+      "id": "8f42a735-db1f-47c4-b9d1-11943382541c",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:32bec5",
+        "label": "Agent token ...32bec5"
+      },
+      "createdAt": "2026-10-04T04:42:38.588Z",
+      "summary": "Updated metadata for \"distribution toggle cut off\".",
+      "nodeIds": [
+        "page-distribution-toggle-cut-off"
+      ]
+    },
+    {
+      "id": "ce17ce6e-f93d-4fca-b0c7-64a731f4f268",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:32bec5",
+        "label": "Agent token ...32bec5"
+      },
+      "createdAt": "2026-10-04T04:42:38.572Z",
+      "summary": "Changed \"distribution toggle cut off\" status to implemented.",
+      "nodeIds": [
+        "page-distribution-toggle-cut-off"
+      ]
+    },
+    {
+      "id": "eb553fab-d4f0-41ee-b3e7-f13f1e0a7e5a",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:6bebaa",
+        "label": "Agent token ...6bebaa"
+      },
+      "createdAt": "2026-10-04T04:42:37.031Z",
+      "summary": "Updated metadata for \"Date filter could use more options and viz\".",
+      "nodeIds": [
+        "page-date-filter-could-use-more-options-and-viz"
+      ]
+    },
+    {
+      "id": "7ace3148-ed8c-42c4-8f9c-22fea9cbf287",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:6bebaa",
+        "label": "Agent token ...6bebaa"
+      },
+      "createdAt": "2026-10-04T04:42:37.009Z",
+      "summary": "Changed \"Date filter could use more options and viz\" status to implemented.",
+      "nodeIds": [
+        "page-date-filter-could-use-more-options-and-viz"
+      ]
+    },
+    {
+      "id": "cb167602-f130-4be8-b17d-2320c7fdfbda",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:da3efa",
+        "label": "Agent token ...da3efa"
+      },
+      "createdAt": "2026-10-04T04:42:35.454Z",
+      "summary": "Updated metadata for \"Add chart list needs some structure and grouping for chart types.\".",
+      "nodeIds": [
+        "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types"
+      ]
+    },
+    {
+      "id": "fa352d02-fdb6-4322-8821-3cdecf86730e",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:da3efa",
+        "label": "Agent token ...da3efa"
+      },
+      "createdAt": "2026-10-04T04:42:35.427Z",
+      "summary": "Changed \"Add chart list needs some structure and grouping for chart types.\" status to implemented.",
+      "nodeIds": [
+        "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types"
+      ]
+    },
+    {
+      "id": "c64201e0-58e9-436c-8b2b-1c905df9a060",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T03:33:51.758Z",
+      "summary": "Added 1 images to \"Add chart list needs some structure and grouping for chart types.\".",
+      "nodeIds": [
+        "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "88b26159-2c92-4d91-93a2-06fa350e5d6b"
       }
     },
     {

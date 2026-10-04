@@ -291,8 +291,8 @@ export function RegionMapSettings({
               </table>
             </div>
             <p>
-              Features with one key form one region. Inspect joins on the map to
-              see every unmatched row and feature.
+              Features with one key form one region. Alt-click outside the regions on
+              the map to see every unmatched row and feature.
             </p>
           </div>
         </details>
