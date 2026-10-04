@@ -50,6 +50,11 @@ to select its source row, or choose **Inspect bubble** to see its size calculati
 Zero uses a hollow marker. Missing, invalid, and negative sizes remain available
 through the source trace.
 
+Choose **Density** in Scatter Plot to count numeric coordinate pairs in rectangular
+bins. Set the X and Y bin counts, then select a bin to filter its exact source rows.
+**Inspect bin** shows intervals, counts, color scale, and source records. Bin edges
+and the automatic color scale use all source rows, so linked filters keep a stable reference.
+
 ## Install
 
 ```sh
