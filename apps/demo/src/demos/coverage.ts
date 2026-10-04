@@ -19,6 +19,55 @@ type FeatureDefinition = {
 };
 
 export const coverageFeatures = [
+  { id: "chart:map", label: "Map", family: "Chart types", description: "Locate source rows by latitude and longitude.", chartType: "map", required: true, status: "supported" },
+  {
+    id: "mode:scatter-density",
+    label: "Binned scatter density",
+    family: "Chart modes",
+    description: "Count numeric coordinate pairs in fixed rectangular bins and inspect exact membership.",
+    required: true,
+    status: "supported",
+  },
+  {
+    id: "mode:bubble-scatter",
+    label: "Bubble scatter",
+    family: "Chart modes",
+    description: "Map a nonnegative value to point area, select source rows, and inspect the size calculation.",
+    required: true,
+    status: "supported",
+  },
+  {
+    id: "mode:area",
+    label: "Area and stacked area",
+    family: "Chart modes",
+    description: "Fill calendar summaries from zero or add nonnegative period totals, with exact band and source tracing.",
+    required: true,
+    status: "supported",
+  },
+  {
+    id: "mode:stacked-bars",
+    label: "Stacked and 100% bars",
+    family: "Chart modes",
+    description: "Compare signed totals or nonnegative shares and inspect each category denominator.",
+    required: true,
+    status: "supported",
+  },
+  {
+    id: "mode:grouped-bars",
+    label: "Grouped bars",
+    family: "Chart modes",
+    description: "Compare category–series pairs and inspect each bar's source rows.",
+    required: true,
+    status: "supported",
+  },
+  {
+    id: "mode:calendar-series",
+    label: "Calendar time series",
+    family: "Chart modes",
+    description: "Summarize dated rows by UTC day, week, or month and inspect each period.",
+    required: true,
+    status: "supported",
+  },
   {
     id: "chart:metric-card",
     label: "Metric card",
@@ -224,9 +273,9 @@ export const coverageFeatures = [
     id: "scale:time",
     label: "Time scale",
     family: "Scales",
-    description: "Interpret values as dates on a time scale.",
+    description: "Use UTC dates in Line Chart calendar summaries.",
     required: true,
-    status: "not-supported",
+    status: "supported",
   },
   {
     id: "scale:band",
@@ -421,6 +470,85 @@ export type ExampleCoverage = {
 };
 
 export const exampleCoverage = [
+  { exampleId: "distribution-discovery", intent: "Discover distributions and inspect exact category members behind Other.", features: { "chart:bar": "shown", "chart:boxplot": "shown", "chart:row": "shown", "chart:metric-card": "shown", "chart:data-table": "shown", "interaction:cross-filter": "shown" } },
+  { exampleId: "region-map", intent: "Join geographic regions to records and inspect each metric and join.", features: { "chart:map": "shown", "chart:pivot": "shown", "chart:metric-card": "shown", "chart:data-table": "shown", "interaction:cross-filter": "shown" } },
+  { exampleId: "point-map", intent: "Locate service sites, inspect their coordinates, and select exact source rows.", features: { "chart:map": "shown", "chart:bar": "shown", "chart:metric-card": "shown", "chart:data-table": "shown", "interaction:cross-filter": "shown" } },
+  {
+    exampleId: "scatter-density",
+    intent: "Resolve overlap in 10,000 daily observations and reconcile each bin with its source rows.",
+    features: {
+      "mode:scatter-density": "shown",
+      "chart:scatter": "shown",
+      "chart:bar": "shown",
+      "chart:metric-card": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "bubble-scatter",
+    intent: "Compare response time, conversion, and trial volume, with exact source rows and size tracing.",
+    features: {
+      "mode:bubble-scatter": "shown",
+      "chart:scatter": "shown",
+      "chart:metric-card": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "area-charts",
+    intent: "Compare monthly revenue layers and inspect each period's stack bounds and source rows.",
+    features: {
+      "mode:area": "shown",
+      "mode:calendar-series": "shown",
+      "chart:line": "shown",
+      "chart:row": "shown",
+      "chart:metric-card": "shown",
+      "chart:calendar": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "stacked-bars",
+    intent: "Compare regional totals and channel shares, with source records for each denominator.",
+    features: {
+      "mode:stacked-bars": "shown",
+      "chart:bar": "shown",
+      "chart:metric-card": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "grouped-bars",
+    intent: "Compare regional revenue by channel and inspect an exact category–series pair.",
+    features: {
+      "mode:grouped-bars": "shown",
+      "chart:bar": "shown",
+      "chart:metric-card": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "calendar-series",
+    intent: "Compare monthly channel revenue, select a period, and inspect its source rows.",
+    features: {
+      "mode:calendar-series": "shown",
+      "scale:time": "shown",
+      "chart:line": "shown",
+      "chart:calendar": "shown",
+      "chart:metric-card": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
   {
     exampleId: "shop-operations",
     intent:

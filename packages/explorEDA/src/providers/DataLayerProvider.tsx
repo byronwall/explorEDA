@@ -1,3 +1,4 @@
+import { isGeometryAsset, type GeometryAsset } from "@/lib/geometryAssets";
 import { getChartFields } from "@/components/charts/chartAccessibility";
 import { chartRegistry, getChartDefinition } from "@/charts/registry";
 import {
@@ -239,6 +240,8 @@ interface DataLayerState<T extends DatumObject> extends DataLayerProps<T> {
   setData: (data: T[], fileName?: string, useDefaults?: boolean) => void;
   fieldSettings: FieldSettingsMap;
   aggregates: AggregateSpec[];
+  geometryAssets: GeometryAsset[];
+  addGeometryAsset: (asset: GeometryAsset) => void;
   addAggregate: (spec: Omit<AggregateSpec, "id">) => AggregateSpec;
   updateAggregate: (
     id: string,
@@ -415,6 +418,7 @@ const getInitialStoreState = <T extends DatumObject>(
     | "metadata"
     | "fieldSettings"
     | "aggregates"
+    | "geometryAssets"
   >
 > => {
   const rawData = initProps?.data ?? [];
@@ -495,6 +499,7 @@ const getInitialStoreState = <T extends DatumObject>(
       fileName: undefined,
       fieldSettings,
       aggregates: savedData.aggregates ?? [],
+      geometryAssets: savedData.geometryAssets ?? [],
     };
   }
 
@@ -530,6 +535,7 @@ const getInitialStoreState = <T extends DatumObject>(
     fileName: undefined,
     fieldSettings,
     aggregates: [],
+    geometryAssets: [],
   };
 };
 
@@ -598,9 +604,15 @@ const createDataLayerStore = <T extends DatumObject>(
         calcColumnCache: {},
         fieldSettings: {},
         aggregates: [],
+        geometryAssets: [],
         nonce: get().nonce + 1,
         filterReset: get().filterReset + 1,
       });
+    },
+
+    addGeometryAsset: (asset) => {
+      if (!isGeometryAsset(asset)) throw new Error("Use a GeoJSON collection with valid polygon coordinates and closed rings.");
+      set((state) => ({ geometryAssets: [...state.geometryAssets.filter((item) => item.id !== asset.id), asset] }));
     },
 
     updateFieldSettings: (field, updates) => {
@@ -1090,6 +1102,7 @@ const createDataLayerStore = <T extends DatumObject>(
         rowsSettings: state.rowsSettings,
         fieldSettings: state.fieldSettings,
         aggregates: state.aggregates,
+        geometryAssets: state.geometryAssets,
       };
     },
 
@@ -1206,6 +1219,7 @@ const createDataLayerStore = <T extends DatumObject>(
         filterReset: state.filterReset + 1,
         fieldSettings,
         aggregates: savedData.settings.aggregates ?? [],
+        geometryAssets: savedData.settings.geometryAssets ?? [],
       }));
       nextCrossfilter.setFieldGetter(get().getColumnData);
     },

@@ -112,6 +112,7 @@ export interface ScatterSnapshot {
   xData: Record<IdType, datum>;
   yData: Record<IdType, datum>;
   colorData: Record<IdType, datum>;
+  sizeData?: Record<IdType, datum>;
   /** Detected field types; omitted types are detected from the column. */
   xType?: DataType;
   yType?: DataType;
@@ -172,10 +173,18 @@ export interface ScatterPlan {
   };
   brushExtent: Extent | null;
   pointStyle: ScatterPointStyle;
+  size?: {
+    field: string;
+    label: string;
+    max: number;
+    radius: number;
+    legendHeight: number;
+    samples: { value: number; label: string; radius: number }[];
+  };
   points: ScatterPoint[];
   exclusions: {
     sourceId: IdType;
-    reason: "invalid-x" | "invalid-y" | "nonfinite-position";
+    reason: "invalid-x" | "invalid-y" | "invalid-size" | "nonfinite-position";
   }[];
   /** Why nothing is drawn when rows remain but none has a position. */
   emptyMessage?: string;
@@ -264,12 +273,14 @@ export function planScatter(
     dataType: DataType | undefined,
     axis: ScatterPlotSettings["xAxis"],
     range: [number, number]
-  ) =>
-    planScatterAxis({ ids: snapshot.allIds, data, dataType, axis, range });
+  ) => planScatterAxis({ ids: snapshot.allIds, data, dataType, axis, range });
   // Plan Y once without pixels to size the left margin from its labels.
-  const yShape = axisFor(snapshot.yData, snapshot.yType, settings.yAxis, [
-    0, 1,
-  ]);
+  const yShape = axisFor(
+    snapshot.yData,
+    snapshot.yType,
+    settings.yAxis,
+    [0, 1]
+  );
   const { margin, policy: marginPolicy } = planChartMargin({
     margin: settings.margin,
     width,
@@ -286,18 +297,51 @@ export function planScatter(
           )
         : undefined,
   });
+  const bubbleRadius = Math.min(
+    settings.maxBubbleRadius ?? 20,
+    Math.max(2, width * 0.08),
+    Math.max(2, height * 0.08)
+  );
+  const sizeMax = settings.sizeField
+    ? snapshot.allIds.reduce(
+        (max, id) => Math.max(max, finiteNumber(snapshot.sizeData?.[id]) ?? 0),
+        0
+      )
+    : 0;
+  const size = settings.sizeField
+    ? {
+        field: settings.sizeField,
+        label: fieldLabel(settings.sizeField, snapshot.fieldSettings),
+        max: sizeMax,
+        radius: bubbleRadius,
+        legendHeight: bubbleRadius * 2 + 30,
+        samples: (sizeMax > 0 ? [0.25, 0.5, 1] : [0]).map((fraction) => ({
+          value: sizeMax * fraction,
+          label: display(
+            settings.sizeField!,
+            sizeMax * fraction,
+            snapshot.fieldSettings
+          ),
+          radius: fraction === 0 ? 2 : bubbleRadius * Math.sqrt(fraction),
+        })),
+      }
+    : undefined;
+  if (size) margin.bottom += size.legendHeight;
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
+  const inset = size ? bubbleRadius : 0;
   const xAxis = axisFor(snapshot.xData, snapshot.xType, settings.xAxis, [
-    0,
-    plotWidth,
+    inset,
+    Math.max(inset, plotWidth - inset),
   ]);
   // Bands list top to bottom; numbers grow upward.
   const yAxis = axisFor(
     snapshot.yData,
     snapshot.yType,
     settings.yAxis,
-    yShape.kind === "band" ? [0, plotHeight] : [plotHeight, 0]
+    yShape.kind === "band"
+      ? [inset, Math.max(inset, plotHeight - inset)]
+      : [Math.max(inset, plotHeight - inset), inset]
   );
   const xScale = xAxis.scale;
   const yScale = yAxis.scale;
@@ -342,6 +386,8 @@ export function planScatter(
     xData: snapshot.xData,
     yData: snapshot.yData,
     colorData: snapshot.colorData,
+    sizeData: snapshot.sizeData,
+    sizeScale: size,
     xAxis,
     yAxis,
     getColor,
@@ -349,6 +395,8 @@ export function planScatter(
     ...point,
     passesAllFilters: filteredSet.has(point.sourceId),
   }));
+  if (size)
+    points.sort((a, b) => b.radius - a.radius || a.sourceId - b.sourceId);
   const included = new Set(points.map((point) => point.sourceId));
   const unplotted = (axis: ScatterAxisScale, value: datum) =>
     axis.kind === "numeric" && finiteNumber(value) === undefined;
@@ -360,7 +408,11 @@ export function planScatter(
         ? ("invalid-x" as const)
         : unplotted(yAxis, snapshot.yData[sourceId])
           ? ("invalid-y" as const)
-          : ("nonfinite-position" as const),
+          : size &&
+              (finiteNumber(snapshot.sizeData?.[sourceId]) === undefined ||
+                Number(snapshot.sizeData?.[sourceId]) < 0)
+            ? ("invalid-size" as const)
+            : ("nonfinite-position" as const),
     }));
 
   const format =
@@ -388,7 +440,7 @@ export function planScatter(
   const axes = planAxes({
     plotWidth,
     plotHeight,
-    margin,
+    margin: { ...margin, bottom: margin.bottom - (size?.legendHeight ?? 0) },
     marginPolicy,
     x: {
       scale: xScale,
@@ -549,11 +601,14 @@ export function planScatter(
     legend,
     brushExtent,
     pointStyle,
+    size,
     points,
     exclusions,
     emptyMessage:
       ids.length > 0 && points.length === 0
-        ? emptyMessage(exclusions, snapshot, xLabel, yLabel)
+        ? size && exclusions.some((item) => item.reason === "invalid-size")
+          ? `${size.label} needs finite, nonnegative values. Inspect excluded rows to see their inputs.`
+          : emptyMessage(exclusions, snapshot, xLabel, yLabel)
         : undefined,
     populations: {
       all: snapshot.allIds.length,
@@ -582,6 +637,28 @@ export function scatterPointReadout(plan: ScatterPlan, point: ScatterPoint) {
   };
 }
 
+export function scatterPointAt(plan: ScatterPlan, x: number, y: number) {
+  if (plan.size) {
+    // Canvas paints small bubbles last. Hit the topmost visible bubble.
+    for (let i = plan.points.length - 1; i >= 0; i--) {
+      const point = plan.points[i]!;
+      if (Math.hypot(point.x - x, point.y - y) <= Math.max(6, point.radius))
+        return point;
+    }
+    return undefined;
+  }
+  let nearest: ScatterPoint | undefined;
+  let distance = 10;
+  for (const point of plan.points) {
+    const next = Math.hypot(point.x - x, point.y - y);
+    if (next < distance) {
+      nearest = point;
+      distance = next;
+    }
+  }
+  return nearest;
+}
+
 export function scatterHoverReadout(
   plan: ScatterPlan,
   snapshot: ScatterSnapshot,
@@ -594,6 +671,9 @@ export function scatterHoverReadout(
       : categoryLabel(item);
   return {
     ...scatterPointReadout(plan, point),
+    sizeText: settings.sizeField
+      ? value(settings.sizeField, point.sizeValue)
+      : undefined,
     colorText: settings.colorField
       ? value(settings.colorField, point.colorValue)
       : undefined,
@@ -617,10 +697,19 @@ export function scatterHoverReadout(
 export function brushFilters(plan: ScatterPlan, extent: Extent): Filter[] {
   const xAxis = planAxisScale(plan.xScale, plan.xCategories);
   const yAxis = planAxisScale(plan.yScale, plan.yCategories);
-  return [
+  const filters: Filter[] = [
     spanFilter(xAxis, plan.xField, [extent[0][0], extent[1][0]]),
     spanFilter(yAxis, plan.yField, [extent[0][1], extent[1][1]]),
   ];
+  if (plan.size) {
+    const sizeRange = filters.find(
+      (filter) => filter.field === plan.size!.field && filter.type === "range"
+    );
+    if (sizeRange?.type === "range")
+      sizeRange.min = Math.max(0, sizeRange.min ?? 0);
+    else filters.push({ type: "range", field: plan.size.field, min: 0 });
+  }
+  return filters;
 }
 
 export function planScatterOverlay(

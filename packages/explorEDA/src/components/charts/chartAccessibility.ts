@@ -2,6 +2,7 @@ import { ChartSettings } from "@/types/ChartTypes";
 import { getChartDefinition } from "@/charts/registry";
 
 const chartNames: Record<string, string> = {
+  map: "Map",
   row: "Row chart",
   bar: "Bar chart",
   scatter: "Scatter plot",
@@ -35,6 +36,14 @@ export function getChartTitle(
   }
   if (title) {
     return title;
+  }
+
+  if (settings.type === "line" && settings.time) {
+    const metric =
+      settings.time.aggregation === "count"
+        ? "Rows"
+        : `${settings.time.aggregation === "sum" ? "Sum" : "Average"} of ${getFieldLabel(settings.time.measureField ?? "")}`;
+    return `${metric} by ${settings.time.interval}`;
   }
 
   if (settings.type === "metric-card") {
@@ -100,10 +109,27 @@ export function getChartTitle(
 export function getChartFields(settings: ChartSettings): string[] {
   const fields = (() => {
     switch (settings.type) {
+      case "bar":
+        return [settings.field, settings.seriesField, settings.colorField];
       case "line":
-        return [settings.xField, ...settings.seriesField];
+        return settings.time
+          ? [
+              settings.xField,
+              settings.time.aggregation === "count"
+                ? undefined
+                : settings.time.measureField,
+              settings.time.splitField,
+            ]
+          : [settings.xField, ...settings.seriesField];
+      case "map":
+        return [settings.latitudeField, settings.longitudeField, settings.labelField, settings.colorField, settings.sizeField, settings.regionField, settings.measureField];
       case "scatter":
-        return [settings.xField, settings.yField, settings.colorField];
+        return [
+          settings.xField,
+          settings.yField,
+          settings.colorField,
+          settings.sizeField,
+        ];
       case "3d-scatter":
         return [
           settings.xField,
@@ -125,7 +151,10 @@ export function getChartFields(settings: ChartSettings): string[] {
       case "sankey":
         return [...settings.stages, settings.measureField];
       case "parallel-coordinates":
-        return [...settings.axes.map((axis) => axis.field), settings.colorField];
+        return [
+          ...settings.axes.map((axis) => axis.field),
+          settings.colorField,
+        ];
       case "calendar":
         return [settings.field, settings.measureField];
       case "heatmap":
@@ -156,8 +185,9 @@ export function getChartAxisFields(settings: ChartSettings): {
     case "line":
       return {
         x: settings.xField,
-        y:
-          settings.seriesField.length === 1
+        y: settings.time
+          ? settings.time.measureField
+          : settings.seriesField.length === 1
             ? settings.seriesField[0]
             : undefined,
       };
@@ -187,6 +217,9 @@ export function getChartSummary(
   settings: ChartSettings,
   getFieldLabel: (field: string) => string = (field) => field
 ): string {
+  if (settings.type === "scatter" && settings.display === "density") {
+    return `Density bins count rows by ${getFieldLabel(settings.xField)} and ${getFieldLabel(settings.yField)}.`;
+  }
   const name = chartNames[settings.type] ?? "Chart";
   if (settings.type === "summary") {
     return `${name} of all data columns.`;

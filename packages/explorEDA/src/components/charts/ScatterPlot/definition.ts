@@ -10,8 +10,12 @@ import { Filter } from "@/types/FilterTypes";
 
 export interface ScatterPlotSettings extends BaseChartSettings {
   type: "scatter";
+  display?: "points" | "density";
+  density?: { xBins?: number; yBins?: number; colorMax?: number };
   pointSize?: number;
   pointOpacity?: number;
+  sizeField?: string;
+  maxBubbleRadius?: number;
   xField: string;
   yField: string;
   filters: Filter[];

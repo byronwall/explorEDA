@@ -28,7 +28,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-type PivotTableProps = BaseChartProps & {
+type PivotTableProps = BaseChartProps<PivotTableSettings> & {
   settings: PivotTableSettings;
 };
 

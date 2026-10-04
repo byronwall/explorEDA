@@ -3,6 +3,7 @@ import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import { BarChartSettings } from "./definition";
 import type { AggregateAggregation } from "@/lib/aggregates";
@@ -47,9 +48,7 @@ export function BarChartSettingsPanel({
     );
     calculations.forEach((calculation) => {
       const values = Object.values(getColumnData(calculation.resultColumnName));
-      if (
-values.some((value) => finiteNumber(value) !== undefined)
-      ) {
+      if (values.some((value) => finiteNumber(value) !== undefined)) {
         numeric.push(calculation.resultColumnName);
       }
     });
@@ -65,6 +64,80 @@ values.some((value) => finiteNumber(value) !== undefined)
     getColumnData,
   ]);
   const [error, setError] = useState<string>();
+  const stacked = Boolean(
+    settings.seriesField &&
+      settings.seriesLayout &&
+      settings.seriesLayout !== "grouped"
+  );
+  const seriesControl = (
+    <>
+      <Label>Split by</Label>
+      <FieldSelector
+        label=""
+        placeholder="Series field"
+        value={settings.seriesField ?? ""}
+        allowClear
+        fields={fieldNames.filter(
+          (field) => field !== (aggregate?.groupField ?? settings.field)
+        )}
+        onChange={(field) =>
+          onSettingsChange({
+            ...settings,
+            seriesField: field || undefined,
+            colorField: field || undefined,
+            colorScaleId: field ? getOrCreateScaleForField(field) : undefined,
+            filters: settings.filters.filter(
+              (filter) => filter.field !== settings.seriesField
+            ),
+          })
+        }
+      />
+      {settings.seriesField && (
+        <>
+          <Label htmlFor="bar-series-layout">Display</Label>
+          <ActionTooltip content="Grouped compares separate values. Stacked adds series. 100% shows each series as a share of its category total.">
+            <select
+              id="bar-series-layout"
+              className="h-9 rounded-md border-input bg-background px-2 text-sm"
+              value={settings.seriesLayout ?? "grouped"}
+              onChange={(event) =>
+                onSettingsChange({
+                  ...settings,
+                  seriesLayout: event.target
+                    .value as BarChartSettings["seriesLayout"],
+                  yAxisLabel: "",
+                  yAxis: { ...settings.yAxis, scaleType: "linear" },
+                })
+              }
+            >
+              <option value="grouped">Grouped</option>
+              <option
+                value="stacked"
+                disabled={aggregate?.aggregation === "average"}
+              >
+                Stacked
+              </option>
+              <option
+                value="percent"
+                disabled={aggregate?.aggregation === "average"}
+              >
+                100%
+              </option>
+            </select>
+          </ActionTooltip>
+          <p className="col-span-2 text-xs text-muted-foreground">
+            {aggregate?.aggregation === "average"
+              ? "Choose count or sum to stack series. Compare averages side by side."
+              : settings.seriesLayout === "percent"
+                ? "Each category totals 100%. Shares use its nonnegative series totals after other chart filters."
+                : settings.seriesLayout === "stacked"
+                  ? "Series add within each category. Positive and negative totals stack separately from zero."
+                  : "Compare series side by side. Stacked adds their values; 100% compares their shares."}
+          </p>
+        </>
+      )}
+    </>
+  );
 
   const createAggregate = (aggregation: AggregateAggregation) => {
     const measureField = measureFields[0];
@@ -117,6 +190,10 @@ values.some((value) => finiteNumber(value) !== undefined)
               ? next.groupField
               : (next.measureField ?? next.groupField),
           ...(settings.title === aggregate.name ? { title: name } : {}),
+          ...(next.aggregation !== aggregate.aggregation ||
+          next.measureField !== aggregate.measureField
+            ? { yAxisLabel: "" }
+            : {}),
           // A new group field makes the old group selection meaningless.
           ...(next.groupField !== aggregate.groupField
             ? {
@@ -176,12 +253,14 @@ values.some((value) => finiteNumber(value) !== undefined)
               });
             }}
           >
-            <option value="category">Category counts / bins</option>
+            {!settings.seriesField && (
+              <option value="category">Category counts / bins</option>
+            )}
             <option value="count">Count rows</option>
             <option value="sum" disabled={!measureFields.length}>
               Sum
             </option>
-            <option value="average" disabled={!measureFields.length}>
+            <option value="average" disabled={!measureFields.length || stacked}>
               Average
             </option>
           </select>
@@ -198,7 +277,13 @@ values.some((value) => finiteNumber(value) !== undefined)
               />
             </>
           )}
+          {seriesControl}
         </div>
+        {settings.seriesField && (
+          <p className="text-xs text-muted-foreground">
+            Select a bar to filter its category and series.
+          </p>
+        )}
       </div>
     );
   }
@@ -211,10 +296,47 @@ values.some((value) => finiteNumber(value) !== undefined)
         </p>
       )}
       <div className="grid grid-cols-[120px_1fr] items-center gap-4">
-        <Label>Group by</Label>
+        {!settings.seriesField && (
+          <>
+            <Label htmlFor="bar-data-mode">Data mode</Label>
+            <ActionTooltip content="Histogram groups numeric values into intervals. Category count gives each distinct value its own bar.">
+              <select
+                id="bar-data-mode"
+                className="h-9 min-w-0 rounded border border-input bg-background px-2 text-sm"
+                value={
+                  !settings.forceString &&
+                  measureFields.includes(settings.field)
+                    ? "histogram"
+                    : "category"
+                }
+                onChange={(event) =>
+                  onSettingsChange({
+                    ...settings,
+                    forceString: event.target.value === "category",
+                    field:
+                      event.target.value === "histogram" &&
+                      !measureFields.includes(settings.field)
+                        ? measureFields[0]!
+                        : settings.field,
+                  })
+                }
+              >
+                <option value="histogram" disabled={!measureFields.length}>
+                  Histogram
+                </option>
+                <option value="category">Category count</option>
+              </select>
+            </ActionTooltip>
+          </>
+        )}
+        <Label>
+          {!settings.forceString && measureFields.includes(settings.field)
+            ? "Numeric field"
+            : "Group by"}
+        </Label>
         <FieldSelector
           label=""
-          placeholder="Group by"
+          placeholder="Chart field"
           value={settings.field}
           onChange={(value) => onSettingsChange({ ...settings, field: value })}
         />
@@ -234,59 +356,57 @@ values.some((value) => finiteNumber(value) !== undefined)
           <option value="sum" disabled={!measureFields.length}>
             Sum
           </option>
-          <option value="average" disabled={!measureFields.length}>
+          <option value="average" disabled={!measureFields.length || stacked}>
             Average
           </option>
         </select>
 
-        <Label>Bins · {settings.binCount ?? 10}</Label>
-        <Slider
-          aria-label="Histogram bin count"
-          value={[settings.binCount ?? 10]}
-          min={2}
-          max={50}
-          step={1}
-          onValueChange={([value]) =>
-            onSettingsChange({ ...settings, binCount: value })
-          }
-        />
-
-        <div className="col-start-2">
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="forceString"
-              checked={settings.forceString}
-              onCheckedChange={(checked) =>
-                onSettingsChange({
-                  ...settings,
-                  forceString: checked,
-                })
-              }
-            />
-            <Label htmlFor="forceString">Treat values as categories</Label>
+        {seriesControl}
+        {!settings.seriesField &&
+          !settings.forceString &&
+          measureFields.includes(settings.field) && (
+            <>
+              <Label>Bins · {settings.binCount ?? 10}</Label>
+              <Slider
+                aria-label="Histogram bin count"
+                value={[settings.binCount ?? 10]}
+                min={2}
+                max={50}
+                step={1}
+                onValueChange={([value]) =>
+                  onSettingsChange({ ...settings, binCount: value })
+                }
+              />
+            </>
+          )}
+        {!settings.seriesField && (
+          <div className="col-start-2">
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="colorField"
+                checked={settings.field === settings.colorField}
+                onCheckedChange={(checked) =>
+                  onSettingsChange({
+                    ...settings,
+                    colorField: checked ? settings.field : undefined,
+                    colorScaleId:
+                      checked && settings.field
+                        ? getOrCreateScaleForField(settings.field)
+                        : undefined,
+                  })
+                }
+              />
+              <Label htmlFor="colorField">Use as color field</Label>
+            </div>
           </div>
-        </div>
-
-        <div className="col-start-2">
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="colorField"
-              checked={settings.field === settings.colorField}
-              onCheckedChange={(checked) =>
-                onSettingsChange({
-                  ...settings,
-                  colorField: checked ? settings.field : undefined,
-                  colorScaleId:
-                    checked && settings.field
-                      ? getOrCreateScaleForField(settings.field)
-                      : undefined,
-                })
-              }
-            />
-            <Label htmlFor="colorField">Use as color field</Label>
-          </div>
-        </div>
+        )}
       </div>
+      {settings.seriesField && (
+        <p className="text-xs text-muted-foreground">
+          Group values are categories. Select a bar to filter its category and
+          series.
+        </p>
+      )}
     </div>
   );
 }

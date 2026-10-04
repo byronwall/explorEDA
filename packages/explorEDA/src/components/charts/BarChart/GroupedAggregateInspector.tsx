@@ -44,11 +44,17 @@ function Pager({
 export function AggregateContributorTable({
   row,
   showInputs = true,
+  compact = false,
 }: {
   row: AggregateResultRow;
   showInputs?: boolean;
+  compact?: boolean;
 }) {
   const [page, setPage] = useState(0);
+  const showRaw =
+    !compact || row.contributors.some((item) => item.input !== item.rawInput);
+  const cellClass = compact ? "px-2 py-1" : "p-2";
+  const numberClass = compact ? `${cellClass} text-right tabular-nums` : cellClass;
   const pageCount = Math.max(1, Math.ceil(row.contributors.length / PAGE_SIZE));
   const visibleContributors = row.contributors.slice(
     page * PAGE_SIZE,
@@ -58,27 +64,33 @@ export function AggregateContributorTable({
   return (
     <div className="space-y-2">
       <div className="overflow-auto rounded border border-border">
-        <table className="w-full text-left text-sm">
+        <table
+          className={`w-full text-left ${compact ? "text-xs" : "text-sm"}`}
+        >
           <caption className="sr-only">Aggregate source contributors</caption>
           <thead className="bg-muted">
             <tr>
-              <th className="p-2" scope="col">
-                Source row ID
+              <th className={numberClass} scope="col">
+                {compact ? "Row ID" : "Source row ID"}
               </th>
               {showInputs && (
                 <>
-                  <th className="p-2" scope="col">
+                  <th className={numberClass} scope="col">
                     Input
                   </th>
-                  <th className="p-2" scope="col">
-                    Raw input
-                  </th>
-                  <th className="p-2" scope="col">
-                    Type
-                  </th>
+                  {showRaw && (
+                    <th className={numberClass} scope="col">
+                      Raw input
+                    </th>
+                  )}
+                  {!compact && (
+                    <th className={cellClass} scope="col">
+                      Type
+                    </th>
+                  )}
                 </>
               )}
-              <th className="p-2" scope="col">
+              <th className={cellClass} scope="col">
                 Used
               </th>
             </tr>
@@ -86,19 +98,23 @@ export function AggregateContributorTable({
           <tbody>
             {visibleContributors.map((contributor) => (
               <tr key={contributor.sourceId} className="border-t border-border">
-                <td className="p-2">{contributor.sourceId}</td>
+                <td className={numberClass}>{contributor.sourceId}</td>
                 {showInputs && (
                   <>
-                    <td className="p-2">
+                    <td className={numberClass}>
                       {displayAggregateValue(contributor.input)}
                     </td>
-                    <td className="p-2">
-                      {displayAggregateValue(contributor.rawInput)}
-                    </td>
-                    <td className="p-2">{typeof contributor.input}</td>
+                    {showRaw && (
+                      <td className={numberClass}>
+                        {displayAggregateValue(contributor.rawInput)}
+                      </td>
+                    )}
+                    {!compact && (
+                      <td className={cellClass}>{typeof contributor.input}</td>
+                    )}
                   </>
                 )}
-                <td className="p-2">
+                <td className={cellClass}>
                   {contributor.included
                     ? "Yes"
                     : contributor.exclusionReason || "No"}

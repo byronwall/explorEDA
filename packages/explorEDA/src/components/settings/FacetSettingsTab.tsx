@@ -101,12 +101,12 @@ export function FacetSettingsTab({
 
   return (
     <div className="space-y-4">
-      {"aggregateId" in settings && settings.aggregateId ? (
+      {"aggregateId" in settings && settings.aggregateId && !(settings.type === "bar" && settings.seriesField) ? (
         <p role="status" className="text-xs text-muted-foreground">
           Faceting is unavailable for grouped summary charts.
         </p>
       ) : null}
-      {"aggregateId" in settings && settings.aggregateId ? null : (
+      {"aggregateId" in settings && settings.aggregateId && !(settings.type === "bar" && settings.seriesField) ? null : (
         <div className="grid grid-cols-[120px_1fr] items-center gap-4">
           <Label htmlFor="enableFacet">Enable Faceting</Label>
           <div className="flex items-center">
