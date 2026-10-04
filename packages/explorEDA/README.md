@@ -108,6 +108,7 @@ interface SavedDataStructure {
   rowsSettings?: SavedRowsSettings;
   fieldSettings?: FieldSettingsMap;
   aggregates?: AggregateSpec[];
+  geometryAssets?: GeometryAsset[];
 }
 
 interface SavedCalculation {
@@ -115,6 +116,10 @@ interface SavedCalculation {
   expression: string;
 }
 ```
+
+Region maps reference a shared `GeometryAsset` by `geometryAssetId`. Each asset has an `id`, `name`, `source`, and `geometry`.
+Geometry is a WGS 84 GeoJSON FeatureCollection of Polygon or MultiPolygon features with closed rings.
+Settings and full-analysis exports both include these assets. Restore the complete settings object to keep map geometry.
 
 The `expression` value is formula text. Runtime code parses and validates it
 when it restores the settings. The settings JSON does not store an AST and no

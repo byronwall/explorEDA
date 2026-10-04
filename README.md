@@ -62,6 +62,15 @@ Drag to pan, use **Fit data** for all source coordinates, or **Reset view** for 
 Views persist in geographic units. Omitted and offscreen rows remain available in the trace.
 The bundled [World Atlas land outline](https://github.com/topojson/world-atlas) supplies context without a tile service.
 
+Choose **Region** in Map settings to join records to a GeoJSON FeatureCollection.
+Import polygon geometry, choose the row and feature keys, and review the join preview.
+Keys match by value and type. Choose count, sum, or average for the region metric.
+Select a region to filter its records; **Inspect region** shows its metric and contributors.
+**Inspect joins** lists unmatched rows. Duplicate feature keys form one region without counting rows twice.
+Patterns distinguish regions with no rows from regions with invalid measures. Zero remains a valid metric.
+The color domain uses full-source bounds and stays fixed across filters and facets.
+Geometry is saved once under `geometryAssets`; each chart stores its `geometryAssetId` reference.
+
 ## Install
 
 ```sh

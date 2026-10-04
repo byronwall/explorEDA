@@ -1,3 +1,4 @@
+import { serviceDistricts } from "./regionMapGeometry";
 import type { SavedDataStructure } from "exploreda";
 
 type Chart = SavedDataStructure["charts"][number];
@@ -960,3 +961,15 @@ export const pointMapDashboard = dashboard(
   ],
   [categoricalScale("map-regions", "Region", ["Americas", "Europe", "Africa", "Asia-Pacific"])]
 );
+
+
+export const regionMapDashboard: SavedDataStructure = {
+  ...dashboard("Requests across service districts", [
+    {...base,id:"district-map",type:"map",mode:"region",title:"Requests by service district",latitudeField:"",longitudeField:"",pointRadius:6,pointOpacity:0.8,projection:"equal-earth",view:{center:[-74.5,41.5],zoom:20},geometryAssetId:"service-districts",regionField:"District",featureKey:"district",aggregation:"sum",measureField:"Requests",showRegionLabels:true,outlineWidth:1,layout:layout(0,0,8,7)},
+    {...base,id:"district-total",type:"metric-card",title:"Requests in this selection",aggregation:"sum",measureField:"Requests",layout:layout(8,0,4,2)},
+    {...base,id:"district-pivot",type:"pivot",title:"Check the region totals",rowFields:["District"],columnField:"",valueFields:[{field:"Requests",aggregation:"sum",label:"Requests"}],layout:layout(8,2,4,5)},
+    table("district-rows","Request source records",["District","Team","Requests"],layout(0,7,12,4)),
+  ]),
+  geometryAssets:[serviceDistricts],
+  fieldSettings:{Requests:{type:"numeric"}},
+};

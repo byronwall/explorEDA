@@ -1,0 +1,16 @@
+District,Team,Requests
+West,Blue,100
+West,Gold,140
+West,Blue,120
+Central,Blue,180
+Central,Gold,170
+Central,Gold,150
+East,Blue,90
+East,Gold,70
+East,Blue,60
+South,Blue,0
+South,Gold,0
+Harbor,Blue,unknown
+Harbor,Gold,
+Unassigned,Blue,25
+,Gold,15
