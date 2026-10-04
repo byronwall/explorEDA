@@ -3,22 +3,22 @@
   "name": "explorEDA",
   "description": "Blank project ready for grid editing, structure mapping, and future AI-assisted details.",
   "createdAt": "2026-09-29T01:22:21.210Z",
-  "updatedAt": "2026-10-04T03:33:51.754Z",
+  "updatedAt": "2026-10-04T23:31:14.293Z",
   "operationLog": [
     {
-      "id": "c64201e0-58e9-436c-8b2b-1c905df9a060",
+      "id": "ccad614b-e6f5-4a2f-934d-069a4fbe5f8c",
       "kind": "node.images.added",
       "actor": {
         "kind": "human"
       },
-      "createdAt": "2026-10-04T03:33:51.758Z",
-      "summary": "Added 1 images to \"Add chart list needs some structure and grouping for chart types.\".",
+      "createdAt": "2026-10-04T23:31:14.295Z",
+      "summary": "Added 1 images to \"Click should always filter\".",
       "nodeIds": [
-        "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types"
+        "page-click-should-always-filter"
       ],
       "metadata": {
         "imageCount": "1",
-        "clientMutationId": "88b26159-2c92-4d91-93a2-06fa350e5d6b"
+        "clientMutationId": "6e87e30c-aa1a-41c4-9609-4f6d1ceb38ca"
       },
       "payload": {
         "state": {
@@ -631,6 +631,236 @@
                     "createdAt": "2026-10-04T03:33:51.754Z"
                   }
                 ]
+              },
+              {
+                "id": "page-10-04",
+                "label": "10-04",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "",
+                "rawContext": "",
+                "images": []
+              },
+              {
+                "id": "page-do-side-by-side-for-order-book-example",
+                "label": "do side by side for order book example",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "Review other examples and ensure we have good aspect ratio and proportions on charts",
+                "rawContext": "Review other examples and ensure we have good aspect ratio and proportions on charts",
+                "images": [
+                  {
+                    "id": "9546e93f-646d-4238-b640-32179376a071",
+                    "src": "/api/projects/untitled-project/images/page-do-side-by-side-for-order-book-example/9546e93f-646d-4238-b640-32179376a071.png",
+                    "filename": "9546e93f-646d-4238-b640-32179376a071.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 316987,
+                    "createdAt": "2026-10-04T23:08:24.352Z"
+                  }
+                ]
+              },
+              {
+                "id": "page-do-not-have-persistent-text-explaining-how-things-work",
+                "label": "do not have persistent text explaining how things work",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "We really need to disclosure only when needed and make these things subtler",
+                "rawContext": "",
+                "images": [
+                  {
+                    "id": "853ebf8b-06cb-4cd4-8334-675231038ff4",
+                    "src": "/api/projects/untitled-project/images/page-do-not-have-persistent-text-explaining-how-things-work/853ebf8b-06cb-4cd4-8334-675231038ff4.png",
+                    "filename": "853ebf8b-06cb-4cd4-8334-675231038ff4.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 319471,
+                    "createdAt": "2026-10-04T23:09:28.837Z"
+                  }
+                ]
+              },
+              {
+                "id": "page-box-plot-should-support-multiple-selection",
+                "label": "box plot should support multiple selection",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "do not limit to single selection",
+                "rawContext": "do not limit to single selection",
+                "images": [
+                  {
+                    "id": "692fbacb-169a-478c-8348-0d9cd6cb8476",
+                    "src": "/api/projects/untitled-project/images/page-box-plot-should-support-multiple-selection/692fbacb-169a-478c-8348-0d9cd6cb8476.png",
+                    "filename": "692fbacb-169a-478c-8348-0d9cd6cb8476.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 69706,
+                    "createdAt": "2026-10-04T23:10:37.653Z"
+                  }
+                ]
+              },
+              {
+                "id": "page-remove-inspect-button",
+                "label": "Remove inspect button",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "Main chart surface should be chart only - no extra buttons always present",
+                "rawContext": "Main chart surface should be chart only - no extra buttons always present",
+                "images": [
+                  {
+                    "id": "17a95c91-9ed4-4959-9f10-ece89f05aaad",
+                    "src": "/api/projects/untitled-project/images/page-remove-inspect-button/17a95c91-9ed4-4959-9f10-ece89f05aaad.png",
+                    "filename": "17a95c91-9ed4-4959-9f10-ece89f05aaad.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 58967,
+                    "createdAt": "2026-10-04T23:11:18.992Z"
+                  }
+                ]
+              },
+              {
+                "id": "page-field-list-is-not-left-aligned-on-all-bars",
+                "label": "Field list is not left aligned on all bars",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "Related to the different count digit length?",
+                "rawContext": "Related to the different count digit length?",
+                "images": [
+                  {
+                    "id": "1f6ce290-908e-48bc-bacb-bb26c620f35e",
+                    "src": "/api/projects/untitled-project/images/page-field-list-is-not-left-aligned-on-all-bars/1f6ce290-908e-48bc-bacb-bb26c620f35e.png",
+                    "filename": "1f6ce290-908e-48bc-bacb-bb26c620f35e.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 134623,
+                    "createdAt": "2026-10-04T23:15:00.687Z"
+                  }
+                ]
+              },
+              {
+                "id": "page-resizing-a-chart-caused-it-to-jump-to-end-of-all-charts",
+                "label": "Resizing a chart caused it to \"jump\" to end of all charts",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "I tried to resize down and the chart jumped to the end after all other charts.  It was jarring and not expected.  Always the least movement possible",
+                "rawContext": "I tried to resize down and the chart jumped to the end after all other charts.  It was jarring and not expected.  Always the least movement possible",
+                "images": []
+              },
+              {
+                "id": "page-add-new-chart-placement-scrolls-down",
+                "label": "\"add new chart\" placement scrolls down",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "We want to start in the current view, do not move anywhere by default",
+                "rawContext": "We want to start in the current view, do not move anywhere by default",
+                "images": []
+              },
+              {
+                "id": "page-compact-vertical-space",
+                "label": "Compact vertical space",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "We do not want to leave gaps at top, gravity goes up",
+                "rawContext": "We do not want to leave gaps at top, gravity goes up",
+                "images": [
+                  {
+                    "id": "5b9cbc72-0c64-4b5b-bfd7-2d9156010ce0",
+                    "src": "/api/projects/untitled-project/images/page-compact-vertical-space/5b9cbc72-0c64-4b5b-bfd7-2d9156010ce0.png",
+                    "filename": "5b9cbc72-0c64-4b5b-bfd7-2d9156010ce0.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 106461,
+                    "createdAt": "2026-10-04T23:21:29.472Z"
+                  }
+                ]
+              },
+              {
+                "id": "page-group-buttons-in-top-nav-better",
+                "label": "Group buttons in top nav better",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "",
+                "rawContext": "",
+                "images": [
+                  {
+                    "id": "9faa34ed-0e0d-4c81-ac7f-6ab8a2978e83",
+                    "src": "/api/projects/untitled-project/images/page-group-buttons-in-top-nav-better/9faa34ed-0e0d-4c81-ac7f-6ab8a2978e83.png",
+                    "filename": "9faa34ed-0e0d-4c81-ac7f-6ab8a2978e83.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 101296,
+                    "createdAt": "2026-10-04T23:22:39.506Z"
+                  }
+                ]
+              },
+              {
+                "id": "page-new-chart-icons-do-not-match-all-real-ones",
+                "label": "New chart icons do not match all real ones",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "Bar chart icon shows horizontal bars but it has vertical bars",
+                "rawContext": "Bar chart icon shows horizontal bars but it has vertical bars",
+                "images": [
+                  {
+                    "id": "846f06e3-1022-4c01-9e9d-eabc00d79d04",
+                    "src": "/api/projects/untitled-project/images/page-new-chart-icons-do-not-match-all-real-ones/846f06e3-1022-4c01-9e9d-eabc00d79d04.png",
+                    "filename": "846f06e3-1022-4c01-9e9d-eabc00d79d04.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 129756,
+                    "createdAt": "2026-10-04T23:25:10.044Z"
+                  }
+                ]
+              },
+              {
+                "id": "page-3d-scatter-needs-some-axis-logic-as-main-scatter",
+                "label": "3D scatter needs some axis logic as main scatter",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "We should support all categorical and other non-numeric types",
+                "rawContext": "We should support all categorical and other non-numeric types",
+                "images": [
+                  {
+                    "id": "b4add20e-8b6c-4b30-84cc-f939bf69aade",
+                    "src": "/api/projects/untitled-project/images/page-3d-scatter-needs-some-axis-logic-as-main-scatter/b4add20e-8b6c-4b30-84cc-f939bf69aade.png",
+                    "filename": "b4add20e-8b6c-4b30-84cc-f939bf69aade.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 290906,
+                    "createdAt": "2026-10-04T23:26:19.651Z"
+                  }
+                ]
+              },
+              {
+                "id": "page-click-should-always-filter",
+                "label": "Click should always filter",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "Bar chart currently does not",
+                "rawContext": "Bar chart currently does not",
+                "images": [
+                  {
+                    "id": "88d606a7-0a41-4907-9d2d-4cca8347e2b5",
+                    "src": "/api/projects/untitled-project/images/page-click-should-always-filter/88d606a7-0a41-4907-9d2d-4cca8347e2b5.png",
+                    "filename": "88d606a7-0a41-4907-9d2d-4cca8347e2b5.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 78942,
+                    "createdAt": "2026-10-04T23:31:14.293Z"
+                  }
+                ]
               }
             ],
             "links": [
@@ -773,10 +1003,468 @@
                 "source": "page-fdbk-10-02",
                 "target": "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types",
                 "parentChild": true
+              },
+              {
+                "source": "page-10-04",
+                "target": "page-do-side-by-side-for-order-book-example",
+                "parentChild": true
+              },
+              {
+                "source": "page-10-04",
+                "target": "page-do-not-have-persistent-text-explaining-how-things-work",
+                "parentChild": true
+              },
+              {
+                "source": "page-10-04",
+                "target": "page-box-plot-should-support-multiple-selection",
+                "parentChild": true
+              },
+              {
+                "source": "page-10-04",
+                "target": "page-remove-inspect-button",
+                "parentChild": true
+              },
+              {
+                "source": "page-10-04",
+                "target": "page-field-list-is-not-left-aligned-on-all-bars",
+                "parentChild": true
+              },
+              {
+                "source": "page-10-04",
+                "target": "page-resizing-a-chart-caused-it-to-jump-to-end-of-all-charts",
+                "parentChild": true
+              },
+              {
+                "source": "page-10-04",
+                "target": "page-add-new-chart-placement-scrolls-down",
+                "parentChild": true
+              },
+              {
+                "source": "page-10-04",
+                "target": "page-compact-vertical-space",
+                "parentChild": true
+              },
+              {
+                "source": "page-10-04",
+                "target": "page-group-buttons-in-top-nav-better",
+                "parentChild": true
+              },
+              {
+                "source": "page-10-04",
+                "target": "page-new-chart-icons-do-not-match-all-real-ones",
+                "parentChild": true
+              },
+              {
+                "source": "page-10-04",
+                "target": "page-3d-scatter-needs-some-axis-logic-as-main-scatter",
+                "parentChild": true
+              },
+              {
+                "source": "page-10-04",
+                "target": "page-click-should-always-filter",
+                "parentChild": true
               }
             ]
           }
         }
+      }
+    },
+    {
+      "id": "5601334e-bdc6-404e-9cba-f4dde660cad6",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:31:13.665Z",
+      "summary": "Created \"Click should always filter\" under \"10-04\".",
+      "nodeIds": [
+        "page-click-should-always-filter",
+        "page-10-04"
+      ],
+      "metadata": {
+        "clientMutationId": "2b3900ae-3d7f-4835-9c83-74ccb31ff80a"
+      }
+    },
+    {
+      "id": "d20c66e4-cfc2-4958-9a87-536ea694900e",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:26:19.653Z",
+      "summary": "Added 1 images to \"3D scatter needs some axis logic as main scatter\".",
+      "nodeIds": [
+        "page-3d-scatter-needs-some-axis-logic-as-main-scatter"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "4e323fbe-172b-445f-b469-e758eeb3819d"
+      }
+    },
+    {
+      "id": "6ac2d4a2-9495-4cdf-94c9-d33434a461fc",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:26:19.277Z",
+      "summary": "Created \"3D scatter needs some axis logic as main scatter\" under \"10-04\".",
+      "nodeIds": [
+        "page-3d-scatter-needs-some-axis-logic-as-main-scatter",
+        "page-10-04"
+      ],
+      "metadata": {
+        "clientMutationId": "567a4ba3-a2a2-42f8-b164-3809acd283ce"
+      }
+    },
+    {
+      "id": "7da05a5d-35aa-4bb1-86ef-8ed539ff655d",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:25:10.046Z",
+      "summary": "Added 1 images to \"New chart icons do not match all real ones\".",
+      "nodeIds": [
+        "page-new-chart-icons-do-not-match-all-real-ones"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "78837235-0cfb-46c3-9646-00454e37e032"
+      }
+    },
+    {
+      "id": "ff733408-f98f-4945-827a-28ee182d40d6",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:25:09.665Z",
+      "summary": "Created \"New chart icons do not match all real ones\" under \"10-04\".",
+      "nodeIds": [
+        "page-new-chart-icons-do-not-match-all-real-ones",
+        "page-10-04"
+      ],
+      "metadata": {
+        "clientMutationId": "bae7069a-4b29-42a0-bedb-ea89c076c5bf"
+      }
+    },
+    {
+      "id": "152d26cb-cd63-435a-a947-ad2e08bcfad5",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:22:39.508Z",
+      "summary": "Added 1 images to \"Group buttons in top nav better\".",
+      "nodeIds": [
+        "page-group-buttons-in-top-nav-better"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "98e94c06-3efc-4081-8654-aa0065a82077"
+      }
+    },
+    {
+      "id": "a1123769-ed72-4378-b055-1fa513c68c14",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:22:38.763Z",
+      "summary": "Created \"Group buttons in top nav better\" under \"10-04\".",
+      "nodeIds": [
+        "page-group-buttons-in-top-nav-better",
+        "page-10-04"
+      ],
+      "metadata": {
+        "clientMutationId": "8834a301-c1da-4cd8-a43f-29d2cbd0744d"
+      }
+    },
+    {
+      "id": "229328a2-86b4-43bd-b8bd-5623dc56c7e5",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:21:29.474Z",
+      "summary": "Added 1 images to \"Compact vertical space\".",
+      "nodeIds": [
+        "page-compact-vertical-space"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "5fb47dd3-3a28-43f5-988f-369ede75a8da"
+      }
+    },
+    {
+      "id": "146fd954-ed03-4ed0-8c8c-a06bb4ec6cf0",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:21:28.371Z",
+      "summary": "Created \"Compact vertical space\" under \"10-04\".",
+      "nodeIds": [
+        "page-compact-vertical-space",
+        "page-10-04"
+      ],
+      "metadata": {
+        "clientMutationId": "b4c27a94-550d-4a85-935c-5246feaff764"
+      }
+    },
+    {
+      "id": "99e08ada-3d1b-4f82-8374-8954bb174c65",
+      "kind": "node.moved",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:18:29.590Z",
+      "summary": "Moved \"\"add new chart\" placement scrolls down\" under \"10-04\".",
+      "nodeIds": [
+        "page-add-new-chart-placement-scrolls-down",
+        "page-10-04"
+      ],
+      "metadata": {
+        "clientMutationId": "01466289-8ffa-46c7-9c0c-cd13526c76e1"
+      }
+    },
+    {
+      "id": "99983163-7cd6-4d41-b7e0-5f852f92a9aa",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:18:26.429Z",
+      "summary": "Created \"\"add new chart\" placement scrolls down\" under \"Resizing a chart caused it to \"jump\" to end of all charts\".",
+      "nodeIds": [
+        "page-add-new-chart-placement-scrolls-down",
+        "page-resizing-a-chart-caused-it-to-jump-to-end-of-all-charts"
+      ],
+      "metadata": {
+        "clientMutationId": "36ca9fca-a6b7-4456-9268-4f5ae019630b"
+      }
+    },
+    {
+      "id": "4c8ddfbc-518e-4208-a2a8-c65078aa6cc2",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:18:08.613Z",
+      "summary": "Created \"Resizing a chart caused it to \"jump\" to end of all charts\" under \"10-04\".",
+      "nodeIds": [
+        "page-resizing-a-chart-caused-it-to-jump-to-end-of-all-charts",
+        "page-10-04"
+      ],
+      "metadata": {
+        "clientMutationId": "d0d5eed4-682c-4ce4-9c7b-815e4494a532"
+      }
+    },
+    {
+      "id": "0a36d038-5500-47bb-a11e-4a7bec9839ce",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:15:00.690Z",
+      "summary": "Added 1 images to \"Field list is not left aligned on all bars\".",
+      "nodeIds": [
+        "page-field-list-is-not-left-aligned-on-all-bars"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "94b95ee9-1dbe-4026-aa03-8e40b327a196"
+      }
+    },
+    {
+      "id": "d57828d7-f7e6-4e57-957b-dcfe705fc8a8",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:14:59.252Z",
+      "summary": "Created \"Field list is not left aligned on all bars\" under \"10-04\".",
+      "nodeIds": [
+        "page-field-list-is-not-left-aligned-on-all-bars",
+        "page-10-04"
+      ],
+      "metadata": {
+        "clientMutationId": "f0bbe744-3dd8-4f3d-9b4a-7599a2f4bedf"
+      }
+    },
+    {
+      "id": "0d689f76-fc81-4afa-83e3-542f1141775d",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:11:18.993Z",
+      "summary": "Added 1 images to \"Remove inspect button\".",
+      "nodeIds": [
+        "page-remove-inspect-button"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "d224defd-2bc6-4680-a266-30aa702a6a0d"
+      }
+    },
+    {
+      "id": "65d61f04-248b-444b-8324-d1bc3bc8965f",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:11:16.712Z",
+      "summary": "Created \"Remove inspect button\" under \"10-04\".",
+      "nodeIds": [
+        "page-remove-inspect-button",
+        "page-10-04"
+      ],
+      "metadata": {
+        "clientMutationId": "dc80a5b9-ff59-4a08-95ec-13479e643394"
+      }
+    },
+    {
+      "id": "07d41260-4144-4888-bde0-973851291fff",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:10:37.659Z",
+      "summary": "Added 1 images to \"box plot should support multiple selection\".",
+      "nodeIds": [
+        "page-box-plot-should-support-multiple-selection"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "f23af44a-e56c-4e5f-b16a-3bfa112a6292"
+      }
+    },
+    {
+      "id": "95894cdc-4ace-492c-b9d5-180a143a0d58",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:10:36.502Z",
+      "summary": "Created \"box plot should support multiple selection\" under \"10-04\".",
+      "nodeIds": [
+        "page-box-plot-should-support-multiple-selection",
+        "page-10-04"
+      ],
+      "metadata": {
+        "clientMutationId": "a17b9c90-29db-4e80-95af-e50850b09c7a"
+      }
+    },
+    {
+      "id": "3abfeb39-8f78-4bf3-a683-9ebdb341545f",
+      "kind": "node.context.updated",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:09:45.754Z",
+      "summary": "Updated context for \"do not have persistent text explaining how things work\".",
+      "nodeIds": [
+        "page-do-not-have-persistent-text-explaining-how-things-work"
+      ],
+      "metadata": {
+        "clientMutationId": "82354cbb-ed31-4111-9f04-89b2f83fed0f"
+      }
+    },
+    {
+      "id": "899830e9-0718-4210-9a15-38856bc29733",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:09:28.839Z",
+      "summary": "Added 1 images to \"do not have persistent text explaining how things work\".",
+      "nodeIds": [
+        "page-do-not-have-persistent-text-explaining-how-things-work"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "804f7f8f-2790-467b-bdc5-92567a9f54ea"
+      }
+    },
+    {
+      "id": "e159a4a5-a56f-4361-866e-c0aac7f81c8b",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:09:27.890Z",
+      "summary": "Created \"do not have persistent text explaining how things work\" under \"10-04\".",
+      "nodeIds": [
+        "page-do-not-have-persistent-text-explaining-how-things-work",
+        "page-10-04"
+      ],
+      "metadata": {
+        "clientMutationId": "e467e3e6-41cd-4b5e-a6e2-209cd3f9d704"
+      }
+    },
+    {
+      "id": "1d4fc328-2a70-42f2-a26a-1663d93e7fad",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:08:24.355Z",
+      "summary": "Added 1 images to \"do side by side for order book example\".",
+      "nodeIds": [
+        "page-do-side-by-side-for-order-book-example"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "261076fd-4483-4346-955a-68361f681c10"
+      }
+    },
+    {
+      "id": "71c95143-9043-4f8f-86d5-d7c2d578a6c9",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:08:23.550Z",
+      "summary": "Created \"do side by side for order book example\" under \"10-04\".",
+      "nodeIds": [
+        "page-do-side-by-side-for-order-book-example",
+        "page-10-04"
+      ],
+      "metadata": {
+        "clientMutationId": "0626064a-4c1a-43c2-bc22-e1d3352fda8f"
+      }
+    },
+    {
+      "id": "5f175e8a-7763-4bf7-8496-0c7f1acdc429",
+      "kind": "node.created",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:07:57.801Z",
+      "summary": "Created \"10-04\".",
+      "nodeIds": [
+        "page-10-04"
+      ],
+      "metadata": {
+        "clientMutationId": "c7eb6320-50f5-407e-a257-2b883481b1fe"
+      }
+    },
+    {
+      "id": "c64201e0-58e9-436c-8b2b-1c905df9a060",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T03:33:51.758Z",
+      "summary": "Added 1 images to \"Add chart list needs some structure and grouping for chart types.\".",
+      "nodeIds": [
+        "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "88b26159-2c92-4d91-93a2-06fa350e5d6b"
       }
     },
     {
