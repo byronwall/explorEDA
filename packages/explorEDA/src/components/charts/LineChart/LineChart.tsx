@@ -1,5 +1,6 @@
 import { finiteNumber } from "@/lib/numeric";
 import { numericScale } from "../Axis/numericScale";
+import { ChartMessage } from "../ChartMessage";
 import { reduceDataPoints } from "@/lib/chartUtils";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { hasFieldDisplayFormat } from "@/lib/fieldSettings";
@@ -292,12 +293,9 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
 
   if (processedLiveSeriesData.length === 0 || !settings.xField) {
     return (
-      <div
-        className="flex items-center justify-center p-4 text-center text-sm text-muted-foreground"
-        style={{ width, height }}
-      >
+      <ChartMessage width={width} height={height}>
         Choose an x field and at least one series in chart settings.
-      </div>
+      </ChartMessage>
     );
   }
 

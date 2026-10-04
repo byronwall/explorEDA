@@ -4,6 +4,7 @@ import {
   categoryLabel,
 } from "@/lib/categories";
 import { numericScale } from "../Axis/numericScale";
+import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import { BaseChartProps, RowChartSettings } from "@/types/ChartTypes";
 
 import { useColorScales } from "@/hooks/useColorScales";
@@ -264,7 +265,13 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   ]);
 
   if (displayCounts.length === 0) {
-    return <div style={{ width, height }}>No data to display</div>;
+    return (
+      <ChartMessage width={width} height={height}>
+        {settings.field
+          ? NO_MATCHING_ROWS
+          : "Choose a field in chart settings."}
+      </ChartMessage>
+    );
   }
 
   const yLabelsByKey = new Map(
