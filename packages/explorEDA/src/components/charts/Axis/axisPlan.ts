@@ -141,6 +141,8 @@ export interface ChartAxesPlan {
 
 export interface AxisInput {
   scale: ChartScale;
+  /** Explicit data-unit ticks, such as UTC calendar boundaries. */
+  tickValues?: number[];
   scaleType?: string;
   field?: string;
   fieldLabel?: string;
@@ -201,9 +203,8 @@ function planAxis(
   const band = "bandwidth" in scale;
   // Density sets the D3 candidate target. Spacing then drops overlapping labels.
   const requested = Math.max(2, input.density ?? 5);
-  const candidates: (number | string)[] = band
-    ? scale.domain()
-    : scale.ticks(requested);
+  const candidates: (number | string)[] =
+    input.tickValues ?? (band ? scale.domain() : scale.ticks(requested));
   const shown = band
     ? candidates
     : spacedTicks(
@@ -282,7 +283,7 @@ function planAxis(
       label:
         axis === "x"
           ? {
-              text: input.label,
+              text: truncate(input.label, Math.max(3, Math.floor(plotWidth / 6))),
               fullText: input.label,
               x: plotWidth / 2,
               y: plotHeight + Math.max(32, margin.bottom - 8),
@@ -290,7 +291,7 @@ function planAxis(
               fontSize: 11,
             }
           : {
-              text: input.label,
+              text: truncate(input.label, Math.max(3, Math.floor(plotHeight / 6))),
               fullText: input.label,
               x: -plotHeight / 2,
               y: -(margin.left - 12),
@@ -405,8 +406,7 @@ export function planChartMargin({
   /** Tick labels of a band Y axis, which replace the numeric ticks. */
   yLabels?: string[];
 }): { margin: MarginSettings; policy: MarginPolicy } {
-  const labels =
-    yLabels ?? scaleLinear().domain(yDomain).ticks(5).map(String);
+  const labels = yLabels ?? scaleLinear().domain(yDomain).ticks(5).map(String);
   const labelLeftMargin = Math.max(
     margin.left,
     ...labels.map((label) => label.length * 7 + (hasYLabel ? 38 : 18))

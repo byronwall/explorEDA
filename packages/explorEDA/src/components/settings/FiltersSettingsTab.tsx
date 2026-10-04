@@ -25,7 +25,12 @@ export function chartFilterFields(
       case "scatter":
         return [{ field: settings.xField }, { field: settings.yField }];
       case "line":
-        return [{ field: settings.xField }];
+        return [
+          { field: settings.xField },
+          ...(settings.time?.splitField
+            ? [{ field: settings.time.splitField, valuesOnly: true }]
+            : []),
+        ];
       case "bar":
         return [
           {

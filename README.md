@@ -32,6 +32,10 @@ table, data table, summary table, metric card, markdown, and color legend.
 Metric cards show a count, sum, or average for rows that match the chart
 filters. Choose **Inspect records** to see the inputs and excluded values.
 
+Line Chart's **Calendar summaries** mode groups dated rows by UTC day, week,
+or month. Select a period and series to filter linked views, then choose
+**Inspect period** to see its calculation, date boundaries, and source rows.
+
 ## Install
 
 ```sh

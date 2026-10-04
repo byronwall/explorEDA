@@ -10,6 +10,24 @@ import { Filter } from "@/types/FilterTypes";
 import { LineChart as LineChartIcon } from "lucide-react";
 import { LineChart } from "./LineChart";
 import { LineChartSettingsPanel } from "./LineChartSettingsPanel";
+import type { AggregateAggregation } from "@/lib/aggregates";
+import type { TimeInterval, WeekStart } from "@/lib/dailyRollup";
+
+export interface TimeSeriesSettings {
+  interval: TimeInterval;
+  weekStart: WeekStart;
+  aggregation: AggregateAggregation;
+  measureField?: string;
+  splitField?: string;
+  missingPeriods: "gap" | "zero";
+}
+
+export const DEFAULT_TIME_SERIES: TimeSeriesSettings = {
+  interval: "month",
+  weekStart: "monday",
+  aggregation: "count",
+  missingPeriods: "gap",
+};
 
 export interface SeriesSettings {
   showPoints: boolean;
@@ -24,6 +42,7 @@ export interface SeriesSettings {
 
 export interface LineChartSettings extends BaseChartSettings {
   type: "line";
+  time?: TimeSeriesSettings;
 
   // Data fields
   xField: string;
@@ -97,7 +116,13 @@ export const lineChartDefinition: ChartDefinition<LineChartSettings> = {
     legendPosition: "top",
   }),
   validateSettings: (settings: LineChartSettings): boolean => {
-    return settings.xField !== "" && settings.seriesField.length > 0;
+    return (
+      settings.xField !== "" &&
+      (settings.time
+        ? settings.time.aggregation === "count" ||
+          Boolean(settings.time.measureField)
+        : settings.seriesField.length > 0)
+    );
   },
   getFilterFunction: (
     settings: LineChartSettings,

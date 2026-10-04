@@ -64,6 +64,12 @@ interface PlotChartPanelProps {
 const CATEGORY_LABELED_CHART_TYPES = new Set(["row", "boxplot"]);
 
 const TRACE_COPY = {
+  line: {
+    heading: "Time series trace",
+    emptyText:
+      "Choose Inspect period, or Alt-click a point, to inspect its calculation and source rows.",
+    ariaLabel: "Time series trace inspector",
+  },
   "metric-card": {
     heading: "Metric trace",
     emptyText:
@@ -465,7 +471,8 @@ export function PlotChartPanel({
             className="eda-drag h-3 w-3 shrink-0 text-muted-foreground"
             aria-hidden="true"
           />
-          {isTraceable(settings.type) ? (
+          {isTraceable(settings.type) &&
+          (settings.type !== "line" || settings.time) ? (
             <TraceTitle id={titleId} text={chartTitle} settings={settings} />
           ) : (
             <h3 id={titleId} className="min-w-0 truncate text-sm font-semibold">
@@ -500,9 +507,10 @@ export function PlotChartPanel({
         )}
         <div className="eda-panel-actions flex shrink-0 items-center gap-0">
           {isTableLike && <div ref={setToolbarTarget} />}
-          {isTraceable(settings.type) && (
-            <ChartTraceInspector type={settings.type} />
-          )}
+          {isTraceable(settings.type) &&
+            (settings.type !== "line" || settings.time) && (
+              <ChartTraceInspector type={settings.type} />
+            )}
           {!expanded && canViewData && (
             <Popover open={dataOpen} onOpenChange={setDataOpen}>
               <ActionTooltip content="View data: preview the rows behind this chart (V)">
