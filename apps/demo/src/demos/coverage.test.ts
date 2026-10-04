@@ -57,7 +57,7 @@ describe("example coverage manifest", () => {
     );
     expect(getImplementationStatus("chart:row")).toBe("supported");
     expect(getImplementationStatus("scale:log")).toBe("not-supported");
-    expect(getImplementationStatus("scale:time")).toBe("not-supported");
+    expect(getImplementationStatus("scale:time")).toBe("supported");
     expect(getImplementationStatus("scale:symlog")).toBe("supported");
     expect(getFeatureReviewStatus("chart:row")).toBe("not-reviewed");
     expect(getFeatureReviewStatus("scale:symlog")).toBe("reviewed");
@@ -65,6 +65,12 @@ describe("example coverage manifest", () => {
       "reviewed"
     );
     expect(getExamplesUsingFeature("chart:row")).toEqual([
+      "distribution-discovery",
+      "bubble-scatter",
+      "area-charts",
+      "stacked-bars",
+      "grouped-bars",
+      "calendar-series",
       "shop-operations",
       "palmer-penguins",
       "categorical-charts",

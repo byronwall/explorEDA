@@ -1,3 +1,7 @@
+import { RowTraceBody } from "../RowChart/RowTraceBody";
+import { DistributionTraceBody } from "../BoxPlot/DistributionTraceBody";
+import { RegionTraceBody } from "../Map/RegionTraceBody";
+import { MapTraceBody } from "../Map/MapTraceBody";
 import { useState } from "react";
 import { BarTraceBody } from "../BarChart/BarTraceBody";
 import { SankeyTraceBody } from "../Sankey/SankeyTraceBody";
@@ -6,7 +10,9 @@ import { CalendarTraceBody } from "../Calendar/CalendarTraceBody";
 import { HeatmapTraceBody } from "../Heatmap/HeatmapTraceBody";
 import { EcdfTraceBody } from "../Ecdf/EcdfTraceBody";
 import { MetricCardTraceBody } from "../MetricCard/MetricCardTraceBody";
+import { TimeSeriesTraceBody } from "../LineChart/TimeSeriesTraceBody";
 import { ScatterTraceBody } from "../ScatterPlot/ScatterTraceBody";
+import { DensityTraceBody } from "../ScatterPlot/DensityTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
 import {
   FacetTraceBody,
@@ -18,6 +24,24 @@ import type { ChartTrace } from "./traceTypes";
 
 function TraceBody({ trace }: { trace: ChartTrace }) {
   switch (trace.kind) {
+    case "row-category": return <RowTraceBody key={trace.id} trace={trace} />;
+    case "distribution": return <DistributionTraceBody trace={trace} />;
+    case "map-region":
+    case "map-region-row":
+    case "map-joins":
+      return <RegionTraceBody trace={trace} />;
+    case "map-point":
+    case "map-exclusions":
+    case "map-offscreen":
+    case "map-background":
+      return <MapTraceBody key={trace.id} trace={trace} />;
+    case "density-bin":
+    case "density-omissions":
+    case "density-row":
+      return <DensityTraceBody key={trace.id} trace={trace} />;
+    case "time-bucket":
+    case "time-omissions":
+      return <TimeSeriesTraceBody key={trace.id} trace={trace} />;
     case "metric-card":
       return <MetricCardTraceBody trace={trace} />;
     case "bar":

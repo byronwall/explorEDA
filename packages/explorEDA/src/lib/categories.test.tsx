@@ -155,9 +155,11 @@ it("clicks typed and missing categories without merging their rows or facet keys
           name: `${categoryLabel(value)}: ${expectedCount} ${type === "row" ? "rows" : "records"}`,
         })
       );
-      expect(screen.getByRole("status")).toHaveTextContent(
-        `Showing ${expectedCount} of ${total} rows`
-      );
+      expect(
+        screen
+          .getAllByRole("status")
+          .find((item) => item.textContent?.startsWith("Showing"))
+      ).toHaveTextContent(`Showing ${expectedCount} of ${total} rows`);
       expect(screen.getByTestId("category-filter")).toHaveTextContent(
         `${typeof value}:${String(value)}`
       );
@@ -166,9 +168,11 @@ it("clicks typed and missing categories without merging their rows or facet keys
           name: `${categoryLabel(value)}: ${expectedCount} ${type === "row" ? "rows" : "records"}`,
         })
       );
-      expect(screen.getByRole("status")).toHaveTextContent(
-        `Showing ${total} of ${total} rows`
-      );
+      expect(
+        screen
+          .getAllByRole("status")
+          .find((item) => item.textContent?.startsWith("Showing"))
+      ).toHaveTextContent(`Showing ${total} of ${total} rows`);
       expect(screen.getByTestId("category-filter")).toHaveTextContent("");
     }
     cleanup();
@@ -245,7 +249,11 @@ it("previews a bar on hover and marks its Alt-hover target", () => {
   const bar = screen.getByRole("button", { name: "A: 2 records" });
   const svg = view.container.querySelector("svg")!;
   fireEvent.pointerMove(bar, { buttons: 0 });
-  expect(screen.getByRole("status")).toHaveTextContent("categoryARows2");
+  expect(
+    screen
+      .getAllByRole("status")
+      .find((item) => item.textContent?.startsWith("category"))
+  ).toHaveTextContent("categoryARows2");
   const altMove = createEvent.pointerMove(bar, { buttons: 0 });
   Object.defineProperty(altMove, "altKey", { value: true });
   fireEvent(bar, altMove);
@@ -380,9 +388,7 @@ it("keeps a numeric bin range filter when Alt-clicking a bar", async () => {
   expect(
     await screen.findByRole("dialog", { name: "Bar trace inspector" })
   ).toHaveTextContent("Bin interval");
-  expect(screen.getByTestId("range-filter")).toHaveTextContent(
-    "value:0.5-2.5"
-  );
+  expect(screen.getByTestId("range-filter")).toHaveTextContent("value:0.5-2.5");
 });
 
 it("moves a range filter onto the current bin edges", async () => {
@@ -423,7 +429,9 @@ it("finds only live numeric source rows and uses half-open bins", async () => {
   const input = screen.getByLabelText("Source row ID");
   fireEvent.change(input, { target: { value: "1" } });
   fireEvent.submit(input.closest("form")!);
-  expect(screen.getByRole("status")).toHaveTextContent("No drawn object uses this row");
+  expect(screen.getByRole("status")).toHaveTextContent(
+    "No drawn object uses this row"
+  );
   fireEvent.change(input, { target: { value: "0" } });
   fireEvent.submit(input.closest("form")!);
   expect(
@@ -485,13 +493,11 @@ it("uses facet-local contributors for grouped aggregate bars", async () => {
   });
   expect(popover).toHaveTextContent("Exact result: 10");
   expect(popover).toHaveTextContent("Source row ID");
-  expect(within(popover).getAllByRole("cell").map((cell) => cell.textContent)).toEqual([
-    "0",
-    "10",
-    "10",
-    "number",
-    "Yes",
-  ]);
+  expect(
+    within(popover)
+      .getAllByRole("cell")
+      .map((cell) => cell.textContent)
+  ).toEqual(["0", "10", "10", "number", "Yes"]);
 });
 
 it("keeps mixed types in table category options", () => {

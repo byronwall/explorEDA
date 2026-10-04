@@ -8,6 +8,8 @@ import { dateTimestamp } from "@/lib/dateTime";
 import type { datum } from "@/types/ChartTypes";
 
 export const DAY_MS = 86_400_000;
+export type TimeInterval = "day" | "week" | "month";
+export type WeekStart = "monday" | "sunday";
 
 export interface DailyRollupSpec {
   dateField: string;
@@ -15,9 +17,7 @@ export interface DailyRollupSpec {
   measureField?: string;
 }
 
-/** One UTC day: rows whose date falls in [start, start + 1 day). */
 export interface DailyBucket {
-  /** `YYYY-MM-DD` in UTC. */
   day: string;
   start: number;
   value: number | undefined;
@@ -25,65 +25,116 @@ export interface DailyBucket {
   contributors: AggregateContributor[];
 }
 
+export interface TimeBucket extends DailyBucket {
+  /** Exclusive upper boundary in UTC. */
+  end: number;
+}
+
 export interface DailyRollup {
   days: Map<string, DailyBucket>;
-  /** Source rows whose date is missing or cannot be read. */
   invalidDateIds: number[];
-  /** Years with at least one valid date, oldest first. */
   years: number[];
 }
 
-/** The UTC day of a date value, or undefined when it is not a readable date. */
-export function utcDay(value: datum): { day: string; start: number } | undefined {
-  if (typeof value !== "string" || !value.trim()) {return undefined;}
+/** The UTC day of a date value, or undefined for an unreadable date. */
+export function utcDay(
+  value: datum
+): { day: string; start: number } | undefined {
+  if (typeof value !== "string" || !value.trim()) return undefined;
   const timestamp = dateTimestamp(value);
-  if (!Number.isFinite(timestamp)) {return undefined;}
+  if (!Number.isFinite(timestamp)) return undefined;
   const start = Math.floor(timestamp / DAY_MS) * DAY_MS;
   return { day: new Date(start).toISOString().slice(0, 10), start };
 }
 
-/**
- * Groups rows by the UTC day of their date and reduces each day with the
- * grouped-summary rules, so a day keeps its contributors and exclusions.
- */
-export function rollupByDay(
+/** Calendar boundaries, including month length and the chosen week start. */
+export function utcPeriod(
+  value: datum,
+  interval: TimeInterval,
+  weekStart: WeekStart = "monday"
+) {
+  const day = utcDay(value);
+  if (!day) return undefined;
+  const date = new Date(day.start);
+  if (interval === "month") date.setUTCDate(1);
+  if (interval === "week") {
+    date.setUTCDate(
+      date.getUTCDate() -
+        ((date.getUTCDay() - (weekStart === "sunday" ? 0 : 1) + 7) % 7)
+    );
+  }
+  const start = date.getTime();
+  if (interval === "month") date.setUTCMonth(date.getUTCMonth() + 1);
+  else date.setUTCDate(date.getUTCDate() + (interval === "week" ? 7 : 1));
+  return {
+    day: new Date(start).toISOString().slice(0, 10),
+    start,
+    end: date.getTime(),
+  };
+}
+
+export function rollupByPeriod(
   ids: number[],
   dateData: Record<number, datum>,
   measureData: Record<number, datum>,
-  spec: DailyRollupSpec
-): DailyRollup {
-  const groups = new Map<string, { start: number; rows: AggregateInputRow[] }>();
+  spec: DailyRollupSpec & { interval: TimeInterval; weekStart?: WeekStart },
+  rawInputs: Record<number, datum> = {},
+  exclusionReasons: Record<number, string> = {}
+) {
+  const groups = new Map<
+    number,
+    {
+      period: NonNullable<ReturnType<typeof utcPeriod>>;
+      rows: AggregateInputRow[];
+    }
+  >();
   const invalidDateIds: number[] = [];
-  const years = new Set<number>();
   const measureField =
     spec.aggregation === "count" ? undefined : spec.measureField;
   for (const id of ids) {
-    const parsed = utcDay(dateData[id]);
-    if (!parsed) {
+    const period = utcPeriod(dateData[id], spec.interval, spec.weekStart);
+    if (!period) {
       invalidDateIds.push(id);
       continue;
     }
-    years.add(new Date(parsed.start).getUTCFullYear());
     const row: AggregateInputRow = { __ID: id };
-    if (measureField) {row[measureField] = measureData[id];}
-    const group = groups.get(parsed.day);
-    if (group) {group.rows.push(row);}
-    else {groups.set(parsed.day, { start: parsed.start, rows: [row] });}
+    if (measureField) row[measureField] = measureData[id];
+    const group = groups.get(period.start);
+    if (group) group.rows.push(row);
+    else groups.set(period.start, { period, rows: [row] });
   }
-  const days = new Map<string, DailyBucket>();
-  for (const [day, group] of groups) {
-    days.set(day, {
-      day,
-      start: group.start,
-      ...summarizeGroup(group.rows, {
-        aggregation: spec.aggregation,
-        measureField,
-      }),
-    });
-  }
+  const buckets: TimeBucket[] = [...groups.values()]
+    .sort((a, b) => a.period.start - b.period.start)
+    .map(({ period, rows }) => ({
+      ...period,
+      ...summarizeGroup(
+        rows,
+        { aggregation: spec.aggregation, measureField },
+        rawInputs,
+        exclusionReasons
+      ),
+    }));
+  return { buckets, invalidDateIds };
+}
+
+/** Calendar heatmaps and daily lines use the same reducer and boundaries. */
+export function rollupByDay(
+  ids: number[],
+  dates: Record<number, datum>,
+  measures: Record<number, datum>,
+  spec: DailyRollupSpec
+): DailyRollup {
+  const { buckets, invalidDateIds } = rollupByPeriod(ids, dates, measures, {
+    ...spec,
+    interval: "day",
+  });
   return {
-    days,
+    days: new Map(buckets.map((bucket) => [bucket.day, bucket])),
     invalidDateIds,
-    years: [...years].sort((a, b) => a - b),
+    years: [
+      ...new Set(
+        buckets.map((bucket) => new Date(bucket.start).getUTCFullYear())
+      ),
+    ].sort((a, b) => a - b),
   };
 }

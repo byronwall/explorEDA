@@ -1,5 +1,5 @@
 import { useBrush } from "@/hooks/useBrush";
-import { useId, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import {
   planScatterOverlay,
   type Extent,
@@ -93,6 +93,9 @@ export function ScatterSvg({
   onInspectGuide,
   onInspectOverlay,
   selectedId,
+  onHoverPoint,
+  onActivatePoint,
+  onSelectPoint,
 }: {
   plan: ScatterPlan;
   hoveredId: string | null;
@@ -101,6 +104,9 @@ export function ScatterSvg({
   onInspectGuide: (id: string) => void;
   onInspectOverlay: (id: string) => void;
   selectedId?: string;
+  onHoverPoint?: (id: string) => void;
+  onActivatePoint?: (id: string, inspect: boolean) => void;
+  onSelectPoint?: (x: number, y: number) => boolean;
 }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const altAtDown = useRef(false);
@@ -115,10 +121,18 @@ export function ScatterSvg({
     innerHeight: plan.plotHeight,
     mode: "2d",
     onBrushChange,
-    onPlotClick: (_, event) => event.altKey || altAtDown.current,
+    onPlotClick: (_, event) =>
+      event.altKey || altAtDown.current || Boolean(plan.size),
     defaultExtent: plan.brushExtent,
   });
   const overlay = planScatterOverlay(plan, brush.extent ?? null, hoveredId);
+  const keyboardPoints = useMemo(
+    () =>
+      plan.size ? [...plan.points].sort((a, b) => a.sourceId - b.sourceId) : [],
+    [plan]
+  );
+  const active =
+    keyboardPoints.find((point) => point.id === hoveredId) ?? keyboardPoints[0];
 
   if (plan.width < 1 || plan.height < 1) {
     return null;
@@ -132,6 +146,11 @@ export function ScatterSvg({
       role="group"
       aria-label={plan.title}
       aria-describedby={`${chartId}-description`}
+      aria-description={
+        plan.size
+          ? "Arrow keys move between bubbles. Enter selects the source row. Alt-Enter inspects it. Escape clears the selection."
+          : undefined
+      }
       className="absolute select-none"
       style={{
         cursor:
@@ -141,7 +160,44 @@ export function ScatterSvg({
         touchAction: "none",
       }}
       tabIndex={0}
+      onFocus={(event) => {
+        if (event.target === event.currentTarget && active)
+          onHoverPoint?.(active.id);
+      }}
       onKeyDown={(event) => {
+        if (event.target === event.currentTarget && active && plan.size) {
+          const index = keyboardPoints.indexOf(active);
+          if (
+            [
+              "ArrowRight",
+              "ArrowDown",
+              "ArrowLeft",
+              "ArrowUp",
+              "Home",
+              "End",
+            ].includes(event.key)
+          ) {
+            event.preventDefault();
+            event.stopPropagation();
+            const next =
+              event.key === "Home"
+                ? 0
+                : event.key === "End"
+                  ? keyboardPoints.length - 1
+                  : (index +
+                      (["ArrowLeft", "ArrowUp"].includes(event.key) ? -1 : 1) +
+                      keyboardPoints.length) %
+                    keyboardPoints.length;
+            onHoverPoint?.(keyboardPoints[next]!.id);
+            return;
+          }
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            event.stopPropagation();
+            onActivatePoint?.(active.id, event.altKey);
+            return;
+          }
+        }
         const id = (event.target as Element)
           .closest("[data-plan-id]")
           ?.getAttribute("data-plan-id");
@@ -183,10 +239,21 @@ export function ScatterSvg({
       onPointerCancel={brush.cancel}
       onLostPointerCapture={brush.cancel}
       onClick={(event) => {
-        if (!event.altKey || brush.wasDrag.current) return;
+        if (brush.wasDrag.current || (!event.altKey && !plan.size)) return;
         const rect = event.currentTarget.getBoundingClientRect();
         const x = event.clientX - rect.left - plan.margin.left;
         const y = event.clientY - rect.top - plan.margin.top;
+        if (!event.altKey) {
+          if (
+            x >= 0 &&
+            x <= plan.plotWidth &&
+            y >= 0 &&
+            y <= plan.plotHeight &&
+            !onSelectPoint?.(x, y)
+          )
+            brush.clear();
+          return;
+        }
         if (
           x >= 0 &&
           x <= plan.plotWidth &&

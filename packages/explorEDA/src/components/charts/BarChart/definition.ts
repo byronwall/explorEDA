@@ -12,6 +12,8 @@ export interface BarChartSettings extends BaseChartSettings {
   binCount?: number;
   forceString?: boolean;
   aggregateId?: string;
+  seriesField?: string;
+  seriesLayout?: "grouped" | "stacked" | "percent";
   filters: Filter[];
 }
 
@@ -44,6 +46,10 @@ export const barChartDefinition: ChartDefinition<BarChartSettings> = {
     settings: BarChartSettings,
     fieldGetter: (name: string) => Record<IdType, datum>
   ) => {
+    if (settings.seriesField) {
+      const active = settings.filters.map((filter) => ({ filter, data: fieldGetter(filter.field) }));
+      return (id: IdType) => active.every(({ filter, data }) => applyFilter(data[id], filter));
+    }
     if (settings.aggregateId) {
       // A grouped bar selects groups with a value filter on its group field
       // and keeps an optional measure range from the Selection tab.

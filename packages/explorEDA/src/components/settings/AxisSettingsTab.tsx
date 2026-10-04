@@ -7,6 +7,14 @@ interface Props {
   onSettingChange: (key: string, value: unknown) => void;
 }
 export function AxisSettingsTab({ settings, onSettingChange }: Props) {
+  const stacked =
+    settings.type === "bar" &&
+    settings.seriesField &&
+    settings.seriesLayout &&
+    settings.seriesLayout !== "grouped";
+  const area =
+    settings.type === "line" &&
+    ["area", "stacked-area"].includes(settings.time?.display ?? "");
   return (
     <div className="space-y-5">
       <p className="text-xs text-muted-foreground">
@@ -18,55 +26,75 @@ export function AxisSettingsTab({ settings, onSettingChange }: Props) {
           <legend className="px-1 text-sm font-medium">
             {axis === "x" ? "Horizontal axis" : "Vertical axis"}
           </legend>
-          <label className="flex items-center justify-between gap-4">
-            Numeric scale
-            <select
-              className="h-8 rounded-md border bg-background px-2 text-xs"
-              aria-label={`${axis.toUpperCase()} numeric scale`}
-              value={
-                settings[`${axis}Axis`]?.scaleType === "symlog"
-                  ? "symlog"
-                  : "linear"
-              }
-              onChange={(event) =>
-                onSettingChange(`${axis}Axis`, {
-                  ...settings[`${axis}Axis`],
-                  scaleType: event.target.value,
-                })
-              }
-            >
-              <option value="linear">Linear</option>
-              <option value="symlog">Symmetric log</option>
-            </select>
-          </label>
-          <label className="flex items-center justify-between gap-4">
-            Grid lines
-            <Switch
-              aria-label={`${axis.toUpperCase()} axis grid lines`}
-              checked={settings[`${axis}Axis`]?.grid ?? false}
-              onCheckedChange={(grid) =>
-                onSettingChange(`${axis}Axis`, {
-                  ...settings[`${axis}Axis`],
-                  grid,
-                })
-              }
-            />
-          </label>
-          <label className="flex items-center justify-between gap-4">
-            Tick density
-            <Input
-              className="w-24"
-              type="number"
-              min={2}
-              max={12}
-              value={settings[`${axis}GridLines`] || 5}
-              onChange={(event) => {
-                const value = Number(event.target.value);
-                if (value >= 2 && value <= 12)
-                  onSettingChange(`${axis}GridLines`, value);
-              }}
-            />
-          </label>
+          {settings.type === "bar" && settings.seriesField && axis === "x" ? (
+            <p className="text-xs text-muted-foreground">
+              Categories share one axis. Series{" "}
+              {stacked ? "stack" : "appear side by side"} within each category.
+            </p>
+          ) : (
+            <>
+              {(stacked || area) && axis === "y" ? (
+                <p className="text-xs text-muted-foreground">
+                  {area ? "Areas" : "Stacks"} use a linear scale so heights stay
+                  proportional.
+                </p>
+              ) : settings.type === "line" && settings.time && axis === "x" ? (
+                <p className="text-xs text-muted-foreground">
+                  Dates use a UTC calendar scale.
+                </p>
+              ) : (
+                <label className="flex items-center justify-between gap-4">
+                  Numeric scale
+                  <select
+                    className="h-8 rounded-md border bg-background px-2 text-xs"
+                    aria-label={`${axis.toUpperCase()} numeric scale`}
+                    value={
+                      settings[`${axis}Axis`]?.scaleType === "symlog"
+                        ? "symlog"
+                        : "linear"
+                    }
+                    onChange={(event) =>
+                      onSettingChange(`${axis}Axis`, {
+                        ...settings[`${axis}Axis`],
+                        scaleType: event.target.value,
+                      })
+                    }
+                  >
+                    <option value="linear">Linear</option>
+                    <option value="symlog">Symmetric log</option>
+                  </select>
+                </label>
+              )}
+              <label className="flex items-center justify-between gap-4">
+                Grid lines
+                <Switch
+                  aria-label={`${axis.toUpperCase()} axis grid lines`}
+                  checked={settings[`${axis}Axis`]?.grid ?? false}
+                  onCheckedChange={(grid) =>
+                    onSettingChange(`${axis}Axis`, {
+                      ...settings[`${axis}Axis`],
+                      grid,
+                    })
+                  }
+                />
+              </label>
+              <label className="flex items-center justify-between gap-4">
+                Tick density
+                <Input
+                  className="w-24"
+                  type="number"
+                  min={2}
+                  max={12}
+                  value={settings[`${axis}GridLines`] || 5}
+                  onChange={(event) => {
+                    const value = Number(event.target.value);
+                    if (value >= 2 && value <= 12)
+                      onSettingChange(`${axis}GridLines`, value);
+                  }}
+                />
+              </label>
+            </>
+          )}
         </fieldset>
       ))}
       <p className="text-xs text-muted-foreground">

@@ -64,6 +64,19 @@ interface PlotChartPanelProps {
 const CATEGORY_LABELED_CHART_TYPES = new Set(["row", "boxplot"]);
 
 const TRACE_COPY = {
+  row: { heading: "Category trace", emptyText: "Choose Inspect Other categories, or Alt-click a bar, to inspect its members and source rows.", ariaLabel: "Row chart trace inspector" },
+  boxplot: { heading: "Distribution trace", emptyText: "Alt-click a box, or choose a group below, to inspect its statistics and source rows.", ariaLabel: "Distribution trace inspector" },
+  map: {
+    heading: "Map trace",
+    emptyText: "Choose Inspect point or Inspect region to see its source records and projection. Alt-click a mark, or find any source row below.",
+    ariaLabel: "Map trace inspector",
+  },
+  line: {
+    heading: "Time series trace",
+    emptyText:
+      "Choose Inspect period, or Alt-click a point, to inspect its calculation and source rows.",
+    ariaLabel: "Time series trace inspector",
+  },
   "metric-card": {
     heading: "Metric trace",
     emptyText:
@@ -337,7 +350,7 @@ export function PlotChartPanel({
   const dataFields = aggregate
     ? Array.from(
         new Set(
-          [aggregate.groupField, aggregate.measureField].filter(
+          [aggregate.groupField, aggregate.measureField, ...(settings.type === "bar" ? [settings.seriesField] : [])].filter(
             (field): field is string => Boolean(field)
           )
         )
@@ -356,6 +369,7 @@ export function PlotChartPanel({
   const autoLegendHeight =
     settings.colorField &&
     settings.colorScaleId &&
+    !(settings.type === "scatter" && settings.display === "density") &&
     !CATEGORY_LABELED_CHART_TYPES.has(settings.type)
       ? 36
       : 0;
@@ -460,12 +474,13 @@ export function PlotChartPanel({
       aria-describedby={descriptionId}
     >
       <div className="eda-panel-header flex min-h-10 items-center justify-between gap-1 select-none px-3 py-1">
-        <div className="drag-handle flex min-w-0 flex-1 cursor-move items-center gap-2">
+        <div className="drag-handle flex min-w-0 flex-[1_1_35%] cursor-move items-center gap-2">
           <GripVertical
             className="eda-drag h-3 w-3 shrink-0 text-muted-foreground"
             aria-hidden="true"
           />
-          {isTraceable(settings.type) ? (
+          {isTraceable(settings.type) &&
+          (settings.type !== "line" || settings.time) ? (
             <TraceTitle id={titleId} text={chartTitle} settings={settings} />
           ) : (
             <h3 id={titleId} className="min-w-0 truncate text-sm font-semibold">
@@ -500,9 +515,10 @@ export function PlotChartPanel({
         )}
         <div className="eda-panel-actions flex shrink-0 items-center gap-0">
           {isTableLike && <div ref={setToolbarTarget} />}
-          {isTraceable(settings.type) && (
-            <ChartTraceInspector type={settings.type} />
-          )}
+          {isTraceable(settings.type) &&
+            (settings.type !== "line" || settings.time) && (
+              <ChartTraceInspector type={settings.type} />
+            )}
           {!expanded && canViewData && (
             <Popover open={dataOpen} onOpenChange={setDataOpen}>
               <ActionTooltip content="View data: preview the rows behind this chart (V)">
@@ -642,7 +658,7 @@ export function PlotChartPanel({
               width={Math.max(1, panelWidth - 24)}
             />
           )}
-          {settings.facet?.enabled && !aggregate ? (
+          {settings.facet?.enabled && (!aggregate || (settings.type === "bar" && settings.seriesField)) ? (
             <FacetContainer
               settings={settings}
               width={Math.max(1, panelWidth - 24)}
