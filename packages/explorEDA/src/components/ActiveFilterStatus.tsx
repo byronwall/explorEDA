@@ -55,7 +55,7 @@ export function formatFilterLabel(
   filter: Filter,
   format: FieldFormatting = plainFormatting
 ): string {
-  const name = format.name(filter.field);
+  const name = filter.field === "__ID" ? "Source row" : format.name(filter.field);
   switch (filter.type) {
     case "value":
       return `${name}: ${filter.values.map(categoryLabel).join(", ")}`;

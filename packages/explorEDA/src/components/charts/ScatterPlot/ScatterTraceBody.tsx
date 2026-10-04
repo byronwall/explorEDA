@@ -46,11 +46,34 @@ export function ScatterTraceBody({ trace }: { trace: ScatterTrace }) {
               },
             ]}
           />
+          {trace.size && plan.size && (
+            <TraceSection heading="Bubble area">
+              <TraceReadout label={plan.size.label}>
+                {trace.hover.sizeText}
+              </TraceReadout>
+              <TraceReadout label="Size domain">
+                0 to {plan.size.max} · all source rows
+              </TraceReadout>
+              <TraceReadout label="Radius">
+                {trace.radius.toFixed(2)} px
+              </TraceReadout>
+              <p className="text-muted-foreground">
+                {trace.size.prepared === 0
+                  ? "Zero has no data area. A 2 px hollow marker keeps the row visible."
+                  : `Radius = ${plan.size.radius} × √(${trace.size.prepared} / ${plan.size.max}). Area is proportional to value.`}
+              </p>
+              <p className="text-muted-foreground">
+                Smaller bubbles draw over larger bubbles. A click selects the
+                top bubble at that position.
+              </p>
+            </TraceSection>
+          )}
           <ChartTraceRowSteps
             fields={[
               trace.x,
               trace.y,
               ...(trace.color ? [trace.color] : []),
+              ...(trace.size ? [trace.size] : []),
               ...(trace.facet
                 ? [
                     trace.facet.row,
@@ -108,11 +131,13 @@ export function ScatterTraceBody({ trace }: { trace: ScatterTrace }) {
             )}
             <TraceEncoding
               channel="Size"
-              output={`${trace.radius} px radius`}
+              output={`${Number(trace.radius.toFixed(2))} px radius`}
               note={
-                plan.pointStyle.radius.source === "chart-setting"
-                  ? "Point size chart setting"
-                  : "Built-in default"
+                trace.size
+                  ? "Square-root size scale; area represents the value"
+                  : plan.pointStyle.radius.source === "chart-setting"
+                    ? "Point size chart setting"
+                    : "Built-in default"
               }
             />
             <TraceEncoding
@@ -132,6 +157,7 @@ export function ScatterTraceBody({ trace }: { trace: ScatterTrace }) {
               {plan.xDisplay} {trace.hover.xText} · {plan.yDisplay}{" "}
               {trace.hover.yText}
               {trace.hover.colorText && ` · Color ${trace.hover.colorText}`}
+              {trace.hover.sizeText && ` · Size ${trace.hover.sizeText}`}
               {trace.hover.facetRowText &&
                 ` · Facet ${trace.hover.facetRowText}`}
               {trace.hover.facetColumnText &&
@@ -181,9 +207,13 @@ export function ScatterTraceBody({ trace }: { trace: ScatterTrace }) {
               ? `${trace.x.field} has no finite value.`
               : trace.reason === "invalid-y"
                 ? `${trace.y.field} has no finite value.`
-                : "The scale has no finite position for this row."}
+                : trace.reason === "invalid-size"
+                  ? `${trace.size?.field} needs a finite, nonnegative value.`
+                  : "The scale has no finite position for this row."}
           </div>
-          <ChartTraceRowSteps fields={[trace.x, trace.y]} />
+          <ChartTraceRowSteps
+            fields={[trace.x, trace.y, ...(trace.size ? [trace.size] : [])]}
+          />
         </div>
       )}
       {trace?.kind === "badge" && (
