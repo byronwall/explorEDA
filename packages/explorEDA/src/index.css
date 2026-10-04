@@ -40,6 +40,8 @@
   --eda-flow-strong: 0.82;
   --eda-flow-faint: 0.2;
   --eda-flow-context: 0.16;
+  --eda-violin-opacity: 0.16;
+  --eda-box-stroke: rgb(15 23 42 / 0.75);
   --eda-heat-text-strong: hsl(0 0% 100%);
   --eda-heat-text-weak: var(--foreground);
   --radius: 0.6rem;
@@ -81,6 +83,8 @@
   --eda-flow-strong: 0.92;
   --eda-flow-faint: 0.26;
   --eda-flow-context: 0.2;
+  --eda-violin-opacity: 0.22;
+  --eda-box-stroke: rgb(248 250 252 / 0.7);
   --eda-heat-text-strong: oklch(0.2 0.02 250);
   --eda-heat-text-weak: var(--foreground);
 }
@@ -300,6 +304,38 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   pointer-events: none;
+}
+.eda-panel svg .eda-box-hit:focus-visible {
+  stroke: var(--foreground);
+  stroke-dasharray: 3 3;
+}
+/* Tick values and field names placed on a 3D scatter's cube edges. */
+.eda-3d-tick,
+.eda-3d-title {
+  will-change: transform;
+  text-shadow:
+    0 0 2px var(--card),
+    0 0 4px var(--card);
+}
+.eda-3d-tick {
+  color: var(--muted-foreground);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.eda-3d-title {
+  color: var(--foreground);
+  font-size: 12px;
+  font-weight: 600;
+}
+.eda-3d-ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--foreground);
+  border-radius: 9999px;
+  box-shadow: 0 0 0 2px var(--card);
 }
 /* The field name above a row chart's category labels. */
 .eda-row-field-title {

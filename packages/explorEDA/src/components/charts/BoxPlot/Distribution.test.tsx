@@ -63,7 +63,7 @@ it("traces individual observations, excluded inputs, and quartiles without chang
   expect(screen.getAllByText('"bad"')).toHaveLength(2);
   expect(screen.getByText("Not a finite number")).toBeInTheDocument();
   fireEvent.keyDown(
-    screen.getByRole("button", { name: "A: median 10.00, 3 records" }),
+    screen.getByRole("button", { name: "A: median 10, 3 rows" }),
     { key: "Enter" }
   );
   expect(screen.getByLabelText("Matching")).toHaveTextContent(/^0,1,2,3$/);
