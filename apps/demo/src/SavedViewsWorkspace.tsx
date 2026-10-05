@@ -54,7 +54,14 @@ function signatures(tabs: SavedView[]) {
     tabs.map(
       ({ settings }) =>
         settings &&
-        Object.fromEntries(SHARED_KEYS.map((key) => [key, settings[key]]))
+        Object.fromEntries(
+          SHARED_KEYS.map((key) => [
+            key,
+            key === "fieldSettings"
+              ? (settings[key] ?? {})
+              : (settings[key] ?? []),
+          ])
+        )
     )
   );
   const filters = JSON.stringify(
