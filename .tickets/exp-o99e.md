@@ -1,6 +1,6 @@
 ---
 id: exp-o99e
-status: partially_implemented
+status: closed
 deps: []
 links: []
 created: 2026-10-05T03:50:56Z
@@ -61,3 +61,15 @@ Final source-review repair: ordinary capture no longer changes the ExplorEda mou
 **2026-10-05T05:23:13Z**
 
 Final review repairs: captured settings stay frozen for each keyed workspace instance, so Add to grid and other ordinary edits no longer remount ExplorEda or lose the editor state. Explicit tab changes and history navigation still remount with requested snapshots. Added ArrowLeft/ArrowRight/Home/End tab selection and focus behavior. Full pnpm check passes: 95 package files/530 tests and 7 demo files/28 tests, both builds and type checks, plus UI conventions.
+
+**2026-10-05T05:42:43Z**
+
+Combined check at 9cdadbc passed on Node 24: 531 package tests and 28 demo tests, builds, types, and UI rules. Prior browser evidence covers Undo, preview, Return to present, restore, displaced-present recovery, and edit-after-Undo. Final repaired-build browser check remains. CSV browser upload/export was not completed; focused tests cover fresh baseline categorization, storage failure export, and import.
+
+**2026-10-05T05:52:01Z**
+
+Browser at 9cdadbc passed Undo/Redo (metric removal/restoration and filter counts 500/167), edit after Undo, preview/Return, explicit restore, displaced-present recovery, retained history after reload, and responsive controls. One required category defect remains: Count rows metric addition showed Shared instead of View. saved_views owns a focused repair; ticket stays unfinished. Screenshot: tmp/saved-views-final-history.jpg.
+
+**2026-10-05T06:04:12Z**
+
+Accepted history outcome at 7d79875. Full Node 24 pnpm check passes: UI rules, package/demo builds and types, 531 package tests and 30 demo tests. Final clean-room browser reopened the Shop example: blank-tab Count rows metric showed 500 and View; a second blank-tab Rows search for Web showed 167 rows and Filter. No console warnings/errors. Earlier combined flow at 9cdadbc passed Undo/Redo, edit after Undo, read-only preview, Return to present, explicit restore, displaced-present recovery, reload, and 1280/783/390 controls. Real-library tests cover omitted shared/Rows defaults; focused tests cover Both/Shared labels, retention bound, storage failure, and export. Final screenshots include tmp/saved-views-final-history.jpg and tmp/saved-views-final-metric.jpg. CSV browser import/export remains unverified after chooser interruption; automated checks cover those paths.

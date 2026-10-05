@@ -54,4 +54,4 @@ The package accepts one row array and one saved settings object. Its state callb
 
 ## Next step after confirmation
 
-Complete browser acceptance and review the saved-tabs PR. Measure larger imports before expanding the storage promise. Parameterized navigation remains a separate initiative.
+Review the saved-tabs PR after completed browser acceptance. Measure larger imports before expanding the storage promise. Parameterized navigation remains a separate initiative.

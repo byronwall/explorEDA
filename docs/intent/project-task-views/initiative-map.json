@@ -8,7 +8,7 @@
     "last_updated": "2026-10-05",
     "summary": "Saved tabs over one source, with view-local charts and filters, automatic local persistence, and categorized Undo/time travel.",
     "status": "active",
-    "next_action": "Execute saved tabs and history tickets, then verify the combined browser flow and open a PR."
+    "next_action": "Review and merge the saved-tabs PR. Larger imports and dedicated filter collections remain follow-up work."
   },
   "artifacts": {
     "intent_brief": {
@@ -544,7 +544,9 @@
       "exp-o99e"
     ],
     "repository_snapshot": {
-      "branch": "codex/saved-view-tabs"
+      "branch": "codex/saved-view-tabs",
+      "commit": "7d79875",
+      "checks": "pnpm check passes on Node 24: 531 package tests and 30 demo tests"
     },
     "fast_local_loop": {
       "command": "pnpm check",
@@ -556,7 +558,8 @@
       "Comparison layouts",
       "Multi-source and server storage",
       "Branch graphs and selective history replay"
-    ]
+    ],
+    "delivery": "Initial saved-tabs and categorized-history scope accepted; exp-cy24 and exp-o99e closed."
   },
   "history": [
     {
@@ -661,6 +664,21 @@
       ],
       "decisions": [
         "Use proposed project-wide categorized history as a reversible execution default."
+      ]
+    },
+    {
+      "date": "2026-10-05",
+      "event": "Accepted initial saved tabs and history; prepare one PR with browser screenshots.",
+      "evidence": [
+        "7d79875: full pnpm check passed on Node 24 (531 package, 30 demo tests)",
+        "Browser: independent tabs and filters, reload, first-chart creation, Undo/Redo, preview/Return/restore, displaced-present recovery, and keyboard navigation",
+        "Browser: controls at 1280/783/390; first chart View and Rows search Filter; no console errors",
+        "Fixed 500-row fixture with 50 checkpoints: 189295 serialized bytes"
+      ],
+      "limits": [
+        "Fresh CSV browser import/export was not completed; focused tests cover those paths",
+        "Larger source storage budgets remain unproven",
+        "Dedicated filter collection and parameterized navigation remain follow-up work"
       ]
     }
   ],

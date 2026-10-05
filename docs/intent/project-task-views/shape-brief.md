@@ -16,7 +16,7 @@ last_updated: "2026-10-05"
 
 ```text
 Saved views over one source
-├── PLANNED ADDITIONS — implementation ready for acceptance
+├── PLANNED ADDITIONS — implemented and verified
 │   ├── Named view tabs
 │   │   ├── Create, rename, duplicate, and switch views
 │   │   └── Each view retains chart definitions, layout, and its own filters
@@ -74,4 +74,4 @@ Execution uses this project timeline as a reversible default. Tabs with autosave
 
 **Storage result:** A 500-row shop fixture with 50 checkpoints used 189,295 serialized bytes in a focused check. This measures one fixture, not a maximum supported import size. Failed saves leave current work available for export.
 
-See the [intent brief](intent-brief.md). Implementation and acceptance evidence live in tickets exp-cy24 and exp-o99e. Browser acceptance and PR review remain the next steps.
+See the [intent brief](intent-brief.md). Implementation and acceptance evidence live in tickets exp-cy24 and exp-o99e. The initial scope passed browser acceptance. PR review is the next step.

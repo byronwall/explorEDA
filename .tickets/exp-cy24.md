@@ -1,6 +1,6 @@
 ---
 id: exp-cy24
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-10-05T03:50:55Z
@@ -51,3 +51,11 @@ Repair on the same branch: startup now distinguishes no saved session from faile
 **2026-10-05T05:23:13Z**
 
 Final review repair: a valid local session now takes precedence over an example URL on refresh, preserving source, active tab, filters, and chart settings. Selecting the back control still exposes the source chooser. Added an actual-routing regression with ?example=shop-operations and a populated two-tab saved session.
+
+**2026-10-05T05:42:43Z**
+
+Combined check at 9cdadbc passed on Node 24: UI rules, both builds and type checks, 531 package tests, and 28 demo tests. Browser on 2f0aea7 confirmed three-tab reload, active tab, independent Web/Store 167/500 filters, local chart deletion, and ArrowLeft/Home/End selection. Final empty-grid browser check and screenshots remain.
+
+**2026-10-05T05:52:01Z**
+
+Accepted saved-tabs outcome at 9cdadbc. Clean-room browser verified blank-tab metric creation (500 rows), switch/reload retention of three tabs and active chart, independent Web/Store filters (167/500), local chart deletion, keyboard arrows/Home/End, and controls at 1280/783/390. Shared palette propagation passed the earlier independent pass; later repairs did not change it. Save/read failure retention and export are covered by focused tests. Browser console reported no warnings or errors. Final screenshots: tmp/saved-views-final-tabs.jpg and tmp/saved-views-final-390.jpg. CSV browser import/export remains unverified after chooser interruption. Root owns final PR publication; history category repair remains in exp-o99e.
