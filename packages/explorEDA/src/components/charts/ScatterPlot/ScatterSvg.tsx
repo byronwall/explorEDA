@@ -9,6 +9,72 @@ import {
 import { findAxisGuide } from "../Axis/axisPlan";
 import { PlannedAxes, PlannedGrid } from "../Axis/AxisLayer";
 import type { FitMark } from "./fitPlan";
+import type { MarginalPlan } from "./marginalPlan";
+
+/** X and Y histograms in the margins; the selection's share reads darker. */
+function MarginalBars({
+  marginals,
+  activeId,
+  onHover,
+}: {
+  marginals: MarginalPlan;
+  activeId?: string;
+  onHover?: (id: string | undefined) => void;
+}) {
+  const interval = (bounds: [number, number]) =>
+    bounds.map((value) => Number(value.toPrecision(4))).join(" to ");
+  return (
+    <g className="eda-marginals">
+      {marginals.bins.map((bin) => {
+        const active = bin.id === activeId;
+        const share =
+          bin.axis === "x"
+            ? {
+                x: bin.x,
+                width: bin.width,
+                y: bin.y + bin.height - bin.selectedLength,
+                height: bin.selectedLength,
+              }
+            : {
+                x: bin.x,
+                width: bin.selectedLength,
+                y: bin.y,
+                height: bin.height,
+              };
+        return (
+          <g
+            key={bin.id}
+            data-marginal-id={bin.id}
+            role="button"
+            tabIndex={-1}
+            aria-label={`${bin.label} ${interval(bin.bounds)}: ${bin.sourceIds.length} rows${marginals.split ? `, ${bin.selected} selected` : ""}`}
+            className="cursor-pointer"
+            onPointerEnter={() => onHover?.(bin.id)}
+            onPointerLeave={() => onHover?.(undefined)}
+          >
+            <rect
+              x={bin.x}
+              y={bin.y}
+              width={bin.width}
+              height={bin.height}
+              fill={marginals.split ? "rgb(156 163 175)" : "#3479a8"}
+              fillOpacity={marginals.split ? 0.45 : active ? 0.85 : 0.6}
+              stroke={active ? "var(--foreground)" : "none"}
+            />
+            {marginals.split && bin.selected > 0 && (
+              <rect
+                {...share}
+                fill="#3479a8"
+                fillOpacity={active ? 0.95 : 0.8}
+                pointerEvents="none"
+              />
+            )}
+          </g>
+        );
+      })}
+    </g>
+  );
+}
 
 /** Fitted curves over the points, with a halo so they read over dense clouds. */
 export function FitCurves({
@@ -146,11 +212,19 @@ export function ScatterSvg({
   onActivatePoint,
   onSelectPoint,
   fitMarks = [],
+  marginals,
+  activeMarginalId,
+  onHoverMarginal,
+  onMarginal,
   activeFitId,
   onActiveFit,
   onInspectFit,
 }: {
   fitMarks?: FitMark[];
+  marginals?: MarginalPlan;
+  activeMarginalId?: string;
+  onHoverMarginal?: (id: string | undefined) => void;
+  onMarginal?: (id: string, inspect: boolean) => void;
   activeFitId?: string;
   onActiveFit?: (id: string | undefined) => void;
   onInspectFit?: (id: string) => void;
@@ -303,6 +377,13 @@ export function ScatterSvg({
       onPointerCancel={brush.cancel}
       onLostPointerCapture={brush.cancel}
       onClick={(event) => {
+        const marginalId = (event.target as Element)
+          .closest("[data-marginal-id]")
+          ?.getAttribute("data-marginal-id");
+        if (marginalId && onMarginal) {
+          onMarginal(marginalId, event.altKey);
+          return;
+        }
         if (brush.wasDrag.current || (!event.altKey && !plan.size)) return;
         const rect = event.currentTarget.getBoundingClientRect();
         const x = event.clientX - rect.left - plan.margin.left;
@@ -367,6 +448,13 @@ export function ScatterSvg({
         <g className="eda-brush" clipPath={`url(#${chartId}-plot)`}>
           <Primitives items={overlay.brush} />
         </g>
+        {marginals && (
+          <MarginalBars
+            marginals={marginals}
+            activeId={activeMarginalId}
+            onHover={onHoverMarginal}
+          />
+        )}
         <PlannedAxes
           plan={plan.axes}
           interactive

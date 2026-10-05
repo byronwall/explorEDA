@@ -405,7 +405,14 @@ function isChart(value: unknown): boolean {
           (isFiniteNumber(value.maxBubbleRadius) &&
             value.maxBubbleRadius >= 6 &&
             value.maxBubbleRadius <= 32)) &&
-        isScatterRegression(value.regression)
+        isScatterRegression(value.regression) &&
+        (value.summary === undefined || typeof value.summary === "boolean") &&
+        (value.marginals === undefined ||
+          (isRecord(value.marginals) &&
+            (value.marginals.bins === undefined ||
+              (Number.isInteger(value.marginals.bins) &&
+                (value.marginals.bins as number) >= 5 &&
+                (value.marginals.bins as number) <= 60))))
       );
     case "pivot":
       return (

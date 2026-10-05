@@ -9,6 +9,7 @@ import {
   type ScatterFitPlan,
 } from "./fitPlan";
 import type { FitTrace } from "./FitTraceBody";
+import { planPairedSummary, type PairedSummaryPlan } from "./pairedSummary";
 import type { ScatterPlan, ScatterSnapshot } from "./scatterPlan";
 import type { TraceTarget } from "../trace/traceTypes";
 
@@ -21,14 +22,37 @@ export function useScatterFits(
   snapshot: ScatterSnapshot,
   plan: ScatterPlan
 ) {
-  const cache = useRef<{ key: string; plan?: ScatterFitPlan }>(undefined);
-  const key = settings.regression ? fitInputKey(settings, snapshot, plan) : "";
+  const cache = useRef<{
+    key: string;
+    plan?: ScatterFitPlan;
+    summary?: PairedSummaryPlan;
+  }>(undefined);
+  const key =
+    settings.regression || settings.summary
+      ? fitInputKey(settings, snapshot, plan)
+      : "";
   if (cache.current?.key !== key)
-    cache.current = { key, plan: planScatterFits(settings, snapshot, plan) };
+    cache.current = {
+      key,
+      plan: planScatterFits(settings, snapshot, plan),
+      summary: planPairedSummary(settings, snapshot, plan),
+    };
   const fitPlan = cache.current.plan;
+  const summary = cache.current.summary;
   const marks = useMemo(() => planFitMarks(fitPlan, plan), [fitPlan, plan]);
   return useMemo(() => {
     const trace = (kind: string, id: string): FitTrace | undefined => {
+      if (kind === "paired-summary")
+        return summary
+          ? {
+              kind,
+              id,
+              revision: plan.revision,
+              summary,
+              xLabel: plan.xDisplay,
+              yLabel: plan.yDisplay,
+            }
+          : undefined;
       if (!fitPlan || (kind !== "fit" && kind !== "fit-results")) return;
       const fit = fitPlan.fits.find((item) => item.id === id);
       if (kind === "fit" && !fit) return;
@@ -42,8 +66,17 @@ export function useScatterFits(
         yLabel: plan.yDisplay,
       };
     };
-    const targets = (): TraceTarget[] =>
-      fitPlan
+    const targets = (): TraceTarget[] => [
+      ...(summary
+        ? [
+            {
+              kind: "paired-summary",
+              id: "paired-summary",
+              label: "Paired summary",
+            },
+          ]
+        : []),
+      ...(fitPlan
         ? [
             {
               kind: "fit-results",
@@ -56,7 +89,8 @@ export function useScatterFits(
               label: `Fit · ${fit.label}: ${fitSummary(fit)}`,
             })),
           ]
-        : [];
-    return { plan: fitPlan, marks, resolve: trace, targets };
-  }, [fitPlan, marks, plan.revision, plan.xDisplay, plan.yDisplay]);
+        : []),
+    ];
+    return { plan: fitPlan, summary, marks, resolve: trace, targets };
+  }, [fitPlan, summary, marks, plan.revision, plan.xDisplay, plan.yDisplay]);
 }

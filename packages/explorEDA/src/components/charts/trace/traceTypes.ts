@@ -21,6 +21,7 @@ import type { TimeSeriesTrace } from "../LineChart/timeSeriesTrace";
 import type { ScatterTrace } from "../ScatterPlot/scatterTrace";
 import type { DensityTrace } from "../ScatterPlot/densityPlan";
 import type { FitTrace } from "../ScatterPlot/FitTraceBody";
+import type { MarginalTrace } from "../ScatterPlot/marginalPlan";
 
 /** A selected object. The owner's source resolves it against its current plan. */
 export interface TraceSelection {
@@ -106,6 +107,7 @@ export type ChartTrace =
   | MapTrace
   | DensityTrace
   | FitTrace
+  | MarginalTrace
   | ScatterTrace
   | BarTrace
   | SankeyTrace

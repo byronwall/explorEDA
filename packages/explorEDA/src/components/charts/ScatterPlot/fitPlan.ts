@@ -76,6 +76,7 @@ export function fitInputKey(
   return JSON.stringify([
     dataRevision,
     settings.regression,
+    settings.summary,
     settings.xField,
     settings.yField,
     settings.colorField,
@@ -87,7 +88,10 @@ export function fitInputKey(
   ]);
 }
 
-function facetLabel(settings: ScatterPlotSettings, snapshot: ScatterSnapshot) {
+export function facetLabel(
+  settings: ScatterPlotSettings,
+  snapshot: ScatterSnapshot
+) {
   const first = snapshot.facetIds?.[0];
   if (!settings.facet.enabled || first === undefined) return undefined;
   const value = (field: string, data?: Record<IdType, datum>) =>
@@ -99,6 +103,64 @@ function facetLabel(settings: ScatterPlotSettings, snapshot: ScatterSnapshot) {
   ]
     .filter(Boolean)
     .join(" · ");
+}
+
+export interface ScatterFitGroup {
+  id: string;
+  key?: string;
+  label: string;
+  color: string;
+  ids: IdType[];
+}
+
+/**
+ * The analysis population: rows in this facet that pass the other charts'
+ * filters, split by categorical color in legend order.
+ */
+export function groupScatterRows(
+  settings: ScatterPlotSettings,
+  snapshot: ScatterSnapshot,
+  plan: ScatterPlan
+) {
+  const categorical = plan.legend?.type === "categorical";
+  const groups = new Map<string, ScatterFitGroup>();
+  if (categorical) {
+    for (const item of plan.legend!.items)
+      groups.set(item.id, {
+        id: `group:${item.id}`,
+        key: item.id,
+        label: item.label,
+        color: item.color,
+        ids: [],
+      });
+  }
+  const all = plan.rowSets.facet;
+  if (categorical)
+    for (const id of all) {
+      const key = categoryKey(snapshot.colorData[id]);
+      let group = groups.get(key);
+      if (!group) {
+        const value = categoryValue(snapshot.colorData[id]);
+        group = {
+          id: `group:${key}`,
+          key,
+          label: hasFieldDisplayFormat(
+            snapshot.fieldSettings[settings.colorField!]
+          )
+            ? formatFieldValue(
+                settings.colorField!,
+                value,
+                snapshot.fieldSettings[settings.colorField!]
+              )
+            : categoryLabel(value),
+          color: DEFAULT_FIT_COLOR,
+          ids: [],
+        };
+        groups.set(key, group);
+      }
+      group.ids.push(id);
+    }
+  return { categorical, groups: [...groups.values()], all };
 }
 
 /**
@@ -132,40 +194,11 @@ export function planScatterFits(
       } is categorical.`,
     };
 
-  const categorical = plan.legend?.type === "categorical";
-  const groups = new Map<
-    string,
-    { label: string; color: string; ids: IdType[] }
-  >();
-  if (categorical) {
-    for (const item of plan.legend!.items)
-      groups.set(item.id, { label: item.label, color: item.color, ids: [] });
-  }
-  const all: IdType[] = [];
-  for (const id of plan.rowSets.facet) {
-    all.push(id);
-    if (!categorical) continue;
-    const key = categoryKey(snapshot.colorData[id]);
-    let group = groups.get(key);
-    if (!group) {
-      const value = categoryValue(snapshot.colorData[id]);
-      group = {
-        label: hasFieldDisplayFormat(
-          snapshot.fieldSettings[settings.colorField!]
-        )
-          ? formatFieldValue(
-              settings.colorField!,
-              value,
-              snapshot.fieldSettings[settings.colorField!]
-            )
-          : categoryLabel(value),
-        color: DEFAULT_FIT_COLOR,
-        ids: [],
-      };
-      groups.set(key, group);
-    }
-    group.ids.push(id);
-  }
+  const { categorical, groups, all } = groupScatterRows(
+    settings,
+    snapshot,
+    plan
+  );
 
   const fit = (
     id: string,
@@ -212,11 +245,17 @@ export function planScatterFits(
       fits.push(
         fit("fit:overall", "overall", "All groups", OVERALL_FIT_COLOR, all)
       );
-    for (const [key, group] of groups) {
+    for (const group of groups) {
       // A group with no rows in this facet has nothing to fit or report.
       if (!group.ids.length) continue;
       fits.push(
-        fit(`fit:group:${key}`, "group", group.label, group.color, group.ids)
+        fit(
+          `fit:group:${group.key}`,
+          "group",
+          group.label,
+          group.color,
+          group.ids
+        )
       );
     }
   } else {

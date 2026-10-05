@@ -8,6 +8,12 @@ import {
   type ScatterFitPlan,
 } from "./fitPlan";
 import type { ScatterPlan } from "./scatterPlan";
+import type { PairedSummaryPlan } from "./pairedSummary";
+
+export type AnalysisTraceKind = "fit" | "fit-results" | "paired-summary";
+
+const formatR = (r: number | undefined) =>
+  r === undefined ? "undefined" : r.toFixed(2).replace("-", "−");
 
 /** Height of one equation line, used to fit the stack to the panel. */
 const LINE_HEIGHT = 17;
@@ -32,28 +38,37 @@ function corner(plan: ScatterPlan, lines: number) {
  */
 export function FitLabels({
   fits,
+  summary,
   plan,
   activeId,
   onActive,
   onTrace,
 }: {
-  fits: ScatterFitPlan;
+  fits?: ScatterFitPlan;
+  summary?: PairedSummaryPlan;
   plan: ScatterPlan;
   activeId?: string;
   onActive: (id: string | undefined) => void;
-  onTrace: (kind: "fit" | "fit-results", id: string) => void;
+  onTrace: (kind: AnalysisTraceKind, id: string) => void;
 }) {
   if (plan.plotWidth < 60 || plan.plotHeight < 40) return null;
   const maxLines = Math.max(
     1,
-    Math.floor((plan.plotHeight * 0.4) / LINE_HEIGHT)
+    Math.floor((plan.plotHeight * 0.4) / LINE_HEIGHT) - (summary ? 1 : 0)
   );
-  const overflow = fits.fits.length > maxLines;
-  const shown = overflow ? fits.fits.slice(0, maxLines - 1) : fits.fits;
-  const named = fits.fits.length > 1 || Boolean(fits.groupField);
-  const side = corner(plan, shown.length + (overflow ? 1 : 0));
+  const all = fits?.notice ? [] : (fits?.fits ?? []);
+  const overflow = all.length > maxLines;
+  const shown = overflow ? all.slice(0, maxLines - 1) : all;
+  const named = all.length > 1 || Boolean(fits?.groupField);
+  const side = corner(
+    plan,
+    shown.length +
+      (overflow ? 1 : 0) +
+      (summary ? 1 : 0) +
+      (fits?.notice ? 1 : 0)
+  );
   const trace =
-    (kind: "fit" | "fit-results", id: string) =>
+    (kind: AnalysisTraceKind, id: string) =>
     (event: MouseEvent | KeyboardEvent) => {
       if ("key" in event) {
         if (event.key !== "Enter" || !event.altKey) return;
@@ -62,9 +77,10 @@ export function FitLabels({
       event.stopPropagation();
       onTrace(kind, id);
     };
+  const method = fits ? METHOD_NAMES[fits.method] : "";
   const line = (fit: ScatterFit) => {
     const summary = fitSummary(fit);
-    const name = `${fit.label} ${METHOD_NAMES[fits.method].toLowerCase()} fit`;
+    const name = `${fit.label} ${method.toLowerCase()} fit`;
     const item = (
       <li
         key={fit.id}
@@ -90,9 +106,7 @@ export function FitLabels({
               stroke={fit.color}
               strokeWidth={2}
               strokeDasharray={
-                fit.kind === "overall" && fits.fits.length > 1
-                  ? "3 2"
-                  : undefined
+                fit.kind === "overall" && all.length > 1 ? "3 2" : undefined
               }
             />
           </svg>
@@ -116,10 +130,26 @@ export function FitLabels({
       </ActionTooltip>
     );
   };
+  const warning = (key: string, text: string, notice: string) => (
+    <ActionTooltip key={key} content={notice}>
+      <li
+        tabIndex={0}
+        className="eda-fit-label"
+        aria-label={`${text}. ${notice}`}
+      >
+        <TriangleAlert
+          className="size-3 shrink-0 text-warning"
+          aria-hidden="true"
+        />
+        <span className="truncate">{text}</span>
+      </li>
+    </ActionTooltip>
+  );
+  const pooled = summary?.pooled;
   return (
     <ul
       className="eda-fit-labels"
-      aria-label={`${METHOD_NAMES[fits.method]} fits`}
+      aria-label={fits ? `${method} fits` : "Paired summary"}
       style={{
         top: plan.margin.top + 4,
         ...(side === "left"
@@ -128,25 +158,32 @@ export function FitLabels({
         maxWidth: Math.max(0, plan.plotWidth - 12),
       }}
     >
-      {fits.notice ? (
-        <ActionTooltip content={fits.notice}>
+      {summary &&
+        (summary.notice || !pooled ? (
+          warning("summary", "No paired summary", summary.notice ?? "")
+        ) : (
           <li
+            key="summary"
             tabIndex={0}
-            className="eda-fit-label"
-            aria-label={`No fit. ${fits.notice}`}
+            className="eda-fit-label text-muted-foreground"
+            aria-label={`Paired summary: Pearson r ${formatR(pooled.r)}, ${pooled.pairs} pairs. Alt-Enter traces it.`}
+            onClick={trace("paired-summary", "paired-summary")}
+            onKeyDown={trace("paired-summary", "paired-summary")}
           >
-            <TriangleAlert
-              className="size-3 shrink-0 text-warning"
-              aria-hidden="true"
-            />
             <span className="truncate">
-              No {METHOD_NAMES[fits.method].toLowerCase()} fit
+              r {formatR(pooled.r)}
+              {summary.groups.length > 1 && " pooled"} ·{" "}
+              {pooled.pairs.toLocaleString()} pairs
+              {summary.groups.length > 1 &&
+                ` · ${summary.groups
+                  .map((group) => `${group.label} ${formatR(group.r)}`)
+                  .join(", ")}`}
             </span>
           </li>
-        </ActionTooltip>
-      ) : (
-        shown.map(line)
-      )}
+        ))}
+      {fits?.notice &&
+        warning("fit-notice", `No ${method.toLowerCase()} fit`, fits.notice)}
+      {shown.map(line)}
       {overflow && (
         <li>
           <button
@@ -154,7 +191,7 @@ export function FitLabels({
             className="eda-fit-label eda-fit-more"
             onClick={() => onTrace("fit-results", "fit-results")}
           >
-            +{fits.fits.length - shown.length} more fits
+            +{all.length - shown.length} more fits
           </button>
         </li>
       )}

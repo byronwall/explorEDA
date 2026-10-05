@@ -28,6 +28,7 @@ import {
 } from "../Axis/axisPlan";
 import { getChartTitle } from "../chartAccessibility";
 import { planScatterPoints, type ScatterPointStyle } from "./planScatterPoints";
+import { MARGINAL_GAP, MARGINAL_SIZE } from "./marginalPlan";
 import type { ScatterPlotSettings } from "./definition";
 import {
   DOMAIN_PADDING,
@@ -328,6 +329,11 @@ export function planScatter(
       }
     : undefined;
   if (size) margin.bottom += size.legendHeight;
+  // Marginal histograms take a band above the plot and one to its right.
+  if (settings.marginals) {
+    margin.top += MARGINAL_SIZE + MARGINAL_GAP;
+    margin.right += MARGINAL_SIZE + MARGINAL_GAP;
+  }
   // A lone chart keeps a line under its axis title for the status line.
   const footer = snapshot.facetIds ? 0 : STATUS_LINE_HEIGHT;
   margin.bottom += footer;

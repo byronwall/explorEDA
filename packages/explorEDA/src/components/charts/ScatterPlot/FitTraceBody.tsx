@@ -1,6 +1,8 @@
 import { TriangleAlert } from "lucide-react";
 import { TraceReadout, TraceSection, TraceSwatch } from "../ChartTraceDetails";
 import { useChartTrace, useChartTraceApi } from "../trace/ChartTraceScope";
+import { PairedSummaryBody } from "./PairedSummaryBody";
+import type { PairedSummaryPlan } from "./pairedSummary";
 import {
   METHOD_NAMES,
   fitSummary,
@@ -15,15 +17,24 @@ import {
   type RegressionFit,
 } from "./regression";
 
-export interface FitTrace {
-  kind: "fit" | "fit-results";
-  id: string;
-  revision: string;
-  plan: ScatterFitPlan;
-  fit?: ScatterFit;
-  xLabel: string;
-  yLabel: string;
-}
+export type FitTrace =
+  | {
+      kind: "fit" | "fit-results";
+      id: string;
+      revision: string;
+      plan: ScatterFitPlan;
+      fit?: ScatterFit;
+      xLabel: string;
+      yLabel: string;
+    }
+  | {
+      kind: "paired-summary";
+      id: string;
+      revision: string;
+      summary: PairedSummaryPlan;
+      xLabel: string;
+      yLabel: string;
+    };
 
 /** Enough digits to reproduce a coefficient, without float noise. */
 const precise = (value: number | undefined) =>
@@ -92,7 +103,15 @@ function Coefficients({ fit }: { fit: RegressionFit }) {
   );
 }
 
-function FitDetails({ trace, fit }: { trace: FitTrace; fit: ScatterFit }) {
+type FitResultTrace = Exclude<FitTrace, { kind: "paired-summary" }>;
+
+function FitDetails({
+  trace,
+  fit,
+}: {
+  trace: FitResultTrace;
+  fit: ScatterFit;
+}) {
   const { plan } = trace;
   const outcome = fit.outcome;
   const used = outcome.ok ? outcome.n : fit.sourceIds.length;
@@ -169,7 +188,7 @@ function FitDetails({ trace, fit }: { trace: FitTrace; fit: ScatterFit }) {
   );
 }
 
-function FitResults({ trace }: { trace: FitTrace }) {
+function FitResults({ trace }: { trace: FitResultTrace }) {
   const state = useChartTrace();
   const api = useChartTraceApi();
   const { plan } = trace;
@@ -214,6 +233,8 @@ function FitResults({ trace }: { trace: FitTrace }) {
 }
 
 export function FitTraceBody({ trace }: { trace: FitTrace }) {
+  if (trace.kind === "paired-summary")
+    return <PairedSummaryBody trace={trace} />;
   return trace.kind === "fit" && trace.fit ? (
     <FitDetails key={trace.id} trace={trace} fit={trace.fit} />
   ) : (

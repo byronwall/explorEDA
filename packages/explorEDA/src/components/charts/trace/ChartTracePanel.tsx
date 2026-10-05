@@ -14,6 +14,7 @@ import { TimeSeriesTraceBody } from "../LineChart/TimeSeriesTraceBody";
 import { ScatterTraceBody } from "../ScatterPlot/ScatterTraceBody";
 import { DensityTraceBody } from "../ScatterPlot/DensityTraceBody";
 import { FitTraceBody } from "../ScatterPlot/FitTraceBody";
+import { MarginalTraceBody } from "../ScatterPlot/MarginalTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
 import {
   FacetTraceBody,
@@ -42,7 +43,10 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
       return <DensityTraceBody key={trace.id} trace={trace} />;
     case "fit":
     case "fit-results":
+    case "paired-summary":
       return <FitTraceBody trace={trace} />;
+    case "marginal-bin":
+      return <MarginalTraceBody trace={trace} />;
     case "time-bucket":
     case "time-omissions":
       return <TimeSeriesTraceBody key={trace.id} trace={trace} />;

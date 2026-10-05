@@ -16,6 +16,11 @@ import { BubbleLegend } from "./BubbleLegend";
 import { DensityScatter } from "./DensityScatter";
 import { FitLabels } from "./FitLabels";
 import { useScatterFits } from "./useScatterFits";
+import {
+  marginalBinFilters,
+  planMarginals,
+  type MarginalTrace,
+} from "./marginalPlan";
 import { useScatterData } from "./useScatterData";
 import { ChartReadout } from "../ChartReadout";
 import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
@@ -77,13 +82,31 @@ function ScatterPoints({
     [settings, snapshot, width, height]
   );
   const fits = useScatterFits(settings, snapshot, plan);
+  const marginals = useMemo(
+    () => planMarginals(settings, plan),
+    [settings, plan]
+  );
+  const [hoveredMarginalId, setHoveredMarginalId] = useState<string>();
   const [activeFitId, setActiveFitId] = useState<string>();
+  const resolveMarginal = (
+    kind: string,
+    id: string
+  ): MarginalTrace | undefined => {
+    const bin =
+      kind === "marginal-bin"
+        ? marginals?.bins.find((item) => item.id === id)
+        : undefined;
+    return bin && marginals
+      ? { kind: "marginal-bin", id, revision: plan.revision, bin, marginals }
+      : undefined;
+  };
   const source = useMemo(
     (): TraceSource => ({
       role: "chart",
       revision: plan.revision,
       resolve: (kind, id) =>
         fits.resolve(kind, id) ??
+        resolveMarginal(kind, id) ??
         resolveScatterTrace(
           { kind, id },
           plan,
@@ -95,11 +118,29 @@ function ScatterPoints({
           manager
         ),
       findRow: (id) => findScatterTraceRow(plan, id),
-      targets: () => [...fits.targets(), ...scatterTraceTargets(plan)],
+      targets: () => [
+        ...fits.targets(),
+        ...(marginals?.bins.map((bin) => ({
+          kind: "marginal-bin",
+          id: bin.id,
+          label: `${bin.label} histogram: ${bin.sourceIds.length} rows`,
+        })) ?? []),
+        ...scatterTraceTargets(plan),
+      ],
       legendItems:
         plan.legend?.type === "categorical" ? plan.legend.items : undefined,
     }),
-    [plan, snapshot, settings, rawData, data, profiles, manager, fits]
+    [
+      plan,
+      snapshot,
+      settings,
+      rawData,
+      data,
+      profiles,
+      manager,
+      fits,
+      marginals,
+    ]
   );
   useTraceSource(owner, source);
   const choose = (kind: string, id: string) =>
@@ -122,6 +163,9 @@ function ScatterPoints({
     });
   };
   const hoveredPoint = plan.points.find((point) => point.id === hoveredId);
+  const hoveredMarginal = marginals?.bins.find(
+    (bin) => bin.id === hoveredMarginalId
+  );
   const hoveredText =
     hoveredPoint && scatterHoverReadout(plan, snapshot, settings, hoveredPoint);
 
@@ -280,6 +324,23 @@ function ScatterPoints({
               return Boolean(choose("point", point.id));
             }}
             fitMarks={fits.marks}
+            marginals={marginals}
+            activeMarginalId={
+              hoveredMarginalId ??
+              (activeSelection?.kind === "marginal-bin"
+                ? activeSelection.id
+                : undefined)
+            }
+            onHoverMarginal={setHoveredMarginalId}
+            onMarginal={(id, inspect) => {
+              const bin = marginals?.bins.find((item) => item.id === id);
+              if (!bin) return;
+              if (inspect) choose("marginal-bin", id);
+              else
+                updateChart(settings.id, {
+                  filters: marginalBinFilters(settings, bin),
+                });
+            }}
             activeFitId={activeFitId}
             onActiveFit={setActiveFitId}
             onInspectFit={(id) => choose("fit", id)}
@@ -289,9 +350,10 @@ function ScatterPoints({
               activeSelection?.kind === "guide" ? activeSelection.id : undefined
             }
           />
-          {fits.plan && (
+          {(fits.plan || fits.summary) && (
             <FitLabels
               fits={fits.plan}
+              summary={fits.summary}
               plan={plan}
               activeId={
                 activeFitId ??
@@ -359,6 +421,23 @@ function ScatterPoints({
                 {plan.emptyMessage}
               </div>
             </div>
+          )}
+          {hoveredMarginal && !hoveredPoint && (
+            <ChartReadout fallbackClassName="eda-chart-readout-inline">
+              <span className="eda-readout-item">
+                <span>
+                  {hoveredMarginal.label}{" "}
+                  {hoveredMarginal.bounds
+                    .map((value) => Number(value.toPrecision(4)))
+                    .join(" to ")}
+                </span>
+                <b>
+                  {hoveredMarginal.sourceIds.length.toLocaleString()} rows
+                  {marginals?.split &&
+                    ` · ${hoveredMarginal.selected.toLocaleString()} selected`}
+                </b>
+              </span>
+            </ChartReadout>
           )}
           {hoveredPoint && (
             // The crosshair marks the point; its values read in one line

@@ -32,6 +32,10 @@ export interface ScatterPlotSettings extends BaseChartSettings {
   maxBubbleRadius?: number;
   /** Absent when the chart draws no fit. */
   regression?: ScatterRegressionSettings;
+  /** Shows the paired summary line: correlation and pair count. */
+  summary?: boolean;
+  /** X and Y histograms beside the plot; absent when off. */
+  marginals?: { bins?: number };
   xField: string;
   yField: string;
   filters: Filter[];

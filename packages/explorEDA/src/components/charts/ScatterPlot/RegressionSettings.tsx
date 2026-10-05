@@ -8,6 +8,7 @@ import type {
   ScatterRegressionSettings,
 } from "./definition";
 import { DEFAULT_DEGREE, DEFAULT_SPAN } from "./regression";
+import { DEFAULT_MARGINAL_BINS } from "./marginalPlan";
 
 type Method = ScatterRegressionSettings["method"] | "none";
 
@@ -102,6 +103,57 @@ export function RegressionSettings({
           </ActionTooltip>
           <Label htmlFor="scatter-fit-overall">Overall fit</Label>
         </div>
+      )}
+      <div className="col-start-2 flex items-center gap-2">
+        <ActionTooltip content="Shows Pearson r and the pair count on the chart. Alt-click it for means, standard deviations, the sample covariance matrix, and per-group results. Uses the rows that pass the other charts' filters.">
+          <span className="inline-flex w-fit">
+            <Switch
+              id="scatter-summary"
+              checked={Boolean(settings.summary)}
+              onCheckedChange={(checked) =>
+                onSettingsChange({ ...settings, summary: checked || undefined })
+              }
+            />
+          </span>
+        </ActionTooltip>
+        <Label htmlFor="scatter-summary">Paired summary</Label>
+      </div>
+      <div className="col-start-2 flex items-center gap-2">
+        <ActionTooltip content="Adds an X histogram above the plot and a Y histogram to its right, counting the plotted points. Click a bar to filter to its range.">
+          <span className="inline-flex w-fit">
+            <Switch
+              id="scatter-marginals"
+              checked={Boolean(settings.marginals)}
+              onCheckedChange={(checked) =>
+                onSettingsChange({
+                  ...settings,
+                  marginals: checked ? {} : undefined,
+                })
+              }
+            />
+          </span>
+        </ActionTooltip>
+        <Label htmlFor="scatter-marginals">Marginal histograms</Label>
+      </div>
+      {settings.marginals && (
+        <>
+          <Label htmlFor="scatter-marginal-bins">Histogram bins</Label>
+          <ActionTooltip content="Equal intervals across each axis's full-source range, from 5 to 60. Edges stay fixed while filtering.">
+            <Input
+              id="scatter-marginal-bins"
+              type="number"
+              min={5}
+              max={60}
+              step={1}
+              value={settings.marginals.bins ?? DEFAULT_MARGINAL_BINS}
+              onChange={(event) => {
+                const bins = Number(event.target.value);
+                if (Number.isInteger(bins) && bins >= 5 && bins <= 60)
+                  onSettingsChange({ ...settings, marginals: { bins } });
+              }}
+            />
+          </ActionTooltip>
+        </>
       )}
     </>
   );

@@ -986,6 +986,8 @@ export const scatterRegressionDashboard = dashboard(
     {
       ...scatter("fit-bill", "Bill depth against bill length", "bill_length_mm", "bill_depth_mm", layout(0, 0, 7, 6), ["Bill length (mm)", "Bill depth (mm)"], "species", "fit-species"),
       regression: { method: "linear", overall: true },
+      summary: true,
+      marginals: { bins: 24 },
     },
     {
       ...scatter("fit-bill-sex", "The same fits for each sex", "bill_length_mm", "bill_depth_mm", layout(7, 0, 5, 6), ["Bill length (mm)", "Bill depth (mm)"], "species", "fit-species"),
