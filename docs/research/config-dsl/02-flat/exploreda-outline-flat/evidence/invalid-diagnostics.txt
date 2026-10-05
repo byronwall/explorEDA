@@ -1,0 +1,8 @@
+[outline-flat] Errors found; bindings checked; native output is patches only.
+6:19 E_UNKNOWN_FIELD Field reveneu does not resolve in salesRows. Suggestions: revenue, Revenue
+7:11 E_OPACITY pointOpacity must be between 0 and 1.
+7:23 E_UNSUPPORTED_SCALE The inspected scatter renderer explicitly chooses linear or symlog for numeric axes. Categorical bands are inferred.
+8:3 E_UNKNOWN_CONFIG Unknown scatter setting pointSzie. config is not a validation bypass. Suggestions: pointSize
+9:1 E_EXPECT_NUMERIC hist requires a numeric field. Use bar for categorical counts.
+9:26 E_BINS binCount must be a positive integer.
+11:1 E_CONTINUATION A detached key=value line has no owner. Add + for a continuation or edit ID for an explicit update.

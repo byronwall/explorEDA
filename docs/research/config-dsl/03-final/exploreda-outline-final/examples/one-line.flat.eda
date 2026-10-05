@@ -1,0 +1,4 @@
+scatter @margin x=Revenue y=Margin opacity=.55
+hist @revenue field=Revenue bins=24
+row @categories field=Category
+table @rows fields=Revenue,Margin,Category

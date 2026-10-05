@@ -1,0 +1,66 @@
+{
+  "browser": "Chromium 144.0.7559.96",
+  "navigation": "set_content with identical HTML bytes; file:// navigation blocked by administrator policy; no native runtime or file-open certification",
+  "cases": [
+    {
+      "case": "self-contained HTML bytes and default dependency/filter summaries",
+      "pass": true
+    },
+    {
+      "case": "Calculations",
+      "pass": true
+    },
+    {
+      "case": "Filter recipes",
+      "pass": true
+    },
+    {
+      "case": "Targeted edits",
+      "pass": true
+    },
+    {
+      "case": "Exact settings",
+      "pass": true
+    },
+    {
+      "case": "No source mapping",
+      "pass": true
+    },
+    {
+      "case": "Wrap button preserves calculations, source bindings, chart patches and filters",
+      "pass": true
+    },
+    {
+      "case": "diagnostic selects exact formula field typo",
+      "pass": true
+    },
+    {
+      "case": "live edit compiles a calculated field and its chart filter",
+      "pass": true
+    },
+    {
+      "case": "keyboard check shortcut",
+      "pass": true
+    },
+    {
+      "case": "machine response has explicit validation limits",
+      "pass": true
+    },
+    {
+      "case": "reset restores the example and compiled calculations",
+      "pass": true
+    },
+    {
+      "case": "783px: no horizontal page overflow",
+      "pass": true
+    },
+    {
+      "case": "390px: no horizontal page overflow",
+      "pass": true
+    },
+    {
+      "case": "no browser JavaScript errors",
+      "pass": true
+    }
+  ]
+}

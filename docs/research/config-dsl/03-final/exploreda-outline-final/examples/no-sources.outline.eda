@@ -1,0 +1,5 @@
+eda 1 outline
+scatter x Revenue y Margin
+  id simple
+  title Revenue and margin
+  opacity .55

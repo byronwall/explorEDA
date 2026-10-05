@@ -1,0 +1,28 @@
+{
+  "salesRows": {
+    "fields": {
+      "Revenue": "numeric",
+      "Margin": "numeric",
+      "Category": "categorical",
+      "Region": "categorical",
+      "Order ID": "categorical",
+      "Cost": "numeric",
+      "Channel": "categorical",
+      "Product": "categorical",
+      "Order Date": "datetime",
+      "Returned": "boolean"
+    }
+  },
+  "data": {
+    "fields": {
+      "Revenue": "numeric",
+      "Margin": "numeric",
+      "Category": "categorical",
+      "Cost": "numeric",
+      "Channel": "categorical",
+      "Product": "categorical",
+      "Order Date": "datetime",
+      "Returned": "boolean"
+    }
+  }
+}

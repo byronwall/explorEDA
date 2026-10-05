@@ -55,7 +55,21 @@ export type DatumObject = {
   [key: string]: string | number | boolean | null | undefined;
 };
 
+const ScatterLab = lazy(() => import("./scatter-lab/ScatterLab"));
+
 export function LandingPage() {
+  const [searchParams] = useSearchParams();
+  if (searchParams.get("view") === "scatter-lab") {
+    return (
+      <Suspense fallback={<p role="status">Loading scatter laboratory…</p>}>
+        <ScatterLab />
+      </Suspense>
+    );
+  }
+  return <LandingContent />;
+}
+
+function LandingContent() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [csvData, setCsvData] = useState<DatumObject[]>([]);
@@ -294,6 +308,15 @@ export function LandingPage() {
                         </SectionHeading>
                       </div>
                       <LearningLinks />
+                      <p className="mb-6 text-sm text-muted-foreground">
+                        Compare scientific scatter methods in the{" "}
+                        <a
+                          href="/?view=scatter-lab"
+                          className="font-medium text-primary underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        >
+                          scatter laboratory
+                        </a>.
+                      </p>
                       <ExampleSelector onSelect={handleExampleSelect} />
                     </section>
                     <section

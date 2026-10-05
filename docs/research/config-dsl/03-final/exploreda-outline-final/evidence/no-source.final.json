@@ -1,0 +1,206 @@
+{
+  "documentSHA256": "02c5b01c304061c3d9f45a334a26c63a2926e867a2ae8e8c8e883fa792e0c507",
+  "ok": true,
+  "productionReady": false,
+  "dialect": "flat",
+  "version": 3,
+  "targetRef": "226ffae632239150b54b55e9b346386e5e1e66d4",
+  "validation": {
+    "syntaxAndSubsetSemantics": "pass",
+    "bindings": "checked",
+    "fullNativeSchema": "not-implemented",
+    "runtime": "not-run",
+    "nativeOutput": "patches-only",
+    "identity": "explicit"
+  },
+  "diagnostics": [],
+  "preview": {
+    "sourceBinding": "data",
+    "fieldSettings": {},
+    "chartPatches": [
+      {
+        "type": "scatter",
+        "id": "p",
+        "xField": "Revenue",
+        "yField": "profit",
+        "filters": [
+          {
+            "type": "range",
+            "field": "profit",
+            "min": 0
+          }
+        ]
+      },
+      {
+        "type": "metric-card",
+        "id": "total",
+        "aggregation": "sum",
+        "measureField": "profit"
+      },
+      {
+        "type": "data-table",
+        "id": "rows",
+        "columns": [
+          {
+            "id": "Revenue",
+            "field": "Revenue"
+          },
+          {
+            "id": "profit",
+            "field": "profit"
+          }
+        ]
+      }
+    ],
+    "calculations": [
+      {
+        "resultColumnName": "profit",
+        "expression": "([\"Revenue\"] - [\"Cost\"])"
+      }
+    ]
+  },
+  "calculationOrigins": [
+    {
+      "name": "profit",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 5
+        },
+        "end": {
+          "line": 0,
+          "character": 11
+        }
+      },
+      "dependencies": [
+        "Revenue",
+        "Cost"
+      ],
+      "inferredType": "numeric",
+      "scope": "row"
+    }
+  ],
+  "filterOrigins": [
+    {
+      "chart": 0,
+      "field": "profit",
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 30
+        },
+        "end": {
+          "line": 1,
+          "character": 46
+        }
+      }
+    }
+  ],
+  "origins": [
+    {
+      "id": "p",
+      "properties": {
+        "/id": {
+          "start": {
+            "line": 1,
+            "character": 8
+          },
+          "end": {
+            "line": 1,
+            "character": 10
+          }
+        },
+        "/xField": {
+          "start": {
+            "line": 1,
+            "character": 11
+          },
+          "end": {
+            "line": 1,
+            "character": 20
+          }
+        },
+        "/yField": {
+          "start": {
+            "line": 1,
+            "character": 21
+          },
+          "end": {
+            "line": 1,
+            "character": 29
+          }
+        },
+        "/filters": {
+          "start": {
+            "line": 1,
+            "character": 30
+          },
+          "end": {
+            "line": 1,
+            "character": 46
+          }
+        }
+      }
+    },
+    {
+      "id": "total",
+      "properties": {
+        "/id": {
+          "start": {
+            "line": 2,
+            "character": 7
+          },
+          "end": {
+            "line": 2,
+            "character": 13
+          }
+        },
+        "/aggregation": {
+          "start": {
+            "line": 2,
+            "character": 14
+          },
+          "end": {
+            "line": 2,
+            "character": 24
+          }
+        },
+        "/measureField": {
+          "start": {
+            "line": 2,
+            "character": 14
+          },
+          "end": {
+            "line": 2,
+            "character": 24
+          }
+        }
+      }
+    },
+    {
+      "id": "rows",
+      "properties": {
+        "/id": {
+          "start": {
+            "line": 3,
+            "character": 6
+          },
+          "end": {
+            "line": 3,
+            "character": 11
+          }
+        },
+        "/columns": {
+          "start": {
+            "line": 3,
+            "character": 12
+          },
+          "end": {
+            "line": 3,
+            "character": 26
+          }
+        }
+      }
+    }
+  ]
+}

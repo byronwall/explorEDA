@@ -1,0 +1,19 @@
+{
+  "documentSHA256": "7e097bd5dd6e9a44cef204531a4915ed697fe090927fba13cf460ce5dcfaacf4",
+  "edits": [
+    {
+      "range": {
+        "start": {
+          "line": 5,
+          "character": 20
+        },
+        "end": {
+          "line": 5,
+          "character": 24
+        }
+      },
+      "expectedText": "cots",
+      "newText": "cost"
+    }
+  ]
+}

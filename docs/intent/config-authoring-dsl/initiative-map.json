@@ -1,0 +1,751 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Compact config authoring",
+    "slug": "config-authoring-dsl",
+    "scale": "capability",
+    "current_phase": "plan",
+    "last_updated": "2026-10-03",
+    "summary": "Create complete dashboards from readable DSL, render usable parts with actionable warnings, and export on demand without JSON authoring.",
+    "status": "planned",
+    "next_action": "Prove complete-document creation and chart-local populations with recoverable native rendering."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-03"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-03"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-10-03"
+    }
+  },
+  "sources": [
+    {
+      "id": "user",
+      "type": "request",
+      "location": "Current conversation",
+      "anchor": "Capture both themes without implementing main-app expansion",
+      "authority": "human"
+    },
+    {
+      "id": "session",
+      "type": "transcript",
+      "location": "docs/research/config-dsl/session-transcript.txt",
+      "anchor": "10:54 first DSL request; 1:14 compact correction; 4:29 calculations and filters",
+      "authority": "human"
+    },
+    {
+      "id": "final",
+      "type": "review",
+      "location": "docs/research/config-dsl/03-final/exploreda-outline-final/REVIEW.md",
+      "anchor": "Sections 1\u20139, validation boundary, source basis",
+      "authority": "agent-analysis"
+    },
+    {
+      "id": "flat",
+      "type": "review",
+      "location": "docs/research/config-dsl/02-flat/exploreda-outline-flat/REVIEW.md",
+      "anchor": "Sections 3\u20137: flat wrapping, workspace and generic chart completeness",
+      "authority": "agent-analysis"
+    },
+    {
+      "id": "repo",
+      "type": "code",
+      "location": "packages/explorEDA/src/types/SavedDataStructure.ts",
+      "anchor": "Native charts/calculations/grid/metadata/colors/rows/fields/aggregates/geometry",
+      "authority": "repository"
+    },
+    {
+      "id": "agent",
+      "type": "intent",
+      "location": "docs/intent/in-app-analysis-agent/intent-brief.md",
+      "anchor": "Direct changes with Undo; reconciliation with concurrent edits",
+      "authority": "human-reconciled"
+    },
+    {
+      "id": "product-answers",
+      "type": "request",
+      "location": "docs/research/config-dsl/dsl-product-decisions.md",
+      "anchor": "Annotations 1\u201310",
+      "authority": "human"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "claim-1",
+        "statement": "Agents can generate compact settings with feedback while people can read them.",
+        "type": "outcome",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "session",
+            "anchor": "First DSL request"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "claim-2",
+        "statement": "Use one chart per line with indentation for settings.",
+        "type": "preference",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "superseded",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "session",
+            "anchor": "First DSL request"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Later correction removes repeated indentation burden."
+      },
+      {
+        "id": "claim-3",
+        "statement": "Prefer short inline key/value lines and little required indentation.",
+        "type": "desired experience",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "session",
+            "anchor": "Compact correction"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "claim-4",
+        "statement": "30\u201350 character lines are comfortable, not a mandatory grammar limit.",
+        "type": "example",
+        "commitment": "illustrative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "session",
+            "anchor": "Compact correction"
+          }
+        ],
+        "confidence": "medium",
+        "notes": ""
+      },
+      {
+        "id": "claim-5",
+        "statement": "Optional source contracts include bindings, field types, and display names.",
+        "type": "required behavior",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "session",
+            "anchor": "First request and compact source correction"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "claim-6",
+        "statement": "Every setting remains reachable through extra detailed configuration.",
+        "type": "required behavior",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          {
+            "source_id": "session",
+            "anchor": "First DSL request"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "claim-7",
+        "statement": "Include calculation definitions and filters per chart.",
+        "type": "required behavior",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "session",
+            "anchor": "Final user request"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "claim-8",
+        "statement": "Flat pairs with calc, where.field, optional + and @ IDs are provisional final syntax.",
+        "type": "implementation hypothesis",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "final",
+            "anchor": "Everyday grammar"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Positive user response supports the flat direction, not independent approval of every final spelling."
+      },
+      {
+        "id": "claim-9",
+        "statement": "Use native calculation text and saved settings as runtime authority.",
+        "type": "implementation hypothesis",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "repo",
+            "anchor": "SavedCalculation and SavedDataStructure"
+          }
+        ],
+        "confidence": "medium",
+        "notes": ""
+      },
+      {
+        "id": "claim-10",
+        "statement": "Chart-owned filters use linked workspace filtering in the proposed first adapter.",
+        "type": "implementation hypothesis",
+        "commitment": "tentative",
+        "importance": "core",
+        "status": "superseded",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "final",
+            "anchor": "Section 6 Ownership"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Annotation 5 requires chart-local restrictions. Linked ownership alone is insufficient."
+      },
+      {
+        "id": "claim-11",
+        "statement": "Keep explicit checks distinct from conversion, and labels distinct from field binding.",
+        "type": "constraint",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "final",
+            "anchor": "Section 2 Sources"
+          }
+        ],
+        "confidence": "medium",
+        "notes": ""
+      },
+      {
+        "id": "claim-12",
+        "statement": "Checker feedback includes locations, suggestions, dependency errors, and ineffective-setting errors.",
+        "type": "required behavior",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "session",
+            "anchor": "Include a checker; agent generation with feedback"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "claim-13",
+        "statement": "Guarded edits, explain, schema and formatting support agent repair.",
+        "type": "future possibility",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "final",
+            "anchor": "Sections 7\u20138"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Patch-oriented edits are secondary to complete-document creation. Explain and capability discovery remain useful."
+      },
+      {
+        "id": "claim-14",
+        "statement": "Current prototype emits partial patches, not complete settings or evaluated rows.",
+        "type": "current repository reality",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "final",
+            "anchor": "Sections 9\u201310 production boundary"
+          }
+        ],
+        "confidence": "medium",
+        "notes": ""
+      },
+      {
+        "id": "claim-15",
+        "statement": "Native import/export, root settings and every chart family complete the language coverage goal.",
+        "type": "future possibility",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          {
+            "source_id": "flat",
+            "anchor": "Section 7 completeness"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "On-demand export is confirmed. Complete setting coverage must avoid JSON escape syntax."
+      },
+      {
+        "id": "claim-16",
+        "statement": "Source mapping does not authorize joins or multi-source workspaces.",
+        "type": "constraint",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "final",
+            "anchor": "Section 2 and native one-array boundary"
+          }
+        ],
+        "confidence": "medium",
+        "notes": ""
+      },
+      {
+        "id": "claim-17",
+        "statement": "Native editing and Undo continue after later agent-driven application.",
+        "type": "constraint",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "agent",
+            "anchor": "Direct application and Undo"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "claim-18",
+        "statement": "Prioritize quick dashboard creation by agents or humans over editing existing dashboards.",
+        "type": "product requirement",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Annotation 1: Creation"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "claim-19",
+        "statement": "Prioritize agent-facing checking. Files are possible. A built-in editor starting from pasted text is a tentative entry option.",
+        "type": "entry proposal",
+        "commitment": "tentative",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Annotation 2: Entry"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "claim-20",
+        "statement": "The document describes the final dashboard. Applying it replaces configuration rather than applying a diff.",
+        "type": "product requirement",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Annotation 3: Document meaning"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "claim-21",
+        "statement": "Charts work without explicit names. Optional names can make authoring and references easier.",
+        "type": "product requirement",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Annotation 4: Identity"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "claim-22",
+        "statement": "Chart filters restrict that chart for now. Consider adding global filters to the main app and DSL later.",
+        "type": "product requirement",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Annotation 5: Filters"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Global filtering is tentative follow-up; local chart scope is explicit."
+      },
+      {
+        "id": "claim-23",
+        "statement": "Use app defaults for omitted settings.",
+        "type": "product requirement",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Annotation 6: Defaults"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "claim-24",
+        "statement": "Export DSL on demand after normal UI edits. Continuous text synchronization is unnecessary.",
+        "type": "product requirement",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Annotation 7: Export"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "claim-25",
+        "statement": "Render as much as possible. Warn clearly about every broken part.",
+        "type": "product requirement",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Annotation 8: Partial rendering"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "claim-26",
+        "statement": "Keep usable results visible. Explain failures with actionable warnings rather than failing the whole workflow.",
+        "type": "product requirement",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Annotation 9: Calculation failures"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "claim-27",
+        "statement": "Avoid JSON in DSL input and output. Verbose identity paths and setting names are acceptable.",
+        "type": "product requirement",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Annotation 10: No JSON authoring"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      }
+    ],
+    "themes": [
+      "Compact checked text lets agents author native settings and people continue editing."
+    ],
+    "conflicts": [
+      {
+        "older_claim": "claim-2",
+        "newer_claim": "claim-3",
+        "resolution": "Compact pairs supersede mandatory nested indentation."
+      },
+      {
+        "older_claim": "claim-10",
+        "newer_claim": "claim-22",
+        "resolution": "Chart-local population restrictions supersede linked-only filter ownership."
+      }
+    ],
+    "human_questions": [
+      {
+        "id": "filter-scope",
+        "question": "Should filters per chart only mean linked ownership, or also independent comparison populations?",
+        "status": "resolved",
+        "blocking_phase": "Independent-population implementation only",
+        "default": "Linked ownership for the first proof; private populations remain deferred.",
+        "resolution": "Annotation 5 chooses chart-local populations for now; global filters remain a proposed extension."
+      }
+    ]
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "plan-ready",
+    "appetite": "One useful native slice at a time; no fixed time budget supplied.",
+    "problem": "Create complete dashboards from readable DSL, render usable parts with actionable warnings, and export on demand without JSON authoring.",
+    "recommended_shape": "Agent-facing complete-document compiler, provisional paste entry, recoverable native rendering, chart-local populations, and on-demand export without JSON syntax.",
+    "success_moves": [
+      "Prove local populations first.",
+      "Build complete documents from app defaults.",
+      "Report every skipped effect.",
+      "Keep chart names optional.",
+      "Export native state on demand.",
+      "Prove complex structures without JSON."
+    ],
+    "first_proof": {
+      "question": "Can a complete document render independent chart populations while exposing a broken declaration?",
+      "artifact": "Pasted local fixture with calculation, two local-filtered charts, and one deliberately broken chart.",
+      "decision_rule": "Proceed if valid charts render with exact populations and every failure is actionable; fail silent constraint dropping."
+    },
+    "rabbit_holes": [
+      "New expression runtime",
+      "Joins and multi-source workspace",
+      "Hosted agent service",
+      "Multiple canonical dialects"
+    ],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "planned",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/6221/explorEDA",
+      "revision": "038be515b0d0869c69f4da45f4744266b073ac19",
+      "worktree_status": "Initially clean detached HEAD. Demo lab imported; package source unchanged. No commit created.",
+      "subsystems": [
+        "ScatterPlot planning and traces",
+        "SavedDataStructure",
+        "saveDataUtils native validation",
+        "CalculationState",
+        "chart registry defaults",
+        "React demo LandingPage"
+      ],
+      "test_commands": [
+        "pnpm check",
+        "node docs/research/scatter-test-bed/validate-numerics.mjs",
+        "pnpm test (final DSL bundle)"
+      ],
+      "deployment_surfaces": [
+        "Existing Vite demo; deployment is outside this request."
+      ]
+    },
+    "dependencies": [
+      {
+        "id": "native-config",
+        "name": "Native saved settings and formula engine",
+        "material": true,
+        "application_seam": "compileDocument(text,catalog,rows,defaults) -> usable SavedDataStructure, completeness, and actionable diagnostics",
+        "first_proof_role": {
+          "mode": "real",
+          "rationale": "Native value semantics and effective settings are the central unknown; mocks cannot prove them."
+        },
+        "failure_modes": [
+          "Unknown fields/settings",
+          "Formula cycles and failed rows",
+          "Local filters accidentally propagated",
+          "Broken filter silently dropped",
+          "All declarations unavailable"
+        ],
+        "proof_rungs": [
+          "Deterministic real row fixtures",
+          "Native parser/evaluator and save validation",
+          "Frozen local public-component rendering"
+        ],
+        "local_proof": "Known independent chart populations and mixed valid/invalid documents through real native rendering.",
+        "live_proof": "No hosted model/provider is needed; external agent service is absent from first proof.",
+        "rollout": "Optional paste entry; normal controls and Undo remain available."
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda build && pnpm --filter demo dev --host 127.0.0.1 --port 5184",
+      "network": "No runtime network beyond localhost and bundled dataset fetch.",
+      "failure_injection": "Deterministic edge fixtures and invalid documents.",
+      "slower_proof": "pnpm check, frozen browser preview, and independent numerical comparisons.",
+      "failure_selection": "Run malformed declarations, unknown fields, formula cycles, row failures, and broken local filters alongside valid charts."
+    },
+    "milestones": [
+      {
+        "id": "milestone-1",
+        "title": "A creation document renders independent chart populations",
+        "outcome": "A creation document renders independent chart populations",
+        "proof": "Hand-counted local populations; native values; complete replacement; omitted defaults; Undo.",
+        "status": "planned",
+        "valid_intermediate_state": "Normal native controls plus the usable completed authoring slice.",
+        "rollback": "Use normal controls and Undo the applied configuration.",
+        "dependencies_introduced": []
+      },
+      {
+        "id": "milestone-2",
+        "title": "Broken parts remain visible and repairable",
+        "outcome": "Broken parts remain visible and repairable",
+        "proof": "Mixed valid/invalid declarations; cycles; row failures; warnings; all-broken repair state.",
+        "status": "planned",
+        "valid_intermediate_state": "Normal native controls plus the usable completed authoring slice.",
+        "rollback": "Use normal controls and Undo the applied configuration.",
+        "dependencies_introduced": []
+      },
+      {
+        "id": "milestone-3",
+        "title": "Export reflects current UI edits",
+        "outcome": "Export reflects current UI edits",
+        "proof": "UI edit/export/recompile semantic comparison without JSON blocks.",
+        "status": "planned",
+        "valid_intermediate_state": "Normal native controls plus the usable completed authoring slice.",
+        "rollback": "Use normal controls and Undo the applied configuration.",
+        "dependencies_introduced": []
+      },
+      {
+        "id": "milestone-4",
+        "title": "Detailed paths cover the native settings surface",
+        "outcome": "Detailed paths cover the native settings surface",
+        "proof": "Complex-value syntax spike; full-setting coverage inventory; native effect checks.",
+        "status": "planned",
+        "valid_intermediate_state": "Normal native controls plus the usable completed authoring slice.",
+        "rollback": "Use normal controls and Undo the applied configuration.",
+        "dependencies_introduced": []
+      }
+    ],
+    "cut_line": [
+      "New expression runtime",
+      "Joins and multi-source workspace",
+      "Hosted agent service",
+      "Multiple canonical dialects",
+      "Patch-oriented editing",
+      "Continuous text synchronization",
+      "Global filters pending main-app shape",
+      "JSON authoring rejected"
+    ],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-03",
+      "event": "created",
+      "reason": "User requests preservation, a runnable scatter lab, and Software Design Sleuth across both themes. Native product expansion remains planned.",
+      "evidence": [
+        "docs/research/config-dsl/session-transcript.txt",
+        "docs/research/scatter-test-bed/original-prompt.txt"
+      ]
+    },
+    {
+      "date": "2026-10-03",
+      "event": "repository-reconciled",
+      "reason": "Current checkout has density cells and bubble sizing absent from older Pro scatter review. Final DSL pass adds calculations and filters.",
+      "revision": "038be515b0d0869c69f4da45f4744266b073ac19"
+    },
+    {
+      "date": "2026-10-03",
+      "event": "local-proof-recorded",
+      "evidence": [
+        "docs/research/scatter-test-bed/local-validation.json"
+      ],
+      "reason": "Repository check, numerical suite, final prototype tests and focused browser smoke passed. Native product work remains planned."
+    },
+    {
+      "date": "2026-10-03",
+      "event": "product-answers-applied",
+      "reason": "Applied all ten DSL answers and regenerated shape/plan. Complete creation replaces patch semantics; local filters replace linked-only ownership; partial rendering replaces all-or-nothing application; on-demand export replaces live text synchronization; JSON authoring is rejected.",
+      "evidence": [
+        "docs/research/config-dsl/dsl-product-decisions.md"
+      ]
+    }
+  ],
+  "closure": null
+}

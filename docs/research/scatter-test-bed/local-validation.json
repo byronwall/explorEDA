@@ -1,0 +1,78 @@
+{
+  "local_date": "2026-10-03",
+  "revision": "038be515b0d0869c69f4da45f4744266b073ac19",
+  "toolchain": {
+    "node": "24.21.0",
+    "pnpm": "11.9.0",
+    "typescript": "5.4.5"
+  },
+  "repository_checks": {
+    "command": "pnpm check",
+    "status": "passed",
+    "ui_rules": "passed",
+    "builds": "passed",
+    "types": "passed",
+    "package_tests": 521,
+    "demo_tests": 58,
+    "notes": [
+      "Existing build chunk-size notices and React act warnings remain; command exits 0."
+    ]
+  },
+  "numerical_checks": {
+    "command": "node docs/research/scatter-test-bed/validate-numerics.mjs",
+    "status": "passed",
+    "passed": 30,
+    "results": "local-numerical-results.json"
+  },
+  "dsl_checks": {
+    "command": "pnpm test in docs/research/config-dsl/03-final/exploreda-outline-final",
+    "status": "passed",
+    "tests": 275,
+    "scope": "Prebuilt prototype subset; not native compilation or source-row evaluation."
+  },
+  "browser": {
+    "surface": "Signed-in user Chrome via Chrome skill",
+    "dev_url": "http://127.0.0.1:5184/?view=scatter-lab",
+    "production_preview_url": "http://127.0.0.1:5185/?view=scatter-lab",
+    "checked": [
+      "Real Vite route loads",
+      "Layer buttons update display",
+      "Group filter gives 500 analysis rows",
+      "Full reference retains 1000 rows",
+      "Source inspection names D and D\u00b2",
+      "Native workspace renders and reports 500/1000 rows",
+      "Palmer Penguins loads 344 rows",
+      "1280px wide layout",
+      "783px dark comparison switch",
+      "390px light layout and keyboard source-row inspection",
+      "JSON restores positive preset after ring selection"
+    ],
+    "horizontal_overflow": false,
+    "screenshots": [
+      "tmp/scatter-test-bed/local-1280-light.jpg",
+      "tmp/scatter-test-bed/local-783-dark.jpg",
+      "tmp/scatter-test-bed/local-390-light.jpg"
+    ],
+    "limitations": [
+      "This is a focused local smoke, not a rerun of every Pro browser scenario.",
+      "No repeated local performance benchmark; original timing claims remain historical.",
+      "Rebuilding package assets while Vite was open caused stale-module HMR errors; frozen production preview used for final responsive checks."
+    ]
+  },
+  "source_repairs": [
+    "Applied LandingPage-only hunk; full original dependency patch does not apply to current checkout.",
+    "Added already-locked Radix Tooltip directly to demo manifest and lockfile importer.",
+    "Removed unsupported exact option from Testing Library getByRole calls.",
+    "Made theme effect cleanup return void."
+  ],
+  "planning": {
+    "validator": "Both initiative maps pass with zero warnings.",
+    "native_expansion": "planned; not implemented"
+  },
+  "publication": {
+    "commit": false,
+    "push": false,
+    "pull_request": false,
+    "deployment": false
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "hero": {
+    "characters": 448,
+    "nonblankLines": 14,
+    "maxLineLength": 45
+  },
+  "sameFilter": {
+    "native": "+ filters=[{\"type\":\"range\",\"field\":\"profit\",\"min\":0}]",
+    "flat": "+ where.profit=0..",
+    "nativeCharacters": 53,
+    "flatCharacters": 18,
+    "reductionPercent": 66.0
+  }
+}

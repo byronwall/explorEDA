@@ -1,0 +1,50 @@
+diff --git a/apps/demo/src/LandingPage.tsx b/apps/demo/src/LandingPage.tsx
+--- a/apps/demo/src/LandingPage.tsx
++++ b/apps/demo/src/LandingPage.tsx
+@@ -50,2 +50,16 @@
++const ScatterLab = lazy(() => import("./scatter-lab/ScatterLab"));
++
+ export function LandingPage() {
++  const [searchParams] = useSearchParams();
++  if (searchParams.get("view") === "scatter-lab") {
++    return (
++      <Suspense fallback={<p role="status">Loading scatter laboratory…</p>}>
++        <ScatterLab />
++      </Suspense>
++    );
++  }
++  return <LandingContent />;
++}
++
++function LandingContent() {
+   const [searchParams, setSearchParams] = useSearchParams();
+@@ -299,2 +313,11 @@
+                       <LearningLinks />
++                      <p className="mb-6 text-sm text-muted-foreground">
++                        Compare scientific scatter methods in the{" "}
++                        <a
++                          href="/?view=scatter-lab"
++                          className="font-medium text-primary underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
++                        >
++                          scatter laboratory
++                        </a>.
++                      </p>
+                       <ExampleSelector onSelect={handleExampleSelect} />
+diff --git a/apps/demo/package.json b/apps/demo/package.json
+--- a/apps/demo/package.json
++++ b/apps/demo/package.json
+@@ -15,1 +15,2 @@
+         "@radix-ui/react-slot": "^1.1.2",
++        "@radix-ui/react-tooltip": "^1.1.8",
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+--- a/pnpm-lock.yaml
++++ b/pnpm-lock.yaml
+@@ -32,5 +32,8 @@
+   apps/demo:
+     dependencies:
+       '@radix-ui/react-slot':
+         specifier: ^1.1.2
+         version: 1.1.2(@types/react@19.0.10)(react@19.0.0)
++      '@radix-ui/react-tooltip':
++        specifier: ^1.1.8
++        version: 1.1.8(@types/react-dom@19.0.4(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)

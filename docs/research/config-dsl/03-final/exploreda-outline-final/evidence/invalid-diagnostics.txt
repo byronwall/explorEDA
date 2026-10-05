@@ -1,0 +1,9 @@
+[outline] Errors found; bindings checked; native runtime not run.
+[outline] 2 calculations; 3 charts; SHA256 7e097bd5dd6e9a44cef204531a4915ed697fe090927fba13cf460ce5dcfaacf4
+6:21 E_CALC_FIELD Unknown formula field cots. Suggestions: cost, Cost
+7:6 E_CALC_CYCLE Calculation cycle: loop -> loop.
+9:11 E_OPACITY pointOpacity must be between 0 and 1.
+9:13 E_FILTER_EFFECT This scatter applies global filtering but its dimming only follows numeric axis ranges, categorical axis values, and its color field. This filter would misrepresent own-selection state.
+11:8 I_EDIT Explicit edit replaces where.Channel.
+12:8 E_CONFLICT where.Channel has more than one explicit value. Use a single value or an explicit edit.
+13:28 E_FILTER_RANGE The lower bound exceeds the upper bound.

@@ -1,0 +1,67 @@
+{
+  "cases": [
+    {
+      "case": "calculations.final.eda",
+      "pass": true,
+      "exit": 0
+    },
+    {
+      "case": "edits.final.eda",
+      "pass": true,
+      "exit": 0
+    },
+    {
+      "case": "exact.final.eda",
+      "pass": true,
+      "exit": 0
+    },
+    {
+      "case": "filters.final.eda",
+      "pass": true,
+      "exit": 0
+    },
+    {
+      "case": "invalid.final.eda",
+      "pass": true,
+      "exit": 1
+    },
+    {
+      "case": "no-source.final.eda",
+      "pass": true,
+      "exit": 0
+    },
+    {
+      "case": "order-book.final.eda",
+      "pass": true,
+      "exit": 0
+    },
+    {
+      "case": "guarded repair changes only the expected typo, stdout only",
+      "pass": true
+    },
+    {
+      "case": "stale SHA-256 rejects --write and leaves source unchanged",
+      "pass": true
+    },
+    {
+      "case": "strict complete fixture passes",
+      "pass": true
+    },
+    {
+      "case": "strict mode blocks deferred source validation",
+      "pass": true
+    },
+    {
+      "case": "explain reports the intended chart and its filter",
+      "pass": true
+    },
+    {
+      "case": "formatter keeps expression body intact",
+      "pass": true
+    },
+    {
+      "case": "schema returns machine-readable capabilities",
+      "pass": true
+    }
+  ]
+}

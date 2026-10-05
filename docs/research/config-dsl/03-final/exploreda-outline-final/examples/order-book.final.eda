@@ -1,0 +1,16 @@
+eda 3 flat
+source orders=salesRows
+revenue:num=Revenue label="Revenue ($)"
+cost:num=Cost
+channel:cat=Channel
+
+calc profit=revenue-cost
+calc rate=revenue==0 ? null : profit/revenue
++ label="Margin" format=percent precision=1
+
+scatter @profit x=revenue y=profit
++ color=channel size=3 where.profit=0..
+row @channels channel where.channel=Web,Store
+hist @distribution profit bins=24
+metric @total sum=profit
+table @records revenue,profit,rate,channel

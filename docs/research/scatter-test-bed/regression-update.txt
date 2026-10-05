@@ -1,0 +1,5 @@
+User scope update — 2026-10-03
+
+"For the scatter one, let’s update to reflect that I really also want to support displaying regression of various kinds: linear, n-order, LOESS. I want to compute separate regressions per group/color in a chart and new formulas per facet as well."
+
+The user also requests ten product questions to define next steps.

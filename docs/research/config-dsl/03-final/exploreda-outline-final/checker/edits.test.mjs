@@ -1,0 +1,10 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {applyEdits} from '../dist/edits.js';
+const e=(line,start,end,expectedText,newText)=>({range:{start:{line,character:start},end:{line,character:end}},expectedText,newText});
+test('repairs apply atomically from the original snapshot',()=>assert.equal(applyEdits('size=3\nx=cost',[e(0,5,6,'3','4'),e(1,2,6,'cost','revenue')]),'size=4\nx=revenue'));
+test('a stale repair blocks the whole batch',()=>assert.throws(()=>applyEdits('abc',[e(0,0,1,'a','A'),e(0,1,2,'wrong','B')]),/Stale/));
+test('overlapping repairs fail',()=>assert.throws(()=>applyEdits('abc',[e(0,0,2,'ab','x'),e(0,1,2,'b','y')]),/Overlapping/));
+test('CRLF ranges use UTF-16 line columns',()=>assert.equal(applyEdits('a\r\nb',[e(1,0,1,'b','c')]),'a\r\nc'));
+test('bare CR line breaks have consistent offsets',()=>assert.equal(applyEdits('a\rb',[e(1,0,1,'b','c')]),'a\rc'));
+test('UTF-16 string offsets preserve surrounding unicode',()=>assert.equal(applyEdits('😀 cost',[e(0,3,7,'cost','revenue')]),'😀 revenue'));
+test('invalid line position fails',()=>assert.throws(()=>applyEdits('a',[e(2,0,1,'a','b')]),/outside/));
+test('ambiguous concurrent insertions fail',()=>assert.throws(()=>applyEdits('abc',[e(0,1,1,'','x'),e(0,1,1,'','y')]),/ambiguous/));

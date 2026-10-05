@@ -1,0 +1,13 @@
+source orders=salesRows
+revenue:num=Revenue
+cost:num=Cost
+channel:cat=Channel
+
+calc profit=revenue-cost
+scatter @p x=revenue y=profit size=3
++ where.profit=0..
+row @c channel where.channel=Web
+
+# Each edit has one explicit target. The other chart's filters survive.
+edit p size=4 where.profit=100..500
+edit c where.channel=*

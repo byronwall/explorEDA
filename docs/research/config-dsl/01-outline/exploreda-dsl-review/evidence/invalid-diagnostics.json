@@ -1,0 +1,139 @@
+{
+  "ok": false,
+  "dialect": "outline",
+  "targetRef": "226ffae632239150b54b55e9b346386e5e1e66d4",
+  "validation": {
+    "syntaxAndSubsetSemantics": "fail",
+    "bindings": "checked",
+    "fullNativeSchema": "not-implemented",
+    "runtime": "not-run"
+  },
+  "diagnostics": [
+    {
+      "code": "E_UNKNOWN_FIELD",
+      "severity": "error",
+      "message": "Field reveneu does not resolve in salesRows.",
+      "range": {
+        "start": {
+          "line": 20,
+          "character": 10
+        },
+        "end": {
+          "line": 20,
+          "character": 17
+        }
+      },
+      "suggestions": [
+        "revenue",
+        "Revenue"
+      ]
+    },
+    {
+      "code": "E_OPACITY",
+      "severity": "error",
+      "message": "pointOpacity must be between 0 and 1.",
+      "range": {
+        "start": {
+          "line": 22,
+          "character": 2
+        },
+        "end": {
+          "line": 22,
+          "character": 9
+        }
+      }
+    },
+    {
+      "code": "E_UNSUPPORTED_SCALE",
+      "severity": "error",
+      "message": "The inspected scatter renderer explicitly chooses linear or symlog for numeric axes. Categorical bands are inferred.",
+      "range": {
+        "start": {
+          "line": 23,
+          "character": 4
+        },
+        "end": {
+          "line": 23,
+          "character": 9
+        }
+      }
+    },
+    {
+      "code": "E_UNKNOWN_CONFIG",
+      "severity": "error",
+      "message": "Unknown scatter setting pointSzie. config is not a validation bypass.",
+      "range": {
+        "start": {
+          "line": 24,
+          "character": 2
+        },
+        "end": {
+          "line": 24,
+          "character": 8
+        }
+      }
+    },
+    {
+      "code": "E_EXPECT_NUMERIC",
+      "severity": "error",
+      "message": "hist requires a numeric field. Use bar for categorical counts.",
+      "range": {
+        "start": {
+          "line": 27,
+          "character": 0
+        },
+        "end": {
+          "line": 27,
+          "character": 26
+        }
+      }
+    },
+    {
+      "code": "E_BINS",
+      "severity": "error",
+      "message": "binCount must be a positive integer.",
+      "range": {
+        "start": {
+          "line": 27,
+          "character": 20
+        },
+        "end": {
+          "line": 27,
+          "character": 24
+        }
+      }
+    }
+  ],
+  "preview": {
+    "sourceBinding": "salesRows",
+    "sourceLabel": "Order book",
+    "fieldSettings": {
+      "Revenue": {
+        "label": "Revenue ($)",
+        "format": "currency",
+        "currency": "USD"
+      },
+      "Margin": {
+        "label": "Margin ($)"
+      }
+    },
+    "chartPatches": [
+      {
+        "type": "scatter",
+        "xField": "reveneu",
+        "yField": "Margin",
+        "id": "broken",
+        "pointOpacity": 1.2,
+        "xAxis": {
+          "scaleType": "log"
+        }
+      },
+      {
+        "type": "bar",
+        "field": "Category",
+        "binCount": 0,
+        "id": "also-broken"
+      }
+    ]
+  }
+}

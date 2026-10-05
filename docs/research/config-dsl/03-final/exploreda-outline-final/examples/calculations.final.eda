@@ -1,0 +1,16 @@
+source orders=salesRows
+revenue:num=Revenue
+cost:num=Cost
+channel:cat=Channel
+
+# Forward dependencies are resolved before compilation.
+calc rate=revenue==0 ? null : profit/revenue
++ format=percent precision=1
+calc profit=revenue-cost
+calc keep=revenue>100 || channel=="Web"
+calc band=profit<0 ? "Loss" : "Profit"
+
+scatter @p x=revenue y=profit color=band
+# The table includes keep because this native owner only filters its columns.
+table @selected revenue,profit,rate,channel,keep
++ where.keep=true

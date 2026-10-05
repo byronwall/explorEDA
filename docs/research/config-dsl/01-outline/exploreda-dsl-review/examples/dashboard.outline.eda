@@ -1,0 +1,50 @@
+eda 1 outline
+sources
+  orders salesRows
+    label Order book
+    fields
+      revenue Revenue
+        label Revenue ($)
+        expect numeric
+        format currency
+        currency USD
+      margin Margin
+        label Margin ($)
+        expect numeric
+      category Category
+        expect categorical
+      region Region
+        expect categorical
+      order Order ID
+use orders
+
+scatter x revenue y margin color category
+  id margin-view
+  title Revenue and margin
+  x scale symlog
+  points 3
+  opacity .55
+  at 0 0 6 5
+  config
+    margin
+      top 16
+      right 24
+    xGridLines 6
+
+hist field revenue bins 24
+  id revenue-distribution
+  title Revenue distribution
+  at 6 0 3 5
+
+row field category
+  id category-counts
+  title Orders by category
+  at 9 0 3 5
+
+table fields order revenue margin
+  id records
+  title Selected orders
+  at 0 5 12 5
+  config
+    sortBy Revenue
+    sortDirection desc

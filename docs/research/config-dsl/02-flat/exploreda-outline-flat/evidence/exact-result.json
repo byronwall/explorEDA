@@ -1,0 +1,180 @@
+{
+  "ok": true,
+  "dialect": "flat",
+  "version": 2,
+  "targetRef": "226ffae632239150b54b55e9b346386e5e1e66d4",
+  "validation": {
+    "syntaxAndSubsetSemantics": "pass",
+    "bindings": "checked",
+    "fullNativeSchema": "not-implemented",
+    "runtime": "not-run",
+    "nativeOutput": "patches-only",
+    "identity": "explicit"
+  },
+  "diagnostics": [],
+  "preview": {
+    "sourceBinding": "salesRows",
+    "fieldSettings": {},
+    "chartPatches": [
+      {
+        "type": "data-table",
+        "id": "rows",
+        "columns": [
+          {
+            "id": "order",
+            "field": "Order ID",
+            "width": 140
+          },
+          {
+            "id": "rev",
+            "field": "Revenue",
+            "width": 180
+          }
+        ],
+        "globalSearch": "true",
+        "sortBy": "Revenue",
+        "sortDirection": "desc"
+      },
+      {
+        "type": "scatter",
+        "id": "margin",
+        "xField": "Revenue",
+        "yField": "Margin",
+        "pointSize": 3,
+        "margin": {
+          "left": 64
+        },
+        "filters": [
+          {
+            "type": "range",
+            "field": "Revenue",
+            "min": 100,
+            "max": 500
+          }
+        ]
+      }
+    ]
+  },
+  "origins": [
+    {
+      "id": "rows",
+      "properties": {
+        "/id": {
+          "start": {
+            "line": 5,
+            "character": 6
+          },
+          "end": {
+            "line": 5,
+            "character": 11
+          }
+        },
+        "/columns": {
+          "start": {
+            "line": 6,
+            "character": 2
+          },
+          "end": {
+            "line": 6,
+            "character": 100
+          }
+        },
+        "/globalSearch": {
+          "start": {
+            "line": 7,
+            "character": 2
+          },
+          "end": {
+            "line": 7,
+            "character": 21
+          }
+        },
+        "/sortBy": {
+          "start": {
+            "line": 7,
+            "character": 22
+          },
+          "end": {
+            "line": 7,
+            "character": 36
+          }
+        },
+        "/sortDirection": {
+          "start": {
+            "line": 7,
+            "character": 37
+          },
+          "end": {
+            "line": 7,
+            "character": 55
+          }
+        }
+      }
+    },
+    {
+      "id": "margin",
+      "properties": {
+        "/id": {
+          "start": {
+            "line": 9,
+            "character": 8
+          },
+          "end": {
+            "line": 9,
+            "character": 15
+          }
+        },
+        "/xField": {
+          "start": {
+            "line": 10,
+            "character": 2
+          },
+          "end": {
+            "line": 10,
+            "character": 82
+          }
+        },
+        "/yField": {
+          "start": {
+            "line": 10,
+            "character": 2
+          },
+          "end": {
+            "line": 10,
+            "character": 82
+          }
+        },
+        "/pointSize": {
+          "start": {
+            "line": 10,
+            "character": 2
+          },
+          "end": {
+            "line": 10,
+            "character": 82
+          }
+        },
+        "/margin/left": {
+          "start": {
+            "line": 10,
+            "character": 2
+          },
+          "end": {
+            "line": 10,
+            "character": 82
+          }
+        },
+        "/filters": {
+          "start": {
+            "line": 11,
+            "character": 2
+          },
+          "end": {
+            "line": 11,
+            "character": 66
+          }
+        }
+      }
+    }
+  ]
+}

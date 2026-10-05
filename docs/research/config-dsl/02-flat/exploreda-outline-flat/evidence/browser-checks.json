@@ -1,0 +1,59 @@
+{
+  "browser": "Playwright Chromium (headless)",
+  "delivery": "self-contained HTML injected with set_content; no network; file:// navigation blocked by managed-browser policy",
+  "cases": [
+    {
+      "case": "self-contained HTML bytes; initial checker; source mappings",
+      "pass": true
+    },
+    {
+      "case": "One-line charts",
+      "pass": true
+    },
+    {
+      "case": "Same dashboard as v1",
+      "pass": true
+    },
+    {
+      "case": "Explicit edits",
+      "pass": true
+    },
+    {
+      "case": "Exact native config",
+      "pass": true
+    },
+    {
+      "case": "Wrap at 50 preserves preview through button",
+      "pass": true
+    },
+    {
+      "case": "Click field error selects exact misspelled source token",
+      "pass": true
+    },
+    {
+      "case": "Typing rechecks locally with host default binding",
+      "pass": true
+    },
+    {
+      "case": "Keyboard check shortcut",
+      "pass": true
+    },
+    {
+      "case": "Width 783: no page overflow; source scroll remains local",
+      "pass": true
+    },
+    {
+      "case": "Width 390: no page overflow; source scroll remains local",
+      "pass": true
+    },
+    {
+      "case": "Full machine result and reset controls",
+      "pass": true
+    },
+    {
+      "case": "Browser JavaScript page errors",
+      "pass": true,
+      "errors": []
+    }
+  ]
+}

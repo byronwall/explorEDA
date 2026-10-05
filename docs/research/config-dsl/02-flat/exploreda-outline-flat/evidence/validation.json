@@ -1,0 +1,82 @@
+{
+  "artifact": "Outline Flat language review 02",
+  "repository_basis": {
+    "ref": "226ffae632239150b54b55e9b346386e5e1e66d4",
+    "source": "supplied previous DSL review and unchanged prototype checker",
+    "fresh_remote_read": false,
+    "repository_modified": false
+  },
+  "standalone_tests": {
+    "passed": 152,
+    "failed": 0,
+    "new_flat_tests": 100,
+    "previous_regression_tests": 52,
+    "evidence": "evidence/tests.tap"
+  },
+  "typecheck": {
+    "result": "pass",
+    "typescript": "5.8.3",
+    "node": "22.16.0",
+    "evidence": "evidence/typecheck.log"
+  },
+  "browser": {
+    "passed": 13,
+    "failed": 0,
+    "evidence": "evidence/browser-checks.json",
+    "native_charts": "not run",
+    "mode": "self-contained HTML bytes via Playwright set_content; file navigation blocked by managed-browser policy",
+    "visual_widths": [
+      1280,
+      783,
+      390
+    ]
+  },
+  "document_qa": {
+    "pages": 9,
+    "all_pages_rendered_and_visually_inspected": true,
+    "intermediate_pngs": "not delivered"
+  },
+  "matched_fixture": {
+    "dashboard.outline.eda": {
+      "characters": 908,
+      "nonemptyLines": 46,
+      "totalLines": 50,
+      "maxIndent": 8,
+      "maxWidth": 41
+    },
+    "dashboard.flat.eda": {
+      "characters": 675,
+      "nonemptyLines": 20,
+      "totalLines": 24,
+      "maxIndent": 0,
+      "maxWidth": 46
+    },
+    "dashboard.wrap50.flat.eda": {
+      "characters": 675,
+      "nonemptyLines": 20,
+      "totalLines": 24,
+      "maxIndent": 0,
+      "maxWidth": 46
+    },
+    "dashboard.single-statements.flat.eda": {
+      "characters": 655,
+      "nonemptyLines": 12,
+      "totalLines": 12,
+      "maxIndent": 0,
+      "maxWidth": 169
+    }
+  },
+  "unverified_or_not_implemented": [
+    "full native schema coverage",
+    "complete SavedDataStructure compilation",
+    "color-scale materialization",
+    "native default expansion",
+    "native chart runtime integration",
+    "full import/export round trip",
+    "root workspace and generic chart declarations",
+    "array-index updates",
+    "clipboard success",
+    "human usability or model-token study"
+  ],
+  "output_kind": "native-name chart patches; not runnable workspace settings"
+}

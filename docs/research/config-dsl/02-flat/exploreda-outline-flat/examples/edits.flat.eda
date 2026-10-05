@@ -1,0 +1,7 @@
+source orders=salesRows
+revenue:num=Revenue
+margin:num=Margin
+
+edit margin opacity=.7 margin.left=72
+scatter @margin x=revenue y=margin opacity=.55
++ size=3 margin.left=64

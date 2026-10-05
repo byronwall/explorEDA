@@ -1,0 +1,15 @@
+source orders=salesRows
+revenue:num=Revenue
+channel:cat=Channel
+product:cat=Product
+date:date="Order Date"
+returned:bool=Returned
+
+# Fields combine with AND; a list combines values with OR.
+metric @orders count where.channel=Web,Store
++ where.revenue=100..500 where.returned=false
++ where.date=2026-10-01..2026-10-31
++ where.product.contains=Pro
+
+# These are chart-owned linked filters, not independent comparison cohorts.
+table @records revenue,channel,product,date,returned

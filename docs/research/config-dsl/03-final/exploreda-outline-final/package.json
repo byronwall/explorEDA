@@ -1,0 +1,12 @@
+{
+  "name": "exploreda-outline-final-review",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc checker/*.ts --strict --target ES2022 --module ES2022 --moduleResolution bundler --skipLibCheck --outDir dist --declaration",
+    "check:types": "tsc checker/*.ts --strict --target ES2022 --module ES2022 --moduleResolution bundler --skipLibCheck --noEmit",
+    "test": "node --test checker/*.test.mjs"
+  },
+  "devDependencies": { "typescript": "5.8.3" }
+}

@@ -1,0 +1,18 @@
+{
+  "salesRows": {
+    "fields": {
+      "Revenue": "numeric",
+      "Margin": "numeric",
+      "Category": "categorical",
+      "Region": "categorical",
+      "Order ID": "categorical"
+    }
+  },
+  "data": {
+    "fields": {
+      "Revenue": "numeric",
+      "Margin": "numeric",
+      "Category": "categorical"
+    }
+  }
+}

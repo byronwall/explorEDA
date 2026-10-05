@@ -39,6 +39,9 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.1.2
         version: 1.1.2(@types/react@19.0.10)(react@19.0.0)
+      '@radix-ui/react-tooltip':
+        specifier: ^1.1.8
+        version: 1.1.8(@types/react-dom@19.0.4(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@tailwindcss/vite':
         specifier: ^4.0.14
         version: 4.0.14(vite@6.2.1(@types/node@22.13.10)(jiti@2.4.2)(lightningcss@1.29.2))

@@ -1,0 +1,11 @@
+source orders=salesRows
+revenue:num=Revenue
+margin:num=Margin
+category:cat=Category
+
+scatter @broken x=reveneu y=margin
++ opacity=1.2 x.scale=log
++ pointSzie=4
+hist field=category bins=0
+row @dupe field=category
+opacity=.6

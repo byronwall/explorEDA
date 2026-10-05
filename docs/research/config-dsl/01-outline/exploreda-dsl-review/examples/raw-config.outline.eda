@@ -1,0 +1,46 @@
+eda 1 outline
+sources
+  orders salesRows
+    label Order book
+    fields
+      revenue Revenue
+        label Revenue ($)
+        expect numeric
+        format currency
+        currency USD
+      margin Margin
+        label Margin ($)
+        expect numeric
+      category Category
+        expect categorical
+      region Region
+        expect categorical
+      order Order ID
+use orders
+
+scatter x revenue y margin color category
+  id grouped-scatter
+  facet region columns 2
+  filter revenue between 0 1000
+  filter category in Home Outdoors
+  config
+    xAxis
+      grid true
+    margin
+      left 64
+    facet
+      visibleFacetIds []
+
+table fields order revenue margin
+  id exact-columns
+  config
+    columns list
+      item
+        id order-key
+        field Order ID
+        width 140
+      item
+        id revenue-key
+        field Revenue
+        width 180
+    globalSearch "true"

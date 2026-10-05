@@ -1,0 +1,4 @@
+calc profit=Revenue-Cost
+scatter @p x=Revenue y=profit where.profit=0..
+metric @total sum=profit
+table @rows Revenue,profit

@@ -1,0 +1,270 @@
+{
+  "documentSHA256": "12446d1b42fbd8b623b7c54724988f1142dc0af66eb3586cdade5e3e17781efe",
+  "ok": true,
+  "productionReady": false,
+  "dialect": "flat",
+  "version": 3,
+  "targetRef": "226ffae632239150b54b55e9b346386e5e1e66d4",
+  "validation": {
+    "syntaxAndSubsetSemantics": "pass",
+    "bindings": "checked",
+    "fullNativeSchema": "not-implemented",
+    "runtime": "not-run",
+    "nativeOutput": "patches-only",
+    "identity": "explicit"
+  },
+  "diagnostics": [
+    {
+      "code": "I_EDIT",
+      "severity": "warning",
+      "message": "Explicit edit replaces /pointSize.",
+      "range": {
+        "start": {
+          "line": 11,
+          "character": 7
+        },
+        "end": {
+          "line": 11,
+          "character": 13
+        }
+      },
+      "relatedInformation": [
+        {
+          "message": "Replaced assignment",
+          "range": {
+            "start": {
+              "line": 6,
+              "character": 30
+            },
+            "end": {
+              "line": 6,
+              "character": 36
+            }
+          }
+        }
+      ]
+    },
+    {
+      "code": "I_EDIT",
+      "severity": "warning",
+      "message": "Explicit edit replaces where.profit.",
+      "range": {
+        "start": {
+          "line": 11,
+          "character": 14
+        },
+        "end": {
+          "line": 11,
+          "character": 35
+        }
+      },
+      "relatedInformation": [
+        {
+          "message": "Replaced assignment",
+          "range": {
+            "start": {
+              "line": 7,
+              "character": 2
+            },
+            "end": {
+              "line": 7,
+              "character": 18
+            }
+          }
+        }
+      ]
+    },
+    {
+      "code": "I_EDIT",
+      "severity": "warning",
+      "message": "Explicit edit replaces where.Channel.",
+      "range": {
+        "start": {
+          "line": 12,
+          "character": 7
+        },
+        "end": {
+          "line": 12,
+          "character": 22
+        }
+      },
+      "relatedInformation": [
+        {
+          "message": "Replaced assignment",
+          "range": {
+            "start": {
+              "line": 8,
+              "character": 15
+            },
+            "end": {
+              "line": 8,
+              "character": 32
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "preview": {
+    "sourceBinding": "salesRows",
+    "fieldSettings": {},
+    "chartPatches": [
+      {
+        "type": "scatter",
+        "id": "p",
+        "xField": "Revenue",
+        "yField": "profit",
+        "pointSize": 4,
+        "filters": [
+          {
+            "type": "range",
+            "field": "profit",
+            "min": 100,
+            "max": 500
+          }
+        ]
+      },
+      {
+        "type": "row",
+        "id": "c",
+        "field": "Channel",
+        "filters": []
+      }
+    ],
+    "calculations": [
+      {
+        "resultColumnName": "profit",
+        "expression": "([\"Revenue\"] - [\"Cost\"])"
+      }
+    ]
+  },
+  "calculationOrigins": [
+    {
+      "name": "profit",
+      "range": {
+        "start": {
+          "line": 5,
+          "character": 5
+        },
+        "end": {
+          "line": 5,
+          "character": 11
+        }
+      },
+      "dependencies": [
+        "Revenue",
+        "Cost"
+      ],
+      "inferredType": "numeric",
+      "scope": "row"
+    }
+  ],
+  "filterOrigins": [
+    {
+      "chart": 0,
+      "field": "profit",
+      "range": {
+        "start": {
+          "line": 11,
+          "character": 14
+        },
+        "end": {
+          "line": 11,
+          "character": 35
+        }
+      }
+    }
+  ],
+  "origins": [
+    {
+      "id": "p",
+      "properties": {
+        "/id": {
+          "start": {
+            "line": 6,
+            "character": 8
+          },
+          "end": {
+            "line": 6,
+            "character": 10
+          }
+        },
+        "/xField": {
+          "start": {
+            "line": 6,
+            "character": 11
+          },
+          "end": {
+            "line": 6,
+            "character": 20
+          }
+        },
+        "/yField": {
+          "start": {
+            "line": 6,
+            "character": 21
+          },
+          "end": {
+            "line": 6,
+            "character": 29
+          }
+        },
+        "/pointSize": {
+          "start": {
+            "line": 11,
+            "character": 7
+          },
+          "end": {
+            "line": 11,
+            "character": 13
+          }
+        },
+        "/filters": {
+          "start": {
+            "line": 11,
+            "character": 14
+          },
+          "end": {
+            "line": 11,
+            "character": 35
+          }
+        }
+      }
+    },
+    {
+      "id": "c",
+      "properties": {
+        "/id": {
+          "start": {
+            "line": 8,
+            "character": 4
+          },
+          "end": {
+            "line": 8,
+            "character": 6
+          }
+        },
+        "/field": {
+          "start": {
+            "line": 8,
+            "character": 7
+          },
+          "end": {
+            "line": 8,
+            "character": 14
+          }
+        },
+        "/filters": {
+          "start": {
+            "line": 12,
+            "character": 7
+          },
+          "end": {
+            "line": 12,
+            "character": 22
+          }
+        }
+      }
+    }
+  ]
+}

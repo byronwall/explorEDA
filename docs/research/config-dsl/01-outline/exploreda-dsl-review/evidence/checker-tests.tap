@@ -1,0 +1,324 @@
+TAP version 13
+# (node:1818) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: outline: complete four-chart dashboard passes subset checks
+ok 1 - outline: complete four-chart dashboard passes subset checks
+  ---
+  duration_ms: 4.297756
+  type: 'test'
+  ...
+# Subtest: phrase: complete four-chart dashboard passes subset checks
+ok 2 - phrase: complete four-chart dashboard passes subset checks
+  ---
+  duration_ms: 1.05536
+  type: 'test'
+  ...
+# Subtest: slots: complete four-chart dashboard passes subset checks
+ok 3 - slots: complete four-chart dashboard passes subset checks
+  ---
+  duration_ms: 0.660785
+  type: 'test'
+  ...
+# Subtest: all three dialects normalize to identical native-name patches
+ok 4 - all three dialects normalize to identical native-name patches
+  ---
+  duration_ms: 2.626639
+  type: 'test'
+  ...
+# Subtest: raw-config.outline: shipped runnable example passes
+ok 5 - raw-config.outline: shipped runnable example passes
+  ---
+  duration_ms: 0.561827
+  type: 'test'
+  ...
+# Subtest: no-sources.outline: shipped runnable example passes
+ok 6 - no-sources.outline: shipped runnable example passes
+  ---
+  duration_ms: 0.166751
+  type: 'test'
+  ...
+# Subtest: metric.outline: shipped runnable example passes
+ok 7 - metric.outline: shipped runnable example passes
+  ---
+  duration_ms: 0.288525
+  type: 'test'
+  ...
+# Subtest: inline.outline: shipped runnable example passes
+ok 8 - inline.outline: shipped runnable example passes
+  ---
+  duration_ms: 0.266311
+  type: 'test'
+  ...
+# Subtest: inline.slots: shipped runnable example passes
+ok 9 - inline.slots: shipped runnable example passes
+  ---
+  duration_ms: 0.439302
+  type: 'test'
+  ...
+# Subtest: source aliases compile to raw keys, not labels
+ok 10 - source aliases compile to raw keys, not labels
+  ---
+  duration_ms: 0.773465
+  type: 'test'
+  ...
+# Subtest: unknown field provides suggestions without correcting input
+ok 11 - unknown field provides suggestions without correcting input
+  ---
+  duration_ms: 0.535708
+  type: 'test'
+  ...
+# Subtest: bad chart does not hide errors in the following chart
+ok 12 - bad chart does not hide errors in the following chart
+  ---
+  duration_ms: 0.49756
+  type: 'test'
+  ...
+# Subtest: duplicate IDs are errors with the original location
+ok 13 - duplicate IDs are errors with the original location
+  ---
+  duration_ms: 0.284298
+  type: 'test'
+  ...
+# Subtest: duplicate shorthand settings are not silently last-write-wins
+ok 14 - duplicate shorthand settings are not silently last-write-wins
+  ---
+  duration_ms: 0.307463
+  type: 'test'
+  ...
+# Subtest: explicit raw overrides get a diagnostic and take precedence
+ok 15 - explicit raw overrides get a diagnostic and take precedence
+  ---
+  duration_ms: 0.23246
+  type: 'test'
+  ...
+# Subtest: raw override precedence does not depend on its textual position
+ok 16 - raw override precedence does not depend on its textual position
+  ---
+  duration_ms: 0.240092
+  type: 'test'
+  ...
+# Subtest: raw typed property paths and nested equivalents match
+ok 17 - raw typed property paths and nested equivalents match
+  ---
+  duration_ms: 0.912435
+  type: 'test'
+  ...
+# Subtest: unknown nested raw settings are rejected
+ok 18 - unknown nested raw settings are rejected
+  ---
+  duration_ms: 0.182655
+  type: 'test'
+  ...
+# Subtest: arbitrary unknown raw properties are not an escape from checking
+ok 19 - arbitrary unknown raw properties are not an escape from checking
+  ---
+  duration_ms: 0.161754
+  type: 'test'
+  ...
+# Subtest: empty arrays remain empty arrays, not omission
+ok 20 - empty arrays remain empty arrays, not omission
+  ---
+  duration_ms: 0.35855
+  type: 'test'
+  ...
+# Subtest: object arrays preserve order and custom column IDs
+ok 21 - object arrays preserve order and custom column IDs
+  ---
+  duration_ms: 0.326622
+  type: 'test'
+  ...
+# Subtest: quoted primitive-looking text stays text
+ok 22 - quoted primitive-looking text stays text
+  ---
+  duration_ms: 0.293342
+  type: 'test'
+  ...
+# Subtest: inline JSON array is accepted in raw config
+ok 23 - inline JSON array is accepted in raw config
+  ---
+  duration_ms: 0.242936
+  type: 'test'
+  ...
+# Subtest: hex color literals are not comments
+ok 24 - hex color literals are not comments
+  ---
+  duration_ms: 0.187573
+  type: 'test'
+  ...
+# Subtest: an unfinished quote is diagnosed locally
+ok 25 - an unfinished quote is diagnosed locally
+  ---
+  duration_ms: 0.184739
+  type: 'test'
+  ...
+# Subtest: tabs are diagnosed, not silently normalized
+ok 26 - tabs are diagnosed, not silently normalized
+  ---
+  duration_ms: 0.166932
+  type: 'test'
+  ...
+# Subtest: unindented options do not attach to the previous chart
+ok 27 - unindented options do not attach to the previous chart
+  ---
+  duration_ms: 0.264989
+  type: 'test'
+  ...
+# Subtest: keyword field names work in quoted explicit positions
+ok 28 - keyword field names work in quoted explicit positions
+  ---
+  duration_ms: 0.154452
+  type: 'test'
+  ...
+# Subtest: single quoted field names are accepted
+ok 29 - single quoted field names are accepted
+  ---
+  duration_ms: 0.174964
+  type: 'test'
+  ...
+# Subtest: optional colons/equal signs work without becoming mandatory
+ok 30 - optional colons/equal signs work without becoming mandatory
+  ---
+  duration_ms: 0.235314
+  type: 'test'
+  ...
+# Subtest: documented alias is accepted with canonical spelling guidance
+ok 31 - documented alias is accepted with canonical spelling guidance
+  ---
+  duration_ms: 0.235055
+  type: 'test'
+  ...
+# Subtest: categorical scatter axes are valid, unlike numeric histogram input
+ok 32 - categorical scatter axes are valid, unlike numeric histogram input
+  ---
+  duration_ms: 0.203426
+  type: 'test'
+  ...
+# Subtest: symlog on categorical axes is not silently accepted
+ok 33 - symlog on categorical axes is not silently accepted
+  ---
+  duration_ms: 0.178719
+  type: 'test'
+  ...
+# Subtest: stored scatter bounds are preserved but reported as ineffective
+ok 34 - stored scatter bounds are preserved but reported as ineffective
+  ---
+  duration_ms: 0.177037
+  type: 'test'
+  ...
+# Subtest: raw references do not expand aliases
+ok 35 - raw references do not expand aliases
+  ---
+  duration_ms: 0.637771
+  type: 'test'
+  ...
+# Subtest: one workspace cannot silently mix sources
+ok 36 - one workspace cannot silently mix sources
+  ---
+  duration_ms: 0.188895
+  type: 'test'
+  ...
+# Subtest: missing catalog gives deferred status, never full binding success
+ok 37 - missing catalog gives deferred status, never full binding success
+  ---
+  duration_ms: 0.136085
+  type: 'test'
+  ...
+# Subtest: source type expectations do not coerce host field types
+ok 38 - source type expectations do not coerce host field types
+  ---
+  duration_ms: 0.216426
+  type: 'test'
+  ...
+# Subtest: optional source fields can be missing while unused
+ok 39 - optional source fields can be missing while unused
+  ---
+  duration_ms: 0.128594
+  type: 'test'
+  ...
+# Subtest: using a missing optional field still errors
+ok 40 - using a missing optional field still errors
+  ---
+  duration_ms: 0.170947
+  type: 'test'
+  ...
+# Subtest: field alias cannot shadow a different raw field
+ok 41 - field alias cannot shadow a different raw field
+  ---
+  duration_ms: 0.110797
+  type: 'test'
+  ...
+# Subtest: range bounds are checked and open ends survive
+ok 42 - range bounds are checked and open ends survive
+  ---
+  duration_ms: 0.207482
+  type: 'test'
+  ...
+# Subtest: null and literal null remain distinct filter values
+ok 43 - null and literal null remain distinct filter values
+  ---
+  duration_ms: 0.145259
+  type: 'test'
+  ...
+# Subtest: nonfinite raw numbers are rejected
+ok 44 - nonfinite raw numbers are rejected
+  ---
+  duration_ms: 6.263619
+  type: 'test'
+  ...
+# Subtest: prototype-pollution paths and objects are rejected
+ok 45 - prototype-pollution paths and objects are rejected
+  ---
+  duration_ms: 0.422276
+  type: 'test'
+  ...
+# Subtest: unsupported full-design declarations fail explicitly
+ok 46 - unsupported full-design declarations fail explicitly
+  ---
+  duration_ms: 0.15289
+  type: 'test'
+  ...
+# Subtest: type discrimination survives raw config
+ok 47 - type discrimination survives raw config
+  ---
+  duration_ms: 0.197398
+  type: 'test'
+  ...
+# Subtest: wrong-chart options are rejected
+ok 48 - wrong-chart options are rejected
+  ---
+  duration_ms: 0.161092
+  type: 'test'
+  ...
+# Subtest: layout dimensions must be positive integers
+ok 49 - layout dimensions must be positive integers
+  ---
+  duration_ms: 0.189115
+  type: 'test'
+  ...
+# Subtest: same input produces identical diagnostics and previews
+ok 50 - same input produces identical diagnostics and previews
+  ---
+  duration_ms: 0.587726
+  type: 'test'
+  ...
+# Subtest: JSON strings preserve embedded comments, delimiters, and spaces
+ok 51 - JSON strings preserve embedded comments, delimiters, and spaces
+  ---
+  duration_ms: 0.277608
+  type: 'test'
+  ...
+# Subtest: native DataTable interface does not gain invented aggregateId support
+ok 52 - native DataTable interface does not gain invented aggregateId support
+  ---
+  duration_ms: 0.170226
+  type: 'test'
+  ...
+1..52
+# tests 52
+# suites 0
+# pass 52
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 150.744366

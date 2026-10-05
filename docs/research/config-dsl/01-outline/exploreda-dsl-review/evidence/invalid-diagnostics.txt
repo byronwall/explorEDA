@@ -1,0 +1,7 @@
+examples/invalid.outline.eda:21:11 error E_UNKNOWN_FIELD: Field reveneu does not resolve in salesRows. Suggestions: revenue, Revenue
+examples/invalid.outline.eda:23:3 error E_OPACITY: pointOpacity must be between 0 and 1.
+examples/invalid.outline.eda:24:5 error E_UNSUPPORTED_SCALE: The inspected scatter renderer explicitly chooses linear or symlog for numeric axes. Categorical bands are inferred.
+examples/invalid.outline.eda:25:3 error E_UNKNOWN_CONFIG: Unknown scatter setting pointSzie. config is not a validation bypass.
+examples/invalid.outline.eda:28:1 error E_EXPECT_NUMERIC: hist requires a numeric field. Use bar for categorical counts.
+examples/invalid.outline.eda:28:21 error E_BINS: binCount must be a positive integer.
+[eda-review] Checks failed; 2 chart patches; bindings checked. Full native schema and runtime were not checked.

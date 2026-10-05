@@ -1,0 +1,5 @@
+{
+  "status": "pass",
+  "scope": "New lab source only; exact baseline check-ui.mjs title and border rules; NOT pnpm check:ui",
+  "failures": []
+}

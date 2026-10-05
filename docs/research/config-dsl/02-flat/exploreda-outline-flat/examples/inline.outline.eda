@@ -1,0 +1,22 @@
+eda 1 outline
+sources
+  orders salesRows
+    label Order book
+    fields
+      revenue Revenue
+        label Revenue ($)
+        expect numeric
+        format currency
+        currency USD
+      margin Margin
+        label Margin ($)
+        expect numeric
+      category Category
+        expect categorical
+      region Region
+        expect categorical
+      order Order ID
+use orders
+
+scatter x revenue y margin color category opacity .55 points 3
+  id one-line-settings
