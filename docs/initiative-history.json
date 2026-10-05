@@ -126,5 +126,64 @@
         "result": "The merged PR reports pnpm check, pnpm check:ui, and browser checks at 1280, 783, and 390 px. Closed ticket exp-9wuz records the earlier grouped-bar proof."
       }
     ]
+  },
+  {
+    "title": "Analytical chart coverage",
+    "slug": "analytical-chart-coverage",
+    "outcome": "completed",
+    "retired_at": "2026-10-04",
+    "summary": "Delivered analytical chart expansion. Byron waived remaining cross-view and browser-restore acceptance checks; no ongoing initiative obligations remain. Reconciled against 3873c2766be43a3f970a2ba62c80d459979234ea and the prior Node 24 pnpm check pass (530 library and 21 demo tests). Relevant uncommitted changes are this review\u2019s durable chart documentation and planning cleanup. No new browser check ran.",
+    "reason": "Byron explicitly requested whole-initiative retirement and said the remaining work was not needed.",
+    "documentation": [
+      "docs/analytical-chart-coverage.md",
+      "docs/application-feature-inventory.md"
+    ],
+    "revision": "3873c2766be43a3f970a2ba62c80d459979234ea",
+    "follow_ups": [],
+    "reconciliation": [
+      {
+        "claim_id": "c1",
+        "disposition": "changed",
+        "evidence": "Accepted scope ends with the delivered chart families documented in docs/analytical-chart-coverage.md. Byron declined remaining acceptance work and retired the whole initiative."
+      },
+      {
+        "claim_id": "c2",
+        "disposition": "delivered",
+        "evidence": "Registry contains 18 view types; merged chart additions and upgrades are documented at 3873c2766be43a3f970a2ba62c80d459979234ea."
+      },
+      {
+        "claim_id": "c5",
+        "disposition": "delivered",
+        "evidence": "Histogram/Distribution presets and exact Other member inspection delivered in merged #123; covered by the prior 530 library test pass."
+      },
+      {
+        "claim_id": "c6",
+        "disposition": "delivered",
+        "evidence": "Calendar, Point/Region maps, Sankey, and ParallelCoordinates are implemented and registered at 3873c2766be43a3f970a2ba62c80d459979234ea."
+      },
+      {
+        "claim_id": "c7",
+        "disposition": "delivered",
+        "evidence": "Grouped-bar selection, heatmap, and Calendar initial slices are present; prior plan records #105, #103, and #104 with screenshots. Later stack #114\u2013#123 is merged."
+      }
+    ],
+    "waived_work": [
+      {
+        "id": "V1",
+        "scope": "Grouped bar, heatmap, pivot, Calendar and daily Line agree with source records",
+        "disposition": "omitted",
+        "reason": "Byron explicitly requested whole-initiative retirement and said the remaining work was not needed."
+      },
+      {
+        "id": "V2",
+        "scope": "Heatmap, Sankey and parallel-coordinate selections survive browser restore",
+        "disposition": "omitted",
+        "reason": "Byron explicitly requested whole-initiative retirement and said the remaining work was not needed."
+      }
+    ],
+    "evidence": [
+      "Prior pnpm check passed on Node 24; existing React act warning in demo test.",
+      "Ok, just retire the whole thing. I don't need that stuff which remains"
+    ]
   }
 ]
