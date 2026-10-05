@@ -49,3 +49,7 @@ History integrated on codex/saved-view-tabs. Undo/Redo, read-only preview, expli
 **2026-10-05T04:28:09Z**
 
 Validation detail: pnpm check completed UI conventions, package/demo builds, and both type checks. The package test suite had one categories test timeout (529/530 passed); that test passed when rerun alone. All 25 demo tests pass after the final extraction, and the demo production build passes.
+
+**2026-10-05T04:36:04Z**
+
+Repair on the same branch: strengthened preview restore coverage by switching to another saved tab during historical preview before restoring; restore opens that selected tab. The demo suite passes 26 tests.

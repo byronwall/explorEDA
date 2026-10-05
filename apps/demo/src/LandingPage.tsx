@@ -31,7 +31,10 @@ import { LandingFooter } from "./landing/LandingFooter";
 import { SampleDataButtons } from "./landing/SampleDataButtons";
 import { PageFileDrop } from "./landing/PageFileDrop";
 import { SectionHeading } from "./landing/SectionHeading";
-import { getSavedViewsRows, readSavedViewsSession } from "./savedViewsSession";
+import {
+  getSavedViewsRows,
+  readSavedViewsSessionResult,
+} from "./savedViewsSession";
 
 const featuredExample = examples.find(
   (item) => item.id === FEATURED_EXAMPLE_ID
@@ -72,8 +75,10 @@ export function LandingPage() {
   const showDocs = searchParams.get("view") === "docs";
 
   const [example, setExample] = useState<ExampleData | null>(null);
-  const [restoredSession, setRestoredSession] = useState(() =>
-    readSavedViewsSession()
+  const [initialRestore] = useState(() => readSavedViewsSessionResult());
+  const [restoreFailed, setRestoreFailed] = useState(initialRestore.failed);
+  const [restoredSession, setRestoredSession] = useState(
+    initialRestore.session
   );
   const [csvData, setCsvData] = useState<DatumObject[]>(() =>
     restoredSession ? getSavedViewsRows(restoredSession) : []
@@ -115,6 +120,7 @@ export function LandingPage() {
   );
 
   const handleClearData = () => {
+    setRestoreFailed(false);
     setSearchParams({});
     setExample(null);
     setIsCsvMode(false);
@@ -133,6 +139,7 @@ export function LandingPage() {
 
   const handleExampleSelect = useCallback(
     (id: string) => {
+      setRestoreFailed(false);
       setSearchParams({ example: id });
     },
     [setSearchParams]
@@ -186,6 +193,7 @@ export function LandingPage() {
   }, [exampleId, fetchExampleData, retryCount]);
 
   const handleCsvImport = (data: DatumObject[]) => {
+    setRestoreFailed(false);
     setIsCsvMode(true);
     setSearchParams({});
     setExample(null);
@@ -206,6 +214,7 @@ export function LandingPage() {
       if (!validateSavedAnalysisForData(analysis)) {
         throw new Error("Analysis formulas do not match the saved source rows");
       }
+      setRestoreFailed(false);
       setCsvData(analysis.data as DatumObject[]);
       setCsvSavedData(analysis.settings);
       setIsCsvMode(true);
@@ -223,6 +232,54 @@ export function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground ">
       <div className="flex flex-col items-center gap-6 px-3 py-3 sm:px-5">
+        {restoreFailed && (
+          <div
+            role="alert"
+            className="w-full max-w-6xl rounded-md border border-destructive/50 bg-destructive/10 p-4 text-sm"
+          >
+            <p>
+              Saved data could not be restored. The stored value is still
+              available.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const result = readSavedViewsSessionResult();
+                  setRestoreFailed(result.failed);
+                  if (!result.session) return;
+                  setSearchParams({});
+                  setExample(null);
+                  setRestoredSession(result.session);
+                  setCsvData(getSavedViewsRows(result.session));
+                  setIsCsvMode(true);
+                }}
+              >
+                Retry restore
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  try {
+                    localStorage.removeItem("exploreda.saved-views.v1");
+                  } catch {
+                    // The user can still import a new source if storage is unavailable.
+                  }
+                  setRestoreFailed(false);
+                  setRestoredSession(undefined);
+                  setCsvData([]);
+                  setIsCsvMode(false);
+                  setExample(null);
+                  setSearchParams({});
+                }}
+              >
+                Clear saved data and start with new data
+              </Button>
+            </div>
+          </div>
+        )}
         <AnimatePresence mode="wait">
           {!hasData ? (
             <motion.div

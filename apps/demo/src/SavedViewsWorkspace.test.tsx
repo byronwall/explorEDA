@@ -195,6 +195,11 @@ describe("saved view session and history", () => {
     expect(localStorage.getItem("exploreda.saved-views.v1")).toBe(
       beforePreview
     );
+    fireEvent.click(screen.getByRole("tab", { name: "Sales" }));
+    expect(screen.getByRole("tab", { name: "Sales" })).toHaveAttribute(
+      "aria-selected",
+      "true"
+    );
     fireEvent.click(screen.getByRole("button", { name: "Return to present" }));
     expect(screen.queryByText(/Preview ·/)).toBeNull();
 
@@ -212,9 +217,14 @@ describe("saved view session and history", () => {
     fireEvent.change(slider, {
       target: { value: String(newViewCheckpoint) },
     });
+    fireEvent.click(screen.getByRole("tab", { name: "Sales" }));
+    expect(screen.getByRole("tab", { name: "Sales" })).toHaveAttribute(
+      "aria-selected",
+      "true"
+    );
     fireEvent.click(screen.getByRole("button", { name: "Restore this view" }));
     await waitFor(() => expect(screen.queryByText(/Preview ·/)).toBeNull());
-    expect(screen.getByRole("tab", { name: "New view" })).toHaveAttribute(
+    expect(screen.getByRole("tab", { name: "Sales" })).toHaveAttribute(
       "aria-selected",
       "true"
     );

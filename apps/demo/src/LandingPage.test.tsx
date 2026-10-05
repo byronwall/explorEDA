@@ -320,6 +320,38 @@ describe("LandingPage routing", () => {
     ).toBe(true);
   });
 
+  it("reports a failed saved-session restore and keeps it until a new source is chosen", async () => {
+    const unreadable = "{not valid json";
+    localStorage.setItem("exploreda.saved-views.v1", unreadable);
+    const router = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
+    );
+
+    render(<RouterProvider router={router} />);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Saved data could not be restored"
+    );
+    expect(localStorage.getItem("exploreda.saved-views.v1")).toBe(unreadable);
+
+    fireEvent.click(screen.getByRole("button", { name: "Retry restore" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Saved data could not be restored"
+    );
+    expect(localStorage.getItem("exploreda.saved-views.v1")).toBe(unreadable);
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Clear saved data and start with new data",
+      })
+    );
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(localStorage.getItem("exploreda.saved-views.v1")).toBeNull();
+    expect(
+      screen.getByRole("heading", { name: "Import your data" })
+    ).toBeInTheDocument();
+  });
+
   it("shows full-analysis validation errors and accepts a valid followup", async () => {
     const router = createMemoryRouter(
       [{ path: "/*", element: <LandingPage /> }],

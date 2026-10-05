@@ -43,3 +43,7 @@ Implementation integrated on codex/saved-view-tabs. Named views, local session r
 **2026-10-05T04:28:09Z**
 
 Validation detail: pnpm check completed UI conventions, package/demo builds, and both type checks. The package test suite had one categories test timeout (529/530 passed); that test passed when rerun alone. All 25 demo tests pass after the final extraction, and the demo production build passes.
+
+**2026-10-05T04:36:04Z**
+
+Repair on the same branch: startup now distinguishes no saved session from failed storage reads or invalid saved data. A visible notice preserves the stored value while retrying and offers an explicit clear-and-import path. Added a regression test for unreadable saved JSON, retention during retry, and explicit clearing before a new import.

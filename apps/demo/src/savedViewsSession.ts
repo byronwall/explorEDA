@@ -35,10 +35,21 @@ export function getSavedViewsRows(session: SavedViewsSession): DatumObject[] {
   return parseSavedAnalysis(session.sourceAnalysis).data as DatumObject[];
 }
 
-export function readSavedViewsSession(): SavedViewsSession | undefined {
+export type SavedViewsReadResult = {
+  session: SavedViewsSession | undefined;
+  failed: boolean;
+};
+
+export function readSavedViewsSessionResult(): SavedViewsReadResult {
+  let raw: string | null;
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return undefined;
+    raw = localStorage.getItem(STORAGE_KEY);
+  } catch {
+    return { session: undefined, failed: true };
+  }
+  if (raw === null) return { session: undefined, failed: false };
+
+  try {
     const value = JSON.parse(raw) as SavedViewsSession;
     if (
       value.version !== 1 ||
@@ -50,7 +61,7 @@ export function readSavedViewsSession(): SavedViewsSession | undefined {
       ) ||
       !value.tabs.some((tab) => tab.id === value.activeTabId)
     )
-      return undefined;
+      return { session: undefined, failed: true };
     parseSavedAnalysis(value.sourceAnalysis);
     if (!Array.isArray(value.history) || !Array.isArray(value.path)) {
       const initial = clone(value.tabs);
@@ -70,9 +81,13 @@ export function readSavedViewsSession(): SavedViewsSession | undefined {
           Number.isInteger(index) && index >= 0 && index < value.history.length
       )
     )
-      return undefined;
-    return value;
+      return { session: undefined, failed: true };
+    return { session: value, failed: false };
   } catch {
-    return undefined;
+    return { session: undefined, failed: true };
   }
+}
+
+export function readSavedViewsSession(): SavedViewsSession | undefined {
+  return readSavedViewsSessionResult().session;
 }
