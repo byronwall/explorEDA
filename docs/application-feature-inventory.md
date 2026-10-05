@@ -1,14 +1,14 @@
 # explorEDA application feature inventory
 
-Updated with bounded initiative retirement findings on 2026-10-02. See the [current gaps and verification](transcript-gap-analysis.md).
+Updated with analytical chart reconciliation on 2026-10-04. Chart additions were reviewed against `3873c27`. See the [current gaps and verification](transcript-gap-analysis.md).
 
 Original audit: 2026-09-17, commit `a168f1b`. Retirement sections reviewed against `22a9bd3`; the full inventory was not re-audited.
 
 This document describes the current reviewed implementation. It covers the demo application and the public `exploreda` package. The companion [transcript gap analysis](transcript-gap-analysis.md) compares this behavior with the recorded product intent.
 
-The application is a desktop workspace for one in-memory table. Users can inspect fields, create linked views, filter rows, define calculated columns, and arrange a dashboard. Eleven registered view types share one data store and one Crossfilter instance per workspace.
+The application is a desktop workspace for one in-memory table. Users can inspect fields, create linked views, filter rows, define calculated columns, and arrange a dashboard. Eighteen registered view types share one data store and one Crossfilter instance per workspace.
 
-The strongest existing path is scalar data → field summary → charts and rows → linked filters. Field settings now preserve source values while applying runtime overrides and shared display rules. Saved workspace structures and a host callback exist. Named grouped summaries can feed read-only bar and table views. Durable saved views do not exist. Scatter and bar have planned, inspectable marks; other chart types do not yet have that trace path.
+The strongest existing path is scalar data → field summary → charts and rows → linked filters. Field settings now preserve source values while applying runtime overrides and shared display rules. Saved workspace structures and a host callback exist. Named grouped summaries feed bar and table views; grouped bars also select source categories. Durable host storage remains separate. Chart traces now cover additional families described in the [analytical chart guide](analytical-chart-coverage.md).
 
 ## Contents
 
@@ -87,7 +87,7 @@ Keep the fixed-seed shop generator. Dataset sources and licenses belong in the [
 | Multiple sources, relationships, joins, lookups, and source inspection | [Multi-source analysis](intent/multi-source-analysis/intent-brief.md). The retired slice accepts one in-memory table. |
 | Named analysis views, durable saves, and application navigation | [Project task views](intent/project-task-views/intent-brief.md). Package restore works; host storage remains separate. |
 | Runtime control of the complete workspace | [Runtime configuration](intent/runtime-configuration-story/intent-brief.md). Keep the public package and primary application aligned. |
-| Inspectable source-to-mark transformations and contributors | [Traceability](#traceability-and-reproducibility). Scatter and bar have trace paths; other chart types and source-data filter flow remain future scope. |
+| Inspectable source-to-mark transformations and contributors | [Traceability](#traceability-and-reproducibility). Additional chart families now have trace paths; see the [chart guide](analytical-chart-coverage.md). Source-data filter flow remains future scope. |
 | Composable visualization definitions, derived layers, and advanced chart construction | [Composed analytical graphics](intent/composed-analytical-graphics/intent-brief.md). Per-chart settings remain the current model. |
 | Agent-created deterministic analysis views | [In-app analysis agent](intent/in-app-analysis-agent/intent-brief.md). This remains separate from the delivered inspection slice. |
 | Adaptive table controls, rich cells, grouping, selection, chart defaults, and facet quality | [Transcript gap analysis](transcript-gap-analysis.md). Column order and virtual rows now exist; do not reuse the old missing-feature list. |
@@ -352,12 +352,14 @@ Sources: [axis controls][axissettings], [scale helper][numeric], [axis rendering
 
 ### Catalogue at a glance
 
+The [analytical chart guide](analytical-chart-coverage.md) documents current modes, contracts, and verification limits. The initiative retired after Byron waived its remaining checks.
+
 | Registered type | Input and result                                           | Direct filtering                              |
 | --------------- | ---------------------------------------------------------- | --------------------------------------------- |
 | `row`           | Category → horizontal count bars.                          | Category selection.                           |
-| `bar`           | Numeric field → histogram; categorical field → count bars. | Numeric brush or category selection.          |
-| `scatter`       | Two numerical fields → row-level points.                   | X/Y rectangle.                                |
-| `line`          | Numeric X and multiple Y columns → one line per column.    | X range.                                      |
+| `bar` | Histogram, category count, grouped measure, grouped/stacked/percentage series. | Numeric range, category, or exact series pair. |
+| `scatter` | Row points, numeric bubble area, or rectangular count bins. | Point or X/Y range. |
+| `line` | Raw observations or UTC period summaries; line, area, stacked area. | X range or exact period/series. |
 | `boxplot`       | Numeric field, optional group → distribution summaries.    | Group selection.                              |
 | `3d-scatter`    | Three numerical coordinates → WebGL points.                | Receives other filters; creates none.         |
 | `pivot`         | Row groups, column group, measures → aggregates.           | Row/column header values.                     |
@@ -365,16 +367,23 @@ Sources: [axis controls][axissettings], [scale helper][numeric], [axis rendering
 | `summary`       | Fields → profiles of globally filtered rows.               | No own filter; field actions create charts.   |
 | `color-legend`  | Color fields → categories or numerical gradient.           | Categories only.                              |
 | `markdown`      | Saved rich-text content → editable explanation.            | None.                                         |
+| `heatmap` | Two categories → count, sum, or average cells. | Exact pair or axis category. |
+| `calendar` | UTC day → daily metric in year/month grid. | Day or date span. |
+| `metric-card` | Active population → count, sum, or average. | Receives filters; source inspection. |
+| `map` | Coordinates or typed GeoJSON region join. | Point rows or region keys. |
+| `sankey` | Ordered stage columns → row paths and flow weights. | Stage values or adjacent stage pair. |
+| `parallel-coordinates` | Fields → one line per complete row. | Intersected axis filters. |
+| `ecdf` | Numeric values → cumulative shares. | Threshold or numeric span. |
 
 ### Row chart
 
 The row chart counts source records by category. It is not a horizontal bar renderer for arbitrary supplied measures.
 
-Categories are ordered by their full-source frequency across all facets. Filtering other charts changes counts without using those new counts to reorder the categories. Row heights adapt within configured limits. Categories that do not fit collapse into an **Other categories** row. This remainder cannot be selected.
+Categories are ordered by their full-source frequency across all facets. Filtering other charts changes counts without using those new counts to reorder the categories. Row heights adapt within configured limits. Categories that do not fit collapse into an **Other categories** row. The remainder opens a member list for exact category selection and source inspection.
 
-Counts appear as labels. Clicking or using the keyboard toggles categories. Unselected values remain visible with subdued styling. The collapsed remainder has no drill-down action. Real categories named Others remain selectable.
+Counts appear as labels. Clicking or using the keyboard toggles categories. Unselected values remain visible with subdued styling. The collapsed remainder supports search, paging, and member inspection. Real categories named Others remain selectable.
 
-Missing categories use the common null filter behavior. Typed values retain separate labels and selections. There is no measure selection, custom category ordering, or list of hidden categories.
+Missing categories use the common null filter behavior. Typed values retain separate labels and selections. Row Chart remains a count view; hidden categories are available through the member list.
 
 Source: [row chart implementation](../packages/explorEDA/src/components/charts/RowChart/RowChart.tsx), [definition](../packages/explorEDA/src/components/charts/RowChart/definition.ts).
 
@@ -388,7 +397,7 @@ For categorical data, the chart counts typed values and supports category select
 
 Selection color for numeric bins tests a bin's start value. A bin that overlaps a brush boundary can therefore have a count/selection appearance that needs closer interpretation. The range filters individual values, not whole-bin membership.
 
-Color applies to bins or categories. A bar can also reference a named grouped summary and render its count, sum, or average result. This path is read-only and uses globally filtered effective values. Stacked bars, grouped bars, percentage bars, and arbitrary supplied measures remain absent.
+Color applies to bins or categories. A bar can reference a named grouped summary for count, sum, or average and select source categories. Series modes add grouped, stacked, and percentage bars. Traces explain segment values, contributors, and category denominators. Stacks use additive metrics; averages remain grouped.
 
 Source: [bar renderer](../packages/explorEDA/src/components/charts/BarChart/BarChart.tsx), [definition](../packages/explorEDA/src/components/charts/BarChart/definition.ts), [bin utilities](../packages/explorEDA/src/components/charts/BarChart/bins.ts).
 
@@ -398,15 +407,15 @@ Scatter plots show one point per usable row. X and Y accept finite numerical val
 
 Points render on Canvas. Axes, hover guides, and brushing use SVG. Domains use source values with padding and can participate in facet sharing. Points excluded by the chart's own brush remain as faint context; records excluded by other charts disappear.
 
-Hover finds a nearby point and shows crosshairs, coordinate values, and available color context. The search scans live points. There is no point-to-record inspector or point-level keyboard navigation.
+Hover finds a nearby point and shows crosshairs, coordinate values, and available color context. The search scans live points. Point traces explain source records. Keyboard and pointer selection exist; broader accessibility review remains separate evidence.
 
-There is no lasso, variable point-size encoding, deterministic jitter control, regression, confidence interval, two-dimensional density layer, or connected path per group.
+Numeric bubble area and rectangular count-density bins are implemented. Traces explain size domains, radius calculations, exact bin boundaries, and source IDs. Lasso, regression, confidence bands, and smooth density contours remain separate proposals.
 
 Source: [scatter renderer](../packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx), [definition](../packages/explorEDA/src/components/charts/ScatterPlot/definition.ts).
 
 ### Line chart
 
-The line chart expects a numerical X field and a list of numerical Y fields. Each Y column becomes a separate series. The default X choice can use positional `__ID`. A categorical group column does not generate multiple long-format series.
+The line chart expects a numerical X field and a list of numerical Y fields. Each Y column becomes a separate series. The default X choice can use positional `__ID`. Calendar mode supports a categorical split field over UTC day, week, or month summaries.
 
 Per-series settings include line color, width, opacity, solid/dashed/dotted style, point visibility, point size, point opacity, and left/right axis assignment. Curve choices include linear, monotone, and step. Users can show a static legend at any of four positions.
 
@@ -414,7 +423,7 @@ Missing or invalid values break paths. Hover locates nearby series values and di
 
 Large series use width-related reduction that preserves representative first/minimum/maximum points within buckets. Input is ordered by finite X before rendering and reduction. Constant-X reduction still needs care because the reduction path can collapse data sharply.
 
-X and Y extents use the full source. Facets therefore retain the same comparison domains under peer filtering. Left and right axes are independent. There is no date-aware axis, long-format grouping, line-per-row/slope view, stacked area, regression series, or click-to-hide legend.
+X and Y extents use the full source. Facets therefore retain the same comparison domains under peer filtering. Left and right axes are independent. Calendar summaries have date-aware intervals, missing-period rules, and line, area, or stacked-area display. Traces retain period and band contributors. Raw observation mode remains available. Regression and rolling windows remain proposals.
 
 Source: [line renderer](../packages/explorEDA/src/components/charts/LineChart/LineChart.tsx), [definition](../packages/explorEDA/src/components/charts/LineChart/definition.ts), [reduction utility](../packages/explorEDA/src/lib/chartUtils.ts).
 
@@ -428,11 +437,11 @@ Users can show outliers, a violin overlay, a beeswarm overlay, or both overlays.
 
 The violin uses a Gaussian density estimate at 100 evaluation points. Automatic bandwidth follows a Silverman-style calculation; a manual bandwidth setting also exists. Each group's peak width is normalized independently. Violin width therefore does not compare group population or absolute peak density directly.
 
-The beeswarm uses deterministic sampling up to 300 points per group and a bounded placement search. Collision distances use the chart's screen-space Y scale, so value ranges keep one visual meaning. A visible note marks capped samples, while box statistics still use all rows. It remains a heuristic and does not retain source row IDs.
+The beeswarm uses deterministic sampling up to 300 points per group and a bounded placement search. Collision distances use the chart's screen-space Y scale, so value ranges keep one visual meaning. A visible note marks capped samples, while box statistics still use all rows. It remains a heuristic. Distribution observation traces retain source IDs.
 
 Group order can follow labels or population medians. Full-source groups and numerical domains help preserve context. Style controls cover box, median, whisker, and outlier appearance, although some stored color properties are not used independently by the renderer.
 
-Aggregated statistics and outlier values do not retain source row IDs. There is no numeric brush on the box or reusable statistics table output.
+Distribution traces explain quartiles, whiskers, density, excluded inputs, and source observations. A reusable statistics table remains separate scope.
 
 Source: [box renderer](../packages/explorEDA/src/components/charts/BoxPlot/BoxPlot.tsx), [statistics and overlays](../packages/explorEDA/src/components/charts/BoxPlot/boxPlotCalculations.ts), [definition](../packages/explorEDA/src/components/charts/BoxPlot/definition.ts).
 
@@ -591,7 +600,7 @@ Sources: [table body][tablebody], [Crossfilter wrapper][crossfilter], [provider]
 
 The application preserves useful configuration evidence: field names, calculation text and dependencies, active chart filters, layouts, color choices, and saved chart settings. Tooltips expose some computed values. Raw rows can be viewed and exported.
 
-Scalar calculations expose source-row inputs, saved and draft values, dependency trees, and downstream uses. Pivot cells and named grouped summaries expose exact inputs and positional source IDs. IDs remain valid within the loaded snapshot. Scatter points, guides, legends, facets, hover values, and badges resolve through a repeatable plan and chart trace. Bar marks use a bar plan with contributors, numeric exclusions, domains, baseline, and geometry. Both use a shared axis plan and chart trace scope. Boxes, violins, and lines do not yet have the same mark trace. There is no source checksum or data-version binding.
+Scalar calculations expose source-row inputs, saved and draft values, dependency trees, and downstream uses. Pivot cells and named grouped summaries expose exact inputs and positional source IDs. IDs remain valid within the loaded snapshot. Scatter points, guides, legends, facets, hover values, and badges resolve through a repeatable plan and chart trace. Bar marks use a bar plan with contributors, numeric exclusions, domains, baseline, and geometry. Both use a shared axis plan and chart trace scope. Distribution and calendar Line modes also expose source traces, as do the new families in the [chart guide](analytical-chart-coverage.md). There is no source checksum or data-version binding.
 
 The trace inspector resolves selected scatter and bar objects from current plans. Plan revisions clear stale selections. Rows removed by another chart have no scatter glyph to select; a source-data filter-flow view remains future scope. A full visual baseline, 10,000-row trace benchmark, and atomic mixed-render check were deferred by the accepted slice.
 
