@@ -140,12 +140,20 @@ export function LandingPage() {
   const handleExampleSelect = useCallback(
     (id: string) => {
       setRestoreFailed(false);
+      setRestoredSession(undefined);
       setSearchParams({ example: id });
     },
     [setSearchParams]
   );
 
   useEffect(() => {
+    if (restoredSession) {
+      setIsLoading(false);
+      setExample(null);
+      setExampleData([]);
+      setLoadError(null);
+      return;
+    }
     if (!exampleId) {
       setIsLoading(false);
       setExample(null);
@@ -190,7 +198,7 @@ export function LandingPage() {
       });
 
     return () => controller.abort();
-  }, [exampleId, fetchExampleData, retryCount]);
+  }, [exampleId, fetchExampleData, retryCount, restoredSession]);
 
   const handleCsvImport = (data: DatumObject[]) => {
     setRestoreFailed(false);

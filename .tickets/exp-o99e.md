@@ -57,3 +57,7 @@ Repair on the same branch: strengthened preview restore coverage by switching to
 **2026-10-05T05:12:13Z**
 
 Final source-review repair: ordinary capture no longer changes the ExplorEda mount key or savedData initialization snapshot, preserving mounted editors and focus. Tab selection, Undo/Redo, preview selection, Return to present, and explicit restore use a new keyed initialization snapshot. Demo tests assert editor draft/focus survives ordinary capture and history actions apply the requested settings. Focused demo tests pass (26/26), with UI and demo type checks passing.
+
+**2026-10-05T05:23:13Z**
+
+Final review repairs: captured settings stay frozen for each keyed workspace instance, so Add to grid and other ordinary edits no longer remount ExplorEda or lose the editor state. Explicit tab changes and history navigation still remount with requested snapshots. Added ArrowLeft/ArrowRight/Home/End tab selection and focus behavior. Full pnpm check passes: 95 package files/530 tests and 7 demo files/28 tests, both builds and type checks, plus UI conventions.

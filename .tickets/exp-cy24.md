@@ -47,3 +47,7 @@ Validation detail: pnpm check completed UI conventions, package/demo builds, and
 **2026-10-05T04:36:04Z**
 
 Repair on the same branch: startup now distinguishes no saved session from failed storage reads or invalid saved data. A visible notice preserves the stored value while retrying and offers an explicit clear-and-import path. Added a regression test for unreadable saved JSON, retention during retry, and explicit clearing before a new import.
+
+**2026-10-05T05:23:13Z**
+
+Final review repair: a valid local session now takes precedence over an example URL on refresh, preserving source, active tab, filters, and chart settings. Selecting the back control still exposes the source chooser. Added an actual-routing regression with ?example=shop-operations and a populated two-tab saved session.

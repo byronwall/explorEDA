@@ -73,6 +73,7 @@ vi.mock("exploreda", async () => {
           "data-rows": data.length,
           "data-filter-count":
             currentSettings.rowsSettings?.filters.length ?? 0,
+          "data-chart-count": currentSettings.charts.length,
           "data-calculation-count": currentSettings.calculations.length,
         },
         React.createElement("input", {
@@ -167,7 +168,18 @@ describe("saved view session and history", () => {
     expect(screen.getByTestId("current-history-label")).toHaveTextContent(
       /^Filter ·/
     );
+    const beforeChartMount = screen
+      .getByTestId("workspace")
+      .getAttribute("data-mount");
     fireEvent.click(screen.getByRole("button", { name: "Emit chart" }));
+    expect(screen.getByTestId("workspace")).toHaveAttribute(
+      "data-mount",
+      beforeChartMount
+    );
+    expect(screen.getByTestId("workspace")).toHaveAttribute(
+      "data-chart-count",
+      "1"
+    );
     expect(screen.getByTestId("current-history-label")).toHaveTextContent(
       /^View ·/
     );
@@ -337,6 +349,33 @@ describe("saved view session and history", () => {
     expect(screen.getByText(/of 50 checkpoints saved/)).toBeInTheDocument();
     view.unmount();
   });
+  it("moves focus and selection through saved tabs with arrow and boundary keys", async () => {
+    render(
+      <SavedViewsWorkspace
+        data={[]}
+        initialSettings={makeSettings()}
+        viewName="Sales"
+      />
+    );
+    await screen.findByTestId("workspace");
+    fireEvent.click(screen.getByRole("button", { name: "New view" }));
+    const sales = screen.getByRole("tab", { name: "Sales" });
+    const newView = screen.getByRole("tab", { name: "New view" });
+
+    sales.focus();
+    fireEvent.keyDown(sales, { key: "ArrowRight" });
+    expect(newView).toHaveFocus();
+    expect(newView).toHaveAttribute("aria-selected", "true");
+
+    fireEvent.keyDown(newView, { key: "ArrowLeft" });
+    expect(sales).toHaveFocus();
+    expect(sales).toHaveAttribute("aria-selected", "true");
+    fireEvent.keyDown(sales, { key: "End" });
+    expect(newView).toHaveFocus();
+    fireEvent.keyDown(newView, { key: "Home" });
+    expect(sales).toHaveFocus();
+  });
+
   it("captures defaults before labeling the first filter edit", async () => {
     render(<SavedViewsWorkspace data={[]} viewName="Orders" />);
     await screen.findByTestId("workspace");

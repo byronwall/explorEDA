@@ -296,6 +296,7 @@ export function SavedViewsWorkspace({
 
   const changeActive = (id: string) => {
     setEditingName(false);
+    if (id === (showingPreview ? previewTabId : currentView.id)) return;
     if (showingPreview) {
       setPreviewTabId(id);
       setWorkspaceKey((key) => key + 1);
@@ -509,8 +510,30 @@ export function SavedViewsWorkspace({
               type="button"
               role="tab"
               aria-selected={tab.id === view.id}
+              tabIndex={tab.id === view.id ? 0 : -1}
               className={`rounded-md border px-3 py-1.5 text-sm ${tab.id === view.id ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground hover:bg-accent"}`}
               onClick={() => changeActive(tab.id)}
+              onKeyDown={(event) => {
+                let index: number | undefined;
+                const currentIndex = shownTabs.findIndex(
+                  (candidate) => candidate.id === tab.id
+                );
+                if (event.key === "ArrowRight")
+                  index = (currentIndex + 1) % shownTabs.length;
+                else if (event.key === "ArrowLeft")
+                  index =
+                    (currentIndex - 1 + shownTabs.length) % shownTabs.length;
+                else if (event.key === "Home") index = 0;
+                else if (event.key === "End") index = shownTabs.length - 1;
+                if (index === undefined) return;
+                event.preventDefault();
+                const tabs =
+                  event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(
+                    '[role="tab"]'
+                  );
+                tabs?.[index]?.focus();
+                changeActive(shownTabs[index]!.id);
+              }}
             >
               {tab.name}
             </button>
