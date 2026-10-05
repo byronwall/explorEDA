@@ -7,7 +7,13 @@ import {
   type ScatterFit,
   type ScatterFitPlan,
 } from "./fitPlan";
-import { fitEquation, formatR2, type RegressionFit } from "./regression";
+import {
+  LOESS_EXACT_ROWS,
+  LOESS_VERTICES,
+  fitEquation,
+  formatR2,
+  type RegressionFit,
+} from "./regression";
 
 export interface FitTrace {
   kind: "fit" | "fit-results";
@@ -26,9 +32,50 @@ const precise = (value: number | undefined) =>
 const METHOD_HELP: Record<ScatterFitPlan["method"], string> = {
   linear:
     "Ordinary least squares: the straight line that minimizes the squared vertical distances to the points. Slope is the change in Y for one unit of X. Offset is the fitted Y at X = 0, which may lie outside the data. R² is the share of Y variance the line explains; it does not show that the relationship is linear or causal.",
+  polynomial:
+    "Least squares on powers of X up to the chosen degree. Coefficients are listed from the constant term up. Adding terms always raises R², so compare adjusted R², which charges for each term. The curve is drawn only across the observed X range; outside it a polynomial can turn sharply.",
+  loess:
+    "Locally weighted regression: each point on the curve comes from a straight line fitted to the nearest rows, weighted by distance with a tricube kernel. Span is the share of rows in each local fit; a larger span gives a smoother curve. LOESS has no single equation or slope. Pseudo R² is 1 − residual sum of squares / total sum of squares.",
 };
 
+const POWER_NAMES = ["Constant", "x", "x²", "x³", "x⁴", "x⁵", "x⁶"];
+
 function Coefficients({ fit }: { fit: RegressionFit }) {
+  if (fit.method === "loess")
+    return (
+      <>
+        <TraceReadout label="Span">
+          {fit.span} · {fit.neighbors.toLocaleString()} rows per local fit
+        </TraceReadout>
+        <TraceReadout label="Pseudo R²">{formatR2(fit.r2)}</TraceReadout>
+        <TraceReadout label="Residual RMS">{precise(fit.rmse)}</TraceReadout>
+        {fit.interpolated && (
+          <p className="text-muted-foreground">
+            With more than {LOESS_EXACT_ROWS} rows, local fits run exactly at{" "}
+            {LOESS_VERTICES + 1} evenly spaced X values and the curve and
+            residuals interpolate between them.
+          </p>
+        )}
+      </>
+    );
+  if (fit.method === "polynomial")
+    return (
+      <>
+        <TraceReadout label="Degree">{fit.degree}</TraceReadout>
+        {fit.coefficients.map((value, power) => (
+          <TraceReadout key={power} label={POWER_NAMES[power]!}>
+            {precise(value)}
+          </TraceReadout>
+        ))}
+        <TraceReadout label="R²">{formatR2(fit.r2)}</TraceReadout>
+        <TraceReadout label="Adjusted R²">
+          {fit.adjustedR2 === undefined ? "undefined" : precise(fit.adjustedR2)}
+        </TraceReadout>
+        <TraceReadout label="Residual SE">
+          {precise(fit.residualSe)}
+        </TraceReadout>
+      </>
+    );
   return (
     <>
       <TraceReadout label="Slope">
@@ -67,11 +114,22 @@ function FitDetails({ trace, fit }: { trace: FitTrace; fit: ScatterFit }) {
         </span>
       </div>
       {outcome.ok ? (
-        <TraceSection heading="Equation">
-          <p className="font-mono text-sm">{fitEquation(outcome)}</p>
-          <p className="text-muted-foreground">
-            y is {trace.yLabel}; x is {trace.xLabel}.
-          </p>
+        <TraceSection
+          heading={outcome.method === "loess" ? "Local fit" : "Equation"}
+        >
+          {outcome.method === "loess" ? (
+            <p className="text-muted-foreground">
+              No single equation: each X gets its own weighted local line.
+              {` y is ${trace.yLabel}; x is ${trace.xLabel}.`}
+            </p>
+          ) : (
+            <>
+              <p className="font-mono text-sm">{fitEquation(outcome)}</p>
+              <p className="text-muted-foreground">
+                y is {trace.yLabel}; x is {trace.xLabel}.
+              </p>
+            </>
+          )}
           <Coefficients fit={outcome} />
         </TraceSection>
       ) : (

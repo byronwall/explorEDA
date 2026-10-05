@@ -13,7 +13,11 @@ import { Filter } from "@/types/FilterTypes";
  * rows, one fit per color group.
  */
 export interface ScatterRegressionSettings {
-  method: "linear";
+  method: "linear" | "polynomial" | "loess";
+  /** Polynomial degree, 2 to 6. */
+  degree?: number;
+  /** LOESS share of rows in each local fit, 0.2 to 1. */
+  span?: number;
   /** Adds one fit through every group in each facet. */
   overall?: boolean;
 }

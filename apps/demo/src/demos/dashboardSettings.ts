@@ -992,8 +992,16 @@ export const scatterRegressionDashboard = dashboard(
       regression: { method: "linear" },
       facet: { enabled: true, type: "wrap", rowVariable: "sex", columnCount: 1 },
     },
-    row("fit-island", "Filter by island", "island", layout(0, 6, 4, 4)),
-    table("fit-records", "Penguins in the fits", ["species", "island", "sex", "bill_length_mm", "bill_depth_mm"], layout(4, 6, 8, 4)),
+    row("fit-island", "Filter by island", "island", layout(0, 6, 3, 5)),
+    {
+      ...scatter("fit-mass", "Body mass along flipper length · LOESS", "flipper_length_mm", "body_mass_g", layout(3, 6, 5, 5), ["Flipper length (mm)", "Body mass (g)"], "species", "fit-species"),
+      regression: { method: "loess", span: 0.6 },
+    },
+    {
+      ...scatter("fit-curve", "Flipper length along bill length · quadratic", "bill_length_mm", "flipper_length_mm", layout(8, 6, 4, 5), ["Bill length (mm)", "Flipper length (mm)"]),
+      regression: { method: "polynomial", degree: 2 },
+    },
+    table("fit-records", "Penguins in the fits", ["species", "island", "sex", "bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"], layout(0, 11, 12, 4)),
   ],
   [categoricalScale("fit-species", "species", ["Adelie", "Chinstrap", "Gentoo"])]
 );

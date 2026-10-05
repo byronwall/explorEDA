@@ -22,6 +22,8 @@ export const OVERALL_FIT_COLOR = "var(--foreground)";
 
 export const METHOD_NAMES: Record<RegressionMethod, string> = {
   linear: "Linear",
+  polynomial: "Polynomial",
+  loess: "LOESS",
 };
 
 export interface ScatterFit {
@@ -300,6 +302,14 @@ export function planFitMarks(
 export function fitSummary(fit: ScatterFit) {
   const outcome = fit.outcome;
   if (!outcome.ok) return "unavailable";
+  // A local smooth has no equation; its R² compares residuals to the mean.
+  if (outcome.method === "loess")
+    return [
+      `LOESS span ${outcome.span}`,
+      outcome.r2 !== undefined && `pseudo R² ${formatR2(outcome.r2)}`,
+    ]
+      .filter(Boolean)
+      .join(" · ");
   return [
     fitEquation(outcome),
     outcome.r2 !== undefined && `R² ${formatR2(outcome.r2)}`,
