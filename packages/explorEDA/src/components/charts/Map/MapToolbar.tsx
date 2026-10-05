@@ -1,4 +1,4 @@
-import { Globe, Minus, Plus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useChartTraceApi } from "../trace/ChartTraceScope";
 import type { MapSettings, MapView } from "./definition";
@@ -8,22 +8,18 @@ import { fitMapCoordinates, projectionLabel, WORLD_VIEW } from "./mapGeometry";
 export function MapToolbar({
   settings,
   plan,
-  activeId,
   owner,
   getFieldLabel,
   onViewChange,
 }: {
   settings: MapSettings;
   plan: PointMapPlan;
-  activeId?: number;
   owner: string;
   getFieldLabel: (field: string) => string;
   onViewChange: (view: MapView) => void;
 }) {
   const api = useChartTraceApi();
   const saveView = onViewChange;
-  const inspect = (id: number) => api?.inspect(owner, "map-point", String(id));
-  const active = plan.points.find((point) => point.sourceId === activeId);
   const width = plan.width;
   return (
     <div className="flex min-h-0 flex-1 flex-col justify-center gap-1 px-2 py-1 text-xs">
@@ -87,33 +83,6 @@ export function MapToolbar({
           onClick={() => saveView(WORLD_VIEW)}
         >
           Reset view
-        </Button>
-        <Button
-          size="sm"
-          variant="ghost"
-          className="h-6 shrink-0 px-1.5 text-xs"
-          disabled={!plan.points.length}
-          onClick={() =>
-            inspect(
-              activeId !== undefined && active
-                ? activeId
-                : (plan.points.find(
-                    (point) => plan.hasSelection && point.matching
-                  )?.sourceId ?? plan.points[0]!.sourceId)
-            )
-          }
-        >
-          Inspect point
-        </Button>
-        <Button
-          size="icon"
-          variant="ghost"
-          className="size-6 shrink-0"
-          aria-label="Inspect land outline"
-          tooltip="Inspect the land source, projection, and saved view."
-          onClick={() => api?.inspect(owner, "map-background", "land")}
-        >
-          <Globe className="size-3.5" />
         </Button>
       </div>
       <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-muted-foreground">

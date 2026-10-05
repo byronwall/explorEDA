@@ -175,6 +175,25 @@ describe("workspace toolbar", () => {
     expect(screen.queryByRole("tooltip")).toBeNull();
   });
 
+  it("closes workspace settings and narrow rows with Escape after a click on the charts", () => {
+    renderWorkspace();
+    fireEvent.click(screen.getByRole("button", { name: "Colors" }));
+    expect(
+      screen.getByRole("complementary", { name: "Workspace settings" })
+    ).toBeInTheDocument();
+    // Focus has left the nonmodal panel, as after a click on a chart.
+    fireEvent.keyDown(document.body, { key: "Escape" });
+    expect(screen.queryByRole("complementary")).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "Rows" }));
+    const rows = screen.getByRole("region", { name: "Rows" });
+    fireEvent.click(
+      within(rows).getByRole("button", { name: "Narrow the rows" })
+    );
+    fireEvent.keyDown(document.body, { key: "Escape" });
+    expect(screen.queryByRole("region", { name: "Rows" })).toBeNull();
+  });
+
   it("keeps unsaved edits in one settings tab while another is shown", () => {
     renderWorkspace({ colorScales: 6 });
     fireEvent.click(screen.getByRole("button", { name: "Grid" }));

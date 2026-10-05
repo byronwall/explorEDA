@@ -1,6 +1,4 @@
-import { ListTree } from "lucide-react";
 import { useId, useMemo } from "react";
-import { Button } from "@/components/ui/button";
 import { convertFieldValue } from "@/lib/fieldSettings";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps, datum } from "@/types/ChartTypes";
@@ -134,6 +132,18 @@ export function MetricCard({
       className="eda-metric flex h-full min-h-0 flex-col gap-1 overflow-auto px-4 py-1.5"
       style={{ justifyContent: "safe center" }}
       aria-label={plan.metricLabel}
+      aria-description="Alt-click or Alt-Enter to list the rows behind this value"
+      tabIndex={0}
+      onClick={(event) => {
+        if (event.altKey)
+          traceApi?.inspect(owner, "metric-card", "metric-card:total");
+      }}
+      onKeyDown={(event) => {
+        if (event.altKey && event.key === "Enter") {
+          event.preventDefault();
+          traceApi?.inspect(owner, "metric-card", "metric-card:total");
+        }
+      }}
     >
       <div className="flex items-center justify-between gap-x-3">
         <p className="min-w-0 text-sm text-muted-foreground">
@@ -145,18 +155,6 @@ export function MetricCard({
             </span>
           )}
         </p>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="-mr-2 h-6 shrink-0 gap-1.5 px-2 text-xs"
-          tooltip="List the rows behind this value and how each one counts"
-          onClick={() =>
-            traceApi?.inspect(owner, "metric-card", "metric-card:total")
-          }
-        >
-          <ListTree className="size-3.5" aria-hidden="true" />
-          Inspect records
-        </Button>
       </div>
       <p
         className="break-words font-semibold leading-tight tabular-nums"

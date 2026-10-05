@@ -52,6 +52,7 @@ When no outside space remains, use a compact corner editor with scrollable contr
 Apply valid chart settings immediately so users can compare the result. Keep a reset action for the current edit session.
 Do not add a persistent sidebar for temporary inspection.
 Keep a chart's actions in its header: View data, Duplicate, details, settings, and Delete, each an icon with a tooltip. Clear filters stays visible there while the chart filters. Chart settings hold settings only.
+Never show an "Inspect" button on a chart or card. Alt-click or Alt-Enter on a mark opens its trace.
 Hidden header actions take no room, so the chart name keeps the full header until the pointer or focus reaches it.
 The field list is the one workspace tool that stays open. It floats over the right edge from the top of the viewport, never resizes the chart grid, and becomes a bottom sheet on narrow screens. Controls it covers move beside it. Fields in the toolbar and the F key open it, and Shift+F opens every field's distribution in a full view.
 

@@ -12,6 +12,9 @@ import type { Filter, TextFilter } from "@/types/FilterTypes";
 import { FilterX } from "lucide-react";
 import isEqual from "react-fast-compare";
 import { Slider } from "@/components/ui/slider";
+import { ActionTooltip } from "@/components/ui/tooltip";
+import { dateTimestamp } from "@/lib/dateTime";
+import { datePresets, type DatePresetGroup } from "@/lib/datePresets";
 import {
   summarizeField,
   type SparkFilter,
@@ -60,6 +63,22 @@ const boundText = (value: number | undefined) =>
 function roundToStep(value: number, step: number) {
   const digits = Math.max(0, -Math.floor(Math.log10(step)));
   return Number(value.toFixed(Math.min(100, digits)));
+}
+
+/** Quick ranges from the dates a field holds, not from the current filter. */
+function presetsFor(profile: FieldProfile): DatePresetGroup[] {
+  let first = Infinity;
+  let last = -Infinity;
+  for (const { value } of profile.categories?.distribution ?? []) {
+    const time =
+      typeof value === "string"
+        ? dateTimestamp(value)
+        : Date.parse(String(value));
+    if (!Number.isFinite(time)) continue;
+    first = Math.min(first, time);
+    last = Math.max(last, time);
+  }
+  return datePresets(first, last);
 }
 
 export function ColumnFilter({
@@ -218,6 +237,58 @@ export function ColumnFilter({
     </div>
   );
 
+  const presetGroups =
+    !lowCardinality && profile.dataType === "datetime"
+      ? presetsFor(profile)
+      : [];
+  const presets = presetGroups.length > 0 && (
+    <div
+      className="eda-date-presets"
+      role="group"
+      aria-label={`Quick ranges for ${columnLabel}`}
+    >
+      {presetGroups.map((group) => (
+        <div key={group.label} className="eda-date-preset-group">
+          <span className="eda-date-preset-label">{group.label}</span>
+          <div className="eda-date-preset-options">
+            {group.presets.map((preset) => {
+              const active =
+                dateFilter?.min === preset.min &&
+                dateFilter?.max === preset.max;
+              return (
+                <ActionTooltip
+                  key={preset.label}
+                  content={`${preset.min} through ${preset.max}`}
+                >
+                  <button
+                    type="button"
+                    className="eda-date-preset"
+                    aria-pressed={active}
+                    onClick={() =>
+                      onChange(
+                        columnId,
+                        active
+                          ? undefined
+                          : {
+                              type: "date-range",
+                              field: profile.name,
+                              min: preset.min,
+                              max: preset.max,
+                            }
+                      )
+                    }
+                  >
+                    {preset.label}
+                  </button>
+                </ActionTooltip>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
   const Group = embedded ? "fieldset" : "div";
   return (
     <Group
@@ -324,6 +395,7 @@ export function ColumnFilter({
           disabled={missingOnly}
         >
           {histogram}
+          {presets}
           <label className="grid gap-1 text-xs">
             From (inclusive)
             <Input
