@@ -24,7 +24,17 @@ export interface ScatterRegressionSettings {
 
 export interface ScatterPlotSettings extends BaseChartSettings {
   type: "scatter";
-  display?: "points" | "density";
+  /** Density is rectangular bins; contour is smoothed 2D density. */
+  display?: "points" | "density" | "hexbin" | "contour";
+  hexbin?: { columns?: number; colorMax?: number; showPoints?: boolean };
+  contour?: {
+    /** Multiplies Scott's rule bandwidth, 0.25 to 4. */
+    bandwidth?: number;
+    levels?: number;
+    fill?: boolean;
+    lines?: boolean;
+    showPoints?: boolean;
+  };
   density?: { xBins?: number; yBins?: number; colorMax?: number };
   pointSize?: number;
   pointOpacity?: number;

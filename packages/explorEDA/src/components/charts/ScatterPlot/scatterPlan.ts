@@ -43,6 +43,8 @@ export { paddedDomain } from "./scatterAxis";
 
 /** Estimated axis title glyph width; ScatterPlot measures the rendered title. */
 const TITLE_CHAR_WIDTH = 6.5;
+/** Room for a hexagon or smoothed-density legend line. */
+export const SURFACE_LEGEND_HEIGHT = 20;
 /** Space between an axis title and its calculated-field badge. */
 export const BADGE_GAP = 4;
 
@@ -329,6 +331,9 @@ export function planScatter(
       }
     : undefined;
   if (size) margin.bottom += size.legendHeight;
+  // A density surface keeps one line under the axis for its color legend.
+  if (settings.display === "hexbin" || settings.display === "contour")
+    margin.bottom += SURFACE_LEGEND_HEIGHT;
   // Marginal histograms take a band above the plot and one to its right.
   if (settings.marginals) {
     margin.top += MARGINAL_SIZE + MARGINAL_GAP;
@@ -453,7 +458,15 @@ export function planScatter(
   const axes = planAxes({
     plotWidth,
     plotHeight,
-    margin: { ...margin, bottom: margin.bottom - (size?.legendHeight ?? 0) },
+    margin: {
+      ...margin,
+      bottom:
+        margin.bottom -
+        (size?.legendHeight ?? 0) -
+        (settings.display === "hexbin" || settings.display === "contour"
+          ? SURFACE_LEGEND_HEIGHT
+          : 0),
+    },
     marginPolicy,
     footer,
     x: {

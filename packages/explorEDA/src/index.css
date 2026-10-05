@@ -2787,6 +2787,20 @@ html {
   z-index: 1;
   transform: translateY(-50%);
 }
+/* A density surface's legend: one line under the X axis title. */
+.eda-surface-legend {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 18px;
+  overflow: hidden;
+  color: var(--foreground);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  pointer-events: none;
+}
 /* Fit equations stack in a quiet plot corner and stay readable over points. */
 .eda-fit-labels {
   position: absolute;

@@ -4,11 +4,11 @@
     "title": "Advanced scatter analysis",
     "slug": "advanced-scatter-analysis",
     "scale": "capability",
-    "current_phase": "plan",
-    "last_updated": "2026-10-04",
+    "current_phase": "implement",
+    "last_updated": "2026-10-05",
     "summary": "Native scatter regression, paired summaries, hexagonal counts, marginals, and required 2D density contours and filled regions.",
-    "status": "planned",
-    "next_action": "Review the package feature scope and DSL research PR; implement accepted native slices afterward."
+    "status": "in-progress",
+    "next_action": "Review the four stacked implementation PRs (milestones 1–3). Milestone 4 overlays still need a separate product decision."
   },
   "artifacts": {
     "intent_brief": {
@@ -46,15 +46,15 @@
       "location": "Historical conversation",
       "anchor": "Mission; Required working features; Statistical scope; Additional methods",
       "authority": "human",
-      "notes": "Lab files removed from this branch at the user\u2019s request. Preserve this source as historical intent evidence."
+      "notes": "Lab files removed from this branch at the user’s request. Preserve this source as historical intent evidence."
     },
     {
       "id": "report",
       "type": "report",
       "location": "Historical conversation",
-      "anchor": "Sections 4\u20139; promotion and ranked experiments",
+      "anchor": "Sections 4–9; promotion and ranked experiments",
       "authority": "agent-analysis",
-      "notes": "Lab files removed from this branch at the user\u2019s request. Preserve this source as historical intent evidence."
+      "notes": "Lab files removed from this branch at the user’s request. Preserve this source as historical intent evidence."
     },
     {
       "id": "repo",
@@ -74,17 +74,17 @@
       "id": "regression-update",
       "type": "request",
       "location": "Historical conversation",
-      "anchor": "User scope update \u2014 2026-10-03",
+      "anchor": "User scope update — 2026-10-03",
       "authority": "human",
-      "notes": "Lab files removed from this branch at the user\u2019s request. Preserve this source as historical intent evidence."
+      "notes": "Lab files removed from this branch at the user’s request. Preserve this source as historical intent evidence."
     },
     {
       "id": "product-answers",
       "type": "request",
       "location": "Historical conversation",
-      "anchor": "Annotations 1\u201310",
+      "anchor": "Annotations 1–10",
       "authority": "human",
-      "notes": "Lab files removed from this branch at the user\u2019s request. Preserve this source as historical intent evidence."
+      "notes": "Lab files removed from this branch at the user’s request. Preserve this source as historical intent evidence."
     },
     {
       "id": "density-scope",
@@ -288,7 +288,7 @@
           }
         ],
         "confidence": "high",
-        "notes": "Regression and LOESS moved to required scope in claims 15\u201317. Other candidates remain assessments."
+        "notes": "Regression and LOESS moved to required scope in claims 15–17. Other candidates remain assessments."
       },
       {
         "id": "claim-12",
@@ -352,7 +352,7 @@
         "source_anchors": [
           {
             "source_id": "regression-update",
-            "anchor": "User scope update \u2014 2026-10-03"
+            "anchor": "User scope update — 2026-10-03"
           }
         ],
         "confidence": "high",
@@ -369,11 +369,11 @@
         "source_anchors": [
           {
             "source_id": "regression-update",
-            "anchor": "User scope update \u2014 2026-10-03"
+            "anchor": "User scope update — 2026-10-03"
           }
         ],
         "confidence": "high",
-        "notes": "Fit within each facet; optional pooled fit is off by default. Other charts\u2019 filters affect fits; own brush does not."
+        "notes": "Fit within each facet; optional pooled fit is off by default. Other charts’ filters affect fits; own brush does not."
       },
       {
         "id": "claim-17",
@@ -386,7 +386,7 @@
         "source_anchors": [
           {
             "source_id": "regression-update",
-            "anchor": "User scope update \u2014 2026-10-03"
+            "anchor": "User scope update — 2026-10-03"
           }
         ],
         "confidence": "high",
@@ -394,7 +394,7 @@
       },
       {
         "id": "claim-18",
-        "statement": "Understand relationships with objective measures. Show slope, offset, and R\u00b2.",
+        "statement": "Understand relationships with objective measures. Show slope, offset, and R².",
         "type": "product requirement",
         "commitment": "explicit",
         "importance": "core",
@@ -588,17 +588,17 @@
       {
         "question": "Which analysis job and first release should set the feature order?",
         "status": "resolved",
-        "resolution": "Product annotations 1\u201310 establish the primary workflow, package delivery, populations, controls, and inspection priorities."
+        "resolution": "Product annotations 1–10 establish the primary workflow, package delivery, populations, controls, and inspection priorities."
       },
       {
         "question": "Which population and controls should govern group and facet fits?",
         "status": "resolved",
-        "resolution": "Product annotations 1\u201310 establish the primary workflow, package delivery, populations, controls, and inspection priorities."
+        "resolution": "Product annotations 1–10 establish the primary workflow, package delivery, populations, controls, and inspection priorities."
       },
       {
         "question": "What formula outputs, diagnostics, and failure behavior make these fits useful?",
         "status": "resolved",
-        "resolution": "Product annotations 1\u201310 establish the primary workflow, package delivery, populations, controls, and inspection priorities."
+        "resolution": "Product annotations 1–10 establish the primary workflow, package delivery, populations, controls, and inspection priorities."
       }
     ]
   },
@@ -623,7 +623,7 @@
     ],
     "first_proof": {
       "question": "Can group/facet linear fits stay fixed during own brushing and recompute after external filters?",
-      "artifact": "Native two-group, two-facet linear fit with equation, slope, offset, R\u00b2, and compact inspection.",
+      "artifact": "Native two-group, two-facet linear fit with equation, slope, offset, R², and compact inspection.",
       "decision_rule": "Proceed when independent numerical values and filter behavior agree and each fit result is discoverable."
     },
     "rabbit_holes": [
@@ -635,11 +635,11 @@
     "open_decisions": []
   },
   "implementation": {
-    "status": "planned",
+    "status": "in-progress",
     "repository_snapshot": {
       "root": "/Users/byronwall/.codex/worktrees/6221/explorEDA",
       "revision": "038be515b0d0869c69f4da45f4744266b073ac19",
-      "worktree_status": "Named branch based on main. Lab code, route, dependencies, and archives removed. Native feature implementation remains planned.",
+      "worktree_status": "Milestones 1–3 implemented on stacked branches claude/scatter-linear-fits → claude/scatter-polynomial-loess → claude/scatter-summaries-marginals → claude/scatter-hexbin-density.",
       "subsystems": [
         "ScatterPlot planning and traces",
         "SavedDataStructure",
@@ -697,30 +697,33 @@
         "title": "Native linear fits explain relationships",
         "outcome": "Native linear fits explain relationships",
         "proof": "Known numerical values; own brush unchanged; external filters recompute; save/restore and accessible inspection.",
-        "status": "planned",
+        "status": "implemented",
         "valid_intermediate_state": "Ordinary scatter plus completed optional native features.",
         "rollback": "Disable the new chart display through settings.",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "evidence": "Grouped/faceted linear fits with equations, R², overall fit, unavailable-fit warnings, and fit traces. Tests cover known coefficients, own-brush stability, external refit, facets, and categorical axes."
       },
       {
         "id": "milestone-2",
         "title": "Polynomial and LOESS fits use shared controls",
         "outcome": "Polynomial and LOESS fits use shared controls",
         "proof": "Independent polynomial/LOESS fixtures; shared facet controls; 10,000 rows across ten groups.",
-        "status": "planned",
+        "status": "implemented",
         "valid_intermediate_state": "Ordinary scatter plus completed optional native features.",
         "rollback": "Disable the new chart display through settings.",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "evidence": "Polynomial (degree 2–6, QR on standardized X) and LOESS (tricube, local linear; exact up to 500 rows, 201 interpolated vertices above). Checked against exact rational and brute-force references. 10,000 rows in ten groups plus an overall fit: LOESS ≈14 ms, other methods under 10 ms in Node."
       },
       {
         "id": "milestone-3",
         "title": "Summaries, counts, and 2D density explain distributions",
         "outcome": "Native summaries, hex counts, marginals, and smoothed contours/filled regions.",
         "proof": "Summary references, count conservation, density finiteness, bandwidth response, legend units, facets, and combined interaction.",
-        "status": "planned",
+        "status": "implemented",
         "valid_intermediate_state": "Ordinary scatter plus completed optional native features.",
         "rollback": "Disable the new chart display through settings.",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "evidence": "Paired summaries (n − 1 covariance, Pearson r, pooled and per group), marginal histograms with fixed full-source edges, hexagonal bins with exact contributors, and Gaussian KDE contours/filled regions in rows per X×Y unit with Scott bandwidth scale and level coverage. 10,000 rows: hexbins ≈4 ms, contours ≈7 ms."
       },
       {
         "id": "milestone-4",
@@ -785,6 +788,11 @@
       "date": "2026-10-04",
       "event": "support-trimmed",
       "reason": "User requests only important research, nested within each initiative. Copied prototypes, generated evidence, documents, archives, and transcript removed; concise notes and references retained."
+    },
+    {
+      "date": "2026-10-05",
+      "event": "implemented",
+      "reason": "User asked to implement the documented package scope as stacked PRs with screenshots. Milestones 1–3 delivered; milestone 4 stays a separate decision."
     }
   ],
   "closure": null

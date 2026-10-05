@@ -22,6 +22,8 @@ import type { ScatterTrace } from "../ScatterPlot/scatterTrace";
 import type { DensityTrace } from "../ScatterPlot/densityPlan";
 import type { FitTrace } from "../ScatterPlot/FitTraceBody";
 import type { MarginalTrace } from "../ScatterPlot/marginalPlan";
+import type { HexTrace } from "../ScatterPlot/hexPlan";
+import type { ContourTrace } from "../ScatterPlot/contourPlan";
 
 /** A selected object. The owner's source resolves it against its current plan. */
 export interface TraceSelection {
@@ -108,6 +110,8 @@ export type ChartTrace =
   | DensityTrace
   | FitTrace
   | MarginalTrace
+  | HexTrace
+  | ContourTrace
   | ScatterTrace
   | BarTrace
   | SankeyTrace

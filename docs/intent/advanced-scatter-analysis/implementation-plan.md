@@ -4,7 +4,7 @@
 
 Deliver regression, summaries, and density improvements as native package work. Start with linear fits across groups and facets. This proves the main relationship-inspection workflow and the highest-risk population rule. Add polynomial and LOESS methods next. Then deliver paired summaries, counts, marginals, and required 2D density contours and filled regions. Retain separate evidence gates for other scientific overlays.
 
-This update changes planning artifacts only. It does not implement regression or certify its performance.
+Milestones 1–3 are implemented on four stacked branches: linear fits, polynomial and LOESS fits, paired summaries with marginals, and hexagonal bins with smoothed density. Milestone 4 remains a separate product decision. Measured in Node with 10,000 rows in ten groups: fits take under 15 ms, hexagons about 4 ms, and contours about 7 ms; browser capacity with many facets is still unmeasured.
 
 ## Implementation strategy
 

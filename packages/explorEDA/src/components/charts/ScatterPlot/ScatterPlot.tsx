@@ -16,6 +16,11 @@ import { BubbleLegend } from "./BubbleLegend";
 import { DensityScatter } from "./DensityScatter";
 import { FitLabels } from "./FitLabels";
 import { useScatterFits } from "./useScatterFits";
+import { hexBinFilters, planHexbins, type HexTrace } from "./hexPlan";
+import { planContours, type ContourTrace } from "./contourPlan";
+import { SurfaceLayer, SurfaceLegend } from "./SurfaceLayer";
+import { STATUS_LINE_HEIGHT } from "../ChartStatusLine";
+import { buildScale } from "../Axis/axisPlan";
 import {
   marginalBinFilters,
   planMarginals,
@@ -48,6 +53,7 @@ interface ScatterPlotProps extends BaseChartProps<ScatterPlotSettings> {
   settings: ScatterPlotSettings;
 }
 
+/** Points, hexagons, and smoothed density share one chart; rectangles have their own. */
 export function ScatterPlot(props: ScatterPlotProps) {
   return props.settings.display === "density" ? (
     <DensityScatter {...props} />
@@ -78,7 +84,16 @@ function ScatterPoints({
   } = useScatterData(settings, facetIds);
 
   const plan = useMemo(
-    () => planScatter(settings, snapshot, width, height),
+    () =>
+      planScatter(
+        // Bubble sizes do not apply under a density surface.
+        settings.display === "hexbin" || settings.display === "contour"
+          ? { ...settings, sizeField: undefined }
+          : settings,
+        snapshot,
+        width,
+        height
+      ),
     [settings, snapshot, width, height]
   );
   const fits = useScatterFits(settings, snapshot, plan);
@@ -87,6 +102,55 @@ function ScatterPoints({
     [settings, plan]
   );
   const [hoveredMarginalId, setHoveredMarginalId] = useState<string>();
+  const hex = useMemo(
+    () => planHexbins(settings, snapshot, plan),
+    [settings, snapshot, plan]
+  );
+  const contour = useMemo(() => planContours(settings, plan), [settings, plan]);
+  const surfaceMode = Boolean(hex || contour);
+  const showSurfacePoints = hex
+    ? Boolean(settings.hexbin?.showPoints)
+    : settings.contour?.showPoints !== false;
+  const [hoveredMarkId, setHoveredMarkId] = useState<string>();
+  const [hoverDensity, setHoverDensity] = useState<number>();
+  const resolveSurface = (
+    kind: string,
+    id: string
+  ): HexTrace | ContourTrace | undefined => {
+    if (kind === "hex-bin" && hex) {
+      const bin = hex.bins.find((item) => item.id === id);
+      if (!bin) return undefined;
+      const invert = (descriptor: typeof plan.xScale, px: number) =>
+        (
+          buildScale(descriptor) as unknown as { invert: (v: number) => number }
+        ).invert(px);
+      return {
+        kind: "hex-bin",
+        id,
+        revision: plan.revision,
+        bin,
+        hex,
+        xLabel: plan.xDisplay,
+        yLabel: plan.yDisplay,
+        center: [invert(plan.xScale, bin.cx), invert(plan.yScale, bin.cy)],
+      };
+    }
+    if (kind === "contour-level" && contour) {
+      const level = contour.levels.find((item) => item.id === id);
+      return level
+        ? {
+            kind: "contour-level",
+            id,
+            revision: plan.revision,
+            level,
+            contour,
+            xLabel: plan.xDisplay,
+            yLabel: plan.yDisplay,
+          }
+        : undefined;
+    }
+    return undefined;
+  };
   const [activeFitId, setActiveFitId] = useState<string>();
   const resolveMarginal = (
     kind: string,
@@ -107,6 +171,7 @@ function ScatterPoints({
       resolve: (kind, id) =>
         fits.resolve(kind, id) ??
         resolveMarginal(kind, id) ??
+        resolveSurface(kind, id) ??
         resolveScatterTrace(
           { kind, id },
           plan,
@@ -117,9 +182,24 @@ function ScatterPoints({
           profiles,
           manager
         ),
-      findRow: (id) => findScatterTraceRow(plan, id),
+      findRow: (id) => {
+        const bin = hex?.bins.find((item) => item.sourceIds.includes(id));
+        return bin
+          ? { kind: "hex-bin", id: bin.id }
+          : findScatterTraceRow(plan, id);
+      },
       targets: () => [
         ...fits.targets(),
+        ...(hex?.bins.map((bin) => ({
+          kind: "hex-bin",
+          id: bin.id,
+          label: `Hexagon: ${bin.rowIds.length} rows`,
+        })) ?? []),
+        ...(contour?.levels.map((level) => ({
+          kind: "contour-level",
+          id: level.id,
+          label: `Density level ${level.index + 1}: ${Math.round(level.coverage * 100)}% of rows`,
+        })) ?? []),
         ...(marginals?.bins.map((bin) => ({
           kind: "marginal-bin",
           id: bin.id,
@@ -163,6 +243,7 @@ function ScatterPoints({
     });
   };
   const hoveredPoint = plan.points.find((point) => point.id === hoveredId);
+  const hoveredHex = hex?.bins.find((bin) => bin.id === hoveredMarkId);
   const hoveredMarginal = marginals?.bins.find(
     (bin) => bin.id === hoveredMarginalId
   );
@@ -187,6 +268,8 @@ function ScatterPoints({
     ctx.beginPath();
     ctx.rect(0, 0, plan.plotWidth, plan.plotHeight);
     ctx.clip();
+    // A density surface draws its own point overlay in SVG.
+    if (surfaceMode) return;
     for (const point of plan.points) {
       ctx.fillStyle = point.color;
       ctx.globalAlpha = point.opacity;
@@ -198,7 +281,7 @@ function ScatterPoints({
         ctx.stroke();
       } else ctx.fill();
     }
-  }, [plan, width, height]);
+  }, [plan, width, height, surfaceMode]);
 
   // Title glyph widths vary by font, so move each badge to the rendered end.
   const rootRef = useRef<HTMLDivElement>(null);
@@ -246,9 +329,13 @@ function ScatterPoints({
     showHints &&
     (plan.brushExtent
       ? "Drag the edges to adjust, Esc to clear"
-      : fits.marks.length
-        ? "Drag to select a region, Alt-click a point or fit line to trace it"
-        : "Drag to select a region, Alt-click a point to trace it");
+      : hex
+        ? "Click a hexagon to select its rows, Alt-click to trace it"
+        : contour
+          ? "Drag to select a region, Alt-click a density region to trace it"
+          : fits.marks.length
+            ? "Drag to select a region, Alt-click a point or fit line to trace it"
+            : "Drag to select a region, Alt-click a point to trace it");
 
   const handleBrushChange = useCallback(
     (extent: Extent | null) => {
@@ -272,7 +359,11 @@ function ScatterPoints({
       ref={rootRef}
       style={{ width, height }}
       className="relative"
-      onPointerLeave={() => setHoveredId(null)}
+      onPointerLeave={() => {
+        setHoveredId(null);
+        setHoveredMarkId(undefined);
+        setHoverDensity(undefined);
+      }}
       onPointerDownCapture={() => setHoveredId(null)}
       onKeyDownCapture={(event) => {
         if (event.key === "Escape") {
@@ -290,6 +381,15 @@ function ScatterPoints({
           setHoveredId(null);
           return;
         }
+        if (hex) {
+          setHoveredMarkId(hex.hexAt(px, py)?.id);
+          setHoveredId(
+            showSurfacePoints ? (pointAt(px, py)?.id ?? null) : null
+          );
+          return;
+        }
+        if (contour) setHoverDensity(contour.densityAt(px, py));
+        if (surfaceMode && !showSurfacePoints) return;
         // ponytail: linear hit testing; use a spatial index if large point clouds need hover.
         setHoveredId(pointAt(px, py)?.id ?? null);
       }}
@@ -319,11 +419,47 @@ function ScatterPoints({
             }}
             onBrushChange={handleBrushChange}
             onInspectPoint={(x, y) => {
+              if (surfaceMode && !showSurfacePoints) return false;
               const point = pointAt(x, y);
               if (!point) return false;
               return Boolean(choose("point", point.id));
             }}
             fitMarks={fits.marks}
+            surface={
+              surfaceMode && (
+                <SurfaceLayer
+                  plan={plan}
+                  hex={hex}
+                  contour={contour}
+                  showPoints={showSurfacePoints}
+                  activeId={
+                    hoveredMarkId ??
+                    (activeSelection?.kind === "hex-bin" ||
+                    activeSelection?.kind === "contour-level"
+                      ? activeSelection.id
+                      : undefined)
+                  }
+                />
+              )
+            }
+            markFirst={Boolean(hex)}
+            onMark={(id, inspect) => {
+              if (hex) {
+                const bin = hex.bins.find((item) => item.id === id);
+                if (!bin) return false;
+                if (inspect) choose("hex-bin", id);
+                else
+                  updateChart(settings.id, {
+                    filters: hexBinFilters(settings, bin),
+                  });
+                return true;
+              }
+              if (contour && inspect) {
+                choose("contour-level", id);
+                return true;
+              }
+              return false;
+            }}
             marginals={marginals}
             activeMarginalId={
               hoveredMarginalId ??
@@ -422,6 +558,53 @@ function ScatterPoints({
               </div>
             </div>
           )}
+          {surfaceMode && (
+            <SurfaceLegend
+              hex={hex}
+              contour={contour}
+              bottom={(facetIds ? 0 : STATUS_LINE_HEIGHT) + 2}
+              left={plan.margin.left}
+              right={plan.margin.right}
+              compact={plan.plotWidth < 420}
+            />
+          )}
+          {(hex?.notice || contour?.notice) && (
+            <div
+              className="pointer-events-none absolute flex items-center justify-center p-3 text-center text-sm text-muted-foreground"
+              style={{
+                left: plan.margin.left,
+                top: plan.margin.top,
+                width: Math.max(0, plan.plotWidth),
+                height: Math.max(0, plan.plotHeight),
+              }}
+              role="status"
+            >
+              {hex?.notice ?? contour?.notice}
+            </div>
+          )}
+          {!hoveredPoint && !hoveredMarginal && hoveredHex && (
+            <ChartReadout fallbackClassName="eda-chart-readout-inline">
+              <span className="eda-readout-item">
+                <span>Hexagon</span>
+                <b>
+                  {hoveredHex.rowIds.length.toLocaleString()} rows
+                  {settings.filters.length > 0 &&
+                    ` · ${hoveredHex.matching.toLocaleString()} selected`}
+                </b>
+              </span>
+            </ChartReadout>
+          )}
+          {!hoveredPoint &&
+            !hoveredMarginal &&
+            contour &&
+            hoverDensity !== undefined && (
+              <ChartReadout fallbackClassName="eda-chart-readout-inline">
+                <span className="eda-readout-item">
+                  <span>Smoothed density</span>
+                  <b>{Number(hoverDensity.toPrecision(3))} rows per X×Y unit</b>
+                </span>
+              </ChartReadout>
+            )}
           {hoveredMarginal && !hoveredPoint && (
             <ChartReadout fallbackClassName="eda-chart-readout-inline">
               <span className="eda-readout-item">

@@ -384,7 +384,9 @@ function isChart(value: unknown): boolean {
         typeof value.xField === "string" &&
         typeof value.yField === "string" &&
         (value.display === undefined ||
-          ["points", "density"].includes(value.display as string)) &&
+          ["points", "density", "hexbin", "contour"].includes(
+            value.display as string
+          )) &&
         (value.density === undefined ||
           (isRecord(value.density) &&
             [value.density.xBins, value.density.yBins].every(
@@ -406,6 +408,34 @@ function isChart(value: unknown): boolean {
             value.maxBubbleRadius >= 6 &&
             value.maxBubbleRadius <= 32)) &&
         isScatterRegression(value.regression) &&
+        (value.hexbin === undefined ||
+          (isRecord(value.hexbin) &&
+            (value.hexbin.columns === undefined ||
+              (Number.isInteger(value.hexbin.columns) &&
+                (value.hexbin.columns as number) >= 5 &&
+                (value.hexbin.columns as number) <= 60)) &&
+            (value.hexbin.colorMax === undefined ||
+              (isFiniteNumber(value.hexbin.colorMax) &&
+                value.hexbin.colorMax >= 1)) &&
+            (value.hexbin.showPoints === undefined ||
+              typeof value.hexbin.showPoints === "boolean"))) &&
+        (value.contour === undefined ||
+          (isRecord(value.contour) &&
+            (value.contour.bandwidth === undefined ||
+              (isFiniteNumber(value.contour.bandwidth) &&
+                value.contour.bandwidth >= 0.25 &&
+                value.contour.bandwidth <= 4)) &&
+            (value.contour.levels === undefined ||
+              (Number.isInteger(value.contour.levels) &&
+                (value.contour.levels as number) >= 2 &&
+                (value.contour.levels as number) <= 12)) &&
+            [
+              value.contour.fill,
+              value.contour.lines,
+              value.contour.showPoints,
+            ].every(
+              (flag) => flag === undefined || typeof flag === "boolean"
+            ))) &&
         (value.summary === undefined || typeof value.summary === "boolean") &&
         (value.marginals === undefined ||
           (isRecord(value.marginals) &&

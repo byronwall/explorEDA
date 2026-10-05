@@ -1,5 +1,5 @@
 import { useBrush } from "@/hooks/useBrush";
-import { useId, useMemo, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   planScatterOverlay,
   type Extent,
@@ -212,6 +212,9 @@ export function ScatterSvg({
   onActivatePoint,
   onSelectPoint,
   fitMarks = [],
+  surface,
+  onMark,
+  markFirst = false,
   marginals,
   activeMarginalId,
   onHoverMarginal,
@@ -221,6 +224,12 @@ export function ScatterSvg({
   onInspectFit,
 }: {
   fitMarks?: FitMark[];
+  /** A density surface drawn under the fits, such as hexagons or contours. */
+  surface?: ReactNode;
+  /** A click on a surface mark; returns false to fall through. */
+  onMark?: (id: string, inspect: boolean) => boolean;
+  /** Hexagons take clicks before points; contours only where no point is near. */
+  markFirst?: boolean;
   marginals?: MarginalPlan;
   activeMarginalId?: string;
   onHoverMarginal?: (id: string | undefined) => void;
@@ -384,6 +393,14 @@ export function ScatterSvg({
           onMarginal(marginalId, event.altKey);
           return;
         }
+        const markId = (event.target as Element)
+          .closest("[data-mark-id]")
+          ?.getAttribute("data-mark-id");
+        const tryMark = () =>
+          Boolean(
+            markId && !brush.wasDrag.current && onMark?.(markId, event.altKey)
+          );
+        if (markFirst && tryMark()) return;
         if (brush.wasDrag.current || (!event.altKey && !plan.size)) return;
         const rect = event.currentTarget.getBoundingClientRect();
         const x = event.clientX - rect.left - plan.margin.left;
@@ -414,6 +431,7 @@ export function ScatterSvg({
           onInspectPoint(x, y)
         )
           return;
+        if (!markFirst && tryMark()) return;
         const id = (event.target as Element)
           .closest("[data-plan-id]")
           ?.getAttribute("data-plan-id");
@@ -440,6 +458,7 @@ export function ScatterSvg({
             activeId={hoveredGuideId ?? selectedId}
           />
         </g>
+        {surface && <g clipPath={`url(#${chartId}-plot)`}>{surface}</g>}
         {fitMarks.length > 0 && (
           <g clipPath={`url(#${chartId}-plot)`}>
             <FitCurves marks={fitMarks} activeId={activeFitId} />

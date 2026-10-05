@@ -996,8 +996,10 @@ export const scatterRegressionDashboard = dashboard(
     },
     row("fit-island", "Filter by island", "island", layout(0, 6, 3, 5)),
     {
-      ...scatter("fit-mass", "Body mass along flipper length · LOESS", "flipper_length_mm", "body_mass_g", layout(3, 6, 5, 5), ["Flipper length (mm)", "Body mass (g)"], "species", "fit-species"),
+      ...scatter("fit-mass", "Body mass along flipper length · LOESS over density", "flipper_length_mm", "body_mass_g", layout(3, 6, 5, 5), ["Flipper length (mm)", "Body mass (g)"], "species", "fit-species"),
       regression: { method: "loess", span: 0.6 },
+      display: "contour",
+      contour: { bandwidth: 0.75, levels: 5 },
     },
     {
       ...scatter("fit-curve", "Flipper length along bill length · quadratic", "bill_length_mm", "flipper_length_mm", layout(8, 6, 4, 5), ["Bill length (mm)", "Flipper length (mm)"]),
@@ -1006,4 +1008,25 @@ export const scatterRegressionDashboard = dashboard(
     table("fit-records", "Penguins in the fits", ["species", "island", "sex", "bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"], layout(0, 11, 12, 4)),
   ],
   [categoricalScale("fit-species", "species", ["Adelie", "Chinstrap", "Gentoo"])]
+);
+
+
+export const scatterSurfaceDashboard = dashboard(
+  "Ten thousand days, two ways to see density",
+  [
+    {
+      ...scatter("surface-hex", "Hexagonal counts", "Temperature (°C)", "Ice Cream Sales", layout(0, 0, 6, 6), ["Temperature (°C)", "Ice cream sales"]),
+      display: "hexbin",
+      hexbin: { columns: 24 },
+    },
+    {
+      ...scatter("surface-kde", "Smoothed density with a linear fit", "Temperature (°C)", "Ice Cream Sales", layout(6, 0, 6, 6), ["Temperature (°C)", "Ice cream sales"]),
+      display: "contour",
+      contour: { bandwidth: 1, levels: 6, showPoints: false },
+      regression: { method: "linear" },
+      summary: true,
+    },
+    histogram("surface-humidity", "Filter by humidity", "Humidity (%)", layout(0, 6, 5, 4), "Humidity (%)"),
+    table("surface-records", "Daily source records", ["Temperature (°C)", "Ice Cream Sales", "Humidity (%)", "Beach Visitors"], layout(5, 6, 7, 4)),
+  ]
 );
