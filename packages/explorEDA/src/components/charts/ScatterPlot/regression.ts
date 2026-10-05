@@ -277,6 +277,9 @@ export function fitPolynomial(
   };
 }
 
+/** Smaller groups give unstable local lines, so LOESS says so instead. */
+export const LOESS_MIN_ROWS = 8;
+export const LOESS_MIN_NEIGHBORS = 5;
 /** Groups up to this size get an exact local fit at every row. */
 export const LOESS_EXACT_ROWS = 500;
 /** Intervals between exact local fits for larger groups. */
@@ -300,9 +303,9 @@ export function fitLoess(
     n,
     reason,
   });
-  if (n < 4)
+  if (n < LOESS_MIN_ROWS)
     return unavailable(
-      `LOESS needs at least 4 rows with numeric X and Y. This group has ${n}.`
+      `LOESS needs at least ${LOESS_MIN_ROWS} rows with numeric X and Y. This group has ${n}.`
     );
   const distinct = distinctCount(xs, 3);
   if (distinct < 3)
@@ -314,7 +317,8 @@ export function fitLoess(
   );
   const sx = Float64Array.from(order, (i) => xs[i]!);
   const sy = Float64Array.from(order, (i) => ys[i]!);
-  const k = Math.min(n, Math.max(3, Math.ceil(span * n)));
+  // Fewer than 5 neighbors leaves a local line on 3 or 4 weighted rows, which swings wildly.
+  const k = Math.min(n, Math.max(LOESS_MIN_NEIGHBORS, Math.ceil(span * n)));
   const lowerBound = (x: number) => {
     let lo = 0;
     let hi = n;

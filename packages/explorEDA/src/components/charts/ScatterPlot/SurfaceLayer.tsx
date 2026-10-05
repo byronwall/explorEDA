@@ -1,6 +1,4 @@
-import { useId } from "react";
-import { densityColor } from "./densityPlan";
-import type { HexPlan } from "./hexPlan";
+import { hexColor, type HexPlan } from "./hexPlan";
 import type { ContourPlan } from "./contourPlan";
 import type { ScatterPlan } from "./scatterPlan";
 
@@ -34,7 +32,15 @@ function PointOverlay({ plan }: { plan: ScatterPlan }) {
   );
 }
 
-const interval = (value: number) => String(Number(value.toPrecision(3)));
+const compact = new Intl.NumberFormat("en-US", {
+  notation: "compact",
+  maximumSignificantDigits: 3,
+});
+/** Density values span many magnitudes with data units; keep them short. */
+const interval = (value: number) =>
+  Math.abs(value) >= 10000
+    ? compact.format(value)
+    : String(Number(value.toPrecision(3)));
 
 export function SurfaceLayer({
   plan,
@@ -58,7 +64,7 @@ export function SurfaceLayer({
             key={bin.id}
             data-mark-id={bin.id}
             points={bin.points}
-            fill={bin.fill}
+            style={{ fill: bin.fill }}
             opacity={bin.dimmed ? 0.25 : 1}
             stroke={
               active || bin.selected ? "var(--foreground)" : "var(--background)"
@@ -76,8 +82,7 @@ export function SurfaceLayer({
             key={level.id}
             data-mark-id={level.id}
             d={level.path}
-            fill={level.fill}
-            fillOpacity={0.55}
+            style={{ fill: level.fill }}
             stroke="none"
             role="img"
             aria-label={`Density at least ${interval(level.threshold)} rows per unit area, ${Math.round(level.coverage * 100)}% of rows`}
@@ -95,10 +100,11 @@ export function SurfaceLayer({
             stroke="var(--foreground)"
             strokeOpacity={
               level.id === activeId
-                ? 0.95
-                : 0.25 + (0.5 * (level.index + 1)) / contour.levels.length
+                ? 0.9
+                : 0.22 + (0.38 * (level.index + 1)) / contour.levels.length
             }
-            strokeWidth={level.id === activeId ? 2 : 1}
+            strokeWidth={level.id === activeId ? 1.75 : 0.75}
+            strokeLinejoin="round"
             pointerEvents={contour.fill ? "stroke" : "all"}
           />
         ))}
@@ -123,7 +129,6 @@ export function SurfaceLegend({
   /** Narrow panels show the lowest and highest level only. */
   compact?: boolean;
 }) {
-  const gradient = `${useId().replace(/:/g, "")}-hex`;
   return (
     <div
       className="eda-surface-legend"
@@ -137,22 +142,13 @@ export function SurfaceLegend({
         >
           <span>Rows per hexagon</span>
           <span>1</span>
-          <svg width={64} height={9} aria-hidden="true">
-            <defs>
-              <linearGradient id={gradient}>
-                {[0, 0.25, 0.5, 0.75, 1].map((value) => (
-                  <stop
-                    key={value}
-                    offset={`${value * 100}%`}
-                    stopColor={densityColor(
-                      (1 + value * (hex.max - 1)) / hex.max
-                    )}
-                  />
-                ))}
-              </linearGradient>
-            </defs>
-            <rect width={64} height={9} fill={`url(#${gradient})`} />
-          </svg>
+          <span
+            className="inline-block h-[9px] w-16 rounded-[2px]"
+            style={{
+              background: `linear-gradient(to right, ${hexColor(1 / hex.max)}, ${hexColor(1)})`,
+            }}
+            aria-hidden="true"
+          />
           <span>{hex.max}</span>
           <span className="text-muted-foreground">
             · {hex.counted.toLocaleString()} rows

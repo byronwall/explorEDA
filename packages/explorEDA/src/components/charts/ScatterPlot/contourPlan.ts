@@ -1,5 +1,4 @@
 import { contours } from "d3-contour";
-import { interpolateGreys } from "d3-scale-chromatic";
 import { buildScale } from "../Axis/axisPlan";
 import type { ScatterPlotSettings } from "./definition";
 import type { ScatterPlan } from "./scatterPlan";
@@ -35,8 +34,16 @@ export interface ContourPlan {
   densityAt: (px: number, py: number) => number | undefined;
 }
 
-export const contourFill = (index: number, count: number) =>
-  interpolateGreys(0.15 + (0.7 * (index + 1)) / count);
+/**
+ * Opaque, theme-aware bands: each level mixes a little more foreground into
+ * the background, so nested regions read as steps rather than stacking into a
+ * dark blur. Neutral tones stay apart from categorical group colors.
+ */
+export const contourFill = (index: number, count: number, strong = true) => {
+  const top = strong ? 36 : 28;
+  const share = 5 + ((top - 5) * (index + 1)) / count;
+  return `color-mix(in oklab, var(--foreground) ${share.toFixed(1)}%, var(--background))`;
+};
 
 function sd(values: number[]) {
   const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
@@ -103,7 +110,10 @@ export function planContours(
     densityAt: () => undefined,
   };
   if (plan.xScale.type === "band" || plan.yScale.type === "band")
-    return { ...empty, notice: "Choose numeric X and Y fields for smoothed density." };
+    return {
+      ...empty,
+      notice: "Choose numeric X and Y fields for smoothed density.",
+    };
   const xs = plan.points.map((point) => Number(point.xValue));
   const ys = plan.points.map((point) => Number(point.yValue));
   const n = xs.length;
@@ -178,14 +188,13 @@ export function planContours(
       id: `contour:${index}`,
       index,
       threshold: shape.value,
-      coverage:
-        rowDensity.filter((value) => value >= shape.value).length / n,
+      coverage: rowDensity.filter((value) => value >= shape.value).length / n,
       path: shape.coordinates
         .map((polygon) =>
           polygon.map((ring) => `M${ring.map(toPixel).join("L")}Z`).join("")
         )
         .join(""),
-      fill: contourFill(index, count),
+      fill: contourFill(index, count, options.showPoints === false),
     }));
   const invertX = (
     buildScale(plan.xScale) as unknown as { invert: (px: number) => number }

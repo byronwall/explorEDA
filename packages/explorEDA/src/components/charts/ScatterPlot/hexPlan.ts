@@ -3,10 +3,17 @@ import type { IdType } from "@/providers/DataLayerProvider";
 import type { Filter } from "@/types/FilterTypes";
 import { buildScale } from "../Axis/axisPlan";
 import type { ScatterPlotSettings } from "./definition";
-import { densityColor } from "./densityPlan";
 import type { ScatterPlan, ScatterSnapshot } from "./scatterPlan";
 
 export const DEFAULT_HEX_COLUMNS = 20;
+
+/**
+ * Count color: more blue mixed into the background for more rows. Light themes
+ * run pale to deep blue; dark themes run dim to bright blue, so sparse
+ * hexagons never glare.
+ */
+export const hexColor = (fraction: number) =>
+  `color-mix(in oklab, var(--eda-count) ${(14 + 86 * Math.max(0, Math.min(1, fraction))).toFixed(1)}%, var(--background))`;
 
 export interface HexBin {
   id: string;
@@ -160,7 +167,7 @@ export function planHexbins(
         rowIds.length > 0 &&
         matching === rowIds.length,
       dimmed: settings.filters.length > 0 && matching === 0,
-      fill: rowIds.length ? densityColor(rowIds.length / max) : "none",
+      fill: rowIds.length ? hexColor(rowIds.length / max) : "none",
     });
   }
   // Read left to right, top to bottom for keyboard order.

@@ -13,6 +13,7 @@ import {
   densityDashboard,
   scatterRegressionDashboard,
   scatterSurfaceDashboard,
+  wineChemistryDashboard,
   pointMapDashboard,
   regionMapDashboard,
   distributionDashboard,
@@ -32,6 +33,7 @@ import {
   Tags,
   ThermometerSun,
   Trophy,
+  Wine,
 } from "lucide-react";
 import { boxPlotSettings } from "./boxPlotSettings";
 import { categoricalChartSettings } from "./categoricalChartSettings";
@@ -134,6 +136,17 @@ export const examples: ExampleData[] = [
     icon: ScatterChart,
     data: "/correlated_medium.csv",
     savedData: densityDashboard,
+  },
+  {
+    id: "wine-chemistry",
+    title: "What separates a good red wine",
+    description: "1,599 Portuguese red wines with lab measurements and a tasting score. Smoothed density, hexagons, per-band fits, paired summaries, and marginal histograms show how alcohol, density, and acidity move together, and how the best wines differ.",
+    dataset: { rows: "1,599 wines", fields: 12, source: "Real" },
+    shows: ["Smoothed density", "LOESS by group", "Faceted fits"],
+    guide: "Try this: click Excellent in the quality bands to refit every chart. Alt-click a density region to see the share of wines inside it. Click a hexagon to select its exact wines.",
+    icon: Wine,
+    data: "/datasets/wine-quality-red.csv",
+    savedData: wineChemistryDashboard,
   },
   {
     id: "scatter-regression",

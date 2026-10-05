@@ -1030,3 +1030,43 @@ export const scatterSurfaceDashboard = dashboard(
     table("surface-records", "Daily source records", ["Temperature (°C)", "Ice Cream Sales", "Humidity (%)", "Beach Visitors"], layout(5, 6, 7, 4)),
   ]
 );
+
+
+const wineBands = ["Ordinary (3–5)", "Good (6)", "Excellent (7–8)"];
+
+export const wineChemistryDashboard: SavedDataStructure = {
+  ...dashboard(
+    "What separates a good red wine",
+    [
+      {
+        ...scatter("wine-density", "Density falls as alcohol rises", "alcohol", "density", layout(0, 0, 7, 7), ["Alcohol (% vol)", "Density (g/cm³)"], "Quality band", "wine-bands"),
+        display: "contour",
+        contour: { bandwidth: 0.8, levels: 6 },
+        regression: { method: "loess", span: 0.7 },
+        summary: true,
+        marginals: { bins: 24 },
+      },
+      {
+        ...scatter("wine-acid", "More fixed acid, lower pH", "fixed acidity", "pH", layout(7, 0, 5, 7), ["Fixed acidity (g/L)", "pH"]),
+        display: "hexbin",
+        hexbin: { columns: 18 },
+        regression: { method: "linear" },
+        summary: true,
+      },
+      {
+        ...scatter("wine-volatile", "Volatile acidity and alcohol in each quality band", "volatile acidity", "alcohol", layout(0, 7, 8, 5), ["Volatile acidity (g/L)", "Alcohol (% vol)"], "Quality band", "wine-bands"),
+        regression: { method: "linear" },
+        facet: { enabled: true, type: "wrap", rowVariable: "Quality band", columnCount: 3 },
+      },
+      { ...row("wine-quality", "Filter by quality band", "Quality band", layout(8, 7, 4, 5), "wine-bands"), minRowHeight: 28, maxRowHeight: 40 },
+      table("wine-records", "Wines in view", ["Quality band", "quality", "alcohol", "density", "volatile acidity", "fixed acidity", "pH"], layout(0, 12, 12, 4)),
+    ],
+    [categoricalScale("wine-bands", "Quality band", wineBands)]
+  ),
+  calculations: [
+    {
+      resultColumnName: "Quality band",
+      expression: `if quality <= 5 then "${wineBands[0]}" else if quality == 6 then "${wineBands[1]}" else "${wineBands[2]}"`,
+    },
+  ],
+};

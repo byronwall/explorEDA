@@ -66,6 +66,7 @@ describe("example coverage manifest", () => {
     );
     expect(getExamplesUsingFeature("chart:row")).toEqual([
       "distribution-discovery",
+      "wine-chemistry",
       "scatter-regression",
       "bubble-scatter",
       "area-charts",

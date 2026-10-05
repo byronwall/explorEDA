@@ -510,6 +510,20 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "wine-chemistry",
+    intent: "Read chemical relationships through density, counts, grouped and faceted fits, and summaries, then refit from a quality filter.",
+    features: {
+      "mode:scatter-contour": "shown",
+      "mode:scatter-hexbin": "shown",
+      "mode:scatter-regression": "shown",
+      "chart:scatter": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "color:categorical": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
     exampleId: "scatter-regression",
     intent: "Compare pooled and per-species relationships, then refit from another chart's filter.",
     features: {

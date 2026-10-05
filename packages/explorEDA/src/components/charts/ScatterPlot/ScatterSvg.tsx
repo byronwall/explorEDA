@@ -57,7 +57,7 @@ function MarginalBars({
               y={bin.y}
               width={bin.width}
               height={bin.height}
-              fill={marginals.split ? "rgb(156 163 175)" : "#3479a8"}
+              fill={marginals.split ? "rgb(156 163 175)" : "var(--eda-count)"}
               fillOpacity={marginals.split ? 0.45 : active ? 0.85 : 0.6}
               stroke={active ? "var(--foreground)" : "none"}
             />

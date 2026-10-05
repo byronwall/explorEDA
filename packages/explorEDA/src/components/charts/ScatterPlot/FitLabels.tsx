@@ -9,6 +9,7 @@ import {
 } from "./fitPlan";
 import type { ScatterPlan } from "./scatterPlan";
 import type { PairedSummaryPlan } from "./pairedSummary";
+import { DEFAULT_SPAN, fitEquation, formatR2 } from "./regression";
 
 export type AnalysisTraceKind = "fit" | "fit-results" | "paired-summary";
 
@@ -52,19 +53,30 @@ export function FitLabels({
   onTrace: (kind: AnalysisTraceKind, id: string) => void;
 }) {
   if (plan.plotWidth < 60 || plan.plotHeight < 40) return null;
+  // LOESS states its method and span once; each group line keeps its fit quality.
+  const loessHeader =
+    fits && !fits.notice && fits.method === "loess"
+      ? `LOESS · span ${fits.settings.span ?? DEFAULT_SPAN}`
+      : undefined;
   const maxLines = Math.max(
     1,
-    Math.floor((plan.plotHeight * 0.4) / LINE_HEIGHT) - (summary ? 1 : 0)
+    Math.floor((plan.plotHeight * 0.4) / LINE_HEIGHT) -
+      (summary ? 1 : 0) -
+      (loessHeader ? 1 : 0)
   );
   const all = fits?.notice ? [] : (fits?.fits ?? []);
   const overflow = all.length > maxLines;
   const shown = overflow ? all.slice(0, maxLines - 1) : all;
-  const named = all.length > 1 || Boolean(fits?.groupField);
+  // Small multiples keep the equation; R² stays in the label's trace.
+  const narrow = plan.plotWidth < 300;
+  // A facet that holds one group already names it in its heading.
+  const named = all.length > 1;
   const side = corner(
     plan,
     shown.length +
       (overflow ? 1 : 0) +
       (summary ? 1 : 0) +
+      (loessHeader ? 1 : 0) +
       (fits?.notice ? 1 : 0)
   );
   const trace =
@@ -80,6 +92,12 @@ export function FitLabels({
   const method = fits ? METHOD_NAMES[fits.method] : "";
   const line = (fit: ScatterFit) => {
     const summary = fitSummary(fit);
+    const text =
+      fit.outcome.ok && fit.outcome.method === "loess"
+        ? `pseudo R² ${formatR2(fit.outcome.r2)}`
+        : narrow && fit.outcome.ok
+          ? (fitEquation(fit.outcome) ?? summary)
+          : summary;
     const name = `${fit.label} ${method.toLowerCase()} fit`;
     const item = (
       <li
@@ -118,7 +136,7 @@ export function FitLabels({
         )}
         <span className="truncate">
           {named && <span className="font-medium">{fit.label}: </span>}
-          {fit.outcome.ok ? summary : "no fit"}
+          {fit.outcome.ok ? text : "no fit"}
         </span>
       </li>
     );
@@ -165,24 +183,39 @@ export function FitLabels({
           <li
             key="summary"
             tabIndex={0}
-            className="eda-fit-label text-muted-foreground"
-            aria-label={`Paired summary: Pearson r ${formatR(pooled.r)}, ${pooled.pairs} pairs. Alt-Enter traces it.`}
+            className="eda-fit-label"
+            aria-label={`Paired summary: Pearson r ${formatR(pooled.r)} for all ${pooled.pairs} pairs${summary.groups.length > 1 ? `; ${summary.groups.map((group) => `${group.label} ${formatR(group.r)}`).join(", ")}` : ""}. Alt-Enter traces it.`}
             onClick={trace("paired-summary", "paired-summary")}
             onKeyDown={trace("paired-summary", "paired-summary")}
           >
-            <span className="truncate">
-              r {formatR(pooled.r)}
-              {summary.groups.length > 1 && " pooled"} ·{" "}
-              {pooled.pairs.toLocaleString()} pairs
+            <span className="eda-summary-line truncate">
+              <span className="text-muted-foreground">Pearson r</span>{" "}
+              <b>{formatR(pooled.r)}</b>
               {summary.groups.length > 1 &&
-                ` · ${summary.groups
-                  .map((group) => `${group.label} ${formatR(group.r)}`)
-                  .join(", ")}`}
+                summary.groups.map((group) => (
+                  <span key={group.id} className="eda-summary-group">
+                    <span
+                      className="eda-summary-dot"
+                      style={{ background: group.color }}
+                      aria-hidden="true"
+                    />
+                    {formatR(group.r)}
+                  </span>
+                ))}
+              <span className="text-muted-foreground">
+                {" "}
+                · n {pooled.pairs.toLocaleString()}
+              </span>
             </span>
           </li>
         ))}
       {fits?.notice &&
         warning("fit-notice", `No ${method.toLowerCase()} fit`, fits.notice)}
+      {loessHeader && (
+        <li className="eda-fit-label eda-fit-heading" aria-hidden="true">
+          {loessHeader}
+        </li>
+      )}
       {shown.map(line)}
       {overflow && (
         <li>

@@ -264,7 +264,12 @@ export function planScatterFits(
         "fit:overall",
         "overall",
         "All rows",
-        settings.colorField ? OVERALL_FIT_COLOR : DEFAULT_FIT_COLOR,
+        // Over a density surface, a blue line would blend into blue counts.
+        settings.colorField ||
+          settings.display === "hexbin" ||
+          settings.display === "contour"
+          ? OVERALL_FIT_COLOR
+          : DEFAULT_FIT_COLOR,
         all
       )
     );
