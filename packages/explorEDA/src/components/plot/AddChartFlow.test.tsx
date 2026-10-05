@@ -53,13 +53,16 @@ function Grid() {
   );
 }
 
-function renderWorkspace() {
+function renderWorkspace({ empty = false } = {}) {
   const existing = barChartDefinition.createDefaultSettings(
     { x: 0, y: 0, w: 6, h: 4 },
     "value"
   );
   render(
-    <DataLayerProvider data={[{ value: 1 }, { value: 2 }]} charts={[existing]}>
+    <DataLayerProvider
+      data={[{ value: 1 }, { value: 2 }]}
+      charts={empty ? [] : [existing]}
+    >
       <ChartDraftProvider>
         <ChartCreationButtons />
         <Grid />
@@ -67,6 +70,22 @@ function renderWorkspace() {
     </DataLayerProvider>
   );
 }
+
+it("places the first chart directly on an empty grid", async () => {
+  renderWorkspace({ empty: true });
+  fireEvent.click(screen.getByRole("button", { name: "Add chart" }));
+  const dialog = await screen.findByRole("dialog", { name: "Add a chart" });
+  fireEvent.click(within(dialog).getByRole("button", { name: "Metric Card" }));
+  fireEvent.click(within(dialog).getByRole("button", { name: "Add to grid" }));
+
+  expect(
+    screen.queryByRole("dialog", { name: "Place the new Metric Card" })
+  ).toBeNull();
+  expect(screen.queryByRole("dialog", { name: "Add a chart" })).toBeNull();
+  expect(screen.getByLabelText("Charts")).toHaveTextContent(
+    /^metric-card@0,0$/
+  );
+});
 
 it("previews a new chart without adding it until the user cancels", async () => {
   renderWorkspace();
@@ -176,9 +195,7 @@ it("discovers Histogram and Distribution without adding a preview to the saved l
   expect(
     within(dialog).getByRole("button", { name: "Histogram" })
   ).toHaveAttribute("aria-pressed", "true");
-  fireEvent.click(
-    within(dialog).getByRole("button", { name: "Bar Chart" })
-  );
+  fireEvent.click(within(dialog).getByRole("button", { name: "Bar Chart" }));
   expect(within(dialog).getByLabelText("Data mode")).toHaveValue("category");
   fireEvent.click(within(dialog).getByRole("button", { name: "Histogram" }));
   expect(within(dialog).getByLabelText("Data mode")).toHaveValue("histogram");

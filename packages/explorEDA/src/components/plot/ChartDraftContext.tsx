@@ -36,7 +36,7 @@ interface ChartDraftApi {
    */
   place: (layout: ChartLayout, moves?: Record<string, ChartLayout>) => void;
   cancel: () => void;
-  /** Narrow grids stack charts, so they skip placement. */
+  /** Narrow grids and empty grids place charts without a placement step. */
   setSkipPlacement: (skip: boolean) => void;
 }
 
@@ -87,7 +87,7 @@ export function ChartDraftProvider({ children }: { children: ReactNode }) {
       place(target);
       return;
     }
-    if (skipPlacement) {
+    if (skipPlacement || occupied.length === 0) {
       place({
         ...settings.layout,
         x: 0,
