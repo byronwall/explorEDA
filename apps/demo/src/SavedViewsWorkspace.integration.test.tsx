@@ -19,12 +19,6 @@ const importedSettings: SavedDataStructure = {
     modifiedAt: "2026-10-05T00:00:00.000Z",
   },
   colorScales: [],
-  rowsSettings: {
-    columns: [],
-    sortDirection: "asc",
-    filters: [],
-    globalSearch: "",
-  },
 };
 
 beforeEach(() => {
@@ -67,5 +61,28 @@ it("labels adding the first chart to a new tab as a view change", async () => {
 
   expect(screen.getByTestId("current-history-label")).toHaveTextContent(
     /^View ·/
+  );
+});
+
+it("labels the first Rows search in an imported new tab as a filter", async () => {
+  render(
+    <SavedViewsWorkspace
+      data={[{ category: "A" }, { category: "B" }]}
+      initialSettings={importedSettings}
+      viewName="Orders"
+    />
+  );
+  await screen.findByRole("button", { name: "Rows" });
+
+  fireEvent.click(screen.getByRole("button", { name: "New view" }));
+  fireEvent.click(screen.getByRole("button", { name: "Rows" }));
+  const rows = screen.getByRole("region", { name: "Rows" });
+  fireEvent.click(within(rows).getByRole("button", { name: "Search rows" }));
+  fireEvent.change(screen.getByRole("textbox", { name: "Search table" }), {
+    target: { value: "A" },
+  });
+
+  expect(screen.getByTestId("current-history-label")).toHaveTextContent(
+    /^Filter ·/
   );
 });

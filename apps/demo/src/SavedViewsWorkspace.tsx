@@ -70,16 +70,26 @@ function signatures(tabs: SavedView[]) {
       charts: settings?.charts
         .filter((chart) => chart.filters.length > 0)
         .map(({ id: chartId, filters }) => ({ id: chartId, filters })),
-      rows: settings?.rowsSettings && {
-        filters: settings.rowsSettings.filters,
-        globalSearch: settings.rowsSettings.globalSearch,
+      rows: {
+        filters: settings?.rowsSettings?.filters ?? [],
+        globalSearch: settings?.rowsSettings?.globalSearch ?? "",
       },
     }))
   );
   const views = JSON.stringify(
     tabs.map(({ id, name, settings }) => {
       if (!settings) return { id, name };
-      const { charts, metadata: _metadata, rowsSettings, ...rest } = settings;
+      const {
+        charts,
+        metadata: _metadata,
+        rowsSettings,
+        calculations: _calculations,
+        colorScales: _colorScales,
+        fieldSettings: _fieldSettings,
+        aggregates: _aggregates,
+        geometryAssets: _geometryAssets,
+        ...rest
+      } = settings;
       const rowsView = rowsSettings && {
         ...rowsSettings,
         filters: undefined,
@@ -364,30 +374,52 @@ export function SavedViewsWorkspace({
 
   const captureBaseline = useCallback((settings: SavedDataStructure) => {
     setSession((current) => {
-      const selected = activeView(current.tabs, current.activeTabId);
-      if (selected.settings) return current;
+      let changed = false;
       const tabs = current.tabs.map((tab) => {
-        if (tab.settings) return tab;
-        const base = {
-          ...settings,
-          charts: [],
-          rowsSettings: settings.rowsSettings && {
-            ...settings.rowsSettings,
-            filters: [],
-            globalSearch: "",
-          },
-          metadata: { ...settings.metadata, name: tab.name },
-        };
-        return tab.id === current.activeTabId
-          ? {
-              ...tab,
-              settings: {
-                ...settings,
-                metadata: { ...settings.metadata, name: tab.name },
-              },
-            }
-          : { ...tab, settings: base };
+        const isActive = tab.id === current.activeTabId;
+        let next = tab.settings;
+        if (!next) {
+          next = {
+            ...settings,
+            charts: isActive ? settings.charts : [],
+            rowsSettings: isActive
+              ? settings.rowsSettings
+              : settings.rowsSettings && {
+                  ...settings.rowsSettings,
+                  filters: [],
+                  globalSearch: "",
+                },
+            metadata: { ...settings.metadata, name: tab.name },
+          };
+          changed = true;
+          return { ...tab, settings: next };
+        }
+
+        const normalized = { ...next };
+        let tabChanged = false;
+        for (const key of SHARED_KEYS) {
+          if (normalized[key] !== undefined) continue;
+          (normalized as unknown as Record<string, unknown>)[key] =
+            settings[key] ?? (key === "fieldSettings" ? {} : []);
+          tabChanged = true;
+        }
+        if (!normalized.rowsSettings && settings.rowsSettings) {
+          normalized.rowsSettings = isActive
+            ? settings.rowsSettings
+            : {
+                ...settings.rowsSettings,
+                filters: [],
+                globalSearch: "",
+              };
+          tabChanged = true;
+        }
+        if (tabChanged) {
+          changed = true;
+          return { ...tab, settings: normalized };
+        }
+        return tab;
       });
+      if (!changed) return current;
       const currentEntryIndex = current.path[current.cursor];
       const history = current.history.map((entry, index) =>
         index === currentEntryIndex ? { ...entry, tabs: snapshot(tabs) } : entry
