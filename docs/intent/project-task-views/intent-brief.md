@@ -3,7 +3,7 @@ title: "Project and task views"
 slug: "project-task-views"
 phase: intent
 status: current
-last_updated: "2026-10-04"
+last_updated: "2026-10-05"
 ---
 
 # Project and task views
@@ -32,15 +32,15 @@ A user opens an order dataset and names a view Sales. They add charts and select
 
 After a refresh, the same tabs, active view, settings, filters, and retained history return. The source also returns when local storage can hold the supported dataset. A save failure must be visible; the app must not claim that unsaved work is retained.
 
-The user walks backward through edits. Timeline entries explain whether charts, filters, or shared settings changed. The current proposal previews an earlier project state before the user chooses to restore it. Exact timeline scope and the supported source size remain shaping choices.
+The user walks backward through edits. Timeline entries explain whether charts, filters, or shared settings changed. The implementation previews earlier project settings before an explicit restore. It retains 50 checkpoints without copying source rows. Larger source sizes still need measured proof.
 
 ## Boundaries
 
 One source supplies all tabs. Multiple sources and lookups remain in their [own initiative](../multi-source-analysis/intent-brief.md). Server storage and account features are outside this first shape.
 
-Parameterized detail views, connection authoring, and filter inheritance move to the navigation follow-up. Side-by-side comparison remains later work. A library of named reusable filters also stays below the first cut line; retaining ordinary view filters comes first. A Filters section must still expose conditions whose fields are absent from visible charts.
+Parameterized detail views, connection authoring, and filter inheritance move to the navigation follow-up. Side-by-side comparison remains later work. A library of named reusable filters also stays below the first cut line; retaining ordinary view filters comes first. The initial implementation reuses chart filter controls and the Rows filter panel. A dedicated filter collection remains follow-up work.
 
-Shared field definitions and color scales retain one current project value. Earlier feedback preferred immediate updates across dependent views. A historical project state may restore an earlier shared value; active views must not keep conflicting copies. Ownership of calculations and grouped summaries remains provisional.
+Shared field definitions and color scales retain one current project value. Earlier feedback preferred immediate updates across dependent views. A historical project state may restore an earlier shared value; active views must not keep conflicting copies. The implementation also shares calculations, grouped definitions, and geometry assets across views.
 
 All client state means meaningful serializable analysis and session state. Hover state and incomplete pointer gestures are proposed exclusions. They do not represent completed work.
 
@@ -50,8 +50,8 @@ Tabs, one source, chart definitions plus filters per view, automatic local savin
 
 ## Current reality that matters
 
-The package accepts one row array and one saved settings object. Its state callback and restore path provide a useful seam. Saved settings already include charts, calculations, colors, field settings, Rows settings, and grouped definitions. The full analysis format includes rows. These are reusable parts, not evidence of a delivered multi-tab or history system.
+The package accepts one row array and one saved settings object. Its state callback and restore path provide a useful seam. Saved settings already include charts, calculations, colors, field settings, Rows settings, and grouped definitions. The full analysis format includes rows. The demo host now adds named tabs, automatic local saving, and categorized history around these package seams. The package API remains unchanged.
 
 ## Next step after confirmation
 
-Prove two independent tabs over a small fixed dataset. Edit, switch, refresh, and restore an earlier chart or filter state. Measure source and history storage before promising the same retention for larger imports.
+Complete browser acceptance and review the saved-tabs PR. Measure larger imports before expanding the storage promise. Parameterized navigation remains a separate initiative.

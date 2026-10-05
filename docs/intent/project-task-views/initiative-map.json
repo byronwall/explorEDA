@@ -4,22 +4,22 @@
     "title": "Project and task views",
     "slug": "project-task-views",
     "scale": "capability",
-    "current_phase": "shape",
-    "last_updated": "2026-10-04",
+    "current_phase": "execution",
+    "last_updated": "2026-10-05",
     "summary": "Saved tabs over one source, with view-local charts and filters, automatic local persistence, and categorized Undo/time travel.",
-    "status": "planned",
-    "next_action": "Review history scope and prove independent tab retention, reload, and recovery with a fixed dataset."
+    "status": "active",
+    "next_action": "Execute saved tabs and history tickets, then verify the combined browser flow and open a PR."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-04"
+      "updated_at": "2026-10-05"
     },
     "shape_brief": {
       "path": "shape-brief.md",
       "status": "current",
-      "updated_at": "2026-10-04"
+      "updated_at": "2026-10-05"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -337,10 +337,11 @@
         "commitment": "explicit",
         "importance": "core",
         "status": "active",
-        "time_horizon": "first release",
+        "time_horizon": "later",
         "source_anchors": [
           "filters-followup"
-        ]
+        ],
+        "resolution": "Initial saved tabs reuse existing chart and Rows filter controls. Dedicated filter collection remains later work."
       },
       {
         "id": "single-source-scope",
@@ -418,7 +419,7 @@
       {
         "id": "project-history-proposal",
         "type": "implementation hypothesis",
-        "statement": "Propose project settings snapshots and read-only preview with explicit restore; history scope is not yet a user decision.",
+        "statement": "Execution uses project settings checkpoints, read-only preview, and explicit restore as a reversible default.",
         "commitment": "tentative",
         "importance": "supporting",
         "status": "active",
@@ -446,17 +447,19 @@
       },
       {
         "question": "Should the timeline restore the whole project or only the selected view?",
-        "status": "open",
+        "status": "resolved",
         "source_anchors": [
           "saved-tabs-feedback-2026-10-04"
-        ]
+        ],
+        "resolution": "Project settings timeline is the execution default; retain 50 checkpoints. Larger imports need further measurement."
       },
       {
         "question": "What representative source size and history retention should local persistence support?",
-        "status": "open",
+        "status": "resolved",
         "source_anchors": [
           "saved-tabs-feedback-2026-10-04"
-        ]
+        ],
+        "resolution": "Project settings timeline is the execution default; retain 50 checkpoints. Larger imports need further measurement."
       }
     ]
   },
@@ -485,13 +488,9 @@
       "observation": "Independent charts, counts, layouts, active tab and retained history restore; preview does not overwrite saved present.",
       "decision_rule": "Continue only if tab retention and history recovery work without navigation; resolve storage limits before larger data."
     },
-    "open_decisions": [
-      "Project-wide or view-only timeline restore",
-      "Representative source size and history retention"
-    ],
+    "open_decisions": [],
     "uncertainties": [
-      "Shared calculation and grouped-definition ownership",
-      "Local storage capacity for source plus history"
+      "Local storage capacity for larger imports"
     ],
     "smaller_counterproposal": "Tabs and autosave alone are the first visible slice, but do not satisfy the required Undo and slider outcome.",
     "source_of_truth": "One project source and shared current definitions; each tab owns local charts/layout/filters. Checkpoints store consistent project settings.",
@@ -531,15 +530,33 @@
       "Branch graphs and selective history replay"
     ],
     "review": {
-      "remaining_weaknesses": "Full client persistence depends on measured source and history size. Project-wide history is proposed, not accepted. Shared calculation ownership still needs an example.",
+      "remaining_weaknesses": "Source size evidence covers one 500-row fixture. Larger imports need measured storage proof.",
       "most_likely_bad_outcome": "Autosave retains charts but loses source or filter state on reload, while time travel overwrites the saved present."
     }
   },
   "implementation": {
-    "status": "not-requested",
+    "status": "current",
     "dependencies": [],
     "milestones": [],
-    "open_decisions": []
+    "open_decisions": [],
+    "tickets": [
+      "exp-cy24",
+      "exp-o99e"
+    ],
+    "repository_snapshot": {
+      "branch": "codex/saved-view-tabs"
+    },
+    "fast_local_loop": {
+      "command": "pnpm check",
+      "runtime": "Node 24"
+    },
+    "cut_line": [
+      "Parameterized navigation and inheritance",
+      "Named reusable filter library",
+      "Comparison layouts",
+      "Multi-source and server storage",
+      "Branch graphs and selective history replay"
+    ]
   },
   "history": [
     {
@@ -634,6 +651,17 @@
           "most_likely_bad_outcome": "Views preserve their charts but carry copied shared definitions or hidden filters that disagree with the project."
         }
       }
+    },
+    {
+      "date": "2026-10-04",
+      "event": "Started steady-execution on codex/saved-view-tabs after planning commit 1bcae7d.",
+      "evidence": [
+        "User authorized saved views implementation and PRs with screenshots",
+        "exp-cy24 in_progress; saved_views owns implementation"
+      ],
+      "decisions": [
+        "Use proposed project-wide categorized history as a reversible execution default."
+      ]
     }
   ],
   "related_initiatives": [

@@ -3,7 +3,7 @@ title: "Project and task views — shape brief"
 slug: "project-task-views"
 phase: shape
 status: current
-last_updated: "2026-10-04"
+last_updated: "2026-10-05"
 ---
 
 # Project and task views — what we are adding
@@ -16,12 +16,12 @@ last_updated: "2026-10-04"
 
 ```text
 Saved views over one source
-├── PLANNED ADDITIONS
+├── PLANNED ADDITIONS — implementation ready for acceptance
 │   ├── Named view tabs
 │   │   ├── Create, rename, duplicate, and switch views
 │   │   └── Each view retains chart definitions, layout, and its own filters
 │   ├── Visible filter state
-│   │   ├── Filters section shows conditions and their scope
+│   │   ├── Existing chart controls and Rows panel show filter conditions
 │   │   └── Filtering does not require that field on a visible chart
 │   ├── Automatic local persistence
 │   │   ├── Retain tabs, active tab, analysis settings, and committed filters
@@ -32,12 +32,12 @@ Saved views over one source
 │       ├── Timeline slider previews previous states and returns to the present
 │       ├── Labels distinguish View, Filter, Both, and Shared changes
 │       └── Restore a selected state and retain the displaced present in history
-├── EVALUATE BEFORE COMMITTING
-│   ├── Source size and retained history that fit local storage
-│   └── Shared calculation and grouped-summary ownership
+├── STORAGE BOUNDARY
+│   ├── Retain at most 50 settings checkpoints
+│   └── Measure larger sources before expanding the storage promise
 └── LATER POSSIBILITIES
     ├── Parameterized overview-to-detail navigation and filter inheritance
-    ├── Named reusable filter presets and side-by-side comparison
+    ├── Dedicated filter collection, named presets, and side-by-side comparison
     └── Multiple sources, server saves, and shared projects
 ```
 
@@ -60,11 +60,11 @@ Saved views over one source
 
 **Key decision:** Separate saved views from [parameterized navigation](../parameterized-task-navigation/intent-brief.md). Tabs provide value before destination parameters or inherited filters have rules.
 
-**Ownership:** The project owns source rows and current shared field definitions and colors. Views own charts, layout, and filters. Duplication copies local settings. Shared calculations and grouped definitions need one concrete example before ownership is fixed.
+**Ownership:** The project owns source rows and current shared field definitions and colors. Views own charts, layout, and filters. Duplication copies local settings. Calculations, grouped definitions, and geometry assets also remain shared. Each view owns its grid layout.
 
-**History proposal:** Use one chronological project timeline with full settings checkpoints, excluding repeated source rows. Categorize entries from changed state. Restore charts and filters together, so an old filter cannot target a missing chart. Undo and Redo step through completed edits. Preview is read-only. Editing after Undo appends a new checkpoint; older states remain available through the timeline. Tab switching persists the active tab without creating an analysis edit.
+**History:** Use one chronological project timeline with full settings checkpoints, excluding repeated source rows. Categorize entries from changed state. Restore charts and filters together, so an old filter cannot target a missing chart. Undo and Redo step through completed edits. Preview is read-only. Editing after Undo appends a new checkpoint; older states remain available through the timeline. Tab switching persists the active tab without creating an analysis edit.
 
-This is a proposed history scope, not a user decision. The smaller alternative is tabs with autosave alone. It proves retention quickly, but Undo and the slider remain required outcomes.
+Execution uses this project timeline as a reversible default. Tabs with autosave alone would leave the required recovery outcome unfinished.
 
 **Reuse and boundary:** Keep the existing single-source chart engine and saved-settings codec. The host owns local storage. State callbacks collect changes; restore runs on tab changes or explicit history actions. Keep chart filters and local Rows filters visibly distinct. Existing single-view restore remains usable while tabs are introduced.
 
@@ -72,6 +72,6 @@ This is a proposed history scope, not a user decision. The smaller alternative i
 
 **First proof:** **Try:** Create Sales and Returns over a fixed order fixture. Give them different charts and filters. Switch, reload, and revisit one chart edit and one filter edit. **Observe:** Tabs restore independently; counts and layouts match; timeline labels match the edits; preview leaves the saved present intact. **Decide:** Continue only if retention and recovery work without navigation features. Resolve storage limits before expanding the dataset.
 
-**Open choices:** Confirm project-wide history versus view-only history. Establish the source size and history retention target from a representative import.
+**Storage result:** A 500-row shop fixture with 50 checkpoints used 189,295 serialized bytes in a focused check. This measures one fixture, not a maximum supported import size. Failed saves leave current work available for export.
 
-See the [intent brief](intent-brief.md). Implementation planning has not started.
+See the [intent brief](intent-brief.md). Implementation and acceptance evidence live in tickets exp-cy24 and exp-o99e. Browser acceptance and PR review remain the next steps.
