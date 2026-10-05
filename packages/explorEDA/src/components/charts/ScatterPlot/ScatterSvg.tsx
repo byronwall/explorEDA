@@ -8,6 +8,55 @@ import {
 } from "./scatterPlan";
 import { findAxisGuide } from "../Axis/axisPlan";
 import { PlannedAxes, PlannedGrid } from "../Axis/AxisLayer";
+import type { FitMark } from "./fitPlan";
+
+/** Fitted curves over the points, with a halo so they read over dense clouds. */
+export function FitCurves({
+  marks,
+  activeId,
+}: {
+  marks: FitMark[];
+  activeId?: string;
+}) {
+  return (
+    <g className="eda-fit-curves">
+      {marks.map((mark) => (
+        <g
+          key={mark.id}
+          data-fit-id={mark.id}
+          role="img"
+          aria-label={mark.label}
+        >
+          <path
+            d={mark.path}
+            fill="none"
+            stroke="var(--background)"
+            strokeOpacity={0.75}
+            strokeWidth={mark.id === activeId ? 6 : 4.5}
+            strokeLinecap="round"
+            pointerEvents="none"
+          />
+          <path
+            d={mark.path}
+            fill="none"
+            stroke={mark.color}
+            strokeWidth={mark.id === activeId ? 3 : 2}
+            strokeDasharray={mark.dashed ? "6 4" : undefined}
+            strokeLinecap="round"
+            pointerEvents="none"
+          />
+          <path
+            d={mark.path}
+            fill="none"
+            stroke="transparent"
+            strokeWidth={10}
+            pointerEvents="stroke"
+          />
+        </g>
+      ))}
+    </g>
+  );
+}
 
 function Primitive({
   item,
@@ -96,7 +145,15 @@ export function ScatterSvg({
   onHoverPoint,
   onActivatePoint,
   onSelectPoint,
+  fitMarks = [],
+  activeFitId,
+  onActiveFit,
+  onInspectFit,
 }: {
+  fitMarks?: FitMark[];
+  activeFitId?: string;
+  onActiveFit?: (id: string | undefined) => void;
+  onInspectFit?: (id: string) => void;
   plan: ScatterPlan;
   hoveredId: string | null;
   onBrushChange: (extent: Extent | null) => void;
@@ -154,7 +211,7 @@ export function ScatterSvg({
       className="absolute select-none"
       style={{
         cursor:
-          altHover && (hoveredId || hoveredGuideId)
+          altHover && (hoveredId || hoveredGuideId || activeFitId)
             ? "pointer"
             : brush.getCursor(),
         touchAction: "none",
@@ -230,9 +287,16 @@ export function ScatterSvg({
         setHoveredGuideId(
           event.altKey && id && findAxisGuide(plan.axes, id) ? id : null
         );
+        if (fitMarks.length && !event.buttons)
+          onActiveFit?.(
+            (event.target as Element)
+              .closest("[data-fit-id]")
+              ?.getAttribute("data-fit-id") ?? undefined
+          );
       }}
       onPointerLeave={() => {
         setHoveredGuideId(null);
+        if (fitMarks.length) onActiveFit?.(undefined);
         setAltHover(false);
       }}
       onPointerUpCapture={brush.handlePointerUp}
@@ -252,6 +316,13 @@ export function ScatterSvg({
             !onSelectPoint?.(x, y)
           )
             brush.clear();
+          return;
+        }
+        const fitId = (event.target as Element)
+          .closest("[data-fit-id]")
+          ?.getAttribute("data-fit-id");
+        if (fitId && onInspectFit) {
+          onInspectFit(fitId);
           return;
         }
         if (
@@ -288,6 +359,11 @@ export function ScatterSvg({
             activeId={hoveredGuideId ?? selectedId}
           />
         </g>
+        {fitMarks.length > 0 && (
+          <g clipPath={`url(#${chartId}-plot)`}>
+            <FitCurves marks={fitMarks} activeId={activeFitId} />
+          </g>
+        )}
         <g className="eda-brush" clipPath={`url(#${chartId}-plot)`}>
           <Primitives items={overlay.brush} />
         </g>

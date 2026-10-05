@@ -14,6 +14,8 @@ import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldB
 import { ScatterSvg } from "./ScatterSvg";
 import { BubbleLegend } from "./BubbleLegend";
 import { DensityScatter } from "./DensityScatter";
+import { FitLabels } from "./FitLabels";
+import { useScatterFits } from "./useScatterFits";
 import { useScatterData } from "./useScatterData";
 import { ChartReadout } from "../ChartReadout";
 import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
@@ -74,11 +76,14 @@ function ScatterPoints({
     () => planScatter(settings, snapshot, width, height),
     [settings, snapshot, width, height]
   );
+  const fits = useScatterFits(settings, snapshot, plan);
+  const [activeFitId, setActiveFitId] = useState<string>();
   const source = useMemo(
     (): TraceSource => ({
       role: "chart",
       revision: plan.revision,
       resolve: (kind, id) =>
+        fits.resolve(kind, id) ??
         resolveScatterTrace(
           { kind, id },
           plan,
@@ -90,11 +95,11 @@ function ScatterPoints({
           manager
         ),
       findRow: (id) => findScatterTraceRow(plan, id),
-      targets: () => scatterTraceTargets(plan),
+      targets: () => [...fits.targets(), ...scatterTraceTargets(plan)],
       legendItems:
         plan.legend?.type === "categorical" ? plan.legend.items : undefined,
     }),
-    [plan, snapshot, settings, rawData, data, profiles, manager]
+    [plan, snapshot, settings, rawData, data, profiles, manager, fits]
   );
   useTraceSource(owner, source);
   const choose = (kind: string, id: string) =>
@@ -197,7 +202,9 @@ function ScatterPoints({
     showHints &&
     (plan.brushExtent
       ? "Drag the edges to adjust, Esc to clear"
-      : "Drag to select a region, Alt-click a point to trace it");
+      : fits.marks.length
+        ? "Drag to select a region, Alt-click a point or fit line to trace it"
+        : "Drag to select a region, Alt-click a point to trace it");
 
   const handleBrushChange = useCallback(
     (extent: Extent | null) => {
@@ -272,12 +279,30 @@ function ScatterPoints({
               if (!point) return false;
               return Boolean(choose("point", point.id));
             }}
+            fitMarks={fits.marks}
+            activeFitId={activeFitId}
+            onActiveFit={setActiveFitId}
+            onInspectFit={(id) => choose("fit", id)}
             onInspectGuide={(id) => choose("guide", id)}
             onInspectOverlay={(id) => choose("overlay", id)}
             selectedId={
               activeSelection?.kind === "guide" ? activeSelection.id : undefined
             }
           />
+          {fits.plan && (
+            <FitLabels
+              fits={fits.plan}
+              plan={plan}
+              activeId={
+                activeFitId ??
+                (activeSelection?.kind === "fit"
+                  ? activeSelection.id
+                  : undefined)
+              }
+              onActive={setActiveFitId}
+              onTrace={choose}
+            />
+          )}
           {plan.size && (
             <BubbleLegend
               size={plan.size}
@@ -384,9 +409,7 @@ function ScatterPoints({
         </>
       ) : (
         <ChartMessage>
-          {plan.populations.all > 0
-            ? NO_MATCHING_ROWS
-            : "No rows to show."}
+          {plan.populations.all > 0 ? NO_MATCHING_ROWS : "No rows to show."}
         </ChartMessage>
       )}
     </div>

@@ -7,6 +7,7 @@ import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { DensitySettings } from "./DensitySettings";
+import { RegressionSettings } from "./RegressionSettings";
 import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
 
 export function ScatterPlotSettingsPanel({
@@ -152,6 +153,10 @@ export function ScatterPlotSettingsPanel({
                 if (value >= 0.1 && value <= 1)
                   onSettingsChange({ ...settings, pointOpacity: value });
               }}
+            />
+            <RegressionSettings
+              settings={settings}
+              onSettingsChange={onSettingsChange}
             />
           </>
         )}

@@ -8,6 +8,16 @@ import { IdType } from "@/providers/DataLayerProvider";
 import { applyFilter } from "@/hooks/applyFilter";
 import { Filter } from "@/types/FilterTypes";
 
+/**
+ * One fit method per chart. Every facet shares these settings and fits its own
+ * rows, one fit per color group.
+ */
+export interface ScatterRegressionSettings {
+  method: "linear";
+  /** Adds one fit through every group in each facet. */
+  overall?: boolean;
+}
+
 export interface ScatterPlotSettings extends BaseChartSettings {
   type: "scatter";
   display?: "points" | "density";
@@ -16,6 +26,8 @@ export interface ScatterPlotSettings extends BaseChartSettings {
   pointOpacity?: number;
   sizeField?: string;
   maxBubbleRadius?: number;
+  /** Absent when the chart draws no fit. */
+  regression?: ScatterRegressionSettings;
   xField: string;
   yField: string;
   filters: Filter[];

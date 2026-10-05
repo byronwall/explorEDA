@@ -130,6 +130,16 @@ export async function saveAnalysisToClipboard(
   }
 }
 
+/** A saved scatter fit: one known method and its shared parameters. */
+function isScatterRegression(value: unknown) {
+  if (value === undefined) return true;
+  return (
+    isRecord(value) &&
+    value.method === "linear" &&
+    (value.overall === undefined || typeof value.overall === "boolean")
+  );
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -381,7 +391,8 @@ function isChart(value: unknown): boolean {
         (value.maxBubbleRadius === undefined ||
           (isFiniteNumber(value.maxBubbleRadius) &&
             value.maxBubbleRadius >= 6 &&
-            value.maxBubbleRadius <= 32))
+            value.maxBubbleRadius <= 32)) &&
+        isScatterRegression(value.regression)
       );
     case "pivot":
       return (

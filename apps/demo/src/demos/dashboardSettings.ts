@@ -978,3 +978,22 @@ export const distributionDashboard = dashboard("Delivery times and smaller route
   table("delivery-records", "Shipment source records", ["Route", "Service", "Hours"], layout(8, 7, 4, 4)),
 ]);
 distributionDashboard.fieldSettings = { Hours: { type: "numeric" } };
+
+
+export const scatterRegressionDashboard = dashboard(
+  "Bill shape within each species",
+  [
+    {
+      ...scatter("fit-bill", "Bill depth against bill length", "bill_length_mm", "bill_depth_mm", layout(0, 0, 7, 6), ["Bill length (mm)", "Bill depth (mm)"], "species", "fit-species"),
+      regression: { method: "linear", overall: true },
+    },
+    {
+      ...scatter("fit-bill-sex", "The same fits for each sex", "bill_length_mm", "bill_depth_mm", layout(7, 0, 5, 6), ["Bill length (mm)", "Bill depth (mm)"], "species", "fit-species"),
+      regression: { method: "linear" },
+      facet: { enabled: true, type: "wrap", rowVariable: "sex", columnCount: 1 },
+    },
+    row("fit-island", "Filter by island", "island", layout(0, 6, 4, 4)),
+    table("fit-records", "Penguins in the fits", ["species", "island", "sex", "bill_length_mm", "bill_depth_mm"], layout(4, 6, 8, 4)),
+  ],
+  [categoricalScale("fit-species", "species", ["Adelie", "Chinstrap", "Gentoo"])]
+);
