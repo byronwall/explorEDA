@@ -4,15 +4,11 @@ import type { ScatterPlan } from "./scatterPlan";
 
 export function BubbleLegend({
   size,
-  points,
   exclusions,
-  onInspect,
   onInspectExcluded,
 }: {
   size: NonNullable<ScatterPlan["size"]>;
-  points: number;
   exclusions: ScatterPlan["exclusions"];
-  onInspect: () => void;
   onInspectExcluded: (id: number) => void;
 }) {
   return (
@@ -26,15 +22,6 @@ export function BubbleLegend({
           <div className="truncate font-medium">Area: {size.label}</div>
         </ActionTooltip>
         <div className="text-muted-foreground">Zero is hollow</div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-6 px-0 text-xs"
-          disabled={!points}
-          onClick={onInspect}
-        >
-          Inspect bubble
-        </Button>
       </div>
       {size.samples.map((sample) => (
         <div key={sample.value} className="shrink-0 text-center tabular-nums">

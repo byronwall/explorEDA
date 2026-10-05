@@ -8,6 +8,7 @@ import {
 import { Maximize2, Minimize2, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { RowsView } from "./RowsView";
+import { useEscapeOutside } from "@/hooks/useEscapeOutside";
 
 /** Popper, menu, and dialog layers that portal out of the drawer's DOM. */
 const layerSelector =
@@ -38,6 +39,8 @@ export function RowsPeek({
   onClose: () => void;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
+  // Charts stay in use beside the narrow drawer, so Escape works from them too.
+  useEscapeOutside(panelRef, onClose);
   const bodyRef = useRef<HTMLDivElement>(null);
   const [toolbarTarget, setToolbarTarget] = useState<HTMLDivElement | null>(
     null

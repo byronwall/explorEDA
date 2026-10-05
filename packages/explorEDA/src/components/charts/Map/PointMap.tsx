@@ -337,7 +337,6 @@ export function PointMap({
       <MapToolbar
         settings={settings}
         plan={plan}
-        activeId={activeId}
         owner={owner}
         getFieldLabel={getFieldLabel}
         onViewChange={saveView}

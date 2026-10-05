@@ -3530,7 +3530,7 @@ html {
       [data-settings-open],
       [data-rows-narrow]
     )
-    .eda-add-chart {
+    .eda-toolbar-add {
     width: 30px;
     padding: 0;
     justify-content: center;
@@ -3540,7 +3540,7 @@ html {
       [data-settings-open],
       [data-rows-narrow]
     )
-    .eda-add-chart-label {
+    .eda-toolbar-add-label {
     display: none;
   }
 }
@@ -4526,8 +4526,28 @@ html {
 }
 .eda-add-chart-types {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.eda-add-chart-type-group {
+  display: grid;
   gap: 4px;
+}
+.eda-add-chart-type-group > h3 {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.eda-add-chart-type-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.eda-add-chart-type-options button {
+  flex: 0 1 auto;
+  max-width: 100%;
+  height: 28px;
 }
 .eda-add-chart-types button {
   display: flex;
@@ -5436,4 +5456,45 @@ td[data-null] {
   .eda-scale-drill {
     animation: none;
   }
+}
+
+/* Quick date ranges in a date column filter. */
+.eda-date-presets {
+  display: grid;
+  gap: 6px;
+}
+.eda-date-preset-group {
+  display: grid;
+  gap: 3px;
+}
+.eda-date-preset-label {
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.eda-date-preset-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+.eda-date-preset {
+  height: 22px;
+  padding: 0 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.eda-date-preset:hover {
+  background: var(--muted);
+}
+.eda-date-preset[aria-pressed="true"] {
+  border-color: var(--primary);
+  background: var(--accent);
+  color: var(--primary);
+  font-weight: 600;
+}
+.eda-date-preset:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
 }

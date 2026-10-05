@@ -158,8 +158,12 @@ export function RegionMap({
         className="block shrink-0 touch-none select-none rounded"
         role="group"
         aria-label="Region map"
-        aria-description="Drag to pan. Arrow keys move between regions. Enter selects joined rows. Alt-Enter inspects. Regions with no rows open inspection. Escape clears selection."
+        aria-description="Drag to pan. Arrow keys move between regions. Enter selects joined rows. Alt-Enter inspects. Regions with no rows open inspection. Alt-click outside the regions to trace joins. Escape clears selection."
         {...events}
+        onClick={(event) => {
+          if (event.altKey && !suppressClick.current)
+            api?.inspect(owner, "map-joins", "joins");
+        }}
         onKeyDown={(event) => {
           if (event.key === "Escape") {
             event.stopPropagation();
@@ -371,23 +375,6 @@ export function RegionMap({
           onClick={() => saveView(WORLD_VIEW)}
         >
           Reset view
-        </Button>
-        <Button
-          size="sm"
-          variant="ghost"
-          className="h-7 px-1 text-xs"
-          disabled={!active}
-          onClick={() => active && inspect(active.id)}
-        >
-          Inspect region
-        </Button>
-        <Button
-          size="sm"
-          variant="ghost"
-          className="h-7 px-1 text-xs"
-          onClick={() => api?.inspect(owner, "map-joins", "joins")}
-        >
-          Inspect joins
         </Button>
       </div>
       <div

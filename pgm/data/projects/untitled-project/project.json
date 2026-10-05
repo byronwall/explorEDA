@@ -1842,6 +1842,944 @@
       }
     },
     {
+      "id": "bf6b1063-f6e5-4b0d-a901-db0c2ee559ba",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:8ce3a8",
+        "label": "Agent token ...8ce3a8"
+      },
+      "createdAt": "2026-10-04T04:42:43.231Z",
+      "summary": "Updated metadata for \"Tooltips are poorly placed\".",
+      "nodeIds": [
+        "page-tooltips-are-poorly-placed"
+      ],
+      "payload": {
+        "state": {
+          "nodeMetadataSchema": [
+            {
+              "key": "purpose",
+              "label": "Purpose",
+              "defaultValue": "Loose context, notes, and markdown content that needs a home in the map."
+            },
+            {
+              "key": "implementation",
+              "label": "Implementation",
+              "defaultValue": "Freeform markdown note stored directly on the node for AI or human editing."
+            }
+          ],
+          "nodeTypeSchema": [
+            {
+              "name": "page",
+              "color": "#92bedd"
+            },
+            {
+              "name": "area",
+              "color": "#92ddb1"
+            },
+            {
+              "name": "assembly",
+              "color": "#ddc692"
+            },
+            {
+              "name": "module",
+              "color": "#dd9c92"
+            },
+            {
+              "name": "component",
+              "color": "#ae92dd"
+            },
+            {
+              "name": "note",
+              "color": "#92d8dd"
+            }
+          ],
+          "spatialMap": {
+            "nodes": [
+              {
+                "id": "page-feedback-rnd-2",
+                "label": "Feedback rnd 2",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "",
+                "rawContext": "",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-delete-confirm-is-massive-and-gross",
+                "label": "Delete confirm is massive and gross",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "implementation": "UI implementation deferred as requested. Opus handoff is ready in docs/opus-feedback-round-2-prompt.md in the explorEDA checkout. It includes requirements, source paths, screenshot references, and acceptance checks. This issue is not implemented."
+                },
+                "context": "",
+                "rawContext": "",
+                "images": [
+                  {
+                    "id": "bb9718e0-1427-4649-b098-0cbd5dfd038f",
+                    "src": "/api/projects/untitled-project/images/page-delete-confirm-is-massive-and-gross/bb9718e0-1427-4649-b098-0cbd5dfd038f.png",
+                    "filename": "bb9718e0-1427-4649-b098-0cbd5dfd038f.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 133859,
+                    "createdAt": "2026-09-29T01:49:21.565Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-add-new-chart-flow-should-propose-moving-existing-charts-too",
+                "label": "Add new chart flow should propose moving existing charts too",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "implementation": "UI implementation deferred as requested. Opus handoff is ready in docs/opus-feedback-round-2-prompt.md in the explorEDA checkout. It includes requirements, source paths, screenshot references, and acceptance checks. This issue is not implemented."
+                },
+                "context": "",
+                "rawContext": "",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-chart-focus-should-really-be-a-details-view-with-settings-already-open",
+                "label": "Chart \"focus\" should really be a details view with settings already open",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "implementation": "UI implementation deferred as requested. Opus handoff is ready in docs/opus-feedback-round-2-prompt.md in the explorEDA checkout. It includes requirements, source paths, screenshot references, and acceptance checks. This issue is not implemented."
+                },
+                "context": "The focus should open a full viewport thing that includes the chart on left and then the settings already open.  Basically a \"control panel\" style split where the left side is chart preview and right side is all the actions.  I am thinkign that settings is good.  If we can figure out how to show the sample data preview also (maybe tabs or somethign) that'd be good too",
+                "rawContext": "The focus should open a full viewport thing that includes the chart on left and then the settings already open.  Basically a \"control panel\" style split where the left side is chart preview and right side is all the actions.  I am thinkign that settings is good.  If we can figure out how to show the sample data preview also (maybe tabs or somethign) that'd be good too",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-expand-rows-data-to-full-viewport-height",
+                "label": "Expand rows/data to full viewport height",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "implementation": "UI implementation deferred as requested. Opus handoff is ready in docs/opus-feedback-round-2-prompt.md in the explorEDA checkout. It includes requirements, source paths, screenshot references, and acceptance checks. This issue is not implemented."
+                },
+                "context": "Feels like it is constrained inside the box and should really be bigger. Maybe a full viewport height with a 80px left side that is misisng so you can still see some charts underneath.  Basically a 90vw right drawer.",
+                "rawContext": "Feels like it is constrained inside the box and should really be bigger. Maybe a full viewport height with a 80px left side that is misisng so you can still see some charts underneath.  Basically a 90vw right drawer.",
+                "images": [
+                  {
+                    "id": "dd6009b3-a85b-465e-9533-9f2dd0edaef8",
+                    "src": "/api/projects/untitled-project/images/page-expand-rows-data-to-full-viewport-height/dd6009b3-a85b-465e-9533-9f2dd0edaef8.png",
+                    "filename": "dd6009b3-a85b-465e-9533-9f2dd0edaef8.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 279536,
+                    "createdAt": "2026-10-01T02:10:54.066Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-rows-tooltip-appears-after-closing",
+                "label": "Rows tooltip appears after closing",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Shared tooltips now open on pointer hover only. Closing Rows with Escape restores focus without showing a tooltip. Regression test and pnpm check passed on Node 24. Browser verified at 1280, 783, and 390 pixels. Changes remain local on main."
+                },
+                "context": "Open rows, hit ESC, the tooltip appears.\r\n\r\nWe basically never want tooltips to appear unless mouse over.",
+                "rawContext": "Open rows, hit ESC, the tooltip appears.\r\n\r\nWe basically never want tooltips to appear unless mouse over.",
+                "images": [
+                  {
+                    "id": "287e7458-f396-45b7-bef9-32b0ed51b2f2",
+                    "src": "/api/projects/untitled-project/images/page-rows-tooltip-appears-after-closing/287e7458-f396-45b7-bef9-32b0ed51b2f2.png",
+                    "filename": "287e7458-f396-45b7-bef9-32b0ed51b2f2.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 43986,
+                    "createdAt": "2026-10-01T02:11:33.536Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-harmonize-disclosure-for-colors-grid-and-calcs",
+                "label": "Harmonize disclosure for colors, grid, and calcs",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "implementation": "UI implementation deferred as requested. Opus handoff is ready in docs/opus-feedback-round-2-prompt.md in the explorEDA checkout. It includes requirements, source paths, screenshot references, and acceptance checks. This issue is not implemented."
+                },
+                "context": "Probably need a right drawer or similar with tabs so I can quickly flip between the different modes.  Maybe it has a narrow view and expanded view.\r\n\r\nThis is starting to feel more and more like a persistence inspector.  But I really want it to float above stuff.\r\n\r\nI think we should use popovers for local things and the drawer for \"global\" things.  Maybe?",
+                "rawContext": "",
+                "images": [
+                  {
+                    "id": "c3161451-9995-420a-97f9-61099e73825e",
+                    "src": "/api/projects/untitled-project/images/page-harmonize-disclosure-for-colors-grid-and-calcs/c3161451-9995-420a-97f9-61099e73825e.png",
+                    "filename": "c3161451-9995-420a-97f9-61099e73825e.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 11840,
+                    "createdAt": "2026-10-01T02:14:07.843Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-move-actions-buttons-into-chart-header",
+                "label": "Move actions buttons into chart header",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "implementation": "UI implementation deferred as requested. Opus handoff is ready in docs/opus-feedback-round-2-prompt.md in the explorEDA checkout. It includes requirements, source paths, screenshot references, and acceptance checks. This issue is not implemented."
+                },
+                "context": "Duplicate, delete, view data.  Just put them in the header.  Remove the action row in the settings.  I want settings to just be settings and not include these actions.",
+                "rawContext": "Duplicate, delete, view data.  Just put them in the header.  Remove the action row in the settings.  I want settings to just be settings and not include these actions.",
+                "images": [
+                  {
+                    "id": "16abdaac-1492-42c1-9d82-e299bacbe85f",
+                    "src": "/api/projects/untitled-project/images/page-move-actions-buttons-into-chart-header/16abdaac-1492-42c1-9d82-e299bacbe85f.png",
+                    "filename": "16abdaac-1492-42c1-9d82-e299bacbe85f.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 55634,
+                    "createdAt": "2026-10-01T02:28:23.964Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-feedback-10-1",
+                "label": "Feedback 10/1",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "All 14 items are implemented in stacked PRs #98 to #102 (merge in order)."
+                },
+                "context": "",
+                "rawContext": "",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-rows-drawer-needs-an-expanded-current-and-small-view",
+                "label": "Rows drawer needs an expanded (current) and small view",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #101: the Rows drawer has a narrow size beside its expanded one; narrow keeps the charts visible and in use."
+                },
+                "context": "I think all inspectors need to have a big and narrow size.",
+                "rawContext": "I think all inspectors need to have a big and narrow size.",
+                "images": [
+                  {
+                    "id": "85df8e48-c3fb-4f97-8d56-0574e3437629",
+                    "src": "/api/projects/untitled-project/images/page-rows-drawer-needs-an-expanded-current-and-small-view/85df8e48-c3fb-4f97-8d56-0574e3437629.png",
+                    "filename": "85df8e48-c3fb-4f97-8d56-0574e3437629.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 281700,
+                    "createdAt": "2026-10-02T01:07:46.967Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-tooltip-for-scatter-is-too-large-and-in-the-way",
+                "label": "tooltip for scatter is too large and \"in the way\"",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #102: hovered scatter values read in one line in the chart header instead of a box over the plot."
+                },
+                "context": "Need to find a way for it to live outside the chart or to be less aggressive.",
+                "rawContext": "Need to find a way for it to live outside the chart or to be less aggressive.",
+                "images": [
+                  {
+                    "id": "99e3a7ec-93cf-4848-8a69-9d1421b03703",
+                    "src": "/api/projects/untitled-project/images/page-tooltip-for-scatter-is-too-large-and-in-the-way/99e3a7ec-93cf-4848-8a69-9d1421b03703.png",
+                    "filename": "99e3a7ec-93cf-4848-8a69-9d1421b03703.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 127999,
+                    "createdAt": "2026-10-02T03:09:34.319Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-chart-focus-should-increase-header-size",
+                "label": "Chart focus should increase header size",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #102: the chart details view shows the title at 20 px in a taller header."
+                },
+                "context": "It seems quite small compared to the enlarged chart.",
+                "rawContext": "It seems quite small compared to the enlarged chart.",
+                "images": [
+                  {
+                    "id": "46409482-c8a2-4785-b0cd-03345f90ff63",
+                    "src": "/api/projects/untitled-project/images/page-chart-focus-should-increase-header-size/46409482-c8a2-4785-b0cd-03345f90ff63.png",
+                    "filename": "46409482-c8a2-4785-b0cd-03345f90ff63.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 66517,
+                    "createdAt": "2026-10-02T03:10:41.826Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-improve-the-row-view-with-small-distribution-in-col-header",
+                "label": "Improve the row view with small distribution in col header",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #98: the Rows view draws each field's distribution under its column name (click or drag to filter). Data table charts can turn it on with Distributions in headers."
+                },
+                "context": "We have similar display available in the summary table.  It would be good to include it the various data table displays.  STart with the large row view.",
+                "rawContext": "We have similar display available in the summary table.  It would be good to include it the various data table displays.  STart with the large row view.",
+                "images": [
+                  {
+                    "id": "346b43de-483c-402d-af47-59135f231213",
+                    "src": "/api/projects/untitled-project/images/page-improve-the-row-view-with-small-distribution-in-col-header/346b43de-483c-402d-af47-59135f231213.png",
+                    "filename": "346b43de-483c-402d-af47-59135f231213.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 183741,
+                    "createdAt": "2026-10-02T03:12:42.519Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-row-display",
+                "label": "row display",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PRs #98, #99, #100 cover all nine row display items."
+                },
+                "context": "",
+                "rawContext": "",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-would-be-nice-to-show-data-type-clearly",
+                "label": "Would be nice to show data type clearly",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #98: every table header shows the field's type icon before its name, with type, range, nulls, and distinct count on hover."
+                },
+                "context": "",
+                "rawContext": "",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-missing-a-robust-right-click-menu-on-header-and-cells",
+                "label": "missing a robust right click menu on header and cells",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #100: right-click menus on headers (filter, sort, move, reset width, hide, show hidden, copy name) and cells (copy value/row, filter to value, at or above/below, sort, hide)."
+                },
+                "context": "Go ahead and get something implemented.  Should probably do some research to see what is common on other tools for right click in table.",
+                "rawContext": "Go ahead and get something implemented.  Should probably do some research to see what is common on other tools for right click in table.",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-column-picker-looks-goofy",
+                "label": "column picker looks goofy",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #100: the column picker reuses the field list's rows (type, name, distinct, missing, distribution) through a shared FieldPicker, also used in data table chart settings."
+                },
+                "context": "needs a refinement pass\r\n\r\nthis thing could really just be the summary table/field list again.  Not sure we need to reinvent this.  Use the same comp everywhere for picking fields (if we have the space)",
+                "rawContext": "needs a refinement pass",
+                "images": [
+                  {
+                    "id": "4808fca3-5e5c-49b6-aa68-4d7f99c577cf",
+                    "src": "/api/projects/untitled-project/images/page-column-picker-looks-goofy/4808fca3-5e5c-49b6-aa68-4d7f99c577cf.png",
+                    "filename": "4808fca3-5e5c-49b6-aa68-4d7f99c577cf.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 128319,
+                    "createdAt": "2026-10-02T03:14:40.754Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-search-should-highlight-what-matched",
+                "label": "search should highlight what matched",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #98: table search marks the matched text in every cell; a match hidden by formatting marks the whole cell."
+                },
+                "context": "this is critical for a good experience",
+                "rawContext": "this is critical for a good experience",
+                "images": [
+                  {
+                    "id": "98eda77c-4e82-48a2-ba05-323966bf26b7",
+                    "src": "/api/projects/untitled-project/images/page-search-should-highlight-what-matched/98eda77c-4e82-48a2-ba05-323966bf26b7.png",
+                    "filename": "98eda77c-4e82-48a2-ba05-323966bf26b7.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 339633,
+                    "createdAt": "2026-10-02T03:15:08.761Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-adding-slider-or-distribution-view-to-filter-in-popover",
+                "label": "Adding slider or distribution view to filter in popover",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #99: number and date column filters show the field's distribution (click or drag to set the range); number fields add a two-thumb range slider."
+                },
+                "context": "",
+                "rawContext": "",
+                "images": [
+                  {
+                    "id": "5fe1146a-114b-4f30-a91c-33a6df4a99e7",
+                    "src": "/api/projects/untitled-project/images/page-adding-slider-or-distribution-view-to-filter-in-popover/5fe1146a-114b-4f30-a91c-33a6df4a99e7.png",
+                    "filename": "5fe1146a-114b-4f30-a91c-33a6df4a99e7.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 78926,
+                    "createdAt": "2026-10-02T03:15:45.888Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-filter-popover-behaves-oddly",
+                "label": "Filter popover behaves oddly",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #99: one filter popover now moves between columns instead of two overlapping for ~80 ms, and popovers close without an exit animation."
+                },
+                "context": "feels like flicker when opening one as another closes.",
+                "rawContext": "feels like flicker when opening one as another closes.",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-would-be-nice-to-drag-columns-left-and-right",
+                "label": "Would be nice to drag columns left and right",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #100: drag a column by its name to reorder it; a line marks the drop position. Move left/right is also in the column menu."
+                },
+                "context": "",
+                "rawContext": "",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-would-be-nice-to-drag-columns-to-gutter-to-remove-variable",
+                "label": "Would be nice to drag columns to gutter to remove variable",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #100: drag a column's name away from the header and release to hide it; Escape cancels."
+                },
+                "context": "I think Excel pivot tables have this",
+                "rawContext": "I think Excel pivot tables have this",
+                "images": [],
+                "archived": true
+              },
+              {
+                "id": "page-column-header-should-match-cell-alignment",
+                "label": "Column header should match cell alignment",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #98: number columns right-align their header with their cells; hover actions move to the left of number headers."
+                },
+                "context": "Things feel misaligned when header is left and cell is right.",
+                "rawContext": "Things feel misaligned when header is left and cell is right.",
+                "images": [
+                  {
+                    "id": "cfc8529a-00fd-474f-a472-2e40d2db9419",
+                    "src": "/api/projects/untitled-project/images/page-column-header-should-match-cell-alignment/cfc8529a-00fd-474f-a472-2e40d2db9419.png",
+                    "filename": "cfc8529a-00fd-474f-a472-2e40d2db9419.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 57205,
+                    "createdAt": "2026-10-02T03:22:27.255Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-chart-settings-should-allow-control-of-all-filters-on-chart",
+                "label": "chart settings should allow control of all filters on chart",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "PR #102: chart settings have a Filters tab with a manual control for every filter the chart sets, replacing the range-only Select tab."
+                },
+                "context": "Right now there is no manual input to change filters.",
+                "rawContext": "Right now there is no manual input to change filters.",
+                "images": [
+                  {
+                    "id": "d4a6b444-52dd-448c-956c-4baa4d13c673",
+                    "src": "/api/projects/untitled-project/images/page-chart-settings-should-allow-control-of-all-filters-on-chart/d4a6b444-52dd-448c-956c-4baa4d13c673.png",
+                    "filename": "d4a6b444-52dd-448c-956c-4baa4d13c673.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 367366,
+                    "createdAt": "2026-10-02T03:23:24.885Z"
+                  }
+                ],
+                "archived": true
+              },
+              {
+                "id": "page-fdbk-10-02",
+                "label": "fdbk 10/02",
+                "type": "page",
+                "status": "planned",
+                "metadata": {},
+                "context": "",
+                "rawContext": "",
+                "images": []
+              },
+              {
+                "id": "page-date-filter-could-use-more-options-and-viz",
+                "label": "Date filter could use more options and viz",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Date column filters show quick ranges chosen from the field's span: latest 7/30/90/365 days, years, quarters, or months, under the histogram, which highlights the chosen span."
+                },
+                "context": "These should be context dependent and include things like years, months, etc.",
+                "rawContext": "These should be context dependent and include things like years, months, etc.",
+                "images": [
+                  {
+                    "id": "ea67f23e-436e-446e-815c-3af8ac799075",
+                    "src": "/api/projects/untitled-project/images/page-date-filter-could-use-more-options-and-viz/ea67f23e-436e-446e-815c-3af8ac799075.png",
+                    "filename": "ea67f23e-436e-446e-815c-3af8ac799075.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 223927,
+                    "createdAt": "2026-10-03T01:06:39.406Z"
+                  }
+                ]
+              },
+              {
+                "id": "page-distribution-toggle-cut-off",
+                "label": "distribution toggle cut off",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Moved the Distributions in headers toggle and search above the column list so a long field list cannot push it below the fold. Distributions are on by default for new and existing tables, including every example."
+                },
+                "context": "Also, it should be enabled by default and enabled for all the examples too",
+                "rawContext": "Also, it should be enabled by default and enabled for all the examples too",
+                "images": [
+                  {
+                    "id": "fe6a30ed-4b3c-47ea-a618-7601803ad22f",
+                    "src": "/api/projects/untitled-project/images/page-distribution-toggle-cut-off/fe6a30ed-4b3c-47ea-a618-7601803ad22f.png",
+                    "filename": "fe6a30ed-4b3c-47ea-a618-7601803ad22f.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 51408,
+                    "createdAt": "2026-10-03T01:27:45.585Z"
+                  }
+                ]
+              },
+              {
+                "id": "page-tooltips-are-poorly-placed",
+                "label": "Tooltips are poorly placed",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Hover values read in the chart panel header for every chart, including ECDF, so nothing floats over the plot. Verified in the browser."
+                },
+                "context": "May need to just get rid of them.  Ideally the tooltip has a way to render in a spot that does not block the chart (maybe below it or something?)",
+                "rawContext": "",
+                "images": [
+                  {
+                    "id": "1226b4ac-97be-417c-b0e6-0139300f4934",
+                    "src": "/api/projects/untitled-project/images/page-tooltips-are-poorly-placed/1226b4ac-97be-417c-b0e6-0139300f4934.png",
+                    "filename": "1226b4ac-97be-417c-b0e6-0139300f4934.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 74285,
+                    "createdAt": "2026-10-03T02:23:50.518Z"
+                  }
+                ]
+              },
+              {
+                "id": "page-hitting-esc-did-not-close-the-colors-popover",
+                "label": "Hitting ESC did not close the colors popover",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Escape closed the Colors panel only while focus was inside it. After a click on a chart it did nothing. Escape now closes workspace settings (and the narrow Rows drawer) from anywhere, before the chart's own Escape."
+                },
+                "context": "",
+                "rawContext": "",
+                "images": []
+              },
+              {
+                "id": "page-remove-inspect-records-on-metric-tiles",
+                "label": "Remove \"inspect records\" on metric tiles",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Removed every on-chart Inspect button (metric card, period, Other categories, point, region, joins, land, bin, bubble, bar, distribution). Alt-click or Alt-Enter opens the trace. AGENTS.md and ui-defaults now forbid Inspect buttons."
+                },
+                "context": "WE should basically never show the \"inspect\" button.  update AGENTS to reflect this desire",
+                "rawContext": "",
+                "images": [
+                  {
+                    "id": "91152b85-cfd8-4e8f-a2ea-b088fed25f6c",
+                    "src": "/api/projects/untitled-project/images/page-remove-inspect-records-on-metric-tiles/91152b85-cfd8-4e8f-a2ea-b088fed25f6c.png",
+                    "filename": "91152b85-cfd8-4e8f-a2ea-b088fed25f6c.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 54037,
+                    "createdAt": "2026-10-04T03:31:47.378Z"
+                  }
+                ]
+              },
+              {
+                "id": "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types",
+                "label": "Add chart list needs some structure and grouping for chart types.",
+                "type": "page",
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Add chart groups chart types under headings (Compare categories, Distribution, Relationships, Over time, Flow and place, Tables and notes) as compact wrapping chips."
+                },
+                "context": "List of buttons is overwhelming.",
+                "rawContext": "List of buttons is overwhelming.",
+                "images": [
+                  {
+                    "id": "77fdccd9-d3d8-4210-a81e-754d67d040b2",
+                    "src": "/api/projects/untitled-project/images/page-add-chart-list-needs-some-structure-and-grouping-for-chart-types/77fdccd9-d3d8-4210-a81e-754d67d040b2.png",
+                    "filename": "77fdccd9-d3d8-4210-a81e-754d67d040b2.png",
+                    "originalName": "image.png",
+                    "mimeType": "image/png",
+                    "size": 134708,
+                    "createdAt": "2026-10-04T03:33:51.754Z"
+                  }
+                ]
+              }
+            ],
+            "links": [
+              {
+                "source": "page-feedback-rnd-2",
+                "target": "page-delete-confirm-is-massive-and-gross",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-rnd-2",
+                "target": "page-add-new-chart-flow-should-propose-moving-existing-charts-too",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-rnd-2",
+                "target": "page-chart-focus-should-really-be-a-details-view-with-settings-already-open",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-rnd-2",
+                "target": "page-expand-rows-data-to-full-viewport-height",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-rnd-2",
+                "target": "page-rows-tooltip-appears-after-closing",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-rnd-2",
+                "target": "page-harmonize-disclosure-for-colors-grid-and-calcs",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-rnd-2",
+                "target": "page-move-actions-buttons-into-chart-header",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-10-1",
+                "target": "page-rows-drawer-needs-an-expanded-current-and-small-view",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-10-1",
+                "target": "page-tooltip-for-scatter-is-too-large-and-in-the-way",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-10-1",
+                "target": "page-chart-focus-should-increase-header-size",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-10-1",
+                "target": "page-row-display",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-improve-the-row-view-with-small-distribution-in-col-header",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-would-be-nice-to-show-data-type-clearly",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-missing-a-robust-right-click-menu-on-header-and-cells",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-column-picker-looks-goofy",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-search-should-highlight-what-matched",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-adding-slider-or-distribution-view-to-filter-in-popover",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-filter-popover-behaves-oddly",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-would-be-nice-to-drag-columns-left-and-right",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-would-be-nice-to-drag-columns-to-gutter-to-remove-variable",
+                "parentChild": true
+              },
+              {
+                "source": "page-row-display",
+                "target": "page-column-header-should-match-cell-alignment",
+                "parentChild": true
+              },
+              {
+                "source": "page-feedback-10-1",
+                "target": "page-chart-settings-should-allow-control-of-all-filters-on-chart",
+                "parentChild": true
+              },
+              {
+                "source": "page-fdbk-10-02",
+                "target": "page-date-filter-could-use-more-options-and-viz",
+                "parentChild": true
+              },
+              {
+                "source": "page-fdbk-10-02",
+                "target": "page-distribution-toggle-cut-off",
+                "parentChild": true
+              },
+              {
+                "source": "page-fdbk-10-02",
+                "target": "page-tooltips-are-poorly-placed",
+                "parentChild": true
+              },
+              {
+                "source": "page-fdbk-10-02",
+                "target": "page-hitting-esc-did-not-close-the-colors-popover",
+                "parentChild": true
+              },
+              {
+                "source": "page-fdbk-10-02",
+                "target": "page-remove-inspect-records-on-metric-tiles",
+                "parentChild": true
+              },
+              {
+                "source": "page-fdbk-10-02",
+                "target": "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types",
+                "parentChild": true
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "dc33bd14-d953-4edb-b742-dd21d749c184",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:8ce3a8",
+        "label": "Agent token ...8ce3a8"
+      },
+      "createdAt": "2026-10-04T04:42:43.203Z",
+      "summary": "Changed \"Tooltips are poorly placed\" status to implemented.",
+      "nodeIds": [
+        "page-tooltips-are-poorly-placed"
+      ]
+    },
+    {
+      "id": "278857b7-71fb-40b0-98d6-2f54efe9f8d3",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:c17f8f",
+        "label": "Agent token ...c17f8f"
+      },
+      "createdAt": "2026-10-04T04:42:41.715Z",
+      "summary": "Updated metadata for \"Remove \"inspect records\" on metric tiles\".",
+      "nodeIds": [
+        "page-remove-inspect-records-on-metric-tiles"
+      ]
+    },
+    {
+      "id": "7316140e-7c0d-447b-8118-7071de61438c",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:c17f8f",
+        "label": "Agent token ...c17f8f"
+      },
+      "createdAt": "2026-10-04T04:42:41.681Z",
+      "summary": "Changed \"Remove \"inspect records\" on metric tiles\" status to implemented.",
+      "nodeIds": [
+        "page-remove-inspect-records-on-metric-tiles"
+      ]
+    },
+    {
+      "id": "927bd5ed-2957-4c61-a16e-f4ebb8b3478a",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:e87dcb",
+        "label": "Agent token ...e87dcb"
+      },
+      "createdAt": "2026-10-04T04:42:40.205Z",
+      "summary": "Updated metadata for \"Hitting ESC did not close the colors popover\".",
+      "nodeIds": [
+        "page-hitting-esc-did-not-close-the-colors-popover"
+      ]
+    },
+    {
+      "id": "7db9d4be-563d-4d53-b1c8-c8668ef27db7",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:e87dcb",
+        "label": "Agent token ...e87dcb"
+      },
+      "createdAt": "2026-10-04T04:42:40.178Z",
+      "summary": "Changed \"Hitting ESC did not close the colors popover\" status to implemented.",
+      "nodeIds": [
+        "page-hitting-esc-did-not-close-the-colors-popover"
+      ]
+    },
+    {
+      "id": "8f42a735-db1f-47c4-b9d1-11943382541c",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:32bec5",
+        "label": "Agent token ...32bec5"
+      },
+      "createdAt": "2026-10-04T04:42:38.588Z",
+      "summary": "Updated metadata for \"distribution toggle cut off\".",
+      "nodeIds": [
+        "page-distribution-toggle-cut-off"
+      ]
+    },
+    {
+      "id": "ce17ce6e-f93d-4fca-b0c7-64a731f4f268",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:32bec5",
+        "label": "Agent token ...32bec5"
+      },
+      "createdAt": "2026-10-04T04:42:38.572Z",
+      "summary": "Changed \"distribution toggle cut off\" status to implemented.",
+      "nodeIds": [
+        "page-distribution-toggle-cut-off"
+      ]
+    },
+    {
+      "id": "eb553fab-d4f0-41ee-b3e7-f13f1e0a7e5a",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:6bebaa",
+        "label": "Agent token ...6bebaa"
+      },
+      "createdAt": "2026-10-04T04:42:37.031Z",
+      "summary": "Updated metadata for \"Date filter could use more options and viz\".",
+      "nodeIds": [
+        "page-date-filter-could-use-more-options-and-viz"
+      ]
+    },
+    {
+      "id": "7ace3148-ed8c-42c4-8f9c-22fea9cbf287",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:6bebaa",
+        "label": "Agent token ...6bebaa"
+      },
+      "createdAt": "2026-10-04T04:42:37.009Z",
+      "summary": "Changed \"Date filter could use more options and viz\" status to implemented.",
+      "nodeIds": [
+        "page-date-filter-could-use-more-options-and-viz"
+      ]
+    },
+    {
+      "id": "cb167602-f130-4be8-b17d-2320c7fdfbda",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:da3efa",
+        "label": "Agent token ...da3efa"
+      },
+      "createdAt": "2026-10-04T04:42:35.454Z",
+      "summary": "Updated metadata for \"Add chart list needs some structure and grouping for chart types.\".",
+      "nodeIds": [
+        "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types"
+      ]
+    },
+    {
+      "id": "fa352d02-fdb6-4322-8821-3cdecf86730e",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:da3efa",
+        "label": "Agent token ...da3efa"
+      },
+      "createdAt": "2026-10-04T04:42:35.427Z",
+      "summary": "Changed \"Add chart list needs some structure and grouping for chart types.\" status to implemented.",
+      "nodeIds": [
+        "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types"
+      ]
+    },
+    {
       "id": "c64201e0-58e9-436c-8b2b-1c905df9a060",
       "kind": "node.images.added",
       "actor": {

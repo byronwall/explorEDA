@@ -149,6 +149,48 @@ describe("ColumnFilter", () => {
     });
   });
 
+  it("offers quick date ranges that fit the field's span", () => {
+    const onChange = vi.fn();
+    const props = {
+      columnId: "created",
+      columnLabel: "Created",
+      profile: profile({
+        name: "created",
+        dataType: "datetime",
+        categories: {
+          topValues: [],
+          distribution: [
+            { value: "2024-01-05", count: 1 },
+            { value: "2024-06-10", count: 1 },
+            { value: "2024-11-20", count: 1 },
+          ],
+        },
+      }),
+      onChange,
+      onClear: vi.fn(),
+    };
+    const { rerender } = render(<ColumnFilter {...props} />);
+    const quarter = screen.getByRole("button", { name: "Q2" });
+    expect(quarter).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByRole("button", { name: "Last 30 days" })).toBeVisible();
+    fireEvent.click(quarter);
+    const q2 = {
+      type: "date-range",
+      field: "created",
+      min: "2024-04-01",
+      max: "2024-06-30",
+    } as const;
+    expect(onChange).toHaveBeenCalledWith("created", q2);
+
+    rerender(<ColumnFilter {...props} filter={q2} />);
+    expect(screen.getByRole("button", { name: "Q2" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Q2" }));
+    expect(onChange).toHaveBeenLastCalledWith("created", undefined);
+  });
+
   it("clears a filter", () => {
     const onClear = vi.fn();
     render(

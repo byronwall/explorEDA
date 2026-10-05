@@ -117,10 +117,6 @@ function ScatterPoints({
     });
   };
   const hoveredPoint = plan.points.find((point) => point.id === hoveredId);
-  const inspectPoint =
-    hoveredPoint ??
-    plan.points.find((point) => point.passesOwnFilter) ??
-    plan.points[0];
   const hoveredText =
     hoveredPoint && scatterHoverReadout(plan, snapshot, settings, hoveredPoint);
 
@@ -285,11 +281,9 @@ function ScatterPoints({
           {plan.size && (
             <BubbleLegend
               size={plan.size}
-              points={plan.points.length}
               exclusions={plan.exclusions.filter(
                 (item) => item.reason === "invalid-size"
               )}
-              onInspect={() => choose("point", inspectPoint!.id)}
               onInspectExcluded={(id) => choose("excluded", String(id))}
             />
           )}

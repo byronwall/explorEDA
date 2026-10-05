@@ -30,11 +30,11 @@ Chart types include row, bar, line, scatter, 3D scatter, box plot, pivot
 table, data table, summary table, metric card, markdown, and color legend.
 
 Metric cards show a count, sum, or average for rows that match the chart
-filters. Choose **Inspect records** to see the inputs and excluded values.
+filters. Alt-click a card to see the inputs and excluded values.
 
 Line Chart's **Calendar summaries** mode groups dated rows by UTC day, week,
-or month. Select a period and series to filter linked views, then choose
-**Inspect period** to see its calculation, date boundaries, and source rows.
+or month. Select a period and series to filter linked views, then Alt-click
+a point to see its calculation, date boundaries, and source rows.
 Choose **Area** to fill each series from zero. **Stacked area** adds nonnegative
 counts or sums. Incomplete periods break the stack. Traces show each band's
 bounds and the series that establish its baseline.
@@ -46,18 +46,18 @@ shares. Tracing includes each category denominator and its source records.
 
 Use **Size by** in Scatter Plot to draw bubbles with area proportional to a
 nonnegative field. The size scale stays fixed during filtering. Click a bubble
-to select its source row, or choose **Inspect bubble** to see its size calculation.
+to select its source row, or Alt-click it to see its size calculation.
 Zero uses a hollow marker. Missing, invalid, and negative sizes remain available
 through the source trace.
 
 Choose **Density** in Scatter Plot to count numeric coordinate pairs in rectangular
 bins. Set the X and Y bin counts, then select a bin to filter its exact source rows.
-**Inspect bin** shows intervals, counts, color scale, and source records. Bin edges
+Alt-click a bin to see its intervals, counts, color scale, and source records. Bin edges
 and the automatic color scale use all source rows, so linked filters keep a stable reference.
 
 Choose **Map** to place rows by latitude and longitude in WGS 84 decimal degrees.
 Add color and size fields, then click a point to select its source row.
-**Inspect point** shows source values, coordinate preparation, size, and projection.
+Alt-click a point to see its source values, coordinate preparation, size, and projection.
 Drag to pan, use **Fit data** for all source coordinates, or **Reset view** for the world.
 Views persist in geographic units. Omitted and offscreen rows remain available in the trace.
 The bundled [World Atlas land outline](https://github.com/topojson/world-atlas) supplies context without a tile service.
@@ -65,8 +65,8 @@ The bundled [World Atlas land outline](https://github.com/topojson/world-atlas) 
 Choose **Region** in Map settings to join records to a GeoJSON FeatureCollection.
 Import polygon geometry, choose the row and feature keys, and review the join preview.
 Keys match by value and type. Choose count, sum, or average for the region metric.
-Select a region to filter its records; **Inspect region** shows its metric and contributors.
-**Inspect joins** lists unmatched rows. Duplicate feature keys form one region without counting rows twice.
+Select a region to filter its records; Alt-click it to see its metric and contributors.
+Alt-click outside the regions to list unmatched rows. Duplicate feature keys form one region without counting rows twice.
 Patterns distinguish regions with no rows from regions with invalid measures. Zero remains a valid metric.
 The color domain uses full-source bounds and stays fixed across filters and facets.
 Geometry is saved once under `geometryAssets`; each chart stores its `geometryAssetId` reference.

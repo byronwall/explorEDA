@@ -16,6 +16,7 @@ import { ColorScalePanel } from "./ColorScaleManager";
 import { usePanelBox } from "./FieldList/FieldList";
 import { GridSettingsPanel } from "./settings/GridSettingsPanel";
 import { ChartSpecPanel } from "./ChartSpecPanel";
+import { useEscapeOutside } from "@/hooks/useEscapeOutside";
 
 export type WorkspaceSettingsTab = "calculations" | "colors" | "grid" | "spec";
 
@@ -71,6 +72,8 @@ export function WorkspaceSettingsDrawer({
 }) {
   const panelRef = useRef<HTMLElement>(null);
   const box = usePanelBox(workspaceRef);
+  // The panel is nonmodal, so Escape still closes it after a click on a chart.
+  useEscapeOutside(panelRef, onClose);
 
   useEffect(() => {
     panelRef.current?.focus({ preventScroll: true });

@@ -26,7 +26,6 @@ import {
   useTraceSource,
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
-import { Button } from "@/components/ui/button";
 import { ChartReadout } from "../ChartReadout";
 import {
   ChartStatusLine,
@@ -447,15 +446,6 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
           })}
         </g>
       </BaseChart>
-      {plan.other.length > 0 && (
-        <Button
-          variant="ghost"
-          className="eda-surface-action h-7 px-2 text-xs"
-          onClick={() => inspect("__other")}
-        >
-          Inspect {plan.other.length} Other categories
-        </Button>
-      )}
       <ChartStatusLine
         parts={statusParts}
         hint={statusHint}

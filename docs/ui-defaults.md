@@ -51,7 +51,7 @@ Chart settings must keep the chart visible. Prefer space beside the panel, then 
 When no outside space remains, use a compact corner editor with scrollable controls.
 Apply valid chart settings immediately so users can compare the result. Keep a reset action for the current edit session.
 Do not add a persistent sidebar for temporary inspection.
-The plot area holds the chart only. Usage hints, such as "Click a cell to select", join the status line only while the pointer or focus is on the chart. Optional actions on the plot, such as Fit view, appear the same way. Inspection uses Alt-click on a mark, not a standing Inspect button.
+The plot area holds the chart only. Usage hints, such as "Click a cell to select", join the status line only while the pointer or focus is on the chart. Optional actions on the plot, such as Fit view, appear the same way. Never show an "Inspect" button on a chart or card. Alt-click or Alt-Enter on a mark opens its trace.
 A click on a mark always filters: a bar, box, or category toggles its value, and a histogram bin sets the range to its bounds.
 Keep a chart's actions in its header: View data, Duplicate, details, settings, and Delete, each an icon with a tooltip. Clear filters stays visible there while the chart filters. Chart settings hold settings only.
 Hidden header actions take no room, so the chart name keeps the full header until the pointer or focus reaches it.

@@ -104,7 +104,7 @@ it("updates from linked filters and field conversion, and inspects the same cont
   expect(card).toHaveTextContent("86% of the $35.00 total · 3 of 4 rows");
   fireEvent.click(within(card).getByText("$30.00"));
   expect(card).toHaveTextContent("3 of 4 rows");
-  fireEvent.click(screen.getByRole("button", { name: "Inspect records" }));
+  fireEvent.click(card, { altKey: true });
   const trace = screen.getByLabelText("Metric card trace");
   const rows = within(trace).getByRole("table");
   expect(within(rows).getAllByRole("row")).toHaveLength(4);

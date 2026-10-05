@@ -1,5 +1,4 @@
 import { useId, useMemo, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { useColorScales } from "@/hooks/useColorScales";
 import { calculateGroupedAggregate } from "@/lib/aggregates";
 import { categoryKey, categoryValue } from "@/lib/categories";
