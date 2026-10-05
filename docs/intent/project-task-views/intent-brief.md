@@ -3,61 +3,55 @@ title: "Project and task views"
 slug: "project-task-views"
 phase: intent
 status: current
-last_updated: "2026-09-29"
+last_updated: "2026-10-04"
 ---
 
 # Project and task views
 
 ## My read
 
-A project should hold several related task views over one source dataset for now. Users need to switch between analyses and move from an overview to detail without losing their work. They should reuse field definitions, color scales, and filters across those views. Side-by-side comparison is lower priority.
+The first useful result is several saved views on tabs over the same source data. A view means chart definitions and filters, including the layout and settings needed to show those charts. Switching tabs must retain each view's analysis. Users can create another view or duplicate one to start a different investigation.
 
-Multiple sources are a separate initiative. Products, orders, and customers remain the motivating example for that future work. They no longer determine the scope of the current view system. The current product can use a supplied order table with the fields its views need.
+The earlier shape combined two jobs: retaining separate analyses and navigating from an overview to parameterized detail. Saved tabs solve the immediate job. Parameterized navigation moves to a [separate follow-up](../parameterized-task-navigation/intent-brief.md). It can build on saved tabs later.
 
-Shared field definitions and color scales should probably update every dependent view immediately. Keeping different current interpretations in per-view snapshots would make changes difficult to understand. History snapshots for Undo are separate from that rule: there is still one current shared definition at any moment.
+Edits save automatically. Byron wants all client state persisted to local storage, ideally including the source required to reopen the analysis. This replaces the previous undecided save policy. Persisting only chart settings would fall short if a refresh loses the source, filters, or active tab. Source data should be stored once for the project, rather than in every view or history checkpoint.
 
-Filters identify fields, thresholds, and selected values. Users apply them to remove bad data or focus on a region of interest. A saved filter should work in another view even when no visible chart plots its field. A dedicated Filters section keeps these independent conditions visible and controllable.
-
-A view can accept a parameter and open from another view with useful context. Users and developers can both create views and their connections. Opening another entity can reuse a detail view or leave another instance open. Easy duplication matters more than fixing one permanent tab policy now.
+Automatic saving needs reliable Undo and a timeline slider for visiting earlier states. The timeline must distinguish changes to chart definitions and layout from changes to filters. An edit can affect both. The distinction describes what changed; it does not yet require separate timelines or selective replay of filter edits.
 
 ## What matters most
 
-- Keep the current project, views, and agent workflow single-source.
-- Support switching analyses and opening details without losing work.
-- Reuse field-based filters independently of displayed charts.
-- Apply shared definition changes across dependent views.
-- Let users create, connect, and duplicate task views.
+- Create and switch saved tabs over one source.
+- Preserve each view's chart definitions, layout, and filters.
+- Save meaningful client state automatically to local storage.
+- Recover earlier states through Undo and a timeline with clear change categories.
+- Prove retention before adding detail navigation.
 
 ## The intended experience
 
-A user opens an order overview and creates charts and saved filters. They open a detail view for a selected store or customer represented in that same dataset. They can configure the destination and parameter connection themselves. Another view can use a saved condition without including its field in a chart.
+A user opens an order dataset and names a view Sales. They add charts and select September. They duplicate the tab as Returns, then change its charts and filters. Switching back restores Sales with its own September selection. Neither view receives the other's local filters.
 
-The user duplicates a view to keep another investigation open. A shared color or field definition change reaches every view that references it. Developers can prepare the same views and connections through runtime configuration.
+After a refresh, the same tabs, active view, settings, filters, and retained history return. The source also returns when local storage can hold the supported dataset. A save failure must be visible; the app must not claim that unsaved work is retained.
 
-A project's definition supplies shared settings. View settings supply task-specific layout and choices. The active analysis should be explainable through those current definitions rather than copied shared settings that drift independently.
+The user walks backward through edits. Timeline entries explain whether charts, filters, or shared settings changed. The current proposal previews an earlier project state before the user chooses to restore it. Exact timeline scope and the supported source size remain shaping choices.
 
 ## Boundaries
 
-One source supplies the current project's working data. There are no cross-table lookups or relationship-based filters in this initiative. See [multiple sources and lookups](../multi-source-analysis/intent-brief.md) for that separate direction.
+One source supplies all tabs. Multiple sources and lookups remain in their [own initiative](../multi-source-analysis/intent-brief.md). Server storage and account features are outside this first shape.
 
-A field absent from charts differs from a field absent from the source. The first should remain filterable. The second needs visible applicability in the Filters section. Adding an arbitrary filter must not falsely claim that it restricts the current data.
+Parameterized detail views, connection authoring, and filter inheritance move to the navigation follow-up. Side-by-side comparison remains later work. A library of named reusable filters also stays below the first cut line; retaining ordinary view filters comes first. A Filters section must still expose conditions whose fields are absent from visible charts.
 
-Automatic saving, explicit Save, and persistence of temporary selections remain undecided. Preserve the requirement to retain meaningful work without inventing a save policy. Side-by-side comparison remains deferred.
+Shared field definitions and color scales retain one current project value. Earlier feedback preferred immediate updates across dependent views. A historical project state may restore an earlier shared value; active views must not keep conflicting copies. Ownership of calculations and grouped summaries remains provisional.
+
+All client state means meaningful serializable analysis and session state. Hover state and incomplete pointer gestures are proposed exclusions. They do not represent completed work.
 
 ## What seems settled
 
-Independent switching and overview-to-detail navigation both matter. Views use one source for now. Saved filters store field names and conditions. Users and developers can build parameterized views and connections. Shared definitions use one current value across dependent views.
+Tabs, one source, chart definitions plus filters per view, automatic local saving, Undo, and categorized time travel are required. Detail-filter inheritance is unresolved and does not block this initiative. Duplication remains useful without comparison or navigation machinery.
 
 ## Current reality that matters
 
-`ExplorEda` accepts one row array and one saved analysis. The current provider has chart and Rows filters, but no independent reusable view filter collection. The chart engine can therefore remain useful while the project shell and filter ownership are shaped.
-
-Whole-settings snapshots can preserve analysis state over the same source. Shared project definitions must be included when a checkpoint promises to restore the entire project. View-local history should not silently rewind unrelated shared changes.
-
-## Remaining uncertainty
-
-Save policy is deliberately undecided. History boundaries between a whole project and a single view need an example before implementation. A condition naming an unavailable source field needs a visible applicability rule.
+The package accepts one row array and one saved settings object. Its state callback and restore path provide a useful seam. Saved settings already include charts, calculations, colors, field settings, Rows settings, and grouped definitions. The full analysis format includes rows. These are reusable parts, not evidence of a delivered multi-tab or history system.
 
 ## Next step after confirmation
 
-Review an overview, parameterized detail view, duplicate, and independent filter over one order dataset. Keep source expansion separate.
+Prove two independent tabs over a small fixed dataset. Edit, switch, refresh, and restore an earlier chart or filter state. Measure source and history storage before promising the same retention for larger imports.
