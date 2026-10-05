@@ -92,6 +92,13 @@
       "location": "Current conversation",
       "anchor": "Require 2D density contours and filled regions; remove lab files; create PR",
       "authority": "human"
+    },
+    {
+      "id": "support-references",
+      "type": "references",
+      "location": "docs/intent/advanced-scatter-analysis/support/references.md",
+      "anchor": "Scatter reference material",
+      "authority": "research starting points"
     }
   ],
   "intent": {
@@ -739,9 +746,7 @@
       "date": "2026-10-03",
       "event": "created",
       "reason": "User requests preservation, a runnable scatter lab, and Software Design Sleuth across both themes. Native product expansion remains planned.",
-      "evidence": [
-        "docs/research/config-dsl/session-transcript.txt"
-      ],
+      "evidence": [],
       "archive_note": "Referenced lab artifacts removed at user request on 2026-10-04; history retained."
     },
     {
@@ -775,6 +780,11 @@
       "date": "2026-10-04",
       "event": "scope-corrected",
       "reason": "2D contours and filled density regions are required package scope. User removes lab deliverables and requests a review PR."
+    },
+    {
+      "date": "2026-10-04",
+      "event": "support-trimmed",
+      "reason": "User requests only important research, nested within each initiative. Copied prototypes, generated evidence, documents, archives, and transcript removed; concise notes and references retained."
     }
   ],
   "closure": null

@@ -67,7 +67,7 @@ Dashboard DSL
 
 ## Likely authoring
 
-These examples illustrate the proposed flat language. They are not a released grammar. The archived checker does not prove complete-document application or chart-local filter behavior.
+These examples illustrate the proposed flat language. They are not a released grammar. The historical prototype did not prove complete-document application or chart-local filter behavior.
 
 ### Start small: no names or mappings
 
@@ -132,3 +132,5 @@ Render the histogram and metric. Identify `MissingMargin`, locate the declaratio
 **Outside this scope:** Source joins, a new formula language, and mandatory live text synchronization. Native JSON can remain an internal saved format.
 
 [Intent](intent-brief.md) · [Shape rationale](shape-brief.md) · [Implementation plan](implementation-plan.md)
+
+[Supporting references](support/references.md)

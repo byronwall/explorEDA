@@ -43,22 +43,22 @@
     {
       "id": "session",
       "type": "transcript",
-      "location": "docs/research/config-dsl/session-transcript.txt",
+      "location": "docs/intent/config-authoring-dsl/support/session-summary.md",
       "anchor": "10:54 first DSL request; 1:14 compact correction; 4:29 calculations and filters",
       "authority": "human"
     },
     {
       "id": "final",
       "type": "review",
-      "location": "docs/research/config-dsl/03-final/exploreda-outline-final/REVIEW.md",
-      "anchor": "Sections 1\u20139, validation boundary, source basis",
+      "location": "docs/intent/config-authoring-dsl/support/language-notes.md",
+      "anchor": "Everyday grammar; Calculations; Filters and empty values; Checking and repair",
       "authority": "agent-analysis"
     },
     {
       "id": "flat",
       "type": "review",
-      "location": "docs/research/config-dsl/02-flat/exploreda-outline-flat/REVIEW.md",
-      "anchor": "Sections 3\u20137: flat wrapping, workspace and generic chart completeness",
+      "location": "docs/intent/config-authoring-dsl/support/language-notes.md",
+      "anchor": "Everyday grammar; Detailed settings; Complete dashboard meaning",
       "authority": "agent-analysis"
     },
     {
@@ -78,9 +78,16 @@
     {
       "id": "product-answers",
       "type": "request",
-      "location": "docs/research/config-dsl/dsl-product-decisions.md",
+      "location": "docs/intent/config-authoring-dsl/support/product-decisions.md",
       "anchor": "Annotations 1\u201310",
       "authority": "human"
+    },
+    {
+      "id": "support-references",
+      "type": "references",
+      "location": "docs/intent/config-authoring-dsl/support/references.md",
+      "anchor": "Historical source references",
+      "authority": "historical repository evidence"
     }
   ],
   "intent": {
@@ -215,7 +222,7 @@
         "source_anchors": [
           {
             "source_id": "final",
-            "anchor": "Everyday grammar"
+            "anchor": "Retained language design notes"
           }
         ],
         "confidence": "medium",
@@ -249,7 +256,7 @@
         "source_anchors": [
           {
             "source_id": "final",
-            "anchor": "Section 6 Ownership"
+            "anchor": "Retained language design notes"
           }
         ],
         "confidence": "medium",
@@ -266,7 +273,7 @@
         "source_anchors": [
           {
             "source_id": "final",
-            "anchor": "Section 2 Sources"
+            "anchor": "Retained language design notes"
           }
         ],
         "confidence": "medium",
@@ -300,7 +307,7 @@
         "source_anchors": [
           {
             "source_id": "final",
-            "anchor": "Sections 7\u20138"
+            "anchor": "Retained language design notes"
           }
         ],
         "confidence": "medium",
@@ -317,7 +324,7 @@
         "source_anchors": [
           {
             "source_id": "final",
-            "anchor": "Sections 9\u201310 production boundary"
+            "anchor": "Retained language design notes"
           }
         ],
         "confidence": "medium",
@@ -334,7 +341,7 @@
         "source_anchors": [
           {
             "source_id": "flat",
-            "anchor": "Section 7 completeness"
+            "anchor": "Retained language design notes"
           }
         ],
         "confidence": "medium",
@@ -351,7 +358,7 @@
         "source_anchors": [
           {
             "source_id": "final",
-            "anchor": "Section 2 and native one-array boundary"
+            "anchor": "Retained language design notes"
           }
         ],
         "confidence": "medium",
@@ -608,7 +615,7 @@
     "repository_snapshot": {
       "root": "/Users/byronwall/.codex/worktrees/6221/explorEDA",
       "revision": "038be515b0d0869c69f4da45f4744266b073ac19",
-      "worktree_status": "Named branch based on main. Final PR contains planning and DSL research only; scatter lab deliverables removed.",
+      "worktree_status": "Named branch based on main. Review scope is intent documents and concise support notes only.",
       "subsystems": [
         "ScatterPlot planning and traces",
         "SavedDataStructure",
@@ -618,8 +625,7 @@
         "React demo LandingPage"
       ],
       "test_commands": [
-        "pnpm check",
-        "pnpm test (final DSL bundle)"
+        "pnpm check"
       ],
       "deployment_surfaces": [
         "Existing Vite demo; deployment is outside this request."
@@ -719,7 +725,7 @@
       "event": "created",
       "reason": "User requests preservation, a runnable scatter lab, and Software Design Sleuth across both themes. Native product expansion remains planned.",
       "evidence": [
-        "docs/research/config-dsl/session-transcript.txt"
+        "docs/intent/config-authoring-dsl/support/session-summary.md"
       ],
       "archive_note": "Scatter lab files removed from this branch at user request on 2026-10-04."
     },
@@ -741,8 +747,13 @@
       "event": "product-answers-applied",
       "reason": "Applied all ten DSL answers and regenerated shape/plan. Complete creation replaces patch semantics; local filters replace linked-only ownership; partial rendering replaces all-or-nothing application; on-demand export replaces live text synchronization; JSON authoring is rejected.",
       "evidence": [
-        "docs/research/config-dsl/dsl-product-decisions.md"
+        "docs/intent/config-authoring-dsl/support/product-decisions.md"
       ]
+    },
+    {
+      "date": "2026-10-04",
+      "event": "support-trimmed",
+      "reason": "User requests only important research, nested within each initiative. Copied prototypes, generated evidence, documents, archives, and transcript removed; concise notes and references retained."
     }
   ],
   "closure": null

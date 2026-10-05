@@ -1,4 +1,4 @@
-# Source register
+# Historical source references
 
 Native-contract ref: `226ffae632239150b54b55e9b346386e5e1e66d4`.
 
@@ -13,7 +13,5 @@ Repository source was read through the connected GitHub tools. Previously suppli
 - **R7:** [Table definition](https://github.com/byronwall/explorEDA/blob/226ffae632239150b54b55e9b346386e5e1e66d4/packages/explorEDA/src/components/charts/DataTable/definition.ts); [row definition](https://github.com/byronwall/explorEDA/blob/226ffae632239150b54b55e9b346386e5e1e66d4/packages/explorEDA/src/components/charts/RowChart/definition.ts); [bar definition](https://github.com/byronwall/explorEDA/blob/226ffae632239150b54b55e9b346386e5e1e66d4/packages/explorEDA/src/components/charts/BarChart/definition.ts).
 - **R8:** [Filter types](https://github.com/byronwall/explorEDA/blob/226ffae632239150b54b55e9b346386e5e1e66d4/packages/explorEDA/src/types/FilterTypes.ts); [filter evaluator](https://github.com/byronwall/explorEDA/blob/226ffae632239150b54b55e9b346386e5e1e66d4/packages/explorEDA/src/hooks/applyFilter.ts).
 - **R9:** [Scatter points](https://github.com/byronwall/explorEDA/blob/226ffae632239150b54b55e9b346386e5e1e66d4/packages/explorEDA/src/components/charts/ScatterPlot/planScatterPoints.ts); [scatter axes](https://github.com/byronwall/explorEDA/blob/226ffae632239150b54b55e9b346386e5e1e66d4/packages/explorEDA/src/components/charts/ScatterPlot/scatterAxis.ts); [crossfilter wrapper](https://github.com/byronwall/explorEDA/blob/226ffae632239150b54b55e9b346386e5e1e66d4/packages/explorEDA/src/hooks/CrossfilterWrapper.ts).
-- **R10:** User-supplied `baseline-demo-94bfe0b.zip`, containing the actual deployed Ohm parser and calculation grammar. The extracted grammar and its digest are retained; the third-party vendor bundle is not redistributed here. [Ohm API reference](https://ohmjs.org/docs/api-reference), accessed 3 October 2026, describes match results and the distinct semantics API.
-- **B1:** Supplied previous review, retained at `reference/outline-flat-review.md`.
 
-All measured validation claims are backed by local evidence files, not inferred from repository documentation.
+The original research also used a supplied calculation grammar and earlier design reviews. Those copied artifacts are not retained. Historical test results are summarized in [session summary](session-summary.md); they are not current implementation proof.

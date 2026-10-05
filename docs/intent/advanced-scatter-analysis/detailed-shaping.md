@@ -82,3 +82,5 @@ Scatter analysis
 **Delivery:** Regression, summaries, hexagonal counts, marginals, and smoothed 2D density are planned package additions. Other scientific layers retain separate scope decisions. The tree describes scope, not current availability.
 
 [Intent](intent-brief.md) · [Shape rationale](shape-brief.md) · [Implementation plan](implementation-plan.md)
+
+[Supporting references](support/references.md)

@@ -18,7 +18,7 @@ Run `pnpm --filter exploreda build`, then `pnpm --filter demo dev --host 127.0.0
 
 ## Milestone 1: A creation document renders independent chart populations
 
-Port the useful flat parser and bind sources, calculations, and anonymous charts. Build representative scatter, histogram, metric, and table settings from app defaults. Use verbose paths for detail. Add a minimal paste entry and Apply action.
+Implement flat parsing from the retained language notes. Bind sources, calculations, and anonymous charts. Build representative scatter, histogram, metric, and table settings from app defaults. Use verbose paths for detail. Add a minimal paste entry and Apply action.
 
 Prove two chart-local filters against hand-counted rows. Introduce local population support at the native preparation boundary if missing. Keep normal interactive linked selection behavior intact. Compare output with equivalent native settings. Applying a second document must remove omitted charts and reset omitted settings to app defaults. Undo restores the prior configuration.
 

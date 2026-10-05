@@ -1,1 +1,0 @@
-{"name":"exploreda-dsl-design-review","private":true,"type":"module","scripts":{"test":"node --experimental-strip-types --test checker/checker.test.mjs"}}

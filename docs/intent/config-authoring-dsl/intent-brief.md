@@ -48,7 +48,7 @@ Anonymous IDs, array syntax, and diagnostic presentation are reversible design c
 
 ## Current reality that matters
 
-The archived checker has 275 passing tests, but emits partial patches rather than complete rendered workspaces. Its JSON escape syntax, linked filter assumptions, and strict success boundary are superseded by these answers. Native chart filtering currently participates in Crossfilter dimensions; chart-local population restrictions need a separate proof. Existing defaults, formula evaluation, save validation, and normal controls remain useful foundations.
+The historical prototype reported 275 passing tests, but emitted partial patches rather than complete rendered workspaces. Only its useful design notes and examples are retained under `support/`. Its JSON escape syntax, linked filter assumptions, and strict success boundary are superseded by these answers. Native chart filtering currently participates in Crossfilter dimensions; chart-local population restrictions need a separate proof. Existing defaults, formula evaluation, save validation, and normal controls remain useful foundations.
 
 ## Next step after confirmation
 
