@@ -17,10 +17,12 @@ vi.mock("./landing/LiveOrderBook", () => ({
   LiveOrderBook: () => <div data-testid="live-order-book" />,
 }));
 
-vi.mock("exploreda", () => {
+vi.mock("exploreda", async () => {
   let workspaceMounts = 0;
+  const actual = await vi.importActual<typeof import("exploreda")>("exploreda");
 
   return {
+    ...actual,
     ExplorEda: ({
       data,
       savedData,
@@ -73,7 +75,10 @@ vi.mock("exploreda", () => {
 });
 
 describe("LandingPage routing", () => {
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    vi.restoreAllMocks();
+    localStorage.clear();
+  });
 
   it("returns to the example selector when browser history clears the example", async () => {
     vi.stubGlobal(
@@ -272,7 +277,7 @@ describe("LandingPage routing", () => {
     expect(screen.queryByTestId("workspace")).toBeNull();
   });
 
-  it("captures state without controlling the workspace and restores it on remount", async () => {
+  it("saves named views and restores them after a reload", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
@@ -280,33 +285,39 @@ describe("LandingPage routing", () => {
         text: () => Promise.resolve("x,y\n1,2"),
       })
     );
-    const router = createMemoryRouter(
-      [{ path: "/*", element: <LandingPage /> }],
-      { initialEntries: ["/?example=palmer-penguins"] }
+    const makeRouter = () =>
+      createMemoryRouter([{ path: "/*", element: <LandingPage /> }], {
+        initialEntries: ["/?example=palmer-penguins"],
+      });
+
+    const first = render(<RouterProvider router={makeRouter()} />);
+    expect(await screen.findByTestId("workspace")).toHaveAttribute(
+      "data-rows",
+      "1"
     );
-
-    render(<RouterProvider router={router} />);
-    const workspace = await screen.findByTestId("workspace");
-    expect(workspace).toHaveAttribute("data-rows", "1");
-    expect(workspace).toHaveAttribute("data-has-saved-data", "true");
-    const initialMount = workspace.getAttribute("data-mount");
-
     fireEvent.click(screen.getByRole("button", { name: "Emit state" }));
-    expect(screen.getByTestId("workspace")).toHaveAttribute(
-      "data-has-saved-data",
-      "true"
+    fireEvent.click(screen.getByRole("button", { name: "New view" }));
+    expect(screen.getAllByRole("tab")).toHaveLength(2);
+    await waitFor(() =>
+      expect(localStorage.getItem("exploreda.saved-views.v1")).not.toBeNull()
     );
+    first.unmount();
 
-    fireEvent.click(screen.getByRole("button", { name: "Reset workspace" }));
-
-    await waitFor(() => {
-      const restoredWorkspace = screen.getByTestId("workspace");
-      expect(restoredWorkspace).toHaveAttribute("data-rows", "1");
-      expect(restoredWorkspace).toHaveAttribute("data-has-saved-data", "true");
-      expect(restoredWorkspace.getAttribute("data-mount")).not.toBe(
-        initialMount
-      );
-    });
+    render(<RouterProvider router={makeRouter()} />);
+    expect(await screen.findByTestId("workspace")).toHaveAttribute(
+      "data-rows",
+      "1"
+    );
+    expect(screen.getAllByRole("tab")).toHaveLength(2);
+    const restored = JSON.parse(
+      localStorage.getItem("exploreda.saved-views.v1") ?? "{}"
+    );
+    expect(restored.sourceAnalysis).toContain('"x":1');
+    expect(
+      restored.history.every(
+        (entry: { tabs: unknown[] }) => !("sourceAnalysis" in entry)
+      )
+    ).toBe(true);
   });
 
   it("shows full-analysis validation errors and accepts a valid followup", async () => {

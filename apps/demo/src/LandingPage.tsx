@@ -2,13 +2,13 @@ import { Button } from "@/components/ui/button";
 import { ExampleData, examples, FEATURED_EXAMPLE_ID } from "@/demos/examples";
 import {
   parseSavedAnalysis,
-  type SavedDataStructure,
   validateSavedAnalysisForData,
+  type SavedDataStructure,
 } from "exploreda";
 
 import { parseCsvData } from "./csvParser";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft, Code2, Lightbulb, RotateCcw } from "lucide-react";
+import { ArrowLeft, Code2, Lightbulb } from "lucide-react";
 import {
   lazy,
   Suspense,
@@ -31,6 +31,7 @@ import { LandingFooter } from "./landing/LandingFooter";
 import { SampleDataButtons } from "./landing/SampleDataButtons";
 import { PageFileDrop } from "./landing/PageFileDrop";
 import { SectionHeading } from "./landing/SectionHeading";
+import { getSavedViewsRows, readSavedViewsSession } from "./savedViewsSession";
 
 const featuredExample = examples.find(
   (item) => item.id === FEATURED_EXAMPLE_ID
@@ -45,10 +46,12 @@ const CoverageMatrix = import.meta.env.DEV
     )
   : null;
 
-const ExplorEda = lazy(() =>
-  import("exploreda").then(({ ExplorEda: Workspace }) => ({
-    default: Workspace,
-  }))
+const SavedViewsWorkspace = lazy(() =>
+  import("./SavedViewsWorkspace").then(
+    ({ SavedViewsWorkspace: Workspace }) => ({
+      default: Workspace,
+    })
+  )
 );
 
 export type DatumObject = {
@@ -58,7 +61,7 @@ export type DatumObject = {
 export function LandingPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
-  const [csvData, setCsvData] = useState<DatumObject[]>([]);
+
   const [exampleData, setExampleData] = useState<DatumObject[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -69,10 +72,15 @@ export function LandingPage() {
   const showDocs = searchParams.get("view") === "docs";
 
   const [example, setExample] = useState<ExampleData | null>(null);
-  const [isCsvMode, setIsCsvMode] = useState(false);
-  const [capturedState, setCapturedState] = useState<
-    SavedDataStructure | undefined
-  >();
+  const [restoredSession, setRestoredSession] = useState(() =>
+    readSavedViewsSession()
+  );
+  const [csvData, setCsvData] = useState<DatumObject[]>(() =>
+    restoredSession ? getSavedViewsRows(restoredSession) : []
+  );
+  const [isCsvMode, setIsCsvMode] = useState(
+    () => restoredSession !== undefined
+  );
   const [csvSavedData, setCsvSavedData] = useState<
     SavedDataStructure | undefined
   >();
@@ -80,7 +88,6 @@ export function LandingPage() {
   const [analysisJsonError, setAnalysisJsonError] = useState<string | null>(
     null
   );
-  const [workspaceKey, setWorkspaceKey] = useState(0);
   const workspaceRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
   const motionY = shouldReduceMotion ? 0 : 20;
@@ -112,25 +119,16 @@ export function LandingPage() {
     setExample(null);
     setIsCsvMode(false);
     setCsvData([]);
-    setCapturedState(undefined);
+    setRestoredSession(undefined);
+    try {
+      localStorage.removeItem("exploreda.saved-views.v1");
+    } catch {
+      // The workspace is already leaving; an unavailable storage area has no session to retain.
+    }
     setCsvSavedData(undefined);
     setAnalysisJson("");
     setAnalysisJsonError(null);
     setLoadError(null);
-  };
-
-  const handleStateChange = useCallback((state: SavedDataStructure) => {
-    setCapturedState(state);
-  }, []);
-
-  const handleResetWorkspace = () => {
-    if (!capturedState) {
-      return;
-    }
-
-    // Re-mount with the original loaded props instead of the latest emitted state.
-    setCapturedState(undefined);
-    setWorkspaceKey((key) => key + 1);
   };
 
   const handleExampleSelect = useCallback(
@@ -139,10 +137,6 @@ export function LandingPage() {
     },
     [setSearchParams]
   );
-
-  useEffect(() => {
-    setCapturedState(undefined);
-  }, [exampleId]);
 
   useEffect(() => {
     if (!exampleId) {
@@ -196,7 +190,12 @@ export function LandingPage() {
     setSearchParams({});
     setExample(null);
     setCsvData(data);
-    setCapturedState(undefined);
+    setRestoredSession(undefined);
+    try {
+      localStorage.removeItem("exploreda.saved-views.v1");
+    } catch {
+      // The workspace is already leaving; an unavailable storage area has no session to retain.
+    }
     setCsvSavedData(undefined);
     setLoadError(null);
   };
@@ -212,7 +211,7 @@ export function LandingPage() {
       setIsCsvMode(true);
       setSearchParams({});
       setExample(null);
-      setCapturedState(undefined);
+      setRestoredSession(undefined);
       setAnalysisJsonError(null);
     } catch (error) {
       setAnalysisJsonError(
@@ -416,15 +415,6 @@ export function LandingPage() {
                     React integration guide
                   </span>
                 </a>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  disabled={!capturedState}
-                  onClick={handleResetWorkspace}
-                  aria-label="Reset workspace"
-                >
-                  <RotateCcw className="h-4 w-4" />
-                </Button>
               </header>
               {example?.guide && (
                 <div
@@ -476,18 +466,17 @@ export function LandingPage() {
                 }
               >
                 {isCsvMode ? (
-                  <ExplorEda
-                    key={workspaceKey}
+                  <SavedViewsWorkspace
                     data={csvData}
-                    savedData={csvSavedData}
-                    onStateChange={handleStateChange}
+                    initialSettings={csvSavedData}
+                    initialSession={restoredSession}
+                    viewName="Analysis"
                   />
                 ) : (
-                  <ExplorEda
-                    key={workspaceKey}
+                  <SavedViewsWorkspace
                     data={exampleData}
-                    savedData={example?.savedData}
-                    onStateChange={handleStateChange}
+                    initialSettings={example?.savedData}
+                    viewName={example?.title ?? "Analysis"}
                   />
                 )}
               </Suspense>
