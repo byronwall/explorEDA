@@ -221,6 +221,28 @@ function checkpointLabel(entry: HistoryEntry) {
   return `${entry.label} · ${time}`;
 }
 
+function WorkspaceInstance({
+  data,
+  settings,
+  onStateChange,
+  workspaceRef,
+}: {
+  data: DatumObject[];
+  settings?: SavedDataStructure;
+  onStateChange: (settings: SavedDataStructure) => void;
+  workspaceRef: React.RefObject<ExplorEdaHandle | null>;
+}) {
+  const [initialSettings] = useState(settings);
+  return (
+    <ExplorEda
+      ref={workspaceRef}
+      data={data}
+      savedData={initialSettings}
+      onStateChange={onStateChange}
+    />
+  );
+}
+
 export function SavedViewsWorkspace({
   data,
   initialSettings,
@@ -276,6 +298,7 @@ export function SavedViewsWorkspace({
     setEditingName(false);
     if (showingPreview) {
       setPreviewTabId(id);
+      setWorkspaceKey((key) => key + 1);
       return;
     }
     setSession((current) => ({ ...current, activeTabId: id }));
@@ -415,10 +438,12 @@ export function SavedViewsWorkspace({
         : tabs[0]!.id;
       return { ...current, tabs, activeTabId, cursor };
     });
+    setWorkspaceKey((key) => key + 1);
   };
 
   const previewHistory = (index: number) => {
     setPreviewIndex(index);
+    setWorkspaceKey((key) => key + 1);
     const tabs = session.history[index]?.tabs ?? [];
     const retained = tabs.some((tab) => tab.id === session.activeTabId);
     setPreviewTabId(
@@ -452,11 +477,16 @@ export function SavedViewsWorkspace({
     setWorkspaceKey((key) => key + 1);
   };
 
+  const returnToPresent = () => {
+    setPreviewIndex(null);
+    setWorkspaceKey((key) => key + 1);
+  };
+
   useEffect(() => {
     if (showingPreview) return;
     const settings = workspaceRef.current?.getSettings();
     if (settings) captureBaseline(settings);
-  }, [captureBaseline, session.cursor, showingPreview, view.id, workspaceKey]);
+  }, [captureBaseline, showingPreview, view.id, workspaceKey]);
 
   const selectedHistoryIndex = session.path[session.cursor] ?? 0;
   const canUndo = session.cursor > 0;
@@ -596,11 +626,7 @@ export function SavedViewsWorkspace({
               <Button size="sm" onClick={restorePreview}>
                 Restore this view
               </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => setPreviewIndex(null)}
-              >
+              <Button size="sm" variant="ghost" onClick={returnToPresent}>
                 Return to present
               </Button>
             </>
@@ -633,12 +659,12 @@ export function SavedViewsWorkspace({
         </div>
       </div>
       <div className="mt-3" inert={showingPreview}>
-        <ExplorEda
-          ref={workspaceRef}
-          key={`${view.id}:${session.cursor}:${workspaceKey}`}
+        <WorkspaceInstance
+          key={`${view.id}:${workspaceKey}`}
           data={sourceRows}
-          savedData={settingsForDisplay}
+          settings={settingsForDisplay}
           onStateChange={capture}
+          workspaceRef={workspaceRef}
         />
       </div>
     </section>

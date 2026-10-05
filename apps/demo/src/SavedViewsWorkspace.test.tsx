@@ -9,6 +9,7 @@ import { getSavedViewsRows, readSavedViewsSession } from "./savedViewsSession";
 vi.mock("exploreda", async () => {
   const React = await import("react");
   const actual = await vi.importActual<typeof import("exploreda")>("exploreda");
+  let workspaceMounts = 0;
   return {
     ...actual,
     ExplorEda: React.forwardRef<
@@ -19,11 +20,18 @@ vi.mock("exploreda", async () => {
         onStateChange?: (settings: SavedDataStructure) => void;
       }
     >(({ data, savedData, onStateChange }, ref) => {
-      React.useImperativeHandle(ref, () => ({
-        getSettings: () => savedData ?? makeSettings(),
-      }));
+      const [mount] = React.useState(() => ++workspaceMounts);
+      const [currentSettings, setCurrentSettings] = React.useState(
+        () => savedData ?? makeSettings()
+      );
+      const [draft, setDraft] = React.useState("");
+      React.useImperativeHandle(
+        ref,
+        () => ({ getSettings: () => currentSettings }),
+        [currentSettings]
+      );
       const emit = (kind: "filter" | "chart" | "both" | "shared") => {
-        const current = savedData ?? makeSettings();
+        const current = currentSettings;
         const filters = current.rowsSettings?.filters ?? [];
         const nextFilter = {
           type: "text" as const,
@@ -34,7 +42,7 @@ vi.mock("exploreda", async () => {
               ? "South"
               : "North",
         };
-        onStateChange?.({
+        const next = {
           ...current,
           charts:
             kind === "chart" || kind === "both"
@@ -53,16 +61,29 @@ vi.mock("exploreda", async () => {
               kind === "filter" || kind === "both" ? [nextFilter] : filters,
             globalSearch: current.rowsSettings?.globalSearch ?? "",
           },
-        });
+        } as SavedDataStructure;
+        setCurrentSettings(next);
+        onStateChange?.(next);
       };
       return React.createElement(
         "div",
         {
           "data-testid": "workspace",
+          "data-mount": mount,
           "data-rows": data.length,
-          "data-filter-count": savedData?.rowsSettings?.filters.length ?? 0,
-          "data-calculation-count": savedData?.calculations.length ?? 0,
+          "data-filter-count":
+            currentSettings.rowsSettings?.filters.length ?? 0,
+          "data-calculation-count": currentSettings.calculations.length,
         },
+        React.createElement("input", {
+          "aria-label": "Editor draft",
+          value: draft,
+          onChange: (event: React.ChangeEvent<HTMLInputElement>) =>
+            setDraft(event.target.value),
+          onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => {
+            if (event.key === "Enter") emit("filter");
+          },
+        }),
         React.createElement(
           "button",
           { onClick: () => emit("filter") },
@@ -128,6 +149,20 @@ describe("saved view session and history", () => {
     );
     await screen.findByTestId("workspace");
 
+    const editor = screen.getByRole("textbox", { name: "Editor draft" });
+    const initialMount = screen
+      .getByTestId("workspace")
+      .getAttribute("data-mount");
+    fireEvent.change(editor, { target: { value: "unfinished expression" } });
+    editor.focus();
+    fireEvent.keyDown(editor, { key: "Enter" });
+    expect(editor).toHaveFocus();
+    expect(editor).toHaveValue("unfinished expression");
+    expect(screen.getByTestId("workspace")).toHaveAttribute(
+      "data-mount",
+      initialMount
+    );
+
     fireEvent.click(screen.getByRole("button", { name: "Emit filter" }));
     expect(screen.getByTestId("current-history-label")).toHaveTextContent(
       /^Filter ·/
@@ -145,8 +180,14 @@ describe("saved view session and history", () => {
       "1"
     );
 
+    const beforeNewView = screen
+      .getByTestId("workspace")
+      .getAttribute("data-mount");
     fireEvent.click(screen.getByRole("button", { name: "New view" }));
     expect(screen.getAllByRole("tab")).toHaveLength(2);
+    expect(screen.getByTestId("workspace").getAttribute("data-mount")).not.toBe(
+      beforeNewView
+    );
     expect(screen.getByTestId("workspace")).toHaveAttribute(
       "data-filter-count",
       "0"
@@ -190,7 +231,17 @@ describe("saved view session and history", () => {
       )
     );
     expect(newViewCheckpoint).toBeGreaterThan(-1);
+    const beforePreviewMount = screen
+      .getByTestId("workspace")
+      .getAttribute("data-mount");
     fireEvent.change(slider, { target: { value: String(newViewCheckpoint) } });
+    expect(screen.getByTestId("workspace").getAttribute("data-mount")).not.toBe(
+      beforePreviewMount
+    );
+    expect(screen.getByTestId("workspace")).toHaveAttribute(
+      "data-calculation-count",
+      "0"
+    );
     expect(screen.getByText(/Preview ·/)).toBeInTheDocument();
     expect(localStorage.getItem("exploreda.saved-views.v1")).toBe(
       beforePreview
@@ -200,15 +251,41 @@ describe("saved view session and history", () => {
       "aria-selected",
       "true"
     );
+    const previewMount = screen
+      .getByTestId("workspace")
+      .getAttribute("data-mount");
     fireEvent.click(screen.getByRole("button", { name: "Return to present" }));
     expect(screen.queryByText(/Preview ·/)).toBeNull();
+    expect(screen.getByTestId("workspace").getAttribute("data-mount")).not.toBe(
+      previewMount
+    );
+    expect(screen.getByRole("tab", { name: "New view" })).toHaveAttribute(
+      "aria-selected",
+      "true"
+    );
+    expect(screen.getByTestId("workspace")).toHaveAttribute(
+      "data-calculation-count",
+      "1"
+    );
 
+    const beforeUndoMount = screen
+      .getByTestId("workspace")
+      .getAttribute("data-mount");
     fireEvent.click(screen.getByRole("button", { name: "Undo" }));
+    expect(screen.getByTestId("workspace").getAttribute("data-mount")).not.toBe(
+      beforeUndoMount
+    );
     expect(screen.getByTestId("workspace")).toHaveAttribute(
       "data-calculation-count",
       "0"
     );
+    const beforeRedoMount = screen
+      .getByTestId("workspace")
+      .getAttribute("data-mount");
     fireEvent.click(screen.getByRole("button", { name: "Redo" }));
+    expect(screen.getByTestId("workspace").getAttribute("data-mount")).not.toBe(
+      beforeRedoMount
+    );
     expect(screen.getByTestId("workspace")).toHaveAttribute(
       "data-calculation-count",
       "1"

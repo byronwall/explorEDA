@@ -53,3 +53,7 @@ Validation detail: pnpm check completed UI conventions, package/demo builds, and
 **2026-10-05T04:36:04Z**
 
 Repair on the same branch: strengthened preview restore coverage by switching to another saved tab during historical preview before restoring; restore opens that selected tab. The demo suite passes 26 tests.
+
+**2026-10-05T05:12:13Z**
+
+Final source-review repair: ordinary capture no longer changes the ExplorEda mount key or savedData initialization snapshot, preserving mounted editors and focus. Tab selection, Undo/Redo, preview selection, Return to present, and explicit restore use a new keyed initialization snapshot. Demo tests assert editor draft/focus survives ordinary capture and history actions apply the requested settings. Focused demo tests pass (26/26), with UI and demo type checks passing.
