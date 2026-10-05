@@ -126,14 +126,28 @@ describe("ResizeHandle", () => {
 });
 
 describe("ChartGridLayout resizing", () => {
-  it("grows a chart left and up while its right and bottom edges stay put", () => {
-    renderGrid({ Target: { x: 6, y: 2, w: 4, h: 3 } });
+  it("grows a chart left while its right edge stays put", () => {
+    renderGrid({ Target: { x: 6, y: 0, w: 4, h: 3 } });
 
     dragHandle("Target", "w", -2 * CELL, 0);
-    expect(readLayouts().Target).toEqual({ x: 4, y: 2, w: 6, h: 3 });
+    expect(readLayouts().Target).toEqual({ x: 4, y: 0, w: 6, h: 3 });
+  });
 
-    dragHandle("Target", "n", 0, -CELL);
-    expect(readLayouts().Target).toEqual({ x: 4, y: 1, w: 6, h: 4 });
+  it("keeps a shrinking chart in its place among its neighbors", () => {
+    renderGrid({
+      Left: { x: 0, y: 0, w: 6, h: 4 },
+      Target: { x: 6, y: 0, w: 6, h: 4 },
+      Below: { x: 0, y: 4, w: 12, h: 3 },
+    });
+
+    dragHandle("Target", "s", 0, -CELL);
+    dragHandle("Target", "w", 2 * CELL, 0);
+
+    expect(readLayouts()).toEqual({
+      Left: { x: 0, y: 0, w: 6, h: 4 },
+      Target: { x: 8, y: 0, w: 4, h: 3 },
+      Below: { x: 0, y: 4, w: 12, h: 3 },
+    });
   });
 
   it("stops a left resize at the neighboring chart without moving it", () => {
@@ -207,12 +221,14 @@ describe("closing gaps", () => {
     });
   });
 
-  it("keeps a resized chart's gap until something moves", () => {
-    renderGrid({ Target: { x: 0, y: 2, w: 6, h: 3 } });
+  it("moves a chart up into empty rows above it", () => {
+    renderGrid({
+      Top: { x: 0, y: 0, w: 6, h: 2 },
+      Target: { x: 6, y: 3, w: 6, h: 3 },
+    });
 
-    dragHandle("Target", "s", 0, CELL);
-
-    expect(readLayouts().Target).toEqual({ x: 0, y: 2, w: 6, h: 4 });
+    expect(readLayouts().Target).toEqual({ x: 6, y: 0, w: 6, h: 3 });
+    expect(readLayouts().Top).toEqual({ x: 0, y: 0, w: 6, h: 2 });
   });
 });
 

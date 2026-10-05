@@ -51,8 +51,9 @@ Chart settings must keep the chart visible. Prefer space beside the panel, then 
 When no outside space remains, use a compact corner editor with scrollable controls.
 Apply valid chart settings immediately so users can compare the result. Keep a reset action for the current edit session.
 Do not add a persistent sidebar for temporary inspection.
+The plot area holds the chart only. Usage hints, such as "Click a cell to select", join the status line only while the pointer or focus is on the chart. Optional actions on the plot, such as Fit view, appear the same way. Never show an "Inspect" button on a chart or card. Alt-click or Alt-Enter on a mark opens its trace.
+A click on a mark always filters: a bar, box, or category toggles its value, and a histogram bin sets the range to its bounds.
 Keep a chart's actions in its header: View data, Duplicate, details, settings, and Delete, each an icon with a tooltip. Clear filters stays visible there while the chart filters. Chart settings hold settings only.
-Never show an "Inspect" button on a chart or card. Alt-click or Alt-Enter on a mark opens its trace.
 Hidden header actions take no room, so the chart name keeps the full header until the pointer or focus reaches it.
 The field list is the one workspace tool that stays open. It floats over the right edge from the top of the viewport, never resizes the chart grid, and becomes a bottom sheet on narrow screens. Controls it covers move beside it. Fields in the toolbar and the F key open it, and Shift+F opens every field's distribution in a full view.
 
@@ -68,7 +69,7 @@ Keep a confirmation small and centered: a short question, one sentence that name
 
 ## Scope and layout
 
-- Keep view controls and active filter scope together in one sticky line. Group inspection tools (Fields, Rows) on the left and configuration (Calculations, colors, grid, workspace actions) on the right, as icon buttons with tooltips.
+- Keep view controls and active filter scope together in one sticky line. Filter scope leads on the left. Add chart, then inspection tools (Fields, Rows), then configuration (Calculations, colors, grid, workspace actions) sit on the right, as icon buttons with tooltips. Beside an open panel, Add chart shows only its icon.
 - Keep filter chips on that line. Show the ones that fit, then a "+N more" popover that lists every filter, beside the row count and clear action.
 - Rows is a drawer over the right of the viewport at full height, not a separate view. It has two sizes, switched from its header. Expanded leaves a strip of charts visible on the left, and a click there dismisses it. Narrow sits beside the charts, which stay in use, so a click on them does not dismiss it. R and Escape dismiss either size. It takes the full width on narrow screens and must not resize the chart grid.
 - The expanded Rows drawer covers the toolbar, so its header carries the row count and active filters. Beside the narrow drawer the toolbar keeps its own, and the controls it would cover move beside it. Table tools and the close action stay in the drawer header while rows scroll.
@@ -83,6 +84,8 @@ Keep a confirmation small and centered: a short question, one sentence that name
 - Start new source imports with summary and data tables. Let users choose their first chart.
 - Preserve the order and layout in saved analyses.
 - “View chart data” opens a temporary preview. It must not add a chart or move existing charts.
+- Charts rise to fill empty rows above them, so the grid never leaves gaps at the top. A resize changes only the edge the user drags; the chart keeps its place among its neighbors.
+- A new chart starts in the rows the user can see, never scrolling the page. Free space in view comes first, then the first chart edge in view.
 - Placing a new chart on an occupied spot proposes moving the charts in its way down. Show them at their proposed positions before the user accepts. Apply the new chart and the moves together on accept. Back and Cancel leave every chart where it was.
 - Preview limits must be visible, such as “first 100 shown.”
 - Use a compact Columns trigger. Show selected columns inside a searchable popover, not a shelf of pills.

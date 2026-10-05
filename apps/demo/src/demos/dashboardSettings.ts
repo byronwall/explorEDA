@@ -569,7 +569,7 @@ export const largeShopDashboard = dashboard(
         "large-trend",
         "Order values by region",
         ["Revenue"],
-        layout(0, 26, 12, 7),
+        layout(0, 26, 12, 5),
         "Revenue ($)"
       ),
       xField: "Order",
@@ -590,7 +590,7 @@ export const largeShopDashboard = dashboard(
       aggregation: "sum",
       measureField: "Revenue",
       weekStart: "monday",
-      layout: layout(0, 33, 12, 4),
+      layout: layout(0, 31, 12, 4),
       margin: { top: 8, right: 16, bottom: 8, left: 8 },
     },
   ],
@@ -611,7 +611,7 @@ shopDashboard.charts.push({
   maxCategories: 20,
   sortBy: "count",
   showValues: true,
-  layout: layout(0, 14, 12, 5),
+  layout: layout(0, 14, 6, 6),
   margin: { top: 8, right: 16, bottom: 8, left: 8 },
 });
 
@@ -838,7 +838,7 @@ export const calculationDashboard: SavedDataStructure = {
   calculations: orderCalculations,
 };
 
-// Placed below whatever the order book already holds.
+// Placed beside the revenue heatmap, which shares its row and height.
 shopDashboard.charts.push({
   ...base,
   id: "shop-flow",
@@ -850,12 +850,7 @@ shopDashboard.charts.push({
   maxNodesPerStage: 8,
   nodeOrder: "value",
   flowColor: "first",
-  layout: layout(
-    0,
-    Math.max(...shopDashboard.charts.map((chart) => chart.layout.y + chart.layout.h)),
-    12,
-    6
-  ),
+  layout: layout(6, 14, 6, 6),
   margin: { top: 8, right: 12, bottom: 8, left: 12 },
 });
 

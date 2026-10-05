@@ -46,12 +46,14 @@ export function ChartCreationButtons() {
       <Button
         variant="outline"
         size="sm"
-        className="flex items-center gap-2"
+        className="eda-toolbar-add flex items-center gap-2"
+        aria-label="Add chart"
         aria-haspopup="dialog"
+        tooltip="Add chart: pick a type and fields, preview it, then place it on the grid"
         onClick={() => chartDraft.openDraft()}
       >
-        <Plus className="h-4 w-4" />
-        Add chart
+        <Plus className="h-4 w-4" aria-hidden="true" />
+        <span className="eda-toolbar-add-label">Add chart</span>
       </Button>
     );
   }

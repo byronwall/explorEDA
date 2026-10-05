@@ -142,12 +142,40 @@ describe("chart runtime", () => {
       [],
       [0, 0],
       () => "#000",
-      { x: [0, 10], y: [-4, 4], z: [7, 7] }
+      {
+        x: { kind: "numeric", domain: [0, 10] },
+        y: { kind: "numeric", domain: [-4, 4] },
+        z: { kind: "numeric", domain: [7, 7] },
+      }
     );
     expect(result.points.map(({ x, y, z }) => [x, y, z])).toEqual([
       [-CUBE_HALF, -CUBE_HALF, 0],
       [0, 0, 0],
       [CUBE_HALF, CUBE_HALF, 0],
     ]);
+  });
+
+  it("gives a text field one slot per category on a 3D axis", () => {
+    const result = buildThreeDScatterData(
+      ["North", "South", "North", null],
+      [1, 2, 3, 4],
+      [5, 6, 7, 8],
+      [],
+      [],
+      [0, 0],
+      () => "#000"
+    );
+    expect(result.axes.x).toMatchObject({
+      kind: "band",
+      categories: [{ label: "North" }, { label: "South" }, { value: null }],
+    });
+    expect(result.omitted).toBe(0);
+    const [north, south, north2, missing] = result.points.map(({ x }) => x);
+    const step = (2 * CUBE_HALF) / 3;
+    expect(Math.abs(north! - (-CUBE_HALF + step / 2))).toBeLessThan(step / 2);
+    expect(Math.abs(north2! - (-CUBE_HALF + step / 2))).toBeLessThan(step / 2);
+    expect(Math.abs(south! - 0)).toBeLessThan(step / 2);
+    expect(missing!).toBeGreaterThan(CUBE_HALF - step);
+    expect(result.points[1]!.values.x).toBe("South");
   });
 });

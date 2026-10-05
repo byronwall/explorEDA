@@ -220,11 +220,12 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
       `${rowsIn(selectedDays).toLocaleString()} of ${rowsIn(plan.days).toLocaleString()} rows in ${period} selected: ${selectionText}`,
     plan.omitted.invalidDates > 0 && `${plan.omitted.invalidDates.toLocaleString()} rows have no readable date`,
     plan.omitted.otherYears > 0 && `${plan.omitted.otherYears.toLocaleString()} rows fall in other years`,
-    !selectionText &&
-      !facetIds &&
-      width >= STATUS_HINT_MIN_WIDTH &&
-      "Click a day to select, Shift-click to extend",
   ];
+  const statusHint =
+    !selectionText &&
+    !facetIds &&
+    width >= STATUS_HINT_MIN_WIDTH &&
+    "Click a day to select, Shift-click to extend";
   const showDayNumbers = !isYear && plan.days[0]!.height >= 18;
 
   return (
@@ -396,6 +397,7 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
       </svg>
       <ChartStatusLine
         parts={statusParts}
+        hint={statusHint}
         left={plan.margin.left - (isYear ? 34 : 0)}
         right={plan.margin.right}
       />

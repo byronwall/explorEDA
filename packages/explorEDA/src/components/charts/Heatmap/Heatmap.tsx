@@ -206,11 +206,12 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
     // Counts lead, so a narrow chart that cuts the line keeps them.
     selectionText &&
       `${rowsIn(selectedCells).toLocaleString()} of ${rowsIn(plan.cells).toLocaleString()} rows selected: ${selectionText}`,
-    !selectionText &&
-      !facetIds &&
-      width >= STATUS_HINT_MIN_WIDTH &&
-      "Click a cell or label to select · Alt-click to inspect",
   ];
+  const statusHint =
+    !selectionText &&
+    !facetIds &&
+    width >= STATUS_HINT_MIN_WIDTH &&
+    "Click a cell or label to select · Alt-click to inspect";
   const bandTop = plan.margin.top - LEGEND_HEIGHT;
   // The column labels end 16px above the bottom margin; their field name fills that gap.
   const columnTitleTop = height - settings.margin.bottom - 16 - STATUS_LINE_HEIGHT;
@@ -385,6 +386,7 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
       {hoveredCell && <Readout cell={hoveredCell} plan={plan} />}
       <ChartStatusLine
         parts={statusParts}
+        hint={statusHint}
         left={plan.margin.left}
         right={plan.margin.right}
       />

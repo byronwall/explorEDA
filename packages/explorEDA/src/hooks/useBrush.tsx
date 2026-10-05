@@ -148,8 +148,11 @@ export function useBrush({
       event.currentTarget.releasePointerCapture(event.pointerId);
     cancel();
     if (!active.moved) {
-      if (active.kind === "draw" && !onPlotClick?.(active.start, event))
-        onBrushChange?.(null);
+      // A click outside the selection clears it unless the chart selects what
+      // was clicked. A click inside may also narrow it to what was clicked.
+      if (active.kind === "resize") return;
+      const handled = onPlotClick?.(active.start, event) ?? false;
+      if (active.kind === "draw" && !handled) onBrushChange?.(null);
       return;
     }
     if (

@@ -37,6 +37,11 @@ interface BaseChartProps {
   /** Receives the planned id under the pointer, or null, and the Alt state. */
   onHoverTarget?: (id: string | null, altKey: boolean) => void;
   onInspectPlot?: (point: [number, number], anchor: DOMRect) => boolean;
+  /**
+   * Receives a plain click in the plot, in plot coordinates. Returning true
+   * means the chart set its own selection, so the brush keeps it.
+   */
+  onSelectPlot?: (point: [number, number]) => boolean;
   activeGuideId?: string | null;
   /** Bottom margin kept below the X axis title, such as for a status line. */
   footer?: number;
@@ -69,6 +74,7 @@ export function BaseChart({
   onInspectGuide,
   onHoverTarget,
   onInspectPlot,
+  onSelectPlot,
   activeGuideId,
   footer = 0,
 }: BaseChartProps) {
@@ -232,10 +238,11 @@ export function BaseChart({
     innerHeight,
     mode: brushingMode as "horizontal" | "2d" | "none",
     onBrushChange,
-    onPlotClick: (_, event) => {
+    onPlotClick: (point, event) => {
       const handled = inspectTarget(event);
       inspectedByBrush.current = handled;
-      return event.altKey || handled;
+      if (event.altKey || handled) return true;
+      return onSelectPlot?.(point) ?? false;
     },
     defaultExtent: extent,
   });

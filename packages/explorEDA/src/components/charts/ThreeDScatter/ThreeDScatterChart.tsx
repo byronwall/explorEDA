@@ -14,11 +14,12 @@ import { ThreeDScatterAxes, type CubeTicks } from "./ThreeDScatterAxes";
 import { showBackFaces } from "./showBackFaces";
 import { ThreeDScatterPoints } from "./ThreeDScatterPoints";
 import {
+  bandCenter,
   CUBE_HALF,
   toCube,
   useThreeDScatterData,
-  type Domain,
 } from "./useThreeDScatterData";
+import { categoryLabel } from "@/lib/categories";
 import { DEFAULT_3D_SCATTER_SETTINGS } from "./defaultSettings";
 
 interface CameraState {
@@ -90,7 +91,7 @@ export function ThreeDScatterChart({
   const updateChart = useDataLayer((state) => state.updateChart);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const fieldSettings = useDataLayer((state) => state.fieldSettings);
-  const { points, omitted, domains } = useThreeDScatterData(settings, facetIds);
+  const { points, omitted, axes } = useThreeDScatterData(settings, facetIds);
   const [nonce, setNonce] = useState(0);
   const [hovered, setHovered] = useState<number | null>(null);
   const themeKey = useThemeKey();
@@ -109,35 +110,57 @@ export function ThreeDScatterChart({
     [fieldSettings]
   );
 
-  // Nice values on each axis; small charts get fewer.
+  // Nice values on a numeric axis and categories on any other; small charts
+  // get fewer.
   const tickCount = Math.min(width, height) < 320 ? 3 : 4;
-  const tickValues = useMemo(() => {
-    const result = {} as Record<AxisKey, number[]>;
-    for (const axis of AXES) {
-      const [min, max] = domains[axis] as Domain;
-      result[axis] =
+  const ticks = useMemo(() => {
+    const result = {} as Record<AxisKey, { at: number; text: string }[]>;
+    for (const key of AXES) {
+      const axis = axes[key];
+      const field = settings[`${key}Field`];
+      if (axis.kind === "band") {
+        const count = axis.categories.length;
+        // Label every category when they fit, else an even sample.
+        const every = Math.max(1, Math.ceil(count / (tickCount * 3)));
+        result[key] = axis.categories
+          .map((item, index) => ({
+            at: bandCenter(index, count),
+            text:
+              item.value == null
+                ? categoryLabel(item.value)
+                : format(field, item.value, true),
+          }))
+          .filter((_, index) => index % every === 0);
+        continue;
+      }
+      const [min, max] = axis.domain;
+      const values =
         max > min ? niceTicks(min, max, tickCount) : min === max ? [min] : [];
+      result[key] = values.map((value) => ({
+        at: toCube(value, axis.domain),
+        text: format(field, value, true),
+      }));
     }
     return result;
-  }, [domains, tickCount]);
+  }, [axes, tickCount, settings, format]);
   const cubeTicks = useMemo(
     (): CubeTicks => ({
-      x: tickValues.x.map((value) => toCube(value, domains.x)),
-      y: tickValues.y.map((value) => toCube(value, domains.y)),
-      z: tickValues.z.map((value) => toCube(value, domains.z)),
+      x: ticks.x.map((tick) => tick.at),
+      y: ticks.y.map((tick) => tick.at),
+      z: ticks.z.map((tick) => tick.at),
     }),
-    [tickValues, domains]
+    [ticks]
   );
   const labels = useMemo((): AxisLabel[] => {
     const items: AxisLabel[] = [];
     for (const axis of AXES) {
       const field = settings[`${axis}Field`];
-      tickValues[axis].forEach((value) =>
+      ticks[axis].forEach((tick, index) =>
         items.push({
-          key: `${axis}:${value}`,
+          key: `${axis}:${index}:${tick.text}`,
           axis,
-          at: toCube(value, domains[axis]),
-          text: format(field, value, true),
+          at: tick.at,
+          text: tick.text,
         })
       );
       items.push({
@@ -148,7 +171,7 @@ export function ThreeDScatterChart({
       });
     }
     return items;
-  }, [tickValues, domains, settings, format, getFieldLabel]);
+  }, [ticks, settings, getFieldLabel]);
   const labelsRef = useRef(labels);
   labelsRef.current = labels;
   const pointsRef = useRef(points);
@@ -403,9 +426,10 @@ export function ThreeDScatterChart({
   const showHints = width >= STATUS_HINT_MIN_WIDTH && !facetIds;
   const statusParts = [
     omitted > 0 &&
-      `${omitted.toLocaleString()} rows without numbers for all three axes left out`,
-    showHints && "Drag to turn, scroll to zoom, right-drag to pan",
+      `${omitted.toLocaleString()} rows without a value on every axis left out`,
   ];
+  const statusHint =
+    showHints && "Drag to turn, scroll to zoom, right-drag to pan";
 
   return (
     <div
@@ -489,7 +513,7 @@ export function ThreeDScatterChart({
         <Button
           variant="ghost"
           size="icon"
-          className="absolute right-1 top-1 size-7 text-muted-foreground"
+          className="eda-surface-action absolute right-1 top-1 size-7 text-muted-foreground"
           aria-label="Fit view"
           tooltip="Turn the camera back to the starting view of the whole cube"
           onClick={fitView}
@@ -518,7 +542,12 @@ export function ThreeDScatterChart({
           />
         </>
       )}
-      <ChartStatusLine parts={statusParts} left={8} right={8} />
+      <ChartStatusLine
+        parts={statusParts}
+        hint={statusHint}
+        left={8}
+        right={8}
+      />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { getChartDefinition } from "@/charts/registry";
 import type { ChartLayout, ChartSettings } from "@/types/ChartTypes";
@@ -8,6 +8,7 @@ import { useChartDraft } from "./ChartDraftContext";
 import {
   clampLayout,
   firstFreeSpot,
+  firstFreeSpotInView,
   overlapsAny,
   shiftForPlacement,
 } from "./chartPlacement";
@@ -45,7 +46,10 @@ export function ChartPlacementLayer({
   onProposal,
 }: ChartPlacementLayerProps) {
   const api = useChartDraft();
+  const layerRef = useRef<HTMLDivElement>(null);
   const ghostRef = useRef<HTMLDivElement>(null);
+  // Only keyboard moves scroll the page. The first spot is already in view.
+  const scrollToSpot = useRef(false);
   const placeRef = useRef<HTMLButtonElement>(null);
   const occupied = charts.map((chart) => chart.layout);
   const size = api?.draft?.settings.layout ?? { w: 6, h: 4 };
@@ -63,10 +67,32 @@ export function ChartPlacementLayer({
     ? (getChartDefinition(api.draft.settings.type)?.name ?? "chart")
     : "chart";
 
+  useLayoutEffect(() => {
+    const layer = layerRef.current;
+    if (!layer) return;
+    // Rows between the sticky toolbar and the bottom of the window.
+    const bounds = layer.getBoundingClientRect();
+    const toolbar = document.querySelector("header.eda-workspace-toolbar");
+    const visibleTop = Math.max(
+      bounds.top,
+      toolbar?.getBoundingClientRect().bottom ?? 0
+    );
+    const row = (pixel: number) => (pixel - bounds.top - padding) / rowHeight;
+    setSpot(
+      firstFreeSpotInView(size, occupied, columnCount, {
+        top: Math.ceil(row(visibleTop)),
+        bottom: Math.floor(row(window.innerHeight)),
+      })
+    );
+    // The first spot is chosen once, when placement starts.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     placeRef.current?.focus({ preventScroll: true });
   }, []);
   useEffect(() => {
+    if (!scrollToSpot.current) return;
+    scrollToSpot.current = false;
     ghostRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }, [spot.x, spot.y]);
 
@@ -91,6 +117,7 @@ export function ChartPlacementLayer({
       } else if (MOVES[event.key]) {
         event.preventDefault();
         const move = MOVES[event.key]!;
+        scrollToSpot.current = true;
         setSpot((current) =>
           clampLayout(
             { ...current, x: current.x + move.x, y: current.y + move.y },
@@ -147,6 +174,7 @@ export function ChartPlacementLayer({
   return (
     <>
       <div
+        ref={layerRef}
         className="eda-placement-layer"
         style={{ height: bottom * rowHeight + padding * 2 + rowHeight }}
         aria-hidden="true"

@@ -192,11 +192,12 @@ function ScatterPoints({
         plan.exclusions.length > 0 &&
           !plan.emptyMessage &&
           `${plan.exclusions.length.toLocaleString()} rows without a position left out`,
-        showHints &&
-          (plan.brushExtent
-            ? "Drag the edges to adjust, Esc to clear"
-            : "Drag to select a region, Alt-click a point to trace it"),
       ];
+  const statusHint =
+    showHints &&
+    (plan.brushExtent
+      ? "Drag the edges to adjust, Esc to clear"
+      : "Drag to select a region, Alt-click a point to trace it");
 
   const handleBrushChange = useCallback(
     (extent: Extent | null) => {
@@ -309,6 +310,7 @@ function ScatterPoints({
           ))}
           <ChartStatusLine
             parts={statusParts}
+            hint={statusHint}
             left={plan.margin.left}
             right={plan.margin.right}
           />

@@ -283,11 +283,12 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
     valueFilter && `${filterValues.length} categories selected`,
     plan.other.length > 0 &&
       `${plan.other.length} smaller categories in Other categories`,
-    !valueFilter &&
-      !facetIds &&
-      width >= STATUS_HINT_MIN_WIDTH &&
-      "Click rows or labels to select categories",
   ];
+  const statusHint =
+    !valueFilter &&
+    !facetIds &&
+    width >= STATUS_HINT_MIN_WIDTH &&
+    "Click rows or labels to select categories";
 
   return (
     <div className="relative" style={{ width, height }}>
@@ -447,6 +448,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
       </BaseChart>
       <ChartStatusLine
         parts={statusParts}
+        hint={statusHint}
         left={margin.left}
         right={margin.right}
         bottom={34}

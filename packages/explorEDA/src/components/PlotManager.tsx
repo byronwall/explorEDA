@@ -421,6 +421,18 @@ export function PlotManager() {
         data-rows-narrow={(rowsOpen && rowsNarrow) || undefined}
       >
         <header className="eda-workspace-toolbar">
+          {rowsOpen && !rowsNarrow ? (
+            // The expanded Rows drawer covers this line and shows the scope.
+            <span className="eda-filter-status" aria-hidden="true" />
+          ) : (
+            <ActiveFilterStatus
+              onShowChart={showChart}
+              onHighlightChart={highlightChart}
+            />
+          )}
+          {/* Filters lead the line; tools and settings sit on the right. */}
+          <ChartCreationButtons />
+          <span className="eda-toolbar-divider" aria-hidden="true" />
           <div
             role="group"
             aria-label="Inspect data"
@@ -482,16 +494,6 @@ export function PlotManager() {
             </Button>
           </div>
           <span className="eda-toolbar-divider" aria-hidden="true" />
-          <ChartCreationButtons />
-          {rowsOpen && !rowsNarrow ? (
-            // The expanded Rows drawer covers this line and shows the scope.
-            <span className="eda-filter-status" aria-hidden="true" />
-          ) : (
-            <ActiveFilterStatus
-              onShowChart={showChart}
-              onHighlightChart={highlightChart}
-            />
-          )}
           <div
             role="group"
             aria-label="Configure workspace"

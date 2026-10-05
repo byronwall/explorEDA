@@ -2,7 +2,7 @@ import type { AggregateAggregation } from "@/lib/aggregates";
 import { applyFilter } from "@/hooks/applyFilter";
 import { BaseChartSettings, ChartDefinition } from "@/types/ChartTypes";
 import { DEFAULT_CHART_SETTINGS } from "@/utils/defaultSettings";
-import { ChartNoAxesColumn } from "lucide-react";
+import { Hash } from "lucide-react";
 import { MetricCard } from "./MetricCard";
 import { MetricCardSettingsPanel } from "./MetricCardSettingsPanel";
 
@@ -16,7 +16,7 @@ export const metricCardDefinition: ChartDefinition<MetricCardSettings> = {
   type: "metric-card",
   name: "Metric Card",
   description: "Show one count, sum, or average for the matching rows",
-  icon: ChartNoAxesColumn,
+  icon: Hash,
   component: MetricCard,
   settingsPanel: MetricCardSettingsPanel,
   createDefaultSettings: (layout) => ({

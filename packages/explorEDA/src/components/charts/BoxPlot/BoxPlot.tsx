@@ -56,7 +56,9 @@ export function BoxPlot({
   const revision = useTraceRevision(settings);
   const liveIds = useGetLiveIds(settings, facetIds);
   const rawData = useDataLayer((state) => state.rawData);
-  const chartHeight = Math.max(40, height - 32);
+  // The observations note takes a line under the chart when it shows.
+  const footerHeight = settings.showObservations ? 32 : 0;
+  const chartHeight = Math.max(40, height - footerHeight);
   const [hoveredGroup, setHoveredGroup] = useState<string | null>(null);
   const updateChart = useDataLayer((s) => s.updateChart);
   const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
@@ -361,14 +363,15 @@ export function BoxPlot({
       : [];
 
   const handleBoxClick = useCallback(
-    (group: datum, add: boolean) => {
+    // Each click adds or removes a group, like the bars of a bar chart.
+    (group: datum) => {
       if (!settings.colorField) return;
       updateChart(settings.id, {
         filters: selectBoxGroup(
           settings.filters,
           settings.colorField,
           group,
-          add
+          true
         ),
       });
     },
@@ -395,12 +398,11 @@ export function BoxPlot({
       : range &&
         showHints &&
         `Medians ${format(range.low.stats.median)} (${groupName} ${formatGroup(range.low.group)}) to ${format(range.high.stats.median)} (${groupName} ${formatGroup(range.high.group)})`,
-    settings.colorField &&
-      showHints &&
-      (selectedGroups.length > 0
-        ? "Shift-click to add or remove a group"
-        : "Click a group to select it, Shift-click to add"),
   ];
+  const statusHint =
+    showHints &&
+    settings.colorField &&
+    "Click groups to select or clear them · Alt-click to inspect";
 
   const boxStroke =
     // The original default follows the theme so boxes keep an edge in dark mode.
@@ -485,14 +487,14 @@ export function BoxPlot({
                   onClick={(event) =>
                     event.altKey || !settings.colorField
                       ? inspect(categoryKey(group))
-                      : handleBoxClick(group, event.shiftKey)
+                      : handleBoxClick(group)
                   }
                   onKeyDown={(event) => {
                     if (event.key === "Enter" || event.key === " ") {
                       event.preventDefault();
                       if (event.altKey || !settings.colorField)
                         inspect(categoryKey(group));
-                      else handleBoxClick(group, event.shiftKey);
+                      else handleBoxClick(group);
                     }
                   }}
                   style={{
@@ -666,16 +668,17 @@ export function BoxPlot({
           );
         })}
       </BaseChart>
-      <div className="absolute bottom-0 left-0 flex h-8 items-center gap-2 overflow-hidden px-2 text-xs text-muted-foreground">
-        {settings.showObservations && (
-          <span>Observations: first 300 per group</span>
-        )}
-      </div>
+      {settings.showObservations && (
+        <div className="absolute bottom-0 left-0 flex h-8 items-center gap-2 overflow-hidden px-2 text-xs text-muted-foreground">
+          Observations: first 300 per group
+        </div>
+      )}
       <ChartStatusLine
         parts={statusParts}
+        hint={statusHint}
         left={margin.left}
         right={margin.right}
-        bottom={34}
+        bottom={footerHeight + 2}
       />
     </div>
   );

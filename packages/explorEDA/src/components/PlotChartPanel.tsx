@@ -65,7 +65,7 @@ const CATEGORY_LABELED_CHART_TYPES = new Set(["row", "boxplot"]);
 
 const TRACE_COPY = {
   row: { heading: "Category trace", emptyText: "Alt-click a bar, including Other categories, to inspect its members and source rows.", ariaLabel: "Row chart trace inspector" },
-  boxplot: { heading: "Distribution trace", emptyText: "Alt-click a box, or choose a group below, to inspect its statistics and source rows.", ariaLabel: "Distribution trace inspector" },
+  boxplot: { heading: "Distribution trace", emptyText: "Alt-click a box to inspect its statistics and source rows.", ariaLabel: "Distribution trace inspector" },
   map: {
     heading: "Map trace",
     emptyText: "Alt-click a point or region to see its source records and projection. Alt-click outside the regions to trace joins. You can also find a source row below.",

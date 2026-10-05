@@ -24,6 +24,7 @@ import {
   type BarChartPlan,
   type BarMark,
 } from "./barPlan";
+import { getRangeFilterForField } from "@/hooks/getAxisFilter";
 import { sameRange, snapRangeToBins } from "./bins";
 import { barTraceTargets, findBarTraceRow, resolveBarTrace } from "./barTrace";
 import { BarChartSettings } from "./definition";
@@ -85,7 +86,11 @@ function HoverReadout({
 }
 
 export function BarChart(props: BarChartProps) {
-  return props.settings.seriesField ? <SeriesBarChart {...props} /> : <SingleBarChart {...props} />;
+  return props.settings.seriesField ? (
+    <SeriesBarChart {...props} />
+  ) : (
+    <SingleBarChart {...props} />
+  );
 }
 
 function SingleBarChart({
@@ -264,6 +269,25 @@ function SingleBarChart({
     ]
   );
 
+  // A click on a bin filters to its bounds. A second click on the only
+  // selected bin clears the filter.
+  const selectBinAt = ([x]: [number, number]) => {
+    const bin = plan.bars.find(
+      (bar) => bar.bin && x >= bar.x && x <= bar.x + bar.width + 1
+    )?.bin;
+    if (!bin) return false;
+    const rest = settings.filters.filter((f) => f.field !== settings.field);
+    const current = getRangeFilterForField(settings.filters, settings.field);
+    const range = { min: bin.start, max: bin.end };
+    updateChart(settings.id, {
+      filters:
+        current && sameRange(current, range, plan.binEdges)
+          ? rest
+          : [...rest, { type: "range", field: settings.field, ...range }],
+    });
+    return true;
+  };
+
   // When the bins change under a range filter, move its bounds to the nearest
   // new edges so the filter still covers whole bars.
   useEffect(() => {
@@ -315,11 +339,13 @@ function SingleBarChart({
     const last = selectedBars.at(-1);
     // Whole-number bins name their first and last values, not the half-step edges.
     selectionText =
-      first && last && !first.label.startsWith("[")
-        ? `${first.label.split("–")[0]} to ${last.label.split("–").at(-1)}`
-        : `${formatField(
-            rangeFilter.min ?? plan.binEdges[0] ?? 0
-          )} to ${formatField(rangeFilter.max ?? plan.binEdges.at(-1) ?? 0)}`;
+      first && first === last && !first.label.startsWith("[")
+        ? first.label
+        : first && last && !first.label.startsWith("[")
+          ? `${first.label.split("–")[0]} to ${last.label.split("–").at(-1)}`
+          : `${formatField(
+              rangeFilter.min ?? plan.binEdges[0] ?? 0
+            )} to ${formatField(rangeFilter.max ?? plan.binEdges.at(-1) ?? 0)}`;
   } else if (selectable && valueFilter?.values.length) {
     const names = selectedBars.map((bar) => bar.label);
     selectionText = `${
@@ -334,13 +360,14 @@ function SingleBarChart({
       `${rowsOf(selectedBars).toLocaleString()} of ${rowsOf(plan.bars).toLocaleString()} rows selected: ${selectionText}`,
     plan.unplotted.length > 0 &&
       `${plan.unplotted.length} ${plan.unplotted.length === 1 ? "group" : "groups"} without a number left out`,
-    !selectionText &&
-      !facetIds &&
-      width >= STATUS_HINT_MIN_WIDTH &&
-      (plan.mode === "bin"
-        ? "Drag across bars to select a range · Alt-click to inspect"
-        : "Click bars or labels to select · Alt-click to inspect"),
   ];
+  const statusHint =
+    !selectionText &&
+    !facetIds &&
+    width >= STATUS_HINT_MIN_WIDTH &&
+    (plan.mode === "bin"
+      ? "Click a bar or drag across bars to select a range · Alt-click to inspect"
+      : "Click bars or labels to select · Alt-click to inspect");
   const band = selectable && "bandwidth" in xScale ? xScale : undefined;
 
   return (
@@ -356,6 +383,7 @@ function SingleBarChart({
         settings={settings}
         onInspectGuide={(id) => inspect("guide", id)}
         onHoverTarget={(id, altKey) => setHovered({ id, altKey })}
+        onSelectPlot={plan.mode === "bin" ? selectBinAt : undefined}
         onInspectPlot={([x, y]) => {
           const bar = barAt(plan, x, y);
           return bar ? Boolean(inspect("bar", bar.id)) : false;
@@ -485,6 +513,7 @@ function SingleBarChart({
       )}
       <ChartStatusLine
         parts={statusParts}
+        hint={statusHint}
         left={margin.left}
         right={margin.right}
       />

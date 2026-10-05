@@ -1125,6 +1125,28 @@ html {
   background: var(--muted);
 }
 
+/* Usage hints and optional actions appear only while the chart has the
+   pointer or focus, so the chart surface stays chart only. */
+@media (hover: hover) and (pointer: fine) {
+  .eda-surface-action {
+    opacity: 0;
+    transition: opacity 120ms ease;
+  }
+  .eda-panel:hover .eda-surface-action,
+  .eda-panel:focus-within .eda-surface-action {
+    opacity: 1;
+  }
+}
+.eda-chart-hint {
+  font-size: 11px;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.eda-panel:hover .eda-chart-hint,
+.eda-panel:focus-within .eda-chart-hint {
+  opacity: 0.8;
+}
+
 /* Quiet controls keep the plotting area primary, without moving the title. */
 @media (hover: hover) and (pointer: fine) {
   .eda-panel-actions,
@@ -2266,12 +2288,19 @@ html {
   gap: 6px;
   justify-items: start;
 }
+/* Rows share the list's columns, so every bar starts at the same place
+   whatever the width of its count. */
 .eda-dist-category-list {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(64px, 34%) auto 4ch;
+  column-gap: 8px;
   width: 100%;
   margin: 0;
   padding: 0;
   list-style: none;
+}
+.eda-dist-category-list > li {
+  grid-column: 1 / -1;
 }
 .eda-dist-scroll {
   max-height: 220px;
@@ -2280,7 +2309,7 @@ html {
 }
 .eda-dist-category {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(64px, 34%) auto 4ch;
+  grid-template-columns: subgrid;
   gap: 8px;
   align-items: center;
   height: 24px;
@@ -3494,6 +3523,25 @@ html {
     order: 1;
     flex-basis: 100%;
     padding-left: 0;
+  }
+  /* Beside a panel, Add chart shows only its icon so the tools fit one line. */
+  .eda-workspace-controls:is(
+      [data-fields-open],
+      [data-settings-open],
+      [data-rows-narrow]
+    )
+    .eda-toolbar-add {
+    width: 30px;
+    padding: 0;
+    justify-content: center;
+  }
+  .eda-workspace-controls:is(
+      [data-fields-open],
+      [data-settings-open],
+      [data-rows-narrow]
+    )
+    .eda-toolbar-add-label {
+    display: none;
   }
 }
 
