@@ -8,22 +8,25 @@ export const STATUS_LINE_HEIGHT = 18;
 export const STATUS_HINT_MIN_WIDTH = 520;
 
 /**
- * One muted line under a chart's axis: the selection, notes about rows left
- * out, and a usage hint when nothing is selected.
+ * One muted line under a chart's axis: the selection and notes about rows
+ * left out. A usage hint joins the line only while the pointer or focus is on
+ * the chart, so the chart surface stays quiet otherwise.
  */
 export function ChartStatusLine({
   parts,
+  hint,
   left,
   right,
   bottom = 2,
 }: {
   parts: (string | false | null | undefined)[];
+  hint?: string | false | null;
   left: number;
   right: number;
   bottom?: number;
 }) {
   const text = parts.filter(Boolean).join(" · ");
-  if (!text) {
+  if (!text && !hint) {
     return null;
   }
   return (
@@ -33,6 +36,12 @@ export function ChartStatusLine({
       role="status"
     >
       {text}
+      {hint && (
+        <span className="eda-chart-hint">
+          {text ? " · " : ""}
+          {hint}
+        </span>
+      )}
     </div>
   );
 }

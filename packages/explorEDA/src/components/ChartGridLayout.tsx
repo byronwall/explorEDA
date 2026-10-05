@@ -71,7 +71,6 @@ export function ChartGridLayout({
     setMenuOpenState(open);
   };
   const [previewVisible, setPreviewVisible] = useState(false);
-  const [dragging, setDragging] = useState(false);
   const createdChart = useRef(false);
   // Top and left edges stop at neighbors. Right and bottom edges can move
   // neighbors down when there is no free space.
@@ -206,12 +205,6 @@ export function ChartGridLayout({
   const stopInteraction = () => {
     isInteracting.current = false;
     setActiveResize(null);
-    setDragging(false);
-  };
-  // Compaction starts with the first movement, so pressing a chart header
-  // without moving it leaves the grid alone.
-  const moveDrag = () => {
-    if (!dragging) setDragging(true);
   };
   const startResize: GridLayout.ItemCallback = (
     currentLayout,
@@ -279,11 +272,9 @@ export function ChartGridLayout({
           gridSettings.containerPadding,
           gridSettings.containerPadding,
         ]}
-        // Free placement keeps charts where the user puts them, so a chart
-        // added in empty space stays there and a top or left resize keeps
-        // the opposite edge fixed. A move closes the gaps it leaves, and the
-        // narrow layout stays a simple stack.
-        compactType={isNarrow || dragging ? "vertical" : null}
+        // Charts rise to fill empty rows above them, so the grid never
+        // leaves gaps at the top.
+        compactType="vertical"
         // Top and left resizes keep neighbors in place.
         preventCollision={
           activeResize !== null &&
@@ -292,7 +283,6 @@ export function ChartGridLayout({
         }
         onLayoutChange={isNarrow || placing ? undefined : handleLayoutChange}
         onDragStart={startInteraction}
-        onDrag={moveDrag}
         onDragStop={stopInteraction}
         onResizeStart={startResize}
         onResizeStop={stopInteraction}

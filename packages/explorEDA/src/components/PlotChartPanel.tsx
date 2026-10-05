@@ -65,7 +65,7 @@ const CATEGORY_LABELED_CHART_TYPES = new Set(["row", "boxplot"]);
 
 const TRACE_COPY = {
   row: { heading: "Category trace", emptyText: "Choose Inspect Other categories, or Alt-click a bar, to inspect its members and source rows.", ariaLabel: "Row chart trace inspector" },
-  boxplot: { heading: "Distribution trace", emptyText: "Alt-click a box, or choose a group below, to inspect its statistics and source rows.", ariaLabel: "Distribution trace inspector" },
+  boxplot: { heading: "Distribution trace", emptyText: "Alt-click a box to inspect its statistics and source rows.", ariaLabel: "Distribution trace inspector" },
   map: {
     heading: "Map trace",
     emptyText: "Choose Inspect point or Inspect region to see its source records and projection. Alt-click a mark, or find any source row below.",
@@ -74,13 +74,13 @@ const TRACE_COPY = {
   line: {
     heading: "Time series trace",
     emptyText:
-      "Choose Inspect period, or Alt-click a point, to inspect its calculation and source rows.",
+      "Alt-click a point to inspect its calculation and source rows.",
     ariaLabel: "Time series trace inspector",
   },
   "metric-card": {
     heading: "Metric trace",
     emptyText:
-      "Choose Inspect records on the card to see its calculation and source rows. You can also find a source row below.",
+      "Choose Inspect records on the card, shown on hover, to see its calculation and source rows. You can also find a source row below.",
     ariaLabel: "Metric card trace inspector",
   },
   scatter: {

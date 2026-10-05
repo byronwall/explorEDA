@@ -414,15 +414,6 @@ export function TimeSeriesChart({
             {plan.invalidDateIds.length} unreadable dates
           </Button>
         )}
-        <Button
-          size="sm"
-          variant="ghost"
-          className="h-7 shrink-0 px-1 text-xs"
-          disabled={!plan.points.length}
-          onClick={() => inspect(active ?? plan.points[0]!)}
-        >
-          Inspect period
-        </Button>
       </div>
       {active && (
         <ChartReadout fallbackClassName="sr-only">

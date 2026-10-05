@@ -3,23 +3,21 @@
   "name": "explorEDA",
   "description": "Blank project ready for grid editing, structure mapping, and future AI-assisted details.",
   "createdAt": "2026-09-29T01:22:21.210Z",
-  "updatedAt": "2026-10-04T23:31:14.293Z",
+  "updatedAt": "2026-10-05T01:36:17.527Z",
   "operationLog": [
     {
-      "id": "ccad614b-e6f5-4a2f-934d-069a4fbe5f8c",
-      "kind": "node.images.added",
+      "id": "48a6031e-c667-421c-b5e1-a4fe60da47bd",
+      "kind": "node.metadata.updated",
       "actor": {
-        "kind": "human"
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
       },
-      "createdAt": "2026-10-04T23:31:14.295Z",
-      "summary": "Added 1 images to \"Click should always filter\".",
+      "createdAt": "2026-10-05T01:36:17.527Z",
+      "summary": "Updated metadata for \"10-04\".",
       "nodeIds": [
-        "page-click-should-always-filter"
+        "page-10-04"
       ],
-      "metadata": {
-        "imageCount": "1",
-        "clientMutationId": "6e87e30c-aa1a-41c4-9609-4f6d1ceb38ca"
-      },
       "payload": {
         "state": {
           "nodeMetadataSchema": [
@@ -636,8 +634,10 @@
                 "id": "page-10-04",
                 "label": "10-04",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "All 10-04 issues implemented in one PR."
+                },
                 "context": "",
                 "rawContext": "",
                 "images": []
@@ -646,8 +646,10 @@
                 "id": "page-do-side-by-side-for-order-book-example",
                 "label": "do side by side for order book example",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Order book heatmap and Sankey now sit side by side (6x6 each). Reviewed other examples; the 10,000-order regional facet chart was shortened from 7 to 5 rows."
+                },
                 "context": "Review other examples and ensure we have good aspect ratio and proportions on charts",
                 "rawContext": "Review other examples and ensure we have good aspect ratio and proportions on charts",
                 "images": [
@@ -666,8 +668,10 @@
                 "id": "page-do-not-have-persistent-text-explaining-how-things-work",
                 "label": "do not have persistent text explaining how things work",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Usage hints are split from status text and show only while the chart has hover or focus, in a smaller, lighter style."
+                },
                 "context": "We really need to disclosure only when needed and make these things subtler",
                 "rawContext": "",
                 "images": [
@@ -686,8 +690,10 @@
                 "id": "page-box-plot-should-support-multiple-selection",
                 "label": "box plot should support multiple selection",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Each click on a box group now adds or removes it, like bar charts, so several groups can be selected."
+                },
                 "context": "do not limit to single selection",
                 "rawContext": "do not limit to single selection",
                 "images": [
@@ -706,8 +712,10 @@
                 "id": "page-remove-inspect-button",
                 "label": "Remove inspect button",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Removed standing Inspect buttons (distribution, bar, period, bin); Alt-click a mark inspects. Inspect records, Fit view, and Other categories buttons appear only on hover or focus."
+                },
                 "context": "Main chart surface should be chart only - no extra buttons always present",
                 "rawContext": "Main chart surface should be chart only - no extra buttons always present",
                 "images": [
@@ -726,8 +734,10 @@
                 "id": "page-field-list-is-not-left-aligned-on-all-bars",
                 "label": "Field list is not left aligned on all bars",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Field value rows now share one grid via subgrid, so bars start at the same x regardless of count width."
+                },
                 "context": "Related to the different count digit length?",
                 "rawContext": "Related to the different count digit length?",
                 "images": [
@@ -746,8 +756,10 @@
                 "id": "page-resizing-a-chart-caused-it-to-jump-to-end-of-all-charts",
                 "label": "Resizing a chart caused it to \"jump\" to end of all charts",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Vertical compaction keeps a resized chart in place among neighbors; verified shrink and grow from every edge in the browser with no reordering."
+                },
                 "context": "I tried to resize down and the chart jumped to the end after all other charts.  It was jarring and not expected.  Always the least movement possible",
                 "rawContext": "I tried to resize down and the chart jumped to the end after all other charts.  It was jarring and not expected.  Always the least movement possible",
                 "images": []
@@ -756,8 +768,10 @@
                 "id": "page-add-new-chart-placement-scrolls-down",
                 "label": "\"add new chart\" placement scrolls down",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "A new chart now starts in the visible rows: free space in view first, else the first chart edge in view. Placement and focus no longer scroll the page."
+                },
                 "context": "We want to start in the current view, do not move anywhere by default",
                 "rawContext": "We want to start in the current view, do not move anywhere by default",
                 "images": []
@@ -766,8 +780,10 @@
                 "id": "page-compact-vertical-space",
                 "label": "Compact vertical space",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "The grid now always compacts vertically, so charts rise to fill empty rows above them."
+                },
                 "context": "We do not want to leave gaps at top, gravity goes up",
                 "rawContext": "We do not want to leave gaps at top, gravity goes up",
                 "images": [
@@ -786,8 +802,10 @@
                 "id": "page-group-buttons-in-top-nav-better",
                 "label": "Group buttons in top nav better",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Toolbar now leads with filter scope on the left; Add chart, Fields, Rows, and configuration sit on the right. Add chart is icon-only beside an open panel."
+                },
                 "context": "",
                 "rawContext": "",
                 "images": [
@@ -806,8 +824,10 @@
                 "id": "page-new-chart-icons-do-not-match-all-real-ones",
                 "label": "New chart icons do not match all real ones",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Bar chart uses vertical column icon, Row chart horizontal bars, Histogram adjacent bins, Parallel coordinates axes with a line, Metric card a hash."
+                },
                 "context": "Bar chart icon shows horizontal bars but it has vertical bars",
                 "rawContext": "Bar chart icon shows horizontal bars but it has vertical bars",
                 "images": [
@@ -826,8 +846,10 @@
                 "id": "page-3d-scatter-needs-some-axis-logic-as-main-scatter",
                 "label": "3D scatter needs some axis logic as main scatter",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "3D scatter axes now plan like the main scatter: numeric fields span their range; text, category, boolean, and missing values get evenly spaced slots with jitter and category tick labels."
+                },
                 "context": "We should support all categorical and other non-numeric types",
                 "rawContext": "We should support all categorical and other non-numeric types",
                 "images": [
@@ -846,8 +868,10 @@
                 "id": "page-click-should-always-filter",
                 "label": "Click should always filter",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "A plain click on a histogram bin sets the range filter to that bin's bounds; clicking the only selected bin clears it. Drag still selects a range."
+                },
                 "context": "Bar chart currently does not",
                 "rawContext": "Bar chart currently does not",
                 "images": [
@@ -1067,6 +1091,372 @@
             ]
           }
         }
+      }
+    },
+    {
+      "id": "98850c3b-4b20-460a-852e-e1abf530c831",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:17.507Z",
+      "summary": "Changed \"10-04\" status to implemented.",
+      "nodeIds": [
+        "page-10-04"
+      ]
+    },
+    {
+      "id": "1f508a64-2903-46db-9436-2625f5ad4ddb",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:17.179Z",
+      "summary": "Updated metadata for \"Resizing a chart caused it to \"jump\" to end of all charts\".",
+      "nodeIds": [
+        "page-resizing-a-chart-caused-it-to-jump-to-end-of-all-charts"
+      ]
+    },
+    {
+      "id": "5f41beaf-f463-4e87-9b94-21e54ff469e9",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:17.164Z",
+      "summary": "Changed \"Resizing a chart caused it to \"jump\" to end of all charts\" status to implemented.",
+      "nodeIds": [
+        "page-resizing-a-chart-caused-it-to-jump-to-end-of-all-charts"
+      ]
+    },
+    {
+      "id": "22309bac-eb8c-4950-b7a2-69bc5def85ef",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:16.842Z",
+      "summary": "Updated metadata for \"Remove inspect button\".",
+      "nodeIds": [
+        "page-remove-inspect-button"
+      ]
+    },
+    {
+      "id": "bbb3e131-7b05-4d63-8a10-ad87b3f7bffd",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:16.828Z",
+      "summary": "Changed \"Remove inspect button\" status to implemented.",
+      "nodeIds": [
+        "page-remove-inspect-button"
+      ]
+    },
+    {
+      "id": "4692e963-be60-46e0-9976-100764ff9286",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:16.504Z",
+      "summary": "Updated metadata for \"New chart icons do not match all real ones\".",
+      "nodeIds": [
+        "page-new-chart-icons-do-not-match-all-real-ones"
+      ]
+    },
+    {
+      "id": "a6edd6e8-4c31-42ba-8738-4517ce9c4dcc",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:16.489Z",
+      "summary": "Changed \"New chart icons do not match all real ones\" status to implemented.",
+      "nodeIds": [
+        "page-new-chart-icons-do-not-match-all-real-ones"
+      ]
+    },
+    {
+      "id": "530a1370-af6b-4191-ac96-136e35a183bc",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:16.160Z",
+      "summary": "Updated metadata for \"Group buttons in top nav better\".",
+      "nodeIds": [
+        "page-group-buttons-in-top-nav-better"
+      ]
+    },
+    {
+      "id": "48200179-3447-4c12-b3de-5733814d75a4",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:16.150Z",
+      "summary": "Changed \"Group buttons in top nav better\" status to implemented.",
+      "nodeIds": [
+        "page-group-buttons-in-top-nav-better"
+      ]
+    },
+    {
+      "id": "70ef3172-0d8d-4879-9c01-08e0c0e66ac3",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:15.791Z",
+      "summary": "Updated metadata for \"Field list is not left aligned on all bars\".",
+      "nodeIds": [
+        "page-field-list-is-not-left-aligned-on-all-bars"
+      ]
+    },
+    {
+      "id": "440d3b63-c6f4-4e93-95fd-5545bd0da91f",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:15.778Z",
+      "summary": "Changed \"Field list is not left aligned on all bars\" status to implemented.",
+      "nodeIds": [
+        "page-field-list-is-not-left-aligned-on-all-bars"
+      ]
+    },
+    {
+      "id": "1679f251-7e75-4c52-b83a-577d330630d3",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:15.420Z",
+      "summary": "Updated metadata for \"do side by side for order book example\".",
+      "nodeIds": [
+        "page-do-side-by-side-for-order-book-example"
+      ]
+    },
+    {
+      "id": "9cf26779-445e-4f3e-88ce-6b6d9c232feb",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:15.410Z",
+      "summary": "Changed \"do side by side for order book example\" status to implemented.",
+      "nodeIds": [
+        "page-do-side-by-side-for-order-book-example"
+      ]
+    },
+    {
+      "id": "abda9099-4b47-4a15-9fa0-9ba018966a2f",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:15.049Z",
+      "summary": "Updated metadata for \"do not have persistent text explaining how things work\".",
+      "nodeIds": [
+        "page-do-not-have-persistent-text-explaining-how-things-work"
+      ]
+    },
+    {
+      "id": "3978f2d2-a06c-4fa4-80ec-b1fd85f306b9",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:15.034Z",
+      "summary": "Changed \"do not have persistent text explaining how things work\" status to implemented.",
+      "nodeIds": [
+        "page-do-not-have-persistent-text-explaining-how-things-work"
+      ]
+    },
+    {
+      "id": "ecdde48c-ed4c-42f9-9283-9bf4f3c32339",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:14.682Z",
+      "summary": "Updated metadata for \"Compact vertical space\".",
+      "nodeIds": [
+        "page-compact-vertical-space"
+      ]
+    },
+    {
+      "id": "35bb10a5-832f-499b-b2ec-201b38dc55e8",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:14.664Z",
+      "summary": "Changed \"Compact vertical space\" status to implemented.",
+      "nodeIds": [
+        "page-compact-vertical-space"
+      ]
+    },
+    {
+      "id": "7a5bd0fd-c877-453e-bd6d-396166d4068f",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:14.242Z",
+      "summary": "Updated metadata for \"Click should always filter\".",
+      "nodeIds": [
+        "page-click-should-always-filter"
+      ]
+    },
+    {
+      "id": "1f248c74-790f-4f6a-aad7-8f1cb7d92d84",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:14.228Z",
+      "summary": "Changed \"Click should always filter\" status to implemented.",
+      "nodeIds": [
+        "page-click-should-always-filter"
+      ]
+    },
+    {
+      "id": "13407399-9104-42d4-a8fb-a2c2ae72285f",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:13.804Z",
+      "summary": "Updated metadata for \"box plot should support multiple selection\".",
+      "nodeIds": [
+        "page-box-plot-should-support-multiple-selection"
+      ]
+    },
+    {
+      "id": "84fc298a-c4dd-418d-aa79-c6ac89c950d1",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:13.787Z",
+      "summary": "Changed \"box plot should support multiple selection\" status to implemented.",
+      "nodeIds": [
+        "page-box-plot-should-support-multiple-selection"
+      ]
+    },
+    {
+      "id": "5afa47f7-b53b-4167-8fd4-ef0c309211d7",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:13.418Z",
+      "summary": "Updated metadata for \"3D scatter needs some axis logic as main scatter\".",
+      "nodeIds": [
+        "page-3d-scatter-needs-some-axis-logic-as-main-scatter"
+      ]
+    },
+    {
+      "id": "4e919b07-e860-4335-b51d-a3fd7dba3b5e",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:13.407Z",
+      "summary": "Changed \"3D scatter needs some axis logic as main scatter\" status to implemented.",
+      "nodeIds": [
+        "page-3d-scatter-needs-some-axis-logic-as-main-scatter"
+      ]
+    },
+    {
+      "id": "4db5cff6-02e5-4dbc-beb6-ef27fa1ccc8a",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:13.061Z",
+      "summary": "Updated metadata for \"\"add new chart\" placement scrolls down\".",
+      "nodeIds": [
+        "page-add-new-chart-placement-scrolls-down"
+      ]
+    },
+    {
+      "id": "7cf8b89a-703e-4d7a-82b8-aa1fd8efcc01",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:9fbf14",
+        "label": "Agent token ...9fbf14"
+      },
+      "createdAt": "2026-10-05T01:36:13.037Z",
+      "summary": "Changed \"\"add new chart\" placement scrolls down\" status to implemented.",
+      "nodeIds": [
+        "page-add-new-chart-placement-scrolls-down"
+      ]
+    },
+    {
+      "id": "ccad614b-e6f5-4a2f-934d-069a4fbe5f8c",
+      "kind": "node.images.added",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-04T23:31:14.295Z",
+      "summary": "Added 1 images to \"Click should always filter\".",
+      "nodeIds": [
+        "page-click-should-always-filter"
+      ],
+      "metadata": {
+        "imageCount": "1",
+        "clientMutationId": "6e87e30c-aa1a-41c4-9609-4f6d1ceb38ca"
       }
     },
     {

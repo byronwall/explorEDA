@@ -2,7 +2,7 @@ import { applyFilter } from "@/hooks/applyFilter";
 import { IdType } from "@/providers/DataLayerProvider";
 import { BaseChartSettings, ChartDefinition, datum } from "@/types/ChartTypes";
 import { DEFAULT_CHART_SETTINGS } from "@/utils/defaultSettings";
-import { ChartNoAxesColumn } from "lucide-react";
+import { ParallelCoordinatesIcon } from "../icons/ChartTypeIcons";
 import { ParallelCoordinates } from "./ParallelCoordinates";
 import { ParallelCoordinatesSettingsPanel } from "./ParallelCoordinatesSettingsPanel";
 
@@ -28,7 +28,7 @@ export const parallelCoordinatesDefinition: ChartDefinition<ParallelCoordinatesS
     type: "parallel-coordinates",
     name: "Parallel Coordinates",
     description: "Follow each row across several fields as one line",
-    icon: ChartNoAxesColumn,
+    icon: ParallelCoordinatesIcon,
 
     component: ParallelCoordinates,
     settingsPanel: ParallelCoordinatesSettingsPanel,

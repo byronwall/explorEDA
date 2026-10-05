@@ -521,13 +521,14 @@ export function ParallelCoordinates({
     ...plan.rejected.map(
       (item) => `${item.label} has ${item.count} values, too many for an axis`
     ),
-    !plan.hasSelection &&
-      !narrow &&
-      !facetIds &&
-      (plan.axes.some((axis) => axis.kind === "categorical")
-        ? "Drag along an axis or click a value to select"
-        : "Drag along an axis to select a range"),
   ];
+  const statusHint =
+    !plan.hasSelection &&
+    !narrow &&
+    !facetIds &&
+    (plan.axes.some((axis) => axis.kind === "categorical")
+      ? "Drag along an axis or click a value to select"
+      : "Drag along an axis to select a range");
 
   return (
     <div
@@ -956,6 +957,7 @@ export function ParallelCoordinates({
       })}
       <ChartStatusLine
         parts={statusParts}
+        hint={statusHint}
         left={settings.margin.left}
         right={settings.margin.right}
         bottom={settings.margin.bottom}

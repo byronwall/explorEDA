@@ -325,11 +325,12 @@ export function SankeyChart({
       (item) =>
         `${item.count.toLocaleString()} rows left out: ${item.reason.toLowerCase()}`
     ),
-    !plan.hasSelection &&
-      !facetIds &&
-      width >= STATUS_HINT_MIN_WIDTH &&
-      "Click a value or flow to select",
   ];
+  const statusHint =
+    !plan.hasSelection &&
+    !facetIds &&
+    width >= STATUS_HINT_MIN_WIDTH &&
+    "Click a value or flow to select";
 
   return (
     <div
@@ -635,6 +636,7 @@ export function SankeyChart({
       </svg>
       <ChartStatusLine
         parts={statusParts}
+        hint={statusHint}
         left={settings.margin.left}
         right={settings.margin.right}
         bottom={settings.margin.bottom}

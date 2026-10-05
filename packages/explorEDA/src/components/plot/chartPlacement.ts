@@ -27,6 +27,35 @@ export function firstFreeSpot(
   return { x: 0, y: bottom, w, h: size.h };
 }
 
+/**
+ * The first free spot that fits inside the visible rows, so a new chart
+ * starts where the user is looking. When none fits, it takes the top visible
+ * row and the charts in its way move down.
+ */
+export function firstFreeSpotInView(
+  size: { w: number; h: number },
+  occupied: ChartLayout[],
+  columnCount: number,
+  view: { top: number; bottom: number }
+): ChartLayout {
+  const w = Math.min(size.w, columnCount);
+  const top = Math.max(0, view.top);
+  const lastY = Math.max(top, view.bottom - size.h);
+  for (let y = top; y <= lastY; y++) {
+    for (let x = 0; x + w <= columnCount; x++) {
+      const candidate = { x, y, w, h: size.h };
+      if (!overlapsAny(candidate, occupied)) return candidate;
+    }
+  }
+  // Take the first chart edge in view, so the charts that move down are
+  // whole rows rather than a chart cut by the top of the window.
+  const edges = occupied
+    .flatMap((item) => [item.y, item.y + item.h])
+    .filter((y) => y >= top && y <= view.bottom)
+    .sort((a, b) => a - b);
+  return { x: 0, y: edges[0] ?? top, w, h: size.h };
+}
+
 /** Keeps a layout inside the grid's columns and below its top edge. */
 export function clampLayout(layout: ChartLayout, columnCount: number) {
   const w = Math.min(layout.w, columnCount);

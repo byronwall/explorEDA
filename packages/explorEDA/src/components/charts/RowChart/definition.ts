@@ -1,4 +1,4 @@
-import { BarChart } from "lucide-react";
+import { ChartBarBig } from "lucide-react";
 
 import { RowChart } from "@/components/charts/RowChart/RowChart";
 import { applyFilter } from "@/hooks/applyFilter";
@@ -17,7 +17,7 @@ export const rowChartDefinition: ChartDefinition<RowChartSettings> = {
   type: "row",
   name: "Row Chart",
   description: "A horizontal bar chart showing values by category",
-  icon: BarChart,
+  icon: ChartBarBig,
 
   component: RowChart,
   settingsPanel: RowChartSettingsPanel,

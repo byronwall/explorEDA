@@ -305,15 +305,6 @@ export function SeriesBarChart({
                 ? "Outline marks have no valid values"
                 : `${plan.bars.length} category–series pairs`}
         </span>
-        <Button
-          size="sm"
-          variant="ghost"
-          className="h-7 shrink-0 px-2 text-xs"
-          disabled={!plan.bars.length}
-          onClick={() => inspect((active ?? plan.bars[0])!.id)}
-        >
-          Inspect bar
-        </Button>
       </div>
       {active && (
         <ChartReadout fallbackClassName="sr-only">

@@ -461,11 +461,12 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
           return x !== undefined && inRange(x);
         })
         .length.toLocaleString()} of ${liveRows.toLocaleString()} rows selected: ${xAxisLabel || settings.xField} ${rangeText}`,
-    !rangeText &&
-      !facetIds &&
-      width >= STATUS_HINT_MIN_WIDTH &&
-      `Drag across to select a range of ${xAxisLabel || settings.xField}`,
   ];
+  const statusHint =
+    !rangeText &&
+    !facetIds &&
+    width >= STATUS_HINT_MIN_WIDTH &&
+    `Drag across to select a range of ${xAxisLabel || settings.xField}`;
   const seriesOpacity = (name: string) =>
     legendHover && legendHover !== name ? 0.2 : 1;
 
@@ -696,6 +697,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
       )}
       <ChartStatusLine
         parts={statusParts}
+        hint={statusHint}
         left={margin.left}
         right={baseMargin.right}
       />

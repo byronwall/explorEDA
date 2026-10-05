@@ -148,7 +148,7 @@ export function MetricCard({
         <Button
           variant="ghost"
           size="sm"
-          className="-mr-2 h-6 shrink-0 gap-1.5 px-2 text-xs"
+          className="eda-surface-action -mr-2 h-6 shrink-0 gap-1.5 px-2 text-xs"
           tooltip="List the rows behind this value and how each one counts"
           onClick={() =>
             traceApi?.inspect(owner, "metric-card", "metric-card:total")

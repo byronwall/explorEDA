@@ -314,15 +314,6 @@ export function DensityScatter({
           </svg>
           <span>{plan.max}</span>
         </div>
-        <Button
-          size="sm"
-          variant="ghost"
-          className="h-6 px-1 text-xs"
-          disabled={!plan.cells.length}
-          onClick={() => inspect(active ?? selected ?? plan.cells[0]!)}
-        >
-          Inspect bin
-        </Button>
         {plan.omittedIds.length > 0 && (
           <Button
             size="sm"

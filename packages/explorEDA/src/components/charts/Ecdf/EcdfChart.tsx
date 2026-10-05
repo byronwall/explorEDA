@@ -383,11 +383,12 @@ export function EcdfChart({
       `${plan.excluded.reduce((total, item) => total + item.count, 0).toLocaleString()} rows without a number left out`,
     plan.otherGroups > 0 && `${plan.otherGroups} smaller groups in Other`,
     plan.logUnavailable && "Log scale needs values above zero",
-    !selected &&
-      !facetIds &&
-      width >= STATUS_HINT_MIN_WIDTH &&
-      `Click to select ${plan.direction === "below" ? "up to" : "from"} a value, drag for a span`,
   ].filter(Boolean);
+  const statusHint =
+    !selected &&
+    !facetIds &&
+    width >= STATUS_HINT_MIN_WIDTH &&
+    `Click to select ${plan.direction === "below" ? "up to" : "from"} a value, drag for a span`;
   const selection = dragSpan
     ? { x0: plan.px(dragSpan[0]!), x1: plan.px(dragSpan[1]!) }
     : plan.selection;
@@ -707,6 +708,7 @@ export function EcdfChart({
       {readout && <Readout {...readout} />}
       <ChartStatusLine
         parts={statusParts}
+        hint={statusHint}
         left={settings.margin.left}
         right={settings.margin.right}
         bottom={settings.margin.bottom}

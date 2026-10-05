@@ -10,7 +10,8 @@ export function focusChartInContainer(
     return;
   }
 
-  element.scrollIntoView({ behavior: "auto", block: "start" });
+  // A chart already in view stays put; others scroll the least distance.
+  element.scrollIntoView({ behavior: "auto", block: "nearest" });
   element.focus({ preventScroll: true });
 }
 

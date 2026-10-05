@@ -1,4 +1,5 @@
 import { useContext, useEffect, useId, useMemo, useRef, useState } from "react";
+import { HistogramIcon } from "@/components/charts/icons/ChartTypeIcons";
 import { chartRegistry, useChartDefinition } from "@/charts/registry";
 import { DataLayerContext, useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
@@ -103,7 +104,15 @@ function AddChartDialogContent({
     .flatMap((definition) => {
       const option = { ...definition, key: definition.type };
       if (definition.type === "bar")
-        return [option, { ...option, key: "histogram", name: "Histogram" }];
+        return [
+          option,
+          {
+            ...option,
+            key: "histogram",
+            name: "Histogram",
+            icon: HistogramIcon,
+          },
+        ];
       if (definition.type === "boxplot")
         return [{ ...option, name: "Distribution" }];
       return [option];

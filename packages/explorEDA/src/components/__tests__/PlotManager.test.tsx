@@ -16,7 +16,7 @@ describe("focusChartInContainer", () => {
     expect(chart).toHaveFocus();
     expect(chart.scrollIntoView).toHaveBeenCalledWith({
       behavior: "auto",
-      block: "start",
+      block: "nearest",
     });
   });
 });

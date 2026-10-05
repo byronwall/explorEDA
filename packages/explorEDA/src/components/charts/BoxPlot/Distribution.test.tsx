@@ -58,7 +58,10 @@ it("traces individual observations, excluded inputs, and quartiles without chang
   );
   expect(screen.getByText("Source row 1")).toBeInTheDocument();
   expect(screen.getByLabelText("Matching")).toHaveTextContent(/^0,1,2,3,4$/);
-  fireEvent.click(screen.getByRole("button", { name: "Inspect distribution" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: "A: median 10, 3 rows" }),
+    { altKey: true }
+  );
   expect(screen.getByText("3 of 4")).toBeInTheDocument();
   expect(screen.getAllByText('"bad"')).toHaveLength(2);
   expect(screen.getByText("Not a finite number")).toBeInTheDocument();
