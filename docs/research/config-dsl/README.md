@@ -30,4 +30,4 @@ node checker/cli.mjs explain examples/order-book.final.eda --chart profit --cata
 The 275 final checker tests pass locally on Node 24.21.0. Prebuilt checker files need no installation.
 Open [the final playground](03-final/exploreda-outline-final/playground/index.html) to explore its static examples.
 
-The [scatter folder](../scatter-test-bed/README.md) contains the experiment source and statistical evidence.
+The [scatter feature scope](../../intent/advanced-scatter-analysis/detailed-shaping.md) describes the proposed native additions.

@@ -1,2 +1,0 @@
-Full session transcript: ../config-dsl/session-transcript.txt
-Source: https://chatgpt.com/c/6ac08186-7fb0-83ea-864e-34a7564edb4c

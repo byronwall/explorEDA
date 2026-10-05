@@ -1,52 +1,86 @@
-# Advanced scatter analysis — shape
+# Scatter — what we are adding
 
-## Recommendation
+**Outcome:** Understand relationships through fitted curves, objective measures, and inspectable distributions.
 
-Deliver native regression, summaries, and density improvements in sequential slices. Start with linear regression and visible equations. Add polynomial and LOESS methods next. Use the lab for evidence, rather than as the final product boundary.
+**Primary flow:** Choose a method → compare groups and facets → inspect results → filter from another chart.
 
-## Problem and appetite
+## Feature scope
 
-Users want objective measures of relationships, including slope, offset, and R². They need curves and equations across color groups and facets. The scope is package delivery; no calendar budget was supplied. Use roughly 10,000 rows across ten groups as the working target.
+```text
+Scatter analysis
+├── ADD TO THE PACKAGE
+│   ├── Regression — one selected method per chart definition
+│   │   ├── Linear: line, equation, slope, offset, R²
+│   │   ├── Polynomial: degree control, curve, equation, coefficients
+│   │   ├── LOESS: smoothing control, curve, method-appropriate results
+│   │   ├── Separate fits: each color group within each facet
+│   │   ├── Optional overall fit: within each facet; off by default
+│   │   └── Results: equation on chart; compact group/facet inspection
+│   ├── Paired summaries — with field names, units, and population
+│   │   ├── Valid and excluded pair counts
+│   │   ├── X/Y means and standard deviations
+│   │   ├── Sample covariance matrix and Pearson correlation
+│   │   └── Pooled and categorical-group summaries
+│   ├── Hexagonal counts — compare with existing rectangular cells
+│   │   ├── Bin size, count colors, legend, optional point overlay
+│   │   ├── Inspect counts and exact contributing source rows
+│   │   └── Optional bin selection must select exact contributors
+│   ├── Smoothed 2D density
+│   │   ├── Contour lines and filled density regions
+│   │   ├── Bandwidth and contour-level controls
+│   │   ├── Point overlay; distinguish group colors from density colors
+│   │   └── Coordinate space, normalization, and legend units
+│   ├── Paired marginals — X and Y histograms
+│   │   └── Bin controls and counts matching the stated population
+│   └── Shared experience
+│       ├── Optional displays; save and restore their settings
+│       ├── Source inspection, visible group/facet identity, method help
+│       ├── Keep chart visible during settings and result inspection
+│       └── Explain unavailable results; preserve normal gestures
+├── OTHER SCIENTIFIC PROPOSALS — NATIVE SCOPE STILL OPEN
+│   ├── Principal covariance axes: directions and variance along each
+│   ├── Data ellipse: fitted distribution contour and coverage control
+│   ├── Mean confidence region: separate mode, level, assumptions, count
+│   └── Mahalanobis distance
+│       ├── Point-level D and D²; coloring or highlighting
+│       ├── Nested distance contours; most-distant-row inspection
+│       └── Visible reference population and scored population
+└── LATER POSSIBILITIES — NOT COMMITTED NATIVE FEATURES
+    ├── Spearman correlation; selected-versus-reference cohorts
+    ├── Identity and engineering tolerance lines
+    ├── Residual displays; confidence bands; separate prediction bands
+    ├── Reusable predicted-value/residual fields
+    ├── Robust regression, covariance, and distance
+    ├── Scatter matrix; observation uncertainty marks; ordered trajectories
+    └── Prediction and tolerance regions
+```
 
-## Core shape
+## Behavior that defines the feature
 
-Choose one method per chart definition. Share its polynomial degree or LOESS smoothing settings across its facet instances. Fit each color group within its facet. Offer an additional pooled fit in that facet, off by default.
+| Situation | Expected result |
+| --- | --- |
+| Brush this scatter | Selection changes; regression does not refit. |
+| Filter from another chart | Regression recomputes from the eligible rows. |
+| Split by group and facet | Each group/facet gets its own fit and results. |
+| Change method parameters | All facets of this definition share them; other definitions stay independent. |
+| Inspect many fits | Prioritize curves and equations; make remaining results available in compact inspection. |
+| Fit unavailable | Warning icon explains why on hover and keyboard focus; no silent method substitution. |
+| Missing, categorical, or singular inputs | Explain exclusions or unavailable methods; do not invent numeric results. |
+| Adjust density | Contours and filled regions respond to bandwidth and level settings; the legend states their meaning. |
+| Change display scale | Keep scientific meaning and stated coordinate space consistent. |
 
-Fit paired finite values after other charts’ filters. Ignore this chart’s own brush when fitting. The brush still selects observations and affects linked charts. “Fixed reference” means stable during own brushing, not frozen against external filtering or data edits.
+## Decisions and boundaries
 
-Draw the curve and equation. Show linear slope, offset, and R² directly when space permits. Use a compact, nonmodal fit inspector for group/facet equations and detailed results. Keep group and facet labels visible. Avoid forcing a linear slope or equation onto methods where that representation is unsuitable.
+**First proof:** Native grouped/faceted linear fits use the intended population.
 
-Unavailable fits show a warning icon with the cause on hover and keyboard focus. Do not substitute a different method silently. Save method, parameters, and pooled-fit choice through native settings. Recompute results from current data.
+**Try:** Show two groups in two facets. Brush the scatter, then filter from another chart.
 
-## Current fit
+**Observe:** Own brushing preserves coefficients. External filters change eligible rows and coefficients. Results remain accessible.
 
-Reuse `ScatterSnapshot`, `useScatterData.ts`, `scatterPlan.ts`, and native tracing. Verify that the fit population excludes own selection while respecting external filters. Do not substitute globally filtered IDs without this proof. Reuse current rectangular density cells before adding hexagonal counts.
+**Decide:** Continue when known numerical values, filtering, and result inspection agree. Resolve incorrect populations before adding methods.
 
-Keep model results local to the chart plan. The workspace’s `SavedCalculation` stores expressions and result-column names. Do not expand it into facet-local reusable calculations merely to inspect fit details.
+Required 2D density includes contours and filled regions, with bandwidth controls and clear legends. Other scientific overlays retain separate scope decisions.
 
-## How to make this go better
+Use about 10,000 rows across ten groups as the working target. Facet count and measured capacity remain open. LOESS requires method-appropriate results rather than an invented global equation.
 
-- **Prove filter behavior first.** Correct curves on the wrong rows would defeat the primary goal.
-- **Start with linear fits.** They prove the requested slope, offset, equation, and R² workflow.
-- **Share controls, separate results.** Facets use one definition’s parameters but compute their own fits.
-- **Keep details compact.** Test ten group results before adding more labels to the plot.
-- **Validate methods independently.** Use known numerical fixtures before choosing an estimator dependency.
-- **Measure the requested scale.** Own brushing should not repeat fitting work; external filtering should.
-
-## First proof
-
-Show linear fits for two groups in two native facets. Inspect each equation, slope, offset, and R². Brush one facet: coefficients must stay unchanged. Filter from another chart: eligible rows and coefficients must change as expected.
-
-Proceed if the numerical fixture agrees, scope behavior holds, and users can find each fit’s results without hiding the chart. Resolve population preparation or inspection design before adding more methods.
-
-## Rabbit holes and no-gos
-
-Avoid a generic layer registry, silent method fallback, global parameter coupling, or a new calculation framework. Uncertainty bands, reusable prediction columns, and residual displays need separate scope decisions. Preserve existing ellipse and density evidence gates.
-
-## Serious alternative
-
-Implement all regression methods in the lab first. This simplifies numerical comparison but delays the native filter proof. Prefer the native linear slice, with lab fixtures supporting independent checks.
-
-## Plan handoff
-
-The plan delivers linear regression, additional methods, summaries/density, and accepted scientific overlays. Each slice leaves ordinary scatter usable and can be disabled through chart settings.
+[Full feature view](detailed-shaping.md) · [Implementation plan](implementation-plan.md)

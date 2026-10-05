@@ -1,54 +1,80 @@
-# Compact config authoring — shape
+# DSL — what we are adding
 
-## Recommendation
+**Outcome:** An agent creates a dashboard from readable text. A person continues with normal settings controls.
 
-Build an agent-facing compiler for complete dashboard documents. Prove it through a small paste entry in the demo. Keep paste entry provisional; the compiler also supports future file input. Use native runtime state after application, with on-demand DSL export.
+**Primary flow:** Generate text → check → bring into site → render usable parts → repair warnings → export when needed.
 
-## Problem and appetite
+## Feature scope
 
-Agents need to create dashboards quickly. People need readable results, useful warnings, and ordinary settings controls afterward. Start with one representative creation flow. No calendar budget was supplied. Editing commands and continuous text synchronization are secondary.
+```text
+Dashboard DSL
+├── REQUIRED CAPABILITIES
+│   ├── Complete-document creation
+│   │   ├── Dashboard matches the document; not a diff
+│   │   ├── Omitted charts disappear; omitted settings use app defaults
+│   │   └── Keep supplied data; normal UI editing and Undo afterward
+│   ├── Compact authoring
+│   │   ├── Chart per line, explicit field roles, inline key=value
+│   │   ├── Optional wrapping; no mandatory nested indentation
+│   │   ├── Optional chart names; quotes for unusual names and labels
+│   │   └── Verbose paths for detail; no JSON escape syntax
+│   ├── Optional source contracts
+│   │   ├── Alias → exact field; separate display label
+│   │   ├── Expected number/category/date/boolean types
+│   │   └── Direct names without mapping; explicit conversion distinct
+│   ├── Chart coverage
+│   │   ├── Common scatter, histogram, row, metric, and table declarations
+│   │   ├── Eventual access to every native chart family and setting
+│   │   ├── Titles, fields, axes, grids, scales, colors, sizes
+│   │   └── Facets, aggregates, layout; new native regression when available
+│   ├── Calculations
+│   │   ├── Named expressions reused by charts, metrics, and filters
+│   │   └── Labels, formats, precision; dependency and row-failure feedback
+│   ├── Chart-local filters
+│   │   ├── Numeric/date bounds, value selections, text conditions
+│   │   ├── Supported missing-value selections and calculated-field inputs
+│   │   └── Independent chart populations; distinct from linked brushing
+│   ├── Checking and repair
+│   │   ├── Discover fields, settings, and supported features
+│   │   ├── Locations, causes, corrective suggestions
+│   │   ├── Render usable parts; report every skipped or changed effect
+│   │   └── Row counts/examples for formula failures; all-broken repair state
+│   ├── On-demand export
+│   │   ├── Current UI settings → readable document → recreated dashboard
+│   │   └── Preserve formulas, filters, layout, order, and empty values
+│   └── Detailed structures without JSON
+│       ├── Workspace settings, field metadata, colors, geometry references
+│       └── Explicit object paths and ordered complex records
+├── PROPOSED ENTRY — INTERFACE NOT SETTLED
+│   ├── Paste-started text editor for checking and repair
+│   └── Possible file input/output
+└── LATER POSSIBILITIES
+    ├── Global filters with matching main-app controls
+    ├── Targeted edit commands
+    └── Integrated agent entry using the same language
+```
 
-## Core shape
+## Behavior that defines the feature
 
-The host supplies rows and a source catalog. Parse flat chart declarations and detailed paths without required names or indentation. Omitted settings use app defaults. Applying a document replaces dashboard configuration, rather than retaining unspecified charts or values. Use a settings checkpoint for Undo.
+| Situation | Expected result |
+| --- | --- |
+| Apply a document | Replace dashboard configuration; do not inherit omitted values from the old dashboard. |
+| One chart is broken | Render independent usable charts and explain the unavailable chart. |
+| Formula fails on rows | Report affected rows and examples; preserve valid results where possible. |
+| A filter is broken | Do not silently drop it and show a broader population as correct. |
+| Edit through normal controls | Export current settings when requested; no continuous text synchronization. |
+| Need uncommon settings | Use readable paths and records; never require authored JSON. |
 
-Return diagnostics and usable configuration together. Recover at declaration boundaries. Render independent valid charts and identify unavailable declarations. A malformed optional setting may use its app default with an explicit warning. An invalid field, formula dependency, or filter cannot become a silent successful chart. Keep the failed source editable.
+## Decisions and boundaries
 
-Use native formulas. Report row failures with counts, examples, locations, and corrective guidance. Preserve valid calculated values where native semantics permit. Do not invent values for failed rows.
+**First proof:** A complete document renders distinct chart populations and explains a broken declaration.
 
-Treat DSL chart filters as local population restrictions. Keep them separate from interactive linked selections. Shared workspace filters are a later main-app proposal. The native data path must support both meanings explicitly before claiming filter correctness.
+**Try:** Apply two locally filtered charts, one calculated field, and one deliberately broken chart.
 
-Export current workspace settings on demand. Use verbose paths when shorthand is inadequate. Design flat object paths and ordered repeated records for complex values; confirm their syntax through representative examples. Never emit a JSON escape block.
+**Observe:** Usable charts render with correct populations. Every skipped effect has actionable feedback. The failed text remains repairable.
 
-## Current fit
+**Decide:** Continue when local filters stay local and partial output remains clear. Resolve silent constraint loss before expanding coverage.
 
-Reuse `SavedDataStructure`, chart defaults, `saveDataUtils`, `CalculationState`, and the public `ExplorEda` component. `CrossfilterWrapper` applies chart dimensions to shared filtering; attaching local DSL restrictions there unchanged would violate intent.
+Paste entry and file workflows remain provisional. Complex ordered records and empty values need non-JSON spellings. Global filters require separate main-app shaping.
 
-Port useful parsing and source locations from the prototype. Replace its patch-centric output, JSON escapes, and all-or-nothing application boundary. Keep native validation on each emitted unit. Native JSON remains an internal storage format, not authored DSL.
-
-## How to make this go better
-
-- **Prove local filter isolation first.** Compare two chart populations before building broad grammar coverage.
-- **Create from defaults.** A complete document must not accidentally inherit a previous workspace.
-- **Recover visibly.** Pair every skipped declaration or substituted default with an actionable diagnostic.
-- **Keep names optional.** Generate IDs for anonymous charts without requiring text maintenance after manual edits.
-- **Export on demand.** Rebuild readable text from native state without a second runtime authority.
-- **Prove complex values without JSON.** Test ordered arrays, literal keys, and empty values before promising full coverage.
-
-## First proof
-
-Paste a document with one calculated field, two charts with distinct local filters, and one broken declaration. Render the valid charts over real deterministic rows. Check each population independently. Show the broken declaration’s location and repair advice. Fix it and apply the complete document again.
-
-Pass if all usable charts render, no local filter changes another chart’s population, and warnings expose every skipped effect. Fail if the renderer silently broadens a broken filter or claims complete success for a partial result.
-
-## Rabbit holes and no-gos
-
-Avoid a second formula engine, joins, hosted agent infrastructure, mandatory chart naming, live comment-preserving text synchronization, and JSON escape syntax. Global filters require main-app design before DSL exposure.
-
-## Serious alternative
-
-Start with the compiler and fixture tests alone. This reduces UI work, but cannot prove that warnings and local populations make sense to users. A minimal paste route gives that evidence without committing to a full editor.
-
-## Plan handoff
-
-Prove creation and chart-local filtering, then recovery and repair, then on-demand export and full-setting coverage. Keep the native app editable throughout. Global filters remain a proposed follow-up.
+[Likely DSL examples](detailed-shaping.md#likely-authoring) · [Implementation plan](implementation-plan.md)

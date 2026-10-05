@@ -2,7 +2,7 @@
 
 ## Plan at a glance
 
-Deliver regression, summaries, and density improvements as native package work. Start with linear fits across groups and facets. This proves the main relationship-inspection workflow and the highest-risk population rule. Add polynomial and LOESS methods next. Then deliver paired summaries and density improvements. Retain separate evidence gates for other scientific overlays.
+Deliver regression, summaries, and density improvements as native package work. Start with linear fits across groups and facets. This proves the main relationship-inspection workflow and the highest-risk population rule. Add polynomial and LOESS methods next. Then deliver paired summaries, counts, marginals, and required 2D density contours and filled regions. Retain separate evidence gates for other scientific overlays.
 
 This update changes planning artifacts only. It does not implement regression or certify its performance.
 
@@ -40,23 +40,23 @@ Check known polynomial data, nonlinear data, repeated X values, insufficient poi
 - Shared parameters produce separate group and facet results.
 - Invalid fits explain their cause without silent fallback.
 
-## Milestone 3: Summaries and density remain auditable
+## Milestone 3: Summaries, counts, and 2D density explain distributions
 
-Add paired summaries using explicit populations. Compare hexagonal counts against the existing rectangular density planner. Integrate exact contributor tracing and paired marginals through existing chart controls. Keep settings and scope visible.
+Add paired summaries using explicit populations. Compare hexagonal counts against the existing rectangular density planner. Integrate exact contributor tracing and paired marginals through existing chart controls. Add smoothed 2D density contours and filled regions with bandwidth and level controls, a clear legend, and optional point overlay. Keep settings and scope visible.
 
-Verify covariance references, bin partitioning, count conservation, boundary points, resize, facets, nonlinear display, and settings restore. Preserve regression behavior when density or summaries are enabled. Measure the combined display at the working scale. Disable each display independently.
+Verify density remains finite and nonnegative, bandwidth changes alter smoothing, and contour/fill legends match the chosen units. Distinguish density thresholds from probability-mass coverage. Verify covariance references, bin partitioning, count conservation, boundary points, resize, facets, nonlinear display, and settings restore. Preserve regression behavior when density or summaries are enabled. Measure the combined display at the working scale. Disable each display independently.
 
 ### Desired end state
 
-- Regression, summaries, and density improvements are native package features.
+- Regression, summaries, counts, marginals, and 2D contours/filled density regions are native package features.
 - Counts and inspected contributors agree.
 - Ordinary points remain usable during sequential delivery.
 
 ## Milestone 4: Scientific overlays retain distinct meanings
 
-Use the lab to prove accepted ellipse, distance, and density model displays before native integration. Keep their analysis/reference populations explicit. The regression brush rule does not silently decide every other model’s population policy.
+If accepted, prove ellipse and distance displays with independent numerical fixtures and native chart interaction. Keep their analysis/reference populations explicit. The regression brush rule does not silently decide every other model’s population policy.
 
-Verify independent ellipse and distance references, singular results, and transformed boundaries. Keep KDE sensitivity and mean-region coverage checks separate. Disable each accepted overlay independently.
+Verify independent ellipse and distance references, singular results, and transformed boundaries. Keep mean-region coverage checks separate from descriptive density. Disable each accepted overlay independently.
 
 ### Desired end state
 

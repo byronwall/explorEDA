@@ -608,7 +608,7 @@
     "repository_snapshot": {
       "root": "/Users/byronwall/.codex/worktrees/6221/explorEDA",
       "revision": "038be515b0d0869c69f4da45f4744266b073ac19",
-      "worktree_status": "Initially clean detached HEAD. Demo lab imported; package source unchanged. No commit created.",
+      "worktree_status": "Named branch based on main. Final PR contains planning and DSL research only; scatter lab deliverables removed.",
       "subsystems": [
         "ScatterPlot planning and traces",
         "SavedDataStructure",
@@ -619,7 +619,6 @@
       ],
       "test_commands": [
         "pnpm check",
-        "node docs/research/scatter-test-bed/validate-numerics.mjs",
         "pnpm test (final DSL bundle)"
       ],
       "deployment_surfaces": [
@@ -720,9 +719,9 @@
       "event": "created",
       "reason": "User requests preservation, a runnable scatter lab, and Software Design Sleuth across both themes. Native product expansion remains planned.",
       "evidence": [
-        "docs/research/config-dsl/session-transcript.txt",
-        "docs/research/scatter-test-bed/original-prompt.txt"
-      ]
+        "docs/research/config-dsl/session-transcript.txt"
+      ],
+      "archive_note": "Scatter lab files removed from this branch at user request on 2026-10-04."
     },
     {
       "date": "2026-10-03",
@@ -733,10 +732,9 @@
     {
       "date": "2026-10-03",
       "event": "local-proof-recorded",
-      "evidence": [
-        "docs/research/scatter-test-bed/local-validation.json"
-      ],
-      "reason": "Repository check, numerical suite, final prototype tests and focused browser smoke passed. Native product work remains planned."
+      "evidence": [],
+      "reason": "Repository check, numerical suite, final prototype tests and focused browser smoke passed. Native product work remains planned.",
+      "archive_note": "Scatter lab files removed from this branch at user request on 2026-10-04."
     },
     {
       "date": "2026-10-03",

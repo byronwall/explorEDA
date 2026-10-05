@@ -5,16 +5,16 @@
     "slug": "advanced-scatter-analysis",
     "scale": "capability",
     "current_phase": "plan",
-    "last_updated": "2026-10-03",
-    "summary": "Compare advanced scatter methods and support linear, n-order, and LOESS fits by color group and facet.",
+    "last_updated": "2026-10-04",
+    "summary": "Native scatter regression, paired summaries, hexagonal counts, marginals, and required 2D density contours and filled regions.",
     "status": "planned",
-    "next_action": "Implement the native linear regression proof, then complete additional methods, summaries, and density slices."
+    "next_action": "Review the package feature scope and DSL research PR; implement accepted native slices afterward."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-03"
+      "updated_at": "2026-10-04"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -24,12 +24,12 @@
     "shape_brief": {
       "path": "shape-brief.md",
       "status": "current",
-      "updated_at": "2026-10-03"
+      "updated_at": "2026-10-04"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
       "status": "current",
-      "updated_at": "2026-10-03"
+      "updated_at": "2026-10-04"
     }
   },
   "sources": [
@@ -43,16 +43,18 @@
     {
       "id": "prompt",
       "type": "prompt",
-      "location": "docs/research/scatter-test-bed/original-prompt.txt",
+      "location": "Historical conversation",
       "anchor": "Mission; Required working features; Statistical scope; Additional methods",
-      "authority": "human"
+      "authority": "human",
+      "notes": "Lab files removed from this branch at the user\u2019s request. Preserve this source as historical intent evidence."
     },
     {
       "id": "report",
       "type": "report",
-      "location": "docs/research/scatter-test-bed/report.md",
+      "location": "Historical conversation",
       "anchor": "Sections 4\u20139; promotion and ranked experiments",
-      "authority": "agent-analysis"
+      "authority": "agent-analysis",
+      "notes": "Lab files removed from this branch at the user\u2019s request. Preserve this source as historical intent evidence."
     },
     {
       "id": "repo",
@@ -71,15 +73,24 @@
     {
       "id": "regression-update",
       "type": "request",
-      "location": "docs/research/scatter-test-bed/regression-update.txt",
+      "location": "Historical conversation",
       "anchor": "User scope update \u2014 2026-10-03",
-      "authority": "human"
+      "authority": "human",
+      "notes": "Lab files removed from this branch at the user\u2019s request. Preserve this source as historical intent evidence."
     },
     {
       "id": "product-answers",
       "type": "request",
-      "location": "docs/research/scatter-test-bed/regression-product-decisions.md",
+      "location": "Historical conversation",
       "anchor": "Annotations 1\u201310",
+      "authority": "human",
+      "notes": "Lab files removed from this branch at the user\u2019s request. Preserve this source as historical intent evidence."
+    },
+    {
+      "id": "density-scope",
+      "type": "request",
+      "location": "Current conversation",
+      "anchor": "Require 2D density contours and filled regions; remove lab files; create PR",
       "authority": "human"
     }
   ],
@@ -91,7 +102,7 @@
         "type": "outcome",
         "commitment": "explicit",
         "importance": "core",
-        "status": "active",
+        "status": "superseded",
         "time_horizon": "proof",
         "source_anchors": [
           {
@@ -100,11 +111,11 @@
           }
         ],
         "confidence": "high",
-        "notes": ""
+        "notes": "Lab scope retired by the 2026-10-04 user correction; native package scope replaces it."
       },
       {
         "id": "claim-2",
-        "statement": "Compare required hex bins, KDE, covariance, Pearson, Mahalanobis D and D\u00b2, data ellipse, and mean region.",
+        "statement": "Add smoothed 2D density contours and filled regions to the native package. Ellipse and distance proposals retain separate scope decisions.",
         "type": "required behavior",
         "commitment": "explicit",
         "importance": "core",
@@ -112,8 +123,8 @@
         "time_horizon": "proof",
         "source_anchors": [
           {
-            "source_id": "prompt",
-            "anchor": "Required working features 1\u20135"
+            "source_id": "density-scope",
+            "anchor": "Required 2D density"
           }
         ],
         "confidence": "high",
@@ -176,7 +187,7 @@
         "type": "required behavior",
         "commitment": "explicit",
         "importance": "core",
-        "status": "active",
+        "status": "superseded",
         "time_horizon": "proof",
         "source_anchors": [
           {
@@ -185,7 +196,7 @@
           }
         ],
         "confidence": "high",
-        "notes": ""
+        "notes": "Lab scope retired by the 2026-10-04 user correction; native package scope replaces it."
       },
       {
         "id": "claim-7",
@@ -202,7 +213,7 @@
           }
         ],
         "confidence": "high",
-        "notes": ""
+        "notes": "Historical proposal; lab references superseded by density-scope."
       },
       {
         "id": "claim-8",
@@ -210,7 +221,7 @@
         "type": "sequence",
         "commitment": "explicit",
         "importance": "core",
-        "status": "active",
+        "status": "superseded",
         "time_horizon": "proof",
         "source_anchors": [
           {
@@ -219,7 +230,7 @@
           }
         ],
         "confidence": "high",
-        "notes": "Evidence gates remain; new answers confirm native package delivery rather than lab-only exploration."
+        "notes": "Lab scope retired by the 2026-10-04 user correction; native package scope replaces it."
       },
       {
         "id": "claim-9",
@@ -240,7 +251,7 @@
       },
       {
         "id": "claim-10",
-        "statement": "Refine KDE, fitted ellipses, distances, principal axes; retain mean inference in the lab initially.",
+        "statement": "Refine ellipse, distance, principal-axis, and mean-region proposals separately from required 2D density.",
         "type": "implementation hypothesis",
         "commitment": "tentative",
         "importance": "supporting",
@@ -253,7 +264,7 @@
           }
         ],
         "confidence": "medium",
-        "notes": ""
+        "notes": "Historical proposal; lab references superseded by density-scope."
       },
       {
         "id": "claim-11",
@@ -474,7 +485,7 @@
           }
         ],
         "confidence": "high",
-        "notes": ""
+        "notes": "Historical proposal; lab references superseded by density-scope."
       },
       {
         "id": "claim-24",
@@ -543,11 +554,27 @@
         ],
         "confidence": "high",
         "notes": "Rough working target; facet count unspecified."
+      },
+      {
+        "id": "claim-28",
+        "statement": "Remove runnable and archived scatter lab files from this branch. Retain native feature planning.",
+        "type": "scope correction",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "current PR",
+        "source_anchors": [
+          {
+            "source_id": "density-scope",
+            "anchor": "Remove lab files"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
       }
     ],
     "themes": [
-      "Choose useful scientific scatter methods through a repeatable local comparison.",
-      "Required regression displays with separate group and facet results."
+      "Native scatter regression, paired summaries, hexagonal counts, marginals, and required 2D density contours and filled regions."
     ],
     "conflicts": [],
     "human_questions": [
@@ -578,7 +605,7 @@
     "status": "plan-ready",
     "appetite": "One useful native slice at a time; no fixed time budget supplied.",
     "problem": "Choose useful scientific scatter methods through a repeatable local comparison.",
-    "recommended_shape": "Native regression with shared definition controls, independent group/facet fits, and compact inspection. Follow with summaries and density improvements.",
+    "recommended_shape": "Deliver native regression, summaries, counts, marginals, and smoothed 2D density contours and filled regions. No separate lab deliverable.",
     "success_moves": [
       "Prove own versus external filter behavior first.",
       "Start with native linear measures.",
@@ -605,7 +632,7 @@
     "repository_snapshot": {
       "root": "/Users/byronwall/.codex/worktrees/6221/explorEDA",
       "revision": "038be515b0d0869c69f4da45f4744266b073ac19",
-      "worktree_status": "Initially clean detached HEAD. Demo lab imported; package source unchanged. No commit created.",
+      "worktree_status": "Named branch based on main. Lab code, route, dependencies, and archives removed. Native feature implementation remains planned.",
       "subsystems": [
         "ScatterPlot planning and traces",
         "SavedDataStructure",
@@ -615,9 +642,7 @@
         "React demo LandingPage"
       ],
       "test_commands": [
-        "pnpm check",
-        "node docs/research/scatter-test-bed/validate-numerics.mjs",
-        "pnpm test (final DSL bundle)"
+        "pnpm check"
       ],
       "deployment_surfaces": [
         "Existing Vite demo; deployment is outside this request."
@@ -656,7 +681,7 @@
       "command": "pnpm --filter exploreda build && pnpm --filter demo dev --host 127.0.0.1 --port 5184",
       "network": "No runtime network beyond localhost and bundled dataset fetch.",
       "failure_injection": "Deterministic edge fixtures and invalid documents.",
-      "slower_proof": "pnpm check, frozen browser preview, and independent numerical comparisons.",
+      "slower_proof": "pnpm check, independent numerical fixtures, and native browser verification.",
       "failure_selection": "Use empty, missing-pair, constant-coordinate, repeated-X, insufficient-group, and invalid-parameter fixtures."
     },
     "milestones": [
@@ -682,9 +707,9 @@
       },
       {
         "id": "milestone-3",
-        "title": "Summaries and density remain auditable",
-        "outcome": "Summaries and density remain auditable",
-        "proof": "Summary references; exact bin contributors; conservation; facets; combined interaction.",
+        "title": "Summaries, counts, and 2D density explain distributions",
+        "outcome": "Native summaries, hex counts, marginals, and smoothed contours/filled regions.",
+        "proof": "Summary references, count conservation, density finiteness, bandwidth response, legend units, facets, and combined interaction.",
         "status": "planned",
         "valid_intermediate_state": "Ordinary scatter plus completed optional native features.",
         "rollback": "Disable the new chart display through settings.",
@@ -715,9 +740,9 @@
       "event": "created",
       "reason": "User requests preservation, a runnable scatter lab, and Software Design Sleuth across both themes. Native product expansion remains planned.",
       "evidence": [
-        "docs/research/config-dsl/session-transcript.txt",
-        "docs/research/scatter-test-bed/original-prompt.txt"
-      ]
+        "docs/research/config-dsl/session-transcript.txt"
+      ],
+      "archive_note": "Referenced lab artifacts removed at user request on 2026-10-04; history retained."
     },
     {
       "date": "2026-10-03",
@@ -728,26 +753,28 @@
     {
       "date": "2026-10-03",
       "event": "local-proof-recorded",
-      "evidence": [
-        "docs/research/scatter-test-bed/local-validation.json"
-      ],
-      "reason": "Repository check, numerical suite, final prototype tests and focused browser smoke passed. Native product work remains planned."
+      "evidence": [],
+      "reason": "Repository check, numerical suite, final prototype tests and focused browser smoke passed. Native product work remains planned.",
+      "archive_note": "Referenced lab artifacts removed at user request on 2026-10-04; history retained."
     },
     {
       "date": "2026-10-03",
       "event": "intent-updated",
       "reason": "User requires linear, n-order, and LOESS regression, separate color-group fits, and facet-specific formulas. Shape and plan are stale pending ten product questions.",
-      "evidence": [
-        "docs/research/scatter-test-bed/regression-update.txt"
-      ]
+      "evidence": [],
+      "archive_note": "Referenced lab artifacts removed at user request on 2026-10-04; history retained."
     },
     {
       "date": "2026-10-03",
       "event": "product-answers-applied",
       "reason": "Applied all ten annotations. Regenerated shape and plan for native sequential delivery, fixed own-brush fits, external-filter refitting, shared definition controls, compact inspection, warning help, and the rough 10k/ten-group target.",
-      "evidence": [
-        "docs/research/scatter-test-bed/regression-product-decisions.md"
-      ]
+      "evidence": [],
+      "archive_note": "Referenced lab artifacts removed at user request on 2026-10-04; history retained."
+    },
+    {
+      "date": "2026-10-04",
+      "event": "scope-corrected",
+      "reason": "2D contours and filled density regions are required package scope. User removes lab deliverables and requests a review PR."
     }
   ],
   "closure": null

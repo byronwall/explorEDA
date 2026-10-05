@@ -25,6 +25,11 @@ Scatter analysis
 │   │   ├── Bin size, count colors, legend, optional point overlay
 │   │   ├── Inspect counts and exact contributing source rows
 │   │   └── Optional bin selection must select exact contributors
+│   ├── Smoothed 2D density
+│   │   ├── Contour lines and filled density regions
+│   │   ├── Bandwidth and contour-level controls
+│   │   ├── Point overlay; distinguish group colors from density colors
+│   │   └── Coordinate space, normalization, and legend units
 │   ├── Paired marginals — X and Y histograms
 │   │   └── Bin controls and counts matching the stated population
 │   └── Shared experience
@@ -32,11 +37,7 @@ Scatter analysis
 │       ├── Source inspection, visible group/facet identity, method help
 │       ├── Keep chart visible during settings and result inspection
 │       └── Explain unavailable results; preserve normal gestures
-├── EVALUATE IN THE LAB BEFORE NATIVE PROMOTION
-│   ├── Smoothed 2D density
-│   │   ├── Filled density and contours; bandwidth and level controls
-│   │   ├── Point overlay; distinguish group colors from density colors
-│   │   └── Coordinate space, normalization, and legend units
+├── OTHER SCIENTIFIC PROPOSALS — NATIVE SCOPE STILL OPEN
 │   ├── Principal covariance axes: directions and variance along each
 │   ├── Data ellipse: fitted distribution contour and coverage control
 │   ├── Mean confidence region: separate mode, level, assumptions, count
@@ -44,10 +45,6 @@ Scatter analysis
 │       ├── Point-level D and D²; coloring or highlighting
 │       ├── Nested distance contours; most-distant-row inspection
 │       └── Visible reference population and scored population
-├── EXISTING LAB — EXTEND FOR REGRESSION
-│   ├── Native baseline comparison, seeded presets, Palmer Penguins
-│   ├── Fields, groups, facets, scopes, parameter controls, reset
-│   └── Point/bin/model inspection; experiment settings export/restore
 └── LATER POSSIBILITIES — NOT COMMITTED NATIVE FEATURES
     ├── Spearman correlation; selected-versus-reference cohorts
     ├── Identity and engineering tolerance lines
@@ -69,6 +66,7 @@ Scatter analysis
 | Inspect many fits | Prioritize curves and equations; make remaining results available in compact inspection. |
 | Fit unavailable | Warning icon explains why on hover and keyboard focus; no silent method substitution. |
 | Missing, categorical, or singular inputs | Explain exclusions or unavailable methods; do not invent numeric results. |
+| Adjust density | Contours and filled regions respond to bandwidth and level settings; the legend states their meaning. |
 | Change display scale | Keep scientific meaning and stated coordinate space consistent. |
 
 ## Boundaries and open choices
@@ -81,6 +79,6 @@ Scatter analysis
 
 **Existing context:** Rectangular density cells and field-driven bubble sizes already exist. This tree adds no separate composition editor or general chart framework.
 
-**Delivery:** Regression, summaries, and count improvements are planned package additions. Other scientific layers keep their native-promotion decision. The tree describes scope, not current availability.
+**Delivery:** Regression, summaries, hexagonal counts, marginals, and smoothed 2D density are planned package additions. Other scientific layers retain separate scope decisions. The tree describes scope, not current availability.
 
 [Intent](intent-brief.md) · [Shape rationale](shape-brief.md) · [Implementation plan](implementation-plan.md)
