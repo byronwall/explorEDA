@@ -3,20 +3,20 @@
   "name": "explorEDA",
   "description": "Blank project ready for grid editing, structure mapping, and future AI-assisted details.",
   "createdAt": "2026-09-29T01:22:21.210Z",
-  "updatedAt": "2026-10-06T03:15:09.768Z",
+  "updatedAt": "2026-10-06T03:15:21.762Z",
   "operationLog": [
     {
-      "id": "c60db153-450b-415a-b3e3-de20a956e5f4",
+      "id": "8270b9aa-948b-4db2-9338-8604f4f2c2dc",
       "kind": "node.metadata.updated",
       "actor": {
         "kind": "agent",
-        "id": "token:35a150",
-        "label": "Agent token ...35a150"
+        "id": "token:02fc2c",
+        "label": "Agent token ...02fc2c"
       },
-      "createdAt": "2026-10-06T03:15:09.768Z",
-      "summary": "Updated metadata for \"Examples section on home page needs some color\".",
+      "createdAt": "2026-10-06T03:15:21.762Z",
+      "summary": "Updated metadata for \"Prevent horz overflow on data tables when they fit\".",
       "nodeIds": [
-        "page-examples-section-on-home-page-needs-some-color"
+        "page-prevent-horz-overflow-on-data-tables-when-they-fit"
       ],
       "payload": {
         "state": {
@@ -746,8 +746,10 @@
                 "id": "page-prevent-horz-overflow-on-data-tables-when-they-fit",
                 "label": "Prevent horz overflow on data tables when they fit",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Columns keep compact widths. Tables scroll only when the columns need more room. Saved widths and pointer resizing remain available."
+                },
                 "context": "Honestly, looks like we need to just do tight columns instead of fillign space.  Dense is better.  Let user expand if they want",
                 "rawContext": "",
                 "images": [
@@ -938,6 +940,34 @@
           }
         }
       }
+    },
+    {
+      "id": "6c0f5094-7d4f-4553-9874-996dfc087796",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:02fc2c",
+        "label": "Agent token ...02fc2c"
+      },
+      "createdAt": "2026-10-06T03:15:21.743Z",
+      "summary": "Changed \"Prevent horz overflow on data tables when they fit\" status to implemented.",
+      "nodeIds": [
+        "page-prevent-horz-overflow-on-data-tables-when-they-fit"
+      ]
+    },
+    {
+      "id": "c60db153-450b-415a-b3e3-de20a956e5f4",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:35a150",
+        "label": "Agent token ...35a150"
+      },
+      "createdAt": "2026-10-06T03:15:09.768Z",
+      "summary": "Updated metadata for \"Examples section on home page needs some color\".",
+      "nodeIds": [
+        "page-examples-section-on-home-page-needs-some-color"
+      ]
     },
     {
       "id": "7a158d1f-4822-446b-8ee4-97703e27958c",
@@ -4669,38 +4699,6 @@
       ],
       "metadata": {
         "clientMutationId": "e845f9a9-4312-446d-b784-122a8314fee5"
-      }
-    },
-    {
-      "id": "c8ccfbca-e757-4c98-941c-d414f87c69a6",
-      "kind": "node.images.added",
-      "actor": {
-        "kind": "human"
-      },
-      "createdAt": "2026-09-29T01:33:25.756Z",
-      "summary": "Added 1 images to \"Some cases when drag on edge does not resize\".",
-      "nodeIds": [
-        "page-some-cases-when-drag-on-edge-does-not-resize"
-      ],
-      "metadata": {
-        "imageCount": "1",
-        "clientMutationId": "ec8ed436-2d68-4947-a61d-8f774c76f815"
-      }
-    },
-    {
-      "id": "51788574-1126-4d9a-adb1-949b2bd4b1a2",
-      "kind": "node.created",
-      "actor": {
-        "kind": "human"
-      },
-      "createdAt": "2026-09-29T01:33:24.782Z",
-      "summary": "Created \"Some cases when drag on edge does not resize\" under \"Feedback mon 9/28\".",
-      "nodeIds": [
-        "page-some-cases-when-drag-on-edge-does-not-resize",
-        "page-feedback-mon-9-28"
-      ],
-      "metadata": {
-        "clientMutationId": "4dfaf3b8-db51-4634-8602-2e64723cb448"
       }
     }
   ]

@@ -28,7 +28,6 @@ interface DataTableProps extends BaseChartProps<DataTableSettings> {
 export function DataTable({
   settings,
   height,
-  width,
   rows,
   onSettingsChange,
   toolbarTarget,
@@ -68,15 +67,19 @@ export function DataTable({
   const headerHeight = showDistributions
     ? HEADER_HEIGHT_WITH_DISTRIBUTIONS
     : HEADER_HEIGHT;
+  const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
   const columnWidth = (column: DataTableSettings["columns"][number]) =>
     columnWidths[column.id] ??
     column.width ??
-    Math.max(110, column.field.length * 7 + 58);
+    Math.min(220, Math.max(88, column.field.length * 7 + 42));
+  const tableWidth = settings.columns.reduce(
+    (sum, column) => sum + columnWidth(column),
+    0
+  );
   const headerApi = useRef<DataTableHeaderApi>(null);
   const [menu, setMenu] = useState<TableMenuTarget>();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [scrollTop, setScrollTop] = useState(0);
-  const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
   const update =
     onSettingsChange ??
     ((next: Partial<DataTableSettings>) => updateChart(settings.id, next));
@@ -161,13 +164,7 @@ export function DataTable({
           aria-rowcount={filteredRows.length + 1}
           style={{
             tableLayout: "fixed",
-            width: Math.max(
-              width,
-              settings.columns.reduce(
-                (sum, column) => sum + columnWidth(column),
-                0
-              )
-            ),
+            width: tableWidth,
           }}
         >
           <caption className="sr-only">{getChartSummary(settings)}</caption>
