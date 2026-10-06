@@ -1,3 +1,4 @@
+/* eslint-disable no-console -- a command-line tool prints its results */
 import { readFileSync } from "node:fs";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import {

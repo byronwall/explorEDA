@@ -117,14 +117,6 @@ table Revenue,Cost,"Net revenue"`,
     } as never);
 
     const { text, omitted, rebuilt } = roundTrip(edited);
-    console.log(
-      text,
-      JSON.stringify(
-        rebuilt.diagnostics.map((d) => [d.line, d.message]),
-        null,
-        1
-      )
-    );
     expect(omitted).toEqual([]);
     expect(rebuilt.diagnostics.map((item) => item.effect)).toEqual([
       "rows-missing",
