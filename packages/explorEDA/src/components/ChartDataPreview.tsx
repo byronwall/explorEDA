@@ -14,7 +14,7 @@ export function ChartDataPreview({
 }) {
   const crossfilter = useDataLayer((s) => s.crossfilterWrapper);
   useDataLayer((s) => s.liveItems);
-  const ids = crossfilter.getFilteredRowIds();
+  const ids = crossfilter.getChartFilteredRowIds(settings);
   const getColumnData = useDataLayer((s) => s.getColumnData);
   const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
   const format = useDataLayer((s) => s.formatFieldValue);

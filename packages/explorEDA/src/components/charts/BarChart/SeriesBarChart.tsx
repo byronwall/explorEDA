@@ -31,7 +31,7 @@ export function SeriesBarChart({
   const api = useChartTraceApi();
   const trace = useChartTrace();
   const revision = useTraceRevision(settings);
-  const allIds = useGetAllIds();
+  const allIds = useGetAllIds(settings);
   const liveIds = useGetLiveIds(settings);
   const aggregate = useDataLayer((s) =>
     s.aggregates.find((item) => item.id === settings.aggregateId)

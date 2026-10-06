@@ -3,6 +3,7 @@ import { ChartSettings } from "@/types/ChartTypes";
 import type { datum } from "@/types/ChartTypes";
 import { useMemo } from "react";
 import { useGetColumnDataForIds } from "./useGetColumnData";
+import { restrictToPopulation } from "@/lib/chartPopulation";
 
 const EMPTY_DATA: datum[] = [];
 
@@ -56,10 +57,24 @@ export function useGetLiveIds(settings: ChartSettings, facetIds?: IdType[]) {
   }, [facetIds, liveItems]);
 }
 
-export function useGetAllIds() {
+/** Every row the chart can draw: all rows, or its own population. */
+export function useGetAllIds(settings?: ChartSettings) {
   const data = useDataLayer((s) => s.data);
+  const getColumnData = useDataLayer((s) => s.getColumnData);
+  const nonce = useDataLayer((s) => s.nonce);
+  const localFilters = settings?.localFilters;
 
-  const allIds = useMemo(() => data.map((row) => row.__ID), [data]);
+  const allIds = useMemo(
+    () =>
+      restrictToPopulation(
+        data.map((row) => row.__ID),
+        { localFilters },
+        getColumnData
+      ),
+    // include the nonce since calculated columns change with it
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [data, localFilters, getColumnData, nonce]
+  );
 
   return allIds;
 }

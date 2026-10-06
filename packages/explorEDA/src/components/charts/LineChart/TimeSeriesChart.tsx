@@ -37,7 +37,7 @@ export function TimeSeriesChart({
   const api = useChartTraceApi();
   const trace = useChartTrace();
   const revision = useTraceRevision(settings);
-  const allIds = useGetAllIds();
+  const allIds = useGetAllIds(settings);
   const liveIds = useGetLiveIds(settings);
   const dates = useGetColumnData(settings.xField);
   const measures = useGetColumnData(time.measureField);

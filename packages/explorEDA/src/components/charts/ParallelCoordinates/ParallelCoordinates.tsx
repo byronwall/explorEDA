@@ -135,7 +135,7 @@ export function ParallelCoordinates({
     s.colorScales.find((item) => item.id === settings.colorScaleId)
   );
   const liveIds = useGetLiveIds(settings, facetIds);
-  const allIds = useGetAllIds();
+  const allIds = useGetAllIds(settings);
   const revision = useTraceRevision(settings);
   const trace = useChartTrace();
   const traceApi = useChartTraceApi();

@@ -1,4 +1,5 @@
 import { getChartDefinition } from "@/charts/registry";
+import { getPopulationTest, restrictToPopulation } from "@/lib/chartPopulation";
 import { IdType } from "@/providers/DataLayerProvider";
 import { ChartSettings } from "@/types/ChartTypes";
 import crossfilter from "crossfilter2";
@@ -111,6 +112,15 @@ export class CrossfilterWrapper<T> {
     return this.ref.allFiltered().map(this.idFunction);
   }
 
+  /** Rows that pass every filter and belong to the chart's own population. */
+  getChartFilteredRowIds(chart: ChartSettings): IdType[] {
+    return restrictToPopulation(
+      this.getFilteredRowIds(),
+      chart,
+      this.fieldGetter
+    );
+  }
+
   getAllData() {
     // obj with key as id and value as datum
 
@@ -120,8 +130,13 @@ export class CrossfilterWrapper<T> {
     const commonNonce = ++this.nonce;
 
     for (const chart of this.charts.values()) {
+      // Rows outside a chart's own population do not exist for that chart.
+      const inPopulation = getPopulationTest(chart.chart, this.fieldGetter);
+      const items = chart.group.all();
       data[chart.chart.id] = {
-        items: chart.group.all(),
+        items: inPopulation
+          ? items.filter((item) => inPopulation(item.key))
+          : items,
         nonce: commonNonce,
       };
     }

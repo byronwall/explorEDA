@@ -72,7 +72,7 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
   const fieldSettings = useDataLayer((s) => s.fieldSettings);
   const updateChart = useDataLayer((s) => s.updateChart);
   const liveIds = useGetLiveIds(settings, facetIds);
-  const allIds = useGetAllIds();
+  const allIds = useGetAllIds(settings);
   const dateData = useGetColumnData(settings.field);
   const measureField =
     settings.aggregation === "count" ? undefined : settings.measureField;

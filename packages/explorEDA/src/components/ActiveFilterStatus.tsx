@@ -84,6 +84,19 @@ export function formatFilterLabel(
   }
 }
 
+/** Formats filter fields and bounds with the workspace's field settings. */
+export function useFieldFormatting(): FieldFormatting {
+  const fieldSettings = useDataLayer((state) => state.fieldSettings);
+  return {
+    name: (field) => getFieldName(field, fieldSettings[field]),
+    bounds: (field, min, max) =>
+      formatFieldBounds(field, min, max, fieldSettings[field]),
+    value: (field, value) =>
+      formatFieldValue(field, value, fieldSettings[field]),
+    rounds: (field, value) => displayRoundsValue(value, fieldSettings[field]),
+  };
+}
+
 export function isActiveFilter(filter: Filter) {
   switch (filter.type) {
     case "value":

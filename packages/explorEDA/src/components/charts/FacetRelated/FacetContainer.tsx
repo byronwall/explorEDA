@@ -55,7 +55,7 @@ export function FacetContainer({
   const fieldSettings = useDataLayer((state) => state.fieldSettings);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const updateChart = useDataLayer((state) => state.updateChart);
-  const allIds = useGetAllIds();
+  const allIds = useGetAllIds(settings);
   const nonce = useDataLayer((state) => state.nonce);
   const rawRows = useDataLayer((state) => state.rawData);
   const calculations = useDataLayer((state) => state.calculationManager);

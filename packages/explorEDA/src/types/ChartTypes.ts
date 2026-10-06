@@ -79,6 +79,11 @@ export interface BaseChartSettings {
   yAxis: AxisSettings;
   margin: MarginSettings;
   filters: Filter[];
+  /**
+   * Restricts the rows this chart draws. Unlike `filters`, these never filter
+   * other charts, and other charts never clear them.
+   */
+  localFilters?: Filter[];
 
   // Label settings
   xAxisLabel: string;

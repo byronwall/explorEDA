@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { FieldSelector } from "@/components/FieldSelector";
 import { ColumnFilter } from "@/components/charts/DataTable/components/ColumnFilter";
 import { resolveFieldProfile } from "@/components/FieldMetadata";
 import { useFilteredFieldProfiles } from "@/hooks/useFilteredFieldProfiles";
@@ -114,11 +116,18 @@ export function FiltersSettingsTab({
       ...(filter ? [filter] : []),
     ]);
 
+  const chartRows = (
+    <ChartRowsFilters settings={settings} onSettingChange={onSettingChange} />
+  );
+
   if (fields.length === 0) {
     return (
-      <p className="text-xs text-muted-foreground">
-        This chart sets no filters on the other views.
-      </p>
+      <div className="eda-chart-filters">
+        <p className="text-xs text-muted-foreground">
+          This chart sets no filters on the other views.
+        </p>
+        {chartRows}
+      </div>
     );
   }
 
@@ -151,6 +160,86 @@ export function FiltersSettingsTab({
           />
         );
       })}
+      {chartRows}
     </div>
+  );
+}
+
+/**
+ * Filters that limit only the rows this chart draws. They never reach other
+ * charts, and clearing the workspace's filters keeps them.
+ */
+function ChartRowsFilters({
+  settings,
+  onSettingChange,
+}: {
+  settings: ChartSettings;
+  onSettingChange: (key: string, value: unknown) => void;
+}) {
+  const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
+  const getColumnNames = useDataLayer((state) => state.getColumnNames);
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
+  const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
+  const [adding, setAdding] = useState<string[]>([]);
+  const localFilters = settings.localFilters ?? [];
+  const fields = [
+    ...new Set([
+      ...localFilters.map((filter) => filter.field),
+      ...adding.filter((field) => getColumnNames().includes(field)),
+    ]),
+  ];
+  const setFilter = (field: string, filter?: Filter) => {
+    const next = [
+      ...localFilters.filter((item) => item.field !== field),
+      ...(filter ? [filter] : []),
+    ];
+    onSettingChange("localFilters", next.length ? next : undefined);
+    if (!filter) setAdding((current) => current.filter((f) => f !== field));
+  };
+
+  return (
+    <section className="eda-chart-rows" aria-label="Chart rows">
+      <h3 className="text-xs font-semibold">Chart rows</h3>
+      <p className="text-xs text-muted-foreground">
+        Limit the rows this chart draws. Other charts ignore these filters.
+      </p>
+      {fields.map((field) => {
+        const profile = resolveFieldProfile(
+          field,
+          fieldProfiles ?? [],
+          getColumnData
+        );
+        if (!profile) {
+          return (
+            <p key={field} className="text-xs text-destructive">
+              {field} is not a field in this data, so the chart draws no rows.
+            </p>
+          );
+        }
+        return (
+          <ColumnFilter
+            key={field}
+            embedded
+            columnId={field}
+            columnLabel={getFieldLabel(field)}
+            profile={profile}
+            format={(value) => formatFieldValue(field, value as datum)}
+            filter={filterFor(localFilters, field)}
+            onChange={(_id, filter) => setFilter(field, filter)}
+            onClear={() => setFilter(field)}
+          />
+        );
+      })}
+      <FieldSelector
+        label=""
+        placeholder="Limit rows by a field"
+        value=""
+        fields={getColumnNames().filter((field) => !fields.includes(field))}
+        onChange={(field) =>
+          field && setAdding((current) => [...current, field])
+        }
+      />
+    </section>
   );
 }
