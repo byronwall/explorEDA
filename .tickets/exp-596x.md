@@ -38,3 +38,7 @@ Implementation plan milestone m3. User authorized same-worktree implementation, 
 **2026-10-06T03:32:03Z**
 
 Implementation checkpoint: per-stage fields/counts/conditions, query overlay, source/intermediate views, related scalar tables, source contributors, chart-to-query flow, and saved step/record selection are implemented. Missing selected steps remain explicit, and inspection row limits are labeled. Required exact backing-row and restored-flow browser proof remains. Next: independent browser verification after first-slice acceptance.
+
+**2026-10-06T04:24:10Z**
+
+Final acceptance found that Full flow stops at evaluator stages. Chart traces reach the correct result row, but omit renderer operations. A focused worker now carries the actual chart trace into Full flow. Required proof remains: filters, conversions, calculations, aggregation, numeric exclusions, and stale trace invalidation.

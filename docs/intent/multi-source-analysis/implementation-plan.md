@@ -3,7 +3,7 @@ title: "Multi-source analysis with explicit data frames — implementation plan"
 slug: "multi-source-analysis"
 phase: plan
 status: current
-last_updated: "2026-10-05"
+last_updated: "2026-10-06"
 ---
 
 # Multi-source analysis with explicit data frames — implementation plan
@@ -20,6 +20,10 @@ The largest risk is restoring plausible charts over the wrong population. Resolv
 
 Implementation uses this same worktree on `codex/multi-source-frames`. The supplied planning edits were committed, then rebased onto PR #148 at `a2e67c0`. The baseline saved-view and history checks passed. The initiative map links milestone tickets; those tickets own execution evidence.
 
+## Execution decision
+
+Browser measurements found input-to-frame delays of 447–1,006 ms on the fixed-seed parameter query. Long Tasks matched those delays. This meets the worker condition in milestone 4. Move evaluation into one local worker and retain the pure evaluator. Cache unchanged source serialization. Repeat browser timing and stale-result checks before acceptance.
+
 ## Implementation strategy
 
 ### Ownership and execution boundary
@@ -35,7 +39,7 @@ Keep React and TypeScript. Extend the current host session, not a second tab or 
 | Charts | Existing `ExplorEda`, `DataLayerProvider`, and `CrossfilterWrapper` consume the selected result. Query context reaches headers, fields, and trace panels. |
 | Edits and history | A package project component emits one coherent definition/view change. `SavedViewsWorkspace` records it and owns tabs, checkpoints, and storage. |
 
-Use a small project component around `ExplorEda`; `ExplorEdaProject` is a proposed name. It receives source tables, project definitions, the selected view, and read-only state. It emits the next definitions and selected-view state through one callback. Its schema/query panels use the existing side-panel contract. Export its types and evaluator from the package. Do not leave the capability inside the demo alone.
+Use `ExplorEdaProject` around `ExplorEda`. It receives source tables, project definitions, the selected view, and read-only state. It emits the next definitions and selected-view state through one callback. Its schema/query panels use the existing side-panel contract. Export its types and evaluator from the package. Do not leave the capability inside the demo alone.
 
 Keep `SavedDataStructure` as chart/view settings. Add project types beside it, rather than inserting source rows into every settings snapshot. Preserve the supported single-source entry point. A single-source example remains a useful regression check, not a second execution engine.
 
@@ -81,7 +85,7 @@ pnpm --filter demo build
 pnpm --filter demo preview --host 127.0.0.1 --port 4173 --strictPort
 ```
 
-Add a proposed `multi-source-shop` example and open `http://127.0.0.1:4173/?example=multi-source-shop`. That route and fixture do not exist yet. Port 4173 had no listening service during planning. Recheck before execution. Use an isolated browser profile with synthetic data; do not clear the user's saved session. Installed dependencies need no network for these checks. The first dependency installation may need network access.
+The implemented `multi-source-shop` example runs at `http://127.0.0.1:4173/?example=multi-source-shop`. Build the package and demo before starting this preview. Use an isolated browser profile with synthetic data; do not clear the user's saved session. Installed dependencies need no network for these checks. The first dependency installation may need network access.
 
 ### Transition and rollback
 

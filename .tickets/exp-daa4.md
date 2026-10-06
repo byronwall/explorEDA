@@ -39,3 +39,7 @@ Implementation plan milestone m2. User authorized same-worktree implementation, 
 **2026-10-06T03:32:03Z**
 
 Implementation checkpoint: schema authoring, observed cardinality, explicit aggregate/expanded frame choices, stable identity controls, and project file boundary are implemented in the shared diff. Focused chart/provider checks42/42, package typecheck, and UI conventions pass. Authoring/browser/export proof at1280/783/390 remains. Preserve dependency on accepted configured view/history round trip. Next: independent browser verification.
+
+**2026-10-06T04:38:29Z**
+
+Browser checks passed the schema link preview and order/item populations. Full-project export/import preserved the investigation and reloaded correctly. Active Items export/import retained one view and its Orders, Items, and Products dependencies. The item total stayed 140. Responsive screenshots now have verified 1280, 783, and 390 pixel widths.

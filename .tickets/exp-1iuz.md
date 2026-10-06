@@ -38,3 +38,11 @@ Implementation plan milestone m4. User authorized same-worktree implementation, 
 **2026-10-06T03:32:03Z**
 
 Implementation checkpoint: customer/date inputs, required-value validation, automatic synchronous updates, ready Customer orders tab, and declared output columns for empty results are implemented. Typed evaluator cases pass. Node24 scale/fan-out evidence is recorded in exp-l1vm. Execution is synchronous, so there are no overlapping async completions. Required browser proof: C1/C4 rows/counts/labels stay consistent, invalid inputs retain applied values, restore/reload works, and large fixture responsiveness. No worker boundary added without measured need.
+
+**2026-10-06T04:38:31Z**
+
+Browser checks passed C1, C4, and invalid-date behavior. Invalid drafts retain the applied bindings and matching rows. The generated project displayed all 10,000 output rows and ten source tables. Inspection showed 20 of 10,000 rows. Console checks found no errors. Tool wall times do not isolate input blocking. Actual browser event-delay measurement remains required before the scheduling decision closes.
+
+**2026-10-06T05:51:28Z**
+
+Browser measurements meet the plan's worker condition. Input-to-frame delay was 447–1,006 ms for the ten-table parameter query. Long Tasks matched those delays. Counts remained correct at minimum values 0, 500, and 900. One worker now owns asynchronous evaluation, applied-result labels, stale completion rejection, and repeated source serialization costs. Required acceptance stays open until measured browser input delay improves.
