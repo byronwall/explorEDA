@@ -74,8 +74,8 @@ export function RegionMapSettings({
     }
   };
   return (
-    <div className="space-y-3">
-      <div className="grid grid-cols-[110px_1fr] items-center gap-3">
+    <div className="space-y-2">
+      <div className="eda-setting-grid">
         <Label htmlFor={`${id}-asset`}>Geometry</Label>
         <select
           id={`${id}-asset`}
@@ -150,7 +150,7 @@ export function RegionMapSettings({
           {error}
         </p>
       )}
-      <div className="grid grid-cols-[110px_1fr] items-center gap-3">
+      <div className="eda-setting-grid">
         <Label>Region key</Label>
         <FieldSelector
           label=""
@@ -291,8 +291,8 @@ export function RegionMapSettings({
               </table>
             </div>
             <p>
-              Features with one key form one region. Alt-click outside the regions on
-              the map to see every unmatched row and feature.
+              Features with one key form one region. Alt-click outside the
+              regions on the map to see every unmatched row and feature.
             </p>
           </div>
         </details>

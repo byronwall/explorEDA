@@ -61,7 +61,7 @@ export function ParallelCoordinatesSettingsPanel({
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2.5">
       <section className="space-y-2" aria-labelledby="pc-axes-heading">
         <div className="flex items-baseline justify-between">
           <h5 id="pc-axes-heading" className="text-sm font-medium">
@@ -179,7 +179,7 @@ export function ParallelCoordinatesSettingsPanel({
         </p>
       </section>
 
-      <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+      <div className="eda-setting-grid">
         <Label>Color</Label>
         <FieldSelector
           label=""

@@ -37,7 +37,8 @@ export function HeatmapSettingsPanel({
     void calculations;
     return getColumnNames().filter((field) =>
       Object.values(getColumnData(field)).some(
-        (value) => typeof value !== "boolean" && finiteNumber(value) !== undefined
+        (value) =>
+          typeof value !== "boolean" && finiteNumber(value) !== undefined
       )
     );
   }, [calculations, getColumnData, getColumnNames]);
@@ -45,8 +46,8 @@ export function HeatmapSettingsPanel({
     onSettingsChange(withoutStaleSelection(settings, next));
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+    <div className="space-y-2.5">
+      <div className="eda-setting-grid">
         <Label>Rows</Label>
         <FieldSelector
           label=""
@@ -134,8 +135,16 @@ export function HeatmapSettingsPanel({
         >
           {(
             [
-              ["count", "Most rows", "Put the values with the most rows first on each axis."],
-              ["label", "A to Z", "Sort each axis by its value labels, numbers in numeric order."],
+              [
+                "count",
+                "Most rows",
+                "Put the values with the most rows first on each axis.",
+              ],
+              [
+                "label",
+                "A to Z",
+                "Sort each axis by its value labels, numbers in numeric order.",
+              ],
             ] as const
           ).map(([value, text, help]) => (
             <ActionTooltip key={value} content={help}>

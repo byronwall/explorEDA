@@ -468,7 +468,7 @@ const MultipleSelector = React.forwardRef<
         <PopoverTrigger asChild>
           <div
             className={cn(
-              "min-h-10 rounded-md border border-input text-base ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 md:text-sm",
+              "min-h-8 rounded-md border border-input text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 md:text-sm",
               {
                 "px-1 py-1": selected.length !== 0,
                 "cursor-text": !disabled && selected.length !== 0,

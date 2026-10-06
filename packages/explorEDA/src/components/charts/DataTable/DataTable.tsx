@@ -28,6 +28,7 @@ interface DataTableProps extends BaseChartProps<DataTableSettings> {
 export function DataTable({
   settings,
   height,
+  width,
   rows,
   onSettingsChange,
   toolbarTarget,
@@ -164,7 +165,9 @@ export function DataTable({
           aria-rowcount={filteredRows.length + 1}
           style={{
             tableLayout: "fixed",
-            width: tableWidth,
+            // Compact columns stretch to fill the chart, and scroll only
+            // when they need more room than it has.
+            width: Math.max(width, tableWidth),
           }}
         >
           <caption className="sr-only">{getChartSummary(settings)}</caption>

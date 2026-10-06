@@ -8,7 +8,7 @@ export function GridSettingsPanel() {
   const updateGridSettings = useDataLayer((s) => s.updateGridSettings);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2.5">
       <div className="space-y-2">
         <Label htmlFor="grid-columns">Columns</Label>
         <Input

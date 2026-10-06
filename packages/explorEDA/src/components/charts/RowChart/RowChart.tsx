@@ -230,6 +230,18 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
     bottom:
       Math.max(baseMargin.bottom, xAxisLabel ? 42 : 26) + STATUS_LINE_HEIGHT,
   };
+  // Few categories keep their bar height, so the X axis rises to sit under
+  // the last bar instead of leaving a gap above it.
+  const bandHeight = Math.min(
+    chartHeight - margin.top - margin.bottom,
+    displayCounts.length *
+      Math.max(settings.minRowHeight, settings.maxRowHeight)
+  );
+  const axisRise = Math.max(
+    0,
+    chartHeight - margin.top - margin.bottom - Math.max(0, bandHeight)
+  );
+  margin.bottom += axisRise;
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = chartHeight - margin.top - margin.bottom;
   const chartSettings = { ...settings, margin };
@@ -247,21 +259,9 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   const yScale = useMemo(() => {
     return scaleBand()
       .domain(displayCounts.map((d) => d.key))
-      .range([
-        0,
-        Math.min(
-          innerHeight,
-          displayCounts.length *
-            Math.max(settings.minRowHeight, settings.maxRowHeight)
-        ),
-      ])
+      .range([0, innerHeight])
       .padding(0.3);
-  }, [
-    displayCounts,
-    innerHeight,
-    settings.minRowHeight,
-    settings.maxRowHeight,
-  ]);
+  }, [displayCounts, innerHeight]);
 
   if (displayCounts.length === 0) {
     return (
@@ -321,6 +321,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
       <BaseChart
         width={width}
         height={chartHeight}
+        footer={axisRise}
         xScale={xScale}
         yScale={yScale}
         settings={chartSettings}

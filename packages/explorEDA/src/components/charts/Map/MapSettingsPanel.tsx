@@ -15,8 +15,8 @@ export function MapSettingsPanel({
   const { getOrCreateScaleForField } = useColorScales();
   const view = settings.view ?? WORLD_VIEW;
   return (
-    <div className="space-y-3">
-      <div className="grid grid-cols-[110px_1fr] items-center gap-3">
+    <div className="space-y-2">
+      <div className="eda-setting-grid">
         <Label htmlFor={`map-mode-${settings.id}`}>Map mode</Label>
         <ActionTooltip content="Points use coordinates from each row. Regions join rows to polygon keys and summarize a measure.">
           <select
@@ -51,7 +51,7 @@ export function MapSettingsPanel({
           onSettingsChange={onSettingsChange}
         />
       )}
-      <div className="grid grid-cols-[110px_1fr] items-center gap-3">
+      <div className="eda-setting-grid">
         {settings.mode === "point" && (
           <>
             <Label>Latitude (°)</Label>
@@ -175,7 +175,7 @@ export function MapSettingsPanel({
       </p>
       <details>
         <summary className="cursor-pointer text-sm">Map view</summary>
-        <div className="mt-3 grid grid-cols-[110px_1fr] items-center gap-3">
+        <div className="mt-3 eda-setting-grid">
           {([0, 1] as const).map((axis) => (
             <div className="contents" key={axis}>
               <Label htmlFor={`map-center-${axis}-${settings.id}`}>

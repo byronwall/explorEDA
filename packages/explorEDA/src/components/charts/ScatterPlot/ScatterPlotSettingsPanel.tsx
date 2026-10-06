@@ -37,10 +37,10 @@ export function ScatterPlotSettingsPanel({
   ];
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+    <div className="space-y-2.5">
+      <div className="eda-setting-grid">
         <Label htmlFor="scatter-display">Display</Label>
-        <div className="col-span-2 grid grid-cols-2 gap-2">
+        <div className="min-w-0">
           <ToggleGroup
             type="single"
             value={settings.display ?? "points"}
@@ -54,37 +54,40 @@ export function ScatterPlotSettingsPanel({
                 });
             }}
             aria-label="Scatter display"
-            className="col-span-2 grid grid-cols-2"
+            className="grid w-full grid-cols-4"
             variant="outline"
             size="sm"
           >
             {(
               [
-                ["points", "Points", "Show each row as a point."],
+                ["points", "Points", "Points", "Show each row as a point."],
                 [
                   "density",
                   "Rect bins",
+                  "Rect",
                   "Count rows in rectangular bins. Click a bin to select its rows.",
                 ],
                 [
                   "hexbin",
                   "Hex bins",
+                  "Hex",
                   "Count rows in hexagonal bins. Click a hexagon to select its rows.",
                 ],
                 [
                   "contour",
                   "Density",
+                  "Density",
                   "Estimate rows per unit area with filled regions and contour lines.",
                 ],
               ] as const
-            ).map(([value, label, help]) => (
+            ).map(([value, label, short, help]) => (
               <ActionTooltip key={value} content={help}>
                 <ToggleGroupItem
                   value={value}
                   aria-label={label}
-                  className="w-full text-xs aria-checked:bg-primary/10 aria-checked:font-semibold aria-checked:text-primary"
+                  className="w-full min-w-0 px-1 text-xs aria-checked:bg-primary/10 aria-checked:font-semibold aria-checked:text-primary"
                 >
-                  {label}
+                  {short}
                 </ToggleGroupItem>
               </ActionTooltip>
             ))}

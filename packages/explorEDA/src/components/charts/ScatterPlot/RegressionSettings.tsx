@@ -26,7 +26,7 @@ export function RegressionSettings({
     });
   return (
     <>
-      <Label className="col-span-2">Fit method</Label>
+      <Label>Fit method</Label>
       <ToggleGroup
         type="single"
         value={regression?.method ?? "none"}
@@ -41,31 +41,38 @@ export function RegressionSettings({
         aria-label="Fit method"
         variant="outline"
         size="sm"
-        className="col-span-2 grid grid-cols-2"
+        className="grid w-full grid-cols-4"
       >
         {(
           [
-            ["none", "None", "Do not draw a fitted curve."],
+            ["none", "None", "None", "Do not draw a fitted curve."],
             [
               "linear",
+              "Linear",
               "Linear",
               "Fit a least-squares line with slope, offset, and R².",
             ],
             [
               "polynomial",
               "Polynomial",
+              "Poly",
               "Add powers of X up to a chosen degree.",
             ],
-            ["loess", "LOESS", "Follow the data with local weighted lines."],
+            [
+              "loess",
+              "LOESS",
+              "LOESS",
+              "Follow the data with local weighted lines.",
+            ],
           ] as const
-        ).map(([value, label, help]) => (
+        ).map(([value, label, short, help]) => (
           <ActionTooltip key={value} content={help}>
             <ToggleGroupItem
               value={value}
               aria-label={label}
-              className="text-xs aria-checked:bg-primary/10 aria-checked:font-semibold aria-checked:text-primary"
+              className="min-w-0 px-1 text-xs aria-checked:bg-primary/10 aria-checked:font-semibold aria-checked:text-primary"
             >
-              {label}
+              {short}
             </ToggleGroupItem>
           </ActionTooltip>
         ))}

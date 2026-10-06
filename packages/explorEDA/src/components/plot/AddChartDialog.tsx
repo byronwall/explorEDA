@@ -186,8 +186,8 @@ function AddChartDialogContent({
         <header className="eda-add-chart-header">
           <DialogTitle>Add a chart</DialogTitle>
           <DialogDescription>
-            Choose a chart type and its fields. The preview uses the current
-            filters. Nothing is added until you place it on the grid.
+            The preview uses the current filters. Nothing is added until you
+            place it on the grid.
           </DialogDescription>
         </header>
         <div className="eda-add-chart-body">
@@ -214,10 +214,6 @@ function AddChartDialogContent({
                   Fields
                 </button>
               </div>
-              <p className="eda-add-chart-selected">
-                Selected:{" "}
-                {chartTypes.find((option) => option.key === selectedType)?.name}
-              </p>
               {controlsTab === "types" && (
                 <div className="eda-add-chart-types" aria-label="Chart type">
                   {chartGroups.map((group, index) => (
@@ -330,6 +326,12 @@ function AddChartDialogContent({
           </section>
         </div>
         <footer className="eda-add-chart-footer">
+          <p className="eda-add-chart-selected">
+            Selected:{" "}
+            <b>
+              {chartTypes.find((option) => option.key === selectedType)?.name}
+            </b>
+          </p>
           <Button variant="ghost" onClick={api.cancel}>
             Cancel
           </Button>

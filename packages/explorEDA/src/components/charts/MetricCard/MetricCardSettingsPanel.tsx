@@ -41,8 +41,8 @@ export function MetricCardSettingsPanel({
     });
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-4">
+    <div className="space-y-2.5">
+      <div className="eda-setting-grid">
         <Label htmlFor={`metric-card-aggregation-${settings.id}`}>Metric</Label>
         <select
           id={`metric-card-aggregation-${settings.id}`}
