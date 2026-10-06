@@ -8,14 +8,44 @@ import { IdType } from "@/providers/DataLayerProvider";
 import { applyFilter } from "@/hooks/applyFilter";
 import { Filter } from "@/types/FilterTypes";
 
+/**
+ * One fit method per chart. Every facet shares these settings and fits its own
+ * rows, one fit per color group.
+ */
+export interface ScatterRegressionSettings {
+  method: "linear" | "polynomial" | "loess";
+  /** Polynomial degree, 2 to 6. */
+  degree?: number;
+  /** LOESS share of rows in each local fit, 0.2 to 1. */
+  span?: number;
+  /** Adds one fit through every group in each facet. */
+  overall?: boolean;
+}
+
 export interface ScatterPlotSettings extends BaseChartSettings {
   type: "scatter";
-  display?: "points" | "density";
+  /** Density is rectangular bins; contour is smoothed 2D density. */
+  display?: "points" | "density" | "hexbin" | "contour";
+  hexbin?: { columns?: number; colorMax?: number; showPoints?: boolean };
+  contour?: {
+    /** Multiplies Scott's rule bandwidth, 0.25 to 4. */
+    bandwidth?: number;
+    levels?: number;
+    fill?: boolean;
+    lines?: boolean;
+    showPoints?: boolean;
+  };
   density?: { xBins?: number; yBins?: number; colorMax?: number };
   pointSize?: number;
   pointOpacity?: number;
   sizeField?: string;
   maxBubbleRadius?: number;
+  /** Absent when the chart draws no fit. */
+  regression?: ScatterRegressionSettings;
+  /** Shows the paired summary line: correlation and pair count. */
+  summary?: boolean;
+  /** X and Y histograms beside the plot; absent when off. */
+  marginals?: { bins?: number };
   xField: string;
   yField: string;
   filters: Filter[];

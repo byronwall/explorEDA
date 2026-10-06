@@ -978,3 +978,95 @@ export const distributionDashboard = dashboard("Delivery times and smaller route
   table("delivery-records", "Shipment source records", ["Route", "Service", "Hours"], layout(8, 7, 4, 4)),
 ]);
 distributionDashboard.fieldSettings = { Hours: { type: "numeric" } };
+
+
+export const scatterRegressionDashboard = dashboard(
+  "Bill shape within each species",
+  [
+    {
+      ...scatter("fit-bill", "Bill depth against bill length", "bill_length_mm", "bill_depth_mm", layout(0, 0, 7, 6), ["Bill length (mm)", "Bill depth (mm)"], "species", "fit-species"),
+      regression: { method: "linear", overall: true },
+      summary: true,
+      marginals: { bins: 24 },
+    },
+    {
+      ...scatter("fit-bill-sex", "The same fits for each sex", "bill_length_mm", "bill_depth_mm", layout(7, 0, 5, 6), ["Bill length (mm)", "Bill depth (mm)"], "species", "fit-species"),
+      regression: { method: "linear" },
+      facet: { enabled: true, type: "wrap", rowVariable: "sex", columnCount: 1 },
+    },
+    row("fit-island", "Filter by island", "island", layout(0, 6, 3, 5)),
+    {
+      ...scatter("fit-mass", "Body mass along flipper length · LOESS over density", "flipper_length_mm", "body_mass_g", layout(3, 6, 5, 5), ["Flipper length (mm)", "Body mass (g)"], "species", "fit-species"),
+      regression: { method: "loess", span: 0.6 },
+      display: "contour",
+      contour: { bandwidth: 0.75, levels: 5 },
+    },
+    {
+      ...scatter("fit-curve", "Flipper length along bill length · quadratic", "bill_length_mm", "flipper_length_mm", layout(8, 6, 4, 5), ["Bill length (mm)", "Flipper length (mm)"]),
+      regression: { method: "polynomial", degree: 2 },
+    },
+    table("fit-records", "Penguins in the fits", ["species", "island", "sex", "bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"], layout(0, 11, 12, 4)),
+  ],
+  [categoricalScale("fit-species", "species", ["Adelie", "Chinstrap", "Gentoo"])]
+);
+
+
+export const scatterSurfaceDashboard = dashboard(
+  "Ten thousand days, two ways to see density",
+  [
+    {
+      ...scatter("surface-hex", "Hexagonal counts", "Temperature (°C)", "Ice Cream Sales", layout(0, 0, 6, 6), ["Temperature (°C)", "Ice cream sales"]),
+      display: "hexbin",
+      hexbin: { columns: 24 },
+    },
+    {
+      ...scatter("surface-kde", "Smoothed density with a linear fit", "Temperature (°C)", "Ice Cream Sales", layout(6, 0, 6, 6), ["Temperature (°C)", "Ice cream sales"]),
+      display: "contour",
+      contour: { bandwidth: 1, levels: 6, showPoints: false },
+      regression: { method: "linear" },
+      summary: true,
+    },
+    histogram("surface-humidity", "Filter by humidity", "Humidity (%)", layout(0, 6, 5, 4), "Humidity (%)"),
+    table("surface-records", "Daily source records", ["Temperature (°C)", "Ice Cream Sales", "Humidity (%)", "Beach Visitors"], layout(5, 6, 7, 4)),
+  ]
+);
+
+
+const wineBands = ["Ordinary (3–5)", "Good (6)", "Excellent (7–8)"];
+
+export const wineChemistryDashboard: SavedDataStructure = {
+  ...dashboard(
+    "What separates a good red wine",
+    [
+      {
+        ...scatter("wine-density", "Density falls as alcohol rises", "alcohol", "density", layout(0, 0, 7, 7), ["Alcohol (% vol)", "Density (g/cm³)"], "Quality band", "wine-bands"),
+        display: "contour",
+        contour: { bandwidth: 0.8, levels: 6 },
+        regression: { method: "loess", span: 0.7 },
+        summary: true,
+        marginals: { bins: 24 },
+      },
+      {
+        ...scatter("wine-acid", "More fixed acid, lower pH", "fixed acidity", "pH", layout(7, 0, 5, 7), ["Fixed acidity (g/L)", "pH"]),
+        display: "hexbin",
+        hexbin: { columns: 18 },
+        regression: { method: "linear" },
+        summary: true,
+      },
+      {
+        ...scatter("wine-volatile", "Volatile acidity and alcohol in each quality band", "volatile acidity", "alcohol", layout(0, 7, 8, 5), ["Volatile acidity (g/L)", "Alcohol (% vol)"], "Quality band", "wine-bands"),
+        regression: { method: "linear" },
+        facet: { enabled: true, type: "wrap", rowVariable: "Quality band", columnCount: 3 },
+      },
+      { ...row("wine-quality", "Filter by quality band", "Quality band", layout(8, 7, 4, 5), "wine-bands"), minRowHeight: 28, maxRowHeight: 40 },
+      table("wine-records", "Wines in view", ["Quality band", "quality", "alcohol", "density", "volatile acidity", "fixed acidity", "pH"], layout(0, 12, 12, 4)),
+    ],
+    [categoricalScale("wine-bands", "Quality band", wineBands)]
+  ),
+  calculations: [
+    {
+      resultColumnName: "Quality band",
+      expression: `if quality <= 5 then "${wineBands[0]}" else if quality == 6 then "${wineBands[1]}" else "${wineBands[2]}"`,
+    },
+  ],
+};

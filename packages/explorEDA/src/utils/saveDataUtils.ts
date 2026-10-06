@@ -130,6 +130,22 @@ export async function saveAnalysisToClipboard(
   }
 }
 
+/** A saved scatter fit: one known method and its shared parameters. */
+function isScatterRegression(value: unknown) {
+  if (value === undefined) return true;
+  return (
+    isRecord(value) &&
+    ["linear", "polynomial", "loess"].includes(value.method as string) &&
+    (value.degree === undefined ||
+      (Number.isInteger(value.degree) &&
+        (value.degree as number) >= 2 &&
+        (value.degree as number) <= 6)) &&
+    (value.span === undefined ||
+      (isFiniteNumber(value.span) && value.span >= 0.2 && value.span <= 1)) &&
+    (value.overall === undefined || typeof value.overall === "boolean")
+  );
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -367,21 +383,66 @@ function isChart(value: unknown): boolean {
       return (
         typeof value.xField === "string" &&
         typeof value.yField === "string" &&
-        (value.display === undefined || ["points", "density"].includes(value.display as string)) &&
+        (value.display === undefined ||
+          ["points", "density", "hexbin", "contour"].includes(
+            value.display as string
+          )) &&
         (value.density === undefined ||
           (isRecord(value.density) &&
-            [value.density.xBins, value.density.yBins].every((count) =>
-              count === undefined || (isFiniteNumber(count) && Number.isInteger(count) && count >= 2 && count <= 60)
+            [value.density.xBins, value.density.yBins].every(
+              (count) =>
+                count === undefined ||
+                (isFiniteNumber(count) &&
+                  Number.isInteger(count) &&
+                  count >= 2 &&
+                  count <= 60)
             ) &&
             (value.density.colorMax === undefined ||
-              (isFiniteNumber(value.density.colorMax) && value.density.colorMax >= 1)))) &&
+              (isFiniteNumber(value.density.colorMax) &&
+                value.density.colorMax >= 1)))) &&
         (value.sizeField === undefined ||
           (typeof value.sizeField === "string" &&
             value.sizeField.length > 0)) &&
         (value.maxBubbleRadius === undefined ||
           (isFiniteNumber(value.maxBubbleRadius) &&
             value.maxBubbleRadius >= 6 &&
-            value.maxBubbleRadius <= 32))
+            value.maxBubbleRadius <= 32)) &&
+        isScatterRegression(value.regression) &&
+        (value.hexbin === undefined ||
+          (isRecord(value.hexbin) &&
+            (value.hexbin.columns === undefined ||
+              (Number.isInteger(value.hexbin.columns) &&
+                (value.hexbin.columns as number) >= 5 &&
+                (value.hexbin.columns as number) <= 60)) &&
+            (value.hexbin.colorMax === undefined ||
+              (isFiniteNumber(value.hexbin.colorMax) &&
+                value.hexbin.colorMax >= 1)) &&
+            (value.hexbin.showPoints === undefined ||
+              typeof value.hexbin.showPoints === "boolean"))) &&
+        (value.contour === undefined ||
+          (isRecord(value.contour) &&
+            (value.contour.bandwidth === undefined ||
+              (isFiniteNumber(value.contour.bandwidth) &&
+                value.contour.bandwidth >= 0.25 &&
+                value.contour.bandwidth <= 4)) &&
+            (value.contour.levels === undefined ||
+              (Number.isInteger(value.contour.levels) &&
+                (value.contour.levels as number) >= 2 &&
+                (value.contour.levels as number) <= 12)) &&
+            [
+              value.contour.fill,
+              value.contour.lines,
+              value.contour.showPoints,
+            ].every(
+              (flag) => flag === undefined || typeof flag === "boolean"
+            ))) &&
+        (value.summary === undefined || typeof value.summary === "boolean") &&
+        (value.marginals === undefined ||
+          (isRecord(value.marginals) &&
+            (value.marginals.bins === undefined ||
+              (Number.isInteger(value.marginals.bins) &&
+                (value.marginals.bins as number) >= 5 &&
+                (value.marginals.bins as number) <= 60))))
       );
     case "pivot":
       return (
@@ -437,7 +498,8 @@ function isChart(value: unknown): boolean {
         ["tukey", "minmax", "stdDev"].includes(value.whiskerType as string) &&
         typeof value.showOutliers === "boolean" &&
         typeof value.violinOverlay === "boolean" &&
-        (value.showObservations === undefined || typeof value.showObservations === "boolean") &&
+        (value.showObservations === undefined ||
+          typeof value.showObservations === "boolean") &&
         ["median", "label"].includes(value.sortBy as string) &&
         isFiniteNumber(value.violinBandwidth) &&
         typeof value.autoBandwidth === "boolean" &&
@@ -483,22 +545,45 @@ function isChart(value: unknown): boolean {
         isFiniteNumber(value.lineWidth)
       );
     case "map":
-      return ["point", "region"].includes(value.mode as string) &&
-        (value.mode !== "region" || (typeof value.geometryAssetId === "string" &&
-          typeof value.regionField === "string" && typeof value.featureKey === "string" &&
-          ["count", "sum", "average"].includes(value.aggregation as string) &&
-          (value.aggregation === "count" || typeof value.measureField === "string") &&
-          typeof value.showRegionLabels === "boolean" && isFiniteNumber(value.outlineWidth) && value.outlineWidth >= 0 && value.outlineWidth <= 4)) &&
-        typeof value.latitudeField === "string" && typeof value.longitudeField === "string" &&
-        (value.labelField === undefined || typeof value.labelField === "string") &&
-        (value.sizeField === undefined || typeof value.sizeField === "string") &&
-        ["equal-earth", "equirectangular"].includes(value.projection as string) &&
-        isFiniteNumber(value.pointRadius) && value.pointRadius >= 2 && value.pointRadius <= 32 &&
-        isFiniteNumber(value.pointOpacity) && value.pointOpacity >= 0.1 && value.pointOpacity <= 1 &&
-        (value.view === undefined || (isRecord(value.view) && Array.isArray(value.view.center) &&
-          value.view.center.length === 2 && value.view.center.every(isFiniteNumber) &&
-          Math.abs(value.view.center[0]!) <= 180 && Math.abs(value.view.center[1]!) <= 90 &&
-          isFiniteNumber(value.view.zoom) && value.view.zoom >= 1 && value.view.zoom <= 64));
+      return (
+        ["point", "region"].includes(value.mode as string) &&
+        (value.mode !== "region" ||
+          (typeof value.geometryAssetId === "string" &&
+            typeof value.regionField === "string" &&
+            typeof value.featureKey === "string" &&
+            ["count", "sum", "average"].includes(value.aggregation as string) &&
+            (value.aggregation === "count" ||
+              typeof value.measureField === "string") &&
+            typeof value.showRegionLabels === "boolean" &&
+            isFiniteNumber(value.outlineWidth) &&
+            value.outlineWidth >= 0 &&
+            value.outlineWidth <= 4)) &&
+        typeof value.latitudeField === "string" &&
+        typeof value.longitudeField === "string" &&
+        (value.labelField === undefined ||
+          typeof value.labelField === "string") &&
+        (value.sizeField === undefined ||
+          typeof value.sizeField === "string") &&
+        ["equal-earth", "equirectangular"].includes(
+          value.projection as string
+        ) &&
+        isFiniteNumber(value.pointRadius) &&
+        value.pointRadius >= 2 &&
+        value.pointRadius <= 32 &&
+        isFiniteNumber(value.pointOpacity) &&
+        value.pointOpacity >= 0.1 &&
+        value.pointOpacity <= 1 &&
+        (value.view === undefined ||
+          (isRecord(value.view) &&
+            Array.isArray(value.view.center) &&
+            value.view.center.length === 2 &&
+            value.view.center.every(isFiniteNumber) &&
+            Math.abs(value.view.center[0]!) <= 180 &&
+            Math.abs(value.view.center[1]!) <= 90 &&
+            isFiniteNumber(value.view.zoom) &&
+            value.view.zoom >= 1 &&
+            value.view.zoom <= 64))
+      );
     case "metric-card":
       return (
         ["count", "sum", "average"].includes(value.aggregation as string) &&
@@ -663,12 +748,27 @@ export function validateSavedData(data: unknown): data is SavedDataStructure {
     return false;
   }
 
-  if (data.geometryAssets !== undefined &&
-    (!Array.isArray(data.geometryAssets) || !data.geometryAssets.every(isGeometryAsset) ||
-      new Set(data.geometryAssets.map((asset) => asset.id)).size !== data.geometryAssets.length)) return false;
+  if (
+    data.geometryAssets !== undefined &&
+    (!Array.isArray(data.geometryAssets) ||
+      !data.geometryAssets.every(isGeometryAsset) ||
+      new Set(data.geometryAssets.map((asset) => asset.id)).size !==
+        data.geometryAssets.length)
+  )
+    return false;
 
-  if (charts.some((chart) => chart.type === "map" && chart.mode === "region" && chart.geometryAssetId &&
-    !(data.geometryAssets as {id:string}[] | undefined)?.some((asset) => asset.id === chart.geometryAssetId))) return false;
+  if (
+    charts.some(
+      (chart) =>
+        chart.type === "map" &&
+        chart.mode === "region" &&
+        chart.geometryAssetId &&
+        !(data.geometryAssets as { id: string }[] | undefined)?.some(
+          (asset) => asset.id === chart.geometryAssetId
+        )
+    )
+  )
+    return false;
 
   if (data.rowsSettings !== undefined) {
     const rowsSettings = data.rowsSettings;

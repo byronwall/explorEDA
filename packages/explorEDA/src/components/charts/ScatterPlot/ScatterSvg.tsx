@@ -1,5 +1,5 @@
 import { useBrush } from "@/hooks/useBrush";
-import { useId, useMemo, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   planScatterOverlay,
   type Extent,
@@ -8,6 +8,121 @@ import {
 } from "./scatterPlan";
 import { findAxisGuide } from "../Axis/axisPlan";
 import { PlannedAxes, PlannedGrid } from "../Axis/AxisLayer";
+import type { FitMark } from "./fitPlan";
+import type { MarginalPlan } from "./marginalPlan";
+
+/** X and Y histograms in the margins; the selection's share reads darker. */
+function MarginalBars({
+  marginals,
+  activeId,
+  onHover,
+}: {
+  marginals: MarginalPlan;
+  activeId?: string;
+  onHover?: (id: string | undefined) => void;
+}) {
+  const interval = (bounds: [number, number]) =>
+    bounds.map((value) => Number(value.toPrecision(4))).join(" to ");
+  return (
+    <g className="eda-marginals">
+      {marginals.bins.map((bin) => {
+        const active = bin.id === activeId;
+        const share =
+          bin.axis === "x"
+            ? {
+                x: bin.x,
+                width: bin.width,
+                y: bin.y + bin.height - bin.selectedLength,
+                height: bin.selectedLength,
+              }
+            : {
+                x: bin.x,
+                width: bin.selectedLength,
+                y: bin.y,
+                height: bin.height,
+              };
+        return (
+          <g
+            key={bin.id}
+            data-marginal-id={bin.id}
+            role="button"
+            tabIndex={-1}
+            aria-label={`${bin.label} ${interval(bin.bounds)}: ${bin.sourceIds.length} rows${marginals.split ? `, ${bin.selected} selected` : ""}`}
+            className="cursor-pointer"
+            onPointerEnter={() => onHover?.(bin.id)}
+            onPointerLeave={() => onHover?.(undefined)}
+          >
+            <rect
+              x={bin.x}
+              y={bin.y}
+              width={bin.width}
+              height={bin.height}
+              fill={marginals.split ? "rgb(156 163 175)" : "var(--eda-count)"}
+              fillOpacity={marginals.split ? 0.45 : active ? 0.85 : 0.6}
+              stroke={active ? "var(--foreground)" : "none"}
+            />
+            {marginals.split && bin.selected > 0 && (
+              <rect
+                {...share}
+                fill="#3479a8"
+                fillOpacity={active ? 0.95 : 0.8}
+                pointerEvents="none"
+              />
+            )}
+          </g>
+        );
+      })}
+    </g>
+  );
+}
+
+/** Fitted curves over the points, with a halo so they read over dense clouds. */
+export function FitCurves({
+  marks,
+  activeId,
+}: {
+  marks: FitMark[];
+  activeId?: string;
+}) {
+  return (
+    <g className="eda-fit-curves">
+      {marks.map((mark) => (
+        <g
+          key={mark.id}
+          data-fit-id={mark.id}
+          role="img"
+          aria-label={mark.label}
+        >
+          <path
+            d={mark.path}
+            fill="none"
+            stroke="var(--background)"
+            strokeOpacity={0.75}
+            strokeWidth={mark.id === activeId ? 6 : 4.5}
+            strokeLinecap="round"
+            pointerEvents="none"
+          />
+          <path
+            d={mark.path}
+            fill="none"
+            stroke={mark.color}
+            strokeWidth={mark.id === activeId ? 3 : 2}
+            strokeDasharray={mark.dashed ? "6 4" : undefined}
+            strokeLinecap="round"
+            pointerEvents="none"
+          />
+          <path
+            d={mark.path}
+            fill="none"
+            stroke="transparent"
+            strokeWidth={10}
+            pointerEvents="stroke"
+          />
+        </g>
+      ))}
+    </g>
+  );
+}
 
 function Primitive({
   item,
@@ -96,7 +211,32 @@ export function ScatterSvg({
   onHoverPoint,
   onActivatePoint,
   onSelectPoint,
+  fitMarks = [],
+  surface,
+  onMark,
+  markFirst = false,
+  marginals,
+  activeMarginalId,
+  onHoverMarginal,
+  onMarginal,
+  activeFitId,
+  onActiveFit,
+  onInspectFit,
 }: {
+  fitMarks?: FitMark[];
+  /** A density surface drawn under the fits, such as hexagons or contours. */
+  surface?: ReactNode;
+  /** A click on a surface mark; returns false to fall through. */
+  onMark?: (id: string, inspect: boolean) => boolean;
+  /** Hexagons take clicks before points; contours only where no point is near. */
+  markFirst?: boolean;
+  marginals?: MarginalPlan;
+  activeMarginalId?: string;
+  onHoverMarginal?: (id: string | undefined) => void;
+  onMarginal?: (id: string, inspect: boolean) => void;
+  activeFitId?: string;
+  onActiveFit?: (id: string | undefined) => void;
+  onInspectFit?: (id: string) => void;
   plan: ScatterPlan;
   hoveredId: string | null;
   onBrushChange: (extent: Extent | null) => void;
@@ -154,7 +294,7 @@ export function ScatterSvg({
       className="absolute select-none"
       style={{
         cursor:
-          altHover && (hoveredId || hoveredGuideId)
+          altHover && (hoveredId || hoveredGuideId || activeFitId)
             ? "pointer"
             : brush.getCursor(),
         touchAction: "none",
@@ -230,15 +370,37 @@ export function ScatterSvg({
         setHoveredGuideId(
           event.altKey && id && findAxisGuide(plan.axes, id) ? id : null
         );
+        if (fitMarks.length && !event.buttons)
+          onActiveFit?.(
+            (event.target as Element)
+              .closest("[data-fit-id]")
+              ?.getAttribute("data-fit-id") ?? undefined
+          );
       }}
       onPointerLeave={() => {
         setHoveredGuideId(null);
+        if (fitMarks.length) onActiveFit?.(undefined);
         setAltHover(false);
       }}
       onPointerUpCapture={brush.handlePointerUp}
       onPointerCancel={brush.cancel}
       onLostPointerCapture={brush.cancel}
       onClick={(event) => {
+        const marginalId = (event.target as Element)
+          .closest("[data-marginal-id]")
+          ?.getAttribute("data-marginal-id");
+        if (marginalId && onMarginal) {
+          onMarginal(marginalId, event.altKey);
+          return;
+        }
+        const markId = (event.target as Element)
+          .closest("[data-mark-id]")
+          ?.getAttribute("data-mark-id");
+        const tryMark = () =>
+          Boolean(
+            markId && !brush.wasDrag.current && onMark?.(markId, event.altKey)
+          );
+        if (markFirst && tryMark()) return;
         if (brush.wasDrag.current || (!event.altKey && !plan.size)) return;
         const rect = event.currentTarget.getBoundingClientRect();
         const x = event.clientX - rect.left - plan.margin.left;
@@ -254,6 +416,13 @@ export function ScatterSvg({
             brush.clear();
           return;
         }
+        const fitId = (event.target as Element)
+          .closest("[data-fit-id]")
+          ?.getAttribute("data-fit-id");
+        if (fitId && onInspectFit) {
+          onInspectFit(fitId);
+          return;
+        }
         if (
           x >= 0 &&
           x <= plan.plotWidth &&
@@ -262,6 +431,7 @@ export function ScatterSvg({
           onInspectPoint(x, y)
         )
           return;
+        if (!markFirst && tryMark()) return;
         const id = (event.target as Element)
           .closest("[data-plan-id]")
           ?.getAttribute("data-plan-id");
@@ -288,9 +458,22 @@ export function ScatterSvg({
             activeId={hoveredGuideId ?? selectedId}
           />
         </g>
+        {surface && <g clipPath={`url(#${chartId}-plot)`}>{surface}</g>}
+        {fitMarks.length > 0 && (
+          <g clipPath={`url(#${chartId}-plot)`}>
+            <FitCurves marks={fitMarks} activeId={activeFitId} />
+          </g>
+        )}
         <g className="eda-brush" clipPath={`url(#${chartId}-plot)`}>
           <Primitives items={overlay.brush} />
         </g>
+        {marginals && (
+          <MarginalBars
+            marginals={marginals}
+            activeId={activeMarginalId}
+            onHover={onHoverMarginal}
+          />
+        )}
         <PlannedAxes
           plan={plan.axes}
           interactive

@@ -56,4 +56,4 @@ This checkout already has rectangular density cells with exact source IDs and tr
 
 ## Next step after confirmation
 
-The ten product answers are captured in the revised [shape](shape-brief.md) and [plan](implementation-plan.md). Start with a native linear fit that preserves its result during own brushing and recomputes after external filtering. Then add polynomial and LOESS fits, followed by summaries and density improvements. These documents define proposed package work; this branch does not implement it.
+The ten product answers are captured in the revised [shape](shape-brief.md) and [plan](implementation-plan.md). Start with a native linear fit that preserves its result during own brushing and recomputes after external filtering. Then add polynomial and LOESS fits, followed by summaries and density improvements. Milestones 1–3 are now implemented as stacked package PRs; see the [plan](implementation-plan.md) for status.

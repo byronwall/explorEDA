@@ -22,6 +22,8 @@
   --destructive: hsl(0 84.2% 60.2%);
   --destructive-foreground: hsl(0 0% 98%);
   --warning: hsl(35 85% 38%);
+  /* Count and density color for hexagonal bins. */
+  --eda-count: hsl(207 60% 36%);
   --border: hsl(214 20% 88%);
   --input: var(--border);
   --ring: var(--primary);
@@ -65,6 +67,7 @@
   --destructive: hsl(0 62.8% 30.6%);
   --destructive-foreground: hsl(0 0% 98%);
   --warning: hsl(38 85% 65%);
+  --eda-count: hsl(205 80% 68%);
   --border: hsl(0 0% 14.9%);
   --input: var(--border);
   --ring: hsl(0 0% 83.1%);
@@ -2786,6 +2789,79 @@ html {
   position: absolute;
   z-index: 1;
   transform: translateY(-50%);
+}
+/* A density surface's legend: one line under the X axis title. */
+.eda-surface-legend {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 18px;
+  overflow: hidden;
+  color: var(--foreground);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  pointer-events: none;
+}
+/* Fit equations stack in a quiet plot corner and stay readable over points. */
+.eda-fit-labels {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  pointer-events: none;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.eda-fit-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 3px;
+  background: color-mix(in oklab, var(--background) 82%, transparent);
+  color: var(--foreground);
+  white-space: nowrap;
+  pointer-events: auto;
+  cursor: default;
+}
+.eda-fit-label[data-active] {
+  background: var(--background);
+  box-shadow: 0 0 0 1px var(--border);
+}
+.eda-fit-label:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.eda-fit-heading {
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+.eda-summary-line b {
+  font-weight: 600;
+}
+.eda-summary-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 7px;
+}
+.eda-summary-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+}
+.eda-fit-more {
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
+.eda-fit-more:hover {
+  color: var(--foreground);
 }
 .eda-scatter-axis-calc-y {
   transform-origin: top left;
