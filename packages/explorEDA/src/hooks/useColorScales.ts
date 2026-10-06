@@ -1,5 +1,4 @@
-import { finiteNumber, finiteNumbers } from "@/lib/numeric";
-import { categoryLabel } from "@/lib/categories";
+import { finiteNumber } from "@/lib/numeric";
 import { detectColumnType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import {
@@ -14,6 +13,7 @@ import { scaleSequential } from "d3-scale";
 import type { ScaleOrdinal, ScaleSequential } from "d3-scale";
 import {
   assignCategoryColors,
+  defaultColorScaleForField,
   makeColorScale,
   makeD3ColorScale,
 } from "@/lib/colorScaleMath";
@@ -163,8 +163,6 @@ export function useColorScales(): UseColorScalesReturn {
 
     // Get all values for the field
     const values = Object.values(getColumnData(field));
-
-    // Filter out null and undefined
     const cleanValues = values.filter((v): v is string | number => v != null);
 
     // Check if values are numerical
@@ -174,25 +172,14 @@ export function useColorScales(): UseColorScalesReturn {
         "numeric" &&
       cleanValues.some((value) => finiteNumber(value) !== undefined);
 
-    let newScale: ColorScaleType;
-    if (isNumerical) {
-      const numericValues = finiteNumbers(cleanValues);
-      const min = Math.min(...numericValues);
-      const max = Math.max(...numericValues);
-      newScale = createDefaultNumericalScale(name ?? field, min, max, field);
-    } else {
-      const counts = new Map<string, number>();
-      values.forEach((value) => {
-        const label = categoryLabel(value);
-        counts.set(label, (counts.get(label) ?? 0) + 1);
-      });
-      newScale = createDefaultCategoricalScale(
-        name ?? field,
-        Array.from(counts.keys()),
+    const newScale = addColorScale(
+      defaultColorScaleForField(
         field,
-        counts
-      );
-    }
+        isNumerical ? cleanValues : values,
+        isNumerical,
+        name
+      )
+    );
 
     return newScale.id;
   };

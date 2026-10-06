@@ -396,3 +396,53 @@ export function planNumericalLegend(
     background,
   };
 }
+
+/**
+ * The scale the app creates when a chart first colors by a field: a ramp
+ * over the range of a number field, or one color per category, largest
+ * groups first.
+ */
+export function defaultColorScaleForField(
+  field: string,
+  values: datum[],
+  numerical: boolean,
+  name = field
+): Omit<NumericalColorScale, "id"> | Omit<CategoricalColorScale, "id"> {
+  if (numerical) {
+    const numbers = values
+      .map((value) => finiteNumber(value))
+      .filter((value): value is number => value !== undefined);
+    return {
+      name,
+      type: "numerical",
+      palette: DEFAULT_SEQUENTIAL_PALETTE,
+      min: Math.min(...numbers),
+      max: Math.max(...numbers),
+      sourceField: field,
+    };
+  }
+  const counts = new Map<string, number>();
+  values.forEach((value) => {
+    const label = categoryLabel(value);
+    counts.set(label, (counts.get(label) ?? 0) + 1);
+  });
+  const assignment = {
+    paletteId: DEFAULT_CATEGORICAL_PALETTE,
+    order: "frequency" as const,
+    overflow: "other" as const,
+  };
+  const { mapping, palette } = assignCategoryColors(
+    Array.from(counts.keys()),
+    assignment,
+    counts
+  );
+  return {
+    name,
+    type: "categorical",
+    palette,
+    mapping,
+    sourceField: field,
+    ...assignment,
+  };
+}
+

@@ -37,6 +37,16 @@ import {
   validateSavedAnalysisForData,
   validateSavedData,
 } from "@/utils/saveDataUtils";
+import {
+  compileDocument,
+  DSL_CHART_KEYWORDS,
+  type DslChartResult,
+  type DslCompileOptions,
+  type DslCompileResult,
+  type DslDiagnostic,
+  type DslEffect,
+  type DslSeverity,
+} from "@/lib/dsl";
 import { PlotManager } from "./PlotManager";
 import type { ExplorEdaSidePanel } from "./WorkspaceSidePanel";
 import { registerAllCharts } from "@/charts/registerAllCharts";
@@ -118,8 +128,16 @@ export type {
   FieldSettingsMap,
   AggregateSpec,
   AggregateResult,
+  DslChartResult,
+  DslCompileOptions,
+  DslCompileResult,
+  DslDiagnostic,
+  DslEffect,
+  DslSeverity,
 };
 export {
+  compileDocument,
+  DSL_CHART_KEYWORDS,
   parseSavedAnalysis,
   parseSavedData,
   saveAnalysisToClipboard,
