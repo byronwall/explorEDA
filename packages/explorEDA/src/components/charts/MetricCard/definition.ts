@@ -10,6 +10,8 @@ export interface MetricCardSettings extends BaseChartSettings {
   type: "metric-card";
   aggregation: AggregateAggregation;
   measureField?: string;
+  /** Reduce repeated result rows to one value per declared entity. */
+  entityField?: string;
 }
 
 export const metricCardDefinition: ChartDefinition<MetricCardSettings> = {

@@ -63,6 +63,11 @@ describe("multi-source analysis", () => {
     const mixedResult = evaluateAnalysisQuery(mixed.project, mixed.sources, "orders-by-customer");
     expect(mixedResult.rows.find((row) => row.values["orders.orderId"] === "O1")?.values["customer.name"]).toBeUndefined();
     expect(mixedResult.diagnostics.some((item) => item.code === "missing-lookup" && item.value === 1)).toBe(true);
+    const invalidKey = createShopFixture();
+    invalidKey.sources.customers![0]!.customerId = NaN;
+    invalidKey.sources.orders![0]!.customerId = NaN;
+    expect(evaluateAnalysisQuery(invalidKey.project, invalidKey.sources, "orders-by-customer").rows[0]!.values["customer.name"]).toBeUndefined();
+
   });
 
   it("follows calculation, filter, aggregate, and typed parameter steps", () => {
@@ -70,6 +75,10 @@ describe("multi-source analysis", () => {
     const revenue = evaluateAnalysisQuery(project, sources, "product-revenue");
     expect(revenue.rows.reduce((sum, row) => sum + Number(row.values.revenueByProduct), 0)).toBe(140);
     expect(revenue.stages.map((stage) => [stage.inputCount, stage.outputCount])).toEqual([[8, 8], [8, 8], [8, 8], [8, 8], [8, 3]]);
+    const emptyTotal = evaluateAnalysisQuery(project, sources, "empty-total");
+    expect(emptyTotal.stages.map((stage) => stage.outputCount)).toEqual([5, 0, 1]);
+    expect(emptyTotal.rows[0]!.values.emptySum).toBeUndefined();
+    expect(emptyTotal.rows[0]!.values.emptyCount).toBe(0);
 
     const customer = evaluateAnalysisQuery(project, sources, "customer-instance", { customerId: "C1", dateStart: "2025-01-01", dateEnd: "2025-02-01" });
     expect(customer.rows).toHaveLength(2);
@@ -86,12 +95,20 @@ describe("multi-source analysis", () => {
     cyclic.queries[0]!.steps[0] = { id: "orders-source", kind: "filter", inputStepId: "order-customer-lookup", fieldId: "orders.amount", operator: "gt", value: 0 };
     expect(() => evaluateAnalysisQuery(cyclic, sources, "orders-by-customer")).toThrow("cycle");
 
-    const file = { format: "exploreda-project" as const, version: 1 as const, project, tables: { ...sources, customers: [...sources.customers!, { customerId: "C5", name: undefined, joinedAt: "2025-06-01" }] }, views: [{ id: "items-view", name: "Items", queryId: "items-by-order", selectedRowKeys: ["items:string:I1"] }] };
+    const fileProject = structuredClone(project);
+    fileProject.sources.find((source) => source.id === "customers")!.fields.push({ id: "__exploreda_value__", name: "Reserved name", type: "string" });
+    const file = { format: "exploreda-project" as const, version: 1 as const, project: fileProject, tables: { ...sources, customers: [...sources.customers!, { customerId: "C5", name: undefined, joinedAt: "2025-06-01" }, { __exploreda_value__: "NaN" }] }, views: [{ id: "items-view", name: "Items", queryId: "items-by-order", selectedRowKeys: ["items:string:I1"] }] };
     const parsed = parseAnalysisProject(stringifyAnalysisProject(file));
     expect(parsed.tables.customers![4]!.name).toBeUndefined();
-    const closure = selectAnalysisProjectView(parsed, "items-view");
+    expect(parsed.tables.customers![5]!.__exploreda_value__).toBe("NaN");
+    const extendedFile = { ...parsed, history: [{ id: "old-query" }], path: "/private/project.json", cursor: 9 };
+    const fullFile = parseAnalysisProject(stringifyAnalysisProject(extendedFile));
+    expect("history" in fullFile || "path" in fullFile || "cursor" in fullFile).toBe(false);
+    const closure = selectAnalysisProjectView(extendedFile, "items-view");
     expect(closure.project.queries.map((query) => query.id)).toEqual(["items-by-order"]);
     expect(Object.keys(closure.tables).sort()).toEqual(["items", "orders", "products"]);
+    expect("history" in closure || "path" in closure || "cursor" in closure).toBe(false);
+    expect(() => parseAnalysisProject(JSON.stringify({ ...file, activeViewId: "items-view", tables: { ...file.tables, customers: [null] } }))).toThrow("row 0 must be an object");
     expect(parseAnalysisState<{ value: number }>(stringifyAnalysisState({ value: Infinity })).value).toBe(Infinity);
   });
 });

@@ -13,7 +13,7 @@ import { DEFAULT_MARGINAL_BINS } from "./marginalPlan";
 type Method = ScatterRegressionSettings["method"] | "none";
 
 const METHOD_HELP =
-  "Draws a fitted curve and its equation for each color group in each facet. Fits use the rows that pass the other charts' filters; selecting points on this chart does not refit. Linear fits a least-squares line with slope, offset, and R². Polynomial adds powers of X up to a chosen degree. LOESS follows the data with local weighted lines and has no single equation.";
+  "Draws a fitted curve and its equation for each color group in each facet. Fits use the rows that pass the other charts' filters; selecting points on this chart does not refit. Linear fits a least-squares line with slope, offset, and R². Polynomial adds powers of X up to a chosen degree. LOESS follows the data with local weighted lines and has no single equation. Entity ID scope supports points only.";
 
 /** One fit method and its shared parameters for every facet of this chart. */
 export function RegressionSettings({
@@ -28,6 +28,12 @@ export function RegressionSettings({
     });
   return (
     <>
+      {settings.entityField && (
+        <p className="col-span-2 text-xs text-muted-foreground" role="status">
+          Entity ID scope supports points. Turn off fits and paired summary to
+          use this scope.
+        </p>
+      )}
       <Label htmlFor="scatter-fit">Fit</Label>
       <ActionTooltip content={METHOD_HELP}>
         <select
@@ -44,9 +50,15 @@ export function RegressionSettings({
           }}
         >
           <option value="none">None</option>
-          <option value="linear">Linear</option>
-          <option value="polynomial">Polynomial</option>
-          <option value="loess">LOESS</option>
+          <option value="linear" disabled={Boolean(settings.entityField)}>
+            Linear
+          </option>
+          <option value="polynomial" disabled={Boolean(settings.entityField)}>
+            Polynomial
+          </option>
+          <option value="loess" disabled={Boolean(settings.entityField)}>
+            LOESS
+          </option>
         </select>
       </ActionTooltip>
       {regression?.method === "polynomial" && (
@@ -110,6 +122,7 @@ export function RegressionSettings({
             <Switch
               id="scatter-summary"
               checked={Boolean(settings.summary)}
+              disabled={Boolean(settings.entityField && !settings.summary)}
               onCheckedChange={(checked) =>
                 onSettingsChange({ ...settings, summary: checked || undefined })
               }

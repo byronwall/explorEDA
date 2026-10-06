@@ -33,6 +33,7 @@ import {
   useTraceSource,
 } from "./charts/trace/ChartTraceScope";
 import { ChartTracePanel } from "./charts/trace/ChartTracePanel";
+import { useAnalysisChartContext } from "./AnalysisChartContext";
 import type { TraceSource } from "./charts/trace/traceTypes";
 import { FacetContainer } from "./charts/FacetRelated/FacetContainer";
 import { useAxisFieldActions } from "./charts/AxisFieldActions";
@@ -64,11 +65,21 @@ interface PlotChartPanelProps {
 const CATEGORY_LABELED_CHART_TYPES = new Set(["row", "boxplot"]);
 
 const TRACE_COPY = {
-  row: { heading: "Category trace", emptyText: "Alt-click a bar, including Other categories, to inspect its members and source rows.", ariaLabel: "Row chart trace inspector" },
-  boxplot: { heading: "Distribution trace", emptyText: "Alt-click a box to inspect its statistics and source rows.", ariaLabel: "Distribution trace inspector" },
+  row: {
+    heading: "Category trace",
+    emptyText:
+      "Alt-click a bar, including Other categories, to inspect its members and source rows.",
+    ariaLabel: "Row chart trace inspector",
+  },
+  boxplot: {
+    heading: "Distribution trace",
+    emptyText: "Alt-click a box to inspect its statistics and source rows.",
+    ariaLabel: "Distribution trace inspector",
+  },
   map: {
     heading: "Map trace",
-    emptyText: "Alt-click a point or region to see its source records and projection. Alt-click outside the regions to trace joins. You can also find a source row below.",
+    emptyText:
+      "Alt-click a point or region to see its source records and projection. Alt-click outside the regions to trace joins. You can also find a source row below.",
     ariaLabel: "Map trace inspector",
   },
   line: {
@@ -328,7 +339,6 @@ export function PlotChartPanel({
     null
   );
   // The details view gives the title more room, so the chart starts lower.
-  const headerExtra = expanded ? 14 : 0;
   const clearFilter = useDataLayer((state) => state.clearFilter);
   const updateChart = useDataLayer((state) => state.updateChart);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
@@ -338,6 +348,8 @@ export function PlotChartPanel({
   const titleId = useId();
   const descriptionId = useId();
   const chartTitle = getChartTitle(settings, getFieldLabel);
+  const analysisContext = useAnalysisChartContext();
+  const headerExtra = (expanded ? 14 : 0) + (analysisContext ? 20 : 0);
   const chartSummary = getChartSummary(settings, getFieldLabel);
   const aggregateId =
     "aggregateId" in settings ? settings.aggregateId : undefined;
@@ -350,9 +362,12 @@ export function PlotChartPanel({
   const dataFields = aggregate
     ? Array.from(
         new Set(
-          [aggregate.groupField, aggregate.measureField, ...(settings.type === "bar" ? [settings.seriesField] : [])].filter(
-            (field): field is string => Boolean(field)
-          )
+          [
+            aggregate.groupField,
+            aggregate.measureField,
+            aggregate.entityField,
+            ...(settings.type === "bar" ? [settings.seriesField] : []),
+          ].filter((field): field is string => Boolean(field))
         )
       )
     : getChartFields(settings);
@@ -636,6 +651,16 @@ export function PlotChartPanel({
           </ActionTooltip>
         )}
       </div>
+      {analysisContext && (
+        <div
+          className="flex h-5 min-w-0 items-center truncate border-b border-border px-4 text-[11px] text-muted-foreground"
+          aria-label="Query and frame population"
+        >
+          {analysisContext.query.glyph} {analysisContext.query.label} ·{" "}
+          {analysisContext.frame.glyph} {analysisContext.frame.label} ·{" "}
+          {analysisContext.availableCount.toLocaleString()} available
+        </div>
+      )}
       {settings.type !== "scatter" && calculatedFields.length > 0 && (
         <div
           className="eda-calc-chart-fields"
@@ -658,7 +683,8 @@ export function PlotChartPanel({
               width={Math.max(1, panelWidth - 24)}
             />
           )}
-          {settings.facet?.enabled && (!aggregate || (settings.type === "bar" && settings.seriesField)) ? (
+          {settings.facet?.enabled &&
+          (!aggregate || (settings.type === "bar" && settings.seriesField)) ? (
             <FacetContainer
               settings={settings}
               width={Math.max(1, panelWidth - 24)}

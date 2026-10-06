@@ -4,11 +4,11 @@
     "title": "Multi-source analysis with explicit data frames",
     "slug": "multi-source-analysis",
     "scale": "capability",
-    "current_phase": "plan",
+    "current_phase": "execution",
     "last_updated": "2026-10-05",
     "summary": "Schema-led relationship creation and frame selection, trustworthy chart identity, full query inspection, and later assisted parameter instances.",
-    "status": "planned",
-    "next_action": "Implement milestone 1 in the existing worktree: first reconcile the saved-view baseline, then prove order/item totals through switch, preview, restore, and reload."
+    "status": "active",
+    "next_action": "Execute the linked milestone tickets, then reconcile acceptance evidence and PRs."
   },
   "artifacts": {
     "intent_brief": {
@@ -1270,7 +1270,7 @@
       {
         "id": "m1",
         "title": "Switch and restore trustworthy order and item views",
-        "status": "planned",
+        "status": "active",
         "slice": 1,
         "depends_on": [],
         "outcome": "Configured order/item queries show correct rows and totals through duplicate, switch, preview, restore, undo/redo, and reload.",
@@ -1288,7 +1288,10 @@
           "query-evaluation",
           "project-view-history"
         ],
-        "evidence": []
+        "evidence": [],
+        "tickets": [
+          "exp-l1vm"
+        ]
       },
       {
         "id": "m2",
@@ -1313,7 +1316,10 @@
           "query-evaluation",
           "project-view-history"
         ],
-        "evidence": []
+        "evidence": [],
+        "tickets": [
+          "exp-daa4"
+        ]
       },
       {
         "id": "m3",
@@ -1329,7 +1335,7 @@
           "Add query overlay, step inspection, related scalar tables, contributors, and explicit new-view actions.",
           "Persist meaningful inspection selection and invalidate stale traces by applied result revision."
         ],
-        "proof": "Check both query paths and every stage against fixture expectations. Reach C1’s two orders and three items totaling 50. Inspect empty stages and exclusions. Restored definitions produce matching flows; temporary inspection leaves layouts unchanged.",
+        "proof": "Check both query paths and every stage against fixture expectations. Reach C1\u2019s two orders and three items totaling 50. Inspect empty stages and exclusions. Restored definitions produce matching flows; temporary inspection leaves layouts unchanged.",
         "valid_intermediate_state": "Complete second slice with inspectable query paths and cardinality spaces; parameter-free first slice remains usable.",
         "rollback": "Close or revert inspection UI while retaining the selected result and saved views.",
         "dependencies_introduced": [],
@@ -1337,7 +1343,10 @@
           "query-evaluation",
           "project-view-history"
         ],
-        "evidence": []
+        "evidence": [],
+        "tickets": [
+          "exp-596x"
+        ]
       },
       {
         "id": "m4",
@@ -1361,7 +1370,10 @@
           "query-evaluation",
           "project-view-history"
         ],
-        "evidence": []
+        "evidence": [],
+        "tickets": [
+          "exp-1iuz"
+        ]
       }
     ],
     "open_decisions": [
@@ -1499,6 +1511,10 @@
         "planning-code-review-2026-10-05",
         "planning-local-target-2026-10-05"
       ]
+    },
+    {
+      "date": "2026-10-05",
+      "event": "User authorized implementation in this worktree, checkpoint commits, and PRs with images. Preserved planning edits in 59d8420 and reconciled saved-view baseline a2e67c0. Execution now tracked in milestone tickets."
     }
   ]
 }

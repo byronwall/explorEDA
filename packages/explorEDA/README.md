@@ -212,3 +212,41 @@ Row Chart groups categories that do not fit under Other categories. Inspect this
 bar to search its members, inspect source rows, or select categories. The saved
 filter contains exact category values. Resizing changes the displayed groups and
 keeps the selection. A literal “Other categories” value remains a separate category.
+
+
+## Related tables and explicit frames
+
+`ExplorEdaProject` evaluates related tables before it renders charts. Each view selects one query and row meaning. The host owns tabs, history, and storage. Source tables stay outside configuration checkpoints.
+
+```tsx
+import { useState } from "react";
+import { ExplorEdaProject, createShopFixture, type AnalysisView } from "exploreda";
+
+const fixture = createShopFixture();
+
+function ShopAnalysis() {
+  const [state, setState] = useState({
+    project: fixture.project,
+    view: { id: "orders", name: "Orders", queryId: "orders-by-customer" } as AnalysisView,
+  });
+  return <ExplorEdaProject
+    tables={fixture.sources}
+    project={state.project}
+    view={state.view}
+    onProjectChange={setState}
+    onStateChange={settings => setState(current => ({
+      ...current, view: { ...current.view, settings },
+    }))}
+  />;
+}
+```
+
+Open Schema to create or repair links. Drag a source field onto another field, or use the matching-field selectors. Review matching counts before you apply a link. A lookup retains the current frame. Multiple matches leave dependent values unavailable. Follow a many-side link with an aggregate, or open an expanded frame explicitly.
+
+Open Query flow to inspect steps, conditions, backing records, and contributors. Temporary inspection keeps the chart layout. Use Open as view to retain an intermediate result. Customer and date inputs update parameter queries automatically when valid.
+
+Use a chart's entity field to count or reduce one value per entity. Two orders with the same amount remain separate entities. Repeated values for one entity must agree. Keep result-row mode when each joined row is the intended contribution.
+
+The shop example has five orders with total amount 150. Its eight items have revenue 140 across four orders. Summing repeated order amounts over item rows gives 310; use the order identity when measuring order amounts from this frame.
+
+Import `evaluateAnalysisQuery` from `exploreda/analysis` to run the local evaluator without React. `stringifyAnalysisProject` and `parseAnalysisProject` preserve project definitions, source tables, views, and special scalar values. `selectAnalysisProjectView` exports one view with its upstream dependencies. Files use the explicit `exploreda-project` format. Existing `ExplorEda` single-table use remains available.

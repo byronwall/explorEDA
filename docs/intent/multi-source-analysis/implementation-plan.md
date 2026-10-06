@@ -18,7 +18,7 @@ Keep one active result frame per view. Let the existing chart renderer consume t
 
 The largest risk is restoring plausible charts over the wrong population. Resolve project definitions, view bindings, and result rows from one checkpoint. Then add authoring controls, complete query inspection, and automatic parameter updates. Each milestone adds to one deterministic fixture.
 
-This plan is saved in the supplied worktree. Its checkout is detached at `8c35e4d`. The inspected saved-view baseline is PR #148 at `a2e67c0`, available through the local `origin/main` ref. Planning did not update the checkout or fetch newer code. Implementation must first bring that baseline into this same worktree while preserving these documents and other edits.
+Implementation uses this same worktree on `codex/multi-source-frames`. The supplied planning edits were committed, then rebased onto PR #148 at `a2e67c0`. The baseline saved-view and history checks passed. The initiative map links milestone tickets; those tickets own execution evidence.
 
 ## Implementation strategy
 
@@ -219,7 +219,7 @@ Use `ActionTooltip` or the Button tooltip prop for non-obvious controls. Follow 
 
 Run `pnpm check:ui` during UI work and `pnpm check` for each broad delivery. Build package exports before host integration checks. Run release checks on Node 24 and preserve its AbortController/AbortSignal in the demo test environment.
 
-Add a minor changeset for package features with `pnpm changeset:add minor "summary"`. Keep one coherent changeset per implementation PR. Add screenshot evidence for visible changes using `gh --attach` and verify the saved PR body. Update package usage docs, example counts, and this map when milestone proof is observed. Implementation start changes lifecycle to active; this planning update leaves it planned. Publishing and deployment require a separate request.
+Add a minor changeset for package features with `pnpm changeset:add minor "summary"`. Keep one coherent changeset per implementation PR. Add screenshot evidence for visible changes using `gh --attach` and verify the saved PR body. Update package usage docs, example counts, and this map when milestone proof is observed. Implementation has started. The map is active; tickets own current execution evidence. Publishing and deployment require a separate request.
 
 ## Open decisions and spikes
 

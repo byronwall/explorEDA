@@ -20,7 +20,11 @@ export function ScatterTraceBody({ trace }: { trace: ScatterTrace }) {
       {trace?.kind === "point" && plan && (
         <div className="space-y-3">
           <div className="eda-trace-subject">
-            <span className="font-semibold">Row {trace.sourceId}</span>
+            <span className="font-semibold">
+              {trace.sourceIds.length > 1
+                ? `Entity represented by ${trace.sourceIds.length} rows`
+                : `Row ${trace.sourceId}`}
+            </span>
             <span className="text-muted-foreground">
               {trace.passesOwnFilter ? "Point" : "Dimmed point"}
             </span>

@@ -9,6 +9,8 @@ export interface AggregateSpec {
   name: string;
   groupField: string;
   measureField?: string;
+  /** Count distinct entities or reduce one measure value per entity. */
+  entityField?: string;
   aggregation: AggregateAggregation;
 }
 
@@ -23,6 +25,7 @@ export interface AggregateContributor {
   rawInput?: datum;
   included: boolean;
   exclusionReason?: string;
+  entityKey?: datum;
 }
 
 export interface AggregateResultRow {
@@ -32,6 +35,10 @@ export interface AggregateResultRow {
   value: number | undefined;
   rowCount: number;
   contributors: AggregateContributor[];
+  identityIssues?: {
+    entityKey?: datum;
+    reason: "missing-id" | "conflicting-values";
+  }[];
 }
 
 export interface AggregateResult {
@@ -112,29 +119,131 @@ function aggregateValues(
 /** Reduces one group of source rows and records why any row was left out. */
 export function summarizeGroup(
   group: AggregateInputRow[],
-  spec: Pick<AggregateSpec, "aggregation" | "measureField">,
+  spec: Pick<AggregateSpec, "aggregation" | "measureField" | "entityField">,
   rawInputs: Record<number, datum> = {},
-  exclusionReasons: Record<number, string> = {}
-): Pick<AggregateResultRow, "value" | "rowCount" | "contributors"> {
-  const values = group.map((row) =>
-    spec.measureField ? row[spec.measureField] : undefined
-  );
+  exclusionReasons: Record<number, string> = {},
+  conflictingGroupEntities: Set<string> = new Set()
+): Pick<
+  AggregateResultRow,
+  "value" | "rowCount" | "contributors" | "identityIssues"
+> {
+  const measureValues = (row: AggregateInputRow) =>
+    spec.measureField ? row[spec.measureField] : undefined;
+  if (!spec.entityField) {
+    const values = group.map(measureValues);
+    const result = aggregateValues(spec.aggregation, values);
+    const exclusionByIndex = new Map(
+      result.exclusions.map((exclusion) => [exclusion.index, exclusion.reason])
+    );
+    return {
+      value: result.value,
+      rowCount: group.length,
+      contributors: group.map((row, index) => ({
+        sourceId: row.__ID,
+        input: values[index],
+        rawInput: rawInputs[row.__ID],
+        included: result.included.has(index),
+        exclusionReason: result.included.has(index)
+          ? undefined
+          : (exclusionReasons[row.__ID] ?? exclusionByIndex.get(index)),
+      })),
+    };
+  }
+
+  const entities = new Map<string, AggregateInputRow[]>();
+  const identityIssues: NonNullable<AggregateResultRow["identityIssues"]> = [];
+  const contributors: AggregateContributor[] = [];
+  for (const row of group) {
+    const entityKey = row[spec.entityField!];
+    if (entityKey === undefined || entityKey === null) {
+      identityIssues.push({ reason: "missing-id" });
+      contributors.push({
+        sourceId: row.__ID,
+        input: measureValues(row),
+        rawInput: rawInputs[row.__ID],
+        included: false,
+        exclusionReason: "Missing entity ID",
+      });
+      continue;
+    }
+    const key = categoryKey(entityKey);
+    const rows = entities.get(key);
+    if (rows) rows.push(row);
+    else entities.set(key, [row]);
+  }
+
+  const values: datum[] = [];
+  const entityContributors: AggregateContributor[][] = [];
+  for (const [entityKey, rows] of entities) {
+    if (conflictingGroupEntities.has(entityKey)) {
+      identityIssues.push({
+        entityKey: rows[0]![spec.entityField!],
+        reason: "conflicting-values",
+      });
+      contributors.push(
+        ...rows.map((row) => ({
+          sourceId: row.__ID,
+          input: measureValues(row),
+          rawInput: rawInputs[row.__ID],
+          included: false,
+          exclusionReason: "Conflicting group values for entity",
+          entityKey: row[spec.entityField!],
+        }))
+      );
+      continue;
+    }
+    const first = measureValues(rows[0]!);
+    const agrees = rows.every((row) => Object.is(measureValues(row), first));
+    if (!agrees) {
+      identityIssues.push({
+        entityKey: rows[0]![spec.entityField],
+        reason: "conflicting-values",
+      });
+      contributors.push(
+        ...rows.map((row) => ({
+          sourceId: row.__ID,
+          input: measureValues(row),
+          rawInput: rawInputs[row.__ID],
+          included: false,
+          exclusionReason: "Conflicting values for entity",
+          entityKey: row[spec.entityField!],
+        }))
+      );
+      continue;
+    }
+    values.push(first);
+    const entity = rows.map((row, index) => ({
+      sourceId: row.__ID,
+      input: measureValues(row),
+      rawInput: rawInputs[row.__ID],
+      included: index === 0,
+      exclusionReason: index === 0 ? undefined : "Repeated entity",
+      entityKey: row[spec.entityField!],
+    }));
+    entityContributors.push(entity);
+  }
+
   const result = aggregateValues(spec.aggregation, values);
   const exclusionByIndex = new Map(
     result.exclusions.map((exclusion) => [exclusion.index, exclusion.reason])
   );
+  entityContributors.forEach((items, index) => {
+    const included = result.included.has(index);
+    contributors.push(
+      ...items.map((item) => ({
+        ...item,
+        included: included && item.included,
+        exclusionReason: included
+          ? item.exclusionReason
+          : (exclusionReasons[item.sourceId] ?? exclusionByIndex.get(index)),
+      }))
+    );
+  });
   return {
-    value: result.value,
-    rowCount: group.length,
-    contributors: group.map((row, index) => ({
-      sourceId: row.__ID,
-      input: values[index],
-      rawInput: rawInputs[row.__ID],
-      included: result.included.has(index),
-      exclusionReason: result.included.has(index)
-        ? undefined
-        : (exclusionReasons[row.__ID] ?? exclusionByIndex.get(index)),
-    })),
+    value: identityIssues.length > 0 ? undefined : result.value,
+    rowCount: entities.size,
+    contributors,
+    ...(identityIssues.length ? { identityIssues } : {}),
   };
 }
 
@@ -149,6 +258,23 @@ export function calculateGroupedAggregate(
   }
 
   const groups = new Map<string, AggregateInputRow[]>();
+  const entityGroups = new Map<string, Set<string>>();
+  if (spec.entityField) {
+    for (const row of rows) {
+      const entity = row[spec.entityField];
+      if (entity === undefined || entity === null) continue;
+      const entityKey = categoryKey(entity);
+      const groupKey = categoryKey(row[spec.groupField]);
+      const assignedGroups = entityGroups.get(entityKey) ?? new Set<string>();
+      assignedGroups.add(groupKey);
+      entityGroups.set(entityKey, assignedGroups);
+    }
+  }
+  const conflictingGroupEntities = new Set(
+    [...entityGroups]
+      .filter(([, assignedGroups]) => assignedGroups.size > 1)
+      .map(([key]) => key)
+  );
   rows.forEach((row) => {
     const value = categoryValue(row[spec.groupField]);
     const key = categoryKey(value);
@@ -164,7 +290,13 @@ export function calculateGroupedAggregate(
     id: `${spec.id}:${key}`,
     groupValue: categoryValue(group[0]?.[spec.groupField]),
     groupLabel: categoryLabel(categoryValue(group[0]?.[spec.groupField])),
-    ...summarizeGroup(group, spec, rawInputs, exclusionReasons),
+    ...summarizeGroup(
+      group,
+      spec,
+      rawInputs,
+      exclusionReasons,
+      conflictingGroupEntities
+    ),
   })) satisfies AggregateResultRow[];
 
   return { spec, rows: resultRows, sourceRowCount: rows.length };

@@ -28,6 +28,10 @@ import {
 } from "../Axis/axisPlan";
 import { getChartTitle } from "../chartAccessibility";
 import { planScatterPoints, type ScatterPointStyle } from "./planScatterPoints";
+import {
+  collapseEntityRows,
+  type EntityIdentityIssue,
+} from "@/lib/entityIdentity";
 import { MARGINAL_GAP, MARGINAL_SIZE } from "./marginalPlan";
 import type { ScatterPlotSettings } from "./definition";
 import {
@@ -50,6 +54,7 @@ export const BADGE_GAP = 4;
 
 export type Extent = [[number, number], [number, number]];
 type ScatterPoint = ReturnType<typeof planScatterPoints>[number] & {
+  sourceIds: IdType[];
   passesAllFilters: boolean;
 };
 export type SvgPrimitive =
@@ -117,6 +122,7 @@ export interface ScatterSnapshot {
   yData: Record<IdType, datum>;
   colorData: Record<IdType, datum>;
   sizeData?: Record<IdType, datum>;
+  entityData?: Record<IdType, datum>;
   /** Detected field types; omitted types are detected from the column. */
   xType?: DataType;
   yType?: DataType;
@@ -186,6 +192,7 @@ export interface ScatterPlan {
     samples: { value: number; label: string; radius: number }[];
   };
   points: ScatterPoint[];
+  identityIssues: EntityIdentityIssue[];
   exclusions: {
     sourceId: IdType;
     reason: "invalid-x" | "invalid-y" | "invalid-size" | "nonfinite-position";
@@ -397,10 +404,23 @@ export function planScatter(
     },
     dimmedOpacity: { value: 0.15, source: "own-filter-rule" },
   };
+  const identity = settings.entityField
+    ? collapseEntityRows(ids, snapshot.entityData ?? {}, [
+        snapshot.xData,
+        snapshot.yData,
+        snapshot.colorData,
+        ...(settings.sizeField ? [snapshot.sizeData ?? {}] : []),
+      ])
+    : {
+        representatives: ids,
+        sourceIdsByRepresentative: new Map<number, number[]>(),
+        issues: [],
+      };
+  const plotIds = identity.representatives;
   const points = planScatterPoints({
     settings,
     style: pointStyle,
-    ids,
+    ids: plotIds,
     xData: snapshot.xData,
     yData: snapshot.yData,
     colorData: snapshot.colorData,
@@ -411,15 +431,24 @@ export function planScatter(
     getColor,
   }).map((point) => ({
     ...point,
-    passesAllFilters: filteredSet.has(point.sourceId),
+    sourceIds: identity.sourceIdsByRepresentative.get(point.sourceId) ?? [
+      point.sourceId,
+    ],
+    passesAllFilters:
+      identity.sourceIdsByRepresentative
+        .get(point.sourceId)
+        ?.some((id) => filteredSet.has(id)) ?? filteredSet.has(point.sourceId),
   }));
   if (size)
     points.sort((a, b) => b.radius - a.radius || a.sourceId - b.sourceId);
-  const included = new Set(points.map((point) => point.sourceId));
+  const represented = new Set(points.flatMap((point) => point.sourceIds));
+  const identityInvalid = new Set(
+    identity.issues.flatMap((issue) => issue.sourceIds)
+  );
   const unplotted = (axis: ScatterAxisScale, value: datum) =>
     axis.kind === "numeric" && finiteNumber(value) === undefined;
   const exclusions: ScatterPlan["exclusions"] = ids
-    .filter((id) => !included.has(id))
+    .filter((id) => !represented.has(id) && !identityInvalid.has(id))
     .map((sourceId) => ({
       sourceId,
       reason: unplotted(xAxis, snapshot.xData[sourceId])
@@ -613,6 +642,8 @@ export function planScatter(
     title,
     description: [
       `Interactive scatter chart.`,
+      identity.issues.length > 0 &&
+        `${identity.issues.length} entity IDs are missing or have conflicting displayed values.`,
       settings.xAxisLabel && `Horizontal axis: ${settings.xAxisLabel}.`,
       settings.yAxisLabel && `Vertical axis: ${settings.yAxisLabel}.`,
     ]
@@ -630,6 +661,7 @@ export function planScatter(
     pointStyle,
     size,
     points,
+    identityIssues: identity.issues,
     exclusions,
     emptyMessage:
       ids.length > 0 && points.length === 0

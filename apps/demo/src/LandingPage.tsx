@@ -2,10 +2,13 @@ import { Button } from "@/components/ui/button";
 import { ExampleData, examples, FEATURED_EXAMPLE_ID } from "@/demos/examples";
 import {
   parseSavedAnalysis,
+  parseAnalysisProject,
+  type AnalysisProjectFile,
   validateSavedAnalysisForData,
   type SavedDataStructure,
 } from "exploreda";
 
+import { shopQueryPresets } from "./demos/multiSourceShop";
 import { parseCsvData } from "./csvParser";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, Code2, Lightbulb } from "lucide-react";
@@ -34,6 +37,7 @@ import { SectionHeading } from "./landing/SectionHeading";
 import {
   getSavedViewsRows,
   readSavedViewsSessionResult,
+  PROJECT_STORAGE_KEY,
 } from "./savedViewsSession";
 
 const featuredExample = examples.find(
@@ -75,13 +79,21 @@ export function LandingPage() {
   const showDocs = searchParams.get("view") === "docs";
 
   const [example, setExample] = useState<ExampleData | null>(null);
-  const [initialRestore] = useState(() => readSavedViewsSessionResult());
+  const [initialRestore] = useState(() =>
+    readSavedViewsSessionResult(
+      exampleId === "multi-source-shop" ? PROJECT_STORAGE_KEY : undefined
+    )
+  );
   const [restoreFailed, setRestoreFailed] = useState(initialRestore.failed);
   const [restoredSession, setRestoredSession] = useState(
     initialRestore.session
   );
   const [csvData, setCsvData] = useState<DatumObject[]>(() =>
-    restoredSession ? getSavedViewsRows(restoredSession) : []
+    restoredSession
+      ? restoredSession.project
+        ? []
+        : getSavedViewsRows(restoredSession)
+      : []
   );
   const [isCsvMode, setIsCsvMode] = useState(
     () => restoredSession !== undefined
@@ -175,7 +187,10 @@ export function LandingPage() {
     setExample(null);
     setExampleData([]);
 
-    fetchExampleData(selectedExample.data, controller.signal)
+    (selectedExample.project
+      ? Promise.resolve([])
+      : fetchExampleData(selectedExample.data, controller.signal)
+    )
       .then((data) => {
         setExampleData(data);
         setExample(selectedExample);
@@ -216,8 +231,61 @@ export function LandingPage() {
     setLoadError(null);
   };
 
+  const handleProjectImport = (file: AnalysisProjectFile) => {
+    const tabs = file.views;
+    setRestoredSession({
+      version: 1,
+      sourceAnalysis: JSON.stringify({
+        format: "exploreda-analysis",
+        version: 1,
+        data: [],
+        settings: tabs[0]?.settings ?? {
+          charts: [],
+          calculations: [],
+          gridSettings: {
+            columnCount: 12,
+            rowHeight: 100,
+            containerPadding: 10,
+            showBackgroundMarkers: true,
+          },
+          metadata: {
+            name: "Project",
+            version: 1,
+            createdAt: "2026-10-05",
+            modifiedAt: "2026-10-05",
+          },
+          colorScales: [],
+        },
+      }),
+      project: file.project,
+      tables: file.tables,
+      tabs,
+      activeTabId: file.activeViewId,
+      history: [
+        {
+          at: new Date().toISOString(),
+          label: "View",
+          tabs,
+          project: file.project,
+        },
+      ],
+      path: [0],
+      cursor: 0,
+    });
+    setRestoreFailed(false);
+    setIsCsvMode(true);
+    setSearchParams({});
+    setExample(null);
+    setAnalysisJsonError(null);
+  };
+
   const handleAnalysisJson = () => {
     try {
+      if (JSON.parse(analysisJson).format === "exploreda-project") {
+        const file = parseAnalysisProject(analysisJson);
+        handleProjectImport(file);
+        return;
+      }
       const analysis = parseSavedAnalysis(analysisJson);
       if (!validateSavedAnalysisForData(analysis)) {
         throw new Error("Analysis formulas do not match the saved source rows");
@@ -312,7 +380,10 @@ export function LandingPage() {
                 </Suspense>
               ) : (
                 <>
-                  <PageFileDrop onImport={handleCsvImport} />
+                  <PageFileDrop
+                    onProjectImport={handleProjectImport}
+                    onImport={handleCsvImport}
+                  />
                   {featuredExample && (
                     <Hero
                       onOpenFeatured={() =>
@@ -384,7 +455,10 @@ export function LandingPage() {
                           >
                             Import your data
                           </h3>
-                          <CsvUpload onImport={handleCsvImport} />
+                          <CsvUpload
+                            onProjectImport={handleProjectImport}
+                            onImport={handleCsvImport}
+                          />
                           <SampleDataButtons onImport={handleCsvImport} />
                         </section>
                         <section
@@ -535,6 +609,11 @@ export function LandingPage() {
                     data={csvData}
                     initialSettings={csvSavedData}
                     initialSession={restoredSession}
+                    queryPresets={
+                      restoredSession?.project?.id === "shop-analysis"
+                        ? shopQueryPresets
+                        : undefined
+                    }
                     viewName="Analysis"
                   />
                 ) : (
@@ -542,7 +621,14 @@ export function LandingPage() {
                     data={exampleData}
                     initialSettings={example?.savedData}
                     initialViews={example?.views}
-                    viewName={example?.title ?? "Analysis"}
+                    initialProject={example?.project}
+                    sourceTables={example?.tables}
+                    queryPresets={example?.queryPresets}
+                    viewName={
+                      example?.project
+                        ? "Orders"
+                        : (example?.title ?? "Analysis")
+                    }
                   />
                 )}
               </Suspense>

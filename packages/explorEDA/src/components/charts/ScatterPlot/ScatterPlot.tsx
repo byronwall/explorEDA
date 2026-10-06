@@ -55,7 +55,21 @@ interface ScatterPlotProps extends BaseChartProps<ScatterPlotSettings> {
 
 /** Points, hexagons, and smoothed density share one chart; rectangles have their own. */
 export function ScatterPlot(props: ScatterPlotProps) {
-  return props.settings.display === "density" ? (
+  const { settings, width, height } = props;
+  if (
+    settings.entityField &&
+    ((settings.display && settings.display !== "points") ||
+      settings.regression ||
+      settings.summary)
+  ) {
+    return (
+      <ChartMessage width={width} height={height}>
+        Entity ID scope supports points only. Set Display to Points and turn off
+        fits and paired summary, or clear Entity ID to use result rows.
+      </ChartMessage>
+    );
+  }
+  return settings.display === "density" ? (
     <DensityScatter {...props} />
   ) : (
     <ScatterPoints {...props} />
@@ -231,15 +245,19 @@ function ScatterPoints({
   const selectPoint = (id: string) => {
     const point = plan.points.find((point) => point.id === id);
     if (!point) return;
-    const selected =
+    const selectedValues =
       settings.filters.length === 1 &&
       settings.filters[0]?.type === "value" &&
-      settings.filters[0].field === "__ID" &&
-      settings.filters[0].values[0] === point.sourceId;
+      settings.filters[0].field === "__ID"
+        ? settings.filters[0].values
+        : [];
+    const selected =
+      selectedValues.length === point.sourceIds.length &&
+      point.sourceIds.every((sourceId) => selectedValues.includes(sourceId));
     updateChart(settings.id, {
       filters: selected
         ? []
-        : [{ type: "value", field: "__ID", values: [point.sourceId] }],
+        : [{ type: "value", field: "__ID", values: point.sourceIds }],
     });
   };
   const hoveredPoint = plan.points.find((point) => point.id === hoveredId);
@@ -532,7 +550,11 @@ function ScatterPoints({
             </span>
           ))}
           <ChartStatusLine
-            parts={statusParts}
+            parts={[
+              ...statusParts,
+              plan.identityIssues.length > 0 &&
+                `Invalid entity identity: ${plan.identityIssues.length} missing or conflicting IDs`,
+            ]}
             hint={statusHint}
             left={plan.margin.left}
             right={plan.margin.right}

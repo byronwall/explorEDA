@@ -246,6 +246,9 @@ function isAggregateSpec(value: unknown): value is AggregateSpec {
     value.name.trim().length > 0 &&
     typeof value.groupField === "string" &&
     value.groupField.length > 0 &&
+    (value.entityField === undefined ||
+      (typeof value.entityField === "string" &&
+        value.entityField.trim().length > 0)) &&
     ["count", "sum", "average"].includes(value.aggregation as string) &&
     (value.measureField === undefined ||
       (typeof value.measureField === "string" &&

@@ -48,6 +48,7 @@ export function useScatterData(
       yData: column(settings.yField),
       colorData: column(settings.colorField),
       sizeData: column(settings.sizeField),
+      entityData: column(settings.entityField),
       xType: profileType(settings.xField),
       yType: profileType(settings.yField),
       facetRowData: settings.facet.enabled
@@ -89,6 +90,7 @@ export function useScatterData(
     settings.yField,
     settings.colorField,
     settings.sizeField,
+    settings.entityField,
     settings.facet,
     facetIds,
   ]);

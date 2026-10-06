@@ -46,6 +46,11 @@
       "types": "./dist/calculations.d.ts",
       "require": "./dist/calculations.cjs",
       "import": "./dist/calculations.js"
+    },
+    "./analysis": {
+      "types": "./dist/analysis.d.ts",
+      "require": "./dist/analysis.cjs",
+      "import": "./dist/analysis.js"
     }
   },
   "main": "./dist/ExplorEda.cjs",

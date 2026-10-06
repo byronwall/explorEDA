@@ -1,4 +1,4 @@
-import type { SavedDataStructure } from "exploreda";
+import type { AnalysisProject, SavedDataStructure } from "exploreda";
 
 const isMac =
   typeof navigator !== "undefined" &&
@@ -25,7 +25,7 @@ type SavedChart = SavedDataStructure["charts"][number];
 type SavedFilter = SavedChart["filters"][number];
 
 export function clone<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value)) as T;
+  return structuredClone(value);
 }
 
 export function snapshot(tabs: SavedView[]) {
@@ -60,28 +60,42 @@ function signatures(tabs: SavedView[]) {
     }))
   );
   const views = JSON.stringify(
-    tabs.map(({ id, name, settings }) => {
-      if (!settings) {
-        return { id, name };
-      }
-      const { charts, rowsSettings, ...rest } = settings;
-      // Metadata changes on every save, and shared keys have their own signature.
-      for (const key of ["metadata", ...SHARED_KEYS] as const) {
-        delete (rest as Partial<SavedDataStructure>)[key];
-      }
-      const rowsView = rowsSettings && {
-        ...rowsSettings,
-        filters: undefined,
-        globalSearch: undefined,
-      };
-      return {
+    tabs.map(
+      ({
         id,
         name,
-        rest,
-        rowsView,
-        charts: charts.map((chart) => ({ ...chart, filters: undefined })),
-      };
-    })
+        settings,
+        queryId,
+        bindings,
+        inspection,
+        selectedRowKeys,
+      }) => {
+        if (!settings) {
+          return { id, name, queryId, bindings, inspection, selectedRowKeys };
+        }
+        const { charts, rowsSettings, ...rest } = settings;
+        // Metadata changes on every save, and shared keys have their own signature.
+        for (const key of ["metadata", ...SHARED_KEYS] as const) {
+          delete (rest as Partial<SavedDataStructure>)[key];
+        }
+        const rowsView = rowsSettings && {
+          ...rowsSettings,
+          filters: undefined,
+          globalSearch: undefined,
+        };
+        return {
+          id,
+          name,
+          queryId,
+          bindings,
+          inspection,
+          selectedRowKeys,
+          rest,
+          rowsView,
+          charts: charts.map((chart) => ({ ...chart, filters: undefined })),
+        };
+      }
+    )
   );
   return { shared, filters, views };
 }
@@ -118,8 +132,11 @@ export function pushCheckpoint(
   session: SavedViewsSession,
   tabs: SavedView[],
   label = classifyChange(session.tabs, tabs),
-  note?: Pick<HistoryEntry, "action" | "restoredFrom">
+  note?: Pick<HistoryEntry, "action" | "restoredFrom">,
+  project = session.project
 ): SavedViewsSession {
+  if (JSON.stringify(project) !== JSON.stringify(session.project))
+    label = "Shared";
   if (!label) {
     return { ...session, tabs };
   }
@@ -128,6 +145,7 @@ export function pushCheckpoint(
     at: new Date().toISOString(),
     label,
     tabs: snapshot(tabs),
+    project: project && clone(project),
     parent,
   };
   if (note?.action) {
@@ -158,6 +176,7 @@ export function pushCheckpoint(
   }
   return {
     ...session,
+    project,
     tabs,
     history: keptHistory,
     path: keptPath,
@@ -416,7 +435,9 @@ function describeChartChanges(
   }
   for (const change of changes) {
     const quoted = /“([^”]+)”/.exec(change.text);
-    if (quoted) {change.subject = `“${quoted[1]}”`;}
+    if (quoted) {
+      change.subject = `“${quoted[1]}”`;
+    }
   }
   // Placing or removing a chart moves its neighbors; only report a layout
   // change when it stands on its own.
@@ -473,7 +494,9 @@ function describeRowsChanges(
       view,
     });
   }
-  for (const change of changes) {change.subject = "Rows";}
+  for (const change of changes) {
+    change.subject = "Rows";
+  }
   if (before && after) {
     if (
       before.sortBy !== after.sortBy ||
@@ -585,7 +608,9 @@ function describeSharedChanges(
 /** Lists what changed from `before` to `after` in plain words. */
 export function describeChanges(
   before: SavedView[] | undefined,
-  after: SavedView[]
+  after: SavedView[],
+  beforeProject?: AnalysisProject,
+  afterProject?: AnalysisProject
 ): HistoryChange[] {
   if (!before) {
     return [
@@ -603,6 +628,17 @@ export function describeChanges(
     ];
   }
   const changes: HistoryChange[] = [];
+  if (!same(beforeProject, afterProject)) {
+    for (const key of [
+      "relationships",
+      "queries",
+      "sources",
+      "parameters",
+    ] as const) {
+      if (!same(beforeProject?.[key], afterProject?.[key]))
+        changes.push({ kind: "shared", text: `Changed project ${key}` });
+    }
+  }
   const previous = new Map(before.map((tab) => [tab.id, tab]));
   const next = new Map(after.map((tab) => [tab.id, tab]));
 
@@ -629,6 +665,26 @@ export function describeChanges(
         view: tab.name,
       });
     }
+    if (old.queryId !== tab.queryId)
+      changes.push({
+        kind: "view",
+        text: `Changed query for ${quote(tab.name)}`,
+        before: old.queryId,
+        after: tab.queryId,
+        view: tab.name,
+      });
+    if (!same(old.bindings, tab.bindings))
+      changes.push({
+        kind: "view",
+        text: `Changed query inputs for ${quote(tab.name)}`,
+        view: tab.name,
+      });
+    if (!same(old.inspection, tab.inspection))
+      changes.push({
+        kind: "view",
+        text: `Changed query selection for ${quote(tab.name)}`,
+        view: tab.name,
+      });
     // A view without settings has not been opened yet; it gains defaults
     // without a user edit.
     if (!old.settings || !tab.settings) {
@@ -674,7 +730,27 @@ export function describeChanges(
   const sharedAfter = after.find(
     (tab) => tab.settings && previous.get(tab.id)?.settings
   )?.settings;
-  if (sharedBefore && sharedAfter) {
+  if (after.some((tab) => tab.queryId)) {
+    const scopes = new Set<string>();
+    for (const tab of after) {
+      const old = previous.get(tab.id);
+      if (
+        !tab.queryId ||
+        scopes.has(tab.queryId) ||
+        old?.queryId !== tab.queryId ||
+        !old.settings ||
+        !tab.settings
+      )
+        continue;
+      scopes.add(tab.queryId);
+      changes.push(
+        ...describeSharedChanges(old.settings, tab.settings).map((change) => ({
+          ...change,
+          view: tab.name,
+        }))
+      );
+    }
+  } else if (sharedBefore && sharedAfter) {
     changes.push(...describeSharedChanges(sharedBefore, sharedAfter));
   }
   return changes;
@@ -738,7 +814,12 @@ export function describeEntry(
   }
   const before =
     parent === undefined ? undefined : session.history[parent]?.tabs;
-  const changes = describeChanges(before, entry.tabs);
+  const changes = describeChanges(
+    before,
+    entry.tabs,
+    parent === undefined ? undefined : session.history[parent]?.project,
+    entry.project
+  );
   const first = changes[0];
   let headline = entry.action ?? first?.text ?? LABEL_FALLBACK[entry.label];
   let detail = changeDetail(first);
@@ -1024,7 +1105,14 @@ export function groupTimeline(
         oldestParent === undefined
           ? undefined
           : session.history[oldestParent]?.tabs;
-      const net = describeChanges(before, newest.tabs);
+      const net = describeChanges(
+        before,
+        newest.tabs,
+        oldestParent === undefined
+          ? undefined
+          : session.history[oldestParent]?.project,
+        newest.project
+      );
       const label = newest.label;
       const views = [
         ...new Set(

@@ -1,7 +1,9 @@
+import { createShopFixture } from "exploreda";
 import { describe, expect, it } from "vitest";
 import type { SavedDataStructure } from "exploreda";
 import {
   buildTimeline,
+  classifyChange,
   describeChanges,
   describeEntry,
   groupTimeline,
@@ -325,3 +327,35 @@ describe("history bundles", () => {
     expect(items[0]).toMatchObject({ type: "day", label: "Today" });
   });
 });
+
+it("checkpoints query bindings and definitions together", () => {
+  const initial = makeProjectSession();
+  const project = { ...initial.project!, relationships: [] };
+  const tabs = initial.tabs.map((tab) => ({
+    ...tab,
+    queryId: "items-by-order",
+    bindings: { customer: "C1" },
+  }));
+  const changed = pushCheckpoint(initial, tabs, undefined, undefined, project);
+  expect(changed.history.at(-1)?.project).toEqual(project);
+  expect(changed.history.at(-1)?.tabs[0]?.queryId).toBe("items-by-order");
+  expect(initial.history[0]?.project?.relationships).not.toHaveLength(0);
+  expect(classifyChange(initial.tabs, changed.tabs)).toBe("View");
+});
+
+function makeProjectSession(): SavedViewsSession {
+  const { project } = createShopFixture();
+  const tabs = [
+    { id: "order-view", name: "Orders", queryId: "orders-by-customer" },
+  ];
+  return {
+    version: 1,
+    sourceAnalysis: "",
+    project,
+    tabs,
+    activeTabId: "order-view",
+    history: [{ at: "2026-10-05", label: "View", tabs, project }],
+    path: [0],
+    cursor: 0,
+  };
+}

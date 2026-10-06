@@ -105,6 +105,14 @@ export function createShopFixture(variant: ShopFixtureVariant = "default"): { pr
         { id: "product-lookup", kind: "lookup", inputStepId: "product-calc", relationshipId: "item-product", as: "product" },
         { id: "product-revenue-sum", kind: "aggregate", inputStepId: "product-lookup", groupBy: ["product.name"], measures: [{ id: "revenueByProduct", label: "Revenue", operation: "sum", fieldId: "items.netRevenue" }] },
       ] },
+      { id: "empty-total", name: "Empty total", glyph: "E", frameLabel: "Orders", outputStepId: "empty-summary", steps: [
+        { id: "empty-orders", kind: "source", sourceId: "orders" },
+        { id: "empty-filter", kind: "filter", inputStepId: "empty-orders", fieldId: "orders.amount", operator: "gt", value: 1000 },
+        { id: "empty-summary", kind: "aggregate", inputStepId: "empty-filter", groupBy: [], measures: [
+          { id: "emptySum", label: "Amount", operation: "sum", fieldId: "orders.amount" },
+          { id: "emptyCount", label: "Orders", operation: "count" },
+        ] },
+      ] },
     ],
     parameters: [
       { id: "customerId", name: "Customer", type: "string", required: true },

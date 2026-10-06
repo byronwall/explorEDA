@@ -1,3 +1,4 @@
+import { parseAnalysisProject, type AnalysisProjectFile } from "exploreda";
 import { Button } from "@/components/ui/button";
 
 import { readDataFile } from "./readDataFile";
@@ -9,10 +10,15 @@ import { DatumObject } from "./LandingPage";
 
 interface CsvUploadProps {
   compact?: boolean;
+  onProjectImport?: (file: AnalysisProjectFile) => void;
   onImport?: (data: DatumObject[], fileName: string) => void;
 }
 
-export function CsvUpload({ compact = false, onImport }: CsvUploadProps) {
+export function CsvUpload({
+  compact = false,
+  onImport,
+  onProjectImport,
+}: CsvUploadProps) {
   const [error, setError] = useState<string | null>(null);
   const [failedFile, setFailedFile] = useState<File | null>(null);
   const onDrop = useCallback(
@@ -28,6 +34,15 @@ export function CsvUpload({ compact = false, onImport }: CsvUploadProps) {
       try {
         setError(null);
         setFailedFile(null);
+        if (file.name.toLowerCase().endsWith(".json")) {
+          const text = await file.text();
+          if (JSON.parse(text).format === "exploreda-project") {
+            if (!onProjectImport)
+              throw new Error("Open this project from the project workspace");
+            onProjectImport(parseAnalysisProject(text));
+            return;
+          }
+        }
         onImport?.(await readDataFile(file), file.name);
       } catch (error) {
         const message =
@@ -41,7 +56,7 @@ export function CsvUpload({ compact = false, onImport }: CsvUploadProps) {
         );
       }
     },
-    [onImport]
+    [onImport, onProjectImport]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

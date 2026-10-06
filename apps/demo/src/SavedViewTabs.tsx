@@ -111,6 +111,7 @@ export function SavedViewTabs({
   onSelect,
   onCreate,
   onDuplicate,
+  projectMode = false,
   onRename,
   onDelete,
   onMove,
@@ -132,6 +133,7 @@ export function SavedViewTabs({
   onSelect: (id: string) => void;
   onCreate: () => void;
   onDuplicate: () => void;
+  projectMode?: boolean;
   onRename: (name: string) => void;
   onDelete: () => void;
   onMove: (direction: -1 | 1) => void;
@@ -309,7 +311,9 @@ export function SavedViewTabs({
                     </DropdownMenuItem>
                     <DropdownMenuItem onSelect={onExport}>
                       <Download aria-hidden="true" />
-                      Export analysis
+                      {projectMode
+                        ? "Export view and its sources"
+                        : "Export analysis"}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
@@ -331,7 +335,11 @@ export function SavedViewTabs({
         label="New view"
         className="mb-0.5 shrink-0"
         disabled={readOnly}
-        tooltip="New view: a blank tab on the same rows. Each view keeps its own charts and filters. Calculations, colors, and field settings stay shared."
+        tooltip={
+          projectMode
+            ? "New view: a blank tab on the active query and frame. Charts and filters stay separate. Definitions are shared with views on the same query."
+            : "New view: a blank tab on the same rows. Each view keeps its own charts and filters. Calculations, colors, and field settings stay shared."
+        }
         onClick={onCreate}
       >
         <Plus aria-hidden="true" />

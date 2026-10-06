@@ -39,6 +39,8 @@ export interface ScatterPlotSettings extends BaseChartSettings {
   pointSize?: number;
   pointOpacity?: number;
   sizeField?: string;
+  /** Collapse repeated result rows when all displayed values agree. */
+  entityField?: string;
   maxBubbleRadius?: number;
   /** Absent when the chart draws no fit. */
   regression?: ScatterRegressionSettings;

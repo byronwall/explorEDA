@@ -17,6 +17,7 @@ import { FitTraceBody } from "../ScatterPlot/FitTraceBody";
 import { MarginalTraceBody } from "../ScatterPlot/MarginalTraceBody";
 import { SurfaceTraceBody } from "../ScatterPlot/SurfaceTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
+import { useAnalysisChartContext } from "@/components/AnalysisChartContext";
 import {
   FacetTraceBody,
   GuideTraceBody,
@@ -27,8 +28,10 @@ import type { ChartTrace } from "./traceTypes";
 
 function TraceBody({ trace }: { trace: ChartTrace }) {
   switch (trace.kind) {
-    case "row-category": return <RowTraceBody key={trace.id} trace={trace} />;
-    case "distribution": return <DistributionTraceBody trace={trace} />;
+    case "row-category":
+      return <RowTraceBody key={trace.id} trace={trace} />;
+    case "distribution":
+      return <DistributionTraceBody trace={trace} />;
     case "map-region":
     case "map-region-row":
     case "map-joins":
@@ -87,6 +90,7 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
 export function ChartTracePanel() {
   const trace = useChartTrace();
   const api = useChartTraceApi();
+  const analysisContext = useAnalysisChartContext();
   const [rowText, setRowText] = useState("");
   const [rowMessage, setRowMessage] = useState("");
   if (!trace || !api) return null;
@@ -102,9 +106,40 @@ export function ChartTracePanel() {
         : "No drawn object uses this row, or it does not exist."
     );
   };
+  const sourceId = (() => {
+    const selected = trace.trace as { sourceId?: unknown } | undefined;
+    if (typeof selected?.sourceId === "number") return selected.sourceId;
+    const seen = new Set<object>();
+    const find = (value: unknown): number | undefined => {
+      if (!value || typeof value !== "object" || seen.has(value))
+        return undefined;
+      seen.add(value);
+      if ("sourceId" in value && typeof value.sourceId === "number")
+        return value.sourceId;
+      for (const child of Object.values(value)) {
+        const found = find(child);
+        if (found !== undefined) return found;
+      }
+      return undefined;
+    };
+    return find(trace.trace);
+  })();
+  const resultRowKey =
+    sourceId === undefined
+      ? undefined
+      : analysisContext?.resultRowsById[sourceId]?.key;
   return (
     <div className="space-y-3 text-xs">
       {trace.trace && <TraceBody trace={trace.trace} />}
+      {analysisContext?.onOpenQueryFlow && (
+        <button
+          type="button"
+          className="rounded border border-border px-2 py-1 hover:bg-muted"
+          onClick={() => analysisContext.onOpenQueryFlow?.(resultRowKey)}
+        >
+          Open query flow{resultRowKey ? " for this row" : ""}
+        </button>
+      )}
       <section
         className="eda-trace-finder"
         aria-label={trace.trace ? "Trace another object" : "Find a source row"}

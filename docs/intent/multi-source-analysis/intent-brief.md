@@ -61,4 +61,4 @@ All current tabs use the same source rows. Their charts and filters differ, whil
 
 ## Next step after confirmation
 
-Follow the [implementation plan](implementation-plan.md). First prove configured order/item frames through view switching, history restoration, and reload. Then complete schema-led relationship creation and chart identity rules. Full path inspection and parameter instances follow as separate slices. Keep the implementation in the existing worktree and reconcile its saved-view baseline before application edits.
+Implementation is authorized. Follow the [implementation plan](implementation-plan.md) and its linked tickets. First prove configured order/item frames through view switching, history restoration, and reload. Then complete schema-led relationship creation and chart identity rules. Full path inspection and parameter instances follow as separate slices. Keep the implementation in the existing worktree and reconcile its saved-view baseline before application edits.

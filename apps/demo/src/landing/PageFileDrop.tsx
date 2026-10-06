@@ -1,3 +1,4 @@
+import { parseAnalysisProject, type AnalysisProjectFile } from "exploreda";
 import { Button } from "@/components/ui/button";
 import { FileUp } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -13,12 +14,16 @@ const carriesFiles = (event: DragEvent) =>
  */
 export function PageFileDrop({
   onImport,
+  onProjectImport,
 }: {
   onImport: (data: DatumObject[], fileName: string) => void;
+  onProjectImport?: (file: AnalysisProjectFile) => void;
 }) {
   const [active, setActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const depth = useRef(0);
+  const onProjectImportRef = useRef(onProjectImport);
+  onProjectImportRef.current = onProjectImport;
   const onImportRef = useRef(onImport);
   onImportRef.current = onImport;
 
@@ -76,13 +81,22 @@ export function PageFileDrop({
         return;
       }
       setError(null);
-      readDataFile(file)
-        .then((data) => onImportRef.current(data, file.name))
-        .catch((reason: unknown) => {
-          const message =
-            reason instanceof Error ? reason.message : "Unknown error";
-          setError(`Could not read ${file.name}: ${message}.`);
-        });
+      (async () => {
+        if (file.name.toLowerCase().endsWith(".json")) {
+          const text = await file.text();
+          if (JSON.parse(text).format === "exploreda-project") {
+            if (!onProjectImportRef.current)
+              throw new Error("Open this project from the project workspace");
+            onProjectImportRef.current(parseAnalysisProject(text));
+            return;
+          }
+        }
+        onImportRef.current(await readDataFile(file), file.name);
+      })().catch((reason: unknown) => {
+        const message =
+          reason instanceof Error ? reason.message : "Unknown error";
+        setError(`Could not read ${file.name}: ${message}.`);
+      });
     };
 
     window.addEventListener("dragenter", handleEnter);

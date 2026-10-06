@@ -1,5 +1,6 @@
 import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import type { AggregateAggregation } from "@/lib/aggregates";
 import { finiteNumber } from "@/lib/numeric";
 import { useDataLayer } from "@/providers/DataLayerProvider";
@@ -60,6 +61,23 @@ export function MetricCardSettingsPanel({
             Average
           </option>
         </select>
+
+        <Label>Entity ID</Label>
+        <ActionTooltip content="Count distinct entities or use one agreeing measure value per entity. Leave empty to use result rows.">
+          <FieldSelector
+            label=""
+            placeholder="Entity ID"
+            value={settings.entityField ?? ""}
+            allowClear
+            fields={getColumnNames()}
+            onChange={(entityField) =>
+              onSettingsChange({
+                ...settings,
+                entityField: entityField || undefined,
+              })
+            }
+          />
+        </ActionTooltip>
 
         {settings.aggregation !== "count" && (
           <>

@@ -9,7 +9,8 @@ function planFor(
   x: datum[],
   y: datum[],
   scaleType: "linear" | "symlog" = "linear",
-  filters: ScatterFilters = []
+  filters: ScatterFilters = [],
+  entityData?: datum[]
 ) {
   const settings = scatterPlotDefinition.createDefaultSettings({
     x: 0,
@@ -22,6 +23,7 @@ function planFor(
   settings.xAxis = { ...settings.xAxis, scaleType };
   settings.yAxis = { ...settings.yAxis, scaleType };
   settings.filters = filters;
+  if (entityData) settings.entityField = "entity";
   const ids = x.map((_, index) => index);
   return planScatter(
     settings,
@@ -33,6 +35,9 @@ function planFor(
       xData: Object.fromEntries(x.map((value, index) => [index, value])),
       yData: Object.fromEntries(y.map((value, index) => [index, value])),
       colorData: {},
+      entityData: entityData
+        ? Object.fromEntries(entityData.map((value, index) => [index, value]))
+        : undefined,
       fieldSettings: {},
     },
     400,
@@ -72,6 +77,25 @@ describe("scatter domain", () => {
     expectPointsInside(planFor([0, 5, 10], [0, 50, 100]));
     expectPointsInside(planFor([0, 50, 5000], [0, 3, 100000], "symlog"));
     expectPointsInside(planFor([7, 7], [3, 3]));
+  });
+});
+
+describe("entity scatter marks", () => {
+  it("collapses only agreeing entity rows and reports conflicts and missing IDs", () => {
+    const plan = planFor(
+      [1, 1, 1, 3, 9, 5, Number.NaN],
+      [2, 2, 2, 4, 4, 6, 7],
+      "linear",
+      [],
+      ["A", "A", "B", "C", "C", null, "D"]
+    );
+    expect(plan.points.map((point) => point.sourceId)).toEqual([0, 2]);
+    expect(plan.points[0]?.sourceIds).toEqual([0, 1]);
+    expect(plan.identityIssues.map((issue) => issue.reason).sort()).toEqual([
+      "conflicting-values",
+      "missing-id",
+    ]);
+    expect(plan.exclusions).toEqual([{ sourceId: 6, reason: "invalid-x" }]);
   });
 });
 

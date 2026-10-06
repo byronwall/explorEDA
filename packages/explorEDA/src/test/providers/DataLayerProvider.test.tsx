@@ -426,6 +426,18 @@ describe("DataLayerProvider", () => {
     expect(screen.getByTestId("columns")).not.toHaveTextContent("__ID");
   });
 
+  it("keeps declared columns when the result has no rows", () => {
+    render(
+      <DataLayerProvider data={[]} fieldNames={["customer.id", "amount"]}>
+        <Probe />
+      </DataLayerProvider>
+    );
+
+    expect(screen.getByTestId("rows")).toHaveTextContent("0");
+    expect(screen.getByTestId("columns")).toHaveTextContent("customer.id");
+    expect(screen.getByTestId("columns")).toHaveTextContent("amount");
+  });
+
   it("creates a summary and table from the union of source fields", () => {
     render(
       <DataLayerProvider data={dataWithLateField}>

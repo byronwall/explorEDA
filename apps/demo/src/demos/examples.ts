@@ -1,3 +1,4 @@
+import { shopProject, shopQueryPresets, shopProjectViews } from "./multiSourceShop";
 import {
   penguinDashboard,
   shopDashboard,
@@ -19,7 +20,7 @@ import {
   distributionDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
-import { SavedDataStructure } from "exploreda";
+import { type AnalysisProject, type AnalysisSourceRow, SavedDataStructure } from "exploreda";
 import {
   MapPin,
   Bird,
@@ -63,6 +64,9 @@ export interface ExampleData {
   /** One tested first action, shown above the workspace. */
   guide?: string;
   icon: LucideIcon;
+  project?: AnalysisProject;
+  tables?: Record<string, readonly AnalysisSourceRow[]>;
+  queryPresets?: Record<string, SavedDataStructure>;
   data: string; // path to the data file
   savedData?: SavedDataStructure;
   /** More saved views that open as tabs beside the main one. */
@@ -188,6 +192,23 @@ export const examples: ExampleData[] = [
     icon: ScatterChart,
     data: "/datasets/product-activity.csv",
     savedData: bubbleDashboard,
+  },
+  {
+    id: "multi-source-shop",
+    title: "Orders, items, and their sources",
+    description:
+      "Follow customers, orders, items, and products. Choose the row meaning before you chart a joined result.",
+    dataset: { rows: "5 orders · 8 items", fields: 15, source: "Synthetic" },
+    shows: ["Related tables", "Explicit frames", "Query flow", "Saved tabs"],
+    guide:
+      "Try this: switch between Orders and Items. Order amount is $150; item revenue is $140. Open Schema to follow a link, or Query flow to see the backing records.",
+    icon: ShoppingCart,
+    data: "",
+    project: shopProject.project,
+    tables: shopProject.sources,
+    savedData: shopQueryPresets["orders-by-customer"],
+    views: shopProjectViews,
+    queryPresets: shopQueryPresets,
   },
   {
     id: "shop-operations",

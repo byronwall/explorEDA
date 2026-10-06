@@ -614,6 +614,11 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId:"multi-source-shop",
+    intent:"Explore related tables with explicit frames and inspect their backing query rows.",
+    features:{"chart:metric-card":"shown","chart:bar":"shown","chart:data-table":"shown"},
+  },
+  {
     exampleId: "shop-operations",
     intent:
       "Click one channel and watch every linked view and the orders table narrow.",

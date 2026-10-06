@@ -2,6 +2,7 @@ import { defineConfig } from "tsup";
 
 export default defineConfig({
   entry: {
+    analysis: "src/analysis.ts",
     ExplorEda: "src/components/ExplorEda.tsx",
     core: "src/charts/registry.ts",
     calculations: "src/lib/calculations/parser/semantics.ts",

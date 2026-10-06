@@ -1,13 +1,25 @@
-import { parseSavedAnalysis, type SavedDataStructure } from "exploreda";
+import {
+  parseSavedAnalysis,
+  parseAnalysisState,
+  type AnalysisProject,
+  type AnalysisView,
+  type AnalysisSourceRow,
+  type SavedDataStructure,
+} from "exploreda";
 import type { DatumObject } from "./LandingPage";
 
 export const STORAGE_KEY = "exploreda.saved-views.v1";
+export const PROJECT_STORAGE_KEY = "exploreda.project-views.v1";
 export const HISTORY_LIMIT = 50;
 
 export type SavedView = {
   id: string;
   name: string;
   settings?: SavedDataStructure;
+  queryId?: string;
+  bindings?: AnalysisView["bindings"];
+  inspection?: AnalysisView["inspection"];
+  selectedRowKeys?: string[];
 };
 
 export type ChangeLabel = "View" | "Filter" | "Both" | "Shared";
@@ -15,6 +27,7 @@ export type HistoryEntry = {
   at: string;
   label: ChangeLabel;
   tabs: SavedView[];
+  project?: AnalysisProject;
   /** The checkpoint this one changed. Missing on the first checkpoint. */
   parent?: number;
   /** Names a deliberate action, such as a duplicated view. */
@@ -28,6 +41,8 @@ export type HistoryEntry = {
 export type SavedViewsSession = {
   version: 1;
   sourceAnalysis: string;
+  project?: AnalysisProject;
+  tables?: Record<string, readonly AnalysisSourceRow[]>;
   tabs: SavedView[];
   activeTabId: string;
   history: HistoryEntry[];
@@ -36,7 +51,7 @@ export type SavedViewsSession = {
 };
 
 function clone<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value)) as T;
+  return structuredClone(value);
 }
 
 export function getSavedViewsRows(
@@ -50,10 +65,12 @@ export type SavedViewsReadResult = {
   failed: boolean;
 };
 
-export function readSavedViewsSessionResult(): SavedViewsReadResult {
+export function readSavedViewsSessionResult(
+  key = STORAGE_KEY
+): SavedViewsReadResult {
   let raw: string | null;
   try {
-    raw = localStorage.getItem(STORAGE_KEY);
+    raw = localStorage.getItem(key);
   } catch {
     return { session: undefined, failed: true };
   }
@@ -62,7 +79,7 @@ export function readSavedViewsSessionResult(): SavedViewsReadResult {
   }
 
   try {
-    const value = JSON.parse(raw) as SavedViewsSession;
+    const value = parseAnalysisState<SavedViewsSession>(raw);
     if (
       value.version !== 1 ||
       typeof value.sourceAnalysis !== "string" ||

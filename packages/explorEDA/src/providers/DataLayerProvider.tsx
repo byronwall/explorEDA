@@ -144,6 +144,15 @@ function validateAggregateState(
     ) {
       throw new Error("Invalid grouped summary definition");
     }
+    if (
+      availableFields &&
+      aggregate.entityField &&
+      !availableFields.has(aggregate.entityField)
+    ) {
+      throw new Error(
+        `Grouped summary ${aggregate.name} references missing entity field ${aggregate.entityField}`
+      );
+    }
     if (availableFields && !availableFields.has(aggregate.groupField)) {
       throw new Error(
         `Grouped summary ${aggregate.name} references missing group field ${aggregate.groupField}`
@@ -223,6 +232,7 @@ function getSavedStateFingerprint(savedData: SavedDataStructure): string {
 // Props and State interfaces
 interface DataLayerProps<T extends DatumObject> {
   data?: T[];
+  fieldNames?: string[];
   charts?: ChartSettings[];
   savedData?: SavedDataStructure;
   onStateChange?: (state: SavedDataStructure) => void;
@@ -401,6 +411,7 @@ const getInitialStoreState = <T extends DatumObject>(
   Pick<
     DataLayerState<T>,
     | "rawData"
+    | "fieldNames"
     | "data"
     | "fieldProfiles"
     | "emptyColumn"
@@ -422,13 +433,13 @@ const getInitialStoreState = <T extends DatumObject>(
   >
 > => {
   const rawData = initProps?.data ?? [];
+  const fieldNames = initProps?.fieldNames ?? [];
   const fieldSettings = initProps?.savedData?.fieldSettings ?? {};
   validateFieldSettings(fieldSettings);
   const inferredTypes = Object.fromEntries(
-    buildFieldProfiles(rawData, typeOverrides(fieldSettings)).map((profile) => [
-      profile.name,
-      profile.dataType,
-    ])
+    buildFieldProfiles(rawData, typeOverrides(fieldSettings), fieldNames).map(
+      (profile) => [profile.name, profile.dataType]
+    )
   );
   const runtimeData = applyFieldSettings(rawData, fieldSettings, inferredTypes);
   const {
@@ -439,7 +450,8 @@ const getInitialStoreState = <T extends DatumObject>(
   } = getDataAndCrossfilterWrapper(runtimeData);
   const fieldProfiles = buildFieldProfiles(
     runtimeData,
-    typeOverrides(fieldSettings)
+    typeOverrides(fieldSettings),
+    fieldNames
   );
 
   if (!crossfilterWrapper || !initData || !ogCalculationManager) {
@@ -477,6 +489,7 @@ const getInitialStoreState = <T extends DatumObject>(
 
     return {
       rawData,
+      fieldNames,
       data: initData,
       fieldProfiles,
       emptyColumn: initialEmptyColumn!,
@@ -506,6 +519,7 @@ const getInitialStoreState = <T extends DatumObject>(
   // Return default state if no saved data
   return {
     rawData,
+    fieldNames,
     data: initData,
     fieldProfiles,
     emptyColumn: initialEmptyColumn!,
@@ -554,11 +568,11 @@ const createDataLayerStore = <T extends DatumObject>(
     liveItems: {},
     filterReset: 0,
     setData: (rawData, fileName, useDefaults = true) => {
+      const fieldNames = get().fieldNames ?? [];
       const inferredTypes = Object.fromEntries(
-        buildFieldProfiles(rawData, typeOverrides({})).map((profile) => [
-          profile.name,
-          profile.dataType,
-        ])
+        buildFieldProfiles(rawData, typeOverrides({}), fieldNames).map(
+          (profile) => [profile.name, profile.dataType]
+        )
       );
       const runtimeData = applyFieldSettings(rawData, {}, inferredTypes);
       // Get fresh crossfilter and data with IDs
@@ -568,7 +582,11 @@ const createDataLayerStore = <T extends DatumObject>(
         crossfilterWrapper: newCrossfilter,
         calculationManager: newCalculationManager,
       } = getDataAndCrossfilterWrapper(runtimeData, get().getColumnData);
-      const fieldProfiles = buildFieldProfiles(runtimeData, typeOverrides({}));
+      const fieldProfiles = buildFieldProfiles(
+        runtimeData,
+        typeOverrides({}),
+        fieldNames
+      );
 
       if (
         !newData ||
@@ -680,7 +698,8 @@ const createDataLayerStore = <T extends DatumObject>(
         emptyColumn: nextData.emptyColumn,
         fieldProfiles: buildFieldProfiles(
           runtimeRows,
-          typeOverrides(nextFieldSettingsMap)
+          typeOverrides(nextFieldSettingsMap),
+          state.fieldNames
         ),
         crossfilterWrapper: nextCrossfilter,
         calculationManager: nextManager,
@@ -796,6 +815,9 @@ const createDataLayerStore = <T extends DatumObject>(
       const measureData = spec.measureField
         ? get().getColumnData(spec.measureField)
         : undefined;
+      const entityData = spec.entityField
+        ? get().getColumnData(spec.entityField)
+        : undefined;
       const rawRows = get().rawData as Array<Record<string, datum>>;
       const rawInputs: Record<number, datum> = {};
       const exclusionReasons: Record<number, string> = {};
@@ -815,6 +837,9 @@ const createDataLayerStore = <T extends DatumObject>(
           ? {
               [spec.measureField]: measureData?.[sourceId],
             }
+          : {}),
+        ...(spec.entityField
+          ? { [spec.entityField]: entityData?.[sourceId] }
           : {}),
       }));
       if (spec.measureField) {
@@ -963,12 +988,12 @@ const createDataLayerStore = <T extends DatumObject>(
     },
 
     getColumnNames() {
-      const { fieldProfiles, calculations } = get();
+      const { fieldProfiles, calculations, fieldNames = [] } = get();
       const baseColumns = fieldProfiles.map((profile) => profile.name);
 
       const calcFields = calculations.map((calc) => calc.resultColumnName);
 
-      return [...baseColumns, ...calcFields];
+      return [...new Set([...fieldNames, ...baseColumns, ...calcFields])];
     },
 
     getColumnData(field: string | undefined) {
@@ -1129,9 +1154,11 @@ const createDataLayerStore = <T extends DatumObject>(
       const fieldSettings = savedData.settings.fieldSettings ?? {};
       validateFieldSettings(fieldSettings);
       const inferredTypes = Object.fromEntries(
-        buildFieldProfiles(rawData, typeOverrides(fieldSettings)).map(
-          (profile) => [profile.name, profile.dataType]
-        )
+        buildFieldProfiles(
+          rawData,
+          typeOverrides(fieldSettings),
+          get().fieldNames
+        ).map((profile) => [profile.name, profile.dataType])
       );
       const runtimeData = applyFieldSettings(
         rawData,
@@ -1156,7 +1183,8 @@ const createDataLayerStore = <T extends DatumObject>(
       const calculationManager = new CalculationManager(nextData, calculations);
       const fieldProfiles = buildFieldProfiles(
         runtimeData,
-        typeOverrides(fieldSettings)
+        typeOverrides(fieldSettings),
+        get().fieldNames
       );
       validateAggregateState(
         savedData.settings.aggregates ?? [],
@@ -1331,6 +1359,7 @@ export function DataLayerProvider<T extends DatumObject>({
   const savedStateFingerprintRef = useRef<string | undefined>(undefined);
   onStateChangeRef.current = props.onStateChange;
   const nextData = props.data;
+  const nextFieldNames = props.fieldNames;
   const nextSavedData = props.savedData;
   if (!storeRef.current) {
     storeRef.current = createDataLayerStore<T>(props);
@@ -1339,7 +1368,8 @@ export function DataLayerProvider<T extends DatumObject>({
   useEffect(() => {
     const store = storeRef.current!;
     const previousProps = propsRef.current;
-    const dataChanged = previousProps.data !== nextData;
+    const fieldNamesChanged = previousProps.fieldNames !== nextFieldNames;
+    const dataChanged = previousProps.data !== nextData || fieldNamesChanged;
     const savedDataChanged = previousProps.savedData !== nextSavedData;
 
     suppressStateChangeRef.current = true;
@@ -1363,8 +1393,12 @@ export function DataLayerProvider<T extends DatumObject>({
       );
     }
 
-    propsRef.current = { data: nextData, savedData: nextSavedData };
-  }, [nextData, nextSavedData]);
+    propsRef.current = {
+      data: nextData,
+      fieldNames: nextFieldNames,
+      savedData: nextSavedData,
+    };
+  }, [nextData, nextFieldNames, nextSavedData]);
 
   useEffect(() => {
     const store = storeRef.current!;

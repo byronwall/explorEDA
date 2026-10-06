@@ -180,3 +180,39 @@ it("selects exact source rows by keyboard and pointer, traces sizes, and replace
   expect(screen.getByLabelText("Selected IDs").textContent).toBe("0,1");
   fireEvent.click(screen.getByRole("button", { name: "Check saved settings" }));
 });
+
+it("selects and toggles every row behind an entity point", () => {
+  const entityChart = { ...chart, entityField: "entity" };
+  const { unmount } = render(
+    <DataLayerProvider
+      data={[
+        { x: 1, y: 2, Amount: 10, entity: "A" },
+        { x: 1, y: 2, Amount: 10, entity: "A" },
+        { x: 2, y: 3, Amount: 40, entity: "B" },
+      ]}
+      charts={[entityChart]}
+    >
+      <Workspace />
+    </DataLayerProvider>
+  );
+  const svg = screen.getByRole("group", { name: "Bubble test" });
+  fireEvent.focus(svg);
+  fireEvent.keyDown(svg, { key: "Enter" });
+  expect(screen.getByLabelText("Selected IDs").textContent).toBe("0,1");
+  fireEvent.keyDown(svg, { key: "Enter" });
+  expect(screen.getByLabelText("Selected IDs").textContent).toBe("0,1,2");
+  unmount();
+});
+
+it("shows an incompatible state for row-based modes with entity scope", () => {
+  render(
+    <ScatterPlot
+      settings={{ ...chart, entityField: "entity", display: "contour" }}
+      width={500}
+      height={320}
+    />
+  );
+  expect(screen.getByRole("status")).toHaveTextContent(
+    "Entity ID scope supports points only"
+  );
+});

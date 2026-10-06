@@ -104,11 +104,11 @@ function lookupFrame(
   }
   const index = new Map<AnalysisScalar, AnalysisSourceRow[]>();
   const referenceByRow = new Map<AnalysisSourceRow, AnalysisSourceReference>();
-  const targetRefs = sourceReferences(source, table);
+  const targetRefs = sourceReferences(source, table, step.id, diagnostics);
   table.forEach((target, rowIndex) => referenceByRow.set(target, targetRefs[rowIndex]!));
   for (const [targetIndex, target] of table.entries()) {
     const key = target[side.targetFieldId];
-    if (key == null) {
+    if (key == null || Number.isNaN(key)) {
       diagnostics.push({ code: "missing-key", message: `Missing relationship key ${side.targetFieldId}`, stepId: step.id, sourceId: source.id, rowKey: `${source.id}:row:${targetIndex}`, fieldId: side.targetFieldId });
       continue;
     }
@@ -118,7 +118,7 @@ function lookupFrame(
   }
   const rows = input.rows.map((row) => {
     const key = row.values[side.inputId];
-    const matches = key == null ? [] : (index.get(key) ?? []);
+    const matches = key == null || Number.isNaN(key) ? [] : (index.get(key) ?? []);
     const selected = matches.length === 1 ? matches[0] : undefined;
     if (matches.length > 1) diagnostics.push({ code: "ambiguous-lookup", message: `Lookup matched ${matches.length} rows`, stepId: step.id, rowKey: row.key, fieldId: side.inputId, value: key });
     else if (matches.length === 0) diagnostics.push({ code: "missing-lookup", message: "Lookup found no matching row", stepId: step.id, rowKey: row.key, fieldId: side.inputId, value: key });
@@ -144,12 +144,12 @@ function expandedFrame(
   const table = tables[side.targetSourceId];
   if (!source || !table) throw new Error(`Source ${side.targetSourceId} is unavailable`);
   const index = new Map<AnalysisScalar, AnalysisSourceRow[]>();
-  const targetRefs = sourceReferences(source, table);
+  const targetRefs = sourceReferences(source, table, step.id, diagnostics);
   const referenceByRow = new Map<AnalysisSourceRow, AnalysisSourceReference>();
   table.forEach((target, rowIndex) => referenceByRow.set(target, targetRefs[rowIndex]!));
   table.forEach((target, targetIndex) => {
     const key = target[side.targetFieldId];
-    if (key == null) {
+    if (key == null || Number.isNaN(key)) {
       diagnostics.push({ code: "missing-key", message: `Missing relationship key ${side.targetFieldId}`, stepId: step.id, sourceId: source.id, rowKey: `${source.id}:row:${targetIndex}`, fieldId: side.targetFieldId });
       return;
     }
@@ -159,7 +159,7 @@ function expandedFrame(
   });
   const rows = input.rows.flatMap((row) => {
     const key = row.values[side.inputId];
-    const matches = key == null ? [] : (index.get(key) ?? []);
+    const matches = key == null || Number.isNaN(key) ? [] : (index.get(key) ?? []);
     if (matches.length === 0) {
       diagnostics.push({ code: "missing-lookup", message: "Expansion found no matching row", stepId: step.id, rowKey: row.key, fieldId: side.inputId, value: key });
       if (step.keepUnmatched) {
@@ -220,6 +220,7 @@ function aggregateFrame(step: AggregateStep, input: Frame, diagnostics: Analysis
     if (group) group.push(row);
     else groups.set(key, [row]);
   }
+  if (step.groupBy.length === 0 && groups.size === 0) groups.set("[]", []);
   const fields: AnalysisField[] = step.groupBy.map((id) => input.fields.find((field) => field.id === id) ?? { id, name: id, origin: { stepId: step.id } });
   for (const measure of step.measures) fields.push({ id: measure.id, name: measure.label, origin: { stepId: step.id } });
   const rows = Array.from(groups, ([key, group]) => {
@@ -390,6 +391,7 @@ export function evaluateAnalysisQuery(
   const sourceIds = new Set(query.steps.filter((step) => stepIds.has(step.id) && step.kind === "source").map((step) => step.kind === "source" ? step.sourceId : ""));
   const relationshipIds = new Set(query.steps.filter((step) => stepIds.has(step.id) && (step.kind === "lookup" || step.kind === "expand")).map((step) => step.kind === "lookup" || step.kind === "expand" ? step.relationshipId : ""));
   project.relationships.filter((item) => relationshipIds.has(item.id)).forEach((item) => { sourceIds.add(item.from.sourceId); sourceIds.add(item.to.sourceId); });
-  const revision = `${project.id}:${query.id}:${fingerprint({ query, relationships: project.relationships.filter((item) => relationshipIds.has(item.id)), sources: Object.fromEntries([...sourceIds].sort().map((sourceId) => [sourceId, tables[sourceId]])), bindings })}`;
+  const parameterIds = query.steps.filter((step) => step.kind === "filter" && step.parameterId).map((step) => step.kind === "filter" ? step.parameterId : undefined);
+  const revision = `${project.id}:${query.id}:${fingerprint({ query, relationships: project.relationships.filter((item) => relationshipIds.has(item.id)), sources: project.sources.filter((source) => sourceIds.has(source.id)).map((source) => [source, tables[source.id]]), parameters: project.parameters?.filter((parameter) => parameterIds.includes(parameter.id)), bindings })}`;
   return { queryId, revision, fields: output.fields, rows: output.rows, stages, diagnostics, counts: { source: stages[0]?.inputCount ?? 0, output: output.rows.length, available: output.rows.length, excluded: stages.at(-1)?.excludedCount ?? 0 } };
 }

@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useDataLayer } from "@/providers/DataLayerProvider";
+import { useAnalysisChartContext } from "@/components/AnalysisChartContext";
 import { CalendarDays, Hash, ToggleLeft, Type } from "lucide-react";
 
 export const typeLabels: Record<FieldProfile["dataType"], string> = {
@@ -121,19 +122,64 @@ export function FieldMetadata({
   showTooltip?: boolean;
 }) {
   const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
-  if (!profile) return <span className={className}>{label}</span>;
-  const metadata = fieldMetadata(profile, (value) =>
-    value == null || value === "" ? "—" : formatFieldValue(profile.name, value)
+  const analysis = useAnalysisChartContext();
+  const fieldId = profile?.name ?? label;
+  const definition = analysis?.fields?.find((field) => field.id === fieldId);
+  const sourceOrigin =
+    definition?.origin && "sourceId" in definition.origin
+      ? definition.origin
+      : undefined;
+  const stepOrigin =
+    definition?.origin && "stepId" in definition.origin
+      ? definition.origin
+      : undefined;
+  const source = sourceOrigin
+    ? analysis?.sources?.find((item) => item.id === sourceOrigin.sourceId)
+    : undefined;
+  const step = stepOrigin
+    ? analysis?.steps?.find((item) => item.id === stepOrigin.stepId)
+    : undefined;
+  const sourceField = source?.fields.find(
+    (field) => field.id === (sourceOrigin ? sourceOrigin.fieldId : "")
   );
+  const origin = source
+    ? {
+        glyph: source.glyph,
+        display: source.name,
+        label: `${source.name} · ${sourceField?.name ?? sourceField?.id ?? "source field"}`,
+      }
+    : step
+      ? {
+          glyph:
+            step.kind === "calculate"
+              ? "ƒx"
+              : step.kind === "aggregate"
+                ? "Σ"
+                : step.kind === "filter"
+                  ? "⌕"
+                  : "↗",
+          display: `${step.kind} step`,
+          label: `${step.kind} step · ${"as" in step ? step.as : step.id}`,
+        }
+      : undefined;
+  if (!profile && !origin) return <span className={className}>{label}</span>;
+  const metadata = profile
+    ? fieldMetadata(profile, (value) =>
+        value == null || value === ""
+          ? "—"
+          : formatFieldValue(profile.name, value)
+      )
+    : undefined;
   const description = [
-    metadata.type,
-    metadata.detail,
-    metadata.nulls,
-    metadata.excluded,
+    metadata?.type,
+    metadata?.detail,
+    metadata?.nulls,
+    metadata?.excluded,
+    origin && `From ${origin.label}`,
   ]
     .filter(Boolean)
     .join("; ");
-  const TypeIcon = typeIcons[profile.dataType];
+  const TypeIcon = profile ? typeIcons[profile.dataType] : undefined;
 
   const content = (
     <span
@@ -143,16 +189,25 @@ export function FieldMetadata({
           : "inline-flex min-w-0 items-baseline gap-1.5",
         className
       )}
-      aria-label={`${label ?? profile.name}: ${description}`}
+      aria-label={`${label ?? profile?.name ?? "Field"}: ${description}`}
     >
-      {compact && (
+      {compact && TypeIcon && (
         <TypeIcon
           className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
           aria-hidden="true"
         />
       )}
+      {origin && (
+        <span
+          className="flex min-w-0 shrink-0 items-center gap-0.5 text-[10px] text-muted-foreground"
+          aria-label={`From ${origin.label}`}
+        >
+          <span aria-hidden="true">{origin.glyph}</span>
+          <span className="max-w-16 truncate">{origin.display}</span>
+        </span>
+      )}
       {label && <span className="truncate font-medium">{label}</span>}
-      {!compact && (
+      {!compact && metadata && (
         <span className="flex min-w-0 gap-1.5 text-[10px] text-muted-foreground">
           <span className="shrink-0">{metadata.type}</span>
           {showDetail && <span className="truncate">{metadata.detail}</span>}
@@ -168,22 +223,42 @@ export function FieldMetadata({
       <Tooltip>
         <TooltipTrigger asChild>{content}</TooltipTrigger>
         <TooltipContent side={tooltipSide} align="start" collisionPadding={12}>
-          <p className="mb-2 font-semibold">{label ?? profile.name}</p>
+          <p className="mb-2 font-semibold">
+            {label ?? profile?.name ?? "Field"}
+          </p>
           <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-xs">
-            <dt className="text-muted-foreground">Type</dt>
-            <dd>{metadata.type}</dd>
-            <dt className="text-muted-foreground">{metadata.detailLabel}</dt>
-            <dd>{metadata.detail}</dd>
-            <dt className="text-muted-foreground">Nulls</dt>
-            <dd>{metadata.nulls}</dd>
-            {metadata.excluded && (
+            {origin && (
+              <>
+                <dt className="text-muted-foreground">Origin</dt>
+                <dd>
+                  {origin.glyph} {origin.label}
+                </dd>
+              </>
+            )}
+            {metadata && (
+              <>
+                <dt className="text-muted-foreground">Type</dt>
+                <dd>{metadata.type}</dd>
+                <dt className="text-muted-foreground">
+                  {metadata.detailLabel}
+                </dt>
+                <dd>{metadata.detail}</dd>
+                <dt className="text-muted-foreground">Nulls</dt>
+                <dd>{metadata.nulls}</dd>
+              </>
+            )}
+            {metadata?.excluded && (
               <>
                 <dt className="text-muted-foreground">Excluded</dt>
                 <dd>{metadata.excluded}</dd>
               </>
             )}
-            <dt className="text-muted-foreground">Distinct</dt>
-            <dd>{profile.uniqueCount.toLocaleString()}</dd>
+            {profile && (
+              <>
+                <dt className="text-muted-foreground">Distinct</dt>
+                <dd>{profile.uniqueCount.toLocaleString()}</dd>
+              </>
+            )}
           </dl>
         </TooltipContent>
       </Tooltip>

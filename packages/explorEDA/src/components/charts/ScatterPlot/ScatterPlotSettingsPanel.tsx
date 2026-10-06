@@ -18,6 +18,7 @@ export function ScatterPlotSettingsPanel({
   const density = settings.display === "density";
   const { getOrCreateScaleForField } = useColorScales();
   const profiles = useDataLayer((s) => s.fieldProfiles);
+  const getColumnNames = useDataLayer((s) => s.getColumnNames);
   const calculations = useDataLayer((s) => s.calculations);
   const sizeFields = [
     ...new Set([
@@ -33,7 +34,7 @@ export function ScatterPlotSettingsPanel({
     <div className="space-y-4">
       <div className="grid grid-cols-[120px_1fr] items-center gap-4">
         <Label htmlFor="scatter-display">Display</Label>
-        <ActionTooltip content="Points show individual rows. Rectangular and hexagonal bins count rows in fixed cells; a click selects a cell's exact rows. Smoothed density estimates rows per unit area and draws filled regions and contour lines.">
+        <ActionTooltip content="Points show individual rows or declared entities. Density bins, hexagons, contours, fits, and paired summaries use result rows, so they are unavailable with Entity ID scope.">
           <select
             id="scatter-display"
             className="h-9 min-w-0 rounded-md border border-input bg-background px-2 text-sm"
@@ -48,11 +49,34 @@ export function ScatterPlotSettingsPanel({
             }
           >
             <option value="points">Points</option>
-            <option value="density">Rectangular bins</option>
-            <option value="hexbin">Hexagonal bins</option>
-            <option value="contour">Smoothed density</option>
+            <option value="density" disabled={Boolean(settings.entityField)}>
+              Rectangular bins
+            </option>
+            <option value="hexbin" disabled={Boolean(settings.entityField)}>
+              Hexagonal bins
+            </option>
+            <option value="contour" disabled={Boolean(settings.entityField)}>
+              Smoothed density
+            </option>
           </select>
         </ActionTooltip>
+        <Label>Entity ID</Label>
+        <ActionTooltip content="Show one point per entity when X, Y, color, and size values agree. Conflicts and missing IDs are invalid. Density displays, fits, and paired summaries use result rows and are unavailable with Entity ID scope.">
+          <FieldSelector
+            label=""
+            placeholder="Entity ID"
+            value={settings.entityField ?? ""}
+            fields={getColumnNames()}
+            allowClear
+            onChange={(entityField) =>
+              onSettingsChange({
+                ...settings,
+                entityField: entityField || undefined,
+              })
+            }
+          />
+        </ActionTooltip>
+
         <Label>X Field</Label>
         <FieldSelector
           label=""

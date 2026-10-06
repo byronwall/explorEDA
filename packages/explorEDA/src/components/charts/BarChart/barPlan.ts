@@ -500,7 +500,12 @@ export function planBarChart({
   const unplotted: BarChartPlan["unplotted"] = [];
   rows.forEach((row, order) => {
     if (typeof row.value !== "number" || !Number.isFinite(row.value)) {
-      unplotted.push({ row, reason: "No valid numbers" });
+      unplotted.push({
+        row,
+        reason: row.identityIssues?.length
+          ? `Invalid entity identity (${row.identityIssues.map((issue) => issue.reason).join(", ")})`
+          : "No valid numbers",
+      });
       return;
     }
     let x: number;

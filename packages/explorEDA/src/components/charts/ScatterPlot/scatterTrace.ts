@@ -41,6 +41,7 @@ export type ScatterTrace =
       revision: string;
       plan: ScatterPlan;
       sourceId: number;
+      sourceIds: number[];
       x: FieldTrace & { pixel: number };
       y: FieldTrace & { pixel: number };
       color?: FieldTrace & { mapped: string; rendered: string };
@@ -176,6 +177,7 @@ export function resolveScatterTrace(
       revision: plan.revision,
       plan,
       sourceId: point.sourceId,
+      sourceIds: point.sourceIds,
       x: {
         ...fieldTrace(settings.xField, point.xValue, point.sourceId),
         pixel: point.x,

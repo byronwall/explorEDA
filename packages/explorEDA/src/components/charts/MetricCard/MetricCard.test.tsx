@@ -197,3 +197,49 @@ it("compares a filtered card with the same metric over every row", () => {
     ).comparison
   ).toBeUndefined();
 });
+
+it("sums one agreeing amount per declared entity and traces every row", () => {
+  const entityMetric: MetricCardSettings = {
+    ...metric,
+    aggregation: "sum",
+    measureField: "amount",
+    entityField: "orderId",
+  };
+  const plan = planMetricCard(
+    entityMetric,
+    {
+      revision: "test",
+      liveIds: [0, 1, 2, 3, 4, 5, 6, 7],
+      measureData: {
+        0: 30,
+        1: 30,
+        2: 20,
+        3: 50,
+        4: 50,
+        5: 50,
+        6: 40,
+        7: 40,
+      },
+      entityData: {
+        0: "O1",
+        1: "O1",
+        2: "O2",
+        3: "O3",
+        4: "O3",
+        5: "O3",
+        6: "O4",
+        7: "O4",
+      },
+    },
+    (field) => field,
+    formatFieldValue
+  );
+  expect(plan).toMatchObject({
+    value: 140,
+    rowCount: 4,
+    metricLabel: "Sum of amount per orderId",
+    includedCount: 4,
+    excludedCount: 0,
+  });
+  expect(plan.contributors).toHaveLength(8);
+});
