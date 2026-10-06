@@ -110,12 +110,11 @@ export function CalculationTrace({
   return (
     <div className="eda-calc-trace">
       <div className="eda-calc-section-heading">
-        <h3>How this value is made</h3>
+        <h3>Inputs and dependencies</h3>
         <span>Row {row.__ID + 1}</span>
       </div>
       <p className="eda-calc-help">
-        Follow the inputs below. Select a calculation to inspect or edit that
-        step.
+        Select a calculated field to inspect or edit that step.
       </p>
       <ul className="eda-calc-tree" aria-label="Calculation dependency chain">
         {node(root, new Set())}
@@ -129,26 +128,25 @@ export function CalculationTrace({
           Return to {root}
         </button>
       )}
-      <div className="eda-calc-section-heading mt-6">
-        <h3>Used by</h3>
-        <span>{dependents.length} calculations</span>
-      </div>
-      {dependents.length ? (
-        <div className="eda-calc-link-list">
-          {dependents.map((calc) => (
-            <button
-              type="button"
-              key={calc.resultColumnName}
-              onClick={() => onSelect(calc.resultColumnName)}
-            >
-              <span className="eda-calc-symbol">ƒx</span>
-              {calc.resultColumnName}
-            </button>
-          ))}
-        </div>
-      ) : (
-        <p className="eda-calc-help">No calculations depend on this field.</p>
-      )}
+      <details className="eda-calc-related">
+        <summary>Used by · {dependents.length} calculations</summary>
+        {dependents.length ? (
+          <div className="eda-calc-link-list">
+            {dependents.map((calc) => (
+              <button
+                type="button"
+                key={calc.resultColumnName}
+                onClick={() => onSelect(calc.resultColumnName)}
+              >
+                <span className="eda-calc-symbol">ƒx</span>
+                {calc.resultColumnName}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <p className="eda-calc-help">No calculations depend on this field.</p>
+        )}
+      </details>
     </div>
   );
 }

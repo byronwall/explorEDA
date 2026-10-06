@@ -55,7 +55,7 @@ export function CalculationPreview({
   return (
     <section className="eda-calc-preview" aria-label="Calculation preview">
       <div className="eda-calc-section-heading">
-        <h3>Inputs → result</h3>
+        <h3>Formula result preview</h3>
         <span>{changed ? "Draft preview" : "Saved values"}</span>
       </div>
       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">

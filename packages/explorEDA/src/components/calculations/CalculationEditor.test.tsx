@@ -75,7 +75,9 @@ it("inspects a chain in place, keeps drafts across steps, and applies only the s
   });
   await screen.findByRole("alert");
   expect(screen.getByRole("button", { name: /Apply changes/ })).toBeDisabled();
-  expect(screen.getByText(/The chain shows saved values/)).toBeInTheDocument();
+  expect(
+    screen.getByText(/Saved values remain in the dependency trace/)
+  ).toBeInTheDocument();
   expect(within(chain()).queryByText("Draft preview")).not.toBeInTheDocument();
   expect(state.getColumnData("Net")[0]).toBe(7);
   fireEvent.click(screen.getByRole("button", { name: "Discard draft" }));

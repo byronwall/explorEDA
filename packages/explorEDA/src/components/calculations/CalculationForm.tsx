@@ -159,7 +159,7 @@ export function CalculationForm({
         <aside className="eda-calc-aside" aria-label="Calculation tools">
           <Tabs value={tab} onValueChange={setTab}>
             <TabsList className="w-full">
-              <TabsTrigger value="chain">Chain</TabsTrigger>
+              <TabsTrigger value="chain">Dependencies</TabsTrigger>
               <TabsTrigger value="fields">Fields</TabsTrigger>
               <TabsTrigger value="functions">Functions</TabsTrigger>
             </TabsList>
