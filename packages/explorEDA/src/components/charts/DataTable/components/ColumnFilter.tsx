@@ -295,7 +295,7 @@ export function ColumnFilter({
       className={
         embedded
           ? "eda-chart-filter-field"
-          : "grid w-64 max-w-full gap-3 text-sm"
+          : "grid w-64 max-w-full gap-2 text-sm"
       }
       onClick={(event) => event.stopPropagation()}
     >
@@ -304,7 +304,7 @@ export function ColumnFilter({
       ) : (
         <div>
           <h3 className="font-semibold">Filter {columnLabel}</h3>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             {local
               ? "Filters only this table."
               : "Filters all charts and rows."}{" "}
@@ -313,7 +313,7 @@ export function ColumnFilter({
         </div>
       )}
       {lowCardinality ? (
-        <div className="flex max-h-56 flex-col gap-2 overflow-auto py-1">
+        <div className="flex max-h-56 flex-col gap-1 overflow-auto py-0.5">
           {valueOptions.map((value) => {
             const label = categoryLabel(value);
             return (
@@ -358,109 +358,115 @@ export function ColumnFilter({
         </div>
       ) : profile.dataType === "numeric" ? (
         <fieldset
-          className="m-0 grid min-w-0 gap-3 border-0 p-0 disabled:opacity-50"
+          className="m-0 grid min-w-0 gap-2 border-0 p-0 disabled:opacity-50"
           disabled={missingOnly}
         >
           {histogram}
-          <label className="grid gap-1 text-xs">
-            Minimum (inclusive)
-            <Input
-              type="number"
-              aria-label={`Minimum ${columnLabel}`}
-              placeholder="Min"
-              value={boundText(rangeFilter?.min)}
-              onChange={(event) =>
-                updateRange("range", "min", event.target.value)
-              }
-              className="h-8 w-full"
-            />
-          </label>
-          <label className="grid gap-1 text-xs">
-            Maximum (inclusive)
-            <Input
-              type="number"
-              aria-label={`Maximum ${columnLabel}`}
-              placeholder="Max"
-              value={boundText(rangeFilter?.max)}
-              onChange={(event) =>
-                updateRange("range", "max", event.target.value)
-              }
-              className="h-8 w-full"
-            />
-          </label>
+          <div className="grid grid-cols-2 gap-2">
+            <label className="grid gap-0.5 text-xs">
+              At least
+              <Input
+                type="number"
+                aria-label={`Minimum ${columnLabel}`}
+                placeholder="Min"
+                value={boundText(rangeFilter?.min)}
+                onChange={(event) =>
+                  updateRange("range", "min", event.target.value)
+                }
+                className="h-7 w-full"
+              />
+            </label>
+            <label className="grid gap-0.5 text-xs">
+              At most
+              <Input
+                type="number"
+                aria-label={`Maximum ${columnLabel}`}
+                placeholder="Max"
+                value={boundText(rangeFilter?.max)}
+                onChange={(event) =>
+                  updateRange("range", "max", event.target.value)
+                }
+                className="h-7 w-full"
+              />
+            </label>
+          </div>
         </fieldset>
       ) : profile.dataType === "datetime" ? (
         <fieldset
-          className="m-0 grid min-w-0 gap-3 border-0 p-0 disabled:opacity-50"
+          className="m-0 grid min-w-0 gap-2 border-0 p-0 disabled:opacity-50"
           disabled={missingOnly}
         >
           {histogram}
           {presets}
-          <label className="grid gap-1 text-xs">
-            From (inclusive)
-            <Input
-              type="date"
-              aria-label={`Start date ${columnLabel}`}
-              value={dateFilter?.min ?? ""}
-              onInput={(event) =>
-                updateRange("date-range", "min", event.currentTarget.value)
-              }
-              className="h-8 w-full"
-            />
-          </label>
-          <label className="grid gap-1 text-xs">
-            Through (inclusive)
-            <Input
-              type="date"
-              aria-label={`End date ${columnLabel}`}
-              value={dateFilter?.max ?? ""}
-              onInput={(event) =>
-                updateRange("date-range", "max", event.currentTarget.value)
-              }
-              className="h-8 w-full"
-            />
-          </label>
+          <div className="grid grid-cols-2 gap-2">
+            <label className="grid gap-0.5 text-xs">
+              From
+              <Input
+                type="date"
+                aria-label={`Start date ${columnLabel}`}
+                value={dateFilter?.min ?? ""}
+                onInput={(event) =>
+                  updateRange("date-range", "min", event.currentTarget.value)
+                }
+                className="h-7 w-full px-1.5 text-xs"
+              />
+            </label>
+            <label className="grid gap-0.5 text-xs">
+              Through
+              <Input
+                type="date"
+                aria-label={`End date ${columnLabel}`}
+                value={dateFilter?.max ?? ""}
+                onInput={(event) =>
+                  updateRange("date-range", "max", event.currentTarget.value)
+                }
+                className="h-7 w-full px-1.5 text-xs"
+              />
+            </label>
+          </div>
         </fieldset>
       ) : (
         <fieldset
-          className="m-0 grid min-w-0 gap-3 border-0 p-0 disabled:opacity-50"
+          className="m-0 grid min-w-0 gap-2 border-0 p-0 disabled:opacity-50"
           disabled={missingOnly}
         >
-          <label className="grid gap-1 text-xs">
-            Match
-            <select
-              aria-label={`Text operator ${columnLabel}`}
-              value={textFilter.operator}
-              onChange={(event) =>
-                updateText({
-                  ...textFilter,
-                  operator: event.target.value as TextFilter["operator"],
-                })
-              }
-              className="h-8 rounded-md border bg-transparent px-2 text-sm"
-            >
-              <option value="contains">Contains</option>
-              <option value="equals">Equals</option>
-              <option value="startsWith">Starts with</option>
-              <option value="endsWith">Ends with</option>
-            </select>
-          </label>
-          <label className="grid gap-1 text-xs">
-            Text
-            <Input
-              aria-label={`Filter text ${columnLabel}`}
-              placeholder={`Filter ${columnLabel}...`}
-              value={textFilter.value}
-              onChange={(event) =>
-                updateText({ ...textFilter, value: event.target.value })
-              }
-              className="h-8 w-full"
-            />
-          </label>
+          <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-2">
+            <label className="grid gap-0.5 text-xs">
+              Match
+              <select
+                aria-label={`Text operator ${columnLabel}`}
+                value={textFilter.operator}
+                onChange={(event) =>
+                  updateText({
+                    ...textFilter,
+                    operator: event.target.value as TextFilter["operator"],
+                  })
+                }
+                className="h-7 rounded-md border bg-transparent px-1.5 text-xs"
+              >
+                <option value="contains">Contains</option>
+                <option value="equals">Equals</option>
+                <option value="startsWith">Starts with</option>
+                <option value="endsWith">Ends with</option>
+              </select>
+            </label>
+            <label className="grid gap-0.5 text-xs">
+              Text
+              <Input
+                aria-label={`Filter text ${columnLabel}`}
+                placeholder={`Filter ${columnLabel}...`}
+                value={textFilter.value}
+                onChange={(event) =>
+                  updateText({ ...textFilter, value: event.target.value })
+                }
+                className="h-7 w-full"
+              />
+            </label>
+          </div>
         </fieldset>
       )}
       {!lowCardinality && (
-        <label className="flex items-center gap-2 border-t border-border pt-3 text-sm has-[:disabled]:opacity-60">
+        <label className="flex items-center gap-2 border-t border-border pt-2 text-xs has-[:disabled]:opacity-60">
           <input
             type="checkbox"
             checked={missingOnly}

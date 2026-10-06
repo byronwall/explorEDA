@@ -199,7 +199,9 @@ it("discovers Histogram and Distribution without adding a preview to the saved l
   expect(within(dialog).getByLabelText("Data mode")).toHaveValue("category");
   expect(within(dialog).getByRole("button", { name: "Fields" })).toHaveFocus();
   fireEvent.click(within(dialog).getByRole("button", { name: "Chart type" }));
-  expect(within(dialog).getByText("Selected: Bar Chart")).toBeInTheDocument();
+  expect(
+    within(dialog).getByText("Bar Chart", { selector: "b" })
+  ).toBeInTheDocument();
   fireEvent.click(within(dialog).getByRole("button", { name: "Histogram" }));
   expect(within(dialog).getByLabelText("Data mode")).toHaveValue("histogram");
   fireEvent.click(within(dialog).getByRole("button", { name: "Chart type" }));

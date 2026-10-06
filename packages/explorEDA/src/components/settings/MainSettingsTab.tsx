@@ -23,8 +23,8 @@ export function MainSettingsTab({
   const SettingsPanel = chartDefinition.settingsPanel;
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+    <div className="space-y-2.5">
+      <div className="eda-setting-grid">
         <Label htmlFor="chartType">Chart Type</Label>
         <ComboBox
           id="chartType"

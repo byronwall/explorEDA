@@ -12,12 +12,12 @@ export function AdvancedSettingsTab({
   onSettingChange,
 }: AdvancedSettingsTabProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-2.5">
       {/* General Chart Settings */}
-      <div className="space-y-4">
+      <div className="space-y-2.5">
         <h3 className="font-medium text-sm">General Settings</h3>
 
-        <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+        <div className="eda-setting-grid">
           <Label htmlFor="margin">Chart Margin</Label>
           <div className="grid grid-cols-3 gap-2">
             <div className="col-start-2">

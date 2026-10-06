@@ -18,7 +18,7 @@ export function ColorLegendSettingsPanel({
   }));
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2.5">
       <div className="space-y-2">
         <Label>Fields to Show</Label>
         <div className="max-w-[400px]">

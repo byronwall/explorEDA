@@ -12,8 +12,8 @@ export function LabelsSettingsTab({
   onSettingChange,
 }: LabelsSettingsTabProps) {
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+    <div className="space-y-2.5">
+      <div className="eda-setting-grid">
         <Label htmlFor="chart-title">Chart title</Label>
         <Input
           id="chart-title"

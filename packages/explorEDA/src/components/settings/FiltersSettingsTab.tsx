@@ -25,7 +25,12 @@ export function chartFilterFields(
   const own: ChartFilterField[] = (() => {
     switch (settings.type) {
       case "map":
-        return settings.mode === "region" ? [{field: settings.regionField ?? ""}] : [{field: settings.latitudeField}, {field: settings.longitudeField}];
+        return settings.mode === "region"
+          ? [{ field: settings.regionField ?? "" }]
+          : [
+              { field: settings.latitudeField },
+              { field: settings.longitudeField },
+            ];
       case "scatter":
         return [{ field: settings.xField }, { field: settings.yField }];
       case "line":
@@ -36,10 +41,17 @@ export function chartFilterFields(
             : []),
         ];
       case "bar":
-        if (settings.seriesField) return [
-          { field: aggregate?.groupField ?? settings.field, valuesOnly: true },
-          { field: settings.seriesField, valuesOnly: true },
-        ].filter((item, index, items) => items.findIndex((other) => other.field === item.field) === index);
+        if (settings.seriesField)
+          return [
+            {
+              field: aggregate?.groupField ?? settings.field,
+              valuesOnly: true,
+            },
+            { field: settings.seriesField, valuesOnly: true },
+          ].filter(
+            (item, index, items) =>
+              items.findIndex((other) => other.field === item.field) === index
+          );
         return [
           {
             field:
@@ -134,8 +146,8 @@ export function FiltersSettingsTab({
   return (
     <div className="eda-chart-filters">
       <p className="text-xs text-muted-foreground">
-        Filters this chart sets on the other charts and rows. Set them here, or
-        select on the chart. Changes apply immediately.
+        Set the filters this chart applies to other charts, or select on the
+        chart.
       </p>
       {fields.map(({ field, valuesOnly }) => {
         const profile = resolveFieldProfile(
@@ -201,7 +213,7 @@ function ChartRowsFilters({
   return (
     <section className="eda-chart-rows" aria-label="Chart rows">
       <h3 className="text-xs font-semibold">Chart rows</h3>
-      <p className="text-xs text-muted-foreground">
+      <p className="-mt-1 text-xs text-muted-foreground">
         Limit the rows this chart draws. Other charts ignore these filters.
       </p>
       {fields.map((field) => {

@@ -20,7 +20,7 @@ import {
 export const LineChartSettingsPanel: FC<
   ChartSettingsPanelProps<LineChartSettings>
 > = (props) => (
-  <div className="space-y-4">
+  <div className="space-y-2.5">
     <LineDataMode {...props} />
     {props.settings.time ? (
       <TimeSeriesSettingsPanel {...props} />
@@ -58,8 +58,8 @@ const ObservationLineSettingsPanel: FC<
   const availableFields = useColumnNames();
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+    <div className="space-y-2.5">
+      <div className="eda-setting-grid">
         <Label>X Field</Label>
         <FieldSelector
           label=""
@@ -103,7 +103,7 @@ const ObservationLineSettingsPanel: FC<
         />
       </div>
 
-      <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+      <div className="eda-setting-grid">
         <Label>Line Style</Label>
         <ComboBox
           value={{
@@ -163,7 +163,7 @@ const ObservationLineSettingsPanel: FC<
         )}
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-2.5">
         {settings.seriesField.map((field) => (
           <LineSeriesSettings
             key={field}

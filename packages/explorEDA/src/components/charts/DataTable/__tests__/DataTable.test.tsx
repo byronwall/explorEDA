@@ -43,13 +43,13 @@ function TableWithHeader() {
 
 beforeAll(registerAllCharts);
 
-it("keeps default columns compact when they fit the table", () => {
+it("stretches compact default columns to fill the table", () => {
   render(
     <DataLayerProvider data={rows}>
       <TableWithHeader />
     </DataLayerProvider>
   );
-  expect(screen.getByRole("table")).toHaveStyle({ width: "88px" });
+  expect(screen.getByRole("table")).toHaveStyle({ width: "400px" });
 });
 
 it("searches and clears rows from the header without adding a table toolbar row", () => {

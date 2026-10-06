@@ -18,7 +18,10 @@ import { useChartDraft } from "./plot/ChartDraftContext";
 import { ChartPlacementLayer } from "./plot/ChartPlacementLayer";
 import {
   findEmptyPlacement,
+  flowTwoColumns,
   GridCell,
+  NARROW_GRID_WIDTH,
+  narrowColumnCount,
   resizeLimits,
 } from "./chartGridPlacement";
 
@@ -47,7 +50,8 @@ export function ChartGridLayout({
   const updateChartLayouts = useDataLayer((s) => s.updateChartLayouts);
   const { createChart } = useCreateCharts();
   const chartDraft = useChartDraft();
-  const isNarrow = containerWidth > 0 && containerWidth < 960;
+  const isNarrow = containerWidth > 0 && containerWidth < NARROW_GRID_WIDTH;
+  const narrowColumns = narrowColumnCount(containerWidth);
   const placing = chartDraft?.draft?.phase === "placing";
   const setSkipPlacement = chartDraft?.setSkipPlacement;
   useEffect(() => setSkipPlacement?.(isNarrow), [isNarrow, setSkipPlacement]);
@@ -81,10 +85,14 @@ export function ChartGridLayout({
     maxH?: number;
   } | null>(null);
 
+  const flowed =
+    isNarrow && narrowColumns === 2
+      ? flowTwoColumns(charts, gridSettings.columnCount)
+      : undefined;
   const layout: Layout[] = charts.map((chart, index) => ({
     ...chart.layout,
     ...(placing ? proposedMoves[chart.id] : undefined),
-    ...(isNarrow ? { x: 0, y: index, w: 1 } : {}),
+    ...(isNarrow ? (flowed?.get(chart.id) ?? { x: 0, y: index, w: 1 }) : {}),
     ...(activeResize?.id === chart.id
       ? { maxW: activeResize.maxW, maxH: activeResize.maxH }
       : {}),
@@ -264,7 +272,7 @@ export function ChartGridLayout({
       <GridLayout
         className="layout"
         layout={layout}
-        cols={isNarrow ? 1 : gridSettings.columnCount}
+        cols={isNarrow ? narrowColumns : gridSettings.columnCount}
         rowHeight={gridSettings.rowHeight}
         width={Math.max(containerWidth, 1)}
         margin={[0, 0]}

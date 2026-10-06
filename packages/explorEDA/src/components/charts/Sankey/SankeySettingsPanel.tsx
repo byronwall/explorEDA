@@ -103,7 +103,7 @@ export function SankeySettingsPanel({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2.5">
       <section className="space-y-2" aria-labelledby="sankey-stages-heading">
         <div className="flex items-baseline justify-between">
           <h5 id="sankey-stages-heading" className="text-sm font-medium">
@@ -201,7 +201,7 @@ export function SankeySettingsPanel({
         </p>
       </section>
 
-      <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+      <div className="eda-setting-grid">
         <Label htmlFor="sankey-metric">Width</Label>
         <select
           id="sankey-metric"

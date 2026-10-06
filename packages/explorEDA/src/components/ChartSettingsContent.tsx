@@ -100,17 +100,35 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
     );
 
   return (
-    <div className="eda-settings space-y-3">
-      <div className="space-y-1 pb-2">
-        <h4 className="text-base font-semibold">Chart settings</h4>
-        <p className="text-xs text-muted-foreground">
-          Changes update the chart immediately.
-        </p>
+    <div className="eda-settings">
+      <div className="eda-settings-head">
+        <h4>Chart settings</h4>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-6 px-2"
+          aria-label="Reset changes"
+          tooltip="Undo every change made since these settings opened"
+          disabled={!dirty}
+          onClick={() => {
+            if (resetAggregate.current)
+              updateAggregate(
+                resetAggregate.current.id,
+                resetAggregate.current
+              );
+            const next = {
+              ...settings,
+              ...resetValues.current,
+            } as ChartSettings;
+            resetValues.current = {};
+            setLocalSettings(mergeWithDefaultSettings(next));
+            updateChart(settings.id, next);
+          }}
+        >
+          Reset
+        </Button>
       </div>
-      <TabContainer
-        key={localSettings.type}
-        tabs={tabs}
-      >
+      <TabContainer key={localSettings.type} tabs={tabs}>
         {{
           filters: (
             <FiltersSettingsTab
@@ -126,12 +144,12 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
             />
           ),
           fit: hasFitTab ? (
-            <div className="space-y-3">
+            <div className="space-y-2">
               <p className="text-xs text-muted-foreground">
                 Fit each color group using the rows that pass other chart
                 filters.
               </p>
-              <div className="grid grid-cols-[120px_1fr] items-center gap-x-4 gap-y-3">
+              <div className="eda-setting-grid">
                 <RegressionSettings
                   settings={localSettings as ScatterPlotSettings}
                   onSettingsChange={handleSettingsChange}
@@ -171,30 +189,6 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
           The minimum must not exceed the maximum.
         </p>
       )}
-      <div className="eda-settings-footer flex items-center justify-between gap-3">
-        <Button
-          variant="ghost"
-          size="sm"
-          disabled={!dirty}
-          onClick={() => {
-            if (resetAggregate.current)
-              updateAggregate(
-                resetAggregate.current.id,
-                resetAggregate.current
-              );
-            const next = {
-              ...settings,
-              ...resetValues.current,
-            } as ChartSettings;
-            resetValues.current = {};
-            setLocalSettings(mergeWithDefaultSettings(next));
-            updateChart(settings.id, next);
-          }}
-        >
-          Reset changes
-        </Button>
-        <span className="text-xs text-muted-foreground">Live preview</span>
-      </div>
     </div>
   );
 }

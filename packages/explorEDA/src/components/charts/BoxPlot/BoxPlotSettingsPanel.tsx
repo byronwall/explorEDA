@@ -15,8 +15,8 @@ export function BoxPlotSettingsPanel({
   const { getOrCreateScaleForField } = useColorScales();
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+    <div className="space-y-2.5">
+      <div className="eda-setting-grid">
         <Label>Numeric field</Label>
         <FieldSelector
           label=""
@@ -26,7 +26,7 @@ export function BoxPlotSettingsPanel({
         />
       </div>
 
-      <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+      <div className="eda-setting-grid">
         <Label htmlFor="colorField">Group by</Label>
         <FieldSelector
           label=""
@@ -48,7 +48,7 @@ export function BoxPlotSettingsPanel({
         )}
       </div>
 
-      <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+      <div className="eda-setting-grid">
         <Label htmlFor="whiskerType">Whisker Type</Label>
         <ComboBox
           aria-label="Whisker type"
@@ -65,7 +65,7 @@ export function BoxPlotSettingsPanel({
         />
       </div>
 
-      <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+      <div className="eda-setting-grid">
         <Label htmlFor="showOutliers">Show Outliers</Label>
         <ActionTooltip content="Show values beyond the whiskers as separate points.">
           <span className="inline-flex w-fit">
@@ -80,7 +80,7 @@ export function BoxPlotSettingsPanel({
         </ActionTooltip>
       </div>
 
-      <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+      <div className="eda-setting-grid">
         <Label htmlFor="sortBy">Sort By</Label>
         <ComboBox
           aria-label="Sort by"
@@ -97,7 +97,7 @@ export function BoxPlotSettingsPanel({
         />
       </div>
 
-      <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+      <div className="eda-setting-grid">
         <Label htmlFor="distribution-display">Display</Label>
         <ActionTooltip content="Box shows quartiles and whiskers. Violin adds a density shape around the box.">
           <select
@@ -131,7 +131,7 @@ export function BoxPlotSettingsPanel({
 
       {settings.violinOverlay && (
         <>
-          <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+          <div className="eda-setting-grid">
             <Label htmlFor="autoBandwidth">Auto Bandwidth</Label>
             <ActionTooltip content="Use the group spread and row count to choose density smoothing.">
               <span className="inline-flex w-fit">
@@ -146,7 +146,7 @@ export function BoxPlotSettingsPanel({
             </ActionTooltip>
           </div>
           {!settings.autoBandwidth && (
-            <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+            <div className="eda-setting-grid">
               <Label htmlFor="violinBandwidth">Bandwidth</Label>
               <input
                 type="number"

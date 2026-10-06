@@ -129,7 +129,7 @@ export function MetricCard({
 
   return (
     <div
-      className="eda-metric flex h-full min-h-0 flex-col gap-1 overflow-auto px-4 py-1.5"
+      className="eda-metric flex h-full min-h-0 flex-col gap-0.5 overflow-auto px-2.5 py-1"
       style={{ justifyContent: "safe center" }}
       aria-label={plan.metricLabel}
       aria-description="Alt-click or Alt-Enter to list the rows behind this value"
@@ -146,7 +146,7 @@ export function MetricCard({
       }}
     >
       <div className="flex items-center justify-between gap-x-3">
-        <p className="min-w-0 text-sm text-muted-foreground">
+        <p className="min-w-0 text-xs text-muted-foreground">
           {plan.metricLabel}
           {(rowsText || excludedText) && (
             <span className="text-xs tabular-nums">

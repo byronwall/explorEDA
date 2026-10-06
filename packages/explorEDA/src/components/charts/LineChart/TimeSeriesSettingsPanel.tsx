@@ -46,7 +46,7 @@ export function LineDataMode({
 }: ChartSettingsPanelProps<LineChartSettings>) {
   const fields = useTimeSeriesFields();
   return (
-    <label className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-4 text-sm">
+    <label className="eda-setting-grid text-sm">
       Data mode
       <select
         className="h-9 min-w-0 rounded-md border border-input bg-background px-2"
@@ -93,8 +93,8 @@ export function TimeSeriesSettingsPanel({
   const inputClass =
     "h-9 min-w-0 rounded-md border border-input bg-background px-2 text-sm";
   return (
-    <div className="space-y-3">
-      <div className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-4">
+    <div className="space-y-2">
+      <div className="eda-setting-grid">
         <Label htmlFor={`${settings.id}-display`}>Display</Label>
         <ActionTooltip content="Line connects period values. Area fills to zero. Stacked area adds nonnegative counts or sums across series.">
           <select
