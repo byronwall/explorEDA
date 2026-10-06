@@ -13,6 +13,7 @@ export function ExampleSelector({
   onSelect,
   examplesToShow = examples,
 }: ExampleSelectorProps) {
+  const firstExampleId = examplesToShow[0]?.id;
   return (
     <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
       {examplesToShow.map((example) => {
@@ -26,7 +27,7 @@ export function ExampleSelector({
           >
             <div className="flex min-w-0 items-start gap-3">
               <Icon
-                className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground transition-colors group-hover:text-primary"
+                className="mt-0.5 h-5 w-5 shrink-0 text-primary transition-colors"
                 aria-hidden="true"
               />
               <div className="min-w-0">
@@ -72,10 +73,14 @@ export function ExampleSelector({
               )}
               <dt className={labelClass}>Shows</dt>
               <dd className="flex min-w-0 flex-wrap gap-1.5">
-                {example.shows.map((feature) => (
+                {example.shows.map((feature, index) => (
                   <span
                     key={feature}
-                    className="rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground"
+                    className={
+                      example.id === firstExampleId && index === 0
+                        ? "rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
+                        : "rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground"
+                    }
                   >
                     {feature}
                   </span>

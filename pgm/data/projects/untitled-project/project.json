@@ -3,22 +3,21 @@
   "name": "explorEDA",
   "description": "Blank project ready for grid editing, structure mapping, and future AI-assisted details.",
   "createdAt": "2026-09-29T01:22:21.210Z",
-  "updatedAt": "2026-10-06T02:32:57.635Z",
+  "updatedAt": "2026-10-06T03:15:09.768Z",
   "operationLog": [
     {
-      "id": "a743735a-e0ad-4807-bed2-62bb87310270",
-      "kind": "node.context.updated",
+      "id": "c60db153-450b-415a-b3e3-de20a956e5f4",
+      "kind": "node.metadata.updated",
       "actor": {
-        "kind": "human"
+        "kind": "agent",
+        "id": "token:35a150",
+        "label": "Agent token ...35a150"
       },
-      "createdAt": "2026-10-06T02:32:57.635Z",
-      "summary": "Updated context for \"Prevent horz overflow on data tables when they fit\".",
+      "createdAt": "2026-10-06T03:15:09.768Z",
+      "summary": "Updated metadata for \"Examples section on home page needs some color\".",
       "nodeIds": [
-        "page-prevent-horz-overflow-on-data-tables-when-they-fit"
+        "page-examples-section-on-home-page-needs-some-color"
       ],
-      "metadata": {
-        "clientMutationId": "f97f60c8-71b2-4603-a05d-429f7f0aa742"
-      },
       "payload": {
         "state": {
           "nodeMetadataSchema": [
@@ -545,8 +544,10 @@
                 "id": "page-examples-section-on-home-page-needs-some-color",
                 "label": "Examples section on home page needs some color",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Added restrained primary accents to example icons, guide links, and one feature tag. Verified at 1280, 783, and 390 pixels."
+                },
                 "context": "Really hard to draw eye to anything, all neutral.\r\n\r\nConsider an emphasis here and there... don't overdo it",
                 "rawContext": "Really hard to draw eye to anything, all neutral.",
                 "images": [
@@ -936,6 +937,35 @@
             ]
           }
         }
+      }
+    },
+    {
+      "id": "7a158d1f-4822-446b-8ee4-97703e27958c",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:35a150",
+        "label": "Agent token ...35a150"
+      },
+      "createdAt": "2026-10-06T03:15:09.755Z",
+      "summary": "Changed \"Examples section on home page needs some color\" status to implemented.",
+      "nodeIds": [
+        "page-examples-section-on-home-page-needs-some-color"
+      ]
+    },
+    {
+      "id": "a743735a-e0ad-4807-bed2-62bb87310270",
+      "kind": "node.context.updated",
+      "actor": {
+        "kind": "human"
+      },
+      "createdAt": "2026-10-06T02:32:57.635Z",
+      "summary": "Updated context for \"Prevent horz overflow on data tables when they fit\".",
+      "nodeIds": [
+        "page-prevent-horz-overflow-on-data-tables-when-they-fit"
+      ],
+      "metadata": {
+        "clientMutationId": "f97f60c8-71b2-4603-a05d-429f7f0aa742"
       }
     },
     {
@@ -4671,37 +4701,6 @@
       ],
       "metadata": {
         "clientMutationId": "4dfaf3b8-db51-4634-8602-2e64723cb448"
-      }
-    },
-    {
-      "id": "7742b4b0-bd71-4771-b463-791e2353206f",
-      "kind": "node.context.updated",
-      "actor": {
-        "kind": "human"
-      },
-      "createdAt": "2026-09-29T01:32:33.432Z",
-      "summary": "Updated context for \"Add more keyboard shortcuts\".",
-      "nodeIds": [
-        "page-add-more-keyboard-shortcuts"
-      ],
-      "metadata": {
-        "clientMutationId": "13719ea9-b9c9-438b-8883-ac547a3bca3a"
-      }
-    },
-    {
-      "id": "56bad25a-cb2e-4811-b65f-31bebddeab6e",
-      "kind": "node.created",
-      "actor": {
-        "kind": "human"
-      },
-      "createdAt": "2026-09-29T01:32:00.247Z",
-      "summary": "Created \"Add more keyboard shortcuts\" under \"Feedback mon 9/28\".",
-      "nodeIds": [
-        "page-add-more-keyboard-shortcuts",
-        "page-feedback-mon-9-28"
-      ],
-      "metadata": {
-        "clientMutationId": "a771c1b7-06fa-41c4-8d3b-d4bdb6572cd5"
       }
     }
   ]
