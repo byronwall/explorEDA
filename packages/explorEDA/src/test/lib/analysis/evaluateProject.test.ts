@@ -109,6 +109,28 @@ describe("multi-source analysis", () => {
     expect(Object.keys(closure.tables).sort()).toEqual(["items", "orders", "products"]);
     expect("history" in closure || "path" in closure || "cursor" in closure).toBe(false);
     expect(() => parseAnalysisProject(JSON.stringify({ ...file, activeViewId: "items-view", tables: { ...file.tables, customers: [null] } }))).toThrow("row 0 must be an object");
+    const nonfinite = createShopFixture();
+    nonfinite.sources.orders![0]!.amount = NaN;
+    nonfinite.sources.orders![1]!.amount = Infinity;
+    nonfinite.sources.orders![2]!.amount = -Infinity;
+    nonfinite.sources.orders![3]!.amount = NaN;
+    nonfinite.sources.orders![4]!.amount = NaN;
+    const nonfiniteStep = nonfinite.project.queries.find((query) => query.id === "order-totals")!.steps[1]!;
+    if (nonfiniteStep.kind === "aggregate") nonfiniteStep.groupBy = ["orders.amount"];
+    const nonfiniteGroups = evaluateAnalysisQuery(nonfinite.project, nonfinite.sources, "order-totals");
+    expect(nonfiniteGroups.rows).toHaveLength(3);
+    expect(new Set(nonfiniteGroups.rows.map((row) => row.values["orders.amount"]))).toEqual(new Set([NaN, Infinity, -Infinity]));
+
+    const badAliasProject = structuredClone(fileProject);
+    const aliasStep = badAliasProject.queries.find((query) => query.id === "items-by-order")!.steps[1]!;
+    if (aliasStep.kind === "lookup") aliasStep.as = "items";
+    expect(() => stringifyAnalysisProject({ ...file, project: badAliasProject })).toThrow("duplicate field id");
+    expect(() => evaluateAnalysisQuery(badAliasProject, file.tables, "items-by-order")).toThrow("duplicate field id");
+    const duplicateMeasureProject = structuredClone(fileProject);
+    const orderAggregate = duplicateMeasureProject.queries.find((query) => query.id === "order-totals")!.steps[1]!;
+    if (orderAggregate.kind === "aggregate") orderAggregate.measures.push({ ...orderAggregate.measures[0]! });
+    expect(() => stringifyAnalysisProject({ ...file, project: duplicateMeasureProject })).toThrow("duplicates output field");
+    expect(() => evaluateAnalysisQuery(duplicateMeasureProject, file.tables, "order-totals")).toThrow("duplicate field id");
     expect(parseAnalysisState<{ value: number }>(stringifyAnalysisState({ value: Infinity })).value).toBe(Infinity);
   });
 });

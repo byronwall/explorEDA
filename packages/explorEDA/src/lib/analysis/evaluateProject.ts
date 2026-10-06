@@ -23,6 +23,15 @@ import type {
 
 type Frame = { rows: AnalysisResultRow[]; fields: AnalysisField[] };
 
+function assertNoFieldCollision(stepId: string, inputFields: AnalysisField[], projectedIds: string[]) {
+  const existing = new Set(inputFields.map((field) => field.id));
+  const seen = new Set<string>();
+  for (const id of projectedIds) {
+    if (existing.has(id) || seen.has(id)) throw new Error(`Step ${stepId} projects a duplicate field id: ${id}`);
+    seen.add(id);
+  }
+}
+
 const stable = (value: AnalysisScalar) => `${typeof value}:${String(value)}`;
 const rowKey = (sourceId: string, key: AnalysisScalar, index: number) =>
   key == null ? `${sourceId}:row:${index}` : `${sourceId}:${stable(key)}`;
@@ -93,6 +102,7 @@ function lookupFrame(
   if (!relationship) throw new Error(`Unknown relationship ${step.relationshipId}`);
   const side = relationshipSide(relationship, input.fields, step.inputFieldId);
   const source = project.sources.find((item) => item.id === side.targetSourceId);
+  if (source) assertNoFieldCollision(step.id, input.fields, source.fields.map((field) => `${step.as}.${field.id}`));
   const table = tables[side.targetSourceId];
   if (!source || !table) {
     diagnostics.push({ code: "missing-source", message: `Source ${side.targetSourceId} is unavailable`, stepId: step.id, sourceId: side.targetSourceId });
@@ -141,6 +151,7 @@ function expandedFrame(
   if (!relationship) throw new Error(`Unknown relationship ${step.relationshipId}`);
   const side = relationshipSide(relationship, input.fields, step.inputFieldId);
   const source = project.sources.find((item) => item.id === side.targetSourceId);
+  if (source) assertNoFieldCollision(step.id, input.fields, source.fields.map((field) => `${step.as}.${field.id}`));
   const table = tables[side.targetSourceId];
   if (!source || !table) throw new Error(`Source ${side.targetSourceId} is unavailable`);
   const index = new Map<AnalysisScalar, AnalysisSourceRow[]>();
@@ -179,6 +190,7 @@ function expandedFrame(
 }
 
 function calculateFrame(step: CalculateStep, input: Frame, diagnostics: AnalysisDiagnostic[]): Frame {
+  assertNoFieldCollision(step.id, input.fields, [step.fieldId]);
   const expression = parseExpression(step.expression);
   const rows = input.rows.map((row) => {
     const result = new Calculator({ data: [row.values], variables: new Map(Object.entries(row.values)) }).evaluate(expression);
@@ -213,9 +225,11 @@ function filterFrame(step: FilterStep, input: Frame, bindings: Record<string, An
 }
 
 function aggregateFrame(step: AggregateStep, input: Frame, diagnostics: AnalysisDiagnostic[]): Frame {
+  assertNoFieldCollision(step.id, step.groupBy.map((id) => input.fields.find((field) => field.id === id) ?? { id, name: id, origin: { stepId: step.id } }), step.measures.map((measure) => measure.id));
+  if (new Set(step.groupBy).size !== step.groupBy.length) throw new Error(`Step ${step.id} repeats a group field`);
   const groups = new Map<string, AnalysisResultRow[]>();
   for (const row of input.rows) {
-    const key = JSON.stringify(step.groupBy.map((field) => [typeof row.values[field], row.values[field]]));
+    const key = JSON.stringify(step.groupBy.map((field) => stable(row.values[field])));
     const group = groups.get(key);
     if (group) group.push(row);
     else groups.set(key, [row]);

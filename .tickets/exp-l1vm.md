@@ -43,3 +43,11 @@ Execution checkpoint: Owner current Codex session. Base a2e67c0 + planning commi
 **2026-10-06T03:26:07Z**
 
 Checkpoint: Core committed408581d. Independent direct run: evaluator5/5 and host/history14/14 pass. Observed fixture totals: orders5/150; items8/140; current-grain item aggregation retains orderO5 with count0/no item revenue. Node24 scale probe: ten10000-row tables,159ms cold,150/133ms warm,10000 output rows and100000 origin links. Serialization36ms; compact configuration2,482,460bytes, portable formatted export5,886,964bytes. Controlled fan-out variant20000 target rows returns20000 rows in33ms; ambiguous lookup10000 conflicts,151ms. Browser proof and full checks remain. Required explicit schema seam added for valid empty parameter results. Next: frozen build and black-box acceptance at three widths.
+
+**2026-10-06T03:51:14Z**
+
+Checked source checkpointefafcc6: Node24 pnpmcheck passes575package/45demo. Review repairs subsequently pass577package/45demo. Browser initial pass confirms5orders/150,8items/140,parent measure140,drag linkpreview andC4empty. Browser exposed invaliddate ranges applyingnewempty results; fixed with typeddate-only bound detection and regression. Independentcode review found relatedduplicatecollapse/nonfinitegroupmerge/projectionoverwrite; all repaired and tested. Generic projectimport now retains explicitprojectstorage route and replacescurrentworkspace; focusedroutingregression protects importandreload. Required remaining evidence is repeatbrowserpass plushistory/export/import/scale flows. No outcome closed yet.
+
+**2026-10-06T04:02:22Z**
+
+Checked repair state: full Node24 pnpmcheck passes577 package tests in102files and46 demo tests in10files. This includes the hot-import/project-route reload regression. The scale probe also passes a standalone TypeScript check using existing Node types and runs on Node24. Browser repeat confirms invaliddates retainappliedO1/O2, C4empty, sourceframeview creation, historyreadonlypreview, restore-as-new, undo/redo, and same-browserreload. Remaining acceptance: export/import dependencyclosure, scale browser responsiveness, keyboard/touch/dark/viewport completion. All appcode is frozen during remainingbrowserpass.

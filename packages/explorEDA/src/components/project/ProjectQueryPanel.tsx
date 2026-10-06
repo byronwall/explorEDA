@@ -25,6 +25,8 @@ import { ActionTooltip } from "@/components/ui/tooltip";
 import { buildFieldProfiles } from "@/lib/fieldProfiles";
 import { FieldMetadata } from "@/components/FieldMetadata";
 import { incompatibleSettingsFields } from "./settingsCompatibility";
+import { matchingSourceRows, resolveSourceRow } from "./sourceRowIdentity";
+import { validParameterValues } from "./parameterBindings";
 
 type Tables = Record<string, readonly AnalysisSourceRow[]>;
 
@@ -156,28 +158,15 @@ function relationshipDirection(
   return undefined;
 }
 
-function sourceRowForRef(
-  project: AnalysisProject,
-  tables: Tables,
-  sourceId: string,
-  ref: AnalysisResultRow["sourceRows"][number]
-) {
-  const source = project.sources.find((item) => item.id === sourceId);
-  const rows = tables[sourceId] ?? [];
-  const byEntity =
-    source && ref.entityKey != null
-      ? rows.find((row) => row[source.entityKey] === ref.entityKey)
-      : undefined;
-  if (byEntity) return byEntity;
-  const match = ref.rowKey.match(/:row:(\d+)$/);
-  return match ? rows[Number(match[1])] : undefined;
-}
-
 function relatedRows(
   project: AnalysisProject,
   tables: Tables,
   row: AnalysisResultRow
-) {
+): {
+  refs: Array<AnalysisResultRow["sourceRows"][number]>;
+  issues: string[];
+} {
+  const issues = new Set<string>();
   const refs = new Map<
     string,
     {
@@ -204,8 +193,22 @@ function relatedRows(
     const current = queue.shift()!;
     if (current.depth >= 2) continue;
     const source = project.sources.find((item) => item.id === current.sourceId);
-    const values = sourceRowForRef(project, tables, current.sourceId, current);
-    if (!source || !values) continue;
+    if (!source) {
+      issues.add(`Source ${current.sourceId} is unavailable.`);
+      continue;
+    }
+    const resolution = resolveSourceRow(
+      source,
+      tables[current.sourceId] ?? [],
+      current
+    );
+    const values = resolution.row;
+    if (resolution.issue) {
+      issues.add(
+        `${source.name} has an ${resolution.issue} source-row reference.`
+      );
+    }
+    if (!values) continue;
     for (const relationship of project.relationships) {
       const forward = relationship.from.sourceId === source.id;
       const reverse = relationship.to.sourceId === source.id;
@@ -227,19 +230,25 @@ function relatedRows(
       if (key == null) continue;
       const target = project.sources.find((item) => item.id === targetSourceId);
       if (!target) continue;
-      for (const targetRow of tables[targetSourceId] ?? []) {
-        if (targetRow[targetField] !== key) continue;
-        const entityKey = targetRow[target.entityKey];
-        const rowKey =
-          entityKey == null
-            ? `${targetSourceId}:missing:${Object.values(targetRow).join("|")}`
-            : `${targetSourceId}:${typeof entityKey}:${String(entityKey)}`;
+      const matched = matchingSourceRows(
+        target,
+        tables[targetSourceId] ?? [],
+        targetField,
+        key
+      );
+      for (const { ref, issue } of matched) {
+        if (issue) {
+          issues.add(
+            `${target.name} has ${issue === "duplicate-key" ? "duplicate" : "missing"} entity keys among related rows.`
+          );
+        }
+        const rowKey = ref.rowKey;
         const identity = `${targetSourceId}:${rowKey}`;
         if (refs.has(identity)) continue;
         const item = {
           sourceId: targetSourceId,
           rowKey,
-          entityKey,
+          entityKey: ref.entityKey,
           depth: current.depth + 1,
         };
         refs.set(identity, item);
@@ -247,52 +256,7 @@ function relatedRows(
       }
     }
   }
-  return [...refs.values()];
-}
-
-function validParameterValues(
-  project: AnalysisProject,
-  bindings: Record<string, AnalysisScalar>,
-  parameterIds?: Set<string>
-) {
-  const parameters = (project.parameters ?? []).filter(
-    (parameter) => !parameterIds || parameterIds.has(parameter.id)
-  );
-  for (const parameter of parameters) {
-    const value = bindings[parameter.id];
-    if (parameter.required && (value == null || value === "")) return false;
-    if (
-      value != null &&
-      parameter.type === "number" &&
-      (typeof value !== "number" || !Number.isFinite(value))
-    )
-      return false;
-    if (
-      value != null &&
-      parameter.type === "date" &&
-      (typeof value !== "string" || !Number.isFinite(Date.parse(value)))
-    )
-      return false;
-  }
-  const starts = parameters.filter((parameter) =>
-    /start|from|begin/i.test(parameter.name)
-  );
-  const ends = parameters.filter((parameter) =>
-    /end|to|through/i.test(parameter.name)
-  );
-  if (starts[0] && ends[0]) {
-    const start = bindings[starts[0].id];
-    const end = bindings[ends[0].id];
-    if (
-      typeof start === "string" &&
-      typeof end === "string" &&
-      start &&
-      end &&
-      start > end
-    )
-      return false;
-  }
-  return true;
+  return { refs: [...refs.values()], issues: [...issues] };
 }
 
 export function ProjectQueryPanel({
@@ -367,6 +331,29 @@ export function ProjectQueryPanel({
           ) ?? []);
   const selectedRow = currentStage?.rows.find(
     (row) => row.key === view.inspection?.rowKey
+  );
+  const stageFields = currentStage?.fields ?? evaluation.fields;
+  const stageProfiles = buildFieldProfiles(
+    currentStage?.rows.map((row) => row.values) ?? [],
+    Object.fromEntries(
+      stageFields.flatMap((field) =>
+        field.type
+          ? [
+              [
+                field.id,
+                field.type === "number"
+                  ? "numeric"
+                  : field.type === "date"
+                    ? "datetime"
+                    : field.type === "boolean"
+                      ? "boolean"
+                      : "categorical",
+              ],
+            ]
+          : []
+      )
+    ),
+    stageFields.map((field) => field.id)
   );
   const usableRelationships = project.relationships.flatMap((relationship) => {
     const direction = relationshipDirection(
@@ -841,6 +828,7 @@ export function ProjectQueryPanel({
           tables={tables}
           parameterIds={usedParameterIds}
           bindings={draftBindings}
+          appliedBindings={view.bindings ?? {}}
           onChange={updateBinding}
           readOnly={readOnly}
         />
@@ -1073,13 +1061,19 @@ export function ProjectQueryPanel({
                 <th scope="col" className="px-2 py-2 text-left">
                   Row
                 </th>
-                {(currentStage?.fields ?? evaluation.fields).map((field) => (
+                {stageFields.map((field) => (
                   <th
                     scope="col"
                     key={field.id}
-                    className="max-w-36 px-2 py-2 text-left"
+                    className={`max-w-36 px-2 py-2 ${field.type === "number" ? "text-right" : "text-left"}`}
                   >
-                    {field.name}
+                    <FieldMetadata
+                      label={field.name}
+                      profile={stageProfiles.find(
+                        (profile) => profile.name === field.id
+                      )}
+                      compact
+                    />
                     <span className="block truncate font-normal text-muted-foreground">
                       {"sourceId" in field.origin
                         ? `from ${field.origin.sourceId}`
@@ -1122,22 +1116,20 @@ export function ProjectQueryPanel({
                         {row.key}
                       </button>
                     </th>
-                    {(currentStage?.fields ?? evaluation.fields).map(
-                      (field) => (
-                        <td
-                          key={field.id}
-                          className="max-w-36 truncate px-2 py-2"
-                        >
-                          {row.values[field.id] == null ? (
-                            <span className="font-mono text-muted-foreground">
-                              null
-                            </span>
-                          ) : (
-                            String(row.values[field.id])
-                          )}
-                        </td>
-                      )
-                    )}
+                    {stageFields.map((field) => (
+                      <td
+                        key={field.id}
+                        className={`max-w-36 truncate px-2 py-2 ${field.type === "number" ? "text-right tabular-nums" : "text-left"}`}
+                      >
+                        {row.values[field.id] == null ? (
+                          <span className="block text-center font-mono text-muted-foreground">
+                            null
+                          </span>
+                        ) : (
+                          String(row.values[field.id])
+                        )}
+                      </td>
+                    ))}
                   </tr>
                 ))}
             </tbody>
@@ -1190,6 +1182,7 @@ function Parameters({
   tables,
   parameterIds,
   bindings,
+  appliedBindings,
   onChange,
   readOnly,
 }: {
@@ -1197,6 +1190,7 @@ function Parameters({
   tables: Tables;
   parameterIds: Set<string>;
   bindings: Record<string, AnalysisScalar>;
+  appliedBindings: Record<string, AnalysisScalar>;
   onChange: (id: string, value: AnalysisScalar) => void;
   readOnly: boolean;
 }) {
@@ -1206,6 +1200,9 @@ function Parameters({
   return (
     <section className="space-y-2 border-t border-border pt-4">
       <h3 className="font-medium">Inputs</h3>
+      <p className="text-xs text-muted-foreground" aria-label="Applied query inputs">
+        Applied: {(project.parameters ?? []).filter(parameter => parameterIds.has(parameter.id)).map(parameter => `${parameter.name}: ${appliedBindings[parameter.id] ?? "not set"}`).join(" · ")}
+      </p>
       {(project.parameters ?? [])
         .filter((parameter) => parameterIds.has(parameter.id))
         .map((parameter) => {
@@ -1317,23 +1314,30 @@ function RelatedRows({
   ) => void;
   view: AnalysisView;
 }) {
-  const refs = relatedRows(project, tables, row);
-  if (!refs.length)
+  const related = relatedRows(project, tables, row);
+  if (!related.refs.length)
     return (
-      <p className="rounded-md border border-border p-3 text-xs text-muted-foreground">
-        This result has no source rows.
-      </p>
+      <div className="space-y-2 rounded-md border border-border p-3 text-xs text-muted-foreground">
+        <p>This result has no related source rows.</p>
+        {related.issues.map((issue) => (
+          <p key={issue} role="status">
+            {issue}
+          </p>
+        ))}
+      </div>
     );
   const groups = project.sources.flatMap((source) => {
-    const items = refs.filter((ref) => ref.sourceId === source.id);
+    const items = related.refs.filter((ref) => ref.sourceId === source.id);
+    const resolved = items.map((ref) =>
+      resolveSourceRow(source, tables[source.id] ?? [], ref)
+    );
     return items.length
       ? [
           {
             source,
             items,
-            rows: items
-              .map((ref) => sourceRowForRef(project, tables, source.id, ref))
-              .filter((item): item is AnalysisSourceRow => !!item),
+            rows: resolved.flatMap((item) => (item.row ? [item.row] : [])),
+            unresolved: resolved.filter((item) => !item.row).length,
           },
         ]
       : [];
@@ -1366,8 +1370,13 @@ function RelatedRows({
       <p className="text-xs text-muted-foreground">
         Rows follow configured relationships from the selected result.
       </p>
+      {related.issues.map((issue) => (
+        <p key={issue} role="status" className="text-xs text-warning">
+          {issue}
+        </p>
+      ))}
       <ul className="space-y-3">
-        {groups.map(({ source, items, rows }) => {
+        {groups.map(({ source, items, rows, unresolved }) => {
           const fields = source.fields;
           const profiles = buildFieldProfiles(rows);
           return (
@@ -1390,6 +1399,13 @@ function RelatedRows({
                   </Button>
                 )}
               </div>
+              {unresolved > 0 && (
+                <p role="status" className="mb-2 text-xs text-warning">
+                  {unresolved.toLocaleString()} of{" "}
+                  {items.length.toLocaleString()} related rows have an
+                  unresolved source reference.
+                </p>
+              )}
               <div className="overflow-x-auto">
                 <table className="min-w-full text-xs">
                   <thead>
@@ -1398,7 +1414,7 @@ function RelatedRows({
                         <th
                           key={field.id}
                           scope="col"
-                          className="px-2 py-2 text-left font-normal"
+                          className={`px-2 py-2 font-normal ${field.type === "number" ? "text-right" : "text-left"}`}
                         >
                           {source.entityKey === field.id && (
                             <span className="mr-1 text-muted-foreground">
@@ -1425,10 +1441,10 @@ function RelatedRows({
                         {fields.map((field) => (
                           <td
                             key={field.id}
-                            className="max-w-40 truncate px-2 py-2"
+                            className={`max-w-40 truncate px-2 py-2 ${field.type === "number" ? "text-right tabular-nums" : "text-left"}`}
                           >
                             {sourceRow[field.id] == null ? (
-                              <span className="font-mono text-muted-foreground">
+                              <span className="block text-center font-mono text-muted-foreground">
                                 null
                               </span>
                             ) : (

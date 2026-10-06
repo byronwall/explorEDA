@@ -208,11 +208,16 @@ export function validateAnalysisProjectFile(value: AnalysisProjectFile): void {
           if (!isFrom && !isTo) throw new Error(`Step ${step.id} has no relationship input field`);
           const targetId = isFrom ? relationship.to.sourceId : relationship.from.sourceId;
           const target = value.project.sources.find((item) => item.id === targetId)!;
-          target.fields.forEach((field) => fields.set(`${step.as}.${field.id}`, { sourceId: targetId, fieldId: field.id }));
+          for (const field of target.fields) {
+            const projectedId = `${step.as}.${field.id}`;
+            if (fields.has(projectedId)) throw new Error(`Step ${step.id} projects a duplicate field id: ${projectedId}`);
+            fields.set(projectedId, { sourceId: targetId, fieldId: field.id });
+          }
         } else if (step.kind === "calculate") {
           if (typeof step.fieldId !== "string" || typeof step.label !== "string" || typeof step.expression !== "string") throw new Error(`Calculation ${step.id} has invalid fields`);
           const expression = parseExpression(step.expression);
           for (const field of expression.dependencies) if (!input.has(field)) throw new Error(`Calculation ${step.id} references missing field ${field}`);
+          if (fields.has(step.fieldId)) throw new Error(`Calculation ${step.id} replaces existing field ${step.fieldId}`);
           fields.set(step.fieldId, {});
         } else if (step.kind === "filter") {
           if (!["eq", "neq", "gt", "gte", "lt", "lte", "is-null", "is-not-null"].includes(step.operator)) throw new Error(`Filter ${step.id} has an unsupported operator`);
@@ -220,6 +225,7 @@ export function validateAnalysisProjectFile(value: AnalysisProjectFile): void {
           if (step.parameterId && (!value.project.parameters?.some((parameter) => parameter.id === step.parameterId) || step.value !== undefined)) throw new Error(`Filter ${step.id} has an invalid parameter reference`);
         } else {
           if (!Array.isArray(step.groupBy) || !Array.isArray(step.measures)) throw new Error(`Aggregate ${step.id} has invalid fields`);
+          if (new Set(step.groupBy).size !== step.groupBy.length) throw new Error(`Aggregate ${step.id} repeats a group field`);
           for (const field of [...step.groupBy, ...step.measures.flatMap((measure) => [measure.fieldId, measure.entityFieldId].filter((item): item is string => !!item))]) {
             if (!input.has(field)) throw new Error(`Aggregate ${step.id} references missing field ${field}`);
           }
@@ -228,7 +234,10 @@ export function validateAnalysisProjectFile(value: AnalysisProjectFile): void {
           }
           const grouped = new Map<string, { sourceId?: string; fieldId?: string }>();
           step.groupBy.forEach((field) => grouped.set(field, input.get(field)!));
-          step.measures.forEach((measure) => grouped.set(measure.id, {}));
+          for (const measure of step.measures) {
+            if (grouped.has(measure.id)) throw new Error(`Aggregate ${step.id} duplicates output field ${measure.id}`);
+            grouped.set(measure.id, {});
+          }
           frames.set(id, grouped);
           return grouped;
         }

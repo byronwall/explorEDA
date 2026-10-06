@@ -122,7 +122,7 @@ export function MetricCard({
   const rowUnit = settings.entityField ? "entity" : "row";
   const rowsText = comparison
     ? ""
-    : `${plan.rowCount.toLocaleString()} ${plan.rowCount === 1 ? rowUnit : `${rowUnit}s`}`;
+    : `${plan.rowCount.toLocaleString()} ${plan.rowCount === 1 ? rowUnit : settings.entityField ? "entities" : "rows"}`;
   const filteredRows =
     comparison && plan.aggregation !== "count" && plan.totalRows !== undefined
       ? `${plan.rowCount.toLocaleString()} of ${plan.totalRows.toLocaleString()} ${settings.entityField ? "entities" : "rows"}`

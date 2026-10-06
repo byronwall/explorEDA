@@ -8,7 +8,7 @@
     "last_updated": "2026-10-05",
     "summary": "Schema-led relationship creation and frame selection, trustworthy chart identity, full query inspection, and later assisted parameter instances.",
     "status": "active",
-    "next_action": "Execute the linked milestone tickets, then reconcile acceptance evidence and PRs."
+    "next_action": "Complete the independent browser acceptance and repair loop, then open the implementation PR with screenshots."
   },
   "artifacts": {
     "intent_brief": {
@@ -1127,7 +1127,7 @@
       }
     ],
     "preimplementation_reconciliation": {
-      "status": "planning reconciliation completed; checkout update and runtime proof pending",
+      "status": "completed",
       "revision": "a2e67c0",
       "pull_request": "https://github.com/byronwall/explorEDA/pull/148",
       "findings": [
@@ -1137,12 +1137,7 @@
         "History snapshots tabs and their settings; sourceAnalysis is outside each checkpoint. Preview is read-only; restore appends a checkpoint.",
         "The package adds sidePanels and readOnly; reuse for schema/query inspection and historical preview."
       ],
-      "remaining_checks": [
-        "Reconcile the inspected PR #148 baseline into this same worktree without losing existing edits; refresh source assumptions if the implementation baseline changed.",
-        "Run baseline saved-view and host integration checks after reconciliation.",
-        "Prove the proposed numeric-ID bridge and full project/view callback round trip in milestone 1.",
-        "Complete real browser proof of switch/duplicate/preview/restore/reload; planning did not run it."
-      ],
+      "remaining_checks": [],
       "source_anchors": [
         "main-multiview-148",
         "reuse-multiview-request"
@@ -1152,10 +1147,14 @@
       "tables": 10,
       "rows_per_table": 10000,
       "latency": "seconds; rough user estimate, no precise SLA",
-      "status": "unmeasured hypothesis",
+      "status": "local evaluator measured; browser responsiveness proof pending",
       "proof": "Probe indexed local execution and serialization in milestone 2. In milestone 4 measure fixed-seed ten-table/10,000-row inputs, fan-out, result rows, origin size, browser responsiveness, and persisted size. Use a worker only if measurements require it; never silently truncate computed rows.",
       "source_anchors": [
         "annotation-2026-10-05-9"
+      ],
+      "evidence": [
+        "Node24 fixed-seed probe: ten10000-row sources;10000resultrows,100000 origin links.196ms cold,242/178ms warm;41ms serialization;2,482,460 compactbytes.20000-row expansion39ms;10000ambiguities233ms.",
+        "Reproduce: node packages/explorEDA/scripts/probe-analysis.ts tmp/analysis-scale.exploreda-project.json. Browser proof remains in exp-1iuz."
       ]
     },
     "view_history_integration": {
@@ -1296,7 +1295,7 @@
       {
         "id": "m2",
         "title": "Build relationships and choose chart grain from the schema",
-        "status": "planned",
+        "status": "active",
         "slice": 1,
         "depends_on": [
           "m1"
@@ -1324,7 +1323,7 @@
       {
         "id": "m3",
         "title": "Follow a complete query and inspect related records",
-        "status": "planned",
+        "status": "active",
         "slice": 2,
         "depends_on": [
           "m2"
@@ -1351,7 +1350,7 @@
       {
         "id": "m4",
         "title": "Inspect parameter instances with automatic, consistent updates",
-        "status": "planned",
+        "status": "active",
         "slice": 3,
         "depends_on": [
           "m3"
@@ -1395,8 +1394,8 @@
     ],
     "repository_snapshot": {
       "root": "/Users/byronwall/.codex/worktrees/81eb/explorEDA",
-      "revision": "8c35e4db02d9e0efc0842644d4a669e58d10caf8",
-      "worktree_status": "Detached HEAD at 8c35e4d. Map, intent brief, and shape brief already modified before this planning request. Preserve those edits; do not change checkout during planning.",
+      "revision": "efafcc6",
+      "worktree_status": "Implementation branch codex/multi-source-frames in the supplied worktree. Preserved supplied planning edits; no new worktree. Browser acceptance checks frozen production builds while source repairs remain tracked.",
       "subsystems": [
         "ExplorEda/DataLayerProvider flat-row rendering",
         "CrossfilterWrapper chart filter scopes",
@@ -1515,6 +1514,10 @@
     {
       "date": "2026-10-05",
       "event": "User authorized implementation in this worktree, checkpoint commits, and PRs with images. Preserved planning edits in 59d8420 and reconciled saved-view baseline a2e67c0. Execution now tracked in milestone tickets."
+    },
+    {
+      "date": "2026-10-05",
+      "event": "Core408581d and integratedfeatureefafcc6 implemented all milestone paths. Node24 project check passes577package/45demo tests. Independent review identified duplicate-related-record identity, nonfinite grouping, and projected-field collisions; focused repairs pass. Browser confirmed core totals and revealed invaliddate-range handling, now repaired. Acceptance remains open until repeat browser proof; no completion claimed."
     }
   ]
 }

@@ -60,7 +60,7 @@ Extend timeline checkpoints with view bindings and relationship/query definition
 2. **Query paths and cardinality exploration:** Overlay a selected query on the schema. Add full inspection, nested rows, and aggregate contributors within saved tabs.
 3. **Parameter-bound instances:** Start from a record, edit assisted inputs, and update all stages automatically.
 
-The [implementation plan](implementation-plan.md) has four milestones: configured views through history/reload, schema authoring, full flow, then parameters. The first two complete slice one. Each extends one shop fixture. Reconcile PR #148 into this worktree before application edits.
+The [implementation plan](implementation-plan.md) has four milestones: configured views through history/reload, schema authoring, full flow, then parameters. The first two complete slice one. Each extends one shop fixture. The implementation uses PR #148.
 
 ## Behavior
 

@@ -250,3 +250,13 @@ Use a chart's entity field to count or reduce one value per entity. Two orders w
 The shop example has five orders with total amount 150. Its eight items have revenue 140 across four orders. Summing repeated order amounts over item rows gives 310; use the order identity when measuring order amounts from this frame.
 
 Import `evaluateAnalysisQuery` from `exploreda/analysis` to run the local evaluator without React. `stringifyAnalysisProject` and `parseAnalysisProject` preserve project definitions, source tables, views, and special scalar values. `selectAnalysisProjectView` exports one view with its upstream dependencies. Files use the explicit `exploreda-project` format. Existing `ExplorEda` single-table use remains available.
+
+
+For a repeatable local scale check, build the package, then run the fixed-seed probe on Node 24:
+
+```sh
+pnpm --filter exploreda build
+node packages/explorEDA/scripts/probe-analysis.ts tmp/analysis-scale.exploreda-project.json
+```
+
+The probe measures ten tables with 10,000 rows each. It reports evaluation time, result rows, origin links, serialization size, and controlled expansion. The optional file opens through the demo import controls. Results depend on the browser, data shape, and chart workload. Large investigations can exceed browser storage; export a project to retain it.

@@ -38,6 +38,7 @@ import {
   getSavedViewsRows,
   readSavedViewsSessionResult,
   PROJECT_STORAGE_KEY,
+  STORAGE_KEY,
 } from "./savedViewsSession";
 
 const featuredExample = examples.find(
@@ -72,6 +73,7 @@ export function LandingPage() {
   const [exampleData, setExampleData] = useState<DatumObject[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [importRevision, setImportRevision] = useState(0);
 
   const exampleId = searchParams.get("example");
   const showCoverage =
@@ -81,7 +83,9 @@ export function LandingPage() {
   const [example, setExample] = useState<ExampleData | null>(null);
   const [initialRestore] = useState(() =>
     readSavedViewsSessionResult(
-      exampleId === "multi-source-shop" ? PROJECT_STORAGE_KEY : undefined
+      exampleId === "multi-source-shop" || searchParams.get("project") === "1"
+        ? PROJECT_STORAGE_KEY
+        : STORAGE_KEY
     )
   );
   const [restoreFailed, setRestoreFailed] = useState(initialRestore.failed);
@@ -216,6 +220,7 @@ export function LandingPage() {
   }, [exampleId, fetchExampleData, retryCount, restoredSession]);
 
   const handleCsvImport = (data: DatumObject[]) => {
+    setImportRevision((revision) => revision + 1);
     setRestoreFailed(false);
     setIsCsvMode(true);
     setSearchParams({});
@@ -232,6 +237,7 @@ export function LandingPage() {
   };
 
   const handleProjectImport = (file: AnalysisProjectFile) => {
+    setImportRevision((revision) => revision + 1);
     const tabs = file.views;
     setRestoredSession({
       version: 1,
@@ -274,7 +280,7 @@ export function LandingPage() {
     });
     setRestoreFailed(false);
     setIsCsvMode(true);
-    setSearchParams({});
+    setSearchParams({ project: "1" });
     setExample(null);
     setAnalysisJsonError(null);
   };
@@ -291,6 +297,7 @@ export function LandingPage() {
         throw new Error("Analysis formulas do not match the saved source rows");
       }
       setRestoreFailed(false);
+      setImportRevision((revision) => revision + 1);
       setCsvData(analysis.data as DatumObject[]);
       setCsvSavedData(analysis.settings);
       setIsCsvMode(true);
@@ -307,6 +314,10 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground ">
+      <PageFileDrop
+        onProjectImport={handleProjectImport}
+        onImport={handleCsvImport}
+      />
       <div className="flex flex-col items-center gap-6 px-3 py-3 sm:px-5">
         {restoreFailed && (
           <div
@@ -380,10 +391,7 @@ export function LandingPage() {
                 </Suspense>
               ) : (
                 <>
-                  <PageFileDrop
-                    onProjectImport={handleProjectImport}
-                    onImport={handleCsvImport}
-                  />
+
                   {featuredExample && (
                     <Hero
                       onOpenFeatured={() =>
@@ -606,6 +614,7 @@ export function LandingPage() {
               >
                 {isCsvMode ? (
                   <SavedViewsWorkspace
+                    key={`import:${importRevision}`}
                     data={csvData}
                     initialSettings={csvSavedData}
                     initialSession={restoredSession}
@@ -618,6 +627,7 @@ export function LandingPage() {
                   />
                 ) : (
                   <SavedViewsWorkspace
+                    key={`example:${example?.id}`}
                     data={exampleData}
                     initialSettings={example?.savedData}
                     initialViews={example?.views}
