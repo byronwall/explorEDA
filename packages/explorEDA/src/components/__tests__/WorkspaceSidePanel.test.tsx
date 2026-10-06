@@ -80,20 +80,24 @@ describe("host side panels", () => {
     expect(screen.getByRole("region", { name: "Rows" })).toBeInTheDocument();
   });
 
-  it("locks the charts and editing tools while read-only", () => {
+  it("keeps inspection and History usable while read-only", () => {
     render(<Host readOnly />);
+    const rowsToggle = screen.getByRole("button", { name: "Rows" });
+    expect(rowsToggle.closest("[inert]")).toBeNull();
+    expect(screen.getByRole("button", { name: "Fields" })).toBeDisabled();
     expect(
-      screen.getByRole("button", { name: "Rows" }).closest("[inert]")
+      screen.getByRole("button", { name: "Add chart" }).closest("[inert]")
     ).not.toBeNull();
     expect(screen.getByRole("main")).toHaveAttribute("inert");
     const toggle = screen.getByRole("button", { name: "History" });
     expect(toggle.closest("[inert]")).toBeNull();
 
     fireEvent.keyDown(document.body, { key: "r" });
-    expect(screen.queryByRole("region", { name: "Rows" })).toBeNull();
+    expect(screen.getByRole("region", { name: "Rows" })).toBeInTheDocument();
     fireEvent.click(toggle);
     expect(
       screen.getByRole("complementary", { name: "History" })
     ).toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Rows" })).toBeNull();
   });
 });
