@@ -130,7 +130,9 @@ function AddChartDialogContent({
   const definition = useChartDefinition(settings.type);
   const preview = usePreviewChart(settings);
   const [previewRef, previewSize] = useElementSize();
+  const [controlsTab, setControlsTab] = useState("types");
   const contentRef = useRef<HTMLDivElement>(null);
+  const fieldsStepRef = useRef<HTMLButtonElement>(null);
   const contentId = useId().replace(/:/g, "");
 
   const chartTypes = chartRegistry.getAll().flatMap((definition) => {
@@ -191,72 +193,104 @@ function AddChartDialogContent({
         <div className="eda-add-chart-body">
           <div className="eda-add-chart-controls">
             <div
-              className="eda-add-chart-types"
+              className="eda-add-chart-control-tabs"
               role="group"
-              aria-label="Chart type"
+              aria-label="Add chart steps"
             >
-              {chartGroups.map((group, index) => (
-                <div
-                  key={group.label}
-                  className="eda-add-chart-type-group"
-                  role="group"
-                  aria-labelledby={`${contentId}-group-${index}`}
+              <div className="eda-add-chart-control-switch">
+                <button
+                  type="button"
+                  aria-pressed={controlsTab === "types"}
+                  onClick={() => setControlsTab("types")}
                 >
-                  <h3 id={`${contentId}-group-${index}`}>{group.label}</h3>
-                  <div className="eda-add-chart-type-options">
-                    {group.options.map((option) => {
-                      const Icon = option.icon;
-                      return (
-                        <button
-                          key={option.key}
-                          type="button"
-                          aria-pressed={option.key === selectedType}
-                          disabled={
-                            option.key === "histogram" && !numericFields.length
-                          }
-                          onClick={() => {
-                            if (option.key === selectedType) return;
-                            const next = buildChart(
-                              option.type,
-                              "",
-                              draft.target
-                            );
-                            if (next.type === "bar") {
-                              next.forceString = option.key !== "histogram";
-                              if (option.key === "histogram")
-                                next.field = numericFields[0]!;
-                            }
-                            updateDraft(next);
-                          }}
-                        >
-                          <Icon aria-hidden="true" />
-                          <span>{option.name}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
+                  Chart type
+                </button>
+                <button
+                  ref={fieldsStepRef}
+                  type="button"
+                  aria-pressed={controlsTab === "fields"}
+                  onClick={() => setControlsTab("fields")}
+                >
+                  Fields
+                </button>
+              </div>
+              <p className="eda-add-chart-selected">
+                Selected:{" "}
+                {chartTypes.find((option) => option.key === selectedType)?.name}
+              </p>
+              {controlsTab === "types" && (
+                <div className="eda-add-chart-types" aria-label="Chart type">
+                  {chartGroups.map((group, index) => (
+                    <div
+                      key={group.label}
+                      className="eda-add-chart-type-group"
+                      role="group"
+                      aria-labelledby={`${contentId}-group-${index}`}
+                    >
+                      <h3 id={`${contentId}-group-${index}`}>{group.label}</h3>
+                      <div className="eda-add-chart-type-options">
+                        {group.options.map((option) => {
+                          const Icon = option.icon;
+                          return (
+                            <button
+                              key={option.key}
+                              type="button"
+                              aria-pressed={option.key === selectedType}
+                              disabled={
+                                option.key === "histogram" &&
+                                !numericFields.length
+                              }
+                              onClick={() => {
+                                if (option.key !== selectedType) {
+                                  const next = buildChart(
+                                    option.type,
+                                    "",
+                                    draft.target
+                                  );
+                                  if (next.type === "bar") {
+                                    next.forceString =
+                                      option.key !== "histogram";
+                                    if (option.key === "histogram")
+                                      next.field = numericFields[0]!;
+                                  }
+                                  updateDraft(next);
+                                }
+                                setControlsTab("fields");
+                                fieldsStepRef.current?.focus();
+                              }}
+                            >
+                              <Icon aria-hidden="true" />
+                              <span>{option.name}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
+              {controlsTab === "fields" && (
+                <section
+                  className="eda-add-chart-fields"
+                  aria-label={`${definition.name} fields`}
+                >
+                  <h3>{definition.name}</h3>
+                  <SettingsPanel
+                    settings={preview}
+                    onSettingsChange={(updates) =>
+                      updateDraft(
+                        mergeWithDefaultSettings({
+                          ...settings,
+                          ...updates,
+                          id: preview.id,
+                          layout: settings.layout,
+                        } as ChartSettings)
+                      )
+                    }
+                  />
+                </section>
+              )}
             </div>
-            <section
-              className="eda-add-chart-fields"
-              aria-label={`${definition.name} fields`}
-            >
-              <h3>Fields</h3>
-              <SettingsPanel
-                settings={preview}
-                onSettingsChange={(updates) =>
-                  updateDraft(
-                    mergeWithDefaultSettings({
-                      ...settings,
-                      ...updates,
-                      id: preview.id,
-                      layout: settings.layout,
-                    } as ChartSettings)
-                  )
-                }
-              />
-            </section>
           </div>
           <section
             className="eda-add-chart-preview"

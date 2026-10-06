@@ -3,20 +3,20 @@
   "name": "explorEDA",
   "description": "Blank project ready for grid editing, structure mapping, and future AI-assisted details.",
   "createdAt": "2026-09-29T01:22:21.210Z",
-  "updatedAt": "2026-10-06T03:15:21.762Z",
+  "updatedAt": "2026-10-06T03:15:38.600Z",
   "operationLog": [
     {
-      "id": "8270b9aa-948b-4db2-9338-8604f4f2c2dc",
+      "id": "cc89c76f-6566-4a6c-ae5c-1a0dca6cb767",
       "kind": "node.metadata.updated",
       "actor": {
         "kind": "agent",
-        "id": "token:02fc2c",
-        "label": "Agent token ...02fc2c"
+        "id": "token:99bc4b",
+        "label": "Agent token ...99bc4b"
       },
-      "createdAt": "2026-10-06T03:15:21.762Z",
-      "summary": "Updated metadata for \"Prevent horz overflow on data tables when they fit\".",
+      "createdAt": "2026-10-06T03:15:38.600Z",
+      "summary": "Updated metadata for \"add chart menu is too spread out\".",
       "nodeIds": [
-        "page-prevent-horz-overflow-on-data-tables-when-they-fit"
+        "page-add-chart-menu-is-too-spread-out"
       ],
       "payload": {
         "state": {
@@ -524,8 +524,10 @@
                 "id": "page-add-chart-menu-is-too-spread-out",
                 "label": "add chart menu is too spread out",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Separated Chart type and Fields panels. Selecting a type moves focus to Fields and keeps the selected chart name visible."
+                },
                 "context": "Really hard to see the settings down below since we have all the grouped buttons.  The groups are good, but we need to somehow separaete the chart picker from the settings.",
                 "rawContext": "Really hard to see the settings down below since we have all the grouped buttons.  The groups are good, but we need to somehow separaete the chart picker from the settings.",
                 "images": [
@@ -940,6 +942,34 @@
           }
         }
       }
+    },
+    {
+      "id": "b47351b4-e62b-4c0b-8041-02b62a83475d",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:99bc4b",
+        "label": "Agent token ...99bc4b"
+      },
+      "createdAt": "2026-10-06T03:15:38.586Z",
+      "summary": "Changed \"add chart menu is too spread out\" status to implemented.",
+      "nodeIds": [
+        "page-add-chart-menu-is-too-spread-out"
+      ]
+    },
+    {
+      "id": "8270b9aa-948b-4db2-9338-8604f4f2c2dc",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:02fc2c",
+        "label": "Agent token ...02fc2c"
+      },
+      "createdAt": "2026-10-06T03:15:21.762Z",
+      "summary": "Updated metadata for \"Prevent horz overflow on data tables when they fit\".",
+      "nodeIds": [
+        "page-prevent-horz-overflow-on-data-tables-when-they-fit"
+      ]
     },
     {
       "id": "6c0f5094-7d4f-4553-9874-996dfc087796",
@@ -4667,38 +4697,6 @@
       ],
       "metadata": {
         "clientMutationId": "93c873ed-e69c-4064-835a-6092477d041a"
-      }
-    },
-    {
-      "id": "74bcc6bd-c68b-47be-bc7e-aceaffe881c6",
-      "kind": "node.images.added",
-      "actor": {
-        "kind": "human"
-      },
-      "createdAt": "2026-09-29T01:34:16.787Z",
-      "summary": "Added 1 images to \"Chart ... menu should get blended into settings as an action row\".",
-      "nodeIds": [
-        "page-chart-menu-should-get-blended-into-settings-as-an-action-row"
-      ],
-      "metadata": {
-        "imageCount": "1",
-        "clientMutationId": "da8bf984-d534-4e3b-99d2-6cb72a802f06"
-      }
-    },
-    {
-      "id": "627b96e4-3848-4cd4-be09-bda04fdef5ff",
-      "kind": "node.created",
-      "actor": {
-        "kind": "human"
-      },
-      "createdAt": "2026-09-29T01:34:15.918Z",
-      "summary": "Created \"Chart ... menu should get blended into settings as an action row\" under \"Feedback mon 9/28\".",
-      "nodeIds": [
-        "page-chart-menu-should-get-blended-into-settings-as-an-action-row",
-        "page-feedback-mon-9-28"
-      ],
-      "metadata": {
-        "clientMutationId": "e845f9a9-4312-446d-b784-122a8314fee5"
       }
     }
   ]
