@@ -1,0 +1,282 @@
+# Transcript reanalysis: all 20 source memos
+
+**Read-only audit · October 5, 2026 · byronwall/explorEDA**  
+**Revision:** `362db58082df9c1b57c2305a49823a1dae385081`  
+**Fresh application browser tests:** 0 completed; navigation blocked by administrator policy.
+
+## Method and corpus boundaries
+
+All 20 copied transcript files in the archive were read in full, not merely the old report's ledger. The archive README supplies file provenance. An empty recording and a brief audio test were not copied into the twenty-file corpus and contain no product requirement in the archive's account. T03 is a short framing note; T10, T19 and T20 are adjacent design/process notes. They are preserved without inflating the analytical feature denominator. [ARCHIVE]
+
+The recordings are exploratory voice notes, not acceptance specifications. This report separates repeated outcomes from implementation suggestions, conditional content needs and unrelated examples. Filename dates are used as stable locators; no internal timecodes have been invented. Short phrases and distinctive topics identify the relevant passages. The gap ledger retains the previous 92 IDs, while the text below reinterprets intent from the original sources. [BASE]
+
+Implementation credit is bounded. Directly inspected active source establishes that a path exists, not that it rendered or behaved correctly here. Recent implementation guides and historical reviews are attributed as repository records. Negative assessments use the reviewed single-source scope and traced paths; they are not claims that every file in the repository was exhaustively searched. The browser gate prevented current behavioral verification.
+
+## T01 · Unknown-table exploration and retained discoveries
+
+**Source:** `docs/transcripts/2026-06-25-interactive-data-table-explorer.txt`  
+**Disposition:** Product outcomes; small-record layouts are candidates.
+
+The first memo starts from the shape of an unknown dataset: many rows, many columns, different types and sometimes only a few records. Its recurring job is to inspect, narrow and remember something interesting. A bookmark on a specific record is not the same as a saved predicate describing a cohort. A transposed or card-like layout is suggested by the few-record case; the memo does not establish a universal row-count threshold for changing views. [T01]
+
+The scalar explorer, fields and linked charts serve the initial exploration loop. Source identity and retained discoveries lag behind: positional IDs do not make durable bookmarks safe, and manual JSON is not a named cohort catalogue. Keep TABLE-08/09 distinct from ordinary chart creation and duplication. The minimal proof is to identify one record by a stable key, narrow to a subset, reopen it and verify membership after a controlled data replacement. [TABLE] [INV] [HOST]
+
+**Ledger crosswalk:** DATA-01 DASH-01 TABLE-08 TABLE-09.
+
+## T02 · Column control, naming, width and field meaning
+
+**Source:** `docs/transcripts/2026-06-25-table-column-controls.txt`  
+**Disposition:** Core usability with candidate algorithms.
+
+This memo distinguishes showing/hiding fields, ordering them, choosing useful widths, preserving canonical names behind aliases and understanding unfamiliar values. It explores content-based width heuristics and double-click auto-fit, but the desired outcome is readable columns with quick correction, not a prescribed percentile algorithm. Shared numerical/date/unit formatting is a different concern from a general conditional-color rule engine. [T02]
+
+Current source closes more of this than the old audit admits: header dragging and context-menu move/hide/show-hidden are mounted in DataTable. Pointer/keyboard resize and Reset width exist. Reset width still uses the name-based default and is not content-aware fit. Shared label/format settings are a delivered slice, but consistent axes/count units and edit provenance need proof. Retain the remaining auto-fit and named-column-set distinctions without rebuilding existing controls. [TABLE] [THDR] [TMENU] [FILTER]
+
+**Ledger crosswalk:** TABLE-01 TABLE-02 TABLE-04 TABLE-05 TABLE-12 DATA-02.
+
+## T03 · Framing note for row controls
+
+**Source:** `docs/transcripts/2026-06-25-interactive-data-table-controls.txt`  
+**Disposition:** Context only; no additional independent feature obligation.
+
+This short recording frames the question of controls for displayed rows. It has far less substantive content than the adjacent filtering and row-display memos. Counting it as another collection of missing features would double-count the same intent and reward file count rather than requirement coverage. [T03]
+
+Its contribution is preserved as context for FILT and TABLE outcomes. The ledger assigns its detailed requirements through the longer recordings instead of inventing a unique feature or a separate pass/fail claim. Every file is accounted for, but not every file needs its own backlog item. [ARCHIVE] [BASE]
+
+**Ledger crosswalk:** FILT-01 TABLE-06.
+
+## T04 · Readable rows and content-dependent cells
+
+**Source:** `docs/transcripts/2026-06-26-interactive-data-table-rows.txt`  
+**Disposition:** Specific needs; editing and rich renderers conditional.
+
+The memo examines row height, where truncation occurs, wrapping, multiline/code-like text and a way to inspect the full value without destroying table structure. Images and short historical arrays motivate specialized renderers such as previews and sparklines. Possible editing is discussed as a content-dependent extension, not a declaration that the analytical table should become a spreadsheet editor. [T04]
+
+The current scalar table gives compact cells and now copy-value/copy-row actions. Those additions do not themselves provide persistent detail expansion, selected truncation side, adjustable row height or rich array/image cells. A realistic fixture must include long text, newlines, quoted values and nested collections; a short numeric CSV cannot demonstrate this intent. Keep the larger rendering boundary parked unless an actual dataset makes it valuable. [INV] [TMENU]
+
+**Ledger crosswalk:** TABLE-06 TABLE-07 TABLE-12.
+
+## T05 · Rich values as semantic objects
+
+**Source:** `docs/transcripts/2026-06-26-rich-data-inside-table-cells.txt`  
+**Disposition:** Specific / outside current scalar source model.
+
+Tags, related entities, branch context and historical series should retain their identity as one field or related object. The memo is about how much meaningful structure should be visible at once and how fuller context is reached. It is not satisfied by making every tag index a separate column or showing an object as an opaque string. [T05]
+
+JSON flattening is an ingestion convenience, not rich-cell support. A tag collection, related-record card or sparkline needs a typed renderer and an explicit relationship/data contract. General multi-source analytics and cell-level related-record previews are related but not identical work. Record the missing outcome while preserving the declared scalar desktop slice; do not force a universal rich-grid framework into the next trust repair. [INV]
+
+**Ledger crosswalk:** DATA-01 DATA-04 DATA-05 TABLE-07.
+
+## T06 · Filtering with distributions, exactness and understandable scope
+
+**Source:** `docs/transcripts/2026-06-28-table-filtering-and-distributions.txt`  
+**Disposition:** Core filtering; richer query language is a candidate.
+
+The memo separates text search, field-aware controls and visual distributions. It asks users to understand the remaining population, uncommon categories, hidden-field matches and exact numerical thresholds. Manual inputs should back up a brush. It also considers fuzzy matching and unified query syntax without selecting one as mandatory. Endpoint and displayed-precision tradeoffs should become explicit policies rather than be resolved by guessing at conversational wording. [T06]
+
+Inline header distributions, exact bound disclosure, numeric cell filters and typed Other member inspection materially improve support. A finite brush interval is still distinct from an open-ended threshold that admits future larger values. Search match explanation and a visible-field scope switch remain unestablished in the reviewed paths. The trust-critical proof compares the actual eligible keys and local/global/peer counts; a screenshot of a selected range alone is insufficient. [TABLE] [THDR] [TMENU] [FILTER] [CHART]
+
+**Ledger crosswalk:** FILT-01 FILT-02 FILT-04 FILT-06 FILT-07 FILT-08 FILT-09 FILT-10 FILT-12.
+
+## T07 · Calendar semantics rather than generic numeric ranges
+
+**Source:** `docs/transcripts/2026-06-29-date-filtering-patterns.txt`  
+**Disposition:** Core date behavior; specialized grouping is conditional.
+
+This memo prefers UTC and distinguishes a date from a timestamp. It describes exact days, calendar-relative versus rolling periods, moving a window by real months/years, meaningful granularity and month choices that respect year. A calendar visualization can guide selection, but the existence of a calendar renderer is not the same as a complete date-filter language. [T07]
+
+UTC day/week/month rollups and Calendar selection are now genuine support. The reducer handles month length and configurable week start instead of approximating a month with a constant number of days. Relative periods, quarter/year controls and stepping are not thereby closed. A future relative filter must preserve or explicitly recompute its reference time on restore. Test offset timestamps and leap-day boundaries, not only date-only strings at noon. [ROLL] [CHART]
+
+**Ledger crosswalk:** FILT-11 FILT-12 SCALE-03 CALC-10.
+
+## T08 · Saved analysis and shared display choices
+
+**Source:** `docs/transcripts/2026-06-29-saved-table-views-and-formatting.txt`  
+**Disposition:** Core persistence; storage hierarchy and autosave policies open.
+
+The central intent is to preserve meaningful user choices: layout, widths, filters, calculations, colors and formatting. URL sharing, named storage, autosave and organizational scope are alternatives with different size/ownership tradeoffs. The memo also prefers editing near the result and a simple relationship between shared field defaults and local overrides. It does not mandate a complex enterprise inheritance hierarchy. [T08]
+
+The current package/host boundary supports settings and full-analysis JSON, plus emitted state. That is meaningful implementation, not a missing save feature. Durable named storage, filter-free templates, checkpoints and source identity remain separate. Formula drafts are local by contract. The decisive test uses imported data that cannot be reconstructed from an example URL, compares applied state before/after restore, and checks invalid replacement leaves the current analysis intact. [HOST] [INV] [BASE]
+
+**Ledger crosswalk:** DASH-03 DASH-04 DASH-05 DASH-06 DASH-07 TABLE-05 SCALE-04 COLOR-01.
+
+## T09 · Restrained defaults, natural sorting and schema correction
+
+**Source:** `docs/transcripts/2026-06-29-data-table-defaults-and-schemas.txt`  
+**Disposition:** Core scalar baseline; multi-sort and power queries optional.
+
+The memo contrasts a known-schema table with an unknown-data explorer. It calls for suitable defaults, natural/numeric ordering, a route back to source order, useful search, type-aware filters, visible nulls and correction before errors become misleading. Multi-sort is not necessarily the default need. Field actions should make charts easy without forcing the user through a generic configuration form. [T09]
+
+Clear sort now restores an unsorted state through the context menu, although header clicks remain a two-state cycle. Treat that as outcome support with a gesture preference difference. Field overrides/profiles and new header distributions address much of the schema-inspection loop. Remaining work includes import preflight, explaining default field roles and proving all-invalid/constant/mixed-type behavior. Do not repeat the stale claim that blanks always become numeric zeros; the shared numeric helper now excludes them. [TMENU] [THDR] [NUM] [INV]
+
+**Ledger crosswalk:** DATA-02 DATA-03 DASH-01 FILT-08 FILT-09 TABLE-03 TABLE-04 UX-01.
+
+## T10 · Evidence-based reusable component requirements
+
+**Source:** `docs/transcripts/2026-07-13-reusable-interactive-component-requirements.txt`  
+**Disposition:** Adjacent method, not an EDA feature catalogue.
+
+This recording concerns collecting requirements, comparing references and retaining the difference between baseline behavior, preference and conditional features. Its relevance is methodological: a requirement should keep a source and a reason, and a catalogue should not erase the circumstances under which a feature matters. A skills marketplace or publishing workflow is not thereby required in explorEDA. [T10]
+
+This report uses separate intent strength, implementation evidence, verification state and proposed priority. It retains the 92 old IDs for traceability instead of replacing them with a new untraceable score. Matrix rows cannot substitute for transcript coverage, and a candidate implementation should not silently become an approved backlog commitment. [BASE] [COV] [COVTEST]
+
+**Ledger crosswalk:** TRACE-07.
+
+## T11 · Source grain, reusable computation and mark explanation
+
+**Source:** `docs/transcripts/2026-07-26-data-visualization-system-design.txt`  
+**Disposition:** Repeated core outcomes; advanced transform examples exploratory.
+
+The memo distinguishes drawing bars from automatically counting records. It asks for the same computation to feed a chart and a table and for a result to explain its source grain, transforms, scale and defaults. Pivot percentages and differences expose the importance of denominators and analytical scope. Examples such as advanced dimensional reduction test an architecture idea; they are not equal-priority commitments to ship a long catalogue. [T11]
+
+Grouped measures, stacks, source traces, cards and shared reducers materially improve the arithmetic contract. The remaining divide is reuse: a chart can explain an internal array without making it a named input to another view. Shared reducer code also does not prove a computation executes once. Use one concrete pivot-as-source or reusable modeled-output task to determine the next boundary, and compare exact source/eligible IDs before designing a general graph. [CHART] [ROLL] [INV]
+
+**Ledger crosswalk:** DATA-04 DATA-05 DATA-08 CALC-06 CALC-07 CALC-08 CHART-01 CHART-05 TRACE-01 TRACE-02 TRACE-03.
+
+## T12 · Fast dashboards and explicit filter populations
+
+**Source:** `docs/transcripts/2026-07-28-dashboarding-filtering-and-chart-defaults.txt`  
+**Disposition:** Core workflow; independent groups and server working sets broader scope.
+
+The memo asks for easy chart creation, stable comparison scales and a clear distinction among all available, working and visible data. It examines same-field filters, own-chart context, independent linked groups and navigation back to the chart that owns a filter. Saving a view should be distinguishable from preserving a temporary selection. These are separate tasks, not one generic cross-filtering checkbox. [T12]
+
+Full/global/peer populations, owner labels and reset exist; owner navigation and highlight are now directly wired in source. Charts/Rows/Calculations remain modes rather than multiple named dashboard sessions. Independent filter islands, a persistent working-set layer and filter-free templates remain unestablished. New pair-selection modes make the distinction between intersected field filters and unions of pairs especially important. Verify source membership under combined filters rather than infer it from totals alone. [FILTER] [PLOT] [INV] [CHART]
+
+**Ledger crosswalk:** DASH-01 DASH-02 DASH-06 DATA-06 DATA-07 FILT-01 FILT-02 FILT-03 FILT-05 SCALE-01.
+
+## T13 · Loading, source tables and missing expected observations
+
+**Source:** `docs/transcripts/2026-07-28-data-transforms-loading-and-source-tables.txt`  
+**Disposition:** Core data understanding; server and relational expansion parked.
+
+This memo expands inspection beyond values already loaded. It asks which sources and columns are available, what one row means, what work can be performed server-side and whether expected observations arrived. Key mismatches and duplicated file-level values illustrate why grain matters. Missing cells in existing records and entirely absent expected records require different models. [T13]
+
+The single-source workspace supports profiles, field actions and full/filtered populations but not the broader available-data protocol. Region Map joins to geometry do not establish analytical multi-table relationships. Missingness charts or generic heatmaps would also need an expectation model before they could answer whether a test plan is complete. Keep these valuable goals visible while avoiding a server/joins rewrite merely because examples now render more chart families. [INV] [HOST] [CHART]
+
+**Ledger crosswalk:** DATA-02 DATA-04 DATA-05 DATA-06 DATA-07 DATA-08 DATA-09 PERF-01 PERF-03 PERF-04.
+
+## T14 · Comparable facets with coherent selection and readable layout
+
+**Source:** `docs/transcripts/2026-07-29-faceting-and-shared-scales.txt`  
+**Disposition:** Strong explicit preferences; not every chart must facet.
+
+This memo treats faceting as coordinated comparison, not just repeating a renderer. Position, color and potentially size scales must preserve meaning; header filters, visible group ordering, zoom, focus/pinning and legend interaction have different jobs. It explicitly resists charts that require internal scrolling. It also distinguishes a global XY selection from selection bounded by facet keys, and recognizes that some chart types are poor facet candidates. [T14]
+
+Typed groups, shared domains, header filters, ordered visibility, paging and Focus are established slices. Their current behavior needs rechecking under new modes and field changes. Facet-local selection, durable pinning, general 2D zoom and continuous legend brushing remain narrower gaps. The matrix should not treat one matching regional-tick screenshot as complete facet correctness, nor require all eighteen registered types to support a nonsensical facet mode. [BASE] [INV] [REVIEW] [CHART]
+
+**Ledger crosswalk:** FACET-01 FACET-02 FACET-03 FACET-04 FACET-05 FACET-06 FACET-07 SCALE-01 SCALE-02 COLOR-01 COLOR-02 COLOR-03.
+
+## T15 · Complete traceability and reproducible dataflow
+
+**Source:** `docs/transcripts/2026-08-02-visualization-traceability-and-dataflow.txt`  
+**Disposition:** Core explanatory outcome; general architecture remains open.
+
+The strongest long-term request is to explain how a visible mark was produced: source records, intermediate tables, transformations, exclusions, filter boundaries, scales, layout and parameter/default origins. User-created and built-in transforms should be comparably inspectable. The memo also considers independent/server rendering, which is materially different from exporting enough state to recreate the same UI. [T15]
+
+The current guide describes extensive mark-specific contributor and geometry traces, so the earlier scalar-only characterization is stale. The remaining question is whether every relevant step is inspectable, reusable and bound to durable source identity. Full-analysis JSON is useful but does not establish a renderer-neutral provenance package. Audit source IDs and parameter origins, not merely whether an Inspect/Trace control exists; preserve the distinction between inspection, reuse and independent reproduction. [CHART] [INV] [HOST]
+
+**Ledger crosswalk:** TRACE-01 TRACE-02 TRACE-03 TRACE-04 TRACE-05 TRACE-06 DATA-04 CALC-03 CALC-08 CALC-09 CALC-10.
+
+## T16 · Friendly specifications, grouping and line topology
+
+**Source:** `docs/transcripts/2026-08-03-spec-driven-interactive-visualization.txt`  
+**Disposition:** Candidate architecture grounded in concrete chart jobs.
+
+This memo explores sources, transforms, filters and axes as a specification while preserving convenient chart defaults. Repeating explicit lists is not the same as grouping by a field. A line per data column, a category series and a line per row have different topology; color alone does not decide which observations connect. Models and grouped outputs need real analytical scope rather than implicit renderer assumptions. [T16]
+
+Grouped bars, category calendar series and Parallel Coordinates now cover several concrete jobs that the old report classified together as absent. They do not establish a universal line/glyph grammar or a general grouped-table source system. Chart settings/spec inspection is a bounded configuration surface. The new DSL plan should be tracked independently from delivered runtime behavior and should prove roundtrip meaning, not just generate syntactically valid configuration. [CHART] [INV] [PLAN]
+
+**Ledger crosswalk:** CHART-01 CHART-03 CALC-07 CALC-08 TRACE-04 TRACE-06.
+
+## T17 · Derived model layers and near-result tuning
+
+**Source:** `docs/transcripts/2026-08-04-chart-specs-grouping-and-derived-layers.txt`  
+**Disposition:** Specific analysis needs; composition mechanism unsettled.
+
+The memo distinguishes color encoding from actual grouping and asks how regression, confidence intervals, densities and related derived outputs inherit facet/group scope. It favors local feedback for controls such as bandwidth. The architectural question is how a simple checkbox or friendly control can expand into an inspectable specification without requiring users to maintain duplicate transform steps manually. [T17]
+
+Violin density exists and newer scatter count bins improve overlap inspection, but neither is general regression or two-dimensional KDE. PR136 now shapes regression, LOESS, grouping/facets, hexagons, marginals and contours, with explicit own-versus-peer-filter scope. That is growing design support, not growing runtime coverage. Keep the planned scope visible with future acceptance cases; do not mark a density mode as proof of every density technique. [CHART] [PLAN]
+
+**Ledger crosswalk:** CALC-08 CALC-09 DASH-07 TRACE-04 TRACE-06 CHART-04.
+
+## T18 · Geometry transforms and advanced chart stress cases
+
+**Source:** `docs/transcripts/2026-08-04-advanced-chart-specs-and-transforms.txt`  
+**Disposition:** Exploratory examples, some subsequently delivered.
+
+This recording uses stacks, normalized stacks, grouped bars, areas, hierarchies and parallel coordinates to test transform boundaries. Accumulation belongs in data units before pixel scaling; ordering and denominators must be explicit. Missing periods and categories should not silently fabricate measurements. Hierarchical aggregates also depend on whether a measure is additive. Deterministic jitter/layout is distinct from a reproducible source calculation. [T18]
+
+Grouped/stacked/percentage bars, area/stacked area and Parallel Coordinates are now delivered slices. Their trace contracts expose more geometry. Streamgraphs, treemap/packing and a general substitutable geometry pipeline remain unestablished, but should not dominate the next backlog merely because they are examples in a long memo. A bounded source-row oracle for stack bands, percentages and ECDF ties gives more assurance than a larger list of nominally supported chart names. [CHART] [REG]
+
+**Ledger crosswalk:** CHART-01 CHART-03 CHART-08 CHART-09 CHART-10 CALC-10 TRACE-02 TRACE-03.
+
+## T19 · Deterministic UI templating and component boundaries
+
+**Source:** `docs/transcripts/2026-08-25-deterministic-ui-templating.txt`  
+**Disposition:** Adjacent method; selected analytical relevance only.
+
+This memo explores terse deterministic templates, semantic styles, structured repeated content, actions and editable bindings. Recipe, email and code-review examples illustrate a design tension between a compact content layer and full custom components. Those applications are not explorEDA features. Static rich explanation is relevant but does not implement the broader templating idea. [T19]
+
+The new compact-authoring plan provides a concrete repository destination for part of this theme, but its merged PR contains only intent/support files. Preserve the distinction between a planned dashboard DSL, a present chart settings inspector and a general UI templating language. For EDA, useful future proof would compare authored intent, expanded settings, rendered controls and export/reimport semantics rather than require the unrelated example applications. [PLAN] [INV] [CHART]
+
+**Ledger crosswalk:** TABLE-08 CHART-07 TRACE-04.
+
+## T20 · Simple user flows, state ownership and evidence-led delivery
+
+**Source:** `docs/transcripts/2026-08-27-ui-complexity-and-component-boundaries.txt`  
+**Disposition:** Adjacent process requirement.
+
+This memo emphasizes starting with a real user flow, choosing useful component boundaries and avoiding stale or overgrown plans. Reference components and implementation granularity should be judged by the outcome they support. A catalogue of ideas or extensive markdown is not equivalent to a demonstrated interaction. Examples from scheduling and resumes remain outside this product. [T20]
+
+The repo currently illustrates the risk: the old audit mixes September headers, repaired findings and newer stale next steps, while the latest closure correctly separates waived checks from passes. This analysis retains that distinction, proposes bounded proof scenarios and reports actual tool failures. The priority is a maintained intent-to-implementation-to-evidence chain, not simply adding another larger static report. [BASE] [INV] [COV] [CHART] [CLOSE]
+
+**Ledger crosswalk:** TRACE-07 PERF-05 UX-03.
+
+## Cross-transcript synthesis
+
+Three strands should remain separate. The first is the daily scalar exploration loop: identify fields, filter, inspect, calculate, compare and preserve applied settings. The second is trust and reuse: explain a mark, reconcile its denominator, bind it to source identity and make a useful intermediate result available elsewhere. The third is a possible broader authoring architecture: general sources, transformations, grouping, layers, geometry and renderer-independent scenes. The first has substantial implementation, the second has grown unevenly, and the third mixes partial current structures with newly shaped or parked scope. [T09] [T11] [T12] [T15] [T16] [T17] [PLAN]
+
+Do not use the number of files, chart examples, tests or declared matrix cells as the denominator for product completion. The strongest gaps are not necessarily the longest passages: source identity, trustworthy restore and exact filter/contributor semantics recur across several independent recordings. Conversely, an isolated treemap, recipe renderer or particular width algorithm should not become a commitment merely because it was spoken once.
+
+---
+
+Source labels link to the identified repository files or PR/run records. Full source locators and reading scope are in Report 06.
+
+[ARCHIVE]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/README.md "20 copied voice memos, provenance and excluded non-requirement recordings"
+[BASE]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcript-gap-analysis.md "Original transcript reconciliation; mixed-age September baseline with later edits"
+[CHART]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/analytical-chart-coverage.md "Current chart contracts, boundaries, and verification waiver"
+[CLOSE]: https://github.com/byronwall/explorEDA/pull/135 "Merged documentation-only closure; waived cross-view comparisons and browser restores; metadata read"
+[COV]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts "Complete feature and example coverage manifest; four source ranges reviewed"
+[COVTEST]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.test.ts "Registry and example equality checks, evidence validation tests"
+[FILTER]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/components/ActiveFilterStatus.tsx "Owner navigation, highlight, formatting, local scope and reset"
+[HOST]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/LandingPage.tsx "Development-only matrix gate; host import, restore, state capture"
+[INV]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/application-feature-inventory.md "Feature inventory selectively updated October 4; explicitly not a full re-audit"
+[NUM]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/lib/numeric.ts "Missing-value and finite-numeric eligibility rules"
+[PLAN]: https://github.com/byronwall/explorEDA/pull/136 "Merged advanced scatter and compact DSL plans; explicitly no application changes; metadata read"
+[PLOT]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/components/PlotManager.tsx "Targeted search confirms onShowChart wiring in Charts and Rows; not full-file review"
+[REG]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/charts/registerAllCharts.ts "18 explicit active chart registrations"
+[REVIEW]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md "Repository-authored historical browser review of 37 assignments in 7 examples"
+[ROLL]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/lib/dailyRollup.ts "UTC period boundaries, grouped reduction, source contributor retention"
+[T01]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-25-interactive-data-table-explorer.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T02]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-25-table-column-controls.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T03]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-25-interactive-data-table-controls.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T04]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-26-interactive-data-table-rows.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T05]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-26-rich-data-inside-table-cells.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T06]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-28-table-filtering-and-distributions.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T07]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-29-date-filtering-patterns.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T08]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-29-saved-table-views-and-formatting.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T09]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-29-data-table-defaults-and-schemas.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T10]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-07-13-reusable-interactive-component-requirements.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T11]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-07-26-data-visualization-system-design.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T12]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-07-28-dashboarding-filtering-and-chart-defaults.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T13]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-07-28-data-transforms-loading-and-source-tables.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T14]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-07-29-faceting-and-shared-scales.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T15]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-08-02-visualization-traceability-and-dataflow.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T16]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-08-03-spec-driven-interactive-visualization.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T17]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-08-04-chart-specs-grouping-and-derived-layers.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T18]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-08-04-advanced-chart-specs-and-transforms.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T19]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-08-25-deterministic-ui-templating.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[T20]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-08-27-ui-complexity-and-component-boundaries.txt "Complete original transcript read; date is filename date, not an invented internal timestamp"
+[TABLE]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/components/charts/DataTable/DataTable.tsx "Active table wiring: distributions, context menu, derived values and virtual body"
+[THDR]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/components/charts/DataTable/DataTableHeader.tsx "Header dragging, typed filters, two-state header sort and keyboard width control; main implementation read"
+[TMENU]: https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/components/charts/DataTable/DataTableContextMenu.tsx "Clear sort, hide/recover/move columns, reset width, copy and cell filters"

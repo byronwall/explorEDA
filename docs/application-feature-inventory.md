@@ -1,6 +1,8 @@
 # explorEDA application feature inventory
 
-Updated with analytical chart reconciliation on 2026-10-04. Chart additions were reviewed against `3873c27`. See the [current gaps and verification](transcript-gap-analysis.md).
+Updated with analytical chart reconciliation on 2026-10-04. Chart additions were reviewed against `3873c27`.
+The [2026-10-05 Pro reconciliation](reviews/pro-gap-analysis-2026-10-05/README.md) updates the [current gaps and verification](transcript-gap-analysis.md).
+It adds source and document checks, not fresh browser proof.
 
 Original audit: 2026-09-17, commit `a168f1b`. Retirement sections reviewed against `22a9bd3`; the full inventory was not re-audited.
 
@@ -34,9 +36,16 @@ This is a source-based audit with automated checks. It is not a complete browser
 
 Evidence comes from active components, their data paths, chart definitions, parsers, state management, and tests. A type declaration, unused helper, demo label, or old plan does not establish working behavior.
 
-Historical records describe baseline package checks and browser evidence. Current automated validation passed: package tests (198), demo tests (11), both builds and type checks, and `verify:lean` (742,700 bytes; 162,129 bytes gzip). Focused browser evidence appears in the [gap audit](transcript-gap-analysis.md#audit-limits). The [repair record](transcript-trust-fixes.md) and [calculation workflow](calculation-workflow.md) separate historical evidence from current status.
+Historical baseline validation passed 198 package tests, 11 demo tests, both builds, type checks, and `verify:lean` (742,700 bytes; 162,129 bytes gzip).
+These totals describe the older audit. The [October 4 chart guide](analytical-chart-coverage.md#implementation-evidence) records 530 library tests and 21 demo tests.
+Neither record is a fresh check for the October 5 reconciliation.
+Focused browser evidence appears in the [prior gap audit](reviews/pro-gap-analysis-2026-10-05/prior-transcript-gap-analysis.md#audit-limits).
+The [repair record](transcript-trust-fixes.md) and [calculation workflow](calculation-workflow.md) separate historical evidence from current status.
 
-The audit covers all eleven registered view types. It also covers common settings, data ingestion, the separate Rows and Calculations modes, serialization, and source-derived performance limits. It does not claim that every combination of settings was exercised in a browser.
+The original audit covered eleven view types. The registry now contains eighteen.
+The [chart guide](analytical-chart-coverage.md) covers the added chart families and modes.
+The inventory also covers common settings, data ingestion, Rows and Calculations modes, serialization, and source-derived performance limits.
+It does not claim that every combination was exercised in a browser.
 
 ## Product direction and package boundary
 
