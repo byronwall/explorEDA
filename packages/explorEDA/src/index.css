@@ -155,8 +155,8 @@
   flex-shrink: 0;
 }
 .eda-panel-actions button {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   color: var(--muted-foreground);
 }
 .eda-panel-actions button:hover {
@@ -703,51 +703,131 @@
     transform: translate(-50%, -50%) scale(0.85);
   }
 }
-.eda-settings input,
-.eda-settings button[role="combobox"] {
-  min-width: 0;
-}
-.eda-settings [role="tablist"] {
-  height: 36px;
-  margin-bottom: 12px;
-}
+/* Chart settings: one header line, one row of tabs, and compact rows of a
+   label beside its control, so the editor shows as many settings as fit. */
 .eda-settings {
   position: relative;
   display: flex;
   flex-direction: column;
-  height: min(
+  max-height: min(
     var(--eda-settings-height, 460px),
-    calc(var(--radix-popover-content-available-height, 600px) - 26px)
+    calc(var(--radix-popover-content-available-height, 600px) - 18px)
   );
   min-height: 0;
+  font-size: 12px;
+}
+.eda-settings-head {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 24px;
+}
+.eda-settings-head h4 {
+  font-size: 13px;
+  font-weight: 600;
 }
 .eda-settings > [data-slot="tabs"] {
+  display: flex;
   flex: 1;
+  flex-direction: column;
+  gap: 0;
   min-height: 0;
   overflow: hidden;
 }
-.eda-settings [role="tablist"],
-.eda-settings-footer,
-.eda-settings > div:first-child {
+.eda-settings [data-slot="tabs-list"] {
+  display: flex;
   flex-shrink: 0;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  width: 100%;
+  height: 28px;
+  margin: 2px 0 8px;
+  padding: 0;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+}
+.eda-settings [data-slot="tabs-trigger"] {
+  flex: none;
+  height: 28px;
+  margin-bottom: -1px;
+  padding: 0 6px;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+.eda-settings [data-slot="tabs-trigger"]:hover {
+  color: var(--foreground);
+}
+.eda-settings [data-slot="tabs-trigger"][data-state="active"] {
+  border-bottom-color: var(--primary);
+  background: transparent;
+  box-shadow: none;
+  color: var(--foreground);
 }
 .eda-settings > [data-slot="tabs"] > [role="tabpanel"] {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 2px 2px 10px;
+  padding: 2px 2px 8px;
   scrollbar-gutter: stable;
 }
-.eda-settings label {
+.eda-settings
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.eda-settings button[role="combobox"],
+.eda-settings [data-slot="select-trigger"],
+.eda-add-chart-fields
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.eda-add-chart-fields button[role="combobox"],
+.eda-add-chart-fields [data-slot="select-trigger"] {
+  min-width: 0;
+  height: 28px;
+  font-size: 12px;
+}
+.eda-settings [data-slot="toggle-group-item"],
+.eda-add-chart-fields [data-slot="toggle-group-item"] {
+  height: 26px;
+  min-width: 0;
+}
+.eda-settings label,
+.eda-add-chart-fields label {
   color: var(--muted-foreground);
   font-size: 12px;
 }
-.eda-settings-footer {
-  position: sticky;
-  bottom: 0;
-  padding: 12px 0 0;
-  background: var(--popover);
+/* A titled group of settings, such as one axis, divided by a rule. */
+.eda-setting-section + .eda-setting-section {
+  padding-top: 8px;
   border-top: 1px solid var(--border);
+}
+.eda-setting-section > h5 {
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.eda-setting-note {
+  margin-bottom: 4px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  line-height: 1.4;
+}
+.eda-setting-label {
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+/* A setting's label beside its control. Every chart's settings share it. */
+.eda-setting-grid {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px 10px;
 }
 @media (prefers-reduced-motion: reduce) {
   .eda-panel *,
@@ -796,17 +876,9 @@ html {
 }
 
 .eda-settings-popover {
+  padding: 8px 10px;
   border-color: var(--ring);
   box-shadow: 0 8px 28px rgb(20 40 70 / 13%);
-}
-@media (max-width: 640px) {
-  .eda-settings-popover {
-    padding: 12px;
-  }
-  .eda-settings [role="tab"] {
-    font-size: 11px;
-    padding: 4px 6px;
-  }
 }
 
 .eda-data-table td {
@@ -1049,23 +1121,30 @@ html {
   z-index: 31;
 }
 /* Chart settings, Filters tab: one bordered group per filtered field. */
+/* A chart's filters read as titled groups divided by rules, like its axes. */
 .eda-chart-filters {
   display: grid;
-  gap: 12px;
+  gap: 8px;
 }
 .eda-chart-filter-field {
   display: grid;
-  gap: 10px;
+  gap: 6px;
   min-width: 0;
   margin: 0;
-  padding: 8px 12px 10px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  font-size: 13px;
+  padding: 0;
+  border: 0;
+  font-size: 12px;
+}
+.eda-chart-filter-field + .eda-chart-filter-field {
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
 }
 .eda-chart-filter-field > legend {
-  padding: 0 4px;
-  font-size: 13px;
+  float: left;
+  width: 100%;
+  margin-bottom: 2px;
+  padding: 0;
+  font-size: 12px;
   font-weight: 600;
 }
 /* Text a table search matched. */
@@ -1444,6 +1523,19 @@ html {
   .eda-row-count-lead,
   .eda-filter-more-label {
     display: none;
+  }
+  /* Phones keep every tool on one line: icons only, no dividers. */
+  .eda-toolbar-add {
+    width: 28px;
+    padding: 0;
+    justify-content: center;
+  }
+  .eda-toolbar-add-label,
+  .eda-toolbar-divider {
+    display: none;
+  }
+  .eda-toolbar-group button {
+    width: 28px;
   }
 }
 
@@ -3264,26 +3356,29 @@ html {
 }
 .eda-calculations-header {
   display: flex;
-  gap: 24px;
+  gap: 8px;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 8px;
 }
 .eda-calculations-header h2 {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-.eda-calculations-header p {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
   font-size: 13px;
+  font-weight: 600;
+}
+.eda-calculations-header h2 span {
   color: var(--muted-foreground);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
 }
 .eda-calculations-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 .eda-calculations-toolbar > div {
   width: min(360px, 60%);
@@ -3298,14 +3393,14 @@ html {
   font-size: 12px;
 }
 .eda-calculation-list th {
-  padding: 10px 12px;
+  padding: 6px 8px;
   text-align: left;
   font-weight: 500;
   color: var(--muted-foreground);
   border-bottom: 1px solid var(--border);
 }
 .eda-calculation-list td {
-  padding: 14px 12px;
+  padding: 6px 8px;
   border-bottom: 1px solid var(--border);
   vertical-align: top;
 }
@@ -3319,7 +3414,7 @@ html {
 /* The host app may load its own Tailwind after this sheet, so keep the
    search icon's room here instead of relying on a padding utility. */
 .eda-calculations-toolbar input {
-  padding-left: 36px;
+  padding-left: 30px;
 }
 /* A narrow settings panel turns each calculation into a compact card:
    name and delete on top, the formula in a code block, then usage and
@@ -3438,21 +3533,27 @@ html {
   text-decoration: underline;
 }
 .eda-calc-empty {
-  padding: 48px 24px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
   max-width: 520px;
+  padding: 10px;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
 }
 .eda-calc-empty > .eda-calc-symbol {
-  font-size: 28px;
+  font-size: 20px;
+  line-height: 1.2;
 }
 .eda-calc-empty h3 {
-  font-size: 18px;
-  font-weight: 500;
-  margin: 12px 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 2px;
 }
 .eda-calc-empty p {
   color: var(--muted-foreground);
-  margin-bottom: 20px;
-  line-height: 1.6;
+  font-size: 12px;
+  line-height: 1.45;
 }
 @media (max-width: 800px) {
   .eda-calc-editor {
@@ -3547,20 +3648,6 @@ html {
   background: var(--background);
   outline: none;
   box-shadow: 0 0 0 2px var(--ring);
-}
-.eda-settings [role="tablist"] {
-  display: flex;
-  flex-wrap: wrap;
-  height: auto;
-  gap: 2px;
-}
-.eda-settings [role="tab"] {
-  font-size: 11px;
-  padding: 4px 6px;
-}
-.eda-settings > [data-slot="tabs"] {
-  display: flex;
-  flex-direction: column;
 }
 
 /* Field list: a nonmodal panel that floats over the right edge of the
@@ -3695,8 +3782,9 @@ html {
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  gap: 4px;
-  padding: 8px;
+  gap: 2px;
+  min-height: 40px;
+  padding: 4px 6px;
   border-bottom: 1px solid var(--border);
 }
 .eda-settings-drawer-head [role="tablist"] {
@@ -3729,31 +3817,19 @@ html {
   clip-path: inset(50%);
   white-space: nowrap;
 }
-.eda-settings-drawer .eda-calculations-header {
-  gap: 12px;
-  align-items: flex-start;
-  margin-bottom: 16px;
-}
-.eda-settings-drawer .eda-calculations-header h2 {
-  font-size: 15px;
-  margin-bottom: 4px;
-}
-.eda-settings-drawer .eda-calculations-header p {
-  font-size: 12px;
-}
 .eda-settings-drawer .eda-calculations-header > button {
   flex-shrink: 0;
 }
 .eda-settings-drawer-head > button {
   flex-shrink: 0;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   color: var(--muted-foreground);
 }
 .eda-settings-drawer-tabs > [role="tabpanel"] {
   flex: 1;
   min-height: 0;
-  padding: 12px;
+  padding: 8px;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -4608,11 +4684,11 @@ html {
 .eda-add-chart {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  width: min(64rem, calc(100vw - 2rem));
+  gap: 10px;
+  width: min(64rem, calc(100vw - 1rem));
   max-width: none;
-  height: min(42rem, calc(100vh - 2rem));
-  padding: 16px;
+  height: min(42rem, calc(100vh - 1rem));
+  padding: 12px;
 }
 .eda-add-chart-header {
   display: grid;
@@ -4620,12 +4696,12 @@ html {
   padding-right: 32px;
 }
 .eda-add-chart-header p {
-  font-size: 13px;
+  font-size: 12px;
 }
 .eda-add-chart-body {
   display: grid;
   grid-template-columns: minmax(15rem, 19rem) minmax(0, 1fr);
-  gap: 16px;
+  gap: 10px;
   flex: 1;
   min-height: 0;
 }
@@ -4668,10 +4744,17 @@ html {
   outline-offset: 1px;
 }
 .eda-add-chart-selected {
-  flex-shrink: 0;
-  margin: 0 0 6px;
+  min-width: 0;
+  margin-right: auto;
+  overflow: hidden;
   color: var(--muted-foreground);
-  font-size: 11px;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-add-chart-selected b {
+  color: var(--foreground);
+  font-weight: 600;
 }
 .eda-add-chart-control-tabs > .eda-add-chart-types,
 .eda-add-chart-control-tabs > .eda-add-chart-fields {
@@ -4682,7 +4765,8 @@ html {
 }
 .eda-add-chart-types {
   display: grid;
-  gap: 10px;
+  align-content: start;
+  gap: 8px;
 }
 .eda-add-chart-type-group {
   display: grid;
@@ -4695,22 +4779,18 @@ html {
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
+/* Chart types line up in even columns, so a group reads as one block. */
 .eda-add-chart-type-options {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
   gap: 4px;
-}
-.eda-add-chart-type-options button {
-  flex: 0 1 auto;
-  max-width: 100%;
-  height: 28px;
 }
 .eda-add-chart-types button {
   display: flex;
   align-items: center;
   gap: 6px;
   min-width: 0;
-  height: 30px;
+  height: 28px;
   padding: 0 8px;
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -4746,7 +4826,8 @@ html {
 }
 .eda-add-chart-fields {
   display: grid;
-  gap: 8px;
+  align-content: start;
+  gap: 6px;
 }
 .eda-add-chart-fields > h3 {
   color: var(--muted-foreground);
@@ -4759,7 +4840,7 @@ html {
   display: flex;
   min-width: 0;
   min-height: 0;
-  padding: 8px;
+  padding: 4px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--card);
@@ -4772,6 +4853,7 @@ html {
 }
 .eda-add-chart-footer {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   gap: 8px;
 }
@@ -5709,7 +5791,7 @@ td[data-null] {
 }
 .eda-chart-rows {
   display: grid;
-  gap: 8px;
-  padding-top: 10px;
+  gap: 6px;
+  padding-top: 8px;
   border-top: 1px solid var(--border);
 }

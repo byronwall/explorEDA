@@ -12,7 +12,7 @@ export function DataTableSettingsPanel({
   onSettingsChange,
 }: ChartSettingsPanelProps<DataTableSettings>) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-2.5">
       <ActionTooltip content="Draws each field’s distribution under its column name. Click or drag a distribution to filter the column.">
         <div className="flex items-center justify-between gap-3">
           <Label htmlFor="showDistributions">Distributions in headers</Label>

@@ -2,6 +2,20 @@
 
 The workspace helps users inspect data while keeping the current scope clear. Controls must support that task without covering it.
 
+## Density
+
+Spend space on data, not chrome. Every surface shares one compact scale:
+
+- Controls are 32 px tall by default and 28 px inside settings, popovers, and side panels. Small buttons are 28 px.
+- A setting is one row: its label in a 100 px column beside its control (`eda-setting-grid`). Do not stack a label above a control in settings.
+- Options of one choice sit in one segmented row. Shorten their visible labels and explain each in its tooltip.
+- Group related settings under a small heading divided by a rule (`eda-setting-section`), not inside nested bordered boxes.
+- Put a panel's actions in its first line. Do not open a panel or popover with a paragraph that explains it; put the explanation in the tooltip of the control it explains.
+- Lay out tabs in one row that scrolls sideways when it must; never wrap them.
+- Let editors and tables fill the space their panel or chart gives them. A table stretches its columns to the chart's width and scrolls only when they need more room.
+- Line up a chart's title, plot, and content with the panel's left padding. Hidden header controls take no room.
+- Below 960 px the grid shows a view-only flow of the saved layout: two charts to a row from 640 px, and one below that. Charts wider than half the grid take the whole row.
+
 ## Borders and focus
 
 Use these tokens:
@@ -82,7 +96,7 @@ Keep a confirmation small and centered: a short question, one sentence that name
 - Show the values under the pointer in the chart panel header, beside the title, in one line. A crosshair or highlight marks the point. Do not float a readout over the plot.
 - The chart details view enlarges the chart title with the chart.
 - Label filter bounds with their meaning and state where the filter applies.
-- Use stacked filter controls at narrow widths. State when changes apply.
+- Pair a filter's bounds side by side in one row, such as At least and At most, under its distribution.
 - Start new source imports with summary and data tables. Let users choose their first chart.
 - Preserve the order and layout in saved analyses.
 - “View chart data” opens a temporary preview. It must not add a chart or move existing charts.

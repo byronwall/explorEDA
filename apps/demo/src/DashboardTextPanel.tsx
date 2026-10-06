@@ -159,13 +159,82 @@ export function DashboardTextPanel({
   };
 
   return (
-    <div className="flex min-h-0 flex-col gap-3 p-3">
-      <p className="text-xs text-muted-foreground">
-        Describe the whole view, one chart per line. Apply replaces this view
-        with what the text describes; Undo brings the old view back. Start
-        sections with <code>view "Name"</code> to describe every view at once.
-      </p>
-      <div className="flex min-h-[14rem] overflow-hidden rounded-md border border-input bg-background font-mono text-xs leading-5 focus-within:ring-2 focus-within:ring-ring">
+    <div className="flex h-full min-h-0 flex-col gap-2 overflow-y-auto p-2">
+      <div className="flex flex-wrap items-center gap-1.5">
+        <ActionTooltip
+          content={
+            allViews
+              ? "Replace every view with what the text describes. Each view \"Name\" line starts a view. Undo brings the old views back."
+              : "Replace this view with what the text describes, one chart per line. Start sections with view \"Name\" to describe every view. Undo brings the old view back."
+          }
+        >
+          <Button
+            size="sm"
+            className="h-7 text-xs"
+            disabled={
+              !result || nothingBuilt || showingApplied || showingExport
+            }
+            onClick={() => result && onApply(result)}
+          >
+            {allViews ? "Apply all views" : "Apply to this view"}
+          </Button>
+        </ActionTooltip>
+        <ActionTooltip content="Replace the text with this view as it is now, including edits made with the chart controls">
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 text-xs"
+            onClick={() => {
+              const result = onExport();
+              if (result) {
+                setExported({ text: result.text, omitted: result.omitted });
+                onTextChange(result.text);
+              }
+            }}
+          >
+            <FileOutput aria-hidden="true" />
+            Write this view
+          </Button>
+        </ActionTooltip>
+        {viewCount > 1 && (
+          <ActionTooltip content="Replace the text with every view as one document: shared definitions first, then a section per view">
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 text-xs"
+              onClick={() => {
+                const result = onExportViews();
+                if (result) {
+                  setExported({ text: result.text, omitted: result.omitted });
+                  onTextChange(result.text);
+                }
+              }}
+            >
+              <Files aria-hidden="true" />
+              Write all views
+            </Button>
+          </ActionTooltip>
+        )}
+        <ActionTooltip content="Copy every problem with its line and fix, as plain text for an agent or a note">
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 text-xs"
+            disabled={!result}
+            onClick={() => {
+              if (result) {
+                void navigator.clipboard
+                  .writeText(formatDslDiagnostics(result, "dashboard.eda"))
+                  .then(() => toast.success("Copied the check report"));
+              }
+            }}
+          >
+            <Copy aria-hidden="true" />
+            Copy report
+          </Button>
+        </ActionTooltip>
+      </div>
+      <div className="flex min-h-[12rem] flex-[1_0_12rem] overflow-hidden rounded-md border border-input bg-background font-mono text-xs leading-5 focus-within:ring-2 focus-within:ring-ring">
         <div
           ref={gutterRef}
           aria-hidden="true"
@@ -188,12 +257,11 @@ export function DashboardTextPanel({
         <textarea
           ref={textareaRef}
           aria-label="Dashboard text editor"
-          className="min-h-[14rem] flex-1 resize-y whitespace-pre bg-transparent px-2 py-2 outline-none"
+          className="flex-1 resize-none whitespace-pre bg-transparent px-2 py-2 outline-none"
           spellCheck={false}
           autoCapitalize="off"
           autoCorrect="off"
           wrap="off"
-          rows={Math.min(Math.max(lineCount, 10), 24)}
           placeholder={PLACEHOLDER}
           value={text}
           onChange={(event) => onTextChange(event.target.value)}
@@ -231,70 +299,6 @@ export function DashboardTextPanel({
           </span>
         )}
       </div>
-      <div className="flex flex-wrap items-center gap-2">
-        <Button
-          size="sm"
-          className="h-8 text-xs"
-          disabled={!result || nothingBuilt || showingApplied || showingExport}
-          onClick={() => result && onApply(result)}
-        >
-          {allViews ? "Apply all views" : "Apply to this view"}
-        </Button>
-        <ActionTooltip content="Replace the text with this view as it is now, including edits made with the chart controls">
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-8 text-xs"
-            onClick={() => {
-              const result = onExport();
-              if (result) {
-                setExported({ text: result.text, omitted: result.omitted });
-                onTextChange(result.text);
-              }
-            }}
-          >
-            <FileOutput aria-hidden="true" />
-            Write this view
-          </Button>
-        </ActionTooltip>
-        {viewCount > 1 && (
-          <ActionTooltip content="Replace the text with every view as one document: shared definitions first, then a section per view">
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-8 text-xs"
-              onClick={() => {
-                const result = onExportViews();
-                if (result) {
-                  setExported({ text: result.text, omitted: result.omitted });
-                  onTextChange(result.text);
-                }
-              }}
-            >
-              <Files aria-hidden="true" />
-              Write all views
-            </Button>
-          </ActionTooltip>
-        )}
-        <ActionTooltip content="Copy every problem with its line and fix, as plain text for an agent or a note">
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-8 text-xs"
-            disabled={!result}
-            onClick={() => {
-              if (result) {
-                void navigator.clipboard
-                  .writeText(formatDslDiagnostics(result, "dashboard.eda"))
-                  .then(() => toast.success("Copied the check report"));
-              }
-            }}
-          >
-            <Copy aria-hidden="true" />
-            Copy report
-          </Button>
-        </ActionTooltip>
-      </div>
       {showingExport && exported.omitted.length > 0 && (
         <section aria-label="Not in the text" className="text-xs">
           <h3 className="font-semibold">Not in the text</h3>
@@ -327,7 +331,7 @@ export function DashboardTextPanel({
         <summary className="cursor-pointer font-semibold">
           Fields and syntax
         </summary>
-        <p className="mt-2 text-muted-foreground">
+        <p className="mt-1 text-muted-foreground">
           Write against these fields by name, or alias them, such as{" "}
           <code>rev:num=Revenue</code>.
         </p>

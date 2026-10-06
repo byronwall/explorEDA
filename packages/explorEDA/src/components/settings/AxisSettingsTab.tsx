@@ -17,138 +17,125 @@ export function AxisSettingsTab({ settings, onSettingChange }: Props) {
   const area =
     settings.type === "line" &&
     ["area", "stacked-area"].includes(settings.time?.display ?? "");
+  const toggleClass =
+    "w-full min-w-0 px-1 text-xs aria-checked:bg-primary/10 aria-checked:font-semibold aria-checked:text-primary";
   return (
-    <div className="space-y-3">
-      <p className="text-xs text-muted-foreground">
-        Symmetric log reveals detail across large ranges and keeps zero and
-        negative values. Category axes retain their order.
-      </p>
-      {(["x", "y"] as const).map((axis) => (
-        <fieldset
-          key={axis}
-          className="space-y-2 rounded-md border border-border p-3"
-        >
-          <legend className="px-1 text-sm font-medium">
-            {axis === "x" ? "Horizontal axis" : "Vertical axis"}
-          </legend>
-          {settings.type === "bar" && settings.seriesField && axis === "x" ? (
-            <p className="text-xs text-muted-foreground">
-              Categories share one axis. Series{" "}
-              {stacked ? "stack" : "appear side by side"} within each category.
-            </p>
-          ) : null}
-          {(stacked || area) && axis === "y" ? (
-            <p className="text-xs text-muted-foreground">
-              {area ? "Areas" : "Stacks"} use a linear scale so heights stay
-              proportional.
-            </p>
-          ) : settings.type === "line" && settings.time && axis === "x" ? (
-            <p className="text-xs text-muted-foreground">
-              Dates use a UTC calendar scale.
-            </p>
-          ) : !(
-              settings.type === "bar" &&
-              settings.seriesField &&
-              axis === "x"
-            ) ? (
-            <div className="grid grid-cols-[92px_minmax(0,1fr)] items-center gap-2">
-              <span className="text-sm">Numeric scale</span>
-              <ToggleGroup
-                type="single"
-                value={
-                  settings[`${axis}Axis`]?.scaleType === "symlog"
-                    ? "symlog"
-                    : "linear"
-                }
-                onValueChange={(scaleType) => {
-                  if (scaleType)
-                    onSettingChange(`${axis}Axis`, {
-                      ...settings[`${axis}Axis`],
-                      scaleType,
-                    });
-                }}
-                aria-label={`${axis.toUpperCase()} numeric scale`}
-                variant="outline"
-                size="sm"
-                className="grid grid-cols-2"
-              >
-                <ActionTooltip content="Use evenly spaced values. This is the standard scale for most charts.">
-                  <ToggleGroupItem
-                    value="linear"
-                    className="w-full text-xs aria-checked:bg-primary/10 aria-checked:font-semibold aria-checked:text-primary"
+    <div className="space-y-2">
+      {(["x", "y"] as const).map((axis) => {
+        const note =
+          settings.type === "bar" && settings.seriesField && axis === "x"
+            ? `Categories share one axis. Series ${stacked ? "stack" : "appear side by side"} within each category.`
+            : (stacked || area) && axis === "y"
+              ? `${area ? "Areas" : "Stacks"} use a linear scale so heights stay proportional.`
+              : settings.type === "line" && settings.time && axis === "x"
+                ? "Dates use a UTC calendar scale."
+                : undefined;
+        const axisSettings = settings[`${axis}Axis`];
+        const update = (next: object) =>
+          onSettingChange(`${axis}Axis`, { ...axisSettings, ...next });
+        const hasTicks = !(
+          settings.type === "line" &&
+          settings.time &&
+          axis === "x"
+        );
+        return (
+          <section
+            key={axis}
+            aria-label={axis === "x" ? "Horizontal axis" : "Vertical axis"}
+            className="eda-setting-section"
+          >
+            <h5>{axis === "x" ? "Horizontal axis" : "Vertical axis"}</h5>
+            {note && <p className="eda-setting-note">{note}</p>}
+            <div className="eda-setting-grid">
+              {!note && (
+                <>
+                  <span className="eda-setting-label">Scale</span>
+                  <ToggleGroup
+                    type="single"
+                    value={
+                      axisSettings?.scaleType === "symlog" ? "symlog" : "linear"
+                    }
+                    onValueChange={(scaleType) => {
+                      if (scaleType) update({ scaleType });
+                    }}
+                    aria-label={`${axis.toUpperCase()} numeric scale`}
+                    variant="outline"
+                    size="sm"
+                    className="grid w-full grid-cols-2"
                   >
-                    Linear
-                  </ToggleGroupItem>
-                </ActionTooltip>
-                <ActionTooltip content="Show detail across large ranges while retaining zero and negative values.">
-                  <ToggleGroupItem
-                    value="symlog"
-                    className="w-full text-xs aria-checked:bg-primary/10 aria-checked:font-semibold aria-checked:text-primary"
-                  >
-                    Symmetric log
-                  </ToggleGroupItem>
-                </ActionTooltip>
-              </ToggleGroup>
-            </div>
-          ) : null}
-          <label className="flex items-center justify-between gap-4">
-            Grid lines
-            <Switch
-              aria-label={`${axis.toUpperCase()} axis grid lines`}
-              checked={settings[`${axis}Axis`]?.grid ?? false}
-              onCheckedChange={(grid) =>
-                onSettingChange(`${axis}Axis`, {
-                  ...settings[`${axis}Axis`],
-                  grid,
-                })
-              }
-            />
-          </label>
-          <AxisTextSize
-            label="Tick text"
-            ariaLabel={`${axis.toUpperCase()} tick text size`}
-            value={settings[`${axis}Axis`]?.tickFontSize ?? 10}
-            sizes={[8, 10, 12]}
-            effect="tick labels"
-            onChange={(tickFontSize) =>
-              onSettingChange(`${axis}Axis`, {
-                ...settings[`${axis}Axis`],
-                tickFontSize,
-              })
-            }
-          />
-          <AxisTextSize
-            label="Axis label"
-            ariaLabel={`${axis.toUpperCase()} axis label text size`}
-            value={settings[`${axis}Axis`]?.labelFontSize ?? 11}
-            sizes={[9, 11, 13]}
-            effect="axis title"
-            onChange={(labelFontSize) =>
-              onSettingChange(`${axis}Axis`, {
-                ...settings[`${axis}Axis`],
-                labelFontSize,
-              })
-            }
-          />
-          {!(settings.type === "line" && settings.time && axis === "x") && (
-            <label className="flex items-center justify-between gap-4">
-              Tick density
-              <Input
-                className="w-24"
-                type="number"
-                min={2}
-                max={12}
-                value={settings[`${axis}GridLines`] || 5}
-                onChange={(event) => {
-                  const value = Number(event.target.value);
-                  if (value >= 2 && value <= 12)
-                    onSettingChange(`${axis}GridLines`, value);
-                }}
+                    <ActionTooltip content="Use evenly spaced values. This is the standard scale for most charts.">
+                      <ToggleGroupItem
+                        value="linear"
+                        aria-label="Linear"
+                        className={toggleClass}
+                      >
+                        Linear
+                      </ToggleGroupItem>
+                    </ActionTooltip>
+                    <ActionTooltip content="Symmetric log: show detail across large ranges while keeping zero and negative values.">
+                      <ToggleGroupItem
+                        value="symlog"
+                        aria-label="Symmetric log"
+                        className={toggleClass}
+                      >
+                        Symlog
+                      </ToggleGroupItem>
+                    </ActionTooltip>
+                  </ToggleGroup>
+                </>
+              )}
+              <AxisTextSize
+                label="Tick text"
+                ariaLabel={`${axis.toUpperCase()} tick text size`}
+                value={axisSettings?.tickFontSize ?? 10}
+                sizes={[8, 10, 12]}
+                effect="tick labels"
+                className={toggleClass}
+                onChange={(tickFontSize) => update({ tickFontSize })}
               />
-            </label>
-          )}
-        </fieldset>
-      ))}
+              <AxisTextSize
+                label="Axis label"
+                ariaLabel={`${axis.toUpperCase()} axis label text size`}
+                value={axisSettings?.labelFontSize ?? 11}
+                sizes={[9, 11, 13]}
+                effect="axis title"
+                className={toggleClass}
+                onChange={(labelFontSize) => update({ labelFontSize })}
+              />
+              <span className="eda-setting-label">
+                {hasTicks ? "Ticks" : "Grid lines"}
+              </span>
+              <div className="flex min-w-0 items-center gap-2">
+                {hasTicks && (
+                  <ActionTooltip content="About how many tick values the axis shows, from 2 to 12">
+                    <Input
+                      aria-label={`${axis.toUpperCase()} tick density`}
+                      className="w-14"
+                      type="number"
+                      min={2}
+                      max={12}
+                      value={settings[`${axis}GridLines`] || 5}
+                      onChange={(event) => {
+                        const value = Number(event.target.value);
+                        if (value >= 2 && value <= 12)
+                          onSettingChange(`${axis}GridLines`, value);
+                      }}
+                    />
+                  </ActionTooltip>
+                )}
+                <label className="ml-auto flex items-center gap-1.5">
+                  {hasTicks && "Grid lines"}
+                  <Switch
+                    aria-label={`${axis.toUpperCase()} axis grid lines`}
+                    checked={axisSettings?.grid ?? false}
+                    onCheckedChange={(grid) => update({ grid })}
+                  />
+                </label>
+              </div>
+            </div>
+          </section>
+        );
+      })}
     </div>
   );
 }
@@ -159,6 +146,7 @@ function AxisTextSize({
   value,
   sizes,
   effect,
+  className,
   onChange,
 }: {
   label: string;
@@ -166,11 +154,12 @@ function AxisTextSize({
   value: number;
   sizes: number[];
   effect: string;
+  className: string;
   onChange: (value: number) => void;
 }) {
   return (
-    <div className="grid grid-cols-[92px_minmax(0,1fr)] items-center gap-2">
-      <span className="text-sm">{label}</span>
+    <>
+      <span className="eda-setting-label">{label}</span>
       <ToggleGroup
         type="single"
         value={String(value)}
@@ -178,7 +167,7 @@ function AxisTextSize({
         aria-label={ariaLabel}
         variant="outline"
         size="sm"
-        className="grid grid-cols-3"
+        className="grid w-full grid-cols-3"
       >
         {sizes.map((size, index) => {
           const name = ["Small", "Default", "Large"][index];
@@ -189,7 +178,8 @@ function AxisTextSize({
             >
               <ToggleGroupItem
                 value={String(size)}
-                className="w-full text-xs aria-checked:bg-primary/10 aria-checked:font-semibold aria-checked:text-primary"
+                aria-label={name}
+                className={className}
               >
                 {name}
               </ToggleGroupItem>
@@ -197,6 +187,6 @@ function AxisTextSize({
           );
         })}
       </ToggleGroup>
-    </div>
+    </>
   );
 }

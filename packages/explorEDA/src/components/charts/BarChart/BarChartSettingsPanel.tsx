@@ -216,13 +216,13 @@ export function BarChartSettingsPanel({
       }
     };
     return (
-      <div className="space-y-4">
+      <div className="space-y-2.5">
         {error && (
           <p className="text-sm text-destructive" role="alert">
             {error}
           </p>
         )}
-        <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+        <div className="eda-setting-grid">
           <Label>Group by</Label>
           <FieldSelector
             label=""
@@ -295,13 +295,13 @@ export function BarChartSettingsPanel({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2.5">
       {error && (
         <p className="text-sm text-destructive" role="alert">
           {error}
         </p>
       )}
-      <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+      <div className="eda-setting-grid">
         {!settings.seriesField && (
           <>
             <Label htmlFor="bar-data-mode">Data mode</Label>

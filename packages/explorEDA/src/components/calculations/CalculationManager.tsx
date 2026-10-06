@@ -23,15 +23,12 @@ export function CalculationManager() {
   return (
     <section className="eda-calculations">
       <header className="eda-calculations-header">
-        <div>
-          <h2>Calculated fields</h2>
-          <p>
-            Reusable formulas, connected to their inputs. Inspect a field to
-            follow its chain or try a change.
-          </p>
-        </div>
-        <Button onClick={() => editor?.open()}>
-          <Plus size={16} />
+        <h2>
+          Calculated fields
+          {calculations.length > 0 && <span>{calculations.length}</span>}
+        </h2>
+        <Button size="sm" onClick={() => editor?.open()}>
+          <Plus />
           New calculation
         </Button>
       </header>
@@ -45,7 +42,7 @@ export function CalculationManager() {
           <div className="eda-calculations-toolbar">
             <div className="relative">
               <Search
-                className="absolute left-3 top-2.5 text-muted-foreground"
+                className="absolute left-2.5 top-2 text-muted-foreground"
                 size={16}
                 aria-hidden="true"
               />
@@ -181,14 +178,14 @@ export function CalculationManager() {
       ) : (
         <div className="eda-calc-empty">
           <span className="eda-calc-symbol">ƒx</span>
-          <h3>Make a field from the data you have</h3>
-          <p>
-            Combine values, set a rule, or extract a date. Preview the result
-            before using it in a chart.
-          </p>
-          <Button variant="outline" onClick={() => editor?.open()}>
-            Create your first calculation
-          </Button>
+          <div>
+            <h3>Make a field from the data you have</h3>
+            <p>
+              Combine values, set a rule, or extract a date. Each formula stays
+              connected to its inputs, and its result previews before you use it
+              in a chart.
+            </p>
+          </div>
         </div>
       )}
     </section>

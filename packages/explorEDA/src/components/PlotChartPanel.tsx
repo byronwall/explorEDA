@@ -504,10 +504,10 @@ export function PlotChartPanel({
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
     >
-      <div className="eda-panel-header flex min-h-10 items-center justify-between gap-1 select-none px-3 py-1">
+      <div className="eda-panel-header relative flex min-h-8 items-center justify-between gap-1 select-none py-0.5 pr-1 pl-2.5">
         <div className="drag-handle flex min-w-0 flex-[1_1_35%] cursor-move items-center gap-2">
           <GripVertical
-            className="eda-drag h-3 w-3 shrink-0 text-muted-foreground"
+            className="eda-drag absolute top-1/2 left-0 h-3 w-2.5 -translate-y-1/2 text-muted-foreground"
             aria-hidden="true"
           />
           {isTraceable(settings.type) &&
@@ -623,11 +623,11 @@ export function PlotChartPanel({
               </ActionTooltip>
               <PopoverContent
                 aria-label={`Settings for ${chartTitle}`}
-                className="eda-settings-popover w-[min(21rem,calc(100vw-1.5rem))]"
+                className="eda-settings-popover w-[min(21.5rem,calc(100vw-1rem))]"
                 style={
                   {
                     maxHeight: settingsHeight,
-                    "--eda-settings-height": `${settingsHeight - 26}px`,
+                    "--eda-settings-height": `${settingsHeight - 18}px`,
                     overflow: "hidden",
                   } as React.CSSProperties
                 }

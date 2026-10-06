@@ -27,7 +27,8 @@ export function CalendarSettingsPanel({
       ),
       measureFields: names.filter((field) =>
         values(field).some(
-          (value) => typeof value !== "boolean" && finiteNumber(value) !== undefined
+          (value) =>
+            typeof value !== "boolean" && finiteNumber(value) !== undefined
         )
       ),
     };
@@ -38,21 +39,28 @@ export function CalendarSettingsPanel({
       ...merged,
       // A day selection belongs to the date field it was made on.
       filters: merged.filters.filter(
-        (filter) => filter.type !== "date-range" || filter.field === merged.field
+        (filter) =>
+          filter.type !== "date-range" || filter.field === merged.field
       ),
-      ...(next.field && next.field !== settings.field ? { year: undefined } : {}),
+      ...(next.field && next.field !== settings.field
+        ? { year: undefined }
+        : {}),
     });
   };
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+    <div className="space-y-2.5">
+      <div className="eda-setting-grid">
         <Label>Date</Label>
         <FieldSelector
           label=""
           placeholder="Date field"
           value={settings.field}
-          fields={dateFields.includes(settings.field) || !settings.field ? dateFields : [settings.field, ...dateFields]}
+          fields={
+            dateFields.includes(settings.field) || !settings.field
+              ? dateFields
+              : [settings.field, ...dateFields]
+          }
           onChange={(value) => change({ field: value })}
         />
 
@@ -107,8 +115,16 @@ export function CalendarSettingsPanel({
         >
           {(
             [
-              ["monday", "Monday", "Start each week column on Monday, as ISO weeks do."],
-              ["sunday", "Sunday", "Start each week column on Sunday, as US calendars do."],
+              [
+                "monday",
+                "Monday",
+                "Start each week column on Monday, as ISO weeks do.",
+              ],
+              [
+                "sunday",
+                "Sunday",
+                "Start each week column on Sunday, as US calendars do.",
+              ],
             ] as const
           ).map(([value, text, help]) => (
             <ActionTooltip key={value} content={help}>

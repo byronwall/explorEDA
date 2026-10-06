@@ -70,6 +70,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import {
+  flowTwoColumns,
+  NARROW_GRID_WIDTH,
+  narrowColumnCount,
+} from "./chartGridPlacement";
 
 const gridToPixels = (
   layout: ChartLayout,
@@ -376,11 +381,20 @@ export function PlotManager({
     return () => observer.disconnect();
   }, []);
 
+  const isNarrowGrid = containerWidth > 0 && containerWidth < NARROW_GRID_WIDTH;
+  const narrowColumns = narrowColumnCount(containerWidth);
   const chartGridSettings = {
     ...gridSettings,
-    columnCount:
-      containerWidth > 0 && containerWidth < 960 ? 1 : gridSettings.columnCount,
+    columnCount: isNarrowGrid ? narrowColumns : gridSettings.columnCount,
   };
+  // Narrow grids show charts in a flow of the saved layout, sized to match.
+  const flowedLayout =
+    isNarrowGrid && narrowColumns === 2
+      ? flowTwoColumns(
+          charts.filter((chart) => chart.layout),
+          gridSettings.columnCount
+        )
+      : undefined;
 
   const focusChartElement = useCallback((id: string) => {
     requestAnimationFrame(() =>
@@ -862,7 +876,12 @@ export function PlotManager({
                   return null;
                 }
                 const size = gridToPixels(
-                  chart.layout,
+                  {
+                    ...chart.layout,
+                    ...(isNarrowGrid
+                      ? (flowedLayout?.get(chart.id) ?? { w: 1 })
+                      : {}),
+                  },
                   containerWidth,
                   chartGridSettings
                 );
