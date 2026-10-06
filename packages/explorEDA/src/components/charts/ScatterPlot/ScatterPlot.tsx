@@ -40,6 +40,9 @@ import {
   useTraceSource,
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
+import { TriangleAlert } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import {
   BADGE_GAP,
   brushFilters,
@@ -268,8 +271,8 @@ function ScatterPoints({
     ctx.beginPath();
     ctx.rect(0, 0, plan.plotWidth, plan.plotHeight);
     ctx.clip();
-    // A density surface draws its own point overlay in SVG.
-    if (surfaceMode) return;
+    // Density surfaces and bubbles draw after the grid in SVG.
+    if (surfaceMode || plan.size) return;
     for (const point of plan.points) {
       ctx.fillStyle = point.color;
       ctx.globalAlpha = point.opacity;
@@ -321,9 +324,6 @@ function ScatterPoints({
     : [
         plan.brushExtent &&
           `${brushed.toLocaleString()} of ${plan.points.length.toLocaleString()} points selected`,
-        plan.exclusions.length > 0 &&
-          !plan.emptyMessage &&
-          `${plan.exclusions.length.toLocaleString()} rows without a position left out`,
       ];
   const statusHint =
     showHints &&
@@ -343,8 +343,8 @@ function ScatterPoints({
         (filter) =>
           filter.field !== settings.xField &&
           filter.field !== settings.yField &&
-          (!settings.sizeField ||
-            (filter.field !== "__ID" && filter.field !== settings.sizeField))
+          filter.field !== "__ID" &&
+          (!settings.sizeField || filter.field !== settings.sizeField)
       );
       if (extent) {
         filters.push(...brushFilters(plan, extent));
@@ -425,6 +425,7 @@ function ScatterPoints({
               return Boolean(choose("point", point.id));
             }}
             fitMarks={fits.marks}
+            bubblePoints={plan.size ? plan.points : undefined}
             surface={
               surfaceMode && (
                 <SurfaceLayer
@@ -477,6 +478,19 @@ function ScatterPoints({
                   filters: marginalBinFilters(settings, bin),
                 });
             }}
+            onMarginalBrush={(axis, bounds) => {
+              const field = axis === "x" ? settings.xField : settings.yField;
+              const filters = settings.filters.filter(
+                (filter) => !(filter.field === field && filter.type === "range")
+              );
+              filters.push({
+                type: "range",
+                field,
+                min: bounds[0],
+                max: bounds[1],
+              });
+              updateChart(settings.id, { filters });
+            }}
             activeFitId={activeFitId}
             onActiveFit={setActiveFitId}
             onInspectFit={(id) => choose("fit", id)}
@@ -504,6 +518,7 @@ function ScatterPoints({
           {plan.size && (
             <BubbleLegend
               size={plan.size}
+              bottom={STATUS_LINE_HEIGHT + 2}
               exclusions={plan.exclusions.filter(
                 (item) => item.reason === "invalid-size"
               )}
@@ -535,8 +550,31 @@ function ScatterPoints({
             parts={statusParts}
             hint={statusHint}
             left={plan.margin.left}
-            right={plan.margin.right}
+            right={plan.margin.right + (plan.exclusions.length > 0 ? 26 : 0)}
           />
+          {plan.exclusions.length > 0 && !plan.emptyMessage && (
+            <div
+              className="absolute"
+              style={{ right: plan.margin.right, bottom: 0 }}
+            >
+              <ActionTooltip
+                content={`${plan.exclusions.length.toLocaleString()} rows are left out because a plotted value is missing or invalid. Activate to inspect an example.`}
+              >
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="size-5 text-warning"
+                  aria-label={`${plan.exclusions.length.toLocaleString()} rows left out because a plotted value is missing or invalid. Inspect an example.`}
+                  onClick={() =>
+                    choose("excluded", String(plan.exclusions[0]!.sourceId))
+                  }
+                >
+                  <TriangleAlert aria-hidden="true" className="size-3.5" />
+                </Button>
+              </ActionTooltip>
+            </div>
+          )}
           {plan.emptyMessage && (
             <div
               className="pointer-events-none absolute flex items-center justify-center p-3 text-center"

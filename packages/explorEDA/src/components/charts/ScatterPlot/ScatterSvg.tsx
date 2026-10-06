@@ -1,5 +1,13 @@
 import { useBrush } from "@/hooks/useBrush";
-import { useId, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type MouseEvent,
+  type PointerEvent as ReactPointerEvent,
+  type ReactNode,
+} from "react";
 import {
   planScatterOverlay,
   type Extent,
@@ -9,22 +17,148 @@ import {
 import { findAxisGuide } from "../Axis/axisPlan";
 import { PlannedAxes, PlannedGrid } from "../Axis/AxisLayer";
 import type { FitMark } from "./fitPlan";
-import type { MarginalPlan } from "./marginalPlan";
+import { MARGINAL_GAP, MARGINAL_SIZE, type MarginalPlan } from "./marginalPlan";
 
 /** X and Y histograms in the margins; the selection's share reads darker. */
 function MarginalBars({
   marginals,
   activeId,
   onHover,
+  margin,
+  plotWidth,
+  plotHeight,
+  onBrush,
 }: {
   marginals: MarginalPlan;
   activeId?: string;
   onHover?: (id: string | undefined) => void;
+  margin: { left: number; top: number };
+  plotWidth: number;
+  plotHeight: number;
+  onBrush?: (axis: "x" | "y", bounds: [number, number]) => void;
 }) {
+  const drag = useRef<{
+    axis: "x" | "y";
+    start: number;
+    current: number;
+    moved: boolean;
+  } | null>(null);
+  const didBrush = useRef(false);
+  const [preview, setPreview] = useState<{
+    axis: "x" | "y";
+    start: number;
+    current: number;
+  } | null>(null);
+  const position = (event: ReactPointerEvent<SVGElement>, axis: "x" | "y") => {
+    const rect = event.currentTarget.ownerSVGElement!.getBoundingClientRect();
+    return axis === "x"
+      ? event.clientX - rect.left - margin.left
+      : event.clientY - rect.top - margin.top;
+  };
+  const beginBrush = (
+    event: ReactPointerEvent<SVGElement>,
+    axis: "x" | "y"
+  ) => {
+    if (event.button !== 0 || !onBrush) return;
+    event.stopPropagation();
+    const start = position(event, axis);
+    drag.current = { axis, start, current: start, moved: false };
+    didBrush.current = false;
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  };
+  const moveBrush = (event: ReactPointerEvent<SVGElement>) => {
+    const active = drag.current;
+    if (!active) return;
+    active.current = position(event, active.axis);
+    active.moved ||= Math.abs(active.current - active.start) >= 3;
+    if (active.moved) {
+      event.preventDefault();
+      setPreview({
+        axis: active.axis,
+        start: active.start,
+        current: active.current,
+      });
+    }
+  };
+  const endBrush = (event: ReactPointerEvent<SVGElement>) => {
+    const active = drag.current;
+    if (!active) return;
+    drag.current = null;
+    if (event.currentTarget.hasPointerCapture?.(event.pointerId))
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    if (!active.moved) return;
+    setPreview(null);
+    didBrush.current = true;
+    const bins = marginals.bins
+      .filter((bin) => bin.axis === active.axis)
+      .sort((a, b) => a.bounds[0] - b.bounds[0]);
+    const center = (bin: (typeof bins)[number]) =>
+      active.axis === "x" ? bin.x + bin.width / 2 : bin.y + bin.height / 2;
+    const nearest = (value: number) =>
+      bins.reduce<(typeof bins)[number] | undefined>(
+        (best, bin) =>
+          !best ||
+          Math.abs(center(bin) - value) < Math.abs(center(best) - value)
+            ? bin
+            : best,
+        undefined
+      );
+    const first = nearest(active.start);
+    const last = nearest(active.current);
+    if (first && last) {
+      const low = Math.min(bins.indexOf(first), bins.indexOf(last));
+      const high = Math.max(bins.indexOf(first), bins.indexOf(last));
+      onBrush?.(active.axis, [bins[low]!.bounds[0], bins[high]!.bounds[1]]);
+    }
+  };
+  const cancelBrush = () => {
+    drag.current = null;
+    setPreview(null);
+  };
+  const finishClick = (event: MouseEvent<SVGElement>) => {
+    if (!didBrush.current) return;
+    event.preventDefault();
+    event.stopPropagation();
+    didBrush.current = false;
+  };
   const interval = (bounds: [number, number]) =>
     bounds.map((value) => Number(value.toPrecision(4))).join(" to ");
   return (
     <g className="eda-marginals">
+      {onBrush && marginals.bins.some((bin) => bin.axis === "x") && (
+        <rect
+          x={0}
+          y={-MARGINAL_GAP - MARGINAL_SIZE}
+          width={plotWidth}
+          height={MARGINAL_SIZE}
+          fill="transparent"
+          pointerEvents="all"
+          aria-hidden="true"
+          onPointerDown={(event) => beginBrush(event, "x")}
+          onPointerMove={moveBrush}
+          onPointerUp={endBrush}
+          onPointerCancel={cancelBrush}
+          onLostPointerCapture={cancelBrush}
+          onClickCapture={finishClick}
+        />
+      )}
+      {onBrush && marginals.bins.some((bin) => bin.axis === "y") && (
+        <rect
+          x={plotWidth + MARGINAL_GAP}
+          y={0}
+          width={MARGINAL_SIZE}
+          height={plotHeight}
+          fill="transparent"
+          pointerEvents="all"
+          aria-hidden="true"
+          onPointerDown={(event) => beginBrush(event, "y")}
+          onPointerMove={moveBrush}
+          onPointerUp={endBrush}
+          onPointerCancel={cancelBrush}
+          onLostPointerCapture={cancelBrush}
+          onClickCapture={finishClick}
+        />
+      )}
       {marginals.bins.map((bin) => {
         const active = bin.id === activeId;
         const share =
@@ -51,6 +185,12 @@ function MarginalBars({
             className="cursor-pointer"
             onPointerEnter={() => onHover?.(bin.id)}
             onPointerLeave={() => onHover?.(undefined)}
+            onPointerDown={(event) => beginBrush(event, bin.axis)}
+            onPointerMove={moveBrush}
+            onPointerUp={endBrush}
+            onPointerCancel={cancelBrush}
+            onLostPointerCapture={cancelBrush}
+            onClickCapture={finishClick}
           >
             <rect
               x={bin.x}
@@ -72,6 +212,30 @@ function MarginalBars({
           </g>
         );
       })}
+      {preview &&
+        (preview.axis === "x" ? (
+          <rect
+            x={Math.min(preview.start, preview.current)}
+            y={-MARGINAL_GAP - MARGINAL_SIZE}
+            width={Math.abs(preview.current - preview.start)}
+            height={MARGINAL_SIZE}
+            fill="var(--primary)"
+            fillOpacity={0.16}
+            stroke="var(--primary)"
+            pointerEvents="none"
+          />
+        ) : (
+          <rect
+            x={plotWidth + MARGINAL_GAP}
+            y={Math.min(preview.start, preview.current)}
+            width={MARGINAL_SIZE}
+            height={Math.abs(preview.current - preview.start)}
+            fill="var(--primary)"
+            fillOpacity={0.16}
+            stroke="var(--primary)"
+            pointerEvents="none"
+          />
+        ))}
     </g>
   );
 }
@@ -212,6 +376,7 @@ export function ScatterSvg({
   onActivatePoint,
   onSelectPoint,
   fitMarks = [],
+  bubblePoints,
   surface,
   onMark,
   markFirst = false,
@@ -219,11 +384,13 @@ export function ScatterSvg({
   activeMarginalId,
   onHoverMarginal,
   onMarginal,
+  onMarginalBrush,
   activeFitId,
   onActiveFit,
   onInspectFit,
 }: {
   fitMarks?: FitMark[];
+  bubblePoints?: ScatterPlan["points"];
   /** A density surface drawn under the fits, such as hexagons or contours. */
   surface?: ReactNode;
   /** A click on a surface mark; returns false to fall through. */
@@ -234,6 +401,7 @@ export function ScatterSvg({
   activeMarginalId?: string;
   onHoverMarginal?: (id: string | undefined) => void;
   onMarginal?: (id: string, inspect: boolean) => void;
+  onMarginalBrush?: (axis: "x" | "y", bounds: [number, number]) => void;
   activeFitId?: string;
   onActiveFit?: (id: string | undefined) => void;
   onInspectFit?: (id: string) => void;
@@ -459,6 +627,26 @@ export function ScatterSvg({
           />
         </g>
         {surface && <g clipPath={`url(#${chartId}-plot)`}>{surface}</g>}
+        {bubblePoints && (
+          <g
+            className="eda-scatter-bubbles"
+            clipPath={`url(#${chartId}-plot)`}
+            pointerEvents="none"
+          >
+            {bubblePoints.map((point) => (
+              <circle
+                key={point.id}
+                cx={point.x}
+                cy={point.y}
+                r={point.radius}
+                fill={point.sizeValue === 0 ? "none" : point.color}
+                opacity={point.opacity}
+                stroke={point.sizeValue === 0 ? point.color : "none"}
+                strokeWidth={point.sizeValue === 0 ? 1 : undefined}
+              />
+            ))}
+          </g>
+        )}
         {fitMarks.length > 0 && (
           <g clipPath={`url(#${chartId}-plot)`}>
             <FitCurves marks={fitMarks} activeId={activeFitId} />
@@ -472,6 +660,10 @@ export function ScatterSvg({
             marginals={marginals}
             activeId={activeMarginalId}
             onHover={onHoverMarginal}
+            margin={{ left: plan.margin.left, top: plan.margin.top }}
+            plotWidth={plan.plotWidth}
+            plotHeight={plan.plotHeight}
+            onBrush={onMarginalBrush}
           />
         )}
         <PlannedAxes

@@ -4,17 +4,19 @@ import type { ScatterPlan } from "./scatterPlan";
 
 export function BubbleLegend({
   size,
+  bottom,
   exclusions,
   onInspectExcluded,
 }: {
   size: NonNullable<ScatterPlan["size"]>;
+  bottom: number;
   exclusions: ScatterPlan["exclusions"];
   onInspectExcluded: (id: number) => void;
 }) {
   return (
     <div
-      className="absolute inset-x-2 bottom-0 flex items-end gap-3 overflow-x-auto text-xs"
-      style={{ height: size.legendHeight }}
+      className="absolute inset-x-2 flex items-end gap-3 overflow-x-auto text-xs"
+      style={{ height: size.legendHeight, bottom }}
       aria-label="Bubble size legend"
     >
       <div className="max-w-28 shrink-0 pb-1">

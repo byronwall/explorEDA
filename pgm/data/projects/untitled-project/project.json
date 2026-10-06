@@ -3,20 +3,20 @@
   "name": "explorEDA",
   "description": "Blank project ready for grid editing, structure mapping, and future AI-assisted details.",
   "createdAt": "2026-09-29T01:22:21.210Z",
-  "updatedAt": "2026-10-06T03:20:20.891Z",
+  "updatedAt": "2026-10-06T03:20:33.324Z",
   "operationLog": [
     {
-      "id": "ddf0e66c-0137-4f23-a85d-1b8b2041bb5d",
+      "id": "7193be8b-8d26-4df8-b509-932079d604c6",
       "kind": "node.metadata.updated",
       "actor": {
         "kind": "agent",
-        "id": "token:349c18",
-        "label": "Agent token ...349c18"
+        "id": "token:2202b1",
+        "label": "Agent token ...2202b1"
       },
-      "createdAt": "2026-10-06T03:20:20.891Z",
-      "summary": "Updated metadata for \"Need more control of text size for axis labels\".",
+      "createdAt": "2026-10-06T03:20:33.324Z",
+      "summary": "Updated metadata for \"10-05\".",
       "nodeIds": [
-        "page-need-more-control-of-text-size-for-axis-labels"
+        "page-10-05"
       ],
       "payload": {
         "state": {
@@ -514,8 +514,10 @@
                 "id": "page-10-05",
                 "label": "10-05",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Resolved all 12 descendant issues in six stacked fix branches. Each fix has browser screenshot evidence in its pull request."
+                },
                 "context": "",
                 "rawContext": "",
                 "images": []
@@ -568,8 +570,10 @@
                 "id": "page-bubble-area-has-conflcit-in-labels",
                 "label": "Bubble area has conflcit in labels",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Moved the bubble size legend above the footer hint so both labels remain readable."
+                },
                 "context": "They overlap when the one is disclosed.",
                 "rawContext": "They overlap when the one is disclosed.",
                 "images": [
@@ -588,8 +592,10 @@
                 "id": "page-bubble-should-render-above-grid-lines",
                 "label": "Bubble should render above grid lines",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Bubble marks render above grid lines and below fit, selection, and trace overlays."
+                },
                 "context": "It looks odd for lines to cut through the bubbles.",
                 "rawContext": "It looks odd for lines to cut through the bubbles.",
                 "images": [
@@ -608,8 +614,10 @@
                 "id": "page-avoid-persistent-labels-on-charts",
                 "label": "Avoid persistent labels on charts",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Replaced the persistent omitted-row label with a warning icon. Its tooltip explains the count, and activation opens an example trace."
+                },
                 "context": "We should have a warning icon somewehre that discloses data concerns.",
                 "rawContext": "We should have a warning icon somewehre that discloses data concerns.",
                 "images": [
@@ -628,8 +636,10 @@
                 "id": "page-marginal-distribution-should-brush-to-filter-too",
                 "label": "Marginal distribution should brush to filter too",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Both marginal histogram bands accept range brushes, show drag feedback, and apply axis filters. Click and Alt-click remain available."
+                },
                 "context": "",
                 "rawContext": "",
                 "images": [
@@ -670,8 +680,10 @@
                 "id": "page-hex-bin-dead-click-should-clear-filter",
                 "label": "hex bin dead click should clear filter",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "An empty-space click now clears the exact-row selection made by a hexagon."
+                },
                 "context": "I wanted to click in empty space but it failed.",
                 "rawContext": "I wanted to click in empty space but it failed.",
                 "images": [
@@ -950,6 +962,174 @@
           }
         }
       }
+    },
+    {
+      "id": "d7ad7cc4-4c6b-4a91-99c3-5194e95fd2c6",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:2202b1",
+        "label": "Agent token ...2202b1"
+      },
+      "createdAt": "2026-10-06T03:20:33.318Z",
+      "summary": "Changed \"10-05\" status to implemented.",
+      "nodeIds": [
+        "page-10-05"
+      ]
+    },
+    {
+      "id": "b8b9a4ad-9cd8-43ea-914c-33eee64d8caa",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:314fad",
+        "label": "Agent token ...314fad"
+      },
+      "createdAt": "2026-10-06T03:20:32.921Z",
+      "summary": "Updated metadata for \"Marginal distribution should brush to filter too\".",
+      "nodeIds": [
+        "page-marginal-distribution-should-brush-to-filter-too"
+      ]
+    },
+    {
+      "id": "b2581a6b-3ad2-46c3-9c27-48680ea1056b",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:314fad",
+        "label": "Agent token ...314fad"
+      },
+      "createdAt": "2026-10-06T03:20:32.914Z",
+      "summary": "Changed \"Marginal distribution should brush to filter too\" status to implemented.",
+      "nodeIds": [
+        "page-marginal-distribution-should-brush-to-filter-too"
+      ]
+    },
+    {
+      "id": "53ae4465-2810-4ee9-9ad5-6a879502cd9f",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:a8fb6b",
+        "label": "Agent token ...a8fb6b"
+      },
+      "createdAt": "2026-10-06T03:20:32.491Z",
+      "summary": "Updated metadata for \"hex bin dead click should clear filter\".",
+      "nodeIds": [
+        "page-hex-bin-dead-click-should-clear-filter"
+      ]
+    },
+    {
+      "id": "c80e2e35-dac9-4d90-a118-a1a099af8a3e",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:a8fb6b",
+        "label": "Agent token ...a8fb6b"
+      },
+      "createdAt": "2026-10-06T03:20:32.483Z",
+      "summary": "Changed \"hex bin dead click should clear filter\" status to implemented.",
+      "nodeIds": [
+        "page-hex-bin-dead-click-should-clear-filter"
+      ]
+    },
+    {
+      "id": "895ef63f-ca52-4fbc-b4ed-81381e8745ef",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:20bba9",
+        "label": "Agent token ...20bba9"
+      },
+      "createdAt": "2026-10-06T03:20:32.059Z",
+      "summary": "Updated metadata for \"Bubble should render above grid lines\".",
+      "nodeIds": [
+        "page-bubble-should-render-above-grid-lines"
+      ]
+    },
+    {
+      "id": "2dfcd723-3bea-44ff-856d-01ff6daa787a",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:20bba9",
+        "label": "Agent token ...20bba9"
+      },
+      "createdAt": "2026-10-06T03:20:32.046Z",
+      "summary": "Changed \"Bubble should render above grid lines\" status to implemented.",
+      "nodeIds": [
+        "page-bubble-should-render-above-grid-lines"
+      ]
+    },
+    {
+      "id": "46c93870-0f4b-43a8-8381-d60641dec166",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:a186ef",
+        "label": "Agent token ...a186ef"
+      },
+      "createdAt": "2026-10-06T03:20:31.614Z",
+      "summary": "Updated metadata for \"Bubble area has conflcit in labels\".",
+      "nodeIds": [
+        "page-bubble-area-has-conflcit-in-labels"
+      ]
+    },
+    {
+      "id": "9fdeea1b-7d1b-4d9a-9083-1f7825cfde16",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:a186ef",
+        "label": "Agent token ...a186ef"
+      },
+      "createdAt": "2026-10-06T03:20:31.604Z",
+      "summary": "Changed \"Bubble area has conflcit in labels\" status to implemented.",
+      "nodeIds": [
+        "page-bubble-area-has-conflcit-in-labels"
+      ]
+    },
+    {
+      "id": "e30cb172-2dc8-47da-baf2-13d7c038df4a",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:15f152",
+        "label": "Agent token ...15f152"
+      },
+      "createdAt": "2026-10-06T03:20:31.206Z",
+      "summary": "Updated metadata for \"Avoid persistent labels on charts\".",
+      "nodeIds": [
+        "page-avoid-persistent-labels-on-charts"
+      ]
+    },
+    {
+      "id": "6740328e-cc4c-4dd5-aba3-92baaa92702c",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:15f152",
+        "label": "Agent token ...15f152"
+      },
+      "createdAt": "2026-10-06T03:20:31.198Z",
+      "summary": "Changed \"Avoid persistent labels on charts\" status to implemented.",
+      "nodeIds": [
+        "page-avoid-persistent-labels-on-charts"
+      ]
+    },
+    {
+      "id": "ddf0e66c-0137-4f23-a85d-1b8b2041bb5d",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:349c18",
+        "label": "Agent token ...349c18"
+      },
+      "createdAt": "2026-10-06T03:20:20.891Z",
+      "summary": "Updated metadata for \"Need more control of text size for axis labels\".",
+      "nodeIds": [
+        "page-need-more-control-of-text-size-for-axis-labels"
+      ]
     },
     {
       "id": "dba44f69-3785-4159-9d45-b161199e058c",
@@ -4528,174 +4708,6 @@
       "summary": "Changed \"Sort indicator should not hide under the other buttons in data table\" status to implemented.",
       "nodeIds": [
         "page-sort-indicator-should-not-hide-under-the-other-buttons-in-data-table"
-      ]
-    },
-    {
-      "id": "b0e5d537-a1d8-410b-9b3d-5aae3a094a3f",
-      "kind": "node.metadata.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-09-29T03:47:20.180Z",
-      "summary": "Updated metadata for \"Some cases when drag on edge does not resize\".",
-      "nodeIds": [
-        "page-some-cases-when-drag-on-edge-does-not-resize"
-      ]
-    },
-    {
-      "id": "87f0ff34-058b-4dad-8a29-b62d673ed5d5",
-      "kind": "node.status.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-09-29T03:47:19.944Z",
-      "summary": "Changed \"Some cases when drag on edge does not resize\" status to implemented.",
-      "nodeIds": [
-        "page-some-cases-when-drag-on-edge-does-not-resize"
-      ]
-    },
-    {
-      "id": "635439a6-a073-425c-b121-da9c101e1d53",
-      "kind": "node.metadata.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-09-29T03:47:16.269Z",
-      "summary": "Updated metadata for \"Pivot table \"inspect\" text is gross\".",
-      "nodeIds": [
-        "page-pivot-table-inspect-text-is-gross"
-      ]
-    },
-    {
-      "id": "0f306c3e-2fd5-401e-b375-5b9cbc8bbe27",
-      "kind": "node.status.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-09-29T03:47:15.965Z",
-      "summary": "Changed \"Pivot table \"inspect\" text is gross\" status to implemented.",
-      "nodeIds": [
-        "page-pivot-table-inspect-text-is-gross"
-      ]
-    },
-    {
-      "id": "5b1b65d4-4f81-4ec7-8da4-6d7929650982",
-      "kind": "node.metadata.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-09-29T03:47:10.803Z",
-      "summary": "Updated metadata for \"Landing page has gross image as example\".",
-      "nodeIds": [
-        "page-landing-page-has-gross-image-as-example"
-      ]
-    },
-    {
-      "id": "28a94623-1245-4e1c-95b6-07b5ec139da3",
-      "kind": "node.status.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-09-29T03:47:10.577Z",
-      "summary": "Changed \"Landing page has gross image as example\" status to implemented.",
-      "nodeIds": [
-        "page-landing-page-has-gross-image-as-example"
-      ]
-    },
-    {
-      "id": "aee5d833-f4b4-4e5f-b393-caec5bdddaa9",
-      "kind": "node.metadata.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-09-29T03:47:07.396Z",
-      "summary": "Updated metadata for \"Code sample on home page should show all - avoid overflow\".",
-      "nodeIds": [
-        "page-code-sample-on-home-page-should-show-all-avoid-overflow"
-      ]
-    },
-    {
-      "id": "6908abe3-a5c2-407d-afe5-f210a26abe71",
-      "kind": "node.status.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-09-29T03:47:07.171Z",
-      "summary": "Changed \"Code sample on home page should show all - avoid overflow\" status to implemented.",
-      "nodeIds": [
-        "page-code-sample-on-home-page-should-show-all-avoid-overflow"
-      ]
-    },
-    {
-      "id": "4ef95d90-b406-4783-a64b-16550694dc5b",
-      "kind": "node.metadata.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-09-29T03:47:03.135Z",
-      "summary": "Updated metadata for \"Chart ... menu should get blended into settings as an action row\".",
-      "nodeIds": [
-        "page-chart-menu-should-get-blended-into-settings-as-an-action-row"
-      ]
-    },
-    {
-      "id": "74149df7-1417-4746-959d-cf227e0cc508",
-      "kind": "node.status.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-09-29T03:47:02.813Z",
-      "summary": "Changed \"Chart ... menu should get blended into settings as an action row\" status to implemented.",
-      "nodeIds": [
-        "page-chart-menu-should-get-blended-into-settings-as-an-action-row"
-      ]
-    },
-    {
-      "id": "15ae4757-6473-4853-98b3-225f489c2ba9",
-      "kind": "node.metadata.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-09-29T03:46:58.288Z",
-      "summary": "Updated metadata for \"Box plot blue dot stroke is confusing - no stroke\".",
-      "nodeIds": [
-        "page-box-plot-blue-dot-stroke-is-confusing-no-stroke"
-      ]
-    },
-    {
-      "id": "53c3024c-ae90-48f1-bcc6-269d66084049",
-      "kind": "node.status.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-09-29T03:46:58.052Z",
-      "summary": "Changed \"Box plot blue dot stroke is confusing - no stroke\" status to implemented.",
-      "nodeIds": [
-        "page-box-plot-blue-dot-stroke-is-confusing-no-stroke"
       ]
     }
   ]
