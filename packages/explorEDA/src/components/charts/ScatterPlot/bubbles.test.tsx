@@ -7,6 +7,7 @@ import { ChartTraceScope } from "../trace/ChartTraceScope";
 import { ChartTracePanel } from "../trace/ChartTracePanel";
 import { ScatterPlot } from "./ScatterPlot";
 import { scatterPlotDefinition, type ScatterPlotSettings } from "./definition";
+import { planHexbins } from "./hexPlan";
 import {
   brushFilters,
   planScatter,
@@ -107,7 +108,7 @@ function Workspace() {
 }
 it("selects exact source rows by keyboard and pointer, traces sizes, and replaces a point selection with a brush", () => {
   window.PointerEvent = MouseEvent as typeof PointerEvent;
-  render(
+  const { container } = render(
     <DataLayerProvider
       data={[
         { x: 1, y: 2, Amount: 10 },
@@ -119,6 +120,16 @@ it("selects exact source rows by keyboard and pointer, traces sizes, and replace
       <Workspace />
     </DataLayerProvider>
   );
+  expect(
+    screen.getByRole("button", {
+      name: /rows left out because a plotted value is missing or invalid/i,
+    })
+  ).toBeInTheDocument();
+  expect(
+    container.querySelector('[aria-label="Bubble size legend"]')
+  ).toHaveStyle({
+    bottom: "20px",
+  });
   const svg = screen.getByRole("group", { name: "Bubble test" });
   fireEvent.focus(svg);
   fireEvent.keyDown(svg, { key: "ArrowRight" });
@@ -179,4 +190,76 @@ it("selects exact source rows by keyboard and pointer, traces sizes, and replace
   });
   expect(screen.getByLabelText("Selected IDs").textContent).toBe("0,1");
   fireEvent.click(screen.getByRole("button", { name: "Check saved settings" }));
+});
+
+it("clears a hexagon selection when the user clicks empty plot space", () => {
+  window.PointerEvent = MouseEvent as typeof PointerEvent;
+  const hexChart: ScatterPlotSettings = {
+    ...chart,
+    display: "hexbin",
+    sizeField: undefined,
+    filters: [],
+  };
+  const data = [
+    { x: 1, y: 2 },
+    { x: 2, y: 3 },
+    { x: 8, y: 9 },
+  ];
+  const snap: ScatterSnapshot = {
+    revision: "hex-test",
+    allIds: [0, 1, 2],
+    chartIds: [0, 1, 2],
+    filteredIds: [0, 1, 2],
+    xData: { 0: 1, 1: 2, 2: 8 },
+    yData: { 0: 2, 1: 3, 2: 9 },
+    colorData: {},
+    fieldSettings: {},
+  };
+  const plan = planScatter(hexChart, snap, 600, 400);
+  const hex = planHexbins(hexChart, snap, plan)!;
+  let empty: [number, number] | undefined;
+  for (let y = 3; y < plan.plotHeight; y += 5) {
+    for (let x = 3; x < plan.plotWidth; x += 5) {
+      if (!hex.hexAt(x, y)) {
+        empty = [x, y];
+        break;
+      }
+    }
+    if (empty) break;
+  }
+  expect(empty).toBeDefined();
+
+  function HexWorkspace() {
+    const active = useDataLayer(
+      (state) => state.charts[0]
+    ) as ScatterPlotSettings;
+    const wrapper = useDataLayer((state) => state.crossfilterWrapper);
+    return (
+      <>
+        <output aria-label="Selected IDs">
+          {wrapper.getFilteredRowIds().join(",")}
+        </output>
+        <ChartTraceScope>
+          <ScatterPlot settings={active} width={600} height={400} />
+        </ChartTraceScope>
+      </>
+    );
+  }
+
+  const { container } = render(
+    <DataLayerProvider data={data} charts={[hexChart]}>
+      <HexWorkspace />
+    </DataLayerProvider>
+  );
+  const svg = screen.getByRole("group", { name: "Bubble test" });
+  fireEvent.click(container.querySelector("[data-mark-id]")!);
+  expect(screen.getByLabelText("Selected IDs").textContent).not.toBe("0,1,2");
+
+  const [x, y] = empty!;
+  const clientX = plan.margin.left + x;
+  const clientY = plan.margin.top + y;
+  fireEvent.pointerDown(svg, { clientX, clientY, button: 0, pointerId: 1 });
+  fireEvent.pointerUp(svg, { clientX, clientY, pointerId: 1 });
+  fireEvent.click(svg, { clientX, clientY });
+  expect(screen.getByLabelText("Selected IDs").textContent).toBe("0,1,2");
 });

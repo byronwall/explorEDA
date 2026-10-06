@@ -2538,7 +2538,8 @@ html {
   background: var(--card);
   box-shadow: 0 4px 12px rgb(0 0 0 / 12%);
 }
-.eda-chart-color-legend .eda-legend-items {
+.eda-chart-color-legend .eda-legend-items,
+.eda-chart-color-legend .eda-legend-items.is-wrapped {
   min-width: 0;
   flex: 1;
   flex-wrap: nowrap;
@@ -2910,7 +2911,7 @@ html {
   font-size: 13px;
 }
 .eda-calc-editor-header {
-  padding: 22px 52px 18px 24px;
+  padding: 14px 48px 12px 20px;
   border-bottom: 1px solid var(--border);
   text-align: left;
   flex-shrink: 0;
@@ -2923,19 +2924,19 @@ html {
 }
 .eda-calc-editor-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 330px;
+  grid-template-columns: minmax(0, 1fr) 300px;
   flex: 1;
   min-height: 0;
 }
 .eda-calc-main {
-  padding: 22px 24px;
+  padding: 16px 20px;
   min-width: 0;
   overflow: auto;
 }
 .eda-calc-name {
   display: grid;
-  gap: 8px;
-  margin-bottom: 22px;
+  gap: 5px;
+  margin-bottom: 14px;
 }
 .eda-calc-name input {
   max-width: 400px;
@@ -2955,7 +2956,7 @@ html {
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 7px;
 }
 .eda-calc-section-heading h3,
 .eda-calc-section-heading label {
@@ -2969,16 +2970,16 @@ html {
 .eda-calc-main textarea {
   display: block;
   width: 100%;
-  min-height: 104px;
+  min-height: 82px;
   max-height: 300px;
   resize: vertical;
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--card);
-  padding: 14px;
+  padding: 10px 12px;
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 14px;
-  line-height: 1.65;
+  line-height: 1.5;
   tab-size: 2;
 }
 .eda-calc-main textarea:focus {
@@ -2993,7 +2994,7 @@ html {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 5px;
 }
 .eda-calc-help {
   color: var(--muted-foreground);
@@ -3009,8 +3010,8 @@ html {
   text-decoration: underline;
 }
 .eda-calc-validation {
-  min-height: 54px;
-  padding: 14px 0;
+  min-height: 36px;
+  padding: 9px 0;
   font-size: 12px;
   color: var(--muted-foreground);
 }
@@ -3035,20 +3036,20 @@ html {
 }
 .eda-calc-aside {
   background: var(--card);
-  padding: 18px;
+  padding: 12px;
   border-left: 1px solid var(--border);
   overflow: auto;
   min-width: 0;
 }
 .eda-calc-aside [role="tablist"] {
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 .eda-calc-aside [role="tab"] {
   flex: 1;
   font-size: 12px;
 }
 .eda-calc-field-group {
-  margin-top: 18px;
+  margin-top: 12px;
 }
 .eda-calc-field-group h3 {
   display: flex;
@@ -3064,7 +3065,7 @@ html {
   text-align: left;
   align-items: center;
   gap: 8px;
-  padding: 7px 6px;
+  padding: 5px 6px;
   border-radius: 4px;
   font-size: 12px;
   overflow-wrap: anywhere;
@@ -3080,8 +3081,8 @@ html {
 }
 .eda-calc-function-list button {
   display: grid;
-  gap: 5px;
-  padding: 10px 6px;
+  gap: 3px;
+  padding: 7px 6px;
   text-align: left;
   border-bottom: 1px solid var(--border);
 }
@@ -3099,8 +3100,8 @@ html {
 }
 .eda-calc-syntax-help {
   font-size: 12px;
-  margin-top: 18px;
-  line-height: 1.7;
+  margin-top: 12px;
+  line-height: 1.55;
 }
 .eda-calc-syntax-help summary {
   cursor: pointer;
@@ -3108,7 +3109,7 @@ html {
   margin-bottom: 8px;
 }
 .eda-calc-tree {
-  margin: 16px 0;
+  margin: 10px 0;
 }
 .eda-calc-tree ul {
   margin-left: 8px;
@@ -3125,7 +3126,7 @@ html {
   width: 100%;
   gap: 7px;
   text-align: left;
-  padding: 8px 5px;
+  padding: 5px;
   font-size: 12px;
   border-radius: 4px;
 }
@@ -3161,9 +3162,27 @@ html {
   font-size: 12px;
   line-height: 1.8;
 }
+.eda-calc-related {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.eda-calc-related > summary {
+  cursor: pointer;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 600;
+}
+.eda-calc-related > summary:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.eda-calc-related .eda-calc-view-list {
+  margin-top: 6px;
+}
 .eda-calc-preview {
   border-top: 1px solid var(--border);
-  padding-top: 18px;
+  padding-top: 12px;
 }
 .eda-calc-preview-scroll {
   max-width: 100%;
@@ -3181,12 +3200,12 @@ html {
 .eda-calc-preview th {
   text-align: right;
   font-weight: 500;
-  padding: 9px 12px;
+  padding: 6px 9px;
   color: var(--muted-foreground);
   background: var(--muted);
 }
 .eda-calc-preview td {
-  padding: 8px 12px;
+  padding: 6px 9px;
   text-align: right;
   border-top: 1px solid var(--border);
 }
@@ -3227,8 +3246,8 @@ html {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  padding: 16px 24px;
+  gap: 12px;
+  padding: 10px 20px;
   flex-shrink: 0;
 }
 .eda-calc-editor-footer p {
@@ -4613,10 +4632,53 @@ html {
 .eda-add-chart-controls {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  min-height: 0;
+  overflow: hidden;
+}
+.eda-add-chart-control-tabs {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+.eda-add-chart-control-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex-shrink: 0;
+  gap: 2px;
+  margin-bottom: 8px;
+  padding: 3px;
+  border-radius: 6px;
+  background: var(--muted);
+}
+.eda-add-chart-control-switch button {
+  min-height: 28px;
+  border-radius: 4px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 500;
+}
+.eda-add-chart-control-switch button[aria-pressed="true"] {
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 10%);
+}
+.eda-add-chart-control-switch button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.eda-add-chart-selected {
+  flex-shrink: 0;
+  margin: 0 0 6px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.eda-add-chart-control-tabs > .eda-add-chart-types,
+.eda-add-chart-control-tabs > .eda-add-chart-fields {
+  flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding-right: 4px;
+  padding: 0 4px 4px 0;
 }
 .eda-add-chart-types {
   display: grid;
@@ -4685,8 +4747,6 @@ html {
 .eda-add-chart-fields {
   display: grid;
   gap: 8px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
 }
 .eda-add-chart-fields > h3 {
   color: var(--muted-foreground);

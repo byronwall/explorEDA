@@ -148,6 +148,8 @@ export interface AxisInput {
   fieldLabel?: string;
   /** Tick density from the chart setting. Undefined uses 5. */
   density?: number;
+  tickFontSize?: number;
+  labelFontSize?: number;
   grid?: boolean;
   format: (value: string | number) => string;
   label?: string;
@@ -160,9 +162,6 @@ export interface AxisInput {
 }
 
 const MIN_LABEL_GAP = 8;
-const X_LABEL_CHAR_WIDTH = 6;
-const Y_LABEL_HEIGHT = 12;
-
 function truncate(text: string, max: number) {
   return text.length > max ? `${text.slice(0, max - 1)}…` : text;
 }
@@ -202,6 +201,9 @@ function planAxis(
 ): AxisPlan {
   const { scale, format } = input;
   const band = "bandwidth" in scale;
+  const tickFontSize = input.tickFontSize ?? 10;
+  const labelFontSize = input.labelFontSize ?? 11;
+  const tickCharWidth = tickFontSize * 0.6;
   // Density sets the D3 candidate target. Spacing then drops overlapping labels.
   const requested = Math.max(2, input.density ?? 5);
   const candidates: (number | string)[] =
@@ -212,15 +214,15 @@ function planAxis(
         candidates,
         (tick) => position(scale, tick),
         axis === "x"
-          ? (tick) => format(tick).length * X_LABEL_CHAR_WIDTH
-          : () => Y_LABEL_HEIGHT
+          ? (tick) => format(tick).length * tickCharWidth
+          : () => tickFontSize * 1.2
       );
   const maxLabelChars =
     axis === "x"
       ? band
-        ? Math.max(3, Math.floor(scale.step() / 7))
+        ? Math.max(3, Math.floor(scale.step() / (tickFontSize * 0.7)))
         : 20
-      : Math.max(5, Math.floor((margin.left - 12 - 4) / 6));
+      : Math.max(5, Math.floor((margin.left - 12 - 4) / tickCharWidth));
   const word = AXIS_WORD[axis];
   const guides: AxisGuide[] = [];
   if (input.rule !== false) {
@@ -259,7 +261,7 @@ function planAxis(
               x: at,
               y: plotHeight + 17,
               anchor: "middle",
-              fontSize: 10,
+              fontSize: input.tickFontSize ?? 10,
             }
           : {
               text: truncate(fullText, maxLabelChars),
@@ -267,7 +269,7 @@ function planAxis(
               x: -9,
               y: at,
               anchor: "end",
-              fontSize: 10,
+              fontSize: input.tickFontSize ?? 10,
               dy: ".32em",
             },
     });
@@ -284,20 +286,26 @@ function planAxis(
       label:
         axis === "x"
           ? {
-              text: truncate(input.label, Math.max(3, Math.floor(plotWidth / 6))),
+              text: truncate(
+                input.label,
+                Math.max(3, Math.floor(plotWidth / (labelFontSize * 0.6)))
+              ),
               fullText: input.label,
               x: plotWidth / 2,
               y: plotHeight + Math.max(32, margin.bottom - footer - 8),
               anchor: "middle",
-              fontSize: 11,
+              fontSize: input.labelFontSize ?? 11,
             }
           : {
-              text: truncate(input.label, Math.max(3, Math.floor(plotHeight / 6))),
+              text: truncate(
+                input.label,
+                Math.max(3, Math.floor(plotHeight / (labelFontSize * 0.6)))
+              ),
               fullText: input.label,
               x: -plotHeight / 2,
               y: -(margin.left - 12),
               anchor: "middle",
-              fontSize: 11,
+              fontSize: input.labelFontSize ?? 11,
               rotate: -90,
             },
     });
@@ -350,8 +358,8 @@ function planAxis(
       minLabelGap: MIN_LABEL_GAP,
       labelSpacing:
         axis === "x"
-          ? `${X_LABEL_CHAR_WIDTH} px per character`
-          : `${Y_LABEL_HEIGHT} px per label`,
+          ? `${tickCharWidth} px per character`
+          : `${tickFontSize * 1.2} px per label`,
       maxLabelChars,
     },
     grid:
@@ -400,6 +408,7 @@ export function planChartMargin({
   yDomain,
   hasXLabel,
   hasYLabel,
+  yTickFontSize = 10,
   yLabels,
 }: {
   margin: MarginSettings;
@@ -407,13 +416,16 @@ export function planChartMargin({
   yDomain: [number, number];
   hasXLabel: boolean;
   hasYLabel: boolean;
+  yTickFontSize?: number;
   /** Tick labels of a band Y axis, which replace the numeric ticks. */
   yLabels?: string[];
 }): { margin: MarginSettings; policy: MarginPolicy } {
   const labels = yLabels ?? scaleLinear().domain(yDomain).ticks(5).map(String);
   const labelLeftMargin = Math.max(
     margin.left,
-    ...labels.map((label) => label.length * 7 + (hasYLabel ? 38 : 18))
+    ...labels.map(
+      (label) => label.length * yTickFontSize * 0.7 + (hasYLabel ? 38 : 18)
+    )
   );
   const minPlotWidth = Math.min(
     80,

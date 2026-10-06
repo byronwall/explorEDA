@@ -298,6 +298,8 @@ export function planSeriesBars({
     margin,
     x: {
       scale: x,
+      tickFontSize: settings.xAxis.tickFontSize,
+      labelFontSize: settings.xAxis.labelFontSize,
       field,
       fieldLabel: getLabel(field),
       label: settings.xAxisLabel || getLabel(field),
@@ -305,6 +307,8 @@ export function planSeriesBars({
     },
     y: {
       scale: y,
+      tickFontSize: settings.yAxis.tickFontSize,
+      labelFontSize: settings.yAxis.labelFontSize,
       field: spec?.measureField,
       label: settings.yAxisLabel || valueLabel,
       scaleType: yScaleType,

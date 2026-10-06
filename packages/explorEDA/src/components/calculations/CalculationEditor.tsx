@@ -234,10 +234,10 @@ export function CalculationEditorProvider({
             </DialogTitle>
             <DialogDescription>
               {root
-                ? "Following " +
+                ? "Editing " +
                   root +
-                  ". Preview a change before applying it to the analysis."
-                : "Turn source fields into values you can reuse in any view."}
+                  ". Preview the formula result, inputs, and affected views."
+                : "Create a formula, then preview its result before using it in a view."}
             </DialogDescription>
           </DialogHeader>
           <CalculationForm
@@ -295,8 +295,8 @@ export function CalculationEditorProvider({
               <>
                 {dirty && !current?.manager && (
                   <p className="eda-calc-help mb-3">
-                    The chain shows saved values until this draft can be
-                    previewed.
+                    Saved values remain in the dependency trace until this draft
+                    can be previewed.
                   </p>
                 )}
                 {traceRoot && selectedRow ? (
@@ -327,8 +327,8 @@ export function CalculationEditorProvider({
                   </p>
                 )}
                 {usedViews.length > 0 && (
-                  <section className="mt-6">
-                    <h3 className="text-sm font-medium">Used in views</h3>
+                  <details className="eda-calc-related">
+                    <summary>Used in views · {usedViews.length}</summary>
                     <ul className="eda-calc-view-list">
                       {usedViews.map((chart) => (
                         <li key={chart.id}>
@@ -336,7 +336,7 @@ export function CalculationEditorProvider({
                         </li>
                       ))}
                     </ul>
-                  </section>
+                  </details>
                 )}
               </>
             }

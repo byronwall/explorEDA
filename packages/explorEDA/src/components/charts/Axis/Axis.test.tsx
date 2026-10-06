@@ -84,10 +84,9 @@ describe("planAxes", () => {
         screen.getByRole("button", { name: `Horizontal tick ${tick}` })
       ).toHaveAttribute("data-plan-id", `x:tick:${tick}`);
     }
-    expect(screen.getByRole("button", { name: "Zero baseline" })).toHaveAttribute(
-      "data-plan-id",
-      "y:zero"
-    );
+    expect(
+      screen.getByRole("button", { name: "Zero baseline" })
+    ).toHaveAttribute("data-plan-id", "y:zero");
     expect(findAxisGuide(plan, "y:zero")?.guide.line?.y1).toBe(100);
   });
 
@@ -101,14 +100,39 @@ describe("planAxes", () => {
         format: String,
       },
       y: {
-        scale: scaleBand<string>()
-          .domain(["a", "b", "c"])
-          .range([0, 200]),
+        scale: scaleBand<string>().domain(["a", "b", "c"]).range([0, 200]),
         format: String,
         label: "Category",
       },
     });
     expect(plan.y.ticks.shown).toEqual(["a", "b", "c"]);
     expect(plan.y.guides.some((guide) => guide.role === "label")).toBe(false);
+  });
+
+  it("uses saved tick and axis label font sizes", () => {
+    const plan = planAxes({
+      plotWidth: 300,
+      plotHeight: 200,
+      margin,
+      x: {
+        scale: numericScale({}).domain([0, 10]).range([0, 300]),
+        format: String,
+        label: "X units",
+        tickFontSize: 12,
+        labelFontSize: 14,
+      },
+      y: {
+        scale: numericScale({}).domain([0, 10]).range([200, 0]),
+        format: String,
+        label: "Y units",
+        tickFontSize: 8,
+        labelFontSize: 9,
+      },
+    });
+
+    expect(findAxisGuide(plan, "x:tick:0")?.guide.label?.fontSize).toBe(12);
+    expect(findAxisGuide(plan, "x:label")?.guide.label?.fontSize).toBe(14);
+    expect(findAxisGuide(plan, "y:tick:0")?.guide.label?.fontSize).toBe(8);
+    expect(findAxisGuide(plan, "y:label")?.guide.label?.fontSize).toBe(9);
   });
 });

@@ -24,9 +24,9 @@ export function TabContainer({
       onValueChange={onTabChange}
       className="w-full"
     >
-      <TabsList className="w-full">
+      <TabsList className="h-auto w-full flex-wrap justify-start gap-1">
         {tabs.map((tab) => (
-          <TabsTrigger key={tab.value} value={tab.value} className="flex-1">
+          <TabsTrigger key={tab.value} value={tab.value} className="flex-none">
             {tab.label}
           </TabsTrigger>
         ))}

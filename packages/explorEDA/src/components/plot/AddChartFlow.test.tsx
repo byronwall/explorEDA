@@ -197,8 +197,12 @@ it("discovers Histogram and Distribution without adding a preview to the saved l
   ).toHaveAttribute("aria-pressed", "true");
   fireEvent.click(within(dialog).getByRole("button", { name: "Bar Chart" }));
   expect(within(dialog).getByLabelText("Data mode")).toHaveValue("category");
+  expect(within(dialog).getByRole("button", { name: "Fields" })).toHaveFocus();
+  fireEvent.click(within(dialog).getByRole("button", { name: "Chart type" }));
+  expect(within(dialog).getByText("Selected: Bar Chart")).toBeInTheDocument();
   fireEvent.click(within(dialog).getByRole("button", { name: "Histogram" }));
   expect(within(dialog).getByLabelText("Data mode")).toHaveValue("histogram");
+  fireEvent.click(within(dialog).getByRole("button", { name: "Chart type" }));
   fireEvent.click(within(dialog).getByRole("button", { name: "Distribution" }));
   fireEvent.change(within(dialog).getByLabelText("Display"), {
     target: { value: "violin" },

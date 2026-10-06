@@ -46,7 +46,14 @@ import {
   PopoverTrigger,
 } from "./ui/popover";
 import { useAlertStore } from "@/stores/alertStore";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   getChartFields,
   getChartSummary,
@@ -64,11 +71,21 @@ interface PlotChartPanelProps {
 const CATEGORY_LABELED_CHART_TYPES = new Set(["row", "boxplot"]);
 
 const TRACE_COPY = {
-  row: { heading: "Category trace", emptyText: "Alt-click a bar, including Other categories, to inspect its members and source rows.", ariaLabel: "Row chart trace inspector" },
-  boxplot: { heading: "Distribution trace", emptyText: "Alt-click a box to inspect its statistics and source rows.", ariaLabel: "Distribution trace inspector" },
+  row: {
+    heading: "Category trace",
+    emptyText:
+      "Alt-click a bar, including Other categories, to inspect its members and source rows.",
+    ariaLabel: "Row chart trace inspector",
+  },
+  boxplot: {
+    heading: "Distribution trace",
+    emptyText: "Alt-click a box to inspect its statistics and source rows.",
+    ariaLabel: "Distribution trace inspector",
+  },
   map: {
     heading: "Map trace",
-    emptyText: "Alt-click a point or region to see its source records and projection. Alt-click outside the regions to trace joins. You can also find a source row below.",
+    emptyText:
+      "Alt-click a point or region to see its source records and projection. Alt-click outside the regions to trace joins. You can also find a source row below.",
     ariaLabel: "Map trace inspector",
   },
   line: {
@@ -296,7 +313,7 @@ export function PlotChartPanel({
     }
     setExpandedState(open);
   };
-  const placeSettings = (open: boolean) => {
+  const placeSettings = useCallback((open: boolean) => {
     setSettingsOpen(open);
     if (!open || !panelRef.current) return;
     settingsAnchor.current = panelRef.current;
@@ -320,7 +337,13 @@ export function PlotChartPanel({
         setSettingsHeight(Math.min(420, window.innerHeight - 48));
       }
     }
-  };
+  }, []);
+  useEffect(() => {
+    if (!settingsOpen) return;
+    const reposition = () => placeSettings(true);
+    window.addEventListener("resize", reposition);
+    return () => window.removeEventListener("resize", reposition);
+  }, [settingsOpen, placeSettings]);
   const [toolbarTarget, setToolbarTarget] = useState<HTMLDivElement | null>(
     null
   );
@@ -350,9 +373,11 @@ export function PlotChartPanel({
   const dataFields = aggregate
     ? Array.from(
         new Set(
-          [aggregate.groupField, aggregate.measureField, ...(settings.type === "bar" ? [settings.seriesField] : [])].filter(
-            (field): field is string => Boolean(field)
-          )
+          [
+            aggregate.groupField,
+            aggregate.measureField,
+            ...(settings.type === "bar" ? [settings.seriesField] : []),
+          ].filter((field): field is string => Boolean(field))
         )
       )
     : getChartFields(settings);
@@ -658,7 +683,8 @@ export function PlotChartPanel({
               width={Math.max(1, panelWidth - 24)}
             />
           )}
-          {settings.facet?.enabled && (!aggregate || (settings.type === "bar" && settings.seriesField)) ? (
+          {settings.facet?.enabled &&
+          (!aggregate || (settings.type === "bar" && settings.seriesField)) ? (
             <FacetContainer
               settings={settings}
               width={Math.max(1, panelWidth - 24)}

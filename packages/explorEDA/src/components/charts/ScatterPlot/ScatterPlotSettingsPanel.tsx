@@ -10,11 +10,18 @@ import { DensitySettings } from "./DensitySettings";
 import { RegressionSettings } from "./RegressionSettings";
 import { SurfaceSettings } from "./SurfaceSettings";
 import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+
+interface ScatterPlotSettingsPanelProps
+  extends ChartSettingsPanelProps<ScatterPlotSettings> {
+  showRegression?: boolean;
+}
 
 export function ScatterPlotSettingsPanel({
   settings,
   onSettingsChange,
-}: ChartSettingsPanelProps<ScatterPlotSettings>) {
+  showRegression = true,
+}: ScatterPlotSettingsPanelProps) {
   const density = settings.display === "density";
   const { getOrCreateScaleForField } = useColorScales();
   const profiles = useDataLayer((s) => s.fieldProfiles);
@@ -33,26 +40,56 @@ export function ScatterPlotSettingsPanel({
     <div className="space-y-4">
       <div className="grid grid-cols-[120px_1fr] items-center gap-4">
         <Label htmlFor="scatter-display">Display</Label>
-        <ActionTooltip content="Points show individual rows. Rectangular and hexagonal bins count rows in fixed cells; a click selects a cell's exact rows. Smoothed density estimates rows per unit area and draws filled regions and contour lines.">
-          <select
-            id="scatter-display"
-            className="h-9 min-w-0 rounded-md border border-input bg-background px-2 text-sm"
+        <div className="col-span-2 grid grid-cols-2 gap-2">
+          <ToggleGroup
+            type="single"
             value={settings.display ?? "points"}
-            onChange={(event) =>
-              onSettingsChange({
-                ...settings,
-                display: event.target.value as NonNullable<
-                  ScatterPlotSettings["display"]
-                >,
-              })
-            }
+            onValueChange={(display) => {
+              if (display)
+                onSettingsChange({
+                  ...settings,
+                  display: display as NonNullable<
+                    ScatterPlotSettings["display"]
+                  >,
+                });
+            }}
+            aria-label="Scatter display"
+            className="col-span-2 grid grid-cols-2"
+            variant="outline"
+            size="sm"
           >
-            <option value="points">Points</option>
-            <option value="density">Rectangular bins</option>
-            <option value="hexbin">Hexagonal bins</option>
-            <option value="contour">Smoothed density</option>
-          </select>
-        </ActionTooltip>
+            {(
+              [
+                ["points", "Points", "Show each row as a point."],
+                [
+                  "density",
+                  "Rect bins",
+                  "Count rows in rectangular bins. Click a bin to select its rows.",
+                ],
+                [
+                  "hexbin",
+                  "Hex bins",
+                  "Count rows in hexagonal bins. Click a hexagon to select its rows.",
+                ],
+                [
+                  "contour",
+                  "Density",
+                  "Estimate rows per unit area with filled regions and contour lines.",
+                ],
+              ] as const
+            ).map(([value, label, help]) => (
+              <ActionTooltip key={value} content={help}>
+                <ToggleGroupItem
+                  value={value}
+                  aria-label={label}
+                  className="w-full text-xs aria-checked:bg-primary/10 aria-checked:font-semibold aria-checked:text-primary"
+                >
+                  {label}
+                </ToggleGroupItem>
+              </ActionTooltip>
+            ))}
+          </ToggleGroup>
+        </div>
         <Label>X Field</Label>
         <FieldSelector
           label=""
@@ -171,10 +208,12 @@ export function ScatterPlotSettingsPanel({
                 />
               </>
             )}
-            <RegressionSettings
-              settings={settings}
-              onSettingsChange={onSettingsChange}
-            />
+            {showRegression && (
+              <RegressionSettings
+                settings={settings}
+                onSettingsChange={onSettingsChange}
+              />
+            )}
           </>
         )}
       </div>

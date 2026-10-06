@@ -13,6 +13,8 @@ import { LabelsSettingsTab } from "./settings/LabelsSettingsTab";
 import { MainSettingsTab } from "./settings/MainSettingsTab";
 import { TabContainer } from "./settings/TabContainer";
 import { Button } from "./ui/button";
+import { RegressionSettings } from "./charts/ScatterPlot/RegressionSettings";
+import type { ScatterPlotSettings } from "./charts/ScatterPlot/definition";
 
 interface ChartSettingsContentProps {
   settings: ChartSettings;
@@ -75,9 +77,14 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
   const hasAxes = ["row", "bar", "scatter", "line", "boxplot"].includes(
     localSettings.type
   );
+  const hasFitTab =
+    localSettings.type === "scatter" && localSettings.display !== "density";
   const tabs = [
     { value: "main", label: "Data" },
-    ...(localSettings.type === "map" ? [{value: "facet", label: "Facets"}] : []),
+    ...(hasFitTab ? [{ value: "fit", label: "Fit" }] : []),
+    ...(localSettings.type === "map"
+      ? [{ value: "facet", label: "Facets" }]
+      : []),
     ...(hasAxes
       ? [
           { value: "facet", label: "Facets" },
@@ -116,7 +123,10 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
           Changes update the chart immediately.
         </p>
       </div>
-      <TabContainer tabs={tabs}>
+      <TabContainer
+        key={localSettings.type}
+        tabs={tabs}
+      >
         {{
           filters: (
             <FiltersSettingsTab
@@ -128,8 +138,23 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
             <MainSettingsTab
               settings={localSettings}
               onSettingsChange={handleSettingsChange}
+              showRegression={localSettings.type !== "scatter"}
             />
           ),
+          fit: hasFitTab ? (
+            <div className="space-y-3">
+              <p className="text-xs text-muted-foreground">
+                Fit each color group using the rows that pass other chart
+                filters.
+              </p>
+              <div className="grid grid-cols-[120px_1fr] items-center gap-x-4 gap-y-3">
+                <RegressionSettings
+                  settings={localSettings as ScatterPlotSettings}
+                  onSettingsChange={handleSettingsChange}
+                />
+              </div>
+            </div>
+          ) : null,
           facet: (
             <FacetSettingsTab
               settings={localSettings}

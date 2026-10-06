@@ -54,6 +54,8 @@ export type FacetSettings = GridFacetSettings | WrapFacetSettings;
 export interface AxisSettings {
   title?: string;
   scaleType?: "linear" | "log" | "time" | "band" | "symlog";
+  tickFontSize?: 8 | 10 | 12;
+  labelFontSize?: 10 | 12 | 14;
   grid?: boolean;
   min?: number;
   max?: number;

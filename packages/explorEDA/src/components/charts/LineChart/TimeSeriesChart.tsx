@@ -151,6 +151,8 @@ export function TimeSeriesChart({
           .filter((_, i) => i % step === 0)
           .map((point) => point.start),
         field: settings.xField,
+        tickFontSize: settings.xAxis.tickFontSize,
+        labelFontSize: settings.xAxis.labelFontSize,
         label: settings.xAxisLabel || `${plan.dateLabel} · UTC`,
         grid: settings.xAxis.grid,
         format: (value) => new Date(Number(value)).toISOString().slice(0, 10),
@@ -158,6 +160,8 @@ export function TimeSeriesChart({
       y: {
         scale: plan.yScale,
         scaleType: plan.yScaleType,
+        tickFontSize: settings.yAxis.tickFontSize,
+        labelFontSize: settings.yAxis.labelFontSize,
         label: settings.yAxisLabel || plan.metricLabel,
         grid: settings.yAxis.grid ?? true,
         density: settings.yGridLines,

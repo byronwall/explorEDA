@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { ActionTooltip } from "@/components/ui/tooltip";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import type {
   ScatterPlotSettings,
   ScatterRegressionSettings,
@@ -11,9 +12,6 @@ import { DEFAULT_DEGREE, DEFAULT_SPAN } from "./regression";
 import { DEFAULT_MARGINAL_BINS } from "./marginalPlan";
 
 type Method = ScatterRegressionSettings["method"] | "none";
-
-const METHOD_HELP =
-  "Draws a fitted curve and its equation for each color group in each facet. Fits use the rows that pass the other charts' filters; selecting points on this chart does not refit. Linear fits a least-squares line with slope, offset, and R². Polynomial adds powers of X up to a chosen degree. LOESS follows the data with local weighted lines and has no single equation.";
 
 /** One fit method and its shared parameters for every facet of this chart. */
 export function RegressionSettings({
@@ -28,27 +26,50 @@ export function RegressionSettings({
     });
   return (
     <>
-      <Label htmlFor="scatter-fit">Fit</Label>
-      <ActionTooltip content={METHOD_HELP}>
-        <select
-          id="scatter-fit"
-          className="h-9 min-w-0 rounded-md border border-input bg-background px-2 text-sm"
-          value={regression?.method ?? "none"}
-          onChange={(event) => {
-            const method = event.target.value as Method;
-            onSettingsChange({
-              ...settings,
-              regression:
-                method === "none" ? undefined : { ...regression, method },
-            });
-          }}
-        >
-          <option value="none">None</option>
-          <option value="linear">Linear</option>
-          <option value="polynomial">Polynomial</option>
-          <option value="loess">LOESS</option>
-        </select>
-      </ActionTooltip>
+      <Label className="col-span-2">Fit method</Label>
+      <ToggleGroup
+        type="single"
+        value={regression?.method ?? "none"}
+        onValueChange={(value) => {
+          const method = (value || "none") as Method;
+          onSettingsChange({
+            ...settings,
+            regression:
+              method === "none" ? undefined : { ...regression, method },
+          });
+        }}
+        aria-label="Fit method"
+        variant="outline"
+        size="sm"
+        className="col-span-2 grid grid-cols-2"
+      >
+        {(
+          [
+            ["none", "None", "Do not draw a fitted curve."],
+            [
+              "linear",
+              "Linear",
+              "Fit a least-squares line with slope, offset, and R².",
+            ],
+            [
+              "polynomial",
+              "Polynomial",
+              "Add powers of X up to a chosen degree.",
+            ],
+            ["loess", "LOESS", "Follow the data with local weighted lines."],
+          ] as const
+        ).map(([value, label, help]) => (
+          <ActionTooltip key={value} content={help}>
+            <ToggleGroupItem
+              value={value}
+              aria-label={label}
+              className="text-xs aria-checked:bg-primary/10 aria-checked:font-semibold aria-checked:text-primary"
+            >
+              {label}
+            </ToggleGroupItem>
+          </ActionTooltip>
+        ))}
+      </ToggleGroup>
       {regression?.method === "polynomial" && (
         <>
           <Label htmlFor="scatter-fit-degree">Degree</Label>
