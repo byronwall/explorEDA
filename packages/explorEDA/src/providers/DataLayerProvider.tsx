@@ -144,6 +144,15 @@ function validateAggregateState(
     ) {
       throw new Error("Invalid grouped summary definition");
     }
+    if (
+      availableFields &&
+      aggregate.entityField &&
+      !availableFields.has(aggregate.entityField)
+    ) {
+      throw new Error(
+        `Grouped summary ${aggregate.name} references missing entity field ${aggregate.entityField}`
+      );
+    }
     if (availableFields && !availableFields.has(aggregate.groupField)) {
       throw new Error(
         `Grouped summary ${aggregate.name} references missing group field ${aggregate.groupField}`
@@ -796,6 +805,9 @@ const createDataLayerStore = <T extends DatumObject>(
       const measureData = spec.measureField
         ? get().getColumnData(spec.measureField)
         : undefined;
+      const entityData = spec.entityField
+        ? get().getColumnData(spec.entityField)
+        : undefined;
       const rawRows = get().rawData as Array<Record<string, datum>>;
       const rawInputs: Record<number, datum> = {};
       const exclusionReasons: Record<number, string> = {};
@@ -815,6 +827,9 @@ const createDataLayerStore = <T extends DatumObject>(
           ? {
               [spec.measureField]: measureData?.[sourceId],
             }
+          : {}),
+        ...(spec.entityField
+          ? { [spec.entityField]: entityData?.[sourceId] }
           : {}),
       }));
       if (spec.measureField) {

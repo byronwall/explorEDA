@@ -47,10 +47,16 @@ export function getChartTitle(
   }
 
   if (settings.type === "metric-card") {
-    if (settings.aggregation === "count") return "Matching rows";
+    if (settings.aggregation === "count")
+      return settings.entityField
+        ? `Distinct ${getFieldLabel(settings.entityField)}`
+        : "Matching rows";
     const metric = settings.aggregation === "sum" ? "Sum" : "Average";
+    const once = settings.entityField
+      ? `, once per ${getFieldLabel(settings.entityField)}`
+      : "";
     return settings.measureField
-      ? `${metric} of ${getFieldLabel(settings.measureField)}`
+      ? `${metric} of ${getFieldLabel(settings.measureField)}${once}`
       : "Metric card";
   }
   if (settings.type === "sankey") {
@@ -160,7 +166,10 @@ export function getChartFields(settings: ChartSettings): string[] {
       case "heatmap":
         return [settings.field, settings.columnField, settings.measureField];
       case "metric-card":
-        return settings.aggregation === "count" ? [] : [settings.measureField];
+        return [
+          settings.aggregation === "count" ? undefined : settings.measureField,
+          settings.entityField,
+        ];
       default:
         return [settings.field, settings.colorField];
     }
@@ -228,7 +237,7 @@ export function getChartSummary(
     return `${name}.`;
   }
   if (settings.type === "metric-card") {
-    return settings.aggregation === "count"
+    return settings.aggregation === "count" && !settings.entityField
       ? "Metric card showing the count of rows that match the chart filters."
       : `${getChartTitle({ ...settings, title: "" }, getFieldLabel)} for rows that match the chart filters.`;
   }
