@@ -38,6 +38,7 @@ import {
   validateSavedData,
 } from "@/utils/saveDataUtils";
 import { PlotManager } from "./PlotManager";
+import type { ExplorEdaSidePanel } from "./WorkspaceSidePanel";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { Toaster } from "./ui/sonner";
 import { GlobalAlertDialog } from "./GlobalAlertDialog";
@@ -52,26 +53,37 @@ export interface ExplorEdaHandle {
   getSettings: () => SavedDataStructure;
 }
 
-export const ExplorEda = forwardRef<
-  ExplorEdaHandle,
-  {
-    data: DatumObject[];
-    savedData?: SavedDataStructure;
-    onStateChange?: (state: SavedDataStructure) => void;
-  }
->(function ExplorEda({ data, savedData, onStateChange }, ref) {
-  return (
-    <DataLayerProvider
-      data={data}
-      savedData={savedData}
-      onStateChange={onStateChange}
-    >
-      <Workspace ref={ref} />
-    </DataLayerProvider>
-  );
-});
+export interface ExplorEdaProps {
+  data: DatumObject[];
+  savedData?: SavedDataStructure;
+  onStateChange?: (state: SavedDataStructure) => void;
+  /** Host panels on the right edge, each with a toolbar button. */
+  sidePanels?: ExplorEdaSidePanel[];
+  /** Shows the charts without accepting edits. Host panels stay usable. */
+  readOnly?: boolean;
+}
 
-const Workspace = forwardRef<ExplorEdaHandle>(function Workspace(_props, ref) {
+export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
+  function ExplorEda(
+    { data, savedData, onStateChange, sidePanels, readOnly },
+    ref
+  ) {
+    return (
+      <DataLayerProvider
+        data={data}
+        savedData={savedData}
+        onStateChange={onStateChange}
+      >
+        <Workspace ref={ref} sidePanels={sidePanels} readOnly={readOnly} />
+      </DataLayerProvider>
+    );
+  }
+);
+
+const Workspace = forwardRef<
+  ExplorEdaHandle,
+  Pick<ExplorEdaProps, "sidePanels" | "readOnly">
+>(function Workspace({ sidePanels, readOnly }, ref) {
   const getSettings = useDataLayer((state) => state.saveToStructure);
   useImperativeHandle(ref, () => ({ getSettings }), [getSettings]);
 
@@ -79,7 +91,7 @@ const Workspace = forwardRef<ExplorEdaHandle>(function Workspace(_props, ref) {
     <div className="bg-background text-foreground">
       <CalculationEditorProvider>
         <ChartDraftProvider>
-          <PlotManager />
+          <PlotManager sidePanels={sidePanels} readOnly={readOnly} />
         </ChartDraftProvider>
       </CalculationEditorProvider>
       <GlobalAlertDialog />
@@ -88,7 +100,7 @@ const Workspace = forwardRef<ExplorEdaHandle>(function Workspace(_props, ref) {
   );
 });
 
-export type { SavedDataStructure };
+export type { SavedDataStructure, ExplorEdaSidePanel };
 export type { GeometryAsset, RegionGeometry } from "@/lib/geometryAssets";
 export type {
   SavedAnalysisStructure,

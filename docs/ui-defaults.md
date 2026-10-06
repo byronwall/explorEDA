@@ -58,7 +58,9 @@ Hidden header actions take no room, so the chart name keeps the full header unti
 The field list is the one workspace tool that stays open. It floats over the right edge from the top of the viewport, never resizes the chart grid, and becomes a bottom sheet on narrow screens. Controls it covers move beside it. Fields in the toolbar and the F key open it, and Shift+F opens every field's distribution in a full view.
 
 Workspace settings (calculations, colors, and grid) share one panel that floats over the right edge in the field list's place. Each toolbar button opens its tab and closes the panel when pressed again. Every tab stays mounted, so unsaved edits survive a switch. The panel has a narrow and a wide width, and becomes a full sheet on narrow screens. Escape closes it and returns focus to its toolbar button.
-The right edge shows one panel at a time. Rows and workspace settings replace each other. Both cover the field list, which returns when they close.
+The right edge shows one panel at a time. Rows, workspace settings, and host panels replace each other. They cover the field list, which returns when they close.
+A host panel, such as the demo's History, gets an icon button beside Fields and Rows, an optional letter shortcut, and the settings panel's narrow and wide sizes. Its wide size shows more detail, not just more room.
+While the workspace is read-only, such as during a history preview, the charts and editing tools take no input. The filter scope stays visible and host panels stay usable.
 
 Use a modal only when focus must be protected, such as chart details or a destructive confirmation.
 Chart details fill the viewport with the chart on the left and its controls on the right, with Settings open first and Chart data in a second tab. Below 900 px the chart sits above the controls. The grid shows no second copy of the chart, and settings stay live with the same reset action.

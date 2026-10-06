@@ -1,41 +1,37 @@
 import { Button } from "@/components/ui/button";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import type { DatumObject } from "./LandingPage";
-import { getSavedViewsRows, type SavedViewsSession } from "./savedViewsSession";
+import {
+  getSavedViewsRows,
+  HISTORY_LIMIT,
+  STORAGE_KEY,
+  type SavedView,
+  type SavedViewsSession,
+} from "./savedViewsSession";
+import {
+  classifyChange,
+  clone,
+  describeEntry,
+  formatClock,
+  LABEL_NAMES,
+  MOD_KEY,
+  pushCheckpoint,
+  SHARED_KEYS,
+  snapshot,
+} from "./savedViewsHistory";
+import { HistoryTimeline } from "./HistoryTimeline";
+import { SavedViewTabs, type SaveState } from "./SavedViewTabs";
 import {
   ExplorEda,
-  parseSavedAnalysis,
   stringifySavedAnalysis,
   type ExplorEdaHandle,
+  type ExplorEdaSidePanel,
   type SavedDataStructure,
 } from "exploreda";
+import { Eye, History, Redo2, Undo2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-const STORAGE_KEY = "exploreda.saved-views.v1";
-const HISTORY_LIMIT = 50;
-const SHARED_KEYS = [
-  "calculations",
-  "colorScales",
-  "fieldSettings",
-  "aggregates",
-  "geometryAssets",
-] as const;
-
-type SavedView = {
-  id: string;
-  name: string;
-  settings?: SavedDataStructure;
-};
-
-type ChangeLabel = "View" | "Filter" | "Both" | "Shared";
-type HistoryEntry = {
-  at: string;
-  label: ChangeLabel;
-  tabs: SavedView[];
-};
-
-function clone<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value)) as T;
-}
+const HISTORY_PANEL_ID = "saved-views-history";
 
 function newId() {
   return `view-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
@@ -43,114 +39,6 @@ function newId() {
 
 function activeView(tabs: SavedView[], id: string) {
   return tabs.find((tab) => tab.id === id) ?? tabs[0]!;
-}
-
-function snapshot(tabs: SavedView[]) {
-  return clone(tabs);
-}
-
-function signatures(tabs: SavedView[]) {
-  const shared = JSON.stringify(
-    tabs.map(
-      ({ settings }) =>
-        settings &&
-        Object.fromEntries(
-          SHARED_KEYS.map((key) => [
-            key,
-            key === "fieldSettings"
-              ? (settings[key] ?? {})
-              : (settings[key] ?? []),
-          ])
-        )
-    )
-  );
-  const filters = JSON.stringify(
-    tabs.map(({ id, settings }) => ({
-      id,
-      charts: settings?.charts
-        .filter((chart) => chart.filters.length > 0)
-        .map(({ id: chartId, filters }) => ({ id: chartId, filters })),
-      rows: {
-        filters: settings?.rowsSettings?.filters ?? [],
-        globalSearch: settings?.rowsSettings?.globalSearch ?? "",
-      },
-    }))
-  );
-  const views = JSON.stringify(
-    tabs.map(({ id, name, settings }) => {
-      if (!settings) return { id, name };
-      const {
-        charts,
-        metadata: _metadata,
-        rowsSettings,
-        calculations: _calculations,
-        colorScales: _colorScales,
-        fieldSettings: _fieldSettings,
-        aggregates: _aggregates,
-        geometryAssets: _geometryAssets,
-        ...rest
-      } = settings;
-      const rowsView = rowsSettings && {
-        ...rowsSettings,
-        filters: undefined,
-        globalSearch: undefined,
-      };
-      return {
-        id,
-        name,
-        rest,
-        rowsView,
-        charts: charts.map(({ filters: _filters, ...chart }) => chart),
-      };
-    })
-  );
-  return { shared, filters, views };
-}
-
-function classifyChange(
-  before: SavedView[],
-  after: SavedView[]
-): ChangeLabel | undefined {
-  const previous = signatures(before);
-  const next = signatures(after);
-  const sharedChanged = previous.shared !== next.shared;
-  const filtersChanged = previous.filters !== next.filters;
-  const viewsChanged = previous.views !== next.views;
-  if (!sharedChanged && !filtersChanged && !viewsChanged) return undefined;
-  if (sharedChanged) return "Shared";
-  if (filtersChanged && viewsChanged) return "Both";
-  if (filtersChanged) return "Filter";
-  return "View";
-}
-
-function pushCheckpoint(
-  session: SavedViewsSession,
-  tabs: SavedView[],
-  label = classifyChange(session.tabs, tabs)
-): SavedViewsSession {
-  if (!label) return { ...session, tabs };
-  const history = [
-    ...session.history,
-    { at: new Date().toISOString(), label, tabs: snapshot(tabs) },
-  ];
-  const newIndex = history.length - 1;
-  const path = [...session.path.slice(0, session.cursor + 1), newIndex];
-  let keptHistory = history;
-  let keptPath = path;
-  if (history.length > HISTORY_LIMIT) {
-    const drop = history.length - HISTORY_LIMIT;
-    keptHistory = history.slice(drop);
-    keptPath = path
-      .filter((index) => index >= drop)
-      .map((index) => index - drop);
-  }
-  return {
-    ...session,
-    tabs,
-    history: keptHistory,
-    path: keptPath,
-    cursor: keptPath.length - 1,
-  };
 }
 
 function makeSession(
@@ -209,6 +97,39 @@ function withSharedSettings(
   return merged;
 }
 
+/** A new view keeps the shared definitions but starts without charts or filters. */
+function blankSettings(
+  settings: SavedDataStructure | undefined,
+  name: string
+): SavedDataStructure | undefined {
+  if (!settings) {
+    return undefined;
+  }
+  const blank = clone(settings);
+  blank.charts = [];
+  if (blank.rowsSettings) {
+    blank.rowsSettings = {
+      ...blank.rowsSettings,
+      filters: [],
+      globalSearch: "",
+    };
+  }
+  blank.metadata = { ...blank.metadata, name };
+  return blank;
+}
+
+function uniqueName(base: string, tabs: SavedView[]) {
+  const names = new Set(tabs.map((tab) => tab.name));
+  if (!names.has(base)) {
+    return base;
+  }
+  let number = 2;
+  while (names.has(`${base} ${number}`)) {
+    number += 1;
+  }
+  return `${base} ${number}`;
+}
+
 function downloadAnalysis(
   data: DatumObject[],
   settings: SavedDataStructure,
@@ -230,12 +151,12 @@ function downloadAnalysis(
   URL.revokeObjectURL(url);
 }
 
-function checkpointLabel(entry: HistoryEntry) {
-  const time = new Date(entry.at).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  return `${entry.label} · ${time}`;
+function isEditableTarget(target: EventTarget | null) {
+  return (
+    target instanceof HTMLElement &&
+    (target.isContentEditable ||
+      Boolean(target.closest("input, textarea, select, [role='combobox']")))
+  );
 }
 
 function WorkspaceInstance({
@@ -243,11 +164,15 @@ function WorkspaceInstance({
   settings,
   onStateChange,
   workspaceRef,
+  sidePanels,
+  readOnly,
 }: {
   data: DatumObject[];
   settings?: SavedDataStructure;
   onStateChange: (settings: SavedDataStructure) => void;
   workspaceRef: React.RefObject<ExplorEdaHandle | null>;
+  sidePanels: ExplorEdaSidePanel[];
+  readOnly: boolean;
 }) {
   const [initialSettings] = useState(settings);
   return (
@@ -256,6 +181,8 @@ function WorkspaceInstance({
       data={data}
       savedData={initialSettings}
       onStateChange={onStateChange}
+      sidePanels={sidePanels}
+      readOnly={readOnly}
     />
   );
 }
@@ -278,11 +205,14 @@ export function SavedViewsWorkspace({
   );
   const [saveError, setSaveError] = useState(false);
   const [savedEncoding, setSavedEncoding] = useState("");
-  const [editingName, setEditingName] = useState(false);
-  const [nameDraft, setNameDraft] = useState("");
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const [previewTabId, setPreviewTabId] = useState(session.activeTabId);
   const [workspaceKey, setWorkspaceKey] = useState(0);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyWide, setHistoryWide] = useState(false);
+  const [announcement, setAnnouncement] = useState("");
+  // The panel remounts with each preview, so the step to focus waits here.
+  const focusCheckpoint = useRef<number | "current">(undefined);
   const workspaceRef = useRef<ExplorEdaHandle>(null);
   const showingPreview = previewIndex !== null;
   const shownTabs = showingPreview
@@ -294,9 +224,10 @@ export function SavedViewsWorkspace({
   const settingsForDisplay = showingPreview
     ? view.settings
     : currentView.settings;
+  const { sourceAnalysis } = session;
   const sourceRows = useMemo(
-    () => getSavedViewsRows(session),
-    [session.sourceAnalysis]
+    () => getSavedViewsRows({ sourceAnalysis }),
+    [sourceAnalysis]
   );
   const encoded = useMemo(() => JSON.stringify(session), [session]);
   const sizeBytes = new Blob([encoded]).size;
@@ -311,49 +242,52 @@ export function SavedViewsWorkspace({
     }
   }, [encoded]);
 
+  const remount = () => setWorkspaceKey((key) => key + 1);
+
   const changeActive = (id: string) => {
-    setEditingName(false);
-    if (id === (showingPreview ? previewTabId : currentView.id)) return;
+    if (id === (showingPreview ? previewTabId : currentView.id)) {
+      return;
+    }
     if (showingPreview) {
       setPreviewTabId(id);
-      setWorkspaceKey((key) => key + 1);
+      remount();
       return;
     }
     setSession((current) => ({ ...current, activeTabId: id }));
-    setWorkspaceKey((key) => key + 1);
+    remount();
   };
 
   const createView = (duplicate: boolean) => {
     const source = currentView;
-    const settings = source.settings ? clone(source.settings) : undefined;
-    if (settings && !duplicate) {
-      settings.charts = [];
-      if (settings.rowsSettings) {
-        settings.rowsSettings = {
-          ...settings.rowsSettings,
-          filters: [],
-          globalSearch: "",
-        };
-      }
-      settings.metadata = { ...settings.metadata, name: "New view" };
-    }
-    const tab: SavedView = {
-      id: newId(),
-      name: duplicate ? `${source.name} copy` : "New view",
-      settings,
-    };
+    const name = uniqueName(
+      duplicate ? `${source.name} copy` : "New view",
+      session.tabs
+    );
+    const settings = duplicate
+      ? source.settings && {
+          ...clone(source.settings),
+          metadata: { ...source.settings.metadata, name },
+        }
+      : blankSettings(source.settings, name);
+    const tab: SavedView = { id: newId(), name, settings };
     setSession((current) => {
-      const tabs = [...current.tabs, tab];
-      const next = pushCheckpoint(current, tabs, "View");
+      const at = current.tabs.findIndex((item) => item.id === source.id);
+      const tabs = [...current.tabs];
+      tabs.splice(at + 1, 0, tab);
+      const next = pushCheckpoint(
+        current,
+        tabs,
+        "View",
+        duplicate
+          ? { action: `Duplicated “${source.name}” as “${name}”` }
+          : undefined
+      );
       return { ...next, activeTabId: tab.id };
     });
-    setEditingName(false);
-    setWorkspaceKey((key) => key + 1);
+    remount();
   };
 
-  const commitName = () => {
-    const name = nameDraft.trim();
-    if (!name) return;
+  const renameView = (name: string) => {
     setSession((current) => {
       const tabs = current.tabs.map((tab) =>
         tab.id === current.activeTabId
@@ -369,7 +303,49 @@ export function SavedViewsWorkspace({
       );
       return pushCheckpoint(current, tabs, "View");
     });
-    setEditingName(false);
+  };
+
+  const deleteView = () => {
+    if (session.tabs.length <= 1) {
+      return;
+    }
+    const removed = currentView;
+    setSession((current) => {
+      const at = current.tabs.findIndex((tab) => tab.id === removed.id);
+      const tabs = current.tabs.filter((tab) => tab.id !== removed.id);
+      const next = pushCheckpoint(current, tabs, "View");
+      return { ...next, activeTabId: tabs[Math.max(0, at - 1)]!.id };
+    });
+    setAnnouncement(
+      `Deleted “${removed.name}”. Undo with ${MOD_KEY}Z or from History.`
+    );
+    remount();
+  };
+
+  const moveView = (direction: -1 | 1) => {
+    setSession((current) => {
+      const at = current.tabs.findIndex(
+        (tab) => tab.id === current.activeTabId
+      );
+      const to = at + direction;
+      if (at < 0 || to < 0 || to >= current.tabs.length) {
+        return current;
+      }
+      const tabs = [...current.tabs];
+      const [moved] = tabs.splice(at, 1);
+      tabs.splice(to, 0, moved!);
+      return pushCheckpoint(current, tabs, "View", {
+        action: `Moved “${moved!.name}” ${direction < 0 ? "left" : "right"}`,
+      });
+    });
+  };
+
+  const exportView = () => {
+    const settings =
+      currentView.settings ?? workspaceRef.current?.getSettings();
+    if (settings) {
+      downloadAnalysis(sourceRows, settings, currentView.name);
+    }
   };
 
   const captureBaseline = useCallback((settings: SavedDataStructure) => {
@@ -398,7 +374,9 @@ export function SavedViewsWorkspace({
         const normalized = { ...next };
         let tabChanged = false;
         for (const key of SHARED_KEYS) {
-          if (normalized[key] !== undefined) continue;
+          if (normalized[key] !== undefined) {
+            continue;
+          }
           (normalized as unknown as Record<string, unknown>)[key] =
             settings[key] ?? (key === "fieldSettings" ? {} : []);
           tabChanged = true;
@@ -419,7 +397,9 @@ export function SavedViewsWorkspace({
         }
         return tab;
       });
-      if (!changed) return current;
+      if (!changed) {
+        return current;
+      }
       const currentEntryIndex = current.path[current.cursor];
       const history = current.history.map((entry, index) =>
         index === currentEntryIndex ? { ...entry, tabs: snapshot(tabs) } : entry
@@ -429,7 +409,9 @@ export function SavedViewsWorkspace({
   }, []);
 
   const capture = (settings: SavedDataStructure) => {
-    if (showingPreview) return;
+    if (showingPreview) {
+      return;
+    }
     setSession((current) => {
       const shared = settings;
       const tabs = current.tabs.map((tab) => {
@@ -442,8 +424,9 @@ export function SavedViewsWorkspace({
             },
           };
         }
-        if (tab.settings)
+        if (tab.settings) {
           return { ...tab, settings: withSharedSettings(tab.settings, shared) };
+        }
         const rowsSettings = settings.rowsSettings && {
           ...settings.rowsSettings,
           filters: [],
@@ -463,270 +446,347 @@ export function SavedViewsWorkspace({
     });
   };
 
-  const moveHistory = (direction: -1 | 1) => {
-    setPreviewIndex(null);
-    setSession((current) => {
-      const cursor = current.cursor + direction;
-      const entryIndex = current.path[cursor];
-      if (entryIndex === undefined) return current;
-      const entry = current.history[entryIndex];
-      if (!entry) return current;
-      const tabs = snapshot(entry.tabs);
-      const restoredTabId = showingPreview ? previewTabId : current.activeTabId;
-      const activeTabId = tabs.some((tab) => tab.id === restoredTabId)
-        ? restoredTabId
-        : tabs[0]!.id;
-      return { ...current, tabs, activeTabId, cursor };
-    });
-    setWorkspaceKey((key) => key + 1);
-  };
-
-  const previewHistory = (index: number) => {
-    setPreviewIndex(index);
-    setWorkspaceKey((key) => key + 1);
-    const tabs = session.history[index]?.tabs ?? [];
-    const retained = tabs.some((tab) => tab.id === session.activeTabId);
-    setPreviewTabId(
-      retained ? session.activeTabId : (tabs[0]?.id ?? session.activeTabId)
-    );
-  };
-
-  const restorePreview = () => {
-    if (previewIndex === null) return;
-    const restored = session.history[previewIndex];
-    if (!restored) return;
-    setSession((current) => {
-      const displaced = pushCheckpoint(
-        current,
-        current.tabs,
-        classifyChange(restored.tabs, current.tabs) ?? restored.label
-      );
-      const tabs = snapshot(restored.tabs);
-      const restoredCheckpoint = pushCheckpoint(
-        displaced,
-        tabs,
-        classifyChange(displaced.tabs, tabs) ?? restored.label
-      );
-      const restoredTabId = showingPreview ? previewTabId : current.activeTabId;
-      const activeTabId = tabs.some((tab) => tab.id === restoredTabId)
-        ? restoredTabId
-        : tabs[0]!.id;
-      return { ...restoredCheckpoint, activeTabId };
-    });
-    setPreviewIndex(null);
-    setWorkspaceKey((key) => key + 1);
-  };
-
-  const returnToPresent = () => {
-    setPreviewIndex(null);
-    setWorkspaceKey((key) => key + 1);
-  };
-
-  useEffect(() => {
-    if (showingPreview) return;
-    const settings = workspaceRef.current?.getSettings();
-    if (settings) captureBaseline(settings);
-  }, [captureBaseline, showingPreview, view.id, workspaceKey]);
-
   const selectedHistoryIndex = session.path[session.cursor] ?? 0;
   const canUndo = session.cursor > 0;
   const canRedo = session.cursor < session.path.length - 1;
+  const undoText = canUndo
+    ? describeEntry(session, selectedHistoryIndex).headline
+    : undefined;
+  const redoIndex = session.path[session.cursor + 1];
+  const redoText =
+    redoIndex === undefined
+      ? undefined
+      : describeEntry(session, redoIndex).headline;
+
+  const moveHistory = (direction: -1 | 1) => {
+    if (showingPreview) {
+      return;
+    }
+    const cursor = session.cursor + direction;
+    const entryIndex = session.path[cursor];
+    const entry =
+      entryIndex === undefined ? undefined : session.history[entryIndex];
+    if (!entry) {
+      return;
+    }
+    const step = describeEntry(
+      session,
+      direction < 0 ? selectedHistoryIndex : entryIndex!
+    ).headline;
+    setSession((current) => {
+      const tabs = snapshot(entry.tabs);
+      const activeTabId = tabs.some((tab) => tab.id === current.activeTabId)
+        ? current.activeTabId
+        : tabs[0]!.id;
+      return { ...current, tabs, activeTabId, cursor };
+    });
+    setAnnouncement(`${direction < 0 ? "Undid" : "Redid"}: ${step}`);
+    // The remount replaces the panel; keep keyboard focus in the timeline.
+    if (
+      document
+        .getElementById(HISTORY_PANEL_ID)
+        ?.contains(document.activeElement)
+    ) {
+      focusCheckpoint.current = "current";
+    }
+    remount();
+  };
+
+  const previewHistory = (index: number) => {
+    if (index === selectedHistoryIndex) {
+      returnToPresent();
+      return;
+    }
+    focusCheckpoint.current = index;
+    setPreviewIndex(index);
+    remount();
+    const tabs = session.history[index]?.tabs ?? [];
+    const keep = showingPreview ? previewTabId : session.activeTabId;
+    setPreviewTabId(
+      tabs.some((tab) => tab.id === keep)
+        ? keep
+        : (tabs[0]?.id ?? session.activeTabId)
+    );
+  };
+
+  const restoreCheckpoint = (index: number) => {
+    const restored = session.history[index];
+    if (!restored) {
+      return;
+    }
+    const keepTabId = showingPreview ? previewTabId : session.activeTabId;
+    setSession((current) => {
+      // Keep unsaved edits to the present recoverable before replacing it.
+      const cursorEntry = current.history[current.path[current.cursor]!];
+      const displaced =
+        cursorEntry && classifyChange(cursorEntry.tabs, current.tabs)
+          ? pushCheckpoint(current, current.tabs)
+          : current;
+      const tabs = snapshot(restored.tabs);
+      const next = pushCheckpoint(
+        displaced,
+        tabs,
+        classifyChange(displaced.tabs, tabs) ?? restored.label,
+        { restoredFrom: restored.at }
+      );
+      const activeTabId = tabs.some((tab) => tab.id === keepTabId)
+        ? keepTabId
+        : tabs[0]!.id;
+      return { ...next, activeTabId };
+    });
+    focusCheckpoint.current = "current";
+    setPreviewIndex(null);
+    setAnnouncement(`Restored the version from ${formatClock(restored.at)}`);
+    remount();
+  };
+
+  function returnToPresent() {
+    if (previewIndex === null) {
+      return;
+    }
+    focusCheckpoint.current = "current";
+    setPreviewIndex(null);
+    remount();
+  }
+
+  // Undo and Redo follow the platform keys unless a field owns them.
+  const shortcutRef = useRef({ moveHistory, canUndo, canRedo });
+  shortcutRef.current = { moveHistory, canUndo, canRedo };
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (!(event.metaKey || event.ctrlKey) || event.altKey) {
+        return;
+      }
+      const key = event.key.toLowerCase();
+      const redo = (key === "z" && event.shiftKey) || key === "y";
+      const undo = key === "z" && !event.shiftKey;
+      if (!undo && !redo) {
+        return;
+      }
+      if (
+        event.defaultPrevented ||
+        isEditableTarget(event.target) ||
+        document.querySelector("[role='dialog'], [role='alertdialog']")
+      ) {
+        return;
+      }
+      const {
+        moveHistory: move,
+        canUndo: undoable,
+        canRedo: redoable,
+      } = shortcutRef.current;
+      if (undo && !undoable) {
+        return;
+      }
+      if (redo && !redoable) {
+        return;
+      }
+      event.preventDefault();
+      move(undo ? -1 : 1);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  useEffect(() => {
+    if (showingPreview) {
+      return;
+    }
+    const settings = workspaceRef.current?.getSettings();
+    if (settings) {
+      captureBaseline(settings);
+    }
+  }, [captureBaseline, showingPreview, view.id, workspaceKey]);
+
+  const saveState: SaveState = saveError
+    ? "error"
+    : savedEncoding === encoded
+      ? "saved"
+      : "saving";
+  const saveDetail = saveError
+    ? "This browser refused to save the session. Export the analysis to keep a copy."
+    : `Saved in this browser: ${session.tabs.length} view${session.tabs.length === 1 ? "" : "s"}, ${session.history.length} of ${HISTORY_LIMIT} history steps, ${(sizeBytes / 1024).toFixed(1)} KB. Select to open History.`;
+
+  const previewed =
+    previewIndex === null ? undefined : describeEntry(session, previewIndex);
+  const previewBanner = previewed && (
+    <div
+      role="status"
+      className="flex flex-wrap items-center gap-2 border-b border-border bg-accent/60 px-3 py-2 text-xs"
+    >
+      <Eye
+        className="size-4 shrink-0 text-muted-foreground"
+        aria-hidden="true"
+      />
+      <span className="min-w-0 flex-1 truncate">
+        <span className="font-medium">
+          Previewing {formatClock(previewed.entry.at)}
+        </span>
+        <span className="text-muted-foreground">
+          {" "}
+          · {previewed.headline} · read-only
+        </span>
+      </span>
+      <Button
+        size="sm"
+        className="h-7 text-xs"
+        onClick={() => restoreCheckpoint(previewIndex!)}
+      >
+        Restore
+      </Button>
+      <Button
+        size="sm"
+        variant="outline"
+        className="h-7 text-xs"
+        onClick={returnToPresent}
+      >
+        Back to present
+      </Button>
+    </div>
+  );
+
+  const sidePanels: ExplorEdaSidePanel[] = [
+    {
+      id: HISTORY_PANEL_ID,
+      label: "History",
+      tooltip:
+        "History: every saved change on a timeline. Preview or restore any step (H)",
+      icon: <History aria-hidden="true" />,
+      shortcut: "h",
+      open: historyOpen,
+      onOpenChange: setHistoryOpen,
+      wide: historyWide,
+      onWideChange: setHistoryWide,
+      banner: previewBanner,
+      actions: (
+        <div className="flex items-center">
+          <ActionTooltip
+            content={
+              undoText
+                ? `Undo: ${undoText} (${MOD_KEY}Z)`
+                : `Undo (${MOD_KEY}Z)`
+            }
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-[30px] text-muted-foreground"
+              aria-label="Undo last change"
+              disabled={!canUndo || showingPreview}
+              onClick={() => moveHistory(-1)}
+            >
+              <Undo2 aria-hidden="true" />
+            </Button>
+          </ActionTooltip>
+          <ActionTooltip
+            content={
+              redoText
+                ? `Redo: ${redoText} (${MOD_KEY}Shift+Z)`
+                : `Redo (${MOD_KEY}Shift+Z)`
+            }
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-[30px] text-muted-foreground"
+              aria-label="Redo next change"
+              disabled={!canRedo || showingPreview}
+              onClick={() => moveHistory(1)}
+            >
+              <Redo2 aria-hidden="true" />
+            </Button>
+          </ActionTooltip>
+        </div>
+      ),
+      children: (
+        <HistoryTimeline
+          session={session}
+          previewIndex={previewIndex}
+          wide={historyWide}
+          focusIndex={focusCheckpoint.current}
+          onFocused={() => {
+            focusCheckpoint.current = undefined;
+          }}
+          onPreview={previewHistory}
+          onReturn={returnToPresent}
+          onRestore={restoreCheckpoint}
+        />
+      ),
+    },
+  ];
+
+  const current = describeEntry(session, selectedHistoryIndex);
 
   return (
-    <section
-      className="mb-3 rounded-lg border border-border bg-card p-3"
-      aria-label="Saved views and history"
-    >
-      <div className="flex flex-wrap items-center gap-2">
-        <div
-          role="tablist"
-          aria-label="Saved views"
-          className="flex min-w-0 flex-1 flex-wrap gap-1"
+    <section className="mb-3" aria-label="Saved views and history">
+      <SavedViewTabs
+        tabs={shownTabs}
+        activeId={view.id}
+        readOnly={showingPreview}
+        onSelect={changeActive}
+        onCreate={() => createView(false)}
+        onDuplicate={() => createView(true)}
+        onRename={renameView}
+        onDelete={deleteView}
+        onMove={moveView}
+        onExport={exportView}
+        canUndo={canUndo}
+        canRedo={canRedo}
+        undoText={undoText}
+        redoText={redoText}
+        onUndo={() => moveHistory(-1)}
+        onRedo={() => moveHistory(1)}
+        saveState={saveState}
+        saveDetail={saveDetail}
+        onOpenHistory={() => setHistoryOpen(true)}
+      />
+      {saveError && (
+        <p
+          role="alert"
+          className="mt-2 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-xs text-destructive"
         >
-          {shownTabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={tab.id === view.id}
-              tabIndex={tab.id === view.id ? 0 : -1}
-              className={`rounded-md border px-3 py-1.5 text-sm ${tab.id === view.id ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground hover:bg-accent"}`}
-              onClick={() => changeActive(tab.id)}
-              onKeyDown={(event) => {
-                let index: number | undefined;
-                const currentIndex = shownTabs.findIndex(
-                  (candidate) => candidate.id === tab.id
-                );
-                if (event.key === "ArrowRight")
-                  index = (currentIndex + 1) % shownTabs.length;
-                else if (event.key === "ArrowLeft")
-                  index =
-                    (currentIndex - 1 + shownTabs.length) % shownTabs.length;
-                else if (event.key === "Home") index = 0;
-                else if (event.key === "End") index = shownTabs.length - 1;
-                if (index === undefined) return;
-                event.preventDefault();
-                const tabs =
-                  event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(
-                    '[role="tab"]'
-                  );
-                tabs?.[index]?.focus();
-                changeActive(shownTabs[index]!.id);
-              }}
-            >
-              {tab.name}
-            </button>
-          ))}
-        </div>
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={showingPreview}
-          onClick={() => createView(false)}
-        >
-          New view
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={showingPreview}
-          onClick={() => createView(true)}
-        >
-          Duplicate view
-        </Button>
-        {editingName && !showingPreview ? (
-          <form
-            className="flex gap-1"
-            onSubmit={(event) => {
-              event.preventDefault();
-              commitName();
-            }}
-          >
-            <input
-              autoFocus
-              aria-label="View name"
-              className="h-8 w-36 rounded-md border border-input bg-background px-2 text-sm"
-              value={nameDraft}
-              onChange={(event) => setNameDraft(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Escape") setEditingName(false);
-              }}
-            />
-            <Button size="sm" type="submit">
-              Save name
-            </Button>
-          </form>
-        ) : (
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={showingPreview}
-            onClick={() => {
-              setNameDraft(view.name);
-              setEditingName(true);
-            }}
-          >
-            Rename view
-          </Button>
-        )}
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={showingPreview}
-          onClick={() => {
-            const settings =
-              currentView.settings ?? workspaceRef.current?.getSettings();
-            if (settings)
-              downloadAnalysis(sourceRows, settings, currentView.name);
-          }}
-        >
-          Export analysis
-        </Button>
-      </div>
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-        <span>Charts and Rows filters belong to this view.</span>
-        {saveError ? (
-          <span role="alert" className="text-destructive">
-            Local save failed. Export this analysis to keep a copy.
-          </span>
-        ) : (
-          <span role="status" aria-live="polite">
-            {savedEncoding === encoded ? "Saved locally" : "Saving locally"} ·{" "}
-            {(sizeBytes / 1024).toFixed(1)} KB
-          </span>
-        )}
-      </div>
-      <div className="mt-3 rounded-md border border-border p-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={!canUndo || showingPreview}
-            onClick={() => moveHistory(-1)}
-          >
-            Undo
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={!canRedo || showingPreview}
-            onClick={() => moveHistory(1)}
-          >
-            Redo
-          </Button>
-          <span className="text-xs text-muted-foreground">
-            {session.history.length} of {HISTORY_LIMIT} checkpoints saved
-          </span>
-          {showingPreview ? (
-            <>
-              <span
-                role="status"
-                className="text-xs font-medium text-foreground"
-              >
-                Preview · {checkpointLabel(session.history[previewIndex]!)}
-              </span>
-              <Button size="sm" onClick={restorePreview}>
-                Restore this view
-              </Button>
-              <Button size="sm" variant="ghost" onClick={returnToPresent}>
-                Return to present
-              </Button>
-            </>
-          ) : (
-            <span
-              data-testid="current-history-label"
-              className="text-xs font-medium text-foreground"
-            >
-              {checkpointLabel(session.history[selectedHistoryIndex]!)}
+          Local save failed. Export this analysis to keep a copy.
+        </p>
+      )}
+      {previewed && !historyOpen && (
+        <div className="mt-2 flex flex-wrap items-center gap-2 rounded-md border border-border bg-accent/50 px-3 py-2 text-sm">
+          <Eye
+            className="size-4 shrink-0 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <p className="min-w-0 flex-1">
+            <span className="font-medium">
+              Viewing the version from {formatClock(previewed.entry.at)}
             </span>
-          )}
+            <span className="text-muted-foreground">
+              {" "}
+              · {previewed.headline}. Charts are read-only until you restore it
+              or return.
+            </span>
+          </p>
+          <Button size="sm" onClick={() => restoreCheckpoint(previewIndex!)}>
+            Restore this version
+          </Button>
+          <Button size="sm" variant="ghost" onClick={returnToPresent}>
+            Return to present
+          </Button>
         </div>
-        <input
-          aria-label="Saved history"
-          className="mt-2 block w-full accent-primary"
-          type="range"
-          min={0}
-          max={Math.max(0, session.history.length - 1)}
-          step={1}
-          value={previewIndex ?? selectedHistoryIndex}
-          onChange={(event) => previewHistory(Number(event.target.value))}
-        />
-        <div className="flex justify-between text-[11px] text-muted-foreground">
-          <span>
-            {session.history.length
-              ? checkpointLabel(session.history[0]!)
-              : "No history"}
-          </span>
-          <span>Latest checkpoint</span>
-        </div>
-      </div>
-      <div className="mt-3" inert={showingPreview}>
+      )}
+      <p className="sr-only" aria-live="polite">
+        {announcement}
+      </p>
+      <span data-testid="current-history-label" className="sr-only">
+        {LABEL_NAMES[current.entry.label]} · {current.headline}
+      </span>
+      <div className="mt-3">
         <WorkspaceInstance
           key={`${view.id}:${workspaceKey}`}
           data={sourceRows}
           settings={settingsForDisplay}
           onStateChange={capture}
           workspaceRef={workspaceRef}
+          sidePanels={sidePanels}
+          readOnly={showingPreview}
         />
       </div>
     </section>
