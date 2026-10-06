@@ -2,15 +2,19 @@ import { chartRegistry, useChartDefinition } from "@/charts/registry";
 import { ChartSettings } from "@/types/ChartTypes";
 import { ComboBox } from "../ComboBox";
 import { Label } from "../ui/label";
+import { ScatterPlotSettingsPanel } from "../charts/ScatterPlot/ScatterPlotSettingsPanel";
+import type { ScatterPlotSettings } from "../charts/ScatterPlot/definition";
 
 interface MainSettingsTabProps {
   settings: ChartSettings;
   onSettingsChange: (settings: Partial<ChartSettings>) => void;
+  showRegression?: boolean;
 }
 
 export function MainSettingsTab({
   settings,
   onSettingsChange,
+  showRegression = true,
 }: MainSettingsTabProps) {
   const chartDefinition = useChartDefinition(settings.type);
   const chartTypes = chartRegistry.getAll();
@@ -50,7 +54,18 @@ export function MainSettingsTab({
         />
       </div>
 
-      <SettingsPanel settings={settings} onSettingsChange={onSettingsChange} />
+      {settings.type === "scatter" ? (
+        <ScatterPlotSettingsPanel
+          settings={settings as ScatterPlotSettings}
+          onSettingsChange={onSettingsChange}
+          showRegression={showRegression}
+        />
+      ) : (
+        <SettingsPanel
+          settings={settings}
+          onSettingsChange={onSettingsChange}
+        />
+      )}
     </div>
   );
 }

@@ -291,6 +291,7 @@ export function planScatter(
     yDomain: yShape.kind === "numeric" ? yShape.domain : [0, 1],
     hasXLabel: Boolean(xLabel),
     hasYLabel: Boolean(yLabel),
+    yTickFontSize: settings.yAxis.tickFontSize,
     yLabels:
       yShape.kind === "band"
         ? yShape.categories.map((item) =>
@@ -475,6 +476,8 @@ export function planScatter(
       field: settings.xField,
       fieldLabel: xLabel,
       density: settings.xGridLines,
+      tickFontSize: settings.xAxis.tickFontSize,
+      labelFontSize: settings.xAxis.labelFontSize,
       grid: settings.xAxis.grid,
       format: format(settings.xField, xAxis),
       label: axisLabel(xLabel, xAxis),
@@ -487,6 +490,8 @@ export function planScatter(
       field: settings.yField,
       fieldLabel: yLabel,
       density: settings.yGridLines,
+      tickFontSize: settings.yAxis.tickFontSize,
+      labelFontSize: settings.yAxis.labelFontSize,
       grid: settings.yAxis.grid,
       format: format(settings.yField, yAxis),
       label: axisLabel(yLabel, yAxis),

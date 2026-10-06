@@ -378,6 +378,7 @@ export function planBarChart({
     yDomain,
     hasXLabel: Boolean(xLabel),
     hasYLabel: Boolean(yLabel),
+    yTickFontSize: settings.yAxis.tickFontSize,
   });
   margin.bottom += footer;
   const plotWidth = width - margin.left - margin.right;
@@ -441,6 +442,8 @@ export function planBarChart({
       field: xField,
       fieldLabel: xField ? getFieldLabel(xField) : undefined,
       density: settings.xGridLines,
+      tickFontSize: settings.xAxis.tickFontSize,
+      labelFontSize: settings.xAxis.labelFontSize,
       grid: settings.xAxis.grid,
       format: format(xField),
       label: symlog(xLabel, settings.xAxis.scaleType),
@@ -453,6 +456,8 @@ export function planBarChart({
       field: yField,
       fieldLabel: yLabel || undefined,
       density: settings.yGridLines,
+      tickFontSize: settings.yAxis.tickFontSize,
+      labelFontSize: settings.yAxis.labelFontSize,
       grid: settings.yAxis.grid ?? true,
       format: formatAxis(yField),
       label: symlog(yLabel, settings.yAxis.scaleType),

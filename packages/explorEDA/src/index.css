@@ -2538,7 +2538,8 @@ html {
   background: var(--card);
   box-shadow: 0 4px 12px rgb(0 0 0 / 12%);
 }
-.eda-chart-color-legend .eda-legend-items {
+.eda-chart-color-legend .eda-legend-items,
+.eda-chart-color-legend .eda-legend-items.is-wrapped {
   min-width: 0;
   flex: 1;
   flex-wrap: nowrap;

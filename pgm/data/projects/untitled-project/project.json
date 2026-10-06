@@ -3,20 +3,20 @@
   "name": "explorEDA",
   "description": "Blank project ready for grid editing, structure mapping, and future AI-assisted details.",
   "createdAt": "2026-09-29T01:22:21.210Z",
-  "updatedAt": "2026-10-06T03:15:47.771Z",
+  "updatedAt": "2026-10-06T03:20:20.891Z",
   "operationLog": [
     {
-      "id": "7ce25380-95fb-49cf-ae55-4dca71dc0421",
+      "id": "ddf0e66c-0137-4f23-a85d-1b8b2041bb5d",
       "kind": "node.metadata.updated",
       "actor": {
         "kind": "agent",
-        "id": "token:ebdb6d",
-        "label": "Agent token ...ebdb6d"
+        "id": "token:349c18",
+        "label": "Agent token ...349c18"
       },
-      "createdAt": "2026-10-06T03:15:47.771Z",
-      "summary": "Updated metadata for \"calc ui is confusing and needs refined\".",
+      "createdAt": "2026-10-06T03:20:20.891Z",
+      "summary": "Updated metadata for \"Need more control of text size for axis labels\".",
       "nodeIds": [
-        "page-calc-ui-is-confusing-and-needs-refined"
+        "page-need-more-control-of-text-size-for-axis-labels"
       ],
       "payload": {
         "state": {
@@ -648,8 +648,10 @@
                 "id": "page-need-more-control-of-text-size-for-axis-labels",
                 "label": "Need more control of text size for axis labels",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Added saved tick and axis-title text sizes per axis. Defaults remain unchanged; live changes and Reset are supported."
+                },
                 "context": "Feels like users will want to improve aesthetics re: font size.",
                 "rawContext": "Feels like users will want to improve aesthetics re: font size.",
                 "images": [
@@ -710,8 +712,10 @@
                 "id": "page-settings-menu-is-tall-hard-to-know-more-below",
                 "label": "settings menu is tall, hard to know more below",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Moved regression controls to a Fit tab. Tabs wrap, and the settings panel repositions when the viewport changes."
+                },
                 "context": "Consider splitting the thing so regression gets its own tab.  Or make them more dense.  Or collapse section?  idk, but current one is really hard to know what settings are off screen",
                 "rawContext": "Consider splitting the thing so regression gets its own tab.  Or make them more dense.  Or collapse section?  idk, but current one is really hard to know what settings are off screen",
                 "images": [
@@ -730,8 +734,10 @@
                 "id": "page-prefer-toggle-buttons-over-select-whenever-possible",
                 "label": "Prefer toggle buttons over select whenever possible",
                 "type": "page",
-                "status": "planned",
-                "metadata": {},
+                "status": "implemented",
+                "metadata": {
+                  "implementation": "Scatter display, fit method, numeric scale, and axis text sizes expose their choices directly, with clear selected states and tooltips."
+                },
                 "context": "I really want the user to see choices before clicking if they can",
                 "rawContext": "I really want the user to see choices before clicking if they can",
                 "images": [
@@ -944,6 +950,90 @@
           }
         }
       }
+    },
+    {
+      "id": "dba44f69-3785-4159-9d45-b161199e058c",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:349c18",
+        "label": "Agent token ...349c18"
+      },
+      "createdAt": "2026-10-06T03:20:20.876Z",
+      "summary": "Changed \"Need more control of text size for axis labels\" status to implemented.",
+      "nodeIds": [
+        "page-need-more-control-of-text-size-for-axis-labels"
+      ]
+    },
+    {
+      "id": "85e1465f-e695-457a-a50a-a3f9c6d1839b",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:88c0c1",
+        "label": "Agent token ...88c0c1"
+      },
+      "createdAt": "2026-10-06T03:20:20.419Z",
+      "summary": "Updated metadata for \"Prefer toggle buttons over select whenever possible\".",
+      "nodeIds": [
+        "page-prefer-toggle-buttons-over-select-whenever-possible"
+      ]
+    },
+    {
+      "id": "cfee80b1-37ef-43e0-9b06-948edb869f14",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:88c0c1",
+        "label": "Agent token ...88c0c1"
+      },
+      "createdAt": "2026-10-06T03:20:20.407Z",
+      "summary": "Changed \"Prefer toggle buttons over select whenever possible\" status to implemented.",
+      "nodeIds": [
+        "page-prefer-toggle-buttons-over-select-whenever-possible"
+      ]
+    },
+    {
+      "id": "96e84885-b74e-455f-8472-874dd0180a2a",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:00d232",
+        "label": "Agent token ...00d232"
+      },
+      "createdAt": "2026-10-06T03:20:19.855Z",
+      "summary": "Updated metadata for \"settings menu is tall, hard to know more below\".",
+      "nodeIds": [
+        "page-settings-menu-is-tall-hard-to-know-more-below"
+      ]
+    },
+    {
+      "id": "5aa0c343-0bf3-4de4-83b5-896c0395b902",
+      "kind": "node.status.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:00d232",
+        "label": "Agent token ...00d232"
+      },
+      "createdAt": "2026-10-06T03:20:19.832Z",
+      "summary": "Changed \"settings menu is tall, hard to know more below\" status to implemented.",
+      "nodeIds": [
+        "page-settings-menu-is-tall-hard-to-know-more-below"
+      ]
+    },
+    {
+      "id": "7ce25380-95fb-49cf-ae55-4dca71dc0421",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:ebdb6d",
+        "label": "Agent token ...ebdb6d"
+      },
+      "createdAt": "2026-10-06T03:15:47.771Z",
+      "summary": "Updated metadata for \"calc ui is confusing and needs refined\".",
+      "nodeIds": [
+        "page-calc-ui-is-confusing-and-needs-refined"
+      ]
     },
     {
       "id": "7c1d2fef-8e76-437f-b4a7-5dca16644b0b",
@@ -4607,95 +4697,6 @@
       "nodeIds": [
         "page-box-plot-blue-dot-stroke-is-confusing-no-stroke"
       ]
-    },
-    {
-      "id": "cc7f713e-a02d-422c-a063-46a995e508c3",
-      "kind": "node.metadata.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-09-29T03:46:34.416Z",
-      "summary": "Updated metadata for \"Active search needs to be clearer in chart header\".",
-      "nodeIds": [
-        "page-active-search-needs-to-be-clearer-in-chart-header"
-      ]
-    },
-    {
-      "id": "0892020f-1b43-4e6a-998d-cae86f5fd7e7",
-      "kind": "node.status.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-09-29T03:46:34.137Z",
-      "summary": "Changed \"Active search needs to be clearer in chart header\" status to implemented.",
-      "nodeIds": [
-        "page-active-search-needs-to-be-clearer-in-chart-header"
-      ]
-    },
-    {
-      "id": "277f50e1-ee64-4f2d-9076-627d72565e0d",
-      "kind": "node.status.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-09-29T02:32:08.583Z",
-      "summary": "Changed \"Add more keyboard shortcuts\" status to implemented.",
-      "nodeIds": [
-        "page-add-more-keyboard-shortcuts"
-      ]
-    },
-    {
-      "id": "598c6d24-8e94-48ad-aa75-1904dc040b6e",
-      "kind": "node.images.added",
-      "actor": {
-        "kind": "human"
-      },
-      "createdAt": "2026-09-29T01:49:21.567Z",
-      "summary": "Added 1 images to \"Delete confirm is massive and gross\".",
-      "nodeIds": [
-        "page-delete-confirm-is-massive-and-gross"
-      ],
-      "metadata": {
-        "imageCount": "1",
-        "clientMutationId": "a42595ff-abdd-43c5-8a57-5a228961241b"
-      }
-    },
-    {
-      "id": "cfc64c9d-03bf-4c89-870b-169174d7e005",
-      "kind": "node.created",
-      "actor": {
-        "kind": "human"
-      },
-      "createdAt": "2026-09-29T01:49:19.385Z",
-      "summary": "Created \"Delete confirm is massive and gross\" under \"Feedback rnd 2\".",
-      "nodeIds": [
-        "page-delete-confirm-is-massive-and-gross",
-        "page-feedback-rnd-2"
-      ],
-      "metadata": {
-        "clientMutationId": "8963421c-c0ce-4597-8d36-cd9f8cc097a7"
-      }
-    },
-    {
-      "id": "e185a8ec-20e1-4625-b2b9-914b5157969f",
-      "kind": "node.created",
-      "actor": {
-        "kind": "human"
-      },
-      "createdAt": "2026-09-29T01:49:13.164Z",
-      "summary": "Created \"Feedback rnd 2\".",
-      "nodeIds": [
-        "page-feedback-rnd-2"
-      ],
-      "metadata": {
-        "clientMutationId": "fac1c35f-a43b-4d39-a84a-b7ec21c5b52c"
-      }
     }
   ]
 }
