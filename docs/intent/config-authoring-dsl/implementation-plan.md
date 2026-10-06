@@ -4,7 +4,7 @@
 
 Prioritize complete-document creation. First prove that local chart filters produce independent populations in the real app. Then add recoverable checking and actionable warnings. Add on-demand export and expand detailed setting coverage without JSON syntax. A minimal paste route is the provisional UI proof; file entry can reuse the compiler later.
 
-All four milestones are built as five stacked PRs: [#149](https://github.com/byronwall/explorEDA/pull/149) chart-local filters, [#150](https://github.com/byronwall/explorEDA/pull/150) compiler and paste panel, [#151](https://github.com/byronwall/explorEDA/pull/151) agent-facing checking, [#159](https://github.com/byronwall/explorEDA/pull/159) export and flat paths, and the shared-definitions PR that closes coverage.
+All four milestones are built as five stacked PRs: [#149](https://github.com/byronwall/explorEDA/pull/149) chart-local filters, [#150](https://github.com/byronwall/explorEDA/pull/150) compiler and paste panel, [#151](https://github.com/byronwall/explorEDA/pull/151) agent-facing checking, [#159](https://github.com/byronwall/explorEDA/pull/159) export and flat paths, and [#160](https://github.com/byronwall/explorEDA/pull/160) shared definitions, which close coverage.
 
 ## Implementation strategy
 

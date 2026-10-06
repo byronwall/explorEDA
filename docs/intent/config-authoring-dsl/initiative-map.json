@@ -8,7 +8,7 @@
     "last_updated": "2026-10-05",
     "summary": "Create complete dashboards from readable DSL, render usable parts with actionable warnings, and export on demand without JSON authoring.",
     "status": "implemented",
-    "next_action": "Review and merge the stacked PRs #149, #150, #151, #159, and the shared-definitions PR; then decide the long-term entry (paste panel in the package or host-only) and whether to shape global filters."
+    "next_action": "Review and merge the stacked PRs #149, #150, #151, #159, and #160; then decide the long-term entry (paste panel in the package or host-only) and whether to shape global filters."
   },
   "artifacts": {
     "intent_brief": {
@@ -708,7 +708,7 @@
         "valid_intermediate_state": "Normal native controls plus the usable completed authoring slice.",
         "rollback": "Use normal controls and Undo the applied configuration.",
         "dependencies_introduced": [],
-        "evidence": "#159 flat paths and the typed CHART_SETTING_KEYS inventory; shared-definitions PR adds scale, group, rows, and map-shape references, so all 28 demo views round-trip with nothing omitted."
+        "evidence": "#159 flat paths and the typed CHART_SETTING_KEYS inventory; #160 adds scale, group, rows, and map-shape references, so all 28 demo views round-trip with nothing omitted."
       }
     ],
     "cut_line": [
@@ -771,7 +771,8 @@
         "https://github.com/byronwall/explorEDA/pull/149",
         "https://github.com/byronwall/explorEDA/pull/150",
         "https://github.com/byronwall/explorEDA/pull/151",
-        "https://github.com/byronwall/explorEDA/pull/159"
+        "https://github.com/byronwall/explorEDA/pull/159",
+        "https://github.com/byronwall/explorEDA/pull/160"
       ]
     }
   ],
