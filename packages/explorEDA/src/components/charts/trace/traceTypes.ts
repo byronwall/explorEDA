@@ -28,6 +28,7 @@ import type { ContourTrace } from "../ScatterPlot/contourPlan";
 /** A selected object. The owner's source resolves it against its current plan. */
 export interface TraceSelection {
   owner: string;
+  chartId?: string;
   kind: string;
   id: string;
   revision: string;
@@ -138,6 +139,7 @@ export interface PlannedLegendItem {
 
 export interface TraceSource {
   role: "chart" | "facets" | "legend" | "title";
+  chartId?: string;
   /** Data revision. A selection made under another revision is stale. */
   revision: string;
   resolve(kind: string, id: string): ChartTrace | undefined;
@@ -153,14 +155,16 @@ export function resolveGuideTrace(
   revision: string
 ): GuideTrace | undefined {
   const found = findAxisGuide(axes, id);
-  return found && {
-    kind: "guide",
-    id,
-    revision,
-    guide: found.guide,
-    axis: found.axis,
-    axes,
-  };
+  return (
+    found && {
+      kind: "guide",
+      id,
+      revision,
+      guide: found.guide,
+      axis: found.axis,
+      axes,
+    }
+  );
 }
 
 export function guideTargets(axes: ChartAxesPlan): TraceTarget[] {

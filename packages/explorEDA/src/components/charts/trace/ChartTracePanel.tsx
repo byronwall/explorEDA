@@ -17,7 +17,10 @@ import { FitTraceBody } from "../ScatterPlot/FitTraceBody";
 import { MarginalTraceBody } from "../ScatterPlot/MarginalTraceBody";
 import { SurfaceTraceBody } from "../ScatterPlot/SurfaceTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
-import { useAnalysisChartContext } from "@/components/AnalysisChartContext";
+import {
+  queryChartFilterRevision,
+  useAnalysisChartContext,
+} from "@/components/AnalysisChartContext";
 import {
   FacetTraceBody,
   GuideTraceBody,
@@ -26,7 +29,7 @@ import {
 } from "./TraceBodies";
 import type { ChartTrace } from "./traceTypes";
 
-function TraceBody({ trace }: { trace: ChartTrace }) {
+export function ChartTraceBody({ trace }: { trace: ChartTrace }) {
   switch (trace.kind) {
     case "row-category":
       return <RowTraceBody key={trace.id} trace={trace} />;
@@ -130,12 +133,29 @@ export function ChartTracePanel() {
       : analysisContext?.resultRowsById[sourceId]?.key;
   return (
     <div className="space-y-3 text-xs">
-      {trace.trace && <TraceBody trace={trace.trace} />}
+      {trace.trace && <ChartTraceBody trace={trace.trace} />}
       {analysisContext?.onOpenQueryFlow && (
         <button
           type="button"
           className="rounded border border-border px-2 py-1 hover:bg-muted"
-          onClick={() => analysisContext.onOpenQueryFlow?.(resultRowKey)}
+          onClick={() =>
+            analysisContext.onOpenQueryFlow?.(
+              resultRowKey,
+              trace.trace
+                ? {
+                    trace: trace.trace,
+                    owner: trace.selection!.owner,
+                    chartId: trace.selection!.chartId,
+                    queryRevision: analysisContext.queryRevision,
+                    filterRevision: queryChartFilterRevision(
+                      trace.selection!.chartId,
+                      analysisContext.chartFilterScopes
+                    ),
+                    traceRevision: trace.trace.revision,
+                  }
+                : undefined
+            )
+          }
         >
           Open query flow{resultRowKey ? " for this row" : ""}
         </button>

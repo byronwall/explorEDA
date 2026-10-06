@@ -181,6 +181,7 @@ function ScatterPoints({
   const source = useMemo(
     (): TraceSource => ({
       role: "chart",
+      chartId: settings.id,
       revision: plan.revision,
       resolve: (kind, id) =>
         fits.resolve(kind, id) ??

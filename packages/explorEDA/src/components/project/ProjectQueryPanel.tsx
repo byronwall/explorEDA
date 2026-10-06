@@ -27,6 +27,11 @@ import { FieldMetadata } from "@/components/FieldMetadata";
 import { incompatibleSettingsFields } from "./settingsCompatibility";
 import { matchingSourceRows, resolveSourceRow } from "./sourceRowIdentity";
 import { validParameterValues } from "./parameterBindings";
+import { QueryRendererEvidence } from "./QueryRendererEvidence";
+import type {
+  QueryChartFilterScope,
+  QueryFlowTraceHandoff,
+} from "../AnalysisChartContext";
 
 type Tables = Record<string, readonly AnalysisSourceRow[]>;
 
@@ -266,6 +271,11 @@ export function ProjectQueryPanel({
   evaluation,
   incompatibleFields,
   unresolvedRowKeys = 0,
+  queryRevision,
+  traceHandoff,
+  traceRevisions,
+  resultRowsById,
+  chartFilterScopes,
   queryPresets,
   readOnly,
   onChange,
@@ -277,6 +287,11 @@ export function ProjectQueryPanel({
   evaluation: AnalysisEvaluation;
   incompatibleFields: string[];
   unresolvedRowKeys?: number;
+  queryRevision: string;
+  traceHandoff?: QueryFlowTraceHandoff;
+  traceRevisions: Record<string, string>;
+  resultRowsById: Record<number, AnalysisResultRow>;
+  chartFilterScopes: QueryChartFilterScope[];
   queryPresets?: Record<string, SavedDataStructure>;
   readOnly: boolean;
   onChange: (project: AnalysisProject, view: AnalysisView) => void;
@@ -834,6 +849,14 @@ export function ProjectQueryPanel({
         />
       )}
 
+      <QueryRendererEvidence
+        handoff={traceHandoff}
+        queryRevision={queryRevision}
+        traceRevisions={traceRevisions}
+        rowsById={resultRowsById}
+        chartFilterScopes={chartFilterScopes}
+      />
+
       <section className="space-y-2">
         <div className="flex items-center justify-between gap-2">
           <h3 className="font-medium">Query flow</h3>
@@ -1200,8 +1223,18 @@ function Parameters({
   return (
     <section className="space-y-2 border-t border-border pt-4">
       <h3 className="font-medium">Inputs</h3>
-      <p className="text-xs text-muted-foreground" aria-label="Applied query inputs">
-        Applied: {(project.parameters ?? []).filter(parameter => parameterIds.has(parameter.id)).map(parameter => `${parameter.name}: ${appliedBindings[parameter.id] ?? "not set"}`).join(" · ")}
+      <p
+        className="text-xs text-muted-foreground"
+        aria-label="Applied query inputs"
+      >
+        Applied:{" "}
+        {(project.parameters ?? [])
+          .filter((parameter) => parameterIds.has(parameter.id))
+          .map(
+            (parameter) =>
+              `${parameter.name}: ${appliedBindings[parameter.id] ?? "not set"}`
+          )
+          .join(" · ")}
       </p>
       {(project.parameters ?? [])
         .filter((parameter) => parameterIds.has(parameter.id))

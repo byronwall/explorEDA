@@ -57,6 +57,7 @@ export type ScatterTrace =
       opacity: number;
       passesOwnFilter: boolean;
       passesAllFilters: boolean;
+      filters: ScatterPlotSettings["filters"];
       hover: ReturnType<typeof scatterHoverReadout>;
     }
   | {
@@ -225,6 +226,7 @@ export function resolveScatterTrace(
       opacity: point.opacity,
       passesOwnFilter: point.passesOwnFilter,
       passesAllFilters: point.passesAllFilters,
+      filters: settings.filters,
       hover: scatterHoverReadout(plan, snapshot, settings, point),
     };
   }

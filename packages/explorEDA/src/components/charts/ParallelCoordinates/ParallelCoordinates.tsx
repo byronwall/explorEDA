@@ -1,9 +1,6 @@
 import { detectColumnType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import { Button } from "@/components/ui/button";
-import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-} from "../ChartStatusLine";
+import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
 import { ChartMessage } from "../ChartMessage";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { categoryKey, categoryValue } from "@/lib/categories";
@@ -212,6 +209,7 @@ export function ParallelCoordinates({
   const source = useMemo(
     (): TraceSource => ({
       role: "chart",
+      chartId: settings.id,
       revision: plan.revision,
       resolve: (kind, id) =>
         resolveParallelTrace(plan, snapshot, settings.colorField, kind, id),

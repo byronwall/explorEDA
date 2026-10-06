@@ -158,6 +158,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
     const currentRevision = `${revision.split(":")[0]}:${settings.field}:${chartHeight}:${plan.other.length}:${plan.categories.map((item) => item.sourceIds.join(",")).join(";")}`;
     return {
       role: "chart",
+      chartId: settings.id,
       revision: currentRevision,
       resolve: (kind, id) => {
         if (kind !== "row-category") return;

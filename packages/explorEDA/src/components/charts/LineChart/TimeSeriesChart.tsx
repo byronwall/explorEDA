@@ -6,6 +6,7 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps, datum } from "@/types/ChartTypes";
 import { BaseChart } from "../BaseChart";
 import { ChartReadout } from "../ChartReadout";
+import { getChartFields } from "../chartAccessibility";
 import { planAxes } from "../Axis/axisPlan";
 import {
   useChartTraceApi,
@@ -166,7 +167,11 @@ export function TimeSeriesChart({
     });
   }, [plan, settings]);
   const source = useMemo(() => {
-    const source = timeSeriesTraceSource(plan);
+    const source = timeSeriesTraceSource(
+      plan,
+      settings.filters,
+      getChartFields(settings)
+    );
     return {
       ...source,
       resolve: (kind: string, id: string) =>
@@ -175,8 +180,8 @@ export function TimeSeriesChart({
           : source.resolve(kind, id),
       targets: () => [...source.targets!(), ...guideTargets(axes)],
     };
-  }, [plan, axes]);
-  useTraceSource(owner, source);
+  }, [plan, axes, settings]);
+  useTraceSource(owner, source, settings.id);
   const active = plan.points.find((point) => point.id === activeId);
   const inspect = (point: TimePoint) =>
     api?.inspect(owner, "time-bucket", point.id);

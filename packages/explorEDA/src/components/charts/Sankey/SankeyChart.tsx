@@ -1,9 +1,6 @@
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
-import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-} from "../ChartStatusLine";
+import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import {
   useCallback,
@@ -173,6 +170,7 @@ export function SankeyChart({
   const source = useMemo(
     (): TraceSource => ({
       role: "chart",
+      chartId: settings.id,
       revision: plan.revision,
       resolve: (kind, id) => resolveSankeyTrace(plan, kind, id),
       findRow: (id) => findSankeyTraceRow(plan, id),

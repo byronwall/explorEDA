@@ -106,6 +106,7 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
   const source = useMemo(
     (): TraceSource => ({
       role: "chart",
+      chartId: settings.id,
       revision: plan.revision,
       resolve: (kind, id) => resolveCalendarTrace(plan, kind, id),
       findRow: (id) => findCalendarTraceRow(plan, id),

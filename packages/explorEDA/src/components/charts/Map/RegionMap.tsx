@@ -61,6 +61,7 @@ export function RegionMap({
   const source = useMemo(
     (): TraceSource => ({
       role: "chart",
+      chartId: settings.id,
       revision: plan.revision,
       resolve: (kind, id) => {
         if (kind === "map-joins")

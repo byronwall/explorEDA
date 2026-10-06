@@ -116,6 +116,7 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
   const source = useMemo(
     (): TraceSource => ({
       role: "chart",
+      chartId: settings.id,
       revision: plan.revision,
       resolve: (kind, id) => resolveHeatmapTrace(plan, kind, id),
       findRow: (id) => findHeatmapTraceRow(plan, id),

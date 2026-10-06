@@ -91,10 +91,19 @@ export function MetricCard({
   const source = useMemo(
     (): TraceSource => ({
       role: "chart",
+      chartId: settings.id,
       revision: plan.revision,
-      ...makeMetricCardTraceSource(plan),
+      ...makeMetricCardTraceSource(
+        plan,
+        settings.filters,
+        [
+          settings.measureField,
+          settings.entityField,
+          ...settings.filters.map((filter) => filter.field),
+        ].filter((field): field is string => Boolean(field))
+      ),
     }),
-    [plan]
+    [plan, settings.entityField, settings.filters, settings.measureField]
   );
   useTraceSource(owner, source);
 

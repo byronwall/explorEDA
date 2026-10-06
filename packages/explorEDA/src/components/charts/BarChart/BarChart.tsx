@@ -196,15 +196,34 @@ function SingleBarChart({
     [plan.yScale]
   );
 
+  const traceFields = useMemo(
+    () =>
+      [
+        settings.field,
+        settings.seriesField,
+        aggregates.find((aggregate) => aggregate.id === settings.aggregateId)
+          ?.measureField,
+        ...settings.filters.map((filter) => filter.field),
+      ].filter((field): field is string => Boolean(field)),
+    [
+      aggregates,
+      settings.aggregateId,
+      settings.field,
+      settings.filters,
+      settings.seriesField,
+    ]
+  );
   const source = useMemo(
     (): TraceSource => ({
       role: "chart",
+      chartId: settings.id,
       revision: plan.revision,
-      resolve: (kind, id) => resolveBarTrace(plan, kind, id),
+      resolve: (kind, id) =>
+        resolveBarTrace(plan, kind, id, settings.filters, traceFields),
       findRow: (id) => findBarTraceRow(plan, id),
       targets: () => barTraceTargets(plan),
     }),
-    [plan]
+    [plan, settings.filters, traceFields]
   );
   useTraceSource(owner, source);
   const inspect = useCallback(

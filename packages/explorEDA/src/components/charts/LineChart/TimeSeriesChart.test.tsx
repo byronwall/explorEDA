@@ -1,11 +1,15 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
-import { beforeAll, expect, it } from "vitest";
+import { beforeAll, expect, it, vi } from "vitest";
 import { useState } from "react";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import { rowChartDefinition } from "../RowChart/definition";
 import { ChartTraceScope } from "../trace/ChartTraceScope";
 import { ChartTracePanel } from "../trace/ChartTracePanel";
+import {
+  AnalysisChartContextProvider,
+  queryChartFilterRevision,
+} from "@/components/AnalysisChartContext";
 import { LineChart } from "./LineChart";
 import {
   DEFAULT_TIME_SERIES,
@@ -18,6 +22,7 @@ beforeAll(registerAllCharts);
 const chart: LineChartSettings = {
   ...lineChartDefinition.createDefaultSettings({ x: 0, y: 0, w: 8, h: 5 }),
   id: "time",
+  filters: [{ type: "value", field: "Channel", values: [] }],
   xField: "Date",
   time: {
     ...DEFAULT_TIME_SERIES,
@@ -73,36 +78,57 @@ function Workspace() {
   );
 }
 it("selects exact period and series IDs, traces inputs, and follows another chart", () => {
+  const onOpenQueryFlow = vi.fn();
+  const chartFilterScopes = [
+    {
+      chartId: "time",
+      label: "Time series",
+      filters: [{ type: "value" as const, field: "Channel", values: [] }],
+    },
+    { chartId: "channels", label: "Channels", filters: [] },
+  ];
   render(
-    <DataLayerProvider
-      data={[
-        { Date: "2024-01-01", Amount: 10, Channel: "Web", Region: "North" },
-        {
-          Date: "2024-01-31T23:59:59.999Z",
-          Amount: 20,
-          Channel: "Web",
-          Region: "South",
-        },
-        { Date: "2024-01-05", Amount: 90, Channel: "Store", Region: "South" },
-        { Date: "2024-02-01", Amount: 30, Channel: "Web", Region: "South" },
-        { Date: "bad", Amount: 15, Channel: "Web", Region: "North" },
-      ]}
-      charts={[
-        chart,
-        {
-          ...rowChartDefinition.createDefaultSettings({
-            x: 8,
-            y: 0,
-            w: 4,
-            h: 5,
-          }),
-          id: "channels",
-          field: "Channel",
-        },
-      ]}
+    <AnalysisChartContextProvider
+      value={{
+        query: { id: "query", label: "Orders", glyph: "O" },
+        queryRevision: "query-r1",
+        frame: { id: "frame", label: "Orders", glyph: "O" },
+        availableCount: 5,
+        resultRowsById: {},
+        chartFilterScopes,
+        onOpenQueryFlow,
+      }}
     >
-      <Workspace />
-    </DataLayerProvider>
+      <DataLayerProvider
+        data={[
+          { Date: "2024-01-01", Amount: 10, Channel: "Web", Region: "North" },
+          {
+            Date: "2024-01-31T23:59:59.999Z",
+            Amount: 20,
+            Channel: "Web",
+            Region: "South",
+          },
+          { Date: "2024-01-05", Amount: 90, Channel: "Store", Region: "South" },
+          { Date: "2024-02-01", Amount: 30, Channel: "Web", Region: "South" },
+          { Date: "bad", Amount: 15, Channel: "Web", Region: "North" },
+        ]}
+        charts={[
+          chart,
+          {
+            ...rowChartDefinition.createDefaultSettings({
+              x: 8,
+              y: 0,
+              w: 4,
+              h: 5,
+            }),
+            id: "channels",
+            field: "Channel",
+          },
+        ]}
+      >
+        <Workspace />
+      </DataLayerProvider>
+    </AnalysisChartContextProvider>
   );
   const january = screen.getByRole("button", {
     name: "Web · 2024-01-01 – 2024-01-31: 30",
@@ -115,6 +141,18 @@ it("selects exact period and series IDs, traces inputs, and follows another char
       '"2024-01-31T23:59:59.999Z"'
     )
   ).toHaveLength(1);
+  fireEvent.click(screen.getByRole("button", { name: "Open query flow" }));
+  expect(onOpenQueryFlow).toHaveBeenCalledWith(
+    undefined,
+    expect.objectContaining({
+      chartId: "time",
+      filterRevision: queryChartFilterRevision("time", chartFilterScopes),
+    })
+  );
+  const handoff = onOpenQueryFlow.mock.calls[0]?.[1];
+  expect(handoff?.trace.kind).toBe("time-bucket");
+  if (handoff?.trace.kind === "time-bucket")
+    expect(handoff.trace.fields).toContain("Amount");
   fireEvent.keyDown(january, { key: "Enter" });
   expect(screen.getByLabelText("Selected IDs")).toHaveTextContent("0,1,2,3,4");
   fireEvent.click(screen.getByRole("button", { name: "Web only" }));

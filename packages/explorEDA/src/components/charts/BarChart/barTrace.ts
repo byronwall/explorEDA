@@ -5,6 +5,7 @@ import {
   type TraceTarget,
 } from "../trace/traceTypes";
 import { findBarForRow, type BarChartPlan, type BarMark } from "./barPlan";
+import type { Filter } from "@/types/FilterTypes";
 
 export interface BarTrace {
   kind: "bar";
@@ -21,13 +22,17 @@ export interface BarTrace {
   xScale: BarChartPlan["xScale"];
   yScale: BarChartPlan["yScale"];
   scopeNote: string;
+  filters: Filter[];
+  fields: string[];
 }
 
 /** Explains one planned bar or guide. Returns undefined when the plan no longer draws it. */
 export function resolveBarTrace(
   plan: BarChartPlan,
   kind: string,
-  id: string
+  id: string,
+  filters: Filter[] = [],
+  fields: string[] = []
 ): BarTrace | GuideTrace | undefined {
   if (kind === "guide") return resolveGuideTrace(plan.axes, id, plan.revision);
   if (kind !== "bar") return undefined;
@@ -48,6 +53,8 @@ export function resolveBarTrace(
     xScale: plan.xScale,
     yScale: plan.yScale,
     scopeNote: plan.scopeNote,
+    filters,
+    fields,
   };
 }
 

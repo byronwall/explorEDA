@@ -1,4 +1,5 @@
 import {
+  useCallback,
   forwardRef,
   useEffect,
   useImperativeHandle,
@@ -23,7 +24,11 @@ import type {
 import { evaluateAnalysisQuery } from "@/lib/analysis/evaluateProject";
 import { ProjectSchemaPanel } from "./project/ProjectSchemaPanel";
 import { ProjectQueryPanel } from "./project/ProjectQueryPanel";
-import { AnalysisChartContextProvider } from "./AnalysisChartContext";
+import {
+  AnalysisChartContextProvider,
+  type QueryChartFilterScope,
+  type QueryFlowTraceHandoff,
+} from "./AnalysisChartContext";
 import {
   decodeAnalysisRowKeys,
   encodeAnalysisRowKeys,
@@ -75,6 +80,11 @@ export const ExplorEdaProject = forwardRef<
   const [queryOpen, setQueryOpen] = useState(false);
   const [schemaWide, setSchemaWide] = useState(false);
   const [queryWide, setQueryWide] = useState(false);
+  const [queryTraceHandoff, setQueryTraceHandoff] =
+    useState<QueryFlowTraceHandoff>();
+  const [traceRevisions, setTraceRevisions] = useState<Record<string, string>>(
+    {}
+  );
   const [readOnlyView, setReadOnlyView] = useState(view);
   useEffect(() => setReadOnlyView(view), [view]);
   const shownView = readOnly ? readOnlyView : view;
@@ -125,45 +135,80 @@ export const ExplorEdaProject = forwardRef<
     () => (settings ? decodeAnalysisRowKeys(settings, idsByKey) : undefined),
     [settings, idsByKey]
   );
-  const declaredFieldSettings = Object.fromEntries(
-    evaluated.evaluation.fields.map((field) => [
-      field.id,
-      {
-        label: field.name,
-        ...(field.type === "number"
-          ? { type: "numeric" as const }
-          : field.type === "string"
-            ? { type: "categorical" as const }
-            : field.type === "boolean"
-              ? { type: "boolean" as const }
-              : field.type === "date"
-                ? { type: "datetime" as const }
-                : {}),
-      },
-    ])
+  const declaredFieldSettings = useMemo(
+    () =>
+      Object.fromEntries(
+        evaluated.evaluation.fields.map((field) => [
+          field.id,
+          {
+            label: field.name,
+            ...(field.type === "number"
+              ? { type: "numeric" as const }
+              : field.type === "string"
+                ? { type: "categorical" as const }
+                : field.type === "boolean"
+                  ? { type: "boolean" as const }
+                  : field.type === "date"
+                    ? { type: "datetime" as const }
+                    : {}),
+          },
+        ])
+      ),
+    [evaluated.evaluation.fields]
   );
-  const renderedSettings = runtimeSettings
-    ? {
-        ...runtimeSettings,
-        fieldSettings: {
-          ...declaredFieldSettings,
-          ...runtimeSettings.fieldSettings,
-        },
-      }
-    : undefined;
+  const renderedSettings = useMemo(
+    () =>
+      runtimeSettings
+        ? {
+            ...runtimeSettings,
+            fieldSettings: {
+              ...declaredFieldSettings,
+              ...runtimeSettings.fieldSettings,
+            },
+          }
+        : undefined,
+    [runtimeSettings, declaredFieldSettings]
+  );
   const availableFields = new Set(
     evaluated.evaluation.fields.map((field) => field.id)
   );
-  const incompatibleFields = incompatibleSettingsFields(settings, availableFields);
+  const incompatibleFields = incompatibleSettingsFields(
+    settings,
+    availableFields
+  );
   const settingsCompatible = incompatibleFields.length === 0;
   const unresolvedKeys = unresolvedAnalysisRowKeys(shownView.settings);
-  const fieldNames = useMemo(() => evaluated.evaluation.fields.map(field => field.id), [evaluated.evaluation]);
+  const fieldNames = useMemo(
+    () => evaluated.evaluation.fields.map((field) => field.id),
+    [evaluated.evaluation]
+  );
   const resultRowsById = useMemo(
     () =>
       Object.fromEntries(
         evaluated.evaluation.rows.map((row, index) => [index, row])
       ),
     [evaluated.evaluation]
+  );
+  const chartFilterScopes: QueryChartFilterScope[] = (
+    settings?.charts ?? []
+  ).map((chart) => ({
+    chartId: chart.id,
+    label: chart.title || chart.type,
+    filters: chart.filters,
+  }));
+  const queryRevision = `${evaluated.evaluation.revision}:${query?.id ?? shownView.queryId}:${JSON.stringify(shownView.bindings ?? {})}`;
+  const reportTraceRevision = useCallback(
+    (owner: string | undefined, revision?: string) => {
+      if (!owner) return;
+      setTraceRevisions((current) => {
+        if (current[owner] === revision) return current;
+        const next = { ...current };
+        if (revision) next[owner] = revision;
+        else delete next[owner];
+        return next;
+      });
+    },
+    []
   );
 
   useImperativeHandle(
@@ -233,6 +278,11 @@ export const ExplorEdaProject = forwardRef<
         view={shownView}
         tables={tables}
         evaluation={evaluated.evaluation}
+        queryRevision={queryRevision}
+        traceHandoff={queryTraceHandoff}
+        traceRevisions={traceRevisions}
+        resultRowsById={resultRowsById}
+        chartFilterScopes={chartFilterScopes}
         incompatibleFields={incompatibleFields}
         unresolvedRowKeys={unresolvedKeys.length}
         queryPresets={queryPresets}
@@ -243,13 +293,18 @@ export const ExplorEdaProject = forwardRef<
     ),
   };
 
-  const onOpenQueryFlow = (rowKey?: string) => {
+  const onOpenQueryFlow = (
+    rowKey?: string,
+    handoff?: QueryFlowTraceHandoff
+  ) => {
+    setQueryTraceHandoff(handoff);
     setSchemaOpen(false);
     setQueryOpen(true);
     const nextView = {
       ...shownView,
       inspection: {
         ...shownView.inspection,
+        mode: "full" as const,
         stepId: query?.outputStepId,
         rowKey,
       },
@@ -266,6 +321,7 @@ export const ExplorEdaProject = forwardRef<
           label: query?.name ?? "Unavailable query",
           glyph: query?.glyph ?? "?",
         },
+        queryRevision,
         frame: {
           id: query?.outputStepId ?? "unavailable",
           label: query?.frameLabel ?? "Unavailable frame",
@@ -273,10 +329,12 @@ export const ExplorEdaProject = forwardRef<
         },
         availableCount: evaluated.evaluation.counts.available,
         resultRowsById,
+        chartFilterScopes,
         fields: evaluated.evaluation.fields,
         sources: project.sources,
         steps: query?.steps,
         onOpenQueryFlow,
+        onTraceRevision: reportTraceRevision,
       }}
     >
       <ExplorEda

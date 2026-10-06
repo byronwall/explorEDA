@@ -16,6 +16,7 @@ import type {
   TraceSource,
   TraceTarget,
 } from "./traceTypes";
+import { useAnalysisChartContext } from "@/components/AnalysisChartContext";
 
 interface TraceApi {
   register: (owner: string, source: TraceSource) => () => void;
@@ -61,24 +62,37 @@ export function ChartTraceScope({ children }: { children: ReactNode }) {
   const inspect = useCallback((owner: string, kind: string, id: string) => {
     const source = sources.current.get(owner);
     if (!source?.resolve(kind, id)) return false;
-    setSelection({ owner, kind, id, revision: source.revision });
+    setSelection({
+      owner,
+      chartId: source.chartId,
+      kind,
+      id,
+      revision: source.revision,
+    });
     return true;
   }, []);
 
   const chartOwner = () =>
     [...sources.current].find(([, source]) => source.role === "chart")?.[0];
 
-  const inspectChart = useCallback((kind: string, id: string) => {
-    const owner = chartOwner();
-    return owner ? inspect(owner, kind, id) : false;
-  }, [inspect]);
+  const inspectChart = useCallback(
+    (kind: string, id: string) => {
+      const owner = chartOwner();
+      return owner ? inspect(owner, kind, id) : false;
+    },
+    [inspect]
+  );
 
   const findVisibleRow = useCallback(
     (id: number) => {
       for (const [owner, source] of sources.current) {
         if (source.role !== "chart") continue;
         const found = source.findRow?.(id);
-        if (found && found !== "pending" && inspect(owner, found.kind, found.id))
+        if (
+          found &&
+          found !== "pending" &&
+          inspect(owner, found.kind, found.id)
+        )
           return true;
       }
       return false;
@@ -157,13 +171,31 @@ export function useChartTrace() {
 }
 
 /** Registers a trace source while the component is mounted. */
-export function useTraceSource(owner: string, source: TraceSource | null) {
+export function useTraceSource(
+  owner: string,
+  source: TraceSource | null,
+  chartId?: string
+) {
   const api = useChartTraceApi();
+  const onTraceRevision = useAnalysisChartContext()?.onTraceRevision;
   const register = api?.register;
+  const chartRevision = source?.role === "chart" ? source.revision : undefined;
   useEffect(() => {
     if (!source) return;
-    return register?.(owner, source);
-  }, [owner, register, source]);
+    const current =
+      source.role === "chart" && chartId ? { ...source, chartId } : source;
+    const unregister = register?.(owner, current);
+    return () => {
+      unregister?.();
+    };
+  }, [owner, register, source, chartId]);
+  useEffect(() => {
+    if (chartRevision !== undefined) onTraceRevision?.(owner, chartRevision);
+  }, [owner, chartRevision, onTraceRevision]);
+  useEffect(
+    () => () => onTraceRevision?.(owner, undefined),
+    [owner, onTraceRevision]
+  );
 }
 
 /** The data revision every trace source uses: data edits and this chart's rows. */
@@ -172,5 +204,5 @@ export function useTraceRevision(settings: ChartSettings) {
   const liveNonce = useDataLayer(
     (state) => state.liveItems[settings.id]?.nonce ?? 0
   );
-  return `${nonce}:${liveNonce}`;
+  return `${nonce}:${liveNonce}:${JSON.stringify(settings)}`;
 }

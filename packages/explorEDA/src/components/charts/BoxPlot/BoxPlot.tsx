@@ -304,6 +304,7 @@ export function BoxPlot({
     const currentRevision = `${revision}:${JSON.stringify(settings)}:${facetIds?.join(",") ?? ""}`;
     return {
       role: "chart",
+      chartId: settings.id,
       revision: currentRevision,
       resolve: (kind, id) => {
         if (kind !== "distribution") return;

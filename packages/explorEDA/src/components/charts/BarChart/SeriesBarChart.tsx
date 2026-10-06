@@ -152,15 +152,32 @@ export function SeriesBarChart({
     facetColumns,
     getColorForValue,
   ]);
+  const traceFields = useMemo(
+    () =>
+      [
+        settings.field,
+        settings.seriesField,
+        aggregate?.measureField,
+        ...settings.filters.map((filter) => filter.field),
+      ].filter((field): field is string => Boolean(field)),
+    [
+      aggregate?.measureField,
+      settings.field,
+      settings.filters,
+      settings.seriesField,
+    ]
+  );
   const source = useMemo(
     () => ({
       role: "chart" as const,
+      chartId: settings.id,
       revision: plan.revision,
-      resolve: (kind: string, id: string) => resolveBarTrace(plan, kind, id),
+      resolve: (kind: string, id: string) =>
+        resolveBarTrace(plan, kind, id, settings.filters, traceFields),
       findRow: (id: number) => findBarTraceRow(plan, id),
       targets: () => barTraceTargets(plan),
     }),
-    [plan]
+    [plan, settings.filters, traceFields]
   );
   useTraceSource(owner, source);
   const active = plan.bars.find((bar) => bar.id === activeId);

@@ -47,6 +47,7 @@ export function DensityScatter({
   const source = useMemo(
     (): TraceSource => ({
       role: "chart",
+      chartId: settings.id,
       revision: base.revision,
       resolve: (kind, id) => {
         if (kind === "density-row") {

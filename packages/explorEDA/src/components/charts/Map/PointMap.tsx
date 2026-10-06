@@ -54,6 +54,7 @@ export function PointMap({
   const paths = useMemo(() => mapPaths(plan.projection), [plan.projection]);
   const source: TraceSource = {
     role: "chart",
+    chartId: settings.id,
     revision: plan.revision,
     resolve: (kind, id) => {
       if (kind === "map-point") {
