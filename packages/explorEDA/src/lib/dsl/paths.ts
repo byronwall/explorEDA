@@ -42,24 +42,34 @@ export function parsePath(key: string): DslPath | undefined {
       let end = index + 1;
       let segment = "";
       while (end < text.length && text[end] !== '"') {
-        if (text[end] === "\\") end++;
+        if (text[end] === "\\") {
+          end++;
+        }
         segment += text[end] ?? "";
         end++;
       }
-      if (end >= text.length) return undefined;
+      if (end >= text.length) {
+        return undefined;
+      }
       segments.push(segment);
       index = end + 1;
     } else {
       const end = text.indexOf(".", index);
       const segment = text.slice(index, end < 0 ? text.length : end);
-      if (!segment) return undefined;
+      if (!segment) {
+        return undefined;
+      }
       segments.push(segment);
       index = end < 0 ? text.length : end;
     }
     if (index < text.length) {
-      if (text[index] !== ".") return undefined;
+      if (text[index] !== ".") {
+        return undefined;
+      }
       index++;
-      if (index === text.length) return undefined;
+      if (index === text.length) {
+        return undefined;
+      }
     }
   }
   return segments.length ? { segments, marker } : undefined;
@@ -75,19 +85,31 @@ export function formatPath(segments: string[]): string {
 
 /** Reads one item, using the setting's current type when there is one. */
 function decodeItem(item: DslItem, current: unknown): Json {
-  if (item.quoted) return item.text;
+  if (item.quoted) {
+    return item.text;
+  }
   const text = item.text;
-  if (text === "null") return null;
-  if (typeof current === "string") return text;
-  if (text === "true" || text === "false") return text === "true";
-  if (text.trim() !== "" && Number.isFinite(Number(text))) return Number(text);
+  if (text === "null") {
+    return null;
+  }
+  if (typeof current === "string") {
+    return text;
+  }
+  if (text === "true" || text === "false") {
+    return text === "true";
+  }
+  if (text.trim() !== "" && Number.isFinite(Number(text))) {
+    return Number(text);
+  }
   return text;
 }
 
 export function getPath(target: unknown, segments: string[]): unknown {
   let value = target;
   for (const segment of segments) {
-    if (value == null || typeof value !== "object") return undefined;
+    if (value == null || typeof value !== "object") {
+      return undefined;
+    }
     value = (value as Record<string, unknown>)[segment];
   }
   return value;
@@ -131,8 +153,11 @@ export function setPath<T>(target: T, path: DslPath, value: DslValue): T {
     const key = isIndex && Array.isArray(copy) ? Number(segment) : segment;
     if (depth === segments.length - 1) {
       if (unset) {
-        if (Array.isArray(copy)) copy.splice(key as number, 1);
-        else delete copy[key as string];
+        if (Array.isArray(copy)) {
+          copy.splice(key as number, 1);
+        } else {
+          delete copy[key as string];
+        }
       } else {
         (copy as Record<string | number, unknown>)[key] = next;
       }
@@ -149,8 +174,12 @@ const RESERVED = /^(null|unset|true|false)$/;
 
 /** Writes a plain value so it reads back as the same value. */
 export function encodeScalar(value: string | number | boolean | null): string {
-  if (value === null) return "null";
-  if (typeof value !== "string") return String(value);
+  if (value === null) {
+    return "null";
+  }
+  if (typeof value !== "string") {
+    return String(value);
+  }
   const plain =
     /^[^\s",=#@+[\]{}][^\s",=]*$/.test(value) &&
     !RESERVED.test(value) &&
@@ -178,9 +207,13 @@ export function diffPaths(
   next: unknown,
   prefix: string[] = []
 ): string[] {
-  if (sameValue(base, next)) return [];
+  if (sameValue(base, next)) {
+    return [];
+  }
   const key = formatPath(prefix);
-  if (next === undefined) return [`${key}=unset`];
+  if (next === undefined) {
+    return [`${key}=unset`];
+  }
   if (isPlain(next)) {
     // A whole number written as text must stay text.
     return [
@@ -206,7 +239,9 @@ export function diffPaths(
     base && typeof base === "object" && !Array.isArray(base)
       ? (base as Record<string, unknown>)
       : undefined;
-  if (!Object.keys(object).length) return [`${key}{}=`];
+  if (!Object.keys(object).length) {
+    return [`${key}{}=`];
+  }
   const pairs: string[] = [];
   if (
     !previous &&
@@ -219,10 +254,14 @@ export function diffPaths(
     ...Object.keys(previous ?? {}),
     ...Object.keys(object),
   ])) {
-    if (object[name] === undefined && previous?.[name] === undefined) continue;
+    if (object[name] === undefined && previous?.[name] === undefined) {
+      continue;
+    }
     pairs.push(...diffPaths(previous?.[name], object[name], [...prefix, name]));
   }
-  if (!previous || !prefix.length) return pairs;
+  if (!previous || !prefix.length) {
+    return pairs;
+  }
   // Rewriting the object whole reads better than clearing many members.
   const whole = [
     `${key}{}=`,

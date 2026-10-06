@@ -57,7 +57,9 @@ function filterPairs(
   types: Record<string, string>
 ): string[] | undefined {
   const fields = filters.map((filter) => filter.field);
-  if (new Set(fields).size !== fields.length) return undefined;
+  if (new Set(fields).size !== fields.length) {
+    return undefined;
+  }
   const pairs: string[] = [];
   for (const filter of filters) {
     const field = formatPath([filter.field]);
@@ -76,9 +78,12 @@ function filterPairs(
       case "range":
       case "date-range": {
         const dated = types[filter.field] === "datetime";
-        if ((filter.type === "date-range") !== dated) return undefined;
-        if (filter.min === undefined && filter.max === undefined)
+        if ((filter.type === "date-range") !== dated) {
           return undefined;
+        }
+        if (filter.min === undefined && filter.max === undefined) {
+          return undefined;
+        }
         pairs.push(
           `${prefix}.${field}=${filter.min ?? ""}..${filter.max ?? ""}`
         );
@@ -148,22 +153,30 @@ export function exportDocument(
       ([key, [word]]) =>
         `${word}=${settings.gridSettings[key as keyof typeof GRID_KEYS]}`
     );
-  if (grid.length) workspace.push(`grid ${grid.join(" ")}`);
+  if (grid.length) {
+    workspace.push(`grid ${grid.join(" ")}`);
+  }
 
   const fieldLines = (names: string[]) =>
     names.flatMap((field) => {
       const value = settings.fieldSettings?.[field];
-      if (!value || !Object.keys(value).length) return [];
+      if (!value || !Object.keys(value).length) {
+        return [];
+      }
       const pairs = Object.entries(value).flatMap(([key, item]) => {
-        if (item === undefined) return [];
-        if (key === "type")
+        if (item === undefined) {
+          return [];
+        }
+        if (key === "type") {
           return calcNames.has(field)
             ? []
             : [`as=${TYPE_WORDS[item as keyof typeof TYPE_WORDS]}`];
-        if (key === "nullTokens")
+        }
+        if (key === "nullTokens") {
           return [
             `nullTokens[]=${(item as string[]).map((token) => JSON.stringify(token)).join(",")}`,
           ];
+        }
         return [
           `${key}=${typeof item === "string" ? JSON.stringify(item) : item}`,
         ];
@@ -188,7 +201,9 @@ export function exportDocument(
       `@${names[index]}`,
       `at=${chart.layout.x},${chart.layout.y},${chart.layout.w},${chart.layout.h}`,
     ];
-    if (chart.colorField) pairs.push(`color=${encodeScalar(chart.colorField)}`);
+    if (chart.colorField) {
+      pairs.push(`color=${encodeScalar(chart.colorField)}`);
+    }
     const local = chart.localFilters?.length
       ? filterPairs("where", chart.localFilters, types)
       : [];
@@ -234,7 +249,9 @@ export function exportDocument(
     ]);
     const extra: string[] = [];
     for (const key of new Set([...Object.keys(built), ...Object.keys(chart)])) {
-      if (skip.has(key)) continue;
+      if (skip.has(key)) {
+        continue;
+      }
       extra.push(
         ...diffPaths(
           (built as unknown as Record<string, unknown>)[key],
@@ -243,10 +260,12 @@ export function exportDocument(
         )
       );
     }
-    if ("aggregateId" in chart && chart.aggregateId)
+    if ("aggregateId" in chart && chart.aggregateId) {
       omitted.push(`${head}: its grouped summary`);
-    if ("geometryAssetId" in chart && chart.geometryAssetId)
+    }
+    if ("geometryAssetId" in chart && chart.geometryAssetId) {
       omitted.push(`${head}: its map shapes`);
+    }
     return wrap(head, [...shown, ...extra]);
   });
 

@@ -1442,7 +1442,10 @@ export function compileDocument(
       }
     }
 
-    if (!internal.keepIncomplete && !definition.validateSettings(chart as never)) {
+    if (
+      !internal.keepIncomplete &&
+      !definition.validateSettings(chart as never)
+    ) {
       return fail(
         declaration.span,
         `${subject} is missing a required setting, so it was skipped.`

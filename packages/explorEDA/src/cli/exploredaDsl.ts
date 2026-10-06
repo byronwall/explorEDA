@@ -19,8 +19,12 @@ fields  lists the fields, types, and example values to write against.`;
 
 /** Reads a CSV cell the way the app's file import does. */
 function typed(text: string): datum {
-  if (text === "") return null;
-  if (text === "true" || text === "false") return text === "true";
+  if (text === "") {
+    return null;
+  }
+  if (text === "true" || text === "false") {
+    return text === "true";
+  }
   const number = Number(text);
   return text.trim() !== "" && Number.isFinite(number) ? number : text;
 }
@@ -36,21 +40,31 @@ function parseCsv(text: string): Array<Record<string, datum>> {
       if (char === '"' && text[index + 1] === '"') {
         cell += '"';
         index++;
-      } else if (char === '"') quoted = false;
-      else cell += char;
-    } else if (char === '"') quoted = true;
-    else if (char === ",") {
+      } else if (char === '"') {
+        quoted = false;
+      } else {
+        cell += char;
+      }
+    } else if (char === '"') {
+      quoted = true;
+    } else if (char === ",") {
       row.push(cell);
       cell = "";
     } else if (char === "\n" || char === "\r") {
-      if (char === "\r" && text[index + 1] === "\n") index++;
+      if (char === "\r" && text[index + 1] === "\n") {
+        index++;
+      }
       row.push(cell);
       records.push(row);
       row = [];
       cell = "";
-    } else cell += char;
+    } else {
+      cell += char;
+    }
   }
-  if (cell || row.length) records.push([...row, cell]);
+  if (cell || row.length) {
+    records.push([...row, cell]);
+  }
   const [header = [], ...body] = records.filter((item) => item.some(Boolean));
   return body.map((values) =>
     Object.fromEntries(
@@ -61,7 +75,9 @@ function parseCsv(text: string): Array<Record<string, datum>> {
 
 function readRows(path: string): Array<Record<string, datum>> {
   const text = readFileSync(path, "utf8");
-  if (!path.endsWith(".json")) return parseCsv(text);
+  if (!path.endsWith(".json")) {
+    return parseCsv(text);
+  }
   const json = JSON.parse(text);
   // Accept plain rows or a saved explorEDA analysis.
   return Array.isArray(json) ? json : json.data;
