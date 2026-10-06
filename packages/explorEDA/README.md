@@ -230,6 +230,39 @@ npx exploreda-dsl reference
 
 Any saved setting can be written as a flat path, such as `xAxis.scaleType=log` or `columns.0.width=140`. Color scales, grouped summaries, and the Rows view have their own lines (`scale`, `group`, `rows`). `exportDocument(settings, { rows })` writes the current dashboard as text that rebuilds it. Region maps refer to map shapes the host passes in as `geometryAssets`.
 
+### Several views in one text
+
+One text can hold every saved view. Shared definitions (field settings, calculations, color scales, and grouped summaries) come first and apply to every view. Each `view "Name"` line starts a view; the grid, Rows view, and charts below it belong to that view.
+
+```text
+dashboard name="Sales"
+calc profit=Revenue-Cost
+
+view Overview
+metric sum=Revenue
+scatter x=Revenue y=profit color=Channel
+
+view "By channel"
+row Channel where.Units=2..
+hist profit
+```
+
+```ts
+import { compileViews, exportViews } from "exploreda";
+
+const { text } = exportViews(
+  [
+    { name: "Overview", settings: overview },
+    { name: "By channel", settings: byChannel },
+  ],
+  { rows, name: "Sales" }
+);
+const { views } = compileViews(text, { rows });
+// views[i].name and views[i].settings rebuild each view.
+```
+
+Text without `view` lines reads as one view. `compileDocument` builds only the first view and warns about the rest. `exploreda-dsl check` checks every view.
+
 `check` exits 0 when every declaration applied, 1 when some were skipped, and 2 when nothing can be built. Add `--json` for the full result.
 
 

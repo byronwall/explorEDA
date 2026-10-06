@@ -5,20 +5,27 @@ import {
   useState,
   type UIEvent,
 } from "react";
-import { AlertTriangle, CircleX, Copy, FileOutput } from "lucide-react";
+import {
+  AlertTriangle,
+  CircleX,
+  Copy,
+  FileOutput,
+  Files,
+} from "lucide-react";
 import {
   describeDslSource,
   DSL_REFERENCE,
   formatDslDiagnostics,
-  type DslCompileResult,
   type DslDiagnostic,
   type DslExportResult,
+  type DslViewsResult,
   type GeometryAsset,
 } from "exploreda";
 import { toast } from "sonner";
 import {
   compileDashboardText,
   describeResult,
+  describesViews,
   type AppliedText,
 } from "./dashboardText";
 import type { DatumObject } from "./LandingPage";
@@ -76,6 +83,7 @@ function DiagnosticItem({
 /**
  * A text editor that builds the current view from dashboard text. It checks
  * as you type; Apply replaces the view, and Undo brings the old one back.
+ * Text with `view` lines describes every view, and Apply replaces them all.
  */
 export function DashboardTextPanel({
   text,
@@ -84,6 +92,8 @@ export function DashboardTextPanel({
   applied,
   onApply,
   onExport,
+  onExportViews,
+  viewCount,
   geometryAssets,
 }: {
   /** Map shapes in this workspace; region maps refer to them by ID. */
@@ -92,9 +102,12 @@ export function DashboardTextPanel({
   onTextChange: (text: string) => void;
   rows: DatumObject[];
   applied?: AppliedText;
-  onApply: (result: DslCompileResult) => void;
+  onApply: (result: DslViewsResult) => void;
   /** Writes the view as it is now, after any edits in the normal controls. */
   onExport: () => DslExportResult | undefined;
+  /** Writes every view as one text, shared definitions first. */
+  onExportViews: () => DslExportResult | undefined;
+  viewCount: number;
 }) {
   const [exported, setExported] = useState<{
     text: string;
@@ -120,6 +133,7 @@ export function DashboardTextPanel({
   const warningLines = new Set(result?.diagnostics.map((item) => item.line));
   const showingApplied = applied && applied.text === text;
   const showingExport = exported?.text === text;
+  const allViews = result ? describesViews(result) : false;
   const nothingBuilt = result && result.charts.length === 0;
 
   const show = (item: DslDiagnostic) => {
@@ -148,7 +162,8 @@ export function DashboardTextPanel({
     <div className="flex min-h-0 flex-col gap-3 p-3">
       <p className="text-xs text-muted-foreground">
         Describe the whole view, one chart per line. Apply replaces this view
-        with what the text describes; Undo brings the old view back.
+        with what the text describes; Undo brings the old view back. Start
+        sections with <code>view "Name"</code> to describe every view at once.
       </p>
       <div className="flex min-h-[14rem] overflow-hidden rounded-md border border-input bg-background font-mono text-xs leading-5 focus-within:ring-2 focus-within:ring-ring">
         <div
@@ -196,7 +211,9 @@ export function DashboardTextPanel({
           </span>
         ) : showingExport ? (
           <span>
-            <span className="font-medium">Matches this view:</span>{" "}
+            <span className="font-medium">
+              {allViews ? "Matches these views:" : "Matches this view:"}
+            </span>{" "}
             {describeResult(result)}
           </span>
         ) : showingApplied ? (
@@ -214,14 +231,14 @@ export function DashboardTextPanel({
           </span>
         )}
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Button
           size="sm"
           className="h-8 text-xs"
           disabled={!result || nothingBuilt || showingApplied || showingExport}
           onClick={() => result && onApply(result)}
         >
-          Apply to this view
+          {allViews ? "Apply all views" : "Apply to this view"}
         </Button>
         <ActionTooltip content="Replace the text with this view as it is now, including edits made with the chart controls">
           <Button
@@ -240,6 +257,25 @@ export function DashboardTextPanel({
             Write this view
           </Button>
         </ActionTooltip>
+        {viewCount > 1 && (
+          <ActionTooltip content="Replace the text with every view as one document: shared definitions first, then a section per view">
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 text-xs"
+              onClick={() => {
+                const result = onExportViews();
+                if (result) {
+                  setExported({ text: result.text, omitted: result.omitted });
+                  onTextChange(result.text);
+                }
+              }}
+            >
+              <Files aria-hidden="true" />
+              Write all views
+            </Button>
+          </ActionTooltip>
+        )}
         <ActionTooltip content="Copy every problem with its line and fix, as plain text for an agent or a note">
           <Button
             size="sm"
@@ -263,7 +299,7 @@ export function DashboardTextPanel({
         <section aria-label="Not in the text" className="text-xs">
           <h3 className="font-semibold">Not in the text</h3>
           <p className="text-muted-foreground">
-            Applying this text rebuilds the view without these:
+            Applying this text rebuilds {allViews ? "the views" : "the view"} without these:
           </p>
           <ul className="mt-1 list-disc pl-5">
             {exported.omitted.map((item) => (

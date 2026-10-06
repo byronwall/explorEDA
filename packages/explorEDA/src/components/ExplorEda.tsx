@@ -39,12 +39,18 @@ import {
 } from "@/utils/saveDataUtils";
 import {
   compileDocument,
+  compileViews,
   describeDslSource,
   DSL_CHART_KEYWORDS,
   DSL_REFERENCE,
   exportDocument,
+  exportViews,
   formatDslDiagnostics,
   type DslChartResult,
+  type DslView,
+  type DslViewResult,
+  type DslViewsExportOptions,
+  type DslViewsResult,
   type DslExportOptions,
   type DslExportResult,
   type DslFieldSummary,
@@ -144,6 +150,10 @@ export type {
   DslExportResult,
   DslFieldSummary,
   DslSeverity,
+  DslView,
+  DslViewResult,
+  DslViewsExportOptions,
+  DslViewsResult,
 };
 export {
   compileDocument,
@@ -151,6 +161,8 @@ export {
   DSL_CHART_KEYWORDS,
   DSL_REFERENCE,
   exportDocument,
+  exportViews,
+  compileViews,
   formatDslDiagnostics,
   parseSavedAnalysis,
   parseSavedData,

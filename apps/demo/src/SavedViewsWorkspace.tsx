@@ -25,6 +25,7 @@ import { SavedViewTabs, type SaveState } from "./SavedViewTabs";
 import {
   ExplorEda,
   exportDocument,
+  exportViews,
   stringifySavedAnalysis,
   type ExplorEdaHandle,
   type ExplorEdaSidePanel,
@@ -32,7 +33,11 @@ import {
 } from "exploreda";
 import { Eye, FileCode, History, Redo2, Undo2 } from "lucide-react";
 import { DashboardTextPanel } from "./DashboardTextPanel";
-import { describeResult, type AppliedText } from "./dashboardText";
+import {
+  describeResult,
+  describesViews,
+  type AppliedText,
+} from "./dashboardText";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const HISTORY_PANEL_ID = "saved-views-history";
@@ -468,13 +473,38 @@ export function SavedViewsWorkspace({
     });
   };
 
-  /** Replaces the current view with the text's dashboard, as one step. */
+  /**
+   * Replaces the current view with the text's dashboard, as one step. Text
+   * with `view` lines replaces every view instead; views keep their place in
+   * history by name.
+   */
   const applyText = (result: AppliedText["result"]) => {
     if (showingPreview) {
       return;
     }
-    const settings = result.settings;
+    const settings = result.views[0]!.settings;
     setSession((current) => {
+      if (describesViews(result)) {
+        const byName = new Map(current.tabs.map((tab) => [tab.name, tab.id]));
+        const used = new Set<string>();
+        const tabs = result.views.map((view) => {
+          const known = byName.get(view.name);
+          const id = known && !used.has(known) ? known : newId();
+          used.add(id);
+          return { id, name: view.name, settings: view.settings };
+        });
+        const active = current.tabs.find(
+          (tab) => tab.id === current.activeTabId
+        );
+        const activeTabId =
+          tabs.find((tab) => tab.name === active?.name)?.id ?? tabs[0]!.id;
+        return {
+          ...pushCheckpoint(current, tabs, "View", {
+            action: `Applied dashboard text: ${describeResult(result)}`,
+          }),
+          activeTabId,
+        };
+      }
       const tabs = current.tabs.map((tab) => {
         if (tab.id === current.activeTabId) {
           return {
@@ -722,6 +752,23 @@ export function SavedViewsWorkspace({
             const settings =
               currentView.settings ?? workspaceRef.current?.getSettings();
             return settings && exportDocument(settings, { rows: sourceRows });
+          }}
+          viewCount={session.tabs.length}
+          onExportViews={() => {
+            const active =
+              currentView.settings ?? workspaceRef.current?.getSettings();
+            if (!active) {
+              return undefined;
+            }
+            // A view not opened yet has the shared definitions and no charts.
+            const views = session.tabs.map((tab) => ({
+              name: tab.name,
+              settings:
+                tab.id === currentView.id
+                  ? active
+                  : (tab.settings ?? blankSettings(active, tab.name)!),
+            }));
+            return exportViews(views, { rows: sourceRows });
           }}
         />
       ),
