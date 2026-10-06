@@ -4,22 +4,22 @@
     "title": "Multi-source analysis with explicit data frames",
     "slug": "multi-source-analysis",
     "scale": "capability",
-    "current_phase": "execution",
+    "current_phase": "reconciliation",
     "last_updated": "2026-10-06",
-    "summary": "Schema-led relationship creation and frame selection, trustworthy chart identity, full query inspection, and later assisted parameter instances.",
+    "summary": "Schema-led relationship creation, explicit query frames, trustworthy chart identity, complete query inspection, and automatic parameter instances.",
     "status": "active",
-    "next_action": "Verify the measured single-worker repair, then complete browser acceptance and open the implementation PR with screenshots."
+    "next_action": "Open the accepted implementation PR with screenshots, then record its link and close the initiative."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-05"
+      "updated_at": "2026-10-06"
     },
     "shape_brief": {
       "path": "shape-brief.md",
       "status": "current",
-      "updated_at": "2026-10-05"
+      "updated_at": "2026-10-06"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -1147,7 +1147,7 @@
       "tables": 10,
       "rows_per_table": 10000,
       "latency": "seconds; rough user estimate, no precise SLA",
-      "status": "Input blocking measured; single-worker repair under verification",
+      "status": "Measured and accepted with one local worker",
       "proof": "Probe indexed local execution and serialization in milestone 2. In milestone 4 measure fixed-seed ten-table/10,000-row inputs, fan-out, result rows, origin size, browser responsiveness, and persisted size. Use a worker only if measurements require it; never silently truncate computed rows.",
       "source_anchors": [
         "annotation-2026-10-05-9"
@@ -1155,7 +1155,9 @@
       "evidence": [
         "Node24 fixed-seed probe: ten10000-row sources;10000resultrows,100000 origin links.196ms cold,242/178ms warm;41ms serialization;2,482,460 compactbytes.20000-row expansion39ms;10000ambiguities233ms.",
         "Reproduce: node packages/explorEDA/scripts/probe-analysis.ts tmp/analysis-scale.exploreda-project.json. Browser proof remains in exp-1iuz.",
-        "Browser input-to-frame delay was 447\u20131,006 ms on the fixed-seed parameter query. Long Tasks matched those delays. This meets the plan\u2019s worker condition; final responsiveness proof remains required."
+        "Browser input-to-frame delay was 447\u20131,006 ms on the fixed-seed parameter query. Long Tasks matched those delays. This meets the plan\u2019s worker condition; final responsiveness proof remains required.",
+        "Final Node 24 probe: seed 42; 100,000 input rows; 10,000 output rows; 100,000 origin links. Cold evaluation took 178 ms; warm runs took 158 and 150 ms. Aggregation reduced 10,000 rows to 1,001 groups in 18 ms. Independent group count and sum checks passed. Serialization took 36 ms and produced 2,482,460 compact bytes. Origins used 6,097,801 bytes. A 20,000-row expansion took 41 ms; 10,000 ambiguous rows took 274 ms.",
+        "Real browser worker timings: input-to-frame delay was about 75\u2013100 ms without a chart and 125\u2013128 ms with a chart. Final result application took about 625 ms and 479 ms, respectively. Chart warmup had one 344 ms task. Rapid bindings finished on minimum 900 with 1,031 rows and matching applied labels and stage counts. The pre-worker input delay was 447\u20131,006 ms. These measurements are local observations, not a service guarantee."
       ]
     },
     "view_history_integration": {
@@ -1270,7 +1272,7 @@
       {
         "id": "m1",
         "title": "Switch and restore trustworthy order and item views",
-        "status": "active",
+        "status": "completed",
         "slice": 1,
         "depends_on": [],
         "outcome": "Configured order/item queries show correct rows and totals through duplicate, switch, preview, restore, undo/redo, and reload.",
@@ -1288,7 +1290,10 @@
           "query-evaluation",
           "project-view-history"
         ],
-        "evidence": [],
+        "evidence": [
+          "Node 24 pnpm check passes 593 package tests and 47 demo tests. Saved view switching, restore, undo/redo, logical row selections, definition scopes, and callback round trips pass.",
+          "Independent browser checks confirm five orders totaling 150, eight items totaling 140, history preview, restore, reload, and read-only Rows pointer/keyboard/search without current-state edits."
+        ],
         "tickets": [
           "exp-l1vm"
         ]
@@ -1296,7 +1301,7 @@
       {
         "id": "m2",
         "title": "Build relationships and choose chart grain from the schema",
-        "status": "active",
+        "status": "completed",
         "slice": 1,
         "depends_on": [
           "m1"
@@ -1316,7 +1321,10 @@
           "query-evaluation",
           "project-view-history"
         ],
-        "evidence": [],
+        "evidence": [
+          "Browser authoring checks used 1280, 783, and 390 px. Existing-link repair previews four matches, one missing row, and no ambiguity. Apply retains relationship ID, two query references, chart fields, five orders, and amount 150. Cancel before preview leaves state intact.",
+          "Full and active-view project export/import plus reload retain definitions and charts. Entity reduction reports 140 across four orders, rather than the repeated row sum 310. Scalar, key, identity, and serialization regressions pass."
+        ],
         "tickets": [
           "exp-daa4"
         ]
@@ -1324,7 +1332,7 @@
       {
         "id": "m3",
         "title": "Follow a complete query and inspect related records",
-        "status": "active",
+        "status": "completed",
         "slice": 2,
         "depends_on": [
           "m2"
@@ -1343,7 +1351,10 @@
           "query-evaluation",
           "project-view-history"
         ],
-        "evidence": [],
+        "evidence": [
+          "Actual Notebook chart flow retains total 50 and contributors I2, I4, and I6 after popover closure. A subsequent chart filter clears stale evidence. Source and intermediate inspection retain explicit steps and origins.",
+          "Controlled renderer handoff tests exercise the real project wrapper. Time-series calculation ownership, field conversions, source contributors, missing selected steps, and nested record counts pass their relevant checks. Query flow screenshots include actual operations and contributors."
+        ],
         "tickets": [
           "exp-596x"
         ]
@@ -1351,7 +1362,7 @@
       {
         "id": "m4",
         "title": "Inspect parameter instances with automatic, consistent updates",
-        "status": "active",
+        "status": "completed",
         "slice": 3,
         "depends_on": [
           "m3"
@@ -1370,7 +1381,10 @@
           "query-evaluation",
           "project-view-history"
         ],
-        "evidence": [],
+        "evidence": [
+          "Browser build f008df6 confirms C4 gives a valid empty result and C1 restores two rows totaling 50. Invalid date drafts retain applied labels and rows. Settled minimum 500 gives 5,059 rows; 900 gives 1,031 rows with 8,969 excluded. Reload and both export/import modes retain the input, result, and chart.",
+          "One packaged worker rejects stale requests and keeps binding-only pending results labeled. StrictMode, query switching, declared empty fields, cached special values, page-exit save, and import/reload regressions pass. Measured input delays and chart settling limits are recorded in the scale probe."
+        ],
         "tickets": [
           "exp-1iuz"
         ]
@@ -1395,8 +1409,8 @@
     ],
     "repository_snapshot": {
       "root": "/Users/byronwall/.codex/worktrees/81eb/explorEDA",
-      "revision": "c55d39a",
-      "worktree_status": "Implementation branch codex/multi-source-frames in the supplied worktree. Preserved supplied planning edits; no new worktree. Browser acceptance checks frozen production builds while source repairs remain tracked.",
+      "revision": "f008df6",
+      "worktree_status": "Implementation branch codex/multi-source-frames in the supplied worktree. Source checkpoint f008df6 passes the full Node 24 gate. Independent final browser acceptance uses its frozen production build.",
       "subsystems": [
         "ExplorEda/DataLayerProvider flat-row rendering",
         "CrossfilterWrapper chart filter scopes",
@@ -1465,7 +1479,8 @@
       "first_slice_boundary": "Milestone 1 is the internal configured proof. Milestone 2 is required before claiming the first product slice complete.",
       "persistence": "Project file format and storage key with source tables once; configuration-only checkpoints. No migration/version coexistence machinery.",
       "query_updates": "Shared query edits update all bound views; explicit copy-query gives an independent definition. Rebinding is per view.",
-      "chart_scope": "Add explicit scatter identity and grouped-bar/metric entity-measure rules. Other charts keep declared result-row semantics or report incompatible configuration."
+      "chart_scope": "Add explicit scatter identity and grouped-bar/metric entity-measure rules. Other charts keep declared result-row semantics or report incompatible configuration.",
+      "evaluation": "One packaged local worker runs the pure evaluator. Binding-only pending updates retain their applied result. Query or source changes wait for a new coherent result."
     },
     "planning_verification": {
       "code_inspected": true,
@@ -1527,6 +1542,22 @@
     {
       "date": "2026-10-06",
       "event": "Browser acceptance measured main-thread input blocking at the proposed scale. One local worker now owns the focused evaluation and storage-cost repair. Milestone 4 remains active until measured browser responsiveness improves."
+    },
+    {
+      "date": "2026-10-06",
+      "event": "The worker build reduced measured input-to-frame delay to about 75\u2013100 ms and preserved the latest 1,031-row result. Actual chart operations and read-only Rows passed. Browser discovery found that new-link creation did not repair an existing ambiguous query. Final review also found query glyph reuse. Focused repairs remain required before closure."
+    },
+    {
+      "date": "2026-10-06",
+      "event": "The final browser pass stopped on a C4 empty-result crash. Provider field declarations were not updated after the initial worker-pending mount. A focused provider correction and transition regression are required, alongside existing-link editing and unique query glyphs. Earlier timing and trace evidence remains recorded; acceptance is open."
+    },
+    {
+      "date": "2026-10-06",
+      "event": "Checkpoint f008df6 repairs provider field declarations for empty results, adds existing-link editing, and assigns unique query glyphs. Full Node 24 pnpm check passes 593 package tests and 47 demo tests, builds, types, and UI rules. A focused independent browser repeat remains required before closure."
+    },
+    {
+      "date": "2026-10-06",
+      "event": "Independent browser acceptance passed on frozen checkpoint f008df6. C4 empty results, in-place relationship repair, query glyphs, read-only Rows, settled scale counts, reload, and full/active-view imports passed. Current browser console errors and horizontal overflow were zero. All milestone outcomes are accepted; PR delivery remains."
     }
   ]
 }

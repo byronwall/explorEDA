@@ -245,7 +245,7 @@ function ShopAnalysis() {
 }
 ```
 
-Open Schema to create or repair links. Drag a source field onto another field, or use the matching-field selectors. Review matching counts before you apply a link. A lookup retains the current frame. Multiple matches leave dependent values unavailable. Follow a many-side link with an aggregate, or open an expanded frame explicitly.
+Open Schema to create or repair links. Drag a source field onto another field, or use the matching-field selectors. Use Edit on a relationship to change matching fields or cardinality. Preview its counts before you apply. Edits preserve query references. Review matching counts before you apply a link. A lookup retains the current frame. Multiple matches leave dependent values unavailable. Follow a many-side link with an aggregate, or open an expanded frame explicitly.
 
 Open Query flow to inspect steps, conditions, backing records, and contributors. Temporary inspection keeps the chart layout. Use Open as view to retain an intermediate result. Customer and date inputs update parameter queries automatically when valid.
 

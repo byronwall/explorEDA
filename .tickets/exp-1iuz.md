@@ -1,6 +1,6 @@
 ---
 id: exp-1iuz
-status: partially_implemented
+status: closed
 deps: [exp-596x]
 links: []
 created: 2026-10-06T02:54:21Z
@@ -46,3 +46,25 @@ Browser checks passed C1, C4, and invalid-date behavior. Invalid drafts retain t
 **2026-10-06T05:51:28Z**
 
 Browser measurements meet the plan's worker condition. Input-to-frame delay was 447–1,006 ms for the ten-table parameter query. Long Tasks matched those delays. Counts remained correct at minimum values 0, 500, and 900. One worker now owns asynchronous evaluation, applied-result labels, stale completion rejection, and repeated source serialization costs. Required acceptance stays open until measured browser input delay improves.
+
+**2026-10-06T06:15:50Z**
+
+Checkpoint 58ba8aa adds one packaged worker and rejects superseded results. Binding-only updates retain applied labels and rows. Query, definition, or source changes show a pending result. Valid empty results replace prior rows.
+
+The worker receives source tables once per source map. The host caches source serialization, delays normal saves, and flushes on page exit. StrictMode, out-of-order completion, query changes, and immediate reload regressions pass.
+
+All 590 package tests and 47 demo tests pass. Package and demo builds, type checks, and UI checks pass. The final browser timing and acceptance pass remains open.
+
+**2026-10-06T06:25:26Z**
+
+Latest browser timing: minimum values 0, 500, and 900 took about 100, 75, and 82 ms to reach the next frame. Rapid edits finished on minimum 900 with 1,031 rows and matching stage counts. The final result applied about 625 ms after the last input. Observed Long Tasks were 75–93 ms. The pre-worker baseline was 447–1,006 ms. Final acceptance remains open for the chart workload repeat and remaining browser flows.
+
+**2026-10-06T06:45:59Z**
+
+Required browser acceptance failed on Customer orders C1 to C4. The page became blank when the empty result restored a grouped summary. Error: Grouped summary Order amount by customer references missing group field orders.customerId.
+
+Source inspection found the provider detects changed fieldNames props but does not update its declared fields before data restoration. The worker initially mounts an empty schema; populated rows hide this defect until the result is empty. A focused provider correction and real transition regression are required before closure.
+
+**2026-10-06T07:28:27Z**
+
+Accepted at f008df6. C4 gives a valid empty result; C1 returns two rows and amount 50. Invalid drafts retain applied data. Settled minimum 500 gives 5,059 rows; 900 gives 1,031. Chart, bindings, and counts survive reload and both project export/import modes. Worker ordering, declared fields, StrictMode, and page-exit save regressions pass. Timing limits remain recorded in the initiative map.

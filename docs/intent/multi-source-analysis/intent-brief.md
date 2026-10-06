@@ -3,7 +3,7 @@ title: "Multi-source analysis with explicit data frames"
 slug: "multi-source-analysis"
 phase: intent
 status: current
-last_updated: "2026-10-05"
+last_updated: "2026-10-06"
 ---
 
 # Multi-source analysis with explicit data frames
@@ -57,7 +57,9 @@ Sample data, ready-to-use examples, and expected counts belong in each slice. Ro
 
 Main now has a host-owned saved-view workspace with tab actions, local storage, undo/redo, and a compact history timeline. History supports read-only previews, restoration, and grouped change summaries. The package provides host side panels and read-only chart display.
 
-All current tabs use the same source rows. Their charts and filters differ, while calculations, colors, field settings, aggregates, and geometry definitions propagate between tabs. Multi-source work must extend view bindings and history snapshots, and scope shared definitions to compatible sources/frames. It should reuse this UI rather than create another view manager. Existing history captures settings, not historical source-data versions.
+The original saved-view baseline used one source population across all tabs. This implementation adds per-view query bindings and project definitions to that session. Shared field definitions stay within the same query scope. Source tables stay outside history checkpoints. Historical source-data versions remain outside this initiative.
+
+The implementation is in the supplied worktree. Final acceptance covers chart flow, read-only inspection, and the measured worker repair. The [implementation plan](implementation-plan.md) and milestone tickets record the evidence.
 
 ## Next step after confirmation
 

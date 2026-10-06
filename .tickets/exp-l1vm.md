@@ -1,6 +1,6 @@
 ---
 id: exp-l1vm
-status: in_progress
+status: closed
 deps: []
 links: []
 created: 2026-10-06T02:54:21Z
@@ -55,3 +55,7 @@ Checked repair state: full Node24 pnpmcheck passes577 package tests in102files a
 **2026-10-06T04:24:12Z**
 
 The browser pass confirmed full-project and active-view export/import plus reload. It found that preview blocks Rows inspection. A focused worker now separates read-only inspection from edit controls. The saved row-selection test passes after source reorder and removal. Required remaining proof includes repaired preview inspection and the complete chart flow.
+
+**2026-10-06T07:28:27Z**
+
+Accepted at f008df6. Full Node 24 pnpm check passes 593 package and 47 demo tests. Browser view/history/reload and file round trips preserve query frames and totals. Read-only Rows pointer, keyboard, and local search leave current saved state intact.

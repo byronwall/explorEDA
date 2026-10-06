@@ -20,9 +20,13 @@ The largest risk is restoring plausible charts over the wrong population. Resolv
 
 Implementation uses this same worktree on `codex/multi-source-frames`. The supplied planning edits were committed, then rebased onto PR #148 at `a2e67c0`. The baseline saved-view and history checks passed. The initiative map links milestone tickets; those tickets own execution evidence.
 
+## Current verification
+
+Checkpoint `f008df6` passes the full Node 24 `pnpm check`: 593 package tests and 47 demo tests. Builds, types, and UI rules pass. Independent browser acceptance passed the C4 empty-result correction, existing-link editing, query glyphs, read-only Rows, and affected restore flows. Tests used 1280, 783, and 390 px. Current browser console errors and horizontal overflow were zero. All four milestones are accepted. PR delivery remains.
+
 ## Execution decision
 
-Browser measurements found input-to-frame delays of 447–1,006 ms on the fixed-seed parameter query. Long Tasks matched those delays. This meets the worker condition in milestone 4. Move evaluation into one local worker and retain the pure evaluator. Cache unchanged source serialization. Repeat browser timing and stale-result checks before acceptance.
+Browser measurements found input-to-frame delays of 447–1,006 ms on the fixed-seed parameter query. Long Tasks matched those delays. This meets the worker condition in milestone 4. One packaged worker now runs the pure evaluator. The host caches unchanged source serialization. Observed input delays were 75–100 ms without a chart and 125–128 ms with a chart. Final chart result application took about 479 ms. A 344 ms warmup task remains an observed chart cost. These timings are local measurements, not a service guarantee.
 
 ## Implementation strategy
 

@@ -3,7 +3,7 @@ title: "Multi-source frames and provenance — shape brief"
 slug: "multi-source-analysis"
 phase: shape
 status: current
-last_updated: "2026-10-05"
+last_updated: "2026-10-06"
 ---
 
 # Multi-source frames and provenance — what we are adding
@@ -16,7 +16,7 @@ last_updated: "2026-10-05"
 
 ```text
 Multi-source exploration
-├── PLANNED ADDITIONS
+├── IMPLEMENTATION SCOPE
 │   ├── Schema and relationships
 │   │   ├── Developer-configured links; drag-and-link field creation
 │   │   ├── Matching keys, declared cardinality, observed link consequences
@@ -54,13 +54,13 @@ Reuse tab actions. Duplicate retains query/frame bindings and settings; New view
 
 Extend timeline checkpoints with view bindings and relationship/query definitions. Reuse read-only preview, restore, and undo/redo. History preserves configuration, not historical source rows. Schema/query inspection uses host side panels.
 
-## Proposed delivery slices
+## Delivery slices
 
 1. **Sources, relationships, and frames:** Configure or create links, validate consequences, choose grain, resolve one-to-many data, and chart with visible provenance. Extend host state output, reload, and history restore.
 2. **Query paths and cardinality exploration:** Overlay a selected query on the schema. Add full inspection, nested rows, and aggregate contributors within saved tabs.
 3. **Parameter-bound instances:** Start from a record, edit assisted inputs, and update all stages automatically.
 
-The [implementation plan](implementation-plan.md) has four milestones: configured views through history/reload, schema authoring, full flow, then parameters. The first two complete slice one. Each extends one shop fixture. The implementation uses PR #148.
+The [implementation plan](implementation-plan.md) has four milestones across three slices. The first two complete slice one. Reuse merged PR #148 and one shop fixture. The shared contract needs one PR. Final browser acceptance remains open.
 
 ## Behavior
 

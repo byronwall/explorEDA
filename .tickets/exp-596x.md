@@ -1,6 +1,6 @@
 ---
 id: exp-596x
-status: partially_implemented
+status: closed
 deps: [exp-daa4]
 links: []
 created: 2026-10-06T02:54:21Z
@@ -42,3 +42,13 @@ Implementation checkpoint: per-stage fields/counts/conditions, query overlay, so
 **2026-10-06T04:24:10Z**
 
 Final acceptance found that Full flow stops at evaluator stages. Chart traces reach the correct result row, but omit renderer operations. A focused worker now carries the actual chart trace into Full flow. Required proof remains: filters, conversions, calculations, aggregation, numeric exclusions, and stale trace invalidation.
+
+**2026-10-06T06:25:26Z**
+
+Latest browser build confirms actual Notebook bar operations and contributors I2, I4, and I6 totaling 50. Closing the trace retains the complete flow. Changing a chart filter removes stale evidence.
+
+Final source review found a query glyph collision when opening a related source view. The eight-symbol palette also reuses a glyph after exhaustion. A bounded repair will use one shared allocator after the current frozen browser pass finishes.
+
+**2026-10-06T07:28:27Z**
+
+Accepted. Actual chart operations keep Notebook total 50 and contributors I2/I4/I6 after popover closure. New filters clear stale evidence. Controlled host handoff, nested rows, stage origins, missing steps, and unique source-view glyphs pass. Complete contributor evidence is captured in the tall flow screenshot.

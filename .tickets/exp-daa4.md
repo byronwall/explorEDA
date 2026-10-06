@@ -1,6 +1,6 @@
 ---
 id: exp-daa4
-status: partially_implemented
+status: closed
 deps: [exp-l1vm]
 links: []
 created: 2026-10-06T02:54:21Z
@@ -43,3 +43,13 @@ Implementation checkpoint: schema authoring, observed cardinality, explicit aggr
 **2026-10-06T04:38:29Z**
 
 Browser checks passed the schema link preview and order/item populations. Full-project export/import preserved the investigation and reloaded correctly. Active Items export/import retained one view and its Orders, Items, and Products dependencies. The item total stayed 140. Responsive screenshots now have verified 1280, 783, and 390 pixel widths.
+
+**2026-10-06T06:30:28Z**
+
+The browser confirmed ambiguous customer lookups leave O1/O2/O5 attributes unavailable while preserving five orders and amount 150. A new relationship preview reports four matches, one missing row, and no ambiguity using the unique key.
+
+The UI could only append that new link and lookup. It could not repair the existing relationship used by chart fields. Add direct matching-field editing that preserves the relationship ID and query references. Repeat this browser flow before closure.
+
+**2026-10-06T07:28:27Z**
+
+Accepted at f008df6. In-place link editing previews 4 matched, 1 missing, and 0 ambiguous rows. Apply preserves the relationship ID, two query references, five orders, and amount 150. Cancel leaves state intact. Browser checks cover 1280, 783, and 390 px; project export/import and entity-scoped totals pass.
