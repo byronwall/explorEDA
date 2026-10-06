@@ -75,6 +75,37 @@ import { barChartDefinition } from "exploreda/charts/bar";
 chartRegistry.register(barChartDefinition);
 ```
 
+`sidePanels` adds host panels to the workspace's right edge. Each panel gets
+an icon button beside Fields and Rows and replaces Rows or workspace settings
+while it is open, one panel at a time. The host owns `open` and `wide`, so a
+panel keeps its state when the host remounts the workspace. A panel can also
+set a letter `shortcut`, header `actions`, and a `banner` pinned above its
+scrolling content.
+
+```tsx
+<ExplorEda
+  data={data}
+  sidePanels={[
+    {
+      id: "history",
+      label: "History",
+      tooltip: "History: every saved change (H)",
+      icon: <HistoryIcon />,
+      shortcut: "h",
+      open: historyOpen,
+      onOpenChange: setHistoryOpen,
+      wide: historyWide,
+      onWideChange: setHistoryWide,
+      children: <Timeline />,
+    },
+  ]}
+/>
+```
+
+`readOnly` shows the charts and the active filter scope without accepting
+edits. Host panels stay usable, so a host can preview an earlier state and
+offer its own way back.
+
 `data` supplies the rows. `savedData` optionally restores chart, calculation,
 Rows, grid, metadata, color-scale, field-settings, and grouped-summary state.
 Pass new references when either value changes; in-place mutations are not

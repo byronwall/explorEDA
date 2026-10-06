@@ -61,6 +61,12 @@ export function ExampleSelector({
                     </span>
                     {" · "}
                     {views.types.join(", ")}
+                    {views.tabs > 1 && (
+                      <span className="text-muted-foreground">
+                        {" "}
+                        · {views.tabs} saved tabs
+                      </span>
+                    )}
                   </dd>
                 </>
               )}

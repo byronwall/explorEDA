@@ -1,0 +1,165 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Parameterized task navigation",
+    "slug": "parameterized-task-navigation",
+    "scale": "feature",
+    "current_phase": "intent",
+    "last_updated": "2026-10-04",
+    "summary": "Deferred overview-to-detail connections over saved views; destination filter inheritance is unresolved.",
+    "status": "planned",
+    "next_action": "After saved tabs are useful, choose destination filter behavior and tab reuse before shaping navigation."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-04"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "saved-tabs-feedback-2026-10-04",
+      "type": "direct-user-input",
+      "location": "2026-10-04 response annotations 1\u20134 and split request in this chat",
+      "anchor": "multiple saved views on tabs; all client state ideally local; automatic Undo and differentiated timeline; view = chart defs and filters; inheritance unclear",
+      "authority": "direct scope correction and product decisions"
+    },
+    {
+      "id": "dictation-2026-09-29",
+      "type": "direct-user-input",
+      "location": "2026-09-29 user dictation in this task",
+      "anchor": "runtime configuration, project views, and in-app agent",
+      "authority": "direct intent"
+    },
+    {
+      "id": "product-feedback-13",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 13",
+      "anchor": "Reuse or keep open.  either is fine.  Probably make it easy for the user to \"duplciate\" a view. Comparison is harder isnce it probalbe requires side by side.  don't worry about that for now,",
+      "authority": "direct product feedback"
+    },
+    {
+      "id": "product-feedback-14",
+      "type": "direct-user-input",
+      "location": "2026-09-29 response annotation 14",
+      "anchor": "Choose and build their own.  Also devs can create htem too",
+      "authority": "direct product feedback"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "c4",
+        "type": "example",
+        "statement": "A sales overview opens a store detail view with an active store parameter",
+        "commitment": "illustrative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          "dictation-2026-09-29:sales overview and single store"
+        ]
+      },
+      {
+        "id": "feedback-14",
+        "type": "required behavior",
+        "statement": "Users and developers can create parameterized views and connections.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          "product-feedback-14"
+        ]
+      }
+    ],
+    "themes": [
+      "overview to detail",
+      "parameter context",
+      "filter inheritance",
+      "destination reuse"
+    ],
+    "conflicts": [],
+    "human_questions": [
+      {
+        "question": "Should detail inherit overview filters, use destination filters, or ask?",
+        "status": "deferred",
+        "source_anchors": [
+          "saved-tabs-feedback-2026-10-04"
+        ]
+      },
+      {
+        "question": "Reuse one detail tab or retain multiple parameter instances?",
+        "status": "deferred",
+        "source_anchors": [
+          "product-feedback-13"
+        ]
+      }
+    ]
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": null,
+      "revision": null,
+      "worktree_status": null,
+      "subsystems": [],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-04",
+      "event": "Extracted navigation scope from Project and task views after user prioritized saved tabs.",
+      "source_anchors": [
+        "saved-tabs-feedback-2026-10-04"
+      ]
+    }
+  ],
+  "closure": null,
+  "related_initiatives": [
+    {
+      "slug": "project-task-views",
+      "path": "../project-task-views/initiative-map.json",
+      "relationship": "Saved tabs are the first outcome and prerequisite."
+    }
+  ]
+}

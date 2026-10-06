@@ -38,6 +38,12 @@ import {
 import { boxPlotSettings } from "./boxPlotSettings";
 import { categoricalChartSettings } from "./categoricalChartSettings";
 import { nbaStatsSettings } from "./nbaStatsSettings";
+import {
+  calendarViews,
+  penguinViews,
+  shopViews,
+  type ExampleView,
+} from "./exampleViews";
 
 export interface ExampleDataset {
   /** Row count with its unit, such as "344 penguins". */
@@ -59,6 +65,8 @@ export interface ExampleData {
   icon: LucideIcon;
   data: string; // path to the data file
   savedData?: SavedDataStructure;
+  /** More saved views that open as tabs beside the main one. */
+  views?: ExampleView[];
 }
 
 const viewNames: Record<string, string> = {
@@ -86,7 +94,7 @@ const viewNames: Record<string, string> = {
 export function describeViews(example: ExampleData) {
   const charts = example.savedData?.charts ?? [];
   const types = [...new Set(charts.map(({ type }) => viewNames[type] ?? type))];
-  return { count: charts.length, types };
+  return { count: charts.length, types, tabs: 1 + (example.views?.length ?? 0) };
 }
 
 export const FEATURED_EXAMPLE_ID = "shop-operations";
@@ -187,23 +195,25 @@ export const examples: ExampleData[] = [
     description:
       "Follow orders from revenue and margin to delivery, channels, and individual records. Click any bar and every other view narrows to match, or follow orders from channel to category to returns in the flow at the bottom.",
     dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
-    shows: ["Metric cards", "Click to filter", "Sankey flow", "Filter chips", "Symmetric log scales"],
+    shows: ["Metric cards", "Click to filter", "Sankey flow", "Filter chips", "Saved tabs", "Symmetric log scales"],
     guide:
       "Try this: click Web in Sales channels. The order count, revenue, and average-order cards update with the charts and table. Alt-click a card to see its inputs. Click Web again to clear the filter.",
     icon: ShoppingCart,
     data: "/datasets/shop-operations.csv",
     savedData: shopDashboard,
+    views: shopViews,
   },
   {
     id: "calendar-series",
     title: "Orders through the calendar",
     description: "Compare monthly revenue by channel, weekly order counts, and daily activity. Every period links to the orders behind it.",
     dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
-    shows: ["Calendar summaries", "Period selection", "Source tracing"],
+    shows: ["Calendar summaries", "Period selection", "Source tracing", "Saved tabs"],
     guide: "Try this: click a point in Monthly revenue by channel. Alt-click it to see how the value was calculated. Open its settings to change Day, Week, or Month.",
     icon: LineChart,
     data: "/datasets/shop-operations.csv",
     savedData: timeSeriesDashboard,
+    views: calendarViews,
   },
   {
     id: "grouped-bars",
@@ -244,10 +254,11 @@ export const examples: ExampleData[] = [
     description:
       "Three species measured on three Antarctic islands. Body size overlaps, but bill shape pulls the species apart. One color key follows them through every view, and parallel coordinates draw each penguin as one line across four measurements.",
     dataset: { rows: "344 penguins", fields: 8, source: "Real" },
-    shows: ["Shared color key", "Parallel coordinates", "Scatter brushing"],
+    shows: ["Shared color key", "Parallel coordinates", "Scatter brushing", "Saved tabs"],
     icon: Bird,
     data: "/datasets/palmer-penguins.csv",
     savedData: penguinDashboard,
+    views: penguinViews,
   },
   {
     id: "nba-stats",

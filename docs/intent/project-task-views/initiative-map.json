@@ -1,23 +1,25 @@
 {
-  "schema_version": "0.4.0",
+  "schema_version": "0.5.0",
   "initiative": {
     "title": "Project and task views",
     "slug": "project-task-views",
     "scale": "capability",
-    "current_phase": "shape",
-    "last_updated": "2026-09-29",
-    "summary": "Single-source task views with shared current definitions, independent filters, parameter navigation, and duplication."
+    "current_phase": "execution",
+    "last_updated": "2026-10-05",
+    "summary": "Saved tabs over one source, with view-local charts and filters, automatic local persistence, and categorized Undo/time travel.",
+    "status": "active",
+    "next_action": "Review and merge the saved-tabs PR. Larger imports and dedicated filter collections remain follow-up work."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-09-29"
+      "updated_at": "2026-10-05"
     },
     "shape_brief": {
       "path": "shape-brief.md",
       "status": "current",
-      "updated_at": "2026-09-29"
+      "updated_at": "2026-10-05"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -149,6 +151,13 @@
       "location": "2026-09-29 response annotation 3 on integration review",
       "anchor": "It seems we should be able to store snapshots of the settings as changes are made.  We could diff that and show it.  Or just undo.  It's not clear to me why undo is difficult if state is fully determined by the settings?  What am i missing?",
       "authority": "direct feedback on history shape"
+    },
+    {
+      "id": "saved-tabs-feedback-2026-10-04",
+      "type": "direct-user-input",
+      "location": "2026-10-04 response annotations 1\u20134 and split request in this chat",
+      "anchor": "multiple saved views on tabs; all client state ideally local; automatic Undo and differentiated timeline; view = chart defs and filters; inheritance unclear",
+      "authority": "direct scope correction and product decisions"
     }
   ],
   "intent": {
@@ -172,7 +181,7 @@
         "commitment": "explicit",
         "importance": "core",
         "status": "active",
-        "time_horizon": "later",
+        "time_horizon": "first release",
         "source_anchors": [
           "dictation-2026-09-29:project workspace and tasks"
         ]
@@ -183,11 +192,13 @@
         "statement": "A sales overview opens a store detail view with an active store parameter",
         "commitment": "illustrative",
         "importance": "supporting",
-        "status": "active",
+        "status": "superseded",
         "time_horizon": "later",
         "source_anchors": [
           "dictation-2026-09-29:sales overview and single store"
-        ]
+        ],
+        "superseded_by": "saved-tabs-scope",
+        "moved_to": "../parameterized-task-navigation/initiative-map.json"
       },
       {
         "id": "c7",
@@ -219,11 +230,12 @@
         "statement": "Switching analyses and overview-to-detail navigation take priority over comparison.",
         "commitment": "explicit",
         "importance": "core",
-        "status": "active",
+        "status": "superseded",
         "time_horizon": "first release",
         "source_anchors": [
           "product-feedback-8"
-        ]
+        ],
+        "superseded_by": "saved-tabs-scope"
       },
       {
         "id": "feedback-9",
@@ -245,12 +257,13 @@
         "statement": "Automatic save, explicit Save, and persistence of temporary selections remain undecided.",
         "commitment": "explicit",
         "importance": "supporting",
-        "status": "active",
+        "status": "superseded",
         "time_horizon": "first release",
         "source_anchors": [
           "product-feedback-10"
         ],
-        "resolution": "Not decided; do not infer a save policy."
+        "resolution": "Automatic local saving selected on 2026-10-04.",
+        "superseded_by": "local-autosave"
       },
       {
         "id": "feedback-11",
@@ -259,7 +272,7 @@
         "commitment": "explicit",
         "importance": "core",
         "status": "active",
-        "time_horizon": "first release",
+        "time_horizon": "later",
         "source_anchors": [
           "product-feedback-11"
         ]
@@ -279,13 +292,14 @@
       {
         "id": "feedback-13",
         "type": "preference",
-        "statement": "Users can duplicate views; detail reuse or a second instance is flexible, and side-by-side comparison is deferred.",
+        "statement": "Users can duplicate saved tabs; local chart and filter edits stay independent. Comparison is deferred.",
         "commitment": "explicit",
         "importance": "supporting",
         "status": "active",
         "time_horizon": "first release",
         "source_anchors": [
-          "product-feedback-13"
+          "product-feedback-13",
+          "saved-tabs-feedback-2026-10-04"
         ]
       },
       {
@@ -294,11 +308,13 @@
         "statement": "Users and developers can create parameterized views and connections.",
         "commitment": "explicit",
         "importance": "core",
-        "status": "active",
+        "status": "superseded",
         "time_horizon": "first release",
         "source_anchors": [
           "product-feedback-14"
-        ]
+        ],
+        "superseded_by": "saved-tabs-scope",
+        "moved_to": "../parameterized-task-navigation/initiative-map.json"
       },
       {
         "id": "lookup-followup",
@@ -321,10 +337,11 @@
         "commitment": "explicit",
         "importance": "core",
         "status": "active",
-        "time_horizon": "first release",
+        "time_horizon": "later",
         "source_anchors": [
           "filters-followup"
-        ]
+        ],
+        "resolution": "Initial saved tabs reuse existing chart and Rows filter controls. Dedicated filter collection remains later work."
       },
       {
         "id": "single-source-scope",
@@ -344,27 +361,105 @@
         "statement": "History checkpoints distinguish project shared definitions from view-local settings.",
         "commitment": "derived",
         "importance": "core",
-        "status": "active",
+        "status": "superseded",
         "time_horizon": "first release",
         "source_anchors": [
           "bridge-feedback-3"
+        ],
+        "superseded_by": "categorized-history"
+      },
+      {
+        "id": "saved-tabs-scope",
+        "type": "required behavior",
+        "statement": "Initial scope is multiple saved views on tabs over one source; a view contains chart definitions and filters.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "saved-tabs-feedback-2026-10-04"
+        ]
+      },
+      {
+        "id": "local-autosave",
+        "type": "required behavior",
+        "statement": "Save edits automatically to local storage; ideally retain all client state including the source and session.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "saved-tabs-feedback-2026-10-04"
+        ]
+      },
+      {
+        "id": "categorized-history",
+        "type": "required behavior",
+        "statement": "Reliable Undo and a time travel slider recover previous state and distinguish view changes from filter changes.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "saved-tabs-feedback-2026-10-04"
+        ]
+      },
+      {
+        "id": "navigation-split",
+        "type": "constraint",
+        "statement": "Parameterized overview-to-detail navigation moves to a separate follow-up; filter inheritance remains unresolved.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "saved-tabs-feedback-2026-10-04"
+        ]
+      },
+      {
+        "id": "project-history-proposal",
+        "type": "implementation hypothesis",
+        "statement": "Execution uses project settings checkpoints, read-only preview, and explicit restore as a reversible default.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "saved-tabs-feedback-2026-10-04"
         ]
       }
     ],
     "themes": [
-      "shared project definitions",
-      "saved task views",
-      "parameterized navigation",
-      "filter scope"
+      "saved tabs",
+      "view-local charts and filters",
+      "automatic local persistence",
+      "categorized recovery"
     ],
     "conflicts": [],
     "human_questions": [
       {
         "question": "Automatic save, explicit Save, and temporary selection persistence",
-        "status": "deferred",
+        "status": "resolved",
+        "resolution": "Automatic local save; retain meaningful client state.",
         "source_anchors": [
-          "product-feedback-10"
+          "saved-tabs-feedback-2026-10-04"
         ]
+      },
+      {
+        "question": "Should the timeline restore the whole project or only the selected view?",
+        "status": "resolved",
+        "source_anchors": [
+          "saved-tabs-feedback-2026-10-04"
+        ],
+        "resolution": "Project settings timeline is the execution default; retain 50 checkpoints. Larger imports need further measurement."
+      },
+      {
+        "question": "What representative source size and history retention should local persistence support?",
+        "status": "resolved",
+        "source_anchors": [
+          "saved-tabs-feedback-2026-10-04"
+        ],
+        "resolution": "Project settings timeline is the execution default; retain 50 checkpoints. Larger imports need further measurement."
       }
     ]
   },
@@ -376,36 +471,95 @@
   },
   "shape": {
     "status": "current",
-    "appetite": "One source, overview/detail task views, duplication, and reusable independent filters.",
-    "recommended_shape": "Shape one single-source project with named task views, overview-to-detail connections, duplication, and reusable filters. Share field definitions and color scales at project scope so changes reach dependent views immediately. Keep multiple sources and lookups in their own [initiative](../multi-source-analysis/shape-brief.md).",
+    "appetite": "One source, saved tabs, automatic local persistence, Undo and categorized time travel.",
+    "problem": "One saved analysis cannot retain several independent chart-and-filter investigations.",
+    "recommended_shape": "Named tabs own charts, layout, and filters. One project owns source and shared definitions. Autosave meaningful client state locally; preview and restore categorized historical settings. Split parameterized navigation into a follow-up.",
     "success_moves": [
-      "Keep one dataset for current views",
-      "Expose independent filters",
-      "Propagate current shared definitions",
-      "Prove user-created navigation",
-      "Make history scope clear"
+      "Prove two independent tabs before connection authoring.",
+      "Reuse saved settings and explicit restore; keep callbacks out of continuous restore loops.",
+      "Store source rows once; keep history as settings checkpoints.",
+      "Categorize chart/filter/shared changes while restoring consistent snapshots.",
+      "Measure storage size and inject save/restore failures before promising full local retention.",
+      "Keep preview read-only and retain displaced present when restoring history."
     ],
     "first_proof": {
-      "question": "Can users keep related views and reusable conditions over one source?",
-      "artifact": "An overview/detail scenario with duplication, shared definitions, and an independent filter",
-      "decision_rule": "Task work survives and definition, filter, and history scope remain clear"
+      "question": "Can two chart-and-filter views survive switching and reload, then recover earlier edits?",
+      "artifact": "Fixed order fixture with Sales and Returns tabs, distinct filters, and labeled chart/filter history entries.",
+      "observation": "Independent charts, counts, layouts, active tab and retained history restore; preview does not overwrite saved present.",
+      "decision_rule": "Continue only if tab retention and history recovery work without navigation; resolve storage limits before larger data."
     },
     "open_decisions": [],
     "uncertainties": [
-      "Save policy deliberately undecided",
-      "View-local versus whole-project history scope",
-      "Absent source-field filter applicability"
+      "Local storage capacity for larger imports"
+    ],
+    "smaller_counterproposal": "Tabs and autosave alone are the first visible slice, but do not satisfy the required Undo and slider outcome.",
+    "source_of_truth": "One project source and shared current definitions; each tab owns local charts/layout/filters. Checkpoints store consistent project settings.",
+    "application_seams": [
+      "Existing onStateChange capture and savedData/imperative restore",
+      "Host local-storage read/write boundary",
+      "Shared-definition ownership versus local tab settings"
+    ],
+    "dependencies": [
+      {
+        "name": "Browser local storage",
+        "application_seam": "Host reads and writes one project containing rows, settings, and bounded history.",
+        "first_proof_role": {
+          "mode": "real",
+          "rationale": "A fixed small fixture can prove reload without server dependencies."
+        },
+        "proof_strategy": "Deterministic state/history checks, injected storage failures, then a local browser reload with real storage.",
+        "failure_modes": [
+          "Write refusal or capacity failure",
+          "Unreadable persisted state",
+          "Restore callback creates duplicate history"
+        ],
+        "live_proof": "No cloud provider or deployment is needed."
+      }
+    ],
+    "valid_intermediate_states": [
+      "Two independent tabs capture and restore settings",
+      "Tabs and source reload from local storage",
+      "Undo and timeline recover categorized previous states"
+    ],
+    "rollback": "Keep existing single-view restore usable during tab introduction; failed saves leave live work open for export.",
+    "cut_line": [
+      "Parameterized navigation and inheritance",
+      "Named reusable filter library",
+      "Comparison layouts",
+      "Multi-source and server storage",
+      "Branch graphs and selective history replay"
     ],
     "review": {
-      "remaining_weaknesses": "Current chart filters and local Rows filters have different scopes. Reusable conditions need a defined scope in that same runtime. Whole-project and view-local restores must agree on ownership of shared settings. Save behavior remains explicitly undecided.",
-      "most_likely_bad_outcome": "Views preserve their charts but carry copied shared definitions or hidden filters that disagree with the project."
+      "remaining_weaknesses": "Source size evidence covers one 500-row fixture. Larger imports need measured storage proof.",
+      "most_likely_bad_outcome": "Autosave retains charts but loses source or filter state on reload, while time travel overwrites the saved present."
     }
   },
   "implementation": {
-    "status": "not-requested",
+    "status": "current",
     "dependencies": [],
     "milestones": [],
-    "open_decisions": []
+    "open_decisions": [],
+    "tickets": [
+      "exp-cy24",
+      "exp-o99e"
+    ],
+    "repository_snapshot": {
+      "branch": "codex/saved-view-tabs",
+      "commit": "7d79875",
+      "checks": "pnpm check passes on Node 24: 531 package tests and 30 demo tests"
+    },
+    "fast_local_loop": {
+      "command": "pnpm check",
+      "runtime": "Node 24"
+    },
+    "cut_line": [
+      "Parameterized navigation and inheritance",
+      "Named reusable filter library",
+      "Comparison layouts",
+      "Multi-source and server storage",
+      "Branch graphs and selective history replay"
+    ],
+    "delivery": "Initial saved-tabs and categorized-history scope accepted; exp-cy24 and exp-o99e closed."
   },
   "history": [
     {
@@ -459,6 +613,80 @@
           "most_likely_bad_outcome": "Views become isolated dashboards over separate tables, and supposedly reusable filters silently stop working when the data changes."
         }
       }
+    },
+    {
+      "date": "2026-10-04",
+      "event": "Split saved tabs from parameterized task navigation and regenerated tree-based shape.",
+      "source_anchors": [
+        "saved-tabs-feedback-2026-10-04"
+      ],
+      "changes": [
+        "Defined view as charts and filters on tabs",
+        "Selected automatic local persistence",
+        "Required categorized Undo and time travel",
+        "Deferred inheritance with navigation"
+      ],
+      "lifecycle_evidence": "Source inspection at 362db58 found single-workspace capture/restore and a localStorage example, but no delivered named-tab/history flow.",
+      "superseded_shape": {
+        "status": "current",
+        "appetite": "One source, overview/detail task views, duplication, and reusable independent filters.",
+        "recommended_shape": "Shape one single-source project with named task views, overview-to-detail connections, duplication, and reusable filters. Share field definitions and color scales at project scope so changes reach dependent views immediately. Keep multiple sources and lookups in their own [initiative](../multi-source-analysis/shape-brief.md).",
+        "success_moves": [
+          "Keep one dataset for current views",
+          "Expose independent filters",
+          "Propagate current shared definitions",
+          "Prove user-created navigation",
+          "Make history scope clear"
+        ],
+        "first_proof": {
+          "question": "Can users keep related views and reusable conditions over one source?",
+          "artifact": "An overview/detail scenario with duplication, shared definitions, and an independent filter",
+          "decision_rule": "Task work survives and definition, filter, and history scope remain clear"
+        },
+        "open_decisions": [],
+        "uncertainties": [
+          "Save policy deliberately undecided",
+          "View-local versus whole-project history scope",
+          "Absent source-field filter applicability"
+        ],
+        "review": {
+          "remaining_weaknesses": "Current chart filters and local Rows filters have different scopes. Reusable conditions need a defined scope in that same runtime. Whole-project and view-local restores must agree on ownership of shared settings. Save behavior remains explicitly undecided.",
+          "most_likely_bad_outcome": "Views preserve their charts but carry copied shared definitions or hidden filters that disagree with the project."
+        }
+      }
+    },
+    {
+      "date": "2026-10-04",
+      "event": "Started steady-execution on codex/saved-view-tabs after planning commit 1bcae7d.",
+      "evidence": [
+        "User authorized saved views implementation and PRs with screenshots",
+        "exp-cy24 in_progress; saved_views owns implementation"
+      ],
+      "decisions": [
+        "Use proposed project-wide categorized history as a reversible execution default."
+      ]
+    },
+    {
+      "date": "2026-10-05",
+      "event": "Accepted initial saved tabs and history; prepare one PR with browser screenshots.",
+      "evidence": [
+        "7d79875: full pnpm check passed on Node 24 (531 package, 30 demo tests)",
+        "Browser: independent tabs and filters, reload, first-chart creation, Undo/Redo, preview/Return/restore, displaced-present recovery, and keyboard navigation",
+        "Browser: controls at 1280/783/390; first chart View and Rows search Filter; no console errors",
+        "Fixed 500-row fixture with 50 checkpoints: 189295 serialized bytes"
+      ],
+      "limits": [
+        "Fresh CSV browser import/export was not completed; focused tests cover those paths",
+        "Larger source storage budgets remain unproven",
+        "Dedicated filter collection and parameterized navigation remain follow-up work"
+      ]
+    }
+  ],
+  "related_initiatives": [
+    {
+      "slug": "parameterized-task-navigation",
+      "path": "../parameterized-task-navigation/initiative-map.json",
+      "relationship": "Deferred parameterized navigation depends on saved views."
     }
   ]
 }

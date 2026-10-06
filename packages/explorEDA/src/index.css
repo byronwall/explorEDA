@@ -1436,7 +1436,7 @@ html {
     flex-wrap: wrap;
     gap: 4px;
   }
-  .eda-workspace-toolbar > .eda-filter-status {
+  .eda-workspace-toolbar .eda-filter-status {
     order: 1;
     flex-basis: 100%;
     padding-left: 0;
@@ -3595,7 +3595,7 @@ html {
       [data-rows-narrow]
     )
     .eda-workspace-toolbar
-    > .eda-filter-status {
+    .eda-filter-status {
     order: 1;
     flex-basis: 100%;
     padding-left: 0;
@@ -3607,9 +3607,27 @@ html {
       [data-rows-narrow]
     )
     .eda-toolbar-add {
-    width: 30px;
+    width: 28px;
     padding: 0;
     justify-content: center;
+  }
+  /* Host panels add a tool, so the icons tighten to stay on one line. */
+  .eda-workspace-controls:is(
+      [data-fields-open],
+      [data-settings-open],
+      [data-rows-narrow]
+    )
+    .eda-toolbar-group
+    button {
+    width: 28px;
+  }
+  .eda-workspace-controls:is(
+      [data-fields-open],
+      [data-settings-open],
+      [data-rows-narrow]
+    )
+    .eda-toolbar-divider {
+    display: none;
   }
   .eda-workspace-controls:is(
       [data-fields-open],
@@ -5478,10 +5496,7 @@ td[data-null] {
   flex-direction: column;
   gap: 14px;
   width: min(400px, calc(100vw - 24px));
-  max-height: min(
-    640px,
-    var(--radix-popover-content-available-height, 80vh)
-  );
+  max-height: min(640px, var(--radix-popover-content-available-height, 80vh));
   padding: 12px;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -5573,4 +5588,32 @@ td[data-null] {
 .eda-date-preset:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 1px;
+}
+
+/* Host panels share the settings drawer's place and sizes. */
+.eda-toolbar-editable {
+  display: contents;
+}
+.eda-side-panel-head {
+  gap: 2px;
+}
+.eda-side-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin: 0 auto 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.eda-side-panel-title svg {
+  width: 15px;
+  height: 15px;
+  color: var(--muted-foreground);
+}
+.eda-side-panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }

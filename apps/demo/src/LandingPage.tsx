@@ -2,13 +2,13 @@ import { Button } from "@/components/ui/button";
 import { ExampleData, examples, FEATURED_EXAMPLE_ID } from "@/demos/examples";
 import {
   parseSavedAnalysis,
-  type SavedDataStructure,
   validateSavedAnalysisForData,
+  type SavedDataStructure,
 } from "exploreda";
 
 import { parseCsvData } from "./csvParser";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft, Code2, Lightbulb, RotateCcw } from "lucide-react";
+import { ArrowLeft, Code2, Lightbulb } from "lucide-react";
 import {
   lazy,
   Suspense,
@@ -31,6 +31,10 @@ import { LandingFooter } from "./landing/LandingFooter";
 import { SampleDataButtons } from "./landing/SampleDataButtons";
 import { PageFileDrop } from "./landing/PageFileDrop";
 import { SectionHeading } from "./landing/SectionHeading";
+import {
+  getSavedViewsRows,
+  readSavedViewsSessionResult,
+} from "./savedViewsSession";
 
 const featuredExample = examples.find(
   (item) => item.id === FEATURED_EXAMPLE_ID
@@ -45,10 +49,12 @@ const CoverageMatrix = import.meta.env.DEV
     )
   : null;
 
-const ExplorEda = lazy(() =>
-  import("exploreda").then(({ ExplorEda: Workspace }) => ({
-    default: Workspace,
-  }))
+const SavedViewsWorkspace = lazy(() =>
+  import("./SavedViewsWorkspace").then(
+    ({ SavedViewsWorkspace: Workspace }) => ({
+      default: Workspace,
+    })
+  )
 );
 
 export type DatumObject = {
@@ -58,7 +64,7 @@ export type DatumObject = {
 export function LandingPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
-  const [csvData, setCsvData] = useState<DatumObject[]>([]);
+
   const [exampleData, setExampleData] = useState<DatumObject[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -69,10 +75,17 @@ export function LandingPage() {
   const showDocs = searchParams.get("view") === "docs";
 
   const [example, setExample] = useState<ExampleData | null>(null);
-  const [isCsvMode, setIsCsvMode] = useState(false);
-  const [capturedState, setCapturedState] = useState<
-    SavedDataStructure | undefined
-  >();
+  const [initialRestore] = useState(() => readSavedViewsSessionResult());
+  const [restoreFailed, setRestoreFailed] = useState(initialRestore.failed);
+  const [restoredSession, setRestoredSession] = useState(
+    initialRestore.session
+  );
+  const [csvData, setCsvData] = useState<DatumObject[]>(() =>
+    restoredSession ? getSavedViewsRows(restoredSession) : []
+  );
+  const [isCsvMode, setIsCsvMode] = useState(
+    () => restoredSession !== undefined
+  );
   const [csvSavedData, setCsvSavedData] = useState<
     SavedDataStructure | undefined
   >();
@@ -80,7 +93,6 @@ export function LandingPage() {
   const [analysisJsonError, setAnalysisJsonError] = useState<string | null>(
     null
   );
-  const [workspaceKey, setWorkspaceKey] = useState(0);
   const workspaceRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
   const motionY = shouldReduceMotion ? 0 : 20;
@@ -108,43 +120,40 @@ export function LandingPage() {
   );
 
   const handleClearData = () => {
+    setRestoreFailed(false);
     setSearchParams({});
     setExample(null);
     setIsCsvMode(false);
     setCsvData([]);
-    setCapturedState(undefined);
+    setRestoredSession(undefined);
+    try {
+      localStorage.removeItem("exploreda.saved-views.v1");
+    } catch {
+      // The workspace is already leaving; an unavailable storage area has no session to retain.
+    }
     setCsvSavedData(undefined);
     setAnalysisJson("");
     setAnalysisJsonError(null);
     setLoadError(null);
   };
 
-  const handleStateChange = useCallback((state: SavedDataStructure) => {
-    setCapturedState(state);
-  }, []);
-
-  const handleResetWorkspace = () => {
-    if (!capturedState) {
-      return;
-    }
-
-    // Re-mount with the original loaded props instead of the latest emitted state.
-    setCapturedState(undefined);
-    setWorkspaceKey((key) => key + 1);
-  };
-
   const handleExampleSelect = useCallback(
     (id: string) => {
+      setRestoreFailed(false);
+      setRestoredSession(undefined);
       setSearchParams({ example: id });
     },
     [setSearchParams]
   );
 
   useEffect(() => {
-    setCapturedState(undefined);
-  }, [exampleId]);
-
-  useEffect(() => {
+    if (restoredSession) {
+      setIsLoading(false);
+      setExample(null);
+      setExampleData([]);
+      setLoadError(null);
+      return;
+    }
     if (!exampleId) {
       setIsLoading(false);
       setExample(null);
@@ -189,14 +198,20 @@ export function LandingPage() {
       });
 
     return () => controller.abort();
-  }, [exampleId, fetchExampleData, retryCount]);
+  }, [exampleId, fetchExampleData, retryCount, restoredSession]);
 
   const handleCsvImport = (data: DatumObject[]) => {
+    setRestoreFailed(false);
     setIsCsvMode(true);
     setSearchParams({});
     setExample(null);
     setCsvData(data);
-    setCapturedState(undefined);
+    setRestoredSession(undefined);
+    try {
+      localStorage.removeItem("exploreda.saved-views.v1");
+    } catch {
+      // The workspace is already leaving; an unavailable storage area has no session to retain.
+    }
     setCsvSavedData(undefined);
     setLoadError(null);
   };
@@ -207,12 +222,13 @@ export function LandingPage() {
       if (!validateSavedAnalysisForData(analysis)) {
         throw new Error("Analysis formulas do not match the saved source rows");
       }
+      setRestoreFailed(false);
       setCsvData(analysis.data as DatumObject[]);
       setCsvSavedData(analysis.settings);
       setIsCsvMode(true);
       setSearchParams({});
       setExample(null);
-      setCapturedState(undefined);
+      setRestoredSession(undefined);
       setAnalysisJsonError(null);
     } catch (error) {
       setAnalysisJsonError(
@@ -224,6 +240,54 @@ export function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground ">
       <div className="flex flex-col items-center gap-6 px-3 py-3 sm:px-5">
+        {restoreFailed && (
+          <div
+            role="alert"
+            className="w-full max-w-6xl rounded-md border border-destructive/50 bg-destructive/10 p-4 text-sm"
+          >
+            <p>
+              Saved data could not be restored. The stored value is still
+              available.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const result = readSavedViewsSessionResult();
+                  setRestoreFailed(result.failed);
+                  if (!result.session) return;
+                  setSearchParams({});
+                  setExample(null);
+                  setRestoredSession(result.session);
+                  setCsvData(getSavedViewsRows(result.session));
+                  setIsCsvMode(true);
+                }}
+              >
+                Retry restore
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  try {
+                    localStorage.removeItem("exploreda.saved-views.v1");
+                  } catch {
+                    // The user can still import a new source if storage is unavailable.
+                  }
+                  setRestoreFailed(false);
+                  setRestoredSession(undefined);
+                  setCsvData([]);
+                  setIsCsvMode(false);
+                  setExample(null);
+                  setSearchParams({});
+                }}
+              >
+                Clear saved data and start with new data
+              </Button>
+            </div>
+          </div>
+        )}
         <AnimatePresence mode="wait">
           {!hasData ? (
             <motion.div
@@ -416,15 +480,6 @@ export function LandingPage() {
                     React integration guide
                   </span>
                 </a>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  disabled={!capturedState}
-                  onClick={handleResetWorkspace}
-                  aria-label="Reset workspace"
-                >
-                  <RotateCcw className="h-4 w-4" />
-                </Button>
               </header>
               {example?.guide && (
                 <div
@@ -476,18 +531,18 @@ export function LandingPage() {
                 }
               >
                 {isCsvMode ? (
-                  <ExplorEda
-                    key={workspaceKey}
+                  <SavedViewsWorkspace
                     data={csvData}
-                    savedData={csvSavedData}
-                    onStateChange={handleStateChange}
+                    initialSettings={csvSavedData}
+                    initialSession={restoredSession}
+                    viewName="Analysis"
                   />
                 ) : (
-                  <ExplorEda
-                    key={workspaceKey}
+                  <SavedViewsWorkspace
                     data={exampleData}
-                    savedData={example?.savedData}
-                    onStateChange={handleStateChange}
+                    initialSettings={example?.savedData}
+                    initialViews={example?.views}
+                    viewName={example?.title ?? "Analysis"}
                   />
                 )}
               </Suspense>

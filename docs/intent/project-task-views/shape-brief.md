@@ -3,65 +3,75 @@ title: "Project and task views — shape brief"
 slug: "project-task-views"
 phase: shape
 status: current
-last_updated: "2026-09-29"
+last_updated: "2026-10-05"
 ---
 
-# Project and task views — shape brief
+# Project and task views — what we are adding
 
-## Recommendation
+**Outcome:** Users retain several analyses of one source and can recover earlier edits.
 
-Shape one single-source project with named task views, overview-to-detail connections, duplication, and reusable filters. Share field definitions and color scales at project scope so changes reach dependent views immediately. Keep multiple sources and lookups in their own [initiative](../multi-source-analysis/shape-brief.md).
+**Primary flow:** Open data → create or duplicate tabs → edit charts and filters → switch or reopen → review history.
 
-The existing chart engine still receives one working row population. The main integration work is definition ownership, view state, and filters that can exist without a chart. This scope can produce a useful view system without selecting a cross-table model.
+## Feature scope
 
-## Problem and appetite
+```text
+Saved views over one source
+├── PLANNED ADDITIONS — implemented and verified
+│   ├── Named view tabs
+│   │   ├── Create, rename, duplicate, and switch views
+│   │   └── Each view retains chart definitions, layout, and its own filters
+│   ├── Visible filter state
+│   │   ├── Existing chart controls and Rows panel show filter conditions
+│   │   └── Filtering does not require that field on a visible chart
+│   ├── Automatic local persistence
+│   │   ├── Retain tabs, active tab, analysis settings, and committed filters
+│   │   ├── Retain source data once and history within a proven storage budget
+│   │   └── Show failed saves and let users export their current analysis
+│   └── Undo and time travel
+│       ├── Undo and Redo completed edits
+│       ├── Timeline slider previews previous states and returns to the present
+│       ├── Labels distinguish View, Filter, Both, and Shared changes
+│       └── Restore a selected state and retain the displaced present in history
+├── STORAGE BOUNDARY
+│   ├── Retain at most 50 settings checkpoints
+│   └── Measure larger sources before expanding the storage promise
+└── LATER POSSIBILITIES
+    ├── Parameterized overview-to-detail navigation and filter inheritance
+    ├── Dedicated filter collection, named presets, and side-by-side comparison
+    └── Multiple sources, server saves, and shared projects
+```
 
-- **Problem:** One analysis cannot organize separate tasks and reusable filters clearly.
-- **Outcome:** Users keep and navigate related analyses over the same source.
-- **Appetite:** One project, overview and detail tasks, duplication, and a Filters section.
-- **Boundary:** Multiple sources, lookups, and comparison layouts are deferred. Save policy remains open.
+## Behavior
 
-## Core shape
+| Situation | Expected result |
+| --- | --- |
+| Switch tabs | Restore that view's charts and filters; keep other tabs unchanged. |
+| Duplicate a view | Copy its current chart and filter settings; later local edits stay independent. |
+| Finish a brush or settings edit | Save the completed state and record a history entry; pointer movement creates no entries. |
+| Refresh or reopen | Restore saved client state and the source within the proven storage budget. |
+| Change a shared definition | Update dependent tabs; label the checkpoint Shared. |
+| Move the timeline slider | Preview a consistent earlier project state without replacing the saved present. |
+| Restore a preview | Make it current; retain the displaced present as a recoverable checkpoint. |
+| Save fails | Keep current work open, show that saving failed, and offer export. |
 
-The project owns one source and current shared definitions. Views own chart definitions, positions, and local choices. Active views reference current project definitions. Switching preserves each view's work.
+## Decisions and boundaries
 
-A dedicated Filters section shows conditions independently of charts. Users can inspect, edit, clear, save, and reuse field conditions. Chart gestures and independent conditions need clear ownership; the new section must not become a second competing interpretation of chart filters.
+**Appetite:** One project, one source, multiple tabs, automatic local saving, and recoverable history. Prove these in slices.
 
-Users configure a detail view's parameter and an overview action that supplies its value. Both views operate on the same dataset. Duplication retains another investigation without requiring side-by-side comparison.
+**Key decision:** Separate saved views from [parameterized navigation](../parameterized-task-navigation/intent-brief.md). Tabs provide value before destination parameters or inherited filters have rules.
 
-Settings snapshots are suitable for retaining and restoring view work. Project and view history have explicit scope. A snapshot representing the whole project includes its shared definitions; a local view restore must not silently reset the project's current definitions.
+**Ownership:** The project owns source rows and current shared field definitions and colors. Views own charts, layout, and filters. Duplication copies local settings. Calculations, grouped definitions, and geometry assets also remain shared. Each view owns its grid layout.
 
-## Current fit
+**History:** Use one chronological project timeline with full settings checkpoints, excluding repeated source rows. Categorize entries from changed state. Restore charts and filters together, so an old filter cannot target a missing chart. Undo and Redo step through completed edits. Preview is read-only. Editing after Undo appends a new checkpoint; older states remain available through the timeline. Tab switching persists the active tab without creating an analysis edit.
 
-Reuse chart settings, the saved codec, field definitions, colors, and chart rendering over one dataset. Review existing active-filter labels and controls for reuse. The filter runtime needs independent conditions as well as chart-owned filters. Reading current settings and restoring a checkpoint already exist; continuous callback-to-restore feedback is not needed for history collection.
+Execution uses this project timeline as a reversible default. Tabs with autosave alone would leave the required recovery outcome unfinished.
 
-## How to make this go better
+**Reuse and boundary:** Keep the existing single-source chart engine and saved-settings codec. The host owns local storage. State callbacks collect changes; restore runs on tab changes or explicit history actions. Keep chart filters and local Rows filters visibly distinct. Existing single-view restore remains usable while tabs are introduced.
 
-- **Keep the dataset boundary stable.** Use one order table so view navigation can reuse current charts.
-- **Separate displayed and available fields.** Conditions should work without a visible chart for their field.
-- **Keep one shared definition current.** History checkpoints do not require simultaneous old and new interpretations.
-- **Prove user-created navigation.** A developer's predefined links alone do not satisfy runtime creation.
-- **Make history scope visible.** A view restore and a project restore should have predictable effects.
+**Storage proof:** Measure one project containing source rows, tab settings, and retained history. Inject write failure and reload failure. Do not silently drop source data or history to report success. If representative data does not fit, revise the storage boundary before claiming complete client persistence.
 
-## First proof
+**First proof:** **Try:** Create Sales and Returns over a fixed order fixture. Give them different charts and filters. Switch, reload, and revisit one chart edit and one filter edit. **Observe:** Tabs restore independently; counts and layouts match; timeline labels match the edits; preview leaves the saved present intact. **Decide:** Continue only if retention and recovery work without navigation features. Resolve storage limits before expanding the dataset.
 
-- **Question:** Can users keep related views and reusable filters over one source without losing work?
-- **Proof:** A reviewed overview/detail scenario with duplication, a shared definition, and an independent condition.
-- **Observe:** Definitions propagate. Conditions remain visible without a chart. Users create the detail connection and return to their overview.
-- **Decision rule:** Keep the shape if task state survives and each definition, filter, and history checkpoint has a clear owner.
+**Storage result:** A 500-row shop fixture with 50 checkpoints used 189,295 serialized bytes in a focused check. This measures one fixture, not a maximum supported import size. Failed saves leave current work available for export.
 
-## Rabbit holes and no-gos
-
-Do not add cross-table source machinery here. Do not hide independent filters in dummy charts. Do not copy shared definitions between views. Do not infer a save policy from the need to preserve work.
-
-## Plan handoff
-
-Intent and shape only. Review the single-source view pair, filter ownership, and history scope before implementation planning.
-
-## Weakest or least-clear parts
-
-Current chart filters and local Rows filters have different scopes. Reusable conditions need a defined scope in that same runtime. Whole-project and view-local restores must agree on ownership of shared settings. Save behavior remains explicitly undecided.
-
-## Most likely bad outcome
-
-Views preserve their charts but carry copied shared definitions or hidden filters that disagree with the project.
+See the [intent brief](intent-brief.md). Implementation and acceptance evidence live in tickets exp-cy24 and exp-o99e. The initial scope passed browser acceptance. PR review is the next step.

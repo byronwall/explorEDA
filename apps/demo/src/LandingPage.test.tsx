@@ -17,10 +17,12 @@ vi.mock("./landing/LiveOrderBook", () => ({
   LiveOrderBook: () => <div data-testid="live-order-book" />,
 }));
 
-vi.mock("exploreda", () => {
+vi.mock("exploreda", async () => {
   let workspaceMounts = 0;
+  const actual = await vi.importActual<typeof import("exploreda")>("exploreda");
 
   return {
+    ...actual,
     ExplorEda: ({
       data,
       savedData,
@@ -31,6 +33,9 @@ vi.mock("exploreda", () => {
       onStateChange?: (state: unknown) => void;
     }) => {
       const [mount] = useState(() => ++workspaceMounts);
+      const settings = savedData as
+        | { charts?: unknown[]; rowsSettings?: { filters?: unknown[] } }
+        | undefined;
       const capturedState = {
         charts: [],
         calculations: [],
@@ -54,6 +59,8 @@ vi.mock("exploreda", () => {
           data-testid="workspace"
           data-rows={data.length}
           data-has-saved-data={savedData !== undefined}
+          data-chart-count={settings?.charts?.length ?? 0}
+          data-filter-count={settings?.rowsSettings?.filters?.length ?? 0}
           data-mount={mount}
         >
           <button onClick={() => onStateChange?.(capturedState)}>
@@ -73,7 +80,10 @@ vi.mock("exploreda", () => {
 });
 
 describe("LandingPage routing", () => {
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    vi.restoreAllMocks();
+    localStorage.clear();
+  });
 
   it("returns to the example selector when browser history clears the example", async () => {
     vi.stubGlobal(
@@ -272,7 +282,7 @@ describe("LandingPage routing", () => {
     expect(screen.queryByTestId("workspace")).toBeNull();
   });
 
-  it("captures state without controlling the workspace and restores it on remount", async () => {
+  it("saves named views and restores them after a reload", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
@@ -280,33 +290,154 @@ describe("LandingPage routing", () => {
         text: () => Promise.resolve("x,y\n1,2"),
       })
     );
+    const makeRouter = () =>
+      createMemoryRouter([{ path: "/*", element: <LandingPage /> }], {
+        initialEntries: ["/?example=palmer-penguins"],
+      });
+
+    const first = render(<RouterProvider router={makeRouter()} />);
+    expect(await screen.findByTestId("workspace")).toHaveAttribute(
+      "data-rows",
+      "1"
+    );
+    // The example opens with its saved views as tabs.
+    expect(screen.getAllByRole("tab").map((tab) => tab.textContent)).toEqual([
+      "Penguin field notes",
+      "Gentoo on Biscoe",
+      "Bill shape",
+    ]);
+    fireEvent.click(screen.getByRole("button", { name: "Emit state" }));
+    fireEvent.click(screen.getByRole("button", { name: "New view" }));
+    expect(screen.getAllByRole("tab")).toHaveLength(4);
+    await waitFor(() =>
+      expect(localStorage.getItem("exploreda.saved-views.v1")).not.toBeNull()
+    );
+    first.unmount();
+
+    render(<RouterProvider router={makeRouter()} />);
+    expect(await screen.findByTestId("workspace")).toHaveAttribute(
+      "data-rows",
+      "1"
+    );
+    expect(screen.getAllByRole("tab")).toHaveLength(4);
+    const restored = JSON.parse(
+      localStorage.getItem("exploreda.saved-views.v1") ?? "{}"
+    );
+    expect(restored.sourceAnalysis).toContain('"x":1');
+    expect(
+      restored.history.every(
+        (entry: { tabs: unknown[] }) => !("sourceAnalysis" in entry)
+      )
+    ).toBe(true);
+  });
+
+  it("reports a failed saved-session restore and keeps it until a new source is chosen", async () => {
+    const unreadable = "{not valid json";
+    localStorage.setItem("exploreda.saved-views.v1", unreadable);
     const router = createMemoryRouter(
       [{ path: "/*", element: <LandingPage /> }],
-      { initialEntries: ["/?example=palmer-penguins"] }
+      { initialEntries: ["/"] }
+    );
+
+    render(<RouterProvider router={router} />);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Saved data could not be restored"
+    );
+    expect(localStorage.getItem("exploreda.saved-views.v1")).toBe(unreadable);
+
+    fireEvent.click(screen.getByRole("button", { name: "Retry restore" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Saved data could not be restored"
+    );
+    expect(localStorage.getItem("exploreda.saved-views.v1")).toBe(unreadable);
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Clear saved data and start with new data",
+      })
+    );
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(localStorage.getItem("exploreda.saved-views.v1")).toBeNull();
+    expect(
+      screen.getByRole("heading", { name: "Import your data" })
+    ).toBeInTheDocument();
+  });
+
+  it("restores the saved session when its example URL is still present", async () => {
+    const savedSettings = {
+      charts: [{ id: "saved-chart", filters: [] }],
+      calculations: [],
+      gridSettings: {
+        columnCount: 12,
+        rowHeight: 100,
+        containerPadding: 10,
+        showBackgroundMarkers: true,
+      },
+      metadata: {
+        name: "Returns",
+        version: 1,
+        createdAt: "2026-01-01T00:00:00.000Z",
+        modifiedAt: "2026-01-01T00:00:00.000Z",
+      },
+      colorScales: [],
+      rowsSettings: {
+        columns: [],
+        sortDirection: "asc",
+        filters: [
+          {
+            type: "text",
+            field: "channel",
+            operator: "equals",
+            value: "Store",
+          },
+        ],
+        globalSearch: "",
+      },
+    };
+    const tabs = [
+      { id: "sales", name: "Sales", settings: savedSettings },
+      { id: "returns", name: "Returns", settings: savedSettings },
+    ];
+    const savedRows = [{ channel: "Web" }, { channel: "Store" }];
+    const storedSession = {
+      version: 1,
+      sourceAnalysis: JSON.stringify({
+        format: "exploreda-analysis",
+        version: 1,
+        data: savedRows,
+        settings: savedSettings,
+      }),
+      tabs,
+      activeTabId: "returns",
+      history: [{ at: "2026-01-01T00:00:00.000Z", label: "Filter", tabs }],
+      path: [0],
+      cursor: 0,
+    };
+    localStorage.setItem(
+      "exploreda.saved-views.v1",
+      JSON.stringify(storedSession)
+    );
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve("channel\nInside example"),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const router = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/?example=shop-operations"] }
     );
 
     render(<RouterProvider router={router} />);
     const workspace = await screen.findByTestId("workspace");
-    expect(workspace).toHaveAttribute("data-rows", "1");
-    expect(workspace).toHaveAttribute("data-has-saved-data", "true");
-    const initialMount = workspace.getAttribute("data-mount");
-
-    fireEvent.click(screen.getByRole("button", { name: "Emit state" }));
-    expect(screen.getByTestId("workspace")).toHaveAttribute(
-      "data-has-saved-data",
+    expect(workspace).toHaveAttribute("data-rows", "2");
+    expect(workspace).toHaveAttribute("data-chart-count", "1");
+    expect(workspace).toHaveAttribute("data-filter-count", "1");
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(screen.getByRole("tab", { name: "Sales" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "Returns" })).toHaveAttribute(
+      "aria-selected",
       "true"
     );
-
-    fireEvent.click(screen.getByRole("button", { name: "Reset workspace" }));
-
-    await waitFor(() => {
-      const restoredWorkspace = screen.getByTestId("workspace");
-      expect(restoredWorkspace).toHaveAttribute("data-rows", "1");
-      expect(restoredWorkspace).toHaveAttribute("data-has-saved-data", "true");
-      expect(restoredWorkspace.getAttribute("data-mount")).not.toBe(
-        initialMount
-      );
-    });
   });
 
   it("shows full-analysis validation errors and accepts a valid followup", async () => {
