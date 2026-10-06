@@ -1,0 +1,206 @@
+import type { AnalysisProject, AnalysisSourceRow, AnalysisView } from "@/types/AnalysisProject";
+import { parseExpression } from "@/lib/calculations/parser/semantics";
+
+export interface AnalysisProjectFile {
+  format: "exploreda-project";
+  version: 1;
+  project: AnalysisProject;
+  tables: Record<string, AnalysisSourceRow[]>;
+  views: AnalysisView[];
+  activeViewId: string;
+}
+
+export type AnalysisProjectFileInput = Omit<AnalysisProjectFile, "activeViewId"> & { activeViewId?: string };
+
+const specialKey = "__exploreda_value__";
+
+function encode(value: unknown): unknown {
+  if (value instanceof Date) return { [specialKey]: "date", value: value.toISOString() };
+  if (value === undefined) return { [specialKey]: "undefined" };
+  if (typeof value === "number" && !Number.isFinite(value)) return { [specialKey]: String(value) };
+  if (Array.isArray(value)) return value.map(encode);
+  if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, encode(item)]));
+  return value;
+}
+
+function decode(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(decode);
+  if (value && typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    const entries = Object.entries(record);
+    if (entries.length === 2 && record[specialKey] === "date" && typeof record.value === "string") return new Date(record.value);
+    if (entries.length === 1 && entries[0]?.[0] === specialKey) {
+      if (entries[0]?.[1] === "undefined") return undefined;
+      if (entries[0]?.[1] === "NaN") return NaN;
+      if (entries[0]?.[1] === "Infinity") return Infinity;
+      if (entries[0]?.[1] === "-Infinity") return -Infinity;
+    }
+    return Object.fromEntries(entries.map(([key, item]) => [key, decode(item)]));
+  }
+  return value;
+}
+
+export function analysisViewClosure(file: AnalysisProjectFile, viewId: string): AnalysisProjectFile {
+  const view = file.views.find((item) => item.id === viewId);
+  if (!view) throw new Error(`Unknown view ${viewId}`);
+  const query = file.project.queries.find((item) => item.id === view.queryId);
+  if (!query) throw new Error(`Unknown query ${view.queryId}`);
+  const steps = new Map(query.steps.map((step) => [step.id, step]));
+  const included = new Set<string>();
+  const sources = new Set<string>();
+  const relationships = new Set<string>();
+  const visit = (id: string) => {
+    if (included.has(id)) return;
+    const step = steps.get(id);
+    if (!step) throw new Error(`Unknown step ${id}`);
+    included.add(id);
+    if (step.kind === "source") sources.add(step.sourceId);
+    else visit(step.inputStepId);
+    if (step.kind === "lookup" || step.kind === "expand") relationships.add(step.relationshipId);
+  };
+  visit(query.outputStepId);
+  const relationshipDefs = file.project.relationships.filter((item) => relationships.has(item.id));
+  relationshipDefs.forEach((item) => { sources.add(item.from.sourceId); sources.add(item.to.sourceId); });
+  const project: AnalysisProject = {
+    ...file.project,
+    sources: file.project.sources.filter((source) => sources.has(source.id)),
+    relationships: relationshipDefs,
+    queries: [{ ...query, steps: query.steps.filter((step) => included.has(step.id)) }],
+  };
+  return { ...file, project, tables: Object.fromEntries(Object.entries(file.tables).filter(([id]) => sources.has(id))), views: [view], activeViewId: view.id };
+}
+
+export const selectAnalysisProjectView = analysisViewClosure;
+
+export function serializeAnalysisProject(file: AnalysisProjectFile): string {
+  const normalized = { ...file, activeViewId: file.activeViewId ?? file.views[0]?.id ?? "" };
+  validateAnalysisProjectFile(normalized);
+  return JSON.stringify(encode(normalized), null, 2);
+}
+
+export function stringifyAnalysisProject(file: AnalysisProjectFileInput): string {
+  return serializeAnalysisProject({ ...file, activeViewId: file.activeViewId ?? file.views[0]?.id ?? "" });
+}
+
+export function parseAnalysisProjectFile(text: string): AnalysisProjectFile {
+  const value = decode(JSON.parse(text)) as AnalysisProjectFile;
+  validateAnalysisProjectFile(value);
+  return value;
+}
+
+export const parseAnalysisProject = parseAnalysisProjectFile;
+
+export function stringifyAnalysisState(value: unknown): string {
+  return JSON.stringify(encode(value));
+}
+
+export function parseAnalysisState<T = unknown>(value: string): T {
+  return decode(JSON.parse(value)) as T;
+}
+
+export function validateAnalysisProjectFile(value: AnalysisProjectFile): void {
+  if (!value || value.format !== "exploreda-project" || value.version !== 1 || value.project?.version !== 1) throw new Error("Unsupported project file");
+  const unique = (items: { id: string }[], kind: string) => {
+    const ids = new Set<string>();
+    for (const item of items) {
+      if (!item.id || ids.has(item.id)) throw new Error(`Duplicate or empty ${kind} id: ${item.id}`);
+      ids.add(item.id);
+    }
+    return ids;
+  };
+  const sourceIds = unique(value.project.sources, "source");
+  const relationshipIds = unique(value.project.relationships, "relationship");
+  unique(value.project.queries, "query");
+  unique(value.views, "view");
+  if (!value.views.some((view) => view.id === value.activeViewId)) throw new Error(`Unknown active view ${value.activeViewId}`);
+  for (const source of value.project.sources) {
+    const fields = unique(source.fields, `field in ${source.id}`);
+    if (!fields.has(source.entityKey)) throw new Error(`Source ${source.id} has an unknown entity key`);
+    for (const row of value.tables[source.id] ?? []) for (const [key, item] of Object.entries(row)) {
+      if (typeof item === "object" && item !== null) throw new Error(`Source ${source.id} has a non-scalar value in ${key}`);
+      if (!fields.has(key) && key !== source.entityKey) throw new Error(`Source ${source.id} row has undeclared field ${key}`);
+    }
+  }
+  for (const relation of value.project.relationships) {
+    if (!sourceIds.has(relation.from.sourceId) || !sourceIds.has(relation.to.sourceId)) throw new Error(`Relationship ${relation.id} references a missing source`);
+    for (const endpoint of [relation.from, relation.to]) {
+      const source = value.project.sources.find((item) => item.id === endpoint.sourceId)!;
+      if (!source.fields.some((field) => field.id === endpoint.fieldId)) throw new Error(`Relationship ${relation.id} references a missing field`);
+    }
+  }
+  for (const query of value.project.queries) {
+    const ids = unique(query.steps, `step in ${query.id}`);
+    if (!ids.has(query.outputStepId)) throw new Error(`Query ${query.id} references a missing output step`);
+    const steps = new Map(query.steps.map((step) => [step.id, step]));
+    const visiting = new Set<string>();
+    const visited = new Set<string>();
+    const visit = (id: string) => {
+      if (visiting.has(id)) throw new Error(`Query ${query.id} contains a cycle`);
+      if (visited.has(id)) return;
+      const step = steps.get(id);
+      if (!step) throw new Error(`Query ${query.id} references a missing step`);
+      visiting.add(id);
+      if (step.kind !== "source") visit(step.inputStepId);
+      visiting.delete(id);
+      visited.add(id);
+    };
+    visit(query.outputStepId);
+    const frames = new Map<string, Map<string, { sourceId?: string; fieldId?: string }>>();
+    const fieldsAt = (id: string) => {
+      const cached = frames.get(id);
+      if (cached) return cached;
+      const step = steps.get(id)!;
+      const fields = new Map<string, { sourceId?: string; fieldId?: string }>();
+      if (step.kind === "source") {
+        const source = value.project.sources.find((item) => item.id === step.sourceId)!;
+        source.fields.forEach((field) => fields.set(`${source.id}.${field.id}`, { sourceId: source.id, fieldId: field.id }));
+      } else {
+        const input = fieldsAt(step.inputStepId);
+        input.forEach((origin, fieldId) => fields.set(fieldId, origin));
+        if (step.kind === "lookup" || step.kind === "expand") {
+          const relationship = value.project.relationships.find((item) => item.id === step.relationshipId)!;
+          const matches = (fieldId: string, endpoint: { sourceId: string; fieldId: string }) => {
+            const origin = input.get(fieldId);
+            return origin?.sourceId === endpoint.sourceId && origin.fieldId === endpoint.fieldId;
+          };
+          const fromId = `${relationship.from.sourceId}.${relationship.from.fieldId}`;
+          const toId = `${relationship.to.sourceId}.${relationship.to.fieldId}`;
+          const inputId = step.inputFieldId;
+          const isFrom = inputId ? matches(inputId, relationship.from) : input.has(fromId) ? matches(fromId, relationship.from) : matches(toId, relationship.from);
+          const isTo = inputId ? matches(inputId, relationship.to) : input.has(toId) ? matches(toId, relationship.to) : matches(fromId, relationship.to);
+          if (!isFrom && !isTo) throw new Error(`Step ${step.id} has no relationship input field`);
+          const targetId = isFrom ? relationship.to.sourceId : relationship.from.sourceId;
+          const target = value.project.sources.find((item) => item.id === targetId)!;
+          target.fields.forEach((field) => fields.set(`${step.as}.${field.id}`, { sourceId: targetId, fieldId: field.id }));
+        } else if (step.kind === "calculate") {
+          const expression = parseExpression(step.expression);
+          for (const field of expression.dependencies) if (!input.has(field)) throw new Error(`Calculation ${step.id} references missing field ${field}`);
+          fields.set(step.fieldId, {});
+        } else if (step.kind === "filter") {
+          if (!input.has(step.fieldId)) throw new Error(`Filter ${step.id} references missing field ${step.fieldId}`);
+        } else {
+          for (const field of [...step.groupBy, ...step.measures.flatMap((measure) => [measure.fieldId, measure.entityFieldId].filter((item): item is string => !!item))]) {
+            if (!input.has(field)) throw new Error(`Aggregate ${step.id} references missing field ${field}`);
+          }
+          const grouped = new Map<string, { sourceId?: string; fieldId?: string }>();
+          step.groupBy.forEach((field) => grouped.set(field, input.get(field)!));
+          step.measures.forEach((measure) => grouped.set(measure.id, {}));
+          frames.set(id, grouped);
+          return grouped;
+        }
+      }
+      frames.set(id, fields);
+      return fields;
+    };
+    fieldsAt(query.outputStepId);
+    for (const step of query.steps) {
+      if (step.kind !== "source" && !ids.has(step.inputStepId)) throw new Error(`Step ${step.id} references a missing input`);
+      if (step.kind === "source" && !sourceIds.has(step.sourceId)) throw new Error(`Step ${step.id} references a missing source`);
+      if ((step.kind === "lookup" || step.kind === "expand") && !relationshipIds.has(step.relationshipId)) throw new Error(`Step ${step.id} references a missing relationship`);
+    }
+  }
+  for (const view of value.views) {
+    if (!value.project.queries.some((query) => query.id === view.queryId)) throw new Error(`View ${view.id} references a missing query`);
+    for (const parameterId of Object.keys(view.bindings ?? {})) if (!value.project.parameters?.some((parameter) => parameter.id === parameterId)) throw new Error(`View ${view.id} references a missing parameter`);
+  }
+}
