@@ -269,6 +269,8 @@ export function ProjectQueryPanel({
   view,
   tables,
   evaluation,
+  evaluationStatus,
+  appliedBindings,
   incompatibleFields,
   unresolvedRowKeys = 0,
   queryRevision,
@@ -285,6 +287,8 @@ export function ProjectQueryPanel({
   view: AnalysisView;
   tables: Tables;
   evaluation: AnalysisEvaluation;
+  evaluationStatus: "pending" | "ready" | "error";
+  appliedBindings?: Record<string, AnalysisScalar>;
   incompatibleFields: string[];
   unresolvedRowKeys?: number;
   queryRevision: string;
@@ -672,7 +676,7 @@ export function ProjectQueryPanel({
             <p className="truncate font-medium">{query.name}</p>
             <p className="text-xs text-muted-foreground">
               {query.frameLabel} · {evaluation.counts.output.toLocaleString()}{" "}
-              rows
+              rows{evaluationStatus === "pending" ? " · updating" : ""}
             </p>
           </div>
         </div>
@@ -843,7 +847,7 @@ export function ProjectQueryPanel({
           tables={tables}
           parameterIds={usedParameterIds}
           bindings={draftBindings}
-          appliedBindings={view.bindings ?? {}}
+          appliedBindings={appliedBindings ?? {}}
           onChange={updateBinding}
           readOnly={readOnly}
         />

@@ -31,7 +31,7 @@ import {
   type AnalysisSourceRow,
   stringifySavedAnalysis,
   stringifyAnalysisProject,
-  stringifyAnalysisState,
+  stringifyAnalysisStateWithCachedTables,
   selectAnalysisProjectView,
   type ExplorEdaHandle,
   type ExplorEdaSidePanel,
@@ -281,7 +281,8 @@ export function SavedViewsWorkspace({
         )
   );
   const [saveError, setSaveError] = useState(false);
-  const [savedEncoding, setSavedEncoding] = useState("");
+  const [savedSession, setSavedSession] = useState<SavedViewsSession>();
+  const [sizeBytes, setSizeBytes] = useState(0);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const [previewTabId, setPreviewTabId] = useState(session.activeTabId);
   const [workspaceKey, setWorkspaceKey] = useState(0);
@@ -309,21 +310,28 @@ export function SavedViewsWorkspace({
     () => getSavedViewsRows({ sourceAnalysis }),
     [sourceAnalysis]
   );
-  const encoded = useMemo(() => stringifyAnalysisState(session), [session]);
-  const sizeBytes = new Blob([encoded]).size;
-
   useEffect(() => {
-    try {
-      localStorage.setItem(
-        session.project ? PROJECT_STORAGE_KEY : STORAGE_KEY,
-        encoded
-      );
-      setSaveError(false);
-      setSavedEncoding(encoded);
-    } catch {
-      setSaveError(true);
-    }
-  }, [encoded]);
+    const save = () => {
+      try {
+        const encoded = stringifyAnalysisStateWithCachedTables(session);
+        localStorage.setItem(
+          session.project ? PROJECT_STORAGE_KEY : STORAGE_KEY,
+          encoded
+        );
+        setSaveError(false);
+        setSizeBytes(new Blob([encoded]).size);
+        setSavedSession(session);
+      } catch {
+        setSaveError(true);
+      }
+    };
+    const timer = window.setTimeout(save, 250);
+    window.addEventListener("pagehide", save);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("pagehide", save);
+    };
+  }, [session]);
 
   const remount = () => setWorkspaceKey((key) => key + 1);
 
@@ -746,7 +754,7 @@ export function SavedViewsWorkspace({
 
   const saveState: SaveState = saveError
     ? "error"
-    : savedEncoding === encoded
+    : savedSession === session
       ? "saved"
       : "saving";
   const saveDetail = saveError

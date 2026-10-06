@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { evaluateAnalysisQuery } from "@/lib/analysis/evaluateProject";
 import { createShopFixture } from "@/lib/analysis/shopFixture";
-import { parseAnalysisProject, selectAnalysisProjectView, stringifyAnalysisProject, stringifyAnalysisState, parseAnalysisState } from "@/lib/analysis/projectFile";
+import { parseAnalysisProject, selectAnalysisProjectView, stringifyAnalysisProject, stringifyAnalysisState, stringifyAnalysisStateWithCachedTables, parseAnalysisState } from "@/lib/analysis/projectFile";
 import type { AnalysisProject } from "@/types/AnalysisProject";
 
 describe("multi-source analysis", () => {
@@ -132,5 +132,22 @@ describe("multi-source analysis", () => {
     expect(() => stringifyAnalysisProject({ ...file, project: duplicateMeasureProject })).toThrow("duplicates output field");
     expect(() => evaluateAnalysisQuery(duplicateMeasureProject, file.tables, "order-totals")).toThrow("duplicate field id");
     expect(parseAnalysisState<{ value: number }>(stringifyAnalysisState({ value: Infinity })).value).toBe(Infinity);
+  });
+
+  it("caches saved source tables without changing special-value restoration", () => {
+    const tables = {
+      orders: [
+        {
+          created: new Date("2025-01-02T00:00:00.000Z"),
+          missing: undefined,
+          amount: Number.NaN,
+          literal: { __exploreda_value__: "undefined" },
+        },
+      ],
+    };
+    const state = { tables, bindings: { customerId: "C1" } };
+    expect(parseAnalysisState(stringifyAnalysisStateWithCachedTables(state))).toEqual(state);
+    const edited = { ...state, bindings: { customerId: "C4" } };
+    expect(parseAnalysisState(stringifyAnalysisStateWithCachedTables(edited))).toEqual(edited);
   });
 });

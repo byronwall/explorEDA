@@ -3,7 +3,13 @@ import {
   PROJECT_STORAGE_KEY,
   readSavedViewsSessionResult,
 } from "./savedViewsSession";
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import {
   createShopFixture,
@@ -103,7 +109,9 @@ it("keeps order and item bindings through duplicate, undo, and local reload", as
       data={[]}
       viewName="Orders"
       initialSettings={shopQueryPresets["orders-by-customer"]}
-      initialViews={shopProjectViews.filter(view => view.queryId === "items-by-order")}
+      initialViews={shopProjectViews.filter(
+        (view) => view.queryId === "items-by-order"
+      )}
       initialProject={fixture.project}
       sourceTables={fixture.sources}
       queryPresets={shopQueryPresets}
@@ -111,6 +119,15 @@ it("keeps order and item bindings through duplicate, undo, and local reload", as
   );
   await screen.findByRole("button", { name: "Add chart" });
   fireEvent.click(screen.getByRole("tab", { name: "Items" }));
+  await waitFor(() =>
+    expect(
+      readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session?.tabs.find(
+        (tab) =>
+          tab.id ===
+          readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session?.activeTabId
+      )?.queryId
+    ).toBe("items-by-order")
+  );
   const stored = readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session!;
   expect(
     stored.tabs.find((tab) => tab.id === stored.activeTabId)?.queryId
@@ -121,12 +138,22 @@ it("keeps order and item bindings through duplicate, undo, and local reload", as
   fireEvent.click(
     await screen.findByRole("menuitem", { name: "Duplicate view" })
   );
+  await waitFor(() =>
+    expect(
+      readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session?.tabs
+    ).toHaveLength(3)
+  );
   const copied = readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session!;
   expect(copied.tabs).toHaveLength(3);
   expect(
     copied.tabs.find((tab) => tab.id === copied.activeTabId)?.queryId
   ).toBe("items-by-order");
   fireEvent.click(screen.getByRole("button", { name: "Undo" }));
+  await waitFor(() =>
+    expect(
+      readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session?.tabs
+    ).toHaveLength(2)
+  );
   const undone = readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session!;
   expect(undone.tabs).toHaveLength(2);
   expect(undone.history[undone.path[undone.cursor]!]!.project?.id).toBe(

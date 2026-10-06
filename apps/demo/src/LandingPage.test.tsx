@@ -547,6 +547,7 @@ describe("LandingPage routing", () => {
       )
     );
     expect(router.state.location.search).toBe("?project=1");
+    fireEvent(window, new Event("pagehide"));
     mounted.unmount();
     const reload = createMemoryRouter(
       [{ path: "/", element: <LandingPage /> }],

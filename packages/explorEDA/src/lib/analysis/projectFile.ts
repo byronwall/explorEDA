@@ -13,6 +13,7 @@ export interface AnalysisProjectFile {
 export type AnalysisProjectFileInput = Omit<AnalysisProjectFile, "activeViewId"> & { activeViewId?: string };
 
 const specialKey = "__exploreda_value__";
+const serializedTableCache = new WeakMap<object, string>();
 const isRecord = (value: unknown): value is Record<string, unknown> => !!value && typeof value === "object" && !Array.isArray(value) && !(value instanceof Date);
 
 function encode(value: unknown): unknown {
@@ -109,6 +110,24 @@ export const parseAnalysisProject = parseAnalysisProjectFile;
 
 export function stringifyAnalysisState(value: unknown): string {
   return JSON.stringify(encode(value));
+}
+
+/** Serialize a saved-view session while reusing its unchanged source tables. */
+export function stringifyAnalysisStateWithCachedTables(value: unknown): string {
+  if (!isRecord(value) || !isRecord(value.tables)) return stringifyAnalysisState(value);
+  let tables = serializedTableCache.get(value.tables);
+  if (!tables) {
+    tables = JSON.stringify(encode(value.tables));
+    serializedTableCache.set(value.tables, tables);
+  }
+  const rest = { ...value };
+  delete rest.tables;
+  const encoded = encode(rest) as Record<string, unknown>;
+  const entries = Object.entries(encoded).map(
+    ([key, item]) => `${JSON.stringify(key)}:${JSON.stringify(item)}`
+  );
+  entries.push(`"tables":${tables}`);
+  return `{${entries.join(",")}}`;
 }
 
 export function parseAnalysisState<T = unknown>(value: string): T {

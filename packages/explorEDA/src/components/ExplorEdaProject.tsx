@@ -16,12 +16,11 @@ import {
   type SavedDataStructure,
 } from "./ExplorEda";
 import type {
-  AnalysisEvaluation,
   AnalysisProject,
   AnalysisSourceRow,
   AnalysisView,
 } from "@/types/AnalysisProject";
-import { evaluateAnalysisQuery } from "@/lib/analysis/evaluateProject";
+import { useAnalysisEvaluation } from "@/lib/analysis/useAnalysisEvaluation";
 import { ProjectSchemaPanel } from "./project/ProjectSchemaPanel";
 import { ProjectQueryPanel } from "./project/ProjectQueryPanel";
 import {
@@ -90,32 +89,12 @@ export const ExplorEdaProject = forwardRef<
   const shownView = readOnly ? readOnlyView : view;
 
   const query = project.queries.find((item) => item.id === shownView.queryId);
-  const evaluated = useMemo(() => {
-    if (!query)
-      return {
-        evaluation: emptyEvaluation(shownView.queryId),
-        error: "This view points to a missing query.",
-      };
-    try {
-      return {
-        evaluation: evaluateAnalysisQuery(
-          project,
-          tables,
-          shownView.queryId,
-          shownView.bindings ?? {}
-        ),
-        error: "",
-      };
-    } catch (error) {
-      return {
-        evaluation: emptyEvaluation(shownView.queryId),
-        error:
-          error instanceof Error
-            ? error.message
-            : "The query could not be evaluated.",
-      };
-    }
-  }, [project, tables, shownView.queryId, shownView.bindings, query]);
+  const evaluated = useAnalysisEvaluation(
+    project,
+    tables,
+    shownView.queryId,
+    shownView.bindings ?? EMPTY_BINDINGS
+  );
   const data = useMemo<DatumObject[]>(
     () => evaluated.evaluation.rows.map((row, __ID) => ({ ...row.data, __ID })),
     [evaluated.evaluation]
@@ -196,7 +175,7 @@ export const ExplorEdaProject = forwardRef<
     label: chart.title || chart.type,
     filters: chart.filters,
   }));
-  const queryRevision = `${evaluated.evaluation.revision}:${query?.id ?? shownView.queryId}:${JSON.stringify(shownView.bindings ?? {})}`;
+  const queryRevision = `${evaluated.evaluation.revision}:${query?.id ?? shownView.queryId}:${JSON.stringify(evaluated.appliedBindings ?? {})}`;
   const reportTraceRevision = useCallback(
     (owner: string | undefined, revision?: string) => {
       if (!owner) return;
@@ -264,20 +243,14 @@ export const ExplorEdaProject = forwardRef<
     },
     wide: queryWide,
     onWideChange: setQueryWide,
-    banner: evaluated.error ? (
-      <div
-        role="alert"
-        className="border-b border-destructive px-3 py-2 text-xs text-destructive"
-      >
-        {evaluated.error}
-      </div>
-    ) : undefined,
     children: (
       <ProjectQueryPanel
         project={project}
         view={shownView}
         tables={tables}
         evaluation={evaluated.evaluation}
+        evaluationStatus={evaluated.status}
+        appliedBindings={evaluated.appliedBindings}
         queryRevision={queryRevision}
         traceHandoff={queryTraceHandoff}
         traceRevisions={traceRevisions}
@@ -337,6 +310,29 @@ export const ExplorEdaProject = forwardRef<
         onTraceRevision: reportTraceRevision,
       }}
     >
+      {evaluated.error ? (
+        <div
+          role="alert"
+          className="border-b border-destructive px-3 py-2 text-xs text-destructive"
+        >
+          {evaluated.error}
+          {evaluated.appliedBindings && (
+            <span className="ml-2 text-muted-foreground">
+              Showing results for {bindingLabel(project, evaluated.appliedBindings)}.
+            </span>
+          )}
+        </div>
+      ) : evaluated.status === "pending" ? (
+        <div
+          role="status"
+          aria-live="polite"
+          className="border-b border-border px-3 py-2 text-xs text-muted-foreground"
+        >
+          {evaluated.appliedBindings
+            ? `Updating query. Showing results for ${bindingLabel(project, evaluated.appliedBindings)}.`
+            : "Running query…"}
+        </div>
+      ) : null}
       <ExplorEda
         ref={chartRef}
         data={data}
@@ -355,14 +351,15 @@ export const ExplorEdaProject = forwardRef<
   );
 });
 
-function emptyEvaluation(queryId: string): AnalysisEvaluation {
-  return {
-    queryId,
-    revision: "unavailable",
-    fields: [],
-    rows: [],
-    stages: [],
-    diagnostics: [],
-    counts: { source: 0, output: 0, available: 0, excluded: 0 },
-  };
+const EMPTY_BINDINGS: Record<string, never> = {};
+
+function bindingLabel(
+  project: AnalysisProject,
+  bindings: Record<string, string | number | boolean | null | undefined>
+) {
+  return (
+    project.parameters
+      ?.map((parameter) => `${parameter.name}: ${String(bindings[parameter.id] ?? "not set")}`)
+      .join(", ") || "default inputs"
+  );
 }

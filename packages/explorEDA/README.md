@@ -218,6 +218,10 @@ keeps the selection. A literal “Other categories” value remains a separate c
 
 `ExplorEdaProject` evaluates related tables before it renders charts. Each view selects one query and row meaning. The host owns tabs, history, and storage. Source tables stay outside configuration checkpoints.
 
+Interactive queries run in one packaged Web Worker. Use a bundler that emits worker assets from `new URL(..., import.meta.url)`. Replace the table map when source data changes.
+
+Valid parameter edits start evaluation automatically. Pending results retain their applied values until the next result arrives. Query or source changes show a pending result. An empty result replaces prior rows.
+
 ```tsx
 import { useState } from "react";
 import { ExplorEdaProject, createShopFixture, type AnalysisView } from "exploreda";
