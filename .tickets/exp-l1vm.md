@@ -59,3 +59,7 @@ The browser pass confirmed full-project and active-view export/import plus reloa
 **2026-10-06T07:28:27Z**
 
 Accepted at f008df6. Full Node 24 pnpm check passes 593 package and 47 demo tests. Browser view/history/reload and file round trips preserve query frames and totals. Read-only Rows pointer, keyboard, and local search leave current saved state intact.
+
+**2026-10-06T07:34:57Z**
+
+Delivered in PR #161: https://github.com/byronwall/explorEDA/pull/161. Six screenshot attachment URLs were verified.

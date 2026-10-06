@@ -59,8 +59,8 @@ Main now has a host-owned saved-view workspace with tab actions, local storage, 
 
 The original saved-view baseline used one source population across all tabs. This implementation adds per-view query bindings and project definitions to that session. Shared field definitions stay within the same query scope. Source tables stay outside history checkpoints. Historical source-data versions remain outside this initiative.
 
-The implementation is in the supplied worktree. Final acceptance covers chart flow, read-only inspection, and the measured worker repair. The [implementation plan](implementation-plan.md) and milestone tickets record the evidence.
+The implementation is complete in the supplied worktree. Browser acceptance passed chart flow, read-only inspection, parameter updates, and repair flows. The [implementation plan](implementation-plan.md) and map record the evidence.
 
 ## Next step after confirmation
 
-Implementation is authorized. Follow the [implementation plan](implementation-plan.md) and its linked tickets. First prove configured order/item frames through view switching, history restoration, and reload. Then complete schema-led relationship creation and chart identity rules. Full path inspection and parameter instances follow as separate slices. Keep the implementation in the existing worktree and reconcile its saved-view baseline before application edits.
+Review [PR #161](https://github.com/byronwall/explorEDA/pull/161). All four milestones are accepted. The initiative map records closure evidence and the scope retained below the cut line.

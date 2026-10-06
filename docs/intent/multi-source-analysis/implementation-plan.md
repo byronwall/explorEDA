@@ -22,7 +22,7 @@ Implementation uses this same worktree on `codex/multi-source-frames`. The suppl
 
 ## Current verification
 
-Checkpoint `f008df6` passes the full Node 24 `pnpm check`: 593 package tests and 47 demo tests. Builds, types, and UI rules pass. Independent browser acceptance passed the C4 empty-result correction, existing-link editing, query glyphs, read-only Rows, and affected restore flows. Tests used 1280, 783, and 390 px. Current browser console errors and horizontal overflow were zero. All four milestones are accepted. PR delivery remains.
+Checkpoint `f008df6` passes the full Node 24 `pnpm check`: 593 package tests and 47 demo tests. Builds, types, and UI rules pass. Independent browser acceptance passed the C4 empty-result correction, existing-link editing, query glyphs, read-only Rows, and affected restore flows. Tests used 1280, 783, and 390 px. Current browser console errors and horizontal overflow were zero. All four milestones are accepted. [PR #161](https://github.com/byronwall/explorEDA/pull/161) contains the implementation, minor changeset, and six screenshots.
 
 ## Execution decision
 
@@ -227,7 +227,7 @@ Use `ActionTooltip` or the Button tooltip prop for non-obvious controls. Follow 
 
 Run `pnpm check:ui` during UI work and `pnpm check` for each broad delivery. Build package exports before host integration checks. Run release checks on Node 24 and preserve its AbortController/AbortSignal in the demo test environment.
 
-Add a minor changeset for package features with `pnpm changeset:add minor "summary"`. Keep one coherent changeset per implementation PR. Add screenshot evidence for visible changes using `gh --attach` and verify the saved PR body. Update package usage docs, example counts, and this map when milestone proof is observed. Implementation has started. The map is active; tickets own current execution evidence. Publishing and deployment require a separate request.
+Add a minor changeset for package features with `pnpm changeset:add minor "summary"`. Keep one coherent changeset per implementation PR. Add screenshot evidence for visible changes using `gh --attach` and verify the saved PR body. Update package usage docs, example counts, and this map when milestone proof is observed. Implementation and verification are complete. The map records closure evidence; all four milestone tickets are closed. Publishing and deployment require a separate request.
 
 ## Open decisions and spikes
 

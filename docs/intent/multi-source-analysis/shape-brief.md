@@ -60,7 +60,7 @@ Extend timeline checkpoints with view bindings and relationship/query definition
 2. **Query paths and cardinality exploration:** Overlay a selected query on the schema. Add full inspection, nested rows, and aggregate contributors within saved tabs.
 3. **Parameter-bound instances:** Start from a record, edit assisted inputs, and update all stages automatically.
 
-The [implementation plan](implementation-plan.md) has four milestones across three slices. The first two complete slice one. Reuse merged PR #148 and one shop fixture. The shared contract needs one PR. Final browser acceptance remains open.
+The [implementation plan](implementation-plan.md) has four milestones across three slices. Reuse merged PR #148 and one shop fixture. [PR #161](https://github.com/byronwall/explorEDA/pull/161) delivers the shared contract. All three slices passed acceptance.
 
 ## Behavior
 

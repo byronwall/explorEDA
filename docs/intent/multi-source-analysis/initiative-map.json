@@ -7,8 +7,8 @@
     "current_phase": "reconciliation",
     "last_updated": "2026-10-06",
     "summary": "Schema-led relationship creation, explicit query frames, trustworthy chart identity, complete query inspection, and automatic parameter instances.",
-    "status": "active",
-    "next_action": "Open the accepted implementation PR with screenshots, then record its link and close the initiative."
+    "status": "completed",
+    "next_action": "Review PR #161."
   },
   "artifacts": {
     "intent_brief": {
@@ -1410,7 +1410,7 @@
     "repository_snapshot": {
       "root": "/Users/byronwall/.codex/worktrees/81eb/explorEDA",
       "revision": "f008df6",
-      "worktree_status": "Implementation branch codex/multi-source-frames in the supplied worktree. Source checkpoint f008df6 passes the full Node 24 gate. Independent final browser acceptance uses its frozen production build.",
+      "worktree_status": "Source checkpoint f008df6 passes the full Node 24 gate and independent browser acceptance. Delivery PR #161 contains the implementation, minor changeset, and six verified screenshot attachments.",
       "subsystems": [
         "ExplorEda/DataLayerProvider flat-row rendering",
         "CrossfilterWrapper chart filter scopes",
@@ -1558,6 +1558,180 @@
     {
       "date": "2026-10-06",
       "event": "Independent browser acceptance passed on frozen checkpoint f008df6. C4 empty results, in-place relationship repair, query glyphs, read-only Rows, settled scale counts, reload, and full/active-view imports passed. Current browser console errors and horizontal overflow were zero. All milestone outcomes are accepted; PR delivery remains."
+    },
+    {
+      "date": "2026-10-06",
+      "event": "PR #161 opened with six uploaded screenshots and the minor changeset. The saved image URLs were verified and the PR is mergeable. All four milestone tickets are closed. The initiative is completed; its planning documents remain available. Closure records claim reconciliation and verification limits."
     }
-  ]
+  ],
+  "closure": {
+    "summary": "Delivered related-table analysis with explicit query frames, schema editing, trustworthy chart identity, complete flow inspection, and automatic parameter instances.",
+    "reason": "The accepted four milestone outcomes are proven and delivered in PR #161.",
+    "evidence": [
+      "Code checkpoint f008df6; baseline a2e67c0; implementation branch codex/multi-source-frames in the supplied worktree.",
+      "Node 24 pnpm check passed: 593 package tests in 107 files and 47 demo tests in 10 files, plus builds, types, and UI rules.",
+      "Independent browser acceptance on f008df6 passed at 1280, 783, and 390 px. C4 empty results, C1 totals, invalid drafts, in-place link repair, glyphs, read-only Rows, settled scale counts, reload, and both project import modes passed. Current console errors and horizontal overflow were zero.",
+      "Actual Notebook chart operations retain total 50 and contributors I2/I4/I6 after popover closure. A later filter removes stale evidence. Controlled renderer handoff and stage/identity regressions pass.",
+      "The fixed-seed probe uses 100,000 input rows and 10,000 output rows. Browser worker input delays were 75\u2013100 ms without a chart and 125\u2013128 ms with a chart. Chart result application took about 479 ms; one warmup task took 344 ms. Timings preceded the final provider/link/glyph repair and were not rerun afterward. The final build repeated the settled counts and round trips.",
+      "Browser controls were exercised with real pointer actions and keyboard navigation. Native touchscreen input and dark-theme output were not verified.",
+      "https://github.com/byronwall/explorEDA/pull/161 contains six screenshots. The saved body was read back; every image uses a GitHub attachment URL. GitHub reports the PR as mergeable."
+    ],
+    "reconciliation": [
+      {
+        "claim_id": "feedback-9",
+        "disposition": "delivered",
+        "evidence": "shopFixture.ts and the multi-source-shop example provide four customers, five orders, eight items, and four products."
+      },
+      {
+        "claim_id": "lookup-followup",
+        "disposition": "delivered",
+        "evidence": "evaluateProject.ts runs indexed equality lookups with strict scalar keys, missing values, and explicit ambiguity diagnostics."
+      },
+      {
+        "claim_id": "separate-initiative",
+        "disposition": "delivered",
+        "evidence": "This dedicated initiative extends the package through ExplorEdaProject while preserving the existing single-source entry point."
+      },
+      {
+        "claim_id": "working-population",
+        "disposition": "delivered",
+        "evidence": "AnalysisProject types, field origins, stable result keys, chart headers, and source contributors keep row and entity meaning explicit."
+      },
+      {
+        "claim_id": "mixed-populations-open",
+        "disposition": "delivered",
+        "evidence": "Each saved view selects one result frame. Separate cardinality views are supported. Mixed frames and automatic filter propagation stay below the accepted cut line."
+      },
+      {
+        "claim_id": "relationships",
+        "disposition": "delivered",
+        "evidence": "ProjectSchemaPanel displays matching fields, declared cardinality, observed counts, and active query steps."
+      },
+      {
+        "claim_id": "query-paths",
+        "disposition": "delivered",
+        "evidence": "ProjectQueryPanel shows selected query stages and overlays their step IDs on the complete schema."
+      },
+      {
+        "claim_id": "parameter-instance",
+        "disposition": "delivered",
+        "evidence": "Customer and date bindings select one instance. Step inspection follows the selected query dependencies."
+      },
+      {
+        "claim_id": "sample-data",
+        "disposition": "delivered",
+        "evidence": "createShopFixture and demo presets cover order, item, customer, product, empty, missing, and conflicting cases."
+      },
+      {
+        "claim_id": "repetition",
+        "disposition": "delivered",
+        "evidence": "Compact query summaries retain stage counts. Step selection and parameter bindings expose one instance. Batch execution and split layouts stay below the accepted cut line."
+      },
+      {
+        "claim_id": "scope-expansion",
+        "disposition": "delivered",
+        "evidence": "The finite evaluator supports source, lookup, expansion, calculation, filter, and grouped aggregation."
+      },
+      {
+        "claim_id": "three-slices",
+        "disposition": "delivered",
+        "evidence": "Four milestone tickets cover the three accepted slices. Their shared contract and session use one coherent implementation PR."
+      },
+      {
+        "claim_id": "primary-job",
+        "disposition": "delivered",
+        "evidence": "The shop example distinguishes five orders totaling 150 from eight items totaling 140. Query frames and chart traces expose the join."
+      },
+      {
+        "claim_id": "schema-frame",
+        "disposition": "delivered",
+        "evidence": "Schema linking previews cardinality. Query controls offer aggregation at current grain or an explicit expanded view."
+      },
+      {
+        "claim_id": "link-authoring",
+        "disposition": "delivered",
+        "evidence": "Configured links, drag linking, keyboard selectors, preview, and existing-link editing are implemented. Agent suggestions remain below the accepted cut line."
+      },
+      {
+        "claim_id": "assisted-bindings",
+        "disposition": "delivered",
+        "evidence": "Known records seed parameters. Customer choices and native date inputs support manual bindings."
+      },
+      {
+        "claim_id": "two-flow-modes",
+        "disposition": "delivered",
+        "evidence": "Summary and Full flow use evaluator stages and the actual ChartTraceBody. Notebook contributors I2/I4/I6 total 50 after the popover closes."
+      },
+      {
+        "claim_id": "cardinality-spaces",
+        "disposition": "delivered",
+        "evidence": "Saved tabs, related scalar tables, intermediate views, and aggregate contributor inspection reuse the merged saved-view/history shell."
+      },
+      {
+        "claim_id": "focused-query",
+        "disposition": "delivered",
+        "evidence": "One query is selected for inspection. Query comparison remains below the accepted cut line."
+      },
+      {
+        "claim_id": "automatic-results",
+        "disposition": "delivered",
+        "evidence": "One local worker applies valid bindings automatically. Pending results keep applied labels; request IDs reject late responses; valid empty results replace prior rows."
+      },
+      {
+        "claim_id": "scale-hypothesis",
+        "disposition": "delivered",
+        "evidence": "The fixed-seed 100,000-input-row probe records indexed lookup, aggregation, expansion, origins, storage, and real browser timing. No service guarantee is inferred."
+      },
+      {
+        "claim_id": "host-persistence",
+        "disposition": "delivered",
+        "evidence": "The controlled package callback, project codec, dependency closure, source-table cache, local storage, and page-exit save preserve the investigation."
+      },
+      {
+        "claim_id": "ambiguity-decision",
+        "disposition": "delivered",
+        "evidence": "Ambiguous unique lookups leave dependent values unavailable. Repairing the matching field preserves relationship ID and query/chart references."
+      },
+      {
+        "claim_id": "slice-order",
+        "disposition": "delivered",
+        "evidence": "Configured frames and identity were verified before terminal parameter acceptance. The shared implementation is delivered in one PR."
+      },
+      {
+        "claim_id": "source-visual-identity",
+        "disposition": "delivered",
+        "evidence": "Stable source glyphs and FieldMetadata expose field origins and accessible source details."
+      },
+      {
+        "claim_id": "count-decision",
+        "disposition": "delivered",
+        "evidence": "Headers show the selected-query denominator. Inspection separates stage counts, exclusions, and distinct entities."
+      },
+      {
+        "claim_id": "chart-identity",
+        "disposition": "delivered",
+        "evidence": "Metric, grouped bar, and scatter plans use explicit entity fields and preserve contributors. Repeated order amounts yield 140 rather than 310."
+      },
+      {
+        "claim_id": "query-visual-identity",
+        "disposition": "delivered",
+        "evidence": "Saved queries retain their glyphs. A shared allocator gives copied, intermediate, and source views a unique glyph after palette exhaustion."
+      },
+      {
+        "claim_id": "confidence-path",
+        "disposition": "delivered",
+        "evidence": "Actual chart operations connect to backing query rows, source records, and the selected path over the schema."
+      },
+      {
+        "claim_id": "reuse-view-history",
+        "disposition": "delivered",
+        "evidence": "SavedViewsWorkspace, savedViewsSession, and savedViewsHistory now checkpoint definitions and view bindings atomically with existing tab actions."
+      }
+    ],
+    "documentation": [
+      "packages/explorEDA/README.md"
+    ],
+    "follow_ups": [],
+    "retirement_files": []
+  }
 }

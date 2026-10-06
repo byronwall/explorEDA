@@ -68,3 +68,7 @@ Source inspection found the provider detects changed fieldNames props but does n
 **2026-10-06T07:28:27Z**
 
 Accepted at f008df6. C4 gives a valid empty result; C1 returns two rows and amount 50. Invalid drafts retain applied data. Settled minimum 500 gives 5,059 rows; 900 gives 1,031. Chart, bindings, and counts survive reload and both project export/import modes. Worker ordering, declared fields, StrictMode, and page-exit save regressions pass. Timing limits remain recorded in the initiative map.
+
+**2026-10-06T07:34:57Z**
+
+Delivered in PR #161: https://github.com/byronwall/explorEDA/pull/161. Six screenshot attachment URLs were verified.

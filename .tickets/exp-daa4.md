@@ -53,3 +53,7 @@ The UI could only append that new link and lookup. It could not repair the exist
 **2026-10-06T07:28:27Z**
 
 Accepted at f008df6. In-place link editing previews 4 matched, 1 missing, and 0 ambiguous rows. Apply preserves the relationship ID, two query references, five orders, and amount 150. Cancel leaves state intact. Browser checks cover 1280, 783, and 390 px; project export/import and entity-scoped totals pass.
+
+**2026-10-06T07:34:57Z**
+
+Delivered in PR #161: https://github.com/byronwall/explorEDA/pull/161. Six screenshot attachment URLs were verified.

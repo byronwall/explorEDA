@@ -52,3 +52,7 @@ Final source review found a query glyph collision when opening a related source 
 **2026-10-06T07:28:27Z**
 
 Accepted. Actual chart operations keep Notebook total 50 and contributors I2/I4/I6 after popover closure. New filters clear stale evidence. Controlled host handoff, nested rows, stage origins, missing steps, and unique source-view glyphs pass. Complete contributor evidence is captured in the tall flow screenshot.
+
+**2026-10-06T07:34:57Z**
+
+Delivered in PR #161: https://github.com/byronwall/explorEDA/pull/161. Six screenshot attachment URLs were verified.
