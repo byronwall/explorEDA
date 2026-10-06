@@ -1,69 +1,96 @@
 ---
-title: "Multiple sources and lookups — shape brief"
+title: "Multi-source frames and provenance — shape brief"
 slug: "multi-source-analysis"
 phase: shape
-status: provisional
-last_updated: "2026-09-29"
+status: current
+last_updated: "2026-10-05"
 ---
 
-# Multiple sources and lookups — shape brief
+# Multi-source frames and provenance — what we are adding
 
-## Recommendation
+**Outcome:** Users explore related tables and know which entities, joins, and measures each chart represents.
 
-Propose one base source per task view, enriched through explicit lookups. Keep orders, customers, and products distinct in the project definition. Resolve lookup fields before giving a single working dataset to the existing chart engine.
+**Primary flow:** Open schema → choose frame → follow or create links → resolve one-to-many meaning → chart → inspect query and rows.
 
-This is the smallest proposed shape that proves the selected lookup workflow. Separate views can choose different base sources. Charts with different populations in the same dashboard and automatic cross-source filtering remain below the first cut. The current single-source projects proceed independently.
+## Feature scope
 
-## Problem and appetite
+```text
+Multi-source exploration
+├── PLANNED ADDITIONS
+│   ├── Schema and relationships
+│   │   ├── Developer-configured links; drag-and-link field creation
+│   │   ├── Matching keys, declared cardinality, observed link consequences
+│   │   └── Stable source glyphs and colors with inspectable names
+│   ├── Frame-based queries
+│   │   ├── Choose customer, order, or item grain and identity fields
+│   │   ├── Follow links; aggregate many-side data or change frame explicitly
+│   │   └── Named queries with unique glyphs; focused path over full schema
+│   ├── Charts with clear backing data
+│   │   ├── Query glyph, frame/measure meaning, included/available count
+│   │   ├── Chart-specific entity identity and measure aggregation
+│   │   └── Query access, backing rows, and contributor inspection
+│   ├── Explore and retain cardinality spaces
+│   │   ├── Separate tables, nested related rows, aggregates with contributors
+│   │   └── Existing saved-view tabs with per-view query/frame bindings
+│   ├── Simplified and full flow inspection
+│   │   ├── Compact population summary and relevant count changes
+│   │   └── Full inputs, filters, joins, calculations, aggregates, exclusions
+│   ├── Parameter instances after the first slice
+│   │   ├── Start from a known record; dropdowns/pickers for manual values
+│   │   └── Automatic updates; intermediate rows for the applied instance
+│   └── Restorable state and working examples
+│       ├── Existing host persistence and history, extended for query/frame state
+│       └── Generated data, query/frame presets, expected rows and totals
+└── LATER INTEGRATION
+    ├── Agent-suggested links through shared configuration
+    └── Remote execution, server persistence, batch instances, query comparison
+```
 
-- **Problem:** One supplied row array cannot describe related tables or the origin of lookup-derived fields.
-- **Outcome:** Users combine source attributes while retaining clear row populations and trustworthy counts.
-- **Appetite:** One orders-based view enriched from customer and product tables.
-- **Boundary:** General joins, remote query execution, and mixed-population dashboards are deferred.
+Keep source/query glyphs stable across views and restoration. Header provenance preserves data colors. Hover, keyboard, and touch reach details. Reuse View data and trace controls.
 
-## Core shape
+## Reuse of saved views and history
 
-A project registers source tables with clear identities and field definitions. A view chooses a base source. Its lookup definitions identify a matching key, target source, and output fields. A deterministic preparation step produces the working rows and keeps field-origin information available for inspection.
+Reuse tab actions. Duplicate retains query/frame bindings and settings; New view starts blank on the active frame. Offer a new view for grain changes. Show query/frame context beside the active view.
 
-The proposed first lookup preserves one row per base record. A unique match supplies the requested values. No match supplies missing values and a visible unmatched count. Repeated target keys report ambiguity rather than silently multiplying base rows. These are recommended first-proof rules, not accepted permanent join semantics.
+Extend timeline checkpoints with view bindings and relationship/query definitions. Reuse read-only preview, restore, and undo/redo. History preserves configuration, not historical source rows. Schema/query inspection uses host side panels.
 
-The prepared dataset enters the current analysis provider. Existing chart filters and calculations use its resulting fields. Field origin remains available so users can distinguish an order field from a looked-up customer field. Changing a lookup or source causes a clear result refresh without resetting unrelated view choices.
+## Proposed delivery slices
 
-The host retains source references and lookup definitions. The package uses a single authoritative result for charts, field profiles, row inspection, and settings validation. The precise host/package preparation boundary remains provisional.
+1. **Sources, relationships, and frames:** Configure or create links, validate consequences, choose grain, resolve one-to-many data, and chart with visible provenance. Extend host state output, reload, and history restore.
+2. **Query paths and cardinality exploration:** Overlay a selected query on the schema. Add full inspection, nested rows, and aggregate contributors within saved tabs.
+3. **Parameter-bound instances:** Start from a record, edit assisted inputs, and update all stages automatically.
 
-## Current fit
+The [implementation plan](implementation-plan.md) has four milestones: configured views through history/reload, schema authoring, full flow, then parameters. The first two complete slice one. Each extends one shop fixture. Reconcile PR #148 into this worktree before application edits.
 
-Reuse the one-dataset renderer, field profiles, calculation engine, saved view settings, and filter controls. Extend project definitions with source identity and lookup declarations. Avoid having individual charts copy and flatten source tables independently.
+## Behavior
 
-Lookup provenance is new metadata. Existing source-row tracing should identify the base row and relevant matched row when lookup values contribute to a chart. The first proof does not require replacing the rendering or trace engine.
+| Situation | Expected result |
+| --- | --- |
+| A many-side link expands the current frame | Offer aggregation at current grain or an explicit frame change. Preview count consequences. |
+| A unique lookup has multiple matches | Inspect conflicts; repair the link, define an aggregation, or choose an expanded frame. No arbitrary first match. |
+| Known entity IDs repeat | Use the chart's declared mark identity and measure rule. Collapse repeated entity marks where appropriate; retain valid item contributions. |
+| A parameter changes | Update automatically. Label pending data; publish rows, counts, and charts for the same applied values. |
+| Inspection finds no matches | Show the empty stage, bindings, and matching condition. Keep preceding inputs reachable. |
+| A checkpoint is previewed or restored | Recover its frame/query definitions with charts and filters. Keep preview read-only; restore becomes a new history step. Recompute from available project sources. |
 
-## How to make this go better
+## Examples
 
-- **Preserve base row counts.** Prove lookup enrichment before supporting operations that expand populations.
-- **Use asymmetric local tables.** Include customers without orders, missing customers, and duplicate keys to reveal population mistakes.
-- **Retain field origin.** Names alone cannot distinguish fields from different sources.
-- **Prepare rows once per view.** All charts and field summaries should see the same lookup result.
-- **Keep source loading separate.** Local tables can prove lookup behavior before choosing remote providers.
+Frames:
 
-## First proof
+- **Order frame:** one record per order; customer attributes plus item totals aggregated by order ID.
+- **Item frame:** one record per order item; product attributes and item revenue. A chart counts items or aggregates revenue explicitly.
+- **Customer instance:** select a customer and date range; inspect matching orders, items, and category totals.
 
-- **Question:** Can lookups enrich an orders analysis without corrupting counts, sums, or field meaning?
-- **Proof:** A small deterministic orders/customer/product example with matched, missing, and ambiguous keys.
-- **Observe:** Source row counts differ. Orders retain their count. Lookup fields appear in chart choices and filters. Ambiguity is visible. Field inspection identifies origin.
-- **Decision rule:** Keep the shape if the result preserves intended order totals and lookup values can be traced to their sources.
+Summary: “Orders · 47 of 60.” Inspection: “130 item rows from 47 orders.” Name the measure.
 
-## Rabbit holes and no-gos
+## Decisions and boundaries
 
-Do not build a general relational query engine before lookup semantics are proven. Do not invent automatic relationship filtering. Do not silently choose one of several matching records. Do not make this work a prerequisite for current single-source views or agents.
+**Appetite:** Prove a local shop project. Benchmark the ten-table, ten-thousand-rows estimate; measure join expansion separately.
 
-## What still needs a later decision
+**Key decision:** Replace developer-only query steps with schema-led frame selection and relationship creation. Preserve one frame until users explicitly change its meaning. Keep chart counts compact; expose stage and distinct-entity counts in inspection.
 
-Should one dashboard contain different base populations? Should filters propagate across source relationships? Those decisions can expand the scope when this initiative is taken up.
+The host owns tabs, persistence, and history; React emits edits. Extend that session. Scope shared field/calculation definitions by compatible sources and frames. Query execution supplies one consistent result; automatic updates must not mix old rows with new labels.
 
-## Plan handoff
+**Boundary:** Agent execution and servers are separate. No universal deduplication or silent selection among ambiguous matches. Closing inspection preserves charts and views.
 
-Intent and shape only. Review the base-source and lookup behavior before implementation planning. The current three initiatives remain single-source.
-
-## Most likely bad outcome
-
-Lookups appear to work, but repeated matches distort totals or charts disagree about which source records they represent.
+**First proof:** **Try:** Build an order-frame chart, duplicate it into an item-frame view, then switch, preview, restore, and reload. **Observe:** Query glyphs, rows, counts, filters, and definitions match each selected view or checkpoint. **Decide:** Proceed only if totals remain correct and view/history actions preserve the intended frame. Fix mismatches before parameters.

@@ -1,23 +1,25 @@
 {
-  "schema_version": "0.4.0",
+  "schema_version": "0.5.0",
   "initiative": {
-    "title": "Multiple sources and lookups",
+    "title": "Multi-source analysis with explicit data frames",
     "slug": "multi-source-analysis",
     "scale": "capability",
-    "current_phase": "shape",
-    "last_updated": "2026-09-29",
-    "summary": "Separate future initiative for related source tables and explicit lookups, initially feeding one working dataset per view."
+    "current_phase": "plan",
+    "last_updated": "2026-10-05",
+    "summary": "Schema-led relationship creation and frame selection, trustworthy chart identity, full query inspection, and later assisted parameter instances.",
+    "status": "planned",
+    "next_action": "Implement milestone 1 in the existing worktree: first reconcile the saved-view baseline, then prove order/item totals through switch, preview, restore, and reload."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-09-29"
+      "updated_at": "2026-10-05"
     },
     "shape_brief": {
       "path": "shape-brief.md",
-      "status": "provisional",
-      "updated_at": "2026-09-29"
+      "status": "current",
+      "updated_at": "2026-10-05"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -26,8 +28,8 @@
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-requested",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-05"
     }
   },
   "sources": [
@@ -149,6 +151,208 @@
       "location": "2026-09-29 response annotation 3 on integration review",
       "anchor": "It seems we should be able to store snapshots of the settings as changes are made.  We could diff that and show it.  Or just undo.  It's not clear to me why undo is difficult if state is fully determined by the settings?  What am i missing?",
       "authority": "direct feedback on history shape"
+    },
+    {
+      "id": "request-2026-10-05",
+      "type": "direct-user-input",
+      "location": "2026-10-05 request in Shape multi-source initiative",
+      "anchor": "See table relationships; show multiple query paths; inspect intermediate tables with parameters; include sample data and examples; replace older shape format.",
+      "authority": "current explicit user intent"
+    },
+    {
+      "id": "notes-page-1",
+      "type": "handwritten-notes",
+      "location": "/Users/byronwall/Pictures/Photos Library.photoslibrary/resources/derivatives/0/097D31E6-A30C-40CB-A17D-E14DF86B306C_1_102_o.jpeg",
+      "anchor": "Showing linked data; customers ID to orders customer ID; graph for a question; multiple tables or query cardinality; need examples with real data/interfaces.",
+      "authority": "user-provided rough exploration; current typed request controls scope",
+      "confidence": "high for diagrams and examples; medium for wording about returning multiple tables",
+      "interpretation": "Separate source relationships from paths for a question. Preserve multi-table outputs as candidates, not mandatory result structure."
+    },
+    {
+      "id": "notes-page-2",
+      "type": "handwritten-notes",
+      "location": "/Users/byronwall/Pictures/Photos Library.photoslibrary/resources/derivatives/B/B2CA95BB-240C-4CD0-B1AF-5EC0220980FC_1_102_o.jpeg",
+      "anchor": "Single-table query has a clear interface; one-to-one/one-to-many links; customer to orders; some subqueries get very complicated; want to see as isolated thing; what must I provide to run a subquery; these parameters are crucial to inspecting rows.",
+      "authority": "user-provided rough exploration; current typed request confirms parameter intent",
+      "confidence": "high for parameter/subquery intent; medium for small labels",
+      "interpretation": "Inspect a subquery with sufficient input bindings. One-to-many data shape may need aggregation or nested inspection; do not assume aggregation is always required."
+    },
+    {
+      "id": "notes-page-3",
+      "type": "handwritten-notes",
+      "location": "/Users/byronwall/Pictures/Photos Library.photoslibrary/resources/derivatives/4/4982B750-067C-4E65-AE76-C8AB322DAC91_1_102_o.jpeg",
+      "anchor": "Real examples have large query trees; Q1 and Q2 paths; repeated tables x20; keep straight; query(params); run query(any) and select column to get a good split result.",
+      "authority": "user-provided rough exploration; UI mechanisms are provisional",
+      "confidence": "high for query trees and repetitions; medium for split-result wording",
+      "interpretation": "Summarize repetition and inspect one instance. Split-by-column may be an alternative display for a flat result; it is distinct from parameter execution. x20 is illustrative, not a scale requirement."
+    },
+    {
+      "id": "slice-request-2026-10-05",
+      "type": "direct-user-input",
+      "location": "2026-10-05 follow-up in this chat",
+      "anchor": "If the initiative needs dedicated slices, propose splits; use consider-contrast to decide.",
+      "authority": "current explicit user direction"
+    },
+    {
+      "id": "repo-2026-10-05",
+      "type": "repository",
+      "location": "packages/explorEDA/src/components/ExplorEda.tsx; packages/explorEDA/src/types/SavedDataStructure.ts; apps/demo/src/demos/examples.ts; .tickets/exp-9wuz.md",
+      "anchor": "HEAD 8c35e4db02d9e0efc0842644d4a669e58d10caf8; one data array; no generic sources/relationships/query-instance settings; multi-source joins excluded from trace ticket.",
+      "authority": "current implementation evidence; supports planned lifecycle, not product requirements"
+    },
+    {
+      "id": "annotation-2026-10-05-1",
+      "type": "direct-user-input",
+      "location": "2026-10-05 response annotation 1 in Shape multi-source initiative",
+      "anchor": "Make sense of data spanning tables through several queries and joins; the hard part is knowing when displayed charts use a join.",
+      "authority": "latest explicit user feedback; preserve tentative qualifiers"
+    },
+    {
+      "id": "annotation-2026-10-05-2",
+      "type": "direct-user-input",
+      "location": "2026-10-05 response annotation 2 in Shape multi-source initiative",
+      "anchor": "Start naturally from an ER/schema view; choose a frame for core cardinality and help aggregate when one-to-many links would expand it.",
+      "authority": "latest explicit user feedback; preserve tentative qualifiers"
+    },
+    {
+      "id": "annotation-2026-10-05-3",
+      "type": "direct-user-input",
+      "location": "2026-10-05 response annotation 3 in Shape multi-source initiative",
+      "anchor": "Support developer-configured links and user drag-and-link creation, with client-side consequence validation; agent suggestions through flat config are near-term follow-up.",
+      "authority": "latest explicit user feedback; preserve tentative qualifiers"
+    },
+    {
+      "id": "annotation-2026-10-05-4",
+      "type": "direct-user-input",
+      "location": "2026-10-05 response annotation 4 in Shape multi-source initiative",
+      "anchor": "Start instance inspection from a known record; support manual values with dropdowns and suitable pickers.",
+      "authority": "latest explicit user feedback; preserve tentative qualifiers"
+    },
+    {
+      "id": "annotation-2026-10-05-5",
+      "type": "direct-user-input",
+      "location": "2026-10-05 response annotation 5 in Shape multi-source initiative",
+      "anchor": "Provide simplified inspection and a full flow mode through every transformation.",
+      "authority": "latest explicit user feedback; preserve tentative qualifiers"
+    },
+    {
+      "id": "annotation-2026-10-05-6",
+      "type": "direct-user-input",
+      "location": "2026-10-05 response annotation 6 in Shape multi-source initiative",
+      "anchor": "Support separate tables, nested related rows, aggregates with contributors, and dedicated views across cardinality spaces; reconcile against the multi-view PR after it lands and before implementation.",
+      "authority": "latest explicit user feedback; preserve tentative qualifiers"
+    },
+    {
+      "id": "annotation-2026-10-05-7",
+      "type": "direct-user-input",
+      "location": "2026-10-05 response annotation 7 in Shape multi-source initiative",
+      "anchor": "Focus on one query for inspection; do not start with query comparison.",
+      "authority": "latest explicit user feedback; preserve tentative qualifiers"
+    },
+    {
+      "id": "annotation-2026-10-05-8",
+      "type": "direct-user-input",
+      "location": "2026-10-05 response annotation 8 in Shape multi-source initiative",
+      "anchor": "Prefer immediate result updates after parameter changes.",
+      "authority": "latest explicit user feedback; preserve tentative qualifiers"
+    },
+    {
+      "id": "annotation-2026-10-05-9",
+      "type": "direct-user-input",
+      "location": "2026-10-05 response annotation 9 in Shape multi-source initiative",
+      "anchor": "A demanding case might use ten tables with ten thousand rows each and execute in seconds.",
+      "authority": "latest explicit user feedback; preserve tentative qualifiers"
+    },
+    {
+      "id": "annotation-2026-10-05-10",
+      "type": "direct-user-input",
+      "location": "2026-10-05 response annotation 10 in Shape multi-source initiative",
+      "anchor": "Save the whole investigation where practical; the React component must emit state for persistence elsewhere. Local storage is initial host storage; server storage is eventual.",
+      "authority": "latest explicit user feedback; preserve tentative qualifiers"
+    },
+    {
+      "id": "annotation-2026-10-05-11",
+      "type": "direct-user-input",
+      "location": "2026-10-05 response annotation 11 in Shape multi-source initiative",
+      "anchor": "Compare how users should handle several matches in a supposed unique lookup.",
+      "authority": "latest explicit user feedback; preserve tentative qualifiers"
+    },
+    {
+      "id": "annotation-2026-10-05-12",
+      "type": "direct-user-input",
+      "location": "2026-10-05 response annotation 12 in Shape multi-source initiative",
+      "anchor": "Multiple sources and relationships are useful first; parameter inspection can follow.",
+      "authority": "latest explicit user feedback; preserve tentative qualifiers"
+    },
+    {
+      "id": "annotation-2026-10-05-13",
+      "type": "direct-user-input",
+      "location": "2026-10-05 response annotation 13 in Shape multi-source initiative",
+      "anchor": "Identify source provenance by color and/or a unique glyph when multiple sources exist, with hover access to source details.",
+      "authority": "latest explicit user feedback; preserve tentative qualifiers"
+    },
+    {
+      "id": "annotation-2026-10-05-14",
+      "type": "direct-user-input",
+      "location": "2026-10-05 response annotation 14 in Shape multi-source initiative",
+      "anchor": "Compare which cardinality and population counts should stay visible.",
+      "authority": "latest explicit user feedback; preserve tentative qualifiers"
+    },
+    {
+      "id": "annotation-2026-10-05-15",
+      "type": "direct-user-input",
+      "location": "2026-10-05 response annotation 15 in Shape multi-source initiative",
+      "anchor": "Detect repeated entities through known IDs and avoid showing duplicates where appropriate; behavior depends on chart meaning.",
+      "authority": "latest explicit user feedback; preserve tentative qualifiers"
+    },
+    {
+      "id": "annotation-2026-10-05-16",
+      "type": "direct-user-input",
+      "location": "2026-10-05 response annotation 16 in Shape multi-source initiative",
+      "anchor": "Provide a clear visual difference such as a unique glyph for each query.",
+      "authority": "latest explicit user feedback; preserve tentative qualifiers"
+    },
+    {
+      "id": "annotation-2026-10-05-17",
+      "type": "direct-user-input",
+      "location": "2026-10-05 response annotation 17 in Shape multi-source initiative",
+      "anchor": "Build confidence by seeing the query, its backing rows, and its overlay on the full schema.",
+      "authority": "latest explicit user feedback; preserve tentative qualifiers"
+    },
+    {
+      "id": "main-multiview-148",
+      "type": "repository",
+      "location": "origin/main a2e67c0; PR https://github.com/byronwall/explorEDA/pull/148; apps/demo/src/{SavedViewsWorkspace.tsx,SavedViewTabs.tsx,savedViewsSession.ts,savedViewsHistory.ts,HistoryTimeline.tsx,demos/exampleViews.ts}; packages/explorEDA/src/components/{ExplorEda.tsx,WorkspaceSidePanel.tsx}",
+      "anchor": "Fetched main; saved tabs and session storage; shared definition propagation; 50 checkpoint cap; read-only preview/restore; timeline bundles/net effects; sidePanels/readOnly public props.",
+      "authority": "inspected merged implementation, not runtime/browser proof"
+    },
+    {
+      "id": "reuse-multiview-request",
+      "type": "direct-user-input",
+      "location": "Current follow-up in Shape multi-source initiative",
+      "anchor": "Main has multi-view and history; integrate it into intent and use existing view UI.",
+      "authority": "explicit current direction"
+    },
+    {
+      "id": "implementation-plan-request-2026-10-05",
+      "type": "direct-user-input",
+      "location": "Current request in this chat",
+      "anchor": "Create a detailed implementation plan for the initiative. Put it in the same branch/worktree as current.",
+      "authority": "Explicit request for planning and artifact updates; not implementation or retirement."
+    },
+    {
+      "id": "planning-code-review-2026-10-05",
+      "type": "repository",
+      "location": "8c35e4d: packages/explorEDA/src/{providers/lib/dataLayerState.ts,providers/DataLayerProvider.tsx,hooks/CrossfilterWrapper.ts,lib/aggregates.ts,components/charts/trace/ChartTraceScope.tsx,utils/saveDataUtils.ts}; a2e67c0: apps/demo/src/{savedViewsSession.ts,savedViewsHistory.ts,SavedViewsWorkspace.tsx,SavedViewsWorkspace.integration.test.tsx,LandingPage.tsx,demos/exampleViews.ts}",
+      "anchor": "Positional numeric __ID; one flat renderer population; scoped chart filters and trace revisions; existing contributor records; settings-only history with global SHARED_KEYS; single-source loader/export; package sidePanels/readOnly leaves host panels usable.",
+      "authority": "Direct source inspection at recorded revisions; not runtime or performance proof."
+    },
+    {
+      "id": "planning-local-target-2026-10-05",
+      "type": "repository-and-local-environment",
+      "location": "apps/demo/vite.config.ts; apps/demo/package.json; apps/demo/public/datasets/shop-operations.csv; lsof -nP -iTCP:4173 -sTCP:LISTEN",
+      "anchor": "Static Vite demo and synthetic shop examples; no process listening on 4173 at planning time; new multi-source-shop fixture and route are proposed.",
+      "authority": "Local read-only check; no server started, no user storage changed, no browser proof."
     }
   ],
   "intent": {
@@ -160,7 +364,7 @@
         "commitment": "explicit",
         "importance": "core",
         "status": "active",
-        "time_horizon": "later",
+        "time_horizon": "first delivery slice",
         "source_anchors": [
           "product-feedback-9"
         ],
@@ -173,11 +377,11 @@
         "commitment": "explicit",
         "importance": "core",
         "status": "active",
-        "time_horizon": "later",
+        "time_horizon": "first delivery slice",
         "source_anchors": [
           "lookup-followup"
         ],
-        "notes": "Moved from project-task-views after the single-source scope correction."
+        "notes": "Moved from project-task-views after the single-source scope correction. Retained as one operation; latest request expands scope beyond lookup enrichment."
       },
       {
         "id": "separate-initiative",
@@ -194,25 +398,353 @@
       {
         "id": "working-population",
         "type": "derived implication",
-        "statement": "Lookups need an explicit base population and visible source field origin.",
+        "statement": "Each query, frame, and chart needs declared entity/mark identity and measure meaning, with inspectable row counts and origin.",
         "commitment": "derived",
         "importance": "core",
         "status": "active",
-        "time_horizon": "later",
+        "time_horizon": "first delivery slice",
         "source_anchors": [
-          "lookup-followup"
-        ]
+          "lookup-followup",
+          "request-2026-10-05",
+          "notes-page-2",
+          "annotation-2026-10-05-2",
+          "annotation-2026-10-05-15"
+        ],
+        "notes": "Expanded beyond one base population; explicit joins may increase row counts."
       },
       {
         "id": "mixed-populations-open",
         "type": "open question",
-        "statement": "Different base populations within one dashboard and relationship-based filter propagation are not decided.",
+        "statement": "Dedicated views across different cardinality spaces are required; multiple populations inside one chart workspace and automatic relationship filter propagation remain unsettled.",
         "commitment": "derived",
         "importance": "core",
         "status": "active",
         "time_horizon": "later",
         "source_anchors": [
-          "bridge-feedback-2"
+          "bridge-feedback-2",
+          "annotation-2026-10-05-6"
+        ]
+      },
+      {
+        "id": "relationships",
+        "type": "outcome",
+        "statement": "Users can see how source tables relate, including matching fields and one/many meaning.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first delivery slice",
+        "source_anchors": [
+          "request-2026-10-05",
+          "notes-page-1",
+          "notes-page-2"
+        ]
+      },
+      {
+        "id": "query-paths",
+        "type": "outcome",
+        "statement": "Users can distinguish the paths multiple queries take through shared source tables and intermediate steps.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "second delivery slice",
+        "source_anchors": [
+          "request-2026-10-05",
+          "notes-page-3"
+        ]
+      },
+      {
+        "id": "parameter-instance",
+        "type": "required behavior",
+        "statement": "Users supply a few parameters to inspect inputs and intermediate tables for one instance of a complicated query.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "third delivery slice",
+        "source_anchors": [
+          "request-2026-10-05",
+          "notes-page-2",
+          "notes-page-3"
+        ]
+      },
+      {
+        "id": "sample-data",
+        "type": "required behavior",
+        "statement": "Generate sample data and ship ready-to-run examples as part of each delivery slice.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "request-2026-10-05",
+          "notes-page-1",
+          "slice-request-2026-10-05"
+        ]
+      },
+      {
+        "id": "repetition",
+        "type": "problem",
+        "statement": "Many repeated intermediate outputs need a compact summary and access to an individual instance.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          "notes-page-3"
+        ]
+      },
+      {
+        "id": "nested-output",
+        "type": "implementation hypothesis",
+        "statement": "Nested one-to-many tables or split-by-column result inspection could make related rows understandable.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "superseded",
+        "time_horizon": "later",
+        "source_anchors": [
+          "notes-page-2",
+          "notes-page-3"
+        ],
+        "notes": "Nested related rows are now required in the broader scope by annotation 6; split-by-column remains optional."
+      },
+      {
+        "id": "scope-expansion",
+        "type": "decision",
+        "statement": "The old lookup-only first shape no longer covers all three requested outcomes.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "request-2026-10-05"
+        ]
+      },
+      {
+        "id": "three-slices",
+        "type": "implementation hypothesis",
+        "statement": "Retain one initiative and deliver relationships/lookups, query paths, then parameter instances as dedicated slices.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "slice-request-2026-10-05"
+        ]
+      },
+      {
+        "id": "primary-job",
+        "type": "outcome",
+        "statement": "Make sense of data spanning tables through several queries and joins; the hard part is knowing when displayed charts use a join.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "annotation-2026-10-05-1"
+        ]
+      },
+      {
+        "id": "schema-frame",
+        "type": "required behavior",
+        "statement": "Start naturally from an ER/schema view; choose a frame for core cardinality and help aggregate when one-to-many links would expand it.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first delivery slice",
+        "source_anchors": [
+          "annotation-2026-10-05-2"
+        ]
+      },
+      {
+        "id": "link-authoring",
+        "type": "required behavior",
+        "statement": "Support developer-configured links and user drag-and-link creation, with client-side consequence validation; agent suggestions through flat config are near-term follow-up.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first delivery slice",
+        "source_anchors": [
+          "annotation-2026-10-05-3"
+        ]
+      },
+      {
+        "id": "assisted-bindings",
+        "type": "preference",
+        "statement": "Start instance inspection from a known record; support manual values with dropdowns and suitable pickers.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "third delivery slice",
+        "source_anchors": [
+          "annotation-2026-10-05-4"
+        ]
+      },
+      {
+        "id": "two-flow-modes",
+        "type": "required behavior",
+        "statement": "Provide simplified inspection and a full flow mode through every transformation.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "second delivery slice",
+        "source_anchors": [
+          "annotation-2026-10-05-5"
+        ]
+      },
+      {
+        "id": "cardinality-spaces",
+        "type": "desired experience",
+        "statement": "Support separate tables, nested related rows, aggregates with contributors, and dedicated views across cardinality spaces; reconcile against the multi-view PR after it lands and before implementation.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "second delivery slice",
+        "source_anchors": [
+          "annotation-2026-10-05-6"
+        ]
+      },
+      {
+        "id": "focused-query",
+        "type": "preference",
+        "statement": "Focus on one query for inspection; do not start with query comparison.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "second delivery slice",
+        "source_anchors": [
+          "annotation-2026-10-05-7"
+        ]
+      },
+      {
+        "id": "automatic-results",
+        "type": "preference",
+        "statement": "Prefer immediate result updates after parameter changes.",
+        "commitment": "tentative",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "third delivery slice",
+        "source_anchors": [
+          "annotation-2026-10-05-8"
+        ]
+      },
+      {
+        "id": "scale-hypothesis",
+        "type": "rough estimate",
+        "statement": "A demanding case might use ten tables with ten thousand rows each and execute in seconds.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "annotation-2026-10-05-9"
+        ]
+      },
+      {
+        "id": "host-persistence",
+        "type": "required behavior",
+        "statement": "Save the whole investigation where practical; the React component must emit state for persistence elsewhere. Local storage is initial host storage; server storage is eventual.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first delivery slice",
+        "source_anchors": [
+          "annotation-2026-10-05-10"
+        ]
+      },
+      {
+        "id": "ambiguity-decision",
+        "type": "open question",
+        "statement": "Compare how users should handle several matches in a supposed unique lookup.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "resolved",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "annotation-2026-10-05-11"
+        ]
+      },
+      {
+        "id": "slice-order",
+        "type": "decision",
+        "statement": "Multiple sources and relationships are useful first; parameter inspection can follow.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first delivery slice",
+        "source_anchors": [
+          "annotation-2026-10-05-12"
+        ]
+      },
+      {
+        "id": "source-visual-identity",
+        "type": "preference",
+        "statement": "Identify source provenance by color and/or a unique glyph when multiple sources exist, with hover access to source details.",
+        "commitment": "tentative",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first delivery slice",
+        "source_anchors": [
+          "annotation-2026-10-05-13"
+        ]
+      },
+      {
+        "id": "count-decision",
+        "type": "open question",
+        "statement": "Compare which cardinality and population counts should stay visible.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "resolved",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "annotation-2026-10-05-14"
+        ]
+      },
+      {
+        "id": "chart-identity",
+        "type": "required behavior",
+        "statement": "Detect repeated entities through known IDs and avoid showing duplicates where appropriate; behavior depends on chart meaning.",
+        "commitment": "tentative",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first delivery slice",
+        "source_anchors": [
+          "annotation-2026-10-05-15"
+        ]
+      },
+      {
+        "id": "query-visual-identity",
+        "type": "required behavior",
+        "statement": "Provide a clear visual difference such as a unique glyph for each query.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first delivery slice",
+        "source_anchors": [
+          "annotation-2026-10-05-16"
+        ]
+      },
+      {
+        "id": "confidence-path",
+        "type": "desired experience",
+        "statement": "Build confidence by seeing the query, its backing rows, and its overlay on the full schema.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "second delivery slice",
+        "source_anchors": [
+          "annotation-2026-10-05-17"
+        ]
+      },
+      {
+        "id": "reuse-view-history",
+        "type": "required behavior",
+        "statement": "Use the landed saved-view tab UI and history for multi-source investigations; extend per-view data/query/frame bindings and history capture rather than build a separate view manager.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first delivery slice",
+        "source_anchors": [
+          "reuse-multiview-request",
+          "main-multiview-148"
         ]
       }
     ],
@@ -220,16 +752,41 @@
       "source identities",
       "explicit lookups",
       "field origin",
-      "trustworthy row populations"
+      "trustworthy row populations",
+      "query path context",
+      "parameter-bound intermediate inspection",
+      "sample data from first delivery",
+      "schema-led frame selection",
+      "chart-specific cardinality",
+      "visual query/source identity",
+      "host-owned persistence",
+      "multi-view reconciliation"
     ],
-    "conflicts": [],
-    "human_questions": [
+    "conflicts": [
       {
-        "question": "Should one dashboard contain charts with different base populations?",
-        "status": "deferred"
+        "earlier": "One base-source lookup result was the whole first shape.",
+        "current": "Query paths and parameter instances are now core outcomes.",
+        "resolution": "Retain count-preserving lookups, add explicit expanding stages, and separate delivery into three slices.",
+        "source_anchors": [
+          "request-2026-10-05",
+          "slice-request-2026-10-05"
+        ]
       },
       {
-        "question": "Should filters propagate through source relationships?",
+        "earlier": "Developer-supplied steps only, manual Run, nested results tentative.",
+        "current": "Schema-led user links and frame selection, preferred automatic updates, and several cardinality presentations.",
+        "resolution": "Replace developer-only entry flow; promote nested exploration in slice two; keep parameters in slice three and update automatically.",
+        "source_anchors": [
+          "annotation-2026-10-05-2",
+          "annotation-2026-10-05-3",
+          "annotation-2026-10-05-6",
+          "annotation-2026-10-05-8"
+        ]
+      }
+    ],
+    "human_questions": [
+      {
+        "question": "Should filters propagate automatically across relationships?",
         "status": "deferred"
       }
     ]
@@ -241,47 +798,707 @@
     "selected_option": null
   },
   "shape": {
-    "status": "provisional",
-    "appetite": "One orders-based view enriched through customer and product lookups.",
-    "recommended_shape": "Propose one base source per task view, enriched through explicit lookups. Keep orders, customers, and products distinct in the project definition. Resolve lookup fields before giving a single working dataset to the existing chart engine.",
+    "status": "current",
+    "appetite": "Local shop first; three delivery slices implemented by four outcome milestones. Reconcile PR #148 into the existing checkout before application edits.",
+    "recommended_shape": "Schema-led frame selection and user/configured links; cardinality guidance and chart-specific identity/measure rules; stable source and query glyphs; query overlay and backing rows; simplified/full inspection; host persistence; assisted automatic parameter instances later.",
     "success_moves": [
-      "Preserve base row counts",
-      "Use asymmetric local tables",
-      "Retain field origin",
-      "Prepare rows once per view",
-      "Separate source loading"
+      "Choose frame grain and identity before traversing links; preview one-to-many expansion and offer aggregation or explicit frame change.",
+      "Separate source glyphs from query glyphs; retain stable identities in saved state and use text-accessible provenance instead of color alone.",
+      "Keep chart summaries compact and put stage counts, distinct entities, and contributors in simplified/full inspection.",
+      "Generate one fixture with expected entity counts and totals; include reused IDs, ambiguity, empty stages, and deliberate expansion in every relevant slice.",
+      "Extend the landed saved-view session and timeline; bind each tab/checkpoint to its query/frame and scope shared definitions by compatible data identity.",
+      "Publish one consistent applied instance after automatic updates; benchmark stated scale and expanded joins before choosing execution scheduling."
     ],
     "first_proof": {
-      "question": "Can lookups enrich orders without corrupting counts or field meaning?",
-      "artifact": "A deterministic orders/customer/product example with matched, missing, and ambiguous keys",
-      "decision_rule": "Base row totals remain correct, ambiguity is visible, and fields trace to their sources"
+      "question": "Does existing view/history UI preserve the correct multi-source frame and backing rows?",
+      "artifact": "Milestone 1 configured shop fixture: five orders, eight items, order total 150, item revenue 140; order/item tabs, duplication, read-only checkpoint preview, restore, and local reload.",
+      "observation": "Selected view and checkpoint agree on query/frame, rows, filters, counts, shared definitions, and glyph identity; preview makes no edits.",
+      "decision_rule": "Proceed if intended totals survive view switches, restore and reload. Repair scope/history mismatches before parameter work."
     },
     "open_decisions": [
-      "Different base populations within one dashboard",
-      "Relationship-based filter propagation"
+      "Automatic filter propagation across source relationships remains deferred."
     ],
     "rabbit_holes": [
-      "general relational query engine",
-      "remote query providers",
-      "per-chart lookup copies"
+      "General SQL parsing and automatic query lineage",
+      "Remote query providers and server persistence in first proof",
+      "Agent service before shared config exists",
+      "Universal deduplication or aggregation",
+      "Batch parameter execution and query comparison"
     ],
     "proposed_rules": [
-      "One base record yields one working row",
-      "Unique match supplies lookup values",
-      "Missing match yields missing values",
-      "Duplicate target keys report ambiguity"
-    ]
+      "A frame declares entity grain and identity; a chart declares mark identity and measure aggregation.",
+      "A many-side traversal offers aggregation at the current grain or a deliberate frame change.",
+      "An ambiguous unique lookup cannot choose the first match; unresolved fields/measures remain visibly unavailable until resolved.",
+      "Collapse duplicate entity marks only where the chart identity permits it; measure aggregation still follows declared grain.",
+      "A chart shows query glyph, frame/measure meaning, and included/available count; inspection exposes expansion and distinct entity counts when relevant.",
+      "A query glyph identifies its definition; labels and details identify active bindings and frame. Source glyphs identify contributing tables.",
+      "Automatic parameter updates publish consistent stage results; pending results retain their applied labels until replaced.",
+      "Host persistence restores investigation state; derived rows may recompute from the same definitions and source references."
+    ],
+    "problem": "A flat row array hides table relationships, query paths, and the rows produced by intermediate steps.",
+    "ownership": {
+      "host": "Reuse saved-view session owner for tabs/history/local persistence. Extend restorable state and host outputs for sources, relationships, queries, and per-view frame/instance bindings.",
+      "component": "Proposed ExplorEdaProject package component receives source tables, definitions, selected view, and read-only state; emits coherent definition/view changes. Existing ExplorEda renders selected rows. Host retains tabs/history/storage.",
+      "execution_seam": "Evaluate frame/query definitions and bindings into consistent stage tables, row-origin links, cardinality observations, and selected results.",
+      "renderer": "Chart-specific mark identity and measure rules over selected results; never deduplicate all joins indiscriminately."
+    },
+    "counterproposal": {
+      "approach": "Only configured relationships and developer-supplied paths feeding existing charts.",
+      "decision": "Insufficient first product slice after feedback.",
+      "reason": "User requires natural schema-led frame selection and simple relationship creation with cardinality help."
+    },
+    "slice_decision": {
+      "scale": "0 fails the stated outcome; 10 fully supports it. Scores are judgment estimates, not measured results.",
+      "dimensions": [
+        "usable related-data result per slice",
+        "consistent query and parameter meaning",
+        "working examples per slice"
+      ],
+      "options": [
+        {
+          "approach": "One large delivery",
+          "scores": [
+            4,
+            9,
+            7
+          ],
+          "reasons": [
+            "Useful result waits for the complete flow.",
+            "One model owns all definitions.",
+            "Examples arrive together rather than proving intermediate delivery."
+          ]
+        },
+        {
+          "approach": "Separate independent initiatives",
+          "scores": [
+            8,
+            5,
+            6
+          ],
+          "reasons": [
+            "Each can deliver alone.",
+            "Relationship and query-instance definitions can diverge.",
+            "Independent fixtures can describe different semantics."
+          ]
+        },
+        {
+          "approach": "One initiative, three dedicated slices",
+          "scores": [
+            9,
+            9,
+            9
+          ],
+          "reasons": [
+            "Each adds a useful related-data flow.",
+            "Shared definitions connect all slices.",
+            "Each extends the same fixture and expected counts."
+          ]
+        }
+      ],
+      "choice": "One initiative, three dedicated slices; no new folders or independent initiative maps yet.",
+      "watch": "The first slice must preserve source and row identity needed by later query steps; do not build a generic engine early."
+    },
+    "delivery_slices": [
+      {
+        "name": "Sources, relationships, and frames",
+        "outcome": "Create or configure links from schema, choose frame, get cardinality help, and chart an identifiable result; export and restore state.",
+        "depends_on": [],
+        "sample_work": [
+          "Generate customers, orders, order items, products with known IDs and unequal counts.",
+          "Add missing and ambiguous unique keys, repeated order IDs after item joins, unused products, and no-orders customers.",
+          "Provide order-frame and item-frame charts with similar appearance but distinct query glyphs and correct measures.",
+          "Record before/after join counts, distinct IDs, aggregation totals, and expected restore state.",
+          "Open order/item presets as existing saved tabs; add relationship/frame edits and expected preview/restore/reload behavior."
+        ],
+        "proof": "Choose order frame, link/aggregate items, duplicate to item frame, switch tabs, preview read-only history, restore as new checkpoint, and reload with correct rows/totals.",
+        "implementation_milestones": [
+          "m1",
+          "m2"
+        ]
+      },
+      {
+        "name": "Query paths and cardinality exploration",
+        "outcome": "Use saved tabs for cardinality spaces, and host side panels for selected-query schema overlay and simplified/full flow inspection.",
+        "depends_on": [
+          "Sources, relationships, and frames"
+        ],
+        "sample_work": [
+          "Extend shared fixture with two paths and branching calculations/filter/aggregate stages.",
+          "Add nested customer-order rows and aggregate contributor examples.",
+          "Provide expected row units, counts, distinct identities, exclusions, and totals per step."
+        ],
+        "proof": "Explain all transformations to the selected chart and move across cardinality views without losing their query identities.",
+        "implementation_milestones": [
+          "m3"
+        ]
+      },
+      {
+        "name": "Parameter-bound instances",
+        "outcome": "Start with a known record, edit assisted inputs, and automatically refresh a consistent instance.",
+        "depends_on": [
+          "Query paths and cardinality exploration"
+        ],
+        "sample_work": [
+          "Add customer and date pickers with valid, invalid, no-match, and alternative-instance presets.",
+          "Include a longer path for isolated intermediate inspection.",
+          "Add deterministic delayed evaluation for pending-state checks; retain applied labels."
+        ],
+        "proof": "Select a record, change valid bindings, inspect consistent automatic results at each stage, and restore the instance.",
+        "implementation_milestones": [
+          "m4"
+        ]
+      }
+    ],
+    "dependency_proof_strategy": [
+      {
+        "id": "query-evaluation",
+        "name": "Local query execution and chart identity",
+        "material": true,
+        "kind": "internal-subsystem",
+        "application_seam": "Project definitions + source tables + bindings produce one applied result with stage rows, stable result keys, origins, diagnostics, and frame context. Existing charts retain numeric runtime IDs.",
+        "first_proof_role": {
+          "mode": "real",
+          "rationale": "Real local joins, reductions, and renderer are necessary to prove totals and identity. Synthetic source tables are deterministic fixtures, not a mocked evaluator."
+        },
+        "failure_modes": [
+          "missing key",
+          "duplicate unique key",
+          "null/type-mismatched keys",
+          "duplicate entity key",
+          "unintended expansion",
+          "inflated repeated parent measure",
+          "runtime ID selection restored to another row",
+          "empty output",
+          "superseded evaluation completion"
+        ],
+        "proof_rungs": [
+          "deterministic-local-evaluator",
+          "real-package-host-integration",
+          "browser-proof"
+        ],
+        "local_proof": "Fixed fixture assertions plus real chart/provider integration; later delayed completion fixture tests atomic parameter updates.",
+        "live_proof": "No external provider. Frozen local browser build proves actual rendering and responsiveness; evaluator mocks cannot prove either.",
+        "rollout": "Add a project component and example; keep supported single-source analysis usable. Revert definitions through history or code through a prior revision."
+      },
+      {
+        "id": "project-view-history",
+        "name": "Landed saved-view session and history",
+        "material": true,
+        "kind": "internal-subsystem",
+        "application_seam": "One host checkpoint captures project definitions and all views together; preview/restore resolves the selected checkpoint against source data stored once.",
+        "first_proof_role": {
+          "mode": "real",
+          "rationale": "The first proof specifically checks the landed tab/history implementation. A fake history reducer would not prove correct displayed bindings."
+        },
+        "failure_modes": [
+          "settings restored with current query definitions",
+          "incompatible shared definitions propagated",
+          "preview callback mutates present state",
+          "checkpoint trimming drops dependencies",
+          "missing source replaced silently",
+          "export omits source/query dependencies",
+          "storage failure"
+        ],
+        "proof_rungs": [
+          "existing-history-unit-suite",
+          "real-package-host-integration",
+          "browser-reload-export-import"
+        ],
+        "local_proof": "Extend savedViewsHistory and real SavedViewsWorkspace integration tests; show matching query glyphs, rows, totals, and filters through restore and reload.",
+        "live_proof": "Real isolated local browser storage proves reload and import. No server, credentials, or historical source versions are required.",
+        "rollout": "Preserve single-source sessions. Use an explicit project format and key, source rows outside history, and existing recoverable restore behavior. Do not add old-format migrations."
+      },
+      {
+        "name": "Remote execution and persistence",
+        "material": false,
+        "first_proof_role": {
+          "mode": "absent",
+          "rationale": "No provider or server is required for this initiative."
+        },
+        "proof_rungs": []
+      }
+    ],
+    "top_risks": [
+      "A chart identifies source tables but hides its query/frame and join-induced repetition.",
+      "Global deduplication hides legitimate item contributions or leaves duplicated measures inflated.",
+      "Full inspection omits calculations, exclusions, or nested paths.",
+      "State export leaves host unable to restore user-created links and investigations.",
+      "Immediate updates mix old rows with new binding labels.",
+      "The current checkout lacks the inspected multi-view baseline; implementation must reconcile it before code changes.",
+      "History restores charts but leaves current query/frame definitions, producing the wrong backing data.",
+      "Existing global shared-key propagation sends incompatible calculations or field settings to a different frame."
+    ],
+    "comparison_decisions": [
+      {
+        "id": "ambiguous-matches",
+        "source_annotation": 11,
+        "decision": "How to resolve multiple matches while retaining intended frame meaning.",
+        "scale": "Judgment estimates: 0 fails the named outcome, 10 fully supports it; no aggregate score.",
+        "dimensions": [
+          "preserves frame meaning",
+          "helps users resolve matches"
+        ],
+        "options": [
+          {
+            "approach": "Pick first match",
+            "scores": [
+              2,
+              2
+            ],
+            "reasons": [
+              "Silently discards alternatives.",
+              "Hides the conflict."
+            ]
+          },
+          {
+            "approach": "Keep all matches automatically",
+            "scores": [
+              3,
+              6
+            ],
+            "reasons": [
+              "May multiply entities and measures.",
+              "Exposes matches but changes the task without consent."
+            ]
+          },
+          {
+            "approach": "Preserve frame with explicit resolution",
+            "scores": [
+              9,
+              9
+            ],
+            "reasons": [
+              "Prevents silent expansion.",
+              "Offers repair, aggregation, or explicit expanded frame."
+            ]
+          }
+        ],
+        "choice": "Preserve frame; show conflicts and offer link repair, explicit aggregation, or expanded frame. A selected single match needs a declared selection rule.",
+        "watch": "Aggregation cannot be one universal operation: numeric measures, labels, and conflicting values need suitable choices. Unresolved lookup values must remain visible as unresolved.",
+        "next": "Add ambiguous-key variants and frame-preserving resolution to first-slice proof."
+      },
+      {
+        "id": "visible-counts",
+        "source_annotation": 14,
+        "decision": "Which counts convey backing data without filling each chart with query diagnostics.",
+        "scale": "Judgment estimates: 0 fails the named outcome, 10 fully supports it; no aggregate score.",
+        "dimensions": [
+          "identifies chart population",
+          "explains cardinality changes"
+        ],
+        "options": [
+          {
+            "approach": "One row count",
+            "scores": [
+              4,
+              2
+            ],
+            "reasons": [
+              "Leaves row unit and duplicate entity meaning implicit.",
+              "Omits effects of joins."
+            ]
+          },
+          {
+            "approach": "All stage counts on every chart",
+            "scores": [
+              7,
+              8
+            ],
+            "reasons": [
+              "Adds context but crowds the chart.",
+              "Shows stage transitions."
+            ]
+          },
+          {
+            "approach": "Compact frame/count summary with detailed inspection",
+            "scores": [
+              9,
+              9
+            ],
+            "reasons": [
+              "Names frame, measure, and included/available population.",
+              "Provides stage, distinct-identity, and contributor counts on demand."
+            ]
+          }
+        ],
+        "choice": "Query glyph plus frame/measure and included/available count in chart context; expand inspection for stage and distinct entity counts when joins matter.",
+        "watch": "Count labels must match chart scope: item rows, distinct orders, contributors, and rendered marks are different quantities. Source glyphs alone cannot identify the query.",
+        "next": "Use paired charts with similar appearance and different grains to test population recognition."
+      }
+    ],
+    "preimplementation_reconciliation": {
+      "status": "planning reconciliation completed; checkout update and runtime proof pending",
+      "revision": "a2e67c0",
+      "pull_request": "https://github.com/byronwall/explorEDA/pull/148",
+      "findings": [
+        "Saved view/history management is in the demo host, not the public SavedDataStructure.",
+        "All current tabs consume sourceAnalysis rows; view settings do not bind different row populations.",
+        "SHARED_KEYS propagates calculations, colorScales, fieldSettings, aggregates, geometryAssets to every tab.",
+        "History snapshots tabs and their settings; sourceAnalysis is outside each checkpoint. Preview is read-only; restore appends a checkpoint.",
+        "The package adds sidePanels and readOnly; reuse for schema/query inspection and historical preview."
+      ],
+      "remaining_checks": [
+        "Reconcile the inspected PR #148 baseline into this same worktree without losing existing edits; refresh source assumptions if the implementation baseline changed.",
+        "Run baseline saved-view and host integration checks after reconciliation.",
+        "Prove the proposed numeric-ID bridge and full project/view callback round trip in milestone 1.",
+        "Complete real browser proof of switch/duplicate/preview/restore/reload; planning did not run it."
+      ],
+      "source_anchors": [
+        "main-multiview-148",
+        "reuse-multiview-request"
+      ]
+    },
+    "scale_probe": {
+      "tables": 10,
+      "rows_per_table": 10000,
+      "latency": "seconds; rough user estimate, no precise SLA",
+      "status": "unmeasured hypothesis",
+      "proof": "Probe indexed local execution and serialization in milestone 2. In milestone 4 measure fixed-seed ten-table/10,000-row inputs, fan-out, result rows, origin size, browser responsiveness, and persisted size. Use a worker only if measurements require it; never silently truncate computed rows.",
+      "source_anchors": [
+        "annotation-2026-10-05-9"
+      ]
+    },
+    "view_history_integration": {
+      "reuse": [
+        "SavedViewTabs actions and keyboard navigation",
+        "SavedViewsWorkspace host session and local persistence",
+        "HistoryTimeline grouped changes and net-effect summaries",
+        "Undo/redo and read-only checkpoint preview",
+        "Restore as new checkpoint",
+        "ExplorEda sidePanels and readOnly props",
+        "ExampleView initial tab presets"
+      ],
+      "per_view": [
+        "queryId",
+        "frame identity/grain",
+        "instance bindings when introduced",
+        "charts/layout",
+        "local filters",
+        "query glyph context"
+      ],
+      "project_state": [
+        "source identities/references",
+        "relationships",
+        "query definitions",
+        "source glyph assignments",
+        "compatible shared definitions"
+      ],
+      "history": "Snapshot view bindings plus referenced project definitions together; preview/restore resolves rows using available project data. Source-data time travel is excluded.",
+      "new_view": "Blank charts and local filters on the active frame; retain applicable shared definitions.",
+      "duplicate": "Copy frame/query/instance bindings and charts while allocating a new view identity; offer explicit frame change.",
+      "frame_change": "Offer new dedicated view rather than silently replacing the original cardinality investigation.",
+      "restore": "Reuse existing preview/restore affordances; restore appends a recoverable checkpoint. Missing source dependencies are shown, not silently replaced.",
+      "change_labels": "Extend meaningful history descriptions for link, query, frame, and parameter changes; keep automatic recomputation out of the timeline unless configuration changes.",
+      "scope_warning": "Shared definitions cannot be blindly copied across incompatible derived populations.",
+      "definition_sharing": "Conservative exact query/frame scope for calculations, aggregates, and field settings. Qualified field references prevent name collisions; field-independent palettes and geometry may remain project-wide.",
+      "query_edit": "Duplicate retains query/frame bindings. Rebinding affects one view; shared query edits update bound views immediately. Explicit copy-query creates an independent definition and glyph.",
+      "inspection_state": "Persist query/step, mode, and stable record selection; do not checkpoint hover, temporary menus, or evaluation completion."
+    }
   },
   "implementation": {
-    "status": "not-requested",
-    "dependencies": [],
-    "milestones": [],
-    "open_decisions": []
+    "status": "current",
+    "dependencies": [
+      {
+        "id": "query-evaluation",
+        "name": "Local query execution and chart identity",
+        "material": true,
+        "kind": "internal-subsystem",
+        "application_seam": "Project definitions + source tables + bindings produce one applied result with stage rows, stable result keys, origins, diagnostics, and frame context. Existing charts retain numeric runtime IDs.",
+        "first_proof_role": {
+          "mode": "real",
+          "rationale": "Real local joins, reductions, and renderer are necessary to prove totals and identity. Synthetic source tables are deterministic fixtures, not a mocked evaluator."
+        },
+        "failure_modes": [
+          "missing key",
+          "duplicate unique key",
+          "null/type-mismatched keys",
+          "duplicate entity key",
+          "unintended expansion",
+          "inflated repeated parent measure",
+          "runtime ID selection restored to another row",
+          "empty output",
+          "superseded evaluation completion"
+        ],
+        "proof_rungs": [
+          "deterministic-local-evaluator",
+          "real-package-host-integration",
+          "browser-proof"
+        ],
+        "local_proof": "Fixed fixture assertions plus real chart/provider integration; later delayed completion fixture tests atomic parameter updates.",
+        "live_proof": "No external provider. Frozen local browser build proves actual rendering and responsiveness; evaluator mocks cannot prove either.",
+        "rollout": "Add a project component and example; keep supported single-source analysis usable. Revert definitions through history or code through a prior revision."
+      },
+      {
+        "id": "project-view-history",
+        "name": "Landed saved-view session and history",
+        "material": true,
+        "kind": "internal-subsystem",
+        "application_seam": "One host checkpoint captures project definitions and all views together; preview/restore resolves the selected checkpoint against source data stored once.",
+        "first_proof_role": {
+          "mode": "real",
+          "rationale": "The first proof specifically checks the landed tab/history implementation. A fake history reducer would not prove correct displayed bindings."
+        },
+        "failure_modes": [
+          "settings restored with current query definitions",
+          "incompatible shared definitions propagated",
+          "preview callback mutates present state",
+          "checkpoint trimming drops dependencies",
+          "missing source replaced silently",
+          "export omits source/query dependencies",
+          "storage failure"
+        ],
+        "proof_rungs": [
+          "existing-history-unit-suite",
+          "real-package-host-integration",
+          "browser-reload-export-import"
+        ],
+        "local_proof": "Extend savedViewsHistory and real SavedViewsWorkspace integration tests; show matching query glyphs, rows, totals, and filters through restore and reload.",
+        "live_proof": "Real isolated local browser storage proves reload and import. No server, credentials, or historical source versions are required.",
+        "rollout": "Preserve single-source sessions. Use an explicit project format and key, source rows outside history, and existing recoverable restore behavior. Do not add old-format migrations."
+      },
+      {
+        "name": "Remote execution and persistence",
+        "material": false,
+        "first_proof_role": {
+          "mode": "absent",
+          "rationale": "No provider or server is required for this initiative."
+        },
+        "proof_rungs": []
+      }
+    ],
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Switch and restore trustworthy order and item views",
+        "status": "planned",
+        "slice": 1,
+        "depends_on": [],
+        "outcome": "Configured order/item queries show correct rows and totals through duplicate, switch, preview, restore, undo/redo, and reload.",
+        "changes": [
+          "Reconcile PR #148 in this same worktree before application changes.",
+          "Add deterministic shop fixture, project types, indexed local lookup/aggregate evaluator, stable-key bridge, and package project component.",
+          "Bind active and preview views to their query/frame; scope definitions; checkpoint definitions and views atomically.",
+          "Load the project preset and prove host callback/state reload with sources stored once."
+        ],
+        "proof": "Five order rows total 150; eight item rows total 140 and represent four orders. All view/history operations retain the intended context. Preview changes nothing. A foreign-frame calculation does not propagate.",
+        "valid_intermediate_state": "Runnable configured multi-source example within the existing saved-view shell; single-source analysis stays usable. User-created links remain milestone 2.",
+        "rollback": "Restore prior project checkpoint or revert project integration; open an existing single-source example.",
+        "dependencies_introduced": [],
+        "dependencies_used": [
+          "query-evaluation",
+          "project-view-history"
+        ],
+        "evidence": []
+      },
+      {
+        "id": "m2",
+        "title": "Build relationships and choose chart grain from the schema",
+        "status": "planned",
+        "slice": 1,
+        "depends_on": [
+          "m1"
+        ],
+        "outcome": "Users create links, resolve cardinality consequences, choose chart grain, and export/import a complete investigation.",
+        "changes": [
+          "Add schema panel with drag linking and equivalent keyboard/touch selectors, declared/observed cardinality, and stable glyphs.",
+          "Provide aggregate-at-current-grain or explicit expanded-frame choices, conflict repair, and unresolved dependency handling.",
+          "Integrate source/frame context and explicit entity/measure behavior into chart plans and traces; translate saved row selections.",
+          "Add project serialization with dependency closure, examples, usage docs, and an initial measured scale probe."
+        ],
+        "proof": "Create a link by pointer and keyboard at 1280/783/390 widths. Resolve duplicate-key fixture explicitly. Preserve order total 150 and item revenue 140; do not report repeated parent sum 310 as order revenue. Export/import full and active-view projects.",
+        "valid_intermediate_state": "Complete first product slice with schema authoring, charts, history, reload, and portable state.",
+        "rollback": "Keep configured presets usable; revert incomplete authoring controls or restore definitions without replacing the history owner.",
+        "dependencies_introduced": [],
+        "dependencies_used": [
+          "query-evaluation",
+          "project-view-history"
+        ],
+        "evidence": []
+      },
+      {
+        "id": "m3",
+        "title": "Follow a complete query and inspect related records",
+        "status": "planned",
+        "slice": 2,
+        "depends_on": [
+          "m2"
+        ],
+        "outcome": "Selected-query schema overlay and simplified/full flow explain exact backing rows, nested records, and aggregate contributors.",
+        "changes": [
+          "Expose explicit query stages and real renderer filter/calculation/aggregation/exclusion traces.",
+          "Add query overlay, step inspection, related scalar tables, contributors, and explicit new-view actions.",
+          "Persist meaningful inspection selection and invalidate stale traces by applied result revision."
+        ],
+        "proof": "Check both query paths and every stage against fixture expectations. Reach C1’s two orders and three items totaling 50. Inspect empty stages and exclusions. Restored definitions produce matching flows; temporary inspection leaves layouts unchanged.",
+        "valid_intermediate_state": "Complete second slice with inspectable query paths and cardinality spaces; parameter-free first slice remains usable.",
+        "rollback": "Close or revert inspection UI while retaining the selected result and saved views.",
+        "dependencies_introduced": [],
+        "dependencies_used": [
+          "query-evaluation",
+          "project-view-history"
+        ],
+        "evidence": []
+      },
+      {
+        "id": "m4",
+        "title": "Inspect parameter instances with automatic, consistent updates",
+        "status": "planned",
+        "slice": 3,
+        "depends_on": [
+          "m3"
+        ],
+        "outcome": "Record-seeded and manual bindings update all stages consistently, survive restoration, and operate within measured local limits.",
+        "changes": [
+          "Add typed parameter definitions, assisted inputs, per-view bindings, and dependency-limited isolated-stage evaluation.",
+          "Separate draft and applied bindings; atomically publish results and discard stale completions.",
+          "Measure fixed-seed ten-table/10,000-row inputs and fan-out; choose a worker only when input responsiveness requires it."
+        ],
+        "proof": "Known record, invalid input, no-match, delayed out-of-order completion, view switch, preview, export, and restore all keep bindings/rows/counts aligned. Record timings, result sizes, origin size, and storage size; never silently truncate computed output.",
+        "valid_intermediate_state": "All three initiative slices are available locally with reproducible examples and observed performance limits.",
+        "rollback": "Restore parameter configuration through history; parameter-free queries stay usable.",
+        "dependencies_introduced": [],
+        "dependencies_used": [
+          "query-evaluation",
+          "project-view-history"
+        ],
+        "evidence": []
+      }
+    ],
+    "open_decisions": [
+      {
+        "id": "identity-bridge",
+        "milestone": "m1",
+        "decision_output": "Smallest project-to-runtime identity mapping that preserves selections through restore.",
+        "evidence": "Real numeric __ID filters and result reorder/removal round trip.",
+        "fallback": "Retain numeric IDs per applied result and translate logical keys at the project boundary; avoid replacing chart IDs throughout the library."
+      },
+      {
+        "id": "execution-scheduling",
+        "milestone": "m4",
+        "probe_at": "m2",
+        "decision_output": "Measured synchronous versus single-worker execution and any explicit expansion limit.",
+        "evidence": "Fixed-seed scale/fan-out measurements, input responsiveness, result/origin/storage size.",
+        "fallback": "Use one worker if input blocks; require narrower queries or aggregation for excessive output. No silent truncation or automatic remote execution."
+      }
+    ],
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/81eb/explorEDA",
+      "revision": "8c35e4db02d9e0efc0842644d4a669e58d10caf8",
+      "worktree_status": "Detached HEAD at 8c35e4d. Map, intent brief, and shape brief already modified before this planning request. Preserve those edits; do not change checkout during planning.",
+      "subsystems": [
+        "ExplorEda/DataLayerProvider flat-row rendering",
+        "CrossfilterWrapper chart filter scopes",
+        "Numeric __ID allocation and ChartTraceScope revision invalidation",
+        "CalculationManager and aggregate contributor records",
+        "SavedDataStructure/SavedAnalysisStructure file boundary",
+        "PR #148 SavedViewsWorkspace/session/history and side panels",
+        "LandingPage example/import/reload loader"
+      ],
+      "test_commands": [
+        "pnpm --filter exploreda test src/test/providers/analysisReliability.test.tsx",
+        "pnpm --filter exploreda build",
+        "pnpm --filter demo test src/SavedViewsWorkspace.integration.test.tsx src/savedViewsHistory.test.ts",
+        "pnpm check:ui",
+        "pnpm check"
+      ],
+      "deployment_surfaces": []
+    },
+    "reference_baseline": {
+      "revision": "a2e67c0",
+      "ref": "origin/main",
+      "inspection": "Re-read relevant merged source and real integration tests through git show at local origin/main a2e67c0. No fetch, checkout update, application tests, or browser run during this request.",
+      "reuse_files": [
+        "apps/demo/src/SavedViewsWorkspace.tsx",
+        "apps/demo/src/SavedViewTabs.tsx",
+        "apps/demo/src/savedViewsSession.ts",
+        "apps/demo/src/savedViewsHistory.ts",
+        "apps/demo/src/HistoryTimeline.tsx",
+        "apps/demo/src/demos/exampleViews.ts",
+        "packages/explorEDA/src/components/WorkspaceSidePanel.tsx",
+        "apps/demo/src/LandingPage.tsx",
+        "apps/demo/src/SavedViewsWorkspace.integration.test.tsx",
+        "apps/demo/src/savedViewsHistory.test.ts"
+      ]
+    },
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda test src/test/lib/analysis/evaluateProject.test.ts",
+      "command_status": "Planned new test file; existing scripts verified in package manifests.",
+      "network_required": false,
+      "shared_infrastructure_required": false,
+      "setup": "Installed pnpm dependencies required; initial install may require network. Build exploreda before demo integration or browser verification.",
+      "failure_injection": [
+        "missing and duplicate keys",
+        "null and mixed scalar keys",
+        "duplicate entity IDs",
+        "empty stage",
+        "incorrect shared scope",
+        "missing source dependency",
+        "delayed evaluation completion"
+      ],
+      "browser": {
+        "command": "pnpm --filter demo preview --host 127.0.0.1 --port 4173 --strictPort",
+        "prerequisites": [
+          "pnpm --filter exploreda build",
+          "pnpm --filter demo build"
+        ],
+        "url": "http://127.0.0.1:4173/?example=multi-source-shop",
+        "status": "Proposed example; no listener on 4173 at planning time. Recheck before starting.",
+        "data": "Isolated browser profile; only synthetic fixture data. No database or user-storage mutation needed."
+      }
+    },
+    "design_decisions": {
+      "public_contract": "Proposed ExplorEdaProject component around existing ExplorEda; controlled definitions and view, atomic callback, source rows supplied separately. Host owns session/history.",
+      "frame_scope": "One query result frame per view. Mixed frames inside one renderer and automatic relationship filter propagation are deferred.",
+      "identity": "Separate source rows, entities, and result keys; bridge to existing numeric runtime IDs and traces.",
+      "first_slice_boundary": "Milestone 1 is the internal configured proof. Milestone 2 is required before claiming the first product slice complete.",
+      "persistence": "Project file format and storage key with source tables once; configuration-only checkpoints. No migration/version coexistence machinery.",
+      "query_updates": "Shared query edits update all bound views; explicit copy-query gives an independent definition. Rebinding is per view.",
+      "chart_scope": "Add explicit scatter identity and grouped-bar/metric entity-measure rules. Other charts keep declared result-row semantics or report incompatible configuration."
+    },
+    "planning_verification": {
+      "code_inspected": true,
+      "browser_run": false,
+      "application_tests_run": false,
+      "performance_measured": false,
+      "reason": "Documentation-only planning; target checkout predates the inspected saved-view baseline.",
+      "validator": "validate-sleuth.mjs passed with zero warnings on the staged artifact set.",
+      "audit": "audit-sleuth.mjs completed; heuristic review checked with direct semantic review of milestone order, fixture arithmetic, state ownership, and cut line.",
+      "consistency_checks": "Milestone names/order and slice mappings agree; all lifecycle states remain planned; local document links resolve; original source and history entries preserved."
+    }
   },
   "history": [
     {
       "date": "2026-09-29",
       "event": "Created a separate intent and provisional shape from prior source/lookup feedback and latest scope correction; no implementation plan"
+    },
+    {
+      "date": "2026-10-05",
+      "event": "Expanded intent from three handwritten pages and direct goals; replaced old prose shape with canonical capability tree; refreshed intent and shape together. Implementation planning remains not requested."
+    },
+    {
+      "date": "2026-10-05",
+      "event": "Assessed lifecycle as planned from one-dataset public API, saved settings, and ticket exclusions. No multi-source implementation evidence found in the inspected paths; migrated schema to 0.5.0 without removing history."
+    },
+    {
+      "date": "2026-10-05",
+      "event": "Applied consider-contrast to proposed splits; selected one umbrella initiative with three dedicated slices and sample work in each."
+    },
+    {
+      "date": "2026-10-05",
+      "event": "Incorporated all 17 response annotations. Superseded developer-only query entry, manual Run, and tentative nested exploration. Compared ambiguity resolution and visible counts; recorded recommendations. Preserved three slices, with parameters later and final multi-view reconciliation required before implementation."
+    },
+    {
+      "date": "2026-10-05",
+      "event": "Fetched and inspected merged PR #148 at a2e67c0. Updated intent/shape to reuse saved tabs, host persistence, timeline preview/restore and package side panels. Identified new frame bindings, checkpoint definitions and shared-data scope work. Checkout unchanged; no implementation or browser proof."
+    },
+    {
+      "date": "2026-10-05",
+      "event": "Created the requested detailed implementation plan in the existing worktree. Re-read initiative artifacts and code at 8c35e4d plus local PR #148 baseline a2e67c0. Sequenced four milestones across the three slices; preserved explicit schema authoring, state/history proof, chart identity, full inspection, and later parameters. Aligned slice horizons and next actions; lifecycle remains planned. No application implementation, checkout update, or runtime proof.",
+      "source_anchors": [
+        "implementation-plan-request-2026-10-05",
+        "planning-code-review-2026-10-05",
+        "planning-local-target-2026-10-05"
+      ]
     }
   ]
 }
