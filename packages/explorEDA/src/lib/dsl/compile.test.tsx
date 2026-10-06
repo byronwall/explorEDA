@@ -4,6 +4,7 @@ import { registerAllCharts } from "@/charts/registerAllCharts";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import { validateSavedData } from "@/utils/saveDataUtils";
 import { compileDocument } from "./compile";
+import { formatDslDiagnostics } from "./describe";
 
 // Six orders. Web: rows 1, 2, 5. Store: rows 3, 4. Wholesale: row 6.
 // Profit (Revenue - Cost): 40, -10, 25, 5, 60, 0.
@@ -217,5 +218,16 @@ rev:num=Revenu`);
       ],
     ]);
     expect(result.settings.fieldSettings).toEqual({});
+  });
+
+  it("says when nothing can be built", () => {
+    const result = compile(`scater x=Revenue y=Cost
+hist Revnue`);
+    expect(result.settings.charts).toEqual([]);
+    expect(formatDslDiagnostics(result, "a.eda")).toBe(`a.eda:1:1: error: scater does not start a declaration, so this line was skipped.
+  fix: Did you mean scatter?
+a.eda:2:6: error: Revnue is not a field, alias, or calculation, so hist (line 2) was skipped.
+  fix: Did you mean Revenue?
+failed: no chart can be built; fix the errors above`);
   });
 });

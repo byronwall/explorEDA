@@ -39,8 +39,12 @@ import {
 } from "@/utils/saveDataUtils";
 import {
   compileDocument,
+  describeDslSource,
   DSL_CHART_KEYWORDS,
+  DSL_REFERENCE,
+  formatDslDiagnostics,
   type DslChartResult,
+  type DslFieldSummary,
   type DslCompileOptions,
   type DslCompileResult,
   type DslDiagnostic,
@@ -133,11 +137,15 @@ export type {
   DslCompileResult,
   DslDiagnostic,
   DslEffect,
+  DslFieldSummary,
   DslSeverity,
 };
 export {
   compileDocument,
+  describeDslSource,
   DSL_CHART_KEYWORDS,
+  DSL_REFERENCE,
+  formatDslDiagnostics,
   parseSavedAnalysis,
   parseSavedData,
   saveAnalysisToClipboard,

@@ -8,3 +8,9 @@ export {
   type DslEffect,
   type DslSeverity,
 } from "./compile";
+export {
+  describeDslSource,
+  DSL_REFERENCE,
+  formatDslDiagnostics,
+  type DslFieldSummary,
+} from "./describe";

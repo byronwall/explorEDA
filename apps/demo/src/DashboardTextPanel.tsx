@@ -1,6 +1,13 @@
 import { useDeferredValue, useMemo, useRef, type UIEvent } from "react";
-import { AlertTriangle, CircleX } from "lucide-react";
-import type { DslCompileResult, DslDiagnostic } from "exploreda";
+import { AlertTriangle, CircleX, Copy } from "lucide-react";
+import {
+  describeDslSource,
+  DSL_REFERENCE,
+  formatDslDiagnostics,
+  type DslCompileResult,
+  type DslDiagnostic,
+} from "exploreda";
+import { toast } from "sonner";
 import {
   compileDashboardText,
   describeResult,
@@ -8,6 +15,7 @@ import {
 } from "./dashboardText";
 import type { DatumObject } from "./LandingPage";
 import { Button } from "@/components/ui/button";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 const PLACEHOLDER = `# Paste or write a dashboard. One chart per line.
@@ -77,6 +85,7 @@ export function DashboardTextPanel({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const gutterRef = useRef<HTMLDivElement>(null);
   const deferred = useDeferredValue(text);
+  const fields = useMemo(() => describeDslSource(rows), [rows]);
   const result = useMemo(
     () => (deferred.trim() ? compileDashboardText(deferred, rows) : undefined),
     [deferred, rows]
@@ -187,6 +196,24 @@ export function DashboardTextPanel({
         >
           Apply to this view
         </Button>
+        <ActionTooltip content="Copy every problem with its line and fix, as plain text for an agent or a note">
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 text-xs"
+            disabled={!result}
+            onClick={() => {
+              if (result) {
+                void navigator.clipboard
+                  .writeText(formatDslDiagnostics(result, "dashboard.eda"))
+                  .then(() => toast.success("Copied the check report"));
+              }
+            }}
+          >
+            <Copy aria-hidden="true" />
+            Copy report
+          </Button>
+        </ActionTooltip>
       </div>
       {result && result.diagnostics.length > 0 && (
         <section aria-label="Problems" className="min-w-0">
@@ -203,6 +230,26 @@ export function DashboardTextPanel({
           </ul>
         </section>
       )}
+      <details className="min-w-0 text-xs">
+        <summary className="cursor-pointer font-semibold">
+          Fields and syntax
+        </summary>
+        <p className="mt-2 text-muted-foreground">
+          Write against these fields by name, or alias them, such as{" "}
+          <code>rev:num=Revenue</code>.
+        </p>
+        <pre className="mt-1 overflow-x-auto rounded-md bg-muted/50 p-2 font-mono leading-5">
+          {fields
+            .map(
+              (field) =>
+                `${field.name}  ${field.type}  ${field.sample}${field.missing ? `  (${field.missing} missing)` : ""}`
+            )
+            .join("\n")}
+        </pre>
+        <pre className="mt-2 overflow-x-auto rounded-md bg-muted/50 p-2 font-mono leading-5">
+          {DSL_REFERENCE}
+        </pre>
+      </details>
     </div>
   );
 }
