@@ -85,9 +85,8 @@ describe("host side panels", () => {
     const rowsToggle = screen.getByRole("button", { name: "Rows" });
     expect(rowsToggle.closest("[inert]")).toBeNull();
     expect(screen.getByRole("button", { name: "Fields" })).toBeDisabled();
-    expect(
-      screen.getByRole("button", { name: "Add chart" }).closest("[inert]")
-    ).not.toBeNull();
+    expect(screen.getByRole("button", { name: "Add chart" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Calculations" })).toBeDisabled();
     expect(screen.getByRole("main")).toHaveAttribute("inert");
     const toggle = screen.getByRole("button", { name: "History" });
     expect(toggle.closest("[inert]")).toBeNull();

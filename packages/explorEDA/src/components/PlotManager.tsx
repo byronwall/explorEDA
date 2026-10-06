@@ -149,8 +149,8 @@ export function PlotManager({
   // Rows, workspace settings, and host panels share the right edge, so one
   // replaces another. They cover the field list, which returns when they close.
   // React 18 has no inert prop, so set the attribute directly.
-  const toolbarEditRef = useRef<HTMLDivElement>(null);
-  const toolbarConfigRef = useRef<HTMLDivElement>(null);
+  const toolbarEditRef = useRef<HTMLFieldSetElement>(null);
+  const toolbarConfigRef = useRef<HTMLFieldSetElement>(null);
   const chartAreaRef = useRef<HTMLElement>(null);
   useLayoutEffect(() => {
     toolbarEditRef.current?.toggleAttribute("inert", readOnly);
@@ -519,7 +519,11 @@ export function PlotManager({
         <header className="eda-workspace-toolbar">
           {/* A read-only workspace keeps its scope visible but takes no
               edits. Host panels stay usable beside it. */}
-          <div className="eda-toolbar-editable" ref={toolbarEditRef}>
+          <fieldset
+            disabled={readOnly}
+            className="eda-toolbar-editable"
+            ref={toolbarEditRef}
+          >
             {rowsOpen && !rowsNarrow ? (
               // The expanded Rows drawer covers this line and shows the scope.
               <span className="eda-filter-status" aria-hidden="true" />
@@ -532,7 +536,7 @@ export function PlotManager({
             {/* Filters lead the line; tools and settings sit on the right. */}
             <ChartCreationButtons />
             <span className="eda-toolbar-divider" aria-hidden="true" />
-          </div>
+          </fieldset>
           <div
             role="group"
             aria-label="Inspect data"
@@ -622,7 +626,11 @@ export function PlotManager({
               ))}
             </div>
           )}
-          <div className="eda-toolbar-editable" ref={toolbarConfigRef}>
+          <fieldset
+            disabled={readOnly}
+            className="eda-toolbar-editable"
+            ref={toolbarConfigRef}
+          >
             <span className="eda-toolbar-divider" aria-hidden="true" />
             <div
               role="group"
@@ -738,7 +746,7 @@ export function PlotManager({
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-          </div>
+          </fieldset>
         </header>
         {openPanel && (
           <WorkspaceSidePanel
