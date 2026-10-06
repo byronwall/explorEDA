@@ -275,3 +275,40 @@ Treat source tables as immutable: pass a new array when rows change.
 `stringifyAnalysisProject` and `parseAnalysisProject` write and validate a
 project file with its tables and views. `selectAnalysisProjectView` keeps one
 view and only what it depends on.
+
+### A chart workspace over a project
+
+`ExplorEdaProject` renders the charts for one view of a project. The view
+names a query; that query's result rows are what every chart in the view
+sees, and one line above the charts says which query and what a row is. The
+host owns the project, the views, and where they are saved.
+
+```tsx
+import { ExplorEdaProject, type AnalysisView } from "exploreda";
+
+function Shop({ project, tables }) {
+  const [state, setState] = useState({
+    project,
+    view: { id: "orders", name: "Orders", queryId: "orders-by-customer" } as AnalysisView,
+  });
+  return (
+    <ExplorEdaProject
+      project={state.project}
+      tables={tables}
+      view={state.view}
+      onProjectChange={setState}
+      onStateChange={(settings) =>
+        setState((current) => ({ ...current, view: { ...current.view, settings } }))
+      }
+    />
+  );
+}
+```
+
+The toolbar gains two panels. **Schema** lists each table's fields and links,
+previews a new or edited link's match counts before it applies, and opens a
+table as its own view. **Query** picks the view's query, follows a link (add
+fields, summarize related rows, or expand into a new view), sets parameter
+inputs, and lists every step with its row counts down to the rows and their
+source records. From a chart trace, "Show these rows in the query flow" opens
+the rows behind a mark. Pass `onOpenView` to let these panels open new views.
