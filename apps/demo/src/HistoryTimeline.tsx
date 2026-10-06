@@ -42,7 +42,7 @@ import {
 const LANE_WIDTH = 14;
 const RAIL_PAD = 12;
 /** The station's center, measured from the row's top edge. */
-const STATION_Y = 19;
+const STATION_Y = 15;
 
 const LABEL_COLORS: Record<ChangeLabel, string> = {
   View: "var(--chart-2)",
@@ -81,38 +81,13 @@ function isSameDay(a: Date, b: Date) {
   return a.toDateString() === b.toDateString();
 }
 
-function formatWhen(at: string, now: number) {
+function formatWhen(at: string, now: number, withSeconds = false) {
   const date = new Date(at);
   if (isSameDay(date, new Date(now))) {
-    return formatClock(at);
+    return formatClock(at, withSeconds);
   }
-  return date.toLocaleDateString([], { month: "short", day: "numeric" });
-}
-
-function formatRelative(at: string, now: number) {
-  const seconds = Math.max(0, Math.round((now - Date.parse(at)) / 1000));
-  if (seconds < 45) {
-    return "just now";
-  }
-  const minutes = Math.round(seconds / 60);
-  if (minutes < 60) {
-    return `${minutes} min ago`;
-  }
-  const hours = Math.round(minutes / 60);
-  if (hours < 24) {
-    return `${hours} h ago`;
-  }
-  const days = Math.round(hours / 24);
-  return days === 1 ? "yesterday" : `${days} days ago`;
-}
-
-function formatFull(at: string) {
-  const date = new Date(at);
-  return `${date.toLocaleDateString([], {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-  })}, ${formatClock(at, true)}`;
+  const day = date.toLocaleDateString([], { month: "short", day: "numeric" });
+  return withSeconds ? `${day}, ${formatClock(at)}` : day;
 }
 
 function Rail({
@@ -193,70 +168,75 @@ function Rail({
   );
 }
 
-function CategoryChip({ label }: { label: ChangeLabel }) {
+/** The expanded view lays each step out as a table row with these columns. */
+const WIDE_COLUMNS =
+  "grid grid-cols-[minmax(0,2fr)_minmax(0,0.8fr)_minmax(0,1.6fr)_2.75rem_2.75rem_2.75rem_6rem] items-baseline gap-x-3";
+
+const STATE_BADGE =
+  "shrink-0 rounded px-1 text-[9.5px] font-semibold uppercase leading-4 tracking-wide";
+
+function StateBadge({ state }: { state: TimelineState }) {
+  const note = STATE_NOTES[state];
+  if (!note) {
+    return null;
+  }
   return (
-    <span className="inline-flex items-center gap-1">
-      <span
-        aria-hidden="true"
-        className="h-1.5 w-1.5 rounded-full"
-        style={{ background: LABEL_COLORS[label] }}
-      />
-      {LABEL_NAMES[label]}
+    <span
+      className={cn(
+        STATE_BADGE,
+        state === "current"
+          ? "bg-primary text-primary-foreground"
+          : "bg-muted text-muted-foreground"
+      )}
+    >
+      {note}
     </span>
   );
 }
 
-function ChangeValues({ change }: { change: HistoryChange }) {
-  if (!change.before && !change.after) {
-    return null;
+function KindIcon({
+  change,
+  label,
+  muted,
+}: {
+  change: HistoryChange | undefined;
+  label: ChangeLabel;
+  muted?: boolean;
+}) {
+  const Icon = change ? KIND_ICONS[change.kind] : LayoutGrid;
+  return (
+    <>
+      <Icon
+        aria-hidden="true"
+        className="size-3.5 shrink-0 self-center"
+        style={{
+          color: muted ? "var(--muted-foreground)" : LABEL_COLORS[label],
+        }}
+      />
+      <span className="sr-only">{LABEL_NAMES[label]}: </span>
+    </>
+  );
+}
+
+function ChangeValues({ change }: { change: HistoryChange | undefined }) {
+  if (!change || (!change.before && !change.after)) {
+    return <span className="text-muted-foreground/60">—</span>;
   }
   return (
-    <p className="mt-0.5 flex flex-wrap items-center gap-x-1.5 font-mono text-[11px] text-muted-foreground">
+    <span className="flex min-w-0 items-center gap-x-1 whitespace-nowrap font-mono text-[11px]">
       {change.before && (
-        <span className="line-through decoration-muted-foreground/50">
+        <span className="min-w-0 shrink truncate text-muted-foreground line-through decoration-muted-foreground/50">
           {change.before}
         </span>
       )}
       {change.before && change.after && (
-        <ArrowRight aria-label="became" className="h-3 w-3" />
+        <ArrowRight
+          aria-label="became"
+          className="size-3 shrink-0 text-muted-foreground"
+        />
       )}
-      {change.after && <span className="text-foreground">{change.after}</span>}
-    </p>
-  );
-}
-
-function ChangeList({ changes }: { changes: HistoryChange[] }) {
-  const views = new Set(changes.map((change) => change.view ?? ""));
-  const showView = views.size > 1;
-  return (
-    <ul className="grid gap-1.5 rounded-md border border-border bg-muted/30 p-2">
-      {changes.map((change, index) => {
-        const Icon = KIND_ICONS[change.kind];
-        return (
-          <li
-            key={index}
-            className="grid grid-cols-[16px_minmax(0,1fr)] gap-x-2 text-xs"
-          >
-            <Icon
-              aria-hidden="true"
-              className="mt-0.5 h-3.5 w-3.5 text-muted-foreground"
-            />
-            <div className="min-w-0">
-              <p className="break-words">
-                {change.text}
-                {showView && (
-                  <span className="text-muted-foreground">
-                    {" "}
-                    · {change.view ?? "All views"}
-                  </span>
-                )}
-              </p>
-              <ChangeValues change={change} />
-            </div>
-          </li>
-        );
-      })}
-    </ul>
+      {change.after && <span className="min-w-0 truncate">{change.after}</span>}
+    </span>
   );
 }
 
@@ -282,23 +262,32 @@ function Station({
   onRestore: () => void;
 }) {
   const { entry, changes, headline, detail, more } = described;
-  const note = STATE_NOTES[row.state];
   const viewNames = [
     ...new Set(
       changes.map((change) => change.view).filter((view) => view !== undefined)
     ),
   ];
-  const stats = wide ? summarizeTabs(entry.tabs) : undefined;
-  // The expanded card shows the headline's own values beside it, not twice.
-  const headlineChange = changes[0]?.text === headline ? changes[0] : undefined;
-  const listed = headlineChange ? changes.slice(1) : changes;
+  const viewText =
+    viewNames.length === 0
+      ? changes.some((change) => change.kind === "shared")
+        ? "All views"
+        : ""
+      : viewNames.length === 1
+        ? viewNames[0]!
+        : `${viewNames.length} views`;
   const muted = row.state === "branch" || row.state === "future";
+  // A headline that is itself the first change shows that change's values.
+  const headlineChange = changes[0]?.text === headline ? changes[0] : undefined;
+  const listed = wide ? (headlineChange ? changes.slice(1) : changes) : [];
+  const stats = wide ? summarizeTabs(entry.tabs) : undefined;
+  const buttonClass =
+    "w-full rounded text-left outline-none focus-visible:ring-2 focus-visible:ring-ring";
+
   return (
     <li
       className={cn(
-        "group relative flex rounded-md",
-        previewing && "bg-accent ring-1 ring-border",
-        !previewing && "hover:bg-accent/40"
+        "relative flex rounded-md",
+        previewing ? "bg-accent ring-1 ring-border" : "hover:bg-accent/40"
       )}
       data-state={row.state}
     >
@@ -308,106 +297,165 @@ function Station({
         label={entry.label}
         previewing={previewing}
       />
-      <div className="min-w-0 flex-1 pr-2">
+      <div className="min-w-0 flex-1 pr-1.5">
         <button
           type="button"
           data-index={row.index}
           tabIndex={focusable ? 0 : -1}
           aria-pressed={previewing}
           aria-current={row.state === "current" ? "step" : undefined}
-          className="block w-full rounded-md py-2 pl-1 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className={cn(
+            buttonClass,
+            wide ? cn(WIDE_COLUMNS, "py-1.5 pl-1 text-xs") : "py-1.5 pl-1"
+          )}
           onClick={onSelect}
         >
-          <span className="flex items-baseline gap-2">
-            <span
-              className={cn(
-                "min-w-0 truncate text-[13px] font-medium",
-                muted && "text-muted-foreground",
-                wide && "whitespace-normal"
-              )}
-            >
-              {headline}
-            </span>
-            {note && (
-              <span
-                className={cn(
-                  "shrink-0 rounded-full px-1.5 py-px text-[10px] font-medium uppercase tracking-wide",
-                  row.state === "current"
-                    ? "bg-primary text-primary-foreground"
-                    : "border border-border text-muted-foreground"
-                )}
-              >
-                {note}
-              </span>
-            )}
-            <time
-              dateTime={entry.at}
-              className="ml-auto shrink-0 text-[11px] tabular-nums text-muted-foreground"
-            >
-              {wide
-                ? `${formatFull(entry.at)} · ${formatRelative(entry.at, now)}`
-                : formatWhen(entry.at, now)}
-            </time>
-          </span>
-          {!wide && detail && (
-            <span className="mt-0.5 block truncate font-mono text-[11px] text-muted-foreground">
-              {detail}
-            </span>
-          )}
-          {wide && headlineChange && <ChangeValues change={headlineChange} />}
-          <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground">
-            {entry.author && (
-              <span className="inline-flex items-center gap-1 text-foreground">
+          {wide ? (
+            <>
+              <span className="flex min-w-0 items-center gap-1.5">
+                <KindIcon
+                  change={changes[0]}
+                  label={entry.label}
+                  muted={muted}
+                />
                 <span
-                  aria-hidden="true"
-                  className="grid h-4 w-4 place-items-center rounded-full bg-muted text-[9px] font-semibold"
+                  className={cn(
+                    "min-w-0 break-words font-medium",
+                    muted && "text-muted-foreground"
+                  )}
                 >
-                  {entry.author.name.slice(0, 1).toUpperCase()}
+                  {headline}
                 </span>
-                {entry.author.name}
+                <StateBadge state={row.state} />
               </span>
-            )}
-            <CategoryChip label={entry.label} />
-            {viewNames.length > 0 && (
-              <span className="min-w-0 truncate">
-                {viewNames.length === 1
-                  ? viewNames[0]
-                  : `${viewNames.length} views`}
+              <span className="truncate text-muted-foreground">{viewText}</span>
+              {headlineChange ? (
+                <ChangeValues change={headlineChange} />
+              ) : (
+                <span className="truncate text-muted-foreground">
+                  {detail ?? "—"}
+                </span>
+              )}
+              <span className="text-right tabular-nums text-muted-foreground">
+                {stats!.views}
               </span>
-            )}
-            {!wide && more > 0 && (
-              <span>
-                +{more} more change{more === 1 ? "" : "s"}
+              <span className="text-right tabular-nums text-muted-foreground">
+                {stats!.charts}
               </span>
-            )}
-            {stats && (
-              <span className="ml-auto tabular-nums">
-                {stats.views} view{stats.views === 1 ? "" : "s"} ·{" "}
-                {stats.charts} chart{stats.charts === 1 ? "" : "s"} ·{" "}
-                {stats.filters} filter{stats.filters === 1 ? "" : "s"}
+              <span className="text-right tabular-nums text-muted-foreground">
+                {stats!.filters}
               </span>
-            )}
-          </span>
+              <span className="truncate text-right tabular-nums text-muted-foreground">
+                {entry.author && (
+                  <span className="text-foreground">
+                    {entry.author.name} ·{" "}
+                  </span>
+                )}
+                <time dateTime={entry.at}>
+                  {formatWhen(entry.at, now, true)}
+                </time>
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="flex items-center gap-1.5">
+                <KindIcon
+                  change={changes[0]}
+                  label={entry.label}
+                  muted={muted}
+                />
+                <span
+                  className={cn(
+                    "min-w-0 truncate text-[12.5px] font-medium leading-[18px]",
+                    muted && "text-muted-foreground"
+                  )}
+                >
+                  {headline}
+                </span>
+                <StateBadge state={row.state} />
+                <time
+                  dateTime={entry.at}
+                  className="ml-auto shrink-0 pl-1 text-[11px] tabular-nums text-muted-foreground"
+                >
+                  {formatWhen(entry.at, now)}
+                </time>
+              </span>
+              <span className="flex items-baseline gap-2 pl-5 text-[11px] leading-4 text-muted-foreground">
+                <span className="min-w-0 flex-1 truncate font-mono">
+                  {detail ?? LABEL_NAMES[entry.label]}
+                </span>
+                <span className="max-w-[45%] shrink-0 truncate">
+                  {entry.author ? `${entry.author.name} · ` : ""}
+                  {viewText}
+                  {more > 0 && (
+                    <span className="tabular-nums">
+                      {viewText ? " · " : ""}+{more}
+                      <span className="sr-only">
+                        {" "}
+                        more change{more === 1 ? "" : "s"}
+                      </span>
+                    </span>
+                  )}
+                </span>
+              </span>
+            </>
+          )}
         </button>
-        {wide && listed.length > 0 && (
-          <div className="pb-2 pl-1">
-            {headlineChange && (
-              <p className="mb-1 text-[11px] font-medium text-muted-foreground">
-                Also changed
-              </p>
-            )}
-            <ChangeList changes={listed} />
-          </div>
+        {listed.length > 0 && (
+          <ul aria-label="Also changed" className="pb-1">
+            {listed.map((change, index) => (
+              <li
+                key={index}
+                className={cn(WIDE_COLUMNS, "py-0.5 pl-1 text-[11px]")}
+              >
+                <span className="flex min-w-0 items-center gap-1.5 pl-5 text-muted-foreground">
+                  <KindIcon change={change} label={entry.label} muted />
+                  <span className="min-w-0 truncate text-foreground/85">
+                    {change.text}
+                  </span>
+                </span>
+                <span className="truncate text-muted-foreground">
+                  {change.view ?? "All views"}
+                </span>
+                <ChangeValues change={change} />
+              </li>
+            ))}
+          </ul>
         )}
         {previewing && row.state !== "current" && (
-          <div className="flex flex-wrap gap-2 pb-2 pl-1">
-            <Button size="sm" className="h-7 text-xs" onClick={onRestore}>
+          <div className="pb-1.5 pl-6">
+            <Button
+              size="sm"
+              className="h-6 px-2 text-[11px]"
+              onClick={onRestore}
+            >
               Restore this version
             </Button>
           </div>
         )}
       </div>
     </li>
+  );
+}
+
+function WideHeader({ laneCount }: { laneCount: number }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={cn(
+        WIDE_COLUMNS,
+        "sticky top-0 z-[1] border-b border-border bg-popover py-1.5 pr-3 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground"
+      )}
+      style={{ paddingLeft: laneX(laneCount - 1) + RAIL_PAD + 4 }}
+    >
+      <span className="pl-5">Change</span>
+      <span>View</span>
+      <span>Values</span>
+      <span className="text-right">Views</span>
+      <span className="text-right">Charts</span>
+      <span className="text-right">Filters</span>
+      <span className="text-right">When</span>
+    </div>
   );
 }
 
@@ -492,11 +540,12 @@ export function HistoryTimeline({
   };
 
   return (
-    <div className="px-2 py-2">
+    <div className={wide ? "pb-2" : "px-1.5 py-1.5"}>
+      {wide && <WideHeader laneCount={laneCount} />}
       <ol
         ref={listRef}
         aria-label="Checkpoints, newest first"
-        className="grid grid-cols-[minmax(0,1fr)]"
+        className={cn("grid grid-cols-[minmax(0,1fr)]", wide && "px-1.5 pt-1")}
         onKeyDown={onKeyDown}
       >
         {rows.map((row) => (
@@ -520,7 +569,7 @@ export function HistoryTimeline({
           />
         ))}
       </ol>
-      <p className="mt-3 px-2 text-[11px] leading-relaxed text-muted-foreground">
+      <p className="mt-2 px-2 text-[11px] leading-relaxed text-muted-foreground">
         {session.history.length === 1
           ? "Each change you make adds a step here. Select a step to preview it, then restore it or return to the present."
           : `Select a step to preview it without changing anything. This browser keeps the latest ${HISTORY_LIMIT} steps; ${session.history.length} are saved now.`}

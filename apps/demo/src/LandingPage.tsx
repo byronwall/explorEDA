@@ -541,6 +541,7 @@ export function LandingPage() {
                   <SavedViewsWorkspace
                     data={exampleData}
                     initialSettings={example?.savedData}
+                    initialViews={example?.views}
                     viewName={example?.title ?? "Analysis"}
                   />
                 )}

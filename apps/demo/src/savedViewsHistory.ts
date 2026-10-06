@@ -588,6 +588,10 @@ export function describeChanges(
           after.length === 1
             ? `Opened ${quote(after[0]!.name)}`
             : `Opened ${after.length} views`,
+        after:
+          after.length === 1
+            ? undefined
+            : after.map((tab) => tab.name).join(", "),
       },
     ];
   }

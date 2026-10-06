@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import type { DatumObject } from "./LandingPage";
+import type { ExampleView } from "./demos/exampleViews";
 import {
   getSavedViewsRows,
   HISTORY_LIMIT,
@@ -44,14 +45,24 @@ function activeView(tabs: SavedView[], id: string) {
 function makeSession(
   data: DatumObject[],
   name: string,
-  settings?: SavedDataStructure
+  settings?: SavedDataStructure,
+  views: ExampleView[] = []
 ): SavedViewsSession {
   const tab = {
     id: newId(),
     name,
     settings: settings ? clone(settings) : undefined,
   };
-  const initial = snapshot([tab]);
+  // An example can open with more saved views beside its main one.
+  const tabs: SavedView[] = [
+    tab,
+    ...views.map((extra) => ({
+      id: newId(),
+      name: extra.name,
+      settings: clone(extra.savedData),
+    })),
+  ];
+  const initial = snapshot(tabs);
   const sourceSettings: SavedDataStructure = {
     charts: [],
     calculations: [],
@@ -78,7 +89,7 @@ function makeSession(
   return {
     version: 1,
     sourceAnalysis,
-    tabs: [tab],
+    tabs,
     activeTabId: tab.id,
     history: [{ at: new Date().toISOString(), label: "View", tabs: initial }],
     path: [0],
@@ -191,17 +202,20 @@ export function SavedViewsWorkspace({
   data,
   initialSettings,
   initialSession,
+  initialViews,
   viewName,
 }: {
   data: DatumObject[];
   initialSettings?: SavedDataStructure;
   initialSession?: SavedViewsSession;
+  /** Saved views that open as tabs after the main one. */
+  initialViews?: ExampleView[];
   viewName: string;
 }) {
   const [session, setSession] = useState(() =>
     initialSession
       ? clone(initialSession)
-      : makeSession(data, viewName, initialSettings)
+      : makeSession(data, viewName, initialSettings, initialViews)
   );
   const [saveError, setSaveError] = useState(false);
   const [savedEncoding, setSavedEncoding] = useState("");

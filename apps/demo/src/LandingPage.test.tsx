@@ -300,9 +300,15 @@ describe("LandingPage routing", () => {
       "data-rows",
       "1"
     );
+    // The example opens with its saved views as tabs.
+    expect(screen.getAllByRole("tab").map((tab) => tab.textContent)).toEqual([
+      "Penguin field notes",
+      "Gentoo on Biscoe",
+      "Bill shape",
+    ]);
     fireEvent.click(screen.getByRole("button", { name: "Emit state" }));
     fireEvent.click(screen.getByRole("button", { name: "New view" }));
-    expect(screen.getAllByRole("tab")).toHaveLength(2);
+    expect(screen.getAllByRole("tab")).toHaveLength(4);
     await waitFor(() =>
       expect(localStorage.getItem("exploreda.saved-views.v1")).not.toBeNull()
     );
@@ -313,7 +319,7 @@ describe("LandingPage routing", () => {
       "data-rows",
       "1"
     );
-    expect(screen.getAllByRole("tab")).toHaveLength(2);
+    expect(screen.getAllByRole("tab")).toHaveLength(4);
     const restored = JSON.parse(
       localStorage.getItem("exploreda.saved-views.v1") ?? "{}"
     );
