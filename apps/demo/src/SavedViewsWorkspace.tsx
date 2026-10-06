@@ -23,6 +23,7 @@ import {
   snapshot,
 } from "./savedViewsHistory";
 import {
+  createAnalysisWorker,
   evaluateAnalysisQuery,
   selectAnalysisProjectView,
   stringifyAnalysisProject,
@@ -1058,6 +1059,7 @@ export function SavedViewsWorkspace({
             queryPresets={queryPresets}
             sidePanels={sidePanels}
             readOnly={showingPreview}
+            createWorker={createAnalysisWorker}
           />
         ) : session.project ? (
           <p role="alert">

@@ -19,7 +19,10 @@ import type {
   AnalysisSourceRow,
   AnalysisView,
 } from "@/types/AnalysisProject";
-import { useAnalysisEvaluation } from "@/lib/analysis/useAnalysisEvaluation";
+import {
+  useAnalysisEvaluation,
+  type AnalysisWorker,
+} from "@/lib/analysis/useAnalysisEvaluation";
 import { ProjectSchemaPanel } from "./project/ProjectSchemaPanel";
 import { ProjectQueryPanel } from "./project/ProjectQueryPanel";
 import { AnalysisChartContextProvider } from "./AnalysisChartContext";
@@ -54,6 +57,12 @@ export interface ExplorEdaProjectProps {
     project?: AnalysisProject
   ) => void;
   readOnly?: boolean;
+  /**
+   * Runs queries in a worker so large projects keep input responsive. Pass
+   * `createAnalysisWorker` from `exploreda/analysis`; without it, queries run
+   * on the main thread.
+   */
+  createWorker?: () => AnalysisWorker;
 }
 
 const FIELD_TYPES = {
@@ -82,6 +91,7 @@ export const ExplorEdaProject = forwardRef<
     onStateChange,
     onOpenView,
     readOnly = false,
+    createWorker,
   },
   ref
 ) {
@@ -101,7 +111,8 @@ export const ExplorEdaProject = forwardRef<
     project,
     tables,
     shownView.queryId,
-    shownView.bindings ?? EMPTY_BINDINGS
+    shownView.bindings ?? EMPTY_BINDINGS,
+    createWorker
   );
   useEffect(() => setFocusRowKeys(undefined), [evaluation]);
 
@@ -255,20 +266,28 @@ export const ExplorEdaProject = forwardRef<
         appliedBindings={appliedBindings}
         project={project}
       />
-      <ExplorEda
-        ref={chartRef}
-        key={`${shownView.id}:${shownView.queryId}`}
-        data={data}
-        fieldNames={fieldNames}
-        savedData={settingsCompatible ? renderedSettings : undefined}
-        onStateChange={
-          readOnly || !settingsCompatible
-            ? undefined
-            : (next) => onStateChange?.(encodeAnalysisRowKeys(next, keysById))
-        }
-        sidePanels={[...sidePanels, schemaPanel, queryPanel]}
-        readOnly={readOnly}
-      />
+      {status === "pending" && evaluation.revision === "unavailable" ? (
+        // Nothing has finished yet. Charts wait rather than draw an empty
+        // result that saved settings would not match.
+        <p className="px-1 py-8 text-center text-sm text-muted-foreground">
+          Running the query…
+        </p>
+      ) : (
+        <ExplorEda
+          ref={chartRef}
+          key={`${shownView.id}:${shownView.queryId}`}
+          data={data}
+          fieldNames={fieldNames}
+          savedData={settingsCompatible ? renderedSettings : undefined}
+          onStateChange={
+            readOnly || !settingsCompatible
+              ? undefined
+              : (next) => onStateChange?.(encodeAnalysisRowKeys(next, keysById))
+          }
+          sidePanels={[...sidePanels, schemaPanel, queryPanel]}
+          readOnly={readOnly}
+        />
+      )}
     </AnalysisChartContextProvider>
   );
 });

@@ -312,3 +312,17 @@ fields, summarize related rows, or expand into a new view), sets parameter
 inputs, and lists every step with its row counts down to the rows and their
 source records. From a chart trace, "Show these rows in the query flow" opens
 the rows behind a mark. Pass `onOpenView` to let these panels open new views.
+
+Large projects can run their queries in a worker so typing in an input stays
+responsive. The worker ships with the package; your bundler must emit worker
+files referenced with `new URL(..., import.meta.url)` (Vite and webpack 5 do).
+
+```tsx
+import { createAnalysisWorker } from "exploreda/analysis";
+
+<ExplorEdaProject createWorker={createAnalysisWorker} {...props} />;
+```
+
+While a query runs, the charts keep the last finished result and the scope
+line says it is updating. A result that finishes after a newer request is
+dropped, so rows, counts, and inputs on screen always match.

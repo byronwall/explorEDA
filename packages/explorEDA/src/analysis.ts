@@ -9,3 +9,4 @@ export {
   type AnalysisProjectFile,
   type AnalysisProjectFileInput,
 } from "./lib/analysis/projectFile";
+export { createAnalysisWorker } from "./lib/analysis/createAnalysisWorker";
