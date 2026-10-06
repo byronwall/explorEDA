@@ -1,7 +1,4 @@
-import {
-  chartFilterFields,
-  FiltersSettingsTab,
-} from "./settings/FiltersSettingsTab";
+import { FiltersSettingsTab } from "./settings/FiltersSettingsTab";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { ChartSettings } from "@/types/ChartTypes";
 import { mergeWithDefaultSettings } from "@/utils/defaultSettings";
@@ -54,15 +51,7 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
       layout: settings.layout,
     } as ChartSettings);
     setLocalSettings(next);
-    if (
-      !next.filters.some(
-        (filter) =>
-          (filter.type === "range" || filter.type === "date-range") &&
-          filter.min !== undefined &&
-          filter.max !== undefined &&
-          filter.min > filter.max
-      )
-    ) {
+    if (!hasInvertedRange(next)) {
       updateChart(settings.id, {
         ...next,
         id: settings.id,
@@ -91,19 +80,14 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
           { value: "axis", label: "Axes" },
         ]
       : []),
-    ...(chartFilterFields(localSettings, aggregate).length > 0
+    // Every chart that draws rows can limit them, so Filters always shows.
+    ...(localSettings.type !== "markdown"
       ? [{ value: "filters", label: "Filters" }]
       : []),
     { value: "labels", label: "Labels" },
     ...(hasAxes ? [{ value: "advanced", label: "Spacing" }] : []),
   ];
-  const invalidRange = localSettings.filters.some(
-    (filter) =>
-      (filter.type === "range" || filter.type === "date-range") &&
-      filter.min !== undefined &&
-      filter.max !== undefined &&
-      filter.min > filter.max
-  );
+  const invalidRange = hasInvertedRange(localSettings);
   const aggregateDirty =
     resetAggregate.current &&
     JSON.stringify(aggregate) !== JSON.stringify(resetAggregate.current);
@@ -212,5 +196,16 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
         <span className="text-xs text-muted-foreground">Live preview</span>
       </div>
     </div>
+  );
+}
+
+/** A range whose minimum passes its maximum can't be applied yet. */
+function hasInvertedRange(settings: ChartSettings) {
+  return [...settings.filters, ...(settings.localFilters ?? [])].some(
+    (filter) =>
+      (filter.type === "range" || filter.type === "date-range") &&
+      filter.min !== undefined &&
+      filter.max !== undefined &&
+      filter.min > filter.max
   );
 }

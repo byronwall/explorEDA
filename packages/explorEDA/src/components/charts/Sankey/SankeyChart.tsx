@@ -123,7 +123,7 @@ export function SankeyChart({
     )
   );
   const liveIds = useGetLiveIds(settings, facetIds);
-  const allIds = useGetAllIds();
+  const allIds = useGetAllIds(settings);
   const measureData = useGetColumnData(
     settings.aggregation === "sum" ? settings.measureField : undefined
   );

@@ -100,7 +100,7 @@ export function EcdfChart({
     s.colorScales.find((item) => item.id === settings.colorScaleId)
   );
   const liveIds = useGetLiveIds(settings, facetIds);
-  const allIds = useGetAllIds();
+  const allIds = useGetAllIds(settings);
   const values = useGetColumnData(settings.field);
   const groupData = useGetColumnData(settings.colorField);
   const revision = useTraceRevision(settings);

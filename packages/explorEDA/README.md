@@ -198,6 +198,40 @@ const calculation: SavedCalculation = {
 
 See [the calculation workflow](../../docs/calculation-workflow.md) and the demo's `calculated-orders` example.
 
+## Dashboard text
+
+Build a complete dashboard from compact text. Each line declares a field alias, a calculation, or a chart. `where.` filters limit only their own chart.
+
+```text
+revenue:num=Revenue label="Revenue ($)"
+calc profit=revenue-Cost
+scatter @web x=revenue y=profit where.Channel=Web
+metric sum=profit where.profit=0..
+table revenue,profit,Channel
+```
+
+```ts
+import { compileDocument, formatDslDiagnostics } from "exploreda";
+
+const result = compileDocument(text, { rows });
+// result.settings is a SavedDataStructure; pass it to <ExplorEda savedData>.
+console.log(formatDslDiagnostics(result));
+```
+
+The text describes the whole dashboard: omitted charts are removed, and omitted settings use the app's defaults. A declaration that can't be built is skipped, and the others still build. Each skipped or changed effect comes back as a diagnostic with its line, column, and a suggested fix.
+
+Agents and scripts can check text without a browser:
+
+```sh
+npx exploreda-dsl fields --data rows.csv
+npx exploreda-dsl check dashboard.eda --data rows.csv
+npx exploreda-dsl reference
+```
+
+Any saved setting can be written as a flat path, such as `xAxis.scaleType=log` or `columns.0.width=140`. Color scales, grouped summaries, and the Rows view have their own lines (`scale`, `group`, `rows`). `exportDocument(settings, { rows })` writes the current dashboard as text that rebuilds it. Region maps refer to map shapes the host passes in as `geometryAssets`.
+
+`check` exits 0 when every declaration applied, 1 when some were skipped, and 2 when nothing can be built. Add `--json` for the full result.
+
 
 ### Histogram and Distribution
 

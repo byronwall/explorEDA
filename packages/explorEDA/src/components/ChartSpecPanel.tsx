@@ -621,6 +621,29 @@ function ChartDetails({
           )}
         </section>
 
+        {chart.localFilters?.length ? (
+          <section aria-label="Chart rows" className="min-w-0">
+            <SectionHeading>
+              Chart rows{" "}
+              <span className="font-normal text-muted-foreground tabular-nums">
+                {chart.localFilters.length}
+              </span>
+            </SectionHeading>
+            <p className="mb-1.5 text-xs text-muted-foreground">
+              This chart draws only rows that match. Other charts ignore these.
+            </p>
+            <ul className="flex flex-wrap gap-1.5">
+              {chart.localFilters.map((filter, index) => (
+                <Chip key={index} tone="neutral">
+                  <span className="truncate">
+                    {formatFilterLabel(filter, formatting)}
+                  </span>
+                </Chip>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
         <section aria-label="Settings" className="min-w-0">
           <SectionHeading
             aside={

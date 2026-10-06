@@ -322,6 +322,9 @@ function isBaseChart(value: Record<string, unknown>): boolean {
     isFiniteNumber(value.margin.left) &&
     Array.isArray(value.filters) &&
     value.filters.every(isFilter) &&
+    (value.localFilters === undefined ||
+      (Array.isArray(value.localFilters) &&
+        value.localFilters.every(isFilter))) &&
     typeof value.xAxisLabel === "string" &&
     typeof value.yAxisLabel === "string" &&
     isFiniteNumber(value.xGridLines) &&

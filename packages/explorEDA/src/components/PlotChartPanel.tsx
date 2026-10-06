@@ -1,5 +1,9 @@
 import { CalculatedFieldBadge } from "./calculations/CalculatedFieldBadge";
 import { isActiveFilter } from "./ActiveFilterStatus";
+import {
+  LOCAL_FILTER_STRIP_HEIGHT,
+  LocalFilterStrip,
+} from "./LocalFilterStrip";
 import { ChartDataPreview } from "./ChartDataPreview";
 import { ActionTooltip } from "./ui/tooltip";
 import {
@@ -387,8 +391,10 @@ export function PlotChartPanel({
     : dataFields.filter((field) =>
         calculations.some((calc) => calc.resultColumnName === field)
       );
+  const localFilters = settings.localFilters ?? [];
   const fieldStripHeight =
-    settings.type !== "scatter" && calculatedFields.length ? 28 : 0;
+    (settings.type !== "scatter" && calculatedFields.length ? 28 : 0) +
+    (localFilters.length ? LOCAL_FILTER_STRIP_HEIGHT : 0);
   // Row charts and box plots color marks by their own labeled category, so a
   // legend repeats them.
   const autoLegendHeight =
@@ -671,6 +677,7 @@ export function PlotChartPanel({
           ))}
         </div>
       )}
+      {localFilters.length > 0 && <LocalFilterStrip filters={localFilters} />}
       <p id={descriptionId} className="sr-only">
         {chartSummary}
       </p>

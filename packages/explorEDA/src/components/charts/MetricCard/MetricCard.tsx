@@ -30,10 +30,10 @@ export function MetricCard({
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
-  const allIds = useGetAllIds();
+  const allIds = useGetAllIds(settings);
 
   const plan = useMemo(() => {
-    const liveIds = crossfilter.getFilteredRowIds();
+    const liveIds = crossfilter.getChartFilteredRowIds(settings);
     const field =
       settings.aggregation === "count" ? undefined : settings.measureField;
     const measureData = field ? getColumnData(field) : {};

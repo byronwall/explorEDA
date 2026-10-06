@@ -48,6 +48,9 @@
       "import": "./dist/calculations.js"
     }
   },
+  "bin": {
+    "exploreda-dsl": "./dist/cli/exploreda-dsl.js"
+  },
   "main": "./dist/ExplorEda.cjs",
   "module": "./dist/ExplorEda.js",
   "types": "./dist/ExplorEda.d.ts",

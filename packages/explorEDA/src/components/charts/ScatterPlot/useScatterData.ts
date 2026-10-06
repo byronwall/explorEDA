@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useDataLayer, type IdType } from "@/providers/DataLayerProvider";
 import type { ScatterPlotSettings } from "./definition";
 import type { ScatterSnapshot } from "./scatterPlan";
+import { useGetAllIds } from "../useGetLiveData";
 
 /** One data snapshot serves points, bubbles, and density bins. */
 export function useScatterData(
@@ -25,7 +26,7 @@ export function useScatterData(
   const fieldLabel = useDataLayer((state) => state.getFieldLabel);
   const getFieldLabel = (field: string) =>
     fieldLabel ? fieldLabel(field) : field;
-  const allIds = useMemo(() => data.map((row) => row.__ID), [data]);
+  const allIds = useGetAllIds(settings);
 
   const snapshot = useMemo((): ScatterSnapshot => {
     // Chart and global filter populations come from the same store update.
@@ -42,7 +43,7 @@ export function useScatterData(
       revision: `${nonce}:${chartItems?.nonce ?? 0}`,
       allIds,
       chartIds,
-      filteredIds: crossfilter.getFilteredRowIds(),
+      filteredIds: crossfilter.getChartFilteredRowIds(settings),
       facetIds: facetIds?.slice(),
       xData: column(settings.xField),
       yData: column(settings.yField),
@@ -90,6 +91,7 @@ export function useScatterData(
     settings.colorField,
     settings.sizeField,
     settings.facet,
+    settings.localFilters,
     facetIds,
   ]);
 

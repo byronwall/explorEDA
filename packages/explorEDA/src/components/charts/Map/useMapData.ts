@@ -5,6 +5,7 @@ import type { RowCalculationTrace } from "@/lib/calculations/CalculationState";
 import type { ChartTraceField } from "../ChartTraceDetails";
 import type { MapSettings } from "./definition";
 import type { MapSnapshot } from "./pointMapPlan";
+import { useGetAllIds } from "../useGetLiveData";
 
 function inputFields(trace: RowCalculationTrace): string[] {
   const calculated = new Set(trace.dependencies.map((item) => item.field));
@@ -23,6 +24,7 @@ export function useMapData(settings: MapSettings, facetIds?: number[]) {
   const live = useDataLayer((state) => state.liveItems[settings.id]);
   const nonce = useDataLayer((state) => state.nonce);
   const crossfilter = useDataLayer((state) => state.crossfilterWrapper);
+  const allIds = useGetAllIds(settings);
   const column = useDataLayer((state) => state.getColumnData);
   const profiles = useDataLayer((state) => state.fieldProfiles);
   const formats = useDataLayer((state) => state.fieldSettings);
@@ -35,11 +37,11 @@ export function useMapData(settings: MapSettings, facetIds?: number[]) {
   const snapshot = useMemo(
     (): MapSnapshot => ({
       revision: `${nonce}:${live?.nonce ?? 0}`,
-      allIds: data.map((row) => row.__ID),
+      allIds,
       chartIds:
         live?.items.filter((row) => row.value > 0).map((row) => row.key) ??
-        crossfilter.getFilteredRowIds(),
-      filteredIds: crossfilter.getFilteredRowIds(),
+        crossfilter.getChartFilteredRowIds(settings),
+      filteredIds: crossfilter.getChartFilteredRowIds(settings),
       facetIds,
       columns: Object.fromEntries(
         [
@@ -57,7 +59,7 @@ export function useMapData(settings: MapSettings, facetIds?: number[]) {
       colorScale,
     }),
     [
-      data,
+      allIds,
       live,
       nonce,
       crossfilter,

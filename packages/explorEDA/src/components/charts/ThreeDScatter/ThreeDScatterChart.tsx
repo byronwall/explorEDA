@@ -7,7 +7,7 @@ import { ThreeDScatterChartProps } from "./types";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { formatFieldValue as formatValue } from "@/lib/fieldSettings";
 import { Button } from "@/components/ui/button";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { ChartReadout } from "../ChartReadout";
 import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
 import { ThreeDScatterAxes, type CubeTicks } from "./ThreeDScatterAxes";

@@ -83,7 +83,7 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
   const fieldSettings = useDataLayer((s) => s.fieldSettings);
   const updateChart = useDataLayer((s) => s.updateChart);
   const liveIds = useGetLiveIds(settings, facetIds);
-  const allIds = useGetAllIds();
+  const allIds = useGetAllIds(settings);
   const rowData = useGetColumnData(settings.field);
   const columnData = useGetColumnData(settings.columnField);
   const measureField =

@@ -30,7 +30,7 @@ Native settings remain authoritative after application. Export current settings 
 
 ## Detailed settings
 
-Readable property paths can expose uncommon settings. Ordered complex records, literal keys, empty collections, dates, and missing-value selections still need settled syntax. JSON escapes from the prototype are rejected.
+Flat property paths reach every setting. Records in a list are written by index, empty lists and objects use `[]=` and `{}=`, and `unset` restores a default. Quoted segments hold literal keys. JSON escapes from the prototype are rejected.
 
 Every native setting remains the eventual coverage goal. Partial rendering must identify unsupported effects rather than imply full support.
 

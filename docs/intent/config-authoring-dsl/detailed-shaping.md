@@ -67,7 +67,7 @@ Dashboard DSL
 
 ## Likely authoring
 
-These examples illustrate the proposed flat language. They are not a released grammar. The historical prototype did not prove complete-document application or chart-local filter behavior.
+These examples use the implemented flat language. `exploreda-dsl reference` prints the full grammar.
 
 ### Start small: no names or mappings
 
@@ -111,7 +111,7 @@ scatter x=Revenue y=Margin color=Category
 + regression.overall=false
 ```
 
-These names are a new proposal. The intent is a degree-two fit per group, with shared parameters across facets. Native regression must exist first.
+These settings use native regression: a degree-two fit per group, with shared parameters across facets.
 
 ### Broken input: keep usable charts
 
@@ -125,9 +125,9 @@ Render the histogram and metric. Identify `MissingMargin`, locate the declaratio
 
 ## Boundaries and open choices
 
-**Unsettled syntax:** Ordered nested records, literal keys with punctuation, empty collections, date bounds, and missing-value filters need concrete spellings. Full coverage must stay readable without JSON.
+**Settled syntax:** Every saved setting is a flat path: `xAxis.scaleType=log`, `columns.0.width=140`, `fields[]=Region,Channel`. `key[]=` is an empty list and `key{}=` an empty object. `key=unset` restores the default, `key=null` is missing, quoted text is always text, and quoted segments hold dots and spaces. Dates bound filters as `where."Order Date"=2024-01-01..`; missing values filter as `where.field=null`. Color scales, grouped summaries, and the Rows view use `scale`, `group`, and `rows` lines. Exports of every demo example rebuild exactly.
 
-**Unsettled entry:** Paste and files are proposals. Global filters require main-app support and separate shaping.
+**Entry:** The demo hosts a paste-started Dashboard text panel, and `exploreda-dsl check` reads files. The package exports the compiler, not the panel. Global filters require main-app support and separate shaping.
 
 **Outside this scope:** Source joins, a new formula language, and mandatory live text synchronization. Native JSON can remain an internal saved format.
 

@@ -5677,3 +5677,39 @@ td[data-null] {
   overflow-y: auto;
   overscroll-behavior: contain;
 }
+.eda-local-filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  height: 28px;
+  padding: 0 12px 4px;
+  overflow-x: auto;
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.eda-local-filters:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+.eda-local-filters-lead {
+  font-weight: 600;
+}
+.eda-local-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--foreground);
+  background: var(--muted);
+}
+.eda-chart-rows {
+  display: grid;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}

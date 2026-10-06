@@ -37,6 +37,23 @@ import {
   validateSavedAnalysisForData,
   validateSavedData,
 } from "@/utils/saveDataUtils";
+import {
+  compileDocument,
+  describeDslSource,
+  DSL_CHART_KEYWORDS,
+  DSL_REFERENCE,
+  exportDocument,
+  formatDslDiagnostics,
+  type DslChartResult,
+  type DslExportOptions,
+  type DslExportResult,
+  type DslFieldSummary,
+  type DslCompileOptions,
+  type DslCompileResult,
+  type DslDiagnostic,
+  type DslEffect,
+  type DslSeverity,
+} from "@/lib/dsl";
 import { PlotManager } from "./PlotManager";
 import type { ExplorEdaSidePanel } from "./WorkspaceSidePanel";
 import { registerAllCharts } from "@/charts/registerAllCharts";
@@ -118,8 +135,23 @@ export type {
   FieldSettingsMap,
   AggregateSpec,
   AggregateResult,
+  DslChartResult,
+  DslCompileOptions,
+  DslCompileResult,
+  DslDiagnostic,
+  DslEffect,
+  DslExportOptions,
+  DslExportResult,
+  DslFieldSummary,
+  DslSeverity,
 };
 export {
+  compileDocument,
+  describeDslSource,
+  DSL_CHART_KEYWORDS,
+  DSL_REFERENCE,
+  exportDocument,
+  formatDslDiagnostics,
   parseSavedAnalysis,
   parseSavedData,
   saveAnalysisToClipboard,

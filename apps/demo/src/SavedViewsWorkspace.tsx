@@ -24,15 +24,19 @@ import { HistoryTimeline } from "./HistoryTimeline";
 import { SavedViewTabs, type SaveState } from "./SavedViewTabs";
 import {
   ExplorEda,
+  exportDocument,
   stringifySavedAnalysis,
   type ExplorEdaHandle,
   type ExplorEdaSidePanel,
   type SavedDataStructure,
 } from "exploreda";
-import { Eye, History, Redo2, Undo2 } from "lucide-react";
+import { Eye, FileCode, History, Redo2, Undo2 } from "lucide-react";
+import { DashboardTextPanel } from "./DashboardTextPanel";
+import { describeResult, type AppliedText } from "./dashboardText";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const HISTORY_PANEL_ID = "saved-views-history";
+const TEXT_PANEL_ID = "dashboard-text";
 
 function newId() {
   return `view-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
@@ -225,6 +229,10 @@ export function SavedViewsWorkspace({
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historyWide, setHistoryWide] = useState(false);
   const [announcement, setAnnouncement] = useState("");
+  const [textOpen, setTextOpen] = useState(false);
+  const [textWide, setTextWide] = useState(false);
+  const [dashboardText, setDashboardText] = useState("");
+  const [appliedText, setAppliedText] = useState<AppliedText>();
   // The panel remounts with each preview, so the step to focus waits here.
   const focusCheckpoint = useRef<number | "current">(undefined);
   const workspaceRef = useRef<ExplorEdaHandle>(null);
@@ -460,6 +468,38 @@ export function SavedViewsWorkspace({
     });
   };
 
+  /** Replaces the current view with the text's dashboard, as one step. */
+  const applyText = (result: AppliedText["result"]) => {
+    if (showingPreview) {
+      return;
+    }
+    const settings = result.settings;
+    setSession((current) => {
+      const tabs = current.tabs.map((tab) => {
+        if (tab.id === current.activeTabId) {
+          return {
+            ...tab,
+            settings: {
+              ...settings,
+              metadata: { ...settings.metadata, name: tab.name },
+            },
+          };
+        }
+        return tab.settings
+          ? { ...tab, settings: withSharedSettings(tab.settings, settings) }
+          : tab;
+      });
+      return pushCheckpoint(current, tabs, "View", {
+        action: `Applied dashboard text: ${describeResult(result)}`,
+      });
+    });
+    setAppliedText({ text: dashboardText, result });
+    setAnnouncement(
+      `Applied dashboard text: ${describeResult(result)}. Undo with ${MOD_KEY}Z.`
+    );
+    remount();
+  };
+
   const selectedHistoryIndex = session.path[session.cursor] ?? 0;
   const canUndo = session.cursor > 0;
   const canRedo = session.cursor < session.path.length - 1;
@@ -660,6 +700,32 @@ export function SavedViewsWorkspace({
   );
 
   const sidePanels: ExplorEdaSidePanel[] = [
+    {
+      id: TEXT_PANEL_ID,
+      label: "Dashboard text",
+      tooltip: "Dashboard text: build this view from compact text (T)",
+      icon: <FileCode aria-hidden="true" />,
+      shortcut: "t",
+      open: textOpen,
+      onOpenChange: setTextOpen,
+      wide: textWide,
+      onWideChange: setTextWide,
+      children: (
+        <DashboardTextPanel
+          text={dashboardText}
+          onTextChange={setDashboardText}
+          rows={sourceRows}
+          applied={appliedText}
+          onApply={applyText}
+          geometryAssets={currentView.settings?.geometryAssets}
+          onExport={() => {
+            const settings =
+              currentView.settings ?? workspaceRef.current?.getSettings();
+            return settings && exportDocument(settings, { rows: sourceRows });
+          }}
+        />
+      ),
+    },
     {
       id: HISTORY_PANEL_ID,
       label: "History",

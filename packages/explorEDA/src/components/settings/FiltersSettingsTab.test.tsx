@@ -98,4 +98,25 @@ describe("FiltersSettingsTab", () => {
       { type: "value", field: "region", values: ["South"] },
     ]);
   });
+
+  it("edits chart rows apart from the filters the chart sets", () => {
+    const onSettingChange = renderTab({
+      ...row,
+      localFilters: [{ type: "value", field: "region", values: ["North"] }],
+    } as ChartSettings);
+
+    const section = screen.getByRole("region", { name: "Chart rows" });
+    const region = within(section).getByRole("group", { name: "region" });
+    fireEvent.click(within(region).getByRole("checkbox", { name: "South" }));
+    expect(onSettingChange).toHaveBeenLastCalledWith("localFilters", [
+      { type: "value", field: "region", values: ["North", "South"] },
+    ]);
+
+    fireEvent.click(within(region).getByRole("button", { name: /Clear/ }));
+    expect(onSettingChange).toHaveBeenLastCalledWith(
+      "localFilters",
+      undefined
+    );
+  });
 });
+
