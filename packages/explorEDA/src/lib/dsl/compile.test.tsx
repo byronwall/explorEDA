@@ -224,7 +224,8 @@ rev:num=Revenu`);
     const result = compile(`scater x=Revenue y=Cost
 hist Revnue`);
     expect(result.settings.charts).toEqual([]);
-    expect(formatDslDiagnostics(result, "a.eda")).toBe(`a.eda:1:1: error: scater does not start a declaration, so this line was skipped.
+    expect(formatDslDiagnostics(result, "a.eda"))
+      .toBe(`a.eda:1:1: error: scater does not start a declaration, so this line was skipped.
   fix: Did you mean scatter?
 a.eda:2:6: error: Revnue is not a field, alias, or calculation, so hist (line 2) was skipped.
   fix: Did you mean Revenue?

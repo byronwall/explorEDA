@@ -14,3 +14,9 @@ export {
   formatDslDiagnostics,
   type DslFieldSummary,
 } from "./describe";
+export {
+  exportDocument,
+  type DslExportOptions,
+  type DslExportResult,
+} from "./export";
+export { CHART_SETTING_KEYS } from "./settingKeys";

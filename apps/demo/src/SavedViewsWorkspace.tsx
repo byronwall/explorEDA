@@ -24,6 +24,7 @@ import { HistoryTimeline } from "./HistoryTimeline";
 import { SavedViewTabs, type SaveState } from "./SavedViewTabs";
 import {
   ExplorEda,
+  exportDocument,
   stringifySavedAnalysis,
   type ExplorEdaHandle,
   type ExplorEdaSidePanel,
@@ -716,6 +717,11 @@ export function SavedViewsWorkspace({
           rows={sourceRows}
           applied={appliedText}
           onApply={applyText}
+          onExport={() => {
+            const settings =
+              currentView.settings ?? workspaceRef.current?.getSettings();
+            return settings && exportDocument(settings, { rows: sourceRows });
+          }}
         />
       ),
     },

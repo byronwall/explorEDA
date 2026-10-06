@@ -1,11 +1,18 @@
-import { useDeferredValue, useMemo, useRef, type UIEvent } from "react";
-import { AlertTriangle, CircleX, Copy } from "lucide-react";
+import {
+  useDeferredValue,
+  useMemo,
+  useRef,
+  useState,
+  type UIEvent,
+} from "react";
+import { AlertTriangle, CircleX, Copy, FileOutput } from "lucide-react";
 import {
   describeDslSource,
   DSL_REFERENCE,
   formatDslDiagnostics,
   type DslCompileResult,
   type DslDiagnostic,
+  type DslExportResult,
 } from "exploreda";
 import { toast } from "sonner";
 import {
@@ -75,13 +82,20 @@ export function DashboardTextPanel({
   rows,
   applied,
   onApply,
+  onExport,
 }: {
   text: string;
   onTextChange: (text: string) => void;
   rows: DatumObject[];
   applied?: AppliedText;
   onApply: (result: DslCompileResult) => void;
+  /** Writes the view as it is now, after any edits in the normal controls. */
+  onExport: () => DslExportResult | undefined;
 }) {
+  const [exported, setExported] = useState<{
+    text: string;
+    omitted: string[];
+  }>();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const gutterRef = useRef<HTMLDivElement>(null);
   const deferred = useDeferredValue(text);
@@ -98,6 +112,7 @@ export function DashboardTextPanel({
   );
   const warningLines = new Set(result?.diagnostics.map((item) => item.line));
   const showingApplied = applied && applied.text === text;
+  const showingExport = exported?.text === text;
   const nothingBuilt = result && result.charts.length === 0;
 
   const show = (item: DslDiagnostic) => {
@@ -172,6 +187,11 @@ export function DashboardTextPanel({
           <span className="font-medium text-destructive">
             Nothing can be built yet. Fix the problems below, then apply.
           </span>
+        ) : showingExport ? (
+          <span>
+            <span className="font-medium">Matches this view:</span>{" "}
+            {describeResult(result)}
+          </span>
         ) : showingApplied ? (
           <span>
             <span className="font-medium">Applied:</span>{" "}
@@ -191,11 +211,28 @@ export function DashboardTextPanel({
         <Button
           size="sm"
           className="h-8 text-xs"
-          disabled={!result || nothingBuilt || showingApplied}
+          disabled={!result || nothingBuilt || showingApplied || showingExport}
           onClick={() => result && onApply(result)}
         >
           Apply to this view
         </Button>
+        <ActionTooltip content="Replace the text with this view as it is now, including edits made with the chart controls">
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 text-xs"
+            onClick={() => {
+              const result = onExport();
+              if (result) {
+                setExported({ text: result.text, omitted: result.omitted });
+                onTextChange(result.text);
+              }
+            }}
+          >
+            <FileOutput aria-hidden="true" />
+            Write this view
+          </Button>
+        </ActionTooltip>
         <ActionTooltip content="Copy every problem with its line and fix, as plain text for an agent or a note">
           <Button
             size="sm"
@@ -215,6 +252,19 @@ export function DashboardTextPanel({
           </Button>
         </ActionTooltip>
       </div>
+      {showingExport && exported.omitted.length > 0 && (
+        <section aria-label="Not in the text" className="text-xs">
+          <h3 className="font-semibold">Not in the text</h3>
+          <p className="text-muted-foreground">
+            Applying this text rebuilds the view without these:
+          </p>
+          <ul className="mt-1 list-disc pl-5">
+            {exported.omitted.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      )}
       {result && result.diagnostics.length > 0 && (
         <section aria-label="Problems" className="min-w-0">
           <h3 className="mb-1 text-xs font-semibold">

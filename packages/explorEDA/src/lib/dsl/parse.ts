@@ -262,8 +262,14 @@ export function parseDocument(text: string): DslParseResult {
       const restStart =
         indent + keywordEnd + (rest.length - rest.trimStart().length);
       const body = rest.trim();
-      const equals = body.indexOf("=");
-      const name = equals > 0 ? body.slice(0, equals).trim() : "";
+      // A quoted name holds spaces: calc "Net sales"=gross-discount.
+      const quotedName = /^"((?:[^"\\]|\\.)*)"\s*=/.exec(body);
+      const equals = quotedName ? quotedName[0].length - 1 : body.indexOf("=");
+      const name = quotedName
+        ? unquote(`"${quotedName[1]}"`)
+        : equals > 0
+          ? body.slice(0, equals).trim()
+          : "";
       const declaration: DslDeclaration = {
         keyword,
         span,
@@ -271,7 +277,7 @@ export function parseDocument(text: string): DslParseResult {
         positional: [],
         pairs: [],
       };
-      if (!/^[A-Za-z_][\w]*$/.test(name)) {
+      if (quotedName ? !name.trim() : !/^[A-Za-z_][\w]*$/.test(name)) {
         problems.push({
           message: "A calculation needs a name and a formula.",
           span: { line, column: indent + 1, length: content.length - indent },
@@ -312,7 +318,7 @@ export function parseDocument(text: string): DslParseResult {
     const alias = ALIAS.exec(first.text);
     if (alias) {
       const declaration: DslDeclaration = {
-        keyword: "field",
+        keyword: "alias",
         span: { line, column: first.column + 1, length: first.text.length },
         endLine: line,
         positional: [],

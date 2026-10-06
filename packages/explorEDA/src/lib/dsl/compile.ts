@@ -29,6 +29,8 @@ import type {
   SerializedColorScale,
 } from "@/types/SavedDataTypes";
 import { validateSavedData } from "@/utils/saveDataUtils";
+import { parsePath, setPath } from "./paths";
+import { CHART_SETTING_KEYS } from "./settingKeys";
 import {
   parseDocument,
   type DslDeclaration,
@@ -97,6 +99,14 @@ const DEFAULT_GRID: GridSettings = {
   showBackgroundMarkers: true,
 };
 
+const EMPTY_SETTINGS: SavedDataStructure = {
+  charts: [],
+  calculations: [],
+  gridSettings: DEFAULT_GRID,
+  metadata: { name: "", version: 1, createdAt: "", modifiedAt: "" },
+  colorScales: [],
+};
+
 const TYPE_NAMES: Record<string, DataType> = {
   num: "numeric",
   number: "numeric",
@@ -130,7 +140,15 @@ export const DSL_CHART_KEYWORDS: Record<string, string> = {
   summary: "summary",
 };
 
-const OTHER_KEYWORDS = ["eda", "dashboard", "grid", "source", "calc"];
+const OTHER_KEYWORDS = [
+  "eda",
+  "dashboard",
+  "grid",
+  "source",
+  "calc",
+  "field",
+  "chart",
+];
 
 const FIELD_SETTING_KEYS = [
   "label",
@@ -139,7 +157,14 @@ const FIELD_SETTING_KEYS = [
   "precision",
   "unit",
   "currency",
+  "datePreset",
+  "nullTokens[]",
 ] as const;
+
+const DATE_PRESETS = ["iso", "month-day-year", "day-month-year"];
+
+/** Last path segments whose values name fields, so aliases apply. */
+const FIELD_SEGMENT = /^(field|\w*Field|fields|rowFields|valueFields|stages)$/;
 
 const FORMATS: FieldFormat[] = [
   "auto",
@@ -245,7 +270,9 @@ function booleanValue(value: DslValue): boolean | undefined {
  */
 export function compileDocument(
   text: string,
-  options: DslCompileOptions
+  options: DslCompileOptions,
+  /** Export builds bare charts first, before their paths make them valid. */
+  internal: { keepIncomplete?: boolean } = {}
 ): DslCompileResult {
   const { declarations, problems } = parseDocument(text);
   const diagnostics: DslDiagnostic[] = problems.map((problem) => ({
@@ -279,6 +306,7 @@ export function compileDocument(
   let metadataName = options.name ?? "Dashboard";
   const gridSettings = { ...DEFAULT_GRID };
   const calcDeclarations: DslDeclaration[] = [];
+  const fieldDeclarations: DslDeclaration[] = [];
   const chartDeclarations: DslDeclaration[] = [];
 
   const applyFieldPairs = (
@@ -310,6 +338,26 @@ export function compileDocument(
       const next: FieldSettings = { ...settingsFor(field) };
       if (pair.key === "precision") {
         next.precision = numberValue(pair.value);
+      } else if (pair.key === "nullTokens[]") {
+        next.nullTokens =
+          pair.value.raw === ""
+            ? []
+            : pair.value.items.map((item) => item.text);
+      } else if (pair.key === "datePreset") {
+        if (!DATE_PRESETS.includes(value)) {
+          report(
+            "warning",
+            "setting-default",
+            pair.span,
+            `${value} is not a date order, so ${subject} keeps the default.`,
+            {
+              subject,
+              suggestion: `Use one of: ${DATE_PRESETS.join(", ")}.`,
+            }
+          );
+          continue;
+        }
+        next.datePreset = value as FieldSettings["datePreset"];
       } else if (pair.key === "format") {
         next.format = value as FieldFormat;
         if (!FORMATS.includes(value as FieldFormat)) {
@@ -505,12 +553,16 @@ export function compileDocument(
                 suggestion: "Use columns=, rowHeight=, padding=, or markers=.",
               }
             );
-          } else if (number === undefined || number <= 0) {
+          } else if (
+            number === undefined ||
+            number < 0 ||
+            (number === 0 && pair.key !== "padding")
+          ) {
             report(
               "warning",
               "setting-default",
               pair.span,
-              `${pair.key} needs a positive number, so the grid keeps its default.`
+              `${pair.key} needs a ${pair.key === "padding" ? "number of 0 or more" : "positive number"}, so the grid keeps its default.`
             );
           } else {
             gridSettings[key] = number;
@@ -520,8 +572,11 @@ export function compileDocument(
       case "calc":
         calcDeclarations.push(declaration);
         break;
+      case "field":
+        fieldDeclarations.push(declaration);
+        break;
       default:
-        if (DSL_CHART_KEYWORDS[keyword]) {
+        if (DSL_CHART_KEYWORDS[keyword] || keyword === "chart") {
           chartDeclarations.push(declaration);
         } else {
           const near = closestName(keyword, [
@@ -720,6 +775,66 @@ export function compileDocument(
     }
   }
 
+  // `field Name key=value` sets display settings on a field or calculation
+  // by its exact name, without an alias.
+  for (const declaration of fieldDeclarations) {
+    const target = declaration.positional[0];
+    const name = target && single(target.value);
+    const subject = `field ${name ?? ""}`.trim();
+    if (!name) {
+      report(
+        "error",
+        "setting-ignored",
+        declaration.span,
+        "A field line needs the field's name.",
+        {
+          suggestion: 'Write it as field "Order Date" label="Ordered".',
+        }
+      );
+      continue;
+    }
+    const isCalc = calcNames.has(name) && !skippedCalcs.has(name);
+    if (!sourceSet.has(name) && !isCalc) {
+      const near = closestName(name, [...sourceFields, ...calcNames]);
+      report(
+        "error",
+        "setting-ignored",
+        target.span,
+        `${name} is not a field or calculation, so its settings were ignored.`,
+        {
+          subject,
+          suggestion: near ? `Did you mean ${near}?` : undefined,
+        }
+      );
+      continue;
+    }
+    const asPair = declaration.pairs.find((pair) => pair.key === "as");
+    if (asPair) {
+      const conversion = TYPE_NAMES[single(asPair.value)];
+      if (conversion && !isCalc) {
+        settingsFor(name).type = conversion;
+      } else {
+        report(
+          "warning",
+          "setting-ignored",
+          asPair.span,
+          isCalc
+            ? "A calculation's type comes from its formula, so as= was ignored."
+            : `${single(asPair.value)} is not a field type, so ${name} keeps its type.`,
+          {
+            subject,
+            suggestion: isCalc ? undefined : "Use num, cat, date, or bool.",
+          }
+        );
+      }
+    }
+    applyFieldPairs(
+      name,
+      declaration.pairs.filter((pair) => pair.key !== "as"),
+      subject
+    );
+  }
+
   // Evaluate with the native engine on the converted rows, like the app does.
   const runtimeRows = applyFieldSettings(rows, fieldSettings, inferred);
   const { dataWithIds } = initializeData(runtimeRows);
@@ -808,7 +923,12 @@ export function compileDocument(
 
   for (const declaration of chartDeclarations) {
     const subject = subjectOf(declaration);
-    const type = DSL_CHART_KEYWORDS[declaration.keyword]!;
+    const type =
+      declaration.keyword === "chart"
+        ? declaration.positional[0]
+          ? single(declaration.positional.shift()!.value)
+          : ""
+        : DSL_CHART_KEYWORDS[declaration.keyword]!;
     const summary = { line: declaration.span.line, subject, type };
     const chart = buildChart(declaration, type, subject);
     if (chart) {
@@ -913,9 +1033,13 @@ export function compileDocument(
     subject: string
   ): Filter | undefined {
     const operators = ["contains", "equals", "startsWith", "endsWith"] as const;
-    const lastDot = path.lastIndexOf(".");
-    const operator = operators.find((item) => path.slice(lastDot + 1) === item);
-    const name = operator ? path.slice(0, lastDot) : path;
+    // Quote a field name with dots or spaces: where."Order Date"=2024-01-01..
+    const segments = parsePath(path)?.segments ?? [path];
+    const operator =
+      segments.length === 2
+        ? operators.find((item) => segments[1] === item)
+        : undefined;
+    const name = operator || segments.length === 1 ? segments[0]! : path;
     const field = resolveField(name, span, subject);
     if (!field) {
       return undefined;
@@ -1004,6 +1128,19 @@ export function compileDocument(
     type: string,
     subject: string
   ): ChartSettings | undefined {
+    if (!type) {
+      report(
+        "error",
+        "chart-skipped",
+        declaration.span,
+        "chart needs a chart type, so this line was skipped.",
+        {
+          subject,
+          suggestion: `Write it as chart boxplot field=Revenue. Types: ${[...chartRegistry.getAll()].map((item) => item.type).join(", ")}.`,
+        }
+      );
+      return undefined;
+    }
     if (!chartRegistry.has(type as ChartType)) {
       report(
         "error",
@@ -1134,6 +1271,23 @@ export function compileDocument(
       case "summary":
         chart = definition.createDefaultSettings(layout) as ChartSettings;
         break;
+      case "chart": {
+        // Any registered type: defaults first, then settings by path.
+        const named = take("field");
+        const resolved = named && fieldFrom(named);
+        if (named && !resolved) {
+          return undefined;
+        }
+        field = resolved ?? "";
+        chart = definition.createDefaultSettings(
+          { ...layout, ...(DEFAULT_SIZES[type] ?? {}) },
+          resolved || undefined
+        ) as ChartSettings;
+        if (resolved && chart.field !== resolved) {
+          chart = { ...chart, field: resolved };
+        }
+        break;
+      }
       default: {
         // hist, bar, row: one field, positionally or as field=.
         const named = take("field");
@@ -1195,6 +1349,10 @@ export function compileDocument(
     }
 
     // Filters first: a broken one skips the chart instead of widening it.
+    const pathGroups = new Map<
+      string,
+      { before: ChartSettings; pairs: DslPair[] }
+    >();
     const localFilters: Filter[] = [];
     const linked: Filter[] = [];
     for (const [key, pair] of [...pairs]) {
@@ -1226,7 +1384,22 @@ export function compileDocument(
     }
 
     for (const [key, pair] of pairs) {
-      const result = applySetting(chart, key, pair, subject);
+      let result = applySetting(chart, key, pair, subject);
+      if (result === "unknown") {
+        const before = chart;
+        const next = applyPath(chart, key, pair, subject);
+        if (typeof next === "object") {
+          // Check a setting once all of its paths are in, so a record
+          // can be filled field by field.
+          const top = parsePath(key)!.segments[0]!;
+          const group = pathGroups.get(top) ?? { before, pairs: [] };
+          group.pairs.push(pair);
+          pathGroups.set(top, group);
+          chart = next;
+          continue;
+        }
+        result = next;
+      }
       if (result === "unknown") {
         const near = closestName(key, settingNames(chart));
         report(
@@ -1239,12 +1412,37 @@ export function compileDocument(
             suggestion: near ? `Did you mean ${near}?` : undefined,
           }
         );
-      } else if (result !== "ok") {
+      } else if (result !== "ok" && result !== "ok-reported") {
         report("warning", "setting-default", pair.span, result, { subject });
       }
     }
 
-    if (!definition.validateSettings(chart as never)) {
+    for (const [top, group] of pathGroups) {
+      if (validateSavedData({ ...EMPTY_SETTINGS, charts: [chart] })) {
+        break;
+      }
+      const candidate = {
+        ...chart,
+        [top]: (group.before as unknown as Record<string, unknown>)[top],
+      } as ChartSettings;
+      const alone = {
+        ...group.before,
+        [top]: (chart as unknown as Record<string, unknown>)[top],
+      } as ChartSettings;
+      if (!validateSavedData({ ...EMPTY_SETTINGS, charts: [alone] })) {
+        chart = candidate;
+        const first = group.pairs[0]!;
+        report(
+          "warning",
+          "setting-default",
+          first.span,
+          `${group.pairs.map((pair) => `${pair.key}=${pair.value.raw}`).join(" ")} doesn't fit ${top}, so ${subject} keeps the default ${top}.`,
+          { subject }
+        );
+      }
+    }
+
+    if (!internal.keepIncomplete && !definition.validateSettings(chart as never)) {
       return fail(
         declaration.span,
         `${subject} is missing a required setting, so it was skipped.`
@@ -1254,8 +1452,67 @@ export function compileDocument(
     return chart;
   }
 
+  /**
+   * Sets any saved setting by its path, such as xAxis.scaleType or
+   * columns.0.width. Returns the changed chart, "unknown" for a name the
+   * chart lacks, or a message when the value doesn't fit.
+   */
+  function applyPath(
+    chart: ChartSettings,
+    key: string,
+    pair: DslPair,
+    subject: string
+  ): ChartSettings | "unknown" | string {
+    const path = parsePath(key);
+    if (!path) {
+      return `${key} is not a setting path, so it was ignored. Separate names with dots and quote names with spaces.`;
+    }
+    const top = path.segments[0]!;
+    if (
+      !CHART_SETTING_KEYS[
+        chart.type as keyof typeof CHART_SETTING_KEYS
+      ]?.includes(top)
+    ) {
+      return "unknown";
+    }
+    if (
+      top === "colorScaleId" ||
+      top === "aggregateId" ||
+      top === "geometryAssetId"
+    ) {
+      return `${key} refers to a workspace definition by ID, which text can't write yet, so ${subject} keeps the default.`;
+    }
+    let value = pair.value;
+    if (FIELD_SEGMENT.test(path.segments.at(-1)!)) {
+      const items = [];
+      for (const item of value.items) {
+        if (
+          item.text === "" ||
+          (!item.quoted && (item.text === "null" || item.text === "unset"))
+        ) {
+          items.push(item);
+          continue;
+        }
+        const native = resolveField(
+          item.text,
+          pair.span,
+          subject,
+          `${key} keeps its default`
+        );
+        if (!native) {
+          return "ok-reported";
+        }
+        items.push({ text: native, quoted: true });
+      }
+      value = { raw: value.raw, items };
+    }
+    return setPath(chart, path, value);
+  }
+
   function settingNames(chart: ChartSettings) {
     return [
+      ...(CHART_SETTING_KEYS[chart.type as keyof typeof CHART_SETTING_KEYS] ??
+        []),
       "title",
       "at",
       "color",
