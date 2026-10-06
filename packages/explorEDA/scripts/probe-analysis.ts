@@ -81,6 +81,53 @@ for (let i = 0; i < 3; i++) {
 }
 if (!result) throw new Error("No evaluation result");
 let start = performance.now();
+const aggregateProject = structuredClone(project);
+aggregateProject.queries.push({
+  id: "scale-aggregate",
+  name: "Scale aggregate",
+  glyph: "A",
+  frameLabel: "Base rows",
+  steps: [
+    { id: "aggregate-source", kind: "source", sourceId: "s0" },
+    {
+      id: "amount-groups",
+      kind: "aggregate",
+      inputStepId: "aggregate-source",
+      groupBy: ["s0.amount"],
+      measures: [
+        { id: "rowCount", label: "Rows", operation: "count" },
+        {
+          id: "amountSum",
+          label: "Amount total",
+          operation: "sum",
+          fieldId: "s0.amount",
+        },
+      ],
+    },
+  ],
+  outputStepId: "amount-groups",
+});
+start = performance.now();
+const aggregated = evaluateAnalysisQuery(
+  aggregateProject,
+  tables,
+  "scale-aggregate"
+);
+const aggregationMs = Math.round(performance.now() - start);
+const checkedAmount = tables.s0[0]!.amount;
+const matchingRows = tables.s0.filter((row) => row.amount === checkedAmount);
+const checkedGroup = aggregated.rows.find(
+  (row) => row.values["s0.amount"] === checkedAmount
+);
+const aggregationCorrect =
+  checkedGroup?.values.rowCount === matchingRows.length &&
+  checkedGroup.values.amountSum ===
+    matchingRows.reduce((sum, row) => sum + Number(row.amount), 0);
+if (!aggregationCorrect) throw new Error("Aggregate cross-check failed");
+const aggregationInput = aggregated.stages.find(
+  (stage) => stage.stepId === "amount-groups"
+)!;
+start = performance.now();
 const encoded = stringifyAnalysisProject({
   format: "exploreda-project",
   version: 1,
@@ -123,6 +170,26 @@ const report = {
     (n, row) => n + row.sourceRows.length,
     0
   ),
+  aggregation: {
+    input: aggregationInput.inputCount,
+    output: aggregated.rows.length,
+    contributors: aggregated.rows.reduce(
+      (count, row) => count + row.contributors.length,
+      0
+    ),
+    durationMs: aggregationMs,
+    correctness: {
+      checkedAmount,
+      expectedCount: matchingRows.length,
+      actualCount: checkedGroup.values.rowCount,
+      expectedSum: matchingRows.reduce(
+        (sum, row) => sum + Number(row.amount),
+        0
+      ),
+      actualSum: checkedGroup.values.amountSum,
+      passed: aggregationCorrect,
+    },
+  },
   originJsonBytes: JSON.stringify(result.rows.map((r) => r.sourceRows)).length,
   persistedBytes: Buffer.byteLength(encoded),
   persistedCompactBytes: Buffer.byteLength(
