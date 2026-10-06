@@ -438,6 +438,98 @@ describe("DataLayerProvider", () => {
     expect(screen.getByTestId("columns")).toHaveTextContent("amount");
   });
 
+  it("applies declared fields before restoring grouped charts for an empty query result", async () => {
+    const emptyFieldNames: string[] = [];
+    const declaredFieldNames = ["orders.customerId", "orders.amount"];
+    const chart = {
+      ...getChartDefinition("bar").createDefaultSettings(
+        { x: 0, y: 0, w: 6, h: 5 },
+        "orders.customerId"
+      ),
+      aggregateId: "amount-by-customer",
+    };
+    const settings = {
+      ...savedData(),
+      charts: [chart],
+      aggregates: [
+        {
+          id: "amount-by-customer",
+          name: "Amount by customer",
+          groupField: "orders.customerId",
+          measureField: "orders.amount",
+          aggregation: "sum" as const,
+        },
+      ],
+    };
+
+    function ResultProbe() {
+      const state = useDataLayer((current) => current);
+      return (
+        <>
+          <output data-testid="result-rows">{state.data.length}</output>
+          <output data-testid="result-fields">
+            {JSON.stringify(state.getColumnNames())}
+          </output>
+          <output data-testid="result-settings">
+            {JSON.stringify({
+              aggregates: state.aggregates,
+              charts: state.charts.map((chart) => ({
+                type: chart.type,
+                aggregateId:
+                  "aggregateId" in chart ? chart.aggregateId : undefined,
+              })),
+            })}
+          </output>
+        </>
+      );
+    }
+
+    const view = render(
+      <DataLayerProvider data={[]} fieldNames={emptyFieldNames}>
+        <ResultProbe />
+      </DataLayerProvider>
+    );
+
+    view.rerender(
+      <DataLayerProvider
+        data={[
+          { "orders.customerId": "C1", "orders.amount": 25 },
+          { "orders.customerId": "C1", "orders.amount": 25 },
+        ]}
+        fieldNames={emptyFieldNames}
+      >
+        <ResultProbe />
+      </DataLayerProvider>
+    );
+    await waitFor(() =>
+      expect(screen.getByTestId("result-rows")).toHaveTextContent("2")
+    );
+
+    view.rerender(
+      <DataLayerProvider
+        data={[]}
+        fieldNames={declaredFieldNames}
+        savedData={settings}
+      >
+        <ResultProbe />
+      </DataLayerProvider>
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId("result-fields")).toHaveTextContent(
+        "orders.customerId"
+      )
+    );
+    expect(screen.getByTestId("result-rows")).toHaveTextContent("0");
+    expect(screen.getByTestId("result-fields")).toHaveTextContent(
+      "orders.amount"
+    );
+    expect(screen.getByTestId("result-settings")).toHaveTextContent(
+      "amount-by-customer"
+    );
+    expect(screen.getByTestId("result-settings")).toHaveTextContent('"type":"bar"');
+  });
+
   it("creates a summary and table from the union of source fields", () => {
     render(
       <DataLayerProvider data={dataWithLateField}>

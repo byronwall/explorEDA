@@ -27,6 +27,7 @@ import { FieldMetadata } from "@/components/FieldMetadata";
 import { incompatibleSettingsFields } from "./settingsCompatibility";
 import { matchingSourceRows, resolveSourceRow } from "./sourceRowIdentity";
 import { validParameterValues } from "./parameterBindings";
+import { nextQueryGlyph } from "@/lib/queryGlyph";
 import { QueryRendererEvidence } from "./QueryRendererEvidence";
 import type {
   QueryChartFilterScope,
@@ -72,12 +73,6 @@ function stageDescription(step: AnalysisStep, project: AnalysisProject) {
   }
 }
 
-function nextGlyph(project: AnalysisProject, fallback: string) {
-  const glyphs = ["◆", "◇", "●", "▦", "◈", "⬡", "▣", "◉"];
-  const used = new Set(project.queries.map((item) => item.glyph));
-  return glyphs.find((glyph) => !used.has(glyph)) ?? fallback;
-}
-
 function queryForStage(
   query: AnalysisQuery,
   stepId: string,
@@ -97,7 +92,7 @@ function queryForStage(
     ...query,
     id: newId(`${query.id}-stage`),
     name: `${query.name} · ${steps.get(stepId)?.kind ?? "step"}`,
-    glyph: nextGlyph(project, query.glyph),
+    glyph: nextQueryGlyph(project.queries),
     steps: query.steps.filter((step) => used.has(step.id)),
     outputStepId: stepId,
   };
@@ -112,7 +107,7 @@ function copyQuery(query: AnalysisQuery, project: AnalysisProject) {
   const stepIds = new Map(
     query.steps.map((step) => [step.id, newId(`${step.id}-copy`)])
   );
-  const glyph = nextGlyph(project, query.glyph);
+  const glyph = nextQueryGlyph(project.queries);
   return {
     ...query,
     id,
@@ -1380,14 +1375,14 @@ function RelatedRows({
       : [];
   });
 
-  function openSource(sourceId: string, sourceName: string, glyph: string) {
+  function openSource(sourceId: string, sourceName: string) {
     if (!onOpenView) return;
     const queryId = newId(`${view.queryId}-source`);
     const stepId = newId(`${queryId}-read`);
     const query: AnalysisQuery = {
       id: queryId,
       name: sourceName,
-      glyph,
+      glyph: nextQueryGlyph(project.queries),
       frameLabel: sourceName,
       steps: [{ id: stepId, kind: "source", sourceId }],
       outputStepId: stepId,
@@ -1427,9 +1422,7 @@ function RelatedRows({
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={() =>
-                      openSource(source.id, source.name, source.glyph)
-                    }
+                    onClick={() => openSource(source.id, source.name)}
                   >
                     <Play />
                     Open source view

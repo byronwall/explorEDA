@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, Link2, Plus, X } from "lucide-react";
 import type {
   AnalysisProject,
@@ -8,6 +8,7 @@ import type {
   SourceDefinition,
 } from "@/types/AnalysisProject";
 import { buildFieldProfiles } from "@/lib/fieldProfiles";
+import { nextQueryGlyph } from "@/lib/queryGlyph";
 import { FieldMetadata } from "@/components/FieldMetadata";
 import { Button } from "@/components/ui/button";
 import { ActionTooltip } from "@/components/ui/tooltip";
@@ -83,8 +84,17 @@ export function ProjectSchemaPanel({
   const [cardinality, setCardinality] =
     useState<RelationshipDefinition["cardinality"]>("many-to-one");
   const [proposal, setProposal] = useState<RelationshipDefinition>();
+  const [editingId, setEditingId] = useState<string>();
   const [pendingRemove, setPendingRemove] = useState<string>();
   const [error, setError] = useState("");
+  const editorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (editingId) {
+      editorRef.current?.scrollIntoView?.({ block: "nearest" });
+      editorRef.current?.focus();
+    }
+  }, [editingId]);
 
   const selectedFrom = project.sources.find((source) => source.id === from);
   const selectedTo = project.sources.find((source) => source.id === to);
@@ -116,9 +126,16 @@ export function ProjectSchemaPanel({
     setTo(targetId);
     setToField(targetFieldId);
     setError("");
+    const existing = project.relationships.find(
+      (relationship) => relationship.id === editingId
+    );
     setProposal({
-      id: `rel-${sourceId}-${fieldId}-${targetId}-${targetFieldId}`,
-      name: `${sourceLabel(project, sourceId)} to ${sourceLabel(project, targetId)}`,
+      id:
+        existing?.id ??
+        `rel-${sourceId}-${fieldId}-${targetId}-${targetFieldId}`,
+      name:
+        existing?.name ??
+        `${sourceLabel(project, sourceId)} to ${sourceLabel(project, targetId)}`,
       from: { sourceId, fieldId },
       to: { sourceId: targetId, fieldId: targetFieldId },
       cardinality,
@@ -127,6 +144,17 @@ export function ProjectSchemaPanel({
 
   function confirmProposal() {
     if (!proposal) return;
+    if (editingId) {
+      onProjectChange({
+        ...project,
+        relationships: project.relationships.map((relationship) =>
+          relationship.id === editingId ? proposal : relationship
+        ),
+      });
+      setEditingId(undefined);
+      setProposal(undefined);
+      return;
+    }
     const conflict = project.relationships.some(
       (relationship) => relationship.id === proposal.id
     );
@@ -139,6 +167,24 @@ export function ProjectSchemaPanel({
       relationships: [...project.relationships, proposal],
     });
     setProposal(undefined);
+    setEditingId(undefined);
+  }
+
+  function editRelationship(relationship: RelationshipDefinition) {
+    setEditingId(relationship.id);
+    setFrom(relationship.from.sourceId);
+    setFromField(relationship.from.fieldId);
+    setTo(relationship.to.sourceId);
+    setToField(relationship.to.fieldId);
+    setCardinality(relationship.cardinality);
+    setProposal(undefined);
+    setError("");
+  }
+
+  function cancelEdit() {
+    setProposal(undefined);
+    setEditingId(undefined);
+    setError("");
   }
 
   function removeRelationship(relationship: RelationshipDefinition) {
@@ -191,17 +237,10 @@ export function ProjectSchemaPanel({
                       onClick={() => {
                         const queryId = `source-${source.id}-${globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)}`;
                         const stepId = `${queryId}-read`;
-                        const glyphs = ["◆", "◇", "●", "▦", "◈", "⬡", "▣", "◉"];
-                        const usedGlyphs = new Set(
-                          project.queries.map((item) => item.glyph)
-                        );
-                        const glyph =
-                          glyphs.find((item) => !usedGlyphs.has(item)) ??
-                          source.glyph;
                         const query = {
                           id: queryId,
                           name: source.name,
-                          glyph,
+                          glyph: nextQueryGlyph(project.queries),
                           frameLabel: source.name,
                           steps: [
                             {
@@ -365,22 +404,36 @@ export function ProjectSchemaPanel({
                     )}
                   </div>
                   {!readOnly && (
-                    <ActionTooltip
-                      content={
-                        affected.length
-                          ? `Remove link; ${affected.length} query references stay for repair`
-                          : "Remove relationship"
-                      }
-                    >
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label={`Remove relationship ${relationship.name}`}
-                        onClick={() => setPendingRemove(relationship.id)}
+                    <div className="flex shrink-0 items-center gap-1">
+                      <ActionTooltip
+                        content={`Edit relationship ${relationship.name}`}
                       >
-                        <X />
-                      </Button>
-                    </ActionTooltip>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          aria-label={`Edit relationship ${relationship.name}`}
+                          onClick={() => editRelationship(relationship)}
+                        >
+                          Edit
+                        </Button>
+                      </ActionTooltip>
+                      <ActionTooltip
+                        content={
+                          affected.length
+                            ? `Remove link; ${affected.length} query references stay for repair`
+                            : "Remove relationship"
+                        }
+                      >
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          aria-label={`Remove relationship ${relationship.name}`}
+                          onClick={() => setPendingRemove(relationship.id)}
+                        >
+                          <X />
+                        </Button>
+                      </ActionTooltip>
+                    </div>
                   )}
                 </div>
                 {pendingRemove === relationship.id && (
@@ -422,12 +475,29 @@ export function ProjectSchemaPanel({
           })}
         </ul>
         {!readOnly && (
-          <div className="space-y-3 rounded-md border border-border p-3">
+          <div
+            ref={editorRef}
+            tabIndex={-1}
+            role="region"
+            aria-label={
+              editingId ? "Edit relationship" : "Propose a relationship"
+            }
+            className="space-y-3 rounded-md border border-border p-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
             <div className="flex items-center justify-between gap-2">
-              <h4 className="font-medium">Propose a relationship</h4>
+              <h4 className="font-medium">
+                {editingId ? "Edit relationship" : "Propose a relationship"}
+              </h4>
               <span className="text-xs text-muted-foreground">
-                Keyboard and touch
+                {editingId
+                  ? `Used by ${project.queries.filter((item) => item.steps.some((step) => (step.kind === "lookup" || step.kind === "expand") && step.relationshipId === editingId)).length} queries`
+                  : "Keyboard and touch"}
               </span>
+              {editingId && !proposal && (
+                <Button size="sm" variant="outline" onClick={cancelEdit}>
+                  Cancel
+                </Button>
+              )}
             </div>
             <label className="block space-y-1 text-xs">
               <span>From source and field</span>
@@ -437,6 +507,8 @@ export function ProjectSchemaPanel({
                   onValueChange={(value) => {
                     setFrom(value);
                     setFromField("");
+                    setProposal(undefined);
+                    setError("");
                   }}
                 >
                   <SelectTrigger aria-label="From source">
@@ -452,7 +524,11 @@ export function ProjectSchemaPanel({
                 </Select>
                 <Select
                   value={fromField}
-                  onValueChange={setFromField}
+                  onValueChange={(value) => {
+                    setFromField(value);
+                    setProposal(undefined);
+                    setError("");
+                  }}
                   disabled={!selectedFrom}
                 >
                   <SelectTrigger aria-label="From field">
@@ -476,6 +552,8 @@ export function ProjectSchemaPanel({
                   onValueChange={(value) => {
                     setTo(value);
                     setToField("");
+                    setProposal(undefined);
+                    setError("");
                   }}
                 >
                   <SelectTrigger aria-label="Matches source">
@@ -493,7 +571,11 @@ export function ProjectSchemaPanel({
                 </Select>
                 <Select
                   value={toField}
-                  onValueChange={setToField}
+                  onValueChange={(value) => {
+                    setToField(value);
+                    setProposal(undefined);
+                    setError("");
+                  }}
                   disabled={!selectedTo}
                 >
                   <SelectTrigger aria-label="Matches field">
@@ -586,14 +668,7 @@ export function ProjectSchemaPanel({
                   >
                     <Check /> Apply relationship
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      setProposal(undefined);
-                      setError("");
-                    }}
-                  >
+                  <Button size="sm" variant="outline" onClick={cancelEdit}>
                     Cancel
                   </Button>
                 </div>

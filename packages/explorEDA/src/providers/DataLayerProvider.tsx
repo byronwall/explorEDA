@@ -1375,6 +1375,9 @@ export function DataLayerProvider<T extends DatumObject>({
     suppressStateChangeRef.current = true;
     try {
       if (dataChanged) {
+        if (fieldNamesChanged) {
+          store.setState({ fieldNames: nextFieldNames ?? [] });
+        }
         store.getState().setData(nextData ?? [], undefined, !nextSavedData);
         if (nextSavedData) {
           store.getState().restoreFromStructure(nextSavedData);
