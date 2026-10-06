@@ -13,6 +13,9 @@ import {
   type FieldSettingsMap,
 } from "@/lib/fieldSettings";
 import { initializeData } from "@/providers/lib/dataLayerState";
+import type { AggregateSpec } from "@/lib/aggregates";
+import type { GeometryAsset } from "@/lib/geometryAssets";
+import type { SavedRowsSettings } from "@/types/SavedDataTypes";
 import type {
   ChartLayout,
   ChartSettings,
@@ -88,6 +91,8 @@ export interface DslCompileOptions {
   sourceName?: string;
   /** Dashboard name when the text has no `dashboard name=` line. */
   name?: string;
+  /** Map shapes the host supplies; region maps refer to them by ID. */
+  geometryAssets?: GeometryAsset[];
   /** Clock for metadata, for repeatable output. */
   now?: () => Date;
 }
@@ -141,6 +146,9 @@ export const DSL_CHART_KEYWORDS: Record<string, string> = {
 };
 
 const OTHER_KEYWORDS = [
+  "scale",
+  "group",
+  "rows",
   "eda",
   "dashboard",
   "grid",
@@ -307,6 +315,7 @@ export function compileDocument(
   const gridSettings = { ...DEFAULT_GRID };
   const calcDeclarations: DslDeclaration[] = [];
   const fieldDeclarations: DslDeclaration[] = [];
+  const sharedDeclarations: DslDeclaration[] = [];
   const chartDeclarations: DslDeclaration[] = [];
 
   const applyFieldPairs = (
@@ -574,6 +583,11 @@ export function compileDocument(
         break;
       case "field":
         fieldDeclarations.push(declaration);
+        break;
+      case "scale":
+      case "group":
+      case "rows":
+        sharedDeclarations.push(declaration);
         break;
       default:
         if (DSL_CHART_KEYWORDS[keyword] || keyword === "chart") {
@@ -915,11 +929,142 @@ export function compileDocument(
 
   // Charts.
   const colorScales: SerializedColorScale[] = [];
+  const generatedScales = new Set<string>();
   const charts: ChartSettings[] = [];
   const built: DslChartResult[] = [];
   const skipped: DslChartResult[] = [];
   const explicitLayouts = new Set<string>();
   const usedIds = new Set<string>();
+
+  // Shared definitions: color scales, grouped summaries, and the Rows view.
+  // Each starts from the app's own default and takes the same flat paths.
+  const aggregates: AggregateSpec[] = [];
+  const geometryAssets = options.geometryAssets ?? [];
+  let rowsSettings: SavedRowsSettings | undefined;
+  for (const declaration of sharedDeclarations) {
+    const { keyword, name } = declaration;
+    const subject = `${keyword}${name ? ` @${name}` : ""} (line ${declaration.span.line})`;
+    const pairs = [...declaration.pairs];
+    const take = (key: string) => {
+      const index = pairs.findIndex((pair) => pair.key === key);
+      return index < 0 ? undefined : pairs.splice(index, 1)[0];
+    };
+    if (keyword !== "rows" && !name) {
+      report(
+        "error",
+        "setting-ignored",
+        declaration.span,
+        `A ${keyword} needs an @name so charts can refer to it, so this line was skipped.`,
+        {
+          subject,
+          suggestion: `Write it as ${keyword} @${keyword === "scale" ? "channelColors field=Channel" : "byRegion groupField=Region aggregation=sum measureField=Revenue"}.`,
+        }
+      );
+      continue;
+    }
+    if (keyword === "scale") {
+      const fieldPair = take("field");
+      const field =
+        fieldPair &&
+        resolveField(
+          single(fieldPair.value),
+          fieldPair.span,
+          subject,
+          `${subject} starts empty`
+        );
+      let scale: unknown = field
+        ? { ...defaultScale(field), id: name, name: field }
+        : { id: name, name, type: "categorical", palette: [], mapping: [] };
+      scale = applyRecordPaths(scale, pairs, subject);
+      if (
+        !validateSavedData({
+          ...EMPTY_SETTINGS,
+          colorScales: [scale as SerializedColorScale],
+        })
+      ) {
+        report(
+          "error",
+          "setting-ignored",
+          declaration.span,
+          `${subject} is not a complete color scale, so it was skipped.`,
+          {
+            subject,
+            suggestion:
+              "Start it from a field with field=, or set type=, palette[]=, and mapping or min= and max=.",
+          }
+        );
+        continue;
+      }
+      colorScales.push(scale as SerializedColorScale);
+    } else if (keyword === "group") {
+      const spec = applyRecordPaths(
+        { id: name, name, groupField: "", aggregation: "count" },
+        pairs,
+        subject
+      ) as AggregateSpec;
+      const valid =
+        spec.groupField &&
+        ["count", "sum", "average"].includes(spec.aggregation) &&
+        (spec.aggregation === "count" || spec.measureField);
+      if (!valid) {
+        report(
+          "error",
+          "setting-ignored",
+          declaration.span,
+          `${subject} needs groupField=, and measureField= unless it counts, so it was skipped.`,
+          {
+            subject,
+            suggestion:
+              "Write it as group @byRegion groupField=Region aggregation=sum measureField=Revenue.",
+          }
+        );
+        continue;
+      }
+      aggregates.push(spec);
+    } else {
+      const filters: Filter[] = [];
+      for (const pair of [...pairs]) {
+        if (!pair.key.startsWith("where.")) {
+          continue;
+        }
+        pairs.splice(pairs.indexOf(pair), 1);
+        const filter = buildFilter(
+          pair.key.slice(6),
+          pair.value,
+          pair.span,
+          subject
+        );
+        if (filter) {
+          filters.push(filter);
+        }
+      }
+      const fields = [
+        ...sourceFields,
+        ...calculations.map((calc) => calc.resultColumnName),
+      ];
+      const next = applyRecordPaths(
+        {
+          columns: fields.map((field) => ({ id: field, field })),
+          sortDirection: "asc",
+          filters,
+          globalSearch: "",
+        },
+        pairs,
+        subject
+      ) as SavedRowsSettings;
+      if (!validateSavedData({ ...EMPTY_SETTINGS, rowsSettings: next })) {
+        report(
+          "error",
+          "setting-ignored",
+          declaration.span,
+          `${subject} has a setting the Rows view can't use, so the Rows view keeps its defaults.`,
+          { subject }
+        );
+        continue;
+      }
+      rowsSettings = next;
+    }
+  }
 
   for (const declaration of chartDeclarations) {
     const subject = subjectOf(declaration);
@@ -1000,11 +1145,78 @@ export function compileDocument(
     return undefined;
   }
 
-  function colorScaleFor(field: string): string {
-    const existing = colorScales.find((scale) => scale.sourceField === field);
-    if (existing) {
-      return existing.id;
+  /** Checks one chart with the shared definitions it may refer to. */
+  function chartFits(chart: ChartSettings) {
+    return validateSavedData({
+      ...EMPTY_SETTINGS,
+      colorScales,
+      aggregates,
+      geometryAssets,
+      charts: [chart as SavedDataStructure["charts"][number]],
+    });
+  }
+
+  /** Swaps alias names for native field names in a field-valued path. */
+  function resolveValueFields(
+    key: string,
+    pair: DslPair,
+    subject: string
+  ): DslValue | undefined {
+    const path = parsePath(key);
+    if (!path || !FIELD_SEGMENT.test(path.segments.at(-1)!)) {
+      return pair.value;
     }
+    const items = [];
+    for (const item of pair.value.items) {
+      if (
+        item.text === "" ||
+        (!item.quoted && (item.text === "null" || item.text === "unset"))
+      ) {
+        items.push(item);
+        continue;
+      }
+      const native = resolveField(
+        item.text,
+        pair.span,
+        subject,
+        `${key} keeps its default`
+      );
+      if (!native) {
+        return undefined;
+      }
+      items.push({ text: native, quoted: true });
+    }
+    return { raw: pair.value.raw, items };
+  }
+
+  /** Applies flat paths to a shared definition, reporting ones it can't read. */
+  function applyRecordPaths(
+    record: unknown,
+    pairs: DslPair[],
+    subject: string
+  ) {
+    let next = record;
+    for (const pair of pairs) {
+      const path = parsePath(pair.key);
+      if (!path || path.segments[0] === "id") {
+        report(
+          "warning",
+          "setting-ignored",
+          pair.span,
+          `${pair.key} is not a setting path for ${subject}, so it was ignored.`,
+          { subject }
+        );
+        continue;
+      }
+      const value = resolveValueFields(pair.key, pair, subject);
+      if (value) {
+        next = setPath(next, path, value);
+      }
+    }
+    return next;
+  }
+
+  function defaultScale(field: string): SerializedColorScale {
     const values = Object.values(columnFor(field));
     const numerical =
       fieldType(field) === "numeric" &&
@@ -1016,12 +1228,23 @@ export function compileDocument(
       numerical ? values.filter((value) => value != null) : values,
       numerical
     );
+    return scale.type === "categorical"
+      ? ({
+          ...scale,
+          id: "",
+          mapping: Array.from(scale.mapping.entries()),
+        } as SerializedColorScale)
+      : ({ ...scale, id: "" } as SerializedColorScale);
+  }
+
+  function colorScaleFor(field: string): string {
+    const existing = colorScales.find((scale) => scale.sourceField === field);
+    if (existing) {
+      return existing.id;
+    }
     const id = `color-${field.replace(/[^\w-]+/g, "-").toLowerCase()}`;
-    colorScales.push(
-      scale.type === "categorical"
-        ? { ...scale, id, mapping: Array.from(scale.mapping.entries()) }
-        : { ...scale, id }
-    );
+    colorScales.push({ ...defaultScale(field), id });
+    generatedScales.add(id);
     return id;
   }
 
@@ -1418,7 +1641,7 @@ export function compileDocument(
     }
 
     for (const [top, group] of pathGroups) {
-      if (validateSavedData({ ...EMPTY_SETTINGS, charts: [chart] })) {
+      if (chartFits(chart)) {
         break;
       }
       const candidate = {
@@ -1429,7 +1652,7 @@ export function compileDocument(
         ...group.before,
         [top]: (chart as unknown as Record<string, unknown>)[top],
       } as ChartSettings;
-      if (!validateSavedData({ ...EMPTY_SETTINGS, charts: [alone] })) {
+      if (!chartFits(alone)) {
         chart = candidate;
         const first = group.pairs[0]!;
         report(
@@ -1478,36 +1701,51 @@ export function compileDocument(
     ) {
       return "unknown";
     }
-    if (
-      top === "colorScaleId" ||
-      top === "aggregateId" ||
-      top === "geometryAssetId"
-    ) {
-      return `${key} refers to a workspace definition by ID, which text can't write yet, so ${subject} keeps the default.`;
-    }
-    let value = pair.value;
-    if (FIELD_SEGMENT.test(path.segments.at(-1)!)) {
-      const items = [];
-      for (const item of value.items) {
-        if (
-          item.text === "" ||
-          (!item.quoted && (item.text === "null" || item.text === "unset"))
-        ) {
-          items.push(item);
-          continue;
-        }
-        const native = resolveField(
-          item.text,
+    const references = {
+      colorScaleId: [
+        "color scale",
+        colorScales.map((item) => item.id),
+        "scale",
+      ],
+      aggregateId: [
+        "grouped summary",
+        aggregates.map((item) => item.id),
+        "group",
+      ],
+      geometryAssetId: ["map shape", geometryAssets.map((item) => item.id), ""],
+    } as const;
+    if (top in references && path.segments.length === 1) {
+      const [noun, ids, keyword] = references[top as keyof typeof references];
+      const id = single(pair.value).replace(/^@/, "");
+      if (id !== "unset" && !(ids as readonly string[]).includes(id)) {
+        const near = closestName(id, ids);
+        report(
+          "warning",
+          "setting-ignored",
           pair.span,
-          subject,
-          `${key} keeps its default`
+          `${id} is not a ${noun} in this ${keyword ? "text" : "workspace"}, so ${subject} keeps the default.`,
+          {
+            subject,
+            suggestion: near
+              ? `Did you mean ${near}?`
+              : keyword
+                ? `Declare it with ${keyword} @${id}.`
+                : "Map shapes come with the data; check the ID.",
+          }
         );
-        if (!native) {
-          return "ok-reported";
-        }
-        items.push({ text: native, quoted: true });
+        return "ok-reported";
       }
-      value = { raw: value.raw, items };
+      return setPath(
+        chart,
+        path,
+        id === "unset"
+          ? pair.value
+          : { raw: id, items: [{ text: id, quoted: true }] }
+      );
+    }
+    const value = resolveValueFields(key, pair, subject);
+    if (!value) {
+      return "ok-reported";
     }
     return setPath(chart, path, value);
   }
@@ -1720,10 +1958,16 @@ export function compileDocument(
       createdAt: now,
       modifiedAt: now,
     },
-    colorScales,
+    // Default scales that a later colorScaleId= replaced are dropped.
+    colorScales: colorScales.filter(
+      (scale) =>
+        !generatedScales.has(scale.id) ||
+        charts.some((chart) => chart.colorScaleId === scale.id)
+    ),
     fieldSettings,
-    aggregates: [],
-    geometryAssets: [],
+    aggregates,
+    geometryAssets,
+    ...(rowsSettings ? { rowsSettings } : {}),
   };
   if (!validateSavedData(settings)) {
     // Every value above is checked; this guards a gap between the two.

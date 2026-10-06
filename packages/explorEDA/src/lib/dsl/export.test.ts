@@ -131,21 +131,29 @@ table Revenue,Cost,"Net revenue"`,
     expect(text).toContain("columns.0.width=140");
   });
 
-  it("names what the text does not carry yet", () => {
-    const { settings } = compileDocument("row Channel color=Channel", { rows });
+  it("carries custom colors, grouped summaries, and the Rows view", () => {
+    const { settings } = compileDocument(
+      `scale @channels field=Channel
+group @byChannel groupField=Channel aggregation=sum measureField=Revenue
+bar Channel aggregateId=byChannel color=Channel
+rows sortBy=Revenue sortDirection=desc where.Units=2..`,
+      { rows }
+    );
     settings.colorScales[0] = {
       ...settings.colorScales[0]!,
-      palette: ["#000000"],
+      mapping: [["Web", "#000000"]],
     } as never;
-    settings.rowsSettings = {
-      columns: [],
-      sortDirection: "asc",
-      filters: [],
-      globalSearch: "web",
-    };
-    expect(exportDocument(settings, { rows }).omitted).toEqual([
-      "Custom chart colors; charts use each field's default colors",
-      "Rows view filters, search, sort, and column widths",
-    ]);
+    settings.rowsSettings!.columns[0]!.width = 90;
+
+    const { text, omitted, rebuilt } = roundTrip(settings);
+    expect(omitted).toEqual([]);
+    expect(text).toContain('mapping.0[]=Web,"#000000"');
+    expect(rebuilt.settings.colorScales).toEqual(settings.colorScales);
+    expect(rebuilt.settings.aggregates).toEqual(settings.aggregates);
+    expect(rebuilt.settings.rowsSettings).toEqual(settings.rowsSettings);
+    expect(rebuilt.settings.charts[0]).toMatchObject({
+      aggregateId: "byChannel",
+      colorScaleId: "channels",
+    });
   });
 });

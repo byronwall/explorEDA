@@ -717,6 +717,7 @@ export function SavedViewsWorkspace({
           rows={sourceRows}
           applied={appliedText}
           onApply={applyText}
+          geometryAssets={currentView.settings?.geometryAssets}
           onExport={() => {
             const settings =
               currentView.settings ?? workspaceRef.current?.getSettings();

@@ -192,7 +192,7 @@ export function exportDocument(
 
   // Build a skeleton from each chart's short form, then add what differs.
   const names = settings.charts.map((chart, index) =>
-    GENERATED_ID.test(chart.id) || !IDENTIFIER.test(chart.id)
+    GENERATED_ID.test(chart.id) || !/^[\w-]+$/.test(chart.id)
       ? `__c${index}`
       : chart.id
   );
@@ -215,18 +215,54 @@ export function exportDocument(
       pairs: [...pairs, ...(local ?? []), ...(linked ?? [])],
     };
   });
+  // Shared definitions keep their IDs, so charts can point at them.
+  const known = new Set([
+    ...profiles.map((profile) => profile.name),
+    ...calcNames,
+  ]);
+  const scaleHeads = settings.colorScales.map(
+    (scale) =>
+      `scale @${scale.id}${scale.sourceField && known.has(scale.sourceField) ? ` field=${encodeScalar(scale.sourceField)}` : ""}`
+  );
+  const groupHeads = (settings.aggregates ?? []).map(
+    (spec) => `group @${spec.id}`
+  );
   const skeleton = [
     ...workspace,
     ...fieldLines(sourceSettings),
     ...calcLines,
     ...fieldLines([...calcNames]),
+    ...scaleHeads,
+    ...groupHeads,
+    "rows",
     ...heads.map(({ head, pairs }) => `${head} ${pairs.join(" ")}`),
   ].join("\n");
   const base = compileDocument(
     skeleton,
-    { rows: options.rows },
+    { rows: options.rows, geometryAssets: settings.geometryAssets },
     { keepIncomplete: true }
   );
+  const record = (value: unknown) => value as Record<string, unknown>;
+  const diffRecord = (built: unknown, next: unknown, skip: string[]) =>
+    [...new Set([...Object.keys(record(built)), ...Object.keys(record(next))])]
+      .filter((key) => !skip.includes(key))
+      .flatMap((key) =>
+        diffPaths(record(built)[key], record(next)[key], [key])
+      );
+  const scaleLines = settings.colorScales.flatMap((scale, index) => {
+    const built = base.settings.colorScales.find(
+      (item) => item.id === scale.id
+    );
+    return wrap(scaleHeads[index]!, diffRecord(built ?? {}, scale, ["id"]));
+  });
+  const groupLines = (settings.aggregates ?? []).flatMap((spec, index) => {
+    const built = base.settings.aggregates?.find((item) => item.id === spec.id);
+    return wrap(groupHeads[index]!, diffRecord(built ?? {}, spec, ["id"]));
+  });
+  const rowsPairs = settings.rowsSettings
+    ? diffRecord(base.settings.rowsSettings, settings.rowsSettings, [])
+    : [];
+  const rowsLines = settings.rowsSettings ? wrap("rows", rowsPairs) : [];
   const baseCharts = new Map(
     base.settings.charts.map((chart) => [chart.id, chart])
   );
@@ -239,14 +275,7 @@ export function exportDocument(
       omitted.push(`${head}: the chart could not be rebuilt from its fields`);
       return [];
     }
-    const skip = new Set([
-      "id",
-      "type",
-      "layout",
-      "colorScaleId",
-      "aggregateId",
-      "geometryAssetId",
-    ]);
+    const skip = new Set(["id", "type", "layout"]);
     const extra: string[] = [];
     for (const key of new Set([...Object.keys(built), ...Object.keys(chart)])) {
       if (skip.has(key)) {
@@ -260,45 +289,14 @@ export function exportDocument(
         )
       );
     }
-    if ("aggregateId" in chart && chart.aggregateId) {
-      omitted.push(`${head}: its grouped summary`);
-    }
-    if ("geometryAssetId" in chart && chart.geometryAssetId) {
-      omitted.push(`${head}: its map shapes`);
-    }
     return wrap(head, [...shown, ...extra]);
   });
-
-  if (
-    settings.colorScales.some((scale) => {
-      const rebuilt = base.settings.colorScales.find(
-        (item) => item.sourceField === scale.sourceField
-      );
-      const strip = (value: object) =>
-        JSON.stringify({ ...value, id: undefined, name: undefined });
-      return (
-        settings.charts.some((chart) => chart.colorScaleId === scale.id) &&
-        (!rebuilt || strip(rebuilt) !== strip(scale))
-      );
-    })
-  ) {
-    omitted.push("Custom chart colors; charts use each field's default colors");
-  }
-  const rows = settings.rowsSettings;
-  if (
-    rows &&
-    (rows.filters.length ||
-      rows.globalSearch ||
-      rows.sortBy ||
-      rows.columns.some((column) => column.width))
-  ) {
-    omitted.push("Rows view filters, search, sort, and column widths");
-  }
 
   const blocks = [
     workspace,
     [...fieldLines(sourceSettings)],
     [...calcLines, ...fieldLines([...calcNames])],
+    [...scaleLines, ...groupLines, ...rowsLines],
     chartLines,
   ].filter((block) => block.length);
   return {

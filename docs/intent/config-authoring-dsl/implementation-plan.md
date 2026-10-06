@@ -4,7 +4,7 @@
 
 Prioritize complete-document creation. First prove that local chart filters produce independent populations in the real app. Then add recoverable checking and actionable warnings. Add on-demand export and expand detailed setting coverage without JSON syntax. A minimal paste route is the provisional UI proof; file entry can reuse the compiler later.
 
-This update prepares planning only. It does not change compiler or app behavior.
+All four milestones are built as five stacked PRs: [#149](https://github.com/byronwall/explorEDA/pull/149) chart-local filters, [#150](https://github.com/byronwall/explorEDA/pull/150) compiler and paste panel, [#151](https://github.com/byronwall/explorEDA/pull/151) agent-facing checking, [#159](https://github.com/byronwall/explorEDA/pull/159) export and flat paths, and the shared-definitions PR that closes coverage.
 
 ## Implementation strategy
 
@@ -70,7 +70,7 @@ Verify current settings are effective through native fixtures and representative
 
 ## Open decisions and spikes
 
-Paste entry and file workflows remain provisional. The complex-value syntax spike must establish ordered structures and empty-value semantics without JSON. Consider global filters as a main-app follow-up, with visible scope and clear operations, before adding DSL syntax for them.
+The complex-value spike chose flat paths (see [detailed shaping](detailed-shaping.md#boundaries-and-open-choices)). Paste entry lives in the demo; whether the package ships the panel is still open. Consider global filters as a main-app follow-up, with visible scope and clear operations, before adding DSL syntax for them.
 
 ## Below the cut line
 

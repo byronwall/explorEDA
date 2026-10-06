@@ -228,6 +228,8 @@ npx exploreda-dsl check dashboard.eda --data rows.csv
 npx exploreda-dsl reference
 ```
 
+Any saved setting can be written as a flat path, such as `xAxis.scaleType=log` or `columns.0.width=140`. Color scales, grouped summaries, and the Rows view have their own lines (`scale`, `group`, `rows`). `exportDocument(settings, { rows })` writes the current dashboard as text that rebuilds it. Region maps refer to map shapes the host passes in as `geometryAssets`.
+
 `check` exits 0 when every declaration applied, 1 when some were skipped, and 2 when nothing can be built. Add `--json` for the full result.
 
 

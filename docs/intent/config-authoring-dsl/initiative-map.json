@@ -4,11 +4,11 @@
     "title": "Compact config authoring",
     "slug": "config-authoring-dsl",
     "scale": "capability",
-    "current_phase": "plan",
-    "last_updated": "2026-10-03",
+    "current_phase": "build",
+    "last_updated": "2026-10-05",
     "summary": "Create complete dashboards from readable DSL, render usable parts with actionable warnings, and export on demand without JSON authoring.",
-    "status": "planned",
-    "next_action": "Prove complete-document creation and chart-local populations with recoverable native rendering."
+    "status": "implemented",
+    "next_action": "Review and merge the stacked PRs #149, #150, #151, #159, and the shared-definitions PR; then decide the long-term entry (paste panel in the package or host-only) and whether to shape global filters."
   },
   "artifacts": {
     "intent_brief": {
@@ -226,7 +226,7 @@
           }
         ],
         "confidence": "medium",
-        "notes": "Positive user response supports the flat direction, not independent approval of every final spelling."
+        "notes": "Implemented as provisional final syntax: calc, where.field, select.field, optional + and @ names, plus flat setting paths."
       },
       {
         "id": "claim-9",
@@ -319,7 +319,7 @@
         "type": "current repository reality",
         "commitment": "derived",
         "importance": "core",
-        "status": "active",
+        "status": "superseded",
         "time_horizon": "proof",
         "source_anchors": [
           {
@@ -328,7 +328,7 @@
           }
         ],
         "confidence": "medium",
-        "notes": ""
+        "notes": "compileDocument now builds complete saved settings and evaluates calculations on the real rows."
       },
       {
         "id": "claim-15",
@@ -611,7 +611,7 @@
     "open_decisions": []
   },
   "implementation": {
-    "status": "planned",
+    "status": "implemented",
     "repository_snapshot": {
       "root": "/Users/byronwall/.codex/worktrees/6221/explorEDA",
       "revision": "038be515b0d0869c69f4da45f4744266b073ac19",
@@ -671,40 +671,44 @@
         "title": "A creation document renders independent chart populations",
         "outcome": "A creation document renders independent chart populations",
         "proof": "Hand-counted local populations; native values; complete replacement; omitted defaults; Undo.",
-        "status": "planned",
+        "status": "done",
         "valid_intermediate_state": "Normal native controls plus the usable completed authoring slice.",
         "rollback": "Use normal controls and Undo the applied configuration.",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "evidence": "#149 chart-local localFilters; #150 compileDocument and the demo Dashboard text panel, with populations hand-checked through DataLayerProvider."
       },
       {
         "id": "milestone-2",
         "title": "Broken parts remain visible and repairable",
         "outcome": "Broken parts remain visible and repairable",
         "proof": "Mixed valid/invalid declarations; cycles; row failures; warnings; all-broken repair state.",
-        "status": "planned",
+        "status": "done",
         "valid_intermediate_state": "Normal native controls plus the usable completed authoring slice.",
         "rollback": "Use normal controls and Undo the applied configuration.",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "evidence": "#150 per-declaration recovery and located diagnostics; #151 exploreda-dsl check/fields/reference, Copy report, and the all-broken repair state."
       },
       {
         "id": "milestone-3",
         "title": "Export reflects current UI edits",
         "outcome": "Export reflects current UI edits",
         "proof": "UI edit/export/recompile semantic comparison without JSON blocks.",
-        "status": "planned",
+        "status": "done",
         "valid_intermediate_state": "Normal native controls plus the usable completed authoring slice.",
         "rollback": "Use normal controls and Undo the applied configuration.",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "evidence": "#159 exportDocument and Write this view; all demo example views round-trip."
       },
       {
         "id": "milestone-4",
         "title": "Detailed paths cover the native settings surface",
         "outcome": "Detailed paths cover the native settings surface",
         "proof": "Complex-value syntax spike; full-setting coverage inventory; native effect checks.",
-        "status": "planned",
+        "status": "done",
         "valid_intermediate_state": "Normal native controls plus the usable completed authoring slice.",
         "rollback": "Use normal controls and Undo the applied configuration.",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "evidence": "#159 flat paths and the typed CHART_SETTING_KEYS inventory; shared-definitions PR adds scale, group, rows, and map-shape references, so all 28 demo views round-trip with nothing omitted."
       }
     ],
     "cut_line": [
@@ -717,7 +721,11 @@
       "Global filters pending main-app shape",
       "JSON authoring rejected"
     ],
-    "open_decisions": []
+    "open_decisions": [],
+    "complex_value_syntax": {
+      "decision": "Flat paths: a.b=v, key[]=a,b (key[]= empty), key{}= empty object, list records by index (columns.0.width=140), key=unset restores the default, key=null is missing, quoted text is always text, quoted path segments hold dots and spaces.",
+      "proof": "Round trip of every demo example view, plus package export tests."
+    }
   },
   "history": [
     {
@@ -754,6 +762,17 @@
       "date": "2026-10-04",
       "event": "support-trimmed",
       "reason": "User requests only important research, nested within each initiative. Copied prototypes, generated evidence, documents, archives, and transcript removed; concise notes and references retained."
+    },
+    {
+      "date": "2026-10-05",
+      "event": "implemented",
+      "reason": "Built all four milestones as five stacked PRs: chart-local filters, the compiler and paste panel, agent-facing checking, on-demand export with flat setting paths, and shared definitions.",
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/pull/149",
+        "https://github.com/byronwall/explorEDA/pull/150",
+        "https://github.com/byronwall/explorEDA/pull/151",
+        "https://github.com/byronwall/explorEDA/pull/159"
+      ]
     }
   ],
   "closure": null

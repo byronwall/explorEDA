@@ -7,6 +7,7 @@ import {
   DSL_REFERENCE,
   formatDslDiagnostics,
 } from "@/lib/dsl";
+import type { GeometryAsset } from "@/lib/geometryAssets";
 import type { datum } from "@/types/ChartTypes";
 
 const USAGE = `Usage:
@@ -74,14 +75,19 @@ function parseCsv(text: string): Array<Record<string, datum>> {
   );
 }
 
-function readRows(path: string): Array<Record<string, datum>> {
+/** Rows, plus map shapes when the file is a saved explorEDA analysis. */
+function readSource(path: string): {
+  rows: Array<Record<string, datum>>;
+  geometryAssets?: GeometryAsset[];
+} {
   const text = readFileSync(path, "utf8");
   if (!path.endsWith(".json")) {
-    return parseCsv(text);
+    return { rows: parseCsv(text) };
   }
   const json = JSON.parse(text);
-  // Accept plain rows or a saved explorEDA analysis.
-  return Array.isArray(json) ? json : json.data;
+  return Array.isArray(json)
+    ? { rows: json }
+    : { rows: json.data, geometryAssets: json.settings?.geometryAssets };
 }
 
 function main(args: string[]) {
@@ -99,7 +105,7 @@ function main(args: string[]) {
     console.error(USAGE);
     return 64;
   }
-  const rows = readRows(dataPath);
+  const { rows, geometryAssets } = readSource(dataPath);
   if (command === "fields") {
     for (const field of describeDslSource(rows)) {
       console.log(
@@ -117,7 +123,10 @@ function main(args: string[]) {
     return 64;
   }
   registerAllCharts();
-  const result = compileDocument(readFileSync(docPath, "utf8"), { rows });
+  const result = compileDocument(readFileSync(docPath, "utf8"), {
+    rows,
+    geometryAssets,
+  });
   if (rest.includes("--json")) {
     console.log(JSON.stringify(result, null, 2));
   } else {

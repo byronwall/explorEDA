@@ -1,4 +1,8 @@
-import { compileDocument, type DslCompileResult } from "exploreda";
+import {
+  compileDocument,
+  type DslCompileResult,
+  type GeometryAsset,
+} from "exploreda";
 import type { DatumObject } from "./LandingPage";
 
 /** What the last Apply built, kept so its warnings stay findable. */
@@ -7,8 +11,12 @@ export interface AppliedText {
   result: DslCompileResult;
 }
 
-export function compileDashboardText(text: string, rows: DatumObject[]) {
-  return compileDocument(text, { rows });
+export function compileDashboardText(
+  text: string,
+  rows: DatumObject[],
+  geometryAssets?: GeometryAsset[]
+) {
+  return compileDocument(text, { rows, geometryAssets });
 }
 
 /** One line per outcome: what was built and what it cost. */

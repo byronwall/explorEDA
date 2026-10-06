@@ -9,36 +9,30 @@ import {
 import { parseCsvData } from "./csvParser";
 import { examples } from "./demos/examples";
 
-/** What a user sees: charts and definitions, without generated IDs. */
+/** The saved view without its timestamps. */
 function meaning(settings: SavedDataStructure) {
   return {
-    name: settings.metadata.name,
-    grid: settings.gridSettings,
-    calculations: settings.calculations,
-    fieldSettings: settings.fieldSettings ?? {},
+    ...settings,
+    metadata: { ...settings.metadata, createdAt: "", modifiedAt: "" },
+    // Generated chart IDs carry no meaning; named ones must survive.
     charts: settings.charts.map((chart) => ({
       ...chart,
-      id: undefined,
-      colorScaleId: undefined,
-      aggregateId: undefined,
-      geometryAssetId: undefined,
+      id: /^[0-9a-f]{8}-[0-9a-f-]{27}$/.test(chart.id) ? "" : chart.id,
     })),
+    fieldSettings: settings.fieldSettings ?? {},
+    aggregates: settings.aggregates ?? [],
+    geometryAssets: settings.geometryAssets ?? [],
   };
 }
 
-// Region maps reference shared map shapes, which text can't carry yet.
-const NOT_YET_IN_TEXT = new Set(["region-map"]);
-
-const views = examples
-  .filter((example) => !NOT_YET_IN_TEXT.has(example.id))
-  .flatMap((example) =>
-    [
-      ...(example.savedData
-        ? [{ name: example.title, savedData: example.savedData }]
-        : []),
-      ...(example.views ?? []),
-    ].map((view) => ({ example, view }))
-  );
+const views = examples.flatMap((example) =>
+  [
+    ...(example.savedData
+      ? [{ name: example.title, savedData: example.savedData }]
+      : []),
+    ...(example.views ?? []),
+  ].map((view) => ({ example, view }))
+);
 
 describe("dashboard text round trip", () => {
   it.each(
@@ -51,13 +45,11 @@ describe("dashboard text round trip", () => {
       readFileSync(join(__dirname, "../public", example.data), "utf8")
     );
     const { text, omitted } = exportDocument(view.savedData, { rows });
-    // Only workspace definitions shared by ID stay out of the text.
-    expect(
-      omitted.filter(
-        (item) => !/grouped summary|Custom chart colors/.test(item)
-      )
-    ).toEqual([]);
-    const rebuilt = compileDocument(text, { rows });
+    expect(omitted).toEqual([]);
+    const rebuilt = compileDocument(text, {
+      rows,
+      geometryAssets: view.savedData.geometryAssets,
+    });
     expect(
       rebuilt.diagnostics.filter((item) => item.effect !== "rows-missing")
     ).toEqual([]);

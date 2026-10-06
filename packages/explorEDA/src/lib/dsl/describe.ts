@@ -96,8 +96,21 @@ Charts (each starts from the app's defaults; @name is optional):
   table <field>,<field>,...           data table (all fields when omitted)
   summary                             field summary table
 
+  chart <type> field=<field>          any chart type, such as chart boxplot
+
 Settings on any chart: title=, at=x,y,w,h, x.scale=, x.title=, x.min=, x.max=,
 y.*, xGridLines=, yGridLines=, margin.left= (top, right, bottom).
+Every saved setting is a path: xAxis.scaleType=log, columns.0.width=140.
+  key[]=a,b    a list (key[]= is empty)    key{}=     an empty object
+  key=unset    back to the app default     key=null   a missing value
+  "a b".c=1    quote a name with spaces    key=""     empty text
+
+Shared definitions (charts point at them by @name):
+  scale @channels field=Channel       color scale; charts: colorScaleId=channels
+  group @byRegion groupField=Region aggregation=sum measureField=Revenue
+                                      grouped summary; charts: aggregateId=byRegion
+  rows sortBy=Revenue where.Units=2.. the Rows view
+  field "Order Date" label=Ordered    display settings by exact name
 
 Filters:
   where.<field>=Web,Store             only these rows, for this chart only

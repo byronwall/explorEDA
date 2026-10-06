@@ -13,6 +13,7 @@ import {
   type DslCompileResult,
   type DslDiagnostic,
   type DslExportResult,
+  type GeometryAsset,
 } from "exploreda";
 import { toast } from "sonner";
 import {
@@ -83,7 +84,10 @@ export function DashboardTextPanel({
   applied,
   onApply,
   onExport,
+  geometryAssets,
 }: {
+  /** Map shapes in this workspace; region maps refer to them by ID. */
+  geometryAssets?: GeometryAsset[];
   text: string;
   onTextChange: (text: string) => void;
   rows: DatumObject[];
@@ -101,8 +105,11 @@ export function DashboardTextPanel({
   const deferred = useDeferredValue(text);
   const fields = useMemo(() => describeDslSource(rows), [rows]);
   const result = useMemo(
-    () => (deferred.trim() ? compileDashboardText(deferred, rows) : undefined),
-    [deferred, rows]
+    () =>
+      deferred.trim()
+        ? compileDashboardText(deferred, rows, geometryAssets)
+        : undefined,
+    [deferred, rows, geometryAssets]
   );
   const lineCount = Math.max(text.split("\n").length, 6);
   const errorLines = new Set(
