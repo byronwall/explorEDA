@@ -4,6 +4,7 @@ import {
   buildTimeline,
   describeChanges,
   describeEntry,
+  groupTimeline,
   pushCheckpoint,
 } from "./savedViewsHistory";
 import type {
@@ -82,10 +83,11 @@ describe("history change descriptions", () => {
         },
       }),
     ];
-    expect(describeChanges(before, after)).toEqual([
+    expect(describeChanges(before, after)).toMatchObject([
       {
         kind: "filter",
         text: "Filtered “Revenue by region”",
+        subject: "“Revenue by region”",
         before: undefined,
         after: "region is North, South",
         view: "Sales",
@@ -236,5 +238,90 @@ describe("history timeline", () => {
     expect(current.path).toEqual(
       Array.from({ length: 50 }, (_, index) => index)
     );
+  });
+});
+
+describe("history bundles", () => {
+  const regionFilter = (...picked: string[]) =>
+    view("Sales", {
+      charts: [
+        chart({
+          filters: picked.length
+            ? [{ type: "value", field: "region", values: picked }]
+            : [],
+        }),
+      ],
+    });
+  const step = (
+    minute: number,
+    tabs: SavedView[],
+    parent?: number,
+    extra: Partial<HistoryEntry> = {}
+  ): HistoryEntry => ({
+    at: `2026-10-05T10:${String(minute).padStart(2, "0")}:00.000Z`,
+    label: parent === undefined ? "View" : "Filter",
+    tabs,
+    parent,
+    ...extra,
+  });
+  const at = Date.parse("2026-10-05T12:00:00.000Z");
+  const group = (history: HistoryEntry[]) => {
+    const path = history.map((_, index) => index);
+    const session: SavedViewsSession = {
+      version: 1,
+      sourceAnalysis: "",
+      tabs: history[history.length - 1]!.tabs,
+      activeTabId: "Sales",
+      history,
+      path,
+      cursor: path.length - 1,
+    };
+    return groupTimeline(session, buildTimeline(session), at);
+  };
+
+  it("folds related filter steps into one bundle with their net effect", () => {
+    const items = group([
+      step(0, [regionFilter()]),
+      step(1, [regionFilter("North")], 0),
+      step(2, [regionFilter("North", "South")], 1),
+      step(3, [regionFilter("South")], 2),
+      step(4, [regionFilter("West")], 3),
+    ]);
+    expect(items.map((item) => item.type)).toEqual(["step", "bundle", "step"]);
+    const bundle = items[1]!;
+    if (bundle.type !== "bundle") {
+      throw new Error("Expected a bundle");
+    }
+    expect(bundle.rows.map((row) => row.index)).toEqual([3, 2, 1]);
+    expect(bundle.headline).toBe("3 filter changes on “Revenue by region”");
+    // The net effect skips the steps in between.
+    expect(bundle.net).toMatchObject([
+      { text: "Filtered “Revenue by region”", after: "region is South" },
+    ]);
+  });
+
+  it("keeps deliberate actions and distant steps on their own", () => {
+    const items = group([
+      step(0, [regionFilter()]),
+      step(1, [regionFilter("North")], 0),
+      step(2, [regionFilter("South")], 1, { action: "Moved “Sales” left" }),
+      step(3, [regionFilter("East")], 2),
+      step(30, [regionFilter("West")], 3),
+      step(31, [regionFilter("North")], 4),
+    ]);
+    expect(items.every((item) => item.type === "step")).toBe(true);
+  });
+
+  it("adds day headings when the history spans several days", () => {
+    const history = [
+      step(0, [regionFilter()]),
+      step(1, [regionFilter("North")], 0),
+    ];
+    history[0]!.at = "2026-10-04T10:00:00.000Z";
+    const items = group(history);
+    expect(
+      items.filter((item) => item.type === "day").map((item) => item.type)
+    ).toHaveLength(2);
+    expect(items[0]).toMatchObject({ type: "day", label: "Today" });
   });
 });

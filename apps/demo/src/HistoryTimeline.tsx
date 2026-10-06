@@ -7,7 +7,10 @@ import {
 } from "react";
 import {
   ArrowRight,
+  ChevronDown,
+  ChevronRight,
   Filter,
+  Layers,
   LayoutGrid,
   Minus,
   Move,
@@ -21,7 +24,9 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   buildTimeline,
+  changeDetail,
   describeEntry,
+  groupTimeline,
   formatClock,
   LABEL_NAMES,
   summarizeTabs,
@@ -30,6 +35,7 @@ import {
   type HistoryChange,
   type RailMerge,
   type RailSegment,
+  type TimelineItem,
   type TimelineRow,
   type TimelineState,
 } from "./savedViewsHistory";
@@ -95,16 +101,20 @@ function Rail({
   laneCount,
   label,
   previewing,
+  station = "step",
 }: {
   row: TimelineRow;
   laneCount: number;
   label: ChangeLabel;
   previewing: boolean;
+  /** A bundle draws a capsule, like an interchange; a heading draws none. */
+  station?: "step" | "bundle" | "none";
 }) {
   const width = laneX(laneCount - 1) + RAIL_PAD;
   const x = laneX(row.lane);
   const current = row.state === "current";
   const size = current ? 15 : 11;
+  const height = station === "bundle" ? 21 : size;
   return (
     <div aria-hidden="true" className="relative shrink-0" style={{ width }}>
       {row.segments.map((segment: RailSegment) => (
@@ -141,36 +151,85 @@ function Rail({
           })}
         </svg>
       )}
-      <span
-        className={cn(
-          "absolute rounded-full border-2 bg-background transition-shadow",
-          current &&
-            "shadow-[0_0_0_4px_color-mix(in_oklab,var(--primary)_18%,transparent)]",
-          previewing &&
-            "shadow-[0_0_0_3px_var(--background),0_0_0_5px_var(--foreground)]",
-          row.state === "future" && "border-dashed"
-        )}
-        style={{
-          left: x - size / 2,
-          top: STATION_Y - size / 2,
-          width: size,
-          height: size,
-          borderColor:
-            row.state === "branch"
-              ? lineColor("branch")
-              : current
-                ? "var(--primary)"
-                : LABEL_COLORS[label],
-          background: current ? "var(--primary)" : undefined,
-        }}
-      />
+      {station !== "none" && (
+        <span
+          className={cn(
+            "absolute rounded-full border-2 bg-background transition-shadow",
+            current &&
+              "shadow-[0_0_0_4px_color-mix(in_oklab,var(--primary)_18%,transparent)]",
+            previewing &&
+              "shadow-[0_0_0_3px_var(--background),0_0_0_5px_var(--foreground)]",
+            row.state === "future" && "border-dashed"
+          )}
+          style={{
+            left: x - size / 2,
+            top: STATION_Y - (station === "bundle" ? 6 : size / 2),
+            width: size,
+            height,
+            borderColor:
+              row.state === "branch"
+                ? lineColor("branch")
+                : current
+                  ? "var(--primary)"
+                  : LABEL_COLORS[label],
+            background: current ? "var(--primary)" : undefined,
+          }}
+        />
+      )}
     </div>
   );
 }
 
+/** Joins the members' rail pieces so a bundle draws as one stretch of line. */
+function bundleRail(rows: TimelineRow[]): TimelineRow {
+  const segments = new Map<string, RailSegment>();
+  for (const row of rows) {
+    for (const segment of row.segments) {
+      const key = `${segment.lane}-${segment.state}`;
+      const joined = segments.get(key);
+      segments.set(
+        key,
+        joined
+          ? {
+              ...joined,
+              above: joined.above || segment.above,
+              below: joined.below || segment.below,
+            }
+          : { ...segment }
+      );
+    }
+  }
+  return { ...rows[0]!, segments: [...segments.values()], merges: [] };
+}
+
+/** Lines that run straight through a heading above `next`. */
+function passingRail(next: TimelineRow | undefined): TimelineRow {
+  const segments: RailSegment[] = [];
+  for (const segment of next?.segments ?? []) {
+    if (segment.above) {
+      segments.push({ ...segment, below: true });
+    }
+  }
+  for (const merge of next?.merges ?? []) {
+    segments.push({
+      lane: merge.fromLane,
+      above: true,
+      below: true,
+      state: merge.state,
+    });
+  }
+  return {
+    index: -1,
+    lane: 0,
+    state: next?.state ?? "past",
+    segments,
+    merges: [],
+  };
+}
+
 /** The expanded view lays each step out as a table row with these columns. */
 const WIDE_COLUMNS =
-  "grid grid-cols-[minmax(0,2fr)_minmax(0,0.8fr)_minmax(0,1.6fr)_2.75rem_2.75rem_2.75rem_6rem] items-baseline gap-x-3";
+  "grid grid-cols-[minmax(0,2fr)_minmax(0,0.8fr)_minmax(0,1.6fr)_2.75rem_2.75rem_2.75rem_8.5rem] items-baseline gap-x-3";
 
 const STATE_BADGE =
   "shrink-0 rounded px-1 text-[9.5px] font-semibold uppercase leading-4 tracking-wide";
@@ -250,9 +309,12 @@ function Station({
   now,
   onSelect,
   onRestore,
+  nested = false,
 }: {
   row: TimelineRow;
   described: DescribedEntry;
+  /** A member shown inside an open bundle. */
+  nested?: boolean;
   laneCount: number;
   wide: boolean;
   previewing: boolean;
@@ -297,9 +359,10 @@ function Station({
         label={entry.label}
         previewing={previewing}
       />
-      <div className="min-w-0 flex-1 pr-1.5">
+      <div className={cn("min-w-0 flex-1 pr-1.5", nested && "pl-3")}>
         <button
           type="button"
+          data-nav=""
           data-index={row.index}
           tabIndex={focusable ? 0 : -1}
           aria-pressed={previewing}
@@ -438,6 +501,207 @@ function Station({
   );
 }
 
+function timeRange(
+  rows: TimelineRow[],
+  session: SavedViewsSession,
+  now: number,
+  withSeconds = false
+) {
+  const newest = session.history[rows[0]!.index]!.at;
+  const oldest = session.history[rows[rows.length - 1]!.index]!.at;
+  const end = formatWhen(newest, now, withSeconds);
+  const start = formatWhen(oldest, now, withSeconds);
+  if (start === end) {
+    return end;
+  }
+  // Drop a shared AM or PM from the start: 10:18:17–10:18:22 PM.
+  const period = /\s(\S+)$/.exec(end)?.[1];
+  const trimmed =
+    period && start.endsWith(` ${period}`)
+      ? start.slice(0, -period.length - 1)
+      : start;
+  return `${trimmed}–${end}`;
+}
+
+const BUNDLE_ICONS: Record<ChangeLabel, LucideIcon> = {
+  View: LayoutGrid,
+  Filter: Filter,
+  Both: Layers,
+  Shared: Share2,
+};
+
+function BundleHeader({
+  item,
+  session,
+  laneCount,
+  wide,
+  open,
+  focusable,
+  now,
+  onToggle,
+}: {
+  item: Extract<TimelineItem, { type: "bundle" }>;
+  session: SavedViewsSession;
+  laneCount: number;
+  wide: boolean;
+  open: boolean;
+  focusable: boolean;
+  now: number;
+  onToggle: () => void;
+}) {
+  const newest = item.rows[0]!;
+  const muted = newest.state === "future";
+  const first = item.net[0];
+  const netDetail = first
+    ? (changeDetail(first) ?? first.text)
+    : "No net change";
+  const netMore = Math.max(0, item.net.length - 1);
+  const viewText =
+    item.views.length === 1 ? item.views[0]! : `${item.views.length} views`;
+  const stats = wide
+    ? summarizeTabs(session.history[newest.index]!.tabs)
+    : undefined;
+  const Icon = BUNDLE_ICONS[item.label];
+  const Chevron = open ? ChevronDown : ChevronRight;
+  const range = timeRange(item.rows, session, now, wide);
+  const title = (
+    <span className="flex min-w-0 items-center gap-1.5">
+      <Icon
+        aria-hidden="true"
+        className="size-3.5 shrink-0 self-center"
+        style={{
+          color: muted ? "var(--muted-foreground)" : LABEL_COLORS[item.label],
+        }}
+      />
+      <span
+        className={cn(
+          "min-w-0 font-medium",
+          wide ? "break-words" : "truncate text-[12.5px] leading-[18px]",
+          muted && "text-muted-foreground"
+        )}
+      >
+        {item.headline}
+      </span>
+      <Chevron
+        aria-hidden="true"
+        className="size-3.5 shrink-0 self-center text-muted-foreground"
+      />
+      {muted && <StateBadge state="future" />}
+    </span>
+  );
+  return (
+    <li className="relative flex rounded-md hover:bg-accent/40">
+      <Rail
+        row={open ? passingRail(newest) : bundleRail(item.rows)}
+        laneCount={laneCount}
+        label={item.label}
+        previewing={false}
+        station={open ? "none" : "bundle"}
+      />
+      <div className="min-w-0 flex-1 pr-1.5">
+        <button
+          type="button"
+          data-nav=""
+          data-bundle={item.key}
+          tabIndex={focusable ? 0 : -1}
+          aria-expanded={open}
+          className={cn(
+            "w-full rounded py-1.5 pl-1 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            wide && cn(WIDE_COLUMNS, "text-xs")
+          )}
+          onClick={onToggle}
+        >
+          {wide ? (
+            <>
+              {title}
+              <span className="truncate text-muted-foreground">{viewText}</span>
+              <span className="flex min-w-0 items-baseline gap-1.5">
+                <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  Net
+                </span>
+                {first ? (
+                  <ChangeValues change={first} />
+                ) : (
+                  <span className="text-muted-foreground">No net change</span>
+                )}
+                {netMore > 0 && (
+                  <span className="shrink-0 text-muted-foreground">
+                    +{netMore}
+                  </span>
+                )}
+              </span>
+              <span className="text-right tabular-nums text-muted-foreground">
+                {stats!.views}
+              </span>
+              <span className="text-right tabular-nums text-muted-foreground">
+                {stats!.charts}
+              </span>
+              <span className="text-right tabular-nums text-muted-foreground">
+                {stats!.filters}
+              </span>
+              <span className="truncate text-right tabular-nums text-muted-foreground">
+                {range}
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="flex items-center gap-1.5">
+                {title}
+                <span className="ml-auto shrink-0 pl-1 text-[11px] tabular-nums text-muted-foreground">
+                  {range}
+                </span>
+              </span>
+              <span className="flex items-baseline gap-2 pl-5 text-[11px] leading-4 text-muted-foreground">
+                <span className="min-w-0 flex-1 truncate">
+                  <span className="mr-1 text-[10px] font-semibold uppercase tracking-wide">
+                    Net
+                  </span>
+                  <span className="font-mono">{netDetail}</span>
+                </span>
+                <span className="max-w-[45%] shrink-0 truncate">
+                  {viewText}
+                  {netMore > 0 && (
+                    <span className="tabular-nums">
+                      {" "}
+                      · +{netMore}
+                      <span className="sr-only"> more net changes</span>
+                    </span>
+                  )}
+                </span>
+              </span>
+            </>
+          )}
+        </button>
+      </div>
+    </li>
+  );
+}
+
+function DayHeading({
+  label,
+  next,
+  laneCount,
+}: {
+  label: string;
+  next: TimelineRow | undefined;
+  laneCount: number;
+}) {
+  return (
+    <li className="flex" aria-label={label}>
+      <Rail
+        row={passingRail(next)}
+        laneCount={laneCount}
+        label="View"
+        previewing={false}
+        station="none"
+      />
+      <span className="py-1 pl-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+        {label}
+      </span>
+    </li>
+  );
+}
+
 function WideHeader({ laneCount }: { laneCount: number }) {
   return (
     <div
@@ -487,6 +751,11 @@ export function HistoryTimeline({
   }, []);
 
   const rows = useMemo(() => buildTimeline(session), [session]);
+  const items = useMemo(
+    () => groupTimeline(session, rows, now),
+    [session, rows, now]
+  );
+  const [openBundles, setOpenBundles] = useState<Set<string>>(() => new Set());
   const laneCount = Math.max(1, ...rows.map((row) => row.lane + 1));
   const currentIndex = session.path[session.cursor] ?? 0;
   const selectedIndex = previewIndex ?? currentIndex;
@@ -512,10 +781,41 @@ export function HistoryTimeline({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // A bundle that holds the selected step stays open so the step is visible.
+  const holds = (item: TimelineItem, index: number | undefined) =>
+    item.type === "bundle" && item.rows.some((row) => row.index === index);
+  const firstRow = (item: TimelineItem | undefined) =>
+    item?.type === "step"
+      ? item.row
+      : item?.type === "bundle"
+        ? item.rows[0]
+        : undefined;
+  const renderStation = (row: TimelineRow, nested = false) => (
+    <Station
+      key={row.index}
+      row={row}
+      nested={nested}
+      described={describeEntry(session, row.index)}
+      laneCount={laneCount}
+      wide={wide}
+      previewing={previewIndex === row.index}
+      focusable={row.index === selectedIndex}
+      now={now}
+      onSelect={() =>
+        row.index === currentIndex || row.index === previewIndex
+          ? previewIndex === null
+            ? undefined
+            : onReturn()
+          : onPreview(row.index)
+      }
+      onRestore={() => onRestore(row.index)}
+    />
+  );
+
   const onKeyDown = (event: KeyboardEvent<HTMLOListElement>) => {
     const buttons = [
       ...(listRef.current?.querySelectorAll<HTMLButtonElement>(
-        "button[data-index]"
+        "button[data-nav]"
       ) ?? []),
     ];
     const at = buttons.indexOf(event.target as HTMLButtonElement);
@@ -548,26 +848,46 @@ export function HistoryTimeline({
         className={cn("grid grid-cols-[minmax(0,1fr)]", wide && "px-1.5 pt-1")}
         onKeyDown={onKeyDown}
       >
-        {rows.map((row) => (
-          <Station
-            key={row.index}
-            row={row}
-            described={describeEntry(session, row.index)}
-            laneCount={laneCount}
-            wide={wide}
-            previewing={previewIndex === row.index}
-            focusable={row.index === selectedIndex}
-            now={now}
-            onSelect={() =>
-              row.index === currentIndex || row.index === previewIndex
-                ? previewIndex === null
-                  ? undefined
-                  : onReturn()
-                : onPreview(row.index)
-            }
-            onRestore={() => onRestore(row.index)}
-          />
-        ))}
+        {items.map((item, at) => {
+          if (item.type === "day") {
+            return (
+              <DayHeading
+                key={item.key}
+                label={item.label}
+                next={firstRow(items[at + 1])}
+                laneCount={laneCount}
+              />
+            );
+          }
+          if (item.type === "step") {
+            return renderStation(item.row);
+          }
+          const open = openBundles.has(item.key) || holds(item, selectedIndex);
+          return [
+            <BundleHeader
+              key={item.key}
+              item={item}
+              session={session}
+              laneCount={laneCount}
+              wide={wide}
+              open={open}
+              focusable={false}
+              now={now}
+              onToggle={() =>
+                setOpenBundles((current) => {
+                  const next = new Set(current);
+                  if (open) {
+                    next.delete(item.key);
+                  } else {
+                    next.add(item.key);
+                  }
+                  return next;
+                })
+              }
+            />,
+            ...(open ? item.rows.map((row) => renderStation(row, true)) : []),
+          ];
+        })}
       </ol>
       <p className="mt-2 px-2 text-[11px] leading-relaxed text-muted-foreground">
         {session.history.length === 1

@@ -209,6 +209,8 @@ export type HistoryChange = {
   text: string;
   /** The view it applies to. Shared changes apply to every view. */
   view?: string;
+  /** What it changed, such as a chart's name or Rows, for grouping. */
+  subject?: string;
   before?: string;
   after?: string;
 };
@@ -412,6 +414,10 @@ function describeChartChanges(
       view,
     });
   }
+  for (const change of changes) {
+    const quoted = /“([^”]+)”/.exec(change.text);
+    if (quoted) {change.subject = `“${quoted[1]}”`;}
+  }
   // Placing or removing a chart moves its neighbors; only report a layout
   // change when it stands on its own.
   const placed = changes.some(
@@ -467,6 +473,7 @@ function describeRowsChanges(
       view,
     });
   }
+  for (const change of changes) {change.subject = "Rows";}
   if (before && after) {
     if (
       before.sortBy !== after.sortBy ||
@@ -923,4 +930,184 @@ export function summarizeTabs(tabs: SavedView[]) {
       (tab.settings?.rowsSettings?.globalSearch ? 1 : 0);
   }
   return { views: tabs.length, charts, filters };
+}
+
+// ---------------------------------------------------------------------------
+// Bundles
+
+/** Fewest related steps that fold into one timeline entry. */
+export const BUNDLE_MIN = 3;
+/** Related steps further apart than this start a new bundle. */
+export const BUNDLE_GAP_MS = 10 * 60 * 1000;
+
+export type TimelineItem =
+  | { type: "day"; key: string; label: string }
+  | { type: "step"; key: string; row: TimelineRow }
+  | {
+      type: "bundle";
+      key: string;
+      /** Member rows, newest first. */
+      rows: TimelineRow[];
+      /** What the bundle did overall: its first step's parent to its last step. */
+      net: HistoryChange[];
+      headline: string;
+      label: ChangeLabel;
+      views: string[];
+    };
+
+function viewKey(described: DescribedEntry) {
+  const views = new Set(
+    described.changes.map((change) => change.view ?? "All views")
+  );
+  return [...views].sort().join("\n");
+}
+
+function dayLabel(at: string, now: number) {
+  const date = new Date(at);
+  const today = new Date(now);
+  const yesterday = new Date(now - 24 * 60 * 60 * 1000);
+  if (date.toDateString() === today.toDateString()) {
+    return "Today";
+  }
+  if (date.toDateString() === yesterday.toDateString()) {
+    return "Yesterday";
+  }
+  return date.toLocaleDateString([], {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+const BUNDLE_NOUNS: Record<ChangeLabel, [string, string]> = {
+  View: ["view change", "view changes"],
+  Filter: ["filter change", "filter changes"],
+  Both: ["view and filter change", "view and filter changes"],
+  Shared: ["shared setting change", "shared setting changes"],
+};
+
+/**
+ * Folds runs of related steps into bundles and adds day headings when the
+ * history spans several days. Related steps share a category and the views
+ * they touch, follow each other closely, and sit on the same stretch of the
+ * line. The current step, deliberate actions, and forks stay on their own.
+ */
+export function groupTimeline(
+  session: Pick<SavedViewsSession, "history" | "path" | "cursor">,
+  rows: TimelineRow[],
+  now: number
+): TimelineItem[] {
+  const items: TimelineItem[] = [];
+  const days = new Set(
+    rows.map((row) => new Date(session.history[row.index]!.at).toDateString())
+  );
+  const showDays = days.size > 1;
+  let lastDay = "";
+
+  const canJoin = (row: TimelineRow) => {
+    const entry = session.history[row.index]!;
+    return (
+      row.lane === 0 &&
+      (row.state === "past" || row.state === "future") &&
+      row.merges.length === 0 &&
+      !entry.action &&
+      !entry.restoredFrom &&
+      parentOf(session, row.index) !== undefined
+    );
+  };
+
+  const flush = (run: TimelineRow[]) => {
+    if (run.length >= BUNDLE_MIN) {
+      const newest = session.history[run[0]!.index]!;
+      const oldestParent = parentOf(session, run[run.length - 1]!.index);
+      const before =
+        oldestParent === undefined
+          ? undefined
+          : session.history[oldestParent]?.tabs;
+      const net = describeChanges(before, newest.tabs);
+      const label = newest.label;
+      const views = [
+        ...new Set(
+          run.flatMap((row) =>
+            describeEntry(session, row.index).changes.map(
+              (change) => change.view ?? "All views"
+            )
+          )
+        ),
+      ];
+      const [one, many] = BUNDLE_NOUNS[label];
+      const subjects = [
+        ...new Set(
+          run.flatMap((row) =>
+            describeEntry(session, row.index).changes.flatMap((change) =>
+              change.subject ? [change.subject] : []
+            )
+          )
+        ),
+      ];
+      const on =
+        subjects.length === 0
+          ? ""
+          : subjects.length <= 2
+            ? ` on ${subjects.join(" and ")}`
+            : ` on ${subjects.length} charts`;
+      items.push({
+        type: "bundle",
+        key: `bundle-${run[run.length - 1]!.index}-${run[0]!.index}`,
+        rows: run,
+        net,
+        headline: `${run.length} ${run.length === 1 ? one : many}${on}`,
+        label,
+        views,
+      });
+    } else {
+      for (const row of run) {
+        items.push({ type: "step", key: `step-${row.index}`, row });
+      }
+    }
+  };
+
+  let run: TimelineRow[] = [];
+  let runKey = "";
+  for (const row of rows) {
+    const entry = session.history[row.index]!;
+    const day = new Date(entry.at).toDateString();
+    const dayChanged = day !== lastDay;
+    if (dayChanged) {
+      flush(run);
+      run = [];
+      runKey = "";
+      if (showDays) {
+        items.push({
+          type: "day",
+          key: `day-${day}`,
+          label: dayLabel(entry.at, now),
+        });
+      }
+      lastDay = day;
+    }
+    if (!canJoin(row)) {
+      flush(run);
+      run = [];
+      runKey = "";
+      items.push({ type: "step", key: `step-${row.index}`, row });
+      continue;
+    }
+    const described = describeEntry(session, row.index);
+    const key = `${row.state}|${entry.label}|${viewKey(described)}`;
+    const previous = run[run.length - 1];
+    const closeInTime =
+      previous !== undefined &&
+      Date.parse(session.history[previous.index]!.at) - Date.parse(entry.at) <=
+        BUNDLE_GAP_MS;
+    if (run.length > 0 && key === runKey && closeInTime) {
+      run.push(row);
+    } else {
+      flush(run);
+      run = [row];
+      runKey = key;
+    }
+  }
+  flush(run);
+  return items;
 }
