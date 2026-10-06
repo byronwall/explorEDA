@@ -6,6 +6,7 @@ export default defineConfig([
       ExplorEda: "src/components/ExplorEda.tsx",
       core: "src/charts/registry.ts",
       calculations: "src/lib/calculations/parser/semantics.ts",
+      analysis: "src/analysis.ts",
       "charts/bar": "src/components/charts/BarChart/definition.ts",
       "charts/box-plot": "src/components/charts/BoxPlot/definition.ts",
       "charts/calendar": "src/components/charts/Calendar/definition.ts",

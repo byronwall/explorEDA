@@ -246,3 +246,32 @@ Row Chart groups categories that do not fit under Other categories. Inspect this
 bar to search its members, inspect source rows, or select categories. The saved
 filter contains exact category values. Resizing changes the displayed groups and
 keeps the selection. A literal “Other categories” value remains a separate category.
+
+## Related tables
+
+`exploreda/analysis` evaluates queries over several related tables without
+React. A project declares sources (each with an entity key), relationships
+between their fields, and queries. A query is a short list of steps: read a
+source, look up a related row, expand to related rows, calculate, filter, or
+group and summarize.
+
+```ts
+import { evaluateAnalysisQuery } from "exploreda/analysis";
+
+const result = evaluateAnalysisQuery(project, tables, "orders-by-customer");
+result.rows; // one row per order, with customer fields added
+result.stages; // input and output counts for every step
+result.diagnostics; // missing matches, duplicate keys, ambiguous lookups
+```
+
+A lookup keeps the current rows. When one row matches several related rows,
+its related values stay empty and a diagnostic names the conflict; the
+evaluator never picks the first match. Use an expand step to change the row
+meaning on purpose, or expand and then group to keep it. A grouped measure can
+use `entityFieldId` to count each parent once, so an order amount repeated on
+its item rows is not summed twice.
+
+Treat source tables as immutable: pass a new array when rows change.
+`stringifyAnalysisProject` and `parseAnalysisProject` write and validate a
+project file with its tables and views. `selectAnalysisProjectView` keeps one
+view and only what it depends on.
