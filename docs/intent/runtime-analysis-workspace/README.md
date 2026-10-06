@@ -1,10 +1,10 @@
 # Runtime analysis initiatives
 
-The 2026-09-29 dictation is split into dedicated initiatives. Each contains an intent brief, a shape brief, and its source state. Implementation planning is deferred at Byron's request.
+The 2026-09-29 dictation is split into dedicated initiatives. Runtime configuration is delivered and retired. The other initiatives retain their planning artifacts.
 
 | Initiative | Intent | Shape |
 | --- | --- | --- |
-| Runtime configuration story | [Intent](../runtime-configuration-story/intent-brief.md) | [Shape](../runtime-configuration-story/shape-brief.md) |
+| Runtime configuration story (completed) | [Delivered behavior](../../developer-workspace.md) | [Closure](../../initiative-history.json) |
 | Project and task views | [Intent](../project-task-views/intent-brief.md) | [Shape](../project-task-views/shape-brief.md) |
 | Agent inside the analysis application | [Intent](../in-app-analysis-agent/intent-brief.md) | [Shape](../in-app-analysis-agent/shape-brief.md) |
 | Multiple sources and lookups | [Intent](../multi-source-analysis/intent-brief.md) | [Shape](../multi-source-analysis/shape-brief.md) |

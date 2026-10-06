@@ -71,7 +71,7 @@ Historical stack records report browser checks at 1280, 783, and 390 pixels for 
 Those records are earlier evidence, not a fresh browser run against this revision.
 Cross-view comparisons and browser restores remained unverified at retirement. Byron explicitly waived that remaining work.
 Retirement records the accepted scope; it does not report those checks as passed.
-Broader visual/example review stays with the [example coverage initiative](intent/data-viz-review-and-example-coverage/intent-brief.md).
+Broader visual/example review uses the [coverage workflow](example-coverage.md).
 
 ## Analysis options
 

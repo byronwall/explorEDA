@@ -25,7 +25,7 @@ Confirm the current public boundary and mount timing. Choose the smallest compat
 A host reads current settings after mount and after an edit, with the same chart definitions as the UI. Do not add an agent service, new persistence format, or row/sample/visual context.
 
 ## Provenance
-Intent claims c1, c2, final-inspection-3; selected shape in docs/intent/runtime-configuration-story/shape-brief.md; milestone M2 in docs/intent/runtime-configuration-story/implementation-plan.md. Repository baseline 22a9bd3694cf208c63911291a5926c3c5a367be0.
+Intent claims c1, c2, final-inspection-3; selected shape in https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/intent/runtime-configuration-story/shape-brief.md; milestone M2 in https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/intent/runtime-configuration-story/implementation-plan.md. Repository baseline 22a9bd3694cf208c63911291a5926c3c5a367be0.
 
 ## Readiness and ownership
 Base: `421abb6` on `codex/runtime-configuration`. No code changes yet. Owner: continuous writer for this scope. Existing package test setup and local demo are available; the ticket viewer is already running at `http://127.0.0.1:7412`. `tk view` could not bind because this sandbox blocks localhost socket creation; reuse the existing viewer.
@@ -46,7 +46,7 @@ Owned boundary: focused public package handle to read current saved settings, it
 - Record focused package tests and type checking. Browser proof remains open for the combined journey.
 
 ## Provenance
-Runtime configuration story, milestone 2: `docs/intent/runtime-configuration-story/implementation-plan.md`; outcome and cut line from this ticket's original scope.
+Runtime configuration story, milestone 2: `https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/intent/runtime-configuration-story/implementation-plan.md`; outcome and cut line from this ticket's original scope.
 
 ## Notes
 

@@ -48,7 +48,7 @@
     {
       "id": "landing-intent",
       "type": "accepted-project-context",
-      "location": "../developer-adoption-page/intent-brief.md",
+      "location": "https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/intent/developer-adoption-page/intent-brief.md",
       "anchor": "current landing scope and product ownership",
       "authority": "earlier intent, refined by current dictation"
     },

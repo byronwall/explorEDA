@@ -21,7 +21,7 @@ Deliver a readable package inspector, initial and edited host settings access, a
 Refine child packets against current source and verify the local example and browser proof environment. The epic tracks completion; it is not a prerequisite for its children.
 
 ## Provenance
-Intent claims c1, feedback-1 through feedback-4, and final-inspection-1 through final-inspection-3; selected shape in docs/intent/runtime-configuration-story/shape-brief.md; milestones M1-M3 in docs/intent/runtime-configuration-story/implementation-plan.md; repository baseline 22a9bd3694cf208c63911291a5926c3c5a367be0.
+Intent claims c1, feedback-1 through feedback-4, and final-inspection-1 through final-inspection-3; selected shape in https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/intent/runtime-configuration-story/shape-brief.md; milestones M1-M3 in https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/intent/runtime-configuration-story/implementation-plan.md; repository baseline 22a9bd3694cf208c63911291a5926c3c5a367be0.
 
 Cut line: no spec editing, comparison UI, agent service, task views, or multiple sources.
 
