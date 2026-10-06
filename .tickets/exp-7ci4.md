@@ -25,7 +25,7 @@ Confirm the inspector and host read packets have landed. Review the current exam
 Complete add/edit/inspect/integrate and Reset from a fresh example. Keep personal-data persistence, spec editing, comparison UI, task views, agents, and multiple sources out of scope.
 
 ## Provenance
-Intent claims feedback-1 through feedback-6, final-inspection-1, final-inspection-3; selected shape in docs/intent/runtime-configuration-story/shape-brief.md; milestone M3 in docs/intent/runtime-configuration-story/implementation-plan.md. Repository baseline 22a9bd3694cf208c63911291a5926c3c5a367be0.
+Intent claims feedback-1 through feedback-6, final-inspection-1, final-inspection-3; selected shape in https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/intent/runtime-configuration-story/shape-brief.md; milestone M3 in https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/intent/runtime-configuration-story/implementation-plan.md. Repository baseline 22a9bd3694cf208c63911291a5926c3c5a367be0.
 
 ## Notes
 
@@ -53,7 +53,7 @@ Owned boundary: demo landing page, featured example guidance, React integration 
 - Keep desktop support claims accurate. Do not claim global mobile support.
 
 ## Provenance
-Runtime configuration story milestone 3: `docs/intent/runtime-configuration-story/implementation-plan.md`; scope from this ticket and the accepted root dependencies.
+Runtime configuration story milestone 3: `https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/intent/runtime-configuration-story/implementation-plan.md`; scope from this ticket and the accepted root dependencies.
 
 **2026-10-02T04:53:59Z**
 

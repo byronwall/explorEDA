@@ -25,7 +25,7 @@ Confirm the current settings shape for each chart type, the inspector entry, ref
 Add and edit a chart, move or resize it, then confirm inventory and details follow. Expand a referenced definition. Do not add spec editing, a second saved format, or change comparison.
 
 ## Provenance
-Intent claims c1, feedback-4, feedback-7, final-inspection-1; selected shape in docs/intent/runtime-configuration-story/shape-brief.md; milestone M1 in docs/intent/runtime-configuration-story/implementation-plan.md. Repository baseline 22a9bd3694cf208c63911291a5926c3c5a367be0.
+Intent claims c1, feedback-4, feedback-7, final-inspection-1; selected shape in https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/intent/runtime-configuration-story/shape-brief.md; milestone M1 in https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/intent/runtime-configuration-story/implementation-plan.md. Repository baseline 22a9bd3694cf208c63911291a5926c3c5a367be0.
 
 ## Readiness and ownership
 Base: `421abb6` on `codex/runtime-configuration`. No code changes yet. Owner: continuous writer for this scope. Existing package, demo, and example data are local; the ticket viewer is already running at `http://127.0.0.1:7412`. `tk view` could not bind because this sandbox blocks localhost socket creation; reuse the existing viewer.
@@ -46,7 +46,7 @@ Owned boundary: package chart inventory and read-only detail panel, current-stat
 - Code-ready proof records package tests/type checks. Browser proof remains open for chart add/edit and move/resize, keyboard use, and 1280/783/390 px widths.
 
 ## Provenance
-Runtime configuration story, milestone 1: `docs/intent/runtime-configuration-story/implementation-plan.md`; outcome and cut line from this ticket's original scope.
+Runtime configuration story, milestone 1: `https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/intent/runtime-configuration-story/implementation-plan.md`; outcome and cut line from this ticket's original scope.
 
 ## Notes
 

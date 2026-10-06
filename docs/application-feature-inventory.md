@@ -80,13 +80,19 @@ Use small fixtures with distinct purposes: Penguins for mixed fields and missing
 shop operations for repeatable dates and edge cases, and Lorenz for dense linked views and facets.
 Keep the fixed-seed shop generator. Dataset sources and licenses belong in the [dataset notes](../apps/demo/public/datasets/README.md).
 
+### Developer workspace and example review
+
+The developer adoption, runtime configuration, and example coverage initiatives retired on 2026-10-05.
+The [developer workspace guide](developer-workspace.md) describes landing routes, Chart spec, host settings reads, and accepted proof limits.
+The [coverage workflow](example-coverage.md) explains the review skill, manifest, matrix, and baseline acceptance.
+Later chart additions retain their own review state. Retirement does not certify all current combinations.
+
 ### Follow-up scope
 
 | Lasting goal | Destination and boundary |
 | --- | --- |
 | Multiple sources, relationships, joins, lookups, and source inspection | [Multi-source analysis](intent/multi-source-analysis/intent-brief.md). The retired slice accepts one in-memory table. |
 | Named analysis views, durable saves, and application navigation | [Project task views](intent/project-task-views/intent-brief.md). Package restore works; host storage remains separate. |
-| Runtime control of the complete workspace | [Runtime configuration](intent/runtime-configuration-story/intent-brief.md). Keep the public package and primary application aligned. |
 | Inspectable source-to-mark transformations and contributors | [Traceability](#traceability-and-reproducibility). Additional chart families now have trace paths; see the [chart guide](analytical-chart-coverage.md). Source-data filter flow remains future scope. |
 | Composable visualization definitions, derived layers, and advanced chart construction | [Composed analytical graphics](intent/composed-analytical-graphics/intent-brief.md). Per-chart settings remain the current model. |
 | Agent-created deterministic analysis views | [In-app analysis agent](intent/in-app-analysis-agent/intent-brief.md). This remains separate from the delivered inspection slice. |
