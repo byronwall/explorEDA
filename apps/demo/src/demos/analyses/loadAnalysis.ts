@@ -6,6 +6,22 @@ import type { ExampleAnalysis } from "./types";
 
 export type AnalysisTables = Record<string, readonly AnalysisSourceRow[]>;
 
+/**
+ * Parses one source table. The CSV parser turns full ISO timestamps into
+ * Date objects; tables keep them as text, like every other date.
+ */
+export async function parseTable(text: string) {
+  const rows = (await parseCsvData(text)) as AnalysisSourceRow[];
+  for (const row of rows) {
+    for (const [key, value] of Object.entries(row)) {
+      if ((value as unknown) instanceof Date) {
+        row[key] = (value as unknown as Date).toISOString();
+      }
+    }
+  }
+  return rows;
+}
+
 /** Fetches and parses every source table of an analysis. */
 export async function loadAnalysisTables(
   analysis: ExampleAnalysis,
@@ -17,8 +33,7 @@ export async function loadAnalysisTables(
       if (!response.ok) {
         throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
       }
-      const rows = await parseCsvData(await response.text());
-      return [sourceId, rows as AnalysisSourceRow[]] as const;
+      return [sourceId, await parseTable(await response.text())] as const;
     })
   );
   return Object.fromEntries(entries);

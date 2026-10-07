@@ -76,6 +76,7 @@ describe("example coverage manifest", () => {
       "january-flights",
       "beijing-air",
       "world-development",
+      "earthquakes-2023",
       "shop-operations",
       "palmer-penguins",
       "categorical-charts",

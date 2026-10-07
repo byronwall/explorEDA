@@ -1,0 +1,107 @@
+{
+  "dataset": "Earthquakes of magnitude 4.5 or more in 2023",
+  "source": {
+    "name": "USGS ANSS Comprehensive Earthquake Catalog (ComCat)",
+    "query": "https://earthquake.usgs.gov/fdsnws/event/1/query?format=csv&starttime=2023-01-01&endtime=2024-01-01&minmagnitude=4.5&eventtype=earthquake&orderby=time-asc",
+    "sha256": "1205d186ed67659e43d73dc0f9fd8317e5b4cbb2a58678c58c172dc82b3ee88b",
+    "retrieved": "2026-10-07T04:08:56.936Z",
+    "license": "Public domain (U.S. Geological Survey)",
+    "credit": "U.S. Geological Survey, Earthquake Hazards Program, ANSS ComCat."
+  },
+  "preparation": [
+    "events: one row per catalogue event in its preferred solution; the half-open window 2023-01-01 ≤ time < 2024-01-01 removes events at the inclusive end time.",
+    "date: the UTC calendar date of the event time.",
+    "depth_band: analyst-defined bands at 70 and 300 km; negative depths, above sea level, stay as their own band.",
+    "area: the text after the last comma in the place description, else the named region.",
+    "metadata_present: how many of nst, gap, dmin, rms, horizontalError, depthError, magError, magNst hold a number; zero counts as present.",
+    "Error fields keep USGS units and are used here only to show which are present."
+  ],
+  "files": [
+    {
+      "file": "events.csv",
+      "rows": 7643,
+      "columns": [
+        "id",
+        "time",
+        "date",
+        "latitude",
+        "longitude",
+        "depth",
+        "depth_band",
+        "mag",
+        "mag_type",
+        "place",
+        "area",
+        "net",
+        "status",
+        "metadata_present",
+        "metadata_band",
+        "nst",
+        "gap",
+        "rms",
+        "horizontal_error",
+        "depth_error",
+        "mag_error"
+      ],
+      "bytes": 1532099,
+      "sha256": "3d21f1864c9e75e23e6fe620735368446aadf3a94a0282c587997bc6f2d30e1f"
+    }
+  ],
+  "audit": {
+    "query": "https://earthquake.usgs.gov/fdsnws/event/1/query?format=csv&starttime=2023-01-01&endtime=2024-01-01&minmagnitude=4.5&eventtype=earthquake&orderby=time-asc",
+    "retrieved": "2026-10-07T04:08:56.936Z",
+    "sourceRows": 7643,
+    "events": 7643,
+    "outsideWindow": 0,
+    "duplicateIds": 0,
+    "mappable": 7643,
+    "finiteDepthAndMag": 7643,
+    "belowMinimum": 0
+  },
+  "findings": {
+    "busiestDay": {
+      "date": "2023-12-02",
+      "events": 164
+    },
+    "medianPerDay": 18,
+    "quietDays": 0,
+    "depthBands": {
+      "1 Shallow, under 70 km": 6060,
+      "2 Intermediate, 70–300 km": 1249,
+      "3 Deep, 300 km or more": 334
+    },
+    "topAreas": [
+      {
+        "name": "Philippines",
+        "events": 793
+      },
+      {
+        "name": "Indonesia",
+        "events": 760
+      },
+      {
+        "name": "Papua New Guinea",
+        "events": 378
+      }
+    ],
+    "strongest": {
+      "id": "us6000jllz",
+      "mag": 7.8,
+      "place": "Pazarcik earthquake, Kahramanmaras earthquake sequence",
+      "date": "2023-02-06"
+    },
+    "commonMagType": {
+      "type": "mb",
+      "events": 6150
+    },
+    "magTypes": 9,
+    "medianMagCommonType": {
+      "shallow": 4.6,
+      "intermediate": 4.6,
+      "deep": 4.6
+    },
+    "usShare": 99.3,
+    "lowMetadata": 30,
+    "networks": 8
+  }
+}

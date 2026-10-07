@@ -36,6 +36,7 @@ import {
   Calculator,
   CloudFog,
   Globe,
+  Activity,
   LineChart,
   LucideIcon,
   Orbit,
@@ -49,6 +50,7 @@ import {
 } from "lucide-react";
 import { boxPlotSettings } from "./boxPlotSettings";
 import { beijingAnalysis } from "./analyses/beijing";
+import { earthquakesAnalysis } from "./analyses/earthquakes";
 import { flightsAnalysis } from "./analyses/flights";
 import { worldBankAnalysis } from "./analyses/worldbank";
 import type { ExampleAnalysis } from "./analyses/types";
@@ -180,6 +182,24 @@ export const examples: ExampleData[] = [
     icon: Globe,
     data: "",
     analysis: worldBankAnalysis,
+  },
+  {
+    id: "earthquakes-2023",
+    title: "Every strong earthquake of 2023",
+    description:
+      "All 7,643 magnitude 4.5+ earthquakes in the USGS catalogue for 2023. Map where they struck, find the busiest days, compare magnitude with depth within one magnitude type, and check which measurement fields each record carries.",
+    dataset: { rows: "7,643 events", fields: 21, source: "Real" },
+    shows: [
+      "Point map",
+      "Calendar heatmap",
+      "Stacked area",
+      "Hexagon bins",
+      "ECDF by group",
+      "100% bars",
+    ],
+    icon: Activity,
+    data: "",
+    analysis: earthquakesAnalysis,
   },
   {
     id: "distribution-discovery",
