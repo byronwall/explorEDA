@@ -1,17 +1,24 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import path from "path";
+import {
+  exploredaSource,
+  sourceAlias,
+  useLibrarySource,
+} from "./exploredaSource";
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
+export default defineConfig(({ command }) => ({
+  plugins: [
+    ...(command === "serve" && useLibrarySource ? [exploredaSource()] : []),
+    react(),
+    tailwindcss(),
+  ],
   base: "/",
 
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
+    alias: sourceAlias,
+    dedupe: ["react", "react-dom"],
   },
   build: {
     rollupOptions: {
@@ -50,4 +57,4 @@ export default defineConfig({
     },
   },
   clearScreen: false,
-});
+}));

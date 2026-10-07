@@ -1,7 +1,7 @@
 # explorEDA working rules
 
 - Keep this existing React library and demo in React and TypeScript.
-- Use pnpm. Run `pnpm check` after a broad change.
+- Use pnpm. Run `pnpm check` after a broad change; see [Verifying changes](#verifying-changes).
 - Read [UI defaults](docs/ui-defaults.md) before changing controls, tables, overlays, or field details.
 - Use `--border` for neutral borders, `--input` for inputs, and semantic tokens for status borders.
 - Never add a `title` attribute or SVG `<title>` element to rendered UI. Both create native hover tooltips.
@@ -17,6 +17,12 @@
 - Use the shared `FieldMetadata` component in field lists and pickers.
 - Verify changed flows in the browser at wide, intermediate, and narrow widths.
 - Keep existing user edits. Do not commit on `main` without an explicit request.
+
+## Verifying changes
+
+- The demo dev server and demo tests run the library from source. Do not build the library to see a change; `pnpm --filter demo dev` picks it up. Set `EXPLOREDA_DIST=1` only to try the built package.
+- While working, run targeted tests (`pnpm --filter exploreda exec vitest run <files>`) and `pnpm --filter exploreda check-types`.
+- Run `pnpm check` once, before opening a PR. It builds the package, so never run it from several worktrees at the same time.
 
 ## Pull requests
 
