@@ -1,0 +1,317 @@
+[
+  {
+    "example_id": "distribution-discovery",
+    "features": {
+      "chart:bar": "shown",
+      "chart:boxplot": "shown",
+      "chart:row": "shown",
+      "chart:metric-card": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown"
+    },
+    "review_date": null,
+    "report": null
+  },
+  {
+    "example_id": "region-map",
+    "features": {
+      "chart:map": "shown",
+      "chart:pivot": "shown",
+      "chart:metric-card": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown"
+    },
+    "review_date": null,
+    "report": null
+  },
+  {
+    "example_id": "point-map",
+    "features": {
+      "chart:map": "shown",
+      "chart:bar": "shown",
+      "chart:metric-card": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown"
+    },
+    "review_date": null,
+    "report": null
+  },
+  {
+    "example_id": "scatter-density",
+    "features": {
+      "mode:scatter-density": "shown",
+      "chart:scatter": "shown",
+      "chart:bar": "shown",
+      "chart:metric-card": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown"
+    },
+    "review_date": null,
+    "report": null
+  },
+  {
+    "example_id": "bubble-scatter",
+    "features": {
+      "mode:bubble-scatter": "shown",
+      "chart:scatter": "shown",
+      "chart:metric-card": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown"
+    },
+    "review_date": null,
+    "report": null
+  },
+  {
+    "example_id": "area-charts",
+    "features": {
+      "mode:area": "shown",
+      "mode:calendar-series": "shown",
+      "chart:line": "shown",
+      "chart:row": "shown",
+      "chart:metric-card": "shown",
+      "chart:calendar": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown"
+    },
+    "review_date": null,
+    "report": null
+  },
+  {
+    "example_id": "stacked-bars",
+    "features": {
+      "mode:stacked-bars": "shown",
+      "chart:bar": "shown",
+      "chart:metric-card": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown"
+    },
+    "review_date": null,
+    "report": null
+  },
+  {
+    "example_id": "grouped-bars",
+    "features": {
+      "mode:grouped-bars": "shown",
+      "chart:bar": "shown",
+      "chart:metric-card": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown"
+    },
+    "review_date": null,
+    "report": null
+  },
+  {
+    "example_id": "calendar-series",
+    "features": {
+      "mode:calendar-series": "shown",
+      "scale:time": "shown",
+      "chart:line": "shown",
+      "chart:calendar": "shown",
+      "chart:metric-card": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown"
+    },
+    "review_date": null,
+    "report": null
+  },
+  {
+    "example_id": "shop-operations",
+    "features": {
+      "chart:metric-card": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:boxplot": "shown",
+      "chart:data-table": "shown",
+      "chart:sankey": "shown",
+      "chart:heatmap": "shown",
+      "chart:scatter": "reviewed",
+      "labels:meaningful-title": "reviewed",
+      "labels:axes": "reviewed",
+      "guides:ticks": "reviewed",
+      "scale:symlog": "reviewed",
+      "color:categorical": "reviewed",
+      "color:legend": "reviewed",
+      "interaction:cross-filter": "reviewed",
+      "layout:dashboard": "reviewed",
+      "responsive:desktop-resize": "reviewed",
+      "accessibility:naming": "reviewed"
+    },
+    "review_date": "2026-10-02",
+    "report": "https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md#shop-operations"
+  },
+  {
+    "example_id": "palmer-penguins",
+    "features": {
+      "chart:scatter": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:boxplot": "shown",
+      "chart:data-table": "shown",
+      "chart:parallel-coordinates": "shown",
+      "color:categorical": "shown",
+      "interaction:brushing": "shown",
+      "interaction:cross-filter": "shown",
+      "layout:dashboard": "shown"
+    },
+    "review_date": null,
+    "report": null
+  },
+  {
+    "example_id": "nba-stats",
+    "features": {
+      "chart:scatter": "shown",
+      "chart:color-legend": "shown",
+      "labels:meaningful-title": "shown",
+      "labels:axes": "shown",
+      "guides:ticks": "shown",
+      "table:virtualization": "shown",
+      "chart:summary": "reviewed",
+      "chart:pivot": "reviewed",
+      "chart:data-table": "reviewed",
+      "color:categorical": "reviewed",
+      "color:legend": "reviewed",
+      "table:sorting": "reviewed",
+      "table:formatting": "reviewed",
+      "accessibility:naming": "reviewed"
+    },
+    "review_date": "2026-10-02",
+    "report": "https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md#nba-stats"
+  },
+  {
+    "example_id": "categorical-charts",
+    "features": {
+      "chart:row": "shown",
+      "chart:pivot": "shown",
+      "chart:data-table": "shown",
+      "labels:meaningful-title": "shown",
+      "labels:axes": "shown",
+      "guides:ticks": "shown",
+      "color:categorical": "shown",
+      "table:sorting": "shown",
+      "scale:band": "reviewed",
+      "facet:grid": "reviewed",
+      "interaction:active-filter": "reviewed",
+      "table:filtering": "reviewed",
+      "state:empty": "reviewed",
+      "accessibility:naming": "reviewed"
+    },
+    "review_date": "2026-10-02",
+    "report": "https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md#categorical-charts"
+  },
+  {
+    "example_id": "box-plot",
+    "features": {
+      "chart:summary": "shown",
+      "chart:scatter": "shown",
+      "chart:color-legend": "shown",
+      "chart:boxplot": "shown",
+      "chart:bar": "shown",
+      "color:numerical": "shown",
+      "color:legend": "shown",
+      "interaction:brushing": "shown"
+    },
+    "review_date": null,
+    "report": null
+  },
+  {
+    "example_id": "product-activity",
+    "features": {
+      "chart:ecdf": "shown",
+      "chart:row": "shown",
+      "chart:scatter": "shown",
+      "chart:bar": "shown",
+      "chart:boxplot": "shown",
+      "chart:data-table": "shown",
+      "labels:meaningful-title": "shown",
+      "labels:axes": "shown",
+      "guides:ticks": "shown",
+      "color:legend": "shown",
+      "accessibility:naming": "shown",
+      "chart:line": "reviewed",
+      "scale:linear": "reviewed"
+    },
+    "review_date": "2026-10-02",
+    "report": "https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md#product-activity"
+  },
+  {
+    "example_id": "scatter-trace",
+    "features": {
+      "chart:scatter": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "chart:markdown": "shown",
+      "guides:grids": "shown",
+      "color:categorical": "shown",
+      "color:legend": "shown",
+      "interaction:brushing": "shown",
+      "interaction:cross-filter": "shown",
+      "layout:dashboard": "shown"
+    },
+    "review_date": null,
+    "report": null
+  },
+  {
+    "example_id": "calculated-orders",
+    "features": {
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:scatter": "shown",
+      "chart:data-table": "shown",
+      "chart:line": "shown",
+      "chart:pivot": "shown",
+      "chart:markdown": "shown",
+      "facet:wrap": "shown",
+      "state:invalid": "reviewed"
+    },
+    "review_date": "2026-10-02",
+    "report": "https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md#calculated-orders"
+  },
+  {
+    "example_id": "shop-10000",
+    "features": {
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:scatter": "shown",
+      "chart:boxplot": "shown",
+      "chart:data-table": "shown",
+      "chart:line": "shown",
+      "labels:meaningful-title": "shown",
+      "labels:axes": "shown",
+      "guides:ticks": "shown",
+      "scale:symlog": "shown",
+      "chart:calendar": "shown",
+      "facet:wrap": "shown",
+      "table:virtualization": "shown",
+      "layout:dashboard": "shown",
+      "accessibility:naming": "shown",
+      "facet:shared-scales": "reviewed"
+    },
+    "review_date": "2026-10-02",
+    "report": "https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md#shop-10000"
+  },
+  {
+    "example_id": "lorenz-3d",
+    "features": {
+      "chart:markdown": "shown",
+      "labels:meaningful-title": "shown",
+      "labels:axes": "shown",
+      "guides:ticks": "shown",
+      "scale:linear": "shown",
+      "layout:dashboard": "shown",
+      "chart:scatter": "reviewed",
+      "chart:3d-scatter": "reviewed",
+      "color:numerical": "reviewed",
+      "facet:wrap": "reviewed",
+      "interaction:brushing": "reviewed",
+      "interaction:cross-filter": "reviewed",
+      "interaction:saved-filter-state": "reviewed",
+      "accessibility:naming": "reviewed"
+    },
+    "review_date": "2026-10-02",
+    "report": "https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md#lorenz-3d"
+  }
+]

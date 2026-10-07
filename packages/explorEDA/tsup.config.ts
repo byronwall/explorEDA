@@ -3,8 +3,12 @@ import { entries } from "./entries.json";
 
 export default defineConfig([
   {
-    // entries.json is shared with scripts/build-types.mjs.
-    entry: entries,
+    // entries.json is shared with scripts/build-types.mjs. The worker is a
+    // script, not an API, so it is left out of the typed entries.
+    entry: {
+      ...entries,
+      "analysis-worker": "src/lib/analysis/analysisWorker.ts",
+    },
     splitting: true,
     sourcemap: true,
     clean: true,

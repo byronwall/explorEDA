@@ -1,0 +1,14 @@
+﻿growth_id,area,new_support,evidence_boundary,source_ids,transcript_ids
+G01,Scalar table workflow,"Header distributions, drag reorder, context-menu column recovery, Clear sort and typed cell actions",Direct active source; browser unverified,TABLE THDR TMENU,T02 T06 T09
+G02,Filter discoverability,"Owner navigation and focus/hover highlighting, overflow chip list and explicit local scope",Direct source and callback wiring search; browser unverified,FILTER PLOT,T12
+G03,Trace breadth,"Contributors, exclusions, bounds and geometry across many more marks than scalar/pivot",Current implementation guide; individual renderer paths not all independently audited,CHART,T11 T15 T18
+G04,Calendar series and Calendar,"UTC day/week/month, category series and exact period contributors",Direct rollup source plus current chart guide; browser unverified,ROLL CHART,T07 T16 T18
+G05,Grouped/stacked/percentage bars and area,"Supplied grouped measures, cumulative bands and denominators",Current chart guide and mode manifest; browser unverified,CHART COV,T11 T18
+G06,Bubble and rectangular density scatter,"Area encoding, bin memberships and source-row tracing","Current chart guide and mode manifest; not regression, KDE or hexagons",CHART COV,T14 T15 T17
+G07,Other member discovery,Search/paging and typed real-member selections,Current chart guide; browser unverified,CHART,T06
+G08,Map,"Point and region modes, local geometry and typed joins",Active registry plus current guide; not general analytical multi-source joins,REG CHART,T11 T15
+G09,Metric Card,Count/sum/average with all-source reference and source inspection,Active registry plus guide; not frozen baseline,REG CHART,T11 T12
+G10,Heatmap,Two-category count/sum/average with exact pair selection,Active registry plus guide; not correlation/missingness semantics,REG CHART,T11 T13
+G11,Sankey,"Ordered-stage flows, exclusions and exact node/link contracts",Active registry plus guide; not arbitrary edge-list network,REG CHART,T11 T15 T18
+G12,Parallel Coordinates and ECDF,Multivariate row topology plus threshold/tie-aware distribution inspection,Active registry plus guide; current browser comparison unverified,REG CHART,T14 T18
+G13,Advanced scatter / authoring DSL,"New shaped regression, contours, hexagons, marginals and compact authoring",Planning growth only; PR136 makes no application changes,PLAN,T16 T17 T19

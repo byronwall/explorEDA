@@ -27,6 +27,12 @@ export function exploredaSource(): Plugin {
       const entry = entries[id === "exploreda" ? "ExplorEda" : id.slice(10)];
       return entry ? path.join(libraryDir, entry) : null;
     },
+    transform(code, id) {
+      // The package loads its built worker file; from source, load the
+      // worker module itself.
+      if (!id.startsWith(path.join(librarySrc, "lib/analysis/"))) return null;
+      return code.replace('"./analysis-worker.js"', '"./analysisWorker.ts"');
+    },
   };
 }
 

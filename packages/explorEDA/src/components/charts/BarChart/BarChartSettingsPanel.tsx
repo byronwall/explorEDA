@@ -6,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import { BarChartSettings } from "./definition";
-import type { AggregateAggregation } from "@/lib/aggregates";
+import { ONCE_PER_HELP, type AggregateAggregation } from "@/lib/aggregates";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useMemo, useState } from "react";
@@ -15,12 +15,13 @@ import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
 function getAggregateName(
   aggregation: AggregateAggregation,
   groupField: string,
-  measureField?: string
+  measureField?: string,
+  entityField?: string
 ) {
   if (aggregation === "count") {
-    return `Count by ${groupField}`;
+    return `Count${entityField ? ` distinct ${entityField}` : ""} by ${groupField}`;
   }
-  return `${aggregation === "sum" ? "Sum" : "Average"} of ${measureField ?? ""} by ${groupField}`;
+  return `${aggregation === "sum" ? "Sum" : "Average"} of ${measureField ?? ""}${entityField ? ` once per ${entityField}` : ""} by ${groupField}`;
 }
 
 export function BarChartSettingsPanel({
@@ -181,7 +182,8 @@ export function BarChartSettingsPanel({
         const name = getAggregateName(
           next.aggregation,
           next.groupField,
-          next.measureField
+          next.measureField,
+          next.entityField
         );
         updateAggregate(settings.aggregateId!, { ...updates, name });
         onSettingsChange({
@@ -278,6 +280,18 @@ export function BarChartSettingsPanel({
               />
             </>
           )}
+          <Label>Once per</Label>
+          <ActionTooltip content={ONCE_PER_HELP}>
+            <FieldSelector
+              label=""
+              placeholder="Every row"
+              value={aggregate.entityField ?? ""}
+              allowClear
+              onChange={(value) =>
+                updateDefinition({ entityField: value || undefined })
+              }
+            />
+          </ActionTooltip>
           {seriesControl}
           {settings.colorScaleId && (
             <div className="col-start-2">

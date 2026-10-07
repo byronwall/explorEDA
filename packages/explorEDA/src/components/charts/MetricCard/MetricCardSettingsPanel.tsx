@@ -1,5 +1,7 @@
 import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
+import { ActionTooltip } from "@/components/ui/tooltip";
+import { ONCE_PER_HELP } from "@/lib/aggregates";
 import type { AggregateAggregation } from "@/lib/aggregates";
 import { finiteNumber } from "@/lib/numeric";
 import { useDataLayer } from "@/providers/DataLayerProvider";
@@ -75,6 +77,22 @@ export function MetricCardSettingsPanel({
             />
           </>
         )}
+        <Label>Once per</Label>
+        <ActionTooltip content={ONCE_PER_HELP}>
+          <FieldSelector
+            label=""
+            placeholder="Every row"
+            value={settings.entityField ?? ""}
+            allowClear
+            fields={getColumnNames()}
+            onChange={(entityField) =>
+              onSettingsChange({
+                ...settings,
+                entityField: entityField || undefined,
+              })
+            }
+          />
+        </ActionTooltip>
       </div>
     </div>
   );

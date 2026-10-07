@@ -1,0 +1,354 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Discover field relationships, then open scatter",
+    "slug": "relationship-discovery",
+    "scale": "feature",
+    "current_phase": "intent",
+    "last_updated": "2026-10-06",
+    "summary": "Users should find useful relationships among several numeric fields before choosing a scatter pair.",
+    "status": "planned",
+    "next_action": "Use three fields with one exact relationship and one constant field. Show coefficients and pair counts, then open the correct scatter. Decide whether the small matrix reduces field-selection effort before adding methods."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-06"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "current-request",
+      "type": "direct-user-input",
+      "location": "../comparison-opportunities/resources/user-request.md",
+      "anchor": "October 6 request: actionable comparisons, obvious current gaps, future seeds, new intent docs, colocated references",
+      "authority": "explicit user direction"
+    },
+    {
+      "id": "pro-chart-review",
+      "type": "agent-authored-analysis",
+      "location": "../comparison-opportunities/resources/pro-chart-review/exploreda-chart-interaction-review/review.md",
+      "anchor": "C15",
+      "authority": "historical recommendation, not approved intent or runtime proof"
+    },
+    {
+      "id": "pro-gap-register",
+      "type": "agent-authored-analysis",
+      "location": "../comparison-opportunities/resources/pro-gap-analysis/explorEDA-gap-analysis-2026-10-05/data/requirements-ledger.json",
+      "anchor": "CHART-02",
+      "authority": "October 5 source audit at 362db580; stale where newer code differs"
+    },
+    {
+      "id": "repository-1",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/ScatterPlot/pairedSummary.ts",
+      "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "repository-2",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
+      "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "repository-3",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/charts/registerAllCharts.ts",
+      "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "scatter-matrix-request",
+      "type": "direct-user-input",
+      "location": "../scatter-plot-matrix/references/user-request.md",
+      "anchor": "Explicit off-diagonal scatter and on-diagonal distributions",
+      "authority": "explicit user intent"
+    },
+    {
+      "id": "product-feedback",
+      "type": "direct-user-input",
+      "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
+      "anchor": "Annotation 3: end users determine product choices",
+      "authority": "Explicit human feedback; tentative answers remain tentative"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "claim-1",
+        "type": "outcome",
+        "statement": "Users should find useful relationships among several numeric fields before choosing a scatter pair.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "current feature set and future seeds"
+          },
+          {
+            "source_id": "pro-chart-review",
+            "anchor": "C15"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Candidate interpretation; no feature implementation has been selected."
+      },
+      {
+        "id": "claim-2",
+        "type": "constraint",
+        "statement": "Preserve existing delivered behavior; references do not grant implementation approval.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "current feature set and future seeds"
+          },
+          {
+            "source_id": "pro-chart-review",
+            "anchor": "C15"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Candidate interpretation; no feature implementation has been selected."
+      },
+      {
+        "id": "claim-3",
+        "type": "future possibility",
+        "statement": "Expand when repeated analyses involve choosing among many numeric pairs. Add rank correlation only when monotonic nonlinear relationships make Pearson misleading for the task.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "current feature set and future seeds"
+          },
+          {
+            "source_id": "pro-chart-review",
+            "anchor": "C15"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Candidate interpretation; no feature implementation has been selected."
+      },
+      {
+        "id": "priority-1",
+        "type": "desired experience",
+        "statement": "Show method, population, and valid-pair count.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "Worthwhile gaps against current features; seeds may expand later"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Recovered candidate priority; no implementation approval."
+      },
+      {
+        "id": "priority-2",
+        "type": "desired experience",
+        "statement": "Treat constant or insufficient pairs as unavailable.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "Worthwhile gaps against current features; seeds may expand later"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Recovered candidate priority; no implementation approval."
+      },
+      {
+        "id": "priority-3",
+        "type": "desired experience",
+        "statement": "Open the existing scatter workflow directly.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "Worthwhile gaps against current features; seeds may expand later"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Recovered candidate priority; no implementation approval."
+      },
+      {
+        "id": "keep-resources-local",
+        "type": "constraint",
+        "statement": "Keep new references and Pro resources inside intent folders.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "Do not scatter across the repo"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "current-foundation",
+        "type": "current repository reality",
+        "statement": "pairedSummary.ts already computes Pearson correlation for grouped finite pairs and unavailable constant cases. The registry has no relationship-matrix view. Scatter regression and surfaces are live source implementations, unlike the older Pro snapshot.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "repository-1",
+            "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof"
+          },
+          {
+            "source_id": "repository-2",
+            "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof"
+          },
+          {
+            "source_id": "repository-3",
+            "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Does not establish runtime or browser acceptance."
+      },
+      {
+        "id": "scatter-matrix-owner",
+        "type": "decision",
+        "statement": "Scatter matrix work has a separate explicit intent in scatter-plot-matrix.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "scatter-matrix-request",
+            "anchor": "Create an intent doc for that one too"
+          }
+        ],
+        "confidence": "high",
+        "notes": "No downstream artifacts require regeneration; these initiatives are still in intent phase."
+      }
+    ],
+    "themes": [
+      "Show method, population, and valid-pair count.",
+      "Treat constant or insufficient pairs as unavailable.",
+      "Open the existing scatter workflow directly."
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
+      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "worktree_status": "clean before intent capture; detached HEAD",
+      "subsystems": [
+        "packages/explorEDA/src/components/charts/ScatterPlot/pairedSummary.ts",
+        "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
+        "packages/explorEDA/src/charts/registerAllCharts.ts"
+      ],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-06",
+      "action": "Created a new intent brief and local reference packet.",
+      "reason": "Current request for actionable comparison gaps and future seeds.",
+      "evidence": "Source reconciliation only. No runtime/browser checks, ticket publication, or implementation."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Checked references and current source against historical missing-feature claims.",
+      "reason": "Prevent stale comparator recommendations from becoming duplicate scope.",
+      "evidence": "Sleuth structure checks and local source inspection; no runtime tests."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Route scatter matrix work to scatter-plot-matrix.",
+      "reason": "The user selected a separate explicit layout; no dependency on correlation discovery is imposed.",
+      "evidence": "New intent brief and direct user request."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Reconciled annotated product feedback and priority.",
+      "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
+      "source_annotation_indices": [
+        3
+      ],
+      "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    }
+  ],
+  "closure": null,
+  "intake": {
+    "kind": "gap",
+    "priority_basis": "Pro recommendations reconciled with current source; proposed priority, no implementation approval",
+    "expand_when": "Expand when repeated analyses involve choosing among many numeric pairs. Add rank correlation only when monotonic nonlinear relationships make Pearson misleading for the task.",
+    "related_initiatives": [
+      "advanced-scatter-analysis",
+      "scatter-plot-matrix"
+    ],
+    "audience": "End users; developers deliver their experience.",
+    "priority": "Unranked candidate or future seed"
+  }
+}

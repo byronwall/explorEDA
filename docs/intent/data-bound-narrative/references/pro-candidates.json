@@ -1,0 +1,27 @@
+{
+  "chart_review_items": [],
+  "gap_register_items": [
+    {
+      "requirement_id": "CHART-07",
+      "intent_strength": "Core supporting views",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Expanded",
+      "desired_outcome": "Use non-plot views as analytical context",
+      "current_evidence_based_assessment": "Summary, source tables, legends, rich explanation and now Metric Card support the workflow; inline table distributions are active.",
+      "remaining_boundary_or_proof_gap": "Static text is not live data-bound narrative; metric all-source comparison is not a frozen baseline; every supporting view needs a clear population label.",
+      "source_ids": "T09 T13 T14 T19 TABLE CHART",
+      "suggested_browser_scenarios": "BT01 BT07 BT33",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    }
+  ],
+  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "current_assessment": {
+    "date": "2026-10-06",
+    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "statement": "The registry includes Markdown and Metric Card. Shared reductions and formatting can support one bounded binding. The Pro gap register distinguishes static text from a live data-bound narrative and warns that every supporting view needs clear population meaning.",
+    "evidence_scope": "Source inspection only; no fresh application browser proof."
+  },
+  "current_priority": "Unranked candidate or future seed"
+}

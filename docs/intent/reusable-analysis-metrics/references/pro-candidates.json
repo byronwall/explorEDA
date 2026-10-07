@@ -1,0 +1,109 @@
+{
+  "chart_review_items": [
+    {
+      "id": "C03",
+      "phase": 1,
+      "title": "Unify basic grouped metrics and source provenance",
+      "effort": "Medium",
+      "current_state": "Named grouped results support one group field and count/sum/average; pivot has richer reducers.",
+      "desired_outcome": "The same metric has the same meaning in bars, cards, tables, and future heatmaps.",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "Count, sum, and mean agree across the first consumers.",
+        "Define row count versus valid-value count and behavior when there are no valid values.",
+        "Separate complete group membership from included numeric contributors.",
+        "Support zero, one, and eventually two grouping keys through incremental adapters.",
+        "Keep existing saved configurations readable; avoid a big-bang rewrite."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/lib/aggregates.ts",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/PivotTable/definition.ts"
+      ]
+    },
+    {
+      "id": "C05",
+      "phase": 1,
+      "title": "Add basic metric cards",
+      "effort": "Small",
+      "current_state": "Filtered-row status exists but no registered arbitrary metric-card type.",
+      "desired_outcome": "The selected population has a visible count and metric summary.",
+      "dependencies": [
+        "C03"
+      ],
+      "acceptance_criteria": [
+        "Count, sum, and mean are available through shared reducers.",
+        "Units and formatting use field metadata.",
+        "Population scope is named.",
+        "Empty/invalid and zero results are visually distinct.",
+        "Inspect action explains contributors without changing selection."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/charts/registerAllCharts.ts",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/ActiveFilterStatus.tsx"
+      ]
+    },
+    {
+      "id": "C06",
+      "phase": 2,
+      "title": "Generalize metric bars across orientations and series",
+      "effort": "Medium–Large, staged",
+      "current_state": "Horizontal chart is count-oriented; bar settings lack first-class grouped/stacked series.",
+      "desired_outcome": "A category/metric/series configuration can change presentation without losing analysis state.",
+      "dependencies": [
+        "C02",
+        "C03",
+        "C04"
+      ],
+      "acceptance_criteria": [
+        "Horizontal and vertical bars accept the same metric.",
+        "Grouped and additive stacked modes share categories, colors, and source membership.",
+        "100% stacks state the normalization denominator.",
+        "Negative and nonadditive metrics are rejected or handled explicitly.",
+        "Metric sort and explicit Top N coexist with stable selections."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/types/ChartTypes.ts",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/BarChart/BarChart.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/RowChart/RowChart.tsx"
+      ]
+    }
+  ],
+  "gap_register_items": [
+    {
+      "requirement_id": "CALC-07",
+      "intent_strength": "Core",
+      "proposed_priority": "P2",
+      "change_from_old_report": "Stable partial",
+      "desired_outcome": "Keep row, group and window computations semantically distinct",
+      "current_evidence_based_assessment": "Scalar formulas and named count/sum/average groups are different controls; calendar rollups add explicit period scope.",
+      "remaining_boundary_or_proof_gap": "Window/rank expressions and arbitrary grouped formula composition are not established. Row sum(x,y) must not be presented as a dataset sum.",
+      "source_ids": "T11 T16 T17 BASE CHART",
+      "suggested_browser_scenarios": "BT19 BT26",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "CHART-05",
+      "intent_strength": "Core / derived measures specific",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Expanded partial",
+      "desired_outcome": "Inspect and reuse aggregates with correct denominators",
+      "current_evidence_based_assessment": "Pivot contributors and reusable grouped summaries exist; newer stacks/cards/time views expose more aggregate semantics.",
+      "remaining_boundary_or_proof_gap": "Pivot-as-source, subtotal hierarchies, percentages and prior-period calculations are not generally established. New generic charts do not close every pivot outcome.",
+      "source_ids": "T11 T13 T15 CHART INV BASE",
+      "suggested_browser_scenarios": "BT07 BT19",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    }
+  ],
+  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "current_assessment": {
+    "date": "2026-10-06",
+    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "statement": "AggregateAggregation contains count, sum, and average. MetricCard uses that contract. Pivot has additional statistical reducers. Current calculations evaluate scalar fields. The Pro chart review explicitly calls out ratio meaning and shared metric definitions.",
+    "evidence_scope": "Source inspection only; no fresh application browser proof."
+  },
+  "current_priority": "seed-demand-unconfirmed"
+}

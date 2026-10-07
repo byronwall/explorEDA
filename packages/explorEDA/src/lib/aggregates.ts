@@ -9,8 +9,14 @@ export interface AggregateSpec {
   name: string;
   groupField: string;
   measureField?: string;
+  /** Counts each value once, and uses one measure value per value. */
+  entityField?: string;
   aggregation: AggregateAggregation;
 }
+
+/** Tooltip for the "Once per" control on grouped summaries and metric cards. */
+export const ONCE_PER_HELP =
+  "Count or measure each value of this ID field once, such as one order among its item rows. Rows without an ID are left out. If one ID has different values, the result is unavailable. Leave empty to use every row.";
 
 export interface AggregateInputRow {
   __ID: number;
@@ -23,6 +29,7 @@ export interface AggregateContributor {
   rawInput?: datum;
   included: boolean;
   exclusionReason?: string;
+  entityKey?: datum;
 }
 
 export interface AggregateResultRow {
@@ -32,6 +39,10 @@ export interface AggregateResultRow {
   value: number | undefined;
   rowCount: number;
   contributors: AggregateContributor[];
+  identityIssues?: {
+    entityKey?: datum;
+    reason: "missing-id" | "conflicting-values";
+  }[];
 }
 
 export interface AggregateResult {
@@ -109,32 +120,102 @@ function aggregateValues(
   };
 }
 
-/** Reduces one group of source rows and records why any row was left out. */
+/**
+ * Reduces one group of source rows and records why any row was left out.
+ * With an entity field, each entity counts once and contributes one measure
+ * value. Rows without an ID are left out; an entity whose rows disagree on
+ * the measure makes the value unavailable instead of picking one of them.
+ */
 export function summarizeGroup(
   group: AggregateInputRow[],
-  spec: Pick<AggregateSpec, "aggregation" | "measureField">,
+  spec: Pick<AggregateSpec, "aggregation" | "measureField" | "entityField">,
   rawInputs: Record<number, datum> = {},
   exclusionReasons: Record<number, string> = {}
-): Pick<AggregateResultRow, "value" | "rowCount" | "contributors"> {
-  const values = group.map((row) =>
-    spec.measureField ? row[spec.measureField] : undefined
+): Pick<
+  AggregateResultRow,
+  "value" | "rowCount" | "contributors" | "identityIssues"
+> {
+  const measureOf = (row: AggregateInputRow) =>
+    spec.measureField ? row[spec.measureField] : undefined;
+  const entityField = spec.entityField;
+  const contributor = (
+    row: AggregateInputRow,
+    included: boolean,
+    exclusionReason?: string
+  ): AggregateContributor => ({
+    sourceId: row.__ID,
+    input: measureOf(row),
+    rawInput: rawInputs[row.__ID],
+    included,
+    exclusionReason: included
+      ? undefined
+      : (exclusionReasons[row.__ID] ?? exclusionReason),
+    ...(entityField ? { entityKey: row[entityField] } : {}),
+  });
+
+  // Each unit is one row, or every row of one entity.
+  const units: AggregateInputRow[][] = [];
+  const contributors: AggregateContributor[] = [];
+  const identityIssues: NonNullable<AggregateResultRow["identityIssues"]> = [];
+  if (!entityField) {
+    group.forEach((row) => units.push([row]));
+  } else {
+    const entities = new Map<string, AggregateInputRow[]>();
+    for (const row of group) {
+      const entityKey = row[entityField];
+      if (entityKey === undefined || entityKey === null) {
+        identityIssues.push({ reason: "missing-id" });
+        contributors.push(contributor(row, false, "Missing ID"));
+        continue;
+      }
+      const key = categoryKey(entityKey);
+      const rows = entities.get(key);
+      if (rows) rows.push(row);
+      else entities.set(key, [row]);
+    }
+    for (const rows of entities.values()) {
+      const first = measureOf(rows[0]!);
+      if (rows.every((row) => Object.is(measureOf(row), first))) {
+        units.push(rows);
+        continue;
+      }
+      identityIssues.push({
+        entityKey: rows[0]![entityField],
+        reason: "conflicting-values",
+      });
+      contributors.push(
+        ...rows.map((row) =>
+          contributor(row, false, "Values differ for this ID")
+        )
+      );
+    }
+  }
+
+  const result = aggregateValues(
+    spec.aggregation,
+    units.map((rows) => measureOf(rows[0]!))
   );
-  const result = aggregateValues(spec.aggregation, values);
   const exclusionByIndex = new Map(
     result.exclusions.map((exclusion) => [exclusion.index, exclusion.reason])
   );
+  units.forEach((rows, index) => {
+    const included = result.included.has(index);
+    rows.forEach((row, position) =>
+      contributors.push(
+        included && position > 0
+          ? contributor(row, false, "Repeats an ID already counted")
+          : contributor(row, included, exclusionByIndex.get(index))
+      )
+    );
+  });
+  const conflicted = identityIssues.some(
+    (issue) => issue.reason === "conflicting-values"
+  );
   return {
-    value: result.value,
-    rowCount: group.length,
-    contributors: group.map((row, index) => ({
-      sourceId: row.__ID,
-      input: values[index],
-      rawInput: rawInputs[row.__ID],
-      included: result.included.has(index),
-      exclusionReason: result.included.has(index)
-        ? undefined
-        : (exclusionReasons[row.__ID] ?? exclusionByIndex.get(index)),
-    })),
+    value: conflicted ? undefined : result.value,
+    rowCount: units.length,
+    contributors,
+    ...(identityIssues.length ? { identityIssues } : {}),
   };
 }
 
