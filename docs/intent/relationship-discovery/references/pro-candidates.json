@@ -1,0 +1,50 @@
+{
+  "chart_review_items": [
+    {
+      "id": "C15",
+      "phase": 3,
+      "title": "Add correlation matrix to scatter exploration",
+      "effort": "Medium",
+      "current_state": "No correlation-matrix family is registered; scatter requires choosing a pair directly.",
+      "desired_outcome": "Users discover relationships across several numeric fields and immediately inspect a pair.",
+      "dependencies": [
+        "C07"
+      ],
+      "acceptance_criteria": [
+        "Method, population, and valid-pair count are visible.",
+        "Constant and insufficient-data fields produce unavailable results, not zero correlation.",
+        "Missing-value policy is explicit and tested.",
+        "Cell activation opens the corresponding scatter configuration rather than inventing a record filter.",
+        "Large field lists have a bounded, usable selection workflow."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/charts/registerAllCharts.ts",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx"
+      ]
+    }
+  ],
+  "gap_register_items": [
+    {
+      "requirement_id": "CHART-02",
+      "intent_strength": "Core inspection / specific extras",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Materially expanded",
+      "desired_outcome": "Explore relationships and inspect selected records",
+      "current_evidence_based_assessment": "Scatter now has row tracing, point/range selection, bubble area and rectangular density bins.",
+      "remaining_boundary_or_proof_gap": "Regression/uncertainty/hexagons/marginals/contours are planned, not delivered. Overlap, size provenance and exclusion visibility need current browser proof.",
+      "source_ids": "T11 T14 T15 CHART PLAN",
+      "suggested_browser_scenarios": "BT10 BT15 BT27",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    }
+  ],
+  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "current_assessment": {
+    "date": "2026-10-06",
+    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "statement": "pairedSummary.ts already computes Pearson correlation for grouped finite pairs and unavailable constant cases. The registry has no relationship-matrix view. Scatter regression and surfaces are live source implementations, unlike the older Pro snapshot.",
+    "evidence_scope": "Source inspection only; no fresh application browser proof."
+  },
+  "current_priority": "Unranked candidate or future seed"
+}

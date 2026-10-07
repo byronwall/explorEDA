@@ -1,0 +1,53 @@
+{
+  "purpose": "Actual browser navigation attempts; not application behavior tests",
+  "checks": [
+    {
+      "id": "B01",
+      "target": "https://exploreda.dev/",
+      "utc": "2026-10-05T13:58:06.203519+00:00",
+      "browser": "144.0.7559.96",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "app_interactions_completed": 0,
+      "status": "blocked-before-app",
+      "error": "Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR at https://exploreda.dev/\nCall log:\n  - navigating to \"https://exploreda.dev/\", waiting until \"domcontentloaded\"\n",
+      "page_title": "exploreda.dev",
+      "body_text": "exploreda.dev is blocked\n\nYour organization doesn\u2019t allow you to view this site",
+      "screenshot": "B01-navigation.png"
+    },
+    {
+      "id": "B02",
+      "target": "http://127.0.0.1:8765/",
+      "utc": "2026-10-05T13:58:07.128857+00:00",
+      "browser": "144.0.7559.96",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "app_interactions_completed": 0,
+      "status": "blocked-before-app",
+      "error": "Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR at http://127.0.0.1:8765/\nCall log:\n  - navigating to \"http://127.0.0.1:8765/\", waiting until \"domcontentloaded\"\n",
+      "page_title": "127.0.0.1",
+      "body_text": "127.0.0.1 is blocked\n\nYour organization doesn\u2019t allow you to view this site",
+      "screenshot": "B02-navigation.png"
+    },
+    {
+      "id": "B03",
+      "target": "file:///mnt/data/explorEDA-audit-work/deployed/index.html",
+      "utc": "2026-10-05T13:58:08.104517+00:00",
+      "browser": "144.0.7559.96",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "app_interactions_completed": 0,
+      "status": "blocked-before-app",
+      "error": "Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR at file:///mnt/data/explorEDA-audit-work/deployed/index.html\nCall log:\n  - navigating to \"file:///mnt/data/explorEDA-audit-work/deployed/index.html\", waiting until \"domcontentloaded\"\n",
+      "page_title": "file:///mnt/data/explorEDA-audit-work/deployed/index.html",
+      "body_text": "\u201cfile\u201d links are blocked\n\nYour organization doesn\u2019t allow you to view this site",
+      "screenshot": "B03-navigation.png"
+    }
+  ]
+}

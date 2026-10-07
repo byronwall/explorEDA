@@ -1,0 +1,20 @@
+[
+  {
+    "command": "node /opt/nvm/versions/node/v22.16.0/lib/node_modules/typescript/bin/tsc --strict --noUncheckedIndexedAccess --target es2022 --module commonjs --outDir /mnt/data/exploreda-investigation/verification/compiled /mnt/data/exploreda-investigation/deliverables/packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.prototype.ts /mnt/data/exploreda-investigation/deliverables/packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.prototypeAdapters.ts",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": "node /opt/nvm/versions/node/v22.16.0/lib/node_modules/typescript/bin/tsc --strict --noEmit --target es2022 /mnt/data/exploreda-investigation/verification/contract-sketch.ts",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": "bash -n /mnt/data/exploreda-investigation/apply-and-validate.sh",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

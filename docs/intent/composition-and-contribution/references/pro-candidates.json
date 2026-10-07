@@ -1,0 +1,50 @@
+{
+  "chart_review_items": [
+    {
+      "id": "C21",
+      "phase": "Later",
+      "title": "Familiar composition and contribution presets",
+      "effort": "Small–Medium after shared primitives",
+      "current_state": "No pie/donut or waterfall family is registered.",
+      "desired_outcome": "Close recognizable presentation gaps after the main analytical contracts are complete.",
+      "dependencies": [
+        "C03",
+        "C04",
+        "C06"
+      ],
+      "acceptance_criteria": [
+        "Donut uses a bounded set of nonnegative categories with readable labels and totals.",
+        "Donut selection reuses category membership.",
+        "Waterfall has explicit start/end and subtotal semantics.",
+        "No new reducer implementation is hidden in the renderer."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/charts/registerAllCharts.ts"
+      ]
+    }
+  ],
+  "gap_register_items": [
+    {
+      "requirement_id": "CHART-08",
+      "intent_strength": "Exploratory examples / later delivered scope",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Old absence largely closed",
+      "desired_outcome": "Draw grouped, stacked, normalized bars and areas",
+      "current_evidence_based_assessment": "Grouped bars, absolute/percentage stacks, area and stacked area are explicitly delivered chart modes.",
+      "remaining_boundary_or_proof_gap": "Do not list the whole family as missing. Streamgraph and generalized stacking/dodging output reuse remain unestablished, lower-priority architecture extensions.",
+      "source_ids": "T18 CHART",
+      "suggested_browser_scenarios": "BT14 BT26",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    }
+  ],
+  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "current_assessment": {
+    "date": "2026-10-06",
+    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "statement": "The registry includes grouped and percentage bars but no donut or waterfall. Shared aggregates provide count, sum, and average. Exact source selection and trace contracts can support category-based extensions.",
+    "evidence_scope": "Source inspection only; no fresh application browser proof."
+  },
+  "current_priority": "Unranked candidate or future seed"
+}

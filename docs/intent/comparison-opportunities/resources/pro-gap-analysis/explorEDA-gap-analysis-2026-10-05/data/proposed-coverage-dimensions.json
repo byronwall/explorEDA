@@ -1,0 +1,202 @@
+[
+  {
+    "proposed_id": "outcome:field-inspection",
+    "assessed_state": "Partial / growing",
+    "requirement_ids": "DATA-02 DATA-03",
+    "contract": "Inline distributions, missing/excluded counts, type preview and raw/effective distinction",
+    "proof_scenarios": "BT01 BT02",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:column-operations",
+    "assessed_state": "Implemented slice / unverified here",
+    "requirement_ids": "TABLE-01 TABLE-02 TABLE-03",
+    "contract": "Drag, hide/recover, width reset, keyboard resize and Clear sort; separate auto-fit absence",
+    "proof_scenarios": "BT12 BT22",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:filter-population",
+    "assessed_state": "Partial / growing",
+    "requirement_ids": "FILT-01 FILT-02",
+    "contract": "Full, peer and global/local population semantics with exact source IDs",
+    "proof_scenarios": "BT03 BT07",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:filter-owner-navigation",
+    "assessed_state": "Implemented slice / unverified here",
+    "requirement_ids": "FILT-03",
+    "contract": "Label focus/jump versus X removal, including overflow and Rows",
+    "proof_scenarios": "BT11",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:reset-all",
+    "assessed_state": "Implemented slice / unverified here",
+    "requirement_ids": "FILT-04",
+    "contract": "Reset chart filters, table searches and Rows-local controls together",
+    "proof_scenarios": "BT03 BT11",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:exact-range",
+    "assessed_state": "Partial",
+    "requirement_ids": "FILT-06 FILT-07",
+    "contract": "Manual bound precision, one-sided intervals and data-replacement semantics",
+    "proof_scenarios": "BT04",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:typed-other-members",
+    "assessed_state": "Implemented slice / unverified here",
+    "requirement_ids": "FILT-08",
+    "contract": "Typed identity, rare-member selection and resize/restore stability",
+    "proof_scenarios": "BT05",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:calculation-authoring",
+    "assessed_state": "Implemented slice / historical proof",
+    "requirement_ids": "CALC-01 CALC-02 CALC-03",
+    "contract": "Valid formulas, invalid drafts, dependency errors and row-level explanations",
+    "proof_scenarios": "BT18",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:calculation-dependent-edit",
+    "assessed_state": "Implemented slice / needs current integration proof",
+    "requirement_ids": "CALC-05 CALC-06",
+    "contract": "Recompute every affected chart/table/filter while preserving thresholds",
+    "proof_scenarios": "BT18 BT22",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:aggregate-contributors",
+    "assessed_state": "Partial / growing",
+    "requirement_ids": "TRACE-01 CALC-08",
+    "contract": "Exact source members versus eligible measurements and exclusions per family",
+    "proof_scenarios": "BT07 BT15 BT16",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:property-provenance",
+    "assessed_state": "Partial / growing",
+    "requirement_ids": "TRACE-03",
+    "contract": "Transforms, scales, defaults, stack bounds, date intervals and denominators",
+    "proof_scenarios": "BT10 BT14 BT24",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:intermediate-reuse",
+    "assessed_state": "Partial",
+    "requirement_ids": "DATA-08 TRACE-02",
+    "contract": "Named grouped outputs versus chart-local arrays; one concrete downstream consumer",
+    "proof_scenarios": "BT19 BT26",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:settings-roundtrip",
+    "assessed_state": "Implemented slice / fresh proof missing",
+    "requirement_ids": "DASH-03 DASH-04",
+    "contract": "Edited settings remount against supplied host data",
+    "proof_scenarios": "BT22",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:full-analysis-roundtrip",
+    "assessed_state": "Implemented slice / fresh proof missing",
+    "requirement_ids": "DASH-03 DASH-04",
+    "contract": "Rows, special values, calculations, new chart settings and geometry assets",
+    "proof_scenarios": "BT22 BT29",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:invalid-restore-atomicity",
+    "assessed_state": "Implemented slice / needs proof",
+    "requirement_ids": "DASH-04 CALC-02",
+    "contract": "Invalid JSON/dependencies cannot destroy the current analysis",
+    "proof_scenarios": "BT22",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:durable-named-analysis",
+    "assessed_state": "Not established in current host",
+    "requirement_ids": "DASH-02 DASH-05",
+    "contract": "Storage, ownership, dirty state, reopening and source binding",
+    "proof_scenarios": "BT22 BT23",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:filter-free-template",
+    "assessed_state": "Not established",
+    "requirement_ids": "DASH-06",
+    "contract": "Layout/configuration separated from a temporary selection",
+    "proof_scenarios": "BT33",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:stable-source-identity",
+    "assessed_state": "Not established",
+    "requirement_ids": "DATA-04 TRACE-05",
+    "contract": "Key and source fingerprint survive reorder/replacement without silent remapping",
+    "proof_scenarios": "BT23",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:calendar-relative-period",
+    "assessed_state": "Not established beyond fixed rollups",
+    "requirement_ids": "FILT-11",
+    "contract": "Rolling versus completed periods, step windows, explicit saved reference time",
+    "proof_scenarios": "BT08 BT09",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:rich-cell-reading",
+    "assessed_state": "Not established in scalar model",
+    "requirement_ids": "TABLE-06 TABLE-07",
+    "contract": "Long text and structured objects retain readable semantic context",
+    "proof_scenarios": "BT13",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:keyboard-workflow",
+    "assessed_state": "Partial / unverified",
+    "requirement_ids": "UX-03",
+    "contract": "Task completion, mark selection alternatives, focus and Escape, not names alone",
+    "proof_scenarios": "BT12 BT24",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:screen-reader-workflow",
+    "assessed_state": "Unverified",
+    "requirement_ids": "UX-03",
+    "contract": "Real assistive technology reads table/trace/selection context accurately",
+    "proof_scenarios": "BT24 BT34",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "outcome:measured-performance",
+    "assessed_state": "Unverified",
+    "requirement_ids": "PERF-01 PERF-05",
+    "contract": "Load/filter/Apply/scroll/heap with device, shape and latency distributions",
+    "proof_scenarios": "BT34",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "planned:advanced-scatter",
+    "assessed_state": "Planned only",
+    "requirement_ids": "CALC-09 CHART-02",
+    "contract": "Regression, LOESS, marginals, hexagons and 2D contours; own versus peer filter scope",
+    "proof_scenarios": "BT27",
+    "proposal_only": true
+  },
+  {
+    "proposed_id": "planned:compact-authoring",
+    "assessed_state": "Planned only",
+    "requirement_ids": "TRACE-04 TRACE-06",
+    "contract": "Complete document authoring, warnings, expanded settings and export equivalence",
+    "proof_scenarios": "BT27",
+    "proposal_only": true
+  }
+]

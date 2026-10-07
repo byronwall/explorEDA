@@ -1,0 +1,29 @@
+{
+  "documents": [
+    {
+      "file": "architecture-options.md",
+      "words": 4381,
+      "lines": 319,
+      "referenceLinks": 42,
+      "codeFencesBalanced": true
+    },
+    {
+      "file": "prototype-findings.md",
+      "words": 2525,
+      "lines": 237,
+      "referenceLinks": 9,
+      "codeFencesBalanced": true
+    },
+    {
+      "file": "implementation-plan.md",
+      "words": 9168,
+      "lines": 739,
+      "referenceLinks": 50,
+      "codeFencesBalanced": true
+    }
+  ],
+  "requiredImplementationSections": 16,
+  "phases": 8,
+  "backlogTasks": 18,
+  "chartDispositions": 11
+}
