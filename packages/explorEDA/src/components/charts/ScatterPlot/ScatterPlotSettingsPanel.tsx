@@ -9,6 +9,7 @@ import { ActionTooltip } from "@/components/ui/tooltip";
 import { DensitySettings } from "./DensitySettings";
 import { RegressionSettings } from "./RegressionSettings";
 import { SurfaceSettings } from "./SurfaceSettings";
+import { PointSizeSetting } from "./PointSizeSetting";
 import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
@@ -178,22 +179,10 @@ export function ScatterPlotSettingsPanel({
                     </ActionTooltip>
                   </>
                 ) : (
-                  <>
-                    <Label htmlFor="scatter-point-size">Point size</Label>
-                    <Input
-                      id="scatter-point-size"
-                      type="number"
-                      min={1}
-                      max={12}
-                      step={0.5}
-                      value={settings.pointSize ?? 3}
-                      onChange={(event) => {
-                        const value = Number(event.target.value);
-                        if (value >= 1 && value <= 12)
-                          onSettingsChange({ ...settings, pointSize: value });
-                      }}
-                    />
-                  </>
+                  <PointSizeSetting
+                    settings={settings}
+                    onSettingsChange={onSettingsChange}
+                  />
                 )}
                 <Label htmlFor="scatter-opacity">Opacity</Label>
                 <Input

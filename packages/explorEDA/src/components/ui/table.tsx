@@ -62,9 +62,14 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
   );
 }
 
-function TableHead({ className, ...props }: React.ComponentProps<"th">) {
+// Forwards its ref on React 18 too, so a header cell can anchor a tooltip.
+const TableHead = React.forwardRef<
+  HTMLTableCellElement,
+  React.ComponentPropsWithoutRef<"th">
+>(function TableHead({ className, ...props }, ref) {
   return (
     <th
+      ref={ref}
       data-slot="table-head"
       className={cn(
         "text-muted-foreground h-8 px-2 text-left align-middle font-medium [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
@@ -73,7 +78,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
       {...props}
     />
   );
-}
+});
 
 function TableCell({ className, ...props }: React.ComponentProps<"td">) {
   return (

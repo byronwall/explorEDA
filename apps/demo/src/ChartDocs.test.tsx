@@ -36,7 +36,7 @@ describe("chart documentation routes", () => {
     );
     expect(
       screen.getByRole("link", { name: "Open the scatter trace example" })
-    ).toHaveAttribute("href", "/?example=scatter-trace");
+    ).toHaveAttribute("href", "/examples/scatter-trace");
     expect(
       screen.getByText(/Mark trace is available for scatter and bar charts/)
     ).toBeInTheDocument();
@@ -49,7 +49,7 @@ describe("chart documentation routes", () => {
     );
     expect(
       screen.getByRole("link", { name: "Open the order-book example" })
-    ).toHaveAttribute("href", "/?example=shop-operations");
+    ).toHaveAttribute("href", "/examples/shop-operations");
     expect(screen.getByText(/globally filtered rows/)).toBeInTheDocument();
     render(
       <MemoryRouter initialEntries={["/?view=docs&topic=rendering"]}>

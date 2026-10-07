@@ -2,15 +2,22 @@ import { hexColor, type HexPlan } from "./hexPlan";
 import type { ContourPlan } from "./contourPlan";
 import type { ScatterPlan } from "./scatterPlan";
 
-/** Small points drawn as one path per color, so thousands stay cheap in SVG. */
+/** One circle as path data, so many share one `<path>`. */
+export function circlePath(x: number, y: number, r: number) {
+  const radius = Number(r.toFixed(2));
+  return `M${(x - radius).toFixed(1)},${y.toFixed(1)}a${radius},${radius} 0 1,0 ${radius * 2},0a${radius},${radius} 0 1,0 ${-radius * 2},0`;
+}
+
+/**
+ * Points drawn as one path per color, so thousands stay cheap in SVG. Each
+ * keeps the chart's point size, the same radius the points display uses.
+ */
 function PointOverlay({ plan }: { plan: ScatterPlan }) {
   const paths = new Map<string, string[]>();
   for (const point of plan.points) {
     const key = `${point.color}|${point.passesOwnFilter ? 1 : 0}`;
     const list = paths.get(key) ?? [];
-    list.push(
-      `M${(point.x - 1.6).toFixed(1)},${point.y.toFixed(1)}a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0`
-    );
+    list.push(circlePath(point.x, point.y, point.radius));
     paths.set(key, list);
   }
   return (

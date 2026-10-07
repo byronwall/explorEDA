@@ -106,6 +106,20 @@ scrolling content.
 edits. Host panels stay usable, so a host can preview an earlier state and
 offer its own way back.
 
+`toolbarStart` and `toolbarEnd` put host content on the workspace's toolbar
+line: view tabs on the left, and actions such as undo or export after the
+workspace tools. Both stay usable while the workspace is read-only. The row
+count and active filters sit in a status bar that stays at the bottom of the
+viewport while the charts scroll.
+
+```tsx
+<ExplorEda
+  data={rows}
+  toolbarStart={<MyViewTabs />}
+  toolbarEnd={<MyUndoButtons />}
+/>
+```
+
 `data` supplies the rows. `savedData` optionally restores chart, calculation,
 Rows, grid, metadata, color-scale, field-settings, and grouped-summary state.
 Pass new references when either value changes; in-place mutations are not

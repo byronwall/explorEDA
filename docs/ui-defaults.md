@@ -12,7 +12,7 @@ Spend space on data, not chrome. Every surface shares one compact scale:
 - Group related settings under a small heading divided by a rule (`eda-setting-section`), not inside nested bordered boxes.
 - Put a panel's actions in its first line. Do not open a panel or popover with a paragraph that explains it; put the explanation in the tooltip of the control it explains.
 - Lay out tabs in one row that scrolls sideways when it must; never wrap them.
-- Let editors and tables fill the space their panel or chart gives them. A table stretches its columns to the chart's width and scrolls only when they need more room.
+- Let editors fill the space their panel gives them. A table sizes each column to its name, distribution, and values, leaves spare width empty at the right instead of spreading the columns apart, and scrolls only when its columns need more room.
 - Line up a chart's title, plot, and content with the panel's left padding. Hidden header controls take no room.
 - Below 960 px the grid shows a view-only flow of the saved layout: two charts to a row from 640 px, and one below that. Charts wider than half the grid take the whole row.
 
@@ -47,6 +47,7 @@ Run `pnpm check:ui` to reject native title attributes, SVG `<title>` elements, a
 - Align a column's header with its cells: numbers right, everything else left. A number column shows its hover actions on the left.
 - Show each column's type with the type icon before its name.
 - The Rows view draws each field's distribution under its column name, from the rows that pass the chart filters. A click or drag on it filters that column. A data table chart offers the same as a setting.
+- A column header has one tooltip, shown above the header so it never covers other headers or rows, and hidden when there is no room above. Hovering the name shows the field summary; hovering a distribution mark adds that mark's value, rows, and share.
 - Mark the text a table search matched in every cell that matched.
 - A number or date column filter shows the field's distribution above its bounds. A click or drag on it sets the range, and a number field adds a range slider under it. A thumb at the end of the track leaves that side open.
 - One filter popover serves a table's columns. Opening another column's filter moves it; it never shows two at once. Popovers close without an exit animation.
@@ -67,6 +68,8 @@ Apply valid chart settings immediately so users can compare the result. Keep a r
 Do not add a persistent sidebar for temporary inspection.
 The plot area holds the chart only. Usage hints, such as "Click a cell to select", join the status line only while the pointer or focus is on the chart. Optional actions on the plot, such as Fit view, appear the same way. Never show an "Inspect" button on a chart or card. Alt-click or Alt-Enter on a mark opens its trace.
 A click on a mark always filters: a bar, box, or category toggles its value, and a histogram bin sets the range to its bounds.
+A plain click on empty plot space, away from every mark, clears that chart's filters, as its clear-filter action does. This covers the space above and between bars and a marginal band outside its bins. A drag or brush is never a dead click, and Alt-click stays inspection.
+Every part of a chart uses the encoding and treatment of its main marks. Marginals, legends, and overlays stack or color by the same field with the same palette, and dim unselected rows the same way.
 Keep a chart's actions in its header: View data, Duplicate, details, settings, and Delete, each an icon with a tooltip. Clear filters stays visible there while the chart filters. Chart settings hold settings only.
 Hidden header actions take no room, so the chart name keeps the full header until the pointer or focus reaches it.
 The field list is the one workspace tool that stays open. It floats over the right edge from the top of the viewport, never resizes the chart grid, and becomes a bottom sheet on narrow screens. Controls it covers move beside it. Fields in the toolbar and the F key open it, and Shift+F opens every field's distribution in a full view.
@@ -85,10 +88,10 @@ Keep a confirmation small and centered: a short question, one sentence that name
 
 ## Scope and layout
 
-- Keep view controls and active filter scope together in one sticky line. Filter scope leads on the left. Add chart, then inspection tools (Fields, Rows), then configuration (Calculations, colors, grid, workspace actions) sit on the right, as icon buttons with tooltips. Beside an open panel, Add chart shows only its icon.
-- Keep filter chips on that line. Show the ones that fit, then a "+N more" popover that lists every filter, beside the row count and clear action.
+- Keep the workspace controls in one sticky toolbar line. Host content, such as view tabs, leads on the left (`toolbarStart`). Add chart, then inspection tools (Fields, Rows), then configuration (Calculations, colors, grid, workspace actions) sit on the right, as icon buttons with tooltips, followed by host actions such as undo and export (`toolbarEnd`). Beside an open panel, Add chart shows only its icon. When the line runs out of room, host content keeps the first line and the tools move to a second.
+- Keep the row count and active filter scope in a status bar at the bottom of the workspace. It sticks to the bottom of the viewport while the charts scroll, so the scope stays visible. Show the filter chips that fit, then a "+N more" popover that lists every filter, beside the row count and clear action.
 - Rows is a drawer over the right of the viewport at full height, not a separate view. It has two sizes, switched from its header. Expanded leaves a strip of charts visible on the left, and a click there dismisses it. Narrow sits beside the charts, which stay in use, so a click on them does not dismiss it. R and Escape dismiss either size. It takes the full width on narrow screens and must not resize the chart grid.
-- The expanded Rows drawer covers the toolbar, so its header carries the row count and active filters. Beside the narrow drawer the toolbar keeps its own, and the controls it would cover move beside it. Table tools and the close action stay in the drawer header while rows scroll.
+- The expanded Rows drawer covers the toolbar and status bar, so its header carries the row count and active filters. Beside the narrow drawer the status bar keeps its own, and the controls it would cover move beside it. Table tools and the close action stay in the drawer header while rows scroll.
 - Give every side inspector a narrow and a wide size: the field list and its full view, workspace settings, and Rows.
 - Label local Rows filters and table searches separately from chart filters.
 - Keep a clear-filter control visible on every chart with an active filter.

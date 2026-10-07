@@ -5,6 +5,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ReactNode,
 } from "react";
 import { Database, GitBranch } from "lucide-react";
 import type { DatumObject } from "@/providers/DataLayerProvider";
@@ -63,6 +64,10 @@ export interface ExplorEdaProjectProps {
    * on the main thread.
    */
   createWorker?: () => AnalysisWorker;
+  /** Host content that leads the toolbar line, like `ExplorEda`'s prop. */
+  toolbarStart?: ReactNode;
+  /** Host actions that end the toolbar line, like `ExplorEda`'s prop. */
+  toolbarEnd?: ReactNode;
 }
 
 const FIELD_TYPES = {
@@ -92,6 +97,8 @@ export const ExplorEdaProject = forwardRef<
     onOpenView,
     readOnly = false,
     createWorker,
+    toolbarStart,
+    toolbarEnd,
   },
   ref
 ) {
@@ -268,10 +275,18 @@ export const ExplorEdaProject = forwardRef<
       />
       {status === "pending" && evaluation.revision === "unavailable" ? (
         // Nothing has finished yet. Charts wait rather than draw an empty
-        // result that saved settings would not match.
-        <p className="px-1 py-8 text-center text-sm text-muted-foreground">
-          Running the query…
-        </p>
+        // result that saved settings would not match. Host controls stay.
+        <>
+          {(toolbarStart || toolbarEnd) && (
+            <div className="flex items-center justify-between gap-2">
+              {toolbarStart}
+              {toolbarEnd}
+            </div>
+          )}
+          <p className="px-1 py-8 text-center text-sm text-muted-foreground">
+            Running the query…
+          </p>
+        </>
       ) : (
         <ExplorEda
           ref={chartRef}
@@ -286,6 +301,8 @@ export const ExplorEdaProject = forwardRef<
           }
           sidePanels={[...sidePanels, schemaPanel, queryPanel]}
           readOnly={readOnly}
+          toolbarStart={toolbarStart}
+          toolbarEnd={toolbarEnd}
         />
       )}
     </AnalysisChartContextProvider>

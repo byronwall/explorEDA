@@ -6,7 +6,12 @@ import { ChartRenderer } from "../ChartRenderer";
 import { traceOnAltEnter } from "./facetTrace";
 import { FacetPager, type FacetPickerProps } from "./FacetPager";
 import { FacetData } from "./FacetContainer";
-import { planFacetGridLayout, type FacetLayoutPlan } from "./facetLayout";
+import {
+  PAGER_HEIGHT,
+  planFacetGridLayout,
+  type FacetLayoutPlan,
+} from "./facetLayout";
+import { useFacetBarSlot } from "./facetBarSlot";
 
 const TABLE_HEADER_HEIGHT = 32;
 const CELL_ACTION_HEIGHT = 20;
@@ -69,6 +74,7 @@ export function FacetGridLayout({
   }, [columnVariable, facetData, formatFacetValue, formatVersion, rowVariable]);
 
   const [page, setPage] = useState(0);
+  const pagerHeight = useFacetBarSlot() ? 0 : PAGER_HEIGHT;
   const tableHeaderRef = useRef<HTMLTableSectionElement>(null);
   const [tableHeaderHeight, setTableHeaderHeight] =
     useState(TABLE_HEADER_HEIGHT);
@@ -78,7 +84,8 @@ export function FacetGridLayout({
     rows.length,
     columns.length,
     page,
-    tableHeaderHeight
+    tableHeaderHeight,
+    pagerHeight
   );
   const {
     rowPageSize,

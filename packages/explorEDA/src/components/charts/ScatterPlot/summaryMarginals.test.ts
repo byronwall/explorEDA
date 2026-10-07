@@ -111,6 +111,45 @@ describe("marginal histograms", () => {
     expect(right.x).toBeGreaterThan(plan.plotWidth);
   });
 
+  it("stacks each bin by the points' colors, with unselected rows gray", () => {
+    const { settings, snapshot } = setup(
+      [0, 0, 0, 10],
+      [0, 1, 2, 3],
+      ["b", "a", "a", "b"]
+    );
+    settings.marginals = { bins: 2 };
+    settings.filters = [{ type: "range", field: "y", min: 0, max: 1 }];
+    const plan = planScatter(settings, snapshot, 400, 300);
+    const marginals = planMarginals(settings, plan)!;
+    expect(marginals.stacked).toBe(true);
+    const first = marginals.bins.find((bin) => bin.id === "marginal:x:0")!;
+    // Legend order (b, then a), then the rows outside the selection.
+    expect(
+      first.segments!.map(({ label, color, count }) => [label, color, count])
+    ).toEqual([
+      ["b", "#222222", 1],
+      ["a", "#111111", 1],
+      ["Not selected", "rgb(156 163 175)", 1],
+    ]);
+    // Segments fill the bar end to end, from the plot outward.
+    const total = first.segments!.reduce((sum, item) => sum + item.height, 0);
+    expect(total).toBeCloseTo(first.height);
+    expect(first.segments![0]!.y + first.segments![0]!.height).toBeCloseTo(
+      first.y + first.height
+    );
+    const right = marginals.bins.find((bin) => bin.axis === "y")!;
+    expect(right.segments![0]!.x).toBeCloseTo(right.x);
+
+    const plain = setup([0, 1], [0, 1]);
+    plain.settings.marginals = { bins: 2 };
+    const plainMarginals = planMarginals(
+      plain.settings,
+      planScatter(plain.settings, plain.snapshot, 400, 300)
+    )!;
+    expect(plainMarginals.stacked).toBe(false);
+    expect(plainMarginals.bins[0]!.segments).toBeUndefined();
+  });
+
   it("toggles a range filter on the bin's field", () => {
     const { settings, snapshot } = setup([0, 1, 2, 3], [0, 1, 2, 3]);
     settings.marginals = { bins: 5 };

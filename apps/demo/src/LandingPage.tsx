@@ -12,7 +12,7 @@ import {
 
 import { parseCsvData } from "./csvParser";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft, Code2, Lightbulb } from "lucide-react";
+import { ArrowLeft, ArrowRight, Lightbulb } from "lucide-react";
 import {
   lazy,
   Suspense,
@@ -21,7 +21,14 @@ import {
   useRef,
   useState,
 } from "react";
-import { useSearchParams } from "react-router-dom";
+import {
+  Link,
+  matchPath,
+  Navigate,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { toast } from "sonner";
 import { CsvUpload } from "./CsvUpload";
 import { ChartDocs } from "./ChartDocs";
@@ -36,12 +43,13 @@ import { SampleDataButtons } from "./landing/SampleDataButtons";
 import { PageFileDrop } from "./landing/PageFileDrop";
 import { SectionHeading } from "./landing/SectionHeading";
 import {
-  getSavedViewsRows,
   readSavedViewsSessionResult,
   PROJECT_STORAGE_KEY,
   projectSession,
   STORAGE_KEY,
+  type SavedViewsSession,
 } from "./savedViewsSession";
+import { examplePath, PROJECT_VIEWER_PATH, VIEWER_PATH } from "./routes";
 
 const featuredExample = examples.find(
   (item) => item.id === FEATURED_EXAMPLE_ID
@@ -68,45 +76,104 @@ export type DatumObject = {
   [key: string]: string | number | boolean | null | undefined;
 };
 
-export function LandingPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [isLoading, setIsLoading] = useState(false);
+type Workspace =
+  | {
+      key: number;
+      kind: "session";
+      session: SavedViewsSession;
+      /** The example the session started from, for its title and guide. */
+      example?: ExampleData;
+    }
+  | {
+      key: number;
+      kind: "rows";
+      rows: DatumObject[];
+      savedData?: SavedDataStructure;
+    }
+  | { key: number; kind: "example"; example: ExampleData; rows: DatumObject[] };
 
-  const [exampleData, setExampleData] = useState<DatumObject[]>([]);
+type WorkspaceInput = Workspace extends infer W
+  ? W extends Workspace
+    ? Omit<W, "key">
+    : never
+  : never;
+
+/** The example a workspace shows, if any. */
+function workspaceExample(workspace: Workspace | null) {
+  return workspace?.kind === "rows" ? undefined : workspace?.example;
+}
+
+function hasStoredSession() {
+  try {
+    return (
+      localStorage.getItem(STORAGE_KEY) !== null ||
+      localStorage.getItem(PROJECT_STORAGE_KEY) !== null
+    );
+  } catch {
+    return false;
+  }
+}
+
+function clearStoredSession(key = STORAGE_KEY) {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    // An unavailable storage area has no session to retain.
+  }
+}
+
+/** Scrolls the home page to its hash target once the page has rendered. */
+function ScrollToHash({ hash }: { hash: string }) {
+  useEffect(() => {
+    const target = hash ? document.getElementById(hash.slice(1)) : null;
+    if (target) {
+      target.scrollIntoView?.({ block: "start" });
+    } else if (window.scrollY > 0) {
+      window.scrollTo({ top: 0 });
+    }
+  }, [hash]);
+  return null;
+}
+
+/**
+ * The demo site. `/` is always the home page. `/examples/<id>` opens an
+ * example, and `/viewer` reopens the last analysis saved in this browser.
+ */
+export function LandingPage() {
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
-  const [importRevision, setImportRevision] = useState(0);
 
-  const exampleId = searchParams.get("example");
+  const isViewer = location.pathname === VIEWER_PATH;
+  // Multi-table projects keep their own saved session.
+  const isProjectViewer = isViewer && searchParams.get("project") === "1";
+  const viewerKey = isProjectViewer ? PROJECT_STORAGE_KEY : STORAGE_KEY;
+  const routeExampleId =
+    matchPath("/examples/:exampleId", location.pathname)?.params.exampleId ??
+    null;
+  // Links from before examples had their own URLs.
+  const legacyExampleId =
+    location.pathname === "/" ? searchParams.get("example") : null;
+  const isHome = !isViewer && routeExampleId === null;
   const showCoverage =
     CoverageMatrix !== null && searchParams.get("view") === "coverage";
   const showDocs = searchParams.get("view") === "docs";
 
-  const [example, setExample] = useState<ExampleData | null>(null);
-  const [initialRestore] = useState(() =>
-    readSavedViewsSessionResult(
-      exampleId === "multi-source-shop" || searchParams.get("project") === "1"
-        ? PROJECT_STORAGE_KEY
-        : STORAGE_KEY
-    )
+  const [workspace, setWorkspaceState] = useState<Workspace | null>(null);
+  const currentWorkspace = useRef(workspace);
+  currentWorkspace.current = workspace;
+  const nextKey = useRef(0);
+  const setWorkspace = useCallback(
+    (value: WorkspaceInput | null) =>
+      setWorkspaceState(
+        value && ({ ...value, key: ++nextKey.current } as Workspace)
+      ),
+    []
   );
-  const [restoreFailed, setRestoreFailed] = useState(initialRestore.failed);
-  const [restoredSession, setRestoredSession] = useState(
-    initialRestore.session
-  );
-  const [csvData, setCsvData] = useState<DatumObject[]>(() =>
-    restoredSession
-      ? restoredSession.project
-        ? []
-        : getSavedViewsRows(restoredSession)
-      : []
-  );
-  const [isCsvMode, setIsCsvMode] = useState(
-    () => restoredSession !== undefined
-  );
-  const [csvSavedData, setCsvSavedData] = useState<
-    SavedDataStructure | undefined
-  >();
+  const [restoreFailed, setRestoreFailed] = useState(false);
   const [analysisJson, setAnalysisJson] = useState("");
   const [analysisJsonError, setAnalysisJsonError] = useState<string | null>(
     null
@@ -115,7 +182,9 @@ export function LandingPage() {
   const shouldReduceMotion = useReducedMotion();
   const motionY = shouldReduceMotion ? 0 : 20;
 
-  const hasData = example !== null || isCsvMode;
+  const example = workspaceExample(workspace);
+  const hasData = workspace !== null;
+  const canResume = isHome && !hasData && hasStoredSession();
 
   useEffect(() => {
     if (!hasData || !workspaceRef.current) {
@@ -124,7 +193,7 @@ export function LandingPage() {
 
     workspaceRef.current.focus({ preventScroll: true });
     workspaceRef.current.scrollIntoView?.({ block: "start" });
-  }, [exampleId, hasData]);
+  }, [workspace?.key, hasData]);
 
   const fetchExampleData = useCallback(
     async (url: string, signal: AbortSignal) => {
@@ -137,71 +206,104 @@ export function LandingPage() {
     []
   );
 
-  const handleClearData = () => {
+  // Home is a reset: it shows the landing page and leaves the saved
+  // analysis in place for /viewer.
+  const handleBack = () => {
     setRestoreFailed(false);
-    setSearchParams({});
-    setExample(null);
-    setIsCsvMode(false);
-    setCsvData([]);
-    setRestoredSession(undefined);
-    try {
-      localStorage.removeItem("exploreda.saved-views.v1");
-    } catch {
-      // The workspace is already leaving; an unavailable storage area has no session to retain.
-    }
-    setCsvSavedData(undefined);
     setAnalysisJson("");
     setAnalysisJsonError(null);
     setLoadError(null);
+    navigate("/");
   };
 
   const handleExampleSelect = useCallback(
     (id: string) => {
       setRestoreFailed(false);
-      setRestoredSession(undefined);
-      setSearchParams({ example: id });
+      navigate(examplePath(id));
     },
-    [setSearchParams]
+    [navigate]
+  );
+
+  const openSession = useCallback(
+    (session: SavedViewsSession) =>
+      setWorkspace({
+        kind: "session",
+        session,
+        example: examples.find((item) => item.id === session.exampleId),
+      }),
+    [setWorkspace]
   );
 
   useEffect(() => {
-    if (restoredSession) {
+    if (isViewer) {
       setIsLoading(false);
-      setExample(null);
-      setExampleData([]);
       setLoadError(null);
+      // Data imported a moment ago is already showing.
+      const current = currentWorkspace.current;
+      if (current && current.kind !== "example") {
+        return;
+      }
+      const result = readSavedViewsSessionResult(viewerKey);
+      setRestoreFailed(result.failed);
+      if (result.session) {
+        openSession(result.session);
+        return;
+      }
+      // With no single-table analysis, reopen the last project instead.
+      const project = isProjectViewer
+        ? undefined
+        : readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session;
+      if (!result.failed && project) {
+        navigate(PROJECT_VIEWER_PATH, { replace: true });
+        return;
+      }
+      setWorkspace(null);
+      if (!result.failed) {
+        // Nothing saved yet: the home page is where analyses start.
+        navigate("/", { replace: true });
+      }
       return;
     }
-    if (!exampleId) {
+    if (routeExampleId === null) {
       setIsLoading(false);
-      setExample(null);
-      setExampleData([]);
+      setWorkspace(null);
       setLoadError(null);
       return;
     }
 
-    const selectedExample = examples.find((item) => item.id === exampleId);
+    const selectedExample = examples.find((item) => item.id === routeExampleId);
     if (!selectedExample) {
       setIsLoading(false);
+      setWorkspace(null);
       setLoadError("That example does not exist. Choose another example.");
+      return;
+    }
+    const current = currentWorkspace.current;
+    if (workspaceExample(current)?.id === selectedExample.id) {
+      return;
+    }
+    // The example's URL reopens the session saved from it.
+    const saved = readSavedViewsSessionResult(
+      selectedExample.project ? PROJECT_STORAGE_KEY : STORAGE_KEY
+    ).session;
+    if (saved?.exampleId === selectedExample.id) {
+      setIsLoading(false);
+      setLoadError(null);
+      openSession(saved);
       return;
     }
 
     const controller = new AbortController();
     setIsLoading(true);
     setLoadError(null);
-    setExample(null);
-    setExampleData([]);
+    setWorkspace(null);
 
     (selectedExample.project
       ? Promise.resolve([])
       : fetchExampleData(selectedExample.data, controller.signal)
     )
-      .then((data) => {
-        setExampleData(data);
-        setExample(selectedExample);
-        setIsCsvMode(false);
-        setCsvData([]);
+      .then((rows) => {
+        setWorkspace({ kind: "example", example: selectedExample, rows });
       })
       .catch((error) => {
         if (error instanceof Error && error.name === "AbortError") {
@@ -219,33 +321,39 @@ export function LandingPage() {
       });
 
     return () => controller.abort();
-  }, [exampleId, fetchExampleData, retryCount, restoredSession]);
+  }, [
+    isViewer,
+    isProjectViewer,
+    viewerKey,
+    routeExampleId,
+    retryCount,
+    fetchExampleData,
+    navigate,
+    openSession,
+    setWorkspace,
+  ]);
 
-  const handleCsvImport = (data: DatumObject[]) => {
-    setImportRevision((revision) => revision + 1);
+  const openImported = (
+    rows: DatumObject[],
+    savedData?: SavedDataStructure
+  ) => {
     setRestoreFailed(false);
-    setIsCsvMode(true);
-    setSearchParams({});
-    setExample(null);
-    setCsvData(data);
-    setRestoredSession(undefined);
-    try {
-      localStorage.removeItem("exploreda.saved-views.v1");
-    } catch {
-      // The workspace is already leaving; an unavailable storage area has no session to retain.
-    }
-    setCsvSavedData(undefined);
+    // A new source starts a new saved analysis.
+    clearStoredSession();
+    setWorkspace({ kind: "rows", rows, savedData });
     setLoadError(null);
+    navigate(VIEWER_PATH);
   };
 
+  const handleCsvImport = (data: DatumObject[]) => openImported(data);
+
+  // A project file keeps its own saved session beside the single-table one.
   const handleProjectImport = (file: AnalysisProjectFile) => {
-    setImportRevision((revision) => revision + 1);
-    setRestoredSession(projectSession(file));
     setRestoreFailed(false);
-    setIsCsvMode(true);
-    setSearchParams({ project: "1" });
-    setExample(null);
     setAnalysisJsonError(null);
+    setLoadError(null);
+    openSession(projectSession(file));
+    navigate(PROJECT_VIEWER_PATH);
   };
 
   const handleAnalysisJson = () => {
@@ -259,21 +367,18 @@ export function LandingPage() {
       if (!validateSavedAnalysisForData(analysis)) {
         throw new Error("Analysis formulas do not match the saved source rows");
       }
-      setRestoreFailed(false);
-      setImportRevision((revision) => revision + 1);
-      setCsvData(analysis.data as DatumObject[]);
-      setCsvSavedData(analysis.settings);
-      setIsCsvMode(true);
-      setSearchParams({});
-      setExample(null);
-      setRestoredSession(undefined);
       setAnalysisJsonError(null);
+      openImported(analysis.data as DatumObject[], analysis.settings);
     } catch (error) {
       setAnalysisJsonError(
         error instanceof Error ? error.message : "Invalid analysis JSON"
       );
     }
   };
+
+  if (legacyExampleId) {
+    return <Navigate replace to={examplePath(legacyExampleId)} />;
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground ">
@@ -292,16 +397,15 @@ export function LandingPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  const result = readSavedViewsSessionResult();
+                  const result = readSavedViewsSessionResult(viewerKey);
                   setRestoreFailed(result.failed);
                   if (!result.session) {
                     return;
                   }
-                  setSearchParams({});
-                  setExample(null);
-                  setRestoredSession(result.session);
-                  setCsvData(getSavedViewsRows(result.session));
-                  setIsCsvMode(true);
+                  openSession(result.session);
+                  navigate(
+                    result.session.project ? PROJECT_VIEWER_PATH : VIEWER_PATH
+                  );
                 }}
               >
                 Retry restore
@@ -310,17 +414,11 @@ export function LandingPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  try {
-                    localStorage.removeItem("exploreda.saved-views.v1");
-                  } catch {
-                    // The user can still import a new source if storage is unavailable.
-                  }
+                  // The user can still import a new source if storage is unavailable.
+                  clearStoredSession(viewerKey);
                   setRestoreFailed(false);
-                  setRestoredSession(undefined);
-                  setCsvData([]);
-                  setIsCsvMode(false);
-                  setExample(null);
-                  setSearchParams({});
+                  setWorkspace(null);
+                  navigate("/");
                 }}
               >
                 Clear saved data and start with new data
@@ -352,6 +450,7 @@ export function LandingPage() {
                 </Suspense>
               ) : (
                 <>
+                  <ScrollToHash hash={location.hash} />
                   <PageFileDrop
                     onProjectImport={handleProjectImport}
                     onImport={handleCsvImport}
@@ -361,6 +460,7 @@ export function LandingPage() {
                       onOpenFeatured={() =>
                         handleExampleSelect(featuredExample.id)
                       }
+                      canResume={canResume}
                     />
                   )}
                   <div className="mt-28 space-y-28 pb-10">
@@ -499,7 +599,7 @@ export function LandingPage() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={handleClearData}
+                  onClick={handleBack}
                   aria-label="Back to examples"
                 >
                   <ArrowLeft className="h-4 w-4" />
@@ -512,20 +612,16 @@ export function LandingPage() {
                     {example?.description}
                   </p>
                 </div>
-                <a
-                  className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-border bg-background px-2.5 text-xs font-medium text-foreground shadow-xs transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  href="/#integration"
-                  aria-label="React integration guide"
+                <Link
+                  className="inline-flex shrink-0 items-center gap-1 rounded-sm text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  to="/#integration"
                 >
-                  <Code2
-                    className="h-3.5 w-3.5 text-muted-foreground"
-                    aria-hidden="true"
-                  />
-                  <span className="sm:hidden">Guide</span>
+                  <span className="sm:hidden">Embed in React</span>
                   <span className="hidden sm:inline">
-                    React integration guide
+                    Embed this workspace in your React app
                   </span>
-                </a>
+                  <ArrowRight className="size-3" aria-hidden="true" />
+                </Link>
               </header>
               {example?.guide && (
                 <div
@@ -576,26 +672,35 @@ export function LandingPage() {
                   </div>
                 }
               >
-                {isCsvMode ? (
+                {workspace?.kind === "session" ? (
                   <SavedViewsWorkspace
-                    key={`import:${importRevision}`}
-                    data={csvData}
-                    initialSettings={csvSavedData}
-                    initialSession={restoredSession}
+                    key={workspace.key}
+                    data={[]}
+                    initialSession={workspace.session}
                     viewName="Analysis"
                   />
-                ) : (
+                ) : workspace?.kind === "rows" ? (
                   <SavedViewsWorkspace
-                    key={`example:${example?.id}`}
-                    data={exampleData}
-                    initialSettings={example?.savedData}
-                    initialViews={example?.views}
-                    initialProject={example?.project}
-                    sourceTables={example?.tables}
-                    queryPresets={example?.queryPresets}
-                    viewName={example?.viewName ?? example?.title ?? "Analysis"}
+                    key={workspace.key}
+                    data={workspace.rows}
+                    initialSettings={workspace.savedData}
+                    viewName="Analysis"
                   />
-                )}
+                ) : workspace?.kind === "example" ? (
+                  <SavedViewsWorkspace
+                    key={workspace.key}
+                    data={workspace.rows}
+                    initialSettings={workspace.example.savedData}
+                    initialViews={workspace.example.views}
+                    initialProject={workspace.example.project}
+                    sourceTables={workspace.example.tables}
+                    queryPresets={workspace.example.queryPresets}
+                    viewName={
+                      workspace.example.viewName ?? workspace.example.title
+                    }
+                    exampleId={workspace.example.id}
+                  />
+                ) : null}
               </Suspense>
             </motion.div>
           )}

@@ -2,9 +2,11 @@ import { buildFieldProfiles } from "@/lib/fieldProfiles";
 import type { datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
 import type { SavedDataStructure } from "@/types/SavedDataStructure";
-import type { SavedChartSettings } from "@/types/SavedDataTypes";
+import type { FieldSettings } from "@/lib/fieldSettings";
+import type { GridSettings, SavedChartSettings } from "@/types/SavedDataTypes";
 import { compileDocument } from "./compile";
 import { diffPaths, encodeScalar, formatPath } from "./paths";
+import { FIELD_SETTING_WORDS, GRID_SETTING_WORDS } from "./settingKeys";
 
 export interface DslExportOptions {
   /** The rows the dashboard shows; text is checked against their fields. */
@@ -22,13 +24,6 @@ const TYPE_WORDS = {
   categorical: "cat",
   datetime: "date",
   boolean: "bool",
-} as const;
-
-const GRID_KEYS = {
-  columnCount: ["columns", 12],
-  rowHeight: ["rowHeight", 100],
-  containerPadding: ["padding", 10],
-  showBackgroundMarkers: ["markers", true],
 } as const;
 
 const IDENTIFIER = /^[A-Za-z_][\w]*$/;
@@ -171,15 +166,14 @@ export function exportParts(
   const workspace: string[] = [
     `dashboard name=${JSON.stringify(settings.metadata.name)}`,
   ];
-  const grid = Object.entries(GRID_KEYS)
-    .filter(
-      ([key, [, fallback]]) =>
-        settings.gridSettings[key as keyof typeof GRID_KEYS] !== fallback
-    )
-    .map(
-      ([key, [word]]) =>
-        `${word}=${settings.gridSettings[key as keyof typeof GRID_KEYS]}`
-    );
+  const grid = Object.entries(GRID_SETTING_WORDS).flatMap(
+    ([key, { word, fallback }]) => {
+      const value = settings.gridSettings[key as keyof GridSettings];
+      return value === undefined || value === fallback
+        ? []
+        : [`${word}=${value}`];
+    }
+  );
   if (grid.length) {
     workspace.push(`grid ${grid.join(" ")}`);
   }
@@ -194,18 +188,23 @@ export function exportParts(
         if (item === undefined) {
           return [];
         }
+        const word = FIELD_SETTING_WORDS[key as keyof FieldSettings];
+        if (!word) {
+          omitted.push(`field ${field}: ${key} has no text form`);
+          return [];
+        }
         if (key === "type") {
           return calcNames.has(field)
             ? []
-            : [`as=${TYPE_WORDS[item as keyof typeof TYPE_WORDS]}`];
+            : [`${word}=${TYPE_WORDS[item as keyof typeof TYPE_WORDS]}`];
         }
-        if (key === "nullTokens") {
+        if (Array.isArray(item)) {
           return [
-            `nullTokens[]=${(item as string[]).map((token) => JSON.stringify(token)).join(",")}`,
+            `${word}=${item.map((token) => JSON.stringify(token)).join(",")}`,
           ];
         }
         return [
-          `${key}=${typeof item === "string" ? JSON.stringify(item) : item}`,
+          `${word}=${typeof item === "string" ? JSON.stringify(item) : item}`,
         ];
       });
       return wrap(`field ${encodeScalar(field)}`, pairs);

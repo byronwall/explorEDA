@@ -63,6 +63,45 @@ function renderWorkspace({ colorScales = 0, readOnly = false } = {}) {
 }
 
 describe("workspace toolbar", () => {
+  it("leads the toolbar line with host content and keeps the scope in a status bar", () => {
+    const { container } = render(
+      <DataLayerProvider data={data} charts={[]}>
+        <CalculationEditorProvider>
+          <PlotManager
+            readOnly
+            toolbarStart={<div role="tablist" aria-label="Views" />}
+            toolbarEnd={<button type="button">Export</button>}
+          />
+        </CalculationEditorProvider>
+      </DataLayerProvider>
+    );
+    const toolbar = container.querySelector(
+      ".eda-workspace-toolbar"
+    ) as HTMLElement;
+    const tabs = within(toolbar).getByRole("tablist", { name: "Views" });
+    const add = within(toolbar).getByRole("button", { name: /Add chart/ });
+    const exportButton = within(toolbar).getByRole("button", {
+      name: "Export",
+    });
+    const follows = (a: Element, b: Element) =>
+      Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(follows(tabs, add)).toBe(true);
+    expect(follows(add, exportButton)).toBe(true);
+    // Host content stays usable while the workspace is read-only.
+    expect(tabs.closest("[inert]")).toBeNull();
+    expect(exportButton.closest("[inert]")).toBeNull();
+
+    // The row count and filters sit in the status bar, not the toolbar.
+    expect(within(toolbar).queryByRole("status")).toBeNull();
+    const status = container.querySelector(
+      ".eda-workspace-status"
+    ) as HTMLElement;
+    expect(within(status).getByRole("status")).toHaveTextContent(
+      "Showing 2 of 2 rows"
+    );
+    expect(follows(screen.getByRole("main"), status)).toBe(true);
+  });
+
   it("keeps Rows reachable in read-only previews and keeps its edits local", async () => {
     renderWorkspace({ readOnly: true });
     const rowsToggle = screen.getByRole("button", { name: "Rows" });

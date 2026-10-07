@@ -31,6 +31,7 @@ export type DataTableHeaderApi = {
   openFilter: (columnId: string) => void;
 };
 import { ColumnFilter } from "./components/ColumnFilter";
+import { ColumnTooltip } from "./components/ColumnTooltip";
 import { DataTableSettings } from "./definition";
 import { FieldInspector } from "@/components/SummaryTable/components/FieldInspector";
 import {
@@ -277,127 +278,148 @@ export function DataTableHeader({
               );
 
             return (
-              <TableHead
+              <ColumnTooltip
                 key={column.id}
-                data-column-id={column.id}
-                data-dragging={columnDrag.draggingId === column.id || undefined}
-                className={`relative select-none ${index === 0 ? "sticky left-0 z-20 bg-background" : ""}`}
-                style={{
-                  width:
-                    resizingColumn === column.id
-                      ? tempWidths[column.id] || column.width
-                      : column.width,
-                }}
-                aria-sort={
-                  sortBy === column.field
-                    ? sortDirection === "asc"
-                      ? "ascending"
-                      : "descending"
-                    : "none"
-                }
+                profile={scoped ?? profile}
+                label={label(column.field)}
+                align={alignRight ? "end" : "start"}
+                disabled={quiet || Boolean(columnDrag.draggingId)}
               >
-                <div
-                  className="eda-column-heading"
-                  data-sorted={sortBy === column.field || undefined}
-                  data-align={alignRight ? "right" : undefined}
-                >
-                  <button
-                    type="button"
-                    className="eda-column-sort"
-                    aria-label={`Sort by ${column.field}`}
-                    onClick={() => handleSort(column.field)}
-                    {...columnDrag.handleProps(column.id)}
-                  >
-                    <FieldMetadata
-                      profile={scoped ?? profile}
-                      label={label(column.field)}
-                      compact
-                      showTooltip={!quiet && !columnDrag.draggingId}
-                      className="eda-column-name"
-                    />
-                    {sortBy === column.field &&
-                      (sortDirection === "asc" ? (
-                        <ChevronUp className="h-4 w-4" />
-                      ) : (
-                        <ChevronDown className="h-4 w-4" />
-                      ))}
-                  </button>
-                  <div className="eda-column-actions">
-                    <CalculatedFieldBadge field={column.field} />
-                    <FieldInspector field={column.field}>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        aria-label={`Inspect ${column.field}`}
-                      >
-                        <Settings2 className="h-3.5 w-3.5" />
-                      </Button>
-                    </FieldInspector>
-                    <ActionTooltip content={`Filter ${label(column.field)}`}>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className={`eda-column-filter ${filter ? "is-active" : ""}`}
-                        aria-label={`Filter ${column.field}`}
-                        aria-haspopup="dialog"
-                        aria-expanded={activeFilter === column.id}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          filterAnchor.current = event.currentTarget;
-                          setActiveFilter(
-                            activeFilter === column.id ? null : column.id
-                          );
-                        }}
-                      >
-                        <FilterIcon className="h-4 w-4" />
-                      </Button>
-                    </ActionTooltip>
-                  </div>
-                </div>
-                {distributionProfiles && (
-                  <div className="eda-column-spark">
-                    {summary ? (
-                      <>
-                        {summary.graphic}
-                        <span className="sr-only">{summary.description}</span>
-                      </>
-                    ) : (
-                      <span className="text-muted-foreground">No values</span>
-                    )}
-                  </div>
-                )}
-                <div
-                  role="separator"
-                  aria-orientation="vertical"
-                  aria-label={`Resize ${column.field} column`}
-                  className="eda-column-resize"
-                  data-resizing={resizingColumn === column.id}
-                  tabIndex={0}
-                  aria-valuemin={50}
-                  aria-valuenow={tempWidths[column.id] ?? column.width ?? 120}
-                  onKeyDown={(event) => {
-                    if (
-                      event.key !== "ArrowLeft" &&
-                      event.key !== "ArrowRight"
-                    ) {
-                      return;
+                {(nameHover) => (
+                  <TableHead
+                    data-column-id={column.id}
+                    data-dragging={
+                      columnDrag.draggingId === column.id || undefined
                     }
-                    event.preventDefault();
-                    const width = Math.max(
-                      50,
-                      event.currentTarget.parentElement!.getBoundingClientRect()
-                        .width + (event.key === "ArrowRight" ? 16 : -16)
-                    );
-                    update({
-                      columns: columns.map((item) =>
-                        item.id === column.id ? { ...item, width } : item
-                      ),
-                    });
-                  }}
-                  onPointerDown={(e) => handleResizeStart(e, column.id)}
-                />
-              </TableHead>
+                    className={`relative select-none ${index === 0 ? "sticky left-0 z-20 bg-background" : ""}`}
+                    style={{
+                      width:
+                        resizingColumn === column.id
+                          ? tempWidths[column.id] || column.width
+                          : column.width,
+                    }}
+                    aria-sort={
+                      sortBy === column.field
+                        ? sortDirection === "asc"
+                          ? "ascending"
+                          : "descending"
+                        : "none"
+                    }
+                  >
+                    <div
+                      className="eda-column-heading"
+                      data-sorted={sortBy === column.field || undefined}
+                      data-align={alignRight ? "right" : undefined}
+                    >
+                      <button
+                        type="button"
+                        className="eda-column-sort"
+                        aria-label={`Sort by ${column.field}`}
+                        onClick={() => handleSort(column.field)}
+                        {...columnDrag.handleProps(column.id)}
+                        onPointerEnter={nameHover.onPointerEnter}
+                        onPointerLeave={nameHover.onPointerLeave}
+                      >
+                        <FieldMetadata
+                          profile={scoped ?? profile}
+                          label={label(column.field)}
+                          compact
+                          showTooltip={false}
+                          className="eda-column-name"
+                        />
+                        {sortBy === column.field &&
+                          (sortDirection === "asc" ? (
+                            <ChevronUp className="h-4 w-4" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4" />
+                          ))}
+                      </button>
+                      <div className="eda-column-actions">
+                        <CalculatedFieldBadge field={column.field} />
+                        <FieldInspector field={column.field}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6"
+                            aria-label={`Inspect ${column.field}`}
+                          >
+                            <Settings2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </FieldInspector>
+                        <ActionTooltip
+                          content={`Filter ${label(column.field)}`}
+                        >
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className={`eda-column-filter ${filter ? "is-active" : ""}`}
+                            aria-label={`Filter ${column.field}`}
+                            aria-haspopup="dialog"
+                            aria-expanded={activeFilter === column.id}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              filterAnchor.current = event.currentTarget;
+                              setActiveFilter(
+                                activeFilter === column.id ? null : column.id
+                              );
+                            }}
+                          >
+                            <FilterIcon className="h-4 w-4" />
+                          </Button>
+                        </ActionTooltip>
+                      </div>
+                    </div>
+                    {distributionProfiles && (
+                      <div className="eda-column-spark">
+                        {summary ? (
+                          <>
+                            {summary.graphic}
+                            <span className="sr-only">
+                              {summary.description}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-muted-foreground">
+                            No values
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    <div
+                      role="separator"
+                      aria-orientation="vertical"
+                      aria-label={`Resize ${column.field} column`}
+                      className="eda-column-resize"
+                      data-resizing={resizingColumn === column.id}
+                      tabIndex={0}
+                      aria-valuemin={50}
+                      aria-valuenow={
+                        tempWidths[column.id] ?? column.width ?? 120
+                      }
+                      onKeyDown={(event) => {
+                        if (
+                          event.key !== "ArrowLeft" &&
+                          event.key !== "ArrowRight"
+                        ) {
+                          return;
+                        }
+                        event.preventDefault();
+                        const width = Math.max(
+                          50,
+                          event.currentTarget.parentElement!.getBoundingClientRect()
+                            .width + (event.key === "ArrowRight" ? 16 : -16)
+                        );
+                        update({
+                          columns: columns.map((item) =>
+                            item.id === column.id ? { ...item, width } : item
+                          ),
+                        });
+                      }}
+                      onPointerDown={(e) => handleResizeStart(e, column.id)}
+                    />
+                  </TableHead>
+                )}
+              </ColumnTooltip>
             );
           })}
         </TableRow>

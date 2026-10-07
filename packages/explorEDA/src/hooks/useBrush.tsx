@@ -12,6 +12,12 @@ interface Options {
   onBrushChange?: (extent: Extent | null) => void;
   onPlotClick?: (point: Point, event: PointerEvent<SVGSVGElement>) => boolean;
   defaultExtent?: Extent | null;
+  /**
+   * A plain click that the chart did not select from. `inside` is true when it
+   * landed inside the current selection. Without it, a click outside the
+   * selection clears the brush.
+   */
+  onDeadClick?: (inside: boolean) => void;
 }
 interface Gesture {
   start: Point;
@@ -32,6 +38,7 @@ export function useBrush({
   onBrushChange,
   onPlotClick,
   defaultExtent,
+  onDeadClick,
 }: Options) {
   const gesture = useRef<Gesture | null>(null);
   const wasDrag = useRef(false);
@@ -152,7 +159,9 @@ export function useBrush({
       // was clicked. A click inside may also narrow it to what was clicked.
       if (active.kind === "resize") return;
       const handled = onPlotClick?.(active.start, event) ?? false;
-      if (active.kind === "draw" && !handled) onBrushChange?.(null);
+      if (handled) return;
+      if (onDeadClick) onDeadClick(active.kind === "move");
+      else if (active.kind === "draw") onBrushChange?.(null);
       return;
     }
     if (

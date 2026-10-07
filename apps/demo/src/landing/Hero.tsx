@@ -3,12 +3,20 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { InstallCommand } from "./CodePanel";
 import { REPO_URL } from "./links";
+import { VIEWER_PATH } from "../routes";
 import { LiveOrderBook } from "./LiveOrderBook";
 
 const navLinkClass =
   "rounded-md px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground";
 
-export function Hero({ onOpenFeatured }: { onOpenFeatured: () => void }) {
+export function Hero({
+  onOpenFeatured,
+  canResume = false,
+}: {
+  onOpenFeatured: () => void;
+  /** An analysis is saved in this browser and can reopen in the viewer. */
+  canResume?: boolean;
+}) {
   return (
     <header>
       <nav
@@ -64,6 +72,14 @@ export function Hero({ onOpenFeatured }: { onOpenFeatured: () => void }) {
           >
             or try your own data
           </a>
+          {canResume && (
+            <Link
+              to={VIEWER_PATH}
+              className="text-sm text-muted-foreground lg:self-start underline-offset-4 hover:text-foreground hover:underline"
+            >
+              or reopen your last analysis
+            </Link>
+          )}
         </div>
       </div>
 

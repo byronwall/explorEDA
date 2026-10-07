@@ -203,6 +203,7 @@ export function SeriesBarChart({
           xScale={plan.x}
           yScale={plan.y}
           brushingMode="none"
+          onClearPlot={() => updateChart(settings.id, { filters: [] })}
           onBrushChange={() => {}}
           onInspectGuide={(id) => api?.inspect(owner, "guide", id)}
           onInspectPlot={([x, y]) => {

@@ -1269,9 +1269,41 @@ html {
 }
 .eda-workspace-toolbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 2px 6px;
   min-height: 34px;
+}
+/* Host content, such as view tabs, leads the line and takes the room the
+   tools leave. When too little remains, the tools wrap below it. */
+.eda-toolbar-start {
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  min-width: 0;
+}
+.eda-workspace-toolbar[data-has-start] .eda-toolbar-start {
+  min-width: min(100%, 180px);
+}
+.eda-toolbar-end {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 2px;
+}
+/* The status bar: row count and filter scope, kept in view at the bottom of
+   the workspace while the charts scroll. */
+.eda-workspace-status {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  margin-top: 8px;
+  padding: 4px 0;
+  background: var(--background);
+  border-top: 1px solid var(--border);
 }
 .eda-toolbar-group {
   display: flex;
@@ -1286,7 +1318,8 @@ html {
   margin: 0 2px;
   background: var(--border);
 }
-.eda-workspace-toolbar button {
+.eda-workspace-toolbar button:not(:where(.eda-toolbar-host *)),
+.eda-workspace-status button {
   height: 30px;
   font-size: 12px;
   padding: 0 10px;
@@ -1300,12 +1333,16 @@ html {
   width: 30px;
   padding: 0;
 }
-.eda-workspace-toolbar button:hover,
-.eda-workspace-toolbar button[aria-expanded="true"] {
+.eda-workspace-toolbar button:not(:where(.eda-toolbar-host *)):hover,
+.eda-workspace-toolbar
+  button:not(:where(.eda-toolbar-host *))[aria-expanded="true"],
+.eda-workspace-status button:hover,
+.eda-workspace-status button[aria-expanded="true"] {
   background: var(--muted);
   color: var(--foreground);
 }
-.eda-workspace-toolbar button[aria-pressed="true"] {
+.eda-workspace-toolbar
+  button:not(:where(.eda-toolbar-host *))[aria-pressed="true"] {
   background: var(--muted);
   color: var(--foreground);
   border-color: var(--border);
@@ -1347,19 +1384,19 @@ html {
 .eda-filter-chips .eda-filter-chip {
   max-width: 240px;
 }
-.eda-workspace-toolbar .eda-filter-chip button,
+.eda-workspace-status .eda-filter-chip button,
 .eda-filter-popover .eda-filter-chip button {
   height: 100%;
   font-size: 11px;
   border: 0;
   border-radius: 0;
 }
-.eda-workspace-toolbar .eda-filter-chip button:first-child {
+.eda-workspace-status .eda-filter-chip button:first-child {
   width: auto;
   padding: 0 8px;
   color: var(--foreground);
 }
-.eda-workspace-toolbar .eda-filter-chip button:last-child {
+.eda-workspace-status .eda-filter-chip button:last-child {
   width: 26px;
   padding: 0;
   border-left: 1px solid var(--border);
@@ -1371,7 +1408,7 @@ html {
   flex: 1 1 auto;
   justify-content: flex-start;
 }
-.eda-workspace-toolbar .eda-filter-more {
+.eda-workspace-status .eda-filter-more {
   flex-shrink: 0;
   width: auto;
   height: 26px;
@@ -1381,7 +1418,7 @@ html {
   color: var(--foreground);
   border-color: var(--input);
 }
-.eda-workspace-toolbar .eda-filter-clear {
+.eda-workspace-status .eda-filter-clear {
   flex-shrink: 0;
   width: 28px;
   height: 28px;
@@ -1512,12 +1549,23 @@ html {
 }
 @media (max-width: 640px) {
   .eda-workspace-toolbar {
-    flex-wrap: wrap;
-    gap: 4px;
+    gap: 2px 4px;
   }
-  .eda-workspace-toolbar .eda-filter-status {
-    order: 1;
+  /* Host content and host actions share the first line; the tools take the
+     second. */
+  .eda-workspace-toolbar[data-has-start] .eda-toolbar-start {
+    order: -3;
+  }
+  .eda-workspace-toolbar[data-has-start] .eda-toolbar-end {
+    order: -2;
+  }
+  .eda-workspace-toolbar[data-has-start]::before {
+    content: "";
+    order: -1;
     flex-basis: 100%;
+    height: 0;
+  }
+  .eda-workspace-status .eda-filter-status {
     padding-left: 0;
   }
   .eda-row-count-lead,
@@ -1685,6 +1733,31 @@ html {
   max-width: 300px;
   overflow-wrap: anywhere;
   pointer-events: none;
+}
+/* A column header's tooltip sits above the header. Where there is no room
+   above, it stays hidden rather than flip over the rows. */
+[data-slot="tooltip-content"].eda-column-tooltip {
+  max-width: 260px;
+}
+[data-slot="tooltip-content"].eda-column-tooltip:not([data-side="top"]) {
+  visibility: hidden;
+}
+.eda-column-tooltip-name {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+.eda-column-tooltip-name svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+.eda-column-tooltip-mark {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -2609,6 +2682,29 @@ html {
   z-index: 2;
   padding: 2px 12px 4px;
 }
+/* A faceted chart's legend and facet pager share one line. When both do not
+   fit, the pager wraps below the legend instead of squeezing it. */
+.eda-facet-bar {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 8px;
+  min-width: 0;
+  min-height: 24px;
+}
+.eda-facet-bar > .eda-chart-color-legend {
+  flex: 0 1 max-content;
+  min-width: 0;
+  padding-right: 0;
+}
+.eda-facet-bar-slot {
+  flex: 0 0 auto;
+  max-width: 100%;
+  min-width: 0;
+  margin-left: auto;
+  padding-right: 4px;
+}
 .eda-legend-disclosure {
   position: relative;
 }
@@ -2960,36 +3056,71 @@ html {
   transform-origin: top left;
   transform: rotate(-90deg) translateY(-50%);
 }
+/* Matches the field details tooltip: a name line, then label and value
+   pairs in two columns, with the formula kept small. */
 .eda-calc-peek {
-  width: min(340px, calc(100vw - 24px));
+  width: min(300px, calc(100vw - 24px));
+  padding: 8px 10px;
   font-size: 12px;
   max-height: var(--radix-popover-content-available-height);
   overflow: auto;
 }
+.eda-calc-peek-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+.eda-calc-peek-heading > span:last-child {
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
 .eda-calc-peek pre {
-  margin: 8px 0;
-  padding: 8px;
-  border-radius: 5px;
+  max-height: 7.5rem;
+  margin: 6px 0;
+  padding: 4px 6px;
+  overflow: auto;
+  border-radius: 4px;
   background: var(--muted);
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.45;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-.eda-calc-peek-result {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 10px 0 6px;
-  border-top: 1px solid var(--border);
-  padding-top: 8px;
+.eda-calc-peek-facts {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 2px 12px;
+  font-size: 12px;
+  line-height: 1.4;
 }
-.eda-calc-peek-result strong {
-  overflow-wrap: anywhere;
-}
-.eda-calc-peek-result > span {
+.eda-calc-peek-facts dt {
   color: var(--muted-foreground);
   white-space: nowrap;
+}
+.eda-calc-peek-facts dd {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.eda-calc-peek-facts strong {
+  font-weight: 600;
+}
+.eda-calc-peek-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 4px -4px -2px 0;
+}
+.eda-calc-peek-actions button {
+  height: 24px;
+  padding: 0 6px;
+  color: var(--primary);
+  font-size: 11px;
+}
+.eda-calc-peek-actions button svg {
+  width: 13px;
+  height: 13px;
 }
 .eda-calc-editor {
   display: flex;
@@ -3676,35 +3807,55 @@ html {
 /* The panel covers the right of the controls; keep them visible beside it. */
 @media (min-width: 641px) {
   .eda-workspace-controls[data-fields-open],
-  .eda-workspace-controls[data-settings-open] {
+  .eda-workspace-controls[data-settings-open],
+  .eda-workspace-status[data-fields-open],
+  .eda-workspace-status[data-settings-open] {
     padding-right: min(464px, calc(100% - 240px));
   }
-  .eda-workspace-controls[data-rows-narrow] {
+  .eda-workspace-controls[data-rows-narrow],
+  .eda-workspace-status[data-rows-narrow] {
     padding-right: min(34.5rem, calc(100% - 240px));
   }
 }
-/* Beside the open panel, a mid-width toolbar keeps its icons on the first
-   line and moves the row count and filter chips to a second line. */
+/* Beside the open panel, a mid-width toolbar gives host content, such as
+   view tabs, the first line and moves the tools to a second line. */
 @media (min-width: 641px) and (max-width: 1100px) {
   .eda-workspace-controls:is(
       [data-fields-open],
       [data-settings-open],
       [data-rows-narrow]
     )
-    .eda-workspace-toolbar {
-    flex-wrap: wrap;
-    gap: 4px;
+    .eda-workspace-toolbar[data-has-start] {
+    gap: 2px 4px;
   }
   .eda-workspace-controls:is(
       [data-fields-open],
       [data-settings-open],
       [data-rows-narrow]
     )
-    .eda-workspace-toolbar
-    .eda-filter-status {
-    order: 1;
+    .eda-workspace-toolbar[data-has-start]
+    .eda-toolbar-start {
+    order: -3;
+  }
+  .eda-workspace-controls:is(
+      [data-fields-open],
+      [data-settings-open],
+      [data-rows-narrow]
+    )
+    .eda-workspace-toolbar[data-has-start]
+    .eda-toolbar-end {
+    order: -2;
+  }
+  .eda-workspace-controls:is(
+      [data-fields-open],
+      [data-settings-open],
+      [data-rows-narrow]
+    )
+    .eda-workspace-toolbar[data-has-start]::before {
+    content: "";
+    order: -1;
     flex-basis: 100%;
-    padding-left: 0;
+    height: 0;
   }
   /* Beside a panel, Add chart shows only its icon so the tools fit one line. */
   .eda-workspace-controls:is(
@@ -4687,7 +4838,7 @@ html {
   gap: 10px;
   width: min(64rem, calc(100vw - 1rem));
   max-width: none;
-  height: min(42rem, calc(100vh - 1rem));
+  height: min(42rem, calc(100dvh - 1rem));
   padding: 12px;
 }
 .eda-add-chart-header {
@@ -4700,7 +4851,7 @@ html {
 }
 .eda-add-chart-body {
   display: grid;
-  grid-template-columns: minmax(15rem, 19rem) minmax(0, 1fr);
+  grid-template-columns: minmax(15rem, 19.5rem) minmax(0, 1fr);
   gap: 10px;
   flex: 1;
   min-height: 0;
@@ -4761,37 +4912,58 @@ html {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 0 4px 4px 0;
+}
+/* Shadows at the top and bottom edges show that more chart types scroll
+   into view, so a short window never hides the last ones. */
+.eda-add-chart-control-tabs > .eda-add-chart-types {
+  background:
+    linear-gradient(var(--background) 50%, transparent) top / 100% 12px
+      no-repeat local,
+    linear-gradient(transparent, var(--background) 50%) bottom / 100% 12px
+      no-repeat local,
+    linear-gradient(
+        color-mix(in oklab, var(--foreground) 12%, transparent),
+        transparent
+      )
+      top / 100% 6px no-repeat scroll,
+    linear-gradient(
+        transparent,
+        color-mix(in oklab, var(--foreground) 12%, transparent)
+      )
+      bottom / 100% 6px no-repeat scroll;
 }
 .eda-add-chart-types {
   display: grid;
   align-content: start;
-  gap: 8px;
+  gap: 6px;
 }
 .eda-add-chart-type-group {
   display: grid;
-  gap: 4px;
+  gap: 3px;
 }
 .eda-add-chart-type-group > h3 {
   color: var(--muted-foreground);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  line-height: 14px;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 /* Chart types line up in even columns, so a group reads as one block. */
 .eda-add-chart-type-options {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
-  gap: 4px;
+  grid-template-columns: repeat(auto-fill, minmax(8.25rem, 1fr));
+  gap: 3px;
 }
 .eda-add-chart-types button {
   display: flex;
   align-items: center;
   gap: 6px;
   min-width: 0;
-  height: 28px;
-  padding: 0 8px;
+  height: 26px;
+  padding: 0 7px;
   border: 1px solid var(--border);
   border-radius: 6px;
   font-size: 12px;
@@ -4859,17 +5031,15 @@ html {
 }
 @media (max-width: 720px) {
   .eda-add-chart {
-    height: calc(100vh - 2rem);
+    height: calc(100dvh - 2rem);
   }
+  /* The chart types get the larger share; the preview stays in view. */
   .eda-add-chart-body {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(14rem, 1fr) auto;
+    grid-template-rows: minmax(8rem, 28%) minmax(0, 1fr);
   }
   .eda-add-chart-preview {
     order: -1;
-  }
-  .eda-add-chart-controls {
-    max-height: 40vh;
   }
 }
 .eda-placement-layer {

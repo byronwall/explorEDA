@@ -32,10 +32,14 @@ vi.mock("exploreda", async () => {
       data,
       savedData,
       onStateChange,
+      toolbarStart,
+      toolbarEnd,
     }: {
       data: unknown[];
       savedData?: unknown;
       onStateChange?: (state: unknown) => void;
+      toolbarStart?: React.ReactNode;
+      toolbarEnd?: React.ReactNode;
     }) => {
       const [mount] = useState(() => ++workspaceMounts);
       const settings = savedData as
@@ -68,6 +72,8 @@ vi.mock("exploreda", async () => {
           data-filter-count={settings?.rowsSettings?.filters?.length ?? 0}
           data-mount={mount}
         >
+          {toolbarStart}
+          {toolbarEnd}
           <button onClick={() => onStateChange?.(capturedState)}>
             Emit state
           </button>
@@ -104,7 +110,7 @@ describe("LandingPage routing", () => {
     const router = createMemoryRouter(
       [{ path: "/*", element: <LandingPage /> }],
       {
-        initialEntries: ["/", "/?example=lorenz-3d"],
+        initialEntries: ["/", "/examples/lorenz-3d"],
         initialIndex: 1,
       }
     );
@@ -192,7 +198,7 @@ describe("LandingPage routing", () => {
     fireEvent.click(
       within(penguins).getByRole("button", { name: "Penguin field notes" })
     );
-    expect(router.state.location.search).toBe("?example=palmer-penguins");
+    expect(router.state.location.pathname).toBe("/examples/palmer-penguins");
   });
 
   it("shows the featured guide above the workspace and opens it from the hero", async () => {
@@ -214,7 +220,7 @@ describe("LandingPage routing", () => {
     );
 
     expect(await screen.findByTestId("workspace")).toBeInTheDocument();
-    expect(router.state.location.search).toBe("?example=shop-operations");
+    expect(router.state.location.pathname).toBe("/examples/shop-operations");
     expect(screen.getByRole("note")).toHaveTextContent(
       "click Web in Sales channels"
     );
@@ -222,7 +228,9 @@ describe("LandingPage routing", () => {
       "Inspect it in Chart spec"
     );
     expect(
-      screen.getByRole("link", { name: "React integration guide" })
+      screen.getByRole("link", {
+        name: /Embed this workspace in your React app/,
+      })
     ).toHaveAttribute("href", "/#integration");
   });
 
@@ -300,7 +308,7 @@ describe("LandingPage routing", () => {
     );
     const makeRouter = () =>
       createMemoryRouter([{ path: "/*", element: <LandingPage /> }], {
-        initialEntries: ["/?example=palmer-penguins"],
+        initialEntries: ["/examples/palmer-penguins"],
       });
 
     const first = render(<RouterProvider router={makeRouter()} />);
@@ -344,7 +352,7 @@ describe("LandingPage routing", () => {
     localStorage.setItem("exploreda.saved-views.v1", unreadable);
     const router = createMemoryRouter(
       [{ path: "/*", element: <LandingPage /> }],
-      { initialEntries: ["/"] }
+      { initialEntries: ["/viewer"] }
     );
 
     render(<RouterProvider router={router} />);
@@ -409,6 +417,7 @@ describe("LandingPage routing", () => {
     const savedRows = [{ channel: "Web" }, { channel: "Store" }];
     const storedSession = {
       version: 1,
+      exampleId: "shop-operations",
       sourceAnalysis: JSON.stringify({
         format: "exploreda-analysis",
         version: 1,
@@ -432,7 +441,7 @@ describe("LandingPage routing", () => {
     vi.stubGlobal("fetch", fetchMock);
     const router = createMemoryRouter(
       [{ path: "/*", element: <LandingPage /> }],
-      { initialEntries: ["/?example=shop-operations"] }
+      { initialEntries: ["/examples/shop-operations"] }
     );
 
     render(<RouterProvider router={router} />);
@@ -506,6 +515,132 @@ describe("LandingPage routing", () => {
     );
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
+  describe("dedicated URLs", () => {
+    const settings = {
+      charts: [],
+      calculations: [],
+      gridSettings: {
+        columnCount: 12,
+        rowHeight: 100,
+        containerPadding: 10,
+        showBackgroundMarkers: true,
+      },
+      metadata: {
+        name: "Saved",
+        version: 1,
+        createdAt: "2026-01-01T00:00:00.000Z",
+        modifiedAt: "2026-01-01T00:00:00.000Z",
+      },
+      colorScales: [],
+    };
+    const storeSession = (exampleId?: string) => {
+      const tabs = [{ id: "saved", name: "Saved view", settings }];
+      localStorage.setItem(
+        "exploreda.saved-views.v1",
+        JSON.stringify({
+          version: 1,
+          ...(exampleId ? { exampleId } : {}),
+          sourceAnalysis: JSON.stringify({
+            format: "exploreda-analysis",
+            version: 1,
+            data: [{ a: 1 }, { a: 2 }, { a: 3 }],
+            settings,
+          }),
+          tabs,
+          activeTabId: "saved",
+          history: [{ at: "2026-01-01T00:00:00.000Z", label: "View", tabs }],
+          path: [0],
+          cursor: 0,
+        })
+      );
+    };
+    const renderAt = (path: string) => {
+      const router = createMemoryRouter(
+        [{ path: "/*", element: <LandingPage /> }],
+        { initialEntries: [path] }
+      );
+      render(<RouterProvider router={router} />);
+      return router;
+    };
+
+    it("always shows the home page at / and reopens the saved analysis from /viewer", async () => {
+      storeSession("palmer-penguins");
+      const router = renderAt("/");
+
+      expect(
+        screen.getByRole("heading", {
+          name: /Embed an interactive analysis workspace/i,
+        })
+      ).toBeInTheDocument();
+      expect(screen.queryByTestId("workspace")).toBeNull();
+
+      fireEvent.click(
+        screen.getByRole("link", { name: "or reopen your last analysis" })
+      );
+      expect(router.state.location.pathname).toBe("/viewer");
+      expect(await screen.findByTestId("workspace")).toHaveAttribute(
+        "data-rows",
+        "3"
+      );
+      expect(screen.getByRole("tab", { name: "Saved view" })).toBeVisible();
+      // The session keeps its example's title in the viewer.
+      expect(
+        screen.getByRole("heading", { name: "Penguin field notes" })
+      ).toBeInTheDocument();
+    });
+
+    it("keeps the saved analysis when Back returns home", async () => {
+      storeSession();
+      const router = renderAt("/viewer");
+      expect(await screen.findByTestId("workspace")).toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole("button", { name: "Back to examples" }));
+      expect(router.state.location.pathname).toBe("/");
+      await waitFor(() => expect(screen.queryByTestId("workspace")).toBeNull());
+      expect(localStorage.getItem("exploreda.saved-views.v1")).not.toBeNull();
+    });
+
+    it("opens an example fresh when the saved analysis came from another source", async () => {
+      storeSession();
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        text: () => Promise.resolve("x,y\n1,2"),
+      });
+      vi.stubGlobal("fetch", fetchMock);
+      renderAt("/examples/lorenz-3d");
+
+      expect(await screen.findByTestId("workspace")).toHaveAttribute(
+        "data-rows",
+        "1"
+      );
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it("sends the viewer home when nothing is saved", async () => {
+      const router = renderAt("/viewer");
+      await waitFor(() => expect(router.state.location.pathname).toBe("/"));
+      expect(screen.queryByTestId("workspace")).toBeNull();
+      expect(
+        screen.queryByRole("link", { name: "or reopen your last analysis" })
+      ).toBeNull();
+    });
+
+    it("moves links from the old example query to the example URL", async () => {
+      vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue({
+          ok: true,
+          text: () => Promise.resolve("x,y\n1,2"),
+        })
+      );
+      const router = renderAt("/?example=lorenz-3d");
+      await waitFor(() =>
+        expect(router.state.location.pathname).toBe("/examples/lorenz-3d")
+      );
+      expect(router.state.location.search).toBe("");
+      expect(await screen.findByTestId("workspace")).toBeInTheDocument();
+    });
+  });
 
   it("opens a dropped project view and restores it after reload", async () => {
     localStorage.clear();
@@ -522,7 +657,7 @@ describe("LandingPage routing", () => {
       activeViewId: "orders",
     };
     const router = createMemoryRouter(
-      [{ path: "/", element: <LandingPage /> }],
+      [{ path: "/*", element: <LandingPage /> }],
       { initialEntries: ["/"] }
     );
     const mounted = render(<RouterProvider router={router} />);
@@ -545,11 +680,12 @@ describe("LandingPage routing", () => {
         "items-by-order"
       )
     );
+    expect(router.state.location.pathname).toBe("/viewer");
     expect(router.state.location.search).toBe("?project=1");
     mounted.unmount();
     const reload = createMemoryRouter(
-      [{ path: "/", element: <LandingPage /> }],
-      { initialEntries: ["/?project=1"] }
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/viewer?project=1"] }
     );
     render(<RouterProvider router={reload} />);
     await waitFor(() =>

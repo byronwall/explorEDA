@@ -29,7 +29,11 @@ import {
   stringifyAnalysisProject,
 } from "exploreda/analysis";
 import { HistoryTimeline } from "./HistoryTimeline";
-import { SavedViewTabs, type SaveState } from "./SavedViewTabs";
+import {
+  SavedViewActions,
+  SavedViewTabs,
+  type SaveState,
+} from "./SavedViewTabs";
 import {
   ExplorEda,
   exportDocument,
@@ -69,7 +73,8 @@ function makeSession(
   settings?: SavedDataStructure,
   views: ExampleView[] = [],
   project?: AnalysisProject,
-  tables?: Record<string, readonly AnalysisSourceRow[]>
+  tables?: Record<string, readonly AnalysisSourceRow[]>,
+  exampleId?: string
 ): SavedViewsSession {
   const tab = {
     id: newId(),
@@ -114,6 +119,7 @@ function makeSession(
   });
   return {
     version: 1,
+    ...(exampleId ? { exampleId } : {}),
     sourceAnalysis,
     project,
     tables,
@@ -241,6 +247,8 @@ function WorkspaceInstance({
   workspaceRef,
   sidePanels,
   readOnly,
+  toolbarStart,
+  toolbarEnd,
 }: {
   data: DatumObject[];
   settings?: SavedDataStructure;
@@ -248,6 +256,8 @@ function WorkspaceInstance({
   workspaceRef: React.RefObject<ExplorEdaHandle | null>;
   sidePanels: ExplorEdaSidePanel[];
   readOnly: boolean;
+  toolbarStart: React.ReactNode;
+  toolbarEnd: React.ReactNode;
 }) {
   const [initialSettings] = useState(settings);
   return (
@@ -258,6 +268,8 @@ function WorkspaceInstance({
       onStateChange={onStateChange}
       sidePanels={sidePanels}
       readOnly={readOnly}
+      toolbarStart={toolbarStart}
+      toolbarEnd={toolbarEnd}
     />
   );
 }
@@ -271,6 +283,7 @@ export function SavedViewsWorkspace({
   sourceTables,
   queryPresets,
   viewName,
+  exampleId,
 }: {
   data: DatumObject[];
   initialSettings?: SavedDataStructure;
@@ -281,6 +294,8 @@ export function SavedViewsWorkspace({
   sourceTables?: Record<string, readonly AnalysisSourceRow[]>;
   queryPresets?: Record<string, SavedDataStructure>;
   viewName: string;
+  /** The example these rows came from, so its URL can restore the session. */
+  exampleId?: string;
 }) {
   const [session, setSession] = useState(() =>
     initialSession
@@ -291,9 +306,12 @@ export function SavedViewsWorkspace({
           initialSettings,
           initialViews,
           initialProject,
-          sourceTables
+          sourceTables,
+          exampleId
         )
   );
+  // Tabs remount with the workspace, so focus follows the selected tab.
+  const tabsHadFocus = useRef(false);
   const [saveError, setSaveError] = useState(false);
   const [savedEncoding, setSavedEncoding] = useState("");
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
@@ -375,11 +393,17 @@ export function SavedViewsWorkspace({
   }, [encoded, tablesBytes, session.project]);
 
   const remount = () => setWorkspaceKey((key) => key + 1);
+  useEffect(() => {
+    // The remounted tabs have taken focus by now, when they had it.
+    tabsHadFocus.current = false;
+  }, [workspaceKey, view.id]);
 
   const changeActive = (id: string) => {
     if (id === (showingPreview ? previewTabId : currentView.id)) {
       return;
     }
+    tabsHadFocus.current =
+      document.activeElement?.getAttribute("role") === "tab";
     if (showingPreview) {
       setPreviewTabId(id);
       remount();
@@ -1021,45 +1045,56 @@ export function SavedViewsWorkspace({
 
   const current = describeEntry(session, selectedHistoryIndex);
 
+  // The view tabs lead the workspace toolbar and the history actions end it.
+  const viewTabs = (
+    <SavedViewTabs
+      projectMode={Boolean(session.project)}
+      tabs={shownTabs}
+      activeId={view.id}
+      readOnly={showingPreview}
+      onSelect={changeActive}
+      onCreate={() => createView(false)}
+      onDuplicate={() => createView(true)}
+      onRename={renameView}
+      onDelete={deleteView}
+      onMove={moveView}
+      onExport={exportView}
+      focusSelected={tabsHadFocus.current}
+    />
+  );
+  const viewActions = (
+    <SavedViewActions
+      readOnly={showingPreview}
+      onExport={exportView}
+      onExportAll={
+        session.project && session.tables
+          ? () => downloadProject(projectFile(session), "project")
+          : undefined
+      }
+      canUndo={canUndo}
+      canRedo={canRedo}
+      undoText={undoText}
+      redoText={redoText}
+      onUndo={() => moveHistory(-1)}
+      onRedo={() => moveHistory(1)}
+      saveState={saveState}
+      saveDetail={saveDetail}
+      onOpenHistory={() => setHistoryOpen(true)}
+    />
+  );
+
   return (
     <section className="mb-3" aria-label="Saved views and history">
-      <SavedViewTabs
-        projectMode={Boolean(session.project)}
-        tabs={shownTabs}
-        activeId={view.id}
-        readOnly={showingPreview}
-        onSelect={changeActive}
-        onCreate={() => createView(false)}
-        onDuplicate={() => createView(true)}
-        onRename={renameView}
-        onDelete={deleteView}
-        onMove={moveView}
-        onExport={exportView}
-        onExportAll={
-          session.project && session.tables
-            ? () => downloadProject(projectFile(session), "project")
-            : undefined
-        }
-        canUndo={canUndo}
-        canRedo={canRedo}
-        undoText={undoText}
-        redoText={redoText}
-        onUndo={() => moveHistory(-1)}
-        onRedo={() => moveHistory(1)}
-        saveState={saveState}
-        saveDetail={saveDetail}
-        onOpenHistory={() => setHistoryOpen(true)}
-      />
       {saveError && (
         <p
           role="alert"
-          className="mt-2 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-xs text-destructive"
+          className="mb-2 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-xs text-destructive"
         >
           Local save failed. Export this analysis to keep a copy.
         </p>
       )}
       {previewed && !historyOpen && (
-        <div className="mt-2 flex flex-wrap items-center gap-2 rounded-md border border-border bg-accent/50 px-3 py-2 text-sm">
+        <div className="mb-2 flex flex-wrap items-center gap-2 rounded-md border border-border bg-accent/50 px-3 py-2 text-sm">
           <Eye
             className="size-4 shrink-0 text-muted-foreground"
             aria-hidden="true"
@@ -1088,7 +1123,7 @@ export function SavedViewsWorkspace({
       <span data-testid="current-history-label" className="sr-only">
         {LABEL_NAMES[current.entry.label]} · {current.headline}
       </span>
-      <div className="mt-3">
+      <div>
         {shownProject && session.tables ? (
           <ExplorEdaProject
             key={`${view.id}:${workspaceKey}`}
@@ -1107,12 +1142,20 @@ export function SavedViewsWorkspace({
             sidePanels={sidePanels}
             readOnly={showingPreview}
             createWorker={createAnalysisWorker}
+            toolbarStart={viewTabs}
+            toolbarEnd={viewActions}
           />
         ) : session.project ? (
-          <p role="alert">
-            This checkpoint has no project definitions. Restore a checkpoint
-            that contains its queries.
-          </p>
+          <>
+            <div className="flex items-center justify-between gap-2">
+              {viewTabs}
+              {viewActions}
+            </div>
+            <p role="alert">
+              This checkpoint has no project definitions. Restore a checkpoint
+              that contains its queries.
+            </p>
+          </>
         ) : (
           <WorkspaceInstance
             key={`${view.id}:${workspaceKey}`}
@@ -1122,6 +1165,8 @@ export function SavedViewsWorkspace({
             workspaceRef={workspaceRef}
             sidePanels={sidePanels}
             readOnly={showingPreview}
+            toolbarStart={viewTabs}
+            toolbarEnd={viewActions}
           />
         )}
       </div>

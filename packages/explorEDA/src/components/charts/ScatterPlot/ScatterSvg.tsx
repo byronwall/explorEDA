@@ -17,9 +17,17 @@ import {
 import { findAxisGuide } from "../Axis/axisPlan";
 import { PlannedAxes, PlannedGrid } from "../Axis/AxisLayer";
 import type { FitMark } from "./fitPlan";
-import { MARGINAL_GAP, MARGINAL_SIZE, type MarginalPlan } from "./marginalPlan";
+import {
+  MARGINAL_GAP,
+  MARGINAL_SIZE,
+  MARGINAL_UNSELECTED,
+  type MarginalPlan,
+} from "./marginalPlan";
 
-/** X and Y histograms in the margins; the selection's share reads darker. */
+/**
+ * X and Y histograms in the margins. They stack by the points' color
+ * categories, and rows outside the selection read gray, as their points do.
+ */
 function MarginalBars({
   marginals,
   activeId,
@@ -134,6 +142,7 @@ function MarginalBars({
           fill="transparent"
           pointerEvents="all"
           aria-hidden="true"
+          data-marginal-band
           onPointerDown={(event) => beginBrush(event, "x")}
           onPointerMove={moveBrush}
           onPointerUp={endBrush}
@@ -151,6 +160,7 @@ function MarginalBars({
           fill="transparent"
           pointerEvents="all"
           aria-hidden="true"
+          data-marginal-band
           onPointerDown={(event) => beginBrush(event, "y")}
           onPointerMove={moveBrush}
           onPointerUp={endBrush}
@@ -197,11 +207,40 @@ function MarginalBars({
               y={bin.y}
               width={bin.width}
               height={bin.height}
-              fill={marginals.split ? "rgb(156 163 175)" : "var(--eda-count)"}
+              fill={
+                bin.segments
+                  ? "transparent"
+                  : marginals.split
+                    ? MARGINAL_UNSELECTED
+                    : "var(--eda-count)"
+              }
               fillOpacity={marginals.split ? 0.45 : active ? 0.85 : 0.6}
-              stroke={active ? "var(--foreground)" : "none"}
+              stroke={active && !bin.segments ? "var(--foreground)" : "none"}
             />
-            {marginals.split && bin.selected > 0 && (
+            {bin.segments?.map((segment) => (
+              <rect
+                key={segment.key}
+                x={segment.x}
+                y={segment.y}
+                width={segment.width}
+                height={segment.height}
+                fill={segment.color}
+                fillOpacity={segment.selected ? (active ? 0.95 : 0.8) : 0.45}
+                pointerEvents="none"
+              />
+            ))}
+            {bin.segments && active && (
+              <rect
+                x={bin.x}
+                y={bin.y}
+                width={bin.width}
+                height={bin.height}
+                fill="none"
+                stroke="var(--foreground)"
+                pointerEvents="none"
+              />
+            )}
+            {!bin.segments && marginals.split && bin.selected > 0 && (
               <rect
                 {...share}
                 fill="#3479a8"
@@ -385,6 +424,7 @@ export function ScatterSvg({
   onHoverMarginal,
   onMarginal,
   onMarginalBrush,
+  onClearPlot,
   activeFitId,
   onActiveFit,
   onInspectFit,
@@ -402,6 +442,11 @@ export function ScatterSvg({
   onHoverMarginal?: (id: string | undefined) => void;
   onMarginal?: (id: string, inspect: boolean) => void;
   onMarginalBrush?: (axis: "x" | "y", bounds: [number, number]) => void;
+  /**
+   * A plain click on empty space, in the plot or a marginal band. The chart
+   * clears its filters. Without it, the plot clears only the brush.
+   */
+  onClearPlot?: () => void;
   activeFitId?: string;
   onActiveFit?: (id: string | undefined) => void;
   onInspectFit?: (id: string) => void;
@@ -432,7 +477,18 @@ export function ScatterSvg({
     onPlotClick: (_, event) =>
       event.altKey || altAtDown.current || Boolean(plan.size),
     defaultExtent: plan.brushExtent,
+    onDeadClick: (inside) => {
+      if (inside) return;
+      if (onClearPlot) onClearPlot();
+      else onBrushChange(null);
+    },
   });
+  const clearPlot = () => {
+    if (onClearPlot) {
+      brush.cancel();
+      onClearPlot();
+    } else brush.clear();
+  };
   const overlay = planScatterOverlay(plan, brush.extent ?? null, hoveredId);
   const keyboardPoints = useMemo(
     () =>
@@ -561,6 +617,14 @@ export function ScatterSvg({
           onMarginal(marginalId, event.altKey);
           return;
         }
+        // A click in a marginal band that misses every bin is a dead click.
+        if (
+          !event.altKey &&
+          (event.target as Element).closest("[data-marginal-band]")
+        ) {
+          clearPlot();
+          return;
+        }
         const markId = (event.target as Element)
           .closest("[data-mark-id]")
           ?.getAttribute("data-mark-id");
@@ -581,7 +645,7 @@ export function ScatterSvg({
             y <= plan.plotHeight &&
             !onSelectPoint?.(x, y)
           )
-            brush.clear();
+            clearPlot();
           return;
         }
         const fitId = (event.target as Element)

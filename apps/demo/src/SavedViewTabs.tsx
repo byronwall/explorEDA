@@ -116,16 +116,7 @@ export function SavedViewTabs({
   onDelete,
   onMove,
   onExport,
-  onExportAll,
-  canUndo,
-  canRedo,
-  undoText,
-  redoText,
-  onUndo,
-  onRedo,
-  saveState,
-  saveDetail,
-  onOpenHistory,
+  focusSelected,
 }: {
   tabs: SavedView[];
   activeId: string;
@@ -139,17 +130,11 @@ export function SavedViewTabs({
   onDelete: () => void;
   onMove: (direction: -1 | 1) => void;
   onExport: () => void;
-  /** Exports every view at once; replaces the per-view export button. */
-  onExportAll?: () => void;
-  canUndo: boolean;
-  canRedo: boolean;
-  undoText?: string;
-  redoText?: string;
-  onUndo: () => void;
-  onRedo: () => void;
-  saveState: SaveState;
-  saveDetail: string;
-  onOpenHistory: () => void;
+  /**
+   * The workspace remounts with each view, and these tabs with it. Focus
+   * returns to the selected tab when it was on a tab before the switch.
+   */
+  focusSelected?: boolean;
 }) {
   const [renaming, setRenaming] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
@@ -193,8 +178,18 @@ export function SavedViewTabs({
     tabs?.[index]?.focus();
   };
 
+  useEffect(() => {
+    if (focusSelected) {
+      listRef.current
+        ?.querySelector<HTMLButtonElement>('[role="tab"][aria-selected="true"]')
+        ?.focus({ preventScroll: true });
+    }
+    // Only on mount: a switch remounts the tabs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <div className="flex min-w-0 items-end gap-1 border-b border-border">
+    <div className="flex min-w-0 items-center gap-1">
       <div
         ref={listRef}
         role="tablist"
@@ -207,7 +202,7 @@ export function SavedViewTabs({
             return (
               <div
                 key={tab.id}
-                className="flex h-9 shrink-0 items-center border-b-2 border-primary px-1"
+                className="flex h-8 shrink-0 items-center border-b-2 border-primary px-1"
               >
                 <RenameField
                   initial={tab.name}
@@ -228,7 +223,7 @@ export function SavedViewTabs({
             <div
               key={tab.id}
               className={cn(
-                "group flex h-9 shrink-0 items-center border-b-2 transition-colors",
+                "group flex h-8 shrink-0 items-center border-b-2 transition-colors",
                 selected
                   ? "border-primary text-foreground"
                   : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"
@@ -240,7 +235,7 @@ export function SavedViewTabs({
                 aria-selected={selected}
                 tabIndex={selected ? 0 : -1}
                 className={cn(
-                  "h-8 max-w-[14rem] truncate rounded-md px-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "h-7 max-w-[14rem] truncate rounded-md px-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring",
                   selected && "font-medium"
                 )}
                 onClick={() => onSelect(tab.id)}
@@ -336,7 +331,7 @@ export function SavedViewTabs({
       </div>
       <IconButton
         label="New view"
-        className="mb-0.5 shrink-0"
+        className="shrink-0"
         disabled={readOnly}
         tooltip={
           projectMode
@@ -347,80 +342,111 @@ export function SavedViewTabs({
       >
         <Plus aria-hidden="true" />
       </IconButton>
-      <div className="mb-0.5 ml-auto flex shrink-0 items-center gap-0.5 pl-2">
-        <IconButton
-          label="Undo"
-          disabled={!canUndo || readOnly}
-          tooltip={
-            undoText ? `Undo: ${undoText} (${MOD_KEY}Z)` : `Undo (${MOD_KEY}Z)`
+    </div>
+  );
+}
+
+/** Undo, redo, save state, and export: the end of the workspace toolbar. */
+export function SavedViewActions({
+  readOnly,
+  onExport,
+  onExportAll,
+  canUndo,
+  canRedo,
+  undoText,
+  redoText,
+  onUndo,
+  onRedo,
+  saveState,
+  saveDetail,
+  onOpenHistory,
+}: {
+  readOnly: boolean;
+  onExport: () => void;
+  /** Exports every view at once; replaces the per-view export button. */
+  onExportAll?: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+  undoText?: string;
+  redoText?: string;
+  onUndo: () => void;
+  onRedo: () => void;
+  saveState: SaveState;
+  saveDetail: string;
+  onOpenHistory: () => void;
+}) {
+  return (
+    <div className="flex shrink-0 items-center gap-0.5">
+      <IconButton
+        label="Undo"
+        disabled={!canUndo || readOnly}
+        tooltip={
+          undoText ? `Undo: ${undoText} (${MOD_KEY}Z)` : `Undo (${MOD_KEY}Z)`
+        }
+        onClick={onUndo}
+      >
+        <Undo2 aria-hidden="true" />
+      </IconButton>
+      <IconButton
+        label="Redo"
+        disabled={!canRedo || readOnly}
+        tooltip={
+          redoText
+            ? `Redo: ${redoText} (${MOD_KEY}Shift+Z)`
+            : `Redo (${MOD_KEY}Shift+Z)`
+        }
+        onClick={onRedo}
+      >
+        <Redo2 aria-hidden="true" />
+      </IconButton>
+      <span className="mx-1 h-4 w-px bg-border" aria-hidden="true" />
+      <ActionTooltip content={saveDetail}>
+        <button
+          type="button"
+          aria-label={
+            saveState === "error"
+              ? "Not saved. Open history"
+              : saveState === "saving"
+                ? "Saving. Open history"
+                : "Saved. Open history"
           }
-          onClick={onUndo}
+          className={cn(
+            "flex h-8 items-center gap-1.5 rounded-md px-2 text-xs outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring",
+            saveState === "error" ? "text-destructive" : "text-muted-foreground"
+          )}
+          onClick={onOpenHistory}
         >
-          <Undo2 aria-hidden="true" />
-        </IconButton>
-        <IconButton
-          label="Redo"
-          disabled={!canRedo || readOnly}
-          tooltip={
-            redoText
-              ? `Redo: ${redoText} (${MOD_KEY}Shift+Z)`
-              : `Redo (${MOD_KEY}Shift+Z)`
-          }
-          onClick={onRedo}
-        >
-          <Redo2 aria-hidden="true" />
-        </IconButton>
-        <span className="mx-1 h-4 w-px bg-border" aria-hidden="true" />
-        <ActionTooltip content={saveDetail}>
-          <button
-            type="button"
-            aria-label={
-              saveState === "error"
-                ? "Not saved. Open history"
-                : saveState === "saving"
-                  ? "Saving. Open history"
-                  : "Saved. Open history"
-            }
-            className={cn(
-              "flex h-8 items-center gap-1.5 rounded-md px-2 text-xs outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring",
-              saveState === "error"
-                ? "text-destructive"
-                : "text-muted-foreground"
-            )}
-            onClick={onOpenHistory}
-          >
-            {saveState === "error" ? (
-              <AlertTriangle className="size-4" aria-hidden="true" />
-            ) : saveState === "saving" ? (
-              <LoaderCircle
-                className="size-4 motion-safe:animate-spin"
-                aria-hidden="true"
-              />
-            ) : (
-              <CircleCheck className="size-4" aria-hidden="true" />
-            )}
-            <span className="hidden sm:inline">
-              {saveState === "error"
-                ? "Not saved"
-                : saveState === "saving"
-                  ? "Saving…"
-                  : "Saved"}
-            </span>
-          </button>
-        </ActionTooltip>
-        <IconButton
-          label={onExportAll ? "Export project" : "Export analysis"}
-          disabled={readOnly}
-          tooltip={
-            onExportAll
-              ? "Export project: download every view, query, and source table as one file"
-              : "Export analysis: download this view's charts and the source rows as one JSON file"
-          }
-          onClick={onExportAll ?? onExport}
-        >
-          <Download aria-hidden="true" />
-        </IconButton>
-      </div>
+          {saveState === "error" ? (
+            <AlertTriangle className="size-4" aria-hidden="true" />
+          ) : saveState === "saving" ? (
+            <LoaderCircle
+              className="size-4 motion-safe:animate-spin"
+              aria-hidden="true"
+            />
+          ) : (
+            <CircleCheck className="size-4" aria-hidden="true" />
+          )}
+          <span className="hidden sm:inline">
+            {saveState === "error"
+              ? "Not saved"
+              : saveState === "saving"
+                ? "Saving…"
+                : "Saved"}
+          </span>
+        </button>
+      </ActionTooltip>
+      <IconButton
+        label={onExportAll ? "Export project" : "Export analysis"}
+        disabled={readOnly}
+        tooltip={
+          onExportAll
+            ? "Export project: download every view, query, and source table as one file"
+            : "Export analysis: download this view's charts and the source rows as one JSON file"
+        }
+        onClick={onExportAll ?? onExport}
+      >
+        <Download aria-hidden="true" />
+      </IconButton>
     </div>
   );
 }

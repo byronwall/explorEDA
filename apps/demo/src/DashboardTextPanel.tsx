@@ -5,13 +5,7 @@ import {
   useState,
   type UIEvent,
 } from "react";
-import {
-  AlertTriangle,
-  CircleX,
-  Copy,
-  FileOutput,
-  Files,
-} from "lucide-react";
+import { AlertTriangle, CircleX, Copy, FileOutput, Files } from "lucide-react";
 import {
   describeDslSource,
   DSL_REFERENCE,
@@ -28,6 +22,7 @@ import {
   describesViews,
   type AppliedText,
 } from "./dashboardText";
+import { DslCode } from "./DslCode";
 import type { DatumObject } from "./LandingPage";
 import { Button } from "@/components/ui/button";
 import { ActionTooltip } from "@/components/ui/tooltip";
@@ -115,6 +110,7 @@ export function DashboardTextPanel({
   }>();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const gutterRef = useRef<HTMLDivElement>(null);
+  const highlightRef = useRef<HTMLPreElement>(null);
   const deferred = useDeferredValue(text);
   const fields = useMemo(() => describeDslSource(rows), [rows]);
   const result = useMemo(
@@ -152,9 +148,14 @@ export function DashboardTextPanel({
     textarea.setSelectionRange(start, start + Math.max(item.length, 1));
   };
 
-  const syncGutter = (event: UIEvent<HTMLTextAreaElement>) => {
+  const syncScroll = (event: UIEvent<HTMLTextAreaElement>) => {
+    const { scrollTop, scrollLeft } = event.currentTarget;
     if (gutterRef.current) {
-      gutterRef.current.scrollTop = event.currentTarget.scrollTop;
+      gutterRef.current.scrollTop = scrollTop;
+    }
+    if (highlightRef.current) {
+      highlightRef.current.scrollTop = scrollTop;
+      highlightRef.current.scrollLeft = scrollLeft;
     }
   };
 
@@ -164,8 +165,8 @@ export function DashboardTextPanel({
         <ActionTooltip
           content={
             allViews
-              ? "Replace every view with what the text describes. Each view \"Name\" line starts a view. Undo brings the old views back."
-              : "Replace this view with what the text describes, one chart per line. Start sections with view \"Name\" to describe every view. Undo brings the old view back."
+              ? 'Replace every view with what the text describes. Each view "Name" line starts a view. Undo brings the old views back.'
+              : 'Replace this view with what the text describes, one chart per line. Start sections with view "Name" to describe every view. Undo brings the old view back.'
           }
         >
           <Button
@@ -234,7 +235,10 @@ export function DashboardTextPanel({
           </Button>
         </ActionTooltip>
       </div>
-      <div className="flex min-h-[12rem] flex-[1_0_12rem] overflow-hidden rounded-md border border-input bg-background font-mono text-xs leading-5 focus-within:ring-2 focus-within:ring-ring">
+      <div
+        data-dsl-editor=""
+        className="flex min-h-[12rem] flex-[1_0_12rem] overflow-hidden rounded-md border border-input bg-background font-mono text-xs leading-5 focus-within:ring-2 focus-within:ring-ring"
+      >
         <div
           ref={gutterRef}
           aria-hidden="true"
@@ -254,19 +258,32 @@ export function DashboardTextPanel({
             </div>
           ))}
         </div>
-        <textarea
-          ref={textareaRef}
-          aria-label="Dashboard text editor"
-          className="flex-1 resize-none whitespace-pre bg-transparent px-2 py-2 outline-none"
-          spellCheck={false}
-          autoCapitalize="off"
-          autoCorrect="off"
-          wrap="off"
-          placeholder={PLACEHOLDER}
-          value={text}
-          onChange={(event) => onTextChange(event.target.value)}
-          onScroll={syncGutter}
-        />
+        <div className="relative min-w-0 flex-1">
+          {/* The colored copy under the text area. Both share one box and
+              font; the extra end padding matches the scroll range that the
+              text area's scrollbars add. */}
+          <pre
+            ref={highlightRef}
+            aria-hidden="true"
+            data-dsl-highlight=""
+            className="pointer-events-none absolute inset-0 m-0 overflow-hidden whitespace-pre pt-2 pr-8 pb-8 pl-2 font-mono text-xs leading-5 text-foreground"
+          >
+            <DslCode text={text} />
+          </pre>
+          <textarea
+            ref={textareaRef}
+            aria-label="Dashboard text editor"
+            className="eda-dsl-input absolute inset-0 size-full resize-none whitespace-pre bg-transparent px-2 py-2 font-mono text-xs leading-5 outline-none"
+            spellCheck={false}
+            autoCapitalize="off"
+            autoCorrect="off"
+            wrap="off"
+            placeholder={PLACEHOLDER}
+            value={text}
+            onChange={(event) => onTextChange(event.target.value)}
+            onScroll={syncScroll}
+          />
+        </div>
       </div>
       <div role="status" className="text-xs">
         {!result ? (
@@ -303,7 +320,8 @@ export function DashboardTextPanel({
         <section aria-label="Not in the text" className="text-xs">
           <h3 className="font-semibold">Not in the text</h3>
           <p className="text-muted-foreground">
-            Applying this text rebuilds {allViews ? "the views" : "the view"} without these:
+            Applying this text rebuilds {allViews ? "the views" : "the view"}{" "}
+            without these:
           </p>
           <ul className="mt-1 list-disc pl-5">
             {exported.omitted.map((item) => (

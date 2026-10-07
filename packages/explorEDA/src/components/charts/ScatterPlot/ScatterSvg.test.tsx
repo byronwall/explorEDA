@@ -230,3 +230,58 @@ it("brushes either marginal histogram to an axis range", () => {
   drag("y");
   expect(onMarginal).not.toHaveBeenCalled();
 });
+
+it("clears filters on a click in a marginal band that misses every bin", () => {
+  window.PointerEvent = MouseEvent as typeof PointerEvent;
+  const settings = scatterPlotDefinition.createDefaultSettings({
+    x: 0,
+    y: 0,
+    w: 4,
+    h: 4,
+  });
+  settings.xField = "x";
+  settings.yField = "y";
+  settings.marginals = { bins: 5 };
+  const snapshot = {
+    revision: "marginal-clear",
+    allIds: [0, 1],
+    chartIds: [0, 1],
+    filteredIds: [0, 1],
+    xData: { 0: 1, 1: 5 },
+    yData: { 0: 5, 1: 1 },
+    colorData: {},
+    fieldSettings: {},
+  };
+  const plan = planScatter(settings, snapshot, 400, 300);
+  const marginals = planMarginals(settings, plan)!;
+  const onMarginal = vi.fn();
+  const onClearPlot = vi.fn();
+  const { container } = render(
+    <ScatterSvg
+      plan={plan}
+      hoveredId={null}
+      marginals={marginals}
+      onMarginalBrush={vi.fn()}
+      onMarginal={onMarginal}
+      onClearPlot={onClearPlot}
+      onBrushChange={vi.fn()}
+      onInspectPoint={vi.fn(() => false)}
+      onInspectGuide={vi.fn()}
+      onInspectOverlay={vi.fn()}
+    />
+  );
+  const bin = marginals.bins[0]!;
+  fireEvent.click(container.querySelector(`[data-marginal-id="${bin.id}"]`)!);
+  expect(onMarginal).toHaveBeenCalledWith(bin.id, false);
+  expect(onClearPlot).not.toHaveBeenCalled();
+
+  const bands = container.querySelectorAll("[data-marginal-band]");
+  expect(bands).toHaveLength(2);
+  fireEvent.click(bands[0]!);
+  fireEvent.click(bands[1]!);
+  expect(onClearPlot).toHaveBeenCalledTimes(2);
+
+  // Alt-click is inspection, never a clear.
+  fireEvent.click(bands[0]!, { altKey: true });
+  expect(onClearPlot).toHaveBeenCalledTimes(2);
+});

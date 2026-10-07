@@ -325,6 +325,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
         xScale={xScale}
         yScale={yScale}
         settings={chartSettings}
+        onClearPlot={() => updateChart(settings.id, { filters: [] })}
         yTickFormatter={(value) =>
           yLabelsByKey.get(String(value)) ?? String(value)
         }

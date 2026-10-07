@@ -54,6 +54,8 @@ export type HistoryEntry = {
 
 export type SavedViewsSession = {
   version: 1;
+  /** The example these rows came from. Imported data has none. */
+  exampleId?: string;
   sourceAnalysis: string;
   project?: AnalysisProject;
   tables?: Record<string, readonly AnalysisSourceRow[]>;

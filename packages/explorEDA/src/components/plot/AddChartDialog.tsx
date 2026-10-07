@@ -6,7 +6,6 @@ import type { ChartSettings } from "@/types/ChartTypes";
 import { mergeWithDefaultSettings } from "@/utils/defaultSettings";
 import { useCreateCharts } from "@/hooks/useCreateCharts";
 import { ChartRenderer } from "../charts/ChartRenderer";
-import { ChartTraceInspector } from "../PlotChartPanel";
 import { ChartTraceScope } from "../charts/trace/ChartTraceScope";
 import { Button } from "../ui/button";
 import {
@@ -292,19 +291,11 @@ function AddChartDialogContent({
             className="eda-add-chart-preview"
             aria-label={`Preview of the new ${definition.name}`}
           >
-            <div ref={previewRef} className="eda-add-chart-canvas relative">
+            <div ref={previewRef} className="eda-add-chart-canvas">
               {previewSize.width > 0 && previewSize.height > 0 && (
+                // The preview is not on the grid yet, so it has no trace
+                // control.
                 <ChartTraceScope>
-                  {(preview.type === "metric-card" ||
-                    preview.type === "map" ||
-                    preview.type === "bar" ||
-                    preview.type === "row" ||
-                    preview.type === "boxplot" ||
-                    (preview.type === "line" && preview.time)) && (
-                    <div className="absolute right-2 top-2 z-10">
-                      <ChartTraceInspector type={preview.type} />
-                    </div>
-                  )}
                   <ChartRenderer
                     settings={preview}
                     onSettingsChange={

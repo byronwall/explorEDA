@@ -37,6 +37,9 @@ import {
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
 
+/** Height, in pixels, a click can land in on even the shortest bin. */
+const MIN_BIN_TARGET = 8;
+
 type BarChartProps = BaseChartProps<BarChartSettings> & {
   aggregateResult?: AggregateResult;
   aggregateScope?: string;
@@ -270,10 +273,21 @@ function SingleBarChart({
   );
 
   // A click on a bin filters to its bounds. A second click on the only
-  // selected bin clears the filter.
-  const selectBinAt = ([x]: [number, number]) => {
+  // selected bin clears the filter. A click above a bar is empty space, but a
+  // short bar keeps a few pixels of target.
+  const selectBinAt = ([x, y]: [number, number]) => {
     const bin = plan.bars.find(
-      (bar) => bar.bin && x >= bar.x && x <= bar.x + bar.width + 1
+      (bar) =>
+        bar.bin &&
+        x >= bar.x &&
+        x <= bar.x + bar.width + 1 &&
+        y >=
+          Math.min(
+            bar.y,
+            bar.total?.y ?? bar.y,
+            bar.y + bar.height - MIN_BIN_TARGET
+          ) &&
+        y <= bar.y + bar.height
     )?.bin;
     if (!bin) return false;
     const rest = settings.filters.filter((f) => f.field !== settings.field);
@@ -384,6 +398,7 @@ function SingleBarChart({
         onInspectGuide={(id) => inspect("guide", id)}
         onHoverTarget={(id, altKey) => setHovered({ id, altKey })}
         onSelectPlot={plan.mode === "bin" ? selectBinAt : undefined}
+        onClearPlot={() => updateChart(settings.id, { filters: [] })}
         onInspectPlot={([x, y]) => {
           const bar = barAt(plan, x, y);
           return bar ? Boolean(inspect("bar", bar.id)) : false;

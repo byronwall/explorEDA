@@ -1,4 +1,6 @@
-import { defineConfig } from "vite";
+import { copyFile } from "node:fs/promises";
+import path from "path";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import {
@@ -7,12 +9,34 @@ import {
   useLibrarySource,
 } from "./exploredaSource";
 
+/**
+ * GitHub Pages serves 404.html for paths it has no file for. A copy of the
+ * app's page there lets /viewer and /examples/<id> load directly.
+ */
+function spaFallback(): Plugin {
+  let outDir = "dist";
+  return {
+    name: "spa-fallback",
+    apply: "build",
+    configResolved(config) {
+      outDir = path.resolve(config.root, config.build.outDir);
+    },
+    async closeBundle() {
+      await copyFile(
+        path.join(outDir, "index.html"),
+        path.join(outDir, "404.html")
+      );
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig(({ command }) => ({
   plugins: [
     ...(command === "serve" && useLibrarySource ? [exploredaSource()] : []),
     react(),
     tailwindcss(),
+    spaFallback(),
   ],
   base: "/",
 

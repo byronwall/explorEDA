@@ -27,120 +27,137 @@ vi.mock("exploreda", async () => {
         onStateChange?: (settings: SavedDataStructure) => void;
         sidePanels?: import("exploreda").ExplorEdaSidePanel[];
         readOnly?: boolean;
+        toolbarStart?: React.ReactNode;
+        toolbarEnd?: React.ReactNode;
       }
-    >(({ data, savedData, onStateChange, sidePanels = [], readOnly }, ref) => {
-      const [mount] = React.useState(() => ++workspaceMounts);
-      const [currentSettings, setCurrentSettings] = React.useState(
-        () => savedData ?? makeSettings()
-      );
-      const [draft, setDraft] = React.useState("");
-      React.useImperativeHandle(
-        ref,
-        () => ({ getSettings: () => currentSettings }),
-        [currentSettings]
-      );
-      const emit = (kind: "filter" | "chart" | "both" | "shared") => {
-        const current = currentSettings;
-        const filters = current.rowsSettings?.filters ?? [];
-        const nextFilter = {
-          type: "text" as const,
-          field: "region",
-          operator: "equals" as const,
-          value:
-            filters[0]?.type === "text" && filters[0].value === "North"
-              ? "South"
-              : "North",
-        };
-        const next = {
-          ...current,
-          charts:
-            kind === "chart" || kind === "both"
-              ? ([
-                  { id: `chart-${current.charts.length + 1}`, filters: [] },
-                ] as unknown as SavedDataStructure["charts"])
-              : current.charts,
-          calculations:
-            kind === "shared"
-              ? [{ resultColumnName: "total", expression: "1" }]
-              : current.calculations,
-          rowsSettings: {
-            columns: current.rowsSettings?.columns ?? [],
-            sortDirection: current.rowsSettings?.sortDirection ?? "asc",
-            filters:
-              kind === "filter" || kind === "both" ? [nextFilter] : filters,
-            globalSearch: current.rowsSettings?.globalSearch ?? "",
-          },
-        } as SavedDataStructure;
-        setCurrentSettings(next);
-        onStateChange?.(next);
-      };
-      return React.createElement(
-        "div",
+    >(
+      (
         {
-          "data-testid": "workspace",
-          "data-mount": mount,
-          "data-rows": data.length,
-          "data-filter-count":
-            currentSettings.rowsSettings?.filters.length ?? 0,
-          "data-chart-count": currentSettings.charts.length,
-          "data-calculation-count": currentSettings.calculations.length,
-          "data-read-only": readOnly ? "true" : "false",
+          data,
+          savedData,
+          onStateChange,
+          sidePanels = [],
+          readOnly,
+          toolbarStart,
+          toolbarEnd,
         },
-        ...sidePanels.map((panel) =>
-          React.createElement(
-            React.Fragment,
-            { key: panel.id },
-            React.createElement(
-              "button",
-              {
-                "aria-pressed": panel.open,
-                onClick: () => panel.onOpenChange(!panel.open),
-              },
-              panel.label
-            ),
-            panel.open &&
-              React.createElement(
-                "aside",
-                { "aria-label": panel.label },
-                panel.actions,
-                panel.banner,
-                panel.children
-              )
-          )
-        ),
-        React.createElement("input", {
-          "aria-label": "Editor draft",
-          value: draft,
-          onChange: (event: React.ChangeEvent<HTMLInputElement>) =>
-            setDraft(event.target.value),
-          onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => {
-            if (event.key === "Enter") {
-              emit("filter");
-            }
+        ref
+      ) => {
+        const [mount] = React.useState(() => ++workspaceMounts);
+        const [currentSettings, setCurrentSettings] = React.useState(
+          () => savedData ?? makeSettings()
+        );
+        const [draft, setDraft] = React.useState("");
+        React.useImperativeHandle(
+          ref,
+          () => ({ getSettings: () => currentSettings }),
+          [currentSettings]
+        );
+        const emit = (kind: "filter" | "chart" | "both" | "shared") => {
+          const current = currentSettings;
+          const filters = current.rowsSettings?.filters ?? [];
+          const nextFilter = {
+            type: "text" as const,
+            field: "region",
+            operator: "equals" as const,
+            value:
+              filters[0]?.type === "text" && filters[0].value === "North"
+                ? "South"
+                : "North",
+          };
+          const next = {
+            ...current,
+            charts:
+              kind === "chart" || kind === "both"
+                ? ([
+                    { id: `chart-${current.charts.length + 1}`, filters: [] },
+                  ] as unknown as SavedDataStructure["charts"])
+                : current.charts,
+            calculations:
+              kind === "shared"
+                ? [{ resultColumnName: "total", expression: "1" }]
+                : current.calculations,
+            rowsSettings: {
+              columns: current.rowsSettings?.columns ?? [],
+              sortDirection: current.rowsSettings?.sortDirection ?? "asc",
+              filters:
+                kind === "filter" || kind === "both" ? [nextFilter] : filters,
+              globalSearch: current.rowsSettings?.globalSearch ?? "",
+            },
+          } as SavedDataStructure;
+          setCurrentSettings(next);
+          onStateChange?.(next);
+        };
+        return React.createElement(
+          "div",
+          {
+            "data-testid": "workspace",
+            "data-mount": mount,
+            "data-rows": data.length,
+            "data-filter-count":
+              currentSettings.rowsSettings?.filters.length ?? 0,
+            "data-chart-count": currentSettings.charts.length,
+            "data-calculation-count": currentSettings.calculations.length,
+            "data-read-only": readOnly ? "true" : "false",
           },
-        }),
-        React.createElement(
-          "button",
-          { onClick: () => emit("filter") },
-          "Emit filter"
-        ),
-        React.createElement(
-          "button",
-          { onClick: () => emit("chart") },
-          "Emit chart"
-        ),
-        React.createElement(
-          "button",
-          { onClick: () => emit("both") },
-          "Emit both"
-        ),
-        React.createElement(
-          "button",
-          { onClick: () => emit("shared") },
-          "Emit shared change"
-        )
-      );
-    }),
+          toolbarStart,
+          toolbarEnd,
+          ...sidePanels.map((panel) =>
+            React.createElement(
+              React.Fragment,
+              { key: panel.id },
+              React.createElement(
+                "button",
+                {
+                  "aria-pressed": panel.open,
+                  onClick: () => panel.onOpenChange(!panel.open),
+                },
+                panel.label
+              ),
+              panel.open &&
+                React.createElement(
+                  "aside",
+                  { "aria-label": panel.label },
+                  panel.actions,
+                  panel.banner,
+                  panel.children
+                )
+            )
+          ),
+          React.createElement("input", {
+            "aria-label": "Editor draft",
+            value: draft,
+            onChange: (event: React.ChangeEvent<HTMLInputElement>) =>
+              setDraft(event.target.value),
+            onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => {
+              if (event.key === "Enter") {
+                emit("filter");
+              }
+            },
+          }),
+          React.createElement(
+            "button",
+            { onClick: () => emit("filter") },
+            "Emit filter"
+          ),
+          React.createElement(
+            "button",
+            { onClick: () => emit("chart") },
+            "Emit chart"
+          ),
+          React.createElement(
+            "button",
+            { onClick: () => emit("both") },
+            "Emit both"
+          ),
+          React.createElement(
+            "button",
+            { onClick: () => emit("shared") },
+            "Emit shared change"
+          )
+        );
+      }
+    ),
   };
 });
 
@@ -413,21 +430,28 @@ describe("saved view session and history", () => {
     );
     await screen.findByTestId("workspace");
     fireEvent.click(screen.getByRole("button", { name: "New view" }));
-    const sales = screen.getByRole("tab", { name: "Sales" });
-    const newView = screen.getByRole("tab", { name: "New view" });
+    // The tabs sit in the workspace toolbar and remount with each view, so
+    // focus moves to the new copy of the selected tab.
+    const sales = () => screen.getByRole("tab", { name: "Sales" });
+    const newView = () => screen.getByRole("tab", { name: "New view" });
 
-    sales.focus();
-    fireEvent.keyDown(sales, { key: "ArrowRight" });
-    expect(newView).toHaveFocus();
-    expect(newView).toHaveAttribute("aria-selected", "true");
+    sales().focus();
+    fireEvent.keyDown(sales(), { key: "ArrowRight" });
+    expect(newView()).toHaveFocus();
+    expect(newView()).toHaveAttribute("aria-selected", "true");
 
-    fireEvent.keyDown(newView, { key: "ArrowLeft" });
-    expect(sales).toHaveFocus();
-    expect(sales).toHaveAttribute("aria-selected", "true");
-    fireEvent.keyDown(sales, { key: "End" });
-    expect(newView).toHaveFocus();
-    fireEvent.keyDown(newView, { key: "Home" });
-    expect(sales).toHaveFocus();
+    fireEvent.keyDown(newView(), { key: "ArrowLeft" });
+    expect(sales()).toHaveFocus();
+    expect(sales()).toHaveAttribute("aria-selected", "true");
+    fireEvent.keyDown(sales(), { key: "End" });
+    expect(newView()).toHaveFocus();
+    fireEvent.keyDown(newView(), { key: "Home" });
+    expect(sales()).toHaveFocus();
+
+    // A switch by pointer leaves focus where it was.
+    fireEvent.click(screen.getByRole("button", { name: "Emit chart" }));
+    fireEvent.click(newView());
+    expect(newView()).toHaveAttribute("aria-selected", "true");
   });
 
   it("renames, duplicates, moves, and deletes views with undo", async () => {

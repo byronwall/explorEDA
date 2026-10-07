@@ -1,10 +1,8 @@
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
-import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-} from "../ChartStatusLine";
+import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
+import { isEmptyPlotTarget } from "../emptyPlotClick";
 import {
   useCallback,
   useId,
@@ -338,7 +336,20 @@ export function SankeyChart({
       style={{ width, height }}
       onPointerLeave={() => setHovered(null)}
     >
-      <svg width={width} height={height} className="block overflow-visible">
+      <svg
+        width={width}
+        height={height}
+        className="block overflow-visible"
+        onClick={(event) => {
+          // A click on empty space between nodes and flows clears the selection.
+          if (
+            !event.altKey &&
+            settings.filters.length > 0 &&
+            isEmptyPlotTarget(event.target)
+          )
+            updateChart(settings.id, { filters: [] });
+        }}
+      >
         <g
           className="fill-foreground"
           fontSize={12}

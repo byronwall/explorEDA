@@ -50,13 +50,6 @@ const RAIL_PAD = 12;
 /** The station's center, measured from the row's top edge. */
 const STATION_Y = 15;
 
-const LABEL_COLORS: Record<ChangeLabel, string> = {
-  View: "var(--chart-2)",
-  Filter: "var(--chart-5)",
-  Both: "var(--chart-1)",
-  Shared: "var(--chart-3)",
-};
-
 const KIND_ICONS: Record<ChangeKind, LucideIcon> = {
   view: LayoutGrid,
   "chart-add": Plus,
@@ -77,10 +70,21 @@ const STATE_NOTES: Record<TimelineState, string | undefined> = {
 
 const laneX = (lane: number) => RAIL_PAD + lane * LANE_WIDTH;
 
+/**
+ * The rail is neutral; only the current step carries the accent. Undone and
+ * replaced steps fade instead of taking a hue of their own.
+ */
 function lineColor(state: TimelineState) {
-  return state === "branch"
-    ? "color-mix(in oklab, var(--muted-foreground) 45%, transparent)"
-    : "var(--primary)";
+  const share = state === "branch" ? 22 : state === "future" ? 35 : 45;
+  return `color-mix(in oklab, var(--muted-foreground) ${share}%, transparent)`;
+}
+
+function stationTone(state: TimelineState) {
+  if (state === "current") {
+    return "var(--primary)";
+  }
+  const share = state === "branch" ? 35 : state === "future" ? 50 : 75;
+  return `color-mix(in oklab, var(--muted-foreground) ${share}%, transparent)`;
 }
 
 function isSameDay(a: Date, b: Date) {
@@ -99,22 +103,21 @@ function formatWhen(at: string, now: number, withSeconds = false) {
 function Rail({
   row,
   laneCount,
-  label,
   previewing,
   station = "step",
 }: {
   row: TimelineRow;
   laneCount: number;
-  label: ChangeLabel;
   previewing: boolean;
-  /** A bundle draws a capsule, like an interchange; a heading draws none. */
+  /** A bundle draws a hollow station; a heading draws none. */
   station?: "step" | "bundle" | "none";
 }) {
   const width = laneX(laneCount - 1) + RAIL_PAD;
   const x = laneX(row.lane);
   const current = row.state === "current";
-  const size = current ? 15 : 11;
-  const height = station === "bundle" ? 21 : size;
+  const size = current ? 11 : 9;
+  // A step is a filled dot; a bundle of steps is a ring of the same size.
+  const filled = current || (station === "step" && row.state === "past");
   return (
     <div aria-hidden="true" className="relative shrink-0" style={{ width }}>
       {row.segments.map((segment: RailSegment) => (
@@ -154,25 +157,20 @@ function Rail({
       {station !== "none" && (
         <span
           className={cn(
-            "absolute rounded-full border-2 bg-background transition-shadow",
+            "absolute rounded-full border-[1.5px] bg-background transition-shadow",
             current &&
-              "shadow-[0_0_0_4px_color-mix(in_oklab,var(--primary)_18%,transparent)]",
+              "shadow-[0_0_0_3px_color-mix(in_oklab,var(--primary)_16%,transparent)]",
             previewing &&
-              "shadow-[0_0_0_3px_var(--background),0_0_0_5px_var(--foreground)]",
+              "shadow-[0_0_0_2px_var(--background),0_0_0_3.5px_var(--foreground)]",
             row.state === "future" && "border-dashed"
           )}
           style={{
             left: x - size / 2,
-            top: STATION_Y - (station === "bundle" ? 6 : size / 2),
+            top: STATION_Y - size / 2,
             width: size,
-            height,
-            borderColor:
-              row.state === "branch"
-                ? lineColor("branch")
-                : current
-                  ? "var(--primary)"
-                  : LABEL_COLORS[label],
-            background: current ? "var(--primary)" : undefined,
+            height: size,
+            borderColor: stationTone(row.state),
+            background: filled ? stationTone(row.state) : undefined,
           }}
         />
       )}
@@ -244,7 +242,7 @@ function StateBadge({ state }: { state: TimelineState }) {
       className={cn(
         STATE_BADGE,
         state === "current"
-          ? "bg-primary text-primary-foreground"
+          ? "bg-primary/10 text-primary"
           : "bg-muted text-muted-foreground"
       )}
     >
@@ -256,21 +254,16 @@ function StateBadge({ state }: { state: TimelineState }) {
 function KindIcon({
   change,
   label,
-  muted,
 }: {
   change: HistoryChange | undefined;
   label: ChangeLabel;
-  muted?: boolean;
 }) {
   const Icon = change ? KIND_ICONS[change.kind] : LayoutGrid;
   return (
     <>
       <Icon
         aria-hidden="true"
-        className="size-3.5 shrink-0 self-center"
-        style={{
-          color: muted ? "var(--muted-foreground)" : LABEL_COLORS[label],
-        }}
+        className="size-3.5 shrink-0 self-center text-muted-foreground"
       />
       <span className="sr-only">{LABEL_NAMES[label]}: </span>
     </>
@@ -353,12 +346,7 @@ function Station({
       )}
       data-state={row.state}
     >
-      <Rail
-        row={row}
-        laneCount={laneCount}
-        label={entry.label}
-        previewing={previewing}
-      />
+      <Rail row={row} laneCount={laneCount} previewing={previewing} />
       <div className={cn("min-w-0 flex-1 pr-1.5", nested && "pl-3")}>
         <button
           type="button"
@@ -376,11 +364,7 @@ function Station({
           {wide ? (
             <>
               <span className="flex min-w-0 items-center gap-1.5">
-                <KindIcon
-                  change={changes[0]}
-                  label={entry.label}
-                  muted={muted}
-                />
+                <KindIcon change={changes[0]} label={entry.label} />
                 <span
                   className={cn(
                     "min-w-0 break-words font-medium",
@@ -422,11 +406,7 @@ function Station({
           ) : (
             <>
               <span className="flex items-center gap-1.5">
-                <KindIcon
-                  change={changes[0]}
-                  label={entry.label}
-                  muted={muted}
-                />
+                <KindIcon change={changes[0]} label={entry.label} />
                 <span
                   className={cn(
                     "min-w-0 truncate text-[12.5px] font-medium leading-[18px]",
@@ -472,7 +452,7 @@ function Station({
                 className={cn(WIDE_COLUMNS, "py-0.5 pl-1 text-[11px]")}
               >
                 <span className="flex min-w-0 items-center gap-1.5 pl-5 text-muted-foreground">
-                  <KindIcon change={change} label={entry.label} muted />
+                  <KindIcon change={change} label={entry.label} />
                   <span className="min-w-0 truncate text-foreground/85">
                     {change.text}
                   </span>
@@ -568,10 +548,7 @@ function BundleHeader({
     <span className="flex min-w-0 items-center gap-1.5">
       <Icon
         aria-hidden="true"
-        className="size-3.5 shrink-0 self-center"
-        style={{
-          color: muted ? "var(--muted-foreground)" : LABEL_COLORS[item.label],
-        }}
+        className="size-3.5 shrink-0 self-center text-muted-foreground"
       />
       <span
         className={cn(
@@ -594,7 +571,6 @@ function BundleHeader({
       <Rail
         row={open ? passingRail(newest) : bundleRail(item.rows)}
         laneCount={laneCount}
-        label={item.label}
         previewing={false}
         station={open ? "none" : "bundle"}
       />
@@ -691,7 +667,6 @@ function DayHeading({
       <Rail
         row={passingRail(next)}
         laneCount={laneCount}
-        label="View"
         previewing={false}
         station="none"
       />

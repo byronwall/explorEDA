@@ -1,4 +1,5 @@
-const PAGER_HEIGHT = 20;
+/** The pager's own row; 0 when it shares the chart's legend line. */
+export const PAGER_HEIGHT = 20;
 const TABLE_HEADER_HEIGHT = 32;
 
 export function planFacetGridLayout(
@@ -7,11 +8,12 @@ export function planFacetGridLayout(
   rowCount: number,
   columnCount: number,
   page: number,
-  tableHeaderHeight: number
+  tableHeaderHeight: number,
+  pagerHeight = PAGER_HEIGHT
 ) {
   const rowPageSize = Math.max(
     1,
-    Math.floor(Math.max(1, height - PAGER_HEIGHT - TABLE_HEADER_HEIGHT) / 160)
+    Math.floor(Math.max(1, height - pagerHeight - TABLE_HEADER_HEIGHT) / 160)
   );
   const columnPageSize = Math.max(1, Math.floor(Math.max(1, width - 90) / 220));
   const rowPages = Math.max(1, Math.ceil(rowCount / rowPageSize));
@@ -25,8 +27,6 @@ export function planFacetGridLayout(
     columnPageSize,
     columnCount - columnPage * columnPageSize
   );
-  // The pager row always holds the facet picker.
-  const pagerHeight = PAGER_HEIGHT;
   return {
     mode: "grid" as const,
     width,
@@ -55,7 +55,8 @@ export function planFacetWrapLayout(
   height: number,
   facetCount: number,
   requestedColumns: number,
-  page: number
+  page: number,
+  pagerHeight = PAGER_HEIGHT
 ) {
   const columnCount = Math.max(
     1,
@@ -63,13 +64,11 @@ export function planFacetWrapLayout(
   );
   const rowCount = Math.max(
     1,
-    Math.floor(Math.max(1, height - PAGER_HEIGHT) / 230) || 1
+    Math.floor(Math.max(1, height - pagerHeight) / 230) || 1
   );
   const pageSize = columnCount * rowCount;
   const pageCount = Math.max(1, Math.ceil(facetCount / pageSize));
   const currentPage = Math.min(page, pageCount - 1);
-  // The pager row always holds the facet picker.
-  const pagerHeight = PAGER_HEIGHT;
   return {
     mode: "wrap" as const,
     width,

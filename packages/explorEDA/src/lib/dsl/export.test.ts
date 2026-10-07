@@ -91,7 +91,8 @@ table Revenue,Cost,"Net revenue"`,
       },
       xAxis: { ...scatter!.xAxis, scaleType: "log", title: "" },
       display: "hexbin",
-      hexbin: { columns: 18, showPoints: false },
+      hexbin: { columns: 18, showPoints: true },
+      pointSize: 4.5,
       regression: undefined,
     });
     Object.assign(row!, {

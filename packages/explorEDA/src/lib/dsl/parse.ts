@@ -65,7 +65,7 @@ interface RawToken {
 const ALIAS = /^([A-Za-z_][\w]*)(?::([A-Za-z]+))?=/;
 
 /** Splits a line at spaces outside quotes. A `#` starting a token ends it. */
-function tokenize(
+export function tokenize(
   line: string,
   start = 0
 ): { tokens: RawToken[]; unclosed?: number } {
@@ -146,7 +146,7 @@ function toItem(text: string, quoted: boolean): DslItem {
 }
 
 /** Splits `key=value` at the first `=` outside quotes. */
-function splitPair(text: string): [string, string] | undefined {
+export function splitPair(text: string): [string, string] | undefined {
   let inQuote = false;
   for (let index = 0; index < text.length; index++) {
     const char = text[index];
