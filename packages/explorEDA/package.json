@@ -46,10 +46,22 @@
       "types": "./dist/calculations.d.ts",
       "require": "./dist/calculations.cjs",
       "import": "./dist/calculations.js"
+    },
+    "./analysis": {
+      "types": "./dist/analysis.d.ts",
+      "require": "./dist/analysis.cjs",
+      "import": "./dist/analysis.js"
     }
   },
   "bin": {
     "exploreda-dsl": "./dist/cli/exploreda-dsl.js"
+  },
+  "typesVersions": {
+    "*": {
+      "analysis": [
+        "./dist/analysis.d.ts"
+      ]
+    }
   },
   "main": "./dist/ExplorEda.cjs",
   "module": "./dist/ExplorEda.js",

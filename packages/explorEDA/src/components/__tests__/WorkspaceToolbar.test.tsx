@@ -45,18 +45,48 @@ function SeedColorScales({ count }: { count: number }) {
   return null;
 }
 
-function renderWorkspace({ colorScales = 0 } = {}) {
+function RowsSettingsSnapshot() {
+  const globalSearch = useDataLayer((state) => state.rowsSettings.globalSearch);
+  return <output data-testid="saved-rows-search">{globalSearch}</output>;
+}
+
+function renderWorkspace({ colorScales = 0, readOnly = false } = {}) {
   return render(
     <DataLayerProvider data={data} charts={[]}>
       <SeedColorScales count={colorScales} />
+      {readOnly && <RowsSettingsSnapshot />}
       <CalculationEditorProvider>
-        <PlotManager />
+        <PlotManager readOnly={readOnly} />
       </CalculationEditorProvider>
     </DataLayerProvider>
   );
 }
 
 describe("workspace toolbar", () => {
+  it("keeps Rows reachable in read-only previews and keeps its edits local", async () => {
+    renderWorkspace({ readOnly: true });
+    const rowsToggle = screen.getByRole("button", { name: "Rows" });
+    expect(rowsToggle.closest("[inert]")).toBeNull();
+    expect(screen.getByRole("button", { name: "Fields" })).toBeDisabled();
+
+    fireEvent.keyDown(document.body, { key: "r" });
+    const keyboardRows = screen.getByRole("region", { name: "Rows" });
+    fireEvent.keyDown(keyboardRows, { key: "Escape" });
+
+    fireEvent.click(rowsToggle);
+    expect(screen.getByRole("region", { name: "Rows" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Search rows" }));
+    fireEvent.change(screen.getByRole("textbox", { name: "Search table" }), {
+      target: { value: "North" },
+    });
+
+    expect(screen.getByTestId("saved-rows-search")).toBeEmptyDOMElement();
+    expect(
+      screen.getByRole("button", { name: "Search rows: North" })
+    ).toBeInTheDocument();
+    expect(screen.getByText("1 row")).toBeInTheDocument();
+  });
+
   it("peeks at the rows with R and closes without opening hover help", async () => {
     renderWorkspace();
     const toggle = screen.getByRole("button", { name: "Rows" });

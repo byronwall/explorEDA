@@ -136,9 +136,124 @@ describe("calculateGroupedAggregate", () => {
     );
 
     expect(result.rows[0]?.contributors).toMatchObject([
-      { rawInput: "bad", exclusionReason: "Conversion failed: Not a finite number" },
+      {
+        rawInput: "bad",
+        exclusionReason: "Conversion failed: Not a finite number",
+      },
       { rawInput: "NULL", exclusionReason: "Missing value" },
       { rawInput: null, exclusionReason: "Missing value" },
     ]);
+  });
+});
+
+describe("entity-scoped aggregates", () => {
+  const spec = {
+    id: "order-total",
+    name: "Order total",
+    groupField: "group",
+    measureField: "amount",
+    entityField: "orderId",
+    aggregation: "sum" as const,
+  };
+
+  it("counts each entity once while keeping equal-valued entities distinct", () => {
+    const result = calculateGroupedAggregate(
+      [
+        { __ID: 0, group: "all", orderId: "O1", amount: 30 },
+        { __ID: 1, group: "all", orderId: "O1", amount: 30 },
+        { __ID: 2, group: "all", orderId: "O2", amount: 30 },
+      ],
+      spec
+    );
+    expect(result.rows[0]?.value).toBe(60);
+    expect(result.rows[0]?.rowCount).toBe(2);
+    expect(result.rows[0]?.contributors).toHaveLength(3);
+    expect(
+      result.rows[0]?.contributors.filter((item) => item.included)
+    ).toHaveLength(2);
+  });
+
+  it("reduces repeated order amounts to the distinct parent total", () => {
+    const rows = [
+      ["O1", 30, 2],
+      ["O1", 30, 2],
+      ["O2", 20, 1],
+      ["O3", 50, 3],
+      ["O3", 50, 3],
+      ["O3", 50, 3],
+      ["O4", 40, 2],
+      ["O4", 40, 2],
+    ].map(([orderId, amount], __ID) => ({
+      __ID,
+      group: "all",
+      orderId,
+      amount,
+    }));
+    const scoped = calculateGroupedAggregate(rows, spec);
+    const rowLevel = calculateGroupedAggregate(rows, {
+      ...spec,
+      entityField: undefined,
+    });
+    expect(scoped.rows[0]?.value).toBe(140);
+    expect(rowLevel.rows[0]?.value).toBe(310);
+  });
+
+  it("counts an entity once in each group it belongs to", () => {
+    const result = calculateGroupedAggregate(
+      [
+        { __ID: 0, group: "North", orderId: "O1", amount: 30 },
+        { __ID: 1, group: "South", orderId: "O1", amount: 30 },
+        { __ID: 2, group: "South", orderId: "O1", amount: 30 },
+      ],
+      spec
+    );
+    expect(result.rows.map((row) => [row.groupLabel, row.value])).toEqual([
+      ["North", 30],
+      ["South", 30],
+    ]);
+  });
+
+  it("leaves out rows without an ID and keeps the remaining value", () => {
+    const result = calculateGroupedAggregate(
+      [
+        { __ID: 0, group: "all", orderId: "O1", amount: 30 },
+        { __ID: 1, group: "all", orderId: null, amount: 99 },
+      ],
+      spec
+    );
+    expect(result.rows[0]?.value).toBe(30);
+    expect(result.rows[0]?.rowCount).toBe(1);
+    expect(
+      result.rows[0]?.contributors.find((item) => item.sourceId === 1)
+    ).toMatchObject({ included: false, exclusionReason: "Missing ID" });
+  });
+
+  it("makes the value unavailable when one ID has different values", () => {
+    const result = calculateGroupedAggregate(
+      [
+        { __ID: 0, group: "all", orderId: "O1", amount: 30 },
+        { __ID: 1, group: "all", orderId: "O1", amount: 31 },
+      ],
+      spec
+    );
+    expect(result.rows[0]?.value).toBeUndefined();
+    expect(result.rows[0]?.identityIssues).toEqual([
+      { entityKey: "O1", reason: "conflicting-values" },
+    ]);
+    expect(result.rows[0]?.contributors.every((item) => !item.included)).toBe(
+      true
+    );
+  });
+
+  it("counts distinct IDs without a measure", () => {
+    const result = calculateGroupedAggregate(
+      [
+        { __ID: 0, group: "all", orderId: "O1" },
+        { __ID: 1, group: "all", orderId: "O1" },
+        { __ID: 2, group: "all", orderId: "O2" },
+      ],
+      { ...spec, aggregation: "count", measureField: undefined }
+    );
+    expect(result.rows[0]?.value).toBe(2);
   });
 });

@@ -1,4 +1,7 @@
 import { RowTraceBody } from "../RowChart/RowTraceBody";
+import { useAnalysisChartContext } from "@/components/AnalysisChartContext";
+import { traceRowIds } from "./traceRows";
+import { useCloseTrace } from "../ChartTraceControl";
 import { DistributionTraceBody } from "../BoxPlot/DistributionTraceBody";
 import { RegionTraceBody } from "../Map/RegionTraceBody";
 import { MapTraceBody } from "../Map/MapTraceBody";
@@ -27,8 +30,10 @@ import type { ChartTrace } from "./traceTypes";
 
 function TraceBody({ trace }: { trace: ChartTrace }) {
   switch (trace.kind) {
-    case "row-category": return <RowTraceBody key={trace.id} trace={trace} />;
-    case "distribution": return <DistributionTraceBody trace={trace} />;
+    case "row-category":
+      return <RowTraceBody key={trace.id} trace={trace} />;
+    case "distribution":
+      return <DistributionTraceBody trace={trace} />;
     case "map-region":
     case "map-region-row":
     case "map-joins":
@@ -83,6 +88,33 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
   }
 }
 
+/** In a project workspace, opens the query flow on the rows behind a mark. */
+function QueryRowsLink({ trace }: { trace: ChartTrace }) {
+  const analysis = useAnalysisChartContext();
+  const closeTrace = useCloseTrace();
+  const ids = traceRowIds(trace);
+  if (!analysis?.onOpenQueryFlow || !ids?.length) return null;
+  const keys = [
+    ...new Set(ids.flatMap((id) => analysis.resultRows[id]?.key ?? [])),
+  ];
+  return (
+    <button
+      type="button"
+      className="h-7 rounded border border-border px-2 hover:bg-muted"
+      onClick={() => {
+        closeTrace?.();
+        analysis.onOpenQueryFlow?.(keys);
+      }}
+    >
+      Show{" "}
+      {keys.length === 1
+        ? "this row"
+        : `these ${keys.length.toLocaleString()} rows`}{" "}
+      in the query flow
+    </button>
+  );
+}
+
 /** The trace for the selected object, a row finder and every traceable object. */
 export function ChartTracePanel() {
   const trace = useChartTrace();
@@ -105,6 +137,7 @@ export function ChartTracePanel() {
   return (
     <div className="space-y-3 text-xs">
       {trace.trace && <TraceBody trace={trace.trace} />}
+      {trace.trace && <QueryRowsLink trace={trace.trace} />}
       <section
         className="eda-trace-finder"
         aria-label={trace.trace ? "Trace another object" : "Find a source row"}

@@ -505,7 +505,14 @@ export function planBarChart({
   const unplotted: BarChartPlan["unplotted"] = [];
   rows.forEach((row, order) => {
     if (typeof row.value !== "number" || !Number.isFinite(row.value)) {
-      unplotted.push({ row, reason: "No valid numbers" });
+      unplotted.push({
+        row,
+        reason: row.identityIssues?.some(
+          (issue) => issue.reason === "conflicting-values"
+        )
+          ? "Values differ within one ID"
+          : "No valid numbers",
+      });
       return;
     }
     let x: number;
