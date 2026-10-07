@@ -57,14 +57,14 @@ Sources: [public component](../packages/explorEDA/src/components/ExplorEda.tsx),
 The developer adoption and runtime configuration initiatives retired on 2026-10-05.
 Their [closure records](initiative-history.json) preserve scope reconciliation and the inspected revision.
 
-The adoption milestones passed through PR #27 and tickets [exp-72ve](../.tickets/exp-72ve.md) and [exp-4ak2](../.tickets/exp-4ak2.md).
+The adoption milestones passed through PR #27 and tickets exp-72ve and exp-4ak2.
 Recorded checks cover linked filtering, integration, guide links, direct refresh, keyboard use, and three widths.
 The final landing check passed builds, types, UI checks, 374 package tests, and 20 demo tests.
 Light and dark checks used the same build; dark appearance came from a host class.
 Actual browser file selection remained unverified after the chooser tool stalled.
 Unchanged import handlers, passing parser tests, sample import, and paste restore supplied the accepted preservation proof.
 
-Runtime acceptance is in [exp-b6fo](../.tickets/exp-b6fo.md) and its three child tickets.
+Runtime acceptance was tracked in ticket exp-b6fo and its three child tickets.
 It records add, edit, inspect, move, resize, references, host reads, integration, and Reset at 1280, 783, and 390 pixels.
 The final Node 24 check passed builds, types, UI checks, 378 package tests, and 18 demo tests.
 These are historical acceptance results. Retirement did not repeat browser or runtime tests and did not deploy the demo.

@@ -243,6 +243,11 @@ Add a minor changeset for package features with `pnpm changeset:add minor "summa
 
 1. **Identity bridge, during milestone 1.** Prove that source references and stable result keys survive chart `__ID` filters and restore. Inspect the real provider and chart-selection paths. If a general mapping spreads through chart internals, keep numeric IDs within each applied result and translate at the project boundary. Do not replace all chart IDs.
 2. **Execution scheduling, probe in milestone 2 and decide in milestone 4.** Measure the fixed-seed case and fan-out separately. Keep synchronous evaluation if responsive. Otherwise use one worker; bound excessive expansion through an explicit user decision. Do not add incremental execution or a remote engine by default.
+3. **Related-table evaluation at scale.** PR #161 reported 447–1,006 ms input delays on a fixed-seed probe, but the probe was not carried into the stack. Add a fixed-seed probe under `packages/explorEDA/scripts/` for about ten tables of 10,000 rows. Evaluate a lookup chain and a grouped summary; report time, output rows, and origin links. Record main-thread and worker timings in the browser with the shop demo's `createWorker` on and off. Use the numbers to decide whether `ExplorEdaProject` defaults to the worker.
+
+## Deferred follow-ups
+
+- **One row per entity from a repeating scatter.** On an item-level query, a scatter of order fields draws each order once per item. PR #161 collapsed repeated IDs inside the scatter, which disabled density, fits, and paired summaries; that was dropped from the stack. Instead, when every scatter field comes from a looked-up parent, suggest a view on a query whose rows are that parent. Use the Query panel helpers (`sourceView`, `queryForStage`), not chart-level identity rules. Verify with the shop example at 1280, 783, and 390 px.
 
 ## Below the cut line
 
