@@ -1,0 +1,166 @@
+{
+  "dataset": "January 2013 flights from New York City",
+  "source": {
+    "name": "nycflights13",
+    "version": "1.0.2",
+    "url": "https://cran.r-project.org/src/contrib/nycflights13_1.0.2.tar.gz",
+    "sha256": "0e87c5a4e285f16750e91c75aeba33b1e4682cdabf4a3effe5a1de7398394a1d",
+    "license": "CC0",
+    "credit": "Hadley Wickham, nycflights13. Flights: Bureau of Transportation Statistics. Aircraft: FAA. Weather: Iowa Environmental Mesonet."
+  },
+  "preparation": [
+    "flights: every 2013 January record, including missing times and delays; flight_id is F plus the row position in the full 1.0.2 table.",
+    "flight: carrier code plus flight number; flight numbers repeat across carriers and days.",
+    "weather_key: origin, local date, and scheduled hour, built the same way for flights and weather.",
+    "planes: every aircraft in the package, so lookup-only aircraft stay visible; year renamed plane_year.",
+    "weather: every January 2013 origin-hour; precipitation in inches, visibility in miles, temperature in °F.",
+    "airports is excluded: its OpenFlights source has separate terms."
+  ],
+  "files": [
+    {
+      "file": "flights.csv",
+      "rows": 27004,
+      "columns": [
+        "flight_id",
+        "flight_date",
+        "sched_dep_hour",
+        "dep_delay",
+        "arr_delay",
+        "carrier",
+        "flight",
+        "tailnum",
+        "origin",
+        "dest",
+        "air_time",
+        "distance",
+        "weather_key"
+      ],
+      "bytes": 2157288,
+      "sha256": "b94697e69fe897040c371bb27f43760982d1406dd5dd241d853881f214eeff89"
+    },
+    {
+      "file": "airlines.csv",
+      "rows": 16,
+      "columns": [
+        "carrier",
+        "name"
+      ],
+      "bytes": 386,
+      "sha256": "162551bd3401a12d63db3d92b7e66af3017d2e40d55919d6a678489323c10609"
+    },
+    {
+      "file": "planes.csv",
+      "rows": 3322,
+      "columns": [
+        "tailnum",
+        "plane_year",
+        "manufacturer",
+        "model",
+        "engines",
+        "seats",
+        "engine"
+      ],
+      "bytes": 157379,
+      "sha256": "f37e16f86e762c91b75be10677c724213db376259d31282cea2a9a190c3dc3db"
+    },
+    {
+      "file": "weather.csv",
+      "rows": 2226,
+      "columns": [
+        "weather_key",
+        "origin",
+        "observed_hour",
+        "temp",
+        "humid",
+        "wind_speed",
+        "precip",
+        "visib"
+      ],
+      "bytes": 142169,
+      "sha256": "fa9d4f621ce3b0152f3b1b1ca0d55033396e1b0c01607ffac1eb4b386cceec9a"
+    }
+  ],
+  "audit": {
+    "flights": 27004,
+    "uniqueFlightIds": 27004,
+    "finiteDepDelay": 26483,
+    "finiteArrDelay": 26398,
+    "pairedDelays": 26398,
+    "distanceSum": 27188805,
+    "operatingDays": 31,
+    "lookups": {
+      "airlines": {
+        "matched": 27004,
+        "duplicateKeys": []
+      },
+      "planes": {
+        "missingTailnum": 155,
+        "matched": 22525,
+        "unmatched": 4324,
+        "duplicateKeys": []
+      },
+      "weather": {
+        "matched": 26952,
+        "unmatched": 52,
+        "ambiguous": 0,
+        "duplicateKeys": []
+      }
+    }
+  },
+  "findings": {
+    "morning": {
+      "hours": "5–9",
+      "flights": 7875,
+      "meanDepDelay": 4.5
+    },
+    "evening": {
+      "hours": "17–21",
+      "flights": 7433,
+      "meanDepDelay": 16.4
+    },
+    "bandCounts": {
+      "Up to 15 min": 4744,
+      "On time or early": 16821,
+      "15–60 min": 3097,
+      "Over 60 min": 1821,
+      "Not recorded": 521
+    },
+    "overHourDepartures": 1821,
+    "overHourStillOverHour": 1569,
+    "lateDeparturesArrivingOnTime": 2537,
+    "lateDeparturesWithArrival": 9620,
+    "delayCorrelation": 0.916,
+    "medianDepDelay": -2,
+    "meanDepDelay": 10,
+    "worstDays": [
+      {
+        "date": "2013-01-31",
+        "mean": 28.7,
+        "flights": 843
+      },
+      {
+        "date": "2013-01-30",
+        "mean": 28.6,
+        "flights": 802
+      },
+      {
+        "date": "2013-01-16",
+        "mean": 24.6,
+        "flights": 855
+      }
+    ],
+    "bestDay": {
+      "date": "2013-01-15",
+      "mean": 0.1,
+      "flights": 881
+    },
+    "lowVisibility": {
+      "flights": 1852,
+      "meanDepDelay": 17.1
+    },
+    "clearVisibility": {
+      "flights": 20257,
+      "meanDepDelay": 9.2
+    }
+  }
+}

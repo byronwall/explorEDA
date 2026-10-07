@@ -141,6 +141,28 @@ export function BarChartSettingsPanel({
     </>
   );
 
+  const orderControl = (
+    <>
+      <Label htmlFor="bar-category-order">Order</Label>
+      <ActionTooltip content="Data order keeps categories in the order rows first show them. A to Z sorts by label, with numbers in numeric order.">
+        <select
+          id="bar-category-order"
+          className="h-9 rounded-md border-input bg-background px-2 text-sm"
+          value={settings.categoryOrder ?? "data"}
+          onChange={(event) =>
+            onSettingsChange({
+              ...settings,
+              categoryOrder: event.target.value as "data" | "label",
+            })
+          }
+        >
+          <option value="data">Data order</option>
+          <option value="label">A to Z</option>
+        </select>
+      </ActionTooltip>
+    </>
+  );
+
   const createAggregate = (aggregation: AggregateAggregation) => {
     const measureField = measureFields[0];
     if (aggregation !== "count" && !measureField) {
@@ -292,6 +314,7 @@ export function BarChartSettingsPanel({
               }
             />
           </ActionTooltip>
+          {orderControl}
           {seriesControl}
           {settings.colorScaleId && (
             <div className="col-start-2">
@@ -381,6 +404,10 @@ export function BarChartSettingsPanel({
           </option>
         </select>
 
+        {(settings.seriesField ||
+          settings.forceString ||
+          !measureFields.includes(settings.field)) &&
+          orderControl}
         {seriesControl}
         {settings.colorScaleId && (
           <div className="col-start-2">

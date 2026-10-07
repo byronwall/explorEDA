@@ -37,6 +37,7 @@ import {
   LineChart,
   LucideIcon,
   Orbit,
+  Plane,
   ScatterChart,
   ShoppingCart,
   Tags,
@@ -45,6 +46,8 @@ import {
   Wine,
 } from "lucide-react";
 import { boxPlotSettings } from "./boxPlotSettings";
+import { flightsAnalysis } from "./analyses/flights";
+import type { ExampleAnalysis } from "./analyses/types";
 import { categoricalChartSettings } from "./categoricalChartSettings";
 import { nbaStatsSettings } from "./nbaStatsSettings";
 import {
@@ -72,6 +75,8 @@ export interface ExampleData {
   /** One tested first action, shown above the workspace. */
   guide?: string;
   icon: LucideIcon;
+  /** A complete analysis: related tables from files, tabs from dashboard text. */
+  analysis?: ExampleAnalysis;
   /** Related tables: the example opens a project instead of one file. */
   project?: AnalysisProject;
   tables?: Record<string, readonly AnalysisSourceRow[]>;
@@ -116,6 +121,25 @@ export const FEATURED_EXAMPLE_ID = "shop-operations";
 
 /** Every example, in the order the landing page lists them. */
 export const examples: ExampleData[] = [
+  {
+    id: "january-flights",
+    title: "Where January's flights lost time",
+    description:
+      "Every flight from New York's three airports in January 2013, joined to its airline, aircraft, and the weather in its scheduled hour. Follow delay from departure to arrival, set it against visibility, find the worst days, and profile routes and fleets.",
+    dataset: { rows: "27,004 flights · 4 tables", fields: 13, source: "Real" },
+    shows: [
+      "Related tables",
+      "Sankey flow",
+      "Hexagon bins",
+      "LOESS by group",
+      "Calendar",
+      "Parallel coordinates",
+      "ECDF",
+    ],
+    icon: Plane,
+    data: "",
+    analysis: flightsAnalysis,
+  },
   {
     id: "distribution-discovery",
     title: "Delivery times and smaller routes",

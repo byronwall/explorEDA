@@ -81,4 +81,4 @@ Reuse the compact workspace, saved tabs, notes, inspection controls, and import 
 
 **Decide:** Keep this presentation if an analyst can identify a useful capability and test it without coaching. Otherwise revise the opening view, tab grouping, or discovery labels before copying the pattern. Prepare and verify all four families before declaring the overhaul complete.
 
-See the [intent brief](intent-brief.md). An implementation plan has not been written.
+See the [intent brief](intent-brief.md) and the [implementation plan](implementation-plan.md).

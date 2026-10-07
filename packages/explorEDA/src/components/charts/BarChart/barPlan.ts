@@ -167,6 +167,22 @@ export function isNumericBarField(
   );
 }
 
+/** Sorts categories A to Z, numbers in numeric order; missing values last. */
+export function sortByLabel<T>(items: readonly T[], value: (item: T) => datum) {
+  return [...items].sort((a, b) => {
+    const left = value(a);
+    const right = value(b);
+    if (isMissingValue(left) || isMissingValue(right)) {
+      return Number(isMissingValue(left)) - Number(isMissingValue(right));
+    }
+    return typeof left === "number" && typeof right === "number"
+      ? left - right
+      : categoryLabel(left).localeCompare(categoryLabel(right), undefined, {
+          numeric: true,
+        });
+  });
+}
+
 function countRows(
   settings: BarChartSettings,
   snapshot: BarSnapshot
@@ -302,7 +318,11 @@ export function planBarChart({
         ? countRows(settings, snapshot)
         : undefined;
   const rows: (AggregateResultRow & Partial<Pick<BinRow, "bin">>)[] =
-    mode === "bin" ? binRows(settings, snapshot) : (result?.rows ?? []);
+    mode === "bin"
+      ? binRows(settings, snapshot)
+      : settings.categoryOrder === "label"
+        ? sortByLabel(result?.rows ?? [], (row) => row.groupValue)
+        : (result?.rows ?? []);
 
   // Y domain: an aggregate uses its current values; counts use every source row
   // so bars keep their scale while other charts filter.

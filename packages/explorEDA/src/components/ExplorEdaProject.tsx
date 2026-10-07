@@ -161,10 +161,14 @@ export const ExplorEdaProject = forwardRef<
         },
       ])
     );
-    return {
-      ...decoded,
-      fieldSettings: { ...declared, ...decoded.fieldSettings },
+    // Saved settings for a field add to its declared name and type.
+    const fieldSettings: NonNullable<SavedDataStructure["fieldSettings"]> = {
+      ...declared,
     };
+    for (const [id, saved] of Object.entries(decoded.fieldSettings ?? {})) {
+      fieldSettings[id] = { ...declared[id], ...saved };
+    }
+    return { ...decoded, fieldSettings };
   }, [settings, idsByKey, evaluation.fields]);
 
   useImperativeHandle(

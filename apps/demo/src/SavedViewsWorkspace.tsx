@@ -8,6 +8,7 @@ import {
   STORAGE_KEY,
   PROJECT_STORAGE_KEY,
   writeProjectTables,
+  clearProjectTables,
   type SavedView,
   type SavedViewsSession,
 } from "./savedViewsSession";
@@ -74,7 +75,8 @@ function makeSession(
   views: ExampleView[] = [],
   project?: AnalysisProject,
   tables?: Record<string, readonly AnalysisSourceRow[]>,
-  exampleId?: string
+  exampleId?: string,
+  tablesFromExample = false
 ): SavedViewsSession {
   const tab = {
     id: newId(),
@@ -120,6 +122,7 @@ function makeSession(
   return {
     version: 1,
     ...(exampleId ? { exampleId } : {}),
+    ...(exampleId && tablesFromExample ? { tablesFrom: exampleId } : {}),
     sourceAnalysis,
     project,
     tables,
@@ -284,6 +287,7 @@ export function SavedViewsWorkspace({
   queryPresets,
   viewName,
   exampleId,
+  tablesFromExample,
 }: {
   data: DatumObject[];
   initialSettings?: SavedDataStructure;
@@ -296,6 +300,8 @@ export function SavedViewsWorkspace({
   viewName: string;
   /** The example these rows came from, so its URL can restore the session. */
   exampleId?: string;
+  /** The example's files hold its tables, so the session does not save them. */
+  tablesFromExample?: boolean;
 }) {
   const [session, setSession] = useState(() =>
     initialSession
@@ -307,7 +313,8 @@ export function SavedViewsWorkspace({
           initialViews,
           initialProject,
           sourceTables,
-          exampleId
+          exampleId,
+          tablesFromExample
         )
   );
   // Tabs remount with the workspace, so focus follows the selected tab.
@@ -346,10 +353,14 @@ export function SavedViewsWorkspace({
     [sourceAnalysis]
   );
   // Dashboard text checks field names against rows. In a project those are
-  // the current view's query result, not the session's single table.
+  // the current view's query result, not the session's single table. The
+  // query runs only while the panel is open.
   const textRows = useMemo(() => {
     if (!shownProject || !session.tables || !view.queryId) {
       return sourceRows;
+    }
+    if (!textOpen) {
+      return [];
     }
     try {
       return evaluateAnalysisQuery(
@@ -361,7 +372,14 @@ export function SavedViewsWorkspace({
     } catch {
       return [];
     }
-  }, [shownProject, session.tables, view.queryId, view.bindings, sourceRows]);
+  }, [
+    shownProject,
+    session.tables,
+    view.queryId,
+    view.bindings,
+    sourceRows,
+    textOpen,
+  ]);
   // Source tables are saved once under their own key; the session, which
   // changes on every edit, is saved without them.
   const { tables, ...sessionWithoutTables } = session;
@@ -370,10 +388,13 @@ export function SavedViewsWorkspace({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [session]
   );
-  const tablesBytes = useMemo(
-    () => (tables ? writeProjectTables(tables) : 0),
-    [tables]
-  );
+  const tablesBytes = useMemo(() => {
+    if (session.tablesFrom) {
+      clearProjectTables();
+      return 0;
+    }
+    return tables ? writeProjectTables(tables) : 0;
+  }, [tables, session.tablesFrom]);
   const sizeBytes = new Blob([encoded]).size + Math.max(0, tablesBytes);
 
   useEffect(() => {

@@ -11,6 +11,10 @@ import {
 } from "exploreda/analysis";
 
 import { parseCsvData } from "./csvParser";
+import {
+  loadAnalysisTables,
+  resolveAnalysisExample,
+} from "./demos/analyses/loadAnalysis";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Lightbulb } from "lucide-react";
 import {
@@ -225,12 +229,35 @@ export function LandingPage() {
   );
 
   const openSession = useCallback(
-    (session: SavedViewsSession) =>
-      setWorkspace({
-        kind: "session",
-        session,
-        example: examples.find((item) => item.id === session.exampleId),
-      }),
+    (session: SavedViewsSession) => {
+      const example = examples.find((item) => item.id === session.exampleId);
+      // An analysis session saves a reference to its example's files.
+      const source = session.tablesFrom
+        ? examples.find((item) => item.id === session.tablesFrom)
+        : undefined;
+      if (session.tablesFrom && !session.tables) {
+        if (!source?.analysis) {
+          setRestoreFailed(true);
+          return;
+        }
+        setIsLoading(true);
+        loadAnalysisTables(source.analysis)
+          .then((tables) =>
+            setWorkspace({
+              kind: "session",
+              session: { ...session, tables },
+              example,
+            })
+          )
+          .catch(() => {
+            setLoadError("Could not load this analysis's tables. Try again.");
+            toast.error("Failed to load example data");
+          })
+          .finally(() => setIsLoading(false));
+        return;
+      }
+      setWorkspace({ kind: "session", session, example });
+    },
     [setWorkspace]
   );
 
@@ -284,7 +311,9 @@ export function LandingPage() {
     }
     // The example's URL reopens the session saved from it.
     const saved = readSavedViewsSessionResult(
-      selectedExample.project ? PROJECT_STORAGE_KEY : STORAGE_KEY
+      selectedExample.project || selectedExample.analysis
+        ? PROJECT_STORAGE_KEY
+        : STORAGE_KEY
     ).session;
     if (saved?.exampleId === selectedExample.id) {
       setIsLoading(false);
@@ -298,12 +327,18 @@ export function LandingPage() {
     setLoadError(null);
     setWorkspace(null);
 
-    (selectedExample.project
-      ? Promise.resolve([])
-      : fetchExampleData(selectedExample.data, controller.signal)
+    (selectedExample.analysis
+      ? resolveAnalysisExample(selectedExample, controller.signal).then(
+          (example) => ({ example, rows: [] })
+        )
+      : selectedExample.project
+        ? Promise.resolve({ example: selectedExample, rows: [] })
+        : fetchExampleData(selectedExample.data, controller.signal).then(
+            (rows) => ({ example: selectedExample, rows })
+          )
     )
-      .then((rows) => {
-        setWorkspace({ kind: "example", example: selectedExample, rows });
+      .then(({ example: loaded, rows }) => {
+        setWorkspace({ kind: "example", example: loaded, rows });
       })
       .catch((error) => {
         if (error instanceof Error && error.name === "AbortError") {
@@ -699,6 +734,7 @@ export function LandingPage() {
                       workspace.example.viewName ?? workspace.example.title
                     }
                     exampleId={workspace.example.id}
+                    tablesFromExample={Boolean(workspace.example.analysis)}
                   />
                 ) : null}
               </Suspense>

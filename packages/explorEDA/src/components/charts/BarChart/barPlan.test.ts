@@ -44,6 +44,18 @@ function plan(
 }
 
 describe("planBarChart", () => {
+  it("keeps data order by default and sorts category labels on request", () => {
+    const values = ["3 High", "1 Low", null, "10 Top", "2 Mid"];
+    expect(plan("level", values, { extra: { forceString: true } }).bars.map((bar) => bar.label)).toEqual(
+      ["3 High", "1 Low", "(missing)", "10 Top", "2 Mid"]
+    );
+    expect(
+      plan("level", values, {
+        extra: { forceString: true, categoryOrder: "label" },
+      }).bars.map((bar) => bar.label)
+    ).toEqual(["1 Low", "2 Mid", "3 High", "10 Top", "(missing)"]);
+  });
+
   it("marks selected groups of a grouped result and fades the rest", () => {
     const result = calculateGroupedAggregate(
       [

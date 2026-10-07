@@ -16,7 +16,7 @@ import {
   useTraceRevision,
   useTraceSource,
 } from "../trace/ChartTraceScope";
-import { barAt } from "./barPlan";
+import { barAt, sortByLabel } from "./barPlan";
 import { barTraceTargets, findBarTraceRow, resolveBarTrace } from "./barTrace";
 import { planSeriesBars, selectSeriesBar } from "./seriesBarPlan";
 import type { BarChartSettings } from "./definition";
@@ -125,7 +125,13 @@ export function SeriesBarChart({
       getLabel,
       format,
       facetFilters,
-      categoryOrder: allIds.map((id) => groupData[id]),
+      categoryOrder:
+        settings.categoryOrder === "label"
+          ? sortByLabel(
+              allIds.map((id) => groupData[id]),
+              (value) => value
+            )
+          : allIds.map((id) => groupData[id]),
       getColor: (value) =>
         getColorForValue(
           settings.colorScaleId,
