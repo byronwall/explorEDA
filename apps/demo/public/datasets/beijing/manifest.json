@@ -1,0 +1,198 @@
+{
+  "dataset": "Beijing air quality, 2016 station-days",
+  "source": {
+    "name": "Beijing Multi-Site Air Quality",
+    "url": "https://archive.ics.uci.edu/static/public/501/beijing+multi+site+air+quality+data.zip",
+    "sha256": "b04da438b2f331ac0ffd45aebdfec0d20d2367feb5f6948c4b1f7ce1191e33c4",
+    "license": "CC BY 4.0",
+    "credit": "Chen, S. (2017). Beijing Multi-Site Air Quality [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5RK5G. Air quality from the Beijing Municipal Environmental Monitoring Center.",
+    "stationFiles": [
+      {
+        "file": "PRSA_Data_Aotizhongxin_20130301-20170228.csv",
+        "sha256": "a94fbcfc71708b6ffdc033360163d91efb7f675e496f6b5860929aa96b96351b",
+        "rows": 35064
+      },
+      {
+        "file": "PRSA_Data_Changping_20130301-20170228.csv",
+        "sha256": "a2e21402a6d95fb7043f87959e6e3dcbecb957aac356a6f8028a85b047c772e7",
+        "rows": 35064
+      },
+      {
+        "file": "PRSA_Data_Dingling_20130301-20170228.csv",
+        "sha256": "3d8dff81f18a80d9f455876a785642bffe1e9b9924ec1e6b7ce8cca790432eeb",
+        "rows": 35064
+      },
+      {
+        "file": "PRSA_Data_Dongsi_20130301-20170228.csv",
+        "sha256": "9c0020214425e5ee2a64d42f97a1f632e1d8f6b53ad50edd85a686cc7999f27e",
+        "rows": 35064
+      },
+      {
+        "file": "PRSA_Data_Guanyuan_20130301-20170228.csv",
+        "sha256": "59390fee3b032597b387491f5230e7edb90a8558e30217ebd6d9befbe669fbf9",
+        "rows": 35064
+      },
+      {
+        "file": "PRSA_Data_Gucheng_20130301-20170228.csv",
+        "sha256": "10ae48801ea55869fee56a48b885fb1127859c130551888d71673f34216ba951",
+        "rows": 35064
+      },
+      {
+        "file": "PRSA_Data_Huairou_20130301-20170228.csv",
+        "sha256": "812dcbe848b3ba2c2d25731064797bff803c46eb0c602156a1fa044df136dc26",
+        "rows": 35064
+      },
+      {
+        "file": "PRSA_Data_Nongzhanguan_20130301-20170228.csv",
+        "sha256": "572cf87b65ef543cd55d3a711b28474def224a46b0ec3fc8add8aaf13b67a487",
+        "rows": 35064
+      },
+      {
+        "file": "PRSA_Data_Shunyi_20130301-20170228.csv",
+        "sha256": "520b59e4ead3b0cfe7f1ed673e30275de8441e999db6f413d5172d2277b8c15a",
+        "rows": 35064
+      },
+      {
+        "file": "PRSA_Data_Tiantan_20130301-20170228.csv",
+        "sha256": "0743e34799cf1ee36195b73321b91baa5625276532e7263c588f68cdef3b4daa",
+        "rows": 35064
+      },
+      {
+        "file": "PRSA_Data_Wanliu_20130301-20170228.csv",
+        "sha256": "0b1a6d754a07f0def2f55434ddfa3870dcd0063b7f766a6f66b6c11bb05a377a",
+        "rows": 35064
+      },
+      {
+        "file": "PRSA_Data_Wanshouxigong_20130301-20170228.csv",
+        "sha256": "ab1d6a356d6997a45f6d657ad47de1e05a4a08d4a7015b38a329a90665ab74d0",
+        "rows": 35064
+      }
+    ]
+  },
+  "preparation": [
+    "station-days: every station and every 2016 date, 12 × 366; a date with no source hours stays as a row with recorded_hours 0.",
+    "Each daily mean needs at least 20 valid hours of 24; otherwise it is empty. Concentrations in µg/m³, temperature in °C, wind speed in m/s.",
+    "Calendar components are the publisher's labels, not UTC instants. Rain is left out: its interval is not documented.",
+    "Seasons: Winter is Dec–Feb of the same calendar year, Spring Mar–May, Summer Jun–Aug, Autumn Sep–Nov.",
+    "stations: one row per station with its year's recorded and valid PM2.5 hours and its mean over qualified days.",
+    "reference-days: Aotizhongxin, the first station by name, one row per date."
+  ],
+  "files": [
+    {
+      "file": "station-days.csv",
+      "rows": 4392,
+      "columns": [
+        "station_day",
+        "station",
+        "date",
+        "month",
+        "season",
+        "recorded_hours",
+        "pm25_valid_hours",
+        "pm25",
+        "pm10",
+        "so2",
+        "no2",
+        "co",
+        "o3",
+        "temp",
+        "wspm",
+        "pm25_coverage_pct"
+      ],
+      "bytes": 441930,
+      "sha256": "4ee894b55386da4ec3c49965919b06c4b8360c5e9346236261e95d6d01102ecd"
+    },
+    {
+      "file": "stations.csv",
+      "rows": 12,
+      "columns": [
+        "station",
+        "recorded_hours",
+        "pm25_valid_hours",
+        "qualified_pm25_days",
+        "annual_pm25"
+      ],
+      "bytes": 411,
+      "sha256": "c147f9b54f2e9127bcfa054fc8cb4dc66f46f3e37febb9e918bb88f094665187"
+    },
+    {
+      "file": "reference-days.csv",
+      "rows": 366,
+      "columns": [
+        "date",
+        "station",
+        "pm25",
+        "pm25_valid_hours"
+      ],
+      "bytes": 11703,
+      "sha256": "7104dd1202b15b5c0b0903634ac32254e403d49bf387e18a6e0fefeb9fe03e1c"
+    }
+  ],
+  "audit": {
+    "stations": 12,
+    "days": 366,
+    "stationDays": 4392,
+    "expectedStationDays": 4392,
+    "sourceHours": 105408,
+    "expectedHours": 105408,
+    "duplicateHours": 0,
+    "daysWithNoRecords": 0,
+    "qualifiedPm25Days": 4275,
+    "pm25ValidHours": 103151,
+    "referenceStation": "Aotizhongxin",
+    "referenceQualifiedDays": 358
+  },
+  "findings": {
+    "highOzone": {
+      "threshold": 81.9,
+      "days": 1057,
+      "medianPm25": 65.5,
+      "medianPm25AllDays": 54.1,
+      "r": -0.22
+    },
+    "pm25CoveragePct": 97.9,
+    "lowestCoverage": {
+      "station": "Dongsi",
+      "month": "07 Jul",
+      "pct": 82.8
+    },
+    "medianPm25": {
+      "Winter": 43.9,
+      "Spring": 54.6,
+      "Summer": 55,
+      "Autumn": 67
+    },
+    "medianO3": {
+      "Winter": 30.3,
+      "Summer": 94.3
+    },
+    "pm25No2": {
+      "n": 4235,
+      "r": 0.76
+    },
+    "tempO3": {
+      "Winter": {
+        "n": 1083,
+        "r": 0.01
+      },
+      "Spring": {
+        "n": 1085,
+        "r": 0.71
+      },
+      "Summer": {
+        "n": 1068,
+        "r": 0.34
+      },
+      "Autumn": {
+        "n": 1021,
+        "r": 0.6
+      }
+    },
+    "worstDay": {
+      "station": "Gucheng",
+      "date": "2016-12-20",
+      "pm25": 476.3
+    },
+    "completeSixPollutantDays": 4143
+  }
+}

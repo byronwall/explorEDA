@@ -639,6 +639,31 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "beijing-air",
+    intent:
+      "Check measurement coverage before comparing stations, then follow daily pollution through seasons, densities, fits, and profiles.",
+    features: {
+      "chart:calendar": "shown",
+      "chart:markdown": "shown",
+      "chart:line": "shown",
+      "chart:row": "shown",
+      "chart:boxplot": "shown",
+      "chart:metric-card": "shown",
+      "chart:data-table": "shown",
+      "chart:heatmap": "shown",
+      "chart:pivot": "shown",
+      "chart:bar": "shown",
+      "chart:scatter": "shown",
+      "chart:ecdf": "shown",
+      "chart:parallel-coordinates": "shown",
+      "mode:scatter-contour": "shown",
+      "mode:scatter-regression": "shown",
+      "mode:calendar-series": "shown",
+      "facet:wrap": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
     exampleId: "multi-source-shop",
     intent:
       "Chart related tables with an explicit row meaning, and follow each chart back to its query steps and source records.",

@@ -34,6 +34,7 @@ import {
   Bird,
   BarChart3,
   Calculator,
+  CloudFog,
   LineChart,
   LucideIcon,
   Orbit,
@@ -46,6 +47,7 @@ import {
   Wine,
 } from "lucide-react";
 import { boxPlotSettings } from "./boxPlotSettings";
+import { beijingAnalysis } from "./analyses/beijing";
 import { flightsAnalysis } from "./analyses/flights";
 import type { ExampleAnalysis } from "./analyses/types";
 import { categoricalChartSettings } from "./categoricalChartSettings";
@@ -139,6 +141,25 @@ export const examples: ExampleData[] = [
     icon: Plane,
     data: "",
     analysis: flightsAnalysis,
+  },
+  {
+    id: "beijing-air",
+    title: "A year of Beijing air, station by station",
+    description:
+      "Daily air quality at 12 Beijing monitoring stations through 2016, built from hourly readings. Check coverage first, then follow PM2.5 through the year, compare particles with NO₂, fit ozone against temperature by season, and brush six-pollutant profiles.",
+    dataset: { rows: "4,392 station-days · 3 tables", fields: 16, source: "Real" },
+    shows: [
+      "Calendar heatmap",
+      "Coverage heatmap",
+      "Smoothed density",
+      "LOESS by group",
+      "Violin and observations",
+      "Parallel coordinates",
+      "Related tables",
+    ],
+    icon: CloudFog,
+    data: "",
+    analysis: beijingAnalysis,
   },
   {
     id: "distribution-discovery",
