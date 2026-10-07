@@ -1,5 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { ExampleData, examples, FEATURED_EXAMPLE_ID } from "@/demos/examples";
+import {
+  ExampleData,
+  examples,
+  FEATURED_ANALYSIS_ID,
+  FEATURED_EXAMPLE_ID,
+} from "@/demos/examples";
 import {
   parseSavedAnalysis,
   validateSavedAnalysisForData,
@@ -12,11 +17,12 @@ import {
 
 import { parseCsvData } from "./csvParser";
 import {
+  buildTextViews,
   loadAnalysisTables,
   resolveAnalysisExample,
 } from "./demos/analyses/loadAnalysis";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Lightbulb } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import {
   lazy,
   Suspense,
@@ -55,8 +61,12 @@ import {
 } from "./savedViewsSession";
 import { examplePath, PROJECT_VIEWER_PATH, VIEWER_PATH } from "./routes";
 
+// The hero's live order book opens the full order book.
 const featuredExample = examples.find(
   (item) => item.id === FEATURED_EXAMPLE_ID
+);
+const featuredAnalysis = examples.find(
+  (item) => item.id === FEATURED_ANALYSIS_ID
 );
 
 // Feature coverage is a development tool. Production builds drop it.
@@ -165,6 +175,8 @@ export function LandingPage() {
   const showCoverage =
     CoverageMatrix !== null && searchParams.get("view") === "coverage";
   const showDocs = searchParams.get("view") === "docs";
+  // A capability link opens an example at the tab that shows it.
+  const initialTab = searchParams.get("tab") ?? undefined;
 
   const [workspace, setWorkspaceState] = useState<Workspace | null>(null);
   const currentWorkspace = useRef(workspace);
@@ -221,9 +233,9 @@ export function LandingPage() {
   };
 
   const handleExampleSelect = useCallback(
-    (id: string) => {
+    (id: string, tab?: string) => {
       setRestoreFailed(false);
-      navigate(examplePath(id));
+      navigate(examplePath(id, tab));
     },
     [navigate]
   );
@@ -334,7 +346,21 @@ export function LandingPage() {
       : selectedExample.project
         ? Promise.resolve({ example: selectedExample, rows: [] })
         : fetchExampleData(selectedExample.data, controller.signal).then(
-            (rows) => ({ example: selectedExample, rows })
+            (rows) => {
+              if (!selectedExample.text) {
+                return { example: selectedExample, rows };
+              }
+              const built = buildTextViews(selectedExample.text, rows);
+              return {
+                example: {
+                  ...selectedExample,
+                  savedData: built.savedData,
+                  views: built.views,
+                  viewName: built.name,
+                },
+                rows,
+              };
+            }
           )
     )
       .then(({ example: loaded, rows }) => {
@@ -499,9 +525,9 @@ export function LandingPage() {
                     />
                   )}
                   <div className="mt-28 space-y-28 pb-10">
-                    {featuredExample && (
+                    {featuredAnalysis && (
                       <FeaturedExample
-                        example={featuredExample}
+                        example={featuredAnalysis}
                         onOpen={handleExampleSelect}
                       />
                     )}
@@ -529,10 +555,9 @@ export function LandingPage() {
                           id="examples-heading"
                           heading="Examples"
                         >
-                          Each example pairs a dataset with the views that
-                          answer its question. Start at the top for a quick
-                          tour; lower examples go deeper into calculations,
-                          tracing, scale, and 3D.
+                          Each is a finished analysis of a real or synthetic
+                          dataset, ready to filter, inspect, and change. Pick a
+                          capability to find the tab that shows it.
                         </SectionHeading>
                       </div>
                       <LearningLinks />
@@ -658,48 +683,6 @@ export function LandingPage() {
                   <ArrowRight className="size-3" aria-hidden="true" />
                 </Link>
               </header>
-              {example?.guide && (
-                <div
-                  role="note"
-                  className="mb-3 flex gap-3 rounded-lg border border-border bg-card px-3 py-2.5 text-sm shadow-xs"
-                >
-                  <Lightbulb
-                    className="mt-0.5 h-4 w-4 shrink-0 text-primary"
-                    aria-hidden="true"
-                  />
-                  <div className="grid min-w-0 gap-2">
-                    <p className="leading-relaxed">{example.guide}</p>
-                    {example.id === FEATURED_EXAMPLE_ID && (
-                      <ol
-                        aria-label="Inspect a chart's settings"
-                        className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-muted-foreground"
-                      >
-                        {[
-                          "Add a chart",
-                          "Edit it in Chart details",
-                          "Inspect it in Chart spec",
-                        ].map((step, index) => (
-                          <li key={step} className="flex items-center gap-1.5">
-                            {index > 0 && (
-                              <span
-                                aria-hidden="true"
-                                className="mr-0.5 h-px w-3 bg-border"
-                              />
-                            )}
-                            <span
-                              aria-hidden="true"
-                              className="grid h-4 w-4 place-items-center rounded-full border border-border bg-background font-mono text-[10px] text-foreground"
-                            >
-                              {index + 1}
-                            </span>
-                            {step}
-                          </li>
-                        ))}
-                      </ol>
-                    )}
-                  </div>
-                </div>
-              )}
               <Suspense
                 fallback={
                   <div role="status" aria-live="polite">
@@ -713,6 +696,7 @@ export function LandingPage() {
                     data={[]}
                     initialSession={workspace.session}
                     viewName="Analysis"
+                    initialTab={initialTab}
                   />
                 ) : workspace?.kind === "rows" ? (
                   <SavedViewsWorkspace
@@ -735,6 +719,7 @@ export function LandingPage() {
                     }
                     exampleId={workspace.example.id}
                     tablesFromExample={Boolean(workspace.example.analysis)}
+                    initialTab={initialTab}
                   />
                 ) : null}
               </Suspense>

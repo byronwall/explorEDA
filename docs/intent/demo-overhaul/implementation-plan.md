@@ -78,5 +78,5 @@ Combine the Shop examples into one analysis, refine Wine, keep Lorenz, and remov
 ## Below the cut line
 
 - Report blocks, saved-state manifests, and sharing.
-- Reusing one analysis worker across tab switches; each switch currently re-evaluates in about 1 s.
+- Reusing one analysis worker across tab switches; each switch currently re-evaluates in about 1 s (`.tickets/exp-dv01.md`).
 - Custom category orders beyond A to Z.
