@@ -339,7 +339,11 @@ describe("LandingPage routing", () => {
     const restored = JSON.parse(
       localStorage.getItem("exploreda.saved-views.v1") ?? "{}"
     );
-    expect(restored.sourceAnalysis).toContain('"x":1');
+    // The rows are saved once, apart from the session that changes per edit.
+    expect(restored.sourceAnalysis).toBeUndefined();
+    expect(localStorage.getItem("exploreda.saved-views.v1.source")).toContain(
+      '"x":1'
+    );
     expect(
       restored.history.every(
         (entry: { tabs: unknown[] }) => !("sourceAnalysis" in entry)
