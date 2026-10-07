@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-06",
+  "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+  "assessment": "CSS theme tokens and chart-specific styles exist. Title expansion is a CSS display rule. There is no common saved editorial style model or subtitle field.",
+  "evidence_scope": "Source inspection only",
+  "sources": [
+    {
+      "path": "packages/explorEDA/src/index.css",
+      "anchor": ":root/.dark tokens; .eda-panel-expanded header typography"
+    },
+    {
+      "path": "packages/explorEDA/src/types/ChartTypes.ts",
+      "anchor": "BaseChartSettings title and axis labels; AxisSettings text sizes"
+    },
+    {
+      "path": "packages/explorEDA/src/types/SavedDataStructure.ts",
+      "anchor": "Saved chart settings and color scales; no common editorial style definition"
+    },
+    {
+      "path": "packages/explorEDA/src/components/PlotChartPanel.tsx",
+      "anchor": "TraceTitle and compact header title classes"
+    },
+    {
+      "path": "packages/explorEDA/src/components/settings/AxisSettingsTab.tsx",
+      "anchor": "Small tick and axis-label text choices"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/axisPlan.ts",
+      "anchor": "Font sizes, label truncation, and spacing calculations"
+    }
+  ]
+}

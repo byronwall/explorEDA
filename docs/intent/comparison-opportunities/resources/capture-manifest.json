@@ -1,0 +1,72 @@
+{
+  "captured_at": "2026-10-06",
+  "repository_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+  "origins": [
+    {
+      "source": "/Users/byronwall/Downloads/explorEDA-gap-analysis-2026-10-05.zip",
+      "copy": "resources/pro-gap-analysis/explorEDA-gap-analysis-2026-10-05.zip",
+      "sha256": "68aaae9bbc666c01df03c5db862ed2fd386b600140435401bc06aa26d51ef2b1",
+      "handling": "Copied unchanged. Extracted for reading; no supplied code was executed."
+    },
+    {
+      "source": "/Users/byronwall/.codex/worktrees/abcf/explorEDA/docs/intent/pro-reviews-2026-09-21/raw/exploreda-chart-interaction-review.zip",
+      "copy": "resources/pro-chart-review/exploreda-chart-interaction-review.zip",
+      "sha256": "234df4464ede399fe97cd22a244fd8f46dc47c8f93f94459619ffa705ed93c01",
+      "handling": "Copied unchanged. Extracted for reading; no supplied code was executed."
+    },
+    {
+      "source": "/Users/byronwall/.codex/worktrees/abcf/explorEDA/docs/intent/pro-reviews-2026-09-21/raw/exploreda-review.zip",
+      "copy": "resources/pro-landing-review/exploreda-review.zip",
+      "sha256": "24eb8a6f48df7a4d71017fdfcca004c4e84c00e42dc38699fb3756d214340518",
+      "handling": "Copied unchanged. Extracted for reading; no supplied code was executed."
+    },
+    {
+      "source": "/Users/byronwall/.codex/worktrees/abcf/explorEDA/docs/research/pro-traceability-2026-09-21/exploreda-deterministic-rendering-data-traceability.zip",
+      "copy": "resources/pro-traceability/exploreda-deterministic-rendering-data-traceability.zip",
+      "sha256": "956db0b414f97bde7f5ff40497d34bada554058d98e110fe647c6bdd6cc6abd6",
+      "handling": "Copied unchanged. Extracted for reading; no supplied code was executed."
+    },
+    {
+      "source": "/Users/byronwall/.codex/worktrees/abcf/explorEDA/docs/intent/pro-reviews-2026-09-21/raw/README.md",
+      "copy": "resources/pro-conversation/README.md",
+      "sha256": "11acb88d64f97f6b517ef870ae1ba224e95c712afea7d6ccb90150033b90f29f"
+    },
+    {
+      "source": "/Users/byronwall/.codex/worktrees/abcf/explorEDA/docs/intent/pro-reviews-2026-09-21/raw/1-user.txt",
+      "copy": "resources/pro-conversation/1-user.txt",
+      "sha256": "db58fcf5aa2859fd0e76a90334469ad6d9fbe8f521e15c5cb64823338a983d29"
+    },
+    {
+      "source": "/Users/byronwall/.codex/worktrees/abcf/explorEDA/docs/intent/pro-reviews-2026-09-21/raw/2-assistant.txt",
+      "copy": "resources/pro-conversation/2-assistant.txt",
+      "sha256": "00f9c2b0cbafddc251904800dd0ffe4423ba9a15007df5353a3575a420898bba"
+    },
+    {
+      "source": "/Users/byronwall/.codex/worktrees/abcf/explorEDA/docs/intent/pro-reviews-2026-09-21/raw/2-assistant.html",
+      "copy": "resources/pro-conversation/2-assistant.html",
+      "sha256": "53a7e33e542e5242921f0ba869dc430d7a2b078a92f67646b4941d778d767c63"
+    },
+    {
+      "source": "/Users/byronwall/.codex/worktrees/abcf/explorEDA/docs/intent/pro-reviews-2026-09-21/raw/3-user.txt",
+      "copy": "resources/pro-conversation/3-user.txt",
+      "sha256": "9b3f72e31f6075b853bf674794c620a6ae5c0f246168e64db402f767d2eea7e7"
+    },
+    {
+      "source": "/Users/byronwall/.codex/worktrees/abcf/explorEDA/docs/intent/pro-reviews-2026-09-21/raw/4-assistant.txt",
+      "copy": "resources/pro-conversation/4-assistant.txt",
+      "sha256": "fc8221ce6990f23ae030acf0289da57d381ca972366f13bd222024d1f2423247"
+    },
+    {
+      "source": "/Users/byronwall/.codex/worktrees/abcf/explorEDA/docs/intent/pro-reviews-2026-09-21/raw/4-assistant.html",
+      "copy": "resources/pro-conversation/4-assistant.html",
+      "sha256": "5f927d4d355df6184ca8af60174ea6a9c9f368555e9cdf7b58cceb38c8040b87"
+    },
+    {
+      "source": "/Users/byronwall/.codex/worktrees/abcf/explorEDA/docs/intent/chart-and-rendering-docs/comparative-research.md",
+      "copy": "resources/documentation-comparisons-2026-09-23.md",
+      "sha256": "d0ac9806136a60f4e9ff05e16bef0663b4260b80d15d0886200385d5720b8958",
+      "handling": "Copied unchanged; historical documentation comparisons."
+    }
+  ],
+  "note": "Original files retained. Copies are reference resources, not approved scope. No supplied scripts or prototypes were run."
+}
