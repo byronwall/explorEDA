@@ -1,0 +1,258 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Export charts and analyses for sharing",
+    "slug": "analysis-export",
+    "scale": "capability",
+    "current_phase": "intent",
+    "last_updated": "2026-10-06",
+    "summary": "Export the end user\u2019s authored chart as an image, with slides and PDF reports as possible later outputs.",
+    "status": "planned",
+    "next_action": "Shape one clean styled chart image, then prove mixed-renderer capture before adding document outputs."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-06"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "product-feedback",
+      "type": "direct-user-input",
+      "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
+      "anchor": "Annotations 3\u20135: end-user focus; image export with possible slides/PDF; visual references",
+      "authority": "Explicit human feedback"
+    },
+    {
+      "id": "chart-panel",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/PlotChartPanel.tsx",
+      "anchor": "Current panel controls contain no common image-export action",
+      "authority": "Current source reality"
+    },
+    {
+      "id": "scatter-rendering",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
+      "anchor": "Canvas point painting plus SVG guides and special layers",
+      "authority": "Current source reality"
+    },
+    {
+      "id": "saved-state",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/types/SavedDataStructure.ts",
+      "anchor": "Saved settings and full-analysis bundles",
+      "authority": "Current source reality"
+    },
+    {
+      "id": "styles",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/index.css",
+      "anchor": "Current chart and workspace typography/theme styling",
+      "authority": "Current source reality"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "image-export",
+        "type": "required behavior",
+        "statement": "Export authored charts as images.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 4"
+          }
+        ],
+        "confidence": "high",
+        "notes": "No format, document layout, or first-pass scheduling decision is inferred."
+      },
+      {
+        "id": "dedicated-scope",
+        "type": "decision",
+        "statement": "Keep export in a dedicated initiative, separate from making the live workspace editorial.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 4"
+          }
+        ],
+        "confidence": "high",
+        "notes": "No format, document layout, or first-pass scheduling decision is inferred."
+      },
+      {
+        "id": "slide-export",
+        "type": "future possibility",
+        "statement": "Possibly export selected analysis content to slides.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 4"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "No format, document layout, or first-pass scheduling decision is inferred."
+      },
+      {
+        "id": "pdf-export",
+        "type": "future possibility",
+        "statement": "Possibly create a PDF report from selected analysis content.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 4"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "No format, document layout, or first-pass scheduling decision is inferred."
+      },
+      {
+        "id": "png-first",
+        "type": "implementation hypothesis",
+        "statement": "Use a chart PNG as the first proof of mixed-renderer export.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 4"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "No format, document layout, or first-pass scheduling decision is inferred."
+      },
+      {
+        "id": "appearance",
+        "type": "derived implication",
+        "statement": "Preserve the authored appearance and data scope in the static output.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 4"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "No format, document layout, or first-pass scheduling decision is inferred."
+      },
+      {
+        "id": "layout-choice",
+        "type": "open question",
+        "statement": "Choose single-chart, dashboard, and multi-page output scopes from actual sharing tasks.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 4"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "No format, document layout, or first-pass scheduling decision is inferred."
+      }
+    ],
+    "themes": [
+      "Readable authored output",
+      "Clean image capture",
+      "Separate slide/report layout proofs"
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
+      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "worktree_status": "Detached HEAD; intent collection remains uncommitted.",
+      "subsystems": [
+        "packages/explorEDA/src/components/PlotChartPanel.tsx",
+        "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
+        "packages/explorEDA/src/types/SavedDataStructure.ts",
+        "packages/explorEDA/src/index.css"
+      ],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-06",
+      "action": "Created export initiative from product-feedback annotation 4.",
+      "reason": "User explicitly requested a separate export scope.",
+      "evidence": "Existing chart controls and rendering paths inspected; no image, slides, PDF, or runtime code produced."
+    }
+  ],
+  "closure": null,
+  "intake": {
+    "kind": "user-addition",
+    "audience": "End users; developers deliver the experience.",
+    "priority": "Dedicated export scope; no implementation order selected.",
+    "related_initiatives": [
+      "editorial-chart-styling",
+      "renderer-independent-replay",
+      "data-bound-narrative"
+    ]
+  }
+}

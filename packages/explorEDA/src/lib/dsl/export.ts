@@ -123,6 +123,17 @@ function headFor(chart: SavedChartSettings): string {
   }
 }
 
+/** Text for one dashboard, split into what views share and what each owns. */
+export interface DslExportParts {
+  /** The `dashboard name=` line. */
+  name: string;
+  /** Field settings, calculations, color scales, and grouped summaries. */
+  shared: string[][];
+  /** The grid, the Rows view, and the charts. */
+  view: string[][];
+  omitted: string[];
+}
+
 /**
  * Writes the current dashboard as text that rebuilds it. Each chart is its
  * short form plus a path for every setting that differs from what the short
@@ -132,6 +143,22 @@ export function exportDocument(
   settings: SavedDataStructure,
   options: DslExportOptions
 ): DslExportResult {
+  const parts = exportParts(settings, options);
+  const blocks = [
+    [parts.name, ...(parts.view[0] ?? [])],
+    ...parts.shared,
+    ...parts.view.slice(1),
+  ].filter((block) => block.length);
+  return {
+    text: `${blocks.map((block) => block.join("\n")).join("\n\n")}\n`,
+    omitted: parts.omitted,
+  };
+}
+
+export function exportParts(
+  settings: SavedDataStructure,
+  options: DslExportOptions
+): DslExportParts {
   const omitted: string[] = [];
   const profiles = buildFieldProfiles(options.rows);
   const types = Object.fromEntries(
@@ -292,15 +319,15 @@ export function exportDocument(
     return wrap(head, [...shown, ...extra]);
   });
 
-  const blocks = [
-    workspace,
-    [...fieldLines(sourceSettings)],
-    [...calcLines, ...fieldLines([...calcNames])],
-    [...scaleLines, ...groupLines, ...rowsLines],
-    chartLines,
-  ].filter((block) => block.length);
   return {
-    text: `${blocks.map((block) => block.join("\n")).join("\n\n")}\n`,
+    name: workspace[0]!,
+    shared: [
+      fieldLines(sourceSettings),
+      [...calcLines, ...fieldLines([...calcNames])],
+      [...scaleLines, ...groupLines],
+    ].filter((block) => block.length),
+    // The grid line rides with the name in a single-view export.
+    view: [workspace.slice(1), [...rowsLines, ...chartLines]],
     omitted,
   };
 }

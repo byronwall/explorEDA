@@ -1,0 +1,17 @@
+{
+  "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+  "features": 52,
+  "examples": 19,
+  "registered_view_types": 18,
+  "chart_modes": 6,
+  "declared_supported": 51,
+  "features_with_declared_examples": 51,
+  "features_with_historical_review": 30,
+  "needs_attention_by_current_ui_predicate": 22,
+  "explicit_gap_strings": 0,
+  "declared_feature_example_pairs": 182,
+  "historically_reviewed_pairs": 37,
+  "examples_with_review_record": 7,
+  "fresh_app_browser_checks_completed": 0,
+  "method": "Counts calculated from a source-transcribed manifest at the pinned revision; not observed UI values and not transcript-completion percentages."
+}

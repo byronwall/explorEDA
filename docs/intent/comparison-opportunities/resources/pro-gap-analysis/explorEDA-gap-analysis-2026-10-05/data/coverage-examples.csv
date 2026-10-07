@@ -1,0 +1,20 @@
+﻿example_id,declared_feature_count,reviewed_pair_count,review_date,review_report,fresh_browser_status
+distribution-discovery,6,0,,,not-tested: navigation blocked
+region-map,5,0,,,not-tested: navigation blocked
+point-map,5,0,,,not-tested: navigation blocked
+scatter-density,6,0,,,not-tested: navigation blocked
+bubble-scatter,6,0,,,not-tested: navigation blocked
+area-charts,8,0,,,not-tested: navigation blocked
+stacked-bars,6,0,,,not-tested: navigation blocked
+grouped-bars,6,0,,,not-tested: navigation blocked
+calendar-series,8,0,,,not-tested: navigation blocked
+shop-operations,18,11,2026-10-02,https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md#shop-operations,not-tested: navigation blocked
+palmer-penguins,10,0,,,not-tested: navigation blocked
+nba-stats,14,8,2026-10-02,https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md#nba-stats,not-tested: navigation blocked
+categorical-charts,14,6,2026-10-02,https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md#categorical-charts,not-tested: navigation blocked
+box-plot,8,0,,,not-tested: navigation blocked
+product-activity,13,2,2026-10-02,https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md#product-activity,not-tested: navigation blocked
+scatter-trace,10,0,,,not-tested: navigation blocked
+calculated-orders,9,1,2026-10-02,https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md#calculated-orders,not-tested: navigation blocked
+shop-10000,16,1,2026-10-02,https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md#shop-10000,not-tested: navigation blocked
+lorenz-3d,14,8,2026-10-02,https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md#lorenz-3d,not-tested: navigation blocked

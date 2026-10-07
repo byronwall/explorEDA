@@ -56,3 +56,11 @@ It does not claim that pointer clicks created the incompatible filters.
 
 These reports are historical observations. Later changes require their own review.
 Retirement did not repeat browser or runtime tests. The [closure record](initiative-history.json) preserves the accepted scope.
+
+## Demo overhaul research
+
+The [demo overhaul intent](intent/demo-overhaul/intent-brief.md) captures the next example direction.
+The [shape](intent/demo-overhaul/shape-brief.md) proposes seven complete analyses and lists the catalogue changes.
+Its [imported research](intent/demo-overhaul/support/README.md) preserves four dataset families and twenty proposed analyses.
+Flights and World Bank indicators provide the strongest related-table examples.
+These proposals have no reviewed assignments in the coverage manifest yet.

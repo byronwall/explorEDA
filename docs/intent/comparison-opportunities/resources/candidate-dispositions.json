@@ -1,0 +1,349 @@
+[
+  {
+    "source": "pro-chart-review",
+    "source_id": "C01",
+    "title": "Expose Histogram and Distribution presets",
+    "disposition": "delivered",
+    "current_assessment": "Histogram and Distribution creation presets are reported delivered.",
+    "intent": "../current-analysis-trust/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C02",
+    "title": "Make Other inspectable and selection-safe",
+    "disposition": "delivered",
+    "current_assessment": "Other member inspection and typed member filters exist.",
+    "intent": "../current-analysis-trust/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C03",
+    "title": "Unify basic grouped metrics and source provenance",
+    "disposition": "partial",
+    "current_assessment": "Count/sum/average reductions exist; richer reusable measures remain candidates.",
+    "intent": "../reusable-analysis-metrics/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C04",
+    "title": "Make grouped bars participate in linked filtering",
+    "disposition": "delivered",
+    "current_assessment": "Grouped vertical bars select source categories.",
+    "intent": "../current-analysis-trust/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C05",
+    "title": "Add basic metric cards",
+    "disposition": "partial",
+    "current_assessment": "Metric Card exists; reusable rates and richer measures remain seeds.",
+    "intent": "../reusable-analysis-metrics/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C06",
+    "title": "Generalize metric bars across orientations and series",
+    "disposition": "partial",
+    "current_assessment": "Vertical grouped/stacked/percentage modes exist; horizontal Row remains count-based.",
+    "intent": "../horizontal-metric-bars/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C07",
+    "title": "Add categorical heatmap with exact cell inspection",
+    "disposition": "delivered",
+    "current_assessment": "Categorical Heatmap and single-pair selection exist.",
+    "intent": "../current-analysis-trust/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C08",
+    "title": "Add tuple-aware selection for nonrectangular multicell choices",
+    "disposition": "gap",
+    "current_assessment": "Field predicates cannot represent arbitrary unions of tuples.",
+    "intent": "../precise-composite-selection/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C09",
+    "title": "Add long-form series and calendar aggregation",
+    "disposition": "partial",
+    "current_assessment": "UTC day/week/month grouped series exist; period stepping and rolling summaries remain.",
+    "intent": "../calendar-period-analysis/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C10",
+    "title": "Add area and stacked-area presentations",
+    "disposition": "partial",
+    "current_assessment": "Area and stacked area exist; rolling calculations remain.",
+    "intent": "../calendar-period-analysis/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C11",
+    "title": "Clarify filter scope and inline legend behavior",
+    "disposition": "partial",
+    "current_assessment": "Manual chart filters, local restrictions, and legend filtering exist; top-level controls and inline hide/isolate remain.",
+    "intent": "../filter-and-series-controls/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C12",
+    "title": "Add reference rules, intervals, and annotations",
+    "disposition": "gap",
+    "current_assessment": "Shared saved reference lines, bands, and annotations remain absent from inspected settings.",
+    "intent": "../reference-marks/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C13",
+    "title": "Add size encoding and identifiable scatter observations",
+    "disposition": "delivered",
+    "current_assessment": "Field-driven bubble area and observation tracing exist.",
+    "intent": "../current-analysis-trust/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C14",
+    "title": "Add binned density mode",
+    "disposition": "delivered",
+    "current_assessment": "Rectangular and now hexagonal counts and smoothed density exist in source.",
+    "intent": "../current-analysis-trust/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C15",
+    "title": "Add correlation matrix to scatter exploration",
+    "disposition": "gap",
+    "current_assessment": "Paired Pearson summaries exist; a matrix-to-scatter discovery route does not.",
+    "intent": "../relationship-discovery/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C16",
+    "title": "Add ECDF and comparable distributions",
+    "disposition": "partial",
+    "current_assessment": "ECDF exists; named reference population comparison remains.",
+    "intent": "../population-baselines/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test",
+    "current_priority": "Named comparisons lowered by product-feedback annotation 12. Existing ECDF remains delivered."
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C17",
+    "title": "Introduce selection-only undo and redo",
+    "disposition": "delivered-in-demo",
+    "current_assessment": "Saved-view history captures filters and supports bounded undo/redo. Verify gesture granularity; no new undo system is presumed.",
+    "intent": "../current-analysis-trust/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C18",
+    "title": "Add named baseline/selection comparison",
+    "disposition": "gap",
+    "current_assessment": "All-source card comparison exists; named frozen or predicate baselines remain separate.",
+    "intent": "../population-baselines/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test",
+    "current_priority": "Named comparisons lowered by product-feedback annotation 12. Existing ECDF remains delivered."
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C19",
+    "title": "Complete axis-domain controls",
+    "disposition": "gap",
+    "current_assessment": "Common numerical controls remain linear/symlog; ECDF separately implements positive-value log. Common true-log and domain/reset controls remain candidates.",
+    "intent": "../axis-domain-controls/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C20",
+    "title": "Optional geographic views",
+    "disposition": "delivered",
+    "current_assessment": "Point and local GeoJSON region maps exist.",
+    "intent": "../current-analysis-trust/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-chart-review",
+    "source_id": "C21",
+    "title": "Familiar composition and contribution presets",
+    "disposition": "seed",
+    "current_assessment": "Donut and waterfall remain conditional presentation additions.",
+    "intent": "../composition-and-contribution/intent-brief.md",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
+  },
+  {
+    "source": "pro-review-narrative-and-gap-register",
+    "source_id": "TABLE-02,TABLE-06,TABLE-07,TABLE-08",
+    "title": "Fit columns to readable cell content",
+    "disposition": "gap",
+    "intent": "../table-content-fit/intent-brief.md",
+    "current_assessment": "DataTableContextMenu includes Reset width and Clear sort. Header controls support manual widths and column movement. The inspected paths do not provide content-aware fit. Existing virtualization means DOM-visible cells are only part of the loaded table.",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+  },
+  {
+    "source": "pro-review-narrative-and-gap-register",
+    "source_id": "DATA-02,DATA-09,UX-02",
+    "title": "Find missing values and missing observations",
+    "disposition": "seed",
+    "intent": "../missingness-and-expected-records/intent-brief.md",
+    "current_assessment": "fieldProfiles.ts supplies missing counts. Heatmap operates on categorical groups and metrics. The registry has no missingness diagnostic view. The October 5 Pro ledger distinguishes field missingness from absent expected observations.",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+  },
+  {
+    "source": "pro-review-narrative-and-gap-register",
+    "source_id": "DATA-08,CALC-08,TRACE-02",
+    "title": "Use one analytical result as another view’s input",
+    "disposition": "seed",
+    "intent": "../reusable-analysis-outputs/intent-brief.md",
+    "current_assessment": "Saved settings include named aggregates used by bars. Trace planners retain contributors. Scalar calculation inspection exists. Generic pivot/model/density outputs are not part of a source catalogue. The current provider still starts from one row array.",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+  },
+  {
+    "source": "pro-review-narrative-and-gap-register",
+    "source_id": "CHART-09",
+    "title": "Explore nested categories and their totals",
+    "disposition": "seed",
+    "intent": "../hierarchy-analysis/intent-brief.md",
+    "current_assessment": "The registry has no hierarchy view. Pivot accepts multiple row fields; facets support one- or two-field repetition. Those are reusable entry points for a small hierarchy proof, not evidence of complete hierarchy totals and navigation.",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+  },
+  {
+    "source": "pro-review-narrative-and-gap-register",
+    "source_id": "CHART-09",
+    "title": "Explore explicit links and edge-list flows",
+    "disposition": "seed",
+    "intent": "../network-and-edge-flow/intent-brief.md",
+    "current_assessment": "Sankey uses two to six ordered categorical stages per row and count or nonnegative sum. Its nodes and links trace contributors. The current registry has no general network view or separate edge-list flow mode.",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+  },
+  {
+    "source": "pro-review-narrative-and-gap-register",
+    "source_id": "CHART-03,CHART-09",
+    "title": "Funnels, retention, and interval schedules",
+    "disposition": "seed",
+    "intent": "../domain-analysis-views/intent-brief.md",
+    "current_assessment": "Current calendar reductions summarize source events by UTC period. Sankey summarizes categorical paths. Neither establishes cohort-entry rules, funnel event ordering, or schedule-interval semantics. The registry has no dedicated funnel, retention, or Gantt view.",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+  },
+  {
+    "source": "pro-review-narrative-and-gap-register",
+    "source_id": "CALC-09,CHART-02",
+    "title": "Scientific overlays and multivariate discovery",
+    "disposition": "seed",
+    "intent": "../scientific-multivariate-analysis/intent-brief.md",
+    "current_assessment": "Native scatter files implement regression, fit planning, paired covariance, marginal histograms, hexagonal counts, and density contours. The existing advanced-scatter plan keeps additional scientific methods below its cut line.",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+  },
+  {
+    "source": "pro-review-narrative-and-gap-register",
+    "source_id": "DATA-04,CALC-10,TRACE-05",
+    "title": "Reproduce an analysis beyond the current renderer",
+    "disposition": "seed",
+    "intent": "../renderer-independent-replay/intent-brief.md",
+    "current_assessment": "The archive includes a Pro scatter planning prototype and verification files. Active scatter and time-series planners now offer narrower real seams. SavedAnalysisStructure stores rows and settings, but no general renderer-neutral analytical result catalogue.",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+  },
+  {
+    "source": "pro-review-narrative-and-gap-register",
+    "source_id": "CHART-07",
+    "title": "Keep explanations aligned with the selected data",
+    "disposition": "seed",
+    "intent": "../data-bound-narrative/intent-brief.md",
+    "current_assessment": "The registry includes Markdown and Metric Card. Shared reductions and formatting can support one bounded binding. The Pro gap register distinguishes static text from a live data-bound narrative and warns that every supporting view needs clear population meaning.",
+    "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+  },
+  {
+    "source": "pro-landing-review",
+    "source_id": "sections-1-5",
+    "title": "Comprehension, featured example, integration guide, differentiation, adoption contract",
+    "disposition": "delivered-core",
+    "current_assessment": "Hero, FeaturedExample, IntegrationGuide, WhyWorkspace, and LearningLinks exist. Do not create another landing rewrite. A fresh adoption-task check belongs to trust work.",
+    "intent": "../current-analysis-trust/intent-brief.md",
+    "evidence": [
+      "apps/demo/src/landing/Hero.tsx",
+      "apps/demo/src/landing/FeaturedExample.tsx",
+      "apps/demo/src/landing/IntegrationGuide.tsx",
+      "apps/demo/src/landing/WhyWorkspace.tsx",
+      "apps/demo/src/landing/LearningLinks.tsx"
+    ]
+  },
+  {
+    "source": "existing-comparative-research",
+    "source_id": "Nivo,ECharts,dc.js,Vega-Lite,Observable-Plot",
+    "title": "Task-led chart pages and shared rendering guide",
+    "disposition": "existing-owner",
+    "current_assessment": "Two chart pages and rendering docs are started. Complete-catalogue work remains in its existing initiative. New intent capture does not duplicate that ownership.",
+    "existing_intent": "../chart-and-rendering-docs/intent-brief.md"
+  },
+  {
+    "source": "pro-gap-register",
+    "source_id": "CALC-09,TRACE-04",
+    "title": "Advanced scatter and compact DSL",
+    "disposition": "stale-missing-claim",
+    "current_assessment": "The October 5 audit is behind current source. Regression, polynomial/LOESS, marginals, hex bins, contours, DSL compile/export, and chart-local filters are implemented. Their existing initiatives retain ownership.",
+    "existing_intents": [
+      "../advanced-scatter-analysis/intent-brief.md",
+      "../config-authoring-dsl/intent-brief.md"
+    ]
+  },
+  {
+    "source": "pro-gap-register",
+    "source_id": "DATA-05,DASH-08,PERF-03",
+    "title": "Multiple sources, task views, server projection",
+    "disposition": "existing-or-conditional-scope",
+    "current_assessment": "Multiple-source and task-view work already has owners. Server projection, remote loaded-versus-total populations, rich mutation, extra 3D variants, and gauges are not obvious comparator gaps in the current single-source workspace. Keep original reports; no new engine or server initiative is presumed.",
+    "existing_intents": [
+      "../multi-source-analysis/intent-brief.md",
+      "../project-task-views/intent-brief.md"
+    ]
+  },
+  {
+    "source": "direct-user-feedback",
+    "source_id": "annotations-1-17",
+    "title": "End-user priorities and dedicated export scope",
+    "disposition": "reconciled",
+    "current_assessment": "First pass: editorial styling, direct editing, scatter matrix, table usability. Time second-pass. Named comparisons low interest. Unclear seeds retain unconfirmed demand.",
+    "feedback": "product-feedback-2026-10-06.json",
+    "new_intent": "../analysis-export/intent-brief.md"
+  }
+]

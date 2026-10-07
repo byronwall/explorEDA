@@ -1,0 +1,55 @@
+{
+  "chart_review_items": [],
+  "gap_register_items": [
+    {
+      "requirement_id": "DATA-08",
+      "intent_strength": "Core / architecture open",
+      "proposed_priority": "P2",
+      "change_from_old_report": "Expanded but not generalized",
+      "desired_outcome": "Reuse named transformed tables as analytical inputs",
+      "current_evidence_based_assessment": "Named grouped summaries provide a reusable definition. Many newer chart transforms retain contributor information.",
+      "remaining_boundary_or_proof_gap": "Traceable internal arrays and shared reducers are not arbitrary named, composable intermediate sources. Pivot/model output reuse remains a distinct extension.",
+      "source_ids": "T11 T13 T15 T16 T17 INV CHART ROLL",
+      "suggested_browser_scenarios": "BT19 BT26",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "CALC-08",
+      "intent_strength": "Core / architecture open",
+      "proposed_priority": "P2",
+      "change_from_old_report": "Expanded partial",
+      "desired_outcome": "Inspect and reuse grouped, pivot and statistical outputs",
+      "current_evidence_based_assessment": "Named grouped summaries are reusable; pivot and many new chart families now expose contributors.",
+      "remaining_boundary_or_proof_gap": "Inspection is wider than reuse. Pivot outputs, density samples and modeled tables are not established as named downstream sources.",
+      "source_ids": "T11 T13 T15 T16 T17 CHART INV",
+      "suggested_browser_scenarios": "BT19 BT26",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "TRACE-02",
+      "intent_strength": "Core",
+      "proposed_priority": "P2",
+      "change_from_old_report": "Expanded partial",
+      "desired_outcome": "Inspect every intermediate result and reuse it where useful",
+      "current_evidence_based_assessment": "Named group results and many chart-specific trace stages are described.",
+      "remaining_boundary_or_proof_gap": "Broad inspection does not establish every intermediate as a named reusable table. Reduced lines, density/model outputs and general transform composition remain uneven.",
+      "source_ids": "T11 T13 T15 CHART INV",
+      "suggested_browser_scenarios": "BT19 BT26",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    }
+  ],
+  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "current_assessment": {
+    "date": "2026-10-06",
+    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "statement": "Saved settings include named aggregates used by bars. Trace planners retain contributors. Scalar calculation inspection exists. Generic pivot/model/density outputs are not part of a source catalogue. The current provider still starts from one row array.",
+    "evidence_scope": "Source inspection only; no fresh application browser proof."
+  },
+  "current_priority": "seed-demand-unconfirmed"
+}
