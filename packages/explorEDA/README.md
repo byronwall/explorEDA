@@ -279,3 +279,83 @@ Row Chart groups categories that do not fit under Other categories. Inspect this
 bar to search its members, inspect source rows, or select categories. The saved
 filter contains exact category values. Resizing changes the displayed groups and
 keeps the selection. A literal “Other categories” value remains a separate category.
+
+## Related tables
+
+`exploreda/analysis` evaluates queries over several related tables without
+React. A project declares sources (each with an entity key), relationships
+between their fields, and queries. A query is a short list of steps: read a
+source, look up a related row, expand to related rows, calculate, filter, or
+group and summarize.
+
+```ts
+import { evaluateAnalysisQuery } from "exploreda/analysis";
+
+const result = evaluateAnalysisQuery(project, tables, "orders-by-customer");
+result.rows; // one row per order, with customer fields added
+result.stages; // input and output counts for every step
+result.diagnostics; // missing matches, duplicate keys, ambiguous lookups
+```
+
+A lookup keeps the current rows. When one row matches several related rows,
+its related values stay empty and a diagnostic names the conflict; the
+evaluator never picks the first match. Use an expand step to change the row
+meaning on purpose, or expand and then group to keep it. A grouped measure can
+use `entityFieldId` to count each parent once, so an order amount repeated on
+its item rows is not summed twice.
+
+Treat source tables as immutable: pass a new array when rows change.
+`stringifyAnalysisProject` and `parseAnalysisProject` write and validate a
+project file with its tables and views. `selectAnalysisProjectView` keeps one
+view and only what it depends on.
+
+### A chart workspace over a project
+
+`ExplorEdaProject` renders the charts for one view of a project. The view
+names a query; that query's result rows are what every chart in the view
+sees, and one line above the charts says which query and what a row is. The
+host owns the project, the views, and where they are saved.
+
+```tsx
+import { ExplorEdaProject, type AnalysisView } from "exploreda";
+
+function Shop({ project, tables }) {
+  const [state, setState] = useState({
+    project,
+    view: { id: "orders", name: "Orders", queryId: "orders-by-customer" } as AnalysisView,
+  });
+  return (
+    <ExplorEdaProject
+      project={state.project}
+      tables={tables}
+      view={state.view}
+      onProjectChange={setState}
+      onStateChange={(settings) =>
+        setState((current) => ({ ...current, view: { ...current.view, settings } }))
+      }
+    />
+  );
+}
+```
+
+The toolbar gains two panels. **Schema** lists each table's fields and links,
+previews a new or edited link's match counts before it applies, and opens a
+table as its own view. **Query** picks the view's query, follows a link (add
+fields, summarize related rows, or expand into a new view), sets parameter
+inputs, and lists every step with its row counts down to the rows and their
+source records. From a chart trace, "Show these rows in the query flow" opens
+the rows behind a mark. Pass `onOpenView` to let these panels open new views.
+
+Large projects can run their queries in a worker so typing in an input stays
+responsive. The worker ships with the package; your bundler must emit worker
+files referenced with `new URL(..., import.meta.url)` (Vite and webpack 5 do).
+
+```tsx
+import { createAnalysisWorker } from "exploreda/analysis";
+
+<ExplorEdaProject createWorker={createAnalysisWorker} {...props} />;
+```
+
+While a query runs, the charts keep the last finished result and the scope
+line says it is updating. A result that finishes after a newer request is
+dropped, so rows, counts, and inputs on screen always match.

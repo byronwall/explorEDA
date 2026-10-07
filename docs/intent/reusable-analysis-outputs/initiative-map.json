@@ -1,0 +1,354 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Use one analytical result as another view’s input",
+    "slug": "reusable-analysis-outputs",
+    "scale": "feature",
+    "current_phase": "intent",
+    "last_updated": "2026-10-06",
+    "summary": "Analysts may want to inspect a grouped, pivoted, modeled, or density result and then use it in another view.",
+    "status": "planned",
+    "next_action": "Retain as an unprioritized seed until tool use reveals a concrete unmet task."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-06"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "current-request",
+      "type": "direct-user-input",
+      "location": "../comparison-opportunities/resources/user-request.md",
+      "anchor": "October 6 request: actionable comparisons, obvious current gaps, future seeds, new intent docs, colocated references",
+      "authority": "explicit user direction"
+    },
+    {
+      "id": "pro-chart-review",
+      "type": "agent-authored-analysis",
+      "location": "../comparison-opportunities/resources/pro-chart-review/exploreda-chart-interaction-review/review.md",
+      "anchor": "Section 5: conditional future chart candidates",
+      "authority": "historical recommendation, not approved intent or runtime proof"
+    },
+    {
+      "id": "pro-gap-register",
+      "type": "agent-authored-analysis",
+      "location": "../comparison-opportunities/resources/pro-gap-analysis/explorEDA-gap-analysis-2026-10-05/data/requirements-ledger.json",
+      "anchor": "DATA-08, CALC-08, TRACE-02",
+      "authority": "October 5 source audit at 362db580; stale where newer code differs"
+    },
+    {
+      "id": "repository-1",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/lib/aggregates.ts",
+      "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "repository-2",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/types/SavedDataStructure.ts",
+      "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "repository-3",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "repository-4",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/ChartDataPreview.tsx",
+      "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "product-feedback",
+      "type": "direct-user-input",
+      "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
+      "anchor": "Annotations 17",
+      "authority": "Explicit human feedback; tentative answers remain tentative"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "claim-1",
+        "type": "outcome",
+        "statement": "Analysts may want to inspect a grouped, pivoted, modeled, or density result and then use it in another view.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "current feature set and future seeds"
+          },
+          {
+            "source_id": "pro-chart-review",
+            "anchor": "comparison-led recommendations"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Candidate interpretation; no feature implementation has been selected."
+      },
+      {
+        "id": "claim-2",
+        "type": "constraint",
+        "statement": "Preserve existing delivered behavior; references do not grant implementation approval.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "current feature set and future seeds"
+          },
+          {
+            "source_id": "pro-chart-review",
+            "anchor": "comparison-led recommendations"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Candidate interpretation; no feature implementation has been selected."
+      },
+      {
+        "id": "claim-3",
+        "type": "future possibility",
+        "statement": "Expand when the same exported result is repeatedly reused, or a second view needs an analytical output that cannot be expressed over the existing source.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "current feature set and future seeds"
+          },
+          {
+            "source_id": "pro-chart-review",
+            "anchor": "comparison-led recommendations"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Candidate interpretation; no feature implementation has been selected."
+      },
+      {
+        "id": "priority-1",
+        "type": "desired experience",
+        "statement": "Name result grain and contributor meaning.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "Worthwhile gaps against current features; seeds may expand later"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Recovered candidate priority; no implementation approval."
+      },
+      {
+        "id": "priority-2",
+        "type": "desired experience",
+        "statement": "Make refresh and filtering rules explicit.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "Worthwhile gaps against current features; seeds may expand later"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Recovered candidate priority; no implementation approval."
+      },
+      {
+        "id": "priority-3",
+        "type": "desired experience",
+        "statement": "Reuse one result without duplicating its computation contract.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "Worthwhile gaps against current features; seeds may expand later"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Recovered candidate priority; no implementation approval."
+      },
+      {
+        "id": "keep-resources-local",
+        "type": "constraint",
+        "statement": "Keep new references and Pro resources inside intent folders.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "Do not scatter across the repo"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "current-foundation",
+        "type": "current repository reality",
+        "statement": "Saved settings include named aggregates used by bars. Trace planners retain contributors. Scalar calculation inspection exists. Generic pivot/model/density outputs are not part of a source catalogue. The current provider still starts from one row array.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "repository-1",
+            "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof"
+          },
+          {
+            "source_id": "repository-2",
+            "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof"
+          },
+          {
+            "source_id": "repository-3",
+            "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof"
+          },
+          {
+            "source_id": "repository-4",
+            "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Does not establish runtime or browser acceptance."
+      },
+      {
+        "id": "demand-unconfirmed",
+        "type": "decision",
+        "statement": "No concrete unmet task is established for this seed; do not make it a first-pass dependency.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 17"
+          }
+        ],
+        "confidence": "high",
+        "supersedes": [],
+        "notes": "No implementation authorization or unobserved proof is inferred."
+      }
+    ],
+    "themes": [
+      "Name result grain and contributor meaning.",
+      "Make refresh and filtering rules explicit.",
+      "Reuse one result without duplicating its computation contract."
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
+      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "worktree_status": "clean before intent capture; detached HEAD",
+      "subsystems": [
+        "packages/explorEDA/src/lib/aggregates.ts",
+        "packages/explorEDA/src/types/SavedDataStructure.ts",
+        "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+        "packages/explorEDA/src/components/ChartDataPreview.tsx"
+      ],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-06",
+      "action": "Created a new intent brief and local reference packet.",
+      "reason": "Current request for actionable comparison gaps and future seeds.",
+      "evidence": "Source reconciliation only. No runtime/browser checks, ticket publication, or implementation."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Checked references and current source against historical missing-feature claims.",
+      "reason": "Prevent stale comparator recommendations from becoming duplicate scope.",
+      "evidence": "Sleuth structure checks and local source inspection; no runtime tests."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Reconciled annotated product feedback and priority.",
+      "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
+      "source_annotation_indices": [
+        17
+      ],
+      "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    }
+  ],
+  "closure": null,
+  "intake": {
+    "kind": "seed",
+    "priority_basis": "Pro recommendations reconciled with current source; proposed priority, no implementation approval",
+    "expand_when": "Expand when the same exported result is repeatedly reused, or a second view needs an analytical output that cannot be expressed over the existing source.",
+    "related_initiatives": [
+      "multi-source-analysis",
+      "composed-analytical-graphics"
+    ],
+    "audience": "End users; developers deliver their experience.",
+    "priority": "seed-demand-unconfirmed"
+  }
+}

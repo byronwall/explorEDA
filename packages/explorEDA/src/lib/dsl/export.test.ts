@@ -156,4 +156,23 @@ rows sortBy=Revenue sortDirection=desc where.Units=2..`,
       colorScaleId: "channels",
     });
   });
+
+  it("carries once-per IDs on grouped summaries and metric cards", () => {
+    const { settings, diagnostics } = compileDocument(
+      `group @channels groupField=Channel aggregation=count entityField=Units
+bar Channel aggregateId=channels
+metric sum=Revenue entityField=Channel`,
+      { rows }
+    );
+    expect(diagnostics).toEqual([]);
+    expect(settings.aggregates?.[0]?.entityField).toBe("Units");
+    expect(settings.charts[1]).toMatchObject({ entityField: "Channel" });
+
+    const { omitted, rebuilt } = roundTrip(settings);
+    expect(omitted).toEqual([]);
+    expect(rebuilt.settings.aggregates).toEqual(settings.aggregates);
+    expect(rebuilt.settings.charts[1]).toMatchObject({
+      entityField: "Channel",
+    });
+  });
 });

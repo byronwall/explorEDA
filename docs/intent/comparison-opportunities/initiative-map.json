@@ -1,0 +1,452 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Comparison-led gaps and future seeds",
+    "slug": "comparison-opportunities",
+    "scale": "program",
+    "current_phase": "intent",
+    "last_updated": "2026-10-06",
+    "summary": "Byron wants comparisons with other tools to reveal obvious, worthwhile gaps in the current explorEDA workspace.",
+    "status": "planned",
+    "next_action": "Shape the four selected end-user priorities. Keep time second-pass and named comparisons low-priority."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-06"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "current-request",
+      "type": "direct-user-input",
+      "location": "resources/user-request.md",
+      "anchor": "October 6 request: actionable comparisons, obvious current gaps, future seeds, new intent docs, colocated references",
+      "authority": "explicit user direction"
+    },
+    {
+      "id": "repository-1",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/charts/registerAllCharts.ts",
+      "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "repository-2",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/types/ChartTypes.ts",
+      "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "repository-3",
+      "type": "repository",
+      "location": "../../../apps/demo/src/SavedViewsWorkspace.tsx",
+      "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "editorial-editing-addition",
+      "type": "direct-user-input",
+      "location": "resources/editorial-and-editing-request.md",
+      "anchor": "Add durable editorial styling and advanced editing projects to the pile",
+      "authority": "explicit user intent"
+    },
+    {
+      "id": "scatter-matrix-request",
+      "type": "direct-user-input",
+      "location": "../scatter-plot-matrix/references/user-request.md",
+      "anchor": "Explicit off-diagonal scatter and on-diagonal distributions",
+      "authority": "explicit user intent"
+    },
+    {
+      "id": "product-feedback",
+      "type": "direct-user-input",
+      "location": "resources/product-feedback-2026-10-06.json",
+      "anchor": "Annotations 1, 2, 3, 12",
+      "authority": "Explicit human feedback; tentative answers remain tentative"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "claim-1",
+        "type": "outcome",
+        "statement": "Byron wants comparisons with other tools to reveal obvious, worthwhile gaps in the current explorEDA workspace.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "current feature set and future seeds"
+          },
+          {
+            "source_id": "current-request",
+            "anchor": "comparison-led recommendations"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Candidate interpretation; no feature implementation has been selected."
+      },
+      {
+        "id": "claim-2",
+        "type": "constraint",
+        "statement": "Preserve existing delivered behavior; references do not grant implementation approval.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "current feature set and future seeds"
+          },
+          {
+            "source_id": "current-request",
+            "anchor": "comparison-led recommendations"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Candidate interpretation; no feature implementation has been selected."
+      },
+      {
+        "id": "claim-3",
+        "type": "future possibility",
+        "statement": "Expand a child only after choosing its task, priority, and smallest useful proof.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "current feature set and future seeds"
+          },
+          {
+            "source_id": "current-request",
+            "anchor": "comparison-led recommendations"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Candidate interpretation; no feature implementation has been selected."
+      },
+      {
+        "id": "priority-1",
+        "type": "desired experience",
+        "statement": "Find small extensions that remove a real analytical dead end.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "Worthwhile gaps against current features; seeds may expand later"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Recovered candidate priority; no implementation approval."
+      },
+      {
+        "id": "priority-2",
+        "type": "desired experience",
+        "statement": "Keep current gaps distinct from future seeds and delivered capabilities.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "Worthwhile gaps against current features; seeds may expand later"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Recovered candidate priority; no implementation approval."
+      },
+      {
+        "id": "priority-3",
+        "type": "desired experience",
+        "statement": "Preserve all reference material inside intent folders.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "Worthwhile gaps against current features; seeds may expand later"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Recovered candidate priority; no implementation approval."
+      },
+      {
+        "id": "keep-resources-local",
+        "type": "constraint",
+        "statement": "Keep new references and Pro resources inside intent folders.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "Do not scatter across the repo"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "user-added-projects",
+        "type": "decision",
+        "statement": "Add separate editorial styling and in-place chart editing intent projects to this collection.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "editorial-editing-addition",
+            "anchor": "Let’s add several more projects to the pile"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Does not select implementation priority."
+      },
+      {
+        "id": "scatter-matrix-owner",
+        "type": "decision",
+        "statement": "Scatter matrix work has a separate explicit intent in scatter-plot-matrix.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "scatter-matrix-request",
+            "anchor": "Create an intent doc for that one too"
+          }
+        ],
+        "confidence": "high",
+        "notes": "No downstream artifacts require regeneration; these initiatives are still in intent phase."
+      },
+      {
+        "id": "first-pass-set",
+        "type": "sequence",
+        "statement": "First pass covers editorial styling, direct editing, scatter matrix, and table usability.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 2"
+          }
+        ],
+        "confidence": "high",
+        "supersedes": [],
+        "notes": "No implementation authorization or unobserved proof is inferred."
+      },
+      {
+        "id": "end-users",
+        "type": "audience",
+        "statement": "Optimize the platform for end users; developers deliver the experience.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 3"
+          }
+        ],
+        "confidence": "high",
+        "supersedes": [],
+        "notes": "No implementation authorization or unobserved proof is inferred."
+      },
+      {
+        "id": "engineering-direction",
+        "type": "outcome",
+        "statement": "Support deep engineering and scientific experiment analysis even while dataset discovery continues.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 1"
+          }
+        ],
+        "confidence": "high",
+        "supersedes": [],
+        "notes": "No implementation authorization or unobserved proof is inferred."
+      },
+      {
+        "id": "separate-export",
+        "type": "decision",
+        "statement": "Create a dedicated image-export scope, with possible later slides and PDF reports.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 4"
+          }
+        ],
+        "confidence": "high",
+        "notes": "First-pass ordering remains unchanged."
+      }
+    ],
+    "themes": [
+      "Find small extensions that remove a real analytical dead end.",
+      "Keep current gaps distinct from future seeds and delivered capabilities.",
+      "Preserve all reference material inside intent folders."
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
+      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "worktree_status": "clean before intent capture; detached HEAD",
+      "subsystems": [
+        "packages/explorEDA/src/charts/registerAllCharts.ts",
+        "packages/explorEDA/src/types/ChartTypes.ts",
+        "apps/demo/src/SavedViewsWorkspace.tsx"
+      ],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-06",
+      "action": "Created a new intent brief and local reference packet.",
+      "reason": "Current request for actionable comparison gaps and future seeds.",
+      "evidence": "Source reconciliation only. No runtime/browser checks, ticket publication, or implementation."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Checked references and current source against historical missing-feature claims.",
+      "reason": "Prevent stale comparator recommendations from becoming duplicate scope.",
+      "evidence": "Sleuth structure checks and local source inspection; no runtime tests."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Added two direct-user projects: editorial-chart-styling and in-place-chart-editing.",
+      "reason": "User follow-up extends the collection beyond comparative research.",
+      "evidence": "Two new intent briefs, maps, and local reference packets; shared axis ownership linked."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Route scatter matrix work to scatter-plot-matrix.",
+      "reason": "The user selected a separate explicit layout; no dependency on correlation discovery is imposed.",
+      "evidence": "New intent brief and direct user request."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Reconciled annotated product feedback and priority.",
+      "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
+      "source_annotation_indices": [
+        1,
+        2,
+        3,
+        12
+      ],
+      "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    }
+  ],
+  "closure": null,
+  "intake": {
+    "kind": "program",
+    "priority_basis": "Pro recommendations reconciled with current source; proposed priority, no implementation approval",
+    "expand_when": "Expand a child only after choosing its task, priority, and smallest useful proof.",
+    "related_initiatives": [],
+    "audience": "End users; developers deliver their experience.",
+    "priority": "Unranked candidate or future seed"
+  },
+  "product_direction": {
+    "primary_audience": "End users",
+    "analysis_direction": "Deep scientific and engineering experiment analysis",
+    "first_pass": [
+      "editorial-chart-styling",
+      "in-place-chart-editing",
+      "scatter-plot-matrix",
+      "table usability (content-fit is a candidate)"
+    ],
+    "first_pass_order": "No relative order selected by user",
+    "second_pass": [
+      "cross-cutting time behavior"
+    ],
+    "desired_extensions": [
+      "lasso selection",
+      "chart-free filters"
+    ],
+    "low_interest": [
+      "named population baselines"
+    ],
+    "unconfirmed_demand": [
+      "additional reusable metrics",
+      "derived-output pipelines",
+      "filter-free templates"
+    ],
+    "dataset_context": "User reports a separate worktree investigating datasets; no source or status was verified in this run.",
+    "export_scope": {
+      "initiative": "analysis-export",
+      "required": "Image export",
+      "possible_later": [
+        "Slides",
+        "PDF reports"
+      ],
+      "order": "Not selected"
+    }
+  }
+}

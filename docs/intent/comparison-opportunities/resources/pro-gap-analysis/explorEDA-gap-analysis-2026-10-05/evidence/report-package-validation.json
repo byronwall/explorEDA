@@ -1,0 +1,54 @@
+{
+  "pdf_reports": [
+    {
+      "file": "00-executive-report.pdf",
+      "pages": 4,
+      "characters": 10249,
+      "bytes": 35238
+    },
+    {
+      "file": "01-transcript-reanalysis.pdf",
+      "pages": 9,
+      "characters": 27205,
+      "bytes": 57700
+    },
+    {
+      "file": "02-comprehensive-gap-register.pdf",
+      "pages": 23,
+      "characters": 59463,
+      "bytes": 119149
+    },
+    {
+      "file": "03-coverage-matrix-review.pdf",
+      "pages": 15,
+      "characters": 31604,
+      "bytes": 69127
+    },
+    {
+      "file": "04-browser-evidence-and-test-plan.pdf",
+      "pages": 12,
+      "characters": 28789,
+      "bytes": 79320
+    },
+    {
+      "file": "05-tooling-limitations-and-repo-readiness.pdf",
+      "pages": 5,
+      "characters": 14251,
+      "bytes": 39837
+    },
+    {
+      "file": "06-method-and-source-index.pdf",
+      "pages": 7,
+      "characters": 9596,
+      "bytes": 37024
+    }
+  ],
+  "total_pages": 75,
+  "text_outside_safety_bounds": [],
+  "broken_local_html_links": [],
+  "json_parsing": "pass",
+  "python_syntax": "pass",
+  "ledger_counts": "pass",
+  "browser_result_labels": "blocked with zero app checks",
+  "qa_method": "PDF text-coordinate safety scan and rendered page review; local HTML link validation; JSON/ledger checks. Not application-browser testing."
+}
