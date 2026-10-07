@@ -11,6 +11,8 @@ import {
   DEFAULT_UPPER_CELLS,
   type ScatterMatrixSettings,
 } from "./definition";
+import { sortedBoxStats } from "./matrixCells";
+import { OTHER_LABEL } from "./matrixBands";
 import {
   brushFilters,
   filterOffsets,
@@ -101,8 +103,9 @@ describe("planScatterMatrix", () => {
     expect(kind(1, 0)).toBe("points");
     expect(kind(0, 1)).toBe("correlation");
     expect(kind(2, 0)).toBe("points");
-    expect(kind(0, 2)).toBe("points");
-    expect(kind(3, 2)).toBe("points");
+    expect(kind(0, 2)).toBe("box");
+    expect(kind(3, 2)).toBe("shares");
+    expect(kind(2, 3)).toBe("tiles");
   });
 
   it("uses pairwise-valid rows and reports reduced counts", () => {
@@ -261,5 +264,127 @@ describe("planScatterMatrix", () => {
     });
     expect(plan.cellSize).toBe(72);
     expect(plan.contentWidth).toBeGreaterThan(300);
+  });
+
+  it("groups box plots by category and recounts the selection", () => {
+    const filters: Filter[] = [
+      { type: "range", field: "body_mass_g", min: 4500, max: 7000 },
+    ];
+    const plan = planScatterMatrix({
+      settings: settings(FIELDS, filters),
+      snapshot,
+      width: 800,
+      height: 800,
+    });
+    // Upper triangle: bill length (row 0) against species (column 2).
+    const cell = plan.cells.find(
+      (item) => item.row === 0 && item.column === 2
+    )!;
+    expect(cell.boxes!.horizontal).toBe(false);
+    const groups = cell.boxes!.groups;
+    expect(groups.map((group) => group.stats.count)).toEqual([151, 68, 123]);
+    const gentoo = groups[2]!;
+    const values = snapshot.liveIds
+      .filter((id) => snapshot.columns.species![id] === "Gentoo")
+      .map((id) => snapshot.columns.bill_length_mm![id])
+      .filter((value): value is number => typeof value === "number")
+      .sort((a, b) => a - b);
+    expect(gentoo.stats.median).toBeCloseTo(
+      values[Math.floor(values.length / 2)]!,
+      5
+    );
+    // Every selected row is a heavy penguin, mostly Gentoo.
+    const selected = cell.boxes!.selected!;
+    expect(selected[2]!.count).toBeGreaterThan(selected[0]?.count ?? 0);
+    expect(selected[2]!.count).toBeLessThanOrEqual(123);
+  });
+
+  it("computes Tukey whiskers from sorted values", () => {
+    const stats = sortedBoxStats([1, 2, 3, 4, 5, 6, 7, 8, 100])!;
+    expect(stats.median).toBe(5);
+    expect(stats.q1).toBe(3);
+    expect(stats.q3).toBe(7);
+    expect(stats.high).toBe(8);
+    expect(stats.low).toBe(1);
+  });
+
+  it("counts pairs of categories for tiles and shares", () => {
+    const plan = planScatterMatrix({
+      settings: settings(FIELDS, [
+        { type: "value", field: "sex", values: ["male"] },
+      ]),
+      snapshot,
+      width: 800,
+      height: 800,
+    });
+    const tiles = plan.cells.find(
+      (item) => item.row === 2 && item.column === 3
+    )!;
+    expect(tiles.kind).toBe("tiles");
+    const pairs = tiles.pairs!;
+    // Columns are sex (female, male, missing); rows are species.
+    expect(pairs.columns).toBe(3);
+    expect(pairs.rows).toBe(3);
+    expect([...pairs.total].reduce((sum, count) => sum + count, 0)).toBe(344);
+    expect([...pairs.columnTotal]).toEqual([165, 168, 11]);
+    const selected = [...tiles.pairSelected!];
+    expect(selected.reduce((sum, count) => sum + count, 0)).toBe(168);
+    // Only the male column holds selected rows.
+    expect(selected.slice(0, 3).every((count) => count === 0)).toBe(true);
+  });
+
+  it("folds rare categories into Other and selects all of them together", () => {
+    const ids = Array.from({ length: 40 }, (_, id) => id);
+    const many: MatrixSnapshot = {
+      allIds: ids,
+      liveIds: ids,
+      columns: {
+        // 20 distinct values: v0 appears 21 times, the rest once each.
+        group: Object.fromEntries(
+          ids.map((id) => [id, id < 21 ? "v0" : `v${id - 20}`])
+        ),
+        value: Object.fromEntries(ids.map((id) => [id, id])),
+      },
+      types: { group: "categorical", value: "numeric" },
+    };
+    const plan = planScatterMatrix({
+      settings: settings(["group", "value"]),
+      snapshot: many,
+      width: 600,
+      height: 600,
+    });
+    const group = plan.fields[0]!;
+    expect(group.bands!.labels).toHaveLength(12);
+    expect(group.bands!.labels.at(-1)).toBe(OTHER_LABEL);
+    const other = group.bands!.other;
+    const step = plan.cellSize / 12;
+    const filter = offsetFilter(group, [
+      plan.cellSize - step / 2,
+      plan.cellSize,
+    ]);
+    expect(filter.type === "value" && filter.values).toHaveLength(9);
+    const selected = many.liveIds.filter((id) =>
+      applyFilter(many.columns.group![id], filter)
+    );
+    expect(selected).toHaveLength(9);
+    expect(filterOffsets(group, [filter])).toBeDefined();
+    const bars = plan.cells[0]!.bars!;
+    expect(bars[other]!.total).toBe(9);
+  });
+
+  it("spreads jittered points by the jitter setting", () => {
+    const tight = planScatterMatrix({
+      settings: { ...settings(FIELDS), jitter: 0 },
+      snapshot,
+      width: 800,
+      height: 800,
+    });
+    const species = tight.fields[2]!;
+    const offsets = new Set(
+      [...species.offset]
+        .filter((value) => value === value)
+        .map((v) => v.toFixed(3))
+    );
+    expect(offsets.size).toBe(3);
   });
 });

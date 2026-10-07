@@ -9,9 +9,12 @@ import { ScatterMatrixSettingsPanel } from "./ScatterMatrixSettingsPanel";
 /** Cells for a pair of numeric or date fields. */
 export type MatrixNumericCell = "points" | "correlation" | "blank";
 /** Cells for a numeric or date field against a category. */
-export type MatrixMixedCell = "points" | "blank";
-/** Cells for two category fields. */
-export type MatrixCategoricalCell = "points" | "blank";
+export type MatrixMixedCell = "points" | "box" | "blank";
+/**
+ * Cells for two category fields. Tiles size each pair by its count; shares
+ * draw each pair as a bar of the column category's rows.
+ */
+export type MatrixCategoricalCell = "points" | "tiles" | "shares" | "blank";
 
 /** What one triangle draws, by the types of its two fields. */
 export interface MatrixTriangleCells {
@@ -36,6 +39,8 @@ export interface ScatterMatrixSettings extends BaseChartSettings {
   /** Absent uses a size that shrinks as rows grow. */
   pointSize?: number;
   pointOpacity?: number;
+  /** Share of a band that jittered points spread across, 0 to 1. Default 0.8. */
+  jitter?: number;
 }
 
 export const MIN_MATRIX_FIELDS = 2;
@@ -44,13 +49,15 @@ export const MAX_MATRIX_FIELDS = 10;
 export const DEFAULT_LOWER_CELLS: MatrixTriangleCells = {
   numeric: "points",
   mixed: "points",
-  categorical: "points",
+  categorical: "shares",
 };
 export const DEFAULT_UPPER_CELLS: MatrixTriangleCells = {
   numeric: "correlation",
-  mixed: "points",
-  categorical: "points",
+  mixed: "box",
+  categorical: "tiles",
 };
+/** Category fields show this many of their most common values, then Other. */
+export const MAX_MATRIX_CATEGORIES = 12;
 export const DEFAULT_DIAGONAL_CELLS: MatrixDiagonalCells = {
   continuous: "histogram",
   categorical: "bars",

@@ -18,6 +18,7 @@ import {
 } from "../ChartStatusLine";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import { drawMatrixPoints, type Rgb } from "./matrixCanvas";
+import type { MatrixBoxStats } from "./matrixCells";
 import { MIN_MATRIX_FIELDS, type ScatterMatrixSettings } from "./definition";
 import {
   BOTTOM_TICKS,
@@ -26,11 +27,13 @@ import {
   filterOffsets,
   MATRIX_CONTEXT_COLOR,
   MATRIX_POINT_COLOR,
+  markFilters,
   nearestRow,
   offsetFilter,
   planMatrixLayout,
   planMatrixSelection,
   replaceSelection,
+  sameSelection,
   withSelectedBars,
   STRIP_SIZE,
   type MatrixBar,
@@ -305,7 +308,6 @@ export function ScatterMatrix({
       return;
     }
     setDrag(null);
-    const field = plan.fields[cell.column]!;
     if (drag.moved) {
       setPreview(null);
       setFilters(dragFilters(cell, drag));
@@ -328,23 +330,10 @@ export function ScatterMatrix({
         return;
       }
     }
-    if (cell.bars) {
-      const height = size - 2;
-      const bar = cell.bars.find(
-        (item) =>
-          x >= Math.min(item.start, item.end) &&
-          x <= Math.max(item.start, item.end) &&
-          y >= size - (item.total / cell.maxBar!) * height - 2
-      );
-      if (bar) {
-        const current = settings.filters.find((f) => f.field === field.field);
-        setFilters(
-          JSON.stringify(current) === JSON.stringify(bar.filter)
-            ? []
-            : [bar.filter]
-        );
-        return;
-      }
+    const mark = markFilters(plan, cell, x, y);
+    if (mark) {
+      setFilters(sameSelection(settings.filters, mark) ? [] : mark);
+      return;
     }
     setFilters([]);
   };
@@ -361,7 +350,7 @@ export function ScatterMatrix({
         ? { x: xSpan[0], y: 0, w: xSpan[1] - xSpan[0], h: size }
         : undefined;
     }
-    if (cell.kind !== "points" || !xSpan) {
+    if (cell.kind === "correlation" || !xSpan) {
       return undefined;
     }
     const ySpan = filterOffsets(plan.fields[cell.row]!, settings.filters);
@@ -714,7 +703,9 @@ function MatrixCellMarks({
           fontWeight={600}
           className="fill-foreground"
         >
-          {cell.r === undefined ? "—" : cell.r.toFixed(2)}
+          {cell.r === undefined
+            ? "—"
+            : (Math.abs(cell.r) < 0.005 ? 0 : cell.r).toFixed(2)}
         </text>
         {count}
       </g>
@@ -734,6 +725,22 @@ function MatrixCellMarks({
       >
         {truncate(label, size - 8)}
       </text>
+    );
+  }
+  if (cell.boxes) {
+    return (
+      <g pointerEvents="none">
+        <BoxCell cell={cell} plan={plan} />
+        {count}
+      </g>
+    );
+  }
+  if (cell.pairs) {
+    return (
+      <g pointerEvents="none">
+        <PairCell cell={cell} plan={plan} />
+        {count}
+      </g>
     );
   }
   if (cell.bars) {
@@ -788,4 +795,200 @@ function DiagonalBar({
       />
     </>
   );
+}
+
+/**
+ * One box per category: the box spans the quartiles, a line marks the median,
+ * and whiskers reach the furthest values within 1.5 IQR. With a selection,
+ * gray boxes summarize every row and narrower colored boxes the selection.
+ */
+function BoxCell({ cell, plan }: { cell: MatrixCell; plan: MatrixPlan }) {
+  const size = plan.cellSize;
+  const boxes = cell.boxes!;
+  const bandField = plan.fields[boxes.horizontal ? cell.row : cell.column]!;
+  const valueField = plan.fields[boxes.horizontal ? cell.column : cell.row]!;
+  const bandAxis = bandField.axis;
+  const valueAxis = valueField.axis;
+  if (bandAxis.kind !== "band" || valueAxis.kind !== "numeric") {
+    return null;
+  }
+  const bandwidth = bandAxis.scale.bandwidth();
+  // Map (band offset, value) to cell pixels for either orientation.
+  const point = (along: number, value: number) => {
+    const across = valueAxis.scale(value);
+    return boxes.horizontal
+      ? { x: cell.x + across, y: cell.y + size - along }
+      : { x: cell.x + along, y: cell.y + size - across };
+  };
+  const draw = (
+    key: string,
+    center: number,
+    width: number,
+    stats: MatrixBoxStats,
+    color: string,
+    fillOpacity: number
+  ) => {
+    const half = width / 2;
+    const a = point(center - half, stats.q1);
+    const b = point(center + half, stats.q3);
+    const m0 = point(center - half, stats.median);
+    const m1 = point(center + half, stats.median);
+    const w0 = point(center, stats.low);
+    const w1 = point(center, stats.high);
+    const q1 = point(center, stats.q1);
+    const q3 = point(center, stats.q3);
+    return (
+      <g key={key} stroke={color} strokeWidth={1}>
+        <line x1={w0.x} y1={w0.y} x2={q1.x} y2={q1.y} />
+        <line x1={q3.x} y1={q3.y} x2={w1.x} y2={w1.y} />
+        <rect
+          x={Math.min(a.x, b.x)}
+          y={Math.min(a.y, b.y)}
+          width={Math.max(1, Math.abs(b.x - a.x))}
+          height={Math.max(1, Math.abs(b.y - a.y))}
+          fill={color}
+          fillOpacity={fillOpacity}
+        />
+        <line x1={m0.x} y1={m0.y} x2={m1.x} y2={m1.y} strokeWidth={2} />
+      </g>
+    );
+  };
+  return (
+    <>
+      {boxes.groups.map((group, index) => {
+        const label = bandField.bands!.labels[group.band]!;
+        const center = (bandAxis.scale(label) ?? 0) + bandwidth / 2;
+        const width = Math.min(bandwidth * 0.7, 28);
+        const selected = boxes.selected?.[index];
+        if (!plan.hasSelection) {
+          return draw(
+            group.band.toString(),
+            center,
+            width,
+            group.stats,
+            MATRIX_POINT_COLOR,
+            0.3
+          );
+        }
+        return (
+          <g key={group.band}>
+            {draw(
+              "all",
+              center,
+              width,
+              group.stats,
+              MATRIX_CONTEXT_COLOR,
+              0.25
+            )}
+            {selected &&
+              draw(
+                "selected",
+                center,
+                width * 0.55,
+                selected,
+                MATRIX_POINT_COLOR,
+                0.45
+              )}
+          </g>
+        );
+      })}
+    </>
+  );
+}
+
+/**
+ * Tiles: a square per pair of categories, its area by count. Shares: a bar per
+ * pair, its length the share of the column category's rows. With a selection,
+ * the selected count fills inside the gray total.
+ */
+function PairCell({ cell, plan }: { cell: MatrixCell; plan: MatrixPlan }) {
+  const size = plan.cellSize;
+  const pairs = cell.pairs!;
+  const column = plan.fields[cell.column]!;
+  const row = plan.fields[cell.row]!;
+  if (column.axis.kind !== "band" || row.axis.kind !== "band") {
+    return null;
+  }
+  const xAxis = column.axis;
+  const yAxis = row.axis;
+  const xWidth = xAxis.scale.bandwidth();
+  const yWidth = yAxis.scale.bandwidth();
+  const marks = [];
+  for (let a = 0; a < pairs.columns; a++) {
+    const x0 = cell.x + (xAxis.scale(column.bands!.labels[a]!) ?? 0);
+    for (let b = 0; b < pairs.rows; b++) {
+      const total = pairs.total[a * pairs.rows + b]!;
+      if (!total) {
+        continue;
+      }
+      const selected = plan.hasSelection
+        ? cell.pairSelected![a * pairs.rows + b]!
+        : total;
+      const yCenter =
+        cell.y +
+        size -
+        ((yAxis.scale(row.bands!.labels[b]!) ?? 0) + yWidth / 2);
+      if (cell.kind === "tiles") {
+        const side = Math.min(xWidth, yWidth);
+        const outer = side * Math.sqrt(total / pairs.max);
+        const inner = side * Math.sqrt(selected / pairs.max);
+        const xCenter = x0 + xWidth / 2;
+        marks.push(
+          <g key={`${a}:${b}`}>
+            {plan.hasSelection && (
+              <rect
+                x={xCenter - outer / 2}
+                y={yCenter - outer / 2}
+                width={outer}
+                height={outer}
+                fill={MATRIX_CONTEXT_COLOR}
+                fillOpacity={0.45}
+              />
+            )}
+            {inner > 0 && (
+              <rect
+                x={xCenter - inner / 2}
+                y={yCenter - inner / 2}
+                width={inner}
+                height={inner}
+                fill={MATRIX_POINT_COLOR}
+                fillOpacity={0.85}
+              />
+            )}
+          </g>
+        );
+      } else {
+        const share = pairs.columnTotal[a] ? total / pairs.columnTotal[a]! : 0;
+        const selectedShare = pairs.columnTotal[a]
+          ? selected / pairs.columnTotal[a]!
+          : 0;
+        const height = Math.max(2, Math.min(yWidth * 0.75, 18));
+        marks.push(
+          <g key={`${a}:${b}`}>
+            {plan.hasSelection && (
+              <rect
+                x={x0}
+                y={yCenter - height / 2}
+                width={Math.max(1, xWidth * share)}
+                height={height}
+                fill={MATRIX_CONTEXT_COLOR}
+                fillOpacity={0.45}
+              />
+            )}
+            {selectedShare > 0 && (
+              <rect
+                x={x0}
+                y={yCenter - height / 2}
+                width={Math.max(1, xWidth * selectedShare)}
+                height={height}
+                fill={MATRIX_POINT_COLOR}
+                fillOpacity={0.85}
+              />
+            )}
+          </g>
+        );
+      }
+    }
+  }
+  return <>{marks}</>;
 }

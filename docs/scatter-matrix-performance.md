@@ -35,6 +35,8 @@ Each run serves a generated CSV in place of the penguins file and rewrites the e
 | 100,000 | 10                           |  51 ms |  88 ms |        721 ms |
 | 100,000 | 10, points in both triangles |  59 ms | 110 ms |        779 ms |
 
+With box plots above the diagonal at 100,000 rows × 10 mixed fields, each brush step recounts every box from rows sorted once per layout: 64 ms median, 84 ms p95.
+
 Before the pixel path and the preview, the same 100,000-row drags took 280 ms median at 5 fields and 340 ms at 10 fields, with p95 values of 700–930 ms.
 
 Releasing a brush on 100,000 rows still takes about 0.7 s. A CPU profile of that commit puts most of it outside the matrix: the workspace recomputes field statistics for every filter change (`calculateColumnStatistics`, `useFilteredFieldProfiles`), and the demo serializes its history. The matrix's own share is about 25 ms. The same cost follows any chart's filter on data this size.
