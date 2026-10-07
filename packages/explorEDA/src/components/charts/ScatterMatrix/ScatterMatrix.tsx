@@ -16,8 +16,8 @@ import {
   STATUS_HINT_MIN_WIDTH,
   STATUS_LINE_HEIGHT,
 } from "../ChartStatusLine";
-import { useTraceRevision } from "../trace/ChartTraceScope";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
+import { drawMatrixPoints, type Rgb } from "./matrixCanvas";
 import { MIN_MATRIX_FIELDS, type ScatterMatrixSettings } from "./definition";
 import {
   BOTTOM_TICKS,
@@ -28,8 +28,10 @@ import {
   MATRIX_POINT_COLOR,
   nearestRow,
   offsetFilter,
-  planScatterMatrix,
+  planMatrixLayout,
+  planMatrixSelection,
   replaceSelection,
+  withSelectedBars,
   STRIP_SIZE,
   type MatrixBar,
   type MatrixCell,
@@ -49,51 +51,30 @@ const truncate = (text: string, pixels: number) => {
   return text.length > max ? `${text.slice(0, max - 1)}…` : text;
 };
 
-/** Point cells draw on one canvas: gray context first, the selection on top. */
-function drawPoints(
-  canvas: HTMLCanvasElement,
-  plan: MatrixPlan,
-  width: number,
-  height: number
-) {
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
-  const dpr = typeof window === "undefined" ? 1 : window.devicePixelRatio || 1;
-  canvas.width = Math.max(1, Math.round(width * dpr));
-  canvas.height = Math.max(1, Math.round(height * dpr));
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, width, height);
-  const r = plan.pointRadius;
-  const size = plan.cellSize;
-  const draw = (cell: MatrixCell, selected: boolean) => {
-    const xs = plan.fields[cell.column]!.offset;
-    const ys = plan.fields[cell.row]!.offset;
-    ctx.beginPath();
-    for (let i = 0; i < plan.liveIds.length; i++) {
-      if (Boolean(plan.selected[i]) !== selected) continue;
-      const x = xs[i]!;
-      const y = ys[i]!;
-      if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
-      const px = cell.x + x;
-      const py = cell.y + size - y;
-      ctx.moveTo(px + r, py);
-      ctx.arc(px, py, r, 0, Math.PI * 2);
-    }
-    ctx.fill();
-  };
-  const cells = plan.cells.filter((cell) => cell.kind === "points");
-  for (const pass of plan.hasSelection ? [false, true] : [true]) {
-    ctx.fillStyle = pass ? MATRIX_POINT_COLOR : MATRIX_CONTEXT_COLOR;
-    ctx.globalAlpha = pass ? plan.pointOpacity : plan.dimmedOpacity;
-    for (const cell of cells) {
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(cell.x, cell.y, size, size);
-      ctx.clip();
-      draw(cell, pass);
-      ctx.restore();
+/**
+ * Above this many rows, a drag previews its selection inside the matrix and
+ * filters linked charts once, on release. Below it, linked charts follow live.
+ */
+const LIVE_BRUSH_ROWS = 20_000;
+const UPDATE_MARK = "eda-scatter-matrix-filter";
+/** MATRIX_POINT_COLOR and MATRIX_CONTEXT_COLOR as channels. */
+const POINT_RGB: Rgb = [0x34, 0x79, 0xa8];
+const CONTEXT_RGB: Rgb = [156, 163, 175];
+const UPDATE_MEASURE = "eda-scatter-matrix-update";
+
+/** Keeps the same array while its contents are unchanged, so plans can be reused. */
+function useStableIds(ids: number[]) {
+  const ref = useRef(ids);
+  const previous = ref.current;
+  if (previous !== ids) {
+    const same =
+      previous.length === ids.length &&
+      previous.every((id, index) => id === ids[index]);
+    if (!same) {
+      ref.current = ids;
     }
   }
+  return ref.current;
 }
 
 export function ScatterMatrix({
@@ -109,10 +90,12 @@ export function ScatterMatrix({
   const profiles = useDataLayer((s) => s.fieldProfiles);
   const nonce = useDataLayer((s) => s.nonce);
   const updateChart = useDataLayer((s) => s.updateChart);
-  const liveIds = useGetLiveIds(settings, facetIds);
-  const allIds = useGetAllIds(settings);
-  const revision = useTraceRevision(settings);
+  const liveIds = useStableIds(useGetLiveIds(settings, facetIds) as number[]);
+  const allIds = useStableIds(useGetAllIds(settings) as number[]);
+  const contextRef = useRef<HTMLCanvasElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const frame = useRef(0);
+  const [preview, setPreview] = useState<Filter[] | null>(null);
   const [drag, setDrag] = useState<Drag | null>(null);
   const [hovered, setHovered] = useState<{
     cell: string;
@@ -122,10 +105,15 @@ export function ScatterMatrix({
 
   // The status line sits under the scrolling plot, so it never scrolls away.
   const plotHeight = Math.max(1, height - STATUS_LINE_HEIGHT);
+  // Brushes filter the matrix's own fields, so the key holds still while brushing.
   const fieldKey = [
-    ...settings.fields,
-    ...settings.filters.map((filter) => filter.field),
-  ].join("\u0000");
+    ...new Set([
+      ...settings.fields,
+      ...settings.filters.map((filter) => filter.field),
+    ]),
+  ]
+    .sort()
+    .join("\u0000");
   const snapshot = useMemo((): MatrixSnapshot => {
     const fields = [
       ...new Set(
@@ -140,45 +128,112 @@ export function ScatterMatrix({
         (profile) => profile.name === field
       )?.dataType;
     }
-    return {
-      allIds: allIds as number[],
-      liveIds: liveIds as number[],
-      columns,
-      types,
-    };
+    return { allIds, liveIds, columns, types };
     // The nonce carries data edits; column maps are replaced when data changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fieldKey, allIds, liveIds, profiles, nonce, revision, getColumnData]);
+  }, [fieldKey, allIds, liveIds, profiles, nonce, getColumnData]);
 
-  const plan = useMemo(
+  // Everything but the selection: a brush reuses it.
+  const { fields, lower, upper, diagonal, margin, pointSize, pointOpacity } =
+    settings;
+  const layout = useMemo(
     () =>
-      planScatterMatrix({
-        settings,
+      planMatrixLayout({
+        settings: {
+          ...settings,
+          fields,
+          lower,
+          upper,
+          diagonal,
+          margin,
+          pointSize,
+          pointOpacity,
+        },
         snapshot,
         width,
         height: plotHeight,
         getFieldLabel,
       }),
-    // Field settings carry label changes.
+    // Only these settings change the layout. Field settings carry labels.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [settings, snapshot, width, plotHeight, fieldSettings]
+    [
+      fields,
+      lower,
+      upper,
+      diagonal,
+      margin,
+      pointSize,
+      pointOpacity,
+      snapshot,
+      width,
+      plotHeight,
+      fieldSettings,
+    ]
+  );
+  const filters = useMemo(
+    () => (preview ? replaceSelection(settings, preview) : settings.filters),
+    // replaceSelection reads only the fields and filters.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [preview, settings.fields, settings.filters]
+  );
+  const plan = useMemo(
+    () =>
+      withSelectedBars(layout, planMatrixSelection(layout, filters, snapshot)),
+    [layout, filters, snapshot]
   );
 
+  // The gray context holds every row and changes only with the layout.
   useEffect(() => {
-    if (canvasRef.current)
-      drawPoints(
-        canvasRef.current,
-        plan,
-        plan.contentWidth,
-        plan.contentHeight
+    if (contextRef.current) {
+      drawMatrixPoints(
+        contextRef.current,
+        layout,
+        CONTEXT_RGB,
+        layout.dimmedOpacity
       );
+    }
+  }, [layout]);
+  useEffect(() => {
+    if (!canvasRef.current) {
+      return;
+    }
+    drawMatrixPoints(
+      canvasRef.current,
+      plan,
+      POINT_RGB,
+      plan.pointOpacity,
+      plan.hasSelection ? plan.selected : undefined
+    );
+    if (performance.getEntriesByName(UPDATE_MARK, "mark").length) {
+      performance.measure(UPDATE_MEASURE, UPDATE_MARK);
+      performance.clearMarks(UPDATE_MARK);
+    }
   }, [plan]);
+  useEffect(() => () => cancelAnimationFrame(frame.current), []);
 
   const setFilters = useCallback(
-    (next: Filter[]) =>
-      updateChart(settings.id, { filters: replaceSelection(settings, next) }),
+    (next: Filter[]) => {
+      cancelAnimationFrame(frame.current);
+      performance.clearMarks(UPDATE_MARK);
+      performance.mark(UPDATE_MARK);
+      updateChart(settings.id, { filters: replaceSelection(settings, next) });
+    },
     [settings, updateChart]
   );
+  // While dragging, update at most once per frame: linked charts follow
+  // live on smaller data, and the matrix previews alone on larger data.
+  const live = liveIds.length <= LIVE_BRUSH_ROWS;
+  const scheduleFilters = (next: Filter[]) => {
+    cancelAnimationFrame(frame.current);
+    frame.current = requestAnimationFrame(() => {
+      if (live) {
+        return setFilters(next);
+      }
+      performance.clearMarks(UPDATE_MARK);
+      performance.mark(UPDATE_MARK);
+      setPreview(next);
+    });
+  };
 
   if (settings.fields.filter(Boolean).length < MIN_MATRIX_FIELDS) {
     return (
@@ -207,37 +262,53 @@ export function ScatterMatrix({
   };
 
   const startDrag = (event: PointerEvent<SVGRectElement>, cell: MatrixCell) => {
-    if (event.button !== 0 || event.altKey) return;
+    if (event.button !== 0 || event.altKey) {
+      return;
+    }
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
     const point = local(event);
     setHovered(null);
     setDrag({ cell: cell.id, start: point, end: point, moved: false });
   };
+  const dragFilters = (cell: MatrixCell, current: Drag) =>
+    cell.row === cell.column
+      ? [
+          offsetFilter(plan.fields[cell.column]!, [
+            current.start[0],
+            current.end[0],
+          ]),
+        ]
+      : brushFilters(plan, cell, current.start, current.end);
   const moveDrag = (event: PointerEvent<SVGRectElement>, cell: MatrixCell) => {
     if (drag?.cell === cell.id) {
       const end = local(event);
       const moved =
         drag.moved ||
         Math.abs(end[0] - drag.start[0]) + Math.abs(end[1] - drag.start[1]) > 3;
-      setDrag({ ...drag, end, moved });
+      const next = { ...drag, end, moved };
+      setDrag(next);
+      if (moved) {
+        scheduleFilters(dragFilters(cell, next));
+      }
       return;
     }
-    if (event.buttons || cell.kind !== "points") return;
+    if (event.buttons || cell.kind !== "points") {
+      return;
+    }
     const [x, y] = local(event);
     const index = nearestRow(plan, cell, x, y);
     setHovered(index === undefined ? null : { cell: cell.id, index });
   };
   const endDrag = (cell: MatrixCell) => {
-    if (drag?.cell !== cell.id) return;
+    if (drag?.cell !== cell.id) {
+      return;
+    }
     setDrag(null);
     const field = plan.fields[cell.column]!;
     if (drag.moved) {
-      setFilters(
-        cell.row === cell.column
-          ? [offsetFilter(field, [drag.start[0], drag.end[0]])]
-          : brushFilters(plan, cell, drag.start, drag.end)
-      );
+      setPreview(null);
+      setFilters(dragFilters(cell, drag));
       return;
     }
     // A click selects the mark under it, or clears the selection on empty space.
@@ -281,16 +352,22 @@ export function ScatterMatrix({
   // A region shows in point cells whose two fields both carry a filter, and
   // on the diagonal of each filtered field.
   const selectionRect = (cell: MatrixCell) => {
-    if (cell.kind === "blank" || cell.kind === "label") return undefined;
+    if (cell.kind === "blank" || cell.kind === "label") {
+      return undefined;
+    }
     const xSpan = filterOffsets(plan.fields[cell.column]!, settings.filters);
     if (cell.row === cell.column) {
       return xSpan
         ? { x: xSpan[0], y: 0, w: xSpan[1] - xSpan[0], h: size }
         : undefined;
     }
-    if (cell.kind !== "points" || !xSpan) return undefined;
+    if (cell.kind !== "points" || !xSpan) {
+      return undefined;
+    }
     const ySpan = filterOffsets(plan.fields[cell.row]!, settings.filters);
-    if (!ySpan) return undefined;
+    if (!ySpan) {
+      return undefined;
+    }
     return {
       x: xSpan[0],
       y: size - ySpan[1],
@@ -355,6 +432,16 @@ export function ScatterMatrix({
               />
             ))}
           </svg>
+          <canvas
+            ref={contextRef}
+            className="pointer-events-none absolute inset-0"
+            style={{
+              width: plan.contentWidth,
+              height: plan.contentHeight,
+              visibility: plan.hasSelection ? "visible" : "hidden",
+            }}
+            aria-hidden="true"
+          />
           <canvas
             ref={canvasRef}
             className="pointer-events-none absolute inset-0"
@@ -499,8 +586,9 @@ export function ScatterMatrix({
                 .filter((cell) => cell.kind === "points")
                 .map((cell) => {
                   const point = cellPoint(plan, cell, hovered!.index);
-                  if (!Number.isFinite(point.x) || !Number.isFinite(point.y))
+                  if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) {
                     return null;
+                  }
                   return (
                     <circle
                       key={`hover-${cell.id}`}
@@ -534,7 +622,11 @@ export function ScatterMatrix({
                   onPointerDown={(event) => startDrag(event, cell)}
                   onPointerMove={(event) => moveDrag(event, cell)}
                   onPointerUp={() => endDrag(cell)}
-                  onPointerCancel={() => setDrag(null)}
+                  onPointerCancel={() => {
+                    cancelAnimationFrame(frame.current);
+                    setPreview(null);
+                    setDrag(null);
+                  }}
                 />
               )
             )}

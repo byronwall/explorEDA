@@ -8,7 +8,7 @@
     "last_updated": "2026-10-06",
     "summary": "Inspect several field pairs in off-diagonal scatter plots and each field’s distribution on the diagonal.",
     "status": "active",
-    "next_action": "Milestone 2: measure and protect brushing at 100k rows and 10 fields."
+    "next_action": "Milestone 3: box plots, count tiles, stacked bars, cell-kind options, jitter width, category cap."
   },
   "artifacts": {
     "intent_brief": {
@@ -585,12 +585,17 @@
       {
         "id": "M2",
         "title": "Brushing stays responsive at 100,000 rows and 10 fields",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Benchmarks (all-numeric and mixed) and renderer protections.",
         "proof": "docs/scatter-matrix-performance.md; ~100 ms at 5×100k, <500 ms at 10×100k, or fallback.",
         "valid_intermediate_state": "M1 behavior unchanged and faster.",
         "rollback": "Renderer-internal; revert or filter on release.",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "evidence": [
+          "docs/scatter-matrix-performance.md: brush on a planned layout 8.9 ms at 100k × 10 mixed (from 121.6 ms full replan).",
+          "Browser drag at 100k × 10 fields, points in both triangles: 59 ms median, 110 ms p95; 100k × 5: 25 ms median. Release commit about 0.7 s, mostly workspace field statistics outside the matrix."
+        ],
+        "notes": "Spike outcome: hybrid. Up to 20,000 rows linked charts filter live; above it the matrix previews during drag and commits on release. Small points paint into a pixel count buffer."
       },
       {
         "id": "M3",
@@ -646,7 +651,7 @@
       "continuous dates in ordinary Scatter Plot"
     ],
     "open_decisions": [
-      "M2 renderer fallback."
+      "Workspace field-statistics cost on every filter change at 100k rows (outside this initiative)."
     ]
   },
   "history": [
@@ -699,6 +704,12 @@
       "action": "Started execution; completed Milestone 1 on branch claude/scatter-matrix-m1.",
       "reason": "User approved the plan and asked for a stack of PRs.",
       "evidence": "Tests and browser checks listed on milestone M1."
+    },
+    {
+      "date": "2026-10-07",
+      "action": "Completed Milestone 2 on branch claude/scatter-matrix-m2.",
+      "reason": "Targets met for drag feedback; release cost traced to workspace-wide statistics.",
+      "evidence": "docs/scatter-matrix-performance.md"
     }
   ],
   "closure": null,

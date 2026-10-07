@@ -93,9 +93,12 @@ export interface MatrixCell {
   bars?: MatrixBar[];
   /** Largest bar total, for scaling. */
   maxBar?: number;
+  /** The bar each live row counts toward, or -1. Diagonal cells only. */
+  barIndex?: Int32Array;
 }
 
-export interface MatrixPlan {
+/** Everything that holds still while the matrix's own selection changes. */
+export interface MatrixLayout {
   fields: MatrixField[];
   cells: MatrixCell[];
   cellSize: number;
@@ -106,14 +109,20 @@ export interface MatrixPlan {
   /** Top-left of the first cell in content coordinates. */
   origin: { x: number; y: number };
   liveIds: number[];
-  /** 1 when a live row passes every one of the matrix's own filters. */
-  selected: Uint8Array;
-  hasSelection: boolean;
-  selectedCount: number;
   pointRadius: number;
   pointOpacity: number;
   dimmedOpacity: number;
 }
+
+/** The rows passing the matrix's own filters. */
+export interface MatrixSelection {
+  /** 1 when a live row passes every one of the matrix's own filters. */
+  selected: Uint8Array;
+  hasSelection: boolean;
+  selectedCount: number;
+}
+
+export type MatrixPlan = MatrixLayout & MatrixSelection;
 
 export const MATRIX_GAP = 6;
 export const MIN_CELL_SIZE = 72;
@@ -139,9 +148,12 @@ export function pairType(
 }
 
 function dateValue(value: datum): number | undefined {
-  if (typeof value === "number")
+  if (typeof value === "number") {
     return Number.isFinite(value) ? value : undefined;
-  if (typeof value !== "string" || value.trim() === "") return undefined;
+  }
+  if (typeof value !== "string" || value.trim() === "") {
+    return undefined;
+  }
   const time = dateTimestamp(value);
   return Number.isFinite(time) ? time : undefined;
 }
@@ -153,7 +165,9 @@ export function continuousValue(kind: MatrixFieldKind, value: datum) {
 
 function timestamps(ids: number[], data: Record<number, datum>) {
   const out: Record<number, number | undefined> = {};
-  for (const id of ids) out[id] = dateValue(data[id]);
+  for (const id of ids) {
+    out[id] = dateValue(data[id]);
+  }
   return out;
 }
 
@@ -211,7 +225,9 @@ function planTicks(
     }));
   }
   const linear = scaleLinear().domain(axis.domain);
-  const format = linear.tickFormat(count, "~s");
+  // SI prefixes only for large magnitudes, so years and small counts read plainly.
+  const largest = Math.max(...axis.domain.map(Math.abs));
+  const format = linear.tickFormat(count, largest >= 1e5 ? "~s" : undefined);
   return linear
     .ticks(count)
     .filter((tick) => tick >= axis.domain[0] && tick <= axis.domain[1])
@@ -242,10 +258,14 @@ function planOffsets(
       }
     } else {
       const value = continuousValue(field.kind, raw);
-      if (value !== undefined) pixel = axis.scale(value);
+      if (value !== undefined) {
+        pixel = axis.scale(value);
+      }
     }
     offset[i] = pixel;
-    if (Number.isFinite(pixel)) valid++;
+    if (Number.isFinite(pixel)) {
+      valid++;
+    }
   }
   return { offset, valid };
 }
@@ -253,7 +273,9 @@ function planOffsets(
 /** Pearson correlation of two continuous fields over rows that have both. */
 export function pearson(xs: ArrayLike<number>, ys: ArrayLike<number>) {
   const n = xs.length;
-  if (n < 3) return undefined;
+  if (n < 3) {
+    return undefined;
+  }
   let mx = 0;
   let my = 0;
   for (let i = 0; i < n; i++) {
@@ -272,7 +294,9 @@ export function pearson(xs: ArrayLike<number>, ys: ArrayLike<number>) {
     sxx += dx * dx;
     syy += dy * dy;
   }
-  if (sxx === 0 || syy === 0) return undefined;
+  if (sxx === 0 || syy === 0) {
+    return undefined;
+  }
   return sxy / Math.sqrt(sxx * syy);
 }
 
@@ -299,21 +323,14 @@ function cellKind(
   return { kind: triangle[type], pairType: type };
 }
 
-/** Whether a row passes one of the matrix's own filters. */
-function passes(filter: Filter, id: number, snapshot: MatrixSnapshot) {
-  const value =
-    filter.field === "__ID" ? id : snapshot.columns[filter.field]?.[id];
-  return applyFilter(value, filter);
-}
-
 function planDiagonalBars(
   field: MatrixField,
-  snapshot: MatrixSnapshot,
-  selected: Uint8Array
-): MatrixBar[] {
+  snapshot: MatrixSnapshot
+): { bars: MatrixBar[]; barIndex: Int32Array } {
   const ids = snapshot.liveIds;
   const data = snapshot.columns[field.field] ?? {};
   const axis = field.axis;
+  const barIndex = new Int32Array(ids.length).fill(-1);
   if (axis.kind === "band") {
     const bars = axis.categories.map((category) => {
       const start = axis.scale(category.label) ?? 0;
@@ -331,14 +348,16 @@ function planDiagonalBars(
         } as Filter,
       };
     });
-    const byLabel = new Map(bars.map((bar) => [bar.label, bar]));
+    const byLabel = new Map(bars.map((bar, index) => [bar.label, index]));
     for (let i = 0; i < ids.length; i++) {
-      const bar = byLabel.get(categoryLabel(categoryValue(data[ids[i]!])));
-      if (!bar) continue;
-      bar.total++;
-      if (selected[i]) bar.selected++;
+      const index = byLabel.get(categoryLabel(categoryValue(data[ids[i]!])));
+      if (index === undefined) {
+        continue;
+      }
+      bars[index]!.total++;
+      barIndex[i] = index;
     }
-    return bars;
+    return { bars, barIndex };
   }
   // Equal-width bins over the data bounds from every source row.
   const [low, high] = axis.bounds;
@@ -362,15 +381,17 @@ function planDiagonalBars(
   );
   for (let i = 0; i < ids.length; i++) {
     const value = continuousValue(field.kind, data[ids[i]!]);
-    if (value === undefined) continue;
+    if (value === undefined) {
+      continue;
+    }
     const index = Math.min(
       HISTOGRAM_BINS - 1,
       Math.max(0, Math.floor((value - low) / width))
     );
     bars[index]!.total++;
-    if (selected[i]) bars[index]!.selected++;
+    barIndex[i] = index;
   }
-  return bars;
+  return { bars, barIndex };
 }
 
 /** A continuous filter between two values: a number range or a date range. */
@@ -414,8 +435,9 @@ export function filterOffsets(
     const filter = filters.find(
       (item) => item.field === field.field && item.type === "date-range"
     );
-    if (filter?.type !== "date-range" || !filter.min || !filter.max)
+    if (filter?.type !== "date-range" || !filter.min || !filter.max) {
       return undefined;
+    }
     const a = axis.scale(dateTimestamp(filter.min));
     const b = axis.scale(dateTimestamp(filter.max));
     return [Math.min(a, b), Math.max(a, b)];
@@ -435,7 +457,11 @@ export function replaceSelection(
   ];
 }
 
-export function planScatterMatrix({
+/**
+ * Plans fields, cells, and summaries. None of it depends on the matrix's own
+ * filters, so a brush reuses it and only recounts the selection.
+ */
+export function planMatrixLayout({
   settings,
   snapshot,
   width,
@@ -447,7 +473,7 @@ export function planScatterMatrix({
   width: number;
   height: number;
   getFieldLabel?: (field: string) => string;
-}): MatrixPlan {
+}): MatrixLayout {
   const names = settings.fields.filter(Boolean);
   const k = Math.max(1, names.length);
   const margin = settings.margin;
@@ -481,15 +507,6 @@ export function planScatterMatrix({
   });
 
   const liveIds = snapshot.liveIds;
-  const selected = new Uint8Array(liveIds.length);
-  const own = settings.filters;
-  let selectedCount = 0;
-  for (let i = 0; i < liveIds.length; i++) {
-    const pass = own.every((filter) => passes(filter, liveIds[i]!, snapshot));
-    selected[i] = pass ? 1 : 0;
-    if (pass) selectedCount++;
-  }
-
   const cells: MatrixCell[] = [];
   for (let row = 0; row < fields.length; row++) {
     for (let column = 0; column < fields.length; column++) {
@@ -509,7 +526,9 @@ export function planScatterMatrix({
       if (row === column) {
         cell.n = a.valid;
         if (kind === "histogram" || kind === "bars") {
-          cell.bars = planDiagonalBars(a, snapshot, selected);
+          const { bars, barIndex } = planDiagonalBars(a, snapshot);
+          cell.bars = bars;
+          cell.barIndex = barIndex;
           cell.maxBar = Math.max(1, ...cell.bars.map((bar) => bar.total));
         }
       } else {
@@ -519,22 +538,35 @@ export function planScatterMatrix({
         const dataA = snapshot.columns[a.field] ?? {};
         const dataB = snapshot.columns[b.field] ?? {};
         for (let i = 0; i < liveIds.length; i++) {
-          if (!Number.isFinite(a.offset[i]!) || !Number.isFinite(b.offset[i]!))
+          if (
+            !Number.isFinite(a.offset[i]!) ||
+            !Number.isFinite(b.offset[i]!)
+          ) {
             continue;
+          }
           cell.n++;
           if (kind === "correlation" && continuous) {
             xs.push(continuousValue(a.kind, dataA[liveIds[i]!])!);
             ys.push(continuousValue(b.kind, dataB[liveIds[i]!])!);
           }
         }
-        if (kind === "correlation") cell.r = pearson(xs, ys);
+        if (kind === "correlation") {
+          cell.r = pearson(xs, ys);
+        }
       }
       cells.push(cell);
     }
   }
 
   // Dense clouds get smaller, lighter points, as in the scatter plot.
-  const density = liveIds.length > 5000 ? 2 : liveIds.length > 1000 ? 1 : 0;
+  const density =
+    liveIds.length > 50_000
+      ? 3
+      : liveIds.length > 5000
+        ? 2
+        : liveIds.length > 1000
+          ? 1
+          : 0;
   const small = cellSize < 110 ? 0.5 : 0;
   return {
     fields,
@@ -548,11 +580,9 @@ export function planScatterMatrix({
     ),
     origin,
     liveIds,
-    selected,
-    hasSelection: own.length > 0,
-    selectedCount,
-    pointRadius: settings.pointSize ?? [2.5, 2, 1.5][density]! - small,
-    pointOpacity: settings.pointOpacity ?? [0.7, 0.5, 0.35][density]!,
+    pointRadius:
+      settings.pointSize ?? Math.max(0.75, [2.5, 2, 1.5, 1][density]! - small),
+    pointOpacity: settings.pointOpacity ?? [0.7, 0.5, 0.35, 0.2][density]!,
     dimmedOpacity: 0.15,
   };
 }
@@ -602,4 +632,89 @@ export function brushFilters(
     // Y offsets count up from the cell's bottom edge.
     offsetFilter(yField, [plan.cellSize - y0, plan.cellSize - y1]),
   ];
+}
+
+/** Marks the live rows that pass every one of the matrix's own filters. */
+export function planMatrixSelection(
+  layout: MatrixLayout,
+  filters: Filter[],
+  snapshot: MatrixSnapshot
+): MatrixSelection {
+  const ids = layout.liveIds;
+  const selected = new Uint8Array(ids.length);
+  if (!filters.length) {
+    selected.fill(1);
+    return { selected, hasSelection: false, selectedCount: ids.length };
+  }
+  const checks = filters.map((filter) => ({
+    filter,
+    values:
+      filter.field === "__ID" ? undefined : snapshot.columns[filter.field],
+  }));
+  let selectedCount = 0;
+  for (let i = 0; i < ids.length; i++) {
+    const id = ids[i]!;
+    let pass = true;
+    for (const { filter, values } of checks) {
+      if (!applyFilter(values ? values[id] : id, filter)) {
+        pass = false;
+        break;
+      }
+    }
+    if (pass) {
+      selected[i] = 1;
+      selectedCount++;
+    }
+  }
+  return { selected, hasSelection: true, selectedCount };
+}
+
+/** Diagonal bars with the selection counted into each one. */
+export function withSelectedBars(
+  layout: MatrixLayout,
+  selection: MatrixSelection
+): MatrixPlan {
+  const cells = layout.cells.map((cell) => {
+    if (!cell.bars || !cell.barIndex) {
+      return cell;
+    }
+    const counts = new Int32Array(cell.bars.length);
+    const index = cell.barIndex;
+    const selected = selection.selected;
+    for (let i = 0; i < index.length; i++) {
+      if (selected[i] && index[i]! >= 0) {
+        counts[index[i]!]!++;
+      }
+    }
+    return {
+      ...cell,
+      bars: cell.bars.map((bar, b) => ({ ...bar, selected: counts[b]! })),
+    };
+  });
+  return { ...layout, ...selection, cells };
+}
+
+export function planScatterMatrix(args: {
+  settings: ScatterMatrixSettings;
+  snapshot: MatrixSnapshot;
+  width: number;
+  height: number;
+  getFieldLabel?: (field: string) => string;
+}): MatrixPlan {
+  const layout = planMatrixLayout(args);
+  return withSelectedBars(
+    layout,
+    planMatrixSelection(layout, args.settings.filters, args.snapshot)
+  );
+}
+
+/** Moves one item to a new index, keeping the rest in order. */
+export function moveField(fields: string[], from: number, to: number) {
+  if (to < 0 || to >= fields.length || from === to) {
+    return fields;
+  }
+  const next = [...fields];
+  const [item] = next.splice(from, 1);
+  next.splice(to, 0, item!);
+  return next;
 }

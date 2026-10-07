@@ -33,7 +33,9 @@ function penguins(): MatrixSnapshot {
   const [header, ...lines] = text.trim().split("\n");
   const names = header!.split(",");
   const columns: Record<string, Record<number, datum>> = {};
-  for (const name of names) columns[name] = {};
+  for (const name of names) {
+    columns[name] = {};
+  }
   lines.forEach((line, id) => {
     line.split(",").forEach((cell, index) => {
       const value = cell === "" || cell === "NA" ? null : cell;
