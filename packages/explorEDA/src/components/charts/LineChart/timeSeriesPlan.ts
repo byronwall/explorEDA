@@ -1,4 +1,8 @@
 import { applyFilter } from "@/hooks/applyFilter";
+import {
+  DEFAULT_AXIS_TYPOGRAPHY,
+  type AxisTypography,
+} from "../Axis/axisPlan";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import { defaultCategoricalColors, makeColorScale } from "@/lib/colorScaleMath";
 import {
@@ -90,7 +94,8 @@ export function planTimeSeries(
   width: number,
   height: number,
   getLabel: (field: string) => string,
-  format: (field: string, value: datum) => string
+  format: (field: string, value: datum) => string,
+  typography: AxisTypography = DEFAULT_AXIS_TYPOGRAPHY
 ) {
   const time = settings.time!;
   const filled = time.display === "area" || time.display === "stacked-area";
@@ -295,9 +300,16 @@ export function planTimeSeries(
   );
   const yLow = Math.min(0, ...values);
   const yHigh = Math.max(0, ...values);
-  const maxYLabel = Math.max(
-    formatValue(yLow).length,
-    formatValue(yHigh).length
+  // Y labels claim their measured width, never less than the old estimate.
+  const yTickSize = settings.yAxis.tickFontSize ?? typography.tickSize;
+  const yLabelWidth = Math.max(
+    ...[yLow, yHigh].map((value) => {
+      const text = formatValue(value);
+      return Math.max(
+        text.length * yTickSize * 0.6,
+        typography.measure(text, yTickSize)
+      );
+    })
   );
   const margin = {
     ...settings.margin,
@@ -310,7 +322,11 @@ export function planTimeSeries(
     bottom: Math.max(64, settings.margin.bottom),
     left: Math.min(
       width * 0.32,
-      Math.max(58, settings.margin.left, maxYLabel * 6 + 22)
+      Math.max(
+        58,
+        settings.margin.left,
+        yLabelWidth + 22 + Math.max(0, typography.labelSize - 11)
+      )
     ),
     right: Math.max(16, Math.min(settings.margin.right, width * 0.12)),
   };

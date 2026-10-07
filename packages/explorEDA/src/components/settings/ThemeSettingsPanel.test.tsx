@@ -27,6 +27,9 @@ it("switches the workspace theme and marks the choice", () => {
   expect(newsprint).toHaveAttribute("aria-checked", "true");
   expect(screen.getByLabelText("theme")).toHaveTextContent("newsprint");
 
+  fireEvent.click(screen.getByRole("radio", { name: "Report" }));
+  expect(screen.getByLabelText("theme")).toHaveTextContent("report");
+
   fireEvent.click(compact);
   expect(screen.getByLabelText("theme")).toHaveTextContent("compact");
 });
