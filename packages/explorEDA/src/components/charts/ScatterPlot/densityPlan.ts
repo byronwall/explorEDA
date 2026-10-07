@@ -1,5 +1,6 @@
 import { bisectRight } from "d3-array";
 import { interpolateBlues } from "d3-scale-chromatic";
+import type { AxisTypography } from "../Axis/axisPlan";
 import { finiteNumber } from "@/lib/numeric";
 import type { datum, Filter } from "@/types/FilterTypes";
 import { numericScale } from "../Axis/numericScale";
@@ -42,7 +43,8 @@ export function planDensity(
   settings: ScatterPlotSettings,
   snapshot: ScatterSnapshot,
   width: number,
-  height: number
+  height: number,
+  typography?: AxisTypography
 ) {
   const scatterSettings = {
     ...settings,
@@ -54,7 +56,8 @@ export function planDensity(
     scatterSettings,
     snapshot,
     width,
-    Math.max(1, height - DENSITY_FOOTER)
+    Math.max(1, height - DENSITY_FOOTER),
+    typography
   );
   const xBins = settings.density?.xBins ?? 20;
   const yBins = settings.density?.yBins ?? 16;

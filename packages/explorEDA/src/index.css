@@ -62,6 +62,10 @@
   --eda-note-color: var(--muted-foreground);
   --eda-panel-surface: var(--card);
   --eda-panel-rule: var(--border);
+  --eda-axis-tick-size: 10px;
+  --eda-axis-label-size: 11px;
+  --eda-axis-tick-color: currentColor;
+  --eda-axis-label-color: currentColor;
 }
 
 .dark {
@@ -201,6 +205,16 @@
 }
 .eda-panel-heading {
   order: 0;
+}
+.eda-panel-title {
+  font-size: var(--eda-headline-size);
+  font-weight: var(--eda-headline-weight);
+}
+.eda-axis-text[data-role="tick"] {
+  fill: var(--eda-axis-tick-color);
+}
+.eda-axis-text[data-role="label"] {
+  fill: var(--eda-axis-label-color);
 }
 .eda-panel-readout {
   order: 1;
@@ -491,6 +505,70 @@
   text-align: left;
 }
 
+/* Charts that override the theme, under the theme picker. */
+.eda-theme-settings > .eda-setting-section {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.eda-override-count {
+  margin-left: 6px;
+  color: var(--muted-foreground);
+  font-weight: 400;
+}
+.eda-override-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+.eda-override-chart {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.eda-override-title {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-override-title:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+.eda-override-chart button[data-slot="button"],
+.eda-override-row button[data-slot="button"] {
+  width: 24px;
+  height: 24px;
+  margin-left: auto;
+  color: var(--muted-foreground);
+}
+.eda-override-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 8px;
+  font-size: 11px;
+}
+.eda-override-row dt {
+  flex: 0 0 96px;
+  color: var(--muted-foreground);
+}
+.eda-override-row dd {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.eda-override-row dd > span {
+  color: var(--muted-foreground);
+}
+
 /* Newsprint: a serif headline on warm paper with hairline rules. */
 [data-eda-theme="newsprint"] {
   --eda-headline-font:
@@ -502,6 +580,10 @@
   --eda-headline-accent: var(--foreground);
   --eda-subtitle-size: 12.5px;
   --eda-note-size: 11px;
+  --eda-axis-tick-size: 11px;
+  --eda-axis-label-size: 12px;
+  --eda-axis-tick-color: var(--muted-foreground);
+  --eda-axis-label-color: var(--foreground);
   --eda-panel-surface: oklch(0.987 0.008 85);
   --eda-panel-rule: oklch(0.88 0.012 80);
 }

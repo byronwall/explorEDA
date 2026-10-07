@@ -1,3 +1,4 @@
+import { useAxisTypography } from "../chartTypography";
 import { useId, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import type { BaseChartProps } from "@/types/ChartTypes";
@@ -39,9 +40,10 @@ export function DensityScatter({
   const trace = useChartTrace();
   const [activeId, setActiveId] = useState<string>();
   const refs = useRef(new Map<string, SVGRectElement>());
+  const typography = useAxisTypography();
   const plan = useMemo(
-    () => planDensity(settings, snapshot, width, height),
-    [settings, snapshot, width, height]
+    () => planDensity(settings, snapshot, width, height, typography),
+    [settings, snapshot, width, height, typography]
   );
   const base = plan.scatter;
   const source = useMemo(

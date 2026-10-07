@@ -61,6 +61,15 @@ export interface AxisSettings {
   max?: number;
 }
 
+/** Chart text that differs from the workspace theme on purpose. */
+export interface ChartStyleOverrides {
+  /** Title size in px. */
+  titleSize?: number;
+  titleWeight?: number;
+  /** Subtitle size in px. */
+  subtitleSize?: number;
+}
+
 export interface MarginSettings {
   top: number;
   right: number;
@@ -75,6 +84,8 @@ export interface BaseChartSettings {
   subtitle?: string;
   /** Source or note line under the plot. */
   note?: string;
+  /** Title and subtitle type that overrides the theme. */
+  style?: ChartStyleOverrides;
   type: string;
   field: string;
   layout: ChartLayout;

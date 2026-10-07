@@ -136,7 +136,7 @@ table Revenue,Cost,"Net revenue"`,
     const start = compileDocument(
       `dashboard name="Orders"
 theme name=newsprint
-scatter x=Revenue y=Units title="Bigger orders earn more" subtitle="Revenue by units, 2024" note="Source: orders export"`,
+scatter x=Revenue y=Units title="Bigger orders earn more" subtitle="Revenue by units, 2024" note="Source: orders export" style.titleSize=26 style.titleWeight=700`,
       { rows }
     );
     expect(start.diagnostics).toEqual([]);
@@ -145,6 +145,7 @@ scatter x=Revenue y=Units title="Bigger orders earn more" subtitle="Revenue by u
     expect(scatter).toMatchObject({
       subtitle: "Revenue by units, 2024",
       note: "Source: orders export",
+      style: { titleSize: 26, titleWeight: 700 },
     });
 
     const { text, rebuilt } = roundTrip(start.settings);

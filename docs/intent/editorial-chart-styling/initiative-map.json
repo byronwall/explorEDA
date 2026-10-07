@@ -834,11 +834,17 @@
         "proof": "axisPlan tests with wide-glyph measurer, listStyleOverrides tests, browser check under Newsprint",
         "rollback": "Unset theme sizes fall back to current defaults; revert PR",
         "spike": "measureText vs per-stack factor",
-        "status": "planned",
+        "status": "completed",
         "valid_intermediate_state": "Two families fully themed; others header-only",
         "dependencies_introduced": [
           "Browser text metrics and font loading"
-        ]
+        ],
+        "evidence": [
+          "Spike decision: Canvas measureText (cached, re-measured after document.fonts.ready) with the old 0.6x/0.7x estimate as a floor, so compact layouts cannot shrink; per-stack factor fallback not needed",
+          "Unit tests: axisTypography (compact layout unchanged, theme sizes, wider margins, fewer overlapping ticks), styleOverrides, ThemeSettingsPanel overrides list and resets, DSL style round trip, saved style validation",
+          "Browser: Newsprint scatter and histogram ticks 11px and labels 12px with no overlap at 1280/783/390; title-size and X tick overrides listed with theme values; reset restores theme"
+        ],
+        "spike_decision": "measureText with estimate floor"
       },
       {
         "id": "M3",
@@ -894,7 +900,8 @@
       {
         "decision": "Text measurement approach",
         "evidence": "M2 spike: overlap, planning time at 10k rows, font-load re-measure",
-        "fallback": "Per-stack width factor from a CSS variable with cached label widths"
+        "fallback": "Per-stack width factor from a CSS variable with cached label widths",
+        "resolution": "Resolved in M2: measureText with the old estimate as a floor."
       }
     ],
     "coverage": {
@@ -966,6 +973,12 @@
       "action": "Started execution and completed Milestone 1 (theme picker, Newsprint, one restyled header).",
       "reason": "Byron approved the plan and asked to implement through to the end with stacked PRs.",
       "evidence": "See milestone M1 evidence."
+    },
+    {
+      "date": "2026-10-07",
+      "action": "Completed Milestone 2 (themed axis text on scatter and bar, chart style overrides, overrides list); first proof gate passed.",
+      "reason": "Continuing the approved plan.",
+      "evidence": "See milestone M2 evidence. Gate: Compact geometry unchanged by construction and test; Newsprint labels do not collide."
     }
   ],
   "closure": null,

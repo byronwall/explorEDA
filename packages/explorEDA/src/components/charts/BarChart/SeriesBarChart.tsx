@@ -1,3 +1,4 @@
+import { useAxisTypography } from "../chartTypography";
 import { useId, useMemo, useRef, useState } from "react";
 import { useColorScales } from "@/hooks/useColorScales";
 import { calculateGroupedAggregate } from "@/lib/aggregates";
@@ -50,6 +51,7 @@ export function SeriesBarChart({
   const { getColorForValue } = useColorScales();
   const [activeId, setActiveId] = useState<string>();
   const refs = useRef(new Map<string, SVGRectElement>());
+  const typography = useAxisTypography();
   const plan = useMemo(() => {
     const facets = facetIds ? new Set(facetIds) : undefined;
     const ids = liveIds.filter((id) => !facets || facets.has(id));
@@ -118,6 +120,7 @@ export function SeriesBarChart({
     );
     return planSeriesBars({
       settings,
+      typography,
       summaries,
       width,
       height: Math.max(1, height - 28),
@@ -135,6 +138,7 @@ export function SeriesBarChart({
     });
   }, [
     settings,
+    typography,
     width,
     height,
     revision,

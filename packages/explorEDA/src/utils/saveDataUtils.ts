@@ -303,12 +303,26 @@ function isFacet(value: unknown): boolean {
   );
 }
 
+const STYLE_KEYS = ["titleSize", "titleWeight", "subtitleSize"];
+
+function isStyleOverrides(value: unknown): boolean {
+  return (
+    isRecord(value) &&
+    Object.entries(value).every(
+      ([key, item]) =>
+        STYLE_KEYS.includes(key) &&
+        (item === undefined || (isFiniteNumber(item) && item > 0))
+    )
+  );
+}
+
 function isBaseChart(value: Record<string, unknown>): boolean {
   return (
     typeof value.id === "string" &&
     typeof value.title === "string" &&
     (value.subtitle === undefined || typeof value.subtitle === "string") &&
     (value.note === undefined || typeof value.note === "string") &&
+    (value.style === undefined || isStyleOverrides(value.style)) &&
     typeof value.field === "string" &&
     isRecord(value.layout) &&
     isFiniteNumber(value.layout.x) &&

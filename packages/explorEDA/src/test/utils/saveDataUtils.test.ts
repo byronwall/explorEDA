@@ -399,6 +399,24 @@ describe("saveDataUtils", () => {
         charts: [{ ...chart, subtitle: 4 } as never],
       })
     ).toBe(false);
+    expect(
+      validateSavedData({
+        ...mockValidData,
+        charts: [{ ...chart, style: { titleSize: 26, titleWeight: 700 } }],
+      })
+    ).toBe(true);
+    expect(
+      validateSavedData({
+        ...mockValidData,
+        charts: [{ ...chart, style: { titleSize: -2 } }],
+      })
+    ).toBe(false);
+    expect(
+      validateSavedData({
+        ...mockValidData,
+        charts: [{ ...chart, style: { color: "red" } } as never],
+      })
+    ).toBe(false);
   });
 
   it("validates saved formulas with the calculation runtime", () => {
