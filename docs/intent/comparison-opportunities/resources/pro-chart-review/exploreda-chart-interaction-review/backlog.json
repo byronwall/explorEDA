@@ -1,0 +1,462 @@
+{
+  "project": "explorEDA",
+  "reviewed_commit": "593ca2e1f9210d5bc66985437afc37fcfcd8a56a",
+  "review_method": "Source inspection and official reference documentation; no runtime or performance certification.",
+  "effort_note": "Relative scope, not duration estimates. Includes semantics, settings, persistence, interaction, and tests; split large items into vertical slices.",
+  "sequence_note": "Within a phase, respect dependencies. The first behavior slice is C03/C04; C05 is the small new visual; C07 is the first new broad chart family.",
+  "items": [
+    {
+      "id": "C01",
+      "phase": 1,
+      "title": "Expose Histogram and Distribution presets",
+      "effort": "Tiny–Small",
+      "current_state": "Numeric histogram is inside Bar Chart. Violin and beeswarm settings exist inside Box Plot.",
+      "desired_outcome": "Users find the capability by the analytical name they expect without duplicate renderers.",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "Histogram is a discoverable creation option for numeric fields.",
+        "Distribution presents box, violin overlay, and observation-overlay options.",
+        "Existing saved type identifiers remain compatible.",
+        "Defaults produce useful plots without requiring all settings to be filled."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/BarChart/BarChart.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/BoxPlot/definition.ts"
+      ]
+    },
+    {
+      "id": "C02",
+      "phase": 1,
+      "title": "Make Other inspectable and selection-safe",
+      "effort": "Small–Medium",
+      "current_state": "Row chart creates a height-dependent Other categories bucket and disables its selection.",
+      "desired_outcome": "High-cardinality data remains explorable instead of being hidden behind a terminal bucket.",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "Other opens an explicit member list or drill view.",
+        "Member categories can be selected.",
+        "A selection is tied to category membership, not the label Other.",
+        "Resizing does not silently change the membership of a committed filter.",
+        "Active categories remain visible or clearly represented when outside the displayed top set."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/RowChart/RowChart.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/RowChart/RowChart.tsx"
+      ]
+    },
+    {
+      "id": "C03",
+      "phase": 1,
+      "title": "Unify basic grouped metrics and source provenance",
+      "effort": "Medium",
+      "current_state": "Named grouped results support one group field and count/sum/average; pivot has richer reducers.",
+      "desired_outcome": "The same metric has the same meaning in bars, cards, tables, and future heatmaps.",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "Count, sum, and mean agree across the first consumers.",
+        "Define row count versus valid-value count and behavior when there are no valid values.",
+        "Separate complete group membership from included numeric contributors.",
+        "Support zero, one, and eventually two grouping keys through incremental adapters.",
+        "Keep existing saved configurations readable; avoid a big-bang rewrite."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/lib/aggregates.ts",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/PivotTable/definition.ts"
+      ]
+    },
+    {
+      "id": "C04",
+      "phase": 1,
+      "title": "Make grouped bars participate in linked filtering",
+      "effort": "Medium",
+      "current_state": "Aggregate bar click opens contributor inspection instead of a filter.",
+      "desired_outcome": "Revenue by region filters the workspace as naturally as count by region.",
+      "dependencies": [
+        "C03"
+      ],
+      "acceptance_criteria": [
+        "A mark can select its source group.",
+        "An explicit separate action retains value/contributor inspection.",
+        "Selecting and clearing groups updates all linked views correctly.",
+        "Invalid metric contributors do not disappear from group membership without an explicit rule.",
+        "Keyboard selection and restored selection match pointer behavior."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/BarChart/BarChart.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/lib/aggregates.ts"
+      ]
+    },
+    {
+      "id": "C05",
+      "phase": 1,
+      "title": "Add basic metric cards",
+      "effort": "Small",
+      "current_state": "Filtered-row status exists but no registered arbitrary metric-card type.",
+      "desired_outcome": "The selected population has a visible count and metric summary.",
+      "dependencies": [
+        "C03"
+      ],
+      "acceptance_criteria": [
+        "Count, sum, and mean are available through shared reducers.",
+        "Units and formatting use field metadata.",
+        "Population scope is named.",
+        "Empty/invalid and zero results are visually distinct.",
+        "Inspect action explains contributors without changing selection."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/charts/registerAllCharts.ts",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/ActiveFilterStatus.tsx"
+      ]
+    },
+    {
+      "id": "C06",
+      "phase": 2,
+      "title": "Generalize metric bars across orientations and series",
+      "effort": "Medium–Large, staged",
+      "current_state": "Horizontal chart is count-oriented; bar settings lack first-class grouped/stacked series.",
+      "desired_outcome": "A category/metric/series configuration can change presentation without losing analysis state.",
+      "dependencies": [
+        "C02",
+        "C03",
+        "C04"
+      ],
+      "acceptance_criteria": [
+        "Horizontal and vertical bars accept the same metric.",
+        "Grouped and additive stacked modes share categories, colors, and source membership.",
+        "100% stacks state the normalization denominator.",
+        "Negative and nonadditive metrics are rejected or handled explicitly.",
+        "Metric sort and explicit Top N coexist with stable selections."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/types/ChartTypes.ts",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/BarChart/BarChart.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/RowChart/RowChart.tsx"
+      ]
+    },
+    {
+      "id": "C07",
+      "phase": 2,
+      "title": "Add categorical heatmap with exact cell inspection",
+      "effort": "Medium",
+      "current_state": "Pivot exists; no heatmap is registered.",
+      "desired_outcome": "Two categorical dimensions can be compared visually using a shared metric.",
+      "dependencies": [
+        "C03",
+        "C04"
+      ],
+      "acceptance_criteria": [
+        "Two grouping fields and one metric drive cells.",
+        "Zero, absent group, and invalid metric results differ.",
+        "Color domain and legend have explicit semantics.",
+        "Single-cell selection maps to the corresponding raw group.",
+        "Cell inspection reports exact value and contributors.",
+        "Keyboard access, ordering, and high-cardinality overflow are defined."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/charts/registerAllCharts.ts",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/PivotTable/definition.ts",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/lib/aggregates.ts"
+      ]
+    },
+    {
+      "id": "C08",
+      "phase": 2,
+      "title": "Add tuple-aware selection for nonrectangular multicell choices",
+      "effort": "Medium",
+      "current_state": "Current filter types are field-based values/ranges/text/date-ranges.",
+      "desired_outcome": "Selecting two region/channel pairs selects exactly those pairs.",
+      "dependencies": [
+        "C07"
+      ],
+      "acceptance_criteria": [
+        "(North, Web) OR (South, Retail) excludes the two unselected cross combinations.",
+        "Interactions within one selection and intersections across views are specified.",
+        "Selection survives serialization and data replacement according to a documented rule.",
+        "Facet membership is included when the intended selection is local to a facet.",
+        "Visual filtering and record inspection use the identical predicate."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/types/FilterTypes.ts"
+      ]
+    },
+    {
+      "id": "C09",
+      "phase": 2,
+      "title": "Add long-form series and calendar aggregation",
+      "effort": "Medium core; Large full scope",
+      "current_state": "Line connects values from multiple measure columns and uses numeric axes, not calendar rollups.",
+      "desired_outcome": "Raw orders/events become date-bucketed series without external reshaping.",
+      "dependencies": [
+        "C03"
+      ],
+      "acceptance_criteria": [
+        "Date field, interval, metric, and optional categorical series field are first-class.",
+        "Day/week/month boundaries and time-zone policy are explicit.",
+        "Duplicate timestamps are aggregated in rollup mode; raw-observation mode remains available.",
+        "Missing periods have metric-appropriate, explicit zero/gap behavior.",
+        "Calendar-aware ticks and brush bounds agree with the source interval.",
+        "Series values match an independent grouping of the same source rows."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/LineChart/definition.ts",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/Axis/numericScale.ts"
+      ]
+    },
+    {
+      "id": "C10",
+      "phase": 2,
+      "title": "Add area and stacked-area presentations",
+      "effort": "Small–Medium after prerequisites",
+      "current_state": "Line rendering includes paths and points, not filled/stacked area modes.",
+      "desired_outcome": "Time series can show totals and composition through shared grouped data.",
+      "dependencies": [
+        "C09",
+        "C06"
+      ],
+      "acceptance_criteria": [
+        "Line and area use identical metric results.",
+        "Stack ordering, missing buckets, and negative-value behavior are explicit.",
+        "Changing mode preserves group identity and filter state.",
+        "A rolling window, when added, identifies its size and missing-value policy."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx"
+      ]
+    },
+    {
+      "id": "C11",
+      "phase": 1,
+      "title": "Clarify filter scope and inline legend behavior",
+      "effort": "Small–Medium, staged",
+      "current_state": "Standalone legend filters; line legend is static. Table/Rows search and filtering have different scopes.",
+      "desired_outcome": "Users can distinguish visual hiding, local search, and global filtering.",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "Line legend supports hide/isolate with visible state.",
+        "Hiding a series is not silently treated as filtering source rows.",
+        "Global/local scope is labeled where controls are used.",
+        "Promoting a local predicate to the workspace is an explicit action when supported.",
+        "Standalone categorical/date filter controls reuse existing predicates."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/ColorLegend/ColorLegendChart.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/DataTable/README.md"
+      ]
+    },
+    {
+      "id": "C12",
+      "phase": 3,
+      "title": "Add reference rules, intervals, and annotations",
+      "effort": "Small rule; Medium reusable system",
+      "current_state": "BaseChart offers an overlay slot but shared saved settings have no annotation model.",
+      "desired_outcome": "Existing charts express targets, events, and supplied bounds without custom renderer forks.",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "Fixed horizontal/vertical rule with label works first.",
+        "Fixed, whole-population, and selected-population reference scopes are distinguished.",
+        "Bands and supplied lower/upper bounds are persisted.",
+        "Labels do not cover essential marks at supported desktop sizes.",
+        "No inferential confidence claim is made for an unlabeled input interval."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/BaseChart.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/types/ChartTypes.ts"
+      ]
+    },
+    {
+      "id": "C13",
+      "phase": 3,
+      "title": "Add size encoding and identifiable scatter observations",
+      "effort": "Small–Medium",
+      "current_state": "Scatter has uniform pointSize, color, Canvas, brush, and a coordinate readout.",
+      "desired_outcome": "Users recognize large/unusual entities and inspect them directly.",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "A size field maps nonnegative values to proportional area.",
+        "Size legend and missing/negative policies are explicit.",
+        "Identity and chosen fields appear in an inspectable tooltip.",
+        "Pointer and non-pointer inspection paths exist.",
+        "Brushing still resolves to original observations."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx"
+      ]
+    },
+    {
+      "id": "C14",
+      "phase": 3,
+      "title": "Add binned density mode",
+      "effort": "Medium",
+      "current_state": "Inspected scatter implementation has no density mode.",
+      "desired_outcome": "Overlapping observations become readable without losing raw-row filtering.",
+      "dependencies": [
+        "C07"
+      ],
+      "acceptance_criteria": [
+        "Rectangular 2D bins are a valid first implementation.",
+        "Bin boundaries and color quantity are explicit.",
+        "Selections resolve to raw observations using documented boundary inclusion.",
+        "Binning for display does not silently sample away selected records.",
+        "Filtering, hover, and redraw are benchmarked on named workloads."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx"
+      ]
+    },
+    {
+      "id": "C15",
+      "phase": 3,
+      "title": "Add correlation matrix to scatter exploration",
+      "effort": "Medium",
+      "current_state": "No correlation-matrix family is registered; scatter requires choosing a pair directly.",
+      "desired_outcome": "Users discover relationships across several numeric fields and immediately inspect a pair.",
+      "dependencies": [
+        "C07"
+      ],
+      "acceptance_criteria": [
+        "Method, population, and valid-pair count are visible.",
+        "Constant and insufficient-data fields produce unavailable results, not zero correlation.",
+        "Missing-value policy is explicit and tested.",
+        "Cell activation opens the corresponding scatter configuration rather than inventing a record filter.",
+        "Large field lists have a bounded, usable selection workflow."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/charts/registerAllCharts.ts",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx"
+      ]
+    },
+    {
+      "id": "C16",
+      "phase": 3,
+      "title": "Add ECDF and comparable distributions",
+      "effort": "Medium",
+      "current_state": "Histogram and box/violin/beeswarm are present; no cumulative distribution family is registered.",
+      "desired_outcome": "Users answer threshold/percentile questions and compare groups without export.",
+      "dependencies": [
+        "C03",
+        "C18"
+      ],
+      "acceptance_criteria": [
+        "ECDF reports fraction of valid observations at or below a value.",
+        "Ties, invalid values, and empty selections are tested.",
+        "Comparison histograms share bin edges.",
+        "Count versus within-group percentage is explicit.",
+        "Baseline scope is named and persists as configured."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/charts/registerAllCharts.ts",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/BoxPlot/definition.ts"
+      ]
+    },
+    {
+      "id": "C17",
+      "phase": 1,
+      "title": "Introduce selection-only undo and redo",
+      "effort": "Medium",
+      "current_state": "Clear-all, removable filter chips, precise ranges, and brush clearing exist; recommendation extends these.",
+      "desired_outcome": "Exploration is reversible without requiring universal application undo.",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "One completed gesture creates one history step.",
+        "Undo/redo restores complete filter state across linked views.",
+        "Clear-all itself can be undone.",
+        "Data replacement resets or rebases history by an explicit policy.",
+        "History is bounded; no raw dataset copies per brush update."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/ActiveFilterStatus.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/settings/SelectionSettingsTab.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/BaseChart.tsx"
+      ]
+    },
+    {
+      "id": "C18",
+      "phase": 3,
+      "title": "Add named baseline/selection comparison",
+      "effort": "Medium",
+      "current_state": "Existing shared filters and saved settings provide a starting point, not a complete comparison feature.",
+      "desired_outcome": "Users compare the current population with a precisely defined reference selection.",
+      "dependencies": [
+        "C03",
+        "C17"
+      ],
+      "acceptance_criteria": [
+        "All data, pre-selection population, and saved predicate are different named choices.",
+        "Raw snapshot versus reevaluated predicate behavior is explicit on data changes.",
+        "Comparison marks use compatible scales and metric definitions.",
+        "Population count and valid-value denominator are available.",
+        "Cards, distributions, and references consume the same scope definition."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/README.md",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/ActiveFilterStatus.tsx"
+      ]
+    },
+    {
+      "id": "C19",
+      "phase": 3,
+      "title": "Complete axis-domain controls",
+      "effort": "Small–Medium",
+      "current_state": "Numeric-scale helper/UI implement linear and symlog; calendar-specific support is separate work.",
+      "desired_outcome": "Users can control view domains without accidentally changing record selection.",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "Explicit bounds and reset/lock behavior are specified.",
+        "A true logarithmic option explicitly handles nonpositive values.",
+        "Zoom and filter actions are distinguishable.",
+        "Brush pixels invert to raw numeric values correctly under every supported scale.",
+        "Saved settings restore domains and selection consistently."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/Axis/numericScale.ts",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/settings/AxisSettingsTab.tsx"
+      ]
+    },
+    {
+      "id": "C20",
+      "phase": "Conditional",
+      "title": "Optional geographic views",
+      "effort": "Medium–Large",
+      "current_state": "No geographic chart is registered.",
+      "desired_outcome": "Geographic users see spatial patterns without expanding the core into a mapping platform.",
+      "dependencies": [
+        "C03",
+        "C04"
+      ],
+      "acceptance_criteria": [
+        "Prioritize only with evidence of geographic user workflows.",
+        "Start with points or caller-supplied GeoJSON and explicit record joins.",
+        "Unknown/unmatched regions are reported.",
+        "Selections map to source records consistently.",
+        "Projection/data/basemap requirements are documented; avoid implied geocoding support."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/charts/registerAllCharts.ts"
+      ]
+    },
+    {
+      "id": "C21",
+      "phase": "Later",
+      "title": "Familiar composition and contribution presets",
+      "effort": "Small–Medium after shared primitives",
+      "current_state": "No pie/donut or waterfall family is registered.",
+      "desired_outcome": "Close recognizable presentation gaps after the main analytical contracts are complete.",
+      "dependencies": [
+        "C03",
+        "C04",
+        "C06"
+      ],
+      "acceptance_criteria": [
+        "Donut uses a bounded set of nonnegative categories with readable labels and totals.",
+        "Donut selection reuses category membership.",
+        "Waterfall has explicit start/end and subtotal semantics.",
+        "No new reducer implementation is hidden in the renderer."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/charts/registerAllCharts.ts"
+      ]
+    }
+  ]
+}

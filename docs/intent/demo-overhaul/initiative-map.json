@@ -1,0 +1,1481 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Demo overhaul with complete analysis examples",
+    "slug": "demo-overhaul",
+    "scale": "capability",
+    "current_phase": "shape",
+    "last_updated": "2026-10-06",
+    "summary": "Show completed, powerful analyses for analysts: all four new dataset families, Wine, a curated Shop analysis, and Lorenz; use the landed multi-table feature.",
+    "status": "planned",
+    "next_action": "Review the seven-entry catalogue proposal, then create a proof-first plan against the landed multi-table contract."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-06"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-06"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "research_report": {
+      "path": "support/dataset-research.md",
+      "status": "imported-source",
+      "updated_at": "2026-10-06"
+    },
+    "research_brief": {
+      "path": "support/original-research-brief.txt",
+      "status": "imported-source",
+      "updated_at": "2026-10-06"
+    }
+  },
+  "sources": [
+    {
+      "id": "request",
+      "type": "direct-user-input",
+      "location": "Current Codex conversation, 2026-10-06",
+      "anchor": "Bring in all the useful info from this tab related to sample data sets. The goal is to overhaul and rework the demos. I asked for some multi-table things since that is coming shortly.",
+      "authority": "current explicit intent"
+    },
+    {
+      "id": "research-brief",
+      "type": "user-supplied-research-brief",
+      "location": "support/original-research-brief.txt",
+      "anchor": "Mission; Priority questions; Five analyses per dataset; Multi-source preparation; Notebook reporting commentary",
+      "authority": "earlier requested research scope, not execution authorization"
+    },
+    {
+      "id": "research-report",
+      "type": "agent-authored-research",
+      "location": "support/dataset-research.md",
+      "anchor": "Four public dataset additions for explorEDA; sections 1–9",
+      "authority": "proposed designs and reported primary-source evidence; not accepted user decisions",
+      "original_url": "https://chatgpt.com/c/6ac458b3-fb98-83e9-85ce-fa9e8edac69f",
+      "reported_research_date": "2026-10-05",
+      "reported_revision": "8c35e4db02d9e0efc0842644d4a669e58d10caf8"
+    },
+    {
+      "id": "catalogue",
+      "type": "repository",
+      "location": "../../../apps/demo/src/demos/examples.ts",
+      "anchor": "ExampleData; examples; views; FEATURED_EXAMPLE_ID",
+      "authority": "current repository reality at a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+    },
+    {
+      "id": "saved-tabs",
+      "type": "repository",
+      "location": "../../../apps/demo/src/demos/exampleViews.ts",
+      "anchor": "ExampleView; shopViews; penguinViews; calendarViews",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "saved-analysis",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/types/SavedDataStructure.ts",
+      "anchor": "SavedDataStructure; SavedAnalysisStructure.data: SavedRow[]",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "coverage",
+      "type": "repository-document",
+      "location": "../../example-coverage.md",
+      "anchor": "Separate implementation status, intentional use, and visual review",
+      "authority": "repository workflow"
+    },
+    {
+      "id": "multi-source",
+      "type": "repository-intent",
+      "location": "../multi-source-analysis/shape-brief.md",
+      "anchor": "One base source per task view; explicit lookups; provisional preparation ownership",
+      "authority": "existing provisional shape, not proof of shipped support"
+    },
+    {
+      "id": "product-answer-1",
+      "type": "direct-user-input",
+      "location": "Current Codex conversation, 2026-10-06 product-question response annotations",
+      "anchor": "Annotation 1: Demos support analysts who might wnat to use the library or tool. Developrs will find waht they need, so demos are meant to serve an actual user.  Not an educational tool.  Raw power.",
+      "authority": "latest explicit user direction",
+      "annotation_index": 1
+    },
+    {
+      "id": "product-answer-2",
+      "type": "direct-user-input",
+      "location": "Current Codex conversation, 2026-10-06 product-question response annotations",
+      "anchor": "Annotation 2: They should be grabbing their CSVs and wanting to try things out on their own data",
+      "authority": "latest explicit user direction",
+      "annotation_index": 2
+    },
+    {
+      "id": "product-answer-3",
+      "type": "direct-user-input",
+      "location": "Current Codex conversation, 2026-10-06 product-question response annotations",
+      "anchor": "Annotation 3: All of htem",
+      "authority": "latest explicit user direction",
+      "annotation_index": 3
+    },
+    {
+      "id": "product-answer-4",
+      "type": "direct-user-input",
+      "location": "Current Codex conversation, 2026-10-06 product-question response annotations",
+      "anchor": "Annotation 4: Yes, make a proposal and then list the removals/combines in teh shaping.  But we should have REALLY GOOD examples, quality instead of quantity.  I really like the wine one currently due to its really ncie scatter stuff.",
+      "authority": "latest explicit user direction",
+      "annotation_index": 4
+    },
+    {
+      "id": "product-answer-5",
+      "type": "direct-user-input",
+      "location": "Current Codex conversation, 2026-10-06 product-question response annotations",
+      "anchor": "Annotation 5: I think we should try to do both.  The goal is to understand what app features are exposed.  I guess that's more important than someone picking a healht data set sinec that's their background",
+      "authority": "latest explicit user direction",
+      "annotation_index": 5
+    },
+    {
+      "id": "product-answer-6",
+      "type": "direct-user-input",
+      "location": "Current Codex conversation, 2026-10-06 product-question response annotations",
+      "anchor": "Annotation 6: I think a set of focused tabs?  do a $consider-contrast run to make sense of this.  I want it to feel like a complete \"end point\" in the analysis.  You are seeing the results of usign this tool to produce a complete analysis on a topic/dataset.",
+      "authority": "latest explicit user direction",
+      "annotation_index": 6
+    },
+    {
+      "id": "product-answer-7",
+      "type": "direct-user-input",
+      "location": "Current Codex conversation, 2026-10-06 product-question response annotations",
+      "anchor": "Annotation 7: They should insepct prepared things.  This is a demo of capabilty not a tutorial or walkthrough.",
+      "authority": "latest explicit user direction",
+      "annotation_index": 7
+    },
+    {
+      "id": "product-answer-8",
+      "type": "direct-user-input",
+      "location": "Current Codex conversation, 2026-10-06 product-question response annotations",
+      "anchor": "Annotation 8: Assume multi table lands before this work starts.  Shape it that way",
+      "authority": "latest explicit user direction",
+      "annotation_index": 8
+    },
+    {
+      "id": "product-answer-9",
+      "type": "direct-user-input",
+      "location": "Current Codex conversation, 2026-10-06 product-question response annotations",
+      "anchor": "Annotation 9: IT shoudl feel more like a final artifact nad less like a stepper-walkthrough thing,",
+      "authority": "latest explicit user direction",
+      "annotation_index": 9
+    },
+    {
+      "id": "product-answer-10",
+      "type": "direct-user-input",
+      "location": "Current Codex conversation, 2026-10-06 product-question response annotations",
+      "anchor": "Annotation 10: Sharing, I guess.  None of these seem very important to me at the moment.",
+      "authority": "latest explicit user direction",
+      "annotation_index": 10
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "overhaul",
+        "type": "outcome",
+        "statement": "Overhaul and rework the demos around useful sample data.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "request"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": ""
+      },
+      {
+        "id": "import",
+        "type": "required behavior",
+        "statement": "Preserve all useful dataset research from the named tab in the repository.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "request",
+          "research-report"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": ""
+      },
+      {
+        "id": "related-data",
+        "type": "outcome",
+        "statement": "Include credible multi-table examples because that support is coming shortly.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "request"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": ""
+      },
+      {
+        "id": "variety",
+        "type": "preference",
+        "statement": "Use a small varied collection of real data to show advanced chart features through useful questions.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "research-brief#Mission"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": ""
+      },
+      {
+        "id": "audience",
+        "type": "audience",
+        "statement": "Serve people learning explorEDA and developers evaluating the embedded workspace.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "superseded",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "catalogue",
+          "research-report#Notebook outlines"
+        ],
+        "confidence": "medium",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": "Latest product answers govern. Flight-first may sequence internal proof, but cannot reduce release scope.",
+        "superseded_by": "primary-analysts"
+      },
+      {
+        "id": "three-stages",
+        "type": "sequence",
+        "statement": "Prepare examples for current linked exploration, upcoming explicit lookups, and later narrative reporting.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "superseded",
+        "time_horizon": "later",
+        "source_anchors": [
+          "research-brief#Mission",
+          "request"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": "Latest product answers govern. Flight-first may sequence internal proof, but cannot reduce release scope.",
+        "superseded_by": "multi-table-first"
+      },
+      {
+        "id": "four-families",
+        "type": "example",
+        "statement": "Flights, Beijing air quality, WDI, and earthquakes form the recommended candidate portfolio.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "superseded",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "research-report#1. Recommendation"
+        ],
+        "confidence": "medium",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": "Latest product answers govern. Flight-first may sequence internal proof, but cannot reduce release scope.",
+        "superseded_by": "all-four-release"
+      },
+      {
+        "id": "twenty-designs",
+        "type": "example",
+        "statement": "Retain all twenty proposed analysis designs and four connected notebook outlines.",
+        "commitment": "illustrative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "research-report#F1–F5",
+          "research-report#B1–B5",
+          "research-report#W1–W5",
+          "research-report#E1–E5"
+        ],
+        "confidence": "medium",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": "Not twenty catalogue entries or five crowded dashboards per family."
+      },
+      {
+        "id": "first-flight",
+        "type": "sequence",
+        "statement": "Start with January flights and prove F1 delay flow plus F2 paired delays.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "superseded",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "research-report#8. Ranked preparation backlog"
+        ],
+        "confidence": "medium",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": "Latest product answers govern. Flight-first may sequence internal proof, but cannot reduce release scope.",
+        "superseded_by": "all-four-release"
+      },
+      {
+        "id": "base-counts",
+        "type": "constraint",
+        "statement": "Lookup enrichment preserves the declared base population and control totals.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "research-brief#Multi-source preparation",
+          "multi-source"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": ""
+      },
+      {
+        "id": "provenance",
+        "type": "required behavior",
+        "statement": "Retain source tables, keys, field units, source versions, missing-match evidence, and reproducible preparation.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "research-brief#Internet research and dataset selection",
+          "research-brief#Multi-source preparation"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": ""
+      },
+      {
+        "id": "no-fake-findings",
+        "type": "constraint",
+        "statement": "Treat uncomputed patterns as hypotheses and preserve observed, proposed, and unknown distinctions.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "research-brief#Evidence and acceptance gates"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": ""
+      },
+      {
+        "id": "reference-fixtures",
+        "type": "constraint",
+        "statement": "Keep altered edge-case fixtures separate from real reference data.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "research-brief#Multi-source preparation"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": ""
+      },
+      {
+        "id": "reuse-tabs",
+        "type": "current repository reality",
+        "statement": "Existing demo saved tabs can hold focused analysis configurations.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "saved-tabs"
+        ],
+        "confidence": "medium",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": ""
+      },
+      {
+        "id": "single-array",
+        "type": "current repository reality",
+        "statement": "This checkout uses one working row array and saves one dataset per analysis bundle.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "saved-analysis",
+          "multi-source"
+        ],
+        "confidence": "medium",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": ""
+      },
+      {
+        "id": "reporting",
+        "type": "future possibility",
+        "statement": "Add ordered report blocks, population/state manifests, live versus saved-result labels, and provenance expansion.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          "research-report#6. Portfolio coverage and notebook-reporting readiness"
+        ],
+        "confidence": "medium",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": ""
+      },
+      {
+        "id": "no-relational-platform",
+        "type": "anti-goal",
+        "statement": "Do not require arbitrary joins, automatic cross-source filtering, mixed populations, or a notebook execution platform for the demo overhaul.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "multi-source",
+          "research-brief#Multi-source preparation",
+          "research-brief#Notebook reporting commentary"
+        ],
+        "confidence": "medium",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": ""
+      },
+      {
+        "id": "primary-analysts",
+        "type": "audience",
+        "statement": "Serve analysts evaluating the tool or library; show analytical power rather than education.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-answer-1"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [
+          "audience"
+        ],
+        "notes": ""
+      },
+      {
+        "id": "own-csv-success",
+        "type": "outcome",
+        "statement": "Visitors want to bring their own CSV files and try the tool after seeing the demos.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-answer-2"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": ""
+      },
+      {
+        "id": "all-four-release",
+        "type": "required behavior",
+        "statement": "Include all four researched dataset families in the first release.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-answer-3"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [
+          "four-families",
+          "first-flight"
+        ],
+        "notes": ""
+      },
+      {
+        "id": "quality-curation",
+        "type": "preference",
+        "statement": "Propose removals and combinations in the shape; prefer excellent examples and preserve Wine as a scatter quality reference.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-answer-4"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": ""
+      },
+      {
+        "id": "capability-and-topic",
+        "type": "required behavior",
+        "statement": "Support capability and topic discovery in the same catalogue; capability visibility takes priority.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-answer-5"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": ""
+      },
+      {
+        "id": "finished-tabs",
+        "type": "preference",
+        "statement": "Evaluate focused tabs with consider-contrast; show a complete analysis endpoint with freely inspectable results.",
+        "commitment": "tentative",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-answer-6"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": "Focused tabs are a leaning; the completed-artifact outcome is explicit."
+      },
+      {
+        "id": "prepared-relationships",
+        "type": "required behavior",
+        "statement": "Let users inspect prepared relationships; no tutorial or relationship-building walkthrough.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-answer-7"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": ""
+      },
+      {
+        "id": "multi-table-first",
+        "type": "constraint",
+        "statement": "Assume multi-table support lands before this implementation starts; shape the release around it.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-answer-8"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [
+          "three-stages"
+        ],
+        "notes": ""
+      },
+      {
+        "id": "final-artifact",
+        "type": "desired experience",
+        "statement": "Show a final analysis artifact rather than a stepper or prescribed walkthrough.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-answer-9"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": ""
+      },
+      {
+        "id": "sharing-secondary",
+        "type": "preference",
+        "statement": "Sharing is a slight preference, but new sharing, downloads, and persistence are low priorities.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "product-answer-10"
+        ],
+        "confidence": "high",
+        "conflicts": [],
+        "supersedes": [],
+        "notes": "Do not turn the slight sharing preference into required feature work."
+      }
+    ],
+    "themes": [
+      "Analytical power for actual analysts",
+      "Completed analyses that motivate personal CSV use",
+      "All four new dataset families",
+      "Capability discovery alongside topics",
+      "Prepared native multi-table relationships",
+      "Quality through catalogue consolidation"
+    ],
+    "conflicts": [
+      {
+        "id": "tabs-baseline",
+        "status": "resolved",
+        "sources": [
+          "research-report#Shared implementation convention",
+          "saved-tabs"
+        ],
+        "resolution": "Keep the historical report unchanged; the current intent recognizes existing saved view tabs. Notebook-result capture remains distinct."
+      },
+      {
+        "id": "multi-table-timing",
+        "status": "resolved",
+        "sources": [
+          "request",
+          "multi-source",
+          "research-report#R5"
+        ],
+        "resolution": "User explicitly says to assume multi-table support lands first. Plan a dependency check before implementation; do not build a flattened release substitute."
+      },
+      {
+        "id": "scope-and-format-update",
+        "status": "resolved",
+        "sources": [
+          "product-answer-1",
+          "product-answer-2",
+          "product-answer-3",
+          "product-answer-4",
+          "product-answer-5",
+          "product-answer-6",
+          "product-answer-7",
+          "product-answer-8",
+          "product-answer-9",
+          "product-answer-10"
+        ],
+        "resolution": "All four new families are required. Analysts and completed analysis artifacts replace inferred educational/developer framing. Assume multi-table arrives before implementation; no flattened release path. Sharing remains low priority."
+      }
+    ],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "All four new families plus Wine, one consolidated Shop analysis, and Lorenz. No new report or sharing platform.",
+    "problem": "The fragmented catalogue shows individual features but does not consistently present completed analyses that motivate analysts to use personal data.",
+    "recommended_shape": "Seven complete analysis entries, discoverable by capability and topic, opening on a strong finished view with freely navigable focused tabs. Native prepared relationships use multi-table support assumed to land first.",
+    "success_moves": [
+      {
+        "move": "Prove one completed Flights analysis before repeating its presentation.",
+        "protects": "Avoid multiplying a tutorial-like or crowded layout across four required families.",
+        "evidence": "Freely navigate tabs, see complete results, inspect lookup provenance, reach own-data import without coaching."
+      },
+      {
+        "move": "Use frozen local extracts with the real landed multi-table contract.",
+        "protects": "Separate source retrieval and data audits from demo runtime and avoid two competing enrichment paths.",
+        "evidence": "Local tables and native relationships preserve base N and distance control totals."
+      },
+      {
+        "move": "Curate public entries while retaining useful correctness fixtures.",
+        "protects": "Reduce repeated examples without discarding important edge cases or analytical capabilities.",
+        "evidence": "Map each of 22 existing IDs to a disposition and verified replacement capability before removal."
+      },
+      {
+        "move": "Keep saved-result interpretations distinct from live filtered outputs.",
+        "protects": "Prevent a finished-looking artifact from making false claims after interaction.",
+        "evidence": "A changed filter updates current charts; any fixed finding identifies its saved analysis state."
+      },
+      {
+        "move": "Reuse existing tabs, compact workspace, notes, and import behavior.",
+        "protects": "Spend effort on data and excellent finished examples; avoid a new reporting or navigation platform.",
+        "evidence": "Existing source anchors for SavedViewsWorkspace, SavedViewTabs, LandingPage, and CsvUpload."
+      }
+    ],
+    "first_proof": {
+      "question": "Can a complete Flights analysis show analytical power and prepared multi-table evidence without a walkthrough?",
+      "artifact": "Local Flights example with finished opening view, independent focused tabs, prepared real source tables, capability discovery, and CSV import access.",
+      "observe": [
+        "No required tutorial or setup sequence",
+        "Capability discovery opens a relevant analysis tab",
+        "Tab scopes and edits remain distinct",
+        "Trace/lookup records reconcile with displayed counts and finite distance totals",
+        "Existing import starts a workspace without reusing incompatible example settings"
+      ],
+      "decision_rule": "Keep focused tabs if an analyst can identify and test a useful capability without coaching and the visible results reconcile with source records. Otherwise revise presentation before applying it across all required families."
+    },
+    "rabbit_holes": [
+      "Treating twenty designs as twenty catalogue entries",
+      "Copying every old Shop chart into one oversized example",
+      "Writing static findings before computing the real extract",
+      "Building a report engine or sharing platform",
+      "Teaching relationship creation rather than exposing prepared capability",
+      "Implementing a flattened fallback despite the landed-multi-table assumption"
+    ],
+    "open_decisions": [],
+    "consider_contrast": {
+      "decision": "How should an analyst first encounter a completed dataset analysis?",
+      "scale": "0 means the approach obstructs this outcome; 10 means it strongly supports it. Judgment scores, not user-tested measurements.",
+      "dimensions": [
+        {
+          "id": "capabilities",
+          "label": "Visible analytical capabilities",
+          "basis": "Answer 5 prioritizes feature discovery."
+        },
+        {
+          "id": "endpoint",
+          "label": "Completed analysis on arrival",
+          "basis": "Answers 6 and 9 require an endpoint artifact."
+        },
+        {
+          "id": "exploration",
+          "label": "Direct access to testing results",
+          "basis": "Answers 2 and 7 prioritize wanting to use the tool and inspecting prepared work."
+        }
+      ],
+      "options": [
+        {
+          "id": "focused-tabs",
+          "scores": {
+            "capabilities": 9,
+            "endpoint": 9,
+            "exploration": 9
+          },
+          "reasons": {
+            "capabilities": "Each analytical mode gets a focused view and a discovery label.",
+            "endpoint": "Strong opening result and complete outcomes per tab.",
+            "exploration": "All views are available immediately in the editable workspace."
+          }
+        },
+        {
+          "id": "single-dashboard",
+          "scores": {
+            "capabilities": 9,
+            "endpoint": 6,
+            "exploration": 8
+          },
+          "reasons": {
+            "capabilities": "Many features can be visible together.",
+            "endpoint": "Five analysis questions compete for space and an opening focal result.",
+            "exploration": "Filters are direct, but dense panels increase the effort to locate a comparison."
+          }
+        },
+        {
+          "id": "report-first",
+          "scores": {
+            "capabilities": 7,
+            "endpoint": 10,
+            "exploration": 5
+          },
+          "reasons": {
+            "capabilities": "Narrative can leave advanced controls and alternate modes less visible.",
+            "endpoint": "Ordered findings read as a final artifact.",
+            "exploration": "Reading structure and isolated figures can slow testing related views."
+          }
+        },
+        {
+          "id": "stepper",
+          "scores": {
+            "capabilities": 6,
+            "endpoint": 2,
+            "exploration": 4
+          },
+          "reasons": {
+            "capabilities": "Later modes remain hidden behind sequence.",
+            "endpoint": "Starts with learning tasks rather than a complete result.",
+            "exploration": "Required progression restricts arbitrary inspection."
+          },
+          "disqualified": "Conflicts with explicit rejection of tutorials and stepper walkthroughs."
+        }
+      ],
+      "choice": "focused-tabs",
+      "hybrid": "Use concise report-quality findings within existing freely navigable editable tabs; do not add a separate report engine.",
+      "watch": "Tabs could still look like lessons or disconnected chart presets. Every tab must show a complete result with sufficient context.",
+      "next": "Encode the selected layout in the shape and prove one complete Flights story."
+    },
+    "catalogue_proposal": {
+      "status": "proposed, not implemented",
+      "current_count": 22,
+      "target_count": 7,
+      "new_entries": [
+        "nycflights13",
+        "beijing-air-quality",
+        "world-development-indicators",
+        "usgs-comcat"
+      ],
+      "kept_existing": [
+        "wine-chemistry",
+        "lorenz-3d"
+      ],
+      "combined": {
+        "source_ids": [
+          "shop-operations",
+          "calendar-series",
+          "grouped-bars",
+          "area-charts",
+          "stacked-bars",
+          "calculated-orders",
+          "shop-10000",
+          "categorical-charts"
+        ],
+        "destination": "shop-operations",
+        "tabs": [
+          "Overview",
+          "Sales mix",
+          "Calendar",
+          "Contribution and delivery"
+        ]
+      },
+      "removed_public_entries": [
+        "scatter-regression",
+        "palmer-penguins",
+        "nba-stats",
+        "scatter-density",
+        "scatter-surfaces",
+        "box-plot",
+        "distribution-discovery",
+        "region-map",
+        "point-map",
+        "bubble-scatter",
+        "product-activity",
+        "scatter-trace"
+      ],
+      "removal_gate": "Verify replacement examples retain the valuable capabilities before removing public entries. Keep useful test fixtures and assets. No extra backward-compatibility routes are assumed.",
+      "rationale": {
+        "wine": "Explicit user quality reference; strong scatter work.",
+        "shop": "Retain useful metrics, categories, calendar, calculations, and distributions in one coherent operational artifact.",
+        "lorenz": "Unique meaningful 3D analysis; no forced 3D view in other datasets."
+      }
+    }
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/0a51/explorEDA",
+      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "worktree_status": "Clean before import; detached HEAD; only documentation changed.",
+      "subsystems": [
+        "apps/demo/src/demos/examples.ts",
+        "apps/demo/src/demos/exampleViews.ts",
+        "apps/demo/src/demos/dashboardSettings.ts",
+        "apps/demo/src/demos/coverage.ts",
+        "apps/demo/public/datasets",
+        "apps/data-samples",
+        "packages/explorEDA/src/types/SavedDataStructure.ts"
+      ],
+      "test_commands": [
+        "pnpm check",
+        "pnpm check:ui"
+      ],
+      "deployment_surfaces": [
+        "Demo website; no publishing in this task"
+      ]
+    },
+    "dependencies": [
+      {
+        "id": "landed-multi-table",
+        "name": "Landed multi-table feature",
+        "material": true,
+        "application_seam": "Demo example loading supplies frozen source tables and prepared relationships through the landed project/view contract.",
+        "first_proof_role": {
+          "mode": "real-local",
+          "rationale": "User directs that multi-table lands before implementation. Use the real feature with local reference tables."
+        },
+        "failure_modes": [
+          "Feature not yet landed",
+          "Composite key or duplicate policy differs from research",
+          "Trace does not expose matching source evidence",
+          "Saved views cannot retain distinct scopes"
+        ],
+        "proof_rungs": [
+          "Inspect landed API and saved-state contract",
+          "Local real-source count and control-total audit",
+          "Local browser proof of prepared relationships and complete artifact"
+        ],
+        "local_proof": "Run the real landed feature against pinned local source tables. Keep changed edge-case fixtures separate.",
+        "live_proof": "No deployed service proof is needed for local-table relationships. Recheck public source downloads and terms before data redistribution.",
+        "rollout": "Add a verified complete example before removing superseded public entries. Revert catalogue configuration if necessary; no alternate enrichment implementation."
+      },
+      {
+        "id": "public-data-extracts",
+        "name": "Public reference data extracts",
+        "material": true,
+        "application_seam": "Offline download/export and preparation produce frozen local demo assets and a provenance manifest.",
+        "first_proof_role": {
+          "mode": "real-frozen",
+          "rationale": "Completed result claims need actual inspected data; arbitrary fake data cannot prove analytical content."
+        },
+        "failure_modes": [
+          "Missing extract or unresolved reuse terms",
+          "Unexpected columns or missing-value codes",
+          "Duplicate keys or incomplete API pagination",
+          "Revised source values change prior proposed findings"
+        ],
+        "proof_rungs": [
+          "One real source retrieval/export per family",
+          "Local schema/key/null and preparation audit",
+          "Count and result reconciliation",
+          "Browser verification of final examples"
+        ],
+        "local_proof": "Use the checked frozen extract for deterministic chart and total verification; do not fetch live providers during normal demo loads.",
+        "live_proof": "Confirm source access, reuse terms, versions, bytes, and checksums while preparing each bundle.",
+        "rollout": "Add families as verified assets and configs; all four must pass before release scope is complete."
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter demo dev",
+      "strategy": "Use local prepared reference tables with native multi-table runtime after it lands. Compute audit totals independently and compare to visible results.",
+      "status": "planned, not run during shaping"
+    },
+    "milestones": [],
+    "cut_line": [
+      "A tutorial or stepper",
+      "Relationship-building instruction",
+      "New report execution or capture engine",
+      "New sharing or persistence platform",
+      "Flattened delivery fallback",
+      "Unverified analytical findings",
+      "Automatic filtering across different source populations"
+    ],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-06",
+      "event": "initiative-created",
+      "status": "planned",
+      "phase": "intent",
+      "reason": "User requested research import for demo overhaul with upcoming multi-table examples.",
+      "evidence": [
+        "request",
+        "support/dataset-research.md",
+        "support/original-research-brief.txt"
+      ],
+      "changes": [
+        "Imported complete report and original prompt",
+        "Recorded 20 proposed analyses, related-table plans, notebook outlines, preparation rules, and evidence limits",
+        "Reconciled existing saved tabs without rewriting historical research",
+        "No runtime code or dataset changes; no implementation lifecycle claim"
+      ]
+    },
+    {
+      "date": "2026-10-06",
+      "event": "product-answers-and-shape",
+      "phase": "shape",
+      "status": "planned",
+      "reason": "User answered all ten product questions, requested focused-tab contrast, and asked to update.",
+      "evidence": [
+        "product-answer-1",
+        "product-answer-2",
+        "product-answer-3",
+        "product-answer-4",
+        "product-answer-5",
+        "product-answer-6",
+        "product-answer-7",
+        "product-answer-8",
+        "product-answer-9",
+        "product-answer-10"
+      ],
+      "previous_claims": [
+        {
+          "id": "audience",
+          "type": "audience",
+          "statement": "Serve people learning explorEDA and developers evaluating the embedded workspace.",
+          "commitment": "derived",
+          "importance": "supporting",
+          "status": "active",
+          "time_horizon": "first release",
+          "source_anchors": [
+            "catalogue",
+            "research-report#Notebook outlines"
+          ],
+          "confidence": "medium",
+          "conflicts": [],
+          "supersedes": [],
+          "notes": ""
+        },
+        {
+          "id": "three-stages",
+          "type": "sequence",
+          "statement": "Prepare examples for current linked exploration, upcoming explicit lookups, and later narrative reporting.",
+          "commitment": "explicit",
+          "importance": "supporting",
+          "status": "active",
+          "time_horizon": "later",
+          "source_anchors": [
+            "research-brief#Mission",
+            "request"
+          ],
+          "confidence": "high",
+          "conflicts": [],
+          "supersedes": [],
+          "notes": ""
+        },
+        {
+          "id": "four-families",
+          "type": "example",
+          "statement": "Flights, Beijing air quality, WDI, and earthquakes form the recommended candidate portfolio.",
+          "commitment": "tentative",
+          "importance": "supporting",
+          "status": "active",
+          "time_horizon": "first release",
+          "source_anchors": [
+            "research-report#1. Recommendation"
+          ],
+          "confidence": "medium",
+          "conflicts": [],
+          "supersedes": [],
+          "notes": "Agent recommendation; no commitment to ship every family."
+        },
+        {
+          "id": "first-flight",
+          "type": "sequence",
+          "statement": "Start with January flights and prove F1 delay flow plus F2 paired delays.",
+          "commitment": "tentative",
+          "importance": "supporting",
+          "status": "active",
+          "time_horizon": "proof",
+          "source_anchors": [
+            "research-report#8. Ranked preparation backlog"
+          ],
+          "confidence": "medium",
+          "conflicts": [],
+          "supersedes": [],
+          "notes": ""
+        }
+      ],
+      "changes": [
+        "Promoted four dataset families into first-release scope",
+        "Set analysts and personal CSV interest as audience and success",
+        "Selected freely navigable focused tabs using consider-contrast",
+        "Proposed 22-to-7 catalogue curation with exact dispositions",
+        "Assumed native multi-table feature lands first; removed flattened delivery path",
+        "Kept low-priority sharing out of required work",
+        "Created concise app product context from the answered interview",
+        "No runtime code, dataset preparation, or implementation plan changed"
+      ]
+    }
+  ],
+  "closure": null,
+  "research_import": {
+    "capture_date": "2026-10-06",
+    "timezone": "America/Indiana/Indianapolis",
+    "method": "Read attached prompt through read_thread; extract the full rendered response from the identified Chrome tab and convert to Markdown.",
+    "completeness": {
+      "dataset_families": 4,
+      "analysis_designs": 20,
+      "notebook_outlines": 4,
+      "additional_candidates": 4,
+      "sections": 9
+    },
+    "limits": [
+      "No bulk downloads, new publisher verification, or runtime checks during import.",
+      "Grouped visible citation badges retain only their exposed URL; hidden grouped citations were not expanded.",
+      "All access, license, size, count, and feature-fit statements remain reported research claims.",
+      "Current user wording establishes near-term multi-table intent; this import does not certify the arriving implementation."
+    ],
+    "files": [
+      {
+        "path": "support/dataset-research.md",
+        "sha256": "5ada2bd98ad326a4936edab6ba291e5712d6d97f88fa3036b15b68b7241e83a8"
+      },
+      {
+        "path": "support/original-research-brief.txt",
+        "sha256": "983829026dd3f91a2f0b371617e9d584cada153a192e9bec3e533df8c28b8b6c"
+      }
+    ]
+  },
+  "dataset_candidates": [
+    {
+      "id": "nycflights13",
+      "rank": 1,
+      "status": "required-family; analysis designs remain proposed",
+      "readiness": "preparation-needed",
+      "population": "Every January 2013 flight row from pinned nycflights13 1.0.2; IDs assigned before subset.",
+      "analyses": [
+        {
+          "id": "F1",
+          "question": "Where in the journey does delay persist or change?",
+          "source_anchor": "support/dataset-research.md#f1-where-in-the-journey-does-delay-persist-or-change"
+        },
+        {
+          "id": "F2",
+          "question": "How closely do departure and arrival delays move together?",
+          "source_anchor": "support/dataset-research.md#f2-how-closely-do-departure-and-arrival-delays-move-together"
+        },
+        {
+          "id": "F3",
+          "question": "Does scheduled-hour weather help describe departure-delay differences?",
+          "source_anchor": "support/dataset-research.md#f3-does-scheduled-hour-weather-help-describe-departure-delay-differences"
+        },
+        {
+          "id": "F4",
+          "question": "Which days account for changes in the month’s delay experience?",
+          "source_anchor": "support/dataset-research.md#f4-which-days-account-for-changes-in-the-months-delay-experience"
+        },
+        {
+          "id": "F5",
+          "question": "How much of the observed pattern reflects route and aircraft mix?",
+          "source_anchor": "support/dataset-research.md#f5-how-much-of-the-observed-pattern-reflects-route-and-aircraft-mix"
+        }
+      ],
+      "relationships": [
+        {
+          "base": "flights",
+          "lookup": "airlines",
+          "key": [
+            "carrier:string"
+          ],
+          "cardinality": "many-to-zero-or-one"
+        },
+        {
+          "base": "flights",
+          "lookup": "planes",
+          "key": [
+            "tailnum:string"
+          ],
+          "cardinality": "many-to-zero-or-one"
+        },
+        {
+          "base": "flights",
+          "lookup": "weather",
+          "key": [
+            "origin:string",
+            "time_hour:instant"
+          ],
+          "cardinality": "many-to-zero-or-one"
+        }
+      ],
+      "invariants": [
+        "Base N",
+        "Unique flight_id N",
+        "Finite-delay counts",
+        "Finite distance sum"
+      ],
+      "cautions": [
+        "Exclude airports from initial redistributed bundle.",
+        "Delay bands <=0, >0–15, >15–60, >60 minutes, Not recorded are analyst-defined.",
+        "NA becomes null; preserve negative delay and valid zero.",
+        "Scheduled-hour weather is flight-weighted; not actual departure weather.",
+        "Missing delay does not prove cancellation; January does not prove annual seasonality."
+      ]
+    },
+    {
+      "id": "beijing-air-quality",
+      "rank": 2,
+      "status": "required-family; analysis designs remain proposed",
+      "readiness": "preparation-needed",
+      "population": "Constructed 12-station × 366-day 2016 grid; expected 4392 calendar rows, not an archive recount.",
+      "analyses": [
+        {
+          "id": "B1",
+          "question": "Is the measurement coverage adequate for comparison?",
+          "source_anchor": "support/dataset-research.md#b1-is-the-measurement-coverage-adequate-for-comparison"
+        },
+        {
+          "id": "B2",
+          "question": "How does the daily pollution profile vary through the year?",
+          "source_anchor": "support/dataset-research.md#b2-how-does-the-daily-pollution-profile-vary-through-the-year"
+        },
+        {
+          "id": "B3",
+          "question": "Do particle and gas measurements form distinct joint patterns?",
+          "source_anchor": "support/dataset-research.md#b3-do-particle-and-gas-measurements-form-distinct-joint-patterns"
+        },
+        {
+          "id": "B4",
+          "question": "Does the temperature–ozone relationship change by season?",
+          "source_anchor": "support/dataset-research.md#b4-does-the-temperatureozone-relationship-change-by-season"
+        },
+        {
+          "id": "B5",
+          "question": "Are high values part of one pollution profile or several?",
+          "source_anchor": "support/dataset-research.md#b5-are-high-values-part-of-one-pollution-profile-or-several"
+        }
+      ],
+      "relationships": [
+        {
+          "operation": "union",
+          "sources": "12 station-hour files",
+          "key": [
+            "station",
+            "year",
+            "month",
+            "day",
+            "hour"
+          ]
+        },
+        {
+          "base": "station-day",
+          "lookup": "derived reference-station day",
+          "key": [
+            "date_label"
+          ],
+          "cardinality": "many-to-zero-or-one",
+          "reference_rule": "Lexically first frozen source station"
+        }
+      ],
+      "invariants": [
+        "4392 constructed calendar rows",
+        "Original daily values and source-hour counts",
+        "Reference date-key uniqueness"
+      ],
+      "cautions": [
+        "Daily mean requires at least 20 valid hours of 24; proposed demo policy.",
+        "Retain recorded_hours, variable-specific valid hours, absent-record flags, and source-hour identifiers.",
+        "Timezone unverified; use publisher calendar labels.",
+        "Rain interval meaning unverified; no daily sum until checked.",
+        "No verified station coordinates or weather-station IDs.",
+        "Daily-row tracing does not imply source-hour navigation."
+      ]
+    },
+    {
+      "id": "world-development-indicators",
+      "rank": 3,
+      "status": "required-family; analysis designs remain proposed",
+      "readiness": "preparation-needed",
+      "population": "All returned SP.POP.TOTL country-year records for 2000–2023 including returned nulls; exclude aggregate economies through country metadata.",
+      "analyses": [
+        {
+          "id": "W1",
+          "question": "How does the income–longevity association differ across regions?",
+          "source_anchor": "support/dataset-research.md#w1-how-does-the-incomelongevity-association-differ-across-regions"
+        },
+        {
+          "id": "W2",
+          "question": "Did the country distribution of electricity access shift between endpoints?",
+          "source_anchor": "support/dataset-research.md#w2-did-the-country-distribution-of-electricity-access-shift-between-endpoints"
+        },
+        {
+          "id": "W3",
+          "question": "Do cross-sectional comparisons conceal different historical paths?",
+          "source_anchor": "support/dataset-research.md#w3-do-cross-sectional-comparisons-conceal-different-historical-paths"
+        },
+        {
+          "id": "W4",
+          "question": "Where do low access rates and large affected populations differ?",
+          "source_anchor": "support/dataset-research.md#w4-where-do-low-access-rates-and-large-affected-populations-differ"
+        },
+        {
+          "id": "W5",
+          "question": "How much improvement was possible from different starting points?",
+          "source_anchor": "support/dataset-research.md#w5-how-much-improvement-was-possible-from-different-starting-points"
+        }
+      ],
+      "relationships": [
+        {
+          "base": "population country-year",
+          "lookup": "GDP, longevity, electricity",
+          "key": [
+            "country_code:string",
+            "year:integer"
+          ],
+          "cardinality": "zero-or-one per indicator"
+        },
+        {
+          "base": "population country-year",
+          "lookup": "country metadata",
+          "key": [
+            "country_code:string"
+          ],
+          "cardinality": "many-to-one"
+        },
+        {
+          "base": "population country-year",
+          "lookup": "derived electricity endpoints",
+          "key": [
+            "country_code:string"
+          ],
+          "cardinality": "many-to-zero-or-one",
+          "preparation": "Pivot 2000 and 2023 into one country row; require base records at both years."
+        }
+      ],
+      "invariants": [
+        "Base N",
+        "Population values",
+        "Population totals within each year",
+        "Equal endpoint country cohorts"
+      ],
+      "cautions": [
+        "Indicators: SP.POP.TOTL, NY.GDP.PCAP.PP.KD, SP.DYN.LE00.IN, EG.ELC.ACCS.ZS.",
+        "GDP PPP unit in report is constant 2021 international dollars.",
+        "World Bank codes are not always ISO; current region/income metadata is not historical classification.",
+        "Natural Earth WB_A3 sentinel -99 needs distinct nonmatching keys based on NE_ID.",
+        "Geometry omissions cannot remove tabular population.",
+        "Bubble sizing does not weight regression.",
+        "Combined access: 100*(1-sum(without_electricity_est)/sum(eligible_population)); no mean of country percentages.",
+        "No interpolation; preserve absent versus returned-null records."
+      ]
+    },
+    {
+      "id": "usgs-comcat",
+      "rank": 4,
+      "status": "required-family; analysis designs remain proposed",
+      "readiness": "preparation-needed",
+      "population": "Frozen global events with eventtype=earthquake, minmagnitude=4.5, and 2023-01-01 <= time < 2024-01-01.",
+      "analyses": [
+        {
+          "id": "E1",
+          "question": "Where are the events in this selected catalogue?",
+          "source_anchor": "support/dataset-research.md#e1-where-are-the-events-in-this-selected-catalogue"
+        },
+        {
+          "id": "E2",
+          "question": "Is the recorded activity evenly distributed through the year?",
+          "source_anchor": "support/dataset-research.md#e2-is-the-recorded-activity-evenly-distributed-through-the-year"
+        },
+        {
+          "id": "E3",
+          "question": "How does the selected magnitude–depth distribution vary by magnitude type?",
+          "source_anchor": "support/dataset-research.md#e3-how-does-the-selected-magnitudedepth-distribution-vary-by-magnitude-type"
+        },
+        {
+          "id": "E4",
+          "question": "Do magnitude distributions differ across depth bands within a common magnitude type?",
+          "source_anchor": "support/dataset-research.md#e4-do-magnitude-distributions-differ-across-depth-bands-within-a-common-magnitude-type"
+        },
+        {
+          "id": "E5",
+          "question": "How complete is the accompanying measurement metadata?",
+          "source_anchor": "support/dataset-research.md#e5-how-complete-is-the-accompanying-measurement-metadata"
+        }
+      ],
+      "relationships": [
+        {
+          "base": "events",
+          "lookup": "optional selected event detail",
+          "key": [
+            "id:string"
+          ],
+          "cardinality": "zero-or-one",
+          "time_horizon": "later",
+          "preparation": "Explicit product type, preferred-status, and revision reduction before enrichment."
+        }
+      ],
+      "invariants": [
+        "Event N",
+        "Unique frozen IDs",
+        "Counts by day, magnitude type, and network"
+      ],
+      "cautions": [
+        "API endtime is inclusive; audit and remove excluded upper-bound event.",
+        "Report describes a 20000-event limit; split queries and reconcile IDs if needed.",
+        "Retain valid negative depths and magType.",
+        "Depth bands <0, 0–<70, 70–<300, >=300, Not recorded.",
+        "Eight ancillary fields support presence audit only until unit definitions are verified.",
+        "Presence count 0–8; bands 0–2, 3–5, 6–8; zero is present.",
+        "E4 uses most frequent nonmissing magType with lexical ties from actual extract.",
+        "This is a thresholded catalogue, not all earthquakes, a hazard map, or a risk forecast."
+      ]
+    }
+  ],
+  "deferred_candidates": [
+    {
+      "name": "UCI Bike Sharing",
+      "reason": "Good reserve; duplicates transport/weather/calendar coverage."
+    },
+    {
+      "name": "UCI Online Retail",
+      "reason": "Close to shop examples; invoice-line and cancellation semantics require preparation."
+    },
+    {
+      "name": "UCI Concrete Compressive Strength",
+      "reason": "Adds less temporal, geographic, or related-table variety than selected candidates."
+    },
+    {
+      "name": "UK DfT STATS19",
+      "reason": "Strong later related-table example with more demanding grain, code, severity, and revision preparation."
+    }
+  ],
+  "preparation_backlog": [
+    {
+      "rank": 1,
+      "task": "Pin/export January flights and prove F1/F2",
+      "status": "proposed"
+    },
+    {
+      "rank": 2,
+      "task": "Record source/preparation manifest and key audits",
+      "status": "proposed"
+    },
+    {
+      "rank": 3,
+      "task": "Prepare Beijing calendar and completeness; prove B1",
+      "status": "proposed"
+    },
+    {
+      "rank": 4,
+      "task": "Freeze WDI indicator and metadata extracts; prepare endpoints",
+      "status": "proposed"
+    },
+    {
+      "rank": 5,
+      "task": "Pin/audit WDI Natural Earth geometry",
+      "status": "proposed"
+    },
+    {
+      "rank": 6,
+      "task": "Freeze/reconcile USGS query",
+      "status": "proposed"
+    },
+    {
+      "rank": 7,
+      "task": "Build focused configs and verify interactions, tracing, denominators, and performance",
+      "status": "proposed"
+    },
+    {
+      "rank": 8,
+      "task": "Later report result/state layer",
+      "status": "proposed"
+    },
+    {
+      "rank": 9,
+      "task": "Use explicit lookups when arriving contract is verified",
+      "status": "proposed"
+    }
+  ],
+  "open_research_checks": [
+    "Bulk retrieval, subset counts, checksums, byte sizes, and full key/null audits",
+    "Beijing calendar/timezone and precipitation semantics",
+    "WDI metadata exclusions, crosswalk coverage, geometry key uniqueness, and endpoint cohorts",
+    "USGS query reconciliation and ancillary units before quantitative error analysis",
+    "Current chart capability and saved-state checks before translating proposed configs",
+    "Check landed multi-table APIs, source identity, preparation ownership, provenance, and saved-view scope before planning implementation.",
+    "Verify public catalogue replacement coverage before proposed removals.",
+    "Compute findings from each audited real bundle before final artifact copy."
+  ]
+}

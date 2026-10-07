@@ -1,0 +1,414 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Scatter plot matrix with diagonal distributions",
+    "slug": "scatter-plot-matrix",
+    "scale": "capability",
+    "current_phase": "intent",
+    "last_updated": "2026-10-06",
+    "summary": "Inspect several field pairs in off-diagonal scatter plots and each field’s distribution on the diagonal.",
+    "status": "planned",
+    "next_action": "Shape a three-field start-here matrix, two-field brushing, dimmed context, and measured row/field workloads."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-06"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "user-request",
+      "type": "direct-user-input",
+      "location": "references/user-request.md",
+      "anchor": "Full request: off-diagonal scatter plots; on-diagonal distributions",
+      "authority": "explicit user intent"
+    },
+    {
+      "id": "pro-review",
+      "type": "agent-authored-analysis",
+      "location": "../comparison-opportunities/resources/pro-chart-review/exploreda-chart-interaction-review/review.md",
+      "anchor": "Section 5: scatterplot matrix candidate",
+      "authority": "historical suggestion; current request supplies separate scope"
+    },
+    {
+      "id": "scatter",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.ts",
+      "anchor": "ScatterPlan points, source IDs, and prepared scales",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "marginals",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/ScatterPlot/marginalPlan.ts",
+      "anchor": "planMarginals uses plotted pairs and full-source bin domains",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "ecdf",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/Ecdf/definition.ts",
+      "anchor": "ECDF settings and filtering",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "registry",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/charts/registerAllCharts.ts",
+      "anchor": "18 view definitions; no dedicated scatter matrix",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "product-feedback",
+      "type": "direct-user-input",
+      "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
+      "anchor": "Annotations 1, 2, 9, 10, 11, 14",
+      "authority": "Explicit human feedback; tentative answers remain tentative"
+    },
+    {
+      "id": "canvas-renderer",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
+      "anchor": "Canvas effect and canvas element draw ordinary point clouds; SVG renders guides and special layers",
+      "authority": "Current source reality, not a matrix performance test"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "matrix",
+        "type": "outcome",
+        "statement": "Explore several field relationships and individual distributions in one matrix.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "scatter plot matrix"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "off-diagonal",
+        "type": "required behavior",
+        "statement": "Show scatter plots in off-diagonal cells.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "scatter plots off diagonal"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "diagonal",
+        "type": "required behavior",
+        "statement": "Show a field distribution in each diagonal cell.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "some sort of distribution on-diagonal"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "distribution-kind",
+        "type": "open question",
+        "statement": "Choose the diagonal display: histogram, density, ECDF, or another suitable distribution.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "some sort of distribution"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": "A choice for later shaping; no input is required to finish this intent brief."
+      },
+      {
+        "id": "domains",
+        "type": "derived implication",
+        "statement": "Use consistent domains for each field across the matrix.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "scatter plot matrix"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": ""
+      },
+      {
+        "id": "population",
+        "type": "open question",
+        "statement": "Choose pairwise-valid populations or a common complete-case population, including diagonal rules.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "scatter and distribution cells over the same source"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": "A choice for later shaping; no input is required to finish this intent brief."
+      },
+      {
+        "id": "histogram-proof",
+        "type": "implementation hypothesis",
+        "statement": "Use histograms in a three-field first proof.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "diagonal distribution type remains unspecified"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": ""
+      },
+      {
+        "id": "selection",
+        "type": "future possibility",
+        "statement": "Consider linked brushing and opening a pair in a larger scatter view.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "superseded",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "matrix exploration; no gesture requested"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": "",
+        "superseded_by": "matrix-brushing"
+      },
+      {
+        "id": "matrix-start",
+        "type": "outcome",
+        "statement": "Provide a starting view for making sense of unfamiliar multivariate data.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 9"
+          }
+        ],
+        "confidence": "high",
+        "supersedes": [],
+        "notes": "No implementation authorization or unobserved proof is inferred."
+      },
+      {
+        "id": "matrix-brushing",
+        "type": "preference",
+        "statement": "A cell brush sets two-field filters and dims nonmatching observations across the matrix.",
+        "commitment": "tentative",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 14"
+          }
+        ],
+        "confidence": "medium",
+        "supersedes": [
+          "selection"
+        ],
+        "notes": "No implementation authorization or unobserved proof is inferred."
+      },
+      {
+        "id": "matrix-row-target",
+        "type": "rough estimate",
+        "statement": "Use approximately 10,000–100,000 rows as a working target; field count and latency are unspecified.",
+        "commitment": "tentative",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 11"
+          }
+        ],
+        "confidence": "medium",
+        "supersedes": [],
+        "notes": "No implementation authorization or unobserved proof is inferred."
+      },
+      {
+        "id": "pairwise-recommendation",
+        "type": "implementation hypothesis",
+        "statement": "Prefer every valid pair per scatter cell and valid values per diagonal field, with visible usable counts.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 10"
+          }
+        ],
+        "confidence": "medium",
+        "supersedes": [],
+        "notes": "No implementation authorization or unobserved proof is inferred."
+      }
+    ],
+    "themes": [
+      "Pairwise observation patterns",
+      "One-field diagonal distributions",
+      "Comparable domains and explicit populations"
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
+      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "worktree_status": "Detached HEAD; intent collection remains uncommitted.",
+      "subsystems": [
+        "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.ts",
+        "packages/explorEDA/src/components/charts/ScatterPlot/marginalPlan.ts",
+        "packages/explorEDA/src/components/charts/Ecdf/definition.ts",
+        "packages/explorEDA/src/charts/registerAllCharts.ts",
+        "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx"
+      ],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-06",
+      "action": "Created explicit scatter matrix intent from direct user input.",
+      "reason": "Promote the prior matrix possibility into its own scope with off-diagonal scatter and diagonal distributions.",
+      "evidence": "Current source inspection and source-preserving references. No implementation or runtime checks."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Reconciled annotated product feedback and priority.",
+      "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
+      "source_annotation_indices": [
+        1,
+        2,
+        9,
+        10,
+        11,
+        14
+      ],
+      "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    }
+  ],
+  "closure": null,
+  "intake": {
+    "kind": "user-addition",
+    "priority": "first-pass",
+    "commitment": "Explicit layout; diagonal display and population policies remain open.",
+    "related_initiatives": [
+      "relationship-discovery",
+      "scientific-multivariate-analysis",
+      "editorial-chart-styling",
+      "axis-domain-controls"
+    ],
+    "audience": "End users; developers deliver their experience."
+  },
+  "relations": [
+    {
+      "initiative": "relationship-discovery",
+      "relationship": "Independent coefficient-summary workflow; no prerequisite order."
+    },
+    {
+      "initiative": "scientific-multivariate-analysis",
+      "relationship": "Extracts the prior tentative matrix idea into this explicit scope."
+    }
+  ]
+}

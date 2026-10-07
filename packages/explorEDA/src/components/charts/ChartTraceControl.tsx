@@ -1,4 +1,10 @@
-import { useEffect, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import { Waypoints } from "lucide-react";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
@@ -7,6 +13,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+
+const CloseTrace = createContext<(() => void) | undefined>(undefined);
+
+/** Closes the trace popover, for actions that move the user elsewhere. */
+export function useCloseTrace() {
+  return useContext(CloseTrace);
+}
 
 export interface ChartTraceControlProps {
   selection: unknown;
@@ -69,7 +82,14 @@ export function ChartTraceControl({
                 : emptyText}
             </p>
           </header>
-          {children}
+          <CloseTrace.Provider
+            value={() => {
+              setOpen(false);
+              onClear();
+            }}
+          >
+            {children}
+          </CloseTrace.Provider>
         </div>
       </PopoverContent>
     </Popover>

@@ -81,6 +81,8 @@ export interface ExplorEdaHandle {
 
 export interface ExplorEdaProps {
   data: DatumObject[];
+  /** Declared output columns, including when the result contains no rows. */
+  fieldNames?: string[];
   savedData?: SavedDataStructure;
   onStateChange?: (state: SavedDataStructure) => void;
   /** Host panels on the right edge, each with a toolbar button. */
@@ -91,12 +93,13 @@ export interface ExplorEdaProps {
 
 export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
   function ExplorEda(
-    { data, savedData, onStateChange, sidePanels, readOnly },
+    { data, fieldNames, savedData, onStateChange, sidePanels, readOnly },
     ref
   ) {
     return (
       <DataLayerProvider
         data={data}
+        fieldNames={fieldNames}
         savedData={savedData}
         onStateChange={onStateChange}
       >
@@ -184,3 +187,10 @@ export {
   getFieldLabel,
   hasFieldDisplayFormat,
 };
+
+export type * from "@/types/AnalysisProject";
+export { ExplorEdaProject } from "./ExplorEdaProject";
+export type {
+  ExplorEdaProjectChange,
+  ExplorEdaProjectProps,
+} from "./ExplorEdaProject";

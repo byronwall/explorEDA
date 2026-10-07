@@ -1,0 +1,370 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Method, provenance and source index</title><link rel="stylesheet" href="../report.css"></head><body><div class="kicker">explorEDA / INDEPENDENT GAP & COVERAGE AUDIT</div><nav class="report-nav"><a href="../index.html">Report library</a> · <a href="06-method-and-source-index.pdf">PDF</a> · <a href="06-method-and-source-index.md">Markdown</a></nav><h1 id="method-provenance-and-source-index">Method, provenance and
+source index</h1>
+<p><strong>Read-only audit · October 5, 2026 ·
+byronwall/explorEDA</strong><br />
+<strong>Revision:</strong>
+<code>362db58082df9c1b57c2305a49823a1dae385081</code><br />
+<strong>Fresh application browser tests:</strong> 0 completed;
+navigation blocked by administrator policy.</p>
+<h2 id="evidence-classes-and-reading-limits">Evidence classes and
+reading limits</h2>
+<p>This audit used five different kinds of evidence and does not
+collapse them. Direct source reads establish implementation structure;
+repository documents describe claimed behavior; repository-authored
+browser reports supply historical claims; independent Python comparisons
+establish data oracles; actual browser probes establish only environment
+blocking. No class substitutes for current application-browser
+proof.</p>
+<p>Pinned links below refer to the reviewed commit unless a PR or
+Actions URL is naturally a separate resource. Sources with partial reads
+or targeted searches explicitly say so. Every transcript was read in
+full. Not every implementation file or test in the repository was
+reviewed, and no full-source local build was performed.</p>
+<h2 id="sources">Sources</h2>
+<h3 id="base">BASE</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcript-gap-analysis.md</code>.</p>
+<p>Original transcript reconciliation; mixed-age September baseline with
+later edits.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcript-gap-analysis.md">Open
+source</a>.</p>
+<h3 id="inv">INV</h3>
+<p><strong>Locator:</strong>
+<code>docs/application-feature-inventory.md</code>.</p>
+<p>Feature inventory selectively updated October 4; explicitly not a
+full re-audit.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/application-feature-inventory.md">Open
+source</a>.</p>
+<h3 id="chart">CHART</h3>
+<p><strong>Locator:</strong>
+<code>docs/analytical-chart-coverage.md</code>.</p>
+<p>Current chart contracts, boundaries, and verification waiver.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/analytical-chart-coverage.md">Open
+source</a>.</p>
+<h3 id="cov">COV</h3>
+<p><strong>Locator:</strong>
+<code>apps/demo/src/demos/coverage.ts</code>.</p>
+<p>Complete feature and example coverage manifest; four source ranges
+reviewed.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts">Open
+source</a>.</p>
+<h3 id="covtest">COVTEST</h3>
+<p><strong>Locator:</strong>
+<code>apps/demo/src/demos/coverage.test.ts</code>.</p>
+<p>Registry and example equality checks, evidence validation tests.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.test.ts">Open
+source</a>.</p>
+<h3 id="covui">COVUI</h3>
+<p><strong>Locator:</strong>
+<code>apps/demo/src/CoverageMatrix.tsx</code>.</p>
+<p>Coverage summary, attention predicate, matrix and example UI.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/CoverageMatrix.tsx">Open
+source</a>.</p>
+<h3 id="host">HOST</h3>
+<p><strong>Locator:</strong>
+<code>apps/demo/src/LandingPage.tsx</code>.</p>
+<p>Development-only matrix gate; host import, restore, state
+capture.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/LandingPage.tsx">Open
+source</a>.</p>
+<h3 id="reg">REG</h3>
+<p><strong>Locator:</strong>
+<code>packages/explorEDA/src/charts/registerAllCharts.ts</code>.</p>
+<p>18 explicit active chart registrations.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/charts/registerAllCharts.ts">Open
+source</a>.</p>
+<h3 id="num">NUM</h3>
+<p><strong>Locator:</strong>
+<code>packages/explorEDA/src/lib/numeric.ts</code>.</p>
+<p>Missing-value and finite-numeric eligibility rules.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/lib/numeric.ts">Open
+source</a>.</p>
+<h3 id="filter">FILTER</h3>
+<p><strong>Locator:</strong>
+<code>packages/explorEDA/src/components/ActiveFilterStatus.tsx</code>.</p>
+<p>Owner navigation, highlight, formatting, local scope and reset.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/components/ActiveFilterStatus.tsx">Open
+source</a>.</p>
+<h3 id="plot">PLOT</h3>
+<p><strong>Locator:</strong>
+<code>packages/explorEDA/src/components/PlotManager.tsx</code>.</p>
+<p>Targeted search confirms onShowChart wiring in Charts and Rows; not
+full-file review.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/components/PlotManager.tsx">Open
+source</a>.</p>
+<h3 id="roll">ROLL</h3>
+<p><strong>Locator:</strong>
+<code>packages/explorEDA/src/lib/dailyRollup.ts</code>.</p>
+<p>UTC period boundaries, grouped reduction, source contributor
+retention.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/lib/dailyRollup.ts">Open
+source</a>.</p>
+<h3 id="table">TABLE</h3>
+<p><strong>Locator:</strong>
+<code>packages/explorEDA/src/components/charts/DataTable/DataTable.tsx</code>.</p>
+<p>Active table wiring: distributions, context menu, derived values and
+virtual body.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/components/charts/DataTable/DataTable.tsx">Open
+source</a>.</p>
+<h3 id="thdr">THDR</h3>
+<p><strong>Locator:</strong>
+<code>packages/explorEDA/src/components/charts/DataTable/DataTableHeader.tsx</code>.</p>
+<p>Header dragging, typed filters, two-state header sort and keyboard
+width control; main implementation read.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/components/charts/DataTable/DataTableHeader.tsx">Open
+source</a>.</p>
+<h3 id="tmenu">TMENU</h3>
+<p><strong>Locator:</strong>
+<code>packages/explorEDA/src/components/charts/DataTable/DataTableContextMenu.tsx</code>.</p>
+<p>Clear sort, hide/recover/move columns, reset width, copy and cell
+filters.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/components/charts/DataTable/DataTableContextMenu.tsx">Open
+source</a>.</p>
+<h3 id="review">REVIEW</h3>
+<p><strong>Locator:</strong>
+<code>docs/reviews/2026-10-02-example-coverage.md</code>.</p>
+<p>Repository-authored historical browser review of 37 assignments in 7
+examples.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md">Open
+source</a>.</p>
+<h3 id="pkg">PKG</h3>
+<p><strong>Locator:</strong>
+<code>packages/explorEDA/package.json</code>.</p>
+<p>Library scripts and exports; lines 1–130 inspected.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/package.json">Open
+source</a>.</p>
+<h3 id="readme">README</h3>
+<p><strong>Locator:</strong> <code>README.md</code>.</p>
+<p>Public integration, current chart contracts and desktop scope.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/README.md">Open
+source</a>.</p>
+<h3 id="archive">ARCHIVE</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/README.md</code>.</p>
+<p>20 copied voice memos, provenance and excluded non-requirement
+recordings.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/README.md">Open
+source</a>.</p>
+<h3 id="t01">T01</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-06-25-interactive-data-table-explorer.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-25-interactive-data-table-explorer.txt">Open
+source</a>.</p>
+<h3 id="t02">T02</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-06-25-table-column-controls.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-25-table-column-controls.txt">Open
+source</a>.</p>
+<h3 id="t03">T03</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-06-25-interactive-data-table-controls.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-25-interactive-data-table-controls.txt">Open
+source</a>.</p>
+<h3 id="t04">T04</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-06-26-interactive-data-table-rows.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-26-interactive-data-table-rows.txt">Open
+source</a>.</p>
+<h3 id="t05">T05</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-06-26-rich-data-inside-table-cells.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-26-rich-data-inside-table-cells.txt">Open
+source</a>.</p>
+<h3 id="t06">T06</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-06-28-table-filtering-and-distributions.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-28-table-filtering-and-distributions.txt">Open
+source</a>.</p>
+<h3 id="t07">T07</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-06-29-date-filtering-patterns.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-29-date-filtering-patterns.txt">Open
+source</a>.</p>
+<h3 id="t08">T08</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-06-29-saved-table-views-and-formatting.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-29-saved-table-views-and-formatting.txt">Open
+source</a>.</p>
+<h3 id="t09">T09</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-06-29-data-table-defaults-and-schemas.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-06-29-data-table-defaults-and-schemas.txt">Open
+source</a>.</p>
+<h3 id="t10">T10</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-07-13-reusable-interactive-component-requirements.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-07-13-reusable-interactive-component-requirements.txt">Open
+source</a>.</p>
+<h3 id="t11">T11</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-07-26-data-visualization-system-design.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-07-26-data-visualization-system-design.txt">Open
+source</a>.</p>
+<h3 id="t12">T12</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-07-28-dashboarding-filtering-and-chart-defaults.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-07-28-dashboarding-filtering-and-chart-defaults.txt">Open
+source</a>.</p>
+<h3 id="t13">T13</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-07-28-data-transforms-loading-and-source-tables.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-07-28-data-transforms-loading-and-source-tables.txt">Open
+source</a>.</p>
+<h3 id="t14">T14</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-07-29-faceting-and-shared-scales.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-07-29-faceting-and-shared-scales.txt">Open
+source</a>.</p>
+<h3 id="t15">T15</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-08-02-visualization-traceability-and-dataflow.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-08-02-visualization-traceability-and-dataflow.txt">Open
+source</a>.</p>
+<h3 id="t16">T16</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-08-03-spec-driven-interactive-visualization.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-08-03-spec-driven-interactive-visualization.txt">Open
+source</a>.</p>
+<h3 id="t17">T17</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-08-04-chart-specs-grouping-and-derived-layers.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-08-04-chart-specs-grouping-and-derived-layers.txt">Open
+source</a>.</p>
+<h3 id="t18">T18</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-08-04-advanced-chart-specs-and-transforms.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-08-04-advanced-chart-specs-and-transforms.txt">Open
+source</a>.</p>
+<h3 id="t19">T19</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-08-25-deterministic-ui-templating.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-08-25-deterministic-ui-templating.txt">Open
+source</a>.</p>
+<h3 id="t20">T20</h3>
+<p><strong>Locator:</strong>
+<code>docs/transcripts/2026-08-27-ui-complexity-and-component-boundaries.txt</code>.</p>
+<p>Complete original transcript read; date is filename date, not an
+invented internal timestamp.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/transcripts/2026-08-27-ui-complexity-and-component-boundaries.txt">Open
+source</a>.</p>
+<h3 id="close">CLOSE</h3>
+<p><strong>Locator:</strong> <code>pull/135</code>.</p>
+<p>Merged documentation-only closure; waived cross-view comparisons and
+browser restores; metadata read.</p>
+<p><a href="https://github.com/byronwall/explorEDA/pull/135">Open
+source</a>.</p>
+<h3 id="plan">PLAN</h3>
+<p><strong>Locator:</strong> <code>pull/136</code>.</p>
+<p>Merged advanced scatter and compact DSL plans; explicitly no
+application changes; metadata read.</p>
+<p><a href="https://github.com/byronwall/explorEDA/pull/136">Open
+source</a>.</p>
+<h3 id="tmp">TMP</h3>
+<p><strong>Locator:</strong> <code>tmp/</code>.</p>
+<p>Pinned directory listing contains only evals/; October 2 report
+screenshots at tmp root absent.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/tree/362db58082df9c1b57c2305a49823a1dae385081/tmp">Open
+source</a>.</p>
+<h3 id="deploy">DEPLOY</h3>
+<p><strong>Locator:</strong> <code>actions/runs/37259962552</code>.</p>
+<p>Successful deploy and downloadable github-pages artifact 11324128490;
+metadata and archive inspected.</p>
+<p><a
+href="https://github.com/byronwall/explorEDA/actions/runs/37259962552">Open
+source</a>.</p>
+<h2 id="local-evidence-files">Local evidence files</h2>
+<p><code>evidence/browser-navigation-results.json</code> and B01–B03
+screenshots are actual browser outputs.
+<code>evidence/artifact-provenance.json</code> records the downloaded
+build's identity and hashes; <code>evidence/deployment-build.zip</code>
+preserves that exact download.
+<code>data/independent-data-oracles.json</code> records independent CSV
+counts and source positions. <code>fixtures/</code> contains newly
+authored synthetic acceptance inputs. <code>data/coverage-*.json</code>
+is a transcription/recount of the reviewed manifest, not an
+app-generated state export.</p>
+<p>The utilities in <code>browser/</code> and <code>data/</code> support
+reproduction but do not constitute completed exploratory application
+testing. Their output/result labels preserve that distinction.</p>
+<hr />
+<p>Source labels link to the identified repository files or PR/run
+records. Full source locators and reading scope are in Report 06.</p>
+</body></html>

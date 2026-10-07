@@ -8,6 +8,7 @@ import {
   exportViews,
   type SavedDataStructure,
 } from "exploreda";
+import { evaluateAnalysisQuery } from "exploreda/analysis";
 import { parseCsvData } from "./csvParser";
 import { examples } from "./demos/examples";
 
@@ -43,9 +44,19 @@ describe("dashboard text round trip", () => {
         [`${example.id}: ${view.name}`, example, view] as const
     )
   )("%s", async (_name, example, view) => {
-    const rows = await parseCsvData(
-      readFileSync(join(__dirname, "../public", example.data), "utf8")
-    );
+    // A project view's rows are its query result.
+    const rows =
+      example.project && example.tables
+        ? evaluateAnalysisQuery(
+            example.project,
+            example.tables,
+            ("queryId" in view && view.queryId) ||
+              example.project.queries[0]!.id,
+            ("bindings" in view && view.bindings) || {}
+          ).rows.map((row) => row.data)
+        : await parseCsvData(
+            readFileSync(join(__dirname, "../public", example.data), "utf8")
+          );
     const { text, omitted } = exportDocument(view.savedData, { rows });
     expect(omitted).toEqual([]);
     const rebuilt = compileDocument(text, {
@@ -60,8 +71,9 @@ describe("dashboard text round trip", () => {
 });
 
 describe("all views as one text", () => {
+  // Project views each chart their own query, so only file examples share rows.
   const withViews = examples.filter(
-    (example) => example.savedData && example.views?.length
+    (example) => !example.project && example.savedData && example.views?.length
   );
   it.each(withViews.map((example) => [example.id, example] as const))(
     "%s",

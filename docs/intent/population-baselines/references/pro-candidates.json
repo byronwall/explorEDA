@@ -1,0 +1,102 @@
+{
+  "chart_review_items": [
+    {
+      "id": "C16",
+      "phase": 3,
+      "title": "Add ECDF and comparable distributions",
+      "effort": "Medium",
+      "current_state": "Histogram and box/violin/beeswarm are present; no cumulative distribution family is registered.",
+      "desired_outcome": "Users answer threshold/percentile questions and compare groups without export.",
+      "dependencies": [
+        "C03",
+        "C18"
+      ],
+      "acceptance_criteria": [
+        "ECDF reports fraction of valid observations at or below a value.",
+        "Ties, invalid values, and empty selections are tested.",
+        "Comparison histograms share bin edges.",
+        "Count versus within-group percentage is explicit.",
+        "Baseline scope is named and persists as configured."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/charts/registerAllCharts.ts",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/BoxPlot/definition.ts"
+      ]
+    },
+    {
+      "id": "C18",
+      "phase": 3,
+      "title": "Add named baseline/selection comparison",
+      "effort": "Medium",
+      "current_state": "Existing shared filters and saved settings provide a starting point, not a complete comparison feature.",
+      "desired_outcome": "Users compare the current population with a precisely defined reference selection.",
+      "dependencies": [
+        "C03",
+        "C17"
+      ],
+      "acceptance_criteria": [
+        "All data, pre-selection population, and saved predicate are different named choices.",
+        "Raw snapshot versus reevaluated predicate behavior is explicit on data changes.",
+        "Comparison marks use compatible scales and metric definitions.",
+        "Population count and valid-value denominator are available.",
+        "Cards, distributions, and references consume the same scope definition."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/README.md",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/ActiveFilterStatus.tsx"
+      ]
+    }
+  ],
+  "gap_register_items": [
+    {
+      "requirement_id": "DASH-06",
+      "intent_strength": "Specific / candidate",
+      "proposed_priority": "P2",
+      "change_from_old_report": "Still limited",
+      "desired_outcome": "Separate saved layout from temporary selection and recover decisions",
+      "current_evidence_based_assessment": "Applied filters are included in saved chart settings.",
+      "remaining_boundary_or_proof_gap": "No explicit filter-free template save, workspace undo, checkpoint history or restored-state diff is established.",
+      "source_ids": "T08 T12 INV BASE CHART",
+      "suggested_browser_scenarios": "BT22 BT33",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "TABLE-09",
+      "intent_strength": "Specific",
+      "proposed_priority": "P3",
+      "change_from_old_report": "Not found in reviewed scope",
+      "desired_outcome": "Bookmark records or retain interesting cohorts",
+      "current_evidence_based_assessment": "Active chart filters can describe a temporary subset and saved JSON can retain them.",
+      "remaining_boundary_or_proof_gap": "Stable row bookmarks, tags and a named cohort collection are not established. Durable source identity is a dependency, not a reason to add a bookmark icon alone.",
+      "source_ids": "T01 T08 INV",
+      "suggested_browser_scenarios": "BT23 BT33",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "CHART-07",
+      "intent_strength": "Core supporting views",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Expanded",
+      "desired_outcome": "Use non-plot views as analytical context",
+      "current_evidence_based_assessment": "Summary, source tables, legends, rich explanation and now Metric Card support the workflow; inline table distributions are active.",
+      "remaining_boundary_or_proof_gap": "Static text is not live data-bound narrative; metric all-source comparison is not a frozen baseline; every supporting view needs a clear population label.",
+      "source_ids": "T09 T13 T14 T19 TABLE CHART",
+      "suggested_browser_scenarios": "BT01 BT07 BT33",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    }
+  ],
+  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "current_assessment": {
+    "date": "2026-10-06",
+    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "statement": "MetricCard computes an all-source comparison. ECDF provides current threshold analysis and an overall curve. Saved settings have no named baseline collection. Chart-local filters are now available but do not create saved cohorts by themselves.",
+    "evidence_scope": "Source inspection only; no fresh application browser proof."
+  },
+  "current_priority": "low-current-interest"
+}
