@@ -1,0 +1,63 @@
+{
+  "chart_review_items": [
+    {
+      "id": "C08",
+      "phase": 2,
+      "title": "Add tuple-aware selection for nonrectangular multicell choices",
+      "effort": "Medium",
+      "current_state": "Current filter types are field-based values/ranges/text/date-ranges.",
+      "desired_outcome": "Selecting two region/channel pairs selects exactly those pairs.",
+      "dependencies": [
+        "C07"
+      ],
+      "acceptance_criteria": [
+        "(North, Web) OR (South, Retail) excludes the two unselected cross combinations.",
+        "Interactions within one selection and intersections across views are specified.",
+        "Selection survives serialization and data replacement according to a documented rule.",
+        "Facet membership is included when the intended selection is local to a facet.",
+        "Visual filtering and record inspection use the identical predicate."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/types/FilterTypes.ts"
+      ]
+    }
+  ],
+  "gap_register_items": [
+    {
+      "requirement_id": "FILT-02",
+      "intent_strength": "Core",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Implemented slice",
+      "desired_outcome": "Compose filters predictably, including the same field twice",
+      "current_evidence_based_assessment": "The workspace model intersects independent chart predicates; selected categorical pairs are two intersected field filters.",
+      "remaining_boundary_or_proof_gap": "Arbitrary unions of category pairs need pair predicates, not independent lists. Effective intersection counts and contradiction explanations remain verification/product gaps.",
+      "source_ids": "T12 INV CHART",
+      "suggested_browser_scenarios": "BT03 BT07 BT11",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "FACET-03",
+      "intent_strength": "Specific",
+      "proposed_priority": "P2",
+      "change_from_old_report": "Still limited by chosen contract",
+      "desired_outcome": "Choose global-coordinate versus facet-local selection",
+      "current_evidence_based_assessment": "The reviewed model applies chart selection across facets and labels its scope.",
+      "remaining_boundary_or_proof_gap": "Facet-key-bounded XY selection is a separate missing option, not a bug in the approved global-coordinate default.",
+      "source_ids": "T14 BASE INV",
+      "suggested_browser_scenarios": "BT17",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    }
+  ],
+  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "current_assessment": {
+    "date": "2026-10-06",
+    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "statement": "FilterTypes.ts defines field-level predicates. Heatmap and Sankey use intersected fields for one selected pair. BaseChart settings now support localFilters, but those restrictions do not supply arbitrary tuple unions or facet-bound XY membership.",
+    "evidence_scope": "Source inspection only; no fresh application browser proof."
+  },
+  "current_priority": "expressed-interest-in-lasso"
+}

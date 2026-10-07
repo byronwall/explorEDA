@@ -52,7 +52,10 @@ export function describeDslSource(
  * with the suggestion and the effect on the dashboard below each one.
  */
 export function formatDslDiagnostics(
-  result: DslCompileResult,
+  result: Pick<
+    DslCompileResult,
+    "diagnostics" | "charts" | "skippedCharts" | "complete"
+  >,
   fileName = "dashboard"
 ): string {
   const lines = result.diagnostics.map((item) =>
@@ -118,6 +121,12 @@ Filters:
   where.<field>=null                  missing values; "a,b" is one value
   where.<field>.contains=text         also equals, startsWith, endsWith
   select.<field>=...                  a linked filter that also narrows other charts
+
+Several views (one text for every saved view):
+  view "Overview"                     starts a view; grid, rows, and charts
+                                      below it belong to that view
+  Fields, calculations, scales, and groups are shared by every view, wherever
+  they appear; put them above the first view.
 
 The text describes the whole dashboard: omitted charts are removed and
 omitted settings use the app's defaults.`;

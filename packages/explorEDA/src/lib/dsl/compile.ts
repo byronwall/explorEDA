@@ -156,7 +156,33 @@ const OTHER_KEYWORDS = [
   "calc",
   "field",
   "chart",
+  "view",
 ];
+
+/** Declarations that hold for every view, wherever they appear. */
+const SHARED_KEYWORDS = new Set([
+  "alias",
+  "calc",
+  "field",
+  "scale",
+  "group",
+  "eda",
+  "source",
+  "dashboard",
+]);
+
+/** The `view` lines in parsed text, which split it into views. */
+export function viewHeaders(declarations: DslDeclaration[]) {
+  return declarations.filter((item) => item.keyword === "view");
+}
+
+/** A view's name: `view "Overview"` or `view name=Overview`. */
+export function viewName(header: DslDeclaration, index: number): string {
+  const value =
+    header.positional[0]?.value ??
+    header.pairs.find((pair) => pair.key === "name")?.value;
+  return (value && single(value)) || `View ${index + 1}`;
+}
 
 const FIELD_SETTING_KEYS = [
   "label",
@@ -280,9 +306,33 @@ export function compileDocument(
   text: string,
   options: DslCompileOptions,
   /** Export builds bare charts first, before their paths make them valid. */
-  internal: { keepIncomplete?: boolean } = {}
+  internal: {
+    keepIncomplete?: boolean;
+    /** Which `view` section to build; compileViews builds each in turn. */
+    view?: number;
+  } = {}
 ): DslCompileResult {
-  const { declarations, problems } = parseDocument(text);
+  const parsed = parseDocument(text);
+  const { problems } = parsed;
+  // Text with `view` lines holds several views. Shared definitions apply to
+  // all of them; everything else belongs to the view section it sits in.
+  const headers = viewHeaders(parsed.declarations);
+  const viewIndex = internal.view ?? 0;
+  const header = headers[viewIndex];
+  let section = -1;
+  const declarations = headers.length
+    ? parsed.declarations.filter((item) => {
+        if (item.keyword === "view") {
+          section = headers.indexOf(item);
+          return false;
+        }
+        return (
+          section === -1 ||
+          section === viewIndex ||
+          SHARED_KEYWORDS.has(item.keyword)
+        );
+      })
+    : parsed.declarations;
   const diagnostics: DslDiagnostic[] = problems.map((problem) => ({
     severity: "error",
     effect: "setting-ignored",
@@ -298,6 +348,31 @@ export function compileDocument(
     extra: { subject?: string; suggestion?: string } = {}
   ) =>
     diagnostics.push({ severity, effect, message, ...spanOf(span), ...extra });
+
+  if (header) {
+    for (const pair of header.pairs) {
+      if (pair.key !== "name") {
+        report(
+          "warning",
+          "setting-ignored",
+          pair.span,
+          `${pair.key} is not a view setting, so it was ignored.`,
+          { suggestion: 'Name the view, as in view "Overview".' }
+        );
+      }
+    }
+    if (internal.view === undefined) {
+      for (const other of headers.slice(1)) {
+        report(
+          "warning",
+          "chart-skipped",
+          other.span,
+          `This builds one view, so ${viewName(other, headers.indexOf(other))} was skipped.`,
+          { suggestion: "Read every view with compileViews." }
+        );
+      }
+    }
+  }
 
   const rows = options.rows;
   const inferred = Object.fromEntries(
@@ -1946,6 +2021,9 @@ export function compileDocument(
   }
 
   placeCharts(charts, explicitLayouts, gridSettings.columnCount);
+  if (header) {
+    metadataName = viewName(header, viewIndex);
+  }
 
   const now = (options.now ?? (() => new Date()))().toISOString();
   const settings: SavedDataStructure = {

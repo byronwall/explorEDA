@@ -1,0 +1,197 @@
+{
+  "chart_review_items": [
+    {
+      "id": "C03",
+      "phase": 1,
+      "title": "Unify basic grouped metrics and source provenance",
+      "effort": "Medium",
+      "current_state": "Named grouped results support one group field and count/sum/average; pivot has richer reducers.",
+      "desired_outcome": "The same metric has the same meaning in bars, cards, tables, and future heatmaps.",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "Count, sum, and mean agree across the first consumers.",
+        "Define row count versus valid-value count and behavior when there are no valid values.",
+        "Separate complete group membership from included numeric contributors.",
+        "Support zero, one, and eventually two grouping keys through incremental adapters.",
+        "Keep existing saved configurations readable; avoid a big-bang rewrite."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/lib/aggregates.ts",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/PivotTable/definition.ts"
+      ]
+    },
+    {
+      "id": "C04",
+      "phase": 1,
+      "title": "Make grouped bars participate in linked filtering",
+      "effort": "Medium",
+      "current_state": "Aggregate bar click opens contributor inspection instead of a filter.",
+      "desired_outcome": "Revenue by region filters the workspace as naturally as count by region.",
+      "dependencies": [
+        "C03"
+      ],
+      "acceptance_criteria": [
+        "A mark can select its source group.",
+        "An explicit separate action retains value/contributor inspection.",
+        "Selecting and clearing groups updates all linked views correctly.",
+        "Invalid metric contributors do not disappear from group membership without an explicit rule.",
+        "Keyboard selection and restored selection match pointer behavior."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/BarChart/BarChart.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/lib/aggregates.ts"
+      ]
+    },
+    {
+      "id": "C05",
+      "phase": 1,
+      "title": "Add basic metric cards",
+      "effort": "Small",
+      "current_state": "Filtered-row status exists but no registered arbitrary metric-card type.",
+      "desired_outcome": "The selected population has a visible count and metric summary.",
+      "dependencies": [
+        "C03"
+      ],
+      "acceptance_criteria": [
+        "Count, sum, and mean are available through shared reducers.",
+        "Units and formatting use field metadata.",
+        "Population scope is named.",
+        "Empty/invalid and zero results are visually distinct.",
+        "Inspect action explains contributors without changing selection."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/charts/registerAllCharts.ts",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/ActiveFilterStatus.tsx"
+      ]
+    },
+    {
+      "id": "C17",
+      "phase": 1,
+      "title": "Introduce selection-only undo and redo",
+      "effort": "Medium",
+      "current_state": "Clear-all, removable filter chips, precise ranges, and brush clearing exist; recommendation extends these.",
+      "desired_outcome": "Exploration is reversible without requiring universal application undo.",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "One completed gesture creates one history step.",
+        "Undo/redo restores complete filter state across linked views.",
+        "Clear-all itself can be undone.",
+        "Data replacement resets or rebases history by an explicit policy.",
+        "History is bounded; no raw dataset copies per brush update."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/ActiveFilterStatus.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/settings/SelectionSettingsTab.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/BaseChart.tsx"
+      ]
+    }
+  ],
+  "gap_register_items": [
+    {
+      "requirement_id": "TABLE-11",
+      "intent_strength": "Specific",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Implemented slice",
+      "desired_outcome": "Export the rows and values being inspected",
+      "current_evidence_based_assessment": "The active table supplies filteredRows to the toolbar; the baseline records CSV escaping, ordering and derived-value repairs.",
+      "remaining_boundary_or_proof_gap": "Browser download inspection was previously incomplete and is blocked here. Prove exported IDs/order/values, quoting, and field names against the visible scope.",
+      "source_ids": "T11 T15 TABLE BASE",
+      "suggested_browser_scenarios": "BT21",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "CALC-06",
+      "intent_strength": "Core",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Expanded partial",
+      "desired_outcome": "Use a consistent computed result in every view",
+      "current_evidence_based_assessment": "Tables resolve shared scalar columns; grouped summaries and UTC rollups reuse definitions/reducers; newer traces retain source inputs.",
+      "remaining_boundary_or_proof_gap": "Shared function code is not proof of one execution or cached shared result. Cross-view arithmetic and eligible-ID agreement were waived for newer charts.",
+      "source_ids": "T11 T15 TABLE ROLL CHART CLOSE",
+      "suggested_browser_scenarios": "BT07 BT19",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "TRACE-01",
+      "intent_strength": "Core",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Materially expanded",
+      "desired_outcome": "Inspect exact source contributors for a selected mark",
+      "current_evidence_based_assessment": "Current chart contracts extend beyond scalar/pivot/named groups to bins, distributions, scatter, time, stacks, maps, flows and ECDF.",
+      "remaining_boundary_or_proof_gap": "The old histogram/box/scatter contributor absence is stale. Trace reachability, selected mark identity, exclusions and roundtrip consistency are not freshly verified.",
+      "source_ids": "T11 T15 CHART",
+      "suggested_browser_scenarios": "BT07 BT15 BT16 BT24",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "TRACE-07",
+      "intent_strength": "Core process",
+      "proposed_priority": "P0",
+      "change_from_old_report": "Documentation drift confirmed",
+      "desired_outcome": "Keep product intent, implementation and proof synchronized",
+      "current_evidence_based_assessment": "A transcript audit, feature inventory, matrix, historical review and retirement records all exist. Tests enforce useful catalogue invariants.",
+      "remaining_boundary_or_proof_gap": "Mixed-age documents conflict; reviews lack revision-bound artifacts in the manifest; October 2 screenshot links point to absent tmp-root files. Add a verifiable claim-to-proof chain.",
+      "source_ids": "T10 T20 BASE INV COV COVTEST REVIEW TMP CLOSE",
+      "suggested_browser_scenarios": "BT35",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "PERF-05",
+      "intent_strength": "Core method",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Proof debt",
+      "desired_outcome": "Measure representative tasks before optimizing",
+      "current_evidence_based_assessment": "Repository review reports and deterministic examples give useful starting points.",
+      "remaining_boundary_or_proof_gap": "No current repeatable browser performance benchmark was run here; no claim can be made about 100k or million-row usability.",
+      "source_ids": "T20 INV DEPLOY",
+      "suggested_browser_scenarios": "BT34",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "UX-02",
+      "intent_strength": "Core",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Expanded partial",
+      "desired_outcome": "Distinguish empty, invalid, zero and missing results",
+      "current_evidence_based_assessment": "An unmatched search was historically reviewed; newer charts document valid-zero versus empty versus no-valid-number distinctions.",
+      "remaining_boundary_or_proof_gap": "One empty-table case is not every chart's empty-state proof. Test date gaps, all-invalid groups, maps and normalized denominators explicitly.",
+      "source_ids": "T06 T07 CHART REVIEW",
+      "suggested_browser_scenarios": "BT02 BT07 BT09 BT29",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "UX-03",
+      "intent_strength": "Core baseline",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Expanded partial / unverified",
+      "desired_outcome": "Complete real tasks with keyboard and assistive technology",
+      "current_evidence_based_assessment": "Named actions, keyboard width control, menu handling, chip focus/highlight and Alt-Enter trace contracts exist.",
+      "remaining_boundary_or_proof_gap": "Naming alone is not full accessibility. Canvas/WebGL marks, brushing, focus return, virtual rows and screen-reader outcomes remain unverified here.",
+      "source_ids": "T02 T09 T20 FILTER THDR TABLE CHART REVIEW",
+      "suggested_browser_scenarios": "BT12 BT24 BT34",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    }
+  ],
+  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "current_assessment": {
+    "date": "2026-10-06",
+    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "statement": "The registry has eighteen types. Shared reductions, chart traces, saved-view history, and local storage exist. The current checkout is newer than both Pro reports. No fresh runtime or browser check was run for this intent capture.",
+    "evidence_scope": "Source inspection only; no fresh application browser proof."
+  },
+  "current_priority": "verification-within-selected-workflows"
+}

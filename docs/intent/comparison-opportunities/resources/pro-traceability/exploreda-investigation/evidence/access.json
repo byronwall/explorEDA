@@ -1,0 +1,15 @@
+{
+  "repository": "byronwall/explorEDA",
+  "baseCommit": "593ca2e1f9210d5bc66985437afc37fcfcd8a56a",
+  "remoteMainRechecked": true,
+  "requiredBranch": "codex/deterministic-rendering-data-traceability",
+  "cloneCreated": false,
+  "branchCreated": false,
+  "commitsCreated": [],
+  "pushSucceeded": false,
+  "pullRequestCreated": false,
+  "readRoute": "GitHub connector at pinned commit",
+  "mutationBlocker": "Local Git cannot resolve github.com; no working authenticated push transport",
+  "validationBlocker": "pnpm and a repository checkout unavailable",
+  "standaloneChecks": "Two pure TS modules compiled; 12 Node assertion groups; minimal SVG adapter rendered in Chromium; new-file patch recovered byte-identically in scratch"
+}

@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-06",
+  "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+  "scope": "Intent recovery and reference capture only",
+  "sleuth_validation": {
+    "folders": 26,
+    "errors": 0,
+    "warnings": 0
+  },
+  "authored_local_links": "All resolve after additions",
+  "current_source_anchors": "All paths resolve after additions",
+  "pro_chart_recommendations": {
+    "original_items": 21,
+    "mapped_items": 21
+  },
+  "original_source_checksums": "12 captured files match",
+  "gap_analysis_package_checksums": {
+    "checked": 57,
+    "matched": 57
+  },
+  "runtime_tests": "Not run: no runtime source changes",
+  "browser_checks": "Not run: no UI changes",
+  "existing_intents": "Updated audience, priorities, and affected intent briefs/maps. No current shapes or plans existed in this collection.",
+  "git_state": "New docs only, detached HEAD; no commit created",
+  "user_additions": [
+    "editorial-chart-styling",
+    "in-place-chart-editing",
+    "scatter-plot-matrix",
+    "analysis-export"
+  ],
+  "product_feedback": {
+    "annotations": 17,
+    "first_pass": [
+      "editorial-chart-styling",
+      "in-place-chart-editing",
+      "scatter-plot-matrix",
+      "table usability"
+    ],
+    "second_pass": "Time",
+    "lowered": "Named population comparisons",
+    "seed_demand_unconfirmed": [
+      "Reusable metrics",
+      "Analytical output reuse",
+      "Filter-free templates"
+    ]
+  }
+}

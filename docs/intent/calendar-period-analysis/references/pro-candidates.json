@@ -1,0 +1,101 @@
+{
+  "chart_review_items": [
+    {
+      "id": "C09",
+      "phase": 2,
+      "title": "Add long-form series and calendar aggregation",
+      "effort": "Medium core; Large full scope",
+      "current_state": "Line connects values from multiple measure columns and uses numeric axes, not calendar rollups.",
+      "desired_outcome": "Raw orders/events become date-bucketed series without external reshaping.",
+      "dependencies": [
+        "C03"
+      ],
+      "acceptance_criteria": [
+        "Date field, interval, metric, and optional categorical series field are first-class.",
+        "Day/week/month boundaries and time-zone policy are explicit.",
+        "Duplicate timestamps are aggregated in rollup mode; raw-observation mode remains available.",
+        "Missing periods have metric-appropriate, explicit zero/gap behavior.",
+        "Calendar-aware ticks and brush bounds agree with the source interval.",
+        "Series values match an independent grouping of the same source rows."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/LineChart/definition.ts",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/Axis/numericScale.ts"
+      ]
+    },
+    {
+      "id": "C10",
+      "phase": 2,
+      "title": "Add area and stacked-area presentations",
+      "effort": "Small–Medium after prerequisites",
+      "current_state": "Line rendering includes paths and points, not filled/stacked area modes.",
+      "desired_outcome": "Time series can show totals and composition through shared grouped data.",
+      "dependencies": [
+        "C09",
+        "C06"
+      ],
+      "acceptance_criteria": [
+        "Line and area use identical metric results.",
+        "Stack ordering, missing buckets, and negative-value behavior are explicit.",
+        "Changing mode preserves group identity and filter state.",
+        "A rolling window, when added, identifies its size and missing-value policy."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx"
+      ]
+    }
+  ],
+  "gap_register_items": [
+    {
+      "requirement_id": "FILT-11",
+      "intent_strength": "Core",
+      "proposed_priority": "P2",
+      "change_from_old_report": "Expanded partial",
+      "desired_outcome": "Select dates with explicit calendar semantics",
+      "current_evidence_based_assessment": "UTC daily Calendar views, day/week/month line rollups, period/series selection and date controls now exist.",
+      "remaining_boundary_or_proof_gap": "Relative rolling versus completed periods, quarter/year presets and calendar stepping are not supplied by those additions. Freeze or encode the reference time for any future relative filter.",
+      "source_ids": "T07 CHART ROLL",
+      "suggested_browser_scenarios": "BT08 BT09",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "CALC-07",
+      "intent_strength": "Core",
+      "proposed_priority": "P2",
+      "change_from_old_report": "Stable partial",
+      "desired_outcome": "Keep row, group and window computations semantically distinct",
+      "current_evidence_based_assessment": "Scalar formulas and named count/sum/average groups are different controls; calendar rollups add explicit period scope.",
+      "remaining_boundary_or_proof_gap": "Window/rank expressions and arbitrary grouped formula composition are not established. Row sum(x,y) must not be presented as a dataset sum.",
+      "source_ids": "T11 T16 T17 BASE CHART",
+      "suggested_browser_scenarios": "BT19 BT26",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "CHART-05",
+      "intent_strength": "Core / derived measures specific",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Expanded partial",
+      "desired_outcome": "Inspect and reuse aggregates with correct denominators",
+      "current_evidence_based_assessment": "Pivot contributors and reusable grouped summaries exist; newer stacks/cards/time views expose more aggregate semantics.",
+      "remaining_boundary_or_proof_gap": "Pivot-as-source, subtotal hierarchies, percentages and prior-period calculations are not generally established. New generic charts do not close every pivot outcome.",
+      "source_ids": "T11 T13 T15 CHART INV BASE",
+      "suggested_browser_scenarios": "BT07 BT19",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    }
+  ],
+  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "current_assessment": {
+    "date": "2026-10-06",
+    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "statement": "datePresets.ts offers latest 7/30/90/365-day ranges and bounded year, quarter, and month groups. dailyRollup.ts supplies UTC reducers. Line time settings support raw or grouped calendar data but no general rolling-window expression.",
+    "evidence_scope": "Source inspection only; no fresh application browser proof."
+  },
+  "current_priority": "second-pass"
+}

@@ -125,7 +125,7 @@ Render the histogram and metric. Identify `MissingMargin`, locate the declaratio
 
 ## Boundaries and open choices
 
-**Settled syntax:** Every saved setting is a flat path: `xAxis.scaleType=log`, `columns.0.width=140`, `fields[]=Region,Channel`. `key[]=` is an empty list and `key{}=` an empty object. `key=unset` restores the default, `key=null` is missing, quoted text is always text, and quoted segments hold dots and spaces. Dates bound filters as `where."Order Date"=2024-01-01..`; missing values filter as `where.field=null`. Color scales, grouped summaries, and the Rows view use `scale`, `group`, and `rows` lines. Exports of every demo example rebuild exactly.
+**Settled syntax:** Every saved setting is a flat path: `xAxis.scaleType=log`, `columns.0.width=140`, `fields[]=Region,Channel`. `key[]=` is an empty list and `key{}=` an empty object. `key=unset` restores the default, `key=null` is missing, quoted text is always text, and quoted segments hold dots and spaces. Dates bound filters as `where."Order Date"=2024-01-01..`; missing values filter as `where.field=null`. Color scales, grouped summaries, and the Rows view use `scale`, `group`, and `rows` lines. Exports of every demo example rebuild exactly. One text holds every saved view: shared definitions come first, and each `view "Name"` line starts a section with its own grid, Rows view, and charts.
 
 **Entry:** The demo hosts a paste-started Dashboard text panel, and `exploreda-dsl check` reads files. The package exports the compiler, not the panel. Global filters require main-app support and separate shaping.
 

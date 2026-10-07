@@ -1,0 +1,55 @@
+{
+  "chart_review_items": [],
+  "gap_register_items": [
+    {
+      "requirement_id": "DATA-02",
+      "intent_strength": "Core",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Expanded",
+      "desired_outcome": "Know field types, missingness and distributions before charting",
+      "current_evidence_based_assessment": "Profiles and inspectors are joined by inline header distributions. DataTable defaults distributions on and Rows always shows them.",
+      "remaining_boundary_or_proof_gap": "Do not keep the old no-inline-distribution claim. Population scope and all-invalid/constant-field behavior need current browser proof.",
+      "source_ids": "T02 T09 T13 TABLE THDR NUM",
+      "suggested_browser_scenarios": "BT01 BT02 BT03",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "DATA-09",
+      "intent_strength": "Specific",
+      "proposed_priority": "P3",
+      "change_from_old_report": "Still limited",
+      "desired_outcome": "Find observations that should exist but are absent",
+      "current_evidence_based_assessment": "Existing profiles identify missing cells in present records; time views can reveal empty periods visually.",
+      "remaining_boundary_or_proof_gap": "Expected key sets, sampling plans and missing-observation reconciliation are not established. A blank cell and an absent record have different denominators.",
+      "source_ids": "T13 INV CHART",
+      "suggested_browser_scenarios": "BT32",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "UX-02",
+      "intent_strength": "Core",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Expanded partial",
+      "desired_outcome": "Distinguish empty, invalid, zero and missing results",
+      "current_evidence_based_assessment": "An unmatched search was historically reviewed; newer charts document valid-zero versus empty versus no-valid-number distinctions.",
+      "remaining_boundary_or_proof_gap": "One empty-table case is not every chart's empty-state proof. Test date gaps, all-invalid groups, maps and normalized denominators explicitly.",
+      "source_ids": "T06 T07 CHART REVIEW",
+      "suggested_browser_scenarios": "BT02 BT07 BT09 BT29",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    }
+  ],
+  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "current_assessment": {
+    "date": "2026-10-06",
+    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "statement": "fieldProfiles.ts supplies missing counts. Heatmap operates on categorical groups and metrics. The registry has no missingness diagnostic view. The October 5 Pro ledger distinguishes field missingness from absent expected observations.",
+    "evidence_scope": "Source inspection only; no fresh application browser proof."
+  },
+  "current_priority": "Unranked candidate or future seed"
+}

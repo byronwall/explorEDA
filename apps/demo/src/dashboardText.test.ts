@@ -3,7 +3,9 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   compileDocument,
+  compileViews,
   exportDocument,
+  exportViews,
   type SavedDataStructure,
 } from "exploreda";
 import { evaluateAnalysisQuery } from "exploreda/analysis";
@@ -66,4 +68,40 @@ describe("dashboard text round trip", () => {
     ).toEqual([]);
     expect(meaning(rebuilt.settings)).toEqual(meaning(view.savedData));
   });
+});
+
+describe("all views as one text", () => {
+  const withViews = examples.filter(
+    (example) => example.savedData && example.views?.length
+  );
+  it.each(withViews.map((example) => [example.id, example] as const))(
+    "%s",
+    async (_id, example) => {
+      const rows = await parseCsvData(
+        readFileSync(join(__dirname, "../public", example.data), "utf8")
+      );
+      const tabs = [
+        { name: example.title, settings: example.savedData! },
+        ...example.views!.map((view) => ({
+          name: view.name,
+          settings: view.savedData,
+        })),
+      ];
+      const { text, omitted } = exportViews(tabs, { rows });
+      expect(omitted).toEqual([]);
+      const rebuilt = compileViews(text, {
+        rows,
+        geometryAssets: example.savedData!.geometryAssets,
+      });
+      expect(
+        rebuilt.diagnostics.filter((item) => item.effect !== "rows-missing")
+      ).toEqual([]);
+      expect(rebuilt.views.map((view) => view.name)).toEqual(
+        tabs.map((tab) => tab.name)
+      );
+      expect(rebuilt.views.map((view) => meaning(view.settings))).toEqual(
+        tabs.map((tab) => meaning(tab.settings))
+      );
+    }
+  );
 });
