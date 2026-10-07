@@ -19,6 +19,7 @@ export {
   type DslExportOptions,
   type DslExportResult,
 } from "./export";
+export { highlightDsl, type DslToken, type DslTokenKind } from "./highlight";
 export { CHART_SETTING_KEYS } from "./settingKeys";
 export {
   compileViews,

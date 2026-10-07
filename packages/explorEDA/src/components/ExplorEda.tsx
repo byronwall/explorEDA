@@ -44,6 +44,7 @@ import {
   DSL_CHART_KEYWORDS,
   DSL_REFERENCE,
   exportDocument,
+  highlightDsl,
   exportViews,
   formatDslDiagnostics,
   type DslChartResult,
@@ -59,6 +60,8 @@ import {
   type DslDiagnostic,
   type DslEffect,
   type DslSeverity,
+  type DslToken,
+  type DslTokenKind,
 } from "@/lib/dsl";
 import { PlotManager } from "./PlotManager";
 import type { ExplorEdaSidePanel } from "./WorkspaceSidePanel";
@@ -150,6 +153,8 @@ export type {
   DslExportResult,
   DslFieldSummary,
   DslSeverity,
+  DslToken,
+  DslTokenKind,
   DslView,
   DslViewResult,
   DslViewsExportOptions,
@@ -164,6 +169,7 @@ export {
   exportViews,
   compileViews,
   formatDslDiagnostics,
+  highlightDsl,
   parseSavedAnalysis,
   parseSavedData,
   saveAnalysisToClipboard,

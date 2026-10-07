@@ -33,7 +33,11 @@ import type {
 } from "@/types/SavedDataTypes";
 import { validateSavedData } from "@/utils/saveDataUtils";
 import { parsePath, setPath } from "./paths";
-import { CHART_SETTING_KEYS } from "./settingKeys";
+import {
+  CHART_SETTING_KEYS,
+  FIELD_SETTING_WORDS,
+  GRID_SETTING_WORDS,
+} from "./settingKeys";
 import {
   parseDocument,
   type DslDeclaration,
@@ -97,6 +101,12 @@ export interface DslCompileOptions {
   now?: () => Date;
 }
 
+/**
+ * Each row's sequence number. A new scatter plots against it, and selecting
+ * points filters on it, so text accepts it like a field.
+ */
+const ROW_ID_FIELD = "__ID";
+
 const DEFAULT_GRID: GridSettings = {
   columnCount: 12,
   rowHeight: 100,
@@ -145,7 +155,7 @@ export const DSL_CHART_KEYWORDS: Record<string, string> = {
   summary: "summary",
 };
 
-const OTHER_KEYWORDS = [
+export const DSL_OTHER_KEYWORDS = [
   "scale",
   "group",
   "rows",
@@ -184,16 +194,20 @@ export function viewName(header: DslDeclaration, index: number): string {
   return (value && single(value)) || `View ${index + 1}`;
 }
 
-const FIELD_SETTING_KEYS = [
-  "label",
-  "description",
-  "format",
-  "precision",
-  "unit",
-  "currency",
-  "datePreset",
-  "nullTokens[]",
-] as const;
+/** Keys a field line takes; `as=` for the type is read on its own. */
+const FIELD_SETTING_KEYS = Object.entries(FIELD_SETTING_WORDS)
+  .filter(([key]) => key !== "type")
+  .map(([, word]) => word);
+
+/** Grid words such as `padding`, and the grid setting each writes. */
+const GRID_WORDS = Object.fromEntries(
+  Object.entries(GRID_SETTING_WORDS).map(([key, { word }]) => [word, key])
+) as Record<string, keyof GridSettings>;
+const GRID_WORD_LIST = Object.keys(GRID_WORDS)
+  .map((word, index, all) =>
+    index === all.length - 1 ? `or ${word}=` : `${word}=`
+  )
+  .join(", ");
 
 const DATE_PRESETS = ["iso", "month-day-year", "day-month-year"];
 
@@ -481,7 +495,7 @@ export function compileDocument(
       const { name, type, field } = declaration.alias;
       const subject = name;
       const native = single(field);
-      if (DSL_CHART_KEYWORDS[name] || OTHER_KEYWORDS.includes(name)) {
+      if (DSL_CHART_KEYWORDS[name] || DSL_OTHER_KEYWORDS.includes(name)) {
         report(
           "error",
           "contract",
@@ -610,22 +624,20 @@ export function compileDocument(
       case "grid":
         for (const pair of declaration.pairs) {
           const number = numberValue(pair.value);
-          const key = {
-            columns: "columnCount",
-            rowHeight: "rowHeight",
-            padding: "containerPadding",
-          }[pair.key] as "columnCount" | undefined;
-          if (pair.key === "markers") {
+          const key = Object.hasOwn(GRID_WORDS, pair.key)
+            ? GRID_WORDS[pair.key]
+            : undefined;
+          if (key && typeof DEFAULT_GRID[key] === "boolean") {
             const flag = booleanValue(pair.value);
             if (flag === undefined) {
               report(
                 "warning",
                 "setting-default",
                 pair.span,
-                "markers must be true or false, so the grid keeps its default."
+                `${pair.key} must be true or false, so the grid keeps its default.`
               );
             } else {
-              gridSettings.showBackgroundMarkers = flag;
+              (gridSettings as Record<string, unknown>)[key] = flag;
             }
           } else if (!key) {
             report(
@@ -634,7 +646,7 @@ export function compileDocument(
               pair.span,
               `${pair.key} is not a grid setting, so it was ignored.`,
               {
-                suggestion: "Use columns=, rowHeight=, padding=, or markers=.",
+                suggestion: `Use ${GRID_WORD_LIST}.`,
               }
             );
           } else if (
@@ -649,7 +661,7 @@ export function compileDocument(
               `${pair.key} needs a ${pair.key === "padding" ? "number of 0 or more" : "positive number"}, so the grid keeps its default.`
             );
           } else {
-            gridSettings[key] = number;
+            (gridSettings as Record<string, unknown>)[key] = number;
           }
         }
         break;
@@ -670,7 +682,7 @@ export function compileDocument(
         } else {
           const near = closestName(keyword, [
             ...Object.keys(DSL_CHART_KEYWORDS),
-            ...OTHER_KEYWORDS,
+            ...DSL_OTHER_KEYWORDS,
           ]);
           report(
             "error",
@@ -987,6 +999,7 @@ export function compileDocument(
   const fieldType = (field: string): DataType | undefined =>
     fieldSettings[field]?.type ??
     inferred[field] ??
+    (field === ROW_ID_FIELD ? "numeric" : undefined) ??
     (calcNames.has(field)
       ? Object.values(columnFor(field)).some(
           (value) => typeof value === "number"
@@ -1171,7 +1184,9 @@ export function compileDocument(
   ): string | undefined {
     const native =
       aliases.get(name) ??
-      (sourceSet.has(name) || (calcNames.has(name) && !skippedCalcs.has(name))
+      (sourceSet.has(name) ||
+      name === ROW_ID_FIELD ||
+      (calcNames.has(name) && !skippedCalcs.has(name))
         ? name
         : undefined);
     if (native !== undefined) {

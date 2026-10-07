@@ -1,4 +1,21 @@
-import type { SavedChartSettings } from "@/types/SavedDataTypes";
+import type { FieldSettings } from "@/lib/fieldSettings";
+import type {
+  SavedCalculation,
+  SavedDataStructure,
+} from "@/types/SavedDataStructure";
+import type {
+  GridSettings,
+  SavedChartSettings,
+  ViewMetadata,
+} from "@/types/SavedDataTypes";
+
+/**
+ * How dashboard text carries one saved setting: the text that writes it, or
+ * why it is deliberately left out. Each map below is a `Record` over every
+ * key of its type, so a new setting fails to compile until it is mapped or
+ * excluded here on purpose.
+ */
+export type DslCoverage = { text: string } | { excluded: string };
 
 type ChartType = SavedChartSettings["type"];
 type SettingKey<T extends ChartType> = Exclude<
@@ -433,3 +450,57 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "zField",
   ]),
 };
+
+/** Grid settings and the `grid` word that writes each, with its default. */
+export const GRID_SETTING_WORDS: Record<
+  keyof GridSettings,
+  { word: string; fallback: number | boolean }
+> = {
+  columnCount: { word: "columns", fallback: 12 },
+  rowHeight: { word: "rowHeight", fallback: 100 },
+  containerPadding: { word: "padding", fallback: 10 },
+  showBackgroundMarkers: { word: "markers", fallback: true },
+};
+
+/** Field display settings and the key that writes each on a field line. */
+export const FIELD_SETTING_WORDS: Record<keyof FieldSettings, string> = {
+  type: "as",
+  label: "label",
+  description: "description",
+  format: "format",
+  precision: "precision",
+  unit: "unit",
+  currency: "currency",
+  datePreset: "datePreset",
+  nullTokens: "nullTokens[]",
+};
+
+/** Every part of a saved dashboard, and the declaration that carries it. */
+export const DASHBOARD_COVERAGE: Record<keyof SavedDataStructure, DslCoverage> =
+  {
+    metadata: { text: "dashboard name=" },
+    gridSettings: { text: "grid" },
+    fieldSettings: { text: "field, or settings after an alias or calc" },
+    calculations: { text: "calc" },
+    colorScales: { text: "scale @id, any setting as a path" },
+    aggregates: { text: "group @id, any setting as a path" },
+    rowsSettings: { text: "rows, any setting as a path" },
+    charts: { text: "a chart line, any setting as a path" },
+    geometryAssets: {
+      excluded:
+        "Map shapes are data, not settings. The host passes them to the compiler, and charts refer to them by geometryAssetId.",
+    },
+  };
+
+export const METADATA_COVERAGE: Record<keyof ViewMetadata, DslCoverage> = {
+  name: { text: "dashboard name=" },
+  version: { excluded: "The save format version, set when saving." },
+  createdAt: { excluded: "A timestamp, set when saving." },
+  modifiedAt: { excluded: "A timestamp, set when saving." },
+};
+
+export const CALCULATION_COVERAGE: Record<keyof SavedCalculation, DslCoverage> =
+  {
+    resultColumnName: { text: "calc <name>=" },
+    expression: { text: "calc name=<formula>" },
+  };

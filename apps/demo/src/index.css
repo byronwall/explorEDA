@@ -41,3 +41,67 @@
 .landing-drop-overlay {
   background: var(--background);
 }
+
+/* Dashboard text colors. Each kind keeps its hue in both themes. Color only:
+   a weight or style change could shift glyphs under the text area. */
+:root {
+  --eda-dsl-keyword: hsl(262 55% 48%);
+  --eda-dsl-type: hsl(190 75% 30%);
+  --eda-dsl-key: hsl(215 70% 40%);
+  --eda-dsl-reference: hsl(190 75% 30%);
+  --eda-dsl-string: hsl(140 55% 29%);
+  --eda-dsl-number: hsl(25 85% 38%);
+  --eda-dsl-constant: hsl(330 60% 44%);
+}
+
+.dark {
+  --eda-dsl-keyword: hsl(262 85% 78%);
+  --eda-dsl-type: hsl(185 60% 62%);
+  --eda-dsl-key: hsl(210 85% 74%);
+  --eda-dsl-reference: hsl(185 60% 62%);
+  --eda-dsl-string: hsl(120 40% 68%);
+  --eda-dsl-number: hsl(30 85% 68%);
+  --eda-dsl-constant: hsl(330 75% 76%);
+}
+
+.eda-dsl-keyword {
+  color: var(--eda-dsl-keyword);
+}
+.eda-dsl-type {
+  color: var(--eda-dsl-type);
+}
+.eda-dsl-key {
+  color: var(--eda-dsl-key);
+}
+.eda-dsl-reference {
+  color: var(--eda-dsl-reference);
+}
+.eda-dsl-string {
+  color: var(--eda-dsl-string);
+}
+.eda-dsl-number {
+  color: var(--eda-dsl-number);
+}
+.eda-dsl-constant {
+  color: var(--eda-dsl-constant);
+}
+.eda-dsl-operator,
+.eda-dsl-continuation {
+  color: var(--muted-foreground);
+}
+.eda-dsl-comment {
+  color: var(--muted-foreground);
+}
+
+/* The text area draws only the caret and selection over the colored copy. */
+.eda-dsl-input {
+  color: transparent;
+  caret-color: var(--foreground);
+}
+.eda-dsl-input::selection {
+  color: transparent;
+  background: color-mix(in oklab, var(--ring) 28%, transparent);
+}
+.eda-dsl-input::placeholder {
+  color: var(--muted-foreground);
+}
