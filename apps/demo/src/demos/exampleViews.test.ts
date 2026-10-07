@@ -15,7 +15,7 @@ describe("example saved views", () => {
   });
 
   it("keeps each view's shared definitions and uses only its example's charts", () => {
-    for (const example of withViews) {
+    for (const example of withViews.filter(example => !example.project)) {
       const main = example.savedData!;
       const ids = new Set(main.charts.map((chart) => chart.id));
       for (const view of example.views!) {

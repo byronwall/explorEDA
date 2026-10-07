@@ -27,6 +27,7 @@ export function RowsPeek({
   narrow,
   onNarrowChange,
   onClose,
+  readOnly = false,
 }: {
   id: string;
   /** The row count and active filters, which the drawer covers in the toolbar. */
@@ -37,6 +38,8 @@ export function RowsPeek({
   narrow: boolean;
   onNarrowChange: (narrow: boolean) => void;
   onClose: () => void;
+  /** Keep table edits local while inspecting a read-only preview. */
+  readOnly?: boolean;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   // Charts stay in use beside the narrow drawer, so Escape works from them too.
@@ -148,6 +151,7 @@ export function RowsPeek({
           width={size.width}
           height={size.height}
           toolbarTarget={toolbarTarget}
+          readOnly={readOnly}
         />
       </div>
     </div>

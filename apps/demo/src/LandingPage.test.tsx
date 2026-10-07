@@ -1,4 +1,9 @@
 import {
+  stringifyAnalysisProject,
+  selectAnalysisProjectView,
+} from "exploreda/analysis";
+import { shopProject } from "./demos/multiSourceShop";
+import {
   act,
   fireEvent,
   render,
@@ -75,6 +80,9 @@ vi.mock("exploreda", async () => {
         </div>
       );
     },
+    ExplorEdaProject: ({ view }: { view: { queryId: string } }) => (
+      <div data-testid="project-workspace" data-query={view.queryId} />
+    ),
     parseSavedAnalysis: (text: string) => JSON.parse(text),
     validateSavedAnalysisForData: (analysis: {
       settings: { calculations: { expression: string }[] };
@@ -632,5 +640,59 @@ describe("LandingPage routing", () => {
       expect(router.state.location.search).toBe("");
       expect(await screen.findByTestId("workspace")).toBeInTheDocument();
     });
+  });
+
+  it("opens a dropped project view and restores it after reload", async () => {
+    localStorage.clear();
+    const fixture = structuredClone(shopProject);
+    const file = {
+      format: "exploreda-project" as const,
+      version: 1 as const,
+      project: fixture.project,
+      tables: fixture.sources,
+      views: [
+        { id: "orders", name: "Orders", queryId: "orders-by-customer" },
+        { id: "items", name: "Items", queryId: "items-by-order" },
+      ],
+      activeViewId: "orders",
+    };
+    const router = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
+    );
+    const mounted = render(<RouterProvider router={router} />);
+    const drop = (text: string) => {
+      const file = new File([text], "project.json", {
+        type: "application/json",
+      });
+      // This DOM environment omits File.text; keep the fixture's browser contract.
+      Object.defineProperty(file, "text", {
+        value: () => Promise.resolve(text),
+      });
+      fireEvent.drop(window, {
+        dataTransfer: { types: ["Files"], files: [file] },
+      });
+    };
+    drop(stringifyAnalysisProject(selectAnalysisProjectView(file, "items")));
+    await waitFor(() =>
+      expect(screen.getByTestId("project-workspace")).toHaveAttribute(
+        "data-query",
+        "items-by-order"
+      )
+    );
+    expect(router.state.location.pathname).toBe("/viewer");
+    expect(router.state.location.search).toBe("?project=1");
+    mounted.unmount();
+    const reload = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/viewer?project=1"] }
+    );
+    render(<RouterProvider router={reload} />);
+    await waitFor(() =>
+      expect(screen.getByTestId("project-workspace")).toHaveAttribute(
+        "data-query",
+        "items-by-order"
+      )
+    );
   });
 });

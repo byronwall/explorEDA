@@ -6,6 +6,8 @@ import {
   getSavedViewsRows,
   HISTORY_LIMIT,
   STORAGE_KEY,
+  PROJECT_STORAGE_KEY,
+  writeProjectTables,
   type SavedView,
   type SavedViewsSession,
 } from "./savedViewsSession";
@@ -20,6 +22,12 @@ import {
   SHARED_KEYS,
   snapshot,
 } from "./savedViewsHistory";
+import {
+  createAnalysisWorker,
+  evaluateAnalysisQuery,
+  selectAnalysisProjectView,
+  stringifyAnalysisProject,
+} from "exploreda/analysis";
 import { HistoryTimeline } from "./HistoryTimeline";
 import {
   SavedViewActions,
@@ -29,7 +37,11 @@ import {
 import {
   ExplorEda,
   exportDocument,
+  ExplorEdaProject,
   exportViews,
+  type AnalysisProject,
+  type AnalysisView,
+  type AnalysisSourceRow,
   stringifySavedAnalysis,
   type ExplorEdaHandle,
   type ExplorEdaSidePanel,
@@ -60,11 +72,14 @@ function makeSession(
   name: string,
   settings?: SavedDataStructure,
   views: ExampleView[] = [],
+  project?: AnalysisProject,
+  tables?: Record<string, readonly AnalysisSourceRow[]>,
   exampleId?: string
 ): SavedViewsSession {
   const tab = {
     id: newId(),
     name,
+    queryId: project?.queries[0]?.id,
     settings: settings ? clone(settings) : undefined,
   };
   // An example can open with more saved views beside its main one.
@@ -73,6 +88,8 @@ function makeSession(
     ...views.map((extra) => ({
       id: newId(),
       name: extra.name,
+      queryId: extra.queryId,
+      bindings: extra.bindings,
       settings: clone(extra.savedData),
     })),
   ];
@@ -104,9 +121,18 @@ function makeSession(
     version: 1,
     ...(exampleId ? { exampleId } : {}),
     sourceAnalysis,
+    project,
+    tables,
     tabs,
     activeTabId: tab.id,
-    history: [{ at: new Date().toISOString(), label: "View", tabs: initial }],
+    history: [
+      {
+        at: new Date().toISOString(),
+        label: "View",
+        tabs: initial,
+        project: project && clone(project),
+      },
+    ],
     path: [0],
     cursor: 0,
   };
@@ -177,6 +203,35 @@ function downloadAnalysis(
   URL.revokeObjectURL(url);
 }
 
+function projectFile(session: SavedViewsSession) {
+  if (!session.project || !session.tables) {
+    throw new Error("No project is available");
+  }
+  return {
+    format: "exploreda-project" as const,
+    version: 1 as const,
+    project: session.project,
+    tables: Object.fromEntries(
+      Object.entries(session.tables).map(([id, rows]) => [id, [...rows]])
+    ),
+    views: session.tabs.map((tab) => ({ ...tab, queryId: tab.queryId ?? "" })),
+    activeViewId: session.activeTabId,
+  };
+}
+function downloadProject(
+  file: Parameters<typeof stringifyAnalysisProject>[0],
+  name: string
+) {
+  const url = URL.createObjectURL(
+    new Blob([stringifyAnalysisProject(file)], { type: "application/json" })
+  );
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${name.replace(/[^a-z0-9-_]+/gi, "-")}.exploreda-project.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
 function isEditableTarget(target: EventTarget | null) {
   return (
     target instanceof HTMLElement &&
@@ -224,6 +279,9 @@ export function SavedViewsWorkspace({
   initialSettings,
   initialSession,
   initialViews,
+  initialProject,
+  sourceTables,
+  queryPresets,
   viewName,
   exampleId,
 }: {
@@ -232,6 +290,9 @@ export function SavedViewsWorkspace({
   initialSession?: SavedViewsSession;
   /** Saved views that open as tabs after the main one. */
   initialViews?: ExampleView[];
+  initialProject?: AnalysisProject;
+  sourceTables?: Record<string, readonly AnalysisSourceRow[]>;
+  queryPresets?: Record<string, SavedDataStructure>;
   viewName: string;
   /** The example these rows came from, so its URL can restore the session. */
   exampleId?: string;
@@ -239,7 +300,15 @@ export function SavedViewsWorkspace({
   const [session, setSession] = useState(() =>
     initialSession
       ? clone(initialSession)
-      : makeSession(data, viewName, initialSettings, initialViews, exampleId)
+      : makeSession(
+          data,
+          viewName,
+          initialSettings,
+          initialViews,
+          initialProject,
+          sourceTables,
+          exampleId
+        )
   );
   // Tabs remount with the workspace, so focus follows the selected tab.
   const tabsHadFocus = useRef(false);
@@ -262,6 +331,9 @@ export function SavedViewsWorkspace({
   const shownTabs = showingPreview
     ? (session.history[previewIndex]?.tabs ?? session.tabs)
     : session.tabs;
+  const shownProject = showingPreview
+    ? session.history[previewIndex]?.project
+    : session.project;
   const shownTabId = showingPreview ? previewTabId : session.activeTabId;
   const currentView = activeView(session.tabs, session.activeTabId);
   const view = activeView(shownTabs, shownTabId);
@@ -273,18 +345,52 @@ export function SavedViewsWorkspace({
     () => getSavedViewsRows({ sourceAnalysis }),
     [sourceAnalysis]
   );
-  const encoded = useMemo(() => JSON.stringify(session), [session]);
-  const sizeBytes = new Blob([encoded]).size;
+  // Dashboard text checks field names against rows. In a project those are
+  // the current view's query result, not the session's single table.
+  const textRows = useMemo(() => {
+    if (!shownProject || !session.tables || !view.queryId) {
+      return sourceRows;
+    }
+    try {
+      return evaluateAnalysisQuery(
+        shownProject,
+        session.tables,
+        view.queryId,
+        view.bindings
+      ).rows.map((row) => row.data as DatumObject);
+    } catch {
+      return [];
+    }
+  }, [shownProject, session.tables, view.queryId, view.bindings, sourceRows]);
+  // Source tables are saved once under their own key; the session, which
+  // changes on every edit, is saved without them.
+  const { tables, ...sessionWithoutTables } = session;
+  const encoded = useMemo(
+    () => JSON.stringify(sessionWithoutTables),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [session]
+  );
+  const tablesBytes = useMemo(
+    () => (tables ? writeProjectTables(tables) : 0),
+    [tables]
+  );
+  const sizeBytes = new Blob([encoded]).size + Math.max(0, tablesBytes);
 
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, encoded);
+      if (tablesBytes < 0) {
+        throw new Error("Tables were not saved");
+      }
+      localStorage.setItem(
+        session.project ? PROJECT_STORAGE_KEY : STORAGE_KEY,
+        encoded
+      );
       setSaveError(false);
       setSavedEncoding(encoded);
     } catch {
       setSaveError(true);
     }
-  }, [encoded]);
+  }, [encoded, tablesBytes, session.project]);
 
   const remount = () => setWorkspaceKey((key) => key + 1);
   useEffect(() => {
@@ -319,7 +425,14 @@ export function SavedViewsWorkspace({
           metadata: { ...source.settings.metadata, name },
         }
       : blankSettings(source.settings, name);
-    const tab: SavedView = { id: newId(), name, settings };
+    const tab: SavedView = {
+      ...source,
+      id: newId(),
+      name,
+      settings,
+      inspection: duplicate ? source.inspection : undefined,
+      selectedRowKeys: duplicate ? source.selectedRowKeys : undefined,
+    };
     setSession((current) => {
       const at = current.tabs.findIndex((item) => item.id === source.id);
       const tabs = [...current.tabs];
@@ -393,7 +506,13 @@ export function SavedViewsWorkspace({
   const exportView = () => {
     const settings =
       currentView.settings ?? workspaceRef.current?.getSettings();
-    if (settings) {
+    if (session.project && session.tables) {
+      const file = projectFile(session);
+      downloadProject(
+        selectAnalysisProjectView(file, currentView.id),
+        currentView.name
+      );
+    } else if (settings) {
       downloadAnalysis(sourceRows, settings, currentView.name);
     }
   };
@@ -403,6 +522,12 @@ export function SavedViewsWorkspace({
       let changed = false;
       const tabs = current.tabs.map((tab) => {
         const isActive = tab.id === current.activeTabId;
+        if (
+          current.project &&
+          tab.queryId !== activeView(current.tabs, current.activeTabId).queryId
+        ) {
+          return tab;
+        }
         let next = tab.settings;
         if (!next) {
           next = {
@@ -474,6 +599,12 @@ export function SavedViewsWorkspace({
             },
           };
         }
+        if (
+          current.project &&
+          tab.queryId !== activeView(current.tabs, current.activeTabId).queryId
+        ) {
+          return tab;
+        }
         if (tab.settings) {
           return { ...tab, settings: withSharedSettings(tab.settings, shared) };
         }
@@ -538,7 +669,10 @@ export function SavedViewsWorkspace({
             },
           };
         }
-        return tab.settings
+        const sameScope =
+          !current.project ||
+          tab.queryId === activeView(current.tabs, current.activeTabId).queryId;
+        return tab.settings && sameScope
           ? { ...tab, settings: withSharedSettings(tab.settings, settings) }
           : tab;
       });
@@ -550,6 +684,49 @@ export function SavedViewsWorkspace({
     setAnnouncement(
       `Applied dashboard text: ${describeResult(result)}. Undo with ${MOD_KEY}Z.`
     );
+    remount();
+  };
+
+  const captureProject = (next: {
+    project: AnalysisProject;
+    view: AnalysisView;
+  }) => {
+    if (showingPreview) {
+      return;
+    }
+    setSession((current) => {
+      const tabs = current.tabs.map((tab) =>
+        tab.id === current.activeTabId
+          ? { ...tab, ...next.view, id: tab.id, name: tab.name }
+          : tab
+      );
+      return pushCheckpoint(current, tabs, undefined, undefined, next.project);
+    });
+  };
+
+  const openProjectView = (
+    nextView: AnalysisView,
+    name: string,
+    project?: AnalysisProject
+  ) => {
+    if (showingPreview) {
+      return;
+    }
+    const tab: SavedView = {
+      ...nextView,
+      id: newId(),
+      name: uniqueName(name, session.tabs),
+    };
+    setSession((current) => ({
+      ...pushCheckpoint(
+        current,
+        [...current.tabs, tab],
+        "View",
+        { action: `Opened ${tab.name}` },
+        project ?? current.project
+      ),
+      activeTabId: tab.id,
+    }));
     remount();
   };
 
@@ -585,7 +762,7 @@ export function SavedViewsWorkspace({
       const activeTabId = tabs.some((tab) => tab.id === current.activeTabId)
         ? current.activeTabId
         : tabs[0]!.id;
-      return { ...current, tabs, activeTabId, cursor };
+      return { ...current, tabs, project: entry.project, activeTabId, cursor };
     });
     setAnnouncement(`${direction < 0 ? "Undid" : "Redid"}: ${step}`);
     // The remount replaces the panel; keep keyboard focus in the timeline.
@@ -634,7 +811,8 @@ export function SavedViewsWorkspace({
         displaced,
         tabs,
         classifyChange(displaced.tabs, tabs) ?? restored.label,
-        { restoredFrom: restored.at }
+        { restoredFrom: restored.at },
+        restored.project
       );
       const activeTabId = tabs.some((tab) => tab.id === keepTabId)
         ? keepTabId
@@ -767,14 +945,14 @@ export function SavedViewsWorkspace({
         <DashboardTextPanel
           text={dashboardText}
           onTextChange={setDashboardText}
-          rows={sourceRows}
+          rows={textRows}
           applied={appliedText}
           onApply={applyText}
           geometryAssets={currentView.settings?.geometryAssets}
           onExport={() => {
             const settings =
               currentView.settings ?? workspaceRef.current?.getSettings();
-            return settings && exportDocument(settings, { rows: sourceRows });
+            return settings && exportDocument(settings, { rows: textRows });
           }}
           viewCount={session.tabs.length}
           onExportViews={() => {
@@ -867,6 +1045,44 @@ export function SavedViewsWorkspace({
 
   const current = describeEntry(session, selectedHistoryIndex);
 
+  // The view tabs lead the workspace toolbar and the history actions end it.
+  const viewTabs = (
+    <SavedViewTabs
+      projectMode={Boolean(session.project)}
+      tabs={shownTabs}
+      activeId={view.id}
+      readOnly={showingPreview}
+      onSelect={changeActive}
+      onCreate={() => createView(false)}
+      onDuplicate={() => createView(true)}
+      onRename={renameView}
+      onDelete={deleteView}
+      onMove={moveView}
+      onExport={exportView}
+      focusSelected={tabsHadFocus.current}
+    />
+  );
+  const viewActions = (
+    <SavedViewActions
+      readOnly={showingPreview}
+      onExport={exportView}
+      onExportAll={
+        session.project && session.tables
+          ? () => downloadProject(projectFile(session), "project")
+          : undefined
+      }
+      canUndo={canUndo}
+      canRedo={canRedo}
+      undoText={undoText}
+      redoText={redoText}
+      onUndo={() => moveHistory(-1)}
+      onRedo={() => moveHistory(1)}
+      saveState={saveState}
+      saveDetail={saveDetail}
+      onOpenHistory={() => setHistoryOpen(true)}
+    />
+  );
+
   return (
     <section className="mb-3" aria-label="Saved views and history">
       {saveError && (
@@ -908,45 +1124,51 @@ export function SavedViewsWorkspace({
         {LABEL_NAMES[current.entry.label]} · {current.headline}
       </span>
       <div>
-        <WorkspaceInstance
-          key={`${view.id}:${workspaceKey}`}
-          data={sourceRows}
-          settings={settingsForDisplay}
-          onStateChange={capture}
-          workspaceRef={workspaceRef}
-          sidePanels={sidePanels}
-          readOnly={showingPreview}
-          toolbarStart={
-            <SavedViewTabs
-              tabs={shownTabs}
-              activeId={view.id}
-              readOnly={showingPreview}
-              onSelect={changeActive}
-              onCreate={() => createView(false)}
-              onDuplicate={() => createView(true)}
-              onRename={renameView}
-              onDelete={deleteView}
-              onMove={moveView}
-              onExport={exportView}
-              focusSelected={tabsHadFocus.current}
-            />
-          }
-          toolbarEnd={
-            <SavedViewActions
-              readOnly={showingPreview}
-              onExport={exportView}
-              canUndo={canUndo}
-              canRedo={canRedo}
-              undoText={undoText}
-              redoText={redoText}
-              onUndo={() => moveHistory(-1)}
-              onRedo={() => moveHistory(1)}
-              saveState={saveState}
-              saveDetail={saveDetail}
-              onOpenHistory={() => setHistoryOpen(true)}
-            />
-          }
-        />
+        {shownProject && session.tables ? (
+          <ExplorEdaProject
+            key={`${view.id}:${workspaceKey}`}
+            ref={workspaceRef}
+            tables={session.tables}
+            project={shownProject}
+            view={{
+              ...view,
+              queryId: view.queryId ?? "",
+              settings: settingsForDisplay,
+            }}
+            onProjectChange={captureProject}
+            onStateChange={capture}
+            onOpenView={openProjectView}
+            queryPresets={queryPresets}
+            sidePanels={sidePanels}
+            readOnly={showingPreview}
+            createWorker={createAnalysisWorker}
+            toolbarStart={viewTabs}
+            toolbarEnd={viewActions}
+          />
+        ) : session.project ? (
+          <>
+            <div className="flex items-center justify-between gap-2">
+              {viewTabs}
+              {viewActions}
+            </div>
+            <p role="alert">
+              This checkpoint has no project definitions. Restore a checkpoint
+              that contains its queries.
+            </p>
+          </>
+        ) : (
+          <WorkspaceInstance
+            key={`${view.id}:${workspaceKey}`}
+            data={sourceRows}
+            settings={settingsForDisplay}
+            onStateChange={capture}
+            workspaceRef={workspaceRef}
+            sidePanels={sidePanels}
+            readOnly={showingPreview}
+            toolbarStart={viewTabs}
+            toolbarEnd={viewActions}
+          />
+        )}
       </div>
     </section>
   );

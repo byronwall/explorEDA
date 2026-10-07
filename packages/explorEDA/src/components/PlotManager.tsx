@@ -161,8 +161,8 @@ export function PlotManager({
   // Rows, workspace settings, and host panels share the right edge, so one
   // replaces another. They cover the field list, which returns when they close.
   // React 18 has no inert prop, so set the attribute directly.
-  const toolbarEditRef = useRef<HTMLDivElement>(null);
-  const toolbarConfigRef = useRef<HTMLDivElement>(null);
+  const toolbarEditRef = useRef<HTMLFieldSetElement>(null);
+  const toolbarConfigRef = useRef<HTMLFieldSetElement>(null);
   const statusRef = useRef<HTMLDivElement>(null);
   const chartAreaRef = useRef<HTMLElement>(null);
   useLayoutEffect(() => {
@@ -303,7 +303,6 @@ export function PlotManager({
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (
-        readOnly ||
         event.key.toLowerCase() !== "r" ||
         event.shiftKey ||
         !acceptsShortcut(event) ||
@@ -317,7 +316,7 @@ export function PlotManager({
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [rowsOpen, closeRows, setRowsOpen, acceptsShortcut, readOnly]);
+  }, [rowsOpen, closeRows, setRowsOpen, acceptsShortcut]);
 
   // A host panel's letter toggles it, like F and R.
   useEffect(() => {
@@ -556,69 +555,74 @@ export function PlotManager({
           </div>
           {/* A read-only workspace keeps its scope visible but takes no
               edits. Host panels stay usable beside it. */}
-          <div className="eda-toolbar-editable" ref={toolbarEditRef}>
+          <fieldset
+            disabled={readOnly}
+            className="eda-toolbar-editable"
+            ref={toolbarEditRef}
+          >
             <ChartCreationButtons />
             <span className="eda-toolbar-divider" aria-hidden="true" />
-            <div
-              role="group"
-              aria-label="Inspect data"
-              className="eda-toolbar-group"
-            >
-              <TooltipProvider>
-                <Tooltip
-                  open={fieldsTipOpen}
-                  onOpenChange={(open) =>
-                    setFieldsTipOpen(open && !quietFieldsTip.current)
-                  }
-                >
-                  <TooltipTrigger asChild>
-                    <Button
-                      ref={fieldsToggleRef}
-                      variant="ghost"
-                      size="icon"
-                      className="eda-fields-toggle"
-                      aria-label="Fields"
-                      aria-pressed={fieldsOpen}
-                      aria-expanded={fieldsOpen}
-                      aria-controls={fieldsOpen ? fieldListId : undefined}
-                      onClick={() =>
-                        fieldsOpen ? closeFields() : setFieldsOpen(true)
-                      }
-                      onPointerLeave={() => {
-                        quietFieldsTip.current = false;
-                      }}
-                      onBlur={() => {
-                        quietFieldsTip.current = false;
-                      }}
-                    >
-                      <ListTree aria-hidden="true" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    {fieldsOpen
-                      ? "Hide the field list (F)"
-                      : "Fields: every field with search, quick stats, and chart actions (F). Shift+F opens every distribution in a full view."}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <Button
-                ref={rowsToggleRef}
-                variant="ghost"
-                size="icon"
-                aria-label="Rows"
-                aria-pressed={rowsOpen}
-                aria-expanded={rowsOpen}
-                aria-controls={rowsOpen ? rowsPeekId : undefined}
-                tooltip={
-                  rowsOpen
-                    ? "Close the rows (R or Esc)"
-                    : "Rows: peek at the rows that pass every chart filter (R)"
+          </fieldset>
+          <div
+            role="group"
+            aria-label="Inspect data"
+            className="eda-toolbar-group"
+          >
+            <TooltipProvider>
+              <Tooltip
+                open={fieldsTipOpen}
+                onOpenChange={(open) =>
+                  setFieldsTipOpen(open && !quietFieldsTip.current)
                 }
-                onClick={() => (rowsOpen ? closeRows() : setRowsOpen(true))}
               >
-                <Rows3 aria-hidden="true" />
-              </Button>
-            </div>
+                <TooltipTrigger asChild>
+                  <Button
+                    ref={fieldsToggleRef}
+                    variant="ghost"
+                    size="icon"
+                    className="eda-fields-toggle"
+                    aria-label="Fields"
+                    aria-pressed={fieldsOpen}
+                    aria-expanded={fieldsOpen}
+                    aria-controls={fieldsOpen ? fieldListId : undefined}
+                    disabled={readOnly}
+                    onClick={() =>
+                      fieldsOpen ? closeFields() : setFieldsOpen(true)
+                    }
+                    onPointerLeave={() => {
+                      quietFieldsTip.current = false;
+                    }}
+                    onBlur={() => {
+                      quietFieldsTip.current = false;
+                    }}
+                  >
+                    <ListTree aria-hidden="true" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {fieldsOpen
+                    ? "Hide the field list (F)"
+                    : "Fields: every field with search, quick stats, and chart actions (F). Shift+F opens every distribution in a full view."}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <Button
+              ref={rowsToggleRef}
+              variant="ghost"
+              size="icon"
+              aria-label="Rows"
+              aria-pressed={rowsOpen}
+              aria-expanded={rowsOpen}
+              aria-controls={rowsOpen ? rowsPeekId : undefined}
+              tooltip={
+                rowsOpen
+                  ? "Close the rows (R or Esc)"
+                  : "Rows: peek at the rows that pass every chart filter (R)"
+              }
+              onClick={() => (rowsOpen ? closeRows() : setRowsOpen(true))}
+            >
+              <Rows3 aria-hidden="true" />
+            </Button>
           </div>
           {sidePanels.length > 0 && (
             // History-like panels sit with the inspection tools and stay
@@ -648,7 +652,11 @@ export function PlotManager({
               ))}
             </div>
           )}
-          <div className="eda-toolbar-editable" ref={toolbarConfigRef}>
+          <fieldset
+            disabled={readOnly}
+            className="eda-toolbar-editable"
+            ref={toolbarConfigRef}
+          >
             <span className="eda-toolbar-divider" aria-hidden="true" />
             <div
               role="group"
@@ -764,7 +772,7 @@ export function PlotManager({
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-          </div>
+          </fieldset>
           {toolbarEnd && (
             <div className="eda-toolbar-end eda-toolbar-host">
               <span className="eda-toolbar-divider" aria-hidden="true" />
@@ -795,6 +803,7 @@ export function PlotManager({
             narrow={rowsNarrow}
             onNarrowChange={setRowsNarrow}
             onClose={closeRows}
+            readOnly={readOnly}
           />
         )}
         {settingsTab && !openPanel && (

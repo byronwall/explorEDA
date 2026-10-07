@@ -1,0 +1,26 @@
+﻿proposed_id,assessed_state,requirement_ids,contract,proof_scenarios,proposal_only
+outcome:field-inspection,Partial / growing,DATA-02 DATA-03,"Inline distributions, missing/excluded counts, type preview and raw/effective distinction",BT01 BT02,True
+outcome:column-operations,Implemented slice / unverified here,TABLE-01 TABLE-02 TABLE-03,"Drag, hide/recover, width reset, keyboard resize and Clear sort; separate auto-fit absence",BT12 BT22,True
+outcome:filter-population,Partial / growing,FILT-01 FILT-02,"Full, peer and global/local population semantics with exact source IDs",BT03 BT07,True
+outcome:filter-owner-navigation,Implemented slice / unverified here,FILT-03,"Label focus/jump versus X removal, including overflow and Rows",BT11,True
+outcome:reset-all,Implemented slice / unverified here,FILT-04,"Reset chart filters, table searches and Rows-local controls together",BT03 BT11,True
+outcome:exact-range,Partial,FILT-06 FILT-07,"Manual bound precision, one-sided intervals and data-replacement semantics",BT04,True
+outcome:typed-other-members,Implemented slice / unverified here,FILT-08,"Typed identity, rare-member selection and resize/restore stability",BT05,True
+outcome:calculation-authoring,Implemented slice / historical proof,CALC-01 CALC-02 CALC-03,"Valid formulas, invalid drafts, dependency errors and row-level explanations",BT18,True
+outcome:calculation-dependent-edit,Implemented slice / needs current integration proof,CALC-05 CALC-06,Recompute every affected chart/table/filter while preserving thresholds,BT18 BT22,True
+outcome:aggregate-contributors,Partial / growing,TRACE-01 CALC-08,Exact source members versus eligible measurements and exclusions per family,BT07 BT15 BT16,True
+outcome:property-provenance,Partial / growing,TRACE-03,"Transforms, scales, defaults, stack bounds, date intervals and denominators",BT10 BT14 BT24,True
+outcome:intermediate-reuse,Partial,DATA-08 TRACE-02,Named grouped outputs versus chart-local arrays; one concrete downstream consumer,BT19 BT26,True
+outcome:settings-roundtrip,Implemented slice / fresh proof missing,DASH-03 DASH-04,Edited settings remount against supplied host data,BT22,True
+outcome:full-analysis-roundtrip,Implemented slice / fresh proof missing,DASH-03 DASH-04,"Rows, special values, calculations, new chart settings and geometry assets",BT22 BT29,True
+outcome:invalid-restore-atomicity,Implemented slice / needs proof,DASH-04 CALC-02,Invalid JSON/dependencies cannot destroy the current analysis,BT22,True
+outcome:durable-named-analysis,Not established in current host,DASH-02 DASH-05,"Storage, ownership, dirty state, reopening and source binding",BT22 BT23,True
+outcome:filter-free-template,Not established,DASH-06,Layout/configuration separated from a temporary selection,BT33,True
+outcome:stable-source-identity,Not established,DATA-04 TRACE-05,Key and source fingerprint survive reorder/replacement without silent remapping,BT23,True
+outcome:calendar-relative-period,Not established beyond fixed rollups,FILT-11,"Rolling versus completed periods, step windows, explicit saved reference time",BT08 BT09,True
+outcome:rich-cell-reading,Not established in scalar model,TABLE-06 TABLE-07,Long text and structured objects retain readable semantic context,BT13,True
+outcome:keyboard-workflow,Partial / unverified,UX-03,"Task completion, mark selection alternatives, focus and Escape, not names alone",BT12 BT24,True
+outcome:screen-reader-workflow,Unverified,UX-03,Real assistive technology reads table/trace/selection context accurately,BT24 BT34,True
+outcome:measured-performance,Unverified,PERF-01 PERF-05,"Load/filter/Apply/scroll/heap with device, shape and latency distributions",BT34,True
+planned:advanced-scatter,Planned only,CALC-09 CHART-02,"Regression, LOESS, marginals, hexagons and 2D contours; own versus peer filter scope",BT27,True
+planned:compact-authoring,Planned only,TRACE-04 TRACE-06,"Complete document authoring, warnings, expanded settings and export equivalence",BT27,True

@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-06",
+  "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+  "scope": "Source inspection only",
+  "mixed_rendering": "Ordinary scatter points on Canvas; guides and special layers on SVG. Other registered views include HTML and WebGL.",
+  "first_proof": "Single-chart PNG is recommended, not user-selected.",
+  "document_outputs": "Slides and PDF are future possibilities; no artifact has been created."
+}

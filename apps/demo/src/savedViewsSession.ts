@@ -1,13 +1,39 @@
-import { parseSavedAnalysis, type SavedDataStructure } from "exploreda";
+import {
+  parseSavedAnalysis,
+  stringifySavedAnalysis,
+  type AnalysisProject,
+  type AnalysisView,
+  type AnalysisSourceRow,
+  type SavedDataStructure,
+} from "exploreda";
 import type { DatumObject } from "./LandingPage";
 
 export const STORAGE_KEY = "exploreda.saved-views.v1";
+export const PROJECT_STORAGE_KEY = "exploreda.project-views.v1";
+const PROJECT_TABLES_KEY = `${PROJECT_STORAGE_KEY}.tables`;
+
+/** Saves project source tables; returns their size, or -1 when storage fails. */
+export function writeProjectTables(
+  tables: Record<string, readonly AnalysisSourceRow[]>
+) {
+  try {
+    const encoded = JSON.stringify(tables);
+    localStorage.setItem(PROJECT_TABLES_KEY, encoded);
+    return new Blob([encoded]).size;
+  } catch {
+    return -1;
+  }
+}
 export const HISTORY_LIMIT = 50;
 
 export type SavedView = {
   id: string;
   name: string;
   settings?: SavedDataStructure;
+  queryId?: string;
+  bindings?: AnalysisView["bindings"];
+  inspection?: AnalysisView["inspection"];
+  selectedRowKeys?: string[];
 };
 
 export type ChangeLabel = "View" | "Filter" | "Both" | "Shared";
@@ -15,6 +41,7 @@ export type HistoryEntry = {
   at: string;
   label: ChangeLabel;
   tabs: SavedView[];
+  project?: AnalysisProject;
   /** The checkpoint this one changed. Missing on the first checkpoint. */
   parent?: number;
   /** Names a deliberate action, such as a duplicated view. */
@@ -30,6 +57,8 @@ export type SavedViewsSession = {
   /** The example these rows came from. Imported data has none. */
   exampleId?: string;
   sourceAnalysis: string;
+  project?: AnalysisProject;
+  tables?: Record<string, readonly AnalysisSourceRow[]>;
   tabs: SavedView[];
   activeTabId: string;
   history: HistoryEntry[];
@@ -52,10 +81,12 @@ export type SavedViewsReadResult = {
   failed: boolean;
 };
 
-export function readSavedViewsSessionResult(): SavedViewsReadResult {
+export function readSavedViewsSessionResult(
+  key = STORAGE_KEY
+): SavedViewsReadResult {
   let raw: string | null;
   try {
-    raw = localStorage.getItem(STORAGE_KEY);
+    raw = localStorage.getItem(key);
   } catch {
     return { session: undefined, failed: true };
   }
@@ -65,6 +96,13 @@ export function readSavedViewsSessionResult(): SavedViewsReadResult {
 
   try {
     const value = JSON.parse(raw) as SavedViewsSession;
+    if (value.project) {
+      const tables = localStorage.getItem(PROJECT_TABLES_KEY);
+      if (tables === null) {
+        return { session: undefined, failed: true };
+      }
+      value.tables = JSON.parse(tables);
+    }
     if (
       value.version !== 1 ||
       typeof value.sourceAnalysis !== "string" ||
@@ -106,4 +144,51 @@ export function readSavedViewsSessionResult(): SavedViewsReadResult {
 
 export function readSavedViewsSession(): SavedViewsSession | undefined {
   return readSavedViewsSessionResult().session;
+}
+
+/** A fresh session for an imported project file, with one history step. */
+export function projectSession(file: {
+  project: AnalysisProject;
+  tables: Record<string, readonly AnalysisSourceRow[]>;
+  views: AnalysisView[];
+  activeViewId: string;
+}): SavedViewsSession {
+  const tabs: SavedView[] = file.views.map((view) => ({ ...view }));
+  const now = new Date().toISOString();
+  return {
+    version: 1,
+    // Project sessions read their rows from `tables`; this keeps the shape
+    // that single-table sessions use.
+    sourceAnalysis: stringifySavedAnalysis({
+      format: "exploreda-analysis",
+      version: 1,
+      data: [],
+      settings: {
+        charts: [],
+        calculations: [],
+        colorScales: [],
+        gridSettings: {
+          columnCount: 12,
+          rowHeight: 100,
+          containerPadding: 10,
+          showBackgroundMarkers: true,
+        },
+        metadata: {
+          name: "Project",
+          version: 1,
+          createdAt: now,
+          modifiedAt: now,
+        },
+      },
+    }),
+    project: file.project,
+    tables: file.tables,
+    tabs,
+    activeTabId: file.activeViewId,
+    history: [
+      { at: now, label: "View", tabs: clone(tabs), project: file.project },
+    ],
+    path: [0],
+    cursor: 0,
+  };
 }

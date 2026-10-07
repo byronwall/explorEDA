@@ -295,6 +295,7 @@ describe("saved view session and history", () => {
     fireEvent.click(screen.getByRole("tab", { name: "New view" }));
 
     // Previewing an earlier step shows it read-only and saves nothing.
+    await screen.findByRole("button", { name: "Saved. Open history" });
     const beforePreview = localStorage.getItem("exploreda.saved-views.v1");
     const currentSession = readSavedViewsSession()!;
     const newViewCheckpoint = currentSession.history.findIndex((entry) =>
@@ -374,10 +375,12 @@ describe("saved view session and history", () => {
     fireEvent.click(
       screen.getByRole("button", { name: "Restore this version" })
     );
-    await waitFor(() => expect(screen.queryByText(/^Previewing/)).toBeNull());
-    expect(readSavedViewsSession()!.history).toHaveLength(
-      historyBeforeRestore + 1
-    );
+    await waitFor(() => {
+      expect(screen.queryByText(/^Previewing/)).toBeNull();
+      expect(readSavedViewsSession()!.history).toHaveLength(
+        historyBeforeRestore + 1
+      );
+    });
     expect(screen.getByTestId("current-history-label")).toHaveTextContent(
       /Restored the version from/
     );
@@ -546,6 +549,22 @@ describe("saved view session and history", () => {
     );
   });
 
+  it("saves the latest session on pagehide before the deferred write", async () => {
+    const data = [{ region: "North" }];
+    render(
+      <SavedViewsWorkspace
+        data={data}
+        initialSettings={makeSettings()}
+        viewName="Orders"
+      />
+    );
+    await screen.findByTestId("workspace");
+    fireEvent.click(screen.getByRole("button", { name: "Emit filter" }));
+    fireEvent(window, new Event("pagehide"));
+
+    expect(readSavedViewsSession()?.history.at(-1)?.label).toBe("Filter");
+  });
+
   it("measures the 500-order source with the full retained history", async () => {
     const csv = readFileSync("public/datasets/shop-operations.csv", "utf8");
     const rows = await parseCsvData(csv);
@@ -561,6 +580,9 @@ describe("saved view session and history", () => {
     for (let index = 0; index < 55; index += 1) {
       fireEvent.click(screen.getByRole("button", { name: "Emit filter" }));
     }
+    await waitFor(() =>
+      expect(localStorage.getItem("exploreda.saved-views.v1")).not.toBeNull()
+    );
     const saved = localStorage.getItem("exploreda.saved-views.v1")!;
     const session = readSavedViewsSession()!;
     const storageBytes = new Blob([saved]).size;
@@ -612,6 +634,7 @@ describe("saved view session and history", () => {
     for (let index = 0; index < 55; index += 1) {
       fireEvent.click(screen.getByRole("button", { name: "Emit filter" }));
     }
+    await screen.findByRole("button", { name: "Saved. Open history" });
     fireEvent.click(
       screen.getByRole("button", { name: "Saved. Open history" })
     );

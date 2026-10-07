@@ -111,6 +111,7 @@ export function SavedViewTabs({
   onSelect,
   onCreate,
   onDuplicate,
+  projectMode = false,
   onRename,
   onDelete,
   onMove,
@@ -124,6 +125,7 @@ export function SavedViewTabs({
   onSelect: (id: string) => void;
   onCreate: () => void;
   onDuplicate: () => void;
+  projectMode?: boolean;
   onRename: (name: string) => void;
   onDelete: () => void;
   onMove: (direction: -1 | 1) => void;
@@ -307,7 +309,9 @@ export function SavedViewTabs({
                     </DropdownMenuItem>
                     <DropdownMenuItem onSelect={onExport}>
                       <Download aria-hidden="true" />
-                      Export analysis
+                      {projectMode
+                        ? "Export this view with its tables"
+                        : "Export analysis"}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
@@ -329,7 +333,11 @@ export function SavedViewTabs({
         label="New view"
         className="shrink-0"
         disabled={readOnly}
-        tooltip="New view: a blank tab on the same rows. Each view keeps its own charts and filters. Calculations, colors, and field settings stay shared."
+        tooltip={
+          projectMode
+            ? "New view: a blank tab on the active query and frame. Charts and filters stay separate. Definitions are shared with views on the same query."
+            : "New view: a blank tab on the same rows. Each view keeps its own charts and filters. Calculations, colors, and field settings stay shared."
+        }
         onClick={onCreate}
       >
         <Plus aria-hidden="true" />
@@ -342,6 +350,7 @@ export function SavedViewTabs({
 export function SavedViewActions({
   readOnly,
   onExport,
+  onExportAll,
   canUndo,
   canRedo,
   undoText,
@@ -354,6 +363,8 @@ export function SavedViewActions({
 }: {
   readOnly: boolean;
   onExport: () => void;
+  /** Exports every view at once; replaces the per-view export button. */
+  onExportAll?: () => void;
   canUndo: boolean;
   canRedo: boolean;
   undoText?: string;
@@ -425,10 +436,14 @@ export function SavedViewActions({
         </button>
       </ActionTooltip>
       <IconButton
-        label="Export analysis"
+        label={onExportAll ? "Export project" : "Export analysis"}
         disabled={readOnly}
-        tooltip="Export analysis: download this view's charts and the source rows as one JSON file"
-        onClick={onExport}
+        tooltip={
+          onExportAll
+            ? "Export project: download every view, query, and source table as one file"
+            : "Export analysis: download this view's charts and the source rows as one JSON file"
+        }
+        onClick={onExportAll ?? onExport}
       >
         <Download aria-hidden="true" />
       </IconButton>

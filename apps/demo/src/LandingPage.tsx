@@ -5,6 +5,10 @@ import {
   validateSavedAnalysisForData,
   type SavedDataStructure,
 } from "exploreda";
+import {
+  parseAnalysisProject,
+  type AnalysisProjectFile,
+} from "exploreda/analysis";
 
 import { parseCsvData } from "./csvParser";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
@@ -40,10 +44,12 @@ import { PageFileDrop } from "./landing/PageFileDrop";
 import { SectionHeading } from "./landing/SectionHeading";
 import {
   readSavedViewsSessionResult,
+  PROJECT_STORAGE_KEY,
+  projectSession,
   STORAGE_KEY,
   type SavedViewsSession,
 } from "./savedViewsSession";
-import { examplePath, VIEWER_PATH } from "./routes";
+import { examplePath, PROJECT_VIEWER_PATH, VIEWER_PATH } from "./routes";
 
 const featuredExample = examples.find(
   (item) => item.id === FEATURED_EXAMPLE_ID
@@ -99,15 +105,18 @@ function workspaceExample(workspace: Workspace | null) {
 
 function hasStoredSession() {
   try {
-    return localStorage.getItem(STORAGE_KEY) !== null;
+    return (
+      localStorage.getItem(STORAGE_KEY) !== null ||
+      localStorage.getItem(PROJECT_STORAGE_KEY) !== null
+    );
   } catch {
     return false;
   }
 }
 
-function clearStoredSession() {
+function clearStoredSession(key = STORAGE_KEY) {
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(key);
   } catch {
     // An unavailable storage area has no session to retain.
   }
@@ -139,6 +148,9 @@ export function LandingPage() {
   const [retryCount, setRetryCount] = useState(0);
 
   const isViewer = location.pathname === VIEWER_PATH;
+  // Multi-table projects keep their own saved session.
+  const isProjectViewer = isViewer && searchParams.get("project") === "1";
+  const viewerKey = isProjectViewer ? PROJECT_STORAGE_KEY : STORAGE_KEY;
   const routeExampleId =
     matchPath("/examples/:exampleId", location.pathname)?.params.exampleId ??
     null;
@@ -231,10 +243,18 @@ export function LandingPage() {
       if (current && current.kind !== "example") {
         return;
       }
-      const result = readSavedViewsSessionResult();
+      const result = readSavedViewsSessionResult(viewerKey);
       setRestoreFailed(result.failed);
       if (result.session) {
         openSession(result.session);
+        return;
+      }
+      // With no single-table analysis, reopen the last project instead.
+      const project = isProjectViewer
+        ? undefined
+        : readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session;
+      if (!result.failed && project) {
+        navigate(PROJECT_VIEWER_PATH, { replace: true });
         return;
       }
       setWorkspace(null);
@@ -263,7 +283,9 @@ export function LandingPage() {
       return;
     }
     // The example's URL reopens the session saved from it.
-    const saved = readSavedViewsSessionResult().session;
+    const saved = readSavedViewsSessionResult(
+      selectedExample.project ? PROJECT_STORAGE_KEY : STORAGE_KEY
+    ).session;
     if (saved?.exampleId === selectedExample.id) {
       setIsLoading(false);
       setLoadError(null);
@@ -276,7 +298,10 @@ export function LandingPage() {
     setLoadError(null);
     setWorkspace(null);
 
-    fetchExampleData(selectedExample.data, controller.signal)
+    (selectedExample.project
+      ? Promise.resolve([])
+      : fetchExampleData(selectedExample.data, controller.signal)
+    )
       .then((rows) => {
         setWorkspace({ kind: "example", example: selectedExample, rows });
       })
@@ -298,6 +323,8 @@ export function LandingPage() {
     return () => controller.abort();
   }, [
     isViewer,
+    isProjectViewer,
+    viewerKey,
     routeExampleId,
     retryCount,
     fetchExampleData,
@@ -320,8 +347,22 @@ export function LandingPage() {
 
   const handleCsvImport = (data: DatumObject[]) => openImported(data);
 
+  // A project file keeps its own saved session beside the single-table one.
+  const handleProjectImport = (file: AnalysisProjectFile) => {
+    setRestoreFailed(false);
+    setAnalysisJsonError(null);
+    setLoadError(null);
+    openSession(projectSession(file));
+    navigate(PROJECT_VIEWER_PATH);
+  };
+
   const handleAnalysisJson = () => {
     try {
+      if (JSON.parse(analysisJson).format === "exploreda-project") {
+        const file = parseAnalysisProject(analysisJson);
+        handleProjectImport(file);
+        return;
+      }
       const analysis = parseSavedAnalysis(analysisJson);
       if (!validateSavedAnalysisForData(analysis)) {
         throw new Error("Analysis formulas do not match the saved source rows");
@@ -356,13 +397,15 @@ export function LandingPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  const result = readSavedViewsSessionResult();
+                  const result = readSavedViewsSessionResult(viewerKey);
                   setRestoreFailed(result.failed);
                   if (!result.session) {
                     return;
                   }
                   openSession(result.session);
-                  navigate(VIEWER_PATH);
+                  navigate(
+                    result.session.project ? PROJECT_VIEWER_PATH : VIEWER_PATH
+                  );
                 }}
               >
                 Retry restore
@@ -372,7 +415,7 @@ export function LandingPage() {
                 size="sm"
                 onClick={() => {
                   // The user can still import a new source if storage is unavailable.
-                  clearStoredSession();
+                  clearStoredSession(viewerKey);
                   setRestoreFailed(false);
                   setWorkspace(null);
                   navigate("/");
@@ -408,7 +451,10 @@ export function LandingPage() {
               ) : (
                 <>
                   <ScrollToHash hash={location.hash} />
-                  <PageFileDrop onImport={handleCsvImport} />
+                  <PageFileDrop
+                    onProjectImport={handleProjectImport}
+                    onImport={handleCsvImport}
+                  />
                   {featuredExample && (
                     <Hero
                       onOpenFeatured={() =>
@@ -481,7 +527,10 @@ export function LandingPage() {
                           >
                             Import your data
                           </h3>
-                          <CsvUpload onImport={handleCsvImport} />
+                          <CsvUpload
+                            onProjectImport={handleProjectImport}
+                            onImport={handleCsvImport}
+                          />
                           <SampleDataButtons onImport={handleCsvImport} />
                         </section>
                         <section
@@ -643,7 +692,12 @@ export function LandingPage() {
                     data={workspace.rows}
                     initialSettings={workspace.example.savedData}
                     initialViews={workspace.example.views}
-                    viewName={workspace.example.title}
+                    initialProject={workspace.example.project}
+                    sourceTables={workspace.example.tables}
+                    queryPresets={workspace.example.queryPresets}
+                    viewName={
+                      workspace.example.viewName ?? workspace.example.title
+                    }
                     exampleId={workspace.example.id}
                   />
                 ) : null}

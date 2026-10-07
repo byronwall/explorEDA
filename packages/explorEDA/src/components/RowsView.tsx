@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { DataTable } from "./charts/DataTable/DataTable";
 import {
@@ -10,23 +10,27 @@ export function RowsView({
   width,
   height,
   toolbarTarget,
+  readOnly = false,
 }: {
   width: number;
   height: number;
   toolbarTarget: HTMLElement | null;
+  readOnly?: boolean;
 }) {
   const data = useDataLayer((state) => state.data);
   const liveItems = useDataLayer((state) => state.liveItems);
   const crossfilter = useDataLayer((state) => state.crossfilterWrapper);
   const rowsSettings = useDataLayer((state) => state.rowsSettings);
   const updateRowsSettings = useDataLayer((state) => state.updateRowsSettings);
+  const [previewSettings, setPreviewSettings] = useState(rowsSettings);
+  const shownRowsSettings = readOnly ? previewSettings : rowsSettings;
   const settings = useMemo<DataTableSettings>(
     () => ({
       ...dataTableDefinition.createDefaultSettings({ x: 0, y: 0, w: 12, h: 6 }),
-      ...rowsSettings,
+      ...shownRowsSettings,
       title: "Data rows",
     }),
-    [rowsSettings]
+    [shownRowsSettings]
   );
   const rows = useMemo(() => {
     const ids = new Set(crossfilter.getFilteredRowIds());
@@ -40,7 +44,11 @@ export function RowsView({
         rows={rows}
         width={width}
         height={height}
-        onSettingsChange={(next) => updateRowsSettings(next)}
+        onSettingsChange={(next) => {
+          if (readOnly)
+            setPreviewSettings((current) => ({ ...current, ...next }));
+          else updateRowsSettings(next);
+        }}
       />
     </div>
   );

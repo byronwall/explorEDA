@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-06",
+  "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+  "evidence_scope": "Source inspection only",
+  "registry": "No dedicated scatter matrix",
+  "reusable_behavior": [
+    "Scatter source IDs and scale plans",
+    "Marginal histogram binning over plotted pairs",
+    "ECDF distribution settings"
+  ],
+  "population_warning": "Pair-based scatter marginals do not automatically define one-field diagonal populations."
+}
