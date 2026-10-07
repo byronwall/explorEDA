@@ -323,7 +323,7 @@
       }
     ],
     "evidence": [
-      "../../../.tickets/exp-b6fo.md",
+      "Ticket exp-b6fo (since removed) recorded acceptance.",
       "Node 24.21.0 pnpm check passed at 85916e9: builds, types, UI checks, 378 package tests, and 18 demo tests.",
       "Independent browser proof at 1280, 783, and 390 pixels covered add, edit, inspect, layout changes, references, integration, keyboard use, and Reset."
     ],

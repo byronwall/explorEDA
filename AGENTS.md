@@ -8,7 +8,7 @@
 - Use `aria-label` or visible text for accessible names. Use `ActionTooltip` or the `Button` `tooltip` prop only when hover help is needed.
 - Give every control whose effect is not obvious from its visible text a real tooltip that explains it: toggles, short or abbreviated labels, icon buttons, and options that differ subtly, such as Core and Full. Use `ActionTooltip` or the `Button` `tooltip` prop so it opens on hover and keyboard focus. Never fall back to a `title` attribute.
 - Run `pnpm check:ui`; it rejects native tooltip sources in TSX.
-- Keep user-facing copy about the product. Put internal caveats, release gaps, known bugs, and to-dos in a `.tickets/` ticket or GitHub issue, not on the page, in the UI, or in example comments. Default to tickets unless user says otherwise.
+- Keep user-facing copy about the product. Put internal caveats, release gaps, known bugs, and to-dos in the owning intent doc under `docs/intent/` or a GitHub issue, not on the page, in the UI, or in example comments.
 - Keep field names and filter state visible. Put optional actions beside or below the content.
 - Prefer compact nonmodal popovers for inspection and settings. Keep the data visible during edits.
 - In charts, a click on a mark selects it and a click on empty plot space clears that chart's filters. Marginals, legends, and overlays use the main marks' color encoding and visual treatment. See [UI defaults](docs/ui-defaults.md).

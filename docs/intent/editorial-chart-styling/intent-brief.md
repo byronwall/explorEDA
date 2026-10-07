@@ -56,6 +56,13 @@ A small reusable style definition could cover text roles, chart surfaces, rules,
 
 The package has light and dark CSS tokens, shared color scales, chart-specific style options, and small axis text controls. Saved settings retain chart options. They have no common editorial style definition or subtitle field.
 
+A few charts still pick colors outside the shared scales, so a theme or palette change misses them:
+
+- Heatmap and calendar heatmap draw with fixed Blues and RdBu ramps. Let them take a numerical scale (palette, steps, spacing, midpoint), building on the theme heat tokens from PR 124.
+- Line chart series colors come from a local palette in `LineChart.tsx` instead of the categorical palettes.
+- Categorical scales store one hex per category, so dark mode reuses light colors. Store the palette ID and resolve a dark step at render time.
+- The editor cannot reorder categories, so choosing which category takes which slot requires picking hex values.
+
 Chart headers use compact title classes. The details view enlarges titles through CSS. That enlargement is a display rule, not a saved user choice. Axis planning uses text sizes to estimate spacing, so typography affects geometry too.
 
 ## Next step after confirmation
