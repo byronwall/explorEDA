@@ -17,6 +17,7 @@ import {
 
 import { Card, CardContent } from "@/components/ui/card";
 import { useDataLayer } from "@/providers/DataLayerProvider";
+import { resolveThemeId } from "@/lib/themes";
 import { RowsPeek } from "./RowsPeek";
 import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { ActiveFilterStatus } from "./ActiveFilterStatus";
@@ -37,6 +38,7 @@ import {
   ListTree,
   MoreHorizontal,
   Palette,
+  Type,
   Rows3,
   X,
 } from "lucide-react";
@@ -118,6 +120,7 @@ export function PlotManager({
   const removeChart = useDataLayer((state) => state.removeChart);
   const removeAllCharts = useDataLayer((state) => state.removeAllCharts);
   const gridSettings = useDataLayer((state) => state.gridSettings);
+  const themeId = resolveThemeId(useDataLayer((state) => state.theme));
   const saveToStructure = useDataLayer((state) => state.saveToStructure);
   const saveAnalysisToStructure = useDataLayer(
     (state) => state.saveAnalysisToStructure
@@ -538,7 +541,11 @@ export function PlotManager({
   };
 
   return (
-    <div className="eda-workspace w-full min-w-0" ref={containerRef}>
+    <div
+      className="eda-workspace w-full min-w-0"
+      ref={containerRef}
+      data-eda-theme={themeId}
+    >
       <div
         ref={controlsRef}
         className="eda-workspace-controls"
@@ -670,6 +677,12 @@ export function PlotManager({
                     "Calculations",
                     "Calculations: create and edit calculated fields",
                     Calculator,
+                  ],
+                  [
+                    "theme",
+                    "Theme",
+                    "Theme: chart titles, type, and surfaces",
+                    Type,
                   ],
                   ["colors", "Colors", "Colors: adjust color scales", Palette],
                   [

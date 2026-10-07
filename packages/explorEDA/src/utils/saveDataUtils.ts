@@ -1,4 +1,5 @@
 import { isGeometryAsset } from "@/lib/geometryAssets";
+import { isSavedTheme } from "@/lib/themes";
 import type {
   SavedAnalysisStructure,
   SavedDataStructure,
@@ -306,6 +307,8 @@ function isBaseChart(value: Record<string, unknown>): boolean {
   return (
     typeof value.id === "string" &&
     typeof value.title === "string" &&
+    (value.subtitle === undefined || typeof value.subtitle === "string") &&
+    (value.note === undefined || typeof value.note === "string") &&
     typeof value.field === "string" &&
     isRecord(value.layout) &&
     isFiniteNumber(value.layout.x) &&
@@ -753,6 +756,8 @@ export function validateSavedData(data: unknown): data is SavedDataStructure {
   ) {
     return false;
   }
+
+  if (data.theme !== undefined && !isSavedTheme(data.theme)) return false;
 
   if (
     data.geometryAssets !== undefined &&

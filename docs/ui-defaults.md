@@ -74,7 +74,7 @@ Keep a chart's actions in its header: View data, Duplicate, details, settings, a
 Hidden header actions take no room, so the chart name keeps the full header until the pointer or focus reaches it.
 The field list is the one workspace tool that stays open. It floats over the right edge from the top of the viewport, never resizes the chart grid, and becomes a bottom sheet on narrow screens. Controls it covers move beside it. Fields in the toolbar and the F key open it, and Shift+F opens every field's distribution in a full view.
 
-Workspace settings (calculations, colors, and grid) share one panel that floats over the right edge in the field list's place. Each toolbar button opens its tab and closes the panel when pressed again. Every tab stays mounted, so unsaved edits survive a switch. The panel has a narrow and a wide width, and becomes a full sheet on narrow screens. Escape closes it and returns focus to its toolbar button.
+Workspace settings (calculations, theme, colors, and grid) share one panel that floats over the right edge in the field list's place. Each toolbar button opens its tab and closes the panel when pressed again. Every tab stays mounted, so unsaved edits survive a switch. The panel has a narrow and a wide width, and becomes a full sheet on narrow screens. Escape closes it and returns focus to its toolbar button.
 The right edge shows one panel at a time. Rows, workspace settings, and host panels replace each other. They cover the field list, which returns when they close.
 A host panel, such as the demo's History, gets an icon button beside Fields and Rows, an optional letter shortcut, and the settings panel's narrow and wide sizes. Its wide size shows more detail, not just more room.
 While the workspace is read-only, such as during a history preview, the charts and editing tools take no input. The filter scope stays visible and host panels stay usable.
@@ -96,8 +96,10 @@ Keep a confirmation small and centered: a short question, one sentence that name
 - Label local Rows filters and table searches separately from chart filters.
 - Keep a clear-filter control visible on every chart with an active filter.
 - Chart settings have a Filters tab with a manual control for every filter the chart sets: the fields its marks select, then any other filtered field. Each control matches the field's type and shows its distribution. A selection on the chart and the control stay in step.
-- Show the values under the pointer in the chart panel header, beside the title, in one line. A crosshair or highlight marks the point. Do not float a readout over the plot.
+- Show the values under the pointer in the chart panel header, beside the title, in one line. A crosshair or highlight marks the point. Do not float a readout over the plot. Under a headline theme the readout covers the end of the subtitle line while the pointer is on the plot, so a reading never moves the header.
 - The chart details view enlarges the chart title with the chart.
+- A chart has one header, which the workspace theme styles. Compact keeps the title on one line beside the controls. A headline theme, such as Newsprint, wraps the title to two lines above the plot, then clamps it and shows a clip marker whose tooltip suggests a larger chart or a shorter title. The subtitle line under it holds the filter control and table search. Hidden actions float over the title's top-right corner; where they stay shown (touch screens and chart details), they sit in the band above the headline.
+- A chart's source note sits under the plot on one line. The header and note take their height from the plot, never from the tile.
 - Label filter bounds with their meaning and state where the filter applies.
 - Pair a filter's bounds side by side in one row, such as At least and At most, under its distribution.
 - Start new source imports with summary and data tables. Let users choose their first chart.
