@@ -459,6 +459,7 @@ export function BoxPlot({
         yScale={yScale}
         brushingMode="none"
         settings={{ ...settings, margin }}
+        onClearPlot={() => updateChart(settings.id, { filters: [] })}
         footer={STATUS_LINE_HEIGHT}
         overlay={
           // Each group's column, including its axis label, is one target.

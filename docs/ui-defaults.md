@@ -67,6 +67,8 @@ Apply valid chart settings immediately so users can compare the result. Keep a r
 Do not add a persistent sidebar for temporary inspection.
 The plot area holds the chart only. Usage hints, such as "Click a cell to select", join the status line only while the pointer or focus is on the chart. Optional actions on the plot, such as Fit view, appear the same way. Never show an "Inspect" button on a chart or card. Alt-click or Alt-Enter on a mark opens its trace.
 A click on a mark always filters: a bar, box, or category toggles its value, and a histogram bin sets the range to its bounds.
+A plain click on empty plot space, away from every mark, clears that chart's filters, as its clear-filter action does. This covers the space above and between bars and a marginal band outside its bins. A drag or brush is never a dead click, and Alt-click stays inspection.
+Every part of a chart uses the encoding and treatment of its main marks. Marginals, legends, and overlays stack or color by the same field with the same palette, and dim unselected rows the same way.
 Keep a chart's actions in its header: View data, Duplicate, details, settings, and Delete, each an icon with a tooltip. Clear filters stays visible there while the chart filters. Chart settings hold settings only.
 Hidden header actions take no room, so the chart name keeps the full header until the pointer or focus reaches it.
 The field list is the one workspace tool that stays open. It floats over the right edge from the top of the viewport, never resizes the chart grid, and becomes a bottom sheet on narrow screens. Controls it covers move beside it. Fields in the toolbar and the F key open it, and Shift+F opens every field's distribution in a full view.

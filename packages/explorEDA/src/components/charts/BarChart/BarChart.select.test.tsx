@@ -84,3 +84,34 @@ it("selects a grouped bar's group on click and keeps Alt-click for inspection", 
   });
   expect(screen.getByTestId("filters").textContent).toBe("[]");
 });
+
+it("clears the chart's filters on a click in empty plot space, but not after a drag", () => {
+  window.PointerEvent = MouseEvent as typeof PointerEvent;
+  const { container } = render(
+    <DataLayerProvider
+      data={[
+        { Region: "West", Revenue: 10 },
+        { Region: "East", Revenue: 7 },
+      ]}
+      savedData={savedData}
+    >
+      <LiveBar />
+      <Filters />
+    </DataLayerProvider>
+  );
+  const svg = container.querySelector<SVGSVGElement>("svg[role='group']")!;
+  const press = (from: number, to: number) => {
+    fireEvent.pointerDown(svg, { button: 0, clientX: from, clientY: 60 });
+    fireEvent.pointerUp(svg, { button: 0, clientX: to, clientY: 60 });
+    fireEvent.click(svg, { button: 0, clientX: to, clientY: 60 });
+  };
+
+  fireEvent.click(screen.getByRole("button", { name: "West: 10" }));
+  expect(screen.getByTestId("filters").textContent).toContain('["West"]');
+
+  press(200, 240);
+  expect(screen.getByTestId("filters").textContent).toContain('["West"]');
+
+  press(200, 200);
+  expect(screen.getByTestId("filters").textContent).toBe("[]");
+});

@@ -11,6 +11,7 @@
 - Keep user-facing copy about the product. Put internal caveats, release gaps, known bugs, and to-dos in a `.tickets/` ticket or GitHub issue, not on the page, in the UI, or in example comments. Default to tickets unless user says otherwise.
 - Keep field names and filter state visible. Put optional actions beside or below the content.
 - Prefer compact nonmodal popovers for inspection and settings. Keep the data visible during edits.
+- In charts, a click on a mark selects it and a click on empty plot space clears that chart's filters. Marginals, legends, and overlays use the main marks' color encoding and visual treatment. See [UI defaults](docs/ui-defaults.md).
 - Do not put "Inspect" buttons (Inspect records, Inspect point, Inspect bar, and the like) on charts or cards. Reach a chart trace by Alt-click or Alt-Enter on the mark, or from the trace control in the chart header.
 - Start new imports with summary and rows. Preserve saved layouts.
 - Quick previews must not create charts or change the saved layout.

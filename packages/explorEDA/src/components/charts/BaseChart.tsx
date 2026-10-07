@@ -13,6 +13,7 @@ import {
   getChartAxisLabel,
   getChartTitle,
 } from "./chartAccessibility";
+import { CLICK_SLOP, isEmptyPlotTarget } from "./emptyPlotClick";
 
 type BrushMode = "horizontal" | "2d" | "none";
 
@@ -42,6 +43,11 @@ interface BaseChartProps {
    * means the chart set its own selection, so the brush keeps it.
    */
   onSelectPlot?: (point: [number, number]) => boolean;
+  /**
+   * A plain click on empty plot space, away from every mark. The chart clears
+   * its filters, as its clear-filter action does. Called only while it filters.
+   */
+  onClearPlot?: () => void;
   activeGuideId?: string | null;
   /** Bottom margin kept below the X axis title, such as for a status line. */
   footer?: number;
@@ -75,6 +81,7 @@ export function BaseChart({
   onHoverTarget,
   onInspectPlot,
   onSelectPlot,
+  onClearPlot,
   activeGuideId,
   footer = 0,
 }: BaseChartProps) {
@@ -234,6 +241,18 @@ export function BaseChart({
     );
   };
 
+  const clearPlot =
+    onClearPlot && settings.filters.length > 0 ? onClearPlot : undefined;
+  // Where a press began, so a click that ends a drag is not a dead click.
+  // A press the brush took settles its dead click on pointer up instead.
+  const pressAt = useRef<{ x: number; y: number; brush: boolean } | null>(null);
+  const plotPoint = (event: { clientX: number; clientY: number }) => {
+    const rect = svgRef.current!.getBoundingClientRect();
+    const x = event.clientX - rect.left - margin.left;
+    const y = event.clientY - rect.top - margin.top;
+    return x >= 0 && x <= innerWidth && y >= 0 && y <= innerHeight;
+  };
+
   const brush = useBrush({
     svgRef,
     marginLeft: margin.left,
@@ -249,6 +268,9 @@ export function BaseChart({
       return onSelectPlot?.(point) ?? false;
     },
     defaultExtent: extent,
+    // A histogram's selection spans the plot's height, so a click inside it
+    // that misses every bar is still a click on empty space.
+    onDeadClick: onClearPlot ? () => clearPlot?.() : undefined,
   });
 
   if (width < 1 || height < 1) {
@@ -278,6 +300,10 @@ export function BaseChart({
         }
       }}
       onPointerDownCapture={(event) => {
+        pressAt.current =
+          event.button === 0
+            ? { x: event.clientX, y: event.clientY, brush: false }
+            : null;
         onHoverTarget?.(null, false);
         setAltHover(false);
         if (interactive && guideAt(event.target)) {
@@ -291,6 +317,7 @@ export function BaseChart({
           setAltPointer(true);
           return;
         }
+        if (pressAt.current) pressAt.current.brush = brushingMode !== "none";
         brush.handlePointerDown(event);
       }}
       onPointerMoveCapture={(event) => {
@@ -317,8 +344,22 @@ export function BaseChart({
         onHoverTarget?.(null, false);
       }}
       onClick={(event) => {
+        const press = pressAt.current;
+        pressAt.current = null;
         if (inspectedByBrush.current) inspectedByBrush.current = false;
-        else if (!inspectTarget(event)) inspectPlot(event);
+        else if (!inspectTarget(event) && !inspectPlot(event)) {
+          if (
+            !press?.brush &&
+            !event.altKey &&
+            clearPlot &&
+            press &&
+            Math.hypot(event.clientX - press.x, event.clientY - press.y) <
+              CLICK_SLOP &&
+            plotPoint(event) &&
+            isEmptyPlotTarget(event.target)
+          )
+            clearPlot();
+        }
         setAltPointer(false);
       }}
       onKeyDownCapture={(event) => {

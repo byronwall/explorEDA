@@ -418,6 +418,10 @@ function ScatterPoints({
               return true;
             }}
             onBrushChange={handleBrushChange}
+            onClearPlot={() => {
+              if (settings.filters.length)
+                updateChart(settings.id, { filters: [] });
+            }}
             onInspectPoint={(x, y) => {
               if (surfaceMode && !showSurfacePoints) return false;
               const point = pointAt(x, y);
