@@ -1,3 +1,6 @@
+import { useColorContext } from "@/hooks/useDisplayColorScales";
+import { defaultCategoricalColors } from "@/lib/colorScaleMath";
+import { THEME_PALETTE, resolvePaletteColor } from "@/lib/themePalettes";
 import { finiteNumber } from "@/lib/numeric";
 import { numericScale } from "../Axis/numericScale";
 import { ChartMessage } from "../ChartMessage";
@@ -34,21 +37,12 @@ const curveTypes = {
 
 type CurveType = keyof typeof curveTypes;
 
-// Define color palettes
-const COLOR_PALETTES = {
-  default: [
-    "#2563eb", // blue-600
-    "#dc2626", // red-600
-    "#9333ea", // purple-600
-    "#ea580c", // orange-600
-    "#0891b2", // cyan-600
-    "#4f46e5", // indigo-600
-    "#be123c", // rose-600
-    "#ca8a04", // yellow-600
-    "#16a34a", // green-600
-    "#059669", // emerald-600
-  ],
-} as const;
+/**
+ * Series take the default palette's colors and save them. Drawing maps a
+ * saved palette color to the workspace theme's palette and dark mode, so
+ * hand-picked series colors stay put and palette ones follow the theme.
+ */
+const SERIES_PALETTE = defaultCategoricalColors;
 
 export const LineChart: FC<BaseChartProps<LineChartSettings>> = (props) =>
   props.settings.time ? (
@@ -218,7 +212,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
   // Ensure consistent color assignment for series with better distribution
   const seriesColors = useMemo(() => {
     const colors: Record<string, string> = {};
-    const palette = COLOR_PALETTES.default;
+    const palette = SERIES_PALETTE;
 
     // First pass - keep existing colors and track which palette colors are used
     const usedPaletteColors = new Set<string>();
@@ -251,6 +245,17 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
 
     return colors;
   }, [settings.seriesField, settings.seriesSettings]);
+  const colorContext = useColorContext();
+  const drawnColors = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(seriesColors).map(([field, color]) => [
+          field,
+          resolvePaletteColor(THEME_PALETTE, color, colorContext),
+        ])
+      ),
+    [seriesColors, colorContext]
+  );
 
   // Store assigned colors back into settings using updateChart
   useEffect(() => {
@@ -375,7 +380,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
                 x2="14"
                 y1="3"
                 y2="3"
-                stroke={seriesColors[name]}
+                stroke={drawnColors[name]}
                 strokeWidth="2"
                 strokeDasharray={
                   settings.seriesSettings[name]?.lineStyle === "dashed"
@@ -574,7 +579,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
                     cx={hoverPx}
                     cy={point.py}
                     r={3.5}
-                    fill={seriesColors[point.name]}
+                    fill={drawnColors[point.name]}
                     stroke="var(--background)"
                     strokeWidth={1.5}
                   />
@@ -636,7 +641,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
               useRightAxis: false,
             };
 
-            const seriesColor = seriesColors[series.name];
+            const seriesColor = drawnColors[series.name];
 
             return (
               <g key={series.name}>

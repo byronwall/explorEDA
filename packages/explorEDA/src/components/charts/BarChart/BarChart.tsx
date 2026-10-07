@@ -1,3 +1,4 @@
+import { useThemeColors } from "@/hooks/useDisplayColorScales";
 import { useAxisTypography } from "../chartTypography";
 import { categoryEqual, categoryIncludes } from "@/lib/categories";
 import type { datum } from "@/types/ChartTypes";
@@ -145,6 +146,7 @@ function SingleBarChart({
   ]);
 
   const typography = useAxisTypography();
+  const themeColors = useThemeColors();
   const plan = useMemo(
     () =>
       planBarChart({
@@ -161,7 +163,7 @@ function SingleBarChart({
           aggregate: aggregateResult ?? resolvedAggregate,
         },
         getColor: (value) =>
-          getColorForValue(settings.colorScaleId, value, "#3479a8"),
+          getColorForValue(settings.colorScaleId, value, themeColors.mark),
         getFieldLabel,
         formatFieldValue,
         formatAxisValue: (field, value) =>
@@ -195,6 +197,7 @@ function SingleBarChart({
       aggregateScope,
       facetIds,
       typography,
+      themeColors,
     ]
   );
   const xScale = useMemo(() => buildScale(plan.xScale), [plan.xScale]);

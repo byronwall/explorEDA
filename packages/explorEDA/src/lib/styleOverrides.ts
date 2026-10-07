@@ -3,6 +3,13 @@ import type {
   ChartSettings,
   ChartStyleOverrides,
 } from "@/types/ChartTypes";
+import type {
+  CategoricalColorScale,
+  ColorScaleType,
+} from "@/types/ColorScaleTypes";
+import { getPalette } from "./colorPalettes";
+import { assignCategoryColors } from "./colorScaleMath";
+import { THEME_PALETTE, handPickedCategories } from "./themePalettes";
 
 /** The theme value a property overrides, for showing beside the override. */
 export type ThemeValueKey =
@@ -117,4 +124,54 @@ export function resetChartStyle(chart: ChartSettings): Partial<ChartSettings> {
     },
     {}
   );
+}
+
+/** A categorical color scale that departs from the workspace theme's palette. */
+export interface ScaleOverride {
+  scale: CategoricalColorScale;
+  /** The palette the scale keeps, when it is not the theme's. */
+  paletteName?: string;
+  /** Categories colored by hand. */
+  handPicked: number;
+}
+
+/** Categorical scales with a fixed palette or hand-picked colors. */
+export function listScaleOverrides(scales: readonly ColorScaleType[]) {
+  return scales.flatMap((scale): ScaleOverride[] => {
+    if (scale.type !== "categorical") return [];
+    // A scale without a palette id is all hand-picked colors.
+    const fixed =
+      scale.paletteId !== undefined && scale.paletteId !== THEME_PALETTE;
+    const handPicked = handPickedCategories(scale).length;
+    if (!fixed && !handPicked) return [];
+    return [
+      {
+        scale,
+        paletteName: fixed
+          ? (getPalette(scale.paletteId)?.name ?? scale.paletteId)
+          : undefined,
+        handPicked,
+      },
+    ];
+  });
+}
+
+/**
+ * Returns a scale to the theme's palette. Categories keep their order, so
+ * each takes the color of its current slot.
+ */
+export function resetScaleToTheme(
+  scale: CategoricalColorScale
+): Partial<CategoricalColorScale> {
+  const assignment = {
+    paletteId: THEME_PALETTE,
+    order: "custom" as const,
+    reverse: false,
+    overflow: scale.overflow ?? "other",
+  };
+  const { mapping, palette } = assignCategoryColors(
+    [...scale.mapping.keys()],
+    assignment
+  );
+  return { ...assignment, mapping, palette };
 }

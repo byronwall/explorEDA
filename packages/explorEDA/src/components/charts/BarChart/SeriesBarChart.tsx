@@ -1,9 +1,9 @@
+import { useThemeColors } from "@/hooks/useDisplayColorScales";
 import { useAxisTypography } from "../chartTypography";
 import { useId, useMemo, useRef, useState } from "react";
 import { useColorScales } from "@/hooks/useColorScales";
 import { calculateGroupedAggregate } from "@/lib/aggregates";
 import { categoryKey, categoryValue } from "@/lib/categories";
-import { defaultCategoricalColors } from "@/lib/colorScaleMath";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps, datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
@@ -52,6 +52,7 @@ export function SeriesBarChart({
   const [activeId, setActiveId] = useState<string>();
   const refs = useRef(new Map<string, SVGRectElement>());
   const typography = useAxisTypography();
+  const themeColors = useThemeColors();
   const plan = useMemo(() => {
     const facets = facetIds ? new Set(facetIds) : undefined;
     const ids = liveIds.filter((id) => !facets || facets.has(id));
@@ -115,7 +116,7 @@ export function SeriesBarChart({
     const colors = new Map(
       [...values].map(([key], index) => [
         key,
-        defaultCategoricalColors[index % defaultCategoricalColors.length]!,
+        themeColors.categorical[index % themeColors.categorical.length]!,
       ])
     );
     return planSeriesBars({
@@ -139,6 +140,7 @@ export function SeriesBarChart({
   }, [
     settings,
     typography,
+    themeColors,
     width,
     height,
     revision,

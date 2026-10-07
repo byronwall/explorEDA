@@ -1,3 +1,5 @@
+import { useThemeColors } from "@/hooks/useDisplayColorScales";
+import { useDisplayColorScale } from "@/hooks/useDisplayColorScales";
 import { useAxisTypography } from "../chartTypography";
 import { useId, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -54,9 +56,8 @@ export function TimeSeriesChart({
   const getLabel = useDataLayer((s) => s.getFieldLabel);
   const format = useDataLayer((s) => s.formatFieldValue);
   const updateChart = useDataLayer((s) => s.updateChart);
-  const colorScale = useDataLayer((s) =>
-    s.colorScales.find((scale) => scale.id === settings.colorScaleId)
-  );
+  const colorScale = useDisplayColorScale(settings.colorScaleId);
+  const themeColors = useThemeColors();
   const [activeId, setActiveId] = useState<string>();
   const refs = useRef(new Map<string, SVGCircleElement>());
   const typography = useAxisTypography();
@@ -98,6 +99,7 @@ export function TimeSeriesChart({
         rawInputs,
         exclusionReasons,
         colorScale,
+        themeColors,
         facetData: facetIds
           ? {
               ...(settings.facet.rowVariable
@@ -133,6 +135,7 @@ export function TimeSeriesChart({
     profiles,
     calculations,
     colorScale,
+    themeColors,
     width,
     height,
     getLabel,

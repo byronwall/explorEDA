@@ -867,11 +867,16 @@
         "outcome": "Theme switch recolors every chart while preserving category slots",
         "proof": "Conversion and slot-preservation tests, ColorScaleEditor reorder test, Canvas repaint browser check",
         "rollback": "Revert PR; literal hex scales still render",
-        "status": "planned",
+        "status": "completed",
         "valid_intermediate_state": "Legacy scales stay literal unless exact match",
         "dependencies_introduced": [
           "Canvas and WebGL color resolution",
           "Saved analyses from before themes"
+        ],
+        "evidence": [
+          "Design change from plan: no saved slots field; a category is linked when its saved color equals a base palette color, so slots are inferred and legacy scales convert only on exact matches (paletteId theme)",
+          "Unit tests: themePalettes (theme slot resolution, hand-picked colors kept, dark steps, editor round trip via normalize, legacy adoption only when untouched, Compact fallback parity, palette distinctness), scale override listing and reset, editor reorder and Theme palette",
+          "Headless browser against the built package: species scale on Theme palette keeps slots across Compact, Newsprint, Report, and dark; uncolored bars take theme mark color; region map and density use theme heat ramp in light and dark"
         ]
       },
       {
@@ -992,6 +997,12 @@
       "action": "Completed Milestone 3 (Report theme; themed axes on row, line, box, ECDF).",
       "reason": "Continuing the approved plan.",
       "evidence": "See milestone M3 evidence."
+    },
+    {
+      "date": "2026-10-07",
+      "action": "Completed Milestone 4 (color reach).",
+      "reason": "Continuing the approved plan.",
+      "evidence": "See milestone M4 evidence."
     }
   ],
   "closure": null,
