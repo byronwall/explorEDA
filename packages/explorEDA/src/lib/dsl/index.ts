@@ -20,3 +20,11 @@ export {
   type DslExportResult,
 } from "./export";
 export { CHART_SETTING_KEYS } from "./settingKeys";
+export {
+  compileViews,
+  exportViews,
+  type DslView,
+  type DslViewResult,
+  type DslViewsExportOptions,
+  type DslViewsResult,
+} from "./views";

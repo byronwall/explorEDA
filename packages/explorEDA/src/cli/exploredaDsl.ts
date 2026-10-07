@@ -2,7 +2,7 @@
 import { readFileSync } from "node:fs";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import {
-  compileDocument,
+  compileViews,
   describeDslSource,
   DSL_REFERENCE,
   formatDslDiagnostics,
@@ -15,7 +15,7 @@ const USAGE = `Usage:
   exploreda-dsl fields --data <rows.csv|rows.json>
   exploreda-dsl reference
 
-check   builds the dashboard and lists every problem with a fix.
+check   builds the dashboard (every view) and lists each problem with a fix.
         Exits 0 when complete, 1 when partial, 2 when nothing builds.
 fields  lists the fields, types, and example values to write against.`;
 
@@ -123,7 +123,7 @@ function main(args: string[]) {
     return 64;
   }
   registerAllCharts();
-  const result = compileDocument(readFileSync(docPath, "utf8"), {
+  const result = compileViews(readFileSync(docPath, "utf8"), {
     rows,
     geometryAssets,
   });
