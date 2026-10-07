@@ -134,7 +134,7 @@ and the demo site is in `apps/demo`. It requires pnpm 11.9.0.
 ```sh
 pnpm install
 pnpm check              # UI rules, build, typecheck, and tests
-pnpm --filter demo dev  # demo site at http://localhost:5173/
+pnpm --filter demo dev  # demo site at http://localhost:5173/, library from source
 ```
 
 ## Local product grid

@@ -1,15 +1,18 @@
 /// <reference types="vitest" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import * as path from "path";
+import {
+  exploredaSource,
+  sourceAlias,
+  useLibrarySource,
+} from "./exploredaSource";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [...(useLibrarySource ? [exploredaSource()] : []), react()],
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
+    alias: sourceAlias,
+    dedupe: ["react", "react-dom"],
   },
   test: {
     globals: true,
