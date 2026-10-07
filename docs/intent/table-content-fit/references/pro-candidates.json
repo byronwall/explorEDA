@@ -1,0 +1,69 @@
+{
+  "chart_review_items": [],
+  "gap_register_items": [
+    {
+      "requirement_id": "TABLE-02",
+      "intent_strength": "Core",
+      "proposed_priority": "P2",
+      "change_from_old_report": "Expanded partial",
+      "desired_outcome": "Choose useful widths and adjust them quickly",
+      "current_evidence_based_assessment": "Name-based default width, pointer resize, keyboard resize and Reset width are active.",
+      "remaining_boundary_or_proof_gap": "No content-aware auto-fit or double-click fit is present in the reviewed header/menu paths. Reset width returns a name-based default, not a content fit.",
+      "source_ids": "T02 TABLE THDR TMENU",
+      "suggested_browser_scenarios": "BT12",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "TABLE-06",
+      "intent_strength": "Specific",
+      "proposed_priority": "P2",
+      "change_from_old_report": "Still limited",
+      "desired_outcome": "Read long and structured text without losing meaning",
+      "current_evidence_based_assessment": "Compact scalar cells and raw-value access are described; copy-value and copy-row actions now exist.",
+      "remaining_boundary_or_proof_gap": "Wrapping, chosen truncation side, code/newline presentation, persistent row detail and configurable row heights are not established. Copying is not rich in-place reading.",
+      "source_ids": "T04 TMENU INV BASE",
+      "suggested_browser_scenarios": "BT13",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "TABLE-07",
+      "intent_strength": "Specific / parked",
+      "proposed_priority": "P3",
+      "change_from_old_report": "Still outside scalar slice",
+      "desired_outcome": "Render tag collections, images, histories and related records",
+      "current_evidence_based_assessment": "The declared data model remains scalar; JSON flattens nested objects/arrays.",
+      "remaining_boundary_or_proof_gap": "No typed rich-cell extension contract is established. Indexed tag columns do not preserve a collection as one semantic field.",
+      "source_ids": "T04 T05 INV",
+      "suggested_browser_scenarios": "BT13 BT30",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "TABLE-08",
+      "intent_strength": "Candidate",
+      "proposed_priority": "P3",
+      "change_from_old_report": "Not found in reviewed scope",
+      "desired_outcome": "Adapt to a small number of records or very wide records",
+      "current_evidence_based_assessment": "The table remains the common record presentation.",
+      "remaining_boundary_or_proof_gap": "Transpose, record cards and automatic small-record layouts are not established. A generic templating DSL is neither a prerequisite nor a delivered substitute.",
+      "source_ids": "T01 T19 INV PLAN",
+      "suggested_browser_scenarios": "BT13",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    }
+  ],
+  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "current_assessment": {
+    "date": "2026-10-06",
+    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "statement": "DataTableContextMenu includes Reset width and Clear sort. Header controls support manual widths and column movement. The inspected paths do not provide content-aware fit. Existing virtualization means DOM-visible cells are only part of the loaded table.",
+    "evidence_scope": "Source inspection only; no fresh application browser proof."
+  },
+  "current_priority": "first-pass-table-usability-candidate"
+}

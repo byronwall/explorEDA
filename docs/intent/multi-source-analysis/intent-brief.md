@@ -1,61 +1,66 @@
 ---
-title: "Multiple sources and lookups"
+title: "Multi-source analysis with explicit data frames"
 slug: "multi-source-analysis"
 phase: intent
 status: current
-last_updated: "2026-09-29"
+last_updated: "2026-10-06"
 ---
 
-# Multiple sources and lookups
+# Multi-source analysis with explicit data frames
 
 ## My read
 
-explorEDA should eventually work with several source tables inside an analysis project. Products, orders, and customers are the motivating example. Users should keep those datasets distinct and use lookups to bring related information into an analysis. The tables may have different row counts. Their relationships should help users answer questions without disguising which records a chart counts.
+explorEDA should make sense of data spread across related tables. Users will explore several queries, including joins. The central difficulty is knowing what a chart represents after those operations. Similar chart shapes must not hide different backing populations or repeated entities.
 
-This is a separate initiative. The landing, task-view, and integrated-agent scopes remain single-source for now. Multiple-source support can be shaped independently without making those useful workflows wait for a new data model.
+The starting point should feel natural from a schema or entity-relationship view. Users choose a frame: the entity or row meaning around which they explore, such as one customer, one order, or one order item. They then follow relationships and create charts that retain that meaning. When a one-to-many relationship would expand the current frame, the product should help them aggregate related data or deliberately choose a different frame.
 
-The durable goal is understandable related-data analysis. An order chart might use a customer's segment or a product's category through a lookup. A project might also support a customer-focused view that includes customers with no orders. That latter experience is a possible extension; the user has not selected different underlying populations within one dashboard.
+Relationships can come from developer configuration or a simple user interface for dragging and linking fields. Client-side validation reveals the observed consequences of a link. Agent-suggested relationships are a near-term direction, using the flat configuration work. Agent integration is separate from this delivery; the definitions should remain usable by it.
 
-The user explicitly chose lookups for combining tables. That does not settle arbitrary joins, a query language, or automatic filtering across relationships. The first shape should explain what a lookup contributes and what happens when there is no match or more than one possible match. It should preserve the existing analysis engine where one working dataset is enough.
+Users also need to move between cardinality spaces as an investigation develops. Separate tables, nested related rows, and aggregates with contributor access all have a role. Useful investigations become tabs in the existing saved-view UI. Reuse its new, duplicate, rename, move, and delete actions, plus its history timeline. Keep a query/frame binding with each view so switching between orders and items also switches the correct backing rows.
 
 ## What matters most
 
-- Keep source tables and their field meanings identifiable.
-- Combine related tables through explicit lookups.
-- Make each chart's record population and count understandable.
-- Preserve reusable field-based filters and project definitions.
-- Extend current runtime configuration rather than create a parallel dashboard engine.
+- Keep each frame's entity identity, row meaning, and measure clear.
+- Make query and source provenance visually distinct and easy to inspect.
+- Help users handle one-to-many links without accidental double counting.
+- Show the query, its backing rows, and its path over the full schema.
+- Provide simplified inspection and full flow inspection through every operation.
+- Export investigation state from the React component so the host can persist it.
 
 ## The intended experience
 
-A user registers orders and customers as distinct sources. They choose orders as the base of a task view. They define a lookup from an order's customer key to the customer table and select fields such as segment or region. The resulting analysis still counts order rows, now with customer attributes available for charts and filters.
+A user opens a shop example, selects orders as the frame, and follows the customer relationship. A source glyph and color identify customer fields. A distinct query glyph identifies the chart's backing query. Hover reveals names and provenance; keyboard and touch access provide the same information.
 
-They can later add product fields through another lookup. A readable definition shows the base source, matching fields, and resulting columns. A missing match stays explainable. A source field change reaches views using the shared definition.
+The user adds order-item information. The interface shows that several items can match one order and offers aggregation at order grain. Alternatively, the user deliberately switches to order-item grain. Chart-specific identity rules determine whether repeated entities collapse into one mark or contribute several values. Known IDs help detect repetition; duplicate joined rows must not silently inflate order measures.
 
-A customer-focused view could instead use customers as its base source. This illustrates why source identity matters even when several views ultimately feed one row array each into the current chart engine.
+The user can inspect the query, view backing rows, or see the selected query overlaid on the full schema. They can duplicate an order view before exploring item grain. History previews show the earlier frame and query; restoration recovers those definitions as well as charts and filters. Simplified inspection answers the immediate population question. Full inspection exposes all inputs, conditions, joins, calculations, aggregation, exclusions, and output steps. Inspection stays focused on one query; side-by-side query comparison is not an initial goal.
+
+Later, the user selects a known record to supply a query instance's parameters. Manual entry uses dropdowns and suitable pickers. Valid changes should update results automatically. Intermediate tables, charts, and counts must describe the same applied values.
 
 ## Boundaries
 
-Current single-source workflows remain valid without this capability. The new source model must not force every existing chart to implement its own lookup logic.
+A source, relationship, query, frame, and parameter instance have different meanings. Source identity alone cannot identify a joined query's row population. Visual identity must not depend on color alone or alter chart measure colors without an explicit reason.
 
-Lookups must identify their source, key fields, and output fields. Fields with the same name in different tables must remain distinguishable. Missing or repeated matches must not silently multiply order counts or sales totals.
+Automatic deduplication is not universal. A customer mark, an order sum, and an item count require different identity and measure rules. Intentional row expansion is valid when users choose it and can see its effect.
 
-Cross-source filtering and several populations within one dashboard are open product choices. Server-side loading, database execution, general joins, and distributed queries are not settled requirements. The initial proof can use small local tables.
+A unique lookup with multiple matches needs an explicit resolution. The recommended route preserves the current frame and offers link repair, aggregation, or a deliberate expanded frame. It must not silently choose the first match.
+
+The component must pass out restorable configuration and investigation state. Local storage is a suitable initial host destination; eventual server persistence does not require a server in this initiative. Computed results may be rebuilt, but restoration must recover the same investigation.
 
 ## What seems settled
 
-Multiple sources are a separate project scope. Products, orders, and customers remain its example. Lookups are the selected way to combine tables. Tables can have different lengths. Current initiatives stay single-source until this work is explicitly taken up.
+Multiple sources and relationships are useful as the first delivery. Parameter instances can follow. The broader scope includes separate, nested, and aggregate exploration, with dedicated views. The first experience must support user-created relationships and frame selection rather than only supplied query steps.
+
+Sample data, ready-to-use examples, and expected counts belong in each slice. Roughly ten tables with ten thousand rows each and execution measured in seconds is a working scale hypothesis, not a fixed performance guarantee.
 
 ## Current reality that matters
 
-`ExplorEda` accepts one row array. The provider profiles one dataset and prepares calculations, columns, and Crossfilter state over it. Chart filters belong to chart instances, and Rows filters have local scope. The saved settings model has no source collection or cross-table lookup definition.
+Main now has a host-owned saved-view workspace with tab actions, local storage, undo/redo, and a compact history timeline. History supports read-only previews, restoration, and grouped change summaries. The package provides host side panels and read-only chart display.
 
-A lookup result that yields one working dataset can reuse current charts. The separate [task views initiative](../project-task-views/intent-brief.md) should provide view identity and shared definition ownership before multi-source relationships need to extend them.
+The original saved-view baseline used one source population across all tabs. This implementation adds per-view query bindings and project definitions to that session. Shared field definitions stay within the same query scope. Source tables stay outside history checkpoints. Historical source-data versions remain outside this initiative.
 
-## Remaining product choices
-
-A later decision must establish whether charts with different base populations coexist within one view. A related decision must establish whether selecting a record restricts other sources through relationships. Neither choice is assumed by the lookup requirement.
+The [implementation plan](implementation-plan.md) describes the delivery and what remains.
 
 ## Next step after confirmation
 
-Review orders enriched by customer and product lookups. Show matched, missing, and ambiguous keys and compare the resulting row count with the base source.
+Review the stacked pull requests listed in the implementation plan, then decide which deferred items in `.tickets/` to take next.

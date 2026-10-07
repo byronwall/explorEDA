@@ -1,0 +1,27 @@
+{
+  "chart_review_items": [],
+  "gap_register_items": [
+    {
+      "requirement_id": "CHART-09",
+      "intent_strength": "Exploratory",
+      "proposed_priority": "P3",
+      "change_from_old_report": "Partially closed",
+      "desired_outcome": "Represent multivariate rows and hierarchies appropriately",
+      "current_evidence_based_assessment": "Parallel Coordinates is active and registered.",
+      "remaining_boundary_or_proof_gap": "Hierarchy-aware treemap/packing remains outside the delivered catalogue. Separate the delivered multivariate slice from uncommitted hierarchy examples.",
+      "source_ids": "T18 REG CHART",
+      "suggested_browser_scenarios": "BT28 BT32",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    }
+  ],
+  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "current_assessment": {
+    "date": "2026-10-06",
+    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "statement": "The registry has no hierarchy view. Pivot accepts multiple row fields; facets support one- or two-field repetition. Those are reusable entry points for a small hierarchy proof, not evidence of complete hierarchy totals and navigation.",
+    "evidence_scope": "Source inspection only; no fresh application browser proof."
+  },
+  "current_priority": "Unranked candidate or future seed"
+}

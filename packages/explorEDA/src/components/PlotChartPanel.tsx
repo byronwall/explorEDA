@@ -398,6 +398,7 @@ export function PlotChartPanel({
           [
             aggregate.groupField,
             aggregate.measureField,
+            aggregate.entityField,
             ...(settings.type === "bar" ? [settings.seriesField] : []),
           ].filter((field): field is string => Boolean(field))
         )

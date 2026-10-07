@@ -1,0 +1,29 @@
+{
+  "scope": "clean scratch directory, not a clone or repository",
+  "checks": [
+    {
+      "command": "git apply --check /mnt/data/exploreda-investigation/exploreda-deterministic-rendering-data-traceability.patch",
+      "cwd": "/mnt/data/exploreda-investigation/verification/patch-scratch",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "git apply /mnt/data/exploreda-investigation/exploreda-deterministic-rendering-data-traceability.patch",
+      "cwd": "/mnt/data/exploreda-investigation/verification/patch-scratch",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "filesRecovered": 6,
+  "byteEquality": true,
+  "files": [
+    "docs/intent/deterministic-rendering-and-data-traceability/architecture-options.md",
+    "docs/intent/deterministic-rendering-and-data-traceability/implementation-plan.md",
+    "docs/intent/deterministic-rendering-and-data-traceability/prototype-findings.md",
+    "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.prototype.test.ts",
+    "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.prototype.ts",
+    "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.prototypeAdapters.ts"
+  ]
+}

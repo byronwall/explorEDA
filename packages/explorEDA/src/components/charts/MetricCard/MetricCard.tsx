@@ -37,6 +37,9 @@ export function MetricCard({
     const field =
       settings.aggregation === "count" ? undefined : settings.measureField;
     const measureData = field ? getColumnData(field) : {};
+    const entityData = settings.entityField
+      ? getColumnData(settings.entityField)
+      : undefined;
     const rawInputs: Record<number, datum> = {};
     const exclusionReasons: Record<number, string> = {};
     if (
@@ -59,10 +62,11 @@ export function MetricCard({
     return planMetricCard(
       settings,
       {
-        revision: `${revision}:${settings.aggregation}:${field ?? ""}:${JSON.stringify(fieldSettings)}`,
+        revision: `${revision}:${settings.aggregation}:${field ?? ""}:${settings.entityField ?? ""}:${JSON.stringify(fieldSettings)}`,
         liveIds,
         allIds,
         measureData,
+        entityData,
         rawInputs,
         exclusionReasons,
       },
@@ -115,12 +119,15 @@ export function MetricCard({
     });
 
   // The top line counts rows; a filtered card says it under the value.
+  const [oneUnit, manyUnits] = settings.entityField
+    ? ["ID", "IDs"]
+    : ["row", "rows"];
   const rowsText = comparison
     ? ""
-    : `${plan.rowCount.toLocaleString()} ${plan.rowCount === 1 ? "row" : "rows"}`;
+    : `${plan.rowCount.toLocaleString()} ${plan.rowCount === 1 ? oneUnit : manyUnits}`;
   const filteredRows =
     comparison && plan.aggregation !== "count" && plan.totalRows !== undefined
-      ? `${plan.rowCount.toLocaleString()} of ${plan.totalRows.toLocaleString()} rows`
+      ? `${plan.rowCount.toLocaleString()} of ${plan.totalRows.toLocaleString()} ${manyUnits}`
       : "";
   const excludedText =
     plan.excludedCount > 0

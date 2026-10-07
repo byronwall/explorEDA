@@ -1,0 +1,8 @@
+key,region,series,date,value,x,y,size,text
+r1,A,Web,2024-01-31T23:30:00-05:00,10,1,2,0,run1
+r2,A,Web,2024-02-01,20,2,4,4,run9
+r3,A,Store,2024-02-29, ,3,6,9,run10
+r4,B,Web,2024-03-01,0,4,8,16,hidden needle
+r5,B,Store,bad-date,,5,,,"long
+multiline	text"
+r6,B,Store,2024-02-29T23:59:59Z,-5,6,12,-1,"a ""quoted"", value"
