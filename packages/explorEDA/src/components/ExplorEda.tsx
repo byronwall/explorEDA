@@ -161,6 +161,8 @@ const Workspace = forwardRef<
 
 export type { SavedDataStructure, ExplorEdaSidePanel };
 export type { GeometryAsset, RegionGeometry } from "@/lib/geometryAssets";
+export type { WorkspaceTheme, WorkspaceThemeId } from "@/lib/themes";
+export type { ChartStyleOverrides } from "@/types/ChartTypes";
 export type {
   SavedAnalysisStructure,
   SavedCalculation,

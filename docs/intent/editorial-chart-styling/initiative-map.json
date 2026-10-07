@@ -8,7 +8,7 @@
     "last_updated": "2026-10-07",
     "summary": "Let users pick a workspace theme (Compact, Newsprint, Report) that charts follow, with authored headlines, findable per-chart overrides, and full color reach.",
     "status": "active",
-    "next_action": "Start Milestone 1: theme state, Compact/Newsprint tokens, Theme tab, one restyled header with measured height on scatter and bar; capture Compact baseline screenshots first."
+    "next_action": "Byron reviews the stacked PRs (#187, #192, #197, #200, #201, M5) and signs off on the Newsprint and Report tokens; then merge in order and run reconciliation."
   },
   "artifacts": {
     "intent_brief": {
@@ -699,7 +699,7 @@
     ]
   },
   "implementation": {
-    "status": "active",
+    "status": "completed",
     "repository_snapshot": {
       "root": "/Users/byronwall/Projects/explorEDA/.claude/worktrees/editorial-chart-styling-412ce3",
       "revision": "bde1889",
@@ -884,9 +884,15 @@
         "outcome": "Hosts brand themes via role variables; coverage handoff documented",
         "proof": "Demo host-token example; late webfont re-measure; docs updated",
         "rollback": "Docs-only and example-only changes",
-        "status": "planned",
+        "status": "completed",
         "valid_intermediate_state": "Feature complete for first release",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "evidence": [
+          "Package README: Themes and styling section with the role variables, font guidance, palette and dark-mode behavior; saved shape lists theme",
+          "Exported WorkspaceTheme, WorkspaceThemeId, ChartStyleOverrides types",
+          "Demo: penguins Field report tab in Newsprint with authored headlines, subtitles, and source notes",
+          "Unit test: loadingdone clears the measure cache and gives axis plans a new typography object; headless check with Arial Black confirmed system fonts stay under the estimate floor, so layouts hold"
+        ]
       }
     ],
     "cut_line": [
@@ -907,7 +913,8 @@
       {
         "decision": "Host lock or hidden picker",
         "evidence": "Host integration needs in M5",
-        "fallback": "No new prop"
+        "fallback": "No new prop",
+        "resolution": "Deferred: no new prop. Hosts can still pass savedData.theme; revisit if a host asks to lock the theme."
       },
       {
         "decision": "Text measurement approach",
@@ -1003,6 +1010,12 @@
       "action": "Completed Milestone 4 (color reach).",
       "reason": "Continuing the approved plan.",
       "evidence": "See milestone M4 evidence."
+    },
+    {
+      "date": "2026-10-07",
+      "action": "Completed Milestone 5 (host integration and handoff). All five milestones are implemented as stacked PRs; lifecycle stays active until they merge.",
+      "reason": "Finishing the approved plan.",
+      "evidence": "See milestone evidence; pnpm check passes on each branch."
     }
   ],
   "closure": null,
