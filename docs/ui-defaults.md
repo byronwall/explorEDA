@@ -12,7 +12,7 @@ Spend space on data, not chrome. Every surface shares one compact scale:
 - Group related settings under a small heading divided by a rule (`eda-setting-section`), not inside nested bordered boxes.
 - Put a panel's actions in its first line. Do not open a panel or popover with a paragraph that explains it; put the explanation in the tooltip of the control it explains.
 - Lay out tabs in one row that scrolls sideways when it must; never wrap them.
-- Let editors and tables fill the space their panel or chart gives them. A table stretches its columns to the chart's width and scrolls only when they need more room.
+- Let editors fill the space their panel gives them. A table sizes each column to its name, distribution, and values, leaves spare width empty at the right instead of spreading the columns apart, and scrolls only when its columns need more room.
 - Line up a chart's title, plot, and content with the panel's left padding. Hidden header controls take no room.
 - Below 960 px the grid shows a view-only flow of the saved layout: two charts to a row from 640 px, and one below that. Charts wider than half the grid take the whole row.
 
@@ -47,6 +47,7 @@ Run `pnpm check:ui` to reject native title attributes, SVG `<title>` elements, a
 - Align a column's header with its cells: numbers right, everything else left. A number column shows its hover actions on the left.
 - Show each column's type with the type icon before its name.
 - The Rows view draws each field's distribution under its column name, from the rows that pass the chart filters. A click or drag on it filters that column. A data table chart offers the same as a setting.
+- A column header has one tooltip, shown above the header so it never covers other headers or rows, and hidden when there is no room above. Hovering the name shows the field summary; hovering a distribution mark adds that mark's value, rows, and share.
 - Mark the text a table search matched in every cell that matched.
 - A number or date column filter shows the field's distribution above its bounds. A click or drag on it sets the range, and a number field adds a range slider under it. A thumb at the end of the track leaves that side open.
 - One filter popover serves a table's columns. Opening another column's filter moves it; it never shows two at once. Popovers close without an exit animation.

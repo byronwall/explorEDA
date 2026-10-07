@@ -11,7 +11,7 @@ The Rows tab shows all fields in one viewport. Its search, sort, and column filt
 Switching tabs preserves its controls and does not change the dashboard layout.
 
 Create settings with `dataTableDefinition.createDefaultSettings(layout)`, then set `columns`.
-Each column needs an `id` and a `field`. Set `width` to choose its initial pixel width.
+Each column needs an `id` and a `field`. Set `width` to choose its initial pixel width; otherwise the column fits its name and values.
 Pass `width` and `height` to `DataTable`. Use `onSettingsChange` and `rows` for a local data view.
 Pass a header element as `toolbarTarget` to place compact tools there. Without it, tools render above the table.
 

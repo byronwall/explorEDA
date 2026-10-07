@@ -1,4 +1,10 @@
-import { useState, type PointerEvent } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type PointerEvent,
+} from "react";
 import { categoryIncludes, categoryLabel } from "@/lib/categories";
 import { dateTimestamp } from "@/lib/dateTime";
 import { calendarBins, calendarLabel } from "@/lib/fieldDistribution";
@@ -77,6 +83,24 @@ export function joinSparkFilters(
   return undefined;
 }
 
+/** The mark under the pointer, as a host tooltip shows it. */
+export type SparkHover = {
+  label: string;
+  count: number;
+  /** Share of rows with a value, such as "15%". */
+  share?: string;
+  /** What a click or release does, when the mark can filter. */
+  hint?: string;
+};
+
+/**
+ * Lets a host, such as a table header, show the hovered mark in its own
+ * tooltip. Sparklines inside it then draw no tooltip of their own.
+ */
+export const SparkHoverContext = createContext<
+  ((hover: SparkHover | undefined) => void) | undefined
+>(undefined);
+
 /**
  * Wraps a sparkline so hovering a mark names its values and row count.
  * Clicking a mark filters to its rows. On a histogram, dragging across bars
@@ -131,75 +155,91 @@ function SparkDetails({
     return index >= 0 && index < bars.length ? index : undefined;
   };
   const canBrush = brushable && Boolean(onFilter);
+  const hint = filter
+    ? brushing
+      ? "Release to filter to this range"
+      : canBrush
+        ? "Click to filter, or drag across bars for a range"
+        : "Click to filter to these rows"
+    : undefined;
+  const share = bar && total > 0 ? percent(bar.count / total) : undefined;
+  const hover: SparkHover | undefined = bar
+    ? { label: bar.label, count: bar.count, share, hint }
+    : undefined;
+  const report = useContext(SparkHoverContext);
+  useEffect(() => {
+    report?.(hover);
+    // The hover's fields name it; a new object with the same fields is no change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [report, hover?.label, hover?.count, hover?.share, hover?.hint]);
+  useEffect(() => () => report?.(undefined), [report]);
+  const marks = (
+    <span
+      className="eda-summary-spark-hit"
+      data-filterable={onFilter && bars.some((b) => b.filter) ? "" : undefined}
+      data-brushing={brushing || undefined}
+      aria-hidden="true"
+      onClick={() => {
+        if (!canBrush && filter) onFilter?.(filter);
+      }}
+      onPointerDown={(event) => {
+        if (!canBrush || event.button !== 0) return;
+        const index = indexAt(event);
+        if (index === undefined || !bars[index]?.filter) return;
+        event.preventDefault();
+        event.currentTarget.setPointerCapture?.(event.pointerId);
+        setBrush({ from: index, to: index });
+      }}
+      onPointerMove={(event) => {
+        const index = indexAt(event);
+        setActive(index);
+        if (brush && index !== undefined) {
+          setBrush({ from: brush.from, to: index });
+        }
+      }}
+      onPointerUp={() => {
+        if (!span) return;
+        setBrush(undefined);
+        const next = joinSparkFilters(bars, span[0], span[1]);
+        if (next) onFilter?.(next);
+      }}
+      onPointerCancel={() => setBrush(undefined)}
+      onPointerLeave={() => {
+        if (!brush) setActive(undefined);
+      }}
+    >
+      {children(active, span)}
+    </span>
+  );
+  if (report) return marks;
   return (
     <TooltipProvider>
-      <Tooltip open={bar !== undefined}>
-        <TooltipTrigger asChild>
-          <span
-            className="eda-summary-spark-hit"
-            data-filterable={
-              onFilter && bars.some((b) => b.filter) ? "" : undefined
-            }
-            data-brushing={brushing || undefined}
-            aria-hidden="true"
-            onClick={() => {
-              if (!canBrush && filter) onFilter?.(filter);
-            }}
-            onPointerDown={(event) => {
-              if (!canBrush || event.button !== 0) return;
-              const index = indexAt(event);
-              if (index === undefined || !bars[index]?.filter) return;
-              event.preventDefault();
-              event.currentTarget.setPointerCapture?.(event.pointerId);
-              setBrush({ from: index, to: index });
-            }}
-            onPointerMove={(event) => {
-              const index = indexAt(event);
-              setActive(index);
-              if (brush && index !== undefined) {
-                setBrush({ from: brush.from, to: index });
-              }
-            }}
-            onPointerUp={() => {
-              if (!span) return;
-              setBrush(undefined);
-              const next = joinSparkFilters(bars, span[0], span[1]);
-              if (next) onFilter?.(next);
-            }}
-            onPointerCancel={() => setBrush(undefined)}
-            onPointerLeave={() => {
-              if (!brush) setActive(undefined);
-            }}
-          >
-            {children(active, span)}
-          </span>
-        </TooltipTrigger>
-        {bar && (
+      <Tooltip open={hover !== undefined}>
+        <TooltipTrigger asChild>{marks}</TooltipTrigger>
+        {hover && (
           <TooltipContent side="top" collisionPadding={12}>
             <p className="text-muted-foreground">{fieldLabel}</p>
-            <p className="font-medium">{bar.label}</p>
-            <p className="tabular-nums">
-              {bar.count.toLocaleString()} {bar.count === 1 ? "row" : "rows"}
-              {total > 0 && (
-                <span className="text-muted-foreground">
-                  {" "}
-                  · {percent(bar.count / total)}
-                </span>
-              )}
-            </p>
-            {filter && (
-              <p className="text-muted-foreground">
-                {brushing
-                  ? "Release to filter to this range"
-                  : canBrush
-                    ? "Click to filter, or drag across bars for a range"
-                    : "Click to filter to these rows"}
-              </p>
-            )}
+            <SparkHoverDetails hover={hover} />
           </TooltipContent>
         )}
       </Tooltip>
     </TooltipProvider>
+  );
+}
+
+/** A hovered mark's value, row count, share, and click hint. */
+export function SparkHoverDetails({ hover }: { hover: SparkHover }) {
+  return (
+    <>
+      <p className="font-medium">{hover.label}</p>
+      <p className="tabular-nums">
+        {hover.count.toLocaleString()} {hover.count === 1 ? "row" : "rows"}
+        {hover.share && (
+          <span className="text-muted-foreground"> · {hover.share}</span>
+        )}
+      </p>
+      {hover.hint && <p className="text-muted-foreground">{hover.hint}</p>}
+    </>
   );
 }
 

@@ -1686,6 +1686,31 @@ html {
   overflow-wrap: anywhere;
   pointer-events: none;
 }
+/* A column header's tooltip sits above the header. Where there is no room
+   above, it stays hidden rather than flip over the rows. */
+[data-slot="tooltip-content"].eda-column-tooltip {
+  max-width: 260px;
+}
+[data-slot="tooltip-content"].eda-column-tooltip:not([data-side="top"]) {
+  visibility: hidden;
+}
+.eda-column-tooltip-name {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+.eda-column-tooltip-name svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+.eda-column-tooltip-mark {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+}
 
 @media (hover: hover) and (pointer: fine) {
   .eda-panel-header {

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { DataTableHeader } from "../DataTableHeader";
 import { DataTableSettings } from "../definition";
 import { getFilteredRows } from "../filteredRows";
@@ -195,6 +195,51 @@ describe("DataTableHeader", () => {
         expect.objectContaining({ type: "range", field: "age", min: 25 }),
       ],
     });
+  });
+
+  it("shows one field tooltip above the header for the name and its marks", async () => {
+    globalThis.PointerEvent ??= class extends MouseEvent {
+      pointerId: number;
+      constructor(type: string, init: PointerEventInit = {}) {
+        super(type, init);
+        this.pointerId = init.pointerId ?? 0;
+      }
+    } as unknown as typeof PointerEvent;
+    const ageProfile = {
+      ...mockFieldProfiles[1]!,
+      statistics: { ...mockFieldProfiles[1]!.statistics!, bins: [1, 1, 1] },
+    };
+    render(
+      <table>
+        <DataTableHeader
+          settings={mockSettings}
+          distributionProfiles={[mockFieldProfiles[0]!, ageProfile]}
+        />
+      </table>
+    );
+    const tooltips = () =>
+      document.querySelectorAll('[data-slot="tooltip-content"]');
+
+    fireEvent.pointerEnter(screen.getByRole("button", { name: "Sort by age" }));
+    await waitFor(() => expect(tooltips()).toHaveLength(1));
+    expect(tooltips()[0]).toHaveClass("eda-column-tooltip");
+    expect(tooltips()[0]).toHaveTextContent("Number · 25–35");
+    fireEvent.pointerLeave(screen.getByRole("button", { name: "Sort by age" }));
+    await waitFor(() => expect(tooltips()).toHaveLength(0));
+
+    const spark = screen
+      .getByText("Range 25 to 35, median 30")
+      .closest(".eda-column-spark")!
+      .querySelector(".eda-summary-spark-hit")!;
+    spark.getBoundingClientRect = () =>
+      ({ left: 0, width: 90, top: 0, height: 20 }) as DOMRect;
+    fireEvent.pointerMove(spark, { clientX: 5, pointerId: 1 });
+    // The mark joins the field summary in the same tooltip.
+    await waitFor(() => expect(tooltips()).toHaveLength(1));
+    expect(tooltips()[0]).toHaveClass("eda-column-tooltip");
+    expect(tooltips()[0]).toHaveTextContent("age");
+    expect(tooltips()[0]).toHaveTextContent("Number · 25–35");
+    expect(tooltips()[0]).toHaveTextContent("1 row · 33%");
   });
 
   it("moves one filter popover between columns", () => {

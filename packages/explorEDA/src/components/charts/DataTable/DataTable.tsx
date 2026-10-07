@@ -18,6 +18,8 @@ import { DataTableToolbar } from "./DataTableToolbar";
 import { DataTableSettings } from "./definition";
 import { getFilteredRows, DataTableRow } from "./filteredRows";
 import { getChartSummary } from "../chartAccessibility";
+import { isMissingValue } from "@/lib/numeric";
+import { fitColumnWidth, WIDTH_SAMPLE_ROWS } from "./columnWidths";
 
 interface DataTableProps extends BaseChartProps<DataTableSettings> {
   settings: DataTableSettings;
@@ -28,7 +30,6 @@ interface DataTableProps extends BaseChartProps<DataTableSettings> {
 export function DataTable({
   settings,
   height,
-  width,
   rows,
   onSettingsChange,
   toolbarTarget,
@@ -39,6 +40,9 @@ export function DataTable({
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const calculations = useDataLayer((state) => state.calculations);
   const nonce = useDataLayer((state) => state.nonce);
+  const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
+  const fieldSettings = useDataLayer((state) => state.fieldSettings);
   const resolvedRows = useMemo(() => {
     void nonce;
     const source = rows ?? data;
@@ -69,10 +73,40 @@ export function DataTable({
     ? HEADER_HEIGHT_WITH_DISTRIBUTIONS
     : HEADER_HEIGHT;
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
+  // Each column fits its name and its values, read from the first rows so
+  // filtering never makes the columns jump.
+  const fitWidths = useMemo(() => {
+    void fieldSettings;
+    const sample = resolvedRows.slice(0, WIDTH_SAMPLE_ROWS);
+    return Object.fromEntries(
+      settings.columns.map((column) => [
+        column.id,
+        fitColumnWidth(
+          getFieldLabel?.(column.field) ?? column.field,
+          sample.flatMap((row) => {
+            const value = row[column.field];
+            if (isMissingValue(value)) return [];
+            return [
+              formatFieldValue
+                ? formatFieldValue(column.field, value)
+                : String(value),
+            ];
+          })
+        ),
+      ])
+    );
+  }, [
+    resolvedRows,
+    settings.columns,
+    formatFieldValue,
+    getFieldLabel,
+    fieldSettings,
+  ]);
   const columnWidth = (column: DataTableSettings["columns"][number]) =>
     columnWidths[column.id] ??
     column.width ??
-    Math.min(220, Math.max(88, column.field.length * 7 + 42));
+    fitWidths[column.id] ??
+    fitColumnWidth(column.field);
   const tableWidth = settings.columns.reduce(
     (sum, column) => sum + columnWidth(column),
     0
@@ -165,9 +199,10 @@ export function DataTable({
           aria-rowcount={filteredRows.length + 1}
           style={{
             tableLayout: "fixed",
-            // Compact columns stretch to fill the chart, and scroll only
-            // when they need more room than it has.
-            width: Math.max(width, tableWidth),
+            // Columns fit their content. Spare width stays empty at the
+            // right instead of spreading the columns apart, and the table
+            // scrolls only when its columns need more room than it has.
+            width: tableWidth,
           }}
         >
           <caption className="sr-only">{getChartSummary(settings)}</caption>

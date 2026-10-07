@@ -43,13 +43,41 @@ function TableWithHeader() {
 
 beforeAll(registerAllCharts);
 
-it("stretches compact default columns to fill the table", () => {
+it("keeps default columns compact and leaves spare width empty", () => {
   render(
     <DataLayerProvider data={rows}>
       <TableWithHeader />
     </DataLayerProvider>
   );
-  expect(screen.getByRole("table")).toHaveStyle({ width: "400px" });
+  // The chart is 400px wide, but the one column needs only its minimum.
+  expect(screen.getByRole("table")).toHaveStyle({ width: "88px" });
+  expect(screen.getByRole("table").querySelector("col")?.style.width).toBe(
+    "88px"
+  );
+});
+
+it("widens a default column to fit its longest value", () => {
+  const long = [
+    { __ID: 1, phase: "Baseline" },
+    { __ID: 2, phase: "Release candidate with notes" },
+  ];
+  function LongTable() {
+    const settings = {
+      ...dataTableDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 6 }),
+      columns: [{ id: "phase", field: "phase" }],
+    };
+    return (
+      <DataTable settings={settings} rows={long} width={800} height={300} />
+    );
+  }
+  render(
+    <DataLayerProvider data={long}>
+      <LongTable />
+    </DataLayerProvider>
+  );
+  const width = parseFloat(screen.getByRole("table").style.width);
+  expect(width).toBeGreaterThan(88);
+  expect(width).toBeLessThan(800);
 });
 
 it("searches and clears rows from the header without adding a table toolbar row", () => {
