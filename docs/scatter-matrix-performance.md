@@ -37,6 +37,8 @@ Each run serves a generated CSV in place of the penguins file and rewrites the e
 
 With box plots above the diagonal at 100,000 rows × 10 mixed fields, each brush step recounts every box from rows sorted once per layout: 64 ms median, 84 ms p95.
 
+With density diagonals and species coloring in three groups, each group draws only its own rows, which are partitioned once per layout. At 100,000 rows: 24 ms median at 5 fields; 62–65 ms median and 89–93 ms p95 at 10 fields over two runs; and 75 ms median and 118 ms p95 with points in both triangles.
+
 Before the pixel path and the preview, the same 100,000-row drags took 280 ms median at 5 fields and 340 ms at 10 fields, with p95 values of 700–930 ms.
 
 Releasing a brush on 100,000 rows still takes about 0.7 s. A CPU profile of that commit puts most of it outside the matrix: the workspace recomputes field statistics for every filter change (`calculateColumnStatistics`, `useFilteredFieldProfiles`), and the demo serializes its history. The matrix's own share is about 25 ms. The same cost follows any chart's filter on data this size.

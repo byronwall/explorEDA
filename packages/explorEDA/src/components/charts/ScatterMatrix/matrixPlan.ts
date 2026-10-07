@@ -8,6 +8,8 @@ import { dateTimestamp } from "@/lib/dateTime";
 import { finiteNumber, isMissingValue } from "@/lib/numeric";
 import type { datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
+import type { ColorScaleType } from "@/types/ColorScaleTypes";
+import { makeColorScale } from "@/lib/colorScaleMath";
 import { DEFAULT_AXIS_SETTINGS } from "@/utils/defaultSettings";
 import {
   jitter,
@@ -28,6 +30,9 @@ import {
 } from "./matrixBands";
 import {
   planBoxGroups,
+  planDensity,
+  selectedDensities,
+  type MatrixDensity,
   planPairs,
   selectedBoxStats,
   selectedPairs,
@@ -54,6 +59,7 @@ export type MatrixCellKind =
   | "shares"
   | "blank"
   | "histogram"
+  | "density"
   | "bars"
   | "label";
 
@@ -64,6 +70,19 @@ export interface MatrixSnapshot {
   liveIds: number[];
   columns: Record<string, Record<number, datum>>;
   types: Record<string, DataType | undefined>;
+  /** The scale that colors rows by `colorField`, when the matrix has one. */
+  colorScale?: ColorScaleType;
+}
+
+/** Rows grouped by the color field's categories. */
+export interface MatrixGroups {
+  field: string;
+  labels: string[];
+  colors: string[];
+  /** Each live row's group, or -1. */
+  index: Int32Array;
+  /** Live row indices in each group, so drawing walks each row once. */
+  rows: Int32Array[];
 }
 
 export interface MatrixTick {
@@ -101,6 +120,8 @@ export interface MatrixBar {
   selected: number;
   /** One-field filter a click on the bar sets. */
   filter: Filter;
+  /** Selected rows in each color group. */
+  groups?: number[];
 }
 
 export interface MatrixCell {
@@ -129,6 +150,13 @@ export interface MatrixCell {
     /** Statistics of the selected rows in each group. */
     selected?: (MatrixBoxStats | undefined)[];
   };
+  /** Density diagonals: the curve of every row, then of the selection. */
+  density?: MatrixDensity & {
+    selected?: Float64Array;
+    groups?: Float64Array[];
+  };
+  /** Correlation cells with a color field: r within each group. */
+  groupR?: (number | undefined)[];
   /** Tile and share cells: counts for each pair of bands. */
   pairs?: MatrixPairs;
   pairSelected?: Int32Array;
@@ -137,6 +165,7 @@ export interface MatrixCell {
 /** Everything that holds still while the matrix's own selection changes. */
 export interface MatrixLayout {
   fields: MatrixField[];
+  groups?: MatrixGroups;
   cells: MatrixCell[];
   cellSize: number;
   gap: number;
@@ -267,9 +296,11 @@ function planTicks(field: Pick<MatrixField, "axis" | "kind">, size: number) {
     }));
   }
   const linear = scaleLinear().domain(axis.domain);
-  // SI prefixes only for large magnitudes, so years and small counts read plainly.
+  // SI prefixes only for large magnitudes, so years read plainly in roomy cells.
   const largest = Math.max(...axis.domain.map(Math.abs));
-  const format = linear.tickFormat(count, largest >= 1e5 ? "~s" : undefined);
+  // Small cells have room for short labels only, such as 4k.
+  const short = largest >= 1e5 || (largest >= 1000 && size < 110);
+  const format = linear.tickFormat(count, short ? "~s" : undefined);
   return linear
     .ticks(count)
     .filter((tick) => tick >= axis.domain[0] && tick <= axis.domain[1])
@@ -354,11 +385,56 @@ export function pearson(xs: ArrayLike<number>, ys: ArrayLike<number>) {
   return sxy / Math.sqrt(sxx * syy);
 }
 
+/** Rows in the color field's Other group and missing values read gray. */
+const NEUTRAL_GROUP_COLOR = "#8a94a3";
+
+function planGroups(
+  settings: ScatterMatrixSettings,
+  snapshot: MatrixSnapshot
+): MatrixGroups | undefined {
+  const field = settings.colorField;
+  const data = field ? snapshot.columns[field] : undefined;
+  if (!field || !data || !snapshot.colorScale) {
+    return undefined;
+  }
+  const bands = planBands(snapshot.allIds, data, MAX_MATRIX_CATEGORIES);
+  const color = makeColorScale(snapshot.colorScale);
+  const colors = bands.labels.map((_, band) => {
+    if (band === bands.other) {
+      return NEUTRAL_GROUP_COLOR;
+    }
+    try {
+      return color(bands.values[band]![0]);
+    } catch {
+      return NEUTRAL_GROUP_COLOR;
+    }
+  });
+  const index = Int32Array.from(snapshot.liveIds, (id) =>
+    bandOf(bands, data[id])
+  );
+  const members: number[][] = bands.labels.map(() => []);
+  index.forEach((group, row) => {
+    if (group >= 0) {
+      members[group]!.push(row);
+    }
+  });
+  const rows = members.map((list) => Int32Array.from(list));
+  return { field, labels: bands.labels, colors, index, rows };
+}
+
 /** Pearson r over the rows where both value arrays have a number. */
-function pairedCorrelation(xs: Float64Array, ys: Float64Array) {
+function pairedCorrelation(
+  xs: Float64Array,
+  ys: Float64Array,
+  groups?: Int32Array,
+  group?: number
+) {
   const a: number[] = [];
   const b: number[] = [];
   for (let i = 0; i < xs.length; i++) {
+    if (groups && groups[i] !== group) {
+      continue;
+    }
     if (xs[i] === xs[i] && ys[i] === ys[i]) {
       a.push(xs[i]!);
       b.push(ys[i]!);
@@ -592,6 +668,7 @@ export function planMatrixLayout({
   });
 
   const liveIds = snapshot.liveIds;
+  const groups = planGroups(settings, snapshot);
   const boxCache = new Map<string, MatrixBoxGroup[]>();
   const cells: MatrixCell[] = [];
   for (let row = 0; row < fields.length; row++) {
@@ -611,6 +688,18 @@ export function planMatrixLayout({
       const b = fields[row]!;
       if (row === column) {
         cell.n = a.valid;
+        if (kind === "density" && a.value && a.axis.kind === "numeric") {
+          const axis = a.axis;
+          cell.density = planDensity(
+            a.value,
+            axis.domain[0],
+            axis.domain[1],
+            (value) => axis.scale(value)
+          );
+          if (!cell.density) {
+            cell.kind = "label";
+          }
+        }
         if (kind === "histogram" || kind === "bars") {
           const { bars, barIndex } = planDiagonalBars(a, snapshot);
           cell.bars = bars;
@@ -625,6 +714,11 @@ export function planMatrixLayout({
         }
         if (kind === "correlation" && a.value && b.value) {
           cell.r = pairedCorrelation(a.value, b.value);
+          if (groups) {
+            cell.groupR = groups.labels.map((_, group) =>
+              pairedCorrelation(a.value!, b.value!, groups.index, group)
+            );
+          }
         } else if (kind === "box") {
           // Mirror cells share one grouping of the same two fields.
           const bandField = a.band ? a : b;
@@ -669,6 +763,7 @@ export function planMatrixLayout({
   const small = cellSize < 110 ? 0.5 : 0;
   return {
     fields,
+    groups,
     cells,
     cellSize,
     gap: MATRIX_GAP,
@@ -774,19 +869,45 @@ export function withSelectedBars(
   selection: MatrixSelection
 ): MatrixPlan {
   const selected = selection.selected;
+  const groups = layout.groups;
   const boxStats = new Map<MatrixBoxGroup[], (MatrixBoxStats | undefined)[]>();
   const cells = layout.cells.map((cell) => {
+    if (cell.density) {
+      return {
+        ...cell,
+        density: {
+          ...cell.density,
+          ...selectedDensities(
+            cell.density,
+            selected,
+            groups && { index: groups.index, count: groups.labels.length }
+          ),
+        },
+      };
+    }
     if (cell.bars && cell.barIndex) {
       const counts = new Int32Array(cell.bars.length);
+      const byGroup = groups
+        ? cell.bars.map(() => new Array<number>(groups.labels.length).fill(0))
+        : undefined;
       const index = cell.barIndex;
       for (let i = 0; i < index.length; i++) {
-        if (selected[i] && index[i]! >= 0) {
-          counts[index[i]!]!++;
+        const bar = index[i]!;
+        if (selected[i] && bar >= 0) {
+          counts[bar]!++;
+          const group = groups?.index[i] ?? -1;
+          if (byGroup && group >= 0) {
+            byGroup[bar]![group]!++;
+          }
         }
       }
       return {
         ...cell,
-        bars: cell.bars.map((bar, b) => ({ ...bar, selected: counts[b]! })),
+        bars: cell.bars.map((bar, b) => ({
+          ...bar,
+          selected: counts[b]!,
+          groups: byGroup?.[b],
+        })),
       };
     }
     if (cell.boxes && selection.hasSelection) {

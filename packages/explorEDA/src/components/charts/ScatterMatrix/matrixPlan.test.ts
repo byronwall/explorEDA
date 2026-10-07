@@ -71,7 +71,7 @@ function settings(
     fields,
     lower: DEFAULT_LOWER_CELLS,
     upper: DEFAULT_UPPER_CELLS,
-    diagonal: DEFAULT_DIAGONAL_CELLS,
+    diagonal: { ...DEFAULT_DIAGONAL_CELLS, continuous: "histogram" },
     margin: { top: 4, right: 4, bottom: 4, left: 4 },
     filters,
   };
@@ -386,5 +386,92 @@ describe("planScatterMatrix", () => {
         .map((v) => v.toFixed(3))
     );
     expect(offsets.size).toBe(3);
+  });
+
+  it("smooths density diagonals on counts so a selection sits inside", () => {
+    const plan = planScatterMatrix({
+      settings: {
+        ...settings(FIELDS, [
+          { type: "value", field: "species", values: ["Gentoo"] },
+        ]),
+        diagonal: DEFAULT_DIAGONAL_CELLS,
+      },
+      snapshot,
+      width: 800,
+      height: 800,
+    });
+    // Category diagonals keep their bars.
+    expect(
+      plan.cells.find((cell) => cell.row === 2 && cell.column === 2)!.kind
+    ).toBe("bars");
+    const cell = plan.cells.find(
+      (item) => item.row === 1 && item.column === 1
+    )!;
+    expect(cell.kind).toBe("density");
+    const curve = cell.density!;
+    const sum = (values: Float64Array) => values.reduce((a, b) => a + b, 0);
+    // Smoothing keeps each curve's total equal to its row count, give or
+    // take the tails that fall past the domain.
+    expect(sum(curve.total)).toBeGreaterThan(330);
+    expect(sum(curve.total)).toBeLessThanOrEqual(342.0001);
+    expect(sum(curve.selected!)).toBeGreaterThan(118);
+    expect(sum(curve.selected!)).toBeLessThanOrEqual(123.0001);
+    expect(
+      curve.selected!.every((value, bin) => value <= curve.total[bin]! + 1e-9)
+    ).toBe(true);
+  });
+
+  it("groups rows by the color field for points, bars, and correlations", () => {
+    const plan = planScatterMatrix({
+      settings: {
+        ...settings(FIELDS),
+        colorField: "species",
+        colorScaleId: "species",
+      },
+      snapshot: {
+        ...snapshot,
+        colorScale: {
+          id: "species",
+          name: "Species",
+          type: "categorical",
+          palette: ["#ff0000", "#00ff00", "#0000ff"],
+          mapping: new Map([
+            ["Adelie", "#ff0000"],
+            ["Chinstrap", "#00ff00"],
+            ["Gentoo", "#0000ff"],
+          ]),
+        } as never,
+      },
+      width: 800,
+      height: 800,
+    });
+    const groups = plan.groups!;
+    expect(groups.labels).toEqual(["Adelie", "Chinstrap", "Gentoo"]);
+    expect([...groups.index].filter((group) => group === 2)).toHaveLength(124);
+    const r = plan.cells.find((cell) => cell.row === 0 && cell.column === 1)!;
+    expect(r.groupR).toHaveLength(3);
+    // Each group's r matches Pearson over that species alone.
+    const gentoo = snapshot.liveIds.filter(
+      (id) =>
+        snapshot.columns.species![id] === "Gentoo" &&
+        typeof snapshot.columns.bill_length_mm![id] === "number" &&
+        typeof snapshot.columns.body_mass_g![id] === "number"
+    );
+    expect(r.groupR![2]).toBeCloseTo(
+      pearson(
+        gentoo.map((id) => snapshot.columns.body_mass_g![id] as number),
+        gentoo.map((id) => snapshot.columns.bill_length_mm![id] as number)
+      )!,
+      10
+    );
+    expect(groups.colors[2]).toBe("#0000ff");
+    const bars = plan.cells.find(
+      (cell) => cell.row === 0 && cell.column === 0
+    )!.bars!;
+    const counted = bars.reduce(
+      (sum, bar) => sum + bar.groups!.reduce((a, b) => a + b, 0),
+      0
+    );
+    expect(counted).toBe(342);
   });
 });
