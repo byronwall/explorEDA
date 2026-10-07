@@ -6,7 +6,12 @@ import { ChartRenderer } from "../ChartRenderer";
 import { traceOnAltEnter } from "./facetTrace";
 import { FacetPager, type FacetPickerProps } from "./FacetPager";
 import { FacetData } from "./FacetContainer";
-import { planFacetWrapLayout, type FacetLayoutPlan } from "./facetLayout";
+import {
+  PAGER_HEIGHT,
+  planFacetWrapLayout,
+  type FacetLayoutPlan,
+} from "./facetLayout";
+import { useFacetBarSlot } from "./facetBarSlot";
 
 const FACET_CARD_WIDTH_CHROME = 18;
 const FACET_CARD_HEIGHT_CHROME = 38;
@@ -43,12 +48,14 @@ export function FacetWrapLayout({
   picker,
 }: FacetWrapLayoutProps) {
   const [page, setPage] = useState(0);
+  const pagerHeight = useFacetBarSlot() ? 0 : PAGER_HEIGHT;
   const layout = planFacetWrapLayout(
     width,
     height,
     facetData.length,
     columns,
-    page
+    page,
+    pagerHeight
   );
   const { columnCount, pageSize, pageCount, facetWidth, facetHeight } = layout;
   useEffect(() => setPage(layout.page), [layout.page]);

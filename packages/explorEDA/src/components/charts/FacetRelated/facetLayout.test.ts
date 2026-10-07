@@ -21,3 +21,11 @@ it("plans the visible facet page and its rendered cell sizes", () => {
     facetHeight: 236,
   });
 });
+
+it("gives the pager's row to the facets when it shares the legend line", () => {
+  const own = planFacetWrapLayout(600, 500, 8, 3, 0);
+  const shared = planFacetWrapLayout(600, 500, 8, 3, 0, 0);
+  expect(shared.facetHeight - own.facetHeight).toBe(10);
+  const grid = planFacetGridLayout(500, 430, 4, 3, 0, 40, 0);
+  expect(grid.cellHeight).toBe(195);
+});

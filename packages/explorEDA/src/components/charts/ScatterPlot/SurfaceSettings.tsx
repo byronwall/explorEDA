@@ -6,6 +6,7 @@ import { ActionTooltip } from "@/components/ui/tooltip";
 import type { ScatterPlotSettings } from "./definition";
 import { DEFAULT_HEX_COLUMNS } from "./hexPlan";
 import { DEFAULT_BANDWIDTH_SCALE, DEFAULT_CONTOUR_LEVELS } from "./contourPlan";
+import { PointSizeSetting } from "./PointSizeSetting";
 
 function Toggle({
   id,
@@ -82,10 +83,16 @@ export function SurfaceSettings({
         <Toggle
           id="hex-points"
           label="Show points"
-          help="Draws each row as a small point in its color group over the hexagons."
+          help="Draws each row as a point in its color group over the hexagons."
           checked={Boolean(hexbin.showPoints)}
           onChange={(checked) => update({ showPoints: checked || undefined })}
         />
+        {hexbin.showPoints && (
+          <PointSizeSetting
+            settings={settings}
+            onSettingsChange={onSettingsChange}
+          />
+        )}
       </>
     );
   }
@@ -142,12 +149,18 @@ export function SurfaceSettings({
       <Toggle
         id="contour-points"
         label="Show points"
-        help="Draws each row as a small point in its color group over the density."
+        help="Draws each row as a point in its color group over the density."
         checked={contour.showPoints !== false}
         onChange={(checked) =>
           update({ showPoints: checked ? undefined : false })
         }
       />
+      {contour.showPoints !== false && (
+        <PointSizeSetting
+          settings={settings}
+          onSettingsChange={onSettingsChange}
+        />
+      )}
     </>
   );
 }

@@ -4,6 +4,7 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 import type { ChartSettings } from "@/types/ChartTypes";
 import type { FacetData } from "./FacetContainer";
 import { FacetWrapLayout } from "./FacetWrapLayout";
+import { FacetBarSlotContext } from "./facetBarSlot";
 
 vi.mock("../ChartRenderer", () => ({ ChartRenderer: () => null }));
 
@@ -134,5 +135,23 @@ describe("facet picker", () => {
     expect(trigger()).toHaveAccessibleName(
       "Choose visible facets, Facets 1–4 of 5"
     );
+  });
+});
+
+describe("facet pager in the legend line", () => {
+  it("renders into the slot instead of its own row", () => {
+    const slot = document.createElement("div");
+    document.body.append(slot);
+    const { container } = render(
+      <FacetBarSlotContext.Provider value={slot}>
+        <PickerHarness facets={["A", "B", "C"].map(makeFacet)} />
+      </FacetBarSlotContext.Provider>
+    );
+    const trigger = screen.getByRole("button", {
+      name: "Choose visible facets, Facets 1–3 of 3",
+    });
+    expect(slot).toContainElement(trigger);
+    expect(container).not.toContainElement(trigger);
+    slot.remove();
   });
 });

@@ -2609,6 +2609,29 @@ html {
   z-index: 2;
   padding: 2px 12px 4px;
 }
+/* A faceted chart's legend and facet pager share one line. When both do not
+   fit, the pager wraps below the legend instead of squeezing it. */
+.eda-facet-bar {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 8px;
+  min-width: 0;
+  min-height: 24px;
+}
+.eda-facet-bar > .eda-chart-color-legend {
+  flex: 0 1 max-content;
+  min-width: 0;
+  padding-right: 0;
+}
+.eda-facet-bar-slot {
+  flex: 0 0 auto;
+  max-width: 100%;
+  min-width: 0;
+  margin-left: auto;
+  padding-right: 4px;
+}
 .eda-legend-disclosure {
   position: relative;
 }

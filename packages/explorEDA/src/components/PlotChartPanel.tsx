@@ -39,6 +39,7 @@ import {
 import { ChartTracePanel } from "./charts/trace/ChartTracePanel";
 import type { TraceSource } from "./charts/trace/traceTypes";
 import { FacetContainer } from "./charts/FacetRelated/FacetContainer";
+import { FacetBarSlotContext } from "./charts/FacetRelated/facetBarSlot";
 import { useAxisFieldActions } from "./charts/AxisFieldActions";
 import { ChartSettingsContent } from "./ChartSettingsContent";
 import { Button } from "./ui/button";
@@ -286,6 +287,9 @@ function detailsLayout(viewport: { width: number; height: number }) {
   };
 }
 
+/** Room the legend leaves for the facet pager on its line. */
+const FACET_SLOT_WIDTH = 150;
+
 export function PlotChartPanel({
   settings,
   onDelete,
@@ -351,6 +355,20 @@ export function PlotChartPanel({
   const [toolbarTarget, setToolbarTarget] = useState<HTMLDivElement | null>(
     null
   );
+  const [facetBarSlot, setFacetBarSlot] = useState<HTMLDivElement | null>(null);
+  const [facetBar, setFacetBar] = useState<HTMLDivElement | null>(null);
+  const [facetBarMeasured, setFacetBarMeasured] = useState<number>();
+  // The legend line wraps the pager below it on narrow panels.
+  useEffect(() => {
+    if (!facetBar) return setFacetBarMeasured(undefined);
+    const measure = () =>
+      setFacetBarMeasured(Math.ceil(facetBar.getBoundingClientRect().height));
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(facetBar);
+    return () => observer.disconnect();
+  }, [facetBar]);
   const [readoutTarget, setReadoutTarget] = useState<HTMLDivElement | null>(
     null
   );
@@ -404,6 +422,14 @@ export function PlotChartPanel({
     !CATEGORY_LABELED_CHART_TYPES.has(settings.type)
       ? 36
       : 0;
+  const faceted = Boolean(
+    settings.facet?.enabled &&
+      (!aggregate || (settings.type === "bar" && settings.seriesField))
+  );
+  // Faceted charts keep one line for the legend and the facet pager.
+  const facetBarHeight = faceted
+    ? (facetBarMeasured ?? Math.max(autoLegendHeight, 24))
+    : 0;
 
   const canViewData =
     !isTableLike && (dataFields.length > 0 || settings.type === "metric-card");
@@ -684,26 +710,40 @@ export function PlotChartPanel({
       {axisFieldActions.overlay}
       <ChartReadoutProvider value={readoutTarget}>
         <div className="eda-chart-content flex min-h-0 flex-1 flex-col">
-          {autoLegendHeight > 0 && (
-            <ChartColorLegend
-              settings={settings}
-              width={Math.max(1, panelWidth - 24)}
-            />
-          )}
-          {settings.facet?.enabled &&
-          (!aggregate || (settings.type === "bar" && settings.seriesField)) ? (
-            <FacetContainer
-              settings={settings}
-              width={Math.max(1, panelWidth - 24)}
-              height={Math.max(
-                1,
-                panelHeight -
-                  58 -
-                  headerExtra -
-                  fieldStripHeight -
-                  autoLegendHeight
+          {faceted ? (
+            // The facet pager shares the legend's line instead of its own row.
+            <div ref={setFacetBar} className="eda-facet-bar">
+              {autoLegendHeight > 0 && (
+                <ChartColorLegend
+                  settings={settings}
+                  width={Math.max(1, panelWidth - 24 - FACET_SLOT_WIDTH)}
+                />
               )}
-            />
+              <div ref={setFacetBarSlot} className="eda-facet-bar-slot" />
+            </div>
+          ) : (
+            autoLegendHeight > 0 && (
+              <ChartColorLegend
+                settings={settings}
+                width={Math.max(1, panelWidth - 24)}
+              />
+            )
+          )}
+          {faceted ? (
+            <FacetBarSlotContext.Provider value={facetBarSlot}>
+              <FacetContainer
+                settings={settings}
+                width={Math.max(1, panelWidth - 24)}
+                height={Math.max(
+                  1,
+                  panelHeight -
+                    58 -
+                    headerExtra -
+                    fieldStripHeight -
+                    facetBarHeight
+                )}
+              />
+            </FacetBarSlotContext.Provider>
           ) : (
             <ChartRenderer
               settings={settings}

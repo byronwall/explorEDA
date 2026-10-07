@@ -14,6 +14,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { FacetBarPortal, useFacetBarSlot } from "./facetBarSlot";
 
 export interface FacetOption {
   id: string;
@@ -60,30 +61,38 @@ export function FacetPager({
   picker,
 }: FacetPagerProps) {
   const paged = pageCount > 1;
+  const inLegendLine = useFacetBarSlot() !== null;
   return (
-    <div className="flex h-5 shrink-0 items-center justify-center gap-1 overflow-hidden text-xs text-muted-foreground">
-      {paged && (
-        <button
-          type="button"
-          className="shrink-0 whitespace-nowrap underline disabled:no-underline disabled:opacity-40"
-          disabled={page === 0}
-          onClick={() => onPageChange(Math.max(0, page - 1))}
-        >
-          Previous
-        </button>
-      )}
-      <FacetPicker label={label} {...picker} />
-      {paged && (
-        <button
-          type="button"
-          className="shrink-0 whitespace-nowrap underline disabled:no-underline disabled:opacity-40"
-          disabled={page === pageCount - 1}
-          onClick={() => onPageChange(Math.min(pageCount - 1, page + 1))}
-        >
-          Next
-        </button>
-      )}
-    </div>
+    <FacetBarPortal>
+      <div
+        className={cn(
+          "flex h-5 shrink-0 items-center gap-1 overflow-hidden text-xs text-muted-foreground",
+          inLegendLine ? "justify-end" : "justify-center"
+        )}
+      >
+        {paged && (
+          <button
+            type="button"
+            className="shrink-0 whitespace-nowrap underline disabled:no-underline disabled:opacity-40"
+            disabled={page === 0}
+            onClick={() => onPageChange(Math.max(0, page - 1))}
+          >
+            Previous
+          </button>
+        )}
+        <FacetPicker label={label} {...picker} />
+        {paged && (
+          <button
+            type="button"
+            className="shrink-0 whitespace-nowrap underline disabled:no-underline disabled:opacity-40"
+            disabled={page === pageCount - 1}
+            onClick={() => onPageChange(Math.min(pageCount - 1, page + 1))}
+          >
+            Next
+          </button>
+        )}
+      </div>
+    </FacetBarPortal>
   );
 }
 

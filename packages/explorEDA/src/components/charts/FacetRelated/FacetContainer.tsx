@@ -15,6 +15,7 @@ import { ChartRenderer } from "../ChartRenderer";
 import { FacetGridLayout } from "./FacetGridLayout";
 import { FacetWrapLayout } from "./FacetWrapLayout";
 import { FacetPager, type FacetPickerProps } from "./FacetPager";
+import { FacetBarPortal } from "./facetBarSlot";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import { hasFieldDisplayFormat } from "@/lib/fieldSettings";
 import {
@@ -222,7 +223,14 @@ export function FacetContainer({
         : null,
     // Facet data, chart rows and settings change the resolved trace too.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [canTrace, revision, allFacetData, chartIds, settings.facet, displayFacetValue]
+    [
+      canTrace,
+      revision,
+      allFacetData,
+      chartIds,
+      settings.facet,
+      displayFacetValue,
+    ]
   );
   useTraceSource(owner, source);
 
@@ -308,15 +316,17 @@ export function FacetContainer({
                 <Minimize2 className="size-3" />
               </Button>
             </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-5 shrink-0 gap-1 px-1.5 text-xs font-normal text-muted-foreground hover:text-foreground"
-              onClick={() => setFocusedFacetId(null)}
-            >
-              <Minimize2 className="size-3" />
-              Back to all facets
-            </Button>
+            <FacetBarPortal>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-5 shrink-0 gap-1 px-1.5 text-xs font-normal text-muted-foreground hover:text-foreground"
+                onClick={() => setFocusedFacetId(null)}
+              >
+                <Minimize2 className="size-3" />
+                Back to all facets
+              </Button>
+            </FacetBarPortal>
           </div>
           <div className="min-h-0 flex-1">
             <ChartRenderer
