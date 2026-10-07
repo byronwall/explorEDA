@@ -1,0 +1,434 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Durable editorial chart styling",
+    "slug": "editorial-chart-styling",
+    "scale": "capability",
+    "current_phase": "intent",
+    "last_updated": "2026-10-06",
+    "summary": "Let users match charts to a theme or design system and retain deliberate editorial typography.",
+    "status": "planned",
+    "next_action": "Shape a live editorial chart with global-theme updates and findable intentional overrides."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-06"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "user-addition",
+      "type": "direct-user-input",
+      "location": "../comparison-opportunities/resources/editorial-and-editing-request.md",
+      "anchor": "October 6: editorial styling and advanced editing additions",
+      "authority": "explicit user intent"
+    },
+    {
+      "id": "code-1",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/index.css",
+      "anchor": ":root/.dark tokens; .eda-panel-expanded header typography; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "authority": "current repository reality; not runtime acceptance"
+    },
+    {
+      "id": "code-2",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/types/ChartTypes.ts",
+      "anchor": "BaseChartSettings title and axis labels; AxisSettings text sizes; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "authority": "current repository reality; not runtime acceptance"
+    },
+    {
+      "id": "code-3",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/types/SavedDataStructure.ts",
+      "anchor": "Saved chart settings and color scales; no common editorial style definition; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "authority": "current repository reality; not runtime acceptance"
+    },
+    {
+      "id": "code-4",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/PlotChartPanel.tsx",
+      "anchor": "TraceTitle and compact header title classes; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "authority": "current repository reality; not runtime acceptance"
+    },
+    {
+      "id": "code-5",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/settings/AxisSettingsTab.tsx",
+      "anchor": "Small tick and axis-label text choices; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "authority": "current repository reality; not runtime acceptance"
+    },
+    {
+      "id": "code-6",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/Axis/axisPlan.ts",
+      "anchor": "Font sizes, label truncation, and spacing calculations; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "authority": "current repository reality; not runtime acceptance"
+    },
+    {
+      "id": "product-feedback",
+      "type": "direct-user-input",
+      "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
+      "anchor": "Annotations 2, 4, 5, 6",
+      "authority": "Explicit human feedback; tentative answers remain tentative"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "theme-alignment",
+        "type": "outcome",
+        "statement": "Charts can match the user’s theme or design system.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-addition",
+            "anchor": "charts can match a desired user’s theme or design system"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "durable-control",
+        "type": "required behavior",
+        "statement": "Retain user style choices when saving and reopening an analysis.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-addition",
+            "anchor": "give control over styles in a durable way"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "editorial-type",
+        "type": "desired experience",
+        "statement": "Produce editorial charts with larger titles and intentional typography.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-addition",
+            "anchor": "editorial charts with larger titles and more intentional typography choices"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "subtitles",
+        "type": "required behavior",
+        "statement": "Support subtitles as authored chart text.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-addition",
+            "anchor": "edit in place on title, subtitles, axis limits"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "style-inheritance",
+        "type": "implementation hypothesis",
+        "statement": "Consider reusable defaults with explicit chart-level overrides.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "superseded",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-addition",
+            "anchor": "durable style control; mechanism remains unselected"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": "Gesture and API choices remain provisional.",
+        "superseded_by": "theme-links"
+      },
+      {
+        "id": "geometry",
+        "type": "derived implication",
+        "statement": "Account for authored typography in title space and plot geometry.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-addition",
+            "anchor": "larger titles and intentional typography"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": ""
+      },
+      {
+        "id": "scope",
+        "type": "constraint",
+        "statement": "Build on the existing charts without requiring the composition editor.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-addition",
+            "anchor": "add projects to the existing pile"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": ""
+      },
+      {
+        "id": "current-foundation",
+        "type": "current repository reality",
+        "statement": "CSS theme tokens and chart-specific styles exist. Title expansion is a CSS display rule. There is no common saved editorial style model or subtitle field.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "code-1",
+            "anchor": ":root/.dark tokens; .eda-panel-expanded header typography; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+          },
+          {
+            "source_id": "code-2",
+            "anchor": "BaseChartSettings title and axis labels; AxisSettings text sizes; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+          },
+          {
+            "source_id": "code-3",
+            "anchor": "Saved chart settings and color scales; no common editorial style definition; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+          },
+          {
+            "source_id": "code-4",
+            "anchor": "TraceTitle and compact header title classes; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+          },
+          {
+            "source_id": "code-5",
+            "anchor": "Small tick and axis-label text choices; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+          },
+          {
+            "source_id": "code-6",
+            "anchor": "Font sizes, label truncation, and spacing calculations; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Source inspection only."
+      },
+      {
+        "id": "theme-links",
+        "type": "required behavior",
+        "statement": "Charts update with global theme and colors unless intentionally overridden.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 6"
+          }
+        ],
+        "confidence": "high",
+        "supersedes": [
+          "style-inheritance"
+        ],
+        "notes": "No implementation authorization or unobserved proof is inferred."
+      },
+      {
+        "id": "override-visibility",
+        "type": "required behavior",
+        "statement": "Provide a findable view of intentional style overrides.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 6"
+          }
+        ],
+        "confidence": "high",
+        "supersedes": [],
+        "notes": "No implementation authorization or unobserved proof is inferred."
+      },
+      {
+        "id": "live-editorial",
+        "type": "desired experience",
+        "statement": "The current interactive workspace itself should feel editorial.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 4"
+          }
+        ],
+        "confidence": "high",
+        "supersedes": [],
+        "notes": "No implementation authorization or unobserved proof is inferred."
+      },
+      {
+        "id": "visual-reference",
+        "type": "preference",
+        "statement": "Use newspaper graphics and annual or investor-relations documents as visual references.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 5"
+          }
+        ],
+        "confidence": "high",
+        "supersedes": [],
+        "notes": "No implementation authorization or unobserved proof is inferred."
+      }
+    ],
+    "themes": [
+      "Editorial authorship",
+      "Durable user controls"
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
+      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "worktree_status": "Detached HEAD; earlier intent files remain uncommitted.",
+      "subsystems": [
+        "packages/explorEDA/src/index.css",
+        "packages/explorEDA/src/types/ChartTypes.ts",
+        "packages/explorEDA/src/types/SavedDataStructure.ts",
+        "packages/explorEDA/src/components/PlotChartPanel.tsx",
+        "packages/explorEDA/src/components/settings/AxisSettingsTab.tsx",
+        "packages/explorEDA/src/components/charts/Axis/axisPlan.ts"
+      ],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-06",
+      "action": "Created a new intent from direct user additions.",
+      "reason": "Add editorial styling and editing projects to the existing collection.",
+      "evidence": "Source inspected; no runtime changes or tests."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Reconciled annotated product feedback and priority.",
+      "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
+      "source_annotation_indices": [
+        2,
+        4,
+        5,
+        6
+      ],
+      "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    }
+  ],
+  "closure": null,
+  "intake": {
+    "kind": "user-addition",
+    "commitment": "explicit outcome; proposed gestures and style mechanisms remain tentative",
+    "related_initiatives": [
+      "in-place-chart-editing",
+      "saved-view-templates",
+      "composed-analytical-graphics",
+      "analysis-export"
+    ],
+    "priority": "first-pass",
+    "audience": "End users; developers deliver their experience."
+  },
+  "relations": [
+    {
+      "initiative": "in-place-chart-editing",
+      "relationship": "Shares authored text and style settings; neither requires the other’s full scope."
+    },
+    {
+      "initiative": "composed-analytical-graphics",
+      "relationship": "Related authoring direction; not a prerequisite for styling existing charts."
+    },
+    {
+      "initiative": "analysis-export",
+      "relationship": "Owns static image and possible document outputs; the live editorial workspace does not depend on export."
+    }
+  ]
+}

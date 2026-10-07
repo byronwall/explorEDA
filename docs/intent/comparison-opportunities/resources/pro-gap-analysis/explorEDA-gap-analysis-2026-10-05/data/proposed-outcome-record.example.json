@@ -1,0 +1,42 @@
+{
+  "schema_status": "proposal only; not written to repo",
+  "id": "outcome:aggregate-contributors",
+  "requirements": [
+    "TRACE-01",
+    "CALC-06"
+  ],
+  "contract": "A selected supported mark explains exact source members, eligible numeric contributors, exclusions and result at the declared filter scope.",
+  "implementation": {
+    "status": "partial",
+    "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+    "source_refs": [
+      "CHART",
+      "REG"
+    ],
+    "exceptions": [
+      "Not every intermediate output is a reusable source",
+      "Current browser behavior not independently confirmed"
+    ]
+  },
+  "verification": [
+    {
+      "id": "BT07",
+      "result": "not-run",
+      "reason": "Application navigation blocked by administrator policy",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "dataset": "fixtures/analytical-edge-cases.json",
+      "expected": {
+        "A": {
+          "source_rows": 3,
+          "numeric_contributors": 2,
+          "sum": 30,
+          "average": 15
+        }
+      },
+      "observed": null,
+      "browser": null,
+      "artifacts": []
+    }
+  ],
+  "historical_records_are_not_current_passes": true
+}

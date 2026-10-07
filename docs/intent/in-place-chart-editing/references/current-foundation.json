@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-06",
+  "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+  "assessment": "Live chart settings and reset exist. Titles overlap drag handles and tracing. Axis context menus already inspect fields. Direct text/domain editing and subtitles are not common saved behaviors.",
+  "evidence_scope": "Source inspection only",
+  "sources": [
+    {
+      "path": "packages/explorEDA/src/components/settings/LabelsSettingsTab.tsx",
+      "anchor": "Existing title and axis-label settings inputs"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ChartSettingsContent.tsx",
+      "anchor": "Live updates, invalid-range handling, and edit-session reset"
+    },
+    {
+      "path": "packages/explorEDA/src/components/PlotChartPanel.tsx",
+      "anchor": "Title inside drag-handle; Alt title tracing; read-only handling"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/AxisFieldActions.tsx",
+      "anchor": "Modifier-click and context-menu field inspection"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/AxisLayer.tsx",
+      "anchor": "Axis label focus, pointer events, and trace actions"
+    },
+    {
+      "path": "packages/explorEDA/src/types/ChartTypes.ts",
+      "anchor": "Axis min/max declarations and existing shared chart settings"
+    },
+    {
+      "path": "docs/ui-defaults.md",
+      "anchor": "Local nonmodal settings; live edits; read-only history; mark tracing and chart movement"
+    }
+  ]
+}

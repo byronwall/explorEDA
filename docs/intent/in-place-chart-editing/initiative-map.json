@@ -1,0 +1,423 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Edit chart features in place",
+    "slug": "in-place-chart-editing",
+    "scale": "capability",
+    "current_phase": "intent",
+    "last_updated": "2026-10-06",
+    "summary": "Edit visible chart features near their result with a clear local edit session.",
+    "status": "planned",
+    "next_action": "Shape direct text and axis edits with immediate updates and useful existing undo steps."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-06"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "user-addition",
+      "type": "direct-user-input",
+      "location": "../comparison-opportunities/resources/editorial-and-editing-request.md",
+      "anchor": "October 6: editorial styling and advanced editing additions",
+      "authority": "explicit user intent"
+    },
+    {
+      "id": "code-1",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/settings/LabelsSettingsTab.tsx",
+      "anchor": "Existing title and axis-label settings inputs; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "authority": "current repository reality; not runtime acceptance"
+    },
+    {
+      "id": "code-2",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/ChartSettingsContent.tsx",
+      "anchor": "Live updates, invalid-range handling, and edit-session reset; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "authority": "current repository reality; not runtime acceptance"
+    },
+    {
+      "id": "code-3",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/PlotChartPanel.tsx",
+      "anchor": "Title inside drag-handle; Alt title tracing; read-only handling; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "authority": "current repository reality; not runtime acceptance"
+    },
+    {
+      "id": "code-4",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/AxisFieldActions.tsx",
+      "anchor": "Modifier-click and context-menu field inspection; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "authority": "current repository reality; not runtime acceptance"
+    },
+    {
+      "id": "code-5",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/Axis/AxisLayer.tsx",
+      "anchor": "Axis label focus, pointer events, and trace actions; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "authority": "current repository reality; not runtime acceptance"
+    },
+    {
+      "id": "code-6",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/types/ChartTypes.ts",
+      "anchor": "Axis min/max declarations and existing shared chart settings; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "authority": "current repository reality; not runtime acceptance"
+    },
+    {
+      "id": "code-7",
+      "type": "repository",
+      "location": "../../../docs/ui-defaults.md",
+      "anchor": "Local nonmodal settings; live edits; read-only history; mark tracing and chart movement; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "authority": "current repository reality; not runtime acceptance"
+    },
+    {
+      "id": "product-feedback",
+      "type": "direct-user-input",
+      "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
+      "anchor": "Annotations 2, 7, 8",
+      "authority": "Explicit human feedback; tentative answers remain tentative"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "direct-editing",
+        "type": "outcome",
+        "statement": "Edit chart features where they appear while keeping the result visible.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-addition",
+            "anchor": "support more advance editing; edit in place"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "targets",
+        "type": "example",
+        "statement": "Titles, subtitles, and axis limits are the first named editing targets.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-addition",
+            "anchor": "title, subtitles, axis limits, etc."
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "double-click",
+        "type": "implementation hypothesis",
+        "statement": "Double-click may open a local editor.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-addition",
+            "anchor": "Either double click to edit"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": "Gesture and API choices remain provisional."
+      },
+      {
+        "id": "context-menu",
+        "type": "implementation hypothesis",
+        "statement": "Right-click may expose a local editing action.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-addition",
+            "anchor": "Or right click"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": "Gesture and API choices remain provisional."
+      },
+      {
+        "id": "axis-drag",
+        "type": "implementation hypothesis",
+        "statement": "Dragging may adjust axis limits.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "user-addition",
+            "anchor": "Axis limits might have a drag interaction"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": "Gesture and API choices remain provisional."
+      },
+      {
+        "id": "exact-entry",
+        "type": "derived implication",
+        "statement": "Keep exact axis-bound input available beside any drag gesture.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-addition",
+            "anchor": "axis limits; drag is a possible mechanism"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": ""
+      },
+      {
+        "id": "gesture-coexistence",
+        "type": "constraint",
+        "statement": "Distinguish editing from chart movement, selection, and inspection.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-addition",
+            "anchor": "edit visible chart features within the current workspace"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": ""
+      },
+      {
+        "id": "local-session",
+        "type": "derived implication",
+        "statement": "Support cancellation and valid accepted changes through current chart settings.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "superseded",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-addition",
+            "anchor": "a nice way to edit in place"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": "",
+        "superseded_by": "immediate-edits"
+      },
+      {
+        "id": "current-foundation",
+        "type": "current repository reality",
+        "statement": "Live chart settings and reset exist. Titles overlap drag handles and tracing. Axis context menus already inspect fields. Direct text/domain editing and subtitles are not common saved behaviors.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "code-1",
+            "anchor": "Existing title and axis-label settings inputs; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+          },
+          {
+            "source_id": "code-2",
+            "anchor": "Live updates, invalid-range handling, and edit-session reset; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+          },
+          {
+            "source_id": "code-3",
+            "anchor": "Title inside drag-handle; Alt title tracing; read-only handling; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+          },
+          {
+            "source_id": "code-4",
+            "anchor": "Modifier-click and context-menu field inspection; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+          },
+          {
+            "source_id": "code-5",
+            "anchor": "Axis label focus, pointer events, and trace actions; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+          },
+          {
+            "source_id": "code-6",
+            "anchor": "Axis min/max declarations and existing shared chart settings; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+          },
+          {
+            "source_id": "code-7",
+            "anchor": "Local nonmodal settings; live edits; read-only history; mark tracing and chart movement; revision a50df9985ed3ff54d0f6ca368c0b369829b8a927"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Source inspection only."
+      },
+      {
+        "id": "immediate-edits",
+        "type": "required behavior",
+        "statement": "Apply valid direct edits immediately and reuse existing undo.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 8"
+          }
+        ],
+        "confidence": "high",
+        "supersedes": [
+          "local-session"
+        ],
+        "notes": "No implementation authorization or unobserved proof is inferred."
+      },
+      {
+        "id": "text-axis-priority",
+        "type": "preference",
+        "statement": "Prioritize direct text and axis edits to remove repeated settings navigation.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 7"
+          }
+        ],
+        "confidence": "high",
+        "supersedes": [],
+        "notes": "No implementation authorization or unobserved proof is inferred."
+      }
+    ],
+    "themes": [
+      "Direct manipulation",
+      "Local edits with clear effects"
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
+      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "worktree_status": "Detached HEAD; earlier intent files remain uncommitted.",
+      "subsystems": [
+        "packages/explorEDA/src/components/settings/LabelsSettingsTab.tsx",
+        "packages/explorEDA/src/components/ChartSettingsContent.tsx",
+        "packages/explorEDA/src/components/PlotChartPanel.tsx",
+        "packages/explorEDA/src/components/charts/AxisFieldActions.tsx",
+        "packages/explorEDA/src/components/charts/Axis/AxisLayer.tsx",
+        "packages/explorEDA/src/types/ChartTypes.ts",
+        "docs/ui-defaults.md"
+      ],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-06",
+      "action": "Created a new intent from direct user additions.",
+      "reason": "Add editorial styling and editing projects to the existing collection.",
+      "evidence": "Source inspected; no runtime changes or tests."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Reconciled annotated product feedback and priority.",
+      "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
+      "source_annotation_indices": [
+        2,
+        7,
+        8
+      ],
+      "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    }
+  ],
+  "closure": null,
+  "intake": {
+    "kind": "user-addition",
+    "commitment": "explicit outcome; proposed gestures and style mechanisms remain tentative",
+    "related_initiatives": [
+      "editorial-chart-styling",
+      "axis-domain-controls",
+      "current-analysis-trust"
+    ],
+    "priority": "first-pass",
+    "audience": "End users; developers deliver their experience."
+  },
+  "relations": [
+    {
+      "initiative": "axis-domain-controls",
+      "relationship": "Owns domain values, zoom, and reset semantics; this initiative owns access and edit interaction."
+    },
+    {
+      "initiative": "editorial-chart-styling",
+      "relationship": "Owns subtitle presentation and style values; this initiative edits them through the same settings."
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+[
+  {
+    "key": "n1",
+    "category": 1,
+    "value": 10
+  },
+  {
+    "key": "s1",
+    "category": "1",
+    "value": 20
+  },
+  {
+    "key": "sep",
+    "category": "a__b",
+    "value": 30
+  },
+  {
+    "key": "missing",
+    "category": null,
+    "value": 40
+  },
+  {
+    "key": "false",
+    "category": false,
+    "value": 50
+  }
+]

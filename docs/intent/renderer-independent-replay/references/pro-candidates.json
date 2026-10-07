@@ -1,0 +1,55 @@
+{
+  "chart_review_items": [],
+  "gap_register_items": [
+    {
+      "requirement_id": "DATA-04",
+      "intent_strength": "Core",
+      "proposed_priority": "P2",
+      "change_from_old_report": "Still limited",
+      "desired_outcome": "Know source identity and the grain of one record",
+      "current_evidence_based_assessment": "Raw/effective rows and positional __ID support inspection within a loaded snapshot.",
+      "remaining_boundary_or_proof_gap": "No durable source key, row-grain description, source fingerprint/version or recorded flattening lineage is established. Reordering can change identity.",
+      "source_ids": "T11 T13 T15 INV",
+      "suggested_browser_scenarios": "BT23",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "CALC-10",
+      "intent_strength": "Core",
+      "proposed_priority": "P2",
+      "change_from_old_report": "Expanded partial",
+      "desired_outcome": "Make analytical transformations deterministic and interpretable",
+      "current_evidence_based_assessment": "Shared numeric rules, UTC calendar arithmetic and chart-specific trace contracts improve determinism.",
+      "remaining_boundary_or_proof_gap": "Stable source IDs across reload, durable source versions and a renderer-independent replay contract are not established; deterministic layout is narrower than deterministic analysis history.",
+      "source_ids": "T15 T18 NUM ROLL CHART INV",
+      "suggested_browser_scenarios": "BT23 BT29",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "TRACE-05",
+      "intent_strength": "Specific / architecture parked",
+      "proposed_priority": "P3",
+      "change_from_old_report": "Stable partial",
+      "desired_outcome": "Reproduce an analysis independently of the current renderer",
+      "current_evidence_based_assessment": "Settings restore and full-analysis bundles preserve applied application state with source rows.",
+      "remaining_boundary_or_proof_gap": "No renderer-neutral scene, stable source version or headless semantic evaluation contract is established. Restoring React is not independent analytical reproduction.",
+      "source_ids": "T15 T16 INV HOST",
+      "suggested_browser_scenarios": "BT22 BT23 BT26",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    }
+  ],
+  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "current_assessment": {
+    "date": "2026-10-06",
+    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "statement": "The archive includes a Pro scatter planning prototype and verification files. Active scatter and time-series planners now offer narrower real seams. SavedAnalysisStructure stores rows and settings, but no general renderer-neutral analytical result catalogue.",
+    "evidence_scope": "Source inspection only; no fresh application browser proof."
+  },
+  "current_priority": "Unranked candidate or future seed"
+}

@@ -1,0 +1,77 @@
+{
+  "chart_review_items": [
+    {
+      "id": "C11",
+      "phase": 1,
+      "title": "Clarify filter scope and inline legend behavior",
+      "effort": "Small–Medium, staged",
+      "current_state": "Standalone legend filters; line legend is static. Table/Rows search and filtering have different scopes.",
+      "desired_outcome": "Users can distinguish visual hiding, local search, and global filtering.",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "Line legend supports hide/isolate with visible state.",
+        "Hiding a series is not silently treated as filtering source rows.",
+        "Global/local scope is labeled where controls are used.",
+        "Promoting a local predicate to the workspace is an explicit action when supported.",
+        "Standalone categorical/date filter controls reuse existing predicates."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/ColorLegend/ColorLegendChart.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/DataTable/README.md"
+      ]
+    }
+  ],
+  "gap_register_items": [
+    {
+      "requirement_id": "FILT-01",
+      "intent_strength": "Core",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Expanded partial",
+      "desired_outcome": "Explain exactly which population a view represents",
+      "current_evidence_based_assessment": "Active counts, local Rows/search labels and owner navigation are active. Chart traces describe additional populations and exclusions.",
+      "remaining_boundary_or_proof_gap": "No universal row-exclusion explanation or ordered filter funnel is established. Peer-filtered mark totals can legitimately differ from global row totals.",
+      "source_ids": "T06 T12 FILTER INV CHART",
+      "suggested_browser_scenarios": "BT03 BT11",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "FILT-05",
+      "intent_strength": "Candidate / parked",
+      "proposed_priority": "P3",
+      "change_from_old_report": "Still outside slice",
+      "desired_outcome": "Keep persistent base constraints and independent filter groups",
+      "current_evidence_based_assessment": "Independent workspace instances are a host composition option.",
+      "remaining_boundary_or_proof_gap": "No in-workspace filter islands or stable base-filter layer is established. Do not interpret peer filtering as independent filter groups.",
+      "source_ids": "T12 T15 INV",
+      "suggested_browser_scenarios": "BT31",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "COLOR-03",
+      "intent_strength": "Specific",
+      "proposed_priority": "P2",
+      "change_from_old_report": "Stable partial",
+      "desired_outcome": "Select or emphasize through legends",
+      "current_evidence_based_assessment": "Typed categorical legend filtering is described.",
+      "remaining_boundary_or_proof_gap": "Continuous legend brushing and linked hover emphasis are not established as general contracts. A visible color ramp is not interactive numerical selection.",
+      "source_ids": "T14 INV BASE",
+      "suggested_browser_scenarios": "BT20",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    }
+  ],
+  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "current_assessment": {
+    "date": "2026-10-06",
+    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "statement": "FiltersSettingsTab uses field-aware controls. LocalFilterStrip names chart-only restrictions. Raw LineChart legend spans handle pointer emphasis. TimeSeriesChart shows static legend labels. The standalone legend already performs categorical record filtering.",
+    "evidence_scope": "Source inspection only; no fresh application browser proof."
+  },
+  "current_priority": "expressed-interest-in-chart-free-filters"
+}

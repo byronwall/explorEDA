@@ -19,7 +19,16 @@ import {
   distributionDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
-import { SavedDataStructure } from "exploreda";
+import type {
+  AnalysisProject,
+  AnalysisSourceRow,
+  SavedDataStructure,
+} from "exploreda";
+import {
+  shopProject,
+  shopProjectViews,
+  shopQueryPresets,
+} from "./multiSourceShop";
 import {
   MapPin,
   Bird,
@@ -63,6 +72,12 @@ export interface ExampleData {
   /** One tested first action, shown above the workspace. */
   guide?: string;
   icon: LucideIcon;
+  /** Related tables: the example opens a project instead of one file. */
+  project?: AnalysisProject;
+  tables?: Record<string, readonly AnalysisSourceRow[]>;
+  queryPresets?: Record<string, SavedDataStructure>;
+  /** The first tab's name, when the title does not fit a tab. */
+  viewName?: string;
   data: string; // path to the data file
   savedData?: SavedDataStructure;
   /** More saved views that open as tabs beside the main one. */
@@ -188,6 +203,24 @@ export const examples: ExampleData[] = [
     icon: ScatterChart,
     data: "/datasets/product-activity.csv",
     savedData: bubbleDashboard,
+  },
+  {
+    id: "multi-source-shop",
+    title: "Orders, items, and their sources",
+    description:
+      "Follow customers, orders, items, and products. Each view says what one row is before you chart it.",
+    dataset: { rows: "5 orders · 8 items", fields: 15, source: "Synthetic" },
+    shows: ["Related tables", "Row meaning", "Query flow", "Saved tabs"],
+    guide:
+      "Try this: switch between Orders and Items. Orders total $150; item revenue is $140. Alt-click a bar, then show its rows in the query flow.",
+    icon: ShoppingCart,
+    data: "",
+    project: shopProject.project,
+    tables: shopProject.sources,
+    savedData: shopQueryPresets["orders-by-customer"],
+    views: shopProjectViews,
+    queryPresets: shopQueryPresets,
+    viewName: "Orders",
   },
   {
     id: "shop-operations",

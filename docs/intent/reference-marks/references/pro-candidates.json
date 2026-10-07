@@ -1,0 +1,62 @@
+{
+  "chart_review_items": [
+    {
+      "id": "C12",
+      "phase": 3,
+      "title": "Add reference rules, intervals, and annotations",
+      "effort": "Small rule; Medium reusable system",
+      "current_state": "BaseChart offers an overlay slot but shared saved settings have no annotation model.",
+      "desired_outcome": "Existing charts express targets, events, and supplied bounds without custom renderer forks.",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "Fixed horizontal/vertical rule with label works first.",
+        "Fixed, whole-population, and selected-population reference scopes are distinguished.",
+        "Bands and supplied lower/upper bounds are persisted.",
+        "Labels do not cover essential marks at supported desktop sizes.",
+        "No inferential confidence claim is made for an unlabeled input interval."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/BaseChart.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/types/ChartTypes.ts"
+      ]
+    }
+  ],
+  "gap_register_items": [
+    {
+      "requirement_id": "CHART-07",
+      "intent_strength": "Core supporting views",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Expanded",
+      "desired_outcome": "Use non-plot views as analytical context",
+      "current_evidence_based_assessment": "Summary, source tables, legends, rich explanation and now Metric Card support the workflow; inline table distributions are active.",
+      "remaining_boundary_or_proof_gap": "Static text is not live data-bound narrative; metric all-source comparison is not a frozen baseline; every supporting view needs a clear population label.",
+      "source_ids": "T09 T13 T14 T19 TABLE CHART",
+      "suggested_browser_scenarios": "BT01 BT07 BT33",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "TRACE-03",
+      "intent_strength": "Core",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Expanded partial",
+      "desired_outcome": "Explain properties, defaults, scales and denominators",
+      "current_evidence_based_assessment": "New traces include stack bands, numeric exclusions, date bounds, projections, ECDF denominators and source inputs.",
+      "remaining_boundary_or_proof_gap": "No universal every-property provenance contract is established. Test parameter origins, own-versus-peer filtering and overridden settings instead of counting trace dialogs.",
+      "source_ids": "T15 CHART INV",
+      "suggested_browser_scenarios": "BT10 BT14 BT24",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    }
+  ],
+  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "current_assessment": {
+    "date": "2026-10-06",
+    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "statement": "BaseChart has an overlay seam. The shared chart settings expose axes and filters but no common reference-mark model. Scatter fits are now implemented; a regression curve does not provide saved target and event controls across other charts.",
+    "evidence_scope": "Source inspection only; no fresh application browser proof."
+  },
+  "current_priority": "Unranked candidate or future seed"
+}
