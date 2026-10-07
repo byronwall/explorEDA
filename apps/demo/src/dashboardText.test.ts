@@ -71,8 +71,9 @@ describe("dashboard text round trip", () => {
 });
 
 describe("all views as one text", () => {
+  // Project views each chart their own query, so only file examples share rows.
   const withViews = examples.filter(
-    (example) => example.savedData && example.views?.length
+    (example) => !example.project && example.savedData && example.views?.length
   );
   it.each(withViews.map((example) => [example.id, example] as const))(
     "%s",
