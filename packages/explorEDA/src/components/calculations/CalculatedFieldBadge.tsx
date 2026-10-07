@@ -5,6 +5,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Workflow } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCalculationEditor } from "./CalculationEditor";
 import { calculationValue, dependentCalculations } from "./calculationHelpers";
@@ -114,44 +115,50 @@ export function CalculatedFieldBadge({
           restoreFocus.current = false;
         }}
       >
-        <div className="eda-calc-section-heading">
+        <div className="eda-calc-peek-heading">
           <FieldMetadata profile={profile} label={field} compact />
           <span>Calculated field</span>
         </div>
         <pre>{calc.expression.rawInput}</pre>
-        <p className="eda-calc-help">
-          Uses{" "}
-          {calc.expression.dependencies.length
-            ? calc.expression.dependencies.join(", ")
-            : "constant values"}
-          .
-        </p>
-        <div className="eda-calc-peek-result">
-          <span>Row {rowId + 1}</span>
-          <strong>{errors.get(rowId) ?? calculationValue(value)}</strong>
+        <dl className="eda-calc-peek-facts">
+          <dt>Uses</dt>
+          <dd>
+            {calc.expression.dependencies.length
+              ? calc.expression.dependencies.join(", ")
+              : "Constant values"}
+          </dd>
+          <dt>Row {rowId + 1}</dt>
+          <dd>
+            <strong>{errors.get(rowId) ?? calculationValue(value)}</strong>
+          </dd>
+          <dt>Rows</dt>
+          <dd>
+            {errors.size
+              ? errors.size.toLocaleString() +
+                " of " +
+                data.length.toLocaleString() +
+                " failed"
+              : "All " + data.length.toLocaleString() + " valid"}
+          </dd>
+          <dt>Dependents</dt>
+          <dd>{dependentCalculations(calculations, field).length}</dd>
+        </dl>
+        <div className="eda-calc-peek-actions">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setOpen(false);
+              pinned.current = false;
+              restoreFocus.current = false;
+              editor.open(field, rowId, trigger.current);
+            }}
+          >
+            <Workflow aria-hidden="true" />
+            Inspect chain & edit
+          </Button>
         </div>
-        <p className="eda-calc-help">
-          {errors.size
-            ? errors.size.toLocaleString() +
-              " of " +
-              data.length.toLocaleString() +
-              " rows failed"
-            : "All " + data.length.toLocaleString() + " rows valid"}{" "}
-          · {dependentCalculations(calculations, field).length} dependent
-          calculations
-        </p>
-        <Button
-          type="button"
-          className="mt-4 w-full"
-          onClick={() => {
-            setOpen(false);
-            pinned.current = false;
-            restoreFocus.current = false;
-            editor.open(field, rowId, trigger.current);
-          }}
-        >
-          Inspect chain & edit
-        </Button>
       </PopoverContent>
     </Popover>
   );

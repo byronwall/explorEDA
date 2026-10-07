@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { beforeAll, expect, it, vi } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
@@ -216,4 +222,36 @@ it("discovers Histogram and Distribution without adding a preview to the saved l
   expect(screen.getByLabelText("Charts")).toHaveTextContent(
     "bar@0,0 boxplot@6,0"
   );
+});
+
+it("shows the preview without a trace control", async () => {
+  // Give the preview a size so the chart renders.
+  class SizedObserver {
+    constructor(
+      private callback: (entries: { contentRect: DOMRectReadOnly }[]) => void
+    ) {}
+    observe() {
+      this.callback([
+        { contentRect: { width: 400, height: 300 } as DOMRectReadOnly },
+      ]);
+    }
+    unobserve() {}
+    disconnect() {}
+  }
+  const previous = globalThis.ResizeObserver;
+  vi.stubGlobal("ResizeObserver", SizedObserver);
+  try {
+    renderWorkspace();
+    fireEvent.click(screen.getByRole("button", { name: "Add chart" }));
+    const dialog = await screen.findByRole("dialog", { name: "Add a chart" });
+    const preview = within(dialog).getByRole("region", {
+      name: /Preview of the new/,
+    });
+    await waitFor(() => expect(preview.querySelector("svg")).not.toBeNull());
+    expect(
+      within(dialog).queryByRole("button", { name: "Trace chart objects" })
+    ).not.toBeInTheDocument();
+  } finally {
+    vi.stubGlobal("ResizeObserver", previous);
+  }
 });

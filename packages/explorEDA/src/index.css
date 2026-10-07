@@ -3008,36 +3008,71 @@ html {
   transform-origin: top left;
   transform: rotate(-90deg) translateY(-50%);
 }
+/* Matches the field details tooltip: a name line, then label and value
+   pairs in two columns, with the formula kept small. */
 .eda-calc-peek {
-  width: min(340px, calc(100vw - 24px));
+  width: min(300px, calc(100vw - 24px));
+  padding: 8px 10px;
   font-size: 12px;
   max-height: var(--radix-popover-content-available-height);
   overflow: auto;
 }
+.eda-calc-peek-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+.eda-calc-peek-heading > span:last-child {
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
 .eda-calc-peek pre {
-  margin: 8px 0;
-  padding: 8px;
-  border-radius: 5px;
+  max-height: 7.5rem;
+  margin: 6px 0;
+  padding: 4px 6px;
+  overflow: auto;
+  border-radius: 4px;
   background: var(--muted);
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.45;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-.eda-calc-peek-result {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 10px 0 6px;
-  border-top: 1px solid var(--border);
-  padding-top: 8px;
+.eda-calc-peek-facts {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 2px 12px;
+  font-size: 12px;
+  line-height: 1.4;
 }
-.eda-calc-peek-result strong {
-  overflow-wrap: anywhere;
-}
-.eda-calc-peek-result > span {
+.eda-calc-peek-facts dt {
   color: var(--muted-foreground);
   white-space: nowrap;
+}
+.eda-calc-peek-facts dd {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.eda-calc-peek-facts strong {
+  font-weight: 600;
+}
+.eda-calc-peek-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 4px -4px -2px 0;
+}
+.eda-calc-peek-actions button {
+  height: 24px;
+  padding: 0 6px;
+  color: var(--primary);
+  font-size: 11px;
+}
+.eda-calc-peek-actions button svg {
+  width: 13px;
+  height: 13px;
 }
 .eda-calc-editor {
   display: flex;
@@ -4735,7 +4770,7 @@ html {
   gap: 10px;
   width: min(64rem, calc(100vw - 1rem));
   max-width: none;
-  height: min(42rem, calc(100vh - 1rem));
+  height: min(42rem, calc(100dvh - 1rem));
   padding: 12px;
 }
 .eda-add-chart-header {
@@ -4748,7 +4783,7 @@ html {
 }
 .eda-add-chart-body {
   display: grid;
-  grid-template-columns: minmax(15rem, 19rem) minmax(0, 1fr);
+  grid-template-columns: minmax(15rem, 19.5rem) minmax(0, 1fr);
   gap: 10px;
   flex: 1;
   min-height: 0;
@@ -4809,37 +4844,58 @@ html {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 0 4px 4px 0;
+}
+/* Shadows at the top and bottom edges show that more chart types scroll
+   into view, so a short window never hides the last ones. */
+.eda-add-chart-control-tabs > .eda-add-chart-types {
+  background:
+    linear-gradient(var(--background) 50%, transparent) top / 100% 12px
+      no-repeat local,
+    linear-gradient(transparent, var(--background) 50%) bottom / 100% 12px
+      no-repeat local,
+    linear-gradient(
+        color-mix(in oklab, var(--foreground) 12%, transparent),
+        transparent
+      )
+      top / 100% 6px no-repeat scroll,
+    linear-gradient(
+        transparent,
+        color-mix(in oklab, var(--foreground) 12%, transparent)
+      )
+      bottom / 100% 6px no-repeat scroll;
 }
 .eda-add-chart-types {
   display: grid;
   align-content: start;
-  gap: 8px;
+  gap: 6px;
 }
 .eda-add-chart-type-group {
   display: grid;
-  gap: 4px;
+  gap: 3px;
 }
 .eda-add-chart-type-group > h3 {
   color: var(--muted-foreground);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  line-height: 14px;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 /* Chart types line up in even columns, so a group reads as one block. */
 .eda-add-chart-type-options {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
-  gap: 4px;
+  grid-template-columns: repeat(auto-fill, minmax(8.25rem, 1fr));
+  gap: 3px;
 }
 .eda-add-chart-types button {
   display: flex;
   align-items: center;
   gap: 6px;
   min-width: 0;
-  height: 28px;
-  padding: 0 8px;
+  height: 26px;
+  padding: 0 7px;
   border: 1px solid var(--border);
   border-radius: 6px;
   font-size: 12px;
@@ -4907,17 +4963,15 @@ html {
 }
 @media (max-width: 720px) {
   .eda-add-chart {
-    height: calc(100vh - 2rem);
+    height: calc(100dvh - 2rem);
   }
+  /* The chart types get the larger share; the preview stays in view. */
   .eda-add-chart-body {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(14rem, 1fr) auto;
+    grid-template-rows: minmax(8rem, 28%) minmax(0, 1fr);
   }
   .eda-add-chart-preview {
     order: -1;
-  }
-  .eda-add-chart-controls {
-    max-height: 40vh;
   }
 }
 .eda-placement-layer {
