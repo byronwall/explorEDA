@@ -1,0 +1,255 @@
+Copy this prompt into ChatGPT Pro or Deep Research. No repository file was created.
+
+---
+
+Research four additional public datasets for **explorEDA**. Propose five detailed analyses per dataset and describe how each example could become a notebook-style report.
+
+Repository: https://github.com/byronwall/explorEDA
+
+Use `main`. The local checkout inspected for this briefing was clean at commit `8c35e4db02d9e0efc0842644d4a669e58d10caf8`. Record the revision you inspect and explain any relevant changes.
+
+### Mission
+
+Find a small, varied collection of real datasets that demonstrate advanced chart features through useful analysis questions.
+
+I want datasets ready for three stages:
+
+1. Advanced charts and linked exploration available today.
+2. Future multi-source tables with explicit lookups.
+3. Future notebook-style reporting that combines narrative, charts, and source evidence.
+
+This is research and example planning. Return the full report in chat. Do not create files, change code, commit, push, or open a pull request.
+
+### Repository context
+
+explorEDA is a React and TypeScript library with a demo application. It accepts one row array and provides linked charts, calculations, row inspection, and saved workspace settings.
+
+The existing examples include Palmer Penguins, red Wine Quality, synthetic shop operations, product activity, service maps, and several chart-specific fixtures. Inspect the full catalogue before choosing additions. Avoid another dataset that only repeats the Penguins or Wine examples.
+
+Current chart features include:
+
+- Scatter points, bubble sizing, rectangular density bins, hexagonal bins, and smoothed density contours.
+- Grouped linear, polynomial, and LOESS fits, paired summaries, and marginal histograms.
+- Histograms, box plots, violin plots, observations, beeswarm overlays, and ECDFs.
+- Grouped, stacked, and percentage bars.
+- Calendar heatmaps and daily, weekly, or monthly line and area summaries.
+- Categorical heatmaps, parallel coordinates, Sankey charts, and 3D scatter.
+- Point maps and region maps using supplied GeoJSON.
+- Pivot tables, summary tables, metric cards, source tables, and editable notes.
+- Linked filters, facets, calculated fields, and source-row tracing.
+
+Confirm actual support from source. Older documents may predate recent chart changes. Do not assume that every renderer supports arbitrary measures or aggregation modes.
+
+Multi-source analysis is planned. Its provisional shape uses one base table per view, enriched through explicit lookups. It preserves the base population. General joins, automatic relationship filtering, and mixed-population dashboards remain open decisions.
+
+Editable notes exist today. Full notebook reporting is a future direction, not a confirmed current feature.
+
+### Reading route
+
+Read these files at minimum:
+
+1. `AGENTS.md`
+2. `README.md`
+3. `package.json`
+4. `packages/explorEDA/README.md`
+5. `packages/explorEDA/package.json`
+6. `apps/demo/public/datasets/README.md`
+7. `apps/demo/src/demos/examples.ts`
+8. `apps/demo/src/demos/dashboardSettings.ts`
+9. `apps/demo/src/demos/coverage.ts`
+10. `docs/example-coverage.md`
+11. `docs/analytical-chart-coverage.md`
+12. `packages/explorEDA/src/charts/registerAllCharts.ts`
+13. `packages/explorEDA/src/types/SavedDataStructure.ts`
+14. `docs/intent/multi-source-analysis/intent-brief.md`
+15. `docs/intent/multi-source-analysis/shape-brief.md`
+16. `packages/explorEDA/src/components/charts/Markdown/Markdown.tsx`
+
+For recent scatter behavior, inspect:
+
+- `packages/explorEDA/src/components/charts/ScatterPlot/definition.ts`
+- `packages/explorEDA/src/components/charts/ScatterPlot/regression.ts`
+- `packages/explorEDA/src/components/charts/ScatterPlot/fitPlan.ts`
+- `packages/explorEDA/src/components/charts/ScatterPlot/pairedSummary.ts`
+- `packages/explorEDA/src/components/charts/ScatterPlot/marginalPlan.ts`
+- `packages/explorEDA/src/components/charts/ScatterPlot/hexPlan.ts`
+- `packages/explorEDA/src/components/charts/ScatterPlot/contourPlan.ts`
+
+Useful read-only commands, if you have a checkout:
+
+```sh
+git status --short
+git rev-parse HEAD
+rg --files apps/demo/src/demos packages/explorEDA/src docs/intent
+rg -n 'regression|loess|polynomial|marginal|density|hex' packages/explorEDA/src/components/charts/ScatterPlot
+```
+
+The repository uses pnpm. Its existing validation commands include `pnpm check`, `pnpm check:ui`, and `pnpm --filter demo dev`. This research does not require installation or test runs. Do not claim runtime verification from source inspection.
+
+### Priority questions
+
+Answer these in order:
+
+1. Which four datasets add the most useful analytical variety beyond the current catalogue?
+2. Which five analyses per dataset produce clear, worthwhile demonstrations of existing advanced features?
+3. Which datasets also provide strong, understandable examples of related tables and explicit lookups?
+4. How would each example become a coherent notebook report?
+5. What preparation work and feature gaps affect readiness?
+
+Prefer four datasets. Return three only if a fourth fails the evidence or quality gates. Explain the shortfall.
+
+### Internet research and dataset selection
+
+Search the internet. Use original publishers, official documentation, and authoritative repositories. Do not rely only on catalogue descriptions or remembered schemas.
+
+Explore at least eight candidates before selecting the final set. Keep the rejected-candidate summary brief.
+
+Choose a varied portfolio. Look for different combinations of:
+
+- Dense numeric relationships suited to fits and density views.
+- Dates, repeated observations, and meaningful seasonality.
+- Geographic coordinates or stable region identifiers.
+- Several numeric measures suitable for parallel coordinates.
+- Ordered categorical stages suitable for a valid Sankey.
+- Related tables with stable identifiers and different row counts.
+
+At least two selected dataset families should contain useful related tables. Prefer base-to-lookup relationships that preserve one row per base record.
+
+Do not force every chart into every dataset. Do not invent stage transitions from unrelated categories. A good analysis question matters more than feature count.
+
+Prefer public downloads without paid access, credentials, or a complex service. Favor CSV or simple tabular extracts. Larger source files are acceptable when a small, reproducible demo subset is practical.
+
+For each selected dataset, provide:
+
+- Publisher, source page, download links, and data dictionary.
+- License or terms, attribution, and evidence that demo redistribution is allowed.
+- Version or time coverage and access date.
+- File formats, approximate size, and verified row counts when available.
+- What one row represents in each table.
+- Actual field names, types, units, identifiers, and important missing-value codes.
+- Known sampling limits or other interpretation limits.
+- Why it adds value beyond existing examples.
+- A recommended demo subset, with a reproducible selection rule.
+- Minimal preparation steps and expected resulting fields.
+- A readiness verdict: **ready**, **preparation needed**, or **blocked**.
+
+Inspect actual sample rows or file contents where tools permit. Separate direct inspection from documentation-only evidence. Preserve data relationships when making subsets. Avoid samples that erase rare groups or seasonal structure.
+
+### Five analyses per dataset
+
+Provide exactly five distinct analyses for each selected dataset.
+
+For each analysis, include:
+
+1. **Question and purpose.** What should a viewer learn, and why does it matter?
+2. **Population.** Name the base table, row grain, date range, exclusions, and denominator.
+3. **Preparation.** Specify derived fields, formulas, units, and aggregation rules. Separate offline preparation from supported in-app calculations.
+4. **Chart design.** Give a detailed specification for each proposed view:
+   - Chart family and display mode.
+   - Actual fields for X, Y, color, size, groups, facets, and stages.
+   - Count, sum, average, or other required calculation.
+   - Scale choices, ordering, bins, and fit settings where relevant.
+   - Supporting charts or tables and their purpose.
+   - A clear title and labels.
+5. **Interaction.** Describe a first user action, linked-filter effect, and source-trace check.
+6. **Interpretation.** State the pattern to investigate. Label untested expectations as hypotheses.
+7. **Correctness checks.** Explain how to check counts, totals, exclusions, denominators, or lookup results.
+8. **Feature fit.** Classify it as available now, available with offline preparation, dependent on planned lookups, or dependent on another feature.
+9. **Notebook role.** Explain where this analysis belongs in the report and what question follows it.
+
+Use enough detail that a developer can later build the example without inventing the analytical design.
+
+Prefer a main chart plus one or two supporting views for each analysis. Explain shared views when several analyses belong in one workspace. Do not propose five crowded dashboards by default.
+
+Do not claim a heatmap can compute a correlation matrix unless the repository supports that calculation. Do not stack averages. Explain weighting when comparing rates. Distinguish missing values, valid zero, and absent records.
+
+Regression and smoothing describe associations. Do not turn them into causal claims or use arbitrary polynomial degrees to create a dramatic shape.
+
+### Multi-source preparation
+
+For each selected dataset, explain its multi-source potential.
+
+For the two or more families with related tables, provide a table relationship plan:
+
+- Base table and lookup tables.
+- Primary keys, lookup keys, key types, and expected cardinality.
+- Fields each lookup contributes.
+- Missing and duplicate key behavior.
+- Base row count and totals that must remain unchanged.
+- Field-origin information needed for inspection.
+- Any required aggregation before a lookup.
+- What can be demonstrated today with a prepared flat table.
+- What becomes possible when explicit lookups arrive.
+
+Identify natural edge cases: unmatched keys, lookup records without base records, duplicate identifiers, and differing table sizes.
+
+Do not alter real data to manufacture edge cases without labeling the altered fixture. Keep any proposed test fixture separate from the reference dataset.
+
+Do not assume cross-source filters propagate automatically. If an analysis needs a different base population, describe a separate future view.
+
+### Notebook reporting commentary
+
+Describe one notebook outline per dataset, using its five analyses as a connected story.
+
+Include:
+
+- A title, audience, and main question.
+- An introduction explaining the population and source.
+- A preparation section with field definitions and lookup provenance.
+- An ordered sequence of narrative, charts, and supporting tables.
+- Short example narrative passages tied to the analyses.
+- Places where readers should filter, inspect rows, or compare groups.
+- How the report records the active population and filter state.
+- How it distinguishes a saved result from a live chart that changes with filters.
+- A conclusion structure that stays within the evidence.
+- An appendix for sources, definitions, preparation rules, and reproducibility.
+
+If you have not computed a result, use conditional narrative. Do not invent findings.
+
+Discuss which report elements can use current notes and saved workspaces. Identify the smallest future additions needed for notebook reporting. Keep this focused on these examples; do not design a general notebook platform.
+
+### Evidence and acceptance gates
+
+Cite every dataset recommendation with primary web sources. Cite chart-feasibility claims with repository paths and relevant symbols.
+
+Keep these distinct:
+
+- **Observed:** verified from data, source, or documentation.
+- **Inferred:** a reasoned conclusion with stated evidence.
+- **Proposed:** an analysis or future behavior.
+- **Unknown:** something you could not verify.
+
+**GO:** Recommend a dataset only when its access, schema, reuse terms, and analytical value are supported by evidence.
+
+**NO-GO:** Reject or hold a dataset when redistribution is unclear, access is impractical, fields do not support the analyses, or preparation cost exceeds its demo value.
+
+Stop pursuing a candidate when essential access or licensing evidence remains unavailable. Move to another candidate. Do not pad the portfolio to reach four.
+
+If repository access fails, continue public dataset research using this briefing as unverified context. Mark chart feasibility provisional. Do not claim a complete repository-grounded result.
+
+If internet browsing is unavailable, stop dataset selection and report that blocker. Do not replace verified research with remembered recommendations.
+
+Do not declare completion until:
+
+- Four datasets are selected, or a justified three-dataset result is explained.
+- Every selected dataset has five detailed analyses.
+- At least two families have credible related-table plans.
+- Each dataset has a notebook outline.
+- Download access, schema, and reuse terms have been checked.
+- Feature gaps and unverified findings are visible.
+- The portfolio adds clear value beyond the existing examples.
+
+### Deliverable
+
+Return one standalone Markdown report in chat. Create no repository files.
+
+Use this order:
+
+1. A concise recommendation and ranked dataset comparison table.
+2. Four dataset sections, each with source details, preparation, five analyses, lookup plans, and a notebook outline.
+3. A portfolio coverage matrix connecting datasets to chart features and future capabilities.
+4. A short rejected-candidate table.
+5. A ranked preparation backlog: what to prepare first, required effort, and dependencies.
+6. A final status stating repository revision, access limits, data inspected, and unresolved questions.
+
+End by naming the best dataset to add first and explaining why.
