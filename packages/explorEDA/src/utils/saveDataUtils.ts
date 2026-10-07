@@ -632,7 +632,7 @@ function isChart(value: unknown): boolean {
               )) &&
             (value.time.display !== "stacked-area" ||
               value.time.aggregation !== "average") &&
-            ["day", "week", "month"].includes(value.time.interval as string) &&
+            ["day", "week", "month", "year"].includes(value.time.interval as string) &&
             ["monday", "sunday"].includes(value.time.weekStart as string) &&
             ["count", "sum", "average"].includes(
               value.time.aggregation as string

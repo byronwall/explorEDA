@@ -8,7 +8,7 @@
     "last_updated": "2026-10-06",
     "summary": "Show completed, powerful analyses for analysts: all four new dataset families, Wine, a curated Shop analysis, and Lorenz; use the landed multi-table feature.",
     "status": "active",
-    "next_action": "Review the Flights and Beijing PRs; then prepare World Bank and Earthquakes, and curate the catalogue."
+    "next_action": "Review the stacked PRs; then prepare Earthquakes and curate the catalogue."
   },
   "artifacts": {
     "intent_brief": {
@@ -994,11 +994,16 @@
       {
         "id": "world-bank",
         "name": "World Bank indicators",
-        "proof": "Country counts and endpoint cohorts reconcile; aggregates excluded by metadata.",
-        "status": "planned",
+        "proof": "5,208 country-years from 217 economies keep their yearly population totals through five lookups; aggregates excluded by metadata; every tab compiles against all rows.",
+        "status": "completed",
         "outcome": "A complete World Bank analysis compares countries across endpoints and geography.",
         "valid_intermediate_state": "World Bank is added as one more catalogue entry.",
-        "rollback": "Remove the catalogue entry; the example and its data files go with it."
+        "rollback": "Remove the catalogue entry; the example and its data files go with it.",
+        "evidence": [
+          "apps/demo/src/demos/analyses/analyses.test.ts (country-years, yearly population totals, lookup misses, tabs)",
+          "apps/demo/public/datasets/worldbank/manifest.json",
+          "Browser screenshots of five tabs at 1440 px"
+        ]
       },
       {
         "id": "earthquakes",
@@ -1176,6 +1181,22 @@
       "changes": [
         "Prepared the 2016 station-day grid with a 20-hour rule, a station summary, and a reference-station table",
         "Corrected a draft note: high-ozone days have higher, not lower, median PM2.5"
+      ]
+    },
+    {
+      "date": "2026-10-07",
+      "event": "milestone-completed",
+      "phase": "execution",
+      "status": "active",
+      "reason": "World Bank analysis delivered.",
+      "evidence": [
+        "apps/demo/src/demos/analyses/worldbank.ts",
+        "apps/data-samples/prepare/worldbank.ts"
+      ],
+      "changes": [
+        "Froze the API vintage 2026-07-13 with response checksums",
+        "Used capital coordinates for the map instead of Natural Earth geometry",
+        "Added a year interval to time-series lines for annual data"
       ]
     }
   ],
@@ -1529,12 +1550,12 @@
     {
       "rank": 4,
       "task": "Freeze WDI indicator and metadata extracts; prepare endpoints",
-      "status": "proposed"
+      "status": "done"
     },
     {
       "rank": 5,
       "task": "Pin/audit WDI Natural Earth geometry",
-      "status": "proposed"
+      "status": "replaced: capital coordinates from country metadata feed a point map; no geometry shipped"
     },
     {
       "rank": 6,

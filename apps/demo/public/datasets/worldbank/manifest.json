@@ -1,0 +1,201 @@
+{
+  "dataset": "World Development Indicators, 2000–2023",
+  "source": {
+    "name": "World Bank World Development Indicators",
+    "license": "CC BY 4.0",
+    "credit": "World Bank, World Development Indicators. Population: UN Population Division and national sources. GDP per capita, PPP: International Comparison Program. Life expectancy: UN Population Division. Electricity access: World Bank, Sustainable Energy for All.",
+    "indicators": {
+      "population": "SP.POP.TOTL",
+      "gdp": "NY.GDP.PCAP.PP.KD",
+      "life": "SP.DYN.LE00.IN",
+      "electricity": "EG.ELC.ACCS.ZS"
+    },
+    "responses": [
+      {
+        "url": "https://api.worldbank.org/v2/country?format=json&per_page=1000",
+        "sha256": "99c199efc2fc2880c169eb611f5a32ba69adc0e225b83f54fe384a5d66ba2448",
+        "records": 296,
+        "lastupdated": null
+      },
+      {
+        "url": "https://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL?date=2000:2023&format=json&per_page=20000",
+        "sha256": "b895511a9e10ce316dda4b5e15bbe5ff323280933be76277e7dc684a3aa3abd1",
+        "records": 6360,
+        "lastupdated": "2026-07-13"
+      },
+      {
+        "url": "https://api.worldbank.org/v2/country/all/indicator/NY.GDP.PCAP.PP.KD?date=2000:2023&format=json&per_page=20000",
+        "sha256": "6a2a55e493a15fcf2bca6a204e107af44ee6f3b66d774d4c34b48eb13a118451",
+        "records": 6360,
+        "lastupdated": "2026-07-13"
+      },
+      {
+        "url": "https://api.worldbank.org/v2/country/all/indicator/SP.DYN.LE00.IN?date=2000:2023&format=json&per_page=20000",
+        "sha256": "2214be46e19a756605cab2b2dc317e049ccd8ebb7ea9286e44be8a260a96a517",
+        "records": 6360,
+        "lastupdated": "2026-07-13"
+      },
+      {
+        "url": "https://api.worldbank.org/v2/country/all/indicator/EG.ELC.ACCS.ZS?date=2000:2023&format=json&per_page=20000",
+        "sha256": "c86af457be444985b2346e8330972f9b7b51e1c0b6958b1e50c8ac748fe26a53",
+        "records": 6360,
+        "lastupdated": "2026-07-13"
+      }
+    ]
+  },
+  "preparation": [
+    "year_start: January 1 of the year, so charts can place years on a time axis.",
+    "country-years: every population record the API returns for 2000–2023, including null values; aggregate economies are excluded through country metadata.",
+    "gdp, life-expectancy, electricity: one row per country-year with a value; a missing row means no published value.",
+    "GDP per capita is in constant 2021 international dollars (PPP); log10_gdp_pc is its base-10 logarithm.",
+    "countries: current World Bank region and income group, not historical classifications; capital coordinates from the same metadata.",
+    "endpoints: electricity access in 2000 and 2023 and the gain in percentage points, only when both endpoints have a value and a base record."
+  ],
+  "files": [
+    {
+      "file": "country-years.csv",
+      "rows": 5208,
+      "columns": [
+        "country_year",
+        "country_code",
+        "year",
+        "year_start",
+        "population"
+      ],
+      "bytes": 193116,
+      "sha256": "f628b0d4958dd55a73cd530d2adc316683799af82b6f54c76df6c5373457eed8"
+    },
+    {
+      "file": "gdp.csv",
+      "rows": 4721,
+      "columns": [
+        "country_year",
+        "gdp_pc",
+        "log10_gdp_pc"
+      ],
+      "bytes": 101543,
+      "sha256": "cddc79d4d01d225960f159864fdff0d040cff6a5af828f4231fb4f2268ce0803"
+    },
+    {
+      "file": "life-expectancy.csv",
+      "rows": 5208,
+      "columns": [
+        "country_year",
+        "life_expectancy"
+      ],
+      "bytes": 77417,
+      "sha256": "b7574bdd5c87c8334ae1437ee28639e1e713a4779aff598e76d5996a3a27cf53"
+    },
+    {
+      "file": "electricity.csv",
+      "rows": 5135,
+      "columns": [
+        "country_year",
+        "electricity_pct"
+      ],
+      "bytes": 69013,
+      "sha256": "164b4ae32be4f631caa29595b4315e3d8175de3597e3645091b8a82c8a9aa1c5"
+    },
+    {
+      "file": "countries.csv",
+      "rows": 217,
+      "columns": [
+        "country_code",
+        "name",
+        "region",
+        "income",
+        "capital",
+        "latitude",
+        "longitude"
+      ],
+      "bytes": 17305,
+      "sha256": "d8506ddb63621a52571999fc9da2fc9725e9c074a143ffe16a3f04d9da3faba2"
+    },
+    {
+      "file": "endpoints.csv",
+      "rows": 217,
+      "columns": [
+        "country_code",
+        "electricity_2000",
+        "electricity_2023",
+        "access_gain_pp",
+        "cohort"
+      ],
+      "bytes": 6855,
+      "sha256": "76cebf42522384e39c1933429210e48bab14abfbf240dc7c14ecaa18f6fab5c7"
+    }
+  ],
+  "audit": {
+    "vintage": "2026-07-13",
+    "economies": 217,
+    "aggregatesExcluded": 79,
+    "baseRows": 5208,
+    "baseNullPopulation": 0,
+    "duplicateKeys": 0,
+    "population2000": 6139355967,
+    "population2023": 8039550134,
+    "gdp": {
+      "rows": 4721,
+      "matchedBase": 4721,
+      "lookupOnly": 0
+    },
+    "life": {
+      "rows": 5208,
+      "matchedBase": 5208,
+      "lookupOnly": 0
+    },
+    "electricity": {
+      "rows": 5135,
+      "matchedBase": 5135,
+      "lookupOnly": 0
+    },
+    "endpointCohort": 211,
+    "countriesWithCoordinates": 211
+  },
+  "findings": {
+    "incomeLongevity": {
+      "countries": 197,
+      "r": 0.86
+    },
+    "medianAccess": {
+      "start": 96.7,
+      "end": 100,
+      "countries": 211
+    },
+    "universalAccess": {
+      "start": 77,
+      "end": 138
+    },
+    "withoutElectricity": {
+      "millions": 675,
+      "weightedAccessPct": 91.6,
+      "meanCountryAccessPct": 88.2,
+      "topRegion": {
+        "region": "Sub-Saharan Africa",
+        "millions": 588
+      },
+      "topCountries": [
+        {
+          "name": "Nigeria",
+          "millions": 88,
+          "pct": 61.2
+        },
+        {
+          "name": "Congo, Dem. Rep.",
+          "millions": 82,
+          "pct": 22.1
+        },
+        {
+          "name": "Ethiopia",
+          "millions": 57,
+          "pct": 55.4
+        }
+      ]
+    },
+    "gains": {
+      "lowStartCountries": 52,
+      "lowStartMedianGain": 35.7,
+      "highStartMedianGain": 0.7
+    }
+  }
+}

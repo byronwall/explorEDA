@@ -56,7 +56,7 @@ Freeze the indicator and country-metadata extracts. Exclude aggregates through m
 
 ### Desired end state
 
-- Country counts and endpoint cohorts reconcile with the manifest; the map plots matched countries.
+- Country counts and endpoint cohorts reconcile with the manifest; the map plots each economy at its capital, from country metadata, so no geometry ships.
 
 ## Milestone 4: Earthquakes
 
@@ -74,10 +74,6 @@ Combine the Shop examples into one analysis, refine Wine, keep Lorenz, and remov
 
 - Seven public entries; each removed entry maps to a verified replacement in the coverage manifest.
 - A capability choice reaches its tab; useful fixtures and data files remain.
-
-## Open decisions and spikes
-
-- **World Bank geography:** use capital coordinates from country metadata in a point map. Fall back to a region map only if a licensed geometry asset is small enough to ship.
 
 ## Below the cut line
 

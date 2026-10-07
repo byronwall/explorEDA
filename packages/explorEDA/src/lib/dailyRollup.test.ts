@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { applyFilter } from "@/hooks/applyFilter";
-import { rollupByDay, utcDay } from "./dailyRollup";
+import { rollupByDay, utcDay, utcPeriod } from "./dailyRollup";
 
 describe("rollupByDay", () => {
   const dates = {
@@ -71,6 +71,13 @@ describe("rollupByDay", () => {
 });
 
 describe("calendar periods", () => {
+  it("bounds a year from January 1 to the next January 1", () => {
+    const period = utcPeriod("2016-07-04T10:00:00Z", "year")!;
+    expect(period.day).toBe("2016-01-01");
+    expect(new Date(period.end).toISOString()).toBe("2017-01-01T00:00:00.000Z");
+    expect(utcPeriod("2016-12-31T23:59:59Z", "year")!.day).toBe("2016-01-01");
+  });
+
   it("keeps week boundaries and month ends equal to their date filters", async () => {
     const { rollupByPeriod } = await import("./dailyRollup");
     const dates = {

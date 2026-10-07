@@ -89,3 +89,20 @@ Each daily mean uses the station's hourly readings and needs at least 20 valid h
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/beijing.ts
 ```
+
+## World Development Indicators, 2000–2023
+
+- Folder: `worldbank/`, with `manifest.json` for API URLs, response checksums, the data vintage, counts, and audits
+- Tables: `country-years.csv` (5,208 population records for 217 economies), `gdp.csv`, `life-expectancy.csv`, `electricity.csv`, `countries.csv` (217), and `endpoints.csv` (217)
+- Demo: `/examples/world-development`
+- Use: indicator lookups on a shared country-year key, matched endpoint cohorts, a point map at capitals, and weighted against unweighted totals
+- Source: [World Bank World Development Indicators](https://data.worldbank.org/) through the public API, vintage 2026-07-13
+- License: CC BY 4.0. Population and life expectancy come from the UN Population Division, GDP per capita (PPP, constant 2021 $) from the International Comparison Program, and electricity access from the World Bank.
+
+Aggregate economies are excluded through country metadata. Indicator tables hold one row per country-year with a published value; a missing row means no value was published. Regions and income groups are current classifications, not historical ones. The endpoint table keeps electricity access in 2000 and 2023 only when both years have a value.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/worldbank.ts
+```
+
+The API is live. The first run caches its responses in `tmp/data-cache/worldbank`; delete them to take a new vintage.

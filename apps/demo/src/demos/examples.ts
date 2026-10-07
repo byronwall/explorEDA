@@ -35,6 +35,7 @@ import {
   BarChart3,
   Calculator,
   CloudFog,
+  Globe,
   LineChart,
   LucideIcon,
   Orbit,
@@ -49,6 +50,7 @@ import {
 import { boxPlotSettings } from "./boxPlotSettings";
 import { beijingAnalysis } from "./analyses/beijing";
 import { flightsAnalysis } from "./analyses/flights";
+import { worldBankAnalysis } from "./analyses/worldbank";
 import type { ExampleAnalysis } from "./analyses/types";
 import { categoricalChartSettings } from "./categoricalChartSettings";
 import { nbaStatsSettings } from "./nbaStatsSettings";
@@ -160,6 +162,24 @@ export const examples: ExampleData[] = [
     icon: CloudFog,
     data: "",
     analysis: beijingAnalysis,
+  },
+  {
+    id: "world-development",
+    title: "Income, longevity, and power across 217 economies",
+    description:
+      "World Bank indicators for every economy from 2000 to 2023, joined by country and year. Compare income with life expectancy, match electricity access at both endpoints, follow countries' paths, map who still lacks power, and see where gains were possible.",
+    dataset: { rows: "5,208 country-years · 6 tables", fields: 20, source: "Real" },
+    shows: [
+      "Bubble scatter",
+      "Point map",
+      "Matched ECDF",
+      "Grouped fits",
+      "Faceted scatter",
+      "Related tables",
+    ],
+    icon: Globe,
+    data: "",
+    analysis: worldBankAnalysis,
   },
   {
     id: "distribution-discovery",
