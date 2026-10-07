@@ -369,6 +369,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "aggregation",
     "colorField",
     "colorScaleId",
+    "entityField",
     "facet",
     "field",
     "filters",

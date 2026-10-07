@@ -5,6 +5,10 @@ import {
   validateSavedAnalysisForData,
   type SavedDataStructure,
 } from "exploreda";
+import {
+  parseAnalysisProject,
+  type AnalysisProjectFile,
+} from "exploreda/analysis";
 
 import { parseCsvData } from "./csvParser";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
@@ -34,6 +38,9 @@ import { SectionHeading } from "./landing/SectionHeading";
 import {
   getSavedViewsRows,
   readSavedViewsSessionResult,
+  PROJECT_STORAGE_KEY,
+  projectSession,
+  STORAGE_KEY,
 } from "./savedViewsSession";
 
 const featuredExample = examples.find(
@@ -68,6 +75,7 @@ export function LandingPage() {
   const [exampleData, setExampleData] = useState<DatumObject[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [importRevision, setImportRevision] = useState(0);
 
   const exampleId = searchParams.get("example");
   const showCoverage =
@@ -75,13 +83,23 @@ export function LandingPage() {
   const showDocs = searchParams.get("view") === "docs";
 
   const [example, setExample] = useState<ExampleData | null>(null);
-  const [initialRestore] = useState(() => readSavedViewsSessionResult());
+  const [initialRestore] = useState(() =>
+    readSavedViewsSessionResult(
+      exampleId === "multi-source-shop" || searchParams.get("project") === "1"
+        ? PROJECT_STORAGE_KEY
+        : STORAGE_KEY
+    )
+  );
   const [restoreFailed, setRestoreFailed] = useState(initialRestore.failed);
   const [restoredSession, setRestoredSession] = useState(
     initialRestore.session
   );
   const [csvData, setCsvData] = useState<DatumObject[]>(() =>
-    restoredSession ? getSavedViewsRows(restoredSession) : []
+    restoredSession
+      ? restoredSession.project
+        ? []
+        : getSavedViewsRows(restoredSession)
+      : []
   );
   const [isCsvMode, setIsCsvMode] = useState(
     () => restoredSession !== undefined
@@ -175,7 +193,10 @@ export function LandingPage() {
     setExample(null);
     setExampleData([]);
 
-    fetchExampleData(selectedExample.data, controller.signal)
+    (selectedExample.project
+      ? Promise.resolve([])
+      : fetchExampleData(selectedExample.data, controller.signal)
+    )
       .then((data) => {
         setExampleData(data);
         setExample(selectedExample);
@@ -201,6 +222,7 @@ export function LandingPage() {
   }, [exampleId, fetchExampleData, retryCount, restoredSession]);
 
   const handleCsvImport = (data: DatumObject[]) => {
+    setImportRevision((revision) => revision + 1);
     setRestoreFailed(false);
     setIsCsvMode(true);
     setSearchParams({});
@@ -216,13 +238,29 @@ export function LandingPage() {
     setLoadError(null);
   };
 
+  const handleProjectImport = (file: AnalysisProjectFile) => {
+    setImportRevision((revision) => revision + 1);
+    setRestoredSession(projectSession(file));
+    setRestoreFailed(false);
+    setIsCsvMode(true);
+    setSearchParams({ project: "1" });
+    setExample(null);
+    setAnalysisJsonError(null);
+  };
+
   const handleAnalysisJson = () => {
     try {
+      if (JSON.parse(analysisJson).format === "exploreda-project") {
+        const file = parseAnalysisProject(analysisJson);
+        handleProjectImport(file);
+        return;
+      }
       const analysis = parseSavedAnalysis(analysisJson);
       if (!validateSavedAnalysisForData(analysis)) {
         throw new Error("Analysis formulas do not match the saved source rows");
       }
       setRestoreFailed(false);
+      setImportRevision((revision) => revision + 1);
       setCsvData(analysis.data as DatumObject[]);
       setCsvSavedData(analysis.settings);
       setIsCsvMode(true);
@@ -256,7 +294,9 @@ export function LandingPage() {
                 onClick={() => {
                   const result = readSavedViewsSessionResult();
                   setRestoreFailed(result.failed);
-                  if (!result.session) return;
+                  if (!result.session) {
+                    return;
+                  }
                   setSearchParams({});
                   setExample(null);
                   setRestoredSession(result.session);
@@ -312,7 +352,10 @@ export function LandingPage() {
                 </Suspense>
               ) : (
                 <>
-                  <PageFileDrop onImport={handleCsvImport} />
+                  <PageFileDrop
+                    onProjectImport={handleProjectImport}
+                    onImport={handleCsvImport}
+                  />
                   {featuredExample && (
                     <Hero
                       onOpenFeatured={() =>
@@ -384,7 +427,10 @@ export function LandingPage() {
                           >
                             Import your data
                           </h3>
-                          <CsvUpload onImport={handleCsvImport} />
+                          <CsvUpload
+                            onProjectImport={handleProjectImport}
+                            onImport={handleCsvImport}
+                          />
                           <SampleDataButtons onImport={handleCsvImport} />
                         </section>
                         <section
@@ -532,6 +578,7 @@ export function LandingPage() {
               >
                 {isCsvMode ? (
                   <SavedViewsWorkspace
+                    key={`import:${importRevision}`}
                     data={csvData}
                     initialSettings={csvSavedData}
                     initialSession={restoredSession}
@@ -539,10 +586,14 @@ export function LandingPage() {
                   />
                 ) : (
                   <SavedViewsWorkspace
+                    key={`example:${example?.id}`}
                     data={exampleData}
                     initialSettings={example?.savedData}
                     initialViews={example?.views}
-                    viewName={example?.title ?? "Analysis"}
+                    initialProject={example?.project}
+                    sourceTables={example?.tables}
+                    queryPresets={example?.queryPresets}
+                    viewName={example?.viewName ?? example?.title ?? "Analysis"}
                   />
                 )}
               </Suspense>

@@ -46,9 +46,10 @@ export function emptyFieldProfile(profile: FieldProfile): FieldProfile {
 
 export function buildFieldProfiles(
   rows: Array<Record<string, datum>>,
-  typeOverrides: Record<string, DataType> = {}
+  typeOverrides: Record<string, DataType> = {},
+  fieldNames: Iterable<string> = []
 ): FieldProfile[] {
-  const fields = new Set<string>();
+  const fields = new Set(fieldNames);
   for (const row of rows) {
     Object.keys(row)
       .filter((field) => field !== "__ID")

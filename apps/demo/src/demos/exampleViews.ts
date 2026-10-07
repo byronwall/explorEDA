@@ -1,4 +1,4 @@
-import type { SavedDataStructure } from "exploreda";
+import type { AnalysisView, SavedDataStructure } from "exploreda";
 import {
   penguinDashboard,
   shopDashboard,
@@ -13,6 +13,8 @@ type Layout = Chart["layout"];
 export interface ExampleView {
   name: string;
   savedData: SavedDataStructure;
+  queryId?: string;
+  bindings?: AnalysisView["bindings"];
 }
 
 const at = (x: number, y: number, w: number, h: number): Layout => ({

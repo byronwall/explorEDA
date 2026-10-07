@@ -1,0 +1,77 @@
+{
+  "chart_review_items": [
+    {
+      "id": "C17",
+      "phase": 1,
+      "title": "Introduce selection-only undo and redo",
+      "effort": "Medium",
+      "current_state": "Clear-all, removable filter chips, precise ranges, and brush clearing exist; recommendation extends these.",
+      "desired_outcome": "Exploration is reversible without requiring universal application undo.",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "One completed gesture creates one history step.",
+        "Undo/redo restores complete filter state across linked views.",
+        "Clear-all itself can be undone.",
+        "Data replacement resets or rebases history by an explicit policy.",
+        "History is bounded; no raw dataset copies per brush update."
+      ],
+      "evidence": [
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/ActiveFilterStatus.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/settings/SelectionSettingsTab.tsx",
+        "https://github.com/byronwall/explorEDA/blob/593ca2e1f9210d5bc66985437afc37fcfcd8a56a/packages/explorEDA/src/components/charts/BaseChart.tsx"
+      ]
+    }
+  ],
+  "gap_register_items": [
+    {
+      "requirement_id": "DASH-02",
+      "intent_strength": "Specific",
+      "proposed_priority": "P3",
+      "change_from_old_report": "Still limited",
+      "desired_outcome": "Keep several named analyses without losing state",
+      "current_evidence_based_assessment": "Charts, Rows and Calculations are modes within one workspace, with panel state retained.",
+      "remaining_boundary_or_proof_gap": "These are not named dashboard tabs, independent analysis sessions, dirty-state indicators or navigation history.",
+      "source_ids": "T12 INV HOST",
+      "suggested_browser_scenarios": "BT22",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "DASH-04",
+      "intent_strength": "Core",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Implemented slice",
+      "desired_outcome": "Save and reopen an analysis",
+      "current_evidence_based_assessment": "The host parses and validates full-analysis JSON before replacing data and settings; settings-only restore is the embedding path.",
+      "remaining_boundary_or_proof_gap": "Manual JSON restore is not durable named storage, autosave or recovery after closing the browser. Keep the host/package ownership distinction.",
+      "source_ids": "T08 HOST INV",
+      "suggested_browser_scenarios": "BT22",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "DASH-06",
+      "intent_strength": "Specific / candidate",
+      "proposed_priority": "P2",
+      "change_from_old_report": "Still limited",
+      "desired_outcome": "Separate saved layout from temporary selection and recover decisions",
+      "current_evidence_based_assessment": "Applied filters are included in saved chart settings.",
+      "remaining_boundary_or_proof_gap": "No explicit filter-free template save, workspace undo, checkpoint history or restored-state diff is established.",
+      "source_ids": "T08 T12 INV BASE CHART",
+      "suggested_browser_scenarios": "BT22 BT33",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    }
+  ],
+  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "current_assessment": {
+    "date": "2026-10-06",
+    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "statement": "SavedViewsWorkspace serializes the source and tabs to localStorage, duplicates views, exports analyses, and captures bounded checkpoints. SavedDataStructure stores chart filters alongside view settings. BaseChartSettings also stores chart-local restrictions.",
+    "evidence_scope": "Source inspection only; no fresh application browser proof."
+  },
+  "current_priority": "seed-template-demand-unconfirmed"
+}

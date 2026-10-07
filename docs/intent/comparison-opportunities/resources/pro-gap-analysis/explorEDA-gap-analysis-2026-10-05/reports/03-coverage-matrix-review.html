@@ -1,0 +1,1043 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Coverage matrix review: growth, blind spots and proof debt</title><link rel="stylesheet" href="../report.css"></head><body><div class="kicker">explorEDA / INDEPENDENT GAP & COVERAGE AUDIT</div><nav class="report-nav"><a href="../index.html">Report library</a> · <a href="03-coverage-matrix-review.pdf">PDF</a> · <a href="03-coverage-matrix-review.md">Markdown</a></nav><h1
+id="coverage-matrix-review-growth-blind-spots-and-proof-debt">Coverage
+matrix review: growth, blind spots and proof debt</h1>
+<p><strong>Read-only audit · October 5, 2026 ·
+byronwall/explorEDA</strong><br />
+<strong>Revision:</strong>
+<code>362db58082df9c1b57c2305a49823a1dae385081</code><br />
+<strong>Fresh application browser tests:</strong> 0 completed;
+navigation blocked by administrator policy.</p>
+<h2 id="what-the-matrix-actually-measures">What the matrix actually
+measures</h2>
+<p>The current matrix is a <strong>selected implementation-and-example
+catalogue</strong>, not a transcript requirements matrix. Its 52 rows
+cover 18 registered view types, six modes and 28 cross-cutting features.
+Every row is marked required; 51 are declared supported and only true
+log is not supported. All supported rows have at least one declared
+example. This is useful catalogue hygiene, but the row set omits
+important product outcomes. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a>
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/charts/registerAllCharts.ts"
+title="18 explicit active chart registrations">REG</a></p>
+<p>Its three concepts are explicitly separate: implementation status,
+example usage (shown/reviewed/not used), and feature review (at least
+one reviewed assignment). The UI explains these definitions. Blank
+example cells mean no recorded usage, not necessarily a missing
+capability or a failed test. Do not demand that every one of the 19
+examples show every feature; most such combinations would be irrelevant.
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a>
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/CoverageMatrix.tsx"
+title="Coverage summary, attention predicate, matrix and example UI">COVUI</a></p>
+<p>The matrix is development-only: LandingPage conditionally imports it
+under <code>import.meta.env.DEV</code>. The deployed Pages build
+therefore cannot be used as a current matrix route even if its
+application were reachable. Provide a development review artifact or
+generated static coverage page rather than misdiagnosing production
+omission as a routing failure. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/LandingPage.tsx"
+title="Development-only matrix gate; host import, restore, state capture">HOST</a></p>
+<h2 id="recomputed-catalogue-snapshot">Recomputed catalogue
+snapshot</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Indicator</th>
+<th style="text-align: right;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Feature rows</td>
+<td style="text-align: right;">52</td>
+</tr>
+<tr class="even">
+<td>Examples</td>
+<td style="text-align: right;">19</td>
+</tr>
+<tr class="odd">
+<td>Declared implemented</td>
+<td style="text-align: right;">51</td>
+</tr>
+<tr class="even">
+<td>Features with declared example usage</td>
+<td style="text-align: right;">51</td>
+</tr>
+<tr class="odd">
+<td>Features with at least one historical reviewed assignment</td>
+<td style="text-align: right;">30</td>
+</tr>
+<tr class="even">
+<td>Needs attention under the current source predicate</td>
+<td style="text-align: right;">22</td>
+</tr>
+<tr class="odd">
+<td>Feature/example declarations</td>
+<td style="text-align: right;">182</td>
+</tr>
+<tr class="even">
+<td>Reviewed feature/example assignments</td>
+<td style="text-align: right;">37</td>
+</tr>
+<tr class="odd">
+<td>Examples with any review record</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr class="even">
+<td>Explicit gap strings</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p>These values are calculated from the included source-transcribed
+JSON. They are not a browser observation or a fresh test result. “Needs
+attention” is the source predicate: an explicit gap,
+unsupported/not-checked implementation, no example, or no review. Here
+it consists of 21 supported-but-unreviewed features plus unsupported
+log. The 182 declarations include the 37 reviewed assignments, not 182
+additional shown-only assignments. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a>
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/CoverageMatrix.tsx"
+title="Coverage summary, attention predicate, matrix and example UI">COVUI</a></p>
+<h2 id="what-is-growing">What is growing</h2>
+<p><strong>Implementation breadth is growing faster than recorded visual
+proof.</strong> All seven added view types and all six chart-mode rows
+are shown but have no reviewed assignment in the manifest. The newer
+time-scale row is also supported/shown without a review. Older
+chart-wide rows can inherit a historical reviewed status from one old
+example even when a newer mode needs different tests. The reviewed
+numeric-day line does not certify calendar areas; reviewed scatter does
+not certify density membership or bubble-area semantics. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a>
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md"
+title="Repository-authored historical browser review of 37 assignments in 7 examples">REVIEW</a>
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/analytical-chart-coverage.md"
+title="Current chart contracts, boundaries, and verification waiver">CHART</a></p>
+<p><strong>Everyday interaction support is undercounted.</strong> Header
+distributions, drag reorder, table context menus and filter-owner
+navigation now exist, yet the row set has no direct outcome-specific
+credit for most of them. Those capabilities disappear inside broad
+table/filter labels. The same problem affects calculations:
+<code>calculated-orders</code> has fourteen recorded calculations, but
+its only reviewed assignment is invalid state. That does not measure a
+valid formula, dependency chain, edit propagation or calculation
+provenance. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/components/charts/DataTable/DataTable.tsx"
+title="Active table wiring: distributions, context menu, derived values and virtual body">TABLE</a>
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/components/charts/DataTable/DataTableHeader.tsx"
+title="Header dragging, typed filters, two-state header sort and keyboard width control; main implementation read">THDR</a>
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/components/charts/DataTable/DataTableContextMenu.tsx"
+title="Clear sort, hide/recover/move columns, reset width, copy and cell filters">TMENU</a>
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/packages/explorEDA/src/components/ActiveFilterStatus.tsx"
+title="Owner navigation, highlight, formatting, local scope and reset">FILTER</a>
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a>
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md"
+title="Repository-authored historical browser review of 37 assignments in 7 examples">REVIEW</a></p>
+<p><strong>Traceability is particularly invisible in the
+matrix.</strong> The <code>scatter-trace</code> example declares charts,
+guides, colors and interactions but has no traceability feature to
+declare. The chart guide describes many contributor/geometry trace
+contracts, yet the matrix cannot say which family can explain which
+step. Add explicit source-membership, exclusion, intermediate-result and
+property-origin outcomes rather than a single oversized “traceability
+supported” flag. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a>
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/analytical-chart-coverage.md"
+title="Current chart contracts, boundaries, and verification waiver">CHART</a></p>
+<h2 id="what-is-lacking-in-the-model">What is lacking in the model</h2>
+<p>The data model lacks partial support, planned-only status and a scope
+description for exceptions. “Map” combines point and region joins;
+“area” combines simple and stacked bands; “stacked bars” combines
+absolute and percentage semantics. Conversely, <code>scale:time</code>
+has an appropriately narrow description tied to calendar Line Charts.
+Use that style of bounded contract more consistently. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<p>The review model stores a date, a repository report string and prose
+evidence per reviewed assignment. It does not store the reviewed commit,
+data hash, browser/version, viewport, action/result identifiers, test
+runner or artifact digest. Source changes cannot automatically make a
+review stale. Feature-level reviewed is computed by any reviewed
+assignment, not by whether the current relevant modes were exercised. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<p>Neither the feature detail nor the example usage view renders the
+stored review date, report link or evidence sentence. They link to the
+example and show checked status, so readers cannot follow the proof
+directly from the visible coverage claim. Expose those fields and their
+freshness next to the assignment, with a clear distinction between
+opening the example and opening its proof. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/CoverageMatrix.tsx"
+title="Coverage summary, attention predicate, matrix and example UI">COVUI</a></p>
+<p><code>getOpenGapCount()</code> sums optional gap strings. With no gap
+arrays, the result is zero even though log is unsupported and most
+transcript gaps are not represented. That API is not a count of
+unresolved product needs. The current summary uses “Needs attention,”
+which is better; retain its distinct definition and avoid publishing a
+misleading “zero product gaps” claim. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a>
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.test.ts"
+title="Registry and example equality checks, evidence validation tests">COVTEST</a>
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/CoverageMatrix.tsx"
+title="Coverage summary, attention predicate, matrix and example UI">COVUI</a></p>
+<h2 id="safeguards-already-present--retain-them">Safeguards already
+present — retain them</h2>
+<p>The coverage tests compare the exact example ID list with the example
+catalogue and compare declared chart types with the active registry. The
+validator also detects unknown IDs, missing reviewed dates, missing
+evidence sentences and evidence attached to unreviewed assignments.
+These are real existing safeguards; they should not be proposed as
+though absent. They were inspected in source but not rerun here. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.test.ts"
+title="Registry and example equality checks, evidence validation tests">COVTEST</a>
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<p>The missing checks are different: real calendar-date validity rather
+than only a date-shaped string; existing report files and anchors rather
+than a path prefix; actual artifact resolution; revision/data freshness;
+semantic assertion coverage; and bounded implementation exceptions.
+Duplicate IDs and changed proof dependencies can also be tested
+explicitly. The existing equality checks protect the current example
+catalogue, but do not establish that each claimed feature is actually
+exercised by its saved example. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a>
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.test.ts"
+title="Registry and example equality checks, evidence validation tests">COVTEST</a></p>
+<h2 id="historical-review-is-useful-but-not-current-proof">Historical
+review is useful but not current proof</h2>
+<p>The 37 reviewed assignments all point to the October 2 report. That
+report documents seven examples, principally at 1280 CSS pixels; shop
+was also checked at 1024, with selected narrow flows at 783/390. It
+explicitly does not cover virtual scrolling and does not expand the
+supported desktop minimum below 1024. It was correct at its date to
+distinguish numeric study days from a time scale. New UTC calendar
+support should not retroactively change the historical report; it should
+add a new proof record. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md"
+title="Repository-authored historical browser review of 37 assignments in 7 examples">REVIEW</a>
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/analytical-chart-coverage.md"
+title="Current chart contracts, boundaries, and verification waiver">CHART</a></p>
+<p>The report's screenshot links resolve to files such as
+<code>tmp/shop-operations-1280.png</code>. At the pinned revision the
+tmp directory listing contains only <code>evals/</code>, so those linked
+screenshots are not retained at their stated repository locations. This
+does not prove the historical browser work never happened. It means this
+audit cannot inspect those screenshots from the cited paths and the
+proof chain is not reproducible from the report alone. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/reviews/2026-10-02-example-coverage.md"
+title="Repository-authored historical browser review of 37 assignments in 7 examples">REVIEW</a>
+<a
+href="https://github.com/byronwall/explorEDA/tree/362db58082df9c1b57c2305a49823a1dae385081/tmp"
+title="Pinned directory listing contains only evals/; October 2 report screenshots at tmp root absent">TMP</a></p>
+<h2 id="row-by-row-commentary">Row-by-row commentary</h2>
+<p>Counts below are manifest declarations and historical assignments.
+“Reviewed 0” is not a runtime failure; it identifies missing recorded
+review for that row. Every row's fresh browser status in this audit is
+not tested.</p>
+<h3 id="chartmap--map">chart:map · Map</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 2. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>Point and region modes are delivered; split their different
+coordinate, join, omission, and geometry-restore contracts in the
+matrix. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="chartmetric-card--metric-card">chart:metric-card · Metric
+Card</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 10. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>A filtered versus all-source metric is useful growth; it is not a
+frozen comparison cohort. Check count versus eligible numeric
+contributors. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="chartrow--row-chart">chart:row · Row Chart</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 13. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>Ranked counts now include searchable Other members. A generic
+row-chart row does not prove exact member identity after resize or
+restore. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="chartbar--bar-chart">chart:bar · Bar Chart</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 11. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>Histogram, counts, grouped measures and multiple series modes
+coexist. Separate bin-boundary, selection, and denominator proof. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="chartscatter--scatter-plot">chart:scatter · Scatter Plot</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 11. <strong>Historically reviewed
+examples:</strong> 2.</p>
+<p>An older scatter example is reviewed, but that cannot certify newly
+added bubble, density, or mark-trace behavior. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="chart3d-scatter--3d-scatter">chart:3d-scatter · 3D Scatter</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Historical Lorenz checks support receiving linked filters and visible
+color. They do not prove point picking or a full accessible selection
+path. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="chartpivot--pivot-table">chart:pivot · Pivot Table</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 4. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Position summaries are historically reviewed; arbitrary aggregate
+error handling, contributor inspection and output reuse need separate
+rows. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="chartdata-table--data-table">chart:data-table · Data Table</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 17. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Listing records is reviewed. New header distributions, dragging,
+context menus, calculated cells and export roundtrips deserve
+independent proof. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="chartsummary--summary">chart:summary · Summary</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 2. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Historical field counts are credited; inference corrections,
+blank/nonfinite policies and filtered distributions require explicit
+scenarios. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="chartmarkdown--markdown--explanation">chart:markdown · Markdown
+/ explanation</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 3. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>Static rich explanation is shown. It is not data-bound narrative or
+the newly planned compact authoring DSL. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="chartboxplot--distribution--box-plot">chart:boxplot ·
+Distribution / Box Plot</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 6. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>Box, violin, observations and beeswarm are materially different
+modes; contributor, density and geometry claims should not hide behind
+one cell. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="chartcolor-legend--color-legend-view">chart:color-legend · Color
+Legend view</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 2. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>A dedicated legend view is distinct from automatic chart legends.
+Continuous-range interaction is not established by displaying a palette.
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="chartline--line-chart">chart:line · Line Chart</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 5. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>The reviewed numeric-day line is not proof of new UTC rollups,
+long-format category series, area bands or missing-period policy. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="chartsankey--sankey">chart:sankey · Sankey</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>Ordered-stage flows are delivered; an edge-list network is not. Check
+adjacent-stage pairs, stage identity, weight exclusions and Other nodes.
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3
+id="chartparallel-coordinates--parallel-coordinates">chart:parallel-coordinates
+· Parallel Coordinates</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>This closes the earlier parallel-coordinate example gap. Reorder,
+inversion, brush intersection and complete-row exclusions need browser
+proof. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="chartcalendar--calendar">chart:calendar · Calendar</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 3. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>UTC day/month presentation is delivered. This does not close relative
+periods, quarter controls or period stepping in generic field filters.
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="chartheatmap--heatmap">chart:heatmap · Heatmap</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>Two-category aggregates are delivered. Correlation and missingness
+semantics are not supplied merely by a grid of colored cells. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="chartecdf--ecdf">chart:ecdf · ECDF</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>Distribution thresholds add analytical depth. Check ties, denominator
+eligibility, both directions and grouped versus overall curves. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="modescatter-density--scatter-density">mode:scatter-density ·
+Scatter density</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>Rectangular count bins are delivered. They are not hexagonal bins or
+two-dimensional KDE contours; those are newly planned scatter scope. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="modebubble-scatter--bubble-scatter">mode:bubble-scatter · Bubble
+scatter</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>Numeric size uses an area contract. Check zero, negative/invalid
+values, full-source stability and source-row selection under overlap. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="modearea--area-and-stacked-area">mode:area · Area and stacked
+area</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>A combined row hides two geometries. Check missing periods and
+cumulative bounds; stack averages must remain disallowed. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="modestacked-bars--stacked-and-percentage-bars">mode:stacked-bars
+· Stacked and percentage bars</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>A combined row hides absolute and normalized denominators. Show
+zero/no rows/no valid measurements separately. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="modegrouped-bars--grouped-bars">mode:grouped-bars · Grouped
+bars</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>An exact category-series pair is supported. Arbitrary unions of pairs
+cannot be represented by independent field value sets. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="modecalendar-series--calendar-series">mode:calendar-series ·
+Calendar series</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 2. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>Day/week/month grouping, week start, category series and source IDs
+are a genuine partial closure of line and date intent. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3
+id="labelsmeaningful-title--meaningful-titles">labels:meaningful-title ·
+Meaningful titles</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 6. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Historical examples have useful questions. No guarantee that every
+newly created chart or changed metric retains a truthful title. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="labelsaxes--axis-labels">labels:axes · Axis labels</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 6. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Historical units and names are credited. Add
+generated-versus-overridden labels and derived units to acceptance
+criteria. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="guidesticks--ticks">guides:ticks · Ticks</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 6. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Reviewed at selected widths; test long labels, date boundaries and
+facet crowding rather than treating one readable axis as universal. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="guidesgrids--grid-lines">guides:grids · Grid lines</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>Shown in scatter-trace but not reviewed. Test whether guides aid
+comparison without covering points or conflicting with facet scale
+policy. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="scalelinear--linear-scale">scale:linear · Linear scale</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 2. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Numeric-day historical proof is appropriately narrow. Include
+constant, empty and all-invalid domains in a separate robustness
+dimension. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="scalelog--log-scale">scale:log · Log scale</h3>
+<p><strong>Declared implementation:</strong> not-supported.
+<strong>Examples:</strong> 0. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>Correctly not supported. Symlog is not log. Zero explicit gap strings
+is not evidence that this unsupported capability is complete. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="scaletime--time-scale">scale:time · Time scale</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>New supported contract is specifically UTC Line Chart calendar
+summaries, not universal time axes across all chart modes. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="scaleband--band-scale">scale:band · Band scale</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Historical categorical positions are credited. Typed equal-looking
+values, ordering and omitted categories still need targeted checks. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="scalesymlog--symmetric-log-scale">scale:symlog · Symmetric log
+scale</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 2. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Correctly separated from log. Preserve that distinction in chart
+copy, exported settings and axis inspection. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="colorcategorical--categorical-color">color:categorical ·
+Categorical color</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 5. <strong>Historically reviewed
+examples:</strong> 2.</p>
+<p>Shared categorical colors have historical proof. Add typed keys,
+missing groups, source-field binding and rename consistency. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="colornumerical--numerical-color">color:numerical · Numerical
+color</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 2. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Historical Lorenz visibility is evidence for that palette and
+background, not for all domains or accessible continuous legends. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="colorlegend--legends">color:legend · Legends</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 5. <strong>Historically reviewed
+examples:</strong> 2.</p>
+<p>Historical categories are named. The description every non-obvious
+encoding is broader than the finite set of reviewed examples. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="facetwrap--wrap-facets">facet:wrap · Wrap facets</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 3. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Historical Lorenz layout is credited. Add ordered visibility, paging,
+focus and keyboard header actions; do not require all 18 types to facet.
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="facetgrid--grid-facets">facet:grid · Grid facets</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Historical material-by-size layout is credited. Add empty cells,
+typed tuples, field changes and interaction scope. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="facetshared-scales--shared-scales">facet:shared-scales · Shared
+scales</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>One matching-tick comparison does not establish all field/type/scale
+combinations. Include position, color and size contracts. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="interactionbrushing--brushing">interaction:brushing ·
+Brushing</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 4. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>A historical range brush is checked. New density, parallel, time and
+stacked modes need their own filter-semantic checks. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3
+id="interactioncross-filter--cross-chart-filtering">interaction:cross-filter
+· Cross-chart filtering</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 13. <strong>Historically reviewed
+examples:</strong> 2.</p>
+<p>Web 167/500 and Lorenz historical counts are valuable oracles. Waived
+new cross-view comparisons remain unverified. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3
+id="interactionactive-filter--active-filter-display">interaction:active-filter
+· Active filter display</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Owner navigation and highlighting are now active source behavior; the
+old reviewed Sports chip alone does not prove the new focus path. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3
+id="interactionsaved-filter-state--saved-filter-state">interaction:saved-filter-state
+· Saved filter state</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>The declared intent is opening a preset example. Rename or split it
+so it cannot be mistaken for edited-state export and restore. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="tablesorting--table-sorting">table:sorting · Table sorting</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 2. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Clear sort now exists in the context menu. Header clicks still toggle
+asc/desc; record outcome support separately from a preferred three-state
+gesture. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="tablefiltering--table-filtering">table:filtering · Table
+filtering</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Text search and a reversible empty result have historical proof. Add
+typed cell filters and local Rows versus chart-owned scopes. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3
+id="tablevirtualization--virtual-table-scrolling">table:virtualization ·
+Virtual table scrolling</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 2. <strong>Historically reviewed
+examples:</strong> 0.</p>
+<p>Explicitly not covered by the October 2 table review. A shown
+10,000-row example is not scroll, memory or screen-reader proof. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="tableformatting--table-formatting">table:formatting · Table
+formatting</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Historical grouped PTS values are narrower than the broad label. Add
+precision, currency, count units, aliases and exact-bound disclosure. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="layoutdashboard--dashboard-layout">layout:dashboard · Dashboard
+layout</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 5. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Readability is historically checked; duplicate filter ownership,
+resize persistence and focused-view restoration are separate outcomes.
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="stateempty--empty-state">state:empty · Empty state</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>One unmatched search is reviewed. Add empty chart inputs, zero-valued
+groups, invalid measures, absent dates and unmatched map regions. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="stateinvalid--invalid-state">state:invalid · Invalid state</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Invalid formula syntax is reviewed. It does not prove transactional
+rejection of malformed full-analysis imports or every new chart setting.
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3 id="accessibilitynaming--accessibility-naming">accessibility:naming
+· Accessibility naming</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 6. <strong>Historically reviewed
+examples:</strong> 4.</p>
+<p>Keep the narrow label. Useful names do not establish keyboard
+equivalence, screen-reader semantics or accessible Canvas/WebGL marks.
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h3
+id="responsivedesktop-resize--desktop-resize">responsive:desktop-resize
+· Desktop resize</h3>
+<p><strong>Declared implementation:</strong> supported.
+<strong>Examples:</strong> 1. <strong>Historically reviewed
+examples:</strong> 1.</p>
+<p>Historical 1280/1024 checks support selected layouts. Narrow checks
+do not change the declared 1024 CSS-pixel workspace minimum. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a></p>
+<h2 id="example-level-review-distribution">Example-level review
+distribution</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Example</th>
+<th style="text-align: right;">Declared pairs</th>
+<th style="text-align: right;">Reviewed pairs</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>distribution-discovery</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td>Shown declarations only; no review record</td>
+</tr>
+<tr class="even">
+<td>region-map</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td>Shown declarations only; no review record</td>
+</tr>
+<tr class="odd">
+<td>point-map</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td>Shown declarations only; no review record</td>
+</tr>
+<tr class="even">
+<td>scatter-density</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td>Shown declarations only; no review record</td>
+</tr>
+<tr class="odd">
+<td>bubble-scatter</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td>Shown declarations only; no review record</td>
+</tr>
+<tr class="even">
+<td>area-charts</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">0</td>
+<td>Shown declarations only; no review record</td>
+</tr>
+<tr class="odd">
+<td>stacked-bars</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td>Shown declarations only; no review record</td>
+</tr>
+<tr class="even">
+<td>grouped-bars</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td>Shown declarations only; no review record</td>
+</tr>
+<tr class="odd">
+<td>calendar-series</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">0</td>
+<td>Shown declarations only; no review record</td>
+</tr>
+<tr class="even">
+<td>shop-operations</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">11</td>
+<td>October 2 report; only listed assignments</td>
+</tr>
+<tr class="odd">
+<td>palmer-penguins</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
+<td>Shown declarations only; no review record</td>
+</tr>
+<tr class="even">
+<td>nba-stats</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">8</td>
+<td>October 2 report; only listed assignments</td>
+</tr>
+<tr class="odd">
+<td>categorical-charts</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">6</td>
+<td>October 2 report; only listed assignments</td>
+</tr>
+<tr class="even">
+<td>box-plot</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">0</td>
+<td>Shown declarations only; no review record</td>
+</tr>
+<tr class="odd">
+<td>product-activity</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">2</td>
+<td>October 2 report; only listed assignments</td>
+</tr>
+<tr class="even">
+<td>scatter-trace</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
+<td>Shown declarations only; no review record</td>
+</tr>
+<tr class="odd">
+<td>calculated-orders</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">1</td>
+<td>October 2 report; only listed assignments</td>
+</tr>
+<tr class="even">
+<td>shop-10000</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">1</td>
+<td>October 2 report; only listed assignments</td>
+</tr>
+<tr class="odd">
+<td>lorenz-3d</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">8</td>
+<td>October 2 report; only listed assignments</td>
+</tr>
+</tbody>
+</table>
+<p>The absence of a review on newly added modes is more important than
+filling every blank square. Prioritize distinct semantics: pair
+selection, percentage denominators, date boundaries, missing
+measurements, trace identity and restore. Avoid spending effort
+declaring the same easy title/legend property in more examples while
+core workflows remain unrepresented. <a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/apps/demo/src/demos/coverage.ts"
+title="Complete feature and example coverage manifest; four source ranges reviewed">COV</a>
+<a
+href="https://github.com/byronwall/explorEDA/blob/362db58082df9c1b57c2305a49823a1dae385081/docs/analytical-chart-coverage.md"
+title="Current chart contracts, boundaries, and verification waiver">CHART</a></p>
+<h2
+id="proposed-extension-outcome-coverage-alongside-the-catalogue">Proposed
+extension: outcome coverage alongside the catalogue</h2>
+<p>Keep the existing chart/example catalogue. Add a linked outcome layer
+with stable requirement IDs, scope, implementation evidence and
+verification records. Do not overload one boolean status to mean
+designed, coded, demonstrated, reviewed and accepted. The proposed
+dimensions in the data folder are recommendations only; no repository
+file has been modified.</p>
+<h3 id="outcomefield-inspection">outcome:field-inspection</h3>
+<p><strong>Assessment:</strong> Partial / growing. <strong>Transcript
+ledger:</strong> DATA-02 DATA-03.</p>
+<p>Contract: Inline distributions, missing/excluded counts, type preview
+and raw/effective distinction. Decisive proof: BT01 BT02.</p>
+<h3 id="outcomecolumn-operations">outcome:column-operations</h3>
+<p><strong>Assessment:</strong> Implemented slice / unverified here.
+<strong>Transcript ledger:</strong> TABLE-01 TABLE-02 TABLE-03.</p>
+<p>Contract: Drag, hide/recover, width reset, keyboard resize and Clear
+sort; separate auto-fit absence. Decisive proof: BT12 BT22.</p>
+<h3 id="outcomefilter-population">outcome:filter-population</h3>
+<p><strong>Assessment:</strong> Partial / growing. <strong>Transcript
+ledger:</strong> FILT-01 FILT-02.</p>
+<p>Contract: Full, peer and global/local population semantics with exact
+source IDs. Decisive proof: BT03 BT07.</p>
+<h3
+id="outcomefilter-owner-navigation">outcome:filter-owner-navigation</h3>
+<p><strong>Assessment:</strong> Implemented slice / unverified here.
+<strong>Transcript ledger:</strong> FILT-03.</p>
+<p>Contract: Label focus/jump versus X removal, including overflow and
+Rows. Decisive proof: BT11.</p>
+<h3 id="outcomereset-all">outcome:reset-all</h3>
+<p><strong>Assessment:</strong> Implemented slice / unverified here.
+<strong>Transcript ledger:</strong> FILT-04.</p>
+<p>Contract: Reset chart filters, table searches and Rows-local controls
+together. Decisive proof: BT03 BT11.</p>
+<h3 id="outcomeexact-range">outcome:exact-range</h3>
+<p><strong>Assessment:</strong> Partial. <strong>Transcript
+ledger:</strong> FILT-06 FILT-07.</p>
+<p>Contract: Manual bound precision, one-sided intervals and
+data-replacement semantics. Decisive proof: BT04.</p>
+<h3 id="outcometyped-other-members">outcome:typed-other-members</h3>
+<p><strong>Assessment:</strong> Implemented slice / unverified here.
+<strong>Transcript ledger:</strong> FILT-08.</p>
+<p>Contract: Typed identity, rare-member selection and resize/restore
+stability. Decisive proof: BT05.</p>
+<h3 id="outcomecalculation-authoring">outcome:calculation-authoring</h3>
+<p><strong>Assessment:</strong> Implemented slice / historical proof.
+<strong>Transcript ledger:</strong> CALC-01 CALC-02 CALC-03.</p>
+<p>Contract: Valid formulas, invalid drafts, dependency errors and
+row-level explanations. Decisive proof: BT18.</p>
+<h3
+id="outcomecalculation-dependent-edit">outcome:calculation-dependent-edit</h3>
+<p><strong>Assessment:</strong> Implemented slice / needs current
+integration proof. <strong>Transcript ledger:</strong> CALC-05
+CALC-06.</p>
+<p>Contract: Recompute every affected chart/table/filter while
+preserving thresholds. Decisive proof: BT18 BT22.</p>
+<h3
+id="outcomeaggregate-contributors">outcome:aggregate-contributors</h3>
+<p><strong>Assessment:</strong> Partial / growing. <strong>Transcript
+ledger:</strong> TRACE-01 CALC-08.</p>
+<p>Contract: Exact source members versus eligible measurements and
+exclusions per family. Decisive proof: BT07 BT15 BT16.</p>
+<h3 id="outcomeproperty-provenance">outcome:property-provenance</h3>
+<p><strong>Assessment:</strong> Partial / growing. <strong>Transcript
+ledger:</strong> TRACE-03.</p>
+<p>Contract: Transforms, scales, defaults, stack bounds, date intervals
+and denominators. Decisive proof: BT10 BT14 BT24.</p>
+<h3 id="outcomeintermediate-reuse">outcome:intermediate-reuse</h3>
+<p><strong>Assessment:</strong> Partial. <strong>Transcript
+ledger:</strong> DATA-08 TRACE-02.</p>
+<p>Contract: Named grouped outputs versus chart-local arrays; one
+concrete downstream consumer. Decisive proof: BT19 BT26.</p>
+<h3 id="outcomesettings-roundtrip">outcome:settings-roundtrip</h3>
+<p><strong>Assessment:</strong> Implemented slice / fresh proof missing.
+<strong>Transcript ledger:</strong> DASH-03 DASH-04.</p>
+<p>Contract: Edited settings remount against supplied host data.
+Decisive proof: BT22.</p>
+<h3
+id="outcomefull-analysis-roundtrip">outcome:full-analysis-roundtrip</h3>
+<p><strong>Assessment:</strong> Implemented slice / fresh proof missing.
+<strong>Transcript ledger:</strong> DASH-03 DASH-04.</p>
+<p>Contract: Rows, special values, calculations, new chart settings and
+geometry assets. Decisive proof: BT22 BT29.</p>
+<h3
+id="outcomeinvalid-restore-atomicity">outcome:invalid-restore-atomicity</h3>
+<p><strong>Assessment:</strong> Implemented slice / needs proof.
+<strong>Transcript ledger:</strong> DASH-04 CALC-02.</p>
+<p>Contract: Invalid JSON/dependencies cannot destroy the current
+analysis. Decisive proof: BT22.</p>
+<h3
+id="outcomedurable-named-analysis">outcome:durable-named-analysis</h3>
+<p><strong>Assessment:</strong> Not established in current host.
+<strong>Transcript ledger:</strong> DASH-02 DASH-05.</p>
+<p>Contract: Storage, ownership, dirty state, reopening and source
+binding. Decisive proof: BT22 BT23.</p>
+<h3 id="outcomefilter-free-template">outcome:filter-free-template</h3>
+<p><strong>Assessment:</strong> Not established. <strong>Transcript
+ledger:</strong> DASH-06.</p>
+<p>Contract: Layout/configuration separated from a temporary selection.
+Decisive proof: BT33.</p>
+<h3
+id="outcomestable-source-identity">outcome:stable-source-identity</h3>
+<p><strong>Assessment:</strong> Not established. <strong>Transcript
+ledger:</strong> DATA-04 TRACE-05.</p>
+<p>Contract: Key and source fingerprint survive reorder/replacement
+without silent remapping. Decisive proof: BT23.</p>
+<h3
+id="outcomecalendar-relative-period">outcome:calendar-relative-period</h3>
+<p><strong>Assessment:</strong> Not established beyond fixed rollups.
+<strong>Transcript ledger:</strong> FILT-11.</p>
+<p>Contract: Rolling versus completed periods, step windows, explicit
+saved reference time. Decisive proof: BT08 BT09.</p>
+<h3 id="outcomerich-cell-reading">outcome:rich-cell-reading</h3>
+<p><strong>Assessment:</strong> Not established in scalar model.
+<strong>Transcript ledger:</strong> TABLE-06 TABLE-07.</p>
+<p>Contract: Long text and structured objects retain readable semantic
+context. Decisive proof: BT13.</p>
+<h3 id="outcomekeyboard-workflow">outcome:keyboard-workflow</h3>
+<p><strong>Assessment:</strong> Partial / unverified. <strong>Transcript
+ledger:</strong> UX-03.</p>
+<p>Contract: Task completion, mark selection alternatives, focus and
+Escape, not names alone. Decisive proof: BT12 BT24.</p>
+<h3
+id="outcomescreen-reader-workflow">outcome:screen-reader-workflow</h3>
+<p><strong>Assessment:</strong> Unverified. <strong>Transcript
+ledger:</strong> UX-03.</p>
+<p>Contract: Real assistive technology reads table/trace/selection
+context accurately. Decisive proof: BT24 BT34.</p>
+<h3 id="outcomemeasured-performance">outcome:measured-performance</h3>
+<p><strong>Assessment:</strong> Unverified. <strong>Transcript
+ledger:</strong> PERF-01 PERF-05.</p>
+<p>Contract: Load/filter/Apply/scroll/heap with device, shape and
+latency distributions. Decisive proof: BT34.</p>
+<h3 id="plannedadvanced-scatter">planned:advanced-scatter</h3>
+<p><strong>Assessment:</strong> Planned only. <strong>Transcript
+ledger:</strong> CALC-09 CHART-02.</p>
+<p>Contract: Regression, LOESS, marginals, hexagons and 2D contours; own
+versus peer filter scope. Decisive proof: BT27.</p>
+<h3 id="plannedcompact-authoring">planned:compact-authoring</h3>
+<p><strong>Assessment:</strong> Planned only. <strong>Transcript
+ledger:</strong> TRACE-04 TRACE-06.</p>
+<p>Contract: Complete document authoring, warnings, expanded settings
+and export equivalence. Decisive proof: BT27.</p>
+<h2 id="suggested-orthogonal-schema">Suggested orthogonal schema</h2>
+<p>An outcome record should contain: requirement IDs and transcript
+anchors; a narrowly stated contract and exceptions; implementation
+status and source revision; example/test IDs; and independent
+verification records. A verification record should carry result
+(<code>pass</code>, <code>fail</code>, <code>blocked</code>,
+<code>not-run</code>, <code>waived</code>, or explicitly historical),
+browser/version/viewport, dataset hash, tested commit, steps,
+expected/observed source keys and values, and artifact
+links/digests.</p>
+<p>A review remains a historical fact after code changes. Its
+applicability to the current build is a separate freshness decision. Use
+either a conservative commit-based expiry or dependency fingerprints for
+changed reducers, providers, source fixtures and renderers. A passed
+screenshot from an old commit must not silently become evidence for a
+new denominator or selection mode.</p>
+<p>Generate the matrix, transcript crosswalk and summary from the same
+structured records. Link each checked assignment to its proof and
+display a filter for unverified current implementations, waived
+acceptance checks, planned-only work and unrepresented transcript
+outcomes. Name the current “With evidence” tile “With declared example
+usage” or keep its explanatory qualifier equally prominent.</p>
+<p>The first useful new proof batch is BT02/03/07/08/11/12/18/21/22/24:
+numeric eligibility, filter scope, cross-view arithmetic, UTC, owner
+navigation, table controls, calculation edits, CSV, restore and
+trace/keyboard behavior. That improves trust more than indiscriminately
+increasing the number of shown cells.</p>
+<hr />
+<p>Source labels link to the identified repository files or PR/run
+records. Full source locators and reading scope are in Report 06.</p>
+</body></html>

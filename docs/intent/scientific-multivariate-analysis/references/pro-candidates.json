@@ -1,0 +1,41 @@
+{
+  "chart_review_items": [],
+  "gap_register_items": [
+    {
+      "requirement_id": "CALC-09",
+      "intent_strength": "Specific / now planned",
+      "proposed_priority": "P2",
+      "change_from_old_report": "New plan, not implementation",
+      "desired_outcome": "Add regression, uncertainty and density at the intended grouping scope",
+      "current_evidence_based_assessment": "Box/violin density and rectangular scatter count bins exist. PR136 adds scoped plans for regression, LOESS, hexagons and 2D contours.",
+      "remaining_boundary_or_proof_gap": "The merged PR explicitly changes no application code. Fits, confidence layers, marginals and contour density must remain planned-only until implementation and browser proof exist.",
+      "source_ids": "T15 T17 CHART PLAN",
+      "suggested_browser_scenarios": "BT26 BT27",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    },
+    {
+      "requirement_id": "CHART-02",
+      "intent_strength": "Core inspection / specific extras",
+      "proposed_priority": "P1",
+      "change_from_old_report": "Materially expanded",
+      "desired_outcome": "Explore relationships and inspect selected records",
+      "current_evidence_based_assessment": "Scatter now has row tracing, point/range selection, bubble area and rectangular density bins.",
+      "remaining_boundary_or_proof_gap": "Regression/uncertainty/hexagons/marginals/contours are planned, not delivered. Overlap, size provenance and exclusion visibility need current browser proof.",
+      "source_ids": "T11 T14 T15 CHART PLAN",
+      "suggested_browser_scenarios": "BT10 BT15 BT27",
+      "current_browser_verification": "not-tested: administrator blocks all navigation",
+      "revision": "362db58082df9c1b57c2305a49823a1dae385081",
+      "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
+    }
+  ],
+  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "current_assessment": {
+    "date": "2026-10-06",
+    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+    "statement": "Native scatter files implement regression, fit planning, paired covariance, marginal histograms, hexagonal counts, and density contours. The existing advanced-scatter plan keeps additional scientific methods below its cut line.",
+    "evidence_scope": "Source inspection only; no fresh application browser proof."
+  },
+  "current_priority": "Unranked candidate or future seed"
+}

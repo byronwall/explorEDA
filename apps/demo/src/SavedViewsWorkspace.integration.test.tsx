@@ -1,6 +1,22 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import {
+  shopProject,
+  shopQueryPresets,
+  shopProjectViews,
+} from "./demos/multiSourceShop";
+import {
+  PROJECT_STORAGE_KEY,
+  readSavedViewsSessionResult,
+} from "./savedViewsSession";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import type { SavedDataStructure } from "exploreda";
+import { evaluateAnalysisQuery } from "exploreda/analysis";
 import { SavedViewsWorkspace } from "./SavedViewsWorkspace";
 
 const importedSettings: SavedDataStructure = {
@@ -85,4 +101,93 @@ it("labels the first Rows search in an imported new tab as a filter", async () =
   expect(screen.getByTestId("current-history-label")).toHaveTextContent(
     /^Filter ·/
   );
+});
+
+it("keeps order and item bindings through duplicate, undo, and local reload", async () => {
+  const fixture = structuredClone(shopProject);
+  const { unmount } = render(
+    <SavedViewsWorkspace
+      data={[]}
+      viewName="Orders"
+      initialSettings={shopQueryPresets["orders-by-customer"]}
+      initialViews={shopProjectViews.filter(
+        (view) => view.queryId === "items-by-order"
+      )}
+      initialProject={fixture.project}
+      sourceTables={fixture.sources}
+      queryPresets={shopQueryPresets}
+    />
+  );
+  await screen.findByRole("button", { name: "Add chart" });
+  fireEvent.click(screen.getByRole("tab", { name: "Items" }));
+  await waitFor(() =>
+    expect(
+      readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session?.tabs.find(
+        (tab) =>
+          tab.id ===
+          readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session?.activeTabId
+      )?.queryId
+    ).toBe("items-by-order")
+  );
+  const stored = readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session!;
+  expect(
+    stored.tabs.find((tab) => tab.id === stored.activeTabId)?.queryId
+  ).toBe("items-by-order");
+  fireEvent.keyDown(screen.getByRole("button", { name: "Options for Items" }), {
+    key: "Enter",
+  });
+  fireEvent.click(
+    await screen.findByRole("menuitem", { name: "Duplicate view" })
+  );
+  await waitFor(() =>
+    expect(
+      readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session?.tabs
+    ).toHaveLength(3)
+  );
+  const copied = readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session!;
+  expect(copied.tabs).toHaveLength(3);
+  expect(
+    copied.tabs.find((tab) => tab.id === copied.activeTabId)?.queryId
+  ).toBe("items-by-order");
+  fireEvent.click(screen.getByRole("button", { name: "Undo" }));
+  await waitFor(() =>
+    expect(
+      readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session?.tabs
+    ).toHaveLength(2)
+  );
+  const undone = readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session!;
+  expect(undone.tabs).toHaveLength(2);
+  expect(undone.history[undone.path[undone.cursor]!]!.project?.id).toBe(
+    fixture.project.id
+  );
+  unmount();
+  render(
+    <SavedViewsWorkspace
+      data={[]}
+      viewName="Reloaded"
+      initialSession={undone}
+      queryPresets={shopQueryPresets}
+    />
+  );
+  await screen.findByRole("button", { name: "Add chart" });
+  const restored = readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session!;
+  const order = evaluateAnalysisQuery(
+    restored.project!,
+    restored.tables!,
+    "orders-by-customer"
+  );
+  const item = evaluateAnalysisQuery(
+    restored.project!,
+    restored.tables!,
+    "items-by-order"
+  );
+  expect(
+    order.rows.reduce(
+      (sum, row) => sum + Number(row.values["orders.amount"]),
+      0
+    )
+  ).toBe(150);
+  expect(
+    item.rows.reduce((sum, row) => sum + Number(row.values["items.revenue"]), 0)
+  ).toBe(140);
 });
