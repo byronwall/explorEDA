@@ -47,6 +47,7 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  type ReactNode,
 } from "react";
 import { toast } from "sonner";
 import { ChartGridLayout } from "./ChartGridLayout";
@@ -102,9 +103,15 @@ const gridToPixels = (
 export function PlotManager({
   sidePanels = [],
   readOnly = false,
+  toolbarStart,
+  toolbarEnd,
 }: {
   sidePanels?: ExplorEdaSidePanel[];
   readOnly?: boolean;
+  /** Host content that leads the toolbar line, such as view tabs. */
+  toolbarStart?: ReactNode;
+  /** Host actions that end the toolbar line. */
+  toolbarEnd?: ReactNode;
 } = {}) {
   const charts = useDataLayer((state) => state.charts);
   const addChart = useDataLayer((state) => state.addChart);
@@ -156,10 +163,12 @@ export function PlotManager({
   // React 18 has no inert prop, so set the attribute directly.
   const toolbarEditRef = useRef<HTMLDivElement>(null);
   const toolbarConfigRef = useRef<HTMLDivElement>(null);
+  const statusRef = useRef<HTMLDivElement>(null);
   const chartAreaRef = useRef<HTMLElement>(null);
   useLayoutEffect(() => {
     toolbarEditRef.current?.toggleAttribute("inert", readOnly);
     toolbarConfigRef.current?.toggleAttribute("inert", readOnly);
+    statusRef.current?.toggleAttribute("inert", readOnly);
     chartAreaRef.current?.toggleAttribute("inert", readOnly);
   }, [readOnly]);
   const sidePanelsRef = useRef(sidePanels);
@@ -505,6 +514,17 @@ export function PlotManager({
     }
   };
 
+  // Panels on the right edge cover part of the toolbar and status bar, so
+  // both keep their content beside the panel.
+  const panelSpaceAttributes = {
+    "data-fields-open": fieldsOpen || undefined,
+    "data-settings-open":
+      (settingsTab && !settingsWide) ||
+      (openPanel && !openPanel.wide) ||
+      undefined,
+    "data-rows-narrow": (rowsOpen && rowsNarrow) || undefined,
+  };
+
   const handleRemoveAllCharts = async () => {
     const confirmed = await showAlert(
       "Remove all charts?",
@@ -519,32 +539,24 @@ export function PlotManager({
   };
 
   return (
-    <div className="eda-workspace w-full min-w-0 pb-8" ref={containerRef}>
+    <div className="eda-workspace w-full min-w-0" ref={containerRef}>
       <div
         ref={controlsRef}
         className="eda-workspace-controls"
-        data-fields-open={fieldsOpen || undefined}
-        data-settings-open={
-          (settingsTab && !settingsWide) ||
-          (openPanel && !openPanel.wide) ||
-          undefined
-        }
-        data-rows-narrow={(rowsOpen && rowsNarrow) || undefined}
+        {...panelSpaceAttributes}
       >
-        <header className="eda-workspace-toolbar">
+        <header
+          className="eda-workspace-toolbar"
+          data-has-start={toolbarStart ? "" : undefined}
+        >
+          {/* Host content, such as view tabs, leads the line. Tools and
+              settings sit on the right. */}
+          <div className="eda-toolbar-start eda-toolbar-host">
+            {toolbarStart}
+          </div>
           {/* A read-only workspace keeps its scope visible but takes no
               edits. Host panels stay usable beside it. */}
           <div className="eda-toolbar-editable" ref={toolbarEditRef}>
-            {rowsOpen && !rowsNarrow ? (
-              // The expanded Rows drawer covers this line and shows the scope.
-              <span className="eda-filter-status" aria-hidden="true" />
-            ) : (
-              <ActiveFilterStatus
-                onShowChart={showChart}
-                onHighlightChart={highlightChart}
-              />
-            )}
-            {/* Filters lead the line; tools and settings sit on the right. */}
             <ChartCreationButtons />
             <span className="eda-toolbar-divider" aria-hidden="true" />
             <div
@@ -753,6 +765,12 @@ export function PlotManager({
               </DropdownMenu>
             </div>
           </div>
+          {toolbarEnd && (
+            <div className="eda-toolbar-end eda-toolbar-host">
+              <span className="eda-toolbar-divider" aria-hidden="true" />
+              {toolbarEnd}
+            </div>
+          )}
         </header>
         {openPanel && (
           <WorkspaceSidePanel
@@ -906,6 +924,22 @@ export function PlotManager({
           )
         )}
       </main>
+
+      {/* The status bar keeps the row count and filter scope in view at the
+          bottom of the workspace while the charts scroll. */}
+      <div
+        ref={statusRef}
+        className="eda-workspace-status"
+        {...panelSpaceAttributes}
+      >
+        {rowsOpen && !rowsNarrow ? null : (
+          // The expanded Rows drawer covers the workspace and shows the scope.
+          <ActiveFilterStatus
+            onShowChart={showChart}
+            onHighlightChart={highlightChart}
+          />
+        )}
+      </div>
     </div>
   );
 }

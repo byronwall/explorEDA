@@ -579,7 +579,7 @@ function ScatterPage() {
             <TryCard
               heading="Trace a scatter point"
               meta="18 orders · 4 views · calculated axes"
-              to="?example=scatter-trace"
+              to="/examples/scatter-trace"
               label="Open the scatter trace example"
             />
             <RelatedGuides>
@@ -704,7 +704,7 @@ function BarPage() {
             <TryCard
               heading="Inside the order book"
               meta="500 orders · 7 linked views"
-              to="?example=shop-operations"
+              to="/examples/shop-operations"
               label="Open the order-book example"
             />
             <RelatedGuides>
@@ -898,7 +898,7 @@ function RenderingPage() {
             <TryCard
               heading="Trace a scatter point"
               meta="Follow T-001 in the live workspace"
-              to="?example=scatter-trace"
+              to="/examples/scatter-trace"
               label="Open the scatter trace example"
             />
             <RelatedGuides>
@@ -911,7 +911,7 @@ function RenderingPage() {
                 <DocsLink topic="bar">Bar modes, row scope, and trace</DocsLink>
               </li>
               <li>
-                <Link className={inlineLinkClass} to="?example=shop-operations">
+                <Link className={inlineLinkClass} to="/examples/shop-operations">
                   Open the order-book bar example
                 </Link>
               </li>

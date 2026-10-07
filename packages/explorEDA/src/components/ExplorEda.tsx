@@ -71,7 +71,7 @@ import { GlobalAlertDialog } from "./GlobalAlertDialog";
 
 import "../index.css";
 import { CalculationEditorProvider } from "./calculations/CalculationEditor";
-import { forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useImperativeHandle, type ReactNode } from "react";
 
 registerAllCharts();
 
@@ -87,11 +87,26 @@ export interface ExplorEdaProps {
   sidePanels?: ExplorEdaSidePanel[];
   /** Shows the charts without accepting edits. Host panels stay usable. */
   readOnly?: boolean;
+  /**
+   * Host content that leads the toolbar line, such as view tabs. It takes the
+   * room the workspace tools leave and stays usable while read-only.
+   */
+  toolbarStart?: ReactNode;
+  /** Host actions that end the toolbar line, such as undo or export. */
+  toolbarEnd?: ReactNode;
 }
 
 export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
   function ExplorEda(
-    { data, savedData, onStateChange, sidePanels, readOnly },
+    {
+      data,
+      savedData,
+      onStateChange,
+      sidePanels,
+      readOnly,
+      toolbarStart,
+      toolbarEnd,
+    },
     ref
   ) {
     return (
@@ -100,7 +115,13 @@ export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
         savedData={savedData}
         onStateChange={onStateChange}
       >
-        <Workspace ref={ref} sidePanels={sidePanels} readOnly={readOnly} />
+        <Workspace
+          ref={ref}
+          sidePanels={sidePanels}
+          readOnly={readOnly}
+          toolbarStart={toolbarStart}
+          toolbarEnd={toolbarEnd}
+        />
       </DataLayerProvider>
     );
   }
@@ -108,8 +129,11 @@ export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
 
 const Workspace = forwardRef<
   ExplorEdaHandle,
-  Pick<ExplorEdaProps, "sidePanels" | "readOnly">
->(function Workspace({ sidePanels, readOnly }, ref) {
+  Pick<
+    ExplorEdaProps,
+    "sidePanels" | "readOnly" | "toolbarStart" | "toolbarEnd"
+  >
+>(function Workspace({ sidePanels, readOnly, toolbarStart, toolbarEnd }, ref) {
   const getSettings = useDataLayer((state) => state.saveToStructure);
   useImperativeHandle(ref, () => ({ getSettings }), [getSettings]);
 
@@ -117,7 +141,12 @@ const Workspace = forwardRef<
     <div className="bg-background text-foreground">
       <CalculationEditorProvider>
         <ChartDraftProvider>
-          <PlotManager sidePanels={sidePanels} readOnly={readOnly} />
+          <PlotManager
+            sidePanels={sidePanels}
+            readOnly={readOnly}
+            toolbarStart={toolbarStart}
+            toolbarEnd={toolbarEnd}
+          />
         </ChartDraftProvider>
       </CalculationEditorProvider>
       <GlobalAlertDialog />

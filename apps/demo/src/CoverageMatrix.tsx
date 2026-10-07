@@ -44,7 +44,7 @@ const featureById = new Map(
 );
 
 function exampleHref(exampleId: string) {
-  return `/?example=${exampleId}`;
+  return `/examples/${exampleId}`;
 }
 
 function plural(count: number, one: string, many = `${one}s`) {

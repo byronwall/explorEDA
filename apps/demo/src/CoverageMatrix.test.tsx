@@ -60,7 +60,7 @@ describe("CoverageMatrix", () => {
       screen.getByRole("link", {
         name: "How quickly do nearby Lorenz runs diverge?",
       })
-    ).toHaveAttribute("href", "/?example=lorenz-3d");
+    ).toHaveAttribute("href", "/examples/lorenz-3d");
   });
 
   it("shows a scrollable matrix with sticky headers and linked marks", () => {
@@ -87,7 +87,7 @@ describe("CoverageMatrix", () => {
       within(table).getByRole("link", {
         name: "How quickly do nearby Lorenz runs diverge?: Dashboard layout — Example shown",
       })
-    ).toHaveAttribute("href", "/?example=lorenz-3d");
+    ).toHaveAttribute("href", "/examples/lorenz-3d");
     expect(
       within(table).getByRole("rowheader", { name: /Log scale/ })
     ).toHaveTextContent("Not implemented");
