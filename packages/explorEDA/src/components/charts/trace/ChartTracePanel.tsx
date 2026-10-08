@@ -19,6 +19,7 @@ import { DensityTraceBody } from "../ScatterPlot/DensityTraceBody";
 import { FitTraceBody } from "../ScatterPlot/FitTraceBody";
 import { MarginalTraceBody } from "../ScatterPlot/MarginalTraceBody";
 import { SurfaceTraceBody } from "../ScatterPlot/SurfaceTraceBody";
+import { CompositionTraceBody } from "../Composition/CompositionTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
 import {
   FacetTraceBody,
@@ -83,6 +84,8 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
       return <FacetTraceBody trace={trace} />;
     case "legend":
       return <LegendTraceBody trace={trace} />;
+    case "composition":
+      return <CompositionTraceBody key={trace.id} trace={trace} />;
     default:
       return <ScatterTraceBody trace={trace} />;
   }

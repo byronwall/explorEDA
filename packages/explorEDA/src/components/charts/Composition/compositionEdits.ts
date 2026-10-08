@@ -1,6 +1,8 @@
-import type {
-  CompositionDefinition,
-  CompositionElement,
+import {
+  isEmptyOverride,
+  type CompositionDefinition,
+  type CompositionElement,
+  type InstanceOverride,
 } from "./compositionTypes";
 
 export function updateElement<T extends CompositionElement>(
@@ -23,6 +25,8 @@ export function removeElement(
   return {
     ...definition,
     elements: definition.elements.filter((element) => element.id !== id),
+    // A unit's overrides go with it.
+    overrides: definition.overrides.filter((item) => item.unitId !== id),
   };
 }
 
@@ -53,4 +57,36 @@ export function moveElement(
     x: Math.round(element.x + dx),
     y: Math.round(element.y + dy),
   });
+}
+
+/** Merges a change into one repeat's override, dropping it once it is empty. */
+export function updateOverride(
+  definition: CompositionDefinition,
+  unitId: string,
+  instanceKey: string,
+  patch: Partial<InstanceOverride>
+): CompositionDefinition {
+  const current = definition.overrides.find(
+    (item) => item.unitId === unitId && item.instanceKey === instanceKey
+  ) ?? { unitId, instanceKey, dx: 0, dy: 0 };
+  const next = { ...current, ...patch };
+  const others = definition.overrides.filter((item) => item !== current);
+  return {
+    ...definition,
+    overrides: isEmptyOverride(next) ? others : [...others, next],
+  };
+}
+
+/** Removes one repeat's override, so it follows the template again. */
+export function resetOverride(
+  definition: CompositionDefinition,
+  unitId: string,
+  instanceKey: string
+): CompositionDefinition {
+  return {
+    ...definition,
+    overrides: definition.overrides.filter(
+      (item) => !(item.unitId === unitId && item.instanceKey === instanceKey)
+    ),
+  };
 }

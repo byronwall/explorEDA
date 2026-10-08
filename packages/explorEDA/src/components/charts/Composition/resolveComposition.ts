@@ -43,6 +43,7 @@ interface NodeBase {
   elementId: string;
   /** The repeat that drew this node, for chart units. */
   instanceKey?: string;
+  opacity?: number;
 }
 
 export interface TextNode extends NodeBase {

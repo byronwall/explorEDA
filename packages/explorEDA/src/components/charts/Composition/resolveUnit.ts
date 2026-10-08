@@ -3,9 +3,11 @@ import { dateTimestamp } from "@/lib/dateTime";
 import { finiteNumber } from "@/lib/numeric";
 import type { datum } from "@/types/ChartTypes";
 import {
+  findOverride,
   MUTED_INK,
   INK,
   type CompositionDefinition,
+  type InstanceOverride,
   type MarkDefinition,
   type PositionScale,
   type TimeInterval,
@@ -22,6 +24,8 @@ export interface CompositionData {
   /** Rows that pass the active filters. Marks draw these. */
   liveIds: number[];
   column: (field: string) => Record<number, datum>;
+  /** Repeats selected in viewing; the others fade. */
+  selection?: { field: string; keys: Set<string> };
 }
 
 export interface PositionBin {
@@ -45,6 +49,9 @@ export interface ResolvedInstance {
   position?: { scale: PositionScale; bins: PositionBin[] };
   /** The value shown beside the label, when the unit has one. */
   labelValue?: CalcResult;
+  override?: InstanceOverride;
+  /** Where automatic layout put the repeat, before its override. */
+  layoutOrigin: { x: number; y: number };
 }
 
 /** What one glyph stands for, kept so inspection can list its rows. */
@@ -180,8 +187,18 @@ export function resolveUnit(
   subsets.forEach((subset, index) => {
     const column = index % columns;
     const row = Math.floor(index / columns);
-    const x = unit.x + column * (cellWidth + unit.repeat.gap);
-    const y = unit.y + row * (cellHeight + unit.repeat.gap);
+    const layoutX = unit.x + column * (cellWidth + unit.repeat.gap);
+    const layoutY = unit.y + row * (cellHeight + unit.repeat.gap);
+    const override = findOverride(definition, unit.id, subset.key);
+    const x = layoutX + (override?.dx ?? 0);
+    const y = layoutY + (override?.dy ?? 0);
+    const selection = data.selection;
+    const faded =
+      selection !== undefined &&
+      selection.field === unit.repeat.field &&
+      !selection.keys.has(subset.key);
+    const opacity = (override?.opacity ?? 1) * (faded ? 0.25 : 1);
+    const firstNode = nodes.length;
     const frame: Bounds = {
       x: x + labelWidth,
       y: y + labelHeight,
@@ -227,8 +244,8 @@ export function resolveUnit(
           },
         ],
         fontSize: labelSize,
-        fontWeight: 600,
-        fill: INK,
+        fontWeight: override?.emphasize ? 700 : 600,
+        fill: override?.accent ?? INK,
         anchor: "start",
       });
     }
@@ -238,10 +255,31 @@ export function resolveUnit(
         value.domain === "instance"
           ? Math.max(0, ...glyphs.map((glyph) => glyph.value))
           : (sharedMax.get(value.id) ?? 0);
+      // An accent recolors this repeat's marks, keeping the template's ramp.
+      const accented = override?.accent
+        ? {
+            mark: { ...mark, fill: override.accent },
+            value: {
+              ...value,
+              colors: [value.colors[0], override.accent] as [string, string],
+            },
+          }
+        : { mark, value };
       nodes.push(
-        ...glyphNodes(unit, mark, value, frame, bins, glyphs, instanceMax)
+        ...glyphNodes(
+          unit,
+          accented.mark,
+          accented.value,
+          frame,
+          bins,
+          glyphs,
+          instanceMax
+        )
       );
     });
+    if (opacity < 1)
+      for (let index = firstNode; index < nodes.length; index += 1)
+        nodes[index] = { ...nodes[index]!, opacity };
     if (unit.axis && (axisPerUnit || index === subsets.length - 1)) {
       const first = marks[0];
       if (first) {
@@ -276,6 +314,8 @@ export function resolveUnit(
         bins: binsFor(marks[0].position, subset),
       },
       labelValue,
+      override,
+      layoutOrigin: { x: layoutX, y: layoutY },
     });
   });
 

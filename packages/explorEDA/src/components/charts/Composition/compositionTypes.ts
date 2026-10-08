@@ -11,6 +11,48 @@ export interface CompositionDefinition {
   scales: CompositionScale[];
   /** Values computed from the data for labels, text, and guides. */
   calculations: CompositionCalculation[];
+  /** Saved exceptions for single repeats, kept apart from their template. */
+  overrides: InstanceOverride[];
+}
+
+/**
+ * Visual changes to one repeat of a chart unit. It is keyed by the subset
+ * value, not by position, so reordering keeps it on the same repeat. Data
+ * bindings, calculations, and scales always come from the template.
+ */
+export interface InstanceOverride {
+  unitId: string;
+  instanceKey: string;
+  /** A nudge from the automatic layout, in artboard pixels. */
+  dx: number;
+  dy: number;
+  /** Replaces the high end of a color ramp, or the fill of other marks. */
+  accent?: string;
+  /** Fades the repeat's marks, from 0.1 to 1. */
+  opacity?: number;
+  /** Bold the repeat's label. */
+  emphasize?: boolean;
+}
+
+export function findOverride(
+  definition: CompositionDefinition,
+  unitId: string,
+  instanceKey: string
+) {
+  return definition.overrides.find(
+    (item) => item.unitId === unitId && item.instanceKey === instanceKey
+  );
+}
+
+/** True when an override changes nothing, so it can be dropped. */
+export function isEmptyOverride(override: InstanceOverride) {
+  return (
+    !override.dx &&
+    !override.dy &&
+    override.accent === undefined &&
+    override.opacity === undefined &&
+    !override.emphasize
+  );
 }
 
 export interface CompositionArtboard {
@@ -212,6 +254,7 @@ export function createEmptyComposition(): CompositionDefinition {
     elements: [],
     scales: [],
     calculations: [],
+    overrides: [],
   };
 }
 
@@ -219,12 +262,13 @@ export function createEmptyComposition(): CompositionDefinition {
 export function normalizeComposition(
   definition: CompositionDefinition
 ): CompositionDefinition {
-  return definition.scales && definition.calculations
+  return definition.scales && definition.calculations && definition.overrides
     ? definition
     : {
         ...definition,
         scales: definition.scales ?? [],
         calculations: definition.calculations ?? [],
+        overrides: definition.overrides ?? [],
       };
 }
 
