@@ -133,17 +133,45 @@ function AxisEditStrip({
     axis === "x"
       ? { x: 0, y: plotHeight, width: plotWidth, height: STRIP_SIZE }
       : { x: -width, y: 0, width, height: plotHeight };
+  // Grips mark each end, which a drag stretches.
+  const ends =
+    axis === "x"
+      ? [0, plotWidth].map((at) => ({
+          x: at - 1.5,
+          y: plotHeight + 4,
+          width: 3,
+          height: 14,
+        }))
+      : [plotHeight, 0].map((at) => ({
+          x: -width + 2,
+          y: at - 1.5,
+          width: 14,
+          height: 3,
+        }));
   return (
-    <rect
-      {...box}
-      className="eda-axis-strip"
-      fill="transparent"
-      pointerEvents="all"
+    <g
+      className="eda-axis-edit"
       data-axis-edit={axis}
       data-scale-type={scale.type}
       data-domain={scale.domain.join(",")}
       data-range={scale.range.join(",")}
-    />
+    >
+      <rect
+        {...box}
+        className="eda-axis-strip"
+        fill="transparent"
+        pointerEvents="all"
+      />
+      {ends.map((end, index) => (
+        <rect
+          key={index}
+          {...end}
+          rx={1.5}
+          className="eda-axis-grip"
+          pointerEvents="none"
+        />
+      ))}
+    </g>
   );
 }
 
