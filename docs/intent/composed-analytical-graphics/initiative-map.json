@@ -4,8 +4,8 @@
     "title": "Composed analytical graphics",
     "slug": "composed-analytical-graphics",
     "scale": "capability",
-    "current_phase": "plan",
-    "last_updated": "2026-09-29",
+    "current_phase": "build",
+    "last_updated": "2026-10-08",
     "summary": "Author polished report graphics from a blank page using primitives, repeated templates, scoped calculations, group placement, and instance overrides."
   },
   "artifacts": {

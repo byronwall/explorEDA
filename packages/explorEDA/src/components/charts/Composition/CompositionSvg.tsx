@@ -97,6 +97,10 @@ function SceneNodeView({ node }: { node: SceneNode }) {
           fill={node.fill}
           opacity={node.opacity}
           textAnchor={node.anchor}
+          stroke={node.halo}
+          strokeWidth={node.halo ? 3 : undefined}
+          strokeLinejoin={node.halo ? "round" : undefined}
+          paintOrder={node.halo ? "stroke" : undefined}
         >
           {node.lines.map((line, index) => (
             <tspan key={index} x={node.x} y={line.y}>

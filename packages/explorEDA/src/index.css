@@ -6227,3 +6227,11 @@ td[data-null] {
   color: var(--muted-foreground);
   font-weight: 500;
 }
+.eda-composition-copy-status {
+  margin-top: -4px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.eda-composition-copy-status[data-state="failed"] {
+  color: var(--destructive);
+}

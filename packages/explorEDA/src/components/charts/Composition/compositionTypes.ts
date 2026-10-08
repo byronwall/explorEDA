@@ -499,8 +499,8 @@ export function createAnnotationElement(
     return {
       ...base,
       text: "Busiest month: {label} ({value})",
-      x: 16,
-      y: -14,
+      x: 14,
+      y: -20,
       anchor: {
         kind: "data",
         unitId: unit.id,
