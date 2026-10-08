@@ -1,9 +1,9 @@
 ---
 title: "Edit chart features in place"
 slug: "in-place-chart-editing"
-phase: intent
+phase: implementation
 status: current
-last_updated: "2026-10-06"
+last_updated: "2026-10-08"
 ---
 
 # Edit chart features in place
@@ -55,6 +55,10 @@ Candidate entry points include double-click, a context-menu action, and an ancho
 Title and axis-label fields already update through live chart settings. The settings editor keeps session reset values. There is no shared subtitle setting.
 
 Titles sit inside the chart’s drag handle and can expose trace actions. Axis labels support field inspection through modifier-click and a context menu. Common numerical axes still lack a complete editable bounds contract. These are existing interaction constraints, not reasons to reject direct editing.
+
+## Plan
+
+The [implementation plan](implementation-plan.md) settles the first gestures: double-click, Enter, and the context menu open an editor in place, and an axis drag follows exact entry. Edits apply immediately and reach the host as one undo step.
 
 ## Next step after confirmation
 

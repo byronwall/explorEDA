@@ -283,6 +283,13 @@ interface DataLayerState<T extends DatumObject> extends DataLayerProps<T> {
   removeAllCharts: () => void;
   updateChart: (id: string, settings: Partial<ChartSettings>) => void;
   updateChartLayouts: (layouts: Record<string, ChartLayout>) => void;
+  /**
+   * Open in-place edits. While one is open, `onStateChange` waits, so a typed
+   * title or a dragged axis reaches the host as one change when it ends.
+   */
+  stateChangeHolds: number;
+  /** Starts a held edit. Call the returned release once the edit ends. */
+  holdStateChanges: () => () => void;
 
   // Color scale state
   colorScales: ColorScaleType[];
@@ -567,6 +574,18 @@ const createDataLayerStore = <T extends DatumObject>(
     ...initialState,
     liveItems: {},
     filterReset: 0,
+    stateChangeHolds: 0,
+    holdStateChanges: () => {
+      set((state) => ({ stateChangeHolds: state.stateChangeHolds + 1 }));
+      let held = true;
+      return () => {
+        if (!held) return;
+        held = false;
+        set((state) => ({
+          stateChangeHolds: Math.max(0, state.stateChangeHolds - 1),
+        }));
+      };
+    },
     setData: (rawData, fileName, useDefaults = true) => {
       const fieldNames = get().fieldNames ?? [];
       const inferredTypes = Object.fromEntries(
@@ -629,8 +648,16 @@ const createDataLayerStore = <T extends DatumObject>(
     },
 
     addGeometryAsset: (asset) => {
-      if (!isGeometryAsset(asset)) throw new Error("Use a GeoJSON collection with valid polygon coordinates and closed rings.");
-      set((state) => ({ geometryAssets: [...state.geometryAssets.filter((item) => item.id !== asset.id), asset] }));
+      if (!isGeometryAsset(asset))
+        throw new Error(
+          "Use a GeoJSON collection with valid polygon coordinates and closed rings."
+        );
+      set((state) => ({
+        geometryAssets: [
+          ...state.geometryAssets.filter((item) => item.id !== asset.id),
+          asset,
+        ],
+      }));
     },
 
     updateFieldSettings: (field, updates) => {
@@ -1410,6 +1437,8 @@ export function DataLayerProvider<T extends DatumObject>({
     );
 
     return store.subscribe((state) => {
+      // A held edit reports once, when its last hold is released.
+      if (state.stateChangeHolds > 0) return;
       const savedData = state.saveToStructure();
       const nextFingerprint = getSavedStateFingerprint(savedData);
 
