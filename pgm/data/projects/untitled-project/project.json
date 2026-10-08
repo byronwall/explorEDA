@@ -3,20 +3,20 @@
   "name": "explorEDA",
   "description": "Blank project ready for grid editing, structure mapping, and future AI-assisted details.",
   "createdAt": "2026-09-29T01:22:21.210Z",
-  "updatedAt": "2026-10-08T18:25:46.250Z",
+  "updatedAt": "2026-10-08T19:19:38.028Z",
   "operationLog": [
     {
-      "id": "6c5279aa-f26d-4abb-bcfe-96ad0cf51265",
-      "kind": "node.metadata.updated",
+      "id": "eb9b0e7c-69af-46eb-a228-4ce108cd144a",
+      "kind": "node.priority.updated",
       "actor": {
         "kind": "agent",
-        "id": "token:57a5c9",
-        "label": "Agent token ...57a5c9"
+        "id": "token:42eb74",
+        "label": "Agent token ...42eb74"
       },
-      "createdAt": "2026-10-08T18:25:46.250Z",
-      "summary": "Updated metadata for \"Retire the in-place editing initiative\".",
+      "createdAt": "2026-10-08T19:19:38.028Z",
+      "summary": "Set \"Log scale is accepted but drawn as linear\" priority to medium.",
       "nodeIds": [
-        "page-retire-the-in-place-editing-initiative"
+        "page-log-scale-is-accepted-but-drawn-as-linear"
       ],
       "payload": {
         "state": {
@@ -865,11 +865,11 @@
               },
               {
                 "id": "page-axis-limits-on-more-chart-families",
-                "label": "Axis limits on more chart families",
+                "label": "Axis scales and limits on more charts",
                 "type": "page",
                 "status": "planned",
                 "metadata": {
-                  "purpose": "Charts whose axes cannot yet take limits."
+                  "purpose": "Charts whose axes cannot yet take limits, and scale types that are accepted but not drawn."
                 },
                 "context": "#204 covers scatter, bar, histogram, series bar, line, time-series Y, row, and box. These need their own domain rules. The axis-domain-controls initiative owns what the limits mean.\n",
                 "rawContext": "#204 covers scatter, bar, histogram, series bar, line, time-series Y, row, and box. These need their own domain rules. The axis-domain-controls initiative owns what the limits mean.\n",
@@ -1066,6 +1066,19 @@
                 "rawContext": "After #203–#206 (and the subtitle follow-up) merge, reconcile `docs/intent/in-place-chart-editing/` with the code. Move what lasts into `docs/ui-defaults.md` and the agent guide, then retire it with the software-design-sleuth workflow.\n",
                 "images": [],
                 "priority": "low"
+              },
+              {
+                "id": "page-log-scale-is-accepted-but-drawn-as-linear",
+                "label": "Log scale is accepted but drawn as linear",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "purpose": "x.scale=log and saved scaleType log silently draw a linear axis."
+                },
+                "context": "**Bug:** `scale=log` is accepted everywhere but drawn as a linear scale, with no warning.\n\n- Dashboard text accepts it: `x.scale=log`, or the flat path `xAxis.scaleType=log`. The allowed list in `packages/explorEDA/src/lib/dsl/compile.ts` (the `axis` key handler) is `linear, log, symlog, time, band`.\n- Saved-data validation accepts it (`isAxis` in `src/utils/saveDataUtils.ts`), and `AxisSettings.scaleType` declares it.\n- `numericScale()` in `components/charts/Axis/numericScale.ts` returns symlog for `symlog` and linear for everything else, so `log`, `time`, and `band` all draw linear.\n- The Axes tab then shows **Linear** selected and the axis title gets no scale note, so the user can't tell their setting was ignored.\n- Only ECDF has a real log option (`logX`, with its own `scaleLog`).\n\nFix options, decided with the axis-domain-controls initiative (`docs/intent/axis-domain-controls/intent-brief.md`, which says not to map log to symlog silently and to report nonpositive values):\n\n1. **Short term:** reject `log` (and `time`/`band` on numeric axes) in dashboard text with a diagnostic that suggests `symlog`. On restore, map the saved value to linear and report it, rather than storing a setting no chart honors.\n2. **Real support:** implement a true log scale in `numericScale`. Values ≤ 0 need an explicit omission or rejection policy, and excluded rows must stay visible in traces. Offer it in the Axes tab beside Linear and Symlog, and make `axisDrag.ts` move log axes in log space, as it does for symlog.\n\nDone when no saved or typed scale is silently replaced by another.\n\nFound while correcting docs in #209, which also changed the docs' `xAxis.scaleType=log` examples to `symlog`.\n",
+                "rawContext": "**Bug:** `scale=log` is accepted everywhere but drawn as a linear scale, with no warning.\n\n- Dashboard text accepts it: `x.scale=log`, or the flat path `xAxis.scaleType=log`. The allowed list in `packages/explorEDA/src/lib/dsl/compile.ts` (the `axis` key handler) is `linear, log, symlog, time, band`.\n- Saved-data validation accepts it (`isAxis` in `src/utils/saveDataUtils.ts`), and `AxisSettings.scaleType` declares it.\n- `numericScale()` in `components/charts/Axis/numericScale.ts` returns symlog for `symlog` and linear for everything else, so `log`, `time`, and `band` all draw linear.\n- The Axes tab then shows **Linear** selected and the axis title gets no scale note, so the user can't tell their setting was ignored.\n- Only ECDF has a real log option (`logX`, with its own `scaleLog`).\n\nFix options, decided with the axis-domain-controls initiative (`docs/intent/axis-domain-controls/intent-brief.md`, which says not to map log to symlog silently and to report nonpositive values):\n\n1. **Short term:** reject `log` (and `time`/`band` on numeric axes) in dashboard text with a diagnostic that suggests `symlog`. On restore, map the saved value to linear and report it, rather than storing a setting no chart honors.\n2. **Real support:** implement a true log scale in `numericScale`. Values ≤ 0 need an explicit omission or rejection policy, and excluded rows must stay visible in traces. Offer it in the Axes tab beside Linear and Symlog, and make `axisDrag.ts` move log axes in log space, as it does for symlog.\n\nDone when no saved or typed scale is silently replaced by another.\n\nFound while correcting docs in #209, which also changed the docs' `xAxis.scaleType=log` examples to `symlog`.\n",
+                "images": [],
+                "priority": "medium"
               }
             ],
             "links": [
@@ -1358,11 +1371,73 @@
                 "source": "page-cleanup-and-retirement",
                 "target": "page-retire-the-in-place-editing-initiative",
                 "parentChild": true
+              },
+              {
+                "source": "page-axis-limits-on-more-chart-families",
+                "target": "page-log-scale-is-accepted-but-drawn-as-linear",
+                "parentChild": true
               }
             ]
           }
         }
       }
+    },
+    {
+      "id": "d4c178f8-fe2c-4fbc-8f7f-41ddafe014c5",
+      "kind": "node.created",
+      "actor": {
+        "kind": "agent",
+        "id": "token:c685e7",
+        "label": "Agent token ...c685e7"
+      },
+      "createdAt": "2026-10-08T19:19:33.789Z",
+      "summary": "Created \"Log scale is accepted but drawn as linear\" under \"Axis scales and limits on more charts\".",
+      "nodeIds": [
+        "page-log-scale-is-accepted-but-drawn-as-linear",
+        "page-axis-limits-on-more-chart-families"
+      ]
+    },
+    {
+      "id": "f13f02ee-ecff-4368-b742-9fcc7ca15623",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:d72900",
+        "label": "Agent token ...d72900"
+      },
+      "createdAt": "2026-10-08T19:19:33.374Z",
+      "summary": "Updated metadata for \"Axis scales and limits on more charts\".",
+      "nodeIds": [
+        "page-axis-limits-on-more-chart-families"
+      ]
+    },
+    {
+      "id": "0dee4981-12da-4c2a-b9f0-aaee72405a5d",
+      "kind": "node.title.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:f1dc55",
+        "label": "Agent token ...f1dc55"
+      },
+      "createdAt": "2026-10-08T19:19:32.959Z",
+      "summary": "Renamed \"Axis limits on more chart families\" to \"Axis scales and limits on more charts\".",
+      "nodeIds": [
+        "page-axis-limits-on-more-chart-families"
+      ]
+    },
+    {
+      "id": "6c5279aa-f26d-4abb-bcfe-96ad0cf51265",
+      "kind": "node.metadata.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:57a5c9",
+        "label": "Agent token ...57a5c9"
+      },
+      "createdAt": "2026-10-08T18:25:46.250Z",
+      "summary": "Updated metadata for \"Retire the in-place editing initiative\".",
+      "nodeIds": [
+        "page-retire-the-in-place-editing-initiative"
+      ]
     },
     {
       "id": "139ae7ca-231c-4126-9660-c56192bf7e9c",
@@ -5054,62 +5129,6 @@
       "summary": "Changed \"Filter popover behaves oddly\" status to implemented.",
       "nodeIds": [
         "page-filter-popover-behaves-oddly"
-      ]
-    },
-    {
-      "id": "38575415-a6d3-4079-a896-4f293e9a6515",
-      "kind": "node.metadata.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-10-02T04:30:29.456Z",
-      "summary": "Updated metadata for \"Adding slider or distribution view to filter in popover\".",
-      "nodeIds": [
-        "page-adding-slider-or-distribution-view-to-filter-in-popover"
-      ]
-    },
-    {
-      "id": "b117b7ed-7f40-4fec-87bd-b96b4645bbfb",
-      "kind": "node.status.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-10-02T04:30:29.320Z",
-      "summary": "Changed \"Adding slider or distribution view to filter in popover\" status to implemented.",
-      "nodeIds": [
-        "page-adding-slider-or-distribution-view-to-filter-in-popover"
-      ]
-    },
-    {
-      "id": "320946b7-c523-48a2-bc38-3a69cedfc87c",
-      "kind": "node.metadata.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-10-02T04:30:29.065Z",
-      "summary": "Updated metadata for \"search should highlight what matched\".",
-      "nodeIds": [
-        "page-search-should-highlight-what-matched"
-      ]
-    },
-    {
-      "id": "b9e91587-7e62-46ec-ad13-8ad8f5eb8c20",
-      "kind": "node.status.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-10-02T04:30:28.930Z",
-      "summary": "Changed \"search should highlight what matched\" status to implemented.",
-      "nodeIds": [
-        "page-search-should-highlight-what-matched"
       ]
     }
   ]
