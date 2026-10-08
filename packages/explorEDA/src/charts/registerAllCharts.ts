@@ -3,6 +3,7 @@ import { barChartDefinition } from "@/components/charts/BarChart/definition";
 import { boxPlotDefinition } from "@/components/charts/BoxPlot/definition";
 import { calendarDefinition } from "@/components/charts/Calendar/definition";
 import { colorLegendDefinition } from "@/components/charts/ColorLegend/definition";
+import { compositionDefinition } from "@/components/charts/Composition/definition";
 import { dataTableDefinition } from "@/components/charts/DataTable/definition";
 import { heatmapDefinition } from "@/components/charts/Heatmap/definition";
 import { ecdfDefinition } from "@/components/charts/Ecdf/definition";
@@ -37,4 +38,5 @@ export function registerAllCharts() {
   chartRegistry.register(ecdfDefinition);
   chartRegistry.register(metricCardDefinition);
   chartRegistry.register(mapDefinition);
+  chartRegistry.register(compositionDefinition);
 }

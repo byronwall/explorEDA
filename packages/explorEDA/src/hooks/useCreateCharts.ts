@@ -16,8 +16,8 @@ export function useCreateCharts() {
     const layout = initialLayout ?? {
       x: 0,
       y: Math.max(0, ...charts.map((chart) => chart.layout.y + chart.layout.h)),
-      w: type === "metric-card" ? 4 : 6,
-      h: type === "metric-card" ? 3 : 4,
+      w: type === "metric-card" ? 4 : type === "composition" ? 12 : 6,
+      h: type === "metric-card" ? 3 : type === "composition" ? 7 : 4,
     };
 
     const definition = getChartDefinition(type);

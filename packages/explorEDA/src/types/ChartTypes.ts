@@ -18,6 +18,7 @@ import type { HeatmapSettings } from "@/components/charts/Heatmap/definition";
 import type { EcdfSettings } from "@/components/charts/Ecdf/definition";
 import type { MetricCardSettings } from "@/components/charts/MetricCard/definition";
 import type { ColorLegendSettings } from "@/components/charts/ColorLegend/definition";
+import type { CompositionSettings } from "@/components/charts/Composition/definition";
 
 export interface ChartLayout {
   x: number;
@@ -118,7 +119,8 @@ export type ChartSettings =
   | EcdfSettings
   | MapSettings
   | MetricCardSettings
-  | ColorLegendSettings;
+  | ColorLegendSettings
+  | CompositionSettings;
 
 export type ChartType = ChartSettings["type"];
 export type ScatterChartSettings = ScatterPlotSettings;

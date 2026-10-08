@@ -20,6 +20,7 @@ const chartNames: Record<string, string> = {
   heatmap: "Heatmap",
   ecdf: "Cumulative distribution",
   "metric-card": "Metric card",
+  composition: "Composition",
 };
 
 export function getChartTitle(

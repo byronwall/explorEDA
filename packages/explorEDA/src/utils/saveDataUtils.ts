@@ -1,3 +1,4 @@
+import { isCompositionDefinition } from "@/components/charts/Composition/validateComposition";
 import { isGeometryAsset } from "@/lib/geometryAssets";
 import type {
   SavedAnalysisStructure,
@@ -590,6 +591,8 @@ function isChart(value: unknown): boolean {
             value.view.zoom >= 1 &&
             value.view.zoom <= 64))
       );
+    case "composition":
+      return isCompositionDefinition(value.composition);
     case "metric-card":
       return (
         ["count", "sum", "average"].includes(value.aggregation as string) &&

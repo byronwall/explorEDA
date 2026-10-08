@@ -190,6 +190,7 @@ describe("dashboard text coverage", () => {
       "ecdf",
       "metric-card",
       "map",
+      "composition",
     ]
   )("rebuilds a %s chart with every setting edited", (type) => {
     expect(chartTypes()).toContain(type);

@@ -1070,3 +1070,34 @@ export const wineChemistryDashboard: SavedDataStructure = {
     },
   ],
 };
+
+// A blank artboard beside the linked views it can draw from, so the
+// composition is authored from scratch.
+export const messageDashboard = dashboard("Message log", [
+  {
+    ...base,
+    id: "messages-composition",
+    type: "composition",
+    title: "Report graphic",
+    layout: layout(0, 0, 12, 7),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 960, height: 600, background: "#ffffff" },
+      elements: [],
+    },
+  },
+  row(
+    "messages-correspondents",
+    "Messages by correspondent",
+    "Correspondent",
+    layout(0, 7, 4, 6)
+  ),
+  row("messages-direction", "Sent or received", "Direction", layout(4, 7, 3, 3)),
+  histogram("messages-words", "Words per message", "Words", layout(4, 10, 3, 3)),
+  table(
+    "messages-records",
+    "Messages",
+    ["Date", "Correspondent", "Role", "Direction", "Words"],
+    layout(7, 7, 5, 6)
+  ),
+]);

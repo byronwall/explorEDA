@@ -17,6 +17,7 @@ import {
   pointMapDashboard,
   regionMapDashboard,
   distributionDashboard,
+  messageDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -34,6 +35,7 @@ import {
   Bird,
   BarChart3,
   Calculator,
+  LayoutTemplate,
   LineChart,
   LucideIcon,
   Orbit,
@@ -90,6 +92,7 @@ const viewNames: Record<string, string> = {
   calendar: "calendar",
   boxplot: "box plot",
   "color-legend": "legend",
+  composition: "composition",
   "data-table": "table",
   heatmap: "heatmap",
   ecdf: "ECDF",
@@ -373,6 +376,19 @@ export const examples: ExampleData[] = [
     icon: ShoppingCart,
     data: "/datasets/shop-10000.csv",
     savedData: largeShopDashboard,
+  },
+  {
+    id: "message-log",
+    title: "Compose a report graphic",
+    description:
+      "Six years of messages with 12 correspondents. Start from a blank artboard: add a title, build one strip of monthly squares, and repeat it for each correspondent.",
+    dataset: { rows: "10,376 messages", fields: 5, source: "Synthetic" },
+    shows: ["Blank composition", "Text elements", "Edit and view modes"],
+    guide:
+      "Try this: open details on Report graphic, add a title and subtitle, and drag them into place.",
+    icon: LayoutTemplate,
+    data: "/datasets/message-log.csv",
+    savedData: messageDashboard,
   },
   {
     id: "lorenz-3d",
