@@ -52,6 +52,10 @@ The CSS file is available at `exploreda/dist/ExplorEda.css`.
 
 `onStateChange` runs after meaningful workspace changes. It does not run on
 initial mount, and replacing `data` or `savedData` does not echo a callback.
+An edit made in place on a chart is reported once, when it ends: typing a title,
+dragging an axis, or a session in an axis range popover. A host that records
+each callback as an undo step therefore gets one step per edit. An edit
+cancelled with Escape is not reported at all.
 `ref.current.getSettings()` reads the current `SavedDataStructure` after mount,
 including initial settings when `savedData` is omitted. It reflects later edits
 when called again. It does not change the edit-only callback behavior.
@@ -242,7 +246,7 @@ npx exploreda-dsl check dashboard.eda --data rows.csv
 npx exploreda-dsl reference
 ```
 
-Any saved setting can be written as a flat path, such as `xAxis.scaleType=log` or `columns.0.width=140`. Color scales, grouped summaries, and the Rows view have their own lines (`scale`, `group`, `rows`). `exportDocument(settings, { rows })` writes the current dashboard as text that rebuilds it. Region maps refer to map shapes the host passes in as `geometryAssets`.
+Set an axis range with `x.min=`, `x.max=`, `y.min=`, and `y.max=`. They save as `xAxis.limits` and `yAxis.limits` and only change the view; rows outside stay counted. Any saved setting can be written as a flat path, such as `xAxis.scaleType=symlog` or `columns.0.width=140`. Color scales, grouped summaries, and the Rows view have their own lines (`scale`, `group`, `rows`). `exportDocument(settings, { rows })` writes the current dashboard as text that rebuilds it. Region maps refer to map shapes the host passes in as `geometryAssets`.
 
 ### Several views in one text
 
@@ -278,7 +282,6 @@ const { views } = compileViews(text, { rows });
 Text without `view` lines reads as one view. `compileDocument` builds only the first view and warns about the rest. `exploreda-dsl check` checks every view.
 
 `check` exits 0 when every declaration applied, 1 when some were skipped, and 2 when nothing can be built. Add `--json` for the full result.
-
 
 ### Histogram and Distribution
 
@@ -336,7 +339,11 @@ import { ExplorEdaProject, type AnalysisView } from "exploreda";
 function Shop({ project, tables }) {
   const [state, setState] = useState({
     project,
-    view: { id: "orders", name: "Orders", queryId: "orders-by-customer" } as AnalysisView,
+    view: {
+      id: "orders",
+      name: "Orders",
+      queryId: "orders-by-customer",
+    } as AnalysisView,
   });
   return (
     <ExplorEdaProject
@@ -345,7 +352,10 @@ function Shop({ project, tables }) {
       view={state.view}
       onProjectChange={setState}
       onStateChange={(settings) =>
-        setState((current) => ({ ...current, view: { ...current.view, settings } }))
+        setState((current) => ({
+          ...current,
+          view: { ...current.view, settings },
+        }))
       }
     />
   );
