@@ -308,7 +308,9 @@
           }
         ],
         "confidence": "high",
-        "supersedes": ["local-session"],
+        "supersedes": [
+          "local-session"
+        ],
         "notes": "No implementation authorization or unobserved proof is inferred."
       },
       {
@@ -330,7 +332,10 @@
         "notes": "No implementation authorization or unobserved proof is inferred."
       }
     ],
-    "themes": ["Direct manipulation", "Local edits with clear effects"],
+    "themes": [
+      "Direct manipulation",
+      "Local edits with clear effects"
+    ],
     "conflicts": [],
     "human_questions": []
   },
@@ -379,12 +384,12 @@
       {
         "id": "m2-axis-limits",
         "outcome": "Charts honor axis min and max; exact entry in the Axes tab",
-        "status": "in-progress"
+        "status": "in-review"
       },
       {
         "id": "m3-axes-in-place",
         "outcome": "Range editor and axis-title editor anchored to the axis",
-        "status": "planned"
+        "status": "in-progress"
       },
       {
         "id": "m4-axis-drag",
@@ -411,7 +416,11 @@
       "date": "2026-10-06",
       "action": "Reconciled annotated product feedback and priority.",
       "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
-      "source_annotation_indices": [2, 7, 8],
+      "source_annotation_indices": [
+        2,
+        7,
+        8
+      ],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
     },
     {
