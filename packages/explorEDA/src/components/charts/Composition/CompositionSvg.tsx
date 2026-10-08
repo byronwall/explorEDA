@@ -12,6 +12,7 @@ export function CompositionSvg({
   label,
   children,
   svgRef,
+  offsets,
   ...props
 }: {
   scene: CompositionScene;
@@ -19,7 +20,16 @@ export function CompositionSvg({
   label: string;
   children?: ReactNode;
   svgRef?: React.Ref<SVGSVGElement>;
+  /** Temporary moves, such as during a drag, by element ID. */
+  offsets?: Record<string, { dx: number; dy: number }>;
 } & Omit<React.SVGProps<SVGSVGElement>, "scale" | "ref">) {
+  // Nodes group by element, so moving one element is one transform.
+  const groups: { elementId: string; nodes: SceneNode[] }[] = [];
+  for (const node of scene.nodes) {
+    const last = groups[groups.length - 1];
+    if (last?.elementId === node.elementId) last.nodes.push(node);
+    else groups.push({ elementId: node.elementId, nodes: [node] });
+  }
   return (
     <svg
       ref={svgRef}
@@ -38,9 +48,21 @@ export function CompositionSvg({
         height={scene.height}
         fill={scene.background}
       />
-      {scene.nodes.map((node) => (
-        <SceneNodeView key={node.key} node={node} />
-      ))}
+      {groups.map(({ elementId, nodes }, index) => {
+        const offset = offsets?.[elementId];
+        return (
+          <g
+            key={`${elementId}:${index}`}
+            transform={
+              offset ? `translate(${offset.dx} ${offset.dy})` : undefined
+            }
+          >
+            {nodes.map((node) => (
+              <SceneNodeView key={node.key} node={node} />
+            ))}
+          </g>
+        );
+      })}
       {children && <g data-overlay="">{children}</g>}
     </svg>
   );
@@ -63,5 +85,17 @@ function SceneNodeView({ node }: { node: SceneNode }) {
           ))}
         </text>
       );
+    case "rect":
+      return (
+        <rect
+          x={node.x}
+          y={node.y}
+          width={node.width}
+          height={node.height}
+          fill={node.fill}
+        />
+      );
+    case "circle":
+      return <circle cx={node.cx} cy={node.cy} r={node.r} fill={node.fill} />;
   }
 }

@@ -3,6 +3,12 @@ import type {
   CompositionElement,
   TextElement,
 } from "./compositionTypes";
+import {
+  resolveUnit,
+  type CompositionData,
+  type GlyphDatum,
+  type ResolvedInstance,
+} from "./resolveUnit";
 
 /** Measures one line of text at a size and weight, in pixels. */
 export type MeasureText = (
@@ -23,6 +29,8 @@ interface NodeBase {
   key: string;
   /** The element whose definition drew this node. */
   elementId: string;
+  /** The repeat that drew this node, for chart units. */
+  instanceKey?: string;
 }
 
 export interface TextNode extends NodeBase {
@@ -36,7 +44,26 @@ export interface TextNode extends NodeBase {
   anchor: "start" | "middle" | "end";
 }
 
-export type SceneNode = TextNode;
+export interface RectNode extends NodeBase {
+  type: "rect";
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fill: string;
+  glyph?: GlyphDatum;
+}
+
+export interface CircleNode extends NodeBase {
+  type: "circle";
+  cx: number;
+  cy: number;
+  r: number;
+  fill: string;
+  glyph?: GlyphDatum;
+}
+
+export type SceneNode = TextNode | RectNode | CircleNode;
 
 /** One element as drawn, with the box that selects and moves it. */
 export interface ResolvedElement {
@@ -44,6 +71,8 @@ export interface ResolvedElement {
   kind: CompositionElement["kind"];
   name: string;
   bounds: Bounds;
+  /** Each repeat of a chart unit. */
+  instances?: ResolvedInstance[];
 }
 
 export interface CompositionScene {
@@ -54,13 +83,20 @@ export interface CompositionScene {
   elements: ResolvedElement[];
 }
 
+export const NO_DATA: CompositionData = {
+  allIds: [],
+  liveIds: [],
+  column: () => ({}),
+};
+
 /**
  * Resolves a definition into the nodes the artboard draws. Viewing, editing,
  * and PNG output all draw this one scene.
  */
 export function resolveComposition(
   definition: CompositionDefinition,
-  measureText: MeasureText
+  measureText: MeasureText,
+  data: CompositionData = NO_DATA
 ): CompositionScene {
   const nodes: SceneNode[] = [];
   const elements: ResolvedElement[] = [];
@@ -73,6 +109,16 @@ export function resolveComposition(
         kind: element.kind,
         name: element.name,
         bounds: textBounds(element, node),
+      });
+    } else if (element.kind === "unit") {
+      const unit = resolveUnit(definition, element, data);
+      nodes.push(...unit.nodes);
+      elements.push({
+        id: element.id,
+        kind: element.kind,
+        name: element.name,
+        bounds: unit.bounds,
+        instances: unit.instances,
       });
     }
   }

@@ -1,16 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
+import { useDataLayer } from "@/providers/DataLayerProvider";
 import {
   ArrowDown,
   ArrowUp,
   Heading1,
   Heading2,
+  Rows3,
   StickyNote,
   Trash2,
   Type,
 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   removeElement,
   reorderElement,
@@ -22,11 +24,16 @@ import {
 } from "./compositionEditorStore";
 import {
   createTextElement,
+  createUnitElement,
+  normalizeComposition,
   type CompositionDefinition,
   type CompositionElement,
   type TextElement,
   type TextRole,
+  type UnitElement,
 } from "./compositionTypes";
+import { ScalesSection } from "./ScaleInspector";
+import { UnitProperties } from "./UnitInspector";
 import type { CompositionSettings } from "./definition";
 import {
   ColorSetting,
@@ -77,14 +84,20 @@ const TEXT_ADDERS: {
 
 const KIND_ICONS: Record<CompositionElement["kind"], typeof Type> = {
   text: Type,
+  unit: Rows3,
 };
 
 export function CompositionInspector({
   settings,
   onSettingsChange,
 }: ChartSettingsPanelProps<CompositionSettings>) {
-  const definition = settings.composition;
+  const definition = useMemo(
+    () => normalizeComposition(settings.composition),
+    [settings.composition]
+  );
   const { mode, selection } = useCompositionEditor(settings.id);
+  const [openScaleId, setOpenScaleId] = useState<string>();
+  const profiles = useDataLayer((state) => state.fieldProfiles);
   const setMode = useCompositionEditorStore((state) => state.setMode);
   const select = useCompositionEditorStore((state) => state.select);
   const close = useCompositionEditorStore((state) => state.close);
@@ -102,8 +115,11 @@ export function CompositionInspector({
     (element) => element.id === selection?.elementId
   );
 
-  const add = (element: CompositionElement) => {
-    change({ ...definition, elements: [...definition.elements, element] });
+  const add = (
+    element: CompositionElement,
+    base: CompositionDefinition = definition
+  ) => {
+    change({ ...base, elements: [...base.elements, element] });
     setMode(settings.id, "edit");
     select(settings.id, { elementId: element.id });
   };
@@ -134,6 +150,19 @@ export function CompositionInspector({
               {label}
             </Button>
           ))}
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!profiles.length}
+            tooltip="Add a chart template: a frame of marks drawn from the data, which you can repeat for each value of a field"
+            onClick={() => {
+              const created = createUnitElement(definition, profiles);
+              if (created) add(created.element, created.definition);
+            }}
+          >
+            <Rows3 className="h-3.5 w-3.5" aria-hidden="true" />
+            Chart unit
+          </Button>
         </div>
       </section>
 
@@ -219,6 +248,25 @@ export function CompositionInspector({
         />
       )}
 
+      {selected?.kind === "unit" && (
+        <UnitProperties
+          unit={selected}
+          scales={definition.scales}
+          repeatCount={countRepeats(selected, profiles)}
+          onChange={(patch) =>
+            change(updateElement<UnitElement>(definition, selected.id, patch))
+          }
+          onEditScale={setOpenScaleId}
+        />
+      )}
+
+      <ScalesSection
+        definition={definition}
+        openScaleId={openScaleId}
+        onOpen={setOpenScaleId}
+        onChange={change}
+      />
+
       <section className="eda-setting-section" aria-label="Artboard">
         <h5>Artboard</h5>
         <div className="eda-setting-grid">
@@ -248,6 +296,19 @@ export function CompositionInspector({
       </section>
     </div>
   );
+}
+
+/** The repeats a unit draws: one per subset value, up to its limit. */
+function countRepeats(
+  unit: UnitElement,
+  profiles: { name: string; uniqueCount: number; nullCount: number }[]
+) {
+  if (!unit.repeat.field) return 1;
+  const profile = profiles.find((item) => item.name === unit.repeat.field);
+  const subsets = profile
+    ? profile.uniqueCount + (profile.nullCount > 0 ? 1 : 0)
+    : 1;
+  return Math.max(1, Math.min(unit.repeat.limit, subsets));
 }
 
 const WEIGHT_OPTIONS = [

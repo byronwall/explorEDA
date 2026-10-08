@@ -2,16 +2,19 @@ import { useMemo, useRef, useState } from "react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { ChartMessage } from "../ChartMessage";
+import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import { moveElement } from "./compositionEdits";
 import {
   useCompositionEditor,
   useCompositionEditorStore,
 } from "./compositionEditorStore";
 import { CompositionSvg } from "./CompositionSvg";
+import { normalizeComposition } from "./compositionTypes";
 import type { CompositionSettings } from "./definition";
 import { measureCompositionText } from "./measureText";
 import {
   resolveComposition,
+  type Bounds,
   type ResolvedElement,
 } from "./resolveComposition";
 
@@ -29,7 +32,10 @@ export function CompositionChart({
   height,
   onSettingsChange,
 }: BaseChartProps<CompositionSettings>) {
-  const definition = settings.composition;
+  const definition = useMemo(
+    () => normalizeComposition(settings.composition),
+    [settings.composition]
+  );
   const updateChart = useDataLayer((state) => state.updateChart);
   const { mode, selection } = useCompositionEditor(settings.id);
   const select = useCompositionEditorStore((state) => state.select);
@@ -37,9 +43,19 @@ export function CompositionChart({
   const [drag, setDrag] = useState<Drag>();
   const svgRef = useRef<SVGSVGElement>(null);
 
+  const liveIds = useGetLiveIds(settings);
+  const allIds = useGetAllIds(settings);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
+  const nonce = useDataLayer((state) => state.nonce);
+  const data = useMemo(
+    () => ({ allIds, liveIds, column: getColumnData }),
+    // Calculated columns change with the nonce.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [allIds, liveIds, getColumnData, nonce]
+  );
   const scene = useMemo(
-    () => resolveComposition(definition, measureCompositionText),
-    [definition]
+    () => resolveComposition(definition, measureCompositionText, data),
+    [definition, data]
   );
 
   const commit = (composition: CompositionSettings["composition"]) => {
@@ -115,16 +131,20 @@ export function CompositionChart({
     commit(moveElement(definition, selection.elementId, delta[0]!, delta[1]!));
   };
 
-  // While dragging, draw the moved definition so the result shows live.
-  const shownScene =
-    drag && (drag.dx || drag.dy)
-      ? resolveComposition(
-          moveElement(definition, drag.elementId, drag.dx, drag.dy),
-          measureCompositionText
-        )
-      : scene;
+  // While dragging, offset the element's drawing; the move saves on release.
+  const offsets = drag && { [drag.elementId]: { dx: drag.dx, dy: drag.dy } };
+  const offsetBounds = (element: ResolvedElement) => {
+    const offset = offsets?.[element.id];
+    return offset
+      ? {
+          ...element.bounds,
+          x: element.bounds.x + offset.dx,
+          y: element.bounds.y + offset.dy,
+        }
+      : element.bounds;
+  };
 
-  const selected = shownScene.elements.find(
+  const selected = scene.elements.find(
     (element) => element.id === selection?.elementId
   );
 
@@ -137,7 +157,8 @@ export function CompositionChart({
     >
       <CompositionSvg
         svgRef={svgRef}
-        scene={shownScene}
+        scene={scene}
+        offsets={offsets}
         scale={scale}
         label={settings.title || "Composition"}
         className="eda-composition-artboard"
@@ -153,21 +174,31 @@ export function CompositionChart({
         onPointerCancel={() => setDrag(undefined)}
       >
         {editing &&
-          shownScene.elements.map((element) => (
-            <rect
-              key={element.id}
-              className="eda-composition-hit"
-              data-selected={element.id === selection?.elementId || undefined}
-              x={element.bounds.x - 3}
-              y={element.bounds.y - 3}
-              width={element.bounds.width + 6}
-              height={element.bounds.height + 6}
-              aria-label={`Select ${element.name}`}
-              onPointerDown={(event) => startDrag(event, element)}
-            />
-          ))}
+          scene.elements.map((element) => {
+            const bounds = offsetBounds(element);
+            return (
+              <rect
+                key={element.id}
+                className="eda-composition-hit"
+                data-kind={element.kind}
+                data-selected={
+                  element.id === selection?.elementId || undefined
+                }
+                x={bounds.x - 3}
+                y={bounds.y - 3}
+                width={bounds.width + 6}
+                height={bounds.height + 6}
+                aria-label={`Select ${element.name}`}
+                onPointerDown={(event) => startDrag(event, element)}
+              />
+            );
+          })}
         {editing && selected && (
-          <SelectionTag element={selected} scale={scale} />
+          <SelectionTag
+            name={selected.name}
+            bounds={offsetBounds(selected)}
+            scale={scale}
+          />
         )}
       </CompositionSvg>
     </div>
@@ -176,22 +207,24 @@ export function CompositionChart({
 
 /** Names the selected element above its box, at a constant screen size. */
 function SelectionTag({
-  element,
+  name,
+  bounds,
   scale,
 }: {
-  element: ResolvedElement;
+  name: string;
+  bounds: Bounds;
   scale: number;
 }) {
   const fontSize = 11 / scale;
-  const y = Math.max(fontSize + 2 / scale, element.bounds.y - 6 / scale);
+  const y = Math.max(fontSize + 2 / scale, bounds.y - 6 / scale);
   return (
     <text
       className="eda-composition-tag"
-      x={element.bounds.x - 3}
+      x={bounds.x - 3}
       y={y}
       fontSize={fontSize}
     >
-      {element.name}
+      {name}
     </text>
   );
 }
