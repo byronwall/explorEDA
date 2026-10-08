@@ -1,4 +1,7 @@
 @import "tailwindcss";
+/* Scan the library even when its checkout is git-ignored, as agent
+   worktrees are; Tailwind skips git-ignored files otherwise. */
+@source "./";
 
 @plugin "tailwindcss-animate";
 

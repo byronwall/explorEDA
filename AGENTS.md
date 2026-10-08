@@ -1,5 +1,6 @@
 # explorEDA working rules
 
+- Start with the [agent guide](docs/agent-guide.md): where code lives, the commands that work, and known traps.
 - Keep this existing React library and demo in React and TypeScript.
 - Use pnpm. Run `pnpm check` after a broad change; see [Verifying changes](#verifying-changes).
 - Read [UI defaults](docs/ui-defaults.md) before changing controls, tables, overlays, or field details.
