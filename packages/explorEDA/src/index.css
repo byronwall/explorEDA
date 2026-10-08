@@ -6179,3 +6179,8 @@ td[data-null] {
   padding: 6px 0 6px 8px;
   border-left: 2px solid var(--border);
 }
+.eda-composition-calc-now {
+  font-size: 11px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}

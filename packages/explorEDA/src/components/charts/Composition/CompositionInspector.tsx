@@ -7,7 +7,9 @@ import {
   ArrowUp,
   Heading1,
   Heading2,
+  MessageSquareText,
   Rows3,
+  SeparatorVertical,
   StickyNote,
   Trash2,
   Type,
@@ -23,11 +25,24 @@ import {
   useCompositionEditorStore,
 } from "./compositionEditorStore";
 import {
+  AnnotationProperties,
+  CalculationsSection,
+  GuideProperties,
+} from "./AnnotationInspector";
+import { measureCompositionText } from "./measureText";
+import { resolveComposition } from "./resolveComposition";
+import { repeatSubsets } from "./resolveUnit";
+import { useCompositionData } from "./useCompositionData";
+import {
+  createAnnotationElement,
+  createGuideElement,
   createTextElement,
   createUnitElement,
   normalizeComposition,
   type CompositionDefinition,
+  type AnnotationElement,
   type CompositionElement,
+  type GuideElement,
   type TextElement,
   type TextRole,
   type UnitElement,
@@ -85,6 +100,8 @@ const TEXT_ADDERS: {
 const KIND_ICONS: Record<CompositionElement["kind"], typeof Type> = {
   text: Type,
   unit: Rows3,
+  guide: SeparatorVertical,
+  annotation: MessageSquareText,
 };
 
 export function CompositionInspector({
@@ -97,6 +114,8 @@ export function CompositionInspector({
   );
   const { mode, selection } = useCompositionEditor(settings.id);
   const [openScaleId, setOpenScaleId] = useState<string>();
+  const [openCalcId, setOpenCalcId] = useState<string>();
+  const data = useCompositionData(settings);
   const profiles = useDataLayer((state) => state.fieldProfiles);
   const setMode = useCompositionEditorStore((state) => state.setMode);
   const select = useCompositionEditorStore((state) => state.select);
@@ -113,6 +132,19 @@ export function CompositionInspector({
 
   const selected = definition.elements.find(
     (element) => element.id === selection?.elementId
+  );
+  const firstUnit = definition.elements.find(
+    (element): element is UnitElement => element.kind === "unit"
+  );
+  // An annotation switching to a page anchor keeps its drawn position.
+  const anchorPoint = useMemo(
+    () =>
+      selected?.kind === "annotation"
+        ? resolveComposition(definition, measureCompositionText, data).elements.find(
+            (element) => element.id === selected.id
+          )?.anchor?.point
+        : undefined,
+    [selected, definition, data]
   );
 
   const add = (
@@ -162,6 +194,35 @@ export function CompositionInspector({
           >
             <Rows3 className="h-3.5 w-3.5" aria-hidden="true" />
             Chart unit
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!firstUnit}
+            tooltip="Add a rule across a chart unit at a fixed or calculated position, such as a date"
+            onClick={() =>
+              firstUnit && add(createGuideElement(definition, firstUnit))
+            }
+          >
+            <SeparatorVertical className="h-3.5 w-3.5" aria-hidden="true" />
+            Guide
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            tooltip="Add a callout. With a chart unit, it follows the busiest glyph of the first repeat; otherwise it sits on the page."
+            onClick={() =>
+              add(
+                createAnnotationElement(
+                  definition,
+                  firstUnit,
+                  firstUnit && repeatSubsets(firstUnit, data)[0]?.key
+                )
+              )
+            }
+          >
+            <MessageSquareText className="h-3.5 w-3.5" aria-hidden="true" />
+            Annotation
           </Button>
         </div>
       </section>
@@ -256,9 +317,42 @@ export function CompositionInspector({
           onChange={(patch) =>
             change(updateElement<UnitElement>(definition, selected.id, patch))
           }
+          calculations={definition.calculations}
           onEditScale={setOpenScaleId}
         />
       )}
+
+      {selected?.kind === "guide" && (
+        <GuideProperties
+          guide={selected}
+          definition={definition}
+          onChange={(patch) =>
+            change(updateElement<GuideElement>(definition, selected.id, patch))
+          }
+        />
+      )}
+
+      {selected?.kind === "annotation" && (
+        <AnnotationProperties
+          note={selected}
+          definition={definition}
+          data={data}
+          anchorPoint={anchorPoint}
+          onChange={(patch) =>
+            change(
+              updateElement<AnnotationElement>(definition, selected.id, patch)
+            )
+          }
+        />
+      )}
+
+      <CalculationsSection
+        definition={definition}
+        data={data}
+        openId={openCalcId}
+        onOpen={setOpenCalcId}
+        onChange={change}
+      />
 
       <ScalesSection
         definition={definition}

@@ -1085,20 +1085,27 @@ export const messageDashboard = dashboard("Message log", [
       artboard: { width: 960, height: 600, background: "#ffffff" },
       elements: [],
       scales: [],
+      calculations: [],
     },
   },
+  {
+    ...line("messages-monthly", "Messages per month", [], layout(0, 7, 8, 4), "Messages"),
+    xField: "Date",
+    xAxisLabel: "Month · UTC",
+    time: { interval: "month", weekStart: "monday", aggregation: "count", missingPeriods: "zero" },
+  },
+  row("messages-direction", "Sent or received", "Direction", layout(8, 7, 4, 4)),
   row(
     "messages-correspondents",
     "Messages by correspondent",
     "Correspondent",
-    layout(0, 7, 4, 6)
+    layout(0, 11, 4, 6)
   ),
-  row("messages-direction", "Sent or received", "Direction", layout(4, 7, 3, 3)),
-  histogram("messages-words", "Words per message", "Words", layout(4, 10, 3, 3)),
+  histogram("messages-words", "Words per message", "Words", layout(4, 11, 3, 6)),
   table(
     "messages-records",
     "Messages",
     ["Date", "Correspondent", "Role", "Direction", "Words"],
-    layout(7, 7, 5, 6)
+    layout(7, 11, 5, 6)
   ),
 ]);

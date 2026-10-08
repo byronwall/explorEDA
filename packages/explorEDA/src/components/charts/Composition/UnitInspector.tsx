@@ -6,6 +6,7 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import { Plus, Trash2 } from "lucide-react";
 import { useId } from "react";
 import type {
+  CompositionCalculation,
   CompositionScale,
   MarkDefinition,
   RepeatRule,
@@ -82,11 +83,13 @@ export function UnitProperties({
   unit,
   scales,
   repeatCount,
+  calculations,
   onChange,
   onEditScale,
 }: {
   unit: UnitElement;
   scales: CompositionScale[];
+  calculations: CompositionCalculation[];
   /** Repeats drawn now, so the template note can name them. */
   repeatCount: number;
   onChange: (patch: Partial<UnitElement>) => void;
@@ -186,6 +189,31 @@ export function UnitProperties({
             options={SHOWN}
             onChange={(show) => onChange({ label: { ...unit.label, show } })}
           />
+          {unit.label.show && (
+            <>
+              <Label htmlFor={`${nameId}-label-value`}>Label value</Label>
+              <select
+                id={`${nameId}-label-value`}
+                className="eda-composition-select"
+                value={unit.label.valueCalcId ?? ""}
+                onChange={(event) =>
+                  onChange({
+                    label: {
+                      ...unit.label,
+                      valueCalcId: event.target.value || undefined,
+                    },
+                  })
+                }
+              >
+                <option value="">None</option>
+                {calculations.map((calc) => (
+                  <option key={calc.id} value={calc.id}>
+                    {calc.name}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
           {unit.label.show && unit.repeat.arrangement === "rows" && (
             <NumberSetting
               label="Label width"

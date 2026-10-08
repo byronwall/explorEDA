@@ -96,6 +96,27 @@ function SceneNodeView({ node }: { node: SceneNode }) {
         />
       );
     case "circle":
-      return <circle cx={node.cx} cy={node.cy} r={node.r} fill={node.fill} />;
+      return (
+        <circle
+          cx={node.cx}
+          cy={node.cy}
+          r={node.r}
+          fill={node.fill}
+          stroke={node.stroke}
+          strokeWidth={node.stroke ? 1.25 : undefined}
+        />
+      );
+    case "line":
+      return (
+        <line
+          x1={node.x1}
+          y1={node.y1}
+          x2={node.x2}
+          y2={node.y2}
+          stroke={node.stroke}
+          strokeWidth={node.strokeWidth}
+          strokeDasharray={node.dash}
+        />
+      );
   }
 }

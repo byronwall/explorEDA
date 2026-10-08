@@ -62,6 +62,7 @@ function isUnitElement(value: Value) {
     typeof label.show === "boolean" &&
     isNumber(label.width) &&
     isNumber(label.fontSize) &&
+    (label.valueCalcId === undefined || isString(label.valueCalcId)) &&
     typeof value.axis === "boolean" &&
     Array.isArray(marks) &&
     marks.every(isMark) &&
@@ -96,6 +97,65 @@ function isScale(value: unknown) {
   );
 }
 
+function isCalculation(value: unknown) {
+  return (
+    isRecord(value) &&
+    isString(value.id) &&
+    isString(value.name) &&
+    oneOf(value.aggregation, ["count", "sum", "average", "min", "max"]) &&
+    (value.field === undefined || isString(value.field)) &&
+    oneOf(value.population, ["repeat", "composition"]) &&
+    oneOf(value.filters, ["follow", "ignore"])
+  );
+}
+
+function isGuideElement(value: Value) {
+  const guide = value.value;
+  return (
+    isString(value.unitId) &&
+    isString(value.label) &&
+    isString(value.color) &&
+    isRecord(guide) &&
+    ((guide.kind === "constant" && isString(guide.value)) ||
+      (guide.kind === "calc" && isString(guide.calcId)))
+  );
+}
+
+function isAnchor(value: unknown) {
+  if (!isRecord(value)) return false;
+  switch (value.kind) {
+    case "page":
+      return true;
+    case "frame":
+      return (
+        isString(value.unitId) &&
+        isString(value.instanceKey) &&
+        isNumber(value.fx) &&
+        isNumber(value.fy)
+      );
+    case "data":
+      return (
+        isString(value.unitId) &&
+        isString(value.instanceKey) &&
+        isString(value.markId) &&
+        oneOf(value.pick, ["max", "min", "first", "last"])
+      );
+    default:
+      return false;
+  }
+}
+
+function isAnnotationElement(value: Value) {
+  return (
+    isString(value.text) &&
+    isAnchor(value.anchor) &&
+    isNumber(value.fontSize) &&
+    value.fontSize > 0 &&
+    isString(value.color) &&
+    typeof value.leader === "boolean"
+  );
+}
+
 function isElement(value: unknown) {
   if (!isRecord(value) || !isPlaced(value)) return false;
   switch (value.kind) {
@@ -103,6 +163,10 @@ function isElement(value: unknown) {
       return isTextElement(value);
     case "unit":
       return isUnitElement(value);
+    case "guide":
+      return isGuideElement(value);
+    case "annotation":
+      return isAnnotationElement(value);
     default:
       return false;
   }
@@ -113,7 +177,7 @@ export function isCompositionDefinition(
   value: unknown
 ): value is CompositionDefinition {
   if (!isRecord(value) || !isRecord(value.artboard)) return false;
-  const { artboard, elements, scales = [] } = value;
+  const { artboard, elements, scales = [], calculations = [] } = value;
   // Every mark must point at a scale of the right kind.
   const kinds = new Map(
     Array.isArray(scales)
@@ -135,6 +199,8 @@ export function isCompositionDefinition(
         )
     );
   return (
+    Array.isArray(calculations) &&
+    calculations.every(isCalculation) &&
     Array.isArray(scales) &&
     scales.every(isScale) &&
     new Set(scales.map((scale) => (scale as Value).id)).size ===
