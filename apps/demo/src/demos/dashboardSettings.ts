@@ -1086,6 +1086,7 @@ export const messageDashboard = dashboard("Message log", [
       elements: [],
       scales: [],
       calculations: [],
+      overrides: [],
     },
   },
   {
