@@ -57,6 +57,18 @@ export interface AxisSettings {
   tickFontSize?: 8 | 10 | 12;
   labelFontSize?: 10 | 12 | 14;
   grid?: boolean;
+  /**
+   * The range the axis shows, in data units. A blank side follows the data.
+   * Limits only change the view: marks outside are clipped, never filtered.
+   */
+  limits?: AxisLimits;
+  /** @deprecated A placeholder that charts never read. Use `limits`. */
+  min?: number;
+  /** @deprecated A placeholder that charts never read. Use `limits`. */
+  max?: number;
+}
+
+export interface AxisLimits {
   min?: number;
   max?: number;
 }

@@ -12,6 +12,7 @@ import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import type { Filter } from "@/types/FilterTypes";
 import { scaleLinear } from "d3-scale";
 import { area, curveLinear, curveStepAfter, line } from "d3-shape";
+import { boundedDomain, hasAxisBounds } from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import type { LineChartSettings } from "./definition";
 
@@ -321,9 +322,15 @@ export function planTimeSeries(
     .range([0, plotWidth]);
   const yScaleType = filled ? "linear" : settings.yAxis.scaleType;
   const yScale = numericScale({ ...settings.yAxis, scaleType: yScaleType })
-    .domain(yHigh === yLow ? [yLow, yLow + 1] : [yLow, yHigh])
-    .range([plotHeight, 0])
-    .nice();
+    .domain(
+      boundedDomain(
+        yHigh === yLow ? [yLow, yLow + 1] : [yLow, yHigh],
+        settings.yAxis
+      )
+    )
+    .range([plotHeight, 0]);
+  // Bounds draw exactly as entered.
+  if (!hasAxisBounds(settings.yAxis)) yScale.nice();
   for (const point of points) {
     point.x = xScale((point.start + point.end) / 2);
     point.y = yScale(

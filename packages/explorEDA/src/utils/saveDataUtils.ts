@@ -281,6 +281,11 @@ function isAxis(value: unknown, zoomLevel = false): boolean {
     (value.grid === undefined || typeof value.grid === "boolean") &&
     (value.min === undefined || isFiniteNumber(value.min)) &&
     (value.max === undefined || isFiniteNumber(value.max)) &&
+    (value.limits === undefined ||
+      (isRecord(value.limits) &&
+        (value.limits.min === undefined || isFiniteNumber(value.limits.min)) &&
+        (value.limits.max === undefined ||
+          isFiniteNumber(value.limits.max)))) &&
     (!zoomLevel || isFiniteNumber(value.zoomLevel))
   );
 }
