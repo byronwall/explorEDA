@@ -32,6 +32,7 @@ import {
   electionsDashboard,
   lincolnRidgelineDashboard,
   taxSlopeDashboard,
+  titanicWaffleDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -899,6 +900,17 @@ export const examples: ExampleData[] = [
     icon: TrendingUp,
     data: "/datasets/tax-slope.csv",
     savedData: taxSlopeDashboard,
+  },
+  {
+    id: "titanic-waffle",
+    title: "Every passenger on the Titanic",
+    description:
+      "A waffle per class: one cell per passenger, filled from the bottom with those who died and then those who survived, so column heights compare class sizes and the blue blocks compare survival.",
+    dataset: { rows: "1,309 passengers", fields: 8, source: "Real" },
+    shows: ["Waffle marks", "One cell per row", "Shared category colors"],
+    icon: Grid3x3,
+    data: "/datasets/titanic.csv",
+    savedData: titanicWaffleDashboard,
   },
 ];
 

@@ -95,6 +95,7 @@ describe("example coverage manifest", () => {
       "covid-compare",
       "elections",
       "tax-slope",
+      "titanic-waffle",
       "product-activity",
       "scatter-trace",
       "calculated-orders",

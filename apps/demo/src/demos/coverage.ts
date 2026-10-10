@@ -1147,6 +1147,17 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "titanic-waffle",
+    intent:
+      "Draw one cell per passenger in each class, grouped by fate, so counts and survival compare at a glance.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

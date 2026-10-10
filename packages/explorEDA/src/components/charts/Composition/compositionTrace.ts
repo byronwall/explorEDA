@@ -134,6 +134,7 @@ export function makeCompositionTraceSource(
       } else if (
         mark.type !== "summary" &&
         mark.type !== "stack" &&
+        mark.type !== "waffle" &&
         mark.type !== "density"
       ) {
         for (const id of [mark.xScaleId, mark.yScaleId]) {

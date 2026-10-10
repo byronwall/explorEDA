@@ -358,3 +358,18 @@ Two rows per OECD country, for 2000 and 2023, with the change across the span an
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/tax-slope.ts
 ```
+
+## Titanic passengers
+
+- File: `titanic.csv`
+- Size: 1,309 rows and 8 fields
+- Demo: `?example=titanic-waffle`
+- Use: a waffle composition, one cell per passenger grouped by fate, repeated by class
+- Source: the [titanic3](https://hbiostat.org/data/) passenger list compiled by Thomas Cason from the Encyclopedia Titanica, kept by Vanderbilt University's Department of Biostatistics.
+- License: public domain data, reused with credit.
+
+One row per passenger with class, sex, age and age group, port of embarkation, fare, and fate. Crew are not included.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/titanic.ts
+```

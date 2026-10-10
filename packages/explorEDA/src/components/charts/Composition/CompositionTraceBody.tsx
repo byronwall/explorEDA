@@ -21,8 +21,33 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
   const point = glyph?.datum.point;
   const summary = glyph?.datum.summary;
   const stack = glyph?.datum.stack;
+  const waffle = glyph?.datum.waffle;
   return (
     <div className="space-y-2" aria-label="Composition trace">
+      {glyph && waffle && (
+        <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
+          <TraceReadout label="Cell">
+            <TraceSwatch color={glyph.fill} /> {waffle.cell} of {waffle.cells}{" "}
+            for {waffle.categoryField} = {glyph.datum.bin.label}
+          </TraceReadout>
+          <TraceReadout label="Stands for">
+            {waffle.normalize
+              ? `1% of this repeat's ${formatCalcValue(waffle.total, "number")} rows, about ${formatCalcValue(glyph.datum.value, "number")} of them`
+              : waffle.each === 1
+                ? "one row"
+                : `${formatCalcValue(waffle.each, "number")} rows, rounded to whole cells`}
+          </TraceReadout>
+          <TraceReadout label="Category">
+            {formatCalcValue(waffle.count, "number")} of{" "}
+            {formatCalcValue(waffle.total, "number")} rows in this repeat (
+            {new Intl.NumberFormat("en-US", {
+              style: "percent",
+              maximumFractionDigits: 1,
+            }).format(waffle.count / waffle.total)}
+            ), after the active filters
+          </TraceReadout>
+        </TraceSection>
+      )}
       {glyph && stack && (
         <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
           <TraceReadout label="Share">
@@ -117,7 +142,7 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
           )}
         </TraceSection>
       )}
-      {glyph && !point && !summary && !stack && (
+      {glyph && !point && !summary && !stack && !waffle && (
         <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
           <TraceReadout label="Value">
             <TraceSwatch color={glyph.fill} />{" "}
