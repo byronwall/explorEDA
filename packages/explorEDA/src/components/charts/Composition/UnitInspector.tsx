@@ -19,6 +19,7 @@ import {
   type PointMark,
   type RepeatRule,
   type StripMark,
+  type SummaryMark,
   type UnitElement,
 } from "./compositionTypes";
 import { convertMark, updateElement } from "./compositionEdits";
@@ -144,6 +145,12 @@ const MARK_TYPES = [
     label: "Band",
     tooltip:
       "A filled area between two fields along x, such as a forecast's 10th to 90th percentile. Layer several, widest first.",
+  },
+  {
+    value: "summary" as const,
+    label: "Summary",
+    tooltip:
+      "Quartiles and the median of a measure for each group in the repeat, such as two years side by side. Markers color by the change in median.",
   },
 ];
 
@@ -421,17 +428,19 @@ function MarksSection({
             encoding: "size",
             fill: "#1f2328",
           }
-        : {
-            type: "point",
-            id,
-            name: "Points",
-            xScaleId: first.xScaleId,
-            yScaleId: first.yScaleId,
-            orderField: first.orderField,
-            radius: 3.5,
-            fill: first.type === "path" ? first.stroke : first.fill,
-            labelEvery: 0,
-          };
+        : first.type === "summary"
+          ? { ...first, id, name: "Summary 2" }
+          : {
+              type: "point",
+              id,
+              name: "Points",
+              xScaleId: first.xScaleId,
+              yScaleId: first.yScaleId,
+              orderField: first.orderField,
+              radius: 3.5,
+              fill: first.type === "path" ? first.stroke : first.fill,
+              labelEvery: 0,
+            };
     onChange([...unit.marks, added]);
   };
   return (
@@ -537,6 +546,14 @@ function MarkProperties({
         />
         {mark.type === "strip" ? (
           <StripFields
+            mark={mark}
+            scales={scales}
+            numericFields={numericFields}
+            onChange={onChange}
+            onEditScale={onEditScale}
+          />
+        ) : mark.type === "summary" ? (
+          <SummaryFields
             mark={mark}
             scales={scales}
             numericFields={numericFields}
@@ -653,6 +670,97 @@ function StripFields({
         max={20}
         value={mark.inset}
         onChange={(inset) => onChange({ inset })}
+      />
+    </>
+  );
+}
+
+function SummaryFields({
+  mark,
+  scales,
+  numericFields,
+  onChange,
+  onEditScale,
+}: {
+  mark: SummaryMark;
+  scales: CompositionScale[];
+  numericFields: string[];
+  onChange: (patch: Partial<SummaryMark>) => void;
+  onEditScale: (scaleId: string) => void;
+}) {
+  const id = useId();
+  const profiles = useDataLayer((state) => state.fieldProfiles);
+  const groupFields = profiles
+    .filter((profile) => profile.uniqueCount <= 24)
+    .map((profile) => profile.name);
+  const numeric = scales.filter((scale) => scale.kind === "numeric");
+  const values = scales.filter((scale) => scale.kind === "value");
+  return (
+    <>
+      <Label>Groups</Label>
+      <FieldSelector
+        label=""
+        placeholder="Cohort field"
+        value={mark.groupField}
+        fields={groupFields}
+        onChange={(groupField) => onChange({ groupField })}
+      />
+      <Label>Measure</Label>
+      <FieldSelector
+        label=""
+        placeholder="Numeric field"
+        value={mark.measureField}
+        fields={numericFields}
+        onChange={(measureField) => onChange({ measureField })}
+      />
+      <Label htmlFor={`${id}-y`}>Y scale</Label>
+      <ScaleSelect
+        id={`${id}-y`}
+        value={mark.yScaleId}
+        scales={numeric}
+        onChange={(yScaleId) => onChange({ yScaleId })}
+        onEdit={onEditScale}
+      />
+      <Label htmlFor={`${id}-value`}>Change color</Label>
+      <div className="eda-composition-scale-select">
+        <select
+          id={`${id}-value`}
+          className="eda-composition-select"
+          value={mark.valueScaleId ?? ""}
+          onChange={(event) =>
+            onChange({ valueScaleId: event.target.value || undefined })
+          }
+        >
+          <option value="">Band fill</option>
+          {values.map((scale) => (
+            <option key={scale.id} value={scale.id}>
+              {scale.name}
+            </option>
+          ))}
+        </select>
+        {mark.valueScaleId && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2"
+            tooltip="Open this scale's settings below. A middle color makes it diverge around no change."
+            onClick={() => onEditScale(mark.valueScaleId!)}
+          >
+            Edit
+          </Button>
+        )}
+      </div>
+      <ColorSetting
+        label="Band fill"
+        value={mark.fill}
+        onChange={(fill) => onChange({ fill })}
+      />
+      <NumberSetting
+        label="Opacity %"
+        min={5}
+        max={100}
+        value={Math.round(mark.opacity * 100)}
+        onChange={(value) => onChange({ opacity: value / 100 })}
       />
     </>
   );

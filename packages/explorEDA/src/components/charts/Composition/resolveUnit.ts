@@ -1,3 +1,4 @@
+import { quantileSorted } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { finiteNumber, timestampOf } from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
@@ -13,6 +14,7 @@ import {
   type PointMark,
   type PositionScale,
   type StripMark,
+  type SummaryMark,
   type TimeInterval,
   type UnitElement,
   type ValueScale,
@@ -83,6 +85,22 @@ export interface GlyphDatum {
   rowIds: number[];
   /** Numeric coordinates, for point marks. */
   point?: { x: number; y: number; xField: string; yField: string };
+  /** The group's quartiles, for summary marks; the glyph's value is the median. */
+  summary?: SummaryStats & {
+    groupField: string;
+    measureField: string;
+    /** The repeat's change in median from its first group to its last. */
+    change?: number;
+    changeText: string;
+  };
+}
+
+/** Unweighted quartiles of one group's measure. */
+export interface SummaryStats {
+  q1: number;
+  median: number;
+  q3: number;
+  count: number;
 }
 
 /** What one path stands for: its rows in order, and the ones it skipped. */
@@ -138,7 +156,20 @@ type ResolvedXy = {
   x: NumericScale;
   y: NumericScale;
 };
-type ResolvedMark = ResolvedStrip | ResolvedXy;
+type ResolvedSummary = {
+  type: "summary";
+  mark: SummaryMark;
+  y: NumericScale;
+  value?: ValueScale;
+};
+type ResolvedMark = ResolvedStrip | ResolvedXy | ResolvedSummary;
+
+/** One group of a summary mark in one repeat. */
+interface SummaryGroup {
+  key: string;
+  rowIds: number[];
+  stats?: SummaryStats;
+}
 
 export function resolveUnit(
   definition: CompositionDefinition,
@@ -155,6 +186,16 @@ export function resolveUnit(
       const value = scale(mark.valueScaleId);
       if (position?.kind === "position" && value?.kind === "value")
         marks.push({ type: "strip", mark, position, value });
+    } else if (mark.type === "summary") {
+      const y = scale(mark.yScaleId);
+      const value = scale(mark.valueScaleId ?? "");
+      if (y?.kind === "numeric")
+        marks.push({
+          type: "summary",
+          mark,
+          y,
+          value: value?.kind === "value" ? value : undefined,
+        });
     } else {
       const x = scale(mark.xScaleId);
       const y = scale(mark.yScaleId);
@@ -166,6 +207,33 @@ export function resolveUnit(
     (item): item is ResolvedStrip => item.type === "strip"
   );
   const xys = marks.filter((item): item is ResolvedXy => item.type === "xy");
+  const summaries = marks.filter(
+    (item): item is ResolvedSummary => item.type === "summary"
+  );
+
+  // Summaries first: their quartiles set the y domain and the change colors.
+  const summarized = subsets.map((subset) =>
+    summaries.map(({ mark }) => summarizeGroups(mark, subset, data))
+  );
+  const changeOf = (groups: SummaryGroup[]) => {
+    const first = groups.find((group) => group.stats)?.stats;
+    const last = [...groups].reverse().find((group) => group.stats)?.stats;
+    if (!first || !last || first === last || first.median === 0)
+      return undefined;
+    return (last.median - first.median) / first.median;
+  };
+  const sharedChange = new Map<string, number>();
+  summarized.forEach((perMark) =>
+    perMark.forEach((groups, markIndex) => {
+      const value = summaries[markIndex]!.value;
+      const change = changeOf(groups);
+      if (value && change !== undefined)
+        sharedChange.set(
+          value.id,
+          Math.max(sharedChange.get(value.id) ?? 0, Math.abs(change))
+        );
+    })
+  );
 
   // Shared position domains span every row; per-unit domains span the subset.
   const sharedBins = new Map<string, PositionBin[]>();
@@ -192,13 +260,31 @@ export function resolveUnit(
     (scaleFields.get(scale.id) ?? [scale.field]).map((field) =>
       data.column(field)
     );
+  // A scale bound to a summary spans the quartiles drawn, not the raw rows.
+  const quartileExtent = (scale: NumericScale, subsetIndex?: number) => {
+    const values: number[] = [];
+    summarized.forEach((perMark, index) => {
+      if (subsetIndex !== undefined && index !== subsetIndex) return;
+      perMark.forEach((groups, markIndex) => {
+        if (summaries[markIndex]!.y.id !== scale.id) return;
+        for (const group of groups)
+          if (group.stats) values.push(group.stats.q1, group.stats.q3);
+      });
+    });
+    return values;
+  };
   const sharedDomains = new Map<string, [number, number]>();
   const domainFor = (scale: NumericScale, subset: Subset) => {
+    const bound = summaries.some((item) => item.y.id === scale.id);
     if (scale.domain === "instance")
-      return numericDomain(scale, columnsOf(scale), subset.allIds);
+      return bound
+        ? numericDomainOf(scale, quartileExtent(scale, subsets.indexOf(subset)))
+        : numericDomain(scale, columnsOf(scale), subset.allIds);
     let domain = sharedDomains.get(scale.id);
     if (!domain) {
-      domain = numericDomain(scale, columnsOf(scale), data.allIds);
+      domain = bound
+        ? numericDomainOf(scale, quartileExtent(scale))
+        : numericDomain(scale, columnsOf(scale), data.allIds);
       sharedDomains.set(scale.id, domain);
     }
     return domain;
@@ -423,6 +509,28 @@ export function resolveUnit(
               ))
       );
     }
+    summarized[index]!.forEach((groups, markIndex) => {
+      const { mark, y, value } = summaries[markIndex]!;
+      const axis = numericAxis(y, domainFor(y, subset), [
+        frame.y + frame.height,
+        frame.y,
+      ]);
+      const change = changeOf(groups);
+      const maxChange = value ? (sharedChange.get(value.id) ?? 0) : 0;
+      nodes.push(
+        ...summaryNodes(
+          unit,
+          override?.accent ? { ...mark, fill: override.accent } : mark,
+          subset,
+          groups,
+          axis,
+          frame,
+          value,
+          change,
+          maxChange
+        )
+      );
+    });
     if (opacity < 1)
       for (let index = firstNode; index < nodes.length; index += 1)
         nodes[index] = { ...nodes[index]!, opacity };
@@ -433,6 +541,47 @@ export function resolveUnit(
         nodes.push(...axisNodes(unit, subset.key, first.position, bins, frame));
       } else if (xy) {
         nodes.push(...numericAxisNodes(unit, subset.key, xy, frame));
+      } else if (summaries[0]) {
+        // Group names under the frame, and the minute span beside it, so a
+        // per-repeat scale still reads.
+        const axis = numericAxis(
+          summaries[0].y,
+          domainFor(summaries[0].y, subset),
+          [frame.y + frame.height, frame.y]
+        );
+        axis.domain.forEach((value, end) =>
+          nodes.push({
+            type: "text",
+            key: `${unit.id}:${subset.key}:axis:y:${end}`,
+            elementId: unit.id,
+            x: frame.x - 5,
+            lines: [
+              {
+                text: formatTick(axis, value),
+                y: numericPixel(axis, value) + 3.5,
+              },
+            ],
+            fontSize: 9,
+            fontWeight: 400,
+            fill: MUTED_INK,
+            anchor: "end",
+          })
+        );
+        const groups = summarized[index]![0]!;
+        const band = frame.width / Math.max(1, groups.length);
+        groups.forEach((group, position) =>
+          nodes.push({
+            type: "text",
+            key: `${unit.id}:${subset.key}:axis:${group.key}`,
+            elementId: unit.id,
+            x: frame.x + (position + 0.5) * band,
+            lines: [{ text: group.key, y: frame.y + frame.height + 12 }],
+            fontSize: 10,
+            fontWeight: 400,
+            fill: MUTED_INK,
+            anchor: "middle",
+          })
+        );
       }
     }
     instances.push({
@@ -763,6 +912,200 @@ export function numericDomain(
   if (scale.max !== undefined) max = scale.max;
   if (min >= max) max = min + 1;
   return [min, max];
+}
+
+/** The extent of given values, after the scale's zero, nice, and limits. */
+export function numericDomainOf(
+  scale: NumericScale,
+  values: number[]
+): [number, number] {
+  const column: Record<number, datum> = {};
+  values.forEach((value, index) => {
+    column[index] = value;
+  });
+  return numericDomain(
+    scale,
+    column,
+    values.map((_, index) => index)
+  );
+}
+
+/** Groups a repeat's live rows by the cohort field and summarizes each. */
+function summarizeGroups(
+  mark: SummaryMark,
+  subset: Subset,
+  data: CompositionData
+): SummaryGroup[] {
+  const groupColumn = data.column(mark.groupField);
+  const measure = data.column(mark.measureField);
+  const byKey = new Map<string, number[]>();
+  for (const id of subset.liveIds) {
+    const raw = groupColumn[id];
+    if (raw === null || raw === undefined || raw === "") continue;
+    const key = String(raw);
+    const list = byKey.get(key);
+    if (list) list.push(id);
+    else byKey.set(key, [id]);
+  }
+  return [...byKey.entries()]
+    .sort((a, b) => compareLabels(a[0], b[0]))
+    .map(([key, rowIds]) => {
+      const values = rowIds
+        .map((id) => finiteNumber(measure[id]))
+        .filter((value): value is number => value !== undefined)
+        .sort((a, b) => a - b);
+      return {
+        key,
+        rowIds,
+        stats: values.length
+          ? {
+              q1: quantileSorted(values, 0.25)!,
+              median: quantileSorted(values, 0.5)!,
+              q3: quantileSorted(values, 0.75)!,
+              count: values.length,
+            }
+          : undefined,
+      };
+    });
+}
+
+const changeFormat = new Intl.NumberFormat("en-US", {
+  style: "percent",
+  maximumFractionDigits: 0,
+  signDisplay: "exceptZero",
+});
+
+/**
+ * The quartile band joined across the groups, the medians as a path, and a
+ * marker per median. Markers take the change color when a value scale is
+ * bound; a repeat whose change is undefined, such as a zero prior median,
+ * stays neutral rather than taking a false color.
+ */
+function summaryNodes(
+  unit: UnitElement,
+  mark: SummaryMark,
+  subset: Subset,
+  groups: SummaryGroup[],
+  axis: NumericAxis,
+  frame: Bounds,
+  value: ValueScale | undefined,
+  change: number | undefined,
+  maxChange: number
+): SceneNode[] {
+  if (!groups.length) return [];
+  const band = frame.width / groups.length;
+  const changeText =
+    change === undefined ? "undefined" : changeFormat.format(change);
+  const marker =
+    value && change !== undefined
+      ? valueColorSigned(value, change, maxChange)
+      : value
+        ? (value.center ?? MUTED_INK)
+        : mark.fill;
+  const nodes: SceneNode[] = [];
+  const area: AreaNode["segments"][number] = [];
+  const path: PathNode["segments"][number] = [];
+  groups.forEach((group, index) => {
+    if (!group.stats) return;
+    const x = frame.x + (index + 0.5) * band;
+    area.push({
+      x,
+      y0: numericPixel(axis, group.stats.q1),
+      y1: numericPixel(axis, group.stats.q3),
+      rowId: group.rowIds[0]!,
+    });
+    path.push({
+      x,
+      y: numericPixel(axis, group.stats.median),
+      rowId: group.rowIds[0]!,
+    });
+  });
+  const rowIds = groups.flatMap((group) => group.rowIds);
+  if (area.length)
+    nodes.push({
+      type: "area",
+      key: `${unit.id}:${subset.key}:${mark.id}:band`,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      segments: [area],
+      fill: mark.fill,
+      fillOpacity: mark.opacity,
+      band: {
+        instanceKey: subset.key,
+        markId: mark.id,
+        orderField: mark.groupField,
+        lowerField: `first quartile of ${mark.measureField}`,
+        upperField: `third quartile of ${mark.measureField}`,
+        rowIds,
+        skipped: [],
+        segments: 1,
+      },
+    });
+  if (path.length > 1)
+    nodes.push({
+      type: "path",
+      key: `${unit.id}:${subset.key}:${mark.id}:median`,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      segments: [path],
+      stroke: marker,
+      strokeWidth: 1.5,
+      path: {
+        instanceKey: subset.key,
+        markId: mark.id,
+        orderField: mark.groupField,
+        rowIds,
+        skipped: [],
+        segments: 1,
+      },
+    });
+  groups.forEach((group, index) => {
+    if (!group.stats) return;
+    nodes.push({
+      type: "circle",
+      key: `${unit.id}:${subset.key}:${mark.id}:${group.key}`,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      cx: frame.x + (index + 0.5) * band,
+      cy: numericPixel(axis, group.stats.median),
+      r: 4,
+      fill: marker,
+      glyph: {
+        instanceKey: subset.key,
+        markId: mark.id,
+        bin: { key: group.key, label: group.key },
+        value: group.stats.median,
+        rowIds: group.rowIds,
+        summary: {
+          ...group.stats,
+          groupField: mark.groupField,
+          measureField: mark.measureField,
+          change,
+          changeText,
+        },
+      },
+    });
+  });
+  return nodes;
+}
+
+/**
+ * A diverging color: negative values run from the center toward the low
+ * color, positive toward the high color, by their share of the largest
+ * absolute value. Without a center, the scale maps the absolute value.
+ */
+export function valueColorSigned(
+  scale: ValueScale,
+  value: number,
+  maxAbs: number
+) {
+  const share = valueShare(scale, Math.abs(value), maxAbs);
+  if (!scale.center) return valueColor(scale, share);
+  const end = value < 0 ? scale.colors[0] : scale.colors[1];
+  return scaleLinear<string>()
+    .domain([0, 1])
+    .range([scale.center, end])
+    .clamp(true)(share);
 }
 
 function numericAxis(

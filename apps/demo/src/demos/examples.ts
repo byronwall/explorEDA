@@ -20,6 +20,7 @@ import {
   drivingDashboard,
   sparklinesDashboard,
   fanDashboard,
+  timeUseDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -40,6 +41,7 @@ import {
   Spline,
   TableProperties,
   AreaChart,
+  LayoutGrid as GridIcon,
   CloudFog,
   Globe,
   Activity,
@@ -711,6 +713,21 @@ export const examples: ExampleData[] = [
     icon: AreaChart,
     data: "/datasets/inflation-fan.csv",
     savedData: fanDashboard,
+  },
+  {
+    id: "time-use",
+    title: "How the day changed in 2020",
+    description:
+      "Twelve activities in a grid. Each panel summarizes minutes a day for the 2019 and 2020 cohorts on the spot: quartile bands joined across the years, medians marked, and a diverging color for the change in median.",
+    dataset: { rows: "5,742 diary entries", fields: 6, source: "Synthetic" },
+    shows: [
+      "Quartile summaries per cohort",
+      "Diverging change color",
+      "Per-panel scales",
+    ],
+    icon: GridIcon,
+    data: "/datasets/time-use.csv",
+    savedData: timeUseDashboard,
   },
 ];
 

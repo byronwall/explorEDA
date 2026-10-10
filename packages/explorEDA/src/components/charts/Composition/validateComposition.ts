@@ -51,6 +51,17 @@ function isMark(value: unknown) {
       (value.show === undefined ||
         oneOf(value.show, ["all", "first", "last", "min", "max"]))
     );
+  if (value.type === "summary")
+    return (
+      isString(value.groupField) &&
+      isString(value.measureField) &&
+      isString(value.yScaleId) &&
+      (value.valueScaleId === undefined || isString(value.valueScaleId)) &&
+      isString(value.fill) &&
+      isNumber(value.opacity) &&
+      value.opacity > 0 &&
+      value.opacity <= 1
+    );
   if (value.type === "band")
     return (
       isString(value.xScaleId) &&
@@ -140,7 +151,8 @@ function isScale(value: unknown) {
     oneOf(value.transform, ["linear", "sqrt", "log"]) &&
     Array.isArray(value.colors) &&
     value.colors.length === 2 &&
-    value.colors.every(isString)
+    value.colors.every(isString) &&
+    (value.center === undefined || isString(value.center))
   );
 }
 
@@ -277,13 +289,17 @@ export function isCompositionDefinition(
         element.marks.every(
           (mark) =>
             isRecord(mark) &&
-            (mark.type === "point" ||
-            mark.type === "path" ||
-            mark.type === "band"
-              ? kinds.get(mark.xScaleId) === "numeric" &&
-                kinds.get(mark.yScaleId) === "numeric"
-              : kinds.get(mark.positionScaleId) === "position" &&
-                kinds.get(mark.valueScaleId) === "value")
+            (mark.type === "summary"
+              ? kinds.get(mark.yScaleId) === "numeric" &&
+                (mark.valueScaleId === undefined ||
+                  kinds.get(mark.valueScaleId) === "value")
+              : mark.type === "point" ||
+                  mark.type === "path" ||
+                  mark.type === "band"
+                ? kinds.get(mark.xScaleId) === "numeric" &&
+                  kinds.get(mark.yScaleId) === "numeric"
+                : kinds.get(mark.positionScaleId) === "position" &&
+                  kinds.get(mark.valueScaleId) === "value")
         )
     );
   return (

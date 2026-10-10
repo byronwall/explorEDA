@@ -468,6 +468,36 @@ function ValueScaleProperties({
         value={scale.colors[1]}
         onChange={(high) => onChange({ colors: [scale.colors[0], high] })}
       />
+      <span className="eda-setting-label">Around zero</span>
+      <Segmented
+        label={`${scale.name} direction`}
+        value={scale.center !== undefined}
+        options={[
+          {
+            value: false,
+            label: "One way",
+            tooltip: "Values run from the low color to the high color",
+          },
+          {
+            value: true,
+            label: "Diverging",
+            tooltip:
+              "A middle color stands for no change; decreases run toward the low color and increases toward the high color",
+          },
+        ]}
+        onChange={(diverging) =>
+          onChange({
+            center: diverging ? (scale.center ?? "#d9dde3") : undefined,
+          })
+        }
+      />
+      {scale.center !== undefined && (
+        <ColorSetting
+          label="Middle color"
+          value={scale.center}
+          onChange={(center) => onChange({ center })}
+        />
+      )}
       <span className="eda-setting-label">Domain</span>
       <Segmented
         label={`${scale.name} domain`}
