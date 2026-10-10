@@ -39,6 +39,7 @@ import {
   scotusTimelineDashboard,
   stocksHorizonDashboard,
   co2SwarmDashboard,
+  titanicMosaicDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -989,6 +990,17 @@ export const examples: ExampleData[] = [
     icon: Bug,
     data: "/datasets/co2-per-capita.csv",
     savedData: co2SwarmDashboard,
+  },
+  {
+    id: "titanic-mosaic",
+    title: "Who survived the Titanic, by class",
+    description:
+      "A mosaic plot: columns sized by each class's share of passengers through a per-repeat calculation, each stacking the shares who survived and died, so area reads as people and filters resize the columns.",
+    dataset: { rows: "1,309 passengers", fields: 8, source: "Real" },
+    shows: ["Weighted repeats", "Normalized stacks", "Label values"],
+    icon: Columns3,
+    data: "/datasets/titanic.csv",
+    savedData: titanicMosaicDashboard,
   },
 ];
 

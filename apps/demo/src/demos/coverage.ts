@@ -1222,6 +1222,16 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "titanic-mosaic",
+    intent:
+      "Size each class's column by its share of passengers and stack the shares who survived and died, so area is people.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

@@ -102,6 +102,7 @@ describe("example coverage manifest", () => {
       "scotus-timeline",
       "stocks-horizon",
       "co2-swarm",
+      "titanic-mosaic",
       "product-activity",
       "scatter-trace",
       "calculated-orders",

@@ -427,6 +427,30 @@ export function UnitProperties({
                   />
                 </>
               )}
+              {(unit.repeat.arrangement === "rows" ||
+                unit.repeat.arrangement === "columns") && (
+                <>
+                  <Label htmlFor={`${nameId}-weight-calc`}>Size by</Label>
+                  <select
+                    id={`${nameId}-weight-calc`}
+                    className="eda-composition-select"
+                    value={unit.repeat.weightCalcId ?? ""}
+                    onChange={(event) =>
+                      repeat({ weightCalcId: event.target.value || undefined })
+                    }
+                  >
+                    <option value="">Same size</option>
+                    {calculations.map((calc) => (
+                      <option key={calc.id} value={calc.id}>
+                        {unit.repeat.arrangement === "rows"
+                          ? "Height"
+                          : "Width"}{" "}
+                        by {calc.name}
+                      </option>
+                    ))}
+                  </select>
+                </>
+              )}
               <NumberSetting
                 label="Most units"
                 min={1}
