@@ -4,7 +4,7 @@
  * way it restyles `--primary`. The values live in `index.css`; this module
  * only names the themes and reads the saved choice.
  */
-export type WorkspaceThemeId = "compact" | "newsprint";
+export type WorkspaceThemeId = "compact" | "newsprint" | "report";
 
 /** The theme a saved analysis chose. Absent means Compact. */
 export interface WorkspaceTheme {
@@ -39,6 +39,13 @@ export const WORKSPACE_THEMES: readonly WorkspaceThemeOption[] = [
     headline: "block",
     description:
       "Newspaper graphics: a large serif headline, a subtitle and source note, hairline rules on warm paper.",
+  },
+  {
+    id: "report",
+    name: "Report",
+    headline: "block",
+    description:
+      "Annual-report graphics: a clean sans headline, generous space, quiet rules, and one restrained accent.",
   },
 ];
 

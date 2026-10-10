@@ -294,7 +294,7 @@
   column-gap: 8px;
   row-gap: 2px;
   min-height: 0;
-  padding: 12px 10px 8px 12px;
+  padding: var(--eda-header-padding, 12px 10px 8px 12px);
 }
 .eda-panel[data-headline="block"] .eda-panel-header::before {
   position: absolute;
@@ -589,6 +589,25 @@
   --eda-axis-label-color: var(--foreground);
   --eda-panel-surface: oklch(0.987 0.008 85);
   --eda-panel-rule: oklch(0.88 0.012 80);
+}
+/* Report: annual-report graphics with a sans headline, generous space, and
+   one restrained accent. */
+[data-eda-theme="report"] {
+  --eda-headline-font:
+    "Inter", "Helvetica Neue", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --eda-headline-size: 18px;
+  --eda-headline-weight: 600;
+  --eda-headline-line: 1.25;
+  --eda-headline-accent: var(--primary);
+  --eda-subtitle-size: 12.5px;
+  --eda-note-size: 11px;
+  --eda-axis-tick-size: 11px;
+  --eda-axis-label-size: 11px;
+  --eda-axis-tick-color: var(--muted-foreground);
+  --eda-axis-label-color: var(--muted-foreground);
+  --eda-panel-surface: var(--card);
+  --eda-panel-rule: color-mix(in oklab, var(--border) 70%, transparent);
+  --eda-header-padding: 16px 14px 10px 16px;
 }
 .dark [data-eda-theme="newsprint"] {
   --eda-panel-surface: oklch(0.2 0.008 70);

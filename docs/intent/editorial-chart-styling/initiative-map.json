@@ -640,7 +640,8 @@
           "sankey",
           "parallel-coordinates",
           "color-legend"
-        ]
+        ],
+        "first_release_full_status": "done for bar, row, scatter, line, box, histogram, ECDF"
       }
     },
     "success_moves": [
@@ -851,9 +852,15 @@
         "outcome": "Report theme and themed axes on row, line, box, histogram, ECDF",
         "proof": "Family tests, browser check across three themes in light and dark, visual sign-off study",
         "rollback": "Hide Report from picker",
-        "status": "planned",
+        "status": "completed",
         "valid_intermediate_state": "Three themes, seven fully covered families",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "evidence": [
+          "Unit tests: Report in the picker and in dashboard text; row, line, ECDF, box suites pass",
+          "Headless browser against the built package: Report at 1280 light and dark and 390 touch; Newsprint on palmer-penguins, calendar-series (line), distribution-discovery (row, box, histogram); every axis family at the theme sizes with no collisions",
+          "Fixed: time-series left margin measured (Y title collided with ticks under Newsprint); row-chart axis title drawn over the Other categories status line (pre-existing in Compact)"
+        ],
+        "notes": "Visual sign-off on Newsprint and Report tokens is still Byron's call; screenshots in the M3 PR serve as the side-by-side study."
       },
       {
         "id": "M4",
@@ -979,6 +986,12 @@
       "action": "Completed Milestone 2 (themed axis text on scatter and bar, chart style overrides, overrides list); first proof gate passed.",
       "reason": "Continuing the approved plan.",
       "evidence": "See milestone M2 evidence. Gate: Compact geometry unchanged by construction and test; Newsprint labels do not collide."
+    },
+    {
+      "date": "2026-10-07",
+      "action": "Completed Milestone 3 (Report theme; themed axes on row, line, box, ECDF).",
+      "reason": "Continuing the approved plan.",
+      "evidence": "See milestone M3 evidence."
     }
   ],
   "closure": null,

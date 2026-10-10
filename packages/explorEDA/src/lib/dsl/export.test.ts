@@ -153,6 +153,16 @@ scatter x=Revenue y=Units title="Bigger orders earn more" subtitle="Revenue by u
     expect(meaning(rebuilt.settings)).toEqual(meaning(start.settings));
   });
 
+  it("reads the Report theme", () => {
+    const { settings, diagnostics } = compileDocument(
+      `dashboard name="Orders"
+theme name=report`,
+      { rows }
+    );
+    expect(diagnostics).toEqual([]);
+    expect(settings.theme).toEqual({ id: "report" });
+  });
+
   it("keeps Compact for an unknown theme and says so", () => {
     const { settings, diagnostics } = compileDocument(
       `dashboard name="Orders"
