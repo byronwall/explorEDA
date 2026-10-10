@@ -373,3 +373,18 @@ One row per passenger with class, sex, age and age group, port of embarkation, f
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/titanic.ts
 ```
+
+## Unemployment by industry, 2000 to 2010
+
+- File: `unemployment-industries.csv`
+- Size: 1,708 rows and 5 fields
+- Demo: `?example=unemployment-stream`
+- Use: a streamgraph composition, industries' unemployed stacked across months on a wiggling baseline
+- Source: Bureau of Labor Statistics, Current Population Survey, as packaged in [vega-datasets](https://github.com/vega/vega-datasets) (`unemployment-across-industries.json`).
+- License: vega-datasets is BSD-3-Clause; the figures are public US government statistics.
+
+One row per industry and month from January 2000 to February 2010, with the unemployed count in thousands and the unemployment rate.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/unemployment-industries.ts
+```

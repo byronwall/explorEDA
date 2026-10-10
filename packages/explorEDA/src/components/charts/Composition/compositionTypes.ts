@@ -289,6 +289,8 @@ export interface PathMark {
   colorField?: string;
   /** One color per category of `colorField`, cycling when there are more. */
   colors?: string[];
+  /** Join the points with a smooth curve rather than straight runs. */
+  curve?: MarkCurve;
 }
 
 export type PathLabels = "none" | "start" | "end" | "both";
@@ -391,7 +393,18 @@ export interface StackMark {
    * one area across x instead of a segment in a single column.
    */
   xScaleId?: string;
+  /**
+   * Where a spread stack rests when heights follow totals: on zero, centered
+   * on the frame's middle, or on the wiggle baseline that keeps the layers'
+   * slopes smallest, as a streamgraph.
+   */
+  baseline?: StackBaseline;
+  /** Join the layers' edges with smooth curves rather than straight runs. */
+  curve?: MarkCurve;
 }
+
+export type StackBaseline = "zero" | "center" | "wiggle";
+export type MarkCurve = "linear" | "smooth";
 
 /**
  * A grid of cells for a repeat's rows: one cell per row, one per `each`

@@ -1158,6 +1158,17 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "unemployment-stream",
+    intent:
+      "Stack each industry's unemployed across months on a wiggling baseline with smooth edges.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

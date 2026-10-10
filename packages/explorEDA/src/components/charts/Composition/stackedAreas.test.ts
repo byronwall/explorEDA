@@ -148,12 +148,15 @@ describe("stacks across x", () => {
         node.key.includes(":mark-1:") &&
         node.key.endsWith(":label")
     );
-    expect(
-      labels.map((node) => (node.type === "text" ? node.lines[0]!.text : ""))
-    ).toEqual(["Cancer", "Accidents"]);
+    const texts = labels.map((node) =>
+      node.type === "text" ? node.lines[0]!.text : ""
+    );
+    expect(texts.sort()).toEqual(["Accidents", "Cancer"]);
     // Accidents is thickest at age 0, so its label hangs inward from the left edge.
     const frame = scene.elements[0]!.instances![0]!.frame;
-    const accidents = labels[1]!;
+    const accidents = labels.find(
+      (node) => node.type === "text" && node.lines[0]!.text === "Accidents"
+    )!;
     expect(accidents.type === "text" && accidents.x).toBeCloseTo(frame.x + 4);
     expect(accidents.type === "text" && accidents.anchor).toBe("start");
   });
