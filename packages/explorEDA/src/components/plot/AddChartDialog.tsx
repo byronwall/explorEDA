@@ -83,7 +83,7 @@ const CHART_GROUPS: Array<{ label: string; keys: string[] }> = [
   { label: "Distribution", keys: ["histogram", "boxplot", "ecdf"] },
   {
     label: "Relationships",
-    keys: ["scatter", "3d-scatter", "parallel-coordinates"],
+    keys: ["scatter", "scatter-matrix", "3d-scatter", "parallel-coordinates"],
   },
   { label: "Over time", keys: ["line", "calendar"] },
   { label: "Flow and place", keys: ["sankey", "map"] },
@@ -91,6 +91,7 @@ const CHART_GROUPS: Array<{ label: string; keys: string[] }> = [
     label: "Tables and notes",
     keys: ["data-table", "summary", "metric-card", "markdown", "color-legend"],
   },
+  { label: "Report graphics", keys: ["composition"] },
 ];
 
 function groupChartTypes<T extends { key: string; name: string }>(

@@ -218,11 +218,13 @@ export function RegionMap({
                   else refs.current.delete(region.id);
                 }}
                 d={region.path}
-                fill={
-                  region.state === "value"
-                    ? region.fill
-                    : `url(#${owner}-${region.state})`
-                }
+                // Theme fills use CSS variables, which only a style resolves.
+                style={{
+                  fill:
+                    region.state === "value"
+                      ? region.fill
+                      : `url(#${owner}-${region.state})`,
+                }}
                 fillOpacity={plan.hasSelection && !region.selected ? 0.35 : 1}
                 stroke={
                   region.selected ||
@@ -390,9 +392,11 @@ export function RegionMap({
               x={i * 2}
               width={2.1}
               height={10}
-              fill={plan.color(
-                plan.domain[0] + ((plan.domain[1] - plan.domain[0]) * i) / 34
-              )}
+              style={{
+                fill: plan.color(
+                  plan.domain[0] + ((plan.domain[1] - plan.domain[0]) * i) / 34
+                ),
+              }}
             />
           ))}
         </svg>

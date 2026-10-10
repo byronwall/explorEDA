@@ -24,7 +24,9 @@ import {
   type ChartAxesPlan,
   type ScaleDescriptor,
   describeScale,
+  type AxisTypography,
 } from "../Axis/axisPlan";
+import { boundedDomain, hasAxisBounds } from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import { getChartAxisLabel } from "../chartAccessibility";
 import { binInRange, numericBins } from "./bins";
@@ -67,6 +69,8 @@ export interface BarPlanInput {
   showTotals?: boolean;
   /** Describes the rows an aggregate result uses. */
   aggregateScope?: string;
+  /** Theme axis sizes and text measurement. */
+  typography?: AxisTypography;
 }
 
 export type BarFillSource =
@@ -303,6 +307,7 @@ export function planBarChart({
   footer = 0,
   showTotals = false,
   aggregateScope = "Rows after other chart filters; this chart's selected groups are shown in color",
+  typography,
 }: BarPlanInput): BarChartPlan {
   const numeric = isNumericBarField(settings, snapshot);
   const mode: BarMode = settings.aggregateId
@@ -377,6 +382,10 @@ export function planBarChart({
     yDomain = [0, Math.max(1, upper.value * (1 + Y_SCALE_PADDING))];
     padding = "10% above the tallest bar";
   }
+  if (hasAxisBounds(settings.yAxis)) {
+    yDomain = boundedDomain(yDomain, settings.yAxis);
+    padding = "bounds set on the axis";
+  }
 
   const xField =
     mode === "aggregate" && spec ? spec.groupField : settings.field;
@@ -399,6 +408,8 @@ export function planBarChart({
     hasXLabel: Boolean(xLabel),
     hasYLabel: Boolean(yLabel),
     yTickFontSize: settings.yAxis.tickFontSize,
+    xTickFontSize: settings.xAxis.tickFontSize,
+    typography,
   });
   margin.bottom += footer;
   const plotWidth = width - margin.left - margin.right;
@@ -417,7 +428,7 @@ export function planBarChart({
     const max = last ? last.end : low === high ? high + 0.5 : high;
     const pad = (max - min) * X_SCALE_PADDING;
     xScale = numericScale(settings.xAxis)
-      .domain([min - pad, max + pad])
+      .domain(boundedDomain([min - pad, max + pad], settings.xAxis))
       .range([0, plotWidth]);
     xDomainSource = {
       population: "all source rows",
@@ -457,6 +468,7 @@ export function planBarChart({
     marginPolicy: policy,
     footer,
     x: {
+      typography,
       scale: xScale,
       scaleType: settings.xAxis.scaleType,
       field: xField,
@@ -471,6 +483,7 @@ export function planBarChart({
       domainSource: xDomainSource,
     },
     y: {
+      typography,
       scale: yScale,
       scaleType: settings.yAxis.scaleType,
       field: yField,

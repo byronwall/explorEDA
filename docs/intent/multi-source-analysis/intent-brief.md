@@ -63,4 +63,4 @@ The [implementation plan](implementation-plan.md) describes the delivery and wha
 
 ## Next step after confirmation
 
-Review the stacked pull requests listed in the implementation plan, then decide which deferred items in `.tickets/` to take next.
+Review the stacked pull requests listed in the implementation plan, then decide which [deferred follow-ups](implementation-plan.md#deferred-follow-ups) and open spikes to take next.

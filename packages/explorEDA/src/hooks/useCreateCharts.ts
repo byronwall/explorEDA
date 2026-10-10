@@ -16,8 +16,8 @@ export function useCreateCharts() {
     const layout = initialLayout ?? {
       x: 0,
       y: Math.max(0, ...charts.map((chart) => chart.layout.y + chart.layout.h)),
-      w: type === "metric-card" ? 4 : 6,
-      h: type === "metric-card" ? 3 : 4,
+      w: type === "metric-card" ? 4 : type === "composition" ? 12 : 6,
+      h: type === "metric-card" ? 3 : type === "composition" ? 7 : 4,
     };
 
     const definition = getChartDefinition(type);
@@ -76,6 +76,21 @@ export function useCreateCharts() {
         .map((profile) => profile.name);
       const start = stages.includes(selectedField) ? [selectedField] : [];
       settings.stages = [...new Set([...start, ...stages])].slice(0, 3);
+    }
+    if (settings.type === "scatter-matrix") {
+      // Numbers first, then a few low-cardinality categories.
+      const groups = profiles
+        .filter(
+          (profile) =>
+            profile.dataType !== "numeric" &&
+            profile.uniqueCount > 1 &&
+            profile.uniqueCount <= 12
+        )
+        .map((profile) => profile.name);
+      const start = selectedField ? [selectedField] : [];
+      settings.fields = [
+        ...new Set([...start, ...numeric.slice(0, 4), ...groups.slice(0, 1)]),
+      ].slice(0, 5);
     }
     if (settings.type === "parallel-coordinates") {
       const start = numeric.includes(selectedField) ? [selectedField] : [];

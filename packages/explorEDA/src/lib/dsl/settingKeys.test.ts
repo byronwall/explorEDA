@@ -65,6 +65,7 @@ const COMPLETE: Record<string, Record<string, unknown>> = {
       { field: "Cost", inverted: true },
     ],
   },
+  "scatter-matrix": { fields: ["Revenue", "Cost", "Region"] },
   heatmap: { columnField: "Channel" },
   map: { latitudeField: "Lat", longitudeField: "Lon" },
 };
@@ -165,6 +166,7 @@ describe("dashboard text coverage", () => {
         rowsSettings: 1,
         aggregates: 1,
         geometryAssets: 1,
+        theme: 1,
       }).sort()
     );
   });
@@ -185,11 +187,13 @@ describe("dashboard text coverage", () => {
       "line",
       "sankey",
       "parallel-coordinates",
+      "scatter-matrix",
       "calendar",
       "heatmap",
       "ecdf",
       "metric-card",
       "map",
+      "composition",
     ]
   )("rebuilds a %s chart with every setting edited", (type) => {
     expect(chartTypes()).toContain(type);

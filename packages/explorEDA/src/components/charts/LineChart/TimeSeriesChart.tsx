@@ -1,3 +1,6 @@
+import { useThemeColors } from "@/hooks/useDisplayColorScales";
+import { useDisplayColorScale } from "@/hooks/useDisplayColorScales";
+import { useAxisTypography } from "../chartTypography";
 import { useId, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { convertFieldValue } from "@/lib/fieldSettings";
@@ -53,11 +56,11 @@ export function TimeSeriesChart({
   const getLabel = useDataLayer((s) => s.getFieldLabel);
   const format = useDataLayer((s) => s.formatFieldValue);
   const updateChart = useDataLayer((s) => s.updateChart);
-  const colorScale = useDataLayer((s) =>
-    s.colorScales.find((scale) => scale.id === settings.colorScaleId)
-  );
+  const colorScale = useDisplayColorScale(settings.colorScaleId);
+  const themeColors = useThemeColors();
   const [activeId, setActiveId] = useState<string>();
   const refs = useRef(new Map<string, SVGCircleElement>());
+  const typography = useAxisTypography();
   const plan = useMemo(() => {
     const facetSet = facetIds ? new Set(facetIds) : undefined;
     const scopeIds = allIds.filter((id) => !facetSet || facetSet.has(id));
@@ -96,6 +99,7 @@ export function TimeSeriesChart({
         rawInputs,
         exclusionReasons,
         colorScale,
+        themeColors,
         facetData: facetIds
           ? {
               ...(settings.facet.rowVariable
@@ -111,7 +115,8 @@ export function TimeSeriesChart({
       width,
       Math.max(1, height - 28),
       getLabel,
-      format
+      format,
+      typography
     );
   }, [
     settings,
@@ -130,10 +135,12 @@ export function TimeSeriesChart({
     profiles,
     calculations,
     colorScale,
+    themeColors,
     width,
     height,
     getLabel,
     format,
+    typography,
   ]);
   const axes = useMemo(() => {
     const periods = plan.series[0]?.points ?? [];
@@ -146,6 +153,7 @@ export function TimeSeriesChart({
       plotHeight: plan.plotHeight,
       margin: plan.margin,
       x: {
+        typography,
         scale: plan.xScale,
         tickValues: periods
           .filter((_, i) => i % step === 0)
@@ -158,6 +166,7 @@ export function TimeSeriesChart({
         format: (value) => new Date(Number(value)).toISOString().slice(0, 10),
       },
       y: {
+        typography,
         scale: plan.yScale,
         scaleType: plan.yScaleType,
         tickFontSize: settings.yAxis.tickFontSize,
@@ -168,7 +177,7 @@ export function TimeSeriesChart({
         format: (value) => plan.formatValue(Number(value)),
       },
     });
-  }, [plan, settings]);
+  }, [plan, settings, typography]);
   const source = useMemo(() => {
     const source = timeSeriesTraceSource(plan);
     return {
