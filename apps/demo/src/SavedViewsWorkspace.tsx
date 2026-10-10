@@ -289,6 +289,7 @@ export function SavedViewsWorkspace({
   viewName,
   exampleId,
   tablesFromExample,
+  initialTab,
 }: {
   data: DatumObject[];
   initialSettings?: SavedDataStructure;
@@ -303,9 +304,11 @@ export function SavedViewsWorkspace({
   exampleId?: string;
   /** The example's files hold its tables, so the session does not save them. */
   tablesFromExample?: boolean;
+  /** Opens on the tab with this name when it exists. */
+  initialTab?: string;
 }) {
-  const [session, setSession] = useState(() =>
-    initialSession
+  const [session, setSession] = useState(() => {
+    const opened = initialSession
       ? clone(initialSession)
       : makeSession(
           data,
@@ -316,8 +319,12 @@ export function SavedViewsWorkspace({
           sourceTables,
           exampleId,
           tablesFromExample
-        )
-  );
+        );
+    const tab = initialTab
+      ? opened.tabs.find((item) => item.name === initialTab)
+      : undefined;
+    return tab ? { ...opened, activeTabId: tab.id } : opened;
+  });
   // Tabs remount with the workspace, so focus follows the selected tab.
   const tabsHadFocus = useRef(false);
   const [saveError, setSaveError] = useState(false);

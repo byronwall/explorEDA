@@ -4,11 +4,11 @@
     "title": "Demo overhaul with complete analysis examples",
     "slug": "demo-overhaul",
     "scale": "capability",
-    "current_phase": "execution",
-    "last_updated": "2026-10-06",
+    "current_phase": "reconciliation",
+    "last_updated": "2026-10-07",
     "summary": "Show completed, powerful analyses for analysts: all four new dataset families, Wine, a curated Shop analysis, and Lorenz; use the landed multi-table feature.",
     "status": "active",
-    "next_action": "Review the stacked PRs; then curate the catalogue to seven entries with capability discovery."
+    "next_action": "Merge the five stacked PRs, then reconcile against intent and decide whether to retire the planning folder."
   },
   "artifacts": {
     "intent_brief": {
@@ -883,7 +883,7 @@
     }
   },
   "implementation": {
-    "status": "active",
+    "status": "delivered, awaiting review",
     "repository_snapshot": {
       "root": ".claude/worktrees/demo-overhaul-review-075486",
       "revision": "d1188f4",
@@ -1022,11 +1022,16 @@
       {
         "id": "catalogue",
         "name": "Curated catalogue",
-        "proof": "Seven public entries; capability filters reach tabs; removals mapped to replacements.",
-        "status": "planned",
+        "proof": "Seven listed entries; capability filters reach their tabs; removed entries stay routable by URL; every listed example's tabs match the tabs it builds.",
+        "status": "completed",
         "outcome": "Seven curated entries, discoverable by capability and topic.",
         "valid_intermediate_state": "The catalogue shows only verified complete analyses; fixtures and data files remain.",
-        "rollback": "Restore the removed entries in examples.ts; their settings and data stay in the repository."
+        "rollback": "Restore the removed entries in examples.ts; their settings and data stay in the repository.",
+        "evidence": [
+          "apps/demo/src/demos/analyses/analyses.test.ts (Catalogue)",
+          "apps/demo/src/LandingPage.test.tsx (capability filter and tab link)",
+          "Browser screenshots of the catalogue at 1440 and 390 px; tab links verified headlessly"
+        ]
       }
     ],
     "cut_line": [
@@ -1218,6 +1223,25 @@
         "Froze the USGS 2023 M4.5+ query and enforced the half-open year",
         "Kept one source table, as the research recommends",
         "Analysis tables keep ISO timestamps as text"
+      ]
+    },
+    {
+      "date": "2026-10-07",
+      "event": "milestone-completed",
+      "phase": "reconciliation",
+      "status": "active",
+      "reason": "Catalogue curated; all five milestones delivered as stacked PRs.",
+      "evidence": [
+        "apps/demo/src/demos/examples.ts",
+        "apps/demo/src/ExampleSelector.tsx",
+        "docs/intent/demo-overhaul/implementation-plan.md"
+      ],
+      "changes": [
+        "Seven listed entries: Flights, Beijing, World Bank, Earthquakes, Wine, Shop, Lorenz",
+        "Shop combined into one four-tab text analysis under its old ID; Wine gains a note and an Acidity and balance tab",
+        "Removed entries, including the small multi-source shop, stay routable by URL but unlisted",
+        "Capability filters and tab links; ?tab= opens a named tab",
+        "Guide banners and the featured walkthrough removed; the featured section shows the Flights analysis"
       ]
     }
   ],
@@ -1591,7 +1615,7 @@
     {
       "rank": 8,
       "task": "Later report result/state layer",
-      "status": "proposed"
+      "status": "deferred: below the cut line"
     },
     {
       "rank": 9,

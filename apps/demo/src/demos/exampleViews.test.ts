@@ -7,7 +7,7 @@ describe("example saved views", () => {
   it("opens at least three examples with extra saved views", () => {
     expect(withViews.map((example) => example.id)).toEqual(
       expect.arrayContaining([
-        "shop-operations",
+        "multi-source-shop",
         "palmer-penguins",
         "calendar-series",
       ])

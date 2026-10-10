@@ -59,7 +59,7 @@ Propose **seven public entries**, down from 22. All four new families are includ
 | Remove public entries | `scatter-density`, `scatter-surfaces`, `box-plot`, `distribution-discovery` | Density and distributions move into Wine, Flights, Beijing, and Earthquakes. |
 | Remove public entries | `region-map`, `point-map`, `bubble-scatter`, `product-activity`, `scatter-trace` | Maps, bubbles, time patterns, and tracing move into complete analyses. |
 
-These are proposed catalogue changes. Preserve useful test fixtures and data assets. Remove public entries only after their valuable capabilities have verified replacements. Do not fabricate a chart to fill a coverage cell.
+Delivered as proposed. Removed entries leave the catalogue but still open from their URLs, so old links and saved layouts keep working; `listed` in `examples.ts` reverts any of them. The small `multi-source-shop` example is also unlisted, since the four new analyses show related tables at full scale. Test fixtures and data assets are unchanged.
 
 ## Decisions and boundaries
 

@@ -88,6 +88,19 @@ export function buildAnalysisViews(
   };
 }
 
+/** Builds a single-table example's tabs from its dashboard text. */
+export function buildTextViews(text: string, rows: Record<string, unknown>[]) {
+  const result = compileViews(text, { rows: rows as AnalysisSourceRow[] });
+  const [main, ...rest] = result.views;
+  return {
+    name: main!.name,
+    savedData: main!.settings,
+    views: rest.map((view) => ({ name: view.name, savedData: view.settings })),
+    diagnostics: result.diagnostics,
+    skippedCharts: result.skippedCharts,
+  };
+}
+
 /**
  * Loads an analysis example's tables and builds its tabs. The result opens
  * like any project example.

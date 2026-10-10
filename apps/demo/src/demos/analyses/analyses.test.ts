@@ -11,9 +11,11 @@ import { earthquakesAnalysis } from "./earthquakes";
 import { facts as earthquakeFacts } from "./facts/earthquakes";
 import { facts as worldBankFacts } from "./facts/worldbank";
 import { worldBankAnalysis } from "./worldbank";
+import { catalogue } from "../examples";
 import {
   analysisQueryId,
   buildAnalysisViews,
+  buildTextViews,
   parseTable,
 } from "./loadAnalysis";
 import type { ExampleAnalysis } from "./types";
@@ -221,5 +223,47 @@ describe("Earthquakes of 2023", () => {
       "One magnitude type by depth",
       "What each record carries",
     ]);
+  });
+});
+
+describe("Catalogue", () => {
+  it("lists complete analyses whose tabs match the tabs they build", async () => {
+    expect(catalogue.map((example) => example.id)).toEqual([
+      "january-flights",
+      "beijing-air",
+      "world-development",
+      "earthquakes-2023",
+      "wine-chemistry",
+      "shop-operations",
+      "lorenz-3d",
+    ]);
+    for (const example of catalogue) {
+      let names: string[];
+      if (example.analysis) {
+        const built = buildAnalysisViews(
+          example.analysis,
+          await readTables(example.analysis)
+        );
+        names = [built.name, ...built.views.map((view) => view.name)];
+      } else if (example.text) {
+        const rows = await parseTable(
+          readFileSync(path.join(publicDir, example.data), "utf8")
+        );
+        const built = buildTextViews(example.text, rows);
+        expect(built.diagnostics, example.id).toEqual([]);
+        expect(built.skippedCharts, example.id).toEqual([]);
+        names = [built.name, ...built.views.map((view) => view.name)];
+      } else {
+        // The workspace names a saved example's first tab after the example.
+        names = [
+          example.viewName ?? example.title,
+          ...(example.views ?? []).map((view) => view.name),
+        ];
+      }
+      expect(
+        example.tabs?.map((tab) => tab.name),
+        example.id
+      ).toEqual(names);
+    }
   });
 });

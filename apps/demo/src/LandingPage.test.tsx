@@ -14,7 +14,7 @@ import {
 import { useState } from "react";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { examples } from "./demos/examples";
+import { catalogue } from "./demos/examples";
 import { LandingPage } from "./LandingPage";
 
 // The hero's live embed has its own test; keep these tests to one workspace.
@@ -132,7 +132,7 @@ describe("LandingPage routing", () => {
     expect(screen.queryByTestId("workspace")).not.toBeInTheDocument();
   });
 
-  it("leads with the featured example before import and restore", () => {
+  it("leads with the featured analysis before import and restore", () => {
     const router = createMemoryRouter(
       [{ path: "/*", element: <LandingPage /> }],
       { initialEntries: ["/"] }
@@ -141,8 +141,14 @@ describe("LandingPage routing", () => {
     render(<RouterProvider router={router} />);
     const featured = screen.getByRole("heading", {
       level: 2,
-      name: "Inside the order book",
+      name: "Where January's flights lost time",
     });
+    const featuredSection = featured.closest("section") as HTMLElement;
+    expect(
+      within(featuredSection).getByRole("button", {
+        name: /Weather at the scheduled hour/,
+      })
+    ).toBeInTheDocument();
     const integration = screen.getByRole("heading", {
       name: "Use it in your React app",
     });
@@ -158,7 +164,7 @@ describe("LandingPage routing", () => {
     ).toBeInTheDocument();
   });
 
-  it("lists every example with its data, views, and features", () => {
+  it("lists the catalogue, narrows it by capability, and opens a tab", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
@@ -176,7 +182,7 @@ describe("LandingPage routing", () => {
       .getByRole("heading", { name: "Examples" })
       .closest("section") as HTMLElement;
     const list = within(section).getByRole("list");
-    const items = within(list).getAllByRole("listitem");
+    const items = () => within(list).getAllByRole("listitem");
 
     expect(
       within(section).getByRole("link", { name: "Browse chart guides" })
@@ -184,24 +190,37 @@ describe("LandingPage routing", () => {
     expect(
       within(section).getByRole("link", { name: "How rendering works" })
     ).toHaveAttribute("href", "/?view=docs&topic=rendering");
-    expect(items).toHaveLength(examples.length);
-    expect(within(section).queryByText("Show all examples")).toBeNull();
+    expect(items()).toHaveLength(catalogue.length);
     expect(screen.queryByText(/feature coverage/i)).toBeNull();
-    const penguins = items.find((item) =>
-      within(item).queryByRole("button", { name: "Penguin field notes" })
+    const wine = items().find(
+      (item) =>
+        within(item).queryAllByRole("button", {
+          name: "What separates a good red wine",
+        }).length > 0
     ) as HTMLElement;
-    expect(penguins).toHaveTextContent("344 penguins");
-    expect(penguins).toHaveTextContent("real data");
-    expect(penguins).toHaveTextContent("8 views · scatter, row, box plot");
-    expect(penguins).toHaveTextContent("Shared color key");
+    expect(wine).toHaveTextContent("1,599 wines");
+    expect(wine).toHaveTextContent("real data");
+    expect(wine).toHaveTextContent("Acidity and balance");
+
+    fireEvent.click(within(section).getByRole("button", { name: "Maps" }));
+    expect(
+      within(section).getByRole("button", { name: "Maps" })
+    ).toHaveAttribute("aria-pressed", "true");
+    expect(
+      items().map((item) => within(item).getAllByRole("button")[0]!.textContent)
+    ).toEqual([
+      "Income, longevity, and power across 217 economies",
+      "Every strong earthquake of 2023",
+    ]);
 
     fireEvent.click(
-      within(penguins).getByRole("button", { name: "Penguin field notes" })
+      within(section).getByRole("button", { name: "Where they struck" })
     );
-    expect(router.state.location.pathname).toBe("/examples/palmer-penguins");
+    expect(router.state.location.pathname).toBe("/examples/earthquakes-2023");
+    expect(router.state.location.search).toBe("?tab=Where+they+struck");
   });
 
-  it("shows the featured guide above the workspace and opens it from the hero", async () => {
+  it("opens the order book from the hero with no guide above it", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
@@ -221,12 +240,7 @@ describe("LandingPage routing", () => {
 
     expect(await screen.findByTestId("workspace")).toBeInTheDocument();
     expect(router.state.location.pathname).toBe("/examples/shop-operations");
-    expect(screen.getByRole("note")).toHaveTextContent(
-      "click Web in Sales channels"
-    );
-    expect(screen.getByRole("note")).toHaveTextContent(
-      "Inspect it in Chart spec"
-    );
+    expect(screen.queryByRole("note")).toBeNull();
     expect(
       screen.getByRole("link", {
         name: /Embed this workspace in your React app/,

@@ -1,6 +1,5 @@
 import {
   penguinDashboard,
-  shopDashboard,
   largeShopDashboard,
   calculationDashboard,
   scatterTraceDashboard,
@@ -14,7 +13,6 @@ import {
   scatterRegressionDashboard,
   scatterMatrixDashboard,
   scatterSurfaceDashboard,
-  wineChemistryDashboard,
   pointMapDashboard,
   regionMapDashboard,
   distributionDashboard,
@@ -56,22 +54,46 @@ import { boxPlotSettings } from "./boxPlotSettings";
 import { beijingAnalysis } from "./analyses/beijing";
 import { earthquakesAnalysis } from "./analyses/earthquakes";
 import { flightsAnalysis } from "./analyses/flights";
+import { shopText } from "./analyses/shop";
+import { wineText } from "./analyses/wine";
 import { worldBankAnalysis } from "./analyses/worldbank";
 import type { ExampleAnalysis } from "./analyses/types";
 import { categoricalChartSettings } from "./categoricalChartSettings";
 import { nbaStatsSettings } from "./nbaStatsSettings";
-import {
-  calendarViews,
-  penguinViews,
-  shopViews,
-  type ExampleView,
-} from "./exampleViews";
+import { calendarViews, penguinViews, type ExampleView } from "./exampleViews";
 
 export interface ExampleDataset {
   /** Row count with its unit, such as "344 penguins". */
   rows: string;
   fields: number;
   source: "Real" | "Synthetic";
+}
+
+/** Capabilities a visitor can look for; each catalogue tab names its own. */
+export const capabilities = {
+  "Related tables":
+    "Lookups across source tables, with each match and miss inspectable.",
+  Maps: "Points placed by latitude and longitude, linked to the other charts.",
+  "Density and bins":
+    "Hexagons, binned counts, and smoothed density for many points.",
+  Fits: "Linear, polynomial, and LOESS fits, per group and pooled.",
+  Distributions:
+    "Histograms, box and violin plots, and ECDFs compared by group.",
+  "Time and calendars":
+    "Daily to yearly series, stacked areas, and calendar heatmaps.",
+  Flows: "Sankey flows from one category to the next.",
+  Profiles: "Parallel coordinates: one line per row across several measures.",
+  "Shares and mixes":
+    "Stacked and 100% bars, heatmaps, and pivots of category mixes.",
+  Calculations: "Calculated fields with formulas you can inspect and change.",
+  "3D": "Rotatable 3D scatter plots with synchronized cameras.",
+} as const;
+export type Capability = keyof typeof capabilities;
+
+/** A catalogue tab: its name in the workspace and what it shows. */
+export interface ExampleTab {
+  name: string;
+  capabilities: Capability[];
 }
 
 export interface ExampleData {
@@ -82,11 +104,15 @@ export interface ExampleData {
   dataset: ExampleDataset;
   /** Workspace capabilities this example is built to show. */
   shows: string[];
-  /** One tested first action, shown above the workspace. */
-  guide?: string;
   icon: LucideIcon;
+  /** Listed in the catalogue. Other examples open only from their URL. */
+  listed?: boolean;
+  /** The tabs it opens with, for capability discovery. Listed examples only. */
+  tabs?: ExampleTab[];
   /** A complete analysis: related tables from files, tabs from dashboard text. */
   analysis?: ExampleAnalysis;
+  /** Dashboard text for a single-file example, with one `view` per tab. */
+  text?: string;
   /** Related tables: the example opens a project instead of one file. */
   project?: AnalysisProject;
   tables?: Record<string, readonly AnalysisSourceRow[]>;
@@ -135,7 +161,7 @@ export function describeViews(example: ExampleData) {
 
 export const FEATURED_EXAMPLE_ID = "shop-operations";
 
-/** Every example, in the order the landing page lists them. */
+/** Every example. Listed ones, first, make up the catalogue. */
 export const examples: ExampleData[] = [
   {
     id: "january-flights",
@@ -152,6 +178,33 @@ export const examples: ExampleData[] = [
       "Parallel coordinates",
       "ECDF",
     ],
+    listed: true,
+    tabs: [
+      {
+        name: "Delays carry through",
+        capabilities: ["Flows", "Shares and mixes", "Related tables"],
+      },
+      {
+        name: "Departure predicts arrival",
+        capabilities: ["Density and bins", "Fits", "Distributions"],
+      },
+      {
+        name: "Weather at the scheduled hour",
+        capabilities: [
+          "Related tables",
+          "Shares and mixes",
+          "Density and bins",
+        ],
+      },
+      {
+        name: "When delays happened",
+        capabilities: ["Time and calendars", "Shares and mixes"],
+      },
+      {
+        name: "Routes and aircraft",
+        capabilities: ["Profiles", "Related tables", "Distributions"],
+      },
+    ],
     icon: Plane,
     data: "",
     analysis: flightsAnalysis,
@@ -161,7 +214,11 @@ export const examples: ExampleData[] = [
     title: "A year of Beijing air, station by station",
     description:
       "Daily air quality at 12 Beijing monitoring stations through 2016, built from hourly readings. Check coverage first, then follow PM2.5 through the year, compare particles with NO₂, fit ozone against temperature by season, and brush six-pollutant profiles.",
-    dataset: { rows: "4,392 station-days · 3 tables", fields: 16, source: "Real" },
+    dataset: {
+      rows: "4,392 station-days · 3 tables",
+      fields: 16,
+      source: "Real",
+    },
     shows: [
       "Calendar heatmap",
       "Coverage heatmap",
@@ -170,6 +227,29 @@ export const examples: ExampleData[] = [
       "Violin and observations",
       "Parallel coordinates",
       "Related tables",
+    ],
+    listed: true,
+    tabs: [
+      {
+        name: "A year of PM2.5",
+        capabilities: ["Time and calendars", "Distributions"],
+      },
+      {
+        name: "Coverage and stations",
+        capabilities: ["Shares and mixes", "Related tables"],
+      },
+      {
+        name: "Particles and NO₂",
+        capabilities: ["Density and bins", "Distributions"],
+      },
+      {
+        name: "Ozone follows temperature",
+        capabilities: ["Fits", "Distributions"],
+      },
+      {
+        name: "Six-pollutant profiles",
+        capabilities: ["Profiles", "Distributions"],
+      },
     ],
     icon: CloudFog,
     data: "",
@@ -180,14 +260,38 @@ export const examples: ExampleData[] = [
     title: "Income, longevity, and power across 217 economies",
     description:
       "World Bank indicators for every economy from 2000 to 2023, joined by country and year. Compare income with life expectancy, match electricity access at both endpoints, follow countries' paths, map who still lacks power, and see where gains were possible.",
-    dataset: { rows: "5,208 country-years · 6 tables", fields: 20, source: "Real" },
+    dataset: {
+      rows: "5,208 country-years · 6 tables",
+      fields: 20,
+      source: "Real",
+    },
     shows: [
       "Bubble scatter",
       "Point map",
       "Matched ECDF",
       "Grouped fits",
-      "Faceted scatter",
+      "Yearly lines",
       "Related tables",
+    ],
+    listed: true,
+    tabs: [
+      {
+        name: "Income and longevity",
+        capabilities: ["Fits", "Related tables"],
+      },
+      {
+        name: "Electricity, 2000 and 2023",
+        capabilities: ["Distributions", "Related tables"],
+      },
+      {
+        name: "Different paths",
+        capabilities: ["Time and calendars", "Shares and mixes"],
+      },
+      {
+        name: "Where people lack power",
+        capabilities: ["Maps", "Related tables"],
+      },
+      { name: "Room to improve", capabilities: ["Distributions"] },
     ],
     icon: Globe,
     data: "",
@@ -207,9 +311,100 @@ export const examples: ExampleData[] = [
       "ECDF by group",
       "100% bars",
     ],
+    listed: true,
+    tabs: [
+      { name: "Where they struck", capabilities: ["Maps", "Distributions"] },
+      { name: "When they happened", capabilities: ["Time and calendars"] },
+      {
+        name: "Magnitude and depth",
+        capabilities: ["Density and bins", "Distributions"],
+      },
+      { name: "One magnitude type by depth", capabilities: ["Distributions"] },
+      { name: "What each record carries", capabilities: ["Shares and mixes"] },
+    ],
     icon: Activity,
     data: "",
     analysis: earthquakesAnalysis,
+  },
+  {
+    id: "wine-chemistry",
+    title: "What separates a good red wine",
+    description:
+      "1,599 Portuguese red wines with lab measurements and a tasting score. Smoothed density, hexagons, per-band fits, and marginals show how alcohol, density, and acidity move together; a second tab compares acidity and balance across quality bands.",
+    dataset: { rows: "1,599 wines", fields: 12, source: "Real" },
+    shows: [
+      "Smoothed density",
+      "LOESS by group",
+      "Faceted fits",
+      "Violins",
+      "Parallel coordinates",
+    ],
+    icon: Wine,
+    listed: true,
+    tabs: [
+      {
+        name: "What separates a good red wine",
+        capabilities: ["Density and bins", "Fits", "Calculations"],
+      },
+      {
+        name: "Acidity and balance",
+        capabilities: ["Distributions", "Profiles"],
+      },
+    ],
+    data: "/datasets/wine-quality-red.csv",
+    text: wineText,
+  },
+  {
+    id: "shop-operations",
+    title: "Inside the order book",
+    description:
+      "500 synthetic orders across regions, channels, and categories. Click any bar and every view narrows; compare the sales mix, follow revenue through the calendar, and trace each order's contribution through its calculated fields.",
+    dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
+    shows: [
+      "Metric cards",
+      "Click to filter",
+      "Sankey flow",
+      "100% bars",
+      "Calendar heatmap",
+      "Calculated fields",
+    ],
+    icon: ShoppingCart,
+    listed: true,
+    tabs: [
+      {
+        name: "Order book",
+        capabilities: ["Flows", "Shares and mixes", "Distributions"],
+      },
+      {
+        name: "Sales mix",
+        capabilities: ["Shares and mixes", "Time and calendars"],
+      },
+      { name: "Calendar", capabilities: ["Time and calendars"] },
+      {
+        name: "Contribution and delivery",
+        capabilities: ["Calculations", "Distributions"],
+      },
+    ],
+    data: "/datasets/shop-operations.csv",
+    text: shopText,
+  },
+  {
+    id: "lorenz-3d",
+    title: "How quickly do nearby Lorenz runs diverge?",
+    description:
+      "Five simulated runs start almost together. A saved time brush on the 2D view shows where they part in the coordinated 3D views.",
+    dataset: { rows: "1,000 points", fields: 5, source: "Synthetic" },
+    shows: ["3D scatter", "Saved brush", "Faceted 3D"],
+    icon: Orbit,
+    listed: true,
+    tabs: [
+      {
+        name: "How quickly do nearby Lorenz runs diverge?",
+        capabilities: ["3D", "Time and calendars"],
+      },
+    ],
+    data: "/lorenz_3d_small.csv",
+    savedData: demoSettings,
   },
   {
     id: "distribution-discovery",
@@ -218,8 +413,6 @@ export const examples: ExampleData[] = [
       "Compare 78 synthetic shipments with a histogram and distributions. Inspect smaller routes together, then select their exact categories.",
     dataset: { rows: "78 shipments", fields: 3, source: "Synthetic" },
     shows: ["Histogram", "Distribution", "Other categories", "Source tracing"],
-    guide:
-      "Try this: Alt-click Other categories and select a route. Open Distribution settings to compare Box, Violin, and Observations. Add chart lists Histogram and Distribution by name.",
     icon: BarChart3,
     data: "/delivery-times.csv",
     savedData: distributionDashboard,
@@ -231,8 +424,6 @@ export const examples: ExampleData[] = [
       "Join 15 synthetic records to six service districts. Compare totals, inspect the joined records, and see zero values, missing measures, and regions with no rows.",
     dataset: { rows: "15 records", fields: 3, source: "Synthetic" },
     shows: ["Region map", "Typed region joins", "Metric tracing"],
-    guide:
-      "Try this: select Central and compare its 500 requests with the pivot. Alt-click outside the regions to see unassigned rows. Alt-click East to see two features joined as one region.",
     icon: MapPin,
     data: "/region-requests.csv",
     savedData: regionMapDashboard,
@@ -244,8 +435,6 @@ export const examples: ExampleData[] = [
       "Compare 30 synthetic service sites. Point area shows requests; color shows region. Inspect any site to follow its coordinates and size.",
     dataset: { rows: "30 sites", fields: 5, source: "Synthetic" },
     shows: ["Point map", "Geographic view", "Source tracing"],
-    guide:
-      "Try this: click a site to select its source row. Alt-click it to see its coordinates. Drag to pan, then choose Reset view. Omitted rows explains the unlocated site.",
     icon: MapPin,
     data: "/map-sites.csv",
     savedData: pointMapDashboard,
@@ -257,24 +446,9 @@ export const examples: ExampleData[] = [
       "Count 10,000 daily observations in temperature and sales bins. Darker cells show where more days share similar values.",
     dataset: { rows: "10,000 days", fields: 12, source: "Synthetic" },
     shows: ["Density bins", "Exact bin selection", "Source tracing"],
-    guide:
-      "Try this: click a dark bin. The count and records show its days. Alt-click it to see exact boundaries. Change Display to Points to compare individual rows.",
     icon: ScatterChart,
     data: "/correlated_medium.csv",
     savedData: densityDashboard,
-  },
-  {
-    id: "wine-chemistry",
-    title: "What separates a good red wine",
-    description:
-      "1,599 Portuguese red wines with lab measurements and a tasting score. Smoothed density, hexagons, per-band fits, paired summaries, and marginal histograms show how alcohol, density, and acidity move together, and how the best wines differ.",
-    dataset: { rows: "1,599 wines", fields: 12, source: "Real" },
-    shows: ["Smoothed density", "LOESS by group", "Faceted fits"],
-    guide:
-      "Try this: click Excellent in the quality bands to refit every chart. Alt-click a density region to see the share of wines inside it. Click a hexagon to select its exact wines.",
-    icon: Wine,
-    data: "/datasets/wine-quality-red.csv",
-    savedData: wineChemistryDashboard,
   },
   {
     id: "scatter-regression",
@@ -283,8 +457,6 @@ export const examples: ExampleData[] = [
       "Pooled together, longer penguin bills look shallower. Fit each species on its own and the slope turns positive. Equations, slopes, and R² read on the chart; a filter from another view refits them.",
     dataset: { rows: "344 penguins", fields: 8, source: "Real" },
     shows: ["Grouped regression", "Faceted fits", "Fit tracing"],
-    guide:
-      "Try this: click an island to refit every species. Drag across the points; the fits stay put. Alt-click a fit line to see its coefficients and rows.",
     icon: ScatterChart,
     data: "/datasets/palmer-penguins.csv",
     savedData: scatterRegressionDashboard,
@@ -296,8 +468,6 @@ export const examples: ExampleData[] = [
       "A scatter matrix puts every pair of fields side by side, with each field's distribution on the diagonal. Numbers, species, and sex share one grid, and a brush in any cell highlights the same penguins everywhere.",
     dataset: { rows: "344 penguins", fields: 8, source: "Real" },
     shows: ["Scatter matrix", "Linked brushing", "Mixed field types"],
-    guide:
-      "Try this: drag across a cell to select those penguins and watch them light up in every other cell. Click a species bar to select it. Click empty space to clear.",
     icon: LayoutGrid,
     data: "/datasets/palmer-penguins.csv",
     savedData: scatterMatrixDashboard,
@@ -309,8 +479,6 @@ export const examples: ExampleData[] = [
       "Hexagons count the days in fixed cells; the smoothed density estimates rows per unit area and outlines where days concentrate. A linear fit and paired summary sit over the density.",
     dataset: { rows: "10,000 days", fields: 12, source: "Synthetic" },
     shows: ["Hexagonal bins", "Smoothed density", "Contour tracing"],
-    guide:
-      "Try this: click a dark hexagon to select its days. Alt-click a shaded region to see its threshold and the share of days inside. Drag across the humidity histogram to re-estimate the density.",
     icon: ScatterChart,
     data: "/correlated_medium.csv",
     savedData: scatterSurfaceDashboard,
@@ -322,8 +490,6 @@ export const examples: ExampleData[] = [
       "Compare daily response time and conversion. Bubble area shows trial volume, and color marks each release phase.",
     dataset: { rows: "90 days", fields: 7, source: "Synthetic" },
     shows: ["Bubble area", "Row selection", "Size tracing"],
-    guide:
-      "Try this: click a bubble to select its day. Alt-click it to see its size calculation. Change Size by in settings to compare another measure.",
     icon: ScatterChart,
     data: "/datasets/product-activity.csv",
     savedData: bubbleDashboard,
@@ -335,8 +501,6 @@ export const examples: ExampleData[] = [
       "Follow customers, orders, items, and products. Each view says what one row is before you chart it.",
     dataset: { rows: "5 orders · 8 items", fields: 15, source: "Synthetic" },
     shows: ["Related tables", "Row meaning", "Query flow", "Saved tabs"],
-    guide:
-      "Try this: switch between Orders and Items. Orders total $150; item revenue is $140. Alt-click a bar, then show its rows in the query flow.",
     icon: ShoppingCart,
     data: "",
     project: shopProject.project,
@@ -345,27 +509,6 @@ export const examples: ExampleData[] = [
     views: shopProjectViews,
     queryPresets: shopQueryPresets,
     viewName: "Orders",
-  },
-  {
-    id: "shop-operations",
-    title: "Inside the order book",
-    description:
-      "Follow orders from revenue and margin to delivery, channels, and individual records. Click any bar and every other view narrows to match, or follow orders from channel to category to returns in the flow at the bottom.",
-    dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
-    shows: [
-      "Metric cards",
-      "Click to filter",
-      "Sankey flow",
-      "Filter chips",
-      "Saved tabs",
-      "Symmetric log scales",
-    ],
-    guide:
-      "Try this: click Web in Sales channels. The order count, revenue, and average-order cards update with the charts and table. Alt-click a card to see its inputs. Click Web again to clear the filter.",
-    icon: ShoppingCart,
-    data: "/datasets/shop-operations.csv",
-    savedData: shopDashboard,
-    views: shopViews,
   },
   {
     id: "calendar-series",
@@ -379,8 +522,6 @@ export const examples: ExampleData[] = [
       "Source tracing",
       "Saved tabs",
     ],
-    guide:
-      "Try this: click a point in Monthly revenue by channel. Alt-click it to see how the value was calculated. Open its settings to change Day, Week, or Month.",
     icon: LineChart,
     data: "/datasets/shop-operations.csv",
     savedData: timeSeriesDashboard,
@@ -393,8 +534,6 @@ export const examples: ExampleData[] = [
       "Compare revenue across regions, with one bar for each channel. Select a pair to inspect the matching orders.",
     dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
     shows: ["Grouped bars", "Pair selection", "Source tracing"],
-    guide:
-      "Try this: select a region–channel bar. Alt-click it to see its source records. Open settings to compare counts, sums, or averages.",
     icon: BarChart3,
     data: "/datasets/shop-operations.csv",
     savedData: groupedBarsDashboard,
@@ -406,8 +545,6 @@ export const examples: ExampleData[] = [
       "Follow monthly revenue totals and the channels that contribute to them. Compare the stack with separate areas and inspect each period.",
     dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
     shows: ["Area charts", "Stacked areas", "Period tracing"],
-    guide:
-      "Try this: inspect a point in Monthly revenue layers. The trace shows its band bounds and source records. Change Display to Area to compare each channel from zero.",
     icon: LineChart,
     data: "/datasets/shop-operations.csv",
     savedData: areaDashboard,
@@ -419,8 +556,6 @@ export const examples: ExampleData[] = [
       "Compare each region's revenue and channel mix with stacked totals and percentage bars.",
     dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
     shows: ["Stacked bars", "100% bars", "Denominator tracing"],
-    guide:
-      "Try this: inspect a revenue segment, then choose 100% in Display. The trace shows its share and category denominator.",
     icon: BarChart3,
     data: "/datasets/shop-operations.csv",
     savedData: stackedBarsDashboard,
@@ -460,8 +595,6 @@ export const examples: ExampleData[] = [
       "A catalog with no numbers worth plotting. Count categories, cross them in a pivot, and split material by stock and size in a facet grid, while the table searches for Sports.",
     dataset: { rows: "10,000 products", fields: 12, source: "Synthetic" },
     shows: ["Grid facets", "Pivot table", "Table search"],
-    guide:
-      "Try this: search Sports products for text with no matches. Clear the search to restore rows.",
     icon: Tags,
     data: "/categorical_medium.csv",
     savedData: categoricalChartSettings,
@@ -506,8 +639,6 @@ export const examples: ExampleData[] = [
       "14 calculated fields turn raw orders into contribution, dates, and service rules. Inspect the chains, preview a rule change, and apply it across linked views.",
     dataset: { rows: "10,000 orders", fields: 16, source: "Synthetic" },
     shows: ["Calculated fields", "Formula preview", "Wrap facets"],
-    guide:
-      "Try this: open Calculations, start a calculation, and enter an invalid formula. Check the parse error, then discard the draft.",
     icon: Calculator,
     data: "/datasets/shop-10000.csv",
     savedData: calculationDashboard,
@@ -530,21 +661,14 @@ export const examples: ExampleData[] = [
       "Six years of messages with 12 correspondents. Start from a blank artboard: add a title, build one strip of monthly squares, and repeat it for each correspondent.",
     dataset: { rows: "10,376 messages", fields: 5, source: "Synthetic" },
     shows: ["Blank composition", "Repeated chart units", "Copy as PNG"],
-    guide:
-      "Try this: open details on Report graphic, add a title and a chart unit, repeat it by Correspondent, then copy the PNG.",
     icon: LayoutTemplate,
     data: "/datasets/message-log.csv",
     savedData: messageDashboard,
   },
-  {
-    id: "lorenz-3d",
-    title: "How quickly do nearby Lorenz runs diverge?",
-    description:
-      "Five simulated runs start almost together. A saved time brush on the 2D view shows where they part in the coordinated 3D views.",
-    dataset: { rows: "1,000 points", fields: 5, source: "Synthetic" },
-    shows: ["3D scatter", "Saved brush", "Faceted 3D"],
-    icon: Orbit,
-    data: "/lorenz_3d_small.csv",
-    savedData: demoSettings,
-  },
 ];
+
+/** The catalogue: complete analyses, in the order the landing page lists them. */
+export const catalogue = examples.filter((example) => example.listed);
+
+/** The analysis the landing page features. */
+export const FEATURED_ANALYSIS_ID = "january-flights";
