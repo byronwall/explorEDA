@@ -10,6 +10,8 @@ import {
   INK,
   type CompositionDefinition,
   type BandMark,
+  type FrameWindow,
+  type InsetFrame,
   type InstanceOverride,
   type MarkDefinition,
   type NumericScale,
@@ -385,11 +387,12 @@ export function resolveUnit(
   const axisFor = (
     scale: NumericScale,
     subset: Subset,
-    range: [number, number]
+    range: [number, number],
+    window?: FrameWindow
   ) =>
     numericAxis(
       scale,
-      domainFor(scale, subset),
+      domainFor(scale, subset, window),
       range,
       dateScales.has(scale.id)
     );
@@ -407,8 +410,35 @@ export function resolveUnit(
     return values;
   };
   const sharedDomains = new Map<string, [number, number]>();
-  const domainFor = (scale: NumericScale, subset: Subset) => {
+  const windowedDomains = new Map<string, [number, number]>();
+  const domainFor = (
+    scale: NumericScale,
+    subset: Subset,
+    window?: FrameWindow
+  ): [number, number] => {
     if (scale.id === MIDDLE_SCALE.id) return [0, 1] as [number, number];
+    if (window) {
+      // A windowed frame spans its window on the window's field, and the
+      // rows inside the window on every other field.
+      const inside = windowTest(window, data);
+      const ids = (
+        scale.domain === "instance" ? subset.allIds : data.allIds
+      ).filter(inside);
+      const key = `${scale.id}|${scale.domain === "instance" ? subset.key : ""}|${window.field}|${window.min ?? ""}|${window.max ?? ""}`;
+      let domain = windowedDomains.get(key);
+      if (!domain) {
+        domain = numericDomain(scale, columnsOf(scale), ids);
+        if (scale.field === window.field) {
+          const min = window.min?.trim() ? readNumber(window.min) : undefined;
+          const max = window.max?.trim() ? readNumber(window.max) : undefined;
+          if (min !== undefined) domain[0] = min;
+          if (max !== undefined) domain[1] = max;
+          if (domain[0] >= domain[1]) domain[1] = domain[0] + 1;
+        }
+        windowedDomains.set(key, domain);
+      }
+      return domain;
+    }
     const bound = summaries.some((item) => item.y.id === scale.id);
     if (scale.domain === "instance")
       return bound
@@ -579,12 +609,26 @@ export function resolveUnit(
     }
 
     // Numeric frames: the first x–y mark's scales place guides and axes too.
-    const firstXy = xys[0];
+    const mainInsetIds = new Set((unit.insets ?? []).map((inset) => inset.id));
+    const firstXy =
+      xys.find(
+        (item) => !item.mark.frameId || !mainInsetIds.has(item.mark.frameId)
+      ) ?? xys[0];
     const spread = stacks.find((item) => item.x);
     const xy = firstXy
       ? {
-          x: axisFor(firstXy.x, subset, [frame.x, frame.x + frame.width]),
-          y: axisFor(firstXy.y, subset, [frame.y + frame.height, frame.y]),
+          x: axisFor(
+            firstXy.x,
+            subset,
+            [frame.x, frame.x + frame.width],
+            unit.window
+          ),
+          y: axisFor(
+            firstXy.y,
+            subset,
+            [frame.y + frame.height, frame.y],
+            unit.window
+          ),
         }
       : spread?.x
         ? {
@@ -633,41 +677,77 @@ export function resolveUnit(
         )
       );
     });
-    for (const item of xys) {
-      const axes = {
-        x: axisFor(item.x, subset, [frame.x, frame.x + frame.width]),
-        y: axisFor(item.y, subset, [frame.y + frame.height, frame.y]),
-      };
-      const accent = override?.accent;
-      nodes.push(
-        ...(item.mark.type === "band"
-          ? bandNodes(
-              unit,
-              accent ? { ...item.mark, fill: accent } : item.mark,
-              subset,
-              axes,
-              frame,
-              data
-            )
-          : item.mark.type === "path"
-            ? pathNodes(
-                unit,
-                accent ? { ...item.mark, stroke: accent } : item.mark,
-                subset,
-                axes,
-                frame,
-                data
-              )
-            : pointNodes(
+    // Each frame draws the marks assigned to it from the rows in its window.
+    const drawFrame = (
+      frameBounds: Bounds,
+      window: FrameWindow | undefined,
+      marksHere: ResolvedXy[]
+    ) => {
+      const inside = window ? windowTest(window, data) : undefined;
+      const frameData = inside
+        ? { ...data, liveIds: data.liveIds.filter(inside) }
+        : data;
+      const frameSubset = inside
+        ? { ...subset, liveIds: subset.liveIds.filter(inside) }
+        : subset;
+      for (const item of marksHere) {
+        const axes = {
+          x: axisFor(
+            item.x,
+            subset,
+            [frameBounds.x, frameBounds.x + frameBounds.width],
+            window
+          ),
+          y: axisFor(
+            item.y,
+            subset,
+            [frameBounds.y + frameBounds.height, frameBounds.y],
+            window
+          ),
+        };
+        const accent = override?.accent;
+        const drawn =
+          item.mark.type === "band"
+            ? bandNodes(
                 unit,
                 accent ? { ...item.mark, fill: accent } : item.mark,
-                subset,
+                frameSubset,
                 axes,
-                frame,
-                data
-              ))
-      );
-    }
+                frameBounds,
+                frameData
+              )
+            : item.mark.type === "path"
+              ? pathNodes(
+                  unit,
+                  accent ? { ...item.mark, stroke: accent } : item.mark,
+                  frameSubset,
+                  axes,
+                  frameBounds,
+                  frameData
+                )
+              : pointNodes(
+                  unit,
+                  accent ? { ...item.mark, fill: accent } : item.mark,
+                  frameSubset,
+                  axes,
+                  frameBounds,
+                  frameData
+                );
+        // A windowed frame clips, so a path cut at the window's edge stays inside.
+        nodes.push(
+          ...(window
+            ? drawn.map((node) => ({ ...node, clip: node.clip ?? frameBounds }))
+            : drawn)
+        );
+      }
+    };
+    drawFrame(
+      frame,
+      unit.window,
+      xys.filter(
+        (item) => !item.mark.frameId || !mainInsetIds.has(item.mark.frameId)
+      )
+    );
     stacks.forEach(({ mark, x }, markIndex) => {
       const accented = override?.accent
         ? { ...mark, colors: [override.accent] }
@@ -715,6 +795,54 @@ export function resolveUnit(
         )
       );
     });
+    // Insets sit over the main frame's marks: paper, marks, then an outline.
+    for (const inset of unit.insets ?? []) {
+      const bounds: Bounds = {
+        x: frame.x + inset.x,
+        y: frame.y + inset.y,
+        width: inset.width,
+        height: inset.height,
+      };
+      nodes.push({
+        type: "rect",
+        key: `${unit.id}:${subset.key}:${inset.id}:paper`,
+        elementId: unit.id,
+        instanceKey: subset.key,
+        x: bounds.x,
+        y: bounds.y,
+        width: bounds.width,
+        height: bounds.height,
+        fill: inset.background ?? "#ffffff",
+        stroke: "#d4d7dc",
+      });
+      const insetXy = xys.filter((item) => item.mark.frameId === inset.id);
+      if (inset.axis && insetXy[0]) {
+        const axisXy = {
+          x: axisFor(
+            insetXy[0].x,
+            subset,
+            [bounds.x, bounds.x + bounds.width],
+            inset.window
+          ),
+          y: axisFor(
+            insetXy[0].y,
+            subset,
+            [bounds.y + bounds.height, bounds.y],
+            inset.window
+          ),
+        };
+        nodes.push(
+          ...numericAxisNodes(
+            unit,
+            `${subset.key}:${inset.id}`,
+            axisXy,
+            bounds,
+            8
+          )
+        );
+      }
+      drawFrame(bounds, inset.window, insetXy);
+    }
     if (opacity < 1)
       for (let index = firstNode; index < nodes.length; index += 1)
         nodes[index] = { ...nodes[index]!, opacity };
@@ -882,6 +1010,20 @@ function unionBounds(instances: ResolvedInstance[], unit: UnitElement) {
   return { x: left, y: top, width: right - left, height: bottom - top };
 }
 
+/** A test for rows inside a frame's window, by the window field's value. */
+export function windowTest(window: FrameWindow, data: CompositionData) {
+  const column = data.column(window.field);
+  const min = window.min?.trim() ? readNumber(window.min) : undefined;
+  const max = window.max?.trim() ? readNumber(window.max) : undefined;
+  return (id: number) => {
+    const value = readNumber(column[id]);
+    if (value === undefined) return false;
+    if (min !== undefined && value < min) return false;
+    if (max !== undefined && value > max) return false;
+    return true;
+  };
+}
+
 /**
  * Splits rows by the repeat field, in the rule's order, up to its limit. The
  * value order needs the definition for its calculation; without it, repeats
@@ -915,7 +1057,15 @@ export function repeatSubsets(
     subset.allIds.push(id);
   }
   for (const id of data.liveIds) groups.get(keyOf(id))?.liveIds.push(id);
-  const subsets = [...groups.values()];
+  const skipped = new Set(
+    (unit.repeat.skip ?? "")
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean)
+  );
+  const subsets = [...groups.values()].filter(
+    (subset) => !skipped.has(subset.key)
+  );
   const calc =
     unit.repeat.order === "value"
       ? definition?.calculations.find(
@@ -2186,7 +2336,8 @@ function numericAxisNodes(
   unit: UnitElement,
   instanceKey: string,
   xy: { x: NumericAxis; y: NumericAxis },
-  frame: Bounds
+  frame: Bounds,
+  fontSize = 10
 ): SceneNode[] {
   const label = (
     text: string,
@@ -2200,7 +2351,7 @@ function numericAxisNodes(
     elementId: unit.id,
     x,
     lines: [{ text, y }],
-    fontSize: 10,
+    fontSize,
     fontWeight: 400,
     fill: MUTED_INK,
     anchor,

@@ -369,6 +369,13 @@ The author edits one compound template and repeats it without copying frame defi
 Detail, inset, guides, and captions move together. Output preserves their distinct scales and clipping.
 Single-frame templates still work. Remove the inset frame to reduce this composition to the previous capability set.
 
+### Status: built with The New York Times' Covid series (updated 2026-10-10)
+
+The state comparison ships as `?example=covid-compare` from `apps/data-samples/prepare/covid-compare.ts`: six state panels, each with a recent-window main frame and a full-history inset.
+A unit holds inset frames placed from its main frame's corner, each with its own display window; the main frame can take a window too. A window leaves rows out of the marks drawn in that frame and spans the window on its field, but it is not a filter: calculations, labels, and sibling frames still see every row.
+Point, path, and band marks name the frame they draw in. A windowed frame clips. The national series sits in the data as a comparison: a repeat rule can leave listed values out, and a mark drawn from the whole graphic with a listed focus shows only that series.
+Group movement, region and date filters, and inset placement were checked in the browser; the inset keeps the full history while the main frame shows the recent window, and selecting a state never alters the national population.
+
 ## Cross-cutting verification
 
 At each milestone, prove blank authoring, save/reload, source inspection, and matching PNG output for the new reference.

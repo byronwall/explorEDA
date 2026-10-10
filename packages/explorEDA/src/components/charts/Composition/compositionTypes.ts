@@ -211,6 +211,8 @@ export interface PointMark {
   type: "point";
   id: string;
   name: string;
+  /** The inset the mark draws in; the main frame when unset. */
+  frameId?: string;
   xScaleId: string;
   /** Without a y scale, points sit on the frame's middle line: a dot row. */
   yScaleId?: string;
@@ -251,6 +253,8 @@ export interface PathMark {
   type: "path";
   id: string;
   name: string;
+  /** The inset the mark draws in; the main frame when unset. */
+  frameId?: string;
   xScaleId: string;
   /** Without a y scale, the path runs along the frame's middle line. */
   yScaleId?: string;
@@ -306,6 +310,8 @@ export interface BandMark {
   type: "band";
   id: string;
   name: string;
+  /** The inset the mark draws in; the main frame when unset. */
+  frameId?: string;
   xScaleId: string;
   yScaleId: string;
   orderField: string;
@@ -462,14 +468,51 @@ export interface RepeatRule {
   direction?: "asc" | "desc";
   /** Most units to draw, in order. */
   limit: number;
+  /** Comma-separated subset values not to repeat, such as a national total drawn as a comparison. */
+  skip?: string;
 }
 
 export type RepeatOrder = "count" | "label" | "value";
+
+/**
+ * A display window on a frame: only rows whose field falls between the
+ * bounds draw there, and a numeric scale on that field spans the bounds.
+ * It is not a filter: calculations and other frames still see every row.
+ */
+export interface FrameWindow {
+  field: string;
+  /** Bounds as the field's text, such as a date; an open end spans the data. */
+  min?: string;
+  max?: string;
+}
+
+/**
+ * A smaller frame inside a repeat, placed from the main frame's top-left
+ * corner, with its own window: an overview beside a recent-window detail.
+ * Marks name the inset they draw in; scales are referenced as usual.
+ */
+export interface InsetFrame {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  window?: FrameWindow;
+  /** Draw tick labels inside the inset. */
+  axis: boolean;
+  /** Paper behind the inset, so it reads over the main frame's marks. */
+  background?: string;
+}
 
 /** A chart template: a frame, its marks, and the rule that repeats it. */
 export interface UnitElement extends ElementBase {
   kind: "unit";
   frame: { width: number; height: number };
+  /** A display window on the main frame. */
+  window?: FrameWindow;
+  /** Smaller frames inside each repeat, drawn after the main frame's marks. */
+  insets?: InsetFrame[];
   /** Each repeat's subset name, beside a row or above a column. */
   label: {
     show: boolean;
@@ -935,6 +978,29 @@ export function createXyUnitElement(
     },
   };
   return { definition: withY.definition, element };
+}
+
+export function newInsetId(unit: UnitElement) {
+  const ids = new Set((unit.insets ?? []).map((inset) => inset.id));
+  let index = 1;
+  while (ids.has(`inset-${index}`)) index += 1;
+  return `inset-${index}`;
+}
+
+/** A new inset sits in the main frame's top-right corner at a third of its size. */
+export function createInset(unit: UnitElement): InsetFrame {
+  const width = Math.round(unit.frame.width * 0.36);
+  const height = Math.round(unit.frame.height * 0.36);
+  return {
+    id: newInsetId(unit),
+    name: `Inset ${(unit.insets?.length ?? 0) + 1}`,
+    x: unit.frame.width - width - 8,
+    y: 8,
+    width,
+    height,
+    axis: false,
+    background: PAPER,
+  };
 }
 
 export function newCalculationId(definition: CompositionDefinition) {

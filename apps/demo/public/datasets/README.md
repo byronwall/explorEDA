@@ -298,3 +298,18 @@ Every seventh day from March 2020 to the series' end in March 2023, for the 50 s
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/covid-tiles.ts
 ```
+
+## Covid case rates, six states and the nation
+
+- File: `covid-compare.csv`
+- Size: 1,119 rows and 4 fields
+- Demo: `?example=covid-compare`
+- Use: a compound-frame composition, one panel per state with the recent window in the main frame, the full history in an inset, and the national series in both for comparison
+- Source: The New York Times, [coronavirus (Covid-19) data in the United States](https://github.com/nytimes/covid-19-data), `rolling-averages/us-states.csv` and `rolling-averages/us.csv`: seven-day average new cases per 100,000 people.
+- License: Creative Commons Attribution-NonCommercial 4.0, with credit to The New York Times.
+
+Every seventh day from March 2020 to March 2023 for California, Florida, New York, Texas, Vermont, and Washington, plus the United States as code `US`.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/covid-compare.ts
+```

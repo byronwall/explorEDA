@@ -142,6 +142,8 @@ function SceneNodeView({ node }: { node: SceneNode }) {
           width={node.width}
           height={node.height}
           fill={node.fill}
+          stroke={node.stroke}
+          strokeWidth={node.stroke ? 1 : undefined}
           opacity={node.opacity}
           pointerEvents={node.under ? "none" : undefined}
           clipPath={clipPath}

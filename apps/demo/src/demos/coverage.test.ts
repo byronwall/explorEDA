@@ -92,6 +92,7 @@ describe("example coverage manifest", () => {
       "pew-meaning",
       "income-life",
       "covid-tiles",
+      "covid-compare",
       "product-activity",
       "scatter-trace",
       "calculated-orders",
