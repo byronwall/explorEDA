@@ -85,6 +85,30 @@ export const EXPLOREDA_CATEGORICAL = [
   "#e34948",
 ] as const;
 
+/** The Newsprint theme's categories: inky, print-like hues on warm paper. */
+const NEWSPRINT_CATEGORICAL = [
+  "#1f5a96",
+  "#b33c2b",
+  "#c58a1b",
+  "#1f7a72",
+  "#7b3f78",
+  "#5b7a2a",
+  "#c45a7c",
+  "#5b6b7a",
+] as const;
+
+/** The Report theme's categories: one strong blue, then quieter companions. */
+const REPORT_CATEGORICAL = [
+  "#2b5d8a",
+  "#d07a3b",
+  "#5d9a7a",
+  "#8fb3d4",
+  "#8a6fb0",
+  "#c9a43d",
+  "#b85b6b",
+  "#6f7c89",
+] as const;
+
 // Okabe and Ito's set without its yellow, which is too pale for marks, and in
 // an order whose neighbors pass the same checks as the default.
 const OKABE_ITO = [
@@ -365,6 +389,20 @@ export const CATEGORICAL_PALETTES: readonly CategoricalPalette[] = [
     EXPLOREDA_CATEGORICAL,
     true,
     "Eight hues ordered so neighbors stay distinct, including for color-blind readers."
+  ),
+  categorical(
+    "Newsprint",
+    "Newsprint",
+    NEWSPRINT_CATEGORICAL,
+    false,
+    "Eight inky hues for newspaper graphics: deep blue, brick, and ochre lead, then teal and plum."
+  ),
+  categorical(
+    "Report",
+    "Report",
+    REPORT_CATEGORICAL,
+    false,
+    "Eight restrained hues for reports: one strong blue, then quieter companions."
   ),
   categorical(
     "OkabeIto",

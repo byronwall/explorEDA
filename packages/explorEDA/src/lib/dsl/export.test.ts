@@ -132,6 +132,50 @@ table Revenue,Cost,"Net revenue"`,
     expect(text).toContain("columns.0.width=140");
   });
 
+  it("carries the workspace theme and chart subtitles and notes", () => {
+    const start = compileDocument(
+      `dashboard name="Orders"
+theme name=newsprint
+scatter x=Revenue y=Units title="Bigger orders earn more" subtitle="Revenue by units, 2024" note="Source: orders export" style.titleSize=26 style.titleWeight=700`,
+      { rows }
+    );
+    expect(start.diagnostics).toEqual([]);
+    expect(start.settings.theme).toEqual({ id: "newsprint" });
+    const [scatter] = start.settings.charts;
+    expect(scatter).toMatchObject({
+      subtitle: "Revenue by units, 2024",
+      note: "Source: orders export",
+      style: { titleSize: 26, titleWeight: 700 },
+    });
+
+    const { text, rebuilt } = roundTrip(start.settings);
+    expect(text).toContain("theme name=newsprint");
+    expect(meaning(rebuilt.settings)).toEqual(meaning(start.settings));
+  });
+
+  it("reads the Report theme", () => {
+    const { settings, diagnostics } = compileDocument(
+      `dashboard name="Orders"
+theme name=report`,
+      { rows }
+    );
+    expect(diagnostics).toEqual([]);
+    expect(settings.theme).toEqual({ id: "report" });
+  });
+
+  it("keeps Compact for an unknown theme and says so", () => {
+    const { settings, diagnostics } = compileDocument(
+      `dashboard name="Orders"
+theme name=newsprnt`,
+      { rows }
+    );
+    expect(settings.theme).toBeUndefined();
+    expect(diagnostics[0]).toMatchObject({
+      effect: "setting-default",
+      suggestion: "Did you mean newsprint?",
+    });
+  });
+
   it("carries custom colors, grouped summaries, and the Rows view", () => {
     const { settings } = compileDocument(
       `scale @channels field=Channel

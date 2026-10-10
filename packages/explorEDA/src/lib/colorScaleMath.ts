@@ -427,7 +427,8 @@ export function defaultColorScaleForField(
     counts.set(label, (counts.get(label) ?? 0) + 1);
   });
   const assignment = {
-    paletteId: DEFAULT_CATEGORICAL_PALETTE,
+    // New scales follow the workspace theme's palette.
+    paletteId: "theme",
     order: "frequency" as const,
     overflow: "other" as const,
   };

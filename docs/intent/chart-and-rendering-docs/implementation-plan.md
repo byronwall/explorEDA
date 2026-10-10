@@ -16,7 +16,7 @@ Start with two unlike chart pages and a small rendering guide. This tests the co
 
 The first slice is accepted on 2026-10-02: `?view=docs` and the `scatter`, `bar`, and `rendering` topics. `apps/demo/src/ChartDocs.tsx` owns the pages. The broader milestones below retain their original scope. Only M1 is accepted by this execution.
 
-[exp-72ve](../../../.tickets/exp-72ve.md) covers the existing first-proof milestone needed by the landing remainder. It is accepted and closed with source, check, browser, and screenshot evidence. This execution did not fan out the full catalogue. Existing example candidates below are historical; confirm current IDs and chart modes before execution. Review any docs-system research available at that frontier.
+Ticket exp-72ve covered the existing first-proof milestone needed by the landing remainder. It is accepted and closed with source, check, browser, and screenshot evidence. This execution did not fan out the full catalogue. Existing example candidates below are historical; confirm current IDs and chart modes before execution. Review any docs-system research available at that frontier.
 
 ## Implementation strategy
 
@@ -68,7 +68,7 @@ Use these current examples as starting points. Confirm that each saved layout st
 ## Milestone 3: The integration and rendering story is complete
 
 - **Change — system guide:** Explain source versus effective fields; full, peer-filtered, and globally filtered rows; chart-owned versus shared filters; facets; SVG/Canvas/Three.js/HTML boundaries; and host-owned persistence. Link the existing README for exact package API.
-- **Landing bridge ownership:** [exp-4ak2](../../../.tickets/exp-4ak2.md) in the adoption initiative owns the landing links. Do not duplicate that work here.
+- **Landing bridge ownership:** Ticket exp-4ak2 in the adoption initiative owns the landing links. Do not duplicate that work here.
 - **Verify:** Read the guide against `DataLayerProvider`, chart registry, representative renderers, saved-state types, and the current traceability status. Build the demo, run `pnpm check`, and smoke-test the deployed static URL only after local checks pass.
 
 ### Desired end state

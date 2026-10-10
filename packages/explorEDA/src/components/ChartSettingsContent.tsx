@@ -69,7 +69,10 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
   const hasFitTab =
     localSettings.type === "scatter" && localSettings.display !== "density";
   const tabs = [
-    { value: "main", label: "Data" },
+    {
+      value: "main",
+      label: localSettings.type === "composition" ? "Compose" : "Data",
+    },
     ...(hasFitTab ? [{ value: "fit", label: "Fit" }] : []),
     ...(localSettings.type === "map"
       ? [{ value: "facet", label: "Facets" }]

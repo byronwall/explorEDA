@@ -802,3 +802,103 @@ it("opens details with settings ready and data in a tab, without changing the ch
   );
   expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
 });
+
+it("shows a subtitle and note in Compact without a clip marker", () => {
+  const chart = {
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "value"
+    ),
+    title: "Values climb through the year and peak in the last quarter",
+    subtitle: "Monthly value, all sites",
+    note: "Source: plant log",
+    filters: [{ type: "range" as const, field: "value", min: 2 }],
+  };
+  // jsdom has no layout, so report a title taller than its two lines.
+  const heights = vi
+    .spyOn(HTMLElement.prototype, "scrollHeight", "get")
+    .mockImplementation(function (this: HTMLElement) {
+      return this.classList.contains("eda-panel-title") ? 90 : 0;
+    });
+  function Panel() {
+    const charts = useDataLayer((s) => s.charts);
+    return (
+      <PlotChartPanel
+        settings={charts[0]!}
+        width={500}
+        height={400}
+        onDelete={() => {}}
+        onDuplicate={() => {}}
+      />
+    );
+  }
+  const { container } = render(
+    <DataLayerProvider data={[{ value: 1 }, { value: 2 }]} charts={[chart]}>
+      <Panel />
+    </DataLayerProvider>
+  );
+  const panel = container.querySelector(".eda-panel")!;
+  // Compact keeps the one-line header and no clip marker.
+  expect(panel).toHaveAttribute("data-headline", "inline");
+  expect(screen.queryByRole("img", { name: "Title clipped" })).toBeNull();
+  expect(screen.getByText("Monthly value, all sites")).toHaveClass(
+    "eda-panel-subtitle"
+  );
+  expect(screen.getByText("Source: plant log")).toHaveClass("eda-panel-note");
+  heights.mockRestore();
+});
+
+it("marks a clipped headline title under Newsprint", () => {
+  const chart = {
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "value"
+    ),
+    title: "Values climb through the year and peak in the last quarter",
+    filters: [{ type: "range" as const, field: "value", min: 2 }],
+  };
+  const heights = vi
+    .spyOn(HTMLElement.prototype, "scrollHeight", "get")
+    .mockImplementation(function (this: HTMLElement) {
+      return this.classList.contains("eda-panel-title") ? 90 : 0;
+    });
+  function Panel() {
+    const charts = useDataLayer((s) => s.charts);
+    const setTheme = useDataLayer((s) => s.setTheme);
+    return (
+      <>
+        <button onClick={() => setTheme("newsprint")}>newsprint</button>
+        <PlotChartPanel
+          settings={charts[0]!}
+          width={500}
+          height={400}
+          onDelete={() => {}}
+          onDuplicate={() => {}}
+        />
+      </>
+    );
+  }
+  const { container } = render(
+    <DataLayerProvider data={[{ value: 1 }, { value: 2 }]} charts={[chart]}>
+      <Panel />
+    </DataLayerProvider>
+  );
+  fireEvent.click(screen.getByRole("button", { name: "newsprint" }));
+  const panel = container.querySelector(".eda-panel")!;
+  expect(panel).toHaveAttribute("data-eda-theme", "newsprint");
+  expect(panel).toHaveAttribute("data-headline", "block");
+  expect(
+    screen.getByRole("img", { name: "Title clipped" })
+  ).toBeInTheDocument();
+  // The full title stays the panel's accessible name.
+  expect(
+    screen.getByRole("region", {
+      name: "Values climb through the year and peak in the last quarter",
+    })
+  ).toBe(panel);
+  // The filter control is status, not a hidden action.
+  const clear = screen.getByRole("button", { name: /Clear filters for/ });
+  expect(clear.closest(".eda-panel-status")).not.toBeNull();
+  expect(clear.closest(".eda-panel-actions")).toBeNull();
+  heights.mockRestore();
+});

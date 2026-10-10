@@ -71,3 +71,13 @@ The numerical spike must define polynomial/LOESS conventions and appropriate fit
 ## Below the cut line
 
 Defer uncertainty bands, reusable prediction/residual columns, robust regression, and a facet-local calculation framework. Keep Spearman, cohort comparison, and compatible-unit guides as later experiments. Scatter matrices, observation uncertainty, trajectories, million-point targets, and blank-page composition remain separate.
+
+### Categorical axes and beeswarm layout
+
+Box plots dropped their beeswarm overlay (#47); a violin shows shape better. Beeswarm still helps when a user needs individual rows on a categorical axis, especially with tracing. Its likeliest home is a categorical X or Y in the scatter (#43).
+
+- The layout survives as `calculateBeeSwarmPositions` in `BoxPlot/boxPlotCalculations.ts`, measured by `scripts/benchmark-beeswarm.mts` and `docs/beeswarm-performance.md`. It samples at most 300 points per group and returns `[x, value]` pairs without row IDs, so traced rows cannot find their dots.
+- Move it to a chart-neutral module that returns `{ rowId, offset }` per row. Replace sampling with an exact windowed-collision sweep; compress spacing or radius instead of dropping rows.
+- Offer Jitter and Beeswarm within each band. Default to beeswarm below a row threshold and say so in the settings tooltip. Consider a strip mode for categorical against numeric.
+- Keep `correlated_medium.csv` layout under the current 30 ms median and record the rerun benchmark.
+- Open: scatter only or a separate strip chart; the beeswarm-to-jitter threshold; whether trace highlight uses the packed position or the band center.

@@ -1,5 +1,14 @@
+import { useColorContext } from "@/hooks/useDisplayColorScales";
+import { THEME_PALETTE, themePaletteId } from "@/lib/themePalettes";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { AlertTriangle, ArrowLeftRight, Check, RotateCcw } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowLeftRight,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  RotateCcw,
+} from "lucide-react";
 import { HexColorPicker } from "react-colorful";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -530,6 +539,13 @@ function NumericalScaleEditor({
   );
 }
 
+const CUSTOM_ORDER_OPTION = {
+  value: "custom" as const,
+  label: "Custom",
+  tooltip:
+    "Your own order, set by moving categories. Each takes the next palette color.",
+};
+
 const ORDER_OPTIONS: readonly {
   value: CategoryColorOrder;
   label: string;
@@ -564,6 +580,35 @@ function CategoricalScaleEditor({
   const simulate = useSimulate();
   const [query, setQuery] = useState("");
   const [preview, setPreview] = useState<Palette>();
+  const colorContext = useColorContext();
+  // The first choice follows the workspace theme, shown in its current colors.
+  const sections = useMemo(
+    () =>
+      CATEGORICAL_SECTIONS.map((section) =>
+        section.id === "categorical"
+          ? {
+              ...section,
+              palettes: [
+                {
+                  id: THEME_PALETTE,
+                  name: "Theme",
+                  kind: "categorical" as const,
+                  group: "Workspace",
+                  colorblindSafe: false,
+                  description:
+                    "Follows the workspace theme: the colors change when the theme does, and each category keeps its place.",
+                  colors:
+                    getCategoricalPalette(
+                      themePaletteId(colorContext.themeId)
+                    )?.colors ?? [],
+                },
+                ...section.palettes,
+              ],
+            }
+          : section
+      ),
+    [colorContext.themeId]
+  );
   const rawValues = useFieldValues(scale.sourceField);
   const counts = useMemo(() => {
     const result = new Map<string, number>();
@@ -594,16 +639,17 @@ function CategoricalScaleEditor({
         CategoricalColorScale,
         "paletteId" | "reverse" | "order" | "overflow"
       >
-    >
+    >,
+    labels: readonly string[] = categories
   ) => {
     const next = {
-      paletteId: paletteId ?? "explorEDA",
+      paletteId: paletteId ?? THEME_PALETTE,
       reverse: scale.reverse,
       order,
       overflow,
       ...options,
     };
-    const { mapping, palette } = assignCategoryColors(categories, next, counts);
+    const { mapping, palette } = assignCategoryColors(labels, next, counts);
     onUpdate({ ...next, mapping, palette });
   };
 
@@ -647,7 +693,7 @@ function CategoricalScaleEditor({
       <Section heading="Palette" actions={paletteActions}>
         <PaletteGallery
           label="Palette"
-          sections={CATEGORICAL_SECTIONS}
+          sections={sections}
           value={paletteId}
           reverse={scale.reverse}
           onSelect={(palette) => {
@@ -672,7 +718,11 @@ function CategoricalScaleEditor({
             <Segmented
               label="Color order"
               value={order}
-              options={ORDER_OPTIONS}
+              options={
+                order === "custom"
+                  ? [...ORDER_OPTIONS, CUSTOM_ORDER_OPTION]
+                  : ORDER_OPTIONS
+              }
               onChange={(next) => assign({ order: next })}
             />
           </div>
@@ -767,6 +817,36 @@ function CategoricalScaleEditor({
                   }}
                 />
                 <span className="eda-category-name">{label}</span>
+                {!query.trim() && label !== MISSING_CATEGORY && (
+                  <span className="eda-category-move">
+                    {(["up", "down"] as const).map((direction) => {
+                      const index = categories.indexOf(label);
+                      const target = index + (direction === "up" ? -1 : 1);
+                      const blocked =
+                        target < 0 ||
+                        target >= categories.length ||
+                        categories[target] === MISSING_CATEGORY;
+                      return (
+                        <Button
+                          key={direction}
+                          variant="ghost"
+                          size="icon"
+                          disabled={blocked}
+                          aria-label={`Move ${label} ${direction}`}
+                          tooltip={`Move ${direction}: ${label} takes the color ${direction === "up" ? "above" : "below"}, and the colors keep their order`}
+                          onClick={() => {
+                            const next = [...categories];
+                            next.splice(index, 1);
+                            next.splice(target, 0, label);
+                            assign({ order: "custom" }, next);
+                          }}
+                        >
+                          {direction === "up" ? <ChevronUp /> : <ChevronDown />}
+                        </Button>
+                      );
+                    })}
+                  </span>
+                )}
                 <span className="eda-category-bar" aria-hidden="true">
                   <span style={{ width: `${(count / maxCount) * 100}%` }} />
                 </span>

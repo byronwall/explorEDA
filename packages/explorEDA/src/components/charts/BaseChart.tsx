@@ -1,3 +1,4 @@
+import { useAxisTypography } from "./chartTypography";
 import { ReactNode, useId, useMemo, useRef, useState } from "react";
 import { ScaleBand, ScaleLinear, scaleLinear } from "d3-scale";
 import { formatTick } from "./Axis/Axis";
@@ -86,6 +87,7 @@ export function BaseChart({
   footer = 0,
 }: BaseChartProps) {
   const margin = plannedAxes?.margin ?? settings.margin;
+  const typography = useAxisTypography();
 
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
@@ -127,6 +129,7 @@ export function BaseChart({
         margin,
         footer,
         x: {
+          typography,
           scale: xScale,
           scaleType: settings.xAxis.scaleType,
           field: axisFields.x,
@@ -139,6 +142,7 @@ export function BaseChart({
           labelSource: settings.xAxisLabel ? "chart-setting" : "field-label",
         },
         y: {
+          typography,
           scale: yScale,
           scaleType: settings.yAxis.scaleType,
           field: axisFields.y,
@@ -155,6 +159,7 @@ export function BaseChart({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       plannedAxes,
+      typography,
       innerWidth,
       innerHeight,
       margin,

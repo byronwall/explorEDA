@@ -9,6 +9,7 @@ import {
   PROJECT_STORAGE_KEY,
   writeProjectTables,
   clearProjectTables,
+  writeSourceAnalysis,
   type SavedView,
   type SavedViewsSession,
 } from "./savedViewsSession";
@@ -380,11 +381,16 @@ export function SavedViewsWorkspace({
     sourceRows,
     textOpen,
   ]);
-  // Source tables are saved once under their own key; the session, which
-  // changes on every edit, is saved without them.
-  const { tables, ...sessionWithoutTables } = session;
+  // Source rows and tables are saved under their own keys when they change.
+  // The session, which changes on every edit, is saved without them.
+  const storageKey = session.project ? PROJECT_STORAGE_KEY : STORAGE_KEY;
+  const {
+    tables,
+    sourceAnalysis: savedSourceAnalysis,
+    ...sessionWithoutRows
+  } = session;
   const encoded = useMemo(
-    () => JSON.stringify(sessionWithoutTables),
+    () => JSON.stringify(sessionWithoutRows),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [session]
   );
@@ -395,23 +401,34 @@ export function SavedViewsWorkspace({
     }
     return tables ? writeProjectTables(tables) : 0;
   }, [tables, session.tablesFrom]);
-  const sizeBytes = new Blob([encoded]).size + Math.max(0, tablesBytes);
+  const sourceBytes = useMemo(
+    () => new Blob([savedSourceAnalysis]).size,
+    [savedSourceAnalysis]
+  );
+  const encodedBytes = useMemo(() => new Blob([encoded]).size, [encoded]);
+  const sizeBytes = encodedBytes + Math.max(0, tablesBytes) + sourceBytes;
+  // The rows last written, so an edit doesn't write them again.
+  const savedSource = useRef<{ key: string; source: string }>(undefined);
 
   useEffect(() => {
     try {
       if (tablesBytes < 0) {
         throw new Error("Tables were not saved");
       }
-      localStorage.setItem(
-        session.project ? PROJECT_STORAGE_KEY : STORAGE_KEY,
-        encoded
-      );
+      if (
+        savedSource.current?.key !== storageKey ||
+        savedSource.current.source !== savedSourceAnalysis
+      ) {
+        writeSourceAnalysis(storageKey, savedSourceAnalysis);
+        savedSource.current = { key: storageKey, source: savedSourceAnalysis };
+      }
+      localStorage.setItem(storageKey, encoded);
       setSaveError(false);
       setSavedEncoding(encoded);
     } catch {
       setSaveError(true);
     }
-  }, [encoded, tablesBytes, session.project]);
+  }, [encoded, tablesBytes, storageKey, savedSourceAnalysis]);
 
   const remount = () => setWorkspaceKey((key) => key + 1);
   useEffect(() => {

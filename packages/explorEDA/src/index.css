@@ -1,4 +1,7 @@
 @import "tailwindcss";
+/* Scan the library even when its checkout is git-ignored, as agent
+   worktrees are; Tailwind skips git-ignored files otherwise. */
+@source "./";
 
 @plugin "tailwindcss-animate";
 
@@ -47,6 +50,25 @@
   --eda-heat-text-strong: hsl(0 0% 100%);
   --eda-heat-text-weak: var(--foreground);
   --radius: 0.6rem;
+
+  /* Chart text roles. Themes and hosts override these. */
+  --eda-headline-font: inherit;
+  --eda-headline-size: 14px;
+  --eda-headline-weight: 600;
+  --eda-headline-line: 1.3;
+  --eda-headline-color: var(--foreground);
+  --eda-headline-accent: transparent;
+  --eda-subtitle-font: inherit;
+  --eda-subtitle-size: 11px;
+  --eda-subtitle-color: var(--muted-foreground);
+  --eda-note-size: 10.5px;
+  --eda-note-color: var(--muted-foreground);
+  --eda-panel-surface: var(--card);
+  --eda-panel-rule: var(--border);
+  --eda-axis-tick-size: 10px;
+  --eda-axis-label-size: 11px;
+  --eda-axis-tick-color: currentColor;
+  --eda-axis-label-color: currentColor;
 }
 
 .dark {
@@ -177,6 +199,546 @@
 }
 .eda-panel-actions .eda-panel-delete:hover {
   color: var(--destructive);
+}
+
+/* A title shows it can be edited: a soft wash on hover, and a pencil cursor
+   only over the text, so the rest of the header still reads as a drag handle. */
+.eda-panel-title[tabindex] {
+  margin-left: -4px;
+  padding: 0 4px;
+  border-radius: 4px;
+  cursor: text;
+  transition: background-color 120ms ease;
+}
+.eda-panel-title[tabindex]:hover {
+  background: color-mix(in oklab, var(--muted) 80%, transparent);
+}
+.eda-panel-title[tabindex]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 0;
+}
+/* An in-place editor keeps the type of the text it replaces, so the chart
+   does not shift when editing starts. */
+.eda-inplace-input {
+  min-width: 4ch;
+  max-width: 100%;
+  margin: -1px 0 -1px -3px;
+  padding: 0 4px;
+  border: 1px solid var(--input);
+  border-radius: 4px;
+  outline: 2px solid color-mix(in oklab, var(--ring) 45%, transparent);
+  outline-offset: 0;
+  background: var(--background);
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  cursor: text;
+}
+/* The subtitle and the clear-filter control stay, so an active filter is
+   never hidden. */
+.eda-panel-header[data-title-editing]
+  > :not(.eda-panel-heading, .eda-panel-subtitle, .eda-panel-status),
+.eda-panel-header[data-title-editing]
+  .eda-panel-status
+  > :not(.eda-chart-filter) {
+  display: none;
+}
+.eda-panel-header[data-title-editing] > .eda-panel-heading {
+  flex: 1 1 auto;
+}
+.eda-panel-header[data-title-editing] .eda-drag {
+  display: none;
+}
+.eda-inplace-input::placeholder {
+  color: var(--muted-foreground);
+  font-weight: 400;
+}
+
+/* An axis band edits its range: a soft wash shows where a double-click
+   or the context menu will act. */
+.eda-axis-strip {
+  transition: fill 120ms ease;
+}
+.eda-axis-strip:hover,
+.eda-axis-edit[data-dragging] .eda-axis-strip {
+  fill: color-mix(in oklab, var(--primary) 7%, transparent);
+}
+/* Dragging the band pans the range; dragging an end grip stretches it. */
+/* A touch along the band drags it; across it, the page still scrolls. */
+.eda-axis-edit[data-axis-edit="x"] .eda-axis-strip {
+  touch-action: pan-y;
+}
+.eda-axis-edit[data-axis-edit="y"] .eda-axis-strip {
+  touch-action: pan-x;
+}
+.eda-axis-edit[data-zone="pan"] .eda-axis-strip {
+  cursor: grab;
+}
+.eda-axis-edit[data-axis-edit="x"]:not([data-zone="pan"]) .eda-axis-strip {
+  cursor: ew-resize;
+}
+.eda-axis-edit[data-axis-edit="y"]:not([data-zone="pan"]) .eda-axis-strip {
+  cursor: ns-resize;
+}
+.eda-axis-edit[data-dragging="pan"] .eda-axis-strip {
+  cursor: grabbing;
+}
+.eda-axis-grip {
+  fill: var(--muted-foreground);
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.eda-axis-edit:hover .eda-axis-grip,
+.eda-axis-edit[data-dragging] .eda-axis-grip {
+  opacity: 0.55;
+}
+.chart-guide[data-inplace-editing] text {
+  opacity: 0;
+}
+.eda-axis-range-head {
+  margin-bottom: 6px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 600;
+}
+/* An axis title editor floats over the drawn title inside the panel. */
+.eda-axis-title-editor {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.eda-axis-title-editor > .eda-inplace-input {
+  margin: 0;
+  pointer-events: auto;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgb(20 40 70 / 12%);
+}
+
+/* Chart header. Compact keeps one line: title, readout, search, actions,
+   then the filter control. A subtitle wraps to its own line below. */
+.eda-panel-status {
+  display: contents;
+}
+.eda-panel-heading {
+  order: 0;
+}
+.eda-panel-title {
+  font-size: var(--eda-headline-size);
+  font-weight: var(--eda-headline-weight);
+}
+.eda-axis-text[data-role="tick"] {
+  fill: var(--eda-axis-tick-color);
+}
+.eda-axis-text[data-role="label"] {
+  fill: var(--eda-axis-label-color);
+}
+.eda-panel-readout {
+  order: 1;
+}
+.eda-chart-search {
+  order: 2;
+}
+.eda-panel-actions {
+  order: 3;
+}
+.eda-chart-filter {
+  order: 4;
+}
+.eda-panel-subtitle {
+  order: 5;
+  flex-basis: 100%;
+  min-width: 0;
+  margin: -4px 0 2px;
+  overflow: hidden;
+  color: var(--eda-subtitle-color);
+  font-family: var(--eda-subtitle-font);
+  font-size: var(--eda-subtitle-size);
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: move;
+}
+.eda-panel-header:has(> .eda-panel-subtitle) {
+  flex-wrap: wrap;
+}
+.eda-panel-header:has(> .eda-panel-subtitle) > .eda-panel-heading {
+  flex-basis: 0;
+}
+.eda-panel-note {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0 10px 6px;
+  overflow: hidden;
+  color: var(--eda-note-color);
+  font-size: var(--eda-note-size);
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-clip-marker {
+  display: inline-flex;
+  flex: none;
+  align-self: flex-end;
+  margin-bottom: 4px;
+  padding: 2px;
+  border-radius: 3px;
+  color: var(--muted-foreground);
+}
+.eda-clip-marker:focus-visible {
+  outline: 2px solid var(--ring);
+}
+
+/* A headline theme: the title wraps to two lines above the plot, the
+   subtitle line holds the status and readout, and the hidden actions float
+   over the title's top-right corner instead of taking a row. */
+.eda-panel[data-headline="block"] {
+  background: var(--eda-panel-surface);
+  border-color: var(--eda-panel-rule);
+  box-shadow: none;
+}
+.eda-panel[data-headline="block"] .eda-panel-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(calc(var(--eda-subtitle-size) * 1.45), auto);
+  grid-template-areas:
+    "heading heading"
+    "subtitle status";
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 2px;
+  min-height: 0;
+  padding: var(--eda-header-padding, 12px 10px 8px 12px);
+}
+.eda-panel[data-headline="block"] .eda-panel-header::before {
+  position: absolute;
+  top: 0;
+  left: 12px;
+  width: 32px;
+  height: 3px;
+  background: var(--eda-headline-accent);
+  content: "";
+}
+.eda-panel[data-headline="block"] .eda-panel-heading {
+  grid-area: heading;
+  align-items: flex-end;
+  gap: 4px;
+}
+.eda-panel[data-headline="block"] .eda-panel-title {
+  display: -webkit-box;
+  flex: 0 1 auto;
+  overflow: hidden;
+  color: var(--eda-headline-color);
+  font-family: var(--eda-headline-font);
+  font-size: var(--eda-headline-size);
+  font-weight: var(--eda-headline-weight);
+  line-height: var(--eda-headline-line);
+  letter-spacing: -0.01em;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+.eda-panel[data-headline="block"] .eda-panel-subtitle {
+  grid-area: subtitle;
+  margin: 0;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+.eda-panel[data-headline="block"] .eda-panel-status {
+  display: flex;
+  grid-area: status;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  min-width: 0;
+}
+/* The readout floats over the end of the subtitle line while the pointer is
+   on the plot, so a reading never rewraps the subtitle or moves the plot. */
+.eda-panel[data-headline="block"] .eda-panel-header {
+  container-type: inline-size;
+}
+.eda-panel[data-headline="block"] .eda-panel-status {
+  position: relative;
+  align-self: end;
+  min-height: calc(var(--eda-subtitle-size) * 1.45);
+}
+.eda-panel[data-headline="block"] .eda-panel-readout {
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  max-width: 72cqw;
+  padding: 1px 4px 1px 10px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--eda-panel-surface) 10px
+  );
+  transform: translateY(-50%);
+}
+.eda-panel[data-headline="block"] .eda-panel-readout:empty {
+  display: none;
+}
+.eda-panel[data-headline="block"] .eda-panel-actions {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 2;
+  border-radius: 6px;
+  background: var(--eda-panel-surface);
+  box-shadow: 0 0 0 1px var(--eda-panel-rule);
+}
+.eda-panel[data-headline="block"] .eda-drag {
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%) rotate(90deg);
+}
+.eda-panel[data-headline="block"] .eda-panel-note {
+  padding: 2px 12px 8px;
+}
+.eda-panel-expanded[data-headline="block"] .eda-panel-header {
+  min-height: 54px;
+  padding: 4px 12px 8px 16px;
+}
+.eda-panel-expanded[data-headline="block"] .eda-panel-header h3 {
+  font-size: calc(var(--eda-headline-size) * 1.3);
+  line-height: var(--eda-headline-line);
+}
+/* Where the actions stay shown (touch screens and the details view), they
+   sit in the band above the headline, beside its rule, so the title keeps
+   the panel's full width. */
+.eda-panel-expanded[data-headline="block"] .eda-panel-header {
+  grid-template-areas:
+    "actions actions"
+    "heading heading"
+    "subtitle status";
+  grid-template-rows: auto auto minmax(
+      calc(var(--eda-subtitle-size) * 1.45),
+      auto
+    );
+  padding-top: 4px;
+}
+.eda-panel-expanded[data-headline="block"] .eda-panel-actions {
+  position: static;
+  grid-area: actions;
+  justify-self: end;
+  background: none;
+  box-shadow: none;
+}
+@media not ((hover: hover) and (pointer: fine)) {
+  .eda-panel[data-headline="block"] .eda-panel-header {
+    grid-template-areas:
+      "actions actions"
+      "heading heading"
+      "subtitle status";
+    grid-template-rows: auto auto minmax(
+        calc(var(--eda-subtitle-size) * 1.45),
+        auto
+      );
+    padding-top: 4px;
+  }
+  .eda-panel[data-headline="block"] .eda-panel-actions {
+    position: static;
+    grid-area: actions;
+    justify-self: end;
+    background: none;
+    box-shadow: none;
+  }
+}
+
+/* Theme picker: each option previews its headline type and surface. */
+.eda-theme-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+.eda-theme-options .eda-theme-option {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  height: auto;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.eda-theme-options .eda-theme-option[aria-checked="true"] {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+.eda-theme-swatch {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 4px;
+  height: 52px;
+  padding: 8px;
+  border: 1px solid var(--eda-panel-rule);
+  border-radius: 4px;
+  background: var(--eda-panel-surface);
+  text-align: left;
+}
+/* Compact's values are the root defaults, which a themed workspace around
+   the picker would otherwise replace. */
+.eda-theme-swatch[data-eda-theme="compact"] {
+  --eda-headline-font: inherit;
+  --eda-headline-size: 14px;
+  --eda-headline-weight: 600;
+  --eda-headline-accent: transparent;
+  --eda-panel-surface: var(--card);
+  --eda-panel-rule: var(--border);
+}
+.eda-theme-swatch[data-headline="block"]::before {
+  position: absolute;
+  top: 0;
+  left: 8px;
+  width: 16px;
+  height: 2px;
+  background: var(--eda-headline-accent);
+  content: "";
+}
+.eda-theme-swatch-title {
+  color: var(--eda-headline-color);
+  font-family: var(--eda-headline-font);
+  font-size: var(--eda-headline-size);
+  font-weight: var(--eda-headline-weight);
+  line-height: 1;
+}
+.eda-theme-swatch-rule {
+  width: 60%;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--eda-subtitle-color);
+  opacity: 0.4;
+}
+.eda-theme-name {
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+}
+
+/* Category order controls in the color scale editor. */
+.eda-category-move {
+  display: inline-flex;
+  flex: none;
+}
+.eda-category-move button[data-slot="button"] {
+  width: 20px;
+  height: 20px;
+  color: var(--muted-foreground);
+}
+
+/* Charts that override the theme, under the theme picker. */
+.eda-theme-settings > .eda-setting-section {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.eda-override-count {
+  margin-left: 6px;
+  color: var(--muted-foreground);
+  font-weight: 400;
+}
+.eda-override-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+.eda-override-chart {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.eda-override-title {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-override-title:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+.eda-override-chart button[data-slot="button"],
+.eda-override-row button[data-slot="button"] {
+  width: 24px;
+  height: 24px;
+  margin-left: auto;
+  color: var(--muted-foreground);
+}
+.eda-override-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 8px;
+  font-size: 11px;
+}
+.eda-override-row dt {
+  flex: 0 0 96px;
+  color: var(--muted-foreground);
+}
+.eda-override-row dd {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.eda-override-row dd > span {
+  color: var(--muted-foreground);
+}
+
+/* Newsprint: a serif headline on warm paper with hairline rules. */
+[data-eda-theme="newsprint"] {
+  --eda-headline-font:
+    "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia,
+    "Times New Roman", serif;
+  --eda-headline-size: 20px;
+  --eda-headline-weight: 600;
+  --eda-headline-line: 1.18;
+  --eda-headline-accent: var(--foreground);
+  --eda-subtitle-size: 12.5px;
+  --eda-note-size: 11px;
+  --eda-axis-tick-size: 11px;
+  --eda-axis-label-size: 12px;
+  --eda-axis-tick-color: var(--muted-foreground);
+  --eda-axis-label-color: var(--foreground);
+  --eda-panel-surface: oklch(0.987 0.008 85);
+  --eda-panel-rule: oklch(0.88 0.012 80);
+}
+/* Report: annual-report graphics with a sans headline, generous space, and
+   one restrained accent. */
+[data-eda-theme="report"] {
+  --eda-headline-font:
+    "Inter", "Helvetica Neue", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --eda-headline-size: 18px;
+  --eda-headline-weight: 600;
+  --eda-headline-line: 1.25;
+  --eda-headline-accent: var(--primary);
+  --eda-subtitle-size: 12.5px;
+  --eda-note-size: 11px;
+  --eda-axis-tick-size: 11px;
+  --eda-axis-label-size: 11px;
+  --eda-axis-tick-color: var(--muted-foreground);
+  --eda-axis-label-color: var(--muted-foreground);
+  --eda-panel-surface: var(--card);
+  --eda-panel-rule: color-mix(in oklab, var(--border) 70%, transparent);
+  --eda-header-padding: 16px 14px 10px 16px;
+}
+.dark [data-eda-theme="newsprint"] {
+  --eda-panel-surface: oklch(0.2 0.008 70);
+  --eda-panel-rule: oklch(0.32 0.01 70);
 }
 
 /* The values under the pointer read in the panel header, beside the title,
@@ -391,6 +953,18 @@
   fill: var(--foreground);
   font-weight: 600;
 }
+/* Scatter matrix panels sit on a soft fill, with field names in strips. */
+.eda-matrix-cell {
+  fill: color-mix(in oklab, var(--muted) 55%, transparent);
+  stroke: var(--border);
+}
+.eda-matrix-cell[data-kind="blank"] {
+  fill: transparent;
+  stroke: none;
+}
+.eda-matrix-strip {
+  fill: var(--muted);
+}
 /* Sankey node labels select their node, like the node itself. */
 .eda-sankey-label {
   cursor: pointer;
@@ -491,6 +1065,8 @@
 }
 .eda-details-side .eda-settings {
   height: 100%;
+  /* The details view gives settings the full panel height. */
+  max-height: none;
 }
 
 /* Confirmations stay small and centered. */
@@ -5964,4 +6540,272 @@ td[data-null] {
   gap: 6px;
   padding-top: 8px;
   border-top: 1px solid var(--border);
+}
+
+/* Composition: an artboard of report graphics. Editing shows the paper on a
+   muted canvas with selectable element boxes; viewing shows the paper only. */
+.eda-composition {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.eda-composition[data-mode="edit"] {
+  border-radius: 6px;
+  background: var(--muted);
+}
+.eda-composition[data-mode="edit"] .eda-composition-artboard {
+  box-shadow:
+    0 1px 3px rgb(20 40 70 / 14%),
+    0 0 0 1px var(--border);
+}
+.eda-composition-artboard:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.eda-composition-hit {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+  cursor: move;
+}
+.eda-composition-hit:hover {
+  stroke: var(--ring);
+  stroke-dasharray: 4 3;
+}
+.eda-composition-hit[data-selected] {
+  stroke: var(--primary);
+  stroke-width: 1.5px;
+  stroke-dasharray: none;
+}
+.eda-composition-tag {
+  fill: var(--primary);
+  font-weight: 600;
+  pointer-events: none;
+  /* A paper-colored halo keeps the name legible over drawn text. */
+  paint-order: stroke;
+  stroke: var(--background);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.eda-composition-inspector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.eda-composition-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.eda-composition-adders {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.eda-composition-adders [data-slot="button"] {
+  height: 26px;
+  gap: 4px;
+  padding: 0 8px;
+  font-size: 12px;
+}
+.eda-composition-layers {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.eda-composition-layers li {
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+  border-radius: 5px;
+}
+.eda-composition-layers li:hover {
+  background: var(--muted);
+}
+.eda-composition-layers li[data-selected] {
+  background: color-mix(in oklab, var(--primary) 12%, transparent);
+}
+.eda-composition-layer {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  height: 28px;
+  padding: 0 6px;
+  border-radius: 5px;
+  color: var(--foreground);
+  font-size: 12px;
+  text-align: left;
+}
+.eda-composition-layer:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+.eda-composition-layer svg {
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+.eda-composition-layer-actions {
+  display: flex;
+  flex-shrink: 0;
+  padding-right: 2px;
+}
+.eda-composition-pair {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted-foreground);
+}
+.eda-composition-pair > div {
+  flex: 1;
+}
+.eda-composition-color {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+.eda-composition-color input[type="color"] {
+  width: 28px;
+  height: 24px;
+  padding: 0 2px;
+  border: 1px solid var(--input);
+  border-radius: 4px;
+  background: transparent;
+}
+.eda-composition-textarea {
+  min-width: 0;
+  padding: 4px 8px;
+  border: 1px solid var(--input);
+  border-radius: 6px;
+  background: transparent;
+  font-size: 12px;
+  line-height: 1.4;
+  resize: vertical;
+}
+.eda-composition-textarea:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 0;
+}
+.eda-composition-scope {
+  margin-bottom: 6px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.eda-composition-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 24px;
+}
+.eda-composition-section-head > h5 {
+  margin-bottom: 0;
+}
+.eda-composition-mark + .eda-composition-mark {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border);
+}
+.eda-composition-mark-name {
+  font-size: 12px;
+  font-weight: 500;
+}
+.eda-composition-select {
+  min-width: 0;
+  height: 28px;
+  padding: 0 6px;
+  border: 1px solid var(--input);
+  border-radius: 6px;
+  background: transparent;
+  font-size: 12px;
+}
+.eda-composition-scale-select {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+.eda-composition-scale-select > select {
+  flex: 1;
+}
+.eda-composition-layers li.eda-composition-scale-row {
+  flex-direction: column;
+  align-items: stretch;
+}
+.eda-composition-layers li.eda-composition-scale-row:hover {
+  background: transparent;
+}
+.eda-composition-layer-meta {
+  margin-left: auto;
+  padding-left: 8px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.eda-composition-scale-props {
+  margin: 4px 0 8px;
+  padding: 6px 0 6px 8px;
+  border-left: 2px solid var(--border);
+}
+.eda-composition-calc-now {
+  font-size: 11px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+.eda-composition-instance {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+}
+.eda-composition-instance:hover,
+.eda-composition-instance[data-overridden] {
+  stroke: var(--ring);
+  stroke-dasharray: 2 3;
+}
+.eda-composition-instance[data-selected] {
+  stroke: var(--warning);
+  stroke-width: 1.5px;
+  stroke-dasharray: none;
+  cursor: move;
+}
+.eda-composition[data-mode="view"] [data-node] {
+  cursor: pointer;
+}
+.eda-composition-override {
+  padding: 6px 8px;
+  border-left: 2px solid var(--warning);
+  background: color-mix(in oklab, var(--warning) 7%, transparent);
+}
+.eda-composition-trace-rows {
+  width: 100%;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  border-collapse: collapse;
+}
+.eda-composition-trace-rows th,
+.eda-composition-trace-rows td {
+  padding: 2px 4px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+.eda-composition-trace-rows th {
+  color: var(--muted-foreground);
+  font-weight: 500;
+}
+.eda-composition-copy-status {
+  margin-top: -4px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.eda-composition-copy-status[data-state="failed"] {
+  color: var(--destructive);
 }
