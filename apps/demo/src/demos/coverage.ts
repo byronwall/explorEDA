@@ -1028,6 +1028,16 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "media-deaths",
+    intent:
+      "Stack causes as shares of each source's total with every denominator open to inspection.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

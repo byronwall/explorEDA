@@ -85,6 +85,7 @@ describe("example coverage manifest", () => {
       "tech-sparklines",
       "forecast-fan",
       "time-use",
+      "media-deaths",
       "product-activity",
       "scatter-trace",
       "calculated-orders",
