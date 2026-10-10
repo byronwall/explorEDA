@@ -4,6 +4,7 @@ label: Edit the subtitle in place
 type: page
 status: planned
 priority: high
+archived: true
 parent: page-more-editable-features
 metadata:
   purpose: "Rename the subtitle where it is drawn, once #192 adds it."

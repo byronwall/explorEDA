@@ -1,0 +1,15 @@
+{
+  "id": "536e5dc0-c5f6-473a-a8a3-ec1c3c74ccf5",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:25820e",
+    "label": "Agent token ...25820e"
+  },
+  "createdAt": "2026-10-10T03:49:31.660Z",
+  "summary": "Created \"Edit the subtitle in place\" under \"In-place chart editing\".",
+  "nodeIds": [
+    "page-edit-the-subtitle-in-place-2",
+    "page-in-place-chart-editing"
+  ]
+}

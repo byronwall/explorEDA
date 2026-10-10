@@ -1,0 +1,14 @@
+{
+  "id": "dc4441ab-50b1-4e56-8dc3-5f91a86b6497",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:12d155",
+    "label": "Agent token ...12d155"
+  },
+  "createdAt": "2026-10-10T03:49:36.490Z",
+  "summary": "Set \"Edit the subtitle in place\" priority to high.",
+  "nodeIds": [
+    "page-edit-the-subtitle-in-place-2"
+  ]
+}
