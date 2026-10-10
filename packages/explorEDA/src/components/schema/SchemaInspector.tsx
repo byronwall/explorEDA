@@ -50,6 +50,14 @@ import type {
   SchemaSelection,
 } from "./schemaEditing";
 import { CommitInput, Field } from "./InspectorControls";
+import { traceField } from "@/lib/schema/schemaTrace";
+
+/** Lets a use of a field jump to the chart in this workspace that reads it. */
+export interface SchemaChartLinks {
+  /** The card that draws this workspace's charts. */
+  nodeId: string;
+  onShowChart: (chartId: string) => void;
+}
 import { AddStep, NewQueryFromTable, StepEditor } from "./SchemaStepEditors";
 
 /** The step, and for a summary the measure, a query card's row draws. */
@@ -105,6 +113,7 @@ export function SchemaInspector({
   selection,
   editing,
   style,
+  charts,
   onSelect,
   onClose,
 }: {
@@ -112,6 +121,8 @@ export function SchemaInspector({
   selection: SchemaSelection;
   editing?: SchemaEditing;
   style?: CSSProperties;
+  /** This workspace's charts: the card that draws them, and how to show one. */
+  charts?: SchemaChartLinks;
   onSelect: (selection: SchemaSelection | undefined) => void;
   onClose: () => void;
 }) {
@@ -137,6 +148,7 @@ export function SchemaInspector({
         node={node}
         row={row}
         editing={editing}
+        charts={charts}
         onSelect={onSelect}
       />
     );
@@ -308,12 +320,14 @@ function FieldBody({
   node,
   row,
   editing,
+  charts,
   onSelect,
 }: {
   graph: SchemaGraph;
   node: SchemaNode;
   row: SchemaRow;
   editing?: SchemaEditing;
+  charts?: SchemaChartLinks;
   onSelect: (selection: SchemaSelection) => void;
 }) {
   const typeLabel = row.dataType ? typeLabels[row.dataType] : undefined;
@@ -401,6 +415,12 @@ function FieldBody({
           inferred={row.dataType}
         />
       )}
+      <Lineage
+        graph={graph}
+        field={{ nodeId: node.id, rowId: row.id }}
+        charts={charts}
+        onSelect={onSelect}
+      />
       {links.length > 0 && (
         <div className="eda-schema-inspector-section">
           <span>Relationships</span>
@@ -939,6 +959,134 @@ function ProposalBody({
           Cancel
         </Button>
       </div>
+    </>
+  );
+}
+
+/** The chart or section heading a view row sits under. */
+function headingOf(node: SchemaNode, rowId: string) {
+  const index = node.rows.findIndex((row) => row.id === rowId);
+  for (let at = index - 1; at >= 0; at -= 1) {
+    if (node.rows[at]!.kind === "heading") return node.rows[at]!.label;
+  }
+  return undefined;
+}
+
+/**
+ * Where a field comes from and what reads it, through calculations and into
+ * each view. Each entry selects that row; a chart in this workspace can be
+ * shown directly.
+ */
+function Lineage({
+  graph,
+  field,
+  charts,
+  onSelect,
+}: {
+  graph: SchemaGraph;
+  field: SchemaEndpoint;
+  charts?: SchemaChartLinks;
+  onSelect: (selection: SchemaSelection) => void;
+}) {
+  const trace = useMemo(() => traceField(graph, field), [graph, field]);
+  const nodes = new Map(graph.nodes.map((node) => [node.id, node]));
+  const describe = (end: SchemaEndpoint) => {
+    const node = nodes.get(end.nodeId);
+    const row = node?.rows.find((item) => item.id === end.rowId);
+    return node && row ? { node, row } : undefined;
+  };
+  const sources = trace.upstream
+    .map(describe)
+    .filter(
+      (item): item is NonNullable<typeof item> =>
+        Boolean(item) && item!.node.kind === "table"
+    );
+  const uses = trace.downstream
+    .map(describe)
+    .filter(
+      (item): item is NonNullable<typeof item> =>
+        Boolean(item) &&
+        (item!.row.kind === "use" || item!.row.mark !== undefined)
+    );
+  const self = describe(field);
+  const hasViews = graph.nodes.some((node) => node.kind === "view");
+  const reachesView = uses.some((item) => item.row.kind === "use");
+  const select = (item: { node: SchemaNode; row: SchemaRow }) =>
+    onSelect({ kind: "field", nodeId: item.node.id, rowId: item.row.id });
+
+  return (
+    <>
+      {self?.node.kind !== "table" && sources.length > 0 && (
+        <div className="eda-schema-inspector-section">
+          <span>Comes from</span>
+          <ul>
+            {sources.map((item) => (
+              <li key={`${item.node.id}/${item.row.id}`}>
+                <button
+                  type="button"
+                  className="eda-schema-inspector-link"
+                  onClick={() => select(item)}
+                >
+                  {item.node.title}.{item.row.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {uses.length > 0 && (
+        <div className="eda-schema-inspector-section">
+          <span>Used by</span>
+          <ul>
+            {uses.map((item) => {
+              const heading =
+                item.row.kind === "use"
+                  ? headingOf(item.node, item.row.id)
+                  : undefined;
+              const chartId =
+                charts?.nodeId === item.node.id ? item.row.chartId : undefined;
+              const text =
+                item.row.kind === "use"
+                  ? [item.node.title, heading, item.row.detail]
+                      .filter(Boolean)
+                      .join(" · ")
+                  : `${item.row.mark} ${item.row.label} in ${item.node.title}`;
+              return (
+                <li
+                  key={`${item.node.id}/${item.row.id}`}
+                  className="eda-schema-inspector-use"
+                >
+                  <button
+                    type="button"
+                    className="eda-schema-inspector-link"
+                    onClick={() => select(item)}
+                  >
+                    {text}
+                  </button>
+                  {chartId && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      aria-label={`Show ${heading ?? "the chart"}`}
+                      tooltip="Close the diagram and show this chart"
+                      onClick={() => charts!.onShowChart(chartId)}
+                    >
+                      Show
+                    </Button>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+      {hasViews &&
+        self?.row.kind !== "use" &&
+        self?.node.kind !== "view" &&
+        !reachesView && (
+          <p className="eda-schema-inspector-hint">Not used by any view.</p>
+        )}
     </>
   );
 }

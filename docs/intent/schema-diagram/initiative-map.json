@@ -386,11 +386,15 @@
       {
         "id": "m5",
         "title": "Field focus traces lineage both ways",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Selecting a field lights its lineage; inspector lists uses and jumps to charts and views.",
         "proof": "traceField unit tests; real mouse and keyboard checks in the browser.",
         "valid_intermediate_state": "Diagram with focus over the current view's usage.",
-        "rollback": "Disable focus; static diagram remains."
+        "rollback": "Disable focus; static diagram remains.",
+        "evidence": [
+          "Vitest: schemaTrace.test.ts (table field to view and view calculation, view calculation back to table, summary back through its input, relationships shown but not walked); SchemaDiagram uses list and Show chart, unused field message",
+          "Playwright: flights Departure delay lights its calculation and seven view rows, dims three cards, and Show focuses the Mean departure delay chart; shop Joined says Not used by any view"
+        ]
       },
       {
         "id": "m6",
@@ -482,6 +486,12 @@
       "date": "2026-10-10",
       "event": "milestone-completed",
       "summary": "Milestone 4 built: add, edit, and remove query steps from the diagram through shared step rules.",
+      "status": "active"
+    },
+    {
+      "date": "2026-10-10",
+      "event": "milestone-completed",
+      "summary": "Milestone 5 built: field focus traces lineage both ways with a uses list and chart jump.",
       "status": "active"
     }
   ],

@@ -38,7 +38,8 @@ import {
   type SchemaEdgePath,
   type SchemaLayout,
 } from "@/lib/schema/schemaLayout";
-import { SchemaInspector } from "./SchemaInspector";
+import { SchemaInspector, type SchemaChartLinks } from "./SchemaInspector";
+import { traceField } from "@/lib/schema/schemaTrace";
 import type { SchemaEditing, SchemaSelection } from "./schemaEditing";
 
 const MIN_SCALE = 0.35;
@@ -134,6 +135,7 @@ export function SchemaDiagram({
   height,
   toolbarTarget,
   editing,
+  charts,
 }: {
   graph: SchemaGraph;
   width: number;
@@ -142,6 +144,8 @@ export function SchemaDiagram({
   toolbarTarget?: HTMLElement | null;
   /** What may be edited. Without it, the diagram only shows and selects. */
   editing?: SchemaEditing;
+  /** Lets a field's uses jump to this workspace's charts. */
+  charts?: SchemaChartLinks;
 }) {
   // Lay out for the drawer's shape, in coarse steps so a resize that barely
   // changes the shape keeps the arrangement.
@@ -303,18 +307,16 @@ export function SchemaDiagram({
         rows.add(key(edge.to));
       }
     } else if (selection?.kind === "field") {
+      // The whole lineage: where the field comes from and all that reads it.
+      const trace = traceField(graph, selection);
       rows.add(key(selection));
+      trace.upstream.forEach((end) => rows.add(key(end)));
+      trace.downstream.forEach((end) => rows.add(key(end)));
       for (const edge of graph.edges) {
-        if (
-          [edge.from, edge.to].some(
-            (end) =>
-              end.nodeId === selection.nodeId && end.rowId === selection.rowId
-          )
-        ) {
-          edges.add(edge.id);
-          rows.add(key(edge.from));
-          rows.add(key(edge.to));
-        }
+        if (!trace.edges.has(edge.id)) continue;
+        edges.add(edge.id);
+        rows.add(key(edge.from));
+        rows.add(key(edge.to));
       }
     } else if (selection?.kind === "table") {
       for (const edge of graph.edges) {
@@ -329,7 +331,12 @@ export function SchemaDiagram({
       rows.add(key(selection.from));
       rows.add(key(selection.to));
     }
-    return { rows, edges, key };
+    // Cards outside a field's lineage fade, so its path stands out.
+    const nodes =
+      selection?.kind === "field"
+        ? new Set([...rows].map((row) => row.split("\u0000")[0]!))
+        : undefined;
+    return { rows, edges, key, nodes };
   }, [graph, selection]);
 
   const tableCount = graph.nodes.filter((node) => node.kind === "table").length;
@@ -689,6 +696,7 @@ export function SchemaDiagram({
                 selected={
                   selection?.kind === "table" && selection.nodeId === node.id
                 }
+                dimmed={Boolean(emphasis.nodes && !emphasis.nodes.has(node.id))}
                 selectedRow={
                   selection?.kind === "field" && selection.nodeId === node.id
                     ? selection.rowId
@@ -713,6 +721,7 @@ export function SchemaDiagram({
             graph={graph}
             selection={selection}
             editing={editing}
+            charts={charts}
             style={inspectorStyle}
             onSelect={setSelection}
             onClose={() => setSelection(undefined)}
@@ -740,6 +749,7 @@ function SchemaCard({
   style,
   linkedRows,
   selected,
+  dimmed,
   selectedRow,
   isEmphasized,
   dropTarget,
@@ -750,6 +760,7 @@ function SchemaCard({
   style: CSSProperties;
   linkedRows: Set<string>;
   selected: boolean;
+  dimmed: boolean;
   selectedRow?: string;
   isEmphasized: (rowId: string) => boolean;
   dropTarget?: string;
@@ -762,6 +773,7 @@ function SchemaCard({
       data-kind={node.kind}
       data-schema-node={node.id}
       data-selected={selected || undefined}
+      data-dimmed={dimmed || undefined}
       style={style}
       tabIndex={0}
       aria-label={`${node.title}${node.detail ? `, ${node.detail}` : ""}`}

@@ -69,6 +69,8 @@ export interface SchemaRow {
   mark?: "ƒ" | "Σ";
   /** What a step row does. */
   step?: AnalysisStep["kind"];
+  /** The chart a view's use row sits under. */
+  chartId?: string;
   /** A reference the diagram could not resolve, or a failed calculation. */
   status?: "missing" | "error";
   /** The underlying field name, when the label is a display name. */
@@ -490,7 +492,7 @@ function usageNode({
   // role a field plays in a chart.
   const groups = new Map<
     string,
-    { heading: string; fields: Map<string, string[]> }
+    { heading: string; chartId?: string; fields: Map<string, string[]> }
   >();
   for (const use of usage.uses) {
     if (use.place.kind === "calculation") continue;
@@ -502,7 +504,11 @@ function usageNode({
       use.place.kind === "chart"
         ? use.place.title
         : PLACE_HEADINGS[use.place.kind];
-    const group = groups.get(key) ?? { heading, fields: new Map() };
+    const group = groups.get(key) ?? {
+      heading,
+      chartId: use.place.kind === "chart" ? use.place.chartId : undefined,
+      fields: new Map(),
+    };
     groups.set(key, group);
     const roles = group.fields.get(use.field) ?? [];
     if (!roles.includes(use.place.role)) roles.push(use.place.role);
@@ -534,6 +540,7 @@ function usageNode({
         kind: "use",
         label: name(field),
         field,
+        chartId: group.chartId,
         detail: roles.join(", "),
         status: from ? undefined : "missing",
       });

@@ -933,6 +933,10 @@ export function PlotManager({
             graph={schema?.graph}
             projectEditing={schema?.editing}
             viewId={schema?.viewId}
+            onShowChart={(id) => {
+              setSchemaOpen(false);
+              showChart(id);
+            }}
             readOnly={readOnly}
             containerRef={controlsRef}
             onClose={closeSchema}

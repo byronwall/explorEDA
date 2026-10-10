@@ -2360,6 +2360,17 @@ html {
   stroke-width: 2;
   opacity: 1;
 }
+.eda-schema-card {
+  transition: opacity 160ms ease;
+}
+.eda-schema-card[data-dimmed] {
+  opacity: 0.38;
+}
+@media (prefers-reduced-motion: reduce) {
+  .eda-schema-card {
+    transition: none;
+  }
+}
 .eda-schema-card:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
@@ -2528,6 +2539,16 @@ html {
   width: 13px;
   height: 13px;
   color: var(--primary);
+}
+.eda-schema-inspector-use {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.eda-schema-inspector-use > button:last-child:not(:first-child) {
+  height: 24px;
+  padding: 0 8px;
+  font-size: 12px;
 }
 .eda-schema-inspector-pair {
   display: grid;
