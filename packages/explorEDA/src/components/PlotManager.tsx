@@ -17,6 +17,7 @@ import {
 
 import { Card, CardContent } from "@/components/ui/card";
 import { useDataLayer } from "@/providers/DataLayerProvider";
+import { resolveThemeId } from "@/lib/themes";
 import { RowsPeek } from "./RowsPeek";
 import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { ActiveFilterStatus } from "./ActiveFilterStatus";
@@ -37,6 +38,7 @@ import {
   ListTree,
   MoreHorizontal,
   Palette,
+  Type,
   Rows3,
   X,
 } from "lucide-react";
@@ -118,6 +120,32 @@ export function PlotManager({
   const removeChart = useDataLayer((state) => state.removeChart);
   const removeAllCharts = useDataLayer((state) => state.removeAllCharts);
   const gridSettings = useDataLayer((state) => state.gridSettings);
+  const themeId = resolveThemeId(useDataLayer((state) => state.theme));
+  const setDarkMode = useDataLayer((state) => state.setDarkMode);
+  // Charts color their palettes for the surface they sit on. Hosts mark dark
+  // mode with a `dark` class on the page or an ancestor of the workspace.
+  useEffect(() => {
+    let dark: boolean | undefined;
+    const update = () => {
+      const next =
+        Boolean(containerRef.current?.closest(".dark")) ||
+        document.documentElement.classList.contains("dark");
+      if (next !== dark) setDarkMode((dark = next));
+    };
+    update();
+    if (typeof MutationObserver === "undefined") return;
+    // Only the workspace's ancestors can switch it, so only they are watched.
+    const observer = new MutationObserver(update);
+    for (
+      let element: Element | null =
+        containerRef.current?.parentElement ?? document.documentElement;
+      element;
+      element = element.parentElement
+    ) {
+      observer.observe(element, { attributes: true, attributeFilter: ["class"] });
+    }
+    return () => observer.disconnect();
+  }, [setDarkMode]);
   const saveToStructure = useDataLayer((state) => state.saveToStructure);
   const saveAnalysisToStructure = useDataLayer(
     (state) => state.saveAnalysisToStructure
@@ -538,7 +566,11 @@ export function PlotManager({
   };
 
   return (
-    <div className="eda-workspace w-full min-w-0" ref={containerRef}>
+    <div
+      className="eda-workspace w-full min-w-0"
+      ref={containerRef}
+      data-eda-theme={themeId}
+    >
       <div
         ref={controlsRef}
         className="eda-workspace-controls"
@@ -670,6 +702,12 @@ export function PlotManager({
                     "Calculations",
                     "Calculations: create and edit calculated fields",
                     Calculator,
+                  ],
+                  [
+                    "theme",
+                    "Theme",
+                    "Theme: chart titles, type, and surfaces",
+                    Type,
                   ],
                   ["colors", "Colors", "Colors: adjust color scales", Palette],
                   [

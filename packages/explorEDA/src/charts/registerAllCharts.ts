@@ -14,6 +14,7 @@ import { metricCardDefinition } from "@/components/charts/MetricCard/definition"
 import { pivotTableDefinition } from "@/components/charts/PivotTable/definition";
 import { rowChartDefinition } from "@/components/charts/RowChart/definition";
 import { sankeyDefinition } from "@/components/charts/Sankey/definition";
+import { scatterMatrixDefinition } from "@/components/charts/ScatterMatrix/definition";
 import { scatterPlotDefinition } from "@/components/charts/ScatterPlot/definition";
 import { summaryTableDefinition } from "@/components/charts/SummaryTable/definition";
 import { threeDScatterDefinition } from "@/components/charts/ThreeDScatter/definition";
@@ -33,6 +34,7 @@ export function registerAllCharts() {
   chartRegistry.register(lineChartDefinition);
   chartRegistry.register(sankeyDefinition);
   chartRegistry.register(parallelCoordinatesDefinition);
+  chartRegistry.register(scatterMatrixDefinition);
   chartRegistry.register(calendarDefinition);
   chartRegistry.register(heatmapDefinition);
   chartRegistry.register(ecdfDefinition);

@@ -5,6 +5,7 @@ import {
 } from "@/components/SummaryTable/utils/dataTypeDetection";
 import {
   calculateColumnStatistics,
+  calculateValueStatistics,
   ColumnStatistics,
 } from "@/components/SummaryTable/utils/statisticsCalculator";
 
@@ -28,6 +29,15 @@ export function buildFieldProfile(
       typeOverride ?? detectColumnType(columnData)
     ),
   };
+}
+
+/** A profile of a list of values whose type is already known. */
+export function buildValuesProfile(
+  name: string,
+  values: readonly datum[],
+  dataType: DataType
+): FieldProfile {
+  return { name, ...calculateValueStatistics(values, dataType) };
 }
 
 export function emptyFieldProfile(profile: FieldProfile): FieldProfile {

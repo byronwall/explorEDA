@@ -219,6 +219,15 @@ export const coverageFeatures = [
     chartType: "parallel-coordinates",
   },
   {
+    id: "chart:scatter-matrix",
+    label: "Scatter matrix",
+    family: "Chart types",
+    description: "Compare every pair of several fields, with each field's distribution on the diagonal.",
+    required: true,
+    status: "supported",
+    chartType: "scatter-matrix",
+  },
+  {
     id: "chart:calendar",
     label: "Calendar heatmap",
     family: "Chart types",
@@ -541,6 +550,17 @@ export const exampleCoverage = [
       "chart:row": "shown",
       "chart:data-table": "shown",
       "color:categorical": "shown",
+      "interaction:brushing": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "scatter-matrix",
+    intent: "Compare every pair of measurements, species, and sex, then brush one cell to follow the same penguins everywhere.",
+    features: {
+      "chart:scatter-matrix": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
       "interaction:brushing": "shown",
       "interaction:cross-filter": "shown",
     },
