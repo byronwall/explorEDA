@@ -38,6 +38,7 @@ import {
   gdpBumpDashboard,
   scotusTimelineDashboard,
   stocksHorizonDashboard,
+  co2SwarmDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -75,6 +76,7 @@ import {
   ListOrdered,
   GanttChart,
   AlignStartVertical,
+  Bug,
   CloudFog,
   Globe,
   Activity,
@@ -976,6 +978,17 @@ export const examples: ExampleData[] = [
     icon: AlignStartVertical,
     data: "/datasets/tech-stocks.csv",
     savedData: stocksHorizonDashboard,
+  },
+  {
+    id: "co2-swarm",
+    title: "Carbon dioxide per person, 2020",
+    description:
+      "A beeswarm per region: every economy as a dot sized by population and colored by income group, pushed off the line just far enough to clear its neighbors along a shared log scale.",
+    dataset: { rows: "203 economies", fields: 6, source: "Real" },
+    shows: ["Swarmed dot rows", "Log scale", "Sized and colored points"],
+    icon: Bug,
+    data: "/datasets/co2-per-capita.csv",
+    savedData: co2SwarmDashboard,
   },
 ];
 

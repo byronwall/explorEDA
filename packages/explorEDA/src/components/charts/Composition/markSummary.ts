@@ -44,7 +44,9 @@ export function describeMark(
       const x = scaleName(mark.xScaleId) ?? "?";
       const y = mark.yScaleId ? scaleName(mark.yScaleId) : undefined;
       parts.push(
-        y ? `${x} → ${y}${mark.rank ? " as ranks" : ""}` : `${x} on a dot row`
+        y
+          ? `${x} → ${y}${mark.rank ? " as ranks" : ""}`
+          : `${x} ${mark.type === "point" && mark.spread === "swarm" ? "as a swarm" : "on a dot row"}`
       );
       if (mark.seriesField) parts.push(`by ${mark.seriesField}`);
       if (mark.colorField) parts.push(`colored by ${mark.colorField}`);

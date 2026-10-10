@@ -144,6 +144,19 @@ const LABEL_VALUE_OPTIONS = [
     tooltip: "The y value at that end before the name",
   },
 ];
+const SPREAD_OPTIONS = [
+  {
+    value: "line" as const,
+    label: "On the line",
+    tooltip: "Every dot sits on the middle line; dots with the same x overlap",
+  },
+  {
+    value: "swarm" as const,
+    label: "Swarm",
+    tooltip:
+      "Dots move off the line just far enough to clear their neighbors, as a beeswarm, so crowded values show their count",
+  },
+];
 const SHOW_OPTIONS = [
   { value: "all" as const, label: "All", tooltip: "Draw every row" },
   {
@@ -2283,6 +2296,19 @@ function XyFields({
               />
             </>
           )}
+          {!mark.yScaleId && (
+            <>
+              <span className="eda-setting-label">Spread</span>
+              <Segmented
+                label={`${mark.name} spread`}
+                value={mark.spread ?? "line"}
+                options={SPREAD_OPTIONS}
+                onChange={(spread) =>
+                  change({ spread: spread === "line" ? undefined : spread })
+                }
+              />
+            </>
+          )}
           <Label>Size by</Label>
           <FieldSelector
             label=""
@@ -2294,6 +2320,15 @@ function XyFields({
               change({ sizeField: sizeField || undefined })
             }
           />
+          {mark.sizeField && (
+            <NumberSetting
+              label="Smallest"
+              min={0.5}
+              max={40}
+              value={mark.minRadius ?? 1}
+              onChange={(minRadius) => change({ minRadius })}
+            />
+          )}
         </>
       )}
     </>

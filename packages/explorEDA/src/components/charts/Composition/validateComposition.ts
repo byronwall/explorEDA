@@ -63,12 +63,15 @@ function isMark(value: unknown) {
       value.labelEvery >= 0 &&
       (value.labelValues === undefined || isString(value.labelValues)) &&
       (value.sizeField === undefined || isString(value.sizeField)) &&
+      (value.minRadius === undefined ||
+        (isNumber(value.minRadius) && value.minRadius > 0)) &&
       (value.show === undefined ||
         oneOf(value.show, ["all", "first", "last", "min", "max"])) &&
       (value.seriesField === undefined || isString(value.seriesField)) &&
       isFocus(value.focus) &&
       (value.mutedFill === undefined || isString(value.mutedFill)) &&
       (value.rank === undefined || oneOf(value.rank, ["desc", "asc"])) &&
+      (value.spread === undefined || value.spread === "swarm") &&
       (value.population === undefined ||
         oneOf(value.population, ["repeat", "composition"]))
     );

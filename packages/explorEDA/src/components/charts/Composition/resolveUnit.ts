@@ -36,12 +36,14 @@ import {
 import type {
   AreaNode,
   Bounds,
+  CircleNode,
   PathNode,
   SceneNode,
   TextNode,
 } from "./resolveComposition";
 import { evaluateCalc, type CalcResult } from "./calculations";
 import { dodgePositions } from "./labelDodge";
+import { swarmOffsets } from "./swarm";
 import { MISSING, orderedRows } from "./ordering";
 
 /** The rows a composition draws from. */
@@ -1632,12 +1634,14 @@ export function numericDomain(
 ): [number, number] {
   let min = Infinity;
   let max = -Infinity;
+  let positive = Infinity;
   for (const column of Array.isArray(columns) ? columns : [columns])
     for (const id of ids) {
       const value = readNumber(column[id]);
       if (value === undefined) continue;
       if (value < min) min = value;
       if (value > max) max = value;
+      if (value > 0 && value < positive) positive = value;
     }
   if (min === Infinity) {
     min = 0;
@@ -1655,7 +1659,8 @@ export function numericDomain(
   }
   if (scale.transform === "log" && min <= 0) {
     // Log spacing ignores values at or below zero; they pin to the low end.
-    min = Math.min(max, 1);
+    // The smallest positive value starts the span, or one when it is alone.
+    min = positive < max ? positive : Math.min(max, 1);
   }
   if (scale.nice) {
     const nice =
@@ -2851,6 +2856,8 @@ export function numericPixel(axis: NumericAxis, value: number) {
   const [d0, d1] = axis.domain;
   const [r0, r1] = axis.range;
   if (axis.scale.transform === "log") {
+    // Values under a log span pin to its low end along with those at or below zero.
+    if (value < d0) return r0;
     // Log spacing needs positive bounds; a value at or below zero pins to the low end.
     const lo = Math.log(Math.max(d0, Number.MIN_VALUE));
     const hi = Math.log(Math.max(d1, Number.MIN_VALUE));
@@ -3291,7 +3298,10 @@ function pointNodes(
   const radiusOf = (id: number) => {
     if (!sizes || sizeMax <= 0) return mark.radius;
     const value = finiteNumber(sizes[id]) ?? 0;
-    return Math.max(1, mark.radius * Math.sqrt(Math.max(0, value) / sizeMax));
+    return Math.max(
+      mark.minRadius ?? 1,
+      mark.radius * Math.sqrt(Math.max(0, value) / sizeMax)
+    );
   };
   const wanted = mark.labelValues
     ? new Set(
@@ -3398,6 +3408,30 @@ function pointNodes(
         });
     }
     drawn += 1;
+  }
+  // A swarm pushes each dot off the middle line just far enough to clear
+  // its neighbors; its label follows.
+  if (mark.spread === "swarm" && axes.y.scale.id === MIDDLE_SCALE.id) {
+    const circles = nodes.filter(
+      (node): node is CircleNode => node.type === "circle"
+    );
+    const largest = Math.max(0, ...circles.map((node) => node.r));
+    const offsets = swarmOffsets(
+      circles.map((node) => node.cx),
+      circles.map((node) => node.r),
+      Math.max(0, frame.height / 2 - largest)
+    );
+    const shift = new Map(
+      circles.map((node, index) => [node.key, offsets[index]!])
+    );
+    for (const node of nodes) {
+      if (node.type === "circle") node.cy += shift.get(node.key) ?? 0;
+      else if (node.type === "text" && node.key.endsWith(":label")) {
+        const dy = shift.get(node.key.slice(0, -":label".length));
+        if (dy)
+          node.lines = node.lines.map((line) => ({ ...line, y: line.y + dy }));
+      }
+    }
   }
   return nodes;
 }
@@ -3527,6 +3561,9 @@ function formatDateTick(axis: NumericAxis, value: number) {
 }
 
 const tickFormat = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
+const smallTickFormat = new Intl.NumberFormat("en-US", {
+  maximumSignificantDigits: 2,
+});
 const plainTickFormat = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2,
   useGrouping: false,
@@ -3537,6 +3574,9 @@ function formatTick(axis: NumericAxis, value: number) {
   if (axis.scale.id === SHARE_SCALE.id) return `${Math.round(value * 100)}%`;
   if (axis.scale.id === BAR_SCALE.id)
     return compactFormat.format(Math.abs(value));
+  // A log span can reach well below one; those ticks keep their leading digit.
+  if (axis.scale.transform === "log" && value > 0 && value < 1)
+    return smallTickFormat.format(value);
   if (axis.dates) return formatDateTick(axis, value);
   return /year|\byr\b/i.test(axis.scale.field) || /year/i.test(axis.scale.name)
     ? plainTickFormat.format(value)

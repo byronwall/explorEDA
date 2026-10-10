@@ -448,3 +448,18 @@ One row per company and month from January 2000 to March 2010 (Google from Augus
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/tech-stocks.ts
 ```
+
+## Carbon dioxide per person, 2020
+
+- File: `co2-per-capita.csv`
+- Size: 203 rows and 6 fields
+- Demo: `?example=co2-swarm`
+- Use: a beeswarm composition, economies swarmed along a log scale within each region
+- Source: the [World Bank World Development Indicators](https://data.worldbank.org/indicator/EN.GHG.CO2.PC.CE.AR5), CO2 emissions excluding LULUCF per capita (`EN.GHG.CO2.PC.CE.AR5`) and population (`SP.POP.TOTL`) for 2020, with regions and income groups from the World Bank country list.
+- License: CC BY 4.0.
+
+One row per economy with its code, region, income group, tonnes of CO2 per person, and population. Aggregates are left out.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/co2-per-capita.ts
+```

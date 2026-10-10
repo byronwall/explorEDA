@@ -366,6 +366,8 @@ Timelines are built as span marks: the Supreme Court seats at `?example=scotus-t
 
 Horizon charts are built as horizon marks: the tech stocks at `?example=stocks-horizon` (`apps/data-samples/prepare/tech-stocks.ts`) read a measure from zero, the repeat's first value, or its mean, as a difference or a share, and cut it into bands that stack at the frame's full height, with drops mirrored upward in a second color and a shared or per-repeat range.
 
+Beeswarms are dot rows with a spread: the emissions swarm at `?example=co2-swarm` (`apps/data-samples/prepare/co2-per-capita.ts`) pushes each point off the middle line just far enough to clear its neighbors, labels following, so crowded values show their count; sized points take a smallest radius so small values stay visible.
+
 ## Milestone 6: Combine detail and overview frames in one unit
 
 Create a state-style comparison with an inset, then repeat that unit for several illustrative regions.

@@ -234,6 +234,8 @@ export interface PointMark {
   labelValues?: string;
   /** Size each point's area by this field, up to `radius` for the largest. */
   sizeField?: string;
+  /** The smallest radius a sized point draws at, so tiny values stay visible; 1 unless set. */
+  minRadius?: number;
   /** Which rows draw: every row, or only the first, last, lowest, or highest. */
   show?: PointShow;
   /** Pick `show` within each value of this field, such as the last point of every country. */
@@ -253,6 +255,11 @@ export interface PointMark {
    * the top of the frame.
    */
   rank?: RankOrder;
+  /**
+   * On a dot row, push points off the middle line so none overlap, each
+   * as close to the line as it can get: a beeswarm.
+   */
+  spread?: "swarm";
 }
 
 export type RankOrder = "desc" | "asc";

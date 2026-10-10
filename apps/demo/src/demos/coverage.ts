@@ -1211,6 +1211,17 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "co2-swarm",
+    intent:
+      "Swarm every economy along a log scale of emissions per person within its region, sized by population.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",
