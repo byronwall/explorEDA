@@ -584,11 +584,30 @@ function LegendProperties({
             </option>
           ))}
         </select>
+        <label htmlFor={`${legend.id}-scale`}>Key for</label>
+        <select
+          id={`${legend.id}-scale`}
+          className="eda-composition-select"
+          value={legend.scaleId ?? ""}
+          onChange={(event) =>
+            onChange({ scaleId: event.target.value || undefined })
+          }
+        >
+          <option value="">A mark's categories</option>
+          {definition.scales
+            .filter((scale) => scale.kind === "value")
+            .map((scale) => (
+              <option key={scale.id} value={scale.id}>
+                {scale.name} ramp
+              </option>
+            ))}
+        </select>
         <label htmlFor={`${legend.id}-mark`}>Mark</label>
         <select
           id={`${legend.id}-mark`}
           className="eda-composition-select"
           value={legend.markId}
+          disabled={Boolean(legend.scaleId)}
           onChange={(event) => onChange({ markId: event.target.value })}
         >
           {(unit?.marks ?? []).map((mark) => (

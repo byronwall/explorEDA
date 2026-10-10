@@ -351,6 +351,7 @@ function isElement(value: unknown) {
       return (
         isString(value.unitId) &&
         isString(value.markId) &&
+        (value.scaleId === undefined || isString(value.scaleId)) &&
         oneOf(value.direction, ["row", "column"]) &&
         isNumber(value.fontSize) &&
         value.fontSize > 0 &&

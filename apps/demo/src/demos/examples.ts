@@ -29,6 +29,7 @@ import {
   incomeLifeDashboard,
   covidTilesDashboard,
   covidCompareDashboard,
+  electionsDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -58,6 +59,7 @@ import {
   CircleDot,
   Map as MapIcon,
   PictureInPicture2,
+  Vote,
   CloudFog,
   Globe,
   Activity,
@@ -856,6 +858,21 @@ export const examples: ExampleData[] = [
     icon: PictureInPicture2,
     data: "/datasets/covid-compare.csv",
     savedData: covidCompareDashboard,
+  },
+  {
+    id: "elections",
+    title: "How each state voted, 1976 to 2016",
+    description:
+      "Fifty-one state strips across eleven presidential elections. Each cell's color follows the signed Democratic margin through a diverging ramp, rows sort by the latest margin, and a ramp legend keys the colors.",
+    dataset: { rows: "561 state-elections", fields: 7, source: "Real" },
+    shows: [
+      "Signed strip colors",
+      "Ramp legend",
+      "Rows ordered by a calculation",
+    ],
+    icon: Vote,
+    data: "/datasets/elections.csv",
+    savedData: electionsDashboard,
   },
 ];
 

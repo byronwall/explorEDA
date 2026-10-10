@@ -78,6 +78,8 @@ export interface LegendElement extends ElementBase {
   kind: "legend";
   unitId: string;
   markId: string;
+  /** A value scale to key instead of a mark's categories: its ramp with the drawn extent's ends. */
+  scaleId?: string;
   direction: "row" | "column";
   fontSize: number;
   color: string;

@@ -93,6 +93,7 @@ describe("example coverage manifest", () => {
       "income-life",
       "covid-tiles",
       "covid-compare",
+      "elections",
       "product-activity",
       "scatter-trace",
       "calculated-orders",

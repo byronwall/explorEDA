@@ -507,7 +507,10 @@ export function resolveUnit(
       const id = strips[markIndex]!.value.id;
       for (const glyph of glyphs)
         if (!glyph.missing)
-          sharedMax.set(id, Math.max(sharedMax.get(id) ?? 0, glyph.value));
+          sharedMax.set(
+            id,
+            Math.max(sharedMax.get(id) ?? 0, Math.abs(glyph.value))
+          );
     })
   );
 
@@ -652,7 +655,12 @@ export function resolveUnit(
       const { mark, value } = strips[markIndex]!;
       const instanceMax =
         value.domain === "instance"
-          ? Math.max(0, ...glyphs.map((glyph) => glyph.value))
+          ? Math.max(
+              0,
+              ...glyphs.map((glyph) =>
+                glyph.missing ? 0 : Math.abs(glyph.value)
+              )
+            )
           : (sharedMax.get(value.id) ?? 0);
       // An accent recolors this repeat's marks, keeping the template's ramp.
       const accented = override?.accent
@@ -2423,12 +2431,17 @@ function glyphNodes(
   return glyphs.flatMap((glyph): SceneNode[] => {
     const position = index.get(glyph.bin.key);
     if (position === undefined) return [];
-    const share = glyph.missing ? 0 : valueShare(scale, glyph.value, max);
+    // A diverging scale reads the sign; other scales read the magnitude.
+    const share = glyph.missing
+      ? 0
+      : valueShare(scale, Math.abs(glyph.value), max);
     const left = frame.x + position * band;
     const fill = glyph.missing
       ? (mark.missing ?? mark.fill)
       : mark.encoding === "color"
-        ? valueColor(scale, share)
+        ? scale.center
+          ? valueColorSigned(scale, glyph.value, max)
+          : valueColor(scale, share)
         : mark.fill;
     // A missing cell draws as a full, neutral cell whatever the encoding.
     const encoding = glyph.missing ? "color" : mark.encoding;
