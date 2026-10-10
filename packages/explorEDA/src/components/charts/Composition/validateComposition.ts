@@ -71,6 +71,18 @@ function isMark(value: unknown) {
       (value.population === undefined ||
         oneOf(value.population, ["repeat", "composition"]))
     );
+  if (value.type === "density")
+    return (
+      isString(value.xScaleId) &&
+      (value.bandwidth === undefined ||
+        (isNumber(value.bandwidth) && value.bandwidth > 0)) &&
+      oneOf(value.height, ["shared", "instance"]) &&
+      isString(value.fill) &&
+      isNumber(value.opacity) &&
+      value.opacity > 0 &&
+      value.opacity <= 1 &&
+      (value.stroke === undefined || isString(value.stroke))
+    );
   if (value.type === "stack")
     return (
       isString(value.categoryField) &&
@@ -392,22 +404,24 @@ export function isCompositionDefinition(
         element.marks.every(
           (mark) =>
             isRecord(mark) &&
-            (mark.type === "stack"
-              ? mark.xScaleId === undefined ||
-                kinds.get(mark.xScaleId) === "numeric"
-              : mark.type === "summary"
-                ? kinds.get(mark.yScaleId) === "numeric" &&
-                  (mark.valueScaleId === undefined ||
-                    kinds.get(mark.valueScaleId) === "value")
-                : mark.type === "point" || mark.type === "path"
-                  ? kinds.get(mark.xScaleId) === "numeric" &&
-                    (mark.yScaleId === undefined ||
-                      kinds.get(mark.yScaleId) === "numeric")
-                  : mark.type === "band"
-                    ? kinds.get(mark.xScaleId) === "numeric" &&
-                      kinds.get(mark.yScaleId) === "numeric"
-                    : kinds.get(mark.positionScaleId) === "position" &&
+            (mark.type === "density"
+              ? kinds.get(mark.xScaleId) === "numeric"
+              : mark.type === "stack"
+                ? mark.xScaleId === undefined ||
+                  kinds.get(mark.xScaleId) === "numeric"
+                : mark.type === "summary"
+                  ? kinds.get(mark.yScaleId) === "numeric" &&
+                    (mark.valueScaleId === undefined ||
                       kinds.get(mark.valueScaleId) === "value")
+                  : mark.type === "point" || mark.type === "path"
+                    ? kinds.get(mark.xScaleId) === "numeric" &&
+                      (mark.yScaleId === undefined ||
+                        kinds.get(mark.yScaleId) === "numeric")
+                    : mark.type === "band"
+                      ? kinds.get(mark.xScaleId) === "numeric" &&
+                        kinds.get(mark.yScaleId) === "numeric"
+                      : kinds.get(mark.positionScaleId) === "position" &&
+                        kinds.get(mark.valueScaleId) === "value")
         )
     );
   return (

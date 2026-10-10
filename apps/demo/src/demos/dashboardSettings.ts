@@ -3924,3 +3924,139 @@ export const electionsDashboard = dashboard("Presidential margins", [
     layout(0, 14, 12, 5)
   ),
 ]);
+
+/**
+ * Temperatures in Lincoln: a ridgeline. Each month's daily mean temperatures
+ * become a density curve on one shared temperature scale; the rows overlap
+ * through a negative gap, January at the top.
+ */
+export const lincolnRidgelineDashboard = dashboard("Lincoln ridgeline", [
+  {
+    ...base,
+    id: "lincoln-composition",
+    type: "composition",
+    title: "Temperatures in Lincoln, Nebraska, in 2016",
+    layout: layout(0, 0, 12, 9),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 760, height: 720, background: "#ffffff" },
+      scales: [
+        {
+          id: "n-1",
+          kind: "numeric",
+          name: "Mean temperature",
+          field: "Mean temperature",
+          domain: "shared",
+          zero: false,
+          nice: true,
+        },
+      ],
+      calculations: [
+        {
+          id: "calc-1",
+          name: "Month order",
+          aggregation: "max",
+          field: "Month number",
+          population: "repeat",
+          filters: "ignore",
+        },
+      ],
+      overrides: [],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "Temperatures in Lincoln, Nebraska, in 2016",
+          x: 32,
+          y: 24,
+          width: 696,
+          fontSize: 24,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "Each ridge is the distribution of a month's daily mean temperatures, in degrees Fahrenheit, on one shared scale and one shared height.",
+          x: 32,
+          y: 56,
+          width: 696,
+          fontSize: 13,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Months",
+          x: 32,
+          y: 110,
+          frame: { width: 580, height: 96 },
+          label: { show: true, width: 110, fontSize: 12 },
+          axis: true,
+          marks: [
+            {
+              type: "density",
+              id: "mark-1",
+              name: "Daily means",
+              xScaleId: "n-1",
+              bandwidth: 3.4,
+              height: "shared",
+              fill: "#d9dde3",
+              opacity: 0.9,
+              stroke: "#1f2328",
+            },
+          ],
+          repeat: {
+            field: "Month",
+            arrangement: "rows",
+            columns: 1,
+            gap: -54,
+            order: "value",
+            orderCalcId: "calc-1",
+            direction: "asc",
+            limit: 12,
+          },
+        },
+        {
+          id: "note-1",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: "Source: Weather Underground observations collected for the ggridges package by Claus Wilke. Densities use a Gaussian kernel with a bandwidth of 3.4 °F on a shared grid. After the ggridges Lincoln weather example.",
+          x: 32,
+          y: 688,
+          width: 696,
+          fontSize: 10,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
+    },
+  },
+  box(
+    "lincoln-box",
+    "Mean temperature by month",
+    "Mean temperature",
+    "Month",
+    layout(0, 9, 8, 5),
+    undefined,
+    "Mean temperature, °F"
+  ),
+  histogram(
+    "lincoln-histogram",
+    "Daily means",
+    "Mean temperature",
+    layout(8, 9, 4, 5)
+  ),
+  table(
+    "lincoln-rows",
+    "Days",
+    ["Date", "Month", "Mean temperature", "Max temperature", "Min temperature"],
+    layout(0, 14, 12, 5)
+  ),
+]);

@@ -10,6 +10,7 @@ import {
   INK,
   type CompositionDefinition,
   type BandMark,
+  type DensityMark,
   type FrameWindow,
   type InsetFrame,
   type InstanceOverride,
@@ -228,11 +229,13 @@ type ResolvedSummary = {
   value?: ValueScale;
 };
 type ResolvedStack = { type: "stack"; mark: StackMark; x?: NumericScale };
+type ResolvedDensity = { type: "density"; mark: DensityMark; x: NumericScale };
 type ResolvedMark =
   | ResolvedStrip
   | ResolvedXy
   | ResolvedSummary
-  | ResolvedStack;
+  | ResolvedStack
+  | ResolvedDensity;
 
 /** One group of a summary mark in one repeat. */
 interface SummaryGroup {
@@ -263,6 +266,9 @@ export function resolveUnit(
         mark,
         x: x?.kind === "numeric" ? x : undefined,
       });
+    } else if (mark.type === "density") {
+      const x = scale(mark.xScaleId);
+      if (x?.kind === "numeric") marks.push({ type: "density", mark, x });
     } else if (mark.type === "summary") {
       const y = scale(mark.yScaleId);
       const value = scale(mark.valueScaleId ?? "");
@@ -454,6 +460,22 @@ export function resolveUnit(
     return domain;
   };
 
+  const densities = marks.filter(
+    (item): item is ResolvedDensity => item.type === "density"
+  );
+  // Densities first: each repeat's curve on the shared grid, and the tallest.
+  const densityCurves = subsets.map((subset) =>
+    densities.map(({ mark, x }) =>
+      densityCurve(mark, x, subset, data, domainFor(x, subset))
+    )
+  );
+  const densityMax = new Map<string, number>();
+  densityCurves.forEach((perMark) =>
+    perMark.forEach((curve, markIndex) => {
+      const id = densities[markIndex]!.mark.id;
+      densityMax.set(id, Math.max(densityMax.get(id) ?? 0, curve.peak));
+    })
+  );
   // First pass: aggregate each strip mark per subset and bin.
   const aggregated = subsets.map((subset) =>
     strips.map(({ mark, position }) => {
@@ -539,7 +561,9 @@ export function resolveUnit(
       ? tileAddresses(subsets, unit.repeat.tileField, data)
       : undefined;
 
+  const sliceStarts: number[] = [];
   subsets.forEach((subset, index) => {
+    sliceStarts[index] = nodes.length;
     const cell = tiles?.get(subset.key) ?? {
       row: Math.floor(index / columns),
       column: index % columns,
@@ -633,19 +657,33 @@ export function resolveUnit(
             unit.window
           ),
         }
-      : spread?.x
+      : densities[0]
         ? {
-            x: axisFor(spread.x, subset, [frame.x, frame.x + frame.width]),
-            // A stacked area's y is the share of each x's total, or the total.
+            x: axisFor(
+              densities[0].x,
+              subset,
+              [frame.x, frame.x + frame.width],
+              unit.window
+            ),
             y: numericAxis(
-              spread.mark.normalize ? SHARE_SCALE : TOTAL_SCALE,
-              spread.mark.normalize
-                ? [0, 1]
-                : [0, data.stackMaxTotal?.get(spread.mark.id) ?? 1],
+              DENSITY_SCALE,
+              [0, 1],
               [frame.y + frame.height, frame.y]
             ),
           }
-        : undefined;
+        : spread?.x
+          ? {
+              x: axisFor(spread.x, subset, [frame.x, frame.x + frame.width]),
+              // A stacked area's y is the share of each x's total, or the total.
+              y: numericAxis(
+                spread.mark.normalize ? SHARE_SCALE : TOTAL_SCALE,
+                spread.mark.normalize
+                  ? [0, 1]
+                  : [0, data.stackMaxTotal?.get(spread.mark.id) ?? 1],
+                [frame.y + frame.height, frame.y]
+              ),
+            }
+          : undefined;
     const drawAxis = unit.axis && (axisPerUnit || index === subsets.length - 1);
     // Grid lines sit under the marks.
     if (xy && unit.axis)
@@ -779,6 +817,30 @@ export function resolveUnit(
               frame,
               data
             ))
+      );
+    });
+    densityCurves[index]!.forEach((curve, markIndex) => {
+      const { mark, x } = densities[markIndex]!;
+      const axis = axisFor(
+        x,
+        subset,
+        [frame.x, frame.x + frame.width],
+        unit.window
+      );
+      const peak =
+        mark.height === "instance"
+          ? curve.peak
+          : (densityMax.get(mark.id) ?? curve.peak);
+      nodes.push(
+        ...densityNodes(
+          unit,
+          override?.accent ? { ...mark, fill: override.accent } : mark,
+          subset,
+          curve,
+          axis,
+          frame,
+          peak
+        )
       );
     });
     summarized[index]!.forEach((groups, markIndex) => {
@@ -948,7 +1010,21 @@ export function resolveUnit(
     });
   });
 
-  return { nodes, bounds: unionBounds(instances, unit), instances };
+  // Rows that overlap through a negative gap draw bottom first, so the
+  // upper ridge sits in front of the one below it.
+  const ordered =
+    unit.repeat.gap < 0 && instances.length > 1
+      ? instances
+          .map((_, index) =>
+            nodes.slice(
+              sliceStarts[index],
+              sliceStarts[index + 1] ?? nodes.length
+            )
+          )
+          .reverse()
+          .flat()
+      : nodes;
+  return { nodes: ordered, bounds: unionBounds(instances, unit), instances };
 }
 
 /**
@@ -1688,6 +1764,114 @@ function stackNodes(
   return nodes;
 }
 
+/** The stand-in y scale of a density: no ticks, the frame's height is the peak. */
+const DENSITY_SCALE: NumericScale = {
+  id: "density-height",
+  kind: "numeric",
+  name: "Density",
+  field: "",
+  domain: "shared",
+  zero: true,
+  nice: false,
+};
+
+interface DensityCurve {
+  /** Sample positions along the field, shared by every repeat. */
+  xs: number[];
+  /** Density at each sample. */
+  ys: number[];
+  peak: number;
+  rowIds: number[];
+  bandwidth: number;
+}
+
+/**
+ * A Gaussian kernel density of the repeat's live values on a fixed grid
+ * across the scale's domain, so repeats line up. The bandwidth defaults to
+ * the domain's span over twelve.
+ */
+function densityCurve(
+  mark: DensityMark,
+  scale: NumericScale,
+  subset: Subset,
+  data: CompositionData,
+  domain: [number, number]
+): DensityCurve {
+  const column = data.column(scale.field);
+  const values: number[] = [];
+  const rowIds: number[] = [];
+  for (const id of subset.liveIds) {
+    const value = readNumber(column[id]);
+    if (value === undefined) continue;
+    values.push(value);
+    rowIds.push(id);
+  }
+  const samples = 96;
+  const [lo, hi] = domain;
+  const bandwidth = mark.bandwidth ?? Math.max((hi - lo) / 12, 1e-9);
+  const xs = Array.from(
+    { length: samples },
+    (_, index) => lo + ((hi - lo) * index) / (samples - 1)
+  );
+  const ys = xs.map((x) => {
+    if (!values.length) return 0;
+    let total = 0;
+    for (const value of values) {
+      const z = (x - value) / bandwidth;
+      total += Math.exp(-0.5 * z * z);
+    }
+    return total / (values.length * bandwidth * Math.sqrt(2 * Math.PI));
+  });
+  return { xs, ys, peak: Math.max(0, ...ys), rowIds, bandwidth };
+}
+
+/** The density as an area from the baseline, with its crest outlined. */
+function densityNodes(
+  unit: UnitElement,
+  mark: DensityMark,
+  subset: Subset,
+  curve: DensityCurve,
+  axis: NumericAxis,
+  frame: Bounds,
+  peak: number
+): SceneNode[] {
+  if (!curve.rowIds.length || peak <= 0) return [];
+  const baseline = frame.y + frame.height;
+  const run = curve.xs.map((x, index) => ({
+    x: numericPixel(axis, x),
+    y0: baseline,
+    y1: baseline - (curve.ys[index]! / peak) * frame.height,
+    rowId: curve.rowIds[0]!,
+  }));
+  return [
+    {
+      type: "area",
+      key: `${unit.id}:${subset.key}:${mark.id}`,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      segments: [run],
+      fill: mark.fill,
+      fillOpacity: mark.opacity,
+      stroke: mark.stroke,
+      band: {
+        instanceKey: subset.key,
+        markId: mark.id,
+        orderField: axis.scale.field,
+        lowerField: "baseline",
+        upperField: `density of ${axis.scale.field} (bandwidth ${formatOrder(curve.bandwidth)})`,
+        rowIds: curve.rowIds,
+        skipped: [],
+        segments: 1,
+      },
+    },
+  ];
+}
+
+const orderFormat = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 2,
+});
+const formatOrder = (value: number) => orderFormat.format(value);
+
 /** The stand-in y scale of a dot row: every point at the middle line. */
 export const MIDDLE_SCALE: NumericScale = {
   id: "middle-line",
@@ -2256,7 +2440,8 @@ function numericGridNodes(
   xy: { x: NumericAxis; y: NumericAxis },
   frame: Bounds
 ): SceneNode[] {
-  if (xy.y.scale.id === MIDDLE_SCALE.id) return [];
+  if (xy.y.scale.id === MIDDLE_SCALE.id || xy.y.scale.id === DENSITY_SCALE.id)
+    return [];
   return tickValues(xy.y, frame.height, 36).map((value) => {
     const y = numericPixel(xy.y, value);
     return {
@@ -2373,8 +2558,9 @@ function numericAxisNodes(
       `x:${value}`
     )
   );
-  // A dot row has no y to label.
-  if (xy.y.scale.id === MIDDLE_SCALE.id) return nodes;
+  // A dot row has no y to label, and a density's height is relative.
+  if (xy.y.scale.id === MIDDLE_SCALE.id || xy.y.scale.id === DENSITY_SCALE.id)
+    return nodes;
   for (const value of tickValues(xy.y, frame.height, 36))
     nodes.push(
       label(

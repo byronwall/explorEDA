@@ -124,6 +124,8 @@ export interface AreaNode extends NodeBase {
   segments: { x: number; y0: number; y1: number; rowId: number }[][];
   fill: string;
   fillOpacity: number;
+  /** An outline along the upper edge, such as a ridge's crest. */
+  stroke?: string;
   band: BandDatum;
 }
 
