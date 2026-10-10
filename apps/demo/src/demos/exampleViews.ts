@@ -37,20 +37,29 @@ const values = (field: string, ...picked: string[]): Filter => ({
 function view(
   source: SavedDataStructure,
   name: string,
-  charts: Array<[id: string, layout: Layout, filters?: Filter[]]>
+  charts: Array<
+    [id: string, layout: Layout, filters?: Filter[], text?: Partial<Chart>]
+  >,
+  extra: Partial<SavedDataStructure> = {}
 ): ExampleView {
   const byId = new Map(source.charts.map((chart) => [chart.id, chart]));
   return {
     name,
     savedData: {
       ...source,
+      ...extra,
       metadata: { ...source.metadata, name },
-      charts: charts.map(([id, layout, filters]) => {
+      charts: charts.map(([id, layout, filters, text]) => {
         const chart = byId.get(id);
         if (!chart) {
           throw new Error(`Example view ${name} has no chart ${id}`);
         }
-        return { ...chart, layout, filters: filters ?? chart.filters };
+        return {
+          ...chart,
+          ...text,
+          layout,
+          filters: filters ?? chart.filters,
+        } as Chart;
       }),
     },
   };
@@ -88,6 +97,53 @@ export const penguinViews: ExampleView[] = [
     ["penguin-mass", at(0, 6, 6, 5)],
     ["penguin-flipper", at(6, 6, 6, 5)],
   ]),
+  // The same charts written up as a newspaper graphic.
+  view(
+    penguinDashboard,
+    "Field report",
+    [
+      [
+        "penguin-size",
+        at(0, 0, 7, 6),
+        undefined,
+        {
+          title: "Gentoo penguins are the heavyweights",
+          subtitle:
+            "Body mass (g) against flipper length (mm), 344 birds, Palmer Archipelago 2007–09",
+          note: "Source: Palmer Station LTER; Gorman, Williams and Fraser (2014)",
+        },
+      ],
+      [
+        "penguin-species",
+        at(7, 0, 5, 6),
+        undefined,
+        {
+          title: "Adelie make up almost half the sample",
+          subtitle: "Penguins measured, by species",
+        },
+      ],
+      [
+        "penguin-bill",
+        at(0, 6, 7, 6),
+        undefined,
+        {
+          title: "Bill shape tells the species apart",
+          subtitle: "Bill depth against bill length (mm)",
+          note: "Species that overlap in body size separate by bill shape.",
+        },
+      ],
+      [
+        "penguin-mass",
+        at(7, 6, 5, 6),
+        undefined,
+        {
+          title: "Chinstrap and Adelie weigh about the same",
+          subtitle: "Body mass (g) by species",
+        },
+      ],
+    ],
+    { theme: { id: "newsprint" } }
+  ),
 ];
 
 export const calendarViews: ExampleView[] = [
