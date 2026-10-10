@@ -1,5 +1,26 @@
+import { dateTimestamp } from "@/lib/dateTime";
 import { isMissingValue, isNumberLike } from "@/lib/numeric";
 import { datum } from "@/types/ChartTypes";
+
+const TIME_PART = String.raw`(?:[T ]\d{1,2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?: ?[AaPp][Mm])?(?: ?(?:Z|[+-]\d{2}:?\d{2}|UTC|GMT))?)?`;
+// 2025-01-10, 2025-01-10T08:00:00Z, 1/15/2025, 2025/01/15, 15.01.2025
+const NUMERIC_DATE = new RegExp(
+  String.raw`^(?:\d{4}[-/.]\d{1,2}[-/.]\d{1,2}|\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4})${TIME_PART}$`
+);
+const MONTH_NAME =
+  /\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sept?(?:ember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b/i;
+
+// Date.parse alone accepts labels such as "Depot 2" in V8, so a value must
+// also look like a date: a numeric date form or a month name with a number.
+export function isDateLike(value: datum): boolean {
+  if (typeof value !== "string") {
+    return false;
+  }
+  const text = value.trim();
+  const shaped =
+    NUMERIC_DATE.test(text) || (MONTH_NAME.test(text) && /\d/.test(text));
+  return shaped && !isNaN(dateTimestamp(text));
+}
 
 export type DataType = "numeric" | "categorical" | "datetime" | "boolean";
 
@@ -27,7 +48,7 @@ export function detectColumnType(columnData: {
   }
 
   // Check if all values are valid dates
-  if (nonNullValues.every((v) => !isNaN(Date.parse(String(v))))) {
+  if (nonNullValues.every(isDateLike)) {
     return "datetime";
   }
 
