@@ -444,9 +444,9 @@ export const examples: ExampleData[] = [
     description:
       "Six years of messages with 12 correspondents. Start from a blank artboard: add a title, build one strip of monthly squares, and repeat it for each correspondent.",
     dataset: { rows: "10,376 messages", fields: 5, source: "Synthetic" },
-    shows: ["Blank composition", "Text elements", "Edit and view modes"],
+    shows: ["Blank composition", "Repeated chart units", "Copy as PNG"],
     guide:
-      "Try this: open details on Report graphic, add a title and subtitle, and drag them into place.",
+      "Try this: open details on Report graphic, add a title and a chart unit, repeat it by Correspondent, then copy the PNG.",
     icon: LayoutTemplate,
     data: "/datasets/message-log.csv",
     savedData: messageDashboard,

@@ -55,6 +55,8 @@ export interface TextNode extends NodeBase {
   fontWeight: number;
   fill: string;
   anchor: "start" | "middle" | "end";
+  /** A paper-colored outline that keeps text legible over marks. */
+  halo?: string;
 }
 
 export interface RectNode extends NodeBase {
@@ -190,7 +192,12 @@ export function resolveComposition(
         break;
       }
       case "annotation": {
-        const note = resolveAnnotation(element, units, measureText);
+        const note = resolveAnnotation(
+          element,
+          units,
+          measureText,
+          definition.artboard.background
+        );
         nodes.push(...note.nodes);
         elements.push({
           id: element.id,
@@ -464,7 +471,8 @@ function glyphCenter(node: RectNode | CircleNode) {
 function resolveAnnotation(
   note: AnnotationElement,
   units: Map<string, ResolvedUnit>,
-  measureText: MeasureText
+  measureText: MeasureText,
+  paper: string
 ) {
   const nodes: SceneNode[] = [];
   const anchor = note.anchor;
@@ -570,6 +578,7 @@ function resolveAnnotation(
     fontWeight: 600,
     fill: note.color,
     anchor: "start",
+    halo: paper,
   });
   return {
     nodes,

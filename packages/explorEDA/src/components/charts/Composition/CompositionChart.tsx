@@ -1,4 +1,4 @@
-import { useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
@@ -15,6 +15,7 @@ import {
   useCompositionEditorStore,
 } from "./compositionEditorStore";
 import { CompositionSvg } from "./CompositionSvg";
+import { registerArtboard } from "./compositionOutput";
 import { makeCompositionTraceSource } from "./compositionTrace";
 import {
   findOverride,
@@ -104,6 +105,11 @@ export function CompositionChart({
   const scene = useMemo(
     () => resolveComposition(definition, measureCompositionText, data),
     [definition, data]
+  );
+  // Output copies the drawn artboard, so it matches what is on screen.
+  useEffect(
+    () => registerArtboard(settings.id, svgRef.current),
+    [settings.id, scene]
   );
   const source = useMemo(
     () => makeCompositionTraceSource(definition, scene, revision),

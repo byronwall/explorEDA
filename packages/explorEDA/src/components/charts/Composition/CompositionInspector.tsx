@@ -5,6 +5,7 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import {
   ArrowDown,
   ArrowUp,
+  ClipboardCopy,
   Heading1,
   Heading2,
   MessageSquareText,
@@ -51,6 +52,7 @@ import {
   type UnitElement,
 } from "./compositionTypes";
 import { ScalesSection } from "./ScaleInspector";
+import { copyArtboardPng } from "./compositionOutput";
 import { OverrideProperties, UnitProperties } from "./UnitInspector";
 import type { CompositionSettings } from "./definition";
 import {
@@ -118,6 +120,9 @@ export function CompositionInspector({
   const { mode, selection } = useCompositionEditor(settings.id);
   const [openScaleId, setOpenScaleId] = useState<string>();
   const [openCalcId, setOpenCalcId] = useState<string>();
+  const [copy, setCopy] = useState<
+    { state: "copying" } | { state: "done" | "failed"; message: string }
+  >();
   const data = useCompositionData(settings);
   const profiles = useDataLayer((state) => state.fieldProfiles);
   const setMode = useCompositionEditorStore((state) => state.setMode);
@@ -168,7 +173,44 @@ export function CompositionInspector({
           options={MODE_OPTIONS}
           onChange={(next) => setMode(settings.id, next)}
         />
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-7"
+          disabled={copy?.state === "copying" || !definition.elements.length}
+          tooltip="Copy the finished graphic as a PNG at twice its artboard size, for reports and slides. Selection boxes are left out."
+          onClick={() => {
+            setCopy({ state: "copying" });
+            copyArtboardPng(settings.id)
+              .then(({ width, height }) =>
+                setCopy({
+                  state: "done",
+                  message: `Copied a ${width} × ${height} PNG.`,
+                })
+              )
+              .catch((error: unknown) =>
+                setCopy({
+                  state: "failed",
+                  message: `Copy failed: ${
+                    error instanceof Error ? error.message : String(error)
+                  } Your composition is unchanged; try again.`,
+                })
+              );
+          }}
+        >
+          <ClipboardCopy className="h-3.5 w-3.5" aria-hidden="true" />
+          {copy?.state === "copying" ? "Copying…" : "Copy PNG"}
+        </Button>
       </div>
+      {copy && copy.state !== "copying" && (
+        <p
+          className="eda-composition-copy-status"
+          data-state={copy.state}
+          role={copy.state === "failed" ? "alert" : "status"}
+        >
+          {copy.message}
+        </p>
+      )}
 
       <section className="eda-setting-section" aria-label="Add elements">
         <h5>Add</h5>
