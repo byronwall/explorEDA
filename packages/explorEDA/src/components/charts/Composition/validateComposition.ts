@@ -47,7 +47,9 @@ function isMark(value: unknown) {
       isString(value.fill) &&
       (value.labelField === undefined || isString(value.labelField)) &&
       isNumber(value.labelEvery) &&
-      value.labelEvery >= 0
+      value.labelEvery >= 0 &&
+      (value.show === undefined ||
+        oneOf(value.show, ["all", "first", "last", "min", "max"]))
     );
   if (value.type === "path")
     return (
@@ -94,7 +96,10 @@ function isUnitElement(value: Value) {
     isNumber(repeat.columns) &&
     repeat.columns >= 1 &&
     isNumber(repeat.gap) &&
-    oneOf(repeat.order, ["count", "label"]) &&
+    oneOf(repeat.order, ["count", "label", "value"]) &&
+    (repeat.orderCalcId === undefined || isString(repeat.orderCalcId)) &&
+    (repeat.direction === undefined ||
+      oneOf(repeat.direction, ["asc", "desc"])) &&
     isNumber(repeat.limit) &&
     repeat.limit >= 1
   );
@@ -148,8 +153,18 @@ function isCalculation(value: unknown) {
     isRecord(value) &&
     isString(value.id) &&
     isString(value.name) &&
-    oneOf(value.aggregation, ["count", "sum", "average", "min", "max"]) &&
+    oneOf(value.aggregation, [
+      "count",
+      "sum",
+      "average",
+      "min",
+      "max",
+      "first",
+      "last",
+      "change",
+    ]) &&
     (value.field === undefined || isString(value.field)) &&
+    (value.orderField === undefined || isString(value.orderField)) &&
     oneOf(value.population, ["repeat", "composition"]) &&
     oneOf(value.filters, ["follow", "ignore"])
   );

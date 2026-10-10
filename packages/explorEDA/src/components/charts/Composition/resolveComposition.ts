@@ -210,7 +210,8 @@ export function resolveComposition(
           element,
           units,
           measureText,
-          definition.artboard.background
+          definition,
+          data
         );
         nodes.push(...note.nodes);
         elements.push({
@@ -521,14 +522,17 @@ function resolveAnnotation(
   note: AnnotationElement,
   units: Map<string, ResolvedUnit>,
   measureText: MeasureText,
-  paper: string
+  definition: CompositionDefinition,
+  data: CompositionData
 ) {
+  const paper = definition.artboard.background;
   const nodes: SceneNode[] = [];
   const anchor = note.anchor;
   let point: { x: number; y: number } | undefined;
   let glyph: GlyphDatum | undefined;
   let missing: string | undefined;
-  let text = note.text;
+  // Calculation tokens such as {Total} fill as they do in page text.
+  let text = fillCalcTokens(note.text, definition, data);
   if (anchor.kind === "page") {
     point = { x: note.x, y: note.y };
   } else {

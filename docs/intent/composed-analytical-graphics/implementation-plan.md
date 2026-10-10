@@ -46,16 +46,16 @@ Snapshot: `claude/composed-chart-audit-62bcc8` at `29b402349f7ee1214cb5f71dc17bc
 The composition editor and direct editor entry are present. PR #215 is already in this branch history.
 The original milestone sequence remains; the continuation uses the existing implementation below.
 
-| Existing seam | Planned use |
-| --- | --- |
-| `src/charts/registry.ts`, `src/types/ChartTypes.ts` | Register one composition type and its settings |
-| `src/components/charts/ChartRenderer.tsx` | Render the composition through the existing chart dispatch |
-| `src/components/ChartGridLayout.tsx` | Host the complete composition; do not make each element a dashboard tile |
-| `src/providers/DataLayerProvider.tsx`, `src/lib/aggregates.ts` | Reuse data, filtering, and contributor metadata where their contracts fit |
-| `src/components/charts/FacetRelated/facetLayout.ts` | Reuse repeat placement calculations |
-| `src/components/charts/ScatterPlot/scatterPlan.ts` | Follow the existing pure planning pattern |
-| `src/components/charts/trace/ChartTraceScope.tsx`, `traceTypes.ts`, `ChartTracePanel.tsx` | Add composition inspection to the current tracing surface |
-| `src/utils/saveDataUtils.ts`, `src/types/SavedDataStructure.ts` | Carry definitions through save, validation, and restore |
+| Existing seam                                                                             | Planned use                                                               |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `src/charts/registry.ts`, `src/types/ChartTypes.ts`                                       | Register one composition type and its settings                            |
+| `src/components/charts/ChartRenderer.tsx`                                                 | Render the composition through the existing chart dispatch                |
+| `src/components/ChartGridLayout.tsx`                                                      | Host the complete composition; do not make each element a dashboard tile  |
+| `src/providers/DataLayerProvider.tsx`, `src/lib/aggregates.ts`                            | Reuse data, filtering, and contributor metadata where their contracts fit |
+| `src/components/charts/FacetRelated/facetLayout.ts`                                       | Reuse repeat placement calculations                                       |
+| `src/components/charts/ScatterPlot/scatterPlan.ts`                                        | Follow the existing pure planning pattern                                 |
+| `src/components/charts/trace/ChartTraceScope.tsx`, `traceTypes.ts`, `ChartTracePanel.tsx` | Add composition inspection to the current tracing surface                 |
+| `src/utils/saveDataUtils.ts`, `src/types/SavedDataStructure.ts`                           | Carry definitions through save, validation, and restore                   |
 
 Paths above are relative to `packages/explorEDA/`. Those integration points already host the first slice.
 Continue in `src/components/charts/Composition/`:
@@ -143,13 +143,13 @@ This is the first release boundary. Reverting this slice removes only the new co
 A stack of five PRs builds Milestone 1 as a vertical slice in `packages/explorEDA/src/components/charts/Composition/`.
 The demo's **Compose a report graphic** example (`?example=message-log`) opens a blank composition beside linked views of a synthetic 10,376-row message log.
 
-| PR | Adds |
-| --- | --- |
-| 1 | The `composition` chart type, artboard, text elements, edit and view modes, layer list, drag and arrow-key placement |
-| 2 | Chart units: a frame of rect or circle marks, named position and value scales (shared by default, per unit optional), and a repeat rule as rows, columns, or a grid |
-| 3 | Calculations with separate population (each repeat or whole graphic) and filter policy (follow or ignore); repeat label values, `{Name}` text tokens, guide rules, and annotations anchored to the page, a frame, or a data glyph |
-| 4 | Repeat overrides keyed by subset value (nudge, accent, opacity, bold label) with reset; view-mode click to select a repeat across the workspace; Alt-click and Alt-Enter tracing with source rows |
-| 5 | Copy PNG to the clipboard at twice the artboard size, drawn from the viewed artboard without editing overlays |
+| PR  | Adds                                                                                                                                                                                                                              |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | The `composition` chart type, artboard, text elements, edit and view modes, layer list, drag and arrow-key placement                                                                                                              |
+| 2   | Chart units: a frame of rect or circle marks, named position and value scales (shared by default, per unit optional), and a repeat rule as rows, columns, or a grid                                                               |
+| 3   | Calculations with separate population (each repeat or whole graphic) and filter policy (follow or ignore); repeat label values, `{Name}` text tokens, guide rules, and annotations anchored to the page, a frame, or a data glyph |
+| 4   | Repeat overrides keyed by subset value (nudge, accent, opacity, bold label) with reset; view-mode click to select a repeat across the workspace; Alt-click and Alt-Enter tracing with source rows                                 |
+| 5   | Copy PNG to the clipboard at twice the artboard size, drawn from the viewed artboard without editing overlays                                                                                                                     |
 
 How the slice answers the plan's open choices:
 
@@ -213,7 +213,12 @@ A path orders a repeat's rows by one field, ties by row order, and breaks at a m
 Annotations gained an `at` pick that follows the glyph whose label matches a typed value, such as a year, and guides place at a numeric x.
 Blank authoring was checked in the browser: X–Y unit, title, and a 2008 callout from the Add chart dialog.
 
-Not built yet: label placement from a side field, path curves, and horizontal guides on y. The technology sparkline proof is the next step.
+Not built yet: label placement from a side field, path curves, and horizontal guides on y.
+
+The technology sparkline table (research entry 14) ships as `?example=tech-sparklines`, prepared by `apps/data-samples/prepare/big-tech.ts`.
+It added three reusable operations: repeats ordered by a per-repeat calculation (low or high first, reading every row so filters do not reorder), `first`, `last`, and `change` calculations ordered by a field, and point marks that show only the first, last, lowest, or highest row.
+Observation index spaces each company's points with a per-unit x domain; the y domain is shared from zero, as the source's `same_limit` default. Prices are split-adjusted in the source.
+Annotations now fill `{Calculation}` tokens as page text does.
 
 ## Milestone 3: Layer interval bands around a line
 

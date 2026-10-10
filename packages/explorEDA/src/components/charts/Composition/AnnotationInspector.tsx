@@ -63,7 +63,16 @@ const AGGREGATIONS: { value: CalcAggregation; label: string }[] = [
   { value: "average", label: "Average" },
   { value: "min", label: "Minimum" },
   { value: "max", label: "Maximum" },
+  { value: "first", label: "First value, in order" },
+  { value: "last", label: "Last value, in order" },
+  { value: "change", label: "Change from first to last, %" },
 ];
+
+const ORDERED_AGGREGATIONS = new Set<CalcAggregation>([
+  "first",
+  "last",
+  "change",
+]);
 
 /** The calculations list, with the open one's scope and current value. */
 export function CalculationsSection({
@@ -214,7 +223,7 @@ function CalculationProperties({
   );
   const perRepeat =
     calc.population === "repeat" && unit
-      ? repeatSubsets(unit, data).map((subset) => ({
+      ? repeatSubsets(unit, data, definition).map((subset) => ({
           key: subset.key,
           result: evaluateCalc(calc, data, subset),
         }))
@@ -254,6 +263,20 @@ function CalculationProperties({
             label=""
             value={calc.field ?? ""}
             onChange={(field) => onChange({ field })}
+          />
+        </>
+      )}
+      {ORDERED_AGGREGATIONS.has(calc.aggregation) && (
+        <>
+          <Label>Ordered by</Label>
+          <FieldSelector
+            label=""
+            placeholder="Row order"
+            value={calc.orderField ?? ""}
+            allowClear
+            onChange={(orderField) =>
+              onChange({ orderField: orderField || undefined })
+            }
           />
         </>
       )}
@@ -489,7 +512,7 @@ export function AnnotationProperties({
       ? undefined
       : units.find((item) => item.id === anchor.unitId);
   const keys = unit
-    ? repeatSubsets(unit, data).map((subset) => subset.key)
+    ? repeatSubsets(unit, data, definition).map((subset) => subset.key)
     : [];
   const setAnchor = (kind: AnnotationAnchor["kind"]) => {
     if (kind === anchor.kind) return;
@@ -507,7 +530,7 @@ export function AnnotationProperties({
     if (!target) return;
     const instanceKey =
       anchor.kind === "page"
-        ? (repeatSubsets(target, data)[0]?.key ?? "all")
+        ? (repeatSubsets(target, data, definition)[0]?.key ?? "all")
         : anchor.instanceKey;
     onChange({
       anchor:

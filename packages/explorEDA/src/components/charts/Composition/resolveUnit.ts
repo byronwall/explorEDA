@@ -18,6 +18,7 @@ import {
 } from "./compositionTypes";
 import type { Bounds, PathNode, SceneNode } from "./resolveComposition";
 import { evaluateCalc, type CalcResult } from "./calculations";
+import { MISSING, orderedRows } from "./ordering";
 
 /** The rows a composition draws from. */
 export interface CompositionData {
@@ -97,7 +98,6 @@ export interface ResolvedUnit {
   instances: ResolvedInstance[];
 }
 
-const MISSING = "Missing";
 const GRID = "#e6e8eb";
 
 /** Rows of one repeat. */
@@ -127,7 +127,7 @@ export function resolveUnit(
   unit: UnitElement,
   data: CompositionData
 ): ResolvedUnit {
-  const subsets = repeatSubsets(unit, data);
+  const subsets = repeatSubsets(unit, data, definition);
   const scale = (id: string) =>
     definition.scales.find((item) => item.id === id);
   const marks: ResolvedMark[] = [];
@@ -443,10 +443,15 @@ function unionBounds(instances: ResolvedInstance[], unit: UnitElement) {
   return { x: left, y: top, width: right - left, height: bottom - top };
 }
 
-/** Splits rows by the repeat field, in the rule's order, up to its limit. */
+/**
+ * Splits rows by the repeat field, in the rule's order, up to its limit. The
+ * value order needs the definition for its calculation; without it, repeats
+ * fall back to label order.
+ */
 export function repeatSubsets(
   unit: UnitElement,
-  data: CompositionData
+  data: CompositionData,
+  definition?: CompositionDefinition
 ): Subset[] {
   const field = unit.repeat.field;
   if (!field)
@@ -472,11 +477,36 @@ export function repeatSubsets(
   }
   for (const id of data.liveIds) groups.get(keyOf(id))?.liveIds.push(id);
   const subsets = [...groups.values()];
-  subsets.sort((a, b) =>
-    unit.repeat.order === "count"
-      ? b.allIds.length - a.allIds.length || compareLabels(a.key, b.key)
-      : compareLabels(a.key, b.key)
-  );
+  const calc =
+    unit.repeat.order === "value"
+      ? definition?.calculations.find(
+          (item) => item.id === unit.repeat.orderCalcId
+        )
+      : undefined;
+  if (calc) {
+    // Repeats keep their place while filtering: the order reads every row.
+    const values = new Map(
+      subsets.map((subset) => [
+        subset.key,
+        evaluateCalc(calc, data, { ...subset, liveIds: subset.allIds }).value,
+      ])
+    );
+    const sign = unit.repeat.direction === "desc" ? -1 : 1;
+    subsets.sort((a, b) => {
+      const va = values.get(a.key);
+      const vb = values.get(b.key);
+      if (va === undefined)
+        return vb === undefined ? compareLabels(a.key, b.key) : 1;
+      if (vb === undefined) return -1;
+      return sign * (va - vb) || compareLabels(a.key, b.key);
+    });
+  } else {
+    subsets.sort((a, b) =>
+      unit.repeat.order === "count"
+        ? b.allIds.length - a.allIds.length || compareLabels(a.key, b.key)
+        : compareLabels(a.key, b.key)
+    );
+  }
   return subsets.slice(0, Math.max(1, unit.repeat.limit));
 }
 
@@ -714,55 +744,6 @@ function fixedLimits(axis: NumericAxis) {
   return axis.scale.min !== undefined || axis.scale.max !== undefined;
 }
 
-/** Reads a row's order value: a number, or a date as its timestamp. */
-function orderReader(column: Record<number, datum>) {
-  return (id: number) => {
-    const value = column[id];
-    return finiteNumber(value) ?? timestampOf(value);
-  };
-}
-
-/**
- * The rows of a subset in the order of a field, ties by row order. Rows
- * without an order value come last, flagged, so paths can skip them.
- */
-export function orderedRows(
-  ids: number[],
-  column: Record<number, datum> | undefined
-): { id: number; order?: number; label: string }[] {
-  if (!column) return ids.map((id) => ({ id, label: String(id) }));
-  const read = orderReader(column);
-  const rows = ids.map((id) => {
-    const order = read(id);
-    const raw = column[id];
-    return {
-      id,
-      order,
-      label:
-        order === undefined
-          ? MISSING
-          : typeof raw === "string" && raw.trim()
-            ? raw.trim()
-            : formatOrder(order),
-    };
-  });
-  rows.sort((a, b) => {
-    if (a.order === undefined) return b.order === undefined ? a.id - b.id : 1;
-    if (b.order === undefined) return -1;
-    return a.order - b.order || a.id - b.id;
-  });
-  return rows;
-}
-
-// Order values label points and match `at` anchors, so a year stays "2008".
-const orderFormat = new Intl.NumberFormat("en-US", {
-  maximumFractionDigits: 2,
-  useGrouping: false,
-});
-function formatOrder(value: number) {
-  return orderFormat.format(value);
-}
-
 function pathNodes(
   unit: UnitElement,
   mark: PathMark,
@@ -835,7 +816,7 @@ function pointNodes(
   const clip = fixedLimits(axes.x) || fixedLimits(axes.y) ? frame : undefined;
   const nodes: SceneNode[] = [];
   let drawn = 0;
-  for (const row of rows) {
+  for (const row of pickShown(rows, mark.show ?? "all", xs, ys)) {
     const x = finiteNumber(xs[row.id]);
     const y = finiteNumber(ys[row.id]);
     if (x === undefined || y === undefined) continue;
@@ -887,6 +868,34 @@ function pointNodes(
     drawn += 1;
   }
   return nodes;
+}
+
+/**
+ * The rows a point mark draws: every row with both coordinates, or only the
+ * first or last in order, or the lowest or highest by y. Ties on y keep the
+ * earliest row.
+ */
+function pickShown(
+  rows: ReturnType<typeof orderedRows>,
+  show: NonNullable<PointMark["show"]>,
+  xs: Record<number, datum>,
+  ys: Record<number, datum>
+) {
+  const drawable = rows.filter(
+    (row) =>
+      finiteNumber(xs[row.id]) !== undefined &&
+      finiteNumber(ys[row.id]) !== undefined
+  );
+  if (show === "all" || !drawable.length) return drawable;
+  if (show === "first") return [drawable[0]!];
+  if (show === "last") return [drawable[drawable.length - 1]!];
+  let picked = drawable[0]!;
+  for (const row of drawable) {
+    const y = finiteNumber(ys[row.id])!;
+    const best = finiteNumber(ys[picked.id])!;
+    if (show === "max" ? y > best : y < best) picked = row;
+  }
+  return [picked];
 }
 
 /** Faint horizontal rules at the y ticks, under the marks. */

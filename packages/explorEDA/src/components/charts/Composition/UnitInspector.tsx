@@ -57,6 +57,49 @@ const ORDERS = [
     label: "A–Z",
     tooltip: "Order the subsets by name, with numbers in numeric order",
   },
+  {
+    value: "value" as const,
+    label: "By value",
+    tooltip:
+      "Order the subsets by a per-repeat calculation, such as each one's change or total. Reads every row, so filters do not reorder.",
+  },
+];
+
+const DIRECTIONS = [
+  {
+    value: "asc" as const,
+    label: "Low first",
+    tooltip: "Smallest value at the top or left",
+  },
+  {
+    value: "desc" as const,
+    label: "High first",
+    tooltip: "Largest value at the top or left",
+  },
+];
+
+const SHOW_OPTIONS = [
+  { value: "all" as const, label: "All", tooltip: "Draw every row" },
+  {
+    value: "first" as const,
+    label: "First",
+    tooltip: "Draw only the first row in order",
+  },
+  {
+    value: "last" as const,
+    label: "Last",
+    tooltip: "Draw only the last row in order",
+  },
+  {
+    value: "min" as const,
+    label: "Low",
+    tooltip: "Draw only the row with the lowest y",
+  },
+  {
+    value: "max" as const,
+    label: "High",
+    tooltip: "Draw only the row with the highest y",
+  },
 ];
 
 const SHOWN = [
@@ -196,8 +239,50 @@ export function UnitProperties({
                 label="Repeat order"
                 value={unit.repeat.order}
                 options={ORDERS}
-                onChange={(order) => repeat({ order })}
+                onChange={(order) =>
+                  repeat({
+                    order,
+                    orderCalcId:
+                      order === "value"
+                        ? (unit.repeat.orderCalcId ??
+                          calculations.find(
+                            (calc) => calc.population === "repeat"
+                          )?.id)
+                        : unit.repeat.orderCalcId,
+                  })
+                }
               />
+              {unit.repeat.order === "value" && (
+                <>
+                  <Label htmlFor={`${nameId}-order-calc`}>Value</Label>
+                  <select
+                    id={`${nameId}-order-calc`}
+                    className="eda-composition-select"
+                    value={unit.repeat.orderCalcId ?? ""}
+                    onChange={(event) =>
+                      repeat({ orderCalcId: event.target.value || undefined })
+                    }
+                  >
+                    {!calculations.length && (
+                      <option value="">
+                        Add a per-repeat calculation first
+                      </option>
+                    )}
+                    {calculations.map((calc) => (
+                      <option key={calc.id} value={calc.id}>
+                        {calc.name}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="eda-setting-label">Direction</span>
+                  <Segmented
+                    label="Repeat direction"
+                    value={unit.repeat.direction ?? "asc"}
+                    options={DIRECTIONS}
+                    onChange={(direction) => repeat({ direction })}
+                  />
+                </>
+              )}
               <NumberSetting
                 label="Most units"
                 min={1}
@@ -651,6 +736,15 @@ function XyFields({
             max={40}
             value={mark.radius}
             onChange={(radius) => change({ radius })}
+          />
+          <span className="eda-setting-label">Show</span>
+          <Segmented
+            label={`${mark.name} rows shown`}
+            value={mark.show ?? "all"}
+            options={SHOW_OPTIONS}
+            onChange={(show) =>
+              change({ show: show === "all" ? undefined : show })
+            }
           />
           <Label>Label with</Label>
           <FieldSelector
