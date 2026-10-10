@@ -4,11 +4,11 @@
     "title": "Chart and rendering documentation",
     "slug": "chart-and-rendering-docs",
     "scale": "capability",
-    "current_phase": "execution",
+    "current_phase": "reconciliation",
     "last_updated": "2026-10-10",
     "summary": "Task-led pages for every registered view and an accurate rendering guide, authored as build-time MDX in the demo with on-demand live examples.",
-    "status": "active",
-    "next_action": "Align the deploy toolchain (M2), then port the three shipped guides to MDX with one live example (M3). Byron to decide the docs URL form and the AGENTS.md image and tooltip rules."
+    "status": "cancelled",
+    "next_action": "Superseded by living-product-docs. Ready to retire on Byron's approval; planning files are kept until then."
   },
   "artifacts": {
     "intent_brief": {
@@ -476,6 +476,16 @@
       "date": "2026-10-10",
       "event": "research-integrated",
       "change": "Copied the ChatGPT Pro documentation-system research into docs/research/. Adopted its build-time MDX + on-demand iframe recommendation with Starlight fallback, but reframed the proof as a port of the three TSX guides that shipped after the research's inspected commit. Extended scope from eleven to twenty registered types, added a deploy-toolchain milestone, cut subpath-base support, and replaced the hand-kept example table with coverage.ts. Rewrote intent, shape, and plan; renumbered milestones (old M2/M3 are now M4-M6)."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "status-changed",
+      "status": "cancelled",
+      "previous_status": "active",
+      "reason": "Byron approved superseding this initiative with living-product-docs, which widens scope to flows and surfaces and requires generated, build-gated docs.",
+      "evidence": [
+        "User decision 2026-10-10 in the living-product-docs session"
+      ]
     }
   ],
   "catalogue": [
@@ -499,5 +509,36 @@
     "heatmap",
     "ecdf",
     "composition"
-  ]
+  ],
+  "closure": {
+    "summary": "Cancelled as superseded by living-product-docs after M1 shipped.",
+    "reason": "Scope widened and the correctness bar raised; remaining milestones moved.",
+    "evidence": [
+      "M1 shipped: apps/demo/src/ChartDocs.tsx (scatter, bar, rendering at ?view=docs)",
+      "Research saved: docs/research/documentation-system-recommendation.md",
+      "Not run: retirement validation"
+    ],
+    "reconciliation": [
+      {
+        "claim": "Page per registered type",
+        "disposition": "changed",
+        "evidence": "Moved to living-product-docs M5"
+      },
+      {
+        "claim": "Rendering-system guide",
+        "disposition": "delivered",
+        "evidence": "ChartDocs.tsx rendering topic; developer guide continues in living-product-docs M6"
+      },
+      {
+        "claim": "Deploy toolchain and MDX port (2026-10-10 revision)",
+        "disposition": "changed",
+        "evidence": "living-product-docs M1-M2"
+      }
+    ],
+    "documentation": [],
+    "follow_ups": [
+      "docs/intent/living-product-docs/implementation-plan.md"
+    ],
+    "retirement_files": []
+  }
 }
