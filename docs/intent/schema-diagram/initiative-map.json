@@ -1,0 +1,425 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "One diagram of a project's tables, links, calculations, and views",
+    "slug": "schema-diagram",
+    "scale": "capability",
+    "current_phase": "execution",
+    "last_updated": "2026-10-10",
+    "summary": "An ER-style diagram that doubles as the model editor, in a very wide drawer like Rows, for projects and single tables: tables, fields, relationships, calculations, and views, with lineage both ways, in-place editing through the existing editors, and an Add source path.",
+    "status": "active",
+    "next_action": "Implement milestones 1–7 as stacked PRs, each with verification screenshots."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-10"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-10"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-10-10"
+    }
+  },
+  "sources": [
+    {
+      "id": "request-2026-10-10",
+      "type": "direct-user-input",
+      "location": "software-design-sleuth-full invocation, 2026-10-10",
+      "anchor": "single schema viewer; node+edge+field list; ER diagram; tables, fields, relationships, calculations; ideally downstream usage by view; universal viewer of all backing defs; crisp 2d",
+      "authority": "direct intent"
+    },
+    {
+      "id": "repo-project-model",
+      "type": "repository",
+      "location": "packages/explorEDA/src/types/AnalysisProject.ts",
+      "anchor": "AnalysisProject sources, relationships, queries, steps, AnalysisView, AnalysisField.origin",
+      "authority": "current reality"
+    },
+    {
+      "id": "repo-schema-panel",
+      "type": "repository",
+      "location": "packages/explorEDA/src/components/project/ProjectSchemaPanel.tsx; ExplorEdaProject.tsx",
+      "anchor": "card-list Schema panel with relationship editing; wide side panel; one view per component",
+      "authority": "current reality"
+    },
+    {
+      "id": "repo-field-usage",
+      "type": "repository",
+      "location": "packages/explorEDA/src/components/project/settingsCompatibility.ts",
+      "anchor": "incompatibleSettingsFields walks charts, filters, facets, Rows, aggregates, calculations",
+      "authority": "current reality"
+    },
+    {
+      "id": "repo-demo-views",
+      "type": "repository",
+      "location": "apps/demo/src/SavedViewsWorkspace.tsx; apps/demo/src/demos/multiSourceShop.ts",
+      "anchor": "demo holds views as session tabs; shop fixture with four tables and three queries",
+      "authority": "current reality"
+    },
+    {
+      "id": "feedback-2026-10-10",
+      "type": "direct-user-input",
+      "location": "user reply, 2026-10-10",
+      "anchor": "include single table, render a table showing the fields; add a new data source from that view; really wide surface like the large rows viewer",
+      "authority": "direct intent, supersedes open questions"
+    },
+    {
+      "id": "repo-rows-drawer",
+      "type": "repository",
+      "location": "packages/explorEDA/src/components/RowsPeek.tsx; index.css .eda-rows-peek; PlotManager.tsx",
+      "anchor": "fixed full-height drawer leaving an 80px chart strip; exclusive with side panels",
+      "authority": "current reality"
+    },
+    {
+      "id": "feedback-2026-10-10b",
+      "type": "direct-user-input",
+      "location": "user reply, 2026-10-10",
+      "anchor": "get the visuals in place early; explorEDA is highly visual; working and feeling good earlier than later",
+      "authority": "direct intent"
+    },
+    {
+      "id": "feedback-2026-10-10c",
+      "type": "direct-user-input",
+      "location": "user reply, 2026-10-10",
+      "anchor": "schema viewer doubles as an editor; editable things can be edited from the schema viewer",
+      "authority": "direct intent, supersedes read-only boundary"
+    },
+    {
+      "id": "repo-editors",
+      "type": "repository",
+      "location": "components/calculations/CalculationEditor.tsx; providers/DataLayerProvider.tsx updateFieldSettings; components/project/ProjectSchemaPanel.tsx; components/project/queryEditing.ts",
+      "anchor": "existing calculation editor, field settings write path, relationship proposal and match counts, replaceQuery",
+      "authority": "current reality"
+    },
+    {
+      "id": "feedback-2026-10-10d",
+      "type": "direct-user-input",
+      "location": "user reply, 2026-10-10",
+      "anchor": "query steps need to get into the schema viewer; universal, all in one; starting a new session on promotion is fine",
+      "authority": "direct intent"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "c1",
+        "text": "One surface shows the whole project's backing definitions.",
+        "kind": "goal",
+        "source": "request-2026-10-10",
+        "core": true
+      },
+      {
+        "id": "c2",
+        "text": "Node + edge + field-list presentation, ER-diagram style.",
+        "kind": "settled-mechanism",
+        "source": "request-2026-10-10",
+        "core": true
+      },
+      {
+        "id": "c3",
+        "text": "Shows tables, fields, relationships, and calculations.",
+        "kind": "requirement",
+        "source": "request-2026-10-10",
+        "core": true
+      },
+      {
+        "id": "c4",
+        "text": "Shows downstream usage of fields by view.",
+        "kind": "desired",
+        "source": "request-2026-10-10",
+        "note": "user said 'ideally'"
+      },
+      {
+        "id": "c5",
+        "text": "Crisp, stable 2D layout.",
+        "kind": "quality-bar",
+        "source": "request-2026-10-10",
+        "core": true
+      },
+      {
+        "id": "c6",
+        "text": "Single-table workspaces render as one table showing its fields.",
+        "kind": "requirement",
+        "source": "feedback-2026-10-10",
+        "core": true
+      },
+      {
+        "id": "c7",
+        "text": "A user can add a new data source from the diagram.",
+        "kind": "requirement",
+        "source": "feedback-2026-10-10"
+      },
+      {
+        "id": "c8",
+        "text": "The diagram uses a very wide surface like the Rows viewer.",
+        "kind": "settled-mechanism",
+        "source": "feedback-2026-10-10",
+        "core": true
+      },
+      {
+        "id": "c9",
+        "text": "The diagram must look and feel right early; visuals lead the sequence.",
+        "kind": "priority",
+        "source": "feedback-2026-10-10b",
+        "core": true
+      },
+      {
+        "id": "c10",
+        "text": "The schema viewer doubles as an editor: whatever is editable can be edited from it.",
+        "kind": "requirement",
+        "source": "feedback-2026-10-10c",
+        "core": true
+      },
+      {
+        "id": "c11",
+        "text": "Query steps are shown and edited in the diagram; it is the all-in-one model surface.",
+        "kind": "requirement",
+        "source": "feedback-2026-10-10d",
+        "core": true
+      }
+    ],
+    "themes": ["lineage", "project overview", "field-level detail"],
+    "conflicts": [
+      {
+        "claims": [
+          "earlier shape boundary: read-only, relationship editing below cut line"
+        ],
+        "resolution": "Superseded by c10 on 2026-10-10; editing is in scope and reuses existing editors."
+      }
+    ],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "Large: the diagram, an editor layer built on the existing editors, lineage, and one table-to-project promotion path. No new runtime dependency.",
+    "problem": "Project definitions, calculations, and view usage are spread across the Schema panel, Query panel, and view settings; nothing answers what uses a field.",
+    "recommended_shape": "Pure buildSchemaGraph model feeding a fixed-column SVG diagram in a wide drawer shared with Rows, for projects and single tables. Selection opens an anchored nonmodal inspector that edits fields, keys, relationships, and calculations through existing write paths; lineage focus and uses list; host-backed Add source with single-table promotion.",
+    "counterproposal": "Extend the existing Schema panel card list with per-field 'used by' lists and no diagram. Cheaper, but fails the explicit ER-diagram and crisp-2D intent; its usage model is the same, so the graph model is built first either way.",
+    "success_moves": [
+      "Lead with a polished visual slice (tables, fields, relationships) drawn from data the project states directly, reviewed in screenshots at three widths and two themes with an impeccable pass.",
+      "Prove the editor model (selection, anchored inspector, one undo step per edit, read-only) on tables and relationships before lineage adds columns.",
+      "Reuse, never fork, editing: move relationship proposal and match counts out of ProjectSchemaPanel and step building out of QueryRelationshipBuilder into shared logic; open the existing calculation editor; use updateFieldSettings; route project edits through onProjectChange.",
+      "Keep buildSchemaGraph pure and tested, reuse incompatibleSettingsFields' walk as settingsFieldUsage, and draw unresolved references as stubs.",
+      "Use fixed layered columns instead of a layout library.",
+      "Keep schema.onProjectChange, views, and onAddSource optional; promotion, the biggest saved-state change, comes last with a round-trip test."
+    ],
+    "first_proof": {
+      "question": "Does a hand-rolled diagram of tables, fields, and relationships in the wide drawer look and feel like explorEDA on real demo data?",
+      "artifact": "Schema drawer on the shop, World Bank, flights, and a CSV import; screenshots at 1280, 783, and 390 px in light and dark; impeccable critique.",
+      "decision_rule": "If cards read at a glance and lines land on the right rows, add selection and editing on this drawing next; otherwise iterate on visual language and ordering first."
+    },
+    "rabbit_holes": [
+      "General graph layout and edge routing",
+      "Forking editor logic between the Schema panel and the diagram",
+      "Query structure editing in the diagram",
+      "Per-keystroke undo steps from inline inputs",
+      "Parameterized queries with missing bindings hiding fields",
+      "Positional row keys through single-table promotion"
+    ],
+    "open_decisions": [],
+    "decision_log": [
+      {
+        "date": "2026-10-10",
+        "decision": "Include single-table workspaces as one table node.",
+        "source": "feedback-2026-10-10"
+      },
+      {
+        "date": "2026-10-10",
+        "decision": "Use a very wide drawer shared with Rows instead of the wide side panel.",
+        "source": "feedback-2026-10-10"
+      },
+      {
+        "date": "2026-10-10",
+        "decision": "Add source from the diagram, host-owned file picking, single-table promotion keeps charts.",
+        "source": "feedback-2026-10-10"
+      },
+      {
+        "date": "2026-10-10",
+        "decision": "Visuals lead: milestone 1 is a polished drawing of tables and relationships; lineage model grows behind the drawing in milestone 2.",
+        "source": "feedback-2026-10-10b"
+      },
+      {
+        "date": "2026-10-10",
+        "decision": "The diagram doubles as an editor; relationship editing moves from below the cut line into milestone 2; calculation editing in milestone 3.",
+        "source": "feedback-2026-10-10c"
+      },
+      {
+        "date": "2026-10-10",
+        "decision": "Query steps are added, edited, and removed in the diagram (milestone 4).",
+        "source": "feedback-2026-10-10d"
+      },
+      {
+        "date": "2026-10-10",
+        "decision": "Promotion starts a new project session; the single-table session stays restorable.",
+        "source": "feedback-2026-10-10d"
+      }
+    ]
+  },
+  "implementation": {
+    "status": "planned",
+    "repository_snapshot": {
+      "root": "packages/explorEDA",
+      "revision": "29b4023",
+      "worktree_status": "clean",
+      "subsystems": [
+        "lib/analysis/evaluateProject.ts",
+        "components/project/ProjectSchemaPanel.tsx",
+        "components/project/settingsCompatibility.ts",
+        "components/ExplorEdaProject.tsx",
+        "lib/calculations/parser/semantics.ts",
+        "apps/demo/src/SavedViewsWorkspace.tsx",
+        "components/RowsPeek.tsx",
+        "components/PlotManager.tsx",
+        "apps/demo/src/LandingPage.tsx",
+        "components/calculations/CalculationEditor.tsx",
+        "providers/DataLayerProvider.tsx (updateFieldSettings)",
+        "components/project/queryEditing.ts"
+      ],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/lib/schema",
+        "pnpm --filter exploreda check-types",
+        "pnpm check"
+      ],
+      "deployment_surfaces": ["npm package exploreda", "demo app"]
+    },
+    "dependencies": [],
+    "fast_local_loop": {
+      "command": "pnpm --filter demo dev --port 5291 --strictPort",
+      "notes": "Shop example plus a CSV import; pnpm --filter exploreda exec vitest run src/lib/schema for layout and model."
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "A polished diagram of tables and relationships",
+        "status": "planned",
+        "outcome": "Schema toolbar button opens a finished-looking diagram of tables, fields, and relationships in a drawer shared with Rows, for projects and single tables. Cards and field rows carry stable IDs for selection.",
+        "proof": "Layout unit tests; Rows unchanged; screenshots of shop, World Bank, flights, and a CSV import at three widths and two themes, with impeccable critique fixes applied.",
+        "valid_intermediate_state": "Useful ER overview for both workspace kinds; no lineage yet.",
+        "rollback": "Remove the toolbar entry; Rows keeps the shared drawer with no visible change."
+      },
+      {
+        "id": "m2",
+        "title": "Select and edit fields, keys, and relationships in place",
+        "status": "planned",
+        "outcome": "Selection with an anchored inspector; field names, labels, units, types, entity keys, and relationships (drag or menu, with match counts) edited from the diagram through existing write paths.",
+        "proof": "Shared relationship logic unit tests; ProjectSchemaPanel tests unchanged; one onProjectChange per confirmed edit; read-only hides controls; browser checks at three widths.",
+        "valid_intermediate_state": "Diagram is a working editor for tables and relationships.",
+        "rollback": "Pass readOnly or hide inspector edit controls; Schema panel list still edits relationships."
+      },
+      {
+        "id": "m3",
+        "title": "Queries, calculations, and views drawn and editable",
+        "status": "planned",
+        "outcome": "Query and view columns with lineage, calculation, and usage edges from tested buildSchemaGraph; workspace and query calculations created and edited from the diagram.",
+        "proof": "Model tests on the shop fixture; incompatibleSettingsFields tests unchanged; calculation edits validated with breakage warnings; screenshot review on World Bank and flights.",
+        "valid_intermediate_state": "Full static diagram.",
+        "rollback": "Hide the query and view columns; table diagram remains.",
+        "spikes": ["empty-table evaluation for lineage"]
+      },
+      {
+        "id": "m4",
+        "title": "Edit query steps in the diagram",
+        "status": "planned",
+        "outcome": "Add, edit, and remove lookup, expand, summarize, filter, and calculate steps, and start new queries, from query cards; dependency warnings on removal.",
+        "proof": "Builder and dependency unit tests; QueryRelationshipBuilder tests unchanged; shop demo browser flow adding a lookup, filter, and summary; Query panel shows the same steps.",
+        "valid_intermediate_state": "Diagram is the all-in-one model editor.",
+        "rollback": "Hide step edit controls; the Query panel still edits steps."
+      },
+      {
+        "id": "m5",
+        "title": "Field focus traces lineage both ways",
+        "status": "planned",
+        "outcome": "Selecting a field lights its lineage; inspector lists uses and jumps to charts and views.",
+        "proof": "traceField unit tests; real mouse and keyboard checks in the browser.",
+        "valid_intermediate_state": "Diagram with focus over the current view's usage.",
+        "rollback": "Disable focus; static diagram remains."
+      },
+      {
+        "id": "m6",
+        "title": "Usage across every view in the host",
+        "status": "planned",
+        "outcome": "Optional views prop; demo passes its tabs; uses span all saved views.",
+        "proof": "Field used only by a second tab lists that tab; relationship removal warns about it; omitting views still works.",
+        "valid_intermediate_state": "Feature complete for multi-table projects.",
+        "rollback": "Hosts omit the views prop."
+      },
+      {
+        "id": "m7",
+        "title": "Add a source from the diagram",
+        "status": "planned",
+        "outcome": "Add source appends a table to a project, or promotes a single-table workspace to a project keeping its charts and layout.",
+        "proof": "Promotion round-trip test; demo CSV workspace adds a second CSV and keeps its charts; hosts without onAddSource show no action; pnpm check.",
+        "valid_intermediate_state": "Feature complete for both workspace kinds.",
+        "rollback": "Hosts omit onAddSource.",
+        "spikes": ["positional row keys through promotion"]
+      }
+    ],
+    "cut_line": [
+      "SVG/image export",
+      "Search within the diagram",
+      "Keyboard shortcut to open the diagram",
+      "Saved manual node positions",
+      "Graph layout library",
+      "Configuring charts from view cards",
+      "Row-level match diagnostics on existing edges"
+    ],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-10",
+      "event": "created",
+      "summary": "Intent, shape, and plan produced in one full run from the user's request and repository inspection.",
+      "status": "planned"
+    },
+    {
+      "date": "2026-10-10",
+      "event": "updated",
+      "summary": "User feedback: include single-table workspaces, use a very wide drawer like Rows, add a source from the diagram. Intent, shape, and plan rewritten; open questions closed; Milestone 5 added.",
+      "status": "planned"
+    },
+    {
+      "date": "2026-10-10",
+      "event": "updated",
+      "summary": "User feedback: visuals must land early. Milestones reordered so milestone 1 is a polished table and relationship diagram with screenshot review; lineage model moves to milestone 2 and grows behind the drawing.",
+      "status": "planned"
+    },
+    {
+      "date": "2026-10-10",
+      "event": "updated",
+      "summary": "User feedback: the diagram doubles as an editor. Intent, shape, and plan updated; read-only boundary removed; editing milestone added after the visual slice; calculation editing added to the lineage milestone.",
+      "status": "planned"
+    },
+    {
+      "date": "2026-10-10",
+      "event": "updated",
+      "summary": "User feedback: query steps belong in the diagram; promotion starts a new session. Milestone 4 (query step editing) added; open decisions closed.",
+      "status": "planned"
+    },
+    {
+      "date": "2026-10-10",
+      "event": "status-change",
+      "summary": "User asked to commit the docs and implement every milestone as stacked PRs with screenshots.",
+      "status": "active"
+    }
+  ],
+  "closure": null
+}
