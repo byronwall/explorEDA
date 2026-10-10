@@ -1,29 +1,42 @@
-# Ten recurring SaaS directions
+# Recurring SaaS directions
 
-Updated October 10, 2026. Original research stays unchanged; inline links identify the limited new platform checks.
+Updated October 10, 2026, twice: first for the recurring-SaaS preference, then after market checks and a code recheck on `29b4023` (see [Market checks](#market-checks-october-2026)). Original research stays unchanged.
 
-**Start by comparing GitHub Actions cost regressions with Shopify promotion leakage.** These are my first two candidates for further investigation. Neither is a selected product or a proven business.
+**Start with the dbt failed-record explorer and "Explore your store" for Shopify.** The second round demoted the two earlier front-runners: GitHub already cut Actions prices and a direct competitor sells the cost-monitor pitch, and Shopify discount monitoring is a crowded $7–79/month category that barely uses explorEDA. None of these is a selected product or a proven business.
 
-This shortlist follows Byron's preference for recurring SaaS. It replaces the service-focused reading order, while preserving all original research. It includes four Shopify products, one related commerce product, and five developer or operations products.
-
-I favored repeat problems, practical source access, a narrow first release, and useful investigation through explorEDA. I reduced the priority of manual data preparation, one-time fixes, and features already covered by established products. This is a new judgment, not a reuse of Pro's weighted scores. The lower five have greater integration or differentiation risks.
+Two tests were added to the ranking. **Is explorEDA central?** asks whether the customer's weekly job is slicing record-level data across many attributes, or whether explorEDA is a drill-down page behind a rules engine. If it is the latter, the real build is the rules engine and the price is $15/month. **Distribution route** asks how the first hundred customers find the product, because that is the hardest part for a solo builder and was missing from Pro's scoring. The other criteria remain: repeat problems, practical source access, a narrow first release, and low manual data preparation.
 
 The recurring product pattern is **detect a new problem → explain the affected records → assign a change → check the result**. The subscription pays for that continuing process. Refreshing a dashboard alone is a weaker reason to renew.
 
-| Priority | Product | Buyer | Reason to return | Main build burden |
-| --- | --- | --- | --- | --- |
-| 1 | GitHub Actions cost regression monitor | Platform lead with material paid CI spend | Workflow changes introduce new waste | Attempt history and credible cost comparisons |
-| 2 | Shopify promotion policy monitor | Merchant running frequent promotions | Each campaign can introduce unwanted discounts | Simple policy setup and low-noise findings |
-| 3 | Merchant Center repair workbench | Shopping agency or catalogue operator | Product and feed changes introduce new issues | Offer matching and useful repair priorities |
-| 4 | Shopify returns improvement tracker | Apparel merchandising lead | New products and batches change return patterns | Reliable cohorts and evidence of improvement |
-| 5 | CI flaky-test repair tracker | Test infrastructure lead | New changes introduce unreliable tests | Test identity and retained attempt evidence |
-| 6 | Shopify final shipping cost monitor | Bulky-goods merchant | Surcharges and order mix change shipping losses | Final charge access and shipment matching |
-| 7 | dbt failed-record explorer | Data team with repeated test failures | Every data run can introduce another failure | Safe failure-row snapshots and test semantics |
-| 8 | AWS cost ownership drift monitor | Small platform or finance team | Resources and teams change each month | Billing ingestion and owner rules |
-| 9 | Shopify margin change explainer | Merchant with usable cost records | Costs, refunds, and fees change contribution | Several synchronized financial sources |
-| 10 | PagerDuty alert-noise improvement tracker | SRE team | Releases and alert rules create new noise | Alert lineage and proof that changes help |
+| Priority | Product | Buyer | explorEDA central? | Distribution route | Main build burden |
+| --- | --- | --- | --- | --- | --- |
+| 1 | dbt failed-record explorer | Data team with repeated test failures | Yes: failing rows sliced by source, date, segment | dbt community, Slack, package hub | Safe failure-row snapshots and test semantics |
+| 2 | "Explore your store" (new) | Merchant who exports CSVs from Shopify Analytics | Yes: explorEDA is the product | Shopify App Store | Order sync, presets, app review |
+| 3 | Shopify returns improvement tracker | Apparel merchandising lead | Yes: size, colour, supplier, batch, reason | Shopify App Store | Reliable cohorts and evidence of improvement |
+| 4 | CI flaky-test repair tracker | Test infrastructure lead | Yes: test, runner, environment, revision | GitHub Marketplace, dev content | Test identity and retained attempt evidence |
+| 5 | Merchant Center repair workbench | Shopping agency or catalogue operator | Partly: issue triage by value and market | Agency outreach | Offer matching and useful repair priorities |
+| 6 | GitHub Actions cost regression monitor | Platform lead with material paid CI spend | Partly: waste by workflow and runner | GitHub Marketplace | Beating CostOps and GitHub's native metrics |
+| 7 | AWS cost ownership drift monitor | Small platform or finance team | Partly: unassigned cost by tag and owner | Direct sales | Billing ingestion and owner rules |
+| 8 | Shopify final shipping cost monitor | Bulky-goods merchant | Partly: subsidy by zone and parcel | Shopify App Store | Final charge access and shipment matching |
+| 9 | Shopify margin change explainer | Merchant with usable cost records | Partly: affected orders and cost components | Shopify App Store | Several synchronized financial sources |
+| 10 | Shopify promotion policy monitor | Merchant running frequent promotions | No: rule evaluation; explorEDA on the side | Shopify App Store, crowded | Simple policy setup and low-noise findings |
+| 11 | PagerDuty alert-noise improvement tracker | SRE team | No: episode rules; explorEDA on the side | Direct sales | Alert lineage and proof that changes help |
 
-The catalogue identifiers below link each revised product to its original brief. Original prices describe service experiments. They are not adopted SaaS prices.
+A separate route, selling the component itself to builders of products like these, is researched in [component-licensing/report.md](component-licensing/report.md). It needs a license decision first and can run alongside either SaaS bet.
+
+The detailed sections below keep their original numbering from the first ranking. The catalogue identifiers link each product to its original brief. Original prices describe service experiments and are not adopted SaaS prices.
+
+## Market checks, October 2026
+
+Quick searches on the two earlier front-runners, done on October 10, 2026. Each is a few results, not a study.
+
+**GitHub Actions cost regressions.** GitHub [cut hosted-runner prices by up to 39% on January 1, 2026](https://itbrief.news/story/github-cuts-actions-runner-prices-adds-new-usage-fee) and [postponed its planned $0.002/minute self-hosted fee](https://feedbagel.com/post/github-postpones-self-hosted-actions-billing-changes-announces-hosted-runner-pri) after backlash; some 2026 articles still describe the fee as live, but GitHub's own notice says postponed. Both moves shrink the cost problem. [CostOps](https://www.capterra.com/p/10036601/CostOps/) already sells the exact pitch: a read-only GitHub App with cost by workflow, repository and runner, job-level analysis and budget alerts, at $29–149/month, with no reviews listed. A team spending about $1,500/month on Actions will not pay $129/month to save a few hundred dollars. CI minutes and developer waiting are the real pain, and that market belongs to Datadog (about $20–29 per committer), Trunk and Buildkite.
+
+**Shopify promotion leakage.** [KeepCart](https://apps.shopify.com/keepcart/reviews), [Paw Discount Anti-Abuse](https://apps.shopify.com/discount-anti-abuse), [GlitchGuard](https://pickyourapp.com/products/glitchguard), CrispShift Discount Guard and others already cover code leaks, stacking and stale promotions at $7–79/month. The original brief says "no special chart is required; policy evaluation belongs in the host," which means the product would not use explorEDA.
+
+**"Explore your store", a new entry.** A cheap app, roughly $19–39/month, that opens a merchant's orders, line items, customers and products in explorEDA with linked charts and Shopify presets. Merchants who outgrow Shopify Analytics today export CSVs to Excel. The App Store solves distribution, the build is mostly one connector plus presets, and explorEDA is the product rather than a side panel. It runs against the rule that customers should not have to design charts; presets answer that by opening on "orders this month, by product, by discount code." Shopify's obligations still apply: app review, scopes, extra approval for orders older than 60 days, and Shopify App Pricing. It is generic, but generic inside one platform with built-in distribution is a different bet from a generic component.
+
+**Code recheck.** The public interfaces of `ExplorEda` and `ExplorEdaProject` were rechecked on `29b4023`, which includes the intake revision. The findings below under [What explorEDA itself needs](#what-exploreda-itself-needs) still hold: no new chart work for a first release, no public selected-rows callback, and all data loads into the browser.
 
 ## 1. GitHub Actions cost regression monitor
 
@@ -166,7 +179,7 @@ Start DevOps options as a standalone web app with a narrow read integration or u
 
 ## What explorEDA itself needs
 
-**No blocking new chart capability is established for these first releases.** Existing supplied datasets, project queries, presets, linked exploration, source inspection, and settings callbacks cover the investigation layer. At intake revision `b3acd0b`, I rechecked the public interfaces in [ExplorEda](../../../packages/explorEDA/src/components/ExplorEda.tsx) and [ExplorEdaProject](../../../packages/explorEDA/src/components/ExplorEdaProject.tsx). Pro reviewed a newer main revision. Selected gaps still need a current-code check before implementation.
+**No blocking new chart capability is established for these first releases.** Existing supplied datasets, project queries, presets, linked exploration, source inspection, and settings callbacks cover the investigation layer. The public interfaces in [ExplorEda](../../../packages/explorEDA/src/components/ExplorEda.tsx) and [ExplorEdaProject](../../../packages/explorEDA/src/components/ExplorEdaProject.tsx) were checked at intake revision `b3acd0b` and again at `29b4023`. Selected gaps still need a current-code check before implementation.
 
 The likely component work is small and conditional:
 
@@ -178,8 +191,6 @@ Sync, alert scheduling, metric definitions, tenant storage, billing, and action 
 
 ## The next comparison
 
-Compare **Actions cost regressions** with **Shopify promotion leakage** first. Add **Merchant Center repair** if an agency audience is appealing. Keep the first proof narrow: one source, one finding, one customer action, and a second refresh showing fresh value.
+Compare the **dbt failed-record explorer** with **"Explore your store"** first, and build the two public-data demos in [next steps](likely-next-steps.md) before any customer conversation. Keep the first proof narrow: one source, one finding, one customer action, and a second refresh showing fresh value. A useful proof shows that the next customer can connect similar data without custom coding, and that later data creates value without Byron writing another report.
 
 Cutover reconciliation and scrap audits leave this shortlist because their proposed initial offers depend heavily on delivered analysis. Wholesale pricing also stays outside: bespoke contract interpretation can create ongoing service work. These ideas remain in the archive.
-
-A useful proof should show that the next customer can connect similar data without custom coding. It should also show that later data creates value without Byron writing another report. The [next steps](likely-next-steps.md) describe that comparison. This document does not select a build or validate subscription prices.

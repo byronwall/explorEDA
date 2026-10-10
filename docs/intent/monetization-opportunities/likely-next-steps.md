@@ -1,18 +1,25 @@
 # Likely next steps
 
-**Compare two recurring products, then test one complete customer task.** Byron prefers SaaS. The remaining choice is which buyer and repeated problem to serve.
+**License the package, build two demos, then test one complete customer task.** Byron prefers SaaS. The remaining choice is which buyer and repeated problem to serve, and whether to sell the component alongside.
 
-## 1. Read the first two candidates
+## 0. Decide the package license
 
-Start with [Actions cost regressions and Shopify promotion leakage](recurring-saas-shortlist.md). They each offer a narrow source integration and a specific recurring task. Merchant Center repair is a useful third option if an agency audience is appealing.
+Nothing can be adopted or sold until the repository and the npm package carry a license. The [component-licensing report](component-licensing/report.md) recommends MIT for the existing `exploreda` package with a commercial superset reserved for later, and explains why deciding now, with no outside contributors, avoids the backlash that follows relicensing after adoption. Also required regardless of route: ship `THIRD_PARTY_NOTICES.md` with the package (done) and keep build tools out of runtime dependencies (done).
 
-Choose based on interest in the customer and access to realistic examples. The ranking does not establish demand. Keep the other 65 ideas in the archive for later sessions.
+## 1. Build two public-data demos
+
+Before any customer conversation, load real data into the demo and see whether a finding falls out in ten minutes. Each demo also produces screenshots for a landing page.
+
+- **dbt or CI:** pull public GitHub Actions run and job history, or public dbt artifacts, from three to five large open-source repositories through the public API. Load them with `ExplorEdaProject` and look for a real flaky test or failing-record pattern.
+- **Shopify:** use a development store with generated orders and build the first "Explore your store" screen: orders this month, by product, by discount code, with linked charts.
+
+Then read the [shortlist](recurring-saas-shortlist.md) comparison of the dbt failed-record explorer and "Explore your store". Choose based on interest in the customer and access to realistic examples. The ranking does not establish demand. Keep the other ideas in the archive for later sessions.
 
 ## 2. Describe the first five minutes
 
 Write one short flow: connect a source, see a finding, inspect the evidence, and record a correction. Define what the home screen shows before the user opens explorEDA. Specify why the customer should return next week.
 
-For Actions, use one workflow and runner category. For promotions, use one store and a few declared discount policies. Avoid expanding into general CI observability or all-store profitability.
+For dbt, use one project and a few count-based tests. For the store explorer, use one store and a handful of presets. Avoid expanding into general data observability or all-store profitability.
 
 ## 3. Prove the data and the action
 

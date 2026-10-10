@@ -4,7 +4,6 @@ Downloaded on October 10, 2026, from [Research deliverables complete](https://ch
 
 | File | Purpose |
 | --- | --- |
-| [Original ZIP](exploreda-monetization-research.zip) | The unchanged download from Pro. |
 | [Full report](exploreda-monetization-research/exploreda-monetization-opportunities.md) | The unchanged report, including 75 briefs, family research, deeper comparisons, plans, and 250 source records. |
 | [Catalogue](exploreda-monetization-research/opportunity-catalog.csv) | The unchanged 75-row, 26-column catalogue. |
 | [Research prompt](chatgpt-pro-research-prompt.md) | Exact copy of the local prompt submitted to Pro. |
@@ -13,7 +12,7 @@ Downloaded on October 10, 2026, from [Research deliverables complete](https://ch
 | [Later SaaS preference](2026-10-10-recurring-saas-request.md) | Direct correction: prioritize recurring SaaS, especially Shopify and DevOps. |
 | [Intake manifest](manifest.json) | File checksums, source locations, repository revisions, and local integrity checks. |
 
-The ZIP contains exactly the report and catalogue. Both extracted files retain the archive's bytes. Helper documents are outside this folder. Do not edit the original files to reconcile later findings.
+The downloaded ZIP contained exactly the report and catalogue; the extracted files retain its bytes, and the [manifest](manifest.json) keeps its checksum, so the archive itself is not stored here. The research prompt is kept only in this folder. Helper documents are outside this folder. Do not edit the original files to reconcile later findings.
 
 The report is about 99,000 words. Its external source index remains inside the report; the 250 linked source records are not 250 separately archived webpages. No browser thinking trace was included in the download.
 

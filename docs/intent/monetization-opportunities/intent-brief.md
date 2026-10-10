@@ -55,4 +55,4 @@ The report used a newer repository revision than the intake checkout. The SaaS c
 
 ## Next step after confirmation
 
-Use the [SaaS shortlist](recurring-saas-shortlist.md) to compare a few candidates. The current recommendation pairs Actions cost regressions with Shopify promotion leakage. Then test one finding and its value after a second data refresh. Keep product selection with Byron; write a shape only when buyer, outcome, and scope are clear.
+Use the [SaaS shortlist](recurring-saas-shortlist.md) to compare a few candidates. After the October 2026 market checks, the current recommendation pairs the dbt failed-record explorer with "Explore your store" for Shopify, and the [component-licensing report](component-licensing/report.md) covers selling the component itself. Then test one finding and its value after a second data refresh. Keep product selection with Byron; write a shape only when buyer, outcome, and scope are clear.
