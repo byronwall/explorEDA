@@ -8,7 +8,7 @@
     "last_updated": "2026-10-10",
     "summary": "Users narrow every linked view to a segment through a workspace-owned filter, without creating a chart to hold it.",
     "status": "active",
-    "next_action": "Review and merge the stacked PRs byronwall/explorEDA#221 (milestone 1), #223 (milestone 2), and the milestone 3 PR, in order. Then check Newsprint and Report themes and decide on retirement."
+    "next_action": "Review and merge the stacked PRs byronwall/explorEDA#221 (milestone 1), #223 (milestone 2), and #224 (milestone 3), in order. Then check Newsprint and Report themes and decide on retirement."
   },
   "artifacts": {
     "intent_brief": {
@@ -675,7 +675,7 @@
         ],
         "end_state": "Exported text applied unchanged keeps workspace filters and counts.",
         "evidence": [
-          "Milestone 3 PR: filter lines compile and export round trips for value, range, date, and text filters, duplicate-field warning, per-view placement; docs and README updated"
+          "PR byronwall/explorEDA#224: filter lines compile and export round trips for value, range, date, and text filters, duplicate-field warning, per-view placement; docs and README updated"
         ]
       }
     ],
@@ -745,7 +745,7 @@
       "status": "active",
       "action": "Implemented milestones 1–3 as stacked PRs.",
       "reason": "User asked to commit the docs, implement every milestone, and stack PRs with verification images.",
-      "evidence": "byronwall/explorEDA#221, byronwall/explorEDA#223, and the milestone 3 PR; each has screenshots and a passing pnpm check. Milestones stay active until merged."
+      "evidence": "byronwall/explorEDA#221, byronwall/explorEDA#223, and byronwall/explorEDA#224; each has screenshots and a passing pnpm check. Milestones stay active until merged."
     }
   ],
   "closure": null,
