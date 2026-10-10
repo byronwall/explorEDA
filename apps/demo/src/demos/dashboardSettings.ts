@@ -2249,3 +2249,154 @@ export const fanDashboard = dashboard("Forecast fan", [
     layout(0, 12, 12, 5)
   ),
 ]);
+
+/**
+ * Time use, 2019 against 2020: a grid of activities. In each, a summary
+ * mark draws the quartiles of minutes per day for the two cohorts as a
+ * joined band, marks the medians, and colors them by the change in median
+ * through a diverging scale.
+ */
+export const timeUseDashboard = dashboard("Time use", [
+  {
+    ...base,
+    id: "time-use-composition",
+    type: "composition",
+    title: "How the day changed",
+    layout: layout(0, 0, 12, 8),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 960, height: 640, background: "#ffffff" },
+      scales: [
+        {
+          id: "n-1",
+          kind: "numeric",
+          name: "Minutes a day",
+          field: "Minutes",
+          domain: "instance",
+          zero: false,
+          nice: true,
+        },
+        {
+          id: "value-1",
+          kind: "value",
+          name: "Change in median",
+          domain: "shared",
+          transform: "sqrt",
+          colors: ["#2b6cb0", "#c2410c"],
+          center: "#b8bcc2",
+        },
+      ],
+      calculations: [
+        {
+          id: "calc-1",
+          name: "Diary entries",
+          aggregation: "count",
+          population: "repeat",
+          filters: "follow",
+        },
+      ],
+      overrides: [],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "How the day changed in 2020",
+          x: 32,
+          y: 26,
+          width: 896,
+          fontSize: 24,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "Minutes a day for people who did each activity: the band spans the middle half of respondents, the dot marks the median, 2019 then 2020. Orange rose, blue fell; each panel keeps its own minute scale.",
+          x: 32,
+          y: 58,
+          width: 896,
+          fontSize: 13,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Activities",
+          x: 56,
+          y: 112,
+          frame: { width: 124, height: 88 },
+          label: { show: true, width: 0, fontSize: 12, valueCalcId: "calc-1" },
+          axis: true,
+          marks: [
+            {
+              type: "summary",
+              id: "mark-1",
+              name: "Minutes a day",
+              groupField: "Year",
+              measureField: "Minutes",
+              yScaleId: "n-1",
+              valueScaleId: "value-1",
+              fill: "#d9dde3",
+              opacity: 0.7,
+            },
+          ],
+          repeat: {
+            field: "Activity",
+            arrangement: "grid",
+            columns: 4,
+            gap: 40,
+            order: "label",
+            limit: 24,
+          },
+        },
+        {
+          id: "note-1",
+          kind: "annotation",
+          name: "Reading note",
+          text: "Each label counts that activity's diary entries after the active filters. Respondents who skipped an activity have no entry.",
+          x: 56,
+          y: 586,
+          anchor: { kind: "page" },
+          fontSize: 11,
+          color: "#5f6368",
+          leader: false,
+        },
+        {
+          id: "note-2",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: "Illustrative diary generated for this demo: 400 respondents a year, unweighted quartiles, not survey estimates. After Nathan Yau's time-use comparison.",
+          x: 32,
+          y: 612,
+          width: 896,
+          fontSize: 10,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
+    },
+  },
+  box(
+    "time-use-box",
+    "Minutes by year",
+    "Minutes",
+    "Year",
+    layout(0, 8, 6, 5),
+    undefined,
+    "Minutes a day"
+  ),
+  row("time-use-age", "Age group", "Age group", layout(6, 8, 3, 5)),
+  row("time-use-weekday", "Day", "Weekday", layout(9, 8, 3, 5)),
+  table(
+    "time-use-rows",
+    "Diary entries",
+    ["Year", "Activity", "Respondent", "Age group", "Weekday", "Minutes"],
+    layout(0, 13, 12, 5)
+  ),
+]);

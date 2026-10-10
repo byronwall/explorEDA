@@ -117,6 +117,12 @@ export interface ValueScale {
   transform: "linear" | "sqrt" | "log";
   /** The low and high ends of the color ramp. */
   colors: [string, string];
+  /**
+   * A middle color makes the scale diverge around zero: negative values run
+   * from this color toward the low end, positive values toward the high
+   * end, each by their share of the largest absolute value.
+   */
+  center?: string;
 }
 
 /**
@@ -226,14 +232,46 @@ export interface BandMark {
   opacity: number;
 }
 
-export type MarkDefinition = StripMark | PointMark | PathMark | BandMark;
+/**
+ * Summarizes a measure for each group in a repeat: the quartiles as a band
+ * joined across the groups, and the median as a marked path. The groups sit
+ * side by side across the frame, in label order, so the first is the prior
+ * cohort and the last the latest. Each repeat's change in median from the
+ * first group to the last colors its markers through a value scale.
+ */
+export interface SummaryMark {
+  type: "summary";
+  id: string;
+  name: string;
+  /** The cohort field, such as a year; one group per value. */
+  groupField: string;
+  /** The numeric field summarized in each group. */
+  measureField: string;
+  /** A numeric scale for the measure; it spans the quartiles drawn. */
+  yScaleId: string;
+  /** Colors the median markers by the repeat's change in median; a diverging scale fits. */
+  valueScaleId?: string;
+  /** The quartile band's fill. */
+  fill: string;
+  opacity: number;
+}
+
+export type MarkDefinition =
+  | StripMark
+  | PointMark
+  | PathMark
+  | BandMark
+  | SummaryMark;
 export type MarkType = MarkDefinition["type"];
 
 /** The scales a mark reads, by ID. */
 export function markScaleIds(mark: MarkDefinition): string[] {
-  return mark.type === "strip"
-    ? [mark.positionScaleId, mark.valueScaleId]
-    : [mark.xScaleId, mark.yScaleId];
+  if (mark.type === "strip") return [mark.positionScaleId, mark.valueScaleId];
+  if (mark.type === "summary")
+    return mark.valueScaleId
+      ? [mark.yScaleId, mark.valueScaleId]
+      : [mark.yScaleId];
+  return [mark.xScaleId, mark.yScaleId];
 }
 
 /** The fields a mark reads, beyond its scales. */
@@ -249,6 +287,8 @@ export function markFields(mark: MarkDefinition): string[] {
       return [mark.orderField];
     case "band":
       return [mark.orderField, mark.lowerField, mark.upperField];
+    case "summary":
+      return [mark.groupField, mark.measureField];
   }
 }
 

@@ -13,6 +13,7 @@ import {
   type PathMark,
   type PointMark,
   type PositionScale,
+  type SummaryMark,
   type UnitElement,
   type ValueScale,
 } from "./compositionTypes";
@@ -119,6 +120,38 @@ export function convertMark(
   if (!mark || mark.type === type) return definition;
   let next = definition;
   let replacement: MarkDefinition;
+  if (type === "summary") {
+    const numeric = fields.filter((item) => item.dataType === "numeric");
+    const groupField =
+      fields.find(
+        (item) =>
+          item.dataType !== "numeric" &&
+          item.uniqueCount >= 2 &&
+          item.uniqueCount <= 6
+      )?.name ??
+      fields.find((item) => item.uniqueCount >= 2 && item.uniqueCount <= 6)
+        ?.name ??
+      fields[0]?.name;
+    const measureField =
+      numeric.find((item) => item.name !== groupField)?.name ??
+      numeric[0]?.name;
+    if (!groupField || !measureField) return definition;
+    const withY = ensureNumericScale(next, measureField);
+    next = withY.definition;
+    const summary: SummaryMark = {
+      type: "summary",
+      id: mark.id,
+      name: mark.name,
+      groupField,
+      measureField,
+      yScaleId: withY.scale.id,
+      fill: mark.type === "path" ? mark.stroke : mark.fill,
+      opacity: 0.3,
+    };
+    return updateElement<UnitElement>(next, unit.id, {
+      marks: unit.marks.map((item) => (item.id === markId ? summary : item)),
+    });
+  }
   if (type === "strip") {
     let position = next.scales.find(
       (scale): scale is PositionScale => scale.kind === "position"
@@ -169,7 +202,7 @@ export function convertMark(
     // A sibling x–y mark already names the scales; otherwise take the data's.
     const sibling = unit.marks.find(
       (item): item is PointMark | PathMark | BandMark =>
-        item.type !== "strip" && item.id !== markId
+        item.type !== "strip" && item.type !== "summary" && item.id !== markId
     );
     let xScaleId = sibling?.xScaleId;
     let yScaleId = sibling?.yScaleId;

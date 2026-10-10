@@ -19,8 +19,31 @@ const SCALE_DOMAIN_TEXT = {
 export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
   const { unit, glyph, path, band, labelValue, guide, anchor } = trace;
   const point = glyph?.datum.point;
+  const summary = glyph?.datum.summary;
   return (
     <div className="space-y-2" aria-label="Composition trace">
+      {glyph && summary && (
+        <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
+          <TraceReadout label="Median">
+            <TraceSwatch color={glyph.fill} />{" "}
+            {formatCalcValue(summary.median, "number")} {summary.measureField}
+          </TraceReadout>
+          <TraceReadout label="Quartiles">
+            {formatCalcValue(summary.q1, "number")} to{" "}
+            {formatCalcValue(summary.q3, "number")}, unweighted, from{" "}
+            {summary.count.toLocaleString()} values
+          </TraceReadout>
+          <TraceReadout label="Group">
+            {summary.groupField} = {glyph.datum.bin.label}, within this repeat,
+            after the active filters
+          </TraceReadout>
+          <TraceReadout label="Change in median">
+            {summary.change === undefined
+              ? "Undefined: the first group has no median or a median of zero, so the marker stays neutral"
+              : `${summary.changeText} from the first group to the last, which sets the marker color`}
+          </TraceReadout>
+        </TraceSection>
+      )}
       {glyph && point && (
         <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
           <TraceReadout label={point.xField}>
@@ -45,7 +68,7 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
           )}
         </TraceSection>
       )}
-      {glyph && !point && (
+      {glyph && !point && !summary && (
         <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
           <TraceReadout label="Value">
             <TraceSwatch color={glyph.fill} />{" "}

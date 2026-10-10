@@ -181,3 +181,17 @@ Two illustrative measures, quarterly from 2015 Q1 to 2027 Q4. History rows carry
 ```sh
 node --experimental-strip-types apps/data-samples/inflation_fan.ts apps/demo/public/datasets/inflation-fan.csv
 ```
+
+## Time-use diary
+
+- File: `time-use.csv`
+- Size: 5,742 rows and 6 fields
+- Demo: `?example=time-use`
+- Use: a grid composition that summarizes minutes per day for 2019 and 2020 cohorts inside each activity, with medians, quartile bands, and a diverging color for the change in median
+- Generation: fixed seed in `apps/data-samples/time_use.ts`
+
+Four hundred respondents per year record minutes spent on twelve activities. A respondent who skips an activity that day has no row for it, not a zero. The 2020 shifts follow the familiar pandemic pattern. The figures are synthetic and unweighted; the composition's quartiles are not survey estimates.
+
+```sh
+node --experimental-strip-types apps/data-samples/time_use.ts apps/demo/public/datasets/time-use.csv
+```

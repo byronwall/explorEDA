@@ -1017,6 +1017,17 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "time-use",
+    intent:
+      "Summarize two cohorts' quartiles inside each activity panel and color the change in median.",
+    features: {
+      "chart:composition": "shown",
+      "chart:boxplot": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

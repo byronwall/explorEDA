@@ -278,6 +278,17 @@ Filters update medians, bands, color, and trace populations together.
 The chosen domain policy is visible and saved. Existing supplied-band compositions need no quartile calculation.
 Bypass the new summaries to return to the supplied-data path.
 
+### Status: built with an illustrative diary (updated 2026-10-10)
+
+The time-use grid ships as `?example=time-use` from `apps/data-samples/time_use.ts`: twelve activities repeated as a grid, each summarizing the 2019 and 2020 cohorts on the spot.
+A summary mark groups a repeat's live rows by a cohort field, takes unweighted quartiles of a measure with `d3-array`, draws the quartiles as a band joined across the groups, marks the medians, and joins them.
+Each repeat's change in median from its first group to its last colors its markers through a value scale; value scales gained a middle color that makes them diverge around zero.
+A zero or missing prior median leaves the change undefined and the marker neutral, as the plan required.
+A numeric scale bound to a summary spans the quartiles drawn, per repeat or shared, so the explicit per-subset domain policy is the scale's existing domain choice.
+Trace on a median lists the quartiles, count, group, and the change that set the color. Filters recompute all of it.
+
+Not built: weighted summaries and a drawn legend for the diverging color; the subtitle states the meaning.
+
 ## Milestone 5: Stack category shares with explainable denominators
 
 Create the Causes composition using category counts by age.
