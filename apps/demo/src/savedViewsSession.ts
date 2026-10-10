@@ -12,6 +12,15 @@ export const STORAGE_KEY = "exploreda.saved-views.v1";
 export const PROJECT_STORAGE_KEY = "exploreda.project-views.v1";
 const PROJECT_TABLES_KEY = `${PROJECT_STORAGE_KEY}.tables`;
 
+/** Drops saved project tables; a session that reloads its tables needs none. */
+export function clearProjectTables() {
+  try {
+    localStorage.removeItem(PROJECT_TABLES_KEY);
+  } catch {
+    // Unavailable storage holds no tables.
+  }
+}
+
 /** Saves project source tables; returns their size, or -1 when storage fails. */
 export function writeProjectTables(
   tables: Record<string, readonly AnalysisSourceRow[]>
@@ -78,6 +87,11 @@ export type SavedViewsSession = {
   sourceAnalysis: string;
   project?: AnalysisProject;
   tables?: Record<string, readonly AnalysisSourceRow[]>;
+  /**
+   * The example whose files hold the tables. Its tables are fetched again on
+   * restore instead of being saved in the browser.
+   */
+  tablesFrom?: string;
   tabs: SavedView[];
   activeTabId: string;
   history: HistoryEntry[];
@@ -122,7 +136,7 @@ export function readSavedViewsSessionResult(
         value.sourceAnalysis = source;
       }
     }
-    if (value.project) {
+    if (value.project && !value.tablesFrom) {
       const tables = localStorage.getItem(PROJECT_TABLES_KEY);
       if (tables === null) {
         return { session: undefined, failed: true };

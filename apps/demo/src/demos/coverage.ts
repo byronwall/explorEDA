@@ -643,6 +643,31 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "january-flights",
+    intent:
+      "Read a complete delay analysis over four related tables, and follow any chart to its flights, aircraft, and weather hours.",
+    features: {
+      "chart:markdown": "shown",
+      "chart:sankey": "shown",
+      "chart:metric-card": "shown",
+      "chart:bar": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "chart:scatter": "shown",
+      "chart:ecdf": "shown",
+      "chart:line": "shown",
+      "chart:heatmap": "shown",
+      "chart:parallel-coordinates": "shown",
+      "mode:scatter-hexbin": "shown",
+      "mode:scatter-regression": "shown",
+      "mode:stacked-bars": "shown",
+      "mode:calendar-series": "shown",
+      "scale:symlog": "shown",
+      "facet:wrap": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
     exampleId: "multi-source-shop",
     intent:
       "Chart related tables with an explicit row meaning, and follow each chart back to its query steps and source records.",

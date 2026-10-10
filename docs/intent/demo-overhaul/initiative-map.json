@@ -4,11 +4,11 @@
     "title": "Demo overhaul with complete analysis examples",
     "slug": "demo-overhaul",
     "scale": "capability",
-    "current_phase": "shape",
+    "current_phase": "execution",
     "last_updated": "2026-10-06",
     "summary": "Show completed, powerful analyses for analysts: all four new dataset families, Wine, a curated Shop analysis, and Lorenz; use the landed multi-table feature.",
-    "status": "planned",
-    "next_action": "Review the seven-entry catalogue proposal, then create a proof-first plan against the landed multi-table contract."
+    "status": "active",
+    "next_action": "Review the Flights proof PR; then prepare Beijing, World Bank, and Earthquakes, and curate the catalogue."
   },
   "artifacts": {
     "intent_brief": {
@@ -28,8 +28,8 @@
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-06"
     },
     "research_report": {
       "path": "support/dataset-research.md",
@@ -883,10 +883,10 @@
     }
   },
   "implementation": {
-    "status": "not-started",
+    "status": "active",
     "repository_snapshot": {
-      "root": "/Users/byronwall/.codex/worktrees/0a51/explorEDA",
-      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "root": ".claude/worktrees/demo-overhaul-review-075486",
+      "revision": "d1188f4",
       "worktree_status": "Clean before import; detached HEAD; only documentation changed.",
       "subsystems": [
         "apps/demo/src/demos/examples.ts",
@@ -928,7 +928,8 @@
         ],
         "local_proof": "Run the real landed feature against pinned local source tables. Keep changed edge-case fixtures separate.",
         "live_proof": "No deployed service proof is needed for local-table relationships. Recheck public source downloads and terms before data redistribution.",
-        "rollout": "Add a verified complete example before removing superseded public entries. Revert catalogue configuration if necessary; no alternate enrichment implementation."
+        "rollout": "Add a verified complete example before removing superseded public entries. Revert catalogue configuration if necessary; no alternate enrichment implementation.",
+        "status": "verified: evaluateAnalysisQuery, ExplorEdaProject, and project sessions carry the Flights proof"
       },
       {
         "id": "public-data-extracts",
@@ -959,9 +960,60 @@
     "fast_local_loop": {
       "command": "pnpm --filter demo dev",
       "strategy": "Use local prepared reference tables with native multi-table runtime after it lands. Compute audit totals independently and compare to visible results.",
-      "status": "planned, not run during shaping"
+      "status": "in use: pnpm --filter demo exec vitest run src/demos/analyses"
     },
-    "milestones": [],
+    "milestones": [
+      {
+        "id": "flights-proof",
+        "name": "Flights proof",
+        "proof": "Five tabs over four related tables; counts, distance total, and lookup misses reconcile; every tab compiles against all rows; restore works.",
+        "evidence": [
+          "apps/demo/src/demos/analyses/analyses.test.ts",
+          "apps/demo/public/datasets/flights/manifest.json",
+          "Browser screenshots at 1440, 900, and 390 px"
+        ],
+        "status": "completed",
+        "outcome": "A complete Flights analysis over four related tables opens on a finished result.",
+        "valid_intermediate_state": "Flights appears beside the existing 22 entries; nothing is removed.",
+        "rollback": "Remove the catalogue entry; the example and its data files go with it."
+      },
+      {
+        "id": "beijing",
+        "name": "Beijing air quality",
+        "proof": "Station-day coverage reconciles with the 4,392-row grid.",
+        "status": "planned",
+        "outcome": "A complete Beijing analysis shows coverage before conclusions.",
+        "valid_intermediate_state": "Beijing is added as one more catalogue entry.",
+        "rollback": "Remove the catalogue entry; the example and its data files go with it."
+      },
+      {
+        "id": "world-bank",
+        "name": "World Bank indicators",
+        "proof": "Country counts and endpoint cohorts reconcile; aggregates excluded by metadata.",
+        "status": "planned",
+        "outcome": "A complete World Bank analysis compares countries across endpoints and geography.",
+        "valid_intermediate_state": "World Bank is added as one more catalogue entry.",
+        "rollback": "Remove the catalogue entry; the example and its data files go with it."
+      },
+      {
+        "id": "earthquakes",
+        "name": "Earthquakes",
+        "proof": "Event count matches the frozen USGS query.",
+        "status": "planned",
+        "outcome": "A complete Earthquakes analysis treats the catalogue as a defined population.",
+        "valid_intermediate_state": "Earthquakes is added as one more catalogue entry.",
+        "rollback": "Remove the catalogue entry; the example and its data files go with it."
+      },
+      {
+        "id": "catalogue",
+        "name": "Curated catalogue",
+        "proof": "Seven public entries; capability filters reach tabs; removals mapped to replacements.",
+        "status": "planned",
+        "outcome": "Seven curated entries, discoverable by capability and topic.",
+        "valid_intermediate_state": "The catalogue shows only verified complete analyses; fixtures and data files remain.",
+        "rollback": "Restore the removed entries in examples.ts; their settings and data stay in the repository."
+      }
+    ],
     "cut_line": [
       "A tutorial or stepper",
       "Relationship-building instruction",
@@ -1087,6 +1139,23 @@
         "Kept low-priority sharing out of required work",
         "Created concise app product context from the answered interview",
         "No runtime code, dataset preparation, or implementation plan changed"
+      ]
+    },
+    {
+      "date": "2026-10-06",
+      "event": "implementation-started",
+      "phase": "execution",
+      "status": "active",
+      "reason": "User asked to implement the shaped work as stacked PRs with screenshots.",
+      "evidence": [
+        "docs/intent/demo-overhaul/implementation-plan.md",
+        "apps/demo/src/demos/analyses/flights.ts"
+      ],
+      "changes": [
+        "Wrote the implementation plan",
+        "Confirmed the multi-table contract has landed",
+        "Delivered the Flights proof: prep script, frozen tables, project, five tabs, tests",
+        "Added bar categoryOrder and kept declared names under saved field settings"
       ]
     }
   ],
@@ -1425,12 +1494,12 @@
     {
       "rank": 1,
       "task": "Pin/export January flights and prove F1/F2",
-      "status": "proposed"
+      "status": "done for flights"
     },
     {
       "rank": 2,
       "task": "Record source/preparation manifest and key audits",
-      "status": "proposed"
+      "status": "done for flights"
     },
     {
       "rank": 3,
@@ -1465,7 +1534,7 @@
     {
       "rank": 9,
       "task": "Use explicit lookups when arriving contract is verified",
-      "status": "proposed"
+      "status": "done for flights"
     }
   ],
   "open_research_checks": [

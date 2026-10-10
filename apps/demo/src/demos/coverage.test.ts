@@ -74,6 +74,7 @@ describe("example coverage manifest", () => {
       "stacked-bars",
       "grouped-bars",
       "calendar-series",
+      "january-flights",
       "shop-operations",
       "palmer-penguins",
       "categorical-charts",

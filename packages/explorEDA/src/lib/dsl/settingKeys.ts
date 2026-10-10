@@ -64,6 +64,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
   bar: keys<"bar">()([
     "aggregateId",
     "binCount",
+    "categoryOrder",
     "colorField",
     "colorScaleId",
     "facet",

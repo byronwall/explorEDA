@@ -55,6 +55,25 @@ cp /tmp/exploreda-10000/shop-operations.csv apps/demo/public/datasets/shop-10000
 
 This is a representative workflow fixture, not a maximum-capacity claim.
 
+## January 2013 flights
+
+- Folder: `flights/`, with `manifest.json` for sources, checksums, counts, and key audits
+- Tables: `flights.csv` (27,004 flights), `airlines.csv` (16), `planes.csv` (3,322), and `weather.csv` (2,226 origin-hours)
+- Demo: `/examples/january-flights`
+- Use: related tables, lookups with unmatched keys, delay bands, weather per scheduled hour, and fleet profiles
+- Source: [nycflights13](https://nycflights13.tidyverse.org/) 1.0.2, pinned by checksum
+- License: CC0. Flights come from the Bureau of Transportation Statistics, aircraft from the FAA, and weather from the Iowa Environmental Mesonet.
+
+Every January record is kept, including flights with no departure or arrival time. `flight_id` comes from the row position in the full package table. `weather_key` joins a flight to its origin's weather in the scheduled hour. The package's airports table is left out because its OpenFlights source has separate terms.
+
+Regenerate the tables, the manifest, and the findings module the analysis quotes:
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/flights.ts
+```
+
+The script downloads the package once into `tmp/data-cache`.
+
 ## Message log
 
 - File: `message-log.csv`

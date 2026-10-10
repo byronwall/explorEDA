@@ -105,3 +105,52 @@ it("keeps a logical order selection through source reorder and removal", async (
   );
   await waitFor(() => expect(screen.getByText("No rows")).toBeInTheDocument());
 });
+
+it("keeps a declared field name when saved settings format the field", async () => {
+  const { project, sources } = createShopFixture();
+  const settings: SavedDataStructure = {
+    charts: [
+      {
+        ...DEFAULT_CHART_SETTINGS,
+        id: "average-amount",
+        type: "metric-card",
+        title: "Average order",
+        aggregation: "average",
+        measureField: "orders.amount",
+        layout: { x: 0, y: 0, w: 12, h: 3 },
+      },
+    ],
+    calculations: [],
+    colorScales: [],
+    fieldSettings: { "orders.amount": { precision: 1 } },
+    gridSettings: {
+      columnCount: 12,
+      rowHeight: 100,
+      containerPadding: 10,
+      showBackgroundMarkers: false,
+    },
+    metadata: {
+      name: "Orders",
+      version: 1,
+      createdAt: "2026-10-05",
+      modifiedAt: "2026-10-05",
+    },
+  };
+  render(
+    <ExplorEdaProject
+      project={project}
+      tables={sources}
+      view={{
+        id: "orders",
+        name: "Orders",
+        queryId: "orders-by-customer",
+        settings,
+      }}
+      onProjectChange={vi.fn()}
+    />
+  );
+  await waitFor(() =>
+    expect(screen.getAllByText(/Average of Amount/).length).toBeGreaterThan(0)
+  );
+  expect(screen.queryByText(/orders\.amount/)).not.toBeInTheDocument();
+});
