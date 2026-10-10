@@ -36,7 +36,7 @@ Linear and symlog behavior are delivered. ECDF also has a working positive-value
 
 ## Current reality that matters
 
-numericScale.ts chooses symlog or linear. ECDF uses scaleLog through its own logX option. AxisSettings contains min and max but broad renderer support is not established. Existing brushes use numerical inversion. Calendar and map-specific controls do not establish a common 2D domain contract.
+numericScale.ts chooses symlog or linear. ECDF uses scaleLog through its own logX option. Explicit bounds now exist as `xAxis.limits` and `yAxis.limits` (in-place editing, #204), honored by scatter, bar, histogram, line, row, and box charts and clipped rather than filtered. The older AxisSettings `min` and `max` keys are an unused placeholder that every saved chart carries. Date axes, ECDF, heatmap, and map have no limits yet. Existing brushes use numerical inversion. Calendar and map-specific controls do not establish a common 2D domain contract.
 
 ## Expansion trigger
 

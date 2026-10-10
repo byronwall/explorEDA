@@ -1,9 +1,9 @@
+import { useThemeColors } from "@/hooks/useDisplayColorScales";
+import { useDisplayColorScale } from "@/hooks/useDisplayColorScales";
+import { useAxisTypography } from "../chartTypography";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
-import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-} from "../ChartStatusLine";
+import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import {
   useCallback,
@@ -96,9 +96,7 @@ export function EcdfChart({
   const formatFieldValue = useDataLayer((s) => s.formatFieldValue);
   const fieldSettings = useDataLayer((s) => s.fieldSettings);
   const updateChart = useDataLayer((s) => s.updateChart);
-  const colorScale = useDataLayer((s) =>
-    s.colorScales.find((item) => item.id === settings.colorScaleId)
-  );
+  const colorScale = useDisplayColorScale(settings.colorScaleId);
   const liveIds = useGetLiveIds(settings, facetIds);
   const allIds = useGetAllIds(settings);
   const values = useGetColumnData(settings.field);
@@ -107,6 +105,7 @@ export function EcdfChart({
   const trace = useChartTrace();
   const traceApi = useChartTraceApi();
   const owner = useId();
+  const typography = useAxisTypography();
   const svgRef = useRef<SVGSVGElement>(null);
   const [hovered, setHovered] = useState<number | null>(null);
   const [focusValue, setFocusValue] = useState<number | null>(null);
@@ -116,6 +115,7 @@ export function EcdfChart({
     moved: boolean;
   } | null>(null);
 
+  const themeColors = useThemeColors();
   const snapshot = useMemo(
     (): EcdfSnapshot => ({
       revision,
@@ -124,6 +124,7 @@ export function EcdfChart({
       values,
       groupData: settings.colorField ? groupData : undefined,
       colorScale,
+      themeColors,
     }),
     [
       revision,
@@ -133,6 +134,7 @@ export function EcdfChart({
       groupData,
       settings.colorField,
       colorScale,
+      themeColors,
     ]
   );
   const plan = useMemo(
@@ -422,8 +424,9 @@ export function EcdfChart({
                   y={tick.y}
                   textAnchor="end"
                   dominantBaseline="middle"
-                  fontSize={10}
-                  className="fill-muted-foreground"
+                  fontSize={typography.tickSize}
+                  className="eda-axis-text fill-muted-foreground"
+                  data-role="tick"
                 >
                   {tick.label}
                 </text>
@@ -436,10 +439,11 @@ export function EcdfChart({
               >
                 <line y2={4} stroke="var(--foreground)" strokeOpacity={0.45} />
                 <text
-                  y={15}
+                  y={5 + typography.tickSize}
                   textAnchor="middle"
-                  fontSize={10}
-                  className="fill-muted-foreground"
+                  fontSize={typography.tickSize}
+                  className="eda-axis-text fill-muted-foreground"
+                  data-role="tick"
                 >
                   {tick.label}
                 </text>
@@ -449,8 +453,9 @@ export function EcdfChart({
               x={plan.plotWidth / 2}
               y={plan.plotHeight + 32}
               textAnchor="middle"
-              fontSize={11}
-              className="fill-foreground"
+              fontSize={typography.labelSize}
+              className="eda-axis-text fill-foreground"
+              data-role="label"
             >
               {plan.fieldLabel}
               {plan.log ? " · log scale" : ""}
@@ -458,8 +463,9 @@ export function EcdfChart({
             <text
               transform={`translate(${-34},${plan.plotHeight / 2}) rotate(-90)`}
               textAnchor="middle"
-              fontSize={11}
-              className="fill-foreground"
+              fontSize={typography.labelSize}
+              className="eda-axis-text fill-foreground"
+              data-role="label"
             >
               {plan.direction === "below"
                 ? "Share at or below"

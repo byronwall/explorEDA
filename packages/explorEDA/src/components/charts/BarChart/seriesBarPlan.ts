@@ -4,7 +4,8 @@ import type { AggregateResult } from "@/lib/aggregates";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import type { datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
-import { describeScale, planAxes } from "../Axis/axisPlan";
+import { describeScale, planAxes, type AxisTypography } from "../Axis/axisPlan";
+import { boundedDomain } from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import type { BarChartSettings } from "./definition";
 import type { BarChartPlan, BarMark } from "./barPlan";
@@ -35,6 +36,7 @@ export function planSeriesBars({
   format,
   facetFilters = [],
   categoryOrder = [],
+  typography,
 }: {
   settings: BarChartSettings;
   summaries: SeriesSummary[];
@@ -46,6 +48,7 @@ export function planSeriesBars({
   format: (field: string, value: datum) => string;
   facetFilters?: Filter[];
   categoryOrder?: datum[];
+  typography?: AxisTypography;
 }) {
   const spec = summaries[0]?.result.spec;
   const field = spec?.groupField ?? settings.field;
@@ -185,7 +188,7 @@ export function planSeriesBars({
     .padding(0.08);
   const yScaleType = stacked ? "linear" : settings.yAxis.scaleType;
   const y = numericScale({ ...settings.yAxis, scaleType: yScaleType })
-    .domain(domain)
+    .domain(boundedDomain(domain, settings.yAxis))
     .range([plotHeight, 0]);
   const notice =
     stacked && operation === "average"
@@ -297,6 +300,7 @@ export function planSeriesBars({
     plotHeight,
     margin,
     x: {
+      typography,
       scale: x,
       tickFontSize: settings.xAxis.tickFontSize,
       labelFontSize: settings.xAxis.labelFontSize,
@@ -306,6 +310,7 @@ export function planSeriesBars({
       format: (key) => categoryLabel(categories.get(String(key))),
     },
     y: {
+      typography,
       scale: y,
       tickFontSize: settings.yAxis.tickFontSize,
       labelFontSize: settings.yAxis.labelFontSize,

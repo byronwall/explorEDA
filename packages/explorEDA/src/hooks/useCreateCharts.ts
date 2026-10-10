@@ -77,6 +77,21 @@ export function useCreateCharts() {
       const start = stages.includes(selectedField) ? [selectedField] : [];
       settings.stages = [...new Set([...start, ...stages])].slice(0, 3);
     }
+    if (settings.type === "scatter-matrix") {
+      // Numbers first, then a few low-cardinality categories.
+      const groups = profiles
+        .filter(
+          (profile) =>
+            profile.dataType !== "numeric" &&
+            profile.uniqueCount > 1 &&
+            profile.uniqueCount <= 12
+        )
+        .map((profile) => profile.name);
+      const start = selectedField ? [selectedField] : [];
+      settings.fields = [
+        ...new Set([...start, ...numeric.slice(0, 4), ...groups.slice(0, 1)]),
+      ].slice(0, 5);
+    }
     if (settings.type === "parallel-coordinates") {
       const start = numeric.includes(selectedField) ? [selectedField] : [];
       settings.axes = [...new Set([...start, ...numeric])]
