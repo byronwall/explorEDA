@@ -164,6 +164,7 @@ export const DSL_OTHER_KEYWORDS = [
   "scale",
   "group",
   "rows",
+  "filter",
   "eda",
   "dashboard",
   "grid",
@@ -412,6 +413,7 @@ export function compileDocument(
   const calcDeclarations: DslDeclaration[] = [];
   const fieldDeclarations: DslDeclaration[] = [];
   const sharedDeclarations: DslDeclaration[] = [];
+  const filterDeclarations: DslDeclaration[] = [];
   const chartDeclarations: DslDeclaration[] = [];
 
   const applyFieldPairs = (
@@ -714,6 +716,9 @@ export function compileDocument(
       case "group":
       case "rows":
         sharedDeclarations.push(declaration);
+        break;
+      case "filter":
+        filterDeclarations.push(declaration);
         break;
       default:
         if (DSL_CHART_KEYWORDS[keyword] || keyword === "chart") {
@@ -1190,6 +1195,56 @@ export function compileDocument(
         continue;
       }
       rowsSettings = next;
+    }
+  }
+
+  // Workspace filters: `filter Region=West`, one field per line. They narrow
+  // every chart, and no chart owns them.
+  const workspaceFilters: Filter[] = [];
+  for (const declaration of filterDeclarations) {
+    const subject = `filter (line ${declaration.span.line})`;
+    if (
+      declaration.name ||
+      declaration.positional.length ||
+      !declaration.pairs.length
+    ) {
+      report(
+        "error",
+        "setting-ignored",
+        declaration.span,
+        "A filter line names a field and its values, so this line was skipped.",
+        {
+          subject,
+          suggestion:
+            'Write it as filter Region=West,East or filter "Order Date"=2024-01-01..2024-03-31.',
+        }
+      );
+      continue;
+    }
+    for (const pair of declaration.pairs) {
+      const filter = buildFilter(pair.key, pair.value, pair.span, subject);
+      if (!filter) {
+        continue;
+      }
+      const index = workspaceFilters.findIndex(
+        (item) => item.field === filter.field
+      );
+      if (index < 0) {
+        workspaceFilters.push(filter);
+        continue;
+      }
+      workspaceFilters[index] = filter;
+      report(
+        "warning",
+        "setting-ignored",
+        pair.span,
+        `${filter.field} already has a filter, so this one replaces it. A field has one workspace filter.`,
+        {
+          subject,
+          suggestion:
+            "Put every value for a field in one filter, such as Region=West,East.",
+        }
+      );
     }
   }
 
@@ -2100,6 +2155,7 @@ export function compileDocument(
     aggregates,
     geometryAssets,
     ...(rowsSettings ? { rowsSettings } : {}),
+    ...(workspaceFilters.length ? { workspaceFilters } : {}),
     ...(theme ? { theme } : {}),
   };
   if (!validateSavedData(settings)) {

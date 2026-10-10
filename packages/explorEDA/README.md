@@ -269,11 +269,12 @@ See [the calculation workflow](../../docs/calculation-workflow.md) and the demo'
 
 ## Dashboard text
 
-Build a complete dashboard from compact text. Each line declares a field alias, a calculation, or a chart. `where.` filters limit only their own chart.
+Build a complete dashboard from compact text. Each line declares a field alias, a calculation, a workspace filter, or a chart. `where.` filters limit only their own chart. A `filter` line narrows every chart, and no chart owns it; write one line per field.
 
 ```text
 revenue:num=Revenue label="Revenue ($)"
 calc profit=revenue-Cost
+filter Channel=Web,Store
 scatter @web x=revenue y=profit where.Channel=Web
 metric sum=profit where.profit=0..
 table revenue,profit,Channel

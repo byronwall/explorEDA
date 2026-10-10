@@ -122,6 +122,8 @@ Filters:
   where.<field>=null                  missing values; "a,b" is one value
   where.<field>.contains=text         also equals, startsWith, endsWith
   select.<field>=...                  a linked filter that also narrows other charts
+  filter <field>=Web,Store            a workspace filter on its own line: narrows
+                                      every chart; one line per field
 
 Several views (one text for every saved view):
   view "Overview"                     starts a view; grid, rows, and charts

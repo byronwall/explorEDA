@@ -42,6 +42,17 @@ function livePopulations(settings: ReturnType<typeof compile>["settings"]) {
 beforeAll(() => registerAllCharts());
 
 describe("compileDocument", () => {
+  it("skips a filter line without field values", () => {
+    const result = compileDocument("filter\nfilter Region\nsummary", {
+      rows: [{ Region: "West" }],
+    });
+    expect(result.settings).not.toHaveProperty("workspaceFilters");
+    expect(result.diagnostics.map((item) => item.message)).toEqual([
+      "A filter line names a field and its values, so this line was skipped.",
+      "A filter line names a field and its values, so this line was skipped.",
+    ]);
+  });
+
   it("builds unnamed charts from app defaults", () => {
     const result = compile(`scatter x=Revenue y=Cost color=Category
 hist Revenue bins=24

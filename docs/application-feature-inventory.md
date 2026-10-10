@@ -227,14 +227,14 @@ Sources: [workspace controls][manager], [grid][grid], [panel][panel], [chart cre
 | Population             | Meaning                                                                  | Main consumers                                                                            |
 | ---------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
 | Full source            | Every loaded row.                                                        | Initial profiles, most chart domains, bin boundaries, category lists, calculated columns. |
-| Globally filtered rows | Rows that pass every chart dimension.                                    | Active row count, Rows mode, Summary view.                                                |
+| Globally filtered rows | Rows that pass every chart dimension and workspace filter.               | Active row count, Rows mode, Summary view.                                                |
 | Peer-filtered rows     | Rows that pass every dimension except the current chart's own dimension. | Most chart rendering and aggregation.                                                     |
 
-Crossfilter creates one dimension per chart, keyed by row ID. Each chart supplies its predicate. Predicates from different charts combine with AND, including multiple charts that filter the same field.
+Crossfilter creates one dimension per chart, keyed by row ID. Each chart supplies its predicate. Predicates from different charts combine with AND, including multiple charts that filter the same field. Each workspace filter gets one more dimension, keyed by its field, and narrows every chart.
 
 A chart's group omits that chart's own dimension. This lets a chart retain context for its own selection. For example, a row chart can display every category and dim unselected categories while other charts show only selected records. This does not imply that every renderer applies identical selection styling. Line paths, for example, retain their own unfiltered context beneath the brush.
 
-There is no separate persistent working-set filter, global query layer, or user-defined group of linked charts. Separate workspace instances can be independent, but one workspace has one shared filter universe.
+Workspace filters are the filters no chart owns: at most one per field, saved with the view, and written in dashboard text as `filter <field>=…` lines. There is no global query layer or user-defined group of linked charts. Separate workspace instances can be independent, but one workspace has one shared filter universe.
 
 ### Filter representations
 
@@ -257,7 +257,7 @@ The chart shows a draft brush during the gesture. Linked filters update when the
 
 Categorical row and bar marks, box groups, pivot headers, and categorical legend entries support value selection. They are alternatives to numerical brushing, not one shared gesture grammar.
 
-The active-filter bar shows the number of rows left after chart filters. It lists removable filter chips and a clear-all action. Chips identify the owning chart. They do not navigate to that chart or show how several filters intersect numerically.
+The active-filter bar shows the number of rows left after workspace and chart filters. Its Filter button adds a workspace filter: a field search, then that field's filter control, in a popover. Picking a field that already has a workspace filter edits it, and an editing session is one state change. The bar lists removable filter chips and a clear-all action. Chips name their owner: a chart, Workspace, or Rows. A chart's chip shows that chart; a workspace chip reopens its control. Chips do not show how several filters intersect numerically.
 
 ### Table scope is different
 
@@ -265,7 +265,7 @@ Dashboard table **field filters** participate in linked chart filtering. Dashboa
 
 The separate Rows mode receives globally filtered records, then applies its own local field filters and search. Its controls do not constrain dashboard charts. They are not emitted in saved workspace state.
 
-Clear all filters clears chart filters, dashboard table searches, and local Rows filters/search. Table counts state their local scope. Before reset, those counts can differ from the global chart-filter count.
+Clear all filters clears workspace and chart filters, dashboard table searches, and local Rows filters/search. Table counts state their local scope. Before reset, those counts can differ from the global chart-filter count.
 
 Sources: [Crossfilter wrapper][crossfilter], [common predicates][filter], [brush hook][brush], [filter status][filterstatus], [table filtering][tablerows], [Rows mode][rowsview], individual chart definitions linked below.
 
