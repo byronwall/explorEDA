@@ -19,12 +19,21 @@ type FeatureDefinition = {
 };
 
 export const coverageFeatures = [
-  { id: "chart:map", label: "Map", family: "Chart types", description: "Locate source rows by latitude and longitude.", chartType: "map", required: true, status: "supported" },
+  {
+    id: "chart:map",
+    label: "Map",
+    family: "Chart types",
+    description: "Locate source rows by latitude and longitude.",
+    chartType: "map",
+    required: true,
+    status: "supported",
+  },
   {
     id: "mode:scatter-density",
     label: "Binned scatter density",
     family: "Chart modes",
-    description: "Count numeric coordinate pairs in fixed rectangular bins and inspect exact membership.",
+    description:
+      "Count numeric coordinate pairs in fixed rectangular bins and inspect exact membership.",
     required: true,
     status: "supported",
   },
@@ -32,7 +41,8 @@ export const coverageFeatures = [
     id: "mode:scatter-regression",
     label: "Scatter regression",
     family: "Chart modes",
-    description: "Fit each color group within each facet, read equations and R², and trace each fit's rows.",
+    description:
+      "Fit each color group within each facet, read equations and R², and trace each fit's rows.",
     required: true,
     status: "supported",
   },
@@ -40,7 +50,8 @@ export const coverageFeatures = [
     id: "mode:scatter-hexbin",
     label: "Hexagonal scatter bins",
     family: "Chart modes",
-    description: "Count coordinate pairs in fixed hexagons and select or inspect each hexagon's exact rows.",
+    description:
+      "Count coordinate pairs in fixed hexagons and select or inspect each hexagon's exact rows.",
     required: true,
     status: "supported",
   },
@@ -48,7 +59,8 @@ export const coverageFeatures = [
     id: "mode:scatter-contour",
     label: "Smoothed 2D density",
     family: "Chart modes",
-    description: "Estimate density with a Gaussian kernel and draw filled regions and contour lines with bandwidth and level controls.",
+    description:
+      "Estimate density with a Gaussian kernel and draw filled regions and contour lines with bandwidth and level controls.",
     required: true,
     status: "supported",
   },
@@ -56,7 +68,8 @@ export const coverageFeatures = [
     id: "mode:bubble-scatter",
     label: "Bubble scatter",
     family: "Chart modes",
-    description: "Map a nonnegative value to point area, select source rows, and inspect the size calculation.",
+    description:
+      "Map a nonnegative value to point area, select source rows, and inspect the size calculation.",
     required: true,
     status: "supported",
   },
@@ -64,7 +77,8 @@ export const coverageFeatures = [
     id: "mode:area",
     label: "Area and stacked area",
     family: "Chart modes",
-    description: "Fill calendar summaries from zero or add nonnegative period totals, with exact band and source tracing.",
+    description:
+      "Fill calendar summaries from zero or add nonnegative period totals, with exact band and source tracing.",
     required: true,
     status: "supported",
   },
@@ -72,7 +86,8 @@ export const coverageFeatures = [
     id: "mode:stacked-bars",
     label: "Stacked and 100% bars",
     family: "Chart modes",
-    description: "Compare signed totals or nonnegative shares and inspect each category denominator.",
+    description:
+      "Compare signed totals or nonnegative shares and inspect each category denominator.",
     required: true,
     status: "supported",
   },
@@ -80,7 +95,8 @@ export const coverageFeatures = [
     id: "mode:grouped-bars",
     label: "Grouped bars",
     family: "Chart modes",
-    description: "Compare category–series pairs and inspect each bar's source rows.",
+    description:
+      "Compare category–series pairs and inspect each bar's source rows.",
     required: true,
     status: "supported",
   },
@@ -88,7 +104,8 @@ export const coverageFeatures = [
     id: "mode:calendar-series",
     label: "Calendar time series",
     family: "Chart modes",
-    description: "Summarize dated rows by UTC day, week, or month and inspect each period.",
+    description:
+      "Summarize dated rows by UTC day, week, or month and inspect each period.",
     required: true,
     status: "supported",
   },
@@ -96,7 +113,8 @@ export const coverageFeatures = [
     id: "chart:metric-card",
     label: "Metric card",
     family: "Chart types",
-    description: "Read the count, sum, or average for matching rows and inspect its inputs.",
+    description:
+      "Read the count, sum, or average for matching rows and inspect its inputs.",
     required: true,
     status: "supported",
     chartType: "metric-card",
@@ -204,7 +222,8 @@ export const coverageFeatures = [
     id: "chart:sankey",
     label: "Sankey diagram",
     family: "Chart types",
-    description: "Follow rows through ordered category stages and select a node or link.",
+    description:
+      "Follow rows through ordered category stages and select a node or link.",
     required: true,
     status: "supported",
     chartType: "sankey",
@@ -213,7 +232,8 @@ export const coverageFeatures = [
     id: "chart:parallel-coordinates",
     label: "Parallel coordinates",
     family: "Chart types",
-    description: "Follow each row across several fields and brush ranges on any axis.",
+    description:
+      "Follow each row across several fields and brush ranges on any axis.",
     required: true,
     status: "supported",
     chartType: "parallel-coordinates",
@@ -222,7 +242,8 @@ export const coverageFeatures = [
     id: "chart:scatter-matrix",
     label: "Scatter matrix",
     family: "Chart types",
-    description: "Compare every pair of several fields, with each field's distribution on the diagonal.",
+    description:
+      "Compare every pair of several fields, with each field's distribution on the diagonal.",
     required: true,
     status: "supported",
     chartType: "scatter-matrix",
@@ -249,7 +270,8 @@ export const coverageFeatures = [
     id: "chart:ecdf",
     label: "ECDF",
     family: "Chart types",
-    description: "Read the share of values at or below any threshold, without bins.",
+    description:
+      "Read the share of values at or below any threshold, without bins.",
     required: true,
     status: "supported",
     chartType: "ecdf",
@@ -258,7 +280,8 @@ export const coverageFeatures = [
     id: "chart:composition",
     label: "Composition",
     family: "Chart types",
-    description: "Build a report graphic on a blank artboard from text, repeated chart units, and guides.",
+    description:
+      "Build a report graphic on a blank artboard from text, repeated chart units, and guides.",
     required: true,
     status: "supported",
     chartType: "composition",
@@ -512,12 +535,47 @@ export type ExampleCoverage = {
 };
 
 export const exampleCoverage = [
-  { exampleId: "distribution-discovery", intent: "Discover distributions and inspect exact category members behind Other.", features: { "chart:bar": "shown", "chart:boxplot": "shown", "chart:row": "shown", "chart:metric-card": "shown", "chart:data-table": "shown", "interaction:cross-filter": "shown" } },
-  { exampleId: "region-map", intent: "Join geographic regions to records and inspect each metric and join.", features: { "chart:map": "shown", "chart:pivot": "shown", "chart:metric-card": "shown", "chart:data-table": "shown", "interaction:cross-filter": "shown" } },
-  { exampleId: "point-map", intent: "Locate service sites, inspect their coordinates, and select exact source rows.", features: { "chart:map": "shown", "chart:bar": "shown", "chart:metric-card": "shown", "chart:data-table": "shown", "interaction:cross-filter": "shown" } },
+  {
+    exampleId: "distribution-discovery",
+    intent:
+      "Discover distributions and inspect exact category members behind Other.",
+    features: {
+      "chart:bar": "shown",
+      "chart:boxplot": "shown",
+      "chart:row": "shown",
+      "chart:metric-card": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "region-map",
+    intent:
+      "Join geographic regions to records and inspect each metric and join.",
+    features: {
+      "chart:map": "shown",
+      "chart:pivot": "shown",
+      "chart:metric-card": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "point-map",
+    intent:
+      "Locate service sites, inspect their coordinates, and select exact source rows.",
+    features: {
+      "chart:map": "shown",
+      "chart:bar": "shown",
+      "chart:metric-card": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
   {
     exampleId: "scatter-density",
-    intent: "Resolve overlap in 10,000 daily observations and reconcile each bin with its source rows.",
+    intent:
+      "Resolve overlap in 10,000 daily observations and reconcile each bin with its source rows.",
     features: {
       "mode:scatter-density": "shown",
       "chart:scatter": "shown",
@@ -529,7 +587,8 @@ export const exampleCoverage = [
   },
   {
     exampleId: "wine-chemistry",
-    intent: "Read chemical relationships through density, counts, grouped and faceted fits, and summaries, then refit from a quality filter.",
+    intent:
+      "Read chemical relationships through density, counts, grouped and faceted fits, and summaries, then refit from a quality filter.",
     features: {
       "mode:scatter-contour": "shown",
       "mode:scatter-hexbin": "shown",
@@ -543,7 +602,8 @@ export const exampleCoverage = [
   },
   {
     exampleId: "scatter-regression",
-    intent: "Compare pooled and per-species relationships, then refit from another chart's filter.",
+    intent:
+      "Compare pooled and per-species relationships, then refit from another chart's filter.",
     features: {
       "mode:scatter-regression": "shown",
       "chart:scatter": "shown",
@@ -556,7 +616,8 @@ export const exampleCoverage = [
   },
   {
     exampleId: "scatter-matrix",
-    intent: "Compare every pair of measurements, species, and sex, then brush one cell to follow the same penguins everywhere.",
+    intent:
+      "Compare every pair of measurements, species, and sex, then brush one cell to follow the same penguins everywhere.",
     features: {
       "chart:scatter-matrix": "shown",
       "chart:row": "shown",
@@ -567,7 +628,8 @@ export const exampleCoverage = [
   },
   {
     exampleId: "scatter-surfaces",
-    intent: "Compare hexagonal counts with a smoothed density estimate and refit as another filters.",
+    intent:
+      "Compare hexagonal counts with a smoothed density estimate and refit as another filters.",
     features: {
       "mode:scatter-hexbin": "shown",
       "mode:scatter-contour": "shown",
@@ -580,7 +642,8 @@ export const exampleCoverage = [
   },
   {
     exampleId: "bubble-scatter",
-    intent: "Compare response time, conversion, and trial volume, with exact source rows and size tracing.",
+    intent:
+      "Compare response time, conversion, and trial volume, with exact source rows and size tracing.",
     features: {
       "mode:bubble-scatter": "shown",
       "chart:scatter": "shown",
@@ -592,7 +655,8 @@ export const exampleCoverage = [
   },
   {
     exampleId: "area-charts",
-    intent: "Compare monthly revenue layers and inspect each period's stack bounds and source rows.",
+    intent:
+      "Compare monthly revenue layers and inspect each period's stack bounds and source rows.",
     features: {
       "mode:area": "shown",
       "mode:calendar-series": "shown",
@@ -606,7 +670,8 @@ export const exampleCoverage = [
   },
   {
     exampleId: "stacked-bars",
-    intent: "Compare regional totals and channel shares, with source records for each denominator.",
+    intent:
+      "Compare regional totals and channel shares, with source records for each denominator.",
     features: {
       "mode:stacked-bars": "shown",
       "chart:bar": "shown",
@@ -618,7 +683,8 @@ export const exampleCoverage = [
   },
   {
     exampleId: "grouped-bars",
-    intent: "Compare regional revenue by channel and inspect an exact category–series pair.",
+    intent:
+      "Compare regional revenue by channel and inspect an exact category–series pair.",
     features: {
       "mode:grouped-bars": "shown",
       "chart:bar": "shown",
@@ -630,7 +696,8 @@ export const exampleCoverage = [
   },
   {
     exampleId: "calendar-series",
-    intent: "Compare monthly channel revenue, select a period, and inspect its source rows.",
+    intent:
+      "Compare monthly channel revenue, select a period, and inspect its source rows.",
     features: {
       "mode:calendar-series": "shown",
       "scale:time": "shown",
@@ -774,17 +841,24 @@ export const exampleCoverage = [
       date: "2026-10-02",
       report: "docs/reviews/2026-10-02-example-coverage.md#shop-operations",
       evidence: {
-        "chart:scatter": "Revenue and margin scatter responds to channel filtering.",
-        "labels:meaningful-title": "Dashboard titles state the question each view answers.",
+        "chart:scatter":
+          "Revenue and margin scatter responds to channel filtering.",
+        "labels:meaningful-title":
+          "Dashboard titles state the question each view answers.",
         "labels:axes": "Scatter axes name Revenue and Margin with units.",
-        "guides:ticks": "Scatter ticks remain readable at the reviewed desktop width.",
+        "guides:ticks":
+          "Scatter ticks remain readable at the reviewed desktop width.",
         "scale:symlog": "Revenue and Margin axes use symmetric-log scales.",
         "color:categorical": "Channel categories use distinct, named colors.",
         "color:legend": "The channel legend identifies each plotted category.",
-        "interaction:cross-filter": "Selecting Web narrows all linked views to 167 of 500 orders.",
-        "layout:dashboard": "The order book and linked charts remain readable together.",
-        "responsive:desktop-resize": "The dashboard fits at 1280 and 1024 pixels.",
-        "accessibility:naming": "Chart names and filter controls are exposed to assistive technology.",
+        "interaction:cross-filter":
+          "Selecting Web narrows all linked views to 167 of 500 orders.",
+        "layout:dashboard":
+          "The order book and linked charts remain readable together.",
+        "responsive:desktop-resize":
+          "The dashboard fits at 1280 and 1024 pixels.",
+        "accessibility:naming":
+          "Chart names and filter controls are exposed to assistive technology.",
       },
     },
   },
@@ -829,14 +903,18 @@ export const exampleCoverage = [
       date: "2026-10-02",
       report: "docs/reviews/2026-10-02-example-coverage.md#nba-stats",
       evidence: {
-        "chart:summary": "Summary table shows season field counts and distributions.",
+        "chart:summary":
+          "Summary table shows season field counts and distributions.",
         "chart:pivot": "Pivot compares player positions and season statistics.",
         "chart:data-table": "Data table lists player rows and selected fields.",
         "color:categorical": "Position groups use distinct colors.",
-        "color:legend": "Legend names the position groups used by the scatter plot.",
-        "table:sorting": "Scoring table sorts players from highest to lowest points.",
+        "color:legend":
+          "Legend names the position groups used by the scatter plot.",
+        "table:sorting":
+          "Scoring table sorts players from highest to lowest points.",
         "table:formatting": "Point totals use grouped thousands separators.",
-        "accessibility:naming": "Summary, pivot, scatter, and table regions have useful names.",
+        "accessibility:naming":
+          "Summary, pivot, scatter, and table regions have useful names.",
       },
     },
   },
@@ -864,12 +942,17 @@ export const exampleCoverage = [
       date: "2026-10-02",
       report: "docs/reviews/2026-10-02-example-coverage.md#categorical-charts",
       evidence: {
-        "scale:band": "Product categories occupy discrete bands in the row chart.",
-        "facet:grid": "The material-by-size grid repeats the same measure across categories.",
-        "interaction:active-filter": "The table displays a removable Sports filter chip.",
+        "scale:band":
+          "Product categories occupy discrete bands in the row chart.",
+        "facet:grid":
+          "The material-by-size grid repeats the same measure across categories.",
+        "interaction:active-filter":
+          "The table displays a removable Sports filter chip.",
         "table:filtering": "Text search narrows matching product rows.",
-        "state:empty": "An unmatched search shows a no-rows message; clearing it restores rows.",
-        "accessibility:naming": "Chart and search controls expose useful accessible names.",
+        "state:empty":
+          "An unmatched search shows a no-rows message; clearing it restores rows.",
+        "accessibility:naming":
+          "Chart and search controls expose useful accessible names.",
       },
     },
   },
@@ -890,12 +973,57 @@ export const exampleCoverage = [
   },
   {
     exampleId: "message-log",
-    intent: "Author a report graphic from a blank artboard beside linked views of its data.",
+    intent:
+      "Author a report graphic from a blank artboard beside linked views of its data.",
     features: {
       "chart:composition": "shown",
       "chart:line": "shown",
       "chart:row": "shown",
       "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
+    exampleId: "driving-shifts",
+    intent:
+      "Rebuild a connected scatterplot: a path through the years at numeric x and y, with callouts anchored to chosen years.",
+    features: {
+      "chart:composition": "shown",
+      "chart:scatter": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
+    exampleId: "tech-sparklines",
+    intent:
+      "Order company rows by a first-to-last change calculation and mark each sparkline's low, high, and latest price.",
+    features: {
+      "chart:composition": "shown",
+      "chart:line": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
+    exampleId: "forecast-fan",
+    intent:
+      "Layer supplied percentile bands around a central path with a shaded projection and a horizontal reference guide.",
+    features: {
+      "chart:composition": "shown",
+      "chart:line": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
+    exampleId: "time-use",
+    intent:
+      "Summarize two cohorts' quartiles inside each activity panel and color the change in median.",
+    features: {
+      "chart:composition": "shown",
+      "chart:boxplot": "shown",
+      "chart:row": "shown",
       "chart:data-table": "shown",
     },
   },
@@ -922,8 +1050,10 @@ export const exampleCoverage = [
       date: "2026-10-02",
       report: "docs/reviews/2026-10-02-example-coverage.md#product-activity",
       evidence: {
-        "chart:line": "Visitors per day is drawn across the ordered 0–90 study-day field.",
-        "scale:linear": "Study day and visitor values use numeric linear scales.",
+        "chart:line":
+          "Visitors per day is drawn across the ordered 0–90 study-day field.",
+        "scale:linear":
+          "Study day and visitor values use numeric linear scales.",
       },
     },
   },
@@ -963,7 +1093,8 @@ export const exampleCoverage = [
       date: "2026-10-02",
       report: "docs/reviews/2026-10-02-example-coverage.md#calculated-orders",
       evidence: {
-        "state:invalid": "Invalid formula shows a parse error and disabled save; discarding preserves saved rows.",
+        "state:invalid":
+          "Invalid formula shows a parse error and disabled save; discarding preserves saved rows.",
       },
     },
   },
@@ -993,7 +1124,8 @@ export const exampleCoverage = [
       date: "2026-10-02",
       report: "docs/reviews/2026-10-02-example-coverage.md#shop-10000",
       evidence: {
-        "facet:shared-scales": "North and South facets use matching order and revenue ticks.",
+        "facet:shared-scales":
+          "North and South facets use matching order and revenue ticks.",
       },
     },
   },
@@ -1020,14 +1152,18 @@ export const exampleCoverage = [
       date: "2026-10-02",
       report: "docs/reviews/2026-10-02-example-coverage.md#lorenz-3d",
       evidence: {
-        "chart:scatter": "2D scatter shows the selected Lorenz runs and filters.",
+        "chart:scatter":
+          "2D scatter shows the selected Lorenz runs and filters.",
         "chart:3d-scatter": "3D scatter shows the same runs on the Z axis.",
-        "color:numerical": "Numerical Run ID uses a visible Cool palette on the 3D view.",
+        "color:numerical":
+          "Numerical Run ID uses a visible Cool palette on the 3D view.",
         "facet:wrap": "Run facets preserve shared scales across panels.",
         "interaction:brushing": "A time-range brush changes the selected data.",
         "interaction:cross-filter": "The range filters linked 2D and 3D views.",
-        "interaction:saved-filter-state": "The example opens with Time and Z filters active.",
-        "accessibility:naming": "Dashboard regions and filtering controls have accessible names.",
+        "interaction:saved-filter-state":
+          "The example opens with Time and Z filters active.",
+        "accessibility:naming":
+          "Dashboard regions and filtering controls have accessible names.",
       },
     },
   },
@@ -1125,7 +1261,9 @@ export function findCoverageErrors(
     }
     for (const id of Object.keys(entry.review?.evidence ?? {})) {
       if (!reviewed.includes(id)) {
-        errors.push(`Review evidence without reviewed assignment: ${entry.exampleId}/${id}`);
+        errors.push(
+          `Review evidence without reviewed assignment: ${entry.exampleId}/${id}`
+        );
       }
     }
   }
