@@ -565,6 +565,42 @@ it("keeps row bars separate when display precision makes labels equal", async ()
   cleanup();
 });
 
+it("builds the JSON text of each value and its type", () => {
+  const values = [
+    "plain",
+    'quote " and \\ backslash',
+    "line\nbreak\ttab\u0001",
+    "emoji 🐧",
+    "",
+    "1",
+    0,
+    -0,
+    1.5,
+    -2e-7,
+    1e21,
+    123456789.123,
+    true,
+    false,
+    null,
+    undefined,
+    NaN,
+    Infinity,
+    -Infinity,
+  ];
+  const reference = (value: (typeof values)[number]) => {
+    if (value == null) return JSON.stringify(["missing"]);
+    if (typeof value === "number" && !Number.isFinite(value)) {
+      return JSON.stringify(["number", String(value)]);
+    }
+    return JSON.stringify([typeof value, value]);
+  };
+  // Twice, so the cached string keys are checked too.
+  for (const value of [...values, ...values]) {
+    expect(categoryKey(value)).toBe(reference(value));
+  }
+  expect(categoryKey(1)).not.toBe(categoryKey("1"));
+});
+
 it("keeps non-finite categories distinct", () => {
   expect(new Set([NaN, Infinity, -Infinity].map(categoryKey)).size).toBe(3);
 });
