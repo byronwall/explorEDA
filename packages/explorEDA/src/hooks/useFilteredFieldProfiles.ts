@@ -6,6 +6,7 @@ import {
   type FieldProfile,
 } from "@/lib/fieldProfiles";
 import { applyFilter } from "@/hooks/applyFilter";
+import { workspaceLiveKey } from "@/hooks/CrossfilterWrapper";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettings, datum } from "@/types/ChartTypes";
 
@@ -27,7 +28,12 @@ export function useFilteredFieldProfiles(
    * Profiles only these fields, such as a table's columns. Profiles cost a
    * pass over every filtered row, so a view that shows a few fields names them.
    */
-  fields?: readonly string[]
+  fields?: readonly string[],
+  /**
+   * A field whose workspace filter is being edited. Its profile leaves that
+   * filter out, so its control still shows every value the others allow.
+   */
+  workspaceField?: string
 ): FieldProfile[] {
   const sourceProfiles = useDataLayer((state) => state.fieldProfiles);
   const data = useDataLayer((state) => state.data);
@@ -79,10 +85,18 @@ export function useFilteredFieldProfiles(
       filteredRows = data.filter((row) => filteredIds.has(row.__ID));
     }
 
-    // Rows that pass every filter except the ones `own` sets.
-    const ownLive = ownId ? liveItems[ownId] : undefined;
+    // Rows that pass every filter except the ones `own` sets, or except the
+    // workspace filter on `workspaceField`.
+    const workspaceLive = workspaceField
+      ? liveItems[workspaceLiveKey(workspaceField)]
+      : undefined;
+    const ownLive = workspaceLive ?? (ownId ? liveItems[ownId] : undefined);
     const ownFields = new Set(
-      ownLive ? (ownFilters ?? []).map((filter) => filter.field) : []
+      workspaceLive
+        ? [workspaceField!]
+        : ownLive
+          ? (ownFilters ?? []).map((filter) => filter.field)
+          : []
     );
     const baseIds = ownLive
       ? new Set(
@@ -91,7 +105,7 @@ export function useFilteredFieldProfiles(
       : undefined;
     const rowsFor = (field: string) => {
       if (!baseIds || !ownFields.has(field)) return filteredRows;
-      const others = (ownFilters ?? [])
+      const others = (workspaceLive ? [] : (ownFilters ?? []))
         .filter((filter) => filter.field !== field)
         .map((filter) => {
           const values = getColumnData(filter.field);
@@ -139,6 +153,7 @@ export function useFilteredFieldProfiles(
     fieldSettings,
     ownId,
     ownFilters,
+    workspaceField,
     enabled,
     fieldKey,
   ]);

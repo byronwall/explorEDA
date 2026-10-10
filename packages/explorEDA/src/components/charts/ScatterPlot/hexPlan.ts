@@ -26,7 +26,7 @@ export interface HexBin {
   points: string;
   /** Every source row in this hexagon and facet. */
   sourceIds: IdType[];
-  /** Rows that pass the other charts' filters: the count it shows. */
+  /** Rows that pass the other filters: the count it shows. */
   rowIds: IdType[];
   /** Counted rows that also pass this chart's own selection. */
   matching: number;
@@ -41,7 +41,7 @@ export interface HexPlan {
   /** Count at full color; the largest full-source hexagon unless fixed. */
   max: number;
   sourceMax: number;
-  /** Rows in hexagons that pass the other charts' filters. */
+  /** Rows in hexagons that pass the other filters. */
   counted: number;
   notice?: string;
   hexAt: (px: number, py: number) => HexBin | undefined;

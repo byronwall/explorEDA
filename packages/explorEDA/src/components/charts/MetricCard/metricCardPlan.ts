@@ -161,7 +161,7 @@ export function planMetricCard(
     totalRows: filtered ? totalRows : undefined,
     comparison,
     scopeNote: settings.entityField
-      ? `Each ${getFieldLabel(settings.entityField)} once, among rows that pass this chart's filters and the other active chart filters.`
-      : "Rows that pass this chart's filters and the other active chart filters.",
+      ? `Each ${getFieldLabel(settings.entityField)} once, among rows that pass this chart's filters and the other active filters.`
+      : "Rows that pass this chart's filters and the other active filters.",
   };
 }

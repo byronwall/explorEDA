@@ -33,7 +33,7 @@ export interface ScatterFit {
   label: string;
   color: string;
   outcome: FitOutcome;
-  /** Rows in this group and facet that pass the other charts' filters. */
+  /** Rows in this group and facet that pass the other filters. */
   eligible: number;
   /** Eligible rows left out because X or Y is not a finite number. */
   missingX: number;
@@ -65,7 +65,7 @@ function hashIds(ids: IdType[]) {
 
 /**
  * Everything a fit depends on. This chart's own brush is not part of it, so a
- * selection never refits; other charts' filters change the eligible rows and do.
+ * selection never refits; other filters change the eligible rows and do.
  */
 export function fitInputKey(
   settings: ScatterPlotSettings,
@@ -165,7 +165,7 @@ export function groupScatterRows(
 
 /**
  * Fits each color group, and optionally all groups together, from the rows in
- * this facet that pass the other charts' filters.
+ * this facet that pass the other filters.
  */
 export function planScatterFits(
   settings: ScatterPlotSettings,

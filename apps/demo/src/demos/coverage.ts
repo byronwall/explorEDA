@@ -567,7 +567,7 @@ export const exampleCoverage = [
   },
   {
     exampleId: "scatter-surfaces",
-    intent: "Compare hexagonal counts with a smoothed density estimate and refit as another chart filters.",
+    intent: "Compare hexagonal counts with a smoothed density estimate and refit as another filters.",
     features: {
       "mode:scatter-hexbin": "shown",
       "mode:scatter-contour": "shown",

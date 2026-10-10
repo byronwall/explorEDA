@@ -119,7 +119,7 @@ describe("FieldList", () => {
     const list = openList();
 
     expect(
-      within(list).getByText("Values describe 2 of 4 rows after chart filters")
+      within(list).getByText("Values describe 2 of 4 rows after filters")
     ).toBeInTheDocument();
     const line = (name: RegExp) =>
       within(list)
@@ -141,7 +141,7 @@ describe("FieldList", () => {
         .getByRole("button", { name })
         .closest(".eda-field-row-line") as HTMLElement;
     expect(
-      within(list).getByText("Values describe 2 of 4 rows after chart filters")
+      within(list).getByText("Values describe 2 of 4 rows after filters")
     ).toBeInTheDocument();
     // Revenue reads every row; other fields read the two filtered rows.
     expect(line(/^revenue/)).toHaveTextContent("10–40");
@@ -164,7 +164,7 @@ describe("FieldList", () => {
       })
     );
     expect(
-      within(list).getByText("Values describe 1 of 2 rows after chart filters")
+      within(list).getByText("Values describe 1 of 2 rows after filters")
     ).toBeInTheDocument();
   });
 

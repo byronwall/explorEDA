@@ -347,6 +347,47 @@ describe("ActiveFilterStatus", () => {
       ).not.toBeInTheDocument();
     });
 
+    it("reports one state change per editing session", async () => {
+      const onStateChange = vi.fn();
+      render(
+        <DataLayerProvider
+          data={data}
+          charts={[makeChart([])]}
+          onStateChange={onStateChange}
+        >
+          <ActiveFilterStatus />
+        </DataLayerProvider>
+      );
+      await addCategoryX();
+      fireEvent.click(screen.getByRole("checkbox", { name: /^y/ }));
+      fireEvent.click(screen.getByRole("checkbox", { name: /^y/ }));
+      expect(onStateChange).not.toHaveBeenCalled();
+      fireEvent.keyDown(document.activeElement ?? document.body, {
+        key: "Escape",
+      });
+      await waitFor(() => expect(onStateChange).toHaveBeenCalledTimes(1));
+      expect(onStateChange.mock.calls[0]![0].workspaceFilters).toEqual([
+        { type: "value", field: "category", values: ["x"] },
+      ]);
+    });
+
+    it("marks a field that has a filter and edits it instead of adding one", async () => {
+      renderBar();
+      await addCategoryX();
+      fireEvent.keyDown(document.activeElement ?? document.body, {
+        key: "Escape",
+      });
+      await waitFor(() =>
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+      );
+      fireEvent.click(screen.getByRole("button", { name: "Add filter" }));
+      const dialog = await screen.findByRole("dialog");
+      const option = within(dialog).getByRole("option", { name: /category/ });
+      expect(option).toHaveTextContent("Filtered");
+      fireEvent.click(option);
+      expect(await screen.findByRole("checkbox", { name: /^x/ })).toBeChecked();
+    });
+
     it("clears workspace filters with every other filter", async () => {
       renderBar();
       await addCategoryX();

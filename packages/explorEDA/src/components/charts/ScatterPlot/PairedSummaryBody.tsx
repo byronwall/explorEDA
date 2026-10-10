@@ -86,9 +86,9 @@ export function PairedSummaryBody({
       </div>
       <p className="text-muted-foreground">
         X is {xLabel}; Y is {yLabel}. Rows
-        {summary.facet ? " in this facet" : ""} that pass the other charts'
-        filters and have numeric values for both. Selecting points on this chart
-        does not change these numbers. Spread and covariance divide by n − 1.
+        {summary.facet ? " in this facet" : ""} that pass the other filters and
+        have numeric values for both. Selecting points on this chart does not
+        change these numbers. Spread and covariance divide by n − 1.
       </p>
       {summary.notice && <p>{summary.notice}</p>}
       {summary.pooled && (

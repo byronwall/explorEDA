@@ -9,7 +9,7 @@ export interface CalendarSnapshot {
   revision: string;
   /** Every source row ID. Years come from them so the year list holds while filtering. */
   allIds: number[];
-  /** Rows after other charts' filters. */
+  /** Rows after other filters. */
   liveIds: number[];
   dateData: Record<number, datum>;
   measureData: Record<number, datum>;
@@ -304,13 +304,13 @@ export function planCalendar({
     scale: {
       kind: scale.kind,
       domain: scale.domain,
-      population: `days in ${year} after other chart filters`,
+      population: `days in ${year} after other filters`,
     },
     hasEmpty: days.some((day) => day.state === "empty"),
     hasInvalid: days.some((day) => day.state === "invalid"),
     omitted: { invalidDates: rollup.invalidDateIds.length, otherYears },
     selection: filter ? { min: filter.min, max: filter.max } : undefined,
-    scopeNote: "Days in UTC. Rows after other chart filters; this chart's selected day is outlined",
+    scopeNote: "Days in UTC. Rows after other filters; this chart's selected day is outlined",
   };
 }
 

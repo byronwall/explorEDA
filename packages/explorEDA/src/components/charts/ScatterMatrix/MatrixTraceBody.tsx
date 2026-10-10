@@ -69,7 +69,7 @@ function CellBody({ trace }: { trace: MatrixCellTrace }) {
           </TraceReadout>
         )}
         <TraceReadout label="Rows used">
-          {`${cell.n.toLocaleString()} of ${trace.liveCount.toLocaleString()} rows after other charts' filters`}
+          {`${cell.n.toLocaleString()} of ${trace.liveCount.toLocaleString()} rows after other filters`}
         </TraceReadout>
         <TraceReadout label="Missing">
           {diagonal

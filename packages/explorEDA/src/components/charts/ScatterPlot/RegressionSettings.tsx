@@ -133,7 +133,7 @@ export function RegressionSettings({
         </div>
       )}
       <div className="col-start-2 flex items-center gap-2">
-        <ActionTooltip content="Shows Pearson r and the pair count on the chart. Alt-click it for means, standard deviations, the sample covariance matrix, and per-group results. Uses the rows that pass the other charts' filters.">
+        <ActionTooltip content="Shows Pearson r and the pair count on the chart. Alt-click it for means, standard deviations, the sample covariance matrix, and per-group results. Uses the rows that pass the other filters.">
           <span className="inline-flex w-fit">
             <Switch
               id="scatter-summary"

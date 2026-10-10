@@ -405,7 +405,7 @@ export function planTimeSeries(
     formatValue,
     dateLabel: getLabel(settings.xField),
     scopeNote:
-      "UTC periods. Rows after other chart filters and facet selection; this chart's own selection keeps the surrounding series visible.",
+      "UTC periods. Rows after other filters and facet selection; this chart's own selection keeps the surrounding series visible.",
   };
 }
 export type TimeSeriesPlan = ReturnType<typeof planTimeSeries>;

@@ -12,7 +12,7 @@ export interface EcdfSnapshot {
   revision: string;
   /** Every source row. The x range uses them so it holds still while filtering. */
   allIds: number[];
-  /** Rows after other charts' filters. */
+  /** Rows after other filters. */
   liveIds: number[];
   values: Record<number, datum>;
   groupData?: Record<number, datum>;
@@ -469,7 +469,7 @@ export function planEcdf({
         }
       : undefined,
     scopeNote:
-      "Rows after other chart filters. Each curve's shares use its own rows with a valid value, so curves of different sizes compare fairly.",
+      "Rows after other filters. Each curve's shares use its own rows with a valid value, so curves of different sizes compare fairly.",
     px,
     py,
   };

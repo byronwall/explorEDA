@@ -97,7 +97,7 @@ describe("planSankey", () => {
     expect(linkIds(result, "South", "(missing)")).toEqual([4]);
   });
 
-  it("uses only rows that pass other charts' filters", () => {
+  it("uses only rows that pass other filters", () => {
     const result = plan({}, [0, 1]);
     expect(result.drawnRows).toBe(2);
     expect(result.nodes.map((node) => node.label)).toEqual([

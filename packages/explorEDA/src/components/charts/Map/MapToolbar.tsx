@@ -60,7 +60,7 @@ export function MapToolbar({
           size="sm"
           variant="ghost"
           className="h-6 shrink-0 px-1.5 text-xs"
-          tooltip="Fit all source coordinates. Other chart filters and facets do not change this view."
+          tooltip="Fit all source coordinates. Other filters and facets do not change this view."
           disabled={!plan.coordinates.length}
           onClick={() =>
             saveView(

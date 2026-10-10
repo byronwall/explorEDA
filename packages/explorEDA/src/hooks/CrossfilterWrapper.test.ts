@@ -21,7 +21,7 @@ const makeChart = (id: string, filters: DataTableSettings["filters"]) => ({
 describe("CrossfilterWrapper", () => {
   beforeAll(() => registerAllCharts());
 
-  it("counts rows that survive every chart filter", () => {
+  it("counts rows that survive every linked filter", () => {
     const data = [
       { __ID: 0, name: "A", category: "x" },
       { __ID: 1, name: "B", category: "x" },

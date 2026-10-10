@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ListFilter } from "lucide-react";
 import { ColumnFilter } from "@/components/charts/DataTable/components/ColumnFilter";
 import { FieldMetadata, resolveFieldProfile } from "@/components/FieldMetadata";
 import { useFilteredFieldProfiles } from "@/hooks/useFilteredFieldProfiles";
@@ -39,6 +39,8 @@ function FieldList({ onPick }: { onPick: (field: string) => void }) {
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
   const getColumnData = useDataLayer((state) => state.getColumnData);
+  const workspaceFilters = useDataLayer((state) => state.workspaceFilters);
+  const filtered = new Set(workspaceFilters.map((filter) => filter.field));
   return (
     <Command
       className="eda-workspace-filter-fields"
@@ -60,6 +62,12 @@ function FieldList({ onPick }: { onPick: (field: string) => void }) {
               compact
               showTooltip={false}
             />
+            {filtered.has(name) && (
+              <span className="eda-workspace-filter-mark ml-auto">
+                <ListFilter aria-hidden="true" />
+                Filtered
+              </span>
+            )}
           </CommandItem>
         ))}
       </CommandList>
@@ -76,7 +84,12 @@ function FieldFilter({ field, onBack }: { field: string; onBack: () => void }) {
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
-  const [distribution] = useFilteredFieldProfiles(undefined, true, [field]);
+  const [distribution] = useFilteredFieldProfiles(
+    undefined,
+    true,
+    [field],
+    field
+  );
   const profile = resolveFieldProfile(field, fieldProfiles, getColumnData);
   const label = getFieldLabel(field);
   const ref = useRef<HTMLDivElement>(null);

@@ -177,7 +177,7 @@ function FitDetails({
           </TraceReadout>
         )}
         <p className="text-muted-foreground">
-          Rows from {scope || "this chart"} that pass the other charts' filters.
+          Rows from {scope || "this chart"} that pass the other filters.
           Selecting points on this chart dims them but does not refit.
         </p>
       </TraceSection>
