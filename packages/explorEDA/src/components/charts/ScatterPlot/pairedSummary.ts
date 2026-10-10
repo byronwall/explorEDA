@@ -9,7 +9,7 @@ export interface PairedStats {
   label: string;
   color: string;
   kind: "pooled" | "group";
-  /** Rows in this group and facet that pass the other charts' filters. */
+  /** Rows in this group and facet that pass the other filters. */
   eligible: number;
   pairs: number;
   missingX: number;

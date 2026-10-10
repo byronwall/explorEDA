@@ -13,7 +13,7 @@ export interface SankeySnapshot {
   revision: string;
   /** Every source row. Node ranking uses them so order holds while filtering. */
   allIds: number[];
-  /** Rows after other charts' filters. */
+  /** Rows after other filters. */
   liveIds: number[];
   stageData: Record<string, Record<number, datum>>;
   measureData: Record<number, datum>;
@@ -564,7 +564,7 @@ export function planSankey({
           }))
         : [],
     scopeNote:
-      "Rows after other chart filters. Each row is one path, so it counts once at every stage.",
+      "Rows after other filters. Each row is one path, so it counts once at every stage.",
   };
 }
 

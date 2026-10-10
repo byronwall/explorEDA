@@ -178,7 +178,7 @@ function Workspace() {
     </>
   );
 }
-it("selects source rows for one segment and recalculates its denominator after another chart filters", () => {
+it("selects source rows for one segment and recalculates its denominator after another filters", () => {
   render(
     <DataLayerProvider
       savedData={saved}

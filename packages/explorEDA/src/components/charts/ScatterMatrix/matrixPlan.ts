@@ -66,7 +66,7 @@ export type MatrixCellKind =
 export interface MatrixSnapshot {
   /** Every source row. Domains and bands use them, so they hold still. */
   allIds: number[];
-  /** Rows after other charts' filters. */
+  /** Rows after other filters. */
   liveIds: number[];
   columns: Record<string, Record<number, datum>>;
   types: Record<string, DataType | undefined>;

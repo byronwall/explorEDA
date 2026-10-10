@@ -34,9 +34,9 @@ export function MarginalTraceBody({ trace }: { trace: MarginalTrace }) {
       </TraceSection>
       <TraceSection heading="Population" muted>
         <p>
-          Plotted points: rows that pass the other charts' filters and have
-          numeric X and Y. The {marginals.binCount} bins divide the full-source
-          axis range into equal intervals, so edges stay put while filtering.
+          Plotted points: rows that pass the other filters and have numeric X
+          and Y. The {marginals.binCount} bins divide the full-source axis range
+          into equal intervals, so edges stay put while filtering.
           {marginals.split &&
             " The darker share passes this chart's own selection."}
         </p>

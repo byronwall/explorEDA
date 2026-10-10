@@ -93,7 +93,7 @@ describe("hexagonal bins", () => {
     expect(hexBinFilters({ ...settings, filters }, bin)).toEqual([]);
   });
 
-  it("counts only rows that pass the other charts' filters", () => {
+  it("counts only rows that pass the other filters", () => {
     const { x, y } = cloud(400);
     const { settings, snapshot } = setup(x, y, "hexbin", [0, 1, 2, 3]);
     const hex = planHexbins(

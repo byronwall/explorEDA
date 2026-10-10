@@ -131,7 +131,7 @@ export function BarChartSettingsPanel({
             {aggregate?.aggregation === "average"
               ? "Choose count or sum to stack series. Compare averages side by side."
               : settings.seriesLayout === "percent"
-                ? "Each category totals 100%. Shares use its nonnegative series totals after other chart filters."
+                ? "Each category totals 100%. Shares use its nonnegative series totals after other filters."
                 : settings.seriesLayout === "stacked"
                   ? "Series add within each category. Positive and negative totals stack separately from zero."
                   : "Compare series side by side. Stacked adds their values; 100% compares their shares."}

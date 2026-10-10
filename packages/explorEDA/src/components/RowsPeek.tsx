@@ -3,7 +3,7 @@ import { RowsView } from "./RowsView";
 import { WorkspaceDrawer } from "./WorkspaceDrawer";
 
 /**
- * The rows that pass every chart filter, in a drawer over the right of the
+ * The rows that pass every linked filter, in a drawer over the right of the
  * viewport. Expanded, it leaves a strip of charts and a click there closes
  * it. Narrow, it sits beside the charts, which stay in use while it is open.
  * R, Escape, and the close button close either size.

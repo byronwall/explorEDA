@@ -110,8 +110,8 @@ export function MapTraceBody({ trace }: { trace: MapTrace }) {
           }
         >
           <p>
-            {rows.length} rows in the chart population. Other chart filters and
-            the facet define this population.
+            {rows.length} rows in the chart population. Other filters and the
+            facet define this population.
           </p>
           <div className="max-h-72 overflow-auto rounded border border-border">
             <table className="w-full text-left">

@@ -63,7 +63,7 @@ export function DataTable({
   // The Rows view always shows distributions; a table chart opts in.
   const showDistributions =
     rows !== undefined || settings.showDistributions !== false;
-  // Rows passes every chart filter. A table chart ignores its own filters,
+  // Rows passes every linked filter. A table chart ignores its own filters,
   // so a filtered column keeps its shape with the kept range highlighted.
   // Only the table's columns are profiled.
   const distributionProfiles = useFilteredFieldProfiles(

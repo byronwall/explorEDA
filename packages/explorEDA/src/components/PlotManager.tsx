@@ -719,7 +719,7 @@ export function PlotManager({
               tooltip={
                 rowsOpen
                   ? "Close the rows (R or Esc)"
-                  : "Rows: peek at the rows that pass every chart filter (R)"
+                  : "Rows: peek at the rows that pass every linked filter (R)"
               }
               onClick={() => (rowsOpen ? closeRows() : setRowsOpen(true))}
             >

@@ -6,7 +6,7 @@ import type { CompositionData } from "./resolveUnit";
 
 /**
  * The rows a composition draws: its population, and the rows that pass the
- * other charts' filters.
+ * other filters.
  */
 export function useCompositionData(settings: ChartSettings): CompositionData {
   const liveIds = useGetLiveIds(settings);

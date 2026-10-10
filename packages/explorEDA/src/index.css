@@ -1994,6 +1994,34 @@ html {
   color: var(--foreground);
   border-color: var(--input);
 }
+.eda-filter-add {
+  flex-shrink: 0;
+  width: auto;
+  height: 26px;
+  gap: 4px;
+  padding: 0 8px;
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.eda-filter-chip-owner {
+  color: var(--muted-foreground);
+}
+.eda-workspace-filter-mark {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.eda-workspace-filter-mark svg {
+  width: 12px;
+  height: 12px;
+}
+.eda-filter-add svg {
+  width: 14px;
+  height: 14px;
+}
 .eda-workspace-status .eda-filter-clear {
   flex-shrink: 0;
   width: 28px;
@@ -2679,8 +2707,14 @@ html {
     padding-left: 0;
   }
   .eda-row-count-lead,
-  .eda-filter-more-label {
+  .eda-filter-more-label,
+  .eda-filter-add-label {
     display: none;
+  }
+  .eda-filter-add {
+    width: 28px;
+    padding: 0;
+    justify-content: center;
   }
   /* Phones keep every tool on one line: icons only, no dividers. */
   .eda-toolbar-add {

@@ -45,7 +45,7 @@ export interface BarSnapshot {
   revision: string;
   /** Every source value of the field. Count and bin domains use it. */
   allValues: datum[];
-  /** Rows after other charts' filters and the current facet. */
+  /** Rows after other filters and the current facet. */
   liveIds: IdType[];
   fieldData: Record<IdType, datum>;
   fieldType?: string;
@@ -113,7 +113,7 @@ export interface BarMark {
   /** The value as the readout and accessible name show it. */
   valueText: string;
   /**
-   * The count over every source row, when other charts' filters lower the bar.
+   * The count over every source row, when other filters lower the bar.
    * The chart draws it as a faint bar behind, so the share left reads at once.
    */
   total?: { value: number; y: number; height: number };
@@ -306,7 +306,7 @@ export function planBarChart({
   formatAxisValue,
   footer = 0,
   showTotals = false,
-  aggregateScope = "Rows after other chart filters; this chart's selected groups are shown in color",
+  aggregateScope = "Rows after other filters; this chart's selected groups are shown in color",
   typography,
 }: BarPlanInput): BarChartPlan {
   const numeric = isNumericBarField(settings, snapshot);
@@ -654,8 +654,8 @@ export function planBarChart({
       mode === "aggregate"
         ? aggregateScope
         : mode === "count"
-          ? "Rows after other chart filters; this chart's selected categories are shown in color"
-          : "Rows after other chart filters; this chart's range is shown in color",
+          ? "Rows after other filters; this chart's selected categories are shown in color"
+          : "Rows after other filters; this chart's range is shown in color",
   };
 }
 

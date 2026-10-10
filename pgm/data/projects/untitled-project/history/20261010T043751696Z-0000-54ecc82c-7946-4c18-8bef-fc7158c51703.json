@@ -1,0 +1,14 @@
+{
+  "id": "54ecc82c-7946-4c18-8bef-fc7158c51703",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:8b507c",
+    "label": "Agent token ...8b507c"
+  },
+  "createdAt": "2026-10-10T04:37:51.696Z",
+  "summary": "Created \"Hide or isolate a series from the legend\".",
+  "nodeIds": [
+    "page-hide-or-isolate-a-series-from-the-legend"
+  ]
+}

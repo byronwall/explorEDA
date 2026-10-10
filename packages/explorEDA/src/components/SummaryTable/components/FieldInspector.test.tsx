@@ -128,7 +128,7 @@ describe("FieldInspector values", () => {
     expect(screen.getByRole("row", { name: /Maximum \$40\.00/ })).toBeTruthy();
   });
 
-  it("compares rows after chart filters with all rows", () => {
+  it("compares rows after filters with all rows", () => {
     render(
       <DataLayerProvider
         data={data}
@@ -145,7 +145,7 @@ describe("FieldInspector values", () => {
     expect(items[0]).toHaveTextContent(/North.*2 \/ 2.*100%/);
     expect(items[1]).toHaveTextContent(/South.*0 \/ 2.*0%/);
     expect(
-      screen.getByRole("columnheader", { name: "After chart filters" })
+      screen.getByRole("columnheader", { name: "After filters" })
     ).toBeInTheDocument();
     expect(screen.getByRole("row", { name: /Rows 2 4/ })).toBeTruthy();
   });

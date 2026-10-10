@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { categoryLabel } from "@/lib/categories";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
@@ -9,10 +9,16 @@ import {
   formatFieldValue,
   getFieldName,
 } from "@/lib/fieldSettings";
-import { FilterX, ListFilter, X } from "lucide-react";
+import { FilterX, ListFilter, Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverTrigger,
+} from "./ui/popover";
+import { WorkspaceFilterEditor } from "./WorkspaceFilterEditor";
 import { ActionTooltip } from "./ui/tooltip";
 
 export type FieldFormatting = {
@@ -117,20 +123,27 @@ export function isActiveFilter(filter: Filter) {
  * removes it. Filters without a chart show a plain label.
  */
 function FilterChip({
+  owner,
   label,
   showLabel,
   showTooltip,
   onShow,
+  expanded,
   onHighlight,
   removeLabel,
   removeTooltip,
   onRemove,
   overflow,
 }: {
+  /** Who owns a filter that no chart owns, shown muted before the label. */
+  owner?: string;
   label: string;
   showLabel?: string;
   showTooltip?: string;
-  onShow?: () => void;
+  /** Receives the label, so a popover can open beside it. */
+  onShow?: (target: HTMLElement) => void;
+  /** Whether the popover the label opens is open. */
+  expanded?: boolean;
   onHighlight?: (active: boolean) => void;
   removeLabel: string;
   removeTooltip: string;
@@ -151,16 +164,24 @@ function FilterChip({
           className="h-full min-w-0 rounded-r-none px-2 font-normal"
           tooltip={showTooltip}
           aria-label={showLabel}
-          onClick={onShow}
+          aria-haspopup={expanded === undefined ? undefined : "dialog"}
+          aria-expanded={expanded}
+          onClick={(event) => onShow(event.currentTarget)}
           onPointerEnter={() => onHighlight?.(true)}
           onPointerLeave={() => onHighlight?.(false)}
           onFocus={() => onHighlight?.(true)}
           onBlur={() => onHighlight?.(false)}
         >
-          <span className="truncate">{label}</span>
+          <span className="truncate">
+            {owner && <span className="eda-filter-chip-owner">{owner} · </span>}
+            {label}
+          </span>
         </Button>
       ) : (
-        <span className="min-w-0 truncate px-2 text-sm">{label}</span>
+        <span className="min-w-0 truncate px-2 text-sm">
+          {owner && <span className="eda-filter-chip-owner">{owner} · </span>}
+          {label}
+        </span>
       )}
       <Button
         type="button"
@@ -207,6 +228,8 @@ export function ActiveFilterStatus({
     state.crossfilterWrapper.getFilteredRowCount()
   );
   const updateChart = useDataLayer((state) => state.updateChart);
+  const workspaceFilters = useDataLayer((state) => state.workspaceFilters);
+  const setWorkspaceFilter = useDataLayer((state) => state.setWorkspaceFilter);
   const clearAllFilters = useDataLayer((state) => state.clearAllFilters);
   const rowsSettings = useDataLayer((state) => state.rowsSettings);
   const updateRowsSettings = useDataLayer((state) => state.updateRowsSettings);
@@ -243,10 +266,76 @@ export function ActiveFilterStatus({
   type ChipProps = Omit<Parameters<typeof FilterChip>[0], "overflow"> & {
     key: string;
   };
+  // The workspace filter popover opens beside Add filter or the chip it edits.
+  // `field` is undefined while the user picks a field.
+  const [editor, setEditor] = useState<{
+    field?: string;
+    anchor: HTMLElement;
+  }>();
+  const addRef = useRef<HTMLButtonElement>(null);
+  const moreRef = useRef<HTMLButtonElement>(null);
+  const holdStateChanges = useDataLayer((state) => state.holdStateChanges);
+  // An editing session reaches the host as one change, one undo step, when
+  // the popover closes. A filter left empty is removed then.
+  const editing = editor !== undefined;
+  const latestWorkspace = useRef({ workspaceFilters, setWorkspaceFilter });
+  latestWorkspace.current = { workspaceFilters, setWorkspaceFilter };
+  useEffect(() => {
+    if (!editing) return;
+    const release = holdStateChanges();
+    return () => {
+      const { workspaceFilters, setWorkspaceFilter } = latestWorkspace.current;
+      for (const filter of workspaceFilters) {
+        if (!isActiveFilter(filter)) setWorkspaceFilter(filter.field);
+      }
+      release();
+    };
+  }, [editing, holdStateChanges]);
+  // The edited chip goes away if its filter is cleared, so the popover keeps
+  // the last place it saw.
+  const anchorRef = useMemo(() => {
+    let last = editor?.anchor.getBoundingClientRect() ?? new DOMRect();
+    return {
+      current: {
+        getBoundingClientRect: () => {
+          const anchor = editor?.anchor;
+          if (anchor?.isConnected) last = anchor.getBoundingClientRect();
+          return last;
+        },
+      },
+    };
+  }, [editor?.anchor]);
+
   const chips: ChipProps[] = [
+    ...workspaceFilters.filter(isActiveFilter).map((filter) => {
+      const label = formatFilterLabel(filter, formatting);
+      const exact = exactBounds(filter, formatting);
+      return {
+        key: `workspace-${filter.field}`,
+        owner: "Workspace",
+        label,
+        showLabel: `Edit workspace filter ${label}`,
+        showTooltip: `Edit this workspace filter. It narrows every chart, and no chart owns it. Use × to remove it.${exact ? ` ${exact}.` : ""}`,
+        // A chip in the overflow list closes with that list, so the editor
+        // opens beside the button that showed it.
+        onShow: (anchor: HTMLElement) =>
+          setEditor({
+            field: filter.field,
+            anchor:
+              anchor.closest(".eda-filter-popover") && moreRef.current
+                ? moreRef.current
+                : anchor,
+          }),
+        expanded: editor?.field === filter.field,
+        removeLabel: `Remove workspace filter ${label}`,
+        removeTooltip: "Remove this workspace filter",
+        onRemove: () => setWorkspaceFilter(filter.field),
+      };
+    }),
     ...localFilters.map((filter, index) => ({
       key: `rows-${index}`,
-      label: `Rows · ${filterLabel(filter)}`,
+      owner: "Rows",
+      label: filterLabel(filter),
       removeLabel: `Remove Rows filter: ${filterLabel(filter)}`,
       removeTooltip:
         "Remove this Rows filter. It was set in the Rows view, not by a chart, and applies only there.",
@@ -302,7 +391,9 @@ export function ActiveFilterStatus({
   // listed in the "+N more" popover instead.
   const listRef = useRef<HTMLUListElement>(null);
   const [fitCount, setFitCount] = useState(chips.length);
-  const chipSignature = chips.map((chip) => chip.key + chip.label).join("|");
+  const chipSignature = chips
+    .map((chip) => chip.key + (chip.owner ?? "") + chip.label)
+    .join("|");
   useLayoutEffect(() => {
     const list = listRef.current;
     if (!list) return;
@@ -326,14 +417,14 @@ export function ActiveFilterStatus({
 
   return (
     <section
-      aria-label="Active chart filters"
+      aria-label="Active filters"
       className={cn("eda-filter-status", className)}
     >
       <ActionTooltip
         content={
           <>
-            Rows that pass every chart filter. Table searches and Rows filters
-            apply only to their own table.
+            Rows that pass every workspace and chart filter. Table searches and
+            Rows filters apply only to their own table.
           </>
         }
       >
@@ -346,9 +437,52 @@ export function ActiveFilterStatus({
           <span className="eda-row-count-lead">Showing </span>
           <strong>{remainingRows.toLocaleString()}</strong> of{" "}
           <strong>{data.length.toLocaleString()}</strong> rows
-          <span className="sr-only"> after chart filters.</span>
+          <span className="sr-only"> after workspace and chart filters.</span>
         </p>
       </ActionTooltip>
+      <Popover
+        open={editor !== undefined}
+        onOpenChange={(open) => !open && setEditor(undefined)}
+      >
+        <PopoverAnchor virtualRef={anchorRef} />
+        <Button
+          ref={addRef}
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="eda-filter-add"
+          aria-label="Add filter"
+          aria-haspopup="dialog"
+          aria-expanded={
+            editor !== undefined && editor.anchor === addRef.current
+          }
+          tooltip="Filter every chart by a field, without adding a chart"
+          onClick={(event) => setEditor({ anchor: event.currentTarget })}
+        >
+          <Plus aria-hidden="true" />
+          <span className="eda-filter-add-label">Filter</span>
+        </Button>
+        <PopoverContent
+          side="top"
+          align="start"
+          aria-label={
+            editor?.field ? "Edit workspace filter" : "Add a workspace filter"
+          }
+          className="eda-workspace-filter-popover w-72 p-2"
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            const anchor = editor?.anchor;
+            (anchor?.isConnected ? anchor : addRef.current)?.focus();
+          }}
+        >
+          <WorkspaceFilterEditor
+            field={editor?.field}
+            onFieldChange={(field) =>
+              setEditor((current) => current && { ...current, field })
+            }
+          />
+        </PopoverContent>
+      </Popover>
       {chips.length > 0 && (
         <ul
           ref={listRef}
@@ -368,6 +502,7 @@ export function ActiveFilterStatus({
                 type="button"
                 variant="outline"
                 size="sm"
+                ref={moreRef}
                 className="eda-filter-more"
                 aria-label={`Show all ${chips.length} active filters`}
               >
@@ -409,7 +544,7 @@ export function ActiveFilterStatus({
           size="icon"
           className="eda-filter-clear shrink-0"
           aria-label="Clear all filters"
-          tooltip="Clear all filters: chart filters, table searches, and Rows filters"
+          tooltip="Clear all filters: workspace and chart filters, table searches, and Rows filters"
           onClick={clearAllFilters}
         >
           <FilterX aria-hidden="true" />

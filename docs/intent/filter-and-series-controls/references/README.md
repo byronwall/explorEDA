@@ -1,4 +1,4 @@
-# References for filter a workspace and control series deliberately
+# References for filter a workspace without a chart
 
 [Selected Pro records](pro-candidates.json) retain the original wording and source IDs. They are historical recommendations.
 
@@ -8,14 +8,18 @@
 - [Source originals and checksums](../../comparison-opportunities/resources/README.md).
 
 The review environment blocked application navigation. Proposed scenarios and prototype tests are not current browser evidence.
-Current source was inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927` on 2026-10-06. No new runtime checks ran.
+Current source was inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927` on 2026-10-06 and at `29b4023` on 2026-10-10. No runtime checks ran.
+
+The line and time-series legend files now belong to the Product Grid task "Hide or isolate a series from the legend" (`pgm/data/projects/untitled-project/nodes/page-hide-or-isolate-a-series-from-the-legend.md`).
 
 ## Current code and documentation
 
 - [packages/explorEDA/src/components/settings/FiltersSettingsTab.tsx](../../../../packages/explorEDA/src/components/settings/FiltersSettingsTab.tsx)
 - [packages/explorEDA/src/components/LocalFilterStrip.tsx](../../../../packages/explorEDA/src/components/LocalFilterStrip.tsx)
-- [packages/explorEDA/src/components/charts/LineChart/LineChart.tsx](../../../../packages/explorEDA/src/components/charts/LineChart/LineChart.tsx)
-- [packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx](../../../../packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx)
+- [packages/explorEDA/src/components/ActiveFilterStatus.tsx](../../../../packages/explorEDA/src/components/ActiveFilterStatus.tsx)
+- [packages/explorEDA/src/hooks/CrossfilterWrapper.ts](../../../../packages/explorEDA/src/hooks/CrossfilterWrapper.ts)
+- [packages/explorEDA/src/hooks/applyFilter.ts](../../../../packages/explorEDA/src/hooks/applyFilter.ts)
+- [packages/explorEDA/src/types/SavedDataStructure.ts](../../../../packages/explorEDA/src/types/SavedDataStructure.ts)
 - [packages/explorEDA/src/components/charts/ColorLegend/definition.ts](../../../../packages/explorEDA/src/components/charts/ColorLegend/definition.ts)
 
 ## Product feedback

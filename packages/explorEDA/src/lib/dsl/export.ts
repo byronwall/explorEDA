@@ -45,9 +45,12 @@ function wrap(head: string, pairs: string[]): string[] {
   return lines;
 }
 
-/** `where.` text for a chart's filters, or undefined when one needs records. */
+/**
+ * `where.` text for a chart's filters, or the bare `field=` pairs of a
+ * `filter` line, or undefined when one needs records.
+ */
 function filterPairs(
-  prefix: "where" | "select",
+  prefix: "where" | "select" | undefined,
   filters: Filter[],
   types: Record<string, string>
 ): string[] | undefined {
@@ -57,7 +60,7 @@ function filterPairs(
   }
   const pairs: string[] = [];
   for (const filter of filters) {
-    const field = formatPath([filter.field]);
+    const field = (prefix ? `${prefix}.` : "") + formatPath([filter.field]);
     switch (filter.type) {
       case "value":
         if (
@@ -67,7 +70,7 @@ function filterPairs(
           return undefined;
         }
         pairs.push(
-          `${prefix}.${field}=${filter.values.map((value) => encodeScalar(value as string | number | boolean | null)).join(",")}`
+          `${field}=${filter.values.map((value) => encodeScalar(value as string | number | boolean | null)).join(",")}`
         );
         break;
       case "range":
@@ -79,14 +82,12 @@ function filterPairs(
         if (filter.min === undefined && filter.max === undefined) {
           return undefined;
         }
-        pairs.push(
-          `${prefix}.${field}=${filter.min ?? ""}..${filter.max ?? ""}`
-        );
+        pairs.push(`${field}=${filter.min ?? ""}..${filter.max ?? ""}`);
         break;
       }
       case "text":
         pairs.push(
-          `${prefix}.${field}.${filter.operator}=${JSON.stringify(filter.value)}`
+          `${field}.${filter.operator}=${JSON.stringify(filter.value)}`
         );
         break;
     }
@@ -292,6 +293,17 @@ export function exportParts(
     ? diffRecord(base.settings.rowsSettings, settings.rowsSettings, [])
     : [];
   const rowsLines = settings.rowsSettings ? wrap("rows", rowsPairs) : [];
+  // One `filter` line per workspace filter, so each reads on its own.
+  const filterLines = (settings.workspaceFilters ?? []).flatMap((filter) => {
+    const pairs = filterPairs(undefined, [filter], types);
+    if (!pairs) {
+      omitted.push(
+        `filter ${filter.field}: its values have no text form, such as a blank value`
+      );
+      return [];
+    }
+    return pairs.map((pair) => `filter ${pair}`);
+  });
   const baseCharts = new Map(
     base.settings.charts.map((chart) => [chart.id, chart])
   );
@@ -329,7 +341,7 @@ export function exportParts(
       [...scaleLines, ...groupLines],
     ].filter((block) => block.length),
     // The grid line rides with the name in a single-view export.
-    view: [workspace.slice(1), [...rowsLines, ...chartLines]],
+    view: [workspace.slice(1), [...rowsLines, ...filterLines, ...chartLines]],
     omitted,
   };
 }
