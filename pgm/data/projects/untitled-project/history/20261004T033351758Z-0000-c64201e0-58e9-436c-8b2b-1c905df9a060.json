@@ -1,0 +1,16 @@
+{
+  "id": "c64201e0-58e9-436c-8b2b-1c905df9a060",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T03:33:51.758Z",
+  "summary": "Added 1 images to \"Add chart list needs some structure and grouping for chart types.\".",
+  "nodeIds": [
+    "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "88b26159-2c92-4d91-93a2-06fa350e5d6b"
+  }
+}

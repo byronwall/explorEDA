@@ -1,0 +1,14 @@
+{
+  "id": "1504528e-8a87-40b6-b58b-4839b86d488a",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:57a5c9",
+    "label": "Agent token ...57a5c9"
+  },
+  "createdAt": "2026-10-08T18:25:45.487Z",
+  "summary": "Updated metadata for \"Limits on ECDF, heatmap, and map\".",
+  "nodeIds": [
+    "page-limits-on-ecdf-heatmap-and-map"
+  ]
+}

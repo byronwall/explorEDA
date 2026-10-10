@@ -1,0 +1,14 @@
+{
+  "id": "eb9b0e7c-69af-46eb-a228-4ce108cd144a",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:42eb74",
+    "label": "Agent token ...42eb74"
+  },
+  "createdAt": "2026-10-08T19:19:38.028Z",
+  "summary": "Set \"Log scale is accepted but drawn as linear\" priority to medium.",
+  "nodeIds": [
+    "page-log-scale-is-accepted-but-drawn-as-linear"
+  ]
+}

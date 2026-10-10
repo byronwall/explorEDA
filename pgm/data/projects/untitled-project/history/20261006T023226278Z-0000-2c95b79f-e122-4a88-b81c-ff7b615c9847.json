@@ -1,0 +1,16 @@
+{
+  "id": "2c95b79f-e122-4a88-b81c-ff7b615c9847",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:32:26.278Z",
+  "summary": "Created \"Prevent horz overflow on data tables when they fit\" under \"10-05\".",
+  "nodeIds": [
+    "page-prevent-horz-overflow-on-data-tables-when-they-fit",
+    "page-10-05"
+  ],
+  "metadata": {
+    "clientMutationId": "3017eb4c-1bbc-48ea-8f55-a7217e0fd7a6"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "df680f77-fb18-4f4b-8c2f-feb4ae9487fa",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:6002a5",
+    "label": "Agent token ...6002a5"
+  },
+  "createdAt": "2026-10-08T18:24:44.032Z",
+  "summary": "Created \"Check axis editors at 783 and 390 px\" under \"Verification not yet done\".",
+  "nodeIds": [
+    "page-check-axis-editors-at-783-and-390-px",
+    "page-verification-not-yet-done"
+  ]
+}

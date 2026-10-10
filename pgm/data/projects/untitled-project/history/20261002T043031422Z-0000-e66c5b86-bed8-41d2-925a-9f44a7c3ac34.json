@@ -1,0 +1,14 @@
+{
+  "id": "e66c5b86-bed8-41d2-925a-9f44a7c3ac34",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:esting",
+    "label": "Agent token ...esting"
+  },
+  "createdAt": "2026-10-02T04:30:31.422Z",
+  "summary": "Updated metadata for \"missing a robust right click menu on header and cells\".",
+  "nodeIds": [
+    "page-missing-a-robust-right-click-menu-on-header-and-cells"
+  ]
+}

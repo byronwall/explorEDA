@@ -1,0 +1,16 @@
+{
+  "id": "40709ded-5e2f-4670-923b-12c14f9ecb03",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-07T01:15:36.489Z",
+  "summary": "Created \"Loading home page returns to previous chart demo\" under \"10-06\".",
+  "nodeIds": [
+    "page-loading-home-page-returns-to-previous-chart-demo",
+    "page-10-06"
+  ],
+  "metadata": {
+    "clientMutationId": "38e0f0ce-b28d-471a-9db1-b6d7d79a38dc"
+  }
+}

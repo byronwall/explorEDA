@@ -1,0 +1,16 @@
+{
+  "id": "146fd954-ed03-4ed0-8c8c-a06bb4ec6cf0",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:21:28.371Z",
+  "summary": "Created \"Compact vertical space\" under \"10-04\".",
+  "nodeIds": [
+    "page-compact-vertical-space",
+    "page-10-04"
+  ],
+  "metadata": {
+    "clientMutationId": "b4c27a94-550d-4a85-935c-5246feaff764"
+  }
+}

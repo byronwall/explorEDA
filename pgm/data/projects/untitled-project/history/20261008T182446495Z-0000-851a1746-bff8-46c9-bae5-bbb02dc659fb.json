@@ -1,0 +1,15 @@
+{
+  "id": "851a1746-bff8-46c9-bae5-bbb02dc659fb",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:76c230",
+    "label": "Agent token ...76c230"
+  },
+  "createdAt": "2026-10-08T18:24:46.495Z",
+  "summary": "Created \"Cleanup and retirement\" under \"In-place chart editing\".",
+  "nodeIds": [
+    "page-cleanup-and-retirement",
+    "page-in-place-chart-editing"
+  ]
+}

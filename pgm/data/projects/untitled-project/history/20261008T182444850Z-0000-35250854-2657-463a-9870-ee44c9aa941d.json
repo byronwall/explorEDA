@@ -1,0 +1,15 @@
+{
+  "id": "35250854-2657-463a-9870-ee44c9aa941d",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:f4c19b",
+    "label": "Agent token ...f4c19b"
+  },
+  "createdAt": "2026-10-08T18:24:44.850Z",
+  "summary": "Created \"Check in-place editors in dark mode and the Report and Newsprint themes\" under \"Verification not yet done\".",
+  "nodeIds": [
+    "page-check-in-place-editors-in-dark-mode-and-the-report-and-newsprint-themes",
+    "page-verification-not-yet-done"
+  ]
+}

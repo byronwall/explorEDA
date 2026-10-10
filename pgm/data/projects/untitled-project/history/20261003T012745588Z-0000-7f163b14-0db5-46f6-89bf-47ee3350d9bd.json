@@ -1,0 +1,16 @@
+{
+  "id": "7f163b14-0db5-46f6-89bf-47ee3350d9bd",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-03T01:27:45.588Z",
+  "summary": "Added 1 images to \"distribution toggle cut off\".",
+  "nodeIds": [
+    "page-distribution-toggle-cut-off"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "9e9f0fef-b911-4635-80f8-0a0613d8218c"
+  }
+}

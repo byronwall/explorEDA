@@ -1,0 +1,14 @@
+{
+  "id": "df194a5c-c524-4f71-8209-842b70688d31",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:738d83",
+    "label": "Agent token ...738d83"
+  },
+  "createdAt": "2026-10-08T18:24:46.083Z",
+  "summary": "Set \"Confirm editors stay closed in a read-only preview\" priority to medium.",
+  "nodeIds": [
+    "page-confirm-editors-stay-closed-in-a-read-only-preview"
+  ]
+}

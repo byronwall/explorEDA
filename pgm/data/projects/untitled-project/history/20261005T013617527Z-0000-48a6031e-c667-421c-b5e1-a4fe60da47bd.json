@@ -1,0 +1,14 @@
+{
+  "id": "48a6031e-c667-421c-b5e1-a4fe60da47bd",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9fbf14",
+    "label": "Agent token ...9fbf14"
+  },
+  "createdAt": "2026-10-05T01:36:17.527Z",
+  "summary": "Updated metadata for \"10-04\".",
+  "nodeIds": [
+    "page-10-04"
+  ]
+}

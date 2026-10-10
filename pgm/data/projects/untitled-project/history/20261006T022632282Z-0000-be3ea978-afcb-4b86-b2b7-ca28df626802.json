@@ -1,0 +1,16 @@
+{
+  "id": "be3ea978-afcb-4b86-b2b7-ca28df626802",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:26:32.282Z",
+  "summary": "Created \"Need more control of text size for axis labels\" under \"10-05\".",
+  "nodeIds": [
+    "page-need-more-control-of-text-size-for-axis-labels",
+    "page-10-05"
+  ],
+  "metadata": {
+    "clientMutationId": "7bbcf9b3-d936-454f-a3f5-b2de1828378b"
+  }
+}

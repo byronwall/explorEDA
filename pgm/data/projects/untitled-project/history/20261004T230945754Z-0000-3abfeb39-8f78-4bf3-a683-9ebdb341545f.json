@@ -1,0 +1,15 @@
+{
+  "id": "3abfeb39-8f78-4bf3-a683-9ebdb341545f",
+  "kind": "node.context.updated",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:09:45.754Z",
+  "summary": "Updated context for \"do not have persistent text explaining how things work\".",
+  "nodeIds": [
+    "page-do-not-have-persistent-text-explaining-how-things-work"
+  ],
+  "metadata": {
+    "clientMutationId": "82354cbb-ed31-4111-9f04-89b2f83fed0f"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "96e84885-b74e-455f-8472-874dd0180a2a",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:00d232",
+    "label": "Agent token ...00d232"
+  },
+  "createdAt": "2026-10-06T03:20:19.855Z",
+  "summary": "Updated metadata for \"settings menu is tall, hard to know more below\".",
+  "nodeIds": [
+    "page-settings-menu-is-tall-hard-to-know-more-below"
+  ]
+}

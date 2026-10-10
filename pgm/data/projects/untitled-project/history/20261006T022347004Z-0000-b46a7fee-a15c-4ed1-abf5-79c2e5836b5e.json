@@ -1,0 +1,16 @@
+{
+  "id": "b46a7fee-a15c-4ed1-abf5-79c2e5836b5e",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:23:47.004Z",
+  "summary": "Added 1 images to \"Avoid persistent labels on charts\".",
+  "nodeIds": [
+    "page-avoid-persistent-labels-on-charts"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "369deb9b-15d6-4b9b-aa75-26b3492d2a34"
+  }
+}

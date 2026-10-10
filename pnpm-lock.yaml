@@ -22,8 +22,8 @@ importers:
         version: 5.4.5
     devDependencies:
       '@byronwallrus/product-grid-cli':
-        specifier: 0.2.0
-        version: 0.2.0
+        specifier: 0.3.0
+        version: 0.3.0
 
   apps/data-samples:
     dependencies:
@@ -584,8 +584,8 @@ packages:
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
 
-  '@byronwallrus/product-grid-cli@0.2.0':
-    resolution: {integrity: sha512-h1kQMEqHcIUXdfeUW0bJo/kR8rujP47Z7xjTl9ErmlWOG3IODzSXKdF69DUueqQJDz6DeRT27yN0HrUwcAQmbQ==}
+  '@byronwallrus/product-grid-cli@0.3.0':
+    resolution: {integrity: sha512-O9FBCj2P5dqfBEIQxg7LDHjlALY3L5eU6Z9y1y5+5pujIUXlpztEY7KoyJWtWzaAZKgXP1oejw/C9OTlSkg8jw==}
     engines: {node: '>=22'}
     hasBin: true
 
@@ -4246,7 +4246,7 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@byronwallrus/product-grid-cli@0.2.0': {}
+  '@byronwallrus/product-grid-cli@0.3.0': {}
 
   '@changesets/apply-release-plan@7.0.10':
     dependencies:

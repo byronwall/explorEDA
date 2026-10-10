@@ -1,0 +1,14 @@
+{
+  "id": "dde4be92-fd43-44b4-93e1-d19bd9afaee3",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:57a5c9",
+    "label": "Agent token ...57a5c9"
+  },
+  "createdAt": "2026-10-08T18:25:45.715Z",
+  "summary": "Updated metadata for \"Touch gestures for in-place editing\".",
+  "nodeIds": [
+    "page-touch-gestures-for-in-place-editing"
+  ]
+}

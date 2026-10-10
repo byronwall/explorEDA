@@ -1,0 +1,14 @@
+{
+  "id": "7df88bae-60a4-4d7a-9f54-a6ea0fc89fa2",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:57a5c9",
+    "label": "Agent token ...57a5c9"
+  },
+  "createdAt": "2026-10-08T18:25:46.022Z",
+  "summary": "Updated metadata for \"Check in-place editors in dark mode and the Report and Newsprint themes\".",
+  "nodeIds": [
+    "page-check-in-place-editors-in-dark-mode-and-the-report-and-newsprint-themes"
+  ]
+}

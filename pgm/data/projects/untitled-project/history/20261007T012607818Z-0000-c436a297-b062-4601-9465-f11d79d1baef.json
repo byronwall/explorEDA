@@ -1,0 +1,16 @@
+{
+  "id": "c436a297-b062-4601-9465-f11d79d1baef",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-07T01:26:07.818Z",
+  "summary": "Added 1 images to \"Improve the filter hover card\".",
+  "nodeIds": [
+    "page-improve-the-filter-hover-card"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "892f7f3a-b07d-489a-8cd6-398255ab66fd"
+  }
+}

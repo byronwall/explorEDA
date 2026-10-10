@@ -1,0 +1,14 @@
+{
+  "id": "a5e40dcc-b5ef-4bf4-9bca-14a96e571132",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:57a5c9",
+    "label": "Agent token ...57a5c9"
+  },
+  "createdAt": "2026-10-08T18:25:45.179Z",
+  "summary": "Updated metadata for \"Edit the subtitle in place\".",
+  "nodeIds": [
+    "page-edit-the-subtitle-in-place"
+  ]
+}

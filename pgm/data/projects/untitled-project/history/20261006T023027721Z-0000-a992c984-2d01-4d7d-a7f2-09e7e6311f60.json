@@ -1,0 +1,16 @@
+{
+  "id": "a992c984-2d01-4d7d-a7f2-09e7e6311f60",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:30:27.721Z",
+  "summary": "Created \"settings menu is tall, hard to know more below\" under \"10-05\".",
+  "nodeIds": [
+    "page-settings-menu-is-tall-hard-to-know-more-below",
+    "page-10-05"
+  ],
+  "metadata": {
+    "clientMutationId": "78943f39-f355-4b73-9d75-a324145a2154"
+  }
+}

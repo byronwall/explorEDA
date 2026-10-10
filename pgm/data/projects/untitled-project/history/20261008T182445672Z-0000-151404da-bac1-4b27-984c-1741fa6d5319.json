@@ -1,0 +1,15 @@
+{
+  "id": "151404da-bac1-4b27-984c-1741fa6d5319",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:db4def",
+    "label": "Agent token ...db4def"
+  },
+  "createdAt": "2026-10-08T18:24:45.672Z",
+  "summary": "Created \"Confirm editors stay closed in a read-only preview\" under \"Verification not yet done\".",
+  "nodeIds": [
+    "page-confirm-editors-stay-closed-in-a-read-only-preview",
+    "page-verification-not-yet-done"
+  ]
+}

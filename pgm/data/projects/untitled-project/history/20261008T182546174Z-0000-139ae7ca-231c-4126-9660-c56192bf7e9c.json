@@ -1,0 +1,14 @@
+{
+  "id": "139ae7ca-231c-4126-9660-c56192bf7e9c",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:57a5c9",
+    "label": "Agent token ...57a5c9"
+  },
+  "createdAt": "2026-10-08T18:25:46.174Z",
+  "summary": "Updated metadata for \"Drop the legacy axis min/max placeholder\".",
+  "nodeIds": [
+    "page-drop-the-legacy-axis-min-max-placeholder"
+  ]
+}

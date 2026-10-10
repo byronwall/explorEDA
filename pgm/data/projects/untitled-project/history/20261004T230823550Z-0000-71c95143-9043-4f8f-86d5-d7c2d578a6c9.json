@@ -1,0 +1,16 @@
+{
+  "id": "71c95143-9043-4f8f-86d5-d7c2d578a6c9",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:08:23.550Z",
+  "summary": "Created \"do side by side for order book example\" under \"10-04\".",
+  "nodeIds": [
+    "page-do-side-by-side-for-order-book-example",
+    "page-10-04"
+  ],
+  "metadata": {
+    "clientMutationId": "0626064a-4c1a-43c2-bc22-e1d3352fda8f"
+  }
+}

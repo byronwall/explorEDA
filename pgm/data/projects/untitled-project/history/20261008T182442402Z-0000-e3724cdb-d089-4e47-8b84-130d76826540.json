@@ -1,0 +1,14 @@
+{
+  "id": "e3724cdb-d089-4e47-8b84-130d76826540",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:337290",
+    "label": "Agent token ...337290"
+  },
+  "createdAt": "2026-10-08T18:24:42.402Z",
+  "summary": "Set \"One undo step per settings-field edit\" priority to medium.",
+  "nodeIds": [
+    "page-one-undo-step-per-settings-field-edit"
+  ]
+}

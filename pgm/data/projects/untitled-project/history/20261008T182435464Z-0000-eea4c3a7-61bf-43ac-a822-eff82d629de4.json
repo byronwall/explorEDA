@@ -1,0 +1,15 @@
+{
+  "id": "eea4c3a7-61bf-43ac-a822-eff82d629de4",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:7167a1",
+    "label": "Agent token ...7167a1"
+  },
+  "createdAt": "2026-10-08T18:24:35.464Z",
+  "summary": "Created \"Edit the source note in place\" under \"More editable features\".",
+  "nodeIds": [
+    "page-edit-the-source-note-in-place",
+    "page-more-editable-features"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "07d41260-4144-4888-bde0-973851291fff",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:10:37.659Z",
+  "summary": "Added 1 images to \"box plot should support multiple selection\".",
+  "nodeIds": [
+    "page-box-plot-should-support-multiple-selection"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "f23af44a-e56c-4e5f-b16a-3bfa112a6292"
+  }
+}

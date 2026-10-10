@@ -1,0 +1,16 @@
+{
+  "id": "99e08ada-3d1b-4f82-8374-8954bb174c65",
+  "kind": "node.moved",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:18:29.590Z",
+  "summary": "Moved \"\"add new chart\" placement scrolls down\" under \"10-04\".",
+  "nodeIds": [
+    "page-add-new-chart-placement-scrolls-down",
+    "page-10-04"
+  ],
+  "metadata": {
+    "clientMutationId": "01466289-8ffa-46c7-9c0c-cd13526c76e1"
+  }
+}

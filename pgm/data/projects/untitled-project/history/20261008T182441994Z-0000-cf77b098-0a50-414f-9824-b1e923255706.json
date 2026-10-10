@@ -1,0 +1,15 @@
+{
+  "id": "cf77b098-0a50-414f-9824-b1e923255706",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:c9dbb5",
+    "label": "Agent token ...c9dbb5"
+  },
+  "createdAt": "2026-10-08T18:24:41.994Z",
+  "summary": "Created \"One undo step per settings-field edit\" under \"Input and accessibility gaps\".",
+  "nodeIds": [
+    "page-one-undo-step-per-settings-field-edit",
+    "page-input-and-accessibility-gaps"
+  ]
+}

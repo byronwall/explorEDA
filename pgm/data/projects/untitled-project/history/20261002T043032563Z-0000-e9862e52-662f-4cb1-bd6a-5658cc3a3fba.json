@@ -1,0 +1,14 @@
+{
+  "id": "e9862e52-662f-4cb1-bd6a-5658cc3a3fba",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:esting",
+    "label": "Agent token ...esting"
+  },
+  "createdAt": "2026-10-02T04:30:32.563Z",
+  "summary": "Updated metadata for \"tooltip for scatter is too large and \"in the way\"\".",
+  "nodeIds": [
+    "page-tooltip-for-scatter-is-too-large-and-in-the-way"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "0dee4981-12da-4c2a-b9f0-aaee72405a5d",
+  "kind": "node.title.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:f1dc55",
+    "label": "Agent token ...f1dc55"
+  },
+  "createdAt": "2026-10-08T19:19:32.959Z",
+  "summary": "Renamed \"Axis limits on more chart families\" to \"Axis scales and limits on more charts\".",
+  "nodeIds": [
+    "page-axis-limits-on-more-chart-families"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "595449e0-2a22-4cbf-bd24-5b2c77dd4541",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:801696",
+    "label": "Agent token ...801696"
+  },
+  "createdAt": "2026-10-08T18:24:45.260Z",
+  "summary": "Set \"Check in-place editors in dark mode and the Report and Newsprint themes\" priority to medium.",
+  "nodeIds": [
+    "page-check-in-place-editors-in-dark-mode-and-the-report-and-newsprint-themes"
+  ]
+}

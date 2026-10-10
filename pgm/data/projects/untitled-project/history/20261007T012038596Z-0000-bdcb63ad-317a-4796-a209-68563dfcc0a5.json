@@ -1,0 +1,16 @@
+{
+  "id": "bdcb63ad-317a-4796-a209-68563dfcc0a5",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-07T01:20:38.596Z",
+  "summary": "Created \"Tooltip blocks the data beneath\" under \"10-06\".",
+  "nodeIds": [
+    "page-tooltip-blocks-the-data-beneath",
+    "page-10-06"
+  ],
+  "metadata": {
+    "clientMutationId": "7fa22d95-d2ce-4483-a248-ef01993873e9"
+  }
+}

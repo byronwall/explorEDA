@@ -1,0 +1,16 @@
+{
+  "id": "166369c7-1418-476b-8f3b-7442a5c53f5b",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:19:33.348Z",
+  "summary": "Created \"add chart menu is too spread out\" under \"10-05\".",
+  "nodeIds": [
+    "page-add-chart-menu-is-too-spread-out",
+    "page-10-05"
+  ],
+  "metadata": {
+    "clientMutationId": "774fc794-52e9-4999-98db-5703613a54ad"
+  }
+}

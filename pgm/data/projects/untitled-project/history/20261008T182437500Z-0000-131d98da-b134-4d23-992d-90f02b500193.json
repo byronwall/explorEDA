@@ -1,0 +1,15 @@
+{
+  "id": "131d98da-b134-4d23-992d-90f02b500193",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:160e4a",
+    "label": "Agent token ...160e4a"
+  },
+  "createdAt": "2026-10-08T18:24:37.500Z",
+  "summary": "Created \"Limits on time-series and calendar X axes\" under \"Axis limits on more chart families\".",
+  "nodeIds": [
+    "page-limits-on-time-series-and-calendar-x-axes",
+    "page-axis-limits-on-more-chart-families"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "db83983f-aae3-451d-9eea-1dfe5395425f",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T23:30:46.192Z",
+  "summary": "Created \"Marginal distributions need to clear filter on dead click\" under \"10-06\".",
+  "nodeIds": [
+    "page-marginal-distributions-need-to-clear-filter-on-dead-click",
+    "page-10-06"
+  ],
+  "metadata": {
+    "clientMutationId": "d0212ce4-90c3-43be-b014-f9bdd6f5bbb2"
+  }
+}

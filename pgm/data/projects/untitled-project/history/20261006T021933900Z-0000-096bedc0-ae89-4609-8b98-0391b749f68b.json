@@ -1,0 +1,16 @@
+{
+  "id": "096bedc0-ae89-4609-8b98-0391b749f68b",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:19:33.900Z",
+  "summary": "Added 1 images to \"add chart menu is too spread out\".",
+  "nodeIds": [
+    "page-add-chart-menu-is-too-spread-out"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "5b143158-b11a-41dd-aec9-054864fd9f31"
+  }
+}

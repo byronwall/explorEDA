@@ -1,0 +1,14 @@
+{
+  "id": "6c5279aa-f26d-4abb-bcfe-96ad0cf51265",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:57a5c9",
+    "label": "Agent token ...57a5c9"
+  },
+  "createdAt": "2026-10-08T18:25:46.250Z",
+  "summary": "Updated metadata for \"Retire the in-place editing initiative\".",
+  "nodeIds": [
+    "page-retire-the-in-place-editing-initiative"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "a0f9d626-bc72-43cc-bb4e-97491831f64e",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:0b7068",
+    "label": "Agent token ...0b7068"
+  },
+  "createdAt": "2026-10-08T18:24:36.688Z",
+  "summary": "Set \"Edit legend and series names in place\" priority to low.",
+  "nodeIds": [
+    "page-edit-legend-and-series-names-in-place"
+  ]
+}

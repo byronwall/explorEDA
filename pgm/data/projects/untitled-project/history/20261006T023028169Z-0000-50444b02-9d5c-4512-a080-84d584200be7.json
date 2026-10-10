@@ -1,0 +1,16 @@
+{
+  "id": "50444b02-9d5c-4512-a080-84d584200be7",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:30:28.169Z",
+  "summary": "Added 1 images to \"settings menu is tall, hard to know more below\".",
+  "nodeIds": [
+    "page-settings-menu-is-tall-hard-to-know-more-below"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "14b29216-c43d-46f8-9405-8c0e02a66075"
+  }
+}

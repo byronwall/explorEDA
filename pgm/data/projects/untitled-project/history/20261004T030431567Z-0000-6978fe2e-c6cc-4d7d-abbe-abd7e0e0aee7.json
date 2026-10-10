@@ -1,0 +1,15 @@
+{
+  "id": "6978fe2e-c6cc-4d7d-abbe-abd7e0e0aee7",
+  "kind": "node.deleted",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T03:04:31.567Z",
+  "summary": "Deleted \"testing-AAA\".",
+  "nodeIds": [
+    "page-testing"
+  ],
+  "metadata": {
+    "clientMutationId": "a10bab14-3c63-45e2-8513-9d1494ab28a9"
+  }
+}

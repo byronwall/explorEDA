@@ -1,0 +1,16 @@
+{
+  "id": "0d689f76-fc81-4afa-83e3-542f1141775d",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:11:18.993Z",
+  "summary": "Added 1 images to \"Remove inspect button\".",
+  "nodeIds": [
+    "page-remove-inspect-button"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "d224defd-2bc6-4680-a266-30aa702a6a0d"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "927bd5ed-2957-4c61-a16e-f4ebb8b3478a",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:e87dcb",
+    "label": "Agent token ...e87dcb"
+  },
+  "createdAt": "2026-10-04T04:42:40.205Z",
+  "summary": "Updated metadata for \"Hitting ESC did not close the colors popover\".",
+  "nodeIds": [
+    "page-hitting-esc-did-not-close-the-colors-popover"
+  ]
+}

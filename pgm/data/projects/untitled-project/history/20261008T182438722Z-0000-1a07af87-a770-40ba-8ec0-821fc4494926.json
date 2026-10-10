@@ -1,0 +1,14 @@
+{
+  "id": "1a07af87-a770-40ba-8ec0-821fc4494926",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:48ce43",
+    "label": "Agent token ...48ce43"
+  },
+  "createdAt": "2026-10-08T18:24:38.722Z",
+  "summary": "Set \"Limits on ECDF, heatmap, and map\" priority to low.",
+  "nodeIds": [
+    "page-limits-on-ecdf-heatmap-and-map"
+  ]
+}

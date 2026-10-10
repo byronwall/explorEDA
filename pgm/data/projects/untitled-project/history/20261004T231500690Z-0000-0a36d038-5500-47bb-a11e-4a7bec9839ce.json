@@ -1,0 +1,16 @@
+{
+  "id": "0a36d038-5500-47bb-a11e-4a7bec9839ce",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:15:00.690Z",
+  "summary": "Added 1 images to \"Field list is not left aligned on all bars\".",
+  "nodeIds": [
+    "page-field-list-is-not-left-aligned-on-all-bars"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "94b95ee9-1dbe-4026-aa03-8e40b327a196"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "953b0f1d-1d26-4b68-a2c8-ad0746b9e195",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:30:57.251Z",
+  "summary": "Created \"Prefer toggle buttons over select whenever possible\" under \"10-05\".",
+  "nodeIds": [
+    "page-prefer-toggle-buttons-over-select-whenever-possible",
+    "page-10-05"
+  ],
+  "metadata": {
+    "clientMutationId": "71e67c32-c5a6-489a-96d7-e13e25baa535"
+  }
+}

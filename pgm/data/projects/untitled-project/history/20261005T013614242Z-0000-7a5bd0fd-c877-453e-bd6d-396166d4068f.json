@@ -1,0 +1,14 @@
+{
+  "id": "7a5bd0fd-c877-453e-bd6d-396166d4068f",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9fbf14",
+    "label": "Agent token ...9fbf14"
+  },
+  "createdAt": "2026-10-05T01:36:14.242Z",
+  "summary": "Updated metadata for \"Click should always filter\".",
+  "nodeIds": [
+    "page-click-should-always-filter"
+  ]
+}

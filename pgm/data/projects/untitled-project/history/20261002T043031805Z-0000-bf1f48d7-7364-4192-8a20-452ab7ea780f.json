@@ -1,0 +1,14 @@
+{
+  "id": "bf1f48d7-7364-4192-8a20-452ab7ea780f",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:esting",
+    "label": "Agent token ...esting"
+  },
+  "createdAt": "2026-10-02T04:30:31.805Z",
+  "summary": "Updated metadata for \"Rows drawer needs an expanded (current) and small view\".",
+  "nodeIds": [
+    "page-rows-drawer-needs-an-expanded-current-and-small-view"
+  ]
+}

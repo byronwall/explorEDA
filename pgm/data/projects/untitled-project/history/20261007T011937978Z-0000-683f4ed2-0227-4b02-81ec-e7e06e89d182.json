@@ -1,0 +1,16 @@
+{
+  "id": "683f4ed2-0227-4b02-81ec-e7e06e89d182",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-07T01:19:37.978Z",
+  "summary": "Created \"Was there a regression on table column width?\" under \"10-06\".",
+  "nodeIds": [
+    "page-was-there-a-regression-on-table-column-width",
+    "page-10-06"
+  ],
+  "metadata": {
+    "clientMutationId": "1a4110f4-cc57-4501-959b-cd0a0a300b26"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "394d0710-5927-4520-aa77-afdc9d8eb4ec",
+  "kind": "node.moved",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T03:31:31.427Z",
+  "summary": "Moved \"Remove \"inspect records\" on metric tiles\" under \"fdbk 10/02\".",
+  "nodeIds": [
+    "page-remove-inspect-records-on-metric-tiles",
+    "page-fdbk-10-02"
+  ],
+  "metadata": {
+    "clientMutationId": "5c1e5c0a-dbb5-4e98-afa0-84f1a9d68d50"
+  }
+}

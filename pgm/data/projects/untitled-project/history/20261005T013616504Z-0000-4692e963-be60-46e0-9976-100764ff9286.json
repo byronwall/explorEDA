@@ -1,0 +1,14 @@
+{
+  "id": "4692e963-be60-46e0-9976-100764ff9286",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9fbf14",
+    "label": "Agent token ...9fbf14"
+  },
+  "createdAt": "2026-10-05T01:36:16.504Z",
+  "summary": "Updated metadata for \"New chart icons do not match all real ones\".",
+  "nodeIds": [
+    "page-new-chart-icons-do-not-match-all-real-ones"
+  ]
+}

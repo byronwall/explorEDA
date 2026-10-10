@@ -1,0 +1,15 @@
+{
+  "id": "d4c178f8-fe2c-4fbc-8f7f-41ddafe014c5",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:c685e7",
+    "label": "Agent token ...c685e7"
+  },
+  "createdAt": "2026-10-08T19:19:33.789Z",
+  "summary": "Created \"Log scale is accepted but drawn as linear\" under \"Axis scales and limits on more charts\".",
+  "nodeIds": [
+    "page-log-scale-is-accepted-but-drawn-as-linear",
+    "page-axis-limits-on-more-chart-families"
+  ]
+}

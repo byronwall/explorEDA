@@ -1,0 +1,16 @@
+{
+  "id": "ce265c6b-8c1c-4caf-a931-06411f475aad",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T23:29:08.069Z",
+  "summary": "Created \"Marginal distributions need to respect color field\" under \"10-06\".",
+  "nodeIds": [
+    "page-marginal-distributions-need-to-respect-color-field",
+    "page-10-06"
+  ],
+  "metadata": {
+    "clientMutationId": "82a07df9-424f-486d-871d-373d26c96545"
+  }
+}

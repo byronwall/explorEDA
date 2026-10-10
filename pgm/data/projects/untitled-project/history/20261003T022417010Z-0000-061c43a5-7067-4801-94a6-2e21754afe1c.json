@@ -1,0 +1,15 @@
+{
+  "id": "061c43a5-7067-4801-94a6-2e21754afe1c",
+  "kind": "node.context.updated",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-03T02:24:17.010Z",
+  "summary": "Updated context for \"Tooltips are poorly placed\".",
+  "nodeIds": [
+    "page-tooltips-are-poorly-placed"
+  ],
+  "metadata": {
+    "clientMutationId": "c5ce98e9-88df-448c-8e3d-e4d343bcdde8"
+  }
+}

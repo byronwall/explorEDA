@@ -1,0 +1,27 @@
+{
+  "id": "ce36da33-01a1-4d42-98e8-aceafe1de8d7",
+  "kind": "node.deleted",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:18:24.449Z",
+  "summary": "Deleted \"10-04\" and 12 children.",
+  "nodeIds": [
+    "page-10-04",
+    "page-click-should-always-filter",
+    "page-3d-scatter-needs-some-axis-logic-as-main-scatter",
+    "page-new-chart-icons-do-not-match-all-real-ones",
+    "page-group-buttons-in-top-nav-better",
+    "page-compact-vertical-space",
+    "page-add-new-chart-placement-scrolls-down",
+    "page-resizing-a-chart-caused-it-to-jump-to-end-of-all-charts",
+    "page-field-list-is-not-left-aligned-on-all-bars",
+    "page-remove-inspect-button",
+    "page-box-plot-should-support-multiple-selection",
+    "page-do-not-have-persistent-text-explaining-how-things-work",
+    "page-do-side-by-side-for-order-book-example"
+  ],
+  "metadata": {
+    "clientMutationId": "ecac1043-692c-4da1-b60e-8880f6d9d052"
+  }
+}

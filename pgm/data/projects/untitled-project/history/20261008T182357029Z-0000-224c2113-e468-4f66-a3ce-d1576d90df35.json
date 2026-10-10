@@ -1,0 +1,14 @@
+{
+  "id": "224c2113-e468-4f66-a3ce-d1576d90df35",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:0ff2e7",
+    "label": "Agent token ...0ff2e7"
+  },
+  "createdAt": "2026-10-08T18:23:57.029Z",
+  "summary": "Created \"In-place chart editing\".",
+  "nodeIds": [
+    "page-in-place-chart-editing"
+  ]
+}

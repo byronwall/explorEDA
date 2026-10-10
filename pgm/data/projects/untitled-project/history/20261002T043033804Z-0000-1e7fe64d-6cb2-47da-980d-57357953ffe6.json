@@ -1,0 +1,14 @@
+{
+  "id": "1e7fe64d-6cb2-47da-980d-57357953ffe6",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:esting",
+    "label": "Agent token ...esting"
+  },
+  "createdAt": "2026-10-02T04:30:33.804Z",
+  "summary": "Updated metadata for \"Feedback 10/1\".",
+  "nodeIds": [
+    "page-feedback-10-1"
+  ]
+}

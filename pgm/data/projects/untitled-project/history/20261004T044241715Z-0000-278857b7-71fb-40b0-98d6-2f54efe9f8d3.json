@@ -1,0 +1,14 @@
+{
+  "id": "278857b7-71fb-40b0-98d6-2f54efe9f8d3",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:c17f8f",
+    "label": "Agent token ...c17f8f"
+  },
+  "createdAt": "2026-10-04T04:42:41.715Z",
+  "summary": "Updated metadata for \"Remove \"inspect records\" on metric tiles\".",
+  "nodeIds": [
+    "page-remove-inspect-records-on-metric-tiles"
+  ]
+}

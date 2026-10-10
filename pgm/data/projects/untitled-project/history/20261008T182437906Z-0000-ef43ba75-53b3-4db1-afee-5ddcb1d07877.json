@@ -1,0 +1,14 @@
+{
+  "id": "ef43ba75-53b3-4db1-afee-5ddcb1d07877",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:b5b2d5",
+    "label": "Agent token ...b5b2d5"
+  },
+  "createdAt": "2026-10-08T18:24:37.906Z",
+  "summary": "Set \"Limits on time-series and calendar X axes\" priority to medium.",
+  "nodeIds": [
+    "page-limits-on-time-series-and-calendar-x-axes"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "9cf26779-445e-4f3e-88ce-6b6d9c232feb",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9fbf14",
+    "label": "Agent token ...9fbf14"
+  },
+  "createdAt": "2026-10-05T01:36:15.410Z",
+  "summary": "Changed \"do side by side for order book example\" status to implemented.",
+  "nodeIds": [
+    "page-do-side-by-side-for-order-book-example"
+  ]
+}

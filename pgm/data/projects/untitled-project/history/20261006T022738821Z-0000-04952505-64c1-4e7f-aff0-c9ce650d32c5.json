@@ -1,0 +1,16 @@
+{
+  "id": "04952505-64c1-4e7f-aff0-c9ce650d32c5",
+  "kind": "node.moved",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:27:38.821Z",
+  "summary": "Moved \"hex bin dead click should clear filter\" under \"10-05\".",
+  "nodeIds": [
+    "page-hex-bin-dead-click-should-clear-filter",
+    "page-10-05"
+  ],
+  "metadata": {
+    "clientMutationId": "636a3eff-7168-4d5d-8451-4c6648ea90f1"
+  }
+}

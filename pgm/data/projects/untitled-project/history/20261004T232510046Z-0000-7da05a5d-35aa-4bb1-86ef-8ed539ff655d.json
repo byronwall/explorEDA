@@ -1,0 +1,16 @@
+{
+  "id": "7da05a5d-35aa-4bb1-86ef-8ed539ff655d",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:25:10.046Z",
+  "summary": "Added 1 images to \"New chart icons do not match all real ones\".",
+  "nodeIds": [
+    "page-new-chart-icons-do-not-match-all-real-ones"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "78837235-0cfb-46c3-9646-00454e37e032"
+  }
+}

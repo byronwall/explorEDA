@@ -1,0 +1,16 @@
+{
+  "id": "1d4fc328-2a70-42f2-a26a-1663d93e7fad",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:08:24.355Z",
+  "summary": "Added 1 images to \"do side by side for order book example\".",
+  "nodeIds": [
+    "page-do-side-by-side-for-order-book-example"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "261076fd-4483-4346-955a-68361f681c10"
+  }
+}

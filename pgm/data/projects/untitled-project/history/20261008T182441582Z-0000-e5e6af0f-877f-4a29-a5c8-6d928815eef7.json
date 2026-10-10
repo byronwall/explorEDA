@@ -1,0 +1,14 @@
+{
+  "id": "e5e6af0f-877f-4a29-a5c8-6d928815eef7",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:21f9db",
+    "label": "Agent token ...21f9db"
+  },
+  "createdAt": "2026-10-08T18:24:41.582Z",
+  "summary": "Set \"Touch gestures for in-place editing\" priority to medium.",
+  "nodeIds": [
+    "page-touch-gestures-for-in-place-editing"
+  ]
+}

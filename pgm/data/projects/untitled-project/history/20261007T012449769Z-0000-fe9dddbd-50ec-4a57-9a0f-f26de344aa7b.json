@@ -1,0 +1,16 @@
+{
+  "id": "fe9dddbd-50ec-4a57-9a0f-f26de344aa7b",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-07T01:24:49.769Z",
+  "summary": "Added 1 images to \"Density dots are too small and cannot be controlled\".",
+  "nodeIds": [
+    "page-density-dots-are-too-small-and-cannot-be-controlled"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "e3008b77-49db-4517-831b-7c3a6c2ad9ad"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "a77869ae-aca3-45ae-959f-e12ca630b220",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:57a5c9",
+    "label": "Agent token ...57a5c9"
+  },
+  "createdAt": "2026-10-08T18:25:45.793Z",
+  "summary": "Updated metadata for \"One undo step per settings-field edit\".",
+  "nodeIds": [
+    "page-one-undo-step-per-settings-field-edit"
+  ]
+}

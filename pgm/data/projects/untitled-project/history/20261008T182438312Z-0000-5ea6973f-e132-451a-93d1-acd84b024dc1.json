@@ -1,0 +1,15 @@
+{
+  "id": "5ea6973f-e132-451a-93d1-acd84b024dc1",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:811d75",
+    "label": "Agent token ...811d75"
+  },
+  "createdAt": "2026-10-08T18:24:38.312Z",
+  "summary": "Created \"Limits on ECDF, heatmap, and map\" under \"Axis limits on more chart families\".",
+  "nodeIds": [
+    "page-limits-on-ecdf-heatmap-and-map",
+    "page-axis-limits-on-more-chart-families"
+  ]
+}

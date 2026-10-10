@@ -1,0 +1,16 @@
+{
+  "id": "0d36e42e-1c07-4a19-8f7d-eb50388247a0",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T23:32:01.364Z",
+  "summary": "Added 1 images to \"Move facet info up to avoid extra line\".",
+  "nodeIds": [
+    "page-move-facet-info-up-to-avoid-extra-line"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "ca62b777-8065-46d6-946c-d0618dfdc1ff"
+  }
+}

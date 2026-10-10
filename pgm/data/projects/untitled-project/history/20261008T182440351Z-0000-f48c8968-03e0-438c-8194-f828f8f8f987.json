@@ -1,0 +1,15 @@
+{
+  "id": "f48c8968-03e0-438c-8194-f828f8f8f987",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:a93ae1",
+    "label": "Agent token ...a93ae1"
+  },
+  "createdAt": "2026-10-08T18:24:40.351Z",
+  "summary": "Created \"Keyboard route to an axis range\" under \"Input and accessibility gaps\".",
+  "nodeIds": [
+    "page-keyboard-route-to-an-axis-range",
+    "page-input-and-accessibility-gaps"
+  ]
+}

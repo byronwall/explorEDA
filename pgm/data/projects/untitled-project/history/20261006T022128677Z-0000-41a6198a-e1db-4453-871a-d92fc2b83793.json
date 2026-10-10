@@ -1,0 +1,16 @@
+{
+  "id": "41a6198a-e1db-4453-871a-d92fc2b83793",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:21:28.677Z",
+  "summary": "Added 1 images to \"Bubble area has conflcit in labels\".",
+  "nodeIds": [
+    "page-bubble-area-has-conflcit-in-labels"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "e4285d00-081d-4e45-a171-2cf0b8cfad85"
+  }
+}
