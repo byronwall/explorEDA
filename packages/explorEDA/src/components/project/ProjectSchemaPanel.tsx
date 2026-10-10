@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, Link2, Plus, X } from "lucide-react";
+import { Check, Link2, Network, Plus, X } from "lucide-react";
 import type {
   AnalysisProject,
   AnalysisSourceRow,
@@ -65,6 +65,7 @@ export function ProjectSchemaPanel({
   readOnly,
   onProjectChange,
   onOpenView,
+  onOpenDiagram,
 }: {
   project: AnalysisProject;
   queryId: string;
@@ -76,6 +77,8 @@ export function ProjectSchemaPanel({
     name: string,
     project?: AnalysisProject
   ) => void;
+  /** Show the tables and relationships as a diagram. */
+  onOpenDiagram?: () => void;
 }) {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -216,11 +219,25 @@ export function ProjectSchemaPanel({
 
   return (
     <div className="space-y-5 p-3 text-sm">
-      <div>
-        <p className="text-sm font-medium">Sources and fields</p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Drag a field onto another to propose a relationship.
-        </p>
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <p className="text-sm font-medium">Sources and fields</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Drag a field onto another to propose a relationship.
+          </p>
+        </div>
+        {onOpenDiagram && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="shrink-0"
+            tooltip="Show every table, field, and relationship as a diagram"
+            onClick={onOpenDiagram}
+          >
+            <Network aria-hidden="true" />
+            Open diagram
+          </Button>
+        )}
       </div>
       <div className="space-y-3">
         {project.sources.map((source) => {

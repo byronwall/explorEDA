@@ -33,6 +33,7 @@ import {
   unresolvedAnalysisRowKeys,
 } from "./project/analysisRowKeys";
 import { incompatibleSettingsFields } from "./project/settingsCompatibility";
+import { projectSchemaGraph } from "@/lib/schema/schemaGraph";
 
 export interface ExplorEdaProjectChange {
   project: AnalysisProject;
@@ -104,6 +105,11 @@ export const ExplorEdaProject = forwardRef<
 ) {
   const chartRef = useRef<ExplorEdaHandle>(null);
   const [openPanel, setOpenPanel] = useState<"schema" | "query">();
+  const [diagramOpen, setDiagramOpen] = useState(false);
+  const schemaGraph = useMemo(
+    () => projectSchemaGraph(project, tables),
+    [project, tables]
+  );
   const [schemaWide, setSchemaWide] = useState(false);
   const [queryWide, setQueryWide] = useState(false);
   const [focusRowKeys, setFocusRowKeys] = useState<string[]>();
@@ -212,6 +218,10 @@ export const ExplorEdaProject = forwardRef<
         readOnly={readOnly}
         onProjectChange={(next) => update(next, shownView)}
         onOpenView={readOnly ? undefined : onOpenView}
+        onOpenDiagram={() => {
+          setOpenPanel(undefined);
+          setDiagramOpen(true);
+        }}
       />
     ),
   };
@@ -304,6 +314,11 @@ export const ExplorEdaProject = forwardRef<
               : (next) => onStateChange?.(encodeAnalysisRowKeys(next, keysById))
           }
           sidePanels={[...sidePanels, schemaPanel, queryPanel]}
+          schema={{
+            graph: schemaGraph,
+            open: diagramOpen,
+            onOpenChange: setDiagramOpen,
+          }}
           readOnly={readOnly}
           toolbarStart={toolbarStart}
           toolbarEnd={toolbarEnd}

@@ -26,7 +26,7 @@ Schema diagram (viewer and editor, both workspace kinds)
 │   │   │   └── Lookup and expand steps draw a line to the relationship they follow
 │   │   ├── View cards: used fields grouped by chart; view calculations
 │   │   ├── Single table: one card with its fields and calculated fields
-│   │   └── Fixed columns, tables → queries → views; pan, zoom, fit
+│   │   └── Flows left to right, top to bottom, shaped to fill the viewport; pan, zoom, fit
 │   ├── Selection: one element at a time
 │   │   ├── Lineage upstream and downstream lit, the rest dimmed
 │   │   └── Inspector popover: properties, uses list, edit controls
@@ -70,7 +70,7 @@ Schema diagram (viewer and editor, both workspace kinds)
 
 Editing reuses, never forks. Relationship proposal and match counts move out of `ProjectSchemaPanel`, and step building moves out of `QueryRelationshipBuilder`, into shared logic used by the panels and the diagram. Calculations open the existing calculation editor. Field settings use the field inspector's controls through `updateFieldSettings`. Every edit goes through the existing write paths (`onProjectChange` and the data store), so undo and host callbacks behave as they do today.
 
-`buildSchemaGraph` stays a pure, tested model, and fixed columns replace ELK or dagre. Editors open in compact nonmodal popovers anchored to the selected element, so the diagram stays visible.
+`buildSchemaGraph` stays a pure, tested model. The layout is hand-rolled rather than ELK or dagre: it reads left to right and top to bottom, and picks the arrangement that shows the whole diagram largest in the current viewport, wrapping a tall layer into more columns rather than leaving the screen empty. Editors open in compact nonmodal popovers anchored to the selected element, so the diagram stays visible.
 
 **Boundary:** Source rows stay host-owned. Promotion keeps the saved charts and starts a new project session, leaving the single-table one restorable. Charts are not configured from the diagram; a chart use jumps to the chart. Removing the toolbar entry disables the diagram. `readOnly` hides every edit control, and omitting the host callback hides Add source.
 

@@ -19,6 +19,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { resolveThemeId } from "@/lib/themes";
 import { RowsPeek } from "./RowsPeek";
+import { SchemaDrawer } from "./schema/SchemaDrawer";
+import type { SchemaGraph } from "@/lib/schema/schemaGraph";
 import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { ActiveFilterStatus } from "./ActiveFilterStatus";
 import type { ChartLayout } from "@/types/ChartTypes";
@@ -39,6 +41,7 @@ import {
   MoreHorizontal,
   Palette,
   Type,
+  Network,
   Rows3,
   X,
 } from "lucide-react";
@@ -103,11 +106,21 @@ const gridToPixels = (
   };
 };
 
+/** The schema diagram's source and, optionally, who controls its drawer. */
+export interface ExplorEdaSchema {
+  /** A project's schema. Without it, the diagram shows the workspace's table. */
+  graph?: SchemaGraph;
+  /** Control whether the drawer is open, such as from a host panel. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
 export function PlotManager({
   sidePanels = [],
   readOnly = false,
   toolbarStart,
   toolbarEnd,
+  schema,
 }: {
   sidePanels?: ExplorEdaSidePanel[];
   readOnly?: boolean;
@@ -115,6 +128,7 @@ export function PlotManager({
   toolbarStart?: ReactNode;
   /** Host actions that end the toolbar line. */
   toolbarEnd?: ReactNode;
+  schema?: ExplorEdaSchema;
 } = {}) {
   const charts = useDataLayer((state) => state.charts);
   const addChart = useDataLayer((state) => state.addChart);
@@ -144,7 +158,10 @@ export function PlotManager({
       element;
       element = element.parentElement
     ) {
-      observer.observe(element, { attributes: true, attributeFilter: ["class"] });
+      observer.observe(element, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
     }
     return () => observer.disconnect();
   }, [setDarkMode]);
@@ -177,10 +194,21 @@ export function PlotManager({
   const rowsToggleRef = useRef<HTMLButtonElement>(null);
   const fieldListId = useId();
   const rowsPeekId = useId();
+  const schemaDrawerId = useId();
+  const schemaToggleRef = useRef<HTMLButtonElement>(null);
   const [fieldsOpen, setFieldsOpen] = useState(false);
   const [fieldsOverview, setFieldsOverview] = useState(false);
   const [rowsOpen, setRowsOpenState] = useState(false);
   const [rowsNarrow, setRowsNarrow] = useState(false);
+  const [schemaOpenState, setSchemaOpenState] = useState(false);
+  const schemaOpen = schema?.open ?? schemaOpenState;
+  const schemaRef = useRef(schema);
+  schemaRef.current = schema;
+  // The host may control the drawer; both learn of every change.
+  const changeSchemaOpen = useCallback((open: boolean) => {
+    setSchemaOpenState(open);
+    schemaRef.current?.onOpenChange?.(open);
+  }, []);
   const settingsDrawerId = useId();
   const settingsToggles = useRef<
     Partial<Record<WorkspaceSettingsTab, HTMLButtonElement | null>>
@@ -215,6 +243,7 @@ export function PlotManager({
     if (!openPanel) return;
     setRowsOpenState(false);
     setSettingsTab(undefined);
+    changeSchemaOpen(false);
   }, [openPanel?.id]);
   const closePanel = useCallback((panel: ExplorEdaSidePanel) => {
     const element = document.getElementById(panel.id);
@@ -243,11 +272,29 @@ export function PlotManager({
       if (open) {
         setSettingsTab(undefined);
         closeHostPanels();
+        changeSchemaOpen(false);
       }
       setRowsOpenState(open);
     },
-    [closeHostPanels]
+    [closeHostPanels, changeSchemaOpen]
   );
+  const setSchemaOpen = useCallback(
+    (open: boolean) => {
+      if (open) {
+        setSettingsTab(undefined);
+        setRowsOpenState(false);
+        closeHostPanels();
+      }
+      changeSchemaOpen(open);
+    },
+    [closeHostPanels, changeSchemaOpen]
+  );
+  const closeSchema = useCallback(() => {
+    const drawer = document.getElementById(schemaDrawerId);
+    const hadFocus = drawer?.contains(document.activeElement) ?? false;
+    setSchemaOpen(false);
+    if (hadFocus) schemaToggleRef.current?.focus({ preventScroll: true });
+  }, [schemaDrawerId, setSchemaOpen]);
   const closeSettings = useCallback(() => {
     const drawer = document.getElementById(settingsDrawerId);
     const hadFocus = drawer?.contains(document.activeElement) ?? false;
@@ -267,6 +314,7 @@ export function PlotManager({
       );
     }
     setRowsOpenState(false);
+    changeSchemaOpen(false);
     closeHostPanels();
     setSettingsTab(tab);
   };
@@ -665,6 +713,23 @@ export function PlotManager({
             >
               <Rows3 aria-hidden="true" />
             </Button>
+            <Button
+              ref={schemaToggleRef}
+              variant="ghost"
+              size="icon"
+              aria-label="Schema diagram"
+              aria-pressed={schemaOpen}
+              aria-expanded={schemaOpen}
+              aria-controls={schemaOpen ? schemaDrawerId : undefined}
+              tooltip={
+                schemaOpen
+                  ? "Close the schema diagram (Esc)"
+                  : "Schema diagram: every table, field, and relationship"
+              }
+              onClick={() => (schemaOpen ? closeSchema() : setSchemaOpen(true))}
+            >
+              <Network aria-hidden="true" />
+            </Button>
           </div>
           {sidePanels.length > 0 && (
             // History-like panels sit with the inspection tools and stay
@@ -854,6 +919,14 @@ export function PlotManager({
             readOnly={readOnly}
           />
         )}
+        {schemaOpen && !openPanel && (
+          <SchemaDrawer
+            id={schemaDrawerId}
+            graph={schema?.graph}
+            containerRef={controlsRef}
+            onClose={closeSchema}
+          />
+        )}
         {settingsTab && !openPanel && (
           <WorkspaceSettingsDrawer
             id={settingsDrawerId}
@@ -989,7 +1062,7 @@ export function PlotManager({
         className="eda-workspace-status"
         {...panelSpaceAttributes}
       >
-        {rowsOpen && !rowsNarrow ? null : (
+        {(rowsOpen && !rowsNarrow) || (schemaOpen && !openPanel) ? null : (
           // The expanded Rows drawer covers the workspace and shows the scope.
           <ActiveFilterStatus
             onShowChart={showChart}

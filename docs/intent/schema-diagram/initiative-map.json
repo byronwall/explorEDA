@@ -109,6 +109,13 @@
       "location": "user reply, 2026-10-10",
       "anchor": "query steps need to get into the schema viewer; universal, all in one; starting a new session on promotion is fine",
       "authority": "direct intent"
+    },
+    {
+      "id": "feedback-2026-10-10e",
+      "type": "direct-user-input",
+      "location": "user message during milestone 1, 2026-10-10",
+      "anchor": "layout should match the viewport's aspect ratio; fill the screen; readable without zoom or pan; flow left to right, top to bottom; avoid one fixed column per depth",
+      "authority": "direct intent"
     }
   ],
   "intent": {
@@ -188,6 +195,13 @@
         "kind": "requirement",
         "source": "feedback-2026-10-10d",
         "core": true
+      },
+      {
+        "id": "c12",
+        "text": "The layout fills the viewport's shape so the diagram reads without zooming or panning, while flowing left to right and top to bottom.",
+        "kind": "quality-bar",
+        "source": "feedback-2026-10-10e",
+        "core": true
       }
     ],
     "themes": ["lineage", "project overview", "field-level detail"],
@@ -218,7 +232,7 @@
       "Prove the editor model (selection, anchored inspector, one undo step per edit, read-only) on tables and relationships before lineage adds columns.",
       "Reuse, never fork, editing: move relationship proposal and match counts out of ProjectSchemaPanel and step building out of QueryRelationshipBuilder into shared logic; open the existing calculation editor; use updateFieldSettings; route project edits through onProjectChange.",
       "Keep buildSchemaGraph pure and tested, reuse incompatibleSettingsFields' walk as settingsFieldUsage, and draw unresolved references as stubs.",
-      "Use fixed layered columns instead of a layout library.",
+      "Use a hand-rolled, viewport-aware layout instead of a layout library: layered columns when they fit, else the same reading order wrapped to the viewport's shape.",
       "Keep schema.onProjectChange, views, and onAddSource optional; promotion, the biggest saved-state change, comes last with a round-trip test."
     ],
     "first_proof": {
@@ -270,6 +284,11 @@
         "date": "2026-10-10",
         "decision": "Promotion starts a new project session; the single-table session stays restorable.",
         "source": "feedback-2026-10-10d"
+      },
+      {
+        "date": "2026-10-10",
+        "decision": "Layout is viewport-aware: layered columns when they fit, otherwise the same order wrapped into columns sized to the viewport's aspect ratio; lines that skip a column route around cards.",
+        "source": "feedback-2026-10-10e"
       }
     ]
   },
@@ -309,11 +328,16 @@
       {
         "id": "m1",
         "title": "A polished diagram of tables and relationships",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Schema toolbar button opens a finished-looking diagram of tables, fields, and relationships in a drawer shared with Rows, for projects and single tables. Cards and field rows carry stable IDs for selection.",
         "proof": "Layout unit tests; Rows unchanged; screenshots of shop, World Bank, flights, and a CSV import at three widths and two themes, with impeccable critique fixes applied.",
         "valid_intermediate_state": "Useful ER overview for both workspace kinds; no lineage yet.",
-        "rollback": "Remove the toolbar entry; Rows keeps the shared drawer with no visible change."
+        "rollback": "Remove the toolbar entry; Rows keeps the shared drawer with no visible change.",
+        "evidence": [
+          "Vitest: src/test/lib/schema/schemaGraph.test.ts (10 tests), WorkspaceToolbar schema test, ProjectSchemaPanel Open diagram test",
+          "Playwright screenshots of shop, flights, World Bank, and a single table at 1280, 783, and 390 px, light and dark",
+          "Real-input checks: Open diagram from the Schema panel, drag pan, zoom, fit, close by chart-strip click"
+        ]
       },
       {
         "id": "m2",
@@ -418,6 +442,12 @@
       "date": "2026-10-10",
       "event": "status-change",
       "summary": "User asked to commit the docs and implement every milestone as stacked PRs with screenshots.",
+      "status": "active"
+    },
+    {
+      "date": "2026-10-10",
+      "event": "milestone-completed",
+      "summary": "Milestone 1 built: shared wide drawer, table cards, relationship lines, viewport-aware layout.",
       "status": "active"
     }
   ],
