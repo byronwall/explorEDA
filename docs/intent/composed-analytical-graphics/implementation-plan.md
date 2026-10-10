@@ -313,6 +313,16 @@ The author builds a stacked composition and can explain a selected share from it
 Changing the population updates all bands consistently. Highlighting one category preserves the denominator.
 Earlier independently supplied bands remain valid. Disable the stack calculation to bypass this addition.
 
+### Status: columns built with the published counts (updated 2026-10-10)
+
+The deaths-and-media graphic (research entry 07) ships as `?example=media-deaths`, prepared by `apps/data-samples/prepare/media-deaths.ts` from Our World in Data's analysis package (CC BY).
+A stack mark counts or sums a repeat's rows per category and stacks them as shares of the repeat's total, from the bottom.
+Category order and color come from totals over every row, so they match across columns and never move while filtering; the denominator comes from the live rows, so filtering the population recomputes shares, while selecting a repeat only fades.
+Columns fill the frame at 100% or scale by total against the largest repeat, and segments with room carry their category and share.
+The trace of a segment states the numerator, the denominator, every contributing category with its count, and the cumulative bounds. The prepared table keeps the package's overdose correction and multiple-mention definition, and the note states what each denominator covers.
+
+Not built: stacked area geometry across an ordered x for the Causes-of-death-by-age reference. The stack calculation is in place; feeding it through the area node is the remaining step.
+
 ## Milestone 6: Combine detail and overview frames in one unit
 
 Create a state-style comparison with an inset, then repeat that unit for several illustrative regions.

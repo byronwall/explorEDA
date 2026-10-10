@@ -256,12 +256,57 @@ export interface SummaryMark {
   opacity: number;
 }
 
+/**
+ * Stacks the categories of a repeat into one column, from the bottom up.
+ * Each segment's share is its count or sum over the repeat's total across
+ * every category, so the denominator is explicit: filtering the population
+ * recomputes it, while selecting a category only fades the others.
+ */
+export interface StackMark {
+  type: "stack";
+  id: string;
+  name: string;
+  categoryField: string;
+  aggregation: "count" | "sum";
+  measureField?: string;
+  /** Every column spans the frame as 100%; otherwise heights follow each repeat's total against the largest. */
+  normalize: boolean;
+  /** Category order from the bottom: by label, or largest total first across the whole graphic. */
+  order: "label" | "total";
+  /** One color per category in that order, cycling when there are more categories. */
+  colors: string[];
+  /** Label segments at least this tall, in artboard pixels, with the category and share. */
+  labelMinHeight: number;
+  /** Space between segments. */
+  inset: number;
+}
+
 export type MarkDefinition =
   | StripMark
   | PointMark
   | PathMark
   | BandMark
-  | SummaryMark;
+  | SummaryMark
+  | StackMark;
+
+/** A categorical palette for stacks, distinct and readable on paper. */
+export const STACK_COLORS = [
+  "#4e79a7",
+  "#f28e2b",
+  "#e15759",
+  "#76b7b2",
+  "#59a14f",
+  "#edc948",
+  "#b07aa1",
+  "#ff9da7",
+  "#9c755f",
+  "#bab0ac",
+  "#1f77b4",
+  "#8c564b",
+  "#17becf",
+  "#bcbd22",
+  "#7f7f7f",
+];
 export type MarkType = MarkDefinition["type"];
 
 /** The scales a mark reads, by ID. */
@@ -271,6 +316,7 @@ export function markScaleIds(mark: MarkDefinition): string[] {
     return mark.valueScaleId
       ? [mark.yScaleId, mark.valueScaleId]
       : [mark.yScaleId];
+  if (mark.type === "stack") return [];
   return [mark.xScaleId, mark.yScaleId];
 }
 
@@ -289,6 +335,10 @@ export function markFields(mark: MarkDefinition): string[] {
       return [mark.orderField, mark.lowerField, mark.upperField];
     case "summary":
       return [mark.groupField, mark.measureField];
+    case "stack":
+      return mark.measureField
+        ? [mark.categoryField, mark.measureField]
+        : [mark.categoryField];
   }
 }
 

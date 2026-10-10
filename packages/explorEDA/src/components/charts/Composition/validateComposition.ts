@@ -51,6 +51,19 @@ function isMark(value: unknown) {
       (value.show === undefined ||
         oneOf(value.show, ["all", "first", "last", "min", "max"]))
     );
+  if (value.type === "stack")
+    return (
+      isString(value.categoryField) &&
+      oneOf(value.aggregation, ["count", "sum"]) &&
+      (value.aggregation === "count" || isString(value.measureField)) &&
+      typeof value.normalize === "boolean" &&
+      oneOf(value.order, ["label", "total"]) &&
+      Array.isArray(value.colors) &&
+      value.colors.length > 0 &&
+      value.colors.every(isString) &&
+      isNumber(value.labelMinHeight) &&
+      isNumber(value.inset)
+    );
   if (value.type === "summary")
     return (
       isString(value.groupField) &&
@@ -289,17 +302,19 @@ export function isCompositionDefinition(
         element.marks.every(
           (mark) =>
             isRecord(mark) &&
-            (mark.type === "summary"
-              ? kinds.get(mark.yScaleId) === "numeric" &&
-                (mark.valueScaleId === undefined ||
-                  kinds.get(mark.valueScaleId) === "value")
-              : mark.type === "point" ||
-                  mark.type === "path" ||
-                  mark.type === "band"
-                ? kinds.get(mark.xScaleId) === "numeric" &&
-                  kinds.get(mark.yScaleId) === "numeric"
-                : kinds.get(mark.positionScaleId) === "position" &&
-                  kinds.get(mark.valueScaleId) === "value")
+            (mark.type === "stack"
+              ? true
+              : mark.type === "summary"
+                ? kinds.get(mark.yScaleId) === "numeric" &&
+                  (mark.valueScaleId === undefined ||
+                    kinds.get(mark.valueScaleId) === "value")
+                : mark.type === "point" ||
+                    mark.type === "path" ||
+                    mark.type === "band"
+                  ? kinds.get(mark.xScaleId) === "numeric" &&
+                    kinds.get(mark.yScaleId) === "numeric"
+                  : kinds.get(mark.positionScaleId) === "position" &&
+                    kinds.get(mark.valueScaleId) === "value")
         )
     );
   return (

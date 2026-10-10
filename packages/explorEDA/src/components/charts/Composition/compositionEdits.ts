@@ -13,7 +13,9 @@ import {
   type PathMark,
   type PointMark,
   type PositionScale,
+  type StackMark,
   type SummaryMark,
+  STACK_COLORS,
   type UnitElement,
   type ValueScale,
 } from "./compositionTypes";
@@ -104,6 +106,13 @@ export function resetOverride(
   };
 }
 
+/** The one color a mark carries over when it changes type. */
+function markColor(mark: MarkDefinition) {
+  if (mark.type === "path") return mark.stroke;
+  if (mark.type === "stack") return mark.colors[0] ?? "#1f2328";
+  return mark.fill;
+}
+
 /**
  * Changes a mark to another type, keeping its name and ID. The new type
  * needs scales of its own kind, so missing ones are added: numeric scales for
@@ -120,6 +129,35 @@ export function convertMark(
   if (!mark || mark.type === type) return definition;
   let next = definition;
   let replacement: MarkDefinition;
+  if (type === "stack") {
+    const categoryField =
+      fields.find(
+        (item) =>
+          item.dataType !== "numeric" &&
+          item.uniqueCount >= 2 &&
+          item.uniqueCount <= 30
+      )?.name ?? fields[0]?.name;
+    if (!categoryField) return definition;
+    const measure = fields.find(
+      (item) => item.dataType === "numeric" && item.name !== categoryField
+    )?.name;
+    const stack: StackMark = {
+      type: "stack",
+      id: mark.id,
+      name: mark.name,
+      categoryField,
+      aggregation: measure ? "sum" : "count",
+      measureField: measure,
+      normalize: true,
+      order: "total",
+      colors: STACK_COLORS,
+      labelMinHeight: 14,
+      inset: 1,
+    };
+    return updateElement<UnitElement>(definition, unit.id, {
+      marks: unit.marks.map((item) => (item.id === markId ? stack : item)),
+    });
+  }
   if (type === "summary") {
     const numeric = fields.filter((item) => item.dataType === "numeric");
     const groupField =
@@ -145,7 +183,7 @@ export function convertMark(
       groupField,
       measureField,
       yScaleId: withY.scale.id,
-      fill: mark.type === "path" ? mark.stroke : mark.fill,
+      fill: markColor(mark),
       opacity: 0.3,
     };
     return updateElement<UnitElement>(next, unit.id, {
@@ -195,14 +233,17 @@ export function convertMark(
       valueScaleId: value.id,
       aggregation: "count",
       encoding: "color",
-      fill: mark.type === "path" ? mark.stroke : mark.fill,
+      fill: markColor(mark),
       inset: 1,
     };
   } else {
     // A sibling x–y mark already names the scales; otherwise take the data's.
     const sibling = unit.marks.find(
       (item): item is PointMark | PathMark | BandMark =>
-        item.type !== "strip" && item.type !== "summary" && item.id !== markId
+        item.type !== "strip" &&
+        item.type !== "summary" &&
+        item.type !== "stack" &&
+        item.id !== markId
     );
     let xScaleId = sibling?.xScaleId;
     let yScaleId = sibling?.yScaleId;
@@ -233,7 +274,7 @@ export function convertMark(
       fields.find((item) => item.dataType === "datetime")?.name ??
       fields.find((item) => item.dataType === "numeric")?.name ??
       "";
-    const color = mark.type === "path" ? mark.stroke : mark.fill;
+    const color = markColor(mark);
     const numericNames = fields
       .filter((item) => item.dataType === "numeric")
       .map((item) => item.name);
