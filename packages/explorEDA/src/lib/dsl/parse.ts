@@ -104,8 +104,21 @@ export function tokenize(
   return { tokens };
 }
 
+const ESCAPES: Record<string, string> = { n: "\n", t: "\t", r: "\r" };
+
+/**
+ * Reads a quoted literal. Export writes strings as JSON, so the JSON escapes
+ * for newlines, tabs, and code points read back; any other escaped
+ * character stands for itself.
+ */
 function unquote(text: string): string {
-  return text.slice(1, -1).replace(/\\(.)/g, "$1");
+  return text
+    .slice(1, -1)
+    .replace(/\\(u[0-9a-fA-F]{4}|.)/g, (_match, escaped: string) =>
+      escaped.startsWith("u")
+        ? String.fromCharCode(parseInt(escaped.slice(1), 16))
+        : (ESCAPES[escaped] ?? escaped)
+    );
 }
 
 /** Splits at commas outside quotes, keeping whether each item was quoted. */
