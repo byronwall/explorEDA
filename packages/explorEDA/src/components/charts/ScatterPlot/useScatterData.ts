@@ -1,3 +1,5 @@
+import { useThemeColors } from "@/hooks/useDisplayColorScales";
+import { useDisplayColorScale } from "@/hooks/useDisplayColorScales";
 import { useMemo } from "react";
 import { useDataLayer, type IdType } from "@/providers/DataLayerProvider";
 import type { ScatterPlotSettings } from "./definition";
@@ -19,9 +21,8 @@ export function useScatterData(
   const crossfilter = useDataLayer((state) => state.crossfilterWrapper);
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const fieldSettings = useDataLayer((state) => state.fieldSettings);
-  const colorScale = useDataLayer((state) =>
-    state.colorScales.find((item) => item.id === settings.colorScaleId)
-  );
+  const colorScale = useDisplayColorScale(settings.colorScaleId);
+  const themeColors = useThemeColors();
   const updateChart = useDataLayer((state) => state.updateChart);
   const fieldLabel = useDataLayer((state) => state.getFieldLabel);
   const getFieldLabel = (field: string) =>
@@ -73,6 +74,7 @@ export function useScatterData(
             }
           : colorScale && { ...colorScale },
       calculatedFields: calculations.map((calc) => calc.resultColumnName),
+      themeColors,
       pixelRatio:
         typeof window === "undefined" ? 1 : window.devicePixelRatio || 1,
     };
@@ -84,6 +86,7 @@ export function useScatterData(
     profiles,
     fieldSettings,
     colorScale,
+    themeColors,
     calculations,
     nonce,
     settings.xField,

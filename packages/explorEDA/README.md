@@ -127,6 +127,56 @@ observed.
 
 React and ReactDOM are peer dependencies.
 
+## Themes and styling
+
+The Theme tab in workspace settings picks how charts look. **Compact** is the
+default dense layout. **Newsprint** and **Report** are editorial themes: each
+chart gets a headline that wraps to two lines, a subtitle, and a source note
+under the plot, with larger axis text and a palette of its own. The choice
+saves in `savedData.theme`; a save without one opens as Compact.
+
+```tsx
+<ExplorEda data={rows} savedData={{ ...saved, theme: { id: "newsprint" } }} />
+```
+
+Charts follow the theme unless a user overrides a chart on purpose. A chart's
+`subtitle`, `note`, and `style` (title size, title weight, subtitle size) save
+with its settings, and the Theme tab lists every override with a reset.
+
+Themes are CSS custom properties, so a host restyles them the same way it
+restyles `--primary`. Set a variable on an ancestor of the workspace to change
+it everywhere, or target a theme with `[data-eda-theme="…"]`:
+
+```css
+/* Your brand's fonts and accent in the editorial themes. */
+.my-app [data-eda-theme="newsprint"],
+.my-app [data-eda-theme="report"] {
+  --eda-headline-font: "Your Serif", Georgia, serif;
+  --eda-headline-accent: var(--brand-red);
+}
+```
+
+| Variable | Sets |
+| --- | --- |
+| `--eda-headline-font`, `--eda-headline-size`, `--eda-headline-weight`, `--eda-headline-line` | Chart title type |
+| `--eda-headline-color`, `--eda-headline-accent` | Title color and the short rule above it |
+| `--eda-subtitle-font`, `--eda-subtitle-size`, `--eda-subtitle-color` | Subtitle type |
+| `--eda-note-size`, `--eda-note-color` | Source note type |
+| `--eda-axis-tick-size`, `--eda-axis-label-size` | Axis tick and title sizes, in px |
+| `--eda-axis-tick-color`, `--eda-axis-label-color` | Axis text colors |
+| `--eda-panel-surface`, `--eda-panel-rule` | Chart surface and border |
+| `--eda-header-padding` | Space around an editorial headline |
+| `--eda-heat-low`, `--eda-heat-high`, `--eda-heat-mid`, `--eda-heat-negative` | The ramp heatmaps, region maps, and density use |
+
+The package ships no font files. Point a font variable at a webfont the host
+already loads; axis layout measures text again once fonts finish loading, so
+wide faces claim the room they need.
+
+Categorical color scales on the **Theme** palette take the current theme's
+colors, and each category keeps its place across themes. Palette colors
+lighten in dark mode: add a `dark` class to the page or to an ancestor of the
+workspace. Hand-picked colors and fixed palettes stay as chosen.
+
 ## Browser requirements
 
 The package runs in a browser with DOM, Canvas 2D, `ResizeObserver`,
@@ -154,6 +204,7 @@ interface SavedDataStructure {
   fieldSettings?: FieldSettingsMap;
   aggregates?: AggregateSpec[];
   geometryAssets?: GeometryAsset[];
+  theme?: WorkspaceTheme; // { id: "compact" | "newsprint" | "report" }
 }
 
 interface SavedCalculation {
