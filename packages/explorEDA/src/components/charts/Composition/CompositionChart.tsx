@@ -2,7 +2,6 @@ import { useMemo, useRef, useState } from "react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { ChartMessage } from "../ChartMessage";
-import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import { moveElement } from "./compositionEdits";
 import {
   useCompositionEditor,
@@ -12,6 +11,7 @@ import { CompositionSvg } from "./CompositionSvg";
 import { normalizeComposition } from "./compositionTypes";
 import type { CompositionSettings } from "./definition";
 import { measureCompositionText } from "./measureText";
+import { useCompositionData } from "./useCompositionData";
 import {
   resolveComposition,
   type Bounds,
@@ -43,16 +43,7 @@ export function CompositionChart({
   const [drag, setDrag] = useState<Drag>();
   const svgRef = useRef<SVGSVGElement>(null);
 
-  const liveIds = useGetLiveIds(settings);
-  const allIds = useGetAllIds(settings);
-  const getColumnData = useDataLayer((state) => state.getColumnData);
-  const nonce = useDataLayer((state) => state.nonce);
-  const data = useMemo(
-    () => ({ allIds, liveIds, column: getColumnData }),
-    // Calculated columns change with the nonce.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [allIds, liveIds, getColumnData, nonce]
-  );
+  const data = useCompositionData(settings);
   const scene = useMemo(
     () => resolveComposition(definition, measureCompositionText, data),
     [definition, data]

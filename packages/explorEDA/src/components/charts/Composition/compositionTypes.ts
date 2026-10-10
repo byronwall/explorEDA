@@ -9,6 +9,8 @@ export interface CompositionDefinition {
   elements: CompositionElement[];
   /** Named scales that chart units reference, shared across their repeats. */
   scales: CompositionScale[];
+  /** Values computed from the data for labels, text, and guides. */
+  calculations: CompositionCalculation[];
 }
 
 export interface CompositionArtboard {
@@ -18,7 +20,11 @@ export interface CompositionArtboard {
   background: string;
 }
 
-export type CompositionElement = TextElement | UnitElement;
+export type CompositionElement =
+  | TextElement
+  | UnitElement
+  | GuideElement
+  | AnnotationElement;
 
 export type CompositionElementKind = CompositionElement["kind"];
 
@@ -117,11 +123,80 @@ export interface UnitElement extends ElementBase {
   kind: "unit";
   frame: { width: number; height: number };
   /** Each repeat's subset name, beside a row or above a column. */
-  label: { show: boolean; width: number; fontSize: number };
+  label: {
+    show: boolean;
+    width: number;
+    fontSize: number;
+    /** A calculation shown beside each repeat's name. */
+    valueCalcId?: string;
+  };
   /** Draw position labels under the units. */
   axis: boolean;
   marks: MarkDefinition[];
   repeat: RepeatRule;
+}
+
+export type CalcAggregation = "count" | "sum" | "average" | "min" | "max";
+
+/**
+ * One value from the data. Population and filter policy are separate
+ * choices: a value can cover each repeat or the whole graphic, and it can
+ * follow the active filters or ignore them.
+ */
+export interface CompositionCalculation {
+  id: string;
+  name: string;
+  aggregation: CalcAggregation;
+  field?: string;
+  /** Each repeat's own rows, or every row in the composition. */
+  population: "repeat" | "composition";
+  filters: "follow" | "ignore";
+}
+
+export type GuideValue =
+  | { kind: "constant"; value: string }
+  | { kind: "calc"; calcId: string };
+
+/**
+ * A rule across a chart unit's frames at one position, such as a date. The
+ * element's x and y offset its label from the top of the rule.
+ */
+export interface GuideElement extends ElementBase {
+  kind: "guide";
+  unitId: string;
+  value: GuideValue;
+  label: string;
+  color: string;
+}
+
+/** Where an annotation attaches. */
+export type AnnotationAnchor =
+  /** A fixed point on the page: the element's x and y. */
+  | { kind: "page" }
+  /** A point in one repeat's frame, as fractions of its width and height. */
+  | { kind: "frame"; unitId: string; instanceKey: string; fx: number; fy: number }
+  /** A glyph chosen from the data, which the annotation follows as data change. */
+  | {
+      kind: "data";
+      unitId: string;
+      instanceKey: string;
+      markId: string;
+      pick: "max" | "min" | "first" | "last";
+    };
+
+/**
+ * Text attached to the page, a frame, or a data mark. For frame and data
+ * anchors, x and y are a visual offset from the anchor point, so a nudge
+ * keeps the attachment.
+ */
+export interface AnnotationElement extends ElementBase {
+  kind: "annotation";
+  text: string;
+  anchor: AnnotationAnchor;
+  fontSize: number;
+  color: string;
+  /** Draw a line from the anchor point to the text. */
+  leader: boolean;
 }
 
 export const COMPOSITION_FONT =
@@ -136,6 +211,7 @@ export function createEmptyComposition(): CompositionDefinition {
     artboard: { width: 960, height: 600, background: PAPER },
     elements: [],
     scales: [],
+    calculations: [],
   };
 }
 
@@ -143,7 +219,13 @@ export function createEmptyComposition(): CompositionDefinition {
 export function normalizeComposition(
   definition: CompositionDefinition
 ): CompositionDefinition {
-  return definition.scales ? definition : { ...definition, scales: [] };
+  return definition.scales && definition.calculations
+    ? definition
+    : {
+        ...definition,
+        scales: definition.scales ?? [],
+        calculations: definition.calculations ?? [],
+      };
 }
 
 const TEXT_DEFAULTS: Record<
@@ -286,15 +368,11 @@ export function createUnitElement(
   const margin = 32;
   const bottom = definition.elements.reduce(
     (max, element) =>
-      element.kind === "text" && element.role === "note"
-        ? max
-        : Math.max(
-            max,
-            element.y +
-              (element.kind === "text"
-                ? Math.round(element.fontSize * 1.3)
-                : element.frame.height)
-          ),
+      element.kind === "text" && element.role !== "note"
+        ? Math.max(max, element.y + Math.round(element.fontSize * 1.3))
+        : element.kind === "unit"
+          ? Math.max(max, element.y + element.frame.height)
+          : max,
     margin
   );
   const labelWidth = 140;
@@ -303,7 +381,8 @@ export function createUnitElement(
     kind: "unit",
     name: uniqueName(definition, "Chart unit"),
     x: margin,
-    y: bottom + 20,
+    // Room above the first repeat for callouts.
+    y: bottom + 32,
     frame: {
       width: definition.artboard.width - margin * 2 - labelWidth,
       height: 18,
@@ -332,4 +411,66 @@ export function createUnitElement(
     },
   };
   return { definition: { ...definition, scales }, element };
+}
+
+export function newCalculationId(definition: CompositionDefinition) {
+  const ids = new Set(definition.calculations.map((calc) => calc.id));
+  let index = 1;
+  while (ids.has(`calc-${index}`)) index += 1;
+  return `calc-${index}`;
+}
+
+export function createGuideElement(
+  definition: CompositionDefinition,
+  unit: UnitElement
+): GuideElement {
+  return {
+    id: newElementId(definition, "guide"),
+    kind: "guide",
+    name: uniqueName(definition, "Guide"),
+    x: 0,
+    y: 0,
+    unitId: unit.id,
+    value: { kind: "constant", value: "" },
+    label: "",
+    color: "#1f2328",
+  };
+}
+
+export function createAnnotationElement(
+  definition: CompositionDefinition,
+  unit: UnitElement | undefined,
+  instanceKey: string | undefined
+): AnnotationElement {
+  const mark = unit?.marks[0];
+  const base = {
+    id: newElementId(definition, "note"),
+    kind: "annotation" as const,
+    name: uniqueName(definition, "Annotation"),
+    fontSize: 12,
+    color: INK,
+    leader: true,
+  };
+  if (unit && mark && instanceKey !== undefined)
+    return {
+      ...base,
+      text: "Busiest month: {label} ({value})",
+      x: 16,
+      y: -14,
+      anchor: {
+        kind: "data",
+        unitId: unit.id,
+        instanceKey,
+        markId: mark.id,
+        pick: "max",
+      },
+    };
+  return {
+    ...base,
+    text: "Annotation",
+    x: definition.artboard.width / 2,
+    y: definition.artboard.height / 2,
+    leader: false,
+    anchor: { kind: "page" },
+  };
 }

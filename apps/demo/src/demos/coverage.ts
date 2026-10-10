@@ -799,6 +799,7 @@ export const exampleCoverage = [
     intent: "Author a report graphic from a blank artboard beside linked views of its data.",
     features: {
       "chart:composition": "shown",
+      "chart:line": "shown",
       "chart:row": "shown",
       "chart:bar": "shown",
       "chart:data-table": "shown",

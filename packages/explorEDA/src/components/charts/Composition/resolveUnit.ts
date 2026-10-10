@@ -13,6 +13,7 @@ import {
   type ValueScale,
 } from "./compositionTypes";
 import type { Bounds, SceneNode } from "./resolveComposition";
+import { evaluateCalc, type CalcResult } from "./calculations";
 
 /** The rows a composition draws from. */
 export interface CompositionData {
@@ -38,6 +39,12 @@ export interface ResolvedInstance {
   /** Rows in the subset, and those that pass the filters. */
   rowCount: number;
   liveCount: number;
+  allIds: number[];
+  liveIds: number[];
+  /** Bins of the first mark's position scale, for guides and anchors. */
+  position?: { scale: PositionScale; bins: PositionBin[] };
+  /** The value shown beside the label, when the unit has one. */
+  labelValue?: CalcResult;
 }
 
 /** What one glyph stands for, kept so inspection can list its rows. */
@@ -181,6 +188,26 @@ export function resolveUnit(
       width: unit.frame.width,
       height: unit.frame.height,
     };
+    const labelCalc = definition.calculations.find(
+      (calc) => calc.id === unit.label.valueCalcId
+    );
+    const labelValue = labelCalc && evaluateCalc(labelCalc, data, subset);
+    if (unit.label.show && labelValue && labelLeft) {
+      nodes.push({
+        type: "text",
+        key: `${unit.id}:${subset.key}:value`,
+        elementId: unit.id,
+        instanceKey: subset.key,
+        x: x + labelWidth - 10,
+        lines: [
+          { text: labelValue.text, y: frame.y + frame.height / 2 + labelSize * 0.35 },
+        ],
+        fontSize: labelSize,
+        fontWeight: 400,
+        fill: MUTED_INK,
+        anchor: "end",
+      });
+    }
     if (unit.label.show && subset.label) {
       nodes.push({
         type: "text",
@@ -190,7 +217,10 @@ export function resolveUnit(
         x,
         lines: [
           {
-            text: subset.label,
+            text:
+              labelValue && !labelLeft
+                ? `${subset.label} · ${labelValue.text}`
+                : subset.label,
             y: labelLeft
               ? frame.y + frame.height / 2 + labelSize * 0.35
               : y + labelSize,
@@ -239,6 +269,13 @@ export function resolveUnit(
       frame,
       rowCount: subset.allIds.length,
       liveCount: subset.liveIds.length,
+      allIds: subset.allIds,
+      liveIds: subset.liveIds,
+      position: marks[0] && {
+        scale: marks[0].position,
+        bins: binsFor(marks[0].position, subset),
+      },
+      labelValue,
     });
   });
 
@@ -387,7 +424,7 @@ function periodsOf(column: Record<number, datum>, interval: TimeInterval) {
   return periods;
 }
 
-const periodKey = (start: number) => new Date(start).toISOString().slice(0, 10);
+export const periodKey = (start: number) => new Date(start).toISOString().slice(0, 10);
 
 const MONTHS = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
