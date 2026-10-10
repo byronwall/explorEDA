@@ -2038,6 +2038,7 @@ export const sparklinesDashboard = dashboard("Big tech", [
       interval: "month",
       weekStart: "monday",
       aggregation: "average",
+      measureField: "Open",
       missingPeriods: "gap",
     },
   },
