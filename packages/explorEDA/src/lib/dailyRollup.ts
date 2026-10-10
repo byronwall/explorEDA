@@ -4,7 +4,7 @@ import {
   type AggregateContributor,
   type AggregateInputRow,
 } from "@/lib/aggregates";
-import { dateTimestamp } from "@/lib/dateTime";
+import { timestampOf } from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 
 export const DAY_MS = 86_400_000;
@@ -62,10 +62,10 @@ function cached<T extends object>(
 export function utcDay(
   value: datum
 ): Readonly<{ day: string; start: number }> | undefined {
-  if (typeof value !== "string" || !value.trim()) return undefined;
-  return cached(`d\u0000${value}`, () => {
-    const timestamp = dateTimestamp(value);
-    if (!Number.isFinite(timestamp)) return undefined;
+  if (typeof value !== "string" && typeof value !== "number") return undefined;
+  return cached(`d\u0000${typeof value}\u0000${value}`, () => {
+    const timestamp = timestampOf(value);
+    if (timestamp === undefined) return undefined;
     const start = Math.floor(timestamp / DAY_MS) * DAY_MS;
     return { day: new Date(start).toISOString().slice(0, 10), start };
   });

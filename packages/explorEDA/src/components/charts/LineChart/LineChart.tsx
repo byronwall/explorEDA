@@ -1,7 +1,7 @@
 import { useColorContext } from "@/hooks/useDisplayColorScales";
 import { defaultCategoricalColors } from "@/lib/colorScaleMath";
 import { THEME_PALETTE, resolvePaletteColor } from "@/lib/themePalettes";
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import { boundedDomain, hasAxisBounds } from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import { ChartMessage } from "../ChartMessage";

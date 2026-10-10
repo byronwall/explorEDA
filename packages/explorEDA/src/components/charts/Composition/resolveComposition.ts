@@ -1,4 +1,4 @@
-import { dateTimestamp } from "@/lib/dateTime";
+import { timestampOf } from "@/lib/valueParsing";
 import {
   evaluateCalc,
   fillCalcTokens,
@@ -297,10 +297,8 @@ export function positionX(
   if (!position || !position.bins.length) return undefined;
   let key: string | undefined;
   if (position.scale.interval) {
-    const time =
-      value.number ??
-      (value.text?.trim() ? dateTimestamp(value.text.trim()) : undefined);
-    if (time === undefined || !Number.isFinite(time)) return undefined;
+    const time = timestampOf(value.number) ?? timestampOf(value.text);
+    if (time === undefined) return undefined;
     key = periodKey(periodStart(time, position.scale.interval));
   } else {
     key =

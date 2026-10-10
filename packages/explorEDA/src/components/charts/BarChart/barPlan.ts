@@ -11,7 +11,7 @@ import {
   finiteNumbers,
   isMissingValue,
   isNumberLike,
-} from "@/lib/numeric";
+} from "@/lib/valueParsing";
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { datum } from "@/types/ChartTypes";
 import type { Filter, ValueFilter } from "@/types/FilterTypes";

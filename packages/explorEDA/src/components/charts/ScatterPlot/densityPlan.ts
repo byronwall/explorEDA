@@ -1,7 +1,7 @@
 import { bisectRight } from "d3-array";
 import { heatFill } from "../heatScale";
 import type { AxisTypography } from "../Axis/axisPlan";
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import type { datum, Filter } from "@/types/FilterTypes";
 import { numericScale } from "../Axis/numericScale";
 import type { ScatterPlotSettings } from "./definition";

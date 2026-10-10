@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import type { AggregateAggregation } from "@/lib/aggregates";
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import { useMemo } from "react";

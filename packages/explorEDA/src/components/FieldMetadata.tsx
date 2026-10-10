@@ -1,3 +1,4 @@
+import { timestampOf } from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import { buildFieldProfile, type FieldProfile } from "@/lib/fieldProfiles";
 import {
@@ -58,8 +59,8 @@ function dateRange(profile: FieldProfile, format: ValueFormat) {
   let firstTime = Infinity;
   let lastTime = -Infinity;
   for (const { value } of profile.categories?.distribution ?? []) {
-    const time = Date.parse(String(value));
-    if (!Number.isFinite(time)) continue;
+    const time = timestampOf(value);
+    if (time === undefined) continue;
     if (time < firstTime) {
       first = value;
       firstTime = time;

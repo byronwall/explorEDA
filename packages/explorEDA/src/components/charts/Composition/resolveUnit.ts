@@ -1,6 +1,5 @@
 import { scaleLinear } from "d3-scale";
-import { dateTimestamp } from "@/lib/dateTime";
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber, timestampOf } from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import {
   findOverride,
@@ -405,12 +404,6 @@ const periodCache = new WeakMap<
   Map<TimeInterval, Map<number, number>>
 >();
 
-function timestamp(value: datum) {
-  if (typeof value === "number") return Number.isFinite(value) ? value : undefined;
-  if (typeof value !== "string" || !value.trim()) return undefined;
-  const parsed = dateTimestamp(value);
-  return Number.isFinite(parsed) ? parsed : undefined;
-}
 
 export function periodStart(time: number, interval: TimeInterval) {
   const date = new Date(time);
@@ -456,7 +449,7 @@ function periodsOf(column: Record<number, datum>, interval: TimeInterval) {
   if (!periods) {
     periods = new Map();
     for (const [id, value] of Object.entries(column)) {
-      const time = timestamp(value);
+      const time = timestampOf(value);
       if (time !== undefined) periods.set(Number(id), periodStart(time, interval));
     }
     byInterval.set(interval, periods);

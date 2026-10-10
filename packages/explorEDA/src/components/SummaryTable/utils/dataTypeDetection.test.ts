@@ -10,6 +10,8 @@ describe("detectColumnType dates", () => {
     ["Route 7", "Route 8"],
     ["Building 12A", "Building 3"],
     ["Market 3", "May Street"],
+    ["0x1A", "0x2B"],
+    ["2025-02-30", "2025-02-31"],
   ])("keeps labels with numbers categorical: %s", (...values) => {
     expect(detectColumnType(column(...values))).toBe("categorical");
   });
@@ -23,6 +25,10 @@ describe("detectColumnType dates", () => {
     ["Jan 15 2025", "February 3, 2025", "15 Mar 2025"],
   ])("detects real dates: %s", (...values) => {
     expect(detectColumnType(column(...values))).toBe("datetime");
+  });
+
+  it("detects true and false in any case as boolean", () => {
+    expect(detectColumnType(column("TRUE", "False", "true"))).toBe("boolean");
   });
 
   it("treats a column with one non-date label as categorical", () => {

@@ -1,7 +1,7 @@
 import type { datum } from "@/types/ChartTypes";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import {
   TraceReadout,
   TraceSection,

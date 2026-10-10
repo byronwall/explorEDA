@@ -1,4 +1,4 @@
-import { finiteNumber, isMissingValue } from "@/lib/numeric";
+import { finiteNumber, isMissingValue } from "@/lib/valueParsing";
 import { datum } from "@/types/ChartTypes";
 import { DataType } from "./dataTypeDetection";
 

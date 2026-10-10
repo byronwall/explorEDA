@@ -6,7 +6,7 @@ import {
   type PointerEvent,
 } from "react";
 import { categoryIncludes, categoryLabel } from "@/lib/categories";
-import { dateTimestamp } from "@/lib/dateTime";
+import { dateBound, timestampOf } from "@/lib/valueParsing";
 import { calendarBins, calendarLabel } from "@/lib/fieldDistribution";
 import type { datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
@@ -375,11 +375,8 @@ function dateBins(profile: FieldProfile) {
   let first: { time: number; value: unknown } | undefined;
   let last: { time: number; value: unknown } | undefined;
   for (const { value, count } of profile.categories?.distribution ?? []) {
-    const time =
-      typeof value === "string"
-        ? dateTimestamp(value)
-        : Date.parse(String(value));
-    if (!Number.isFinite(time)) continue;
+    const time = timestampOf(value);
+    if (time === undefined) continue;
     for (let i = 0; i < count; i += 1) times.push(time);
     if (!first || time < first.time) first = { time, value };
     if (!last || time > last.time) last = { time, value };
@@ -452,15 +449,11 @@ function keeps(active: Filter | undefined, filter: SparkFilter | undefined) {
     );
   }
   if (active.type === "date-range" && filter.type === "date-range") {
-    const time = (value: string, end: boolean) =>
-      dateTimestamp(
-        value.length === 10 && end ? `${value}T23:59:59.999Z` : value
-      );
     return (
       (active.max === undefined ||
-        time(filter.min, false) <= time(active.max, true)) &&
+        dateBound(filter.min) <= dateBound(active.max, true)) &&
       (active.min === undefined ||
-        time(filter.max, true) >= time(active.min, false))
+        dateBound(filter.max, true) >= dateBound(active.min))
     );
   }
   return false;

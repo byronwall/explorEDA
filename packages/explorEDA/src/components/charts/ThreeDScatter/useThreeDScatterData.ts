@@ -1,6 +1,6 @@
 import { detectColumnType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import { categoryLabel, categoryValue } from "@/lib/categories";
-import { finiteNumber, finiteNumbers, isMissingValue } from "@/lib/numeric";
+import { finiteNumber, finiteNumbers, isMissingValue } from "@/lib/valueParsing";
 import { useColorScales } from "@/hooks/useColorScales";
 import { IdType } from "@/providers/DataLayerProvider";
 import { useMemo } from "react";

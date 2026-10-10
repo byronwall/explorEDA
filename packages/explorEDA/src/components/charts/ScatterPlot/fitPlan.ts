@@ -1,4 +1,4 @@
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import { formatFieldValue, hasFieldDisplayFormat } from "@/lib/fieldSettings";
 import type { IdType } from "@/providers/DataLayerProvider";

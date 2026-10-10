@@ -41,5 +41,12 @@ describe("parameter inputs", () => {
         dateEnd: "2025-01-31",
       })
     ).toBe("From date is not a valid date.");
+    expect(
+      bindingProblem(parameters, query, {
+        customerId: "C1",
+        dateStart: "Depot 2",
+        dateEnd: "2025-01-31",
+      })
+    ).toBe("From date is not a valid date.");
   });
 });

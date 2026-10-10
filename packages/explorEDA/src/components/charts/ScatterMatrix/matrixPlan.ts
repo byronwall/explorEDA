@@ -4,8 +4,12 @@ import {
   type DataType,
 } from "@/components/SummaryTable/utils/dataTypeDetection";
 import { applyFilter } from "@/hooks/applyFilter";
-import { dateTimestamp } from "@/lib/dateTime";
-import { finiteNumber, isMissingValue } from "@/lib/numeric";
+import {
+  dateBound,
+  finiteNumber,
+  isMissingValue,
+  timestampOf,
+} from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";
@@ -213,26 +217,15 @@ export function pairType(
   return bandA && bandB ? "categorical" : bandA || bandB ? "mixed" : "numeric";
 }
 
-function dateValue(value: datum): number | undefined {
-  if (typeof value === "number") {
-    return Number.isFinite(value) ? value : undefined;
-  }
-  if (typeof value !== "string" || value.trim() === "") {
-    return undefined;
-  }
-  const time = dateTimestamp(value);
-  return Number.isFinite(time) ? time : undefined;
-}
-
 /** The continuous value a row plots at: a number, a timestamp, or undefined. */
 export function continuousValue(kind: MatrixFieldKind, value: datum) {
-  return kind === "date" ? dateValue(value) : finiteNumber(value);
+  return kind === "date" ? timestampOf(value) : finiteNumber(value);
 }
 
 function timestamps(ids: number[], data: Record<number, datum>) {
   const out: Record<number, number | undefined> = {};
   for (const id of ids) {
-    out[id] = dateValue(data[id]);
+    out[id] = timestampOf(data[id]);
   }
   return out;
 }
@@ -580,8 +573,8 @@ export function filterOffsets(
     if (filter?.type !== "date-range" || !filter.min || !filter.max) {
       return undefined;
     }
-    const a = axis.scale(dateTimestamp(filter.min));
-    const b = axis.scale(dateTimestamp(filter.max));
+    const a = axis.scale(dateBound(filter.min));
+    const b = axis.scale(dateBound(filter.max, true));
     return [Math.min(a, b), Math.max(a, b)];
   }
   return bandFilterSpan(field.field, field.bands!, axis as BandAxis, filters);
