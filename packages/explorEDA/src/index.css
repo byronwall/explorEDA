@@ -508,6 +508,17 @@
   text-align: left;
 }
 
+/* Category order controls in the color scale editor. */
+.eda-category-move {
+  display: inline-flex;
+  flex: none;
+}
+.eda-category-move button[data-slot="button"] {
+  width: 20px;
+  height: 20px;
+  color: var(--muted-foreground);
+}
+
 /* Charts that override the theme, under the theme picker. */
 .eda-theme-settings > .eda-setting-section {
   margin-top: 12px;

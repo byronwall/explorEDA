@@ -1,5 +1,5 @@
 import { bisectRight } from "d3-array";
-import { interpolateBlues } from "d3-scale-chromatic";
+import { heatFill } from "../heatScale";
 import type { AxisTypography } from "../Axis/axisPlan";
 import { finiteNumber } from "@/lib/numeric";
 import type { datum, Filter } from "@/types/FilterTypes";
@@ -29,8 +29,9 @@ export interface DensityBin {
   fill: string;
 }
 
+/** Bin fill from the theme's heat ramp, so density follows theme and mode. */
 export const densityColor = (fraction: number) =>
-  interpolateBlues(0.2 + 0.75 * Math.max(0, Math.min(1, fraction)));
+  heatFill(0.2 + 0.8 * Math.max(0, Math.min(1, fraction)), "sequential");
 
 /** Equal numeric intervals keep exact membership independent of panel pixels. */
 export function densityEdges(domain: [number, number], count: number) {

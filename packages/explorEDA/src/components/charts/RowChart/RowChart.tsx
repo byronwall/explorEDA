@@ -1,3 +1,4 @@
+import { useThemeColors } from "@/hooks/useDisplayColorScales";
 import { useAxisTypography } from "../chartTypography";
 import {
   categoryEqual,
@@ -208,6 +209,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   const inspect = (key: string) => api?.inspect(owner, "row-category", key);
 
   const typography = useAxisTypography();
+  const themeColors = useThemeColors();
   const yLabels = displayCounts.map((d) => d.label);
   const axisFields = getChartAxisFields(settings);
   const xAxisLabel = getChartAxisLabel(
@@ -381,7 +383,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
                       : getColorForValue(
                           settings.colorScaleId,
                           item.value,
-                          "#3479a8"
+                          themeColors.mark
                         ),
                     fillOpacity: "var(--eda-flow-context)",
                   }}
@@ -400,7 +402,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
             const color =
               valueFilter && !isFiltered
                 ? "rgb(156 163 175)" // gray-400 for filtered out points
-                : getColorForValue(settings.colorScaleId, value, "#3479a8");
+                : getColorForValue(settings.colorScaleId, value, themeColors.mark);
 
             const barWidth = xScale(count);
             const barHeight = yScale.bandwidth();

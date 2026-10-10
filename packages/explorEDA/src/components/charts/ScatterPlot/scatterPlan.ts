@@ -1,3 +1,4 @@
+import type { ThemeColors } from "@/lib/themePalettes";
 import { finiteNumber, isMissingValue } from "@/lib/numeric";
 import {
   getFieldLabel,
@@ -125,6 +126,8 @@ export interface ScatterSnapshot {
   facetColumnData?: Record<IdType, datum>;
   fieldSettings: FieldSettingsMap;
   colorScale?: ColorScaleType;
+  /** Fallback colors from the workspace theme. */
+  themeColors?: ThemeColors;
   calculatedFields?: string[];
   pixelRatio?: number;
 }
@@ -375,7 +378,7 @@ export function planScatter(
     : null;
   const getColor = (value: datum) => {
     if (!settings.colorScaleId) {
-      return "#3479a8";
+      return snapshot.themeColors?.mark ?? "#3479a8";
     }
     if (!resolveColor) {
       return "#000000";

@@ -3,8 +3,10 @@ import { barChartDefinition } from "@/components/charts/BarChart/definition";
 import type { ChartSettings } from "@/types/ChartTypes";
 import {
   chartStyleOverrides,
+  listScaleOverrides,
   listStyleOverrides,
   resetChartStyle,
+  resetScaleToTheme,
 } from "./styleOverrides";
 
 function chart(patch: Partial<ChartSettings> = {}) {
@@ -69,5 +71,43 @@ describe("style overrides", () => {
     expect(
       chartStyleOverrides({ ...overridden, ...patch } as ChartSettings)
     ).toEqual([]);
+  });
+
+  it("lists scales with a fixed palette or hand-picked colors", () => {
+    const base = {
+      id: "s",
+      name: "Species",
+      type: "categorical" as const,
+      palette: ["#2a78d6", "#eb6834"],
+    };
+    const theme = {
+      ...base,
+      paletteId: "theme",
+      mapping: new Map([
+        ["A", "#2a78d6"],
+        ["B", "#eb6834"],
+      ]),
+    };
+    expect(listScaleOverrides([theme])).toEqual([]);
+    const hand = {
+      ...theme,
+      mapping: new Map([...theme.mapping, ["B", "#123456"]]),
+    };
+    expect(listScaleOverrides([hand])[0]).toMatchObject({ handPicked: 1 });
+    const fixed = {
+      ...theme,
+      paletteId: "OkabeIto",
+      mapping: new Map([["A", "#0072b2"]]),
+    };
+    expect(listScaleOverrides([fixed])[0]).toMatchObject({
+      paletteName: "Okabe Ito",
+      handPicked: 0,
+    });
+    const reset = resetScaleToTheme(hand);
+    expect(reset.paletteId).toBe("theme");
+    expect([...reset.mapping!]).toEqual([
+      ["A", "#2a78d6"],
+      ["B", "#eb6834"],
+    ]);
   });
 });

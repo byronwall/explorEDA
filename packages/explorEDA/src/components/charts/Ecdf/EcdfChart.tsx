@@ -1,3 +1,5 @@
+import { useThemeColors } from "@/hooks/useDisplayColorScales";
+import { useDisplayColorScale } from "@/hooks/useDisplayColorScales";
 import { useAxisTypography } from "../chartTypography";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
@@ -94,9 +96,7 @@ export function EcdfChart({
   const formatFieldValue = useDataLayer((s) => s.formatFieldValue);
   const fieldSettings = useDataLayer((s) => s.fieldSettings);
   const updateChart = useDataLayer((s) => s.updateChart);
-  const colorScale = useDataLayer((s) =>
-    s.colorScales.find((item) => item.id === settings.colorScaleId)
-  );
+  const colorScale = useDisplayColorScale(settings.colorScaleId);
   const liveIds = useGetLiveIds(settings, facetIds);
   const allIds = useGetAllIds(settings);
   const values = useGetColumnData(settings.field);
@@ -115,6 +115,7 @@ export function EcdfChart({
     moved: boolean;
   } | null>(null);
 
+  const themeColors = useThemeColors();
   const snapshot = useMemo(
     (): EcdfSnapshot => ({
       revision,
@@ -123,6 +124,7 @@ export function EcdfChart({
       values,
       groupData: settings.colorField ? groupData : undefined,
       colorScale,
+      themeColors,
     }),
     [
       revision,
@@ -132,6 +134,7 @@ export function EcdfChart({
       groupData,
       settings.colorField,
       colorScale,
+      themeColors,
     ]
   );
   const plan = useMemo(

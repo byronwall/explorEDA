@@ -7,8 +7,10 @@ import {
   resolveThemeId,
 } from "@/lib/themes";
 import {
+  listScaleOverrides,
   listStyleOverrides,
   resetChartStyle,
+  resetScaleToTheme,
   type StyleOverride,
 } from "@/lib/styleOverrides";
 import { getChartTitle } from "../charts/chartAccessibility";
@@ -37,6 +39,10 @@ export function ThemeSettingsPanel() {
   // The panel sits in the themed workspace, so it reads the theme's values.
   const { typography } = useThemeTypography(ref, themeId);
   const overridden = listStyleOverrides(charts);
+  const colorScales = useDataLayer((state) => state.colorScales);
+  const updateColorScale = useDataLayer((state) => state.updateColorScale);
+  const scaleOverrides = listScaleOverrides(colorScales);
+  const total = overridden.length + scaleOverrides.length;
 
   return (
     <div ref={ref} className="eda-theme-settings">
@@ -74,9 +80,9 @@ export function ThemeSettingsPanel() {
       <section className="eda-setting-section" aria-labelledby="eda-overrides">
         <h5 id="eda-overrides">
           Overrides
-          <span className="eda-override-count">{overridden.length}</span>
+          <span className="eda-override-count">{total}</span>
         </h5>
-        {overridden.length === 0 ? (
+        {total === 0 ? (
           <p className="eda-setting-note">
             Every chart follows the{" "}
             {WORKSPACE_THEMES.find((t) => t.id === themeId)!.name} theme.
@@ -145,6 +151,50 @@ export function ThemeSettingsPanel() {
                 </li>
               );
             })}
+          </ul>
+        )}
+        {scaleOverrides.length > 0 && (
+          <ul className="eda-override-list" aria-label="Color scales">
+            {scaleOverrides.map(({ scale, paletteName, handPicked }) => (
+              <li key={scale.id}>
+                <div className="eda-override-chart">
+                  <span className="eda-override-title">{scale.name}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`Return ${scale.name} to the theme palette`}
+                    tooltip="Use the theme's palette. Each category keeps its place, and hand-picked colors are cleared."
+                    onClick={() =>
+                      updateColorScale(scale.id, resetScaleToTheme(scale))
+                    }
+                  >
+                    <RotateCcw />
+                  </Button>
+                </div>
+                <dl>
+                  {paletteName && (
+                    <div className="eda-override-row">
+                      <dt>Palette</dt>
+                      <dd>
+                        <b>{paletteName}</b>
+                        <span>theme palette instead</span>
+                      </dd>
+                    </div>
+                  )}
+                  {handPicked > 0 && (
+                    <div className="eda-override-row">
+                      <dt>Hand-picked</dt>
+                      <dd>
+                        <b>
+                          {handPicked} {handPicked === 1 ? "color" : "colors"}
+                        </b>
+                        <span>stay the same in every theme</span>
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+              </li>
+            ))}
           </ul>
         )}
       </section>

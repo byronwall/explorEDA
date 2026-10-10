@@ -121,6 +121,31 @@ export function PlotManager({
   const removeAllCharts = useDataLayer((state) => state.removeAllCharts);
   const gridSettings = useDataLayer((state) => state.gridSettings);
   const themeId = resolveThemeId(useDataLayer((state) => state.theme));
+  const setDarkMode = useDataLayer((state) => state.setDarkMode);
+  // Charts color their palettes for the surface they sit on. Hosts mark dark
+  // mode with a `dark` class on the page or an ancestor of the workspace.
+  useEffect(() => {
+    let dark: boolean | undefined;
+    const update = () => {
+      const next =
+        Boolean(containerRef.current?.closest(".dark")) ||
+        document.documentElement.classList.contains("dark");
+      if (next !== dark) setDarkMode((dark = next));
+    };
+    update();
+    if (typeof MutationObserver === "undefined") return;
+    // Only the workspace's ancestors can switch it, so only they are watched.
+    const observer = new MutationObserver(update);
+    for (
+      let element: Element | null =
+        containerRef.current?.parentElement ?? document.documentElement;
+      element;
+      element = element.parentElement
+    ) {
+      observer.observe(element, { attributes: true, attributeFilter: ["class"] });
+    }
+    return () => observer.disconnect();
+  }, [setDarkMode]);
   const saveToStructure = useDataLayer((state) => state.saveToStructure);
   const saveAnalysisToStructure = useDataLayer(
     (state) => state.saveAnalysisToStructure

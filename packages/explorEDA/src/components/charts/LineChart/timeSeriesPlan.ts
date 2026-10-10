@@ -1,3 +1,4 @@
+import type { ThemeColors } from "@/lib/themePalettes";
 import { applyFilter } from "@/hooks/applyFilter";
 import {
   DEFAULT_AXIS_TYPOGRAPHY,
@@ -30,6 +31,8 @@ export interface TimeSeriesSnapshot {
   rawInputs: Record<number, datum>;
   exclusionReasons: Record<number, string>;
   colorScale?: ColorScaleType;
+  /** Fallback colors from the workspace theme. */
+  themeColors?: ThemeColors;
   facetData?: Record<string, Record<number, datum>>;
 }
 
@@ -169,9 +172,10 @@ export function planTimeSeries(
   const series = [...groupMap]
     .map(([key, value], index) => {
       const label = time.splitField ? categoryLabel(value) : metricLabel;
+      const fallback =
+        snapshot.themeColors?.categorical ?? defaultCategoricalColors;
       const seriesColor =
-        color?.(value) ??
-        defaultCategoricalColors[index % defaultCategoricalColors.length]!;
+        color?.(value) ?? fallback[index % fallback.length]!;
       const ids = snapshot.allIds.filter(
         (id) =>
           liveSet.has(id) &&
