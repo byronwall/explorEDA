@@ -18,6 +18,7 @@ import {
   type StackMark,
   type WaffleMark,
   type BarMark,
+  type SpanMark,
   type SummaryMark,
   STACK_COLORS,
   type UnitElement,
@@ -317,12 +318,13 @@ export function convertMark(
   } else {
     // A sibling x–y mark already names the scales; otherwise take the data's.
     const sibling = unit.marks.find(
-      (item): item is PointMark | PathMark | BandMark =>
+      (item): item is PointMark | PathMark | BandMark | SpanMark =>
         isXyMark(item) && item.id !== markId
     );
     let xScaleId = sibling?.xScaleId;
     let yScaleId = sibling?.yScaleId;
-    let orderField = sibling?.orderField;
+    let orderField =
+      sibling && "orderField" in sibling ? sibling.orderField : undefined;
     if (!xScaleId || !yScaleId) {
       const numeric = fields.filter((item) => item.dataType === "numeric");
       const existing = next.scales.filter(
@@ -356,53 +358,82 @@ export function convertMark(
     const yField = next.scales.find(
       (scale): scale is NumericScale => scale.id === yScaleId
     )?.field;
+    const dateNames = fields
+      .filter((item) => item.dataType === "datetime")
+      .map((item) => item.name);
     replacement =
-      type === "band"
+      type === "span"
         ? {
-            type: "band",
+            type: "span",
             id: mark.id,
             name: mark.name,
             xScaleId,
-            yScaleId,
-            orderField,
-            // The y field stands in for both bounds until the author picks them.
-            lowerField:
-              numericNames.find((name) => /low|min|p10|lower/i.test(name)) ??
-              yField ??
+            startField:
+              dateNames.find((name) => /start|begin|from|open/i.test(name)) ??
+              dateNames[0] ??
+              numericNames.find((name) => /start|begin|from/i.test(name)) ??
               numericNames[0] ??
               "",
-            upperField:
-              numericNames.find((name) => /high|max|p90|upper/i.test(name)) ??
-              yField ??
+            endField:
+              dateNames.find((name) =>
+                /end|finish|to|close|until/i.test(name)
+              ) ??
+              dateNames[1] ??
+              numericNames.find((name) => /end|finish|to/i.test(name)) ??
+              numericNames[1] ??
               numericNames[0] ??
               "",
+            openEnd: true,
             fill: color,
-            opacity: 0.25,
+            labelMinWidth: 40,
+            inset: 1,
           }
-        : type === "path"
+        : type === "band"
           ? {
-              type: "path",
+              type: "band",
               id: mark.id,
               name: mark.name,
               xScaleId,
               yScaleId,
               orderField,
-              stroke: color,
-              strokeWidth: 1.5,
-              colorField: mark.type === "point" ? mark.colorField : undefined,
-            }
-          : {
-              type: "point",
-              id: mark.id,
-              name: mark.name,
-              xScaleId,
-              yScaleId,
-              orderField: orderField || undefined,
-              radius: 3.5,
+              // The y field stands in for both bounds until the author picks them.
+              lowerField:
+                numericNames.find((name) => /low|min|p10|lower/i.test(name)) ??
+                yField ??
+                numericNames[0] ??
+                "",
+              upperField:
+                numericNames.find((name) => /high|max|p90|upper/i.test(name)) ??
+                yField ??
+                numericNames[0] ??
+                "",
               fill: color,
-              labelEvery: 0,
-              colorField: mark.type === "path" ? mark.colorField : undefined,
-            };
+              opacity: 0.25,
+            }
+          : type === "path"
+            ? {
+                type: "path",
+                id: mark.id,
+                name: mark.name,
+                xScaleId,
+                yScaleId,
+                orderField,
+                stroke: color,
+                strokeWidth: 1.5,
+                colorField: mark.type === "point" ? mark.colorField : undefined,
+              }
+            : {
+                type: "point",
+                id: mark.id,
+                name: mark.name,
+                xScaleId,
+                yScaleId,
+                orderField: orderField || undefined,
+                radius: 3.5,
+                fill: color,
+                labelEvery: 0,
+                colorField: mark.type === "path" ? mark.colorField : undefined,
+              };
   }
   return updateElement<UnitElement>(next, unit.id, {
     marks: unit.marks.map((item) => (item.id === markId ? replacement : item)),

@@ -1189,6 +1189,17 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "scotus-timeline",
+    intent:
+      "Lay every justice's term in its seat's lane, colored by the appointing party, with sitting justices running to today.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

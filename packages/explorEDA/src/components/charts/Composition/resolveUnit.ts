@@ -23,6 +23,7 @@ import {
   type StackMark,
   type WaffleMark,
   type BarMark,
+  type SpanMark,
   type MarkAggregation,
   type RankOrder,
   type StripMark,
@@ -146,6 +147,16 @@ export interface GlyphDatum {
     /** Every category in the denominator, with its count. */
     contributors: { category: string; count: number }[];
   };
+  /** The ends of a span; the glyph's value is its length in the x field's units. */
+  span?: {
+    startField: string;
+    endField: string;
+    start: number;
+    end?: number;
+    /** The row has no end, so the span runs to the frame's edge. */
+    open: boolean;
+    category?: string;
+  };
   /** The aggregate behind a bar; the glyph's value is its signed length in the measure. */
   bar?: {
     aggregation: MarkAggregation;
@@ -252,7 +263,7 @@ type ResolvedStrip = {
 };
 type ResolvedXy = {
   type: "xy";
-  mark: PointMark | PathMark | BandMark;
+  mark: PointMark | PathMark | BandMark | SpanMark;
   x: NumericScale;
   y: NumericScale;
 
@@ -329,7 +340,9 @@ export function resolveUnit(
       // A point or path without a y scale sits on the frame's middle line.
       const named = scale(mark.yScaleId ?? "");
       const ranked =
-        mark.type !== "band" && mark.rank && named?.kind === "numeric";
+        (mark.type === "point" || mark.type === "path") &&
+        mark.rank &&
+        named?.kind === "numeric";
       const y = ranked
         ? rankScale(mark.id, named as NumericScale)
         : mark.type !== "band" && mark.yScaleId === undefined
@@ -454,10 +467,10 @@ export function resolveUnit(
     for (const { mark, x, rankBy } of rankedMarks) {
       const xColumn = data.column(x.field);
       const yColumn = data.column(rankBy!.field);
-      const order = (mark as PointMark | PathMark).rank ?? "desc";
+      const order = ("rank" in mark ? mark.rank : undefined) ?? "desc";
       for (const subset of subsets) {
         const ids =
-          (mark as PointMark | PathMark).population === "composition"
+          "population" in mark && mark.population === "composition"
             ? data.liveIds
             : subset.liveIds;
         const record = rankRows(ids, xColumn, yColumn, order);
@@ -509,10 +522,16 @@ export function resolveUnit(
   // of any band bound to it, so a fan's widest interval stays in the frame.
   const scaleFields = new Map<string, string[]>();
   for (const item of xys) {
-    if (item.mark.type !== "band") continue;
-    const fields = scaleFields.get(item.y.id) ?? [item.y.field];
-    fields.push(item.mark.lowerField, item.mark.upperField);
-    scaleFields.set(item.y.id, fields);
+    if (item.mark.type === "band") {
+      const fields = scaleFields.get(item.y.id) ?? [item.y.field];
+      fields.push(item.mark.lowerField, item.mark.upperField);
+      scaleFields.set(item.y.id, fields);
+    } else if (item.mark.type === "span") {
+      // A span's x spans both its ends.
+      const fields = scaleFields.get(item.x.id) ?? [item.x.field];
+      fields.push(item.mark.startField, item.mark.endField);
+      scaleFields.set(item.x.id, fields);
+    }
   }
   const columnsOf = (scale: NumericScale) =>
     (scaleFields.get(scale.id) ?? [scale.field]).map((field) =>
@@ -921,23 +940,32 @@ export function resolveUnit(
                 frameBounds,
                 frameData
               )
-            : item.mark.type === "path"
-              ? pathNodes(
-                  unit,
-                  accent ? { ...item.mark, stroke: accent } : item.mark,
-                  frameSubset,
-                  axes,
-                  frameBounds,
-                  frameData
-                )
-              : pointNodes(
+            : item.mark.type === "span"
+              ? spanNodes(
                   unit,
                   accent ? { ...item.mark, fill: accent } : item.mark,
                   frameSubset,
                   axes,
                   frameBounds,
                   frameData
-                );
+                )
+              : item.mark.type === "path"
+                ? pathNodes(
+                    unit,
+                    accent ? { ...item.mark, stroke: accent } : item.mark,
+                    frameSubset,
+                    axes,
+                    frameBounds,
+                    frameData
+                  )
+                : pointNodes(
+                    unit,
+                    accent ? { ...item.mark, fill: accent } : item.mark,
+                    frameSubset,
+                    axes,
+                    frameBounds,
+                    frameData
+                  );
         // A windowed frame clips, so a path cut at the window's edge stays inside.
         nodes.push(
           ...(window
@@ -2688,7 +2716,10 @@ export function markCategories(
   mark: MarkDefinition,
   data: CompositionData
 ): { key: string; color: string }[] {
-  if ((mark.type === "point" || mark.type === "path") && mark.colorField) {
+  if (
+    (mark.type === "point" || mark.type === "path" || mark.type === "span") &&
+    mark.colorField
+  ) {
     const column = data.column(mark.colorField);
     const keys = new Set<string>();
     for (const id of data.allIds) {
@@ -2917,6 +2948,94 @@ function endLabelNodes(
         anchor: side === "start" ? "end" : "start",
       })
     );
+  }
+  return nodes;
+}
+
+/**
+ * One bar per row from its start to its end along x, filling the frame's
+ * height. Rows without a readable start are left out; rows without an end
+ * run to the frame's edge when the mark allows open ends.
+ */
+function spanNodes(
+  unit: UnitElement,
+  mark: SpanMark,
+  subset: Subset,
+  axes: { x: NumericAxis; y: NumericAxis },
+  frame: Bounds,
+  data: CompositionData
+): SceneNode[] {
+  const starts = data.column(mark.startField);
+  const ends = data.column(mark.endField);
+  const labels = mark.labelField ? data.column(mark.labelField) : undefined;
+  const colorColumn = mark.colorField
+    ? data.column(mark.colorField)
+    : undefined;
+  const categoryColors = new Map(
+    markCategories(mark, data).map((item) => [item.key, item.color])
+  );
+  const nodes: SceneNode[] = [];
+  const y = frame.y + mark.inset;
+  const height = Math.max(1, frame.height - mark.inset * 2);
+  for (const id of subset.liveIds) {
+    const start = readNumber(starts[id]);
+    if (start === undefined) continue;
+    const end = readNumber(ends[id]);
+    if (end === undefined && !mark.openEnd) continue;
+    const x0 = numericPixel(axes.x, start);
+    const x1 =
+      end === undefined ? frame.x + frame.width : numericPixel(axes.x, end);
+    const left = Math.min(x0, x1);
+    const width = Math.max(0.5, Math.abs(x1 - x0));
+    const category = colorColumn ? categoryKey(colorColumn[id]) : undefined;
+    const fill =
+      category !== undefined
+        ? (categoryColors.get(category) ?? mark.fill)
+        : mark.fill;
+    const raw = labels?.[id];
+    const label = raw === null || raw === undefined ? "" : String(raw).trim();
+    const key = `${unit.id}:${subset.key}:${mark.id}:${id}`;
+    nodes.push({
+      type: "rect",
+      key,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      x: left,
+      y,
+      width,
+      height,
+      fill,
+      clip: frame,
+      glyph: {
+        instanceKey: subset.key,
+        markId: mark.id,
+        bin: { key: label || String(id), label: label || `Row ${id}` },
+        value: (end ?? axes.x.domain[1]) - start,
+        rowIds: [id],
+        span: {
+          startField: mark.startField,
+          endField: mark.endField,
+          start,
+          end,
+          open: end === undefined,
+          category,
+        },
+      },
+    });
+    if (label && mark.labelMinWidth > 0 && width >= mark.labelMinWidth)
+      nodes.push({
+        type: "text",
+        key: `${key}:label`,
+        elementId: unit.id,
+        instanceKey: subset.key,
+        x: left + 4,
+        lines: [{ text: label, y: y + height / 2 + 3.5 }],
+        fontSize: Math.min(10, Math.max(7, height - 4)),
+        fontWeight: 500,
+        fill: "#ffffff",
+        anchor: "start",
+        clip: { x: left, y, width: Math.max(0, width - 4), height },
+      });
   }
   return nodes;
 }

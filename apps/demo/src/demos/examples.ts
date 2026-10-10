@@ -36,6 +36,7 @@ import {
   unemploymentStreamDashboard,
   populationPyramidDashboard,
   gdpBumpDashboard,
+  scotusTimelineDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -71,6 +72,7 @@ import {
   Waves,
   Users,
   ListOrdered,
+  GanttChart,
   CloudFog,
   Globe,
   Activity,
@@ -950,6 +952,17 @@ export const examples: ExampleData[] = [
     icon: ListOrdered,
     data: "/datasets/gdp-ranks.csv",
     savedData: gdpBumpDashboard,
+  },
+  {
+    id: "scotus-timeline",
+    title: "Every seat on the Supreme Court, 1789 to today",
+    description:
+      "A timeline: one lane per seat, one span per justice from oath to departure, colored by the appointing president's party, with open ends for sitting justices and names inside the longer terms.",
+    dataset: { rows: "121 terms", fields: 13, source: "Real" },
+    shows: ["Span marks", "Open ends", "Labels inside spans"],
+    icon: GanttChart,
+    data: "/datasets/scotus.csv",
+    savedData: scotusTimelineDashboard,
   },
 ];
 

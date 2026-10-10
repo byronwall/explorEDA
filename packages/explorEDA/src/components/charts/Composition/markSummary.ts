@@ -14,6 +14,7 @@ const TYPE_NAMES: Record<MarkDefinition["type"], string> = {
   waffle: "Waffle",
   bar: "Bars",
   density: "Density",
+  span: "Spans",
 };
 
 /**
@@ -48,6 +49,12 @@ export function describeMark(
       if (mark.colorField) parts.push(`colored by ${mark.colorField}`);
       break;
     }
+    case "span":
+      parts.push(
+        `${scaleName(mark.xScaleId) ?? "?"} · ${mark.startField} to ${mark.endField}`
+      );
+      if (mark.colorField) parts.push(`colored by ${mark.colorField}`);
+      break;
     case "band":
       parts.push(
         `${scaleName(mark.xScaleId) ?? "?"} · ${mark.lowerField} to ${mark.upperField}`

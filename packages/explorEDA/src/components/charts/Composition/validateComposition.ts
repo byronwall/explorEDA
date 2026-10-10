@@ -72,6 +72,24 @@ function isMark(value: unknown) {
       (value.population === undefined ||
         oneOf(value.population, ["repeat", "composition"]))
     );
+  if (value.type === "span")
+    return (
+      (value.frameId === undefined || isString(value.frameId)) &&
+      isString(value.xScaleId) &&
+      (value.yScaleId === undefined || isString(value.yScaleId)) &&
+      isString(value.startField) &&
+      isString(value.endField) &&
+      typeof value.openEnd === "boolean" &&
+      isString(value.fill) &&
+      (value.colorField === undefined || isString(value.colorField)) &&
+      (value.colors === undefined ||
+        (Array.isArray(value.colors) && value.colors.every(isString))) &&
+      (value.labelField === undefined || isString(value.labelField)) &&
+      isNumber(value.labelMinWidth) &&
+      value.labelMinWidth >= 0 &&
+      isNumber(value.inset) &&
+      value.inset >= 0
+    );
   if (value.type === "bar")
     return (
       oneOf(value.aggregation, ["count", "sum", "average"]) &&
@@ -462,7 +480,9 @@ export function isCompositionDefinition(
                     ? kinds.get(mark.yScaleId) === "numeric" &&
                       (mark.valueScaleId === undefined ||
                         kinds.get(mark.valueScaleId) === "value")
-                    : mark.type === "point" || mark.type === "path"
+                    : mark.type === "point" ||
+                        mark.type === "path" ||
+                        mark.type === "span"
                       ? kinds.get(mark.xScaleId) === "numeric" &&
                         (mark.yScaleId === undefined ||
                           kinds.get(mark.yScaleId) === "numeric")

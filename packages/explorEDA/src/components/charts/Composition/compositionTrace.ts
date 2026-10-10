@@ -162,6 +162,7 @@ export function makeCompositionTraceSource(
         const strip = mark?.type === "strip" ? mark : undefined;
         const point = mark?.type === "point" ? mark : undefined;
         const bar = mark?.type === "bar" ? mark : undefined;
+        const span = mark?.type === "span" ? mark : undefined;
         return {
           kind,
           id,
@@ -184,7 +185,9 @@ export function makeCompositionTraceSource(
               | PositionScale
               | undefined,
             value: scale(strip?.valueScaleId) as ValueScale | undefined,
-            x: scale(point?.xScaleId) as NumericScale | undefined,
+            x: scale(point?.xScaleId ?? span?.xScaleId) as
+              | NumericScale
+              | undefined,
             y: scale(point?.yScaleId) as NumericScale | undefined,
           },
         };

@@ -99,6 +99,7 @@ describe("example coverage manifest", () => {
       "unemployment-stream",
       "population-pyramid",
       "gdp-bump",
+      "scotus-timeline",
       "product-activity",
       "scatter-trace",
       "calculated-orders",

@@ -305,6 +305,35 @@ export interface PathMark {
 
 export type PathLabels = "none" | "start" | "end" | "both";
 
+/**
+ * One bar per row from a start field to an end field along x: a term, a
+ * project phase, a stay. Spans fill the frame's height, so a unit repeated
+ * as rows reads as a timeline with one lane per repeat.
+ */
+export interface SpanMark {
+  type: "span";
+  id: string;
+  name: string;
+  /** The inset the mark draws in; the main frame when unset. */
+  frameId?: string;
+  xScaleId: string;
+  /** Spans fill the frame's height and ignore y; the field exists so the mark fits the x–y family. */
+  yScaleId?: string;
+  startField: string;
+  endField: string;
+  /** A row without an end runs to the frame's right edge; otherwise it is left out. */
+  openEnd: boolean;
+  fill: string;
+  /** Fill each span by this field's value, through `colors` in label order across the graphic. */
+  colorField?: string;
+  colors?: string[];
+  /** Write this field's value inside spans at least `labelMinWidth` wide. */
+  labelField?: string;
+  labelMinWidth: number;
+  /** Space above and below each span, in artboard pixels. */
+  inset: number;
+}
+
 export type MarkPopulation = "repeat" | "composition";
 
 export type MarkFocus = { kind: "repeat" } | { kind: "values"; values: string };
@@ -498,6 +527,7 @@ export type MarkDefinition =
   | PointMark
   | PathMark
   | BandMark
+  | SpanMark
   | SummaryMark
   | StackMark
   | WaffleMark
@@ -545,8 +575,13 @@ export function markScaleIds(mark: MarkDefinition): string[] {
  */
 export function isXyMark(
   mark: MarkDefinition
-): mark is PointMark | PathMark | BandMark {
-  return mark.type === "point" || mark.type === "path" || mark.type === "band";
+): mark is PointMark | PathMark | BandMark | SpanMark {
+  return (
+    mark.type === "point" ||
+    mark.type === "path" ||
+    mark.type === "band" ||
+    mark.type === "span"
+  );
 }
 
 /** True when a mark's colors stand for the values of a category field, so a legend can list them. */
@@ -559,6 +594,7 @@ export function markHasCategories(mark: MarkDefinition): boolean {
       return Boolean(mark.categoryField);
     case "point":
     case "path":
+    case "span":
       return Boolean(mark.colorField);
     default:
       return false;
@@ -584,6 +620,13 @@ export function markFields(mark: MarkDefinition): string[] {
       );
     case "band":
       return [mark.orderField, mark.lowerField, mark.upperField];
+    case "span":
+      return [
+        mark.startField,
+        mark.endField,
+        mark.colorField,
+        mark.labelField,
+      ].filter((field): field is string => Boolean(field));
     case "summary":
       return [mark.groupField, mark.measureField];
     case "stack":

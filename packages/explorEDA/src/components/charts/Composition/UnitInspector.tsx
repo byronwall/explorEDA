@@ -15,6 +15,7 @@ import {
   type DensityMark,
   type WaffleMark,
   type BarMark,
+  type SpanMark,
   type FrameWindow,
   type InsetFrame,
   type InstanceOverride,
@@ -201,6 +202,12 @@ const MARK_TYPES = [
     label: "Path",
     tooltip:
       "One line through the rows in the order of a field, such as year, at numeric x and y",
+  },
+  {
+    value: "span" as const,
+    label: "Span",
+    tooltip:
+      "One bar per row from a start field to an end field along x, filling the frame's height: a timeline when the unit repeats as rows.",
   },
   {
     value: "band" as const,
@@ -710,7 +717,8 @@ function MarksSection({
                       name: "Points",
                       xScaleId: first.xScaleId,
                       yScaleId: first.yScaleId,
-                      orderField: first.orderField,
+                      orderField:
+                        "orderField" in first ? first.orderField : undefined,
                       radius: 3.5,
                       fill: first.type === "path" ? first.stroke : first.fill,
                       labelEvery: 0,
@@ -1652,7 +1660,7 @@ function XyFields({
   onChange,
   onEditScale,
 }: {
-  mark: PointMark | PathMark | BandMark;
+  mark: PointMark | PathMark | BandMark | SpanMark;
   scales: CompositionScale[];
   insets: InsetFrame[];
   onChange: (
@@ -1662,6 +1670,12 @@ function XyFields({
 }) {
   const id = useId();
   const profiles = useDataLayer((state) => state.fieldProfiles);
+  const spanFields = profiles
+    .filter(
+      (profile) =>
+        profile.dataType === "numeric" || profile.dataType === "datetime"
+    )
+    .map((profile) => profile.name);
   const orderFields = profiles
     .filter(
       (profile) =>
@@ -1674,7 +1688,10 @@ function XyFields({
   const numeric = scales.filter((scale) => scale.kind === "numeric");
   const change = onChange as (
     patch: Partial<
-      Omit<PointMark, "type"> & Omit<PathMark, "type"> & Omit<BandMark, "type">
+      Omit<PointMark, "type"> &
+        Omit<PathMark, "type"> &
+        Omit<BandMark, "type"> &
+        Omit<SpanMark, "type">
     >
   ) => void;
   const numericFields = profiles
@@ -1749,7 +1766,7 @@ function XyFields({
           )}
         </div>
       )}
-      {mark.type !== "band" && mark.yScaleId && (
+      {mark.type !== "band" && mark.type !== "span" && mark.yScaleId && (
         <>
           <span className="eda-setting-label">Plot</span>
           <Segmented
@@ -1762,22 +1779,26 @@ function XyFields({
           />
         </>
       )}
-      <Label>Order by</Label>
-      <FieldSelector
-        label=""
-        placeholder={mark.type === "point" ? "Row order" : "Order field"}
-        value={mark.orderField ?? ""}
-        allowClear={mark.type === "point"}
-        fields={orderFields}
-        onChange={(orderField) =>
-          change(
-            mark.type === "point"
-              ? { orderField: orderField || undefined }
-              : { orderField }
-          )
-        }
-      />
-      {mark.type !== "band" && (
+      {mark.type !== "span" && (
+        <>
+          <Label>Order by</Label>
+          <FieldSelector
+            label=""
+            placeholder={mark.type === "point" ? "Row order" : "Order field"}
+            value={mark.orderField ?? ""}
+            allowClear={mark.type === "point"}
+            fields={orderFields}
+            onChange={(orderField) =>
+              change(
+                mark.type === "point"
+                  ? { orderField: orderField || undefined }
+                  : { orderField }
+              )
+            }
+          />
+        </>
+      )}
+      {mark.type !== "band" && mark.type !== "span" && (
         <>
           <Label>Series</Label>
           <FieldSelector
@@ -1877,7 +1898,87 @@ function XyFields({
           )}
         </>
       )}
-      {mark.type === "band" ? (
+      {mark.type === "span" ? (
+        <>
+          <Label>From</Label>
+          <FieldSelector
+            label=""
+            placeholder="Start field"
+            value={mark.startField}
+            fields={spanFields}
+            onChange={(startField) => change({ startField })}
+          />
+          <Label>To</Label>
+          <FieldSelector
+            label=""
+            placeholder="End field"
+            value={mark.endField}
+            fields={spanFields}
+            onChange={(endField) => change({ endField })}
+          />
+          <span className="eda-setting-label">No end</span>
+          <Segmented
+            label={`${mark.name} open ends`}
+            value={mark.openEnd}
+            options={[
+              {
+                value: true,
+                label: "Runs on",
+                tooltip:
+                  "A row without an end draws to the frame's right edge, as an incumbent's term",
+              },
+              {
+                value: false,
+                label: "Left out",
+                tooltip: "A row without an end draws nothing",
+              },
+            ]}
+            onChange={(openEnd) => change({ openEnd })}
+          />
+          <ColorSetting
+            label="Fill"
+            value={mark.fill}
+            onChange={(fill) => change({ fill })}
+          />
+          <Label>Color by</Label>
+          <FieldSelector
+            label=""
+            placeholder="One fill"
+            value={mark.colorField ?? ""}
+            allowClear
+            fields={seriesFields}
+            onChange={(colorField) =>
+              change({ colorField: colorField || undefined })
+            }
+          />
+          <Label>Label with</Label>
+          <FieldSelector
+            label=""
+            placeholder="No labels"
+            value={mark.labelField ?? ""}
+            allowClear
+            onChange={(labelField) =>
+              change({ labelField: labelField || undefined })
+            }
+          />
+          {mark.labelField && (
+            <NumberSetting
+              label="Label from"
+              min={0}
+              max={400}
+              value={mark.labelMinWidth}
+              onChange={(labelMinWidth) => change({ labelMinWidth })}
+            />
+          )}
+          <NumberSetting
+            label="Spacing"
+            min={0}
+            max={40}
+            value={mark.inset}
+            onChange={(inset) => change({ inset })}
+          />
+        </>
+      ) : mark.type === "band" ? (
         <>
           <Label>Lower</Label>
           <FieldSelector

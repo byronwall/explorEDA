@@ -418,3 +418,18 @@ One row per year for the 17 economies that ranked in the world's top twelve in a
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/gdp-ranks.ts
 ```
+
+## Justices of the Supreme Court
+
+- File: `scotus.csv`
+- Size: 121 rows and 13 fields
+- Demo: `?example=scotus-timeline`
+- Use: a timeline composition, one lane per seat with a span per justice's term
+- Source: [Wikipedia, List of justices of the Supreme Court of the United States](https://en.wikipedia.org/wiki/List_of_justices_of_the_Supreme_Court_of_the_United_States), parsed from the article's wikitext through the MediaWiki API; the appointing president's party is added from their election.
+- License: CC BY-SA 4.0.
+
+One row per term: the justice, surname, position, home state, seat and seat name, oath and departure dates (blank for sitting justices), years served, how the term ended, the appointing president, and that president's party. A justice who held two seats has two rows.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/scotus.ts
+```

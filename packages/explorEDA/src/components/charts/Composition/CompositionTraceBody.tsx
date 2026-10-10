@@ -23,8 +23,25 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
   const stack = glyph?.datum.stack;
   const waffle = glyph?.datum.waffle;
   const bar = glyph?.datum.bar;
+  const span = glyph?.datum.span;
   return (
     <div className="space-y-2" aria-label="Composition trace">
+      {glyph && span && (
+        <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
+          <TraceReadout label="From">
+            <TraceSwatch color={glyph.fill} /> {span.startField} ={" "}
+            {formatCalcValue(span.start, glyph.x ? "date" : "number")}
+          </TraceReadout>
+          <TraceReadout label="To">
+            {span.open
+              ? `no ${span.endField}; the span runs to the frame's edge`
+              : `${span.endField} = ${formatCalcValue(span.end!, glyph.x ? "date" : "number")}`}
+          </TraceReadout>
+          {span.category !== undefined && (
+            <TraceReadout label="Colored by">{span.category}</TraceReadout>
+          )}
+        </TraceSection>
+      )}
       {glyph && bar && (
         <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
           <TraceReadout label="Length">
@@ -163,7 +180,7 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
           )}
         </TraceSection>
       )}
-      {glyph && !point && !summary && !stack && !waffle && !bar && (
+      {glyph && !point && !summary && !stack && !waffle && !bar && !span && (
         <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
           <TraceReadout label="Value">
             <TraceSwatch color={glyph.fill} />{" "}

@@ -362,6 +362,8 @@ The unemployment streamgraph ships as `?example=unemployment-stream` from `apps/
 
 Horizontal bar lengths, named below the cut line until a proof needed them, are built as bar marks for the population pyramids at `?example=population-pyramid` (`apps/data-samples/prepare/us-population.ts`): one bar per repeat or per category, counted, summed, or averaged, on one length axis shared across repeats, with one category mirrored leftward. Mark types now declare their capabilities through `isXyMark` and `markHasCategories`, so adding a mark no longer touches every type check.
 
+Timelines are built as span marks: the Supreme Court seats at `?example=scotus-timeline` (`apps/data-samples/prepare/scotus.ts`) draw one bar per row from a start field to an end field along a date scale whose domain covers both ends, with open ends for rows that have none, labels inside the wider spans, and colors from a field.
+
 ## Milestone 6: Combine detail and overview frames in one unit
 
 Create a state-style comparison with an inset, then repeat that unit for several illustrative regions.
