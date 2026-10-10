@@ -62,7 +62,8 @@ function isMark(value: unknown) {
       value.colors.length > 0 &&
       value.colors.every(isString) &&
       isNumber(value.labelMinHeight) &&
-      isNumber(value.inset)
+      isNumber(value.inset) &&
+      (value.xScaleId === undefined || isString(value.xScaleId))
     );
   if (value.type === "summary")
     return (
@@ -310,7 +311,8 @@ export function isCompositionDefinition(
           (mark) =>
             isRecord(mark) &&
             (mark.type === "stack"
-              ? true
+              ? mark.xScaleId === undefined ||
+                kinds.get(mark.xScaleId) === "numeric"
               : mark.type === "summary"
                 ? kinds.get(mark.yScaleId) === "numeric" &&
                   (mark.valueScaleId === undefined ||

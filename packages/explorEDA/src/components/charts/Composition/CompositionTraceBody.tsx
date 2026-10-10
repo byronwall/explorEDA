@@ -186,7 +186,34 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
           </TraceReadout>
         </TraceSection>
       )}
-      {band && (
+      {band && band.datum.stack && (
+        <TraceSection
+          heading={`${band.markName} · ${band.datum.stack.category}`}
+        >
+          <TraceReadout label="Share">
+            <TraceSwatch color={band.fill} />{" "}
+            {describeShareRange(band.datum.stack.points)} of each{" "}
+            {band.datum.orderField}'s total, across{" "}
+            {band.datum.stack.points.length.toLocaleString()} values of{" "}
+            {band.datum.orderField}
+          </TraceReadout>
+          <TraceReadout label="Numerator">
+            {band.datum.stack.aggregation === "count"
+              ? "Rows"
+              : `Sum of ${band.datum.stack.measureField}`}{" "}
+            where {band.datum.stack.categoryField} = {band.datum.stack.category}
+            , at each {band.datum.orderField}
+          </TraceReadout>
+          <TraceReadout label="Denominator">
+            Every category at that {band.datum.orderField}, after the active
+            filters: {band.datum.stack.categories.join(", ")}
+          </TraceReadout>
+          <TraceReadout label="Largest share">
+            {describeLargest(band.datum.stack.points, band.datum.orderField)}
+          </TraceReadout>
+        </TraceSection>
+      )}
+      {band && !band.datum.stack && (
         <TraceSection heading={band.markName}>
           <TraceReadout label="Bounds">
             <TraceSwatch color={band.fill} /> {band.datum.lowerField} to{" "}
@@ -304,6 +331,33 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
       <TraceRows ids={trace.rowIds} fields={trace.fields} />
     </div>
   );
+}
+
+const percent = new Intl.NumberFormat("en-US", {
+  style: "percent",
+  maximumFractionDigits: 1,
+});
+
+function describeShareRange(points: { share: number }[]) {
+  const shares = points.map((point) => point.share);
+  const low = Math.min(...shares);
+  const high = Math.max(...shares);
+  return low === high
+    ? percent.format(low)
+    : `${percent.format(low)} to ${percent.format(high)}`;
+}
+
+function describeLargest(
+  points: { x: number; count: number; total: number; share: number }[],
+  xField: string
+) {
+  const best = points.reduce((top, point) =>
+    point.share > top.share ? point : top
+  );
+  return `${percent.format(best.share)} at ${xField} ${best.x}: ${formatCalcValue(
+    best.count,
+    "number"
+  )} of ${formatCalcValue(best.total, "number")}`;
 }
 
 function describeNumericScale(

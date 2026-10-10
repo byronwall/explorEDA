@@ -290,6 +290,12 @@ export interface StackMark {
   labelMinHeight: number;
   /** Space between segments. */
   inset: number;
+  /**
+   * A numeric x scale spreads the stack across the frame: rows group by
+   * their x value, categories stack at each x, and each category draws as
+   * one area across x instead of a segment in a single column.
+   */
+  xScaleId?: string;
 }
 
 export type MarkDefinition =
@@ -327,7 +333,7 @@ export function markScaleIds(mark: MarkDefinition): string[] {
     return mark.valueScaleId
       ? [mark.yScaleId, mark.valueScaleId]
       : [mark.yScaleId];
-  if (mark.type === "stack") return [];
+  if (mark.type === "stack") return mark.xScaleId ? [mark.xScaleId] : [];
   return [mark.xScaleId, mark.yScaleId];
 }
 

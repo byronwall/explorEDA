@@ -564,8 +564,10 @@ function MarkProperties({
         ) : mark.type === "stack" ? (
           <StackFields
             mark={mark}
+            scales={scales}
             numericFields={numericFields}
             onChange={onChange}
+            onEditScale={onEditScale}
           />
         ) : mark.type === "summary" ? (
           <SummaryFields
@@ -728,20 +730,58 @@ const STACK_ORDERS = [
 
 function StackFields({
   mark,
+  scales,
   numericFields,
   onChange,
+  onEditScale,
 }: {
   mark: StackMark;
+  scales: CompositionScale[];
   numericFields: string[];
   onChange: (patch: Partial<StackMark>) => void;
+  onEditScale: (scaleId: string) => void;
 }) {
   const id = useId();
   const profiles = useDataLayer((state) => state.fieldProfiles);
   const categoryFields = profiles
     .filter((profile) => profile.uniqueCount <= 60)
     .map((profile) => profile.name);
+  const numeric = scales.filter((scale) => scale.kind === "numeric");
   return (
     <>
+      <span className="eda-setting-label">Layout</span>
+      <Segmented
+        label={`${mark.name} layout`}
+        value={Boolean(mark.xScaleId)}
+        options={[
+          {
+            value: false,
+            label: "Column",
+            tooltip: "One stacked column per repeat",
+          },
+          {
+            value: true,
+            label: "Across x",
+            tooltip:
+              "Spread the stack along a numeric x scale: categories stack at each x value and draw as areas, such as shares by age. Needs a numeric scale.",
+          },
+        ]}
+        onChange={(across) =>
+          onChange({ xScaleId: across ? numeric[0]?.id : undefined })
+        }
+      />
+      {mark.xScaleId && (
+        <>
+          <Label htmlFor={`${id}-x`}>X scale</Label>
+          <ScaleSelect
+            id={`${id}-x`}
+            value={mark.xScaleId}
+            scales={numeric}
+            onChange={(xScaleId) => onChange({ xScaleId })}
+            onEdit={onEditScale}
+          />
+        </>
+      )}
       <Label>Categories</Label>
       <FieldSelector
         label=""
