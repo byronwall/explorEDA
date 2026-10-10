@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   act,
   fireEvent,
@@ -879,6 +879,55 @@ describe("DataLayerProvider", () => {
         }),
       ])
     );
+  });
+
+  it("does not rebuild when a controlled host passes back its own snapshot", () => {
+    const wrappers = new Set<unknown>();
+    function WrapperProbe() {
+      wrappers.add(useDataLayer((state) => state.crossfilterWrapper));
+      const titles = useDataLayer((state) =>
+        state.charts.map((chart) => chart.title).join(",")
+      );
+      return <output data-testid="titles">{titles}</output>;
+    }
+    function ControlledHost() {
+      const [saved, setSaved] = useState<SavedDataStructure>();
+      return (
+        <>
+          <button
+            onClick={() =>
+              setSaved((current) => ({
+                ...current!,
+                charts: current!.charts.map((chart) => ({
+                  ...chart,
+                  title: "From host",
+                })),
+              }))
+            }
+          >
+            host edit
+          </button>
+          <DataLayerProvider
+            data={data}
+            savedData={saved}
+            onStateChange={setSaved}
+          >
+            <StateChangeProbe />
+            <WrapperProbe />
+          </DataLayerProvider>
+        </>
+      );
+    }
+    render(<ControlledHost />);
+
+    fireEvent.click(screen.getByRole("button", { name: "change filter" }));
+    fireEvent.click(screen.getByRole("button", { name: "change chart" }));
+    expect(wrappers.size).toBe(1);
+    expect(screen.getByTestId("titles")).toHaveTextContent("Changed");
+
+    fireEvent.click(screen.getByRole("button", { name: "host edit" }));
+    expect(wrappers.size).toBe(2);
+    expect(screen.getByTestId("titles")).toHaveTextContent("From host");
   });
 
   it("does not emit for derived column cache updates", async () => {

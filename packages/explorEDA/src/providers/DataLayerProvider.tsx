@@ -1,5 +1,9 @@
 import { isGeometryAsset, type GeometryAsset } from "@/lib/geometryAssets";
-import { resolveThemeId, type WorkspaceTheme, type WorkspaceThemeId } from "@/lib/themes";
+import {
+  resolveThemeId,
+  type WorkspaceTheme,
+  type WorkspaceThemeId,
+} from "@/lib/themes";
 import { adoptThemePalette, normalizeColorScale } from "@/lib/themePalettes";
 import { getChartFields } from "@/components/charts/chartAccessibility";
 import { chartRegistry, getChartDefinition } from "@/charts/registry";
@@ -600,745 +604,768 @@ const createDataLayerStore = <T extends DatumObject>(
   }
 
   const store = createStore<DataLayerState<T>>()((set, get) => {
-  /** The theme and mode charts draw colors in. */
-  const colorContext = () => ({
-    themeId: resolveThemeId(get().theme),
-    dark: get().darkMode,
-  });
-  return {
-    ...initialState,
-    liveItems: {},
-    filterReset: 0,
-    stateChangeHolds: 0,
-    holdStateChanges: () => {
-      set((state) => ({ stateChangeHolds: state.stateChangeHolds + 1 }));
-      let held = true;
-      return () => {
-        if (!held) return;
-        held = false;
-        set((state) => ({
-          stateChangeHolds: Math.max(0, state.stateChangeHolds - 1),
-        }));
-      };
-    },
-    setData: (rawData, fileName, useDefaults = true) => {
-      const fieldNames = get().fieldNames ?? [];
-      const inferredTypes = Object.fromEntries(
-        buildFieldProfiles(rawData, typeOverrides({}), fieldNames).map(
-          (profile) => [profile.name, profile.dataType]
-        )
-      );
-      const runtimeData = applyFieldSettings(rawData, {}, inferredTypes);
-      // Get fresh crossfilter and data with IDs
-      const {
-        data: newData,
-        emptyColumn: newEmptyColumn,
-        crossfilterWrapper: newCrossfilter,
-        calculationManager: newCalculationManager,
-      } = getDataAndCrossfilterWrapper(runtimeData, get().getColumnData);
-      const fieldProfiles = buildFieldProfiles(
-        runtimeData,
-        typeOverrides({}),
-        fieldNames
-      );
-
-      if (
-        !newData ||
-        !newEmptyColumn ||
-        !newCrossfilter ||
-        !newCalculationManager
-      ) {
-        throw new Error("Failed to reset data layer");
-      }
-
-      const charts = useDefaults
-        ? createDefaultWorkspaceCharts(fieldProfiles)
-        : [];
-      charts.forEach((chart) => newCrossfilter.addChart(chart));
-
-      // Reset everything to initial state
-      set({
-        rawData,
-        data: newData,
-        fieldProfiles,
-        emptyColumn: newEmptyColumn,
-        fileName,
-        crossfilterWrapper: newCrossfilter,
-        calculationManager: newCalculationManager,
-        calculations: [],
-        charts,
-        colorScales: [],
-        rowsSettings: getDefaultRowsSettings(
-          fieldProfiles.map((profile) => profile.name)
-        ),
-        liveItems: newCrossfilter.getAllData(),
-        columnCache: {},
-        calcColumnCache: {},
-        fieldSettings: {},
-        aggregates: [],
-        geometryAssets: [],
-        nonce: get().nonce + 1,
-        filterReset: get().filterReset + 1,
-      });
-    },
-
-    // Compact is the default, so choosing it saves no theme at all.
-    setTheme: (id) => set({ theme: id === "compact" ? undefined : { id } }),
-    darkMode: false,
-    setDarkMode: (darkMode) => set({ darkMode }),
-
-    addGeometryAsset: (asset) => {
-      if (!isGeometryAsset(asset))
-        throw new Error(
-          "Use a GeoJSON collection with valid polygon coordinates and closed rings."
+    /** The theme and mode charts draw colors in. */
+    const colorContext = () => ({
+      themeId: resolveThemeId(get().theme),
+      dark: get().darkMode,
+    });
+    return {
+      ...initialState,
+      liveItems: {},
+      filterReset: 0,
+      stateChangeHolds: 0,
+      holdStateChanges: () => {
+        set((state) => ({ stateChangeHolds: state.stateChangeHolds + 1 }));
+        let held = true;
+        return () => {
+          if (!held) return;
+          held = false;
+          set((state) => ({
+            stateChangeHolds: Math.max(0, state.stateChangeHolds - 1),
+          }));
+        };
+      },
+      setData: (rawData, fileName, useDefaults = true) => {
+        const fieldNames = get().fieldNames ?? [];
+        const inferredTypes = Object.fromEntries(
+          buildFieldProfiles(rawData, typeOverrides({}), fieldNames).map(
+            (profile) => [profile.name, profile.dataType]
+          )
         );
-      set((state) => ({
-        geometryAssets: [
-          ...state.geometryAssets.filter((item) => item.id !== asset.id),
-          asset,
-        ],
-      }));
-    },
-
-    updateFieldSettings: (field, updates) => {
-      const current = get().fieldSettings[field] ?? {};
-      const nextFieldSettings = { ...current, ...updates };
-      const settingsError = getFieldSettingsError(nextFieldSettings);
-      if (settingsError) {
-        throw new Error(settingsError);
-      }
-      const nextFieldSettingsMap = { ...get().fieldSettings };
-      if (Object.keys(nextFieldSettings).length === 0) {
-        delete nextFieldSettingsMap[field];
-      } else {
-        nextFieldSettingsMap[field] = nextFieldSettings;
-      }
-
-      const typeChanged =
-        current.type !== nextFieldSettings.type ||
-        current.datePreset !== nextFieldSettings.datePreset ||
-        JSON.stringify(current.nullTokens?.filter(Boolean) ?? []) !==
-          JSON.stringify(nextFieldSettings.nullTokens?.filter(Boolean) ?? []);
-      if (!typeChanged) {
-        set((state) => ({
-          fieldSettings: nextFieldSettingsMap,
-          nonce: state.nonce + 1,
-        }));
-        return;
-      }
-
-      const inferredTypes = Object.fromEntries(
-        buildFieldProfiles(
-          get().rawData,
-          typeOverrides(nextFieldSettingsMap)
-        ).map((profile) => [profile.name, profile.dataType])
-      );
-      const runtimeRows = applyFieldSettings(
-        get().rawData,
-        nextFieldSettingsMap,
-        inferredTypes
-      );
-      const nextData = initializeData(runtimeRows);
-      const nextCrossfilter = new CrossfilterWrapper<T & HasId>(
-        nextData.dataWithIds,
-        (row) => row.__ID
-      );
-      const nextCharts = get().charts.map((chart) => ({
-        ...chart,
-        filters: chart.filters.filter((filter) => filter.field !== field),
-        facet:
-          typeChanged &&
-          (chart.facet.rowVariable === field ||
-            (chart.facet.type === "grid" &&
-              chart.facet.columnVariable === field))
-            ? { ...chart.facet, visibleFacetIds: undefined }
-            : chart.facet,
-      })) as ChartSettings[];
-      nextCharts.forEach((chart) => nextCrossfilter.addChart(chart));
-      const nextManager = new CalculationManager(
-        nextData.dataWithIds,
-        get().calculations
-      );
-      set((state) => ({
-        fieldSettings: nextFieldSettingsMap,
-        data: nextData.dataWithIds,
-        emptyColumn: nextData.emptyColumn,
-        fieldProfiles: buildFieldProfiles(
-          runtimeRows,
-          typeOverrides(nextFieldSettingsMap),
-          state.fieldNames
-        ),
-        crossfilterWrapper: nextCrossfilter,
-        calculationManager: nextManager,
-        charts: nextCharts,
-        rowsSettings: {
-          ...state.rowsSettings,
-          filters: state.rowsSettings.filters.filter(
-            (filter) => filter.field !== field
-          ),
-        },
-        columnCache: {},
-        calcColumnCache: {},
-        liveItems: {},
-        nonce: state.nonce + 1,
-        filterReset: state.filterReset + 1,
-      }));
-      nextCrossfilter.setFieldGetter(get().getColumnData);
-      nextCharts.forEach((chart) => nextCrossfilter.updateChartFilters(chart));
-      set({ liveItems: nextCrossfilter.getAllData() });
-    },
-
-    getFieldLabel: (field) =>
-      resolveFieldLabel(field, get().fieldSettings[field]),
-
-    formatFieldValue: (field, value) =>
-      formatValue(field, value, get().fieldSettings[field]),
-
-    getFieldConversionPreview: (field, previewSettings) => {
-      const rawRows = get().rawData;
-      const rawProfile = buildFieldProfiles(rawRows).find(
-        (profile) => profile.name === field
-      );
-      return buildConversionPreview(
-        field,
-        rawRows,
-        previewSettings ?? get().fieldSettings[field],
-        rawProfile?.dataType ?? "categorical"
-      );
-    },
-
-    addAggregate: (spec) => {
-      if (!spec.name.trim() || !spec.groupField.trim()) {
-        throw new Error("Bar aggregates need a name and group field");
-      }
-      if (spec.aggregation !== "count" && !spec.measureField?.trim()) {
-        throw new Error(`${spec.aggregation} requires a measure field`);
-      }
-      validateAggregateState(
-        [{ ...spec, id: "new" }],
-        [],
-        get().getColumnNames()
-      );
-      const aggregate = { ...spec, id: crypto.randomUUID() };
-      set((state) => ({
-        aggregates: [...state.aggregates, aggregate],
-        nonce: state.nonce + 1,
-      }));
-      return aggregate;
-    },
-
-    updateAggregate: (id, updates) => {
-      const current = get().aggregates.find((aggregate) => aggregate.id === id);
-      if (!current) {
-        throw new Error("Grouped summary was not found");
-      }
-      const next = { ...current, ...updates };
-      if (!next.name.trim() || !next.groupField.trim()) {
-        throw new Error("Bar aggregates need a name and group field");
-      }
-      if (next.aggregation !== "count" && !next.measureField?.trim()) {
-        throw new Error(`${next.aggregation} requires a measure field`);
-      }
-      validateAggregateState([next], [], get().getColumnNames());
-      set((state) => ({
-        aggregates: state.aggregates.map((aggregate) =>
-          aggregate.id === id ? next : aggregate
-        ),
-        nonce: state.nonce + 1,
-      }));
-    },
-
-    removeAggregate: (id) => {
-      const aggregate = get().aggregates.find((item) => item.id === id);
-      if (!aggregate) {
-        return;
-      }
-      if (
-        get().charts.some(
-          (chart) =>
-            (chart as ChartSettings & { aggregateId?: string }).aggregateId ===
-            id
-        )
-      ) {
-        throw new Error(
-          `Remove charts using ${aggregate.name} before deleting the grouped summary`
+        const runtimeData = applyFieldSettings(rawData, {}, inferredTypes);
+        // Get fresh crossfilter and data with IDs
+        const {
+          data: newData,
+          emptyColumn: newEmptyColumn,
+          crossfilterWrapper: newCrossfilter,
+          calculationManager: newCalculationManager,
+        } = getDataAndCrossfilterWrapper(runtimeData, get().getColumnData);
+        const fieldProfiles = buildFieldProfiles(
+          runtimeData,
+          typeOverrides({}),
+          fieldNames
         );
-      }
-      set((state) => ({
-        aggregates: state.aggregates.filter((item) => item.id !== id),
-        nonce: state.nonce + 1,
-      }));
-    },
 
-    getAggregate: (id) => get().aggregates.find((item) => item.id === id),
-
-    getAggregateResult: (id, sourceIds) => {
-      const spec = get().aggregates.find((item) => item.id === id);
-      if (!spec) {
-        return undefined;
-      }
-      const ids = sourceIds ?? get().crossfilterWrapper.getFilteredRowIds();
-      const groupData = get().getColumnData(spec.groupField);
-      const measureData = spec.measureField
-        ? get().getColumnData(spec.measureField)
-        : undefined;
-      const entityData = spec.entityField
-        ? get().getColumnData(spec.entityField)
-        : undefined;
-      const rawRows = get().rawData as Array<Record<string, datum>>;
-      const rawInputs: Record<number, datum> = {};
-      const exclusionReasons: Record<number, string> = {};
-      const calculationField = get().calculations.some(
-        (calculation) => calculation.resultColumnName === spec.measureField
-      );
-      const measureProfile = get().fieldProfiles.find(
-        (profile) => profile.name === spec.measureField
-      );
-      const measureSettings = spec.measureField
-        ? (get().fieldSettings[spec.measureField] ?? {})
-        : {};
-      const rows = ids.map((sourceId) => ({
-        __ID: sourceId,
-        [spec.groupField]: groupData[sourceId],
-        ...(spec.measureField
-          ? {
-              [spec.measureField]: measureData?.[sourceId],
-            }
-          : {}),
-        ...(spec.entityField
-          ? { [spec.entityField]: entityData?.[sourceId] }
-          : {}),
-      }));
-      if (spec.measureField) {
-        ids.forEach((sourceId) => {
-          const rawValue = rawRows[sourceId]?.[spec.measureField!];
-          if (!calculationField) {
-            rawInputs[sourceId] = rawValue;
-            const conversion = convertFieldValue(
-              rawValue,
-              measureSettings.type ?? measureProfile?.dataType ?? "categorical",
-              measureSettings
-            );
-            if (conversion.error) {
-              exclusionReasons[sourceId] =
-                `Conversion failed: ${conversion.error}`;
-            }
-          }
-        });
-      }
-      return calculateGroupedAggregate(rows, spec, rawInputs, exclusionReasons);
-    },
-
-    addChart: (chartSettings) => {
-      const { crossfilterWrapper } = get();
-      const newChart = {
-        ...chartSettings,
-        id: crypto.randomUUID(),
-      } as ChartSettings;
-
-      crossfilterWrapper.addChart(newChart);
-      set((state) => ({
-        charts: [...state.charts, newChart],
-        liveItems: crossfilterWrapper.getAllData(),
-      }));
-    },
-
-    removeChart: (chart) => {
-      const { crossfilterWrapper } = get();
-      crossfilterWrapper.removeChart(chart);
-      set((state) => ({
-        charts: compactChartLayouts(
-          state.charts.filter((ogChart) => ogChart.id !== chart.id)
-        ),
-        liveItems: crossfilterWrapper.getAllData(),
-      }));
-    },
-
-    removeAllCharts: () => {
-      const { crossfilterWrapper } = get();
-      crossfilterWrapper.removeAllCharts();
-      set({ charts: [], liveItems: crossfilterWrapper.getAllData() });
-    },
-
-    updateChart: (id, settings) => {
-      const { crossfilterWrapper } = get();
-
-      const chart = get().charts.find((chart) => chart.id === id);
-
-      if (!chart) {
-        return;
-      }
-
-      const updatedChart = { ...chart, ...settings, id } as ChartSettings;
-      crossfilterWrapper.updateChart(updatedChart);
-      // Text, style, and composition edits leave every chart's rows as they
-      // were. Keeping the live items skips a redraw of every other chart.
-      const rowsUnchanged = (Object.keys(settings) as (keyof ChartSettings)[])
-        .filter((key) => !isEqual(chart[key], updatedChart[key]))
-        .every((key) => DISPLAY_ONLY_KEYS.has(key));
-      set((state) => ({
-        charts: state.charts.map((chart) =>
-          chart.id === id ? updatedChart : chart
-        ),
-        ...(rowsUnchanged
-          ? {}
-          : { liveItems: crossfilterWrapper.getAllData() }),
-      }));
-    },
-
-    updateChartLayouts: (layouts) => {
-      set((state) => ({
-        charts: state.charts.map((chart) => {
-          const layout = layouts[chart.id];
-          return layout ? { ...chart, layout } : chart;
-        }),
-      }));
-    },
-
-    addColorScale: (scale: Omit<ColorScaleType, "id">) => {
-      const newScale = {
-        ...normalizeColorScale(
-          scale,
-          (scale as { paletteId?: string }).paletteId,
-          colorContext()
-        ),
-        id: crypto.randomUUID(),
-      } as ColorScaleType;
-
-      set((state) => ({
-        colorScales: [...state.colorScales, newScale],
-      }));
-
-      return newScale;
-    },
-
-    removeColorScale: (id: string) => {
-      set((state) => ({
-        colorScales: state.colorScales.filter((scale) => scale.id !== id),
-      }));
-    },
-
-    updateColorScale: (id: string, updates: Partial<ColorScaleType>) => {
-      set((state) => ({
-        colorScales: state.colorScales.map((scale) => {
-          if (scale.id !== id) return scale;
-          const next = { ...scale, ...updates } as ColorScaleType;
-          // Editors show themed colors; they save as palette slots.
-          return normalizeColorScale(
-            next,
-            next.type === "categorical" ? next.paletteId : undefined,
-            colorContext()
-          );
-        }),
-      }));
-    },
-
-    clearAllFilters: () => {
-      const { charts, crossfilterWrapper } = get();
-
-      const newCharts = charts.map((chart) => ({
-        ...chart,
-        filters: [],
-        ...(chart.type === "data-table" ? { globalSearch: "" } : {}),
-      })) as ChartSettings[];
-
-      for (const chart of newCharts) {
-        crossfilterWrapper.updateChart(chart);
-      }
-
-      // Update all live items in a single update
-      set((state) => ({
-        charts: newCharts,
-        rowsSettings: {
-          ...state.rowsSettings,
-          filters: [],
-          globalSearch: "",
-        },
-        liveItems: crossfilterWrapper.getAllData(),
-        filterReset: state.filterReset + 1,
-      }));
-    },
-
-    clearFilter: (chart) => {
-      const { updateChart } = get();
-      updateChart(chart.id, { filters: [] });
-    },
-
-    getLiveItems: (chart) => {
-      const { liveItems } = get();
-
-      const liveItemsForChart = liveItems[chart.id] ?? undefined;
-
-      return liveItemsForChart;
-    },
-
-    getColumnNames() {
-      const { fieldProfiles, calculations, fieldNames = [] } = get();
-      const baseColumns = fieldProfiles.map((profile) => profile.name);
-
-      const calcFields = calculations.map((calc) => calc.resultColumnName);
-
-      return [...new Set([...fieldNames, ...baseColumns, ...calcFields])];
-    },
-
-    getColumnData(field: string | undefined) {
-      const {
-        columnCache,
-        data,
-        calcColumnCache,
-        calculations,
-        emptyColumn,
-        calculationManager,
-      } = get();
-
-      if (!field) {
-        return emptyColumn;
-      }
-
-      if (Object.hasOwn(columnCache, field)) {
-        return columnCache[field] as Record<string, datum>;
-      }
-
-      const calculation = calculations.find(
-        (calc) => calc.resultColumnName === field
-      );
-
-      if (calculation) {
-        if (Object.hasOwn(calcColumnCache, field)) {
-          return calcColumnCache[field] as Record<string, datum>;
+        if (
+          !newData ||
+          !newEmptyColumn ||
+          !newCrossfilter ||
+          !newCalculationManager
+        ) {
+          throw new Error("Failed to reset data layer");
         }
 
-        // Calculate the column and its dependencies.
-        const resultMap = calculationManager.executeCalculation(calculation);
+        const charts = useDefaults
+          ? createDefaultWorkspaceCharts(fieldProfiles)
+          : [];
+        charts.forEach((chart) => newCrossfilter.addChart(chart));
 
-        // convert to Record<IdType, datum>
+        // Reset everything to initial state
+        set({
+          rawData,
+          data: newData,
+          fieldProfiles,
+          emptyColumn: newEmptyColumn,
+          fileName,
+          crossfilterWrapper: newCrossfilter,
+          calculationManager: newCalculationManager,
+          calculations: [],
+          charts,
+          colorScales: [],
+          rowsSettings: getDefaultRowsSettings(
+            fieldProfiles.map((profile) => profile.name)
+          ),
+          liveItems: newCrossfilter.getAllData(),
+          columnCache: {},
+          calcColumnCache: {},
+          fieldSettings: {},
+          aggregates: [],
+          geometryAssets: [],
+          nonce: get().nonce + 1,
+          filterReset: get().filterReset + 1,
+        });
+      },
+
+      // Compact is the default, so choosing it saves no theme at all.
+      setTheme: (id) => set({ theme: id === "compact" ? undefined : { id } }),
+      darkMode: false,
+      setDarkMode: (darkMode) => set({ darkMode }),
+
+      addGeometryAsset: (asset) => {
+        if (!isGeometryAsset(asset))
+          throw new Error(
+            "Use a GeoJSON collection with valid polygon coordinates and closed rings."
+          );
+        set((state) => ({
+          geometryAssets: [
+            ...state.geometryAssets.filter((item) => item.id !== asset.id),
+            asset,
+          ],
+        }));
+      },
+
+      updateFieldSettings: (field, updates) => {
+        const current = get().fieldSettings[field] ?? {};
+        const nextFieldSettings = { ...current, ...updates };
+        const settingsError = getFieldSettingsError(nextFieldSettings);
+        if (settingsError) {
+          throw new Error(settingsError);
+        }
+        const nextFieldSettingsMap = { ...get().fieldSettings };
+        if (Object.keys(nextFieldSettings).length === 0) {
+          delete nextFieldSettingsMap[field];
+        } else {
+          nextFieldSettingsMap[field] = nextFieldSettings;
+        }
+
+        const typeChanged =
+          current.type !== nextFieldSettings.type ||
+          current.datePreset !== nextFieldSettings.datePreset ||
+          JSON.stringify(current.nullTokens?.filter(Boolean) ?? []) !==
+            JSON.stringify(nextFieldSettings.nullTokens?.filter(Boolean) ?? []);
+        if (!typeChanged) {
+          set((state) => ({
+            fieldSettings: nextFieldSettingsMap,
+            nonce: state.nonce + 1,
+          }));
+          return;
+        }
+
+        const inferredTypes = Object.fromEntries(
+          buildFieldProfiles(
+            get().rawData,
+            typeOverrides(nextFieldSettingsMap)
+          ).map((profile) => [profile.name, profile.dataType])
+        );
+        const runtimeRows = applyFieldSettings(
+          get().rawData,
+          nextFieldSettingsMap,
+          inferredTypes
+        );
+        const nextData = initializeData(runtimeRows);
+        const nextCrossfilter = new CrossfilterWrapper<T & HasId>(
+          nextData.dataWithIds,
+          (row) => row.__ID
+        );
+        const nextCharts = get().charts.map((chart) => ({
+          ...chart,
+          filters: chart.filters.filter((filter) => filter.field !== field),
+          facet:
+            typeChanged &&
+            (chart.facet.rowVariable === field ||
+              (chart.facet.type === "grid" &&
+                chart.facet.columnVariable === field))
+              ? { ...chart.facet, visibleFacetIds: undefined }
+              : chart.facet,
+        })) as ChartSettings[];
+        nextCharts.forEach((chart) => nextCrossfilter.addChart(chart));
+        const nextManager = new CalculationManager(
+          nextData.dataWithIds,
+          get().calculations
+        );
+        set((state) => ({
+          fieldSettings: nextFieldSettingsMap,
+          data: nextData.dataWithIds,
+          emptyColumn: nextData.emptyColumn,
+          fieldProfiles: buildFieldProfiles(
+            runtimeRows,
+            typeOverrides(nextFieldSettingsMap),
+            state.fieldNames
+          ),
+          crossfilterWrapper: nextCrossfilter,
+          calculationManager: nextManager,
+          charts: nextCharts,
+          rowsSettings: {
+            ...state.rowsSettings,
+            filters: state.rowsSettings.filters.filter(
+              (filter) => filter.field !== field
+            ),
+          },
+          columnCache: {},
+          calcColumnCache: {},
+          liveItems: {},
+          nonce: state.nonce + 1,
+          filterReset: state.filterReset + 1,
+        }));
+        nextCrossfilter.setFieldGetter(get().getColumnData);
+        nextCharts.forEach((chart) =>
+          nextCrossfilter.updateChartFilters(chart)
+        );
+        set({ liveItems: nextCrossfilter.getAllData() });
+      },
+
+      getFieldLabel: (field) =>
+        resolveFieldLabel(field, get().fieldSettings[field]),
+
+      formatFieldValue: (field, value) =>
+        formatValue(field, value, get().fieldSettings[field]),
+
+      getFieldConversionPreview: (field, previewSettings) => {
+        const rawRows = get().rawData;
+        const rawProfile = buildFieldProfiles(rawRows).find(
+          (profile) => profile.name === field
+        );
+        return buildConversionPreview(
+          field,
+          rawRows,
+          previewSettings ?? get().fieldSettings[field],
+          rawProfile?.dataType ?? "categorical"
+        );
+      },
+
+      addAggregate: (spec) => {
+        if (!spec.name.trim() || !spec.groupField.trim()) {
+          throw new Error("Bar aggregates need a name and group field");
+        }
+        if (spec.aggregation !== "count" && !spec.measureField?.trim()) {
+          throw new Error(`${spec.aggregation} requires a measure field`);
+        }
+        validateAggregateState(
+          [{ ...spec, id: "new" }],
+          [],
+          get().getColumnNames()
+        );
+        const aggregate = { ...spec, id: crypto.randomUUID() };
+        set((state) => ({
+          aggregates: [...state.aggregates, aggregate],
+          nonce: state.nonce + 1,
+        }));
+        return aggregate;
+      },
+
+      updateAggregate: (id, updates) => {
+        const current = get().aggregates.find(
+          (aggregate) => aggregate.id === id
+        );
+        if (!current) {
+          throw new Error("Grouped summary was not found");
+        }
+        const next = { ...current, ...updates };
+        if (!next.name.trim() || !next.groupField.trim()) {
+          throw new Error("Bar aggregates need a name and group field");
+        }
+        if (next.aggregation !== "count" && !next.measureField?.trim()) {
+          throw new Error(`${next.aggregation} requires a measure field`);
+        }
+        validateAggregateState([next], [], get().getColumnNames());
+        set((state) => ({
+          aggregates: state.aggregates.map((aggregate) =>
+            aggregate.id === id ? next : aggregate
+          ),
+          nonce: state.nonce + 1,
+        }));
+      },
+
+      removeAggregate: (id) => {
+        const aggregate = get().aggregates.find((item) => item.id === id);
+        if (!aggregate) {
+          return;
+        }
+        if (
+          get().charts.some(
+            (chart) =>
+              (chart as ChartSettings & { aggregateId?: string })
+                .aggregateId === id
+          )
+        ) {
+          throw new Error(
+            `Remove charts using ${aggregate.name} before deleting the grouped summary`
+          );
+        }
+        set((state) => ({
+          aggregates: state.aggregates.filter((item) => item.id !== id),
+          nonce: state.nonce + 1,
+        }));
+      },
+
+      getAggregate: (id) => get().aggregates.find((item) => item.id === id),
+
+      getAggregateResult: (id, sourceIds) => {
+        const spec = get().aggregates.find((item) => item.id === id);
+        if (!spec) {
+          return undefined;
+        }
+        const ids = sourceIds ?? get().crossfilterWrapper.getFilteredRowIds();
+        const groupData = get().getColumnData(spec.groupField);
+        const measureData = spec.measureField
+          ? get().getColumnData(spec.measureField)
+          : undefined;
+        const entityData = spec.entityField
+          ? get().getColumnData(spec.entityField)
+          : undefined;
+        const rawRows = get().rawData as Array<Record<string, datum>>;
+        const rawInputs: Record<number, datum> = {};
+        const exclusionReasons: Record<number, string> = {};
+        const calculationField = get().calculations.some(
+          (calculation) => calculation.resultColumnName === spec.measureField
+        );
+        const measureProfile = get().fieldProfiles.find(
+          (profile) => profile.name === spec.measureField
+        );
+        const measureSettings = spec.measureField
+          ? (get().fieldSettings[spec.measureField] ?? {})
+          : {};
+        const rows = ids.map((sourceId) => ({
+          __ID: sourceId,
+          [spec.groupField]: groupData[sourceId],
+          ...(spec.measureField
+            ? {
+                [spec.measureField]: measureData?.[sourceId],
+              }
+            : {}),
+          ...(spec.entityField
+            ? { [spec.entityField]: entityData?.[sourceId] }
+            : {}),
+        }));
+        if (spec.measureField) {
+          ids.forEach((sourceId) => {
+            const rawValue = rawRows[sourceId]?.[spec.measureField!];
+            if (!calculationField) {
+              rawInputs[sourceId] = rawValue;
+              const conversion = convertFieldValue(
+                rawValue,
+                measureSettings.type ??
+                  measureProfile?.dataType ??
+                  "categorical",
+                measureSettings
+              );
+              if (conversion.error) {
+                exclusionReasons[sourceId] =
+                  `Conversion failed: ${conversion.error}`;
+              }
+            }
+          });
+        }
+        return calculateGroupedAggregate(
+          rows,
+          spec,
+          rawInputs,
+          exclusionReasons
+        );
+      },
+
+      addChart: (chartSettings) => {
+        const { crossfilterWrapper } = get();
+        const newChart = {
+          ...chartSettings,
+          id: crypto.randomUUID(),
+        } as ChartSettings;
+
+        crossfilterWrapper.addChart(newChart);
+        set((state) => ({
+          charts: [...state.charts, newChart],
+          liveItems: crossfilterWrapper.getAllData(),
+        }));
+      },
+
+      removeChart: (chart) => {
+        const { crossfilterWrapper } = get();
+        crossfilterWrapper.removeChart(chart);
+        set((state) => ({
+          charts: compactChartLayouts(
+            state.charts.filter((ogChart) => ogChart.id !== chart.id)
+          ),
+          liveItems: crossfilterWrapper.getAllData(),
+        }));
+      },
+
+      removeAllCharts: () => {
+        const { crossfilterWrapper } = get();
+        crossfilterWrapper.removeAllCharts();
+        set({ charts: [], liveItems: crossfilterWrapper.getAllData() });
+      },
+
+      updateChart: (id, settings) => {
+        const { crossfilterWrapper } = get();
+
+        const chart = get().charts.find((chart) => chart.id === id);
+
+        if (!chart) {
+          return;
+        }
+
+        const updatedChart = { ...chart, ...settings, id } as ChartSettings;
+        crossfilterWrapper.updateChart(updatedChart);
+        // Text, style, and composition edits leave every chart's rows as they
+        // were. Keeping the live items skips a redraw of every other chart.
+        const rowsUnchanged = (Object.keys(settings) as (keyof ChartSettings)[])
+          .filter((key) => !isEqual(chart[key], updatedChart[key]))
+          .every((key) => DISPLAY_ONLY_KEYS.has(key));
+        set((state) => ({
+          charts: state.charts.map((chart) =>
+            chart.id === id ? updatedChart : chart
+          ),
+          ...(rowsUnchanged
+            ? {}
+            : { liveItems: crossfilterWrapper.getAllData() }),
+        }));
+      },
+
+      updateChartLayouts: (layouts) => {
+        set((state) => ({
+          charts: state.charts.map((chart) => {
+            const layout = layouts[chart.id];
+            return layout ? { ...chart, layout } : chart;
+          }),
+        }));
+      },
+
+      addColorScale: (scale: Omit<ColorScaleType, "id">) => {
+        const newScale = {
+          ...normalizeColorScale(
+            scale,
+            (scale as { paletteId?: string }).paletteId,
+            colorContext()
+          ),
+          id: crypto.randomUUID(),
+        } as ColorScaleType;
+
+        set((state) => ({
+          colorScales: [...state.colorScales, newScale],
+        }));
+
+        return newScale;
+      },
+
+      removeColorScale: (id: string) => {
+        set((state) => ({
+          colorScales: state.colorScales.filter((scale) => scale.id !== id),
+        }));
+      },
+
+      updateColorScale: (id: string, updates: Partial<ColorScaleType>) => {
+        set((state) => ({
+          colorScales: state.colorScales.map((scale) => {
+            if (scale.id !== id) return scale;
+            const next = { ...scale, ...updates } as ColorScaleType;
+            // Editors show themed colors; they save as palette slots.
+            return normalizeColorScale(
+              next,
+              next.type === "categorical" ? next.paletteId : undefined,
+              colorContext()
+            );
+          }),
+        }));
+      },
+
+      clearAllFilters: () => {
+        const { charts, crossfilterWrapper } = get();
+
+        const newCharts = charts.map((chart) => ({
+          ...chart,
+          filters: [],
+          ...(chart.type === "data-table" ? { globalSearch: "" } : {}),
+        })) as ChartSettings[];
+
+        for (const chart of newCharts) {
+          crossfilterWrapper.updateChart(chart);
+        }
+
+        // Update all live items in a single update
+        set((state) => ({
+          charts: newCharts,
+          rowsSettings: {
+            ...state.rowsSettings,
+            filters: [],
+            globalSearch: "",
+          },
+          liveItems: crossfilterWrapper.getAllData(),
+          filterReset: state.filterReset + 1,
+        }));
+      },
+
+      clearFilter: (chart) => {
+        const { updateChart } = get();
+        updateChart(chart.id, { filters: [] });
+      },
+
+      getLiveItems: (chart) => {
+        const { liveItems } = get();
+
+        const liveItemsForChart = liveItems[chart.id] ?? undefined;
+
+        return liveItemsForChart;
+      },
+
+      getColumnNames() {
+        const { fieldProfiles, calculations, fieldNames = [] } = get();
+        const baseColumns = fieldProfiles.map((profile) => profile.name);
+
+        const calcFields = calculations.map((calc) => calc.resultColumnName);
+
+        return [...new Set([...fieldNames, ...baseColumns, ...calcFields])];
+      },
+
+      getColumnData(field: string | undefined) {
+        const {
+          columnCache,
+          data,
+          calcColumnCache,
+          calculations,
+          emptyColumn,
+          calculationManager,
+        } = get();
+
+        if (!field) {
+          return emptyColumn;
+        }
+
+        if (Object.hasOwn(columnCache, field)) {
+          return columnCache[field] as Record<string, datum>;
+        }
+
+        const calculation = calculations.find(
+          (calc) => calc.resultColumnName === field
+        );
+
+        if (calculation) {
+          if (Object.hasOwn(calcColumnCache, field)) {
+            return calcColumnCache[field] as Record<string, datum>;
+          }
+
+          // Calculate the column and its dependencies.
+          const resultMap = calculationManager.executeCalculation(calculation);
+
+          // convert to Record<IdType, datum>
+          const columnData: { [key: IdType]: datum } = {};
+          resultMap.forEach((value, key) => {
+            columnData[key] = value;
+          });
+
+          // Caches are read through getters; nonce carries visible data changes.
+          Object.defineProperty(calcColumnCache, field, {
+            value: columnData,
+            enumerable: true,
+            configurable: true,
+          });
+
+          return columnData;
+        }
+
+        // check if field is in the data -- if not, return all undefined
+        // do not add to column cache
+        if (!data.some((row) => field in row)) {
+          return emptyColumn;
+        }
+
+        // Otherwise, it's a regular column
         const columnData: { [key: IdType]: datum } = {};
-        resultMap.forEach((value, key) => {
-          columnData[key] = value;
+        data.forEach((row) => {
+          columnData[row.__ID] = row[field];
         });
 
-        // Caches are read through getters; nonce carries visible data changes.
-        Object.defineProperty(calcColumnCache, field, {
+        Object.defineProperty(columnCache, field, {
           value: columnData,
           enumerable: true,
           configurable: true,
         });
 
         return columnData;
-      }
+      },
 
-      // check if field is in the data -- if not, return all undefined
-      // do not add to column cache
-      if (!data.some((row) => field in row)) {
-        return emptyColumn;
-      }
+      // Calculation management
+      addCalculation: async (calculation) => {
+        get().calculationManager.addCalculation(calculation);
+        refreshCalculations();
+        return calculation;
+      },
 
-      // Otherwise, it's a regular column
-      const columnData: { [key: IdType]: datum } = {};
-      data.forEach((row) => {
-        columnData[row.__ID] = row[field];
-      });
-
-      Object.defineProperty(columnCache, field, {
-        value: columnData,
-        enumerable: true,
-        configurable: true,
-      });
-
-      return columnData;
-    },
-
-    // Calculation management
-    addCalculation: async (calculation) => {
-      get().calculationManager.addCalculation(calculation);
-      refreshCalculations();
-      return calculation;
-    },
-
-    removeCalculation: (name) => {
-      assertUnusedCalculation(name);
-      get().calculationManager.removeCalculation(name);
-      refreshCalculations();
-    },
-
-    updateCalculation: (name, calculation) => {
-      if (name !== calculation.resultColumnName) {
+      removeCalculation: (name) => {
         assertUnusedCalculation(name);
-      }
-      get().calculationManager.updateCalculation(name, calculation);
-      refreshCalculations();
-    },
+        get().calculationManager.removeCalculation(name);
+        refreshCalculations();
+      },
 
-    updateGridSettings: (settings) => {
-      set((state) => ({
-        gridSettings: {
-          ...state.gridSettings,
-          ...settings,
-        },
-      }));
-    },
+      updateCalculation: (name, calculation) => {
+        if (name !== calculation.resultColumnName) {
+          assertUnusedCalculation(name);
+        }
+        get().calculationManager.updateCalculation(name, calculation);
+        refreshCalculations();
+      },
 
-    updateRowsSettings: (settings) => {
-      set((state) => ({
-        rowsSettings: { ...state.rowsSettings, ...settings },
-      }));
-    },
+      updateGridSettings: (settings) => {
+        set((state) => ({
+          gridSettings: {
+            ...state.gridSettings,
+            ...settings,
+          },
+        }));
+      },
 
-    // Save/Restore functionality
-    saveToStructure: () => {
-      const state = get();
+      updateRowsSettings: (settings) => {
+        set((state) => ({
+          rowsSettings: { ...state.rowsSettings, ...settings },
+        }));
+      },
 
-      // Convert Map objects in colorScales to arrays for serialization
-      const serializedColorScales: SerializedColorScale[] =
-        state.colorScales.map((scale) => {
-          if (scale.type === "categorical") {
-            return {
-              ...scale,
-              mapping: Array.from(scale.mapping.entries()),
-            };
-          }
-          return scale;
+      // Save/Restore functionality
+      saveToStructure: () => {
+        const state = get();
+
+        // Convert Map objects in colorScales to arrays for serialization
+        const serializedColorScales: SerializedColorScale[] =
+          state.colorScales.map((scale) => {
+            if (scale.type === "categorical") {
+              return {
+                ...scale,
+                mapping: Array.from(scale.mapping.entries()),
+              };
+            }
+            return scale;
+          });
+
+        return {
+          charts: state.charts.map(toSavedChart),
+          calculations: toSavedCalculations(state.calculations),
+          gridSettings: state.gridSettings,
+          metadata: {
+            ...state.metadata,
+            modifiedAt: new Date().toISOString(),
+          },
+          colorScales: serializedColorScales,
+          rowsSettings: state.rowsSettings,
+          fieldSettings: state.fieldSettings,
+          aggregates: state.aggregates,
+          geometryAssets: state.geometryAssets,
+          ...(state.theme ? { theme: state.theme } : {}),
+        };
+      },
+
+      restoreFromStructure: (savedData: SavedDataStructure) => {
+        const data = get().rawData;
+        get().restoreAnalysisFromStructure({
+          format: "exploreda-analysis",
+          version: 1,
+          data,
+          settings: savedData,
         });
-
-      return {
-        charts: state.charts.map(toSavedChart),
-        calculations: toSavedCalculations(state.calculations),
-        gridSettings: state.gridSettings,
-        metadata: {
-          ...state.metadata,
-          modifiedAt: new Date().toISOString(),
-        },
-        colorScales: serializedColorScales,
-        rowsSettings: state.rowsSettings,
-        fieldSettings: state.fieldSettings,
-        aggregates: state.aggregates,
-        geometryAssets: state.geometryAssets,
-        ...(state.theme ? { theme: state.theme } : {}),
-      };
-    },
-
-    restoreFromStructure: (savedData: SavedDataStructure) => {
-      const data = get().rawData;
-      get().restoreAnalysisFromStructure({
-        format: "exploreda-analysis",
-        version: 1,
-        data,
-        settings: savedData,
-      });
-    },
-    saveAnalysisToStructure: () => {
-      const state = get();
-      return {
-        format: "exploreda-analysis",
-        version: 1,
-        data: state.rawData as SavedRow[],
-        settings: state.saveToStructure(),
-      };
-    },
-    restoreAnalysisFromStructure: (savedData) => {
-      const rawData = savedData.data as T[];
-      const fieldSettings = savedData.settings.fieldSettings ?? {};
-      validateFieldSettings(fieldSettings);
-      const inferredTypes = Object.fromEntries(
-        buildFieldProfiles(
+      },
+      saveAnalysisToStructure: () => {
+        const state = get();
+        return {
+          format: "exploreda-analysis",
+          version: 1,
+          data: state.rawData as SavedRow[],
+          settings: state.saveToStructure(),
+        };
+      },
+      restoreAnalysisFromStructure: (savedData) => {
+        const rawData = savedData.data as T[];
+        const fieldSettings = savedData.settings.fieldSettings ?? {};
+        validateFieldSettings(fieldSettings);
+        const inferredTypes = Object.fromEntries(
+          buildFieldProfiles(
+            rawData,
+            typeOverrides(fieldSettings),
+            get().fieldNames
+          ).map((profile) => [profile.name, profile.dataType])
+        );
+        const runtimeData = applyFieldSettings(
           rawData,
+          fieldSettings,
+          inferredTypes
+        );
+        const next = getDataAndCrossfilterWrapper(runtimeData);
+        const nextData = next.data;
+        const nextCrossfilter = next.crossfilterWrapper;
+        const nextEmptyColumn = next.emptyColumn;
+        if (
+          !nextData ||
+          !nextCrossfilter ||
+          !nextEmptyColumn ||
+          !next.calculationManager
+        ) {
+          throw new Error("Failed to restore analysis rows");
+        }
+        const calculations = toRuntimeCalculations(
+          savedData.settings.calculations
+        );
+        const calculationManager = new CalculationManager(
+          nextData,
+          calculations
+        );
+        const fieldProfiles = buildFieldProfiles(
+          runtimeData,
           typeOverrides(fieldSettings),
           get().fieldNames
-        ).map((profile) => [profile.name, profile.dataType])
-      );
-      const runtimeData = applyFieldSettings(
-        rawData,
-        fieldSettings,
-        inferredTypes
-      );
-      const next = getDataAndCrossfilterWrapper(runtimeData);
-      const nextData = next.data;
-      const nextCrossfilter = next.crossfilterWrapper;
-      const nextEmptyColumn = next.emptyColumn;
-      if (
-        !nextData ||
-        !nextCrossfilter ||
-        !nextEmptyColumn ||
-        !next.calculationManager
-      ) {
-        throw new Error("Failed to restore analysis rows");
-      }
-      const calculations = toRuntimeCalculations(
-        savedData.settings.calculations
-      );
-      const calculationManager = new CalculationManager(nextData, calculations);
-      const fieldProfiles = buildFieldProfiles(
-        runtimeData,
-        typeOverrides(fieldSettings),
-        get().fieldNames
-      );
-      validateAggregateState(
-        savedData.settings.aggregates ?? [],
-        savedData.settings.charts,
-        [
-          ...fieldProfiles.map((profile) => profile.name),
-          ...calculations.map((calculation) => calculation.resultColumnName),
-        ]
-      );
-      const charts = savedData.settings.charts.map(toRuntimeChart);
-      const fieldGetter = (field: string): Record<IdType, datum> => {
-        const calculation = calculations.find(
-          (item) => item.resultColumnName === field
         );
-        if (calculation) {
-          const values: Record<IdType, datum> = {};
-          calculationManager
-            .executeCalculation(calculation)
-            .forEach((value, id) => (values[id] = value));
-          return values;
-        }
-        if (!nextData.some((row) => field in row)) {
-          return nextEmptyColumn;
-        }
-        return Object.fromEntries(
-          nextData.map((row) => [row.__ID, row[field]])
-        ) as Record<IdType, datum>;
-      };
-      nextCrossfilter.setFieldGetter(fieldGetter);
-      charts.forEach((chart) => nextCrossfilter.addChart(chart));
-      const colorScales: ColorScaleType[] = savedData.settings.colorScales.map(
-        (scale) =>
-          scale.type === "categorical"
-            ? adoptThemePalette({ ...scale, mapping: new Map(scale.mapping) })
-            : scale
-      );
-      set((state) => ({
-        rawData,
-        data: nextData,
-        fieldProfiles,
-        emptyColumn: nextEmptyColumn,
-        fileName: undefined,
-        crossfilterWrapper: nextCrossfilter,
-        calculationManager,
-        calculations: calculationManager.getCalculations(),
-        charts,
-        colorScales,
-        gridSettings: savedData.settings.gridSettings,
-        rowsSettings:
-          savedData.settings.rowsSettings ??
-          getDefaultRowsSettings(
-            fieldProfiles.map((profile) => profile.name),
-            calculations.map((calculation) => calculation.resultColumnName)
-          ),
-        metadata: savedData.settings.metadata,
-        liveItems: nextCrossfilter.getAllData(),
-        columnCache: {},
-        calcColumnCache: {},
-        nonce: state.nonce + 1,
-        filterReset: state.filterReset + 1,
-        fieldSettings,
-        aggregates: savedData.settings.aggregates ?? [],
-        geometryAssets: savedData.settings.geometryAssets ?? [],
-        theme: savedData.settings.theme,
-      }));
-      nextCrossfilter.setFieldGetter(get().getColumnData);
-    },
-  };
+        validateAggregateState(
+          savedData.settings.aggregates ?? [],
+          savedData.settings.charts,
+          [
+            ...fieldProfiles.map((profile) => profile.name),
+            ...calculations.map((calculation) => calculation.resultColumnName),
+          ]
+        );
+        const charts = savedData.settings.charts.map(toRuntimeChart);
+        const buildRestoredColumn = (field: string): Record<IdType, datum> => {
+          const calculation = calculations.find(
+            (item) => item.resultColumnName === field
+          );
+          if (calculation) {
+            const values: Record<IdType, datum> = {};
+            calculationManager
+              .executeCalculation(calculation)
+              .forEach((value, id) => (values[id] = value));
+            return values;
+          }
+          if (!nextData.some((row) => field in row)) {
+            return nextEmptyColumn;
+          }
+          return Object.fromEntries(
+            nextData.map((row) => [row.__ID, row[field]])
+          ) as Record<IdType, datum>;
+        };
+        // Filters ask for a column once per chart; build each one once.
+        const restoredColumns = new Map<string, Record<IdType, datum>>();
+        const fieldGetter = (field: string): Record<IdType, datum> => {
+          const cached = restoredColumns.get(field);
+          if (cached) return cached;
+          const column = buildRestoredColumn(field);
+          restoredColumns.set(field, column);
+          return column;
+        };
+        nextCrossfilter.setFieldGetter(fieldGetter);
+        charts.forEach((chart) => nextCrossfilter.addChart(chart));
+        const colorScales: ColorScaleType[] =
+          savedData.settings.colorScales.map((scale) =>
+            scale.type === "categorical"
+              ? adoptThemePalette({ ...scale, mapping: new Map(scale.mapping) })
+              : scale
+          );
+        set((state) => ({
+          rawData,
+          data: nextData,
+          fieldProfiles,
+          emptyColumn: nextEmptyColumn,
+          fileName: undefined,
+          crossfilterWrapper: nextCrossfilter,
+          calculationManager,
+          calculations: calculationManager.getCalculations(),
+          charts,
+          colorScales,
+          gridSettings: savedData.settings.gridSettings,
+          rowsSettings:
+            savedData.settings.rowsSettings ??
+            getDefaultRowsSettings(
+              fieldProfiles.map((profile) => profile.name),
+              calculations.map((calculation) => calculation.resultColumnName)
+            ),
+          metadata: savedData.settings.metadata,
+          liveItems: nextCrossfilter.getAllData(),
+          columnCache: {},
+          calcColumnCache: {},
+          nonce: state.nonce + 1,
+          filterReset: state.filterReset + 1,
+          fieldSettings,
+          aggregates: savedData.settings.aggregates ?? [],
+          geometryAssets: savedData.settings.geometryAssets ?? [],
+          theme: savedData.settings.theme,
+        }));
+        nextCrossfilter.setFieldGetter(get().getColumnData);
+      },
+    };
   });
 
   function assertUnusedCalculation(name: string) {
@@ -1471,10 +1498,15 @@ export function DataLayerProvider<T extends DatumObject>({
           store.getState().restoreFromStructure(nextSavedData);
         }
       } else if (savedDataChanged) {
-        if (nextSavedData) {
-          store.getState().restoreFromStructure(nextSavedData);
-        } else {
+        if (!nextSavedData) {
           store.getState().setData(store.getState().rawData);
+        } else if (
+          // A controlled host passes back what onStateChange just reported.
+          // Restoring it would rebuild every row and chart for no change.
+          getSavedStateFingerprint(nextSavedData) !==
+          getSavedStateFingerprint(store.getState().saveToStructure())
+        ) {
+          store.getState().restoreFromStructure(nextSavedData);
         }
       }
     } finally {
