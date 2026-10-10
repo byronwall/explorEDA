@@ -1,0 +1,14 @@
+{
+  "id": "b72bb58d-568a-4f62-8597-84201fdc5875",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:57a5c9",
+    "label": "Agent token ...57a5c9"
+  },
+  "createdAt": "2026-10-08T18:25:45.869Z",
+  "summary": "Updated metadata for \"Describe axis edits in History\".",
+  "nodeIds": [
+    "page-describe-axis-edits-in-history"
+  ]
+}

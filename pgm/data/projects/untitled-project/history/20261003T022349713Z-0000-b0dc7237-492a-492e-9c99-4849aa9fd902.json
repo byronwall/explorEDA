@@ -1,0 +1,16 @@
+{
+  "id": "b0dc7237-492a-492e-9c99-4849aa9fd902",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-03T02:23:49.713Z",
+  "summary": "Created \"Tooltips are poorly placed\" under \"fdbk 10/02\".",
+  "nodeIds": [
+    "page-tooltips-are-poorly-placed",
+    "page-fdbk-10-02"
+  ],
+  "metadata": {
+    "clientMutationId": "6af2a9f4-1ffc-4a02-9665-5c6056cbb404"
+  }
+}

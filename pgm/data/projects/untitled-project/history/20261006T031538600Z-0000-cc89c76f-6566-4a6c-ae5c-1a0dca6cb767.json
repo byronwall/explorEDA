@@ -1,0 +1,14 @@
+{
+  "id": "cc89c76f-6566-4a6c-ae5c-1a0dca6cb767",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:99bc4b",
+    "label": "Agent token ...99bc4b"
+  },
+  "createdAt": "2026-10-06T03:15:38.600Z",
+  "summary": "Updated metadata for \"add chart menu is too spread out\".",
+  "nodeIds": [
+    "page-add-chart-menu-is-too-spread-out"
+  ]
+}

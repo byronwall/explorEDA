@@ -1,0 +1,16 @@
+{
+  "id": "6efde101-97dd-43c3-b908-756a7f9e62ad",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-03T02:25:30.014Z",
+  "summary": "Created \"Hitting ESC did not close the colors popover\" under \"fdbk 10/02\".",
+  "nodeIds": [
+    "page-hitting-esc-did-not-close-the-colors-popover",
+    "page-fdbk-10-02"
+  ],
+  "metadata": {
+    "clientMutationId": "7f701bd5-c923-4b7e-99a3-07a510a12d34"
+  }
+}

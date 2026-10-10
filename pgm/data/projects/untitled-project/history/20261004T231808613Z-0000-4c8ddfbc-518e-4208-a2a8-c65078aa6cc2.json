@@ -1,0 +1,16 @@
+{
+  "id": "4c8ddfbc-518e-4208-a2a8-c65078aa6cc2",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:18:08.613Z",
+  "summary": "Created \"Resizing a chart caused it to \"jump\" to end of all charts\" under \"10-04\".",
+  "nodeIds": [
+    "page-resizing-a-chart-caused-it-to-jump-to-end-of-all-charts",
+    "page-10-04"
+  ],
+  "metadata": {
+    "clientMutationId": "d0d5eed4-682c-4ce4-9c7b-815e4494a532"
+  }
+}

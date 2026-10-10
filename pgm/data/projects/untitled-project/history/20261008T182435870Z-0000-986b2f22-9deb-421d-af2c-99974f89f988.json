@@ -1,0 +1,14 @@
+{
+  "id": "986b2f22-9deb-421d-af2c-99974f89f988",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:e20adc",
+    "label": "Agent token ...e20adc"
+  },
+  "createdAt": "2026-10-08T18:24:35.870Z",
+  "summary": "Set \"Edit the source note in place\" priority to medium.",
+  "nodeIds": [
+    "page-edit-the-source-note-in-place"
+  ]
+}

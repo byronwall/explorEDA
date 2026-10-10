@@ -1,0 +1,16 @@
+{
+  "id": "df796219-13bf-474d-ba97-33cb334d0c90",
+  "kind": "node.image.deleted",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T23:36:24.488Z",
+  "summary": "Deleted image \"image.png\" from \"Dead click on bar empty area should clear filters\".",
+  "nodeIds": [
+    "page-dead-click-on-bar-empty-area-should-clear-filters"
+  ],
+  "metadata": {
+    "imageId": "fca204c7-282b-491f-87e0-247b1c73e077",
+    "clientMutationId": "8629ff13-ce0e-42ef-980c-315063206899"
+  }
+}

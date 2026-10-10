@@ -1,0 +1,15 @@
+{
+  "id": "db8c66af-cb8e-4398-8e15-f4b0a07e8788",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T03:31:23.689Z",
+  "summary": "Created \"Remove \"inspect records\" on metric tiles\".",
+  "nodeIds": [
+    "page-remove-inspect-records-on-metric-tiles"
+  ],
+  "metadata": {
+    "clientMutationId": "bee3322b-e4aa-418c-9862-5c2122d68b4a"
+  }
+}

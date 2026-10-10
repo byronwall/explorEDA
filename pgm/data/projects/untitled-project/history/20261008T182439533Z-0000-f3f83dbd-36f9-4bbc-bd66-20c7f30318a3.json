@@ -1,0 +1,14 @@
+{
+  "id": "f3f83dbd-36f9-4bbc-bd66-20c7f30318a3",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:363142",
+    "label": "Agent token ...363142"
+  },
+  "createdAt": "2026-10-08T18:24:39.533Z",
+  "summary": "Set \"Check limits across facets\" priority to medium.",
+  "nodeIds": [
+    "page-check-limits-across-facets"
+  ]
+}

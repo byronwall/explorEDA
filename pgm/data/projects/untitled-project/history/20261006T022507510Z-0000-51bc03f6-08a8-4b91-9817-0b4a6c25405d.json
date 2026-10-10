@@ -1,0 +1,16 @@
+{
+  "id": "51bc03f6-08a8-4b91-9817-0b4a6c25405d",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:25:07.510Z",
+  "summary": "Created \"Marginal distribution should brush to filter too\" under \"10-05\".",
+  "nodeIds": [
+    "page-marginal-distribution-should-brush-to-filter-too",
+    "page-10-05"
+  ],
+  "metadata": {
+    "clientMutationId": "ac23252d-795a-453e-9169-4837160ee897"
+  }
+}

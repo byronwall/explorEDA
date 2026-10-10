@@ -1,0 +1,16 @@
+{
+  "id": "ff21bf11-90a7-40d4-b927-876f55b23b97",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-07T01:17:35.044Z",
+  "summary": "Added 1 images to \"Tooltip covers column header\".",
+  "nodeIds": [
+    "page-tooltip-covers-column-header"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "75024a14-8c68-45f2-8132-37626ca746b5"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "d95478ed-9e03-438c-8ee9-4061ef6c678a",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:23:46.536Z",
+  "summary": "Created \"Avoid persistent labels on charts\" under \"10-05\".",
+  "nodeIds": [
+    "page-avoid-persistent-labels-on-charts",
+    "page-10-05"
+  ],
+  "metadata": {
+    "clientMutationId": "3190349d-2912-42df-b945-d9e9667a824a"
+  }
+}

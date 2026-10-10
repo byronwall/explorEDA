@@ -1,0 +1,14 @@
+{
+  "id": "7db9d4be-563d-4d53-b1c8-c8668ef27db7",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:e87dcb",
+    "label": "Agent token ...e87dcb"
+  },
+  "createdAt": "2026-10-04T04:42:40.178Z",
+  "summary": "Changed \"Hitting ESC did not close the colors popover\" status to implemented.",
+  "nodeIds": [
+    "page-hitting-esc-did-not-close-the-colors-popover"
+  ]
+}

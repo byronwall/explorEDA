@@ -1,0 +1,16 @@
+{
+  "id": "0797efa0-1ccf-44ee-949d-ff9932d86900",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-03T01:27:44.524Z",
+  "summary": "Created \"distribution toggle cut off\" under \"fdbk 10/02\".",
+  "nodeIds": [
+    "page-distribution-toggle-cut-off",
+    "page-fdbk-10-02"
+  ],
+  "metadata": {
+    "clientMutationId": "cd6ade26-7bde-4820-9340-c06d4a47aa6a"
+  }
+}

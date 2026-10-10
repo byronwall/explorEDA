@@ -1,0 +1,14 @@
+{
+  "id": "bf6b1063-f6e5-4b0d-a901-db0c2ee559ba",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:8ce3a8",
+    "label": "Agent token ...8ce3a8"
+  },
+  "createdAt": "2026-10-04T04:42:43.231Z",
+  "summary": "Updated metadata for \"Tooltips are poorly placed\".",
+  "nodeIds": [
+    "page-tooltips-are-poorly-placed"
+  ]
+}

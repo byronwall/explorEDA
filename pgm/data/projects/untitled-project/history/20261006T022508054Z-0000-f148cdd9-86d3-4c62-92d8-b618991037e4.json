@@ -1,0 +1,16 @@
+{
+  "id": "f148cdd9-86d3-4c62-92d8-b618991037e4",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:25:08.054Z",
+  "summary": "Added 1 images to \"Marginal distribution should brush to filter too\".",
+  "nodeIds": [
+    "page-marginal-distribution-should-brush-to-filter-too"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "9273a7fc-b03d-446a-bade-4761af27c9cb"
+  }
+}

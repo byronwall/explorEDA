@@ -1,0 +1,16 @@
+{
+  "id": "716ef7ad-e590-42cc-bee2-fe515c7e22bc",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T23:38:26.709Z",
+  "summary": "Created \"Add chart controls cut off all charts.\" under \"10-06\".",
+  "nodeIds": [
+    "page-add-chart-controls-cut-off-all-charts",
+    "page-10-06"
+  ],
+  "metadata": {
+    "clientMutationId": "3e670f5f-c9a5-481f-9ce0-4a0459291c52"
+  }
+}

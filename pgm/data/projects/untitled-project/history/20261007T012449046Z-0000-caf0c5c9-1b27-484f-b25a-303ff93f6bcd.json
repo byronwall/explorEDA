@@ -1,0 +1,16 @@
+{
+  "id": "caf0c5c9-1b27-484f-b25a-303ff93f6bcd",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-07T01:24:49.046Z",
+  "summary": "Created \"Density dots are too small and cannot be controlled\" under \"10-06\".",
+  "nodeIds": [
+    "page-density-dots-are-too-small-and-cannot-be-controlled",
+    "page-10-06"
+  ],
+  "metadata": {
+    "clientMutationId": "7bd6920d-7de3-4952-81f2-c5ac70f0d856"
+  }
+}

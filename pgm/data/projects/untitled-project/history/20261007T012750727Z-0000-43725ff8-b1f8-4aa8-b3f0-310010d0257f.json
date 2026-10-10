@@ -1,0 +1,16 @@
+{
+  "id": "43725ff8-b1f8-4aa8-b3f0-310010d0257f",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-07T01:27:50.727Z",
+  "summary": "Added 1 images to \"Remove the react integration guide button\".",
+  "nodeIds": [
+    "page-remove-the-react-integration-guide-button"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "598f9047-e134-4ec0-9bf8-d409801ab826"
+  }
+}

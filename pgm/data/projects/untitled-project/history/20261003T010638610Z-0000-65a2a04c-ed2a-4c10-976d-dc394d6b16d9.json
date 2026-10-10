@@ -1,0 +1,16 @@
+{
+  "id": "65a2a04c-ed2a-4c10-976d-dc394d6b16d9",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-03T01:06:38.610Z",
+  "summary": "Created \"Date filter could use more options and viz\" under \"fdbk 10/02\".",
+  "nodeIds": [
+    "page-date-filter-could-use-more-options-and-viz",
+    "page-fdbk-10-02"
+  ],
+  "metadata": {
+    "clientMutationId": "4a800d19-4551-4f71-8a84-d678fe357e34"
+  }
+}

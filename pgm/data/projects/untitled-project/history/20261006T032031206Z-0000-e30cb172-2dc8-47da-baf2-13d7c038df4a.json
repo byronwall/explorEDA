@@ -1,0 +1,14 @@
+{
+  "id": "e30cb172-2dc8-47da-baf2-13d7c038df4a",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:15f152",
+    "label": "Agent token ...15f152"
+  },
+  "createdAt": "2026-10-06T03:20:31.206Z",
+  "summary": "Updated metadata for \"Avoid persistent labels on charts\".",
+  "nodeIds": [
+    "page-avoid-persistent-labels-on-charts"
+  ]
+}

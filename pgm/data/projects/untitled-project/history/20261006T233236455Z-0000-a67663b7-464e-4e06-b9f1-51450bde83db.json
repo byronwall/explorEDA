@@ -1,0 +1,16 @@
+{
+  "id": "a67663b7-464e-4e06-b9f1-51450bde83db",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T23:32:36.455Z",
+  "summary": "Created \"DSL view needs syntax highlighting\" under \"10-06\".",
+  "nodeIds": [
+    "page-dsl-view-needs-syntax-highlighting",
+    "page-10-06"
+  ],
+  "metadata": {
+    "clientMutationId": "8637091c-e9e2-4f95-a2cf-a0310064082f"
+  }
+}

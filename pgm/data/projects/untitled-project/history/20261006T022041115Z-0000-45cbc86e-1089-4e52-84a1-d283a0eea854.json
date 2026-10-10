@@ -1,0 +1,15 @@
+{
+  "id": "45cbc86e-1089-4e52-84a1-d283a0eea854",
+  "kind": "node.context.updated",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:20:41.115Z",
+  "summary": "Updated context for \"Examples section on home page needs some color\".",
+  "nodeIds": [
+    "page-examples-section-on-home-page-needs-some-color"
+  ],
+  "metadata": {
+    "clientMutationId": "81008fd7-0e97-4505-95eb-11144ba32a03"
+  }
+}

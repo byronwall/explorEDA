@@ -1,0 +1,14 @@
+{
+  "id": "59deb9d3-3492-41c7-b369-3e3c931a120a",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:esting",
+    "label": "Agent token ...esting"
+  },
+  "createdAt": "2026-10-02T04:30:33.321Z",
+  "summary": "Updated metadata for \"row display\".",
+  "nodeIds": [
+    "page-row-display"
+  ]
+}

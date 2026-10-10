@@ -1,0 +1,14 @@
+{
+  "id": "1679f251-7e75-4c52-b83a-577d330630d3",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9fbf14",
+    "label": "Agent token ...9fbf14"
+  },
+  "createdAt": "2026-10-05T01:36:15.420Z",
+  "summary": "Updated metadata for \"do side by side for order book example\".",
+  "nodeIds": [
+    "page-do-side-by-side-for-order-book-example"
+  ]
+}

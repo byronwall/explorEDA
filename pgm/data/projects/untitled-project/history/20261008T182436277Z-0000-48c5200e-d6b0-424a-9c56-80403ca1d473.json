@@ -1,0 +1,15 @@
+{
+  "id": "48c5200e-d6b0-424a-9c56-80403ca1d473",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:7a512e",
+    "label": "Agent token ...7a512e"
+  },
+  "createdAt": "2026-10-08T18:24:36.277Z",
+  "summary": "Created \"Edit legend and series names in place\" under \"More editable features\".",
+  "nodeIds": [
+    "page-edit-legend-and-series-names-in-place",
+    "page-more-editable-features"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "2cf6b37d-1fa4-4792-9c64-54f44df88014",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:57a5c9",
+    "label": "Agent token ...57a5c9"
+  },
+  "createdAt": "2026-10-08T18:25:46.098Z",
+  "summary": "Updated metadata for \"Confirm editors stay closed in a read-only preview\".",
+  "nodeIds": [
+    "page-confirm-editors-stay-closed-in-a-read-only-preview"
+  ]
+}

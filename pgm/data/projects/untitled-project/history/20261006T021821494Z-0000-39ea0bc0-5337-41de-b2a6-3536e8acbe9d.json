@@ -1,0 +1,21 @@
+{
+  "id": "39ea0bc0-5337-41de-b2a6-3536e8acbe9d",
+  "kind": "node.deleted",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:18:21.494Z",
+  "summary": "Deleted \"fdbk 10/02\" and 6 children.",
+  "nodeIds": [
+    "page-fdbk-10-02",
+    "page-add-chart-list-needs-some-structure-and-grouping-for-chart-types",
+    "page-remove-inspect-records-on-metric-tiles",
+    "page-hitting-esc-did-not-close-the-colors-popover",
+    "page-tooltips-are-poorly-placed",
+    "page-distribution-toggle-cut-off",
+    "page-date-filter-could-use-more-options-and-viz"
+  ],
+  "metadata": {
+    "clientMutationId": "b76da55f-cd55-4c41-9639-b4ed04000e9a"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "d8cc920c-f4bc-47f3-af41-5904668cb0a4",
+  "kind": "node.moved",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:21:35.301Z",
+  "summary": "Moved \"Bubble area has conflcit in labels\" under \"10-05\".",
+  "nodeIds": [
+    "page-bubble-area-has-conflcit-in-labels",
+    "page-10-05"
+  ],
+  "metadata": {
+    "clientMutationId": "4d8ab1da-9bff-4416-950c-25cf2581d389"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "8f41d354-67e4-47e3-adb4-468524abad85",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T23:32:37.037Z",
+  "summary": "Added 1 images to \"DSL view needs syntax highlighting\".",
+  "nodeIds": [
+    "page-dsl-view-needs-syntax-highlighting"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "e775b693-299b-4ddb-ad72-4797af82a723"
+  }
+}

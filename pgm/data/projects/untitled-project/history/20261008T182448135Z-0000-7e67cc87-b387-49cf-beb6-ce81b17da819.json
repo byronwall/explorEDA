@@ -1,0 +1,14 @@
+{
+  "id": "7e67cc87-b387-49cf-beb6-ce81b17da819",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:7caf23",
+    "label": "Agent token ...7caf23"
+  },
+  "createdAt": "2026-10-08T18:24:48.135Z",
+  "summary": "Set \"Retire the in-place editing initiative\" priority to low.",
+  "nodeIds": [
+    "page-retire-the-in-place-editing-initiative"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "f9b8f345-f2f1-47bc-9fa7-6c3ffa603fdc",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:esting",
+    "label": "Agent token ...esting"
+  },
+  "createdAt": "2026-10-02T04:30:32.928Z",
+  "summary": "Updated metadata for \"Chart focus should increase header size\".",
+  "nodeIds": [
+    "page-chart-focus-should-increase-header-size"
+  ]
+}

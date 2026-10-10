@@ -1,0 +1,15 @@
+{
+  "id": "1e25d484-acd9-4cb7-aa01-009f6637ac28",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:ee3ec1",
+    "label": "Agent token ...ee3ec1"
+  },
+  "createdAt": "2026-10-10T03:36:57.534Z",
+  "summary": "Created \"Decide where dashboard text is entered\" under \"Retired initiative follow-ups\".",
+  "nodeIds": [
+    "page-decide-where-dashboard-text-is-entered",
+    "page-retired-initiative-follow-ups"
+  ]
+}

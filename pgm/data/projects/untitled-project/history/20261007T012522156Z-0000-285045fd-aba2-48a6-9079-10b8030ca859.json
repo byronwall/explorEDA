@@ -1,0 +1,16 @@
+{
+  "id": "285045fd-aba2-48a6-9079-10b8030ca859",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-07T01:25:22.156Z",
+  "summary": "Created \"Ensure we have some sort of \"tight\" check between available chart settings and the new compact DSL\" under \"10-06\".",
+  "nodeIds": [
+    "page-ensure-we-have-some-sort-of-tight-check-between-available-chart-63ppx8",
+    "page-10-06"
+  ],
+  "metadata": {
+    "clientMutationId": "5af85479-aa27-4f5d-9383-50a4bb9c0b6b"
+  }
+}

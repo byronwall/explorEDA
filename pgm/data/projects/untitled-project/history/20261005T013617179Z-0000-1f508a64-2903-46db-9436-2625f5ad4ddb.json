@@ -1,0 +1,14 @@
+{
+  "id": "1f508a64-2903-46db-9436-2625f5ad4ddb",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9fbf14",
+    "label": "Agent token ...9fbf14"
+  },
+  "createdAt": "2026-10-05T01:36:17.179Z",
+  "summary": "Updated metadata for \"Resizing a chart caused it to \"jump\" to end of all charts\".",
+  "nodeIds": [
+    "page-resizing-a-chart-caused-it-to-jump-to-end-of-all-charts"
+  ]
+}

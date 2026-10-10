@@ -1,0 +1,14 @@
+{
+  "id": "70ef3172-0d8d-4879-9c01-08e0c0e66ac3",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9fbf14",
+    "label": "Agent token ...9fbf14"
+  },
+  "createdAt": "2026-10-05T01:36:15.791Z",
+  "summary": "Updated metadata for \"Field list is not left aligned on all bars\".",
+  "nodeIds": [
+    "page-field-list-is-not-left-aligned-on-all-bars"
+  ]
+}

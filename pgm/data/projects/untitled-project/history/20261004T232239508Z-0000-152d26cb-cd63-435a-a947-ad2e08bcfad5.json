@@ -1,0 +1,16 @@
+{
+  "id": "152d26cb-cd63-435a-a947-ad2e08bcfad5",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:22:39.508Z",
+  "summary": "Added 1 images to \"Group buttons in top nav better\".",
+  "nodeIds": [
+    "page-group-buttons-in-top-nav-better"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "98e94c06-3efc-4081-8654-aa0065a82077"
+  }
+}

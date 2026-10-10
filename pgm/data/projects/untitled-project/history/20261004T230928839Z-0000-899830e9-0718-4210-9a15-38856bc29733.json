@@ -1,0 +1,16 @@
+{
+  "id": "899830e9-0718-4210-9a15-38856bc29733",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:09:28.839Z",
+  "summary": "Added 1 images to \"do not have persistent text explaining how things work\".",
+  "nodeIds": [
+    "page-do-not-have-persistent-text-explaining-how-things-work"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "804f7f8f-2790-467b-bdc5-92567a9f54ea"
+  }
+}

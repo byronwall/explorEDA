@@ -1,0 +1,16 @@
+{
+  "id": "c3a28bb7-a1a1-41d9-985f-3d30263a87f2",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-07T01:20:39.144Z",
+  "summary": "Added 1 images to \"Tooltip blocks the data beneath\".",
+  "nodeIds": [
+    "page-tooltip-blocks-the-data-beneath"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "0334be67-6a34-4708-b0ac-e3c5cb809783"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "d57828d7-f7e6-4e57-957b-dcfe705fc8a8",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:14:59.252Z",
+  "summary": "Created \"Field list is not left aligned on all bars\" under \"10-04\".",
+  "nodeIds": [
+    "page-field-list-is-not-left-aligned-on-all-bars",
+    "page-10-04"
+  ],
+  "metadata": {
+    "clientMutationId": "f0bbe744-3dd8-4f3d-9b4a-7599a2f4bedf"
+  }
+}

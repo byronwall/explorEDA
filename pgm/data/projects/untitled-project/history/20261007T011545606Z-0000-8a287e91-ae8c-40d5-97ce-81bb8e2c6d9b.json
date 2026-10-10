@@ -1,0 +1,15 @@
+{
+  "id": "8a287e91-ae8c-40d5-97ce-81bb8e2c6d9b",
+  "kind": "node.context.updated",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-07T01:15:45.606Z",
+  "summary": "Updated context for \"Loading home page returns to previous chart demo\".",
+  "nodeIds": [
+    "page-loading-home-page-returns-to-previous-chart-demo"
+  ],
+  "metadata": {
+    "clientMutationId": "ba3aa4e1-382b-447d-81ad-129285e4cec4"
+  }
+}

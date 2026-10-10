@@ -1,0 +1,14 @@
+{
+  "id": "530a1370-af6b-4191-ac96-136e35a183bc",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9fbf14",
+    "label": "Agent token ...9fbf14"
+  },
+  "createdAt": "2026-10-05T01:36:16.160Z",
+  "summary": "Updated metadata for \"Group buttons in top nav better\".",
+  "nodeIds": [
+    "page-group-buttons-in-top-nav-better"
+  ]
+}

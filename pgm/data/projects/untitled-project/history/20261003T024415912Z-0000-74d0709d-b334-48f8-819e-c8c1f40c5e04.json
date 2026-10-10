@@ -1,0 +1,30 @@
+{
+  "id": "74d0709d-b334-48f8-819e-c8c1f40c5e04",
+  "kind": "nodes.bulk.updated",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-03T02:44:15.912Z",
+  "summary": "Bulk updated 16 nodes: archived.",
+  "nodeIds": [
+    "page-feedback-10-1",
+    "page-rows-drawer-needs-an-expanded-current-and-small-view",
+    "page-tooltip-for-scatter-is-too-large-and-in-the-way",
+    "page-chart-focus-should-increase-header-size",
+    "page-improve-the-row-view-with-small-distribution-in-col-header",
+    "page-row-display",
+    "page-would-be-nice-to-show-data-type-clearly",
+    "page-missing-a-robust-right-click-menu-on-header-and-cells",
+    "page-column-picker-looks-goofy",
+    "page-search-should-highlight-what-matched",
+    "page-adding-slider-or-distribution-view-to-filter-in-popover",
+    "page-filter-popover-behaves-oddly",
+    "page-would-be-nice-to-drag-columns-left-and-right",
+    "page-would-be-nice-to-drag-columns-to-gutter-to-remove-variable",
+    "page-column-header-should-match-cell-alignment",
+    "page-chart-settings-should-allow-control-of-all-filters-on-chart"
+  ],
+  "metadata": {
+    "clientMutationId": "425294d2-e07e-4144-8625-7faca9592f6d"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "2ca3d79e-1d55-4604-ab65-f94a8fd04711",
+  "kind": "node.title.updated",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T03:03:59.845Z",
+  "summary": "Renamed \"testing\" to \"testing-AAA\".",
+  "nodeIds": [
+    "page-testing"
+  ],
+  "metadata": {
+    "clientMutationId": "82b35416-7a03-4a7c-a600-32a9c3b664f3"
+  }
+}

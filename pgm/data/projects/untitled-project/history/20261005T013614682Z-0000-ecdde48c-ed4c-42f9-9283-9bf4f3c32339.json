@@ -1,0 +1,14 @@
+{
+  "id": "ecdde48c-ed4c-42f9-9283-9bf4f3c32339",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9fbf14",
+    "label": "Agent token ...9fbf14"
+  },
+  "createdAt": "2026-10-05T01:36:14.682Z",
+  "summary": "Updated metadata for \"Compact vertical space\".",
+  "nodeIds": [
+    "page-compact-vertical-space"
+  ]
+}

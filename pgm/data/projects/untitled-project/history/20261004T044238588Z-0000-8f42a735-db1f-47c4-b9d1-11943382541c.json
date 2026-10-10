@@ -1,0 +1,14 @@
+{
+  "id": "8f42a735-db1f-47c4-b9d1-11943382541c",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:32bec5",
+    "label": "Agent token ...32bec5"
+  },
+  "createdAt": "2026-10-04T04:42:38.588Z",
+  "summary": "Updated metadata for \"distribution toggle cut off\".",
+  "nodeIds": [
+    "page-distribution-toggle-cut-off"
+  ]
+}

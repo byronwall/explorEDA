@@ -1,0 +1,14 @@
+{
+  "id": "abda9099-4b47-4a15-9fa0-9ba018966a2f",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9fbf14",
+    "label": "Agent token ...9fbf14"
+  },
+  "createdAt": "2026-10-05T01:36:15.049Z",
+  "summary": "Updated metadata for \"do not have persistent text explaining how things work\".",
+  "nodeIds": [
+    "page-do-not-have-persistent-text-explaining-how-things-work"
+  ]
+}

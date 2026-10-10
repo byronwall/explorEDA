@@ -1,0 +1,14 @@
+{
+  "id": "3d3fdbcc-ee8f-4588-952e-2341b41dafb4",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:6fb15d",
+    "label": "Agent token ...6fb15d"
+  },
+  "createdAt": "2026-10-08T18:24:43.220Z",
+  "summary": "Set \"Describe axis edits in History\" priority to low.",
+  "nodeIds": [
+    "page-describe-axis-edits-in-history"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "ec2835cc-867a-4e68-bc6e-295538fa8997",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:c37d8a",
+    "label": "Agent token ...c37d8a"
+  },
+  "createdAt": "2026-10-08T18:24:47.313Z",
+  "summary": "Set \"Drop the legacy axis min/max placeholder\" priority to low.",
+  "nodeIds": [
+    "page-drop-the-legacy-axis-min-max-placeholder"
+  ]
+}

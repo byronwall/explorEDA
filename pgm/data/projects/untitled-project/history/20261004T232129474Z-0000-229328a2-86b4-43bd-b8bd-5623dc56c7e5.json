@@ -1,0 +1,16 @@
+{
+  "id": "229328a2-86b4-43bd-b8bd-5623dc56c7e5",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:21:29.474Z",
+  "summary": "Added 1 images to \"Compact vertical space\".",
+  "nodeIds": [
+    "page-compact-vertical-space"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "5fb47dd3-3a28-43f5-988f-369ede75a8da"
+  }
+}

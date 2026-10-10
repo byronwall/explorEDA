@@ -1,0 +1,16 @@
+{
+  "id": "7d61ef3f-f1f8-462c-98c6-20ca51b611f1",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-07T01:21:30.499Z",
+  "summary": "Added 1 images to \"History view is really nice, tighten the colors and overall visuals\".",
+  "nodeIds": [
+    "page-history-view-is-really-nice-tighten-the-colors-and-overall-visuals"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "6c07aa28-f2c1-43cb-8683-df2aa734209f"
+  }
+}

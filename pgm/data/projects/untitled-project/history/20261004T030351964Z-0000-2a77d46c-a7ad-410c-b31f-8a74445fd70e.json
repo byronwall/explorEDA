@@ -1,0 +1,15 @@
+{
+  "id": "2a77d46c-a7ad-410c-b31f-8a74445fd70e",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T03:03:51.964Z",
+  "summary": "Created \"testing\".",
+  "nodeIds": [
+    "page-testing"
+  ],
+  "metadata": {
+    "clientMutationId": "dbb5fe28-04ad-4fa7-8338-144c2e2ec77b"
+  }
+}

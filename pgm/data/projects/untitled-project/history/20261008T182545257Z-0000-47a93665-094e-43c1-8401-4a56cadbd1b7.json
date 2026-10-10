@@ -1,0 +1,14 @@
+{
+  "id": "47a93665-094e-43c1-8401-4a56cadbd1b7",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:57a5c9",
+    "label": "Agent token ...57a5c9"
+  },
+  "createdAt": "2026-10-08T18:25:45.257Z",
+  "summary": "Updated metadata for \"Edit the source note in place\".",
+  "nodeIds": [
+    "page-edit-the-source-note-in-place"
+  ]
+}

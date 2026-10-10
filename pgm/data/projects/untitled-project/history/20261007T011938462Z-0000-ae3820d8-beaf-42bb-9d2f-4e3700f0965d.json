@@ -1,0 +1,16 @@
+{
+  "id": "ae3820d8-beaf-42bb-9d2f-4e3700f0965d",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-07T01:19:38.462Z",
+  "summary": "Added 1 images to \"Was there a regression on table column width?\".",
+  "nodeIds": [
+    "page-was-there-a-regression-on-table-column-width"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "bf097156-99d0-4e5f-b42f-58bbd7ec84de"
+  }
+}

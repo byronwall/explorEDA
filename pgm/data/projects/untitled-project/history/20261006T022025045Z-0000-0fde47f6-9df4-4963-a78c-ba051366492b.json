@@ -1,0 +1,16 @@
+{
+  "id": "0fde47f6-9df4-4963-a78c-ba051366492b",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:20:25.045Z",
+  "summary": "Added 1 images to \"Examples section on home page needs some color\".",
+  "nodeIds": [
+    "page-examples-section-on-home-page-needs-some-color"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "6dabdc9a-0650-4855-8642-f6027a8e7a53"
+  }
+}

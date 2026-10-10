@@ -1,0 +1,14 @@
+{
+  "id": "9d5de40e-b489-42f3-b09d-c0be68117a9c",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:af95eb",
+    "label": "Agent token ...af95eb"
+  },
+  "createdAt": "2026-10-10T03:36:44.452Z",
+  "summary": "Created \"Retired initiative follow-ups\".",
+  "nodeIds": [
+    "page-retired-initiative-follow-ups"
+  ]
+}

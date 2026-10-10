@@ -1,0 +1,15 @@
+{
+  "id": "cc9c56aa-e138-4903-9ddb-bb4aa8493b3d",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:dd9e29",
+    "label": "Agent token ...dd9e29"
+  },
+  "createdAt": "2026-10-08T18:24:43.630Z",
+  "summary": "Created \"Verification not yet done\" under \"In-place chart editing\".",
+  "nodeIds": [
+    "page-verification-not-yet-done",
+    "page-in-place-chart-editing"
+  ]
+}

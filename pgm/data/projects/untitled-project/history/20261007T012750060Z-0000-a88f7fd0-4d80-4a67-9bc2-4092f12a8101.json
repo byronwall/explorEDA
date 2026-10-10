@@ -1,0 +1,16 @@
+{
+  "id": "a88f7fd0-4d80-4a67-9bc2-4092f12a8101",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-07T01:27:50.060Z",
+  "summary": "Created \"Remove the react integration guide button\" under \"10-06\".",
+  "nodeIds": [
+    "page-remove-the-react-integration-guide-button",
+    "page-10-06"
+  ],
+  "metadata": {
+    "clientMutationId": "eff3275e-857f-47fd-8b3c-72350d422c66"
+  }
+}

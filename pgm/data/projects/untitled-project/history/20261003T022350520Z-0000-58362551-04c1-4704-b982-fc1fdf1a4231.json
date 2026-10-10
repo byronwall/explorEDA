@@ -1,0 +1,16 @@
+{
+  "id": "58362551-04c1-4704-b982-fc1fdf1a4231",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-03T02:23:50.520Z",
+  "summary": "Added 1 images to \"Tooltips are poorly placed\".",
+  "nodeIds": [
+    "page-tooltips-are-poorly-placed"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "aa62b1c7-3f1e-4983-88d2-fbe64e010c24"
+  }
+}

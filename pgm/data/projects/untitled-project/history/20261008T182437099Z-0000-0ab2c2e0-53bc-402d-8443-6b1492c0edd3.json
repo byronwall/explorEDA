@@ -1,0 +1,15 @@
+{
+  "id": "0ab2c2e0-53bc-402d-8443-6b1492c0edd3",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:58b8ea",
+    "label": "Agent token ...58b8ea"
+  },
+  "createdAt": "2026-10-08T18:24:37.099Z",
+  "summary": "Created \"Axis limits on more chart families\" under \"In-place chart editing\".",
+  "nodeIds": [
+    "page-axis-limits-on-more-chart-families",
+    "page-in-place-chart-editing"
+  ]
+}

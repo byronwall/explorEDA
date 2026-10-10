@@ -1,0 +1,16 @@
+{
+  "id": "42350c87-1e04-4f76-9431-a48f8c1497c2",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-07T01:17:34.436Z",
+  "summary": "Created \"Tooltip covers column header\" under \"10-06\".",
+  "nodeIds": [
+    "page-tooltip-covers-column-header",
+    "page-10-06"
+  ],
+  "metadata": {
+    "clientMutationId": "42a7ed3c-3e82-44c6-abe4-34323923c277"
+  }
+}

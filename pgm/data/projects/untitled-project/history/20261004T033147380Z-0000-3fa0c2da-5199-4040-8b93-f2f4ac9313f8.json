@@ -1,0 +1,16 @@
+{
+  "id": "3fa0c2da-5199-4040-8b93-f2f4ac9313f8",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T03:31:47.380Z",
+  "summary": "Added 1 images to \"Remove \"inspect records\" on metric tiles\".",
+  "nodeIds": [
+    "page-remove-inspect-records-on-metric-tiles"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "edb9ebba-e6d8-46ee-9874-0bf28020e2b7"
+  }
+}

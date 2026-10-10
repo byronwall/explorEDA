@@ -1,0 +1,16 @@
+{
+  "id": "99983163-7cd6-4d41-b7e0-5f852f92a9aa",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:18:26.429Z",
+  "summary": "Created \"\"add new chart\" placement scrolls down\" under \"Resizing a chart caused it to \"jump\" to end of all charts\".",
+  "nodeIds": [
+    "page-add-new-chart-placement-scrolls-down",
+    "page-resizing-a-chart-caused-it-to-jump-to-end-of-all-charts"
+  ],
+  "metadata": {
+    "clientMutationId": "36ca9fca-a6b7-4456-9268-4f5ae019630b"
+  }
+}

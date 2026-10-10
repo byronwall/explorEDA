@@ -1,0 +1,16 @@
+{
+  "id": "e159a4a5-a56f-4361-866e-c0aac7f81c8b",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:09:27.890Z",
+  "summary": "Created \"do not have persistent text explaining how things work\" under \"10-04\".",
+  "nodeIds": [
+    "page-do-not-have-persistent-text-explaining-how-things-work",
+    "page-10-04"
+  ],
+  "metadata": {
+    "clientMutationId": "e467e3e6-41cd-4b5e-a6e2-209cd3f9d704"
+  }
+}

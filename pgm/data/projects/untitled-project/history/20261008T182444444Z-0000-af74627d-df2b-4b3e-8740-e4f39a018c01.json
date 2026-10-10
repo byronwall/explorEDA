@@ -1,0 +1,14 @@
+{
+  "id": "af74627d-df2b-4b3e-8740-e4f39a018c01",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:0cce4e",
+    "label": "Agent token ...0cce4e"
+  },
+  "createdAt": "2026-10-08T18:24:44.444Z",
+  "summary": "Set \"Check axis editors at 783 and 390 px\" priority to high.",
+  "nodeIds": [
+    "page-check-axis-editors-at-783-and-390-px"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "id": "70cf54c1-9356-4578-b015-06c5c5301367",
+  "kind": "node.deleted",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T23:28:46.822Z",
+  "summary": "Deleted \"10-05\" and 12 children.",
+  "nodeIds": [
+    "page-10-05",
+    "page-prevent-horz-overflow-on-data-tables-when-they-fit",
+    "page-prefer-toggle-buttons-over-select-whenever-possible",
+    "page-settings-menu-is-tall-hard-to-know-more-below",
+    "page-calc-ui-is-confusing-and-needs-refined",
+    "page-hex-bin-dead-click-should-clear-filter",
+    "page-need-more-control-of-text-size-for-axis-labels",
+    "page-marginal-distribution-should-brush-to-filter-too",
+    "page-avoid-persistent-labels-on-charts",
+    "page-bubble-should-render-above-grid-lines",
+    "page-bubble-area-has-conflcit-in-labels",
+    "page-add-chart-menu-is-too-spread-out",
+    "page-examples-section-on-home-page-needs-some-color"
+  ],
+  "metadata": {
+    "clientMutationId": "0cc1a158-e48c-4251-88e9-3250fcce7fe0"
+  }
+}

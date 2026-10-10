@@ -1,0 +1,14 @@
+{
+  "id": "e309ffec-73af-4844-91b8-6ea2f770bc3b",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:57a5c9",
+    "label": "Agent token ...57a5c9"
+  },
+  "createdAt": "2026-10-08T18:25:45.334Z",
+  "summary": "Updated metadata for \"Edit legend and series names in place\".",
+  "nodeIds": [
+    "page-edit-legend-and-series-names-in-place"
+  ]
+}

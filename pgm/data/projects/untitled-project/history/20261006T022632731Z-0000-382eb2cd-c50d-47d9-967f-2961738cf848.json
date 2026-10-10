@@ -1,0 +1,16 @@
+{
+  "id": "382eb2cd-c50d-47d9-967f-2961738cf848",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:26:32.731Z",
+  "summary": "Added 1 images to \"Need more control of text size for axis labels\".",
+  "nodeIds": [
+    "page-need-more-control-of-text-size-for-axis-labels"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "dd63c27e-49f4-4462-9202-51c693b833c3"
+  }
+}

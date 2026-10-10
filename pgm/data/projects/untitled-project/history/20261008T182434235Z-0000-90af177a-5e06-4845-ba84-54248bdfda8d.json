@@ -1,0 +1,15 @@
+{
+  "id": "90af177a-5e06-4845-ba84-54248bdfda8d",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:0d835d",
+    "label": "Agent token ...0d835d"
+  },
+  "createdAt": "2026-10-08T18:24:34.235Z",
+  "summary": "Created \"More editable features\" under \"In-place chart editing\".",
+  "nodeIds": [
+    "page-more-editable-features",
+    "page-in-place-chart-editing"
+  ]
+}

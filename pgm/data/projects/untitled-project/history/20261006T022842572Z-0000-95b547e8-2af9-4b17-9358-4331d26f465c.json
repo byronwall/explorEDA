@@ -1,0 +1,16 @@
+{
+  "id": "95b547e8-2af9-4b17-9358-4331d26f465c",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T02:28:42.572Z",
+  "summary": "Created \"calc ui is confusing and needs refined\" under \"10-05\".",
+  "nodeIds": [
+    "page-calc-ui-is-confusing-and-needs-refined",
+    "page-10-05"
+  ],
+  "metadata": {
+    "clientMutationId": "14bbe209-f68e-45fe-a48a-7a176fed6a1b"
+  }
+}

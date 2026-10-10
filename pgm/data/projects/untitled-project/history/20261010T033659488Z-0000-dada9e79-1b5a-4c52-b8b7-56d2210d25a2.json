@@ -1,0 +1,15 @@
+{
+  "id": "dada9e79-1b5a-4c52-b8b7-56d2210d25a2",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:f38ba8",
+    "label": "Agent token ...f38ba8"
+  },
+  "createdAt": "2026-10-10T03:36:59.488Z",
+  "summary": "Created \"Probe related-table evaluation at scale\" under \"Retired initiative follow-ups\".",
+  "nodeIds": [
+    "page-probe-related-table-evaluation-at-scale",
+    "page-retired-initiative-follow-ups"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "5eaeade8-2cdf-4eaf-b112-d173b60dcbed",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:0ebcb9",
+    "label": "Agent token ...0ebcb9"
+  },
+  "createdAt": "2026-10-08T18:24:40.761Z",
+  "summary": "Set \"Keyboard route to an axis range\" priority to high.",
+  "nodeIds": [
+    "page-keyboard-route-to-an-axis-range"
+  ]
+}

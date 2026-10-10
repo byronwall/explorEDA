@@ -1,0 +1,14 @@
+{
+  "id": "eef6db94-a7fd-422c-8539-ebe951edfdde",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:esting",
+    "label": "Agent token ...esting"
+  },
+  "createdAt": "2026-10-02T04:30:32.179Z",
+  "summary": "Updated metadata for \"chart settings should allow control of all filters on chart\".",
+  "nodeIds": [
+    "page-chart-settings-should-allow-control-of-all-filters-on-chart"
+  ]
+}

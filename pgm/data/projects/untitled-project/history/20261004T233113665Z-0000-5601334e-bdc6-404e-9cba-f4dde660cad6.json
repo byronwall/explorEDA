@@ -1,0 +1,16 @@
+{
+  "id": "5601334e-bdc6-404e-9cba-f4dde660cad6",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:31:13.665Z",
+  "summary": "Created \"Click should always filter\" under \"10-04\".",
+  "nodeIds": [
+    "page-click-should-always-filter",
+    "page-10-04"
+  ],
+  "metadata": {
+    "clientMutationId": "2b3900ae-3d7f-4835-9c83-74ccb31ff80a"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "ccad614b-e6f5-4a2f-934d-069a4fbe5f8c",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-04T23:31:14.295Z",
+  "summary": "Added 1 images to \"Click should always filter\".",
+  "nodeIds": [
+    "page-click-should-always-filter"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "6e87e30c-aa1a-41c4-9609-4f6d1ceb38ca"
+  }
+}

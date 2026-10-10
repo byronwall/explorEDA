@@ -1,0 +1,16 @@
+{
+  "id": "fa48943b-90a0-4156-8522-41c984e67e30",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-06T23:32:00.583Z",
+  "summary": "Created \"Move facet info up to avoid extra line\" under \"10-06\".",
+  "nodeIds": [
+    "page-move-facet-info-up-to-avoid-extra-line",
+    "page-10-06"
+  ],
+  "metadata": {
+    "clientMutationId": "472e61f2-5b51-44c8-bd79-82435551b10e"
+  }
+}
