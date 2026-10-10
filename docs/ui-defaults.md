@@ -66,6 +66,10 @@ Chart settings must keep the chart visible. Prefer space beside the panel, then 
 When no outside space remains, use a compact corner editor with scrollable controls.
 Apply valid chart settings immediately so users can compare the result. Keep a reset action for the current edit session.
 Do not add a persistent sidebar for temporary inspection.
+Edit a visible chart feature where it is drawn. Double-click, Enter, or F2 on a title opens a field in its place, and its context menu offers the same edit and a reset to the inherited name. The chart shows each keystroke, Escape restores the old text, and the whole edit is one undo step. An editor never starts a chart drag, brush, or shortcut.
+A numeric axis has a range: an exact minimum and maximum in the Axes settings, each blank to follow the data. A range only changes the view. Marks outside it are clipped, never filtered, and the row count stays the same. A draft that is not a number, or a minimum at or above the maximum, is marked and never applied.
+Double-click a numeric axis, or pick Set range from its context menu, to edit its range in a small popover beside it. Double-click an axis title, or press Enter on it, to edit the title in place. A soft wash on the axis band shows where these act. Command-click on an axis still inspects its field, and Alt-click still traces.
+Drag along a numeric axis to pan its range, or drag one of its end grips to stretch that end, as if pulling a ruler by that tick. The chart follows the pointer, Escape puts the range back, and the drag is one undo step. The header readout names these gestures while the pointer is on the axis. A drag on an axis never brushes or filters.
 The plot area holds the chart only. Usage hints, such as "Click a cell to select", join the status line only while the pointer or focus is on the chart. Optional actions on the plot, such as Fit view, appear the same way. Never show an "Inspect" button on a chart or card. Alt-click or Alt-Enter on a mark opens its trace.
 A click on a mark always filters: a bar, box, or category toggles its value, and a histogram bin sets the range to its bounds.
 A plain click on empty plot space, away from every mark, clears that chart's filters, as its clear-filter action does. This covers the space above and between bars and a marginal band outside its bins. A drag or brush is never a dead click, and Alt-click stays inspection.
@@ -74,7 +78,7 @@ Keep a chart's actions in its header: View data, Duplicate, details, settings, a
 Hidden header actions take no room, so the chart name keeps the full header until the pointer or focus reaches it.
 The field list is the one workspace tool that stays open. It floats over the right edge from the top of the viewport, never resizes the chart grid, and becomes a bottom sheet on narrow screens. Controls it covers move beside it. Fields in the toolbar and the F key open it, and Shift+F opens every field's distribution in a full view.
 
-Workspace settings (calculations, colors, and grid) share one panel that floats over the right edge in the field list's place. Each toolbar button opens its tab and closes the panel when pressed again. Every tab stays mounted, so unsaved edits survive a switch. The panel has a narrow and a wide width, and becomes a full sheet on narrow screens. Escape closes it and returns focus to its toolbar button.
+Workspace settings (calculations, theme, colors, and grid) share one panel that floats over the right edge in the field list's place. Each toolbar button opens its tab and closes the panel when pressed again. Every tab stays mounted, so unsaved edits survive a switch. The panel has a narrow and a wide width, and becomes a full sheet on narrow screens. Escape closes it and returns focus to its toolbar button.
 The right edge shows one panel at a time. Rows, workspace settings, and host panels replace each other. They cover the field list, which returns when they close.
 A host panel, such as the demo's History, gets an icon button beside Fields and Rows, an optional letter shortcut, and the settings panel's narrow and wide sizes. Its wide size shows more detail, not just more room.
 While the workspace is read-only, such as during a history preview, the charts and editing tools take no input. The filter scope stays visible and host panels stay usable.
@@ -96,8 +100,12 @@ Keep a confirmation small and centered: a short question, one sentence that name
 - Label local Rows filters and table searches separately from chart filters.
 - Keep a clear-filter control visible on every chart with an active filter.
 - Chart settings have a Filters tab with a manual control for every filter the chart sets: the fields its marks select, then any other filtered field. Each control matches the field's type and shows its distribution. A selection on the chart and the control stay in step.
-- Show the values under the pointer in the chart panel header, beside the title, in one line. A crosshair or highlight marks the point. Do not float a readout over the plot.
+- Show the values under the pointer in the chart panel header, beside the title, in one line. A crosshair or highlight marks the point. Do not float a readout over the plot. Under a headline theme the readout covers the end of the subtitle line while the pointer is on the plot, so a reading never moves the header.
 - The chart details view enlarges the chart title with the chart.
+- A chart has one header, which the workspace theme styles. Compact keeps the title on one line beside the controls. A headline theme, such as Newsprint, wraps the title to two lines above the plot, then clamps it and shows a clip marker whose tooltip suggests a larger chart or a shorter title. The subtitle line under it holds the filter control and table search. Hidden actions float over the title's top-right corner; where they stay shown (touch screens and chart details), they sit in the band above the headline.
+- A chart's source note sits under the plot on one line. The header and note take their height from the plot, never from the tile.
+- Chart colors follow the workspace theme too. A categorical scale on the Theme palette takes the theme's colors, and each category keeps its slot, so a theme switch never changes which category has which color position. Palette colors lighten in dark mode. Hand-picked colors and fixed palettes stay as chosen and are listed as overrides. Move categories in the scale editor to choose which takes which color.
+- Chart type follows the workspace theme unless a chart overrides it on purpose. Size and weight controls offer a Theme choice that clears the override. The Theme tab lists every override by chart, with a reset for each property and for the whole chart. A reset changes type only, never fields, filters, scales, or layout.
 - Label filter bounds with their meaning and state where the filter applies.
 - Pair a filter's bounds side by side in one row, such as At least and At most, under its distribution.
 - Start new source imports with summary and data tables. Let users choose their first chart.
@@ -114,8 +122,8 @@ Keep a confirmation small and centered: a short question, one sentence that name
 
 ## Verification
 
-Build the package with `pnpm --filter exploreda build` before browser checks. The demo uses built package exports.
-Use a frozen production preview during concurrent source edits. Vite can reload the page when test files change.
+The demo dev server runs the library from source, so browser checks need no build; see [Verifying changes](../AGENTS.md#verifying-changes).
+Vite can reload the page when test files change. During concurrent source edits, check a frozen build with `EXPLOREDA_DIST=1` instead.
 
 Check changed flows at 1280 px, 783 px, and 390 px widths. Use real pointer and keyboard input.
 Check long field names, null values, active filters, many categories, and empty results.

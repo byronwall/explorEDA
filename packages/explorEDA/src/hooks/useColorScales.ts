@@ -17,15 +17,15 @@ import {
   makeColorScale,
   makeD3ColorScale,
 } from "@/lib/colorScaleMath";
-import {
-  DEFAULT_CATEGORICAL_PALETTE,
-  DEFAULT_SEQUENTIAL_PALETTE,
-} from "@/lib/colorPalettes";
+import { DEFAULT_SEQUENTIAL_PALETTE } from "@/lib/colorPalettes";
 
 import { useCallback, useMemo } from "react";
+import { useDisplayColorScales } from "./useDisplayColorScales";
+import { THEME_PALETTE } from "@/lib/themePalettes";
 
 export function useColorScales(): UseColorScalesReturn {
-  const colorScales = useDataLayer((state) => state.colorScales);
+  // Charts and editors see colors as drawn in the current theme and mode.
+  const colorScales = useDisplayColorScales();
   const addColorScale = useDataLayer((state) => state.addColorScale);
   const removeColorScale = useDataLayer((state) => state.removeColorScale);
   const updateColorScale = useDataLayer((state) => state.updateColorScale);
@@ -106,7 +106,7 @@ export function useColorScales(): UseColorScalesReturn {
     // The largest groups take the most distinct colors; the smallest past the
     // palette's end share a neutral gray.
     const assignment = {
-      paletteId: DEFAULT_CATEGORICAL_PALETTE,
+      paletteId: THEME_PALETTE,
       order: counts ? ("frequency" as const) : ("data" as const),
       overflow: "other" as const,
     };

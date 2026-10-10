@@ -1,3 +1,4 @@
+import type { ThemeColors } from "@/lib/themePalettes";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import { defaultCategoricalColors, makeColorScale } from "@/lib/colorScaleMath";
 import { finiteNumber, numericExclusionReason } from "@/lib/numeric";
@@ -16,6 +17,8 @@ export interface EcdfSnapshot {
   values: Record<number, datum>;
   groupData?: Record<number, datum>;
   colorScale?: ColorScaleType;
+  /** Fallback colors from the workspace theme. */
+  themeColors?: ThemeColors;
 }
 
 /** One distinct observed value. Equal values share a step. */
@@ -382,8 +385,9 @@ export function planEcdf({
   const curves: EcdfCurve[] = [];
   if (settings.colorField) {
     shown.forEach(([key, group], index) => {
-      let color =
-        defaultCategoricalColors[index % defaultCategoricalColors.length]!;
+      const fallback =
+        snapshot.themeColors?.categorical ?? defaultCategoricalColors;
+      let color = fallback[index % fallback.length]!;
       if (resolve) {
         try {
           color = resolve(group.value);

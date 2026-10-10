@@ -1,9 +1,9 @@
 ---
 title: "Edit chart features in place"
 slug: "in-place-chart-editing"
-phase: intent
+phase: implementation
 status: current
-last_updated: "2026-10-06"
+last_updated: "2026-10-08"
 ---
 
 # Edit chart features in place
@@ -52,12 +52,23 @@ Candidate entry points include double-click, a context-menu action, and an ancho
 
 ## Current reality that matters
 
-Title and axis-label fields already update through live chart settings. The settings editor keeps session reset values. There is no shared subtitle setting.
+The first release is built in stacked PRs #203–#206, still in review. Titles, axis titles, and numeric axis ranges edit in place. Ranges are a real setting (`xAxis.limits`, `yAxis.limits`) that scatter, bar, histogram, line, row, and box charts honor; marks outside are clipped, not filtered. Each edit applies live and reaches the host as one `onStateChange`.
 
-Titles sit inside the chart’s drag handle and can expose trace actions. Axis labels support field inspection through modifier-click and a context menu. Common numerical axes still lack a complete editable bounds contract. These are existing interaction constraints, not reasons to reject direct editing.
+Titles sit inside the chart’s drag handle, so the title editor opens on the second press of a double-click rather than on `dblclick`. Axis labels keep field inspection through Command-click and the context menu, which now also offers range and title actions. There is still no shared subtitle setting; it arrives with the editorial stack (#192).
 
-## Next step after confirmation
+## Plan
 
-Compare a few entry gestures on one title and one numerical axis. Prove immediate valid updates, useful undo steps, invalid-bound handling, reset, and saved-state restore. Check that editing leaves row counts unchanged and does not move the chart. Add axis dragging only if it improves the task over exact entry.
+The [implementation plan](implementation-plan.md) settles the first gestures: double-click, Enter, and the context menu open an editor in place, and an axis drag follows exact entry. Edits apply immediately and reach the host as one undo step.
+
+## Remaining work
+
+Follow-up items live in the Product Grid (`pgm/data`) under **In-place chart editing**:
+
+- subtitle and note editing after #192;
+- limits for date axes, ECDF, heatmap, and map;
+- a keyboard route to an axis range, and touch gestures;
+- one undo step per settings-field edit;
+- checks at 783 and 390 px, in dark mode, and in read-only previews;
+- retiring this initiative once the stack merges.
 
 See the [reference packet](references/README.md), [axis-domain initiative](../axis-domain-controls/intent-brief.md), and [editorial styling initiative](../editorial-chart-styling/intent-brief.md).

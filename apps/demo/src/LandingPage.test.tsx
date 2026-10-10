@@ -321,10 +321,11 @@ describe("LandingPage routing", () => {
       "Penguin field notes",
       "Gentoo on Biscoe",
       "Bill shape",
+      "Field report",
     ]);
     fireEvent.click(screen.getByRole("button", { name: "Emit state" }));
     fireEvent.click(screen.getByRole("button", { name: "New view" }));
-    expect(screen.getAllByRole("tab")).toHaveLength(4);
+    expect(screen.getAllByRole("tab")).toHaveLength(5);
     await waitFor(() =>
       expect(localStorage.getItem("exploreda.saved-views.v1")).not.toBeNull()
     );
@@ -335,11 +336,15 @@ describe("LandingPage routing", () => {
       "data-rows",
       "1"
     );
-    expect(screen.getAllByRole("tab")).toHaveLength(4);
+    expect(screen.getAllByRole("tab")).toHaveLength(5);
     const restored = JSON.parse(
       localStorage.getItem("exploreda.saved-views.v1") ?? "{}"
     );
-    expect(restored.sourceAnalysis).toContain('"x":1');
+    // The rows are saved once, apart from the session that changes per edit.
+    expect(restored.sourceAnalysis).toBeUndefined();
+    expect(localStorage.getItem("exploreda.saved-views.v1.source")).toContain(
+      '"x":1'
+    );
     expect(
       restored.history.every(
         (entry: { tabs: unknown[] }) => !("sourceAnalysis" in entry)

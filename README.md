@@ -71,6 +71,12 @@ Patterns distinguish regions with no rows from regions with invalid measures. Ze
 The color domain uses full-source bounds and stays fixed across filters and facets.
 Geometry is saved once under `geometryAssets`; each chart stores its `geometryAssetId` reference.
 
+Edit a chart where it is drawn. Double-click a chart or axis title to rename
+it. Double-click a numeric axis to type its range, drag the axis to pan, or
+drag one of its ends to stretch it. A range changes only the view: filters and
+row counts stay as they were. Your app's `onStateChange` hears each edit once,
+so one rename or one drag is one undo step.
+
 ## Install
 
 ```sh

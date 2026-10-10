@@ -295,6 +295,8 @@ export function ChartGridLayout({
         onResizeStart={startResize}
         onResizeStop={stopInteraction}
         draggableHandle=".drag-handle"
+        // In-place editors sit inside the title, which is also the drag handle.
+        draggableCancel="[data-inplace-editor]"
         isDraggable={!isNarrow}
         isResizable={!isNarrow}
         style={{ position: "relative" }}
