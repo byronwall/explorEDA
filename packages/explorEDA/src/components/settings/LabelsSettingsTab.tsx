@@ -22,6 +22,24 @@ export function LabelsSettingsTab({
           placeholder="Enter chart title"
         />
 
+        <Label htmlFor="chart-subtitle">Subtitle</Label>
+        <Input
+          id="chart-subtitle"
+          value={settings.subtitle ?? ""}
+          onChange={(e) =>
+            onSettingChange("subtitle", e.target.value || undefined)
+          }
+          placeholder="What the chart shows, for whom"
+        />
+
+        <Label htmlFor="chart-note">Source note</Label>
+        <Input
+          id="chart-note"
+          value={settings.note ?? ""}
+          onChange={(e) => onSettingChange("note", e.target.value || undefined)}
+          placeholder="Source: …"
+        />
+
         {["row", "bar", "scatter", "line", "boxplot"].includes(
           settings.type
         ) && (

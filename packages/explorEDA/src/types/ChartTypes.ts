@@ -72,6 +72,10 @@ export interface MarginSettings {
 export interface BaseChartSettings {
   id: string;
   title: string;
+  /** Line under the title that says what the chart shows. */
+  subtitle?: string;
+  /** Source or note line under the plot. */
+  note?: string;
   type: string;
   field: string;
   layout: ChartLayout;

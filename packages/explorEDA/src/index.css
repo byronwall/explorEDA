@@ -50,6 +50,21 @@
   --eda-heat-text-strong: hsl(0 0% 100%);
   --eda-heat-text-weak: var(--foreground);
   --radius: 0.6rem;
+
+  /* Chart text roles. Themes and hosts override these. */
+  --eda-headline-font: inherit;
+  --eda-headline-size: 14px;
+  --eda-headline-weight: 600;
+  --eda-headline-line: 1.3;
+  --eda-headline-color: var(--foreground);
+  --eda-headline-accent: transparent;
+  --eda-subtitle-font: inherit;
+  --eda-subtitle-size: 11px;
+  --eda-subtitle-color: var(--muted-foreground);
+  --eda-note-size: 10.5px;
+  --eda-note-color: var(--muted-foreground);
+  --eda-panel-surface: var(--card);
+  --eda-panel-rule: var(--border);
 }
 
 .dark {
@@ -180,6 +195,322 @@
 }
 .eda-panel-actions .eda-panel-delete:hover {
   color: var(--destructive);
+}
+
+/* Chart header. Compact keeps one line: title, readout, search, actions,
+   then the filter control. A subtitle wraps to its own line below. */
+.eda-panel-status {
+  display: contents;
+}
+.eda-panel-heading {
+  order: 0;
+}
+.eda-panel-readout {
+  order: 1;
+}
+.eda-chart-search {
+  order: 2;
+}
+.eda-panel-actions {
+  order: 3;
+}
+.eda-chart-filter {
+  order: 4;
+}
+.eda-panel-subtitle {
+  order: 5;
+  flex-basis: 100%;
+  min-width: 0;
+  margin: -4px 0 2px;
+  overflow: hidden;
+  color: var(--eda-subtitle-color);
+  font-family: var(--eda-subtitle-font);
+  font-size: var(--eda-subtitle-size);
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: move;
+}
+.eda-panel-header:has(> .eda-panel-subtitle) {
+  flex-wrap: wrap;
+}
+.eda-panel-header:has(> .eda-panel-subtitle) > .eda-panel-heading {
+  flex-basis: 0;
+}
+.eda-panel-note {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0 10px 6px;
+  overflow: hidden;
+  color: var(--eda-note-color);
+  font-size: var(--eda-note-size);
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-clip-marker {
+  display: inline-flex;
+  flex: none;
+  align-self: flex-end;
+  margin-bottom: 4px;
+  padding: 2px;
+  border-radius: 3px;
+  color: var(--muted-foreground);
+}
+.eda-clip-marker:focus-visible {
+  outline: 2px solid var(--ring);
+}
+
+/* A headline theme: the title wraps to two lines above the plot, the
+   subtitle line holds the status and readout, and the hidden actions float
+   over the title's top-right corner instead of taking a row. */
+.eda-panel[data-headline="block"] {
+  background: var(--eda-panel-surface);
+  border-color: var(--eda-panel-rule);
+  box-shadow: none;
+}
+.eda-panel[data-headline="block"] .eda-panel-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(calc(var(--eda-subtitle-size) * 1.45), auto);
+  grid-template-areas:
+    "heading heading"
+    "subtitle status";
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 2px;
+  min-height: 0;
+  padding: 12px 10px 8px 12px;
+}
+.eda-panel[data-headline="block"] .eda-panel-header::before {
+  position: absolute;
+  top: 0;
+  left: 12px;
+  width: 32px;
+  height: 3px;
+  background: var(--eda-headline-accent);
+  content: "";
+}
+.eda-panel[data-headline="block"] .eda-panel-heading {
+  grid-area: heading;
+  align-items: flex-end;
+  gap: 4px;
+}
+.eda-panel[data-headline="block"] .eda-panel-title {
+  display: -webkit-box;
+  flex: 0 1 auto;
+  overflow: hidden;
+  color: var(--eda-headline-color);
+  font-family: var(--eda-headline-font);
+  font-size: var(--eda-headline-size);
+  font-weight: var(--eda-headline-weight);
+  line-height: var(--eda-headline-line);
+  letter-spacing: -0.01em;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+.eda-panel[data-headline="block"] .eda-panel-subtitle {
+  grid-area: subtitle;
+  margin: 0;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+.eda-panel[data-headline="block"] .eda-panel-status {
+  display: flex;
+  grid-area: status;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  min-width: 0;
+}
+/* The readout floats over the end of the subtitle line while the pointer is
+   on the plot, so a reading never rewraps the subtitle or moves the plot. */
+.eda-panel[data-headline="block"] .eda-panel-header {
+  container-type: inline-size;
+}
+.eda-panel[data-headline="block"] .eda-panel-status {
+  position: relative;
+  align-self: end;
+  min-height: calc(var(--eda-subtitle-size) * 1.45);
+}
+.eda-panel[data-headline="block"] .eda-panel-readout {
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  max-width: 72cqw;
+  padding: 1px 4px 1px 10px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--eda-panel-surface) 10px
+  );
+  transform: translateY(-50%);
+}
+.eda-panel[data-headline="block"] .eda-panel-readout:empty {
+  display: none;
+}
+.eda-panel[data-headline="block"] .eda-panel-actions {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 2;
+  border-radius: 6px;
+  background: var(--eda-panel-surface);
+  box-shadow: 0 0 0 1px var(--eda-panel-rule);
+}
+.eda-panel[data-headline="block"] .eda-drag {
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%) rotate(90deg);
+}
+.eda-panel[data-headline="block"] .eda-panel-note {
+  padding: 2px 12px 8px;
+}
+.eda-panel-expanded[data-headline="block"] .eda-panel-header {
+  min-height: 54px;
+  padding: 4px 12px 8px 16px;
+}
+.eda-panel-expanded[data-headline="block"] .eda-panel-header h3 {
+  font-size: calc(var(--eda-headline-size) * 1.3);
+  line-height: var(--eda-headline-line);
+}
+/* Where the actions stay shown (touch screens and the details view), they
+   sit in the band above the headline, beside its rule, so the title keeps
+   the panel's full width. */
+.eda-panel-expanded[data-headline="block"] .eda-panel-header {
+  grid-template-areas:
+    "actions actions"
+    "heading heading"
+    "subtitle status";
+  grid-template-rows: auto auto minmax(
+      calc(var(--eda-subtitle-size) * 1.45),
+      auto
+    );
+  padding-top: 4px;
+}
+.eda-panel-expanded[data-headline="block"] .eda-panel-actions {
+  position: static;
+  grid-area: actions;
+  justify-self: end;
+  background: none;
+  box-shadow: none;
+}
+@media not ((hover: hover) and (pointer: fine)) {
+  .eda-panel[data-headline="block"] .eda-panel-header {
+    grid-template-areas:
+      "actions actions"
+      "heading heading"
+      "subtitle status";
+    grid-template-rows: auto auto minmax(
+        calc(var(--eda-subtitle-size) * 1.45),
+        auto
+      );
+    padding-top: 4px;
+  }
+  .eda-panel[data-headline="block"] .eda-panel-actions {
+    position: static;
+    grid-area: actions;
+    justify-self: end;
+    background: none;
+    box-shadow: none;
+  }
+}
+
+/* Theme picker: each option previews its headline type and surface. */
+.eda-theme-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+.eda-theme-options .eda-theme-option {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  height: auto;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.eda-theme-options .eda-theme-option[aria-checked="true"] {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+.eda-theme-swatch {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 4px;
+  height: 52px;
+  padding: 8px;
+  border: 1px solid var(--eda-panel-rule);
+  border-radius: 4px;
+  background: var(--eda-panel-surface);
+  text-align: left;
+}
+/* Compact's values are the root defaults, which a themed workspace around
+   the picker would otherwise replace. */
+.eda-theme-swatch[data-eda-theme="compact"] {
+  --eda-headline-font: inherit;
+  --eda-headline-size: 14px;
+  --eda-headline-weight: 600;
+  --eda-headline-accent: transparent;
+  --eda-panel-surface: var(--card);
+  --eda-panel-rule: var(--border);
+}
+.eda-theme-swatch[data-headline="block"]::before {
+  position: absolute;
+  top: 0;
+  left: 8px;
+  width: 16px;
+  height: 2px;
+  background: var(--eda-headline-accent);
+  content: "";
+}
+.eda-theme-swatch-title {
+  color: var(--eda-headline-color);
+  font-family: var(--eda-headline-font);
+  font-size: var(--eda-headline-size);
+  font-weight: var(--eda-headline-weight);
+  line-height: 1;
+}
+.eda-theme-swatch-rule {
+  width: 60%;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--eda-subtitle-color);
+  opacity: 0.4;
+}
+.eda-theme-name {
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+}
+
+/* Newsprint: a serif headline on warm paper with hairline rules. */
+[data-eda-theme="newsprint"] {
+  --eda-headline-font:
+    "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia,
+    "Times New Roman", serif;
+  --eda-headline-size: 20px;
+  --eda-headline-weight: 600;
+  --eda-headline-line: 1.18;
+  --eda-headline-accent: var(--foreground);
+  --eda-subtitle-size: 12.5px;
+  --eda-note-size: 11px;
+  --eda-panel-surface: oklch(0.987 0.008 85);
+  --eda-panel-rule: oklch(0.88 0.012 80);
+}
+.dark [data-eda-theme="newsprint"] {
+  --eda-panel-surface: oklch(0.2 0.008 70);
+  --eda-panel-rule: oklch(0.32 0.01 70);
 }
 
 /* The values under the pointer read in the panel header, beside the title,

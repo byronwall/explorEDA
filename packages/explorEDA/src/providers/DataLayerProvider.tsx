@@ -1,4 +1,5 @@
 import { isGeometryAsset, type GeometryAsset } from "@/lib/geometryAssets";
+import type { WorkspaceTheme, WorkspaceThemeId } from "@/lib/themes";
 import { getChartFields } from "@/components/charts/chartAccessibility";
 import { chartRegistry, getChartDefinition } from "@/charts/registry";
 import {
@@ -251,6 +252,9 @@ interface DataLayerState<T extends DatumObject> extends DataLayerProps<T> {
   fieldSettings: FieldSettingsMap;
   aggregates: AggregateSpec[];
   geometryAssets: GeometryAsset[];
+  /** Saved workspace theme. Undefined draws Compact. */
+  theme: WorkspaceTheme | undefined;
+  setTheme: (id: WorkspaceThemeId) => void;
   addGeometryAsset: (asset: GeometryAsset) => void;
   addAggregate: (spec: Omit<AggregateSpec, "id">) => AggregateSpec;
   updateAggregate: (
@@ -430,6 +434,7 @@ const getInitialStoreState = <T extends DatumObject>(
     | "fieldSettings"
     | "aggregates"
     | "geometryAssets"
+    | "theme"
   >
 > => {
   const rawData = initProps?.data ?? [];
@@ -513,6 +518,7 @@ const getInitialStoreState = <T extends DatumObject>(
       fieldSettings,
       aggregates: savedData.aggregates ?? [],
       geometryAssets: savedData.geometryAssets ?? [],
+      theme: savedData.theme,
     };
   }
 
@@ -550,6 +556,7 @@ const getInitialStoreState = <T extends DatumObject>(
     fieldSettings,
     aggregates: [],
     geometryAssets: [],
+    theme: undefined,
   };
 };
 
@@ -627,6 +634,9 @@ const createDataLayerStore = <T extends DatumObject>(
         filterReset: get().filterReset + 1,
       });
     },
+
+    // Compact is the default, so choosing it saves no theme at all.
+    setTheme: (id) => set({ theme: id === "compact" ? undefined : { id } }),
 
     addGeometryAsset: (asset) => {
       if (!isGeometryAsset(asset)) throw new Error("Use a GeoJSON collection with valid polygon coordinates and closed rings.");
@@ -1128,6 +1138,7 @@ const createDataLayerStore = <T extends DatumObject>(
         fieldSettings: state.fieldSettings,
         aggregates: state.aggregates,
         geometryAssets: state.geometryAssets,
+        ...(state.theme ? { theme: state.theme } : {}),
       };
     },
 
@@ -1248,6 +1259,7 @@ const createDataLayerStore = <T extends DatumObject>(
         fieldSettings,
         aggregates: savedData.settings.aggregates ?? [],
         geometryAssets: savedData.settings.geometryAssets ?? [],
+        theme: savedData.settings.theme,
       }));
       nextCrossfilter.setFieldGetter(get().getColumnData);
     },
