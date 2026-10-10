@@ -25,6 +25,7 @@ import {
   measlesDashboard,
   causesByAgeDashboard,
   consumerConfidenceDashboard,
+  pewMeaningDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -50,6 +51,7 @@ import {
   Grid3x3,
   Layers,
   LayoutPanelTop,
+  Dumbbell,
   CloudFog,
   Globe,
   Activity,
@@ -792,6 +794,21 @@ export const examples: ExampleData[] = [
     icon: LayoutPanelTop,
     data: "/datasets/consumer-confidence.csv",
     savedData: consumerConfidenceDashboard,
+  },
+  {
+    id: "pew-meaning",
+    title: "What makes life meaningful, by party",
+    description:
+      "Seven topics as dumbbell rows: each party's share as a colored dot on one percentage scale, a connector between them, a legend, and the signed gap beside every row from a difference calculation.",
+    dataset: { rows: "14 topic-party shares", fields: 4, source: "Real" },
+    shows: [
+      "Dot rows without a y scale",
+      "Color by category",
+      "Legend element",
+    ],
+    icon: Dumbbell,
+    data: "/datasets/pew-meaning.csv",
+    savedData: pewMeaningDashboard,
   },
 ];
 

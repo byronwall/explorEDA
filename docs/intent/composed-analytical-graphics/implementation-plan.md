@@ -231,6 +231,10 @@ The consumer confidence grid (research entry 12) ships as `?example=consumer-con
 Path and point marks split by a series field, draw from the repeat's rows or the whole graphic, and take a focus: the repeat's own series or a listed set in color, the rest muted beneath.
 Numeric scales accept date fields, read as timestamps, with ticks labeled as years, months, or days by the span.
 
+The Pew dumbbell (research entry 15) ships as `?example=pew-meaning` from `apps/data-samples/pew_meaning.ts`.
+Point and path marks can leave the y scale off to form a dot row on the frame's middle line; a text order field, such as a party, ranks by its labels.
+Point marks color by a category field through a palette, a legend element lists a mark's categories with their colors, and calculations gain a signed difference from first to last.
+
 ## Milestone 3: Layer interval bands around a line
 
 Create the inflation-fan structure from supplied interval data.

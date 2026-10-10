@@ -10,9 +10,12 @@ import type {
   CompositionDefinition,
   CompositionElement,
   GuideElement,
+  LegendElement,
   TextElement,
+  UnitElement,
 } from "./compositionTypes";
 import {
+  markCategories,
   numericPixel,
   readNumber,
   periodKey,
@@ -224,6 +227,17 @@ export function resolveComposition(
         });
         break;
       }
+      case "legend": {
+        const legend = resolveLegend(element, definition, data, measureText);
+        nodes.push(...legend.nodes);
+        elements.push({
+          id: element.id,
+          kind: element.kind,
+          name: element.name,
+          bounds: legend.bounds,
+        });
+        break;
+      }
       case "annotation": {
         const note = resolveAnnotation(
           element,
@@ -360,6 +374,78 @@ export function positionX(
   if (index < 0) return undefined;
   const band = instance.frame.width / position.bins.length;
   return instance.frame.x + (index + 0.5) * band;
+}
+
+/**
+ * A key for a mark's categories: a swatch and a label per category, in a
+ * row or a column from the element's position. It reads the same category
+ * order and colors the mark draws with.
+ */
+function resolveLegend(
+  legend: LegendElement,
+  definition: CompositionDefinition,
+  data: CompositionData,
+  measureText: MeasureText
+) {
+  const unit = definition.elements.find(
+    (element): element is UnitElement =>
+      element.kind === "unit" && element.id === legend.unitId
+  );
+  const mark = unit?.marks.find((item) => item.id === legend.markId);
+  const entries = mark ? markCategories(mark, data) : [];
+  const nodes: SceneNode[] = [];
+  const swatch = Math.round(legend.fontSize * 0.9);
+  const gap = 6;
+  const step = Math.round(legend.fontSize * 1.5);
+  let x = legend.x;
+  let y = legend.y;
+  let width = 0;
+  entries.forEach((entry, index) => {
+    nodes.push({
+      type: "rect",
+      key: `${legend.id}:${index}:swatch`,
+      elementId: legend.id,
+      x,
+      y: y + (step - swatch) / 2,
+      width: swatch,
+      height: swatch,
+      fill: entry.color,
+    });
+    nodes.push({
+      type: "text",
+      key: `${legend.id}:${index}:label`,
+      elementId: legend.id,
+      x: x + swatch + 4,
+      lines: [{ text: entry.key, y: y + step / 2 + legend.fontSize * 0.35 }],
+      fontSize: legend.fontSize,
+      fontWeight: 400,
+      fill: legend.color,
+      anchor: "start",
+    });
+    const entryWidth =
+      swatch + 4 + measureText(entry.key, legend.fontSize, 400) + gap * 2;
+    if (legend.direction === "row") {
+      x += entryWidth;
+      width = x - legend.x;
+    } else {
+      y += step;
+      width = Math.max(width, entryWidth);
+    }
+  });
+  if (!entries.length)
+    return {
+      nodes,
+      bounds: { x: legend.x, y: legend.y, width: 80, height: step },
+    };
+  return {
+    nodes,
+    bounds: {
+      x: legend.x,
+      y: legend.y,
+      width,
+      height: legend.direction === "row" ? step : entries.length * step,
+    },
+  };
 }
 
 /** The y of a numeric value on a repeat's y scale, for horizontal guides. */

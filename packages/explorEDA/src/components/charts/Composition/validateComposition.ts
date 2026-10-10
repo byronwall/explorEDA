@@ -49,7 +49,10 @@ function isMark(value: unknown) {
   if (value.type === "point")
     return (
       isString(value.xScaleId) &&
-      isString(value.yScaleId) &&
+      (value.yScaleId === undefined || isString(value.yScaleId)) &&
+      (value.colorField === undefined || isString(value.colorField)) &&
+      (value.colors === undefined ||
+        (Array.isArray(value.colors) && value.colors.every(isString))) &&
       (value.orderField === undefined || isString(value.orderField)) &&
       isNumber(value.radius) &&
       value.radius > 0 &&
@@ -105,7 +108,7 @@ function isMark(value: unknown) {
   if (value.type === "path")
     return (
       isString(value.xScaleId) &&
-      isString(value.yScaleId) &&
+      (value.yScaleId === undefined || isString(value.yScaleId)) &&
       isString(value.orderField) &&
       isString(value.stroke) &&
       isNumber(value.strokeWidth) &&
@@ -226,6 +229,7 @@ function isCalculation(value: unknown) {
       "first",
       "last",
       "change",
+      "difference",
     ]) &&
     (value.field === undefined || isString(value.field)) &&
     (value.orderField === undefined || isString(value.orderField)) &&
@@ -296,6 +300,15 @@ function isElement(value: unknown) {
       return isGuideElement(value);
     case "annotation":
       return isAnnotationElement(value);
+    case "legend":
+      return (
+        isString(value.unitId) &&
+        isString(value.markId) &&
+        oneOf(value.direction, ["row", "column"]) &&
+        isNumber(value.fontSize) &&
+        value.fontSize > 0 &&
+        isString(value.color)
+      );
     default:
       return false;
   }
@@ -336,13 +349,15 @@ export function isCompositionDefinition(
                 ? kinds.get(mark.yScaleId) === "numeric" &&
                   (mark.valueScaleId === undefined ||
                     kinds.get(mark.valueScaleId) === "value")
-                : mark.type === "point" ||
-                    mark.type === "path" ||
-                    mark.type === "band"
+                : mark.type === "point" || mark.type === "path"
                   ? kinds.get(mark.xScaleId) === "numeric" &&
-                    kinds.get(mark.yScaleId) === "numeric"
-                  : kinds.get(mark.positionScaleId) === "position" &&
-                    kinds.get(mark.valueScaleId) === "value")
+                    (mark.yScaleId === undefined ||
+                      kinds.get(mark.yScaleId) === "numeric")
+                  : mark.type === "band"
+                    ? kinds.get(mark.xScaleId) === "numeric" &&
+                      kinds.get(mark.yScaleId) === "numeric"
+                    : kinds.get(mark.positionScaleId) === "position" &&
+                      kinds.get(mark.valueScaleId) === "value")
         )
     );
   return (

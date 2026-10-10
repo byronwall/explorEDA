@@ -11,8 +11,10 @@ import {
   type CompositionDefinition,
   type BandMark,
   type InstanceOverride,
+  type MarkDefinition,
   type NumericScale,
   type PathMark,
+  STACK_COLORS,
   type PointMark,
   type PositionScale,
   type StackMark,
@@ -116,6 +118,8 @@ export interface GlyphDatum {
     yField: string;
     /** The series the point belongs to, when the mark splits by a field. */
     series?: string;
+    /** The color field's value, when the mark colors by one. */
+    category?: string;
   };
   /** The segment's share of its repeat's total, for stack marks; the glyph's value is that share. */
   stack?: {
@@ -269,7 +273,11 @@ export function resolveUnit(
         });
     } else {
       const x = scale(mark.xScaleId);
-      const y = scale(mark.yScaleId);
+      // A point or path without a y scale sits on the frame's middle line.
+      const y =
+        mark.type !== "band" && mark.yScaleId === undefined
+          ? MIDDLE_SCALE
+          : scale(mark.yScaleId ?? "");
       if (x?.kind === "numeric" && y?.kind === "numeric")
         marks.push({ type: "xy", mark, x, y });
     }
@@ -400,6 +408,7 @@ export function resolveUnit(
   };
   const sharedDomains = new Map<string, [number, number]>();
   const domainFor = (scale: NumericScale, subset: Subset) => {
+    if (scale.id === MIDDLE_SCALE.id) return [0, 1] as [number, number];
     const bound = summaries.some((item) => item.y.id === scale.id);
     if (scale.domain === "instance")
       return bound
@@ -1458,6 +1467,22 @@ function stackNodes(
   return nodes;
 }
 
+/** The stand-in y scale of a dot row: every point at the middle line. */
+export const MIDDLE_SCALE: NumericScale = {
+  id: "middle-line",
+  kind: "numeric",
+  name: "Middle",
+  field: "",
+  domain: "shared",
+  zero: false,
+  nice: false,
+};
+
+/** Reads a row's y for an axis: the middle line, or the field's value. */
+function readY(axis: NumericAxis, column: Record<number, datum>, id: number) {
+  return axis.scale.id === MIDDLE_SCALE.id ? 0.5 : readNumber(column[id]);
+}
+
 /** Stand-in scales for a stacked area's y axis: shares, or totals. */
 const SHARE_SCALE: NumericScale = {
   id: "stack-share",
@@ -1641,6 +1666,41 @@ function fixedLimits(axis: NumericAxis) {
   return axis.scale.min !== undefined || axis.scale.max !== undefined;
 }
 
+const categoryKey = (value: datum) =>
+  value === null || value === undefined || value === ""
+    ? MISSING
+    : String(value);
+
+/**
+ * The categories a mark colors, in label order across every row of the
+ * graphic, with their colors: a point mark's color field through its
+ * palette, or a stack's categories through its palette. Legends read this.
+ */
+export function markCategories(
+  mark: MarkDefinition,
+  data: CompositionData
+): { key: string; color: string }[] {
+  if (mark.type === "point" && mark.colorField) {
+    const column = data.column(mark.colorField);
+    const keys = new Set<string>();
+    for (const id of data.allIds) {
+      const value = column[id];
+      if (value === null || value === undefined || value === "") continue;
+      keys.add(String(value));
+    }
+    const palette = mark.colors?.length ? mark.colors : STACK_COLORS;
+    return [...keys]
+      .sort(compareLabels)
+      .map((key, index) => ({ key, color: palette[index % palette.length]! }));
+  }
+  if (mark.type === "stack")
+    return stackCategories(mark, data).map((category) => ({
+      key: category.key,
+      color: mark.colors[category.index % mark.colors.length]!,
+    }));
+  return [];
+}
+
 /** Splits a repeat's rows by a series field; one group when there is none. */
 function seriesGroups(
   ids: number[],
@@ -1685,7 +1745,7 @@ function pathNodes(
     const skipped: number[] = [];
     for (const row of rows) {
       const x = readNumber(xs[row.id]);
-      const y = readNumber(ys[row.id]);
+      const y = readY(axes.y, ys, row.id);
       if (row.order === undefined || x === undefined || y === undefined) {
         skipped.push(row.id);
         if (current.length) segments.push(current);
@@ -1810,6 +1870,12 @@ function pointNodes(
   const ys = data.column(axes.y.scale.field);
   const labels = mark.labelField ? data.column(mark.labelField) : undefined;
   const order = mark.orderField ? data.column(mark.orderField) : undefined;
+  const colorColumn = mark.colorField
+    ? data.column(mark.colorField)
+    : undefined;
+  const categoryColors = new Map(
+    markCategories(mark, data).map((item) => [item.key, item.color])
+  );
   const clip = fixedLimits(axes.x) || fixedLimits(axes.y) ? frame : undefined;
   const nodes: SceneNode[] = [];
   let drawn = 0;
@@ -1819,9 +1885,13 @@ function pointNodes(
     mark.seriesField ? data.column(mark.seriesField) : undefined
   );
   const shown = groups.flatMap((group) =>
-    pickShown(orderedRows(group.ids, order), mark.show ?? "all", xs, ys).map(
-      (row) => ({ row, series: group.series })
-    )
+    pickShown(
+      orderedRows(group.ids, order),
+      mark.show ?? "all",
+      xs,
+      ys,
+      axes.y.scale.id === MIDDLE_SCALE.id
+    ).map((row) => ({ row, series: group.series }))
   );
   // Focused points draw last, over the muted ones.
   shown.sort(
@@ -1832,25 +1902,33 @@ function pointNodes(
   for (const { row, series } of shown) {
     const focused = isFocused(mark.focus, series, subset.key);
     const x = readNumber(xs[row.id]);
-    const y = readNumber(ys[row.id]);
+    const y = readY(axes.y, ys, row.id);
     if (x === undefined || y === undefined) continue;
     const cx = numericPixel(axes.x, x);
     const cy = numericPixel(axes.y, y);
     const key = `${unit.id}:${subset.key}:${mark.id}:${row.id}`;
+    const middle = axes.y.scale.id === MIDDLE_SCALE.id;
+    const category = colorColumn ? categoryKey(colorColumn[row.id]) : undefined;
     const glyph: GlyphDatum = {
       instanceKey: subset.key,
       markId: mark.id,
       bin: { key: row.label, label: row.label },
-      value: y,
+      value: middle ? x : y,
       rowIds: [row.id],
       point: {
         x,
-        y,
+        y: middle ? x : y,
         xField: axes.x.scale.field,
-        yField: axes.y.scale.field,
+        yField: middle ? axes.x.scale.field : axes.y.scale.field,
         series,
+        category,
       },
     };
+    const fill = !focused
+      ? (mark.mutedFill ?? MUTED_MARK)
+      : category !== undefined
+        ? (categoryColors.get(category) ?? mark.fill)
+        : mark.fill;
     nodes.push({
       type: "circle",
       key,
@@ -1859,7 +1937,7 @@ function pointNodes(
       cx,
       cy,
       r: mark.radius,
-      fill: focused ? mark.fill : (mark.mutedFill ?? MUTED_MARK),
+      fill,
       clip,
       glyph,
     });
@@ -1900,20 +1978,24 @@ function pickShown(
   rows: ReturnType<typeof orderedRows>,
   show: NonNullable<PointMark["show"]>,
   xs: Record<number, datum>,
-  ys: Record<number, datum>
+  ys: Record<number, datum>,
+  middle = false
 ) {
   const drawable = rows.filter(
     (row) =>
       readNumber(xs[row.id]) !== undefined &&
-      readNumber(ys[row.id]) !== undefined
+      (middle || readNumber(ys[row.id]) !== undefined)
   );
   if (show === "all" || !drawable.length) return drawable;
   if (show === "first") return [drawable[0]!];
   if (show === "last") return [drawable[drawable.length - 1]!];
   let picked = drawable[0]!;
   for (const row of drawable) {
-    const y = finiteNumber(ys[row.id])!;
-    const best = finiteNumber(ys[picked.id])!;
+    // On a dot row, low and high read along x instead.
+    const y = (middle ? readNumber(xs[row.id]) : readNumber(ys[row.id]))!;
+    const best = (
+      middle ? readNumber(xs[picked.id]) : readNumber(ys[picked.id])
+    )!;
     if (show === "max" ? y > best : y < best) picked = row;
   }
   return [picked];
@@ -1926,6 +2008,7 @@ function numericGridNodes(
   xy: { x: NumericAxis; y: NumericAxis },
   frame: Bounds
 ): SceneNode[] {
+  if (xy.y.scale.id === MIDDLE_SCALE.id) return [];
   return tickValues(xy.y, frame.height, 36).map((value) => {
     const y = numericPixel(xy.y, value);
     return {
@@ -2025,6 +2108,8 @@ function numericAxisNodes(
       `x:${value}`
     )
   );
+  // A dot row has no y to label.
+  if (xy.y.scale.id === MIDDLE_SCALE.id) return nodes;
   for (const value of tickValues(xy.y, frame.height, 36))
     nodes.push(
       label(
