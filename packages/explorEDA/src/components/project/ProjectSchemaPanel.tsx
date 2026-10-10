@@ -8,6 +8,18 @@ import type {
   SourceDefinition,
 } from "@/types/AnalysisProject";
 import { buildFieldProfiles } from "@/lib/fieldProfiles";
+import {
+  addRelationship,
+  blockedByAmbiguity,
+  CARDINALITY_LABELS,
+  countMatches,
+  proposeRelationship,
+  proposalProblem,
+  queriesUsingRelationship,
+  removeRelationship as withoutRelationship,
+  replaceRelationship,
+  type Cardinality,
+} from "./relationshipEditing";
 import { sourceView } from "./queryEditing";
 import { FieldMetadata } from "@/components/FieldMetadata";
 import { Button } from "@/components/ui/button";
@@ -28,34 +40,6 @@ function sourceLabel(project: AnalysisProject, id: string) {
 
 function fieldLabel(source: SourceDefinition, id: string) {
   return source.fields.find((field) => field.id === id)?.name ?? id;
-}
-
-function countMatches(
-  fromRows: readonly AnalysisSourceRow[],
-  fromField: string,
-  toRows: readonly AnalysisSourceRow[],
-  toField: string
-) {
-  const counts = new Map<unknown, number>();
-  for (const row of toRows) {
-    const key = row[toField];
-    if (key != null) counts.set(key, (counts.get(key) ?? 0) + 1);
-  }
-  let matched = 0;
-  let unmatched = 0;
-  let ambiguous = 0;
-  let expanded = 0;
-  for (const row of fromRows) {
-    const key = row[fromField];
-    const count = key == null ? 0 : (counts.get(key) ?? 0);
-    if (!count) unmatched += 1;
-    else {
-      matched += 1;
-      if (count > 1) ambiguous += 1;
-      expanded += Math.max(0, count - 1);
-    }
-  }
-  return { matched, unmatched, ambiguous, expanded };
 }
 
 export function ProjectSchemaPanel({
@@ -143,43 +127,31 @@ export function ProjectSchemaPanel({
     const existing = project.relationships.find(
       (relationship) => relationship.id === editingId
     );
-    setProposal({
-      id:
-        existing?.id ??
-        `rel-${sourceId}-${fieldId}-${targetId}-${targetFieldId}`,
-      name:
-        existing?.name ??
-        `${sourceLabel(project, sourceId)} to ${sourceLabel(project, targetId)}`,
-      from: { sourceId, fieldId },
-      to: { sourceId: targetId, fieldId: targetFieldId },
-      cardinality,
-    });
+    setProposal(
+      proposeRelationship(
+        project,
+        { sourceId, fieldId },
+        { sourceId: targetId, fieldId: targetFieldId },
+        cardinality,
+        existing
+      )
+    );
   }
 
   function confirmProposal() {
     if (!proposal) return;
     if (editingId) {
-      onProjectChange({
-        ...project,
-        relationships: project.relationships.map((relationship) =>
-          relationship.id === editingId ? proposal : relationship
-        ),
-      });
+      onProjectChange(replaceRelationship(project, editingId, proposal));
       setEditingId(undefined);
       setProposal(undefined);
       return;
     }
-    const conflict = project.relationships.some(
-      (relationship) => relationship.id === proposal.id
-    );
-    if (conflict) {
-      setError("This relationship already exists.");
+    const problem = proposalProblem(project, proposal.from, proposal.to);
+    if (problem) {
+      setError(problem);
       return;
     }
-    onProjectChange({
-      ...project,
-      relationships: [...project.relationships, proposal],
-    });
+    onProjectChange(addRelationship(project, proposal));
     setProposal(undefined);
     setEditingId(undefined);
   }
@@ -202,12 +174,7 @@ export function ProjectSchemaPanel({
   }
 
   function removeRelationship(relationship: RelationshipDefinition) {
-    onProjectChange({
-      ...project,
-      relationships: project.relationships.filter(
-        (item) => item.id !== relationship.id
-      ),
-    });
+    onProjectChange(withoutRelationship(project, relationship.id));
     setPendingRemove(undefined);
   }
 
@@ -365,13 +332,7 @@ export function ProjectSchemaPanel({
             const targetField = target?.fields.find(
               (field) => field.id === relationship.to.fieldId
             );
-            const affected = project.queries.filter((query) =>
-              query.steps.some(
-                (step) =>
-                  (step.kind === "lookup" || step.kind === "expand") &&
-                  step.relationshipId === relationship.id
-              )
-            );
+            const affected = queriesUsingRelationship(project, relationship.id);
             return (
               <li
                 key={relationship.id}
@@ -490,7 +451,7 @@ export function ProjectSchemaPanel({
               </h4>
               <span className="text-xs text-muted-foreground">
                 {editingId
-                  ? `Used by ${project.queries.filter((item) => item.steps.some((step) => (step.kind === "lookup" || step.kind === "expand") && step.relationshipId === editingId)).length} queries`
+                  ? `Used by ${queriesUsingRelationship(project, editingId).length} queries`
                   : "Or drag one field onto another"}
               </span>
               {editingId && !proposal && (
@@ -596,7 +557,7 @@ export function ProjectSchemaPanel({
               <Select
                 value={cardinality}
                 onValueChange={(value) => {
-                  const next = value as RelationshipDefinition["cardinality"];
+                  const next = value as Cardinality;
                   setCardinality(next);
                   setProposal((current) =>
                     current ? { ...current, cardinality: next } : current
@@ -607,10 +568,11 @@ export function ProjectSchemaPanel({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="many-to-one">Many to one</SelectItem>
-                  <SelectItem value="one-to-one">One to one</SelectItem>
-                  <SelectItem value="one-to-many">One to many</SelectItem>
-                  <SelectItem value="many-to-many">Many to many</SelectItem>
+                  {Object.entries(CARDINALITY_LABELS).map(([value, label]) => (
+                    <SelectItem value={value} key={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </label>
@@ -661,11 +623,7 @@ export function ProjectSchemaPanel({
                   <Button
                     size="sm"
                     onClick={confirmProposal}
-                    disabled={
-                      matchCounts.ambiguous > 0 &&
-                      (cardinality === "many-to-one" ||
-                        cardinality === "one-to-one")
-                    }
+                    disabled={blockedByAmbiguity(matchCounts, cardinality)}
                   >
                     <Check /> Apply relationship
                   </Button>

@@ -183,6 +183,11 @@ export type {
   SchemaRow,
 } from "@/lib/schema/schemaGraph";
 export type {
+  SchemaEditing,
+  SchemaFieldEditing,
+  SchemaProjectEditing,
+} from "./schema/schemaEditing";
+export type {
   SavedAnalysisStructure,
   SavedCalculation,
   SavedRow,

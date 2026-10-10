@@ -316,6 +316,13 @@ export const ExplorEdaProject = forwardRef<
           sidePanels={[...sidePanels, schemaPanel, queryPanel]}
           schema={{
             graph: schemaGraph,
+            editing: readOnly
+              ? undefined
+              : {
+                  project,
+                  tables,
+                  onChange: (next) => update(next, shownView),
+                },
             open: diagramOpen,
             onOpenChange: setDiagramOpen,
           }}

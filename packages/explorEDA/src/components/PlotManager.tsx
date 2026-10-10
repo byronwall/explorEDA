@@ -21,6 +21,7 @@ import { resolveThemeId } from "@/lib/themes";
 import { RowsPeek } from "./RowsPeek";
 import { SchemaDrawer } from "./schema/SchemaDrawer";
 import type { SchemaGraph } from "@/lib/schema/schemaGraph";
+import type { SchemaProjectEditing } from "./schema/schemaEditing";
 import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { ActiveFilterStatus } from "./ActiveFilterStatus";
 import type { ChartLayout } from "@/types/ChartTypes";
@@ -110,6 +111,11 @@ const gridToPixels = (
 export interface ExplorEdaSchema {
   /** A project's schema. Without it, the diagram shows the workspace's table. */
   graph?: SchemaGraph;
+  /**
+   * Lets the diagram change the project's sources and relationships. Omit
+   * it to show the project without edits.
+   */
+  editing?: SchemaProjectEditing;
   /** Control whether the drawer is open, such as from a host panel. */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -923,6 +929,8 @@ export function PlotManager({
           <SchemaDrawer
             id={schemaDrawerId}
             graph={schema?.graph}
+            projectEditing={schema?.editing}
+            readOnly={readOnly}
             containerRef={controlsRef}
             onClose={closeSchema}
           />

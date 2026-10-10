@@ -2139,6 +2139,10 @@ html {
   background-size: 20px 20px;
   user-select: none;
 }
+.eda-schema-viewport:focus,
+.eda-schema-inspector:focus {
+  outline: none;
+}
 .eda-schema-viewport[data-panning] {
   cursor: grabbing;
 }
@@ -2277,6 +2281,238 @@ html {
 .eda-schema-empty {
   color: var(--muted-foreground);
   font-style: italic;
+}
+.eda-schema-card:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.eda-schema-card[data-selected] {
+  border-color: var(--primary);
+  box-shadow:
+    0 0 0 1px var(--primary),
+    0 4px 14px rgb(20 40 70 / 10%);
+}
+.eda-schema-row {
+  cursor: pointer;
+}
+.eda-schema-row:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+.eda-schema-row[data-relatable] {
+  position: relative;
+}
+/* A handle on the right edge hints that the field can be dragged to relate. */
+.eda-schema-row[data-relatable]:hover::after {
+  position: absolute;
+  top: 50%;
+  right: -5px;
+  width: 9px;
+  height: 9px;
+  border: 2px solid var(--card);
+  border-radius: 999px;
+  background: var(--primary);
+  content: "";
+  transform: translateY(-50%);
+}
+.eda-schema-viewport[data-linking] .eda-schema-row {
+  cursor: copy;
+}
+.eda-schema-row[data-emphasized] {
+  background: color-mix(in oklab, var(--primary) 12%, transparent);
+}
+.eda-schema-row[data-selected] {
+  background: color-mix(in oklab, var(--primary) 20%, transparent);
+  box-shadow: inset 3px 0 0 var(--primary);
+}
+.eda-schema-row[data-drop-target] {
+  background: color-mix(in oklab, var(--primary) 24%, transparent);
+  box-shadow: inset 0 0 0 1.5px var(--primary);
+}
+.eda-schema-edge-group[data-dimmed] {
+  opacity: 0.28;
+}
+.eda-schema-edge[data-dimmed] {
+  opacity: 0.2;
+}
+.eda-schema-edge-group[data-emphasized] .eda-schema-edge,
+.eda-schema-edge-group[data-emphasized] .eda-schema-edge-mark {
+  stroke: var(--primary);
+  stroke-width: 2.25;
+}
+.eda-schema-edge-group[data-selected] .eda-schema-edge,
+.eda-schema-edge-group[data-selected] .eda-schema-edge-mark {
+  stroke-width: 3;
+}
+.eda-schema-edge-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 12;
+  pointer-events: stroke;
+  cursor: pointer;
+}
+.eda-schema-edge[data-kind="ghost"] {
+  stroke: var(--primary);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+}
+.eda-schema-inspector {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  max-height: 60%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow:
+    0 10px 30px rgb(20 40 70 / 16%),
+    0 1px 3px rgb(20 40 70 / 8%);
+  cursor: auto;
+  user-select: text;
+}
+.eda-schema-inspector-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 6px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.eda-schema-inspector-header h3 {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-schema-inspector-header button {
+  width: 28px;
+  height: 28px;
+}
+.eda-schema-inspector-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px 14px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.eda-schema-inspector-body > button {
+  align-self: flex-start;
+}
+.eda-schema-inspector-facts,
+.eda-schema-inspector-hint {
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+.eda-schema-inspector-error {
+  color: var(--destructive);
+  font-size: 12px;
+}
+.eda-schema-inspector-field,
+.eda-schema-inspector-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+}
+.eda-schema-inspector-field > span,
+.eda-schema-inspector-section > span,
+.eda-schema-inspector-code > span {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 500;
+}
+.eda-schema-inspector-section ul {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.eda-schema-inspector-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 4px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  text-align: left;
+}
+.eda-schema-inspector-link:hover,
+.eda-schema-inspector-link:focus-visible {
+  background: var(--muted);
+}
+.eda-schema-inspector-link svg {
+  width: 13px;
+  height: 13px;
+  color: var(--primary);
+}
+.eda-schema-inspector-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.eda-schema-inspector-pairline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.eda-schema-inspector-pairline svg {
+  width: 13px;
+  height: 13px;
+  color: var(--muted-foreground);
+}
+.eda-schema-inspector-counts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--muted);
+  font-size: 11px;
+}
+.eda-schema-inspector-counts dt {
+  color: var(--muted-foreground);
+}
+.eda-schema-inspector-counts dd {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.eda-schema-inspector-counts dd[data-warning] {
+  color: var(--warning);
+}
+.eda-schema-inspector-code {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.eda-schema-inspector-code code {
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.eda-schema-inspector-actions {
+  display: flex;
+  gap: 6px;
+}
+.eda-schema-inspector-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--warning);
+  border-radius: 6px;
+  font-size: 12px;
 }
 .eda-schema-facts {
   color: var(--muted-foreground);

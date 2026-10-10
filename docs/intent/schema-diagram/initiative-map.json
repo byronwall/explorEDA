@@ -342,11 +342,16 @@
       {
         "id": "m2",
         "title": "Select and edit fields, keys, and relationships in place",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Selection with an anchored inspector; field names, labels, units, types, entity keys, and relationships (drag or menu, with match counts) edited from the diagram through existing write paths.",
         "proof": "Shared relationship logic unit tests; ProjectSchemaPanel tests unchanged; one onProjectChange per confirmed edit; read-only hides controls; browser checks at three widths.",
         "valid_intermediate_state": "Diagram is a working editor for tables and relationships.",
-        "rollback": "Pass readOnly or hide inspector edit controls; Schema panel list still edits relationships."
+        "rollback": "Pass readOnly or hide inspector edit controls; Schema panel list still edits relationships.",
+        "evidence": [
+          "Vitest: relationshipEditing.test.ts, schema/__tests__/SchemaDiagram.test.tsx (rename is one change on Enter, remove names following queries, Escape clears without closing, read-only has no controls); ProjectSchemaPanel tests unchanged",
+          "Playwright real input at 1280 and 390 px: select field and line, remove and re-create a relationship by dragging field to field (8 matched), rename a field, Escape ladder",
+          "Single-table label and unit edits each one demo undo step"
+        ]
       },
       {
         "id": "m3",
@@ -448,6 +453,12 @@
       "date": "2026-10-10",
       "event": "milestone-completed",
       "summary": "Milestone 1 built: shared wide drawer, table cards, relationship lines, viewport-aware layout.",
+      "status": "active"
+    },
+    {
+      "date": "2026-10-10",
+      "event": "milestone-completed",
+      "summary": "Milestone 2 built: selection, anchored details, field/key/relationship edits through shared relationship rules.",
       "status": "active"
     }
   ],

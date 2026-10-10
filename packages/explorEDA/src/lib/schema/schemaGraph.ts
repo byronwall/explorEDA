@@ -29,6 +29,8 @@ export interface SchemaNode {
   glyph?: string;
   /** A fact under the title, such as the row count. */
   detail?: string;
+  /** The project source a table card draws. */
+  sourceId?: string;
   rows: SchemaRow[];
 }
 
@@ -56,6 +58,8 @@ export interface SchemaEdge {
   to: SchemaEndpoint;
   label?: string;
   cardinality?: RelationshipDefinition["cardinality"];
+  /** The project relationship a relationship line draws. */
+  relationshipId?: string;
 }
 
 const DECLARED_TYPES: Record<
@@ -104,6 +108,7 @@ export function projectSchemaGraph(
       title: source.name,
       glyph: source.glyph,
       detail: rows ? rowCountLabel(rows.length) : undefined,
+      sourceId: source.id,
       rows: source.fields.map((field) => ({
         id: fieldRowId(field.id),
         label: field.name,
@@ -142,6 +147,7 @@ export function projectSchemaGraph(
       },
       label: relationship.name,
       cardinality: relationship.cardinality,
+      relationshipId: relationship.id,
     }));
 
   return { nodes, edges };
