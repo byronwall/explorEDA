@@ -1,6 +1,9 @@
 import isEqual from "react-fast-compare";
 import { chartRegistry, getChartDefinition } from "@/charts/registry";
-import { useDataLayer } from "@/providers/DataLayerProvider";
+import {
+  useDataLayer,
+  useDataLayerSnapshot,
+} from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
 
@@ -19,10 +22,15 @@ export type FieldFilterSpec = Filter extends infer F
  * adds a Summary Table below the other charts.
  */
 export function useFieldFilter(chart?: ChartSettings) {
-  const charts = useDataLayer((state) => state.charts);
+  // Only the summary chart: every field row uses this hook, and a whole-list
+  // subscription would re-render them all on any chart's edit.
+  const summary = useDataLayer((state) =>
+    state.charts.find((item) => item.type === "summary")
+  );
+  const getState = useDataLayerSnapshot();
   const updateChart = useDataLayer((state) => state.updateChart);
   const addChart = useDataLayer((state) => state.addChart);
-  const target = chart ?? charts.find((item) => item.type === "summary");
+  const target = chart ?? summary;
   const filters = target?.filters ?? [];
 
   /** Replace a field's filter, or clear it with undefined. */
@@ -36,15 +44,18 @@ export function useFieldFilter(chart?: ChartSettings) {
     if (!spec || !chartRegistry.has("summary")) return;
     const layout = {
       x: 0,
-      y: Math.max(0, ...charts.map((item) => item.layout.y + item.layout.h)),
+      y: Math.max(
+        0,
+        ...getState().charts.map((item) => item.layout.y + item.layout.h)
+      ),
       w: 6,
       h: 6,
     };
-    const summary = getChartDefinition("summary").createDefaultSettings(
+    const created = getChartDefinition("summary").createDefaultSettings(
       layout,
       ""
     );
-    addChart({ ...summary, filters: next });
+    addChart({ ...created, filters: next });
   };
 
   /** Set a field's filter, or clear it when the same filter is set again. */

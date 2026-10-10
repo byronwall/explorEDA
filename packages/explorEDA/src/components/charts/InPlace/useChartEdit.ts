@@ -12,9 +12,13 @@ import type { ChartSettings } from "@/types/ChartTypes";
 export function useChartEdit(chartId: string) {
   const updateChart = useDataLayer((state) => state.updateChart);
   const holdStateChanges = useDataLayer((state) => state.holdStateChanges);
-  const charts = useDataLayer((state) => state.charts);
-  const chartsRef = useRef(charts);
-  chartsRef.current = charts;
+  // Only this chart: a whole-list subscription re-renders every panel on
+  // any chart's edit.
+  const chart = useDataLayer((state) =>
+    state.charts.find((item) => item.id === chartId)
+  );
+  const chartRef = useRef(chart);
+  chartRef.current = chart;
   const session = useRef<{
     release: () => void;
     original: Partial<ChartSettings>;
@@ -36,7 +40,7 @@ export function useChartEdit(chartId: string) {
   const apply = useCallback(
     (updates: Partial<ChartSettings>) => {
       begin();
-      const chart = chartsRef.current.find((item) => item.id === chartId);
+      const chart = chartRef.current;
       const original = session.current!.original;
       for (const key of Object.keys(updates) as (keyof ChartSettings)[]) {
         if (!(key in original))

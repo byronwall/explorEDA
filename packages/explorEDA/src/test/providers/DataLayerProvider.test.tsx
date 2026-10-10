@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import {
   act,
   fireEvent,
@@ -133,6 +134,32 @@ function WorkspaceProbe() {
         )}
       </output>
       <button onClick={() => setData([{ replacement: 1 }])}>replace</button>
+    </>
+  );
+}
+
+function LiveItemsIdentityProbe() {
+  const charts = useDataLayer((state) => state.charts);
+  const liveItems = useDataLayer((state) => state.liveItems);
+  const updateChart = useDataLayer((state) => state.updateChart);
+  const seen = useRef<unknown[]>([]);
+  if (!seen.current.includes(liveItems)) seen.current.push(liveItems);
+  const table = charts.find((chart) => chart.type === "data-table")!;
+  return (
+    <>
+      <output data-testid="live-versions">{seen.current.length}</output>
+      <button onClick={() => updateChart(table.id, { title: "Renamed" })}>
+        Rename table
+      </button>
+      <button
+        onClick={() =>
+          updateChart(table.id, {
+            filters: [{ type: "value", field: "region", values: ["North"] }],
+          })
+        }
+      >
+        Filter table
+      </button>
     </>
   );
 }
@@ -452,6 +479,21 @@ describe("DataLayerProvider", () => {
     expect(screen.getByTestId("live-count")).toHaveTextContent("2");
     fireEvent.click(screen.getByRole("button", { name: "Clear rows" }));
     expect(screen.getByTestId("live-count")).toHaveTextContent("3");
+  });
+
+  it("keeps live items when a chart's text changes and rebuilds them when its filters change", () => {
+    render(
+      <DataLayerProvider data={filteredSummaryData}>
+        <LiveItemsIdentityProbe />
+      </DataLayerProvider>
+    );
+    const versions = () =>
+      Number(screen.getByTestId("live-versions").textContent);
+    const before = versions();
+    fireEvent.click(screen.getByRole("button", { name: "Rename table" }));
+    expect(versions()).toBe(before);
+    fireEvent.click(screen.getByRole("button", { name: "Filter table" }));
+    expect(versions()).toBe(before + 1);
   });
   beforeAll(() => registerAllCharts());
 

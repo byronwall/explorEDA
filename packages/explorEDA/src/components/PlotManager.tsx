@@ -43,6 +43,7 @@ import {
   X,
 } from "lucide-react";
 import {
+  memo,
   useCallback,
   useEffect,
   useId,
@@ -58,6 +59,7 @@ import { focusChartInContainer, highlightChartInContainer } from "./chartFocus";
 
 export { focusChartInContainer };
 import { PlotChartPanel } from "./PlotChartPanel";
+import { useChartDetailsStore } from "./chartDetailsStore";
 import { useAlertStore } from "@/stores/alertStore";
 import {
   Dialog,
@@ -78,6 +80,16 @@ import {
   NARROW_GRID_WIDTH,
   narrowColumnCount,
 } from "./chartGridPlacement";
+
+// An edit to one chart re-renders only that panel. The delete and duplicate
+// callbacks close over the settings alone, so equal settings mean equal props.
+const GridChartPanel = memo(
+  PlotChartPanel,
+  (before, after) =>
+    before.settings === after.settings &&
+    before.width === after.width &&
+    before.height === after.height
+);
 
 const gridToPixels = (
   layout: ChartLayout,
@@ -118,6 +130,7 @@ export function PlotManager({
   const charts = useDataLayer((state) => state.charts);
   const addChart = useDataLayer((state) => state.addChart);
   const removeChart = useDataLayer((state) => state.removeChart);
+  const openDetails = useChartDetailsStore((state) => state.open);
   const removeAllCharts = useDataLayer((state) => state.removeAllCharts);
   const gridSettings = useDataLayer((state) => state.gridSettings);
   const themeId = resolveThemeId(useDataLayer((state) => state.theme));
@@ -478,8 +491,16 @@ export function PlotManager({
     const title = addedChart.title || "New chart";
     setAnnouncement(`${title} added`);
     setRowsOpen(false);
+    // A blank composition is built in its editor, so it opens there.
+    if (
+      addedChart.type === "composition" &&
+      !addedChart.composition?.elements?.length
+    ) {
+      openDetails(addedChart.id);
+      return;
+    }
     requestAnimationFrame(() => focusChartElement(addedChart.id));
-  }, [charts, focusChartElement, setRowsOpen]);
+  }, [charts, focusChartElement, openDetails, setRowsOpen]);
 
   const copyChartsToClipboard = async () => {
     try {
@@ -952,7 +973,7 @@ export function PlotManager({
                 );
                 return (
                   <div key={chart.id} data-chart-id={chart.id} tabIndex={-1}>
-                    <PlotChartPanel
+                    <GridChartPanel
                       settings={chart}
                       onDelete={() => removeChart(chart)}
                       onDuplicate={() => {

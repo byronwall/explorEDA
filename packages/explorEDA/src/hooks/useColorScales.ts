@@ -1,6 +1,9 @@
 import { finiteNumber } from "@/lib/numeric";
 import { detectColumnType } from "@/components/SummaryTable/utils/dataTypeDetection";
-import { useDataLayer } from "@/providers/DataLayerProvider";
+import {
+  useDataLayer,
+  useDataLayerSnapshot,
+} from "@/providers/DataLayerProvider";
 import {
   CategoricalColorScale,
   ColorScaleType,
@@ -31,7 +34,8 @@ export function useColorScales(): UseColorScalesReturn {
   const updateColorScale = useDataLayer((state) => state.updateColorScale);
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
-  const charts = useDataLayer((state) => state.charts);
+  // Read when a scale is chosen; a subscription would re-render every chart.
+  const getState = useDataLayerSnapshot();
 
   // One color function per scale, shared with the chart plans.
   const colorFunctions = useMemo(
@@ -138,8 +142,8 @@ export function useColorScales(): UseColorScalesReturn {
     // Existing chart bindings are authoritative. Keep the exact ID instead of
     // matching display names.
     const boundScaleIds = new Set(
-      charts
-        .filter(
+      getState()
+        .charts.filter(
           (chart) =>
             chart.colorField === field && typeof chart.colorScaleId === "string"
         )

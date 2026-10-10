@@ -36,7 +36,8 @@ export function useFilteredFieldProfiles(
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const crossfilterWrapper = useDataLayer((state) => state.crossfilterWrapper);
   const liveItems = useDataLayer((state) => state.liveItems);
-  const chartState = useDataLayer((state) => state.charts);
+  // Whether any chart exists; the list itself changes on every edit.
+  const hasCharts = useDataLayer((state) => state.charts.length > 0);
   const ownId = own?.id;
   const ownFilters = own?.filters;
   // Callers often build the list inline, so compare its contents.
@@ -71,7 +72,7 @@ export function useFilteredFieldProfiles(
     const wanted =
       fieldKey === undefined ? undefined : new Set(fieldKey.split("\u0000"));
     let filteredRows = data;
-    if (chartState.length) {
+    if (hasCharts) {
       const filteredIds = new Set(crossfilterWrapper.getFilteredRowIds());
       filteredRows = data.filter((row) => filteredIds.has(row.__ID));
     }
@@ -131,7 +132,7 @@ export function useFilteredFieldProfiles(
     calculatedProfiles,
     getColumnData,
     crossfilterWrapper,
-    chartState,
+    hasCharts,
     liveItems,
     fieldSettings,
     ownId,
@@ -146,11 +147,12 @@ export function useFilteredRowCount(): number {
   const data = useDataLayer((state) => state.data);
   const crossfilterWrapper = useDataLayer((state) => state.crossfilterWrapper);
   const liveItems = useDataLayer((state) => state.liveItems);
-  const chartState = useDataLayer((state) => state.charts);
+  // Whether any chart exists; the list itself changes on every edit.
+  const hasCharts = useDataLayer((state) => state.charts.length > 0);
   return useMemo(() => {
     void liveItems;
-    return chartState.length
+    return hasCharts
       ? crossfilterWrapper.getFilteredRowCount()
       : data.length;
-  }, [data, crossfilterWrapper, liveItems, chartState]);
+  }, [data, crossfilterWrapper, liveItems, hasCharts]);
 }

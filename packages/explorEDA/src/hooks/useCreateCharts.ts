@@ -1,10 +1,14 @@
 import { getChartDefinition } from "@/charts/registry";
-import { useDataLayer } from "@/providers/DataLayerProvider";
+import {
+  useDataLayer,
+  useDataLayerSnapshot,
+} from "@/providers/DataLayerProvider";
 import { ChartLayout, ChartType } from "@/types/ChartTypes";
 
 export function useCreateCharts() {
   const profiles = useDataLayer((s) => s.fieldProfiles);
-  const charts = useDataLayer((s) => s.charts);
+  // Read when a chart is built; a subscription would re-render every caller.
+  const getState = useDataLayerSnapshot();
   const addChart = useDataLayer((s) => s.addChart);
 
   /** Default settings for a new chart, without adding it to the grid. */
@@ -15,7 +19,10 @@ export function useCreateCharts() {
   ) => {
     const layout = initialLayout ?? {
       x: 0,
-      y: Math.max(0, ...charts.map((chart) => chart.layout.y + chart.layout.h)),
+      y: Math.max(
+        0,
+        ...getState().charts.map((chart) => chart.layout.y + chart.layout.h)
+      ),
       w: type === "metric-card" ? 4 : type === "composition" ? 12 : 6,
       h: type === "metric-card" ? 3 : type === "composition" ? 7 : 4,
     };
