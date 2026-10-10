@@ -1,3 +1,4 @@
+import { useThemeColors } from "@/hooks/useDisplayColorScales";
 import { useBrush } from "@/hooks/useBrush";
 import {
   useId,
@@ -45,6 +46,7 @@ function MarginalBars({
   plotHeight: number;
   onBrush?: (axis: "x" | "y", bounds: [number, number]) => void;
 }) {
+  const { mark } = useThemeColors();
   const drag = useRef<{
     axis: "x" | "y";
     start: number;
@@ -243,7 +245,7 @@ function MarginalBars({
             {!bin.segments && marginals.split && bin.selected > 0 && (
               <rect
                 {...share}
-                fill="#3479a8"
+                fill={mark}
                 fillOpacity={active ? 0.95 : 0.8}
                 pointerEvents="none"
               />

@@ -12,11 +12,13 @@ import {
   bubbleDashboard,
   densityDashboard,
   scatterRegressionDashboard,
+  scatterMatrixDashboard,
   scatterSurfaceDashboard,
   wineChemistryDashboard,
   pointMapDashboard,
   regionMapDashboard,
   distributionDashboard,
+  messageDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -36,6 +38,8 @@ import {
   Calculator,
   CloudFog,
   Globe,
+  LayoutGrid,
+  LayoutTemplate,
   LineChart,
   LucideIcon,
   Orbit,
@@ -99,6 +103,7 @@ const viewNames: Record<string, string> = {
   calendar: "calendar",
   boxplot: "box plot",
   "color-legend": "legend",
+  composition: "composition",
   "data-table": "table",
   heatmap: "heatmap",
   ecdf: "ECDF",
@@ -107,6 +112,7 @@ const viewNames: Record<string, string> = {
   "metric-card": "metric card",
   map: "map",
   "parallel-coordinates": "parallel coordinates",
+  "scatter-matrix": "scatter matrix",
   pivot: "pivot",
   row: "row",
   sankey: "sankey",
@@ -118,7 +124,11 @@ const viewNames: Record<string, string> = {
 export function describeViews(example: ExampleData) {
   const charts = example.savedData?.charts ?? [];
   const types = [...new Set(charts.map(({ type }) => viewNames[type] ?? type))];
-  return { count: charts.length, types, tabs: 1 + (example.views?.length ?? 0) };
+  return {
+    count: charts.length,
+    types,
+    tabs: 1 + (example.views?.length ?? 0),
+  };
 }
 
 export const FEATURED_EXAMPLE_ID = "shop-operations";
@@ -184,10 +194,12 @@ export const examples: ExampleData[] = [
   {
     id: "distribution-discovery",
     title: "Delivery times and smaller routes",
-    description: "Compare 78 synthetic shipments with a histogram and distributions. Inspect smaller routes together, then select their exact categories.",
+    description:
+      "Compare 78 synthetic shipments with a histogram and distributions. Inspect smaller routes together, then select their exact categories.",
     dataset: { rows: "78 shipments", fields: 3, source: "Synthetic" },
     shows: ["Histogram", "Distribution", "Other categories", "Source tracing"],
-    guide: "Try this: Alt-click Other categories and select a route. Open Distribution settings to compare Box, Violin, and Observations. Add chart lists Histogram and Distribution by name.",
+    guide:
+      "Try this: Alt-click Other categories and select a route. Open Distribution settings to compare Box, Violin, and Observations. Add chart lists Histogram and Distribution by name.",
     icon: BarChart3,
     data: "/delivery-times.csv",
     savedData: distributionDashboard,
@@ -195,21 +207,25 @@ export const examples: ExampleData[] = [
   {
     id: "region-map",
     title: "Requests across service districts",
-    description: "Join 15 synthetic records to six service districts. Compare totals, inspect the joined records, and see zero values, missing measures, and regions with no rows.",
-    dataset: {rows:"15 records",fields:3,source:"Synthetic"},
-    shows:["Region map","Typed region joins","Metric tracing"],
-    guide:"Try this: select Central and compare its 500 requests with the pivot. Alt-click outside the regions to see unassigned rows. Alt-click East to see two features joined as one region.",
-    icon:MapPin,
-    data:"/region-requests.csv",
-    savedData:regionMapDashboard,
+    description:
+      "Join 15 synthetic records to six service districts. Compare totals, inspect the joined records, and see zero values, missing measures, and regions with no rows.",
+    dataset: { rows: "15 records", fields: 3, source: "Synthetic" },
+    shows: ["Region map", "Typed region joins", "Metric tracing"],
+    guide:
+      "Try this: select Central and compare its 500 requests with the pivot. Alt-click outside the regions to see unassigned rows. Alt-click East to see two features joined as one region.",
+    icon: MapPin,
+    data: "/region-requests.csv",
+    savedData: regionMapDashboard,
   },
   {
     id: "point-map",
     title: "Where service requests originate",
-    description: "Compare 30 synthetic service sites. Point area shows requests; color shows region. Inspect any site to follow its coordinates and size.",
+    description:
+      "Compare 30 synthetic service sites. Point area shows requests; color shows region. Inspect any site to follow its coordinates and size.",
     dataset: { rows: "30 sites", fields: 5, source: "Synthetic" },
     shows: ["Point map", "Geographic view", "Source tracing"],
-    guide: "Try this: click a site to select its source row. Alt-click it to see its coordinates. Drag to pan, then choose Reset view. Omitted rows explains the unlocated site.",
+    guide:
+      "Try this: click a site to select its source row. Alt-click it to see its coordinates. Drag to pan, then choose Reset view. Omitted rows explains the unlocated site.",
     icon: MapPin,
     data: "/map-sites.csv",
     savedData: pointMapDashboard,
@@ -217,10 +233,12 @@ export const examples: ExampleData[] = [
   {
     id: "scatter-density",
     title: "Where daily observations cluster",
-    description: "Count 10,000 daily observations in temperature and sales bins. Darker cells show where more days share similar values.",
+    description:
+      "Count 10,000 daily observations in temperature and sales bins. Darker cells show where more days share similar values.",
     dataset: { rows: "10,000 days", fields: 12, source: "Synthetic" },
     shows: ["Density bins", "Exact bin selection", "Source tracing"],
-    guide: "Try this: click a dark bin. The count and records show its days. Alt-click it to see exact boundaries. Change Display to Points to compare individual rows.",
+    guide:
+      "Try this: click a dark bin. The count and records show its days. Alt-click it to see exact boundaries. Change Display to Points to compare individual rows.",
     icon: ScatterChart,
     data: "/correlated_medium.csv",
     savedData: densityDashboard,
@@ -228,10 +246,12 @@ export const examples: ExampleData[] = [
   {
     id: "wine-chemistry",
     title: "What separates a good red wine",
-    description: "1,599 Portuguese red wines with lab measurements and a tasting score. Smoothed density, hexagons, per-band fits, paired summaries, and marginal histograms show how alcohol, density, and acidity move together, and how the best wines differ.",
+    description:
+      "1,599 Portuguese red wines with lab measurements and a tasting score. Smoothed density, hexagons, per-band fits, paired summaries, and marginal histograms show how alcohol, density, and acidity move together, and how the best wines differ.",
     dataset: { rows: "1,599 wines", fields: 12, source: "Real" },
     shows: ["Smoothed density", "LOESS by group", "Faceted fits"],
-    guide: "Try this: click Excellent in the quality bands to refit every chart. Alt-click a density region to see the share of wines inside it. Click a hexagon to select its exact wines.",
+    guide:
+      "Try this: click Excellent in the quality bands to refit every chart. Alt-click a density region to see the share of wines inside it. Click a hexagon to select its exact wines.",
     icon: Wine,
     data: "/datasets/wine-quality-red.csv",
     savedData: wineChemistryDashboard,
@@ -239,21 +259,38 @@ export const examples: ExampleData[] = [
   {
     id: "scatter-regression",
     title: "Bill shape within each species",
-    description: "Pooled together, longer penguin bills look shallower. Fit each species on its own and the slope turns positive. Equations, slopes, and R² read on the chart; a filter from another view refits them.",
+    description:
+      "Pooled together, longer penguin bills look shallower. Fit each species on its own and the slope turns positive. Equations, slopes, and R² read on the chart; a filter from another view refits them.",
     dataset: { rows: "344 penguins", fields: 8, source: "Real" },
     shows: ["Grouped regression", "Faceted fits", "Fit tracing"],
-    guide: "Try this: click an island to refit every species. Drag across the points; the fits stay put. Alt-click a fit line to see its coefficients and rows.",
+    guide:
+      "Try this: click an island to refit every species. Drag across the points; the fits stay put. Alt-click a fit line to see its coefficients and rows.",
     icon: ScatterChart,
     data: "/datasets/palmer-penguins.csv",
     savedData: scatterRegressionDashboard,
   },
   {
+    id: "scatter-matrix",
+    title: "Every pair of penguin measurements",
+    description:
+      "A scatter matrix puts every pair of fields side by side, with each field's distribution on the diagonal. Numbers, species, and sex share one grid, and a brush in any cell highlights the same penguins everywhere.",
+    dataset: { rows: "344 penguins", fields: 8, source: "Real" },
+    shows: ["Scatter matrix", "Linked brushing", "Mixed field types"],
+    guide:
+      "Try this: drag across a cell to select those penguins and watch them light up in every other cell. Click a species bar to select it. Click empty space to clear.",
+    icon: LayoutGrid,
+    data: "/datasets/palmer-penguins.csv",
+    savedData: scatterMatrixDashboard,
+  },
+  {
     id: "scatter-surfaces",
     title: "Ten thousand days, two ways to see density",
-    description: "Hexagons count the days in fixed cells; the smoothed density estimates rows per unit area and outlines where days concentrate. A linear fit and paired summary sit over the density.",
+    description:
+      "Hexagons count the days in fixed cells; the smoothed density estimates rows per unit area and outlines where days concentrate. A linear fit and paired summary sit over the density.",
     dataset: { rows: "10,000 days", fields: 12, source: "Synthetic" },
     shows: ["Hexagonal bins", "Smoothed density", "Contour tracing"],
-    guide: "Try this: click a dark hexagon to select its days. Alt-click a shaded region to see its threshold and the share of days inside. Drag across the humidity histogram to re-estimate the density.",
+    guide:
+      "Try this: click a dark hexagon to select its days. Alt-click a shaded region to see its threshold and the share of days inside. Drag across the humidity histogram to re-estimate the density.",
     icon: ScatterChart,
     data: "/correlated_medium.csv",
     savedData: scatterSurfaceDashboard,
@@ -261,10 +298,12 @@ export const examples: ExampleData[] = [
   {
     id: "bubble-scatter",
     title: "Trial volume, speed, and conversion",
-    description: "Compare daily response time and conversion. Bubble area shows trial volume, and color marks each release phase.",
+    description:
+      "Compare daily response time and conversion. Bubble area shows trial volume, and color marks each release phase.",
     dataset: { rows: "90 days", fields: 7, source: "Synthetic" },
     shows: ["Bubble area", "Row selection", "Size tracing"],
-    guide: "Try this: click a bubble to select its day. Alt-click it to see its size calculation. Change Size by in settings to compare another measure.",
+    guide:
+      "Try this: click a bubble to select its day. Alt-click it to see its size calculation. Change Size by in settings to compare another measure.",
     icon: ScatterChart,
     data: "/datasets/product-activity.csv",
     savedData: bubbleDashboard,
@@ -293,7 +332,14 @@ export const examples: ExampleData[] = [
     description:
       "Follow orders from revenue and margin to delivery, channels, and individual records. Click any bar and every other view narrows to match, or follow orders from channel to category to returns in the flow at the bottom.",
     dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
-    shows: ["Metric cards", "Click to filter", "Sankey flow", "Filter chips", "Saved tabs", "Symmetric log scales"],
+    shows: [
+      "Metric cards",
+      "Click to filter",
+      "Sankey flow",
+      "Filter chips",
+      "Saved tabs",
+      "Symmetric log scales",
+    ],
     guide:
       "Try this: click Web in Sales channels. The order count, revenue, and average-order cards update with the charts and table. Alt-click a card to see its inputs. Click Web again to clear the filter.",
     icon: ShoppingCart,
@@ -304,10 +350,17 @@ export const examples: ExampleData[] = [
   {
     id: "calendar-series",
     title: "Orders through the calendar",
-    description: "Compare monthly revenue by channel, weekly order counts, and daily activity. Every period links to the orders behind it.",
+    description:
+      "Compare monthly revenue by channel, weekly order counts, and daily activity. Every period links to the orders behind it.",
     dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
-    shows: ["Calendar summaries", "Period selection", "Source tracing", "Saved tabs"],
-    guide: "Try this: click a point in Monthly revenue by channel. Alt-click it to see how the value was calculated. Open its settings to change Day, Week, or Month.",
+    shows: [
+      "Calendar summaries",
+      "Period selection",
+      "Source tracing",
+      "Saved tabs",
+    ],
+    guide:
+      "Try this: click a point in Monthly revenue by channel. Alt-click it to see how the value was calculated. Open its settings to change Day, Week, or Month.",
     icon: LineChart,
     data: "/datasets/shop-operations.csv",
     savedData: timeSeriesDashboard,
@@ -316,10 +369,12 @@ export const examples: ExampleData[] = [
   {
     id: "grouped-bars",
     title: "Sales by region and channel",
-    description: "Compare revenue across regions, with one bar for each channel. Select a pair to inspect the matching orders.",
+    description:
+      "Compare revenue across regions, with one bar for each channel. Select a pair to inspect the matching orders.",
     dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
     shows: ["Grouped bars", "Pair selection", "Source tracing"],
-    guide: "Try this: select a region–channel bar. Alt-click it to see its source records. Open settings to compare counts, sums, or averages.",
+    guide:
+      "Try this: select a region–channel bar. Alt-click it to see its source records. Open settings to compare counts, sums, or averages.",
     icon: BarChart3,
     data: "/datasets/shop-operations.csv",
     savedData: groupedBarsDashboard,
@@ -327,10 +382,12 @@ export const examples: ExampleData[] = [
   {
     id: "area-charts",
     title: "Revenue layers through the year",
-    description: "Follow monthly revenue totals and the channels that contribute to them. Compare the stack with separate areas and inspect each period.",
+    description:
+      "Follow monthly revenue totals and the channels that contribute to them. Compare the stack with separate areas and inspect each period.",
     dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
     shows: ["Area charts", "Stacked areas", "Period tracing"],
-    guide: "Try this: inspect a point in Monthly revenue layers. The trace shows its band bounds and source records. Change Display to Area to compare each channel from zero.",
+    guide:
+      "Try this: inspect a point in Monthly revenue layers. The trace shows its band bounds and source records. Change Display to Area to compare each channel from zero.",
     icon: LineChart,
     data: "/datasets/shop-operations.csv",
     savedData: areaDashboard,
@@ -338,10 +395,12 @@ export const examples: ExampleData[] = [
   {
     id: "stacked-bars",
     title: "Regional totals and channel shares",
-    description: "Compare each region's revenue and channel mix with stacked totals and percentage bars.",
+    description:
+      "Compare each region's revenue and channel mix with stacked totals and percentage bars.",
     dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
     shows: ["Stacked bars", "100% bars", "Denominator tracing"],
-    guide: "Try this: inspect a revenue segment, then choose 100% in Display. The trace shows its share and category denominator.",
+    guide:
+      "Try this: inspect a revenue segment, then choose 100% in Display. The trace shows its share and category denominator.",
     icon: BarChart3,
     data: "/datasets/shop-operations.csv",
     savedData: stackedBarsDashboard,
@@ -352,7 +411,12 @@ export const examples: ExampleData[] = [
     description:
       "Three species measured on three Antarctic islands. Body size overlaps, but bill shape pulls the species apart. One color key follows them through every view, and parallel coordinates draw each penguin as one line across four measurements.",
     dataset: { rows: "344 penguins", fields: 8, source: "Real" },
-    shows: ["Shared color key", "Parallel coordinates", "Scatter brushing", "Saved tabs"],
+    shows: [
+      "Shared color key",
+      "Parallel coordinates",
+      "Scatter brushing",
+      "Saved tabs",
+    ],
     icon: Bird,
     data: "/datasets/palmer-penguins.csv",
     savedData: penguinDashboard,
@@ -438,6 +502,19 @@ export const examples: ExampleData[] = [
     icon: ShoppingCart,
     data: "/datasets/shop-10000.csv",
     savedData: largeShopDashboard,
+  },
+  {
+    id: "message-log",
+    title: "Compose a report graphic",
+    description:
+      "Six years of messages with 12 correspondents. Start from a blank artboard: add a title, build one strip of monthly squares, and repeat it for each correspondent.",
+    dataset: { rows: "10,376 messages", fields: 5, source: "Synthetic" },
+    shows: ["Blank composition", "Repeated chart units", "Copy as PNG"],
+    guide:
+      "Try this: open details on Report graphic, add a title and a chart unit, repeat it by Correspondent, then copy the PNG.",
+    icon: LayoutTemplate,
+    data: "/datasets/message-log.csv",
+    savedData: messageDashboard,
   },
   {
     id: "lorenz-3d",

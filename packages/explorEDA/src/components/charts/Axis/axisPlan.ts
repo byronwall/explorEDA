@@ -139,8 +139,61 @@ export interface ChartAxesPlan {
   marginPolicy?: MarginPolicy;
 }
 
+/**
+ * The theme's axis type. Sizes fill in where the chart sets none, and
+ * `measure` gives rendered text width so wide type claims room.
+ */
+export interface AxisTypography {
+  tickSize: number;
+  labelSize: number;
+  measure: (text: string, size: number) => number;
+}
+
+export const DEFAULT_AXIS_TYPOGRAPHY: AxisTypography = {
+  tickSize: 10,
+  labelSize: 11,
+  measure: (text, size) => text.length * size * 0.6,
+};
+
+/**
+ * Text width for layout: the measured width, never less than the estimate
+ * the axes always used, so compact charts keep their spacing.
+ */
+function textWidth(
+  typography: AxisTypography,
+  text: string,
+  size: number,
+  factor = 0.6
+) {
+  return Math.max(text.length * size * factor, typography.measure(text, size));
+}
+
+/** Cuts text with an ellipsis so it fits a width. */
+function fitText(
+  typography: AxisTypography,
+  text: string,
+  size: number,
+  maxWidth: number,
+  factor = 0.6
+) {
+  if (textWidth(typography, text, size, factor) <= maxWidth) return text;
+  let low = 0;
+  let high = text.length;
+  while (low < high) {
+    const mid = Math.ceil((low + high) / 2);
+    if (
+      textWidth(typography, `${text.slice(0, mid)}…`, size, factor) <= maxWidth
+    )
+      low = mid;
+    else high = mid - 1;
+  }
+  return `${text.slice(0, Math.max(2, low))}…`;
+}
+
 export interface AxisInput {
   scale: ChartScale;
+  /** Theme sizes and text measurement. Defaults to the compact sizes. */
+  typography?: AxisTypography;
   /** Explicit data-unit ticks, such as UTC calendar boundaries. */
   tickValues?: number[];
   scaleType?: string;
@@ -201,8 +254,9 @@ function planAxis(
 ): AxisPlan {
   const { scale, format } = input;
   const band = "bandwidth" in scale;
-  const tickFontSize = input.tickFontSize ?? 10;
-  const labelFontSize = input.labelFontSize ?? 11;
+  const typography = input.typography ?? DEFAULT_AXIS_TYPOGRAPHY;
+  const tickFontSize = input.tickFontSize ?? typography.tickSize;
+  const labelFontSize = input.labelFontSize ?? typography.labelSize;
   const tickCharWidth = tickFontSize * 0.6;
   // Density sets the D3 candidate target. Spacing then drops overlapping labels.
   const requested = Math.max(2, input.density ?? 5);
@@ -214,7 +268,7 @@ function planAxis(
         candidates,
         (tick) => position(scale, tick),
         axis === "x"
-          ? (tick) => format(tick).length * tickCharWidth
+          ? (tick) => textWidth(typography, format(tick), tickFontSize)
           : () => tickFontSize * 1.2
       );
   const maxLabelChars =
@@ -223,6 +277,21 @@ function planAxis(
         ? Math.max(3, Math.floor(scale.step() / (tickFontSize * 0.7)))
         : 20
       : Math.max(5, Math.floor((margin.left - 12 - 4) / tickCharWidth));
+  // Tick text fits the room the layout gives it, measured in its own font.
+  const maxTickWidth =
+    axis === "x"
+      ? band
+        ? Math.max(3 * tickFontSize * 0.7, scale.step())
+        : 20 * tickCharWidth
+      : Math.max(5 * tickCharWidth, margin.left - 12 - 4);
+  const tickText = (text: string) =>
+    fitText(
+      typography,
+      truncate(text, maxLabelChars),
+      tickFontSize,
+      maxTickWidth,
+      axis === "x" && band ? 0.7 : 0.6
+    );
   const word = AXIS_WORD[axis];
   const guides: AxisGuide[] = [];
   if (input.rule !== false) {
@@ -256,20 +325,20 @@ function planAxis(
       label:
         axis === "x"
           ? {
-              text: truncate(fullText, maxLabelChars),
+              text: tickText(fullText),
               fullText,
               x: at,
-              y: plotHeight + 17,
+              y: plotHeight + 7 + tickFontSize,
               anchor: "middle",
-              fontSize: input.tickFontSize ?? 10,
+              fontSize: tickFontSize,
             }
           : {
-              text: truncate(fullText, maxLabelChars),
+              text: tickText(fullText),
               fullText,
               x: -9,
               y: at,
               anchor: "end",
-              fontSize: input.tickFontSize ?? 10,
+              fontSize: tickFontSize,
               dy: ".32em",
             },
     });
@@ -286,26 +355,35 @@ function planAxis(
       label:
         axis === "x"
           ? {
-              text: truncate(
+              text: fitText(
+                typography,
                 input.label,
-                Math.max(3, Math.floor(plotWidth / (labelFontSize * 0.6)))
+                labelFontSize,
+                Math.max(3 * labelFontSize * 0.6, plotWidth)
               ),
               fullText: input.label,
               x: plotWidth / 2,
-              y: plotHeight + Math.max(32, margin.bottom - footer - 8),
+              y:
+                plotHeight +
+                Math.max(
+                  32 + (tickFontSize - 10) + (labelFontSize - 11),
+                  margin.bottom - footer - 8
+                ),
               anchor: "middle",
-              fontSize: input.labelFontSize ?? 11,
+              fontSize: labelFontSize,
             }
           : {
-              text: truncate(
+              text: fitText(
+                typography,
                 input.label,
-                Math.max(3, Math.floor(plotHeight / (labelFontSize * 0.6)))
+                labelFontSize,
+                Math.max(3 * labelFontSize * 0.6, plotHeight)
               ),
               fullText: input.label,
               x: -plotHeight / 2,
               y: -(margin.left - 12),
               anchor: "middle",
-              fontSize: input.labelFontSize ?? 11,
+              fontSize: labelFontSize,
               rotate: -90,
             },
     });
@@ -408,8 +486,10 @@ export function planChartMargin({
   yDomain,
   hasXLabel,
   hasYLabel,
-  yTickFontSize = 10,
+  yTickFontSize,
   yLabels,
+  typography = DEFAULT_AXIS_TYPOGRAPHY,
+  xTickFontSize,
 }: {
   margin: MarginSettings;
   width: number;
@@ -419,12 +499,21 @@ export function planChartMargin({
   yTickFontSize?: number;
   /** Tick labels of a band Y axis, which replace the numeric ticks. */
   yLabels?: string[];
+  typography?: AxisTypography;
+  /** The X tick size, when the chart sets one; it sizes the bottom margin. */
+  xTickFontSize?: number;
 }): { margin: MarginSettings; policy: MarginPolicy } {
   const labels = yLabels ?? scaleLinear().domain(yDomain).ticks(5).map(String);
+  const yTick = yTickFontSize ?? typography.tickSize;
+  // Larger type than the compact sizes widens the title band and footer.
+  const labelGrowth = Math.max(0, typography.labelSize - 11);
+  const tickGrowth = Math.max(0, (xTickFontSize ?? typography.tickSize) - 10);
   const labelLeftMargin = Math.max(
     margin.left,
     ...labels.map(
-      (label) => label.length * yTickFontSize * 0.7 + (hasYLabel ? 38 : 18)
+      (label) =>
+        textWidth(typography, label, yTick, 0.7) +
+        (hasYLabel ? 38 + labelGrowth : 18)
     )
   );
   const minPlotWidth = Math.min(
@@ -432,7 +521,10 @@ export function planChartMargin({
     Math.max(0, width - margin.left - margin.right)
   );
   const maxLeftMargin = Math.max(0, width - margin.right - minPlotWidth);
-  const bottomMargin = Math.max(margin.bottom, hasXLabel ? 46 : 28);
+  const bottomMargin = Math.max(
+    margin.bottom,
+    (hasXLabel ? 46 + labelGrowth : 28) + tickGrowth
+  );
   return {
     margin: {
       ...margin,

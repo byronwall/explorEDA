@@ -14,6 +14,8 @@ export function traceRowIds(trace: ChartTrace): number[] | undefined {
       return trace.point?.contributors.map((item) => item.sourceId);
     case "point":
       return [trace.sourceId];
+    case "composition":
+      return trace.rowIds;
     default:
       return undefined;
   }

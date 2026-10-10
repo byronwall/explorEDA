@@ -13,13 +13,15 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useCreateCharts } from "@/hooks/useCreateCharts";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 
 type Target = { field: string; element: Element };
-type Menu = Target & { x: number; y: number };
+/** A menu opens on a field label, or on an axis band that has no field. */
+type Menu = { field?: string; element: Element; x: number; y: number };
 
 /** The axis title or tick label under an event, with the field it shows. */
 export function axisFieldTarget(target: EventTarget | null) {
@@ -38,7 +40,10 @@ const isShortcut = (event: MouseEvent | KeyboardEvent) =>
  * menu offers inspection beside other field actions. Spread `handlers` on
  * the chart panel and render `overlay` anywhere inside it.
  */
-export function useAxisFieldActions() {
+export function useAxisFieldActions(
+  /** More actions for the axis under the menu, such as editing its range. */
+  axisItems?: (element: Element) => ReactNode
+) {
   const [inspected, setInspected] = useState<Target>();
   const [menu, setMenu] = useState<Menu>();
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
@@ -47,7 +52,7 @@ export function useAxisFieldActions() {
   const { createChart } = useCreateCharts();
   const inspecting = useRef(false);
 
-  const openMenu = (target: Target, x: number, y: number) => {
+  const openMenu = (target: Omit<Menu, "x" | "y">, x: number, y: number) => {
     setInspected(undefined);
     setMenu({ ...target, x, y });
   };
@@ -62,7 +67,12 @@ export function useAxisFieldActions() {
       setInspected(target);
     },
     onContextMenu: (event: MouseEvent) => {
-      const target = axisFieldTarget(event.target);
+      const strip =
+        axisItems && event.target instanceof Element
+          ? event.target.closest("[data-axis-edit]")
+          : null;
+      const target =
+        axisFieldTarget(event.target) ?? (strip ? { element: strip } : null);
       if (!target) return;
       event.preventDefault();
       // A keyboard-opened menu has no pointer position; use the label's.
@@ -85,8 +95,8 @@ export function useAxisFieldActions() {
     },
   };
 
-  const label = menu ? getFieldLabel(menu.field) : "";
-  const dataType = menu
+  const label = menu?.field ? getFieldLabel(menu.field) : "";
+  const dataType = menu?.field
     ? resolveFieldProfile(menu.field, fieldProfiles ?? [], getColumnData)
         ?.dataType
     : undefined;
@@ -123,27 +133,38 @@ export function useAxisFieldActions() {
             <DropdownMenuContent
               align="start"
               collisionPadding={12}
-              aria-label={`Actions for ${label}`}
+              aria-label={label ? `Actions for ${label}` : "Axis actions"}
               className="max-w-[min(280px,calc(100vw-24px))]"
               onCloseAutoFocus={(event) => {
                 event.preventDefault();
-                // The inspector takes focus; otherwise return it to the label.
-                if (!inspecting.current) focusLabel(menu.element);
+                // The inspector, or an axis editor the menu opened, takes
+                // focus; otherwise return it to the label.
+                const element = menu.element;
+                if (!inspecting.current)
+                  requestAnimationFrame(() => {
+                    const active = document.activeElement;
+                    if (!active || active === document.body)
+                      focusLabel(element);
+                  });
                 inspecting.current = false;
               }}
             >
-              <DropdownMenuItem
-                onSelect={() => {
-                  inspecting.current = true;
-                  setInspected(menu);
-                }}
-              >
-                <Settings2 aria-hidden="true" />
-                <span className="truncate">Inspect {label}</span>
-              </DropdownMenuItem>
-              {chartType && (
+              {axisItems?.(menu.element)}
+              {menu.field && axisItems && <DropdownMenuSeparator />}
+              {menu.field && (
                 <DropdownMenuItem
-                  onSelect={() => createChart(chartType, menu.field)}
+                  onSelect={() => {
+                    inspecting.current = true;
+                    setInspected({ field: menu.field!, element: menu.element });
+                  }}
+                >
+                  <Settings2 aria-hidden="true" />
+                  <span className="truncate">Inspect {label}</span>
+                </DropdownMenuItem>
+              )}
+              {menu.field && chartType && (
+                <DropdownMenuItem
+                  onSelect={() => createChart(chartType, menu.field!)}
                 >
                   <BarChart
                     aria-hidden="true"
@@ -152,14 +173,16 @@ export function useAxisFieldActions() {
                   <span className="truncate">New chart of {label}</span>
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem
-                onSelect={() => {
-                  void navigator.clipboard?.writeText(menu.field);
-                }}
-              >
-                <Copy aria-hidden="true" />
-                Copy field name
-              </DropdownMenuItem>
+              {menu.field && (
+                <DropdownMenuItem
+                  onSelect={() => {
+                    void navigator.clipboard?.writeText(menu.field!);
+                  }}
+                >
+                  <Copy aria-hidden="true" />
+                  Copy field name
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>,
           document.body

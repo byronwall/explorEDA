@@ -13,6 +13,7 @@ export interface NumericInputEnterProps {
   stepLarge?: number;
   placeholder?: string;
   className?: string;
+  "aria-label"?: string;
 }
 
 export function NumericInputEnter({
@@ -26,6 +27,7 @@ export function NumericInputEnter({
   max,
   placeholder,
   className,
+  "aria-label": ariaLabel,
 }: NumericInputEnterProps) {
   const [localValue, setLocalValue] = useState<string>(value.toString());
 
@@ -91,6 +93,7 @@ export function NumericInputEnter({
         min={min}
         max={max}
         placeholder={placeholder}
+        aria-label={ariaLabel}
         className={`w-full`}
       />
     </div>

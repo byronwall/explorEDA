@@ -44,6 +44,8 @@ Shared field definitions and color scales retain one current project value. Earl
 
 All client state means meaningful serializable analysis and session state. Hover state and incomplete pointer gestures are proposed exclusions. They do not represent completed work.
 
+History steps already render an optional author, and `HistoryEntry` has an `author` field, but nothing sets it while sessions stay in one browser. When sessions sync between people, stamp the author in `pushCheckpoint`. Show the name in the compact meta line and beside the time when expanded; steps without an author render as now. Decide what else belongs beside it, such as device or a comment.
+
 ## What seems settled
 
 Tabs, one source, chart definitions plus filters per view, automatic local saving, Undo, and categorized time travel are required. Detail-filter inheritance is unresolved and does not block this initiative. Duplication remains useful without comparison or navigation machinery.

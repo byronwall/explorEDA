@@ -1,3 +1,4 @@
+import type { ThemeColors } from "@/lib/themePalettes";
 import { applyFilter } from "@/hooks/applyFilter";
 import type { AggregateContributor } from "@/lib/aggregates";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
@@ -18,6 +19,8 @@ export interface SankeySnapshot {
   measureData: Record<number, datum>;
   /** A workspace color scale for the first stage, when one exists. */
   colorScale?: ColorScaleType;
+  /** Fallback colors from the workspace theme. */
+  themeColors?: ThemeColors;
 }
 
 export interface SankeyNode {
@@ -127,6 +130,9 @@ export const STATUS_HEIGHT = 20;
 const NODE_WIDTH = 12;
 const OTHER_KEY = "__other__";
 const ONE_COLOR = "#3479a8";
+/** The theme's one color for uncolored flows. */
+const oneColor = (snapshot: SankeySnapshot) =>
+  snapshot.themeColors?.mark ?? ONE_COLOR;
 
 function measureReason(value: datum) {
   const reason = numericExclusionReason(value);
@@ -259,7 +265,7 @@ export function planSankey({
         y: 0,
         width: NODE_WIDTH,
         height: 0,
-        color: ONE_COLOR,
+        color: oneColor(snapshot),
         selected: undefined,
         contributors: [],
       };
@@ -353,7 +359,7 @@ export function planSankey({
       if (!segment) {
         segment = {
           key: segmentKey,
-          color: ONE_COLOR,
+          color: oneColor(snapshot),
           weight: 0,
           selectedWeight: 0,
           offset: 0,
@@ -436,8 +442,9 @@ export function planSankey({
   const colorIndex = new Map<string, string>();
   for (const stage of stagePlans) {
     stage.nodes.forEach((node, index) => {
-      let color =
-        defaultCategoricalColors[index % defaultCategoricalColors.length]!;
+      const fallback =
+        snapshot.themeColors?.categorical ?? defaultCategoricalColors;
+      let color = fallback[index % fallback.length]!;
       if (node.kind !== "value") {
         color = "#8a94a3";
       } else if (stage.index === 0 && resolve) {
@@ -448,7 +455,7 @@ export function planSankey({
         }
       }
       if (settings.flowColor === "none") {
-        color = ONE_COLOR;
+        color = oneColor(snapshot);
       }
       node.color = color;
       colorIndex.set(node.id, color);
@@ -506,7 +513,7 @@ export function planSankey({
         const thickness = segment.weight * k;
         const planned = {
           ...segment,
-          color: colorIndex.get(segment.key) ?? ONE_COLOR,
+          color: colorIndex.get(segment.key) ?? oneColor(snapshot),
           offset,
           thickness,
         };
