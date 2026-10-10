@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { useId, type ReactNode } from "react";
 
-export function Segmented<T extends string | number>({
+export function Segmented<T extends string | number | boolean>({
   label,
   value,
   options,

@@ -1107,6 +1107,7 @@ export const messageDashboard = dashboard("Message log", [
     composition: {
       artboard: { width: 960, height: 600, background: "#ffffff" },
       elements: [],
+      scales: [],
     },
   },
   row(

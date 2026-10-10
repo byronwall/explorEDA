@@ -6583,6 +6583,12 @@ td[data-null] {
   fill: var(--primary);
   font-weight: 600;
   pointer-events: none;
+  /* A paper-colored halo keeps the name legible over drawn text. */
+  paint-order: stroke;
+  stroke: var(--background);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
 }
 .eda-composition-inspector {
   display: flex;
@@ -6685,4 +6691,65 @@ td[data-null] {
 .eda-composition-textarea:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 0;
+}
+.eda-composition-scope {
+  margin-bottom: 6px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.eda-composition-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 24px;
+}
+.eda-composition-section-head > h5 {
+  margin-bottom: 0;
+}
+.eda-composition-mark + .eda-composition-mark {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border);
+}
+.eda-composition-mark-name {
+  font-size: 12px;
+  font-weight: 500;
+}
+.eda-composition-select {
+  min-width: 0;
+  height: 28px;
+  padding: 0 6px;
+  border: 1px solid var(--input);
+  border-radius: 6px;
+  background: transparent;
+  font-size: 12px;
+}
+.eda-composition-scale-select {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+.eda-composition-scale-select > select {
+  flex: 1;
+}
+.eda-composition-layers li.eda-composition-scale-row {
+  flex-direction: column;
+  align-items: stretch;
+}
+.eda-composition-layers li.eda-composition-scale-row:hover {
+  background: transparent;
+}
+.eda-composition-layer-meta {
+  margin-left: auto;
+  padding-left: 8px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.eda-composition-scale-props {
+  margin: 4px 0 8px;
+  padding: 6px 0 6px 8px;
+  border-left: 2px solid var(--border);
 }

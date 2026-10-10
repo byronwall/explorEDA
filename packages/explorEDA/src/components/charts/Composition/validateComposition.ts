@@ -31,11 +31,78 @@ function isTextElement(value: Value) {
   );
 }
 
+const oneOf = (value: unknown, options: readonly unknown[]) =>
+  options.includes(value);
+
+function isMark(value: unknown) {
+  return (
+    isRecord(value) &&
+    isString(value.id) &&
+    isString(value.name) &&
+    oneOf(value.shape, ["rect", "circle"]) &&
+    isString(value.positionScaleId) &&
+    isString(value.valueScaleId) &&
+    oneOf(value.aggregation, ["count", "sum", "average"]) &&
+    (value.aggregation === "count" || isString(value.measureField)) &&
+    oneOf(value.encoding, ["color", "size", "height"]) &&
+    isString(value.fill) &&
+    isNumber(value.inset)
+  );
+}
+
+function isUnitElement(value: Value) {
+  const { frame, label, repeat, marks } = value;
+  return (
+    isRecord(frame) &&
+    isNumber(frame.width) &&
+    frame.width > 0 &&
+    isNumber(frame.height) &&
+    frame.height > 0 &&
+    isRecord(label) &&
+    typeof label.show === "boolean" &&
+    isNumber(label.width) &&
+    isNumber(label.fontSize) &&
+    typeof value.axis === "boolean" &&
+    Array.isArray(marks) &&
+    marks.every(isMark) &&
+    isRecord(repeat) &&
+    (repeat.field === undefined || isString(repeat.field)) &&
+    oneOf(repeat.arrangement, ["rows", "columns", "grid"]) &&
+    isNumber(repeat.columns) &&
+    repeat.columns >= 1 &&
+    isNumber(repeat.gap) &&
+    oneOf(repeat.order, ["count", "label"]) &&
+    isNumber(repeat.limit) &&
+    repeat.limit >= 1
+  );
+}
+
+function isScale(value: unknown) {
+  if (!isRecord(value) || !isString(value.id) || !isString(value.name))
+    return false;
+  if (!oneOf(value.domain, ["shared", "instance"])) return false;
+  if (value.kind === "position")
+    return (
+      isString(value.field) &&
+      (value.interval === undefined ||
+        oneOf(value.interval, ["day", "week", "month", "year"]))
+    );
+  return (
+    value.kind === "value" &&
+    oneOf(value.transform, ["linear", "sqrt", "log"]) &&
+    Array.isArray(value.colors) &&
+    value.colors.length === 2 &&
+    value.colors.every(isString)
+  );
+}
+
 function isElement(value: unknown) {
   if (!isRecord(value) || !isPlaced(value)) return false;
   switch (value.kind) {
     case "text":
       return isTextElement(value);
+    case "unit":
+      return isUnitElement(value);
     default:
       return false;
   }
@@ -46,8 +113,33 @@ export function isCompositionDefinition(
   value: unknown
 ): value is CompositionDefinition {
   if (!isRecord(value) || !isRecord(value.artboard)) return false;
-  const { artboard, elements } = value;
+  const { artboard, elements, scales = [] } = value;
+  // Every mark must point at a scale of the right kind.
+  const kinds = new Map(
+    Array.isArray(scales)
+      ? scales.map((scale) => [(scale as Value).id, (scale as Value).kind])
+      : []
+  );
+  const marksResolve =
+    Array.isArray(elements) &&
+    elements.every(
+      (element) =>
+        !isRecord(element) ||
+        element.kind !== "unit" ||
+        !Array.isArray(element.marks) ||
+        element.marks.every(
+          (mark) =>
+            isRecord(mark) &&
+            kinds.get(mark.positionScaleId) === "position" &&
+            kinds.get(mark.valueScaleId) === "value"
+        )
+    );
   return (
+    Array.isArray(scales) &&
+    scales.every(isScale) &&
+    new Set(scales.map((scale) => (scale as Value).id)).size ===
+      scales.length &&
+    marksResolve &&
     isNumber(artboard.width) &&
     artboard.width > 0 &&
     isNumber(artboard.height) &&

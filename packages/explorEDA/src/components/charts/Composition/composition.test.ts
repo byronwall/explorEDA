@@ -4,6 +4,7 @@ import {
   createEmptyComposition,
   createTextElement,
   type CompositionDefinition,
+  type TextElement,
 } from "./compositionTypes";
 import { estimateTextWidth } from "./measureText";
 import { resolveComposition, wrapText } from "./resolveComposition";
@@ -22,7 +23,7 @@ function withText(): CompositionDefinition {
 
 describe("composition text", () => {
   it("stacks a new subtitle below the title", () => {
-    const [title, subtitle] = withText().elements;
+    const [title, subtitle] = withText().elements as TextElement[];
     expect(title).toMatchObject({ id: "title-1", x: 32, y: 32 });
     expect(subtitle!.y).toBeGreaterThan(title!.y + title!.fontSize);
   });
