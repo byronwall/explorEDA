@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDataLayer } from "@/providers/DataLayerProvider";
+import { describeMark } from "./markSummary";
 import { Plus, Trash2 } from "lucide-react";
-import { useId } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import {
   createInset,
   MUTED_MARK,
@@ -266,6 +267,7 @@ export function UnitProperties({
   onChange,
   onChangeDefinition,
   onEditScale,
+  revealedMark,
 }: {
   unit: UnitElement;
   definition: CompositionDefinition;
@@ -276,6 +278,8 @@ export function UnitProperties({
   /** For edits that also add scales, such as changing a mark's type. */
   onChangeDefinition: (definition: CompositionDefinition) => void;
   onEditScale: (scaleId: string) => void;
+  /** A mark a quick action asked to show; the token repeats a request. */
+  revealedMark?: { id: string; token: number };
 }) {
   const profiles = useDataLayer((state) => state.fieldProfiles);
   const repeatFields = profiles
@@ -496,6 +500,7 @@ export function UnitProperties({
         onChange={(marks) => onChange({ marks })}
         onChangeDefinition={onChangeDefinition}
         onEditScale={onEditScale}
+        revealedMark={revealedMark}
       />
     </>
   );
@@ -658,12 +663,14 @@ function MarksSection({
   onChange,
   onChangeDefinition,
   onEditScale,
+  revealedMark,
 }: {
   unit: UnitElement;
   definition: CompositionDefinition;
   fields: FieldChoice[];
   onChange: (marks: MarkDefinition[]) => void;
   onChangeDefinition: (definition: CompositionDefinition) => void;
+  revealedMark?: { id: string; token: number };
   onEditScale: (scaleId: string) => void;
 }) {
   const update = (id: string, patch: Partial<MarkDefinition>) =>
@@ -729,6 +736,10 @@ function MarksSection({
         <MarkProperties
           key={mark.id}
           mark={mark}
+          summary={describeMark(mark, definition)}
+          revealToken={
+            revealedMark?.id === mark.id ? revealedMark.token : undefined
+          }
           scales={definition.scales}
           insets={unit.insets ?? []}
           canRemove={unit.marks.length > 1}
@@ -754,6 +765,8 @@ function MarksSection({
 
 function MarkProperties({
   mark,
+  summary,
+  revealToken,
   scales,
   insets,
   canRemove,
@@ -763,6 +776,10 @@ function MarkProperties({
   onEditScale,
 }: {
   mark: MarkDefinition;
+  /** One line on what the mark draws, for scanning the list. */
+  summary: string;
+  /** Set when a quick action asked for this mark; scrolls to it and flashes. */
+  revealToken?: number;
   scales: CompositionScale[];
   insets: InsetFrame[];
   canRemove: boolean;
@@ -776,8 +793,23 @@ function MarkProperties({
     .filter((profile) => profile.dataType === "numeric")
     .map((profile) => profile.name);
   const hasNumeric = numericFields.length >= 1;
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [flash, setFlash] = useState(false);
+  useEffect(() => {
+    if (revealToken === undefined) return;
+    cardRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+    setFlash(true);
+    const timer = window.setTimeout(() => setFlash(false), 1600);
+    return () => window.clearTimeout(timer);
+  }, [revealToken]);
   return (
-    <div className="eda-composition-mark">
+    <div
+      ref={cardRef}
+      className="eda-composition-mark"
+      data-mark-id={mark.id}
+      data-mark-type={mark.type}
+      data-revealed={flash || undefined}
+    >
       <div className="eda-composition-section-head">
         <span className="eda-composition-mark-name">{mark.name}</span>
         {canRemove && (
@@ -793,6 +825,7 @@ function MarkProperties({
           </Button>
         )}
       </div>
+      <p className="eda-composition-mark-summary">{summary}</p>
       <div className="eda-setting-grid">
         <span className="eda-setting-label">Type</span>
         <Segmented

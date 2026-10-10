@@ -393,6 +393,10 @@ A unit holds inset frames placed from its main frame's corner, each with its own
 Point, path, and band marks name the frame they draw in. A windowed frame clips. The national series sits in the data as a comparison: a repeat rule can leave listed values out, and a mark drawn from the whole graphic with a listed focus shows only that series.
 Group movement, region and date filters, and inset placement were checked in the browser; the inset keeps the full history while the main frame shows the recent window, and selecting a state never alters the national population.
 
+## Editing without hunting
+
+A right-click on any drawn object lists what it is made of, most specific first: the mark with a one-line summary of what it draws, each scale it uses, the unit and the repeat under the pointer, a trace, the workspace filter for that repeat, and removal while editing. Each line selects the owning element, scrolls the inspector to that mark or opens that scale, and opens the details view when no editor is showing. Mark cards carry the same summaries, so the Marks section scans without opening each type.
+
 ## Cross-cutting verification
 
 At each milestone, prove blank authoring, save/reload, source inspection, and matching PNG output for the new reference.

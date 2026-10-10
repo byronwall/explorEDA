@@ -12,7 +12,16 @@ import {
   useTraceRevision,
   useTraceSource,
 } from "../trace/ChartTraceScope";
-import { moveElement, updateOverride } from "./compositionEdits";
+import { moveElement, removeElement, updateOverride } from "./compositionEdits";
+import { CompositionQuickMenu } from "./CompositionQuickMenu";
+import {
+  elementOfNode,
+  markOfNode,
+  quickActions,
+  traceIdOf,
+  type QuickAction,
+  type QuickActionApi,
+} from "./quickActions";
 import {
   useCompositionEditor,
   useCompositionEditorStore,
@@ -65,8 +74,15 @@ export function CompositionChart({
   const openDetails = useChartDetailsStore((state) => state.open);
   const { mode, selection } = useCompositionEditor(settings.id);
   const select = useCompositionEditorStore((state) => state.select);
+  const reveal = useCompositionEditorStore((state) => state.reveal);
+  const setMode = useCompositionEditorStore((state) => state.setMode);
   const editing = mode === "edit";
   const [drag, setDrag] = useState<Drag>();
+  const [menu, setMenu] = useState<{
+    x: number;
+    y: number;
+    node?: SceneNode;
+  }>();
   const [hovered, setHovered] = useState<SceneNode>();
   const svgRef = useRef<SVGSVGElement>(null);
   const traceApi = useChartTraceApi();
@@ -274,19 +290,7 @@ export function CompositionChart({
       (item) => item.id === node?.elementId
     );
     if (event.altKey) {
-      if (!node) return;
-      const id =
-        (node.type === "rect" || node.type === "circle") && node.glyph
-          ? `glyph:${node.key}`
-          : node.type === "path"
-            ? `path:${node.key}`
-            : node.type === "area"
-              ? `band:${node.key}`
-              : element?.kind === "unit" && node.instanceKey !== undefined
-                ? `repeat:${element.id}:${node.instanceKey}`
-                : element?.kind === "guide" || element?.kind === "annotation"
-                  ? `element:${element.id}`
-                  : undefined;
+      const id = traceIdOf(node, element);
       if (id) traceApi?.inspect(owner, "composition", id);
       return;
     }
@@ -299,7 +303,12 @@ export function CompositionChart({
       if (settings.filters.length) updateChart(settings.id, { filters: [] });
       return;
     }
-    const value = filterValue(node.instanceKey);
+    toggleRepeatFilter(field, node.instanceKey);
+  };
+
+  /** Adds a repeat to this composition's value filter, or takes it out. */
+  const toggleRepeatFilter = (field: string, key: string) => {
+    const value = filterValue(key);
     const current = settings.filters.find(
       (item): item is ValueFilter =>
         item.type === "value" && item.field === field
@@ -317,6 +326,70 @@ export function CompositionChart({
       ],
     });
   };
+
+  // Right-click: a menu of what is under the pointer and where to edit it.
+  // The keyboard's menu key lands at (0, 0), so it opens by the selection.
+  const onContextMenu = (event: React.MouseEvent) => {
+    if (onSettingsChange) return;
+    event.preventDefault();
+    const node = nodeAt(event);
+    const rect = svgRef.current?.getBoundingClientRect();
+    const fromKeyboard = event.clientX === 0 && event.clientY === 0;
+    setMenu({
+      x: fromKeyboard
+        ? (rect?.left ?? 0) + (rect?.width ?? 0) / 2
+        : event.clientX,
+      y: fromKeyboard
+        ? (rect?.top ?? 0) + (rect?.height ?? 0) / 2
+        : event.clientY,
+      node:
+        node ??
+        (fromKeyboard && selection
+          ? scene.nodes.find((item) => item.elementId === selection.elementId)
+          : undefined),
+    });
+  };
+  // Opens the editor beside the artboard when none is showing.
+  const ensureEditor = () => {
+    const state = useCompositionEditorStore.getState().editors[settings.id];
+    if (!state?.attached) openDetails(settings.id);
+    else if (state.mode !== "edit") setMode(settings.id, "edit");
+  };
+  const quickApi: QuickActionApi = {
+    edit: (elementId, instanceKey) => {
+      ensureEditor();
+      select(settings.id, { elementId, instanceKey });
+    },
+    editMark: (elementId, markId) => {
+      ensureEditor();
+      select(settings.id, { elementId });
+      reveal(settings.id, { markId });
+    },
+    editScale: (scaleId) => {
+      ensureEditor();
+      reveal(settings.id, { scaleId });
+    },
+    trace: (id) => traceApi?.inspect(owner, "composition", id),
+    filterRepeat: toggleRepeatFilter,
+    clearFilters: () => updateChart(settings.id, { filters: [] }),
+    remove: (elementId) => {
+      select(settings.id, undefined);
+      commit(removeElement(definition, elementId));
+    },
+  };
+  const menuElement = menu && elementOfNode(definition, menu.node);
+  const menuMark = menu && markOfNode(menuElement, menu.node);
+  const menuHeading = menu
+    ? [
+        menuElement?.name ?? "Artboard",
+        menuMark?.name,
+        menu.node?.instanceKey !== undefined && menu.node.instanceKey !== "all"
+          ? menu.node.instanceKey
+          : undefined,
+      ]
+        .filter(Boolean)
+        .join(" · ")
+    : "";
 
   // While dragging, offset the drawing; the move saves on release.
   const offsets =
@@ -429,8 +502,27 @@ export function CompositionChart({
       className="eda-composition"
       data-mode={mode}
       style={{ width, height }}
-      onPointerDown={() => editing && select(settings.id, undefined)}
+      onPointerDown={(event) =>
+        editing && event.button === 0 && select(settings.id, undefined)
+      }
+      onContextMenu={onContextMenu}
     >
+      {menu && (
+        <CompositionQuickMenu
+          x={menu.x}
+          y={menu.y}
+          heading={menuHeading}
+          actions={quickActions({
+            definition,
+            mode,
+            node: menu.node,
+            hasFilters: settings.filters.length > 0,
+          })}
+          container={svgRef.current?.closest<HTMLElement>("[role='dialog']")}
+          onRun={(action: QuickAction) => action.run(quickApi)}
+          onClose={() => setMenu(undefined)}
+        />
+      )}
       {!editing && glyph && (
         <ChartReadout fallbackClassName="eda-chart-readout-inline">
           {[
