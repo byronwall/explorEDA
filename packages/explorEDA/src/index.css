@@ -7369,6 +7369,29 @@ td[data-null] {
   color: var(--muted-foreground);
   font-weight: 500;
 }
+.eda-composition-ramp {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.eda-composition-ramp-stop {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.eda-composition-ramp-stop input[type="color"] {
+  width: 28px;
+  height: 24px;
+  padding: 0 2px;
+  border: 1px solid var(--input);
+  border-radius: 4px;
+  background: transparent;
+}
+.eda-composition-ramp-stop > div {
+  width: 64px;
+}
 .eda-composition-copy-status {
   margin-top: -4px;
   color: var(--muted-foreground);

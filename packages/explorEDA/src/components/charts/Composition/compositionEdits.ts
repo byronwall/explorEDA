@@ -1,8 +1,23 @@
 import {
+  ensureNumericScale,
   isEmptyOverride,
+  newScaleId,
+  type BandMark,
   type CompositionDefinition,
   type CompositionElement,
+  type FieldChoice,
   type InstanceOverride,
+  type MarkDefinition,
+  type MarkType,
+  type NumericScale,
+  type PathMark,
+  type PointMark,
+  type PositionScale,
+  type StackMark,
+  type SummaryMark,
+  STACK_COLORS,
+  type UnitElement,
+  type ValueScale,
 } from "./compositionTypes";
 
 export function updateElement<T extends CompositionElement>(
@@ -89,4 +104,230 @@ export function resetOverride(
       (item) => !(item.unitId === unitId && item.instanceKey === instanceKey)
     ),
   };
+}
+
+/** The one color a mark carries over when it changes type. */
+function markColor(mark: MarkDefinition) {
+  if (mark.type === "path") return mark.stroke;
+  if (mark.type === "stack") return mark.colors[0] ?? "#1f2328";
+  return mark.fill;
+}
+
+/**
+ * Changes a mark to another type, keeping its name and ID. The new type
+ * needs scales of its own kind, so missing ones are added: numeric scales for
+ * the first two numeric fields, or a position and value scale for strips.
+ */
+export function convertMark(
+  definition: CompositionDefinition,
+  unit: UnitElement,
+  markId: string,
+  type: MarkType,
+  fields: FieldChoice[]
+): CompositionDefinition {
+  const mark = unit.marks.find((item) => item.id === markId);
+  if (!mark || mark.type === type) return definition;
+  let next = definition;
+  let replacement: MarkDefinition;
+  if (type === "stack") {
+    const categoryField =
+      fields.find(
+        (item) =>
+          item.dataType !== "numeric" &&
+          item.uniqueCount >= 2 &&
+          item.uniqueCount <= 30
+      )?.name ?? fields[0]?.name;
+    if (!categoryField) return definition;
+    const measure = fields.find(
+      (item) => item.dataType === "numeric" && item.name !== categoryField
+    )?.name;
+    const stack: StackMark = {
+      type: "stack",
+      id: mark.id,
+      name: mark.name,
+      categoryField,
+      aggregation: measure ? "sum" : "count",
+      measureField: measure,
+      normalize: true,
+      order: "total",
+      colors: STACK_COLORS,
+      labelMinHeight: 14,
+      inset: 1,
+    };
+    return updateElement<UnitElement>(definition, unit.id, {
+      marks: unit.marks.map((item) => (item.id === markId ? stack : item)),
+    });
+  }
+  if (type === "summary") {
+    const numeric = fields.filter((item) => item.dataType === "numeric");
+    const groupField =
+      fields.find(
+        (item) =>
+          item.dataType !== "numeric" &&
+          item.uniqueCount >= 2 &&
+          item.uniqueCount <= 6
+      )?.name ??
+      fields.find((item) => item.uniqueCount >= 2 && item.uniqueCount <= 6)
+        ?.name ??
+      fields[0]?.name;
+    const measureField =
+      numeric.find((item) => item.name !== groupField)?.name ??
+      numeric[0]?.name;
+    if (!groupField || !measureField) return definition;
+    const withY = ensureNumericScale(next, measureField);
+    next = withY.definition;
+    const summary: SummaryMark = {
+      type: "summary",
+      id: mark.id,
+      name: mark.name,
+      groupField,
+      measureField,
+      yScaleId: withY.scale.id,
+      fill: markColor(mark),
+      opacity: 0.3,
+    };
+    return updateElement<UnitElement>(next, unit.id, {
+      marks: unit.marks.map((item) => (item.id === markId ? summary : item)),
+    });
+  }
+  if (type === "strip") {
+    let position = next.scales.find(
+      (scale): scale is PositionScale => scale.kind === "position"
+    );
+    if (!position) {
+      const field =
+        fields.find((item) => item.dataType === "datetime") ??
+        fields.find((item) => item.uniqueCount <= 60) ??
+        fields[0];
+      if (!field) return definition;
+      position = {
+        id: newScaleId(next, "x"),
+        kind: "position",
+        name: field.name,
+        field: field.name,
+        interval: field.dataType === "datetime" ? "month" : undefined,
+        domain: "shared",
+      };
+      next = { ...next, scales: [...next.scales, position] };
+    }
+    let value = next.scales.find(
+      (scale): scale is ValueScale => scale.kind === "value"
+    );
+    if (!value) {
+      value = {
+        id: newScaleId(next, "value"),
+        kind: "value",
+        name: "Rows",
+        domain: "shared",
+        transform: "linear",
+        colors: ["#e8eef6", "#1f4e8c"],
+      };
+      next = { ...next, scales: [...next.scales, value] };
+    }
+    replacement = {
+      type: "strip",
+      id: mark.id,
+      name: mark.name,
+      shape: "rect",
+      positionScaleId: position.id,
+      valueScaleId: value.id,
+      aggregation: "count",
+      encoding: "color",
+      fill: markColor(mark),
+      inset: 1,
+    };
+  } else {
+    // A sibling x–y mark already names the scales; otherwise take the data's.
+    const sibling = unit.marks.find(
+      (item): item is PointMark | PathMark | BandMark =>
+        item.type !== "strip" &&
+        item.type !== "summary" &&
+        item.type !== "stack" &&
+        item.id !== markId
+    );
+    let xScaleId = sibling?.xScaleId;
+    let yScaleId = sibling?.yScaleId;
+    let orderField = sibling?.orderField;
+    if (!xScaleId || !yScaleId) {
+      const numeric = fields.filter((item) => item.dataType === "numeric");
+      const existing = next.scales.filter(
+        (scale): scale is NumericScale => scale.kind === "numeric"
+      );
+      const xField = existing[0]?.field ?? numeric[0]?.name;
+      const yField =
+        existing[1]?.field ??
+        numeric.find((item) => item.name !== xField)?.name ??
+        xField;
+      if (!xField || !yField) return definition;
+      const withX = ensureNumericScale(next, xField);
+      const withY = ensureNumericScale(withX.definition, yField);
+      next = withY.definition;
+      xScaleId = withX.scale.id;
+      yScaleId = withY.scale.id;
+    }
+    orderField ??=
+      fields.find(
+        (item) =>
+          item.dataType === "numeric" &&
+          /year|date|time|index|order|seq/i.test(item.name)
+      )?.name ??
+      fields.find((item) => item.dataType === "datetime")?.name ??
+      fields.find((item) => item.dataType === "numeric")?.name ??
+      "";
+    const color = markColor(mark);
+    const numericNames = fields
+      .filter((item) => item.dataType === "numeric")
+      .map((item) => item.name);
+    const yField = next.scales.find(
+      (scale): scale is NumericScale => scale.id === yScaleId
+    )?.field;
+    replacement =
+      type === "band"
+        ? {
+            type: "band",
+            id: mark.id,
+            name: mark.name,
+            xScaleId,
+            yScaleId,
+            orderField,
+            // The y field stands in for both bounds until the author picks them.
+            lowerField:
+              numericNames.find((name) => /low|min|p10|lower/i.test(name)) ??
+              yField ??
+              numericNames[0] ??
+              "",
+            upperField:
+              numericNames.find((name) => /high|max|p90|upper/i.test(name)) ??
+              yField ??
+              numericNames[0] ??
+              "",
+            fill: color,
+            opacity: 0.25,
+          }
+        : type === "path"
+          ? {
+              type: "path",
+              id: mark.id,
+              name: mark.name,
+              xScaleId,
+              yScaleId,
+              orderField,
+              stroke: color,
+              strokeWidth: 1.5,
+            }
+          : {
+              type: "point",
+              id: mark.id,
+              name: mark.name,
+              xScaleId,
+              yScaleId,
+              orderField: orderField || undefined,
+              radius: 3.5,
+              fill: color,
+              labelEvery: 0,
+            };
+  }
+  return updateElement<UnitElement>(next, unit.id, {
+    marks: unit.marks.map((item) => (item.id === markId ? replacement : item)),
+  });
 }

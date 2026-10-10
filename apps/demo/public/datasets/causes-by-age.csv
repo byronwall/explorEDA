@@ -1,0 +1,910 @@
+Age,Cause,Count
+0,Perinatal conditions,911
+0,Accidents,29
+0,Suicide,0
+0,Homicide,19
+0,Cancer,7
+0,Heart disease,10
+0,Stroke,0
+0,Alzheimer's,0
+0,Other,26
+1,Perinatal conditions,55
+1,Accidents,33
+1,Suicide,0
+1,Homicide,9
+1,Cancer,7
+1,Heart disease,9
+1,Stroke,0
+1,Alzheimer's,0
+1,Other,27
+2,Perinatal conditions,0
+2,Accidents,47
+2,Suicide,0
+2,Homicide,12
+2,Cancer,7
+2,Heart disease,10
+2,Stroke,0
+2,Alzheimer's,0
+2,Other,29
+3,Perinatal conditions,0
+3,Accidents,49
+3,Suicide,0
+3,Homicide,13
+3,Cancer,8
+3,Heart disease,11
+3,Stroke,0
+3,Alzheimer's,0
+3,Other,34
+4,Perinatal conditions,0
+4,Accidents,50
+4,Suicide,0
+4,Homicide,13
+4,Cancer,8
+4,Heart disease,11
+4,Stroke,0
+4,Alzheimer's,0
+4,Other,29
+5,Perinatal conditions,0
+5,Accidents,69
+5,Suicide,0
+5,Homicide,16
+5,Cancer,9
+5,Heart disease,11
+5,Stroke,0
+5,Alzheimer's,0
+5,Other,29
+6,Perinatal conditions,0
+6,Accidents,80
+6,Suicide,0
+6,Homicide,19
+6,Cancer,7
+6,Heart disease,10
+6,Stroke,0
+6,Alzheimer's,0
+6,Other,31
+7,Perinatal conditions,0
+7,Accidents,94
+7,Suicide,0
+7,Homicide,24
+7,Cancer,8
+7,Heart disease,11
+7,Stroke,0
+7,Alzheimer's,0
+7,Other,26
+8,Perinatal conditions,0
+8,Accidents,112
+8,Suicide,0
+8,Homicide,24
+8,Cancer,9
+8,Heart disease,10
+8,Stroke,0
+8,Alzheimer's,0
+8,Other,33
+9,Perinatal conditions,0
+9,Accidents,110
+9,Suicide,0
+9,Homicide,36
+9,Cancer,7
+9,Heart disease,11
+9,Stroke,0
+9,Alzheimer's,0
+9,Other,27
+10,Perinatal conditions,0
+10,Accidents,133
+10,Suicide,69
+10,Homicide,43
+10,Cancer,7
+10,Heart disease,10
+10,Stroke,0
+10,Alzheimer's,0
+10,Other,30
+11,Perinatal conditions,0
+11,Accidents,124
+11,Suicide,68
+11,Homicide,44
+11,Cancer,8
+11,Heart disease,9
+11,Stroke,0
+11,Alzheimer's,0
+11,Other,26
+12,Perinatal conditions,0
+12,Accidents,145
+12,Suicide,74
+12,Homicide,47
+12,Cancer,8
+12,Heart disease,10
+12,Stroke,0
+12,Alzheimer's,0
+12,Other,30
+13,Perinatal conditions,0
+13,Accidents,194
+13,Suicide,91
+13,Homicide,54
+13,Cancer,8
+13,Heart disease,9
+13,Stroke,0
+13,Alzheimer's,0
+13,Other,32
+14,Perinatal conditions,0
+14,Accidents,210
+14,Suicide,88
+14,Homicide,72
+14,Cancer,8
+14,Heart disease,11
+14,Stroke,0
+14,Alzheimer's,0
+14,Other,34
+15,Perinatal conditions,0
+15,Accidents,227
+15,Suicide,88
+15,Homicide,90
+15,Cancer,8
+15,Heart disease,10
+15,Stroke,0
+15,Alzheimer's,0
+15,Other,28
+16,Perinatal conditions,0
+16,Accidents,222
+16,Suicide,84
+16,Homicide,87
+16,Cancer,9
+16,Heart disease,11
+16,Stroke,0
+16,Alzheimer's,0
+16,Other,26
+17,Perinatal conditions,0
+17,Accidents,233
+17,Suicide,88
+17,Homicide,101
+17,Cancer,9
+17,Heart disease,9
+17,Stroke,0
+17,Alzheimer's,0
+17,Other,32
+18,Perinatal conditions,0
+18,Accidents,237
+18,Suicide,106
+18,Homicide,98
+18,Cancer,10
+18,Heart disease,11
+18,Stroke,0
+18,Alzheimer's,0
+18,Other,33
+19,Perinatal conditions,0
+19,Accidents,255
+19,Suicide,97
+19,Homicide,119
+19,Cancer,9
+19,Heart disease,11
+19,Stroke,0
+19,Alzheimer's,0
+19,Other,31
+20,Perinatal conditions,0
+20,Accidents,305
+20,Suicide,128
+20,Homicide,123
+20,Cancer,9
+20,Heart disease,9
+20,Stroke,0
+20,Alzheimer's,0
+20,Other,27
+21,Perinatal conditions,0
+21,Accidents,286
+21,Suicide,130
+21,Homicide,134
+21,Cancer,10
+21,Heart disease,10
+21,Stroke,0
+21,Alzheimer's,0
+21,Other,34
+22,Perinatal conditions,0
+22,Accidents,287
+22,Suicide,128
+22,Homicide,123
+22,Cancer,11
+22,Heart disease,9
+22,Stroke,0
+22,Alzheimer's,0
+22,Other,35
+23,Perinatal conditions,0
+23,Accidents,253
+23,Suicide,138
+23,Homicide,150
+23,Cancer,11
+23,Heart disease,9
+23,Stroke,0
+23,Alzheimer's,0
+23,Other,35
+24,Perinatal conditions,0
+24,Accidents,241
+24,Suicide,125
+24,Homicide,136
+24,Cancer,14
+24,Heart disease,9
+24,Stroke,0
+24,Alzheimer's,0
+24,Other,40
+25,Perinatal conditions,0
+25,Accidents,233
+25,Suicide,142
+25,Homicide,133
+25,Cancer,13
+25,Heart disease,9
+25,Stroke,0
+25,Alzheimer's,0
+25,Other,41
+26,Perinatal conditions,0
+26,Accidents,288
+26,Suicide,131
+26,Homicide,147
+26,Cancer,19
+26,Heart disease,10
+26,Stroke,0
+26,Alzheimer's,0
+26,Other,45
+27,Perinatal conditions,0
+27,Accidents,211
+27,Suicide,128
+27,Homicide,126
+27,Cancer,19
+27,Heart disease,9
+27,Stroke,0
+27,Alzheimer's,0
+27,Other,50
+28,Perinatal conditions,0
+28,Accidents,207
+28,Suicide,139
+28,Homicide,148
+28,Cancer,20
+28,Heart disease,10
+28,Stroke,0
+28,Alzheimer's,0
+28,Other,47
+29,Perinatal conditions,0
+29,Accidents,184
+29,Suicide,135
+29,Homicide,133
+29,Cancer,24
+29,Heart disease,9
+29,Stroke,0
+29,Alzheimer's,0
+29,Other,55
+30,Perinatal conditions,0
+30,Accidents,201
+30,Suicide,131
+30,Homicide,124
+30,Cancer,25
+30,Heart disease,11
+30,Stroke,0
+30,Alzheimer's,0
+30,Other,55
+31,Perinatal conditions,0
+31,Accidents,197
+31,Suicide,157
+31,Homicide,109
+31,Cancer,34
+31,Heart disease,15
+31,Stroke,0
+31,Alzheimer's,0
+31,Other,63
+32,Perinatal conditions,0
+32,Accidents,169
+32,Suicide,132
+32,Homicide,90
+32,Cancer,36
+32,Heart disease,19
+32,Stroke,0
+32,Alzheimer's,0
+32,Other,60
+33,Perinatal conditions,0
+33,Accidents,131
+33,Suicide,136
+33,Homicide,72
+33,Cancer,45
+33,Heart disease,19
+33,Stroke,0
+33,Alzheimer's,0
+33,Other,65
+34,Perinatal conditions,0
+34,Accidents,116
+34,Suicide,124
+34,Homicide,71
+34,Cancer,48
+34,Heart disease,24
+34,Stroke,0
+34,Alzheimer's,0
+34,Other,71
+35,Perinatal conditions,0
+35,Accidents,122
+35,Suicide,138
+35,Homicide,71
+35,Cancer,61
+35,Heart disease,32
+35,Stroke,0
+35,Alzheimer's,0
+35,Other,68
+36,Perinatal conditions,0
+36,Accidents,84
+36,Suicide,128
+36,Homicide,54
+36,Cancer,81
+36,Heart disease,33
+36,Stroke,0
+36,Alzheimer's,0
+36,Other,83
+37,Perinatal conditions,0
+37,Accidents,78
+37,Suicide,156
+37,Homicide,41
+37,Cancer,94
+37,Heart disease,42
+37,Stroke,0
+37,Alzheimer's,0
+37,Other,81
+38,Perinatal conditions,0
+38,Accidents,81
+38,Suicide,160
+38,Homicide,43
+38,Cancer,92
+38,Heart disease,41
+38,Stroke,0
+38,Alzheimer's,0
+38,Other,75
+39,Perinatal conditions,0
+39,Accidents,66
+39,Suicide,152
+39,Homicide,32
+39,Cancer,115
+39,Heart disease,43
+39,Stroke,0
+39,Alzheimer's,0
+39,Other,86
+40,Perinatal conditions,0
+40,Accidents,61
+40,Suicide,148
+40,Homicide,29
+40,Cancer,139
+40,Heart disease,51
+40,Stroke,0
+40,Alzheimer's,0
+40,Other,101
+41,Perinatal conditions,0
+41,Accidents,44
+41,Suicide,137
+41,Homicide,26
+41,Cancer,158
+41,Heart disease,59
+41,Stroke,0
+41,Alzheimer's,0
+41,Other,82
+42,Perinatal conditions,0
+42,Accidents,38
+42,Suicide,130
+42,Homicide,19
+42,Cancer,170
+42,Heart disease,51
+42,Stroke,0
+42,Alzheimer's,0
+42,Other,86
+43,Perinatal conditions,0
+43,Accidents,39
+43,Suicide,123
+43,Homicide,16
+43,Cancer,249
+43,Heart disease,55
+43,Stroke,0
+43,Alzheimer's,0
+43,Other,89
+44,Perinatal conditions,0
+44,Accidents,37
+44,Suicide,145
+44,Homicide,13
+44,Cancer,292
+44,Heart disease,64
+44,Stroke,0
+44,Alzheimer's,0
+44,Other,106
+45,Perinatal conditions,0
+45,Accidents,34
+45,Suicide,151
+45,Homicide,12
+45,Cancer,330
+45,Heart disease,71
+45,Stroke,0
+45,Alzheimer's,0
+45,Other,106
+46,Perinatal conditions,0
+46,Accidents,31
+46,Suicide,156
+46,Homicide,10
+46,Cancer,318
+46,Heart disease,66
+46,Stroke,1
+46,Alzheimer's,0
+46,Other,105
+47,Perinatal conditions,0
+47,Accidents,27
+47,Suicide,124
+47,Homicide,10
+47,Cancer,381
+47,Heart disease,88
+47,Stroke,1
+47,Alzheimer's,0
+47,Other,127
+48,Perinatal conditions,0
+48,Accidents,21
+48,Suicide,155
+48,Homicide,10
+48,Cancer,491
+48,Heart disease,78
+48,Stroke,1
+48,Alzheimer's,0
+48,Other,107
+49,Perinatal conditions,0
+49,Accidents,26
+49,Suicide,136
+49,Homicide,9
+49,Cancer,433
+49,Heart disease,79
+49,Stroke,1
+49,Alzheimer's,0
+49,Other,108
+50,Perinatal conditions,0
+50,Accidents,21
+50,Suicide,151
+50,Homicide,9
+50,Cancer,635
+50,Heart disease,92
+50,Stroke,2
+50,Alzheimer's,0
+50,Other,117
+51,Perinatal conditions,0
+51,Accidents,21
+51,Suicide,126
+51,Homicide,8
+51,Cancer,659
+51,Heart disease,108
+51,Stroke,2
+51,Alzheimer's,0
+51,Other,157
+52,Perinatal conditions,0
+52,Accidents,21
+52,Suicide,132
+52,Homicide,9
+52,Cancer,606
+52,Heart disease,100
+52,Stroke,4
+52,Alzheimer's,0
+52,Other,162
+53,Perinatal conditions,0
+53,Accidents,18
+53,Suicide,143
+53,Homicide,8
+53,Cancer,678
+53,Heart disease,98
+53,Stroke,5
+53,Alzheimer's,0
+53,Other,156
+54,Perinatal conditions,0
+54,Accidents,21
+54,Suicide,135
+54,Homicide,8
+54,Cancer,788
+54,Heart disease,116
+54,Stroke,6
+54,Alzheimer's,0
+54,Other,141
+55,Perinatal conditions,0
+55,Accidents,18
+55,Suicide,135
+55,Homicide,8
+55,Cancer,917
+55,Heart disease,116
+55,Stroke,8
+55,Alzheimer's,0
+55,Other,194
+56,Perinatal conditions,0
+56,Accidents,22
+56,Suicide,128
+56,Homicide,8
+56,Cancer,1009
+56,Heart disease,112
+56,Stroke,11
+56,Alzheimer's,0
+56,Other,173
+57,Perinatal conditions,0
+57,Accidents,19
+57,Suicide,121
+57,Homicide,7
+57,Cancer,1163
+57,Heart disease,133
+57,Stroke,14
+57,Alzheimer's,0
+57,Other,192
+58,Perinatal conditions,0
+58,Accidents,23
+58,Suicide,124
+58,Homicide,7
+58,Cancer,1173
+58,Heart disease,162
+58,Stroke,15
+58,Alzheimer's,0
+58,Other,236
+59,Perinatal conditions,0
+59,Accidents,19
+59,Suicide,116
+59,Homicide,8
+59,Cancer,1211
+59,Heart disease,141
+59,Stroke,24
+59,Alzheimer's,0
+59,Other,231
+60,Perinatal conditions,0
+60,Accidents,17
+60,Suicide,93
+60,Homicide,7
+60,Cancer,1403
+60,Heart disease,186
+60,Stroke,25
+60,Alzheimer's,1
+60,Other,278
+61,Perinatal conditions,0
+61,Accidents,22
+61,Suicide,100
+61,Homicide,8
+61,Cancer,1481
+61,Heart disease,216
+61,Stroke,30
+61,Alzheimer's,1
+61,Other,265
+62,Perinatal conditions,0
+62,Accidents,29
+62,Suicide,101
+62,Homicide,9
+62,Cancer,1359
+62,Heart disease,199
+62,Stroke,38
+62,Alzheimer's,1
+62,Other,296
+63,Perinatal conditions,0
+63,Accidents,40
+63,Suicide,104
+63,Homicide,7
+63,Cancer,1562
+63,Heart disease,283
+63,Stroke,54
+63,Alzheimer's,2
+63,Other,329
+64,Perinatal conditions,0
+64,Accidents,49
+64,Suicide,91
+64,Homicide,9
+64,Cancer,1500
+64,Heart disease,275
+64,Stroke,57
+64,Alzheimer's,3
+64,Other,329
+65,Perinatal conditions,0
+65,Accidents,56
+65,Suicide,81
+65,Homicide,8
+65,Cancer,1924
+65,Heart disease,366
+65,Stroke,71
+65,Alzheimer's,5
+65,Other,370
+66,Perinatal conditions,0
+66,Accidents,49
+66,Suicide,70
+66,Homicide,8
+66,Cancer,1682
+66,Heart disease,328
+66,Stroke,106
+66,Alzheimer's,7
+66,Other,407
+67,Perinatal conditions,0
+67,Accidents,69
+67,Suicide,74
+67,Homicide,7
+67,Cancer,1847
+67,Heart disease,448
+67,Stroke,130
+67,Alzheimer's,9
+67,Other,504
+68,Perinatal conditions,0
+68,Accidents,71
+68,Suicide,59
+68,Homicide,9
+68,Cancer,2095
+68,Heart disease,472
+68,Stroke,123
+68,Alzheimer's,15
+68,Other,575
+69,Perinatal conditions,0
+69,Accidents,85
+69,Suicide,64
+69,Homicide,8
+69,Cancer,1937
+69,Heart disease,573
+69,Stroke,179
+69,Alzheimer's,23
+69,Other,610
+70,Perinatal conditions,0
+70,Accidents,89
+70,Suicide,65
+70,Homicide,9
+70,Cancer,1769
+70,Heart disease,613
+70,Stroke,189
+70,Alzheimer's,32
+70,Other,536
+71,Perinatal conditions,0
+71,Accidents,83
+71,Suicide,53
+71,Homicide,7
+71,Cancer,1765
+71,Heart disease,661
+71,Stroke,182
+71,Alzheimer's,39
+71,Other,699
+72,Perinatal conditions,0
+72,Accidents,101
+72,Suicide,46
+72,Homicide,9
+72,Cancer,1709
+72,Heart disease,790
+72,Stroke,241
+72,Alzheimer's,48
+72,Other,683
+73,Perinatal conditions,0
+73,Accidents,93
+73,Suicide,51
+73,Homicide,8
+73,Cancer,2101
+73,Heart disease,998
+73,Stroke,284
+73,Alzheimer's,58
+73,Other,648
+74,Perinatal conditions,0
+74,Accidents,110
+74,Suicide,46
+74,Homicide,8
+74,Cancer,1813
+74,Heart disease,1162
+74,Stroke,273
+74,Alzheimer's,93
+74,Other,775
+75,Perinatal conditions,0
+75,Accidents,102
+75,Suicide,43
+75,Homicide,9
+75,Cancer,1751
+75,Heart disease,1067
+75,Stroke,380
+75,Alzheimer's,103
+75,Other,893
+76,Perinatal conditions,0
+76,Accidents,104
+76,Suicide,42
+76,Homicide,8
+76,Cancer,1736
+76,Heart disease,1358
+76,Stroke,435
+76,Alzheimer's,131
+76,Other,849
+77,Perinatal conditions,0
+77,Accidents,130
+77,Suicide,33
+77,Homicide,8
+77,Cancer,1777
+77,Heart disease,1620
+77,Stroke,366
+77,Alzheimer's,166
+77,Other,967
+78,Perinatal conditions,0
+78,Accidents,125
+78,Suicide,28
+78,Homicide,9
+78,Cancer,1502
+78,Heart disease,1535
+78,Stroke,400
+78,Alzheimer's,194
+78,Other,830
+79,Perinatal conditions,0
+79,Accidents,138
+79,Suicide,33
+79,Homicide,9
+79,Cancer,1806
+79,Heart disease,1973
+79,Stroke,568
+79,Alzheimer's,245
+79,Other,969
+80,Perinatal conditions,0
+80,Accidents,137
+80,Suicide,25
+80,Homicide,8
+80,Cancer,1696
+80,Heart disease,2233
+80,Stroke,480
+80,Alzheimer's,302
+80,Other,1182
+81,Perinatal conditions,0
+81,Accidents,124
+81,Suicide,28
+81,Homicide,8
+81,Cancer,1752
+81,Heart disease,2176
+81,Stroke,540
+81,Alzheimer's,346
+81,Other,1158
+82,Perinatal conditions,0
+82,Accidents,150
+82,Suicide,25
+82,Homicide,7
+82,Cancer,1566
+82,Heart disease,2282
+82,Stroke,592
+82,Alzheimer's,351
+82,Other,953
+83,Perinatal conditions,0
+83,Accidents,149
+83,Suicide,25
+83,Homicide,7
+83,Cancer,1381
+83,Heart disease,2333
+83,Stroke,725
+83,Alzheimer's,469
+83,Other,978
+84,Perinatal conditions,0
+84,Accidents,162
+84,Suicide,23
+84,Homicide,8
+84,Cancer,1464
+84,Heart disease,2561
+84,Stroke,586
+84,Alzheimer's,524
+84,Other,1207
+85,Perinatal conditions,0
+85,Accidents,155
+85,Suicide,24
+85,Homicide,8
+85,Cancer,1416
+85,Heart disease,2893
+85,Stroke,657
+85,Alzheimer's,581
+85,Other,1198
+86,Perinatal conditions,0
+86,Accidents,154
+86,Suicide,24
+86,Homicide,7
+86,Cancer,1280
+86,Heart disease,2910
+86,Stroke,603
+86,Alzheimer's,646
+86,Other,1246
+87,Perinatal conditions,0
+87,Accidents,179
+87,Suicide,24
+87,Homicide,7
+87,Cancer,1072
+87,Heart disease,2857
+87,Stroke,648
+87,Alzheimer's,592
+87,Other,1215
+88,Perinatal conditions,0
+88,Accidents,173
+88,Suicide,19
+88,Homicide,8
+88,Cancer,1057
+88,Heart disease,2386
+88,Stroke,657
+88,Alzheimer's,540
+88,Other,965
+89,Perinatal conditions,0
+89,Accidents,171
+89,Suicide,24
+89,Homicide,9
+89,Cancer,960
+89,Heart disease,2905
+89,Stroke,615
+89,Alzheimer's,711
+89,Other,1047
+90,Perinatal conditions,0
+90,Accidents,215
+90,Suicide,23
+90,Homicide,8
+90,Cancer,778
+90,Heart disease,2435
+90,Stroke,706
+90,Alzheimer's,664
+90,Other,1023
+91,Perinatal conditions,0
+91,Accidents,184
+91,Suicide,21
+91,Homicide,8
+91,Cancer,869
+91,Heart disease,2269
+91,Stroke,600
+91,Alzheimer's,626
+91,Other,1071
+92,Perinatal conditions,0
+92,Accidents,220
+92,Suicide,22
+92,Homicide,8
+92,Cancer,669
+92,Heart disease,2456
+92,Stroke,722
+92,Alzheimer's,551
+92,Other,1039
+93,Perinatal conditions,0
+93,Accidents,230
+93,Suicide,22
+93,Homicide,7
+93,Cancer,675
+93,Heart disease,2056
+93,Stroke,700
+93,Alzheimer's,656
+93,Other,948
+94,Perinatal conditions,0
+94,Accidents,212
+94,Suicide,23
+94,Homicide,7
+94,Cancer,643
+94,Heart disease,2579
+94,Stroke,671
+94,Alzheimer's,649
+94,Other,817
+95,Perinatal conditions,0
+95,Accidents,202
+95,Suicide,18
+95,Homicide,7
+95,Cancer,557
+95,Heart disease,2218
+95,Stroke,595
+95,Alzheimer's,526
+95,Other,878
+96,Perinatal conditions,0
+96,Accidents,218
+96,Suicide,21
+96,Homicide,9
+96,Cancer,424
+96,Heart disease,1879
+96,Stroke,542
+96,Alzheimer's,493
+96,Other,932
+97,Perinatal conditions,0
+97,Accidents,251
+97,Suicide,20
+97,Homicide,8
+97,Cancer,335
+97,Heart disease,1758
+97,Stroke,538
+97,Alzheimer's,478
+97,Other,833
+98,Perinatal conditions,0
+98,Accidents,281
+98,Suicide,19
+98,Homicide,7
+98,Cancer,316
+98,Heart disease,1711
+98,Stroke,522
+98,Alzheimer's,399
+98,Other,681
+99,Perinatal conditions,0
+99,Accidents,266
+99,Suicide,20
+99,Homicide,8
+99,Cancer,285
+99,Heart disease,1468
+99,Stroke,418
+99,Alzheimer's,320
+99,Other,766
+100,Perinatal conditions,0
+100,Accidents,262
+100,Suicide,22
+100,Homicide,9
+100,Cancer,261
+100,Heart disease,1424
+100,Stroke,409
+100,Alzheimer's,311
+100,Other,646

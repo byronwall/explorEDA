@@ -1,0 +1,17 @@
+{
+  "checked_at": "2026-10-10",
+  "archive_crc": "passed",
+  "archive_extraction_byte_equality": "passed for all 30 members",
+  "records": 23,
+  "manifest_entries": 23,
+  "image_hashes": "23/23 match research-records.json",
+  "source_summary_counts": "match records, including overlap counts",
+  "conversation_complete": true,
+  "visual_check": "Opened the visual atlas; all 23 numbered entries are present.",
+  "not_repeated": [
+    "Publisher dataset fetches and schema audits",
+    "PDF page-by-page visual review reported by Pro",
+    "Editor browser acceptance and report/slide paste"
+  ],
+  "data_payloads_in_archive": false
+}

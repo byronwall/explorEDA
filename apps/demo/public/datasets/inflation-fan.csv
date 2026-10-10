@@ -1,0 +1,105 @@
+Measure,Period,Year,Kind,Central,P10,P20,P30,P40,P60,P70,P80,P90
+Inflation,2015 Q1,2015,history,1.8,,,,,,,,
+Inflation,2015 Q2,2015.25,history,1.59,,,,,,,,
+Inflation,2015 Q3,2015.5,history,1.79,,,,,,,,
+Inflation,2015 Q4,2015.75,history,1.56,,,,,,,,
+Inflation,2016 Q1,2016,history,1.4,,,,,,,,
+Inflation,2016 Q2,2016.25,history,1.47,,,,,,,,
+Inflation,2016 Q3,2016.5,history,1.36,,,,,,,,
+Inflation,2016 Q4,2016.75,history,1.85,,,,,,,,
+Inflation,2017 Q1,2017,history,1.59,,,,,,,,
+Inflation,2017 Q2,2017.25,history,1.67,,,,,,,,
+Inflation,2017 Q3,2017.5,history,1.8,,,,,,,,
+Inflation,2017 Q4,2017.75,history,2.13,,,,,,,,
+Inflation,2018 Q1,2018,history,2.4,,,,,,,,
+Inflation,2018 Q2,2018.25,history,2.42,,,,,,,,
+Inflation,2018 Q3,2018.5,history,2.55,,,,,,,,
+Inflation,2018 Q4,2018.75,history,2.67,,,,,,,,
+Inflation,2019 Q1,2019,history,2.27,,,,,,,,
+Inflation,2019 Q2,2019.25,history,2.02,,,,,,,,
+Inflation,2019 Q3,2019.5,history,2.07,,,,,,,,
+Inflation,2019 Q4,2019.75,history,2.2,,,,,,,,
+Inflation,2020 Q1,2020,history,2.49,,,,,,,,
+Inflation,2020 Q2,2020.25,history,2.08,,,,,,,,
+Inflation,2020 Q3,2020.5,history,1.96,,,,,,,,
+Inflation,2020 Q4,2020.75,history,2.24,,,,,,,,
+Inflation,2021 Q1,2021,history,1.99,,,,,,,,
+Inflation,2021 Q2,2021.25,history,2.03,,,,,,,,
+Inflation,2021 Q3,2021.5,history,10.13,,,,,,,,
+Inflation,2021 Q4,2021.75,history,6.11,,,,,,,,
+Inflation,2022 Q1,2022,history,4.17,,,,,,,,
+Inflation,2022 Q2,2022.25,history,3.3,,,,,,,,
+Inflation,2022 Q3,2022.5,history,2.73,,,,,,,,
+Inflation,2022 Q4,2022.75,history,2.72,,,,,,,,
+Inflation,2023 Q1,2023,history,1.98,,,,,,,,
+Inflation,2023 Q2,2023.25,history,2.27,,,,,,,,
+Inflation,2023 Q3,2023.5,history,2.18,,,,,,,,
+Inflation,2023 Q4,2023.75,history,2.21,,,,,,,,
+Inflation,2024 Q1,2024,history,2.5,,,,,,,,
+Inflation,2024 Q2,2024.25,history,2.21,,,,,,,,
+Inflation,2024 Q3,2024.5,history,2.32,,,,,,,,
+Inflation,2024 Q4,2024.75,history,1.94,,,,,,,,
+Inflation,2025 Q1,2025,projection,2.24,1.66,1.86,2,2.13,2.35,2.48,2.62,2.82
+Inflation,2025 Q2,2025.25,projection,1.83,1.02,1.3,1.5,1.67,1.99,2.16,2.37,2.65
+Inflation,2025 Q3,2025.5,projection,1.82,0.82,1.17,1.41,1.62,2.02,2.23,2.48,2.82
+Inflation,2025 Q4,2025.75,projection,1.98,0.82,1.22,1.5,1.75,2.2,2.45,2.73,3.13
+Inflation,2026 Q1,2026,projection,2.02,0.73,1.18,1.5,1.77,2.28,2.55,2.87,3.31
+Inflation,2026 Q2,2026.25,projection,1.95,0.54,1.02,1.37,1.67,2.23,2.53,2.88,3.36
+Inflation,2026 Q3,2026.5,projection,2.31,0.78,1.3,1.68,2,2.61,2.93,3.31,3.83
+Inflation,2026 Q4,2026.75,projection,2.16,0.53,1.09,1.49,1.83,2.48,2.82,3.23,3.79
+Inflation,2027 Q1,2027,projection,1.83,0.1,0.69,1.12,1.49,2.17,2.54,2.97,3.56
+Inflation,2027 Q2,2027.25,projection,1.99,0.16,0.79,1.24,1.62,2.35,2.73,3.18,3.81
+Inflation,2027 Q3,2027.5,projection,1.93,0.02,0.67,1.15,1.55,2.31,2.71,3.19,3.84
+Inflation,2027 Q4,2027.75,projection,1.63,-0.37,0.32,0.81,1.24,2.03,2.45,2.94,3.63
+GDP growth,2015 Q1,2015,history,1.58,,,,,,,,
+GDP growth,2015 Q2,2015.25,history,1.09,,,,,,,,
+GDP growth,2015 Q3,2015.5,history,0.83,,,,,,,,
+GDP growth,2015 Q4,2015.75,history,0.74,,,,,,,,
+GDP growth,2016 Q1,2016,history,1.16,,,,,,,,
+GDP growth,2016 Q2,2016.25,history,1.08,,,,,,,,
+GDP growth,2016 Q3,2016.5,history,0.83,,,,,,,,
+GDP growth,2016 Q4,2016.75,history,0.73,,,,,,,,
+GDP growth,2017 Q1,2017,history,1.39,,,,,,,,
+GDP growth,2017 Q2,2017.25,history,1.48,,,,,,,,
+GDP growth,2017 Q3,2017.5,history,1.46,,,,,,,,
+GDP growth,2017 Q4,2017.75,history,1.24,,,,,,,,
+GDP growth,2018 Q1,2018,history,1.09,,,,,,,,
+GDP growth,2018 Q2,2018.25,history,1.1,,,,,,,,
+GDP growth,2018 Q3,2018.5,history,0.88,,,,,,,,
+GDP growth,2018 Q4,2018.75,history,1.22,,,,,,,,
+GDP growth,2019 Q1,2019,history,1.67,,,,,,,,
+GDP growth,2019 Q2,2019.25,history,1.9,,,,,,,,
+GDP growth,2019 Q3,2019.5,history,2.14,,,,,,,,
+GDP growth,2019 Q4,2019.75,history,1.71,,,,,,,,
+GDP growth,2020 Q1,2020,history,1.86,,,,,,,,
+GDP growth,2020 Q2,2020.25,history,-10.48,,,,,,,,
+GDP growth,2020 Q3,2020.5,history,-5.09,,,,,,,,
+GDP growth,2020 Q4,2020.75,history,-1.59,,,,,,,,
+GDP growth,2021 Q1,2021,history,0.23,,,,,,,,
+GDP growth,2021 Q2,2021.25,history,1.19,,,,,,,,
+GDP growth,2021 Q3,2021.5,history,1.71,,,,,,,,
+GDP growth,2021 Q4,2021.75,history,1.77,,,,,,,,
+GDP growth,2022 Q1,2022,history,1.69,,,,,,,,
+GDP growth,2022 Q2,2022.25,history,1.66,,,,,,,,
+GDP growth,2022 Q3,2022.5,history,1.73,,,,,,,,
+GDP growth,2022 Q4,2022.75,history,1.55,,,,,,,,
+GDP growth,2023 Q1,2023,history,1.52,,,,,,,,
+GDP growth,2023 Q2,2023.25,history,1.2,,,,,,,,
+GDP growth,2023 Q3,2023.5,history,1.66,,,,,,,,
+GDP growth,2023 Q4,2023.75,history,2.06,,,,,,,,
+GDP growth,2024 Q1,2024,history,1.88,,,,,,,,
+GDP growth,2024 Q2,2024.25,history,2.02,,,,,,,,
+GDP growth,2024 Q3,2024.5,history,1.85,,,,,,,,
+GDP growth,2024 Q4,2024.75,history,2.03,,,,,,,,
+GDP growth,2025 Q1,2025,projection,1.45,0.68,0.95,1.14,1.3,1.61,1.77,1.96,2.22
+GDP growth,2025 Q2,2025.25,projection,1.53,0.44,0.82,1.08,1.31,1.74,1.97,2.24,2.62
+GDP growth,2025 Q3,2025.5,projection,1.16,-0.17,0.28,0.61,0.9,1.42,1.7,2.03,2.49
+GDP growth,2025 Q4,2025.75,projection,1.22,-0.31,0.21,0.59,0.92,1.53,1.85,2.23,2.76
+GDP growth,2026 Q1,2026,projection,1.12,-0.6,-0.01,0.42,0.78,1.46,1.83,2.25,2.84
+GDP growth,2026 Q2,2026.25,projection,1.23,-0.65,0,0.46,0.86,1.6,2,2.47,3.12
+GDP growth,2026 Q3,2026.5,projection,1.84,-0.2,0.5,1.01,1.44,2.24,2.67,3.17,3.87
+GDP growth,2026 Q4,2026.75,projection,1.59,-0.58,0.17,0.7,1.16,2.02,2.48,3.02,3.77
+GDP growth,2027 Q1,2027,projection,1.27,-1.04,-0.25,0.33,0.81,1.72,2.21,2.78,3.58
+GDP growth,2027 Q2,2027.25,projection,1.41,-1.02,-0.19,0.41,0.93,1.89,2.4,3.01,3.84
+GDP growth,2027 Q3,2027.5,projection,1.91,-0.64,0.23,0.86,1.4,2.41,2.95,3.58,4.46
+GDP growth,2027 Q4,2027.75,projection,1.6,-1.07,-0.15,0.51,1.07,2.12,2.69,3.34,4.26

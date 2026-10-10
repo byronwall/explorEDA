@@ -12,10 +12,12 @@ import {
   ClipboardCopy,
   Heading1,
   Heading2,
+  ListOrdered,
   Maximize2,
   MessageSquareText,
   Rows3,
   SeparatorVertical,
+  Spline,
   StickyNote,
   Trash2,
   Type,
@@ -44,14 +46,17 @@ import { useCompositionData } from "./useCompositionData";
 import {
   createAnnotationElement,
   createGuideElement,
+  createLegendElement,
   createTextElement,
   createUnitElement,
+  createXyUnitElement,
   findOverride,
   normalizeComposition,
   type CompositionDefinition,
   type AnnotationElement,
   type CompositionElement,
   type GuideElement,
+  type LegendElement,
   type TextElement,
   type TextRole,
   type UnitElement,
@@ -112,6 +117,7 @@ const KIND_ICONS: Record<CompositionElement["kind"], typeof Type> = {
   unit: Rows3,
   guide: SeparatorVertical,
   annotation: MessageSquareText,
+  legend: ListOrdered,
 };
 
 export function CompositionInspector({
@@ -155,9 +161,12 @@ export function CompositionInspector({
   const anchorPoint = useMemo(
     () =>
       selected?.kind === "annotation"
-        ? resolveComposition(definition, measureCompositionText, data).elements.find(
-            (element) => element.id === selected.id
-          )?.anchor?.point
+        ? resolveComposition(
+            definition,
+            measureCompositionText,
+            data
+          ).elements.find((element) => element.id === selected.id)?.anchor
+            ?.point
         : undefined,
     [selected, definition, data]
   );
@@ -262,6 +271,22 @@ export function CompositionInspector({
           <Button
             variant="outline"
             size="sm"
+            disabled={
+              profiles.filter((profile) => profile.dataType === "numeric")
+                .length < 2
+            }
+            tooltip="Add a frame with numeric x and y scales: a path through the rows in the order of a field, with a point on each row. Needs two numeric fields."
+            onClick={() => {
+              const created = createXyUnitElement(definition, profiles);
+              if (created) add(created.element, created.definition);
+            }}
+          >
+            <Spline className="h-3.5 w-3.5" aria-hidden="true" />
+            X–Y unit
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             disabled={!firstUnit}
             tooltip="Add a rule across a chart unit at a fixed or calculated position, such as a date"
             onClick={() =>
@@ -274,13 +299,26 @@ export function CompositionInspector({
           <Button
             variant="outline"
             size="sm"
+            disabled={!firstUnit}
+            tooltip="Add a key for a mark's categories: the colors of a point mark's color field or a stack's categories"
+            onClick={() =>
+              firstUnit && add(createLegendElement(definition, firstUnit))
+            }
+          >
+            <ListOrdered className="h-3.5 w-3.5" aria-hidden="true" />
+            Legend
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             tooltip="Add a callout. With a chart unit, it follows the busiest glyph of the first repeat; otherwise it sits on the page."
             onClick={() =>
               add(
                 createAnnotationElement(
                   definition,
                   firstUnit,
-                  firstUnit && repeatSubsets(firstUnit, data)[0]?.key
+                  firstUnit &&
+                    repeatSubsets(firstUnit, data, definition)[0]?.key
                 )
               )
             }
@@ -389,7 +427,11 @@ export function CompositionInspector({
               ? "the one unit"
               : selection.instanceKey
           }
-          override={findOverride(definition, selected.id, selection.instanceKey)}
+          override={findOverride(
+            definition,
+            selected.id,
+            selection.instanceKey
+          )}
           onChange={(patch) =>
             change(
               updateOverride(
@@ -401,22 +443,23 @@ export function CompositionInspector({
             )
           }
           onReset={() =>
-            change(resetOverride(definition, selected.id, selection.instanceKey!))
+            change(
+              resetOverride(definition, selected.id, selection.instanceKey!)
+            )
           }
-          onEditTemplate={() =>
-            select(settings.id, { elementId: selected.id })
-          }
+          onEditTemplate={() => select(settings.id, { elementId: selected.id })}
         />
       )}
 
       {selected?.kind === "unit" && (
         <UnitProperties
           unit={selected}
-          scales={definition.scales}
+          definition={definition}
           repeatCount={countRepeats(selected, profiles)}
           onChange={(patch) =>
             change(updateElement<UnitElement>(definition, selected.id, patch))
           }
+          onChangeDefinition={change}
           calculations={definition.calculations}
           onEditScale={setOpenScaleId}
         />
@@ -428,6 +471,16 @@ export function CompositionInspector({
           definition={definition}
           onChange={(patch) =>
             change(updateElement<GuideElement>(definition, selected.id, patch))
+          }
+        />
+      )}
+
+      {selected?.kind === "legend" && (
+        <LegendProperties
+          legend={selected}
+          definition={definition}
+          onChange={(patch) =>
+            change(updateElement<LegendElement>(definition, selected.id, patch))
           }
         />
       )}
@@ -492,6 +545,112 @@ export function CompositionInspector({
   );
 }
 
+function LegendProperties({
+  legend,
+  definition,
+  onChange,
+}: {
+  legend: LegendElement;
+  definition: CompositionDefinition;
+  onChange: (patch: Partial<LegendElement>) => void;
+}) {
+  const units = definition.elements.filter(
+    (element): element is UnitElement => element.kind === "unit"
+  );
+  const unit = units.find((item) => item.id === legend.unitId);
+  return (
+    <section
+      className="eda-setting-section"
+      aria-label={`${legend.name} legend`}
+    >
+      <h5>{legend.name}</h5>
+      <div className="eda-setting-grid">
+        <label htmlFor={`${legend.id}-unit`}>Unit</label>
+        <select
+          id={`${legend.id}-unit`}
+          className="eda-composition-select"
+          value={legend.unitId}
+          onChange={(event) => {
+            const next = units.find((item) => item.id === event.target.value);
+            onChange({
+              unitId: event.target.value,
+              markId: next?.marks[0]?.id ?? "",
+            });
+          }}
+        >
+          {units.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.name}
+            </option>
+          ))}
+        </select>
+        <label htmlFor={`${legend.id}-mark`}>Mark</label>
+        <select
+          id={`${legend.id}-mark`}
+          className="eda-composition-select"
+          value={legend.markId}
+          onChange={(event) => onChange({ markId: event.target.value })}
+        >
+          {(unit?.marks ?? []).map((mark) => (
+            <option key={mark.id} value={mark.id}>
+              {mark.name}
+              {mark.type === "stack" ||
+              (mark.type === "point" && mark.colorField)
+                ? ""
+                : " (no categories)"}
+            </option>
+          ))}
+        </select>
+        <span className="eda-setting-label">Layout</span>
+        <Segmented
+          label="Legend direction"
+          value={legend.direction}
+          options={[
+            {
+              value: "row" as const,
+              label: "Row",
+              tooltip: "Entries side by side",
+            },
+            {
+              value: "column" as const,
+              label: "Column",
+              tooltip: "Entries one under another",
+            },
+          ]}
+          onChange={(direction) => onChange({ direction })}
+        />
+        <NumberSetting
+          label="Size"
+          min={6}
+          max={40}
+          value={legend.fontSize}
+          onChange={(fontSize) => onChange({ fontSize })}
+        />
+        {legend.direction === "row" && (
+          <NumberSetting
+            label="Wrap at"
+            min={40}
+            max={4000}
+            value={legend.width ?? definition.artboard.width - legend.x - 16}
+            onChange={(width) => onChange({ width })}
+          />
+        )}
+        <ColorSetting
+          label="Color"
+          value={legend.color}
+          onChange={(color) => onChange({ color })}
+        />
+        <PairSetting
+          label="Position"
+          names={["X", "Y"]}
+          values={[legend.x, legend.y]}
+          onChange={([x, y]) => onChange({ x, y })}
+        />
+      </div>
+    </section>
+  );
+}
+
 function OverrideCount({ count }: { count: number }) {
   if (!count) return null;
   return (
@@ -528,7 +687,10 @@ function TextProperties({
   onChange: (patch: Partial<TextElement>) => void;
 }) {
   return (
-    <section className="eda-setting-section" aria-label={`${element.name} text`}>
+    <section
+      className="eda-setting-section"
+      aria-label={`${element.name} text`}
+    >
       <h5>{element.name}</h5>
       <div className="eda-setting-grid">
         <label htmlFor={`${element.id}-name`}>Layer name</label>

@@ -1,6 +1,7 @@
 # Reference compositions and capability order
 
-Research date: 2026-09-29. These five examples extend the existing email-strip and EV references.
+Initial research: 2026-09-29. Pro research imported: 2026-10-10.
+The original five examples below extend the email-strip and EV references. The later collection adds 23 distinct examples.
 The capability choices below are proposals based on the graphics, not new user requirements.
 
 ## Shared elements
@@ -29,7 +30,8 @@ The accessible [University of Washington recreation](https://idl.uw.edu/mosaic/e
 An [Observable recreation](https://observablehq.com/@observablehq/plot-connected-scatterplot) provides another inspectable version.
 
 - **New capability:** A path consumes ordered rows, rather than generating one independent glyph per row.
-- **Reuse:** Numeric scales, circles, data anchors, text, and the baseline inspector.
+- **Reuse:** Named-scale ownership, circle rendering, data anchors, text, and the baseline inspector.
+- **Foundation still needed:** Bind both numeric coordinates for circles and paths in the same frame; strip circles cannot do this yet.
 - **Proof composition:** Connect observations by year. Label selected years and add one movable callout.
 - **Pass:** Reversing input row order preserves the year-ordered path. Trace reveals the path's rows and selected segment endpoints.
 - **Data:** Use a small local year/miles/cost table. Preserve source attribution if using the recreation's data.
@@ -115,3 +117,70 @@ Start with two sibling frames inside a unit. Arbitrary recursive repeats are unn
 The existing EV comparison remains a small early layout regression check, not a sixth new reference.
 Each stage must remain authorable through visible controls and preserve earlier compositions.
 Detailed changes and completion gates are in [the implementation plan](implementation-plan.md).
+
+
+## New Pro collection and integration recommendation
+
+Read the [illustrated HTML report](raw/2026-10-10-pro-graphics/dataviz-composition-research/research-report.html) for every composition breakdown.
+The [visual index](raw/2026-10-10-pro-graphics/dataviz-composition-research/visual-atlas.png) shows all 23 examples.
+The [source archive](raw/2026-10-10-pro-graphics/README.md) includes the original prompt, complete response, reports, records, and images.
+
+Pro reports 23 examples across all 12 requested families: three Today, seven Planned M2–M6, and thirteen New capability.
+It reports twenty Available datasets and three Obtainable datasets. No example is labeled Synthetic.
+These are source classifications. They are neither browser acceptance results nor proof that the underlying datasets are in the archive.
+
+### Five proposed builds
+
+| Pro example | Useful proof | Integration condition |
+| --- | --- | --- |
+| 01 — WSJ measles | Strip layout, missingness, shared color, fixed vaccine guide | Audit current palette and source-order limits first. |
+| 03 — Yield Gap | Packed country cells, continent colors, crop sections | Record upstream joins, averages, bins, and cell packing; verify categorical color support. |
+| 14 — Technology sparklines | Ordered paths, numeric extrema, row text | Extend M2; preserve observation-index x positions and shared y limits. |
+| 05 — OBR fan charts | Supplied intervals, historical line, fiscal annotations | Extend M3; keep separate panel domains and March 2025 data. |
+| 07 — Deaths and media coverage | Normalized columns with explainable denominators | Extend M5; preserve each selected-cause population and source correction. |
+
+Keep the established milestone order. The five recommendations select useful examples; they do not approve new release scope.
+Driving remains the first path proof. Time use remains the median/IQR proof.
+The banana table, entry 04, is a strong compound-frame example after paths and strip behavior work.
+
+### Gaps that matter now
+
+Numeric circle positions appear in eight entries: 12, 14, 15, 16, 17, 18, 21, and 22.
+This reinforces the numeric-point work already implied by Driving. Share coordinates with paths instead of adding chart-specific renderers.
+
+Tile addresses appear in entries 13, 18, and 19. Dense automatic grids do not preserve geographical gaps or explicit addresses.
+Keep that addition separate. Horizontal bar lengths (11), variable repeat height (20), path gradients (22), and area gradients (23) can wait.
+
+The requested branch has narrower behavior than the prompt's “Today” model:
+
+- Value colors use two endpoints with a nonnegative value mapping. Signed election shares and categorical continent colors need more work.
+- Repeat order uses count or label. Source rank and explicit row/column addresses are absent.
+- Shared value domains use filtered glyphs. Filtering can change colors even though position bins remain fixed.
+- Missing numeric values produce no glyph. Exact neutral missing cells, multistop colors, and publication legends need separate checks.
+
+Treat these as repository findings, not edits to the original report. Do not force numerical category codes through a continuous palette.
+Source classifications remain unchanged in the archived JSON; the initiative map stores local reconciliation.
+
+### Data details to preserve
+
+Measles has 493 explicit null rates and one absent Alaska 2003 record. Its complete grid needs 4,335 cells.
+Election stripe weights sum to 533 display slots, not the full 538 electoral votes. Color represents signed winner share, not vote margin.
+The source covers eleven elections; the 2020 projection snapshot remains unverified.
+
+The banana table uses rounded decade means, then averages those rounded means. Its sparkline domains are local.
+Technology sparklines sort dates but space points by observation index. Their vertical limits are shared.
+HBCU enrollment uses mean and sample SD across years; it does not prove M4 medians or quartiles.
+
+The disaster tutorial changes a category name and interpolates across columns. Review that preparation before copying its scientific claims.
+The IPCC files distinguish smoothed and annual values and encode missing values as `1e20`.
+Density curves, rankings, packed cells, and fitted curves may be prepared upstream. Keep the preparation and original grain visible.
+
+Three data gaps remain: the election projection (02), original population totals for capital-chart heights (20), and the occupation table (22).
+Other Available entries can still use reconstruction data or later source vintages. Available does not mean exact publication parity.
+Preserve every entry's source notes and reuse terms before including data or images in a public demo.
+
+### Next integration step
+
+Finish the remaining report/slide paste proof. Audit a small measles fixture, then continue numeric points and paths in M2.
+Use local pinned fixtures for development. A prepared composition can protect regression behavior after blank authoring succeeds.
+The complete entry-level crosswalk, source anchors, and checks remain in `initiative-map.json` and the raw archive.

@@ -137,3 +137,149 @@ Twelve fictional correspondents exchange messages with one mailbox from 2019 thr
 ```sh
 node --experimental-strip-types apps/data-samples/message_log.ts apps/demo/public/datasets/message-log.csv
 ```
+
+## Driving shifts into reverse
+
+- File: `driving.csv`
+- Size: 55 rows and 4 fields
+- Demo: `?example=driving-shifts`
+- Use: a composition with numeric x and y scales, a path through the years, points, a calculated guide, and callouts anchored to chosen years
+- Source: [vega-datasets](https://github.com/vega/vega-datasets) `driving.json`, which recreates Hannah Fairfield's "Driving Shifts Into Reverse" (The New York Times, 2010). Miles are driven per person each year; gas is the inflation-adjusted price of a gallon.
+- License: BSD-3-Clause (vega-datasets). The graphic's design belongs to The New York Times; only the figures are reused.
+
+Rows are written in a shuffled order on purpose: the composition orders its path by `Year`, not by file order. `Label side` is the recreation's hint for where each year's label sits; the demo does not use it.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/driving.ts
+```
+
+## Big-tech opening prices
+
+- File: `big-tech-prices.csv`
+- Size: 9,030 rows and 5 fields
+- Demo: `?example=tech-sparklines`
+- Use: a sparkline table composition, one row per company, ordered by each company's first-to-last change with its lowest, highest, and latest prices marked
+- Source: [TidyTuesday 2023-02-07](https://github.com/rfordatascience/tidytuesday/tree/master/data/2023/2023-02-07), big tech stock prices from Yahoo Finance via Kaggle. Opening prices from January 2010 to January 2023 for 14 companies.
+- License: the TidyTuesday repository is CC0; the underlying prices carry no separate license statement.
+
+Every fifth trading day is kept, plus each company's first and last day, so a first-to-last change matches the daily series. `Observation` numbers the kept rows within each company in date order; the composition spaces points by it, so companies with shorter histories still fill their row, as the source sparklines do. Company names drop their corporate suffixes.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/big-tech.ts
+```
+
+## Forecast fan
+
+- File: `inflation-fan.csv`
+- Size: 104 rows and 13 fields
+- Demo: `?example=forecast-fan`
+- Use: a fan chart composition from supplied intervals, with nested bands, a central path, a shaded projection period, and a horizontal target guide
+- Generation: fixed seed in `apps/data-samples/inflation_fan.ts`
+
+Two illustrative measures, quarterly from 2015 Q1 to 2027 Q4. History rows carry a central value only; projection rows add eight percentiles (P10 to P90, around the central path) that widen with the horizon. The intervals are supplied, not modeled, and the figures are synthetic: the editor renders bands, it does not forecast. `Year` is the quarter as a fraction of a year, for a numeric scale.
+
+```sh
+node --experimental-strip-types apps/data-samples/inflation_fan.ts apps/demo/public/datasets/inflation-fan.csv
+```
+
+## Time-use diary
+
+- File: `time-use.csv`
+- Size: 5,742 rows and 6 fields
+- Demo: `?example=time-use`
+- Use: a grid composition that summarizes minutes per day for 2019 and 2020 cohorts inside each activity, with medians, quartile bands, and a diverging color for the change in median
+- Generation: fixed seed in `apps/data-samples/time_use.ts`
+
+Four hundred respondents per year record minutes spent on twelve activities. A respondent who skips an activity that day has no row for it, not a zero. The 2020 shifts follow the familiar pandemic pattern. The figures are synthetic and unweighted; the composition's quartiles are not survey estimates.
+
+```sh
+node --experimental-strip-types apps/data-samples/time_use.ts apps/demo/public/datasets/time-use.csv
+```
+
+## Deaths and media coverage, 2023
+
+- File: `media-deaths.csv`
+- Size: 60 rows and 5 fields
+- Demo: `?example=media-deaths`
+- Use: a normalized-stack composition, one column per source, with each cause's share of that source's total and an explainable denominator
+- Source: Our World in Data, [What Americans die from and the causes of death the US media reports on](https://ourworldindata.org/), analysis package `media-deaths-analysis-data.zip`. Deaths from the CDC; article counts from Media Cloud for The New York Times, The Washington Post, and Fox News.
+- License: CC BY (Our World in Data)
+
+Fifteen causes: the CDC's twelve most common leading causes plus drug overdoses and homicides, and terrorism from the Global Terrorism Index. The package's accident count excludes drug overdoses so they are not counted twice, and an article counts only when it mentions a cause several times. Each column's denominator is its source's total over these fifteen causes, not all deaths or all articles.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/media-deaths.ts
+```
+
+## Measles, 1928–2012
+
+- File: `measles.csv`
+- Size: 4,335 rows and 6 fields
+- Demo: `?example=measles`
+- Use: a strip composition with 51 state rows in the publisher's order, a placed multistop color ramp, explicit missing cells, and a fixed vaccine guide
+- Source: The Wall Street Journal, [Battling Infectious Diseases in the 20th Century: The Impact of Vaccines](https://graphics.wsj.com/infectious-diseases-and-vaccines/) (Tynan DeBold and Dov Friedman, 2015), `data/datum.json` and the page script's state order. The incidence figures come from Project Tycho and the CDC; the 2003–2012 values are CDC annual confirmed cases, where earlier years are weekly provisional counts.
+- License: the figures are public health statistics from Project Tycho (CC BY) and the CDC. The graphic's design belongs to Dow Jones; only the published numbers are reused, with credit.
+
+The file is the complete 51 × 85 grid: 3,841 reported rates per 100,000 people, 493 cells the publisher marked not available, and one cell (Alaska, 2003) the publisher has no record for. `Status` names which. `Order` is the publisher's row index, which sorts states by postal code. The vaccine was introduced in 1963.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/measles.ts
+```
+
+## Causes of death by age
+
+- File: `causes-by-age.csv`
+- Size: 909 rows and 3 fields
+- Demo: `?example=causes-by-age`
+- Use: a stacked-area composition across age, each cause's share of that age's total, with labels where each band is thickest
+- Generation: fixed seed in `apps/data-samples/causes_by_age.ts`
+
+Nine causes by single year of age from 0 to 100. Each cause follows a plausible age profile with a little noise. The counts are synthetic and claim nothing about any population; the composition's shares are what the editor computes from them.
+
+```sh
+node --experimental-strip-types apps/data-samples/causes_by_age.ts apps/demo/public/datasets/causes-by-age.csv
+```
+
+## Consumer confidence, 2018–2022
+
+- File: `consumer-confidence.csv`
+- Size: 467 rows and 3 fields
+- Demo: `?example=consumer-confidence`
+- Use: a small-multiples composition where every panel draws all nine countries and lights up its own, with a shared index scale and a 100 reference line
+- Source: OECD consumer confidence indicator, as prepared for the [R Graph Gallery](https://r-graph-gallery.com/) recreation of an Economist-style grid (`dataConsumerConfidence.csv`). Monthly, July 2018 to October 2022.
+- License: the gallery's data file carries no separate license statement; the indicator is OECD data.
+
+Written long from the gallery's wide table: one row per country and month, dropping months without a value (China ends in September 2022). `Month` is the first day of the month.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/consumer-confidence.ts
+```
+
+## What makes life meaningful, by party
+
+- File: `pew-meaning.csv`
+- Size: 14 rows and 4 fields
+- Demo: `?example=pew-meaning`
+- Use: a dumbbell composition, one topic per row, with the two parties' shares as colored dots on a shared scale, a connector, and the signed gap beside each row
+- Source: Pew Research Center, "What makes life meaningful? Views from 17 advanced economies" (November 2021), chart "Republicans and Democrats in the U.S. differ over some factors that make life meaningful", as transcribed in the R Graph Gallery's dumbbell recreation. Shares of each party's respondents who mentioned the topic.
+- License: Pew Research Center data is free to use with attribution.
+
+`Order` is the published chart's row order.
+
+```sh
+node --experimental-strip-types apps/data-samples/pew_meaning.ts apps/demo/public/datasets/pew-meaning.csv
+```
+
+## Income and life expectancy, 2023
+
+- File: `gapminder-2023.csv`
+- Size: 197 rows and 7 fields
+- Demo: `?example=income-life`
+- Use: an annotated scatter composition on a log income scale, points sized by population and colored by region, with a legend and labels for chosen economies
+- Source: the World Development Indicators tables already in `worldbank/`, joined for 2023 by `prepare/gapminder.ts`. See the World Bank entry above for sources, vintage, and license (CC BY 4.0).
+
+One row per economy with a 2023 population, GDP per capita (PPP, constant 2021 $), and life expectancy. Economies missing any of the three are left out.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/gapminder.ts
+```

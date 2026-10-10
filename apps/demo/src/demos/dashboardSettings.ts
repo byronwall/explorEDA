@@ -461,7 +461,10 @@ export const activityDashboard = dashboard(
 
 export const bubbleDashboard: SavedDataStructure = {
   ...activityDashboard,
-  metadata: { ...activityDashboard.metadata, name: "Trial volume, speed, and conversion" },
+  metadata: {
+    ...activityDashboard.metadata,
+    name: "Trial volume, speed, and conversion",
+  },
   charts: [
     {
       ...scatter(
@@ -487,11 +490,25 @@ export const bubbleDashboard: SavedDataStructure = {
       measureField: "Trials",
       layout: layout(8, 0, 4, 2),
     },
-    row("bubble-phase", "Days by release phase", "Phase", layout(8, 2, 4, 4), "phase-colors"),
+    row(
+      "bubble-phase",
+      "Days by release phase",
+      "Phase",
+      layout(8, 2, 4, 4),
+      "phase-colors"
+    ),
     table(
       "bubble-records",
       "Daily observations",
-      ["Day", "Phase", "Visitors", "Returning visitors", "Trials", "Conversion (%)", "Response time (ms)"],
+      [
+        "Day",
+        "Phase",
+        "Visitors",
+        "Returning visitors",
+        "Trials",
+        "Conversion (%)",
+        "Response time (ms)",
+      ],
       layout(0, 6, 12, 5)
     ),
   ],
@@ -854,22 +871,25 @@ shopDashboard.charts.push({
   margin: { top: 8, right: 12, bottom: 8, left: 12 },
 });
 
-
 // Add the metric row only to this example; the large order book keeps its layout.
 shopDashboard.charts = [
-  ...([
-    ["shop-count", "Matching orders", "count"],
-    ["shop-revenue", "Revenue in this selection", "sum"],
-    ["shop-average", "Average order value", "average"],
-  ] as const).map(([id, title, aggregation], index): Chart => ({
-    ...base,
-    id,
-    type: "metric-card",
-    title,
-    aggregation,
-    measureField: aggregation === "count" ? undefined : "Revenue",
-    layout: layout(index * 4, 0, 4, 2),
-  })),
+  ...(
+    [
+      ["shop-count", "Matching orders", "count"],
+      ["shop-revenue", "Revenue in this selection", "sum"],
+      ["shop-average", "Average order value", "average"],
+    ] as const
+  ).map(
+    ([id, title, aggregation], index): Chart => ({
+      ...base,
+      id,
+      type: "metric-card",
+      title,
+      aggregation,
+      measureField: aggregation === "count" ? undefined : "Revenue",
+      layout: layout(index * 4, 0, 4, 2),
+    })
+  ),
   ...shopDashboard.charts.map((chart) => ({
     ...chart,
     layout: { ...chart.layout, y: chart.layout.y + 2 },
@@ -880,136 +900,504 @@ shopDashboard.fieldSettings = {
   Revenue: { format: "currency", currency: "USD", precision: 2 },
 };
 
-export const timeSeriesDashboard = dashboard("Orders through the calendar", [
-  {
-    ...line("time-revenue", "Monthly revenue by channel", [], layout(0, 0, 8, 6), "Revenue ($)"),
-    xField: "Order Date", xAxisLabel: "Order date · UTC", colorField: "Channel", colorScaleId: "time-channel",
-    time: { interval: "month", weekStart: "monday", aggregation: "sum", measureField: "Revenue", splitField: "Channel", missingPeriods: "gap" },
+export const timeSeriesDashboard = dashboard(
+  "Orders through the calendar",
+  [
+    {
+      ...line(
+        "time-revenue",
+        "Monthly revenue by channel",
+        [],
+        layout(0, 0, 8, 6),
+        "Revenue ($)"
+      ),
+      xField: "Order Date",
+      xAxisLabel: "Order date · UTC",
+      colorField: "Channel",
+      colorScaleId: "time-channel",
+      time: {
+        interval: "month",
+        weekStart: "monday",
+        aggregation: "sum",
+        measureField: "Revenue",
+        splitField: "Channel",
+        missingPeriods: "gap",
+      },
+    },
+    {
+      ...base,
+      id: "time-count",
+      type: "metric-card",
+      title: "Matching orders",
+      aggregation: "count",
+      layout: layout(8, 0, 4, 2),
+    },
+    row(
+      "time-channels",
+      "Sales channels",
+      "Channel",
+      layout(8, 2, 4, 4),
+      "time-channel"
+    ),
+    {
+      ...line(
+        "time-weekly",
+        "Weekly order count",
+        [],
+        layout(0, 6, 6, 5),
+        "Orders"
+      ),
+      xField: "Order Date",
+      xAxisLabel: "Order date · UTC",
+      time: {
+        interval: "week",
+        weekStart: "monday",
+        aggregation: "count",
+        missingPeriods: "zero",
+      },
+    },
+    {
+      ...base,
+      id: "time-calendar",
+      type: "calendar",
+      title: "Daily orders",
+      field: "Order Date",
+      aggregation: "count",
+      weekStart: "monday",
+      layout: layout(6, 6, 6, 5),
+    },
+    table(
+      "time-records",
+      "Matching source records",
+      ["Order Date", "Channel", "Revenue", "Region"],
+      layout(0, 11, 12, 5)
+    ),
+  ],
+  [categoricalScale("time-channel", "Channel", ["Web", "Store", "Wholesale"])]
+);
+timeSeriesDashboard.fieldSettings = {
+  Revenue: {
+    type: "numeric",
+    format: "currency",
+    currency: "USD",
+    precision: 2,
   },
-  { ...base, id: "time-count", type: "metric-card", title: "Matching orders", aggregation: "count", layout: layout(8, 0, 4, 2) },
-  row("time-channels", "Sales channels", "Channel", layout(8, 2, 4, 4), "time-channel"),
-  {
-    ...line("time-weekly", "Weekly order count", [], layout(0, 6, 6, 5), "Orders"),
-    xField: "Order Date", xAxisLabel: "Order date · UTC",
-    time: { interval: "week", weekStart: "monday", aggregation: "count", missingPeriods: "zero" },
-  },
-  { ...base, id: "time-calendar", type: "calendar", title: "Daily orders", field: "Order Date", aggregation: "count", weekStart: "monday", layout: layout(6, 6, 6, 5) },
-  table("time-records", "Matching source records", ["Order Date", "Channel", "Revenue", "Region"], layout(0, 11, 12, 5)),
-], [categoricalScale("time-channel", "Channel", ["Web", "Store", "Wholesale"])]);
-timeSeriesDashboard.fieldSettings = { Revenue: { type: "numeric", format: "currency", currency: "USD", precision: 2 } };
+};
 
-export const groupedBarsDashboard = dashboard("Sales by region and channel", [
-  { ...base, id: "grouped-revenue", type: "bar", title: "Revenue by region and channel", field: "Revenue", aggregateId: "grouped-sales", seriesField: "Channel", colorField: "Channel", colorScaleId: "grouped-channel", layout: layout(0, 0, 8, 6), yAxisLabel: "Revenue ($)" },
-  { ...base, id: "grouped-total", type: "metric-card", title: "Matching revenue", aggregation: "sum", measureField: "Revenue", layout: layout(8, 0, 4, 2) },
-  row("grouped-categories", "Product categories", "Category", layout(8, 2, 4, 4)),
-  { ...base, id: "grouped-count", type: "bar", title: "Orders by category and channel", field: "Category", seriesField: "Channel", colorField: "Channel", colorScaleId: "grouped-channel", layout: layout(0, 6, 12, 5), yAxisLabel: "Orders" },
-  table("grouped-records", "Matching source records", ["Region", "Channel", "Category", "Revenue"], layout(0, 11, 12, 5)),
-], [categoricalScale("grouped-channel", "Channel", ["Web", "Store", "Wholesale"])]);
-groupedBarsDashboard.aggregates = [{ id: "grouped-sales", name: "Revenue by region", groupField: "Region", measureField: "Revenue", aggregation: "sum" }];
-groupedBarsDashboard.fieldSettings = { Revenue: { type: "numeric", format: "currency", currency: "USD", precision: 2 } };
+export const groupedBarsDashboard = dashboard(
+  "Sales by region and channel",
+  [
+    {
+      ...base,
+      id: "grouped-revenue",
+      type: "bar",
+      title: "Revenue by region and channel",
+      field: "Revenue",
+      aggregateId: "grouped-sales",
+      seriesField: "Channel",
+      colorField: "Channel",
+      colorScaleId: "grouped-channel",
+      layout: layout(0, 0, 8, 6),
+      yAxisLabel: "Revenue ($)",
+    },
+    {
+      ...base,
+      id: "grouped-total",
+      type: "metric-card",
+      title: "Matching revenue",
+      aggregation: "sum",
+      measureField: "Revenue",
+      layout: layout(8, 0, 4, 2),
+    },
+    row(
+      "grouped-categories",
+      "Product categories",
+      "Category",
+      layout(8, 2, 4, 4)
+    ),
+    {
+      ...base,
+      id: "grouped-count",
+      type: "bar",
+      title: "Orders by category and channel",
+      field: "Category",
+      seriesField: "Channel",
+      colorField: "Channel",
+      colorScaleId: "grouped-channel",
+      layout: layout(0, 6, 12, 5),
+      yAxisLabel: "Orders",
+    },
+    table(
+      "grouped-records",
+      "Matching source records",
+      ["Region", "Channel", "Category", "Revenue"],
+      layout(0, 11, 12, 5)
+    ),
+  ],
+  [
+    categoricalScale("grouped-channel", "Channel", [
+      "Web",
+      "Store",
+      "Wholesale",
+    ]),
+  ]
+);
+groupedBarsDashboard.aggregates = [
+  {
+    id: "grouped-sales",
+    name: "Revenue by region",
+    groupField: "Region",
+    measureField: "Revenue",
+    aggregation: "sum",
+  },
+];
+groupedBarsDashboard.fieldSettings = {
+  Revenue: {
+    type: "numeric",
+    format: "currency",
+    currency: "USD",
+    precision: 2,
+  },
+};
 
 export const stackedBarsDashboard: SavedDataStructure = {
   ...groupedBarsDashboard,
-  metadata: { ...groupedBarsDashboard.metadata, name: "Regional totals and channel shares" },
-  charts: groupedBarsDashboard.charts.map((chart) => chart.type === "bar" ? {
-    ...chart,
-    seriesLayout: chart.aggregateId ? "stacked" : "percent",
-    title: chart.aggregateId ? "Regional revenue by channel" : "Channel share of regional orders",
-    field: chart.aggregateId ? chart.field : "Region",
-    yAxisLabel: chart.aggregateId ? "Revenue ($)" : "Share of regional orders (%)",
-  } : chart),
+  metadata: {
+    ...groupedBarsDashboard.metadata,
+    name: "Regional totals and channel shares",
+  },
+  charts: groupedBarsDashboard.charts.map((chart) =>
+    chart.type === "bar"
+      ? {
+          ...chart,
+          seriesLayout: chart.aggregateId ? "stacked" : "percent",
+          title: chart.aggregateId
+            ? "Regional revenue by channel"
+            : "Channel share of regional orders",
+          field: chart.aggregateId ? chart.field : "Region",
+          yAxisLabel: chart.aggregateId
+            ? "Revenue ($)"
+            : "Share of regional orders (%)",
+        }
+      : chart
+  ),
 };
-
 
 export const areaDashboard: SavedDataStructure = {
   ...timeSeriesDashboard,
-  metadata: { ...timeSeriesDashboard.metadata, name: "Revenue layers through the year" },
-  charts: timeSeriesDashboard.charts.map((chart) => chart.type === "line" && chart.time ? {
-    ...chart,
-    title: chart.id === "time-revenue" ? "Monthly revenue layers" : "Weekly orders as an area",
-    time: { ...chart.time, display: chart.id === "time-revenue" ? "stacked-area" : "area" },
-  } : chart),
+  metadata: {
+    ...timeSeriesDashboard.metadata,
+    name: "Revenue layers through the year",
+  },
+  charts: timeSeriesDashboard.charts.map((chart) =>
+    chart.type === "line" && chart.time
+      ? {
+          ...chart,
+          title:
+            chart.id === "time-revenue"
+              ? "Monthly revenue layers"
+              : "Weekly orders as an area",
+          time: {
+            ...chart.time,
+            display: chart.id === "time-revenue" ? "stacked-area" : "area",
+          },
+        }
+      : chart
+  ),
 };
 
-export const densityDashboard = dashboard(
-  "Where daily observations cluster",
-  [
-    {
-      ...scatter("density-days", "Temperature and ice cream sales", "Temperature (°C)", "Ice Cream Sales", layout(0, 0, 8, 6), ["Temperature (°C)", "Ice cream sales"]),
-      display: "density",
-      density: { xBins: 24, yBins: 20 },
-    },
-    { ...base, id: "density-count", type: "metric-card", title: "Days in this selection", aggregation: "count", layout: layout(8, 0, 4, 2) },
-    histogram("density-humidity", "Humidity of matching days", "Humidity (%)", layout(8, 2, 4, 4), "Humidity (%)"),
-    table("density-records", "Daily source records", ["Temperature (°C)", "Ice Cream Sales", "Humidity (%)", "Beach Visitors", "Mood Index"], layout(0, 6, 12, 5)),
-  ]
-);
-
+export const densityDashboard = dashboard("Where daily observations cluster", [
+  {
+    ...scatter(
+      "density-days",
+      "Temperature and ice cream sales",
+      "Temperature (°C)",
+      "Ice Cream Sales",
+      layout(0, 0, 8, 6),
+      ["Temperature (°C)", "Ice cream sales"]
+    ),
+    display: "density",
+    density: { xBins: 24, yBins: 20 },
+  },
+  {
+    ...base,
+    id: "density-count",
+    type: "metric-card",
+    title: "Days in this selection",
+    aggregation: "count",
+    layout: layout(8, 0, 4, 2),
+  },
+  histogram(
+    "density-humidity",
+    "Humidity of matching days",
+    "Humidity (%)",
+    layout(8, 2, 4, 4),
+    "Humidity (%)"
+  ),
+  table(
+    "density-records",
+    "Daily source records",
+    [
+      "Temperature (°C)",
+      "Ice Cream Sales",
+      "Humidity (%)",
+      "Beach Visitors",
+      "Mood Index",
+    ],
+    layout(0, 6, 12, 5)
+  ),
+]);
 
 export const pointMapDashboard = dashboard(
   "Where service requests originate",
   [
-    { ...base, id: "map-sites", type: "map", mode: "point", title: "Service sites around the world", latitudeField: "Latitude", longitudeField: "Longitude", labelField: "Site", colorField: "Region", colorScaleId: "map-regions", sizeField: "Requests", pointRadius: 18, pointOpacity: 0.75, projection: "equal-earth", layout: layout(0, 0, 8, 7) },
-    { ...base, id: "map-count", type: "metric-card", title: "Sites in this selection", aggregation: "count", layout: layout(8, 0, 4, 2) },
-    { ...base, id: "map-regions", type: "bar", title: "Sites by region", field: "Region", layout: layout(8, 2, 4, 5), binCount: 20, yAxisLabel: "Sites" },
-    table("map-records", "Site source records", ["Site", "Latitude", "Longitude", "Region", "Requests"], layout(0, 7, 12, 5)),
+    {
+      ...base,
+      id: "map-sites",
+      type: "map",
+      mode: "point",
+      title: "Service sites around the world",
+      latitudeField: "Latitude",
+      longitudeField: "Longitude",
+      labelField: "Site",
+      colorField: "Region",
+      colorScaleId: "map-regions",
+      sizeField: "Requests",
+      pointRadius: 18,
+      pointOpacity: 0.75,
+      projection: "equal-earth",
+      layout: layout(0, 0, 8, 7),
+    },
+    {
+      ...base,
+      id: "map-count",
+      type: "metric-card",
+      title: "Sites in this selection",
+      aggregation: "count",
+      layout: layout(8, 0, 4, 2),
+    },
+    {
+      ...base,
+      id: "map-regions",
+      type: "bar",
+      title: "Sites by region",
+      field: "Region",
+      layout: layout(8, 2, 4, 5),
+      binCount: 20,
+      yAxisLabel: "Sites",
+    },
+    table(
+      "map-records",
+      "Site source records",
+      ["Site", "Latitude", "Longitude", "Region", "Requests"],
+      layout(0, 7, 12, 5)
+    ),
   ],
-  [categoricalScale("map-regions", "Region", ["Americas", "Europe", "Africa", "Asia-Pacific"])]
+  [
+    categoricalScale("map-regions", "Region", [
+      "Americas",
+      "Europe",
+      "Africa",
+      "Asia-Pacific",
+    ]),
+  ]
 );
-
 
 export const regionMapDashboard: SavedDataStructure = {
   ...dashboard("Requests across service districts", [
-    {...base,id:"district-map",type:"map",mode:"region",title:"Requests by service district",latitudeField:"",longitudeField:"",pointRadius:6,pointOpacity:0.8,projection:"equal-earth",view:{center:[-74.5,41.5],zoom:20},geometryAssetId:"service-districts",regionField:"District",featureKey:"district",aggregation:"sum",measureField:"Requests",showRegionLabels:true,outlineWidth:1,layout:layout(0,0,8,7)},
-    {...base,id:"district-total",type:"metric-card",title:"Requests in this selection",aggregation:"sum",measureField:"Requests",layout:layout(8,0,4,2)},
-    {...base,id:"district-pivot",type:"pivot",title:"Check the region totals",rowFields:["District"],columnField:"",valueFields:[{field:"Requests",aggregation:"sum",label:"Requests"}],layout:layout(8,2,4,5)},
-    table("district-rows","Request source records",["District","Team","Requests"],layout(0,7,12,4)),
+    {
+      ...base,
+      id: "district-map",
+      type: "map",
+      mode: "region",
+      title: "Requests by service district",
+      latitudeField: "",
+      longitudeField: "",
+      pointRadius: 6,
+      pointOpacity: 0.8,
+      projection: "equal-earth",
+      view: { center: [-74.5, 41.5], zoom: 20 },
+      geometryAssetId: "service-districts",
+      regionField: "District",
+      featureKey: "district",
+      aggregation: "sum",
+      measureField: "Requests",
+      showRegionLabels: true,
+      outlineWidth: 1,
+      layout: layout(0, 0, 8, 7),
+    },
+    {
+      ...base,
+      id: "district-total",
+      type: "metric-card",
+      title: "Requests in this selection",
+      aggregation: "sum",
+      measureField: "Requests",
+      layout: layout(8, 0, 4, 2),
+    },
+    {
+      ...base,
+      id: "district-pivot",
+      type: "pivot",
+      title: "Check the region totals",
+      rowFields: ["District"],
+      columnField: "",
+      valueFields: [
+        { field: "Requests", aggregation: "sum", label: "Requests" },
+      ],
+      layout: layout(8, 2, 4, 5),
+    },
+    table(
+      "district-rows",
+      "Request source records",
+      ["District", "Team", "Requests"],
+      layout(0, 7, 12, 4)
+    ),
   ]),
-  geometryAssets:[serviceDistricts],
-  fieldSettings:{Requests:{type:"numeric"}},
+  geometryAssets: [serviceDistricts],
+  fieldSettings: { Requests: { type: "numeric" } },
 };
 
-
-export const distributionDashboard = dashboard("Delivery times and smaller routes", [
-  { ...histogram("delivery-histogram", "Delivery time histogram", "Hours", layout(0, 0, 7, 5), "Delivery time (hours)"), binCount: 12, forceString: false },
-  { ...row("delivery-routes", "Shipments by route", "Route", layout(7, 0, 5, 5)), minRowHeight: 36, maxRowHeight: 42 },
-  { ...box("delivery-distribution", "Delivery time by service", "Hours", "Service", layout(0, 5, 8, 6)), violinOverlay: true, showObservations: true },
-  { ...base, id: "delivery-count", type: "metric-card", title: "Matching shipments", aggregation: "count", layout: layout(8, 5, 4, 2) },
-  table("delivery-records", "Shipment source records", ["Route", "Service", "Hours"], layout(8, 7, 4, 4)),
-]);
+export const distributionDashboard = dashboard(
+  "Delivery times and smaller routes",
+  [
+    {
+      ...histogram(
+        "delivery-histogram",
+        "Delivery time histogram",
+        "Hours",
+        layout(0, 0, 7, 5),
+        "Delivery time (hours)"
+      ),
+      binCount: 12,
+      forceString: false,
+    },
+    {
+      ...row(
+        "delivery-routes",
+        "Shipments by route",
+        "Route",
+        layout(7, 0, 5, 5)
+      ),
+      minRowHeight: 36,
+      maxRowHeight: 42,
+    },
+    {
+      ...box(
+        "delivery-distribution",
+        "Delivery time by service",
+        "Hours",
+        "Service",
+        layout(0, 5, 8, 6)
+      ),
+      violinOverlay: true,
+      showObservations: true,
+    },
+    {
+      ...base,
+      id: "delivery-count",
+      type: "metric-card",
+      title: "Matching shipments",
+      aggregation: "count",
+      layout: layout(8, 5, 4, 2),
+    },
+    table(
+      "delivery-records",
+      "Shipment source records",
+      ["Route", "Service", "Hours"],
+      layout(8, 7, 4, 4)
+    ),
+  ]
+);
 distributionDashboard.fieldSettings = { Hours: { type: "numeric" } };
-
 
 export const scatterRegressionDashboard = dashboard(
   "Bill shape within each species",
   [
     {
-      ...scatter("fit-bill", "Bill depth against bill length", "bill_length_mm", "bill_depth_mm", layout(0, 0, 7, 6), ["Bill length (mm)", "Bill depth (mm)"], "species", "fit-species"),
+      ...scatter(
+        "fit-bill",
+        "Bill depth against bill length",
+        "bill_length_mm",
+        "bill_depth_mm",
+        layout(0, 0, 7, 6),
+        ["Bill length (mm)", "Bill depth (mm)"],
+        "species",
+        "fit-species"
+      ),
       regression: { method: "linear", overall: true },
       summary: true,
       marginals: { bins: 24 },
     },
     {
-      ...scatter("fit-bill-sex", "The same fits for each sex", "bill_length_mm", "bill_depth_mm", layout(7, 0, 5, 6), ["Bill length (mm)", "Bill depth (mm)"], "species", "fit-species"),
+      ...scatter(
+        "fit-bill-sex",
+        "The same fits for each sex",
+        "bill_length_mm",
+        "bill_depth_mm",
+        layout(7, 0, 5, 6),
+        ["Bill length (mm)", "Bill depth (mm)"],
+        "species",
+        "fit-species"
+      ),
       regression: { method: "linear" },
-      facet: { enabled: true, type: "wrap", rowVariable: "sex", columnCount: 1 },
+      facet: {
+        enabled: true,
+        type: "wrap",
+        rowVariable: "sex",
+        columnCount: 1,
+      },
     },
     row("fit-island", "Filter by island", "island", layout(0, 6, 3, 5)),
     {
-      ...scatter("fit-mass", "Body mass along flipper length · LOESS over density", "flipper_length_mm", "body_mass_g", layout(3, 6, 5, 5), ["Flipper length (mm)", "Body mass (g)"], "species", "fit-species"),
+      ...scatter(
+        "fit-mass",
+        "Body mass along flipper length · LOESS over density",
+        "flipper_length_mm",
+        "body_mass_g",
+        layout(3, 6, 5, 5),
+        ["Flipper length (mm)", "Body mass (g)"],
+        "species",
+        "fit-species"
+      ),
       regression: { method: "loess", span: 0.6 },
       display: "contour",
       contour: { bandwidth: 0.75, levels: 5 },
     },
     {
-      ...scatter("fit-curve", "Flipper length along bill length · quadratic", "bill_length_mm", "flipper_length_mm", layout(8, 6, 4, 5), ["Bill length (mm)", "Flipper length (mm)"]),
+      ...scatter(
+        "fit-curve",
+        "Flipper length along bill length · quadratic",
+        "bill_length_mm",
+        "flipper_length_mm",
+        layout(8, 6, 4, 5),
+        ["Bill length (mm)", "Flipper length (mm)"]
+      ),
       regression: { method: "polynomial", degree: 2 },
     },
-    table("fit-records", "Penguins in the fits", ["species", "island", "sex", "bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"], layout(0, 11, 12, 4)),
+    table(
+      "fit-records",
+      "Penguins in the fits",
+      [
+        "species",
+        "island",
+        "sex",
+        "bill_length_mm",
+        "bill_depth_mm",
+        "flipper_length_mm",
+        "body_mass_g",
+      ],
+      layout(0, 11, 12, 4)
+    ),
   ],
-  [categoricalScale("fit-species", "species", ["Adelie", "Chinstrap", "Gentoo"])]
+  [
+    categoricalScale("fit-species", "species", [
+      "Adelie",
+      "Chinstrap",
+      "Gentoo",
+    ]),
+  ]
 );
-
 
 export const scatterMatrixDashboard = dashboard(
   "Every pair at once",
@@ -1021,7 +1409,13 @@ export const scatterMatrixDashboard = dashboard(
       title: "Measurements, species, and sex, pair by pair",
       colorField: "species",
       colorScaleId: "matrix-species",
-      fields: ["bill_length_mm", "flipper_length_mm", "body_mass_g", "species", "sex"],
+      fields: [
+        "bill_length_mm",
+        "flipper_length_mm",
+        "body_mass_g",
+        "species",
+        "sex",
+      ],
       lower: { numeric: "points", mixed: "points", categorical: "shares" },
       upper: { numeric: "correlation", mixed: "box", categorical: "tiles" },
       diagonal: { continuous: "density", categorical: "bars" },
@@ -1029,31 +1423,73 @@ export const scatterMatrixDashboard = dashboard(
       margin: { top: 4, right: 4, bottom: 4, left: 4 },
     },
     row("matrix-island", "Filter by island", "island", layout(8, 0, 4, 4)),
-    table("matrix-records", "Penguins in the matrix", ["species", "island", "sex", "bill_length_mm", "flipper_length_mm", "body_mass_g"], layout(8, 4, 4, 6)),
+    table(
+      "matrix-records",
+      "Penguins in the matrix",
+      [
+        "species",
+        "island",
+        "sex",
+        "bill_length_mm",
+        "flipper_length_mm",
+        "body_mass_g",
+      ],
+      layout(8, 4, 4, 6)
+    ),
   ],
-  [categoricalScale("matrix-species", "species", ["Adelie", "Chinstrap", "Gentoo"])]
+  [
+    categoricalScale("matrix-species", "species", [
+      "Adelie",
+      "Chinstrap",
+      "Gentoo",
+    ]),
+  ]
 );
 
 export const scatterSurfaceDashboard = dashboard(
   "Ten thousand days, two ways to see density",
   [
     {
-      ...scatter("surface-hex", "Hexagonal counts", "Temperature (°C)", "Ice Cream Sales", layout(0, 0, 6, 6), ["Temperature (°C)", "Ice cream sales"]),
+      ...scatter(
+        "surface-hex",
+        "Hexagonal counts",
+        "Temperature (°C)",
+        "Ice Cream Sales",
+        layout(0, 0, 6, 6),
+        ["Temperature (°C)", "Ice cream sales"]
+      ),
       display: "hexbin",
       hexbin: { columns: 24 },
     },
     {
-      ...scatter("surface-kde", "Smoothed density with a linear fit", "Temperature (°C)", "Ice Cream Sales", layout(6, 0, 6, 6), ["Temperature (°C)", "Ice cream sales"]),
+      ...scatter(
+        "surface-kde",
+        "Smoothed density with a linear fit",
+        "Temperature (°C)",
+        "Ice Cream Sales",
+        layout(6, 0, 6, 6),
+        ["Temperature (°C)", "Ice cream sales"]
+      ),
       display: "contour",
       contour: { bandwidth: 1, levels: 6, showPoints: false },
       regression: { method: "linear" },
       summary: true,
     },
-    histogram("surface-humidity", "Filter by humidity", "Humidity (%)", layout(0, 6, 5, 4), "Humidity (%)"),
-    table("surface-records", "Daily source records", ["Temperature (°C)", "Ice Cream Sales", "Humidity (%)", "Beach Visitors"], layout(5, 6, 7, 4)),
+    histogram(
+      "surface-humidity",
+      "Filter by humidity",
+      "Humidity (%)",
+      layout(0, 6, 5, 4),
+      "Humidity (%)"
+    ),
+    table(
+      "surface-records",
+      "Daily source records",
+      ["Temperature (°C)", "Ice Cream Sales", "Humidity (%)", "Beach Visitors"],
+      layout(5, 6, 7, 4)
+    ),
   ]
 );
-
 
 const wineBands = ["Ordinary (3–5)", "Good (6)", "Excellent (7–8)"];
 
@@ -1062,7 +1498,16 @@ export const wineChemistryDashboard: SavedDataStructure = {
     "What separates a good red wine",
     [
       {
-        ...scatter("wine-density", "Density falls as alcohol rises", "alcohol", "density", layout(0, 0, 7, 7), ["Alcohol (% vol)", "Density (g/cm³)"], "Quality band", "wine-bands"),
+        ...scatter(
+          "wine-density",
+          "Density falls as alcohol rises",
+          "alcohol",
+          "density",
+          layout(0, 0, 7, 7),
+          ["Alcohol (% vol)", "Density (g/cm³)"],
+          "Quality band",
+          "wine-bands"
+        ),
         display: "contour",
         contour: { bandwidth: 0.8, levels: 6 },
         regression: { method: "loess", span: 0.7 },
@@ -1070,19 +1515,63 @@ export const wineChemistryDashboard: SavedDataStructure = {
         marginals: { bins: 24 },
       },
       {
-        ...scatter("wine-acid", "More fixed acid, lower pH", "fixed acidity", "pH", layout(7, 0, 5, 7), ["Fixed acidity (g/L)", "pH"]),
+        ...scatter(
+          "wine-acid",
+          "More fixed acid, lower pH",
+          "fixed acidity",
+          "pH",
+          layout(7, 0, 5, 7),
+          ["Fixed acidity (g/L)", "pH"]
+        ),
         display: "hexbin",
         hexbin: { columns: 18 },
         regression: { method: "linear" },
         summary: true,
       },
       {
-        ...scatter("wine-volatile", "Volatile acidity and alcohol in each quality band", "volatile acidity", "alcohol", layout(0, 7, 8, 5), ["Volatile acidity (g/L)", "Alcohol (% vol)"], "Quality band", "wine-bands"),
+        ...scatter(
+          "wine-volatile",
+          "Volatile acidity and alcohol in each quality band",
+          "volatile acidity",
+          "alcohol",
+          layout(0, 7, 8, 5),
+          ["Volatile acidity (g/L)", "Alcohol (% vol)"],
+          "Quality band",
+          "wine-bands"
+        ),
         regression: { method: "linear" },
-        facet: { enabled: true, type: "wrap", rowVariable: "Quality band", columnCount: 3 },
+        facet: {
+          enabled: true,
+          type: "wrap",
+          rowVariable: "Quality band",
+          columnCount: 3,
+        },
       },
-      { ...row("wine-quality", "Filter by quality band", "Quality band", layout(8, 7, 4, 5), "wine-bands"), minRowHeight: 28, maxRowHeight: 40 },
-      table("wine-records", "Wines in view", ["Quality band", "quality", "alcohol", "density", "volatile acidity", "fixed acidity", "pH"], layout(0, 12, 12, 4)),
+      {
+        ...row(
+          "wine-quality",
+          "Filter by quality band",
+          "Quality band",
+          layout(8, 7, 4, 5),
+          "wine-bands"
+        ),
+        minRowHeight: 28,
+        maxRowHeight: 40,
+      },
+      table(
+        "wine-records",
+        "Wines in view",
+        [
+          "Quality band",
+          "quality",
+          "alcohol",
+          "density",
+          "volatile acidity",
+          "fixed acidity",
+          "pH",
+        ],
+        layout(0, 12, 12, 4)
+      ),
     ],
     [categoricalScale("wine-bands", "Quality band", wineBands)]
   ),
@@ -1113,23 +1602,1766 @@ export const messageDashboard = dashboard("Message log", [
     },
   },
   {
-    ...line("messages-monthly", "Messages per month", [], layout(0, 7, 8, 4), "Messages"),
+    ...line(
+      "messages-monthly",
+      "Messages per month",
+      [],
+      layout(0, 7, 8, 4),
+      "Messages"
+    ),
     xField: "Date",
     xAxisLabel: "Month · UTC",
-    time: { interval: "month", weekStart: "monday", aggregation: "count", missingPeriods: "zero" },
+    time: {
+      interval: "month",
+      weekStart: "monday",
+      aggregation: "count",
+      missingPeriods: "zero",
+    },
   },
-  row("messages-direction", "Sent or received", "Direction", layout(8, 7, 4, 4)),
+  row(
+    "messages-direction",
+    "Sent or received",
+    "Direction",
+    layout(8, 7, 4, 4)
+  ),
   row(
     "messages-correspondents",
     "Messages by correspondent",
     "Correspondent",
     layout(0, 11, 4, 6)
   ),
-  histogram("messages-words", "Words per message", "Words", layout(4, 11, 3, 6)),
+  histogram(
+    "messages-words",
+    "Words per message",
+    "Words",
+    layout(4, 11, 3, 6)
+  ),
   table(
     "messages-records",
     "Messages",
     ["Date", "Correspondent", "Role", "Direction", "Words"],
     layout(7, 11, 5, 6)
+  ),
+]);
+
+/**
+ * Driving shifts into reverse: a connected scatterplot. The composition's
+ * path orders 55 shuffled rows by Year through numeric Miles and Gas scales,
+ * with labeled points, a calculated guide, and callouts that follow years.
+ */
+export const drivingDashboard = dashboard("Driving", [
+  {
+    ...base,
+    id: "driving-composition",
+    type: "composition",
+    title: "Driving shifts into reverse",
+    layout: layout(0, 0, 12, 8),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 960, height: 600, background: "#ffffff" },
+      scales: [
+        {
+          id: "n-1",
+          kind: "numeric",
+          name: "Miles driven per person",
+          field: "Miles",
+          domain: "shared",
+          zero: false,
+          nice: true,
+        },
+        {
+          id: "n-2",
+          kind: "numeric",
+          name: "Gas price",
+          field: "Gas",
+          domain: "shared",
+          zero: false,
+          nice: true,
+        },
+      ],
+      calculations: [
+        {
+          id: "calc-1",
+          name: "Average miles",
+          aggregation: "average",
+          field: "Miles",
+          population: "composition",
+          filters: "ignore",
+        },
+      ],
+      overrides: [],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "Driving shifts into reverse",
+          x: 32,
+          y: 28,
+          width: 896,
+          fontSize: 26,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "Miles driven per person each year against the inflation-adjusted price of a gallon of gas, 1956–2010. The line follows the years.",
+          x: 32,
+          y: 64,
+          width: 896,
+          fontSize: 15,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Years",
+          x: 96,
+          y: 112,
+          frame: { width: 824, height: 400 },
+          label: { show: false, width: 0, fontSize: 12 },
+          axis: true,
+          marks: [
+            {
+              type: "path",
+              id: "mark-1",
+              name: "Path",
+              xScaleId: "n-1",
+              yScaleId: "n-2",
+              orderField: "Year",
+              stroke: "#1f2328",
+              strokeWidth: 1.5,
+            },
+            {
+              type: "point",
+              id: "mark-2",
+              name: "Points",
+              xScaleId: "n-1",
+              yScaleId: "n-2",
+              orderField: "Year",
+              radius: 3.5,
+              fill: "#1f2328",
+              labelField: "Year",
+              labelEvery: 4,
+            },
+          ],
+          repeat: {
+            arrangement: "rows",
+            columns: 3,
+            gap: 6,
+            order: "count",
+            limit: 24,
+          },
+        },
+        {
+          id: "guide-1",
+          kind: "guide",
+          name: "Average miles",
+          x: 6,
+          y: -40,
+          unitId: "unit-1",
+          value: { kind: "calc", calcId: "calc-1" },
+          label: "Average {value} miles a year",
+          color: "#8a6d3b",
+        },
+        {
+          id: "note-1",
+          kind: "annotation",
+          name: "2008 peak",
+          text: "{label}: gas peaks at ${y} a gallon\nand driving falls for the first time",
+          x: -230,
+          y: -34,
+          anchor: {
+            kind: "data",
+            unitId: "unit-1",
+            instanceKey: "all",
+            markId: "mark-2",
+            pick: "at",
+            at: "2008",
+          },
+          fontSize: 12,
+          color: "#a3241d",
+          leader: true,
+        },
+        {
+          id: "note-2",
+          kind: "annotation",
+          name: "1980 shock",
+          text: "{label}: the oil shock sends gas to ${y}\nwhile miles stall",
+          x: 22,
+          y: 18,
+          anchor: {
+            kind: "data",
+            unitId: "unit-1",
+            instanceKey: "all",
+            markId: "mark-2",
+            pick: "at",
+            at: "1980",
+          },
+          fontSize: 12,
+          color: "#1f4e8c",
+          leader: true,
+        },
+        {
+          id: "note-3",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: "Source: vega-datasets driving.json, after Hannah Fairfield, The New York Times (2010). Miles per person from the FHWA; gas price per gallon from the EIA, adjusted for inflation.",
+          x: 32,
+          y: 566,
+          width: 896,
+          fontSize: 11,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
+    },
+  },
+  scatter(
+    "driving-scatter",
+    "Gas against miles",
+    "Miles",
+    "Gas",
+    layout(0, 8, 6, 5),
+    ["Miles per person", "Gas, $ per gallon"]
+  ),
+  histogram("driving-years", "Years", "Year", layout(6, 8, 6, 5)),
+  table(
+    "driving-rows",
+    "Years",
+    ["Year", "Miles", "Gas"],
+    layout(0, 13, 12, 5)
+  ),
+]);
+
+/**
+ * Big-tech sparklines: a table of 14 company rows, each a path through its
+ * opening prices with the low, high, and latest prices marked. Rows order by
+ * a first-to-last change calculation, which also prints beside each name.
+ */
+export const sparklinesDashboard = dashboard("Big tech", [
+  {
+    ...base,
+    id: "sparklines-composition",
+    type: "composition",
+    title: "Big-tech opening prices",
+    layout: layout(0, 0, 12, 9),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 760, height: 740, background: "#ffffff" },
+      scales: [
+        {
+          id: "n-1",
+          kind: "numeric",
+          name: "Observation",
+          field: "Observation",
+          domain: "instance",
+          zero: false,
+          nice: false,
+        },
+        {
+          id: "n-2",
+          kind: "numeric",
+          name: "Opening price",
+          field: "Open",
+          domain: "shared",
+          zero: true,
+          nice: false,
+        },
+      ],
+      calculations: [
+        {
+          id: "calc-1",
+          name: "Change",
+          aggregation: "change",
+          field: "Open",
+          orderField: "Date",
+          population: "repeat",
+          filters: "ignore",
+        },
+        {
+          id: "calc-2",
+          name: "Highest open",
+          aggregation: "max",
+          field: "Open",
+          population: "composition",
+          filters: "ignore",
+        },
+      ],
+      overrides: [],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "Big-tech opening prices, 2010–2023",
+          x: 32,
+          y: 28,
+          width: 696,
+          fontSize: 24,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "Each line follows one company's opening price on one shared dollar scale. Rows sort by the change from first to last day; purple marks the low, green the high, black the latest.",
+          x: 32,
+          y: 62,
+          width: 696,
+          fontSize: 13,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Companies",
+          x: 32,
+          y: 118,
+          frame: { width: 420, height: 26 },
+          label: {
+            show: true,
+            width: 260,
+            fontSize: 12,
+            valueCalcId: "calc-1",
+          },
+          axis: false,
+          marks: [
+            {
+              type: "path",
+              id: "mark-1",
+              name: "Price line",
+              xScaleId: "n-1",
+              yScaleId: "n-2",
+              orderField: "Date",
+              stroke: "#1f2328",
+              strokeWidth: 1,
+            },
+            {
+              type: "point",
+              id: "mark-2",
+              name: "Low",
+              xScaleId: "n-1",
+              yScaleId: "n-2",
+              orderField: "Date",
+              radius: 3,
+              fill: "#7b4ea3",
+              labelEvery: 0,
+              show: "min",
+            },
+            {
+              type: "point",
+              id: "mark-3",
+              name: "High",
+              xScaleId: "n-1",
+              yScaleId: "n-2",
+              orderField: "Date",
+              radius: 3,
+              fill: "#2f8f5b",
+              labelEvery: 0,
+              show: "max",
+            },
+            {
+              type: "point",
+              id: "mark-4",
+              name: "Latest",
+              xScaleId: "n-1",
+              yScaleId: "n-2",
+              orderField: "Date",
+              radius: 2.5,
+              fill: "#1f2328",
+              labelField: "Open",
+              labelEvery: 1,
+              show: "last",
+            },
+          ],
+          repeat: {
+            field: "Company",
+            arrangement: "rows",
+            columns: 1,
+            gap: 12,
+            order: "value",
+            orderCalcId: "calc-1",
+            direction: "asc",
+            limit: 24,
+          },
+        },
+        {
+          id: "note-1",
+          kind: "annotation",
+          name: "Shared scale",
+          text: "Every row shares one split-adjusted dollar scale, from $0 to the highest opening price of ${Highest open}.",
+          x: 32,
+          y: 664,
+          anchor: { kind: "page" },
+          fontSize: 11,
+          color: "#5f6368",
+          leader: false,
+        },
+        {
+          id: "note-2",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: "Source: TidyTuesday 2023-02-07, big tech stock prices (Yahoo Finance via Kaggle). Every fifth trading day plus each company's first and last day. After Albert Rapp's gt sparkline table.",
+          x: 32,
+          y: 706,
+          width: 696,
+          fontSize: 10,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
+    },
+  },
+  {
+    ...line(
+      "sparklines-prices",
+      "Opening price by date",
+      ["Open"],
+      layout(0, 9, 8, 5),
+      "Open, $"
+    ),
+    xField: "Date",
+    xAxisLabel: "Date",
+    time: {
+      interval: "month",
+      weekStart: "monday",
+      aggregation: "average",
+      measureField: "Open",
+      missingPeriods: "gap",
+    },
+  },
+  row("sparklines-companies", "Rows by company", "Company", layout(8, 9, 4, 5)),
+  table(
+    "sparklines-rows",
+    "Prices",
+    ["Company", "Date", "Observation", "Open"],
+    layout(0, 14, 12, 5)
+  ),
+]);
+
+const fanBand = (
+  id: string,
+  name: string,
+  lowerField: string,
+  upperField: string,
+  opacity: number
+) => ({
+  type: "band" as const,
+  id,
+  name,
+  xScaleId: "n-1",
+  yScaleId: "n-2",
+  orderField: "Year",
+  lowerField,
+  upperField,
+  fill: "#1f4e8c",
+  opacity,
+});
+
+/**
+ * Forecast fan: two measure panels, each with four nested percentile bands
+ * from supplied interval columns, a central path, a shaded projection
+ * period, and a horizontal reference guide. Illustrative data.
+ */
+export const fanDashboard = dashboard("Forecast fan", [
+  {
+    ...base,
+    id: "fan-composition",
+    type: "composition",
+    title: "Forecast fan",
+    layout: layout(0, 0, 12, 7),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 960, height: 540, background: "#ffffff" },
+      scales: [
+        {
+          id: "n-1",
+          kind: "numeric",
+          name: "Year",
+          field: "Year",
+          domain: "shared",
+          zero: false,
+          nice: false,
+        },
+        {
+          id: "n-2",
+          kind: "numeric",
+          name: "Percent",
+          field: "Central",
+          domain: "instance",
+          zero: true,
+          nice: true,
+        },
+      ],
+      calculations: [
+        {
+          id: "calc-1",
+          name: "Latest central",
+          aggregation: "last",
+          field: "Central",
+          orderField: "Year",
+          population: "repeat",
+          filters: "follow",
+        },
+      ],
+      overrides: [],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "Two measures, three years ahead",
+          x: 32,
+          y: 28,
+          width: 896,
+          fontSize: 24,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "Quarterly history, then projections from 2025 with 20%, 40%, 60%, and 80% intervals around the central path. Illustrative figures; each panel keeps its own scale.",
+          x: 32,
+          y: 62,
+          width: 896,
+          fontSize: 13,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Measures",
+          x: 72,
+          y: 110,
+          frame: { width: 380, height: 300 },
+          label: { show: true, width: 0, fontSize: 13, valueCalcId: "calc-1" },
+          axis: true,
+          marks: [
+            fanBand("mark-1", "80% interval", "P10", "P90", 0.12),
+            fanBand("mark-2", "60% interval", "P20", "P80", 0.16),
+            fanBand("mark-3", "40% interval", "P30", "P70", 0.2),
+            fanBand("mark-4", "20% interval", "P40", "P60", 0.26),
+            {
+              type: "path",
+              id: "mark-5",
+              name: "Central",
+              xScaleId: "n-1",
+              yScaleId: "n-2",
+              orderField: "Year",
+              stroke: "#1f2328",
+              strokeWidth: 1.5,
+            },
+          ],
+          repeat: {
+            field: "Measure",
+            arrangement: "columns",
+            columns: 2,
+            gap: 72,
+            order: "label",
+            limit: 24,
+          },
+        },
+        {
+          id: "guide-1",
+          kind: "guide",
+          name: "Projection",
+          x: 4,
+          y: -318,
+          unitId: "unit-1",
+          value: { kind: "constant", value: "2025" },
+          label: "Projection",
+          color: "#8a6d3b",
+          shade: "after",
+        },
+        {
+          id: "guide-2",
+          kind: "guide",
+          name: "2% reference",
+          x: 4,
+          y: 0,
+          unitId: "unit-1",
+          value: { kind: "constant", value: "2" },
+          label: "2%",
+          color: "#a3241d",
+          axis: "y",
+        },
+        {
+          id: "note-1",
+          kind: "annotation",
+          name: "How to read",
+          text: "The darkest band holds the middle 20% of outcomes; the lightest, 80%.",
+          x: 72,
+          y: 452,
+          anchor: { kind: "page" },
+          fontSize: 11,
+          color: "#5f6368",
+          leader: false,
+        },
+        {
+          id: "note-2",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: "Illustrative data generated for this demo: supplied percentile columns, not a forecast model. The layout follows central-bank fan charts.",
+          x: 32,
+          y: 506,
+          width: 896,
+          fontSize: 10,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
+    },
+  },
+  {
+    ...line(
+      "fan-central",
+      "Central path by quarter",
+      ["Central"],
+      layout(0, 7, 8, 5),
+      "Percent"
+    ),
+    xField: "Year",
+    xAxisLabel: "Year",
+  },
+  row("fan-kind", "History or projection", "Kind", layout(8, 7, 4, 5)),
+  table(
+    "fan-rows",
+    "Quarters",
+    ["Measure", "Period", "Kind", "Central", "P10", "P90"],
+    layout(0, 12, 12, 5)
+  ),
+]);
+
+/**
+ * Time use, 2019 against 2020: a grid of activities. In each, a summary
+ * mark draws the quartiles of minutes per day for the two cohorts as a
+ * joined band, marks the medians, and colors them by the change in median
+ * through a diverging scale.
+ */
+export const timeUseDashboard = dashboard("Time use", [
+  {
+    ...base,
+    id: "time-use-composition",
+    type: "composition",
+    title: "How the day changed",
+    layout: layout(0, 0, 12, 8),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 960, height: 640, background: "#ffffff" },
+      scales: [
+        {
+          id: "n-1",
+          kind: "numeric",
+          name: "Minutes a day",
+          field: "Minutes",
+          domain: "instance",
+          zero: false,
+          nice: true,
+        },
+        {
+          id: "value-1",
+          kind: "value",
+          name: "Change in median",
+          domain: "shared",
+          transform: "sqrt",
+          colors: ["#2b6cb0", "#c2410c"],
+          center: "#b8bcc2",
+        },
+      ],
+      calculations: [
+        {
+          id: "calc-1",
+          name: "Diary entries",
+          aggregation: "count",
+          population: "repeat",
+          filters: "follow",
+        },
+      ],
+      overrides: [],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "How the day changed in 2020",
+          x: 32,
+          y: 26,
+          width: 896,
+          fontSize: 24,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "Minutes a day for people who did each activity: the band spans the middle half of respondents, the dot marks the median, 2019 then 2020. Orange rose, blue fell; each panel keeps its own minute scale.",
+          x: 32,
+          y: 58,
+          width: 896,
+          fontSize: 13,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Activities",
+          x: 56,
+          y: 112,
+          frame: { width: 124, height: 88 },
+          label: { show: true, width: 0, fontSize: 12, valueCalcId: "calc-1" },
+          axis: true,
+          marks: [
+            {
+              type: "summary",
+              id: "mark-1",
+              name: "Minutes a day",
+              groupField: "Year",
+              measureField: "Minutes",
+              yScaleId: "n-1",
+              valueScaleId: "value-1",
+              fill: "#d9dde3",
+              opacity: 0.7,
+            },
+          ],
+          repeat: {
+            field: "Activity",
+            arrangement: "grid",
+            columns: 4,
+            gap: 40,
+            order: "label",
+            limit: 24,
+          },
+        },
+        {
+          id: "note-1",
+          kind: "annotation",
+          name: "Reading note",
+          text: "Each label counts that activity's diary entries after the active filters. Respondents who skipped an activity have no entry.",
+          x: 56,
+          y: 586,
+          anchor: { kind: "page" },
+          fontSize: 11,
+          color: "#5f6368",
+          leader: false,
+        },
+        {
+          id: "note-2",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: "Illustrative diary generated for this demo: 400 respondents a year, unweighted quartiles, not survey estimates. After Nathan Yau's time-use comparison.",
+          x: 32,
+          y: 612,
+          width: 896,
+          fontSize: 10,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
+    },
+  },
+  box(
+    "time-use-box",
+    "Minutes by year",
+    "Minutes",
+    "Year",
+    layout(0, 8, 6, 5),
+    undefined,
+    "Minutes a day"
+  ),
+  row("time-use-age", "Age group", "Age group", layout(6, 8, 3, 5)),
+  row("time-use-weekday", "Day", "Weekday", layout(9, 8, 3, 5)),
+  table(
+    "time-use-rows",
+    "Diary entries",
+    ["Year", "Activity", "Respondent", "Age group", "Weekday", "Minutes"],
+    layout(0, 13, 12, 5)
+  ),
+]);
+
+/**
+ * Deaths against media coverage: four normalized columns. Each stacks the
+ * fifteen causes as shares of that source's total, in one order and color
+ * across the columns, so the mortality column reads against the three
+ * outlets. Real 2023 figures from Our World in Data.
+ */
+export const mediaDeathsDashboard = dashboard("Media and deaths", [
+  {
+    ...base,
+    id: "media-deaths-composition",
+    type: "composition",
+    title: "What Americans die from, and what the news covers",
+    layout: layout(0, 0, 12, 9),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 960, height: 720, background: "#ffffff" },
+      scales: [],
+      calculations: [
+        {
+          id: "calc-1",
+          name: "Total",
+          aggregation: "sum",
+          field: "Count",
+          population: "repeat",
+          filters: "follow",
+        },
+      ],
+      overrides: [
+        {
+          unitId: "unit-1",
+          instanceKey: "Deaths",
+          dx: -40,
+          dy: 0,
+          emphasize: true,
+        },
+      ],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "What Americans die from, and what the news covers",
+          x: 32,
+          y: 26,
+          width: 896,
+          fontSize: 24,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "Each column stacks fifteen causes of death as shares of its own total: deaths in 2023 on the left, then articles that discussed each cause in three outlets. Homicide and terrorism fill the news; heart disease and cancer fill the death certificates.",
+          x: 32,
+          y: 58,
+          width: 896,
+          fontSize: 13,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Sources",
+          x: 108,
+          y: 128,
+          frame: { width: 150, height: 500 },
+          label: { show: true, width: 0, fontSize: 12, valueCalcId: "calc-1" },
+          axis: true,
+          marks: [
+            {
+              type: "stack",
+              id: "mark-1",
+              name: "Share of total",
+              categoryField: "Cause",
+              aggregation: "sum",
+              measureField: "Count",
+              normalize: true,
+              order: "total",
+              colors: [
+                "#4e79a7",
+                "#f28e2b",
+                "#e15759",
+                "#76b7b2",
+                "#59a14f",
+                "#edc948",
+                "#b07aa1",
+                "#ff9da7",
+                "#9c755f",
+                "#bab0ac",
+                "#1f77b4",
+                "#8c564b",
+                "#17becf",
+                "#bcbd22",
+                "#7f7f7f",
+              ],
+              labelMinHeight: 13,
+              inset: 1.5,
+            },
+          ],
+          repeat: {
+            field: "Source",
+            arrangement: "columns",
+            columns: 4,
+            gap: 56,
+            order: "label",
+            limit: 24,
+          },
+        },
+        {
+          id: "note-1",
+          kind: "annotation",
+          name: "Denominators",
+          text: "Deaths are deaths from these fifteen causes, not all deaths. Articles count pieces that mention a cause several times, not every story.",
+          x: 120,
+          y: 652,
+          anchor: { kind: "page" },
+          fontSize: 11,
+          color: "#5f6368",
+          leader: false,
+        },
+        {
+          id: "note-2",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: "Source: Our World in Data, media deaths analysis (CC BY). Deaths from the CDC; articles from Media Cloud, 2023. Accidents exclude drug overdoses. After the Our World in Data graphic.",
+          x: 32,
+          y: 692,
+          width: 896,
+          fontSize: 10,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
+    },
+  },
+  row("media-deaths-causes", "Rows by cause", "Cause", layout(0, 9, 6, 6)),
+  row("media-deaths-sources", "Rows by source", "Source", layout(6, 9, 6, 6)),
+  table(
+    "media-deaths-rows",
+    "Counts",
+    ["Source", "Cause", "Measure", "Count"],
+    layout(0, 15, 12, 5)
+  ),
+]);
+
+/**
+ * Measles before and after the vaccine: 51 state strips in the publisher's
+ * order, one cell per year colored by a placed multistop ramp, with not
+ * reported years drawn as neutral cells and a fixed 1963 guide.
+ */
+export const measlesDashboard = dashboard("Measles", [
+  {
+    ...base,
+    id: "measles-composition",
+    type: "composition",
+    title: "Measles",
+    layout: layout(0, 0, 12, 9),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 900, height: 760, background: "#ffffff" },
+      scales: [
+        {
+          id: "x-1",
+          kind: "position",
+          name: "Year",
+          field: "Year",
+          domain: "shared",
+        },
+        {
+          id: "value-1",
+          kind: "value",
+          name: "Cases per 100,000",
+          domain: "shared",
+          transform: "linear",
+          colors: [
+            "#e7f0fa",
+            "#c9e2f6",
+            "#95cbee",
+            "#0099dc",
+            "#4ab04a",
+            "#ffd73e",
+            "#eec73a",
+            "#e29421",
+            "#e29421",
+            "#f05336",
+            "#ce472e",
+          ],
+          stops: [0, 0.01, 0.02, 0.03, 0.09, 0.1, 0.15, 0.25, 0.4, 0.5, 1],
+        },
+      ],
+      calculations: [
+        {
+          id: "calc-1",
+          name: "Row order",
+          aggregation: "max",
+          field: "Order",
+          population: "repeat",
+          filters: "ignore",
+        },
+      ],
+      overrides: [],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "Measles",
+          x: 32,
+          y: 24,
+          width: 836,
+          fontSize: 24,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "Reported cases per 100,000 people, by state and year. Grey cells are years a state did not report. The ramp climbs quickly: pale blue is under 30 cases, green about 270, and red 1,500 and above.",
+          x: 32,
+          y: 56,
+          width: 836,
+          fontSize: 13,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "States",
+          x: 32,
+          y: 104,
+          frame: { width: 776, height: 10 },
+          label: { show: true, width: 60, fontSize: 9 },
+          axis: true,
+          marks: [
+            {
+              type: "strip",
+              id: "mark-1",
+              name: "Cells",
+              shape: "rect",
+              positionScaleId: "x-1",
+              valueScaleId: "value-1",
+              aggregation: "average",
+              measureField: "Rate",
+              encoding: "color",
+              fill: "#1f2328",
+              inset: 1,
+              missing: "#e6e8eb",
+            },
+          ],
+          repeat: {
+            field: "Label",
+            arrangement: "rows",
+            columns: 1,
+            gap: 1,
+            order: "value",
+            orderCalcId: "calc-1",
+            direction: "asc",
+            limit: 60,
+          },
+        },
+        {
+          id: "guide-1",
+          kind: "guide",
+          name: "Vaccine",
+          x: 4,
+          y: -610,
+          unitId: "unit-1",
+          value: { kind: "constant", value: "1963" },
+          label: "Vaccine introduced",
+          color: "#1f2328",
+        },
+        {
+          id: "note-1",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: "Source: The Wall Street Journal, Battling Infectious Diseases in the 20th Century (2015), from Project Tycho and CDC data. CDC data from 2003 to 2012 counts confirmed cases yearly rather than provisional cases weekly. Alaska's 2003 cell has no record and stays blank.",
+          x: 32,
+          y: 722,
+          width: 836,
+          fontSize: 10,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
+    },
+  },
+  {
+    ...line(
+      "measles-years",
+      "Average rate by year",
+      ["Rate"],
+      layout(0, 9, 8, 5),
+      "Cases per 100,000"
+    ),
+    xField: "Year",
+    xAxisLabel: "Year",
+  },
+  row("measles-status", "Cell status", "Status", layout(8, 9, 4, 5)),
+  table(
+    "measles-rows",
+    "Cells",
+    ["State", "Year", "Rate", "Status"],
+    layout(0, 14, 12, 5)
+  ),
+]);
+
+/**
+ * Causes of death by age: one stack spread across age. Each cause draws as
+ * an area of its share of that age's total, labeled where it is thickest.
+ * Illustrative counts.
+ */
+export const causesByAgeDashboard = dashboard("Causes by age", [
+  {
+    ...base,
+    id: "causes-composition",
+    type: "composition",
+    title: "What people die from, by age",
+    layout: layout(0, 0, 12, 8),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 960, height: 600, background: "#ffffff" },
+      scales: [
+        {
+          id: "n-1",
+          kind: "numeric",
+          name: "Age",
+          field: "Age",
+          domain: "shared",
+          zero: true,
+          nice: false,
+        },
+      ],
+      calculations: [
+        {
+          id: "calc-1",
+          name: "Deaths",
+          aggregation: "sum",
+          field: "Count",
+          population: "composition",
+          filters: "follow",
+        },
+      ],
+      overrides: [],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "What people die from, by age",
+          x: 32,
+          y: 26,
+          width: 896,
+          fontSize: 24,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "Each band is one cause's share of deaths at that age, from birth to 100. Shares at every age add to 100%; {Deaths} deaths in all after the active filters.",
+          x: 32,
+          y: 58,
+          width: 896,
+          fontSize: 13,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Ages",
+          x: 72,
+          y: 110,
+          frame: { width: 848, height: 400 },
+          label: { show: false, width: 0, fontSize: 12 },
+          axis: true,
+          marks: [
+            {
+              type: "stack",
+              id: "mark-1",
+              name: "Share of deaths",
+              categoryField: "Cause",
+              aggregation: "sum",
+              measureField: "Count",
+              normalize: true,
+              order: "total",
+              colors: [
+                "#4e79a7",
+                "#f28e2b",
+                "#76b7b2",
+                "#e15759",
+                "#59a14f",
+                "#edc948",
+                "#b07aa1",
+                "#9c755f",
+                "#bab0ac",
+              ],
+              labelMinHeight: 14,
+              inset: 0,
+              xScaleId: "n-1",
+            },
+          ],
+          repeat: {
+            arrangement: "rows",
+            columns: 1,
+            gap: 0,
+            order: "label",
+            limit: 1,
+          },
+        },
+        {
+          id: "guide-1",
+          kind: "guide",
+          name: "Retirement",
+          x: 4,
+          y: -416,
+          unitId: "unit-1",
+          value: { kind: "constant", value: "65" },
+          label: "65",
+          color: "#5f6368",
+        },
+        {
+          id: "note-1",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: "Illustrative counts generated for this demo; they describe no real population. After Nathan Yau's Causes of Death.",
+          x: 32,
+          y: 566,
+          width: 896,
+          fontSize: 10,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
+    },
+  },
+  row("causes-list", "Rows by cause", "Cause", layout(0, 8, 4, 6)),
+  histogram("causes-ages", "Ages", "Age", layout(4, 8, 8, 6)),
+  table(
+    "causes-rows",
+    "Counts",
+    ["Age", "Cause", "Count"],
+    layout(0, 14, 12, 5)
+  ),
+]);
+
+/**
+ * Consumer confidence around the world: a 3 × 3 grid. Every panel draws all
+ * nine countries' paths on one shared scale and lights up its own, with the
+ * latest value marked and labeled and a 100 reference line.
+ */
+export const consumerConfidenceDashboard = dashboard("Consumer confidence", [
+  {
+    ...base,
+    id: "confidence-composition",
+    type: "composition",
+    title: "Consumer confidence around the world",
+    layout: layout(0, 0, 12, 9),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 960, height: 760, background: "#ffffff" },
+      scales: [
+        {
+          id: "n-1",
+          kind: "numeric",
+          name: "Month",
+          field: "Month",
+          domain: "shared",
+          zero: false,
+          nice: false,
+        },
+        {
+          id: "n-2",
+          kind: "numeric",
+          name: "Index",
+          field: "Index",
+          domain: "shared",
+          zero: false,
+          nice: true,
+        },
+      ],
+      calculations: [
+        {
+          id: "calc-1",
+          name: "Latest",
+          aggregation: "last",
+          field: "Index",
+          orderField: "Month",
+          population: "repeat",
+          filters: "follow",
+        },
+      ],
+      overrides: [],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "Consumer confidence around the world",
+          x: 32,
+          y: 26,
+          width: 896,
+          fontSize: 24,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "OECD consumer confidence index, monthly from July 2018 to October 2022. Each panel shows all nine countries in grey and its own in color; 100 is the long-run average.",
+          x: 32,
+          y: 58,
+          width: 896,
+          fontSize: 13,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Countries",
+          x: 72,
+          y: 112,
+          frame: { width: 236, height: 150 },
+          label: { show: true, width: 0, fontSize: 13, valueCalcId: "calc-1" },
+          axis: true,
+          marks: [
+            {
+              type: "path",
+              id: "mark-1",
+              name: "Index",
+              xScaleId: "n-1",
+              yScaleId: "n-2",
+              orderField: "Month",
+              stroke: "#c2410c",
+              strokeWidth: 1.75,
+              seriesField: "Country",
+              focus: { kind: "repeat" },
+              mutedStroke: "#d4d7dc",
+              population: "composition",
+            },
+            {
+              type: "point",
+              id: "mark-2",
+              name: "Latest",
+              xScaleId: "n-1",
+              yScaleId: "n-2",
+              orderField: "Month",
+              radius: 3,
+              fill: "#c2410c",
+              labelEvery: 0,
+              show: "last",
+              seriesField: "Country",
+              focus: { kind: "repeat" },
+              mutedFill: "#d4d7dc",
+              population: "composition",
+            },
+          ],
+          repeat: {
+            field: "Country",
+            arrangement: "grid",
+            columns: 3,
+            gap: 56,
+            order: "label",
+            limit: 9,
+          },
+        },
+        {
+          id: "guide-1",
+          kind: "guide",
+          name: "Average",
+          x: 4,
+          y: 0,
+          unitId: "unit-1",
+          value: { kind: "constant", value: "100" },
+          label: "",
+          color: "#8a8f98",
+          axis: "y",
+        },
+        {
+          id: "note-1",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: "Source: OECD consumer confidence indicator, via the R Graph Gallery's data file. Each panel's label shows its latest index after the active filters. After the Economist's small-multiples grid.",
+          x: 32,
+          y: 724,
+          width: 896,
+          fontSize: 10,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
+    },
+  },
+  {
+    ...line(
+      "confidence-line",
+      "Average index by month",
+      ["Index"],
+      layout(0, 9, 8, 5),
+      "Index"
+    ),
+    xField: "Month",
+    xAxisLabel: "Month",
+    time: {
+      interval: "month",
+      weekStart: "monday",
+      aggregation: "average",
+      measureField: "Index",
+      missingPeriods: "gap",
+    },
+  },
+  row("confidence-countries", "Rows by country", "Country", layout(8, 9, 4, 5)),
+  table(
+    "confidence-rows",
+    "Country-months",
+    ["Country", "Month", "Index"],
+    layout(0, 14, 12, 5)
+  ),
+]);
+
+/**
+ * Pew's dumbbell: one topic per row, the two parties' shares as colored dots
+ * on a shared percentage scale with a connector, a legend above, and the
+ * signed gap beside each row.
+ */
+export const pewMeaningDashboard = dashboard("Life's meaning by party", [
+  {
+    ...base,
+    id: "pew-composition",
+    type: "composition",
+    title: "Republicans and Democrats differ over what makes life meaningful",
+    layout: layout(0, 0, 12, 7),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 840, height: 560, background: "#ffffff" },
+      scales: [
+        {
+          id: "n-1",
+          kind: "numeric",
+          name: "Share",
+          field: "Share",
+          domain: "shared",
+          zero: true,
+          nice: true,
+        },
+      ],
+      calculations: [
+        {
+          id: "calc-1",
+          name: "Rep minus Dem",
+          aggregation: "difference",
+          field: "Share",
+          orderField: "Party",
+          population: "repeat",
+          filters: "follow",
+        },
+        {
+          id: "calc-2",
+          name: "Row order",
+          aggregation: "max",
+          field: "Order",
+          population: "repeat",
+          filters: "ignore",
+        },
+      ],
+      overrides: [],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "Republicans and Democrats in the U.S. differ over some factors that make life meaningful",
+          x: 32,
+          y: 24,
+          width: 776,
+          fontSize: 20,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "% of U.S. adults who mention each topic when describing what gives them meaning in life, by party. The number at the right is the Republican share minus the Democratic share.",
+          x: 32,
+          y: 82,
+          width: 776,
+          fontSize: 13,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+        {
+          id: "legend-1",
+          kind: "legend",
+          name: "Party key",
+          x: 300,
+          y: 134,
+          unitId: "unit-1",
+          markId: "mark-2",
+          direction: "row",
+          fontSize: 12,
+          color: "#1f2328",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Topics",
+          x: 32,
+          y: 166,
+          frame: { width: 420, height: 30 },
+          label: {
+            show: true,
+            width: 268,
+            fontSize: 13,
+            valueCalcId: "calc-1",
+          },
+          axis: true,
+          marks: [
+            {
+              type: "path",
+              id: "mark-1",
+              name: "Gap",
+              xScaleId: "n-1",
+              orderField: "Party",
+              stroke: "#d4d7dc",
+              strokeWidth: 4,
+            },
+            {
+              type: "point",
+              id: "mark-2",
+              name: "Parties",
+              xScaleId: "n-1",
+              orderField: "Party",
+              radius: 7,
+              fill: "#1f2328",
+              labelField: "Share",
+              labelEvery: 1,
+              colorField: "Party",
+              colors: ["#436685", "#bf2f24"],
+            },
+          ],
+          repeat: {
+            field: "Topic",
+            arrangement: "rows",
+            columns: 1,
+            gap: 14,
+            order: "value",
+            orderCalcId: "calc-2",
+            direction: "asc",
+            limit: 10,
+          },
+        },
+        {
+          id: "note-1",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: 'Source: Pew Research Center, "What makes life meaningful? Views from 17 advanced economies" (November 2021), U.S. survey. Figures as transcribed in the R Graph Gallery\'s recreation.',
+          x: 32,
+          y: 524,
+          width: 776,
+          fontSize: 10,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
+    },
+  },
+  row("pew-topics", "Rows by topic", "Topic", layout(0, 7, 6, 5)),
+  row("pew-parties", "Rows by party", "Party", layout(6, 7, 6, 5)),
+  table(
+    "pew-rows",
+    "Shares",
+    ["Topic", "Party", "Share"],
+    layout(0, 12, 12, 4)
+  ),
+]);
+
+/**
+ * Income against life expectancy: one annotated scatter. Points sit on a log
+ * income scale, size by population, color by region, and a few chosen
+ * economies carry labels; a legend keys the regions.
+ */
+export const incomeLifeDashboard = dashboard("Income and life", [
+  {
+    ...base,
+    id: "income-life-composition",
+    type: "composition",
+    title: "Richer countries live longer",
+    layout: layout(0, 0, 12, 8),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 960, height: 620, background: "#ffffff" },
+      scales: [
+        {
+          id: "n-1",
+          kind: "numeric",
+          name: "GDP per capita",
+          field: "GDP per capita",
+          domain: "shared",
+          zero: false,
+          nice: true,
+          transform: "log",
+        },
+        {
+          id: "n-2",
+          kind: "numeric",
+          name: "Life expectancy",
+          field: "Life expectancy",
+          domain: "shared",
+          zero: false,
+          nice: true,
+        },
+      ],
+      calculations: [
+        {
+          id: "calc-1",
+          name: "Economies",
+          aggregation: "count",
+          population: "composition",
+          filters: "follow",
+        },
+      ],
+      overrides: [],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "Richer countries live longer",
+          x: 32,
+          y: 26,
+          width: 896,
+          fontSize: 24,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "Life expectancy at birth against GDP per capita in 2023, for {Economies} economies. Each tenfold step in income takes the same room; circle area follows population.",
+          x: 32,
+          y: 58,
+          width: 896,
+          fontSize: 13,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+        {
+          id: "legend-1",
+          kind: "legend",
+          name: "Regions",
+          x: 80,
+          y: 96,
+          unitId: "unit-1",
+          markId: "mark-1",
+          direction: "row",
+          fontSize: 11,
+          color: "#1f2328",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Economies",
+          x: 80,
+          y: 126,
+          frame: { width: 840, height: 410 },
+          label: { show: false, width: 0, fontSize: 12 },
+          axis: true,
+          marks: [
+            {
+              type: "point",
+              id: "mark-1",
+              name: "Economies",
+              xScaleId: "n-1",
+              yScaleId: "n-2",
+              radius: 22,
+              fill: "#4e79a7",
+              labelField: "Country",
+              labelEvery: 1,
+              labelValues:
+                "China, India, United States, Nigeria, Japan, Chad, Qatar, Brazil, Indonesia, Lesotho, Luxembourg, Afghanistan",
+              sizeField: "Population",
+              colorField: "Region",
+              colors: [
+                "#4e79a7",
+                "#f28e2b",
+                "#59a14f",
+                "#e15759",
+                "#76b7b2",
+                "#b07aa1",
+                "#edc948",
+              ],
+            },
+          ],
+          repeat: {
+            arrangement: "rows",
+            columns: 1,
+            gap: 0,
+            order: "label",
+            limit: 1,
+          },
+        },
+        {
+          id: "note-1",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: "Source: World Bank World Development Indicators, 2023 vintage (CC BY 4.0): population and life expectancy from the UN Population Division, GDP per capita in PPP constant 2021 dollars. After Gapminder's income and health chart.",
+          x: 32,
+          y: 586,
+          width: 896,
+          fontSize: 10,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
+    },
+  },
+  row("income-life-regions", "Rows by region", "Region", layout(0, 8, 5, 5)),
+  histogram(
+    "income-life-expectancy",
+    "Life expectancy",
+    "Life expectancy",
+    layout(5, 8, 7, 5)
+  ),
+  table(
+    "income-life-rows",
+    "Economies",
+    [
+      "Country",
+      "Region",
+      "Income",
+      "Population",
+      "GDP per capita",
+      "Life expectancy",
+    ],
+    layout(0, 13, 12, 5)
   ),
 ]);

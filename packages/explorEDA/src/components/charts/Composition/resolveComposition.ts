@@ -10,14 +10,21 @@ import type {
   CompositionDefinition,
   CompositionElement,
   GuideElement,
+  LegendElement,
   TextElement,
+  UnitElement,
 } from "./compositionTypes";
 import {
+  markCategories,
+  numericPixel,
+  readNumber,
   periodKey,
   periodStart,
   resolveUnit,
+  type BandDatum,
   type CompositionData,
   type GlyphDatum,
+  type PathDatum,
   type ResolvedInstance,
   type ResolvedUnit,
 } from "./resolveUnit";
@@ -44,6 +51,10 @@ interface NodeBase {
   /** The repeat that drew this node, for chart units. */
   instanceKey?: string;
   opacity?: number;
+  /** Clip the node to this box, such as a frame with fixed scale limits. */
+  clip?: Bounds;
+  /** Draw beneath every other node, such as a guide's shaded region. */
+  under?: boolean;
 }
 
 export interface TextNode extends NodeBase {
@@ -91,7 +102,32 @@ export interface LineNode extends NodeBase {
   dash?: string;
 }
 
-export type SceneNode = TextNode | RectNode | CircleNode | LineNode;
+/** One path through ordered points, drawn as connected runs. */
+export interface PathNode extends NodeBase {
+  type: "path";
+  /** Connected runs of vertices; a gap in the data starts a new run. */
+  segments: { x: number; y: number; rowId: number }[][];
+  stroke: string;
+  strokeWidth: number;
+  path: PathDatum;
+}
+
+/** The area between two bounds along ordered points, drawn as connected runs. */
+export interface AreaNode extends NodeBase {
+  type: "area";
+  segments: { x: number; y0: number; y1: number; rowId: number }[][];
+  fill: string;
+  fillOpacity: number;
+  band: BandDatum;
+}
+
+export type SceneNode =
+  | TextNode
+  | RectNode
+  | CircleNode
+  | LineNode
+  | PathNode
+  | AreaNode;
 
 /** Why a guide or annotation sits where it does. */
 export interface ResolvedAnchor {
@@ -191,12 +227,24 @@ export function resolveComposition(
         });
         break;
       }
+      case "legend": {
+        const legend = resolveLegend(element, definition, data, measureText);
+        nodes.push(...legend.nodes);
+        elements.push({
+          id: element.id,
+          kind: element.kind,
+          name: element.name,
+          bounds: legend.bounds,
+        });
+        break;
+      }
       case "annotation": {
         const note = resolveAnnotation(
           element,
           units,
           measureText,
-          definition.artboard.background
+          definition,
+          data
         );
         nodes.push(...note.nodes);
         elements.push({
@@ -214,7 +262,12 @@ export function resolveComposition(
     width: definition.artboard.width,
     height: definition.artboard.height,
     background: definition.artboard.background,
-    nodes,
+    // Shaded regions go beneath the marks they sit behind, whatever the
+    // element order, so a projection tint never covers a band or a click.
+    nodes: [
+      ...nodes.filter((node) => node.under),
+      ...nodes.filter((node) => !node.under),
+    ],
     elements,
   };
 }
@@ -288,12 +341,24 @@ export function wrapText(
   return lines;
 }
 
-/** The x of a value on a repeat's position scale, at the middle of its bin. */
+/**
+ * The x of a value on a repeat's position scale, at the middle of its bin, or
+ * along its numeric x scale.
+ */
 export function positionX(
   instance: ResolvedInstance,
   value: { number?: number; text?: string }
 ): number | undefined {
   const position = instance.position;
+  if (!position && instance.xy) {
+    const number =
+      value.number ??
+      (value.text?.trim() ? readNumber(value.text.trim()) : undefined);
+    if (number === undefined || !Number.isFinite(number)) return undefined;
+    const [min, max] = instance.xy.x.domain;
+    if (number < min || number > max) return undefined;
+    return numericPixel(instance.xy.x, number);
+  }
   if (!position || !position.bins.length) return undefined;
   let key: string | undefined;
   if (position.scale.interval) {
@@ -309,6 +374,107 @@ export function positionX(
   if (index < 0) return undefined;
   const band = instance.frame.width / position.bins.length;
   return instance.frame.x + (index + 0.5) * band;
+}
+
+/**
+ * A key for a mark's categories: a swatch and a label per category, in a
+ * row or a column from the element's position. It reads the same category
+ * order and colors the mark draws with.
+ */
+function resolveLegend(
+  legend: LegendElement,
+  definition: CompositionDefinition,
+  data: CompositionData,
+  measureText: MeasureText
+) {
+  const unit = definition.elements.find(
+    (element): element is UnitElement =>
+      element.kind === "unit" && element.id === legend.unitId
+  );
+  const mark = unit?.marks.find((item) => item.id === legend.markId);
+  const entries = mark ? markCategories(mark, data) : [];
+  const nodes: SceneNode[] = [];
+  const swatch = Math.round(legend.fontSize * 0.9);
+  const gap = 6;
+  const step = Math.round(legend.fontSize * 1.5);
+  let x = legend.x;
+  let y = legend.y;
+  let width = 0;
+  // A row wraps before it runs off the artboard, or past the set width.
+  const maxWidth =
+    legend.width ?? Math.max(80, definition.artboard.width - legend.x - 16);
+  entries.forEach((entry, index) => {
+    const entryWidth =
+      swatch + 4 + measureText(entry.key, legend.fontSize, 400) + gap * 2;
+    if (
+      legend.direction === "row" &&
+      x > legend.x &&
+      x + entryWidth - gap * 2 > legend.x + maxWidth
+    ) {
+      x = legend.x;
+      y += step;
+    }
+    nodes.push({
+      type: "rect",
+      key: `${legend.id}:${index}:swatch`,
+      elementId: legend.id,
+      x,
+      y: y + (step - swatch) / 2,
+      width: swatch,
+      height: swatch,
+      fill: entry.color,
+    });
+    nodes.push({
+      type: "text",
+      key: `${legend.id}:${index}:label`,
+      elementId: legend.id,
+      x: x + swatch + 4,
+      lines: [{ text: entry.key, y: y + step / 2 + legend.fontSize * 0.35 }],
+      fontSize: legend.fontSize,
+      fontWeight: 400,
+      fill: legend.color,
+      anchor: "start",
+    });
+    if (legend.direction === "row") {
+      x += entryWidth;
+      width = Math.max(width, x - legend.x);
+    } else {
+      y += step;
+      width = Math.max(width, entryWidth);
+    }
+  });
+  if (!entries.length)
+    return {
+      nodes,
+      bounds: { x: legend.x, y: legend.y, width: 80, height: step },
+    };
+  return {
+    nodes,
+    bounds: {
+      x: legend.x,
+      y: legend.y,
+      width,
+      height:
+        legend.direction === "row"
+          ? y - legend.y + step
+          : entries.length * step,
+    },
+  };
+}
+
+/** The y of a numeric value on a repeat's y scale, for horizontal guides. */
+export function positionY(
+  instance: ResolvedInstance,
+  value: { number?: number; text?: string }
+): number | undefined {
+  if (!instance.xy) return undefined;
+  const number =
+    value.number ??
+    (value.text?.trim() ? Number(value.text.trim()) : undefined);
+  if (number === undefined || !Number.isFinite(number)) return undefined;
+  const [min, max] = instance.xy.y.domain;
+  if (number < min || number > max) return undefined;
+  return numericPixel(instance.xy.y, number);
 }
 
 const emptyBounds = (x: number, y: number): Bounds => ({
@@ -349,18 +515,20 @@ function resolveGuide(
     ? unit.instances.map((instance) => [instance])
     : [unit.instances];
   let label: { x: number; y: number; text: string } | undefined;
+  const horizontal = guide.axis === "y";
   groups.forEach((group, index) => {
     const first = group[0]!;
     let x: number | undefined;
     let text = guide.label;
+    const place = (input: { number?: number; text?: string }) =>
+      horizontal ? positionY(first, input) : positionX(first, input);
     if (value.kind === "constant") {
-      x = positionX(first, { text: value.value });
+      x = place({ text: value.value });
     } else if (calc) {
       const result = evaluateCalc(calc, data, perRepeat ? first : undefined);
       values.push(result);
       if (result.value !== undefined)
-        x = positionX(
-          first,
+        x = place(
           result.kind === "date"
             ? { number: result.value }
             : { text: String(result.value) }
@@ -368,6 +536,70 @@ function resolveGuide(
       text = text.replace(/\{value\}/g, result.text);
     }
     if (x === undefined) return;
+    if (horizontal) {
+      // A horizontal rule per frame, with the shade above or below it.
+      group.forEach((item, part) => {
+        if (guide.shade && guide.shade !== "none") {
+          const above = guide.shade === "after";
+          nodes.push({
+            type: "rect",
+            key: `${guide.id}:${index}:${part}:shade`,
+            elementId: guide.id,
+            instanceKey: perRepeat ? first.key : undefined,
+            x: item.frame.x,
+            y: above ? item.frame.y : x,
+            width: item.frame.width,
+            height: above
+              ? x - item.frame.y
+              : item.frame.y + item.frame.height - x,
+            fill: guide.color,
+            opacity: 0.08,
+            under: true,
+          });
+        }
+        nodes.push({
+          type: "line",
+          key: `${guide.id}:${index}:${part}`,
+          elementId: guide.id,
+          instanceKey: perRepeat ? first.key : undefined,
+          x1: item.frame.x - 3,
+          x2: item.frame.x + item.frame.width + 3,
+          y1: x,
+          y2: x,
+          stroke: guide.color,
+          strokeWidth: 1.25,
+          dash: "4 3",
+        });
+      });
+      if (text && !label)
+        label = {
+          x: first.frame.x + 4 + guide.x,
+          y: x - 5 + guide.y,
+          text,
+        };
+      return;
+    }
+    if (guide.shade && guide.shade !== "none")
+      group.forEach((item, part) => {
+        const after = guide.shade === "after";
+        nodes.push({
+          type: "rect",
+          key: `${guide.id}:${index}:${part}:shade`,
+          elementId: guide.id,
+          instanceKey: perRepeat ? first.key : undefined,
+          x: after ? x + (item.frame.x - first.frame.x) : item.frame.x,
+          y: item.frame.y,
+          width: after
+            ? item.frame.x +
+              item.frame.width -
+              (x + (item.frame.x - first.frame.x))
+            : x + (item.frame.x - first.frame.x) - item.frame.x,
+          height: item.frame.height,
+          fill: guide.color,
+          opacity: 0.08,
+          under: true,
+        });
+      });
     // Repeats stacked in one column share a rule that runs through the gaps.
     const segments = group.every((item) => item.frame.x === first.frame.x)
       ? [
@@ -428,20 +660,25 @@ function resolveGuide(
         kind: "guide" as const,
         point: { x: unit.bounds.x, y: unit.bounds.y },
         values,
-        missing: "The guide's value falls outside the unit's position scale.",
+        missing: horizontal
+          ? "The guide's value falls outside the unit's y scale."
+          : "The guide's value falls outside the unit's position scale.",
       },
     };
-  const left = Math.min(...lines.map((line) => line.x1), label?.x ?? Infinity);
+  const left = Math.min(
+    ...lines.flatMap((line) => [line.x1, line.x2]),
+    label?.x ?? Infinity
+  );
   const right = Math.max(
-    ...lines.map((line) => line.x1),
+    ...lines.flatMap((line) => [line.x1, line.x2]),
     label ? label.x + measureText(label.text, 11, 600) : -Infinity
   );
   const top = Math.min(
-    ...lines.map((line) => line.y1),
+    ...lines.flatMap((line) => [line.y1, line.y2]),
     label ? label.y - 11 : Infinity
   );
   const bottom = Math.max(
-    ...lines.map((line) => line.y2),
+    ...lines.flatMap((line) => [line.y1, line.y2]),
     label ? label.y + 3 : -Infinity
   );
   return {
@@ -460,6 +697,31 @@ function resolveGuide(
   };
 }
 
+/** True when a glyph's label, or its order value, equals the `at` text. */
+function matchesAt(glyph: GlyphDatum, at: string | undefined) {
+  const wanted = at?.trim().toLowerCase();
+  if (!wanted) return false;
+  return (
+    glyph.bin.label.trim().toLowerCase() === wanted ||
+    glyph.bin.key.trim().toLowerCase() === wanted
+  );
+}
+
+/** Replaces `{label}`, `{value}`, `{x}`, and `{y}` with a glyph's values. */
+export function fillGlyphTokens(text: string, glyph: GlyphDatum) {
+  return text
+    .replace(/\{value\}/g, formatCalcValue(glyph.value, "number"))
+    .replace(/\{label\}/g, glyph.bin.label)
+    .replace(
+      /\{x\}/g,
+      glyph.point ? formatCalcValue(glyph.point.x, "number") : "{x}"
+    )
+    .replace(
+      /\{y\}/g,
+      glyph.point ? formatCalcValue(glyph.point.y, "number") : "{y}"
+    );
+}
+
 function glyphCenter(node: RectNode | CircleNode) {
   return node.type === "rect"
     ? { x: node.x + node.width / 2, y: node.y + node.height / 2 }
@@ -470,14 +732,17 @@ function resolveAnnotation(
   note: AnnotationElement,
   units: Map<string, ResolvedUnit>,
   measureText: MeasureText,
-  paper: string
+  definition: CompositionDefinition,
+  data: CompositionData
 ) {
+  const paper = definition.artboard.background;
   const nodes: SceneNode[] = [];
   const anchor = note.anchor;
   let point: { x: number; y: number } | undefined;
   let glyph: GlyphDatum | undefined;
   let missing: string | undefined;
-  let text = note.text;
+  // Calculation tokens such as {Total} fill as they do in page text.
+  let text = fillCalcTokens(note.text, definition, data);
   if (anchor.kind === "page") {
     point = { x: note.x, y: note.y };
   } else {
@@ -502,6 +767,10 @@ function resolveAnnotation(
         )
           continue;
         const value = node.glyph.value;
+        if (anchor.pick === "at") {
+          if (matchesAt(node.glyph, anchor.at)) picked = node;
+          continue;
+        }
         if (
           !picked ||
           (anchor.pick === "max" && value > picked.glyph!.value) ||
@@ -510,13 +779,15 @@ function resolveAnnotation(
         )
           picked = node;
       }
-      if (!picked) missing = "No glyph in this repeat passes the filters.";
+      if (!picked)
+        missing =
+          anchor.pick === "at"
+            ? `No glyph in this repeat is labeled ${anchor.at ?? "(empty)"}.`
+            : "No glyph in this repeat passes the filters.";
       else {
         point = glyphCenter(picked);
         glyph = picked.glyph!;
-        text = text
-          .replace(/\{value\}/g, formatCalcValue(glyph.value, "number"))
-          .replace(/\{label\}/g, glyph.bin.label);
+        text = fillGlyphTokens(text, glyph);
       }
     }
   }

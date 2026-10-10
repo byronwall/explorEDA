@@ -63,7 +63,16 @@ const AGGREGATIONS: { value: CalcAggregation; label: string }[] = [
   { value: "average", label: "Average" },
   { value: "min", label: "Minimum" },
   { value: "max", label: "Maximum" },
+  { value: "first", label: "First value, in order" },
+  { value: "last", label: "Last value, in order" },
+  { value: "change", label: "Change from first to last, %" },
 ];
+
+const ORDERED_AGGREGATIONS = new Set<CalcAggregation>([
+  "first",
+  "last",
+  "change",
+]);
 
 /** The calculations list, with the open one's scope and current value. */
 export function CalculationsSection({
@@ -214,7 +223,7 @@ function CalculationProperties({
   );
   const perRepeat =
     calc.population === "repeat" && unit
-      ? repeatSubsets(unit, data).map((subset) => ({
+      ? repeatSubsets(unit, data, definition).map((subset) => ({
           key: subset.key,
           result: evaluateCalc(calc, data, subset),
         }))
@@ -254,6 +263,20 @@ function CalculationProperties({
             label=""
             value={calc.field ?? ""}
             onChange={(field) => onChange({ field })}
+          />
+        </>
+      )}
+      {ORDERED_AGGREGATIONS.has(calc.aggregation) && (
+        <>
+          <Label>Ordered by</Label>
+          <FieldSelector
+            label=""
+            placeholder="Row order"
+            value={calc.orderField ?? ""}
+            allowClear
+            onChange={(orderField) =>
+              onChange({ orderField: orderField || undefined })
+            }
           />
         </>
       )}
@@ -362,7 +385,9 @@ export function GuideProperties({
               placeholder="2022-01-01"
               value={guide.value.value}
               onChange={(event) =>
-                onChange({ value: { kind: "constant", value: event.target.value } })
+                onChange({
+                  value: { kind: "constant", value: event.target.value },
+                })
               }
             />
           </>
@@ -374,7 +399,9 @@ export function GuideProperties({
               className="eda-composition-select"
               value={guide.value.calcId}
               onChange={(event) =>
-                onChange({ value: { kind: "calc", calcId: event.target.value } })
+                onChange({
+                  value: { kind: "calc", calcId: event.target.value },
+                })
               }
             >
               {!definition.calculations.length && (
@@ -388,6 +415,52 @@ export function GuideProperties({
             </select>
           </>
         )}
+        <span className="eda-setting-label">Across</span>
+        <Segmented
+          label="Guide direction"
+          value={guide.axis ?? "x"}
+          options={[
+            {
+              value: "x" as const,
+              label: "Vertical",
+              tooltip: "A rule down the frame at a position or numeric x value",
+            },
+            {
+              value: "y" as const,
+              label: "Horizontal",
+              tooltip:
+                "A rule across the frame at a numeric y value, such as a target. Needs an x–y unit.",
+            },
+          ]}
+          onChange={(axis) => onChange({ axis })}
+        />
+        <span className="eda-setting-label">Shade</span>
+        <Segmented
+          label="Guide shading"
+          value={guide.shade ?? "none"}
+          options={[
+            {
+              value: "none" as const,
+              label: "None",
+              tooltip: "Draw the rule only",
+            },
+            {
+              value: "after" as const,
+              label: "After",
+              tooltip:
+                "Tint the frame to the right of a vertical rule, or above a horizontal one, such as a projection period",
+            },
+            {
+              value: "before" as const,
+              label: "Before",
+              tooltip:
+                "Tint the frame to the left of a vertical rule, or below a horizontal one",
+            },
+          ]}
+          onChange={(shade) =>
+            onChange({ shade: shade === "none" ? undefined : shade })
+          }
+        />
         <Label htmlFor={`${id}-label`}>Label</Label>
         <Input
           id={`${id}-label`}
@@ -431,10 +504,34 @@ const ANCHORS = [
 ];
 
 const PICKS = [
-  { value: "max" as const, label: "Largest", tooltip: "The glyph with the largest value" },
-  { value: "min" as const, label: "Smallest", tooltip: "The glyph with the smallest value" },
-  { value: "first" as const, label: "First", tooltip: "The first glyph along the position scale" },
-  { value: "last" as const, label: "Last", tooltip: "The last glyph along the position scale" },
+  {
+    value: "max" as const,
+    label: "Largest",
+    tooltip: "The glyph with the largest value, or the highest point",
+  },
+  {
+    value: "min" as const,
+    label: "Smallest",
+    tooltip: "The glyph with the smallest value, or the lowest point",
+  },
+  {
+    value: "first" as const,
+    label: "First",
+    tooltip:
+      "The first glyph along the position scale, or the first point in order",
+  },
+  {
+    value: "last" as const,
+    label: "Last",
+    tooltip:
+      "The last glyph along the position scale, or the last point in order",
+  },
+  {
+    value: "at" as const,
+    label: "At…",
+    tooltip:
+      "The glyph whose bin or order value matches a value you type, such as a year",
+  },
 ];
 
 export function AnnotationProperties({
@@ -460,7 +557,9 @@ export function AnnotationProperties({
     anchor.kind === "page"
       ? undefined
       : units.find((item) => item.id === anchor.unitId);
-  const keys = unit ? repeatSubsets(unit, data).map((subset) => subset.key) : [];
+  const keys = unit
+    ? repeatSubsets(unit, data, definition).map((subset) => subset.key)
+    : [];
   const setAnchor = (kind: AnnotationAnchor["kind"]) => {
     if (kind === anchor.kind) return;
     if (kind === "page") {
@@ -477,7 +576,7 @@ export function AnnotationProperties({
     if (!target) return;
     const instanceKey =
       anchor.kind === "page"
-        ? (repeatSubsets(target, data)[0]?.key ?? "all")
+        ? (repeatSubsets(target, data, definition)[0]?.key ?? "all")
         : anchor.instanceKey;
     onChange({
       anchor:
@@ -567,6 +666,19 @@ export function AnnotationProperties({
               options={PICKS}
               onChange={(pick) => onChange({ anchor: { ...anchor, pick } })}
             />
+            {anchor.pick === "at" && (
+              <>
+                <Label htmlFor={`${id}-at`}>Matching</Label>
+                <Input
+                  id={`${id}-at`}
+                  placeholder="A bin label or order value, such as 2008"
+                  value={anchor.at ?? ""}
+                  onChange={(event) =>
+                    onChange({ anchor: { ...anchor, at: event.target.value } })
+                  }
+                />
+              </>
+            )}
           </>
         )}
         {anchor.kind === "frame" && (
@@ -598,8 +710,16 @@ export function AnnotationProperties({
               label="Leader line"
               value={note.leader}
               options={[
-                { value: true, label: "Show", tooltip: "Draw a line from the anchor to the text" },
-                { value: false, label: "Hide", tooltip: "Show only the ring at the anchor" },
+                {
+                  value: true,
+                  label: "Show",
+                  tooltip: "Draw a line from the anchor to the text",
+                },
+                {
+                  value: false,
+                  label: "Hide",
+                  tooltip: "Show only the ring at the anchor",
+                },
               ]}
               onChange={(leader) => onChange({ leader })}
             />
@@ -621,7 +741,8 @@ export function AnnotationProperties({
       {anchor.kind === "data" && (
         <p className="eda-setting-note">
           Use {"{label}"} and {"{value}"} for the followed glyph&apos;s bin and
-          value. A drag changes the offset and keeps the attachment.
+          value, or {"{x}"} and {"{y}"} for a point&apos;s coordinates. A drag
+          changes the offset and keeps the attachment.
         </p>
       )}
     </section>

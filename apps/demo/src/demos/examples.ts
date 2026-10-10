@@ -17,6 +17,16 @@ import {
   regionMapDashboard,
   distributionDashboard,
   messageDashboard,
+  drivingDashboard,
+  sparklinesDashboard,
+  fanDashboard,
+  timeUseDashboard,
+  mediaDeathsDashboard,
+  measlesDashboard,
+  causesByAgeDashboard,
+  consumerConfidenceDashboard,
+  pewMeaningDashboard,
+  incomeLifeDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -34,6 +44,16 @@ import {
   Bird,
   BarChart3,
   Calculator,
+  Spline,
+  TableProperties,
+  AreaChart,
+  LayoutGrid as GridIcon,
+  Columns3,
+  Grid3x3,
+  Layers,
+  LayoutPanelTop,
+  Dumbbell,
+  CircleDot,
   CloudFog,
   Globe,
   Activity,
@@ -664,6 +684,148 @@ export const examples: ExampleData[] = [
     icon: LayoutTemplate,
     data: "/datasets/message-log.csv",
     savedData: messageDashboard,
+  },
+  {
+    id: "driving-shifts",
+    title: "Driving shifts into reverse",
+    description:
+      "Fifty-five years of miles driven against the price of gas, as one connected path. The composition orders shuffled rows by year through shared numeric scales, labels every fourth year, and anchors callouts to 1980 and 2008.",
+    dataset: { rows: "55 years", fields: 4, source: "Real" },
+    shows: ["Ordered path", "Numeric x–y scales", "Callouts at a year"],
+    icon: Spline,
+    data: "/datasets/driving.csv",
+    savedData: drivingDashboard,
+  },
+  {
+    id: "tech-sparklines",
+    title: "Big-tech sparkline table",
+    description:
+      "Fourteen company rows, each a line through 13 years of opening prices with the low, high, and latest marked. Rows order by a first-to-last change calculation that also prints beside each name.",
+    dataset: { rows: "9,030 trading days", fields: 5, source: "Real" },
+    shows: [
+      "Order repeats by value",
+      "First-to-last change",
+      "Extrema markers",
+    ],
+    icon: TableProperties,
+    data: "/datasets/big-tech-prices.csv",
+    savedData: sparklinesDashboard,
+  },
+  {
+    id: "forecast-fan",
+    title: "Forecast fan",
+    description:
+      "Two measures with quarterly history and three projected years. Four nested bands come straight from supplied percentile columns, under a central path, a shaded projection period, and a 2% reference line.",
+    dataset: { rows: "104 quarters", fields: 13, source: "Synthetic" },
+    shows: [
+      "Supplied interval bands",
+      "Shaded projection guide",
+      "Horizontal guide",
+    ],
+    icon: AreaChart,
+    data: "/datasets/inflation-fan.csv",
+    savedData: fanDashboard,
+  },
+  {
+    id: "time-use",
+    title: "How the day changed in 2020",
+    description:
+      "Twelve activities in a grid. Each panel summarizes minutes a day for the 2019 and 2020 cohorts on the spot: quartile bands joined across the years, medians marked, and a diverging color for the change in median.",
+    dataset: { rows: "5,742 diary entries", fields: 6, source: "Synthetic" },
+    shows: [
+      "Quartile summaries per cohort",
+      "Diverging change color",
+      "Per-panel scales",
+    ],
+    icon: GridIcon,
+    data: "/datasets/time-use.csv",
+    savedData: timeUseDashboard,
+  },
+  {
+    id: "media-deaths",
+    title: "What Americans die from, and what the news covers",
+    description:
+      "Four normalized columns: deaths in 2023, then the causes three outlets wrote about. Each column stacks fifteen causes as shares of its own total, in one order and color, with the denominator spelled out in every segment's trace.",
+    dataset: { rows: "60 source-cause counts", fields: 5, source: "Real" },
+    shows: [
+      "Normalized stacks",
+      "Explainable denominators",
+      "Shared category colors",
+    ],
+    icon: Columns3,
+    data: "/datasets/media-deaths.csv",
+    savedData: mediaDeathsDashboard,
+  },
+  {
+    id: "measles",
+    title: "Measles before and after the vaccine",
+    description:
+      "Fifty-one state strips, one cell per year from 1928 to 2012, colored by a placed multistop ramp. Years a state did not report draw as neutral cells, the one missing record stays blank, and the 1963 vaccine guide holds while you filter.",
+    dataset: { rows: "4,335 state-years", fields: 6, source: "Real" },
+    shows: [
+      "Multistop color ramp",
+      "Explicit missing cells",
+      "Publisher row order",
+    ],
+    icon: Grid3x3,
+    data: "/datasets/measles.csv",
+    savedData: measlesDashboard,
+  },
+  {
+    id: "causes-by-age",
+    title: "What people die from, by age",
+    description:
+      "One stack spread across age from 0 to 100. Nine causes draw as areas of their share of each age's total, labeled where each band is thickest, with every denominator open to inspection.",
+    dataset: { rows: "909 age-cause counts", fields: 3, source: "Synthetic" },
+    shows: ["Stacked areas across x", "Shares per age", "Band labels"],
+    icon: Layers,
+    data: "/datasets/causes-by-age.csv",
+    savedData: causesByAgeDashboard,
+  },
+  {
+    id: "consumer-confidence",
+    title: "Consumer confidence around the world",
+    description:
+      "Nine countries in a 3 × 3 grid. Every panel draws all nine index paths on one shared scale and lights up its own, with the latest value marked and a 100 reference line; the x axis is a real date scale.",
+    dataset: { rows: "467 country-months", fields: 3, source: "Real" },
+    shows: [
+      "Series paths with a focus",
+      "Date scales",
+      "Latest point per series",
+    ],
+    icon: LayoutPanelTop,
+    data: "/datasets/consumer-confidence.csv",
+    savedData: consumerConfidenceDashboard,
+  },
+  {
+    id: "pew-meaning",
+    title: "What makes life meaningful, by party",
+    description:
+      "Seven topics as dumbbell rows: each party's share as a colored dot on one percentage scale, a connector between them, a legend, and the signed gap beside every row from a difference calculation.",
+    dataset: { rows: "14 topic-party shares", fields: 4, source: "Real" },
+    shows: [
+      "Dot rows without a y scale",
+      "Color by category",
+      "Legend element",
+    ],
+    icon: Dumbbell,
+    data: "/datasets/pew-meaning.csv",
+    savedData: pewMeaningDashboard,
+  },
+  {
+    id: "income-life",
+    title: "Richer countries live longer",
+    description:
+      "One annotated scatter of 197 economies in 2023: life expectancy against income on a log scale, circles sized by population and colored by region, a region legend, and labels on a dozen chosen countries.",
+    dataset: { rows: "197 economies", fields: 7, source: "Real" },
+    shows: [
+      "Log numeric scale",
+      "Size by population",
+      "Labels on listed values",
+    ],
+    icon: CircleDot,
+    data: "/datasets/gapminder-2023.csv",
+    savedData: incomeLifeDashboard,
   },
 ];
 

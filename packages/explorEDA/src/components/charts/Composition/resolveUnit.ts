@@ -1,20 +1,37 @@
-import { scaleLinear } from "d3-scale";
+import { quantileSorted } from "d3-array";
+import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
 import { finiteNumber, timestampOf } from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import {
   findOverride,
+  isFocused,
   MUTED_INK,
+  MUTED_MARK,
   INK,
   type CompositionDefinition,
+  type BandMark,
   type InstanceOverride,
   type MarkDefinition,
+  type NumericScale,
+  type PathMark,
+  STACK_COLORS,
+  type PointMark,
   type PositionScale,
+  type StackMark,
+  type StripMark,
+  type SummaryMark,
   type TimeInterval,
   type UnitElement,
   type ValueScale,
 } from "./compositionTypes";
-import type { Bounds, SceneNode } from "./resolveComposition";
+import type {
+  AreaNode,
+  Bounds,
+  PathNode,
+  SceneNode,
+} from "./resolveComposition";
 import { evaluateCalc, type CalcResult } from "./calculations";
+import { MISSING, orderedRows } from "./ordering";
 
 /** The rows a composition draws from. */
 export interface CompositionData {
@@ -25,11 +42,38 @@ export interface CompositionData {
   column: (field: string) => Record<number, datum>;
   /** Repeats selected in viewing; the others fade. */
   selection?: { field: string; keys: Set<string> };
+  /** The largest repeat total per stack mark, set while a unit resolves. */
+  stackMaxTotal?: Map<string, number>;
 }
 
 export interface PositionBin {
   key: string;
   label: string;
+}
+
+/** A numeric scale as one repeat uses it: its domain and pixel range. */
+export interface NumericAxis {
+  scale: NumericScale;
+  domain: [number, number];
+  range: [number, number];
+  /** The field holds dates, read as timestamps; ticks format as dates. */
+  dates?: boolean;
+}
+
+/** A numeric scale's reading of a value: a number, or a date as its timestamp. */
+export function readNumber(value: datum): number | undefined {
+  return finiteNumber(value) ?? timestampOf(value);
+}
+
+/** True when a column's first readable value is a date rather than a number. */
+export function isDateColumn(column: Record<number, datum>, ids: number[]) {
+  for (const id of ids) {
+    const value = column[id];
+    if (value === null || value === undefined || value === "") continue;
+    if (finiteNumber(value) !== undefined) return false;
+    return timestampOf(value) !== undefined;
+  }
+  return false;
 }
 
 export interface ResolvedInstance {
@@ -44,8 +88,10 @@ export interface ResolvedInstance {
   liveCount: number;
   allIds: number[];
   liveIds: number[];
-  /** Bins of the first mark's position scale, for guides and anchors. */
+  /** Bins of the first strip mark's position scale, for guides and anchors. */
   position?: { scale: PositionScale; bins: PositionBin[] };
+  /** Numeric x and y of the first point or path mark, for guides and anchors. */
+  xy?: { x: NumericAxis; y: NumericAxis };
   /** The value shown beside the label, when the unit has one. */
   labelValue?: CalcResult;
   override?: InstanceOverride;
@@ -57,9 +103,92 @@ export interface ResolvedInstance {
 export interface GlyphDatum {
   instanceKey: string;
   markId: string;
+  /** The position bin of a strip glyph, or the order value of a point. */
   bin: PositionBin;
+  /** The aggregated value of a strip glyph, or the y value of a point. */
   value: number;
   rowIds: number[];
+  /** The bin has rows but none has a value; the glyph is a missing cell. */
+  missing?: boolean;
+  /** Numeric coordinates, for point marks. */
+  point?: {
+    x: number;
+    y: number;
+    xField: string;
+    yField: string;
+    /** The series the point belongs to, when the mark splits by a field. */
+    series?: string;
+    /** The color field's value, when the mark colors by one. */
+    category?: string;
+  };
+  /** The segment's share of its repeat's total, for stack marks; the glyph's value is that share. */
+  stack?: {
+    count: number;
+    total: number;
+    /** Cumulative bounds as shares of the total, from the bottom. */
+    lower: number;
+    upper: number;
+    categoryField: string;
+    aggregation: "count" | "sum";
+    measureField?: string;
+    /** Every category in the denominator, with its count. */
+    contributors: { category: string; count: number }[];
+  };
+  /** The group's quartiles, for summary marks; the glyph's value is the median. */
+  summary?: SummaryStats & {
+    groupField: string;
+    measureField: string;
+    /** The repeat's change in median from its first group to its last. */
+    change?: number;
+    changeText: string;
+  };
+}
+
+/** Unweighted quartiles of one group's measure. */
+export interface SummaryStats {
+  q1: number;
+  median: number;
+  q3: number;
+  count: number;
+}
+
+/** What one path stands for: its rows in order, and the ones it skipped. */
+export interface PathDatum {
+  instanceKey: string;
+  markId: string;
+  orderField: string;
+  /** Rows in path order, including the ones a missing value skipped. */
+  rowIds: number[];
+  /** Rows left out because a coordinate or order value was missing. */
+  skipped: number[];
+  /** Connected runs; a skipped row starts a new one. */
+  segments: number;
+  /** The series this path belongs to, when the mark splits by a field. */
+  series?: string;
+  /** Whether the path is in the mark's focus, or muted behind it. */
+  focused?: boolean;
+}
+
+/** What one band stands for: its bounds, rows in order, and gaps. */
+export interface BandDatum {
+  instanceKey: string;
+  markId: string;
+  orderField: string;
+  lowerField: string;
+  upperField: string;
+  rowIds: number[];
+  skipped: number[];
+  segments: number;
+  /** For a stacked area: the category and its share at each x. */
+  stack?: {
+    category: string;
+    categoryField: string;
+    aggregation: "count" | "sum";
+    measureField?: string;
+    /** Every category in the denominators, in stacking order. */
+    categories: string[];
+    points: { x: number; count: number; total: number; share: number }[];
+  };
 }
 
 export interface ResolvedUnit {
@@ -68,7 +197,7 @@ export interface ResolvedUnit {
   instances: ResolvedInstance[];
 }
 
-const MISSING = "Missing";
+const GRID = "#e6e8eb";
 
 /** Rows of one repeat. */
 interface Subset {
@@ -78,33 +207,148 @@ interface Subset {
   liveIds: number[];
 }
 
+type ResolvedStrip = {
+  type: "strip";
+  mark: StripMark;
+  position: PositionScale;
+  value: ValueScale;
+};
+type ResolvedXy = {
+  type: "xy";
+  mark: PointMark | PathMark | BandMark;
+  x: NumericScale;
+  y: NumericScale;
+};
+type ResolvedSummary = {
+  type: "summary";
+  mark: SummaryMark;
+  y: NumericScale;
+  value?: ValueScale;
+};
+type ResolvedStack = { type: "stack"; mark: StackMark; x?: NumericScale };
+type ResolvedMark =
+  | ResolvedStrip
+  | ResolvedXy
+  | ResolvedSummary
+  | ResolvedStack;
+
+/** One group of a summary mark in one repeat. */
+interface SummaryGroup {
+  key: string;
+  rowIds: number[];
+  stats?: SummaryStats;
+}
+
 export function resolveUnit(
   definition: CompositionDefinition,
   unit: UnitElement,
   data: CompositionData
 ): ResolvedUnit {
-  const subsets = repeatSubsets(unit, data);
-  const marks = unit.marks
-    .map((mark) => ({
-      mark,
-      position: definition.scales.find(
-        (scale): scale is PositionScale =>
-          scale.kind === "position" && scale.id === mark.positionScaleId
-      ),
-      value: definition.scales.find(
-        (scale): scale is ValueScale =>
-          scale.kind === "value" && scale.id === mark.valueScaleId
-      ),
-    }))
-    .filter(
-      (
-        item
-      ): item is {
-        mark: MarkDefinition;
-        position: PositionScale;
-        value: ValueScale;
-      } => Boolean(item.position && item.value)
-    );
+  const subsets = repeatSubsets(unit, data, definition);
+  const scale = (id: string) =>
+    definition.scales.find((item) => item.id === id);
+  const marks: ResolvedMark[] = [];
+  for (const mark of unit.marks) {
+    if (mark.type === "strip") {
+      const position = scale(mark.positionScaleId);
+      const value = scale(mark.valueScaleId);
+      if (position?.kind === "position" && value?.kind === "value")
+        marks.push({ type: "strip", mark, position, value });
+    } else if (mark.type === "stack") {
+      const x = mark.xScaleId ? scale(mark.xScaleId) : undefined;
+      marks.push({
+        type: "stack",
+        mark,
+        x: x?.kind === "numeric" ? x : undefined,
+      });
+    } else if (mark.type === "summary") {
+      const y = scale(mark.yScaleId);
+      const value = scale(mark.valueScaleId ?? "");
+      if (y?.kind === "numeric")
+        marks.push({
+          type: "summary",
+          mark,
+          y,
+          value: value?.kind === "value" ? value : undefined,
+        });
+    } else {
+      const x = scale(mark.xScaleId);
+      // A point or path without a y scale sits on the frame's middle line.
+      const y =
+        mark.type !== "band" && mark.yScaleId === undefined
+          ? MIDDLE_SCALE
+          : scale(mark.yScaleId ?? "");
+      if (x?.kind === "numeric" && y?.kind === "numeric")
+        marks.push({ type: "xy", mark, x, y });
+    }
+  }
+  const strips = marks.filter(
+    (item): item is ResolvedStrip => item.type === "strip"
+  );
+  const xys = marks.filter((item): item is ResolvedXy => item.type === "xy");
+  const summaries = marks.filter(
+    (item): item is ResolvedSummary => item.type === "summary"
+  );
+  const stacks = marks.filter(
+    (item): item is ResolvedStack => item.type === "stack"
+  );
+  // Stacks share one category order and color across every repeat.
+  const stacked = stacks.map(({ mark }) => stackCategories(mark, data));
+  if (stacks.length) {
+    const maxTotals = new Map<string, number>();
+    for (const { mark } of stacks) {
+      const column = data.column(mark.categoryField);
+      const measure = mark.measureField
+        ? data.column(mark.measureField)
+        : undefined;
+      const xColumn = mark.xScaleId
+        ? data.column(
+            (
+              definition.scales.find((item) => item.id === mark.xScaleId) as
+                | NumericScale
+                | undefined
+            )?.field ?? ""
+          )
+        : undefined;
+      for (const subset of subsets) {
+        // Across x, the largest total at any x; otherwise the repeat's total.
+        const groups = xColumn
+          ? groupByCategory(xColumn, subset.liveIds)
+          : new Map([["all", subset.liveIds]]);
+        for (const ids of groups.values()) {
+          let total = 0;
+          for (const rowIds of groupByCategory(column, ids).values())
+            total += stackValue(mark, rowIds, measure);
+          maxTotals.set(mark.id, Math.max(maxTotals.get(mark.id) ?? 0, total));
+        }
+      }
+    }
+    data = { ...data, stackMaxTotal: maxTotals };
+  }
+
+  // Summaries first: their quartiles set the y domain and the change colors.
+  const summarized = subsets.map((subset) =>
+    summaries.map(({ mark }) => summarizeGroups(mark, subset, data))
+  );
+  const changeOf = (groups: SummaryGroup[]) => {
+    const first = groups.find((group) => group.stats)?.stats;
+    const last = [...groups].reverse().find((group) => group.stats)?.stats;
+    if (!first || !last || first === last || first.median === 0)
+      return undefined;
+    return (last.median - first.median) / first.median;
+  };
+  const sharedChange = new Map<string, number>();
+  summarized.forEach((perMark) =>
+    perMark.forEach((groups, markIndex) => {
+      const value = summaries[markIndex]!.value;
+      const change = changeOf(groups);
+      if (value && change !== undefined)
+        sharedChange.set(
+          value.id,
+          Math.max(sharedChange.get(value.id) ?? 0, Math.abs(change))
+        );
+    })
+  );
 
   // Shared position domains span every row; per-unit domains span the subset.
   const sharedBins = new Map<string, PositionBin[]>();
@@ -118,10 +362,71 @@ export function resolveUnit(
     }
     return bins;
   };
+  // A numeric scale spans every field drawn on it: its own, plus the bounds
+  // of any band bound to it, so a fan's widest interval stays in the frame.
+  const scaleFields = new Map<string, string[]>();
+  for (const item of xys) {
+    if (item.mark.type !== "band") continue;
+    const fields = scaleFields.get(item.y.id) ?? [item.y.field];
+    fields.push(item.mark.lowerField, item.mark.upperField);
+    scaleFields.set(item.y.id, fields);
+  }
+  const columnsOf = (scale: NumericScale) =>
+    (scaleFields.get(scale.id) ?? [scale.field]).map((field) =>
+      data.column(field)
+    );
+  const dateScales = new Set<string>();
+  for (const scale of definition.scales)
+    if (
+      scale.kind === "numeric" &&
+      isDateColumn(data.column(scale.field), data.allIds)
+    )
+      dateScales.add(scale.id);
+  const axisFor = (
+    scale: NumericScale,
+    subset: Subset,
+    range: [number, number]
+  ) =>
+    numericAxis(
+      scale,
+      domainFor(scale, subset),
+      range,
+      dateScales.has(scale.id)
+    );
+  // A scale bound to a summary spans the quartiles drawn, not the raw rows.
+  const quartileExtent = (scale: NumericScale, subsetIndex?: number) => {
+    const values: number[] = [];
+    summarized.forEach((perMark, index) => {
+      if (subsetIndex !== undefined && index !== subsetIndex) return;
+      perMark.forEach((groups, markIndex) => {
+        if (summaries[markIndex]!.y.id !== scale.id) return;
+        for (const group of groups)
+          if (group.stats) values.push(group.stats.q1, group.stats.q3);
+      });
+    });
+    return values;
+  };
+  const sharedDomains = new Map<string, [number, number]>();
+  const domainFor = (scale: NumericScale, subset: Subset) => {
+    if (scale.id === MIDDLE_SCALE.id) return [0, 1] as [number, number];
+    const bound = summaries.some((item) => item.y.id === scale.id);
+    if (scale.domain === "instance")
+      return bound
+        ? numericDomainOf(scale, quartileExtent(scale, subsets.indexOf(subset)))
+        : numericDomain(scale, columnsOf(scale), subset.allIds);
+    let domain = sharedDomains.get(scale.id);
+    if (!domain) {
+      domain = bound
+        ? numericDomainOf(scale, quartileExtent(scale))
+        : numericDomain(scale, columnsOf(scale), data.allIds);
+      sharedDomains.set(scale.id, domain);
+    }
+    return domain;
+  };
 
-  // First pass: aggregate each mark per subset and bin.
+  // First pass: aggregate each strip mark per subset and bin.
   const aggregated = subsets.map((subset) =>
-    marks.map(({ mark, position }) => {
+    strips.map(({ mark, position }) => {
       const bins = binsFor(position, subset);
       const keyOf = binKeyReader(position, data.column(position.field));
       const groups = new Map<string, number[]>();
@@ -140,7 +445,19 @@ export function resolveUnit(
         const rowIds = groups.get(bin.key);
         if (!rowIds) return;
         const value = aggregate(mark, rowIds, measure);
-        if (value === undefined) return;
+        if (value === undefined) {
+          // Rows without a value: a missing cell when the mark draws one.
+          if (mark.missing)
+            glyphs.push({
+              instanceKey: subset.key,
+              markId: mark.id,
+              bin,
+              value: 0,
+              rowIds,
+              missing: true,
+            });
+          return;
+        }
         glyphs.push({
           instanceKey: subset.key,
           markId: mark.id,
@@ -157,9 +474,10 @@ export function resolveUnit(
   const sharedMax = new Map<string, number>();
   aggregated.forEach((perMark) =>
     perMark.forEach(({ glyphs }, markIndex) => {
-      const id = marks[markIndex]!.value.id;
+      const id = strips[markIndex]!.value.id;
       for (const glyph of glyphs)
-        sharedMax.set(id, Math.max(sharedMax.get(id) ?? 0, glyph.value));
+        if (!glyph.missing)
+          sharedMax.set(id, Math.max(sharedMax.get(id) ?? 0, glyph.value));
     })
   );
 
@@ -216,7 +534,10 @@ export function resolveUnit(
         instanceKey: subset.key,
         x: x + labelWidth - 10,
         lines: [
-          { text: labelValue.text, y: frame.y + frame.height / 2 + labelSize * 0.35 },
+          {
+            text: labelValue.text,
+            y: frame.y + frame.height / 2 + labelSize * 0.35,
+          },
         ],
         fontSize: labelSize,
         fontWeight: 400,
@@ -248,8 +569,35 @@ export function resolveUnit(
         anchor: "start",
       });
     }
+
+    // Numeric frames: the first x–y mark's scales place guides and axes too.
+    const firstXy = xys[0];
+    const spread = stacks.find((item) => item.x);
+    const xy = firstXy
+      ? {
+          x: axisFor(firstXy.x, subset, [frame.x, frame.x + frame.width]),
+          y: axisFor(firstXy.y, subset, [frame.y + frame.height, frame.y]),
+        }
+      : spread?.x
+        ? {
+            x: axisFor(spread.x, subset, [frame.x, frame.x + frame.width]),
+            // A stacked area's y is the share of each x's total, or the total.
+            y: numericAxis(
+              spread.mark.normalize ? SHARE_SCALE : TOTAL_SCALE,
+              spread.mark.normalize
+                ? [0, 1]
+                : [0, data.stackMaxTotal?.get(spread.mark.id) ?? 1],
+              [frame.y + frame.height, frame.y]
+            ),
+          }
+        : undefined;
+    const drawAxis = unit.axis && (axisPerUnit || index === subsets.length - 1);
+    // Grid lines sit under the marks.
+    if (xy && unit.axis)
+      nodes.push(...numericGridNodes(unit, subset.key, xy, frame));
+
     aggregated[index]!.forEach(({ bins, glyphs }, markIndex) => {
-      const { mark, value } = marks[markIndex]!;
+      const { mark, value } = strips[markIndex]!;
       const instanceMax =
         value.domain === "instance"
           ? Math.max(0, ...glyphs.map((glyph) => glyph.value))
@@ -260,7 +608,8 @@ export function resolveUnit(
             mark: { ...mark, fill: override.accent },
             value: {
               ...value,
-              colors: [value.colors[0], override.accent] as [string, string],
+              colors: [value.colors[0]!, override.accent],
+              stops: undefined,
             },
           }
         : { mark, value };
@@ -276,15 +625,156 @@ export function resolveUnit(
         )
       );
     });
+    for (const item of xys) {
+      const axes = {
+        x: axisFor(item.x, subset, [frame.x, frame.x + frame.width]),
+        y: axisFor(item.y, subset, [frame.y + frame.height, frame.y]),
+      };
+      const accent = override?.accent;
+      nodes.push(
+        ...(item.mark.type === "band"
+          ? bandNodes(
+              unit,
+              accent ? { ...item.mark, fill: accent } : item.mark,
+              subset,
+              axes,
+              frame,
+              data
+            )
+          : item.mark.type === "path"
+            ? pathNodes(
+                unit,
+                accent ? { ...item.mark, stroke: accent } : item.mark,
+                subset,
+                axes,
+                frame,
+                data
+              )
+            : pointNodes(
+                unit,
+                accent ? { ...item.mark, fill: accent } : item.mark,
+                subset,
+                axes,
+                frame,
+                data
+              ))
+      );
+    }
+    stacks.forEach(({ mark, x }, markIndex) => {
+      const accented = override?.accent
+        ? { ...mark, colors: [override.accent] }
+        : mark;
+      nodes.push(
+        ...(x && xy
+          ? stackAreaNodes(
+              unit,
+              accented,
+              subset,
+              stacked[markIndex]!,
+              xy,
+              frame,
+              data
+            )
+          : stackNodes(
+              unit,
+              accented,
+              subset,
+              stacked[markIndex]!,
+              frame,
+              data
+            ))
+      );
+    });
+    summarized[index]!.forEach((groups, markIndex) => {
+      const { mark, y, value } = summaries[markIndex]!;
+      const axis = numericAxis(y, domainFor(y, subset), [
+        frame.y + frame.height,
+        frame.y,
+      ]);
+      const change = changeOf(groups);
+      const maxChange = value ? (sharedChange.get(value.id) ?? 0) : 0;
+      nodes.push(
+        ...summaryNodes(
+          unit,
+          override?.accent ? { ...mark, fill: override.accent } : mark,
+          subset,
+          groups,
+          axis,
+          frame,
+          value,
+          change,
+          maxChange
+        )
+      );
+    });
     if (opacity < 1)
       for (let index = firstNode; index < nodes.length; index += 1)
         nodes[index] = { ...nodes[index]!, opacity };
-    if (unit.axis && (axisPerUnit || index === subsets.length - 1)) {
-      const first = marks[0];
+    if (drawAxis) {
+      const first = strips[0];
       if (first) {
         const bins = binsFor(first.position, subset);
-        nodes.push(
-          ...axisNodes(unit, subset.key, first.position, bins, frame)
+        nodes.push(...axisNodes(unit, subset.key, first.position, bins, frame));
+      } else if (xy) {
+        nodes.push(...numericAxisNodes(unit, subset.key, xy, frame));
+      } else if (stacks[0] && stacks[0].mark.normalize) {
+        for (const share of [0, 0.25, 0.5, 0.75, 1])
+          nodes.push({
+            type: "text",
+            key: `${unit.id}:${subset.key}:axis:${share}`,
+            elementId: unit.id,
+            x: frame.x - 5,
+            lines: [
+              {
+                text: `${Math.round(share * 100)}%`,
+                y: frame.y + frame.height * (1 - share) + 3.5,
+              },
+            ],
+            fontSize: 9,
+            fontWeight: 400,
+            fill: MUTED_INK,
+            anchor: "end",
+          });
+      } else if (summaries[0]) {
+        // Group names under the frame, and the minute span beside it, so a
+        // per-repeat scale still reads.
+        const axis = numericAxis(
+          summaries[0].y,
+          domainFor(summaries[0].y, subset),
+          [frame.y + frame.height, frame.y]
+        );
+        axis.domain.forEach((value, end) =>
+          nodes.push({
+            type: "text",
+            key: `${unit.id}:${subset.key}:axis:y:${end}`,
+            elementId: unit.id,
+            x: frame.x - 5,
+            lines: [
+              {
+                text: formatTick(axis, value),
+                y: numericPixel(axis, value) + 3.5,
+              },
+            ],
+            fontSize: 9,
+            fontWeight: 400,
+            fill: MUTED_INK,
+            anchor: "end",
+          })
+        );
+        const groups = summarized[index]![0]!;
+        const band = frame.width / Math.max(1, groups.length);
+        groups.forEach((group, position) =>
+          nodes.push({
+            type: "text",
+            key: `${unit.id}:${subset.key}:axis:${group.key}`,
+            elementId: unit.id,
+            x: frame.x + (position + 0.5) * band,
+            lines: [{ text: group.key, y: frame.y + frame.height + 12 }],
+            fontSize: 10,
+            fontWeight: 400,
+            fill: MUTED_INK,
+            anchor: "middle",
+          })
         );
       }
     }
@@ -296,22 +786,18 @@ export function resolveUnit(
         x,
         y,
         width: cellWidth,
-        height:
-          labelHeight +
-          unit.frame.height +
-          (unit.axis && (axisPerUnit || index === subsets.length - 1)
-            ? axisHeight
-            : 0),
+        height: labelHeight + unit.frame.height + (drawAxis ? axisHeight : 0),
       },
       frame,
       rowCount: subset.allIds.length,
       liveCount: subset.liveIds.length,
       allIds: subset.allIds,
       liveIds: subset.liveIds,
-      position: marks[0] && {
-        scale: marks[0].position,
-        bins: binsFor(marks[0].position, subset),
+      position: strips[0] && {
+        scale: strips[0].position,
+        bins: binsFor(strips[0].position, subset),
       },
+      xy,
       labelValue,
       override,
       layoutOrigin: { x: layoutX, y: layoutY },
@@ -340,14 +826,21 @@ function unionBounds(instances: ResolvedInstance[], unit: UnitElement) {
   return { x: left, y: top, width: right - left, height: bottom - top };
 }
 
-/** Splits rows by the repeat field, in the rule's order, up to its limit. */
+/**
+ * Splits rows by the repeat field, in the rule's order, up to its limit. The
+ * value order needs the definition for its calculation; without it, repeats
+ * fall back to label order.
+ */
 export function repeatSubsets(
   unit: UnitElement,
-  data: CompositionData
+  data: CompositionData,
+  definition?: CompositionDefinition
 ): Subset[] {
   const field = unit.repeat.field;
   if (!field)
-    return [{ key: "all", label: "", allIds: data.allIds, liveIds: data.liveIds }];
+    return [
+      { key: "all", label: "", allIds: data.allIds, liveIds: data.liveIds },
+    ];
   const values = data.column(field);
   const keyOf = (id: number) => {
     const value = values[id];
@@ -367,11 +860,36 @@ export function repeatSubsets(
   }
   for (const id of data.liveIds) groups.get(keyOf(id))?.liveIds.push(id);
   const subsets = [...groups.values()];
-  subsets.sort((a, b) =>
-    unit.repeat.order === "count"
-      ? b.allIds.length - a.allIds.length || compareLabels(a.key, b.key)
-      : compareLabels(a.key, b.key)
-  );
+  const calc =
+    unit.repeat.order === "value"
+      ? definition?.calculations.find(
+          (item) => item.id === unit.repeat.orderCalcId
+        )
+      : undefined;
+  if (calc) {
+    // Repeats keep their place while filtering: the order reads every row.
+    const values = new Map(
+      subsets.map((subset) => [
+        subset.key,
+        evaluateCalc(calc, data, { ...subset, liveIds: subset.allIds }).value,
+      ])
+    );
+    const sign = unit.repeat.direction === "desc" ? -1 : 1;
+    subsets.sort((a, b) => {
+      const va = values.get(a.key);
+      const vb = values.get(b.key);
+      if (va === undefined)
+        return vb === undefined ? compareLabels(a.key, b.key) : 1;
+      if (vb === undefined) return -1;
+      return sign * (va - vb) || compareLabels(a.key, b.key);
+    });
+  } else {
+    subsets.sort((a, b) =>
+      unit.repeat.order === "count"
+        ? b.allIds.length - a.allIds.length || compareLabels(a.key, b.key)
+        : compareLabels(a.key, b.key)
+    );
+  }
   return subsets.slice(0, Math.max(1, unit.repeat.limit));
 }
 
@@ -381,7 +899,7 @@ function compareLabels(a: string, b: string) {
 }
 
 function aggregate(
-  mark: MarkDefinition,
+  mark: StripMark,
   rowIds: number[],
   measure: Record<number, datum> | undefined
 ) {
@@ -403,7 +921,6 @@ const periodCache = new WeakMap<
   Record<number, datum>,
   Map<TimeInterval, Map<number, number>>
 >();
-
 
 export function periodStart(time: number, interval: TimeInterval) {
   const date = new Date(time);
@@ -450,18 +967,30 @@ function periodsOf(column: Record<number, datum>, interval: TimeInterval) {
     periods = new Map();
     for (const [id, value] of Object.entries(column)) {
       const time = timestampOf(value);
-      if (time !== undefined) periods.set(Number(id), periodStart(time, interval));
+      if (time !== undefined)
+        periods.set(Number(id), periodStart(time, interval));
     }
     byInterval.set(interval, periods);
   }
   return periods;
 }
 
-export const periodKey = (start: number) => new Date(start).toISOString().slice(0, 10);
+export const periodKey = (start: number) =>
+  new Date(start).toISOString().slice(0, 10);
 
 const MONTHS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 function periodLabel(start: number, interval: TimeInterval) {
@@ -518,7 +1047,10 @@ export function positionBins(
       start <= max && bins.length < 5000;
       start = nextPeriod(start, scale.interval)
     )
-      bins.push({ key: periodKey(start), label: periodLabel(start, scale.interval) });
+      bins.push({
+        key: periodKey(start),
+        label: periodLabel(start, scale.interval),
+      });
     return bins;
   }
   const values = new Set<string>();
@@ -530,6 +1062,1115 @@ export function positionBins(
   return [...values]
     .sort(compareLabels)
     .map((value) => ({ key: value, label: value }));
+}
+
+/**
+ * The extent a numeric scale spans for these rows, after its zero, nice, and
+ * fixed-limit settings. A field with no numbers spans 0–1 so marks still
+ * have somewhere to go.
+ */
+export function numericDomain(
+  scale: NumericScale,
+  columns: Record<number, datum> | Record<number, datum>[],
+  ids: number[]
+): [number, number] {
+  let min = Infinity;
+  let max = -Infinity;
+  for (const column of Array.isArray(columns) ? columns : [columns])
+    for (const id of ids) {
+      const value = readNumber(column[id]);
+      if (value === undefined) continue;
+      if (value < min) min = value;
+      if (value > max) max = value;
+    }
+  if (min === Infinity) {
+    min = 0;
+    max = 1;
+  }
+  if (scale.zero) {
+    min = Math.min(0, min);
+    max = Math.max(0, max);
+  }
+  if (min === max) {
+    // One value: pad so the mark sits in the middle rather than on an edge.
+    const pad = Math.abs(min) * 0.1 || 1;
+    min -= pad;
+    max += pad;
+  }
+  if (scale.transform === "log" && min <= 0) {
+    // Log spacing ignores values at or below zero; they pin to the low end.
+    min = Math.min(max, 1);
+  }
+  if (scale.nice) {
+    const nice =
+      scale.transform === "log"
+        ? scaleLog().domain([min, max]).nice().domain()
+        : scaleLinear().domain([min, max]).nice().domain();
+    min = nice[0]!;
+    max = nice[1]!;
+  }
+  if (scale.min !== undefined) min = scale.min;
+  if (scale.max !== undefined) max = scale.max;
+  if (min >= max) max = min + 1;
+  return [min, max];
+}
+
+/** The extent of given values, after the scale's zero, nice, and limits. */
+export function numericDomainOf(
+  scale: NumericScale,
+  values: number[]
+): [number, number] {
+  const column: Record<number, datum> = {};
+  values.forEach((value, index) => {
+    column[index] = value;
+  });
+  return numericDomain(
+    scale,
+    column,
+    values.map((_, index) => index)
+  );
+}
+
+/** Groups a repeat's live rows by the cohort field and summarizes each. */
+function summarizeGroups(
+  mark: SummaryMark,
+  subset: Subset,
+  data: CompositionData
+): SummaryGroup[] {
+  const groupColumn = data.column(mark.groupField);
+  const measure = data.column(mark.measureField);
+  const byKey = new Map<string, number[]>();
+  for (const id of subset.liveIds) {
+    const raw = groupColumn[id];
+    if (raw === null || raw === undefined || raw === "") continue;
+    const key = String(raw);
+    const list = byKey.get(key);
+    if (list) list.push(id);
+    else byKey.set(key, [id]);
+  }
+  return [...byKey.entries()]
+    .sort((a, b) => compareLabels(a[0], b[0]))
+    .map(([key, rowIds]) => {
+      const values = rowIds
+        .map((id) => finiteNumber(measure[id]))
+        .filter((value): value is number => value !== undefined)
+        .sort((a, b) => a - b);
+      return {
+        key,
+        rowIds,
+        stats: values.length
+          ? {
+              q1: quantileSorted(values, 0.25)!,
+              median: quantileSorted(values, 0.5)!,
+              q3: quantileSorted(values, 0.75)!,
+              count: values.length,
+            }
+          : undefined,
+      };
+    });
+}
+
+const changeFormat = new Intl.NumberFormat("en-US", {
+  style: "percent",
+  maximumFractionDigits: 0,
+  signDisplay: "exceptZero",
+});
+
+/**
+ * The quartile band joined across the groups, the medians as a path, and a
+ * marker per median. Markers take the change color when a value scale is
+ * bound; a repeat whose change is undefined, such as a zero prior median,
+ * stays neutral rather than taking a false color.
+ */
+function summaryNodes(
+  unit: UnitElement,
+  mark: SummaryMark,
+  subset: Subset,
+  groups: SummaryGroup[],
+  axis: NumericAxis,
+  frame: Bounds,
+  value: ValueScale | undefined,
+  change: number | undefined,
+  maxChange: number
+): SceneNode[] {
+  if (!groups.length) return [];
+  const band = frame.width / groups.length;
+  const changeText =
+    change === undefined ? "undefined" : changeFormat.format(change);
+  const marker =
+    value && change !== undefined
+      ? valueColorSigned(value, change, maxChange)
+      : value
+        ? (value.center ?? MUTED_INK)
+        : mark.fill;
+  const nodes: SceneNode[] = [];
+  const area: AreaNode["segments"][number] = [];
+  const path: PathNode["segments"][number] = [];
+  groups.forEach((group, index) => {
+    if (!group.stats) return;
+    const x = frame.x + (index + 0.5) * band;
+    area.push({
+      x,
+      y0: numericPixel(axis, group.stats.q1),
+      y1: numericPixel(axis, group.stats.q3),
+      rowId: group.rowIds[0]!,
+    });
+    path.push({
+      x,
+      y: numericPixel(axis, group.stats.median),
+      rowId: group.rowIds[0]!,
+    });
+  });
+  const rowIds = groups.flatMap((group) => group.rowIds);
+  if (area.length)
+    nodes.push({
+      type: "area",
+      key: `${unit.id}:${subset.key}:${mark.id}:band`,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      segments: [area],
+      fill: mark.fill,
+      fillOpacity: mark.opacity,
+      band: {
+        instanceKey: subset.key,
+        markId: mark.id,
+        orderField: mark.groupField,
+        lowerField: `first quartile of ${mark.measureField}`,
+        upperField: `third quartile of ${mark.measureField}`,
+        rowIds,
+        skipped: [],
+        segments: 1,
+      },
+    });
+  if (path.length > 1)
+    nodes.push({
+      type: "path",
+      key: `${unit.id}:${subset.key}:${mark.id}:median`,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      segments: [path],
+      stroke: marker,
+      strokeWidth: 1.5,
+      path: {
+        instanceKey: subset.key,
+        markId: mark.id,
+        orderField: mark.groupField,
+        rowIds,
+        skipped: [],
+        segments: 1,
+      },
+    });
+  groups.forEach((group, index) => {
+    if (!group.stats) return;
+    nodes.push({
+      type: "circle",
+      key: `${unit.id}:${subset.key}:${mark.id}:${group.key}`,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      cx: frame.x + (index + 0.5) * band,
+      cy: numericPixel(axis, group.stats.median),
+      r: 4,
+      fill: marker,
+      glyph: {
+        instanceKey: subset.key,
+        markId: mark.id,
+        bin: { key: group.key, label: group.key },
+        value: group.stats.median,
+        rowIds: group.rowIds,
+        summary: {
+          ...group.stats,
+          groupField: mark.groupField,
+          measureField: mark.measureField,
+          change,
+          changeText,
+        },
+      },
+    });
+  });
+  return nodes;
+}
+
+/**
+ * A diverging color: negative values run from the center toward the low
+ * color, positive toward the high color, by their share of the largest
+ * absolute value. Without a center, the scale maps the absolute value.
+ */
+export function valueColorSigned(
+  scale: ValueScale,
+  value: number,
+  maxAbs: number
+) {
+  const share = valueShare(scale, Math.abs(value), maxAbs);
+  if (!scale.center) return valueColor(scale, share);
+  const end =
+    value < 0 ? scale.colors[0]! : scale.colors[scale.colors.length - 1]!;
+  return scaleLinear<string>()
+    .domain([0, 1])
+    .range([scale.center, end])
+    .clamp(true)(share);
+}
+
+/** The categories a stack draws, in its order, with their graphic-wide totals. */
+interface StackCategory {
+  key: string;
+  index: number;
+  total: number;
+}
+
+function stackValue(
+  mark: StackMark,
+  rowIds: number[],
+  measure: Record<number, datum> | undefined
+) {
+  if (mark.aggregation === "count" || !measure) return rowIds.length;
+  let sum = 0;
+  for (const id of rowIds) sum += finiteNumber(measure[id]) ?? 0;
+  return sum;
+}
+
+/** Groups rows by category. */
+function groupByCategory(
+  column: Record<number, datum>,
+  ids: number[]
+): Map<string, number[]> {
+  const groups = new Map<string, number[]>();
+  for (const id of ids) {
+    const raw = column[id];
+    if (raw === null || raw === undefined || raw === "") continue;
+    const key = String(raw);
+    const list = groups.get(key);
+    if (list) list.push(id);
+    else groups.set(key, [id]);
+  }
+  return groups;
+}
+
+/**
+ * The category order of a stack, shared by every repeat so colors and
+ * positions line up across columns. It reads every row, so filters change
+ * shares but never reorder or recolor.
+ */
+function stackCategories(
+  mark: StackMark,
+  data: CompositionData
+): StackCategory[] {
+  const column = data.column(mark.categoryField);
+  const measure = mark.measureField
+    ? data.column(mark.measureField)
+    : undefined;
+  const groups = groupByCategory(column, data.allIds);
+  const categories = [...groups.entries()].map(([key, rowIds]) => ({
+    key,
+    total: stackValue(mark, rowIds, measure),
+  }));
+  categories.sort((a, b) =>
+    mark.order === "total"
+      ? b.total - a.total || compareLabels(a.key, b.key)
+      : compareLabels(a.key, b.key)
+  );
+  return categories.map((category, index) => ({ ...category, index }));
+}
+
+const shareFormat = new Intl.NumberFormat("en-US", {
+  style: "percent",
+  maximumFractionDigits: 1,
+});
+
+/**
+ * One column of stacked segments for a repeat. Shares divide each
+ * category's value by the repeat's total across every category it has
+ * rows for. An empty repeat draws nothing rather than invented shares.
+ */
+function stackNodes(
+  unit: UnitElement,
+  mark: StackMark,
+  subset: Subset,
+  categories: StackCategory[],
+  frame: Bounds,
+  data: CompositionData
+): SceneNode[] {
+  const column = data.column(mark.categoryField);
+  const measure = mark.measureField
+    ? data.column(mark.measureField)
+    : undefined;
+  const groups = groupByCategory(column, subset.liveIds);
+  const counts = categories
+    .map((category) => ({
+      category,
+      rowIds: groups.get(category.key) ?? [],
+      count: stackValue(mark, groups.get(category.key) ?? [], measure),
+    }))
+    .filter((item) => item.rowIds.length > 0);
+  const total = counts.reduce((sum, item) => sum + item.count, 0);
+  if (!total) return [];
+  const contributors = counts.map((item) => ({
+    category: item.category.key,
+    count: item.count,
+  }));
+  // Normalized columns fill the frame; otherwise height follows the total
+  // against the largest total across the repeats.
+  const columnHeight = mark.normalize
+    ? frame.height
+    : frame.height * (total / (data.stackMaxTotal?.get(mark.id) ?? total));
+  const nodes: SceneNode[] = [];
+  let lower = 0;
+  for (const item of counts) {
+    const share = item.count / total;
+    const upper = lower + share;
+    const top = frame.y + frame.height - upper * columnHeight;
+    const height = Math.max(0, share * columnHeight - mark.inset);
+    const fill = mark.colors[item.category.index % mark.colors.length]!;
+    const key = `${unit.id}:${subset.key}:${mark.id}:${item.category.key}`;
+    const glyph: GlyphDatum = {
+      instanceKey: subset.key,
+      markId: mark.id,
+      bin: { key: item.category.key, label: item.category.key },
+      value: share,
+      rowIds: item.rowIds,
+      stack: {
+        count: item.count,
+        total,
+        lower,
+        upper,
+        categoryField: mark.categoryField,
+        aggregation: mark.aggregation,
+        measureField: mark.measureField,
+        contributors,
+      },
+    };
+    nodes.push({
+      type: "rect",
+      key,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      x: frame.x,
+      y: top + mark.inset / 2,
+      width: frame.width,
+      height,
+      fill,
+      glyph,
+    });
+    if (height >= mark.labelMinHeight)
+      nodes.push({
+        type: "text",
+        key: `${key}:label`,
+        elementId: unit.id,
+        instanceKey: subset.key,
+        x: frame.x + 5,
+        lines: [
+          {
+            text: `${item.category.key} ${shareFormat.format(share)}`,
+            y: top + mark.inset / 2 + height / 2 + 3.5,
+          },
+        ],
+        fontSize: 10,
+        fontWeight: 600,
+        fill: INK,
+        anchor: "start",
+        halo: "#ffffff",
+      });
+    lower = upper;
+  }
+  return nodes;
+}
+
+/** The stand-in y scale of a dot row: every point at the middle line. */
+export const MIDDLE_SCALE: NumericScale = {
+  id: "middle-line",
+  kind: "numeric",
+  name: "Middle",
+  field: "",
+  domain: "shared",
+  zero: false,
+  nice: false,
+};
+
+/** Reads a row's y for an axis: the middle line, or the field's value. */
+function readY(axis: NumericAxis, column: Record<number, datum>, id: number) {
+  return axis.scale.id === MIDDLE_SCALE.id ? 0.5 : readNumber(column[id]);
+}
+
+/** Stand-in scales for a stacked area's y axis: shares, or totals. */
+const SHARE_SCALE: NumericScale = {
+  id: "stack-share",
+  kind: "numeric",
+  name: "Share",
+  field: "share",
+  domain: "shared",
+  zero: true,
+  nice: false,
+};
+const TOTAL_SCALE: NumericScale = {
+  id: "stack-total",
+  kind: "numeric",
+  name: "Total",
+  field: "total",
+  domain: "shared",
+  zero: true,
+  nice: false,
+};
+
+/**
+ * A stack spread across x: rows group by their x value, categories stack
+ * at each x, and each category draws as one area from x to x in stacking
+ * order. An x whose total is zero leaves a gap rather than invented shares.
+ */
+function stackAreaNodes(
+  unit: UnitElement,
+  mark: StackMark,
+  subset: Subset,
+  categories: StackCategory[],
+  xy: { x: NumericAxis; y: NumericAxis },
+  frame: Bounds,
+  data: CompositionData
+): SceneNode[] {
+  const xColumn = data.column(xy.x.scale.field);
+  const categoryColumn = data.column(mark.categoryField);
+  const measure = mark.measureField
+    ? data.column(mark.measureField)
+    : undefined;
+  // Columns at each x, in x order.
+  const byX = new Map<number, number[]>();
+  for (const id of subset.liveIds) {
+    const x = readNumber(xColumn[id]);
+    if (x === undefined) continue;
+    const list = byX.get(x);
+    if (list) list.push(id);
+    else byX.set(x, [id]);
+  }
+  const xs = [...byX.keys()].sort((a, b) => a - b);
+  type Column = {
+    x: number;
+    total: number;
+    counts: Map<string, { count: number; rowIds: number[] }>;
+  };
+  const columns: Column[] = xs.map((x) => {
+    const groups = groupByCategory(categoryColumn, byX.get(x)!);
+    const counts = new Map<string, { count: number; rowIds: number[] }>();
+    let total = 0;
+    for (const category of categories) {
+      const rowIds = groups.get(category.key);
+      if (!rowIds) continue;
+      const count = stackValue(mark, rowIds, measure);
+      counts.set(category.key, { count, rowIds });
+      total += count;
+    }
+    return { x, total, counts };
+  });
+  const nodes: SceneNode[] = [];
+  const names = categories.map((category) => category.key);
+  for (const category of categories) {
+    const segments: AreaNode["segments"] = [];
+    let run: AreaNode["segments"][number] = [];
+    const points: NonNullable<BandDatum["stack"]>["points"] = [];
+    const rowIds: number[] = [];
+    let best: { x: number; height: number; y: number } | undefined;
+    for (const column of columns) {
+      if (!column.total) {
+        if (run.length) segments.push(run);
+        run = [];
+        continue;
+      }
+      // Cumulative share below this category at this x.
+      let below = 0;
+      for (const other of categories) {
+        if (other.index >= category.index) break;
+        below += (column.counts.get(other.key)?.count ?? 0) / column.total;
+      }
+      const own = column.counts.get(category.key);
+      const share = (own?.count ?? 0) / column.total;
+      const scale = mark.normalize ? 1 : column.total;
+      const y0 = numericPixel(xy.y, below * scale);
+      const y1 = numericPixel(xy.y, (below + share) * scale);
+      const px = numericPixel(xy.x, column.x);
+      run.push({ x: px, y0, y1, rowId: own?.rowIds[0] ?? -1 });
+      if (own) {
+        rowIds.push(...own.rowIds);
+        points.push({
+          x: column.x,
+          count: own.count,
+          total: column.total,
+          share,
+        });
+        const height = y0 - y1;
+        if (!best || height > best.height)
+          best = { x: px, height, y: (y0 + y1) / 2 };
+      }
+    }
+    if (run.length) segments.push(run);
+    if (!points.length) continue;
+    const fill = mark.colors[category.index % mark.colors.length]!;
+    nodes.push({
+      type: "area",
+      key: `${unit.id}:${subset.key}:${mark.id}:${category.key}`,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      segments,
+      fill,
+      fillOpacity: 1,
+      band: {
+        instanceKey: subset.key,
+        markId: mark.id,
+        orderField: xy.x.scale.field,
+        lowerField: `share below ${category.key}`,
+        upperField: category.key,
+        rowIds,
+        skipped: [],
+        segments: segments.length,
+        stack: {
+          category: category.key,
+          categoryField: mark.categoryField,
+          aggregation: mark.aggregation,
+          measureField: mark.measureField,
+          categories: names,
+          points,
+        },
+      },
+    });
+    // The label sits where the band is thickest, if it has the room.
+    if (best && best.height >= mark.labelMinHeight)
+      nodes.push({
+        type: "text",
+        key: `${unit.id}:${subset.key}:${mark.id}:${category.key}:label`,
+        elementId: unit.id,
+        instanceKey: subset.key,
+        x: Math.min(Math.max(best.x, frame.x + 4), frame.x + frame.width - 4),
+        lines: [{ text: category.key, y: best.y + 3.5 }],
+        fontSize: 10,
+        fontWeight: 600,
+        fill: INK,
+        // Labels near an edge hang inward so they stay inside the frame.
+        anchor:
+          best.x > frame.x + frame.width * 0.8
+            ? "end"
+            : best.x < frame.x + frame.width * 0.2
+              ? "start"
+              : "middle",
+        halo: "#ffffff",
+      });
+  }
+  return nodes;
+}
+
+function numericAxis(
+  scale: NumericScale,
+  domain: [number, number],
+  range: [number, number],
+  dates = false
+): NumericAxis {
+  return { scale, domain, range, dates };
+}
+
+/** Maps a value along a numeric axis, in artboard pixels. */
+export function numericPixel(axis: NumericAxis, value: number) {
+  const [d0, d1] = axis.domain;
+  const [r0, r1] = axis.range;
+  if (axis.scale.transform === "log") {
+    // Log spacing needs positive bounds; a value at or below zero pins to the low end.
+    const lo = Math.log(Math.max(d0, Number.MIN_VALUE));
+    const hi = Math.log(Math.max(d1, Number.MIN_VALUE));
+    if (value <= 0 || hi === lo) return r0;
+    return r0 + ((Math.log(value) - lo) / (hi - lo)) * (r1 - r0);
+  }
+  return r0 + ((value - d0) / (d1 - d0)) * (r1 - r0);
+}
+
+/** True when the axis has a fixed limit, so marks outside it must clip. */
+function fixedLimits(axis: NumericAxis) {
+  return axis.scale.min !== undefined || axis.scale.max !== undefined;
+}
+
+const categoryKey = (value: datum) =>
+  value === null || value === undefined || value === ""
+    ? MISSING
+    : String(value);
+
+/**
+ * The categories a mark colors, in label order across every row of the
+ * graphic, with their colors: a point mark's color field through its
+ * palette, or a stack's categories through its palette. Legends read this.
+ */
+export function markCategories(
+  mark: MarkDefinition,
+  data: CompositionData
+): { key: string; color: string }[] {
+  if (mark.type === "point" && mark.colorField) {
+    const column = data.column(mark.colorField);
+    const keys = new Set<string>();
+    for (const id of data.allIds) {
+      const value = column[id];
+      if (value === null || value === undefined || value === "") continue;
+      keys.add(String(value));
+    }
+    const palette = mark.colors?.length ? mark.colors : STACK_COLORS;
+    return [...keys]
+      .sort(compareLabels)
+      .map((key, index) => ({ key, color: palette[index % palette.length]! }));
+  }
+  if (mark.type === "stack")
+    return stackCategories(mark, data).map((category) => ({
+      key: category.key,
+      color: mark.colors[category.index % mark.colors.length]!,
+    }));
+  return [];
+}
+
+/** Splits a repeat's rows by a series field; one group when there is none. */
+function seriesGroups(
+  ids: number[],
+  column: Record<number, datum> | undefined
+): { series: string | undefined; ids: number[] }[] {
+  if (!column) return [{ series: undefined, ids }];
+  const groups = new Map<string, number[]>();
+  for (const id of ids) {
+    const raw = column[id];
+    const key =
+      raw === null || raw === undefined || raw === "" ? MISSING : String(raw);
+    const list = groups.get(key);
+    if (list) list.push(id);
+    else groups.set(key, [id]);
+  }
+  return [...groups.entries()]
+    .sort((a, b) => compareLabels(a[0], b[0]))
+    .map(([series, list]) => ({ series, ids: list }));
+}
+
+function pathNodes(
+  unit: UnitElement,
+  mark: PathMark,
+  subset: Subset,
+  axes: { x: NumericAxis; y: NumericAxis },
+  frame: Bounds,
+  data: CompositionData
+): SceneNode[] {
+  const xs = data.column(axes.x.scale.field);
+  const ys = data.column(axes.y.scale.field);
+  const order = data.column(mark.orderField);
+  const clip = fixedLimits(axes.x) || fixedLimits(axes.y) ? frame : undefined;
+  const groups = seriesGroups(
+    mark.population === "composition" ? data.liveIds : subset.liveIds,
+    mark.seriesField ? data.column(mark.seriesField) : undefined
+  );
+  const nodes: PathNode[] = [];
+  for (const group of groups) {
+    const rows = orderedRows(group.ids, order);
+    const segments: PathNode["segments"] = [];
+    let current: PathNode["segments"][number] = [];
+    const skipped: number[] = [];
+    for (const row of rows) {
+      const x = readNumber(xs[row.id]);
+      const y = readY(axes.y, ys, row.id);
+      if (row.order === undefined || x === undefined || y === undefined) {
+        skipped.push(row.id);
+        if (current.length) segments.push(current);
+        current = [];
+        continue;
+      }
+      current.push({
+        x: numericPixel(axes.x, x),
+        y: numericPixel(axes.y, y),
+        rowId: row.id,
+      });
+    }
+    if (current.length) segments.push(current);
+    if (!segments.length) continue;
+    const focused = isFocused(mark.focus, group.series, subset.key);
+    nodes.push({
+      type: "path",
+      key:
+        group.series === undefined
+          ? `${unit.id}:${subset.key}:${mark.id}`
+          : `${unit.id}:${subset.key}:${mark.id}:${group.series}`,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      segments,
+      stroke: focused ? mark.stroke : (mark.mutedStroke ?? MUTED_MARK),
+      strokeWidth: focused
+        ? mark.strokeWidth
+        : Math.max(0.75, mark.strokeWidth * 0.75),
+      clip,
+      path: {
+        instanceKey: subset.key,
+        markId: mark.id,
+        orderField: mark.orderField,
+        rowIds: rows.map((row) => row.id),
+        skipped,
+        segments: segments.length,
+        series: group.series,
+        focused,
+      },
+    });
+  }
+  // Focused series draw last, so they sit over the muted ones.
+  return [
+    ...nodes.filter((node) => !node.path.focused),
+    ...nodes.filter((node) => node.path.focused),
+  ];
+}
+
+function bandNodes(
+  unit: UnitElement,
+  mark: BandMark,
+  subset: Subset,
+  axes: { x: NumericAxis; y: NumericAxis },
+  frame: Bounds,
+  data: CompositionData
+): SceneNode[] {
+  const xs = data.column(axes.x.scale.field);
+  const lowers = data.column(mark.lowerField);
+  const uppers = data.column(mark.upperField);
+  const rows = orderedRows(subset.liveIds, data.column(mark.orderField));
+  const segments: AreaNode["segments"] = [];
+  let current: AreaNode["segments"][number] = [];
+  const skipped: number[] = [];
+  for (const row of rows) {
+    const x = readNumber(xs[row.id]);
+    const lower = finiteNumber(lowers[row.id]);
+    const upper = finiteNumber(uppers[row.id]);
+    if (
+      row.order === undefined ||
+      x === undefined ||
+      lower === undefined ||
+      upper === undefined
+    ) {
+      skipped.push(row.id);
+      if (current.length) segments.push(current);
+      current = [];
+      continue;
+    }
+    current.push({
+      x: numericPixel(axes.x, x),
+      y0: numericPixel(axes.y, Math.min(lower, upper)),
+      y1: numericPixel(axes.y, Math.max(lower, upper)),
+      rowId: row.id,
+    });
+  }
+  if (current.length) segments.push(current);
+  if (!segments.length) return [];
+  const clip = fixedLimits(axes.x) || fixedLimits(axes.y) ? frame : undefined;
+  return [
+    {
+      type: "area",
+      key: `${unit.id}:${subset.key}:${mark.id}`,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      segments,
+      fill: mark.fill,
+      fillOpacity: mark.opacity,
+      clip,
+      band: {
+        instanceKey: subset.key,
+        markId: mark.id,
+        orderField: mark.orderField,
+        lowerField: mark.lowerField,
+        upperField: mark.upperField,
+        rowIds: rows.map((row) => row.id),
+        skipped,
+        segments: segments.length,
+      },
+    },
+  ];
+}
+
+function pointNodes(
+  unit: UnitElement,
+  mark: PointMark,
+  subset: Subset,
+  axes: { x: NumericAxis; y: NumericAxis },
+  frame: Bounds,
+  data: CompositionData
+): SceneNode[] {
+  const xs = data.column(axes.x.scale.field);
+  const ys = data.column(axes.y.scale.field);
+  const labels = mark.labelField ? data.column(mark.labelField) : undefined;
+  const order = mark.orderField ? data.column(mark.orderField) : undefined;
+  const colorColumn = mark.colorField
+    ? data.column(mark.colorField)
+    : undefined;
+  const sizes = mark.sizeField ? data.column(mark.sizeField) : undefined;
+  // The largest size across the graphic takes the full radius; area scales.
+  let sizeMax = 0;
+  if (sizes)
+    for (const id of data.allIds)
+      sizeMax = Math.max(sizeMax, finiteNumber(sizes[id]) ?? 0);
+  const radiusOf = (id: number) => {
+    if (!sizes || sizeMax <= 0) return mark.radius;
+    const value = finiteNumber(sizes[id]) ?? 0;
+    return Math.max(1, mark.radius * Math.sqrt(Math.max(0, value) / sizeMax));
+  };
+  const wanted = mark.labelValues
+    ? new Set(
+        mark.labelValues
+          .split(",")
+          .map((value) => value.trim().toLowerCase())
+          .filter(Boolean)
+      )
+    : undefined;
+  const categoryColors = new Map(
+    markCategories(mark, data).map((item) => [item.key, item.color])
+  );
+  const clip = fixedLimits(axes.x) || fixedLimits(axes.y) ? frame : undefined;
+  const nodes: SceneNode[] = [];
+  let drawn = 0;
+  // `show` picks within each series, so every country keeps its last point.
+  const groups = seriesGroups(
+    mark.population === "composition" ? data.liveIds : subset.liveIds,
+    mark.seriesField ? data.column(mark.seriesField) : undefined
+  );
+  const shown = groups.flatMap((group) =>
+    pickShown(
+      orderedRows(group.ids, order),
+      mark.show ?? "all",
+      xs,
+      ys,
+      axes.y.scale.id === MIDDLE_SCALE.id
+    ).map((row) => ({ row, series: group.series }))
+  );
+  // Focused points draw last, over the muted ones.
+  shown.sort(
+    (a, b) =>
+      Number(isFocused(mark.focus, a.series, subset.key)) -
+      Number(isFocused(mark.focus, b.series, subset.key))
+  );
+  for (const { row, series } of shown) {
+    const focused = isFocused(mark.focus, series, subset.key);
+    const x = readNumber(xs[row.id]);
+    const y = readY(axes.y, ys, row.id);
+    if (x === undefined || y === undefined) continue;
+    const cx = numericPixel(axes.x, x);
+    const cy = numericPixel(axes.y, y);
+    const key = `${unit.id}:${subset.key}:${mark.id}:${row.id}`;
+    const middle = axes.y.scale.id === MIDDLE_SCALE.id;
+    const category = colorColumn ? categoryKey(colorColumn[row.id]) : undefined;
+    const glyph: GlyphDatum = {
+      instanceKey: subset.key,
+      markId: mark.id,
+      bin: { key: row.label, label: row.label },
+      value: middle ? x : y,
+      rowIds: [row.id],
+      point: {
+        x,
+        y: middle ? x : y,
+        xField: axes.x.scale.field,
+        yField: middle ? axes.x.scale.field : axes.y.scale.field,
+        series,
+        category,
+      },
+    };
+    const fill = !focused
+      ? (mark.mutedFill ?? MUTED_MARK)
+      : category !== undefined
+        ? (categoryColors.get(category) ?? mark.fill)
+        : mark.fill;
+    nodes.push({
+      type: "circle",
+      key,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      cx,
+      cy,
+      r: radiusOf(row.id),
+      fill,
+      clip,
+      glyph,
+    });
+    // Labels follow focused points only, so a muted field stays quiet.
+    if (
+      labels &&
+      focused &&
+      mark.labelEvery > 0 &&
+      drawn % mark.labelEvery === 0
+    ) {
+      const raw = labels[row.id];
+      const text = raw === null || raw === undefined ? "" : String(raw).trim();
+      // Listed values label; everything else stays quiet.
+      if (text && (!wanted || wanted.has(text.toLowerCase())))
+        nodes.push({
+          type: "text",
+          key: `${key}:label`,
+          elementId: unit.id,
+          instanceKey: subset.key,
+          x: cx + radiusOf(row.id) + 3,
+          lines: [{ text, y: cy - radiusOf(row.id) - 1 }],
+          fontSize: 10,
+          fontWeight: 400,
+          fill: MUTED_INK,
+          anchor: "start",
+        });
+    }
+    drawn += 1;
+  }
+  return nodes;
+}
+
+/**
+ * The rows a point mark draws: every row with both coordinates, or only the
+ * first or last in order, or the lowest or highest by y. Ties on y keep the
+ * earliest row.
+ */
+function pickShown(
+  rows: ReturnType<typeof orderedRows>,
+  show: NonNullable<PointMark["show"]>,
+  xs: Record<number, datum>,
+  ys: Record<number, datum>,
+  middle = false
+) {
+  const drawable = rows.filter(
+    (row) =>
+      readNumber(xs[row.id]) !== undefined &&
+      (middle || readNumber(ys[row.id]) !== undefined)
+  );
+  if (show === "all" || !drawable.length) return drawable;
+  if (show === "first") return [drawable[0]!];
+  if (show === "last") return [drawable[drawable.length - 1]!];
+  let picked = drawable[0]!;
+  for (const row of drawable) {
+    // On a dot row, low and high read along x instead.
+    const y = (middle ? readNumber(xs[row.id]) : readNumber(ys[row.id]))!;
+    const best = (
+      middle ? readNumber(xs[picked.id]) : readNumber(ys[picked.id])
+    )!;
+    if (show === "max" ? y > best : y < best) picked = row;
+  }
+  return [picked];
+}
+
+/** Faint horizontal rules at the y ticks, under the marks. */
+function numericGridNodes(
+  unit: UnitElement,
+  instanceKey: string,
+  xy: { x: NumericAxis; y: NumericAxis },
+  frame: Bounds
+): SceneNode[] {
+  if (xy.y.scale.id === MIDDLE_SCALE.id) return [];
+  return tickValues(xy.y, frame.height, 36).map((value) => {
+    const y = numericPixel(xy.y, value);
+    return {
+      type: "line",
+      key: `${unit.id}:${instanceKey}:grid:${value}`,
+      elementId: unit.id,
+      x1: frame.x,
+      x2: frame.x + frame.width,
+      y1: y,
+      y2: y,
+      stroke: GRID,
+      strokeWidth: 1,
+    };
+  });
+}
+
+/** Tick values along a numeric axis, about one per `spacing` pixels. */
+function tickValues(axis: NumericAxis, length: number, spacing: number) {
+  const count = Math.max(2, Math.floor(length / spacing));
+  if (axis.dates)
+    return scaleTime()
+      .domain(axis.domain.map((value) => new Date(value)))
+      .ticks(count)
+      .map((date) => date.getTime());
+  if (axis.scale.transform === "log") {
+    // Across more than a decade and a half keep the 1, 2, 5 steps; across
+    // more than three decades keep only the powers of ten.
+    const decades = Math.log10(
+      Math.max(axis.domain[1], 1) / Math.max(axis.domain[0], Number.MIN_VALUE)
+    );
+    const keep = decades > 3 ? [1] : decades > 1.5 ? [1, 2, 5] : undefined;
+    return scaleLog()
+      .domain(axis.domain)
+      .ticks(count)
+      .filter((value) => {
+        if (!keep) return true;
+        const mantissa = value / 10 ** Math.floor(Math.log10(value));
+        return keep.includes(Math.round(mantissa * 100) / 100);
+      });
+  }
+  return scaleLinear().domain(axis.domain).ticks(count);
+}
+
+const yearFormat = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  timeZone: "UTC",
+});
+const monthFormat = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+const dayFormat = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC",
+});
+
+/** A date tick: the year across years, the month within a few, else the day. */
+function formatDateTick(axis: NumericAxis, value: number) {
+  const span = axis.domain[1] - axis.domain[0];
+  const year = 365.25 * 86_400_000;
+  if (span > 4 * year) return yearFormat.format(new Date(value));
+  if (span > 90 * 86_400_000) return monthFormat.format(new Date(value));
+  return dayFormat.format(new Date(value));
+}
+
+const tickFormat = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
+const plainTickFormat = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 2,
+  useGrouping: false,
+});
+
+/** Years read as "2016", not "2,016"; other numbers keep their separators. */
+function formatTick(axis: NumericAxis, value: number) {
+  if (axis.scale.id === SHARE_SCALE.id) return `${Math.round(value * 100)}%`;
+  if (axis.dates) return formatDateTick(axis, value);
+  return /year|\byr\b/i.test(axis.scale.field) || /year/i.test(axis.scale.name)
+    ? plainTickFormat.format(value)
+    : tickFormat.format(value);
+}
+
+/** Tick labels under and beside a numeric frame. */
+function numericAxisNodes(
+  unit: UnitElement,
+  instanceKey: string,
+  xy: { x: NumericAxis; y: NumericAxis },
+  frame: Bounds
+): SceneNode[] {
+  const label = (
+    text: string,
+    x: number,
+    y: number,
+    anchor: "start" | "middle" | "end",
+    key: string
+  ): SceneNode => ({
+    type: "text",
+    key: `${unit.id}:${instanceKey}:axis:${key}`,
+    elementId: unit.id,
+    x,
+    lines: [{ text, y }],
+    fontSize: 10,
+    fontWeight: 400,
+    fill: MUTED_INK,
+    anchor,
+  });
+  const nodes = tickValues(xy.x, frame.width, 72).map((value) =>
+    label(
+      formatTick(xy.x, value),
+      numericPixel(xy.x, value),
+      frame.y + frame.height + 14,
+      "middle",
+      `x:${value}`
+    )
+  );
+  // A dot row has no y to label.
+  if (xy.y.scale.id === MIDDLE_SCALE.id) return nodes;
+  for (const value of tickValues(xy.y, frame.height, 36))
+    nodes.push(
+      label(
+        formatTick(xy.y, value),
+        frame.x - 6,
+        numericPixel(xy.y, value) + 3.5,
+        "end",
+        `y:${value}`
+      )
+    );
+  return nodes;
 }
 
 /** Maps a value to 0–1 along a value scale with this maximum. */
@@ -545,16 +2186,23 @@ export function valueShare(scale: ValueScale, value: number, max: number) {
 }
 
 export function valueColor(scale: ValueScale, share: number) {
-  // Even the smallest value stays visible against the paper.
-  return scaleLinear<string>()
-    .domain([0, 1])
-    .range(scale.colors)
-    .clamp(true)(0.1 + 0.9 * share);
+  const stops =
+    scale.stops && scale.stops.length === scale.colors.length
+      ? scale.stops
+      : scale.colors.map((_, index) =>
+          scale.colors.length > 1 ? index / (scale.colors.length - 1) : 0
+        );
+  // Even the smallest value stays visible against the paper on a plain ramp;
+  // a placed multistop ramp maps shares exactly.
+  const position = scale.stops ? share : 0.1 + 0.9 * share;
+  return scaleLinear<string>().domain(stops).range(scale.colors).clamp(true)(
+    position
+  );
 }
 
 function glyphNodes(
   unit: UnitElement,
-  mark: MarkDefinition,
+  mark: StripMark,
   scale: ValueScale,
   frame: Bounds,
   bins: PositionBin[],
@@ -568,10 +2216,15 @@ function glyphNodes(
   return glyphs.flatMap((glyph): SceneNode[] => {
     const position = index.get(glyph.bin.key);
     if (position === undefined) return [];
-    const share = valueShare(scale, glyph.value, max);
+    const share = glyph.missing ? 0 : valueShare(scale, glyph.value, max);
     const left = frame.x + position * band;
-    const fill =
-      mark.encoding === "color" ? valueColor(scale, share) : mark.fill;
+    const fill = glyph.missing
+      ? (mark.missing ?? mark.fill)
+      : mark.encoding === "color"
+        ? valueColor(scale, share)
+        : mark.fill;
+    // A missing cell draws as a full, neutral cell whatever the encoding.
+    const encoding = glyph.missing ? "color" : mark.encoding;
     const key = `${unit.id}:${glyph.instanceKey}:${mark.id}:${glyph.bin.key}`;
     const base = {
       key,
@@ -582,7 +2235,7 @@ function glyphNodes(
     };
     const width = Math.max(0.5, band - inset);
     if (mark.shape === "rect") {
-      if (mark.encoding === "height") {
+      if (encoding === "height") {
         const height = frame.height * share;
         return [
           {
@@ -595,7 +2248,7 @@ function glyphNodes(
           },
         ];
       }
-      if (mark.encoding === "size") {
+      if (encoding === "size") {
         const side = Math.min(width, frame.height) * share;
         return [
           {
@@ -621,7 +2274,7 @@ function glyphNodes(
     }
     const radius = Math.max(0.5, Math.min(width, frame.height) / 2);
     const cx = left + band / 2;
-    if (mark.encoding === "height") {
+    if (encoding === "height") {
       const r = Math.max(1.5, Math.min(radius, 4));
       return [
         {
@@ -639,7 +2292,7 @@ function glyphNodes(
         type: "circle",
         cx,
         cy: frame.y + frame.height / 2,
-        r: mark.encoding === "size" ? radius * share : radius,
+        r: encoding === "size" ? radius * share : radius,
       },
     ];
   });
