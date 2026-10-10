@@ -48,6 +48,12 @@ const ARRANGEMENTS = [
     label: "Grid",
     tooltip: "Wrap the repeats into a grid with a set number of columns",
   },
+  {
+    value: "tiles" as const,
+    label: "Tiles",
+    tooltip:
+      "Place each repeat at the cell a field names as row,column, such as a state's place on a tile map",
+  },
 ];
 
 const ORDERS = [
@@ -255,6 +261,20 @@ export function UnitProperties({
                   value={unit.repeat.columns}
                   onChange={(columns) => repeat({ columns })}
                 />
+              )}
+              {unit.repeat.arrangement === "tiles" && (
+                <>
+                  <Label>Cell field</Label>
+                  <FieldSelector
+                    label=""
+                    placeholder="A row,column field"
+                    value={unit.repeat.tileField ?? ""}
+                    allowClear
+                    onChange={(tileField) =>
+                      repeat({ tileField: tileField || undefined })
+                    }
+                  />
+                </>
               )}
               <span className="eda-setting-label">Order</span>
               <Segmented

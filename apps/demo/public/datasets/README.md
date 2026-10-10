@@ -283,3 +283,18 @@ One row per economy with a 2023 population, GDP per capita (PPP, constant 2021 $
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/gapminder.ts
 ```
+
+## Covid case rates by state, weekly
+
+- File: `covid-tiles.csv`
+- Size: 8,109 rows and 5 fields
+- Demo: `?example=covid-tiles`
+- Use: a tile-grid map composition, one small case-rate path per state at its place on a US tile grid, with the latest value labeled
+- Source: The New York Times, [coronavirus (Covid-19) data in the United States](https://github.com/nytimes/covid-19-data), `rolling-averages/us-states.csv`: seven-day average new cases per 100,000 people.
+- License: Creative Commons Attribution-NonCommercial 4.0, with credit to The New York Times.
+
+Every seventh day from March 2020 to the series' end in March 2023, for the 50 states and D.C. `Tile` is each state's row and column on the common 8 × 11 tile grid, counted from the top left.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/covid-tiles.ts
+```

@@ -91,6 +91,7 @@ describe("example coverage manifest", () => {
       "consumer-confidence",
       "pew-meaning",
       "income-life",
+      "covid-tiles",
       "product-activity",
       "scatter-trace",
       "calculated-orders",
