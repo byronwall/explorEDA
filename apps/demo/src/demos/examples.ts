@@ -18,6 +18,7 @@ import {
   distributionDashboard,
   messageDashboard,
   drivingDashboard,
+  sparklinesDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -36,6 +37,7 @@ import {
   BarChart3,
   Calculator,
   Spline,
+  TableProperties,
   CloudFog,
   Globe,
   Activity,
@@ -677,6 +679,21 @@ export const examples: ExampleData[] = [
     icon: Spline,
     data: "/datasets/driving.csv",
     savedData: drivingDashboard,
+  },
+  {
+    id: "tech-sparklines",
+    title: "Big-tech sparkline table",
+    description:
+      "Fourteen company rows, each a line through 13 years of opening prices with the low, high, and latest marked. Rows order by a first-to-last change calculation that also prints beside each name.",
+    dataset: { rows: "9,030 trading days", fields: 5, source: "Real" },
+    shows: [
+      "Order repeats by value",
+      "First-to-last change",
+      "Extrema markers",
+    ],
+    icon: TableProperties,
+    data: "/datasets/big-tech-prices.csv",
+    savedData: sparklinesDashboard,
   },
 ];
 

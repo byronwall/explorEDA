@@ -995,6 +995,17 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "tech-sparklines",
+    intent:
+      "Order company rows by a first-to-last change calculation and mark each sparkline's low, high, and latest price.",
+    features: {
+      "chart:composition": "shown",
+      "chart:line": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

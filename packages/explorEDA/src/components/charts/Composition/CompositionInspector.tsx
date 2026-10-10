@@ -301,7 +301,8 @@ export function CompositionInspector({
                 createAnnotationElement(
                   definition,
                   firstUnit,
-                  firstUnit && repeatSubsets(firstUnit, data)[0]?.key
+                  firstUnit &&
+                    repeatSubsets(firstUnit, data, definition)[0]?.key
                 )
               )
             }

@@ -185,7 +185,11 @@ export interface PointMark {
   labelField?: string;
   /** Label every nth point in order; 1 labels all, 0 labels none. */
   labelEvery: number;
+  /** Which rows draw: every row, or only the first, last, lowest, or highest. */
+  show?: PointShow;
 }
+
+export type PointShow = "all" | "first" | "last" | "min" | "max";
 
 /**
  * Connects a repeat's rows in the order of one field, such as year, into one
@@ -222,10 +226,17 @@ export interface RepeatRule {
   /** Units per row in a grid. */
   columns: number;
   gap: number;
-  order: "count" | "label";
+  /** Most rows first, A–Z by label, or by a per-repeat calculation's value. */
+  order: RepeatOrder;
+  /** The calculation whose value orders the repeats, for the value order. */
+  orderCalcId?: string;
+  /** Ascending unless set. */
+  direction?: "asc" | "desc";
   /** Most units to draw, in order. */
   limit: number;
 }
+
+export type RepeatOrder = "count" | "label" | "value";
 
 /** A chart template: a frame, its marks, and the rule that repeats it. */
 export interface UnitElement extends ElementBase {
@@ -245,7 +256,15 @@ export interface UnitElement extends ElementBase {
   repeat: RepeatRule;
 }
 
-export type CalcAggregation = "count" | "sum" | "average" | "min" | "max";
+export type CalcAggregation =
+  | "count"
+  | "sum"
+  | "average"
+  | "min"
+  | "max"
+  | "first"
+  | "last"
+  | "change";
 
 /**
  * One value from the data. Population and filter policy are separate
@@ -257,6 +276,12 @@ export interface CompositionCalculation {
   name: string;
   aggregation: CalcAggregation;
   field?: string;
+  /**
+   * Orders the rows for first, last, and change: the field's value in the
+   * first row, in the last row, or the change from first to last as a share
+   * of the first. Row order when unset.
+   */
+  orderField?: string;
   /** Each repeat's own rows, or every row in the composition. */
   population: "repeat" | "composition";
   filters: "follow" | "ignore";

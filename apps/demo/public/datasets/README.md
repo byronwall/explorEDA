@@ -152,3 +152,18 @@ Rows are written in a shuffled order on purpose: the composition orders its path
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/driving.ts
 ```
+
+## Big-tech opening prices
+
+- File: `big-tech-prices.csv`
+- Size: 9,030 rows and 5 fields
+- Demo: `?example=tech-sparklines`
+- Use: a sparkline table composition, one row per company, ordered by each company's first-to-last change with its lowest, highest, and latest prices marked
+- Source: [TidyTuesday 2023-02-07](https://github.com/rfordatascience/tidytuesday/tree/master/data/2023/2023-02-07), big tech stock prices from Yahoo Finance via Kaggle. Opening prices from January 2010 to January 2023 for 14 companies.
+- License: the TidyTuesday repository is CC0; the underlying prices carry no separate license statement.
+
+Every fifth trading day is kept, plus each company's first and last day, so a first-to-last change matches the daily series. `Observation` numbers the kept rows within each company in date order; the composition spaces points by it, so companies with shorter histories still fill their row, as the source sparklines do. Company names drop their corporate suffixes.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/big-tech.ts
+```

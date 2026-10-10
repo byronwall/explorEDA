@@ -4,6 +4,7 @@ import type {
   CompositionCalculation,
   CompositionDefinition,
 } from "./compositionTypes";
+import { orderedRows } from "./ordering";
 import type { CompositionData } from "./resolveUnit";
 
 /** One repeat's rows, when a calculation runs for a repeat. */
@@ -16,8 +17,8 @@ export interface CalcSubset {
 export interface CalcResult {
   calcId: string;
   value?: number;
-  /** Dates come back as timestamps and format as dates. */
-  kind: "number" | "date";
+  /** Dates come back as timestamps and format as dates; a change formats as a signed percent. */
+  kind: "number" | "date" | "percent";
   text: string;
   /** The rows the value was computed from. */
   rowIds: number[];
@@ -35,12 +36,27 @@ const dateFormat = new Intl.DateTimeFormat("en-US", {
   timeZone: "UTC",
 });
 
-export function formatCalcValue(value: number | undefined, kind: CalcResult["kind"]) {
+const percentFormat = new Intl.NumberFormat("en-US", {
+  style: "percent",
+  maximumFractionDigits: 0,
+  signDisplay: "exceptZero",
+});
+
+export function formatCalcValue(
+  value: number | undefined,
+  kind: CalcResult["kind"]
+) {
   if (value === undefined) return "–";
-  return kind === "date"
-    ? dateFormat.format(new Date(value))
-    : numberFormat.format(value);
+  if (kind === "date") return dateFormat.format(new Date(value));
+  if (kind === "percent") return percentFormat.format(value);
+  return numberFormat.format(value);
 }
+
+const ORDERED = new Set<CompositionCalculation["aggregation"]>([
+  "first",
+  "last",
+  "change",
+]);
 
 /** The rows a calculation reads: its population, then its filter policy. */
 export function calcRows(
@@ -79,6 +95,33 @@ export function evaluateCalc(
     };
   }
   const column = data.column(calc.field);
+  if (ORDERED.has(calc.aggregation)) {
+    const ends = orderedEnds(
+      column,
+      rowIds,
+      calc.orderField ? data.column(calc.orderField) : undefined
+    );
+    let value: number | undefined;
+    let kind: CalcResult["kind"] = ends?.kind ?? "number";
+    if (ends) {
+      if (calc.aggregation === "first") value = ends.first;
+      else if (calc.aggregation === "last") value = ends.last;
+      else {
+        // The change from the first value to the last, as a share of the first.
+        value =
+          ends.first === 0 ? undefined : (ends.last - ends.first) / ends.first;
+        kind = "percent";
+      }
+    }
+    return {
+      calcId: calc.id,
+      value,
+      kind,
+      text: formatCalcValue(value, kind),
+      rowIds,
+      instanceKey,
+    };
+  }
   const { values, kind } = readValues(column, rowIds);
   let value: number | undefined;
   if (values.length) {
@@ -98,7 +141,8 @@ export function evaluateCalc(
     }
   }
   // A sum of dates means nothing; show it as a number.
-  const shownKind = kind === "date" && calc.aggregation !== "sum" ? "date" : "number";
+  const shownKind =
+    kind === "date" && calc.aggregation !== "sum" ? "date" : "number";
   return {
     calcId: calc.id,
     value,
@@ -106,6 +150,41 @@ export function evaluateCalc(
     text: formatCalcValue(value, shownKind),
     rowIds,
     instanceKey,
+  };
+}
+
+/**
+ * The field's value in the first and last rows that have one, in the order
+ * of another field. Rows without an order value are left out, as a path
+ * leaves them out.
+ */
+function orderedEnds(
+  column: Record<number, datum>,
+  ids: number[],
+  orderColumn: Record<number, datum> | undefined
+) {
+  const rows = orderedRows(ids, orderColumn).filter(
+    (row) => !orderColumn || row.order !== undefined
+  );
+  const readable = rows.filter((row) => {
+    const value = column[row.id];
+    return (
+      finiteNumber(value) !== undefined || timestampOf(value) !== undefined
+    );
+  });
+  if (!readable.length) return undefined;
+  const firstRaw = column[readable[0]!.id];
+  const lastRaw = column[readable[readable.length - 1]!.id];
+  const numeric = finiteNumber(firstRaw) !== undefined;
+  const read = (value: datum) =>
+    numeric ? finiteNumber(value) : timestampOf(value);
+  const first = read(firstRaw);
+  const last = read(lastRaw);
+  if (first === undefined || last === undefined) return undefined;
+  return {
+    first,
+    last,
+    kind: numeric ? ("number" as const) : ("date" as const),
   };
 }
 
@@ -149,15 +228,23 @@ const POPULATION_TEXT = {
   composition: "every row in the graphic",
 };
 
+const ORDERED_TEXT = {
+  first: "First value of",
+  last: "Last value of",
+  change: "Change from first to last value of",
+};
+
 /** A short sentence that says which rows a calculation reads. */
 export function describeCalc(calc: CompositionCalculation) {
   const of =
     calc.aggregation === "count" || !calc.field
       ? "Row count"
-      : `${calc.aggregation[0]!.toUpperCase()}${calc.aggregation.slice(1)} of ${calc.field}`;
+      : calc.aggregation in ORDERED_TEXT
+        ? `${ORDERED_TEXT[calc.aggregation as keyof typeof ORDERED_TEXT]} ${calc.field}${
+            calc.orderField ? ` by ${calc.orderField}` : ""
+          }`
+        : `${calc.aggregation[0]!.toUpperCase()}${calc.aggregation.slice(1)} of ${calc.field}`;
   return `${of} over ${POPULATION_TEXT[calc.population]}, ${
-    calc.filters === "ignore"
-      ? "ignoring filters"
-      : "after the active filters"
+    calc.filters === "ignore" ? "ignoring filters" : "after the active filters"
   }`;
 }
