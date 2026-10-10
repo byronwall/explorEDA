@@ -1,7 +1,7 @@
 import { applyFilter } from "@/hooks/applyFilter";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import { makeColorScale } from "@/lib/colorScaleMath";
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import type { Filter, RangeFilter, ValueFilter } from "@/types/FilterTypes";

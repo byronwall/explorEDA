@@ -18,7 +18,7 @@ import { DataTableToolbar } from "./DataTableToolbar";
 import { DataTableSettings } from "./definition";
 import { getFilteredRows, DataTableRow } from "./filteredRows";
 import { getChartSummary } from "../chartAccessibility";
-import { isMissingValue } from "@/lib/numeric";
+import { isMissingValue } from "@/lib/valueParsing";
 import { fitColumnWidth, WIDTH_SAMPLE_ROWS } from "./columnWidths";
 
 interface DataTableProps extends BaseChartProps<DataTableSettings> {

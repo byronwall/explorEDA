@@ -1,4 +1,9 @@
-import { isMissingValue, isNumberLike } from "@/lib/numeric";
+import {
+  isDateText,
+  isMissingValue,
+  isNumberLike,
+  parseBoolean,
+} from "@/lib/valueParsing";
 import { datum } from "@/types/ChartTypes";
 
 export type DataType = "numeric" | "categorical" | "datetime" | "boolean";
@@ -16,8 +21,7 @@ export function detectColumnType(columnData: {
   }
 
   // Check if all values are boolean
-  const booleanValues = new Set(["true", "false", true, false]);
-  if (nonNullValues.every((v) => booleanValues.has(v as string | boolean))) {
+  if (nonNullValues.every((v) => parseBoolean(v) !== undefined)) {
     return "boolean";
   }
 
@@ -27,7 +31,11 @@ export function detectColumnType(columnData: {
   }
 
   // Check if all values are valid dates
-  if (nonNullValues.every((v) => !isNaN(Date.parse(String(v))))) {
+  if (
+    nonNullValues.every(
+      (value) => typeof value === "string" && isDateText(value)
+    )
+  ) {
     return "datetime";
   }
 

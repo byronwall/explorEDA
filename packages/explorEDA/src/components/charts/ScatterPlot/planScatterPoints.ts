@@ -1,5 +1,5 @@
 import { applyFilter } from "@/hooks/applyFilter";
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { datum } from "@/types/ChartTypes";
 import type { ScatterPlotSettings } from "./definition";

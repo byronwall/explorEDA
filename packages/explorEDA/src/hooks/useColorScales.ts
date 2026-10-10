@@ -1,4 +1,4 @@
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import { detectColumnType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import {
   useDataLayer,

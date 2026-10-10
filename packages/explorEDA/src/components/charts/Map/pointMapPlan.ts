@@ -1,4 +1,4 @@
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import { makeColorScale } from "@/lib/colorScaleMath";
 import type { datum } from "@/types/ChartTypes";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";

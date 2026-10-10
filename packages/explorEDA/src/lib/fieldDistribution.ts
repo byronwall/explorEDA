@@ -1,6 +1,6 @@
+import { finiteNumber, isMissingValue, timestampOf } from "@/lib/valueParsing";
 import type { DataType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import { DISTRIBUTION_BINS } from "@/components/SummaryTable/utils/statisticsCalculator";
-import { finiteNumber, isMissingValue } from "@/lib/numeric";
 import { nice, tickStep } from "d3-array";
 import type { datum } from "@/types/ChartTypes";
 
@@ -448,17 +448,6 @@ function countDistinct(values: datum[]) {
   return new Set(values.filter((value) => value != null)).size;
 }
 
-function dateTime(value: datum): number | undefined {
-  if (typeof value === "number") {
-    return Number.isFinite(value) ? value : undefined;
-  }
-  if (typeof value !== "string") {
-    return undefined;
-  }
-  const time = Date.parse(value);
-  return Number.isFinite(time) ? time : undefined;
-}
-
 function extent(values: number[]) {
   if (values.length === 0) {
     return undefined;
@@ -501,7 +490,7 @@ export function buildFieldDistribution(
     const measure =
       dataType === "numeric"
         ? (value: datum) => finiteNumber(value)
-        : (value: datum) => dateTime(value);
+        : (value: datum) => timestampOf(value);
     const missing =
       dataType === "numeric" ? isMissingValue : (value: datum) => value == null;
     const read = (rows: Array<[string, datum]>) => {

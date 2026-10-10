@@ -2,7 +2,8 @@ import {
   finiteNumber,
   finiteNumbers,
   numericExclusionReason,
-} from "@/lib/numeric";
+  parseNumber,
+} from "@/lib/valueParsing";
 import {
   categoryEqual,
   categoryKey,
@@ -334,7 +335,7 @@ export function BoxPlot({
           stats: calculateBoxPlotStats(
             entry.contributors
               .filter((item) => item.included)
-              .map((item) => Number(item.input)),
+              .map((item) => parseNumber(item.input)),
             settings.whiskerType
           ),
           whiskerType: settings.whiskerType,
@@ -536,7 +537,7 @@ export function BoxPlot({
                               997) *
                               0.6)
                       }
-                      cy={yScale(Number(item.input))}
+                      cy={yScale(parseNumber(item.input))}
                       r={3}
                       fill="var(--background)"
                       stroke={color}

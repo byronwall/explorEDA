@@ -1,6 +1,6 @@
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import type { datum } from "@/types/ChartTypes";
-import { numericExclusionReason } from "@/lib/numeric";
+import { numericExclusionReason, parseNumber } from "@/lib/valueParsing";
 
 export type AggregateAggregation = "count" | "sum" | "average";
 
@@ -85,7 +85,7 @@ export function numericInputs(values: datum[]): {
     if (reason) {
       exclusions.push({ index, reason });
     } else {
-      inputs.push({ value: Number(value), index });
+      inputs.push({ value: parseNumber(value), index });
     }
   });
   return { inputs, exclusions };

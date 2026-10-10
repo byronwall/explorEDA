@@ -1,4 +1,4 @@
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { Filter } from "@/types/FilterTypes";
 import { buildScale } from "../Axis/axisPlan";

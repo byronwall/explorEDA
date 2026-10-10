@@ -2,7 +2,7 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
 import { getChartFields } from "./charts/chartAccessibility";
 import { NullValue } from "./NullValue";
-import { isMissingValue } from "@/lib/numeric";
+import { isMissingValue } from "@/lib/valueParsing";
 
 export function ChartDataPreview({
   settings,

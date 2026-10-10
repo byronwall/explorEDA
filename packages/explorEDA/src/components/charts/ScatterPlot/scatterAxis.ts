@@ -6,7 +6,7 @@ import {
   categoryLabel,
   categoryValue,
 } from "@/lib/categories";
-import { finiteNumber, isMissingValue } from "@/lib/numeric";
+import { finiteNumber, isMissingValue } from "@/lib/valueParsing";
 import { applyFilter } from "@/hooks/applyFilter";
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { AxisSettings, datum } from "@/types/ChartTypes";

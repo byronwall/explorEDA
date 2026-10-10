@@ -3,8 +3,7 @@ import { ScaleLinear } from "d3-scale";
 import { useCallback, useMemo } from "react";
 import { getRangeFilterForField } from "./getAxisFilter";
 import { RangeFilter } from "@/types/FilterTypes";
-import { dateTimestamp } from "@/lib/dateTime";
-import { DAY_MS } from "@/lib/dailyRollup";
+import { dateBound } from "@/lib/valueParsing";
 
 interface UseFilterExtentProps {
   settings: ChartSettings;
@@ -76,11 +75,8 @@ export function useFilterExtent({
           );
           if (!filter || filter.type !== "date-range") return null;
           const domain = xScale.domain();
-          const min = filter.min ? dateTimestamp(filter.min) : domain[0]!;
-          const max = filter.max
-            ? dateTimestamp(filter.max) +
-              (filter.max.length === 10 ? DAY_MS : 0)
-            : domain[1]!;
+          const min = filter.min ? dateBound(filter.min) : domain[0]!;
+          const max = filter.max ? dateBound(filter.max, true) : domain[1]!;
           if (!Number.isFinite(min) || !Number.isFinite(max)) return null;
           return [
             [xScale(min), 0],

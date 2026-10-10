@@ -39,7 +39,7 @@ import {
   scaleGradient,
 } from "@/lib/colorScaleMath";
 import { hasFieldDisplayFormat } from "@/lib/fieldSettings";
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type {
   CategoricalColorScale,

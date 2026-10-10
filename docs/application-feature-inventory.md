@@ -73,7 +73,7 @@ Nine demo tests also passed, including host capture and remount restore. One dem
 No new browser, performance, or deployment check ran for this documentation change.
 
 The old date-inference question now has a concrete rule: skip missing values, then test booleans, numbers, and dates in that order.
-Every remaining value must parse with `Date.parse` for inferred datetime type. This is broader than ISO-only detection.
+Every remaining value must read as a date under `parseDateText` in [value parsing](../packages/explorEDA/src/lib/valueParsing.ts) for inferred datetime type: ISO dates and date-times, month-first numeric dates, or month-name dates. Labels with a number, such as "Depot 2", and impossible days stay categorical. Dates without an offset read as UTC.
 Profiles scan the full source. Sampling, background work, and a capacity guarantee remain unproven.
 
 Use small fixtures with distinct purposes: Penguins for mixed fields and missing values, red wine for numeric distributions,
@@ -558,7 +558,7 @@ The CSV export includes more detail than the compact view: counts, missing value
 
 The field inspector shows inferred and effective types, counts, raw/runtime examples, conversion failures, and editable labels, descriptions, formats, units, precision, currencies, date presets, null tokens, and type overrides. Applying a type-related setting rebuilds effective values and clears filters for that field. Summary has no independent filter dimension, inline histograms, calendar heatmaps, or missing-value matrix.
 
-Numeric views share one eligibility rule ([numeric eligibility](../packages/explorEDA/src/lib/numeric.ts)). Blank strings count as missing. Nonfinite values stay in a numeric field but are excluded from measurements, and field details show the excluded count. The gap analysis records the repair as R18.
+Numeric views share one eligibility rule ([value parsing](../packages/explorEDA/src/lib/valueParsing.ts)). Blank strings count as missing. Nonfinite values stay in a numeric field but are excluded from measurements, and field details show the excluded count. The gap analysis records the repair as R18.
 
 Source: [summary renderer](../packages/explorEDA/src/components/charts/SummaryTable/SummaryTable.tsx), [field profiles][profiles].
 

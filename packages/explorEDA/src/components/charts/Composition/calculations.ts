@@ -1,5 +1,4 @@
-import { dateTimestamp } from "@/lib/dateTime";
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber, timestampOf } from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import type {
   CompositionCalculation,
@@ -123,9 +122,9 @@ function readValues(column: Record<number, datum>, ids: number[]) {
   const dates: number[] = [];
   for (const id of ids) {
     const value = column[id];
-    if (typeof value !== "string" || !value.trim()) continue;
-    const time = dateTimestamp(value);
-    if (Number.isFinite(time)) dates.push(time);
+    if (typeof value !== "string") continue;
+    const time = timestampOf(value);
+    if (time !== undefined) dates.push(time);
   }
   return { values: dates, kind: "date" as const };
 }

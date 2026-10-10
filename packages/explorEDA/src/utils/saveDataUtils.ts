@@ -1,3 +1,4 @@
+import { isDateText } from "@/lib/valueParsing";
 import { isCompositionDefinition } from "@/components/charts/Composition/validateComposition";
 import { isGeometryAsset } from "@/lib/geometryAssets";
 import { isSavedTheme } from "@/lib/themes";
@@ -174,9 +175,7 @@ function isFilter(value: unknown): boolean {
   }
   if (value.type === "date-range") {
     const isIsoDate = (date: unknown) =>
-      typeof date === "string" &&
-      /^\d{4}-\d{2}-\d{2}(?:T.*)?$/.test(date) &&
-      !Number.isNaN(Date.parse(date));
+      typeof date === "string" && isDateText(date, "iso");
 
     return (
       (value.min === undefined || isIsoDate(value.min)) &&

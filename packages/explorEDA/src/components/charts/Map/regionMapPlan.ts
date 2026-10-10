@@ -1,3 +1,4 @@
+import { parseNumber } from "@/lib/valueParsing";
 import { geoPath } from "d3-geo";
 import { heatFill } from "../heatScale";
 import { categoryKey, categoryLabel, categoryIncludes } from "@/lib/categories";
@@ -143,7 +144,7 @@ export function planRegionMap(
     }
     const inputs = summarize(source.map((row) => row.sourceId))
       .contributors.filter((item) => item.included)
-      .map((item) => Number(item.input));
+      .map((item) => parseNumber(item.input));
     if (spec.aggregation === "sum")
       values.push(
         inputs.reduce((sum, value) => sum + Math.max(0, value), 0),

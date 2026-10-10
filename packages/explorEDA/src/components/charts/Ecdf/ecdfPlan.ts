@@ -1,7 +1,11 @@
 import type { ThemeColors } from "@/lib/themePalettes";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import { defaultCategoricalColors, makeColorScale } from "@/lib/colorScaleMath";
-import { finiteNumber, numericExclusionReason } from "@/lib/numeric";
+import {
+  finiteNumber,
+  numericExclusionReason,
+  parseNumber,
+} from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import type { RangeFilter } from "@/types/FilterTypes";
@@ -261,7 +265,7 @@ export function planEcdf({
       excludedReasons.set(reason, (excludedReasons.get(reason) ?? 0) + 1);
       continue;
     }
-    const entry = { id, value: Number(raw) };
+    const entry = { id, value: parseNumber(raw) };
     all.push(entry);
     if (!settings.colorField) {
       continue;

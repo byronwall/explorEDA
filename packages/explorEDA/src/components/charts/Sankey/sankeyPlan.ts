@@ -3,7 +3,11 @@ import { applyFilter } from "@/hooks/applyFilter";
 import type { AggregateContributor } from "@/lib/aggregates";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import { defaultCategoricalColors, makeColorScale } from "@/lib/colorScaleMath";
-import { isMissingValue, numericExclusionReason } from "@/lib/numeric";
+import {
+  isMissingValue,
+  numericExclusionReason,
+  parseNumber,
+} from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import type { Filter, ValueFilter } from "@/types/FilterTypes";
@@ -293,7 +297,7 @@ export function planSankey({
     if (reason) {
       excludedReasons.set(reason, (excludedReasons.get(reason) ?? 0) + 1);
     }
-    const weight = reason ? 0 : sum ? Number(input) : 1;
+    const weight = reason ? 0 : sum ? parseNumber(input) : 1;
     const selected =
       hasSelection &&
       ownFilters.every(({ filter, data }) => applyFilter(data[id], filter));

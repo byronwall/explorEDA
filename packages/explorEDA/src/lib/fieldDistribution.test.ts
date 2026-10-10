@@ -146,6 +146,14 @@ describe("buildFieldDistribution", () => {
     expect(distribution.bins.reduce((sum, bin) => sum + bin.all, 0)).toBe(3);
   });
 
+  it("reads date-times without an offset as UTC", () => {
+    const values = column(["2026-01-01T08:00", "2026-01-02T08:00"]);
+    const distribution = buildFieldDistribution(values, "datetime");
+    if (distribution.kind !== "date") throw new Error("date expected");
+
+    expect(distribution.range?.all.first).toBe(Date.UTC(2026, 0, 1, 8));
+  });
+
   it("reports no filtered population when filters keep every row", () => {
     const distribution = buildFieldDistribution(
       column([1, 2, 3]),

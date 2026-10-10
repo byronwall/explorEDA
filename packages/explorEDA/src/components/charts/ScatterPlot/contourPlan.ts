@@ -1,3 +1,4 @@
+import { parseNumber } from "@/lib/valueParsing";
 import { contours } from "d3-contour";
 import { buildScale } from "../Axis/axisPlan";
 import type { ScatterPlotSettings } from "./definition";
@@ -114,8 +115,8 @@ export function planContours(
       ...empty,
       notice: "Choose numeric X and Y fields for smoothed density.",
     };
-  const xs = plan.points.map((point) => Number(point.xValue));
-  const ys = plan.points.map((point) => Number(point.yValue));
+  const xs = plan.points.map((point) => parseNumber(point.xValue));
+  const ys = plan.points.map((point) => parseNumber(point.yValue));
   const n = xs.length;
   if (n < 3)
     return {

@@ -1,4 +1,4 @@
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import type { ScatterPlotSettings } from "./definition";
 import { facetLabel, groupScatterRows, type ScatterFitGroup } from "./fitPlan";
 import type { ScatterPlan, ScatterSnapshot } from "./scatterPlan";

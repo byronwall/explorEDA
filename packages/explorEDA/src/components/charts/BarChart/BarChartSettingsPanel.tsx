@@ -1,4 +1,4 @@
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
