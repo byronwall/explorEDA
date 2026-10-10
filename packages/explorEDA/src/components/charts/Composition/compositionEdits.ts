@@ -339,6 +339,7 @@ export function convertMark(
               orderField,
               stroke: color,
               strokeWidth: 1.5,
+              colorField: mark.type === "point" ? mark.colorField : undefined,
             }
           : {
               type: "point",
@@ -350,6 +351,7 @@ export function convertMark(
               radius: 3.5,
               fill: color,
               labelEvery: 0,
+              colorField: mark.type === "path" ? mark.colorField : undefined,
             };
   }
   return updateElement<UnitElement>(next, unit.id, {

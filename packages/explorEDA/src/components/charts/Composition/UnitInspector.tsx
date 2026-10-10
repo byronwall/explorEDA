@@ -93,6 +93,36 @@ const DIRECTIONS = [
   },
 ];
 
+const PATH_LABEL_OPTIONS = [
+  {
+    value: "none" as const,
+    label: "Nowhere",
+    tooltip: "No labels on the path",
+  },
+  {
+    value: "start" as const,
+    label: "Start",
+    tooltip: "Name each path beside its first point",
+  },
+  {
+    value: "end" as const,
+    label: "End",
+    tooltip: "Name each path beside its last point, in place of a legend",
+  },
+  {
+    value: "both" as const,
+    label: "Both",
+    tooltip: "Name each path at both ends, as a slope chart reads",
+  },
+];
+const LABEL_VALUE_OPTIONS = [
+  { value: false, label: "Name", tooltip: "The series or repeat name alone" },
+  {
+    value: true,
+    label: "Value and name",
+    tooltip: "The y value at that end before the name",
+  },
+];
 const SHOW_OPTIONS = [
   { value: "all" as const, label: "All", tooltip: "Draw every row" },
   {
@@ -1547,6 +1577,39 @@ function XyFields({
             value={mark.strokeWidth}
             onChange={(strokeWidth) => change({ strokeWidth })}
           />
+          <Label>Color by</Label>
+          <FieldSelector
+            label=""
+            placeholder="One stroke"
+            value={mark.colorField ?? ""}
+            allowClear
+            fields={seriesFields}
+            onChange={(colorField) =>
+              change({ colorField: colorField || undefined })
+            }
+          />
+          <span className="eda-setting-label">Name at</span>
+          <Segmented
+            label={`${mark.name} end labels`}
+            value={mark.labels ?? "none"}
+            options={PATH_LABEL_OPTIONS}
+            onChange={(labels) =>
+              change({ labels: labels === "none" ? undefined : labels })
+            }
+          />
+          {mark.labels && mark.labels !== "none" && (
+            <>
+              <span className="eda-setting-label">Label value</span>
+              <Segmented
+                label={`${mark.name} label value`}
+                value={Boolean(mark.labelValue)}
+                options={LABEL_VALUE_OPTIONS}
+                onChange={(labelValue) =>
+                  change({ labelValue: labelValue || undefined })
+                }
+              />
+            </>
+          )}
         </>
       ) : (
         <>

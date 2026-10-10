@@ -1136,6 +1136,17 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "tax-slope",
+    intent:
+      "Join each country's two readings with a line named at both ends, colored by whether the share rose or fell.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

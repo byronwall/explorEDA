@@ -172,6 +172,11 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
                   : ""}
             </TraceReadout>
           )}
+          {path.datum.category !== undefined && (
+            <TraceReadout label="Colored by">
+              <TraceSwatch color={path.stroke} /> {path.datum.category}
+            </TraceReadout>
+          )}
           <TraceReadout label="Order">
             <TraceSwatch color={path.stroke} /> {path.datum.orderField},
             ascending; ties keep row order

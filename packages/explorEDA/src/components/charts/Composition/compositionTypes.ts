@@ -170,7 +170,11 @@ export interface NumericScale {
   max?: number;
   /** Log spacing for values that span orders of magnitude; linear unless set. */
   transform?: "linear" | "log";
+  /** Which ticks to label: tidy steps, only the two ends, or none. */
+  ticks?: NumericTicks;
 }
+
+export type NumericTicks = "auto" | "ends" | "none";
 
 export type CompositionScale = PositionScale | ValueScale | NumericScale;
 export type ScaleDomain = "shared" | "instance";
@@ -277,7 +281,17 @@ export interface PathMark {
    * graphic, so each panel can show the whole field behind its own series.
    */
   population?: MarkPopulation;
+  /** Name the path at its start, its end, or both, with its series or the repeat. */
+  labels?: PathLabels;
+  /** Add the y value at that end to each label. */
+  labelValue?: boolean;
+  /** Stroke each path by this field's value, through `colors` in label order across the graphic. */
+  colorField?: string;
+  /** One color per category of `colorField`, cycling when there are more. */
+  colors?: string[];
 }
+
+export type PathLabels = "none" | "start" | "end" | "both";
 
 export type MarkPopulation = "repeat" | "composition";
 
@@ -457,7 +471,9 @@ export function markFields(mark: MarkDefinition): string[] {
         mark.sizeField,
       ].filter((field): field is string => Boolean(field));
     case "path":
-      return [mark.orderField];
+      return [mark.orderField, mark.colorField].filter(
+        (field): field is string => Boolean(field)
+      );
     case "band":
       return [mark.orderField, mark.lowerField, mark.upperField];
     case "summary":

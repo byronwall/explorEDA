@@ -31,6 +31,7 @@ import {
   covidCompareDashboard,
   electionsDashboard,
   lincolnRidgelineDashboard,
+  taxSlopeDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -62,6 +63,7 @@ import {
   PictureInPicture2,
   Vote,
   Mountain,
+  TrendingUp,
   CloudFog,
   Globe,
   Activity,
@@ -886,6 +888,17 @@ export const examples: ExampleData[] = [
     icon: Mountain,
     data: "/datasets/lincoln-weather.csv",
     savedData: lincolnRidgelineDashboard,
+  },
+  {
+    id: "tax-slope",
+    title: "Central government tax revenue, 2000 and 2023",
+    description:
+      "A slope chart: one line per OECD country between its two readings of tax revenue as a share of GDP, named and valued at both ends, colored by whether the share rose or fell.",
+    dataset: { rows: "68 readings", fields: 6, source: "Real" },
+    shows: ["End labels", "Paths colored by field", "End ticks"],
+    icon: TrendingUp,
+    data: "/datasets/tax-slope.csv",
+    savedData: taxSlopeDashboard,
   },
 ];
 

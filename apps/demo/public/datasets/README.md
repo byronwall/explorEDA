@@ -343,3 +343,18 @@ Daily mean, maximum, and minimum temperatures in degrees Fahrenheit, with the mo
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/lincoln-weather.ts
 ```
+
+## Central government tax revenue, 2000 and 2023
+
+- File: `tax-slope.csv`
+- Size: 68 rows and 6 fields
+- Demo: `?example=tax-slope`
+- Use: a slope chart composition, one path per country between its two readings, labeled at both ends and colored by direction
+- Source: the [World Bank World Development Indicators](https://data.worldbank.org/indicator/GC.TAX.TOTL.GD.ZS), tax revenue (% of GDP), indicator `GC.TAX.TOTL.GD.ZS`, through the World Bank API.
+- License: CC BY 4.0.
+
+Two rows per OECD country, for 2000 and 2023, with the change across the span and its direction. Members without both readings are left out: Japan, Australia, New Zealand, and Türkiye.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/tax-slope.ts
+```

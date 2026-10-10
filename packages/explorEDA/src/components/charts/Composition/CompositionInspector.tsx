@@ -614,7 +614,8 @@ function LegendProperties({
             <option key={mark.id} value={mark.id}>
               {mark.name}
               {mark.type === "stack" ||
-              (mark.type === "point" && mark.colorField)
+              ((mark.type === "point" || mark.type === "path") &&
+                mark.colorField)
                 ? ""
                 : " (no categories)"}
             </option>
