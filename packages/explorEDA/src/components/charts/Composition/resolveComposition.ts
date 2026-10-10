@@ -115,6 +115,8 @@ export interface PathNode extends NodeBase {
   segments: { x: number; y: number; rowId: number }[][];
   stroke: string;
   strokeWidth: number;
+  /** Smooth curves through the vertices instead of straight runs. */
+  curve?: "smooth";
   path: PathDatum;
 }
 
@@ -126,6 +128,8 @@ export interface AreaNode extends NodeBase {
   fillOpacity: number;
   /** An outline along the upper edge, such as a ridge's crest. */
   stroke?: string;
+  /** Smooth curves along both edges instead of straight runs. */
+  curve?: "smooth";
   band: BandDatum;
 }
 

@@ -33,6 +33,7 @@ import type {
   Bounds,
   PathNode,
   SceneNode,
+  TextNode,
 } from "./resolveComposition";
 import { evaluateCalc, type CalcResult } from "./calculations";
 import { dodgePositions } from "./labelDodge";
@@ -346,8 +347,27 @@ export function resolveUnit(
             )?.field ?? ""
           )
         : undefined;
+      const categories = stackCategories(mark, data);
       for (const subset of subsets) {
-        // Across x, the largest total at any x; otherwise the repeat's total.
+        // Across x, the largest total at any x, or the whole extent of a
+        // wiggling stream; otherwise the repeat's total.
+        if (xColumn && mark.baseline === "wiggle" && !mark.normalize) {
+          const columns = stackColumns(
+            mark,
+            subset.liveIds,
+            categories,
+            xColumn,
+            column,
+            measure
+          );
+          const offsets = streamOffsets(columns, categories);
+          const extent = Math.max(
+            0,
+            ...columns.map((item, index) => offsets[index]! + item.total)
+          );
+          maxTotals.set(mark.id, Math.max(maxTotals.get(mark.id) ?? 0, extent));
+          continue;
+        }
         const groups = xColumn
           ? groupByCategory(xColumn, subset.liveIds)
           : new Map([["all", subset.liveIds]]);
@@ -702,9 +722,14 @@ export function resolveUnit(
         : spread?.x
           ? {
               x: axisFor(spread.x, subset, [frame.x, frame.x + frame.width]),
-              // A stacked area's y is the share of each x's total, or the total.
+              // A stacked area's y is the share of each x's total, or the
+              // total. A stream's values float off zero, so it has no y ticks.
               y: numericAxis(
-                spread.mark.normalize ? SHARE_SCALE : TOTAL_SCALE,
+                spread.mark.normalize
+                  ? SHARE_SCALE
+                  : spread.mark.baseline && spread.mark.baseline !== "zero"
+                    ? { ...TOTAL_SCALE, ticks: "none" }
+                    : TOTAL_SCALE,
                 spread.mark.normalize
                   ? [0, 1]
                   : [0, data.stackMaxTotal?.get(spread.mark.id) ?? 1],
@@ -2058,23 +2083,23 @@ const TOTAL_SCALE: NumericScale = {
  * at each x, and each category draws as one area from x to x in stacking
  * order. An x whose total is zero leaves a gap rather than invented shares.
  */
-function stackAreaNodes(
-  unit: UnitElement,
-  mark: StackMark,
-  subset: Subset,
+interface StackColumn {
+  x: number;
+  total: number;
+  counts: Map<string, { count: number; rowIds: number[] }>;
+}
+
+/** The rows of a spread stack grouped at each x, in x order, with each category's value. */
+function stackColumns(
+  mark: Pick<StackMark, "aggregation">,
+  ids: number[],
   categories: StackCategory[],
-  xy: { x: NumericAxis; y: NumericAxis },
-  frame: Bounds,
-  data: CompositionData
-): SceneNode[] {
-  const xColumn = data.column(xy.x.scale.field);
-  const categoryColumn = data.column(mark.categoryField);
-  const measure = mark.measureField
-    ? data.column(mark.measureField)
-    : undefined;
-  // Columns at each x, in x order.
+  xColumn: Record<number, datum>,
+  categoryColumn: Record<number, datum>,
+  measure: Record<number, datum> | undefined
+): StackColumn[] {
   const byX = new Map<number, number[]>();
-  for (const id of subset.liveIds) {
+  for (const id of ids) {
     const x = readNumber(xColumn[id]);
     if (x === undefined) continue;
     const list = byX.get(x);
@@ -2082,12 +2107,7 @@ function stackAreaNodes(
     else byX.set(x, [id]);
   }
   const xs = [...byX.keys()].sort((a, b) => a - b);
-  type Column = {
-    x: number;
-    total: number;
-    counts: Map<string, { count: number; rowIds: number[] }>;
-  };
-  const columns: Column[] = xs.map((x) => {
+  return xs.map((x) => {
     const groups = groupByCategory(categoryColumn, byX.get(x)!);
     const counts = new Map<string, { count: number; rowIds: number[] }>();
     let total = 0;
@@ -2100,7 +2120,77 @@ function stackAreaNodes(
     }
     return { x, total, counts };
   });
+}
+
+/**
+ * The wiggle baseline of a streamgraph: at each step the baseline moves so
+ * the layers' weighted slopes sum to zero, after Byron and Wattenberg, then
+ * the whole stream shifts so its lowest point rests on zero.
+ */
+export function streamOffsets(
+  columns: StackColumn[],
+  categories: StackCategory[]
+): number[] {
+  const height = (column: StackColumn, key: string) =>
+    column.counts.get(key)?.count ?? 0;
+  const offsets: number[] = [];
+  let y = 0;
+  for (let j = 0; j < columns.length; j += 1) {
+    if (j > 0) {
+      const previous = columns[j - 1]!;
+      const current = columns[j]!;
+      let s1 = 0;
+      let s2 = 0;
+      categories.forEach((category, i) => {
+        const own = height(current, category.key);
+        let s3 = (own - height(previous, category.key)) / 2;
+        for (let k = 0; k < i; k += 1) {
+          const key = categories[k]!.key;
+          s3 += height(current, key) - height(previous, key);
+        }
+        s1 += own;
+        s2 += s3 * own;
+      });
+      if (s1) y -= s2 / s1;
+    }
+    offsets.push(y);
+  }
+  const low = Math.min(0, ...offsets);
+  return offsets.map((offset) => offset - low);
+}
+
+function stackAreaNodes(
+  unit: UnitElement,
+  mark: StackMark,
+  subset: Subset,
+  categories: StackCategory[],
+  xy: { x: NumericAxis; y: NumericAxis },
+  frame: Bounds,
+  data: CompositionData
+): SceneNode[] {
+  const columns = stackColumns(
+    mark,
+    subset.liveIds,
+    categories,
+    data.column(xy.x.scale.field),
+    data.column(mark.categoryField),
+    mark.measureField ? data.column(mark.measureField) : undefined
+  );
+  // Where each column rests: on zero, centered on the tallest total, or on
+  // the wiggle baseline. Normalized stacks always fill from zero.
+  const baseline = mark.normalize ? "zero" : (mark.baseline ?? "zero");
+  const offsets =
+    baseline === "wiggle"
+      ? streamOffsets(columns, categories)
+      : columns.map((column) =>
+          baseline === "center"
+            ? ((data.stackMaxTotal?.get(mark.id) ?? column.total) -
+                column.total) /
+              2
+            : 0
+        );
   const nodes: SceneNode[] = [];
+  const labels: TextNode[] = [];
   const names = categories.map((category) => category.key);
   for (const category of categories) {
     const segments: AreaNode["segments"] = [];
@@ -2108,12 +2198,13 @@ function stackAreaNodes(
     const points: NonNullable<BandDatum["stack"]>["points"] = [];
     const rowIds: number[] = [];
     let best: { x: number; height: number; y: number } | undefined;
-    for (const column of columns) {
+    columns.forEach((column, columnIndex) => {
       if (!column.total) {
         if (run.length) segments.push(run);
         run = [];
-        continue;
+        return;
       }
+      const offset = offsets[columnIndex]!;
       // Cumulative share below this category at this x.
       let below = 0;
       for (const other of categories) {
@@ -2123,8 +2214,8 @@ function stackAreaNodes(
       const own = column.counts.get(category.key);
       const share = (own?.count ?? 0) / column.total;
       const scale = mark.normalize ? 1 : column.total;
-      const y0 = numericPixel(xy.y, below * scale);
-      const y1 = numericPixel(xy.y, (below + share) * scale);
+      const y0 = numericPixel(xy.y, offset + below * scale);
+      const y1 = numericPixel(xy.y, offset + (below + share) * scale);
       const px = numericPixel(xy.x, column.x);
       run.push({ x: px, y0, y1, rowId: own?.rowIds[0] ?? -1 });
       if (own) {
@@ -2139,7 +2230,7 @@ function stackAreaNodes(
         if (!best || height > best.height)
           best = { x: px, height, y: (y0 + y1) / 2 };
       }
-    }
+    });
     if (run.length) segments.push(run);
     if (!points.length) continue;
     const fill = mark.colors[category.index % mark.colors.length]!;
@@ -2151,6 +2242,7 @@ function stackAreaNodes(
       segments,
       fill,
       fillOpacity: 1,
+      curve: mark.curve === "smooth" ? "smooth" : undefined,
       band: {
         instanceKey: subset.key,
         markId: mark.id,
@@ -2172,7 +2264,7 @@ function stackAreaNodes(
     });
     // The label sits where the band is thickest, if it has the room.
     if (best && best.height >= mark.labelMinHeight)
-      nodes.push({
+      labels.push({
         type: "text",
         key: `${unit.id}:${subset.key}:${mark.id}:${category.key}:label`,
         elementId: unit.id,
@@ -2191,6 +2283,25 @@ function stackAreaNodes(
               : "middle",
         halo: "#ffffff",
       });
+  }
+  // Labels that hang from the same edge spread apart so none overlap.
+  for (const anchor of ["start", "middle", "end"] as const) {
+    const group = labels.filter((label) => label.anchor === anchor);
+    if (anchor === "middle") {
+      nodes.push(...group);
+      continue;
+    }
+    const placed = dodgePositions(
+      group.map((label) => label.lines[0]!.y),
+      12,
+      [frame.y + 8, frame.y + frame.height]
+    );
+    group.forEach((label, index) =>
+      nodes.push({
+        ...label,
+        lines: [{ ...label.lines[0]!, y: placed[index]! }],
+      })
+    );
   }
   return nodes;
 }
@@ -2355,6 +2466,7 @@ function pathNodes(
       strokeWidth: focused
         ? mark.strokeWidth
         : Math.max(0.75, mark.strokeWidth * 0.75),
+      curve: mark.curve === "smooth" ? "smooth" : undefined,
       clip,
       path: {
         instanceKey: subset.key,

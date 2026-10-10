@@ -1079,6 +1079,38 @@ function DensityFields({
   );
 }
 
+const BASELINE_OPTIONS = [
+  {
+    value: "zero" as const,
+    label: "Zero",
+    tooltip:
+      "Layers stack up from the frame's bottom, so the top edge is the total",
+  },
+  {
+    value: "center" as const,
+    label: "Center",
+    tooltip:
+      "Each column centers on the frame's middle, so the stream's thickness is the total",
+  },
+  {
+    value: "wiggle" as const,
+    label: "Wiggle",
+    tooltip:
+      "The baseline moves so the layers' slopes stay smallest, as a streamgraph; the thickness is still the total",
+  },
+];
+const CURVE_OPTIONS = [
+  {
+    value: "linear" as const,
+    label: "Straight",
+    tooltip: "Straight runs between the values",
+  },
+  {
+    value: "smooth" as const,
+    label: "Smooth",
+    tooltip: "Smooth curves through the values that never overshoot them",
+  },
+];
 const STACK_ORDERS = [
   {
     value: "total" as const,
@@ -1144,6 +1176,30 @@ function StackFields({
             scales={numeric}
             onChange={(xScaleId) => onChange({ xScaleId })}
             onEdit={onEditScale}
+          />
+          {!mark.normalize && (
+            <>
+              <span className="eda-setting-label">Rests on</span>
+              <Segmented
+                label={`${mark.name} baseline`}
+                value={mark.baseline ?? "zero"}
+                options={BASELINE_OPTIONS}
+                onChange={(baseline) =>
+                  onChange({
+                    baseline: baseline === "zero" ? undefined : baseline,
+                  })
+                }
+              />
+            </>
+          )}
+          <span className="eda-setting-label">Edges</span>
+          <Segmented
+            label={`${mark.name} curve`}
+            value={mark.curve ?? "linear"}
+            options={CURVE_OPTIONS}
+            onChange={(curve) =>
+              onChange({ curve: curve === "linear" ? undefined : curve })
+            }
           />
         </>
       )}
@@ -1692,6 +1748,15 @@ function XyFields({
             fields={seriesFields}
             onChange={(colorField) =>
               change({ colorField: colorField || undefined })
+            }
+          />
+          <span className="eda-setting-label">Line</span>
+          <Segmented
+            label={`${mark.name} curve`}
+            value={mark.curve ?? "linear"}
+            options={CURVE_OPTIONS}
+            onChange={(curve) =>
+              change({ curve: curve === "linear" ? undefined : curve })
             }
           />
           <span className="eda-setting-label">Name at</span>

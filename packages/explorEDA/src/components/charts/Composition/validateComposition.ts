@@ -111,7 +111,10 @@ function isMark(value: unknown) {
       value.colors.every(isString) &&
       isNumber(value.labelMinHeight) &&
       isNumber(value.inset) &&
-      (value.xScaleId === undefined || isString(value.xScaleId))
+      (value.xScaleId === undefined || isString(value.xScaleId)) &&
+      (value.baseline === undefined ||
+        oneOf(value.baseline, ["zero", "center", "wiggle"])) &&
+      (value.curve === undefined || oneOf(value.curve, ["linear", "smooth"]))
     );
   if (value.type === "summary")
     return (
@@ -157,7 +160,8 @@ function isMark(value: unknown) {
         typeof value.labelValue === "boolean") &&
       (value.colorField === undefined || isString(value.colorField)) &&
       (value.colors === undefined ||
-        (Array.isArray(value.colors) && value.colors.every(isString)))
+        (Array.isArray(value.colors) && value.colors.every(isString))) &&
+      (value.curve === undefined || oneOf(value.curve, ["linear", "smooth"]))
     );
   // Marks saved before mark types existed have none; they are strips.
   return (

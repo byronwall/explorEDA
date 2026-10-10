@@ -356,6 +356,8 @@ The y axis reads as shares or totals, an x with no rows breaks the areas, and th
 
 Unit charts are built as waffle marks: the Titanic waffle ships as `?example=titanic-waffle` from `apps/data-samples/prepare/titanic.ts`, one cell per passenger in each class, grouped by fate in an order and color shared across repeats, with counted cells, cells per several rows, or a hundred cells of shares.
 
+The unemployment streamgraph ships as `?example=unemployment-stream` from `apps/data-samples/prepare/unemployment-industries.ts`, fourteen industries stacked across 122 months: a spread stack can rest on a centered or wiggling baseline, and stack and path marks can draw smooth monotone curves, closing the path-curve gap noted above.
+
 ## Milestone 6: Combine detail and overview frames in one unit
 
 Create a state-style comparison with an inset, then repeat that unit for several illustrative regions.

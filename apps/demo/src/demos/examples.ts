@@ -33,6 +33,7 @@ import {
   lincolnRidgelineDashboard,
   taxSlopeDashboard,
   titanicWaffleDashboard,
+  unemploymentStreamDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -65,6 +66,7 @@ import {
   Vote,
   Mountain,
   TrendingUp,
+  Waves,
   CloudFog,
   Globe,
   Activity,
@@ -911,6 +913,17 @@ export const examples: ExampleData[] = [
     icon: Grid3x3,
     data: "/datasets/titanic.csv",
     savedData: titanicWaffleDashboard,
+  },
+  {
+    id: "unemployment-stream",
+    title: "Unemployed Americans by industry, 2000 to 2010",
+    description:
+      "A streamgraph: fourteen industries' unemployed stacked month by month on a wiggling baseline with smooth edges, so the stream's thickness is the total and each layer's swell is its own.",
+    dataset: { rows: "1,708 months", fields: 5, source: "Real" },
+    shows: ["Stream baselines", "Smooth curves", "Dated stacks"],
+    icon: Waves,
+    data: "/datasets/unemployment-industries.csv",
+    savedData: unemploymentStreamDashboard,
   },
 ];
 
