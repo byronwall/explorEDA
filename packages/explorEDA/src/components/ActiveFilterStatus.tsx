@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { categoryLabel } from "@/lib/categories";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
@@ -9,10 +9,16 @@ import {
   formatFieldValue,
   getFieldName,
 } from "@/lib/fieldSettings";
-import { FilterX, ListFilter, X } from "lucide-react";
+import { FilterX, ListFilter, Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverTrigger,
+} from "./ui/popover";
+import { WorkspaceFilterEditor } from "./WorkspaceFilterEditor";
 import { ActionTooltip } from "./ui/tooltip";
 
 export type FieldFormatting = {
@@ -55,7 +61,8 @@ export function formatFilterLabel(
   filter: Filter,
   format: FieldFormatting = plainFormatting
 ): string {
-  const name = filter.field === "__ID" ? "Source row" : format.name(filter.field);
+  const name =
+    filter.field === "__ID" ? "Source row" : format.name(filter.field);
   switch (filter.type) {
     case "value":
       if (filter.field === "__ID" && filter.values.length > 1) {
@@ -120,6 +127,7 @@ function FilterChip({
   showLabel,
   showTooltip,
   onShow,
+  expanded,
   onHighlight,
   removeLabel,
   removeTooltip,
@@ -129,7 +137,10 @@ function FilterChip({
   label: string;
   showLabel?: string;
   showTooltip?: string;
-  onShow?: () => void;
+  /** Receives the label, so a popover can open beside it. */
+  onShow?: (target: HTMLElement) => void;
+  /** Whether the popover the label opens is open. */
+  expanded?: boolean;
   onHighlight?: (active: boolean) => void;
   removeLabel: string;
   removeTooltip: string;
@@ -150,7 +161,9 @@ function FilterChip({
           className="h-full min-w-0 rounded-r-none px-2 font-normal"
           tooltip={showTooltip}
           aria-label={showLabel}
-          onClick={onShow}
+          aria-haspopup={expanded === undefined ? undefined : "dialog"}
+          aria-expanded={expanded}
+          onClick={(event) => onShow(event.currentTarget)}
           onPointerEnter={() => onHighlight?.(true)}
           onPointerLeave={() => onHighlight?.(false)}
           onFocus={() => onHighlight?.(true)}
@@ -206,6 +219,8 @@ export function ActiveFilterStatus({
     state.crossfilterWrapper.getFilteredRowCount()
   );
   const updateChart = useDataLayer((state) => state.updateChart);
+  const workspaceFilters = useDataLayer((state) => state.workspaceFilters);
+  const setWorkspaceFilter = useDataLayer((state) => state.setWorkspaceFilter);
   const clearAllFilters = useDataLayer((state) => state.clearAllFilters);
   const rowsSettings = useDataLayer((state) => state.rowsSettings);
   const updateRowsSettings = useDataLayer((state) => state.updateRowsSettings);
@@ -242,7 +257,45 @@ export function ActiveFilterStatus({
   type ChipProps = Omit<Parameters<typeof FilterChip>[0], "overflow"> & {
     key: string;
   };
+  // The workspace filter popover opens beside Add filter or the chip it edits.
+  // `field` is undefined while the user picks a field.
+  const [editor, setEditor] = useState<{
+    field?: string;
+    anchor: HTMLElement;
+  }>();
+  const addRef = useRef<HTMLButtonElement>(null);
+  // The edited chip goes away if its filter is cleared, so the popover keeps
+  // the last place it saw.
+  const anchorRef = useMemo(() => {
+    let last = new DOMRect();
+    return {
+      current: {
+        getBoundingClientRect: () => {
+          const anchor = editor?.anchor;
+          if (anchor?.isConnected) last = anchor.getBoundingClientRect();
+          return last;
+        },
+      },
+    };
+  }, [editor?.anchor]);
+
   const chips: ChipProps[] = [
+    ...workspaceFilters.filter(isActiveFilter).map((filter) => {
+      const label = formatFilterLabel(filter, formatting);
+      const exact = exactBounds(filter, formatting);
+      return {
+        key: `workspace-${filter.field}`,
+        label: `Workspace · ${label}`,
+        showLabel: `Edit workspace filter ${label}`,
+        showTooltip: `Edit this workspace filter. It narrows every chart, and no chart owns it. Use × to remove it.${exact ? ` ${exact}.` : ""}`,
+        onShow: (anchor: HTMLElement) =>
+          setEditor({ field: filter.field, anchor }),
+        expanded: editor?.field === filter.field,
+        removeLabel: `Remove workspace filter ${label}`,
+        removeTooltip: "Remove this workspace filter",
+        onRemove: () => setWorkspaceFilter(filter.field),
+      };
+    }),
     ...localFilters.map((filter, index) => ({
       key: `rows-${index}`,
       label: `Rows · ${filterLabel(filter)}`,
@@ -348,6 +401,49 @@ export function ActiveFilterStatus({
           <span className="sr-only"> after chart filters.</span>
         </p>
       </ActionTooltip>
+      <Popover
+        open={editor !== undefined}
+        onOpenChange={(open) => !open && setEditor(undefined)}
+      >
+        <PopoverAnchor virtualRef={anchorRef} />
+        <Button
+          ref={addRef}
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="eda-filter-add"
+          aria-label="Add filter"
+          aria-haspopup="dialog"
+          aria-expanded={
+            editor !== undefined && editor.anchor === addRef.current
+          }
+          tooltip="Filter every chart by a field, without adding a chart"
+          onClick={(event) => setEditor({ anchor: event.currentTarget })}
+        >
+          <Plus aria-hidden="true" />
+          <span className="eda-filter-add-label">Filter</span>
+        </Button>
+        <PopoverContent
+          side="top"
+          align="start"
+          aria-label={
+            editor?.field ? "Edit workspace filter" : "Add a workspace filter"
+          }
+          className="eda-workspace-filter-popover w-72 p-2"
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            const anchor = editor?.anchor;
+            (anchor?.isConnected ? anchor : addRef.current)?.focus();
+          }}
+        >
+          <WorkspaceFilterEditor
+            field={editor?.field}
+            onFieldChange={(field) =>
+              setEditor((current) => current && { ...current, field })
+            }
+          />
+        </PopoverContent>
+      </Popover>
       {chips.length > 0 && (
         <ul
           ref={listRef}

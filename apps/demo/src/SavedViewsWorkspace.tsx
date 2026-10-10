@@ -163,6 +163,7 @@ function blankSettings(
   }
   const blank = clone(settings);
   blank.charts = [];
+  delete blank.workspaceFilters;
   if (blank.rowsSettings) {
     blank.rowsSettings = {
       ...blank.rowsSettings,
@@ -578,6 +579,7 @@ export function SavedViewsWorkspace({
           next = {
             ...settings,
             charts: isActive ? settings.charts : [],
+            workspaceFilters: isActive ? settings.workspaceFilters : undefined,
             rowsSettings: isActive
               ? settings.rowsSettings
               : settings.rowsSettings && {
@@ -663,6 +665,7 @@ export function SavedViewsWorkspace({
           settings: {
             ...settings,
             charts: [],
+            workspaceFilters: undefined,
             rowsSettings,
             metadata: { ...settings.metadata, name: tab.name },
           },

@@ -167,6 +167,7 @@ describe("dashboard text coverage", () => {
         aggregates: 1,
         geometryAssets: 1,
         theme: 1,
+        workspaceFilters: 1,
       }).sort()
     );
   });

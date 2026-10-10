@@ -97,6 +97,7 @@ const baseState = {
   data: [],
   fieldProfiles: [],
   charts: [],
+  workspaceFilters: [],
   calculations: [],
   liveItems: {},
   fieldSettings: {},

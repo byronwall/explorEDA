@@ -589,6 +589,9 @@ export const DASHBOARD_COVERAGE: Record<keyof SavedDataStructure, DslCoverage> =
     colorScales: { text: "scale @id, any setting as a path" },
     aggregates: { text: "group @id, any setting as a path" },
     rowsSettings: { text: "rows, any setting as a path" },
+    workspaceFilters: {
+      excluded: "Workspace filters are not in dashboard text yet.",
+    },
     charts: { text: "a chart line, any setting as a path" },
     theme: { text: "theme name=" },
     geometryAssets: {

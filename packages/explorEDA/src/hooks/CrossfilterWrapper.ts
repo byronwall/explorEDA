@@ -1,7 +1,9 @@
 import { getChartDefinition } from "@/charts/registry";
+import { applyFilter } from "@/hooks/applyFilter";
 import { getPopulationTest, restrictToPopulation } from "@/lib/chartPopulation";
 import { IdType } from "@/providers/DataLayerProvider";
 import { ChartSettings } from "@/types/ChartTypes";
+import type { Filter } from "@/types/FilterTypes";
 import crossfilter from "crossfilter2";
 import isEqual from "react-fast-compare";
 
@@ -13,10 +15,27 @@ type ChartDimension<TData, TId extends IdType> = {
   group: crossfilter.Group<TData, TId, number>;
 };
 
+type WorkspaceDimension<TData, TId extends IdType> = {
+  dimension: crossfilter.Dimension<TData, TId>;
+  filter: Filter;
+  group: crossfilter.Group<TData, TId, number>;
+};
+
+/** The live items key for a workspace filter on one field. */
+export function workspaceLiveKey(field: string) {
+  return `workspace:${field}`;
+}
+
 export class CrossfilterWrapper<T> {
   ref: crossfilter.Crossfilter<T>;
   private nonce = 0;
   charts: Map<string, ChartDimension<T, IdType>> = new Map();
+  /**
+   * Filters no chart owns, one dimension per field. Like a chart's own
+   * filter, a field's dimension leaves its own filter out of its group, so
+   * that field's control can still show every value the other filters allow.
+   */
+  workspace: Map<string, WorkspaceDimension<T, IdType>> = new Map();
   idFunction: (item: T) => IdType;
 
   // assume this gets set after creation
@@ -99,6 +118,41 @@ export class CrossfilterWrapper<T> {
     this.charts.clear();
   }
 
+  /**
+   * Applies the workspace's filters: at most one per field. `refresh`
+   * re-reads every column, for when calculated values change.
+   */
+  setWorkspaceFilters(filters: readonly Filter[], refresh = false) {
+    const next = new Map(filters.map((filter) => [filter.field, filter]));
+    for (const [field, entry] of this.workspace) {
+      if (next.has(field)) continue;
+      entry.dimension.filterAll();
+      entry.group.dispose();
+      entry.dimension.dispose();
+      this.workspace.delete(field);
+    }
+    for (const [field, filter] of next) {
+      const existing = this.workspace.get(field);
+      if (!refresh && existing && isEqual(existing.filter, filter)) continue;
+      const entry = existing ?? this.addWorkspaceDimension(field, filter);
+      entry.filter = filter;
+      // Look the column up once; the test runs once per row.
+      const values = this.fieldGetter(field);
+      entry.dimension.filterFunction((id) => applyFilter(values[id], filter));
+    }
+  }
+
+  private addWorkspaceDimension(field: string, filter: Filter) {
+    const dimension = this.ref.dimension(this.idFunction);
+    const entry: WorkspaceDimension<T, IdType> = {
+      dimension,
+      filter,
+      group: dimension.group<IdType, number>(),
+    };
+    this.workspace.set(field, entry);
+    return entry;
+  }
+
   getFilterFunction(chart: ChartSettings): (d: IdType) => boolean {
     const definition = getChartDefinition(chart.type);
     return definition.getFilterFunction(chart, this.fieldGetter);
@@ -137,6 +191,12 @@ export class CrossfilterWrapper<T> {
         items: inPopulation
           ? items.filter((item) => inPopulation(item.key))
           : items,
+        nonce: commonNonce,
+      };
+    }
+    for (const [field, entry] of this.workspace) {
+      data[workspaceLiveKey(field)] = {
+        items: entry.group.all(),
         nonce: commonNonce,
       };
     }

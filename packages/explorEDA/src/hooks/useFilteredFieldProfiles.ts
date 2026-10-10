@@ -36,8 +36,10 @@ export function useFilteredFieldProfiles(
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const crossfilterWrapper = useDataLayer((state) => state.crossfilterWrapper);
   const liveItems = useDataLayer((state) => state.liveItems);
-  // Whether any chart exists; the list itself changes on every edit.
-  const hasCharts = useDataLayer((state) => state.charts.length > 0);
+  // Whether any filter owner exists; the chart list changes on every edit.
+  const hasCharts = useDataLayer(
+    (state) => state.charts.length > 0 || state.workspaceFilters.length > 0
+  );
   const ownId = own?.id;
   const ownFilters = own?.filters;
   // Callers often build the list inline, so compare its contents.
@@ -142,17 +144,17 @@ export function useFilteredFieldProfiles(
   ]);
 }
 
-/** Rows that pass every chart filter. */
+/** Rows that pass every linked filter. */
 export function useFilteredRowCount(): number {
   const data = useDataLayer((state) => state.data);
   const crossfilterWrapper = useDataLayer((state) => state.crossfilterWrapper);
   const liveItems = useDataLayer((state) => state.liveItems);
-  // Whether any chart exists; the list itself changes on every edit.
-  const hasCharts = useDataLayer((state) => state.charts.length > 0);
+  // Whether any filter owner exists; the chart list changes on every edit.
+  const hasCharts = useDataLayer(
+    (state) => state.charts.length > 0 || state.workspaceFilters.length > 0
+  );
   return useMemo(() => {
     void liveItems;
-    return hasCharts
-      ? crossfilterWrapper.getFilteredRowCount()
-      : data.length;
+    return hasCharts ? crossfilterWrapper.getFilteredRowCount() : data.length;
   }, [data, crossfilterWrapper, liveItems, hasCharts]);
 }
