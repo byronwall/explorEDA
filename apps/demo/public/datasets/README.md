@@ -74,6 +74,22 @@ node --experimental-strip-types apps/data-samples/prepare/flights.ts
 
 The script downloads the package once into `tmp/data-cache`.
 
+## Beijing air quality, 2016
+
+- Folder: `beijing/`, with `manifest.json` for the archive checksum, station files, counts, and audits
+- Tables: `station-days.csv` (4,392 rows, 12 stations × 366 days), `stations.csv` (12), and `reference-days.csv` (366)
+- Demo: `/examples/beijing-air`
+- Use: coverage before comparison, calendar summaries, seasonal fits, densities, and six-pollutant profiles
+- Source: [UCI Beijing Multi-Site Air Quality](https://archive.ics.uci.edu/dataset/501/beijing+multi+site+air+quality+data)
+- License: CC BY 4.0
+- Citation: Chen, S. (2017). DOI: 10.24432/C5RK5G. Air quality from the Beijing Municipal Environmental Monitoring Center.
+
+Each daily mean uses the station's hourly readings and needs at least 20 valid hours of 24; otherwise it is empty. Calendar components are the publisher's labels, not UTC instants. Rain is left out because its interval is not documented. The reference table repeats Aotizhongxin, the first station by name, so each day can be compared with the same date there.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/beijing.ts
+```
+
 ## Message log
 
 - File: `message-log.csv`

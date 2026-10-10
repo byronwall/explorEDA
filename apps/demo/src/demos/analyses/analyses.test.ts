@@ -4,6 +4,8 @@ import type { AnalysisSourceRow } from "exploreda";
 import { evaluateAnalysisQuery } from "exploreda/analysis";
 import { describe, expect, it } from "vitest";
 import { parseCsvData } from "@/csvParser";
+import { beijingAnalysis } from "./beijing";
+import { facts as beijingFacts } from "./facts/beijing";
 import { facts as flightFacts } from "./facts/flights";
 import { flightsAnalysis } from "./flights";
 import { analysisQueryId, buildAnalysisViews } from "./loadAnalysis";
@@ -27,6 +29,28 @@ function sum(rows: { data: Record<string, unknown> }[], field: string) {
       ? total + value
       : total;
   }, 0);
+}
+
+async function evaluate(analysis: ExampleAnalysis) {
+  return evaluateAnalysisQuery(
+    analysis.project,
+    await readTables(analysis),
+    analysisQueryId(analysis)
+  );
+}
+
+async function expectCleanTabs(analysis: ExampleAnalysis, names: string[]) {
+  const tables = await readTables(analysis);
+  const built = buildAnalysisViews(analysis, tables, { sample: false });
+  expect(built.diagnostics).toEqual([]);
+  expect(built.skippedCharts).toEqual([]);
+  expect([built.name, ...built.views.map((view) => view.name)]).toEqual(names);
+  // The workspace checks its text against a sample; it must build the same.
+  const sampled = buildAnalysisViews(analysis, tables);
+  expect({ ...sampled.savedData, metadata: undefined }).toEqual({
+    ...built.savedData,
+    metadata: undefined,
+  });
 }
 
 describe("January flights", () => {
@@ -59,24 +83,13 @@ describe("January flights", () => {
   });
 
   it("builds every tab from its text against all rows", async () => {
-    const tables = await readTables(flightsAnalysis);
-    const built = buildAnalysisViews(flightsAnalysis, tables, {
-      sample: false,
-    });
-    expect(built.diagnostics).toEqual([]);
-    expect(built.skippedCharts).toEqual([]);
-    expect([built.name, ...built.views.map((view) => view.name)]).toEqual([
+    await expectCleanTabs(flightsAnalysis, [
       "Delays carry through",
       "Departure predicts arrival",
       "Weather at the scheduled hour",
       "When delays happened",
       "Routes and aircraft",
     ]);
-    const sampled = buildAnalysisViews(flightsAnalysis, tables);
-    expect({ ...sampled.savedData, metadata: undefined }).toEqual({
-      ...built.savedData,
-      metadata: undefined,
-    });
   });
 
   it("states findings that match the query result", async () => {
@@ -105,5 +118,37 @@ describe("January flights", () => {
           row.arr_band === "4 Over 60 min late"
       ).length
     ).toBe(findings.overHourStillOverHour);
+  });
+});
+
+describe("Beijing air quality", () => {
+  it("keeps the full station-day grid through both lookups", async () => {
+    const result = await evaluate(beijingAnalysis);
+    const { audit } = beijingFacts;
+    expect(result.counts.output).toBe(audit.expectedStationDays);
+    expect(sum(result.rows, "days.recorded_hours")).toBe(audit.sourceHours);
+    expect(sum(result.rows, "days.pm25_valid_hours")).toBe(
+      audit.pm25ValidHours
+    );
+    expect(
+      result.diagnostics.filter((item) =>
+        ["missing-lookup", "ambiguous-lookup", "duplicate-key"].includes(
+          item.code
+        )
+      )
+    ).toEqual([]);
+    expect(
+      result.rows.filter((row) => row.data.pm25_status === "Qualified").length
+    ).toBe(audit.qualifiedPm25Days);
+  });
+
+  it("builds every tab from its text against all rows", async () => {
+    await expectCleanTabs(beijingAnalysis, [
+      "A year of PM2.5",
+      "Coverage and stations",
+      "Particles and NO₂",
+      "Ozone follows temperature",
+      "Six-pollutant profiles",
+    ]);
   });
 });
