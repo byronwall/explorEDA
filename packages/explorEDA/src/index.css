@@ -394,6 +394,18 @@
   fill: var(--foreground);
   font-weight: 600;
 }
+/* Scatter matrix panels sit on a soft fill, with field names in strips. */
+.eda-matrix-cell {
+  fill: color-mix(in oklab, var(--muted) 55%, transparent);
+  stroke: var(--border);
+}
+.eda-matrix-cell[data-kind="blank"] {
+  fill: transparent;
+  stroke: none;
+}
+.eda-matrix-strip {
+  fill: var(--muted);
+}
 /* Sankey node labels select their node, like the node itself. */
 .eda-sankey-label {
   cursor: pointer;

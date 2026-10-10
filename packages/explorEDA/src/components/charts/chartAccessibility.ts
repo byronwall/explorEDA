@@ -16,6 +16,7 @@ const chartNames: Record<string, string> = {
   markdown: "Markdown note",
   sankey: "Sankey diagram",
   "parallel-coordinates": "Parallel coordinates",
+  "scatter-matrix": "Scatter matrix",
   calendar: "Calendar heatmap",
   heatmap: "Heatmap",
   ecdf: "Cumulative distribution",
@@ -63,6 +64,14 @@ export function getChartTitle(
     const labels = settings.stages.filter(Boolean).map(getFieldLabel);
     return labels.length > 1
       ? `${labels.join(" → ")}`
+      : getChartDefinition(settings.type).name;
+  }
+  if (settings.type === "scatter-matrix") {
+    const labels = settings.fields.filter(Boolean).map(getFieldLabel);
+    return labels.length
+      ? labels.length > 3
+        ? `${labels.slice(0, 3).join(", ")} and ${labels.length - 3} more`
+        : labels.join(", ")
       : getChartDefinition(settings.type).name;
   }
   if (settings.type === "parallel-coordinates") {
@@ -161,6 +170,8 @@ export function getChartFields(settings: ChartSettings): string[] {
           ...settings.axes.map((axis) => axis.field),
           settings.colorField,
         ];
+      case "scatter-matrix":
+        return [...settings.fields, settings.colorField];
       case "calendar":
         return [settings.field, settings.measureField];
       case "heatmap":

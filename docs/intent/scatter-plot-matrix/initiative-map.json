@@ -4,11 +4,11 @@
     "title": "Scatter plot matrix with diagonal distributions",
     "slug": "scatter-plot-matrix",
     "scale": "capability",
-    "current_phase": "plan",
+    "current_phase": "execution",
     "last_updated": "2026-10-06",
     "summary": "Inspect several field pairs in off-diagonal scatter plots and each field’s distribution on the diagonal.",
-    "status": "planned",
-    "next_action": "Start Milestone 1: mixed-type penguins matrix with points everywhere and linked brushing."
+    "status": "active",
+    "next_action": "Milestone 2: measure and protect brushing at 100k rows and 10 fields."
   },
   "artifacts": {
     "intent_brief": {
@@ -570,12 +570,17 @@
       {
         "id": "M1",
         "title": "A mixed-type penguins matrix with points everywhere and linked brushing",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Shared-axis planner for numeric, categorical, boolean, and date fields; points in every cell; r; histogram and bar diagonals; one brush with gray context.",
         "proof": "Planner tests (counts, r, fixed domains/bands, range/value brush filters, date fixture) and browser check at three widths; Byron judges readability.",
         "valid_intermediate_state": "Registered, saveable view with points-only cells.",
         "rollback": "Remove the AddChartDialog entry; keep the type and validator so saves load.",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "evidence": [
+          "Planner tests on penguins (counts, r≈0.595, fixed domains, range/value/date-range brush filters) pass; 665 package and 87 demo tests pass.",
+          "Browser check of the penguins example: brush sets two filters, every cell dims, species bar click selects, empty click clears; screenshots at 1280, 783, 390 px."
+        ],
+        "notes": "The penguins demo example and coverage entry moved into M1 so every milestone has a reproducible screen; the settings panel ships a field list early."
       },
       {
         "id": "M2",
@@ -688,6 +693,12 @@
       "action": "Brought categorical, boolean, and date fields into the first release; reshaped around shared axes with per-pair-type cell kinds; replanned into six milestones.",
       "reason": "User required categorical support, all data types in scatter cells, a jitter option, and intentional cells such as box plots.",
       "evidence": "Source inspection of scatterAxis band axes, jitter, band-aware brushFilters, dateTime, boxPlotCalculations. No implementation."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Started execution; completed Milestone 1 on branch claude/scatter-matrix-m1.",
+      "reason": "User approved the plan and asked for a stack of PRs.",
+      "evidence": "Tests and browser checks listed on milestone M1."
     }
   ],
   "closure": null,
