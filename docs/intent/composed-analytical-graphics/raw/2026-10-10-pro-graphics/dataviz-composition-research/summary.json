@@ -1,0 +1,42 @@
+{
+  "total": 23,
+  "families": {
+    "Strips, heat strips, and timeline grids": 2,
+    "Waffles and unit grids": 2,
+    "Sparkline tables": 2,
+    "Fans, bands, and uncertainty": 2,
+    "Ridgelines, horizons, and stacked strips": 2,
+    "Normalized stacks and share charts": 2,
+    "Annotated single-frame editorial charts": 2,
+    "Historical composed graphics": 2,
+    "Small-multiple lines and areas": 1,
+    "Dots, dumbbells, and intervals": 2,
+    "Slopes and bumps": 2,
+    "Tile-grid maps with mini charts": 2
+  },
+  "tiers": {
+    "Today": 3,
+    "Planned M2–M6": 7,
+    "New capability": 13
+  },
+  "data_status": {
+    "Available": 20,
+    "Obtainable": 3,
+    "Synthetic": 0
+  },
+  "milestones": {
+    "paths": 13,
+    "bands": 6,
+    "paired summaries": 0,
+    "normalized stacks": 3,
+    "compound frames": 1
+  },
+  "gaps": {
+    "horizontal bar length encoding": 1,
+    "numeric positions for circle marks": 8,
+    "tile-grid arrangement driven by row and column fields": 3,
+    "data-driven repeat height": 1,
+    "continuous color gradients along paths": 1,
+    "gradient fills in areas": 1
+  }
+}

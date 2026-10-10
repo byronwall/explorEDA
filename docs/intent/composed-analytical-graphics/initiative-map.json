@@ -5,16 +5,16 @@
     "slug": "composed-analytical-graphics",
     "scale": "capability",
     "current_phase": "execution",
-    "last_updated": "2026-10-09",
+    "last_updated": "2026-10-10",
     "summary": "Author polished report graphics from a blank page using primitives, repeated templates, scoped calculations, group placement, and instance overrides.",
     "status": "active",
-    "next_action": "Merge #215 (direct editor entry, fewer redraws). Then decide whether value domains stay fixed under filtering, and start milestone 2 (connected observations)."
+    "next_action": "Claude: close the remaining report/slide PNG paste proof, audit a small measles strip, then continue M2 with shared numeric point/path coordinates. Read the archived Pro records before selecting fixtures."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-09-29"
+      "updated_at": "2026-10-10"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -24,22 +24,27 @@
     "shape_brief": {
       "path": "shape-brief.md",
       "status": "current",
-      "updated_at": "2026-09-29"
+      "updated_at": "2026-10-10"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
       "status": "current",
-      "updated_at": "2026-09-29"
+      "updated_at": "2026-10-10"
     },
     "reference_study": {
       "path": "reference-study.md",
       "status": "current",
-      "updated_at": "2026-09-29"
+      "updated_at": "2026-10-10"
     },
     "reference_assets": {
       "path": "references/README.md",
       "status": "current",
       "updated_at": "2026-09-29"
+    },
+    "pro_sources": {
+      "path": "raw/2026-10-10-pro-graphics/README.md",
+      "status": "current",
+      "updated_at": "2026-10-10"
     }
   },
   "sources": [
@@ -119,6 +124,41 @@
       "location": "2026-09-29 current conversation",
       "anchor": "Store reference images and available datasets for all discovered examples",
       "authority": "direct intent"
+    },
+    {
+      "id": "pro-import-request",
+      "type": "direct-user-input",
+      "location": "Codex chat 01a1262a-73a0-7bb3-9360-8888cf9b5935, 2026-10-10",
+      "anchor": "Branch = claude/composed-chart-audit-62bcc8; update intent docs; preserve raw sources; Claude will continue integration; download and synthesis approved",
+      "authority": "current direct intent"
+    },
+    {
+      "id": "pro-graphics-prompt",
+      "type": "direct-user-input",
+      "location": "raw/2026-10-10-pro-graphics/Pasted markdown(20261010-050011).md",
+      "anchor": "Background, What to find, Final deliverable",
+      "authority": "user-supplied research brief; examples and tiers do not establish implementation acceptance"
+    },
+    {
+      "id": "pro-graphics-response",
+      "type": "agent-research",
+      "location": "raw/2026-10-10-pro-graphics/pro-response.md",
+      "anchor": "The five to build first; capability gaps; data quality and reconstruction limits",
+      "authority": "Pro research recommendations, not new product requirements"
+    },
+    {
+      "id": "pro-graphics-records",
+      "type": "agent-research",
+      "location": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json",
+      "anchor": "Entries 01–23; composition, data status, source data, verification, and supporting URLs",
+      "authority": "archived Pro evidence; publisher retrieval claims were not independently repeated during import"
+    },
+    {
+      "id": "composition-branch-audit",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/Composition/",
+      "anchor": "29b402349f7ee1214cb5f71dc17bc8c5cac84458; compositionTypes.ts, resolveUnit.ts, compositionOutput.ts, UnitInspector.tsx, ScaleInspector.tsx",
+      "authority": "read-only source inspection; no browser acceptance test in this import"
     }
   ],
   "intent": {
@@ -271,12 +311,16 @@
         "statement": "Current charts are separate registry components, while facets and tracing cover only parts of the desired composition",
         "commitment": "derived",
         "importance": "supporting",
-        "status": "active",
+        "status": "superseded",
         "time_horizon": "proof",
         "source_anchors": [
           "repo:ChartRenderer",
           "prior-workspace:visualization specification"
-        ]
+        ],
+        "superseded_by": [
+          "c29"
+        ],
+        "notes": "First composition slice is now implemented; preserve the earlier repository assessment as history."
       },
       {
         "id": "c13",
@@ -409,7 +453,7 @@
         "source_anchors": [
           "product-feedback:annotation 5"
         ],
-        "notes": "Agent recommendation; identity behavior has not yet been selected by the user."
+        "notes": "Implemented in InstanceOverride.instanceKey and findOverride; the import does not claim a new browser acceptance pass."
       },
       {
         "id": "c24",
@@ -470,6 +514,84 @@
         "source_anchors": [
           "product-feedback-2:annotation 5"
         ]
+      },
+      {
+        "id": "c29",
+        "type": "current repository reality",
+        "statement": "The requested branch contains blank composition authoring, strip marks, repeats, scoped calculations, annotations, overrides, tracing, and PNG copying. Numeric x/y frames and M2–M6 remain unimplemented.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "composition-branch-audit:compositionTypes.ts",
+          "composition-branch-audit:resolveUnit.ts",
+          "composition-branch-audit:compositionOutput.ts"
+        ]
+      },
+      {
+        "id": "c30",
+        "type": "constraint",
+        "statement": "This task imports and synthesizes the composed-graphics Pro material. Claude owns subsequent application integration.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "pro-import-request:download and synthesis approved; Claude will continue integration"
+        ]
+      },
+      {
+        "id": "c31",
+        "type": "example",
+        "statement": "The 23 examples and five recommended builds expand the proof collection without requiring exact replicas or replacing the milestone sequence.",
+        "commitment": "illustrative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "pro-graphics-response:The five to build first",
+          "pro-graphics-prompt:What to find"
+        ]
+      },
+      {
+        "id": "c32",
+        "type": "derived implication",
+        "statement": "Shared numeric coordinates for circles and paths are required by the existing Driving proof and useful across eight new examples.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "reference-research:Driving",
+          "pro-graphics-records:12,14,15,16,17,18,21,22"
+        ],
+        "notes": "Clarifies the existing M2 foundation; the frequency count alone does not authorize other additions."
+      },
+      {
+        "id": "c33",
+        "type": "future possibility",
+        "statement": "Explicit tile addresses, horizontal bar lengths, data-driven repeat height, and path/area gradients remain candidates after the current proofs.",
+        "commitment": "tentative",
+        "importance": "peripheral",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          "pro-graphics-response:Capability gaps, ranked by frequency"
+        ]
+      },
+      {
+        "id": "c34",
+        "type": "current repository reality",
+        "statement": "M1 code and historical clipboard readback evidence exist, but the agreed report/slide paste observation remains missing.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "composition-branch-audit:implementation-plan.md M1 status"
+        ],
+        "notes": "Corrects the milestone acceptance status; initiative remains active."
       }
     ],
     "themes": [
@@ -510,19 +632,21 @@
   "shape": {
     "status": "current",
     "appetite": "One complete authoring and output flow plus a small layout check; five staged capability extensions",
-    "problem": "The workspace cannot author polished graphics from primitives, repeated units, scoped calculations, and individual refinements",
+    "problem": "Authors need to finish and extend the existing strip composition editor while preserving meaningful data, saved refinements, and report output.",
     "recommended_shape": "Blank composition editor with repeated templates, common scales, visual instance overrides, group placement, three annotation anchor types, editing/viewing modes, and PNG clipboard output",
     "success_moves": [
-      "Test authoring from blank",
-      "Distinguish template and instance edits",
-      "Separate population from filter policy",
-      "Prove group placement and nudges",
-      "Check report output early"
+      "Retain the existing first slice and close the real report/slide paste proof before marking M1 complete.",
+      "Audit a small measles fixture to expose palette, order, and missing-cell limits before a full recreation.",
+      "Use one named numeric frame for both points and ordered paths in the Driving proof.",
+      "Keep preparation explicit and local; packed cells and precomputed densities do not imply native transforms.",
+      "Keep raw Pro files unchanged and separate source classifications from repository evidence.",
+      "Defer tile addresses and gradients until a selected proof needs them."
     ],
     "first_proof": {
       "question": "Can the author build and finish a repeated graphic from blank while keeping its inputs and exceptions understandable?",
       "artifact": "A graphic authored from blank, saved and reloaded, with shared scales, visual overrides, scoped calculations, tracing, annotation anchors, and PNG clipboard output",
-      "decision_rule": "Proceed when blank authoring, save/reload, correct tracing, visual override retention, anchor behavior, and pasted PNG appearance work; check a second repeat arrangement before widening mark coverage"
+      "decision_rule": "Proceed when blank authoring, save/reload, correct tracing, visual override retention, anchor behavior, and pasted PNG appearance work; check a second repeat arrangement before widening mark coverage",
+      "observed_status": "Code exists and prior documentation reports PNG clipboard readback; real report/slide paste remains unproved. No new browser proof ran during the import."
     },
     "rabbit_holes": [
       "Preset-only authoring proof",
@@ -532,29 +656,41 @@
       "Editable PPTX export",
       "Recurring reports and parameterized dashboards"
     ],
-    "open_decisions": []
+    "open_decisions": [
+      {
+        "id": "value-domain-filter-policy",
+        "question": "Should shared value domains stay fixed under filtering by default?",
+        "current_behavior": "resolveUnit calculates maxima from filtered glyphs",
+        "recommendation": "Choose and save the policy explicitly before claiming a faithful archival comparison; source examples alone do not settle this product choice."
+      }
+    ]
   },
   "implementation": {
-    "status": "planned",
+    "status": "active",
     "repository_snapshot": {
-      "root": "/Users/byronwall/.codex/worktrees/e44a8c8b-4922-4374-8cda-5b028b88b70d/explorEDA",
-      "revision": "6762dfd1ea96d45d80ec86feb130a23fe92c4fdf",
-      "worktree_status": "Detached HEAD; initiative documents are untracked; application code unchanged",
+      "root": "/Users/byronwall/Projects/explorEDA/.claude/worktrees/composed-chart-audit-9fdc4a",
+      "revision": "29b402349f7ee1214cb5f71dc17bc8c5cac84458",
+      "branch": "claude/composed-chart-audit-62bcc8",
+      "inspected_at": "2026-10-10",
+      "worktree_status": "Before import: one untracked user file, example-research-prompt.md. Preserve it unchanged and outside the import commits.",
       "subsystems": [
-        "Chart registry and settings",
-        "SavedDataStructure and save validation",
-        "DataLayerProvider and aggregates",
-        "Facet layout and scatter render plan",
-        "ChartTraceScope and trace panel"
+        "Composition definition and validation",
+        "resolveUnit and resolveComposition",
+        "Unit, Scale, and Annotation inspectors",
+        "Composition trace and contributors",
+        "PNG output",
+        "Composition registration and saved state"
       ],
       "test_commands": [
-        "pnpm --filter exploreda test <test-file>",
+        "pnpm --filter exploreda exec vitest run <test-file>",
+        "pnpm --filter exploreda check-types",
         "pnpm check"
       ],
       "deployment_surfaces": [
         "Published exploreda library",
         "Local Vite demo"
-      ]
+      ],
+      "verification_scope": "Source inspection and archive/document integrity only; no implementation, build, browser test, or deployment."
     },
     "dependencies": [
       {
@@ -582,7 +718,7 @@
       }
     ],
     "fast_local_loop": {
-      "command": "pnpm --filter demo dev -- --host 127.0.0.1",
+      "command": "pnpm --filter demo dev --port 5291 --strictPort",
       "proof": "Author local fixtures from blank; focused resolver tests without remote dataset fetches"
     },
     "milestones": [
@@ -595,11 +731,15 @@
         "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
         "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
         "dependencies_introduced": [],
-        "status": "completed",
+        "status": "active",
         "evidence": [
           "PRs #210-#214 merged; implementation-plan.md 'Status: vertical slice built'",
-          "Not yet checked: pasting the PNG into a report or slide by hand"
-        ]
+          "Not yet checked: pasting the PNG into a report or slide by hand",
+          "2026-10-10: checked current composition source and PR #215 merge ancestry; first-slice implementation is present.",
+          "2026-10-10: corrected completed to active because the recorded report/slide paste proof is still missing. This is an evidence correction, not a new requirement."
+        ],
+        "remaining_proof": "Paste copied PNG into a real report or slide and compare text, dimensions, colors, and clipping.",
+        "research_follow_up": "Audit entry 01 on a small local fixture before a full 51-state strip; do not silently treat null or absent cells as zero."
       },
       {
         "id": "m2",
@@ -608,11 +748,16 @@
         "depends_on": [
           "m1"
         ],
-        "proof": "Shuffled input retains year order; missing coordinates break the path; segment contributors inspect correctly",
+        "proof": "Shuffled input retains year order; missing coordinates break the path; segment contributors inspect correctly; points and path vertices agree in the same numeric frame after domain changes",
         "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
         "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
         "dependencies_introduced": [],
-        "status": "planned"
+        "status": "planned",
+        "reference_entries": [
+          "14",
+          "12",
+          "15"
+        ]
       },
       {
         "id": "m3",
@@ -625,7 +770,12 @@
         "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
         "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
         "dependencies_introduced": [],
-        "status": "planned"
+        "status": "planned",
+        "reference_entries": [
+          "05",
+          "10",
+          "06"
+        ]
       },
       {
         "id": "m4",
@@ -638,7 +788,8 @@
         "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
         "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
         "dependencies_introduced": [],
-        "status": "planned"
+        "status": "planned",
+        "research_qualification": "No direct new M4 benchmark. Entry 16 uses mean and sample SD, not median and IQR."
       },
       {
         "id": "m5",
@@ -647,11 +798,15 @@
         "depends_on": [
           "m4"
         ],
-        "proof": "100% totals, numerator/denominator trace, stable order, and zero-total gaps",
+        "proof": "100% totals, numerator/denominator trace, stable order, and zero-total gaps; entry 07 preserves selected-cause denominators and supports normalized rectangle geometry",
         "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
         "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
         "dependencies_introduced": [],
-        "status": "planned"
+        "status": "planned",
+        "reference_entries": [
+          "07",
+          "09"
+        ]
       },
       {
         "id": "m6",
@@ -664,7 +819,10 @@
         "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
         "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
         "dependencies_introduced": [],
-        "status": "planned"
+        "status": "planned",
+        "reference_entries": [
+          "04"
+        ]
       }
     ],
     "cut_line": [
@@ -672,9 +830,29 @@
       "Exact source-data parity",
       "Forecast generation and survey weighting",
       "Automatic label solver",
-      "Additional export formats and recurring reports"
+      "Additional export formats and recurring reports",
+      "Tile-addressed repeats, horizontal bar lengths, data-driven repeat heights, and path/area gradients until selected proof requires them"
     ],
-    "open_decisions": []
+    "open_decisions": [
+      {
+        "id": "value-domain-filter-policy",
+        "decision": "Choose fixed versus filtered shared value domains.",
+        "evidence": "Small filtered measles/strip comparison; resolveUnit computes sharedMax from live glyphs.",
+        "fallback": "Keep current behavior explicit; do not claim fixed archival colors."
+      },
+      {
+        "id": "today-tier-audit",
+        "decision": "Choose the minimum faithful strip proof and list exact unsupported details.",
+        "evidence": "Local fixture with zero, null, absent cell, source row order, and color meaning.",
+        "fallback": "Use a labeled approximation or defer the example; do not encode categories as a continuous value scale."
+      },
+      {
+        "id": "source-fixture",
+        "decision": "Pin only the dataset and upstream transformation needed by the selected proof.",
+        "evidence": "Source URLs, terms, grain, nulls, calculation and vintage in archived records.",
+        "fallback": "Use a clearly labeled deterministic illustrative fixture; do not claim source-data parity."
+      }
+    ]
   },
   "history": [
     {
@@ -721,6 +899,467 @@
         "Milestone 1 merged as PRs #210-#214 (composition chart type, repeats, calculations, overrides, Copy PNG)",
         "PR #215 open"
       ]
+    },
+    {
+      "date": "2026-10-10",
+      "event": "Imported the full composed-graphics Pro package and original prompt. Preserved raw classifications and source claims. Added entry-level reconciliation against the requested branch."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "Updated intent, shape and plan in place. Retained the milestone sequence, clarified numeric points with paths, and kept extra gaps as candidates. Revalidated downstream documents after repository and research changes.",
+      "invalidation": {
+        "intent": "Durable intent unchanged; current reality corrected.",
+        "shape": "Refreshed for existing editor and new proof candidates.",
+        "plan": "Regenerated affected continuation sections; no stale downstream artifact retained."
+      }
+    },
+    {
+      "date": "2026-10-10",
+      "event": "Corrected M1 status from completed to active because the existing acceptance evidence explicitly lacks real report/slide paste. Initiative remains active in execution; no retirement or scope removal."
     }
-  ]
+  ],
+  "research_import": {
+    "date": "2026-10-10",
+    "chat_title": "Research Data Viz Graphics",
+    "chat_url": "https://chatgpt.com/c/6ac9c668-4fcc-83ea-835d-6eb65c5afa84",
+    "scope": "Composed-graphics response and every attached deliverable in the complete package. Notebook and monetization chats are separate initiatives.",
+    "archive": "raw/2026-10-10-pro-graphics",
+    "source_inventory": "raw/2026-10-10-pro-graphics/source-inventory.json",
+    "integrity": "raw/2026-10-10-pro-graphics/integrity.json",
+    "source_summary": {
+      "total": 23,
+      "families": {
+        "Strips, heat strips, and timeline grids": 2,
+        "Waffles and unit grids": 2,
+        "Sparkline tables": 2,
+        "Fans, bands, and uncertainty": 2,
+        "Ridgelines, horizons, and stacked strips": 2,
+        "Normalized stacks and share charts": 2,
+        "Annotated single-frame editorial charts": 2,
+        "Historical composed graphics": 2,
+        "Small-multiple lines and areas": 1,
+        "Dots, dumbbells, and intervals": 2,
+        "Slopes and bumps": 2,
+        "Tile-grid maps with mini charts": 2
+      },
+      "tiers": {
+        "Today": 3,
+        "Planned M2–M6": 7,
+        "New capability": 13
+      },
+      "data_status": {
+        "Available": 20,
+        "Obtainable": 3,
+        "Synthetic": 0
+      },
+      "milestones": {
+        "paths": 13,
+        "bands": 6,
+        "paired summaries": 0,
+        "normalized stacks": 3,
+        "compound frames": 1
+      },
+      "gaps": {
+        "horizontal bar length encoding": 1,
+        "numeric positions for circle marks": 8,
+        "tile-grid arrangement driven by row and column fields": 3,
+        "data-driven repeat height": 1,
+        "continuous color gradients along paths": 1,
+        "gradient fills in areas": 1
+      }
+    },
+    "recommended_builds": [
+      "01",
+      "03",
+      "14",
+      "05",
+      "07"
+    ],
+    "recommendation_authority": "Pro proposals; no approval to add all gaps or replace the accepted outcome sequence.",
+    "archive_limit": "The Pro package contains 23 images, reports, source URLs and verification notes; it contains no original dataset payloads. Import does not repeat publisher retrievals.",
+    "local_observations": [
+      {
+        "files": [
+          "compositionTypes.ts",
+          "resolveUnit.ts"
+        ],
+        "finding": "Date/category strip positions; no independent numeric x/y point binding."
+      },
+      {
+        "files": [
+          "compositionTypes.ts",
+          "resolveUnit.ts",
+          "ScaleInspector.tsx"
+        ],
+        "finding": "Value scales have two colors; nonpositive values map to zero. No categorical color map, signed diverging domain, or multistop ramp."
+      },
+      {
+        "files": [
+          "compositionTypes.ts",
+          "resolveUnit.ts",
+          "UnitInspector.tsx"
+        ],
+        "finding": "Repeat ordering is count or label; dense rows/columns/grid; no explicit rank or tile address."
+      },
+      {
+        "files": [
+          "resolveUnit.ts"
+        ],
+        "finding": "Position domains use allIds; value maxima use filtered glyphs. Missing measured values produce no glyph."
+      },
+      {
+        "files": [
+          "compositionTypes.ts"
+        ],
+        "finding": "Composition-level calculations and mark aggregation differ: label/guide calculations include min/max, marks support count/sum/average."
+      }
+    ],
+    "entries": [
+      {
+        "id": "01",
+        "title": "Measles — Battling Infectious Diseases in the 20th Century: The Impact of Vaccines",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=01",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/01-measles-battling-infectious-diseases-in-the-20th-century-the-impact-of-vacc.png",
+        "source_tier": "Today",
+        "source_milestones": [],
+        "source_new_capabilities": [],
+        "source_data_status": "Available",
+        "integration_note": "First strip audit. Verify missing cells, source order, color stops, and fixed vaccine guide; Today is not confirmed in the current editor.",
+        "browser_verified": false
+      },
+      {
+        "id": "02",
+        "title": "States won by Democrats and Republicans in the U.S. presidential election",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=02",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/02-states-won-by-democrats-and-republicans-in-the-u-s-presidential-election.png",
+        "source_tier": "Today",
+        "source_milestones": [],
+        "source_new_capabilities": [],
+        "source_data_status": "Obtainable",
+        "integration_note": "Prepared slots are possible in principle. Current value mapping lacks signed diverging colors; source order and the 2020 projection are unresolved. Preserve 533 display slots.",
+        "browser_verified": false
+      },
+      {
+        "id": "03",
+        "title": "The Yield Gap",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=03",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/03-the-yield-gap.png",
+        "source_tier": "Today",
+        "source_milestones": [],
+        "source_new_capabilities": [],
+        "source_data_status": "Available",
+        "integration_note": "Keep joins, means, bins, and square packing upstream. Current model lacks categorical continent colors and explicit prepared ordering; Today is not verified.",
+        "browser_verified": false
+      },
+      {
+        "id": "04",
+        "title": "Long-Term Top Yielding Banana-Producing Countries",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=04",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/04-long-term-top-yielding-banana-producing-countries.png",
+        "source_tier": "Planned M2–M6",
+        "source_milestones": [
+          "paths",
+          "compound frames"
+        ],
+        "source_new_capabilities": [],
+        "source_data_status": "Available",
+        "integration_note": "M2 plus M6 candidate. Local annual path domains, per-column decade colors, and mean of rounded decade means require explicit scope.",
+        "browser_verified": false
+      },
+      {
+        "id": "05",
+        "title": "Fan chart for current budget and PSNFL — Chart 7.4",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=05",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/05-fan-chart-for-current-budget-and-psnfl-chart-7-4.png",
+        "source_tier": "Planned M2–M6",
+        "source_milestones": [
+          "paths",
+          "bands"
+        ],
+        "source_new_capabilities": [],
+        "source_data_status": "Available",
+        "integration_note": "Priority M3 proof with supplied percentile bands. Two ordinary panels, separate y domains, shared time, null historical bounds, and original vintage.",
+        "browser_verified": false
+      },
+      {
+        "id": "06",
+        "title": "Temperatures in Lincoln NE",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=06",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/06-temperatures-in-lincoln-ne.png",
+        "source_tier": "Planned M2–M6",
+        "source_milestones": [
+          "paths",
+          "bands"
+        ],
+        "source_new_capabilities": [],
+        "source_data_status": "Available",
+        "integration_note": "Density curves and baseline offsets are prepared upstream. Their availability does not add a native density estimator.",
+        "browser_verified": false
+      },
+      {
+        "id": "07",
+        "title": "What Americans die from and the causes of death the US media reports on",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=07",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/07-what-americans-die-from-and-the-causes-of-death-the-us-media-reports-on.png",
+        "source_tier": "Planned M2–M6",
+        "source_milestones": [
+          "normalized stacks"
+        ],
+        "source_new_capabilities": [],
+        "source_data_status": "Available",
+        "integration_note": "Priority M5 proof. Four normalized columns; preserve selected-cause denominators, multiple mentions, and accident/overdose correction. Needs stacked rectangle output.",
+        "browser_verified": false
+      },
+      {
+        "id": "08",
+        "title": "More than 1 natural disaster occurs every day since the 21st century",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=08",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/08-more-than-1-natural-disaster-occurs-every-day-since-the-21st-century.png",
+        "source_tier": "Planned M2–M6",
+        "source_milestones": [
+          "bands"
+        ],
+        "source_new_capabilities": [],
+        "source_data_status": "Available",
+        "integration_note": "Supplied cumulative bounds can use M3. Review the tutorial category rename and interpolation before reproducing its conclusions.",
+        "browser_verified": false
+      },
+      {
+        "id": "09",
+        "title": "Income and expenditure of 150 Negro families in Atlanta, Ga., U.S.A.",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=09",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/09-income-and-expenditure-of-150-negro-families-in-atlanta-ga-u-s-a.jpg",
+        "source_tier": "Planned M2–M6",
+        "source_milestones": [
+          "normalized stacks"
+        ],
+        "source_new_capabilities": [],
+        "source_data_status": "Available",
+        "integration_note": "M5 candidate with supplied aggregate shares. Keep rounding residual and source terms; do not invent household microdata.",
+        "browser_verified": false
+      },
+      {
+        "id": "10",
+        "title": "History of global temperature change and causes of recent warming — IPCC AR6 WGI SPM Figure 1",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=10",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/10-history-of-global-temperature-change-and-causes-of-recent-warming-ipcc-ar6.png",
+        "source_tier": "Planned M2–M6",
+        "source_milestones": [
+          "paths",
+          "bands"
+        ],
+        "source_new_capabilities": [],
+        "source_data_status": "Available",
+        "integration_note": "M2/M3 candidate. Separate annual and smoothed series, retain metadata, decode cp1252, and convert the 1e20 missing sentinel.",
+        "browser_verified": false
+      },
+      {
+        "id": "11",
+        "title": "Age distribution of Georgia Negroes compared with France",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=11",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/11-age-distribution-of-georgia-negroes-compared-with-france.jpg",
+        "source_tier": "New capability",
+        "source_milestones": [],
+        "source_new_capabilities": [
+          "horizontal bar length encoding"
+        ],
+        "source_data_status": "Available",
+        "integration_note": "Deferred horizontal length encoding. Preserve age order and already-aggregated percentages without renormalizing.",
+        "browser_verified": false
+      },
+      {
+        "id": "12",
+        "title": "Consumer Confidence Around the World",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=12",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/12-consumer-confidence-around-the-world.png",
+        "source_tier": "New capability",
+        "source_milestones": [
+          "paths"
+        ],
+        "source_new_capabilities": [
+          "numeric positions for circle marks"
+        ],
+        "source_data_status": "Available",
+        "integration_note": "M2 with numeric endpoint circles. Prepared panel expansion supplies context paths; keep the missing China endpoint.",
+        "browser_verified": false
+      },
+      {
+        "id": "13",
+        "title": "Recycling rates by London borough",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=13",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/13-recycling-rates-by-london-borough.png",
+        "source_tier": "New capability",
+        "source_milestones": [],
+        "source_new_capabilities": [
+          "tile-grid arrangement driven by row and column fields"
+        ],
+        "source_data_status": "Available",
+        "integration_note": "Deferred addressed tile layout plus prepared waffle cells. Categorical color and geographic gaps also need explicit verification.",
+        "browser_verified": false
+      },
+      {
+        "id": "14",
+        "title": "Big-tech opening prices in a sparkline table",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=14",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/14-big-tech-opening-prices-in-a-sparkline-table.png",
+        "source_tier": "New capability",
+        "source_milestones": [
+          "paths"
+        ],
+        "source_new_capabilities": [
+          "numeric positions for circle marks"
+        ],
+        "source_data_status": "Available",
+        "integration_note": "Priority M2 follow-up. Numeric circle/path coordinates; per-company observation-index x, shared price y, prepared percent-change order; no M6 needed.",
+        "browser_verified": false
+      },
+      {
+        "id": "15",
+        "title": "Republicans and Democrats in the U.S. differ over some factors that make life meaningful",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=15",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/15-republicans-and-democrats-in-the-u-s-differ-over-some-factors-that-make-lif.png",
+        "source_tier": "New capability",
+        "source_milestones": [
+          "paths"
+        ],
+        "source_new_capabilities": [
+          "numeric positions for circle marks"
+        ],
+        "source_data_status": "Available",
+        "integration_note": "M2 with numeric endpoint circles and a text rail. Preserve supplied survey aggregates and signed percentage-point gaps.",
+        "browser_verified": false
+      },
+      {
+        "id": "16",
+        "title": "Enrollment Trends at Historically Black Colleges and Universities",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=16",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/16-enrollment-trends-at-historically-black-colleges-and-universities.png",
+        "source_tier": "New capability",
+        "source_milestones": [
+          "paths",
+          "bands"
+        ],
+        "source_new_capabilities": [
+          "numeric positions for circle marks"
+        ],
+        "source_data_status": "Available",
+        "integration_note": "M2/M3 with numeric circles. Mean and sample SD across annual totals are not M4 quartiles, student-level variation, or confidence intervals.",
+        "browser_verified": false
+      },
+      {
+        "id": "17",
+        "title": "Investitionstätigkeit in der EU",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=17",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/17-investitionst-tigkeit-in-der-eu.png",
+        "source_tier": "New capability",
+        "source_milestones": [
+          "paths"
+        ],
+        "source_new_capabilities": [
+          "numeric positions for circle marks"
+        ],
+        "source_data_status": "Available",
+        "integration_note": "M2 with numeric rank circles. Prepare ratio/rank, preserve the source country selection, and disclose data-vintage differences.",
+        "browser_verified": false
+      },
+      {
+        "id": "18",
+        "title": "What to Make of Those Soaring Covid Counts — published SAS recreation",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=18",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/18-what-to-make-of-those-soaring-covid-counts-published-sas-recreation.png",
+        "source_tier": "New capability",
+        "source_milestones": [
+          "paths"
+        ],
+        "source_new_capabilities": [
+          "tile-grid arrangement driven by row and column fields",
+          "numeric positions for circle marks"
+        ],
+        "source_data_status": "Available",
+        "integration_note": "Deferred tile addresses plus M2 numeric points. Preserve cutoff, corrections, literal tile positions, and noncommercial source terms.",
+        "browser_verified": false
+      },
+      {
+        "id": "19",
+        "title": "Housing Expensiveness by US State (Jan. 2000–Sept. 2025)",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=19",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/19-housing-expensiveness-by-us-state-jan-2000-sept-2025.png",
+        "source_tier": "New capability",
+        "source_milestones": [],
+        "source_new_capabilities": [
+          "tile-grid arrangement driven by row and column fields"
+        ],
+        "source_data_status": "Available",
+        "integration_note": "Deferred tile addresses. Preserve missing home values and estimated income flags; live sources can differ from the original vintage.",
+        "browser_verified": false
+      },
+      {
+        "id": "20",
+        "title": "Who lives in the capitals? — population-weighted Marimekko explanation",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=20",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/20-who-lives-in-the-capitals-population-weighted-marimekko-explanation.png",
+        "source_tier": "New capability",
+        "source_milestones": [
+          "normalized stacks"
+        ],
+        "source_new_capabilities": [
+          "data-driven repeat height"
+        ],
+        "source_data_status": "Obtainable",
+        "integration_note": "Deferred variable repeat height plus M5. Available shares do not establish exact national population totals or original heights.",
+        "browser_verified": false
+      },
+      {
+        "id": "21",
+        "title": "Corruption and human development",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=21",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/21-corruption-and-human-development.png",
+        "source_tier": "New capability",
+        "source_milestones": [
+          "paths"
+        ],
+        "source_new_capabilities": [
+          "numeric positions for circle marks"
+        ],
+        "source_data_status": "Available",
+        "integration_note": "M2 numeric points and prepared fit curve. The available reconstruction does not verify the original Economist model or analytical extract.",
+        "browser_verified": false
+      },
+      {
+        "id": "22",
+        "title": "The Changing Nature of Middle-Class Jobs",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=22",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/22-the-changing-nature-of-middle-class-jobs.jpg",
+        "source_tier": "New capability",
+        "source_milestones": [
+          "paths"
+        ],
+        "source_new_capabilities": [
+          "continuous color gradients along paths",
+          "numeric positions for circle marks"
+        ],
+        "source_data_status": "Obtainable",
+        "integration_note": "Deferred stroke gradients plus M2 numeric circles. Exact occupation-level table, weights, crosswalk and gender shares remain unverified.",
+        "browser_verified": false
+      },
+      {
+        "id": "23",
+        "title": "More days at the highest temperatures in 2023",
+        "source_record": "raw/2026-10-10-pro-graphics/dataviz-composition-research/research-records.json#id=23",
+        "image": "raw/2026-10-10-pro-graphics/dataviz-composition-research/images/23-more-days-at-the-highest-temperatures-in-2023.png",
+        "source_tier": "New capability",
+        "source_milestones": [
+          "paths",
+          "bands"
+        ],
+        "source_new_capabilities": [
+          "gradient fills in areas"
+        ],
+        "source_data_status": "Available",
+        "integration_note": "Deferred area gradients plus M2/M3. Source values are year-bin counts, not daily records; original density bandwidth remains unverified.",
+        "browser_verified": false
+      }
+    ],
+    "preserved_user_file": "example-research-prompt.md remains unchanged and untracked in the target checkout."
+  }
 }
