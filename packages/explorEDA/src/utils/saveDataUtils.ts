@@ -553,6 +553,19 @@ function isChart(value: unknown): boolean {
         isFiniteNumber(value.lineOpacity) &&
         isFiniteNumber(value.lineWidth)
       );
+    case "scatter-matrix":
+      return (
+        isStringArray(value.fields) &&
+        isMatrixCells(value.lower) &&
+        isMatrixCells(value.upper) &&
+        isRecord(value.diagonal) &&
+        typeof value.diagonal.continuous === "string" &&
+        typeof value.diagonal.categorical === "string" &&
+        (value.pointSize === undefined || isFiniteNumber(value.pointSize)) &&
+        (value.pointOpacity === undefined ||
+          isFiniteNumber(value.pointOpacity)) &&
+        (value.jitter === undefined || isFiniteNumber(value.jitter))
+      );
     case "map":
       return (
         ["point", "region"].includes(value.mode as string) &&
@@ -683,6 +696,15 @@ function isChart(value: unknown): boolean {
     default:
       return false;
   }
+}
+
+function isMatrixCells(value: unknown): boolean {
+  return (
+    isRecord(value) &&
+    typeof value.numeric === "string" &&
+    typeof value.mixed === "string" &&
+    typeof value.categorical === "string"
+  );
 }
 
 function isColorScale(value: unknown): boolean {

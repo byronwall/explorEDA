@@ -126,6 +126,12 @@ const TRACE_COPY = {
       "Alt-click a node or link to trace it. Normal clicks keep selecting. You can also find a source row below.",
     ariaLabel: "Sankey trace inspector",
   },
+  "scatter-matrix": {
+    heading: "Matrix trace",
+    emptyText:
+      "Alt-click a point to follow its row through every field, or Alt-click a cell to see what it draws. Normal clicks keep selecting. You can also find a source row below.",
+    ariaLabel: "Scatter matrix trace inspector",
+  },
   "parallel-coordinates": {
     heading: "Line trace",
     emptyText:

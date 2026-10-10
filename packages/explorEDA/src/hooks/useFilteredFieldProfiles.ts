@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import {
   buildFieldProfile,
+  buildValuesProfile,
   emptyFieldProfile,
   type FieldProfile,
 } from "@/lib/fieldProfiles";
@@ -21,7 +22,12 @@ import type { ChartSettings, datum } from "@/types/ChartTypes";
 export function useFilteredFieldProfiles(
   own?: ChartSettings,
   /** False skips the work and returns no profiles. */
-  enabled = true
+  enabled = true,
+  /**
+   * Profiles only these fields, such as a table's columns. Profiles cost a
+   * pass over every filtered row, so a view that shows a few fields names them.
+   */
+  fields?: readonly string[]
 ): FieldProfile[] {
   const sourceProfiles = useDataLayer((state) => state.fieldProfiles);
   const data = useDataLayer((state) => state.data);
@@ -33,18 +39,42 @@ export function useFilteredFieldProfiles(
   const chartState = useDataLayer((state) => state.charts);
   const ownId = own?.id;
   const ownFilters = own?.filters;
+  // Callers often build the list inline, so compare its contents.
+  const fieldKey = fields?.join("\u0000");
+
+  // A calculated field's type comes from all of its values, so filters
+  // don't change it.
+  const calculatedProfiles = useMemo(() => {
+    if (!enabled) return [];
+    void data;
+    void fieldSettings;
+    const wanted =
+      fieldKey === undefined ? undefined : fieldKey.split("\u0000");
+    return calculations
+      .filter(
+        (calculation) =>
+          !wanted || wanted.includes(calculation.resultColumnName)
+      )
+      .map((calculation) =>
+        buildFieldProfile(
+          calculation.resultColumnName,
+          getColumnData(calculation.resultColumnName)
+        )
+      );
+  }, [enabled, calculations, getColumnData, data, fieldSettings, fieldKey]);
 
   return useMemo(() => {
     if (!enabled) return [];
     // liveItems and fieldSettings change when filters or conversions change
     // the values these profiles describe.
     void fieldSettings;
-    const filteredIds = new Set(
-      chartState.length
-        ? crossfilterWrapper.getFilteredRowIds()
-        : data.map((row) => row.__ID)
-    );
-    const filteredRows = data.filter((row) => filteredIds.has(row.__ID));
+    const wanted =
+      fieldKey === undefined ? undefined : new Set(fieldKey.split("\u0000"));
+    let filteredRows = data;
+    if (chartState.length) {
+      const filteredIds = new Set(crossfilterWrapper.getFilteredRowIds());
+      filteredRows = data.filter((row) => filteredIds.has(row.__ID));
+    }
 
     // Rows that pass every filter except the ones `own` sets.
     const ownLive = ownId ? liveItems[ownId] : undefined;
@@ -73,35 +103,23 @@ export function useFilteredFieldProfiles(
     const profileFrom = (
       name: string,
       value: (row: (typeof data)[number]) => datum,
-      dataType: FieldProfile["dataType"],
       empty: FieldProfile
     ) => {
       const rows = rowsFor(name);
       if (rows.length === 0) return emptyFieldProfile(empty);
-      const values = Object.fromEntries(
-        rows.map((row) => [row.__ID, value(row)])
-      ) as Record<number, datum>;
-      return buildFieldProfile(name, values, dataType);
+      return buildValuesProfile(name, rows.map(value), empty.dataType);
     };
 
-    const source = sourceProfiles.map((profile) =>
-      profileFrom(
-        profile.name,
-        (row) => row[profile.name] as datum,
-        profile.dataType,
-        profile
-      )
-    );
-    const calculated = calculations.map((calculation) => {
-      const allColumnData = getColumnData(calculation.resultColumnName);
-      const profile = buildFieldProfile(
-        calculation.resultColumnName,
-        allColumnData
+    const source = sourceProfiles
+      .filter((profile) => !wanted || wanted.has(profile.name))
+      .map((profile) =>
+        profileFrom(profile.name, (row) => row[profile.name] as datum, profile)
       );
+    const calculated = calculatedProfiles.map((profile) => {
+      const allColumnData = getColumnData(profile.name);
       return profileFrom(
-        calculation.resultColumnName,
+        profile.name,
         (row) => allColumnData[row.__ID],
-        profile.dataType,
         profile
       );
     });
@@ -110,7 +128,7 @@ export function useFilteredFieldProfiles(
   }, [
     sourceProfiles,
     data,
-    calculations,
+    calculatedProfiles,
     getColumnData,
     crossfilterWrapper,
     chartState,
@@ -119,6 +137,7 @@ export function useFilteredFieldProfiles(
     ownId,
     ownFilters,
     enabled,
+    fieldKey,
   ]);
 }
 

@@ -1,4 +1,7 @@
 @import "tailwindcss";
+/* Scan the library even when its checkout is git-ignored, as agent
+   worktrees are; Tailwind skips git-ignored files otherwise. */
+@source "./";
 
 @plugin "tailwindcss-animate";
 
@@ -721,6 +724,18 @@
 .eda-pc-pill[data-selected] text {
   fill: var(--foreground);
   font-weight: 600;
+}
+/* Scatter matrix panels sit on a soft fill, with field names in strips. */
+.eda-matrix-cell {
+  fill: color-mix(in oklab, var(--muted) 55%, transparent);
+  stroke: var(--border);
+}
+.eda-matrix-cell[data-kind="blank"] {
+  fill: transparent;
+  stroke: none;
+}
+.eda-matrix-strip {
+  fill: var(--muted);
 }
 /* Sankey node labels select their node, like the node itself. */
 .eda-sankey-label {
