@@ -743,6 +743,41 @@ export function resolveUnit(
       ? tileAddresses(subsets, unit.repeat.tileField, data)
       : undefined;
 
+  // Weighted rows or columns size each repeat by a calculation's value,
+  // keeping the unit's total extent; the offsets accumulate along the axis.
+  const weightCalc =
+    unit.repeat.weightCalcId &&
+    (unit.repeat.arrangement === "rows" ||
+      unit.repeat.arrangement === "columns")
+      ? definition.calculations.find(
+          (calc) => calc.id === unit.repeat.weightCalcId
+        )
+      : undefined;
+  const weighted = unit.repeat.arrangement === "rows" ? "height" : "width";
+  const sizes = weightCalc
+    ? (() => {
+        const weights = subsets.map((subset) =>
+          Math.max(0, evaluateCalc(weightCalc, data, subset).value ?? 0)
+        );
+        const total = weights.reduce((sum, weight) => sum + weight, 0);
+        const base = unit.frame[weighted] * subsets.length;
+        return weights.map((weight) =>
+          total > 0 ? (base * weight) / total : unit.frame[weighted]
+        );
+      })()
+    : undefined;
+  const offsets: number[] = [];
+  if (sizes) {
+    let along = 0;
+    sizes.forEach((size, index) => {
+      offsets[index] = along;
+      along +=
+        size +
+        (weighted === "height" ? labelHeight : labelWidth) +
+        unit.repeat.gap;
+    });
+  }
+
   const sliceStarts: number[] = [];
   subsets.forEach((subset, index) => {
     sliceStarts[index] = nodes.length;
@@ -751,8 +786,18 @@ export function resolveUnit(
       column: index % columns,
     };
     const { column, row } = cell;
-    const layoutX = unit.x + column * (cellWidth + unit.repeat.gap);
-    const layoutY = unit.y + row * (cellHeight + unit.repeat.gap);
+    const frameWidth =
+      sizes && weighted === "width" ? sizes[index]! : unit.frame.width;
+    const frameHeight =
+      sizes && weighted === "height" ? sizes[index]! : unit.frame.height;
+    const layoutX =
+      sizes && weighted === "width"
+        ? unit.x + offsets[index]!
+        : unit.x + column * (cellWidth + unit.repeat.gap);
+    const layoutY =
+      sizes && weighted === "height"
+        ? unit.y + offsets[index]!
+        : unit.y + row * (cellHeight + unit.repeat.gap);
     const override = findOverride(definition, unit.id, subset.key);
     const x = layoutX + (override?.dx ?? 0);
     const y = layoutY + (override?.dy ?? 0);
@@ -766,8 +811,8 @@ export function resolveUnit(
     const frame: Bounds = {
       x: x + labelWidth,
       y: y + labelHeight,
-      width: unit.frame.width,
-      height: unit.frame.height,
+      width: frameWidth,
+      height: frameHeight,
     };
     const labelCalc = definition.calculations.find(
       (calc) => calc.id === unit.label.valueCalcId
@@ -1248,8 +1293,8 @@ export function resolveUnit(
       bounds: {
         x,
         y,
-        width: cellWidth,
-        height: labelHeight + unit.frame.height + (drawAxis ? axisHeight : 0),
+        width: labelWidth + frameWidth,
+        height: labelHeight + frameHeight + (drawAxis ? axisHeight : 0),
       },
       frame,
       rowCount: subset.allIds.length,

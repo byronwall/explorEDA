@@ -363,8 +363,8 @@ node --experimental-strip-types apps/data-samples/prepare/tax-slope.ts
 
 - File: `titanic.csv`
 - Size: 1,309 rows and 8 fields
-- Demo: `?example=titanic-waffle`
-- Use: a waffle composition, one cell per passenger grouped by fate, repeated by class
+- Demo: `?example=titanic-waffle` and `?example=titanic-mosaic`
+- Use: a waffle composition, one cell per passenger grouped by fate, repeated by class; and a mosaic plot with columns sized by class
 - Source: the [titanic3](https://hbiostat.org/data/) passenger list compiled by Thomas Cason from the Encyclopedia Titanica, kept by Vanderbilt University's Department of Biostatistics.
 - License: public domain data, reused with credit.
 

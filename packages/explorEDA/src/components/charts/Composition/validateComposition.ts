@@ -294,6 +294,7 @@ function isUnitElement(value: Value) {
     isNumber(repeat.gap) &&
     oneOf(repeat.order, ["count", "label", "value"]) &&
     (repeat.orderCalcId === undefined || isString(repeat.orderCalcId)) &&
+    (repeat.weightCalcId === undefined || isString(repeat.weightCalcId)) &&
     (repeat.direction === undefined ||
       oneOf(repeat.direction, ["asc", "desc"])) &&
     isNumber(repeat.limit) &&

@@ -709,6 +709,12 @@ export interface RepeatRule {
   limit: number;
   /** Comma-separated subset values not to repeat, such as a national total drawn as a comparison. */
   skip?: string;
+  /**
+   * A per-repeat calculation that sizes each repeat along the arrangement:
+   * row heights, or column widths, in proportion to its value, keeping the
+   * unit's total extent. Grids and tiles keep one size.
+   */
+  weightCalcId?: string;
 }
 
 export type RepeatOrder = "count" | "label" | "value";

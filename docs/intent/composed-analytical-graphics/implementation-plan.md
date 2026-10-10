@@ -368,6 +368,8 @@ Horizon charts are built as horizon marks: the tech stocks at `?example=stocks-h
 
 Beeswarms are dot rows with a spread: the emissions swarm at `?example=co2-swarm` (`apps/data-samples/prepare/co2-per-capita.ts`) pushes each point off the middle line just far enough to clear its neighbors, labels following, so crowded values show their count; sized points take a smallest radius so small values stay visible.
 
+Variable repeat sizes, the last layout gap from the research, are built as weighted repeats: a per-repeat calculation sizes each row's height or each column's width in proportion to its value while the unit keeps its total extent, so the Titanic mosaic at `?example=titanic-mosaic` draws columns as wide as each class's share of passengers and resizes them with the filters.
+
 ## Milestone 6: Combine detail and overview frames in one unit
 
 Create a state-style comparison with an inset, then repeat that unit for several illustrative regions.
@@ -416,7 +418,7 @@ Each library feature PR needs a user-facing minor changeset. These research docu
 
 ## Below the cut line
 
-- Tile-addressed repeats, horizontal bar lengths, variable repeat heights, and path/area gradients until a selected proof needs them.
+- Path/area gradients until a selected proof needs them. (Tile-addressed repeats, horizontal bar lengths, and variable repeat sizes were built for the tile map, the population pyramid, and the mosaic.)
 - A general visualization compiler, arbitrary expressions, recursive repeats, or a layout solver.
 - Exact publication replicas or fetching live reference datasets during authoring tests.
 - Statistical forecast generation or a survey-weighting engine.
