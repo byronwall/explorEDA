@@ -8,7 +8,7 @@
     "last_updated": "2026-10-08",
     "summary": "Edit visible chart features near their result with a clear local edit session.",
     "status": "in-progress",
-    "next_action": "Review the four stacked PRs (#203–#206). After #192 merges, edit subtitles with the same InlineTextEditor and useChartEdit."
+    "next_action": "Review the stacked PRs #203–#206 and the docs PR on top of them. Remaining items are under \"In-place chart editing\" in the Product Grid."
   },
   "artifacts": {
     "intent_brief": {
@@ -425,6 +425,12 @@
       "action": "Opened milestones 1–4 as stacked PRs #203–#206.",
       "reason": "Implementation of the plan.",
       "evidence": "Unit tests and browser checks in each PR."
+    },
+    {
+      "date": "2026-10-08",
+      "action": "Recorded follow-up work in the Product Grid and brought the durable docs up to date.",
+      "reason": "Keep remaining work and current behavior findable in the repo.",
+      "evidence": "pgm/data (#208); docs PR stacked on #206."
     }
   ],
   "closure": null,

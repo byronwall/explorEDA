@@ -33,8 +33,20 @@ Each milestone ships as one PR stacked on the one before it. Every PR includes a
 - In the browser at 1280, 783, and 390 px: the edit opens where the feature is drawn, the chart does not move, and the row count does not change.
 - Saved state round-trips through `saveToStructure`/`restoreFromStructure` without new keys: titles and axis bounds already save.
 
+## Status
+
+| #   | PR                      | State                      |
+| --- | ----------------------- | -------------------------- |
+| 1   | byronwall/explorEDA#203 | In review                  |
+| 2   | byronwall/explorEDA#204 | In review, stacked on #203 |
+| 3   | byronwall/explorEDA#205 | In review, stacked on #204 |
+| 4   | byronwall/explorEDA#206 | In review, stacked on #205 |
+
+What the browser checks covered: real mouse input at 1280 px for every milestone; the title editor at 390 px; the range popover inside chart details. Checks at 783 and 390 px for the axis editors, dark mode, and read-only previews are still open.
+
 ## Cut line and follow-ups
 
 - **Subtitles** arrive with the editorial styling stack (`subtitle` setting, PR byronwall/explorEDA#192). Once it merges, the subtitle reuses `InlineTextEditor` and `useChartEdit` unchanged.
 - Axis limits on ECDF, time-series X, map, and calendar charts need their own domain rules. They are out of scope here; see [axis-domain-controls](../axis-domain-controls/intent-brief.md).
 - True log scales stay with the axis-domain initiative.
+- Every remaining item is a node under **In-place chart editing** in the Product Grid (`pgm/data`).
