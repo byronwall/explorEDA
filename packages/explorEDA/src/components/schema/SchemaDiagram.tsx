@@ -9,7 +9,18 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import { createPortal } from "react-dom";
-import { KeyRound, Minus, Plus, Scan } from "lucide-react";
+import {
+  AlertTriangle,
+  Database,
+  Filter,
+  KeyRound,
+  Link2,
+  Minus,
+  Plus,
+  Scan,
+  Sigma,
+  Split,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { typeIcons, typeLabels } from "@/components/FieldMetadata";
 import type {
@@ -22,6 +33,7 @@ import type {
 import {
   layoutSchemaGraph,
   routeSchemaEdge,
+  rowOffset,
   SCHEMA_SIZES,
   type SchemaEdgePath,
   type SchemaLayout,
@@ -74,13 +86,12 @@ const rowCenter = (
   end: SchemaEndpoint
 ) => {
   const box = layout.boxes[end.nodeId];
-  const node = graph.nodes.find((item) => item.id === end.nodeId);
-  const index = node?.rows.findIndex((row) => row.id === end.rowId) ?? -1;
-  if (!box || index < 0) return undefined;
-  return {
-    box,
-    y: box.y + SCHEMA_SIZES.header + (index + 0.5) * SCHEMA_SIZES.row,
-  };
+  const offset = rowOffset(
+    graph.nodes.find((item) => item.id === end.nodeId),
+    end.rowId
+  );
+  if (!box || offset === undefined) return undefined;
+  return { box, y: box.y + offset };
 };
 
 /** Whether a selection still names something in the graph. */
@@ -303,6 +314,15 @@ export function SchemaDiagram({
           edges.add(edge.id);
           rows.add(key(edge.from));
           rows.add(key(edge.to));
+        }
+      }
+    } else if (selection?.kind === "table") {
+      for (const edge of graph.edges) {
+        if (
+          edge.from.nodeId === selection.nodeId ||
+          edge.to.nodeId === selection.nodeId
+        ) {
+          edges.add(edge.id);
         }
       }
     } else if (selection?.kind === "proposal") {
@@ -616,18 +636,27 @@ export function SchemaDiagram({
             height={layout.height}
             aria-hidden="true"
           >
-            {paths.map((path) => (
-              <SchemaEdgeLine
-                key={path.edge.id}
-                path={path}
-                selected={
-                  selection?.kind === "relationship" &&
-                  selection.edgeId === path.edge.id
-                }
-                emphasized={emphasis.edges.has(path.edge.id)}
-                dimmed={Boolean(selection) && !emphasis.edges.has(path.edge.id)}
-              />
-            ))}
+            {paths
+              // A view's rows name where each field comes from; its lines
+              // show only for the selection, so they do not crowd the rest.
+              .filter(
+                (path) =>
+                  path.edge.kind !== "usage" || emphasis.edges.has(path.edge.id)
+              )
+              .map((path) => (
+                <SchemaEdgeLine
+                  key={path.edge.id}
+                  path={path}
+                  selected={
+                    selection?.kind === "relationship" &&
+                    selection.edgeId === path.edge.id
+                  }
+                  emphasized={emphasis.edges.has(path.edge.id)}
+                  dimmed={
+                    Boolean(selection) && !emphasis.edges.has(path.edge.id)
+                  }
+                />
+              ))}
             {ghost && ghostStart && (
               <path
                 className="eda-schema-edge"
@@ -776,6 +805,15 @@ function SchemaCard({
   );
 }
 
+const STEP_ICONS = {
+  source: Database,
+  lookup: Link2,
+  expand: Split,
+  calculate: Sigma,
+  filter: Filter,
+  aggregate: Sigma,
+} as const;
+
 function SchemaRowItem({
   row,
   linked,
@@ -791,37 +829,65 @@ function SchemaRowItem({
   dropTarget: boolean;
   relatable: boolean;
 }) {
-  const Icon = row.dataType ? typeIcons[row.dataType] : undefined;
-  const type = row.dataType ? typeLabels[row.dataType] : "Unknown type";
+  if (row.kind === "heading") {
+    return (
+      <li
+        className="eda-schema-row"
+        data-kind="heading"
+        role="presentation"
+        style={{ height: SCHEMA_SIZES.row }}
+      >
+        <span className="eda-schema-label">{row.label}</span>
+      </li>
+    );
+  }
+  const Icon =
+    row.kind === "step" && row.step
+      ? STEP_ICONS[row.step]
+      : row.dataType
+        ? typeIcons[row.dataType]
+        : undefined;
+  const type = row.dataType ? typeLabels[row.dataType] : undefined;
   const facts = [
-    type,
+    row.kind === "step" ? "step" : row.kind === "use" ? undefined : type,
+    row.detail,
     row.key ? "key" : undefined,
     row.calculation ? `calculated: ${row.calculation.expression}` : undefined,
+    row.status === "missing" ? "missing from its query" : undefined,
+    row.status === "error" ? (row.calculation?.error ?? "error") : undefined,
   ].filter(Boolean);
   return (
     <li
       className="eda-schema-row"
       style={{ height: SCHEMA_SIZES.row }}
       tabIndex={-1}
+      data-kind={row.kind ?? "field"}
       data-schema-row={row.id}
       data-linked={linked || undefined}
       data-selected={selected || undefined}
       data-emphasized={emphasized || undefined}
       data-drop-target={dropTarget || undefined}
       data-relatable={relatable || undefined}
+      data-status={row.status}
       data-calculated={row.calculation ? "" : undefined}
-      aria-label={`${row.label}, ${facts.join(", ")}`}
+      aria-label={[row.label, ...facts].join(", ")}
       aria-selected={selected}
       role="option"
     >
       <span className="eda-schema-type" aria-hidden="true">
-        {row.calculation ? (
-          <span className="eda-schema-calc-mark">ƒ</span>
+        {row.mark ? (
+          <span className="eda-schema-calc-mark">{row.mark}</span>
         ) : Icon ? (
           <Icon />
         ) : null}
       </span>
       <span className="eda-schema-label">{row.label}</span>
+      {row.detail && (
+        <span className="eda-schema-row-detail">{row.detail}</span>
+      )}
+      {row.status && (
+        <AlertTriangle className="eda-schema-status" aria-hidden="true" />
+      )}
       {row.key && <KeyRound className="eda-schema-key" aria-hidden="true" />}
     </li>
   );
@@ -853,11 +919,12 @@ function SchemaEdgeLine({
   dimmed: boolean;
 }) {
   const { edge } = path;
-  if (edge.kind === "calculation") {
+  if (edge.kind !== "relationship") {
     return (
       <path
         className="eda-schema-edge"
-        data-kind="calculation"
+        data-kind={edge.kind}
+        data-emphasized={emphasized || undefined}
         data-dimmed={dimmed || undefined}
         d={path.d}
       />

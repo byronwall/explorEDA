@@ -116,6 +116,8 @@ export interface ExplorEdaSchema {
    * it to show the project without edits.
    */
   editing?: SchemaProjectEditing;
+  /** The project view this workspace shows; its calculations edit here. */
+  viewId?: string;
   /** Control whether the drawer is open, such as from a host panel. */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -930,6 +932,7 @@ export function PlotManager({
             id={schemaDrawerId}
             graph={schema?.graph}
             projectEditing={schema?.editing}
+            viewId={schema?.viewId}
             readOnly={readOnly}
             containerRef={controlsRef}
             onClose={closeSchema}

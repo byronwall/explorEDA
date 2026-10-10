@@ -1,9 +1,26 @@
 import type {
+  AnalysisEvaluation,
+  AnalysisField,
   AnalysisProject,
+  AnalysisQuery,
   AnalysisSourceRow,
+  AnalysisStep,
   FieldDefinition,
   RelationshipDefinition,
 } from "@/types/AnalysisProject";
+import type { SavedDataStructure } from "@/types/SavedDataStructure";
+import { parseExpression } from "@/lib/calculations/parser/semantics";
+import { evaluateAnalysisQuery } from "@/lib/analysis/evaluateProject";
+import {
+  fieldName as queryFieldName,
+  stepDetail,
+  stepTitle,
+} from "@/components/project/queryEditing";
+import {
+  settingsFieldUsage,
+  type FieldUsePlace,
+  type SettingsFieldUsage,
+} from "@/components/project/settingsCompatibility";
 import {
   detectColumnType,
   type DataType,
@@ -31,12 +48,29 @@ export interface SchemaNode {
   detail?: string;
   /** The project source a table card draws. */
   sourceId?: string;
+  /** The query a query card draws, or that a view card reads. */
+  queryId?: string;
+  /** The saved view a view card draws. */
+  viewId?: string;
   rows: SchemaRow[];
 }
 
 export interface SchemaRow {
   id: string;
+  /**
+   * A field (the default), a query step, a chart or section heading in a
+   * view, or one place a view reads a field.
+   */
+  kind?: "field" | "step" | "heading" | "use";
   label: string;
+  /** A short fact at the end of the row, such as how a view uses a field. */
+  detail?: string;
+  /** ƒ for a calculation, Σ for a summary. */
+  mark?: "ƒ" | "Σ";
+  /** What a step row does. */
+  step?: AnalysisStep["kind"];
+  /** A reference the diagram could not resolve, or a failed calculation. */
+  status?: "missing" | "error";
   /** The underlying field name, when the label is a display name. */
   field?: string;
   dataType?: DataType;
@@ -53,7 +87,11 @@ export interface SchemaEndpoint {
 
 export interface SchemaEdge {
   id: string;
-  kind: "relationship" | "calculation";
+  /**
+   * A relationship between tables; a calculation's input; lineage from a
+   * table to a query step; or usage of a field by a view.
+   */
+  kind: "relationship" | "calculation" | "lineage" | "usage";
   from: SchemaEndpoint;
   to: SchemaEndpoint;
   label?: string;
@@ -94,11 +132,26 @@ export const rowCountLabel = (count: number) =>
 
 export const tableNodeId = (sourceId: string) => `table:${sourceId}`;
 export const fieldRowId = (fieldId: string) => `field:${fieldId}`;
+/** A line can end at a card's header rather than one of its rows. */
+export const HEADER_ROW = "header";
 
-/** The tables of a project, their fields, and the relationships among them. */
+/** A saved view whose charts the diagram traces back to its query. */
+export interface SchemaViewInput {
+  id: string;
+  name: string;
+  queryId: string;
+  settings?: SavedDataStructure;
+}
+
+/**
+ * The tables of a project, their fields, and the relationships among them;
+ * then each query's steps and calculated fields; then each view's use of
+ * fields, traced back to where the fields come from.
+ */
 export function projectSchemaGraph(
   project: AnalysisProject,
-  tables: Record<string, readonly AnalysisSourceRow[]> = {}
+  tables: Record<string, readonly AnalysisSourceRow[]> = {},
+  views: SchemaViewInput[] = []
 ): SchemaGraph {
   const nodes: SchemaNode[] = project.sources.map((source) => {
     const rows = tables[source.id];
@@ -150,7 +203,379 @@ export function projectSchemaGraph(
       relationshipId: relationship.id,
     }));
 
+  const queries = project.queries.map((query) => queryLineage(project, query));
+  for (const lineage of queries) {
+    nodes.push(lineage.node);
+    edges.push(...lineage.edges);
+  }
+  const byQuery = new Map(queries.map((lineage) => [lineage.queryId, lineage]));
+  for (const view of views) {
+    const lineage = byQuery.get(view.queryId);
+    const query = project.queries.find((item) => item.id === view.queryId);
+    const viewNode = usageNode({
+      id: `view:${view.id}`,
+      title: view.name.trim() || query?.name || "View",
+      glyph: query?.glyph,
+      detail: query ? undefined : "Missing query",
+      usage: settingsFieldUsage(view.settings),
+      label: (field) => lineage?.labels.get(field) ?? undefined,
+      origin: (field) => lineage?.outputs.get(field),
+    });
+    viewNode.node.queryId = view.queryId;
+    viewNode.node.viewId = view.id;
+    nodes.push(viewNode.node);
+    edges.push(...viewNode.edges);
+  }
   return { nodes, edges };
+}
+
+/** Defined but empty tables give each step's fields and origins, fast. */
+function emptyTables(project: AnalysisProject) {
+  return Object.fromEntries(project.sources.map((source) => [source.id, []]));
+}
+
+const stepRowId = (stepId: string) => `step:${stepId}`;
+const measureRowId = (stepId: string, measureId: string) =>
+  `measure:${stepId}:${measureId}`;
+
+interface QueryLineage {
+  queryId: string;
+  node: SchemaNode;
+  edges: SchemaEdge[];
+  /** Where each output field comes from, for the views that read it. */
+  outputs: Map<string, SchemaEndpoint>;
+  labels: Map<string, string>;
+}
+
+/** A query's steps as rows, with lines from the tables and fields they read. */
+function queryLineage(
+  project: AnalysisProject,
+  query: AnalysisQuery
+): QueryLineage {
+  const nodeId = `query:${query.id}`;
+  const rows: SchemaRow[] = [];
+  const edges: SchemaEdge[] = [];
+  const outputs = new Map<string, SchemaEndpoint>();
+  const labels = new Map<string, string>();
+  let evaluation: AnalysisEvaluation | undefined;
+  let problem: string | undefined;
+  try {
+    evaluation = evaluateAnalysisQuery(project, emptyTables(project), query.id);
+  } catch (error) {
+    problem = error instanceof Error ? error.message : String(error);
+  }
+  const stages = new Map(
+    (evaluation?.stages ?? []).map((stage) => [stage.stepId, stage])
+  );
+  const stepsById = new Map(query.steps.map((step) => [step.id, step]));
+
+  /** The row a field comes from: a table's field, or this query's step. */
+  const originOf = (field: AnalysisField): SchemaEndpoint | undefined => {
+    if ("sourceId" in field.origin) {
+      return {
+        nodeId: tableNodeId(field.origin.sourceId),
+        rowId: fieldRowId(field.origin.fieldId),
+      };
+    }
+    const step = stepsById.get(field.origin.stepId);
+    if (!step) return undefined;
+    if (step.kind === "aggregate") {
+      const measure = step.measures.find((item) => item.id === field.id);
+      return {
+        nodeId,
+        rowId: measure ? measureRowId(step.id, measure.id) : stepRowId(step.id),
+      };
+    }
+    return { nodeId, rowId: stepRowId(step.id) };
+  };
+  const inputFields = (stepId: string) => {
+    const step = stepsById.get(stepId);
+    return step && step.kind !== "source"
+      ? (stages.get(step.inputStepId)?.fields ?? [])
+      : [];
+  };
+  let edgeCount = 0;
+  const link = (
+    kind: SchemaEdge["kind"],
+    from: SchemaEndpoint | undefined,
+    rowId: string
+  ) => {
+    if (!from) return;
+    edges.push({
+      id: `${kind}:${nodeId}:${(edgeCount += 1)}`,
+      kind,
+      from,
+      to: { nodeId, rowId },
+    });
+  };
+  const inputEdge = (stepId: string, fieldId: string, rowId: string) => {
+    const field = inputFields(stepId).find((item) => item.id === fieldId);
+    link("calculation", field && originOf(field), rowId);
+    return Boolean(field);
+  };
+
+  for (const step of query.steps) {
+    const rowId = stepRowId(step.id);
+    const detail = stepDetail(step, project, inputFields(step.id)) ?? undefined;
+    switch (step.kind) {
+      case "source":
+        rows.push({
+          id: rowId,
+          kind: "step",
+          step: step.kind,
+          label: stepTitle(step, project),
+        });
+        link(
+          "lineage",
+          { nodeId: tableNodeId(step.sourceId), rowId: HEADER_ROW },
+          rowId
+        );
+        break;
+      case "lookup":
+      case "expand": {
+        rows.push({
+          id: rowId,
+          kind: "step",
+          step: step.kind,
+          label: stepTitle(step, project),
+          detail: step.as,
+        });
+        const added = stages
+          .get(step.id)
+          ?.fields.find((field) => field.id.startsWith(`${step.as}.`));
+        if (added && "sourceId" in added.origin) {
+          link(
+            "lineage",
+            { nodeId: tableNodeId(added.origin.sourceId), rowId: HEADER_ROW },
+            rowId
+          );
+        }
+        break;
+      }
+      case "calculate": {
+        let error: string | undefined;
+        let dependencies: string[] = [];
+        try {
+          dependencies = parseDependencies(step.expression);
+        } catch (caught) {
+          error = caught instanceof Error ? caught.message : String(caught);
+        }
+        const missing = dependencies.filter(
+          (field) => !inputEdge(step.id, field, rowId)
+        );
+        rows.push({
+          id: rowId,
+          kind: "field",
+          step: step.kind,
+          label: step.label,
+          field: step.fieldId,
+          mark: "ƒ",
+          calculation: {
+            expression: step.expression,
+            error:
+              error ??
+              (missing.length
+                ? `Unknown fields: ${missing.join(", ")}`
+                : undefined),
+          },
+          status: error || missing.length ? "error" : undefined,
+        });
+        break;
+      }
+      case "filter":
+        rows.push({
+          id: rowId,
+          kind: "step",
+          step: step.kind,
+          label: stepTitle(step, project),
+          detail,
+        });
+        inputEdge(step.id, step.fieldId, rowId);
+        break;
+      case "aggregate":
+        rows.push({
+          id: rowId,
+          kind: "step",
+          step: step.kind,
+          label: stepTitle(step, project),
+          detail,
+        });
+        step.groupBy.forEach((field) => inputEdge(step.id, field, rowId));
+        for (const measure of step.measures) {
+          const measureRow = measureRowId(step.id, measure.id);
+          rows.push({
+            id: measureRow,
+            kind: "field",
+            label: measure.label,
+            field: measure.id,
+            mark: "Σ",
+            detail: measure.operation,
+          });
+          if (measure.fieldId) inputEdge(step.id, measure.fieldId, measureRow);
+        }
+        break;
+    }
+  }
+
+  for (const field of evaluation?.fields ?? []) {
+    const origin = originOf(field);
+    if (origin) outputs.set(field.id, origin);
+    labels.set(field.id, queryFieldName(project, evaluation!.fields, field.id));
+  }
+
+  return {
+    queryId: query.id,
+    node: {
+      id: nodeId,
+      kind: "query",
+      title: query.name,
+      glyph: query.glyph,
+      detail: problem ? "Cannot run" : undefined,
+      queryId: query.id,
+      rows,
+    },
+    edges,
+    outputs,
+    labels,
+  };
+}
+
+function parseDependencies(expression: string) {
+  return parseExpression(expression).dependencies;
+}
+
+const PLACE_HEADINGS: Record<
+  Exclude<FieldUsePlace["kind"], "chart">,
+  string
+> = {
+  rows: "Rows",
+  aggregate: "Summaries",
+  calculation: "Calculations",
+};
+
+/**
+ * A card for one view: each chart, then Rows and summaries, with a row for
+ * each field it reads and a line from where that field comes from. A view's
+ * own calculated fields are rows too, fed by the fields they read.
+ */
+function usageNode({
+  id,
+  title,
+  glyph,
+  detail,
+  usage,
+  label,
+  origin,
+}: {
+  id: string;
+  title: string;
+  glyph?: string;
+  detail?: string;
+  usage: SettingsFieldUsage;
+  label: (field: string) => string | undefined;
+  origin: (field: string) => SchemaEndpoint | undefined;
+}): { node: SchemaNode; edges: SchemaEdge[] } {
+  const rows: SchemaRow[] = [];
+  const edges: SchemaEdge[] = [];
+  const calculations = new Map(
+    usage.calculations.map((calculation) => [calculation.name, calculation])
+  );
+  const sourceOf = (field: string): SchemaEndpoint | undefined =>
+    calculations.has(field)
+      ? { nodeId: id, rowId: `calc:${field}` }
+      : origin(field);
+  const name = (field: string) => label(field) ?? field;
+
+  // Group uses by where they are, then by field, so one row names every
+  // role a field plays in a chart.
+  const groups = new Map<
+    string,
+    { heading: string; fields: Map<string, string[]> }
+  >();
+  for (const use of usage.uses) {
+    if (use.place.kind === "calculation") continue;
+    const key =
+      use.place.kind === "chart"
+        ? `chart:${use.place.chartId}`
+        : use.place.kind;
+    const heading =
+      use.place.kind === "chart"
+        ? use.place.title
+        : PLACE_HEADINGS[use.place.kind];
+    const group = groups.get(key) ?? { heading, fields: new Map() };
+    groups.set(key, group);
+    const roles = group.fields.get(use.field) ?? [];
+    if (!roles.includes(use.place.role)) roles.push(use.place.role);
+    group.fields.set(use.field, roles);
+  }
+
+  let edgeCount = 0;
+  const link = (
+    kind: SchemaEdge["kind"],
+    from: SchemaEndpoint | undefined,
+    rowId: string
+  ) => {
+    if (!from) return;
+    edges.push({
+      id: `${kind}:${id}:${(edgeCount += 1)}`,
+      kind,
+      from,
+      to: { nodeId: id, rowId },
+    });
+  };
+
+  for (const [key, group] of groups) {
+    rows.push({ id: `${key}:heading`, kind: "heading", label: group.heading });
+    for (const [field, roles] of group.fields) {
+      const rowId = `use:${key}:${field}`;
+      const from = sourceOf(field);
+      rows.push({
+        id: rowId,
+        kind: "use",
+        label: name(field),
+        field,
+        detail: roles.join(", "),
+        status: from ? undefined : "missing",
+      });
+      link("usage", from, rowId);
+    }
+  }
+  if (calculations.size) {
+    rows.push({
+      id: "calculations:heading",
+      kind: "heading",
+      label: "Calculations",
+    });
+    for (const calculation of calculations.values()) {
+      const rowId = `calc:${calculation.name}`;
+      const missing = calculation.dependencies.filter(
+        (field) => !sourceOf(field)
+      );
+      rows.push({
+        id: rowId,
+        kind: "field",
+        label: name(calculation.name),
+        field: calculation.name,
+        mark: "ƒ",
+        calculation: {
+          expression: calculation.expression,
+          error:
+            calculation.error ??
+            (missing.length
+              ? `Unknown fields: ${missing.join(", ")}`
+              : undefined),
+        },
+        status: calculation.error || missing.length ? "error" : undefined,
+      });
+      for (const field of new Set(calculation.dependencies)) {
+        link("calculation", sourceOf(field), rowId);
+      }
+    }
+  }
+  return {
+    node: { id, kind: "view", title, glyph, detail, rows },
+    edges,
+  };
 }
 
 export interface TableSchemaField {
@@ -174,11 +599,14 @@ export function tableSchemaGraph({
   rowCount,
   fields,
   calculations,
+  settings,
 }: {
   title: string;
   rowCount?: number;
   fields: TableSchemaField[];
   calculations: TableSchemaCalculation[];
+  /** The workspace's charts, Rows, and summaries, to show what uses each field. */
+  settings?: SavedDataStructure;
 }): SchemaGraph {
   const nodeId = "table:data";
   const calculated = new Map(
@@ -217,16 +645,30 @@ export function tableSchemaGraph({
         to: { nodeId, rowId: fieldRowId(calculation.name) },
       }))
   );
-  return {
-    nodes: [
-      {
-        id: nodeId,
-        kind: "table",
-        title,
-        detail: rowCount === undefined ? undefined : rowCountLabel(rowCount),
-        rows,
-      },
-    ],
-    edges,
-  };
+  const nodes: SchemaNode[] = [
+    {
+      id: nodeId,
+      kind: "table",
+      title,
+      detail: rowCount === undefined ? undefined : rowCountLabel(rowCount),
+      rows,
+    },
+  ];
+  const usage = settingsFieldUsage(settings);
+  if (usage.uses.some((use) => use.place.kind !== "calculation")) {
+    // The table card already lists the calculated fields.
+    const view = usageNode({
+      id: "view:workspace",
+      title: "This workspace",
+      usage: { uses: usage.uses, calculations: [] },
+      label: (field) => byName.get(field)?.label,
+      origin: (field) =>
+        rowIds.has(fieldRowId(field))
+          ? { nodeId, rowId: fieldRowId(field) }
+          : undefined,
+    });
+    nodes.push(view.node);
+    edges.push(...view.edges);
+  }
+  return { nodes, edges };
 }

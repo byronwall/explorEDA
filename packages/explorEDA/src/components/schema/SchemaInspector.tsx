@@ -1,5 +1,16 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
-import { ArrowRight, KeyRound, Link2, Trash2, X } from "lucide-react";
+import {
+  ArrowRight,
+  KeyRound,
+  Link2,
+  Pencil,
+  Plus,
+  Trash2,
+  X,
+} from "lucide-react";
+import { parseExpression } from "@/lib/calculations/parser/semantics";
+import { evaluateAnalysisQuery } from "@/lib/analysis/evaluateProject";
+import { replaceQuery } from "@/components/project/queryEditing";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -60,12 +71,15 @@ function CommitInput({
   label,
   placeholder,
   disabled,
+  multiline,
   onCommit,
 }: {
   value: string;
   label: string;
   placeholder?: string;
   disabled?: boolean;
+  /** Wrap long text, such as an expression. Enter still applies it. */
+  multiline?: boolean;
   onCommit: (value: string) => void;
 }) {
   const [draft, setDraft] = useState(value);
@@ -73,31 +87,38 @@ function CommitInput({
   const commit = () => {
     if (draft !== value) onCommit(draft);
   };
-  return (
-    <Input
-      aria-label={label}
-      value={draft}
-      placeholder={placeholder}
-      disabled={disabled}
-      data-inplace-editor=""
-      onChange={(event) => setDraft(event.target.value)}
-      onBlur={commit}
-      onKeyDown={(event) => {
-        if (event.key === "Enter") {
-          event.preventDefault();
-          commit();
-        } else if (event.key === "Escape") {
-          event.preventDefault();
-          event.stopPropagation();
-          setDraft(value);
-          // Leave the field but stay in the details, so a second Escape
-          // clears the selection rather than closing the drawer.
-          event.currentTarget
-            .closest<HTMLElement>(".eda-schema-inspector")
-            ?.focus({ preventScroll: true });
-        }
-      }}
-    />
+  const props = {
+    "aria-label": label,
+    value: draft,
+    placeholder,
+    disabled,
+    "data-inplace-editor": "",
+    onChange: (
+      event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => setDraft(event.target.value),
+    onBlur: commit,
+    onKeyDown: (
+      event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        commit();
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
+        setDraft(value);
+        // Leave the field but stay in the details, so a second Escape
+        // clears the selection rather than closing the drawer.
+        event.currentTarget
+          .closest<HTMLElement>(".eda-schema-inspector")
+          ?.focus({ preventScroll: true });
+      }
+    },
+  };
+  return multiline ? (
+    <textarea {...props} rows={3} className="eda-schema-inspector-textarea" />
+  ) : (
+    <Input {...props} />
   );
 }
 
@@ -291,10 +312,28 @@ function TableBody({
       <p className="eda-schema-inspector-hint">
         {project && source
           ? "Drag a field onto a field of another table to relate them."
-          : editing?.fields
-            ? "Select a field to change its label, unit, or type."
-            : "Select a field to see its details."}
+          : node.kind === "view"
+            ? "Select a field to see where it comes from."
+            : node.kind === "query"
+              ? "Select a step or calculated field to see its details."
+              : editing?.fields
+                ? "Select a field to change its label, unit, or type."
+                : "Select a field to see its details."}
       </p>
+      {editing?.calculations?.nodeId === node.id && (
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          tooltip="Add a calculated field from an expression over these fields"
+          onClick={(event) =>
+            editing.calculations!.open(undefined, event.currentTarget)
+          }
+        >
+          <Plus aria-hidden="true" />
+          Add calculation
+        </Button>
+      )}
       {node.rows[0] && (
         <Button
           type="button"
@@ -328,7 +367,7 @@ function FieldBody({
   editing?: SchemaEditing;
   onSelect: (selection: SchemaSelection) => void;
 }) {
-  const typeLabel = row.dataType ? typeLabels[row.dataType] : "Unknown type";
+  const typeLabel = row.dataType ? typeLabels[row.dataType] : undefined;
   const links = graph.edges.filter(
     (edge) =>
       edge.kind === "relationship" &&
@@ -345,15 +384,56 @@ function FieldBody({
   return (
     <>
       <p className="eda-schema-inspector-facts">
-        {[node.title, typeLabel, row.key ? "key" : undefined]
+        {(row.kind === "use"
+          ? [node.title, row.detail ? `as ${row.detail}` : undefined]
+          : row.kind === "step"
+            ? [node.title, row.detail]
+            : [
+                node.title,
+                typeLabel,
+                row.mark === "Σ" ? row.detail : undefined,
+                row.key ? "key" : undefined,
+              ]
+        )
           .filter(Boolean)
           .join(" · ")}
       </p>
-      {row.calculation && (
-        <div className="eda-schema-inspector-code">
-          <span>Calculated as</span>
-          <code>{row.calculation.expression}</code>
-        </div>
+      {row.status === "missing" && (
+        <p className="eda-schema-inspector-error">
+          This view reads a field its query no longer has.
+        </p>
+      )}
+      {row.calculation &&
+        !(row.step === "calculate" && project && node.queryId) && (
+          <div className="eda-schema-inspector-code">
+            <span>Calculated as</span>
+            <code>{row.calculation.expression}</code>
+          </div>
+        )}
+      {row.calculation?.error && (
+        <p className="eda-schema-inspector-error">{row.calculation.error}</p>
+      )}
+      {row.calculation &&
+        row.field &&
+        editing?.calculations?.nodeId === node.id && (
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={(event) =>
+              editing.calculations!.open(row.field, event.currentTarget)
+            }
+          >
+            <Pencil aria-hidden="true" />
+            Edit calculation
+          </Button>
+        )}
+      {row.step === "calculate" && project && node.queryId && (
+        <QueryCalculationEditor
+          project={project}
+          queryId={node.queryId}
+          stepId={row.id.replace(/^step:/, "")}
+        />
       )}
       {project && source && definition && (
         <ProjectFieldEditor
@@ -907,6 +987,75 @@ function ProposalBody({
           Cancel
         </Button>
       </div>
+    </>
+  );
+}
+
+/** A query's calculate step: its label and expression, checked before saving. */
+function QueryCalculationEditor({
+  project,
+  queryId,
+  stepId,
+}: {
+  project: SchemaProjectEditing;
+  queryId: string;
+  stepId: string;
+}) {
+  const [error, setError] = useState("");
+  const query = project.project.queries.find((item) => item.id === queryId);
+  const step = query?.steps.find((item) => item.id === stepId);
+  if (!query || step?.kind !== "calculate") return null;
+  const save = (update: { label?: string; expression?: string }) => {
+    const next = { ...step, ...update };
+    try {
+      const dependencies = parseExpression(next.expression).dependencies;
+      // Inputs are the fields of the step before this one.
+      const evaluation = evaluateAnalysisQuery(
+        project.project,
+        Object.fromEntries(
+          project.project.sources.map((source) => [source.id, []])
+        ),
+        query.id
+      );
+      const input = evaluation.stages.find(
+        (stage) => stage.stepId === step.inputStepId
+      );
+      const known = new Set(input?.fields.map((field) => field.id));
+      const unknown = dependencies.filter((field) => !known.has(field));
+      if (input && unknown.length) {
+        setError(`Unknown fields: ${unknown.join(", ")}`);
+        return;
+      }
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught));
+      return;
+    }
+    setError("");
+    project.onChange(
+      replaceQuery(project.project, {
+        ...query,
+        steps: query.steps.map((item) => (item.id === step.id ? next : item)),
+      })
+    );
+  };
+  return (
+    <>
+      <Field label="Label">
+        <CommitInput
+          label={`Label of ${step.label}`}
+          value={step.label}
+          onCommit={(label) => save({ label: label.trim() || step.label })}
+        />
+      </Field>
+      <Field label="Expression">
+        <CommitInput
+          label={`Expression of ${step.label}`}
+          value={step.expression}
+          multiline
+          onCommit={(expression) => save({ expression })}
+        />
+      </Field>
+      {error && <p className="eda-schema-inspector-error">{error}</p>}
     </>
   );
 }

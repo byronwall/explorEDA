@@ -356,12 +356,18 @@
       {
         "id": "m3",
         "title": "Queries, calculations, and views drawn and editable",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Query and view columns with lineage, calculation, and usage edges from tested buildSchemaGraph; workspace and query calculations created and edited from the diagram.",
         "proof": "Model tests on the shop fixture; incompatibleSettingsFields tests unchanged; calculation edits validated with breakage warnings; screenshot review on World Bank and flights.",
         "valid_intermediate_state": "Full static diagram.",
         "rollback": "Hide the query and view columns; table diagram remains.",
-        "spikes": ["empty-table evaluation for lineage"]
+        "spikes": ["empty-table evaluation for lineage"],
+        "spike_result": "evaluateAnalysisQuery with no tables throws on lookups (a missing source gives no fields), but with defined empty tables it returns the same fields and origins as a real evaluation for every shop query and runs on World Bank, flights, and Beijing. The static-walk fallback was not needed.",
+        "evidence": [
+          "Vitest: schemaLineage.test.ts (usage roles, lookup traced to Customers.name, step lineage, calculated step inputs, broken calculation has no guessed inputs, missing view field stub, single-table usage card); SchemaDiagram query-calculation check; project and provider tests unchanged (95)",
+          "Playwright: field selection lights its view uses; view selection lights all uses; flights query calculation edits in place; Add calculation opens the calculation editor and Escape returns to the diagram"
+        ],
+        "notes": "Usage lines show only for the selection so the default view stays readable; flow wrapping keeps tables, queries, and views in their own columns."
       },
       {
         "id": "m4",
@@ -459,6 +465,12 @@
       "date": "2026-10-10",
       "event": "milestone-completed",
       "summary": "Milestone 2 built: selection, anchored details, field/key/relationship edits through shared relationship rules.",
+      "status": "active"
+    },
+    {
+      "date": "2026-10-10",
+      "event": "milestone-completed",
+      "summary": "Milestone 3 built: query and view cards with lineage, calculation, and usage lines; calculation editing.",
       "status": "active"
     }
   ],

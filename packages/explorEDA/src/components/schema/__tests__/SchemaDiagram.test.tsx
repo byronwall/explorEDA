@@ -33,7 +33,7 @@ function renderDiagram(readOnly = false) {
 
 /** Select a field the way a keyboard user does: card, arrows, Enter. */
 function selectField(table: string, field: string) {
-  const card = screen.getByRole("region", { name: new RegExp(`^${table},`) });
+  const card = screen.getByRole("region", { name: new RegExp(`^${table}(,|$)`) });
   const fields = within(card).getAllByRole("option");
   const index = fields.findIndex((row) =>
     row.getAttribute("aria-label")!.startsWith(`${field},`)
@@ -100,6 +100,26 @@ describe("SchemaDiagram editing", () => {
     );
     expect(event).toBe(false);
     expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("checks a query calculation before saving it", () => {
+    const { onChange } = renderDiagram();
+    const details = selectField("Product revenue", "Net revenue");
+    const expression = within(details).getByRole("textbox", {
+      name: "Expression of Net revenue",
+    });
+    fireEvent.change(expression, { target: { value: '["nope"] * 2' } });
+    fireEvent.keyDown(expression, { key: "Enter" });
+    expect(onChange).not.toHaveBeenCalled();
+    expect(details).toHaveTextContent("Unknown fields: nope");
+
+    fireEvent.change(expression, { target: { value: '["items.revenue"] * 2' } });
+    fireEvent.keyDown(expression, { key: "Enter" });
+    expect(onChange).toHaveBeenCalledOnce();
+    const step = onChange.mock.calls[0]![0].queries
+      .find((query) => query.id === "product-revenue")!
+      .steps.find((item) => item.id === "product-calc")!;
+    expect(step).toMatchObject({ expression: '["items.revenue"] * 2' });
   });
 
   it("shows details without edit controls when read-only", () => {

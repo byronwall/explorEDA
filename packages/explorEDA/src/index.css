@@ -2223,7 +2223,12 @@ html {
   font-weight: 700;
 }
 .eda-schema-detail {
-  flex-shrink: 0;
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 45%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--muted-foreground);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
@@ -2281,6 +2286,79 @@ html {
 .eda-schema-empty {
   color: var(--muted-foreground);
   font-style: italic;
+}
+.eda-schema-card[data-kind="query"] .eda-schema-card-header {
+  background: color-mix(in oklab, var(--eda-count) 9%, var(--card));
+}
+.eda-schema-card[data-kind="query"] .eda-schema-glyph {
+  background: color-mix(in oklab, var(--eda-count) 18%, var(--card));
+  color: var(--eda-count);
+}
+.eda-schema-card[data-kind="view"] .eda-schema-card-header {
+  background: color-mix(in oklab, var(--warning) 8%, var(--card));
+}
+.eda-schema-card[data-kind="view"] .eda-schema-glyph {
+  background: color-mix(in oklab, var(--warning) 16%, var(--card));
+  color: var(--warning);
+}
+.eda-schema-row[data-kind="heading"] {
+  padding-top: 6px;
+  color: var(--muted-foreground);
+  cursor: default;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.eda-schema-row[data-kind="heading"] + .eda-schema-row,
+.eda-schema-row + .eda-schema-row[data-kind="heading"] {
+  border-top-color: var(--border);
+}
+.eda-schema-row[data-kind="step"] .eda-schema-label {
+  color: var(--muted-foreground);
+}
+.eda-schema-row[data-kind="use"] {
+  padding-left: 18px;
+}
+.eda-schema-row-detail {
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 48%;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-schema-row[data-status="missing"] .eda-schema-label {
+  color: var(--warning);
+  text-decoration: underline dotted;
+}
+.eda-schema-row[data-status="error"] .eda-schema-label {
+  color: var(--destructive);
+}
+.eda-schema-status {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  color: var(--warning);
+}
+.eda-schema-row[data-status="error"] .eda-schema-status {
+  color: var(--destructive);
+}
+.eda-schema-edge[data-kind="lineage"] {
+  stroke: var(--muted-foreground);
+  stroke-width: 1.25;
+  opacity: 0.45;
+}
+.eda-schema-edge[data-kind="usage"] {
+  stroke: color-mix(in oklab, var(--warning) 70%, var(--muted-foreground));
+  stroke-width: 1.1;
+  opacity: 0.5;
+}
+.eda-schema-edge[data-emphasized] {
+  stroke-width: 2;
+  opacity: 1;
 }
 .eda-schema-card:focus-visible {
   outline: 2px solid var(--ring);
@@ -2500,6 +2578,21 @@ html {
   background: var(--muted);
   font-size: 12px;
   overflow-wrap: anywhere;
+}
+.eda-schema-inspector-textarea {
+  width: 100%;
+  min-height: 64px;
+  padding: 6px 10px;
+  border: 1px solid var(--input);
+  border-radius: calc(var(--radius) - 2px);
+  background: transparent;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  resize: vertical;
+}
+.eda-schema-inspector-textarea:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
 }
 .eda-schema-inspector-actions {
   display: flex;

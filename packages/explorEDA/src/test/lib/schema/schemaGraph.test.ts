@@ -8,6 +8,14 @@ import {
 } from "@/lib/schema/schemaLayout";
 import type { SchemaGraph } from "@/lib/schema/schemaGraph";
 
+/** Only the tables and their relationships, as Milestone 1 drew them. */
+function tablesOnly(graph: SchemaGraph): SchemaGraph {
+  return {
+    nodes: graph.nodes.filter((node) => node.kind === "table"),
+    edges: graph.edges.filter((edge) => edge.kind === "relationship"),
+  };
+}
+
 /** Unrelated tables of many fields, which one column per depth stacks. */
 function manyTables(count: number): SchemaGraph {
   return {
@@ -27,7 +35,7 @@ function manyTables(count: number): SchemaGraph {
 describe("projectSchemaGraph", () => {
   it("draws each source as a table and each relationship field to field", () => {
     const { project, sources: tables } = createShopFixture();
-    const graph = projectSchemaGraph(project, tables);
+    const graph = tablesOnly(projectSchemaGraph(project, tables));
 
     expect(graph.nodes.map((node) => node.title)).toEqual([
       "Customers",
@@ -55,15 +63,17 @@ describe("projectSchemaGraph", () => {
 
   it("skips a relationship whose field no longer exists", () => {
     const { project } = createShopFixture();
-    const graph = projectSchemaGraph({
-      ...project,
-      relationships: [
-        {
-          ...project.relationships[0]!,
-          from: { sourceId: "orders", fieldId: "gone" },
-        },
-      ],
-    });
+    const graph = tablesOnly(
+      projectSchemaGraph({
+        ...project,
+        relationships: [
+          {
+            ...project.relationships[0]!,
+            from: { sourceId: "orders", fieldId: "gone" },
+          },
+        ],
+      })
+    );
     expect(graph.edges).toEqual([]);
   });
 
@@ -119,7 +129,7 @@ describe("tableSchemaGraph", () => {
 describe("layoutSchemaGraph", () => {
   it("puts detail tables left of the tables they look up", () => {
     const { project, sources: tables } = createShopFixture();
-    const graph = projectSchemaGraph(project, tables);
+    const graph = tablesOnly(projectSchemaGraph(project, tables));
     const { boxes } = layoutSchemaGraph(graph);
 
     expect(boxes["table:items"]!.x).toBeLessThan(boxes["table:orders"]!.x);
@@ -129,7 +139,7 @@ describe("layoutSchemaGraph", () => {
 
   it("is deterministic and never overlaps cards", () => {
     const { project, sources: tables } = createShopFixture();
-    const graph = projectSchemaGraph(project, tables);
+    const graph = tablesOnly(projectSchemaGraph(project, tables));
     const first = layoutSchemaGraph(graph);
     expect(layoutSchemaGraph(graph)).toEqual(first);
 
@@ -173,7 +183,7 @@ describe("layoutSchemaGraph", () => {
 
   it("keeps one column per depth when it already fits", () => {
     const { project, sources: tables } = createShopFixture();
-    const graph = projectSchemaGraph(project, tables);
+    const graph = tablesOnly(projectSchemaGraph(project, tables));
     expect(layoutSchemaGraph(graph, { width: 1400, height: 900 })).toEqual(
       layoutSchemaGraph(graph)
     );
@@ -181,25 +191,27 @@ describe("layoutSchemaGraph", () => {
 
   it("survives a relationship cycle", () => {
     const { project } = createShopFixture();
-    const graph = projectSchemaGraph({
-      ...project,
-      relationships: [
-        ...project.relationships,
-        {
-          id: "loop",
-          name: "Loop",
-          from: { sourceId: "customers", fieldId: "customerId" },
-          to: { sourceId: "items", fieldId: "itemId" },
-          cardinality: "many-to-one",
-        },
-      ],
-    });
+    const graph = tablesOnly(
+      projectSchemaGraph({
+        ...project,
+        relationships: [
+          ...project.relationships,
+          {
+            id: "loop",
+            name: "Loop",
+            from: { sourceId: "customers", fieldId: "customerId" },
+            to: { sourceId: "items", fieldId: "itemId" },
+            cardinality: "many-to-one",
+          },
+        ],
+      })
+    );
     expect(Object.keys(layoutSchemaGraph(graph).boxes)).toHaveLength(4);
   });
 
   it("routes lines between the rows they join", () => {
     const { project, sources: tables } = createShopFixture();
-    const graph = projectSchemaGraph(project, tables);
+    const graph = tablesOnly(projectSchemaGraph(project, tables));
     const layout = layoutSchemaGraph(graph);
     const edge = graph.edges.find(
       (item) => item.from.nodeId === "table:items"

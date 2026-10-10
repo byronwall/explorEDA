@@ -2,6 +2,7 @@ import { useMemo, type RefObject } from "react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { tableSchemaGraph, type SchemaGraph } from "@/lib/schema/schemaGraph";
 import { WorkspaceDrawer } from "../WorkspaceDrawer";
+import { useCalculationEditor } from "../calculations/CalculationEditor";
 import { SchemaDiagram } from "./SchemaDiagram";
 import type { SchemaEditing, SchemaProjectEditing } from "./schemaEditing";
 
@@ -12,6 +13,17 @@ function useWorkspaceSchemaGraph(enabled: boolean): SchemaGraph | undefined {
   const rowCount = useDataLayer((state) => state.data.length);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const fieldSettings = useDataLayer((state) => state.fieldSettings);
+  // What the charts, Rows, and summaries read, for the workspace's usage card.
+  const charts = useDataLayer((state) => state.charts);
+  const rowsSettings = useDataLayer((state) => state.rowsSettings);
+  const aggregates = useDataLayer((state) => state.aggregates);
+  const saveToStructure = useDataLayer((state) => state.saveToStructure);
+  const settings = useMemo(
+    () => (enabled ? saveToStructure() : undefined),
+    // The saved structure changes with these.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [enabled, charts, rowsSettings, aggregates, calculations]
+  );
   return useMemo(
     () =>
       enabled
@@ -30,11 +42,20 @@ function useWorkspaceSchemaGraph(enabled: boolean): SchemaGraph | undefined {
               expression: calculation.expression.rawInput,
               dependencies: calculation.expression.dependencies,
             })),
+            settings,
           })
         : undefined,
     // Field labels come from the field settings.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [enabled, profiles, calculations, rowCount, getFieldLabel, fieldSettings]
+    [
+      enabled,
+      profiles,
+      calculations,
+      rowCount,
+      getFieldLabel,
+      fieldSettings,
+      settings,
+    ]
   );
 }
 
@@ -47,6 +68,7 @@ export function SchemaDrawer({
   id,
   graph: hostGraph,
   projectEditing,
+  viewId,
   readOnly = false,
   containerRef,
   onClose,
@@ -55,6 +77,8 @@ export function SchemaDrawer({
   /** A project's schema. Without it, the drawer shows this workspace's table. */
   graph?: SchemaGraph;
   projectEditing?: SchemaProjectEditing;
+  /** The project view this workspace shows, whose calculations it edits. */
+  viewId?: string;
   /** Show and select without edits. */
   readOnly?: boolean;
   containerRef: RefObject<HTMLElement | null>;
@@ -66,18 +90,42 @@ export function SchemaDrawer({
   const updateFieldSettings = useDataLayer(
     (state) => state.updateFieldSettings
   );
+  const calculationEditor = useCalculationEditor();
   const editing = useMemo((): SchemaEditing | undefined => {
     if (readOnly) return undefined;
-    if (hostGraph)
-      return projectEditing ? { project: projectEditing } : undefined;
+    const calculations = (nodeId: string) =>
+      calculationEditor
+        ? {
+            nodeId,
+            open: (name?: string, returnFocus?: HTMLElement | null) =>
+              calculationEditor.open(name, undefined, returnFocus),
+          }
+        : undefined;
+    if (hostGraph) {
+      return {
+        project: projectEditing,
+        calculations: viewId ? calculations(`view:${viewId}`) : undefined,
+      };
+    }
     return {
       fields: {
         settings: (field) => fieldSettings[field] ?? {},
         update: updateFieldSettings,
       },
+      calculations: calculations("table:data"),
     };
-  }, [readOnly, hostGraph, projectEditing, fieldSettings, updateFieldSettings]);
+  }, [
+    readOnly,
+    hostGraph,
+    projectEditing,
+    viewId,
+    fieldSettings,
+    updateFieldSettings,
+    calculationEditor,
+  ]);
   const tables = graph.nodes.filter((node) => node.kind === "table");
+  const queries = graph.nodes.filter((node) => node.kind === "query").length;
+  const views = graph.nodes.filter((node) => node.kind === "view").length;
   const fields = tables.reduce((sum, node) => sum + node.rows.length, 0);
   const relationships = graph.edges.filter(
     (edge) => edge.kind === "relationship"
@@ -88,6 +136,8 @@ export function SchemaDrawer({
     tables.length > 1
       ? countLabel(relationships, "relationship", "relationships")
       : undefined,
+    queries ? countLabel(queries, "query", "queries") : undefined,
+    views && hostGraph ? countLabel(views, "view", "views") : undefined,
   ].filter(Boolean);
 
   return (

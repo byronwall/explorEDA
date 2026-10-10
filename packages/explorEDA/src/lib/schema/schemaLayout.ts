@@ -1,8 +1,9 @@
-import type {
-  SchemaEdge,
-  SchemaEndpoint,
-  SchemaGraph,
-  SchemaNode,
+import {
+  HEADER_ROW,
+  type SchemaEdge,
+  type SchemaEndpoint,
+  type SchemaGraph,
+  type SchemaNode,
 } from "./schemaGraph";
 
 /** Fixed sizes, so lines can find a row without measuring the page. */
@@ -35,6 +36,17 @@ const KIND_ORDER: Record<SchemaNode["kind"], number> = {
   query: 1,
   view: 2,
 };
+
+/**
+ * How far below a card's top a line meets a row: the middle of the row, or
+ * of the header for a line that joins the card as a whole.
+ */
+export function rowOffset(node: SchemaNode | undefined, rowId: string) {
+  if (rowId === HEADER_ROW) return SCHEMA_SIZES.header / 2;
+  const index = node?.rows.findIndex((row) => row.id === rowId) ?? -1;
+  if (index < 0) return undefined;
+  return SCHEMA_SIZES.header + (index + 0.5) * SCHEMA_SIZES.row;
+}
 
 export function nodeHeight(node: SchemaNode) {
   const { header, row, footer } = SCHEMA_SIZES;
@@ -107,12 +119,9 @@ function layeredLayout(graph: SchemaGraph): SchemaLayout {
 
   const boxes: Record<string, SchemaBox> = {};
   const nodesById = new Map(graph.nodes.map((node) => [node.id, node]));
-  const rowOffset = (endpoint: SchemaEndpoint) => {
-    const node = nodesById.get(endpoint.nodeId);
-    const index =
-      node?.rows.findIndex((row) => row.id === endpoint.rowId) ?? -1;
-    return SCHEMA_SIZES.header + (Math.max(0, index) + 0.5) * SCHEMA_SIZES.row;
-  };
+  const offsetOf = (endpoint: SchemaEndpoint) =>
+    rowOffset(nodesById.get(endpoint.nodeId), endpoint.rowId) ??
+    SCHEMA_SIZES.header / 2;
 
   /**
    * Where a card's top would put each of its linked rows level with the row
@@ -130,7 +139,7 @@ function layeredLayout(graph: SchemaGraph): SchemaLayout {
       if (!own || !other || other.nodeId === node.id) continue;
       const box = boxes[other.nodeId];
       if (!box || !placed(other.nodeId)) continue;
-      tops.push(box.y + rowOffset(other) - rowOffset(own));
+      tops.push(box.y + offsetOf(other) - offsetOf(own));
     }
     return tops.length
       ? tops.reduce((sum, top) => sum + top, 0) / tops.length
@@ -235,12 +244,9 @@ export function routeSchemaEdge(
   const point = (endpoint: SchemaEndpoint) => {
     const box = layout.boxes[endpoint.nodeId];
     const node = graph.nodes.find((item) => item.id === endpoint.nodeId);
-    const index = node?.rows.findIndex((row) => row.id === endpoint.rowId);
-    if (!box || index === undefined || index < 0) return undefined;
-    return {
-      box,
-      y: box.y + SCHEMA_SIZES.header + (index + 0.5) * SCHEMA_SIZES.row,
-    };
+    const offset = rowOffset(node, endpoint.rowId);
+    if (!box || offset === undefined) return undefined;
+    return { box, y: box.y + offset };
   };
   const a = point(edge.from);
   const b = point(edge.to);
@@ -339,7 +345,8 @@ function roundedPath(points: [number, number][], radius = 10) {
 /**
  * The layered order, poured into columns no taller than `maxHeight`: cards
  * read top to bottom, then on to the next column, so a tall layer wraps
- * instead of leaving the rest of the screen empty.
+ * instead of leaving the rest of the screen empty. Each kind of card starts
+ * a new column.
  */
 function flowLayout(order: SchemaNode[], maxHeight: number): SchemaLayout {
   const { cardWidth, columnGap, cardGap, margin } = SCHEMA_SIZES;
@@ -347,12 +354,17 @@ function flowLayout(order: SchemaNode[], maxHeight: number): SchemaLayout {
   let column = 0;
   let y = margin;
   let height = 0;
+  let previous: SchemaNode | undefined;
   for (const node of order) {
     const nodeHeightValue = nodeHeight(node);
-    if (y > margin && y + nodeHeightValue > margin + maxHeight) {
+    // Tables, queries, and views each start their own column, so each kind
+    // reads as one group.
+    const newKind = previous !== undefined && previous.kind !== node.kind;
+    if (y > margin && (newKind || y + nodeHeightValue > margin + maxHeight)) {
       column += 1;
       y = margin;
     }
+    previous = node;
     boxes[node.id] = {
       x: margin + column * (cardWidth + columnGap),
       y,

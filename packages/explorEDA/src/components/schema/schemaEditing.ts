@@ -13,6 +13,14 @@ export interface SchemaProjectEditing {
   onChange: (project: AnalysisProject) => void;
 }
 
+/** The workspace's calculated fields, edited in the calculation editor. */
+export interface SchemaCalculationEditing {
+  /** The card that holds the workspace's calculations. */
+  nodeId: string;
+  /** Open the editor on a calculation, or empty to add one. */
+  open: (name?: string, returnFocus?: HTMLElement | null) => void;
+}
+
 /** A single-table workspace's field labels, units, and types. */
 export interface SchemaFieldEditing {
   settings: (field: string) => FieldSettings;
@@ -23,6 +31,7 @@ export interface SchemaFieldEditing {
 export interface SchemaEditing {
   project?: SchemaProjectEditing;
   fields?: SchemaFieldEditing;
+  calculations?: SchemaCalculationEditing;
 }
 
 export type SchemaSelection =

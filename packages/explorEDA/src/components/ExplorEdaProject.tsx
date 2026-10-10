@@ -106,10 +106,7 @@ export const ExplorEdaProject = forwardRef<
   const chartRef = useRef<ExplorEdaHandle>(null);
   const [openPanel, setOpenPanel] = useState<"schema" | "query">();
   const [diagramOpen, setDiagramOpen] = useState(false);
-  const schemaGraph = useMemo(
-    () => projectSchemaGraph(project, tables),
-    [project, tables]
-  );
+
   const [schemaWide, setSchemaWide] = useState(false);
   const [queryWide, setQueryWide] = useState(false);
   const [focusRowKeys, setFocusRowKeys] = useState<string[]>();
@@ -147,6 +144,18 @@ export const ExplorEdaProject = forwardRef<
   );
 
   const settings = shownView.settings ?? queryPresets?.[shownView.queryId];
+  const schemaGraph = useMemo(
+    () =>
+      projectSchemaGraph(project, tables, [
+        {
+          id: shownView.id,
+          name: shownView.name,
+          queryId: shownView.queryId,
+          settings,
+        },
+      ]),
+    [project, tables, shownView.id, shownView.name, shownView.queryId, settings]
+  );
   const incompatibleFields = useMemo(
     () => incompatibleSettingsFields(settings, new Set(fieldNames)),
     [settings, fieldNames]
@@ -323,6 +332,7 @@ export const ExplorEdaProject = forwardRef<
                   tables,
                   onChange: (next) => update(next, shownView),
                 },
+            viewId: shownView.id,
             open: diagramOpen,
             onOpenChange: setDiagramOpen,
           }}
