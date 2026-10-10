@@ -107,6 +107,23 @@ node --experimental-strip-types apps/data-samples/prepare/worldbank.ts
 
 The API is live. The first run caches its responses in `tmp/data-cache/worldbank`; delete them to take a new vintage.
 
+## Earthquakes of magnitude 4.5 or more, 2023
+
+- Folder: `earthquakes/`, with `manifest.json` for the query, retrieval time, checksum, counts, and audits
+- Table: `events.csv` (7,643 events, one row per catalogue event)
+- Demo: `/examples/earthquakes-2023`
+- Use: a point map, daily and weekly counts, hexagon bins, distributions within one magnitude type, and field completeness
+- Source: [USGS ANSS ComCat](https://earthquake.usgs.gov/data/comcat/) query `starttime=2023-01-01&endtime=2024-01-01&minmagnitude=4.5&eventtype=earthquake`
+- License: public domain (U.S. Geological Survey)
+
+The query's end time is inclusive, so the script keeps only events before 2024-01-01. Depth bands at 70 and 300 km are analyst-defined. `metadata_present` counts how many of eight measurement fields hold a number. The table is a single source on purpose: each row is already one event.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/earthquakes.ts
+```
+
+The catalogue revises events. The first run caches the response in `tmp/data-cache`; delete it to take a new revision.
+
 ## Message log
 
 - File: `message-log.csv`

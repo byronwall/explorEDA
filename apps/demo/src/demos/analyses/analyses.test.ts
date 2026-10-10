@@ -3,14 +3,19 @@ import path from "node:path";
 import type { AnalysisSourceRow } from "exploreda";
 import { evaluateAnalysisQuery } from "exploreda/analysis";
 import { describe, expect, it } from "vitest";
-import { parseCsvData } from "@/csvParser";
 import { beijingAnalysis } from "./beijing";
 import { facts as beijingFacts } from "./facts/beijing";
 import { facts as flightFacts } from "./facts/flights";
 import { flightsAnalysis } from "./flights";
+import { earthquakesAnalysis } from "./earthquakes";
+import { facts as earthquakeFacts } from "./facts/earthquakes";
 import { facts as worldBankFacts } from "./facts/worldbank";
 import { worldBankAnalysis } from "./worldbank";
-import { analysisQueryId, buildAnalysisViews } from "./loadAnalysis";
+import {
+  analysisQueryId,
+  buildAnalysisViews,
+  parseTable,
+} from "./loadAnalysis";
 import type { ExampleAnalysis } from "./types";
 
 const publicDir = path.resolve(__dirname, "../../../public");
@@ -19,7 +24,7 @@ async function readTables(analysis: ExampleAnalysis) {
   const tables: Record<string, AnalysisSourceRow[]> = {};
   for (const [sourceId, url] of Object.entries(analysis.tableFiles)) {
     const text = readFileSync(path.join(publicDir, url), "utf8");
-    tables[sourceId] = (await parseCsvData(text)) as AnalysisSourceRow[];
+    tables[sourceId] = await parseTable(text);
   }
   return tables;
 }
@@ -188,6 +193,33 @@ describe("World development indicators", () => {
       "Different paths",
       "Where people lack power",
       "Room to improve",
+    ]);
+  });
+});
+
+describe("Earthquakes of 2023", () => {
+  it("keeps every catalogue event inside the half-open year", async () => {
+    const result = await evaluate(earthquakesAnalysis);
+    const { audit, findings } = earthquakeFacts;
+    expect(result.counts.output).toBe(audit.events);
+    expect(new Set(result.rows.map((row) => row.data["events.id"])).size).toBe(
+      audit.events
+    );
+    const dates = result.rows.map((row) => String(row.data["events.date"]));
+    expect(dates.every((value) => value.startsWith("2023-"))).toBe(true);
+    expect(
+      dates.filter((value) => value === findings.busiestDay.date).length
+    ).toBe(findings.busiestDay.events);
+    expect(typeof result.rows[0]!.data["events.time"]).toBe("string");
+  });
+
+  it("builds every tab from its text against all rows", async () => {
+    await expectCleanTabs(earthquakesAnalysis, [
+      "Where they struck",
+      "When they happened",
+      "Magnitude and depth",
+      "One magnitude type by depth",
+      "What each record carries",
     ]);
   });
 });

@@ -714,6 +714,29 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "earthquakes-2023",
+    intent:
+      "Treat a thresholded catalogue as a defined population: where, when, magnitude against depth, and which fields each record carries.",
+    features: {
+      "chart:map": "shown",
+      "chart:markdown": "shown",
+      "chart:bar": "shown",
+      "chart:row": "shown",
+      "chart:metric-card": "shown",
+      "chart:data-table": "shown",
+      "chart:calendar": "shown",
+      "chart:line": "shown",
+      "chart:scatter": "shown",
+      "chart:ecdf": "shown",
+      "chart:boxplot": "shown",
+      "mode:scatter-hexbin": "shown",
+      "mode:area": "shown",
+      "mode:stacked-bars": "shown",
+      "mode:calendar-series": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
     exampleId: "multi-source-shop",
     intent:
       "Chart related tables with an explicit row meaning, and follow each chart back to its query steps and source records.",
