@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { NumericInputEnter } from "@/components/NumericInputEnter";
 import { Label } from "@/components/ui/label";
 import { ActionTooltip } from "@/components/ui/tooltip";
+import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
+import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import { ArrowDown, ArrowUp, X } from "lucide-react";
@@ -63,6 +65,11 @@ const CATEGORICAL_CELLS: Options = [
   ["blank", "Blank", "Leave these cells empty."],
 ];
 const CONTINUOUS_DIAGONAL: Options = [
+  [
+    "density",
+    "Density",
+    "Draw a smoothed curve of the field, scaled to row counts so a selection's curve sits inside the whole one.",
+  ],
   [
     "histogram",
     "Histogram",
@@ -125,6 +132,7 @@ export function ScatterMatrixSettingsPanel({
     return getColumnNames();
   }, [calculations, getColumnNames]);
   const used = new Set(settings.fields);
+  const { getOrCreateScaleForField } = useColorScales();
 
   const change = (next: Partial<ScatterMatrixSettings>) =>
     onSettingsChange({ ...settings, ...next });
@@ -325,6 +333,36 @@ export function ScatterMatrixSettingsPanel({
       <section className="eda-setting-section" aria-label="Points">
         <h5>Points</h5>
         <div className="eda-setting-grid">
+          <ActionTooltip content="Color points, distributions, and correlations by a category field. Box plots and tiles keep one color.">
+            <Label>Color</Label>
+          </ActionTooltip>
+          <FieldSelector
+            label=""
+            placeholder="One color"
+            value={settings.colorField ?? ""}
+            allowClear
+            onChange={(value) =>
+              change({
+                colorField: value || undefined,
+                colorScaleId: value
+                  ? getOrCreateScaleForField(value)
+                  : undefined,
+                // A legend selection belongs to the old color field.
+                filters: settings.colorField
+                  ? settings.filters.filter(
+                      (filter) =>
+                        filter.field !== settings.colorField ||
+                        used.has(filter.field)
+                    )
+                  : settings.filters,
+              })
+            }
+          />
+          {settings.colorScaleId && (
+            <div className="col-start-2 -mt-2">
+              <ColorScaleControl scaleId={settings.colorScaleId} />
+            </div>
+          )}
           <ActionTooltip content="How much of a category's band jittered points spread across. 0 stacks them on one line; 1 fills the band.">
             <Label htmlFor="matrix-jitter">Jitter</Label>
           </ActionTooltip>

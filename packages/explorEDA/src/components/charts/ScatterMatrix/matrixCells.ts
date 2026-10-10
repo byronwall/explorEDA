@@ -147,3 +147,135 @@ export function selectedPairs(pairs: MatrixPairs, selected: Uint8Array) {
   }
   return counts;
 }
+
+/** Bins a density is estimated on before smoothing. */
+export const DENSITY_BINS = 128;
+
+/**
+ * A kernel density estimate on fixed bins, scaled to counts so a subset's
+ * curve sits inside the whole curve and its area shows the subset's share.
+ */
+export interface MatrixDensity {
+  /** Offset of each bin's center along the cell. */
+  centers: Float64Array;
+  /** Each live row's bin, or -1. */
+  binIndex: Int32Array;
+  /** Gaussian weights from -radius to +radius bins, summing to one. */
+  kernel: Float64Array;
+  /** Smoothed rows per bin across every live row. */
+  total: Float64Array;
+  /** The largest value of `total`, for scaling. */
+  max: number;
+}
+
+/**
+ * Bins every live row's value between `low` and `high`, then smooths with a
+ * Gaussian whose width follows Scott's rule. Binning first keeps the cost to
+ * one pass over the rows, which matters at 100,000 rows per field.
+ */
+export function planDensity(
+  values: Float64Array,
+  low: number,
+  high: number,
+  toOffset: (value: number) => number
+): MatrixDensity | undefined {
+  const span = high - low;
+  if (!(span > 0)) {
+    return undefined;
+  }
+  const width = span / DENSITY_BINS;
+  const binIndex = new Int32Array(values.length).fill(-1);
+  const counts = new Float64Array(DENSITY_BINS);
+  let n = 0;
+  let sum = 0;
+  let squares = 0;
+  for (let i = 0; i < values.length; i++) {
+    const value = values[i]!;
+    if (value !== value) {
+      continue;
+    }
+    const bin = Math.min(
+      DENSITY_BINS - 1,
+      Math.max(0, Math.floor((value - low) / width))
+    );
+    binIndex[i] = bin;
+    counts[bin]!++;
+    n++;
+    sum += value;
+    squares += value * value;
+  }
+  if (n < 2) {
+    return undefined;
+  }
+  const mean = sum / n;
+  const sd = Math.sqrt(Math.max(0, squares / n - mean * mean));
+  const bandwidth = sd > 0 ? 1.06 * sd * Math.pow(n, -0.2) : span / 20;
+  const sigma = Math.max(0.5, bandwidth / width);
+  const radius = Math.min(DENSITY_BINS, Math.ceil(3 * sigma));
+  const kernel = new Float64Array(radius * 2 + 1);
+  let weight = 0;
+  for (let k = -radius; k <= radius; k++) {
+    const value = Math.exp(-0.5 * (k / sigma) ** 2);
+    kernel[k + radius] = value;
+    weight += value;
+  }
+  for (let k = 0; k < kernel.length; k++) {
+    kernel[k]! /= weight;
+  }
+  const centers = Float64Array.from({ length: DENSITY_BINS }, (_, bin) =>
+    toOffset(low + (bin + 0.5) * width)
+  );
+  const total = smoothCounts(counts, kernel);
+  return { centers, binIndex, kernel, total, max: Math.max(...total) };
+}
+
+export function smoothCounts(counts: Float64Array, kernel: Float64Array) {
+  const radius = (kernel.length - 1) / 2;
+  const out = new Float64Array(counts.length);
+  for (let bin = 0; bin < counts.length; bin++) {
+    const count = counts[bin]!;
+    if (!count) {
+      continue;
+    }
+    for (let k = -radius; k <= radius; k++) {
+      const target = bin + k;
+      if (target >= 0 && target < out.length) {
+        out[target]! += count * kernel[k + radius]!;
+      }
+    }
+  }
+  return out;
+}
+
+/**
+ * Smoothed counts of the selected rows, and of the selected rows in each
+ * color group, in one pass over the rows.
+ */
+export function selectedDensities(
+  density: MatrixDensity,
+  selected: Uint8Array,
+  groups?: { index: Int32Array; count: number }
+) {
+  const counts = new Float64Array(DENSITY_BINS);
+  const byGroup = groups
+    ? Array.from({ length: groups.count }, () => new Float64Array(DENSITY_BINS))
+    : undefined;
+  const bins = density.binIndex;
+  for (let i = 0; i < bins.length; i++) {
+    const bin = bins[i]!;
+    if (bin < 0 || !selected[i]) {
+      continue;
+    }
+    counts[bin]!++;
+    if (byGroup) {
+      const group = groups!.index[i]!;
+      if (group >= 0) {
+        byGroup[group]![bin]!++;
+      }
+    }
+  }
+  return {
+    selected: smoothCounts(counts, density.kernel),
+    groups: byGroup?.map((group) => smoothCounts(group, density.kernel)),
+  };
+}

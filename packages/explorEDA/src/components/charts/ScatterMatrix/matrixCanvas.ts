@@ -7,6 +7,13 @@ export type Rgb = [number, number, number];
 
 /** Reused between draws so large matrices do not allocate on every brush. */
 let counts = new Uint16Array(0);
+let scratch: HTMLCanvasElement | undefined;
+
+/** Rows colored by group: each group's live row indices and color. */
+export interface PointGroups {
+  rows: Int32Array[];
+  colors: Rgb[];
+}
 
 /**
  * Draws every point cell of a matrix on one canvas. With `selected`, only the
@@ -22,7 +29,8 @@ export function drawMatrixPoints(
   layout: MatrixLayout,
   color: Rgb,
   opacity: number,
-  selected?: Uint8Array
+  selected?: Uint8Array,
+  groups?: PointGroups
 ) {
   const ctx = canvas.getContext("2d");
   if (!ctx) {
@@ -39,10 +47,51 @@ export function drawMatrixPoints(
   }
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, width, height);
-  if (layout.pointRadius <= SQUARE_RADIUS) {
-    paintSquares(ctx, layout, dpr, width, height, color, opacity, selected);
-  } else {
-    strokeCircles(ctx, layout, dpr, color, opacity, selected);
+  const square = layout.pointRadius <= SQUARE_RADIUS;
+  if (!groups) {
+    if (square) {
+      paintSquares(ctx, layout, dpr, width, height, color, opacity, selected);
+    } else {
+      strokeCircles(ctx, layout, dpr, color, opacity, selected);
+    }
+    return;
+  }
+  // One pass per group, later groups on top, as the scatter plot draws them.
+  for (let group = 0; group < groups.colors.length; group++) {
+    const only = groups.rows[group]!;
+    if (!square) {
+      strokeCircles(
+        ctx,
+        layout,
+        dpr,
+        groups.colors[group]!,
+        opacity,
+        selected,
+        only
+      );
+      continue;
+    }
+    // Pixel layers replace what they cover, so each group paints on its own
+    // canvas and composites onto the chart.
+    scratch ??= document.createElement("canvas");
+    scratch.width = width;
+    scratch.height = height;
+    const layer = scratch.getContext("2d");
+    if (!layer) {
+      return;
+    }
+    paintSquares(
+      layer,
+      layout,
+      dpr,
+      width,
+      height,
+      groups.colors[group]!,
+      opacity,
+      selected,
+      only
+    );
+    ctx.drawImage(scratch, 0, 0);
   }
 }
 
@@ -54,7 +103,8 @@ function paintSquares(
   height: number,
   [red, green, blue]: Rgb,
   opacity: number,
-  selected?: Uint8Array
+  selected?: Uint8Array,
+  only?: Int32Array
 ) {
   if (counts.length < width * height) {
     counts = new Uint16Array(width * height);
@@ -64,7 +114,8 @@ function paintSquares(
   const side = Math.max(1, Math.round(layout.pointRadius * 2 * dpr));
   const half = side / 2;
   const size = layout.cellSize;
-  const rows = layout.liveIds.length;
+  // With `only`, walk just those rows; otherwise every live row.
+  const rows = only ? only.length : layout.liveIds.length;
   // Only the cells that hold points need converting back to pixels.
   let top = height;
   let bottom = 0;
@@ -85,7 +136,8 @@ function paintSquares(
     left = Math.min(left, x0);
     right = Math.max(right, x1);
     const baseY = (cell.y + size) * dpr;
-    for (let i = 0; i < rows; i++) {
+    for (let k = 0; k < rows; k++) {
+      const i = only ? only[k]! : k;
       if (selected && !selected[i]) {
         continue;
       }
@@ -161,14 +213,16 @@ function strokeCircles(
   dpr: number,
   [red, green, blue]: Rgb,
   opacity: number,
-  selected?: Uint8Array
+  selected?: Uint8Array,
+  only?: Int32Array
 ) {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.fillStyle = `rgb(${red} ${green} ${blue})`;
   ctx.globalAlpha = opacity;
   const r = layout.pointRadius;
   const size = layout.cellSize;
-  const rows = layout.liveIds.length;
+  // With `only`, walk just those rows; otherwise every live row.
+  const rows = only ? only.length : layout.liveIds.length;
   for (const cell of layout.cells) {
     if (cell.kind !== "points") {
       continue;
@@ -181,7 +235,8 @@ function strokeCircles(
     ctx.rect(cell.x, cell.y, size, size);
     ctx.clip();
     ctx.beginPath();
-    for (let i = 0; i < rows; i++) {
+    for (let k = 0; k < rows; k++) {
+      const i = only ? only[k]! : k;
       if (selected && !selected[i]) {
         continue;
       }
@@ -198,4 +253,21 @@ function strokeCircles(
     ctx.fill();
     ctx.restore();
   }
+}
+
+/** Parses "#rrggbb", "#rgb", or "rgb(r g b)" into channels; gray otherwise. */
+export function toRgb(color: string): Rgb {
+  const hex = color.trim().match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (hex) {
+    const digits =
+      hex[1]!.length === 3
+        ? [...hex[1]!].map((digit) => digit + digit).join("")
+        : hex[1]!;
+    return [0, 2, 4].map((at) => parseInt(digits.slice(at, at + 2), 16)) as Rgb;
+  }
+  const rgb = color.match(/rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/i);
+  if (rgb) {
+    return [Number(rgb[1]), Number(rgb[2]), Number(rgb[3])];
+  }
+  return [138, 148, 163];
 }

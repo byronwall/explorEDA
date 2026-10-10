@@ -25,7 +25,7 @@ export interface MatrixTriangleCells {
 
 /** What the diagonal draws, by the type of its field. */
 export interface MatrixDiagonalCells {
-  continuous: "histogram" | "label";
+  continuous: "density" | "histogram" | "label";
   categorical: "bars" | "label";
 }
 
@@ -59,7 +59,7 @@ export const DEFAULT_UPPER_CELLS: MatrixTriangleCells = {
 /** Category fields show this many of their most common values, then Other. */
 export const MAX_MATRIX_CATEGORIES = 12;
 export const DEFAULT_DIAGONAL_CELLS: MatrixDiagonalCells = {
-  continuous: "histogram",
+  continuous: "density",
   categorical: "bars",
 };
 

@@ -17,7 +17,7 @@ import {
   STATUS_LINE_HEIGHT,
 } from "../ChartStatusLine";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
-import { drawMatrixPoints, type Rgb } from "./matrixCanvas";
+import { drawMatrixPoints, toRgb, type Rgb } from "./matrixCanvas";
 import type { MatrixBoxStats } from "./matrixCells";
 import { MIN_MATRIX_FIELDS, type ScatterMatrixSettings } from "./definition";
 import {
@@ -93,6 +93,11 @@ export function ScatterMatrix({
   const profiles = useDataLayer((s) => s.fieldProfiles);
   const nonce = useDataLayer((s) => s.nonce);
   const updateChart = useDataLayer((s) => s.updateChart);
+  const colorScale = useDataLayer((s) =>
+    settings.colorScaleId
+      ? s.colorScales.find((item) => item.id === settings.colorScaleId)
+      : undefined
+  );
   const liveIds = useStableIds(useGetLiveIds(settings, facetIds) as number[]);
   const allIds = useStableIds(useGetAllIds(settings) as number[]);
   const contextRef = useRef<HTMLCanvasElement>(null);
@@ -112,6 +117,7 @@ export function ScatterMatrix({
   const fieldKey = [
     ...new Set([
       ...settings.fields,
+      ...(settings.colorField ? [settings.colorField] : []),
       ...settings.filters.map((filter) => filter.field),
     ]),
   ]
@@ -131,14 +137,23 @@ export function ScatterMatrix({
         (profile) => profile.name === field
       )?.dataType;
     }
-    return { allIds, liveIds, columns, types };
+    return { allIds, liveIds, columns, types, colorScale };
     // The nonce carries data edits; column maps are replaced when data changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fieldKey, allIds, liveIds, profiles, nonce, getColumnData]);
+  }, [fieldKey, allIds, liveIds, profiles, nonce, getColumnData, colorScale]);
 
   // Everything but the selection: a brush reuses it.
-  const { fields, lower, upper, diagonal, margin, pointSize, pointOpacity } =
-    settings;
+  const {
+    fields,
+    lower,
+    upper,
+    diagonal,
+    margin,
+    pointSize,
+    pointOpacity,
+    jitter,
+    colorField,
+  } = settings;
   const layout = useMemo(
     () =>
       planMatrixLayout({
@@ -151,6 +166,8 @@ export function ScatterMatrix({
           margin,
           pointSize,
           pointOpacity,
+          jitter,
+          colorField,
         },
         snapshot,
         width,
@@ -167,6 +184,8 @@ export function ScatterMatrix({
       margin,
       pointSize,
       pointOpacity,
+      jitter,
+      colorField,
       snapshot,
       width,
       plotHeight,
@@ -205,7 +224,11 @@ export function ScatterMatrix({
       plan,
       POINT_RGB,
       plan.pointOpacity,
-      plan.hasSelection ? plan.selected : undefined
+      plan.hasSelection ? plan.selected : undefined,
+      plan.groups && {
+        rows: plan.groups.rows,
+        colors: plan.groups.colors.map(toRgb),
+      }
     );
     if (performance.getEntriesByName(UPDATE_MARK, "mark").length) {
       performance.measure(UPDATE_MEASURE, UPDATE_MARK);
@@ -681,32 +704,17 @@ function MatrixCellMarks({
     </text>
   );
   if (cell.kind === "correlation") {
-    const fontSize = Math.max(11, Math.min(20, size / 7));
     return (
       <g pointerEvents="none">
-        <text
-          x={cell.x + size / 2}
-          y={cell.y + size / 2 - fontSize * 0.4}
-          textAnchor="middle"
-          dominantBaseline="central"
-          fontSize={fontSize * 0.6}
-          className="fill-muted-foreground"
-        >
-          Corr
-        </text>
-        <text
-          x={cell.x + size / 2}
-          y={cell.y + size / 2 + fontSize * 0.45}
-          textAnchor="middle"
-          dominantBaseline="central"
-          fontSize={fontSize}
-          fontWeight={600}
-          className="fill-foreground"
-        >
-          {cell.r === undefined
-            ? "—"
-            : (Math.abs(cell.r) < 0.005 ? 0 : cell.r).toFixed(2)}
-        </text>
+        <CorrelationCell cell={cell} plan={plan} />
+        {count}
+      </g>
+    );
+  }
+  if (cell.density) {
+    return (
+      <g pointerEvents="none">
+        <DensityCell cell={cell} plan={plan} />
         {count}
       </g>
     );
@@ -773,6 +781,42 @@ function DiagonalBar({
   const total = bar.total * scale;
   // The selected share stacks at the base, the rest above it in gray.
   const selected = (plan.hasSelection ? bar.selected : bar.total) * scale;
+  const groups = plan.groups;
+  if (groups && bar.groups) {
+    let top = base;
+    return (
+      <>
+        {plan.hasSelection && (
+          <rect
+            x={x}
+            y={base - total}
+            width={w}
+            height={total}
+            fill={MATRIX_CONTEXT_COLOR}
+            fillOpacity={0.45}
+          />
+        )}
+        {bar.groups.map((count, group) => {
+          if (!count) {
+            return null;
+          }
+          const height = count * scale;
+          top -= height;
+          return (
+            <rect
+              key={group}
+              x={x}
+              y={top}
+              width={w}
+              height={height}
+              fill={groups.colors[group]}
+              fillOpacity={0.85}
+            />
+          );
+        })}
+      </>
+    );
+  }
   return (
     <>
       {plan.hasSelection && (
@@ -991,4 +1035,141 @@ function PairCell({ cell, plan }: { cell: MatrixCell; plan: MatrixPlan }) {
     }
   }
   return <>{marks}</>;
+}
+
+const formatR = (r: number | undefined) =>
+  r === undefined ? "—" : (Math.abs(r) < 0.005 ? 0 : r).toFixed(2);
+
+/**
+ * Pearson r for the pair, then one line per color group in its color, as many
+ * as fit the cell.
+ */
+function CorrelationCell({
+  cell,
+  plan,
+}: {
+  cell: MatrixCell;
+  plan: MatrixPlan;
+}) {
+  const size = plan.cellSize;
+  const fontSize = Math.max(11, Math.min(20, size / 7));
+  const groups = plan.groups && cell.groupR ? plan.groups : undefined;
+  const lineHeight = Math.max(10, Math.min(14, size / 9));
+  const room = groups
+    ? Math.max(0, Math.floor((size - fontSize * 2.4) / lineHeight))
+    : 0;
+  const shown = groups
+    ? groups.labels
+        .map((label, group) => ({ label, group, r: cell.groupR![group] }))
+        .filter((item) => item.r !== undefined)
+        .slice(0, room)
+    : [];
+  const blockHeight = fontSize * 1.9 + shown.length * lineHeight;
+  const top = cell.y + (size - blockHeight) / 2;
+  return (
+    <>
+      <text
+        x={cell.x + size / 2}
+        y={top + fontSize * 0.35}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize={fontSize * 0.6}
+        className="fill-muted-foreground"
+      >
+        Corr
+      </text>
+      <text
+        x={cell.x + size / 2}
+        y={top + fontSize * 1.2}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize={fontSize}
+        fontWeight={600}
+        className="fill-foreground"
+      >
+        {formatR(cell.r)}
+      </text>
+      {shown.map((item, index) => (
+        <text
+          key={item.group}
+          x={cell.x + size / 2}
+          y={top + fontSize * 1.9 + (index + 0.5) * lineHeight}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize={lineHeight * 0.82}
+          fill={groups!.colors[item.group]}
+        >
+          {`${truncate(item.label, size * 0.6)}: ${formatR(item.r)}`}
+        </text>
+      ))}
+    </>
+  );
+}
+
+/** A smoothed curve as a closed area along the cell's bottom edge. */
+function areaPath(
+  cell: MatrixCell,
+  size: number,
+  centers: Float64Array,
+  curve: Float64Array,
+  scale: number
+) {
+  const base = cell.y + size;
+  let path = `M${cell.x + centers[0]!},${base}`;
+  for (let bin = 0; bin < curve.length; bin++) {
+    path += `L${cell.x + centers[bin]!},${base - curve[bin]! * scale}`;
+  }
+  return `${path}L${cell.x + centers[centers.length - 1]!},${base}Z`;
+}
+
+/**
+ * Kernel density of the diagonal field, scaled to counts. With a selection,
+ * the gray curve holds every row and the colored curve the selection, so its
+ * area shows the selected share. With a color field, each group's curve
+ * overlaps the others.
+ */
+function DensityCell({ cell, plan }: { cell: MatrixCell; plan: MatrixPlan }) {
+  const size = plan.cellSize;
+  const density = cell.density!;
+  const scale = (size - 6) / Math.max(1e-9, density.max);
+  const groups = plan.groups;
+  return (
+    <>
+      {plan.hasSelection && (
+        <path
+          d={areaPath(cell, size, density.centers, density.total, scale)}
+          fill={MATRIX_CONTEXT_COLOR}
+          fillOpacity={0.4}
+        />
+      )}
+      {groups && density.groups ? (
+        density.groups.map((curve, group) => (
+          <path
+            key={group}
+            d={areaPath(cell, size, density.centers, curve, scale)}
+            fill={groups.colors[group]}
+            fillOpacity={0.35}
+            stroke={groups.colors[group]}
+            strokeWidth={1}
+          />
+        ))
+      ) : (
+        <path
+          d={areaPath(
+            cell,
+            size,
+            density.centers,
+            plan.hasSelection && density.selected
+              ? density.selected
+              : density.total,
+            scale
+          )}
+          fill={MATRIX_POINT_COLOR}
+          fillOpacity={0.55}
+          stroke={MATRIX_POINT_COLOR}
+          strokeWidth={1}
+        />
+      )}
+    </>
+  );
 }
