@@ -13,6 +13,7 @@ import { BoxPlotSettings } from "@/components/charts/BoxPlot/definition";
 import { LineChartSettings } from "@/components/charts/LineChart/definition";
 import type { SankeySettings } from "@/components/charts/Sankey/definition";
 import type { ParallelCoordinatesSettings } from "@/components/charts/ParallelCoordinates/definition";
+import type { ScatterMatrixSettings } from "@/components/charts/ScatterMatrix/definition";
 import type { CalendarSettings } from "@/components/charts/Calendar/definition";
 import type { HeatmapSettings } from "@/components/charts/Heatmap/definition";
 import type { EcdfSettings } from "@/components/charts/Ecdf/definition";
@@ -58,8 +59,29 @@ export interface AxisSettings {
   tickFontSize?: 8 | 10 | 12;
   labelFontSize?: 10 | 12 | 14;
   grid?: boolean;
+  /**
+   * The range the axis shows, in data units. A blank side follows the data.
+   * Limits only change the view: marks outside are clipped, never filtered.
+   */
+  limits?: AxisLimits;
+  /** @deprecated A placeholder that charts never read. Use `limits`. */
+  min?: number;
+  /** @deprecated A placeholder that charts never read. Use `limits`. */
+  max?: number;
+}
+
+export interface AxisLimits {
   min?: number;
   max?: number;
+}
+
+/** Chart text that differs from the workspace theme on purpose. */
+export interface ChartStyleOverrides {
+  /** Title size in px. */
+  titleSize?: number;
+  titleWeight?: number;
+  /** Subtitle size in px. */
+  subtitleSize?: number;
 }
 
 export interface MarginSettings {
@@ -72,6 +94,12 @@ export interface MarginSettings {
 export interface BaseChartSettings {
   id: string;
   title: string;
+  /** Line under the title that says what the chart shows. */
+  subtitle?: string;
+  /** Source or note line under the plot. */
+  note?: string;
+  /** Title and subtitle type that overrides the theme. */
+  style?: ChartStyleOverrides;
   type: string;
   field: string;
   layout: ChartLayout;
@@ -114,6 +142,7 @@ export type ChartSettings =
   | LineChartSettings
   | SankeySettings
   | ParallelCoordinatesSettings
+  | ScatterMatrixSettings
   | CalendarSettings
   | HeatmapSettings
   | EcdfSettings

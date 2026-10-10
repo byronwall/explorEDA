@@ -177,6 +177,9 @@ export function exportParts(
   if (grid.length) {
     workspace.push(`grid ${grid.join(" ")}`);
   }
+  if (settings.theme) {
+    workspace.push(`theme name=${settings.theme.id}`);
+  }
 
   const fieldLines = (names: string[]) =>
     names.flatMap((field) => {

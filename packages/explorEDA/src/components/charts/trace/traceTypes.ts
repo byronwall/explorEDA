@@ -13,6 +13,7 @@ import type { FacetLayoutPlan } from "../FacetRelated/facetLayout";
 import type { BarTrace } from "../BarChart/barTrace";
 import type { SankeyTrace } from "../Sankey/sankeyTrace";
 import type { ParallelTrace } from "../ParallelCoordinates/parallelTrace";
+import type { MatrixTrace } from "../ScatterMatrix/matrixTrace";
 import type { CalendarTrace } from "../Calendar/calendarTrace";
 import type { HeatmapTrace } from "../Heatmap/heatmapTrace";
 import type { EcdfTrace } from "../Ecdf/ecdfTrace";
@@ -117,6 +118,7 @@ export type ChartTrace =
   | BarTrace
   | SankeyTrace
   | ParallelTrace
+  | MatrixTrace
   | CalendarTrace
   | HeatmapTrace
   | EcdfTrace

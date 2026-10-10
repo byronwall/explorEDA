@@ -20,6 +20,7 @@ import {
   GripVertical,
   Maximize2,
   Minimize2,
+  Scaling,
   Search,
   Settings2,
   Table2,
@@ -27,6 +28,13 @@ import {
   X,
 } from "lucide-react";
 import { ChartRenderer } from "./charts/ChartRenderer";
+import { planPanelBody } from "./charts/panelBody";
+import {
+  AxisTypographyProvider,
+  toAxisTypography,
+  useThemeTypography,
+} from "./charts/chartTypography";
+import { getWorkspaceTheme } from "@/lib/themes";
 import { ChartReadoutProvider } from "./charts/ChartReadout";
 import { ChartColorLegend } from "./charts/ColorLegend/ChartColorLegend";
 import { ChartTraceControl } from "./charts/ChartTraceControl";
@@ -41,6 +49,11 @@ import type { TraceSource } from "./charts/trace/traceTypes";
 import { FacetContainer } from "./charts/FacetRelated/FacetContainer";
 import { FacetBarSlotContext } from "./charts/FacetRelated/facetBarSlot";
 import { useAxisFieldActions } from "./charts/AxisFieldActions";
+import { useAxisEditing } from "./charts/InPlace/useAxisEditing";
+import {
+  TITLE_EDIT_DESCRIPTION,
+  useTitleEditing,
+} from "./charts/InPlace/useTitleEditing";
 import { ChartSettingsContent } from "./ChartSettingsContent";
 import { Button } from "./ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
@@ -123,6 +136,12 @@ const TRACE_COPY = {
       "Alt-click a node or link to trace it. Normal clicks keep selecting. You can also find a source row below.",
     ariaLabel: "Sankey trace inspector",
   },
+  "scatter-matrix": {
+    heading: "Matrix trace",
+    emptyText:
+      "Alt-click a point to follow its row through every field, or Alt-click a cell to see what it draws. Normal clicks keep selecting. You can also find a source row below.",
+    ariaLabel: "Scatter matrix trace inspector",
+  },
   "parallel-coordinates": {
     heading: "Line trace",
     emptyText:
@@ -178,14 +197,20 @@ export function ChartTraceInspector({
   );
 }
 
+type TitleEditProps = ReturnType<typeof useTitleEditing>["titleProps"];
+
 function TraceTitle({
   id,
   text,
   settings,
+  editProps,
+  titleRef,
 }: {
   id: string;
   text: string;
   settings: ChartSettings;
+  editProps: TitleEditProps;
+  titleRef: React.Ref<HTMLHeadingElement>;
 }) {
   const api = useChartTraceApi();
   const owner = useId();
@@ -215,10 +240,12 @@ function TraceTitle({
   const inspect = () => api?.inspect(owner, "title", "title");
   return (
     <h3
+      ref={titleRef}
       id={id}
-      className="min-w-0 truncate text-sm font-semibold"
+      className="eda-panel-title min-w-0 truncate text-sm font-semibold"
       tabIndex={0}
-      aria-description="Alt-click or Alt-Enter to trace title"
+      aria-description={`${TITLE_EDIT_DESCRIPTION}. Alt-click or Alt-Enter to trace it`}
+      {...editProps}
       onMouseDownCapture={(event) => {
         if (event.altKey) event.stopPropagation();
       }}
@@ -232,7 +259,7 @@ function TraceTitle({
         if (event.altKey && event.key === "Enter") {
           event.preventDefault();
           inspect();
-        }
+        } else editProps.onKeyDown(event);
       }}
     >
       {text}
@@ -293,6 +320,47 @@ function detailsLayout(viewport: { width: number; height: number }) {
   };
 }
 
+/** Tracks an element's rendered height; undefined until it is measured. */
+function useMeasuredHeight() {
+  const [element, ref] = useState<HTMLElement | null>(null);
+  const [height, setHeight] = useState<number>();
+  useEffect(() => {
+    if (!element) return setHeight(undefined);
+    const measure = () =>
+      setHeight(Math.ceil(element.getBoundingClientRect().height));
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [element]);
+  return { ref, height };
+}
+
+/** Whether a line-clamped element hides some of its text. */
+function useClipped(
+  ref: React.RefObject<HTMLElement | null>,
+  active: boolean,
+  text: string
+) {
+  const [clipped, setClipped] = useState(false);
+  useEffect(() => {
+    const element = ref.current;
+    if (!active || !element) return setClipped(false);
+    // Tall glyphs overflow by a pixel or two; a hidden line adds a full line.
+    const measure = () => {
+      const line = parseFloat(getComputedStyle(element).lineHeight) || 16;
+      setClipped(element.scrollHeight > element.clientHeight + line / 2);
+    };
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref, active, text]);
+  return clipped;
+}
+
 /** Room the legend leaves for the facet pager on its line. */
 const FACET_SLOT_WIDTH = 150;
 
@@ -309,7 +377,8 @@ export function PlotChartPanel({
   const panelRef = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
   const details = detailsLayout(useViewport(expanded));
-  const axisFieldActions = useAxisFieldActions();
+  const axisEditing = useAxisEditing(settings, panelRef);
+  const axisFieldActions = useAxisFieldActions(axisEditing.menuItems);
   const settingsRef = useRef<HTMLButtonElement>(null);
   const settingsAnchor = useRef<HTMLElement | null>(null);
   const expandRef = useRef<HTMLButtonElement>(null);
@@ -378,8 +447,30 @@ export function PlotChartPanel({
   const [readoutTarget, setReadoutTarget] = useState<HTMLDivElement | null>(
     null
   );
-  // The details view gives the title more room, so the chart starts lower.
-  const headerExtra = expanded ? 14 : 0;
+  const theme = getWorkspaceTheme(useDataLayer((state) => state.theme));
+  const header = useMeasuredHeight();
+  const { typography: themeTypography, fonts } = useThemeTypography(
+    panelRef,
+    `${theme.id}:${expanded}`
+  );
+  const axisTypography = useMemo(
+    () => toAxisTypography(themeTypography, fonts),
+    [themeTypography, fonts]
+  );
+  const styleOverrides = settings.style;
+  const headerStyle = {
+    ...(styleOverrides?.titleSize
+      ? { "--eda-headline-size": `${styleOverrides.titleSize}px` }
+      : {}),
+    ...(styleOverrides?.titleWeight
+      ? { "--eda-headline-weight": styleOverrides.titleWeight }
+      : {}),
+    ...(styleOverrides?.subtitleSize
+      ? { "--eda-subtitle-size": `${styleOverrides.subtitleSize}px` }
+      : {}),
+  } as React.CSSProperties;
+  const note = useMeasuredHeight();
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const clearFilter = useDataLayer((state) => state.clearFilter);
   const updateChart = useDataLayer((state) => state.updateChart);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
@@ -389,7 +480,13 @@ export function PlotChartPanel({
   const titleId = useId();
   const descriptionId = useId();
   const chartTitle = getChartTitle(settings, getFieldLabel);
+  const titleClipped = useClipped(
+    titleRef,
+    theme.headline === "block",
+    chartTitle
+  );
   const chartSummary = getChartSummary(settings, getFieldLabel);
+  const titleEditing = useTitleEditing(settings, chartTitle);
   const aggregateId =
     "aggregateId" in settings ? settings.aggregateId : undefined;
   const aggregate = useDataLayer((state) =>
@@ -440,6 +537,17 @@ export function PlotChartPanel({
 
   const canViewData =
     !isTableLike && (dataFields.length > 0 || settings.type === "metric-card");
+  const subtitle = settings.subtitle?.trim();
+  const noteText = settings.note?.trim();
+  const bodyHeight = (legendHeight: number) =>
+    planPanelBody({
+      panelHeight,
+      headerHeight: header.height,
+      noteHeight: noteText ? note.height : 0,
+      stripHeight: fieldStripHeight,
+      legendHeight,
+      expanded,
+    });
   const tableSearch =
     settings.type === "data-table" ? settings.globalSearch : "";
   const hasFilter = settings.filters.some(isActiveFilter);
@@ -518,15 +626,18 @@ export function PlotChartPanel({
   const panel = (
     <div
       ref={panelRef}
-      className={`eda-panel bg-card border rounded-lg flex min-w-0 flex-col overflow-hidden ${expanded ? "eda-panel-expanded" : ""}`}
+      className={`eda-panel relative bg-card border rounded-lg flex min-w-0 flex-col overflow-hidden ${expanded ? "eda-panel-expanded" : ""}`}
+      data-eda-theme={theme.id}
+      data-headline={theme.headline}
       // Ring the chart while its settings are open so the editor has a clear owner.
       data-settings-open={(settingsOpen && !expanded) || undefined}
       onPointerEnter={(event) =>
         event.currentTarget.setAttribute("data-shortcut-hovered", "")
       }
-      onPointerLeave={(event) =>
-        event.currentTarget.removeAttribute("data-shortcut-hovered")
-      }
+      onPointerLeave={(event) => {
+        event.currentTarget.removeAttribute("data-shortcut-hovered");
+        axisEditing.clearHint();
+      }}
       style={{
         width: widthWithPadding,
         height: heightWithPadding,
@@ -534,49 +645,112 @@ export function PlotChartPanel({
       }}
       role="region"
       {...axisFieldActions.handlers}
+      {...axisEditing.handlers}
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
     >
-      <div className="eda-panel-header relative flex min-h-8 items-center justify-between gap-1 select-none py-0.5 pr-1 pl-2.5">
-        <div className="drag-handle flex min-w-0 flex-[1_1_35%] cursor-move items-center gap-2">
+      <div
+        ref={header.ref}
+        style={headerStyle}
+        className="eda-panel-header relative flex min-h-8 items-center justify-between gap-1 select-none py-0.5 pr-1 pl-2.5"
+        // The title takes the whole header while it is edited.
+        data-title-editing={titleEditing.editing || undefined}
+      >
+        <div className="eda-panel-heading drag-handle flex min-w-0 flex-[1_1_35%] cursor-move items-center gap-2">
           <GripVertical
             className="eda-drag absolute top-1/2 left-0 h-3 w-2.5 -translate-y-1/2 text-muted-foreground"
             aria-hidden="true"
           />
-          {isTraceable(settings.type) &&
-          (settings.type !== "line" || settings.time) ? (
-            <TraceTitle id={titleId} text={chartTitle} settings={settings} />
+          {titleEditing.editor ? (
+            <h3
+              id={titleId}
+              className="eda-panel-title min-w-0 flex-1 text-sm font-semibold"
+            >
+              {titleEditing.editor}
+            </h3>
+          ) : isTraceable(settings.type) &&
+            (settings.type !== "line" || settings.time) ? (
+            <TraceTitle
+              id={titleId}
+              text={chartTitle}
+              settings={settings}
+              editProps={titleEditing.titleProps}
+              titleRef={titleRef}
+            />
           ) : (
-            <h3 id={titleId} className="min-w-0 truncate text-sm font-semibold">
+            <h3
+              ref={titleRef}
+              id={titleId}
+              className="eda-panel-title min-w-0 truncate text-sm font-semibold"
+              tabIndex={0}
+              aria-description={TITLE_EDIT_DESCRIPTION}
+              {...titleEditing.titleProps}
+            >
               {chartTitle}
             </h3>
           )}
-        </div>
-        {/* Values under the pointer, beside the title and off the plot. */}
-        <div
-          ref={setReadoutTarget}
-          className="eda-panel-readout"
-          role="status"
-        />
-        {tableSearch && (
-          <div
-            className="eda-chart-search"
-            role="group"
-            aria-label={`Active table search in ${chartTitle}`}
-          >
-            <Search className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            <span className="truncate">{tableSearch}</span>
-            <ActionTooltip content="Clear this table’s search">
-              <button
-                type="button"
-                aria-label={`Clear search “${tableSearch}” in ${chartTitle}`}
-                onClick={() => updateChart(settings.id, { globalSearch: "" })}
+          {titleEditing.overlay}
+          {titleClipped && !titleEditing.editing && (
+            <ActionTooltip content="Title clipped: widen or heighten the chart, or shorten the title">
+              <span
+                className="eda-clip-marker"
+                role="img"
+                tabIndex={0}
+                aria-label="Title clipped"
               >
-                <X className="h-3 w-3" />
-              </button>
+                <Scaling className="h-3 w-3" aria-hidden="true" />
+              </span>
             </ActionTooltip>
-          </div>
+          )}
+        </div>
+        {subtitle && (
+          <p className="eda-panel-subtitle drag-handle">{subtitle}</p>
         )}
+        {/* Values under the pointer, beside the title and off the plot. */}
+        <div className="eda-panel-status">
+          <div
+            ref={setReadoutTarget}
+            className="eda-panel-readout"
+            role="status"
+          >
+            {/* How to edit the axis under the pointer, in place of a reading. */}
+            {axisEditing.hint && (
+              <span className="eda-readout-item">{axisEditing.hint}</span>
+            )}
+          </div>
+          {tableSearch && (
+            <div
+              className="eda-chart-search"
+              role="group"
+              aria-label={`Active table search in ${chartTitle}`}
+            >
+              <Search className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span className="truncate">{tableSearch}</span>
+              <ActionTooltip content="Clear this table’s search">
+                <button
+                  type="button"
+                  aria-label={`Clear search “${tableSearch}” in ${chartTitle}`}
+                  onClick={() => updateChart(settings.id, { globalSearch: "" })}
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </ActionTooltip>
+            </div>
+          )}
+          {hasFilter && (
+            <ActionTooltip content="Clear this chart’s filters">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="eda-chart-filter is-active"
+                aria-label={`Clear filters for ${chartTitle}`}
+                onClick={() => clearFilter(settings)}
+              >
+                <FilterX className="h-4 w-4" />
+              </Button>
+            </ActionTooltip>
+          )}
+        </div>
         <div className="eda-panel-actions flex shrink-0 items-center gap-0">
           {isTableLike && <div ref={setToolbarTarget} />}
           {isTraceable(settings.type) &&
@@ -686,19 +860,6 @@ export function PlotChartPanel({
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
-        {hasFilter && (
-          <ActionTooltip content="Clear this chart’s filters">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="eda-chart-filter is-active"
-              aria-label={`Clear filters for ${chartTitle}`}
-              onClick={() => clearFilter(settings)}
-            >
-              <FilterX className="h-4 w-4" />
-            </Button>
-          </ActionTooltip>
-        )}
       </div>
       {settings.type !== "scatter" && calculatedFields.length > 0 && (
         <div
@@ -715,66 +876,71 @@ export function PlotChartPanel({
         {chartSummary}
       </p>
       {axisFieldActions.overlay}
-      <ChartReadoutProvider value={readoutTarget}>
-        <div className="eda-chart-content flex min-h-0 flex-1 flex-col">
-          {faceted ? (
-            // The facet pager shares the legend's line instead of its own row.
-            <div ref={setFacetBar} className="eda-facet-bar">
-              {autoLegendHeight > 0 && (
+      {axisEditing.overlay}
+      <AxisTypographyProvider value={axisTypography}>
+        <ChartReadoutProvider value={readoutTarget}>
+          <div className="eda-chart-content flex min-h-0 flex-1 flex-col">
+            {faceted ? (
+              // The facet pager shares the legend's line instead of its own row.
+              <div ref={setFacetBar} className="eda-facet-bar">
+                {autoLegendHeight > 0 && (
+                  <ChartColorLegend
+                    settings={settings}
+                    width={Math.max(1, panelWidth - 24 - FACET_SLOT_WIDTH)}
+                  />
+                )}
+                <div ref={setFacetBarSlot} className="eda-facet-bar-slot" />
+              </div>
+            ) : (
+              autoLegendHeight > 0 && (
                 <ChartColorLegend
                   settings={settings}
-                  width={Math.max(1, panelWidth - 24 - FACET_SLOT_WIDTH)}
+                  width={Math.max(1, panelWidth - 24)}
                 />
-              )}
-              <div ref={setFacetBarSlot} className="eda-facet-bar-slot" />
-            </div>
-          ) : (
-            autoLegendHeight > 0 && (
-              <ChartColorLegend
+              )
+            )}
+            {faceted ? (
+              <FacetBarSlotContext.Provider value={facetBarSlot}>
+                <FacetContainer
+                  settings={settings}
+                  width={Math.max(1, panelWidth - 24)}
+                  height={bodyHeight(facetBarHeight)}
+                />
+              </FacetBarSlotContext.Provider>
+            ) : (
+              <ChartRenderer
                 settings={settings}
+                toolbarTarget={isTableLike ? toolbarTarget : undefined}
                 width={Math.max(1, panelWidth - 24)}
+                height={bodyHeight(autoLegendHeight)}
               />
-            )
-          )}
-          {faceted ? (
-            <FacetBarSlotContext.Provider value={facetBarSlot}>
-              <FacetContainer
-                settings={settings}
-                width={Math.max(1, panelWidth - 24)}
-                height={Math.max(
-                  1,
-                  panelHeight -
-                    58 -
-                    headerExtra -
-                    fieldStripHeight -
-                    facetBarHeight
-                )}
-              />
-            </FacetBarSlotContext.Provider>
-          ) : (
-            <ChartRenderer
-              settings={settings}
-              toolbarTarget={isTableLike ? toolbarTarget : undefined}
-              width={Math.max(1, panelWidth - 24)}
-              height={Math.max(
-                1,
-                panelHeight -
-                  58 -
-                  headerExtra -
-                  fieldStripHeight -
-                  autoLegendHeight
-              )}
-            />
-          )}
-        </div>
-      </ChartReadoutProvider>
+            )}
+          </div>
+        </ChartReadoutProvider>
+      </AxisTypographyProvider>
+      {noteText && (
+        <p ref={note.ref} className="eda-panel-note">
+          {noteText}
+        </p>
+      )}
     </div>
   );
   // Escape closes a nested editor first, and a tooltip must not swallow it.
   useEffect(() => {
     if (!expanded) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !hasNestedLayer(detailsRef.current)) {
+      if (
+        event.key === "Escape" &&
+        !hasNestedLayer(detailsRef.current) &&
+        // An in-place editor takes Escape to put its old value back, and a
+        // popover mounted inside the details view closes first.
+        !(
+          event.target instanceof Element &&
+          event.target.closest(
+            "[data-inplace-editor], [data-slot='popover-content']"
+          )
+        )
+      ) {
         setExpandedState(false);
       }
     };

@@ -4,11 +4,11 @@
     "title": "Scatter plot matrix with diagonal distributions",
     "slug": "scatter-plot-matrix",
     "scale": "capability",
-    "current_phase": "intent",
+    "current_phase": "execution",
     "last_updated": "2026-10-06",
     "summary": "Inspect several field pairs in off-diagonal scatter plots and each field’s distribution on the diagonal.",
-    "status": "planned",
-    "next_action": "Shape a three-field start-here matrix, two-field brushing, dimmed context, and measured row/field workloads."
+    "status": "active",
+    "next_action": "Review and merge the PR stack (byronwall/explorEDA#184 through the release PR); then reconcile and retire the initiative on request."
   },
   "artifacts": {
     "intent_brief": {
@@ -23,13 +23,13 @@
     },
     "shape_brief": {
       "path": "shape-brief.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-06"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-06"
     }
   },
   "sources": [
@@ -88,6 +88,41 @@
       "location": "../../../packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
       "anchor": "Canvas effect and canvas element draw ordinary point clouds; SVG renders guides and special layers",
       "authority": "Current source reality, not a matrix performance test"
+    },
+    {
+      "id": "parallel-coordinates",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/ParallelCoordinates/definition.ts",
+      "anchor": "Ordered axes list, intersecting filters, canvas lines with selected/context drawing",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "penguins",
+      "type": "repository",
+      "location": "../../../apps/demo/public/datasets/palmer-penguins.csv",
+      "anchor": "344 rows; four numeric measurements with missing values",
+      "authority": "local proof fixture"
+    },
+    {
+      "id": "user-chat-2026-10-06",
+      "type": "direct-user-input",
+      "location": "chat",
+      "anchor": "Perf answer and request for the implementation plan",
+      "authority": "explicit user intent"
+    },
+    {
+      "id": "ggpairs-references",
+      "type": "direct-user-input",
+      "location": "references/user-request.md",
+      "anchor": "Follow-up: three ggpairs screenshots and 'some ability to configure options'",
+      "authority": "explicit user intent (reference look); specific details are examples"
+    },
+    {
+      "id": "user-chat-categorical",
+      "type": "direct-user-input",
+      "location": "references/user-request.md",
+      "anchor": "Follow-up — categorical support",
+      "authority": "explicit user intent"
     }
   ],
   "intent": {
@@ -155,7 +190,7 @@
         "statement": "Choose the diagonal display: histogram, density, ECDF, or another suitable distribution.",
         "commitment": "tentative",
         "importance": "supporting",
-        "status": "active",
+        "status": "resolved",
         "time_horizon": "proof",
         "source_anchors": [
           {
@@ -166,7 +201,7 @@
         "conflicts": [],
         "supersedes": [],
         "confidence": "medium",
-        "notes": "A choice for later shaping; no input is required to finish this intent brief."
+        "notes": "Resolved by ggpairs reference: configurable diagonal; density default, histogram option."
       },
       {
         "id": "domains",
@@ -204,7 +239,7 @@
         "conflicts": [],
         "supersedes": [],
         "confidence": "medium",
-        "notes": "A choice for later shaping; no input is required to finish this intent brief."
+        "notes": "Shape adopts pairwise-valid cells with conditional n labels; complete-case mode is not planned. Feedback asked for explanation, not a new decision."
       },
       {
         "id": "histogram-proof",
@@ -223,7 +258,7 @@
         "conflicts": [],
         "supersedes": [],
         "confidence": "medium",
-        "notes": ""
+        "notes": "Histogram remains the M1 diagonal (reuses marginal stacking); density becomes the default in M3."
       },
       {
         "id": "selection",
@@ -299,7 +334,7 @@
         ],
         "confidence": "medium",
         "supersedes": [],
-        "notes": "No implementation authorization or unobserved proof is inferred."
+        "notes": "Field count and latency now set by matrix-perf-target."
       },
       {
         "id": "pairwise-recommendation",
@@ -318,6 +353,124 @@
         "confidence": "medium",
         "supersedes": [],
         "notes": "No implementation authorization or unobserved proof is inferred."
+      },
+      {
+        "id": "matrix-perf-target",
+        "type": "constraint",
+        "statement": "Expect 5–10 fields per matrix; aim for ~100 ms brush feedback, with ~500 ms as an acceptable ceiling.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-chat-2026-10-06",
+            "anchor": "5-10 total charts; back off to 500ms maybe; 100 is fine to aim for"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "User confirmed 5–10 means fields per side."
+      },
+      {
+        "id": "ggpairs-look",
+        "type": "outcome",
+        "statement": "The matrix should look and work like R ggpairs: scatter in one triangle, correlation text in the other, distributions on the diagonal.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "ggpairs-references",
+            "anchor": "something like this image"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "Upper-correlation default is an interpretation of the reference images."
+      },
+      {
+        "id": "configurable-regions",
+        "type": "required behavior",
+        "statement": "Users can configure what the upper triangle, lower triangle, and diagonal show.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "ggpairs-references",
+            "anchor": "some ability to configure options"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": "Exact option list is agent-proposed."
+      },
+      {
+        "id": "group-color",
+        "type": "preference",
+        "statement": "An optional categorical group color carries through points, diagonal distributions, and per-group correlations.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "ggpairs-references",
+            "anchor": "iris image colored by species"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": "Promoted from later possibility because the primary reference shows it."
+      },
+      {
+        "id": "categorical-cells",
+        "type": "open question",
+        "statement": "Categorical fields are in the first release; scatter cells support all data types, with jitter width and intentional cells such as box plots.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "resolved",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "ggpairs-references",
+            "anchor": "tips mixed-type image"
+          },
+          {
+            "source_id": "user-chat-categorical",
+            "anchor": "We need support for categorical"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "Resolved by user: categorical required."
+      },
+      {
+        "id": "all-types",
+        "type": "required behavior",
+        "statement": "Scatter cells support every data type (numeric, categorical, boolean, date), with a jitter width option and intentional alternatives like box plots.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-chat-categorical",
+            "anchor": "Scatters need to support all data types"
+          }
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "Cell kinds per pair type and the 12-category cap are agent proposals."
       }
     ],
     "themes": [
@@ -335,36 +488,189 @@
     "selected_option": null
   },
   "shape": {
-    "status": "not-started",
-    "appetite": null,
-    "problem": null,
-    "recommended_shape": null,
-    "success_moves": [],
-    "first_proof": null,
-    "rabbit_holes": [],
+    "status": "current",
+    "appetite": "One new view type covering every field type with a small set of intentional cell kinds (scatter, jitter, correlation, box, count tiles, stacked bars; density/histogram/bar diagonals), one group color, one brush, and trace.",
+    "problem": "Users facing unfamiliar multivariate data need every pairwise relationship and every field distribution in one linked view.",
+    "recommended_shape": {
+      "summary": "A dedicated 'scatter-matrix' chart definition with fields[] of any type, cell kinds per region and pair type, optional colorField, and filters. Every cell uses its fields' shared axes (continuous for numeric and date, bands with jitter for categorical and boolean); cell kinds only change drawing, so one brush and dimming rule covers all cells. One canvas draws point cells with a cached context layer; SVG draws the rest.",
+      "selected_option": null,
+      "provisional_choices": [
+        "per-pair-type defaults: numeric scatter/correlation, mixed jitter/box, categorical stacked bars/count tiles",
+        "dates continuous in the matrix",
+        "12-category cap with Other",
+        "box plots ignore group color in first release",
+        "~100 ms target, 500 ms ceiling",
+        "10-field cap",
+        "new brush replaces previous"
+      ]
+    },
+    "success_moves": [
+      "Make every cell share its two fields' axes and let cell kinds only change drawing, so brushing, dimming, domains, and trace work identically for scatter, box, tile, and bar cells.",
+      "Model the matrix as one chart definition following ParallelCoordinates so saved layouts, crossfilter live IDs, and own-filter dimming come from existing paths.",
+      "Reuse scatter band axes, deterministic jitter, band-aware brushFilters, pairedStats, marginalPlan stacking, and boxPlotCalculations inside a pure planScatterMatrix planner tested on penguins.",
+      "Prove points-in-every-cell across types before adding intentional categorical cells.",
+      "Render point cells on one canvas with a cached context layer, and benchmark the worst case at 10 × 100k including mixed fields with per-brush box recomputation.",
+      "Register as a separate view type with no ScatterPlot changes; hide by removing the add-chart entry."
+    ],
+    "first_proof": {
+      "question": "Does the shared-axis matrix work across data types with consistent dimming and responsive brushing?",
+      "artifact": "Penguins matrix with bill length, body mass, species, and sex (points, box, tiles, bars; histogram and bar diagonals), plus timings at 10k/100k × 3/5/10 fields, all-numeric and half categorical.",
+      "decision_rule": "Proceed when each gesture yields the expected two filters, all cell kinds dim consistently, r matches pairedStats, and brushing meets ~100 ms at 5 × 100k and stays under 500 ms at 10 × 100k; otherwise filter on release or bin cells, and fix poorly reading cell kinds before adding more."
+    },
+    "rabbit_holes": [
+      "general plot-any-pair framework",
+      "high-cardinality categories without a cap",
+      "group-dodged box plots",
+      "contour cells at 10 fields",
+      "significance stars",
+      "per-cell canvases or a grid of chart cards"
+    ],
     "open_decisions": []
   },
   "implementation": {
-    "status": "not-started",
+    "status": "current",
     "repository_snapshot": {
-      "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
-      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
-      "worktree_status": "Detached HEAD; intent collection remains uncommitted.",
+      "root": "/Users/byronwall/Projects/explorEDA/.claude/worktrees/scatter-plot-matrix-review-61ecf6",
+      "revision": "bde1889b51baab171bb4a5a2827815485d54a121",
+      "worktree_status": "Clean worktree on claude/scatter-plot-matrix-review-61ecf6; shaping edits uncommitted.",
       "subsystems": [
         "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.ts",
         "packages/explorEDA/src/components/charts/ScatterPlot/marginalPlan.ts",
         "packages/explorEDA/src/components/charts/Ecdf/definition.ts",
         "packages/explorEDA/src/charts/registerAllCharts.ts",
-        "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx"
+        "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
+        "packages/explorEDA/src/components/charts/ParallelCoordinates/definition.ts",
+        "packages/explorEDA/src/types/ChartTypes.ts",
+        "packages/explorEDA/src/utils/saveDataUtils.ts",
+        "packages/explorEDA/src/hooks/useCreateCharts.ts",
+        "packages/explorEDA/src/components/plot/AddChartDialog.tsx",
+        "packages/explorEDA/src/components/PlotChartPanel.tsx",
+        "packages/explorEDA/src/components/charts/chartAccessibility.ts",
+        "packages/explorEDA/src/lib/dsl/settingKeys.ts",
+        "packages/explorEDA/scripts/benchmark-beeswarm.mts",
+        "apps/demo/src/demos/coverage.ts",
+        "packages/explorEDA/src/components/charts/ScatterPlot/pairedSummary.ts",
+        "packages/explorEDA/src/components/charts/ScatterPlot/fitPlan.ts",
+        "packages/explorEDA/src/components/charts/BoxPlot/boxPlotCalculations.ts",
+        "packages/explorEDA/src/components/charts/ScatterPlot/scatterAxis.ts",
+        "packages/explorEDA/src/lib/dateTime.ts"
       ],
-      "test_commands": [],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/components/charts/ScatterMatrix",
+        "pnpm --filter exploreda check-types",
+        "node scripts/benchmark-scatter-matrix.mts (package dir, added in M2)",
+        "pnpm check:ui",
+        "pnpm check (once, before PR)"
+      ],
       "deployment_surfaces": []
     },
     "dependencies": [],
-    "fast_local_loop": null,
-    "milestones": [],
-    "cut_line": [],
-    "open_decisions": []
+    "fast_local_loop": "pnpm --filter exploreda exec vitest run on the planner; demo dev server with penguins and a generated 100k dataset for visual and timing checks.",
+    "milestones": [
+      {
+        "id": "M1",
+        "title": "A mixed-type penguins matrix with points everywhere and linked brushing",
+        "status": "completed",
+        "outcome": "Shared-axis planner for numeric, categorical, boolean, and date fields; points in every cell; r; histogram and bar diagonals; one brush with gray context.",
+        "proof": "Planner tests (counts, r, fixed domains/bands, range/value brush filters, date fixture) and browser check at three widths; Byron judges readability.",
+        "valid_intermediate_state": "Registered, saveable view with points-only cells.",
+        "rollback": "Remove the AddChartDialog entry; keep the type and validator so saves load.",
+        "dependencies_introduced": [],
+        "evidence": [
+          "Planner tests on penguins (counts, r≈0.595, fixed domains, range/value/date-range brush filters) pass; 665 package and 87 demo tests pass.",
+          "Browser check of the penguins example: brush sets two filters, every cell dims, species bar click selects, empty click clears; screenshots at 1280, 783, 390 px."
+        ],
+        "notes": "The penguins demo example and coverage entry moved into M1 so every milestone has a reproducible screen; the settings panel ships a field list early."
+      },
+      {
+        "id": "M2",
+        "title": "Brushing stays responsive at 100,000 rows and 10 fields",
+        "status": "completed",
+        "outcome": "Benchmarks (all-numeric and mixed) and renderer protections.",
+        "proof": "docs/scatter-matrix-performance.md; ~100 ms at 5×100k, <500 ms at 10×100k, or fallback.",
+        "valid_intermediate_state": "M1 behavior unchanged and faster.",
+        "rollback": "Renderer-internal; revert or filter on release.",
+        "dependencies_introduced": [],
+        "evidence": [
+          "docs/scatter-matrix-performance.md: brush on a planned layout 8.9 ms at 100k × 10 mixed (from 121.6 ms full replan).",
+          "Browser drag at 100k × 10 fields, points in both triangles: 59 ms median, 110 ms p95; 100k × 5: 25 ms median. Release commit about 0.7 s, mostly workspace field statistics outside the matrix."
+        ],
+        "notes": "Spike outcome: hybrid. Up to 20,000 rows linked charts filter live; above it the matrix previews during drag and commits on release. Small points paint into a pixel count buffer."
+      },
+      {
+        "id": "M3",
+        "title": "Intentional cells for categorical pairs",
+        "status": "completed",
+        "outcome": "Box plots, count tiles, stacked bars on shared axes; click-to-select; per-region per-pair-type kinds; jitter width; 12-category cap with Other.",
+        "proof": "Cell planner tests, high-cardinality fixture, benchmark rerun with box cells.",
+        "valid_intermediate_state": "Penguins shows all cell kinds dimming consistently.",
+        "rollback": "New kinds are optional settings; defaults fall back to points.",
+        "dependencies_introduced": [],
+        "evidence": [
+          "Tests: box groups match penguin species counts (151, 68, 123), Tukey stats, tile pair counts and selection, Other folding selects all folded values, jitter 0 stacks bands; 670 package and 87 demo tests pass.",
+          "Browser: box click selects a species, tile click selects a species and sex pair; 100k × 10 mixed brush 64 ms median, 84 ms p95."
+        ],
+        "notes": "Category pairs use count tiles (upper) and share bars (lower) instead of stacked bars: shares keep each pair on the shared axes, so brushing and dimming need no new rules."
+      },
+      {
+        "id": "M4",
+        "title": "ggpairs look — densities and group color",
+        "status": "completed",
+        "outcome": "Binned count-scaled density diagonal; group color with per-group r and densities.",
+        "proof": "KDE helper tests, per-group r on species, benchmark rerun.",
+        "valid_intermediate_state": "Penguins by species matches the ggpairs reference.",
+        "rollback": "Optional settings; fall back to histogram and no color.",
+        "dependencies_introduced": [],
+        "evidence": [
+          "Tests: count-scaled densities keep totals and the selection inside the whole curve; color groups count bars and match per-species Pearson r.",
+          "Browser: penguins by species matches the ggpairs iris reference; 100k × 10 with three color groups brushes at 62–65 ms median, 89–93 ms p95."
+        ]
+      },
+      {
+        "id": "M5",
+        "title": "Settable, traceable, and usable at every width",
+        "status": "completed",
+        "outcome": "Settings panel, Esc/status, trace across cells, narrow scroll.",
+        "proof": "Component and settingKeys tests, pnpm check:ui, browser checks.",
+        "valid_intermediate_state": "Feature-complete view.",
+        "rollback": "Remove the AddChartDialog entry; keep the type and validator so saves load.",
+        "dependencies_introduced": [],
+        "evidence": [
+          "Trace test: a row with no measurements is drawn in 0 of 5 point cells and fails the species filter; a cell trace reports 2 missing per field. 673 package and 87 demo tests pass.",
+          "Browser: Alt-click traces a row ringed in every point cell and a correlation cell with per-group r; Esc clears a brush; Alt-Enter traces a focused cell; settings and narrow layouts checked at 1280, 783, 390 px."
+        ],
+        "notes": "The settings panel (field list, cell kinds, jitter, color) shipped with Milestones 1, 3, and 4; this milestone added trace, keyboard, and hover detail."
+      },
+      {
+        "id": "M6",
+        "title": "Shipped in the demo and package",
+        "status": "completed",
+        "outcome": "Demo example, coverage, docs, minor changeset, PR with screenshots.",
+        "proof": "pnpm check passes; PR screenshots at three widths.",
+        "valid_intermediate_state": "Release-ready change.",
+        "rollback": "Revert the PR before release; afterwards remove the add-chart entry.",
+        "dependencies_introduced": [],
+        "evidence": [
+          "pnpm check passed on 2026-10-07: UI conventions, package and demo builds, type checks, 673 package tests, 87 demo tests.",
+          "Demo example and coverage entry landed in Milestone 1; docs/analytical-chart-coverage.md and docs/application-feature-inventory.md describe the view; one minor changeset covers the stack."
+        ]
+      }
+    ],
+    "cut_line": [
+      "violin and faceted-histogram mixed cells",
+      "group-dodged box plots",
+      "contour cells",
+      "significance stars",
+      "Spearman and categorical association measures",
+      "open pair as full chart",
+      "lasso and several brushes",
+      "in-matrix drag reorder",
+      "regression/marginal/bubble layers in cells",
+      "continuous dates in ordinary Scatter Plot"
+    ],
+    "open_decisions": [
+      "Workspace field-statistics cost on every filter change at 100k rows (outside this initiative)."
+    ]
   },
   "history": [
     {
@@ -386,6 +692,66 @@
         14
       ],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Shaped the matrix as one dedicated view type with diagonal histograms, one replacing brush, dimmed context, and a measured performance proof.",
+      "reason": "User asked to shape this initiative; no new comments.",
+      "evidence": "Source inspection of ScatterPlot, marginalPlan, ParallelCoordinates, useGetLiveData, and demo datasets. No implementation or runtime checks."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Recorded the performance target and created the implementation plan with four outcome milestones.",
+      "reason": "User set 5–10 fields, ~100 ms aim, 500 ms ceiling, and asked for the plan.",
+      "evidence": "Source inspection of chart wiring sites (registry, ChartTypes, saveDataUtils, useCreateCharts, AddChartDialog, PlotChartPanel, settingKeys, beeswarm benchmark). No implementation."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Reshaped and replanned around ggpairs references: configurable regions, correlation upper triangle, density diagonal, group color; five milestones.",
+      "reason": "User shared ggpairs screenshots, asked for configurable options, and confirmed 5–10 fields per side.",
+      "evidence": "Source inspection of pairedStats, groupScatterRows, calculateKernelDensity. No implementation."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Brought categorical, boolean, and date fields into the first release; reshaped around shared axes with per-pair-type cell kinds; replanned into six milestones.",
+      "reason": "User required categorical support, all data types in scatter cells, a jitter option, and intentional cells such as box plots.",
+      "evidence": "Source inspection of scatterAxis band axes, jitter, band-aware brushFilters, dateTime, boxPlotCalculations. No implementation."
+    },
+    {
+      "date": "2026-10-06",
+      "action": "Started execution; completed Milestone 1 on branch claude/scatter-matrix-m1.",
+      "reason": "User approved the plan and asked for a stack of PRs.",
+      "evidence": "Tests and browser checks listed on milestone M1."
+    },
+    {
+      "date": "2026-10-07",
+      "action": "Completed Milestone 2 on branch claude/scatter-matrix-m2.",
+      "reason": "Targets met for drag feedback; release cost traced to workspace-wide statistics.",
+      "evidence": "docs/scatter-matrix-performance.md"
+    },
+    {
+      "date": "2026-10-07",
+      "action": "Completed Milestone 3 on branch claude/scatter-matrix-m3.",
+      "reason": "Categorical cells added on shared axes.",
+      "evidence": "Milestone M3 evidence."
+    },
+    {
+      "date": "2026-10-07",
+      "action": "Completed Milestone 4 on branch claude/scatter-matrix-m4.",
+      "reason": "Density diagonals and group color.",
+      "evidence": "Milestone M4 evidence."
+    },
+    {
+      "date": "2026-10-07",
+      "action": "Completed Milestone 5 on branch claude/scatter-matrix-m5.",
+      "reason": "Trace, keyboard, and hover detail.",
+      "evidence": "Milestone M5 evidence."
+    },
+    {
+      "date": "2026-10-07",
+      "action": "Completed Milestone 6; every milestone has a stacked PR.",
+      "reason": "Release readiness.",
+      "evidence": "pnpm check exit 0."
     }
   ],
   "closure": null,
