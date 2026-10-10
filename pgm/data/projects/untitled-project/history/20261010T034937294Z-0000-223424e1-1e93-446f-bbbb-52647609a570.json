@@ -1,0 +1,14 @@
+{
+  "id": "223424e1-1e93-446f-bbbb-52647609a570",
+  "kind": "node.archive.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:d0425d",
+    "label": "Agent token ...d0425d"
+  },
+  "createdAt": "2026-10-10T03:49:37.294Z",
+  "summary": "Archived \"Edit the subtitle in place\".",
+  "nodeIds": [
+    "page-edit-the-subtitle-in-place"
+  ]
+}
