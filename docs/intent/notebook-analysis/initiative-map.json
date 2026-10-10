@@ -1,0 +1,408 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Notebook analysis with synchronized definitions",
+    "slug": "notebook-analysis",
+    "scale": "capability",
+    "current_phase": "intent",
+    "last_updated": "2026-10-10",
+    "summary": "Interleave explanation, dashboard-language blocks, and editable graphics in a notebook view. Keep definitions and graphical edits synchronized.",
+    "status": "planned",
+    "next_action": "Answer the ten scope questions, select one initial workflow, and then shape its text-to-graph and graph-to-text behavior."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-10"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "user-request-2026-10-10",
+      "type": "direct-user-input",
+      "location": "Codex chat 01a12432-ded5-72b0-8ac2-9d6fb0dea869, notebook intent request, 2026-10-10",
+      "anchor": "Okay, let's go ahead and create a new intent document around the desire to produce an output that looks more like a notebook-style execution where we've got text and graphics interleaved. In particular, the goal is to go after something that feels a little bit more like observable rather than the These things which are straight dashboard. And what I'd really like to uncover is ways to define the queries and basically the visuals that result using our dashboarding language and to have it be kind of two-way synced so that the user can edit the graphs after they're made and then that persists back into the like text that defines the calculation block. And basically to just have the notebook style thing be just another coherent view into the rest of the features of the application. So go ahead and capture that as an intent. And then in the intent document, include 10 questions that would be good to answer to dial in the scope",
+      "authority": "Current explicit user request"
+    },
+    {
+      "id": "dashboard-text",
+      "type": "repository-documentation",
+      "location": "packages/explorEDA/README.md#dashboard-text",
+      "anchor": "Complete-dashboard declarations; calculations; chart-local where filters; compileDocument/exportDocument; compileViews/exportViews.",
+      "authority": "Current repository reality, not product intent"
+    },
+    {
+      "id": "saved-view-text-panel",
+      "type": "repository-code",
+      "location": "apps/demo/src/SavedViewsWorkspace.tsx:978",
+      "anchor": "DashboardTextPanel receives draft text, onApply, onExport, and onExportViews; export reads current saved settings.",
+      "authority": "Observed wiring, not proof of notebook synchronization"
+    },
+    {
+      "id": "rich-text-panel",
+      "type": "repository-documentation",
+      "location": "docs/application-feature-inventory.md#markdown--explanation-panel",
+      "anchor": "Markdown is a Tiptap editor storing HTML in chart settings; it is not a Markdown source editor or notebook execution system.",
+      "authority": "Current documented behavior"
+    },
+    {
+      "id": "related-intents",
+      "type": "repository-planning",
+      "location": "docs/intent/data-bound-narrative/intent-brief.md; docs/intent/reusable-analysis-outputs/intent-brief.md",
+      "anchor": "Live metric bindings in explanations and named downstream analytical results are separate future seeds.",
+      "authority": "Related scope context; does not add requirements to this initiative"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "readable-analysis",
+        "type": "outcome",
+        "statement": "Read explanation, calculation blocks, and graphics as one ordered notebook analysis.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "observable-reference",
+        "type": "example",
+        "statement": "Use Observable as an experience reference for interleaved analysis.",
+        "commitment": "illustrative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "No syntax, runtime, hosting, or collaboration requirement is inferred."
+      },
+      {
+        "id": "dashboard-language",
+        "type": "required behavior",
+        "statement": "Use the dashboard language to define queries, calculations, and resulting visuals.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "Required query breadth is unresolved; current declarations may not cover it."
+      },
+      {
+        "id": "two-way-editing",
+        "type": "required behavior",
+        "statement": "Text edits update results, and graphical edits persist into the text defining the corresponding block.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "Supported edit types, update timing, and treatment of invalid drafts remain open."
+      },
+      {
+        "id": "coherent-view",
+        "type": "desired experience",
+        "statement": "The notebook is another coherent view into existing explorEDA capabilities.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "Whether notebook and dashboard share saved-view identity remains open."
+      },
+      {
+        "id": "durable-meaning",
+        "type": "derived implication",
+        "statement": "Saved work retains the meaning of definitions and graphs when reopened.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": "Derived from edits persisting back into block text. Export and sharing are not settled."
+      },
+      {
+        "id": "initial-author",
+        "type": "audience",
+        "statement": "The likely author investigates data and explains the reasoning to a reader.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": "The user did not select a first audience or task."
+      },
+      {
+        "id": "existing-language",
+        "type": "current repository reality",
+        "statement": "Dashboard text already compiles and exports saved settings, including calculations and multiple views.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "dashboard-text"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "These APIs do not prove preservation of authored notebook blocks, comments, or formatting."
+      },
+      {
+        "id": "existing-prose",
+        "type": "current repository reality",
+        "statement": "The current Markdown panel stores rich text without notebook execution.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "rich-text-panel"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "scope-capture",
+        "type": "decision",
+        "statement": "Create an intent document with ten scope questions; do not start shaping or implementation in this request.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "The explicit ten-question request overrides the skill default of three."
+      }
+    ],
+    "themes": [
+      "Interleaved explanation and results",
+      "Two-way definition editing",
+      "One coherent analysis model",
+      "Initial notebook scope"
+    ],
+    "conflicts": [],
+    "human_questions": [
+      {
+        "id": "q1",
+        "topic": "First task",
+        "question": "Who will author and read the first notebook, and what real analysis should they complete?",
+        "status": "open",
+        "decision_impact": "Sets the primary workflow and reader needs.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ]
+      },
+      {
+        "id": "q2",
+        "topic": "First release",
+        "question": "What is the smallest useful version: prose, definition blocks, and one chart, or tables and summary values too?",
+        "status": "open",
+        "decision_impact": "Sets the first release boundary and appetite.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ]
+      },
+      {
+        "id": "q3",
+        "topic": "Query scope",
+        "question": "Are current dashboard declarations enough initially, or must blocks produce named results that later blocks can use?",
+        "status": "open",
+        "decision_impact": "Determines whether reusable intermediate outputs are needed.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ]
+      },
+      {
+        "id": "q4",
+        "topic": "Execution",
+        "question": "Should changes run automatically, require running one block, or require running the whole notebook?",
+        "status": "open",
+        "decision_impact": "Sets when results refresh and what execution controls users need.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ]
+      },
+      {
+        "id": "q5",
+        "topic": "Shared state",
+        "question": "Should calculations and interactive filters affect the whole notebook, only later blocks, or explicitly linked blocks?",
+        "status": "open",
+        "decision_impact": "Sets population and dependency expectations across blocks.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ]
+      },
+      {
+        "id": "q6",
+        "topic": "Graphical edits",
+        "question": "Which edits must write back first: fields, chart type, aggregation, filters, axis settings, or visual styling?",
+        "status": "open",
+        "decision_impact": "Sets the first supported graphical write-back contract.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ]
+      },
+      {
+        "id": "q7",
+        "topic": "Text preservation",
+        "question": "Must graph edits preserve comments, formatting, and declaration order, or is regenerated equivalent text acceptable?",
+        "status": "open",
+        "decision_impact": "Sets whether equivalent generated text is sufficient.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ]
+      },
+      {
+        "id": "q8",
+        "topic": "View relationship",
+        "question": "Is the notebook another presentation of the same saved dashboard, or a separate document that reuses its analysis objects?",
+        "status": "open",
+        "decision_impact": "Sets saved-view identity and cross-view edit expectations.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ]
+      },
+      {
+        "id": "q9",
+        "topic": "Invalid drafts",
+        "question": "While block text is invalid, should the last valid graph remain editable, and how should users reconcile those edits?",
+        "status": "open",
+        "decision_impact": "Sets visible behavior when draft text and valid graphical state differ.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ]
+      },
+      {
+        "id": "q10",
+        "topic": "Saved output",
+        "question": "Is reopening an editable notebook enough initially, or must users also share or export a readable, self-contained result?",
+        "status": "open",
+        "decision_impact": "Sets persistence, sharing, and export expectations.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ]
+      }
+    ],
+    "shape_readiness": {
+      "status": "needs-scope-decisions",
+      "reason": "Core outcome is captured. First audience, task, release size, execution, and synchronization expectations are not selected."
+    }
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/0345/explorEDA",
+      "revision": "29b402349f7ee1214cb5f71dc17bc8c5cac84458",
+      "worktree_status": "Clean detached HEAD before creating the intent files.",
+      "subsystems": [
+        "Dashboard text compiler and exporter",
+        "Saved view workspace",
+        "Rich-text explanation panel",
+        "Chart settings and save/restore"
+      ],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-10",
+      "event": "intent-created",
+      "status": "planned",
+      "reason": "Captured the requested notebook direction and ten scope questions. No implementation or shape was selected.",
+      "source_anchors": [
+        "user-request-2026-10-10"
+      ]
+    }
+  ],
+  "closure": null,
+  "quality_overrides": [
+    {
+      "rule": "intent.human_questions maximum of three",
+      "requested_count": 10,
+      "reason": "The user explicitly requested ten questions in the intent document.",
+      "source_anchors": [
+        "user-request-2026-10-10"
+      ]
+    }
+  ]
+}
