@@ -14,7 +14,8 @@ import {
 import { useState } from "react";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { catalogue } from "./demos/examples";
+import { catalogue, examples } from "./demos/examples";
+import { compositionExamples, exampleGroups } from "./demos/exampleIndex";
 import { LandingPage } from "./LandingPage";
 
 // The hero's live embed has its own test; keep these tests to one workspace.
@@ -162,6 +163,54 @@ describe("LandingPage routing", () => {
     expect(
       screen.getByRole("textbox", { name: "Full analysis JSON" })
     ).toBeInTheDocument();
+  });
+
+  it("previews report graphics and links to the index of every example", () => {
+    const router = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
+    );
+
+    render(<RouterProvider router={router} />);
+    const section = screen
+      .getByRole("heading", { name: "Report graphics" })
+      .closest("section") as HTMLElement;
+    const newest = compositionExamples[0]!;
+    expect(
+      within(section).getByRole("link", { name: newest.title })
+    ).toHaveAttribute("href", `/examples/${newest.id}`);
+    expect(
+      within(section).getByRole("link", {
+        name: `All ${compositionExamples.length} report graphics`,
+      })
+    ).toHaveAttribute("href", "/examples#report-graphics");
+    expect(
+      screen.getByRole("link", {
+        name: `Browse all ${examples.length} examples`,
+      })
+    ).toHaveAttribute("href", "/examples");
+  });
+
+  it("lists every example once on the examples page", () => {
+    const router = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/examples"] }
+    );
+
+    render(<RouterProvider router={router} />);
+    expect(
+      screen.getByRole("heading", { level: 1, name: "All examples" })
+    ).toBeInTheDocument();
+    for (const example of examples) {
+      expect(screen.getByRole("link", { name: example.title })).toHaveAttribute(
+        "href",
+        `/examples/${example.id}`
+      );
+    }
+    expect(
+      exampleGroups.reduce((total, group) => total + group.examples.length, 0)
+    ).toBe(examples.length);
+    expect(screen.queryByTestId("workspace")).not.toBeInTheDocument();
   });
 
   it("lists the catalogue, narrows it by capability, and opens a tab", () => {
