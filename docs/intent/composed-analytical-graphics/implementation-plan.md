@@ -2,15 +2,15 @@
 title: "Composed analytical graphics — implementation plan"
 slug: "composed-analytical-graphics"
 phase: plan
-status: draft
-last_updated: "2026-10-08"
+status: current
+last_updated: "2026-10-10"
 ---
 
 # Composed analytical graphics — implementation plan
 
 ## Plan at a glance
 
-Build the email-style authoring flow first. It proves a usable editor, including saved edits and PNG clipboard output.
+The first editor slice exists. Finish its remaining report/slide paste proof before declaring Milestone 1 complete.
 Then add five capabilities through the [reference compositions](reference-study.md), in dependency order.
 Each example must add a reusable operation, not a hard-coded chart type.
 
@@ -23,12 +23,28 @@ Research does not establish exact source-data reproduction as a requirement.
 Use small local fixtures with known values. Label illustrative data and document its source.
 Author each proof from blank. A completed fixture definition can support regression checks but cannot replace that authoring proof.
 
+### Handoff for Claude
+
+This update preserves Pro's full response, prompt, reports, records, and images in the [raw source folder](raw/2026-10-10-pro-graphics/README.md).
+No application code changed. The source report's capability tiers describe the prompt model, not verified support in this branch.
+
+1. Close the remaining Milestone 1 output proof. Keep its implemented editor.
+2. Audit a small measles strip before a full reference build. Compare zeros, nulls, absent cells, order, and fixed guide placement.
+3. Continue M2 with shared numeric coordinates for both points and ordered paths.
+4. Use the technology sparkline table as a second M2 proof, then OBR bands in M3 and media/death denominators in M5.
+5. Keep the banana table as an M6 proof. Tile addresses and remaining geometry gaps stay below the cut line.
+
+Pro's five suggested builds are measles, Yield Gap, technology sparklines, OBR fans, and media/death shares.
+They are candidate examples, not a replacement milestone order. Preserve the existing time-use proof for M4.
+Yield Gap needs explicit upstream cell packing; check categorical colors before treating it as supported.
+
 ## Implementation strategy
 
 ### Repository fit
 
-Snapshot: detached HEAD `6762dfd1ea96d45d80ec86feb130a23fe92c4fdf`, inspected 2026-09-29.
-This plan changes no application code.
+Snapshot: `claude/composed-chart-audit-62bcc8` at `29b402349f7ee1214cb5f71dc17bc8c5cac84458`, inspected 2026-10-10.
+The composition editor and direct editor entry are present. PR #215 is already in this branch history.
+The original milestone sequence remains; the continuation uses the existing implementation below.
 
 | Existing seam | Planned use |
 | --- | --- |
@@ -41,20 +57,31 @@ This plan changes no application code.
 | `src/components/charts/trace/ChartTraceScope.tsx`, `traceTypes.ts`, `ChartTracePanel.tsx` | Add composition inspection to the current tracing surface |
 | `src/utils/saveDataUtils.ts`, `src/types/SavedDataStructure.ts` | Carry definitions through save, validation, and restore |
 
-Paths above are relative to `packages/explorEDA/`.
-Current grouped aggregates support count, sum, and average. Quartiles and stacking require new calculation behavior.
-Clipboard saving currently writes JSON text. PNG output needs a separate image action.
+Paths above are relative to `packages/explorEDA/`. Those integration points already host the first slice.
+Continue in `src/components/charts/Composition/`:
+
+- `compositionTypes.ts` and `validateComposition.ts`: serializable definitions and their validation.
+- `resolveUnit.ts` and `resolveComposition.ts`: strip aggregation, placement, guides, annotations, and scene nodes.
+- `UnitInspector.tsx`, `ScaleInspector.tsx`, and `AnnotationInspector.tsx`: visible authoring controls.
+- `compositionTrace.ts` and `CompositionTraceBody.tsx`: retained contributors and inspection.
+- `compositionOutput.ts`: existing PNG copy action; reuse it for new scene geometry.
+
+Mark aggregation supports count, sum, and average. Label/guide calculations also support min and max.
+Quartiles and stacking still need new calculations. Numeric x/y binding is absent from strip marks.
+Named value scales currently have two color endpoints and a nonnegative value-to-maximum mapping.
+Repeat order is count or label; explicit source rank and tile addresses are absent.
+These limits affect Pro's “Today” classifications. Keep source classifications unchanged in raw files and record local findings separately.
 
 ### Small model and render path
 
-Keep React and TypeScript. Start with one serializable composition definition and a pure resolver that produces SVG elements.
+Keep React and TypeScript. Extend the existing serializable composition definition and pure SVG scene resolver.
 Store elements, frames, named scales, data bindings, calculations, repeat rules, and visual overrides.
 Use direct typed properties, not a general graph language or a new compiler.
 Extend the definition only when the next reference requires it.
 
-Proposed ownership: scale definitions declare domains; frames supply pixel ranges and clipping.
-Marks reference a frame and its named scales. Shared domains map into each repeated frame.
-Confirm these controls in the first blank-page proof before expanding geometry.
+Current scales declare domain policy, and each unit frame supplies pixel ranges.
+Extend that ownership to named numeric x/y scales and path clipping. Points and paths must use the same coordinate mapping.
+Keep shared versus local domains explicit; settle filter-driven domain changes before claiming archival scale fidelity.
 
 Keep instance identities tied to subset keys. Visual overrides reference those keys and element IDs.
 Population, filter policy, and frame display window are separate inputs.
@@ -67,9 +94,10 @@ No additional chart engine is needed.
 
 ### Local loop and platform proof
 
-Run `pnpm --filter demo dev -- --host 127.0.0.1` for authoring proofs.
-Run focused tests with `pnpm --filter exploreda test <test-file>` after nontrivial resolver or calculation changes.
-Run `pnpm check` after each broad milestone. It includes the required UI check.
+Run `pnpm --filter demo dev --port 5291 --strictPort` for authoring proofs using the library source.
+Run focused tests with `pnpm --filter exploreda exec vitest run <test-file>` after resolver or calculation changes.
+Run `pnpm --filter exploreda check-types` while working and `pnpm check` once before each PR.
+Confirm the local demo and fixture before browser checks. No browser acceptance test ran during this document import.
 Read `docs/ui-defaults.md` before implementing controls. Use existing tooltips and accessible names.
 
 PNG clipboard is the only material external platform boundary in the initial flow.
@@ -84,7 +112,8 @@ On failure, preserve edits and allow retry. Do not add alternate export formats 
 
 ## Milestone 1: Finish a repeated email-style graphic from blank
 
-Build the smallest complete editor before adding path geometry.
+Retain the implemented editor. Close its remaining acceptance proof before adding path geometry.
+The list below records the agreed first-slice behavior; it is not a request to rebuild existing components.
 
 - Add blank composition creation, text, frames, scales, rectangles, circles, and annotation lines.
 - Add an inspector for bindings and ad hoc count/sum/average calculations.
@@ -109,7 +138,7 @@ Common scales and a filter-independent guide remain clear. Saved nudges follow t
 Record redraw and selection timing at representative size; no latency target has been agreed.
 This is the first release boundary. Reverting this slice removes only the new composition entry and its files.
 
-### Status: vertical slice built (2026-10-08)
+### Status: code built; output acceptance remains open (updated 2026-10-10)
 
 A stack of five PRs builds Milestone 1 as a vertical slice in `packages/explorEDA/src/components/charts/Composition/`.
 The demo's **Compose a report graphic** example (`?example=message-log`) opens a blank composition beside linked views of a synthetic 10,376-row message log.
@@ -137,6 +166,12 @@ Measured on 2026-10-08 (Apple silicon, Chromium headless, production package bui
   Since 2026-10-10, a text, style, or composition edit no longer redraws the other charts, because the workspace keeps their live rows. In a development build of the message-log example, adding an element went from about 165 ms to about 70 ms of main-thread work.
 - Copy PNG writes a 1920 × 1200 image that reads back from the Chromium clipboard. Pasting into a report or slide has not been checked by hand yet.
 
+Research adds one small follow-up audit. Use a local measles fixture containing zero, null, and an absent state/year cell.
+The published source has 4,334 records, including 493 null rates; a complete 51 × 85 grid has 4,335 cells.
+Keep the absent Alaska 2003 record distinct in preparation. Do not replace missing rates with zero.
+Current numeric aggregation omits all-null cells; it does not render a dedicated missing-value mark.
+Decide whether a documented approximation is sufficient before adding exact multistop palettes or publisher row order.
+
 Open questions for the next round:
 
 - Value domains are computed from the glyphs that pass the filters, so colors rescale while filtering. Position domains stay fixed. Decide whether value domains should also stay fixed by default.
@@ -148,6 +183,7 @@ Open questions for the next round:
 
 Create the Driving composition with a path, points, selected-year labels, and a data-bound callout.
 
+- Add numeric x/y fields and named domains shared by point marks and paths in one frame.
 - Add series and order bindings to the path element. Use year order, not x-coordinate order.
 - Define missing-value breaks and a stable tie policy for equal order values.
 - Inspect path contributors and segment endpoints using retained row references.
@@ -155,6 +191,12 @@ Create the Driving composition with a path, points, selected-year labels, and a 
 
 One resolver test uses shuffled input, a reversal in x, and a missing coordinate.
 The rendered path must preserve the declared sequence and break at the missing value.
+Check that a circle and path vertex for the same record occupy the same position after a domain change.
+
+Then try research entry 14: fourteen company sparklines with extrema and endpoint markers.
+Its source sorts by date, then spaces observations by index within each company. It does not align every row by calendar date.
+Keep one shared opening-price y domain and source percentage-change order. A text rail plus one frame is sufficient.
+Treat richer row labels and ordering as explicit follow-up work if the current controls cannot express them.
 
 ### Desired end state
 
@@ -173,6 +215,10 @@ Create the inflation-fan structure from supplied interval data.
 
 One fixture checks nested bounds, missing-value gaps, and clipping at the projection boundary.
 Trace shows the interval's supplied fields, not an invented forecast calculation.
+
+Research entry 05 provides a second proof with two OBR panels, both measured as percent of GDP.
+Retain nine percentile columns, null historical bounds, and the March 2025 vintage. Check p50 against the central forecast.
+Use separate vertical domains and shared time. Two ordinary units suffice; do not require compound frames for this example.
 
 ### Desired end state
 
@@ -196,6 +242,8 @@ If reproducing survey estimates later, accept correctly prepared weighted summar
 
 One calculation fixture checks known quartiles, pairing, filtering, and a zero prior median.
 Show a missing cohort as missing rather than pairing unrelated records.
+The new collection supplies no direct median/IQR benchmark. Entry 16 uses means and sample standard deviations of annual totals.
+Do not substitute those values for quartiles or describe them as confidence intervals. Keep the existing time-use proof.
 
 ### Desired end state
 
@@ -217,6 +265,11 @@ Create the Causes composition using category counts by age.
 One calculation fixture checks 100% totals, stable order, a population filter, and a zero-total gap.
 For example, counts 2 and 3 must produce shares 40% and 60% with total 5 visible in inspection.
 
+Research entry 07 supplies four normalized columns for deaths and three media outlets.
+Each denominator covers the selected causes in that source. Deaths are not all deaths; media values count cause mentions.
+Preserve the documented accident/overdose correction and use multiple mentions as specified by the source method.
+Prove a stacked rectangle output as well as area geometry before claiming this new example is supported.
+
 ### Desired end state
 
 The author builds a stacked composition and can explain a selected share from its original counts.
@@ -235,6 +288,11 @@ Create a state-style comparison with an inset, then repeat that unit for several
 
 One integration fixture checks distinct time windows, a region filter, a date filter, and group movement.
 The recent-window frame must not truncate the overview's input. Region selection must not silently alter the national population.
+
+Research entry 04 adds a mixed-frame proof: one annual sparkline and one decade strip inside each country row.
+Its annual paths use local domains. Each decade column has its own color domain across the selected countries.
+The displayed average is the mean of rounded decade means, not the mean of all annual observations.
+Keep ranking and rounding in the prepared table first; do not silently replace the source calculation.
 
 ### Desired end state
 
@@ -255,6 +313,7 @@ Each library feature PR needs a user-facing minor changeset. These research docu
 
 ## Below the cut line
 
+- Tile-addressed repeats, horizontal bar lengths, variable repeat heights, and path/area gradients until a selected proof needs them.
 - A general visualization compiler, arbitrary expressions, recursive repeats, or a layout solver.
 - Exact publication replicas or fetching live reference datasets during authoring tests.
 - Statistical forecast generation or a survey-weighting engine.
@@ -262,3 +321,6 @@ Each library feature PR needs a user-facing minor changeset. These research docu
 - SVG, PDF, editable PPTX export, recurring reports, and replacement-data parameterization.
 
 The six milestones describe the capability order. They are not a requirement to build all capabilities in one release.
+Do not promote the Pro report's “Available” data status into a claim that dataset bytes are stored locally.
+The delivered archive contains images, reports, source URLs, and verification notes, but no underlying dataset files.
+Retrieve and pin only the data needed for the selected proof. Keep source terms and preparation notes with it.

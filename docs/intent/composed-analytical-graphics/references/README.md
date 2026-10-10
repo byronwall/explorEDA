@@ -51,3 +51,10 @@ Keep illustrative fixtures separate from source data. Do not fabricate source ro
 Use controlled counts for the normalized-stack proof until actual counts with valid denominator inputs are available.
 Use controlled raw durations for the quartile proof until survey weighting and source preparation are specified.
 Inspect stored image resolution before using it for visual comparison; previews may be smaller than published originals.
+
+
+## Additional Pro research
+
+The [2026-10-10 source archive](../raw/2026-10-10-pro-graphics/README.md) preserves 23 additional graphics and the full Pro report.
+Its original images and metadata remain separate from these earlier reference assets.
+See the [reference study](../reference-study.md) for the current integration recommendation.

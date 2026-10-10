@@ -3,20 +3,20 @@ title: "Composed analytical graphics"
 slug: "composed-analytical-graphics"
 phase: intent
 status: current
-last_updated: "2026-09-29"
+last_updated: "2026-10-10"
 ---
 
 # Composed analytical graphics
 
 ## My read
 
-Composition mode should produce polished analytical graphics for reports and presentations. The output is a durable artifact that the author expects to refine and use again. Its interactive form should also support drilldown and tracing.
+Composition mode should produce polished analytical graphics for reports and presentations. Authors can refine and reuse the result, with drilldown and tracing.
 
-Authoring starts from a blank page. The user chooses primitives and builds the composition. Titles and subtitles are elements. Frames, scales, mark definitions, and annotations provide the structure for drawing. A chart template defines one visual unit, including instructions that draw rectangles, circles, or other marks from data. A repeat rule applies that unit to data subsets. The author controls the definition that generates those marks, rather than arranging each generated mark separately.
+Authoring starts from a blank page with user-selected primitives. Titles, subtitles, frames, scales, mark definitions, and annotations form the graphic. A chart template defines one visual unit and generates marks from data. A repeat rule applies that unit to subsets. Authors edit definitions instead of arranging thousands of marks.
 
-Repeated units can form comparison panels, stacked rows, or facet grids. Shared elements tie them into one graphic. An inspector explains which data, filters, calculations, and scales reach each unit. The author can position groups of elements and make exceptions for an individual repeated unit. Those exceptions combine with the template to produce the final result.
+Repeated units form comparison panels, stacked rows, or facet grids. Shared elements tie them into one graphic. The inspector explains each unit’s data, filters, calculations, and scales. Authors can position groups and save visual exceptions for individual units.
 
-The editor should support careful finishing as well as sound data analysis. It needs useful automatic layout, deliberate placement controls, clear calculation scopes, and saved edits. A successful result belongs in a report or PPTX. PNG output with a Copy to clipboard action is sufficient initially.
+The editor combines automatic layout with deliberate placement, clear calculation scopes, and saved edits. PNG output with Copy to clipboard is sufficient initially.
 
 ## What matters most
 
@@ -29,11 +29,11 @@ The editor should support careful finishing as well as sound data analysis. It n
 
 ## Authoring and viewing
 
-The author adds text, a frame or scales, and mark definitions to a blank page. They bind data and build one chart unit. They then choose a repeat rule and arrange the resulting units. Global text, guides, and annotations complete the graphic.
+Authors bind data, build one chart unit, and choose a repeat rule. Global text, guides, and annotations complete the graphic.
 
-The author usually creates calculations on the spot, after selecting the relevant data, filters, or aggregation. A calculated label or line should expose its inputs and scope. The interface should explain the difference between a group value, a composition-wide value, and a value that ignores filters.
+Authors create calculations after selecting data, filters, or aggregation. A calculated label or line should expose its inputs and scope. The interface should explain the difference between a group value, a composition-wide value, and a value that ignores filters.
 
-Editing and viewing likely need distinct modes. During editing, clicking selects an element for changes and possible movement. During viewing, clicking supports interaction, probably drilldown. Alt-click is a proposed shortcut for full tracing. The exact gestures remain provisional.
+Editing and viewing use distinct modes in the current editor. Editing clicks select elements or repeat overrides. Viewing clicks select a repeat across the workspace. Alt-click and Alt-Enter open source tracing.
 
 ## What seems settled
 
@@ -71,14 +71,20 @@ The email graphic provides a representative size: about 10,000 source rows, 10�
 
 ## Possibilities, not decisions
 
-A frame may establish scale bounds, or scales may be placed explicitly and referenced by chart elements. Rectangles and circles are expected primitives; the complete mark list is open. Annotation anchors include data, frames, and page positions. Their detailed editing controls remain provisional. PNG is the initial output format; other export formats are deferred.
+Named composition scales now define domain policy; each chart unit supplies its pixel range. The complete mark list remains open. The new research favors numeric circle positions alongside ordered paths. This supports the existing connected-scatterplot proof. Addressed tile layouts and other additions remain candidates, not agreed release scope.
+
+The 23 published examples broaden the reference set. They do not require 23 replicas or change the blank-page authoring goal. Prepared tables may handle packing, density estimation, rankings, or source-specific calculations. Such preparation must remain explicit.
 
 ## Current reality that matters
 
-explorEDA has chart settings, workspace layout, facets, filters, and trace inspection for some chart objects. It lacks the blank-page composition editor described here. The older `data-and-glyphs` email reproduction is a visual reference. Its monthly values were reconstructed from an image and cannot establish data accuracy.
+The requested branch contains the first composition editor slice: blank authoring, strip marks, repeats, calculations, guides, annotations, overrides, tracing, and PNG copying. Its units still use date or category bins. Numeric x/y frames, paths, bands, paired summaries, normalized stacks, and compound frames remain planned.
+
+The earlier implementation report records clipboard readback. It does not prove a successful paste into a report or slide. Keep that first-proof requirement open. Shared value domains currently rescale from filtered glyphs; stable comparison domains need an explicit decision.
+
+Pro classified three examples as “Today” using the research prompt. That label does not establish support in this checkout. Exact palettes, source order, and missing-value treatment need checks. The older email reconstruction remains visual guidance; its inferred values do not establish data accuracy.
 
 ## Next step after confirmation
 
-Prove blank-page authoring through a polished repeated graphic, saved overrides, inspection, and report-ready output. The output format, initial override scope, scale default, and supported annotation anchors are now settled enough for planning.
+Claude can resume integration from the updated [implementation plan](implementation-plan.md). First close the remaining output proof and audit a small measles strip. Then extend the existing model for the Driving path and numeric points.
 
-Use the five additional [reference compositions](reference-study.md) to sequence capability growth. Preserve images and available data with provenance in [references](references/README.md).
+The [reference study](reference-study.md) reconciles the new examples with the existing sequence. The full [Pro source package](raw/2026-10-10-pro-graphics/README.md) remains unchanged for inspection. Research recommendations guide proof selection; they do not silently become requirements.
