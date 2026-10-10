@@ -17,6 +17,7 @@ import {
   periodKey,
   periodStart,
   resolveUnit,
+  type BandDatum,
   type CompositionData,
   type GlyphDatum,
   type PathDatum,
@@ -48,6 +49,8 @@ interface NodeBase {
   opacity?: number;
   /** Clip the node to this box, such as a frame with fixed scale limits. */
   clip?: Bounds;
+  /** Draw beneath every other node, such as a guide's shaded region. */
+  under?: boolean;
 }
 
 export interface TextNode extends NodeBase {
@@ -105,7 +108,22 @@ export interface PathNode extends NodeBase {
   path: PathDatum;
 }
 
-export type SceneNode = TextNode | RectNode | CircleNode | LineNode | PathNode;
+/** The area between two bounds along ordered points, drawn as connected runs. */
+export interface AreaNode extends NodeBase {
+  type: "area";
+  segments: { x: number; y0: number; y1: number; rowId: number }[][];
+  fill: string;
+  fillOpacity: number;
+  band: BandDatum;
+}
+
+export type SceneNode =
+  | TextNode
+  | RectNode
+  | CircleNode
+  | LineNode
+  | PathNode
+  | AreaNode;
 
 /** Why a guide or annotation sits where it does. */
 export interface ResolvedAnchor {
@@ -229,7 +247,12 @@ export function resolveComposition(
     width: definition.artboard.width,
     height: definition.artboard.height,
     background: definition.artboard.background,
-    nodes,
+    // Shaded regions go beneath the marks they sit behind, whatever the
+    // element order, so a projection tint never covers a band or a click.
+    nodes: [
+      ...nodes.filter((node) => node.under),
+      ...nodes.filter((node) => !node.under),
+    ],
     elements,
   };
 }
@@ -338,6 +361,21 @@ export function positionX(
   return instance.frame.x + (index + 0.5) * band;
 }
 
+/** The y of a numeric value on a repeat's y scale, for horizontal guides. */
+export function positionY(
+  instance: ResolvedInstance,
+  value: { number?: number; text?: string }
+): number | undefined {
+  if (!instance.xy) return undefined;
+  const number =
+    value.number ??
+    (value.text?.trim() ? Number(value.text.trim()) : undefined);
+  if (number === undefined || !Number.isFinite(number)) return undefined;
+  const [min, max] = instance.xy.y.domain;
+  if (number < min || number > max) return undefined;
+  return numericPixel(instance.xy.y, number);
+}
+
 const emptyBounds = (x: number, y: number): Bounds => ({
   x,
   y,
@@ -376,18 +414,20 @@ function resolveGuide(
     ? unit.instances.map((instance) => [instance])
     : [unit.instances];
   let label: { x: number; y: number; text: string } | undefined;
+  const horizontal = guide.axis === "y";
   groups.forEach((group, index) => {
     const first = group[0]!;
     let x: number | undefined;
     let text = guide.label;
+    const place = (input: { number?: number; text?: string }) =>
+      horizontal ? positionY(first, input) : positionX(first, input);
     if (value.kind === "constant") {
-      x = positionX(first, { text: value.value });
+      x = place({ text: value.value });
     } else if (calc) {
       const result = evaluateCalc(calc, data, perRepeat ? first : undefined);
       values.push(result);
       if (result.value !== undefined)
-        x = positionX(
-          first,
+        x = place(
           result.kind === "date"
             ? { number: result.value }
             : { text: String(result.value) }
@@ -395,6 +435,70 @@ function resolveGuide(
       text = text.replace(/\{value\}/g, result.text);
     }
     if (x === undefined) return;
+    if (horizontal) {
+      // A horizontal rule per frame, with the shade above or below it.
+      group.forEach((item, part) => {
+        if (guide.shade && guide.shade !== "none") {
+          const above = guide.shade === "after";
+          nodes.push({
+            type: "rect",
+            key: `${guide.id}:${index}:${part}:shade`,
+            elementId: guide.id,
+            instanceKey: perRepeat ? first.key : undefined,
+            x: item.frame.x,
+            y: above ? item.frame.y : x,
+            width: item.frame.width,
+            height: above
+              ? x - item.frame.y
+              : item.frame.y + item.frame.height - x,
+            fill: guide.color,
+            opacity: 0.08,
+            under: true,
+          });
+        }
+        nodes.push({
+          type: "line",
+          key: `${guide.id}:${index}:${part}`,
+          elementId: guide.id,
+          instanceKey: perRepeat ? first.key : undefined,
+          x1: item.frame.x - 3,
+          x2: item.frame.x + item.frame.width + 3,
+          y1: x,
+          y2: x,
+          stroke: guide.color,
+          strokeWidth: 1.25,
+          dash: "4 3",
+        });
+      });
+      if (text && !label)
+        label = {
+          x: first.frame.x + 4 + guide.x,
+          y: x - 5 + guide.y,
+          text,
+        };
+      return;
+    }
+    if (guide.shade && guide.shade !== "none")
+      group.forEach((item, part) => {
+        const after = guide.shade === "after";
+        nodes.push({
+          type: "rect",
+          key: `${guide.id}:${index}:${part}:shade`,
+          elementId: guide.id,
+          instanceKey: perRepeat ? first.key : undefined,
+          x: after ? x + (item.frame.x - first.frame.x) : item.frame.x,
+          y: item.frame.y,
+          width: after
+            ? item.frame.x +
+              item.frame.width -
+              (x + (item.frame.x - first.frame.x))
+            : x + (item.frame.x - first.frame.x) - item.frame.x,
+          height: item.frame.height,
+          fill: guide.color,
+          opacity: 0.08,
+          under: true,
+        });
+      });
     // Repeats stacked in one column share a rule that runs through the gaps.
     const segments = group.every((item) => item.frame.x === first.frame.x)
       ? [
@@ -455,20 +559,25 @@ function resolveGuide(
         kind: "guide" as const,
         point: { x: unit.bounds.x, y: unit.bounds.y },
         values,
-        missing: "The guide's value falls outside the unit's position scale.",
+        missing: horizontal
+          ? "The guide's value falls outside the unit's y scale."
+          : "The guide's value falls outside the unit's position scale.",
       },
     };
-  const left = Math.min(...lines.map((line) => line.x1), label?.x ?? Infinity);
+  const left = Math.min(
+    ...lines.flatMap((line) => [line.x1, line.x2]),
+    label?.x ?? Infinity
+  );
   const right = Math.max(
-    ...lines.map((line) => line.x1),
+    ...lines.flatMap((line) => [line.x1, line.x2]),
     label ? label.x + measureText(label.text, 11, 600) : -Infinity
   );
   const top = Math.min(
-    ...lines.map((line) => line.y1),
+    ...lines.flatMap((line) => [line.y1, line.y2]),
     label ? label.y - 11 : Infinity
   );
   const bottom = Math.max(
-    ...lines.map((line) => line.y2),
+    ...lines.flatMap((line) => [line.y1, line.y2]),
     label ? label.y + 3 : -Infinity
   );
   return {

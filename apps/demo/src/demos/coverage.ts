@@ -1006,6 +1006,17 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "forecast-fan",
+    intent:
+      "Layer supplied percentile bands around a central path with a shaded projection and a horizontal reference guide.",
+    features: {
+      "chart:composition": "shown",
+      "chart:line": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

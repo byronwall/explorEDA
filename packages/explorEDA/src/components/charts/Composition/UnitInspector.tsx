@@ -7,6 +7,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useId } from "react";
 import {
   newMarkId,
+  type BandMark,
   type InstanceOverride,
   type CompositionCalculation,
   type CompositionDefinition,
@@ -137,6 +138,12 @@ const MARK_TYPES = [
     label: "Path",
     tooltip:
       "One line through the rows in the order of a field, such as year, at numeric x and y",
+  },
+  {
+    value: "band" as const,
+    label: "Band",
+    tooltip:
+      "A filled area between two fields along x, such as a forecast's 10th to 90th percentile. Layer several, widest first.",
   },
 ];
 
@@ -658,9 +665,11 @@ function XyFields({
   onChange,
   onEditScale,
 }: {
-  mark: PointMark | PathMark;
+  mark: PointMark | PathMark | BandMark;
   scales: CompositionScale[];
-  onChange: (patch: Partial<PointMark> | Partial<PathMark>) => void;
+  onChange: (
+    patch: Partial<PointMark> | Partial<PathMark> | Partial<BandMark>
+  ) => void;
   onEditScale: (scaleId: string) => void;
 }) {
   const id = useId();
@@ -673,8 +682,13 @@ function XyFields({
     .map((profile) => profile.name);
   const numeric = scales.filter((scale) => scale.kind === "numeric");
   const change = onChange as (
-    patch: Partial<Omit<PointMark, "type"> & Omit<PathMark, "type">>
+    patch: Partial<
+      Omit<PointMark, "type"> & Omit<PathMark, "type"> & Omit<BandMark, "type">
+    >
   ) => void;
+  const numericFields = profiles
+    .filter((profile) => profile.dataType === "numeric")
+    .map((profile) => profile.name);
   return (
     <>
       <Label htmlFor={`${id}-x`}>X scale</Label>
@@ -696,19 +710,50 @@ function XyFields({
       <Label>Order by</Label>
       <FieldSelector
         label=""
-        placeholder={mark.type === "path" ? "Order field" : "Row order"}
+        placeholder={mark.type === "point" ? "Row order" : "Order field"}
         value={mark.orderField ?? ""}
         allowClear={mark.type === "point"}
         fields={orderFields}
         onChange={(orderField) =>
           change(
-            mark.type === "path"
-              ? { orderField }
-              : { orderField: orderField || undefined }
+            mark.type === "point"
+              ? { orderField: orderField || undefined }
+              : { orderField }
           )
         }
       />
-      {mark.type === "path" ? (
+      {mark.type === "band" ? (
+        <>
+          <Label>Lower</Label>
+          <FieldSelector
+            label=""
+            placeholder="Lower bound"
+            value={mark.lowerField}
+            fields={numericFields}
+            onChange={(lowerField) => change({ lowerField })}
+          />
+          <Label>Upper</Label>
+          <FieldSelector
+            label=""
+            placeholder="Upper bound"
+            value={mark.upperField}
+            fields={numericFields}
+            onChange={(upperField) => change({ upperField })}
+          />
+          <ColorSetting
+            label="Fill"
+            value={mark.fill}
+            onChange={(fill) => change({ fill })}
+          />
+          <NumberSetting
+            label="Opacity %"
+            min={5}
+            max={100}
+            value={Math.round(mark.opacity * 100)}
+            onChange={(value) => change({ opacity: value / 100 })}
+          />
+        </>
+      ) : mark.type === "path" ? (
         <>
           <ColorSetting
             label="Stroke"

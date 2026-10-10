@@ -167,3 +167,17 @@ Every fifth trading day is kept, plus each company's first and last day, so a fi
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/big-tech.ts
 ```
+
+## Forecast fan
+
+- File: `inflation-fan.csv`
+- Size: 104 rows and 13 fields
+- Demo: `?example=forecast-fan`
+- Use: a fan chart composition from supplied intervals, with nested bands, a central path, a shaded projection period, and a horizontal target guide
+- Generation: fixed seed in `apps/data-samples/inflation_fan.ts`
+
+Two illustrative measures, quarterly from 2015 Q1 to 2027 Q4. History rows carry a central value only; projection rows add eight percentiles (P10 to P90, around the central path) that widen with the horizon. The intervals are supplied, not modeled, and the figures are synthetic: the editor renders bands, it does not forecast. `Year` is the quarter as a fraction of a year, for a numeric scale.
+
+```sh
+node --experimental-strip-types apps/data-samples/inflation_fan.ts apps/demo/public/datasets/inflation-fan.csv
+```

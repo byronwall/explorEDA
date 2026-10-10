@@ -143,6 +143,8 @@ function SceneNodeView({ node }: { node: SceneNode }) {
           height={node.height}
           fill={node.fill}
           opacity={node.opacity}
+          pointerEvents={node.under ? "none" : undefined}
+          clipPath={clipPath}
         />
       );
     case "circle":
@@ -156,6 +158,29 @@ function SceneNodeView({ node }: { node: SceneNode }) {
           opacity={node.opacity}
           stroke={node.stroke}
           strokeWidth={node.stroke ? 1.25 : undefined}
+          clipPath={clipPath}
+        />
+      );
+    case "area":
+      return (
+        <path
+          data-node={node.key}
+          d={node.segments
+            .map((run) => {
+              const upper = run.map(
+                (vertex, index) =>
+                  `${index ? "L" : "M"}${round(vertex.x)} ${round(vertex.y1)}`
+              );
+              const lower = [...run]
+                .reverse()
+                .map((vertex) => `L${round(vertex.x)} ${round(vertex.y0)}`);
+              return `${upper.join("")}${lower.join("")}Z`;
+            })
+            .join("")}
+          fill={node.fill}
+          fillOpacity={node.fillOpacity}
+          stroke="none"
+          opacity={node.opacity}
           clipPath={clipPath}
         />
       );

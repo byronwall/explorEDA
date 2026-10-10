@@ -116,8 +116,8 @@ export function CompositionChart({
     [settings.id, scene]
   );
   const source = useMemo(
-    () => makeCompositionTraceSource(definition, scene, revision),
-    [definition, scene, revision]
+    () => makeCompositionTraceSource(definition, scene, revision, data),
+    [definition, scene, revision, data]
   );
   useTraceSource(owner, source);
 
@@ -280,11 +280,13 @@ export function CompositionChart({
           ? `glyph:${node.key}`
           : node.type === "path"
             ? `path:${node.key}`
-            : element?.kind === "unit" && node.instanceKey !== undefined
-              ? `repeat:${element.id}:${node.instanceKey}`
-              : element?.kind === "guide" || element?.kind === "annotation"
-                ? `element:${element.id}`
-                : undefined;
+            : node.type === "area"
+              ? `band:${node.key}`
+              : element?.kind === "unit" && node.instanceKey !== undefined
+                ? `repeat:${element.id}:${node.instanceKey}`
+                : element?.kind === "guide" || element?.kind === "annotation"
+                  ? `element:${element.id}`
+                  : undefined;
       if (id) traceApi?.inspect(owner, "composition", id);
       return;
     }

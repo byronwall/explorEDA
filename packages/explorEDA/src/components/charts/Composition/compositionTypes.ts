@@ -206,7 +206,27 @@ export interface PathMark {
   strokeWidth: number;
 }
 
-export type MarkDefinition = StripMark | PointMark | PathMark;
+/**
+ * Fills the area between two fields along x, in the order of one field: a
+ * supplied interval such as a forecast's 10th to 90th percentile. Several
+ * bands layer in drawing order, so the widest goes first. A row with a
+ * missing bound breaks the band there.
+ */
+export interface BandMark {
+  type: "band";
+  id: string;
+  name: string;
+  xScaleId: string;
+  yScaleId: string;
+  orderField: string;
+  lowerField: string;
+  upperField: string;
+  fill: string;
+  /** From 0.05 to 1. */
+  opacity: number;
+}
+
+export type MarkDefinition = StripMark | PointMark | PathMark | BandMark;
 export type MarkType = MarkDefinition["type"];
 
 /** The scales a mark reads, by ID. */
@@ -214,6 +234,22 @@ export function markScaleIds(mark: MarkDefinition): string[] {
   return mark.type === "strip"
     ? [mark.positionScaleId, mark.valueScaleId]
     : [mark.xScaleId, mark.yScaleId];
+}
+
+/** The fields a mark reads, beyond its scales. */
+export function markFields(mark: MarkDefinition): string[] {
+  switch (mark.type) {
+    case "strip":
+      return mark.measureField ? [mark.measureField] : [];
+    case "point":
+      return [mark.orderField, mark.labelField].filter(
+        (field): field is string => Boolean(field)
+      );
+    case "path":
+      return [mark.orderField];
+    case "band":
+      return [mark.orderField, mark.lowerField, mark.upperField];
+  }
 }
 
 export type RepeatArrangement = "rows" | "columns" | "grid";
@@ -301,6 +337,10 @@ export interface GuideElement extends ElementBase {
   value: GuideValue;
   label: string;
   color: string;
+  /** A vertical rule at an x value, or a horizontal rule at a numeric y value. */
+  axis?: "x" | "y";
+  /** Tint the frame on one side of the rule, such as a projection period. */
+  shade?: "none" | "after" | "before";
 }
 
 /** Where an annotation attaches. */

@@ -2,6 +2,7 @@ import type { TraceSource, TraceTarget } from "../trace/traceTypes";
 import { describeCalc, type CalcResult } from "./calculations";
 import {
   findOverride,
+  markFields,
   type CompositionDefinition,
   type InstanceOverride,
   type NumericScale,
@@ -10,20 +11,27 @@ import {
   type ValueScale,
 } from "./compositionTypes";
 import type {
+  AreaNode,
   CircleNode,
   CompositionScene,
   PathNode,
   RectNode,
   ResolvedAnchor,
 } from "./resolveComposition";
-import type { GlyphDatum, PathDatum, ResolvedInstance } from "./resolveUnit";
+import type {
+  BandDatum,
+  CompositionData,
+  GlyphDatum,
+  PathDatum,
+  ResolvedInstance,
+} from "./resolveUnit";
 
 /** Which template, subset, and override drew an object. */
 export interface CompositionTrace {
   kind: "composition";
   id: string;
   revision: string;
-  role: "glyph" | "path" | "repeat" | "guide" | "annotation";
+  role: "glyph" | "path" | "band" | "repeat" | "guide" | "annotation";
   elementName: string;
   /** The rows behind the object. */
   rowIds: number[];
@@ -58,6 +66,14 @@ export interface CompositionTrace {
     /** Each vertex in path order, with its coordinates. */
     vertices: { rowId: number; x: number; y: number }[];
   };
+  band?: {
+    datum: BandDatum;
+    markName: string;
+    fill: string;
+    x?: NumericScale;
+    y?: NumericScale;
+    vertices: { rowId: number; lower: number; upper: number }[];
+  };
   labelValue?: CalcResult & { description: string };
   guide?: {
     source: "constant" | "calc";
@@ -75,14 +91,18 @@ type Glyph = RectNode | CircleNode;
 export function makeCompositionTraceSource(
   definition: CompositionDefinition,
   scene: CompositionScene,
-  revision: string
+  revision: string,
+  /** The rows behind the scene, so a band can show its bound values. */
+  data?: Pick<CompositionData, "column">
 ): TraceSource {
   const glyphs = new Map<string, Glyph>();
   const paths = new Map<string, PathNode>();
+  const areas = new Map<string, AreaNode>();
   for (const node of scene.nodes) {
     if ((node.type === "rect" || node.type === "circle") && node.glyph)
       glyphs.set(node.key, node);
     if (node.type === "path") paths.set(node.key, node);
+    if (node.type === "area") areas.set(node.key, node);
   }
   const units = new Map(
     definition.elements
@@ -111,15 +131,13 @@ export function makeCompositionTraceSource(
       if (mark.type === "strip") {
         const position = scale(mark.positionScaleId);
         if (position?.kind === "position") fields.add(position.field);
-        if (mark.measureField) fields.add(mark.measureField);
-        continue;
+      } else {
+        for (const id of [mark.xScaleId, mark.yScaleId]) {
+          const axis = scale(id);
+          if (axis?.kind === "numeric") fields.add(axis.field);
+        }
       }
-      if (mark.orderField) fields.add(mark.orderField);
-      for (const id of [mark.xScaleId, mark.yScaleId]) {
-        const axis = scale(id);
-        if (axis?.kind === "numeric") fields.add(axis.field);
-      }
-      if (mark.type === "point" && mark.labelField) fields.add(mark.labelField);
+      for (const field of markFields(mark)) fields.add(field);
     }
     return [...fields];
   };
@@ -195,6 +213,41 @@ export function makeCompositionTraceSource(
                 rowId: vertex.rowId,
                 x: vertex.x,
                 y: vertex.y,
+              }))
+            ),
+          },
+        };
+      }
+      if (role === "band") {
+        const node = areas.get(rest.join(":"));
+        const unit = node && units.get(node.elementId);
+        const instance =
+          node && unit && instanceOf(unit.id, node.band.instanceKey);
+        if (!node || !unit || !instance) return undefined;
+        const mark = unit.marks.find((item) => item.id === node.band.markId);
+        const band = mark?.type === "band" ? mark : undefined;
+        const lowers = data?.column(node.band.lowerField) ?? {};
+        const uppers = data?.column(node.band.upperField) ?? {};
+        return {
+          kind,
+          id,
+          revision,
+          role: "band",
+          elementName: unit.name,
+          rowIds: node.band.rowIds,
+          fields: fieldsOf(unit),
+          unit: unitPart(unit, instance),
+          band: {
+            datum: node.band,
+            markName: mark?.name ?? "Band",
+            fill: node.fill,
+            x: scale(band?.xScaleId) as NumericScale | undefined,
+            y: scale(band?.yScaleId) as NumericScale | undefined,
+            vertices: node.segments.flatMap((run) =>
+              run.map((vertex) => ({
+                rowId: vertex.rowId,
+                lower: Number(lowers[vertex.rowId]),
+                upper: Number(uppers[vertex.rowId]),
               }))
             ),
           },
@@ -287,6 +340,9 @@ export function makeCompositionTraceSource(
       for (const [key, node] of paths)
         if (node.path.rowIds.includes(sourceId))
           return { kind: "composition", id: `path:${key}` };
+      for (const [key, node] of areas)
+        if (node.band.rowIds.includes(sourceId))
+          return { kind: "composition", id: `band:${key}` };
       return undefined;
     },
     targets(): TraceTarget[] {

@@ -51,6 +51,18 @@ function isMark(value: unknown) {
       (value.show === undefined ||
         oneOf(value.show, ["all", "first", "last", "min", "max"]))
     );
+  if (value.type === "band")
+    return (
+      isString(value.xScaleId) &&
+      isString(value.yScaleId) &&
+      isString(value.orderField) &&
+      isString(value.lowerField) &&
+      isString(value.upperField) &&
+      isString(value.fill) &&
+      isNumber(value.opacity) &&
+      value.opacity > 0 &&
+      value.opacity <= 1
+    );
   if (value.type === "path")
     return (
       isString(value.xScaleId) &&
@@ -176,6 +188,9 @@ function isGuideElement(value: Value) {
     isString(value.unitId) &&
     isString(value.label) &&
     isString(value.color) &&
+    (value.axis === undefined || oneOf(value.axis, ["x", "y"])) &&
+    (value.shade === undefined ||
+      oneOf(value.shade, ["none", "after", "before"])) &&
     isRecord(guide) &&
     ((guide.kind === "constant" && isString(guide.value)) ||
       (guide.kind === "calc" && isString(guide.calcId)))
@@ -262,7 +277,9 @@ export function isCompositionDefinition(
         element.marks.every(
           (mark) =>
             isRecord(mark) &&
-            (mark.type === "point" || mark.type === "path"
+            (mark.type === "point" ||
+            mark.type === "path" ||
+            mark.type === "band"
               ? kinds.get(mark.xScaleId) === "numeric" &&
                 kinds.get(mark.yScaleId) === "numeric"
               : kinds.get(mark.positionScaleId) === "position" &&

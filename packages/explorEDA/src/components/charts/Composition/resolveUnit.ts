@@ -6,6 +6,7 @@ import {
   MUTED_INK,
   INK,
   type CompositionDefinition,
+  type BandMark,
   type InstanceOverride,
   type NumericScale,
   type PathMark,
@@ -16,7 +17,12 @@ import {
   type UnitElement,
   type ValueScale,
 } from "./compositionTypes";
-import type { Bounds, PathNode, SceneNode } from "./resolveComposition";
+import type {
+  AreaNode,
+  Bounds,
+  PathNode,
+  SceneNode,
+} from "./resolveComposition";
 import { evaluateCalc, type CalcResult } from "./calculations";
 import { MISSING, orderedRows } from "./ordering";
 
@@ -92,6 +98,18 @@ export interface PathDatum {
   segments: number;
 }
 
+/** What one band stands for: its bounds, rows in order, and gaps. */
+export interface BandDatum {
+  instanceKey: string;
+  markId: string;
+  orderField: string;
+  lowerField: string;
+  upperField: string;
+  rowIds: number[];
+  skipped: number[];
+  segments: number;
+}
+
 export interface ResolvedUnit {
   nodes: SceneNode[];
   bounds: Bounds;
@@ -116,7 +134,7 @@ type ResolvedStrip = {
 };
 type ResolvedXy = {
   type: "xy";
-  mark: PointMark | PathMark;
+  mark: PointMark | PathMark | BandMark;
   x: NumericScale;
   y: NumericScale;
 };
@@ -161,13 +179,26 @@ export function resolveUnit(
     }
     return bins;
   };
+  // A numeric scale spans every field drawn on it: its own, plus the bounds
+  // of any band bound to it, so a fan's widest interval stays in the frame.
+  const scaleFields = new Map<string, string[]>();
+  for (const item of xys) {
+    if (item.mark.type !== "band") continue;
+    const fields = scaleFields.get(item.y.id) ?? [item.y.field];
+    fields.push(item.mark.lowerField, item.mark.upperField);
+    scaleFields.set(item.y.id, fields);
+  }
+  const columnsOf = (scale: NumericScale) =>
+    (scaleFields.get(scale.id) ?? [scale.field]).map((field) =>
+      data.column(field)
+    );
   const sharedDomains = new Map<string, [number, number]>();
   const domainFor = (scale: NumericScale, subset: Subset) => {
     if (scale.domain === "instance")
-      return numericDomain(scale, data.column(scale.field), subset.allIds);
+      return numericDomain(scale, columnsOf(scale), subset.allIds);
     let domain = sharedDomains.get(scale.id);
     if (!domain) {
-      domain = numericDomain(scale, data.column(scale.field), data.allIds);
+      domain = numericDomain(scale, columnsOf(scale), data.allIds);
       sharedDomains.set(scale.id, domain);
     }
     return domain;
@@ -364,23 +395,32 @@ export function resolveUnit(
       };
       const accent = override?.accent;
       nodes.push(
-        ...(item.mark.type === "path"
-          ? pathNodes(
-              unit,
-              accent ? { ...item.mark, stroke: accent } : item.mark,
-              subset,
-              axes,
-              frame,
-              data
-            )
-          : pointNodes(
+        ...(item.mark.type === "band"
+          ? bandNodes(
               unit,
               accent ? { ...item.mark, fill: accent } : item.mark,
               subset,
               axes,
               frame,
               data
-            ))
+            )
+          : item.mark.type === "path"
+            ? pathNodes(
+                unit,
+                accent ? { ...item.mark, stroke: accent } : item.mark,
+                subset,
+                axes,
+                frame,
+                data
+              )
+            : pointNodes(
+                unit,
+                accent ? { ...item.mark, fill: accent } : item.mark,
+                subset,
+                axes,
+                frame,
+                data
+              ))
       );
     }
     if (opacity < 1)
@@ -688,17 +728,18 @@ export function positionBins(
  */
 export function numericDomain(
   scale: NumericScale,
-  column: Record<number, datum>,
+  columns: Record<number, datum> | Record<number, datum>[],
   ids: number[]
 ): [number, number] {
   let min = Infinity;
   let max = -Infinity;
-  for (const id of ids) {
-    const value = finiteNumber(column[id]);
-    if (value === undefined) continue;
-    if (value < min) min = value;
-    if (value > max) max = value;
-  }
+  for (const column of Array.isArray(columns) ? columns : [columns])
+    for (const id of ids) {
+      const value = finiteNumber(column[id]);
+      if (value === undefined) continue;
+      if (value < min) min = value;
+      if (value > max) max = value;
+    }
   if (min === Infinity) {
     min = 0;
     max = 1;
@@ -790,6 +831,70 @@ function pathNodes(
         instanceKey: subset.key,
         markId: mark.id,
         orderField: mark.orderField,
+        rowIds: rows.map((row) => row.id),
+        skipped,
+        segments: segments.length,
+      },
+    },
+  ];
+}
+
+function bandNodes(
+  unit: UnitElement,
+  mark: BandMark,
+  subset: Subset,
+  axes: { x: NumericAxis; y: NumericAxis },
+  frame: Bounds,
+  data: CompositionData
+): SceneNode[] {
+  const xs = data.column(axes.x.scale.field);
+  const lowers = data.column(mark.lowerField);
+  const uppers = data.column(mark.upperField);
+  const rows = orderedRows(subset.liveIds, data.column(mark.orderField));
+  const segments: AreaNode["segments"] = [];
+  let current: AreaNode["segments"][number] = [];
+  const skipped: number[] = [];
+  for (const row of rows) {
+    const x = finiteNumber(xs[row.id]);
+    const lower = finiteNumber(lowers[row.id]);
+    const upper = finiteNumber(uppers[row.id]);
+    if (
+      row.order === undefined ||
+      x === undefined ||
+      lower === undefined ||
+      upper === undefined
+    ) {
+      skipped.push(row.id);
+      if (current.length) segments.push(current);
+      current = [];
+      continue;
+    }
+    current.push({
+      x: numericPixel(axes.x, x),
+      y0: numericPixel(axes.y, Math.min(lower, upper)),
+      y1: numericPixel(axes.y, Math.max(lower, upper)),
+      rowId: row.id,
+    });
+  }
+  if (current.length) segments.push(current);
+  if (!segments.length) return [];
+  const clip = fixedLimits(axes.x) || fixedLimits(axes.y) ? frame : undefined;
+  return [
+    {
+      type: "area",
+      key: `${unit.id}:${subset.key}:${mark.id}`,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      segments,
+      fill: mark.fill,
+      fillOpacity: mark.opacity,
+      clip,
+      band: {
+        instanceKey: subset.key,
+        markId: mark.id,
+        orderField: mark.orderField,
+        lowerField: mark.lowerField,
+        upperField: mark.upperField,
         rowIds: rows.map((row) => row.id),
         skipped,
         segments: segments.length,
@@ -928,6 +1033,17 @@ function tickValues(axis: NumericAxis, length: number, spacing: number) {
 }
 
 const tickFormat = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
+const plainTickFormat = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 2,
+  useGrouping: false,
+});
+
+/** Years read as "2016", not "2,016"; other numbers keep their separators. */
+function formatTick(axis: NumericAxis, value: number) {
+  return /year|\byr\b/i.test(axis.scale.field) || /year/i.test(axis.scale.name)
+    ? plainTickFormat.format(value)
+    : tickFormat.format(value);
+}
 
 /** Tick labels under and beside a numeric frame. */
 function numericAxisNodes(
@@ -955,7 +1071,7 @@ function numericAxisNodes(
   });
   const nodes = tickValues(xy.x, frame.width, 72).map((value) =>
     label(
-      tickFormat.format(value),
+      formatTick(xy.x, value),
       numericPixel(xy.x, value),
       frame.y + frame.height + 14,
       "middle",
@@ -965,7 +1081,7 @@ function numericAxisNodes(
   for (const value of tickValues(xy.y, frame.height, 36))
     nodes.push(
       label(
-        tickFormat.format(value),
+        formatTick(xy.y, value),
         frame.x - 6,
         numericPixel(xy.y, value) + 3.5,
         "end",

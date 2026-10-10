@@ -17,7 +17,7 @@ const SCALE_DOMAIN_TEXT = {
 };
 
 export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
-  const { unit, glyph, path, labelValue, guide, anchor } = trace;
+  const { unit, glyph, path, band, labelValue, guide, anchor } = trace;
   const point = glyph?.datum.point;
   return (
     <div className="space-y-2" aria-label="Composition trace">
@@ -111,6 +111,54 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
             rows {path.vertices[0]?.rowId} →{" "}
             {path.vertices[path.vertices.length - 1]?.rowId}
           </TraceReadout>
+        </TraceSection>
+      )}
+      {band && (
+        <TraceSection heading={band.markName}>
+          <TraceReadout label="Bounds">
+            <TraceSwatch color={band.fill} /> {band.datum.lowerField} to{" "}
+            {band.datum.upperField}, supplied by the data
+          </TraceReadout>
+          <TraceReadout label="Order">
+            {band.datum.orderField}, ascending; ties keep row order
+          </TraceReadout>
+          <TraceReadout label="Vertices">
+            {band.vertices.length.toLocaleString()} in{" "}
+            {band.datum.segments === 1
+              ? "one run"
+              : `${band.datum.segments} runs`}
+            {band.datum.skipped.length
+              ? `; ${band.datum.skipped.length} ${
+                  band.datum.skipped.length === 1 ? "row" : "rows"
+                } skipped for a missing bound`
+              : "; no gaps"}
+          </TraceReadout>
+          {band.vertices.length > 0 && (
+            <TraceReadout label="Ends">
+              {formatCalcValue(band.vertices[0]!.lower, "number")} to{" "}
+              {formatCalcValue(band.vertices[0]!.upper, "number")} at the start;{" "}
+              {formatCalcValue(
+                band.vertices[band.vertices.length - 1]!.lower,
+                "number"
+              )}{" "}
+              to{" "}
+              {formatCalcValue(
+                band.vertices[band.vertices.length - 1]!.upper,
+                "number"
+              )}{" "}
+              at the end
+            </TraceReadout>
+          )}
+          {band.x && (
+            <TraceReadout label="X scale">
+              {describeNumericScale(band.x)}
+            </TraceReadout>
+          )}
+          {band.y && (
+            <TraceReadout label="Y scale">
+              {describeNumericScale(band.y)}
+            </TraceReadout>
+          )}
         </TraceSection>
       )}
       {unit && (

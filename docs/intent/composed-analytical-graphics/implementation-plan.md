@@ -242,6 +242,16 @@ The author layers three bands and a line in one frame and copies a matching PNG.
 Resizing keeps bounds and annotations aligned.
 Existing line compositions still work. Remove the area option to bypass this addition.
 
+### Status: built with illustrative intervals (updated 2026-10-10)
+
+The forecast fan ships as `?example=forecast-fan` from `apps/data-samples/inflation_fan.ts`: two measures repeated as columns, four nested bands from supplied percentile columns, a central path, a shaded projection period, and a horizontal 2% guide.
+Band marks bind x, y, an order field, and lower and upper fields; a missing bound breaks the band, crossed bounds are swapped, and fixed limits clip through the frame's clip box.
+A numeric scale now spans every field drawn on it, so a band's widest interval sets the frame even when the scale's own field is the central path.
+Guides gained a direction (vertical at x, or horizontal at a numeric y) and a shade on either side.
+The trace of a band lists its bound fields, order, runs, skipped rows, and end values.
+
+The OBR March 2025 workbook (research entry 05) was not retrieved: the download URL returns an HTML page, and no spreadsheet reader is available in this environment. Its two-panel structure is what the example reproduces; swapping in the published percentiles is a data step, not a new capability.
+
 ## Milestone 4: Repeat paired distribution summaries in a grid
 
 Create the time-use comparison using raw illustrative durations.
