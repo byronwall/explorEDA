@@ -86,6 +86,7 @@ describe("example coverage manifest", () => {
       "forecast-fan",
       "time-use",
       "media-deaths",
+      "measles",
       "product-activity",
       "scatter-trace",
       "calculated-orders",
