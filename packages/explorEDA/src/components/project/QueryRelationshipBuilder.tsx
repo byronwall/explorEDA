@@ -1,12 +1,9 @@
 import { useState } from "react";
 import type {
-  AggregateStep,
   AnalysisEvaluation,
   AnalysisProject,
   AnalysisQuery,
   AnalysisView,
-  ExpandStep,
-  LookupStep,
 } from "@/types/AnalysisProject";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,24 +14,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ActionTooltip } from "@/components/ui/tooltip";
+import { relationshipDirection } from "./queryEditing";
 import {
-  copyQuery,
-  newId,
-  relationshipDirection,
-  replaceQuery,
-} from "./queryEditing";
-
-type Mode = "lookup" | "aggregate" | "expand";
-type Measure = "count" | "sum" | "average";
-
-const MODE_HELP: Record<Mode, string> = {
-  lookup:
-    "Adds the related record's fields to each row. Rows stay the same. Only for links with at most one related record per row.",
-  aggregate:
-    "Counts, sums, or averages the related records for each row. Rows stay the same.",
-  expand:
-    "Makes one row per related record in a new view, so the row meaning changes. This view keeps its rows.",
-};
+  FOLLOW_MODE_HELP as MODE_HELP,
+  followRelationship,
+  type FollowMeasure as Measure,
+  type FollowMode as Mode,
+} from "./stepEditing";
 
 /** Follow a relationship from the current rows without silently changing them. */
 export function QueryRelationshipBuilder({
@@ -90,95 +76,17 @@ export function QueryRelationshipBuilder({
 
   function apply() {
     if (blocked || !target) return;
-    // Projected fields are prefixed with an alias; keep it unique in this frame.
-    const base = target.id.replace(/[^a-zA-Z0-9_]/g, "_");
-    const aliases = new Set(evaluation.fields.map((f) => f.id.split(".")[0]));
-    let alias = base;
-    for (let n = 2; aliases.has(alias); n += 1) alias = `${base}${n}`;
-    const follow = {
-      relationshipId: relationship.id,
-      as: alias,
-      inputFieldId: direction.inputField.id,
-    };
-
-    if (mode === "lookup") {
-      const step: LookupStep = {
-        id: newId("lookup"),
-        kind: "lookup",
-        inputStepId: query.outputStepId,
-        ...follow,
-      };
-      onChange(
-        replaceQuery(project, {
-          ...query,
-          steps: [...query.steps, step],
-          outputStepId: step.id,
-        }),
-        view
-      );
-      return;
-    }
-
-    if (mode === "aggregate") {
-      // Group by every current field so each current row stays one row.
-      const expand: ExpandStep = {
-        id: newId("expand"),
-        kind: "expand",
-        inputStepId: query.outputStepId,
-        keepUnmatched: true,
-        ...follow,
-      };
-      const fieldId = measure === "count" ? target.entityKey : sumField;
-      const fieldName =
-        target.fields.find((field) => field.id === fieldId)?.name ?? fieldId;
-      const summary: AggregateStep = {
-        id: newId("aggregate"),
-        kind: "aggregate",
-        inputStepId: expand.id,
-        groupBy: outputFields.map((field) => field.id),
-        measures: [
-          {
-            id: newId(`${alias}-${measure}`),
-            label:
-              measure === "count"
-                ? `${target.name} count`
-                : `${measure === "sum" ? "Total" : "Average"} ${fieldName}`,
-            operation: measure,
-            fieldId: `${alias}.${fieldId}`,
-          },
-        ],
-      };
-      onChange(
-        replaceQuery(project, {
-          ...query,
-          steps: [...query.steps, expand, summary],
-          outputStepId: summary.id,
-        }),
-        view
-      );
-      return;
-    }
-
-    // Expanding changes the row meaning, so it gets its own query and view.
-    const copy = copyQuery(query, project);
-    const expand: ExpandStep = {
-      id: newId("expand"),
-      kind: "expand",
-      inputStepId: copy.outputStepId,
-      ...follow,
-    };
-    const expanded: AnalysisQuery = {
-      ...copy,
-      name: `${query.name} with ${target.name}`,
-      frameLabel: target.name,
-      steps: [...copy.steps, expand],
-      outputStepId: expand.id,
-    };
-    onOpenView?.(
-      { id: newId("view"), name: expanded.name, queryId: expanded.id },
-      expanded.name,
-      { ...project, queries: [...project.queries, expanded] }
-    );
+    const result = followRelationship({
+      project,
+      query,
+      relationship,
+      mode,
+      measure,
+      measureFieldId: sumField,
+    });
+    if (result.kind === "replace") onChange(result.project, view);
+    else if (result.kind === "open")
+      onOpenView?.(result.view, result.name, result.project);
   }
 
   return (

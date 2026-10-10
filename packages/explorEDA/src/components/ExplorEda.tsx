@@ -63,7 +63,7 @@ import {
   type DslToken,
   type DslTokenKind,
 } from "@/lib/dsl";
-import { PlotManager } from "./PlotManager";
+import { PlotManager, type ExplorEdaSchema } from "./PlotManager";
 import type { ExplorEdaSidePanel } from "./WorkspaceSidePanel";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { Toaster } from "./ui/sonner";
@@ -96,6 +96,17 @@ export interface ExplorEdaProps {
   toolbarStart?: ReactNode;
   /** Host actions that end the toolbar line, such as undo or export. */
   toolbarEnd?: ReactNode;
+  /**
+   * What the Schema diagram shows. Without it, the diagram shows this
+   * workspace's table and its calculated fields.
+   */
+  schema?: ExplorEdaSchema;
+  /**
+   * Shows Add source in the Schema diagram. The host picks a file, then can
+   * turn this workspace into a project with `singleTableProject` and
+   * `addSourceFromRows` from `exploreda/analysis`.
+   */
+  onAddSource?: () => void;
 }
 
 export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
@@ -109,6 +120,8 @@ export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
       readOnly,
       toolbarStart,
       toolbarEnd,
+      schema,
+      onAddSource,
     },
     ref
   ) {
@@ -125,6 +138,11 @@ export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
           readOnly={readOnly}
           toolbarStart={toolbarStart}
           toolbarEnd={toolbarEnd}
+          schema={
+            onAddSource && !schema?.onAddSource
+              ? { ...schema, onAddSource }
+              : schema
+          }
         />
       </DataLayerProvider>
     );
@@ -135,9 +153,12 @@ const Workspace = forwardRef<
   ExplorEdaHandle,
   Pick<
     ExplorEdaProps,
-    "sidePanels" | "readOnly" | "toolbarStart" | "toolbarEnd"
+    "sidePanels" | "readOnly" | "toolbarStart" | "toolbarEnd" | "schema"
   >
->(function Workspace({ sidePanels, readOnly, toolbarStart, toolbarEnd }, ref) {
+>(function Workspace(
+  { sidePanels, readOnly, toolbarStart, toolbarEnd, schema },
+  ref
+) {
   const getSettings = useDataLayer((state) => state.saveToStructure);
   useImperativeHandle(ref, () => ({ getSettings }), [getSettings]);
 
@@ -150,6 +171,7 @@ const Workspace = forwardRef<
             readOnly={readOnly}
             toolbarStart={toolbarStart}
             toolbarEnd={toolbarEnd}
+            schema={schema}
           />
         </ChartDraftProvider>
       </CalculationEditorProvider>
@@ -159,10 +181,23 @@ const Workspace = forwardRef<
   );
 });
 
-export type { SavedDataStructure, ExplorEdaSidePanel };
+export type { SavedDataStructure, ExplorEdaSidePanel, ExplorEdaSchema };
 export type { GeometryAsset, RegionGeometry } from "@/lib/geometryAssets";
 export type { WorkspaceTheme, WorkspaceThemeId } from "@/lib/themes";
 export type { ChartStyleOverrides } from "@/types/ChartTypes";
+export type {
+  SchemaEdge,
+  SchemaEndpoint,
+  SchemaGraph,
+  SchemaNode,
+  SchemaNodeKind,
+  SchemaRow,
+} from "@/lib/schema/schemaGraph";
+export type {
+  SchemaEditing,
+  SchemaFieldEditing,
+  SchemaProjectEditing,
+} from "./schema/schemaEditing";
 export type {
   SavedAnalysisStructure,
   SavedCalculation,

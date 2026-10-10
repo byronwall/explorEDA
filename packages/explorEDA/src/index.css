@@ -2001,9 +2001,9 @@ html {
   padding: 0;
 }
 
-/* Rows: a drawer over the right of the viewport, at full height. A strip of
-   charts stays visible on the left so a click there closes it. */
-.eda-rows-peek {
+/* Rows and Schema: a drawer over the right of the viewport, at full height.
+   A strip of charts stays visible on the left so a click there closes it. */
+.eda-drawer {
   position: fixed;
   top: 0;
   right: 0;
@@ -2019,9 +2019,9 @@ html {
     -1px 0 3px rgb(20 40 70 / 8%);
   overflow: hidden;
   outline: none;
-  animation: eda-rows-peek-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: eda-drawer-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
-.eda-rows-peek-header {
+.eda-drawer-header {
   display: flex;
   flex-shrink: 0;
   align-items: center;
@@ -2030,30 +2030,30 @@ html {
   padding: 6px 8px 6px 14px;
   border-bottom: 1px solid var(--border);
 }
-.eda-rows-peek-header h2 {
+.eda-drawer-header h2 {
   font-size: 14px;
   font-weight: 600;
 }
-.eda-rows-peek-scope {
+.eda-drawer-scope {
   flex: 1 1 0;
   min-width: 0;
 }
-.eda-rows-peek-tools {
+.eda-drawer-tools {
   display: flex;
   flex: 0 1 auto;
   justify-content: flex-end;
   min-width: 0;
 }
-.eda-rows-peek-tools .eda-table-toolbar {
+.eda-drawer-tools .eda-table-toolbar {
   height: auto;
   padding: 0;
 }
-.eda-rows-peek-header > button {
+.eda-drawer-header > button {
   flex-shrink: 0;
   width: 30px;
   height: 30px;
 }
-.eda-rows-peek-body {
+.eda-drawer-body {
   flex: 1;
   min-height: 0;
   overflow: hidden;
@@ -2061,67 +2061,601 @@ html {
 }
 /* Narrow: the rows sit beside the charts, which stay in use. The header
    gives the scope its own line. */
-.eda-rows-peek[data-narrow] {
+.eda-drawer[data-narrow] {
   left: auto;
   width: min(34rem, calc(100vw - 96px));
 }
-.eda-rows-peek[data-narrow] .eda-rows-peek-header {
+.eda-drawer[data-narrow] .eda-drawer-header {
   flex-wrap: wrap;
 }
-.eda-rows-peek[data-narrow] .eda-rows-peek-header h2 {
+.eda-drawer[data-narrow] .eda-drawer-header h2 {
   flex: 1;
 }
-.eda-rows-peek[data-narrow] .eda-rows-peek-scope {
+.eda-drawer[data-narrow] .eda-drawer-scope {
   order: 1;
   flex-basis: 100%;
 }
-.eda-rows-peek[data-narrow] .eda-rows-peek-tools {
+.eda-drawer[data-narrow] .eda-drawer-tools {
   flex: 0 0 auto;
 }
-.eda-rows-peek-header > .eda-rows-peek-size {
+.eda-drawer-header > .eda-drawer-size {
   color: var(--muted-foreground);
 }
-@keyframes eda-rows-peek-in {
+@keyframes eda-drawer-in {
   from {
     opacity: 0;
     transform: translateX(24px);
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .eda-rows-peek {
+  .eda-drawer {
     animation: none;
   }
 }
 @media (max-width: 1023px) {
-  .eda-rows-peek {
+  .eda-drawer {
     left: 32px;
   }
 }
 /* Narrow screens give the table the full width, at either size. */
 @media (max-width: 640px) {
-  .eda-rows-peek,
-  .eda-rows-peek[data-narrow] {
+  .eda-drawer,
+  .eda-drawer[data-narrow] {
     left: 0;
     width: auto;
     border-left: 0;
   }
-  .eda-rows-peek-header > .eda-rows-peek-size {
+  .eda-drawer-header > .eda-drawer-size {
     display: none;
   }
-  .eda-rows-peek-header {
+  .eda-drawer-header {
     flex-wrap: wrap;
     padding-left: 10px;
   }
-  .eda-rows-peek-header h2 {
+  .eda-drawer-header h2 {
     flex: 1;
   }
-  .eda-rows-peek-scope {
+  .eda-drawer-scope {
     order: 1;
     flex-basis: 100%;
   }
-  .eda-rows-peek-tools {
+  .eda-drawer-tools {
     flex: 0 0 auto;
   }
+}
+/* Schema: cards with field rows over a layer of lines. Sizes match
+   SCHEMA_SIZES so lines land on rows without measuring. */
+.eda-schema-viewport {
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  background-color: var(--background);
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--muted-foreground) 22%, transparent) 1px,
+    transparent 1.2px
+  );
+  background-size: 20px 20px;
+  user-select: none;
+}
+.eda-schema-viewport:focus,
+.eda-schema-inspector:focus {
+  outline: none;
+}
+.eda-schema-viewport[data-panning] {
+  cursor: grabbing;
+}
+.eda-schema-world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+}
+.eda-schema-edges {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.eda-schema-edge {
+  fill: none;
+  stroke: color-mix(in oklab, var(--primary) 70%, var(--muted-foreground));
+  stroke-width: 1.5;
+}
+.eda-schema-edge[data-kind="calculation"] {
+  stroke: var(--muted-foreground);
+  stroke-width: 1.25;
+  stroke-dasharray: 3 3;
+  opacity: 0.7;
+}
+.eda-schema-edge-mark {
+  fill: none;
+  stroke: color-mix(in oklab, var(--primary) 70%, var(--muted-foreground));
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+.eda-schema-card {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--card-foreground);
+  box-shadow:
+    0 1px 2px rgb(20 40 70 / 6%),
+    0 4px 14px rgb(20 40 70 / 6%);
+  overflow: hidden;
+}
+.dark .eda-schema-card {
+  background: color-mix(in oklab, var(--card) 92%, var(--foreground));
+  box-shadow: 0 6px 18px rgb(0 0 0 / 35%);
+}
+.eda-schema-card-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in oklab, var(--primary) 5%, var(--card));
+}
+.eda-schema-card-header h3 {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-schema-glyph {
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: color-mix(in oklab, var(--primary) 14%, var(--card));
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+}
+.eda-schema-detail {
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 45%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.eda-schema-rows {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.eda-schema-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  font-size: 12px;
+}
+.eda-schema-row + .eda-schema-row {
+  border-top: 1px solid color-mix(in oklab, var(--border) 55%, transparent);
+}
+.eda-schema-row[data-linked] {
+  background: color-mix(in oklab, var(--primary) 6%, transparent);
+}
+.eda-schema-type {
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 14px;
+  color: var(--muted-foreground);
+}
+.eda-schema-type svg {
+  width: 13px;
+  height: 13px;
+}
+.eda-schema-calc-mark {
+  color: var(--primary);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1;
+}
+.eda-schema-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-schema-key {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  color: var(--warning);
+}
+.eda-schema-empty {
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+.eda-schema-card[data-kind="query"] .eda-schema-card-header {
+  background: color-mix(in oklab, var(--eda-count) 9%, var(--card));
+}
+.eda-schema-card[data-kind="query"] .eda-schema-glyph {
+  background: color-mix(in oklab, var(--eda-count) 18%, var(--card));
+  color: var(--eda-count);
+}
+.eda-schema-card[data-kind="view"] .eda-schema-card-header {
+  background: color-mix(in oklab, var(--warning) 8%, var(--card));
+}
+.eda-schema-card[data-kind="view"] .eda-schema-glyph {
+  background: color-mix(in oklab, var(--warning) 16%, var(--card));
+  color: var(--warning);
+}
+.eda-schema-row[data-kind="heading"] {
+  padding-top: 6px;
+  color: var(--muted-foreground);
+  cursor: default;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.eda-schema-row[data-kind="heading"] + .eda-schema-row,
+.eda-schema-row + .eda-schema-row[data-kind="heading"] {
+  border-top-color: var(--border);
+}
+.eda-schema-row[data-kind="step"] .eda-schema-label {
+  color: var(--muted-foreground);
+}
+.eda-schema-row[data-kind="use"] {
+  padding-left: 18px;
+}
+.eda-schema-row-detail {
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 48%;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-schema-row[data-status="missing"] .eda-schema-label {
+  color: var(--warning);
+  text-decoration: underline dotted;
+}
+.eda-schema-row[data-status="error"] .eda-schema-label {
+  color: var(--destructive);
+}
+.eda-schema-status {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  color: var(--warning);
+}
+.eda-schema-row[data-status="error"] .eda-schema-status {
+  color: var(--destructive);
+}
+.eda-schema-edge[data-kind="lineage"] {
+  stroke: var(--muted-foreground);
+  stroke-width: 1.25;
+  opacity: 0.45;
+}
+.eda-schema-edge[data-kind="usage"] {
+  stroke: color-mix(in oklab, var(--warning) 70%, var(--muted-foreground));
+  stroke-width: 1.1;
+  opacity: 0.5;
+}
+.eda-schema-edge[data-emphasized] {
+  stroke-width: 2;
+  opacity: 1;
+}
+.eda-schema-card {
+  transition: opacity 160ms ease;
+}
+.eda-schema-card[data-dimmed] {
+  opacity: 0.38;
+}
+@media (prefers-reduced-motion: reduce) {
+  .eda-schema-card {
+    transition: none;
+  }
+}
+.eda-schema-card:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.eda-schema-card[data-selected] {
+  border-color: var(--primary);
+  box-shadow:
+    0 0 0 1px var(--primary),
+    0 4px 14px rgb(20 40 70 / 10%);
+}
+.eda-schema-row {
+  cursor: pointer;
+}
+.eda-schema-row:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+.eda-schema-row[data-relatable] {
+  position: relative;
+}
+/* A handle on the right edge hints that the field can be dragged to relate. */
+.eda-schema-row[data-relatable]:hover::after {
+  position: absolute;
+  top: 50%;
+  right: -5px;
+  width: 9px;
+  height: 9px;
+  border: 2px solid var(--card);
+  border-radius: 999px;
+  background: var(--primary);
+  content: "";
+  transform: translateY(-50%);
+}
+.eda-schema-viewport[data-linking] .eda-schema-row {
+  cursor: copy;
+}
+.eda-schema-row[data-emphasized] {
+  background: color-mix(in oklab, var(--primary) 12%, transparent);
+}
+.eda-schema-row[data-selected] {
+  background: color-mix(in oklab, var(--primary) 20%, transparent);
+  box-shadow: inset 3px 0 0 var(--primary);
+}
+.eda-schema-row[data-drop-target] {
+  background: color-mix(in oklab, var(--primary) 24%, transparent);
+  box-shadow: inset 0 0 0 1.5px var(--primary);
+}
+.eda-schema-edge-group[data-dimmed] {
+  opacity: 0.28;
+}
+.eda-schema-edge[data-dimmed] {
+  opacity: 0.2;
+}
+.eda-schema-edge-group[data-emphasized] .eda-schema-edge,
+.eda-schema-edge-group[data-emphasized] .eda-schema-edge-mark {
+  stroke: var(--primary);
+  stroke-width: 2.25;
+}
+.eda-schema-edge-group[data-selected] .eda-schema-edge,
+.eda-schema-edge-group[data-selected] .eda-schema-edge-mark {
+  stroke-width: 3;
+}
+.eda-schema-edge-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 12;
+  pointer-events: stroke;
+  cursor: pointer;
+}
+.eda-schema-edge[data-kind="ghost"] {
+  stroke: var(--primary);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+}
+.eda-schema-inspector {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  max-height: 60%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow:
+    0 10px 30px rgb(20 40 70 / 16%),
+    0 1px 3px rgb(20 40 70 / 8%);
+  cursor: auto;
+  user-select: text;
+}
+.eda-schema-inspector-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 6px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.eda-schema-inspector-header h3 {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-schema-inspector-header button {
+  width: 28px;
+  height: 28px;
+}
+.eda-schema-inspector-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px 14px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.eda-schema-inspector-body > button {
+  align-self: flex-start;
+}
+.eda-schema-inspector-facts,
+.eda-schema-inspector-hint {
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+.eda-schema-inspector-error {
+  color: var(--destructive);
+  font-size: 12px;
+}
+.eda-schema-inspector-field,
+.eda-schema-inspector-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+}
+.eda-schema-inspector-field > span,
+.eda-schema-inspector-section > span,
+.eda-schema-inspector-code > span {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 500;
+}
+.eda-schema-inspector-section ul {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.eda-schema-inspector-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 4px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  text-align: left;
+}
+.eda-schema-inspector-link:hover,
+.eda-schema-inspector-link:focus-visible {
+  background: var(--muted);
+}
+.eda-schema-inspector-link svg {
+  width: 13px;
+  height: 13px;
+  color: var(--primary);
+}
+.eda-schema-inspector-use {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.eda-schema-inspector-use > button:last-child:not(:first-child) {
+  height: 24px;
+  padding: 0 8px;
+  font-size: 12px;
+}
+.eda-schema-inspector-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.eda-schema-inspector-pairline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.eda-schema-inspector-pairline svg {
+  width: 13px;
+  height: 13px;
+  color: var(--muted-foreground);
+}
+.eda-schema-inspector-counts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--muted);
+  font-size: 11px;
+}
+.eda-schema-inspector-counts dt {
+  color: var(--muted-foreground);
+}
+.eda-schema-inspector-counts dd {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.eda-schema-inspector-counts dd[data-warning] {
+  color: var(--warning);
+}
+.eda-schema-inspector-code {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.eda-schema-inspector-code code {
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.eda-schema-inspector-textarea {
+  width: 100%;
+  min-height: 64px;
+  padding: 6px 10px;
+  border: 1px solid var(--input);
+  border-radius: calc(var(--radius) - 2px);
+  background: transparent;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  resize: vertical;
+}
+.eda-schema-inspector-textarea:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.eda-schema-inspector-actions {
+  display: flex;
+  gap: 6px;
+}
+.eda-schema-inspector-list {
+  padding-left: 16px;
+  list-style: disc;
+  color: var(--muted-foreground);
+}
+.eda-schema-inspector-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--warning);
+  border-radius: 6px;
+  font-size: 12px;
+}
+.eda-schema-facts {
+  color: var(--muted-foreground);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.eda-schema-controls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.eda-schema-controls button:not(.eda-schema-add-source) {
+  width: 30px;
+  height: 30px;
+}
+.eda-schema-add-source {
+  margin-right: 8px;
+}
+.eda-schema-zoom {
+  min-width: 3.25em;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
 }
 @media (max-width: 640px) {
   .eda-workspace-toolbar {

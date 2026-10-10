@@ -126,6 +126,25 @@ describe("workspace toolbar", () => {
     expect(screen.getByText("1 row")).toBeInTheDocument();
   });
 
+  it("opens the schema diagram of the workspace's table, in place of Rows", () => {
+    renderWorkspace();
+    fireEvent.click(screen.getByRole("button", { name: "Rows" }));
+    const toggle = screen.getByRole("button", { name: "Schema diagram" });
+    fireEvent.click(toggle);
+
+    expect(screen.queryByRole("region", { name: "Rows" })).toBeNull();
+    const drawer = screen.getByRole("region", { name: "Schema diagram" });
+    expect(drawer).toHaveFocus();
+    expect(drawer).toHaveTextContent("1 table · 2 fields");
+    const table = within(drawer).getByRole("region", { name: "Data, 2 rows" });
+    expect(within(table).getByLabelText("region, Text")).toBeInTheDocument();
+    expect(within(table).getByLabelText("revenue, Number")).toBeInTheDocument();
+
+    fireEvent.keyDown(drawer, { key: "Escape" });
+    expect(screen.queryByRole("region", { name: "Schema diagram" })).toBeNull();
+    expect(toggle).toHaveFocus();
+  });
+
   it("peeks at the rows with R and closes without opening hover help", async () => {
     renderWorkspace();
     const toggle = screen.getByRole("button", { name: "Rows" });

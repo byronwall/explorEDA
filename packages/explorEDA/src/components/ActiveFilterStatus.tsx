@@ -55,7 +55,8 @@ export function formatFilterLabel(
   filter: Filter,
   format: FieldFormatting = plainFormatting
 ): string {
-  const name = filter.field === "__ID" ? "Source row" : format.name(filter.field);
+  const name =
+    filter.field === "__ID" ? "Source row" : format.name(filter.field);
   switch (filter.type) {
     case "value":
       if (filter.field === "__ID" && filter.values.length > 1) {

@@ -421,6 +421,37 @@ inputs, and lists every step with its row counts down to the rows and their
 source records. From a chart trace, "Show these rows in the query flow" opens
 the rows behind a mark. Pass `onOpenView` to let these panels open new views.
 
+### The schema diagram
+
+The **Schema diagram** button opens the whole model in a wide drawer: tables
+with their fields and keys, the relationships between them, each query's
+steps and calculated fields, and each view's charts. The layout reads left to
+right and top to bottom and is shaped to fit the drawer. Select a field to
+trace where it comes from and every calculation and view that reads it; a
+chart in this workspace can be shown from there.
+
+The diagram is also an editor. Drag one field onto another table's field to
+relate them, with match counts before you apply. Rename fields, change types
+and keys, change or remove relationships, and add, change, or remove query
+steps; removing a step first names the fields and views it breaks. Each edit
+reaches `onProjectChange` once. `readOnly` keeps the diagram and hides edits.
+
+Pass every saved view as `views` so the diagram shows what each one reads;
+views other than the current one fold to one row per chart. Pass
+`onAddSource` to show **Add source**: your app picks a file, then adds it
+with `addSourceFromRows`. A single-table `ExplorEda` takes `onAddSource` too,
+and `singleTableProject` turns its rows and saved settings into a project
+whose view keeps the same charts, filters, and layout.
+
+```ts
+import { addSourceFromRows, singleTableProject } from "exploreda/analysis";
+
+const promoted = singleTableProject({ name: "Deliveries", rows, settings });
+const added = addSourceFromRows(promoted.project, promoted.tables, "Routes", routeRows);
+// Render ExplorEdaProject with added.project, added.tables, and promoted.view;
+// schemaFocus={added.sourceId} opens the diagram on the new table.
+```
+
 Large projects can run their queries in a worker so typing in an input stays
 responsive. The worker ships with the package; your bundler must emit worker
 files referenced with `new URL(..., import.meta.url)` (Vite and webpack 5 do).

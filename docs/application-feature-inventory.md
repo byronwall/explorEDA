@@ -97,6 +97,7 @@ Seven initiatives retired on 2026-10-09 after their stacked PRs merged. Each shi
 - **Compact config authoring.** Dashboard text: chart-local filters, a compiler that builds what it can and reports the rest, an agent-facing checker CLI, and export. See the package README's [Dashboard text](../packages/explorEDA/README.md#dashboard-text).
 - **Project and task views.** Saved tabs with local persistence and categorized history in the demo. See [Saved state, exports, and host integration](#saved-state-exports-and-host-integration).
 - **Multiple sources and lookups.** `exploreda/analysis` and `ExplorEdaProject`: related tables, lookups and expansions with diagnostics, Schema and Query panels, parameters, and an optional worker. See the package README's [Related tables](../packages/explorEDA/README.md#related-tables).
+- **Schema diagram.** A wide drawer in every workspace that draws tables, relationships, query steps, calculations, and every saved view, traces a field's lineage both ways, and edits fields, keys, relationships, calculations, and query steps in place. Add source turns a single table into a project that keeps its charts. See the package README's [schema diagram](../packages/explorEDA/README.md#the-schema-diagram).
 - **Demo overhaul.** Seven curated analyses with capability discovery. See [the curated catalogue](example-coverage.md#curated-catalogue) and the [dataset notes](../apps/demo/public/datasets/README.md).
 
 ### Follow-up scope
