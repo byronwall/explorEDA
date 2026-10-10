@@ -443,7 +443,10 @@ export function CompositionChart({
                 ]
               : [
                   ["Bin", glyph.bin.label],
-                  ["Value", readoutNumber(glyph.value)],
+                  [
+                    "Value",
+                    glyph.missing ? "none" : readoutNumber(glyph.value),
+                  ],
                 ]),
             ["Rows", glyph.rowIds.length.toLocaleString()],
           ].map(([name, value]) => (

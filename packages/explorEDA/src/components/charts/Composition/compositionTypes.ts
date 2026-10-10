@@ -115,8 +115,13 @@ export interface ValueScale {
   name: string;
   domain: ScaleDomain;
   transform: "linear" | "sqrt" | "log";
-  /** The low and high ends of the color ramp. */
-  colors: [string, string];
+  /**
+   * The color ramp, low to high. Two colors blend end to end; more colors
+   * blend through each stop, evenly spaced unless `stops` places them.
+   */
+  colors: string[];
+  /** Where each color sits along the ramp, from 0 to 1, in the same order. */
+  stops?: number[];
   /**
    * A middle color makes the scale diverge around zero: negative values run
    * from this color toward the low end, positive values toward the high
@@ -171,6 +176,12 @@ export interface StripMark {
   fill: string;
   /** Space between neighboring glyphs, in artboard pixels. */
   inset: number;
+  /**
+   * Draw a cell in this color for a bin whose rows have no value, such as a
+   * year a state did not report. A bin with no rows at all stays blank, so
+   * "not reported" and "no record" read differently.
+   */
+  missing?: string;
 }
 
 /**

@@ -86,6 +86,8 @@ export interface GlyphDatum {
   /** The aggregated value of a strip glyph, or the y value of a point. */
   value: number;
   rowIds: number[];
+  /** The bin has rows but none has a value; the glyph is a missing cell. */
+  missing?: boolean;
   /** Numeric coordinates, for point marks. */
   point?: { x: number; y: number; xField: string; yField: string };
   /** The segment's share of its repeat's total, for stack marks; the glyph's value is that share. */
@@ -355,7 +357,19 @@ export function resolveUnit(
         const rowIds = groups.get(bin.key);
         if (!rowIds) return;
         const value = aggregate(mark, rowIds, measure);
-        if (value === undefined) return;
+        if (value === undefined) {
+          // Rows without a value: a missing cell when the mark draws one.
+          if (mark.missing)
+            glyphs.push({
+              instanceKey: subset.key,
+              markId: mark.id,
+              bin,
+              value: 0,
+              rowIds,
+              missing: true,
+            });
+          return;
+        }
         glyphs.push({
           instanceKey: subset.key,
           markId: mark.id,
@@ -374,7 +388,8 @@ export function resolveUnit(
     perMark.forEach(({ glyphs }, markIndex) => {
       const id = strips[markIndex]!.value.id;
       for (const glyph of glyphs)
-        sharedMax.set(id, Math.max(sharedMax.get(id) ?? 0, glyph.value));
+        if (!glyph.missing)
+          sharedMax.set(id, Math.max(sharedMax.get(id) ?? 0, glyph.value));
     })
   );
 
@@ -496,7 +511,8 @@ export function resolveUnit(
             mark: { ...mark, fill: override.accent },
             value: {
               ...value,
-              colors: [value.colors[0], override.accent] as [string, string],
+              colors: [value.colors[0]!, override.accent],
+              stops: undefined,
             },
           }
         : { mark, value };
@@ -1175,7 +1191,8 @@ export function valueColorSigned(
 ) {
   const share = valueShare(scale, Math.abs(value), maxAbs);
   if (!scale.center) return valueColor(scale, share);
-  const end = value < 0 ? scale.colors[0] : scale.colors[1];
+  const end =
+    value < 0 ? scale.colors[0]! : scale.colors[scale.colors.length - 1]!;
   return scaleLinear<string>()
     .domain([0, 1])
     .range([scale.center, end])
@@ -1685,9 +1702,17 @@ export function valueShare(scale: ValueScale, value: number, max: number) {
 }
 
 export function valueColor(scale: ValueScale, share: number) {
-  // Even the smallest value stays visible against the paper.
-  return scaleLinear<string>().domain([0, 1]).range(scale.colors).clamp(true)(
-    0.1 + 0.9 * share
+  const stops =
+    scale.stops && scale.stops.length === scale.colors.length
+      ? scale.stops
+      : scale.colors.map((_, index) =>
+          scale.colors.length > 1 ? index / (scale.colors.length - 1) : 0
+        );
+  // Even the smallest value stays visible against the paper on a plain ramp;
+  // a placed multistop ramp maps shares exactly.
+  const position = scale.stops ? share : 0.1 + 0.9 * share;
+  return scaleLinear<string>().domain(stops).range(scale.colors).clamp(true)(
+    position
   );
 }
 
@@ -1707,10 +1732,15 @@ function glyphNodes(
   return glyphs.flatMap((glyph): SceneNode[] => {
     const position = index.get(glyph.bin.key);
     if (position === undefined) return [];
-    const share = valueShare(scale, glyph.value, max);
+    const share = glyph.missing ? 0 : valueShare(scale, glyph.value, max);
     const left = frame.x + position * band;
-    const fill =
-      mark.encoding === "color" ? valueColor(scale, share) : mark.fill;
+    const fill = glyph.missing
+      ? (mark.missing ?? mark.fill)
+      : mark.encoding === "color"
+        ? valueColor(scale, share)
+        : mark.fill;
+    // A missing cell draws as a full, neutral cell whatever the encoding.
+    const encoding = glyph.missing ? "color" : mark.encoding;
     const key = `${unit.id}:${glyph.instanceKey}:${mark.id}:${glyph.bin.key}`;
     const base = {
       key,
@@ -1721,7 +1751,7 @@ function glyphNodes(
     };
     const width = Math.max(0.5, band - inset);
     if (mark.shape === "rect") {
-      if (mark.encoding === "height") {
+      if (encoding === "height") {
         const height = frame.height * share;
         return [
           {
@@ -1734,7 +1764,7 @@ function glyphNodes(
           },
         ];
       }
-      if (mark.encoding === "size") {
+      if (encoding === "size") {
         const side = Math.min(width, frame.height) * share;
         return [
           {
@@ -1760,7 +1790,7 @@ function glyphNodes(
     }
     const radius = Math.max(0.5, Math.min(width, frame.height) / 2);
     const cx = left + band / 2;
-    if (mark.encoding === "height") {
+    if (encoding === "height") {
       const r = Math.max(1.5, Math.min(radius, 4));
       return [
         {
@@ -1778,7 +1808,7 @@ function glyphNodes(
         type: "circle",
         cx,
         cy: frame.y + frame.height / 2,
-        r: mark.encoding === "size" ? radius * share : radius,
+        r: encoding === "size" ? radius * share : radius,
       },
     ];
   });

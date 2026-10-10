@@ -210,3 +210,18 @@ Fifteen causes: the CDC's twelve most common leading causes plus drug overdoses 
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/media-deaths.ts
 ```
+
+## Measles, 1928–2012
+
+- File: `measles.csv`
+- Size: 4,335 rows and 6 fields
+- Demo: `?example=measles`
+- Use: a strip composition with 51 state rows in the publisher's order, a placed multistop color ramp, explicit missing cells, and a fixed vaccine guide
+- Source: The Wall Street Journal, [Battling Infectious Diseases in the 20th Century: The Impact of Vaccines](https://graphics.wsj.com/infectious-diseases-and-vaccines/) (Tynan DeBold and Dov Friedman, 2015), `data/datum.json` and the page script's state order. The incidence figures come from Project Tycho and the CDC; the 2003–2012 values are CDC annual confirmed cases, where earlier years are weekly provisional counts.
+- License: the figures are public health statistics from Project Tycho (CC BY) and the CDC. The graphic's design belongs to Dow Jones; only the published numbers are reused, with credit.
+
+The file is the complete 51 × 85 grid: 3,841 reported rates per 100,000 people, 493 cells the publisher marked not available, and one cell (Alaska, 2003) the publisher has no record for. `Status` names which. `Order` is the publisher's row index, which sorts states by postal code. The vaccine was introduced in 1963.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/measles.ts
+```

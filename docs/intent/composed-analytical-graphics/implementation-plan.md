@@ -166,6 +166,13 @@ Measured on 2026-10-08 (Apple silicon, Chromium headless, production package bui
   Since 2026-10-10, a text, style, or composition edit no longer redraws the other charts, because the workspace keeps their live rows. In a development build of the message-log example, adding an element went from about 165 ms to about 70 ms of main-thread work.
 - Copy PNG writes a 1920 × 1200 image that reads back from the Chromium clipboard. Pasting into a report or slide has not been checked by hand yet.
 
+#### Measles audit: built (updated 2026-10-10)
+
+The measles strip (research entry 01) ships as `?example=measles`, prepared by `apps/data-samples/prepare/measles.ts` from the publisher's JSON and state order: the complete 51 × 85 grid with 3,841 rates, 493 explicit nulls, and the one absent Alaska 2003 cell, each named in a `Status` column.
+Two additions closed the audit's gaps. Value scales take more than two colors, each placed at a stop along the ramp, so the publisher's eleven-stop ramp maps exactly; a two-color ramp keeps its visibility floor.
+Strip marks take a missing color: a bin whose rows have no value draws a neutral cell, while a bin with no rows stays blank, so "not reported" and "no record" read differently and the missing cell's trace says so.
+The publisher's row order comes through the repeat's value order on a prepared rank column. The 1963 guide is a fixed constant and holds under filtering. No rate is replaced with zero.
+
 Research adds one small follow-up audit. Use a local measles fixture containing zero, null, and an absent state/year cell.
 The published source has 4,334 records, including 493 null rates; a complete 51 × 85 grid has 4,335 cells.
 Keep the absent Alaska 2003 record distinct in preparation. Do not replace missing rates with zero.

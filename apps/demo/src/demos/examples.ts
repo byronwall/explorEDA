@@ -22,6 +22,7 @@ import {
   fanDashboard,
   timeUseDashboard,
   mediaDeathsDashboard,
+  measlesDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -44,6 +45,7 @@ import {
   AreaChart,
   LayoutGrid as GridIcon,
   Columns3,
+  Grid3x3,
   CloudFog,
   Globe,
   Activity,
@@ -745,6 +747,21 @@ export const examples: ExampleData[] = [
     icon: Columns3,
     data: "/datasets/media-deaths.csv",
     savedData: mediaDeathsDashboard,
+  },
+  {
+    id: "measles",
+    title: "Measles before and after the vaccine",
+    description:
+      "Fifty-one state strips, one cell per year from 1928 to 2012, colored by a placed multistop ramp. Years a state did not report draw as neutral cells, the one missing record stays blank, and the 1963 vaccine guide holds while you filter.",
+    dataset: { rows: "4,335 state-years", fields: 6, source: "Real" },
+    shows: [
+      "Multistop color ramp",
+      "Explicit missing cells",
+      "Publisher row order",
+    ],
+    icon: Grid3x3,
+    data: "/datasets/measles.csv",
+    savedData: measlesDashboard,
   },
 ];
 
