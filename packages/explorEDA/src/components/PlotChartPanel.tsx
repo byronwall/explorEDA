@@ -29,6 +29,11 @@ import {
 } from "lucide-react";
 import { ChartRenderer } from "./charts/ChartRenderer";
 import { planPanelBody } from "./charts/panelBody";
+import {
+  AxisTypographyProvider,
+  toAxisTypography,
+  useThemeTypography,
+} from "./charts/chartTypography";
 import { getWorkspaceTheme } from "@/lib/themes";
 import { ChartReadoutProvider } from "./charts/ChartReadout";
 import { ChartColorLegend } from "./charts/ColorLegend/ChartColorLegend";
@@ -427,6 +432,26 @@ export function PlotChartPanel({
   );
   const theme = getWorkspaceTheme(useDataLayer((state) => state.theme));
   const header = useMeasuredHeight();
+  const { typography: themeTypography, fonts } = useThemeTypography(
+    panelRef,
+    `${theme.id}:${expanded}`
+  );
+  const axisTypography = useMemo(
+    () => toAxisTypography(themeTypography, fonts),
+    [themeTypography, fonts]
+  );
+  const styleOverrides = settings.style;
+  const headerStyle = {
+    ...(styleOverrides?.titleSize
+      ? { "--eda-headline-size": `${styleOverrides.titleSize}px` }
+      : {}),
+    ...(styleOverrides?.titleWeight
+      ? { "--eda-headline-weight": styleOverrides.titleWeight }
+      : {}),
+    ...(styleOverrides?.subtitleSize
+      ? { "--eda-subtitle-size": `${styleOverrides.subtitleSize}px` }
+      : {}),
+  } as React.CSSProperties;
   const note = useMeasuredHeight();
   const titleRef = useRef<HTMLHeadingElement>(null);
   const clearFilter = useDataLayer((state) => state.clearFilter);
@@ -606,6 +631,7 @@ export function PlotChartPanel({
     >
       <div
         ref={header.ref}
+        style={headerStyle}
         className="eda-panel-header relative flex min-h-8 items-center justify-between gap-1 select-none py-0.5 pr-1 pl-2.5"
       >
         <div className="eda-panel-heading drag-handle flex min-w-0 flex-[1_1_35%] cursor-move items-center gap-2">
@@ -811,45 +837,47 @@ export function PlotChartPanel({
         {chartSummary}
       </p>
       {axisFieldActions.overlay}
-      <ChartReadoutProvider value={readoutTarget}>
-        <div className="eda-chart-content flex min-h-0 flex-1 flex-col">
-          {faceted ? (
-            // The facet pager shares the legend's line instead of its own row.
-            <div ref={setFacetBar} className="eda-facet-bar">
-              {autoLegendHeight > 0 && (
+      <AxisTypographyProvider value={axisTypography}>
+        <ChartReadoutProvider value={readoutTarget}>
+          <div className="eda-chart-content flex min-h-0 flex-1 flex-col">
+            {faceted ? (
+              // The facet pager shares the legend's line instead of its own row.
+              <div ref={setFacetBar} className="eda-facet-bar">
+                {autoLegendHeight > 0 && (
+                  <ChartColorLegend
+                    settings={settings}
+                    width={Math.max(1, panelWidth - 24 - FACET_SLOT_WIDTH)}
+                  />
+                )}
+                <div ref={setFacetBarSlot} className="eda-facet-bar-slot" />
+              </div>
+            ) : (
+              autoLegendHeight > 0 && (
                 <ChartColorLegend
                   settings={settings}
-                  width={Math.max(1, panelWidth - 24 - FACET_SLOT_WIDTH)}
+                  width={Math.max(1, panelWidth - 24)}
                 />
-              )}
-              <div ref={setFacetBarSlot} className="eda-facet-bar-slot" />
-            </div>
-          ) : (
-            autoLegendHeight > 0 && (
-              <ChartColorLegend
+              )
+            )}
+            {faceted ? (
+              <FacetBarSlotContext.Provider value={facetBarSlot}>
+                <FacetContainer
+                  settings={settings}
+                  width={Math.max(1, panelWidth - 24)}
+                  height={bodyHeight(facetBarHeight)}
+                />
+              </FacetBarSlotContext.Provider>
+            ) : (
+              <ChartRenderer
                 settings={settings}
+                toolbarTarget={isTableLike ? toolbarTarget : undefined}
                 width={Math.max(1, panelWidth - 24)}
+                height={bodyHeight(autoLegendHeight)}
               />
-            )
-          )}
-          {faceted ? (
-            <FacetBarSlotContext.Provider value={facetBarSlot}>
-              <FacetContainer
-                settings={settings}
-                width={Math.max(1, panelWidth - 24)}
-                height={bodyHeight(facetBarHeight)}
-              />
-            </FacetBarSlotContext.Provider>
-          ) : (
-            <ChartRenderer
-              settings={settings}
-              toolbarTarget={isTableLike ? toolbarTarget : undefined}
-              width={Math.max(1, panelWidth - 24)}
-              height={bodyHeight(autoLegendHeight)}
-            />
-          )}
-        </div>
-      </ChartReadoutProvider>
+            )}
+          </div>
+        </ChartReadoutProvider>
+      </AxisTypographyProvider>
       {noteText && (
         <p ref={note.ref} className="eda-panel-note">
           {noteText}

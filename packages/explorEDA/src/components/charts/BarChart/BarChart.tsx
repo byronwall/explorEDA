@@ -1,3 +1,4 @@
+import { useAxisTypography } from "../chartTypography";
 import { categoryEqual, categoryIncludes } from "@/lib/categories";
 import type { datum } from "@/types/ChartTypes";
 import { useColorScales } from "@/hooks/useColorScales";
@@ -143,12 +144,14 @@ function SingleBarChart({
     nonce,
   ]);
 
+  const typography = useAxisTypography();
   const plan = useMemo(
     () =>
       planBarChart({
         settings,
         width,
         height,
+        typography,
         snapshot: {
           revision,
           allValues,
@@ -191,6 +194,7 @@ function SingleBarChart({
       getColorForValue,
       aggregateScope,
       facetIds,
+      typography,
     ]
   );
   const xScale = useMemo(() => buildScale(plan.xScale), [plan.xScale]);

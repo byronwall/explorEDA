@@ -24,6 +24,7 @@ import {
   type ChartAxesPlan,
   type ScaleDescriptor,
   describeScale,
+  type AxisTypography,
 } from "../Axis/axisPlan";
 import { numericScale } from "../Axis/numericScale";
 import { getChartAxisLabel } from "../chartAccessibility";
@@ -67,6 +68,8 @@ export interface BarPlanInput {
   showTotals?: boolean;
   /** Describes the rows an aggregate result uses. */
   aggregateScope?: string;
+  /** Theme axis sizes and text measurement. */
+  typography?: AxisTypography;
 }
 
 export type BarFillSource =
@@ -287,6 +290,7 @@ export function planBarChart({
   footer = 0,
   showTotals = false,
   aggregateScope = "Rows after other chart filters; this chart's selected groups are shown in color",
+  typography,
 }: BarPlanInput): BarChartPlan {
   const numeric = isNumericBarField(settings, snapshot);
   const mode: BarMode = settings.aggregateId
@@ -379,6 +383,8 @@ export function planBarChart({
     hasXLabel: Boolean(xLabel),
     hasYLabel: Boolean(yLabel),
     yTickFontSize: settings.yAxis.tickFontSize,
+    xTickFontSize: settings.xAxis.tickFontSize,
+    typography,
   });
   margin.bottom += footer;
   const plotWidth = width - margin.left - margin.right;
@@ -437,6 +443,7 @@ export function planBarChart({
     marginPolicy: policy,
     footer,
     x: {
+      typography,
       scale: xScale,
       scaleType: settings.xAxis.scaleType,
       field: xField,
@@ -451,6 +458,7 @@ export function planBarChart({
       domainSource: xDomainSource,
     },
     y: {
+      typography,
       scale: yScale,
       scaleType: settings.yAxis.scaleType,
       field: yField,
