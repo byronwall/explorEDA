@@ -49,6 +49,7 @@ import type { TraceSource } from "./charts/trace/traceTypes";
 import { FacetContainer } from "./charts/FacetRelated/FacetContainer";
 import { FacetBarSlotContext } from "./charts/FacetRelated/facetBarSlot";
 import { useAxisFieldActions } from "./charts/AxisFieldActions";
+import { useAxisEditing } from "./charts/InPlace/useAxisEditing";
 import {
   TITLE_EDIT_DESCRIPTION,
   useTitleEditing,
@@ -370,7 +371,8 @@ export function PlotChartPanel({
   const panelRef = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
   const details = detailsLayout(useViewport(expanded));
-  const axisFieldActions = useAxisFieldActions();
+  const axisEditing = useAxisEditing(settings, panelRef);
+  const axisFieldActions = useAxisFieldActions(axisEditing.menuItems);
   const settingsRef = useRef<HTMLButtonElement>(null);
   const settingsAnchor = useRef<HTMLElement | null>(null);
   const expandRef = useRef<HTMLButtonElement>(null);
@@ -618,7 +620,7 @@ export function PlotChartPanel({
   const panel = (
     <div
       ref={panelRef}
-      className={`eda-panel bg-card border rounded-lg flex min-w-0 flex-col overflow-hidden ${expanded ? "eda-panel-expanded" : ""}`}
+      className={`eda-panel relative bg-card border rounded-lg flex min-w-0 flex-col overflow-hidden ${expanded ? "eda-panel-expanded" : ""}`}
       data-eda-theme={theme.id}
       data-headline={theme.headline}
       // Ring the chart while its settings are open so the editor has a clear owner.
@@ -636,6 +638,7 @@ export function PlotChartPanel({
       }}
       role="region"
       {...axisFieldActions.handlers}
+      {...axisEditing.handlers}
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
     >
@@ -861,6 +864,7 @@ export function PlotChartPanel({
         {chartSummary}
       </p>
       {axisFieldActions.overlay}
+      {axisEditing.overlay}
       <AxisTypographyProvider value={axisTypography}>
         <ChartReadoutProvider value={readoutTarget}>
           <div className="eda-chart-content flex min-h-0 flex-1 flex-col">
@@ -916,10 +920,13 @@ export function PlotChartPanel({
       if (
         event.key === "Escape" &&
         !hasNestedLayer(detailsRef.current) &&
-        // An in-place editor takes Escape to put its old value back.
+        // An in-place editor takes Escape to put its old value back, and a
+        // popover mounted inside the details view closes first.
         !(
           event.target instanceof Element &&
-          event.target.closest("[data-inplace-editor]")
+          event.target.closest(
+            "[data-inplace-editor], [data-slot='popover-content']"
+          )
         )
       ) {
         setExpandedState(false);

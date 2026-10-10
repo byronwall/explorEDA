@@ -112,6 +112,43 @@ export function PlannedGrid({
   );
 }
 
+/** Height of the band under the X axis, and least width beside the Y axis, that edits its range. */
+const STRIP_SIZE = 24;
+
+/**
+ * An invisible band along a numeric axis, over its tick labels. Double-click
+ * or the context menu there edits the axis range. It carries the drawn
+ * domain so an editor can show and invert it.
+ */
+function AxisEditStrip({
+  plan,
+  axis,
+}: {
+  plan: ChartAxesPlan;
+  axis: "x" | "y";
+}) {
+  const scale = plan[axis].scale;
+  if (scale.type === "band") return null;
+  const { plotWidth, plotHeight, margin } = plan;
+  const width = Math.max(STRIP_SIZE, margin.left - 18);
+  const box =
+    axis === "x"
+      ? { x: 0, y: plotHeight, width: plotWidth, height: STRIP_SIZE }
+      : { x: -width, y: 0, width, height: plotHeight };
+  return (
+    <rect
+      {...box}
+      className="eda-axis-strip"
+      fill="transparent"
+      pointerEvents="all"
+      data-axis-edit={axis}
+      data-scale-type={scale.type}
+      data-domain={scale.domain.join(",")}
+      data-range={scale.range.join(",")}
+    />
+  );
+}
+
 /** Draws planned axis rules, ticks, labels and the zero line. */
 export function PlannedAxes({
   plan,
@@ -127,6 +164,8 @@ export function PlannedAxes({
       className="fill-muted-foreground"
       pointerEvents={interactive ? "auto" : "none"}
     >
+      <AxisEditStrip plan={plan} axis="x" />
+      <AxisEditStrip plan={plan} axis="y" />
       {[...plan.x.guides, ...plan.y.guides].map((guide) => (
         <g
           key={guide.id}

@@ -255,6 +255,38 @@
   font-weight: 400;
 }
 
+/* An axis band edits its range: a soft wash shows where a double-click
+   or the context menu will act. */
+.eda-axis-strip {
+  transition: fill 120ms ease;
+}
+.eda-axis-strip:hover {
+  fill: color-mix(in oklab, var(--primary) 7%, transparent);
+}
+.chart-guide[data-inplace-editing] text {
+  opacity: 0;
+}
+.eda-axis-range-head {
+  margin-bottom: 6px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 600;
+}
+/* An axis title editor floats over the drawn title inside the panel. */
+.eda-axis-title-editor {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.eda-axis-title-editor > .eda-inplace-input {
+  margin: 0;
+  pointer-events: auto;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgb(20 40 70 / 12%);
+}
+
 /* Chart header. Compact keeps one line: title, readout, search, actions,
    then the filter control. A subtitle wraps to its own line below. */
 .eda-panel-status {
