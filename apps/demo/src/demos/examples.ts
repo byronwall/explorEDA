@@ -28,6 +28,7 @@ import {
   pewMeaningDashboard,
   incomeLifeDashboard,
   covidTilesDashboard,
+  covidCompareDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -56,6 +57,7 @@ import {
   Dumbbell,
   CircleDot,
   Map as MapIcon,
+  PictureInPicture2,
   CloudFog,
   Globe,
   Activity,
@@ -839,6 +841,21 @@ export const examples: ExampleData[] = [
     icon: MapIcon,
     data: "/datasets/covid-tiles.csv",
     savedData: covidTilesDashboard,
+  },
+  {
+    id: "covid-compare",
+    title: "The last nine months, against three years",
+    description:
+      "Six state panels with two frames each: the recent window in the main frame against the national rate, and the full three-year history in an inset, on a separate scale, for the state and the nation.",
+    dataset: { rows: "1,119 state-weeks", fields: 4, source: "Real" },
+    shows: [
+      "Inset frames",
+      "Display windows",
+      "Comparison series left out of repeats",
+    ],
+    icon: PictureInPicture2,
+    data: "/datasets/covid-compare.csv",
+    savedData: covidCompareDashboard,
   },
 ];
 

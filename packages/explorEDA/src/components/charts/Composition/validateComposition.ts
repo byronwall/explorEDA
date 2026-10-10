@@ -48,6 +48,7 @@ function isMark(value: unknown) {
     return false;
   if (value.type === "point")
     return (
+      (value.frameId === undefined || isString(value.frameId)) &&
       isString(value.xScaleId) &&
       (value.yScaleId === undefined || isString(value.yScaleId)) &&
       (value.colorField === undefined || isString(value.colorField)) &&
@@ -97,6 +98,7 @@ function isMark(value: unknown) {
     );
   if (value.type === "band")
     return (
+      (value.frameId === undefined || isString(value.frameId)) &&
       isString(value.xScaleId) &&
       isString(value.yScaleId) &&
       isString(value.orderField) &&
@@ -109,6 +111,7 @@ function isMark(value: unknown) {
     );
   if (value.type === "path")
     return (
+      (value.frameId === undefined || isString(value.frameId)) &&
       isString(value.xScaleId) &&
       (value.yScaleId === undefined || isString(value.yScaleId)) &&
       isString(value.orderField) &&
@@ -136,8 +139,46 @@ function isMark(value: unknown) {
   );
 }
 
+function isWindow(value: unknown) {
+  if (value === undefined) return true;
+  return (
+    isRecord(value) &&
+    isString(value.field) &&
+    (value.min === undefined || isString(value.min)) &&
+    (value.max === undefined || isString(value.max))
+  );
+}
+
+function isInset(value: unknown) {
+  return (
+    isRecord(value) &&
+    isString(value.id) &&
+    isString(value.name) &&
+    isNumber(value.x) &&
+    isNumber(value.y) &&
+    isNumber(value.width) &&
+    value.width > 0 &&
+    isNumber(value.height) &&
+    value.height > 0 &&
+    isWindow(value.window) &&
+    typeof value.axis === "boolean" &&
+    (value.background === undefined || isString(value.background))
+  );
+}
+
 function isUnitElement(value: Value) {
   const { frame, label, repeat, marks } = value;
+  const insets = value.insets;
+  if (
+    insets !== undefined &&
+    !(
+      Array.isArray(insets) &&
+      insets.every(isInset) &&
+      new Set(insets.map((inset) => (inset as Value).id)).size === insets.length
+    )
+  )
+    return false;
+  if (!isWindow(value.window)) return false;
   return (
     isRecord(frame) &&
     isNumber(frame.width) &&
@@ -164,7 +205,8 @@ function isUnitElement(value: Value) {
     (repeat.direction === undefined ||
       oneOf(repeat.direction, ["asc", "desc"])) &&
     isNumber(repeat.limit) &&
-    repeat.limit >= 1
+    repeat.limit >= 1 &&
+    (repeat.skip === undefined || isString(repeat.skip))
   );
 }
 

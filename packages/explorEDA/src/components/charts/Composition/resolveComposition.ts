@@ -77,6 +77,8 @@ export interface RectNode extends NodeBase {
   width: number;
   height: number;
   fill: string;
+  /** An outline, such as an inset's border. */
+  stroke?: string;
   glyph?: GlyphDatum;
 }
 

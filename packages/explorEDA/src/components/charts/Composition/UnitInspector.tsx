@@ -6,9 +6,12 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import { Plus, Trash2 } from "lucide-react";
 import { useId } from "react";
 import {
+  createInset,
   MUTED_MARK,
   newMarkId,
   type BandMark,
+  type FrameWindow,
+  type InsetFrame,
   type InstanceOverride,
   type CompositionCalculation,
   type CompositionDefinition,
@@ -332,6 +335,15 @@ export function UnitProperties({
                 value={unit.repeat.limit}
                 onChange={(limit) => repeat({ limit })}
               />
+              <Label htmlFor={`${nameId}-skip`}>Leave out</Label>
+              <Input
+                id={`${nameId}-skip`}
+                placeholder="Values not to repeat, comma-separated"
+                value={unit.repeat.skip ?? ""}
+                onChange={(event) =>
+                  repeat({ skip: event.target.value || undefined })
+                }
+              />
               <NumberSetting
                 label="Gap"
                 min={0}
@@ -408,6 +420,7 @@ export function UnitProperties({
           />
         </div>
       </section>
+      <FrameSection unit={unit} onChange={onChange} />
       <MarksSection
         unit={unit}
         definition={definition}
@@ -417,6 +430,159 @@ export function UnitProperties({
         onEditScale={onEditScale}
       />
     </>
+  );
+}
+
+function WindowFields({
+  label,
+  window,
+  onChange,
+}: {
+  label: string;
+  window: FrameWindow | undefined;
+  onChange: (window: FrameWindow | undefined) => void;
+}) {
+  const id = useId();
+  return (
+    <>
+      <Label>{label}</Label>
+      <FieldSelector
+        label=""
+        placeholder="Every row"
+        value={window?.field ?? ""}
+        allowClear
+        onChange={(field) => onChange(field ? { ...window, field } : undefined)}
+      />
+      {window && (
+        <>
+          <Label htmlFor={`${id}-min`}>From</Label>
+          <Input
+            id={`${id}-min`}
+            placeholder="Open"
+            value={window.min ?? ""}
+            onChange={(event) =>
+              onChange({ ...window, min: event.target.value || undefined })
+            }
+          />
+          <Label htmlFor={`${id}-max`}>To</Label>
+          <Input
+            id={`${id}-max`}
+            placeholder="Open"
+            value={window.max ?? ""}
+            onChange={(event) =>
+              onChange({ ...window, max: event.target.value || undefined })
+            }
+          />
+        </>
+      )}
+    </>
+  );
+}
+
+/** The main frame's window and the insets drawn inside each repeat. */
+function FrameSection({
+  unit,
+  onChange,
+}: {
+  unit: UnitElement;
+  onChange: (patch: Partial<UnitElement>) => void;
+}) {
+  const insets = unit.insets ?? [];
+  const update = (id: string, patch: Partial<InsetFrame>) =>
+    onChange({
+      insets: insets.map((inset) =>
+        inset.id === id ? { ...inset, ...patch } : inset
+      ),
+    });
+  return (
+    <section className="eda-setting-section" aria-label="Frames">
+      <div className="eda-composition-section-head">
+        <h5>Frames</h5>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-6 px-2"
+          tooltip="Add a smaller frame inside each repeat, such as a full-history overview beside a recent-window detail. Assign marks to it below."
+          onClick={() => onChange({ insets: [...insets, createInset(unit)] })}
+        >
+          <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+          Inset
+        </Button>
+      </div>
+      <div className="eda-setting-grid">
+        <WindowFields
+          label="Window"
+          window={unit.window}
+          onChange={(window) => onChange({ window })}
+        />
+      </div>
+      {insets.map((inset) => (
+        <div key={inset.id} className="eda-composition-mark">
+          <div className="eda-composition-section-head">
+            <span className="eda-composition-mark-name">{inset.name}</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6"
+              aria-label={`Remove ${inset.name}`}
+              tooltip="Remove this inset; its marks move back to the main frame"
+              onClick={() =>
+                onChange({
+                  insets: insets.filter((item) => item.id !== inset.id),
+                  marks: unit.marks.map((mark) =>
+                    mark.type !== "strip" &&
+                    mark.type !== "summary" &&
+                    mark.type !== "stack" &&
+                    mark.frameId === inset.id
+                      ? { ...mark, frameId: undefined }
+                      : mark
+                  ),
+                })
+              }
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+          <div className="eda-setting-grid">
+            <Label htmlFor={`${inset.id}-name`}>Name</Label>
+            <Input
+              id={`${inset.id}-name`}
+              value={inset.name}
+              onChange={(event) =>
+                update(inset.id, { name: event.target.value })
+              }
+            />
+            <PairSetting
+              label="Offset"
+              names={["X", "Y"]}
+              values={[inset.x, inset.y]}
+              onChange={([x, y]) => update(inset.id, { x, y })}
+            />
+            <PairSetting
+              label="Size"
+              names={["W", "H"]}
+              min={8}
+              values={[inset.width, inset.height]}
+              onChange={([width, height]) =>
+                update(inset.id, { width, height })
+              }
+            />
+            <WindowFields
+              label="Window"
+              window={inset.window}
+              onChange={(window) => update(inset.id, { window })}
+            />
+            <span className="eda-setting-label">Ticks</span>
+            <Segmented
+              label={`${inset.name} ticks`}
+              value={inset.axis}
+              options={SHOWN}
+              onChange={(axis) => update(inset.id, { axis })}
+            />
+          </div>
+        </div>
+      ))}
+    </section>
   );
 }
 
@@ -493,6 +659,7 @@ function MarksSection({
           key={mark.id}
           mark={mark}
           scales={definition.scales}
+          insets={unit.insets ?? []}
           canRemove={unit.marks.length > 1}
           onChange={(patch) => update(mark.id, patch)}
           onChangeType={(type) =>
@@ -517,6 +684,7 @@ function MarksSection({
 function MarkProperties({
   mark,
   scales,
+  insets,
   canRemove,
   onChange,
   onChangeType,
@@ -525,6 +693,7 @@ function MarkProperties({
 }: {
   mark: MarkDefinition;
   scales: CompositionScale[];
+  insets: InsetFrame[];
   canRemove: boolean;
   onChange: (patch: Partial<MarkDefinition>) => void;
   onChangeType: (type: MarkType) => void;
@@ -602,6 +771,7 @@ function MarkProperties({
           <XyFields
             mark={mark}
             scales={scales}
+            insets={insets}
             onChange={onChange}
             onEditScale={onEditScale}
           />
@@ -1003,11 +1173,13 @@ function SummaryFields({
 function XyFields({
   mark,
   scales,
+  insets,
   onChange,
   onEditScale,
 }: {
   mark: PointMark | PathMark | BandMark;
   scales: CompositionScale[];
+  insets: InsetFrame[];
   onChange: (
     patch: Partial<PointMark> | Partial<PathMark> | Partial<BandMark>
   ) => void;
@@ -1035,6 +1207,26 @@ function XyFields({
     .map((profile) => profile.name);
   return (
     <>
+      {insets.length > 0 && (
+        <>
+          <Label htmlFor={`${id}-frame`}>Frame</Label>
+          <select
+            id={`${id}-frame`}
+            className="eda-composition-select"
+            value={mark.frameId ?? ""}
+            onChange={(event) =>
+              change({ frameId: event.target.value || undefined })
+            }
+          >
+            <option value="">Main frame</option>
+            {insets.map((inset) => (
+              <option key={inset.id} value={inset.id}>
+                {inset.name}
+              </option>
+            ))}
+          </select>
+        </>
+      )}
       <Label htmlFor={`${id}-x`}>X scale</Label>
       <ScaleSelect
         id={`${id}-x`}
