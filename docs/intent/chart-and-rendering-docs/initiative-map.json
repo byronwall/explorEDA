@@ -5,16 +5,16 @@
     "slug": "chart-and-rendering-docs",
     "scale": "capability",
     "current_phase": "execution",
-    "last_updated": "2026-10-09",
-    "summary": "Create task-led pages for all registered views and an accurate current-state rendering guide.",
+    "last_updated": "2026-10-10",
+    "summary": "Task-led pages for every registered view and an accurate rendering guide, authored as build-time MDX in the demo with on-demand live examples.",
     "status": "active",
-    "next_action": "Milestone 1 (scatter and bar guides, rendering guide) shipped. Milestones 2-3 (the other registered types and the full rendering story) have not started; the registry has grown since the plan counted eleven types."
+    "next_action": "Align the deploy toolchain (M2), then port the three shipped guides to MDX with one live example (M3). Byron to decide the docs URL form and the AGENTS.md image and tooltip rules."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-09-23"
+      "updated_at": "2026-10-10"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -24,12 +24,12 @@
     "shape_brief": {
       "path": "shape-brief.md",
       "status": "current",
-      "updated_at": "2026-09-23"
+      "updated_at": "2026-10-10"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
       "status": "current",
-      "updated_at": "2026-10-02"
+      "updated_at": "2026-10-10"
     }
   },
   "sources": [
@@ -44,7 +44,7 @@
       "id": "registry",
       "type": "repository",
       "location": "../../../packages/explorEDA/src/charts/registerAllCharts.ts",
-      "anchor": "Eleven registered chart definitions",
+      "anchor": "Twenty registered chart definitions (eleven when the initiative began)",
       "authority": "current implementation reality"
     },
     {
@@ -60,6 +60,41 @@
       "location": "comparative-research.md",
       "anchor": "Nivo, ECharts, dc.js, Vega-Lite, Observable Plot",
       "authority": "documentation patterns, not intent"
+    },
+    {
+      "id": "docs-research-prompt",
+      "type": "direct-user-input",
+      "location": "../../chatgpt-pro-documentation-system-research-prompt.md",
+      "anchor": "Mission and decision context",
+      "authority": "direct intent: static Pages, many images, ideally real interactive embeds, low maintenance"
+    },
+    {
+      "id": "docs-system-research",
+      "type": "primary-web-research",
+      "location": "../../research/documentation-system-recommendation.md",
+      "anchor": "Recommendation, sections 4-9",
+      "authority": "tooling and proof strategy, inspected 3cc4117 before ChartDocs.tsx existed"
+    },
+    {
+      "id": "chart-docs-source",
+      "type": "repository",
+      "location": "../../../apps/demo/src/ChartDocs.tsx",
+      "anchor": "Shipped scatter, bar, and rendering guides",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "coverage",
+      "type": "repository",
+      "location": "../../../apps/demo/src/demos/coverage.ts",
+      "anchor": "chart:<type> features and example usage",
+      "authority": "current example membership per chart type"
+    },
+    {
+      "id": "routes",
+      "type": "repository",
+      "location": "../../../apps/demo/src/routes.ts",
+      "anchor": "/examples/<id> and /viewer path routes with 404.html fallback",
+      "authority": "current implementation reality"
     }
   ],
   "intent": {
@@ -79,7 +114,7 @@
       {
         "id": "c2",
         "type": "derived implication",
-        "statement": "Cover all eleven registered views, including tables and supporting views",
+        "statement": "Cover every registered view, including tables and supporting views (twenty today)",
         "commitment": "derived",
         "importance": "core",
         "status": "active",
@@ -99,14 +134,87 @@
         "source_anchors": [
           "inventory"
         ]
+      },
+      {
+        "id": "c4",
+        "type": "constraint",
+        "statement": "Docs build as static files and ship in the demo's existing GitHub Pages deployment",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "docs-research-prompt"
+        ]
+      },
+      {
+        "id": "c5",
+        "type": "outcome",
+        "statement": "Pages are image-heavy, and adding a page or replacing a screenshot is routine prose work",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "docs-research-prompt"
+        ]
+      },
+      {
+        "id": "c6",
+        "type": "preference",
+        "statement": "Embed the actual interactive React workspace where possible, without inventing a standalone chart API",
+        "commitment": "explicit-ideal",
+        "importance": "high",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "docs-research-prompt"
+        ]
+      },
+      {
+        "id": "c7",
+        "type": "constraint",
+        "statement": "Small system a solo developer can maintain: no server, CMS, versions, translations, or playground",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "ongoing",
+        "source_anchors": [
+          "docs-research-prompt"
+        ]
+      },
+      {
+        "id": "c8",
+        "type": "constraint",
+        "statement": "Prose and figures work on narrow screens; live workspaces only at 1024 CSS px and up",
+        "commitment": "derived",
+        "importance": "high",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "docs-research-prompt",
+          "docs-system-research"
+        ]
       }
     ],
     "themes": [
       "task-led chart guidance",
       "shared rendering model",
-      "live examples"
+      "live examples",
+      "low-maintenance image-heavy authoring"
     ],
-    "conflicts": [],
+    "conflicts": [
+      {
+        "id": "x1",
+        "summary": "AGENTS.md says screenshots stay in tmp/ and are never committed; curated docs images are committed under apps/demo/public/docs/",
+        "resolution": "pending human decision"
+      },
+      {
+        "id": "x2",
+        "summary": "AGENTS.md says tooltips open on hover and keyboard focus; docs/ui-defaults.md says pointer hover only",
+        "resolution": "pending human decision; docs controls use visible labels meanwhile"
+      }
+    ],
     "human_questions": []
   },
   "brainstorm": {
@@ -117,50 +225,129 @@
   },
   "shape": {
     "status": "current",
-    "appetite": "small docs section in existing demo, then eleven concise pages",
-    "problem": "Chart guidance is spread across internal inventory, README, source, and demos",
-    "recommended_shape": "Task-led index, one page per registered type, one shared current-state rendering guide",
+    "appetite": "One small MDX shell in the demo (research estimate 12-20 h including proof), then pages in groups",
+    "problem": "Three TSX guides cost ~940 lines; twenty registered types make every prose and screenshot edit code work",
+    "recommended_shape": "In-demo docs as build-time MDX with imported figures, Figure/FigurePair/LiveExample components, a typed catalogue checked against coverage.ts, and on-demand iframe embeds of /examples/<id>",
     "success_moves": [
-      "Prove scatter and bar first",
-      "Check source and runtime together",
-      "Explain shared scope once",
-      "Use hand-authored pages until generation has clear value"
+      "Port the three shipped guides instead of greenfielding",
+      "Keep one router and one deployment",
+      "Derive example membership from coverage.ts",
+      "Fix the deploy toolchain first, separately",
+      "Treat the iframe as a probe with a direct-mount fallback; links always remain"
     ],
     "first_proof": {
-      "question": "Can two unlike pages explain use, filtering, and limits clearly?",
-      "artifact": "Scatter and bar guides plus shared rendering guide",
-      "decision_rule": "Proceed when both examples and direct URLs work and claims match runtime"
+      "question": "Does MDX make the existing three pages cheaper to edit without loss, and can a real workspace run inline?",
+      "artifact": "Scatter, bar, and rendering guides ported to MDX with one LiveExample on scatter",
+      "decision_rule": "Proceed when URLs, tests, focus, build-failure-on-missing-image, and width-gated live brush all pass; otherwise apply the Starlight triggers"
     },
     "rabbit_holes": [
-      "new docs framework",
-      "generated reference before first pages",
-      "future renderer described as shipped"
+      "search, image resizing, or a docs theme",
+      "/explorEDA/ subpath base",
+      "one-renderer claims",
+      "retired traceability plans described as shipped"
     ],
-    "open_decisions": []
+    "open_decisions": [
+      "docs URL form: ?view=docs&topic= or /docs/<topic>",
+      "AGENTS.md curated-image exception and a single tooltip rule"
+    ],
+    "fallback": {
+      "shape": "Separate static Astro/Starlight app published under /docs/ in the same Pages artifact",
+      "triggers": [
+        "image authoring needs per-page glue",
+        "navigation or search needs a custom content framework",
+        "MDX shell exceeds ~20 engineering hours",
+        "pre-rendered article HTML or full-text search becomes required"
+      ]
+    }
   },
   "implementation": {
     "status": "current",
     "repository_snapshot": {
-      "root": "/Users/byronwall/.codex/worktrees/adoption-page-tickets/explorEDA",
-      "revision": "33602bc",
-      "worktree_status": "Accepted two-ticket slice; runtime source checked at 33602bc. Evidence is in exp-72ve and exp-4ak2.",
+      "root": "byronwall/explorEDA",
+      "revision": "29b4023",
+      "worktree_status": "Read-only reconciliation of the documentation-system research against current main; no code changed.",
       "subsystems": [
-        "apps/demo/src/main.tsx",
+        "apps/demo/src/ChartDocs.tsx",
         "apps/demo/src/LandingPage.tsx",
+        "apps/demo/src/routes.ts",
+        "apps/demo/src/demos/coverage.ts",
         "apps/demo/src/demos/examples.ts",
+        "apps/demo/src/landing/LiveOrderBook.tsx",
+        "apps/demo/vite.config.ts",
+        ".github/workflows/deploy.yml",
         "packages/explorEDA/src/charts/registerAllCharts.ts",
         "packages/explorEDA/src/providers/DataLayerProvider.tsx"
-      ],
-      "test_commands": [
-        "pnpm --filter demo dev",
-        "pnpm check:ui",
-        "pnpm check"
-      ],
-      "deployment_surfaces": [
-        "GitHub Pages static Vite demo"
       ]
     },
-    "dependencies": [],
+    "dependencies": [
+      {
+        "name": "@mdx-js/rollup",
+        "material": true,
+        "role": "build-time MDX compilation in Vite",
+        "application_seam": "apps/demo/vite.config.ts plugin order (before @vitejs/plugin-react) and src/docs/pages/*.mdx",
+        "first_proof_role": {
+          "mode": "real",
+          "rationale": "A build plugin has no faithful fake; local build and preview are fast."
+        },
+        "failure_modes": [
+          "plugin order breaks JSX transform",
+          "missing image import",
+          "MDX syntax error in prose"
+        ],
+        "local_proof": "pnpm --filter demo build && pnpm --filter demo preview; delete an imported image and confirm the build fails",
+        "live_proof": "Deployed Pages smoke of each docs topic after M2",
+        "proof_rungs": [
+          "local-build",
+          "deployed-smoke"
+        ],
+        "rollout": "Revert the plugin and restore ChartDocs.tsx from history"
+      },
+      {
+        "name": "Same-origin iframe of /examples/<id>",
+        "material": true,
+        "role": "live workspace embed",
+        "application_seam": "LiveExample component; child document uses the existing example route",
+        "first_proof_role": {
+          "mode": "real",
+          "rationale": "Embedding behavior (focus, overlays, sizing) only shows in a real browser."
+        },
+        "failure_modes": [
+          "frame blocked",
+          "dataset fetch fails",
+          "focus trapped in frame",
+          "mounted below 1024 px"
+        ],
+        "local_proof": "vite preview at 1280/783/390 px; mocked ExplorEda tests for width gating, reset, close, failure UI",
+        "live_proof": "One deployed scatter page brush",
+        "proof_rungs": [
+          "unit-test",
+          "local-browser",
+          "deployed-smoke"
+        ],
+        "rollout": "Fall back to the LiveOrderBook direct mount once, else links only"
+      },
+      {
+        "name": "GitHub Pages deploy toolchain",
+        "material": true,
+        "role": "static hosting build",
+        "application_seam": ".github/workflows/deploy.yml uploading apps/demo/dist",
+        "first_proof_role": {
+          "mode": "local-substitute",
+          "rationale": "Node 24 + pnpm 11.9.0 frozen install and build locally before CI."
+        },
+        "failure_modes": [
+          "lockfile mismatch",
+          "pnpm/Node incompatibility"
+        ],
+        "local_proof": "Frozen install and build on Node 24",
+        "live_proof": "Pages run succeeds; /, /examples/scatter-trace, and docs topic load",
+        "proof_rungs": [
+          "local-build",
+          "deployed-smoke"
+        ],
+        "rollout": "Revert the workflow change"
+      }
+    ],
     "fast_local_loop": {
       "command": "pnpm --filter demo dev",
       "network_required": false,
@@ -177,43 +364,89 @@
         "status": "completed",
         "evidence": [
           "Accepted exp-72ve records index, scatter/bar guides, rendering guide, real captures, query refresh, runtime claims, and independent browser proof."
-        ]
+        ],
+        "dependencies_introduced": []
       },
       {
         "id": "M2",
-        "outcome": "All eleven registered types documented",
-        "proof": "Index matches registry and every guide has a working example link",
-        "valid_intermediate_state": "Existing docs routes stay useful",
-        "rollback": "Revise individual pages",
-        "status": "planned"
+        "outcome": "Deploys build with the pinned toolchain",
+        "proof": "Node 24 + pnpm 11.9.0 frozen install and build succeed locally and on Pages",
+        "valid_intermediate_state": "Site unchanged",
+        "rollback": "Revert workflow",
+        "status": "planned",
+        "dependencies_introduced": [
+          "GitHub Pages deploy toolchain"
+        ]
       },
       {
         "id": "M3",
+        "outcome": "Existing guides run on MDX with one live example",
+        "proof": "Same URLs and tests; missing image fails build; width-gated live brush matches fixture rows",
+        "valid_intermediate_state": "Three guides published",
+        "rollback": "Restore ChartDocs.tsx and remove MDX plugin",
+        "status": "planned",
+        "dependencies_introduced": [
+          "@mdx-js/rollup",
+          "Same-origin iframe of /examples/<id>"
+        ]
+      },
+      {
+        "id": "M4",
+        "outcome": "Original eleven types documented",
+        "proof": "Catalogue test and per-page checks against running demo",
+        "valid_intermediate_state": "Existing docs routes stay useful",
+        "rollback": "Revise or remove individual pages",
+        "status": "planned",
+        "dependencies_introduced": []
+      },
+      {
+        "id": "M5",
+        "outcome": "Newer nine types documented",
+        "proof": "Test fails if a registered type lacks a page",
+        "valid_intermediate_state": "Partial catalogue stays coherent",
+        "rollback": "Revise individual pages",
+        "status": "planned",
+        "dependencies_introduced": []
+      },
+      {
+        "id": "M6",
         "outcome": "Integration and rendering story is complete",
-        "proof": "Links work and guide matches current implementation",
+        "proof": "Guide matches current source; deployed links work",
         "valid_intermediate_state": "Demo and docs coexist",
         "rollback": "Remove landing links",
         "landing_bridge_ticket": "exp-4ak2",
-        "status": "planned",
         "landing_bridge_status": "completed",
-        "evidence": [
-          "The landing bridge is accepted in exp-4ak2. The expanded integration and rendering story remains planned; this execution supplied the current M1 guide only."
-        ]
+        "status": "planned",
+        "dependencies_introduced": []
       }
     ],
     "cut_line": [
-      "new documentation framework",
+      "Astro/Starlight unless M3 trips a trigger",
+      "full-text search and pre-rendered article HTML",
+      "responsive image generation",
+      "/explorEDA/ subpath base",
       "property playground",
       "generated API pipeline",
       "chart behavior changes only for docs"
     ],
-    "open_decisions": [],
+    "open_decisions": [
+      "docs URL form: ?view=docs&topic= or /docs/<topic>",
+      "AGENTS.md curated-image exception and a single tooltip rule"
+    ],
     "tickets": [
       {
         "id": "exp-72ve",
         "milestone": "M1",
         "role": "minimal landing documentation prerequisite"
       }
+    ],
+    "test_commands": [
+      "pnpm --filter demo dev",
+      "pnpm --filter demo build",
+      "pnpm --filter demo preview",
+      "pnpm --filter demo test",
+      "pnpm check:ui",
+      "pnpm check"
     ]
   },
   "history": [
@@ -238,6 +471,11 @@
         "apps/demo/src/ChartDocs.tsx covers scatter, bar, and the system guide only",
         "No ChartDocs changes since 326c7a1"
       ]
+    },
+    {
+      "date": "2026-10-10",
+      "event": "research-integrated",
+      "change": "Copied the ChatGPT Pro documentation-system research into docs/research/. Adopted its build-time MDX + on-demand iframe recommendation with Starlight fallback, but reframed the proof as a port of the three TSX guides that shipped after the research's inspected commit. Extended scope from eleven to twenty registered types, added a deploy-toolchain milestone, cut subpath-base support, and replaced the hand-kept example table with coverage.ts. Rewrote intent, shape, and plan; renumbered milestones (old M2/M3 are now M4-M6)."
     }
   ],
   "catalogue": [
@@ -251,6 +489,15 @@
     "data-table",
     "summary",
     "color-legend",
-    "markdown"
+    "markdown",
+    "map",
+    "metric-card",
+    "sankey",
+    "parallel-coordinates",
+    "scatter-matrix",
+    "calendar",
+    "heatmap",
+    "ecdf",
+    "composition"
   ]
 }
