@@ -160,6 +160,12 @@ const TRACE_COPY = {
       "Alt-click a cell to trace it. Normal clicks keep selecting cells. You can also find a source row below.",
     ariaLabel: "Heatmap trace inspector",
   },
+  composition: {
+    heading: "Composition trace",
+    emptyText:
+      "In view mode, Alt-click a mark, label, guide, or annotation to see its template, subset, override, and source rows. You can also browse repeats below.",
+    ariaLabel: "Composition trace inspector",
+  },
   ecdf: {
     heading: "Step trace",
     emptyText:

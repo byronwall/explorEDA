@@ -6,6 +6,7 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import { Plus, Trash2 } from "lucide-react";
 import { useId } from "react";
 import type {
+  InstanceOverride,
   CompositionCalculation,
   CompositionScale,
   MarkDefinition,
@@ -476,5 +477,103 @@ function ScaleSelect({
         Edit
       </Button>
     </div>
+  );
+}
+
+/** Edits one repeat apart from its template: placement and look only. */
+export function OverrideProperties({
+  label,
+  override,
+  onChange,
+  onReset,
+  onEditTemplate,
+}: {
+  label: string;
+  override?: InstanceOverride;
+  onChange: (patch: Partial<InstanceOverride>) => void;
+  onReset: () => void;
+  onEditTemplate: () => void;
+}) {
+  return (
+    <section
+      className="eda-setting-section eda-composition-override"
+      aria-label={`${label} override`}
+    >
+      <div className="eda-composition-section-head">
+        <h5>Repeat: {label}</h5>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-6 px-2"
+          tooltip="Select the template again. Its edits apply to every repeat."
+          onClick={onEditTemplate}
+        >
+          Edit template
+        </Button>
+      </div>
+      <p className="eda-composition-scope" role="note">
+        Override · changes only this repeat. Its rows, calculations, and scales
+        still come from the template.
+      </p>
+      <div className="eda-setting-grid">
+        <PairSetting
+          label="Nudge"
+          names={["X", "Y"]}
+          values={[override?.dx ?? 0, override?.dy ?? 0]}
+          onChange={([dx, dy]) => onChange({ dx, dy })}
+        />
+        <span className="eda-setting-label">Accent</span>
+        <div className="eda-composition-color">
+          <input
+            type="color"
+            aria-label={`${label} accent color`}
+            value={override?.accent ?? "#1f4e8c"}
+            onChange={(event) => onChange({ accent: event.target.value })}
+          />
+          {override?.accent ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 px-2"
+              tooltip="Use the template's colors for this repeat again"
+              onClick={() => onChange({ accent: undefined })}
+            >
+              Clear
+            </Button>
+          ) : (
+            <span className="text-muted-foreground">Template colors</span>
+          )}
+        </div>
+        <NumberSetting
+          label="Opacity %"
+          min={10}
+          max={100}
+          value={Math.round((override?.opacity ?? 1) * 100)}
+          onChange={(value) =>
+            onChange({ opacity: value >= 100 ? undefined : value / 100 })
+          }
+        />
+        <span className="eda-setting-label">Label</span>
+        <Segmented
+          label={`${label} label weight`}
+          value={Boolean(override?.emphasize)}
+          options={[
+            { value: false, label: "Template", tooltip: "Use the template's label weight" },
+            { value: true, label: "Bold", tooltip: "Make this repeat's label bold, to call it out" },
+          ]}
+          onChange={(emphasize) => onChange({ emphasize })}
+        />
+      </div>
+      <Button
+        variant="outline"
+        size="sm"
+        className="mt-2 h-7"
+        disabled={!override}
+        tooltip="Remove every change made to this repeat, so it matches the template"
+        onClick={onReset}
+      >
+        Reset to template
+      </Button>
+    </section>
   );
 }

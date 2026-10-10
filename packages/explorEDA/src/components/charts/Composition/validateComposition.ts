@@ -97,6 +97,20 @@ function isScale(value: unknown) {
   );
 }
 
+function isOverride(value: unknown) {
+  return (
+    isRecord(value) &&
+    isString(value.unitId) &&
+    isString(value.instanceKey) &&
+    isNumber(value.dx) &&
+    isNumber(value.dy) &&
+    (value.accent === undefined || isString(value.accent)) &&
+    (value.opacity === undefined ||
+      (isNumber(value.opacity) && value.opacity >= 0.1 && value.opacity <= 1)) &&
+    (value.emphasize === undefined || typeof value.emphasize === "boolean")
+  );
+}
+
 function isCalculation(value: unknown) {
   return (
     isRecord(value) &&
@@ -177,7 +191,13 @@ export function isCompositionDefinition(
   value: unknown
 ): value is CompositionDefinition {
   if (!isRecord(value) || !isRecord(value.artboard)) return false;
-  const { artboard, elements, scales = [], calculations = [] } = value;
+  const {
+    artboard,
+    elements,
+    scales = [],
+    calculations = [],
+    overrides = [],
+  } = value;
   // Every mark must point at a scale of the right kind.
   const kinds = new Map(
     Array.isArray(scales)
@@ -199,6 +219,8 @@ export function isCompositionDefinition(
         )
     );
   return (
+    Array.isArray(overrides) &&
+    overrides.every(isOverride) &&
     Array.isArray(calculations) &&
     calculations.every(isCalculation) &&
     Array.isArray(scales) &&

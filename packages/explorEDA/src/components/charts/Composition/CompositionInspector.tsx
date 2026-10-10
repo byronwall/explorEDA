@@ -18,7 +18,9 @@ import { useEffect, useMemo, useState } from "react";
 import {
   removeElement,
   reorderElement,
+  resetOverride,
   updateElement,
+  updateOverride,
 } from "./compositionEdits";
 import {
   useCompositionEditor,
@@ -38,6 +40,7 @@ import {
   createGuideElement,
   createTextElement,
   createUnitElement,
+  findOverride,
   normalizeComposition,
   type CompositionDefinition,
   type AnnotationElement,
@@ -48,7 +51,7 @@ import {
   type UnitElement,
 } from "./compositionTypes";
 import { ScalesSection } from "./ScaleInspector";
-import { UnitProperties } from "./UnitInspector";
+import { OverrideProperties, UnitProperties } from "./UnitInspector";
 import type { CompositionSettings } from "./definition";
 import {
   ColorSetting,
@@ -251,6 +254,15 @@ export function CompositionInspector({
                   >
                     <Icon className="h-3.5 w-3.5" aria-hidden="true" />
                     <span className="truncate">{element.name}</span>
+                    {element.kind === "unit" && (
+                      <OverrideCount
+                        count={
+                          definition.overrides.filter(
+                            (item) => item.unitId === element.id
+                          ).length
+                        }
+                      />
+                    )}
                   </button>
                   {isSelected && (
                     <span className="eda-composition-layer-actions">
@@ -305,6 +317,33 @@ export function CompositionInspector({
           element={selected}
           onChange={(patch) =>
             change(updateElement<TextElement>(definition, selected.id, patch))
+          }
+        />
+      )}
+
+      {selected?.kind === "unit" && selection?.instanceKey !== undefined && (
+        <OverrideProperties
+          label={
+            selection.instanceKey === "all"
+              ? "the one unit"
+              : selection.instanceKey
+          }
+          override={findOverride(definition, selected.id, selection.instanceKey)}
+          onChange={(patch) =>
+            change(
+              updateOverride(
+                definition,
+                selected.id,
+                selection.instanceKey!,
+                patch
+              )
+            )
+          }
+          onReset={() =>
+            change(resetOverride(definition, selected.id, selection.instanceKey!))
+          }
+          onEditTemplate={() =>
+            select(settings.id, { elementId: selected.id })
           }
         />
       )}
@@ -389,6 +428,15 @@ export function CompositionInspector({
         </div>
       </section>
     </div>
+  );
+}
+
+function OverrideCount({ count }: { count: number }) {
+  if (!count) return null;
+  return (
+    <span className="eda-composition-layer-meta">
+      {count} {count === 1 ? "override" : "overrides"}
+    </span>
   );
 }
 

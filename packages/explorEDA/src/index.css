@@ -6758,3 +6758,46 @@ td[data-null] {
   line-height: 1.45;
   font-variant-numeric: tabular-nums;
 }
+.eda-composition-instance {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+}
+.eda-composition-instance:hover,
+.eda-composition-instance[data-overridden] {
+  stroke: var(--ring);
+  stroke-dasharray: 2 3;
+}
+.eda-composition-instance[data-selected] {
+  stroke: var(--warning);
+  stroke-width: 1.5px;
+  stroke-dasharray: none;
+  cursor: move;
+}
+.eda-composition[data-mode="view"] [data-node] {
+  cursor: pointer;
+}
+.eda-composition-override {
+  padding: 6px 8px;
+  border-left: 2px solid var(--warning);
+  background: color-mix(in oklab, var(--warning) 7%, transparent);
+}
+.eda-composition-trace-rows {
+  width: 100%;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  border-collapse: collapse;
+}
+.eda-composition-trace-rows th,
+.eda-composition-trace-rows td {
+  padding: 2px 4px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+.eda-composition-trace-rows th {
+  color: var(--muted-foreground);
+  font-weight: 500;
+}

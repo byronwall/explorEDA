@@ -25,6 +25,7 @@ import type { FitTrace } from "../ScatterPlot/FitTraceBody";
 import type { MarginalTrace } from "../ScatterPlot/marginalPlan";
 import type { HexTrace } from "../ScatterPlot/hexPlan";
 import type { ContourTrace } from "../ScatterPlot/contourPlan";
+import type { CompositionTrace } from "../Composition/compositionTrace";
 
 /** A selected object. The owner's source resolves it against its current plan. */
 export interface TraceSelection {
@@ -126,7 +127,8 @@ export type ChartTrace =
   | GuideTrace
   | TitleTrace
   | FacetTrace
-  | LegendTrace;
+  | LegendTrace
+  | CompositionTrace;
 
 /** A planned legend entry that a chart owns, so the legend draws what the chart drew. */
 export interface PlannedLegendItem {

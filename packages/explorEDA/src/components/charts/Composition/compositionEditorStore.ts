@@ -4,6 +4,8 @@ export type CompositionMode = "edit" | "view";
 
 export interface CompositionSelection {
   elementId: string;
+  /** One repeat of a chart unit, edited apart from its template. */
+  instanceKey?: string;
 }
 
 interface EditorState {

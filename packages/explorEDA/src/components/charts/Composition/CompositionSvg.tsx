@@ -13,6 +13,7 @@ export function CompositionSvg({
   children,
   svgRef,
   offsets,
+  instanceOffset,
   ...props
 }: {
   scene: CompositionScene;
@@ -22,6 +23,13 @@ export function CompositionSvg({
   svgRef?: React.Ref<SVGSVGElement>;
   /** Temporary moves, such as during a drag, by element ID. */
   offsets?: Record<string, { dx: number; dy: number }>;
+  /** A temporary move of one repeat of a chart unit. */
+  instanceOffset?: {
+    elementId: string;
+    instanceKey: string;
+    dx: number;
+    dy: number;
+  };
 } & Omit<React.SVGProps<SVGSVGElement>, "scale" | "ref">) {
   // Nodes group by element, so moving one element is one transform.
   const groups: { elementId: string; nodes: SceneNode[] }[] = [];
@@ -57,9 +65,19 @@ export function CompositionSvg({
               offset ? `translate(${offset.dx} ${offset.dy})` : undefined
             }
           >
-            {nodes.map((node) => (
-              <SceneNodeView key={node.key} node={node} />
-            ))}
+            {nodes.map((node) =>
+              instanceOffset?.elementId === node.elementId &&
+              instanceOffset.instanceKey === node.instanceKey ? (
+                <g
+                  key={node.key}
+                  transform={`translate(${instanceOffset.dx} ${instanceOffset.dy})`}
+                >
+                  <SceneNodeView node={node} />
+                </g>
+              ) : (
+                <SceneNodeView key={node.key} node={node} />
+              )
+            )}
           </g>
         );
       })}
@@ -73,9 +91,11 @@ function SceneNodeView({ node }: { node: SceneNode }) {
     case "text":
       return (
         <text
+          data-node={node.key}
           fontSize={node.fontSize}
           fontWeight={node.fontWeight}
           fill={node.fill}
+          opacity={node.opacity}
           textAnchor={node.anchor}
         >
           {node.lines.map((line, index) => (
@@ -88,20 +108,24 @@ function SceneNodeView({ node }: { node: SceneNode }) {
     case "rect":
       return (
         <rect
+          data-node={node.key}
           x={node.x}
           y={node.y}
           width={node.width}
           height={node.height}
           fill={node.fill}
+          opacity={node.opacity}
         />
       );
     case "circle":
       return (
         <circle
+          data-node={node.key}
           cx={node.cx}
           cy={node.cy}
           r={node.r}
           fill={node.fill}
+          opacity={node.opacity}
           stroke={node.stroke}
           strokeWidth={node.stroke ? 1.25 : undefined}
         />
@@ -109,6 +133,7 @@ function SceneNodeView({ node }: { node: SceneNode }) {
     case "line":
       return (
         <line
+          data-node={node.key}
           x1={node.x1}
           y1={node.y1}
           x2={node.x2}
@@ -116,6 +141,7 @@ function SceneNodeView({ node }: { node: SceneNode }) {
           stroke={node.stroke}
           strokeWidth={node.strokeWidth}
           strokeDasharray={node.dash}
+          opacity={node.opacity}
         />
       );
   }
