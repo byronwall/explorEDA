@@ -18,6 +18,7 @@ import {
   type PathMark,
   type PointMark,
   type RepeatRule,
+  type StackMark,
   type StripMark,
   type SummaryMark,
   type UnitElement,
@@ -145,6 +146,12 @@ const MARK_TYPES = [
     label: "Band",
     tooltip:
       "A filled area between two fields along x, such as a forecast's 10th to 90th percentile. Layer several, widest first.",
+  },
+  {
+    value: "stack" as const,
+    label: "Stack",
+    tooltip:
+      "One column per repeat, its categories stacked from the bottom as shares of the repeat's total. Filtering the rows recomputes the total.",
   },
   {
     value: "summary" as const,
@@ -430,17 +437,19 @@ function MarksSection({
           }
         : first.type === "summary"
           ? { ...first, id, name: "Summary 2" }
-          : {
-              type: "point",
-              id,
-              name: "Points",
-              xScaleId: first.xScaleId,
-              yScaleId: first.yScaleId,
-              orderField: first.orderField,
-              radius: 3.5,
-              fill: first.type === "path" ? first.stroke : first.fill,
-              labelEvery: 0,
-            };
+          : first.type === "stack"
+            ? { ...first, id, name: "Stack 2" }
+            : {
+                type: "point",
+                id,
+                name: "Points",
+                xScaleId: first.xScaleId,
+                yScaleId: first.yScaleId,
+                orderField: first.orderField,
+                radius: 3.5,
+                fill: first.type === "path" ? first.stroke : first.fill,
+                labelEvery: 0,
+              };
     onChange([...unit.marks, added]);
   };
   return (
@@ -551,6 +560,12 @@ function MarkProperties({
             numericFields={numericFields}
             onChange={onChange}
             onEditScale={onEditScale}
+          />
+        ) : mark.type === "stack" ? (
+          <StackFields
+            mark={mark}
+            numericFields={numericFields}
+            onChange={onChange}
           />
         ) : mark.type === "summary" ? (
           <SummaryFields
@@ -664,6 +679,122 @@ function StripFields({
           onChange={(fill) => onChange({ fill })}
         />
       )}
+      <NumberSetting
+        label="Spacing"
+        min={0}
+        max={20}
+        value={mark.inset}
+        onChange={(inset) => onChange({ inset })}
+      />
+    </>
+  );
+}
+
+const STACK_ORDERS = [
+  {
+    value: "total" as const,
+    label: "Largest first",
+    tooltip:
+      "The category with the largest total across the whole graphic sits at the bottom. Reads every row, so filters never reorder or recolor.",
+  },
+  {
+    value: "label" as const,
+    label: "A–Z",
+    tooltip: "Categories stack in name order from the bottom",
+  },
+];
+
+function StackFields({
+  mark,
+  numericFields,
+  onChange,
+}: {
+  mark: StackMark;
+  numericFields: string[];
+  onChange: (patch: Partial<StackMark>) => void;
+}) {
+  const id = useId();
+  const profiles = useDataLayer((state) => state.fieldProfiles);
+  const categoryFields = profiles
+    .filter((profile) => profile.uniqueCount <= 60)
+    .map((profile) => profile.name);
+  return (
+    <>
+      <Label>Categories</Label>
+      <FieldSelector
+        label=""
+        placeholder="Category field"
+        value={mark.categoryField}
+        fields={categoryFields}
+        onChange={(categoryField) => onChange({ categoryField })}
+      />
+      <Label htmlFor={`${id}-aggregation`}>Value</Label>
+      <select
+        id={`${id}-aggregation`}
+        className="eda-composition-select"
+        value={mark.aggregation}
+        onChange={(event) => {
+          const aggregation = event.target.value as StackMark["aggregation"];
+          onChange({
+            aggregation,
+            measureField:
+              aggregation === "count"
+                ? undefined
+                : (mark.measureField ?? numericFields[0]),
+          });
+        }}
+      >
+        <option value="count">Count rows</option>
+        <option value="sum" disabled={!numericFields.length}>
+          Sum
+        </option>
+      </select>
+      {mark.aggregation === "sum" && (
+        <>
+          <Label>Of</Label>
+          <FieldSelector
+            label=""
+            placeholder="Measure"
+            value={mark.measureField ?? ""}
+            fields={numericFields}
+            onChange={(measureField) => onChange({ measureField })}
+          />
+        </>
+      )}
+      <span className="eda-setting-label">Height</span>
+      <Segmented
+        label={`${mark.name} height`}
+        value={mark.normalize}
+        options={[
+          {
+            value: true,
+            label: "100%",
+            tooltip:
+              "Every column fills the frame; segments show shares of each repeat's total",
+          },
+          {
+            value: false,
+            label: "Totals",
+            tooltip:
+              "Column height follows each repeat's total against the largest repeat; segments still show shares",
+          },
+        ]}
+        onChange={(normalize) => onChange({ normalize })}
+      />
+      <span className="eda-setting-label">Order</span>
+      <Segmented
+        label={`${mark.name} category order`}
+        value={mark.order}
+        options={STACK_ORDERS}
+        onChange={(order) => onChange({ order })}
+      />
+      <NumberSetting
+        label="Label from"
+        min={0}
+        max={200}
+        value={mark.labelMinHeight}
+        onChange={(labelMinHeight) => onChange({ labelMinHeight })}
+      />
       <NumberSetting
         label="Spacing"
         min={0}

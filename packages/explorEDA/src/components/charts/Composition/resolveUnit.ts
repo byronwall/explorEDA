@@ -13,6 +13,7 @@ import {
   type PathMark,
   type PointMark,
   type PositionScale,
+  type StackMark,
   type StripMark,
   type SummaryMark,
   type TimeInterval,
@@ -37,6 +38,8 @@ export interface CompositionData {
   column: (field: string) => Record<number, datum>;
   /** Repeats selected in viewing; the others fade. */
   selection?: { field: string; keys: Set<string> };
+  /** The largest repeat total per stack mark, set while a unit resolves. */
+  stackMaxTotal?: Map<string, number>;
 }
 
 export interface PositionBin {
@@ -85,6 +88,19 @@ export interface GlyphDatum {
   rowIds: number[];
   /** Numeric coordinates, for point marks. */
   point?: { x: number; y: number; xField: string; yField: string };
+  /** The segment's share of its repeat's total, for stack marks; the glyph's value is that share. */
+  stack?: {
+    count: number;
+    total: number;
+    /** Cumulative bounds as shares of the total, from the bottom. */
+    lower: number;
+    upper: number;
+    categoryField: string;
+    aggregation: "count" | "sum";
+    measureField?: string;
+    /** Every category in the denominator, with its count. */
+    contributors: { category: string; count: number }[];
+  };
   /** The group's quartiles, for summary marks; the glyph's value is the median. */
   summary?: SummaryStats & {
     groupField: string;
@@ -162,7 +178,12 @@ type ResolvedSummary = {
   y: NumericScale;
   value?: ValueScale;
 };
-type ResolvedMark = ResolvedStrip | ResolvedXy | ResolvedSummary;
+type ResolvedStack = { type: "stack"; mark: StackMark };
+type ResolvedMark =
+  | ResolvedStrip
+  | ResolvedXy
+  | ResolvedSummary
+  | ResolvedStack;
 
 /** One group of a summary mark in one repeat. */
 interface SummaryGroup {
@@ -186,6 +207,8 @@ export function resolveUnit(
       const value = scale(mark.valueScaleId);
       if (position?.kind === "position" && value?.kind === "value")
         marks.push({ type: "strip", mark, position, value });
+    } else if (mark.type === "stack") {
+      marks.push({ type: "stack", mark });
     } else if (mark.type === "summary") {
       const y = scale(mark.yScaleId);
       const value = scale(mark.valueScaleId ?? "");
@@ -210,6 +233,27 @@ export function resolveUnit(
   const summaries = marks.filter(
     (item): item is ResolvedSummary => item.type === "summary"
   );
+  const stacks = marks.filter(
+    (item): item is ResolvedStack => item.type === "stack"
+  );
+  // Stacks share one category order and color across every repeat.
+  const stacked = stacks.map(({ mark }) => stackCategories(mark, data));
+  if (stacks.length) {
+    const maxTotals = new Map<string, number>();
+    for (const { mark } of stacks) {
+      const column = data.column(mark.categoryField);
+      const measure = mark.measureField
+        ? data.column(mark.measureField)
+        : undefined;
+      for (const subset of subsets) {
+        let total = 0;
+        for (const rowIds of groupByCategory(column, subset.liveIds).values())
+          total += stackValue(mark, rowIds, measure);
+        maxTotals.set(mark.id, Math.max(maxTotals.get(mark.id) ?? 0, total));
+      }
+    }
+    data = { ...data, stackMaxTotal: maxTotals };
+  }
 
   // Summaries first: their quartiles set the y domain and the change colors.
   const summarized = subsets.map((subset) =>
@@ -509,6 +553,18 @@ export function resolveUnit(
               ))
       );
     }
+    stacks.forEach(({ mark }, markIndex) => {
+      nodes.push(
+        ...stackNodes(
+          unit,
+          override?.accent ? { ...mark, colors: [override.accent] } : mark,
+          subset,
+          stacked[markIndex]!,
+          frame,
+          data
+        )
+      );
+    });
     summarized[index]!.forEach((groups, markIndex) => {
       const { mark, y, value } = summaries[markIndex]!;
       const axis = numericAxis(y, domainFor(y, subset), [
@@ -541,6 +597,24 @@ export function resolveUnit(
         nodes.push(...axisNodes(unit, subset.key, first.position, bins, frame));
       } else if (xy) {
         nodes.push(...numericAxisNodes(unit, subset.key, xy, frame));
+      } else if (stacks[0] && stacks[0].mark.normalize) {
+        for (const share of [0, 0.25, 0.5, 0.75, 1])
+          nodes.push({
+            type: "text",
+            key: `${unit.id}:${subset.key}:axis:${share}`,
+            elementId: unit.id,
+            x: frame.x - 5,
+            lines: [
+              {
+                text: `${Math.round(share * 100)}%`,
+                y: frame.y + frame.height * (1 - share) + 3.5,
+              },
+            ],
+            fontSize: 9,
+            fontWeight: 400,
+            fill: MUTED_INK,
+            anchor: "end",
+          });
       } else if (summaries[0]) {
         // Group names under the frame, and the minute span beside it, so a
         // per-repeat scale still reads.
@@ -1106,6 +1180,170 @@ export function valueColorSigned(
     .domain([0, 1])
     .range([scale.center, end])
     .clamp(true)(share);
+}
+
+/** The categories a stack draws, in its order, with their graphic-wide totals. */
+interface StackCategory {
+  key: string;
+  index: number;
+  total: number;
+}
+
+function stackValue(
+  mark: StackMark,
+  rowIds: number[],
+  measure: Record<number, datum> | undefined
+) {
+  if (mark.aggregation === "count" || !measure) return rowIds.length;
+  let sum = 0;
+  for (const id of rowIds) sum += finiteNumber(measure[id]) ?? 0;
+  return sum;
+}
+
+/** Groups rows by category. */
+function groupByCategory(
+  column: Record<number, datum>,
+  ids: number[]
+): Map<string, number[]> {
+  const groups = new Map<string, number[]>();
+  for (const id of ids) {
+    const raw = column[id];
+    if (raw === null || raw === undefined || raw === "") continue;
+    const key = String(raw);
+    const list = groups.get(key);
+    if (list) list.push(id);
+    else groups.set(key, [id]);
+  }
+  return groups;
+}
+
+/**
+ * The category order of a stack, shared by every repeat so colors and
+ * positions line up across columns. It reads every row, so filters change
+ * shares but never reorder or recolor.
+ */
+function stackCategories(
+  mark: StackMark,
+  data: CompositionData
+): StackCategory[] {
+  const column = data.column(mark.categoryField);
+  const measure = mark.measureField
+    ? data.column(mark.measureField)
+    : undefined;
+  const groups = groupByCategory(column, data.allIds);
+  const categories = [...groups.entries()].map(([key, rowIds]) => ({
+    key,
+    total: stackValue(mark, rowIds, measure),
+  }));
+  categories.sort((a, b) =>
+    mark.order === "total"
+      ? b.total - a.total || compareLabels(a.key, b.key)
+      : compareLabels(a.key, b.key)
+  );
+  return categories.map((category, index) => ({ ...category, index }));
+}
+
+const shareFormat = new Intl.NumberFormat("en-US", {
+  style: "percent",
+  maximumFractionDigits: 1,
+});
+
+/**
+ * One column of stacked segments for a repeat. Shares divide each
+ * category's value by the repeat's total across every category it has
+ * rows for. An empty repeat draws nothing rather than invented shares.
+ */
+function stackNodes(
+  unit: UnitElement,
+  mark: StackMark,
+  subset: Subset,
+  categories: StackCategory[],
+  frame: Bounds,
+  data: CompositionData
+): SceneNode[] {
+  const column = data.column(mark.categoryField);
+  const measure = mark.measureField
+    ? data.column(mark.measureField)
+    : undefined;
+  const groups = groupByCategory(column, subset.liveIds);
+  const counts = categories
+    .map((category) => ({
+      category,
+      rowIds: groups.get(category.key) ?? [],
+      count: stackValue(mark, groups.get(category.key) ?? [], measure),
+    }))
+    .filter((item) => item.rowIds.length > 0);
+  const total = counts.reduce((sum, item) => sum + item.count, 0);
+  if (!total) return [];
+  const contributors = counts.map((item) => ({
+    category: item.category.key,
+    count: item.count,
+  }));
+  // Normalized columns fill the frame; otherwise height follows the total
+  // against the largest total across the repeats.
+  const columnHeight = mark.normalize
+    ? frame.height
+    : frame.height * (total / (data.stackMaxTotal?.get(mark.id) ?? total));
+  const nodes: SceneNode[] = [];
+  let lower = 0;
+  for (const item of counts) {
+    const share = item.count / total;
+    const upper = lower + share;
+    const top = frame.y + frame.height - upper * columnHeight;
+    const height = Math.max(0, share * columnHeight - mark.inset);
+    const fill = mark.colors[item.category.index % mark.colors.length]!;
+    const key = `${unit.id}:${subset.key}:${mark.id}:${item.category.key}`;
+    const glyph: GlyphDatum = {
+      instanceKey: subset.key,
+      markId: mark.id,
+      bin: { key: item.category.key, label: item.category.key },
+      value: share,
+      rowIds: item.rowIds,
+      stack: {
+        count: item.count,
+        total,
+        lower,
+        upper,
+        categoryField: mark.categoryField,
+        aggregation: mark.aggregation,
+        measureField: mark.measureField,
+        contributors,
+      },
+    };
+    nodes.push({
+      type: "rect",
+      key,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      x: frame.x,
+      y: top + mark.inset / 2,
+      width: frame.width,
+      height,
+      fill,
+      glyph,
+    });
+    if (height >= mark.labelMinHeight)
+      nodes.push({
+        type: "text",
+        key: `${key}:label`,
+        elementId: unit.id,
+        instanceKey: subset.key,
+        x: frame.x + 5,
+        lines: [
+          {
+            text: `${item.category.key} ${shareFormat.format(share)}`,
+            y: top + mark.inset / 2 + height / 2 + 3.5,
+          },
+        ],
+        fontSize: 10,
+        fontWeight: 600,
+        fill: INK,
+        anchor: "start",
+        halo: "#ffffff",
+      });
+    lower = upper;
+  }
+  return nodes;
 }
 
 function numericAxis(

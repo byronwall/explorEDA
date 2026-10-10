@@ -2399,3 +2399,153 @@ export const timeUseDashboard = dashboard("Time use", [
     layout(0, 13, 12, 5)
   ),
 ]);
+
+/**
+ * Deaths against media coverage: four normalized columns. Each stacks the
+ * fifteen causes as shares of that source's total, in one order and color
+ * across the columns, so the mortality column reads against the three
+ * outlets. Real 2023 figures from Our World in Data.
+ */
+export const mediaDeathsDashboard = dashboard("Media and deaths", [
+  {
+    ...base,
+    id: "media-deaths-composition",
+    type: "composition",
+    title: "What Americans die from, and what the news covers",
+    layout: layout(0, 0, 12, 9),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 960, height: 720, background: "#ffffff" },
+      scales: [],
+      calculations: [
+        {
+          id: "calc-1",
+          name: "Total",
+          aggregation: "sum",
+          field: "Count",
+          population: "repeat",
+          filters: "follow",
+        },
+      ],
+      overrides: [
+        {
+          unitId: "unit-1",
+          instanceKey: "Deaths",
+          dx: -40,
+          dy: 0,
+          emphasize: true,
+        },
+      ],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "What Americans die from, and what the news covers",
+          x: 32,
+          y: 26,
+          width: 896,
+          fontSize: 24,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "Each column stacks fifteen causes of death as shares of its own total: deaths in 2023 on the left, then articles that discussed each cause in three outlets. Homicide and terrorism fill the news; heart disease and cancer fill the death certificates.",
+          x: 32,
+          y: 58,
+          width: 896,
+          fontSize: 13,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Sources",
+          x: 108,
+          y: 128,
+          frame: { width: 150, height: 500 },
+          label: { show: true, width: 0, fontSize: 12, valueCalcId: "calc-1" },
+          axis: true,
+          marks: [
+            {
+              type: "stack",
+              id: "mark-1",
+              name: "Share of total",
+              categoryField: "Cause",
+              aggregation: "sum",
+              measureField: "Count",
+              normalize: true,
+              order: "total",
+              colors: [
+                "#4e79a7",
+                "#f28e2b",
+                "#e15759",
+                "#76b7b2",
+                "#59a14f",
+                "#edc948",
+                "#b07aa1",
+                "#ff9da7",
+                "#9c755f",
+                "#bab0ac",
+                "#1f77b4",
+                "#8c564b",
+                "#17becf",
+                "#bcbd22",
+                "#7f7f7f",
+              ],
+              labelMinHeight: 13,
+              inset: 1.5,
+            },
+          ],
+          repeat: {
+            field: "Source",
+            arrangement: "columns",
+            columns: 4,
+            gap: 56,
+            order: "label",
+            limit: 24,
+          },
+        },
+        {
+          id: "note-1",
+          kind: "annotation",
+          name: "Denominators",
+          text: "Deaths are deaths from these fifteen causes, not all deaths. Articles count pieces that mention a cause several times, not every story.",
+          x: 120,
+          y: 652,
+          anchor: { kind: "page" },
+          fontSize: 11,
+          color: "#5f6368",
+          leader: false,
+        },
+        {
+          id: "note-2",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: "Source: Our World in Data, media deaths analysis (CC BY). Deaths from the CDC; articles from Media Cloud, 2023. Accidents exclude drug overdoses. After the Our World in Data graphic.",
+          x: 32,
+          y: 692,
+          width: 896,
+          fontSize: 10,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
+    },
+  },
+  row("media-deaths-causes", "Rows by cause", "Cause", layout(0, 9, 6, 6)),
+  row("media-deaths-sources", "Rows by source", "Source", layout(6, 9, 6, 6)),
+  table(
+    "media-deaths-rows",
+    "Counts",
+    ["Source", "Cause", "Measure", "Count"],
+    layout(0, 15, 12, 5)
+  ),
+]);

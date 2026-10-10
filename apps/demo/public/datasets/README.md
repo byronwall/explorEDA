@@ -195,3 +195,18 @@ Four hundred respondents per year record minutes spent on twelve activities. A r
 ```sh
 node --experimental-strip-types apps/data-samples/time_use.ts apps/demo/public/datasets/time-use.csv
 ```
+
+## Deaths and media coverage, 2023
+
+- File: `media-deaths.csv`
+- Size: 60 rows and 5 fields
+- Demo: `?example=media-deaths`
+- Use: a normalized-stack composition, one column per source, with each cause's share of that source's total and an explainable denominator
+- Source: Our World in Data, [What Americans die from and the causes of death the US media reports on](https://ourworldindata.org/), analysis package `media-deaths-analysis-data.zip`. Deaths from the CDC; article counts from Media Cloud for The New York Times, The Washington Post, and Fox News.
+- License: CC BY (Our World in Data)
+
+Fifteen causes: the CDC's twelve most common leading causes plus drug overdoses and homicides, and terrorism from the Global Terrorism Index. The package's accident count excludes drug overdoses so they are not counted twice, and an article counts only when it mentions a cause several times. Each column's denominator is its source's total over these fifteen causes, not all deaths or all articles.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/media-deaths.ts
+```

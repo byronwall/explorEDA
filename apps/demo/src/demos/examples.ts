@@ -21,6 +21,7 @@ import {
   sparklinesDashboard,
   fanDashboard,
   timeUseDashboard,
+  mediaDeathsDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -42,6 +43,7 @@ import {
   TableProperties,
   AreaChart,
   LayoutGrid as GridIcon,
+  Columns3,
   CloudFog,
   Globe,
   Activity,
@@ -728,6 +730,21 @@ export const examples: ExampleData[] = [
     icon: GridIcon,
     data: "/datasets/time-use.csv",
     savedData: timeUseDashboard,
+  },
+  {
+    id: "media-deaths",
+    title: "What Americans die from, and what the news covers",
+    description:
+      "Four normalized columns: deaths in 2023, then the causes three outlets wrote about. Each column stacks fifteen causes as shares of its own total, in one order and color, with the denominator spelled out in every segment's trace.",
+    dataset: { rows: "60 source-cause counts", fields: 5, source: "Real" },
+    shows: [
+      "Normalized stacks",
+      "Explainable denominators",
+      "Shared category colors",
+    ],
+    icon: Columns3,
+    data: "/datasets/media-deaths.csv",
+    savedData: mediaDeathsDashboard,
   },
 ];
 

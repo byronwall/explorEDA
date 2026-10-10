@@ -20,8 +20,54 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
   const { unit, glyph, path, band, labelValue, guide, anchor } = trace;
   const point = glyph?.datum.point;
   const summary = glyph?.datum.summary;
+  const stack = glyph?.datum.stack;
   return (
     <div className="space-y-2" aria-label="Composition trace">
+      {glyph && stack && (
+        <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
+          <TraceReadout label="Share">
+            <TraceSwatch color={glyph.fill} />{" "}
+            {new Intl.NumberFormat("en-US", {
+              style: "percent",
+              maximumFractionDigits: 1,
+            }).format(glyph.datum.value)}{" "}
+            of this repeat's total
+          </TraceReadout>
+          <TraceReadout label="Numerator">
+            {formatCalcValue(stack.count, "number")}{" "}
+            {stack.aggregation === "count"
+              ? "rows"
+              : `as the sum of ${stack.measureField}`}{" "}
+            where {stack.categoryField} = {glyph.datum.bin.label}
+          </TraceReadout>
+          <TraceReadout label="Denominator">
+            {formatCalcValue(stack.total, "number")} across{" "}
+            {stack.contributors.length} categories in this repeat, after the
+            active filters. Selecting a category fades the others; it does not
+            leave the total.
+          </TraceReadout>
+          <TraceReadout label="Contributors">
+            {stack.contributors
+              .map(
+                (item) =>
+                  `${item.category} ${formatCalcValue(item.count, "number")}`
+              )
+              .join(" · ")}
+          </TraceReadout>
+          <TraceReadout label="Stacked">
+            from{" "}
+            {new Intl.NumberFormat("en-US", {
+              style: "percent",
+              maximumFractionDigits: 1,
+            }).format(stack.lower)}{" "}
+            to{" "}
+            {new Intl.NumberFormat("en-US", {
+              style: "percent",
+              maximumFractionDigits: 1,
+            }).format(stack.upper)}
+          </TraceReadout>
+        </TraceSection>
+      )}
       {glyph && summary && (
         <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
           <TraceReadout label="Median">
@@ -68,7 +114,7 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
           )}
         </TraceSection>
       )}
-      {glyph && !point && !summary && (
+      {glyph && !point && !summary && !stack && (
         <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
           <TraceReadout label="Value">
             <TraceSwatch color={glyph.fill} />{" "}
