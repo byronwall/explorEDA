@@ -358,6 +358,8 @@ Unit charts are built as waffle marks: the Titanic waffle ships as `?example=tit
 
 The unemployment streamgraph ships as `?example=unemployment-stream` from `apps/data-samples/prepare/unemployment-industries.ts`, fourteen industries stacked across 122 months: a spread stack can rest on a centered or wiggling baseline, and stack and path marks can draw smooth monotone curves, closing the path-curve gap noted above.
 
+Horizontal bar lengths, named below the cut line until a proof needed them, are built as bar marks for the population pyramids at `?example=population-pyramid` (`apps/data-samples/prepare/us-population.ts`): one bar per repeat or per category, counted, summed, or averaged, on one length axis shared across repeats, with one category mirrored leftward. Mark types now declare their capabilities through `isXyMark` and `markHasCategories`, so adding a mark no longer touches every type check.
+
 ## Milestone 6: Combine detail and overview frames in one unit
 
 Create a state-style comparison with an inset, then repeat that unit for several illustrative regions.

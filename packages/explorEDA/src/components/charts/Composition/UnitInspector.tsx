@@ -13,6 +13,7 @@ import {
   type BandMark,
   type DensityMark,
   type WaffleMark,
+  type BarMark,
   type FrameWindow,
   type InsetFrame,
   type InstanceOverride,
@@ -29,6 +30,7 @@ import {
   type StripMark,
   type SummaryMark,
   type UnitElement,
+  isXyMark,
 } from "./compositionTypes";
 import { convertMark, updateElement } from "./compositionEdits";
 import {
@@ -195,6 +197,12 @@ const MARK_TYPES = [
     label: "Stack",
     tooltip:
       "One column per repeat, its categories stacked from the bottom as shares of the repeat's total. Filtering the rows recomputes the total.",
+  },
+  {
+    value: "bar" as const,
+    label: "Bar",
+    tooltip:
+      "One bar per repeat, or per category, whose length is a count, sum, or average of the repeat's rows. One category can mirror leftward, as a population pyramid.",
   },
   {
     value: "waffle" as const,
@@ -575,12 +583,7 @@ function FrameSection({
                 onChange({
                   insets: insets.filter((item) => item.id !== inset.id),
                   marks: unit.marks.map((mark) =>
-                    mark.type !== "strip" &&
-                    mark.type !== "summary" &&
-                    mark.type !== "stack" &&
-                    mark.type !== "waffle" &&
-                    mark.type !== "density" &&
-                    mark.frameId === inset.id
+                    isXyMark(mark) && mark.frameId === inset.id
                       ? { ...mark, frameId: undefined }
                       : mark
                   ),
@@ -675,19 +678,21 @@ function MarksSection({
             ? { ...first, id, name: "Stack 2" }
             : first.type === "waffle"
               ? { ...first, id, name: "Waffle 2" }
-              : first.type === "density"
-                ? { ...first, id, name: "Density 2" }
-                : {
-                    type: "point",
-                    id,
-                    name: "Points",
-                    xScaleId: first.xScaleId,
-                    yScaleId: first.yScaleId,
-                    orderField: first.orderField,
-                    radius: 3.5,
-                    fill: first.type === "path" ? first.stroke : first.fill,
-                    labelEvery: 0,
-                  };
+              : first.type === "bar"
+                ? { ...first, id, name: "Bars 2" }
+                : first.type === "density"
+                  ? { ...first, id, name: "Density 2" }
+                  : {
+                      type: "point",
+                      id,
+                      name: "Points",
+                      xScaleId: first.xScaleId,
+                      yScaleId: first.yScaleId,
+                      orderField: first.orderField,
+                      radius: 3.5,
+                      fill: first.type === "path" ? first.stroke : first.fill,
+                      labelEvery: 0,
+                    };
     onChange([...unit.marks, added]);
   };
   return (
@@ -811,6 +816,12 @@ function MarkProperties({
           />
         ) : mark.type === "waffle" ? (
           <WaffleFields mark={mark} onChange={onChange} />
+        ) : mark.type === "bar" ? (
+          <BarFields
+            mark={mark}
+            numericFields={numericFields}
+            onChange={onChange}
+          />
         ) : mark.type === "stack" ? (
           <StackFields
             mark={mark}
@@ -1284,6 +1295,117 @@ function StackFields({
         max={20}
         value={mark.inset}
         onChange={(inset) => onChange({ inset })}
+      />
+    </>
+  );
+}
+
+function BarFields({
+  mark,
+  numericFields,
+  onChange,
+}: {
+  mark: BarMark;
+  numericFields: string[];
+  onChange: (patch: Partial<BarMark>) => void;
+}) {
+  const id = useId();
+  const profiles = useDataLayer((state) => state.fieldProfiles);
+  const categoryFields = profiles
+    .filter((profile) => profile.uniqueCount <= 24)
+    .map((profile) => profile.name);
+  return (
+    <>
+      <Label htmlFor={`${id}-aggregation`}>Length</Label>
+      <select
+        id={`${id}-aggregation`}
+        className="eda-composition-select"
+        value={mark.aggregation}
+        onChange={(event) => {
+          const aggregation = event.target.value as BarMark["aggregation"];
+          onChange({
+            aggregation,
+            measureField:
+              aggregation === "count"
+                ? undefined
+                : (mark.measureField ?? numericFields[0]),
+          });
+        }}
+      >
+        <option value="count">Count rows</option>
+        <option value="sum" disabled={!numericFields.length}>
+          Sum
+        </option>
+        <option value="average" disabled={!numericFields.length}>
+          Average
+        </option>
+      </select>
+      {mark.aggregation !== "count" && (
+        <>
+          <Label>Of</Label>
+          <FieldSelector
+            label=""
+            placeholder="Measure"
+            value={mark.measureField ?? ""}
+            fields={numericFields}
+            onChange={(measureField) => onChange({ measureField })}
+          />
+        </>
+      )}
+      <Label>Split by</Label>
+      <FieldSelector
+        label=""
+        placeholder="One bar per repeat"
+        value={mark.categoryField ?? ""}
+        allowClear
+        fields={categoryFields}
+        onChange={(categoryField) =>
+          onChange({
+            categoryField: categoryField || undefined,
+            mirror: categoryField ? mark.mirror : undefined,
+          })
+        }
+      />
+      {mark.categoryField && (
+        <>
+          <Label htmlFor={`${id}-mirror`}>Leftward</Label>
+          <Input
+            id={`${id}-mirror`}
+            placeholder="A category to mirror, or blank"
+            value={mark.mirror ?? ""}
+            onChange={(event) =>
+              onChange({ mirror: event.target.value || undefined })
+            }
+          />
+          <span className="eda-setting-label">Order</span>
+          <Segmented
+            label={`${mark.name} category order`}
+            value={mark.order}
+            options={STACK_ORDERS}
+            onChange={(order) => onChange({ order })}
+          />
+        </>
+      )}
+      <NumberSetting
+        label="Axis to"
+        min={0}
+        max={1e12}
+        value={mark.max ?? 0}
+        onChange={(max) => onChange({ max: max > 0 ? max : undefined })}
+      />
+      <NumberSetting
+        label="Spacing"
+        min={0}
+        max={20}
+        value={mark.inset}
+        onChange={(inset) => onChange({ inset })}
+      />
+      <NumberSetting
+        label="Label from"
+        min={0}
+        max={400}
+        value={mark.labelMinWidth}
+        onChange={(labelMinWidth) => onChange({ labelMinWidth })}
       />
     </>
   );

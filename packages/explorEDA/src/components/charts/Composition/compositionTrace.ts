@@ -9,6 +9,7 @@ import {
   type PositionScale,
   type UnitElement,
   type ValueScale,
+  isXyMark,
 } from "./compositionTypes";
 import type {
   AreaNode,
@@ -131,12 +132,7 @@ export function makeCompositionTraceSource(
       if (mark.type === "strip") {
         const position = scale(mark.positionScaleId);
         if (position?.kind === "position") fields.add(position.field);
-      } else if (
-        mark.type !== "summary" &&
-        mark.type !== "stack" &&
-        mark.type !== "waffle" &&
-        mark.type !== "density"
-      ) {
+      } else if (isXyMark(mark)) {
         for (const id of [mark.xScaleId, mark.yScaleId]) {
           const axis = scale(id);
           if (axis?.kind === "numeric") fields.add(axis.field);
@@ -162,6 +158,7 @@ export function makeCompositionTraceSource(
         const mark = unit.marks.find((item) => item.id === node.glyph!.markId);
         const strip = mark?.type === "strip" ? mark : undefined;
         const point = mark?.type === "point" ? mark : undefined;
+        const bar = mark?.type === "bar" ? mark : undefined;
         return {
           kind,
           id,
@@ -174,8 +171,11 @@ export function makeCompositionTraceSource(
           glyph: {
             datum: node.glyph!,
             markName: mark?.name ?? "Mark",
-            aggregation: strip?.aggregation ?? (point ? "row" : "count"),
-            measureField: strip?.measureField,
+            aggregation:
+              strip?.aggregation ??
+              bar?.aggregation ??
+              (point ? "row" : "count"),
+            measureField: strip?.measureField ?? bar?.measureField,
             fill: node.fill,
             position: scale(strip?.positionScaleId) as
               | PositionScale

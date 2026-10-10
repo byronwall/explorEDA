@@ -22,6 +22,8 @@ import {
   type PositionScale,
   type StackMark,
   type WaffleMark,
+  type BarMark,
+  type MarkAggregation,
   type StripMark,
   type SummaryMark,
   type TimeInterval,
@@ -140,6 +142,15 @@ export interface GlyphDatum {
     /** Every category in the denominator, with its count. */
     contributors: { category: string; count: number }[];
   };
+  /** The aggregate behind a bar; the glyph's value is its signed length in the measure. */
+  bar?: {
+    aggregation: MarkAggregation;
+    measureField?: string;
+    categoryField?: string;
+    category?: string;
+    /** Drawn leftward from the baseline. */
+    mirrored: boolean;
+  };
   /** The cell's place in a waffle; the glyph's value is the rows the cell stands for. */
   waffle?: {
     /** This cell's number within its category, from one. */
@@ -249,6 +260,7 @@ type ResolvedSummary = {
 };
 type ResolvedStack = { type: "stack"; mark: StackMark; x?: NumericScale };
 type ResolvedWaffle = { type: "waffle"; mark: WaffleMark };
+type ResolvedBar = { type: "bar"; mark: BarMark };
 type ResolvedDensity = { type: "density"; mark: DensityMark; x: NumericScale };
 type ResolvedMark =
   | ResolvedStrip
@@ -256,6 +268,7 @@ type ResolvedMark =
   | ResolvedSummary
   | ResolvedStack
   | ResolvedWaffle
+  | ResolvedBar
   | ResolvedDensity;
 
 /** One group of a summary mark in one repeat. */
@@ -289,6 +302,8 @@ export function resolveUnit(
       });
     } else if (mark.type === "waffle") {
       marks.push({ type: "waffle", mark });
+    } else if (mark.type === "bar") {
+      marks.push({ type: "bar", mark });
     } else if (mark.type === "density") {
       const x = scale(mark.xScaleId);
       if (x?.kind === "numeric") marks.push({ type: "density", mark, x });
@@ -326,6 +341,38 @@ export function resolveUnit(
   const waffles = marks.filter(
     (item): item is ResolvedWaffle => item.type === "waffle"
   );
+  const bars = marks.filter((item): item is ResolvedBar => item.type === "bar");
+  // Bars share one category order and one length axis across every repeat.
+  const barred = bars.map(({ mark }) =>
+    mark.categoryField
+      ? stackCategories(
+          {
+            categoryField: mark.categoryField,
+            aggregation: mark.aggregation === "sum" ? "sum" : "count",
+            measureField: mark.measureField,
+            order: mark.order,
+          },
+          data
+        )
+      : []
+  );
+  const barAxes = bars.map(({ mark }, markIndex) => {
+    let longest = 0;
+    for (const subset of subsets)
+      for (const bar of barValues(
+        mark,
+        windowed(subset, unit.window, data),
+        barred[markIndex]!,
+        data
+      ))
+        longest = Math.max(longest, Math.abs(bar.value));
+    const max =
+      mark.max ??
+      scaleLinear().domain([0, longest]).nice().domain()[1] ??
+      1 ??
+      1;
+    return { mark, domain: [mark.mirror ? -max : 0, max] as [number, number] };
+  });
   // Stacks and waffles share one category order and color across every repeat.
   const stacked = stacks.map(({ mark }) => stackCategories(mark, data));
   const waffled = waffles.map(({ mark }) =>
@@ -719,24 +766,37 @@ export function resolveUnit(
               [frame.y + frame.height, frame.y]
             ),
           }
-        : spread?.x
+        : barAxes[0]
           ? {
-              x: axisFor(spread.x, subset, [frame.x, frame.x + frame.width]),
-              // A stacked area's y is the share of each x's total, or the
-              // total. A stream's values float off zero, so it has no y ticks.
+              // Bars share one length axis; their height has no scale.
+              x: numericAxis(BAR_SCALE, barAxes[0].domain, [
+                frame.x,
+                frame.x + frame.width,
+              ]),
               y: numericAxis(
-                spread.mark.normalize
-                  ? SHARE_SCALE
-                  : spread.mark.baseline && spread.mark.baseline !== "zero"
-                    ? { ...TOTAL_SCALE, ticks: "none" }
-                    : TOTAL_SCALE,
-                spread.mark.normalize
-                  ? [0, 1]
-                  : [0, data.stackMaxTotal?.get(spread.mark.id) ?? 1],
+                DENSITY_SCALE,
+                [0, 1],
                 [frame.y + frame.height, frame.y]
               ),
             }
-          : undefined;
+          : spread?.x
+            ? {
+                x: axisFor(spread.x, subset, [frame.x, frame.x + frame.width]),
+                // A stacked area's y is the share of each x's total, or the
+                // total. A stream's values float off zero, so it has no y ticks.
+                y: numericAxis(
+                  spread.mark.normalize
+                    ? SHARE_SCALE
+                    : spread.mark.baseline && spread.mark.baseline !== "zero"
+                      ? { ...TOTAL_SCALE, ticks: "none" }
+                      : TOTAL_SCALE,
+                  spread.mark.normalize
+                    ? [0, 1]
+                    : [0, data.stackMaxTotal?.get(spread.mark.id) ?? 1],
+                  [frame.y + frame.height, frame.y]
+                ),
+              }
+            : undefined;
     const drawAxis = unit.axis && (axisPerUnit || index === subsets.length - 1);
     // Grid lines sit under the marks.
     if (xy && unit.axis)
@@ -877,8 +937,24 @@ export function resolveUnit(
         ...waffleNodes(
           unit,
           override?.accent ? { ...mark, colors: [override.accent] } : mark,
-          subset,
+          windowed(subset, unit.window, data),
           waffled[markIndex]!,
+          frame,
+          data
+        )
+      );
+    });
+    bars.forEach(({ mark }, markIndex) => {
+      nodes.push(
+        ...barNodes(
+          unit,
+          override?.accent ? { ...mark, colors: [override.accent] } : mark,
+          windowed(subset, unit.window, data),
+          barred[markIndex]!,
+          numericAxis(BAR_SCALE, barAxes[markIndex]!.domain, [
+            frame.x,
+            frame.x + frame.width,
+          ]),
           frame,
           data
         )
@@ -1160,6 +1236,17 @@ function unionBounds(instances: ResolvedInstance[], unit: UnitElement) {
 }
 
 /** A test for rows inside a frame's window, by the window field's value. */
+/** The subset's live rows inside the unit's display window, when it has one. */
+function windowed(
+  subset: Subset,
+  window: FrameWindow | undefined,
+  data: CompositionData
+): Subset {
+  if (!window) return subset;
+  const inside = windowTest(window, data);
+  return { ...subset, liveIds: subset.liveIds.filter(inside) };
+}
+
 export function windowTest(window: FrameWindow, data: CompositionData) {
   const column = data.column(window.field);
   const min = window.min?.trim() ? readNumber(window.min) : undefined;
@@ -1254,7 +1341,7 @@ function compareLabels(a: string, b: string) {
 }
 
 function aggregate(
-  mark: StripMark,
+  mark: Pick<StripMark, "aggregation">,
   rowIds: number[],
   measure: Record<number, datum> | undefined
 ) {
@@ -1934,6 +2021,155 @@ function waffleNodes(
   return nodes;
 }
 
+/** The stand-in x scale of bars: lengths from zero, or about zero when one mirrors. */
+const BAR_SCALE: NumericScale = {
+  id: "bar-length",
+  kind: "numeric",
+  name: "Length",
+  field: "length",
+  domain: "shared",
+  zero: true,
+  nice: false,
+};
+
+interface BarValue {
+  category?: string;
+  index: number;
+  rowIds: number[];
+  /** The aggregate, negative when the category mirrors. */
+  value: number;
+}
+
+/** A repeat's bars: one per present category in the shared order, or one for all its rows. */
+function barValues(
+  mark: BarMark,
+  subset: Subset,
+  categories: StackCategory[],
+  data: CompositionData
+): BarValue[] {
+  const measure = mark.measureField
+    ? data.column(mark.measureField)
+    : undefined;
+  const groups = mark.categoryField
+    ? groupByCategory(data.column(mark.categoryField), subset.liveIds)
+    : new Map([["", subset.liveIds]]);
+  const list = mark.categoryField
+    ? categories.map((category) => ({
+        category: category.key as string | undefined,
+        index: category.index,
+        rowIds: groups.get(category.key) ?? [],
+      }))
+    : [{ category: undefined, index: 0, rowIds: subset.liveIds }];
+  const bars: BarValue[] = [];
+  for (const item of list) {
+    if (!item.rowIds.length) continue;
+    const value = aggregate(mark, item.rowIds, measure);
+    if (value === undefined) continue;
+    const mirrored = mark.mirror !== undefined && item.category === mark.mirror;
+    bars.push({ ...item, value: mirrored ? -value : value });
+  }
+  return bars;
+}
+
+const compactFormat = new Intl.NumberFormat("en-US", {
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
+
+/**
+ * One repeat's bars from the baseline: the mirrored category takes the
+ * frame's full height leftward, and the rest share the height rightward.
+ */
+function barNodes(
+  unit: UnitElement,
+  mark: BarMark,
+  subset: Subset,
+  categories: StackCategory[],
+  axis: NumericAxis,
+  frame: Bounds,
+  data: CompositionData
+): SceneNode[] {
+  const bars = barValues(mark, subset, categories, data);
+  if (!bars.length) return [];
+  const rightward = bars.filter((bar) => bar.value >= 0);
+  const rows = Math.max(1, rightward.length);
+  const height = Math.max(1, (frame.height - mark.inset * (rows - 1)) / rows);
+  const baseline = numericPixel(axis, 0);
+  const nodes: SceneNode[] = [];
+  let row = 0;
+  for (const bar of bars) {
+    const mirrored = bar.value < 0;
+    const end = numericPixel(axis, bar.value);
+    const y = mirrored ? frame.y : frame.y + row * (height + mark.inset);
+    if (!mirrored) row += 1;
+    const barHeight = mirrored ? frame.height : height;
+    const key = `${unit.id}:${subset.key}:${mark.id}:${bar.category ?? "all"}`;
+    const fill = mark.colors[bar.index % mark.colors.length]!;
+    nodes.push({
+      type: "rect",
+      key,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      x: Math.min(baseline, end),
+      y,
+      width: Math.abs(end - baseline),
+      height: barHeight,
+      fill,
+      glyph: {
+        instanceKey: subset.key,
+        markId: mark.id,
+        bin: {
+          key: bar.category ?? subset.key,
+          label: bar.category ?? subset.label,
+        },
+        value: bar.value,
+        rowIds: bar.rowIds,
+        bar: {
+          aggregation: mark.aggregation,
+          measureField: mark.measureField,
+          categoryField: mark.categoryField,
+          category: bar.category,
+          mirrored,
+        },
+      },
+    });
+    if (
+      mark.labelMinWidth > 0 &&
+      Math.abs(end - baseline) >= mark.labelMinWidth
+    )
+      nodes.push({
+        type: "text",
+        key: `${key}:label`,
+        elementId: unit.id,
+        instanceKey: subset.key,
+        x: mirrored ? end - 4 : end + 4,
+        lines: [
+          {
+            text: compactFormat.format(Math.abs(bar.value)),
+            y: y + barHeight / 2 + 3.5,
+          },
+        ],
+        fontSize: 10,
+        fontWeight: 400,
+        fill: MUTED_INK,
+        anchor: mirrored ? "end" : "start",
+      });
+  }
+  // The baseline rule, over the bars.
+  nodes.push({
+    type: "line",
+    key: `${unit.id}:${subset.key}:${mark.id}:baseline`,
+    elementId: unit.id,
+    x1: baseline,
+    x2: baseline,
+    y1: frame.y,
+    y2: frame.y + frame.height,
+    stroke: INK,
+    strokeWidth: 1,
+  });
+  return nodes;
+}
+
 /** The stand-in y scale of a density: no ticks, the frame's height is the peak. */
 const DENSITY_SCALE: NumericScale = {
   id: "density-height",
@@ -2363,6 +2599,19 @@ export function markCategories(
   }
   if (mark.type === "stack")
     return stackCategories(mark, data).map((category) => ({
+      key: category.key,
+      color: mark.colors[category.index % mark.colors.length]!,
+    }));
+  if (mark.type === "bar" && mark.categoryField)
+    return stackCategories(
+      {
+        categoryField: mark.categoryField,
+        aggregation: mark.aggregation === "sum" ? "sum" : "count",
+        measureField: mark.measureField,
+        order: mark.order,
+      },
+      data
+    ).map((category) => ({
       key: category.key,
       color: mark.colors[category.index % mark.colors.length]!,
     }));
@@ -2885,6 +3134,8 @@ const plainTickFormat = new Intl.NumberFormat("en-US", {
 /** Years read as "2016", not "2,016"; other numbers keep their separators. */
 function formatTick(axis: NumericAxis, value: number) {
   if (axis.scale.id === SHARE_SCALE.id) return `${Math.round(value * 100)}%`;
+  if (axis.scale.id === BAR_SCALE.id)
+    return compactFormat.format(Math.abs(value));
   if (axis.dates) return formatDateTick(axis, value);
   return /year|\byr\b/i.test(axis.scale.field) || /year/i.test(axis.scale.name)
     ? plainTickFormat.format(value)

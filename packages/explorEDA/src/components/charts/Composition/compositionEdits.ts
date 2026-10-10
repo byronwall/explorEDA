@@ -14,8 +14,10 @@ import {
   type PathMark,
   type PointMark,
   type PositionScale,
+  isXyMark,
   type StackMark,
   type WaffleMark,
+  type BarMark,
   type SummaryMark,
   STACK_COLORS,
   type UnitElement,
@@ -111,7 +113,7 @@ export function resetOverride(
 /** The one color a mark carries over when it changes type. */
 function markColor(mark: MarkDefinition) {
   if (mark.type === "path") return mark.stroke;
-  if (mark.type === "stack" || mark.type === "waffle")
+  if (mark.type === "stack" || mark.type === "waffle" || mark.type === "bar")
     return mark.colors[0] ?? "#1f2328";
   if (mark.type === "density") return mark.fill;
   return mark.fill;
@@ -182,6 +184,30 @@ export function convertMark(
     };
     return updateElement<UnitElement>(definition, unit.id, {
       marks: unit.marks.map((item) => (item.id === markId ? stack : item)),
+    });
+  }
+  if (type === "bar") {
+    const measure = fields.find((item) => item.dataType === "numeric")?.name;
+    const categoryField = fields.find(
+      (item) =>
+        item.dataType !== "numeric" &&
+        item.uniqueCount >= 2 &&
+        item.uniqueCount <= 6
+    )?.name;
+    const bar: BarMark = {
+      type: "bar",
+      id: mark.id,
+      name: mark.name,
+      aggregation: measure ? "sum" : "count",
+      measureField: measure,
+      categoryField,
+      order: "label",
+      colors: categoryField ? STACK_COLORS : [markColor(mark)],
+      inset: 1,
+      labelMinWidth: 24,
+    };
+    return updateElement<UnitElement>(definition, unit.id, {
+      marks: unit.marks.map((item) => (item.id === markId ? bar : item)),
     });
   }
   if (type === "waffle") {
@@ -292,12 +318,7 @@ export function convertMark(
     // A sibling x–y mark already names the scales; otherwise take the data's.
     const sibling = unit.marks.find(
       (item): item is PointMark | PathMark | BandMark =>
-        item.type !== "strip" &&
-        item.type !== "summary" &&
-        item.type !== "stack" &&
-        item.type !== "waffle" &&
-        item.type !== "density" &&
-        item.id !== markId
+        isXyMark(item) && item.id !== markId
     );
     let xScaleId = sibling?.xScaleId;
     let yScaleId = sibling?.yScaleId;
