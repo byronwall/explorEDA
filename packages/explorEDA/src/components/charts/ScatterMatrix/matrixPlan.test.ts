@@ -12,6 +12,7 @@ import {
   type ScatterMatrixSettings,
 } from "./definition";
 import { sortedBoxStats } from "./matrixCells";
+import { findMatrixTraceRow, resolveMatrixTrace } from "./matrixTrace";
 import { OTHER_LABEL } from "./matrixBands";
 import {
   brushFilters,
@@ -473,5 +474,48 @@ describe("planScatterMatrix", () => {
       0
     );
     expect(counted).toBe(342);
+  });
+
+  it("traces a row through every field and a cell's rows", () => {
+    const filters: Filter[] = [
+      { type: "value", field: "species", values: ["Gentoo"] },
+    ];
+    const plan = planScatterMatrix({
+      settings: settings(FIELDS, filters),
+      snapshot,
+      width: 800,
+      height: 800,
+    });
+    expect(findMatrixTraceRow(plan, 3)).toEqual({
+      kind: "matrix-row",
+      id: "row:3",
+    });
+    // Row 3 is the Adelie penguin with no measurements and no sex.
+    const row = resolveMatrixTrace(
+      plan,
+      snapshot,
+      filters,
+      "r",
+      "matrix-row",
+      "row:3"
+    );
+    expect(row?.kind).toBe("matrix-row");
+    if (row?.kind !== "matrix-row") {
+      return;
+    }
+    expect(row.selected).toBe(false);
+    expect(row.drawnIn).toBe(0);
+    expect(row.pointCells).toBe(5);
+    expect(row.values[0]!.position).toBe("no place on this axis");
+    expect(row.values[2]!.passes).toBe(false);
+    const cell = resolveMatrixTrace(
+      plan,
+      snapshot,
+      filters,
+      "r",
+      "matrix-cell",
+      "1:0"
+    );
+    expect(cell?.kind === "matrix-cell" && cell.missing).toEqual([2, 2]);
   });
 });

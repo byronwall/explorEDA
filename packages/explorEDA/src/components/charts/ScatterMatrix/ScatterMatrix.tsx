@@ -4,11 +4,26 @@ import type { Filter } from "@/types/FilterTypes";
 import {
   useCallback,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
+  type KeyboardEvent,
   type PointerEvent,
 } from "react";
+import {
+  useChartTrace,
+  useChartTraceApi,
+  useTraceRevision,
+  useTraceSource,
+} from "../trace/ChartTraceScope";
+import type { TraceSource } from "../trace/traceTypes";
+import {
+  cellKindName,
+  findMatrixTraceRow,
+  matrixTraceTargets,
+  resolveMatrixTrace,
+} from "./matrixTrace";
 import { ChartMessage } from "../ChartMessage";
 import { ChartReadout } from "../ChartReadout";
 import {
@@ -110,6 +125,11 @@ export function ScatterMatrix({
     index: number;
   } | null>(null);
   const [focused, setFocused] = useState(false);
+  const [hoverCell, setHoverCell] = useState<string | null>(null);
+  const owner = useId();
+  const revision = useTraceRevision(settings);
+  const trace = useChartTrace();
+  const traceApi = useChartTraceApi();
 
   // The status line sits under the scrolling plot, so it never scrolls away.
   const plotHeight = Math.max(1, height - STATUS_LINE_HEIGHT);
@@ -237,6 +257,37 @@ export function ScatterMatrix({
   }, [plan]);
   useEffect(() => () => cancelAnimationFrame(frame.current), []);
 
+  const source = useMemo(
+    (): TraceSource => ({
+      role: "chart",
+      revision,
+      resolve: (kind, id) =>
+        resolveMatrixTrace(
+          plan,
+          snapshot,
+          settings.filters,
+          revision,
+          kind,
+          id
+        ),
+      findRow: (id) => findMatrixTraceRow(plan, id),
+      targets: () => matrixTraceTargets(plan),
+    }),
+    [plan, snapshot, settings.filters, revision]
+  );
+  useTraceSource(owner, source);
+  const inspect = useCallback(
+    (kind: string, id: string) => traceApi?.inspect(owner, kind, id),
+    [owner, traceApi]
+  );
+  const traced =
+    trace?.selection?.owner === owner ? trace.selection : undefined;
+  const tracedIndex =
+    traced?.kind === "matrix-row"
+      ? plan.liveIds.indexOf(Number(traced.id.replace("row:", "")))
+      : -1;
+  const tracedCell = traced?.kind === "matrix-cell" ? traced.id : undefined;
+
   const setFilters = useCallback(
     (next: Filter[]) => {
       cancelAnimationFrame(frame.current);
@@ -288,10 +339,32 @@ export function ScatterMatrix({
   };
 
   const startDrag = (event: PointerEvent<SVGRectElement>, cell: MatrixCell) => {
-    if (event.button !== 0 || event.altKey) {
+    if (event.button !== 0) {
+      return;
+    }
+    // Alt-click traces the point under the pointer, or else the cell.
+    if (event.altKey) {
+      event.preventDefault();
+      const [x, y] = local(event);
+      const index =
+        cell.kind === "points" ? nearestRow(plan, cell, x, y) : undefined;
+      if (index !== undefined) {
+        inspect("matrix-row", `row:${plan.liveIds[index]}`);
+      } else {
+        inspect("matrix-cell", cell.id);
+      }
+      return;
+    }
+    // Text and name cells hold no marks: a click there is empty space.
+    if (cell.kind === "correlation" || cell.kind === "label") {
+      if (settings.filters.length) {
+        setFilters([]);
+      }
       return;
     }
     event.preventDefault();
+    // Keep keyboard focus on the cell, so Escape clears what the drag sets.
+    event.currentTarget.focus({ preventScroll: true });
     event.currentTarget.setPointerCapture?.(event.pointerId);
     const point = local(event);
     setHovered(null);
@@ -319,7 +392,12 @@ export function ScatterMatrix({
       }
       return;
     }
-    if (event.buttons || cell.kind !== "points") {
+    if (event.buttons) {
+      return;
+    }
+    setHoverCell(cell.id);
+    if (cell.kind !== "points") {
+      setHovered(null);
       return;
     }
     const [x, y] = local(event);
@@ -408,8 +486,23 @@ export function ScatterMatrix({
     !narrow &&
     !facetIds &&
     (plan.hasSelection
-      ? "Drag in a cell for a new selection, click empty space to clear"
-      : "Drag in a cell to select, click a bar to select its values");
+      ? "Drag in a cell for a new selection, click empty space or press Esc to clear"
+      : "Drag in a cell to select, click a mark to select its values, Alt-click to trace");
+
+  const cellName = (cell: MatrixCell) =>
+    cell.row === cell.column
+      ? `${plan.fields[cell.column]!.label} distribution`
+      : `${plan.fields[cell.column]!.label} by ${plan.fields[cell.row]!.label}`;
+  const cellKey = (event: KeyboardEvent<SVGRectElement>, cell: MatrixCell) => {
+    if (event.altKey && event.key === "Enter") {
+      event.preventDefault();
+      inspect("matrix-cell", cell.id);
+    } else if (event.key === "Escape" && settings.filters.length) {
+      event.preventDefault();
+      event.stopPropagation();
+      setFilters([]);
+    }
+  };
 
   return (
     <div
@@ -419,6 +512,7 @@ export function ScatterMatrix({
       onPointerLeave={() => {
         setFocused(false);
         setHovered(null);
+        setHoverCell(null);
       }}
     >
       <div className="overflow-auto" style={{ width, height: plotHeight }}>
@@ -593,43 +687,77 @@ export function ScatterMatrix({
                 )
               );
             })}
-            {hoveredId !== undefined &&
+            {[
+              tracedIndex >= 0 && { index: tracedIndex, traced: true },
+              hovered && { index: hovered.index, traced: false },
+            ].map(
+              (ring) =>
+                ring &&
+                plan.cells
+                  .filter((cell) => cell.kind === "points")
+                  .map((cell) => {
+                    const point = cellPoint(plan, cell, ring.index);
+                    if (
+                      !Number.isFinite(point.x) ||
+                      !Number.isFinite(point.y)
+                    ) {
+                      return null;
+                    }
+                    return (
+                      <circle
+                        key={`${ring.traced ? "trace" : "hover"}-${cell.id}`}
+                        cx={cell.x + point.x}
+                        cy={cell.y + point.y}
+                        r={plan.pointRadius + (ring.traced ? 4 : 3)}
+                        fill="none"
+                        stroke={
+                          ring.traced ? "var(--primary)" : "var(--foreground)"
+                        }
+                        strokeWidth={ring.traced ? 2 : 1.5}
+                        pointerEvents="none"
+                      />
+                    );
+                  })
+            )}
+            {tracedCell &&
               plan.cells
-                .filter((cell) => cell.kind === "points")
-                .map((cell) => {
-                  const point = cellPoint(plan, cell, hovered!.index);
-                  if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) {
-                    return null;
-                  }
-                  return (
-                    <circle
-                      key={`hover-${cell.id}`}
-                      cx={cell.x + point.x}
-                      cy={cell.y + point.y}
-                      r={plan.pointRadius + 3}
-                      fill="none"
-                      stroke="var(--foreground)"
-                      strokeWidth={1.5}
-                      pointerEvents="none"
-                    />
-                  );
-                })}
+                .filter((cell) => cell.id === tracedCell)
+                .map((cell) => (
+                  <rect
+                    key="traced-cell"
+                    x={cell.x - 1.5}
+                    y={cell.y - 1.5}
+                    width={size + 3}
+                    height={size + 3}
+                    fill="none"
+                    stroke="var(--primary)"
+                    strokeWidth={2}
+                    rx={2}
+                    pointerEvents="none"
+                  />
+                ))}
             {plan.cells.map((cell) =>
-              cell.kind === "blank" ||
-              cell.kind === "label" ||
-              cell.kind === "correlation" ? null : (
+              cell.kind === "blank" ? null : (
                 <rect
                   key={`hit-${cell.id}`}
+                  tabIndex={0}
+                  role="img"
+                  aria-label={`${cellName(cell)}: ${cellKindName(cell.kind)}, ${cell.n.toLocaleString()} rows`}
+                  aria-description="Alt-Enter traces this cell. Escape clears the matrix's selection."
+                  onKeyDown={(event) => cellKey(event, cell)}
                   x={cell.x}
                   y={cell.y}
                   width={size}
                   height={size}
                   fill="transparent"
-                  className={
+                  className={`outline-none focus-visible:stroke-[var(--ring)] ${
                     hoveredCell?.id === cell.id
                       ? "cursor-pointer"
-                      : "cursor-crosshair"
-                  }
+                      : cell.kind === "correlation" || cell.kind === "label"
+                        ? "cursor-default"
+                        : "cursor-crosshair"
+                  }`}
+                  strokeWidth={2}
                   data-cell={cell.id}
                   onPointerDown={(event) => startDrag(event, cell)}
                   onPointerMove={(event) => moveDrag(event, cell)}
@@ -652,6 +780,13 @@ export function ScatterMatrix({
         right={settings.margin.right}
         bottom={settings.margin.bottom}
       />
+      {!hovered && !drag && hoverCell && (
+        <CellReadout
+          cell={plan.cells.find((cell) => cell.id === hoverCell)}
+          plan={plan}
+          name={cellName}
+        />
+      )}
       {hoveredCell && hoveredId !== undefined && !drag && (
         <ChartReadout fallbackClassName="eda-chart-readout-inline">
           {[
@@ -1171,5 +1306,47 @@ function DensityCell({ cell, plan }: { cell: MatrixCell; plan: MatrixPlan }) {
         />
       )}
     </>
+  );
+}
+
+/** The hovered cell's name, rows, and any field that leaves rows out. */
+function CellReadout({
+  cell,
+  plan,
+  name,
+}: {
+  cell: MatrixCell | undefined;
+  plan: MatrixPlan;
+  name: (cell: MatrixCell) => string;
+}) {
+  if (!cell || cell.kind === "blank") {
+    return null;
+  }
+  const live = plan.liveIds.length;
+  const fields =
+    cell.row === cell.column
+      ? [plan.fields[cell.column]!]
+      : [plan.fields[cell.column]!, plan.fields[cell.row]!];
+  return (
+    <ChartReadout fallbackClassName="eda-chart-readout-inline">
+      <span className="eda-readout-item">
+        <span>{name(cell)}</span>
+        <b>{cellKindName(cell.kind)}</b>
+      </span>
+      <span className="eda-readout-item">
+        <span>Rows</span>
+        <b>
+          {cell.n.toLocaleString()} of {live.toLocaleString()}
+        </b>
+      </span>
+      {fields
+        .filter((field) => field.valid < live)
+        .map((field) => (
+          <span key={field.field} className="eda-readout-item">
+            <span>Missing {field.label}</span>
+            <b>{(live - field.valid).toLocaleString()}</b>
+          </span>
+        ))}
+    </ChartReadout>
   );
 }
