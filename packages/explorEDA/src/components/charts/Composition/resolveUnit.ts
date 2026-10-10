@@ -10,6 +10,9 @@ import {
   INK,
   type CompositionDefinition,
   type BandMark,
+  type DensityMark,
+  type FrameWindow,
+  type InsetFrame,
   type InstanceOverride,
   type MarkDefinition,
   type NumericScale,
@@ -18,6 +21,12 @@ import {
   type PointMark,
   type PositionScale,
   type StackMark,
+  type WaffleMark,
+  type BarMark,
+  type SpanMark,
+  type HorizonMark,
+  type MarkAggregation,
+  type RankOrder,
   type StripMark,
   type SummaryMark,
   type TimeInterval,
@@ -27,10 +36,14 @@ import {
 import type {
   AreaNode,
   Bounds,
+  CircleNode,
   PathNode,
   SceneNode,
+  TextNode,
 } from "./resolveComposition";
 import { evaluateCalc, type CalcResult } from "./calculations";
+import { dodgePositions } from "./labelDodge";
+import { swarmOffsets } from "./swarm";
 import { MISSING, orderedRows } from "./ordering";
 
 /** The rows a composition draws from. */
@@ -44,6 +57,9 @@ export interface CompositionData {
   selection?: { field: string; keys: Set<string> };
   /** The largest repeat total per stack mark, set while a unit resolves. */
   stackMaxTotal?: Map<string, number>;
+  /** Each ranked mark's ranks per repeat, keyed `markId|repeatKey`, and the deepest rank per mark. */
+  ranks?: Map<string, Record<number, number>>;
+  rankMax?: Map<string, number>;
 }
 
 export interface PositionBin {
@@ -134,6 +150,39 @@ export interface GlyphDatum {
     /** Every category in the denominator, with its count. */
     contributors: { category: string; count: number }[];
   };
+  /** The ends of a span; the glyph's value is its length in the x field's units. */
+  span?: {
+    startField: string;
+    endField: string;
+    start: number;
+    end?: number;
+    /** The row has no end, so the span runs to the frame's edge. */
+    open: boolean;
+    category?: string;
+  };
+  /** The aggregate behind a bar; the glyph's value is its signed length in the measure. */
+  bar?: {
+    aggregation: MarkAggregation;
+    measureField?: string;
+    categoryField?: string;
+    category?: string;
+    /** Drawn leftward from the baseline. */
+    mirrored: boolean;
+  };
+  /** The cell's place in a waffle; the glyph's value is the rows the cell stands for. */
+  waffle?: {
+    /** This cell's number within its category, from one. */
+    cell: number;
+    /** Cells drawn for the category in this repeat. */
+    cells: number;
+    /** Rows of the category in this repeat, and all rows of the repeat. */
+    count: number;
+    total: number;
+    /** Rows per cell, or the share of the total per cell when normalized. */
+    each: number;
+    normalize: boolean;
+    categoryField: string;
+  };
   /** The group's quartiles, for summary marks; the glyph's value is the median. */
   summary?: SummaryStats & {
     groupField: string;
@@ -167,6 +216,8 @@ export interface PathDatum {
   series?: string;
   /** Whether the path is in the mark's focus, or muted behind it. */
   focused?: boolean;
+  /** The value of the mark's color field on the path's first row. */
+  category?: string;
 }
 
 /** What one band stands for: its bounds, rows in order, and gaps. */
@@ -215,9 +266,12 @@ type ResolvedStrip = {
 };
 type ResolvedXy = {
   type: "xy";
-  mark: PointMark | PathMark | BandMark;
+  mark: PointMark | PathMark | BandMark | SpanMark;
   x: NumericScale;
   y: NumericScale;
+
+  /** The scale whose field the rows rank by, when the mark plots ranks. */
+  rankBy?: NumericScale;
 };
 type ResolvedSummary = {
   type: "summary";
@@ -226,11 +280,19 @@ type ResolvedSummary = {
   value?: ValueScale;
 };
 type ResolvedStack = { type: "stack"; mark: StackMark; x?: NumericScale };
+type ResolvedWaffle = { type: "waffle"; mark: WaffleMark };
+type ResolvedBar = { type: "bar"; mark: BarMark };
+type ResolvedHorizon = { type: "horizon"; mark: HorizonMark; x: NumericScale };
+type ResolvedDensity = { type: "density"; mark: DensityMark; x: NumericScale };
 type ResolvedMark =
   | ResolvedStrip
   | ResolvedXy
   | ResolvedSummary
-  | ResolvedStack;
+  | ResolvedStack
+  | ResolvedWaffle
+  | ResolvedBar
+  | ResolvedHorizon
+  | ResolvedDensity;
 
 /** One group of a summary mark in one repeat. */
 interface SummaryGroup {
@@ -261,6 +323,16 @@ export function resolveUnit(
         mark,
         x: x?.kind === "numeric" ? x : undefined,
       });
+    } else if (mark.type === "waffle") {
+      marks.push({ type: "waffle", mark });
+    } else if (mark.type === "bar") {
+      marks.push({ type: "bar", mark });
+    } else if (mark.type === "horizon") {
+      const x = scale(mark.xScaleId);
+      if (x?.kind === "numeric") marks.push({ type: "horizon", mark, x });
+    } else if (mark.type === "density") {
+      const x = scale(mark.xScaleId);
+      if (x?.kind === "numeric") marks.push({ type: "density", mark, x });
     } else if (mark.type === "summary") {
       const y = scale(mark.yScaleId);
       const value = scale(mark.valueScaleId ?? "");
@@ -274,12 +346,24 @@ export function resolveUnit(
     } else {
       const x = scale(mark.xScaleId);
       // A point or path without a y scale sits on the frame's middle line.
-      const y =
-        mark.type !== "band" && mark.yScaleId === undefined
+      const named = scale(mark.yScaleId ?? "");
+      const ranked =
+        (mark.type === "point" || mark.type === "path") &&
+        mark.rank &&
+        named?.kind === "numeric";
+      const y = ranked
+        ? rankScale(mark.id, named as NumericScale)
+        : mark.type !== "band" && mark.yScaleId === undefined
           ? MIDDLE_SCALE
-          : scale(mark.yScaleId ?? "");
+          : named;
       if (x?.kind === "numeric" && y?.kind === "numeric")
-        marks.push({ type: "xy", mark, x, y });
+        marks.push({
+          type: "xy",
+          mark,
+          x,
+          y,
+          rankBy: ranked ? (named as NumericScale) : undefined,
+        });
     }
   }
   const strips = marks.filter(
@@ -292,8 +376,60 @@ export function resolveUnit(
   const stacks = marks.filter(
     (item): item is ResolvedStack => item.type === "stack"
   );
-  // Stacks share one category order and color across every repeat.
+  const waffles = marks.filter(
+    (item): item is ResolvedWaffle => item.type === "waffle"
+  );
+  const bars = marks.filter((item): item is ResolvedBar => item.type === "bar");
+  const horizons = marks.filter(
+    (item): item is ResolvedHorizon => item.type === "horizon"
+  );
+  // Horizon series per repeat, and the largest magnitude per mark.
+  const horizonSeries = subsets.map((subset) =>
+    horizons.map(({ mark, x }) => horizonValues(mark, x, subset, data))
+  );
+  const horizonMax = new Map<string, number>();
+  horizonSeries.forEach((perMark) =>
+    perMark.forEach((series, markIndex) => {
+      const id = horizons[markIndex]!.mark.id;
+      horizonMax.set(id, Math.max(horizonMax.get(id) ?? 0, series.peak));
+    })
+  );
+  // Bars share one category order and one length axis across every repeat.
+  const barred = bars.map(({ mark }) =>
+    mark.categoryField
+      ? stackCategories(
+          {
+            categoryField: mark.categoryField,
+            aggregation: mark.aggregation === "sum" ? "sum" : "count",
+            measureField: mark.measureField,
+            order: mark.order,
+          },
+          data
+        )
+      : []
+  );
+  const barAxes = bars.map(({ mark }, markIndex) => {
+    let longest = 0;
+    for (const subset of subsets)
+      for (const bar of barValues(
+        mark,
+        windowed(subset, unit.window, data),
+        barred[markIndex]!,
+        data
+      ))
+        longest = Math.max(longest, Math.abs(bar.value));
+    const max =
+      mark.max ??
+      scaleLinear().domain([0, longest]).nice().domain()[1] ??
+      1 ??
+      1;
+    return { mark, domain: [mark.mirror ? -max : 0, max] as [number, number] };
+  });
+  // Stacks and waffles share one category order and color across every repeat.
   const stacked = stacks.map(({ mark }) => stackCategories(mark, data));
+  const waffled = waffles.map(({ mark }) =>
+    stackCategories({ ...mark, aggregation: "count" }, data)
+  );
   if (stacks.length) {
     const maxTotals = new Map<string, number>();
     for (const { mark } of stacks) {
@@ -310,8 +446,27 @@ export function resolveUnit(
             )?.field ?? ""
           )
         : undefined;
+      const categories = stackCategories(mark, data);
       for (const subset of subsets) {
-        // Across x, the largest total at any x; otherwise the repeat's total.
+        // Across x, the largest total at any x, or the whole extent of a
+        // wiggling stream; otherwise the repeat's total.
+        if (xColumn && mark.baseline === "wiggle" && !mark.normalize) {
+          const columns = stackColumns(
+            mark,
+            subset.liveIds,
+            categories,
+            xColumn,
+            column,
+            measure
+          );
+          const offsets = streamOffsets(columns, categories);
+          const extent = Math.max(
+            0,
+            ...columns.map((item, index) => offsets[index]! + item.total)
+          );
+          maxTotals.set(mark.id, Math.max(maxTotals.get(mark.id) ?? 0, extent));
+          continue;
+        }
         const groups = xColumn
           ? groupByCategory(xColumn, subset.liveIds)
           : new Map([["all", subset.liveIds]]);
@@ -324,6 +479,29 @@ export function resolveUnit(
       }
     }
     data = { ...data, stackMaxTotal: maxTotals };
+  }
+
+  // Ranked marks: each row's place among the rows at its x, per repeat.
+  const rankedMarks = xys.filter((item) => item.rankBy);
+  if (rankedMarks.length) {
+    const ranks = new Map<string, Record<number, number>>();
+    const rankMax = new Map<string, number>();
+    for (const { mark, x, rankBy } of rankedMarks) {
+      const xColumn = data.column(x.field);
+      const yColumn = data.column(rankBy!.field);
+      const order = ("rank" in mark ? mark.rank : undefined) ?? "desc";
+      for (const subset of subsets) {
+        const ids =
+          "population" in mark && mark.population === "composition"
+            ? data.liveIds
+            : subset.liveIds;
+        const record = rankRows(ids, xColumn, yColumn, order);
+        ranks.set(`${mark.id}|${subset.key}`, record);
+        const deepest = Math.max(0, ...Object.values(record));
+        rankMax.set(mark.id, Math.max(rankMax.get(mark.id) ?? 1, deepest));
+      }
+    }
+    data = { ...data, ranks, rankMax };
   }
 
   // Summaries first: their quartiles set the y domain and the change colors.
@@ -366,10 +544,16 @@ export function resolveUnit(
   // of any band bound to it, so a fan's widest interval stays in the frame.
   const scaleFields = new Map<string, string[]>();
   for (const item of xys) {
-    if (item.mark.type !== "band") continue;
-    const fields = scaleFields.get(item.y.id) ?? [item.y.field];
-    fields.push(item.mark.lowerField, item.mark.upperField);
-    scaleFields.set(item.y.id, fields);
+    if (item.mark.type === "band") {
+      const fields = scaleFields.get(item.y.id) ?? [item.y.field];
+      fields.push(item.mark.lowerField, item.mark.upperField);
+      scaleFields.set(item.y.id, fields);
+    } else if (item.mark.type === "span") {
+      // A span's x spans both its ends.
+      const fields = scaleFields.get(item.x.id) ?? [item.x.field];
+      fields.push(item.mark.startField, item.mark.endField);
+      scaleFields.set(item.x.id, fields);
+    }
   }
   const columnsOf = (scale: NumericScale) =>
     (scaleFields.get(scale.id) ?? [scale.field]).map((field) =>
@@ -385,11 +569,12 @@ export function resolveUnit(
   const axisFor = (
     scale: NumericScale,
     subset: Subset,
-    range: [number, number]
+    range: [number, number],
+    window?: FrameWindow
   ) =>
     numericAxis(
       scale,
-      domainFor(scale, subset),
+      domainFor(scale, subset, window),
       range,
       dateScales.has(scale.id)
     );
@@ -407,8 +592,41 @@ export function resolveUnit(
     return values;
   };
   const sharedDomains = new Map<string, [number, number]>();
-  const domainFor = (scale: NumericScale, subset: Subset) => {
+  const windowedDomains = new Map<string, [number, number]>();
+  const domainFor = (
+    scale: NumericScale,
+    subset: Subset,
+    window?: FrameWindow
+  ): [number, number] => {
     if (scale.id === MIDDLE_SCALE.id) return [0, 1] as [number, number];
+    // Ranks run from one at the top to the deepest rank at the bottom.
+    if (isRankScale(scale))
+      return [(data.rankMax?.get(rankedMarkId(scale)) ?? 1) + 0.5, 0.5] as [
+        number,
+        number,
+      ];
+    if (window) {
+      // A windowed frame spans its window on the window's field, and the
+      // rows inside the window on every other field.
+      const inside = windowTest(window, data);
+      const ids = (
+        scale.domain === "instance" ? subset.allIds : data.allIds
+      ).filter(inside);
+      const key = `${scale.id}|${scale.domain === "instance" ? subset.key : ""}|${window.field}|${window.min ?? ""}|${window.max ?? ""}`;
+      let domain = windowedDomains.get(key);
+      if (!domain) {
+        domain = numericDomain(scale, columnsOf(scale), ids);
+        if (scale.field === window.field) {
+          const min = window.min?.trim() ? readNumber(window.min) : undefined;
+          const max = window.max?.trim() ? readNumber(window.max) : undefined;
+          if (min !== undefined) domain[0] = min;
+          if (max !== undefined) domain[1] = max;
+          if (domain[0] >= domain[1]) domain[1] = domain[0] + 1;
+        }
+        windowedDomains.set(key, domain);
+      }
+      return domain;
+    }
     const bound = summaries.some((item) => item.y.id === scale.id);
     if (scale.domain === "instance")
       return bound
@@ -424,6 +642,22 @@ export function resolveUnit(
     return domain;
   };
 
+  const densities = marks.filter(
+    (item): item is ResolvedDensity => item.type === "density"
+  );
+  // Densities first: each repeat's curve on the shared grid, and the tallest.
+  const densityCurves = subsets.map((subset) =>
+    densities.map(({ mark, x }) =>
+      densityCurve(mark, x, subset, data, domainFor(x, subset))
+    )
+  );
+  const densityMax = new Map<string, number>();
+  densityCurves.forEach((perMark) =>
+    perMark.forEach((curve, markIndex) => {
+      const id = densities[markIndex]!.mark.id;
+      densityMax.set(id, Math.max(densityMax.get(id) ?? 0, curve.peak));
+    })
+  );
   // First pass: aggregate each strip mark per subset and bin.
   const aggregated = subsets.map((subset) =>
     strips.map(({ mark, position }) => {
@@ -477,7 +711,10 @@ export function resolveUnit(
       const id = strips[markIndex]!.value.id;
       for (const glyph of glyphs)
         if (!glyph.missing)
-          sharedMax.set(id, Math.max(sharedMax.get(id) ?? 0, glyph.value));
+          sharedMax.set(
+            id,
+            Math.max(sharedMax.get(id) ?? 0, Math.abs(glyph.value))
+          );
     })
   );
 
@@ -500,10 +737,20 @@ export function resolveUnit(
       : unit.repeat.arrangement === "columns"
         ? Math.max(1, subsets.length)
         : Math.max(1, unit.repeat.columns);
+  // Tiles read each subset's cell from a field; the unaddressed queue below.
+  const tiles =
+    unit.repeat.arrangement === "tiles"
+      ? tileAddresses(subsets, unit.repeat.tileField, data)
+      : undefined;
 
+  const sliceStarts: number[] = [];
   subsets.forEach((subset, index) => {
-    const column = index % columns;
-    const row = Math.floor(index / columns);
+    sliceStarts[index] = nodes.length;
+    const cell = tiles?.get(subset.key) ?? {
+      row: Math.floor(index / columns),
+      column: index % columns,
+    };
+    const { column, row } = cell;
     const layoutX = unit.x + column * (cellWidth + unit.repeat.gap);
     const layoutY = unit.y + row * (cellHeight + unit.repeat.gap);
     const override = findOverride(definition, unit.id, subset.key);
@@ -571,26 +818,72 @@ export function resolveUnit(
     }
 
     // Numeric frames: the first x–y mark's scales place guides and axes too.
-    const firstXy = xys[0];
+    const mainInsetIds = new Set((unit.insets ?? []).map((inset) => inset.id));
+    const firstXy =
+      xys.find(
+        (item) => !item.mark.frameId || !mainInsetIds.has(item.mark.frameId)
+      ) ?? xys[0];
     const spread = stacks.find((item) => item.x);
     const xy = firstXy
       ? {
-          x: axisFor(firstXy.x, subset, [frame.x, frame.x + frame.width]),
-          y: axisFor(firstXy.y, subset, [frame.y + frame.height, frame.y]),
+          x: axisFor(
+            firstXy.x,
+            subset,
+            [frame.x, frame.x + frame.width],
+            unit.window
+          ),
+          y: axisFor(
+            firstXy.y,
+            subset,
+            [frame.y + frame.height, frame.y],
+            unit.window
+          ),
         }
-      : spread?.x
+      : densities[0] || horizons[0]
         ? {
-            x: axisFor(spread.x, subset, [frame.x, frame.x + frame.width]),
-            // A stacked area's y is the share of each x's total, or the total.
+            x: axisFor(
+              (densities[0] ?? horizons[0])!.x,
+              subset,
+              [frame.x, frame.x + frame.width],
+              unit.window
+            ),
             y: numericAxis(
-              spread.mark.normalize ? SHARE_SCALE : TOTAL_SCALE,
-              spread.mark.normalize
-                ? [0, 1]
-                : [0, data.stackMaxTotal?.get(spread.mark.id) ?? 1],
+              DENSITY_SCALE,
+              [0, 1],
               [frame.y + frame.height, frame.y]
             ),
           }
-        : undefined;
+        : barAxes[0]
+          ? {
+              // Bars share one length axis; their height has no scale.
+              x: numericAxis(BAR_SCALE, barAxes[0].domain, [
+                frame.x,
+                frame.x + frame.width,
+              ]),
+              y: numericAxis(
+                DENSITY_SCALE,
+                [0, 1],
+                [frame.y + frame.height, frame.y]
+              ),
+            }
+          : spread?.x
+            ? {
+                x: axisFor(spread.x, subset, [frame.x, frame.x + frame.width]),
+                // A stacked area's y is the share of each x's total, or the
+                // total. A stream's values float off zero, so it has no y ticks.
+                y: numericAxis(
+                  spread.mark.normalize
+                    ? SHARE_SCALE
+                    : spread.mark.baseline && spread.mark.baseline !== "zero"
+                      ? { ...TOTAL_SCALE, ticks: "none" }
+                      : TOTAL_SCALE,
+                  spread.mark.normalize
+                    ? [0, 1]
+                    : [0, data.stackMaxTotal?.get(spread.mark.id) ?? 1],
+                  [frame.y + frame.height, frame.y]
+                ),
+              }
+            : undefined;
     const drawAxis = unit.axis && (axisPerUnit || index === subsets.length - 1);
     // Grid lines sit under the marks.
     if (xy && unit.axis)
@@ -600,7 +893,12 @@ export function resolveUnit(
       const { mark, value } = strips[markIndex]!;
       const instanceMax =
         value.domain === "instance"
-          ? Math.max(0, ...glyphs.map((glyph) => glyph.value))
+          ? Math.max(
+              0,
+              ...glyphs.map((glyph) =>
+                glyph.missing ? 0 : Math.abs(glyph.value)
+              )
+            )
           : (sharedMax.get(value.id) ?? 0);
       // An accent recolors this repeat's marks, keeping the template's ramp.
       const accented = override?.accent
@@ -625,41 +923,86 @@ export function resolveUnit(
         )
       );
     });
-    for (const item of xys) {
-      const axes = {
-        x: axisFor(item.x, subset, [frame.x, frame.x + frame.width]),
-        y: axisFor(item.y, subset, [frame.y + frame.height, frame.y]),
-      };
-      const accent = override?.accent;
-      nodes.push(
-        ...(item.mark.type === "band"
-          ? bandNodes(
-              unit,
-              accent ? { ...item.mark, fill: accent } : item.mark,
-              subset,
-              axes,
-              frame,
-              data
-            )
-          : item.mark.type === "path"
-            ? pathNodes(
-                unit,
-                accent ? { ...item.mark, stroke: accent } : item.mark,
-                subset,
-                axes,
-                frame,
-                data
-              )
-            : pointNodes(
+    // Each frame draws the marks assigned to it from the rows in its window.
+    const drawFrame = (
+      frameBounds: Bounds,
+      window: FrameWindow | undefined,
+      marksHere: ResolvedXy[]
+    ) => {
+      const inside = window ? windowTest(window, data) : undefined;
+      const frameData = inside
+        ? { ...data, liveIds: data.liveIds.filter(inside) }
+        : data;
+      const frameSubset = inside
+        ? { ...subset, liveIds: subset.liveIds.filter(inside) }
+        : subset;
+      for (const item of marksHere) {
+        const axes = {
+          x: axisFor(
+            item.x,
+            subset,
+            [frameBounds.x, frameBounds.x + frameBounds.width],
+            window
+          ),
+          y: axisFor(
+            item.y,
+            subset,
+            [frameBounds.y + frameBounds.height, frameBounds.y],
+            window
+          ),
+        };
+        const accent = override?.accent;
+        const drawn =
+          item.mark.type === "band"
+            ? bandNodes(
                 unit,
                 accent ? { ...item.mark, fill: accent } : item.mark,
-                subset,
+                frameSubset,
                 axes,
-                frame,
-                data
-              ))
-      );
-    }
+                frameBounds,
+                frameData
+              )
+            : item.mark.type === "span"
+              ? spanNodes(
+                  unit,
+                  accent ? { ...item.mark, fill: accent } : item.mark,
+                  frameSubset,
+                  axes,
+                  frameBounds,
+                  frameData
+                )
+              : item.mark.type === "path"
+                ? pathNodes(
+                    unit,
+                    accent ? { ...item.mark, stroke: accent } : item.mark,
+                    frameSubset,
+                    axes,
+                    frameBounds,
+                    frameData
+                  )
+                : pointNodes(
+                    unit,
+                    accent ? { ...item.mark, fill: accent } : item.mark,
+                    frameSubset,
+                    axes,
+                    frameBounds,
+                    frameData
+                  );
+        // A windowed frame clips, so a path cut at the window's edge stays inside.
+        nodes.push(
+          ...(window
+            ? drawn.map((node) => ({ ...node, clip: node.clip ?? frameBounds }))
+            : drawn)
+        );
+      }
+    };
+    drawFrame(
+      frame,
+      unit.window,
+      xys.filter(
+        (item) => !item.mark.frameId || !mainInsetIds.has(item.mark.frameId)
+      )
+    );
     stacks.forEach(({ mark, x }, markIndex) => {
       const accented = override?.accent
         ? { ...mark, colors: [override.accent] }
@@ -685,6 +1028,78 @@ export function resolveUnit(
             ))
       );
     });
+    waffles.forEach(({ mark }, markIndex) => {
+      nodes.push(
+        ...waffleNodes(
+          unit,
+          override?.accent ? { ...mark, colors: [override.accent] } : mark,
+          windowed(subset, unit.window, data),
+          waffled[markIndex]!,
+          frame,
+          data
+        )
+      );
+    });
+    bars.forEach(({ mark }, markIndex) => {
+      nodes.push(
+        ...barNodes(
+          unit,
+          override?.accent ? { ...mark, colors: [override.accent] } : mark,
+          windowed(subset, unit.window, data),
+          barred[markIndex]!,
+          numericAxis(BAR_SCALE, barAxes[markIndex]!.domain, [
+            frame.x,
+            frame.x + frame.width,
+          ]),
+          frame,
+          data
+        )
+      );
+    });
+    horizonSeries[index]!.forEach((series, markIndex) => {
+      const { mark, x } = horizons[markIndex]!;
+      const peak =
+        mark.domain === "instance"
+          ? series.peak
+          : (horizonMax.get(mark.id) ?? series.peak);
+      nodes.push(
+        ...horizonNodes(
+          unit,
+          override?.accent
+            ? { ...mark, positive: override.accent, negative: override.accent }
+            : mark,
+          subset,
+          series,
+          axisFor(x, subset, [frame.x, frame.x + frame.width], unit.window),
+          frame,
+          peak
+        )
+      );
+    });
+    densityCurves[index]!.forEach((curve, markIndex) => {
+      const { mark, x } = densities[markIndex]!;
+      const axis = axisFor(
+        x,
+        subset,
+        [frame.x, frame.x + frame.width],
+        unit.window
+      );
+      const peak =
+        mark.height === "instance"
+          ? curve.peak
+          : (densityMax.get(mark.id) ?? curve.peak);
+      nodes.push(
+        ...densityNodes(
+          unit,
+          override?.accent ? { ...mark, fill: override.accent } : mark,
+          subset,
+          curve,
+          axis,
+          frame,
+          peak
+        )
+      );
+    });
     summarized[index]!.forEach((groups, markIndex) => {
       const { mark, y, value } = summaries[markIndex]!;
       const axis = numericAxis(y, domainFor(y, subset), [
@@ -707,6 +1122,54 @@ export function resolveUnit(
         )
       );
     });
+    // Insets sit over the main frame's marks: paper, marks, then an outline.
+    for (const inset of unit.insets ?? []) {
+      const bounds: Bounds = {
+        x: frame.x + inset.x,
+        y: frame.y + inset.y,
+        width: inset.width,
+        height: inset.height,
+      };
+      nodes.push({
+        type: "rect",
+        key: `${unit.id}:${subset.key}:${inset.id}:paper`,
+        elementId: unit.id,
+        instanceKey: subset.key,
+        x: bounds.x,
+        y: bounds.y,
+        width: bounds.width,
+        height: bounds.height,
+        fill: inset.background ?? "#ffffff",
+        stroke: "#d4d7dc",
+      });
+      const insetXy = xys.filter((item) => item.mark.frameId === inset.id);
+      if (inset.axis && insetXy[0]) {
+        const axisXy = {
+          x: axisFor(
+            insetXy[0].x,
+            subset,
+            [bounds.x, bounds.x + bounds.width],
+            inset.window
+          ),
+          y: axisFor(
+            insetXy[0].y,
+            subset,
+            [bounds.y + bounds.height, bounds.y],
+            inset.window
+          ),
+        };
+        nodes.push(
+          ...numericAxisNodes(
+            unit,
+            `${subset.key}:${inset.id}`,
+            axisXy,
+            bounds,
+            8
+          )
+        );
+      }
+      drawFrame(bounds, inset.window, insetXy);
+    }
     if (opacity < 1)
       for (let index = firstNode; index < nodes.length; index += 1)
         nodes[index] = { ...nodes[index]!, opacity };
@@ -804,7 +1267,69 @@ export function resolveUnit(
     });
   });
 
-  return { nodes, bounds: unionBounds(instances, unit), instances };
+  // Rows that overlap through a negative gap draw bottom first, so the
+  // upper ridge sits in front of the one below it.
+  const ordered =
+    unit.repeat.gap < 0 && instances.length > 1
+      ? instances
+          .map((_, index) =>
+            nodes.slice(
+              sliceStarts[index],
+              sliceStarts[index + 1] ?? nodes.length
+            )
+          )
+          .reverse()
+          .flat()
+      : nodes;
+  return { nodes: ordered, bounds: unionBounds(instances, unit), instances };
+}
+
+/**
+ * Each subset's cell on a tile grid, read as "row,column" from the first row
+ * that has one. Subsets without an address fill rows under the grid, so
+ * nothing disappears for want of a tile.
+ */
+function tileAddresses(
+  subsets: Subset[],
+  field: string | undefined,
+  data: CompositionData
+): Map<string, { row: number; column: number }> {
+  const cells = new Map<string, { row: number; column: number }>();
+  const column = field ? data.column(field) : undefined;
+  let maxRow = -1;
+  let maxColumn = 0;
+  const unplaced: Subset[] = [];
+  for (const subset of subsets) {
+    let placed = false;
+    if (column)
+      for (const id of subset.allIds) {
+        const raw = column[id];
+        if (raw === null || raw === undefined || raw === "") continue;
+        const parts = String(raw)
+          .split(/[,;\s]+/)
+          .map(Number);
+        if (
+          parts.length < 2 ||
+          !parts.every(Number.isInteger) ||
+          parts.some((part) => part < 0)
+        )
+          break;
+        cells.set(subset.key, { row: parts[0]!, column: parts[1]! });
+        maxRow = Math.max(maxRow, parts[0]!);
+        maxColumn = Math.max(maxColumn, parts[1]!);
+        placed = true;
+        break;
+      }
+    if (!placed) unplaced.push(subset);
+  }
+  const width = Math.max(1, maxColumn + 1);
+  unplaced.forEach((subset, index) => {
+    cells.set(subset.key, {
+      row: maxRow + 1 + Math.floor(index / width),
+      column: index % width,
+    });
+  });
+  return cells;
 }
 
 function unionBounds(instances: ResolvedInstance[], unit: UnitElement) {
@@ -824,6 +1349,31 @@ function unionBounds(instances: ResolvedInstance[], unit: UnitElement) {
     ...instances.map((item) => item.bounds.y + item.bounds.height)
   );
   return { x: left, y: top, width: right - left, height: bottom - top };
+}
+
+/** A test for rows inside a frame's window, by the window field's value. */
+/** The subset's live rows inside the unit's display window, when it has one. */
+function windowed(
+  subset: Subset,
+  window: FrameWindow | undefined,
+  data: CompositionData
+): Subset {
+  if (!window) return subset;
+  const inside = windowTest(window, data);
+  return { ...subset, liveIds: subset.liveIds.filter(inside) };
+}
+
+export function windowTest(window: FrameWindow, data: CompositionData) {
+  const column = data.column(window.field);
+  const min = window.min?.trim() ? readNumber(window.min) : undefined;
+  const max = window.max?.trim() ? readNumber(window.max) : undefined;
+  return (id: number) => {
+    const value = readNumber(column[id]);
+    if (value === undefined) return false;
+    if (min !== undefined && value < min) return false;
+    if (max !== undefined && value > max) return false;
+    return true;
+  };
 }
 
 /**
@@ -859,7 +1409,15 @@ export function repeatSubsets(
     subset.allIds.push(id);
   }
   for (const id of data.liveIds) groups.get(keyOf(id))?.liveIds.push(id);
-  const subsets = [...groups.values()];
+  const skipped = new Set(
+    (unit.repeat.skip ?? "")
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean)
+  );
+  const subsets = [...groups.values()].filter(
+    (subset) => !skipped.has(subset.key)
+  );
   const calc =
     unit.repeat.order === "value"
       ? definition?.calculations.find(
@@ -899,7 +1457,7 @@ function compareLabels(a: string, b: string) {
 }
 
 function aggregate(
-  mark: StripMark,
+  mark: Pick<StripMark, "aggregation">,
   rowIds: number[],
   measure: Record<number, datum> | undefined
 ) {
@@ -1076,12 +1634,14 @@ export function numericDomain(
 ): [number, number] {
   let min = Infinity;
   let max = -Infinity;
+  let positive = Infinity;
   for (const column of Array.isArray(columns) ? columns : [columns])
     for (const id of ids) {
       const value = readNumber(column[id]);
       if (value === undefined) continue;
       if (value < min) min = value;
       if (value > max) max = value;
+      if (value > 0 && value < positive) positive = value;
     }
   if (min === Infinity) {
     min = 0;
@@ -1099,7 +1659,8 @@ export function numericDomain(
   }
   if (scale.transform === "log" && min <= 0) {
     // Log spacing ignores values at or below zero; they pin to the low end.
-    min = Math.min(max, 1);
+    // The smallest positive value starts the span, or one when it is alone.
+    min = positive < max ? positive : Math.min(max, 1);
   }
   if (scale.nice) {
     const nice =
@@ -1318,7 +1879,7 @@ interface StackCategory {
 }
 
 function stackValue(
-  mark: StackMark,
+  mark: Pick<StackMark, "aggregation">,
   rowIds: number[],
   measure: Record<number, datum> | undefined
 ) {
@@ -1351,7 +1912,10 @@ function groupByCategory(
  * shares but never reorder or recolor.
  */
 function stackCategories(
-  mark: StackMark,
+  mark: Pick<
+    StackMark,
+    "categoryField" | "aggregation" | "measureField" | "order"
+  >,
   data: CompositionData
 ): StackCategory[] {
   const column = data.column(mark.categoryField);
@@ -1474,6 +2038,488 @@ function stackNodes(
   return nodes;
 }
 
+/**
+ * The cells of one repeat's waffle. Each category takes a whole number of
+ * cells: one per row, one per `each` rows rounded, or its share of a
+ * hundred by largest remainder. Cells run along rows of `columns` from
+ * the chosen corner, category after category in the shared order.
+ */
+function waffleNodes(
+  unit: UnitElement,
+  mark: WaffleMark,
+  subset: Subset,
+  categories: StackCategory[],
+  frame: Bounds,
+  data: CompositionData
+): SceneNode[] {
+  const groups = groupByCategory(
+    data.column(mark.categoryField),
+    subset.liveIds
+  );
+  const present = categories
+    .map((category) => ({ category, rowIds: groups.get(category.key) ?? [] }))
+    .filter((item) => item.rowIds.length > 0);
+  const total = present.reduce((sum, item) => sum + item.rowIds.length, 0);
+  if (!total) return [];
+  const each = Math.max(1, Math.round(mark.each));
+  let cellCounts: number[];
+  if (mark.normalize) {
+    // Largest remainder keeps the hundred exact.
+    const exact = present.map((item) => (item.rowIds.length / total) * 100);
+    cellCounts = exact.map(Math.floor);
+    let left = 100 - cellCounts.reduce((sum, value) => sum + value, 0);
+    const byRemainder = exact
+      .map((value, index) => ({ index, remainder: value - Math.floor(value) }))
+      .sort((a, b) => b.remainder - a.remainder);
+    for (const item of byRemainder) {
+      if (left <= 0) break;
+      cellCounts[item.index]! += 1;
+      left -= 1;
+    }
+  } else {
+    cellCounts = present.map((item) =>
+      Math.max(1, Math.round(item.rowIds.length / each))
+    );
+  }
+  const columns = Math.max(1, Math.round(mark.columns));
+  const side = Math.max(
+    0.5,
+    (frame.width - mark.gap * (columns - 1)) / columns
+  );
+  const step = side + mark.gap;
+  const nodes: SceneNode[] = [];
+  let index = 0;
+  present.forEach((item, categoryIndex) => {
+    const cells = cellCounts[categoryIndex]!;
+    const fill = mark.colors[item.category.index % mark.colors.length]!;
+    const perCell = item.rowIds.length / cells;
+    for (let cell = 0; cell < cells; cell += 1) {
+      const column = index % columns;
+      const row = Math.floor(index / columns);
+      const y =
+        mark.from === "bottom"
+          ? frame.y + frame.height - side - row * step
+          : frame.y + row * step;
+      const rowIds = item.rowIds.slice(
+        Math.floor(cell * perCell),
+        Math.max(
+          Math.floor(cell * perCell) + 1,
+          Math.floor((cell + 1) * perCell)
+        )
+      );
+      nodes.push({
+        type: "rect",
+        key: `${unit.id}:${subset.key}:${mark.id}:${item.category.key}:${cell}`,
+        elementId: unit.id,
+        instanceKey: subset.key,
+        x: frame.x + column * step,
+        y,
+        width: side,
+        height: side,
+        fill,
+        glyph: {
+          instanceKey: subset.key,
+          markId: mark.id,
+          bin: { key: item.category.key, label: item.category.key },
+          value: mark.normalize ? perCell : each,
+          rowIds,
+          waffle: {
+            cell: cell + 1,
+            cells,
+            count: item.rowIds.length,
+            total,
+            each: mark.normalize ? 1 / 100 : each,
+            normalize: mark.normalize,
+            categoryField: mark.categoryField,
+          },
+        },
+      });
+      index += 1;
+    }
+  });
+  return nodes;
+}
+
+/** The stand-in x scale of bars: lengths from zero, or about zero when one mirrors. */
+const BAR_SCALE: NumericScale = {
+  id: "bar-length",
+  kind: "numeric",
+  name: "Length",
+  field: "length",
+  domain: "shared",
+  zero: true,
+  nice: false,
+};
+
+interface BarValue {
+  category?: string;
+  index: number;
+  rowIds: number[];
+  /** The aggregate, negative when the category mirrors. */
+  value: number;
+}
+
+/** A repeat's bars: one per present category in the shared order, or one for all its rows. */
+function barValues(
+  mark: BarMark,
+  subset: Subset,
+  categories: StackCategory[],
+  data: CompositionData
+): BarValue[] {
+  const measure = mark.measureField
+    ? data.column(mark.measureField)
+    : undefined;
+  const groups = mark.categoryField
+    ? groupByCategory(data.column(mark.categoryField), subset.liveIds)
+    : new Map([["", subset.liveIds]]);
+  const list = mark.categoryField
+    ? categories.map((category) => ({
+        category: category.key as string | undefined,
+        index: category.index,
+        rowIds: groups.get(category.key) ?? [],
+      }))
+    : [{ category: undefined, index: 0, rowIds: subset.liveIds }];
+  const bars: BarValue[] = [];
+  for (const item of list) {
+    if (!item.rowIds.length) continue;
+    const value = aggregate(mark, item.rowIds, measure);
+    if (value === undefined) continue;
+    const mirrored = mark.mirror !== undefined && item.category === mark.mirror;
+    bars.push({ ...item, value: mirrored ? -value : value });
+  }
+  return bars;
+}
+
+const compactFormat = new Intl.NumberFormat("en-US", {
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
+
+/**
+ * One repeat's bars from the baseline: the mirrored category takes the
+ * frame's full height leftward, and the rest share the height rightward.
+ */
+function barNodes(
+  unit: UnitElement,
+  mark: BarMark,
+  subset: Subset,
+  categories: StackCategory[],
+  axis: NumericAxis,
+  frame: Bounds,
+  data: CompositionData
+): SceneNode[] {
+  const bars = barValues(mark, subset, categories, data);
+  if (!bars.length) return [];
+  const rightward = bars.filter((bar) => bar.value >= 0);
+  const rows = Math.max(1, rightward.length);
+  const height = Math.max(1, (frame.height - mark.inset * (rows - 1)) / rows);
+  const baseline = numericPixel(axis, 0);
+  const nodes: SceneNode[] = [];
+  let row = 0;
+  for (const bar of bars) {
+    const mirrored = bar.value < 0;
+    const end = numericPixel(axis, bar.value);
+    const y = mirrored ? frame.y : frame.y + row * (height + mark.inset);
+    if (!mirrored) row += 1;
+    const barHeight = mirrored ? frame.height : height;
+    const key = `${unit.id}:${subset.key}:${mark.id}:${bar.category ?? "all"}`;
+    const fill = mark.colors[bar.index % mark.colors.length]!;
+    nodes.push({
+      type: "rect",
+      key,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      x: Math.min(baseline, end),
+      y,
+      width: Math.abs(end - baseline),
+      height: barHeight,
+      fill,
+      glyph: {
+        instanceKey: subset.key,
+        markId: mark.id,
+        bin: {
+          key: bar.category ?? subset.key,
+          label: bar.category ?? subset.label,
+        },
+        value: bar.value,
+        rowIds: bar.rowIds,
+        bar: {
+          aggregation: mark.aggregation,
+          measureField: mark.measureField,
+          categoryField: mark.categoryField,
+          category: bar.category,
+          mirrored,
+        },
+      },
+    });
+    if (
+      mark.labelMinWidth > 0 &&
+      Math.abs(end - baseline) >= mark.labelMinWidth
+    )
+      nodes.push({
+        type: "text",
+        key: `${key}:label`,
+        elementId: unit.id,
+        instanceKey: subset.key,
+        x: mirrored ? end - 4 : end + 4,
+        lines: [
+          {
+            text: compactFormat.format(Math.abs(bar.value)),
+            y: y + barHeight / 2 + 3.5,
+          },
+        ],
+        fontSize: 10,
+        fontWeight: 400,
+        fill: MUTED_INK,
+        anchor: mirrored ? "end" : "start",
+      });
+  }
+  // The baseline rule, over the bars.
+  nodes.push({
+    type: "line",
+    key: `${unit.id}:${subset.key}:${mark.id}:baseline`,
+    elementId: unit.id,
+    x1: baseline,
+    x2: baseline,
+    y1: frame.y,
+    y2: frame.y + frame.height,
+    stroke: INK,
+    strokeWidth: 1,
+  });
+  return nodes;
+}
+
+interface HorizonSeries {
+  /** Points in x order with the measure read from the baseline. */
+  points: { x: number; value: number; rowId: number }[];
+  base: number;
+  peak: number;
+  rowIds: number[];
+  skipped: number[];
+}
+
+/**
+ * A repeat's measure along x, read from the chosen baseline: as a
+ * difference, or as a share of the baseline when relative.
+ */
+function horizonValues(
+  mark: HorizonMark,
+  x: NumericScale,
+  subset: Subset,
+  data: CompositionData
+): HorizonSeries {
+  const xs = data.column(x.field);
+  const values = data.column(mark.field);
+  const rows = orderedRows(subset.liveIds, data.column(mark.orderField));
+  const raw: { x: number; value: number; rowId: number }[] = [];
+  const skipped: number[] = [];
+  for (const row of rows) {
+    const px = readNumber(xs[row.id]);
+    const value = finiteNumber(values[row.id]);
+    if (row.order === undefined || px === undefined || value === undefined) {
+      skipped.push(row.id);
+      continue;
+    }
+    raw.push({ x: px, value, rowId: row.id });
+  }
+  const base =
+    mark.baseline === "first"
+      ? (raw[0]?.value ?? 0)
+      : mark.baseline === "mean" && raw.length
+        ? raw.reduce((sum, item) => sum + item.value, 0) / raw.length
+        : 0;
+  const points = raw.map((item) => ({
+    ...item,
+    value:
+      mark.relative && base !== 0
+        ? (item.value - base) / Math.abs(base)
+        : item.value - base,
+  }));
+  const peak = Math.max(0, ...points.map((item) => Math.abs(item.value)));
+  return {
+    points,
+    base,
+    peak,
+    rowIds: rows.map((row) => row.id),
+    skipped,
+  };
+}
+
+/** Deeper bands take deeper tints of the mark's color, from a third of it up. */
+function horizonTint(color: string, band: number, bands: number) {
+  return scaleLinear<string>().domain([0, 1]).range(["#ffffff", color])(
+    0.35 + (0.65 * (band + 1)) / bands
+  );
+}
+
+/**
+ * One repeat's horizon: `bands` layers, each the part of the measure that
+ * falls in its slice of the range, drawn from the frame's bottom at the
+ * frame's full height. Values below the baseline draw the same way in the
+ * negative color.
+ */
+function horizonNodes(
+  unit: UnitElement,
+  mark: HorizonMark,
+  subset: Subset,
+  series: HorizonSeries,
+  axis: NumericAxis,
+  frame: Bounds,
+  peak: number
+): SceneNode[] {
+  if (series.points.length < 2 || peak <= 0) return [];
+  const bands = Math.max(1, Math.round(mark.bands));
+  const step = peak / bands;
+  const bottom = frame.y + frame.height;
+  const nodes: SceneNode[] = [];
+  for (const sign of [1, -1] as const) {
+    for (let band = 0; band < bands; band += 1) {
+      const low = band * step;
+      const run = series.points.map((point) => {
+        const magnitude = sign * point.value;
+        const within = Math.min(step, Math.max(0, magnitude - low));
+        return {
+          x: numericPixel(axis, point.x),
+          y0: bottom,
+          y1: bottom - (within / step) * frame.height,
+          rowId: point.rowId,
+        };
+      });
+      if (!run.some((vertex) => vertex.y1 < bottom)) continue;
+      const color = sign > 0 ? mark.positive : mark.negative;
+      nodes.push({
+        type: "area",
+        key: `${unit.id}:${subset.key}:${mark.id}:${sign > 0 ? "up" : "down"}:${band}`,
+        elementId: unit.id,
+        instanceKey: subset.key,
+        segments: [run],
+        fill: horizonTint(color, band, bands),
+        fillOpacity: 1,
+        clip: frame,
+        band: {
+          instanceKey: subset.key,
+          markId: mark.id,
+          orderField: mark.orderField,
+          lowerField: `baseline (${mark.baseline}${mark.relative ? ", as a share" : ""})`,
+          upperField: `${mark.field} ${sign > 0 ? "above" : "below"} the baseline, band ${band + 1} of ${bands} (${formatOrder(low)} to ${formatOrder(low + step)})`,
+          rowIds: series.rowIds,
+          skipped: series.skipped,
+          segments: 1,
+        },
+      });
+    }
+  }
+  return nodes;
+}
+
+/** The stand-in y scale of a density: no ticks, the frame's height is the peak. */
+const DENSITY_SCALE: NumericScale = {
+  id: "density-height",
+  kind: "numeric",
+  name: "Density",
+  field: "",
+  domain: "shared",
+  zero: true,
+  nice: false,
+};
+
+interface DensityCurve {
+  /** Sample positions along the field, shared by every repeat. */
+  xs: number[];
+  /** Density at each sample. */
+  ys: number[];
+  peak: number;
+  rowIds: number[];
+  bandwidth: number;
+}
+
+/**
+ * A Gaussian kernel density of the repeat's live values on a fixed grid
+ * across the scale's domain, so repeats line up. The bandwidth defaults to
+ * the domain's span over twelve.
+ */
+function densityCurve(
+  mark: DensityMark,
+  scale: NumericScale,
+  subset: Subset,
+  data: CompositionData,
+  domain: [number, number]
+): DensityCurve {
+  const column = data.column(scale.field);
+  const values: number[] = [];
+  const rowIds: number[] = [];
+  for (const id of subset.liveIds) {
+    const value = readNumber(column[id]);
+    if (value === undefined) continue;
+    values.push(value);
+    rowIds.push(id);
+  }
+  const samples = 96;
+  const [lo, hi] = domain;
+  const bandwidth = mark.bandwidth ?? Math.max((hi - lo) / 12, 1e-9);
+  const xs = Array.from(
+    { length: samples },
+    (_, index) => lo + ((hi - lo) * index) / (samples - 1)
+  );
+  const ys = xs.map((x) => {
+    if (!values.length) return 0;
+    let total = 0;
+    for (const value of values) {
+      const z = (x - value) / bandwidth;
+      total += Math.exp(-0.5 * z * z);
+    }
+    return total / (values.length * bandwidth * Math.sqrt(2 * Math.PI));
+  });
+  return { xs, ys, peak: Math.max(0, ...ys), rowIds, bandwidth };
+}
+
+/** The density as an area from the baseline, with its crest outlined. */
+function densityNodes(
+  unit: UnitElement,
+  mark: DensityMark,
+  subset: Subset,
+  curve: DensityCurve,
+  axis: NumericAxis,
+  frame: Bounds,
+  peak: number
+): SceneNode[] {
+  if (!curve.rowIds.length || peak <= 0) return [];
+  const baseline = frame.y + frame.height;
+  const run = curve.xs.map((x, index) => ({
+    x: numericPixel(axis, x),
+    y0: baseline,
+    y1: baseline - (curve.ys[index]! / peak) * frame.height,
+    rowId: curve.rowIds[0]!,
+  }));
+  return [
+    {
+      type: "area",
+      key: `${unit.id}:${subset.key}:${mark.id}`,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      segments: [run],
+      fill: mark.fill,
+      fillOpacity: mark.opacity,
+      stroke: mark.stroke,
+      band: {
+        instanceKey: subset.key,
+        markId: mark.id,
+        orderField: axis.scale.field,
+        lowerField: "baseline",
+        upperField: `density of ${axis.scale.field} (bandwidth ${formatOrder(curve.bandwidth)})`,
+        rowIds: curve.rowIds,
+        skipped: [],
+        segments: 1,
+      },
+    },
+  ];
+}
+
+const orderFormat = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 2,
+});
+const formatOrder = (value: number) => orderFormat.format(value);
+
 /** The stand-in y scale of a dot row: every point at the middle line. */
 export const MIDDLE_SCALE: NumericScale = {
   id: "middle-line",
@@ -1488,6 +2534,64 @@ export const MIDDLE_SCALE: NumericScale = {
 /** Reads a row's y for an axis: the middle line, or the field's value. */
 function readY(axis: NumericAxis, column: Record<number, datum>, id: number) {
   return axis.scale.id === MIDDLE_SCALE.id ? 0.5 : readNumber(column[id]);
+}
+
+/** The y values a mark reads: its ranks when it plots ranks, else the field. */
+function yColumn(
+  axis: NumericAxis,
+  mark: PointMark | PathMark,
+  subset: Subset,
+  data: CompositionData
+): Record<number, datum> {
+  if (isRankScale(axis.scale))
+    return data.ranks?.get(`${mark.id}|${subset.key}`) ?? {};
+  return data.column(axis.scale.field);
+}
+
+/** A mark's stand-in y scale for ranks; the mark's id rides in the scale's. */
+function rankScale(markId: string, by: NumericScale): NumericScale {
+  return {
+    ...MIDDLE_SCALE,
+    id: `rank:${markId}`,
+    name: by.name,
+    field: by.field,
+  };
+}
+function isRankScale(scale: NumericScale) {
+  return scale.id.startsWith("rank:");
+}
+function rankedMarkId(scale: NumericScale) {
+  return scale.id.slice("rank:".length);
+}
+
+/**
+ * Ranks rows among those sharing an x value by a y field: one for the
+ * largest (or smallest) value, ties broken by row order. Rows without a
+ * readable x or y get no rank.
+ */
+export function rankRows(
+  ids: number[],
+  xColumn: Record<number, datum>,
+  yColumn: Record<number, datum>,
+  order: RankOrder
+): Record<number, number> {
+  const byX = new Map<number, { id: number; y: number }[]>();
+  for (const id of ids) {
+    const x = readNumber(xColumn[id]);
+    const y = finiteNumber(yColumn[id]);
+    if (x === undefined || y === undefined) continue;
+    const list = byX.get(x);
+    if (list) list.push({ id, y });
+    else byX.set(x, [{ id, y }]);
+  }
+  const ranks: Record<number, number> = {};
+  for (const list of byX.values()) {
+    list.sort((a, b) => (order === "asc" ? a.y - b.y : b.y - a.y));
+    list.forEach((item, index) => {
+      ranks[item.id] = index + 1;
+    });
+  }
+  return ranks;
 }
 
 /** Stand-in scales for a stacked area's y axis: shares, or totals. */
@@ -1515,23 +2619,23 @@ const TOTAL_SCALE: NumericScale = {
  * at each x, and each category draws as one area from x to x in stacking
  * order. An x whose total is zero leaves a gap rather than invented shares.
  */
-function stackAreaNodes(
-  unit: UnitElement,
-  mark: StackMark,
-  subset: Subset,
+interface StackColumn {
+  x: number;
+  total: number;
+  counts: Map<string, { count: number; rowIds: number[] }>;
+}
+
+/** The rows of a spread stack grouped at each x, in x order, with each category's value. */
+function stackColumns(
+  mark: Pick<StackMark, "aggregation">,
+  ids: number[],
   categories: StackCategory[],
-  xy: { x: NumericAxis; y: NumericAxis },
-  frame: Bounds,
-  data: CompositionData
-): SceneNode[] {
-  const xColumn = data.column(xy.x.scale.field);
-  const categoryColumn = data.column(mark.categoryField);
-  const measure = mark.measureField
-    ? data.column(mark.measureField)
-    : undefined;
-  // Columns at each x, in x order.
+  xColumn: Record<number, datum>,
+  categoryColumn: Record<number, datum>,
+  measure: Record<number, datum> | undefined
+): StackColumn[] {
   const byX = new Map<number, number[]>();
-  for (const id of subset.liveIds) {
+  for (const id of ids) {
     const x = readNumber(xColumn[id]);
     if (x === undefined) continue;
     const list = byX.get(x);
@@ -1539,12 +2643,7 @@ function stackAreaNodes(
     else byX.set(x, [id]);
   }
   const xs = [...byX.keys()].sort((a, b) => a - b);
-  type Column = {
-    x: number;
-    total: number;
-    counts: Map<string, { count: number; rowIds: number[] }>;
-  };
-  const columns: Column[] = xs.map((x) => {
+  return xs.map((x) => {
     const groups = groupByCategory(categoryColumn, byX.get(x)!);
     const counts = new Map<string, { count: number; rowIds: number[] }>();
     let total = 0;
@@ -1557,7 +2656,77 @@ function stackAreaNodes(
     }
     return { x, total, counts };
   });
+}
+
+/**
+ * The wiggle baseline of a streamgraph: at each step the baseline moves so
+ * the layers' weighted slopes sum to zero, after Byron and Wattenberg, then
+ * the whole stream shifts so its lowest point rests on zero.
+ */
+export function streamOffsets(
+  columns: StackColumn[],
+  categories: StackCategory[]
+): number[] {
+  const height = (column: StackColumn, key: string) =>
+    column.counts.get(key)?.count ?? 0;
+  const offsets: number[] = [];
+  let y = 0;
+  for (let j = 0; j < columns.length; j += 1) {
+    if (j > 0) {
+      const previous = columns[j - 1]!;
+      const current = columns[j]!;
+      let s1 = 0;
+      let s2 = 0;
+      categories.forEach((category, i) => {
+        const own = height(current, category.key);
+        let s3 = (own - height(previous, category.key)) / 2;
+        for (let k = 0; k < i; k += 1) {
+          const key = categories[k]!.key;
+          s3 += height(current, key) - height(previous, key);
+        }
+        s1 += own;
+        s2 += s3 * own;
+      });
+      if (s1) y -= s2 / s1;
+    }
+    offsets.push(y);
+  }
+  const low = Math.min(0, ...offsets);
+  return offsets.map((offset) => offset - low);
+}
+
+function stackAreaNodes(
+  unit: UnitElement,
+  mark: StackMark,
+  subset: Subset,
+  categories: StackCategory[],
+  xy: { x: NumericAxis; y: NumericAxis },
+  frame: Bounds,
+  data: CompositionData
+): SceneNode[] {
+  const columns = stackColumns(
+    mark,
+    subset.liveIds,
+    categories,
+    data.column(xy.x.scale.field),
+    data.column(mark.categoryField),
+    mark.measureField ? data.column(mark.measureField) : undefined
+  );
+  // Where each column rests: on zero, centered on the tallest total, or on
+  // the wiggle baseline. Normalized stacks always fill from zero.
+  const baseline = mark.normalize ? "zero" : (mark.baseline ?? "zero");
+  const offsets =
+    baseline === "wiggle"
+      ? streamOffsets(columns, categories)
+      : columns.map((column) =>
+          baseline === "center"
+            ? ((data.stackMaxTotal?.get(mark.id) ?? column.total) -
+                column.total) /
+              2
+            : 0
+        );
   const nodes: SceneNode[] = [];
+  const labels: TextNode[] = [];
   const names = categories.map((category) => category.key);
   for (const category of categories) {
     const segments: AreaNode["segments"] = [];
@@ -1565,12 +2734,13 @@ function stackAreaNodes(
     const points: NonNullable<BandDatum["stack"]>["points"] = [];
     const rowIds: number[] = [];
     let best: { x: number; height: number; y: number } | undefined;
-    for (const column of columns) {
+    columns.forEach((column, columnIndex) => {
       if (!column.total) {
         if (run.length) segments.push(run);
         run = [];
-        continue;
+        return;
       }
+      const offset = offsets[columnIndex]!;
       // Cumulative share below this category at this x.
       let below = 0;
       for (const other of categories) {
@@ -1580,8 +2750,8 @@ function stackAreaNodes(
       const own = column.counts.get(category.key);
       const share = (own?.count ?? 0) / column.total;
       const scale = mark.normalize ? 1 : column.total;
-      const y0 = numericPixel(xy.y, below * scale);
-      const y1 = numericPixel(xy.y, (below + share) * scale);
+      const y0 = numericPixel(xy.y, offset + below * scale);
+      const y1 = numericPixel(xy.y, offset + (below + share) * scale);
       const px = numericPixel(xy.x, column.x);
       run.push({ x: px, y0, y1, rowId: own?.rowIds[0] ?? -1 });
       if (own) {
@@ -1596,7 +2766,7 @@ function stackAreaNodes(
         if (!best || height > best.height)
           best = { x: px, height, y: (y0 + y1) / 2 };
       }
-    }
+    });
     if (run.length) segments.push(run);
     if (!points.length) continue;
     const fill = mark.colors[category.index % mark.colors.length]!;
@@ -1608,6 +2778,7 @@ function stackAreaNodes(
       segments,
       fill,
       fillOpacity: 1,
+      curve: mark.curve === "smooth" ? "smooth" : undefined,
       band: {
         instanceKey: subset.key,
         markId: mark.id,
@@ -1629,7 +2800,7 @@ function stackAreaNodes(
     });
     // The label sits where the band is thickest, if it has the room.
     if (best && best.height >= mark.labelMinHeight)
-      nodes.push({
+      labels.push({
         type: "text",
         key: `${unit.id}:${subset.key}:${mark.id}:${category.key}:label`,
         elementId: unit.id,
@@ -1649,6 +2820,25 @@ function stackAreaNodes(
         halo: "#ffffff",
       });
   }
+  // Labels that hang from the same edge spread apart so none overlap.
+  for (const anchor of ["start", "middle", "end"] as const) {
+    const group = labels.filter((label) => label.anchor === anchor);
+    if (anchor === "middle") {
+      nodes.push(...group);
+      continue;
+    }
+    const placed = dodgePositions(
+      group.map((label) => label.lines[0]!.y),
+      12,
+      [frame.y + 8, frame.y + frame.height]
+    );
+    group.forEach((label, index) =>
+      nodes.push({
+        ...label,
+        lines: [{ ...label.lines[0]!, y: placed[index]! }],
+      })
+    );
+  }
   return nodes;
 }
 
@@ -1666,6 +2856,8 @@ export function numericPixel(axis: NumericAxis, value: number) {
   const [d0, d1] = axis.domain;
   const [r0, r1] = axis.range;
   if (axis.scale.transform === "log") {
+    // Values under a log span pin to its low end along with those at or below zero.
+    if (value < d0) return r0;
     // Log spacing needs positive bounds; a value at or below zero pins to the low end.
     const lo = Math.log(Math.max(d0, Number.MIN_VALUE));
     const hi = Math.log(Math.max(d1, Number.MIN_VALUE));
@@ -1694,7 +2886,10 @@ export function markCategories(
   mark: MarkDefinition,
   data: CompositionData
 ): { key: string; color: string }[] {
-  if (mark.type === "point" && mark.colorField) {
+  if (
+    (mark.type === "point" || mark.type === "path" || mark.type === "span") &&
+    mark.colorField
+  ) {
     const column = data.column(mark.colorField);
     const keys = new Set<string>();
     for (const id of data.allIds) {
@@ -1712,6 +2907,26 @@ export function markCategories(
       key: category.key,
       color: mark.colors[category.index % mark.colors.length]!,
     }));
+  if (mark.type === "bar" && mark.categoryField)
+    return stackCategories(
+      {
+        categoryField: mark.categoryField,
+        aggregation: mark.aggregation === "sum" ? "sum" : "count",
+        measureField: mark.measureField,
+        order: mark.order,
+      },
+      data
+    ).map((category) => ({
+      key: category.key,
+      color: mark.colors[category.index % mark.colors.length]!,
+    }));
+  if (mark.type === "waffle")
+    return stackCategories({ ...mark, aggregation: "count" }, data).map(
+      (category) => ({
+        key: category.key,
+        color: mark.colors[category.index % mark.colors.length]!,
+      })
+    );
   return [];
 }
 
@@ -1744,14 +2959,21 @@ function pathNodes(
   data: CompositionData
 ): SceneNode[] {
   const xs = data.column(axes.x.scale.field);
-  const ys = data.column(axes.y.scale.field);
+  const ys = yColumn(axes.y, mark, subset, data);
   const order = data.column(mark.orderField);
   const clip = fixedLimits(axes.x) || fixedLimits(axes.y) ? frame : undefined;
   const groups = seriesGroups(
     mark.population === "composition" ? data.liveIds : subset.liveIds,
     mark.seriesField ? data.column(mark.seriesField) : undefined
   );
+  const colorColumn = mark.colorField
+    ? data.column(mark.colorField)
+    : undefined;
+  const categoryColors = new Map(
+    markCategories(mark, data).map((item) => [item.key, item.color])
+  );
   const nodes: PathNode[] = [];
+  const ends: EndLabel[] = [];
   for (const group of groups) {
     const rows = orderedRows(group.ids, order);
     const segments: PathNode["segments"] = [];
@@ -1775,19 +2997,30 @@ function pathNodes(
     if (current.length) segments.push(current);
     if (!segments.length) continue;
     const focused = isFocused(mark.focus, group.series, subset.key);
+    const first = segments[0]![0]!;
+    const category = colorColumn
+      ? categoryKey(colorColumn[first.rowId])
+      : undefined;
+    const stroke = !focused
+      ? (mark.mutedStroke ?? MUTED_MARK)
+      : category !== undefined
+        ? (categoryColors.get(category) ?? mark.stroke)
+        : mark.stroke;
+    const key =
+      group.series === undefined
+        ? `${unit.id}:${subset.key}:${mark.id}`
+        : `${unit.id}:${subset.key}:${mark.id}:${group.series}`;
     nodes.push({
       type: "path",
-      key:
-        group.series === undefined
-          ? `${unit.id}:${subset.key}:${mark.id}`
-          : `${unit.id}:${subset.key}:${mark.id}:${group.series}`,
+      key,
       elementId: unit.id,
       instanceKey: subset.key,
       segments,
-      stroke: focused ? mark.stroke : (mark.mutedStroke ?? MUTED_MARK),
+      stroke,
       strokeWidth: focused
         ? mark.strokeWidth
         : Math.max(0.75, mark.strokeWidth * 0.75),
+      curve: mark.curve === "smooth" ? "smooth" : undefined,
       clip,
       path: {
         instanceKey: subset.key,
@@ -1798,14 +3031,183 @@ function pathNodes(
         segments: segments.length,
         series: group.series,
         focused,
+        category,
       },
     });
+    // End labels name the series, or the repeat when there is none, or
+    // the unit itself when it is not repeated.
+    const labels = mark.labels ?? "none";
+    if (labels === "none") continue;
+    const name = group.series ?? (subset.label || unit.name);
+    const value = (vertex: { rowId: number }) => {
+      if (!mark.labelValue) return "";
+      const y = readY(axes.y, ys, vertex.rowId);
+      return y === undefined ? "" : tickFormat.format(y);
+    };
+    const lastRun = segments[segments.length - 1]!;
+    const last = lastRun[lastRun.length - 1]!;
+    if (labels === "start" || labels === "both")
+      ends.push({
+        key: `${key}:label:start`,
+        side: "start",
+        x: first.x - 6,
+        y: first.y,
+        text: [value(first), name].filter(Boolean).join("  "),
+        focused,
+      });
+    if (labels === "end" || labels === "both")
+      ends.push({
+        key: `${key}:label:end`,
+        side: "end",
+        x: last.x + 6,
+        y: last.y,
+        text: [value(last), name].filter(Boolean).join("  "),
+        focused,
+      });
   }
   // Focused series draw last, so they sit over the muted ones.
   return [
     ...nodes.filter((node) => !node.path.focused),
     ...nodes.filter((node) => node.path.focused),
+    ...endLabelNodes(unit, subset, ends, frame),
   ];
+}
+
+interface EndLabel {
+  key: string;
+  side: "start" | "end";
+  x: number;
+  y: number;
+  text: string;
+  focused: boolean;
+}
+
+/**
+ * Lays each side's end labels out so none overlap: they keep their order
+ * down the frame and move the least that separates them, overflowing the
+ * frame when the stack is taller than it.
+ */
+function endLabelNodes(
+  unit: UnitElement,
+  subset: Subset,
+  ends: EndLabel[],
+  frame: Bounds
+): SceneNode[] {
+  const fontSize = 10;
+  const spacing = Math.round(fontSize * 1.15);
+  const nodes: SceneNode[] = [];
+  for (const side of ["start", "end"] as const) {
+    const labels = ends.filter((label) => label.side === side);
+    if (!labels.length) continue;
+    const placed = dodgePositions(
+      labels.map((label) => label.y),
+      spacing,
+      [frame.y + fontSize / 2, frame.y + frame.height]
+    );
+    labels.forEach((label, index) =>
+      nodes.push({
+        type: "text",
+        key: label.key,
+        elementId: unit.id,
+        instanceKey: subset.key,
+        x: label.x,
+        lines: [{ text: label.text, y: placed[index]! + fontSize * 0.35 }],
+        fontSize,
+        fontWeight: 400,
+        fill: label.focused ? INK : MUTED_INK,
+        anchor: side === "start" ? "end" : "start",
+      })
+    );
+  }
+  return nodes;
+}
+
+/**
+ * One bar per row from its start to its end along x, filling the frame's
+ * height. Rows without a readable start are left out; rows without an end
+ * run to the frame's edge when the mark allows open ends.
+ */
+function spanNodes(
+  unit: UnitElement,
+  mark: SpanMark,
+  subset: Subset,
+  axes: { x: NumericAxis; y: NumericAxis },
+  frame: Bounds,
+  data: CompositionData
+): SceneNode[] {
+  const starts = data.column(mark.startField);
+  const ends = data.column(mark.endField);
+  const labels = mark.labelField ? data.column(mark.labelField) : undefined;
+  const colorColumn = mark.colorField
+    ? data.column(mark.colorField)
+    : undefined;
+  const categoryColors = new Map(
+    markCategories(mark, data).map((item) => [item.key, item.color])
+  );
+  const nodes: SceneNode[] = [];
+  const y = frame.y + mark.inset;
+  const height = Math.max(1, frame.height - mark.inset * 2);
+  for (const id of subset.liveIds) {
+    const start = readNumber(starts[id]);
+    if (start === undefined) continue;
+    const end = readNumber(ends[id]);
+    if (end === undefined && !mark.openEnd) continue;
+    const x0 = numericPixel(axes.x, start);
+    const x1 =
+      end === undefined ? frame.x + frame.width : numericPixel(axes.x, end);
+    const left = Math.min(x0, x1);
+    const width = Math.max(0.5, Math.abs(x1 - x0));
+    const category = colorColumn ? categoryKey(colorColumn[id]) : undefined;
+    const fill =
+      category !== undefined
+        ? (categoryColors.get(category) ?? mark.fill)
+        : mark.fill;
+    const raw = labels?.[id];
+    const label = raw === null || raw === undefined ? "" : String(raw).trim();
+    const key = `${unit.id}:${subset.key}:${mark.id}:${id}`;
+    nodes.push({
+      type: "rect",
+      key,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      x: left,
+      y,
+      width,
+      height,
+      fill,
+      clip: frame,
+      glyph: {
+        instanceKey: subset.key,
+        markId: mark.id,
+        bin: { key: label || String(id), label: label || `Row ${id}` },
+        value: (end ?? axes.x.domain[1]) - start,
+        rowIds: [id],
+        span: {
+          startField: mark.startField,
+          endField: mark.endField,
+          start,
+          end,
+          open: end === undefined,
+          category,
+        },
+      },
+    });
+    if (label && mark.labelMinWidth > 0 && width >= mark.labelMinWidth)
+      nodes.push({
+        type: "text",
+        key: `${key}:label`,
+        elementId: unit.id,
+        instanceKey: subset.key,
+        x: left + 4,
+        lines: [{ text: label, y: y + height / 2 + 3.5 }],
+        fontSize: Math.min(10, Math.max(7, height - 4)),
+        fontWeight: 500,
+        fill: "#ffffff",
+        anchor: "start",
+        clip: { x: left, y, width: Math.max(0, width - 4), height },
+      });
+  }
+  return nodes;
 }
 
 function bandNodes(
@@ -1881,7 +3283,7 @@ function pointNodes(
   data: CompositionData
 ): SceneNode[] {
   const xs = data.column(axes.x.scale.field);
-  const ys = data.column(axes.y.scale.field);
+  const ys = yColumn(axes.y, mark, subset, data);
   const labels = mark.labelField ? data.column(mark.labelField) : undefined;
   const order = mark.orderField ? data.column(mark.orderField) : undefined;
   const colorColumn = mark.colorField
@@ -1896,7 +3298,10 @@ function pointNodes(
   const radiusOf = (id: number) => {
     if (!sizes || sizeMax <= 0) return mark.radius;
     const value = finiteNumber(sizes[id]) ?? 0;
-    return Math.max(1, mark.radius * Math.sqrt(Math.max(0, value) / sizeMax));
+    return Math.max(
+      mark.minRadius ?? 1,
+      mark.radius * Math.sqrt(Math.max(0, value) / sizeMax)
+    );
   };
   const wanted = mark.labelValues
     ? new Set(
@@ -1952,7 +3357,11 @@ function pointNodes(
         x,
         y: middle ? x : y,
         xField: axes.x.scale.field,
-        yField: middle ? axes.x.scale.field : axes.y.scale.field,
+        yField: middle
+          ? axes.x.scale.field
+          : isRankScale(axes.y.scale)
+            ? `rank by ${mark.rank === "asc" ? "smallest" : "largest"} ${axes.y.scale.name}`
+            : axes.y.scale.field,
         series,
         category,
       },
@@ -2000,6 +3409,30 @@ function pointNodes(
     }
     drawn += 1;
   }
+  // A swarm pushes each dot off the middle line just far enough to clear
+  // its neighbors; its label follows.
+  if (mark.spread === "swarm" && axes.y.scale.id === MIDDLE_SCALE.id) {
+    const circles = nodes.filter(
+      (node): node is CircleNode => node.type === "circle"
+    );
+    const largest = Math.max(0, ...circles.map((node) => node.r));
+    const offsets = swarmOffsets(
+      circles.map((node) => node.cx),
+      circles.map((node) => node.r),
+      Math.max(0, frame.height / 2 - largest)
+    );
+    const shift = new Map(
+      circles.map((node, index) => [node.key, offsets[index]!])
+    );
+    for (const node of nodes) {
+      if (node.type === "circle") node.cy += shift.get(node.key) ?? 0;
+      else if (node.type === "text" && node.key.endsWith(":label")) {
+        const dy = shift.get(node.key.slice(0, -":label".length));
+        if (dy)
+          node.lines = node.lines.map((line) => ({ ...line, y: line.y + dy }));
+      }
+    }
+  }
   return nodes;
 }
 
@@ -2042,7 +3475,8 @@ function numericGridNodes(
   xy: { x: NumericAxis; y: NumericAxis },
   frame: Bounds
 ): SceneNode[] {
-  if (xy.y.scale.id === MIDDLE_SCALE.id) return [];
+  if (xy.y.scale.id === MIDDLE_SCALE.id || xy.y.scale.id === DENSITY_SCALE.id)
+    return [];
   return tickValues(xy.y, frame.height, 36).map((value) => {
     const y = numericPixel(xy.y, value);
     return {
@@ -2061,6 +3495,22 @@ function numericGridNodes(
 
 /** Tick values along a numeric axis, about one per `spacing` pixels. */
 function tickValues(axis: NumericAxis, length: number, spacing: number) {
+  if (axis.scale.ticks === "none") return [];
+  // Ranks tick at whole numbers, thinned to about one per `spacing`.
+  if (isRankScale(axis.scale)) {
+    const deepest = Math.round(Math.max(...axis.domain) - 0.5);
+    const step = Math.max(
+      1,
+      Math.ceil(deepest / Math.max(1, length / spacing))
+    );
+    const ticks: number[] = [];
+    for (let rank = 1; rank <= deepest; rank += step) ticks.push(rank);
+    return ticks;
+  }
+  if (axis.scale.ticks === "ends")
+    return axis.domain[0] === axis.domain[1]
+      ? [axis.domain[0]]
+      : [axis.domain[0], axis.domain[1]];
   const count = Math.max(2, Math.floor(length / spacing));
   if (axis.dates)
     return scaleTime()
@@ -2111,6 +3561,9 @@ function formatDateTick(axis: NumericAxis, value: number) {
 }
 
 const tickFormat = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
+const smallTickFormat = new Intl.NumberFormat("en-US", {
+  maximumSignificantDigits: 2,
+});
 const plainTickFormat = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2,
   useGrouping: false,
@@ -2119,6 +3572,11 @@ const plainTickFormat = new Intl.NumberFormat("en-US", {
 /** Years read as "2016", not "2,016"; other numbers keep their separators. */
 function formatTick(axis: NumericAxis, value: number) {
   if (axis.scale.id === SHARE_SCALE.id) return `${Math.round(value * 100)}%`;
+  if (axis.scale.id === BAR_SCALE.id)
+    return compactFormat.format(Math.abs(value));
+  // A log span can reach well below one; those ticks keep their leading digit.
+  if (axis.scale.transform === "log" && value > 0 && value < 1)
+    return smallTickFormat.format(value);
   if (axis.dates) return formatDateTick(axis, value);
   return /year|\byr\b/i.test(axis.scale.field) || /year/i.test(axis.scale.name)
     ? plainTickFormat.format(value)
@@ -2130,7 +3588,8 @@ function numericAxisNodes(
   unit: UnitElement,
   instanceKey: string,
   xy: { x: NumericAxis; y: NumericAxis },
-  frame: Bounds
+  frame: Bounds,
+  fontSize = 10
 ): SceneNode[] {
   const label = (
     text: string,
@@ -2144,7 +3603,7 @@ function numericAxisNodes(
     elementId: unit.id,
     x,
     lines: [{ text, y }],
-    fontSize: 10,
+    fontSize,
     fontWeight: 400,
     fill: MUTED_INK,
     anchor,
@@ -2158,8 +3617,9 @@ function numericAxisNodes(
       `x:${value}`
     )
   );
-  // A dot row has no y to label.
-  if (xy.y.scale.id === MIDDLE_SCALE.id) return nodes;
+  // A dot row has no y to label, and a density's height is relative.
+  if (xy.y.scale.id === MIDDLE_SCALE.id || xy.y.scale.id === DENSITY_SCALE.id)
+    return nodes;
   for (const value of tickValues(xy.y, frame.height, 36))
     nodes.push(
       label(
@@ -2216,12 +3676,17 @@ function glyphNodes(
   return glyphs.flatMap((glyph): SceneNode[] => {
     const position = index.get(glyph.bin.key);
     if (position === undefined) return [];
-    const share = glyph.missing ? 0 : valueShare(scale, glyph.value, max);
+    // A diverging scale reads the sign; other scales read the magnitude.
+    const share = glyph.missing
+      ? 0
+      : valueShare(scale, Math.abs(glyph.value), max);
     const left = frame.x + position * band;
     const fill = glyph.missing
       ? (mark.missing ?? mark.fill)
       : mark.encoding === "color"
-        ? valueColor(scale, share)
+        ? scale.center
+          ? valueColorSigned(scale, glyph.value, max)
+          : valueColor(scale, share)
         : mark.fill;
     // A missing cell draws as a full, neutral cell whatever the encoding.
     const encoding = glyph.missing ? "color" : mark.encoding;

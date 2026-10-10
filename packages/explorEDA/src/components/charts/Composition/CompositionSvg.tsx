@@ -1,3 +1,4 @@
+import { area as shapeArea, curveMonotoneX, line as shapeLine } from "d3-shape";
 import type { ReactNode } from "react";
 import { COMPOSITION_FONT } from "./compositionTypes";
 import type { Bounds, CompositionScene, SceneNode } from "./resolveComposition";
@@ -142,6 +143,8 @@ function SceneNodeView({ node }: { node: SceneNode }) {
           width={node.width}
           height={node.height}
           fill={node.fill}
+          stroke={node.stroke}
+          strokeWidth={node.stroke ? 1 : undefined}
           opacity={node.opacity}
           pointerEvents={node.under ? "none" : undefined}
           clipPath={clipPath}
@@ -163,26 +166,54 @@ function SceneNodeView({ node }: { node: SceneNode }) {
       );
     case "area":
       return (
-        <path
-          data-node={node.key}
-          d={node.segments
-            .map((run) => {
-              const upper = run.map(
-                (vertex, index) =>
-                  `${index ? "L" : "M"}${round(vertex.x)} ${round(vertex.y1)}`
-              );
-              const lower = [...run]
-                .reverse()
-                .map((vertex) => `L${round(vertex.x)} ${round(vertex.y0)}`);
-              return `${upper.join("")}${lower.join("")}Z`;
-            })
-            .join("")}
-          fill={node.fill}
-          fillOpacity={node.fillOpacity}
-          stroke="none"
-          opacity={node.opacity}
-          clipPath={clipPath}
-        />
+        <g>
+          <path
+            data-node={node.key}
+            d={node.segments
+              .map((run) => {
+                if (node.curve === "smooth") return smoothArea(run) ?? "";
+                const upper = run.map(
+                  (vertex, index) =>
+                    `${index ? "L" : "M"}${round(vertex.x)} ${round(vertex.y1)}`
+                );
+                const lower = [...run]
+                  .reverse()
+                  .map((vertex) => `L${round(vertex.x)} ${round(vertex.y0)}`);
+                return `${upper.join("")}${lower.join("")}Z`;
+              })
+              .join("")}
+            fill={node.fill}
+            fillOpacity={node.fillOpacity}
+            stroke="none"
+            opacity={node.opacity}
+            clipPath={clipPath}
+          />
+          {node.stroke && (
+            <path
+              d={node.segments
+                .map((run) =>
+                  node.curve === "smooth"
+                    ? (smoothLine(
+                        run.map((vertex) => ({ x: vertex.x, y: vertex.y1 }))
+                      ) ?? "")
+                    : run
+                        .map(
+                          (vertex, index) =>
+                            `${index ? "L" : "M"}${round(vertex.x)} ${round(vertex.y1)}`
+                        )
+                        .join("")
+                )
+                .join("")}
+              fill="none"
+              stroke={node.stroke}
+              strokeWidth={1}
+              strokeLinejoin="round"
+              opacity={node.opacity}
+              clipPath={clipPath}
+              pointerEvents="none"
+            />
+          )}
+        </g>
       );
     case "path":
       return (
@@ -190,12 +221,14 @@ function SceneNodeView({ node }: { node: SceneNode }) {
           data-node={node.key}
           d={node.segments
             .map((run) =>
-              run
-                .map(
-                  (vertex, index) =>
-                    `${index ? "L" : "M"}${round(vertex.x)} ${round(vertex.y)}`
-                )
-                .join("")
+              node.curve === "smooth"
+                ? (smoothLine(run) ?? "")
+                : run
+                    .map(
+                      (vertex, index) =>
+                        `${index ? "L" : "M"}${round(vertex.x)} ${round(vertex.y)}`
+                    )
+                    .join("")
             )
             .join("")}
           fill="none"
@@ -223,5 +256,16 @@ function SceneNodeView({ node }: { node: SceneNode }) {
       );
   }
 }
+
+/** A monotone cubic curve through points, which never overshoots them. */
+const smoothLine = shapeLine<{ x: number; y: number }>()
+  .x((vertex) => vertex.x)
+  .y((vertex) => vertex.y)
+  .curve(curveMonotoneX);
+const smoothArea = shapeArea<{ x: number; y0: number; y1: number }>()
+  .x((vertex) => vertex.x)
+  .y0((vertex) => vertex.y0)
+  .y1((vertex) => vertex.y1)
+  .curve(curveMonotoneX);
 
 const round = (value: number) => Math.round(value * 100) / 100;

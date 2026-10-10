@@ -261,6 +261,19 @@ function describeScale(scale: CompositionScale) {
   return `${scale.transform} · ${domain}`;
 }
 
+const TICK_OPTIONS = [
+  {
+    value: "auto" as const,
+    label: "Steps",
+    tooltip: "Tidy tick values spaced along the frame",
+  },
+  {
+    value: "ends" as const,
+    label: "Ends",
+    tooltip: "Only the two ends of the span, as a slope chart's two dates",
+  },
+  { value: "none" as const, label: "None", tooltip: "No ticks or grid lines" },
+];
 const ZERO_OPTIONS = [
   {
     value: false,
@@ -368,6 +381,15 @@ function NumericScaleProperties({
           onChange({
             transform: transform === "linear" ? undefined : transform,
           })
+        }
+      />
+      <span className="eda-setting-label">Ticks</span>
+      <Segmented
+        label={`${scale.name} ticks`}
+        value={scale.ticks ?? "auto"}
+        options={TICK_OPTIONS}
+        onChange={(ticks) =>
+          onChange({ ticks: ticks === "auto" ? undefined : ticks })
         }
       />
       <span className="eda-setting-label">Limits</span>

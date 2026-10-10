@@ -283,3 +283,183 @@ One row per economy with a 2023 population, GDP per capita (PPP, constant 2021 $
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/gapminder.ts
 ```
+
+## Covid case rates by state, weekly
+
+- File: `covid-tiles.csv`
+- Size: 8,109 rows and 5 fields
+- Demo: `?example=covid-tiles`
+- Use: a tile-grid map composition, one small case-rate path per state at its place on a US tile grid, with the latest value labeled
+- Source: The New York Times, [coronavirus (Covid-19) data in the United States](https://github.com/nytimes/covid-19-data), `rolling-averages/us-states.csv`: seven-day average new cases per 100,000 people.
+- License: Creative Commons Attribution-NonCommercial 4.0, with credit to The New York Times.
+
+Every seventh day from March 2020 to the series' end in March 2023, for the 50 states and D.C. `Tile` is each state's row and column on the common 8 × 11 tile grid, counted from the top left.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/covid-tiles.ts
+```
+
+## Covid case rates, six states and the nation
+
+- File: `covid-compare.csv`
+- Size: 1,119 rows and 4 fields
+- Demo: `?example=covid-compare`
+- Use: a compound-frame composition, one panel per state with the recent window in the main frame, the full history in an inset, and the national series in both for comparison
+- Source: The New York Times, [coronavirus (Covid-19) data in the United States](https://github.com/nytimes/covid-19-data), `rolling-averages/us-states.csv` and `rolling-averages/us.csv`: seven-day average new cases per 100,000 people.
+- License: Creative Commons Attribution-NonCommercial 4.0, with credit to The New York Times.
+
+Every seventh day from March 2020 to March 2023 for California, Florida, New York, Texas, Vermont, and Washington, plus the United States as code `US`.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/covid-compare.ts
+```
+
+## Presidential margins by state, 1976–2016
+
+- File: `elections.csv`
+- Size: 561 rows and 7 fields
+- Demo: `?example=elections`
+- Use: a strip composition of 51 state rows and 11 election columns, each cell colored by the signed Democratic margin through a diverging ramp, with a ramp legend
+- Source: MIT Election Data and Science Lab, [U.S. President 1976–2020](https://doi.org/10.7910/DVN/42MVDX) state returns (the file version retrieved covers 1976–2016).
+- License: CC0 1.0 (the lab's public dataverse terms).
+
+`Margin` is the Democratic share of all votes cast minus the Republican share, in percentage points; positive leans Democratic. Minnesota's Democratic-Farmer-Labor line counts as the Democratic ticket; other minor party lines are not folded in.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/elections.ts
+```
+
+## Lincoln, Nebraska weather, 2016
+
+- File: `lincoln-weather.csv`
+- Size: 366 rows and 6 fields
+- Demo: `?example=lincoln-ridgeline`
+- Use: a ridgeline composition, one density of daily mean temperatures per month, overlapping down the page in calendar order
+- Source: the [ggridges](https://github.com/wilkelab/ggridges) package's raw `lincoln-weather.csv`, Weather Underground observations for Lincoln, Nebraska, collected by Claus Wilke.
+- License: ggridges is GPL-2; the observations are factual weather records, reused with credit.
+
+Daily mean, maximum, and minimum temperatures in degrees Fahrenheit, with the month name and number.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/lincoln-weather.ts
+```
+
+## Central government tax revenue, 2000 and 2023
+
+- File: `tax-slope.csv`
+- Size: 68 rows and 6 fields
+- Demo: `?example=tax-slope`
+- Use: a slope chart composition, one path per country between its two readings, labeled at both ends and colored by direction
+- Source: the [World Bank World Development Indicators](https://data.worldbank.org/indicator/GC.TAX.TOTL.GD.ZS), tax revenue (% of GDP), indicator `GC.TAX.TOTL.GD.ZS`, through the World Bank API.
+- License: CC BY 4.0.
+
+Two rows per OECD country, for 2000 and 2023, with the change across the span and its direction. Members without both readings are left out: Japan, Australia, New Zealand, and Türkiye.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/tax-slope.ts
+```
+
+## Titanic passengers
+
+- File: `titanic.csv`
+- Size: 1,309 rows and 8 fields
+- Demo: `?example=titanic-waffle`
+- Use: a waffle composition, one cell per passenger grouped by fate, repeated by class
+- Source: the [titanic3](https://hbiostat.org/data/) passenger list compiled by Thomas Cason from the Encyclopedia Titanica, kept by Vanderbilt University's Department of Biostatistics.
+- License: public domain data, reused with credit.
+
+One row per passenger with class, sex, age and age group, port of embarkation, fare, and fate. Crew are not included.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/titanic.ts
+```
+
+## Unemployment by industry, 2000 to 2010
+
+- File: `unemployment-industries.csv`
+- Size: 1,708 rows and 5 fields
+- Demo: `?example=unemployment-stream`
+- Use: a streamgraph composition, industries' unemployed stacked across months on a wiggling baseline
+- Source: Bureau of Labor Statistics, Current Population Survey, as packaged in [vega-datasets](https://github.com/vega/vega-datasets) (`unemployment-across-industries.json`).
+- License: vega-datasets is BSD-3-Clause; the figures are public US government statistics.
+
+One row per industry and month from January 2000 to February 2010, with the unemployed count in thousands and the unemployment rate.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/unemployment-industries.ts
+```
+
+## United States population by age and sex, 1850 to 2000
+
+- File: `us-population.csv`
+- Size: 570 rows and 5 fields
+- Demo: `?example=population-pyramid`
+- Use: population pyramid compositions, bars per age group mirrored by sex
+- Source: U.S. Census Bureau decennial censuses, as packaged in [vega-datasets](https://github.com/vega/vega-datasets) (`population.json`).
+- License: vega-datasets is BSD-3-Clause; the figures are public US government statistics.
+
+One row per census year, five-year age group, and sex, with the number of people. The 1890 census is absent from the source.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/us-population.ts
+```
+
+## Largest economies by GDP, 1980 to 2023
+
+- File: `gdp-ranks.csv`
+- Size: 740 rows and 5 fields
+- Demo: `?example=gdp-bump`
+- Use: a bump chart composition, each economy ranked at every year and joined into a path
+- Source: the [World Bank World Development Indicators](https://data.worldbank.org/indicator/NY.GDP.MKTP.CD), GDP (current US$), indicator `NY.GDP.MKTP.CD`, with regions from the World Bank country list.
+- License: CC BY 4.0.
+
+One row per year for the 17 economies that ranked in the world's top twelve in any year from 1980 to 2023, with the World Bank region and GDP in current US dollars. Regional and income aggregates are left out.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/gdp-ranks.ts
+```
+
+## Justices of the Supreme Court
+
+- File: `scotus.csv`
+- Size: 121 rows and 13 fields
+- Demo: `?example=scotus-timeline`
+- Use: a timeline composition, one lane per seat with a span per justice's term
+- Source: [Wikipedia, List of justices of the Supreme Court of the United States](https://en.wikipedia.org/wiki/List_of_justices_of_the_Supreme_Court_of_the_United_States), parsed from the article's wikitext through the MediaWiki API; the appointing president's party is added from their election.
+- License: CC BY-SA 4.0.
+
+One row per term: the justice, surname, position, home state, seat and seat name, oath and departure dates (blank for sitting justices), years served, how the term ended, the appointing president, and that president's party. A justice who held two seats has two rows.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/scotus.ts
+```
+
+## Tech stock prices, 2000 to 2010
+
+- File: `tech-stocks.csv`
+- Size: 560 rows and 4 fields
+- Demo: `?example=stocks-horizon`
+- Use: a horizon chart composition, each company's growth since 2000 in stacked bands
+- Source: monthly closing prices for AAPL, AMZN, GOOG, IBM, and MSFT as packaged in [vega-datasets](https://github.com/vega/vega-datasets) (`stocks.csv`).
+- License: vega-datasets is BSD-3-Clause.
+
+One row per company and month from January 2000 to March 2010 (Google from August 2004), with the symbol, company name, and closing price.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/tech-stocks.ts
+```
+
+## Carbon dioxide per person, 2020
+
+- File: `co2-per-capita.csv`
+- Size: 203 rows and 6 fields
+- Demo: `?example=co2-swarm`
+- Use: a beeswarm composition, economies swarmed along a log scale within each region
+- Source: the [World Bank World Development Indicators](https://data.worldbank.org/indicator/EN.GHG.CO2.PC.CE.AR5), CO2 emissions excluding LULUCF per capita (`EN.GHG.CO2.PC.CE.AR5`) and population (`SP.POP.TOTL`) for 2020, with regions and income groups from the World Bank country list.
+- License: CC BY 4.0.
+
+One row per economy with its code, region, income group, tonnes of CO2 per person, and population. Aggregates are left out.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/co2-per-capita.ts
+```

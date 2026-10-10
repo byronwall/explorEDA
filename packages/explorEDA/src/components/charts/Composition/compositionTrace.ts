@@ -9,6 +9,8 @@ import {
   type PositionScale,
   type UnitElement,
   type ValueScale,
+  isXyMark,
+  type RankOrder,
 } from "./compositionTypes";
 import type {
   AreaNode,
@@ -63,6 +65,8 @@ export interface CompositionTrace {
     stroke: string;
     x?: NumericScale;
     y?: NumericScale;
+    /** Set when the path plots ranks by the y scale's field instead of values. */
+    rank?: RankOrder;
     /** Each vertex in path order, with its coordinates. */
     vertices: { rowId: number; x: number; y: number }[];
   };
@@ -131,7 +135,7 @@ export function makeCompositionTraceSource(
       if (mark.type === "strip") {
         const position = scale(mark.positionScaleId);
         if (position?.kind === "position") fields.add(position.field);
-      } else if (mark.type !== "summary" && mark.type !== "stack") {
+      } else if (isXyMark(mark)) {
         for (const id of [mark.xScaleId, mark.yScaleId]) {
           const axis = scale(id);
           if (axis?.kind === "numeric") fields.add(axis.field);
@@ -157,6 +161,8 @@ export function makeCompositionTraceSource(
         const mark = unit.marks.find((item) => item.id === node.glyph!.markId);
         const strip = mark?.type === "strip" ? mark : undefined;
         const point = mark?.type === "point" ? mark : undefined;
+        const bar = mark?.type === "bar" ? mark : undefined;
+        const span = mark?.type === "span" ? mark : undefined;
         return {
           kind,
           id,
@@ -169,14 +175,19 @@ export function makeCompositionTraceSource(
           glyph: {
             datum: node.glyph!,
             markName: mark?.name ?? "Mark",
-            aggregation: strip?.aggregation ?? (point ? "row" : "count"),
-            measureField: strip?.measureField,
+            aggregation:
+              strip?.aggregation ??
+              bar?.aggregation ??
+              (point ? "row" : "count"),
+            measureField: strip?.measureField ?? bar?.measureField,
             fill: node.fill,
             position: scale(strip?.positionScaleId) as
               | PositionScale
               | undefined,
             value: scale(strip?.valueScaleId) as ValueScale | undefined,
-            x: scale(point?.xScaleId) as NumericScale | undefined,
+            x: scale(point?.xScaleId ?? span?.xScaleId) as
+              | NumericScale
+              | undefined,
             y: scale(point?.yScaleId) as NumericScale | undefined,
           },
         };
@@ -208,6 +219,7 @@ export function makeCompositionTraceSource(
             stroke: node.stroke,
             x,
             y,
+            rank: mark?.type === "path" ? mark.rank : undefined,
             vertices: node.segments.flatMap((run) =>
               run.map((vertex) => ({
                 rowId: vertex.rowId,

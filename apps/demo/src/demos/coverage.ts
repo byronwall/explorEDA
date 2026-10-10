@@ -1092,6 +1092,136 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "covid-tiles",
+    intent:
+      "Place each state's weekly case-rate path at its cell on a tile grid, on one shared scale.",
+    features: {
+      "chart:composition": "shown",
+      "chart:line": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
+    exampleId: "covid-compare",
+    intent:
+      "Show each state's recent window beside the nation in the main frame and the full history in an inset.",
+    features: {
+      "chart:composition": "shown",
+      "chart:line": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
+    exampleId: "elections",
+    intent:
+      "Color each state-election cell by its signed margin through a diverging ramp with a ramp legend.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
+    exampleId: "lincoln-ridgeline",
+    intent:
+      "Overlap a density of each month's daily temperatures down the page on one shared scale and height.",
+    features: {
+      "chart:composition": "shown",
+      "chart:boxplot": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
+    exampleId: "tax-slope",
+    intent:
+      "Join each country's two readings with a line named at both ends, colored by whether the share rose or fell.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
+    exampleId: "titanic-waffle",
+    intent:
+      "Draw one cell per passenger in each class, grouped by fate, so counts and survival compare at a glance.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
+    exampleId: "unemployment-stream",
+    intent:
+      "Stack each industry's unemployed across months on a wiggling baseline with smooth edges.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
+    exampleId: "population-pyramid",
+    intent:
+      "Mirror men and women about a baseline per age group, 1900 beside 2000, on one shared length axis.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
+    exampleId: "gdp-bump",
+    intent:
+      "Rank the largest economies at every year and join each one's ranks into a smooth path named at the end.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
+    exampleId: "scotus-timeline",
+    intent:
+      "Lay every justice's term in its seat's lane, colored by the appointing party, with sitting justices running to today.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
+    exampleId: "stocks-horizon",
+    intent:
+      "Fold each stock's growth since 2000 into stacked bands per row, losses mirrored upward in red.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
+    exampleId: "co2-swarm",
+    intent:
+      "Swarm every economy along a log scale of emissions per person within its region, sized by population.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

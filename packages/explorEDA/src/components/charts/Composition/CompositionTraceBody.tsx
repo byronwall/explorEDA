@@ -21,8 +21,71 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
   const point = glyph?.datum.point;
   const summary = glyph?.datum.summary;
   const stack = glyph?.datum.stack;
+  const waffle = glyph?.datum.waffle;
+  const bar = glyph?.datum.bar;
+  const span = glyph?.datum.span;
   return (
     <div className="space-y-2" aria-label="Composition trace">
+      {glyph && span && (
+        <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
+          <TraceReadout label="From">
+            <TraceSwatch color={glyph.fill} /> {span.startField} ={" "}
+            {formatCalcValue(span.start, glyph.x ? "date" : "number")}
+          </TraceReadout>
+          <TraceReadout label="To">
+            {span.open
+              ? `no ${span.endField}; the span runs to the frame's edge`
+              : `${span.endField} = ${formatCalcValue(span.end!, glyph.x ? "date" : "number")}`}
+          </TraceReadout>
+          {span.category !== undefined && (
+            <TraceReadout label="Colored by">{span.category}</TraceReadout>
+          )}
+        </TraceSection>
+      )}
+      {glyph && bar && (
+        <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
+          <TraceReadout label="Length">
+            <TraceSwatch color={glyph.fill} />{" "}
+            {formatCalcValue(Math.abs(glyph.datum.value), "number")}
+            {bar.measureField ? ` ${bar.measureField}` : " rows"}
+            {bar.mirrored ? ", drawn leftward from the baseline" : ""}
+          </TraceReadout>
+          <TraceReadout label="Calculation">
+            {AGGREGATION_TEXT[bar.aggregation] ?? bar.aggregation}
+            {bar.measureField ? ` of ${bar.measureField}` : ""} over{" "}
+            {glyph.datum.rowIds.length.toLocaleString()}{" "}
+            {glyph.datum.rowIds.length === 1 ? "row" : "rows"} in this repeat
+            {bar.category !== undefined
+              ? ` where ${bar.categoryField} = ${bar.category}`
+              : ""}
+            , after the active filters
+          </TraceReadout>
+        </TraceSection>
+      )}
+      {glyph && waffle && (
+        <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
+          <TraceReadout label="Cell">
+            <TraceSwatch color={glyph.fill} /> {waffle.cell} of {waffle.cells}{" "}
+            for {waffle.categoryField} = {glyph.datum.bin.label}
+          </TraceReadout>
+          <TraceReadout label="Stands for">
+            {waffle.normalize
+              ? `1% of this repeat's ${formatCalcValue(waffle.total, "number")} rows, about ${formatCalcValue(glyph.datum.value, "number")} of them`
+              : waffle.each === 1
+                ? "one row"
+                : `${formatCalcValue(waffle.each, "number")} rows, rounded to whole cells`}
+          </TraceReadout>
+          <TraceReadout label="Category">
+            {formatCalcValue(waffle.count, "number")} of{" "}
+            {formatCalcValue(waffle.total, "number")} rows in this repeat (
+            {new Intl.NumberFormat("en-US", {
+              style: "percent",
+              maximumFractionDigits: 1,
+            }).format(waffle.count / waffle.total)}
+            ), after the active filters
+          </TraceReadout>
+        </TraceSection>
+      )}
       {glyph && stack && (
         <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
           <TraceReadout label="Share">
@@ -117,7 +180,7 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
           )}
         </TraceSection>
       )}
-      {glyph && !point && !summary && !stack && (
+      {glyph && !point && !summary && !stack && !waffle && !bar && !span && (
         <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
           <TraceReadout label="Value">
             <TraceSwatch color={glyph.fill} />{" "}
@@ -172,6 +235,11 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
                   : ""}
             </TraceReadout>
           )}
+          {path.datum.category !== undefined && (
+            <TraceReadout label="Colored by">
+              <TraceSwatch color={path.stroke} /> {path.datum.category}
+            </TraceReadout>
+          )}
           <TraceReadout label="Order">
             <TraceSwatch color={path.stroke} /> {path.datum.orderField},
             ascending; ties keep row order
@@ -196,6 +264,11 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
           )}
           {path.y && (
             <TraceReadout label="Y scale">
+              {path.rank
+                ? `Rank among the rows at each x by ${
+                    path.rank === "asc" ? "smallest" : "largest"
+                  } ${path.y.name}, from the live rows; `
+                : ""}
               {describeNumericScale(path.y)}
             </TraceReadout>
           )}

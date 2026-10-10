@@ -186,6 +186,9 @@ Open questions for the next round:
 - Guides take one value from a fixed entry or a calculation. Bands between two values, and guides on value scales, are not built.
 - The example graphic is authored by hand in the demo. A saved reference composition could become a regression fixture once the model settles.
 
+The election strips (research entry 02) ship as `?example=elections` from `apps/data-samples/prepare/elections.ts`, built from the MIT Election Data and Science Lab's state returns for 1976 to 2016.
+Strip marks now read a diverging value scale's sign, so the research's signed-share gap is closed, and a legend can key a value scale's ramp with the drawn extent. Stripe weights by electoral votes, which need variable repeat heights, stay below the cut line.
+
 ## Milestone 2: Connect observations in an explicit order
 
 Create the Driving composition with a path, points, selected-year labels, and a data-bound callout.
@@ -237,6 +240,14 @@ Point marks color by a category field through a palette, a legend element lists 
 
 The income and life expectancy scatter (after research entry 21 and Gapminder) ships as `?example=income-life`, joined from the World Bank tables by `apps/data-samples/prepare/gapminder.ts`.
 Numeric scales take log spacing with decade ticks, point marks size by a field and label only listed values, and legends wrap long rows.
+
+The Covid tile map (research entry 18) ships as `?example=covid-tiles` from `apps/data-samples/prepare/covid-tiles.ts`, weekly from The New York Times' rolling averages.
+Repeats can be arranged as tiles: a prepared field names each repeat's cell as row,column, and repeats without a cell queue below the grid, so the tile-address gap the research named is closed.
+
+The tax revenue slope (after Tufte's government receipts) ships as `?example=tax-slope` from `apps/data-samples/prepare/tax-slope.ts`, two World Bank readings per OECD country.
+Path marks name each path at its start, end, or both, with the value there, and the labels on each side move the least that keeps them apart; paths color by a field like points, and numeric scales can label only their ends or nothing.
+
+The GDP bump chart ships as `?example=gdp-bump` from `apps/data-samples/prepare/gdp-ranks.ts`: point and path marks can plot each row's rank among the rows at its x, by the y field, largest or smallest first, with rank one at the top; the ranks come from the live rows, so filters re-rank.
 
 ## Milestone 3: Layer interval bands around a line
 
@@ -307,6 +318,9 @@ Trace on a median lists the quartiles, count, group, and the change that set the
 
 Not built: weighted summaries and a drawn legend for the diverging color; the subtitle states the meaning.
 
+Distributions can also be drawn whole: a density mark estimates a repeat's measure with a Gaussian kernel on a grid shared across repeats, fills from the frame's baseline, and takes its height from the shared peak or each repeat's own.
+The Lincoln ridgeline ships as `?example=lincoln-ridgeline` from `apps/data-samples/prepare/lincoln-weather.ts`: twelve months of daily temperatures as rows that overlap through a negative repeat gap, drawn bottom first so the upper ridge sits in front.
+
 ## Milestone 5: Stack category shares with explainable denominators
 
 Create the Causes composition using category counts by age.
@@ -342,6 +356,18 @@ The trace of a segment states the numerator, the denominator, every contributing
 The area geometry followed as `?example=causes-by-age` from `apps/data-samples/causes_by_age.ts`: a stack mark bound to a numeric x scale groups rows by their x value, stacks categories at each x, and draws each category as one area, labeled where it is thickest.
 The y axis reads as shares or totals, an x with no rows breaks the areas, and the trace of an area gives the category's share range, numerator, denominator, and largest share. Column and area layouts share one calculation and one category order.
 
+Unit charts are built as waffle marks: the Titanic waffle ships as `?example=titanic-waffle` from `apps/data-samples/prepare/titanic.ts`, one cell per passenger in each class, grouped by fate in an order and color shared across repeats, with counted cells, cells per several rows, or a hundred cells of shares.
+
+The unemployment streamgraph ships as `?example=unemployment-stream` from `apps/data-samples/prepare/unemployment-industries.ts`, fourteen industries stacked across 122 months: a spread stack can rest on a centered or wiggling baseline, and stack and path marks can draw smooth monotone curves, closing the path-curve gap noted above.
+
+Horizontal bar lengths, named below the cut line until a proof needed them, are built as bar marks for the population pyramids at `?example=population-pyramid` (`apps/data-samples/prepare/us-population.ts`): one bar per repeat or per category, counted, summed, or averaged, on one length axis shared across repeats, with one category mirrored leftward. Mark types now declare their capabilities through `isXyMark` and `markHasCategories`, so adding a mark no longer touches every type check.
+
+Timelines are built as span marks: the Supreme Court seats at `?example=scotus-timeline` (`apps/data-samples/prepare/scotus.ts`) draw one bar per row from a start field to an end field along a date scale whose domain covers both ends, with open ends for rows that have none, labels inside the wider spans, and colors from a field.
+
+Horizon charts are built as horizon marks: the tech stocks at `?example=stocks-horizon` (`apps/data-samples/prepare/tech-stocks.ts`) read a measure from zero, the repeat's first value, or its mean, as a difference or a share, and cut it into bands that stack at the frame's full height, with drops mirrored upward in a second color and a shared or per-repeat range.
+
+Beeswarms are dot rows with a spread: the emissions swarm at `?example=co2-swarm` (`apps/data-samples/prepare/co2-per-capita.ts`) pushes each point off the middle line just far enough to clear its neighbors, labels following, so crowded values show their count; sized points take a smallest radius so small values stay visible.
+
 ## Milestone 6: Combine detail and overview frames in one unit
 
 Create a state-style comparison with an inset, then repeat that unit for several illustrative regions.
@@ -365,6 +391,17 @@ Keep ranking and rounding in the prepared table first; do not silently replace t
 The author edits one compound template and repeats it without copying frame definitions manually.
 Detail, inset, guides, and captions move together. Output preserves their distinct scales and clipping.
 Single-frame templates still work. Remove the inset frame to reduce this composition to the previous capability set.
+
+### Status: built with The New York Times' Covid series (updated 2026-10-10)
+
+The state comparison ships as `?example=covid-compare` from `apps/data-samples/prepare/covid-compare.ts`: six state panels, each with a recent-window main frame and a full-history inset.
+A unit holds inset frames placed from its main frame's corner, each with its own display window; the main frame can take a window too. A window leaves rows out of the marks drawn in that frame and spans the window on its field, but it is not a filter: calculations, labels, and sibling frames still see every row.
+Point, path, and band marks name the frame they draw in. A windowed frame clips. The national series sits in the data as a comparison: a repeat rule can leave listed values out, and a mark drawn from the whole graphic with a listed focus shows only that series.
+Group movement, region and date filters, and inset placement were checked in the browser; the inset keeps the full history while the main frame shows the recent window, and selecting a state never alters the national population.
+
+## Editing without hunting
+
+A right-click on any drawn object lists what it is made of, most specific first: the mark with a one-line summary of what it draws, each scale it uses, the unit and the repeat under the pointer, a trace, the workspace filter for that repeat, and removal while editing. Each line selects the owning element, scrolls the inspector to that mark or opens that scale, and opens the details view when no editor is showing. Mark cards carry the same summaries, so the Marks section scans without opening each type.
 
 ## Cross-cutting verification
 

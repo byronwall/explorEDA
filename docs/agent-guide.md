@@ -76,6 +76,12 @@ Format only the files you changed: `npx prettier --write <files>`. Formatting a 
 - **A chart's filter function runs once per row.** Call `fieldGetter` before you return the row test. A lookup inside it is quadratic: 34 s for one click at 27,000 rows.
 - **Axis labels and tick labels take the pointer** (`pointerEvents="auto"` with `data-field`), so they sit above anything drawn under them in `PlannedAxes`, such as the axis bands. Map a label back to its band, as `axisEditTarget` in `useAxisEditing.tsx` does.
 
+## Editing a composition quickly
+
+- **Right-click any drawn object** on a composition's artboard for a menu of what it is made of: the mark under the pointer with a one-line summary, each scale it uses, the unit and the repeat, a trace, the workspace filter for that repeat, and removal while editing. Each line opens that part of the editor and scrolls to it, opening the details view when no editor is showing. Shift+F10 or the menu key does the same for the selected element.
+- Inspector parts carry stable hooks for scripts: `[data-element-id]` and `[data-element-kind]` on the selected element's properties, `[data-mark-id]` and `[data-mark-type]` on each mark card, and `[data-action]` on each quick-menu item.
+- `describeMark` in `markSummary.ts` is the one-line summary under each mark's name; keep it in step when a mark type gains a field that changes what it draws.
+
 ## Tests
 
 - Vitest with Testing Library and jsdom. Call `registerAllCharts()` in `beforeAll` before rendering charts.

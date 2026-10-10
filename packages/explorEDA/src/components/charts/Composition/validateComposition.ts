@@ -48,6 +48,7 @@ function isMark(value: unknown) {
     return false;
   if (value.type === "point")
     return (
+      (value.frameId === undefined || isString(value.frameId)) &&
       isString(value.xScaleId) &&
       (value.yScaleId === undefined || isString(value.yScaleId)) &&
       (value.colorField === undefined || isString(value.colorField)) &&
@@ -62,13 +63,93 @@ function isMark(value: unknown) {
       value.labelEvery >= 0 &&
       (value.labelValues === undefined || isString(value.labelValues)) &&
       (value.sizeField === undefined || isString(value.sizeField)) &&
+      (value.minRadius === undefined ||
+        (isNumber(value.minRadius) && value.minRadius > 0)) &&
       (value.show === undefined ||
         oneOf(value.show, ["all", "first", "last", "min", "max"])) &&
       (value.seriesField === undefined || isString(value.seriesField)) &&
       isFocus(value.focus) &&
       (value.mutedFill === undefined || isString(value.mutedFill)) &&
+      (value.rank === undefined || oneOf(value.rank, ["desc", "asc"])) &&
+      (value.spread === undefined || value.spread === "swarm") &&
       (value.population === undefined ||
         oneOf(value.population, ["repeat", "composition"]))
+    );
+  if (value.type === "span")
+    return (
+      (value.frameId === undefined || isString(value.frameId)) &&
+      isString(value.xScaleId) &&
+      (value.yScaleId === undefined || isString(value.yScaleId)) &&
+      isString(value.startField) &&
+      isString(value.endField) &&
+      typeof value.openEnd === "boolean" &&
+      isString(value.fill) &&
+      (value.colorField === undefined || isString(value.colorField)) &&
+      (value.colors === undefined ||
+        (Array.isArray(value.colors) && value.colors.every(isString))) &&
+      (value.labelField === undefined || isString(value.labelField)) &&
+      isNumber(value.labelMinWidth) &&
+      value.labelMinWidth >= 0 &&
+      isNumber(value.inset) &&
+      value.inset >= 0
+    );
+  if (value.type === "bar")
+    return (
+      oneOf(value.aggregation, ["count", "sum", "average"]) &&
+      (value.aggregation === "count" || isString(value.measureField)) &&
+      (value.categoryField === undefined || isString(value.categoryField)) &&
+      (value.mirror === undefined || isString(value.mirror)) &&
+      oneOf(value.order, ["label", "total"]) &&
+      Array.isArray(value.colors) &&
+      value.colors.length > 0 &&
+      value.colors.every(isString) &&
+      (value.max === undefined || (isNumber(value.max) && value.max > 0)) &&
+      isNumber(value.inset) &&
+      value.inset >= 0 &&
+      isNumber(value.labelMinWidth) &&
+      value.labelMinWidth >= 0
+    );
+  if (value.type === "waffle")
+    return (
+      isString(value.categoryField) &&
+      isNumber(value.each) &&
+      value.each >= 1 &&
+      typeof value.normalize === "boolean" &&
+      isNumber(value.columns) &&
+      value.columns >= 1 &&
+      isNumber(value.gap) &&
+      value.gap >= 0 &&
+      oneOf(value.from, ["top", "bottom"]) &&
+      oneOf(value.order, ["label", "total"]) &&
+      Array.isArray(value.colors) &&
+      value.colors.length > 0 &&
+      value.colors.every(isString)
+    );
+  if (value.type === "horizon")
+    return (
+      isString(value.xScaleId) &&
+      isString(value.field) &&
+      isString(value.orderField) &&
+      oneOf(value.baseline, ["zero", "first", "mean"]) &&
+      typeof value.relative === "boolean" &&
+      isNumber(value.bands) &&
+      value.bands >= 1 &&
+      value.bands <= 10 &&
+      oneOf(value.domain, ["shared", "instance"]) &&
+      isString(value.positive) &&
+      isString(value.negative)
+    );
+  if (value.type === "density")
+    return (
+      isString(value.xScaleId) &&
+      (value.bandwidth === undefined ||
+        (isNumber(value.bandwidth) && value.bandwidth > 0)) &&
+      oneOf(value.height, ["shared", "instance"]) &&
+      isString(value.fill) &&
+      isNumber(value.opacity) &&
+      value.opacity > 0 &&
+      value.opacity <= 1 &&
+      (value.stroke === undefined || isString(value.stroke))
     );
   if (value.type === "stack")
     return (
@@ -82,7 +163,10 @@ function isMark(value: unknown) {
       value.colors.every(isString) &&
       isNumber(value.labelMinHeight) &&
       isNumber(value.inset) &&
-      (value.xScaleId === undefined || isString(value.xScaleId))
+      (value.xScaleId === undefined || isString(value.xScaleId)) &&
+      (value.baseline === undefined ||
+        oneOf(value.baseline, ["zero", "center", "wiggle"])) &&
+      (value.curve === undefined || oneOf(value.curve, ["linear", "smooth"]))
     );
   if (value.type === "summary")
     return (
@@ -97,6 +181,7 @@ function isMark(value: unknown) {
     );
   if (value.type === "band")
     return (
+      (value.frameId === undefined || isString(value.frameId)) &&
       isString(value.xScaleId) &&
       isString(value.yScaleId) &&
       isString(value.orderField) &&
@@ -109,6 +194,7 @@ function isMark(value: unknown) {
     );
   if (value.type === "path")
     return (
+      (value.frameId === undefined || isString(value.frameId)) &&
       isString(value.xScaleId) &&
       (value.yScaleId === undefined || isString(value.yScaleId)) &&
       isString(value.orderField) &&
@@ -119,7 +205,16 @@ function isMark(value: unknown) {
       isFocus(value.focus) &&
       (value.mutedStroke === undefined || isString(value.mutedStroke)) &&
       (value.population === undefined ||
-        oneOf(value.population, ["repeat", "composition"]))
+        oneOf(value.population, ["repeat", "composition"])) &&
+      (value.labels === undefined ||
+        oneOf(value.labels, ["none", "start", "end", "both"])) &&
+      (value.labelValue === undefined ||
+        typeof value.labelValue === "boolean") &&
+      (value.colorField === undefined || isString(value.colorField)) &&
+      (value.colors === undefined ||
+        (Array.isArray(value.colors) && value.colors.every(isString))) &&
+      (value.curve === undefined || oneOf(value.curve, ["linear", "smooth"])) &&
+      (value.rank === undefined || oneOf(value.rank, ["desc", "asc"]))
     );
   // Marks saved before mark types existed have none; they are strips.
   return (
@@ -136,8 +231,46 @@ function isMark(value: unknown) {
   );
 }
 
+function isWindow(value: unknown) {
+  if (value === undefined) return true;
+  return (
+    isRecord(value) &&
+    isString(value.field) &&
+    (value.min === undefined || isString(value.min)) &&
+    (value.max === undefined || isString(value.max))
+  );
+}
+
+function isInset(value: unknown) {
+  return (
+    isRecord(value) &&
+    isString(value.id) &&
+    isString(value.name) &&
+    isNumber(value.x) &&
+    isNumber(value.y) &&
+    isNumber(value.width) &&
+    value.width > 0 &&
+    isNumber(value.height) &&
+    value.height > 0 &&
+    isWindow(value.window) &&
+    typeof value.axis === "boolean" &&
+    (value.background === undefined || isString(value.background))
+  );
+}
+
 function isUnitElement(value: Value) {
   const { frame, label, repeat, marks } = value;
+  const insets = value.insets;
+  if (
+    insets !== undefined &&
+    !(
+      Array.isArray(insets) &&
+      insets.every(isInset) &&
+      new Set(insets.map((inset) => (inset as Value).id)).size === insets.length
+    )
+  )
+    return false;
+  if (!isWindow(value.window)) return false;
   return (
     isRecord(frame) &&
     isNumber(frame.width) &&
@@ -154,7 +287,8 @@ function isUnitElement(value: Value) {
     marks.every(isMark) &&
     isRecord(repeat) &&
     (repeat.field === undefined || isString(repeat.field)) &&
-    oneOf(repeat.arrangement, ["rows", "columns", "grid"]) &&
+    oneOf(repeat.arrangement, ["rows", "columns", "grid", "tiles"]) &&
+    (repeat.tileField === undefined || isString(repeat.tileField)) &&
     isNumber(repeat.columns) &&
     repeat.columns >= 1 &&
     isNumber(repeat.gap) &&
@@ -163,7 +297,8 @@ function isUnitElement(value: Value) {
     (repeat.direction === undefined ||
       oneOf(repeat.direction, ["asc", "desc"])) &&
     isNumber(repeat.limit) &&
-    repeat.limit >= 1
+    repeat.limit >= 1 &&
+    (repeat.skip === undefined || isString(repeat.skip))
   );
 }
 
@@ -185,7 +320,9 @@ function isScale(value: unknown) {
       (value.min === undefined || isNumber(value.min)) &&
       (value.max === undefined || isNumber(value.max)) &&
       (value.transform === undefined ||
-        oneOf(value.transform, ["linear", "log"]))
+        oneOf(value.transform, ["linear", "log"])) &&
+      (value.ticks === undefined ||
+        oneOf(value.ticks, ["auto", "ends", "none"]))
     );
   return (
     value.kind === "value" &&
@@ -308,6 +445,7 @@ function isElement(value: unknown) {
       return (
         isString(value.unitId) &&
         isString(value.markId) &&
+        (value.scaleId === undefined || isString(value.scaleId)) &&
         oneOf(value.direction, ["row", "column"]) &&
         isNumber(value.fontSize) &&
         value.fontSize > 0 &&
@@ -348,22 +486,28 @@ export function isCompositionDefinition(
         element.marks.every(
           (mark) =>
             isRecord(mark) &&
-            (mark.type === "stack"
-              ? mark.xScaleId === undefined ||
-                kinds.get(mark.xScaleId) === "numeric"
-              : mark.type === "summary"
-                ? kinds.get(mark.yScaleId) === "numeric" &&
-                  (mark.valueScaleId === undefined ||
-                    kinds.get(mark.valueScaleId) === "value")
-                : mark.type === "point" || mark.type === "path"
-                  ? kinds.get(mark.xScaleId) === "numeric" &&
-                    (mark.yScaleId === undefined ||
-                      kinds.get(mark.yScaleId) === "numeric")
-                  : mark.type === "band"
-                    ? kinds.get(mark.xScaleId) === "numeric" &&
-                      kinds.get(mark.yScaleId) === "numeric"
-                    : kinds.get(mark.positionScaleId) === "position" &&
-                      kinds.get(mark.valueScaleId) === "value")
+            (mark.type === "density" || mark.type === "horizon"
+              ? kinds.get(mark.xScaleId) === "numeric"
+              : mark.type === "waffle" || mark.type === "bar"
+                ? true
+                : mark.type === "stack"
+                  ? mark.xScaleId === undefined ||
+                    kinds.get(mark.xScaleId) === "numeric"
+                  : mark.type === "summary"
+                    ? kinds.get(mark.yScaleId) === "numeric" &&
+                      (mark.valueScaleId === undefined ||
+                        kinds.get(mark.valueScaleId) === "value")
+                    : mark.type === "point" ||
+                        mark.type === "path" ||
+                        mark.type === "span"
+                      ? kinds.get(mark.xScaleId) === "numeric" &&
+                        (mark.yScaleId === undefined ||
+                          kinds.get(mark.yScaleId) === "numeric")
+                      : mark.type === "band"
+                        ? kinds.get(mark.xScaleId) === "numeric" &&
+                          kinds.get(mark.yScaleId) === "numeric"
+                        : kinds.get(mark.positionScaleId) === "position" &&
+                          kinds.get(mark.valueScaleId) === "value")
         )
     );
   return (

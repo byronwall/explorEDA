@@ -7284,6 +7284,66 @@ td[data-null] {
   font-size: 12px;
   font-weight: 500;
 }
+.eda-composition-mark-summary {
+  margin: -2px 0 6px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  line-height: 1.35;
+}
+.eda-composition-mark[data-revealed],
+.eda-composition-properties[data-revealed] {
+  animation: eda-reveal-flash 1.6s ease-out;
+  border-radius: 6px;
+}
+@keyframes eda-reveal-flash {
+  0% {
+    box-shadow: 0 0 0 2px var(--ring);
+  }
+  100% {
+    box-shadow: 0 0 0 2px transparent;
+  }
+}
+/* The right-click menu over a composition */
+.eda-quick-menu {
+  width: 300px;
+  padding: 4px;
+}
+.eda-quick-menu-heading {
+  padding: 4px 8px 6px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.eda-quick-menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  width: 100%;
+  padding: 5px 8px;
+  border-radius: 5px;
+  font-size: 12.5px;
+  text-align: left;
+}
+.eda-quick-menu-item:hover,
+.eda-quick-menu-item:focus-visible {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  outline: none;
+}
+.eda-quick-menu-item[data-destructive] {
+  color: var(--destructive);
+}
+.eda-quick-menu-detail {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  line-height: 1.3;
+}
+.eda-quick-menu-empty {
+  padding: 4px 8px 6px;
+}
 .eda-composition-select {
   min-width: 0;
   height: 28px;
