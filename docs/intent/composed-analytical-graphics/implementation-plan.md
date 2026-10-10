@@ -354,6 +354,8 @@ The trace of a segment states the numerator, the denominator, every contributing
 The area geometry followed as `?example=causes-by-age` from `apps/data-samples/causes_by_age.ts`: a stack mark bound to a numeric x scale groups rows by their x value, stacks categories at each x, and draws each category as one area, labeled where it is thickest.
 The y axis reads as shares or totals, an x with no rows breaks the areas, and the trace of an area gives the category's share range, numerator, denominator, and largest share. Column and area layouts share one calculation and one category order.
 
+Unit charts are built as waffle marks: the Titanic waffle ships as `?example=titanic-waffle` from `apps/data-samples/prepare/titanic.ts`, one cell per passenger in each class, grouped by fate in an order and color shared across repeats, with counted cells, cells per several rows, or a hundred cells of shares.
+
 ## Milestone 6: Combine detail and overview frames in one unit
 
 Create a state-style comparison with an inset, then repeat that unit for several illustrative regions.

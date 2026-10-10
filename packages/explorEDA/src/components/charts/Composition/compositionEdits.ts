@@ -15,6 +15,7 @@ import {
   type PointMark,
   type PositionScale,
   type StackMark,
+  type WaffleMark,
   type SummaryMark,
   STACK_COLORS,
   type UnitElement,
@@ -110,7 +111,8 @@ export function resetOverride(
 /** The one color a mark carries over when it changes type. */
 function markColor(mark: MarkDefinition) {
   if (mark.type === "path") return mark.stroke;
-  if (mark.type === "stack") return mark.colors[0] ?? "#1f2328";
+  if (mark.type === "stack" || mark.type === "waffle")
+    return mark.colors[0] ?? "#1f2328";
   if (mark.type === "density") return mark.fill;
   return mark.fill;
 }
@@ -180,6 +182,32 @@ export function convertMark(
     };
     return updateElement<UnitElement>(definition, unit.id, {
       marks: unit.marks.map((item) => (item.id === markId ? stack : item)),
+    });
+  }
+  if (type === "waffle") {
+    const categoryField =
+      fields.find(
+        (item) =>
+          item.dataType !== "numeric" &&
+          item.uniqueCount >= 2 &&
+          item.uniqueCount <= 12
+      )?.name ?? fields[0]?.name;
+    if (!categoryField) return definition;
+    const waffle: WaffleMark = {
+      type: "waffle",
+      id: mark.id,
+      name: mark.name,
+      categoryField,
+      each: 1,
+      normalize: false,
+      columns: 10,
+      gap: 2,
+      from: "top",
+      order: "total",
+      colors: STACK_COLORS,
+    };
+    return updateElement<UnitElement>(definition, unit.id, {
+      marks: unit.marks.map((item) => (item.id === markId ? waffle : item)),
     });
   }
   if (type === "summary") {
@@ -267,6 +295,7 @@ export function convertMark(
         item.type !== "strip" &&
         item.type !== "summary" &&
         item.type !== "stack" &&
+        item.type !== "waffle" &&
         item.type !== "density" &&
         item.id !== markId
     );

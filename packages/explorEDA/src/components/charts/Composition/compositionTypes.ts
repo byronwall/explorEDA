@@ -394,6 +394,33 @@ export interface StackMark {
 }
 
 /**
+ * A grid of cells for a repeat's rows: one cell per row, one per `each`
+ * rows, or a hundred cells of shares. Cells fill row by row from one
+ * corner, grouped by a category field in an order shared across repeats,
+ * so each category reads as a block and the blocks compare across repeats.
+ */
+export interface WaffleMark {
+  type: "waffle";
+  id: string;
+  name: string;
+  categoryField: string;
+  /** Rows per cell; 1 draws every row as its own cell. */
+  each: number;
+  /** Draw a hundred cells of shares instead of counted cells. */
+  normalize: boolean;
+  /** Cells per row across the frame; the cell size follows from the frame's width. */
+  columns: number;
+  /** Space between cells, in artboard pixels. */
+  gap: number;
+  /** Fill from the top left downward, or the bottom left upward. */
+  from: "top" | "bottom";
+  /** Category order: by label, or largest total first across the whole graphic. */
+  order: "label" | "total";
+  /** One color per category in that order, cycling when there are more. */
+  colors: string[];
+}
+
+/**
  * The distribution of a numeric field in each repeat, as a smoothed density
  * curve along x filled down to the frame's baseline. Densities share one
  * height so repeats compare, or each fills its own frame. Rows that overlap
@@ -421,6 +448,7 @@ export type MarkDefinition =
   | BandMark
   | SummaryMark
   | StackMark
+  | WaffleMark
   | DensityMark;
 
 /** A categorical palette for stacks, distinct and readable on paper. */
@@ -452,6 +480,7 @@ export function markScaleIds(mark: MarkDefinition): string[] {
       : [mark.yScaleId];
   if (mark.type === "stack") return mark.xScaleId ? [mark.xScaleId] : [];
   if (mark.type === "density") return [mark.xScaleId];
+  if (mark.type === "waffle") return [];
   if (mark.type === "point" || mark.type === "path")
     return mark.yScaleId ? [mark.xScaleId, mark.yScaleId] : [mark.xScaleId];
   return [mark.xScaleId, mark.yScaleId];
@@ -482,6 +511,8 @@ export function markFields(mark: MarkDefinition): string[] {
       return mark.measureField
         ? [mark.categoryField, mark.measureField]
         : [mark.categoryField];
+    case "waffle":
+      return [mark.categoryField];
     case "density":
       return [];
   }

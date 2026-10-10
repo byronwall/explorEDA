@@ -21,6 +21,7 @@ import {
   type PointMark,
   type PositionScale,
   type StackMark,
+  type WaffleMark,
   type StripMark,
   type SummaryMark,
   type TimeInterval,
@@ -138,6 +139,20 @@ export interface GlyphDatum {
     /** Every category in the denominator, with its count. */
     contributors: { category: string; count: number }[];
   };
+  /** The cell's place in a waffle; the glyph's value is the rows the cell stands for. */
+  waffle?: {
+    /** This cell's number within its category, from one. */
+    cell: number;
+    /** Cells drawn for the category in this repeat. */
+    cells: number;
+    /** Rows of the category in this repeat, and all rows of the repeat. */
+    count: number;
+    total: number;
+    /** Rows per cell, or the share of the total per cell when normalized. */
+    each: number;
+    normalize: boolean;
+    categoryField: string;
+  };
   /** The group's quartiles, for summary marks; the glyph's value is the median. */
   summary?: SummaryStats & {
     groupField: string;
@@ -232,12 +247,14 @@ type ResolvedSummary = {
   value?: ValueScale;
 };
 type ResolvedStack = { type: "stack"; mark: StackMark; x?: NumericScale };
+type ResolvedWaffle = { type: "waffle"; mark: WaffleMark };
 type ResolvedDensity = { type: "density"; mark: DensityMark; x: NumericScale };
 type ResolvedMark =
   | ResolvedStrip
   | ResolvedXy
   | ResolvedSummary
   | ResolvedStack
+  | ResolvedWaffle
   | ResolvedDensity;
 
 /** One group of a summary mark in one repeat. */
@@ -269,6 +286,8 @@ export function resolveUnit(
         mark,
         x: x?.kind === "numeric" ? x : undefined,
       });
+    } else if (mark.type === "waffle") {
+      marks.push({ type: "waffle", mark });
     } else if (mark.type === "density") {
       const x = scale(mark.xScaleId);
       if (x?.kind === "numeric") marks.push({ type: "density", mark, x });
@@ -303,8 +322,14 @@ export function resolveUnit(
   const stacks = marks.filter(
     (item): item is ResolvedStack => item.type === "stack"
   );
-  // Stacks share one category order and color across every repeat.
+  const waffles = marks.filter(
+    (item): item is ResolvedWaffle => item.type === "waffle"
+  );
+  // Stacks and waffles share one category order and color across every repeat.
   const stacked = stacks.map(({ mark }) => stackCategories(mark, data));
+  const waffled = waffles.map(({ mark }) =>
+    stackCategories({ ...mark, aggregation: "count" }, data)
+  );
   if (stacks.length) {
     const maxTotals = new Map<string, number>();
     for (const { mark } of stacks) {
@@ -820,6 +845,18 @@ export function resolveUnit(
               frame,
               data
             ))
+      );
+    });
+    waffles.forEach(({ mark }, markIndex) => {
+      nodes.push(
+        ...waffleNodes(
+          unit,
+          override?.accent ? { ...mark, colors: [override.accent] } : mark,
+          subset,
+          waffled[markIndex]!,
+          frame,
+          data
+        )
       );
     });
     densityCurves[index]!.forEach((curve, markIndex) => {
@@ -1611,7 +1648,7 @@ interface StackCategory {
 }
 
 function stackValue(
-  mark: StackMark,
+  mark: Pick<StackMark, "aggregation">,
   rowIds: number[],
   measure: Record<number, datum> | undefined
 ) {
@@ -1644,7 +1681,10 @@ function groupByCategory(
  * shares but never reorder or recolor.
  */
 function stackCategories(
-  mark: StackMark,
+  mark: Pick<
+    StackMark,
+    "categoryField" | "aggregation" | "measureField" | "order"
+  >,
   data: CompositionData
 ): StackCategory[] {
   const column = data.column(mark.categoryField);
@@ -1764,6 +1804,108 @@ function stackNodes(
       });
     lower = upper;
   }
+  return nodes;
+}
+
+/**
+ * The cells of one repeat's waffle. Each category takes a whole number of
+ * cells: one per row, one per `each` rows rounded, or its share of a
+ * hundred by largest remainder. Cells run along rows of `columns` from
+ * the chosen corner, category after category in the shared order.
+ */
+function waffleNodes(
+  unit: UnitElement,
+  mark: WaffleMark,
+  subset: Subset,
+  categories: StackCategory[],
+  frame: Bounds,
+  data: CompositionData
+): SceneNode[] {
+  const groups = groupByCategory(
+    data.column(mark.categoryField),
+    subset.liveIds
+  );
+  const present = categories
+    .map((category) => ({ category, rowIds: groups.get(category.key) ?? [] }))
+    .filter((item) => item.rowIds.length > 0);
+  const total = present.reduce((sum, item) => sum + item.rowIds.length, 0);
+  if (!total) return [];
+  const each = Math.max(1, Math.round(mark.each));
+  let cellCounts: number[];
+  if (mark.normalize) {
+    // Largest remainder keeps the hundred exact.
+    const exact = present.map((item) => (item.rowIds.length / total) * 100);
+    cellCounts = exact.map(Math.floor);
+    let left = 100 - cellCounts.reduce((sum, value) => sum + value, 0);
+    const byRemainder = exact
+      .map((value, index) => ({ index, remainder: value - Math.floor(value) }))
+      .sort((a, b) => b.remainder - a.remainder);
+    for (const item of byRemainder) {
+      if (left <= 0) break;
+      cellCounts[item.index]! += 1;
+      left -= 1;
+    }
+  } else {
+    cellCounts = present.map((item) =>
+      Math.max(1, Math.round(item.rowIds.length / each))
+    );
+  }
+  const columns = Math.max(1, Math.round(mark.columns));
+  const side = Math.max(
+    0.5,
+    (frame.width - mark.gap * (columns - 1)) / columns
+  );
+  const step = side + mark.gap;
+  const nodes: SceneNode[] = [];
+  let index = 0;
+  present.forEach((item, categoryIndex) => {
+    const cells = cellCounts[categoryIndex]!;
+    const fill = mark.colors[item.category.index % mark.colors.length]!;
+    const perCell = item.rowIds.length / cells;
+    for (let cell = 0; cell < cells; cell += 1) {
+      const column = index % columns;
+      const row = Math.floor(index / columns);
+      const y =
+        mark.from === "bottom"
+          ? frame.y + frame.height - side - row * step
+          : frame.y + row * step;
+      const rowIds = item.rowIds.slice(
+        Math.floor(cell * perCell),
+        Math.max(
+          Math.floor(cell * perCell) + 1,
+          Math.floor((cell + 1) * perCell)
+        )
+      );
+      nodes.push({
+        type: "rect",
+        key: `${unit.id}:${subset.key}:${mark.id}:${item.category.key}:${cell}`,
+        elementId: unit.id,
+        instanceKey: subset.key,
+        x: frame.x + column * step,
+        y,
+        width: side,
+        height: side,
+        fill,
+        glyph: {
+          instanceKey: subset.key,
+          markId: mark.id,
+          bin: { key: item.category.key, label: item.category.key },
+          value: mark.normalize ? perCell : each,
+          rowIds,
+          waffle: {
+            cell: cell + 1,
+            cells,
+            count: item.rowIds.length,
+            total,
+            each: mark.normalize ? 1 / 100 : each,
+            normalize: mark.normalize,
+            categoryField: mark.categoryField,
+          },
+        },
+      });
+      index += 1;
+    }
+  });
   return nodes;
 }
 
@@ -2113,6 +2255,13 @@ export function markCategories(
       key: category.key,
       color: mark.colors[category.index % mark.colors.length]!,
     }));
+  if (mark.type === "waffle")
+    return stackCategories({ ...mark, aggregation: "count" }, data).map(
+      (category) => ({
+        key: category.key,
+        color: mark.colors[category.index % mark.colors.length]!,
+      })
+    );
   return [];
 }
 

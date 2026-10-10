@@ -12,6 +12,7 @@ import {
   newMarkId,
   type BandMark,
   type DensityMark,
+  type WaffleMark,
   type FrameWindow,
   type InsetFrame,
   type InstanceOverride,
@@ -194,6 +195,12 @@ const MARK_TYPES = [
     label: "Stack",
     tooltip:
       "One column per repeat, its categories stacked from the bottom as shares of the repeat's total. Filtering the rows recomputes the total.",
+  },
+  {
+    value: "waffle" as const,
+    label: "Waffle",
+    tooltip:
+      "A grid of cells per repeat, one per row or per a set number of rows, grouped and colored by a category. Filtering the rows redraws the cells.",
   },
   {
     value: "density" as const,
@@ -571,6 +578,7 @@ function FrameSection({
                     mark.type !== "strip" &&
                     mark.type !== "summary" &&
                     mark.type !== "stack" &&
+                    mark.type !== "waffle" &&
                     mark.type !== "density" &&
                     mark.frameId === inset.id
                       ? { ...mark, frameId: undefined }
@@ -665,19 +673,21 @@ function MarksSection({
           ? { ...first, id, name: "Summary 2" }
           : first.type === "stack"
             ? { ...first, id, name: "Stack 2" }
-            : first.type === "density"
-              ? { ...first, id, name: "Density 2" }
-              : {
-                  type: "point",
-                  id,
-                  name: "Points",
-                  xScaleId: first.xScaleId,
-                  yScaleId: first.yScaleId,
-                  orderField: first.orderField,
-                  radius: 3.5,
-                  fill: first.type === "path" ? first.stroke : first.fill,
-                  labelEvery: 0,
-                };
+            : first.type === "waffle"
+              ? { ...first, id, name: "Waffle 2" }
+              : first.type === "density"
+                ? { ...first, id, name: "Density 2" }
+                : {
+                    type: "point",
+                    id,
+                    name: "Points",
+                    xScaleId: first.xScaleId,
+                    yScaleId: first.yScaleId,
+                    orderField: first.orderField,
+                    radius: 3.5,
+                    fill: first.type === "path" ? first.stroke : first.fill,
+                    labelEvery: 0,
+                  };
     onChange([...unit.marks, added]);
   };
   return (
@@ -799,6 +809,8 @@ function MarkProperties({
             onChange={onChange}
             onEditScale={onEditScale}
           />
+        ) : mark.type === "waffle" ? (
+          <WaffleFields mark={mark} onChange={onChange} />
         ) : mark.type === "stack" ? (
           <StackFields
             mark={mark}
@@ -1216,6 +1228,100 @@ function StackFields({
         max={20}
         value={mark.inset}
         onChange={(inset) => onChange({ inset })}
+      />
+    </>
+  );
+}
+
+function WaffleFields({
+  mark,
+  onChange,
+}: {
+  mark: WaffleMark;
+  onChange: (patch: Partial<WaffleMark>) => void;
+}) {
+  const profiles = useDataLayer((state) => state.fieldProfiles);
+  const categoryFields = profiles
+    .filter((profile) => profile.uniqueCount <= 60)
+    .map((profile) => profile.name);
+  return (
+    <>
+      <Label>Categories</Label>
+      <FieldSelector
+        label=""
+        placeholder="Category field"
+        value={mark.categoryField}
+        fields={categoryFields}
+        onChange={(categoryField) => onChange({ categoryField })}
+      />
+      <span className="eda-setting-label">Cells</span>
+      <Segmented
+        label={`${mark.name} cells`}
+        value={mark.normalize}
+        options={[
+          {
+            value: false,
+            label: "Counted",
+            tooltip:
+              "One cell per row, or per the number of rows set below, so bigger repeats draw more cells",
+          },
+          {
+            value: true,
+            label: "100 shares",
+            tooltip:
+              "A hundred cells per repeat, each one percent of its rows, so repeats compare as shares",
+          },
+        ]}
+        onChange={(normalize) => onChange({ normalize })}
+      />
+      {!mark.normalize && (
+        <NumberSetting
+          label="Rows per cell"
+          min={1}
+          max={100000}
+          value={mark.each}
+          onChange={(each) => onChange({ each })}
+        />
+      )}
+      <NumberSetting
+        label="Columns"
+        min={1}
+        max={200}
+        value={mark.columns}
+        onChange={(columns) => onChange({ columns })}
+      />
+      <NumberSetting
+        label="Gap"
+        min={0}
+        max={20}
+        value={mark.gap}
+        onChange={(gap) => onChange({ gap })}
+      />
+      <span className="eda-setting-label">Fill from</span>
+      <Segmented
+        label={`${mark.name} fill direction`}
+        value={mark.from}
+        options={[
+          {
+            value: "top" as const,
+            label: "Top",
+            tooltip: "Cells run left to right from the top row down",
+          },
+          {
+            value: "bottom" as const,
+            label: "Bottom",
+            tooltip:
+              "Cells run left to right from the bottom row up, so the grid grows like a bar",
+          },
+        ]}
+        onChange={(from) => onChange({ from })}
+      />
+      <span className="eda-setting-label">Order</span>
+      <Segmented
+        label={`${mark.name} category order`}
+        value={mark.order}
+        options={STACK_ORDERS}
+        onChange={(order) => onChange({ order })}
       />
     </>
   );
