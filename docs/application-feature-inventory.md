@@ -97,8 +97,15 @@ Seven initiatives retired on 2026-10-09 after their stacked PRs merged. Each shi
 - **Compact config authoring.** Dashboard text: chart-local filters, a compiler that builds what it can and reports the rest, an agent-facing checker CLI, and export. See the package README's [Dashboard text](../packages/explorEDA/README.md#dashboard-text).
 - **Project and task views.** Saved tabs with local persistence and categorized history in the demo. See [Saved state, exports, and host integration](#saved-state-exports-and-host-integration).
 - **Multiple sources and lookups.** `exploreda/analysis` and `ExplorEdaProject`: related tables, lookups and expansions with diagnostics, Schema and Query panels, parameters, and an optional worker. See the package README's [Related tables](../packages/explorEDA/README.md#related-tables).
-- **Schema diagram.** A wide drawer in every workspace that draws tables, relationships, query steps, calculations, and every saved view, traces a field's lineage both ways, and edits fields, keys, relationships, calculations, and query steps in place. Add source turns a single table into a project that keeps its charts. See the package README's [schema diagram](../packages/explorEDA/README.md#the-schema-diagram).
 - **Demo overhaul.** Seven curated analyses with capability discovery. See [the curated catalogue](example-coverage.md#curated-catalogue) and the [dataset notes](../apps/demo/public/datasets/README.md).
+
+### Initiatives retired 2026-10-10
+
+Three initiatives retired on 2026-10-10 after their stacked PRs merged. Leftover work is under **Retired initiative follow-ups** in the Product Grid.
+
+- **Schema diagram.** A wide drawer in every workspace that draws tables, relationships, query steps, calculations, and every saved view, traces a field's lineage both ways, and edits fields, keys, relationships, calculations, and query steps in place. Add source turns a single table into a project that keeps its charts. See the package README's [schema diagram](../packages/explorEDA/README.md#the-schema-diagram).
+- **Workspace filters.** A linked filter that no chart owns, added from the active filter bar's Filter button, at most one per field, saved with the view, and written as `filter` lines in dashboard text. See [Filter representations](#filter-representations) and [Direct selection and filter status](#direct-selection-and-filter-status). Checked in the Newsprint and Report themes on 2026-10-10.
+- **Editing in place.** Titles, axis titles, and numeric axis ranges edit where they are drawn, and axes pan and stretch by drag; each edit is one undo step. See [Settings and field actions](#settings-and-field-actions) and [UI defaults](ui-defaults.md#popovers-and-dialogs). Subtitle, source note, and legend name editing remain Product Grid tasks.
 
 ### Follow-up scope
 

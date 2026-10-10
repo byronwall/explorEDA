@@ -1,0 +1,14 @@
+{
+  "id": "d0baa470-98f3-47fc-8917-78ca4211283e",
+  "kind": "node.context.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:6381d2",
+    "label": "Agent token ...6381d2"
+  },
+  "createdAt": "2026-10-10T22:46:56.316Z",
+  "summary": "Updated context for \"Retire the in-place editing initiative\".",
+  "nodeIds": [
+    "page-retire-the-in-place-editing-initiative"
+  ]
+}
