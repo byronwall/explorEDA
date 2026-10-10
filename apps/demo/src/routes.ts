@@ -9,3 +9,6 @@ export function examplePath(exampleId: string, tab?: string) {
   const path = `/examples/${encodeURIComponent(exampleId)}`;
   return tab ? `${path}?${new URLSearchParams({ tab })}` : path;
 }
+
+/** Lists every example, grouped by kind. */
+export const EXAMPLES_PATH = "/examples";
