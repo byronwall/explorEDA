@@ -1049,6 +1049,17 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "causes-by-age",
+    intent:
+      "Spread one stack across age as areas of each cause's share, labeled where each band is thickest.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",
