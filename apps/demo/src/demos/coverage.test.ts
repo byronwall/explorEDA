@@ -90,6 +90,7 @@ describe("example coverage manifest", () => {
       "causes-by-age",
       "consumer-confidence",
       "pew-meaning",
+      "income-life",
       "product-activity",
       "scatter-trace",
       "calculated-orders",

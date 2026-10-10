@@ -626,6 +626,15 @@ function LegendProperties({
           value={legend.fontSize}
           onChange={(fontSize) => onChange({ fontSize })}
         />
+        {legend.direction === "row" && (
+          <NumberSetting
+            label="Wrap at"
+            min={40}
+            max={4000}
+            value={legend.width ?? definition.artboard.width - legend.x - 16}
+            onChange={(width) => onChange({ width })}
+          />
+        )}
         <ColorSetting
           label="Color"
           value={legend.color}

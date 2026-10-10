@@ -235,6 +235,9 @@ The Pew dumbbell (research entry 15) ships as `?example=pew-meaning` from `apps/
 Point and path marks can leave the y scale off to form a dot row on the frame's middle line; a text order field, such as a party, ranks by its labels.
 Point marks color by a category field through a palette, a legend element lists a mark's categories with their colors, and calculations gain a signed difference from first to last.
 
+The income and life expectancy scatter (after research entry 21 and Gapminder) ships as `?example=income-life`, joined from the World Bank tables by `apps/data-samples/prepare/gapminder.ts`.
+Numeric scales take log spacing with decade ticks, point marks size by a field and label only listed values, and legends wrap long rows.
+
 ## Milestone 3: Layer interval bands around a line
 
 Create the inflation-fan structure from supplied interval data.

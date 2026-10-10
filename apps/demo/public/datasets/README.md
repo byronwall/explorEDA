@@ -269,3 +269,17 @@ node --experimental-strip-types apps/data-samples/prepare/consumer-confidence.ts
 ```sh
 node --experimental-strip-types apps/data-samples/pew_meaning.ts apps/demo/public/datasets/pew-meaning.csv
 ```
+
+## Income and life expectancy, 2023
+
+- File: `gapminder-2023.csv`
+- Size: 197 rows and 7 fields
+- Demo: `?example=income-life`
+- Use: an annotated scatter composition on a log income scale, points sized by population and colored by region, with a legend and labels for chosen economies
+- Source: the World Development Indicators tables already in `worldbank/`, joined for 2023 by `prepare/gapminder.ts`. See the World Bank entry above for sources, vintage, and license (CC BY 4.0).
+
+One row per economy with a 2023 population, GDP per capita (PPP, constant 2021 $), and life expectancy. Economies missing any of the three are left out.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/gapminder.ts
+```

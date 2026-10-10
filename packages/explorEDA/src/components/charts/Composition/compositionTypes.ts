@@ -81,6 +81,8 @@ export interface LegendElement extends ElementBase {
   direction: "row" | "column";
   fontSize: number;
   color: string;
+  /** A row wraps to the next line past this width; the artboard's edge unless set. */
+  width?: number;
 }
 
 export type CompositionElementKind = CompositionElement["kind"];
@@ -164,6 +166,8 @@ export interface NumericScale {
   /** Fixed limits replace the data's extent when set. */
   min?: number;
   max?: number;
+  /** Log spacing for values that span orders of magnitude; linear unless set. */
+  transform?: "linear" | "log";
 }
 
 export type CompositionScale = PositionScale | ValueScale | NumericScale;
@@ -218,6 +222,10 @@ export interface PointMark {
   labelField?: string;
   /** Label every nth point in order; 1 labels all, 0 labels none. */
   labelEvery: number;
+  /** Label only the points whose label matches one of these comma-separated values. */
+  labelValues?: string;
+  /** Size each point's area by this field, up to `radius` for the largest. */
+  sizeField?: string;
   /** Which rows draw: every row, or only the first, last, lowest, or highest. */
   show?: PointShow;
   /** Pick `show` within each value of this field, such as the last point of every country. */
@@ -415,6 +423,7 @@ export function markFields(mark: MarkDefinition): string[] {
         mark.labelField,
         mark.colorField,
         mark.seriesField,
+        mark.sizeField,
       ].filter((field): field is string => Boolean(field));
     case "path":
       return [mark.orderField];
