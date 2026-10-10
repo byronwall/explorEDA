@@ -126,3 +126,46 @@ it("offers range and title actions in the axis context menu", async () => {
   );
   expect(saved().at(-1)?.yAxis.limits).toBeUndefined();
 });
+
+it("drags an axis as one change and puts it back on Escape", () => {
+  window.PointerEvent ??= MouseEvent as typeof PointerEvent;
+  const { saved, strip, onStateChange } = setup();
+  const band = strip("x");
+  const [low, high] = band.getAttribute("data-domain")!.split(",").map(Number);
+  const width = Number(band.getAttribute("data-range")!.split(",")[1]);
+  const hit = band.querySelector(".eda-axis-strip")!;
+  const middle = width / 2;
+
+  // Pan: drag the middle of the band a quarter of its width to the right.
+  fireEvent.pointerDown(hit, { button: 0, pointerId: 1, clientX: middle });
+  for (const step of [10, 40, width / 4])
+    fireEvent.pointerMove(hit, { pointerId: 1, clientX: middle + step });
+  expect(saved()).toEqual([]);
+  fireEvent.pointerUp(hit, { pointerId: 1, clientX: middle + width / 4 });
+  const limits = saved().at(-1)!.xAxis.limits!;
+  expect(onStateChange).toHaveBeenCalledTimes(1);
+  // The view moved left by a quarter of its span.
+  const shift = (high! - low!) / 4;
+  expect(limits.min).toBeCloseTo(low! - shift, 1);
+  expect(limits.max).toBeCloseTo(high! - shift, 1);
+
+  // A drag cancelled with Escape reports nothing and restores the range.
+  const before = strip("x").getAttribute("data-domain");
+  fireEvent.pointerDown(hit, { button: 0, pointerId: 2, clientX: middle });
+  fireEvent.pointerMove(hit, { pointerId: 2, clientX: middle - 60 });
+  expect(strip("x").getAttribute("data-domain")).not.toBe(before);
+  fireEvent.keyDown(window, { key: "Escape" });
+  fireEvent.pointerUp(hit, { pointerId: 2, clientX: middle - 60 });
+  expect(strip("x").getAttribute("data-domain")).toBe(before);
+  expect(onStateChange).toHaveBeenCalledTimes(1);
+});
+
+it("never drags on a press that does not move", () => {
+  window.PointerEvent ??= MouseEvent as typeof PointerEvent;
+  const { onStateChange, strip } = setup();
+  const hit = strip("x").querySelector(".eda-axis-strip")!;
+  fireEvent.pointerDown(hit, { button: 0, pointerId: 1, clientX: 200 });
+  fireEvent.pointerMove(hit, { pointerId: 1, clientX: 201 });
+  fireEvent.pointerUp(hit, { pointerId: 1, clientX: 201 });
+  expect(onStateChange).not.toHaveBeenCalled();
+});

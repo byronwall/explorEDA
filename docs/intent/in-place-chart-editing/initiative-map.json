@@ -8,7 +8,7 @@
     "last_updated": "2026-10-08",
     "summary": "Edit visible chart features near their result with a clear local edit session.",
     "status": "in-progress",
-    "next_action": "Land the four stacked milestones in implementation-plan.md: title, axis limits, axes in place, axis drag."
+    "next_action": "Review the four stacked PRs (#203–#206). After #192 merges, edit subtitles with the same InlineTextEditor and useChartEdit."
   },
   "artifacts": {
     "intent_brief": {
@@ -308,9 +308,7 @@
           }
         ],
         "confidence": "high",
-        "supersedes": [
-          "local-session"
-        ],
+        "supersedes": ["local-session"],
         "notes": "No implementation authorization or unobserved proof is inferred."
       },
       {
@@ -332,10 +330,7 @@
         "notes": "No implementation authorization or unobserved proof is inferred."
       }
     ],
-    "themes": [
-      "Direct manipulation",
-      "Local edits with clear effects"
-    ],
+    "themes": ["Direct manipulation", "Local edits with clear effects"],
     "conflicts": [],
     "human_questions": []
   },
@@ -389,12 +384,12 @@
       {
         "id": "m3-axes-in-place",
         "outcome": "Range editor and axis-title editor anchored to the axis",
-        "status": "in-progress"
+        "status": "in-review"
       },
       {
         "id": "m4-axis-drag",
         "outcome": "Drag to pan or stretch an axis range as one undo step",
-        "status": "planned"
+        "status": "in-review"
       }
     ],
     "cut_line": [
@@ -416,11 +411,7 @@
       "date": "2026-10-06",
       "action": "Reconciled annotated product feedback and priority.",
       "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
-      "source_annotation_indices": [
-        2,
-        7,
-        8
-      ],
+      "source_annotation_indices": [2, 7, 8],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
     },
     {
@@ -428,6 +419,12 @@
       "action": "Planned four stacked milestones and started milestone 1.",
       "reason": "User asked to start implementation.",
       "evidence": "implementation-plan.md"
+    },
+    {
+      "date": "2026-10-08",
+      "action": "Opened milestones 1–4 as stacked PRs #203–#206.",
+      "reason": "Implementation of the plan.",
+      "evidence": "Unit tests and browser checks in each PR."
     }
   ],
   "closure": null,

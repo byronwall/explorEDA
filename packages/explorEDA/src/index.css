@@ -260,8 +260,38 @@
 .eda-axis-strip {
   transition: fill 120ms ease;
 }
-.eda-axis-strip:hover {
+.eda-axis-strip:hover,
+.eda-axis-edit[data-dragging] .eda-axis-strip {
   fill: color-mix(in oklab, var(--primary) 7%, transparent);
+}
+/* Dragging the band pans the range; dragging an end grip stretches it. */
+/* A touch along the band drags it; across it, the page still scrolls. */
+.eda-axis-edit[data-axis-edit="x"] .eda-axis-strip {
+  touch-action: pan-y;
+}
+.eda-axis-edit[data-axis-edit="y"] .eda-axis-strip {
+  touch-action: pan-x;
+}
+.eda-axis-edit[data-zone="pan"] .eda-axis-strip {
+  cursor: grab;
+}
+.eda-axis-edit[data-axis-edit="x"]:not([data-zone="pan"]) .eda-axis-strip {
+  cursor: ew-resize;
+}
+.eda-axis-edit[data-axis-edit="y"]:not([data-zone="pan"]) .eda-axis-strip {
+  cursor: ns-resize;
+}
+.eda-axis-edit[data-dragging="pan"] .eda-axis-strip {
+  cursor: grabbing;
+}
+.eda-axis-grip {
+  fill: var(--muted-foreground);
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.eda-axis-edit:hover .eda-axis-grip,
+.eda-axis-edit[data-dragging] .eda-axis-grip {
+  opacity: 0.55;
 }
 .chart-guide[data-inplace-editing] text {
   opacity: 0;

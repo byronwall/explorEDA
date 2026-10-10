@@ -1,5 +1,7 @@
 import {
+  useRef,
   useState,
+  type PointerEvent,
   type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
@@ -20,6 +22,43 @@ import { numericAxes } from "../Axis/axisBounds";
 import { AxisLimitFields } from "./AxisLimitFields";
 import { InlineTextEditor } from "./InlineTextEditor";
 import { useChartEdit } from "./useChartEdit";
+import { axisDragMode, dragDomain, type AxisDragMode } from "./axisDrag";
+
+/** Pixels a press must travel before it drags the axis, so a double-click never does. */
+const DRAG_SLOP = 3;
+
+const DRAG_HINT = "Drag to pan or stretch · double-click to type";
+
+/** The band's position along its axis, in plot pixels. */
+function alongAxis(
+  band: Element,
+  axis: AxisName,
+  event: { clientX: number; clientY: number }
+) {
+  const box = (
+    band.querySelector(".eda-axis-strip") ?? band
+  ).getBoundingClientRect();
+  return axis === "x" ? event.clientX - box.left : event.clientY - box.top;
+}
+
+/**
+ * The axis band under a pointer. Tick labels and the rule sit above the band
+ * and take the pointer, so they drag their axis too. Titles do not.
+ */
+function bandAt(target: EventTarget | null) {
+  const found = axisEditTarget(target);
+  return found?.kind === "range" ? found.element : undefined;
+}
+
+function bandScale(band: Element) {
+  const pair = (name: string) =>
+    (band.getAttribute(name) ?? "").split(",").map(Number) as [number, number];
+  return {
+    domain: pair("data-domain"),
+    range: pair("data-range"),
+    scaleType: band.getAttribute("data-scale-type") ?? "linear",
+  };
+}
 
 export type AxisName = "x" | "y";
 type Target = { axis: AxisName; kind: "range" | "title"; element: Element };
@@ -90,6 +129,19 @@ export function useAxisEditing(
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const edit = useChartEdit(settings.id);
+  const settingsRef = useRef(settings);
+  settingsRef.current = settings;
+  const [hint, setHint] = useState<string>();
+  const drag = useRef<{
+    axis: AxisName;
+    band: Element;
+    mode: AxisDragMode;
+    start: number;
+    pointerId: number;
+    moved: boolean;
+    scale: ReturnType<typeof bandScale>;
+    stopEscape: () => void;
+  } | null>(null);
   const ranged = numericAxes(
     settings,
     (field) =>
@@ -139,7 +191,93 @@ export function useAxisEditing(
       ? openRange(target.axis, target.element)
       : openTitle(target.axis, target.element);
 
+  const endDrag = (keep: boolean) => {
+    const current = drag.current;
+    if (!current) return;
+    drag.current = null;
+    current.stopEscape();
+    current.band.removeAttribute("data-dragging");
+    if (!current.moved) return;
+    if (!keep) edit.cancel();
+    // An open range editor keeps the session; it ends when the editor closes.
+    else if (!range) edit.commit();
+  };
+
+  const dragHandlers = {
+    onPointerDown: (event: PointerEvent) => {
+      if (event.button !== 0 || event.altKey || event.metaKey || event.ctrlKey)
+        return;
+      const band = bandAt(event.target);
+      const axis = band?.getAttribute("data-axis-edit") as AxisName | undefined;
+      if (!band || !axis || !ranged[axis]) return;
+      event.preventDefault();
+      const scale = bandScale(band);
+      const start = alongAxis(band, axis, event);
+      (event.target as Element).setPointerCapture?.(event.pointerId);
+      // Escape puts the range back while the pointer is still down.
+      const onKey = (key: globalThis.KeyboardEvent) => {
+        if (key.key !== "Escape") return;
+        key.preventDefault();
+        key.stopPropagation();
+        endDrag(false);
+      };
+      window.addEventListener("keydown", onKey, true);
+      drag.current = {
+        axis,
+        band,
+        mode: axisDragMode(scale.range, start),
+        start,
+        pointerId: event.pointerId,
+        moved: false,
+        scale,
+        stopEscape: () => window.removeEventListener("keydown", onKey, true),
+      };
+    },
+    onPointerMove: (event: PointerEvent) => {
+      const current = drag.current;
+      if (!current) {
+        // Show which gesture a press here would start.
+        const band = bandAt(event.target);
+        const axis = band?.getAttribute("data-axis-edit") as
+          | AxisName
+          | undefined;
+        if (band && axis && ranged[axis]) {
+          band.setAttribute(
+            "data-zone",
+            axisDragMode(bandScale(band).range, alongAxis(band, axis, event))
+          );
+          setHint(DRAG_HINT);
+        } else if (hint) setHint(undefined);
+        return;
+      }
+      if (event.pointerId !== current.pointerId) return;
+      const at = alongAxis(current.band, current.axis, event);
+      if (!current.moved && Math.abs(at - current.start) < DRAG_SLOP) return;
+      current.moved = true;
+      current.band.setAttribute("data-dragging", current.mode);
+      const next = dragDomain({
+        ...current.scale,
+        mode: current.mode,
+        start: current.start,
+        current: at,
+      });
+      if (!next) return;
+      const key = `${current.axis}Axis` as const;
+      edit.apply({
+        [key]: {
+          ...settingsRef.current[key],
+          limits: { min: next[0], max: next[1] },
+        },
+      });
+    },
+    onPointerUp: (event: PointerEvent) => {
+      if (drag.current?.pointerId === event.pointerId) endDrag(true);
+    },
+    onPointerCancel: () => endDrag(false),
+  };
+
   const handlers = {
+    ...dragHandlers,
     onDoubleClick: (event: MouseEvent) => {
       if (event.altKey || event.metaKey || event.ctrlKey) return;
       const target = axisEditTarget(event.target);
@@ -293,7 +431,16 @@ export function useAxisEditing(
     </>
   );
 
-  return { handlers, menuItems, overlay, editing: Boolean(range || title) };
+  return {
+    handlers,
+    menuItems,
+    overlay,
+    hint,
+    clearHint: () => {
+      if (!drag.current) setHint(undefined);
+    },
+    editing: Boolean(range || title),
+  };
 }
 
 /**

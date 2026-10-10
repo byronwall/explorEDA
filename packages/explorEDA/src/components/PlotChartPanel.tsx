@@ -628,9 +628,10 @@ export function PlotChartPanel({
       onPointerEnter={(event) =>
         event.currentTarget.setAttribute("data-shortcut-hovered", "")
       }
-      onPointerLeave={(event) =>
-        event.currentTarget.removeAttribute("data-shortcut-hovered")
-      }
+      onPointerLeave={(event) => {
+        event.currentTarget.removeAttribute("data-shortcut-hovered");
+        axisEditing.clearHint();
+      }}
       style={{
         width: widthWithPadding,
         height: heightWithPadding,
@@ -705,7 +706,12 @@ export function PlotChartPanel({
             ref={setReadoutTarget}
             className="eda-panel-readout"
             role="status"
-          />
+          >
+            {/* How to edit the axis under the pointer, in place of a reading. */}
+            {axisEditing.hint && (
+              <span className="eda-readout-item">{axisEditing.hint}</span>
+            )}
+          </div>
           {tableSearch && (
             <div
               className="eda-chart-search"
