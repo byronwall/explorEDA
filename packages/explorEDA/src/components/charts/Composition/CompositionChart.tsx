@@ -218,9 +218,8 @@ export function CompositionChart({
         event.preventDefault();
         const unit = scene.elements.find((element) => element.kind === "unit");
         const instance =
-          unit?.instances?.find((item) =>
-            data.selection?.keys.has(item.key)
-          ) ?? unit?.instances?.[0];
+          unit?.instances?.find((item) => data.selection?.keys.has(item.key)) ??
+          unit?.instances?.[0];
         if (unit && instance)
           traceApi?.inspect(
             owner,
@@ -279,16 +278,20 @@ export function CompositionChart({
       const id =
         (node.type === "rect" || node.type === "circle") && node.glyph
           ? `glyph:${node.key}`
-          : element?.kind === "unit" && node.instanceKey !== undefined
-            ? `repeat:${element.id}:${node.instanceKey}`
-            : element?.kind === "guide" || element?.kind === "annotation"
-              ? `element:${element.id}`
-              : undefined;
+          : node.type === "path"
+            ? `path:${node.key}`
+            : element?.kind === "unit" && node.instanceKey !== undefined
+              ? `repeat:${element.id}:${node.instanceKey}`
+              : element?.kind === "guide" || element?.kind === "annotation"
+                ? `element:${element.id}`
+                : undefined;
       if (id) traceApi?.inspect(owner, "composition", id);
       return;
     }
     const field =
-      element?.kind === "unit" ? (element as UnitElement).repeat.field : undefined;
+      element?.kind === "unit"
+        ? (element as UnitElement).repeat.field
+        : undefined;
     if (!node || node.instanceKey === undefined || !field) {
       // Empty space clears this composition's filters.
       if (settings.filters.length) updateChart(settings.id, { filters: [] });
@@ -429,14 +432,17 @@ export function CompositionChart({
       {!editing && glyph && (
         <ChartReadout fallbackClassName="eda-chart-readout-inline">
           {[
-            [hoveredField ?? "Repeat", glyph.instanceKey],
-            ["Bin", glyph.bin.label],
-            [
-              "Value",
-              glyph.value.toLocaleString("en-US", {
-                maximumFractionDigits: 1,
-              }),
-            ],
+            ...(hoveredField ? [[hoveredField, glyph.instanceKey]] : []),
+            ...(glyph.point
+              ? [
+                  [glyph.point.xField, readoutNumber(glyph.point.x)],
+                  [glyph.point.yField, readoutNumber(glyph.point.y)],
+                  ["Order", glyph.bin.label],
+                ]
+              : [
+                  ["Bin", glyph.bin.label],
+                  ["Value", readoutNumber(glyph.value)],
+                ]),
             ["Rows", glyph.rowIds.length.toLocaleString()],
           ].map(([name, value]) => (
             <span key={name} className="eda-readout-item">
@@ -491,6 +497,9 @@ export function CompositionChart({
     </div>
   );
 }
+
+const readoutNumber = (value: number) =>
+  value.toLocaleString("en-US", { maximumFractionDigits: 2 });
 
 /** Names the selection above its box, at a constant screen size. */
 function SelectionTag({

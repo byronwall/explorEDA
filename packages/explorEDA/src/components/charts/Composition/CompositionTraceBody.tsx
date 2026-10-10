@@ -11,11 +11,41 @@ const AGGREGATION_TEXT: Record<string, string> = {
   average: "Average",
 };
 
+const SCALE_DOMAIN_TEXT = {
+  shared: "shared by every repeat",
+  instance: "fit to this repeat",
+};
+
 export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
-  const { unit, glyph, labelValue, guide, anchor } = trace;
+  const { unit, glyph, path, labelValue, guide, anchor } = trace;
+  const point = glyph?.datum.point;
   return (
     <div className="space-y-2" aria-label="Composition trace">
-      {glyph && (
+      {glyph && point && (
+        <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
+          <TraceReadout label={point.xField}>
+            <TraceSwatch color={glyph.fill} />{" "}
+            {formatCalcValue(point.x, "number")}
+          </TraceReadout>
+          <TraceReadout label={point.yField}>
+            {formatCalcValue(point.y, "number")}
+          </TraceReadout>
+          <TraceReadout label="Calculation">
+            One point per row; no aggregation
+          </TraceReadout>
+          {glyph.x && (
+            <TraceReadout label="X scale">
+              {describeNumericScale(glyph.x)}
+            </TraceReadout>
+          )}
+          {glyph.y && (
+            <TraceReadout label="Y scale">
+              {describeNumericScale(glyph.y)}
+            </TraceReadout>
+          )}
+        </TraceSection>
+      )}
+      {glyph && !point && (
         <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
           <TraceReadout label="Value">
             <TraceSwatch color={glyph.fill} />{" "}
@@ -48,8 +78,45 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
           )}
         </TraceSection>
       )}
+      {path && (
+        <TraceSection heading={path.markName}>
+          <TraceReadout label="Order">
+            <TraceSwatch color={path.stroke} /> {path.datum.orderField},
+            ascending; ties keep row order
+          </TraceReadout>
+          <TraceReadout label="Vertices">
+            {path.vertices.length.toLocaleString()} in{" "}
+            {path.datum.segments === 1
+              ? "one run"
+              : `${path.datum.segments} runs`}
+            {path.datum.skipped.length
+              ? `; ${path.datum.skipped.length} ${
+                  path.datum.skipped.length === 1 ? "row" : "rows"
+                } skipped for a missing value (${path.datum.skipped
+                  .slice(0, 6)
+                  .join(", ")}${path.datum.skipped.length > 6 ? ", …" : ""})`
+              : "; no gaps"}
+          </TraceReadout>
+          {path.x && (
+            <TraceReadout label="X scale">
+              {describeNumericScale(path.x)}
+            </TraceReadout>
+          )}
+          {path.y && (
+            <TraceReadout label="Y scale">
+              {describeNumericScale(path.y)}
+            </TraceReadout>
+          )}
+          <TraceReadout label="Endpoints">
+            rows {path.vertices[0]?.rowId} →{" "}
+            {path.vertices[path.vertices.length - 1]?.rowId}
+          </TraceReadout>
+        </TraceSection>
+      )}
       {unit && (
-        <TraceSection heading={`Repeat: ${unit.instanceKey === "all" ? "the one unit" : unit.instanceKey}`}>
+        <TraceSection
+          heading={`Repeat: ${unit.instanceKey === "all" ? "the one unit" : unit.instanceKey}`}
+        >
           <TraceReadout label="Template">{trace.elementName}</TraceReadout>
           {unit.repeatField && (
             <TraceReadout label="Subset">
@@ -61,7 +128,9 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
             {unit.rowCount.toLocaleString()} pass the filters
           </TraceReadout>
           <TraceReadout label="Override">
-            {unit.override ? describeOverride(unit.override) : "None; drawn from the template"}
+            {unit.override
+              ? describeOverride(unit.override)
+              : "None; drawn from the template"}
           </TraceReadout>
         </TraceSection>
       )}
@@ -116,7 +185,23 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
   );
 }
 
-function describeOverride(override: NonNullable<CompositionTrace["unit"]>["override"]) {
+function describeNumericScale(
+  scale: NonNullable<CompositionTrace["glyph"]>["x"] & object
+) {
+  const limits =
+    scale.min !== undefined || scale.max !== undefined
+      ? ` · fixed ${scale.min ?? "…"} to ${scale.max ?? "…"}`
+      : scale.nice
+        ? " · rounded to ticks"
+        : "";
+  return `${scale.name} · ${scale.field} · ${SCALE_DOMAIN_TEXT[scale.domain]}${
+    scale.zero ? " · includes zero" : ""
+  }${limits}`;
+}
+
+function describeOverride(
+  override: NonNullable<CompositionTrace["unit"]>["override"]
+) {
   if (!override) return "";
   const parts = [];
   if (override.dx || override.dy)
@@ -137,7 +222,10 @@ function TraceRows({ ids, fields }: { ids: number[]; fields: string[] }) {
         <p className="text-muted-foreground">No source rows.</p>
       </TraceSection>
     );
-  const columns = fields.map((field) => ({ field, values: getColumnData(field) }));
+  const columns = fields.map((field) => ({
+    field,
+    values: getColumnData(field),
+  }));
   return (
     <TraceSection heading={`Source rows · ${ids.length.toLocaleString()}`}>
       <table className="eda-composition-trace-rows">

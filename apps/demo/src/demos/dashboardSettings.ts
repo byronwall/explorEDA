@@ -461,7 +461,10 @@ export const activityDashboard = dashboard(
 
 export const bubbleDashboard: SavedDataStructure = {
   ...activityDashboard,
-  metadata: { ...activityDashboard.metadata, name: "Trial volume, speed, and conversion" },
+  metadata: {
+    ...activityDashboard.metadata,
+    name: "Trial volume, speed, and conversion",
+  },
   charts: [
     {
       ...scatter(
@@ -487,11 +490,25 @@ export const bubbleDashboard: SavedDataStructure = {
       measureField: "Trials",
       layout: layout(8, 0, 4, 2),
     },
-    row("bubble-phase", "Days by release phase", "Phase", layout(8, 2, 4, 4), "phase-colors"),
+    row(
+      "bubble-phase",
+      "Days by release phase",
+      "Phase",
+      layout(8, 2, 4, 4),
+      "phase-colors"
+    ),
     table(
       "bubble-records",
       "Daily observations",
-      ["Day", "Phase", "Visitors", "Returning visitors", "Trials", "Conversion (%)", "Response time (ms)"],
+      [
+        "Day",
+        "Phase",
+        "Visitors",
+        "Returning visitors",
+        "Trials",
+        "Conversion (%)",
+        "Response time (ms)",
+      ],
       layout(0, 6, 12, 5)
     ),
   ],
@@ -854,22 +871,25 @@ shopDashboard.charts.push({
   margin: { top: 8, right: 12, bottom: 8, left: 12 },
 });
 
-
 // Add the metric row only to this example; the large order book keeps its layout.
 shopDashboard.charts = [
-  ...([
-    ["shop-count", "Matching orders", "count"],
-    ["shop-revenue", "Revenue in this selection", "sum"],
-    ["shop-average", "Average order value", "average"],
-  ] as const).map(([id, title, aggregation], index): Chart => ({
-    ...base,
-    id,
-    type: "metric-card",
-    title,
-    aggregation,
-    measureField: aggregation === "count" ? undefined : "Revenue",
-    layout: layout(index * 4, 0, 4, 2),
-  })),
+  ...(
+    [
+      ["shop-count", "Matching orders", "count"],
+      ["shop-revenue", "Revenue in this selection", "sum"],
+      ["shop-average", "Average order value", "average"],
+    ] as const
+  ).map(
+    ([id, title, aggregation], index): Chart => ({
+      ...base,
+      id,
+      type: "metric-card",
+      title,
+      aggregation,
+      measureField: aggregation === "count" ? undefined : "Revenue",
+      layout: layout(index * 4, 0, 4, 2),
+    })
+  ),
   ...shopDashboard.charts.map((chart) => ({
     ...chart,
     layout: { ...chart.layout, y: chart.layout.y + 2 },
@@ -880,136 +900,504 @@ shopDashboard.fieldSettings = {
   Revenue: { format: "currency", currency: "USD", precision: 2 },
 };
 
-export const timeSeriesDashboard = dashboard("Orders through the calendar", [
-  {
-    ...line("time-revenue", "Monthly revenue by channel", [], layout(0, 0, 8, 6), "Revenue ($)"),
-    xField: "Order Date", xAxisLabel: "Order date · UTC", colorField: "Channel", colorScaleId: "time-channel",
-    time: { interval: "month", weekStart: "monday", aggregation: "sum", measureField: "Revenue", splitField: "Channel", missingPeriods: "gap" },
+export const timeSeriesDashboard = dashboard(
+  "Orders through the calendar",
+  [
+    {
+      ...line(
+        "time-revenue",
+        "Monthly revenue by channel",
+        [],
+        layout(0, 0, 8, 6),
+        "Revenue ($)"
+      ),
+      xField: "Order Date",
+      xAxisLabel: "Order date · UTC",
+      colorField: "Channel",
+      colorScaleId: "time-channel",
+      time: {
+        interval: "month",
+        weekStart: "monday",
+        aggregation: "sum",
+        measureField: "Revenue",
+        splitField: "Channel",
+        missingPeriods: "gap",
+      },
+    },
+    {
+      ...base,
+      id: "time-count",
+      type: "metric-card",
+      title: "Matching orders",
+      aggregation: "count",
+      layout: layout(8, 0, 4, 2),
+    },
+    row(
+      "time-channels",
+      "Sales channels",
+      "Channel",
+      layout(8, 2, 4, 4),
+      "time-channel"
+    ),
+    {
+      ...line(
+        "time-weekly",
+        "Weekly order count",
+        [],
+        layout(0, 6, 6, 5),
+        "Orders"
+      ),
+      xField: "Order Date",
+      xAxisLabel: "Order date · UTC",
+      time: {
+        interval: "week",
+        weekStart: "monday",
+        aggregation: "count",
+        missingPeriods: "zero",
+      },
+    },
+    {
+      ...base,
+      id: "time-calendar",
+      type: "calendar",
+      title: "Daily orders",
+      field: "Order Date",
+      aggregation: "count",
+      weekStart: "monday",
+      layout: layout(6, 6, 6, 5),
+    },
+    table(
+      "time-records",
+      "Matching source records",
+      ["Order Date", "Channel", "Revenue", "Region"],
+      layout(0, 11, 12, 5)
+    ),
+  ],
+  [categoricalScale("time-channel", "Channel", ["Web", "Store", "Wholesale"])]
+);
+timeSeriesDashboard.fieldSettings = {
+  Revenue: {
+    type: "numeric",
+    format: "currency",
+    currency: "USD",
+    precision: 2,
   },
-  { ...base, id: "time-count", type: "metric-card", title: "Matching orders", aggregation: "count", layout: layout(8, 0, 4, 2) },
-  row("time-channels", "Sales channels", "Channel", layout(8, 2, 4, 4), "time-channel"),
-  {
-    ...line("time-weekly", "Weekly order count", [], layout(0, 6, 6, 5), "Orders"),
-    xField: "Order Date", xAxisLabel: "Order date · UTC",
-    time: { interval: "week", weekStart: "monday", aggregation: "count", missingPeriods: "zero" },
-  },
-  { ...base, id: "time-calendar", type: "calendar", title: "Daily orders", field: "Order Date", aggregation: "count", weekStart: "monday", layout: layout(6, 6, 6, 5) },
-  table("time-records", "Matching source records", ["Order Date", "Channel", "Revenue", "Region"], layout(0, 11, 12, 5)),
-], [categoricalScale("time-channel", "Channel", ["Web", "Store", "Wholesale"])]);
-timeSeriesDashboard.fieldSettings = { Revenue: { type: "numeric", format: "currency", currency: "USD", precision: 2 } };
+};
 
-export const groupedBarsDashboard = dashboard("Sales by region and channel", [
-  { ...base, id: "grouped-revenue", type: "bar", title: "Revenue by region and channel", field: "Revenue", aggregateId: "grouped-sales", seriesField: "Channel", colorField: "Channel", colorScaleId: "grouped-channel", layout: layout(0, 0, 8, 6), yAxisLabel: "Revenue ($)" },
-  { ...base, id: "grouped-total", type: "metric-card", title: "Matching revenue", aggregation: "sum", measureField: "Revenue", layout: layout(8, 0, 4, 2) },
-  row("grouped-categories", "Product categories", "Category", layout(8, 2, 4, 4)),
-  { ...base, id: "grouped-count", type: "bar", title: "Orders by category and channel", field: "Category", seriesField: "Channel", colorField: "Channel", colorScaleId: "grouped-channel", layout: layout(0, 6, 12, 5), yAxisLabel: "Orders" },
-  table("grouped-records", "Matching source records", ["Region", "Channel", "Category", "Revenue"], layout(0, 11, 12, 5)),
-], [categoricalScale("grouped-channel", "Channel", ["Web", "Store", "Wholesale"])]);
-groupedBarsDashboard.aggregates = [{ id: "grouped-sales", name: "Revenue by region", groupField: "Region", measureField: "Revenue", aggregation: "sum" }];
-groupedBarsDashboard.fieldSettings = { Revenue: { type: "numeric", format: "currency", currency: "USD", precision: 2 } };
+export const groupedBarsDashboard = dashboard(
+  "Sales by region and channel",
+  [
+    {
+      ...base,
+      id: "grouped-revenue",
+      type: "bar",
+      title: "Revenue by region and channel",
+      field: "Revenue",
+      aggregateId: "grouped-sales",
+      seriesField: "Channel",
+      colorField: "Channel",
+      colorScaleId: "grouped-channel",
+      layout: layout(0, 0, 8, 6),
+      yAxisLabel: "Revenue ($)",
+    },
+    {
+      ...base,
+      id: "grouped-total",
+      type: "metric-card",
+      title: "Matching revenue",
+      aggregation: "sum",
+      measureField: "Revenue",
+      layout: layout(8, 0, 4, 2),
+    },
+    row(
+      "grouped-categories",
+      "Product categories",
+      "Category",
+      layout(8, 2, 4, 4)
+    ),
+    {
+      ...base,
+      id: "grouped-count",
+      type: "bar",
+      title: "Orders by category and channel",
+      field: "Category",
+      seriesField: "Channel",
+      colorField: "Channel",
+      colorScaleId: "grouped-channel",
+      layout: layout(0, 6, 12, 5),
+      yAxisLabel: "Orders",
+    },
+    table(
+      "grouped-records",
+      "Matching source records",
+      ["Region", "Channel", "Category", "Revenue"],
+      layout(0, 11, 12, 5)
+    ),
+  ],
+  [
+    categoricalScale("grouped-channel", "Channel", [
+      "Web",
+      "Store",
+      "Wholesale",
+    ]),
+  ]
+);
+groupedBarsDashboard.aggregates = [
+  {
+    id: "grouped-sales",
+    name: "Revenue by region",
+    groupField: "Region",
+    measureField: "Revenue",
+    aggregation: "sum",
+  },
+];
+groupedBarsDashboard.fieldSettings = {
+  Revenue: {
+    type: "numeric",
+    format: "currency",
+    currency: "USD",
+    precision: 2,
+  },
+};
 
 export const stackedBarsDashboard: SavedDataStructure = {
   ...groupedBarsDashboard,
-  metadata: { ...groupedBarsDashboard.metadata, name: "Regional totals and channel shares" },
-  charts: groupedBarsDashboard.charts.map((chart) => chart.type === "bar" ? {
-    ...chart,
-    seriesLayout: chart.aggregateId ? "stacked" : "percent",
-    title: chart.aggregateId ? "Regional revenue by channel" : "Channel share of regional orders",
-    field: chart.aggregateId ? chart.field : "Region",
-    yAxisLabel: chart.aggregateId ? "Revenue ($)" : "Share of regional orders (%)",
-  } : chart),
+  metadata: {
+    ...groupedBarsDashboard.metadata,
+    name: "Regional totals and channel shares",
+  },
+  charts: groupedBarsDashboard.charts.map((chart) =>
+    chart.type === "bar"
+      ? {
+          ...chart,
+          seriesLayout: chart.aggregateId ? "stacked" : "percent",
+          title: chart.aggregateId
+            ? "Regional revenue by channel"
+            : "Channel share of regional orders",
+          field: chart.aggregateId ? chart.field : "Region",
+          yAxisLabel: chart.aggregateId
+            ? "Revenue ($)"
+            : "Share of regional orders (%)",
+        }
+      : chart
+  ),
 };
-
 
 export const areaDashboard: SavedDataStructure = {
   ...timeSeriesDashboard,
-  metadata: { ...timeSeriesDashboard.metadata, name: "Revenue layers through the year" },
-  charts: timeSeriesDashboard.charts.map((chart) => chart.type === "line" && chart.time ? {
-    ...chart,
-    title: chart.id === "time-revenue" ? "Monthly revenue layers" : "Weekly orders as an area",
-    time: { ...chart.time, display: chart.id === "time-revenue" ? "stacked-area" : "area" },
-  } : chart),
+  metadata: {
+    ...timeSeriesDashboard.metadata,
+    name: "Revenue layers through the year",
+  },
+  charts: timeSeriesDashboard.charts.map((chart) =>
+    chart.type === "line" && chart.time
+      ? {
+          ...chart,
+          title:
+            chart.id === "time-revenue"
+              ? "Monthly revenue layers"
+              : "Weekly orders as an area",
+          time: {
+            ...chart.time,
+            display: chart.id === "time-revenue" ? "stacked-area" : "area",
+          },
+        }
+      : chart
+  ),
 };
 
-export const densityDashboard = dashboard(
-  "Where daily observations cluster",
-  [
-    {
-      ...scatter("density-days", "Temperature and ice cream sales", "Temperature (°C)", "Ice Cream Sales", layout(0, 0, 8, 6), ["Temperature (°C)", "Ice cream sales"]),
-      display: "density",
-      density: { xBins: 24, yBins: 20 },
-    },
-    { ...base, id: "density-count", type: "metric-card", title: "Days in this selection", aggregation: "count", layout: layout(8, 0, 4, 2) },
-    histogram("density-humidity", "Humidity of matching days", "Humidity (%)", layout(8, 2, 4, 4), "Humidity (%)"),
-    table("density-records", "Daily source records", ["Temperature (°C)", "Ice Cream Sales", "Humidity (%)", "Beach Visitors", "Mood Index"], layout(0, 6, 12, 5)),
-  ]
-);
-
+export const densityDashboard = dashboard("Where daily observations cluster", [
+  {
+    ...scatter(
+      "density-days",
+      "Temperature and ice cream sales",
+      "Temperature (°C)",
+      "Ice Cream Sales",
+      layout(0, 0, 8, 6),
+      ["Temperature (°C)", "Ice cream sales"]
+    ),
+    display: "density",
+    density: { xBins: 24, yBins: 20 },
+  },
+  {
+    ...base,
+    id: "density-count",
+    type: "metric-card",
+    title: "Days in this selection",
+    aggregation: "count",
+    layout: layout(8, 0, 4, 2),
+  },
+  histogram(
+    "density-humidity",
+    "Humidity of matching days",
+    "Humidity (%)",
+    layout(8, 2, 4, 4),
+    "Humidity (%)"
+  ),
+  table(
+    "density-records",
+    "Daily source records",
+    [
+      "Temperature (°C)",
+      "Ice Cream Sales",
+      "Humidity (%)",
+      "Beach Visitors",
+      "Mood Index",
+    ],
+    layout(0, 6, 12, 5)
+  ),
+]);
 
 export const pointMapDashboard = dashboard(
   "Where service requests originate",
   [
-    { ...base, id: "map-sites", type: "map", mode: "point", title: "Service sites around the world", latitudeField: "Latitude", longitudeField: "Longitude", labelField: "Site", colorField: "Region", colorScaleId: "map-regions", sizeField: "Requests", pointRadius: 18, pointOpacity: 0.75, projection: "equal-earth", layout: layout(0, 0, 8, 7) },
-    { ...base, id: "map-count", type: "metric-card", title: "Sites in this selection", aggregation: "count", layout: layout(8, 0, 4, 2) },
-    { ...base, id: "map-regions", type: "bar", title: "Sites by region", field: "Region", layout: layout(8, 2, 4, 5), binCount: 20, yAxisLabel: "Sites" },
-    table("map-records", "Site source records", ["Site", "Latitude", "Longitude", "Region", "Requests"], layout(0, 7, 12, 5)),
+    {
+      ...base,
+      id: "map-sites",
+      type: "map",
+      mode: "point",
+      title: "Service sites around the world",
+      latitudeField: "Latitude",
+      longitudeField: "Longitude",
+      labelField: "Site",
+      colorField: "Region",
+      colorScaleId: "map-regions",
+      sizeField: "Requests",
+      pointRadius: 18,
+      pointOpacity: 0.75,
+      projection: "equal-earth",
+      layout: layout(0, 0, 8, 7),
+    },
+    {
+      ...base,
+      id: "map-count",
+      type: "metric-card",
+      title: "Sites in this selection",
+      aggregation: "count",
+      layout: layout(8, 0, 4, 2),
+    },
+    {
+      ...base,
+      id: "map-regions",
+      type: "bar",
+      title: "Sites by region",
+      field: "Region",
+      layout: layout(8, 2, 4, 5),
+      binCount: 20,
+      yAxisLabel: "Sites",
+    },
+    table(
+      "map-records",
+      "Site source records",
+      ["Site", "Latitude", "Longitude", "Region", "Requests"],
+      layout(0, 7, 12, 5)
+    ),
   ],
-  [categoricalScale("map-regions", "Region", ["Americas", "Europe", "Africa", "Asia-Pacific"])]
+  [
+    categoricalScale("map-regions", "Region", [
+      "Americas",
+      "Europe",
+      "Africa",
+      "Asia-Pacific",
+    ]),
+  ]
 );
-
 
 export const regionMapDashboard: SavedDataStructure = {
   ...dashboard("Requests across service districts", [
-    {...base,id:"district-map",type:"map",mode:"region",title:"Requests by service district",latitudeField:"",longitudeField:"",pointRadius:6,pointOpacity:0.8,projection:"equal-earth",view:{center:[-74.5,41.5],zoom:20},geometryAssetId:"service-districts",regionField:"District",featureKey:"district",aggregation:"sum",measureField:"Requests",showRegionLabels:true,outlineWidth:1,layout:layout(0,0,8,7)},
-    {...base,id:"district-total",type:"metric-card",title:"Requests in this selection",aggregation:"sum",measureField:"Requests",layout:layout(8,0,4,2)},
-    {...base,id:"district-pivot",type:"pivot",title:"Check the region totals",rowFields:["District"],columnField:"",valueFields:[{field:"Requests",aggregation:"sum",label:"Requests"}],layout:layout(8,2,4,5)},
-    table("district-rows","Request source records",["District","Team","Requests"],layout(0,7,12,4)),
+    {
+      ...base,
+      id: "district-map",
+      type: "map",
+      mode: "region",
+      title: "Requests by service district",
+      latitudeField: "",
+      longitudeField: "",
+      pointRadius: 6,
+      pointOpacity: 0.8,
+      projection: "equal-earth",
+      view: { center: [-74.5, 41.5], zoom: 20 },
+      geometryAssetId: "service-districts",
+      regionField: "District",
+      featureKey: "district",
+      aggregation: "sum",
+      measureField: "Requests",
+      showRegionLabels: true,
+      outlineWidth: 1,
+      layout: layout(0, 0, 8, 7),
+    },
+    {
+      ...base,
+      id: "district-total",
+      type: "metric-card",
+      title: "Requests in this selection",
+      aggregation: "sum",
+      measureField: "Requests",
+      layout: layout(8, 0, 4, 2),
+    },
+    {
+      ...base,
+      id: "district-pivot",
+      type: "pivot",
+      title: "Check the region totals",
+      rowFields: ["District"],
+      columnField: "",
+      valueFields: [
+        { field: "Requests", aggregation: "sum", label: "Requests" },
+      ],
+      layout: layout(8, 2, 4, 5),
+    },
+    table(
+      "district-rows",
+      "Request source records",
+      ["District", "Team", "Requests"],
+      layout(0, 7, 12, 4)
+    ),
   ]),
-  geometryAssets:[serviceDistricts],
-  fieldSettings:{Requests:{type:"numeric"}},
+  geometryAssets: [serviceDistricts],
+  fieldSettings: { Requests: { type: "numeric" } },
 };
 
-
-export const distributionDashboard = dashboard("Delivery times and smaller routes", [
-  { ...histogram("delivery-histogram", "Delivery time histogram", "Hours", layout(0, 0, 7, 5), "Delivery time (hours)"), binCount: 12, forceString: false },
-  { ...row("delivery-routes", "Shipments by route", "Route", layout(7, 0, 5, 5)), minRowHeight: 36, maxRowHeight: 42 },
-  { ...box("delivery-distribution", "Delivery time by service", "Hours", "Service", layout(0, 5, 8, 6)), violinOverlay: true, showObservations: true },
-  { ...base, id: "delivery-count", type: "metric-card", title: "Matching shipments", aggregation: "count", layout: layout(8, 5, 4, 2) },
-  table("delivery-records", "Shipment source records", ["Route", "Service", "Hours"], layout(8, 7, 4, 4)),
-]);
+export const distributionDashboard = dashboard(
+  "Delivery times and smaller routes",
+  [
+    {
+      ...histogram(
+        "delivery-histogram",
+        "Delivery time histogram",
+        "Hours",
+        layout(0, 0, 7, 5),
+        "Delivery time (hours)"
+      ),
+      binCount: 12,
+      forceString: false,
+    },
+    {
+      ...row(
+        "delivery-routes",
+        "Shipments by route",
+        "Route",
+        layout(7, 0, 5, 5)
+      ),
+      minRowHeight: 36,
+      maxRowHeight: 42,
+    },
+    {
+      ...box(
+        "delivery-distribution",
+        "Delivery time by service",
+        "Hours",
+        "Service",
+        layout(0, 5, 8, 6)
+      ),
+      violinOverlay: true,
+      showObservations: true,
+    },
+    {
+      ...base,
+      id: "delivery-count",
+      type: "metric-card",
+      title: "Matching shipments",
+      aggregation: "count",
+      layout: layout(8, 5, 4, 2),
+    },
+    table(
+      "delivery-records",
+      "Shipment source records",
+      ["Route", "Service", "Hours"],
+      layout(8, 7, 4, 4)
+    ),
+  ]
+);
 distributionDashboard.fieldSettings = { Hours: { type: "numeric" } };
-
 
 export const scatterRegressionDashboard = dashboard(
   "Bill shape within each species",
   [
     {
-      ...scatter("fit-bill", "Bill depth against bill length", "bill_length_mm", "bill_depth_mm", layout(0, 0, 7, 6), ["Bill length (mm)", "Bill depth (mm)"], "species", "fit-species"),
+      ...scatter(
+        "fit-bill",
+        "Bill depth against bill length",
+        "bill_length_mm",
+        "bill_depth_mm",
+        layout(0, 0, 7, 6),
+        ["Bill length (mm)", "Bill depth (mm)"],
+        "species",
+        "fit-species"
+      ),
       regression: { method: "linear", overall: true },
       summary: true,
       marginals: { bins: 24 },
     },
     {
-      ...scatter("fit-bill-sex", "The same fits for each sex", "bill_length_mm", "bill_depth_mm", layout(7, 0, 5, 6), ["Bill length (mm)", "Bill depth (mm)"], "species", "fit-species"),
+      ...scatter(
+        "fit-bill-sex",
+        "The same fits for each sex",
+        "bill_length_mm",
+        "bill_depth_mm",
+        layout(7, 0, 5, 6),
+        ["Bill length (mm)", "Bill depth (mm)"],
+        "species",
+        "fit-species"
+      ),
       regression: { method: "linear" },
-      facet: { enabled: true, type: "wrap", rowVariable: "sex", columnCount: 1 },
+      facet: {
+        enabled: true,
+        type: "wrap",
+        rowVariable: "sex",
+        columnCount: 1,
+      },
     },
     row("fit-island", "Filter by island", "island", layout(0, 6, 3, 5)),
     {
-      ...scatter("fit-mass", "Body mass along flipper length · LOESS over density", "flipper_length_mm", "body_mass_g", layout(3, 6, 5, 5), ["Flipper length (mm)", "Body mass (g)"], "species", "fit-species"),
+      ...scatter(
+        "fit-mass",
+        "Body mass along flipper length · LOESS over density",
+        "flipper_length_mm",
+        "body_mass_g",
+        layout(3, 6, 5, 5),
+        ["Flipper length (mm)", "Body mass (g)"],
+        "species",
+        "fit-species"
+      ),
       regression: { method: "loess", span: 0.6 },
       display: "contour",
       contour: { bandwidth: 0.75, levels: 5 },
     },
     {
-      ...scatter("fit-curve", "Flipper length along bill length · quadratic", "bill_length_mm", "flipper_length_mm", layout(8, 6, 4, 5), ["Bill length (mm)", "Flipper length (mm)"]),
+      ...scatter(
+        "fit-curve",
+        "Flipper length along bill length · quadratic",
+        "bill_length_mm",
+        "flipper_length_mm",
+        layout(8, 6, 4, 5),
+        ["Bill length (mm)", "Flipper length (mm)"]
+      ),
       regression: { method: "polynomial", degree: 2 },
     },
-    table("fit-records", "Penguins in the fits", ["species", "island", "sex", "bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"], layout(0, 11, 12, 4)),
+    table(
+      "fit-records",
+      "Penguins in the fits",
+      [
+        "species",
+        "island",
+        "sex",
+        "bill_length_mm",
+        "bill_depth_mm",
+        "flipper_length_mm",
+        "body_mass_g",
+      ],
+      layout(0, 11, 12, 4)
+    ),
   ],
-  [categoricalScale("fit-species", "species", ["Adelie", "Chinstrap", "Gentoo"])]
+  [
+    categoricalScale("fit-species", "species", [
+      "Adelie",
+      "Chinstrap",
+      "Gentoo",
+    ]),
+  ]
 );
-
 
 export const scatterMatrixDashboard = dashboard(
   "Every pair at once",
@@ -1021,7 +1409,13 @@ export const scatterMatrixDashboard = dashboard(
       title: "Measurements, species, and sex, pair by pair",
       colorField: "species",
       colorScaleId: "matrix-species",
-      fields: ["bill_length_mm", "flipper_length_mm", "body_mass_g", "species", "sex"],
+      fields: [
+        "bill_length_mm",
+        "flipper_length_mm",
+        "body_mass_g",
+        "species",
+        "sex",
+      ],
       lower: { numeric: "points", mixed: "points", categorical: "shares" },
       upper: { numeric: "correlation", mixed: "box", categorical: "tiles" },
       diagonal: { continuous: "density", categorical: "bars" },
@@ -1029,31 +1423,73 @@ export const scatterMatrixDashboard = dashboard(
       margin: { top: 4, right: 4, bottom: 4, left: 4 },
     },
     row("matrix-island", "Filter by island", "island", layout(8, 0, 4, 4)),
-    table("matrix-records", "Penguins in the matrix", ["species", "island", "sex", "bill_length_mm", "flipper_length_mm", "body_mass_g"], layout(8, 4, 4, 6)),
+    table(
+      "matrix-records",
+      "Penguins in the matrix",
+      [
+        "species",
+        "island",
+        "sex",
+        "bill_length_mm",
+        "flipper_length_mm",
+        "body_mass_g",
+      ],
+      layout(8, 4, 4, 6)
+    ),
   ],
-  [categoricalScale("matrix-species", "species", ["Adelie", "Chinstrap", "Gentoo"])]
+  [
+    categoricalScale("matrix-species", "species", [
+      "Adelie",
+      "Chinstrap",
+      "Gentoo",
+    ]),
+  ]
 );
 
 export const scatterSurfaceDashboard = dashboard(
   "Ten thousand days, two ways to see density",
   [
     {
-      ...scatter("surface-hex", "Hexagonal counts", "Temperature (°C)", "Ice Cream Sales", layout(0, 0, 6, 6), ["Temperature (°C)", "Ice cream sales"]),
+      ...scatter(
+        "surface-hex",
+        "Hexagonal counts",
+        "Temperature (°C)",
+        "Ice Cream Sales",
+        layout(0, 0, 6, 6),
+        ["Temperature (°C)", "Ice cream sales"]
+      ),
       display: "hexbin",
       hexbin: { columns: 24 },
     },
     {
-      ...scatter("surface-kde", "Smoothed density with a linear fit", "Temperature (°C)", "Ice Cream Sales", layout(6, 0, 6, 6), ["Temperature (°C)", "Ice cream sales"]),
+      ...scatter(
+        "surface-kde",
+        "Smoothed density with a linear fit",
+        "Temperature (°C)",
+        "Ice Cream Sales",
+        layout(6, 0, 6, 6),
+        ["Temperature (°C)", "Ice cream sales"]
+      ),
       display: "contour",
       contour: { bandwidth: 1, levels: 6, showPoints: false },
       regression: { method: "linear" },
       summary: true,
     },
-    histogram("surface-humidity", "Filter by humidity", "Humidity (%)", layout(0, 6, 5, 4), "Humidity (%)"),
-    table("surface-records", "Daily source records", ["Temperature (°C)", "Ice Cream Sales", "Humidity (%)", "Beach Visitors"], layout(5, 6, 7, 4)),
+    histogram(
+      "surface-humidity",
+      "Filter by humidity",
+      "Humidity (%)",
+      layout(0, 6, 5, 4),
+      "Humidity (%)"
+    ),
+    table(
+      "surface-records",
+      "Daily source records",
+      ["Temperature (°C)", "Ice Cream Sales", "Humidity (%)", "Beach Visitors"],
+      layout(5, 6, 7, 4)
+    ),
   ]
 );
-
 
 const wineBands = ["Ordinary (3–5)", "Good (6)", "Excellent (7–8)"];
 
@@ -1062,7 +1498,16 @@ export const wineChemistryDashboard: SavedDataStructure = {
     "What separates a good red wine",
     [
       {
-        ...scatter("wine-density", "Density falls as alcohol rises", "alcohol", "density", layout(0, 0, 7, 7), ["Alcohol (% vol)", "Density (g/cm³)"], "Quality band", "wine-bands"),
+        ...scatter(
+          "wine-density",
+          "Density falls as alcohol rises",
+          "alcohol",
+          "density",
+          layout(0, 0, 7, 7),
+          ["Alcohol (% vol)", "Density (g/cm³)"],
+          "Quality band",
+          "wine-bands"
+        ),
         display: "contour",
         contour: { bandwidth: 0.8, levels: 6 },
         regression: { method: "loess", span: 0.7 },
@@ -1070,19 +1515,63 @@ export const wineChemistryDashboard: SavedDataStructure = {
         marginals: { bins: 24 },
       },
       {
-        ...scatter("wine-acid", "More fixed acid, lower pH", "fixed acidity", "pH", layout(7, 0, 5, 7), ["Fixed acidity (g/L)", "pH"]),
+        ...scatter(
+          "wine-acid",
+          "More fixed acid, lower pH",
+          "fixed acidity",
+          "pH",
+          layout(7, 0, 5, 7),
+          ["Fixed acidity (g/L)", "pH"]
+        ),
         display: "hexbin",
         hexbin: { columns: 18 },
         regression: { method: "linear" },
         summary: true,
       },
       {
-        ...scatter("wine-volatile", "Volatile acidity and alcohol in each quality band", "volatile acidity", "alcohol", layout(0, 7, 8, 5), ["Volatile acidity (g/L)", "Alcohol (% vol)"], "Quality band", "wine-bands"),
+        ...scatter(
+          "wine-volatile",
+          "Volatile acidity and alcohol in each quality band",
+          "volatile acidity",
+          "alcohol",
+          layout(0, 7, 8, 5),
+          ["Volatile acidity (g/L)", "Alcohol (% vol)"],
+          "Quality band",
+          "wine-bands"
+        ),
         regression: { method: "linear" },
-        facet: { enabled: true, type: "wrap", rowVariable: "Quality band", columnCount: 3 },
+        facet: {
+          enabled: true,
+          type: "wrap",
+          rowVariable: "Quality band",
+          columnCount: 3,
+        },
       },
-      { ...row("wine-quality", "Filter by quality band", "Quality band", layout(8, 7, 4, 5), "wine-bands"), minRowHeight: 28, maxRowHeight: 40 },
-      table("wine-records", "Wines in view", ["Quality band", "quality", "alcohol", "density", "volatile acidity", "fixed acidity", "pH"], layout(0, 12, 12, 4)),
+      {
+        ...row(
+          "wine-quality",
+          "Filter by quality band",
+          "Quality band",
+          layout(8, 7, 4, 5),
+          "wine-bands"
+        ),
+        minRowHeight: 28,
+        maxRowHeight: 40,
+      },
+      table(
+        "wine-records",
+        "Wines in view",
+        [
+          "Quality band",
+          "quality",
+          "alcohol",
+          "density",
+          "volatile acidity",
+          "fixed acidity",
+          "pH",
+        ],
+        layout(0, 12, 12, 4)
+      ),
     ],
     [categoricalScale("wine-bands", "Quality band", wineBands)]
   ),
@@ -1113,23 +1602,240 @@ export const messageDashboard = dashboard("Message log", [
     },
   },
   {
-    ...line("messages-monthly", "Messages per month", [], layout(0, 7, 8, 4), "Messages"),
+    ...line(
+      "messages-monthly",
+      "Messages per month",
+      [],
+      layout(0, 7, 8, 4),
+      "Messages"
+    ),
     xField: "Date",
     xAxisLabel: "Month · UTC",
-    time: { interval: "month", weekStart: "monday", aggregation: "count", missingPeriods: "zero" },
+    time: {
+      interval: "month",
+      weekStart: "monday",
+      aggregation: "count",
+      missingPeriods: "zero",
+    },
   },
-  row("messages-direction", "Sent or received", "Direction", layout(8, 7, 4, 4)),
+  row(
+    "messages-direction",
+    "Sent or received",
+    "Direction",
+    layout(8, 7, 4, 4)
+  ),
   row(
     "messages-correspondents",
     "Messages by correspondent",
     "Correspondent",
     layout(0, 11, 4, 6)
   ),
-  histogram("messages-words", "Words per message", "Words", layout(4, 11, 3, 6)),
+  histogram(
+    "messages-words",
+    "Words per message",
+    "Words",
+    layout(4, 11, 3, 6)
+  ),
   table(
     "messages-records",
     "Messages",
     ["Date", "Correspondent", "Role", "Direction", "Words"],
     layout(7, 11, 5, 6)
+  ),
+]);
+
+/**
+ * Driving shifts into reverse: a connected scatterplot. The composition's
+ * path orders 55 shuffled rows by Year through numeric Miles and Gas scales,
+ * with labeled points, a calculated guide, and callouts that follow years.
+ */
+export const drivingDashboard = dashboard("Driving", [
+  {
+    ...base,
+    id: "driving-composition",
+    type: "composition",
+    title: "Driving shifts into reverse",
+    layout: layout(0, 0, 12, 8),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 960, height: 600, background: "#ffffff" },
+      scales: [
+        {
+          id: "n-1",
+          kind: "numeric",
+          name: "Miles driven per person",
+          field: "Miles",
+          domain: "shared",
+          zero: false,
+          nice: true,
+        },
+        {
+          id: "n-2",
+          kind: "numeric",
+          name: "Gas price",
+          field: "Gas",
+          domain: "shared",
+          zero: false,
+          nice: true,
+        },
+      ],
+      calculations: [
+        {
+          id: "calc-1",
+          name: "Average miles",
+          aggregation: "average",
+          field: "Miles",
+          population: "composition",
+          filters: "ignore",
+        },
+      ],
+      overrides: [],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "Driving shifts into reverse",
+          x: 32,
+          y: 28,
+          width: 896,
+          fontSize: 26,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "Miles driven per person each year against the inflation-adjusted price of a gallon of gas, 1956–2010. The line follows the years.",
+          x: 32,
+          y: 64,
+          width: 896,
+          fontSize: 15,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Years",
+          x: 96,
+          y: 112,
+          frame: { width: 824, height: 400 },
+          label: { show: false, width: 0, fontSize: 12 },
+          axis: true,
+          marks: [
+            {
+              type: "path",
+              id: "mark-1",
+              name: "Path",
+              xScaleId: "n-1",
+              yScaleId: "n-2",
+              orderField: "Year",
+              stroke: "#1f2328",
+              strokeWidth: 1.5,
+            },
+            {
+              type: "point",
+              id: "mark-2",
+              name: "Points",
+              xScaleId: "n-1",
+              yScaleId: "n-2",
+              orderField: "Year",
+              radius: 3.5,
+              fill: "#1f2328",
+              labelField: "Year",
+              labelEvery: 4,
+            },
+          ],
+          repeat: {
+            arrangement: "rows",
+            columns: 3,
+            gap: 6,
+            order: "count",
+            limit: 24,
+          },
+        },
+        {
+          id: "guide-1",
+          kind: "guide",
+          name: "Average miles",
+          x: 6,
+          y: -40,
+          unitId: "unit-1",
+          value: { kind: "calc", calcId: "calc-1" },
+          label: "Average {value} miles a year",
+          color: "#8a6d3b",
+        },
+        {
+          id: "note-1",
+          kind: "annotation",
+          name: "2008 peak",
+          text: "{label}: gas peaks at ${y} a gallon\nand driving falls for the first time",
+          x: -230,
+          y: -34,
+          anchor: {
+            kind: "data",
+            unitId: "unit-1",
+            instanceKey: "all",
+            markId: "mark-2",
+            pick: "at",
+            at: "2008",
+          },
+          fontSize: 12,
+          color: "#a3241d",
+          leader: true,
+        },
+        {
+          id: "note-2",
+          kind: "annotation",
+          name: "1980 shock",
+          text: "{label}: the oil shock sends gas to ${y}\nwhile miles stall",
+          x: 22,
+          y: 18,
+          anchor: {
+            kind: "data",
+            unitId: "unit-1",
+            instanceKey: "all",
+            markId: "mark-2",
+            pick: "at",
+            at: "1980",
+          },
+          fontSize: 12,
+          color: "#1f4e8c",
+          leader: true,
+        },
+        {
+          id: "note-3",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: "Source: vega-datasets driving.json, after Hannah Fairfield, The New York Times (2010). Miles per person from the FHWA; gas price per gallon from the EIA, adjusted for inflation.",
+          x: 32,
+          y: 566,
+          width: 896,
+          fontSize: 11,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
+    },
+  },
+  scatter(
+    "driving-scatter",
+    "Gas against miles",
+    "Miles",
+    "Gas",
+    layout(0, 8, 6, 5),
+    ["Miles per person", "Gas, $ per gallon"]
+  ),
+  histogram("driving-years", "Years", "Year", layout(6, 8, 6, 5)),
+  table(
+    "driving-rows",
+    "Years",
+    ["Year", "Miles", "Gas"],
+    layout(0, 13, 12, 5)
   ),
 ]);

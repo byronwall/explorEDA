@@ -16,6 +16,7 @@ import {
   MessageSquareText,
   Rows3,
   SeparatorVertical,
+  Spline,
   StickyNote,
   Trash2,
   Type,
@@ -46,6 +47,7 @@ import {
   createGuideElement,
   createTextElement,
   createUnitElement,
+  createXyUnitElement,
   findOverride,
   normalizeComposition,
   type CompositionDefinition,
@@ -155,9 +157,12 @@ export function CompositionInspector({
   const anchorPoint = useMemo(
     () =>
       selected?.kind === "annotation"
-        ? resolveComposition(definition, measureCompositionText, data).elements.find(
-            (element) => element.id === selected.id
-          )?.anchor?.point
+        ? resolveComposition(
+            definition,
+            measureCompositionText,
+            data
+          ).elements.find((element) => element.id === selected.id)?.anchor
+            ?.point
         : undefined,
     [selected, definition, data]
   );
@@ -258,6 +263,22 @@ export function CompositionInspector({
           >
             <Rows3 className="h-3.5 w-3.5" aria-hidden="true" />
             Chart unit
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={
+              profiles.filter((profile) => profile.dataType === "numeric")
+                .length < 2
+            }
+            tooltip="Add a frame with numeric x and y scales: a path through the rows in the order of a field, with a point on each row. Needs two numeric fields."
+            onClick={() => {
+              const created = createXyUnitElement(definition, profiles);
+              if (created) add(created.element, created.definition);
+            }}
+          >
+            <Spline className="h-3.5 w-3.5" aria-hidden="true" />
+            X–Y unit
           </Button>
           <Button
             variant="outline"
@@ -389,7 +410,11 @@ export function CompositionInspector({
               ? "the one unit"
               : selection.instanceKey
           }
-          override={findOverride(definition, selected.id, selection.instanceKey)}
+          override={findOverride(
+            definition,
+            selected.id,
+            selection.instanceKey
+          )}
           onChange={(patch) =>
             change(
               updateOverride(
@@ -401,22 +426,23 @@ export function CompositionInspector({
             )
           }
           onReset={() =>
-            change(resetOverride(definition, selected.id, selection.instanceKey!))
+            change(
+              resetOverride(definition, selected.id, selection.instanceKey!)
+            )
           }
-          onEditTemplate={() =>
-            select(settings.id, { elementId: selected.id })
-          }
+          onEditTemplate={() => select(settings.id, { elementId: selected.id })}
         />
       )}
 
       {selected?.kind === "unit" && (
         <UnitProperties
           unit={selected}
-          scales={definition.scales}
+          definition={definition}
           repeatCount={countRepeats(selected, profiles)}
           onChange={(patch) =>
             change(updateElement<UnitElement>(definition, selected.id, patch))
           }
+          onChangeDefinition={change}
           calculations={definition.calculations}
           onEditScale={setOpenScaleId}
         />
@@ -528,7 +554,10 @@ function TextProperties({
   onChange: (patch: Partial<TextElement>) => void;
 }) {
   return (
-    <section className="eda-setting-section" aria-label={`${element.name} text`}>
+    <section
+      className="eda-setting-section"
+      aria-label={`${element.name} text`}
+    >
       <h5>{element.name}</h5>
       <div className="eda-setting-grid">
         <label htmlFor={`${element.id}-name`}>Layer name</label>

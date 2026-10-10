@@ -1,6 +1,13 @@
 import type { ReactNode } from "react";
 import { COMPOSITION_FONT } from "./compositionTypes";
-import type { CompositionScene, SceneNode } from "./resolveComposition";
+import type { Bounds, CompositionScene, SceneNode } from "./resolveComposition";
+
+/** A stable ID for a clip box, shared by every node clipped to it. */
+export function clipId(clip: Bounds) {
+  return `eda-clip-${[clip.x, clip.y, clip.width, clip.height]
+    .map((value) => Math.round(value * 100))
+    .join("-")}`;
+}
 
 /**
  * Draws a resolved scene. Editing overlays go in `children`, inside a group
@@ -33,10 +40,12 @@ export function CompositionSvg({
 } & Omit<React.SVGProps<SVGSVGElement>, "scale" | "ref">) {
   // Nodes group by element, so moving one element is one transform.
   const groups: { elementId: string; nodes: SceneNode[] }[] = [];
+  const clips = new Map<string, Bounds>();
   for (const node of scene.nodes) {
     const last = groups[groups.length - 1];
     if (last?.elementId === node.elementId) last.nodes.push(node);
     else groups.push({ elementId: node.elementId, nodes: [node] });
+    if (node.clip) clips.set(clipId(node.clip), node.clip);
   }
   return (
     <svg
@@ -50,6 +59,20 @@ export function CompositionSvg({
       fontFamily={COMPOSITION_FONT}
       {...props}
     >
+      {clips.size > 0 && (
+        <defs>
+          {[...clips].map(([id, clip]) => (
+            <clipPath key={id} id={id}>
+              <rect
+                x={clip.x}
+                y={clip.y}
+                width={clip.width}
+                height={clip.height}
+              />
+            </clipPath>
+          ))}
+        </defs>
+      )}
       <rect
         data-artboard=""
         width={scene.width}
@@ -87,6 +110,7 @@ export function CompositionSvg({
 }
 
 function SceneNodeView({ node }: { node: SceneNode }) {
+  const clipPath = node.clip ? `url(#${clipId(node.clip)})` : undefined;
   switch (node.type) {
     case "text":
       return (
@@ -132,6 +156,30 @@ function SceneNodeView({ node }: { node: SceneNode }) {
           opacity={node.opacity}
           stroke={node.stroke}
           strokeWidth={node.stroke ? 1.25 : undefined}
+          clipPath={clipPath}
+        />
+      );
+    case "path":
+      return (
+        <path
+          data-node={node.key}
+          d={node.segments
+            .map((run) =>
+              run
+                .map(
+                  (vertex, index) =>
+                    `${index ? "L" : "M"}${round(vertex.x)} ${round(vertex.y)}`
+                )
+                .join("")
+            )
+            .join("")}
+          fill="none"
+          stroke={node.stroke}
+          strokeWidth={node.strokeWidth}
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          opacity={node.opacity}
+          clipPath={clipPath}
         />
       );
     case "line":
@@ -150,3 +198,5 @@ function SceneNodeView({ node }: { node: SceneNode }) {
       );
   }
 }
+
+const round = (value: number) => Math.round(value * 100) / 100;

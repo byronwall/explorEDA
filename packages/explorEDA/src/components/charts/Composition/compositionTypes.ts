@@ -119,7 +119,28 @@ export interface ValueScale {
   colors: [string, string];
 }
 
-export type CompositionScale = PositionScale | ValueScale;
+/**
+ * Maps a numeric field along a frame's width or height. Point and path marks
+ * bind one numeric scale to x and one to y, so a circle and a path vertex for
+ * the same row always land on the same spot.
+ */
+export interface NumericScale {
+  id: string;
+  kind: "numeric";
+  name: string;
+  field: string;
+  /** Shared: every repeat uses one extent. Per unit: each fits its own rows. */
+  domain: ScaleDomain;
+  /** Extend the extent to include zero. */
+  zero: boolean;
+  /** Round the extent out to tidy tick values. */
+  nice: boolean;
+  /** Fixed limits replace the data's extent when set. */
+  min?: number;
+  max?: number;
+}
+
+export type CompositionScale = PositionScale | ValueScale | NumericScale;
 export type ScaleDomain = "shared" | "instance";
 
 export type MarkShape = "rect" | "circle";
@@ -130,7 +151,8 @@ export type MarkAggregation = "count" | "sum" | "average";
  * Draws one glyph per position bin in each repeated unit, from the rows of
  * that unit and bin. The definition is edited once for every repeat.
  */
-export interface MarkDefinition {
+export interface StripMark {
+  type: "strip";
   id: string;
   name: string;
   shape: MarkShape;
@@ -143,6 +165,51 @@ export interface MarkDefinition {
   fill: string;
   /** Space between neighboring glyphs, in artboard pixels. */
   inset: number;
+}
+
+/**
+ * Draws one circle per row at numeric x and y. Points share their scales with
+ * a path in the same frame, so the path runs through its points.
+ */
+export interface PointMark {
+  type: "point";
+  id: string;
+  name: string;
+  xScaleId: string;
+  yScaleId: string;
+  /** Orders the rows for `first`/`last` picks and every-nth labels; row order otherwise. */
+  orderField?: string;
+  radius: number;
+  fill: string;
+  /** Label each point with this field's value. */
+  labelField?: string;
+  /** Label every nth point in order; 1 labels all, 0 labels none. */
+  labelEvery: number;
+}
+
+/**
+ * Connects a repeat's rows in the order of one field, such as year, into one
+ * path. A row with a missing x, y, or order value breaks the path there.
+ */
+export interface PathMark {
+  type: "path";
+  id: string;
+  name: string;
+  xScaleId: string;
+  yScaleId: string;
+  orderField: string;
+  stroke: string;
+  strokeWidth: number;
+}
+
+export type MarkDefinition = StripMark | PointMark | PathMark;
+export type MarkType = MarkDefinition["type"];
+
+/** The scales a mark reads, by ID. */
+export function markScaleIds(mark: MarkDefinition): string[] {
+  return mark.type === "strip"
+    ? [mark.positionScaleId, mark.valueScaleId]
+    : [mark.xScaleId, mark.yScaleId];
 }
 
 export type RepeatArrangement = "rows" | "columns" | "grid";
@@ -216,15 +283,25 @@ export type AnnotationAnchor =
   /** A fixed point on the page: the element's x and y. */
   | { kind: "page" }
   /** A point in one repeat's frame, as fractions of its width and height. */
-  | { kind: "frame"; unitId: string; instanceKey: string; fx: number; fy: number }
+  | {
+      kind: "frame";
+      unitId: string;
+      instanceKey: string;
+      fx: number;
+      fy: number;
+    }
   /** A glyph chosen from the data, which the annotation follows as data change. */
   | {
       kind: "data";
       unitId: string;
       instanceKey: string;
       markId: string;
-      pick: "max" | "min" | "first" | "last";
+      pick: AnchorPick;
+      /** The glyph whose label equals this, for the `at` pick, such as a year. */
+      at?: string;
     };
+
+export type AnchorPick = "max" | "min" | "first" | "last" | "at";
 
 /**
  * Text attached to the page, a frame, or a data mark. For frame and data
@@ -262,14 +339,39 @@ export function createEmptyComposition(): CompositionDefinition {
 export function normalizeComposition(
   definition: CompositionDefinition
 ): CompositionDefinition {
-  return definition.scales && definition.calculations && definition.overrides
-    ? definition
-    : {
-        ...definition,
-        scales: definition.scales ?? [],
-        calculations: definition.calculations ?? [],
-        overrides: definition.overrides ?? [],
-      };
+  // Marks saved before point and path marks existed are strips.
+  const untyped = definition.elements.some(
+    (element) =>
+      element.kind === "unit" &&
+      element.marks.some((mark) => !(mark as Partial<MarkDefinition>).type)
+  );
+  if (
+    definition.scales &&
+    definition.calculations &&
+    definition.overrides &&
+    !untyped
+  )
+    return definition;
+  return {
+    ...definition,
+    elements: untyped
+      ? definition.elements.map((element) =>
+          element.kind === "unit"
+            ? {
+                ...element,
+                marks: element.marks.map((mark) =>
+                  (mark as Partial<MarkDefinition>).type
+                    ? mark
+                    : ({ ...mark, type: "strip" } as StripMark)
+                ),
+              }
+            : element
+        )
+      : definition.elements,
+    scales: definition.scales ?? [],
+    calculations: definition.calculations ?? [],
+    overrides: definition.overrides ?? [],
+  };
 }
 
 const TEXT_DEFAULTS: Record<
@@ -335,7 +437,10 @@ export function createTextElement(
   };
 }
 
-export function newElementId(definition: CompositionDefinition, prefix: string) {
+export function newElementId(
+  definition: CompositionDefinition,
+  prefix: string
+) {
   const ids = new Set(definition.elements.map((element) => element.id));
   let index = 1;
   while (ids.has(`${prefix}-${index}`)) index += 1;
@@ -435,6 +540,7 @@ export function createUnitElement(
     axis: true,
     marks: [
       {
+        type: "strip",
         id: "mark-1",
         name: "Squares",
         shape: "rect",
@@ -455,6 +561,121 @@ export function createUnitElement(
     },
   };
   return { definition: { ...definition, scales }, element };
+}
+
+export function newMarkId(unit: Pick<UnitElement, "marks">) {
+  const ids = new Set(unit.marks.map((mark) => mark.id));
+  let index = 1;
+  while (ids.has(`mark-${index}`)) index += 1;
+  return `mark-${index}`;
+}
+
+/** Finds the numeric scale on a field, or adds one, and returns both. */
+export function ensureNumericScale(
+  definition: CompositionDefinition,
+  field: string
+): { definition: CompositionDefinition; scale: NumericScale } {
+  const existing = definition.scales.find(
+    (scale): scale is NumericScale =>
+      scale.kind === "numeric" && scale.field === field
+  );
+  if (existing) return { definition, scale: existing };
+  const scale: NumericScale = {
+    id: newScaleId(definition, "n"),
+    kind: "numeric",
+    name: field,
+    field,
+    domain: "shared",
+    zero: false,
+    nice: true,
+  };
+  return {
+    definition: { ...definition, scales: [...definition.scales, scale] },
+    scale,
+  };
+}
+
+/**
+ * A new x–y unit draws a path through the rows in the order of one numeric
+ * field, with a point on every row: a connected scatterplot. It takes the
+ * first numeric field as the order and x, and the next as y.
+ */
+export function createXyUnitElement(
+  definition: CompositionDefinition,
+  fields: FieldChoice[]
+): { definition: CompositionDefinition; element: UnitElement } | undefined {
+  const numeric = fields.filter((field) => field.dataType === "numeric");
+  // A sequence field such as year orders the path; the other two are x and y.
+  const order =
+    numeric.find((field) =>
+      /year|date|time|index|order|seq/i.test(field.name)
+    ) ?? numeric[0];
+  const rest = numeric.filter((field) => field !== order);
+  const xField = rest[0] ?? order;
+  const yField = rest[1] ?? rest[0] ?? order;
+  if (!order || !xField || !yField || numeric.length < 2) return undefined;
+  const withX = ensureNumericScale(definition, xField.name);
+  const withY = ensureNumericScale(withX.definition, yField.name);
+  const margin = 32;
+  const bottom = definition.elements.reduce(
+    (max, element) =>
+      element.kind === "text" && element.role !== "note"
+        ? Math.max(max, element.y + Math.round(element.fontSize * 1.3))
+        : element.kind === "unit"
+          ? Math.max(max, element.y + element.frame.height)
+          : max,
+    margin
+  );
+  // Room on the left for y-axis labels and below for x-axis labels.
+  const axisGutter = 56;
+  const element: UnitElement = {
+    id: newElementId(definition, "unit"),
+    kind: "unit",
+    name: uniqueName(definition, "X–Y unit"),
+    x: margin + axisGutter,
+    y: bottom + 24,
+    frame: {
+      width: definition.artboard.width - margin * 2 - axisGutter,
+      height: Math.max(
+        120,
+        definition.artboard.height - bottom - 24 - margin - 40
+      ),
+    },
+    label: { show: false, width: 0, fontSize: 12 },
+    axis: true,
+    marks: [
+      {
+        type: "path",
+        id: "mark-1",
+        name: "Path",
+        xScaleId: withX.scale.id,
+        yScaleId: withY.scale.id,
+        orderField: order.name,
+        stroke: INK,
+        strokeWidth: 1.5,
+      },
+      {
+        type: "point",
+        id: "mark-2",
+        name: "Points",
+        xScaleId: withX.scale.id,
+        yScaleId: withY.scale.id,
+        orderField: order.name,
+        radius: 3.5,
+        fill: INK,
+        labelField: order.name,
+        labelEvery: 0,
+      },
+    ],
+    repeat: {
+      arrangement: "rows",
+      columns: 3,
+      gap: 6,
+      order: "count",
+      limit: 24,
+    },
+  };
+  return { definition: withY.definition, element };
 }
 
 export function newCalculationId(definition: CompositionDefinition) {
@@ -486,7 +707,9 @@ export function createAnnotationElement(
   unit: UnitElement | undefined,
   instanceKey: string | undefined
 ): AnnotationElement {
-  const mark = unit?.marks[0];
+  // A path has no glyphs to follow, so prefer a strip or point mark.
+  const mark =
+    unit?.marks.find((item) => item.type !== "path") ?? unit?.marks[0];
   const base = {
     id: newElementId(definition, "note"),
     kind: "annotation" as const,
@@ -498,7 +721,10 @@ export function createAnnotationElement(
   if (unit && mark && instanceKey !== undefined)
     return {
       ...base,
-      text: "Busiest month: {label} ({value})",
+      text:
+        mark.type === "point"
+          ? "Highest point: {label} ({x}, {y})"
+          : "Busiest month: {label} ({value})",
       x: 14,
       y: -20,
       anchor: {

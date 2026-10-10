@@ -17,6 +17,7 @@ import {
   regionMapDashboard,
   distributionDashboard,
   messageDashboard,
+  drivingDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -34,6 +35,7 @@ import {
   Bird,
   BarChart3,
   Calculator,
+  Spline,
   CloudFog,
   Globe,
   Activity,
@@ -664,6 +666,17 @@ export const examples: ExampleData[] = [
     icon: LayoutTemplate,
     data: "/datasets/message-log.csv",
     savedData: messageDashboard,
+  },
+  {
+    id: "driving-shifts",
+    title: "Driving shifts into reverse",
+    description:
+      "Fifty-five years of miles driven against the price of gas, as one connected path. The composition orders shuffled rows by year through shared numeric scales, labels every fourth year, and anchors callouts to 1980 and 2008.",
+    dataset: { rows: "55 years", fields: 4, source: "Real" },
+    shows: ["Ordered path", "Numeric x–y scales", "Callouts at a year"],
+    icon: Spline,
+    data: "/datasets/driving.csv",
+    savedData: drivingDashboard,
   },
 ];
 

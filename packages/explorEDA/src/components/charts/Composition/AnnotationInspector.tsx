@@ -362,7 +362,9 @@ export function GuideProperties({
               placeholder="2022-01-01"
               value={guide.value.value}
               onChange={(event) =>
-                onChange({ value: { kind: "constant", value: event.target.value } })
+                onChange({
+                  value: { kind: "constant", value: event.target.value },
+                })
               }
             />
           </>
@@ -374,7 +376,9 @@ export function GuideProperties({
               className="eda-composition-select"
               value={guide.value.calcId}
               onChange={(event) =>
-                onChange({ value: { kind: "calc", calcId: event.target.value } })
+                onChange({
+                  value: { kind: "calc", calcId: event.target.value },
+                })
               }
             >
               {!definition.calculations.length && (
@@ -431,10 +435,34 @@ const ANCHORS = [
 ];
 
 const PICKS = [
-  { value: "max" as const, label: "Largest", tooltip: "The glyph with the largest value" },
-  { value: "min" as const, label: "Smallest", tooltip: "The glyph with the smallest value" },
-  { value: "first" as const, label: "First", tooltip: "The first glyph along the position scale" },
-  { value: "last" as const, label: "Last", tooltip: "The last glyph along the position scale" },
+  {
+    value: "max" as const,
+    label: "Largest",
+    tooltip: "The glyph with the largest value, or the highest point",
+  },
+  {
+    value: "min" as const,
+    label: "Smallest",
+    tooltip: "The glyph with the smallest value, or the lowest point",
+  },
+  {
+    value: "first" as const,
+    label: "First",
+    tooltip:
+      "The first glyph along the position scale, or the first point in order",
+  },
+  {
+    value: "last" as const,
+    label: "Last",
+    tooltip:
+      "The last glyph along the position scale, or the last point in order",
+  },
+  {
+    value: "at" as const,
+    label: "At…",
+    tooltip:
+      "The glyph whose bin or order value matches a value you type, such as a year",
+  },
 ];
 
 export function AnnotationProperties({
@@ -460,7 +488,9 @@ export function AnnotationProperties({
     anchor.kind === "page"
       ? undefined
       : units.find((item) => item.id === anchor.unitId);
-  const keys = unit ? repeatSubsets(unit, data).map((subset) => subset.key) : [];
+  const keys = unit
+    ? repeatSubsets(unit, data).map((subset) => subset.key)
+    : [];
   const setAnchor = (kind: AnnotationAnchor["kind"]) => {
     if (kind === anchor.kind) return;
     if (kind === "page") {
@@ -567,6 +597,19 @@ export function AnnotationProperties({
               options={PICKS}
               onChange={(pick) => onChange({ anchor: { ...anchor, pick } })}
             />
+            {anchor.pick === "at" && (
+              <>
+                <Label htmlFor={`${id}-at`}>Matching</Label>
+                <Input
+                  id={`${id}-at`}
+                  placeholder="A bin label or order value, such as 2008"
+                  value={anchor.at ?? ""}
+                  onChange={(event) =>
+                    onChange({ anchor: { ...anchor, at: event.target.value } })
+                  }
+                />
+              </>
+            )}
           </>
         )}
         {anchor.kind === "frame" && (
@@ -598,8 +641,16 @@ export function AnnotationProperties({
               label="Leader line"
               value={note.leader}
               options={[
-                { value: true, label: "Show", tooltip: "Draw a line from the anchor to the text" },
-                { value: false, label: "Hide", tooltip: "Show only the ring at the anchor" },
+                {
+                  value: true,
+                  label: "Show",
+                  tooltip: "Draw a line from the anchor to the text",
+                },
+                {
+                  value: false,
+                  label: "Hide",
+                  tooltip: "Show only the ring at the anchor",
+                },
               ]}
               onChange={(leader) => onChange({ leader })}
             />
@@ -621,7 +672,8 @@ export function AnnotationProperties({
       {anchor.kind === "data" && (
         <p className="eda-setting-note">
           Use {"{label}"} and {"{value}"} for the followed glyph&apos;s bin and
-          value. A drag changes the offset and keeps the attachment.
+          value, or {"{x}"} and {"{y}"} for a point&apos;s coordinates. A drag
+          changes the offset and keeps the attachment.
         </p>
       )}
     </section>
