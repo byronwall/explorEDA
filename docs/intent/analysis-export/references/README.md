@@ -13,7 +13,7 @@ Source inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927`. No fresh export 
 
 ## Related intent
 
-- [Editorial styling](../../editorial-chart-styling/intent-brief.md): global style links, explicit overrides, and editorial live layout.
+- [Editorial styling](https://github.com/byronwall/explorEDA/blob/91b627d7307a4a14c7f123a713ce5f45662a3d22/docs/intent/editorial-chart-styling/intent-brief.md): global style links, explicit overrides, and editorial live layout.
 - [Renderer-independent replay](../../renderer-independent-replay/intent-brief.md): a future semantic reproduction contract; not a prerequisite for an image.
 - [Data-bound narrative](../../data-bound-narrative/intent-brief.md): a possible later report-content source; not required for user-authored captions.
 

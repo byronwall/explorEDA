@@ -25,14 +25,15 @@ The existing application also accepts user data and provides an editable workspa
 
 Use React and TypeScript in the existing application.
 Keep the current compact workspace conventions in `../../docs/ui-defaults.md`.
-For the demo overhaul, assume multi-table support lands before implementation starts.
-This assumption does not certify support in the current checkout.
+Related tables use the package's project API (`ExplorEdaProject`), as in the shop example.
 
 ## Evidence on Hand
 
 Existing Wine analysis: `src/demos/examples.ts`, example `wine-chemistry`.
-Imported dataset research: `../../docs/intent/demo-overhaul/support/dataset-research.md`.
-The research proposes analyses; their findings still require computation.
+Curated catalogue: `src/demos/examples.ts`, with analyses in `src/demos/analyses/`.
+Dataset sources and preparation: `public/datasets/README.md`.
+Dataset research and reserve candidates: `../../docs/research/demo-datasets/README.md`.
+Unused research proposals still require computation before they become findings.
 
 ## Product Principles
 

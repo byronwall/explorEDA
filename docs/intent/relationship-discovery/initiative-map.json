@@ -5,10 +5,10 @@
     "slug": "relationship-discovery",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-06",
+    "last_updated": "2026-10-09",
     "summary": "Users should find useful relationships among several numeric fields before choosing a scatter pair.",
-    "status": "planned",
-    "next_action": "Use three fields with one exact relationship and one constant field. Show coefficients and pair counts, then open the correct scatter. Decide whether the small matrix reduces field-selection effort before adding methods."
+    "status": "active",
+    "next_action": "The scatter matrix shows Pearson r per pair. Remaining: open a scatter from a correlation cell, and decide whether a coefficient-only matrix for more than ten fields is worth adding."
   },
   "artifacts": {
     "intent_brief": {
@@ -78,7 +78,7 @@
     {
       "id": "scatter-matrix-request",
       "type": "direct-user-input",
-      "location": "../scatter-plot-matrix/references/user-request.md",
+      "location": "https://github.com/byronwall/explorEDA/blob/91b627d7307a4a14c7f123a713ce5f45662a3d22/docs/intent/scatter-plot-matrix/references/user-request.md",
       "anchor": "Explicit off-diagonal scatter and on-diagonal distributions",
       "authority": "explicit user intent"
     },
@@ -337,6 +337,15 @@
         3
       ],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    },
+    {
+      "date": "2026-10-09",
+      "event": "partially-delivered",
+      "status": "active",
+      "previous_status": "planned",
+      "evidence": [
+        "ScatterMatrix correlation cells (components/charts/ScatterMatrix/ScatterMatrix.tsx CorrelationCell), PRs #185-#199"
+      ]
     }
   ],
   "closure": null,

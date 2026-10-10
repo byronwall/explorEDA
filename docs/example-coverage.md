@@ -57,10 +57,10 @@ It does not claim that pointer clicks created the incompatible filters.
 These reports are historical observations. Later changes require their own review.
 Retirement did not repeat browser or runtime tests. The [closure record](initiative-history.json) preserves the accepted scope.
 
-## Demo overhaul research
+## Curated catalogue
 
-The [demo overhaul intent](intent/demo-overhaul/intent-brief.md) captures the next example direction.
-The [shape](intent/demo-overhaul/shape-brief.md) proposes seven complete analyses and lists the catalogue changes.
-Its [imported research](intent/demo-overhaul/support/README.md) preserves four dataset families and twenty proposed analyses.
-Flights and World Bank indicators provide the strongest related-table examples.
-These proposals have no reviewed assignments in the coverage manifest yet.
+The demo overhaul retired on 2026-10-09. The landing catalogue lists seven complete analyses: January 2013 flights, Beijing air quality, World Development Indicators, 2023 earthquakes, Wine chemistry, Shop operations, and Lorenz. Each opens on its own saved tabs. Each tab names the capabilities it shows, such as Related tables, Fits, or Maps, and **Find by capability** narrows the catalogue to the analyses that show one. Card titles and descriptions carry the subject; there is no separate topic filter. Other examples stay reachable by URL but are not listed.
+
+The catalogue lives in `apps/demo/src/demos/examples.ts`, with the analyses in `apps/demo/src/demos/analyses/` and their tests in `analyses.test.ts`. The [dataset notes](../apps/demo/public/datasets/README.md) record sources, frozen versions, and preparation. The [dataset research](research/demo-datasets/README.md) keeps the reserve candidates and unused analysis proposals.
+
+Lookups use the prepared tables directly; enrichment keeps each base row and its control totals, and misses stay inspectable. The coverage manifest has no reviewed assignments for these analyses yet.

@@ -1,12 +1,14 @@
 {
-  "schema_version": "0.4.0",
+  "schema_version": "0.5.0",
   "initiative": {
     "title": "Agent inside the analysis application",
     "slug": "in-app-analysis-agent",
     "scale": "capability",
     "current_phase": "shape",
-    "last_updated": "2026-09-29",
-    "summary": "Single-source agent dashboard creation through a server API, with direct application, settings-checkpoint Undo, and reconciliation."
+    "last_updated": "2026-10-09",
+    "summary": "Single-source agent dashboard creation through a server API, with direct application, settings-checkpoint Undo, and reconciliation.",
+    "status": "planned",
+    "next_action": "Not started. Dashboard text (compileDocument, the exploreda-dsl checker) and saved-tab history now exist as building blocks; plan the server API and direct application on top of them."
   },
   "artifacts": {
     "intent_brief": {
@@ -293,7 +295,7 @@
       {
         "id": "feedback-21",
         "type": "required behavior",
-        "statement": "Target useful dashboards in under 60 seconds and smaller edits in 15\u201320 seconds, preferably faster.",
+        "statement": "Target useful dashboards in under 60 seconds and smaller edits in 15–20 seconds, preferably faster.",
         "commitment": "explicit",
         "importance": "core",
         "status": "active",
@@ -451,6 +453,15 @@
       "event": "Applied final inspection scope comments",
       "changes": [
         "Change-comparison UI deferred; snapshot Undo remains in scope"
+      ]
+    },
+    {
+      "date": "2026-10-09",
+      "event": "status-assessed",
+      "status": "planned",
+      "previous_status": null,
+      "evidence": [
+        "No agent API or agent UI in packages or apps at 91b627d"
       ]
     }
   ]

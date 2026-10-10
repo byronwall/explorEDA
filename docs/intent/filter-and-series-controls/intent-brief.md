@@ -34,7 +34,7 @@ Continuous legend brushing and linked hover emphasis remain later possibilities.
 
 ## What seems settled
 
-Chart-owned manual filters and localFilters are delivered. Inline series emphasis exists in the raw line legend; persistent hide/isolate and a compact top-level filter route remain proposed.
+Chart-owned manual filters and localFilters are delivered. Inline series emphasis exists in the raw line legend; persistent hide/isolate and a compact top-level filter route remain proposed. Dashboard text has only chart-local `where.` filters. A workspace filter added here should also get a dashboard text form; the retired config-authoring initiative left that open.
 
 ## Current reality that matters
 

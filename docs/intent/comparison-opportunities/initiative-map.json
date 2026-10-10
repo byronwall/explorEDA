@@ -5,7 +5,7 @@
     "slug": "comparison-opportunities",
     "scale": "program",
     "current_phase": "intent",
-    "last_updated": "2026-10-06",
+    "last_updated": "2026-10-09",
     "summary": "Byron wants comparisons with other tools to reveal obvious, worthwhile gaps in the current explorEDA workspace.",
     "status": "planned",
     "next_action": "Shape the four selected end-user priorities. Keep time second-pass and named comparisons low-priority."
@@ -71,7 +71,7 @@
     {
       "id": "scatter-matrix-request",
       "type": "direct-user-input",
-      "location": "../scatter-plot-matrix/references/user-request.md",
+      "location": "https://github.com/byronwall/explorEDA/blob/91b627d7307a4a14c7f123a713ce5f45662a3d22/docs/intent/scatter-plot-matrix/references/user-request.md",
       "anchor": "Explicit off-diagonal scatter and on-diagonal distributions",
       "authority": "explicit user intent"
     },
@@ -402,6 +402,14 @@
         12
       ],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    },
+    {
+      "date": "2026-10-09",
+      "event": "status-checked",
+      "status": "planned",
+      "evidence": [
+        "No implementation of this scope found at 91b627d"
+      ]
     }
   ],
   "closure": null,

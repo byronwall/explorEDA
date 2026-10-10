@@ -9,7 +9,7 @@ Complete original bundles and extracted resources remain here. Child intents lin
 - [Traceability bundle](pro-traceability/): original archive, prototype, plans, fixtures, and validation evidence.
 - [Current request](user-request.md).
 - [Editorial and editing additions](editorial-and-editing-request.md): direct user goals and tentative gesture examples.
-- [Scatter matrix addition](../../scatter-plot-matrix/references/user-request.md): required layout, with diagonal distribution type open.
+- [Scatter matrix addition](https://github.com/byronwall/explorEDA/blob/91b627d7307a4a14c7f123a713ce5f45662a3d22/docs/intent/scatter-plot-matrix/references/user-request.md): required layout, with diagonal distribution type open.
 - [Annotated product feedback](product-feedback-2026-10-06.md): current end-user direction and priorities.
 - [All seventeen feedback records](product-feedback-2026-10-06.json): original comments, context, and resolutions.
 - [Candidate dispositions](candidate-dispositions.json): every numbered chart-review item and additional routing decisions.

@@ -71,4 +71,4 @@ Follow-up items live in the Product Grid (`pgm/data`) under **In-place chart edi
 - checks at 783 and 390 px, in dark mode, and in read-only previews;
 - retiring this initiative once the stack merges.
 
-See the [reference packet](references/README.md), [axis-domain initiative](../axis-domain-controls/intent-brief.md), and [editorial styling initiative](../editorial-chart-styling/intent-brief.md).
+See the [reference packet](references/README.md), [axis-domain initiative](../axis-domain-controls/intent-brief.md), and [editorial styling initiative](https://github.com/byronwall/explorEDA/blob/91b627d7307a4a14c7f123a713ce5f45662a3d22/docs/intent/editorial-chart-styling/intent-brief.md).

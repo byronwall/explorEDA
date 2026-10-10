@@ -5,13 +5,13 @@ The lifecycle maps own status. This guide groups candidates by planning horizon.
 
 ## User-added projects
 
-These outcomes come from Byron’s direct follow-up. Their implementation priority remains open.
+These outcomes come from Byron’s direct follow-up. Editorial styling and the scatter matrix shipped and retired on 2026-10-09; editing in place shipped its first four milestones.
 
 | New intent | Intended outcome |
 | --- | --- |
-| [Durable editorial chart styling](../editorial-chart-styling/intent-brief.md) | Match a user’s theme or design system; retain larger titles, subtitles, and deliberate typography. |
+| Durable editorial chart styling (completed) | Delivered as workspace themes; see the package README's [Themes and styling](../../../packages/explorEDA/README.md#themes-and-styling). |
 | [Edit chart features in place](../in-place-chart-editing/intent-brief.md) | Edit visible text and axis limits near the result. Compare double-click, context-menu, and optional drag interactions. |
-| [Scatter plot matrix](../scatter-plot-matrix/intent-brief.md) | A multivariate starting view with off-diagonal scatter, diagonal distributions, and linked brushing. |
+| Scatter plot matrix (completed) | Delivered as the `scatter-matrix` view; see the [feature inventory](../../application-feature-inventory.md#scatter-matrix). |
 | [Image export and possible document outputs](../analysis-export/intent-brief.md) | Export authored charts; evaluate slides and PDF reports separately. |
 
 The editing initiative links to axis-domain controls for numerical meaning. Styling owns visual choices and subtitle presentation.
@@ -20,18 +20,18 @@ The editing initiative links to axis-domain controls for numerical meaning. Styl
 
 End users drive the platform. Engineering and scientific experiment analysis is a central direction. Byron reports another worktree investigating datasets; dataset access is not a reason to block small local proofs here.
 
-The first pass has four priorities. Their relative order is not selected:
+The first pass had four priorities. Editorial styling and the scatter matrix are delivered; editing in place and table usability are under way:
 
-- [Editorial styling](../editorial-chart-styling/intent-brief.md): make the live workspace editorial, with global theme links and findable overrides.
+- Editorial styling (delivered): Compact, Newsprint, and Report themes with global theme links and findable overrides.
 - [Editing in place](../in-place-chart-editing/intent-brief.md): direct text and axis edits, immediate updates, and existing undo.
-- [Scatter matrix](../scatter-plot-matrix/intent-brief.md): a starting view for unfamiliar multivariate data, with two-field brushing and dimmed context.
+- Scatter matrix (delivered): a starting view for unfamiliar multivariate data, with two-field brushing and dimmed context.
 - [Table usability](../table-content-fit/intent-brief.md): improve numerical inspection; content-aware fitting is one candidate, not the whole scope.
 
 Time is important and belongs in a second pass across these workflows. Lasso and filters without charts also have direct interest.
 Named comparisons have low current interest. Extra metrics, derived-output reuse, and filter-free templates remain unproven seeds.
 Keep correctness and restore checks within the selected journeys instead of replacing the priorities with a separate broad verification project.
 
-[Image export](../analysis-export/intent-brief.md) now has a dedicated scope. Slides and PDF reports remain possible extensions; no implementation order is implied.
+[Image export](../analysis-export/intent-brief.md) now has a dedicated scope. Compositions can already copy a PNG; other charts cannot. Slides and PDF reports remain possible extensions; no implementation order is implied.
 The [annotated product feedback](resources/product-feedback-2026-10-06.md) records the decisions and uncertainty.
 
 ## Current gaps worth evaluating
@@ -73,7 +73,7 @@ Advanced scatter and DSL recommendations are now implemented in source. Saved-vi
 Runtime agreement and gesture-level history behavior still need direct proof where the reports could not supply it.
 
 The remaining complete chart catalogue stays with [chart documentation](../chart-and-rendering-docs/intent-brief.md).
-Lookups stay with [multiple sources](../multi-source-analysis/intent-brief.md).
+Lookups are delivered as [related tables](../../../packages/explorEDA/README.md#related-tables).
 Task navigation, composition, and agents keep their current owners. Child briefs link those owners where useful.
 
 ## Research packet
@@ -81,5 +81,5 @@ Task navigation, composition, and agents keep their current owners. Child briefs
 [Resources](resources/README.md) includes unchanged Pro archives, extracted reports, ledgers, fixtures, source links, and browser limitations.
 Every child keeps selected Pro records and current code references in its own `references/` folder.
 The user-added projects instead retain the [direct request](resources/editorial-and-editing-request.md) and current source references.
-The matrix folder also retains its [direct request](../scatter-plot-matrix/references/user-request.md).
+The retired matrix initiative kept its [direct request](https://github.com/byronwall/explorEDA/blob/91b627d7307a4a14c7f123a713ce5f45662a3d22/docs/intent/scatter-plot-matrix/references/user-request.md); that link is the last revision with it.
 The capture was reconciled against `a50df9985ed3ff54d0f6ca368c0b369829b8a927` on 2026-10-06. No fresh browser or runtime test is claimed.

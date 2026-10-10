@@ -50,10 +50,10 @@ Start with one chart exported as PNG. A size preset or a simple width control co
 
 ## Current reality that matters
 
-Current exports cover records and serialized analysis settings. The inspected chart panel has no common image-export action. Ordinary scatter uses Canvas points with SVG guides; other views also use HTML and WebGL. These paths need an output proof before choosing one export mechanism for every family.
+Current exports cover records and serialized analysis settings. The `composition` view copies its artboard to the clipboard as a 2x PNG (PR #214); hand-pasting into a report or slide is unchecked. Other chart panels have no image-export action. Ordinary scatter uses Canvas points with SVG guides; other views also use HTML and WebGL. These paths need an output proof before choosing one export mechanism for every family.
 
 ## Next step after confirmation
 
 Shape one image export from a styled scatter chart with a title, subtitle, legend, and active selection. Open the downloaded image and check size, fonts, Canvas points, SVG guides, and text bounds. Use that proof to choose a format and scope. Then test a second family before considering slides or PDF reports.
 
-See the [reference packet](references/README.md) and [editorial styling initiative](../editorial-chart-styling/intent-brief.md).
+See the [reference packet](references/README.md) and [editorial styling initiative](https://github.com/byronwall/explorEDA/blob/91b627d7307a4a14c7f123a713ce5f45662a3d22/docs/intent/editorial-chart-styling/intent-brief.md).

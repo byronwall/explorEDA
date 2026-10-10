@@ -5,7 +5,7 @@
     "slug": "reference-marks",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-06",
+    "last_updated": "2026-10-09",
     "summary": "Users should interpret an existing chart against a target, event, or known interval without preparing a custom renderer.",
     "status": "planned",
     "next_action": "Place one fixed target on a line chart. Filter and restore the view. Verify its value and location remain correct under linear and symlog display. Decide whether a small settings object is enough before sharing it across charts."
@@ -307,6 +307,14 @@
         3
       ],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    },
+    {
+      "date": "2026-10-09",
+      "event": "status-checked",
+      "status": "planned",
+      "evidence": [
+        "No implementation of this scope found at 91b627d"
+      ]
     }
   ],
   "closure": null,

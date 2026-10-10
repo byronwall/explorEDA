@@ -53,7 +53,7 @@ Dashboard creation is the first representative request. Rich schema and visual c
 
 The package restores validated settings and emits edits. It has chart controls and calculations, but no agent service. Saved settings do not include source rows or rendered visual context. The earlier preview-and-Apply shape is superseded, as is a first proof limited to one added chart and an explanation. Current settings restore rebuilds charts, calculations, colors, and filters over retained source rows. This supports ordinary checkpoint Undo.
 
-The [project initiative](../project-task-views/intent-brief.md) expands future context. The [runtime story](../../developer-workspace.md) gains major agent emphasis once this works.
+The [project initiative](https://github.com/byronwall/explorEDA/blob/91b627d7307a4a14c7f123a713ce5f45662a3d22/docs/intent/project-task-views/intent-brief.md) expands future context. The [runtime story](../../developer-workspace.md) gains major agent emphasis once this works.
 
 ## Settings history and concurrent responses
 

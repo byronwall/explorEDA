@@ -1,6 +1,6 @@
 # Scatter matrix performance
 
-Measured locally on 2026-10-07 on an Apple silicon laptop with Chrome for Testing 1234 and the demo dev server. The targets come from the [scatter matrix plan](intent/scatter-plot-matrix/implementation-plan.md): about 100 ms of brush feedback at 5 fields × 100,000 rows, and under 500 ms at 10 fields.
+Measured locally on 2026-10-07 on an Apple silicon laptop with Chrome for Testing 1234 and the demo dev server. The targets are about 100 ms of brush feedback at 5 fields × 100,000 rows, and under 500 ms at 10 fields.
 
 ## What keeps brushing fast
 

@@ -19,7 +19,7 @@ Current source was inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927` on 20
 
 ## Related existing intent
 
-- [multi-source-analysis](../../multi-source-analysis/intent-brief.md)
+- [multi-source-analysis](https://github.com/byronwall/explorEDA/blob/91b627d7307a4a14c7f123a713ce5f45662a3d22/docs/intent/multi-source-analysis/intent-brief.md)
 - [composed-analytical-graphics](../../composed-analytical-graphics/intent-brief.md)
 
 ## Product feedback

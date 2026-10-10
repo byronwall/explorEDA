@@ -5,7 +5,7 @@
     "slug": "filter-and-series-controls",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-06",
+    "last_updated": "2026-10-09",
     "summary": "Users should choose a segment without creating a chart merely to host the filter.",
     "status": "planned",
     "next_action": "Reuse one category control as a workspace filter. Verify linked IDs and owner clearing. Separately hide one line with keyboard input and confirm row IDs stay unchanged. Decide whether both operations are clear before adding promotion."
@@ -349,6 +349,14 @@
         15
       ],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    },
+    {
+      "date": "2026-10-09",
+      "event": "status-checked",
+      "status": "planned",
+      "evidence": [
+        "No implementation of this scope found at 91b627d"
+      ]
     }
   ],
   "closure": null,

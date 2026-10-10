@@ -4,11 +4,11 @@
     "title": "Chart and rendering documentation",
     "slug": "chart-and-rendering-docs",
     "scale": "capability",
-    "current_phase": "execute",
-    "last_updated": "2026-10-02",
+    "current_phase": "execution",
+    "last_updated": "2026-10-09",
     "summary": "Create task-led pages for all registered views and an accurate current-state rendering guide.",
     "status": "active",
-    "next_action": "The full catalogue and expanded rendering guide remain outside this two-ticket execution."
+    "next_action": "Milestone 1 (scatter and bar guides, rendering guide) shipped. Milestones 2-3 (the other registered types and the full rendering story) have not started; the registry has grown since the plan counted eleven types."
   },
   "artifacts": {
     "intent_brief": {
@@ -228,6 +228,16 @@
     {
       "date": "2026-10-02",
       "change": "Executed only exp-72ve and exp-4ak2 after refinement. Both accepted locally. Full catalogue, publishing, and deployment remain outside this execution; native tickets hold proof and limits."
+    },
+    {
+      "date": "2026-10-09",
+      "event": "status-assessed",
+      "status": "active",
+      "previous_status": "active",
+      "evidence": [
+        "apps/demo/src/ChartDocs.tsx covers scatter, bar, and the system guide only",
+        "No ChartDocs changes since 326c7a1"
+      ]
     }
   ],
   "catalogue": [

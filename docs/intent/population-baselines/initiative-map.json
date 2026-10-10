@@ -5,7 +5,7 @@
     "slug": "population-baselines",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-06",
+    "last_updated": "2026-10-09",
     "summary": "Analysts should compare the current selection with a reference population they can name and understand.",
     "status": "planned",
     "next_action": "Retain as a low-priority seed until a concrete comparison task emerges."
@@ -337,6 +337,14 @@
         12
       ],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    },
+    {
+      "date": "2026-10-09",
+      "event": "status-checked",
+      "status": "planned",
+      "evidence": [
+        "No implementation of this scope found at 91b627d"
+      ]
     }
   ],
   "closure": null,

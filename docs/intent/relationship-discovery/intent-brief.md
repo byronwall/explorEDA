@@ -30,7 +30,7 @@ Choose a small set of numeric fields. Scan relationships, inspect one coefficien
 
 Use paired finite values and an explicit missing-value rule. Correlation is not causation or a forecast. Pearson is the reuse-first candidate; rank methods are later choices. Bound field count. Keep this coefficient workflow separate from a statistical notebook.
 
-The [scatter plot matrix](../scatter-plot-matrix/intent-brief.md) is now a separate explicit request. It shows observations and diagonal distributions. It does not depend on completing correlation discovery first.
+The [scatter matrix](../../application-feature-inventory.md#scatter-matrix) shipped on 2026-10-09. It shows observations, diagonal distributions, and optional Pearson correlation cells for two to ten fields.
 
 ## What seems settled
 
@@ -38,7 +38,7 @@ A matrix is a proposed mechanism. The durable goal is easier pair discovery. Cur
 
 ## Current reality that matters
 
-pairedSummary.ts already computes Pearson correlation for grouped finite pairs and unavailable constant cases. The registry has no relationship-matrix view. Scatter regression and surfaces are live source implementations, unlike the older Pro snapshot.
+pairedSummary.ts already computes Pearson correlation for grouped finite pairs and unavailable constant cases. The `scatter-matrix` view can show Pearson r and its row count in one triangle, per color group too, so part of pair discovery exists. It is not a coefficient-only matrix: a correlation cell cannot open a scatter for its pair, and the view is bounded at ten fields. Scatter regression and surfaces are live source implementations, unlike the older Pro snapshot.
 
 ## Expansion trigger
 
@@ -46,6 +46,6 @@ Expand when repeated analyses involve choosing among many numeric pairs. Add ran
 
 ## Next step after confirmation
 
-Use three fields with one exact relationship and one constant field. Show coefficients and pair counts, then open the correct scatter. Decide whether the small matrix reduces field-selection effort before adding methods.
+Use three fields with one exact relationship and one constant field in the scatter matrix. Check its coefficients and pair counts, then add a route from a correlation cell to the matching scatter. Decide whether the small matrix reduces field-selection effort before adding methods.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.

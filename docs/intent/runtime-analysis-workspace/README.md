@@ -1,12 +1,12 @@
 # Runtime analysis initiatives
 
-The 2026-09-29 dictation is split into dedicated initiatives. Runtime configuration is delivered and retired. The other initiatives retain their planning artifacts.
+The 2026-09-29 dictation is split into dedicated initiatives. Runtime configuration, project and task views, and multiple sources are delivered and retired. The agent initiative keeps its planning artifacts.
 
 | Initiative | Intent | Shape |
 | --- | --- | --- |
 | Runtime configuration story (completed) | [Delivered behavior](../../developer-workspace.md) | [Closure](../../initiative-history.json) |
-| Project and task views | [Intent](../project-task-views/intent-brief.md) | [Shape](../project-task-views/shape-brief.md) |
+| Project and task views (completed) | [Delivered behavior](../../application-feature-inventory.md#saved-state-exports-and-host-integration) | [Closure](../../initiative-history.json) |
 | Agent inside the analysis application | [Intent](../in-app-analysis-agent/intent-brief.md) | [Shape](../in-app-analysis-agent/shape-brief.md) |
-| Multiple sources and lookups | [Intent](../multi-source-analysis/intent-brief.md) | [Shape](../multi-source-analysis/shape-brief.md) |
+| Multiple sources and lookups (completed) | [Delivered behavior](../../../packages/explorEDA/README.md#related-tables) | [Closure](../../initiative-history.json) |
 
-Runtime configuration connects the initiatives. Landing presentation, task views, and the integrated agent remain single-source for now. Multiple sources and lookups have their own future scope. Each initiative can be reviewed independently. The split does not set a delivery order.
+Runtime configuration connects the initiatives. The integrated agent remains single-source for now. Saved tabs and related tables shipped separately; the agent can build on both.
