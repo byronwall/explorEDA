@@ -10,7 +10,7 @@ last_updated: "2026-10-10"
 
 ## My read
 
-Make an analysis readable as a notebook, with explanatory text, calculation blocks, and graphics interleaved in a deliberate order. The reader should be able to follow the question, the calculation, and its result as one continuous analysis. Byron's reference is an experience that feels closer to Observable than a page organized only as a dashboard grid.
+Make an analysis readable as a notebook, with explanatory text, calculation blocks, and graphics interleaved in one reading column. Each main block spans that column. The reader should follow the question, calculation, and result as one continuous analysis. Byron's reference is an experience that feels closer to Observable than a page organized only as a dashboard grid.
 
 Use explorEDA's dashboard language to define queries, calculations, and the visuals they produce. Keep the resulting graphs editable through the application's controls. When someone changes a graph, save the corresponding change back into the text that defines its block. Editing that text must also update the result. These are two ways to work on the same analysis.
 
@@ -51,6 +51,12 @@ The document format, block syntax, execution controls, and exact relationship to
 
 The existing [Markdown panel](../../application-feature-inventory.md#markdown--explanation-panel) saves rich-text content. It is not an execution system. [Data-bound narrative](../data-bound-narrative/intent-brief.md) concerns values inside explanations. [Reusable analysis outputs](../reusable-analysis-outputs/intent-brief.md) concerns feeding one result into another view. Neither capability is automatically required by this request.
 
+## What the research adds
+
+The [research synthesis](research-synthesis.md) covers eleven examples, with the [full illustrated report](resources/pro-notebook-research/exploreda-notebook-research/exploreda-notebook-examples.html) preserved locally. Forecast performance is the recommended first reproduction: a simple subtraction connects explanation, graphics, and a local event window. Date Patterns and Seattle cycling provide broader follow-ups.
+
+The examples distinguish reading order from calculation dependencies, and graphical settings from changes to analytical inputs. They also expose differences between local controls and shared filters. These are candidate behaviors to evaluate. The research does not select execution rules, exact text preservation, or first-release scope. Its suggested interactions are not all observed source behavior.
+
 ## Ten questions to define scope
 
 1. **First task:** Who will author and read the first notebook, and what real analysis should they complete?
@@ -66,4 +72,4 @@ The existing [Markdown panel](../../application-feature-inventory.md#markdown--e
 
 ## Next step after confirmation
 
-Use these answers to select one initial workflow and define what must survive an edit in each direction. Then shape the smallest demonstration that proves that behavior. Keep execution mechanics and broader notebook features provisional until that scope is clear.
+Choose the first reproduction and its relationship to saved dashboard views. Use the remaining answers to define what survives each edit. Then shape a small demonstration of text edits, graphical edits, local scope, and reopening. Keep broader notebook features provisional until that scope is clear.
