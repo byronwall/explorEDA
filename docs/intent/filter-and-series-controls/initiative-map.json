@@ -1,20 +1,20 @@
 {
   "schema_version": "0.5.0",
   "initiative": {
-    "title": "Filter a workspace and control series deliberately",
+    "title": "Filter a workspace without a chart",
     "slug": "filter-and-series-controls",
     "scale": "feature",
-    "current_phase": "intent",
-    "last_updated": "2026-10-09",
-    "summary": "Users should choose a segment without creating a chart merely to host the filter.",
+    "current_phase": "plan",
+    "last_updated": "2026-10-10",
+    "summary": "Users narrow every linked view to a segment through a workspace-owned filter, without creating a chart to hold it.",
     "status": "planned",
-    "next_action": "Reuse one category control as a workspace filter. Verify linked IDs and owner clearing. Separately hide one line with keyboard input and confirm row IDs stay unchanged. Decide whether both operations are clear before adding promotion."
+    "next_action": "Start milestone 1: workspace dimensions in CrossfilterWrapper, workspaceFilters state and save field, and a plain Add filter popover and chip in ActiveFilterStatus. Check counts against a chart select.Region filter."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-06"
+      "updated_at": "2026-10-10"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -23,13 +23,13 @@
     },
     "shape_brief": {
       "path": "shape-brief.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-10"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-10"
     }
   },
   "sources": [
@@ -95,6 +95,76 @@
       "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
       "anchor": "Annotations 15",
       "authority": "Explicit human feedback; tentative answers remain tentative"
+    },
+    {
+      "id": "user-request-2026-10-10",
+      "type": "direct-user-input",
+      "location": "chat request, 2026-10-10",
+      "anchor": "Split filter without chart from the time series work; time series is a simple Product Grid node; shape the filter intent",
+      "authority": "explicit user direction"
+    },
+    {
+      "id": "repository-6",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/ActiveFilterStatus.tsx",
+      "anchor": "29b402349f7ee1214cb5f71dc17bc8c5cac84458: inspected source file; no runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "repository-7",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+      "anchor": "29b402349f7ee1214cb5f71dc17bc8c5cac84458: inspected source file; no runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "repository-8",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/hooks/applyFilter.ts",
+      "anchor": "29b402349f7ee1214cb5f71dc17bc8c5cac84458: inspected source file; no runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "repository-9",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/types/SavedDataStructure.ts",
+      "anchor": "29b402349f7ee1214cb5f71dc17bc8c5cac84458: inspected source file; no runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "repository-10",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/lib/dsl/describe.ts",
+      "anchor": "29b402349f7ee1214cb5f71dc17bc8c5cac84458: inspected source file; no runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "repository-11",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/RowsView.tsx",
+      "anchor": "29b402349f7ee1214cb5f71dc17bc8c5cac84458: inspected source file; no runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "pgm-series-node",
+      "type": "tracking",
+      "location": "../../../pgm/data/projects/untitled-project/nodes/page-hide-or-isolate-a-series-from-the-legend.md",
+      "anchor": "Product Grid node page-hide-or-isolate-a-series-from-the-legend",
+      "authority": "split-out task created 2026-10-10"
+    },
+    {
+      "id": "user-decision-2026-10-10",
+      "type": "direct-user-input",
+      "location": "chat reply, 2026-10-10",
+      "anchor": "Start from the active filter bar and make it feel really good, then expand. One filter per field; editing changes instead of stacking or combining. Build the plan.",
+      "authority": "explicit user decision"
+    },
+    {
+      "id": "user-decision-2026-10-10-syntax",
+      "type": "direct-user-input",
+      "location": "chat reply, 2026-10-10",
+      "anchor": "Dashboard text should be as simple and clear as possible; use filter ...",
+      "authority": "explicit user decision"
     }
   ],
   "intent": {
@@ -103,7 +173,7 @@
         "id": "claim-1",
         "type": "outcome",
         "statement": "Users should choose a segment without creating a chart merely to host the filter.",
-        "commitment": "derived",
+        "commitment": "explicit",
         "importance": "core",
         "status": "active",
         "time_horizon": "first release",
@@ -117,8 +187,8 @@
             "anchor": "C11"
           }
         ],
-        "confidence": "medium",
-        "notes": "Candidate interpretation; no feature implementation has been selected."
+        "confidence": "high",
+        "notes": "Confirmed by annotation 15 and the 2026-10-10 request to shape the filter intent."
       },
       {
         "id": "claim-2",
@@ -144,7 +214,7 @@
       {
         "id": "claim-3",
         "type": "future possibility",
-        "statement": "Expand when analysts repeatedly create disposable filter charts or cannot isolate overlapping series while keeping the same source population.",
+        "statement": "Expand to named segments, filters across saved views, or promotion from Rows after analysts keep a workspace filter across sessions or repeatedly re-create a chart filter as a workspace filter.",
         "commitment": "tentative",
         "importance": "supporting",
         "status": "active",
@@ -165,9 +235,9 @@
       {
         "id": "priority-1",
         "type": "desired experience",
-        "statement": "Offer a direct workspace-level segment control.",
+        "statement": "Add a linked filter on any field without creating or choosing a chart.",
         "commitment": "derived",
-        "importance": "supporting",
+        "importance": "core",
         "status": "active",
         "time_horizon": "first release",
         "source_anchors": [
@@ -182,7 +252,7 @@
       {
         "id": "priority-2",
         "type": "desired experience",
-        "statement": "Separate local search, chart-local restriction, and linked filtering.",
+        "statement": "Tell apart Rows-only filters and searches, chart-local where. restrictions, and linked filters owned by a chart or the workspace.",
         "commitment": "derived",
         "importance": "supporting",
         "status": "active",
@@ -202,16 +272,24 @@
         "statement": "Make inline hide/isolate visible and keyboard operable.",
         "commitment": "derived",
         "importance": "supporting",
-        "status": "active",
+        "status": "moved",
         "time_horizon": "first release",
         "source_anchors": [
           {
             "source_id": "current-request",
             "anchor": "Worthwhile gaps against current features; seeds may expand later"
+          },
+          {
+            "source_id": "user-request-2026-10-10",
+            "anchor": "split them"
+          },
+          {
+            "source_id": "pgm-series-node",
+            "anchor": "node"
           }
         ],
         "confidence": "medium",
-        "notes": "Recovered candidate priority; no implementation approval."
+        "notes": "Split out 2026-10-10 at user direction; tracked as Product Grid node page-hide-or-isolate-a-series-from-the-legend."
       },
       {
         "id": "keep-resources-local",
@@ -233,7 +311,7 @@
       {
         "id": "current-foundation",
         "type": "current repository reality",
-        "statement": "FiltersSettingsTab uses field-aware controls. LocalFilterStrip names chart-only restrictions. Raw LineChart legend spans handle pointer emphasis. TimeSeriesChart shows static legend labels. The standalone legend already performs categorical record filtering.",
+        "statement": "Every linked filter is owned by a chart: CrossfilterWrapper keeps one dimension per chart ID and ActiveFilterStatus names the owning chart. Rows filters apply only to Rows. ColumnFilter and FiltersSettingsTab give field-aware controls; applyFilter evaluates one typed filter. Dashboard text has where. (chart-local) and select. (chart-owned linked) filters, and replaces the whole dashboard. SavedDataStructure is per view and has no workspace filter field.",
         "commitment": "derived",
         "importance": "supporting",
         "status": "active",
@@ -258,6 +336,30 @@
           {
             "source_id": "repository-5",
             "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof"
+          },
+          {
+            "source_id": "repository-6",
+            "anchor": "29b402349f7ee1214cb5f71dc17bc8c5cac84458"
+          },
+          {
+            "source_id": "repository-7",
+            "anchor": "29b402349f7ee1214cb5f71dc17bc8c5cac84458"
+          },
+          {
+            "source_id": "repository-8",
+            "anchor": "29b402349f7ee1214cb5f71dc17bc8c5cac84458"
+          },
+          {
+            "source_id": "repository-9",
+            "anchor": "29b402349f7ee1214cb5f71dc17bc8c5cac84458"
+          },
+          {
+            "source_id": "repository-10",
+            "anchor": "29b402349f7ee1214cb5f71dc17bc8c5cac84458"
+          },
+          {
+            "source_id": "repository-11",
+            "anchor": "29b402349f7ee1214cb5f71dc17bc8c5cac84458"
           }
         ],
         "confidence": "high",
@@ -280,12 +382,108 @@
         "confidence": "high",
         "supersedes": [],
         "notes": "No implementation authorization or unobserved proof is inferred."
+      },
+      {
+        "id": "reuse-one-engine",
+        "type": "constraint",
+        "statement": "One filter engine: the workspace is one more filter owner in crossfilter, using the existing Filter types and applyFilter. No chart is created to hold the filter.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "current-request",
+            "anchor": "existing typed predicates"
+          },
+          {
+            "source_id": "product-feedback",
+            "anchor": "Annotation 15"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "series-split",
+        "type": "decision",
+        "statement": "Legend hide/isolate for line and time-series charts is a display change outside this initiative.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request-2026-10-10",
+            "anchor": "split them to start"
+          },
+          {
+            "source_id": "pgm-series-node",
+            "anchor": "node"
+          }
+        ],
+        "confidence": "high",
+        "supersedes": [
+          "priority-3"
+        ],
+        "notes": ""
+      },
+      {
+        "id": "entry-bar-first",
+        "type": "decision",
+        "statement": "The active filter bar is the only entry point at first, and it should feel really good before other entry points are considered.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-decision-2026-10-10",
+            "anchor": "Start from the active filter bar"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Field list and column header entries are below the cut line."
+      },
+      {
+        "id": "one-filter-per-field",
+        "type": "decision",
+        "statement": "There is one workspace filter per field, and editing changes it instead of stacking or combining.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-decision-2026-10-10",
+            "anchor": "1 per field"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "text-form-filter",
+        "type": "decision",
+        "statement": "Dashboard text expresses a workspace filter as filter <field>=..., one line per field.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-decision-2026-10-10-syntax",
+            "anchor": "filter ..."
+          }
+        ],
+        "confidence": "high",
+        "notes": "Simplicity and clarity outrank parser reuse."
       }
     ],
     "themes": [
-      "Offer a direct workspace-level segment control.",
-      "Separate local search, chart-local restriction, and linked filtering.",
-      "Make inline hide/isolate visible and keyboard operable."
+      "Add a linked filter without a chart.",
+      "Keep filter scope and owner visible.",
+      "Reuse the existing filter controls and engine."
     ],
     "conflicts": [],
     "human_questions": []
@@ -297,35 +495,188 @@
     "selected_option": null
   },
   "shape": {
-    "status": "not-started",
-    "appetite": null,
-    "problem": null,
-    "recommended_shape": null,
-    "success_moves": [],
-    "first_proof": null,
-    "rabbit_holes": [],
-    "open_decisions": []
+    "status": "current",
+    "appetite": "Small-to-medium: a workspace filter owner, one entry point in the active filter bar, saved state, and a dashboard text form. No new filter types or controls.",
+    "problem": "Every linked filter needs a chart owner, so a segment that is not drawn anywhere requires a disposable chart.",
+    "recommended_shape": "A workspaceFilters list on each saved view, applied through one crossfilter dimension per filtered field (workspace:<field>) that evaluates filters with applyFilter. Add filter in the active filter bar opens a FieldSelector and the field’s existing ColumnFilter control in a nonmodal popover. Workspace chips edit on click, remove on ×, and clear with Clear all. Dashboard text gains a view-level line per workspace filter: filter <field>=<value forms of where.>.",
+    "alternatives_considered": [
+      {
+        "option": "Marks-free filter card chart type",
+        "verdict": "rejected",
+        "reason": "No engine change, but it still places a chart on the grid to hold the filter, which is what the user wants to avoid."
+      },
+      {
+        "option": "Promote Rows filters to linked filters",
+        "verdict": "deferred",
+        "reason": "Changes the meaning of existing Rows-only state; keep as an explicit later action."
+      }
+    ],
+    "success_moves": [
+      "Model each workspace filter as its own crossfilter dimension (workspace:<field>) evaluated with applyFilter, so no chart registry or chart-type change is needed and the editor gets the field’s distribution excluding its own filter.",
+      "Store workspaceFilters as an optional field on SavedDataStructure; absent means none, so older saves and layouts load unchanged.",
+      "Reuse ColumnFilter and FieldPicker/FieldMetadata in a nonmodal popover instead of building a new control.",
+      "Route add, edit, remove, and Clear all through the same state update that charts use, so each edit is one onStateChange and one undo step.",
+      "Ship the dashboard text form (filter <field>=...) with the feature, because applying text replaces the whole dashboard and would otherwise drop workspace filters.",
+      "Prove counts against a chart-owned select. filter on the same values before adding any second entry point."
+    ],
+    "first_proof": {
+      "question": "Does a workspace-owned filter narrow every view exactly as a chart-owned linked filter does, and can users find it?",
+      "artifact": "Workspace owner plus a Region value filter from Add filter in the demo, with no new chart.",
+      "observation": "Chart marks and row count equal a chart-owned select.Region filter on the same values; the chip names the workspace; × and Clear all restore all rows; the filter survives reload.",
+      "decision_rule": "If counts match and the entry is discoverable at 1280, 783, and 390 px, build the text form and finish; otherwise add the field-list entry first."
+    },
+    "rabbit_holes": [
+      "Dashboard text round-trip: the whole-dashboard replacement semantics would drop workspace filters without a text form.",
+      "Charts that draw the filtered field show only the remaining values; the chip must explain it.",
+      "Field removal or rename leaves an orphaned filter; show it as missing rather than failing.",
+      "Undo granularity for popover edits (one step per committed edit).",
+      "useFilteredFieldProfiles short-circuits when there are no charts; a chart-free workspace must still narrow.",
+      "Workspace filters on Rows: Rows uses getFilteredRowIds, so they apply there automatically; Rows-only filters stay separate."
+    ],
+    "open_decisions": [],
+    "resolved_decisions": [
+      {
+        "decision": "Entry point",
+        "resolution": "Active filter bar only, polished first.",
+        "source": "user-decision-2026-10-10"
+      },
+      {
+        "decision": "Filters per field",
+        "resolution": "One per field; editing replaces it.",
+        "source": "user-decision-2026-10-10"
+      },
+      {
+        "decision": "Field removal",
+        "resolution": "Drop the workspace filter with the field, matching Rows filters (repository precedent in DataLayerProvider).",
+        "source": "repository"
+      },
+      {
+        "decision": "Dashboard text form",
+        "resolution": "filter <field>=... , one line per field, chosen for simplicity and clarity over workspace select.<field>=...",
+        "source": "user-decision-2026-10-10-syntax"
+      }
+    ]
   },
   "implementation": {
-    "status": "not-started",
+    "status": "planned",
     "repository_snapshot": {
-      "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
-      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
-      "worktree_status": "clean before intent capture; detached HEAD",
+      "root": "/Users/byronwall/Projects/explorEDA/.claude/worktrees/filter-series-controls-review-55770f",
+      "revision": "29b4023",
+      "worktree_status": "branch claude/filter-series-controls-review-55770f; docs-only changes uncommitted",
       "subsystems": [
+        "packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+        "packages/explorEDA/src/components/ActiveFilterStatus.tsx",
+        "packages/explorEDA/src/components/charts/DataTable/components/ColumnFilter.tsx",
+        "packages/explorEDA/src/hooks/applyFilter.ts",
+        "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+        "packages/explorEDA/src/types/SavedDataStructure.ts",
+        "packages/explorEDA/src/lib/dsl/compile.ts",
+        "packages/explorEDA/src/lib/dsl/export.ts",
+        "packages/explorEDA/src/hooks/useFilteredFieldProfiles.ts",
         "packages/explorEDA/src/components/settings/FiltersSettingsTab.tsx",
-        "packages/explorEDA/src/components/LocalFilterStrip.tsx",
-        "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
-        "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
-        "packages/explorEDA/src/components/charts/ColorLegend/definition.ts"
+        "packages/explorEDA/src/utils/saveDataUtils.ts"
       ],
-      "test_commands": [],
-      "deployment_surfaces": []
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/hooks/CrossfilterWrapper.test.ts src/test/providers/DataLayerProvider.test.tsx src/components/ActiveFilterStatus.test.tsx",
+        "pnpm --filter exploreda check-types",
+        "pnpm check:ui",
+        "pnpm check (once, before the PR)"
+      ],
+      "deployment_surfaces": [
+        "npm package exploreda via changeset (minor)"
+      ]
     },
     "dependencies": [],
-    "fast_local_loop": null,
-    "milestones": [],
-    "cut_line": [],
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda exec vitest run src/hooks/CrossfilterWrapper.test.ts src/test/providers/DataLayerProvider.test.tsx src/components/ActiveFilterStatus.test.tsx && pnpm --filter exploreda check-types",
+      "starts": [
+        "vitest"
+      ],
+      "network_required": false,
+      "shared_infrastructure_required": false,
+      "failure_injection": [
+        "older save without workspaceFilters",
+        "removed field with an active workspace filter",
+        "workspace with no charts",
+        "more than 32 crossfilter dimensions"
+      ],
+      "browser": "pnpm --filter demo dev (library from source)"
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "A workspace filter narrows every view",
+        "outcome": "Region=West added from the filter bar narrows every chart and the row count, with no new chart.",
+        "proof": "CrossfilterWrapper IDs equal a chart select. filter on the same values (including with more than 32 dimensions); DataLayerProvider save/restore, older save, chart-free workspace, Clear all, field removal; ActiveFilterStatus add/edit/remove; demo browser check.",
+        "valid_intermediate_state": "Workspace filters work and save with a plain popover; dashboard text does not yet express them (applying text drops them), so M3 must land before release.",
+        "rollback": "Additive: remove the Add filter button; workspaceFilters is optional in saves and clears from its chip or Clear all.",
+        "dependencies_introduced": [],
+        "status": "planned",
+        "changes": [
+          "CrossfilterWrapper workspace dimensions + setWorkspaceFilters",
+          "workspaceFilters store state, optional save field, validateSavedData, setWorkspaceFilter, clearAllFilters, import reset, field removal",
+          "Plain Add filter popover (FieldSelector + ColumnFilter) and Workspace chips in ActiveFilterStatus"
+        ],
+        "verification": [
+          "Filtered IDs equal a chart select. filter on the same values",
+          "Save/restore, older save, chart-free workspace",
+          "ActiveFilterStatus add/edit/remove/Clear all tests",
+          "Demo browser check"
+        ],
+        "end_state": "Region=West from the bar narrows every chart and the row count, matches select.Region=West, and survives reload."
+      },
+      {
+        "id": "m2",
+        "title": "The filter bar feels right",
+        "outcome": "The bar feels right: keyboard-first add and edit, live preview, one undo step per edit, full field distribution, accurate copy, and narrow layouts.",
+        "proof": "Keyboard-only browser walkthrough; one onStateChange per edit session test; screenshots at 1280, 783, and 390 px in light and dark and three themes.",
+        "valid_intermediate_state": "Same feature as M1 with better interaction; each change is independently shippable.",
+        "rollback": "Each polish change reverts on its own; the M1 popover remains.",
+        "dependencies_introduced": [],
+        "status": "planned",
+        "changes": [
+          "Keyboard-first add flow, one-per-field picking, focus return",
+          "Live edits held by holdStateChanges for one onStateChange per session; empty filter removed on close",
+          "useFilteredFieldProfiles excludes a workspace field’s own dimension",
+          "Copy: filter bar labels and trace/plan text say other filters, traces name workspace filters",
+          "Width, theme, Rows drawer, and read-only checks"
+        ],
+        "verification": [
+          "Keyboard-only browser walkthrough",
+          "One onStateChange per edit session test",
+          "1280/783/390 px, light/dark, Compact/Newsprint/Report screenshots"
+        ],
+        "end_state": "Keyboard-only add, edit, and remove of two filters; one undo step per edit; Add filter, the row count, and Clear all stay visible at 390 px."
+      },
+      {
+        "id": "m3",
+        "title": "Dashboard text, docs, and release",
+        "outcome": "Dashboard text round-trips workspace filters, and the feature is documented and released as a minor change.",
+        "proof": "compile/export round-trip tests; applying exported text unchanged keeps counts; pnpm check passes.",
+        "valid_intermediate_state": "Feature complete and safe to release.",
+        "rollback": "The filter line is additive; text without it behaves as today.",
+        "dependencies_introduced": [],
+        "status": "planned",
+        "changes": [
+          "filter keyword in compile.ts (view-level, pairs to buildFilter, duplicate field replaces with a warning), prefix-less filterPairs in export.ts, describe.ts help, views.ts",
+          "Feature inventory and ui-defaults docs",
+          "minor changeset",
+          "pnpm check:ui and pnpm check"
+        ],
+        "verification": [
+          "compile/export round trips for value, range, date, and text filters, quoted field names, duplicate-field warning; omitted filter lines clear workspace filters",
+          "pnpm check passes"
+        ],
+        "end_state": "Exported text applied unchanged keeps workspace filters and counts."
+      }
+    ],
+    "cut_line": [
+      "Field list and column header entry points",
+      "Promote chart filter or Rows search to workspace",
+      "Named segments or filters across saved views",
+      "Disable without removing",
+      "Several filters per field or OR combination"
+    ],
     "open_decisions": []
   },
   "history": [
@@ -357,14 +708,37 @@
       "evidence": [
         "No implementation of this scope found at 91b627d"
       ]
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Split legend hide/isolate out into Product Grid node page-hide-or-isolate-a-series-from-the-legend; retitled the initiative to filters only; rewrote the intent brief and wrote the shape brief.",
+      "reason": "User asked to split filter-without-chart from the time-series work and shape the filter intent.",
+      "status": "planned",
+      "evidence": "Source inspection at 29b402349f7ee1214cb5f71dc17bc8c5cac84458; corrected the stale claim that dashboard text has only where. filters (select. exists). No implementation or runtime checks."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Recorded the entry-point and one-per-field decisions; updated the shape (per-field dimensions, field removal, text form); wrote the implementation plan.",
+      "reason": "User chose the active filter bar first and one filter per field, and asked for the plan.",
+      "status": "planned",
+      "evidence": "Source inspection at 29b4023 of CrossfilterWrapper, DataLayerProvider save/restore/holds, ActiveFilterStatus, FiltersSettingsTab, useFilteredFieldProfiles, and lib/dsl. No implementation or runtime checks."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Chose filter <field>=... as the dashboard text form; removed the open keyword decision.",
+      "reason": "User wants dashboard text as simple and clear as possible.",
+      "status": "planned",
+      "evidence": "compile.ts buildFilter already takes a bare field path; filter is not an existing DSL keyword. No implementation."
     }
   ],
   "closure": null,
   "intake": {
     "kind": "gap",
     "priority_basis": "Pro recommendations reconciled with current source; proposed priority, no implementation approval",
-    "expand_when": "Expand when analysts repeatedly create disposable filter charts or cannot isolate overlapping series while keeping the same source population.",
-    "related_initiatives": [],
+    "expand_when": "Expand to named segments, filters across saved views, or promotion from Rows after analysts keep a workspace filter across sessions or repeatedly re-create a chart filter as a workspace filter.",
+    "related_initiatives": [
+      "precise-composite-selection"
+    ],
     "audience": "End users; developers deliver their experience.",
     "priority": "expressed-interest-in-chart-free-filters"
   }
