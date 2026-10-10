@@ -227,6 +227,10 @@ It added three reusable operations: repeats ordered by a per-repeat calculation 
 Observation index spaces each company's points with a per-unit x domain; the y domain is shared from zero, as the source's `same_limit` default. Prices are split-adjusted in the source.
 Annotations now fill `{Calculation}` tokens as page text does.
 
+The consumer confidence grid (research entry 12) ships as `?example=consumer-confidence` from `apps/data-samples/prepare/consumer-confidence.ts`.
+Path and point marks split by a series field, draw from the repeat's rows or the whole graphic, and take a focus: the repeat's own series or a listed set in color, the rest muted beneath.
+Numeric scales accept date fields, read as timestamps, with ticks labeled as years, months, or days by the span.
+
 ## Milestone 3: Layer interval bands around a line
 
 Create the inflation-fan structure from supplied interval data.

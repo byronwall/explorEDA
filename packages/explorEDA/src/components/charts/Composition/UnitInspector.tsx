@@ -6,6 +6,7 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import { Plus, Trash2 } from "lucide-react";
 import { useId } from "react";
 import {
+  MUTED_MARK,
   newMarkId,
   type BandMark,
   type InstanceOverride,
@@ -714,6 +715,25 @@ function StripFields({
   );
 }
 
+const FOCUS_OPTIONS = [
+  {
+    value: "none" as const,
+    label: "All",
+    tooltip: "Every series draws in the mark's color",
+  },
+  {
+    value: "repeat" as const,
+    label: "This repeat",
+    tooltip:
+      "The series that matches the repeat's own value draws in color; the others fade behind it, so every panel shows the field for comparison",
+  },
+  {
+    value: "values" as const,
+    label: "Listed",
+    tooltip: "Only the series you list draw in color; the rest fade",
+  },
+];
+
 const STACK_ORDERS = [
   {
     value: "total" as const,
@@ -981,6 +1001,9 @@ function XyFields({
         profile.dataType === "numeric" || profile.dataType === "datetime"
     )
     .map((profile) => profile.name);
+  const seriesFields = profiles
+    .filter((profile) => profile.uniqueCount <= 200)
+    .map((profile) => profile.name);
   const numeric = scales.filter((scale) => scale.kind === "numeric");
   const change = onChange as (
     patch: Partial<
@@ -1023,6 +1046,106 @@ function XyFields({
           )
         }
       />
+      {mark.type !== "band" && (
+        <>
+          <Label>Series</Label>
+          <FieldSelector
+            label=""
+            placeholder={
+              mark.type === "path"
+                ? "One path per repeat"
+                : "Pick across all rows"
+            }
+            value={mark.seriesField ?? ""}
+            allowClear
+            fields={seriesFields}
+            onChange={(seriesField) =>
+              change({ seriesField: seriesField || undefined })
+            }
+          />
+          <span className="eda-setting-label">Rows</span>
+          <Segmented
+            label={`${mark.name} rows`}
+            value={mark.population ?? "repeat"}
+            options={[
+              {
+                value: "repeat" as const,
+                label: "This repeat",
+                tooltip: "Draw from the repeat's own rows",
+              },
+              {
+                value: "composition" as const,
+                label: "Whole graphic",
+                tooltip:
+                  "Draw from every row in the graphic in each repeat, such as every country's path behind a panel's own",
+              },
+            ]}
+            onChange={(population) =>
+              change({
+                population: population === "repeat" ? undefined : population,
+              })
+            }
+          />
+          {mark.seriesField && (
+            <>
+              <span className="eda-setting-label">Focus</span>
+              <Segmented
+                label={`${mark.name} focus`}
+                value={mark.focus?.kind ?? "none"}
+                options={FOCUS_OPTIONS}
+                onChange={(kind) =>
+                  change({
+                    focus:
+                      kind === "none"
+                        ? undefined
+                        : kind === "repeat"
+                          ? { kind: "repeat" }
+                          : {
+                              kind: "values",
+                              values:
+                                mark.focus?.kind === "values"
+                                  ? mark.focus.values
+                                  : "",
+                            },
+                  })
+                }
+              />
+              {mark.focus?.kind === "values" && (
+                <>
+                  <Label htmlFor={`${id}-focus-values`}>Values</Label>
+                  <Input
+                    id={`${id}-focus-values`}
+                    placeholder="Comma-separated series values"
+                    value={mark.focus.values}
+                    onChange={(event) =>
+                      change({
+                        focus: { kind: "values", values: event.target.value },
+                      })
+                    }
+                  />
+                </>
+              )}
+              {mark.focus && (
+                <ColorSetting
+                  label="Muted"
+                  value={
+                    (mark.type === "path"
+                      ? mark.mutedStroke
+                      : mark.mutedFill) ?? MUTED_MARK
+                  }
+                  onChange={(muted) =>
+                    change(
+                      mark.type === "path"
+                        ? { mutedStroke: muted }
+                        : { mutedFill: muted }
+                    )
+                  }
+                />
+              )}
+            </>
+          )}
+        </>
+      )}
       {mark.type === "band" ? (
         <>
           <Label>Lower</Label>

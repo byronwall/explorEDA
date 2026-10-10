@@ -99,6 +99,9 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
           <TraceReadout label={point.yField}>
             {formatCalcValue(point.y, "number")}
           </TraceReadout>
+          {point.series !== undefined && (
+            <TraceReadout label="Series">{point.series}</TraceReadout>
+          )}
           <TraceReadout label="Calculation">
             One point per row; no aggregation
           </TraceReadout>
@@ -152,7 +155,23 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
         </TraceSection>
       )}
       {path && (
-        <TraceSection heading={path.markName}>
+        <TraceSection
+          heading={
+            path.datum.series === undefined
+              ? path.markName
+              : `${path.markName} · ${path.datum.series}`
+          }
+        >
+          {path.datum.series !== undefined && (
+            <TraceReadout label="Series">
+              {path.datum.series}
+              {path.datum.focused === false
+                ? ", muted behind the focused series"
+                : path.datum.focused
+                  ? ", in focus"
+                  : ""}
+            </TraceReadout>
+          )}
           <TraceReadout label="Order">
             <TraceSwatch color={path.stroke} /> {path.datum.orderField},
             ascending; ties keep row order

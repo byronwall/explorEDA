@@ -239,3 +239,18 @@ Nine causes by single year of age from 0 to 100. Each cause follows a plausible 
 ```sh
 node --experimental-strip-types apps/data-samples/causes_by_age.ts apps/demo/public/datasets/causes-by-age.csv
 ```
+
+## Consumer confidence, 2018–2022
+
+- File: `consumer-confidence.csv`
+- Size: 467 rows and 3 fields
+- Demo: `?example=consumer-confidence`
+- Use: a small-multiples composition where every panel draws all nine countries and lights up its own, with a shared index scale and a 100 reference line
+- Source: OECD consumer confidence indicator, as prepared for the [R Graph Gallery](https://r-graph-gallery.com/) recreation of an Economist-style grid (`dataConsumerConfidence.csv`). Monthly, July 2018 to October 2022.
+- License: the gallery's data file carries no separate license statement; the indicator is OECD data.
+
+Written long from the gallery's wide table: one row per country and month, dropping months without a value (China ends in September 2022). `Month` is the first day of the month.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/consumer-confidence.ts
+```

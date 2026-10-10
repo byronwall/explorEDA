@@ -1,10 +1,12 @@
 import { quantileSorted } from "d3-array";
-import { scaleLinear } from "d3-scale";
+import { scaleLinear, scaleTime } from "d3-scale";
 import { finiteNumber, timestampOf } from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import {
   findOverride,
+  isFocused,
   MUTED_INK,
+  MUTED_MARK,
   INK,
   type CompositionDefinition,
   type BandMark,
@@ -52,6 +54,24 @@ export interface NumericAxis {
   scale: NumericScale;
   domain: [number, number];
   range: [number, number];
+  /** The field holds dates, read as timestamps; ticks format as dates. */
+  dates?: boolean;
+}
+
+/** A numeric scale's reading of a value: a number, or a date as its timestamp. */
+export function readNumber(value: datum): number | undefined {
+  return finiteNumber(value) ?? timestampOf(value);
+}
+
+/** True when a column's first readable value is a date rather than a number. */
+export function isDateColumn(column: Record<number, datum>, ids: number[]) {
+  for (const id of ids) {
+    const value = column[id];
+    if (value === null || value === undefined || value === "") continue;
+    if (finiteNumber(value) !== undefined) return false;
+    return timestampOf(value) !== undefined;
+  }
+  return false;
 }
 
 export interface ResolvedInstance {
@@ -89,7 +109,14 @@ export interface GlyphDatum {
   /** The bin has rows but none has a value; the glyph is a missing cell. */
   missing?: boolean;
   /** Numeric coordinates, for point marks. */
-  point?: { x: number; y: number; xField: string; yField: string };
+  point?: {
+    x: number;
+    y: number;
+    xField: string;
+    yField: string;
+    /** The series the point belongs to, when the mark splits by a field. */
+    series?: string;
+  };
   /** The segment's share of its repeat's total, for stack marks; the glyph's value is that share. */
   stack?: {
     count: number;
@@ -132,6 +159,10 @@ export interface PathDatum {
   skipped: number[];
   /** Connected runs; a skipped row starts a new one. */
   segments: number;
+  /** The series this path belongs to, when the mark splits by a field. */
+  series?: string;
+  /** Whether the path is in the mark's focus, or muted behind it. */
+  focused?: boolean;
 }
 
 /** What one band stands for: its bounds, rows in order, and gaps. */
@@ -336,6 +367,24 @@ export function resolveUnit(
     (scaleFields.get(scale.id) ?? [scale.field]).map((field) =>
       data.column(field)
     );
+  const dateScales = new Set<string>();
+  for (const scale of definition.scales)
+    if (
+      scale.kind === "numeric" &&
+      isDateColumn(data.column(scale.field), data.allIds)
+    )
+      dateScales.add(scale.id);
+  const axisFor = (
+    scale: NumericScale,
+    subset: Subset,
+    range: [number, number]
+  ) =>
+    numericAxis(
+      scale,
+      domainFor(scale, subset),
+      range,
+      dateScales.has(scale.id)
+    );
   // A scale bound to a summary spans the quartiles drawn, not the raw rows.
   const quartileExtent = (scale: NumericScale, subsetIndex?: number) => {
     const values: number[] = [];
@@ -517,21 +566,12 @@ export function resolveUnit(
     const spread = stacks.find((item) => item.x);
     const xy = firstXy
       ? {
-          x: numericAxis(firstXy.x, domainFor(firstXy.x, subset), [
-            frame.x,
-            frame.x + frame.width,
-          ]),
-          y: numericAxis(firstXy.y, domainFor(firstXy.y, subset), [
-            frame.y + frame.height,
-            frame.y,
-          ]),
+          x: axisFor(firstXy.x, subset, [frame.x, frame.x + frame.width]),
+          y: axisFor(firstXy.y, subset, [frame.y + frame.height, frame.y]),
         }
       : spread?.x
         ? {
-            x: numericAxis(spread.x, domainFor(spread.x, subset), [
-              frame.x,
-              frame.x + frame.width,
-            ]),
+            x: axisFor(spread.x, subset, [frame.x, frame.x + frame.width]),
             // A stacked area's y is the share of each x's total, or the total.
             y: numericAxis(
               spread.mark.normalize ? SHARE_SCALE : TOTAL_SCALE,
@@ -578,14 +618,8 @@ export function resolveUnit(
     });
     for (const item of xys) {
       const axes = {
-        x: numericAxis(item.x, domainFor(item.x, subset), [
-          frame.x,
-          frame.x + frame.width,
-        ]),
-        y: numericAxis(item.y, domainFor(item.y, subset), [
-          frame.y + frame.height,
-          frame.y,
-        ]),
+        x: axisFor(item.x, subset, [frame.x, frame.x + frame.width]),
+        y: axisFor(item.y, subset, [frame.y + frame.height, frame.y]),
       };
       const accent = override?.accent;
       nodes.push(
@@ -1035,7 +1069,7 @@ export function numericDomain(
   let max = -Infinity;
   for (const column of Array.isArray(columns) ? columns : [columns])
     for (const id of ids) {
-      const value = finiteNumber(column[id]);
+      const value = readNumber(column[id]);
       if (value === undefined) continue;
       if (value < min) min = value;
       if (value > max) max = value;
@@ -1466,7 +1500,7 @@ function stackAreaNodes(
   // Columns at each x, in x order.
   const byX = new Map<number, number[]>();
   for (const id of subset.liveIds) {
-    const x = finiteNumber(xColumn[id]);
+    const x = readNumber(xColumn[id]);
     if (x === undefined) continue;
     const list = byX.get(x);
     if (list) list.push(id);
@@ -1589,9 +1623,10 @@ function stackAreaNodes(
 function numericAxis(
   scale: NumericScale,
   domain: [number, number],
-  range: [number, number]
+  range: [number, number],
+  dates = false
 ): NumericAxis {
-  return { scale, domain, range };
+  return { scale, domain, range, dates };
 }
 
 /** Maps a value along a numeric axis, in artboard pixels. */
@@ -1606,6 +1641,26 @@ function fixedLimits(axis: NumericAxis) {
   return axis.scale.min !== undefined || axis.scale.max !== undefined;
 }
 
+/** Splits a repeat's rows by a series field; one group when there is none. */
+function seriesGroups(
+  ids: number[],
+  column: Record<number, datum> | undefined
+): { series: string | undefined; ids: number[] }[] {
+  if (!column) return [{ series: undefined, ids }];
+  const groups = new Map<string, number[]>();
+  for (const id of ids) {
+    const raw = column[id];
+    const key =
+      raw === null || raw === undefined || raw === "" ? MISSING : String(raw);
+    const list = groups.get(key);
+    if (list) list.push(id);
+    else groups.set(key, [id]);
+  }
+  return [...groups.entries()]
+    .sort((a, b) => compareLabels(a[0], b[0]))
+    .map(([series, list]) => ({ series, ids: list }));
+}
+
 function pathNodes(
   unit: UnitElement,
   mark: PathMark,
@@ -1616,37 +1671,49 @@ function pathNodes(
 ): SceneNode[] {
   const xs = data.column(axes.x.scale.field);
   const ys = data.column(axes.y.scale.field);
-  const rows = orderedRows(subset.liveIds, data.column(mark.orderField));
-  const segments: PathNode["segments"] = [];
-  let current: PathNode["segments"][number] = [];
-  const skipped: number[] = [];
-  for (const row of rows) {
-    const x = finiteNumber(xs[row.id]);
-    const y = finiteNumber(ys[row.id]);
-    if (row.order === undefined || x === undefined || y === undefined) {
-      skipped.push(row.id);
-      if (current.length) segments.push(current);
-      current = [];
-      continue;
-    }
-    current.push({
-      x: numericPixel(axes.x, x),
-      y: numericPixel(axes.y, y),
-      rowId: row.id,
-    });
-  }
-  if (current.length) segments.push(current);
-  if (!segments.length) return [];
+  const order = data.column(mark.orderField);
   const clip = fixedLimits(axes.x) || fixedLimits(axes.y) ? frame : undefined;
-  return [
-    {
+  const groups = seriesGroups(
+    mark.population === "composition" ? data.liveIds : subset.liveIds,
+    mark.seriesField ? data.column(mark.seriesField) : undefined
+  );
+  const nodes: PathNode[] = [];
+  for (const group of groups) {
+    const rows = orderedRows(group.ids, order);
+    const segments: PathNode["segments"] = [];
+    let current: PathNode["segments"][number] = [];
+    const skipped: number[] = [];
+    for (const row of rows) {
+      const x = readNumber(xs[row.id]);
+      const y = readNumber(ys[row.id]);
+      if (row.order === undefined || x === undefined || y === undefined) {
+        skipped.push(row.id);
+        if (current.length) segments.push(current);
+        current = [];
+        continue;
+      }
+      current.push({
+        x: numericPixel(axes.x, x),
+        y: numericPixel(axes.y, y),
+        rowId: row.id,
+      });
+    }
+    if (current.length) segments.push(current);
+    if (!segments.length) continue;
+    const focused = isFocused(mark.focus, group.series, subset.key);
+    nodes.push({
       type: "path",
-      key: `${unit.id}:${subset.key}:${mark.id}`,
+      key:
+        group.series === undefined
+          ? `${unit.id}:${subset.key}:${mark.id}`
+          : `${unit.id}:${subset.key}:${mark.id}:${group.series}`,
       elementId: unit.id,
       instanceKey: subset.key,
       segments,
-      stroke: mark.stroke,
-      strokeWidth: mark.strokeWidth,
+      stroke: focused ? mark.stroke : (mark.mutedStroke ?? MUTED_MARK),
+      strokeWidth: focused
+        ? mark.strokeWidth
+        : Math.max(0.75, mark.strokeWidth * 0.75),
       clip,
       path: {
         instanceKey: subset.key,
@@ -1655,8 +1722,15 @@ function pathNodes(
         rowIds: rows.map((row) => row.id),
         skipped,
         segments: segments.length,
+        series: group.series,
+        focused,
       },
-    },
+    });
+  }
+  // Focused series draw last, so they sit over the muted ones.
+  return [
+    ...nodes.filter((node) => !node.path.focused),
+    ...nodes.filter((node) => node.path.focused),
   ];
 }
 
@@ -1676,7 +1750,7 @@ function bandNodes(
   let current: AreaNode["segments"][number] = [];
   const skipped: number[] = [];
   for (const row of rows) {
-    const x = finiteNumber(xs[row.id]);
+    const x = readNumber(xs[row.id]);
     const lower = finiteNumber(lowers[row.id]);
     const upper = finiteNumber(uppers[row.id]);
     if (
@@ -1735,16 +1809,30 @@ function pointNodes(
   const xs = data.column(axes.x.scale.field);
   const ys = data.column(axes.y.scale.field);
   const labels = mark.labelField ? data.column(mark.labelField) : undefined;
-  const rows = orderedRows(
-    subset.liveIds,
-    mark.orderField ? data.column(mark.orderField) : undefined
-  );
+  const order = mark.orderField ? data.column(mark.orderField) : undefined;
   const clip = fixedLimits(axes.x) || fixedLimits(axes.y) ? frame : undefined;
   const nodes: SceneNode[] = [];
   let drawn = 0;
-  for (const row of pickShown(rows, mark.show ?? "all", xs, ys)) {
-    const x = finiteNumber(xs[row.id]);
-    const y = finiteNumber(ys[row.id]);
+  // `show` picks within each series, so every country keeps its last point.
+  const groups = seriesGroups(
+    mark.population === "composition" ? data.liveIds : subset.liveIds,
+    mark.seriesField ? data.column(mark.seriesField) : undefined
+  );
+  const shown = groups.flatMap((group) =>
+    pickShown(orderedRows(group.ids, order), mark.show ?? "all", xs, ys).map(
+      (row) => ({ row, series: group.series })
+    )
+  );
+  // Focused points draw last, over the muted ones.
+  shown.sort(
+    (a, b) =>
+      Number(isFocused(mark.focus, a.series, subset.key)) -
+      Number(isFocused(mark.focus, b.series, subset.key))
+  );
+  for (const { row, series } of shown) {
+    const focused = isFocused(mark.focus, series, subset.key);
+    const x = readNumber(xs[row.id]);
+    const y = readNumber(ys[row.id]);
     if (x === undefined || y === undefined) continue;
     const cx = numericPixel(axes.x, x);
     const cy = numericPixel(axes.y, y);
@@ -1760,6 +1848,7 @@ function pointNodes(
         y,
         xField: axes.x.scale.field,
         yField: axes.y.scale.field,
+        series,
       },
     };
     nodes.push({
@@ -1770,11 +1859,17 @@ function pointNodes(
       cx,
       cy,
       r: mark.radius,
-      fill: mark.fill,
+      fill: focused ? mark.fill : (mark.mutedFill ?? MUTED_MARK),
       clip,
       glyph,
     });
-    if (labels && mark.labelEvery > 0 && drawn % mark.labelEvery === 0) {
+    // Labels follow focused points only, so a muted field stays quiet.
+    if (
+      labels &&
+      focused &&
+      mark.labelEvery > 0 &&
+      drawn % mark.labelEvery === 0
+    ) {
       const raw = labels[row.id];
       const text = raw === null || raw === undefined ? "" : String(raw).trim();
       if (text)
@@ -1809,8 +1904,8 @@ function pickShown(
 ) {
   const drawable = rows.filter(
     (row) =>
-      finiteNumber(xs[row.id]) !== undefined &&
-      finiteNumber(ys[row.id]) !== undefined
+      readNumber(xs[row.id]) !== undefined &&
+      readNumber(ys[row.id]) !== undefined
   );
   if (show === "all" || !drawable.length) return drawable;
   if (show === "first") return [drawable[0]!];
@@ -1850,7 +1945,36 @@ function numericGridNodes(
 /** Tick values along a numeric axis, about one per `spacing` pixels. */
 function tickValues(axis: NumericAxis, length: number, spacing: number) {
   const count = Math.max(2, Math.floor(length / spacing));
+  if (axis.dates)
+    return scaleTime()
+      .domain(axis.domain.map((value) => new Date(value)))
+      .ticks(count)
+      .map((date) => date.getTime());
   return scaleLinear().domain(axis.domain).ticks(count);
+}
+
+const yearFormat = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  timeZone: "UTC",
+});
+const monthFormat = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+const dayFormat = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC",
+});
+
+/** A date tick: the year across years, the month within a few, else the day. */
+function formatDateTick(axis: NumericAxis, value: number) {
+  const span = axis.domain[1] - axis.domain[0];
+  const year = 365.25 * 86_400_000;
+  if (span > 4 * year) return yearFormat.format(new Date(value));
+  if (span > 90 * 86_400_000) return monthFormat.format(new Date(value));
+  return dayFormat.format(new Date(value));
 }
 
 const tickFormat = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
@@ -1862,6 +1986,7 @@ const plainTickFormat = new Intl.NumberFormat("en-US", {
 /** Years read as "2016", not "2,016"; other numbers keep their separators. */
 function formatTick(axis: NumericAxis, value: number) {
   if (axis.scale.id === SHARE_SCALE.id) return `${Math.round(value * 100)}%`;
+  if (axis.dates) return formatDateTick(axis, value);
   return /year|\byr\b/i.test(axis.scale.field) || /year/i.test(axis.scale.name)
     ? plainTickFormat.format(value)
     : tickFormat.format(value);

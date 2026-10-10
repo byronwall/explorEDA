@@ -14,6 +14,7 @@ import type {
 } from "./compositionTypes";
 import {
   numericPixel,
+  readNumber,
   periodKey,
   periodStart,
   resolveUnit,
@@ -338,7 +339,7 @@ export function positionX(
   if (!position && instance.xy) {
     const number =
       value.number ??
-      (value.text?.trim() ? Number(value.text.trim()) : undefined);
+      (value.text?.trim() ? readNumber(value.text.trim()) : undefined);
     if (number === undefined || !Number.isFinite(number)) return undefined;
     const [min, max] = instance.xy.x.domain;
     if (number < min || number > max) return undefined;
