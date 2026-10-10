@@ -91,6 +91,7 @@ const CHART_GROUPS: Array<{ label: string; keys: string[] }> = [
     label: "Tables and notes",
     keys: ["data-table", "summary", "metric-card", "markdown", "color-legend"],
   },
+  { label: "Report graphics", keys: ["composition"] },
 ];
 
 function groupChartTypes<T extends { key: string; name: string }>(

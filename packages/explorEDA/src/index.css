@@ -1065,6 +1065,8 @@
 }
 .eda-details-side .eda-settings {
   height: 100%;
+  /* The details view gives settings the full panel height. */
+  max-height: none;
 }
 
 /* Confirmations stay small and centered. */
@@ -6538,4 +6540,149 @@ td[data-null] {
   gap: 6px;
   padding-top: 8px;
   border-top: 1px solid var(--border);
+}
+
+/* Composition: an artboard of report graphics. Editing shows the paper on a
+   muted canvas with selectable element boxes; viewing shows the paper only. */
+.eda-composition {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.eda-composition[data-mode="edit"] {
+  border-radius: 6px;
+  background: var(--muted);
+}
+.eda-composition[data-mode="edit"] .eda-composition-artboard {
+  box-shadow:
+    0 1px 3px rgb(20 40 70 / 14%),
+    0 0 0 1px var(--border);
+}
+.eda-composition-artboard:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.eda-composition-hit {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+  cursor: move;
+}
+.eda-composition-hit:hover {
+  stroke: var(--ring);
+  stroke-dasharray: 4 3;
+}
+.eda-composition-hit[data-selected] {
+  stroke: var(--primary);
+  stroke-width: 1.5px;
+  stroke-dasharray: none;
+}
+.eda-composition-tag {
+  fill: var(--primary);
+  font-weight: 600;
+  pointer-events: none;
+}
+.eda-composition-inspector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.eda-composition-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.eda-composition-adders {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.eda-composition-adders [data-slot="button"] {
+  height: 26px;
+  gap: 4px;
+  padding: 0 8px;
+  font-size: 12px;
+}
+.eda-composition-layers {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.eda-composition-layers li {
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+  border-radius: 5px;
+}
+.eda-composition-layers li:hover {
+  background: var(--muted);
+}
+.eda-composition-layers li[data-selected] {
+  background: color-mix(in oklab, var(--primary) 12%, transparent);
+}
+.eda-composition-layer {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  height: 28px;
+  padding: 0 6px;
+  border-radius: 5px;
+  color: var(--foreground);
+  font-size: 12px;
+  text-align: left;
+}
+.eda-composition-layer:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+.eda-composition-layer svg {
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+.eda-composition-layer-actions {
+  display: flex;
+  flex-shrink: 0;
+  padding-right: 2px;
+}
+.eda-composition-pair {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted-foreground);
+}
+.eda-composition-pair > div {
+  flex: 1;
+}
+.eda-composition-color {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+.eda-composition-color input[type="color"] {
+  width: 28px;
+  height: 24px;
+  padding: 0 2px;
+  border: 1px solid var(--input);
+  border-radius: 4px;
+  background: transparent;
+}
+.eda-composition-textarea {
+  min-width: 0;
+  padding: 4px 8px;
+  border: 1px solid var(--input);
+  border-radius: 6px;
+  background: transparent;
+  font-size: 12px;
+  line-height: 1.4;
+  resize: vertical;
+}
+.eda-composition-textarea:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 0;
 }

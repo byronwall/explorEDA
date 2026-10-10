@@ -255,6 +255,15 @@ export const coverageFeatures = [
     chartType: "ecdf",
   },
   {
+    id: "chart:composition",
+    label: "Composition",
+    family: "Chart types",
+    description: "Build a report graphic on a blank artboard from text, repeated chart units, and guides.",
+    required: true,
+    status: "supported",
+    chartType: "composition",
+  },
+  {
     id: "labels:meaningful-title",
     label: "Meaningful titles",
     family: "Labels and guides",
@@ -783,6 +792,16 @@ export const exampleCoverage = [
       "color:numerical": "shown",
       "color:legend": "shown",
       "interaction:brushing": "shown",
+    },
+  },
+  {
+    exampleId: "message-log",
+    intent: "Author a report graphic from a blank artboard beside linked views of its data.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
     },
   },
   {
