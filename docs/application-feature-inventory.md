@@ -379,6 +379,7 @@ The [analytical chart guide](analytical-chart-coverage.md) documents current mod
 | `map` | Coordinates or typed GeoJSON region join. | Point rows or region keys. |
 | `sankey` | Ordered stage columns → row paths and flow weights. | Stage values or adjacent stage pair. |
 | `parallel-coordinates` | Fields → one line per complete row. | Intersected axis filters. |
+| `scatter-matrix` | Two to ten fields of any type → every pair, distributions on the diagonal. | Two-field brush or mark; replaces the previous selection. |
 | `ecdf` | Numeric values → cumulative shares. | Threshold or numeric span. |
 
 ### Row chart
@@ -418,6 +419,16 @@ Hover finds a nearby point and shows crosshairs, coordinate values, and availabl
 Numeric bubble area and rectangular count-density bins are implemented. Traces explain size domains, radius calculations, exact bin boundaries, and source IDs. Lasso, regression, confidence bands, and smooth density contours remain separate proposals.
 
 Source: [scatter renderer](../packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx), [definition](../packages/explorEDA/src/components/charts/ScatterPlot/definition.ts).
+
+### Scatter matrix
+
+The scatter matrix shows every pair of two to ten fields in one grid, like an R `ggpairs` plot. Each field keeps one axis wherever it appears: numbers and dates are continuous, and categories and booleans get bands. Category fields with more than 12 values fold the least common into Other categories. Domains and bands come from every source row, so they hold still while charts filter.
+
+Settings choose what each triangle draws for number pairs (points or Pearson r), number and category pairs (jittered points or box plots), and category pairs (count tiles or share bars), and what the diagonal draws (density, histogram, or category bars). Each cell uses the rows that have both of its values; a cell shows its count when 2% or more are missing. A color field colors points, densities, diagonal bars, and adds one correlation per group. Box plots and tiles keep one color.
+
+A brush in any cell sets filters on its two fields and replaces the previous selection. Clicking a bar, box, tile, or point selects it; clicking empty space or pressing Escape clears. Unselected rows stay as gray context everywhere; correlations and bins ignore the matrix's own selection. Above 20,000 rows a drag previews inside the matrix and filters other charts on release. Alt-click traces a row through every field or a cell's rows. Measured costs are in [scatter matrix performance](scatter-matrix-performance.md).
+
+Source: [matrix renderer](../packages/explorEDA/src/components/charts/ScatterMatrix/ScatterMatrix.tsx), [planner](../packages/explorEDA/src/components/charts/ScatterMatrix/matrixPlan.ts), [definition](../packages/explorEDA/src/components/charts/ScatterMatrix/definition.ts).
 
 ### Line chart
 

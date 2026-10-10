@@ -1,3 +1,4 @@
+import { useAxisTypography } from "../chartTypography";
 import { useId, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import type { BaseChartProps } from "@/types/ChartTypes";
@@ -39,9 +40,10 @@ export function DensityScatter({
   const trace = useChartTrace();
   const [activeId, setActiveId] = useState<string>();
   const refs = useRef(new Map<string, SVGRectElement>());
+  const typography = useAxisTypography();
   const plan = useMemo(
-    () => planDensity(settings, snapshot, width, height),
-    [settings, snapshot, width, height]
+    () => planDensity(settings, snapshot, width, height, typography),
+    [settings, snapshot, width, height, typography]
   );
   const base = plan.scatter;
   const source = useMemo(
@@ -215,7 +217,7 @@ export function DensityScatter({
               y={bin.y + Math.min(0.5, bin.height * 0.1)}
               width={bin.width - Math.min(1, bin.width * 0.2)}
               height={bin.height - Math.min(1, bin.height * 0.2)}
-              fill={bin.fill}
+              style={{ fill: bin.fill }}
               opacity={bin.dimmed ? 0.25 : 1}
               stroke={
                 bin.id === activeId || bin.id === tracedId || bin.selected
@@ -303,9 +305,11 @@ export function DensityScatter({
                   <stop
                     key={value}
                     offset={`${value * 100}%`}
-                    stopColor={densityColor(
-                      (1 + value * (plan.max - 1)) / plan.max
-                    )}
+                    style={{
+                      stopColor: densityColor(
+                        (1 + value * (plan.max - 1)) / plan.max
+                      ),
+                    }}
                   />
                 ))}
               </linearGradient>
