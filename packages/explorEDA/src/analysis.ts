@@ -10,3 +10,9 @@ export {
   type AnalysisProjectFileInput,
 } from "./lib/analysis/projectFile";
 export { createAnalysisWorker } from "./lib/analysis/createAnalysisWorker";
+export {
+  addSourceFromRows,
+  renameSettingsFields,
+  singleTableProject,
+  sourceFromRows,
+} from "./lib/analysis/sources";

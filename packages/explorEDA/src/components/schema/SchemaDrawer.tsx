@@ -70,6 +70,8 @@ export function SchemaDrawer({
   projectEditing,
   viewId,
   onShowChart,
+  onAddSource,
+  focusNodeId,
   readOnly = false,
   containerRef,
   onClose,
@@ -82,6 +84,10 @@ export function SchemaDrawer({
   viewId?: string;
   /** Close the drawer and show one of this workspace's charts. */
   onShowChart?: (chartId: string) => void;
+  /** Add a table; the host picks the file. */
+  onAddSource?: () => void;
+  /** A card to select when the diagram opens. */
+  focusNodeId?: string;
   /** Show and select without edits. */
   readOnly?: boolean;
   containerRef: RefObject<HTMLElement | null>;
@@ -161,6 +167,8 @@ export function SchemaDrawer({
           height={size.height}
           toolbarTarget={toolbarTarget}
           editing={editing}
+          onAddSource={onAddSource}
+          focusNodeId={focusNodeId}
           charts={
             onShowChart && (!hostGraph || viewId)
               ? {

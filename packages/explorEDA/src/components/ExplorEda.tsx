@@ -101,6 +101,12 @@ export interface ExplorEdaProps {
    * workspace's table and its calculated fields.
    */
   schema?: ExplorEdaSchema;
+  /**
+   * Shows Add source in the Schema diagram. The host picks a file, then can
+   * turn this workspace into a project with `singleTableProject` and
+   * `addSourceFromRows` from `exploreda/analysis`.
+   */
+  onAddSource?: () => void;
 }
 
 export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
@@ -115,6 +121,7 @@ export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
       toolbarStart,
       toolbarEnd,
       schema,
+      onAddSource,
     },
     ref
   ) {
@@ -131,7 +138,11 @@ export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
           readOnly={readOnly}
           toolbarStart={toolbarStart}
           toolbarEnd={toolbarEnd}
-          schema={schema}
+          schema={
+            onAddSource && !schema?.onAddSource
+              ? { ...schema, onAddSource }
+              : schema
+          }
         />
       </DataLayerProvider>
     );

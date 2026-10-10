@@ -2643,9 +2643,12 @@ html {
   align-items: center;
   gap: 2px;
 }
-.eda-schema-controls button {
+.eda-schema-controls button:not(.eda-schema-add-source) {
   width: 30px;
   height: 30px;
+}
+.eda-schema-add-source {
+  margin-right: 8px;
 }
 .eda-schema-zoom {
   min-width: 3.25em;

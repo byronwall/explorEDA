@@ -25,11 +25,15 @@ import {
   snapshot,
 } from "./savedViewsHistory";
 import {
+  addSourceFromRows,
   createAnalysisWorker,
   evaluateAnalysisQuery,
   selectAnalysisProjectView,
+  singleTableProject,
   stringifyAnalysisProject,
+  type AnalysisProjectFile,
 } from "exploreda/analysis";
+import { parseCsvData } from "./csvParser";
 import { HistoryTimeline } from "./HistoryTimeline";
 import {
   SavedViewActions,
@@ -253,6 +257,7 @@ function WorkspaceInstance({
   readOnly,
   toolbarStart,
   toolbarEnd,
+  onAddSource,
 }: {
   data: DatumObject[];
   settings?: SavedDataStructure;
@@ -262,6 +267,7 @@ function WorkspaceInstance({
   readOnly: boolean;
   toolbarStart: React.ReactNode;
   toolbarEnd: React.ReactNode;
+  onAddSource?: () => void;
 }) {
   const [initialSettings] = useState(settings);
   return (
@@ -274,6 +280,7 @@ function WorkspaceInstance({
       readOnly={readOnly}
       toolbarStart={toolbarStart}
       toolbarEnd={toolbarEnd}
+      onAddSource={onAddSource}
     />
   );
 }
@@ -290,6 +297,8 @@ export function SavedViewsWorkspace({
   exampleId,
   tablesFromExample,
   initialTab,
+  schemaFocus,
+  onPromoteToProject,
 }: {
   data: DatumObject[];
   initialSettings?: SavedDataStructure;
@@ -306,6 +315,13 @@ export function SavedViewsWorkspace({
   tablesFromExample?: boolean;
   /** Opens on the tab with this name when it exists. */
   initialTab?: string;
+  /** Opens the Schema diagram with this source selected. */
+  schemaFocus?: string;
+  /**
+   * Opens a project made from this single-table workspace and a new source,
+   * with the new source selected.
+   */
+  onPromoteToProject?: (file: AnalysisProjectFile, sourceId: string) => void;
 }) {
   const [session, setSession] = useState(() => {
     const opened = initialSession
@@ -359,6 +375,86 @@ export function SavedViewsWorkspace({
   const projectViews = useMemo(
     () => shownTabs.map((tab) => ({ ...tab, queryId: tab.queryId ?? "" })),
     [shownTabs]
+  );
+  // Add source: pick a CSV file, then add it to the project, or turn this
+  // single table into a project that keeps every tab's charts.
+  const sourceInputRef = useRef<HTMLInputElement>(null);
+  const addSourceFile = async (file: File) => {
+    const rows = (await parseCsvData(file)) as AnalysisSourceRow[];
+    const name = file.name.replace(/\.[^.]+$/, "") || "Source";
+    if (session.project && session.tables) {
+      const added = addSourceFromRows(
+        session.project,
+        session.tables,
+        name,
+        rows
+      );
+      setSession((current) => ({
+        ...pushCheckpoint(
+          current,
+          current.tabs,
+          undefined,
+          undefined,
+          added.project
+        ),
+        tables: added.tables,
+        // The new table lives only in this session, so it saves with it.
+        tablesFrom: undefined,
+      }));
+      setAnnouncement(`${name} added`);
+      return;
+    }
+    const tabs = session.tabs.map((tab) => {
+      const promoted = singleTableProject({
+        name: viewName,
+        rows: sourceRows as AnalysisSourceRow[],
+        settings: tab.settings,
+      });
+      return {
+        promoted,
+        view: { ...promoted.view, id: tab.id, name: tab.name },
+      };
+    });
+    const first = tabs[0]!.promoted;
+    const added = addSourceFromRows(first.project, first.tables, name, rows);
+    onPromoteToProject?.(
+      {
+        format: "exploreda-project",
+        version: 1,
+        project: added.project,
+        tables: Object.fromEntries(
+          Object.entries(added.tables).map(([id, rows]) => [id, [...rows]])
+        ),
+        views: tabs.map((tab) => tab.view),
+        activeViewId: session.activeTabId,
+      },
+      added.sourceId
+    );
+  };
+  const requestSource =
+    showingPreview || (!session.project && !onPromoteToProject)
+      ? undefined
+      : () => sourceInputRef.current?.click();
+  const sourceInput = (
+    <input
+      ref={sourceInputRef}
+      type="file"
+      accept=".csv,text/csv"
+      className="sr-only"
+      tabIndex={-1}
+      aria-hidden="true"
+      onChange={(event) => {
+        const file = event.target.files?.[0];
+        event.target.value = "";
+        if (file) {
+          addSourceFile(file).catch((error: unknown) =>
+            setAnnouncement(
+              `Could not add the file: ${error instanceof Error ? error.message : String(error)}`
+            )
+          );
+        }
+      }}
+    />
   );
   const { sourceAnalysis } = session;
   const sourceRows = useMemo(
@@ -1186,6 +1282,8 @@ export function SavedViewsWorkspace({
               settings: settingsForDisplay,
             }}
             views={projectViews}
+            onAddSource={requestSource}
+            schemaFocus={schemaFocus}
             onProjectChange={captureProject}
             onStateChange={capture}
             onOpenView={openProjectView}
@@ -1218,8 +1316,10 @@ export function SavedViewsWorkspace({
             readOnly={showingPreview}
             toolbarStart={viewTabs}
             toolbarEnd={viewActions}
+            onAddSource={requestSource}
           />
         )}
+        {sourceInput}
       </div>
     </section>
   );

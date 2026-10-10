@@ -50,6 +50,13 @@ export interface ExplorEdaProjectProps {
    * each one reads. Without it, the diagram shows only the current view.
    */
   views?: AnalysisView[];
+  /**
+   * Shows Add source in the Schema diagram. The host picks a file and adds
+   * it, for example with `addSourceFromRows` from `exploreda/analysis`.
+   */
+  onAddSource?: () => void;
+  /** Open the Schema diagram with this source selected, such as one just added. */
+  schemaFocus?: string;
   sidePanels?: ExplorEdaSidePanel[];
   /** Starting charts for a view of a query that has no settings yet. */
   queryPresets?: Record<string, SavedDataStructure>;
@@ -97,6 +104,8 @@ export const ExplorEdaProject = forwardRef<
     tables,
     view,
     views,
+    onAddSource,
+    schemaFocus,
     sidePanels = [],
     queryPresets,
     onProjectChange,
@@ -111,7 +120,7 @@ export const ExplorEdaProject = forwardRef<
 ) {
   const chartRef = useRef<ExplorEdaHandle>(null);
   const [openPanel, setOpenPanel] = useState<"schema" | "query">();
-  const [diagramOpen, setDiagramOpen] = useState(false);
+  const [diagramOpen, setDiagramOpen] = useState(Boolean(schemaFocus));
 
   const [schemaWide, setSchemaWide] = useState(false);
   const [queryWide, setQueryWide] = useState(false);
@@ -362,6 +371,8 @@ export const ExplorEdaProject = forwardRef<
                   onOpenView,
                 },
             viewId: shownView.id,
+            onAddSource,
+            focusNodeId: schemaFocus ? `table:${schemaFocus}` : undefined,
             open: diagramOpen,
             onOpenChange: setDiagramOpen,
           }}

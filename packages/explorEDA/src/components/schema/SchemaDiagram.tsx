@@ -137,6 +137,8 @@ export function SchemaDiagram({
   toolbarTarget,
   editing,
   charts,
+  onAddSource,
+  focusNodeId,
 }: {
   graph: SchemaGraph;
   width: number;
@@ -147,6 +149,10 @@ export function SchemaDiagram({
   editing?: SchemaEditing;
   /** Lets a field's uses jump to this workspace's charts. */
   charts?: SchemaChartLinks;
+  /** Add a table; the host picks the file and supplies the rows. */
+  onAddSource?: () => void;
+  /** A card to select when the diagram opens, such as a table just added. */
+  focusNodeId?: string;
 }) {
   // Other views fold to their charts until the user opens one.
   const [expandedViews, setExpandedViews] = useState<ReadonlySet<string>>(
@@ -245,7 +251,28 @@ export function SchemaDiagram({
     return () => viewport.removeEventListener("wheel", onWheel);
   }, [zoomAt]);
 
-  const [selection, setSelection] = useState<SchemaSelection>();
+  const [selection, setSelection] = useState<SchemaSelection | undefined>(() =>
+    focusNodeId && fullGraph.nodes.some((node) => node.id === focusNodeId)
+      ? { kind: "table", nodeId: focusNodeId }
+      : undefined
+  );
+  // A table added while the diagram is open is selected, ready to relate.
+  const knownTables = useRef(
+    new Set(
+      fullGraph.nodes
+        .filter((node) => node.kind === "table")
+        .map((node) => node.id)
+    )
+  );
+  useEffect(() => {
+    const added = fullGraph.nodes.find(
+      (node) => node.kind === "table" && !knownTables.current.has(node.id)
+    );
+    fullGraph.nodes
+      .filter((node) => node.kind === "table")
+      .forEach((node) => knownTables.current.add(node.id));
+    if (added) setSelection({ kind: "table", nodeId: added.id });
+  }, [fullGraph]);
   // An edit can remove what was selected, such as a removed relationship.
   useEffect(() => {
     if (selection && !selectionExists(graph, selection))
@@ -507,6 +534,19 @@ export function SchemaDiagram({
 
   const controls = (
     <div className="eda-schema-controls" role="group" aria-label="Zoom">
+      {onAddSource && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="eda-schema-add-source"
+          tooltip="Add a table from a file; relate it to these tables next"
+          onClick={onAddSource}
+        >
+          <Plus aria-hidden="true" />
+          Add source
+        </Button>
+      )}
       <Button
         type="button"
         variant="ghost"

@@ -8,7 +8,7 @@
     "last_updated": "2026-10-10",
     "summary": "An ER-style diagram that doubles as the model editor, in a very wide drawer like Rows, for projects and single tables: tables, fields, relationships, calculations, and views, with lineage both ways, in-place editing through the existing editors, and an Add source path.",
     "status": "active",
-    "next_action": "Implement milestones 1–7 as stacked PRs, each with verification screenshots."
+    "next_action": "Review and merge the stacked PRs #222–#230 in order; then reconcile and retire this initiative."
   },
   "artifacts": {
     "intent_brief": {
@@ -413,12 +413,19 @@
       {
         "id": "m7",
         "title": "Add a source from the diagram",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Add source appends a table to a project, or promotes a single-table workspace to a project keeping its charts and layout.",
         "proof": "Promotion round-trip test; demo CSV workspace adds a second CSV and keeps its charts; hosts without onAddSource show no action; pnpm check.",
         "valid_intermediate_state": "Feature complete for both workspace kinds.",
         "rollback": "Hosts omit onAddSource.",
-        "spikes": ["positional row keys through promotion"]
+        "spikes": ["positional row keys through promotion"],
+        "spike_result": "Saved row selections survive promotion exactly: the promoted project is evaluated once and encodeAnalysisRowKeys maps each saved position to its new row key. No fallback needed. Field references needed translating because source steps name fields sourceId.field; renameSettingsFields does that for field-valued settings, field settings, and expressions.",
+        "evidence": [
+          "Vitest: sources.test.ts (key choice or added row number, charts/layout/titles kept, field references renamed, every field resolves in the new query, row selection kept, unique ID for a second source)",
+          "Playwright at 1280 and 390 px: a single-table example adds a CSV from the diagram, opens as a project with the new table selected, keeps all 5 charts, and relates Data.Route to routes.Route (77 matched); a project adds a source that appears selected and one Undo removes it; the single-table session still restores",
+          "pnpm check: build, types, 871 library tests, 94 demo tests"
+        ],
+        "notes": "Decision applied: promotion starts a new project session; the single-table session stays restorable."
       }
     ],
     "cut_line": [
@@ -503,6 +510,12 @@
       "date": "2026-10-10",
       "event": "milestone-completed",
       "summary": "Milestone 6 built: ExplorEdaProject views prop, demo passes every tab, other views fold to their charts.",
+      "status": "active"
+    },
+    {
+      "date": "2026-10-10",
+      "event": "milestone-completed",
+      "summary": "Milestone 7 built: Add source in both workspace kinds, single-table promotion that keeps charts, demo wiring. All seven milestones built and verified; awaiting review.",
       "status": "active"
     }
   ],

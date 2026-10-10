@@ -149,10 +149,14 @@ export function FieldMetadata({
         label: `${source.name} · ${sourceField?.name ?? sourceField?.id ?? "source field"}`,
       }
     : step?.kind === "calculate"
-      ? { glyph: "ƒx", display: "Query", label: `query calculation ${step.label}` }
+      ? {
+          glyph: "ƒx",
+          display: "Query",
+          label: `query calculation ${step.label}`,
+        }
       : step?.kind === "aggregate"
         ? { glyph: "Σ", display: "Query", label: "a query summary" }
-      : undefined;
+        : undefined;
   if (!profile && !origin) return <span className={className}>{label}</span>;
   const metadata = profile
     ? fieldMetadata(profile, (value) =>

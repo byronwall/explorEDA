@@ -418,6 +418,15 @@ export function LandingPage() {
     navigate(PROJECT_VIEWER_PATH);
   };
 
+  // Add source in a single-table workspace opens it as a project, with the
+  // new table selected in the Schema diagram. The single-table session stays
+  // saved and restorable.
+  const [schemaFocus, setSchemaFocus] = useState<string>();
+  const openPromotedProject = (file: AnalysisProjectFile, sourceId: string) => {
+    setSchemaFocus(sourceId);
+    handleProjectImport(file);
+  };
+
   const handleAnalysisJson = () => {
     try {
       if (JSON.parse(analysisJson).format === "exploreda-project") {
@@ -698,6 +707,7 @@ export function LandingPage() {
                     initialSession={workspace.session}
                     viewName="Analysis"
                     initialTab={initialTab}
+                    schemaFocus={schemaFocus}
                   />
                 ) : workspace?.kind === "rows" ? (
                   <SavedViewsWorkspace
@@ -705,6 +715,7 @@ export function LandingPage() {
                     data={workspace.rows}
                     initialSettings={workspace.savedData}
                     viewName="Analysis"
+                    onPromoteToProject={openPromotedProject}
                   />
                 ) : workspace?.kind === "example" ? (
                   <SavedViewsWorkspace
@@ -721,6 +732,7 @@ export function LandingPage() {
                     exampleId={workspace.example.id}
                     tablesFromExample={Boolean(workspace.example.analysis)}
                     initialTab={initialTab}
+                    onPromoteToProject={openPromotedProject}
                   />
                 ) : null}
               </Suspense>

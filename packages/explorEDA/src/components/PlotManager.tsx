@@ -118,6 +118,10 @@ export interface ExplorEdaSchema {
   editing?: SchemaProjectEditing;
   /** The project view this workspace shows; its calculations edit here. */
   viewId?: string;
+  /** Add a table. The host picks the file and supplies the rows. */
+  onAddSource?: () => void;
+  /** Select this card when the diagram opens, such as a table just added. */
+  focusNodeId?: string;
   /** Control whether the drawer is open, such as from a host panel. */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -933,6 +937,8 @@ export function PlotManager({
             graph={schema?.graph}
             projectEditing={schema?.editing}
             viewId={schema?.viewId}
+            onAddSource={readOnly ? undefined : schema?.onAddSource}
+            focusNodeId={schema?.focusNodeId}
             onShowChart={(id) => {
               setSchemaOpen(false);
               showChart(id);
