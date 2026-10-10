@@ -1,0 +1,434 @@
+[
+  {
+    "id": "01",
+    "title": "Measles — Battling Infectious Diseases in the 20th Century: The Impact of Vaccines",
+    "page_url": "https://graphics.wsj.com/infectious-diseases-and-vaccines/",
+    "image_url": "https://community.jmp.com/t5/image/serverpage/image-id/1253iDBAECD788ECD2BBD/image-size/large?px=999&v=v2",
+    "image_file": "images/01-measles-battling-infectious-diseases-in-the-20th-century-the-impact-of-vacc.png",
+    "tier": "Today",
+    "milestones": [],
+    "new_capabilities": [],
+    "data_status": "Available",
+    "data_urls": [
+      "https://graphics.wsj.com/infectious-diseases-and-vaccines/data/datum.json",
+      "https://graphics.wsj.com/infectious-diseases-and-vaccines/js/script.min.js?v=49884a29ff"
+    ],
+    "difficulty": "low"
+  },
+  {
+    "id": "02",
+    "title": "States won by Democrats and Republicans in the U.S. presidential election",
+    "page_url": "https://www.datawrapper.de/blog/weekly-chart-presidential-elections",
+    "image_url": "https://datawrapper.dwcdn.net/eqkqt/full.png",
+    "image_file": "images/02-states-won-by-democrats-and-republicans-in-the-u-s-presidential-election.png",
+    "tier": "Today",
+    "milestones": [],
+    "new_capabilities": [],
+    "data_status": "Obtainable",
+    "data_urls": [
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ4O_Vc5K1zcGRZ0Fw4ihMDB3LCvShxlDmRGyLskzX-9YFYWT1G7u4oBu1UJGlpb3-Yce0Ra0u-aF61/pub?gid=0&single=true&output=csv",
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ4O_Vc5K1zcGRZ0Fw4ihMDB3LCvShxlDmRGyLskzX-9YFYWT1G7u4oBu1UJGlpb3-Yce0Ra0u-aF61/pub?gid=536124004&single=true&output=csv",
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ4O_Vc5K1zcGRZ0Fw4ihMDB3LCvShxlDmRGyLskzX-9YFYWT1G7u4oBu1UJGlpb3-Yce0Ra0u-aF61/pub?gid=1236465032&single=true&output=csv"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "03",
+    "title": "The Yield Gap",
+    "page_url": "https://r-graph-gallery.com/web-waffle-chart-for-distribution.html",
+    "image_url": "https://r-graph-gallery.com/img/graph/web-waffle-chart-for-distribution.png",
+    "image_file": "images/03-the-yield-gap.png",
+    "tier": "Today",
+    "milestones": [],
+    "new_capabilities": [],
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/BjnNowak/book/main/data/wheat_maize_2010_2020.csv",
+      "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "04",
+    "title": "Long-Term Top Yielding Banana-Producing Countries",
+    "page_url": "https://forum.posit.co/t/banana-crop-yields-over-time-table-contest-submission/86137",
+    "image_url": "https://raw.githubusercontent.com/soroosj/TidyTuesday/master/2020-09-01/output/crops.png",
+    "image_file": "images/04-long-term-top-yielding-banana-producing-countries.png",
+    "tier": "Planned M2–M6",
+    "milestones": [
+      "paths",
+      "compound frames"
+    ],
+    "new_capabilities": [],
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv",
+      "https://raw.githubusercontent.com/soroosj/TidyTuesday/master/2020-09-01/markdown/crops.Rmd"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "05",
+    "title": "Fan chart for current budget and PSNFL — Chart 7.4",
+    "page_url": "https://obr.uk/efo/economic-and-fiscal-outlook-march-2025/",
+    "image_url": "https://obr.uk/docs/publications/efo2503/chart-7-4.png",
+    "image_file": "images/05-fan-chart-for-current-budget-and-psnfl-chart-7-4.png",
+    "tier": "Planned M2–M6",
+    "milestones": [
+      "paths",
+      "bands"
+    ],
+    "new_capabilities": [],
+    "data_status": "Available",
+    "data_urls": [
+      "https://obr.uk/download/march-2025-economic-and-fiscal-outlook-charts-and-tables-chapter-7/"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "06",
+    "title": "Temperatures in Lincoln NE",
+    "page_url": "https://austinwehrwein.com/data-visualization/it-brings-me-ggjoy/",
+    "image_url": "https://austinwehrwein.com/data-visualization/it-brings-me-ggjoy_files/figure-html/unnamed-chunk-3-1.png",
+    "image_file": "images/06-temperatures-in-lincoln-ne.png",
+    "tier": "Planned M2–M6",
+    "milestones": [
+      "paths",
+      "bands"
+    ],
+    "new_capabilities": [],
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/wilkelab/ggridges/master/data-raw/lincoln-weather.csv",
+      "https://raw.githubusercontent.com/wilkelab/ggridges/master/data-raw/lincoln-weather.R"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "07",
+    "title": "What Americans die from and the causes of death the US media reports on",
+    "page_url": "https://ourworldindata.org/does-the-news-reflect-what-we-die-from",
+    "image_url": "https://ourworldindata.org/cdn-cgi/imagedelivery/qLq-8BTgXU8yG0N6HnOy8g/ae881f37-dd2f-4089-6ab8-cb88ca6b6000/w=3600",
+    "image_file": "images/07-what-americans-die-from-and-the-causes-of-death-the-us-media-reports-on.png",
+    "tier": "Planned M2–M6",
+    "milestones": [
+      "normalized stacks"
+    ],
+    "new_capabilities": [],
+    "data_status": "Available",
+    "data_urls": [
+      "https://catalog.owid.io/analyses/media-deaths-analysis-data.zip"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "08",
+    "title": "More than 1 natural disaster occurs every day since the 21st century",
+    "page_url": "https://python-graph-gallery.com/web-stacked-area-with-inflexion-arrows/",
+    "image_url": "https://raw.githubusercontent.com/holtzy/The-Python-Graph-Gallery/master/static/graph/web-stacked-area-with-inflexion-arrows.png",
+    "image_file": "images/08-more-than-1-natural-disaster-occurs-every-day-since-the-21st-century.png",
+    "tier": "Planned M2–M6",
+    "milestones": [
+      "bands"
+    ],
+    "new_capabilities": [],
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/holtzy/The-Python-Graph-Gallery/master/static/data/disaster-events.csv"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "09",
+    "title": "Income and expenditure of 150 Negro families in Atlanta, Ga., U.S.A.",
+    "page_url": "https://www.loc.gov/pictures/item/2013650354/",
+    "image_url": "https://tile.loc.gov/storage-services/service/pnp/ppmsca/33800/33893v.jpg",
+    "image_file": "images/09-income-and-expenditure-of-150-negro-families-in-atlanta-ga-u-s-a.jpg",
+    "tier": "Planned M2–M6",
+    "milestones": [
+      "normalized stacks"
+    ],
+    "new_capabilities": [],
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/ajstarks/dubois-data-portraits/master/plate31/data.csv"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "10",
+    "title": "History of global temperature change and causes of recent warming — IPCC AR6 WGI SPM Figure 1",
+    "page_url": "https://www.ipcc.ch/report/ar6/wg1/figures/summary-for-policymakers/figure-spm-1/",
+    "image_url": "https://www.ipcc.ch/report/ar6/wg1/downloads/figures/IPCC_AR6_WGI_SPM_Figure_1.png",
+    "image_file": "images/10-history-of-global-temperature-change-and-causes-of-recent-warming-ipcc-ar6.png",
+    "tier": "Planned M2–M6",
+    "milestones": [
+      "paths",
+      "bands"
+    ],
+    "new_capabilities": [],
+    "data_status": "Available",
+    "data_urls": [
+      "https://dap.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_01/v20221116/panel_a/SPM1_1-2000_recon.csv",
+      "https://dap.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_01/v20221116/panel_a/SPM1_1850-2020_obs.csv",
+      "https://dap.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_01/v20221116/panel_a/spm1_6500_recon.csv",
+      "https://dap.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_01/v20221116/panel_b/gmst_changes_model_and_obs.csv"
+    ],
+    "difficulty": "high"
+  },
+  {
+    "id": "11",
+    "title": "Age distribution of Georgia Negroes compared with France",
+    "page_url": "https://www.loc.gov/pictures/item/2013650428/",
+    "image_url": "https://cdn.loc.gov/service/pnp/ppmsca/33800/33871v.jpg",
+    "image_file": "images/11-age-distribution-of-georgia-negroes-compared-with-france.jpg",
+    "tier": "New capability",
+    "milestones": [],
+    "new_capabilities": [
+      "horizontal bar length encoding"
+    ],
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/ajstarks/dubois-data-portraits/master/plate09/data.csv"
+    ],
+    "difficulty": "low"
+  },
+  {
+    "id": "12",
+    "title": "Consumer Confidence Around the World",
+    "page_url": "https://r-graph-gallery.com/web-line-chart-small-multiple-all-group-greyed-out.html",
+    "image_url": "https://r-graph-gallery.com/img/fromTheWeb/we-line-chart-consumer-confidence.png",
+    "image_file": "images/12-consumer-confidence-around-the-world.png",
+    "tier": "New capability",
+    "milestones": [
+      "paths"
+    ],
+    "new_capabilities": [
+      "numeric positions for circle marks"
+    ],
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/holtzy/R-graph-gallery/master/DATA/dataConsumerConfidence.csv"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "13",
+    "title": "Recycling rates by London borough",
+    "page_url": "https://python-graph-gallery.com/web-waffle-with-small-multiples/",
+    "image_url": "https://github.com/holtzy/The-Python-Graph-Gallery/blob/master/static/graph/web-waffle-with-small-multiples.png?raw=true",
+    "image_file": "images/13-recycling-rates-by-london-borough.png",
+    "tier": "New capability",
+    "milestones": [],
+    "new_capabilities": [
+      "tile-grid arrangement driven by row and column fields"
+    ],
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/holtzy/the-python-graph-gallery/master/static/data/london_recycling.csv"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "14",
+    "title": "Big-tech opening prices in a sparkline table",
+    "page_url": "https://rfortherestofus.com/2024/02/sparklines-gt",
+    "image_url": "https://rfortherestofus.com/img/containers/images/blog/006-sparklines-gt/final_sparklines.png/94c2d8880fd1fa5837ac3e0dd14a7300/final_sparklines.png",
+    "image_file": "images/14-big-tech-opening-prices-in-a-sparkline-table.png",
+    "tier": "New capability",
+    "milestones": [
+      "paths"
+    ],
+    "new_capabilities": [
+      "numeric positions for circle marks"
+    ],
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-02-07/big_tech_stock_prices.csv",
+      "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-02-07/big_tech_companies.csv"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "15",
+    "title": "Republicans and Democrats in the U.S. differ over some factors that make life meaningful",
+    "page_url": "https://www.pewresearch.org/short-reads/2021/11/22/both-republicans-and-democrats-prioritize-family-but-they-differ-over-other-sources-of-meaning-in-life/",
+    "image_url": "https://www.pewresearch.org/wp-content/uploads/sites/20/2021/11/ft_2021.11.22_partisanmeaning_02a.png",
+    "image_file": "images/15-republicans-and-democrats-in-the-u-s-differ-over-some-factors-that-make-lif.png",
+    "tier": "New capability",
+    "milestones": [
+      "paths"
+    ],
+    "new_capabilities": [
+      "numeric positions for circle marks"
+    ],
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/holtzy/R-graph-gallery/master/web-dumbbell-chart-with-a-gap-column.Rmd"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "16",
+    "title": "Enrollment Trends at Historically Black Colleges and Universities",
+    "page_url": "https://r-graph-gallery.com/web-extended-dumbbell-plot-ggplot2.html",
+    "image_url": "https://r-graph-gallery.com/img/fromTheWeb/HBCU_trends_gender.png",
+    "image_file": "images/16-enrollment-trends-at-historically-black-colleges-and-universities.png",
+    "tier": "New capability",
+    "milestones": [
+      "paths",
+      "bands"
+    ],
+    "new_capabilities": [
+      "numeric positions for circle marks"
+    ],
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-02/hbcu_all.csv"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "17",
+    "title": "Investitionstätigkeit in der EU",
+    "page_url": "https://r-graph-gallery.com/web-bump-plot-with-highlights.html",
+    "image_url": "https://r-graph-gallery.com/img/graph/web-bump-plot-with-highlights.png",
+    "image_file": "images/17-investitionst-tigkeit-in-der-eu.png",
+    "tier": "New capability",
+    "milestones": [
+      "paths"
+    ],
+    "new_capabilities": [
+      "numeric positions for circle marks"
+    ],
+    "data_status": "Available",
+    "data_urls": [
+      "https://api.db.nomics.world/v22/series/AMECO/UIGP?limit=1000&observations=1",
+      "https://api.db.nomics.world/v22/series/AMECO/UVGD?limit=1000&observations=1"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "18",
+    "title": "What to Make of Those Soaring Covid Counts — published SAS recreation",
+    "page_url": "https://communities.sas.com/t5/Graphics-Programming/Creating-A-New-York-Times-Like-Tile-Grid-U-S-Map-With-SAS-ODS/td-p/790814",
+    "image_url": "https://communities.sas.com/t5/image/serverpage/image-id/67491i351F091A4E7CD1D7?v=v2",
+    "image_file": "images/18-what-to-make-of-those-soaring-covid-counts-published-sas-recreation.png",
+    "tier": "New capability",
+    "milestones": [
+      "paths"
+    ],
+    "new_capabilities": [
+      "tile-grid arrangement driven by row and column fields",
+      "numeric positions for circle marks"
+    ],
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/nytimes/covid-19-data/master/rolling-averages/us-states.csv"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "19",
+    "title": "Housing Expensiveness by US State (Jan. 2000–Sept. 2025)",
+    "page_url": "https://aaronjbecker.com/posts/housing-expensiveness-by-state-2000-2025/",
+    "image_url": "https://aaronjbecker.com/_astro/home-value-vs-income-by-state-2000-2025_image_0.2TV0Zlwp_1faC1v.webp",
+    "image_file": "images/19-housing-expensiveness-by-us-state-jan-2000-sept-2025.png",
+    "tier": "New capability",
+    "milestones": [],
+    "new_capabilities": [
+      "tile-grid arrangement driven by row and column fields"
+    ],
+    "data_status": "Available",
+    "data_urls": [
+      "https://files.zillowstatic.com/research/public_csvs/zhvi/State_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv",
+      "https://files.zillowstatic.com/research/public_csvs/zhvi/Metro_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv",
+      "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MEHOINUSALA646N,MEHOINUSAKA646N,MEHOINUSAZA646N,MEHOINUSARA646N,MEHOINUSCAA646N,MEHOINUSCOA646N,MEHOINUSCTA646N,MEHOINUSDEA646N,MEHOINUSFLA646N,MEHOINUSGAA646N,MEHOINUSHIA646N,MEHOINUSIDA646N",
+      "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MEHOINUSILA646N,MEHOINUSINA646N,MEHOINUSIAA646N,MEHOINUSKSA646N,MEHOINUSKYA646N,MEHOINUSLAA646N,MEHOINUSMEA646N,MEHOINUSMDA646N,MEHOINUSMAA646N,MEHOINUSMIA646N,MEHOINUSMNA646N,MEHOINUSMSA646N",
+      "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MEHOINUSMOA646N,MEHOINUSMTA646N,MEHOINUSNEA646N,MEHOINUSNVA646N,MEHOINUSNHA646N,MEHOINUSNJA646N,MEHOINUSNMA646N,MEHOINUSNYA646N,MEHOINUSNCA646N,MEHOINUSNDA646N,MEHOINUSOHA646N,MEHOINUSOKA646N",
+      "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MEHOINUSORA646N,MEHOINUSPAA646N,MEHOINUSRIA646N,MEHOINUSSCA646N,MEHOINUSSDA646N,MEHOINUSTNA646N,MEHOINUSTXA646N,MEHOINUSUTA646N,MEHOINUSVTA646N,MEHOINUSVAA646N,MEHOINUSWAA646N,MEHOINUSWVA646N",
+      "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MEHOINUSWIA646N,MEHOINUSWYA646N,MEHOINUSDCA646N,MEHOINUSA646N"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "20",
+    "title": "Who lives in the capitals? — population-weighted Marimekko explanation",
+    "page_url": "https://www.datawrapper.de/blog/weekly-chart-capitals",
+    "image_url": "https://kirby.datawrapper.de/media/pages/blog/weekly-chart-capitals/28e899ec5b-1740123106/full-180329_marimekko1.png",
+    "image_file": "images/20-who-lives-in-the-capitals-population-weighted-marimekko-explanation.png",
+    "tier": "New capability",
+    "milestones": [
+      "normalized stacks"
+    ],
+    "new_capabilities": [
+      "data-driven repeat height"
+    ],
+    "data_status": "Obtainable",
+    "data_urls": [
+      "https://datawrapper.dwcdn.net/ev8d7/10/data.csv",
+      "https://esa.un.org/unpd/wup/CD-ROM/"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "21",
+    "title": "Corruption and human development",
+    "page_url": "https://databeauty.com/blog/tutorial/2017/03/03/recreate-economist-graph-by-ggplot2.html",
+    "image_url": "https://databeauty.com/figures/2017-03-03-recreate-economist-graph-by-ggplot2/Economist1.png",
+    "image_file": "images/21-corruption-and-human-development.png",
+    "tier": "New capability",
+    "milestones": [
+      "paths"
+    ],
+    "new_capabilities": [
+      "numeric positions for circle marks"
+    ],
+    "data_status": "Available",
+    "data_urls": [
+      "https://databeauty.com/data/EconomistData.csv"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "22",
+    "title": "The Changing Nature of Middle-Class Jobs",
+    "page_url": "https://driven-by-data.net/2015/02/23/middle-class/",
+    "image_url": "https://driven-by-data.net/_app/immutable/assets/middleclass-1.CTCmdPfM.jpeg",
+    "image_file": "images/22-the-changing-nature-of-middle-class-jobs.jpg",
+    "tier": "New capability",
+    "milestones": [
+      "paths"
+    ],
+    "new_capabilities": [
+      "continuous color gradients along paths",
+      "numeric positions for circle marks"
+    ],
+    "data_status": "Obtainable",
+    "data_urls": [
+      "https://usa.ipums.org/usa/",
+      "https://driven-by-data.net/_app/immutable/assets/middleclass-2.mjyi8TV1.jpeg"
+    ],
+    "difficulty": "high"
+  },
+  {
+    "id": "23",
+    "title": "More days at the highest temperatures in 2023",
+    "page_url": "https://www.bbc.co.uk/news/science-environment-67861954",
+    "image_url": "https://ichef.bbci.co.uk/ace/standard/1280/cpsprodpb/1216F/production/_132259047_global_temp_delta_1991_2020avg_multiple_ridges_v2-2x-nc.png",
+    "image_file": "images/23-more-days-at-the-highest-temperatures-in-2023.png",
+    "tier": "New capability",
+    "milestones": [
+      "paths",
+      "bands"
+    ],
+    "new_capabilities": [
+      "gradient fills in areas"
+    ],
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/open-innovations/oi-lume-viz/main/example-site/_data/test/data/era5_world_t2_year.csv"
+    ],
+    "difficulty": "high"
+  }
+]
