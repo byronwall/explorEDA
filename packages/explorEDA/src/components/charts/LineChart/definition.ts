@@ -129,9 +129,12 @@ export const lineChartDefinition: ChartDefinition<LineChartSettings> = {
     settings: LineChartSettings,
     fieldGetter: (name: string) => Record<IdType, datum>
   ) => {
+    // Look each column up once; the returned test runs once per row.
+    const filters = settings.filters.map((filter: Filter) => ({
+      filter,
+      values: fieldGetter(filter.field),
+    }));
     return (d: IdType) =>
-      settings.filters.every((filter: Filter) =>
-        applyFilter(fieldGetter(filter.field)[d], filter)
-      );
+      filters.every(({ filter, values }) => applyFilter(values[d], filter));
   },
 };
