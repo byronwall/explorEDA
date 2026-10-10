@@ -35,6 +35,7 @@ import {
   titanicWaffleDashboard,
   unemploymentStreamDashboard,
   populationPyramidDashboard,
+  gdpBumpDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -69,6 +70,7 @@ import {
   TrendingUp,
   Waves,
   Users,
+  ListOrdered,
   CloudFog,
   Globe,
   Activity,
@@ -937,6 +939,17 @@ export const examples: ExampleData[] = [
     icon: Users,
     data: "/datasets/us-population.csv",
     savedData: populationPyramidDashboard,
+  },
+  {
+    id: "gdp-bump",
+    title: "The world's largest economies, ranked each year since 1980",
+    description:
+      "A bump chart: each economy's rank by GDP at every year, computed on the spot among the rows shown, joined into smooth paths colored by region and named at the right with the latest rank.",
+    dataset: { rows: "740 rows", fields: 5, source: "Real" },
+    shows: ["Ranks on the fly", "Smooth paths", "End labels"],
+    icon: ListOrdered,
+    data: "/datasets/gdp-ranks.csv",
+    savedData: gdpBumpDashboard,
   },
 ];
 

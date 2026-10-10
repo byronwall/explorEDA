@@ -96,6 +96,21 @@ const DIRECTIONS = [
   },
 ];
 
+const RANK_OPTIONS = [
+  { value: "value" as const, label: "Value", tooltip: "The y field's value" },
+  {
+    value: "desc" as const,
+    label: "Rank ↓",
+    tooltip:
+      "Each row's rank among the rows at the same x, largest value first; rank 1 sits at the top, as a bump chart",
+  },
+  {
+    value: "asc" as const,
+    label: "Rank ↑",
+    tooltip:
+      "Each row's rank among the rows at the same x, smallest value first; rank 1 sits at the top",
+  },
+];
 const PATH_LABEL_OPTIONS = [
   {
     value: "none" as const,
@@ -1700,6 +1715,19 @@ function XyFields({
             </Button>
           )}
         </div>
+      )}
+      {mark.type !== "band" && mark.yScaleId && (
+        <>
+          <span className="eda-setting-label">Plot</span>
+          <Segmented
+            label={`${mark.name} y plots`}
+            value={mark.rank ?? "value"}
+            options={RANK_OPTIONS}
+            onChange={(rank) =>
+              change({ rank: rank === "value" ? undefined : rank })
+            }
+          />
+        </>
       )}
       <Label>Order by</Label>
       <FieldSelector

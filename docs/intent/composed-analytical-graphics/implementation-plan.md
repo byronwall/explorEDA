@@ -247,6 +247,8 @@ Repeats can be arranged as tiles: a prepared field names each repeat's cell as r
 The tax revenue slope (after Tufte's government receipts) ships as `?example=tax-slope` from `apps/data-samples/prepare/tax-slope.ts`, two World Bank readings per OECD country.
 Path marks name each path at its start, end, or both, with the value there, and the labels on each side move the least that keeps them apart; paths color by a field like points, and numeric scales can label only their ends or nothing.
 
+The GDP bump chart ships as `?example=gdp-bump` from `apps/data-samples/prepare/gdp-ranks.ts`: point and path marks can plot each row's rank among the rows at its x, by the y field, largest or smallest first, with rank one at the top; the ranks come from the live rows, so filters re-rank.
+
 ## Milestone 3: Layer interval bands around a line
 
 Create the inflation-fan structure from supplied interval data.

@@ -403,3 +403,18 @@ One row per census year, five-year age group, and sex, with the number of people
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/us-population.ts
 ```
+
+## Largest economies by GDP, 1980 to 2023
+
+- File: `gdp-ranks.csv`
+- Size: 740 rows and 5 fields
+- Demo: `?example=gdp-bump`
+- Use: a bump chart composition, each economy ranked at every year and joined into a path
+- Source: the [World Bank World Development Indicators](https://data.worldbank.org/indicator/NY.GDP.MKTP.CD), GDP (current US$), indicator `NY.GDP.MKTP.CD`, with regions from the World Bank country list.
+- License: CC BY 4.0.
+
+One row per year for the 17 economies that ranked in the world's top twelve in any year from 1980 to 2023, with the World Bank region and GDP in current US dollars. Regional and income aggregates are left out.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/gdp-ranks.ts
+```
