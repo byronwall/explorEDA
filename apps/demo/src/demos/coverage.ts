@@ -1060,6 +1060,17 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "consumer-confidence",
+    intent:
+      "Draw every country in every panel and light up its own, with the latest point per series on a date scale.",
+    features: {
+      "chart:composition": "shown",
+      "chart:line": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

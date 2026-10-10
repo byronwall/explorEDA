@@ -24,6 +24,7 @@ import {
   mediaDeathsDashboard,
   measlesDashboard,
   causesByAgeDashboard,
+  consumerConfidenceDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -48,6 +49,7 @@ import {
   Columns3,
   Grid3x3,
   Layers,
+  LayoutPanelTop,
   CloudFog,
   Globe,
   Activity,
@@ -775,6 +777,21 @@ export const examples: ExampleData[] = [
     icon: Layers,
     data: "/datasets/causes-by-age.csv",
     savedData: causesByAgeDashboard,
+  },
+  {
+    id: "consumer-confidence",
+    title: "Consumer confidence around the world",
+    description:
+      "Nine countries in a 3 × 3 grid. Every panel draws all nine index paths on one shared scale and lights up its own, with the latest value marked and a 100 reference line; the x axis is a real date scale.",
+    dataset: { rows: "467 country-months", fields: 3, source: "Real" },
+    shows: [
+      "Series paths with a focus",
+      "Date scales",
+      "Latest point per series",
+    ],
+    icon: LayoutPanelTop,
+    data: "/datasets/consumer-confidence.csv",
+    savedData: consumerConfidenceDashboard,
   },
 ];
 

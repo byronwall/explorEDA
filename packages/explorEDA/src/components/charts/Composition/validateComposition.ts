@@ -34,6 +34,15 @@ function isTextElement(value: Value) {
 const oneOf = (value: unknown, options: readonly unknown[]) =>
   options.includes(value);
 
+function isFocus(value: unknown) {
+  if (value === undefined) return true;
+  if (!isRecord(value)) return false;
+  return (
+    value.kind === "repeat" ||
+    (value.kind === "values" && isString(value.values))
+  );
+}
+
 function isMark(value: unknown) {
   if (!isRecord(value) || !isString(value.id) || !isString(value.name))
     return false;
@@ -49,7 +58,12 @@ function isMark(value: unknown) {
       isNumber(value.labelEvery) &&
       value.labelEvery >= 0 &&
       (value.show === undefined ||
-        oneOf(value.show, ["all", "first", "last", "min", "max"]))
+        oneOf(value.show, ["all", "first", "last", "min", "max"])) &&
+      (value.seriesField === undefined || isString(value.seriesField)) &&
+      isFocus(value.focus) &&
+      (value.mutedFill === undefined || isString(value.mutedFill)) &&
+      (value.population === undefined ||
+        oneOf(value.population, ["repeat", "composition"]))
     );
   if (value.type === "stack")
     return (
@@ -95,7 +109,12 @@ function isMark(value: unknown) {
       isString(value.orderField) &&
       isString(value.stroke) &&
       isNumber(value.strokeWidth) &&
-      value.strokeWidth > 0
+      value.strokeWidth > 0 &&
+      (value.seriesField === undefined || isString(value.seriesField)) &&
+      isFocus(value.focus) &&
+      (value.mutedStroke === undefined || isString(value.mutedStroke)) &&
+      (value.population === undefined ||
+        oneOf(value.population, ["repeat", "composition"]))
     );
   // Marks saved before mark types existed have none; they are strips.
   return (

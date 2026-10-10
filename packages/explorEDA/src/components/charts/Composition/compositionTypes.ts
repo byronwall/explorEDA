@@ -204,6 +204,13 @@ export interface PointMark {
   labelEvery: number;
   /** Which rows draw: every row, or only the first, last, lowest, or highest. */
   show?: PointShow;
+  /** Pick `show` within each value of this field, such as the last point of every country. */
+  seriesField?: string;
+  /** Series in focus take the fill; the rest take the muted fill. */
+  focus?: MarkFocus;
+  mutedFill?: string;
+  /** The rows the mark draws from: the repeat's own, or every row in the graphic. */
+  population?: MarkPopulation;
 }
 
 export type PointShow = "all" | "first" | "last" | "min" | "max";
@@ -221,6 +228,43 @@ export interface PathMark {
   orderField: string;
   stroke: string;
   strokeWidth: number;
+  /** One path per value of this field within the repeat, such as a country. */
+  seriesField?: string;
+  /**
+   * Which series draw in the stroke color; the rest take the muted color
+   * and sit underneath. Repeat: the series whose value equals the repeat's
+   * key. Values: a comma-separated list.
+   */
+  focus?: MarkFocus;
+  mutedStroke?: string;
+  /**
+   * The rows the mark draws from: the repeat's own, or every row in the
+   * graphic, so each panel can show the whole field behind its own series.
+   */
+  population?: MarkPopulation;
+}
+
+export type MarkPopulation = "repeat" | "composition";
+
+export type MarkFocus = { kind: "repeat" } | { kind: "values"; values: string };
+
+/** The muted color for series outside a mark's focus. */
+export const MUTED_MARK = "#c9ccd1";
+
+/** True when a series value is in the mark's focus; every series without one. */
+export function isFocused(
+  focus: MarkFocus | undefined,
+  series: string | undefined,
+  repeatKey: string
+) {
+  if (!focus) return true;
+  if (series === undefined) return true;
+  if (focus.kind === "repeat") return series === repeatKey;
+  return focus.values
+    .split(",")
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean)
+    .includes(series.trim().toLowerCase());
 }
 
 /**

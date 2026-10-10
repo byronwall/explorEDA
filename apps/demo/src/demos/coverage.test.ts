@@ -88,6 +88,7 @@ describe("example coverage manifest", () => {
       "media-deaths",
       "measles",
       "causes-by-age",
+      "consumer-confidence",
       "product-activity",
       "scatter-trace",
       "calculated-orders",
