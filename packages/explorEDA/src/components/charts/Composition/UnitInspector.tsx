@@ -686,6 +686,28 @@ function StripFields({
         value={mark.inset}
         onChange={(inset) => onChange({ inset })}
       />
+      <span className="eda-setting-label">No value</span>
+      <div className="eda-composition-color">
+        <input
+          type="color"
+          aria-label={`${mark.name} missing cell color`}
+          value={mark.missing ?? "#e6e8eb"}
+          onChange={(event) => onChange({ missing: event.target.value })}
+        />
+        {mark.missing ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 px-2"
+            tooltip="Leave bins whose rows have no value blank again"
+            onClick={() => onChange({ missing: undefined })}
+          >
+            Blank
+          </Button>
+        ) : (
+          <span className="text-muted-foreground">Blank</span>
+        )}
+      </div>
     </>
   );
 }

@@ -118,7 +118,11 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
         <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
           <TraceReadout label="Value">
             <TraceSwatch color={glyph.fill} />{" "}
-            {formatCalcValue(glyph.datum.value, "number")}
+            {glyph.datum.missing
+              ? `No value: ${glyph.datum.rowIds.length.toLocaleString()} ${
+                  glyph.datum.rowIds.length === 1 ? "row" : "rows"
+                } in this bin, none with a value, so the cell is drawn as missing`
+              : formatCalcValue(glyph.datum.value, "number")}
           </TraceReadout>
           <TraceReadout label="Calculation">
             {AGGREGATION_TEXT[glyph.aggregation] ?? glyph.aggregation}

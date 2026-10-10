@@ -106,7 +106,8 @@ function isMark(value: unknown) {
     (value.aggregation === "count" || isString(value.measureField)) &&
     oneOf(value.encoding, ["color", "size", "height"]) &&
     isString(value.fill) &&
-    isNumber(value.inset)
+    isNumber(value.inset) &&
+    (value.missing === undefined || isString(value.missing))
   );
 }
 
@@ -163,8 +164,14 @@ function isScale(value: unknown) {
     value.kind === "value" &&
     oneOf(value.transform, ["linear", "sqrt", "log"]) &&
     Array.isArray(value.colors) &&
-    value.colors.length === 2 &&
+    value.colors.length >= 2 &&
     value.colors.every(isString) &&
+    (value.stops === undefined ||
+      (Array.isArray(value.stops) &&
+        value.stops.length === value.colors.length &&
+        value.stops.every(
+          (stop: unknown) => isNumber(stop) && stop >= 0 && stop <= 1
+        ))) &&
     (value.center === undefined || isString(value.center))
   );
 }

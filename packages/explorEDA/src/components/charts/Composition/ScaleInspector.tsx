@@ -1,4 +1,5 @@
 import { FieldSelector } from "@/components/FieldSelector";
+import { NumericInputEnter } from "@/components/NumericInputEnter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -458,16 +459,97 @@ function ValueScaleProperties({
         options={TRANSFORMS}
         onChange={(transform) => onChange({ transform })}
       />
-      <ColorSetting
-        label="Low color"
-        value={scale.colors[0]}
-        onChange={(low) => onChange({ colors: [low, scale.colors[1]] })}
-      />
-      <ColorSetting
-        label="High color"
-        value={scale.colors[1]}
-        onChange={(high) => onChange({ colors: [scale.colors[0], high] })}
-      />
+      <span className="eda-setting-label">Ramp</span>
+      <div className="eda-composition-ramp">
+        {scale.colors.map((color, index) => {
+          const stops =
+            scale.stops ??
+            scale.colors.map((_, position) =>
+              scale.colors.length > 1 ? position / (scale.colors.length - 1) : 0
+            );
+          return (
+            <div key={index} className="eda-composition-ramp-stop">
+              <input
+                type="color"
+                aria-label={`Ramp color ${index + 1}`}
+                value={color}
+                onChange={(event) =>
+                  onChange({
+                    colors: scale.colors.map((item, position) =>
+                      position === index ? event.target.value : item
+                    ),
+                  })
+                }
+              />
+              <NumericInputEnter
+                aria-label={`Ramp stop ${index + 1} position`}
+                value={Math.round(stops[index]! * 100)}
+                min={0}
+                max={100}
+                onChange={(next) =>
+                  Number.isFinite(next) &&
+                  onChange({
+                    stops: stops.map((stop, position) =>
+                      position === index
+                        ? Math.min(1, Math.max(0, next / 100))
+                        : stop
+                    ),
+                  })
+                }
+              />
+              <span aria-hidden="true">%</span>
+              {scale.colors.length > 2 && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  aria-label={`Remove ramp stop ${index + 1}`}
+                  tooltip="Remove this color from the ramp"
+                  onClick={() =>
+                    onChange({
+                      colors: scale.colors.filter(
+                        (_, position) => position !== index
+                      ),
+                      stops: scale.stops
+                        ? scale.stops.filter(
+                            (_, position) => position !== index
+                          )
+                        : undefined,
+                    })
+                  }
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              )}
+            </div>
+          );
+        })}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-6 px-2 self-start"
+          tooltip="Add a color stop. Set each stop's position as a percent of the ramp, so a few high values can take the strongest colors."
+          onClick={() => {
+            const stops =
+              scale.stops ??
+              scale.colors.map((_, position) =>
+                scale.colors.length > 1
+                  ? position / (scale.colors.length - 1)
+                  : 0
+              );
+            // The old top color moves halfway toward the end; a copy of it
+            // takes the end, ready to recolor.
+            const last = scale.colors[scale.colors.length - 1]!;
+            const previous = stops[stops.length - 2] ?? 0;
+            onChange({
+              colors: [...scale.colors, last],
+              stops: [...stops.slice(0, -1), (previous + 1) / 2, 1],
+            });
+          }}
+        >
+          + Stop
+        </Button>
+      </div>
       <span className="eda-setting-label">Around zero</span>
       <Segmented
         label={`${scale.name} direction`}

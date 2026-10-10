@@ -1038,6 +1038,17 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "measles",
+    intent:
+      "Draw 51 state strips in the publisher's order with a placed multistop ramp and explicit missing cells.",
+    features: {
+      "chart:composition": "shown",
+      "chart:line": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",
