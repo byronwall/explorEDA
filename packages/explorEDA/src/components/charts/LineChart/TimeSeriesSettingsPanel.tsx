@@ -158,6 +158,7 @@ export function TimeSeriesSettingsPanel({
           <option value="day">Day</option>
           <option value="week">Week</option>
           <option value="month">Month</option>
+          <option value="year">Year</option>
         </select>
         {time.interval === "week" && (
           <>

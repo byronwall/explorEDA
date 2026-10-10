@@ -8,7 +8,7 @@ import { dateTimestamp } from "@/lib/dateTime";
 import type { datum } from "@/types/ChartTypes";
 
 export const DAY_MS = 86_400_000;
-export type TimeInterval = "day" | "week" | "month";
+export type TimeInterval = "day" | "week" | "month" | "year";
 export type WeekStart = "monday" | "sunday";
 
 export interface DailyRollupSpec {
@@ -56,7 +56,8 @@ export function utcPeriod(
   const day = utcDay(value);
   if (!day) return undefined;
   const date = new Date(day.start);
-  if (interval === "month") date.setUTCDate(1);
+  if (interval === "month" || interval === "year") date.setUTCDate(1);
+  if (interval === "year") date.setUTCMonth(0);
   if (interval === "week") {
     date.setUTCDate(
       date.getUTCDate() -
@@ -64,7 +65,8 @@ export function utcPeriod(
     );
   }
   const start = date.getTime();
-  if (interval === "month") date.setUTCMonth(date.getUTCMonth() + 1);
+  if (interval === "year") date.setUTCFullYear(date.getUTCFullYear() + 1);
+  else if (interval === "month") date.setUTCMonth(date.getUTCMonth() + 1);
   else date.setUTCDate(date.getUTCDate() + (interval === "week" ? 7 : 1));
   return {
     day: new Date(start).toISOString().slice(0, 10),

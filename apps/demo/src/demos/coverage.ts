@@ -693,6 +693,27 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "world-development",
+    intent:
+      "Compare economies across five lookups on one country-year key, keeping matched cohorts and weighting explicit.",
+    features: {
+      "chart:scatter": "shown",
+      "chart:markdown": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "chart:ecdf": "shown",
+      "chart:line": "shown",
+      "chart:heatmap": "shown",
+      "chart:map": "shown",
+      "chart:bar": "shown",
+      "chart:boxplot": "shown",
+      "mode:bubble-scatter": "shown",
+      "mode:scatter-regression": "shown",
+      "mode:calendar-series": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
     exampleId: "multi-source-shop",
     intent:
       "Chart related tables with an explicit row meaning, and follow each chart back to its query steps and source records.",

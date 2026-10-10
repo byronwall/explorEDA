@@ -163,7 +163,10 @@ export function TimeSeriesChart({
         labelFontSize: settings.xAxis.labelFontSize,
         label: settings.xAxisLabel || `${plan.dateLabel} · UTC`,
         grid: settings.xAxis.grid,
-        format: (value) => new Date(Number(value)).toISOString().slice(0, 10),
+        format: (value) =>
+          new Date(Number(value))
+            .toISOString()
+            .slice(0, time.interval === "year" ? 4 : 10),
       },
       y: {
         typography,
@@ -207,7 +210,9 @@ export function TimeSeriesChart({
       ? "Daily"
       : time.interval === "week"
         ? "Weekly"
-        : "Monthly";
+        : time.interval === "year"
+          ? "Yearly"
+          : "Monthly";
 
   return (
     <div className="relative" style={{ width, height }}>

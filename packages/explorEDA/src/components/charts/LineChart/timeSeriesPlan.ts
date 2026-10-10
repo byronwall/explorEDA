@@ -215,7 +215,9 @@ export function planTimeSeries(
           const label =
             time.interval === "day"
               ? period.day
-              : `${period.day} – ${new Date(period.end - DAY_MS).toISOString().slice(0, 10)}`;
+              : time.interval === "year"
+                ? period.day.slice(0, 4)
+                : `${period.day} – ${new Date(period.end - DAY_MS).toISOString().slice(0, 10)}`;
           const selected =
             !settings.filters.length ||
             Boolean(

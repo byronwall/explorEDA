@@ -8,6 +8,8 @@ import { beijingAnalysis } from "./beijing";
 import { facts as beijingFacts } from "./facts/beijing";
 import { facts as flightFacts } from "./facts/flights";
 import { flightsAnalysis } from "./flights";
+import { facts as worldBankFacts } from "./facts/worldbank";
+import { worldBankAnalysis } from "./worldbank";
 import { analysisQueryId, buildAnalysisViews } from "./loadAnalysis";
 import type { ExampleAnalysis } from "./types";
 
@@ -149,6 +151,43 @@ describe("Beijing air quality", () => {
       "Particles and NO₂",
       "Ozone follows temperature",
       "Six-pollutant profiles",
+    ]);
+  });
+});
+
+describe("World development indicators", () => {
+  it("keeps every country-year and each year's population through the lookups", async () => {
+    const result = await evaluate(worldBankAnalysis);
+    const { audit } = worldBankFacts;
+    expect(result.counts.output).toBe(audit.baseRows);
+    const population = (year: number) =>
+      sum(
+        result.rows.filter((row) => row.data["years.year"] === year),
+        "years.population"
+      );
+    expect(population(2000)).toBe(audit.population2000);
+    expect(population(2023)).toBe(audit.population2023);
+    const missing = (stepId: string) =>
+      result.diagnostics.filter(
+        (item) => item.code === "missing-lookup" && item.stepId === stepId
+      ).length;
+    expect(missing("country")).toBe(0);
+    expect(missing("gdp")).toBe(audit.baseRows - audit.gdp.matchedBase);
+    expect(missing("power")).toBe(
+      audit.baseRows - audit.electricity.matchedBase
+    );
+    expect(
+      result.diagnostics.filter((item) => item.code === "ambiguous-lookup")
+    ).toEqual([]);
+  });
+
+  it("builds every tab from its text against all rows", async () => {
+    await expectCleanTabs(worldBankAnalysis, [
+      "Income and longevity",
+      "Electricity, 2000 and 2023",
+      "Different paths",
+      "Where people lack power",
+      "Room to improve",
     ]);
   });
 });
