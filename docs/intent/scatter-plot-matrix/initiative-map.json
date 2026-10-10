@@ -8,7 +8,7 @@
     "last_updated": "2026-10-06",
     "summary": "Inspect several field pairs in off-diagonal scatter plots and each field’s distribution on the diagonal.",
     "status": "active",
-    "next_action": "Milestone 6: release readiness — docs, pnpm check, and the stack review."
+    "next_action": "Review and merge the PR stack (byronwall/explorEDA#184 through the release PR); then reconcile and retire the initiative on request."
   },
   "artifacts": {
     "intent_brief": {
@@ -644,12 +644,16 @@
       {
         "id": "M6",
         "title": "Shipped in the demo and package",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Demo example, coverage, docs, minor changeset, PR with screenshots.",
         "proof": "pnpm check passes; PR screenshots at three widths.",
         "valid_intermediate_state": "Release-ready change.",
         "rollback": "Revert the PR before release; afterwards remove the add-chart entry.",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "evidence": [
+          "pnpm check passed on 2026-10-07: UI conventions, package and demo builds, type checks, 673 package tests, 87 demo tests.",
+          "Demo example and coverage entry landed in Milestone 1; docs/analytical-chart-coverage.md and docs/application-feature-inventory.md describe the view; one minor changeset covers the stack."
+        ]
       }
     ],
     "cut_line": [
@@ -742,6 +746,12 @@
       "action": "Completed Milestone 5 on branch claude/scatter-matrix-m5.",
       "reason": "Trace, keyboard, and hover detail.",
       "evidence": "Milestone M5 evidence."
+    },
+    {
+      "date": "2026-10-07",
+      "action": "Completed Milestone 6; every milestone has a stacked PR.",
+      "reason": "Release readiness.",
+      "evidence": "pnpm check exit 0."
     }
   ],
   "closure": null,
