@@ -19,6 +19,7 @@ import {
   messageDashboard,
   drivingDashboard,
   sparklinesDashboard,
+  fanDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -38,6 +39,7 @@ import {
   Calculator,
   Spline,
   TableProperties,
+  AreaChart,
   CloudFog,
   Globe,
   Activity,
@@ -694,6 +696,21 @@ export const examples: ExampleData[] = [
     icon: TableProperties,
     data: "/datasets/big-tech-prices.csv",
     savedData: sparklinesDashboard,
+  },
+  {
+    id: "forecast-fan",
+    title: "Forecast fan",
+    description:
+      "Two measures with quarterly history and three projected years. Four nested bands come straight from supplied percentile columns, under a central path, a shaded projection period, and a 2% reference line.",
+    dataset: { rows: "104 quarters", fields: 13, source: "Synthetic" },
+    shows: [
+      "Supplied interval bands",
+      "Shaded projection guide",
+      "Horizontal guide",
+    ],
+    icon: AreaChart,
+    data: "/datasets/inflation-fan.csv",
+    savedData: fanDashboard,
   },
 ];
 

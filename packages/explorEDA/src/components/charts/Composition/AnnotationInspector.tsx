@@ -415,6 +415,52 @@ export function GuideProperties({
             </select>
           </>
         )}
+        <span className="eda-setting-label">Across</span>
+        <Segmented
+          label="Guide direction"
+          value={guide.axis ?? "x"}
+          options={[
+            {
+              value: "x" as const,
+              label: "Vertical",
+              tooltip: "A rule down the frame at a position or numeric x value",
+            },
+            {
+              value: "y" as const,
+              label: "Horizontal",
+              tooltip:
+                "A rule across the frame at a numeric y value, such as a target. Needs an x–y unit.",
+            },
+          ]}
+          onChange={(axis) => onChange({ axis })}
+        />
+        <span className="eda-setting-label">Shade</span>
+        <Segmented
+          label="Guide shading"
+          value={guide.shade ?? "none"}
+          options={[
+            {
+              value: "none" as const,
+              label: "None",
+              tooltip: "Draw the rule only",
+            },
+            {
+              value: "after" as const,
+              label: "After",
+              tooltip:
+                "Tint the frame to the right of a vertical rule, or above a horizontal one, such as a projection period",
+            },
+            {
+              value: "before" as const,
+              label: "Before",
+              tooltip:
+                "Tint the frame to the left of a vertical rule, or below a horizontal one",
+            },
+          ]}
+          onChange={(shade) =>
+            onChange({ shade: shade === "none" ? undefined : shade })
+          }
+        />
         <Label htmlFor={`${id}-label`}>Label</Label>
         <Input
           id={`${id}-label`}
