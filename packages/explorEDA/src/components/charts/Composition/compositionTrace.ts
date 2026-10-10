@@ -131,7 +131,11 @@ export function makeCompositionTraceSource(
       if (mark.type === "strip") {
         const position = scale(mark.positionScaleId);
         if (position?.kind === "position") fields.add(position.field);
-      } else if (mark.type !== "summary" && mark.type !== "stack") {
+      } else if (
+        mark.type !== "summary" &&
+        mark.type !== "stack" &&
+        mark.type !== "density"
+      ) {
         for (const id of [mark.xScaleId, mark.yScaleId]) {
           const axis = scale(id);
           if (axis?.kind === "numeric") fields.add(axis.field);

@@ -30,6 +30,7 @@ import {
   covidTilesDashboard,
   covidCompareDashboard,
   electionsDashboard,
+  lincolnRidgelineDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -60,6 +61,7 @@ import {
   Map as MapIcon,
   PictureInPicture2,
   Vote,
+  Mountain,
   CloudFog,
   Globe,
   Activity,
@@ -873,6 +875,17 @@ export const examples: ExampleData[] = [
     icon: Vote,
     data: "/datasets/elections.csv",
     savedData: electionsDashboard,
+  },
+  {
+    id: "lincoln-ridgeline",
+    title: "Temperatures in Lincoln, Nebraska, in 2016",
+    description:
+      "Twelve overlapping ridges, one per month: the density of each month's daily mean temperatures on one shared scale and height, computed on the spot from the daily readings.",
+    dataset: { rows: "366 days", fields: 6, source: "Real" },
+    shows: ["Density marks", "Overlapping rows", "Shared height"],
+    icon: Mountain,
+    data: "/datasets/lincoln-weather.csv",
+    savedData: lincolnRidgelineDashboard,
   },
 ];
 

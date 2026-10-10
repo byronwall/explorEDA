@@ -1,4 +1,5 @@
 import { FieldSelector } from "@/components/FieldSelector";
+import { NumericInputEnter } from "@/components/NumericInputEnter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +11,7 @@ import {
   MUTED_MARK,
   newMarkId,
   type BandMark,
+  type DensityMark,
   type FrameWindow,
   type InsetFrame,
   type InstanceOverride,
@@ -162,6 +164,12 @@ const MARK_TYPES = [
     label: "Stack",
     tooltip:
       "One column per repeat, its categories stacked from the bottom as shares of the repeat's total. Filtering the rows recomputes the total.",
+  },
+  {
+    value: "density" as const,
+    label: "Density",
+    tooltip:
+      "The distribution of a numeric field in each repeat as a smoothed curve filled to the baseline. Overlap rows with a negative gap for a ridgeline.",
   },
   {
     value: "summary" as const,
@@ -346,7 +354,7 @@ export function UnitProperties({
               />
               <NumberSetting
                 label="Gap"
-                min={0}
+                min={-400}
                 max={200}
                 value={unit.repeat.gap}
                 onChange={(gap) => repeat({ gap })}
@@ -533,6 +541,7 @@ function FrameSection({
                     mark.type !== "strip" &&
                     mark.type !== "summary" &&
                     mark.type !== "stack" &&
+                    mark.type !== "density" &&
                     mark.frameId === inset.id
                       ? { ...mark, frameId: undefined }
                       : mark
@@ -626,17 +635,19 @@ function MarksSection({
           ? { ...first, id, name: "Summary 2" }
           : first.type === "stack"
             ? { ...first, id, name: "Stack 2" }
-            : {
-                type: "point",
-                id,
-                name: "Points",
-                xScaleId: first.xScaleId,
-                yScaleId: first.yScaleId,
-                orderField: first.orderField,
-                radius: 3.5,
-                fill: first.type === "path" ? first.stroke : first.fill,
-                labelEvery: 0,
-              };
+            : first.type === "density"
+              ? { ...first, id, name: "Density 2" }
+              : {
+                  type: "point",
+                  id,
+                  name: "Points",
+                  xScaleId: first.xScaleId,
+                  yScaleId: first.yScaleId,
+                  orderField: first.orderField,
+                  radius: 3.5,
+                  fill: first.type === "path" ? first.stroke : first.fill,
+                  labelEvery: 0,
+                };
     onChange([...unit.marks, added]);
   };
   return (
@@ -748,6 +759,13 @@ function MarkProperties({
             mark={mark}
             scales={scales}
             numericFields={numericFields}
+            onChange={onChange}
+            onEditScale={onEditScale}
+          />
+        ) : mark.type === "density" ? (
+          <DensityFields
+            mark={mark}
+            scales={scales}
             onChange={onChange}
             onEditScale={onEditScale}
           />
@@ -923,6 +941,101 @@ const FOCUS_OPTIONS = [
     tooltip: "Only the series you list draw in color; the rest fade",
   },
 ];
+
+function DensityFields({
+  mark,
+  scales,
+  onChange,
+  onEditScale,
+}: {
+  mark: DensityMark;
+  scales: CompositionScale[];
+  onChange: (patch: Partial<DensityMark>) => void;
+  onEditScale: (scaleId: string) => void;
+}) {
+  const id = useId();
+  const numeric = scales.filter((scale) => scale.kind === "numeric");
+  return (
+    <>
+      <Label htmlFor={`${id}-x`}>Field scale</Label>
+      <ScaleSelect
+        id={`${id}-x`}
+        value={mark.xScaleId}
+        scales={numeric}
+        onChange={(xScaleId) => onChange({ xScaleId })}
+        onEdit={onEditScale}
+      />
+      <span className="eda-setting-label">Height</span>
+      <Segmented
+        label={`${mark.name} height`}
+        value={mark.height}
+        options={[
+          {
+            value: "shared" as const,
+            label: "Shared",
+            tooltip:
+              "The tallest density across the repeats fills the frame, so heights compare",
+          },
+          {
+            value: "instance" as const,
+            label: "Per unit",
+            tooltip: "Each repeat's own peak fills its frame",
+          },
+        ]}
+        onChange={(height) => onChange({ height })}
+      />
+      <span className="eda-setting-label">Smoothing</span>
+      <div className="eda-composition-color">
+        <NumericInputEnter
+          aria-label={`${mark.name} bandwidth`}
+          value={mark.bandwidth ?? 0}
+          min={0}
+          onChange={(bandwidth) =>
+            Number.isFinite(bandwidth) &&
+            onChange({ bandwidth: bandwidth > 0 ? bandwidth : undefined })
+          }
+        />
+        <span className="text-muted-foreground">
+          {mark.bandwidth ? "in field units" : "0 = span over 12"}
+        </span>
+      </div>
+      <ColorSetting
+        label="Fill"
+        value={mark.fill}
+        onChange={(fill) => onChange({ fill })}
+      />
+      <NumberSetting
+        label="Opacity %"
+        min={5}
+        max={100}
+        value={Math.round(mark.opacity * 100)}
+        onChange={(value) => onChange({ opacity: value / 100 })}
+      />
+      <span className="eda-setting-label">Outline</span>
+      <div className="eda-composition-color">
+        <input
+          type="color"
+          aria-label={`${mark.name} outline color`}
+          value={mark.stroke ?? "#1f2328"}
+          onChange={(event) => onChange({ stroke: event.target.value })}
+        />
+        {mark.stroke ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 px-2"
+            tooltip="Draw the curve without an outline"
+            onClick={() => onChange({ stroke: undefined })}
+          >
+            None
+          </Button>
+        ) : (
+          <span className="text-muted-foreground">None</span>
+        )}
+      </div>
+    </>
+  );
+}
 
 const STACK_ORDERS = [
   {

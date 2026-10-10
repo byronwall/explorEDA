@@ -313,6 +313,9 @@ Trace on a median lists the quartiles, count, group, and the change that set the
 
 Not built: weighted summaries and a drawn legend for the diverging color; the subtitle states the meaning.
 
+Distributions can also be drawn whole: a density mark estimates a repeat's measure with a Gaussian kernel on a grid shared across repeats, fills from the frame's baseline, and takes its height from the shared peak or each repeat's own.
+The Lincoln ridgeline ships as `?example=lincoln-ridgeline` from `apps/data-samples/prepare/lincoln-weather.ts`: twelve months of daily temperatures as rows that overlap through a negative repeat gap, drawn bottom first so the upper ridge sits in front.
+
 ## Milestone 5: Stack category shares with explainable denominators
 
 Create the Causes composition using category counts by age.

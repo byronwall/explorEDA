@@ -328,3 +328,18 @@ node --experimental-strip-types apps/data-samples/prepare/covid-compare.ts
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/elections.ts
 ```
+
+## Lincoln, Nebraska weather, 2016
+
+- File: `lincoln-weather.csv`
+- Size: 366 rows and 6 fields
+- Demo: `?example=lincoln-ridgeline`
+- Use: a ridgeline composition, one density of daily mean temperatures per month, overlapping down the page in calendar order
+- Source: the [ggridges](https://github.com/wilkelab/ggridges) package's raw `lincoln-weather.csv`, Weather Underground observations for Lincoln, Nebraska, collected by Claus Wilke.
+- License: ggridges is GPL-2; the observations are factual weather records, reused with credit.
+
+Daily mean, maximum, and minimum temperatures in degrees Fahrenheit, with the month name and number.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/lincoln-weather.ts
+```

@@ -5,6 +5,7 @@ import {
   type BandMark,
   type CompositionDefinition,
   type CompositionElement,
+  type DensityMark,
   type FieldChoice,
   type InstanceOverride,
   type MarkDefinition,
@@ -110,6 +111,7 @@ export function resetOverride(
 function markColor(mark: MarkDefinition) {
   if (mark.type === "path") return mark.stroke;
   if (mark.type === "stack") return mark.colors[0] ?? "#1f2328";
+  if (mark.type === "density") return mark.fill;
   return mark.fill;
 }
 
@@ -129,6 +131,28 @@ export function convertMark(
   if (!mark || mark.type === type) return definition;
   let next = definition;
   let replacement: MarkDefinition;
+  if (type === "density") {
+    const numeric = fields.filter((item) => item.dataType === "numeric");
+    const field =
+      next.scales.find(
+        (scale): scale is NumericScale => scale.kind === "numeric"
+      )?.field ?? numeric[0]?.name;
+    if (!field) return definition;
+    const withX = ensureNumericScale(next, field);
+    const density: DensityMark = {
+      type: "density",
+      id: mark.id,
+      name: mark.name,
+      xScaleId: withX.scale.id,
+      height: "shared",
+      fill: markColor(mark),
+      opacity: 0.8,
+      stroke: "#1f2328",
+    };
+    return updateElement<UnitElement>(withX.definition, unit.id, {
+      marks: unit.marks.map((item) => (item.id === markId ? density : item)),
+    });
+  }
   if (type === "stack") {
     const categoryField =
       fields.find(
@@ -243,6 +267,7 @@ export function convertMark(
         item.type !== "strip" &&
         item.type !== "summary" &&
         item.type !== "stack" &&
+        item.type !== "density" &&
         item.id !== markId
     );
     let xScaleId = sibling?.xScaleId;

@@ -1125,6 +1125,17 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "lincoln-ridgeline",
+    intent:
+      "Overlap a density of each month's daily temperatures down the page on one shared scale and height.",
+    features: {
+      "chart:composition": "shown",
+      "chart:boxplot": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

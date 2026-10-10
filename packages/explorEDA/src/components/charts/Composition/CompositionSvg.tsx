@@ -165,26 +165,49 @@ function SceneNodeView({ node }: { node: SceneNode }) {
       );
     case "area":
       return (
-        <path
-          data-node={node.key}
-          d={node.segments
-            .map((run) => {
-              const upper = run.map(
-                (vertex, index) =>
-                  `${index ? "L" : "M"}${round(vertex.x)} ${round(vertex.y1)}`
-              );
-              const lower = [...run]
-                .reverse()
-                .map((vertex) => `L${round(vertex.x)} ${round(vertex.y0)}`);
-              return `${upper.join("")}${lower.join("")}Z`;
-            })
-            .join("")}
-          fill={node.fill}
-          fillOpacity={node.fillOpacity}
-          stroke="none"
-          opacity={node.opacity}
-          clipPath={clipPath}
-        />
+        <g>
+          <path
+            data-node={node.key}
+            d={node.segments
+              .map((run) => {
+                const upper = run.map(
+                  (vertex, index) =>
+                    `${index ? "L" : "M"}${round(vertex.x)} ${round(vertex.y1)}`
+                );
+                const lower = [...run]
+                  .reverse()
+                  .map((vertex) => `L${round(vertex.x)} ${round(vertex.y0)}`);
+                return `${upper.join("")}${lower.join("")}Z`;
+              })
+              .join("")}
+            fill={node.fill}
+            fillOpacity={node.fillOpacity}
+            stroke="none"
+            opacity={node.opacity}
+            clipPath={clipPath}
+          />
+          {node.stroke && (
+            <path
+              d={node.segments
+                .map((run) =>
+                  run
+                    .map(
+                      (vertex, index) =>
+                        `${index ? "L" : "M"}${round(vertex.x)} ${round(vertex.y1)}`
+                    )
+                    .join("")
+                )
+                .join("")}
+              fill="none"
+              stroke={node.stroke}
+              strokeWidth={1}
+              strokeLinejoin="round"
+              opacity={node.opacity}
+              clipPath={clipPath}
+              pointerEvents="none"
+            />
+          )}
+        </g>
       );
     case "path":
       return (

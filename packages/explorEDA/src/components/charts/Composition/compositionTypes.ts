@@ -379,13 +379,35 @@ export interface StackMark {
   xScaleId?: string;
 }
 
+/**
+ * The distribution of a numeric field in each repeat, as a smoothed density
+ * curve along x filled down to the frame's baseline. Densities share one
+ * height so repeats compare, or each fills its own frame. Rows that overlap
+ * through a negative repeat gap make a ridgeline.
+ */
+export interface DensityMark {
+  type: "density";
+  id: string;
+  name: string;
+  /** The numeric scale along x; its field is the one summarized. */
+  xScaleId: string;
+  /** Kernel width in the field's units; the data's spread over 12 when unset. */
+  bandwidth?: number;
+  /** Shared: the tallest density across repeats fills the frame. Per unit: each repeat's peak does. */
+  height: ScaleDomain;
+  fill: string;
+  opacity: number;
+  stroke?: string;
+}
+
 export type MarkDefinition =
   | StripMark
   | PointMark
   | PathMark
   | BandMark
   | SummaryMark
-  | StackMark;
+  | StackMark
+  | DensityMark;
 
 /** A categorical palette for stacks, distinct and readable on paper. */
 export const STACK_COLORS = [
@@ -415,6 +437,7 @@ export function markScaleIds(mark: MarkDefinition): string[] {
       ? [mark.yScaleId, mark.valueScaleId]
       : [mark.yScaleId];
   if (mark.type === "stack") return mark.xScaleId ? [mark.xScaleId] : [];
+  if (mark.type === "density") return [mark.xScaleId];
   if (mark.type === "point" || mark.type === "path")
     return mark.yScaleId ? [mark.xScaleId, mark.yScaleId] : [mark.xScaleId];
   return [mark.xScaleId, mark.yScaleId];
@@ -443,6 +466,8 @@ export function markFields(mark: MarkDefinition): string[] {
       return mark.measureField
         ? [mark.categoryField, mark.measureField]
         : [mark.categoryField];
+    case "density":
+      return [];
   }
 }
 
