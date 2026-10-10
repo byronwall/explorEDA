@@ -28,7 +28,12 @@ export interface NumericalColorScale extends BaseColorScale {
 }
 
 /** The order categories take a palette's colors in. */
-export type CategoryColorOrder = "frequency" | "alphabetical" | "data";
+export type CategoryColorOrder =
+  | "frequency"
+  | "alphabetical"
+  | "data"
+  /** The order the user set by moving categories. */
+  | "custom";
 
 export interface CategoricalColorScale extends BaseColorScale {
   type: "categorical";

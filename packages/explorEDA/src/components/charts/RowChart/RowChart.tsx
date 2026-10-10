@@ -1,3 +1,5 @@
+import { useThemeColors } from "@/hooks/useDisplayColorScales";
+import { useAxisTypography } from "../chartTypography";
 import {
   categoryEqual,
   categoryIncludes,
@@ -207,6 +209,8 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   useTraceSource(owner, source);
   const inspect = (key: string) => api?.inspect(owner, "row-category", key);
 
+  const typography = useAxisTypography();
+  const themeColors = useThemeColors();
   const yLabels = displayCounts.map((d) => d.label);
   const axisFields = getChartAxisFields(settings);
   const xAxisLabel = getChartAxisLabel(
@@ -214,10 +218,21 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
     settings.xAxisLabel,
     getFieldLabel
   );
+  const tickSize = settings.yAxis.tickFontSize ?? typography.tickSize;
+  // Category names claim their measured width, never less than the estimate.
   const requestedLabelMargin = Math.max(
     baseMargin.left,
-    ...yLabels.map((label) => label.length * 7 + 24)
+    ...yLabels.map(
+      (label) =>
+        Math.max(
+          label.length * tickSize * 0.7,
+          typography.measure(label, tickSize)
+        ) + 24
+    )
   );
+  const typeGrowth =
+    Math.max(0, (settings.xAxis.tickFontSize ?? typography.tickSize) - 10) +
+    (xAxisLabel ? Math.max(0, typography.labelSize - 11) : 0);
   const minPlotWidth = Math.min(
     80,
     Math.max(0, width - baseMargin.left - baseMargin.right)
@@ -229,7 +244,8 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
     left: Math.min(labelMargin, width * 0.42),
     right: Math.max(baseMargin.right, 48),
     bottom:
-      Math.max(baseMargin.bottom, xAxisLabel ? 42 : 26) + STATUS_LINE_HEIGHT,
+      Math.max(baseMargin.bottom, (xAxisLabel ? 42 : 26) + typeGrowth) +
+      STATUS_LINE_HEIGHT,
   };
   // Few categories keep their bar height, so the X axis rises to sit under
   // the last bar instead of leaving a gap above it.
@@ -323,7 +339,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
       <BaseChart
         width={width}
         height={chartHeight}
-        footer={axisRise}
+        footer={axisRise + STATUS_LINE_HEIGHT}
         xScale={xScale}
         yScale={yScale}
         settings={chartSettings}
@@ -369,7 +385,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
                       : getColorForValue(
                           settings.colorScaleId,
                           item.value,
-                          "#3479a8"
+                          themeColors.mark
                         ),
                     fillOpacity: "var(--eda-flow-context)",
                   }}
@@ -388,7 +404,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
             const color =
               valueFilter && !isFiltered
                 ? "rgb(156 163 175)" // gray-400 for filtered out points
-                : getColorForValue(settings.colorScaleId, value, "#3479a8");
+                : getColorForValue(settings.colorScaleId, value, themeColors.mark);
 
             const barWidth = xScale(count);
             const barHeight = yScale.bandwidth();

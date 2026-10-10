@@ -1,5 +1,6 @@
 import { bisectRight } from "d3-array";
-import { interpolateBlues } from "d3-scale-chromatic";
+import { heatFill } from "../heatScale";
+import type { AxisTypography } from "../Axis/axisPlan";
 import { finiteNumber } from "@/lib/numeric";
 import type { datum, Filter } from "@/types/FilterTypes";
 import { numericScale } from "../Axis/numericScale";
@@ -28,8 +29,9 @@ export interface DensityBin {
   fill: string;
 }
 
+/** Bin fill from the theme's heat ramp, so density follows theme and mode. */
 export const densityColor = (fraction: number) =>
-  interpolateBlues(0.2 + 0.75 * Math.max(0, Math.min(1, fraction)));
+  heatFill(0.2 + 0.8 * Math.max(0, Math.min(1, fraction)), "sequential");
 
 /** Equal numeric intervals keep exact membership independent of panel pixels. */
 export function densityEdges(domain: [number, number], count: number) {
@@ -42,7 +44,8 @@ export function planDensity(
   settings: ScatterPlotSettings,
   snapshot: ScatterSnapshot,
   width: number,
-  height: number
+  height: number,
+  typography?: AxisTypography
 ) {
   const scatterSettings = {
     ...settings,
@@ -54,7 +57,8 @@ export function planDensity(
     scatterSettings,
     snapshot,
     width,
-    Math.max(1, height - DENSITY_FOOTER)
+    Math.max(1, height - DENSITY_FOOTER),
+    typography
   );
   const xBins = settings.density?.xBins ?? 20;
   const yBins = settings.density?.yBins ?? 16;
