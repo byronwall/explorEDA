@@ -22,8 +22,28 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
   const summary = glyph?.datum.summary;
   const stack = glyph?.datum.stack;
   const waffle = glyph?.datum.waffle;
+  const bar = glyph?.datum.bar;
   return (
     <div className="space-y-2" aria-label="Composition trace">
+      {glyph && bar && (
+        <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
+          <TraceReadout label="Length">
+            <TraceSwatch color={glyph.fill} />{" "}
+            {formatCalcValue(Math.abs(glyph.datum.value), "number")}
+            {bar.measureField ? ` ${bar.measureField}` : " rows"}
+            {bar.mirrored ? ", drawn leftward from the baseline" : ""}
+          </TraceReadout>
+          <TraceReadout label="Calculation">
+            {AGGREGATION_TEXT[bar.aggregation] ?? bar.aggregation}
+            {bar.measureField ? ` of ${bar.measureField}` : ""} over{" "}
+            {glyph.datum.rowIds.length.toLocaleString()} rows in this repeat
+            {bar.category !== undefined
+              ? ` where ${bar.categoryField} = ${bar.category}`
+              : ""}
+            , after the active filters
+          </TraceReadout>
+        </TraceSection>
+      )}
       {glyph && waffle && (
         <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
           <TraceReadout label="Cell">
@@ -142,7 +162,7 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
           )}
         </TraceSection>
       )}
-      {glyph && !point && !summary && !stack && !waffle && (
+      {glyph && !point && !summary && !stack && !waffle && !bar && (
         <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
           <TraceReadout label="Value">
             <TraceSwatch color={glyph.fill} />{" "}

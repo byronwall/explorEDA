@@ -388,3 +388,18 @@ One row per industry and month from January 2000 to February 2010, with the unem
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/unemployment-industries.ts
 ```
+
+## United States population by age and sex, 1850 to 2000
+
+- File: `us-population.csv`
+- Size: 570 rows and 5 fields
+- Demo: `?example=population-pyramid`
+- Use: population pyramid compositions, bars per age group mirrored by sex
+- Source: U.S. Census Bureau decennial censuses, as packaged in [vega-datasets](https://github.com/vega/vega-datasets) (`population.json`).
+- License: vega-datasets is BSD-3-Clause; the figures are public US government statistics.
+
+One row per census year, five-year age group, and sex, with the number of people. The 1890 census is absent from the source.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/us-population.ts
+```

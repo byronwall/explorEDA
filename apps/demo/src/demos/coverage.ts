@@ -1169,6 +1169,16 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "population-pyramid",
+    intent:
+      "Mirror men and women about a baseline per age group, 1900 beside 2000, on one shared length axis.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

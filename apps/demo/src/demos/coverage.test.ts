@@ -97,6 +97,7 @@ describe("example coverage manifest", () => {
       "tax-slope",
       "titanic-waffle",
       "unemployment-stream",
+      "population-pyramid",
       "product-activity",
       "scatter-trace",
       "calculated-orders",

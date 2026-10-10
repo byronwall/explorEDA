@@ -60,6 +60,7 @@ import {
   type TextElement,
   type TextRole,
   type UnitElement,
+  markHasCategories,
 } from "./compositionTypes";
 import { ScalesSection } from "./ScaleInspector";
 import { copyArtboardPng } from "./compositionOutput";
@@ -613,11 +614,7 @@ function LegendProperties({
           {(unit?.marks ?? []).map((mark) => (
             <option key={mark.id} value={mark.id}>
               {mark.name}
-              {mark.type === "stack" ||
-              ((mark.type === "point" || mark.type === "path") &&
-                mark.colorField)
-                ? ""
-                : " (no categories)"}
+              {markHasCategories(mark) ? "" : " (no categories)"}
             </option>
           ))}
         </select>

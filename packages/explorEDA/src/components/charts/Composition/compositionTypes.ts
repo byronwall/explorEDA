@@ -407,6 +407,35 @@ export type StackBaseline = "zero" | "center" | "wiggle";
 export type MarkCurve = "linear" | "smooth";
 
 /**
+ * One bar per repeat, or per category of a field, whose length along x is an
+ * aggregate of the repeat's rows: a bar chart when the unit repeats as rows.
+ * Lengths share one axis across repeats, from zero to the longest bar or to
+ * a fixed length. One category can draw leftward from the baseline, as the
+ * two sexes of a population pyramid.
+ */
+export interface BarMark {
+  type: "bar";
+  id: string;
+  name: string;
+  aggregation: MarkAggregation;
+  measureField?: string;
+  /** One bar per value of this field within the repeat, in an order shared across repeats. */
+  categoryField?: string;
+  /** The category drawn leftward from the baseline, mirroring the rest. */
+  mirror?: string;
+  /** Category order: by label, or largest total first across the whole graphic. */
+  order: "label" | "total";
+  /** One color per category in that order, cycling when there are more. */
+  colors: string[];
+  /** The length of the axis in the measure; the longest drawn bar, rounded out, when unset. */
+  max?: number;
+  /** Space between a repeat's bars, in artboard pixels. */
+  inset: number;
+  /** Label a bar's value at its end when the bar is at least this long, in pixels; 0 never. */
+  labelMinWidth: number;
+}
+
+/**
  * A grid of cells for a repeat's rows: one cell per row, one per `each`
  * rows, or a hundred cells of shares. Cells fill row by row from one
  * corner, grouped by a category field in an order shared across repeats,
@@ -462,6 +491,7 @@ export type MarkDefinition =
   | SummaryMark
   | StackMark
   | WaffleMark
+  | BarMark
   | DensityMark;
 
 /** A categorical palette for stacks, distinct and readable on paper. */
@@ -493,10 +523,36 @@ export function markScaleIds(mark: MarkDefinition): string[] {
       : [mark.yScaleId];
   if (mark.type === "stack") return mark.xScaleId ? [mark.xScaleId] : [];
   if (mark.type === "density") return [mark.xScaleId];
-  if (mark.type === "waffle") return [];
-  if (mark.type === "point" || mark.type === "path")
-    return mark.yScaleId ? [mark.xScaleId, mark.yScaleId] : [mark.xScaleId];
-  return [mark.xScaleId, mark.yScaleId];
+  if (mark.type === "waffle" || mark.type === "bar") return [];
+  if (mark.type === "band") return [mark.xScaleId, mark.yScaleId];
+  return mark.yScaleId ? [mark.xScaleId, mark.yScaleId] : [mark.xScaleId];
+}
+
+/**
+ * Marks that draw in an x–y frame: they name numeric scales, can sit in an
+ * inset, and can be converted among one another. Every other mark type is
+ * either strip-based or builds its own axis.
+ */
+export function isXyMark(
+  mark: MarkDefinition
+): mark is PointMark | PathMark | BandMark {
+  return mark.type === "point" || mark.type === "path" || mark.type === "band";
+}
+
+/** True when a mark's colors stand for the values of a category field, so a legend can list them. */
+export function markHasCategories(mark: MarkDefinition): boolean {
+  switch (mark.type) {
+    case "stack":
+    case "waffle":
+      return true;
+    case "bar":
+      return Boolean(mark.categoryField);
+    case "point":
+    case "path":
+      return Boolean(mark.colorField);
+    default:
+      return false;
+  }
 }
 
 /** The fields a mark reads, beyond its scales. */
@@ -526,6 +582,10 @@ export function markFields(mark: MarkDefinition): string[] {
         : [mark.categoryField];
     case "waffle":
       return [mark.categoryField];
+    case "bar":
+      return [mark.measureField, mark.categoryField].filter(
+        (field): field is string => Boolean(field)
+      );
     case "density":
       return [];
   }

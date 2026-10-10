@@ -34,6 +34,7 @@ import {
   taxSlopeDashboard,
   titanicWaffleDashboard,
   unemploymentStreamDashboard,
+  populationPyramidDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -67,6 +68,7 @@ import {
   Mountain,
   TrendingUp,
   Waves,
+  Users,
   CloudFog,
   Globe,
   Activity,
@@ -924,6 +926,17 @@ export const examples: ExampleData[] = [
     icon: Waves,
     data: "/datasets/unemployment-industries.csv",
     savedData: unemploymentStreamDashboard,
+  },
+  {
+    id: "population-pyramid",
+    title: "The United States grew older",
+    description:
+      "Two population pyramids, 1900 and 2000: bar marks per age group with men mirrored left of the baseline, on one shared length axis, each unit windowed to its census.",
+    dataset: { rows: "570 rows", fields: 5, source: "Real" },
+    shows: ["Bar marks", "Mirrored categories", "Windowed units"],
+    icon: Users,
+    data: "/datasets/us-population.csv",
+    savedData: populationPyramidDashboard,
   },
 ];
 

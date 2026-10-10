@@ -71,6 +71,22 @@ function isMark(value: unknown) {
       (value.population === undefined ||
         oneOf(value.population, ["repeat", "composition"]))
     );
+  if (value.type === "bar")
+    return (
+      oneOf(value.aggregation, ["count", "sum", "average"]) &&
+      (value.aggregation === "count" || isString(value.measureField)) &&
+      (value.categoryField === undefined || isString(value.categoryField)) &&
+      (value.mirror === undefined || isString(value.mirror)) &&
+      oneOf(value.order, ["label", "total"]) &&
+      Array.isArray(value.colors) &&
+      value.colors.length > 0 &&
+      value.colors.every(isString) &&
+      (value.max === undefined || (isNumber(value.max) && value.max > 0)) &&
+      isNumber(value.inset) &&
+      value.inset >= 0 &&
+      isNumber(value.labelMinWidth) &&
+      value.labelMinWidth >= 0
+    );
   if (value.type === "waffle")
     return (
       isString(value.categoryField) &&
@@ -435,7 +451,7 @@ export function isCompositionDefinition(
             isRecord(mark) &&
             (mark.type === "density"
               ? kinds.get(mark.xScaleId) === "numeric"
-              : mark.type === "waffle"
+              : mark.type === "waffle" || mark.type === "bar"
                 ? true
                 : mark.type === "stack"
                   ? mark.xScaleId === undefined ||
