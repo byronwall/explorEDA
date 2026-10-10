@@ -313,3 +313,18 @@ Every seventh day from March 2020 to March 2023 for California, Florida, New Yor
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/covid-compare.ts
 ```
+
+## Presidential margins by state, 1976–2016
+
+- File: `elections.csv`
+- Size: 561 rows and 7 fields
+- Demo: `?example=elections`
+- Use: a strip composition of 51 state rows and 11 election columns, each cell colored by the signed Democratic margin through a diverging ramp, with a ramp legend
+- Source: MIT Election Data and Science Lab, [U.S. President 1976–2020](https://doi.org/10.7910/DVN/42MVDX) state returns (the file version retrieved covers 1976–2016).
+- License: CC0 1.0 (the lab's public dataverse terms).
+
+`Margin` is the Democratic share of all votes cast minus the Republican share, in percentage points; positive leans Democratic. Minnesota's Democratic-Farmer-Labor line counts as the Democratic ticket; other minor party lines are not folded in.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/elections.ts
+```

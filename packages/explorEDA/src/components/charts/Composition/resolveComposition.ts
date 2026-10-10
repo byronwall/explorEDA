@@ -13,12 +13,16 @@ import type {
   LegendElement,
   TextElement,
   UnitElement,
+  ValueScale,
 } from "./compositionTypes";
 import {
   markCategories,
   numericPixel,
   readNumber,
   periodKey,
+  valueColor,
+  valueColorSigned,
+  valueShare,
   periodStart,
   resolveUnit,
   type BandDatum,
@@ -230,7 +234,13 @@ export function resolveComposition(
         break;
       }
       case "legend": {
-        const legend = resolveLegend(element, definition, data, measureText);
+        const legend = resolveLegend(
+          element,
+          definition,
+          data,
+          measureText,
+          units
+        );
         nodes.push(...legend.nodes);
         elements.push({
           id: element.id,
@@ -387,12 +397,21 @@ function resolveLegend(
   legend: LegendElement,
   definition: CompositionDefinition,
   data: CompositionData,
-  measureText: MeasureText
+  measureText: MeasureText,
+  units: Map<string, ResolvedUnit>
 ) {
   const unit = definition.elements.find(
     (element): element is UnitElement =>
       element.kind === "unit" && element.id === legend.unitId
   );
+  const scale = legend.scaleId
+    ? definition.scales.find(
+        (item): item is ValueScale =>
+          item.kind === "value" && item.id === legend.scaleId
+      )
+    : undefined;
+  if (scale)
+    return resolveRampLegend(legend, scale, definition, units, measureText);
   const mark = unit?.marks.find((item) => item.id === legend.markId);
   const entries = mark ? markCategories(mark, data) : [];
   const nodes: SceneNode[] = [];
@@ -461,6 +480,168 @@ function resolveLegend(
           ? y - legend.y + step
           : entries.length * step,
     },
+  };
+}
+
+/**
+ * A key for a value scale: swatches along its ramp from the lowest drawn
+ * value to the highest, labeled at the ends. A diverging scale runs from
+ * minus the largest magnitude through its center to plus, labeled at zero.
+ */
+function resolveRampLegend(
+  legend: LegendElement,
+  scale: ValueScale,
+  definition: CompositionDefinition,
+  units: Map<string, ResolvedUnit>,
+  measureText: MeasureText
+) {
+  // The drawn extent: every strip glyph of a mark on this scale.
+  let max = 0;
+  let min = Infinity;
+  for (const element of definition.elements) {
+    if (element.kind !== "unit") continue;
+    const markIds = new Set(
+      element.marks
+        .filter(
+          (mark) => mark.type === "strip" && mark.valueScaleId === scale.id
+        )
+        .map((mark) => mark.id)
+    );
+    if (!markIds.size) continue;
+    for (const node of units.get(element.id)?.nodes ?? []) {
+      if ((node.type !== "rect" && node.type !== "circle") || !node.glyph)
+        continue;
+      if (!markIds.has(node.glyph.markId) || node.glyph.missing) continue;
+      max = Math.max(max, Math.abs(node.glyph.value));
+      min = Math.min(min, node.glyph.value);
+    }
+  }
+  if (min === Infinity) min = 0;
+  const diverging = scale.center !== undefined;
+  const steps = diverging ? 9 : 7;
+  const swatch = Math.round(legend.fontSize * 0.9);
+  const step = Math.round(legend.fontSize * 1.5);
+  const nodes: SceneNode[] = [];
+  const row = legend.direction === "row";
+  for (let index = 0; index < steps; index += 1) {
+    const share = steps > 1 ? index / (steps - 1) : 0;
+    const value = diverging
+      ? -max + share * 2 * max
+      : min + share * (max - min);
+    const fill = diverging
+      ? valueColorSigned(scale, value, max)
+      : valueColor(scale, valueShare(scale, value, max));
+    nodes.push({
+      type: "rect",
+      key: `${legend.id}:${index}:swatch`,
+      elementId: legend.id,
+      x: row ? legend.x + index * (swatch + 1) : legend.x,
+      y: row ? legend.y + (step - swatch) / 2 : legend.y + index * (swatch + 1),
+      width: swatch,
+      height: swatch,
+      fill,
+    });
+  }
+  const rampLength = steps * (swatch + 1) - 1;
+  const low = diverging
+    ? `−${formatCalcValue(max, "number")}`
+    : formatCalcValue(min, "number");
+  const high = diverging
+    ? `+${formatCalcValue(max, "number")}`
+    : formatCalcValue(max, "number");
+  type Label = {
+    text: string;
+    x: number;
+    y: number;
+    anchor: "start" | "middle" | "end";
+  };
+  const labels: Label[] = row
+    ? [
+        {
+          text: low,
+          x: legend.x,
+          y: legend.y + step + legend.fontSize,
+          anchor: "start",
+        },
+        {
+          text: high,
+          x: legend.x + rampLength,
+          y: legend.y + step + legend.fontSize,
+          anchor: "end",
+        },
+      ]
+    : [
+        {
+          text: low,
+          x: legend.x + swatch + 4,
+          y: legend.y + legend.fontSize * 0.9,
+          anchor: "start",
+        },
+        {
+          text: high,
+          x: legend.x + swatch + 4,
+          y: legend.y + rampLength,
+          anchor: "start",
+        },
+      ];
+  if (diverging)
+    labels.push(
+      row
+        ? {
+            text: "0",
+            x: legend.x + rampLength / 2,
+            y: legend.y + step + legend.fontSize,
+            anchor: "middle",
+          }
+        : {
+            text: "0",
+            x: legend.x + swatch + 4,
+            y: legend.y + rampLength / 2 + legend.fontSize * 0.35,
+            anchor: "start",
+          }
+    );
+  nodes.push({
+    type: "text",
+    key: `${legend.id}:title`,
+    elementId: legend.id,
+    x: legend.x,
+    lines: [{ text: scale.name, y: legend.y - 4 }],
+    fontSize: legend.fontSize,
+    fontWeight: 600,
+    fill: legend.color,
+    anchor: "start",
+  });
+  labels.forEach((label, index) =>
+    nodes.push({
+      type: "text",
+      key: `${legend.id}:${index}:label`,
+      elementId: legend.id,
+      x: label.x,
+      lines: [{ text: label.text, y: label.y }],
+      fontSize: legend.fontSize,
+      fontWeight: 400,
+      fill: legend.color,
+      anchor: label.anchor,
+    })
+  );
+  const labelWidth = Math.max(
+    ...labels.map((label) => measureText(label.text, legend.fontSize, 400))
+  );
+  return {
+    nodes,
+    bounds: row
+      ? {
+          x: legend.x,
+          y: legend.y - legend.fontSize - 4,
+          width: Math.max(rampLength, labelWidth * 2),
+          height: step + legend.fontSize * 2 + 8,
+        }
+      : {
+          x: legend.x,
+          y: legend.y - legend.fontSize - 4,
+          width: swatch + 8 + labelWidth,
+          height: rampLength + legend.fontSize + 8,
+        },
   };
 }
 

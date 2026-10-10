@@ -186,6 +186,9 @@ Open questions for the next round:
 - Guides take one value from a fixed entry or a calculation. Bands between two values, and guides on value scales, are not built.
 - The example graphic is authored by hand in the demo. A saved reference composition could become a regression fixture once the model settles.
 
+The election strips (research entry 02) ship as `?example=elections` from `apps/data-samples/prepare/elections.ts`, built from the MIT Election Data and Science Lab's state returns for 1976 to 2016.
+Strip marks now read a diverging value scale's sign, so the research's signed-share gap is closed, and a legend can key a value scale's ramp with the drawn extent. Stripe weights by electoral votes, which need variable repeat heights, stay below the cut line.
+
 ## Milestone 2: Connect observations in an explicit order
 
 Create the Driving composition with a path, points, selected-year labels, and a data-bound callout.

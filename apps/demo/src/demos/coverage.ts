@@ -1114,6 +1114,17 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "elections",
+    intent:
+      "Color each state-election cell by its signed margin through a diverging ramp with a ramp legend.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",
