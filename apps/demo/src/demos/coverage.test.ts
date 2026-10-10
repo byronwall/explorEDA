@@ -82,6 +82,7 @@ describe("example coverage manifest", () => {
       "palmer-penguins",
       "categorical-charts",
       "message-log",
+      "tech-sparklines",
       "product-activity",
       "scatter-trace",
       "calculated-orders",
