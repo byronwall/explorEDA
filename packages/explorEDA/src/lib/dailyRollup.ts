@@ -78,6 +78,8 @@ export function utcPeriod(
   weekStart: WeekStart = "monday"
 ): Readonly<UtcPeriod> | undefined {
   if (typeof value !== "string" || !value.trim()) return undefined;
+  // The key names every argument. A new argument must join it, or calls
+  // that differ only in that argument share one cached result.
   return cached(`${interval}\u0000${weekStart}\u0000${value}`, () =>
     computePeriod(value, interval, weekStart)
   );

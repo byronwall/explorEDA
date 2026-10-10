@@ -43,7 +43,6 @@ import {
   X,
 } from "lucide-react";
 import {
-  memo,
   useCallback,
   useEffect,
   useId,
@@ -58,7 +57,7 @@ import { FieldList } from "./FieldList/FieldList";
 import { focusChartInContainer, highlightChartInContainer } from "./chartFocus";
 
 export { focusChartInContainer };
-import { PlotChartPanel } from "./PlotChartPanel";
+import { GridChartPanel } from "./GridChartPanel";
 import { useChartDetailsStore } from "./chartDetailsStore";
 import { useAlertStore } from "@/stores/alertStore";
 import {
@@ -80,16 +79,6 @@ import {
   NARROW_GRID_WIDTH,
   narrowColumnCount,
 } from "./chartGridPlacement";
-
-// An edit to one chart re-renders only that panel. The delete and duplicate
-// callbacks close over the settings alone, so equal settings mean equal props.
-const GridChartPanel = memo(
-  PlotChartPanel,
-  (before, after) =>
-    before.settings === after.settings &&
-    before.width === after.width &&
-    before.height === after.height
-);
 
 const gridToPixels = (
   layout: ChartLayout,

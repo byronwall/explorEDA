@@ -72,8 +72,16 @@ function validateFieldSettings(settings: FieldSettingsMap) {
   }
 }
 
-/** Chart settings that change only how a chart looks, never which rows it holds. */
-const DISPLAY_ONLY_KEYS = new Set<keyof ChartSettings>([
+/**
+ * Chart settings that change only how a chart looks, never which rows it
+ * holds. An edit limited to these keys keeps every chart's live items, so no
+ * other chart redraws. A key belongs here only if no chart type's filter or
+ * population reads it; `displayOnlyKeys.test.tsx` checks that for every
+ * registered type, and needs a sample value for each key.
+ */
+export const DISPLAY_ONLY_KEYS: ReadonlySet<keyof ChartSettings> = new Set<
+  keyof ChartSettings
+>([
   "title",
   "subtitle",
   "note",
