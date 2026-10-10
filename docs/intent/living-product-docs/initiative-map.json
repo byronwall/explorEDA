@@ -427,7 +427,11 @@
         "end_state": "Attributable deploy failures",
         "outcome": "The live site deploys on the toolchain developers use, and demo tests gate the upload",
         "valid_intermediate_state": "Demo and docs unchanged; only CI differs",
-        "rollback": "Revert deploy.yml"
+        "rollback": "Revert deploy.yml",
+        "evidence": [
+          "Local Node 24.21.0 + pnpm 11.9.0: install --frozen-lockfile, recursive build, and demo tests (12 files, 94 tests) pass",
+          "Not yet observed: Pages run on main and live URL checks"
+        ]
       },
       {
         "id": "m2",
