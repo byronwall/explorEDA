@@ -103,7 +103,8 @@ Charts (each starts from the app's defaults; @name is optional):
 
 Settings on any chart: title=, at=x,y,w,h, x.scale=, x.title=, x.min=, x.max=,
 y.*, xGridLines=, yGridLines=, margin.left= (top, right, bottom).
-Every saved setting is a path: xAxis.scaleType=log, columns.0.width=140.
+x.min= and x.max= set the axis range shown; rows outside stay counted.
+Every saved setting is a path: xAxis.scaleType=symlog, columns.0.width=140.
   key[]=a,b    a list (key[]= is empty)    key{}=     an empty object
   key=unset    back to the app default     key=null   a missing value
   "a b".c=1    quote a name with spaces    key=""     empty text

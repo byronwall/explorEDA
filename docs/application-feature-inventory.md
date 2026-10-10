@@ -89,15 +89,15 @@ Later chart additions retain their own review state. Retirement does not certify
 
 ### Follow-up scope
 
-| Lasting goal | Destination and boundary |
-| --- | --- |
-| Multiple sources, relationships, joins, lookups, and source inspection | [Multi-source analysis](intent/multi-source-analysis/intent-brief.md). The retired slice accepts one in-memory table. |
-| Named analysis views, durable saves, and application navigation | [Project task views](intent/project-task-views/intent-brief.md). Package restore works; host storage remains separate. |
-| Inspectable source-to-mark transformations and contributors | [Traceability](#traceability-and-reproducibility). Additional chart families now have trace paths; see the [chart guide](analytical-chart-coverage.md). Source-data filter flow remains future scope. |
-| Composable visualization definitions, derived layers, and advanced chart construction | [Composed analytical graphics](intent/composed-analytical-graphics/intent-brief.md). Per-chart settings remain the current model. |
-| Agent-created deterministic analysis views | [In-app analysis agent](intent/in-app-analysis-agent/intent-brief.md). This remains separate from the delivered inspection slice. |
-| Adaptive table controls, rich cells, grouping, selection, chart defaults, and facet quality | [Transcript gap analysis](transcript-gap-analysis.md). Column order and virtual rows now exist; do not reuse the old missing-feature list. |
-| Large-source profile cost and desktop capacity | [Performance evidence](#performance-and-resource-use). Measure representative sources before changing the full-source profile path. |
+| Lasting goal                                                                                | Destination and boundary                                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Multiple sources, relationships, joins, lookups, and source inspection                      | [Multi-source analysis](intent/multi-source-analysis/intent-brief.md). The retired slice accepts one in-memory table.                                                                                 |
+| Named analysis views, durable saves, and application navigation                             | [Project task views](intent/project-task-views/intent-brief.md). Package restore works; host storage remains separate.                                                                                |
+| Inspectable source-to-mark transformations and contributors                                 | [Traceability](#traceability-and-reproducibility). Additional chart families now have trace paths; see the [chart guide](analytical-chart-coverage.md). Source-data filter flow remains future scope. |
+| Composable visualization definitions, derived layers, and advanced chart construction       | [Composed analytical graphics](intent/composed-analytical-graphics/intent-brief.md). Per-chart settings remain the current model.                                                                     |
+| Agent-created deterministic analysis views                                                  | [In-app analysis agent](intent/in-app-analysis-agent/intent-brief.md). This remains separate from the delivered inspection slice.                                                                     |
+| Adaptive table controls, rich cells, grouping, selection, chart defaults, and facet quality | [Transcript gap analysis](transcript-gap-analysis.md). Column order and virtual rows now exist; do not reuse the old missing-feature list.                                                            |
+| Large-source profile cost and desktop capacity                                              | [Performance evidence](#performance-and-resource-use). Measure representative sources before changing the full-source profile path.                                                                   |
 
 The [initiative history](initiative-history.json) records closure. Source transcripts remain in [the transcript archive](transcripts/README.md).
 
@@ -190,9 +190,17 @@ The grid supports configurable column count, row height, container padding, and 
 
 ### Settings and field actions
 
-Chart settings use a local draft. Apply commits the draft; Reset discards draft changes. Most settings do not preview live on the chart. Changing chart type creates that type's defaults while preserving the panel identity and layout.
+Chart settings apply each valid change to the chart as it is made. Reset restores the values from when the settings opened. A draft that cannot apply, such as an inverted range, is marked and held. Changing chart type creates that type's defaults while preserving the panel identity and layout.
 
-Data and Labels settings are common. Facets, Axes, and Spacing are exposed for row, bar, scatter, line, and box plots. Select settings expose numeric filter bounds for scatter, line, and bar charts. Those bounds define filters, not axis zoom limits.
+Visible features also edit in place, through the same `updateChart` path:
+
+- **Title:** double-click it, press Enter or F2 on it, or use its context menu.
+- **Axis title:** double-click it or press Enter on it.
+- **Numeric axis range:** double-click the axis, or use its context menu, for a popover anchored to the axis. Dragging the axis pans its range, and dragging an end grip stretches it.
+
+Each edit updates the chart live and reaches the host's `onStateChange` once, when the edit ends, so it is one undo step. Escape restores a text edit or a drag. Code lives in `components/charts/InPlace/`.
+
+Data and Labels settings are common. Facets, Axes, and Spacing are exposed for row, bar, scatter, line, and box plots. Select settings expose numeric filter bounds for scatter, line, and bar charts. Those bounds define filters. Axis ranges are separate: they change only the view (see [Position scales and labels](#position-scales-and-labels)).
 
 The floating Fields list opens from the toolbar or F key without adding a table or changing the saved layout. It shows filtered field facts, supports search and quick distribution inspection, and opens the shared field inspector. A field can create a chart or replace one chart axis through a menu or drag; the menu is the keyboard and touch path. Summary field actions can also create charts directly. Numeric fields offer distribution and relationship views. Categorical fields offer count and pivot views. Date fields offer a pivot route. Chart defaults still choose other fields heuristically; the action is not a general field-role assignment workflow.
 
@@ -312,7 +320,7 @@ Facet keys preserve source types and both grid coordinates. Values containing `_
 
 ### Shared domains and selection
 
-All supported facet families derive domains directly from the current full source. There is no accumulating axis-registration provider.
+All supported facet families derive domains directly from the current full source, unless the chart sets axis limits, which every facet then shares. There is no accumulating axis-registration provider.
 
 | Chart   | Shared domain behavior                        |
 | ------- | --------------------------------------------- |
@@ -334,9 +342,11 @@ Sources: [facet container][facet], [wrap layout][wrap], [grid layout][facetgrid]
 
 The common numerical scale helper implements linear and symmetric-log scales. The settings UI exposes those choices. Type declarations also mention logarithmic and time scales, but the helper falls back to linear for those values. True date axes and logarithmic behavior are not established by those declarations.
 
-Supported 2D facet domains derive from the full source, rather than each facet or the globally filtered subset. This stabilizes brushing comparisons. There is no common control for domain population, manual domain bounds, or chart zoom with reset. Axis `min` and `max` properties are not broadly consumed by the active numerical renderers.
+Supported 2D facet domains derive from the full source, rather than each facet or the globally filtered subset. This stabilizes brushing comparisons.
 
-Common charts provide axis labels, chart titles, margins, grid lines, and density controls. Tick density adjusts to available pixels. Numeric ticks use `en-US` formatting, compact notation at large magnitudes, and limited decimal places. Category labels can truncate with an SVG title containing the complete text.
+`xAxis.limits` and `yAxis.limits` set an axis range in data units over that automatic domain. Each side is optional, and a limited axis is drawn exactly as entered, never niced. Scatter (both axes), histogram (both), bar and series bar, line and time-series Y, row, and box charts honor them; marks outside are clipped, never filtered. Users set limits in the Axes settings, in a popover on the axis, or by dragging the axis. Date axes, ECDF, heatmap, and map have no limits yet. The legacy axis `min` and `max` keys are an unused placeholder that every saved chart carries (`min: 0, max: 100`), so renderers never read them. There is no common control for domain population.
+
+Common charts provide axis labels, chart titles, margins, grid lines, and density controls. Tick density adjusts to available pixels. Numeric ticks use `en-US` formatting, compact notation at large magnitudes, and limited decimal places. Category labels can truncate; their `aria-label` keeps the complete text. Rendered UI never uses native `title` tooltips.
 
 Field settings provide shared labels and value formatting for numbers, currency, percentages, dates, datetimes, units, and precision. The formatter is used by table cells, chart labels and tooltips, facet labels, pivot values, and legends. Explicit chart axis labels override field labels; blank labels inherit them. Multiple measures on one axis still need a shared formatting policy.
 
@@ -360,26 +370,27 @@ Sources: [axis controls][axissettings], [scale helper][numeric], [axis rendering
 
 The [analytical chart guide](analytical-chart-coverage.md) documents current modes, contracts, and verification limits. The initiative retired after Byron waived its remaining checks.
 
-| Registered type | Input and result                                           | Direct filtering                              |
-| --------------- | ---------------------------------------------------------- | --------------------------------------------- |
-| `row`           | Category → horizontal count bars.                          | Category selection.                           |
-| `bar` | Histogram, category count, grouped measure, grouped/stacked/percentage series. | Numeric range, category, or exact series pair. |
-| `scatter` | Row points, numeric bubble area, or rectangular count bins. | Point or X/Y range. |
-| `line` | Raw observations or UTC period summaries; line, area, stacked area. | X range or exact period/series. |
-| `boxplot`       | Numeric field, optional group → distribution summaries.    | Group selection.                              |
-| `3d-scatter`    | Three numerical coordinates → WebGL points.                | Receives other filters; creates none.         |
-| `pivot`         | Row groups, column group, measures → aggregates.           | Row/column header values.                     |
-| `data-table`    | Selected raw fields → records.                             | Linked field filters in panels; local search. |
-| `summary`       | Fields → profiles of globally filtered rows.               | No own filter; field actions create charts.   |
-| `color-legend`  | Color fields → categories or numerical gradient.           | Categories only.                              |
-| `markdown`      | Saved rich-text content → editable explanation.            | None.                                         |
-| `heatmap` | Two categories → count, sum, or average cells. | Exact pair or axis category. |
-| `calendar` | UTC day → daily metric in year/month grid. | Day or date span. |
-| `metric-card` | Active population → count, sum, or average. | Receives filters; source inspection. |
-| `map` | Coordinates or typed GeoJSON region join. | Point rows or region keys. |
-| `sankey` | Ordered stage columns → row paths and flow weights. | Stage values or adjacent stage pair. |
-| `parallel-coordinates` | Fields → one line per complete row. | Intersected axis filters. |
-| `ecdf` | Numeric values → cumulative shares. | Threshold or numeric span. |
+| Registered type        | Input and result                                                               | Direct filtering                                          |
+| ---------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------- |
+| `row`                  | Category → horizontal count bars.                                              | Category selection.                                       |
+| `bar`                  | Histogram, category count, grouped measure, grouped/stacked/percentage series. | Numeric range, category, or exact series pair.            |
+| `scatter`              | Row points, numeric bubble area, or rectangular count bins.                    | Point or X/Y range.                                       |
+| `line`                 | Raw observations or UTC period summaries; line, area, stacked area.            | X range or exact period/series.                           |
+| `boxplot`              | Numeric field, optional group → distribution summaries.                        | Group selection.                                          |
+| `3d-scatter`           | Three numerical coordinates → WebGL points.                                    | Receives other filters; creates none.                     |
+| `pivot`                | Row groups, column group, measures → aggregates.                               | Row/column header values.                                 |
+| `data-table`           | Selected raw fields → records.                                                 | Linked field filters in panels; local search.             |
+| `summary`              | Fields → profiles of globally filtered rows.                                   | No own filter; field actions create charts.               |
+| `color-legend`         | Color fields → categories or numerical gradient.                               | Categories only.                                          |
+| `markdown`             | Saved rich-text content → editable explanation.                                | None.                                                     |
+| `heatmap`              | Two categories → count, sum, or average cells.                                 | Exact pair or axis category.                              |
+| `calendar`             | UTC day → daily metric in year/month grid.                                     | Day or date span.                                         |
+| `metric-card`          | Active population → count, sum, or average.                                    | Receives filters; source inspection.                      |
+| `map`                  | Coordinates or typed GeoJSON region join.                                      | Point rows or region keys.                                |
+| `sankey`               | Ordered stage columns → row paths and flow weights.                            | Stage values or adjacent stage pair.                      |
+| `parallel-coordinates` | Fields → one line per complete row.                                            | Intersected axis filters.                                 |
+| `scatter-matrix`       | Two to ten fields of any type → every pair, distributions on the diagonal.     | Two-field brush or mark; replaces the previous selection. |
+| `ecdf`                 | Numeric values → cumulative shares.                                            | Threshold or numeric span.                                |
 
 ### Row chart
 
@@ -418,6 +429,16 @@ Hover finds a nearby point and shows crosshairs, coordinate values, and availabl
 Numeric bubble area and rectangular count-density bins are implemented. Traces explain size domains, radius calculations, exact bin boundaries, and source IDs. Lasso, regression, confidence bands, and smooth density contours remain separate proposals.
 
 Source: [scatter renderer](../packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx), [definition](../packages/explorEDA/src/components/charts/ScatterPlot/definition.ts).
+
+### Scatter matrix
+
+The scatter matrix shows every pair of two to ten fields in one grid, like an R `ggpairs` plot. Each field keeps one axis wherever it appears: numbers and dates are continuous, and categories and booleans get bands. Category fields with more than 12 values fold the least common into Other categories. Domains and bands come from every source row, so they hold still while charts filter.
+
+Settings choose what each triangle draws for number pairs (points or Pearson r), number and category pairs (jittered points or box plots), and category pairs (count tiles or share bars), and what the diagonal draws (density, histogram, or category bars). Each cell uses the rows that have both of its values; a cell shows its count when 2% or more are missing. A color field colors points, densities, diagonal bars, and adds one correlation per group. Box plots and tiles keep one color.
+
+A brush in any cell sets filters on its two fields and replaces the previous selection. Clicking a bar, box, tile, or point selects it; clicking empty space or pressing Escape clears. Unselected rows stay as gray context everywhere; correlations and bins ignore the matrix's own selection. Above 20,000 rows a drag previews inside the matrix and filters other charts on release. Alt-click traces a row through every field or a cell's rows. Measured costs are in [scatter matrix performance](scatter-matrix-performance.md).
+
+Source: [matrix renderer](../packages/explorEDA/src/components/charts/ScatterMatrix/ScatterMatrix.tsx), [planner](../packages/explorEDA/src/components/charts/ScatterMatrix/matrixPlan.ts), [definition](../packages/explorEDA/src/components/charts/ScatterMatrix/definition.ts).
 
 ### Line chart
 
@@ -546,16 +567,16 @@ Source: [editor](../packages/explorEDA/src/components/charts/Markdown/Markdown.t
 
 ## Saved state, exports, and host integration
 
-| Capability       | Current contract                                                                                                       |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Capability       | Current contract                                                                                                                                                 |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Saved workspace  | Charts and settings/filters/layouts, formula-string calculations, color scales, grid settings, metadata, Rows settings, field settings, and grouped definitions. |
-| Source data      | Passed separately for primary settings restore. A full analysis bundle also includes raw rows and preserves undefined/nonfinite values. |
-| Host callback    | `onStateChange` emits storage-neutral settings JSON when relevant workspace state changes.                                  |
-| Restore          | `savedData` restores settings against current rows. Restore validates calculations and settings before replacement.      |
-| Clipboard        | The package and demo support copy/open settings JSON and copy/open full analysis JSON.                                      |
-| Table download   | CSV of selected source/derived columns and matching rows in displayed order.                                           |
-| Summary download | CSV of current field profiles.                                                                                         |
-| Demo URL         | Identifies an example or coverage page. It does not encode the live analysis.                                          |
+| Source data      | Passed separately for primary settings restore. A full analysis bundle also includes raw rows and preserves undefined/nonfinite values.                          |
+| Host callback    | `onStateChange` emits storage-neutral settings JSON when relevant workspace state changes.                                                                       |
+| Restore          | `savedData` restores settings against current rows. Restore validates calculations and settings before replacement.                                              |
+| Clipboard        | The package and demo support copy/open settings JSON and copy/open full analysis JSON.                                                                           |
+| Table download   | CSV of selected source/derived columns and matching rows in displayed order.                                                                                     |
+| Summary download | CSV of current field profiles.                                                                                                                                   |
+| Demo URL         | Identifies an example or coverage page. It does not encode the live analysis.                                                                                    |
 
 Categorical color maps serialize as entry arrays. 3D camera vectors serialize as plain X/Y/Z objects and are restored to runtime vectors.
 

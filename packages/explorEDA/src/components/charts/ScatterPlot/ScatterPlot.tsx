@@ -1,3 +1,4 @@
+import { useAxisTypography } from "../chartTypography";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import {
@@ -85,6 +86,7 @@ function ScatterPoints({
     updateChart,
     getFieldLabel,
   } = useScatterData(settings, facetIds);
+  const typography = useAxisTypography();
 
   const plan = useMemo(
     () =>
@@ -95,9 +97,10 @@ function ScatterPoints({
           : settings,
         snapshot,
         width,
-        height
+        height,
+        typography
       ),
-    [settings, snapshot, width, height]
+    [settings, snapshot, width, height, typography]
   );
   const fits = useScatterFits(settings, snapshot, plan);
   const marginals = useMemo(

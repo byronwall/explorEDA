@@ -1011,6 +1011,29 @@ export const scatterRegressionDashboard = dashboard(
 );
 
 
+export const scatterMatrixDashboard = dashboard(
+  "Every pair at once",
+  [
+    {
+      ...base,
+      id: "matrix-penguins",
+      type: "scatter-matrix",
+      title: "Measurements, species, and sex, pair by pair",
+      colorField: "species",
+      colorScaleId: "matrix-species",
+      fields: ["bill_length_mm", "flipper_length_mm", "body_mass_g", "species", "sex"],
+      lower: { numeric: "points", mixed: "points", categorical: "shares" },
+      upper: { numeric: "correlation", mixed: "box", categorical: "tiles" },
+      diagonal: { continuous: "density", categorical: "bars" },
+      layout: layout(0, 0, 8, 10),
+      margin: { top: 4, right: 4, bottom: 4, left: 4 },
+    },
+    row("matrix-island", "Filter by island", "island", layout(8, 0, 4, 4)),
+    table("matrix-records", "Penguins in the matrix", ["species", "island", "sex", "bill_length_mm", "flipper_length_mm", "body_mass_g"], layout(8, 4, 4, 6)),
+  ],
+  [categoricalScale("matrix-species", "species", ["Adelie", "Chinstrap", "Gentoo"])]
+);
+
 export const scatterSurfaceDashboard = dashboard(
   "Ten thousand days, two ways to see density",
   [

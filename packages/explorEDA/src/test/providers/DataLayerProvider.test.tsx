@@ -240,6 +240,48 @@ function savedData(calculations: SavedDataStructure["calculations"] = []) {
 }
 
 describe("DataLayerProvider", () => {
+  it("saves the chosen theme, and saves no theme for Compact", () => {
+    const changes: SavedDataStructure[] = [];
+    function ThemeProbe() {
+      const setTheme = useDataLayer((state) => state.setTheme);
+      return (
+        <>
+          <button onClick={() => setTheme("newsprint")}>newsprint</button>
+          <button onClick={() => setTheme("compact")}>compact</button>
+        </>
+      );
+    }
+    render(
+      <DataLayerProvider
+        data={[{ value: 1 }]}
+        savedData={savedData()}
+        onStateChange={(state) => changes.push(state)}
+      >
+        <ThemeProbe />
+      </DataLayerProvider>
+    );
+    fireEvent.click(screen.getByRole("button", { name: "newsprint" }));
+    expect(changes.at(-1)?.theme).toEqual({ id: "newsprint" });
+    fireEvent.click(screen.getByRole("button", { name: "compact" }));
+    expect(changes.at(-1)).not.toHaveProperty("theme");
+  });
+
+  it("restores a saved theme", () => {
+    function ThemeReader() {
+      const theme = useDataLayer((state) => state.theme);
+      return <span data-testid="theme">{theme?.id ?? "none"}</span>;
+    }
+    render(
+      <DataLayerProvider
+        data={[{ value: 1 }]}
+        savedData={{ ...savedData(), theme: { id: "newsprint" } }}
+      >
+        <ThemeReader />
+      </DataLayerProvider>
+    );
+    expect(screen.getByTestId("theme")).toHaveTextContent("newsprint");
+  });
+
   it("keeps an exact chart color scale binding when the saved scale is renamed", () => {
     const chart = getChartDefinition("row").createDefaultSettings(
       { x: 0, y: 0, w: 4, h: 4 },
@@ -527,7 +569,9 @@ describe("DataLayerProvider", () => {
     expect(screen.getByTestId("result-settings")).toHaveTextContent(
       "amount-by-customer"
     );
-    expect(screen.getByTestId("result-settings")).toHaveTextContent('"type":"bar"');
+    expect(screen.getByTestId("result-settings")).toHaveTextContent(
+      '"type":"bar"'
+    );
   });
 
   it("creates a summary and table from the union of source fields", () => {

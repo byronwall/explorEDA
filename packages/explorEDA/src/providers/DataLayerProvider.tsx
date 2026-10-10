@@ -1,4 +1,6 @@
 import { isGeometryAsset, type GeometryAsset } from "@/lib/geometryAssets";
+import { resolveThemeId, type WorkspaceTheme, type WorkspaceThemeId } from "@/lib/themes";
+import { adoptThemePalette, normalizeColorScale } from "@/lib/themePalettes";
 import { getChartFields } from "@/components/charts/chartAccessibility";
 import { chartRegistry, getChartDefinition } from "@/charts/registry";
 import {
@@ -251,6 +253,12 @@ interface DataLayerState<T extends DatumObject> extends DataLayerProps<T> {
   fieldSettings: FieldSettingsMap;
   aggregates: AggregateSpec[];
   geometryAssets: GeometryAsset[];
+  /** Saved workspace theme. Undefined draws Compact. */
+  theme: WorkspaceTheme | undefined;
+  setTheme: (id: WorkspaceThemeId) => void;
+  /** Whether the workspace draws on a dark surface. Not saved. */
+  darkMode: boolean;
+  setDarkMode: (dark: boolean) => void;
   addGeometryAsset: (asset: GeometryAsset) => void;
   addAggregate: (spec: Omit<AggregateSpec, "id">) => AggregateSpec;
   updateAggregate: (
@@ -283,6 +291,13 @@ interface DataLayerState<T extends DatumObject> extends DataLayerProps<T> {
   removeAllCharts: () => void;
   updateChart: (id: string, settings: Partial<ChartSettings>) => void;
   updateChartLayouts: (layouts: Record<string, ChartLayout>) => void;
+  /**
+   * Open in-place edits. While one is open, `onStateChange` waits, so a typed
+   * title or a dragged axis reaches the host as one change when it ends.
+   */
+  stateChangeHolds: number;
+  /** Starts a held edit. Call the returned release once the edit ends. */
+  holdStateChanges: () => () => void;
 
   // Color scale state
   colorScales: ColorScaleType[];
@@ -430,6 +445,7 @@ const getInitialStoreState = <T extends DatumObject>(
     | "fieldSettings"
     | "aggregates"
     | "geometryAssets"
+    | "theme"
   >
 > => {
   const rawData = initProps?.data ?? [];
@@ -478,10 +494,10 @@ const getInitialStoreState = <T extends DatumObject>(
     const restoredColorScales: ColorScaleType[] = savedData.colorScales.map(
       (scale) => {
         if (scale.type === "categorical") {
-          return {
+          return adoptThemePalette({
             ...scale,
             mapping: new Map(scale.mapping),
-          };
+          });
         }
         return scale;
       }
@@ -513,6 +529,7 @@ const getInitialStoreState = <T extends DatumObject>(
       fieldSettings,
       aggregates: savedData.aggregates ?? [],
       geometryAssets: savedData.geometryAssets ?? [],
+      theme: savedData.theme,
     };
   }
 
@@ -550,6 +567,7 @@ const getInitialStoreState = <T extends DatumObject>(
     fieldSettings,
     aggregates: [],
     geometryAssets: [],
+    theme: undefined,
   };
 };
 
@@ -563,10 +581,28 @@ const createDataLayerStore = <T extends DatumObject>(
     throw new Error("crossfilterWrapper not found in initial state");
   }
 
-  const store = createStore<DataLayerState<T>>()((set, get) => ({
+  const store = createStore<DataLayerState<T>>()((set, get) => {
+  /** The theme and mode charts draw colors in. */
+  const colorContext = () => ({
+    themeId: resolveThemeId(get().theme),
+    dark: get().darkMode,
+  });
+  return {
     ...initialState,
     liveItems: {},
     filterReset: 0,
+    stateChangeHolds: 0,
+    holdStateChanges: () => {
+      set((state) => ({ stateChangeHolds: state.stateChangeHolds + 1 }));
+      let held = true;
+      return () => {
+        if (!held) return;
+        held = false;
+        set((state) => ({
+          stateChangeHolds: Math.max(0, state.stateChangeHolds - 1),
+        }));
+      };
+    },
     setData: (rawData, fileName, useDefaults = true) => {
       const fieldNames = get().fieldNames ?? [];
       const inferredTypes = Object.fromEntries(
@@ -628,9 +664,22 @@ const createDataLayerStore = <T extends DatumObject>(
       });
     },
 
+    // Compact is the default, so choosing it saves no theme at all.
+    setTheme: (id) => set({ theme: id === "compact" ? undefined : { id } }),
+    darkMode: false,
+    setDarkMode: (darkMode) => set({ darkMode }),
+
     addGeometryAsset: (asset) => {
-      if (!isGeometryAsset(asset)) throw new Error("Use a GeoJSON collection with valid polygon coordinates and closed rings.");
-      set((state) => ({ geometryAssets: [...state.geometryAssets.filter((item) => item.id !== asset.id), asset] }));
+      if (!isGeometryAsset(asset))
+        throw new Error(
+          "Use a GeoJSON collection with valid polygon coordinates and closed rings."
+        );
+      set((state) => ({
+        geometryAssets: [
+          ...state.geometryAssets.filter((item) => item.id !== asset.id),
+          asset,
+        ],
+      }));
     },
 
     updateFieldSettings: (field, updates) => {
@@ -923,7 +972,11 @@ const createDataLayerStore = <T extends DatumObject>(
 
     addColorScale: (scale: Omit<ColorScaleType, "id">) => {
       const newScale = {
-        ...scale,
+        ...normalizeColorScale(
+          scale,
+          (scale as { paletteId?: string }).paletteId,
+          colorContext()
+        ),
         id: crypto.randomUUID(),
       } as ColorScaleType;
 
@@ -942,9 +995,16 @@ const createDataLayerStore = <T extends DatumObject>(
 
     updateColorScale: (id: string, updates: Partial<ColorScaleType>) => {
       set((state) => ({
-        colorScales: state.colorScales.map((scale) =>
-          scale.id === id ? ({ ...scale, ...updates } as ColorScaleType) : scale
-        ),
+        colorScales: state.colorScales.map((scale) => {
+          if (scale.id !== id) return scale;
+          const next = { ...scale, ...updates } as ColorScaleType;
+          // Editors show themed colors; they save as palette slots.
+          return normalizeColorScale(
+            next,
+            next.type === "categorical" ? next.paletteId : undefined,
+            colorContext()
+          );
+        }),
       }));
     },
 
@@ -1128,6 +1188,7 @@ const createDataLayerStore = <T extends DatumObject>(
         fieldSettings: state.fieldSettings,
         aggregates: state.aggregates,
         geometryAssets: state.geometryAssets,
+        ...(state.theme ? { theme: state.theme } : {}),
       };
     },
 
@@ -1218,7 +1279,7 @@ const createDataLayerStore = <T extends DatumObject>(
       const colorScales: ColorScaleType[] = savedData.settings.colorScales.map(
         (scale) =>
           scale.type === "categorical"
-            ? { ...scale, mapping: new Map(scale.mapping) }
+            ? adoptThemePalette({ ...scale, mapping: new Map(scale.mapping) })
             : scale
       );
       set((state) => ({
@@ -1248,10 +1309,12 @@ const createDataLayerStore = <T extends DatumObject>(
         fieldSettings,
         aggregates: savedData.settings.aggregates ?? [],
         geometryAssets: savedData.settings.geometryAssets ?? [],
+        theme: savedData.settings.theme,
       }));
       nextCrossfilter.setFieldGetter(get().getColumnData);
     },
-  }));
+  };
+  });
 
   function assertUnusedCalculation(name: string) {
     const { charts, aggregates } = store.getState();
@@ -1410,6 +1473,8 @@ export function DataLayerProvider<T extends DatumObject>({
     );
 
     return store.subscribe((state) => {
+      // A held edit reports once, when its last hold is released.
+      if (state.stateChangeHolds > 0) return;
       const savedData = state.saveToStructure();
       const nextFingerprint = getSavedStateFingerprint(savedData);
 
@@ -1439,5 +1504,21 @@ export function useDataLayer<T extends DatumObject, U>(
   if (!store) {
     throw new Error("Missing DataLayerContext.Provider in the tree");
   }
+  return useStore(store, selector);
+}
+
+const NO_STORE = createStore<Partial<DataLayerState<DatumObject>>>()(
+  () => ({})
+);
+
+/**
+ * Reads the data layer where one may be missing, such as a chart part drawn
+ * on its own. Without a provider the selector sees an empty state.
+ */
+export function useOptionalDataLayer<U>(
+  selector: (state: Partial<DataLayerState<DatumObject>>) => U
+): U {
+  const store =
+    (useContext(DataLayerContext) as typeof NO_STORE | null) ?? NO_STORE;
   return useStore(store, selector);
 }

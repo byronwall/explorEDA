@@ -20,11 +20,18 @@ function PopoverContent({
   align = "center",
   sideOffset = 8,
   collisionPadding = 12,
+  container,
   ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Content>) {
+}: React.ComponentProps<typeof PopoverPrimitive.Content> & {
+  /**
+   * Where the popover mounts. Inside a modal dialog, pass the dialog, so its
+   * focus trap lets the popover's fields take focus.
+   */
+  container?: HTMLElement | null;
+}) {
   // A popover closes at once, so the next one never opens over a fading one.
   return (
-    <PopoverPrimitive.Portal>
+    <PopoverPrimitive.Portal container={container}>
       <PopoverPrimitive.Content
         data-slot="popover-content"
         align={align}

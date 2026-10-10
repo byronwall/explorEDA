@@ -119,9 +119,13 @@ export function FiltersSettingsTab({
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
-  // The chart ignores its own filters, so each field keeps its full shape.
-  const scoped = useFilteredFieldProfiles(settings);
   const fields = chartFilterFields(settings, aggregate);
+  // The chart ignores its own filters, so each field keeps its full shape.
+  const scoped = useFilteredFieldProfiles(
+    settings,
+    true,
+    fields.map(({ field }) => field)
+  );
   const setFilter = (field: string, filter?: Filter) =>
     onSettingChange("filters", [
       ...settings.filters.filter((item) => item.field !== field),

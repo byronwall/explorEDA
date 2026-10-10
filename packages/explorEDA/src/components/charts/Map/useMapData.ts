@@ -1,3 +1,4 @@
+import { useDisplayColorScale } from "@/hooks/useDisplayColorScales";
 import { useMemo } from "react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { convertFieldValue } from "@/lib/fieldSettings";
@@ -29,9 +30,7 @@ export function useMapData(settings: MapSettings, facetIds?: number[]) {
   const profiles = useDataLayer((state) => state.fieldProfiles);
   const formats = useDataLayer((state) => state.fieldSettings);
   const manager = useDataLayer((state) => state.calculationManager);
-  const colorScale = useDataLayer((state) =>
-    state.colorScales.find((scale) => scale.id === settings.colorScaleId)
-  );
+  const colorScale = useDisplayColorScale(settings.colorScaleId);
   const updateChart = useDataLayer((state) => state.updateChart);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const snapshot = useMemo(

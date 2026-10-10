@@ -1,3 +1,4 @@
+import { useDisplayColorScale } from "@/hooks/useDisplayColorScales";
 import { detectColumnType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import { Button } from "@/components/ui/button";
 import {
@@ -131,9 +132,7 @@ export function ParallelCoordinates({
   const profiles = useDataLayer((s) => s.fieldProfiles);
   const nonce = useDataLayer((s) => s.nonce);
   const updateChart = useDataLayer((s) => s.updateChart);
-  const colorScale = useDataLayer((s) =>
-    s.colorScales.find((item) => item.id === settings.colorScaleId)
-  );
+  const colorScale = useDisplayColorScale(settings.colorScaleId);
   const liveIds = useGetLiveIds(settings, facetIds);
   const allIds = useGetAllIds(settings);
   const revision = useTraceRevision(settings);
