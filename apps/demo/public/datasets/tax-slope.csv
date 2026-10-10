@@ -1,0 +1,69 @@
+Country,Code,Year,Tax revenue,Change 2000–2023,Direction
+Austria,AUT,2000,26.4,-0.7,Fell
+Austria,AUT,2023,25.6,-0.7,Fell
+Belgium,BEL,2000,27.3,-4.8,Fell
+Belgium,BEL,2023,22.5,-4.8,Fell
+Canada,CAN,2000,14.9,-1.1,Fell
+Canada,CAN,2023,13.7,-1.1,Fell
+Chile,CHL,2000,16.1,1.6,Rose
+Chile,CHL,2023,17.7,1.6,Rose
+Colombia,COL,2000,11.2,6.3,Rose
+Colombia,COL,2023,17.5,6.3,Rose
+Costa Rica,CRI,2000,12.8,0.9,Rose
+Costa Rica,CRI,2023,13.8,0.9,Rose
+Czechia,CZE,2000,17.5,0.6,Rose
+Czechia,CZE,2023,18.1,0.6,Rose
+Denmark,DNK,2000,31.5,0.5,Rose
+Denmark,DNK,2023,32,0.5,Rose
+Estonia,EST,2000,19.7,1.7,Rose
+Estonia,EST,2023,21.4,1.7,Rose
+Finland,FIN,2000,24.3,1.1,Rose
+Finland,FIN,2023,25.4,1.1,Rose
+France,FRA,2000,23.5,-0.4,Fell
+France,FRA,2023,23.2,-0.4,Fell
+Germany,DEU,2000,11.7,-1,Fell
+Germany,DEU,2023,10.7,-1,Fell
+Greece,GRC,2000,23.3,3.2,Rose
+Greece,GRC,2023,26.5,3.2,Rose
+Hungary,HUN,2000,22.4,0.6,Rose
+Hungary,HUN,2023,22.9,0.6,Rose
+Iceland,ISL,2000,24.8,-1.6,Fell
+Iceland,ISL,2023,23.2,-1.6,Fell
+Ireland,IRL,2000,26.3,-8.8,Fell
+Ireland,IRL,2023,17.5,-8.8,Fell
+Israel,ISR,2000,26.3,-4.2,Fell
+Israel,ISR,2023,22.1,-4.2,Fell
+Italy,ITA,2000,23.7,1,Rose
+Italy,ITA,2023,24.7,1,Rose
+South Korea,KOR,2000,13.8,0.8,Rose
+South Korea,KOR,2023,14.6,0.8,Rose
+Latvia,LVA,2000,14.9,1.7,Rose
+Latvia,LVA,2023,16.6,1.7,Rose
+Lithuania,LTU,2000,20.3,1.1,Rose
+Lithuania,LTU,2023,21.3,1.1,Rose
+Luxembourg,LUX,2000,25.5,1.5,Rose
+Luxembourg,LUX,2023,27,1.5,Rose
+Mexico,MEX,2000,9.1,5.1,Rose
+Mexico,MEX,2023,14.2,5.1,Rose
+Netherlands,NLD,2000,20.9,4.3,Rose
+Netherlands,NLD,2023,25.2,4.3,Rose
+Norway,NOR,2000,26.8,-0.7,Fell
+Norway,NOR,2023,26.1,-0.7,Fell
+Poland,POL,2000,16.9,1.1,Rose
+Poland,POL,2023,18,1.1,Rose
+Portugal,PRT,2000,20.9,1.8,Rose
+Portugal,PRT,2023,22.7,1.8,Rose
+Slovakia,SVK,2000,18.5,0.9,Rose
+Slovakia,SVK,2023,19.4,0.9,Rose
+Slovenia,SVN,2000,22.4,-2.1,Fell
+Slovenia,SVN,2023,20.3,-2.1,Fell
+Spain,ESP,2000,15.8,-0.8,Fell
+Spain,ESP,2023,15,-0.8,Fell
+Sweden,SWE,2000,30.4,-3,Fell
+Sweden,SWE,2023,27.4,-3,Fell
+Switzerland,CHE,2000,9.9,-1.2,Fell
+Switzerland,CHE,2023,8.7,-1.2,Fell
+United Kingdom,GBR,2000,26,0.9,Rose
+United Kingdom,GBR,2023,26.9,0.9,Rose
+United States,USA,2000,13,-2.4,Fell
+United States,USA,2023,10.6,-2.4,Fell

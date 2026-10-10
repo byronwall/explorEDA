@@ -244,6 +244,9 @@ Numeric scales take log spacing with decade ticks, point marks size by a field a
 The Covid tile map (research entry 18) ships as `?example=covid-tiles` from `apps/data-samples/prepare/covid-tiles.ts`, weekly from The New York Times' rolling averages.
 Repeats can be arranged as tiles: a prepared field names each repeat's cell as row,column, and repeats without a cell queue below the grid, so the tile-address gap the research named is closed.
 
+The tax revenue slope (after Tufte's government receipts) ships as `?example=tax-slope` from `apps/data-samples/prepare/tax-slope.ts`, two World Bank readings per OECD country.
+Path marks name each path at its start, end, or both, with the value there, and the labels on each side move the least that keeps them apart; paths color by a field like points, and numeric scales can label only their ends or nothing.
+
 ## Milestone 3: Layer interval bands around a line
 
 Create the inflation-fan structure from supplied interval data.

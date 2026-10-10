@@ -34,6 +34,7 @@ import type {
   SceneNode,
 } from "./resolveComposition";
 import { evaluateCalc, type CalcResult } from "./calculations";
+import { dodgePositions } from "./labelDodge";
 import { MISSING, orderedRows } from "./ordering";
 
 /** The rows a composition draws from. */
@@ -170,6 +171,8 @@ export interface PathDatum {
   series?: string;
   /** Whether the path is in the mark's focus, or muted behind it. */
   focused?: boolean;
+  /** The value of the mark's color field on the path's first row. */
+  category?: string;
 }
 
 /** What one band stands for: its bounds, rows in order, and gaps. */
@@ -2092,7 +2095,7 @@ export function markCategories(
   mark: MarkDefinition,
   data: CompositionData
 ): { key: string; color: string }[] {
-  if (mark.type === "point" && mark.colorField) {
+  if ((mark.type === "point" || mark.type === "path") && mark.colorField) {
     const column = data.column(mark.colorField);
     const keys = new Set<string>();
     for (const id of data.allIds) {
@@ -2149,7 +2152,14 @@ function pathNodes(
     mark.population === "composition" ? data.liveIds : subset.liveIds,
     mark.seriesField ? data.column(mark.seriesField) : undefined
   );
+  const colorColumn = mark.colorField
+    ? data.column(mark.colorField)
+    : undefined;
+  const categoryColors = new Map(
+    markCategories(mark, data).map((item) => [item.key, item.color])
+  );
   const nodes: PathNode[] = [];
+  const ends: EndLabel[] = [];
   for (const group of groups) {
     const rows = orderedRows(group.ids, order);
     const segments: PathNode["segments"] = [];
@@ -2173,16 +2183,26 @@ function pathNodes(
     if (current.length) segments.push(current);
     if (!segments.length) continue;
     const focused = isFocused(mark.focus, group.series, subset.key);
+    const first = segments[0]![0]!;
+    const category = colorColumn
+      ? categoryKey(colorColumn[first.rowId])
+      : undefined;
+    const stroke = !focused
+      ? (mark.mutedStroke ?? MUTED_MARK)
+      : category !== undefined
+        ? (categoryColors.get(category) ?? mark.stroke)
+        : mark.stroke;
+    const key =
+      group.series === undefined
+        ? `${unit.id}:${subset.key}:${mark.id}`
+        : `${unit.id}:${subset.key}:${mark.id}:${group.series}`;
     nodes.push({
       type: "path",
-      key:
-        group.series === undefined
-          ? `${unit.id}:${subset.key}:${mark.id}`
-          : `${unit.id}:${subset.key}:${mark.id}:${group.series}`,
+      key,
       elementId: unit.id,
       instanceKey: subset.key,
       segments,
-      stroke: focused ? mark.stroke : (mark.mutedStroke ?? MUTED_MARK),
+      stroke,
       strokeWidth: focused
         ? mark.strokeWidth
         : Math.max(0.75, mark.strokeWidth * 0.75),
@@ -2196,14 +2216,95 @@ function pathNodes(
         segments: segments.length,
         series: group.series,
         focused,
+        category,
       },
     });
+    // End labels name the series, or the repeat when there is none, or
+    // the unit itself when it is not repeated.
+    const labels = mark.labels ?? "none";
+    if (labels === "none") continue;
+    const name = group.series ?? (subset.label || unit.name);
+    const value = (vertex: { rowId: number }) => {
+      if (!mark.labelValue) return "";
+      const y = readY(axes.y, ys, vertex.rowId);
+      return y === undefined ? "" : tickFormat.format(y);
+    };
+    const lastRun = segments[segments.length - 1]!;
+    const last = lastRun[lastRun.length - 1]!;
+    if (labels === "start" || labels === "both")
+      ends.push({
+        key: `${key}:label:start`,
+        side: "start",
+        x: first.x - 6,
+        y: first.y,
+        text: [value(first), name].filter(Boolean).join("  "),
+        focused,
+      });
+    if (labels === "end" || labels === "both")
+      ends.push({
+        key: `${key}:label:end`,
+        side: "end",
+        x: last.x + 6,
+        y: last.y,
+        text: [value(last), name].filter(Boolean).join("  "),
+        focused,
+      });
   }
   // Focused series draw last, so they sit over the muted ones.
   return [
     ...nodes.filter((node) => !node.path.focused),
     ...nodes.filter((node) => node.path.focused),
+    ...endLabelNodes(unit, subset, ends, frame),
   ];
+}
+
+interface EndLabel {
+  key: string;
+  side: "start" | "end";
+  x: number;
+  y: number;
+  text: string;
+  focused: boolean;
+}
+
+/**
+ * Lays each side's end labels out so none overlap: they keep their order
+ * down the frame and move the least that separates them, overflowing the
+ * frame when the stack is taller than it.
+ */
+function endLabelNodes(
+  unit: UnitElement,
+  subset: Subset,
+  ends: EndLabel[],
+  frame: Bounds
+): SceneNode[] {
+  const fontSize = 10;
+  const spacing = Math.round(fontSize * 1.15);
+  const nodes: SceneNode[] = [];
+  for (const side of ["start", "end"] as const) {
+    const labels = ends.filter((label) => label.side === side);
+    if (!labels.length) continue;
+    const placed = dodgePositions(
+      labels.map((label) => label.y),
+      spacing,
+      [frame.y + fontSize / 2, frame.y + frame.height]
+    );
+    labels.forEach((label, index) =>
+      nodes.push({
+        type: "text",
+        key: label.key,
+        elementId: unit.id,
+        instanceKey: subset.key,
+        x: label.x,
+        lines: [{ text: label.text, y: placed[index]! + fontSize * 0.35 }],
+        fontSize,
+        fontWeight: 400,
+        fill: label.focused ? INK : MUTED_INK,
+        anchor: side === "start" ? "end" : "start",
+      })
+    );
+  }
+  return nodes;
 }
 
 function bandNodes(
@@ -2460,6 +2561,11 @@ function numericGridNodes(
 
 /** Tick values along a numeric axis, about one per `spacing` pixels. */
 function tickValues(axis: NumericAxis, length: number, spacing: number) {
+  if (axis.scale.ticks === "none") return [];
+  if (axis.scale.ticks === "ends")
+    return axis.domain[0] === axis.domain[1]
+      ? [axis.domain[0]]
+      : [axis.domain[0], axis.domain[1]];
   const count = Math.max(2, Math.floor(length / spacing));
   if (axis.dates)
     return scaleTime()

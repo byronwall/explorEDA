@@ -134,7 +134,14 @@ function isMark(value: unknown) {
       isFocus(value.focus) &&
       (value.mutedStroke === undefined || isString(value.mutedStroke)) &&
       (value.population === undefined ||
-        oneOf(value.population, ["repeat", "composition"]))
+        oneOf(value.population, ["repeat", "composition"])) &&
+      (value.labels === undefined ||
+        oneOf(value.labels, ["none", "start", "end", "both"])) &&
+      (value.labelValue === undefined ||
+        typeof value.labelValue === "boolean") &&
+      (value.colorField === undefined || isString(value.colorField)) &&
+      (value.colors === undefined ||
+        (Array.isArray(value.colors) && value.colors.every(isString)))
     );
   // Marks saved before mark types existed have none; they are strips.
   return (
@@ -240,7 +247,9 @@ function isScale(value: unknown) {
       (value.min === undefined || isNumber(value.min)) &&
       (value.max === undefined || isNumber(value.max)) &&
       (value.transform === undefined ||
-        oneOf(value.transform, ["linear", "log"]))
+        oneOf(value.transform, ["linear", "log"])) &&
+      (value.ticks === undefined ||
+        oneOf(value.ticks, ["auto", "ends", "none"]))
     );
   return (
     value.kind === "value" &&
