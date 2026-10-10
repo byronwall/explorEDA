@@ -2020,7 +2020,7 @@ export function compileDocument(
         if (number === undefined) {
           return needNumber();
         }
-        next[axis[2] as "min"] = number;
+        next.limits = { ...next.limits, [axis[2] as "min"]: number };
       }
       chart[name] = next;
       return "ok";

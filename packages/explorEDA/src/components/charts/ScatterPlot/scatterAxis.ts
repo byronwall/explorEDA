@@ -12,6 +12,7 @@ import type { IdType } from "@/providers/DataLayerProvider";
 import type { AxisSettings, datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
 import { numericScale } from "../Axis/numericScale";
+import { boundedDomain } from "../Axis/axisBounds";
 
 /** Space between bands, as a share of each band's step. */
 export const BAND_PADDING = 0.2;
@@ -139,7 +140,7 @@ export function planScatterAxis({
   }
   const type = axis.scaleType === "symlog" ? "symlog" : "linear";
   const extent = bounds(ids, data);
-  const domain = paddedDomain(extent, type);
+  const domain = boundedDomain(paddedDomain(extent, type), axis);
   return {
     kind: "numeric",
     type,

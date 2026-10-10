@@ -2,6 +2,7 @@ import { useColorContext } from "@/hooks/useDisplayColorScales";
 import { defaultCategoricalColors } from "@/lib/colorScaleMath";
 import { THEME_PALETTE, resolvePaletteColor } from "@/lib/themePalettes";
 import { finiteNumber } from "@/lib/numeric";
+import { boundedDomain, hasAxisBounds } from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import { ChartMessage } from "../ChartMessage";
 import { reduceDataPoints } from "@/lib/chartUtils";
@@ -317,13 +318,13 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
   const rightYExtent = extent(yValuesByAxis.right) as [number, number];
 
   const xScale = numericScale(settings.xAxis)
-    .domain(xExtent)
-    .range([0, innerWidth])
-    .nice();
+    .domain(boundedDomain(xExtent, settings.xAxis))
+    .range([0, innerWidth]);
+  if (!hasAxisBounds(settings.xAxis)) xScale.nice();
   const leftYScale = numericScale(settings.yAxis)
-    .domain(leftYExtent)
-    .range([innerHeight, 0])
-    .nice();
+    .domain(boundedDomain(leftYExtent, settings.yAxis))
+    .range([innerHeight, 0]);
+  if (!hasAxisBounds(settings.yAxis)) leftYScale.nice();
   const rightYScale = numericScale(settings.yAxis)
     .domain(rightYExtent)
     .range([innerHeight, 0])

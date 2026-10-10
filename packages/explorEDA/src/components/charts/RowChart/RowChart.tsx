@@ -5,6 +5,7 @@ import {
   categoryIncludes,
   categoryLabel,
 } from "@/lib/categories";
+import { boundedDomain, hasAxisBounds } from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import { BaseChartProps, RowChartSettings } from "@/types/ChartTypes";
@@ -266,10 +267,11 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   const xScale = useMemo(() => {
     const maxValue = Math.max(1, ...displayCounts.map((d) => d.total));
 
-    return numericScale(settings.xAxis)
-      .domain([0, maxValue])
-      .range([0, innerWidth])
-      .nice();
+    const scale = numericScale(settings.xAxis)
+      .domain(boundedDomain([0, maxValue], settings.xAxis))
+      .range([0, innerWidth]);
+    // Bounds draw exactly as entered.
+    return hasAxisBounds(settings.xAxis) ? scale : scale.nice();
   }, [displayCounts, innerWidth, settings.xAxis]);
 
   const yScale = useMemo(() => {

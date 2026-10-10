@@ -374,12 +374,12 @@
       {
         "id": "m1-title",
         "outcome": "Edit the title in place with one undo step per edit",
-        "status": "in-progress"
+        "status": "in-review"
       },
       {
         "id": "m2-axis-limits",
         "outcome": "Charts honor axis min and max; exact entry in the Axes tab",
-        "status": "planned"
+        "status": "in-progress"
       },
       {
         "id": "m3-axes-in-place",
@@ -396,7 +396,9 @@
       "Subtitle editing waits for the editorial subtitle setting (#192)",
       "ECDF, time X, map, and calendar limits stay with axis-domain-controls"
     ],
-    "open_decisions": []
+    "open_decisions": [
+      "Saved charts carry an unused xAxis/yAxis min=0,max=100 placeholder. Limits use a new `limits` key so old saves never clip; the placeholder can be dropped in a later major release."
+    ]
   },
   "history": [
     {

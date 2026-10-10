@@ -3,12 +3,24 @@ import { Input } from "../ui/input";
 import { Switch } from "../ui/switch";
 import { ActionTooltip } from "../ui/tooltip";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { numericAxes } from "../charts/Axis/axisBounds";
+import { AxisLimitFields } from "../charts/InPlace/AxisLimitFields";
+import { resolveFieldProfile } from "../FieldMetadata";
+import { useDataLayer } from "@/providers/DataLayerProvider";
 
 interface Props {
   settings: ChartSettings;
   onSettingChange: (key: string, value: unknown) => void;
 }
 export function AxisSettingsTab({ settings, onSettingChange }: Props) {
+  const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
+  const ranged = numericAxes(
+    settings,
+    (field) =>
+      resolveFieldProfile(field, fieldProfiles ?? [], getColumnData)
+        ?.dataType === "numeric"
+  );
   const stacked =
     settings.type === "bar" &&
     settings.seriesField &&
@@ -82,6 +94,18 @@ export function AxisSettingsTab({ settings, onSettingChange }: Props) {
                       </ToggleGroupItem>
                     </ActionTooltip>
                   </ToggleGroup>
+                </>
+              )}
+              {ranged[axis] && (
+                <>
+                  <ActionTooltip content="The values this axis shows. Leave a side blank to follow the data. Marks outside are hidden, not filtered.">
+                    <span className="eda-setting-label">Range</span>
+                  </ActionTooltip>
+                  <AxisLimitFields
+                    axisName={axis.toUpperCase()}
+                    limits={axisSettings?.limits}
+                    onChange={(limits) => update({ limits })}
+                  />
                 </>
               )}
               <AxisTextSize

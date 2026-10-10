@@ -5,6 +5,7 @@ import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import type { datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
 import { describeScale, planAxes, type AxisTypography } from "../Axis/axisPlan";
+import { boundedDomain } from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import type { BarChartSettings } from "./definition";
 import type { BarChartPlan, BarMark } from "./barPlan";
@@ -187,7 +188,7 @@ export function planSeriesBars({
     .padding(0.08);
   const yScaleType = stacked ? "linear" : settings.yAxis.scaleType;
   const y = numericScale({ ...settings.yAxis, scaleType: yScaleType })
-    .domain(domain)
+    .domain(boundedDomain(domain, settings.yAxis))
     .range([plotHeight, 0]);
   const notice =
     stacked && operation === "average"
