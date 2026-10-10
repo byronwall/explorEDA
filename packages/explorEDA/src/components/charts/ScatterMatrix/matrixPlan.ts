@@ -4,24 +4,42 @@ import {
   type DataType,
 } from "@/components/SummaryTable/utils/dataTypeDetection";
 import { applyFilter } from "@/hooks/applyFilter";
-import { categoryLabel, categoryValue } from "@/lib/categories";
 import { dateTimestamp } from "@/lib/dateTime";
 import { finiteNumber, isMissingValue } from "@/lib/numeric";
 import type { datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
 import { DEFAULT_AXIS_SETTINGS } from "@/utils/defaultSettings";
 import {
-  filterSpan,
   jitter,
   JITTER_SHARE,
   planScatterAxis,
-  spanFilter,
   type ScatterAxisScale,
 } from "../ScatterPlot/scatterAxis";
+import {
+  bandAt,
+  bandAxis,
+  bandFilter,
+  bandFilterSpan,
+  bandOf,
+  bandSpanFilter,
+  planBands,
+  type BandAxis,
+  type MatrixBands,
+} from "./matrixBands";
+import {
+  planBoxGroups,
+  planPairs,
+  selectedBoxStats,
+  selectedPairs,
+  type MatrixBoxGroup,
+  type MatrixBoxStats,
+  type MatrixPairs,
+} from "./matrixCells";
 import {
   DEFAULT_DIAGONAL_CELLS,
   DEFAULT_LOWER_CELLS,
   DEFAULT_UPPER_CELLS,
+  MAX_MATRIX_CATEGORIES,
   type ScatterMatrixSettings,
 } from "./definition";
 
@@ -31,6 +49,9 @@ export type MatrixPairType = "numeric" | "mixed" | "categorical";
 export type MatrixCellKind =
   | "points"
   | "correlation"
+  | "box"
+  | "tiles"
+  | "shares"
   | "blank"
   | "histogram"
   | "bars"
@@ -63,6 +84,11 @@ export interface MatrixField {
   /** Live rows with a value for this field. */
   valid: number;
   ticks: MatrixTick[];
+  /** Category fields: their bands and each live row's band, or -1. */
+  bands?: MatrixBands;
+  band?: Int32Array;
+  /** Continuous fields: each live row's number or timestamp, NaN when missing. */
+  value?: Float64Array;
 }
 
 export interface MatrixBar {
@@ -95,6 +121,17 @@ export interface MatrixCell {
   maxBar?: number;
   /** The bar each live row counts toward, or -1. Diagonal cells only. */
   barIndex?: Int32Array;
+  /** Box plot cells: one group per category of the band field. */
+  boxes?: {
+    /** True when the categories run down the row field. */
+    horizontal: boolean;
+    groups: MatrixBoxGroup[];
+    /** Statistics of the selected rows in each group. */
+    selected?: (MatrixBoxStats | undefined)[];
+  };
+  /** Tile and share cells: counts for each pair of bands. */
+  pairs?: MatrixPairs;
+  pairSelected?: Int32Array;
 }
 
 /** Everything that holds still while the matrix's own selection changes. */
@@ -176,34 +213,39 @@ function planFieldAxis(
   ids: number[],
   data: Record<number, datum>,
   size: number
-): ScatterAxisScale {
+): { axis: ScatterAxisScale; bands?: MatrixBands } {
   const range: [number, number] = [
     CELL_INSET,
     Math.max(CELL_INSET + 1, size - CELL_INSET),
   ];
+  if (kind === "band") {
+    const bands = planBands(ids, data, MAX_MATRIX_CATEGORIES);
+    return { axis: bandAxis(bands, range), bands };
+  }
   if (kind === "date") {
     const times = timestamps(ids, data);
-    return planScatterAxis({
+    return {
+      axis: planScatterAxis({
+        ids,
+        data: times,
+        dataType: "numeric",
+        axis: DEFAULT_AXIS_SETTINGS,
+        range,
+      }),
+    };
+  }
+  return {
+    axis: planScatterAxis({
       ids,
-      data: times,
+      data,
       dataType: "numeric",
       axis: DEFAULT_AXIS_SETTINGS,
       range,
-    });
-  }
-  return planScatterAxis({
-    ids,
-    data,
-    dataType: kind === "numeric" ? "numeric" : "categorical",
-    axis: DEFAULT_AXIS_SETTINGS,
-    range,
-  });
+    }),
+  };
 }
 
-function planTicks(
-  field: Omit<MatrixField, "ticks" | "offset" | "valid">,
-  size: number
-) {
+function planTicks(field: Pick<MatrixField, "axis" | "kind">, size: number) {
   const axis = field.axis;
   const count = Math.max(2, Math.min(5, Math.floor(size / 40)));
   if (axis.kind === "band") {
@@ -234,40 +276,52 @@ function planTicks(
     .map((tick) => ({ offset: axis.scale(tick), label: format(tick) }));
 }
 
-/** Offsets for every live row along one field. Bands jitter by row and field. */
+/**
+ * Offsets for every live row along one field, with each row's band or value.
+ * Bands jitter by row and field across `jitterShare` of their width.
+ */
 function planOffsets(
-  field: Pick<MatrixField, "axis" | "kind" | "index">,
+  field: Pick<MatrixField, "axis" | "kind" | "index" | "bands">,
   ids: number[],
-  data: Record<number, datum>
+  data: Record<number, datum>,
+  jitterShare: number
 ) {
   const offset = new Float32Array(ids.length);
   let valid = 0;
   const axis = field.axis;
-  for (let i = 0; i < ids.length; i++) {
-    const id = ids[i]!;
-    const raw = data[id];
-    let pixel = NaN;
-    if (axis.kind === "band") {
-      const start = axis.scale(categoryLabel(categoryValue(raw)));
-      if (start !== undefined) {
-        const width = axis.scale.bandwidth();
-        pixel =
-          start +
-          width / 2 +
-          jitter(id, field.index + 1) * width * JITTER_SHARE;
-      }
-    } else {
-      const value = continuousValue(field.kind, raw);
-      if (value !== undefined) {
-        pixel = axis.scale(value);
+  if (axis.kind === "band" && field.bands) {
+    const band = new Int32Array(ids.length);
+    const width = axis.scale.bandwidth();
+    const starts = field.bands.labels.map((label) => axis.scale(label) ?? 0);
+    for (let i = 0; i < ids.length; i++) {
+      const id = ids[i]!;
+      const index = bandOf(field.bands, data[id]);
+      band[i] = index;
+      offset[i] =
+        index < 0
+          ? NaN
+          : starts[index]! +
+            width / 2 +
+            jitter(id, field.index + 1) * width * jitterShare;
+      if (index >= 0) {
+        valid++;
       }
     }
-    offset[i] = pixel;
-    if (Number.isFinite(pixel)) {
+    return { offset, valid, band };
+  }
+  const value = new Float64Array(ids.length);
+  for (let i = 0; i < ids.length; i++) {
+    const number = continuousValue(field.kind, data[ids[i]!]);
+    value[i] = number ?? NaN;
+    offset[i] =
+      number === undefined || axis.kind !== "numeric"
+        ? NaN
+        : axis.scale(number);
+    if (offset[i] === offset[i]) {
       valid++;
     }
   }
-  return { offset, valid };
+  return { offset, valid, value };
 }
 
 /** Pearson correlation of two continuous fields over rows that have both. */
@@ -298,6 +352,19 @@ export function pearson(xs: ArrayLike<number>, ys: ArrayLike<number>) {
     return undefined;
   }
   return sxy / Math.sqrt(sxx * syy);
+}
+
+/** Pearson r over the rows where both value arrays have a number. */
+function pairedCorrelation(xs: Float64Array, ys: Float64Array) {
+  const a: number[] = [];
+  const b: number[] = [];
+  for (let i = 0; i < xs.length; i++) {
+    if (xs[i] === xs[i] && ys[i] === ys[i]) {
+      a.push(xs[i]!);
+      b.push(ys[i]!);
+    }
+  }
+  return pearson(a, b);
 }
 
 function cellKind(
@@ -331,33 +398,32 @@ function planDiagonalBars(
   const data = snapshot.columns[field.field] ?? {};
   const axis = field.axis;
   const barIndex = new Int32Array(ids.length).fill(-1);
-  if (axis.kind === "band") {
-    const bars = axis.categories.map((category) => {
-      const start = axis.scale(category.label) ?? 0;
+  if (axis.kind === "band" && field.bands && field.band) {
+    const bands = field.bands;
+    const bars: MatrixBar[] = bands.labels.map((label, index) => {
+      const start = axis.scale(label) ?? 0;
       return {
-        id: `${field.field}:bar:${category.label}`,
-        label: category.label,
+        id: `${field.field}:bar:${label}`,
+        label,
         start,
         end: start + axis.scale.bandwidth(),
         total: 0,
         selected: 0,
-        filter: {
-          type: "value",
-          field: field.field,
-          values: [category.value],
-        } as Filter,
+        filter: bandFilter(field.field, bands, index),
       };
     });
-    const byLabel = new Map(bars.map((bar, index) => [bar.label, index]));
     for (let i = 0; i < ids.length; i++) {
-      const index = byLabel.get(categoryLabel(categoryValue(data[ids[i]!])));
-      if (index === undefined) {
+      const index = field.band[i]!;
+      if (index < 0) {
         continue;
       }
       bars[index]!.total++;
       barIndex[i] = index;
     }
     return { bars, barIndex };
+  }
+  if (axis.kind !== "numeric") {
+    return { bars: [], barIndex };
   }
   // Equal-width bins over the data bounds from every source row.
   const [low, high] = axis.bounds;
@@ -422,7 +488,7 @@ export function offsetFilter(
     const y = axis.scale.invert(Math.max(a, b));
     return rangeFilter(field, Math.min(x, y), Math.max(x, y));
   }
-  return spanFilter(axis, field.field, [a, b]);
+  return bandSpanFilter(field.field, field.bands!, axis, [a, b]);
 }
 
 /** The span of offsets a field's filter covers, if it has one. */
@@ -442,7 +508,7 @@ export function filterOffsets(
     const b = axis.scale(dateTimestamp(filter.max));
     return [Math.min(a, b), Math.max(a, b)];
   }
-  return filterSpan(axis, filters, field.field);
+  return bandFilterSpan(field.field, field.bands!, axis as BandAxis, filters);
 }
 
 /** Replaces the matrix's selection: a brush always starts a new one. */
@@ -500,13 +566,33 @@ export function planMatrixLayout({
         ? detectColumnType(snapshot.allIds.map((id) => data[id]))
         : "numeric");
     const kind = matrixFieldKind(type);
-    const axis = planFieldAxis(kind, snapshot.allIds, data, cellSize);
-    const base = { field: name, label: getFieldLabel(name), index, kind, axis };
-    const { offset, valid } = planOffsets(base, snapshot.liveIds, data);
-    return { ...base, offset, valid, ticks: planTicks(base, cellSize) };
+    const { axis, bands } = planFieldAxis(
+      kind,
+      snapshot.allIds,
+      data,
+      cellSize
+    );
+    const base = {
+      field: name,
+      label: getFieldLabel(name),
+      index,
+      kind,
+      axis,
+      bands,
+    };
+    const jitterShare = Math.min(
+      1,
+      Math.max(0, settings.jitter ?? JITTER_SHARE)
+    );
+    return {
+      ...base,
+      ...planOffsets(base, snapshot.liveIds, data, jitterShare),
+      ticks: planTicks(base, cellSize),
+    };
   });
 
   const liveIds = snapshot.liveIds;
+  const boxCache = new Map<string, MatrixBoxGroup[]>();
   const cells: MatrixCell[] = [];
   for (let row = 0; row < fields.length; row++) {
     for (let column = 0; column < fields.length; column++) {
@@ -532,26 +618,39 @@ export function planMatrixLayout({
           cell.maxBar = Math.max(1, ...cell.bars.map((bar) => bar.total));
         }
       } else {
-        const xs: number[] = [];
-        const ys: number[] = [];
-        const continuous = a.kind !== "band" && b.kind !== "band";
-        const dataA = snapshot.columns[a.field] ?? {};
-        const dataB = snapshot.columns[b.field] ?? {};
         for (let i = 0; i < liveIds.length; i++) {
-          if (
-            !Number.isFinite(a.offset[i]!) ||
-            !Number.isFinite(b.offset[i]!)
-          ) {
-            continue;
-          }
-          cell.n++;
-          if (kind === "correlation" && continuous) {
-            xs.push(continuousValue(a.kind, dataA[liveIds[i]!])!);
-            ys.push(continuousValue(b.kind, dataB[liveIds[i]!])!);
+          if (a.offset[i] === a.offset[i] && b.offset[i] === b.offset[i]) {
+            cell.n++;
           }
         }
-        if (kind === "correlation") {
-          cell.r = pearson(xs, ys);
+        if (kind === "correlation" && a.value && b.value) {
+          cell.r = pairedCorrelation(a.value, b.value);
+        } else if (kind === "box") {
+          // Mirror cells share one grouping of the same two fields.
+          const bandField = a.band ? a : b;
+          const valueField = a.band ? b : a;
+          const key = `${bandField.index}:${valueField.index}`;
+          let groups = boxCache.get(key);
+          if (!groups) {
+            groups = planBoxGroups(
+              bandField.band!,
+              valueField.value!,
+              bandField.bands!.labels.length
+            );
+            boxCache.set(key, groups);
+          }
+          cell.boxes = { horizontal: !a.band, groups };
+        } else if (
+          (kind === "tiles" || kind === "shares") &&
+          a.band &&
+          b.band
+        ) {
+          cell.pairs = planPairs(
+            a.band,
+            b.band,
+            a.bands!.labels.length,
+            b.bands!.labels.length
+          );
         }
       }
       cells.push(cell);
@@ -669,27 +768,40 @@ export function planMatrixSelection(
   return { selected, hasSelection: true, selectedCount };
 }
 
-/** Diagonal bars with the selection counted into each one. */
+/** Counts the selection into diagonal bars, box plots, and pair cells. */
 export function withSelectedBars(
   layout: MatrixLayout,
   selection: MatrixSelection
 ): MatrixPlan {
+  const selected = selection.selected;
+  const boxStats = new Map<MatrixBoxGroup[], (MatrixBoxStats | undefined)[]>();
   const cells = layout.cells.map((cell) => {
-    if (!cell.bars || !cell.barIndex) {
-      return cell;
-    }
-    const counts = new Int32Array(cell.bars.length);
-    const index = cell.barIndex;
-    const selected = selection.selected;
-    for (let i = 0; i < index.length; i++) {
-      if (selected[i] && index[i]! >= 0) {
-        counts[index[i]!]!++;
+    if (cell.bars && cell.barIndex) {
+      const counts = new Int32Array(cell.bars.length);
+      const index = cell.barIndex;
+      for (let i = 0; i < index.length; i++) {
+        if (selected[i] && index[i]! >= 0) {
+          counts[index[i]!]!++;
+        }
       }
+      return {
+        ...cell,
+        bars: cell.bars.map((bar, b) => ({ ...bar, selected: counts[b]! })),
+      };
     }
-    return {
-      ...cell,
-      bars: cell.bars.map((bar, b) => ({ ...bar, selected: counts[b]! })),
-    };
+    if (cell.boxes && selection.hasSelection) {
+      const groups = cell.boxes.groups;
+      let stats = boxStats.get(groups);
+      if (!stats) {
+        stats = groups.map((group) => selectedBoxStats(group, selected));
+        boxStats.set(groups, stats);
+      }
+      return { ...cell, boxes: { ...cell.boxes, selected: stats } };
+    }
+    if (cell.pairs) {
+      return { ...cell, pairSelected: selectedPairs(cell.pairs, selected) };
+    }
+    return cell;
   });
   return { ...layout, ...selection, cells };
 }
@@ -717,4 +829,62 @@ export function moveField(fields: string[], from: number, to: number) {
   const [item] = next.splice(from, 1);
   next.splice(to, 0, item!);
   return next;
+}
+
+/**
+ * The filters a click on a mark sets: a diagonal bar, a box plot's category,
+ * or a tile's pair of categories. Undefined when the click missed every mark.
+ */
+export function markFilters(
+  plan: MatrixPlan,
+  cell: MatrixCell,
+  x: number,
+  y: number
+): Filter[] | undefined {
+  const size = plan.cellSize;
+  const column = plan.fields[cell.column]!;
+  const row = plan.fields[cell.row]!;
+  if (cell.bars) {
+    const height = size - 2;
+    const bar = cell.bars.find(
+      (item) =>
+        x >= Math.min(item.start, item.end) &&
+        x <= Math.max(item.start, item.end) &&
+        y >= size - (item.total / cell.maxBar!) * height - 2
+    );
+    return bar && [bar.filter];
+  }
+  if (cell.boxes) {
+    const field = cell.boxes.horizontal ? row : column;
+    const band = bandAt(
+      field.axis as BandAxis,
+      cell.boxes.horizontal ? size - y : x
+    );
+    return cell.boxes.groups.some((group) => group.band === band)
+      ? [bandFilter(field.field, field.bands!, band)]
+      : undefined;
+  }
+  if (cell.pairs && column.bands && row.bands) {
+    const a = bandAt(column.axis as BandAxis, x);
+    const b = bandAt(row.axis as BandAxis, size - y);
+    return a >= 0 && b >= 0 && cell.pairs.total[a * cell.pairs.rows + b]
+      ? [
+          bandFilter(column.field, column.bands, a),
+          bandFilter(row.field, row.bands, b),
+        ]
+      : undefined;
+  }
+  return undefined;
+}
+
+/** True when the matrix already holds exactly these filters on their fields. */
+export function sameSelection(current: Filter[], next: Filter[]) {
+  const fields = new Set(next.map((filter) => filter.field));
+  const held = current.filter((filter) => fields.has(filter.field));
+  return (
+    held.length === next.length &&
+    next.every((filter) =>
+      held.some((item) => JSON.stringify(item) === JSON.stringify(filter))
+    )
+  );
 }

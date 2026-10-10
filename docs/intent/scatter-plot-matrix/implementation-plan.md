@@ -14,7 +14,7 @@ Start with the rule that makes everything else cheap: every cell uses its two fi
 
 The second milestone protects the main technical risk. Point cells grow with the square of the field count, so at 10 × 100,000 rows the renderer may draw 9 million points. Measure it, cache the gray context, redraw only selected points, and pick a fallback before building on the renderer.
 
-The third milestone adds the intentional categorical cells — box plots, count tiles, stacked bars — on top of the same axes, so brushing and dimming need no new rules. The fourth adds the ggpairs look: densities and group color. Settings, trace, narrow layouts, and release follow. Each milestone leaves a registered, saveable view that works on its own.
+The third milestone adds the intentional categorical cells — box plots, count tiles, share bars — on top of the same axes, so brushing and dimming need no new rules. The fourth adds the ggpairs look: densities and group color. Settings, trace, narrow layouts, and release follow. Each milestone leaves a registered, saveable view that works on its own.
 
 ## Implementation strategy
 
@@ -64,7 +64,7 @@ Proves the shared-axis rule across types. Excludes box, tile, and bar cells, den
 
 - **Change — Cell kinds on the shared axes**
   - Box plot for numeric × categorical, reusing `boxPlotCalculations`: gray box for all rows, narrower colored box for the selection, recomputed on brush. Include it in the Milestone 2 benchmark.
-  - Count tiles and stacked bars for categorical × categorical, with filled share for the selection.
+  - Count tiles and share bars for categorical × categorical, with filled share for the selection.
   - Clicking a box, tile, or segment selects its categories; rectangle brushing keeps working.
 - **Change — Options**
   - Cell kind per region and pair type with the defaults in the shape brief; jitter width setting replacing the fixed `JITTER_SHARE` for matrix cells.
@@ -72,7 +72,7 @@ Proves the shared-axis rule across types. Excludes box, tile, and bar cells, den
 
 ### Desired end state
 
-- Penguins shows box plots, tiles, and stacked bars that dim consistently with point cells; the benchmark still meets its targets with box cells.
+- Penguins shows box plots, tiles, and share bars that dim consistently with point cells; the benchmark still meets its targets with box cells.
 
 ## Milestone 4: ggpairs look — densities and group color
 

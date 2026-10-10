@@ -292,6 +292,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "field",
     "fields",
     "filters",
+    "jitter",
     "layout",
     "localFilters",
     "lower",

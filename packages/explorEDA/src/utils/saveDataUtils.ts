@@ -559,7 +559,9 @@ function isChart(value: unknown): boolean {
         typeof value.diagonal.continuous === "string" &&
         typeof value.diagonal.categorical === "string" &&
         (value.pointSize === undefined || isFiniteNumber(value.pointSize)) &&
-        (value.pointOpacity === undefined || isFiniteNumber(value.pointOpacity))
+        (value.pointOpacity === undefined ||
+          isFiniteNumber(value.pointOpacity)) &&
+        (value.jitter === undefined || isFiniteNumber(value.jitter))
       );
     case "map":
       return (

@@ -8,7 +8,7 @@
     "last_updated": "2026-10-06",
     "summary": "Inspect several field pairs in off-diagonal scatter plots and each field’s distribution on the diagonal.",
     "status": "active",
-    "next_action": "Milestone 3: box plots, count tiles, stacked bars, cell-kind options, jitter width, category cap."
+    "next_action": "Milestone 4: density diagonals and group color."
   },
   "artifacts": {
     "intent_brief": {
@@ -600,12 +600,17 @@
       {
         "id": "M3",
         "title": "Intentional cells for categorical pairs",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Box plots, count tiles, stacked bars on shared axes; click-to-select; per-region per-pair-type kinds; jitter width; 12-category cap with Other.",
         "proof": "Cell planner tests, high-cardinality fixture, benchmark rerun with box cells.",
         "valid_intermediate_state": "Penguins shows all cell kinds dimming consistently.",
         "rollback": "New kinds are optional settings; defaults fall back to points.",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "evidence": [
+          "Tests: box groups match penguin species counts (151, 68, 123), Tukey stats, tile pair counts and selection, Other folding selects all folded values, jitter 0 stacks bands; 670 package and 87 demo tests pass.",
+          "Browser: box click selects a species, tile click selects a species and sex pair; 100k × 10 mixed brush 64 ms median, 84 ms p95."
+        ],
+        "notes": "Category pairs use count tiles (upper) and share bars (lower) instead of stacked bars: shares keep each pair on the shared axes, so brushing and dimming need no new rules."
       },
       {
         "id": "M4",
@@ -710,6 +715,12 @@
       "action": "Completed Milestone 2 on branch claude/scatter-matrix-m2.",
       "reason": "Targets met for drag feedback; release cost traced to workspace-wide statistics.",
       "evidence": "docs/scatter-matrix-performance.md"
+    },
+    {
+      "date": "2026-10-07",
+      "action": "Completed Milestone 3 on branch claude/scatter-matrix-m3.",
+      "reason": "Categorical cells added on shared axes.",
+      "evidence": "Milestone M3 evidence."
     }
   ],
   "closure": null,

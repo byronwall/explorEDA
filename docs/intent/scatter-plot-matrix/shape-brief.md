@@ -22,7 +22,7 @@ Scatter Matrix (new view type, beside Scatter Plot and Parallel Coordinates)
 │   ├── Cell content, chosen per region (lower, upper) and per pair type
 │   │   ├── Numeric × numeric: scatter (lower default), correlation (upper default), blank
 │   │   ├── Numeric × categorical: box plot (upper default), jittered points (lower default), blank
-│   │   ├── Categorical × categorical: count tiles (upper default), stacked bars (lower default), jittered points
+│   │   ├── Categorical × categorical: count tiles (upper default), share bars (lower default), jittered points
 │   │   └── Jitter width option, 0 to a full band, for any jittered cell
 │   ├── Diagonal, chosen per field type
 │   │   ├── Numeric or date: density (default), histogram, or name only
@@ -53,7 +53,7 @@ Scatter Matrix (new view type, beside Scatter Plot and Parallel Coordinates)
 | --- | --- |
 | Any off-diagonal cell | Its x is the column field's axis and its y the row field's axis, whatever it draws. So one brush rule works everywhere: ranges on continuous axes, spanned categories on bands. |
 | Box plot with a brush | Gray boxes summarize every row; a narrower colored box summarizes the selection in each category. |
-| Count tile or stacked bar with a brush | Area shows all rows; the filled share shows the selection. |
+| Count tile or share bar with a brush | Area shows all rows; the filled share shows the selection. |
 | A field has more than 12 categories | The 11 most common appear plus Other; selecting Other selects the remaining values. |
 | A row lacks one field | It still appears in every cell that does not need that field; reduced n is shown. |
 | The matrix's own brush changes | Domains, bands, and correlations hold still; only highlighting changes. |
