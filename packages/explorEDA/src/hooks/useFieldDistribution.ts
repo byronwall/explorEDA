@@ -17,7 +17,8 @@ export function useFieldDistributions(fields: string[], enabled: boolean) {
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const crossfilterWrapper = useDataLayer((state) => state.crossfilterWrapper);
   const liveItems = useDataLayer((state) => state.liveItems);
-  const charts = useDataLayer((state) => state.charts);
+  // Whether any chart exists; the list itself changes on every edit.
+  const hasCharts = useDataLayer((state) => state.charts.length > 0);
   const key = fields.join("\u0000");
 
   return useMemo(() => {
@@ -28,7 +29,7 @@ export function useFieldDistributions(fields: string[], enabled: boolean) {
       return distributions;
     }
     // Chart filters scope the rows; with no charts every row is in scope.
-    const filteredIds = charts.length
+    const filteredIds = hasCharts
       ? new Set(crossfilterWrapper.getFilteredRowIds())
       : undefined;
     for (const field of fields) {
@@ -56,7 +57,7 @@ export function useFieldDistributions(fields: string[], enabled: boolean) {
     fieldProfiles,
     getColumnData,
     crossfilterWrapper,
-    charts,
+    hasCharts,
     liveItems,
   ]);
 }

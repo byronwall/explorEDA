@@ -2,6 +2,9 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
+import { PencilRuler } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useChartDetailsStore } from "../../chartDetailsStore";
 import { ChartMessage } from "../ChartMessage";
 import { ChartReadout } from "../ChartReadout";
 import {
@@ -59,6 +62,7 @@ export function CompositionChart({
     [settings.composition]
   );
   const updateChart = useDataLayer((state) => state.updateChart);
+  const openDetails = useChartDetailsStore((state) => state.open);
   const { mode, selection } = useCompositionEditor(settings.id);
   const select = useCompositionEditorStore((state) => state.select);
   const editing = mode === "edit";
@@ -136,7 +140,20 @@ export function CompositionChart({
   if (!editing && definition.elements.length === 0) {
     return (
       <ChartMessage width={width} height={height}>
-        Open details to compose a graphic from text, chart units, and guides.
+        <span className="flex flex-col items-center gap-3">
+          <span>Compose a graphic from text, chart units, and guides.</span>
+          {/* A draft preview has no details view to open. */}
+          {!onSettingsChange && (
+            <Button
+              size="sm"
+              tooltip="Open the editor: the artboard beside its layers, scales, and calculations"
+              onClick={() => openDetails(settings.id)}
+            >
+              <PencilRuler className="h-4 w-4" aria-hidden="true" />
+              Open editor
+            </Button>
+          )}
+        </span>
       </ChartMessage>
     );
   }

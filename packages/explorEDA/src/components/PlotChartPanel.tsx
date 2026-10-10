@@ -65,6 +65,10 @@ import {
 } from "./ui/popover";
 import { useAlertStore } from "@/stores/alertStore";
 import {
+  SettingsPopoverContext,
+  useChartDetailsStore,
+} from "./chartDetailsStore";
+import {
   useCallback,
   useEffect,
   useId,
@@ -396,6 +400,19 @@ export function PlotChartPanel({
     }
     setExpandedState(open);
   };
+  // A chart body, such as a blank composition, can ask for its details view.
+  const detailsRequested = useChartDetailsStore(
+    (state) => state.requested === settings.id
+  );
+  const clearDetailsRequest = useChartDetailsStore((state) => state.clear);
+  useEffect(() => {
+    if (!detailsRequested) return;
+    clearDetailsRequest();
+    setSettingsOpen(false);
+    setDataOpen(false);
+    setDetailsTab("settings");
+    setExpandedState(true);
+  }, [detailsRequested, clearDetailsRequest]);
   const placeSettings = useCallback((open: boolean) => {
     setSettingsOpen(open);
     if (!open || !panelRef.current) return;
@@ -845,7 +862,9 @@ export function PlotChartPanel({
                 align="start"
                 collisionPadding={12}
               >
-                <ChartSettingsContent settings={settings} />
+                <SettingsPopoverContext.Provider value={true}>
+                  <ChartSettingsContent settings={settings} />
+                </SettingsPopoverContext.Provider>
               </PopoverContent>
             </Popover>
           )}

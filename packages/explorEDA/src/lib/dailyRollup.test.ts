@@ -156,3 +156,28 @@ describe("calendar periods", () => {
     expect(result.invalidDateIds).toEqual([4]);
   });
 });
+
+describe("repeated date reads", () => {
+  it("returns the same frozen period for a repeated value", () => {
+    const first = utcPeriod("2024-02-14", "month");
+    expect(utcPeriod("2024-02-14", "month")).toBe(first);
+    expect(Object.isFrozen(first)).toBe(true);
+    expect(first).toEqual({
+      day: "2024-02-01",
+      start: Date.UTC(2024, 1, 1),
+      end: Date.UTC(2024, 2, 1),
+    });
+  });
+
+  it("keeps intervals and week starts apart", () => {
+    expect(utcPeriod("2024-02-14", "week", "monday")?.day).toBe("2024-02-12");
+    expect(utcPeriod("2024-02-14", "week", "sunday")?.day).toBe("2024-02-11");
+    expect(utcPeriod("2024-02-14", "year")?.day).toBe("2024-01-01");
+    expect(utcDay("2024-02-14")?.day).toBe("2024-02-14");
+  });
+
+  it("remembers unreadable dates as missing", () => {
+    expect(utcPeriod("not a date", "day")).toBeUndefined();
+    expect(utcPeriod("not a date", "day")).toBeUndefined();
+  });
+});

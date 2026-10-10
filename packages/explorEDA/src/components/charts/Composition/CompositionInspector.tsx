@@ -1,6 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
+import {
+  SettingsPopoverContext,
+  useChartDetailsStore,
+} from "@/components/chartDetailsStore";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import {
   ArrowDown,
@@ -8,6 +12,7 @@ import {
   ClipboardCopy,
   Heading1,
   Heading2,
+  Maximize2,
   MessageSquareText,
   Rows3,
   SeparatorVertical,
@@ -15,7 +20,7 @@ import {
   Trash2,
   Type,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   removeElement,
   reorderElement,
@@ -128,6 +133,8 @@ export function CompositionInspector({
   const setMode = useCompositionEditorStore((state) => state.setMode);
   const select = useCompositionEditorStore((state) => state.select);
   const close = useCompositionEditorStore((state) => state.close);
+  const inPopover = useContext(SettingsPopoverContext);
+  const openDetails = useChartDetailsStore((state) => state.open);
 
   // Opening the inspector starts editing; closing it returns to viewing.
   useEffect(() => {
@@ -173,6 +180,18 @@ export function CompositionInspector({
           options={MODE_OPTIONS}
           onChange={(next) => setMode(settings.id, next)}
         />
+        {inPopover && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7"
+            tooltip="Edit in the details view: the artboard at full size beside these controls"
+            onClick={() => openDetails(settings.id)}
+          >
+            <Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />
+            Full editor
+          </Button>
+        )}
         <Button
           variant="outline"
           size="sm"

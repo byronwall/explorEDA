@@ -126,6 +126,7 @@ How the slice answers the plan's open choices:
 
 - **Frames and scales.** Scales are named composition-level objects that hold domain policy. A chart unit's frame supplies the pixel range. Marks reference one position scale and one value scale.
 - **Editing and viewing.** The chart's details view is the editor: the artboard on the left and the inspector on the right. Opening the inspector starts edit mode; the grid tile shows the view.
+  A blank composition shows an **Open editor** button, and a new composition opens in the editor. The settings popover's **Full editor** button moves there too.
 - **Template and instance.** Clicking a selected unit's repeat selects that repeat. The inspector then shows an override panel above the template and states which one an edit changes.
 - **Data scope.** Repeats and position domains come from every row in the population, so filtering keeps the layout and empties marks instead of removing repeats.
 
@@ -133,6 +134,7 @@ Measured on 2026-10-08 (Apple silicon, Chromium headless, production package bui
 
 - Resolving the email graphic from 10,376 rows takes about 7 ms for 536 monthly glyphs and 8 ms for 2,136 weekly glyphs.
 - A template edit takes about 170 ms from input to the second animation frame. The resolver is a small part of that; the rest is the workspace update path that every chart setting edit takes.
+  Since 2026-10-10, a text, style, or composition edit no longer redraws the other charts, because the workspace keeps their live rows. In a development build of the message-log example, adding an element went from about 165 ms to about 70 ms of main-thread work.
 - Copy PNG writes a 1920 × 1200 image that reads back from the Chromium clipboard. Pasting into a report or slide has not been checked by hand yet.
 
 Open questions for the next round:

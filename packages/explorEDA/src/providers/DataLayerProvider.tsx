@@ -47,6 +47,7 @@ import {
 } from "@/types/SavedDataStructure";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { createStore, useStore } from "zustand";
+import isEqual from "react-fast-compare";
 import { compactChartLayouts } from "@/utils/compactChartLayouts";
 import { IdType, initializeData } from "./lib/dataLayerState";
 
@@ -70,6 +71,23 @@ function validateFieldSettings(settings: FieldSettingsMap) {
     }
   }
 }
+
+/**
+ * Chart settings that change only how a chart looks, never which rows it
+ * holds. An edit limited to these keys keeps every chart's live items, so no
+ * other chart redraws. A key belongs here only if no chart type's filter or
+ * population reads it; `displayOnlyKeys.test.tsx` checks that for every
+ * registered type, and needs a sample value for each key.
+ */
+export const DISPLAY_ONLY_KEYS: ReadonlySet<keyof ChartSettings> = new Set<
+  keyof ChartSettings
+>([
+  "title",
+  "subtitle",
+  "note",
+  "style",
+  "composition",
+] as (keyof ChartSettings)[]);
 
 const toVector3 = ({ x, y, z }: { x: number; y: number; z: number }) => ({
   x,
@@ -953,11 +971,18 @@ const createDataLayerStore = <T extends DatumObject>(
 
       const updatedChart = { ...chart, ...settings, id } as ChartSettings;
       crossfilterWrapper.updateChart(updatedChart);
+      // Text, style, and composition edits leave every chart's rows as they
+      // were. Keeping the live items skips a redraw of every other chart.
+      const rowsUnchanged = (Object.keys(settings) as (keyof ChartSettings)[])
+        .filter((key) => !isEqual(chart[key], updatedChart[key]))
+        .every((key) => DISPLAY_ONLY_KEYS.has(key));
       set((state) => ({
         charts: state.charts.map((chart) =>
           chart.id === id ? updatedChart : chart
         ),
-        liveItems: crossfilterWrapper.getAllData(),
+        ...(rowsUnchanged
+          ? {}
+          : { liveItems: crossfilterWrapper.getAllData() }),
       }));
     },
 
@@ -1505,6 +1530,21 @@ export function useDataLayer<T extends DatumObject, U>(
     throw new Error("Missing DataLayerContext.Provider in the tree");
   }
   return useStore(store, selector);
+}
+
+/**
+ * Reads the current state when an action runs, without subscribing. A hook
+ * that needs the chart list only to act on it uses this, so it does not
+ * re-render every chart whenever any chart changes.
+ */
+export function useDataLayerSnapshot<
+  T extends DatumObject,
+>(): () => DataLayerState<T> {
+  const store = useContext(DataLayerContext) as DataLayerStore<T> | null;
+  if (!store) {
+    throw new Error("Missing DataLayerContext.Provider in the tree");
+  }
+  return store.getState;
 }
 
 const NO_STORE = createStore<Partial<DataLayerState<DatumObject>>>()(

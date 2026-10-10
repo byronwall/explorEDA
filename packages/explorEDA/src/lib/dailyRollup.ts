@@ -36,15 +36,39 @@ export interface DailyRollup {
   years: number[];
 }
 
+/**
+ * Charts read the same date strings on every filter change, and a column
+ * repeats each day across many rows. Results are frozen and shared, so a
+ * cache hit skips parsing. The cache clears when it grows past its limit.
+ */
+const PERIOD_CACHE_LIMIT = 100_000;
+const periodCache = new Map<string, Readonly<UtcPeriod> | undefined>();
+
+type UtcPeriod = { day: string; start: number; end: number };
+
+function cached<T extends object>(
+  key: string,
+  compute: () => T | undefined
+): Readonly<T> | undefined {
+  if (periodCache.has(key)) return periodCache.get(key) as Readonly<T>;
+  if (periodCache.size >= PERIOD_CACHE_LIMIT) periodCache.clear();
+  const result = compute();
+  const frozen = result && Object.freeze(result);
+  periodCache.set(key, frozen as Readonly<UtcPeriod> | undefined);
+  return frozen;
+}
+
 /** The UTC day of a date value, or undefined for an unreadable date. */
 export function utcDay(
   value: datum
-): { day: string; start: number } | undefined {
+): Readonly<{ day: string; start: number }> | undefined {
   if (typeof value !== "string" || !value.trim()) return undefined;
-  const timestamp = dateTimestamp(value);
-  if (!Number.isFinite(timestamp)) return undefined;
-  const start = Math.floor(timestamp / DAY_MS) * DAY_MS;
-  return { day: new Date(start).toISOString().slice(0, 10), start };
+  return cached(`d\u0000${value}`, () => {
+    const timestamp = dateTimestamp(value);
+    if (!Number.isFinite(timestamp)) return undefined;
+    const start = Math.floor(timestamp / DAY_MS) * DAY_MS;
+    return { day: new Date(start).toISOString().slice(0, 10), start };
+  });
 }
 
 /** Calendar boundaries, including month length and the chosen week start. */
@@ -52,7 +76,20 @@ export function utcPeriod(
   value: datum,
   interval: TimeInterval,
   weekStart: WeekStart = "monday"
-) {
+): Readonly<UtcPeriod> | undefined {
+  if (typeof value !== "string" || !value.trim()) return undefined;
+  // The key names every argument. A new argument must join it, or calls
+  // that differ only in that argument share one cached result.
+  return cached(`${interval}\u0000${weekStart}\u0000${value}`, () =>
+    computePeriod(value, interval, weekStart)
+  );
+}
+
+function computePeriod(
+  value: string,
+  interval: TimeInterval,
+  weekStart: WeekStart
+): UtcPeriod | undefined {
   const day = utcDay(value);
   if (!day) return undefined;
   const date = new Date(day.start);
