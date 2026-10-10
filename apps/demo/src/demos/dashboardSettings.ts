@@ -2716,3 +2716,147 @@ export const measlesDashboard = dashboard("Measles", [
     layout(0, 14, 12, 5)
   ),
 ]);
+
+/**
+ * Causes of death by age: one stack spread across age. Each cause draws as
+ * an area of its share of that age's total, labeled where it is thickest.
+ * Illustrative counts.
+ */
+export const causesByAgeDashboard = dashboard("Causes by age", [
+  {
+    ...base,
+    id: "causes-composition",
+    type: "composition",
+    title: "What people die from, by age",
+    layout: layout(0, 0, 12, 8),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 960, height: 600, background: "#ffffff" },
+      scales: [
+        {
+          id: "n-1",
+          kind: "numeric",
+          name: "Age",
+          field: "Age",
+          domain: "shared",
+          zero: true,
+          nice: false,
+        },
+      ],
+      calculations: [
+        {
+          id: "calc-1",
+          name: "Deaths",
+          aggregation: "sum",
+          field: "Count",
+          population: "composition",
+          filters: "follow",
+        },
+      ],
+      overrides: [],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "What people die from, by age",
+          x: 32,
+          y: 26,
+          width: 896,
+          fontSize: 24,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "Each band is one cause's share of deaths at that age, from birth to 100. Shares at every age add to 100%; {Deaths} deaths in all after the active filters.",
+          x: 32,
+          y: 58,
+          width: 896,
+          fontSize: 13,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Ages",
+          x: 72,
+          y: 110,
+          frame: { width: 848, height: 400 },
+          label: { show: false, width: 0, fontSize: 12 },
+          axis: true,
+          marks: [
+            {
+              type: "stack",
+              id: "mark-1",
+              name: "Share of deaths",
+              categoryField: "Cause",
+              aggregation: "sum",
+              measureField: "Count",
+              normalize: true,
+              order: "total",
+              colors: [
+                "#4e79a7",
+                "#f28e2b",
+                "#76b7b2",
+                "#e15759",
+                "#59a14f",
+                "#edc948",
+                "#b07aa1",
+                "#9c755f",
+                "#bab0ac",
+              ],
+              labelMinHeight: 14,
+              inset: 0,
+              xScaleId: "n-1",
+            },
+          ],
+          repeat: {
+            arrangement: "rows",
+            columns: 1,
+            gap: 0,
+            order: "label",
+            limit: 1,
+          },
+        },
+        {
+          id: "guide-1",
+          kind: "guide",
+          name: "Retirement",
+          x: 4,
+          y: -416,
+          unitId: "unit-1",
+          value: { kind: "constant", value: "65" },
+          label: "65",
+          color: "#5f6368",
+        },
+        {
+          id: "note-1",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: "Illustrative counts generated for this demo; they describe no real population. After Nathan Yau's Causes of Death.",
+          x: 32,
+          y: 566,
+          width: 896,
+          fontSize: 10,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
+    },
+  },
+  row("causes-list", "Rows by cause", "Cause", layout(0, 8, 4, 6)),
+  histogram("causes-ages", "Ages", "Age", layout(4, 8, 8, 6)),
+  table(
+    "causes-rows",
+    "Counts",
+    ["Age", "Cause", "Count"],
+    layout(0, 14, 12, 5)
+  ),
+]);

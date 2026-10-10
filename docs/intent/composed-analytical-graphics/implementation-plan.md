@@ -328,7 +328,8 @@ Category order and color come from totals over every row, so they match across c
 Columns fill the frame at 100% or scale by total against the largest repeat, and segments with room carry their category and share.
 The trace of a segment states the numerator, the denominator, every contributing category with its count, and the cumulative bounds. The prepared table keeps the package's overdose correction and multiple-mention definition, and the note states what each denominator covers.
 
-Not built: stacked area geometry across an ordered x for the Causes-of-death-by-age reference. The stack calculation is in place; feeding it through the area node is the remaining step.
+The area geometry followed as `?example=causes-by-age` from `apps/data-samples/causes_by_age.ts`: a stack mark bound to a numeric x scale groups rows by their x value, stacks categories at each x, and draws each category as one area, labeled where it is thickest.
+The y axis reads as shares or totals, an x with no rows breaks the areas, and the trace of an area gives the category's share range, numerator, denominator, and largest share. Column and area layouts share one calculation and one category order.
 
 ## Milestone 6: Combine detail and overview frames in one unit
 

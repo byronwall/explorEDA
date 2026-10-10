@@ -23,6 +23,7 @@ import {
   timeUseDashboard,
   mediaDeathsDashboard,
   measlesDashboard,
+  causesByAgeDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -46,6 +47,7 @@ import {
   LayoutGrid as GridIcon,
   Columns3,
   Grid3x3,
+  Layers,
   CloudFog,
   Globe,
   Activity,
@@ -762,6 +764,17 @@ export const examples: ExampleData[] = [
     icon: Grid3x3,
     data: "/datasets/measles.csv",
     savedData: measlesDashboard,
+  },
+  {
+    id: "causes-by-age",
+    title: "What people die from, by age",
+    description:
+      "One stack spread across age from 0 to 100. Nine causes draw as areas of their share of each age's total, labeled where each band is thickest, with every denominator open to inspection.",
+    dataset: { rows: "909 age-cause counts", fields: 3, source: "Synthetic" },
+    shows: ["Stacked areas across x", "Shares per age", "Band labels"],
+    icon: Layers,
+    data: "/datasets/causes-by-age.csv",
+    savedData: causesByAgeDashboard,
   },
 ];
 

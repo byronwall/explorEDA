@@ -144,6 +144,16 @@ export interface BandDatum {
   rowIds: number[];
   skipped: number[];
   segments: number;
+  /** For a stacked area: the category and its share at each x. */
+  stack?: {
+    category: string;
+    categoryField: string;
+    aggregation: "count" | "sum";
+    measureField?: string;
+    /** Every category in the denominators, in stacking order. */
+    categories: string[];
+    points: { x: number; count: number; total: number; share: number }[];
+  };
 }
 
 export interface ResolvedUnit {
@@ -180,7 +190,7 @@ type ResolvedSummary = {
   y: NumericScale;
   value?: ValueScale;
 };
-type ResolvedStack = { type: "stack"; mark: StackMark };
+type ResolvedStack = { type: "stack"; mark: StackMark; x?: NumericScale };
 type ResolvedMark =
   | ResolvedStrip
   | ResolvedXy
@@ -210,7 +220,12 @@ export function resolveUnit(
       if (position?.kind === "position" && value?.kind === "value")
         marks.push({ type: "strip", mark, position, value });
     } else if (mark.type === "stack") {
-      marks.push({ type: "stack", mark });
+      const x = mark.xScaleId ? scale(mark.xScaleId) : undefined;
+      marks.push({
+        type: "stack",
+        mark,
+        x: x?.kind === "numeric" ? x : undefined,
+      });
     } else if (mark.type === "summary") {
       const y = scale(mark.yScaleId);
       const value = scale(mark.valueScaleId ?? "");
@@ -247,11 +262,26 @@ export function resolveUnit(
       const measure = mark.measureField
         ? data.column(mark.measureField)
         : undefined;
+      const xColumn = mark.xScaleId
+        ? data.column(
+            (
+              definition.scales.find((item) => item.id === mark.xScaleId) as
+                | NumericScale
+                | undefined
+            )?.field ?? ""
+          )
+        : undefined;
       for (const subset of subsets) {
-        let total = 0;
-        for (const rowIds of groupByCategory(column, subset.liveIds).values())
-          total += stackValue(mark, rowIds, measure);
-        maxTotals.set(mark.id, Math.max(maxTotals.get(mark.id) ?? 0, total));
+        // Across x, the largest total at any x; otherwise the repeat's total.
+        const groups = xColumn
+          ? groupByCategory(xColumn, subset.liveIds)
+          : new Map([["all", subset.liveIds]]);
+        for (const ids of groups.values()) {
+          let total = 0;
+          for (const rowIds of groupByCategory(column, ids).values())
+            total += stackValue(mark, rowIds, measure);
+          maxTotals.set(mark.id, Math.max(maxTotals.get(mark.id) ?? 0, total));
+        }
       }
     }
     data = { ...data, stackMaxTotal: maxTotals };
@@ -484,16 +514,34 @@ export function resolveUnit(
 
     // Numeric frames: the first x–y mark's scales place guides and axes too.
     const firstXy = xys[0];
-    const xy = firstXy && {
-      x: numericAxis(firstXy.x, domainFor(firstXy.x, subset), [
-        frame.x,
-        frame.x + frame.width,
-      ]),
-      y: numericAxis(firstXy.y, domainFor(firstXy.y, subset), [
-        frame.y + frame.height,
-        frame.y,
-      ]),
-    };
+    const spread = stacks.find((item) => item.x);
+    const xy = firstXy
+      ? {
+          x: numericAxis(firstXy.x, domainFor(firstXy.x, subset), [
+            frame.x,
+            frame.x + frame.width,
+          ]),
+          y: numericAxis(firstXy.y, domainFor(firstXy.y, subset), [
+            frame.y + frame.height,
+            frame.y,
+          ]),
+        }
+      : spread?.x
+        ? {
+            x: numericAxis(spread.x, domainFor(spread.x, subset), [
+              frame.x,
+              frame.x + frame.width,
+            ]),
+            // A stacked area's y is the share of each x's total, or the total.
+            y: numericAxis(
+              spread.mark.normalize ? SHARE_SCALE : TOTAL_SCALE,
+              spread.mark.normalize
+                ? [0, 1]
+                : [0, data.stackMaxTotal?.get(spread.mark.id) ?? 1],
+              [frame.y + frame.height, frame.y]
+            ),
+          }
+        : undefined;
     const drawAxis = unit.axis && (axisPerUnit || index === subsets.length - 1);
     // Grid lines sit under the marks.
     if (xy && unit.axis)
@@ -569,16 +617,29 @@ export function resolveUnit(
               ))
       );
     }
-    stacks.forEach(({ mark }, markIndex) => {
+    stacks.forEach(({ mark, x }, markIndex) => {
+      const accented = override?.accent
+        ? { ...mark, colors: [override.accent] }
+        : mark;
       nodes.push(
-        ...stackNodes(
-          unit,
-          override?.accent ? { ...mark, colors: [override.accent] } : mark,
-          subset,
-          stacked[markIndex]!,
-          frame,
-          data
-        )
+        ...(x && xy
+          ? stackAreaNodes(
+              unit,
+              accented,
+              subset,
+              stacked[markIndex]!,
+              xy,
+              frame,
+              data
+            )
+          : stackNodes(
+              unit,
+              accented,
+              subset,
+              stacked[markIndex]!,
+              frame,
+              data
+            ))
       );
     });
     summarized[index]!.forEach((groups, markIndex) => {
@@ -1363,6 +1424,168 @@ function stackNodes(
   return nodes;
 }
 
+/** Stand-in scales for a stacked area's y axis: shares, or totals. */
+const SHARE_SCALE: NumericScale = {
+  id: "stack-share",
+  kind: "numeric",
+  name: "Share",
+  field: "share",
+  domain: "shared",
+  zero: true,
+  nice: false,
+};
+const TOTAL_SCALE: NumericScale = {
+  id: "stack-total",
+  kind: "numeric",
+  name: "Total",
+  field: "total",
+  domain: "shared",
+  zero: true,
+  nice: false,
+};
+
+/**
+ * A stack spread across x: rows group by their x value, categories stack
+ * at each x, and each category draws as one area from x to x in stacking
+ * order. An x whose total is zero leaves a gap rather than invented shares.
+ */
+function stackAreaNodes(
+  unit: UnitElement,
+  mark: StackMark,
+  subset: Subset,
+  categories: StackCategory[],
+  xy: { x: NumericAxis; y: NumericAxis },
+  frame: Bounds,
+  data: CompositionData
+): SceneNode[] {
+  const xColumn = data.column(xy.x.scale.field);
+  const categoryColumn = data.column(mark.categoryField);
+  const measure = mark.measureField
+    ? data.column(mark.measureField)
+    : undefined;
+  // Columns at each x, in x order.
+  const byX = new Map<number, number[]>();
+  for (const id of subset.liveIds) {
+    const x = finiteNumber(xColumn[id]);
+    if (x === undefined) continue;
+    const list = byX.get(x);
+    if (list) list.push(id);
+    else byX.set(x, [id]);
+  }
+  const xs = [...byX.keys()].sort((a, b) => a - b);
+  type Column = {
+    x: number;
+    total: number;
+    counts: Map<string, { count: number; rowIds: number[] }>;
+  };
+  const columns: Column[] = xs.map((x) => {
+    const groups = groupByCategory(categoryColumn, byX.get(x)!);
+    const counts = new Map<string, { count: number; rowIds: number[] }>();
+    let total = 0;
+    for (const category of categories) {
+      const rowIds = groups.get(category.key);
+      if (!rowIds) continue;
+      const count = stackValue(mark, rowIds, measure);
+      counts.set(category.key, { count, rowIds });
+      total += count;
+    }
+    return { x, total, counts };
+  });
+  const nodes: SceneNode[] = [];
+  const names = categories.map((category) => category.key);
+  for (const category of categories) {
+    const segments: AreaNode["segments"] = [];
+    let run: AreaNode["segments"][number] = [];
+    const points: NonNullable<BandDatum["stack"]>["points"] = [];
+    const rowIds: number[] = [];
+    let best: { x: number; height: number; y: number } | undefined;
+    for (const column of columns) {
+      if (!column.total) {
+        if (run.length) segments.push(run);
+        run = [];
+        continue;
+      }
+      // Cumulative share below this category at this x.
+      let below = 0;
+      for (const other of categories) {
+        if (other.index >= category.index) break;
+        below += (column.counts.get(other.key)?.count ?? 0) / column.total;
+      }
+      const own = column.counts.get(category.key);
+      const share = (own?.count ?? 0) / column.total;
+      const scale = mark.normalize ? 1 : column.total;
+      const y0 = numericPixel(xy.y, below * scale);
+      const y1 = numericPixel(xy.y, (below + share) * scale);
+      const px = numericPixel(xy.x, column.x);
+      run.push({ x: px, y0, y1, rowId: own?.rowIds[0] ?? -1 });
+      if (own) {
+        rowIds.push(...own.rowIds);
+        points.push({
+          x: column.x,
+          count: own.count,
+          total: column.total,
+          share,
+        });
+        const height = y0 - y1;
+        if (!best || height > best.height)
+          best = { x: px, height, y: (y0 + y1) / 2 };
+      }
+    }
+    if (run.length) segments.push(run);
+    if (!points.length) continue;
+    const fill = mark.colors[category.index % mark.colors.length]!;
+    nodes.push({
+      type: "area",
+      key: `${unit.id}:${subset.key}:${mark.id}:${category.key}`,
+      elementId: unit.id,
+      instanceKey: subset.key,
+      segments,
+      fill,
+      fillOpacity: 1,
+      band: {
+        instanceKey: subset.key,
+        markId: mark.id,
+        orderField: xy.x.scale.field,
+        lowerField: `share below ${category.key}`,
+        upperField: category.key,
+        rowIds,
+        skipped: [],
+        segments: segments.length,
+        stack: {
+          category: category.key,
+          categoryField: mark.categoryField,
+          aggregation: mark.aggregation,
+          measureField: mark.measureField,
+          categories: names,
+          points,
+        },
+      },
+    });
+    // The label sits where the band is thickest, if it has the room.
+    if (best && best.height >= mark.labelMinHeight)
+      nodes.push({
+        type: "text",
+        key: `${unit.id}:${subset.key}:${mark.id}:${category.key}:label`,
+        elementId: unit.id,
+        instanceKey: subset.key,
+        x: Math.min(Math.max(best.x, frame.x + 4), frame.x + frame.width - 4),
+        lines: [{ text: category.key, y: best.y + 3.5 }],
+        fontSize: 10,
+        fontWeight: 600,
+        fill: INK,
+        // Labels near an edge hang inward so they stay inside the frame.
+        anchor:
+          best.x > frame.x + frame.width * 0.8
+            ? "end"
+            : best.x < frame.x + frame.width * 0.2
+              ? "start"
+              : "middle",
+        halo: "#ffffff",
+      });
+  }
+  return nodes;
+}
+
 function numericAxis(
   scale: NumericScale,
   domain: [number, number],
@@ -1638,6 +1861,7 @@ const plainTickFormat = new Intl.NumberFormat("en-US", {
 
 /** Years read as "2016", not "2,016"; other numbers keep their separators. */
 function formatTick(axis: NumericAxis, value: number) {
+  if (axis.scale.id === SHARE_SCALE.id) return `${Math.round(value * 100)}%`;
   return /year|\byr\b/i.test(axis.scale.field) || /year/i.test(axis.scale.name)
     ? plainTickFormat.format(value)
     : tickFormat.format(value);

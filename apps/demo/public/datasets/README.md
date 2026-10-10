@@ -225,3 +225,17 @@ The file is the complete 51 × 85 grid: 3,841 reported rates per 100,000 people,
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/measles.ts
 ```
+
+## Causes of death by age
+
+- File: `causes-by-age.csv`
+- Size: 909 rows and 3 fields
+- Demo: `?example=causes-by-age`
+- Use: a stacked-area composition across age, each cause's share of that age's total, with labels where each band is thickest
+- Generation: fixed seed in `apps/data-samples/causes_by_age.ts`
+
+Nine causes by single year of age from 0 to 100. Each cause follows a plausible age profile with a little noise. The counts are synthetic and claim nothing about any population; the composition's shares are what the editor computes from them.
+
+```sh
+node --experimental-strip-types apps/data-samples/causes_by_age.ts apps/demo/public/datasets/causes-by-age.csv
+```
