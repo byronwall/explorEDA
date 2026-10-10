@@ -1092,6 +1092,17 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "covid-tiles",
+    intent:
+      "Place each state's weekly case-rate path at its cell on a tile grid, on one shared scale.",
+    features: {
+      "chart:composition": "shown",
+      "chart:line": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

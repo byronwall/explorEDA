@@ -500,10 +500,18 @@ export function resolveUnit(
       : unit.repeat.arrangement === "columns"
         ? Math.max(1, subsets.length)
         : Math.max(1, unit.repeat.columns);
+  // Tiles read each subset's cell from a field; the unaddressed queue below.
+  const tiles =
+    unit.repeat.arrangement === "tiles"
+      ? tileAddresses(subsets, unit.repeat.tileField, data)
+      : undefined;
 
   subsets.forEach((subset, index) => {
-    const column = index % columns;
-    const row = Math.floor(index / columns);
+    const cell = tiles?.get(subset.key) ?? {
+      row: Math.floor(index / columns),
+      column: index % columns,
+    };
+    const { column, row } = cell;
     const layoutX = unit.x + column * (cellWidth + unit.repeat.gap);
     const layoutY = unit.y + row * (cellHeight + unit.repeat.gap);
     const override = findOverride(definition, unit.id, subset.key);
@@ -805,6 +813,54 @@ export function resolveUnit(
   });
 
   return { nodes, bounds: unionBounds(instances, unit), instances };
+}
+
+/**
+ * Each subset's cell on a tile grid, read as "row,column" from the first row
+ * that has one. Subsets without an address fill rows under the grid, so
+ * nothing disappears for want of a tile.
+ */
+function tileAddresses(
+  subsets: Subset[],
+  field: string | undefined,
+  data: CompositionData
+): Map<string, { row: number; column: number }> {
+  const cells = new Map<string, { row: number; column: number }>();
+  const column = field ? data.column(field) : undefined;
+  let maxRow = -1;
+  let maxColumn = 0;
+  const unplaced: Subset[] = [];
+  for (const subset of subsets) {
+    let placed = false;
+    if (column)
+      for (const id of subset.allIds) {
+        const raw = column[id];
+        if (raw === null || raw === undefined || raw === "") continue;
+        const parts = String(raw)
+          .split(/[,;\s]+/)
+          .map(Number);
+        if (
+          parts.length < 2 ||
+          !parts.every(Number.isInteger) ||
+          parts.some((part) => part < 0)
+        )
+          break;
+        cells.set(subset.key, { row: parts[0]!, column: parts[1]! });
+        maxRow = Math.max(maxRow, parts[0]!);
+        maxColumn = Math.max(maxColumn, parts[1]!);
+        placed = true;
+        break;
+      }
+    if (!placed) unplaced.push(subset);
+  }
+  const width = Math.max(1, maxColumn + 1);
+  unplaced.forEach((subset, index) => {
+    cells.set(subset.key, {
+      row: maxRow + 1 + Math.floor(index / width),
+      column: index % width,
+    });
+  });
+  return cells;
 }
 
 function unionBounds(instances: ResolvedInstance[], unit: UnitElement) {

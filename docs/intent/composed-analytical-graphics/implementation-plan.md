@@ -238,6 +238,9 @@ Point marks color by a category field through a palette, a legend element lists 
 The income and life expectancy scatter (after research entry 21 and Gapminder) ships as `?example=income-life`, joined from the World Bank tables by `apps/data-samples/prepare/gapminder.ts`.
 Numeric scales take log spacing with decade ticks, point marks size by a field and label only listed values, and legends wrap long rows.
 
+The Covid tile map (research entry 18) ships as `?example=covid-tiles` from `apps/data-samples/prepare/covid-tiles.ts`, weekly from The New York Times' rolling averages.
+Repeats can be arranged as tiles: a prepared field names each repeat's cell as row,column, and repeats without a cell queue below the grid, so the tile-address gap the research named is closed.
+
 ## Milestone 3: Layer interval bands around a line
 
 Create the inflation-fan structure from supplied interval data.

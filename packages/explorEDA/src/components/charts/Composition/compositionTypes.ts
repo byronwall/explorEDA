@@ -438,7 +438,7 @@ export function markFields(mark: MarkDefinition): string[] {
   }
 }
 
-export type RepeatArrangement = "rows" | "columns" | "grid";
+export type RepeatArrangement = "rows" | "columns" | "grid" | "tiles";
 
 /** Splits rows into subsets and draws the unit once for each. */
 export interface RepeatRule {
@@ -447,6 +447,12 @@ export interface RepeatRule {
   arrangement: RepeatArrangement;
   /** Units per row in a grid. */
   columns: number;
+  /**
+   * For tiles: a field holding each subset's cell as "row,column", counted
+   * from the top left, such as a state's place on a tile map. A subset
+   * without an address goes below the grid.
+   */
+  tileField?: string;
   gap: number;
   /** Most rows first, A–Z by label, or by a per-repeat calculation's value. */
   order: RepeatOrder;

@@ -154,7 +154,8 @@ function isUnitElement(value: Value) {
     marks.every(isMark) &&
     isRecord(repeat) &&
     (repeat.field === undefined || isString(repeat.field)) &&
-    oneOf(repeat.arrangement, ["rows", "columns", "grid"]) &&
+    oneOf(repeat.arrangement, ["rows", "columns", "grid", "tiles"]) &&
+    (repeat.tileField === undefined || isString(repeat.tileField)) &&
     isNumber(repeat.columns) &&
     repeat.columns >= 1 &&
     isNumber(repeat.gap) &&

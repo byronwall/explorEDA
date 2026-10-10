@@ -27,6 +27,7 @@ import {
   consumerConfidenceDashboard,
   pewMeaningDashboard,
   incomeLifeDashboard,
+  covidTilesDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -54,6 +55,7 @@ import {
   LayoutPanelTop,
   Dumbbell,
   CircleDot,
+  Map as MapIcon,
   CloudFog,
   Globe,
   Activity,
@@ -826,6 +828,17 @@ export const examples: ExampleData[] = [
     icon: CircleDot,
     data: "/datasets/gapminder-2023.csv",
     savedData: incomeLifeDashboard,
+  },
+  {
+    id: "covid-tiles",
+    title: "Three years of Covid, state by state",
+    description:
+      "Fifty-one small case-rate paths, each at its state's cell on a US tile grid, on one shared scale with the latest week marked and the worst week in every label.",
+    dataset: { rows: "8,109 state-weeks", fields: 5, source: "Real" },
+    shows: ["Tile-addressed repeats", "Shared time scale", "Peak per repeat"],
+    icon: MapIcon,
+    data: "/datasets/covid-tiles.csv",
+    savedData: covidTilesDashboard,
   },
 ];
 
