@@ -123,3 +123,17 @@ node --experimental-strip-types apps/data-samples/prepare/earthquakes.ts
 ```
 
 The catalogue revises events. The first run caches the response in `tmp/data-cache`; delete it to take a new revision.
+
+## Message log
+
+- File: `message-log.csv`
+- Size: 10,376 rows and 5 fields
+- Demo: `?example=message-log`
+- Use: authoring a composition from a blank artboard, such as monthly strips repeated for each correspondent
+- Generation: fixed seed in `apps/data-samples/message_log.ts`
+
+Twelve fictional correspondents exchange messages with one mailbox from 2019 through 2024. Each has an active span and a few busy months. The data is synthetic.
+
+```sh
+node --experimental-strip-types apps/data-samples/message_log.ts apps/demo/public/datasets/message-log.csv
+```

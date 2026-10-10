@@ -1,5 +1,5 @@
 import { geoPath } from "d3-geo";
-import { interpolateBlues, interpolateRdBu } from "d3-scale-chromatic";
+import { heatFill } from "../heatScale";
 import { categoryKey, categoryLabel, categoryIncludes } from "@/lib/categories";
 import { summarizeGroup } from "@/lib/aggregates";
 import type { GeometryAsset, RegionGeometry } from "@/lib/geometryAssets";
@@ -160,10 +160,12 @@ export function planRegionMap(
     max = finiteValues.reduce((a, b) => Math.max(a, b), 0);
   const limit = Math.max(Math.abs(min), Math.abs(max));
   const domain: [number, number] = min < 0 ? [-limit, limit] : [0, max];
+  // The theme's heat ramp, shared with the heatmaps, so maps follow theme
+  // and mode: diverging around zero, sequential otherwise.
   const color = (value: number) =>
     min < 0
-      ? interpolateRdBu((value / (limit || 1) + 1) / 2)
-      : interpolateBlues(value / (max || 1));
+      ? heatFill(Math.max(-1, Math.min(1, value / (limit || 1))), "diverging")
+      : heatFill(Math.max(0, Math.min(1, value / (max || 1))), "sequential");
   return {
     revision: snapshot.revision,
     asset,

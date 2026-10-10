@@ -500,7 +500,9 @@ function ScopedColumnFilter({
   own?: DataTableSettings;
   scopedProfiles?: FieldProfile[];
 }) {
-  const built = useFilteredFieldProfiles(own, scopedProfiles === undefined);
+  const built = useFilteredFieldProfiles(own, scopedProfiles === undefined, [
+    props.profile.name,
+  ]);
   const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
   return (
     <ColumnFilter

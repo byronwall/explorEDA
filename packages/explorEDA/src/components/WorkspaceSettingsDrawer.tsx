@@ -6,6 +6,7 @@ import {
   Maximize2,
   Minimize2,
   Palette,
+  Type,
   X,
 } from "lucide-react";
 import { Button } from "./ui/button";
@@ -15,10 +16,16 @@ import { CalculationManager } from "./calculations/CalculationManager";
 import { ColorScalePanel } from "./ColorScaleManager";
 import { usePanelBox } from "./FieldList/FieldList";
 import { GridSettingsPanel } from "./settings/GridSettingsPanel";
+import { ThemeSettingsPanel } from "./settings/ThemeSettingsPanel";
 import { ChartSpecPanel } from "./ChartSpecPanel";
 import { useEscapeOutside } from "@/hooks/useEscapeOutside";
 
-export type WorkspaceSettingsTab = "calculations" | "colors" | "grid" | "spec";
+export type WorkspaceSettingsTab =
+  | "calculations"
+  | "theme"
+  | "colors"
+  | "grid"
+  | "spec";
 
 const TABS = [
   {
@@ -26,6 +33,12 @@ const TABS = [
     label: "Calculations",
     icon: Calculator,
     tooltip: "Create and edit calculated fields",
+  },
+  {
+    value: "theme",
+    label: "Theme",
+    icon: Type,
+    tooltip: "Pick the workspace theme: chart titles, type, and surfaces",
   },
   {
     value: "colors",
@@ -159,6 +172,9 @@ export function WorkspaceSettingsDrawer({
         </div>
         <TabsContent value="calculations" forceMount>
           <CalculationManager />
+        </TabsContent>
+        <TabsContent value="theme" forceMount>
+          <ThemeSettingsPanel />
         </TabsContent>
         <TabsContent value="colors" forceMount>
           <ColorScalePanel />

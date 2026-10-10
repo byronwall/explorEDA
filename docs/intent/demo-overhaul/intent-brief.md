@@ -54,6 +54,8 @@ Multi-table support is a prerequisite assumed to arrive first. Users inspect pre
 
 The current catalogue contains 22 entries, including several views of the same synthetic datasets. Saved tabs, editable chart settings, notes, and source traces provide reuse. Coverage records separate supported features, example use, and browser review.
 
+The feature coverage page (`?view=coverage`) renders only in development builds; the landing page no longer links it. Decide whether it ships publicly. If so, restore a quiet link from the Examples section and remove the development gate in `apps/demo/src/LandingPage.tsx`. Its status comes from a hand-maintained manifest in `apps/demo/src/demos/coverage.ts`. Log and time scales stay in Needs attention until they ship or leave the manifest. The Lorenz guide hardcodes the saved-filter count (164 of 1,000), which drifts if the generated data changes.
+
 The inspected checkout still uses one working row array. This is historical context, not a reason to shape a single-table release. Planning must inspect the landed multi-table contract before naming APIs or saved formats.
 
 ## Next step after confirmation

@@ -4,11 +4,11 @@
     "title": "Edit chart features in place",
     "slug": "in-place-chart-editing",
     "scale": "capability",
-    "current_phase": "intent",
-    "last_updated": "2026-10-06",
+    "current_phase": "implementation",
+    "last_updated": "2026-10-08",
     "summary": "Edit visible chart features near their result with a clear local edit session.",
-    "status": "planned",
-    "next_action": "Shape direct text and axis edits with immediate updates and useful existing undo steps."
+    "status": "in-progress",
+    "next_action": "Review the stacked PRs #203–#206 and the docs PR on top of them. Remaining items are under \"In-place chart editing\" in the Product Grid."
   },
   "artifacts": {
     "intent_brief": {
@@ -28,8 +28,8 @@
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-08"
     }
   },
   "sources": [
@@ -308,9 +308,7 @@
           }
         ],
         "confidence": "high",
-        "supersedes": [
-          "local-session"
-        ],
+        "supersedes": ["local-session"],
         "notes": "No implementation authorization or unobserved proof is inferred."
       },
       {
@@ -332,10 +330,7 @@
         "notes": "No implementation authorization or unobserved proof is inferred."
       }
     ],
-    "themes": [
-      "Direct manipulation",
-      "Local edits with clear effects"
-    ],
+    "themes": ["Direct manipulation", "Local edits with clear effects"],
     "conflicts": [],
     "human_questions": []
   },
@@ -356,7 +351,7 @@
     "open_decisions": []
   },
   "implementation": {
-    "status": "not-started",
+    "status": "in-progress",
     "repository_snapshot": {
       "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
       "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
@@ -375,9 +370,35 @@
     },
     "dependencies": [],
     "fast_local_loop": null,
-    "milestones": [],
-    "cut_line": [],
-    "open_decisions": []
+    "milestones": [
+      {
+        "id": "m1-title",
+        "outcome": "Edit the title in place with one undo step per edit",
+        "status": "in-review"
+      },
+      {
+        "id": "m2-axis-limits",
+        "outcome": "Charts honor axis min and max; exact entry in the Axes tab",
+        "status": "in-review"
+      },
+      {
+        "id": "m3-axes-in-place",
+        "outcome": "Range editor and axis-title editor anchored to the axis",
+        "status": "in-review"
+      },
+      {
+        "id": "m4-axis-drag",
+        "outcome": "Drag to pan or stretch an axis range as one undo step",
+        "status": "in-review"
+      }
+    ],
+    "cut_line": [
+      "Subtitle editing waits for the editorial subtitle setting (#192)",
+      "ECDF, time X, map, and calendar limits stay with axis-domain-controls"
+    ],
+    "open_decisions": [
+      "Saved charts carry an unused xAxis/yAxis min=0,max=100 placeholder. Limits use a new `limits` key so old saves never clip; the placeholder can be dropped in a later major release."
+    ]
   },
   "history": [
     {
@@ -390,12 +411,26 @@
       "date": "2026-10-06",
       "action": "Reconciled annotated product feedback and priority.",
       "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
-      "source_annotation_indices": [
-        2,
-        7,
-        8
-      ],
+      "source_annotation_indices": [2, 7, 8],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    },
+    {
+      "date": "2026-10-08",
+      "action": "Planned four stacked milestones and started milestone 1.",
+      "reason": "User asked to start implementation.",
+      "evidence": "implementation-plan.md"
+    },
+    {
+      "date": "2026-10-08",
+      "action": "Opened milestones 1–4 as stacked PRs #203–#206.",
+      "reason": "Implementation of the plan.",
+      "evidence": "Unit tests and browser checks in each PR."
+    },
+    {
+      "date": "2026-10-08",
+      "action": "Recorded follow-up work in the Product Grid and brought the durable docs up to date.",
+      "reason": "Keep remaining work and current behavior findable in the repo.",
+      "evidence": "pgm/data (#208); docs PR stacked on #206."
     }
   ],
   "closure": null,

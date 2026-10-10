@@ -1,3 +1,5 @@
+import { useThemeColors } from "@/hooks/useDisplayColorScales";
+import { useDisplayColorScale } from "@/hooks/useDisplayColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
@@ -115,11 +117,13 @@ export function SankeyChart({
   const nonce = useDataLayer((s) => s.nonce);
   const updateChart = useDataLayer((s) => s.updateChart);
   const firstStage = settings.stages[0];
-  const colorScale = useDataLayer((s) =>
-    s.colorScales.find(
-      (scale) => firstStage && scale.sourceField === firstStage
-    )
+  const colorScaleId = useDataLayer(
+    (s) =>
+      s.colorScales.find(
+        (scale) => firstStage && scale.sourceField === firstStage
+      )?.id
   );
+  const colorScale = useDisplayColorScale(colorScaleId);
   const liveIds = useGetLiveIds(settings, facetIds);
   const allIds = useGetAllIds(settings);
   const measureData = useGetColumnData(
@@ -134,12 +138,21 @@ export function SankeyChart({
   const refs = useRef(new Map<string, SVGPathElement | SVGRectElement>());
 
   const stageKey = settings.stages.join("\u0000");
+  const themeColors = useThemeColors();
   const snapshot = useMemo((): SankeySnapshot => {
     const stageData: SankeySnapshot["stageData"] = {};
     for (const field of stageKey.split("\u0000").filter(Boolean)) {
       stageData[field] = getColumnData(field);
     }
-    return { revision, allIds, liveIds, stageData, measureData, colorScale };
+    return {
+      revision,
+      allIds,
+      liveIds,
+      stageData,
+      measureData,
+      colorScale,
+      themeColors,
+    };
     // The nonce carries data edits; column maps are replaced when data changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -149,6 +162,7 @@ export function SankeyChart({
     liveIds,
     measureData,
     colorScale,
+    themeColors,
     nonce,
     getColumnData,
   ]);

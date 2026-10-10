@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildFieldProfiles } from "./fieldProfiles";
+import { buildFieldProfiles, buildValuesProfile } from "./fieldProfiles";
 
 describe("buildFieldProfiles", () => {
   it("keeps fields in first-seen order and profiles mixed values", () => {
@@ -54,5 +54,47 @@ describe("buildFieldProfiles", () => {
     });
     expect(profile?.categories?.topValues).toEqual([]);
     expect(buildFieldProfiles([])).toEqual([]);
+  });
+
+  it("measures numeric values the way charts read them", () => {
+    const profile = buildValuesProfile(
+      "value",
+      [4, "1", "", null, Infinity, " 3 ", 2, 4, "n/a"],
+      "numeric"
+    );
+
+    expect(profile).toMatchObject({
+      totalCount: 9,
+      // null and the blank string are missing.
+      nullCount: 2,
+      // Infinity and "n/a" are present but not measurable.
+      excludedCount: 2,
+      // Every present value counts once, including the blank string.
+      uniqueCount: 7,
+      statistics: { min: 1, max: 4, median: 3, mean: 2.8, bins: [1, 1, 1, 2] },
+    });
+    expect(profile.statistics?.stdDev).toBeCloseTo(Math.sqrt(1.36));
+  });
+
+  it("matches a sorted reference on larger numeric fields", () => {
+    let seed = 7;
+    const random = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const values = Array.from(
+      { length: 5001 },
+      () => Math.round(random() * 1000) / 10 - 20
+    );
+    const sorted = [...values].sort((a, b) => a - b);
+    const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
+
+    const profile = buildValuesProfile("value", values, "numeric");
+
+    expect(profile.uniqueCount).toBe(new Set(values).size);
+    expect(profile.statistics).toMatchObject({
+      min: sorted[0],
+      max: sorted.at(-1),
+      median: sorted[2500],
+    });
+    expect(profile.statistics?.mean).toBeCloseTo(mean, 10);
+    expect(profile.statistics?.bins?.reduce((a, b) => a + b, 0)).toBe(5001);
   });
 });

@@ -3,12 +3,24 @@ import { Input } from "../ui/input";
 import { Switch } from "../ui/switch";
 import { ActionTooltip } from "../ui/tooltip";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { numericAxes } from "../charts/Axis/axisBounds";
+import { AxisLimitFields } from "../charts/InPlace/AxisLimitFields";
+import { resolveFieldProfile } from "../FieldMetadata";
+import { useDataLayer } from "@/providers/DataLayerProvider";
 
 interface Props {
   settings: ChartSettings;
   onSettingChange: (key: string, value: unknown) => void;
 }
 export function AxisSettingsTab({ settings, onSettingChange }: Props) {
+  const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
+  const ranged = numericAxes(
+    settings,
+    (field) =>
+      resolveFieldProfile(field, fieldProfiles ?? [], getColumnData)
+        ?.dataType === "numeric"
+  );
   const stacked =
     settings.type === "bar" &&
     settings.seriesField &&
@@ -84,10 +96,22 @@ export function AxisSettingsTab({ settings, onSettingChange }: Props) {
                   </ToggleGroup>
                 </>
               )}
+              {ranged[axis] && (
+                <>
+                  <ActionTooltip content="The values this axis shows. Leave a side blank to follow the data. Marks outside are hidden, not filtered.">
+                    <span className="eda-setting-label">Range</span>
+                  </ActionTooltip>
+                  <AxisLimitFields
+                    axisName={axis.toUpperCase()}
+                    limits={axisSettings?.limits}
+                    onChange={(limits) => update({ limits })}
+                  />
+                </>
+              )}
               <AxisTextSize
                 label="Tick text"
                 ariaLabel={`${axis.toUpperCase()} tick text size`}
-                value={axisSettings?.tickFontSize ?? 10}
+                value={axisSettings?.tickFontSize}
                 sizes={[8, 10, 12]}
                 effect="tick labels"
                 className={toggleClass}
@@ -96,7 +120,7 @@ export function AxisSettingsTab({ settings, onSettingChange }: Props) {
               <AxisTextSize
                 label="Axis label"
                 ariaLabel={`${axis.toUpperCase()} axis label text size`}
-                value={axisSettings?.labelFontSize ?? 11}
+                value={axisSettings?.labelFontSize}
                 sizes={[9, 11, 13]}
                 effect="axis title"
                 className={toggleClass}
@@ -151,30 +175,44 @@ function AxisTextSize({
 }: {
   label: string;
   ariaLabel: string;
-  value: number;
+  /** Undefined follows the workspace theme. */
+  value: number | undefined;
   sizes: number[];
   effect: string;
   className: string;
-  onChange: (value: number) => void;
+  onChange: (value: number | undefined) => void;
 }) {
   return (
     <>
       <span className="eda-setting-label">{label}</span>
       <ToggleGroup
         type="single"
-        value={String(value)}
-        onValueChange={(size) => size && onChange(Number(size))}
+        value={value === undefined ? "theme" : String(value)}
+        onValueChange={(size) => {
+          if (size) onChange(size === "theme" ? undefined : Number(size));
+        }}
         aria-label={ariaLabel}
         variant="outline"
         size="sm"
-        className="grid w-full grid-cols-3"
+        className="grid w-full grid-cols-4"
       >
+        <ActionTooltip
+          content={`Follow the workspace theme's ${effect} size. Any other choice overrides the theme for this chart.`}
+        >
+          <ToggleGroupItem
+            value="theme"
+            aria-label="Theme"
+            className={className}
+          >
+            Theme
+          </ToggleGroupItem>
+        </ActionTooltip>
         {sizes.map((size, index) => {
-          const name = ["Small", "Default", "Large"][index];
+          const name = ["Small", "Medium", "Large"][index];
           return (
             <ActionTooltip
               key={size}
-              content={`${name} ${effect}, at ${size} px.`}
+              content={`${name} ${effect}, at ${size} px, whatever the theme.`}
             >
               <ToggleGroupItem
                 value={String(size)}

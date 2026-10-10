@@ -33,6 +33,25 @@ export function writeProjectTables(
     return -1;
   }
 }
+
+/** Where a session's rows are saved, apart from the session itself. */
+export function sourceStorageKey(key: string) {
+  return `${key}.source`;
+}
+
+/**
+ * Saves a session's rows under their own key, so an edit to the session
+ * doesn't serialize them again. Throws when storage refuses them.
+ */
+export function writeSourceAnalysis(key: string, sourceAnalysis: string) {
+  localStorage.setItem(sourceStorageKey(key), sourceAnalysis);
+}
+
+/** Removes a saved session and its rows. */
+export function removeSavedSession(key: string) {
+  localStorage.removeItem(key);
+  localStorage.removeItem(sourceStorageKey(key));
+}
 export const HISTORY_LIMIT = 50;
 
 export type SavedView = {
@@ -110,6 +129,13 @@ export function readSavedViewsSessionResult(
 
   try {
     const value = JSON.parse(raw) as SavedViewsSession;
+    // Rows are saved under their own key. Older sessions keep them inline.
+    if (value.sourceAnalysis === undefined) {
+      const source = localStorage.getItem(sourceStorageKey(key));
+      if (source !== null) {
+        value.sourceAnalysis = source;
+      }
+    }
     if (value.project && !value.tablesFrom) {
       const tables = localStorage.getItem(PROJECT_TABLES_KEY);
       if (tables === null) {

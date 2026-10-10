@@ -13,6 +13,7 @@ import type { FacetLayoutPlan } from "../FacetRelated/facetLayout";
 import type { BarTrace } from "../BarChart/barTrace";
 import type { SankeyTrace } from "../Sankey/sankeyTrace";
 import type { ParallelTrace } from "../ParallelCoordinates/parallelTrace";
+import type { MatrixTrace } from "../ScatterMatrix/matrixTrace";
 import type { CalendarTrace } from "../Calendar/calendarTrace";
 import type { HeatmapTrace } from "../Heatmap/heatmapTrace";
 import type { EcdfTrace } from "../Ecdf/ecdfTrace";
@@ -24,6 +25,7 @@ import type { FitTrace } from "../ScatterPlot/FitTraceBody";
 import type { MarginalTrace } from "../ScatterPlot/marginalPlan";
 import type { HexTrace } from "../ScatterPlot/hexPlan";
 import type { ContourTrace } from "../ScatterPlot/contourPlan";
+import type { CompositionTrace } from "../Composition/compositionTrace";
 
 /** A selected object. The owner's source resolves it against its current plan. */
 export interface TraceSelection {
@@ -116,6 +118,7 @@ export type ChartTrace =
   | BarTrace
   | SankeyTrace
   | ParallelTrace
+  | MatrixTrace
   | CalendarTrace
   | HeatmapTrace
   | EcdfTrace
@@ -124,7 +127,8 @@ export type ChartTrace =
   | GuideTrace
   | TitleTrace
   | FacetTrace
-  | LegendTrace;
+  | LegendTrace
+  | CompositionTrace;
 
 /** A planned legend entry that a chart owns, so the legend draws what the chart drew. */
 export interface PlannedLegendItem {

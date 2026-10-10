@@ -10,6 +10,7 @@ import {
   categoryLabel,
   categoryValue,
 } from "@/lib/categories";
+import { boundedDomain } from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
@@ -248,10 +249,15 @@ export function BoxPlot({
     const padding = range * Y_SCALE_PADDING;
 
     const scale = numericScale(settings.yAxis)
-      .domain([
-        settings.yAxis.scaleType === "symlog" ? min : min - padding,
-        max + padding,
-      ])
+      .domain(
+        boundedDomain(
+          [
+            settings.yAxis.scaleType === "symlog" ? min : min - padding,
+            max + padding,
+          ],
+          settings.yAxis
+        )
+      )
       .range([innerHeight, 0]);
 
     return scale;

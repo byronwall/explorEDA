@@ -65,9 +65,11 @@ export function DataTable({
     rows !== undefined || settings.showDistributions !== false;
   // Rows passes every chart filter. A table chart ignores its own filters,
   // so a filtered column keeps its shape with the kept range highlighted.
+  // Only the table's columns are profiled.
   const distributionProfiles = useFilteredFieldProfiles(
     rows ? undefined : settings,
-    showDistributions
+    showDistributions,
+    settings.columns.map((column) => column.field)
   );
   const headerHeight = showDistributions
     ? HEADER_HEIGHT_WITH_DISTRIBUTIONS
