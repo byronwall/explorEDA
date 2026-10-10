@@ -1,12 +1,14 @@
 {
-  "schema_version": "0.4.0",
+  "schema_version": "0.5.0",
   "initiative": {
     "title": "Composed analytical graphics",
     "slug": "composed-analytical-graphics",
     "scale": "capability",
-    "current_phase": "build",
-    "last_updated": "2026-10-08",
-    "summary": "Author polished report graphics from a blank page using primitives, repeated templates, scoped calculations, group placement, and instance overrides."
+    "current_phase": "execution",
+    "last_updated": "2026-10-09",
+    "summary": "Author polished report graphics from a blank page using primitives, repeated templates, scoped calculations, group placement, and instance overrides.",
+    "status": "active",
+    "next_action": "Merge #215 (direct editor entry, fewer redraws). Then decide whether value domains stay fixed under filtering, and start milestone 2 (connected observations)."
   },
   "artifacts": {
     "intent_brief": {
@@ -93,14 +95,14 @@
     {
       "id": "product-feedback",
       "type": "direct-user-input",
-      "location": "2026-09-29 current conversation response annotations 1\u201310",
+      "location": "2026-09-29 current conversation response annotations 1–10",
       "anchor": "polished output; blank page; primitives and templates; repeat layouts; overrides; ad hoc calculations; modes; filter-independent inputs; group placement; representative size",
       "authority": "latest direct intent"
     },
     {
       "id": "product-feedback-2",
       "type": "direct-user-input",
-      "location": "2026-09-29 current conversation follow-up annotations 1\u20135",
+      "location": "2026-09-29 current conversation follow-up annotations 1–5",
       "anchor": "PNG clipboard output; visual overrides; common scales; data/frame/page anchors; separate recurring-report project",
       "authority": "latest direct intent"
     },
@@ -387,7 +389,7 @@
       {
         "id": "c22",
         "type": "rough estimate",
-        "statement": "The representative graphic uses about 10000 source rows, 10\u201315 repeated units, and 1000\u20132000 glyphs",
+        "statement": "The representative graphic uses about 10000 source rows, 10–15 repeated units, and 1000–2000 glyphs",
         "commitment": "illustrative",
         "importance": "supporting",
         "status": "active",
@@ -592,7 +594,12 @@
         "proof": "Blank authoring, inspection, save/reload, retained override identities, three anchors, and pasted PNG",
         "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
         "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "status": "completed",
+        "evidence": [
+          "PRs #210-#214 merged; implementation-plan.md 'Status: vertical slice built'",
+          "Not yet checked: pasting the PNG into a report or slide by hand"
+        ]
       },
       {
         "id": "m2",
@@ -604,7 +611,8 @@
         "proof": "Shuffled input retains year order; missing coordinates break the path; segment contributors inspect correctly",
         "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
         "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "status": "planned"
       },
       {
         "id": "m3",
@@ -616,7 +624,8 @@
         "proof": "Nested bounds, gaps, clipping, layer order, and matching output",
         "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
         "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "status": "planned"
       },
       {
         "id": "m4",
@@ -628,7 +637,8 @@
         "proof": "Known quartiles, paired cohorts, filter updates, zero-base change, and explicit domain policy",
         "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
         "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "status": "planned"
       },
       {
         "id": "m5",
@@ -640,7 +650,8 @@
         "proof": "100% totals, numerator/denominator trace, stable order, and zero-total gaps",
         "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
         "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "status": "planned"
       },
       {
         "id": "m6",
@@ -652,7 +663,8 @@
         "proof": "Distinct sibling windows, subset/global inputs, filter policies, and group movement",
         "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
         "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "status": "planned"
       }
     ],
     "cut_line": [
@@ -699,6 +711,16 @@
     {
       "date": "2026-09-29",
       "event": "Researched five additional references; added distinct capability ladder and repository-grounded plan. Stored seven reference image sets and available datasets with source provenance."
+    },
+    {
+      "date": "2026-10-09",
+      "event": "status-assessed",
+      "status": "active",
+      "previous_status": null,
+      "evidence": [
+        "Milestone 1 merged as PRs #210-#214 (composition chart type, repeats, calculations, overrides, Copy PNG)",
+        "PR #215 open"
+      ]
     }
   ]
 }

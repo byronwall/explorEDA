@@ -5,7 +5,7 @@
     "slug": "hierarchy-analysis",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-06",
+    "last_updated": "2026-10-09",
     "summary": "Analysts may need to understand how a total divides through several category levels.",
     "status": "planned",
     "next_action": "Use two category levels and a hand-checkable sum. Show a simple hierarchy table with drill and source inspection. Decide whether spatial area encoding adds value before choosing treemap or sunburst."
@@ -307,6 +307,14 @@
         3
       ],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    },
+    {
+      "date": "2026-10-09",
+      "event": "status-checked",
+      "status": "planned",
+      "evidence": [
+        "No implementation of this scope found at 91b627d"
+      ]
     }
   ],
   "closure": null,

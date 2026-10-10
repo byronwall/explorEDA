@@ -47,7 +47,7 @@ Reuse chart definitions, settings validation, calculations, field metadata, and 
 
 The agent starts from A. The user changes a chart, producing B. Reconcile the agent's result with B, capture B, and apply C. Undo restores B. If the user then makes another edit D, normal Undo steps through C and then B. Removing only the older agent change while keeping D would be selective Undo, which is deferred.
 
-History snapshots reuse the saved format. A change-comparison UI is deferred and is not required for Undo. Do not add an operation log solely to make ordinary Undo possible. Multiple sources and lookups are a separate [initiative](../multi-source-analysis/shape-brief.md).
+History snapshots reuse the saved format. A change-comparison UI is deferred and is not required for Undo. Do not add an operation log solely to make ordinary Undo possible. Related tables shipped separately (see the package README's [Related tables](../../../packages/explorEDA/README.md#related-tables)); this shape stays single-source.
 
 ## First proof
 

@@ -5,10 +5,10 @@
     "slug": "axis-domain-controls",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-06",
+    "last_updated": "2026-10-09",
     "summary": "Analysts should change the region of a numerical chart they see without unintentionally changing the record population.",
-    "status": "planned",
-    "next_action": "Use a positive fixture and one scatter chart. Change bounds without changing row IDs, brush, reset, and restore. Add zero and negative values before deciding true-log behavior. Verify facet comparison separately."
+    "status": "active",
+    "next_action": "Explicit bounds shipped with in-place editing (#204). Remaining: limits on date axes, ECDF, heatmap, and map; true log scale; and checking limits across facets. Shape those before more gestures."
   },
   "artifacts": {
     "intent_brief": {
@@ -343,6 +343,15 @@
         3
       ],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    },
+    {
+      "date": "2026-10-09",
+      "event": "partially-delivered",
+      "status": "active",
+      "previous_status": "planned",
+      "evidence": [
+        "xAxis.limits and yAxis.limits honored by scatter, bar, histogram, line, row, and box (components/charts/Axis/axisBounds.ts, PR #204)"
+      ]
     }
   ],
   "closure": null,

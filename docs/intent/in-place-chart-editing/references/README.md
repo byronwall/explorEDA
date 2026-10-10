@@ -18,7 +18,7 @@ Source inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927`. No runtime or br
 
 ## Related intent
 
-- [editorial-chart-styling](../../editorial-chart-styling/intent-brief.md).
+- [editorial-chart-styling](https://github.com/byronwall/explorEDA/blob/91b627d7307a4a14c7f123a713ce5f45662a3d22/docs/intent/editorial-chart-styling/intent-brief.md).
 - [axis-domain-controls](../../axis-domain-controls/intent-brief.md).
 - [current-analysis-trust](../../current-analysis-trust/intent-brief.md).
 

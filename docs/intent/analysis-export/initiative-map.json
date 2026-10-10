@@ -5,10 +5,10 @@
     "slug": "analysis-export",
     "scale": "capability",
     "current_phase": "intent",
-    "last_updated": "2026-10-06",
-    "summary": "Export the end user\u2019s authored chart as an image, with slides and PDF reports as possible later outputs.",
-    "status": "planned",
-    "next_action": "Shape one clean styled chart image, then prove mixed-renderer capture before adding document outputs."
+    "last_updated": "2026-10-09",
+    "summary": "Export the end user’s authored chart as an image, with slides and PDF reports as possible later outputs.",
+    "status": "active",
+    "next_action": "Composition views copy a PNG (PR #214). Shape one image export for ordinary charts, which mix Canvas, SVG, HTML, and WebGL, reusing the composition raster path where it fits."
   },
   "artifacts": {
     "intent_brief": {
@@ -37,7 +37,7 @@
       "id": "product-feedback",
       "type": "direct-user-input",
       "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
-      "anchor": "Annotations 3\u20135: end-user focus; image export with possible slides/PDF; visual references",
+      "anchor": "Annotations 3–5: end-user focus; image export with possible slides/PDF; visual references",
       "authority": "Explicit human feedback"
     },
     {
@@ -242,6 +242,15 @@
       "action": "Created export initiative from product-feedback annotation 4.",
       "reason": "User explicitly requested a separate export scope.",
       "evidence": "Existing chart controls and rendering paths inspected; no image, slides, PDF, or runtime code produced."
+    },
+    {
+      "date": "2026-10-09",
+      "event": "partially-delivered",
+      "status": "active",
+      "previous_status": "planned",
+      "evidence": [
+        "components/charts/Composition/compositionOutput.ts writes a 2x PNG to the clipboard (PR #214)"
+      ]
     }
   ],
   "closure": null,

@@ -5,7 +5,7 @@
     "slug": "data-bound-narrative",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-06",
+    "last_updated": "2026-10-09",
     "summary": "Analysts may want a short explanation beside a chart that updates when its population or measure changes.",
     "status": "planned",
     "next_action": "Bind a single selected count beside a matching card. Check filtering, zero rows, and restore against exact IDs. Decide whether explicit bindings solve the task before introducing templates or generated language."
@@ -307,6 +307,14 @@
         3
       ],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    },
+    {
+      "date": "2026-10-09",
+      "event": "status-checked",
+      "status": "planned",
+      "evidence": [
+        "No implementation of this scope found at 91b627d"
+      ]
     }
   ],
   "closure": null,

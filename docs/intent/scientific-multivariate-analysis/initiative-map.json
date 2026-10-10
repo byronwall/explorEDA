@@ -5,7 +5,7 @@
     "slug": "scientific-multivariate-analysis",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-06",
+    "last_updated": "2026-10-09",
     "summary": "Scientific users may need more than a fitted scatter curve.",
     "status": "planned",
     "next_action": "Select one method and a deterministic fixture where it changes the interpretation. Compare with an independent numerical result, inspect exclusions, and verify own-versus-peer filtering. Decide its statistical meaning before adding a display."
@@ -85,14 +85,14 @@
     {
       "id": "existing-scatter-intent",
       "type": "direct-intent-artifact",
-      "location": "../advanced-scatter-analysis/intent-brief.md",
+      "location": "https://github.com/byronwall/explorEDA/blob/91b627d7307a4a14c7f123a713ce5f45662a3d22/docs/intent/advanced-scatter-analysis/intent-brief.md",
       "anchor": "Possibilities, not decisions; scientific overlays outside required native scope",
       "authority": "Earlier user intent, not new implementation approval"
     },
     {
       "id": "scatter-matrix-request",
       "type": "direct-user-input",
-      "location": "../scatter-plot-matrix/references/user-request.md",
+      "location": "https://github.com/byronwall/explorEDA/blob/91b627d7307a4a14c7f123a713ce5f45662a3d22/docs/intent/scatter-plot-matrix/references/user-request.md",
       "anchor": "Explicit off-diagonal scatter and on-diagonal distributions",
       "authority": "explicit user intent"
     },
@@ -356,6 +356,14 @@
         3
       ],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    },
+    {
+      "date": "2026-10-09",
+      "event": "status-checked",
+      "status": "planned",
+      "evidence": [
+        "No implementation of this scope found at 91b627d"
+      ]
     }
   ],
   "closure": null,

@@ -5,7 +5,7 @@
     "slug": "parameterized-task-navigation",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-04",
+    "last_updated": "2026-10-09",
     "summary": "Deferred overview-to-detail connections over saved views; destination filter inheritance is unresolved.",
     "status": "planned",
     "next_action": "After saved tabs are useful, choose destination filter behavior and tab reuse before shaping navigation."
@@ -36,7 +36,7 @@
     {
       "id": "saved-tabs-feedback-2026-10-04",
       "type": "direct-user-input",
-      "location": "2026-10-04 response annotations 1\u20134 and split request in this chat",
+      "location": "2026-10-04 response annotations 1–4 and split request in this chat",
       "anchor": "multiple saved views on tabs; all client state ideally local; automatic Undo and differentiated timeline; view = chart defs and filters; inheritance unclear",
       "authority": "direct scope correction and product decisions"
     },
@@ -152,13 +152,21 @@
       "source_anchors": [
         "saved-tabs-feedback-2026-10-04"
       ]
+    },
+    {
+      "date": "2026-10-09",
+      "event": "status-checked",
+      "status": "planned",
+      "evidence": [
+        "No implementation of this scope found at 91b627d"
+      ]
     }
   ],
   "closure": null,
   "related_initiatives": [
     {
       "slug": "project-task-views",
-      "path": "../project-task-views/initiative-map.json",
+      "path": "https://github.com/byronwall/explorEDA/blob/91b627d7307a4a14c7f123a713ce5f45662a3d22/docs/intent/project-task-views/initiative-map.json",
       "relationship": "Saved tabs are the first outcome and prerequisite."
     }
   ]

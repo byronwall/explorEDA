@@ -2,7 +2,7 @@
 
 Updated with analytical chart reconciliation on 2026-10-04. Chart additions were reviewed against `3873c27`. See the [current gaps and verification](transcript-gap-analysis.md).
 
-Original audit: 2026-09-17, commit `a168f1b`. Retirement sections reviewed against `22a9bd3`; the full inventory was not re-audited.
+Original audit: 2026-09-17, commit `a168f1b`. Retirement sections reviewed against `22a9bd3`, and against `91b627d` on 2026-10-09; the full inventory was not re-audited.
 
 This document describes the current reviewed implementation. It covers the demo application and the public `exploreda` package. The companion [transcript gap analysis](transcript-gap-analysis.md) compares this behavior with the recorded product intent.
 
@@ -87,14 +87,26 @@ The [developer workspace guide](developer-workspace.md) describes landing routes
 The [coverage workflow](example-coverage.md) explains the review skill, manifest, matrix, and baseline acceptance.
 Later chart additions retain their own review state. Retirement does not certify all current combinations.
 
+### Initiatives retired 2026-10-09
+
+Seven initiatives retired on 2026-10-09 after their stacked PRs merged. Each shipped as described below. Leftover work is under **Retired initiative follow-ups** in the Product Grid.
+
+- **Advanced scatter analysis.** Scatter plots fit linear, polynomial, and LOESS curves per group and pooled, show paired summaries and marginal histograms, and draw hexagonal bins and smoothed density contours. See [Two-dimensional scatter plot](#two-dimensional-scatter-plot). Ellipses, distances, and other inferential overlays moved to the [scientific overlays seed](intent/scientific-multivariate-analysis/intent-brief.md).
+- **Scatter plot matrix.** The `scatter-matrix` view. See [Scatter matrix](#scatter-matrix) and [its performance notes](scatter-matrix-performance.md).
+- **Editorial chart styling.** Compact, Newsprint, and Report themes with headlines, subtitles, source notes, findable overrides, and theme-following color. See the package README's [Themes and styling](../packages/explorEDA/README.md#themes-and-styling).
+- **Compact config authoring.** Dashboard text: chart-local filters, a compiler that builds what it can and reports the rest, an agent-facing checker CLI, and export. See the package README's [Dashboard text](../packages/explorEDA/README.md#dashboard-text).
+- **Project and task views.** Saved tabs with local persistence and categorized history in the demo. See [Saved state, exports, and host integration](#saved-state-exports-and-host-integration).
+- **Multiple sources and lookups.** `exploreda/analysis` and `ExplorEdaProject`: related tables, lookups and expansions with diagnostics, Schema and Query panels, parameters, and an optional worker. See the package README's [Related tables](../packages/explorEDA/README.md#related-tables).
+- **Demo overhaul.** Seven curated analyses with capability discovery. See [the curated catalogue](example-coverage.md#curated-catalogue) and the [dataset notes](../apps/demo/public/datasets/README.md).
+
 ### Follow-up scope
 
 | Lasting goal                                                                                | Destination and boundary                                                                                                                                                                              |
 | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Multiple sources, relationships, joins, lookups, and source inspection                      | [Multi-source analysis](intent/multi-source-analysis/intent-brief.md). The retired slice accepts one in-memory table.                                                                                 |
-| Named analysis views, durable saves, and application navigation                             | [Project task views](intent/project-task-views/intent-brief.md). Package restore works; host storage remains separate.                                                                                |
+| Multiple sources, relationships, joins, lookups, and source inspection                      | Delivered as related tables; see the package README's [Related tables](../packages/explorEDA/README.md#related-tables). `ExplorEda` alone still takes one in-memory table.                         |
+| Named analysis views, durable saves, and application navigation                             | Saved tabs and history are delivered in the demo. Overview-to-detail navigation is the [parameterized navigation seed](intent/parameterized-task-navigation/intent-brief.md); server storage remains host scope. |
 | Inspectable source-to-mark transformations and contributors                                 | [Traceability](#traceability-and-reproducibility). Additional chart families now have trace paths; see the [chart guide](analytical-chart-coverage.md). Source-data filter flow remains future scope. |
-| Composable visualization definitions, derived layers, and advanced chart construction       | [Composed analytical graphics](intent/composed-analytical-graphics/intent-brief.md). Per-chart settings remain the current model.                                                                     |
+| Composable visualization definitions, derived layers, and advanced chart construction       | [Composed analytical graphics](intent/composed-analytical-graphics/intent-brief.md). Its first milestone shipped the `composition` view; the other chart types keep per-chart settings.             |
 | Agent-created deterministic analysis views                                                  | [In-app analysis agent](intent/in-app-analysis-agent/intent-brief.md). This remains separate from the delivered inspection slice.                                                                     |
 | Adaptive table controls, rich cells, grouping, selection, chart defaults, and facet quality | [Transcript gap analysis](transcript-gap-analysis.md). Column order and virtual rows now exist; do not reuse the old missing-feature list.                                                            |
 | Large-source profile cost and desktop capacity                                              | [Performance evidence](#performance-and-resource-use). Measure representative sources before changing the full-source profile path.                                                                   |
@@ -426,7 +438,11 @@ Points render on Canvas. Axes, hover guides, and brushing use SVG. Domains use s
 
 Hover finds a nearby point and shows crosshairs, coordinate values, and available color context. The search scans live points. Point traces explain source records. Keyboard and pointer selection exist; broader accessibility review remains separate evidence.
 
-Numeric bubble area and rectangular count-density bins are implemented. Traces explain size domains, radius calculations, exact bin boundaries, and source IDs. Lasso, regression, confidence bands, and smooth density contours remain separate proposals.
+Numeric bubble area and rectangular count-density bins are implemented. Traces explain size domains, radius calculations, exact bin boundaries, and source IDs.
+
+Fits are linear, polynomial (degree 2–6), or LOESS, drawn per color group, per facet, and pooled. Each fit shows its equation and R², warns when a group cannot be fit, and traces back to its rows. The chart's own brush does not refit it; filters from other charts do. Paired summaries report n − 1 covariance and Pearson r, pooled and per group. Marginal histograms use fixed full-source bin edges and stack by the color field. Hexagonal bins keep exact contributors. Smoothed density draws Gaussian kernel contours or filled regions, with a bandwidth scale and a level count. Each level is a density threshold in rows per X×Y unit and reports the share of rows inside it. In Node, 10,000 rows in ten groups fit in under 15 ms, hexagons take about 4 ms, and contours about 7 ms; browser cost with many facets is unmeasured. Code lives in `components/charts/ScatterPlot/` (`regression.ts`, `fitPlan.ts`, `pairedSummary.ts`, `marginalPlan.ts`, `hexPlan.ts`, `contourPlan.ts`).
+
+Lasso, confidence and prediction bands, ellipses, and distance displays are not built.
 
 Source: [scatter renderer](../packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx), [definition](../packages/explorEDA/src/components/charts/ScatterPlot/definition.ts).
 
@@ -569,11 +585,12 @@ Source: [editor](../packages/explorEDA/src/components/charts/Markdown/Markdown.t
 
 | Capability       | Current contract                                                                                                                                                 |
 | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Saved workspace  | Charts and settings/filters/layouts, formula-string calculations, color scales, grid settings, metadata, Rows settings, field settings, and grouped definitions. |
+| Saved workspace  | Charts and settings/filters/layouts, formula-string calculations, color scales, grid settings, metadata, Rows settings, field settings, grouped definitions, and the workspace theme. |
 | Source data      | Passed separately for primary settings restore. A full analysis bundle also includes raw rows and preserves undefined/nonfinite values.                          |
 | Host callback    | `onStateChange` emits storage-neutral settings JSON when relevant workspace state changes.                                                                       |
 | Restore          | `savedData` restores settings against current rows. Restore validates calculations and settings before replacement.                                              |
 | Clipboard        | The package and demo support copy/open settings JSON and copy/open full analysis JSON.                                                                           |
+| Dashboard text   | `compileDocument` builds settings from text and `exportDocument` writes them back; the demo's Dashboard text panel pastes and exports it.                         |
 | Table download   | CSV of selected source/derived columns and matching rows in displayed order.                                                                                     |
 | Summary download | CSV of current field profiles.                                                                                                                                   |
 | Demo URL         | Identifies an example or coverage page. It does not encode the live analysis.                                                                                    |
@@ -588,9 +605,11 @@ The saved-data validator checks nested structures, field settings, grouped defin
 
 Restore validates and installs calculations before rebuilding chart predicates. A focused integration check verifies a saved calculated-field threshold against the restored values.
 
-The demo remembers emitted state only in memory to support reset behavior. There is no durable save/load library, autosave, named view selector, shareable live-state URL, undo history for dashboard actions, or data-version binding. Draft calculations remain session-local. `modifiedAt` records the snapshot time. Markdown editor undo is local to its content editor.
+The demo saves each analysis as named tabs over one source (`apps/demo/src/SavedViewsWorkspace.tsx`). Users create, rename, duplicate, and switch tabs. Each tab keeps its own charts, layout, and filters; field definitions, calculations, and color scales are shared. The source, tabs, active tab, and history save to `localStorage` automatically. A failed save keeps the work open, says so, and offers export. History keeps up to 50 settings checkpoints labeled View, Filter, Both, or Shared. Undo and Redo step through them; the History timeline previews an earlier state and can restore it, keeping the displaced present. A 500-row fixture with 50 checkpoints used about 189 KB; larger sources are unmeasured.
 
-There is no built-in chart image, SVG, PDF, or complete dashboard export. Clipboard configuration and CSV downloads are the current export paths.
+The package itself stays storage-neutral. There is no shareable live-state URL, server storage, or data-version binding. Draft calculations remain session-local. Markdown editor undo is local to its content editor.
+
+A `composition` view can copy itself to the clipboard as a PNG. Other charts have no image, SVG, PDF, or dashboard export; clipboard configuration and CSV downloads are their export paths.
 
 Sources: [data provider][provider], [saved schema](../packages/explorEDA/src/types/SavedDataStructure.ts), [serialization types](../packages/explorEDA/src/types/SavedDataTypes.ts), [save utilities][save], [demo landing page][landing], [workspace menu][manager].
 

@@ -4,11 +4,11 @@
     "title": "Edit chart features in place",
     "slug": "in-place-chart-editing",
     "scale": "capability",
-    "current_phase": "implementation",
-    "last_updated": "2026-10-08",
+    "current_phase": "execution",
+    "last_updated": "2026-10-09",
     "summary": "Edit visible chart features near their result with a clear local edit session.",
-    "status": "in-progress",
-    "next_action": "Review the stacked PRs #203–#206 and the docs PR on top of them. Remaining items are under \"In-place chart editing\" in the Product Grid."
+    "status": "active",
+    "next_action": "Milestones 1-4 merged. Before retiring: build subtitle editing in place (now unblocked by editorial themes) and run the width and theme checks under 'In-place chart editing' in the Product Grid."
   },
   "artifacts": {
     "intent_brief": {
@@ -308,7 +308,9 @@
           }
         ],
         "confidence": "high",
-        "supersedes": ["local-session"],
+        "supersedes": [
+          "local-session"
+        ],
         "notes": "No implementation authorization or unobserved proof is inferred."
       },
       {
@@ -330,7 +332,10 @@
         "notes": "No implementation authorization or unobserved proof is inferred."
       }
     ],
-    "themes": ["Direct manipulation", "Local edits with clear effects"],
+    "themes": [
+      "Direct manipulation",
+      "Local edits with clear effects"
+    ],
     "conflicts": [],
     "human_questions": []
   },
@@ -374,22 +379,34 @@
       {
         "id": "m1-title",
         "outcome": "Edit the title in place with one undo step per edit",
-        "status": "in-review"
+        "status": "completed",
+        "evidence": [
+          "Merged in PR #203"
+        ]
       },
       {
         "id": "m2-axis-limits",
         "outcome": "Charts honor axis min and max; exact entry in the Axes tab",
-        "status": "in-review"
+        "status": "completed",
+        "evidence": [
+          "Merged in PR #204"
+        ]
       },
       {
         "id": "m3-axes-in-place",
         "outcome": "Range editor and axis-title editor anchored to the axis",
-        "status": "in-review"
+        "status": "completed",
+        "evidence": [
+          "Merged in PR #205"
+        ]
       },
       {
         "id": "m4-axis-drag",
         "outcome": "Drag to pan or stretch an axis range as one undo step",
-        "status": "in-review"
+        "status": "completed",
+        "evidence": [
+          "Merged in PR #206"
+        ]
       }
     ],
     "cut_line": [
@@ -411,7 +428,11 @@
       "date": "2026-10-06",
       "action": "Reconciled annotated product feedback and priority.",
       "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
-      "source_annotation_indices": [2, 7, 8],
+      "source_annotation_indices": [
+        2,
+        7,
+        8
+      ],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
     },
     {
@@ -431,6 +452,16 @@
       "action": "Recorded follow-up work in the Product Grid and brought the durable docs up to date.",
       "reason": "Keep remaining work and current behavior findable in the repo.",
       "evidence": "pgm/data (#208); docs PR stacked on #206."
+    },
+    {
+      "date": "2026-10-09",
+      "event": "status-assessed",
+      "status": "active",
+      "previous_status": "in-progress",
+      "evidence": [
+        "PRs #203-#206 and docs PR #209 merged",
+        "Product Grid page-retire-the-in-place-editing-initiative waits on the subtitle follow-up; page-verification-not-yet-done lists checks AGENTS.md requires"
+      ]
     }
   ],
   "closure": null,

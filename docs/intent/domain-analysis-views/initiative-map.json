@@ -5,7 +5,7 @@
     "slug": "domain-analysis-views",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-06",
+    "last_updated": "2026-10-09",
     "summary": "Certain questions require a domain model beyond generic chart fields.",
     "status": "planned",
     "next_action": "Choose one real domain and a hand-sized fixture. Write independent expected stage counts, cohort rates, or overlap results. Decide whether existing views with explicit preparation suffice before adding a dedicated chart."
@@ -307,6 +307,14 @@
         3
       ],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    },
+    {
+      "date": "2026-10-09",
+      "event": "status-checked",
+      "status": "planned",
+      "evidence": [
+        "No implementation of this scope found at 91b627d"
+      ]
     }
   ],
   "closure": null,

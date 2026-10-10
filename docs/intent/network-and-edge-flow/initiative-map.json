@@ -5,7 +5,7 @@
     "slug": "network-and-edge-flow",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-06",
+    "last_updated": "2026-10-09",
     "summary": "Some datasets describe links between entities rather than one ordered categorical path per source row.",
     "status": "planned",
     "next_action": "Use six explicit edges, including a duplicate and a cycle. Show identity and contributors in a table before choosing geometry. Decide whether adapting Sankey is sufficient or a network interaction is necessary."
@@ -307,6 +307,14 @@
         3
       ],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    },
+    {
+      "date": "2026-10-09",
+      "event": "status-checked",
+      "status": "planned",
+      "evidence": [
+        "No implementation of this scope found at 91b627d"
+      ]
     }
   ],
   "closure": null,

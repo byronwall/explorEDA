@@ -132,7 +132,7 @@
     "slug": "analytical-chart-coverage",
     "outcome": "completed",
     "retired_at": "2026-10-04",
-    "summary": "Delivered analytical chart expansion. Byron waived remaining cross-view and browser-restore acceptance checks; no ongoing initiative obligations remain. Reconciled against 3873c2766be43a3f970a2ba62c80d459979234ea and the prior Node 24 pnpm check pass (530 library and 21 demo tests). Relevant uncommitted changes are this review\u2019s durable chart documentation and planning cleanup. No new browser check ran.",
+    "summary": "Delivered analytical chart expansion. Byron waived remaining cross-view and browser-restore acceptance checks; no ongoing initiative obligations remain. Reconciled against 3873c2766be43a3f970a2ba62c80d459979234ea and the prior Node 24 pnpm check pass (530 library and 21 demo tests). Relevant uncommitted changes are this review’s durable chart documentation and planning cleanup. No new browser check ran.",
     "reason": "Byron explicitly requested whole-initiative retirement and said the remaining work was not needed.",
     "documentation": [
       "docs/analytical-chart-coverage.md",
@@ -164,7 +164,7 @@
       {
         "claim_id": "c7",
         "disposition": "delivered",
-        "evidence": "Grouped-bar selection, heatmap, and Calendar initial slices are present; prior plan records #105, #103, and #104 with screenshots. Later stack #114\u2013#123 is merged."
+        "evidence": "Grouped-bar selection, heatmap, and Calendar initial slices are present; prior plan records #105, #103, and #104 with screenshots. Later stack #114–#123 is merged."
       }
     ],
     "waived_work": [
@@ -397,6 +397,166 @@
       "docs/intent/data-viz-review-and-example-coverage/initiative-map.json",
       "docs/intent/data-viz-review-and-example-coverage/intent-brief.md",
       "docs/intent/data-viz-review-and-example-coverage/shape-brief.md"
+    ]
+  },
+  {
+    "title": "Demo overhaul with complete analysis examples",
+    "slug": "demo-overhaul",
+    "outcome": "completed",
+    "retired_at": "2026-10-09",
+    "summary": "Delivered seven curated analyses (flights, Beijing, World Bank, earthquakes, Wine, Shop, Lorenz) with saved tabs per analysis and capability discovery, using the landed related-tables feature. Dataset research moved to docs/research/demo-datasets/. Reconciled against 91b627d; merged PRs #183, #186, #188, #190, #193. No new browser or test run for retirement.",
+    "reason": "Byron asked on 2026-10-09 to retire the completed docs/intent initiatives. Every planned milestone's PR merged into main.",
+    "documentation": [
+      "docs/example-coverage.md",
+      "apps/demo/public/datasets/README.md",
+      "docs/research/demo-datasets/README.md",
+      "docs/application-feature-inventory.md"
+    ],
+    "revision": "91b627d7307a4a14c7f123a713ce5f45662a3d22",
+    "follow_ups": [
+      {
+        "scope": "Reserve datasets (STATS19, Bike Sharing, Online Retail, Concrete)",
+        "destination": "docs/research/demo-datasets/README.md"
+      }
+    ]
+  },
+  {
+    "title": "Scatter plot matrix with diagonal distributions",
+    "slug": "scatter-plot-matrix",
+    "outcome": "completed",
+    "retired_at": "2026-10-09",
+    "summary": "Delivered the scatter-matrix view: two to ten fields of any type, configurable upper/lower/diagonal cells (points, correlation, box, tile, share, histogram, density), group color, linked two-field brushing, traces, and 100k-row performance. Reconciled against 91b627d; merged PRs #184, #185, #189, #191, #195, #198, #199.",
+    "reason": "Byron asked on 2026-10-09 to retire the completed docs/intent initiatives. Every planned milestone's PR merged into main.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "docs/scatter-matrix-performance.md",
+      "docs/analytical-chart-coverage.md"
+    ],
+    "revision": "91b627d7307a4a14c7f123a713ce5f45662a3d22",
+    "follow_ups": [
+      {
+        "scope": "Open a scatter from a correlation cell",
+        "destination": "docs/intent/relationship-discovery/intent-brief.md"
+      }
+    ]
+  },
+  {
+    "title": "Durable editorial chart styling",
+    "slug": "editorial-chart-styling",
+    "outcome": "completed",
+    "retired_at": "2026-10-09",
+    "summary": "Delivered Compact, Newsprint, and Report workspace themes with one restyled header, subtitles and source notes, two-line title clamp, themed axis text on seven families, a Theme tab listing overrides, theme-following color, and host CSS variables. Merging the stack is taken as Byron's sign-off on the Newsprint and Report tokens. Reconciled against 91b627d; merged PRs #187, #192, #197, #200, #201, #202.",
+    "reason": "Byron asked on 2026-10-09 to retire the completed docs/intent initiatives. Every planned milestone's PR merged into main.",
+    "documentation": [
+      "packages/explorEDA/README.md",
+      "docs/application-feature-inventory.md"
+    ],
+    "revision": "91b627d7307a4a14c7f123a713ce5f45662a3d22",
+    "follow_ups": [
+      {
+        "scope": "Theme typography on the remaining chart families",
+        "destination": "Product Grid page-theme-typography-on-the-remaining-chart-families (pgm/data)"
+      },
+      {
+        "scope": "Host theme lock (deferred until a host asks)",
+        "destination": "packages/explorEDA/README.md"
+      }
+    ]
+  },
+  {
+    "title": "Compact config authoring",
+    "slug": "config-authoring-dsl",
+    "outcome": "completed",
+    "retired_at": "2026-10-09",
+    "summary": "Delivered dashboard text: chart-local filters, compileDocument with per-declaration recovery and located diagnostics, the exploreda-dsl check/fields/reference CLI, exportDocument with flat setting paths, shared definitions, and several views in one text. Reconciled against 91b627d; merged PRs #149, #150, #151, #159, #160, #164, #179.",
+    "reason": "Byron asked on 2026-10-09 to retire the completed docs/intent initiatives. Every planned milestone's PR merged into main.",
+    "documentation": [
+      "packages/explorEDA/README.md",
+      "docs/application-feature-inventory.md",
+      "docs/agent-guide.md"
+    ],
+    "revision": "91b627d7307a4a14c7f123a713ce5f45662a3d22",
+    "follow_ups": [
+      {
+        "scope": "Package or host ownership of the dashboard text panel",
+        "destination": "Product Grid page-decide-where-dashboard-text-is-entered (pgm/data)"
+      },
+      {
+        "scope": "Workspace filters in dashboard text",
+        "destination": "docs/intent/filter-and-series-controls/intent-brief.md"
+      }
+    ]
+  },
+  {
+    "title": "Project and task views",
+    "slug": "project-task-views",
+    "outcome": "completed",
+    "retired_at": "2026-10-09",
+    "summary": "Delivered saved tabs over one source in the demo: create, rename, duplicate, and switch views with their own charts, layout, and filters; shared definitions; automatic localStorage persistence with failure export; and 50-checkpoint categorized history with Undo/Redo and a timeline preview and restore. Reconciled against 91b627d; merged PRs #142, #146, #148.",
+    "reason": "Byron asked on 2026-10-09 to retire the completed docs/intent initiatives. Every planned milestone's PR merged into main.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "docs/agent-guide.md"
+    ],
+    "revision": "91b627d7307a4a14c7f123a713ce5f45662a3d22",
+    "follow_ups": [
+      {
+        "scope": "Storage limits for larger imports",
+        "destination": "Product Grid page-measure-saved-tabs-with-larger-imports (pgm/data)"
+      },
+      {
+        "scope": "Overview-to-detail navigation",
+        "destination": "docs/intent/parameterized-task-navigation/intent-brief.md"
+      },
+      {
+        "scope": "Reusable filter collections",
+        "destination": "docs/intent/filter-and-series-controls/intent-brief.md"
+      }
+    ]
+  },
+  {
+    "title": "Multiple sources and lookups",
+    "slug": "multi-source-analysis",
+    "outcome": "completed",
+    "retired_at": "2026-10-09",
+    "summary": "Delivered related tables: exploreda/analysis evaluates sources, relationships, lookups, expansions, calculations, filters, and grouped summaries with diagnostics; ExplorEdaProject adds Schema and Query panels, parameters, and an opt-in worker; the shop example runs in the saved-view workspace. One query per view; no automatic relationship filter propagation. Reconciled against 91b627d; merged PRs #165, #167, #168, #169, #170.",
+    "reason": "Byron asked on 2026-10-09 to retire the completed docs/intent initiatives. Every planned milestone's PR merged into main.",
+    "documentation": [
+      "packages/explorEDA/README.md",
+      "docs/application-feature-inventory.md"
+    ],
+    "revision": "91b627d7307a4a14c7f123a713ce5f45662a3d22",
+    "follow_ups": [
+      {
+        "scope": "One point per entity from a repeating scatter",
+        "destination": "Product Grid page-suggest-a-parent-query-for-scatters-over-repeated-rows (pgm/data)"
+      },
+      {
+        "scope": "Related-table evaluation at scale",
+        "destination": "Product Grid page-probe-related-table-evaluation-at-scale (pgm/data)"
+      }
+    ]
+  },
+  {
+    "title": "Advanced scatter analysis",
+    "slug": "advanced-scatter-analysis",
+    "outcome": "completed",
+    "retired_at": "2026-10-09",
+    "summary": "Delivered the required package scope: linear, polynomial, and LOESS fits per group, facet, and pooled; paired summaries; marginal histograms; hexagonal bins; and smoothed density contours and filled regions. Milestone 4 (ellipse and distance overlays) was never accepted and moved to the scientific-multivariate-analysis seed. Reconciled against 91b627d; merged PRs #137, #138, #139, #140, #141.",
+    "reason": "Byron asked on 2026-10-09 to retire the completed docs/intent initiatives. Every planned milestone's PR merged into main.",
+    "documentation": [
+      "docs/application-feature-inventory.md"
+    ],
+    "revision": "91b627d7307a4a14c7f123a713ce5f45662a3d22",
+    "follow_ups": [
+      {
+        "scope": "Ellipse and distance overlays (old milestone 4)",
+        "destination": "docs/intent/scientific-multivariate-analysis/intent-brief.md"
+      },
+      {
+        "scope": "Browser capacity with many facets",
+        "destination": "Product Grid page-measure-scatter-fits-and-densities-with-many-facets (pgm/data)"
+      }
     ]
   }
 ]

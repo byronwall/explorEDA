@@ -12,7 +12,7 @@ last_updated: "2026-10-04"
 
 Users may later open a detail analysis from a selected entity in an overview. A store selection could open a saved detail view with that store as its parameter. Users and developers should be able to create these views and connections.
 
-This job was previously part of [Project and task views](../project-task-views/intent-brief.md). Byron's immediate goal is saved tabs containing chart definitions and filters over one source. Navigation is a separate follow-up and must not delay that first result.
+This job was previously part of [Project and task views](https://github.com/byronwall/explorEDA/blob/91b627d7307a4a14c7f123a713ce5f45662a3d22/docs/intent/project-task-views/intent-brief.md). Byron's immediate goal is saved tabs containing chart definitions and filters over one source. Navigation is a separate follow-up and must not delay that first result.
 
 ## What matters most
 

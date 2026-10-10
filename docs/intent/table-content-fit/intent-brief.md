@@ -10,7 +10,7 @@ last_updated: "2026-10-06"
 
 ## My read
 
-Users should make a table readable with one deliberate action when default widths hide important values. The current table already resizes, reorders, hides and recovers columns, clears sort, and resets widths. The remaining fitting gap is content-aware sizing. Resetting a width from a field name does not inspect the rendered values.
+Users should make a table readable with one deliberate action when default widths hide important values. The current table already resizes, reorders, hides and recovers columns, clears sort, and resets widths. Since 2026-10-06 every column also starts at a content-fitted width. The remaining fitting gap is an explicit fit for one column when a long value needs more than the default cap.
 
 The durable outcome is quick inspection of long or uneven fields without spending time dragging every divider. Start with an explicit fit action for one column. It should use displayed formatting and bounded available space. A few unusually long values should not make the entire workspace unusable. The underlying source value and copy/export behavior must remain intact.
 
@@ -36,7 +36,7 @@ Content fit is a candidate adjacent to the comparison work. The old no-reorder a
 
 ## Current reality that matters
 
-DataTableContextMenu includes Reset width and Clear sort. Header controls support manual widths and column movement. The inspected paths do not provide content-aware fit. Existing virtualization means DOM-visible cells are only part of the loaded table.
+DataTableContextMenu includes Reset width and Clear sort. Header controls support manual widths and column movement. `fitColumnWidth` (`DataTable/columnWidths.ts`, PR #177) sets each default width from the header and the formatted values in the first 200 rows, between 88 and 220 px. Reset width returns to that fit. There is no explicit Fit action, and values past the cap still truncate. Existing virtualization means DOM-visible cells are only part of the loaded table.
 
 ## Expansion trigger
 

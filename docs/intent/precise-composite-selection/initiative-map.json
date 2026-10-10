@@ -5,7 +5,7 @@
     "slug": "precise-composite-selection",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-06",
+    "last_updated": "2026-10-09",
     "summary": "Users should select exactly the combinations or facet observations they point to.",
     "status": "planned",
     "next_action": "Shape exact lasso membership and linked selection before further tuple-union or facet-local proposals."
@@ -337,6 +337,14 @@
         15
       ],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    },
+    {
+      "date": "2026-10-09",
+      "event": "status-checked",
+      "status": "planned",
+      "evidence": [
+        "No implementation of this scope found at 91b627d"
+      ]
     }
   ],
   "closure": null,

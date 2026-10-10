@@ -3,20 +3,21 @@
   "name": "explorEDA",
   "description": "Blank project ready for grid editing, structure mapping, and future AI-assisted details.",
   "createdAt": "2026-09-29T01:22:21.210Z",
-  "updatedAt": "2026-10-08T19:19:38.028Z",
+  "updatedAt": "2026-10-10T03:37:00.146Z",
   "operationLog": [
     {
-      "id": "eb9b0e7c-69af-46eb-a228-4ce108cd144a",
-      "kind": "node.priority.updated",
+      "id": "d9039137-f284-4cc3-9401-0c00da53a1a7",
+      "kind": "node.created",
       "actor": {
         "kind": "agent",
-        "id": "token:42eb74",
-        "label": "Agent token ...42eb74"
+        "id": "token:32c4ad",
+        "label": "Agent token ...32c4ad"
       },
-      "createdAt": "2026-10-08T19:19:38.028Z",
-      "summary": "Set \"Log scale is accepted but drawn as linear\" priority to medium.",
+      "createdAt": "2026-10-10T03:37:00.147Z",
+      "summary": "Created \"Measure scatter fits and densities with many facets\" under \"Retired initiative follow-ups\".",
       "nodeIds": [
-        "page-log-scale-is-accepted-but-drawn-as-linear"
+        "page-measure-scatter-fits-and-densities-with-many-facets",
+        "page-retired-initiative-follow-ups"
       ],
       "payload": {
         "state": {
@@ -1079,6 +1080,89 @@
                 "rawContext": "**Bug:** `scale=log` is accepted everywhere but drawn as a linear scale, with no warning.\n\n- Dashboard text accepts it: `x.scale=log`, or the flat path `xAxis.scaleType=log`. The allowed list in `packages/explorEDA/src/lib/dsl/compile.ts` (the `axis` key handler) is `linear, log, symlog, time, band`.\n- Saved-data validation accepts it (`isAxis` in `src/utils/saveDataUtils.ts`), and `AxisSettings.scaleType` declares it.\n- `numericScale()` in `components/charts/Axis/numericScale.ts` returns symlog for `symlog` and linear for everything else, so `log`, `time`, and `band` all draw linear.\n- The Axes tab then shows **Linear** selected and the axis title gets no scale note, so the user can't tell their setting was ignored.\n- Only ECDF has a real log option (`logX`, with its own `scaleLog`).\n\nFix options, decided with the axis-domain-controls initiative (`docs/intent/axis-domain-controls/intent-brief.md`, which says not to map log to symlog silently and to report nonpositive values):\n\n1. **Short term:** reject `log` (and `time`/`band` on numeric axes) in dashboard text with a diagnostic that suggests `symlog`. On restore, map the saved value to linear and report it, rather than storing a setting no chart honors.\n2. **Real support:** implement a true log scale in `numericScale`. Values ≤ 0 need an explicit omission or rejection policy, and excluded rows must stay visible in traces. Offer it in the Axes tab beside Linear and Symlog, and make `axisDrag.ts` move log axes in log space, as it does for symlog.\n\nDone when no saved or typed scale is silently replaced by another.\n\nFound while correcting docs in #209, which also changed the docs' `xAxis.scaleType=log` examples to `symlog`.\n",
                 "images": [],
                 "priority": "medium"
+              },
+              {
+                "id": "page-retired-initiative-follow-ups",
+                "label": "Retired initiative follow-ups",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "purpose": "Work left over after an initiative retired; the initiative history links here."
+                },
+                "context": "Remaining work from initiatives retired on 2026-10-09. Closure records are in `docs/initiative-history.json`. Each item names the retired initiative it came from.\n",
+                "rawContext": "Remaining work from initiatives retired on 2026-10-09. Closure records are in `docs/initiative-history.json`. Each item names the retired initiative it came from.\n",
+                "images": []
+              },
+              {
+                "id": "page-theme-typography-on-the-remaining-chart-families",
+                "label": "Theme typography on the remaining chart families",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "purpose": "Themed text sizes on families that only have the themed header."
+                },
+                "context": "From editorial chart styling. Bar, row, scatter, line, box, histogram, and ECDF take the full theme typography. Every other family takes only the themed header: data table, pivot, summary, metric card, markdown, map, calendar, heatmap, 3D scatter, Sankey, parallel coordinates, and color legend. Give each its themed axis or text sizes and check it under Compact, Newsprint, and Report in light and dark.\n",
+                "rawContext": "From editorial chart styling. Bar, row, scatter, line, box, histogram, and ECDF take the full theme typography. Every other family takes only the themed header: data table, pivot, summary, metric card, markdown, map, calendar, heatmap, 3D scatter, Sankey, parallel coordinates, and color legend. Give each its themed axis or text sizes and check it under Compact, Newsprint, and Report in light and dark.\n",
+                "images": []
+              },
+              {
+                "id": "page-decide-where-dashboard-text-is-entered",
+                "label": "Decide where dashboard text is entered",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "purpose": "Package or host ownership of the dashboard text panel."
+                },
+                "context": "From compact config authoring. The demo has a Dashboard text panel for pasting and exporting text. Decide whether that panel moves into the package or stays a host feature. The compiler, checker CLI, and exportDocument are already package API.\n",
+                "rawContext": "From compact config authoring. The demo has a Dashboard text panel for pasting and exporting text. Decide whether that panel moves into the package or stays a host feature. The compiler, checker CLI, and exportDocument are already package API.\n",
+                "images": []
+              },
+              {
+                "id": "page-measure-saved-tabs-with-larger-imports",
+                "label": "Measure saved tabs with larger imports",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "purpose": "Storage limits for saved tabs and history."
+                },
+                "context": "From project and task views. A 500-row shop fixture with 50 checkpoints used about 189 KB of local storage. That is one fixture, not a supported import size. Measure representative larger sources, then state the storage limit or move source rows out of local storage.\n",
+                "rawContext": "From project and task views. A 500-row shop fixture with 50 checkpoints used about 189 KB of local storage. That is one fixture, not a supported import size. Measure representative larger sources, then state the storage limit or move source rows out of local storage.\n",
+                "images": []
+              },
+              {
+                "id": "page-suggest-a-parent-query-for-scatters-over-repeated-rows",
+                "label": "Suggest a parent query for scatters over repeated rows",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "purpose": "One point per entity without chart-level dedup."
+                },
+                "context": "From multi-source analysis. On an item-level query, a scatter of order fields draws each order once per item. When every scatter field comes from a looked-up parent, suggest opening a view on a query whose rows are that parent, using the Query panel helpers (sourceView, queryForStage), not chart-level identity rules. Verify with the shop example at 1280, 783, and 390 px.\n",
+                "rawContext": "From multi-source analysis. On an item-level query, a scatter of order fields draws each order once per item. When every scatter field comes from a looked-up parent, suggest opening a view on a query whose rows are that parent, using the Query panel helpers (sourceView, queryForStage), not chart-level identity rules. Verify with the shop example at 1280, 783, and 390 px.\n",
+                "images": []
+              },
+              {
+                "id": "page-probe-related-table-evaluation-at-scale",
+                "label": "Probe related-table evaluation at scale",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "purpose": "Measured cost of project queries."
+                },
+                "context": "From multi-source analysis. Add a fixed-seed probe under packages/explorEDA/scripts/ for about ten tables of 10,000 rows, with a lookup chain and a grouped summary. Report time, output rows, and origin links, then compare main thread and worker in the browser. Use the numbers to decide whether ExplorEdaProject should default to the worker.\n",
+                "rawContext": "From multi-source analysis. Add a fixed-seed probe under packages/explorEDA/scripts/ for about ten tables of 10,000 rows, with a lookup chain and a grouped summary. Report time, output rows, and origin links, then compare main thread and worker in the browser. Use the numbers to decide whether ExplorEdaProject should default to the worker.\n",
+                "images": []
+              },
+              {
+                "id": "page-measure-scatter-fits-and-densities-with-many-facets",
+                "label": "Measure scatter fits and densities with many facets",
+                "type": "page",
+                "status": "planned",
+                "metadata": {
+                  "purpose": "Browser capacity of the scatter analysis layers."
+                },
+                "context": "From advanced scatter analysis. In Node, 10,000 rows in ten groups fit in under 15 ms, hexagons take about 4 ms, and contours about 7 ms. Browser cost with many facets and several layers on at once has not been measured.\n",
+                "rawContext": "From advanced scatter analysis. In Node, 10,000 rows in ten groups fit in under 15 ms, hexagons take about 4 ms, and contours about 7 ms. Browser cost with many facets and several layers on at once has not been measured.\n"
               }
             ],
             "links": [
@@ -1376,11 +1460,144 @@
                 "source": "page-axis-limits-on-more-chart-families",
                 "target": "page-log-scale-is-accepted-but-drawn-as-linear",
                 "parentChild": true
+              },
+              {
+                "source": "page-retired-initiative-follow-ups",
+                "target": "page-theme-typography-on-the-remaining-chart-families",
+                "parentChild": true
+              },
+              {
+                "source": "page-retired-initiative-follow-ups",
+                "target": "page-decide-where-dashboard-text-is-entered",
+                "parentChild": true
+              },
+              {
+                "source": "page-retired-initiative-follow-ups",
+                "target": "page-measure-saved-tabs-with-larger-imports",
+                "parentChild": true
+              },
+              {
+                "source": "page-retired-initiative-follow-ups",
+                "target": "page-suggest-a-parent-query-for-scatters-over-repeated-rows",
+                "parentChild": true
+              },
+              {
+                "source": "page-retired-initiative-follow-ups",
+                "target": "page-probe-related-table-evaluation-at-scale",
+                "parentChild": true
+              },
+              {
+                "source": "page-retired-initiative-follow-ups",
+                "target": "page-measure-scatter-fits-and-densities-with-many-facets",
+                "parentChild": true
               }
             ]
           }
         }
       }
+    },
+    {
+      "id": "dada9e79-1b5a-4c52-b8b7-56d2210d25a2",
+      "kind": "node.created",
+      "actor": {
+        "kind": "agent",
+        "id": "token:f38ba8",
+        "label": "Agent token ...f38ba8"
+      },
+      "createdAt": "2026-10-10T03:36:59.488Z",
+      "summary": "Created \"Probe related-table evaluation at scale\" under \"Retired initiative follow-ups\".",
+      "nodeIds": [
+        "page-probe-related-table-evaluation-at-scale",
+        "page-retired-initiative-follow-ups"
+      ]
+    },
+    {
+      "id": "851c7ef2-6c26-4556-afdf-97f338612680",
+      "kind": "node.created",
+      "actor": {
+        "kind": "agent",
+        "id": "token:7ed9e9",
+        "label": "Agent token ...7ed9e9"
+      },
+      "createdAt": "2026-10-10T03:36:58.840Z",
+      "summary": "Created \"Suggest a parent query for scatters over repeated rows\" under \"Retired initiative follow-ups\".",
+      "nodeIds": [
+        "page-suggest-a-parent-query-for-scatters-over-repeated-rows",
+        "page-retired-initiative-follow-ups"
+      ]
+    },
+    {
+      "id": "ac221050-6191-4897-bf44-ffd1df98ca76",
+      "kind": "node.created",
+      "actor": {
+        "kind": "agent",
+        "id": "token:85068f",
+        "label": "Agent token ...85068f"
+      },
+      "createdAt": "2026-10-10T03:36:58.172Z",
+      "summary": "Created \"Measure saved tabs with larger imports\" under \"Retired initiative follow-ups\".",
+      "nodeIds": [
+        "page-measure-saved-tabs-with-larger-imports",
+        "page-retired-initiative-follow-ups"
+      ]
+    },
+    {
+      "id": "1e25d484-acd9-4cb7-aa01-009f6637ac28",
+      "kind": "node.created",
+      "actor": {
+        "kind": "agent",
+        "id": "token:ee3ec1",
+        "label": "Agent token ...ee3ec1"
+      },
+      "createdAt": "2026-10-10T03:36:57.534Z",
+      "summary": "Created \"Decide where dashboard text is entered\" under \"Retired initiative follow-ups\".",
+      "nodeIds": [
+        "page-decide-where-dashboard-text-is-entered",
+        "page-retired-initiative-follow-ups"
+      ]
+    },
+    {
+      "id": "84d1f9ef-9b5f-489c-a7cb-a9903f15b100",
+      "kind": "node.created",
+      "actor": {
+        "kind": "agent",
+        "id": "token:c9abd5",
+        "label": "Agent token ...c9abd5"
+      },
+      "createdAt": "2026-10-10T03:36:56.885Z",
+      "summary": "Created \"Theme typography on the remaining chart families\" under \"Retired initiative follow-ups\".",
+      "nodeIds": [
+        "page-theme-typography-on-the-remaining-chart-families",
+        "page-retired-initiative-follow-ups"
+      ]
+    },
+    {
+      "id": "9d5de40e-b489-42f3-b09d-c0be68117a9c",
+      "kind": "node.created",
+      "actor": {
+        "kind": "agent",
+        "id": "token:af95eb",
+        "label": "Agent token ...af95eb"
+      },
+      "createdAt": "2026-10-10T03:36:44.452Z",
+      "summary": "Created \"Retired initiative follow-ups\".",
+      "nodeIds": [
+        "page-retired-initiative-follow-ups"
+      ]
+    },
+    {
+      "id": "eb9b0e7c-69af-46eb-a228-4ce108cd144a",
+      "kind": "node.priority.updated",
+      "actor": {
+        "kind": "agent",
+        "id": "token:42eb74",
+        "label": "Agent token ...42eb74"
+      },
+      "createdAt": "2026-10-08T19:19:38.028Z",
+      "summary": "Set \"Log scale is accepted but drawn as linear\" priority to medium.",
+      "nodeIds": [
+        "page-log-scale-is-accepted-but-drawn-as-linear"
+      ]
     },
     {
       "id": "d4c178f8-fe2c-4fbc-8f7f-41ddafe014c5",
@@ -5031,104 +5248,6 @@
       "summary": "Updated metadata for \"Would be nice to drag columns to gutter to remove variable\".",
       "nodeIds": [
         "page-would-be-nice-to-drag-columns-to-gutter-to-remove-variable"
-      ]
-    },
-    {
-      "id": "85c1db51-26bd-4104-805d-a9d15a6500dd",
-      "kind": "node.status.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-10-02T04:30:30.887Z",
-      "summary": "Changed \"Would be nice to drag columns to gutter to remove variable\" status to implemented.",
-      "nodeIds": [
-        "page-would-be-nice-to-drag-columns-to-gutter-to-remove-variable"
-      ]
-    },
-    {
-      "id": "ae34e9d4-a2bc-4f56-92cf-4be014459183",
-      "kind": "node.metadata.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-10-02T04:30:30.638Z",
-      "summary": "Updated metadata for \"Would be nice to drag columns left and right\".",
-      "nodeIds": [
-        "page-would-be-nice-to-drag-columns-left-and-right"
-      ]
-    },
-    {
-      "id": "96ca2cba-bd18-4a1f-8c95-d332b431a2c1",
-      "kind": "node.status.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-10-02T04:30:30.501Z",
-      "summary": "Changed \"Would be nice to drag columns left and right\" status to implemented.",
-      "nodeIds": [
-        "page-would-be-nice-to-drag-columns-left-and-right"
-      ]
-    },
-    {
-      "id": "d20126d3-fd53-420c-9616-d29a96e39771",
-      "kind": "node.metadata.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-10-02T04:30:30.242Z",
-      "summary": "Updated metadata for \"column picker looks goofy\".",
-      "nodeIds": [
-        "page-column-picker-looks-goofy"
-      ]
-    },
-    {
-      "id": "3d6cf441-a78d-40b3-b2e4-72a83d50e37b",
-      "kind": "node.status.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-10-02T04:30:30.100Z",
-      "summary": "Changed \"column picker looks goofy\" status to implemented.",
-      "nodeIds": [
-        "page-column-picker-looks-goofy"
-      ]
-    },
-    {
-      "id": "35ff7863-fb56-4b91-be94-ea9ea1aa15fd",
-      "kind": "node.metadata.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-10-02T04:30:29.844Z",
-      "summary": "Updated metadata for \"Filter popover behaves oddly\".",
-      "nodeIds": [
-        "page-filter-popover-behaves-oddly"
-      ]
-    },
-    {
-      "id": "1aa25dfa-b2ea-41f2-b595-71a1defd841b",
-      "kind": "node.status.updated",
-      "actor": {
-        "kind": "agent",
-        "id": "token:esting",
-        "label": "Agent token ...esting"
-      },
-      "createdAt": "2026-10-02T04:30:29.709Z",
-      "summary": "Changed \"Filter popover behaves oddly\" status to implemented.",
-      "nodeIds": [
-        "page-filter-popover-behaves-oddly"
       ]
     }
   ]

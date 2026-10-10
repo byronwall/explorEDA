@@ -5,10 +5,10 @@
     "slug": "table-content-fit",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-06",
+    "last_updated": "2026-10-09",
     "summary": "Users should make a table readable with one deliberate action when default widths hide important values.",
-    "status": "planned",
-    "next_action": "Use three formatted fields with one long value. Fit a column and check that it remains within available space. Scroll, filter, and restore. Decide the measurement population before exposing a fit-all action."
+    "status": "active",
+    "next_action": "Columns now default to a content-fitted width (PR #177). Decide whether an explicit per-column Fit action, able to exceed the 220 px default cap, is still needed."
   },
   "artifacts": {
     "intent_brief": {
@@ -325,6 +325,15 @@
         2
       ],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
+    },
+    {
+      "date": "2026-10-09",
+      "event": "partially-delivered",
+      "status": "active",
+      "previous_status": "planned",
+      "evidence": [
+        "fitColumnWidth in components/charts/DataTable/columnWidths.ts sizes columns from formatted values in the first 200 rows, between 88 and 220 px (PR #177)"
+      ]
     }
   ],
   "closure": null,
