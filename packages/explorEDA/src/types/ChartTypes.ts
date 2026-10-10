@@ -13,6 +13,7 @@ import { BoxPlotSettings } from "@/components/charts/BoxPlot/definition";
 import { LineChartSettings } from "@/components/charts/LineChart/definition";
 import type { SankeySettings } from "@/components/charts/Sankey/definition";
 import type { ParallelCoordinatesSettings } from "@/components/charts/ParallelCoordinates/definition";
+import type { ScatterMatrixSettings } from "@/components/charts/ScatterMatrix/definition";
 import type { CalendarSettings } from "@/components/charts/Calendar/definition";
 import type { HeatmapSettings } from "@/components/charts/Heatmap/definition";
 import type { EcdfSettings } from "@/components/charts/Ecdf/definition";
@@ -128,6 +129,7 @@ export type ChartSettings =
   | LineChartSettings
   | SankeySettings
   | ParallelCoordinatesSettings
+  | ScatterMatrixSettings
   | CalendarSettings
   | HeatmapSettings
   | EcdfSettings
