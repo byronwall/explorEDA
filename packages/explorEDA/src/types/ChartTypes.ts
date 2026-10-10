@@ -13,6 +13,7 @@ import { BoxPlotSettings } from "@/components/charts/BoxPlot/definition";
 import { LineChartSettings } from "@/components/charts/LineChart/definition";
 import type { SankeySettings } from "@/components/charts/Sankey/definition";
 import type { ParallelCoordinatesSettings } from "@/components/charts/ParallelCoordinates/definition";
+import type { ScatterMatrixSettings } from "@/components/charts/ScatterMatrix/definition";
 import type { CalendarSettings } from "@/components/charts/Calendar/definition";
 import type { HeatmapSettings } from "@/components/charts/Heatmap/definition";
 import type { EcdfSettings } from "@/components/charts/Ecdf/definition";
@@ -73,6 +74,15 @@ export interface AxisLimits {
   max?: number;
 }
 
+/** Chart text that differs from the workspace theme on purpose. */
+export interface ChartStyleOverrides {
+  /** Title size in px. */
+  titleSize?: number;
+  titleWeight?: number;
+  /** Subtitle size in px. */
+  subtitleSize?: number;
+}
+
 export interface MarginSettings {
   top: number;
   right: number;
@@ -83,6 +93,12 @@ export interface MarginSettings {
 export interface BaseChartSettings {
   id: string;
   title: string;
+  /** Line under the title that says what the chart shows. */
+  subtitle?: string;
+  /** Source or note line under the plot. */
+  note?: string;
+  /** Title and subtitle type that overrides the theme. */
+  style?: ChartStyleOverrides;
   type: string;
   field: string;
   layout: ChartLayout;
@@ -125,6 +141,7 @@ export type ChartSettings =
   | LineChartSettings
   | SankeySettings
   | ParallelCoordinatesSettings
+  | ScatterMatrixSettings
   | CalendarSettings
   | HeatmapSettings
   | EcdfSettings

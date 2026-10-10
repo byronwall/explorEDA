@@ -51,6 +51,8 @@ function GuideShape({ guide, active }: { guide: AxisGuide; active: boolean }) {
       )}
       {label && (
         <text
+          className="eda-axis-text"
+          data-role={guide.role}
           x={label.x}
           y={label.y}
           dy={label.dy}

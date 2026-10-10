@@ -1,3 +1,4 @@
+import type { ThemeColors } from "@/lib/themePalettes";
 import { finiteNumber, isMissingValue } from "@/lib/numeric";
 import {
   getFieldLabel,
@@ -23,6 +24,7 @@ import {
   describeScale,
   planAxes,
   planChartMargin,
+  type AxisTypography,
   type ChartAxesPlan,
   type ScaleDescriptor,
 } from "../Axis/axisPlan";
@@ -124,6 +126,8 @@ export interface ScatterSnapshot {
   facetColumnData?: Record<IdType, datum>;
   fieldSettings: FieldSettingsMap;
   colorScale?: ColorScaleType;
+  /** Fallback colors from the workspace theme. */
+  themeColors?: ThemeColors;
   calculatedFields?: string[];
   pixelRatio?: number;
 }
@@ -266,7 +270,8 @@ export function planScatter(
   settings: ScatterPlotSettings,
   snapshot: ScatterSnapshot,
   width: number,
-  height: number
+  height: number,
+  typography?: AxisTypography
 ): ScatterPlan {
   const xLabel =
     settings.xAxisLabel || fieldLabel(settings.xField, snapshot.fieldSettings);
@@ -292,6 +297,8 @@ export function planScatter(
     hasXLabel: Boolean(xLabel),
     hasYLabel: Boolean(yLabel),
     yTickFontSize: settings.yAxis.tickFontSize,
+    xTickFontSize: settings.xAxis.tickFontSize,
+    typography,
     yLabels:
       yShape.kind === "band"
         ? yShape.categories.map((item) =>
@@ -371,7 +378,7 @@ export function planScatter(
     : null;
   const getColor = (value: datum) => {
     if (!settings.colorScaleId) {
-      return "#3479a8";
+      return snapshot.themeColors?.mark ?? "#3479a8";
     }
     if (!resolveColor) {
       return "#000000";
@@ -471,6 +478,7 @@ export function planScatter(
     marginPolicy,
     footer,
     x: {
+      typography,
       scale: xScale,
       scaleType: xAxis.type,
       field: settings.xField,
@@ -485,6 +493,7 @@ export function planScatter(
       domainSource: domainSource(xAxis),
     },
     y: {
+      typography,
       scale: yScale,
       scaleType: yAxis.type,
       field: settings.yField,

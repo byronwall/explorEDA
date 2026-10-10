@@ -9,6 +9,7 @@ import { useState } from "react";
 import { BarTraceBody } from "../BarChart/BarTraceBody";
 import { SankeyTraceBody } from "../Sankey/SankeyTraceBody";
 import { ParallelTraceBody } from "../ParallelCoordinates/ParallelTraceBody";
+import { MatrixTraceBody } from "../ScatterMatrix/MatrixTraceBody";
 import { CalendarTraceBody } from "../Calendar/CalendarTraceBody";
 import { HeatmapTraceBody } from "../Heatmap/HeatmapTraceBody";
 import { EcdfTraceBody } from "../Ecdf/EcdfTraceBody";
@@ -69,6 +70,9 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
     case "polyline":
     case "pc-axis":
       return <ParallelTraceBody trace={trace} />;
+    case "matrix-row":
+    case "matrix-cell":
+      return <MatrixTraceBody trace={trace} />;
     case "day":
       return <CalendarTraceBody trace={trace} />;
     case "cell":

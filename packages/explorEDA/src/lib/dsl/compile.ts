@@ -15,6 +15,11 @@ import {
 import { initializeData } from "@/providers/lib/dataLayerState";
 import type { AggregateSpec } from "@/lib/aggregates";
 import type { GeometryAsset } from "@/lib/geometryAssets";
+import {
+  WORKSPACE_THEMES,
+  isWorkspaceThemeId,
+  type WorkspaceTheme,
+} from "@/lib/themes";
 import type { SavedRowsSettings } from "@/types/SavedDataTypes";
 import type {
   ChartLayout,
@@ -162,6 +167,7 @@ export const DSL_OTHER_KEYWORDS = [
   "eda",
   "dashboard",
   "grid",
+  "theme",
   "source",
   "calc",
   "field",
@@ -402,6 +408,7 @@ export function compileDocument(
   const settingsFor = (field: string) => (fieldSettings[field] ??= {});
   let metadataName = options.name ?? "Dashboard";
   const gridSettings = { ...DEFAULT_GRID };
+  let theme: WorkspaceTheme | undefined;
   const calcDeclarations: DslDeclaration[] = [];
   const fieldDeclarations: DslDeclaration[] = [];
   const sharedDeclarations: DslDeclaration[] = [];
@@ -662,6 +669,38 @@ export function compileDocument(
             );
           } else {
             (gridSettings as Record<string, unknown>)[key] = number;
+          }
+        }
+        break;
+      case "theme":
+        for (const pair of declaration.pairs) {
+          const id = single(pair.value);
+          if (pair.key !== "name") {
+            report(
+              "warning",
+              "setting-ignored",
+              pair.span,
+              `${pair.key} is not a theme setting, so it was ignored.`,
+              { suggestion: "Use name=." }
+            );
+          } else if (!isWorkspaceThemeId(id)) {
+            const near = closestName(
+              id,
+              WORKSPACE_THEMES.map((item) => item.id)
+            );
+            report(
+              "warning",
+              "setting-default",
+              pair.span,
+              `${id} is not a theme, so the dashboard keeps Compact.`,
+              {
+                suggestion: near
+                  ? `Did you mean ${near}?`
+                  : `Use ${WORKSPACE_THEMES.map((item) => item.id).join(", ")}.`,
+              }
+            );
+          } else {
+            theme = id === "compact" ? undefined : { id };
           }
         }
         break;
@@ -2061,6 +2100,7 @@ export function compileDocument(
     aggregates,
     geometryAssets,
     ...(rowsSettings ? { rowsSettings } : {}),
+    ...(theme ? { theme } : {}),
   };
   if (!validateSavedData(settings)) {
     // Every value above is checked; this guards a gap between the two.
