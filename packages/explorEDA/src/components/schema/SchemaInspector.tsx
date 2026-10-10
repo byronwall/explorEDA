@@ -8,11 +8,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { parseExpression } from "@/lib/calculations/parser/semantics";
-import { evaluateAnalysisQuery } from "@/lib/analysis/evaluateProject";
-import { replaceQuery } from "@/components/project/queryEditing";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -53,6 +49,17 @@ import type {
   SchemaProjectEditing,
   SchemaSelection,
 } from "./schemaEditing";
+import { CommitInput, Field } from "./InspectorControls";
+import { AddStep, NewQueryFromTable, StepEditor } from "./SchemaStepEditors";
+
+/** The step, and for a summary the measure, a query card's row draws. */
+function stepRowIds(rowId: string) {
+  const step = /^step:(.+)$/.exec(rowId);
+  if (step) return { stepId: step[1]! };
+  const measure = /^measure:([^:]+):(.+)$/.exec(rowId);
+  if (measure) return { stepId: measure[1]!, measureId: measure[2]! };
+  return undefined;
+}
 
 const DECLARED_TYPE_LABELS: Record<
   NonNullable<FieldDefinition["type"]>,
@@ -64,78 +71,6 @@ const DECLARED_TYPE_LABELS: Record<
   boolean: "Boolean",
   unknown: "Unknown",
 };
-
-/** Text that applies on Enter or when focus leaves; Escape restores it. */
-function CommitInput({
-  value,
-  label,
-  placeholder,
-  disabled,
-  multiline,
-  onCommit,
-}: {
-  value: string;
-  label: string;
-  placeholder?: string;
-  disabled?: boolean;
-  /** Wrap long text, such as an expression. Enter still applies it. */
-  multiline?: boolean;
-  onCommit: (value: string) => void;
-}) {
-  const [draft, setDraft] = useState(value);
-  useEffect(() => setDraft(value), [value]);
-  const commit = () => {
-    if (draft !== value) onCommit(draft);
-  };
-  const props = {
-    "aria-label": label,
-    value: draft,
-    placeholder,
-    disabled,
-    "data-inplace-editor": "",
-    onChange: (
-      event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => setDraft(event.target.value),
-    onBlur: commit,
-    onKeyDown: (
-      event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-      if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
-        commit();
-      } else if (event.key === "Escape") {
-        event.preventDefault();
-        event.stopPropagation();
-        setDraft(value);
-        // Leave the field but stay in the details, so a second Escape
-        // clears the selection rather than closing the drawer.
-        event.currentTarget
-          .closest<HTMLElement>(".eda-schema-inspector")
-          ?.focus({ preventScroll: true });
-      }
-    },
-  };
-  return multiline ? (
-    <textarea {...props} rows={3} className="eda-schema-inspector-textarea" />
-  ) : (
-    <Input {...props} />
-  );
-}
-
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="eda-schema-inspector-field">
-      <span>{label}</span>
-      {children}
-    </label>
-  );
-}
 
 function endpointRef(
   graph: SchemaGraph,
@@ -272,14 +207,22 @@ function TableBody({
   const source = project?.project.sources.find(
     (item) => item.id === node.sourceId
   );
-  const fields = node.rows.length;
+  const count = (kind: string, one: string, many: string) => {
+    const total = node.rows.filter(
+      (row) => (row.kind ?? "field") === kind
+    ).length;
+    return total ? `${total} ${total === 1 ? one : many}` : undefined;
+  };
   const calculated = node.rows.filter((row) => row.calculation).length;
   return (
     <>
       <p className="eda-schema-inspector-facts">
         {[
           node.detail,
-          `${fields} ${fields === 1 ? "field" : "fields"}`,
+          node.kind === "query" ? count("step", "step", "steps") : undefined,
+          node.kind === "view"
+            ? count("use", "field read", "fields read")
+            : count("field", "field", "fields"),
           calculated ? `${calculated} calculated` : undefined,
         ]
           .filter(Boolean)
@@ -320,6 +263,12 @@ function TableBody({
                 ? "Select a field to change its label, unit, or type."
                 : "Select a field to see its details."}
       </p>
+      {project && node.kind === "query" && node.queryId && (
+        <AddStep editing={project} queryId={node.queryId} />
+      )}
+      {project && source && (
+        <NewQueryFromTable editing={project} sourceId={source.id} />
+      )}
       {editing?.calculations?.nodeId === node.id && (
         <Button
           type="button"
@@ -334,7 +283,7 @@ function TableBody({
           Add calculation
         </Button>
       )}
-      {node.rows[0] && (
+      {node.kind === "table" && node.rows[0] && (
         <Button
           type="button"
           size="sm"
@@ -428,13 +377,16 @@ function FieldBody({
             Edit calculation
           </Button>
         )}
-      {row.step === "calculate" && project && node.queryId && (
-        <QueryCalculationEditor
-          project={project}
-          queryId={node.queryId}
-          stepId={row.id.replace(/^step:/, "")}
-        />
-      )}
+      {project &&
+        node.kind === "query" &&
+        node.queryId &&
+        stepRowIds(row.id) && (
+          <StepEditor
+            editing={project}
+            queryId={node.queryId}
+            {...stepRowIds(row.id)!}
+          />
+        )}
       {project && source && definition && (
         <ProjectFieldEditor
           project={project}
@@ -987,75 +939,6 @@ function ProposalBody({
           Cancel
         </Button>
       </div>
-    </>
-  );
-}
-
-/** A query's calculate step: its label and expression, checked before saving. */
-function QueryCalculationEditor({
-  project,
-  queryId,
-  stepId,
-}: {
-  project: SchemaProjectEditing;
-  queryId: string;
-  stepId: string;
-}) {
-  const [error, setError] = useState("");
-  const query = project.project.queries.find((item) => item.id === queryId);
-  const step = query?.steps.find((item) => item.id === stepId);
-  if (!query || step?.kind !== "calculate") return null;
-  const save = (update: { label?: string; expression?: string }) => {
-    const next = { ...step, ...update };
-    try {
-      const dependencies = parseExpression(next.expression).dependencies;
-      // Inputs are the fields of the step before this one.
-      const evaluation = evaluateAnalysisQuery(
-        project.project,
-        Object.fromEntries(
-          project.project.sources.map((source) => [source.id, []])
-        ),
-        query.id
-      );
-      const input = evaluation.stages.find(
-        (stage) => stage.stepId === step.inputStepId
-      );
-      const known = new Set(input?.fields.map((field) => field.id));
-      const unknown = dependencies.filter((field) => !known.has(field));
-      if (input && unknown.length) {
-        setError(`Unknown fields: ${unknown.join(", ")}`);
-        return;
-      }
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
-      return;
-    }
-    setError("");
-    project.onChange(
-      replaceQuery(project.project, {
-        ...query,
-        steps: query.steps.map((item) => (item.id === step.id ? next : item)),
-      })
-    );
-  };
-  return (
-    <>
-      <Field label="Label">
-        <CommitInput
-          label={`Label of ${step.label}`}
-          value={step.label}
-          onCommit={(label) => save({ label: label.trim() || step.label })}
-        />
-      </Field>
-      <Field label="Expression">
-        <CommitInput
-          label={`Expression of ${step.label}`}
-          value={step.expression}
-          multiline
-          onCommit={(expression) => save({ expression })}
-        />
-      </Field>
-      {error && <p className="eda-schema-inspector-error">{error}</p>}
     </>
   );
 }

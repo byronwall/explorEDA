@@ -2598,6 +2598,11 @@ html {
   display: flex;
   gap: 6px;
 }
+.eda-schema-inspector-list {
+  padding-left: 16px;
+  list-style: disc;
+  color: var(--muted-foreground);
+}
 .eda-schema-inspector-confirm {
   display: flex;
   flex-direction: column;

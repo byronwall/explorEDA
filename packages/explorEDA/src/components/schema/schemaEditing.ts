@@ -1,9 +1,13 @@
 import type {
   AnalysisProject,
   AnalysisSourceRow,
+  AnalysisView,
 } from "@/types/AnalysisProject";
 import type { FieldSettings } from "@/lib/fieldSettings";
-import type { SchemaEndpoint } from "@/lib/schema/schemaGraph";
+import type {
+  SchemaEndpoint,
+  SchemaViewInput,
+} from "@/lib/schema/schemaGraph";
 
 /** Project definitions the diagram can change: sources and relationships. */
 export interface SchemaProjectEditing {
@@ -11,6 +15,14 @@ export interface SchemaProjectEditing {
   tables: Record<string, readonly AnalysisSourceRow[]>;
   /** One call per confirmed edit, so each edit is one undo step. */
   onChange: (project: AnalysisProject) => void;
+  /** Saved views, so removing a step can name the views it breaks. */
+  views?: SchemaViewInput[];
+  /** Open a new view, such as one for a new query. Omit to hide those actions. */
+  onOpenView?: (
+    view: AnalysisView,
+    name: string,
+    project?: AnalysisProject
+  ) => void;
 }
 
 /** The workspace's calculated fields, edited in the calculation editor. */

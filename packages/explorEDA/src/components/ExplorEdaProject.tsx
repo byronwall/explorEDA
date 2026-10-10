@@ -144,17 +144,20 @@ export const ExplorEdaProject = forwardRef<
   );
 
   const settings = shownView.settings ?? queryPresets?.[shownView.queryId];
+  const schemaViews = useMemo(
+    () => [
+      {
+        id: shownView.id,
+        name: shownView.name,
+        queryId: shownView.queryId,
+        settings,
+      },
+    ],
+    [shownView.id, shownView.name, shownView.queryId, settings]
+  );
   const schemaGraph = useMemo(
-    () =>
-      projectSchemaGraph(project, tables, [
-        {
-          id: shownView.id,
-          name: shownView.name,
-          queryId: shownView.queryId,
-          settings,
-        },
-      ]),
-    [project, tables, shownView.id, shownView.name, shownView.queryId, settings]
+    () => projectSchemaGraph(project, tables, schemaViews),
+    [project, tables, schemaViews]
   );
   const incompatibleFields = useMemo(
     () => incompatibleSettingsFields(settings, new Set(fieldNames)),
@@ -331,6 +334,8 @@ export const ExplorEdaProject = forwardRef<
                   project,
                   tables,
                   onChange: (next) => update(next, shownView),
+                  views: schemaViews,
+                  onOpenView,
                 },
             viewId: shownView.id,
             open: diagramOpen,

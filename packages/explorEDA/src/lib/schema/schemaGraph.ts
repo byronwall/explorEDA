@@ -383,12 +383,12 @@ function queryLineage(
         break;
       }
       case "filter":
+        // The condition says more than "Keep matching rows" does.
         rows.push({
           id: rowId,
           kind: "step",
           step: step.kind,
-          label: stepTitle(step, project),
-          detail,
+          label: detail ? `Keep ${detail}` : stepTitle(step, project),
         });
         inputEdge(step.id, step.fieldId, rowId);
         break;

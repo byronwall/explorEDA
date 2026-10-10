@@ -372,11 +372,16 @@
       {
         "id": "m4",
         "title": "Edit query steps in the diagram",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Add, edit, and remove lookup, expand, summarize, filter, and calculate steps, and start new queries, from query cards; dependency warnings on removal.",
         "proof": "Builder and dependency unit tests; QueryRelationshipBuilder tests unchanged; shop demo browser flow adding a lookup, filter, and summary; Query panel shows the same steps.",
         "valid_intermediate_state": "Diagram is the all-in-one model editor.",
-        "rollback": "Hide step edit controls; the Query panel still edits steps."
+        "rollback": "Hide step edit controls; the Query panel still edits steps.",
+        "evidence": [
+          "Vitest: stepEditing.test.ts (lookup appends and becomes output, expand opens a new view, unique calculation field and input check, typed filter values, removal names lost fields and broken views, the reading step stays); QueryRelationshipBuilder and Query panel tests unchanged",
+          "Playwright at 1280 and 390 px: add a lookup, a calculation (bad expression refused), and a filter on a query card; remove a lookup with the lost fields named; removal on the current view's query names that view; a diagram-added step shows in the Query panel"
+        ],
+        "notes": "Shipped through menus in the details panel. Not built: dragging a relationship line onto a query card (the menu path covers it), and editing query parameters, which stay in the Query panel; filters on an input say so."
       },
       {
         "id": "m5",
@@ -471,6 +476,12 @@
       "date": "2026-10-10",
       "event": "milestone-completed",
       "summary": "Milestone 3 built: query and view cards with lineage, calculation, and usage lines; calculation editing.",
+      "status": "active"
+    },
+    {
+      "date": "2026-10-10",
+      "event": "milestone-completed",
+      "summary": "Milestone 4 built: add, edit, and remove query steps from the diagram through shared step rules.",
       "status": "active"
     }
   ],
