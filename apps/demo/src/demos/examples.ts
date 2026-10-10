@@ -26,6 +26,7 @@ import {
   causesByAgeDashboard,
   consumerConfidenceDashboard,
   pewMeaningDashboard,
+  incomeLifeDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -52,6 +53,7 @@ import {
   Layers,
   LayoutPanelTop,
   Dumbbell,
+  CircleDot,
   CloudFog,
   Globe,
   Activity,
@@ -809,6 +811,21 @@ export const examples: ExampleData[] = [
     icon: Dumbbell,
     data: "/datasets/pew-meaning.csv",
     savedData: pewMeaningDashboard,
+  },
+  {
+    id: "income-life",
+    title: "Richer countries live longer",
+    description:
+      "One annotated scatter of 197 economies in 2023: life expectancy against income on a log scale, circles sized by population and colored by region, a region legend, and labels on a dozen chosen countries.",
+    dataset: { rows: "197 economies", fields: 7, source: "Real" },
+    shows: [
+      "Log numeric scale",
+      "Size by population",
+      "Labels on listed values",
+    ],
+    icon: CircleDot,
+    data: "/datasets/gapminder-2023.csv",
+    savedData: incomeLifeDashboard,
   },
 ];
 

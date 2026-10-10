@@ -1272,14 +1272,36 @@ function XyFields({
             }
           />
           {mark.labelField && (
-            <NumberSetting
-              label="Label every"
-              min={0}
-              max={200}
-              value={mark.labelEvery}
-              onChange={(labelEvery) => change({ labelEvery })}
-            />
+            <>
+              <NumberSetting
+                label="Label every"
+                min={0}
+                max={200}
+                value={mark.labelEvery}
+                onChange={(labelEvery) => change({ labelEvery })}
+              />
+              <Label htmlFor={`${id}-label-values`}>Only</Label>
+              <Input
+                id={`${id}-label-values`}
+                placeholder="Comma-separated labels, or blank for all"
+                value={mark.labelValues ?? ""}
+                onChange={(event) =>
+                  change({ labelValues: event.target.value || undefined })
+                }
+              />
+            </>
           )}
+          <Label>Size by</Label>
+          <FieldSelector
+            label=""
+            placeholder="One radius"
+            value={mark.sizeField ?? ""}
+            allowClear
+            fields={numericFields}
+            onChange={(sizeField) =>
+              change({ sizeField: sizeField || undefined })
+            }
+          />
         </>
       )}
     </>

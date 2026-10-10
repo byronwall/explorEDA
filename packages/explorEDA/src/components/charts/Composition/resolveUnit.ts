@@ -1,5 +1,5 @@
 import { quantileSorted } from "d3-array";
-import { scaleLinear, scaleTime } from "d3-scale";
+import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
 import { finiteNumber, timestampOf } from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import {
@@ -1097,8 +1097,15 @@ export function numericDomain(
     min -= pad;
     max += pad;
   }
+  if (scale.transform === "log" && min <= 0) {
+    // Log spacing ignores values at or below zero; they pin to the low end.
+    min = Math.min(max, 1);
+  }
   if (scale.nice) {
-    const nice = scaleLinear().domain([min, max]).nice().domain();
+    const nice =
+      scale.transform === "log"
+        ? scaleLog().domain([min, max]).nice().domain()
+        : scaleLinear().domain([min, max]).nice().domain();
     min = nice[0]!;
     max = nice[1]!;
   }
@@ -1658,6 +1665,13 @@ function numericAxis(
 export function numericPixel(axis: NumericAxis, value: number) {
   const [d0, d1] = axis.domain;
   const [r0, r1] = axis.range;
+  if (axis.scale.transform === "log") {
+    // Log spacing needs positive bounds; a value at or below zero pins to the low end.
+    const lo = Math.log(Math.max(d0, Number.MIN_VALUE));
+    const hi = Math.log(Math.max(d1, Number.MIN_VALUE));
+    if (value <= 0 || hi === lo) return r0;
+    return r0 + ((Math.log(value) - lo) / (hi - lo)) * (r1 - r0);
+  }
   return r0 + ((value - d0) / (d1 - d0)) * (r1 - r0);
 }
 
@@ -1873,6 +1887,25 @@ function pointNodes(
   const colorColumn = mark.colorField
     ? data.column(mark.colorField)
     : undefined;
+  const sizes = mark.sizeField ? data.column(mark.sizeField) : undefined;
+  // The largest size across the graphic takes the full radius; area scales.
+  let sizeMax = 0;
+  if (sizes)
+    for (const id of data.allIds)
+      sizeMax = Math.max(sizeMax, finiteNumber(sizes[id]) ?? 0);
+  const radiusOf = (id: number) => {
+    if (!sizes || sizeMax <= 0) return mark.radius;
+    const value = finiteNumber(sizes[id]) ?? 0;
+    return Math.max(1, mark.radius * Math.sqrt(Math.max(0, value) / sizeMax));
+  };
+  const wanted = mark.labelValues
+    ? new Set(
+        mark.labelValues
+          .split(",")
+          .map((value) => value.trim().toLowerCase())
+          .filter(Boolean)
+      )
+    : undefined;
   const categoryColors = new Map(
     markCategories(mark, data).map((item) => [item.key, item.color])
   );
@@ -1936,7 +1969,7 @@ function pointNodes(
       instanceKey: subset.key,
       cx,
       cy,
-      r: mark.radius,
+      r: radiusOf(row.id),
       fill,
       clip,
       glyph,
@@ -1950,14 +1983,15 @@ function pointNodes(
     ) {
       const raw = labels[row.id];
       const text = raw === null || raw === undefined ? "" : String(raw).trim();
-      if (text)
+      // Listed values label; everything else stays quiet.
+      if (text && (!wanted || wanted.has(text.toLowerCase())))
         nodes.push({
           type: "text",
           key: `${key}:label`,
           elementId: unit.id,
           instanceKey: subset.key,
-          x: cx + mark.radius + 3,
-          lines: [{ text, y: cy - mark.radius - 1 }],
+          x: cx + radiusOf(row.id) + 3,
+          lines: [{ text, y: cy - radiusOf(row.id) - 1 }],
           fontSize: 10,
           fontWeight: 400,
           fill: MUTED_INK,
@@ -2033,6 +2067,22 @@ function tickValues(axis: NumericAxis, length: number, spacing: number) {
       .domain(axis.domain.map((value) => new Date(value)))
       .ticks(count)
       .map((date) => date.getTime());
+  if (axis.scale.transform === "log") {
+    // Across more than a decade and a half keep the 1, 2, 5 steps; across
+    // more than three decades keep only the powers of ten.
+    const decades = Math.log10(
+      Math.max(axis.domain[1], 1) / Math.max(axis.domain[0], Number.MIN_VALUE)
+    );
+    const keep = decades > 3 ? [1] : decades > 1.5 ? [1, 2, 5] : undefined;
+    return scaleLog()
+      .domain(axis.domain)
+      .ticks(count)
+      .filter((value) => {
+        if (!keep) return true;
+        const mantissa = value / 10 ** Math.floor(Math.log10(value));
+        return keep.includes(Math.round(mantissa * 100) / 100);
+      });
+  }
   return scaleLinear().domain(axis.domain).ticks(count);
 }
 

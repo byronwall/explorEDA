@@ -1081,6 +1081,17 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "income-life",
+    intent:
+      "Place economies on a log income scale, sized by population and colored by region, with a legend and labels on chosen countries.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

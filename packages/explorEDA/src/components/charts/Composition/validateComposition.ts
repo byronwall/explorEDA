@@ -60,6 +60,8 @@ function isMark(value: unknown) {
       (value.labelField === undefined || isString(value.labelField)) &&
       isNumber(value.labelEvery) &&
       value.labelEvery >= 0 &&
+      (value.labelValues === undefined || isString(value.labelValues)) &&
+      (value.sizeField === undefined || isString(value.sizeField)) &&
       (value.show === undefined ||
         oneOf(value.show, ["all", "first", "last", "min", "max"])) &&
       (value.seriesField === undefined || isString(value.seriesField)) &&
@@ -181,7 +183,9 @@ function isScale(value: unknown) {
       typeof value.zero === "boolean" &&
       typeof value.nice === "boolean" &&
       (value.min === undefined || isNumber(value.min)) &&
-      (value.max === undefined || isNumber(value.max))
+      (value.max === undefined || isNumber(value.max)) &&
+      (value.transform === undefined ||
+        oneOf(value.transform, ["linear", "log"]))
     );
   return (
     value.kind === "value" &&
@@ -307,7 +311,9 @@ function isElement(value: unknown) {
         oneOf(value.direction, ["row", "column"]) &&
         isNumber(value.fontSize) &&
         value.fontSize > 0 &&
-        isString(value.color)
+        isString(value.color) &&
+        (value.width === undefined ||
+          (isNumber(value.width) && value.width > 0))
       );
     default:
       return false;

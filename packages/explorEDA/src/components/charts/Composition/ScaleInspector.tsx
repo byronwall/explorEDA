@@ -347,6 +347,29 @@ function NumericScaleProperties({
         options={NICE_OPTIONS}
         onChange={(nice) => onChange({ nice })}
       />
+      <span className="eda-setting-label">Spacing</span>
+      <Segmented
+        label={`${scale.name} spacing`}
+        value={scale.transform ?? "linear"}
+        options={[
+          {
+            value: "linear" as const,
+            label: "Linear",
+            tooltip: "Equal steps in value make equal steps along the frame",
+          },
+          {
+            value: "log" as const,
+            label: "Log",
+            tooltip:
+              "Each tenfold step takes the same room, for values that span orders of magnitude. Values at or below zero pin to the low end.",
+          },
+        ]}
+        onChange={(transform) =>
+          onChange({
+            transform: transform === "linear" ? undefined : transform,
+          })
+        }
+      />
       <span className="eda-setting-label">Limits</span>
       <Segmented
         label={`${scale.name} limits`}

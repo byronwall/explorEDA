@@ -3199,3 +3199,169 @@ export const pewMeaningDashboard = dashboard("Life's meaning by party", [
     layout(0, 12, 12, 4)
   ),
 ]);
+
+/**
+ * Income against life expectancy: one annotated scatter. Points sit on a log
+ * income scale, size by population, color by region, and a few chosen
+ * economies carry labels; a legend keys the regions.
+ */
+export const incomeLifeDashboard = dashboard("Income and life", [
+  {
+    ...base,
+    id: "income-life-composition",
+    type: "composition",
+    title: "Richer countries live longer",
+    layout: layout(0, 0, 12, 8),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 960, height: 620, background: "#ffffff" },
+      scales: [
+        {
+          id: "n-1",
+          kind: "numeric",
+          name: "GDP per capita",
+          field: "GDP per capita",
+          domain: "shared",
+          zero: false,
+          nice: true,
+          transform: "log",
+        },
+        {
+          id: "n-2",
+          kind: "numeric",
+          name: "Life expectancy",
+          field: "Life expectancy",
+          domain: "shared",
+          zero: false,
+          nice: true,
+        },
+      ],
+      calculations: [
+        {
+          id: "calc-1",
+          name: "Economies",
+          aggregation: "count",
+          population: "composition",
+          filters: "follow",
+        },
+      ],
+      overrides: [],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "Richer countries live longer",
+          x: 32,
+          y: 26,
+          width: 896,
+          fontSize: 24,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "Life expectancy at birth against GDP per capita in 2023, for {Economies} economies. Each tenfold step in income takes the same room; circle area follows population.",
+          x: 32,
+          y: 58,
+          width: 896,
+          fontSize: 13,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+        {
+          id: "legend-1",
+          kind: "legend",
+          name: "Regions",
+          x: 80,
+          y: 96,
+          unitId: "unit-1",
+          markId: "mark-1",
+          direction: "row",
+          fontSize: 11,
+          color: "#1f2328",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Economies",
+          x: 80,
+          y: 126,
+          frame: { width: 840, height: 410 },
+          label: { show: false, width: 0, fontSize: 12 },
+          axis: true,
+          marks: [
+            {
+              type: "point",
+              id: "mark-1",
+              name: "Economies",
+              xScaleId: "n-1",
+              yScaleId: "n-2",
+              radius: 22,
+              fill: "#4e79a7",
+              labelField: "Country",
+              labelEvery: 1,
+              labelValues:
+                "China, India, United States, Nigeria, Japan, Chad, Qatar, Brazil, Indonesia, Lesotho, Luxembourg, Afghanistan",
+              sizeField: "Population",
+              colorField: "Region",
+              colors: [
+                "#4e79a7",
+                "#f28e2b",
+                "#59a14f",
+                "#e15759",
+                "#76b7b2",
+                "#b07aa1",
+                "#edc948",
+              ],
+            },
+          ],
+          repeat: {
+            arrangement: "rows",
+            columns: 1,
+            gap: 0,
+            order: "label",
+            limit: 1,
+          },
+        },
+        {
+          id: "note-1",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: "Source: World Bank World Development Indicators, 2023 vintage (CC BY 4.0): population and life expectancy from the UN Population Division, GDP per capita in PPP constant 2021 dollars. After Gapminder's income and health chart.",
+          x: 32,
+          y: 586,
+          width: 896,
+          fontSize: 10,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
+    },
+  },
+  row("income-life-regions", "Rows by region", "Region", layout(0, 8, 5, 5)),
+  histogram(
+    "income-life-expectancy",
+    "Life expectancy",
+    "Life expectancy",
+    layout(5, 8, 7, 5)
+  ),
+  table(
+    "income-life-rows",
+    "Economies",
+    [
+      "Country",
+      "Region",
+      "Income",
+      "Population",
+      "GDP per capita",
+      "Life expectancy",
+    ],
+    layout(0, 13, 12, 5)
+  ),
+]);

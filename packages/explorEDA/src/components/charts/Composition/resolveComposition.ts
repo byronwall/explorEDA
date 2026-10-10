@@ -400,7 +400,20 @@ function resolveLegend(
   let x = legend.x;
   let y = legend.y;
   let width = 0;
+  // A row wraps before it runs off the artboard, or past the set width.
+  const maxWidth =
+    legend.width ?? Math.max(80, definition.artboard.width - legend.x - 16);
   entries.forEach((entry, index) => {
+    const entryWidth =
+      swatch + 4 + measureText(entry.key, legend.fontSize, 400) + gap * 2;
+    if (
+      legend.direction === "row" &&
+      x > legend.x &&
+      x + entryWidth - gap * 2 > legend.x + maxWidth
+    ) {
+      x = legend.x;
+      y += step;
+    }
     nodes.push({
       type: "rect",
       key: `${legend.id}:${index}:swatch`,
@@ -422,11 +435,9 @@ function resolveLegend(
       fill: legend.color,
       anchor: "start",
     });
-    const entryWidth =
-      swatch + 4 + measureText(entry.key, legend.fontSize, 400) + gap * 2;
     if (legend.direction === "row") {
       x += entryWidth;
-      width = x - legend.x;
+      width = Math.max(width, x - legend.x);
     } else {
       y += step;
       width = Math.max(width, entryWidth);
@@ -443,7 +454,10 @@ function resolveLegend(
       x: legend.x,
       y: legend.y,
       width,
-      height: legend.direction === "row" ? step : entries.length * step,
+      height:
+        legend.direction === "row"
+          ? y - legend.y + step
+          : entries.length * step,
     },
   };
 }
