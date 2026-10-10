@@ -201,6 +201,60 @@
   color: var(--destructive);
 }
 
+/* A title shows it can be edited: a soft wash on hover, and a pencil cursor
+   only over the text, so the rest of the header still reads as a drag handle. */
+.eda-panel-title[tabindex] {
+  margin-left: -4px;
+  padding: 0 4px;
+  border-radius: 4px;
+  cursor: text;
+  transition: background-color 120ms ease;
+}
+.eda-panel-title[tabindex]:hover {
+  background: color-mix(in oklab, var(--muted) 80%, transparent);
+}
+.eda-panel-title[tabindex]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 0;
+}
+/* An in-place editor keeps the type of the text it replaces, so the chart
+   does not shift when editing starts. */
+.eda-inplace-input {
+  min-width: 4ch;
+  max-width: 100%;
+  margin: -1px 0 -1px -3px;
+  padding: 0 4px;
+  border: 1px solid var(--input);
+  border-radius: 4px;
+  outline: 2px solid color-mix(in oklab, var(--ring) 45%, transparent);
+  outline-offset: 0;
+  background: var(--background);
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  cursor: text;
+}
+/* The subtitle and the clear-filter control stay, so an active filter is
+   never hidden. */
+.eda-panel-header[data-title-editing]
+  > :not(.eda-panel-heading, .eda-panel-subtitle, .eda-panel-status),
+.eda-panel-header[data-title-editing]
+  .eda-panel-status
+  > :not(.eda-chart-filter) {
+  display: none;
+}
+.eda-panel-header[data-title-editing] > .eda-panel-heading {
+  flex: 1 1 auto;
+}
+.eda-panel-header[data-title-editing] .eda-drag {
+  display: none;
+}
+.eda-inplace-input::placeholder {
+  color: var(--muted-foreground);
+  font-weight: 400;
+}
+
 /* Chart header. Compact keeps one line: title, readout, search, actions,
    then the filter control. A subtitle wraps to its own line below. */
 .eda-panel-status {

@@ -49,6 +49,10 @@ import type { TraceSource } from "./charts/trace/traceTypes";
 import { FacetContainer } from "./charts/FacetRelated/FacetContainer";
 import { FacetBarSlotContext } from "./charts/FacetRelated/facetBarSlot";
 import { useAxisFieldActions } from "./charts/AxisFieldActions";
+import {
+  TITLE_EDIT_DESCRIPTION,
+  useTitleEditing,
+} from "./charts/InPlace/useTitleEditing";
 import { ChartSettingsContent } from "./ChartSettingsContent";
 import { Button } from "./ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
@@ -186,15 +190,19 @@ export function ChartTraceInspector({
   );
 }
 
+type TitleEditProps = ReturnType<typeof useTitleEditing>["titleProps"];
+
 function TraceTitle({
   id,
   text,
   settings,
+  editProps,
   titleRef,
 }: {
   id: string;
   text: string;
   settings: ChartSettings;
+  editProps: TitleEditProps;
   titleRef: React.Ref<HTMLHeadingElement>;
 }) {
   const api = useChartTraceApi();
@@ -229,7 +237,8 @@ function TraceTitle({
       id={id}
       className="eda-panel-title min-w-0 truncate text-sm font-semibold"
       tabIndex={0}
-      aria-description="Alt-click or Alt-Enter to trace title"
+      aria-description={`${TITLE_EDIT_DESCRIPTION}. Alt-click or Alt-Enter to trace it`}
+      {...editProps}
       onMouseDownCapture={(event) => {
         if (event.altKey) event.stopPropagation();
       }}
@@ -243,7 +252,7 @@ function TraceTitle({
         if (event.altKey && event.key === "Enter") {
           event.preventDefault();
           inspect();
-        }
+        } else editProps.onKeyDown(event);
       }}
     >
       {text}
@@ -469,6 +478,7 @@ export function PlotChartPanel({
     chartTitle
   );
   const chartSummary = getChartSummary(settings, getFieldLabel);
+  const titleEditing = useTitleEditing(settings, chartTitle);
   const aggregateId =
     "aggregateId" in settings ? settings.aggregateId : undefined;
   const aggregate = useDataLayer((state) =>
@@ -633,18 +643,28 @@ export function PlotChartPanel({
         ref={header.ref}
         style={headerStyle}
         className="eda-panel-header relative flex min-h-8 items-center justify-between gap-1 select-none py-0.5 pr-1 pl-2.5"
+        // The title takes the whole header while it is edited.
+        data-title-editing={titleEditing.editing || undefined}
       >
         <div className="eda-panel-heading drag-handle flex min-w-0 flex-[1_1_35%] cursor-move items-center gap-2">
           <GripVertical
             className="eda-drag absolute top-1/2 left-0 h-3 w-2.5 -translate-y-1/2 text-muted-foreground"
             aria-hidden="true"
           />
-          {isTraceable(settings.type) &&
-          (settings.type !== "line" || settings.time) ? (
+          {titleEditing.editor ? (
+            <h3
+              id={titleId}
+              className="eda-panel-title min-w-0 flex-1 text-sm font-semibold"
+            >
+              {titleEditing.editor}
+            </h3>
+          ) : isTraceable(settings.type) &&
+            (settings.type !== "line" || settings.time) ? (
             <TraceTitle
               id={titleId}
               text={chartTitle}
               settings={settings}
+              editProps={titleEditing.titleProps}
               titleRef={titleRef}
             />
           ) : (
@@ -652,11 +672,15 @@ export function PlotChartPanel({
               ref={titleRef}
               id={titleId}
               className="eda-panel-title min-w-0 truncate text-sm font-semibold"
+              tabIndex={0}
+              aria-description={TITLE_EDIT_DESCRIPTION}
+              {...titleEditing.titleProps}
             >
               {chartTitle}
             </h3>
           )}
-          {titleClipped && (
+          {titleEditing.overlay}
+          {titleClipped && !titleEditing.editing && (
             <ActionTooltip content="Title clipped: widen or heighten the chart, or shorten the title">
               <span
                 className="eda-clip-marker"
@@ -889,7 +913,15 @@ export function PlotChartPanel({
   useEffect(() => {
     if (!expanded) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !hasNestedLayer(detailsRef.current)) {
+      if (
+        event.key === "Escape" &&
+        !hasNestedLayer(detailsRef.current) &&
+        // An in-place editor takes Escape to put its old value back.
+        !(
+          event.target instanceof Element &&
+          event.target.closest("[data-inplace-editor]")
+        )
+      ) {
         setExpandedState(false);
       }
     };
