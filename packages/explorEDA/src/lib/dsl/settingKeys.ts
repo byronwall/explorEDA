@@ -333,6 +333,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "note",
     "pointOpacity",
     "pointSize",
+    "style",
     "subtitle",
     "title",
     "upper",
