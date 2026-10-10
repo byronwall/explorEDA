@@ -9,15 +9,7 @@ import {
   MIN_MATRIX_FIELDS,
   type ScatterMatrixSettings,
 } from "./definition";
-
-/** Moves one item to a new index, keeping the rest in order. */
-export function moveField(fields: string[], from: number, to: number) {
-  if (to < 0 || to >= fields.length || from === to) return fields;
-  const next = [...fields];
-  const [item] = next.splice(from, 1);
-  next.splice(to, 0, item!);
-  return next;
-}
+import { moveField } from "./matrixPlan";
 
 export function ScatterMatrixSettingsPanel({
   settings,
