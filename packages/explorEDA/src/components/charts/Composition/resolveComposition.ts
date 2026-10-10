@@ -13,11 +13,13 @@ import type {
   TextElement,
 } from "./compositionTypes";
 import {
+  numericPixel,
   periodKey,
   periodStart,
   resolveUnit,
   type CompositionData,
   type GlyphDatum,
+  type PathDatum,
   type ResolvedInstance,
   type ResolvedUnit,
 } from "./resolveUnit";
@@ -44,6 +46,8 @@ interface NodeBase {
   /** The repeat that drew this node, for chart units. */
   instanceKey?: string;
   opacity?: number;
+  /** Clip the node to this box, such as a frame with fixed scale limits. */
+  clip?: Bounds;
 }
 
 export interface TextNode extends NodeBase {
@@ -91,7 +95,17 @@ export interface LineNode extends NodeBase {
   dash?: string;
 }
 
-export type SceneNode = TextNode | RectNode | CircleNode | LineNode;
+/** One path through ordered points, drawn as connected runs. */
+export interface PathNode extends NodeBase {
+  type: "path";
+  /** Connected runs of vertices; a gap in the data starts a new run. */
+  segments: { x: number; y: number; rowId: number }[][];
+  stroke: string;
+  strokeWidth: number;
+  path: PathDatum;
+}
+
+export type SceneNode = TextNode | RectNode | CircleNode | LineNode | PathNode;
 
 /** Why a guide or annotation sits where it does. */
 export interface ResolvedAnchor {
@@ -288,12 +302,24 @@ export function wrapText(
   return lines;
 }
 
-/** The x of a value on a repeat's position scale, at the middle of its bin. */
+/**
+ * The x of a value on a repeat's position scale, at the middle of its bin, or
+ * along its numeric x scale.
+ */
 export function positionX(
   instance: ResolvedInstance,
   value: { number?: number; text?: string }
 ): number | undefined {
   const position = instance.position;
+  if (!position && instance.xy) {
+    const number =
+      value.number ??
+      (value.text?.trim() ? Number(value.text.trim()) : undefined);
+    if (number === undefined || !Number.isFinite(number)) return undefined;
+    const [min, max] = instance.xy.x.domain;
+    if (number < min || number > max) return undefined;
+    return numericPixel(instance.xy.x, number);
+  }
   if (!position || !position.bins.length) return undefined;
   let key: string | undefined;
   if (position.scale.interval) {
@@ -460,6 +486,31 @@ function resolveGuide(
   };
 }
 
+/** True when a glyph's label, or its order value, equals the `at` text. */
+function matchesAt(glyph: GlyphDatum, at: string | undefined) {
+  const wanted = at?.trim().toLowerCase();
+  if (!wanted) return false;
+  return (
+    glyph.bin.label.trim().toLowerCase() === wanted ||
+    glyph.bin.key.trim().toLowerCase() === wanted
+  );
+}
+
+/** Replaces `{label}`, `{value}`, `{x}`, and `{y}` with a glyph's values. */
+export function fillGlyphTokens(text: string, glyph: GlyphDatum) {
+  return text
+    .replace(/\{value\}/g, formatCalcValue(glyph.value, "number"))
+    .replace(/\{label\}/g, glyph.bin.label)
+    .replace(
+      /\{x\}/g,
+      glyph.point ? formatCalcValue(glyph.point.x, "number") : "{x}"
+    )
+    .replace(
+      /\{y\}/g,
+      glyph.point ? formatCalcValue(glyph.point.y, "number") : "{y}"
+    );
+}
+
 function glyphCenter(node: RectNode | CircleNode) {
   return node.type === "rect"
     ? { x: node.x + node.width / 2, y: node.y + node.height / 2 }
@@ -502,6 +553,10 @@ function resolveAnnotation(
         )
           continue;
         const value = node.glyph.value;
+        if (anchor.pick === "at") {
+          if (matchesAt(node.glyph, anchor.at)) picked = node;
+          continue;
+        }
         if (
           !picked ||
           (anchor.pick === "max" && value > picked.glyph!.value) ||
@@ -510,13 +565,15 @@ function resolveAnnotation(
         )
           picked = node;
       }
-      if (!picked) missing = "No glyph in this repeat passes the filters.";
+      if (!picked)
+        missing =
+          anchor.pick === "at"
+            ? `No glyph in this repeat is labeled ${anchor.at ?? "(empty)"}.`
+            : "No glyph in this repeat passes the filters.";
       else {
         point = glyphCenter(picked);
         glyph = picked.glyph!;
-        text = text
-          .replace(/\{value\}/g, formatCalcValue(glyph.value, "number"))
-          .replace(/\{label\}/g, glyph.bin.label);
+        text = fillGlyphTokens(text, glyph);
       }
     }
   }

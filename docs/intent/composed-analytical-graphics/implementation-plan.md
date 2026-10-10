@@ -204,6 +204,17 @@ The author builds the connected scatterplot from blank and can inspect its order
 Callouts track their selected records after a scale change.
 Earlier rectangle/circle compositions still save and copy correctly. Remove the new path option to roll back this stage.
 
+### Status: Driving built (updated 2026-10-10)
+
+The Driving example ships as `?example=driving-shifts`, prepared by `apps/data-samples/prepare/driving.ts` from vega-datasets with the rows shuffled on purpose.
+Marks are now a union: strips keep their position and value scales; point and path marks bind two numeric scales, one for x and one for y, so a point and its path vertex share one mapping.
+Numeric scales hold the domain policy (shared or per unit), a zero baseline, tidy ends, and optional fixed limits; fixed limits clip marks to the frame through a scene clip box.
+A path orders a repeat's rows by one field, ties by row order, and breaks at a missing order or coordinate. Its trace lists the order, runs, skipped rows, and endpoints.
+Annotations gained an `at` pick that follows the glyph whose label matches a typed value, such as a year, and guides place at a numeric x.
+Blank authoring was checked in the browser: X–Y unit, title, and a 2008 callout from the Add chart dialog.
+
+Not built yet: label placement from a side field, path curves, and horizontal guides on y. The technology sparkline proof is the next step.
+
 ## Milestone 3: Layer interval bands around a line
 
 Create the inflation-fan structure from supplied interval data.

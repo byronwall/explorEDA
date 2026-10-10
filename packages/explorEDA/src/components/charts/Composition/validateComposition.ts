@@ -35,10 +35,32 @@ const oneOf = (value: unknown, options: readonly unknown[]) =>
   options.includes(value);
 
 function isMark(value: unknown) {
+  if (!isRecord(value) || !isString(value.id) || !isString(value.name))
+    return false;
+  if (value.type === "point")
+    return (
+      isString(value.xScaleId) &&
+      isString(value.yScaleId) &&
+      (value.orderField === undefined || isString(value.orderField)) &&
+      isNumber(value.radius) &&
+      value.radius > 0 &&
+      isString(value.fill) &&
+      (value.labelField === undefined || isString(value.labelField)) &&
+      isNumber(value.labelEvery) &&
+      value.labelEvery >= 0
+    );
+  if (value.type === "path")
+    return (
+      isString(value.xScaleId) &&
+      isString(value.yScaleId) &&
+      isString(value.orderField) &&
+      isString(value.stroke) &&
+      isNumber(value.strokeWidth) &&
+      value.strokeWidth > 0
+    );
+  // Marks saved before mark types existed have none; they are strips.
   return (
-    isRecord(value) &&
-    isString(value.id) &&
-    isString(value.name) &&
+    (value.type === undefined || value.type === "strip") &&
     oneOf(value.shape, ["rect", "circle"]) &&
     isString(value.positionScaleId) &&
     isString(value.valueScaleId) &&
@@ -88,6 +110,14 @@ function isScale(value: unknown) {
       (value.interval === undefined ||
         oneOf(value.interval, ["day", "week", "month", "year"]))
     );
+  if (value.kind === "numeric")
+    return (
+      isString(value.field) &&
+      typeof value.zero === "boolean" &&
+      typeof value.nice === "boolean" &&
+      (value.min === undefined || isNumber(value.min)) &&
+      (value.max === undefined || isNumber(value.max))
+    );
   return (
     value.kind === "value" &&
     oneOf(value.transform, ["linear", "sqrt", "log"]) &&
@@ -106,7 +136,9 @@ function isOverride(value: unknown) {
     isNumber(value.dy) &&
     (value.accent === undefined || isString(value.accent)) &&
     (value.opacity === undefined ||
-      (isNumber(value.opacity) && value.opacity >= 0.1 && value.opacity <= 1)) &&
+      (isNumber(value.opacity) &&
+        value.opacity >= 0.1 &&
+        value.opacity <= 1)) &&
     (value.emphasize === undefined || typeof value.emphasize === "boolean")
   );
 }
@@ -152,7 +184,8 @@ function isAnchor(value: unknown) {
         isString(value.unitId) &&
         isString(value.instanceKey) &&
         isString(value.markId) &&
-        oneOf(value.pick, ["max", "min", "first", "last"])
+        oneOf(value.pick, ["max", "min", "first", "last", "at"]) &&
+        (value.at === undefined || isString(value.at))
       );
     default:
       return false;
@@ -214,8 +247,11 @@ export function isCompositionDefinition(
         element.marks.every(
           (mark) =>
             isRecord(mark) &&
-            kinds.get(mark.positionScaleId) === "position" &&
-            kinds.get(mark.valueScaleId) === "value"
+            (mark.type === "point" || mark.type === "path"
+              ? kinds.get(mark.xScaleId) === "numeric" &&
+                kinds.get(mark.yScaleId) === "numeric"
+              : kinds.get(mark.positionScaleId) === "position" &&
+                kinds.get(mark.valueScaleId) === "value")
         )
     );
   return (

@@ -4,6 +4,7 @@ import {
   findOverride,
   type CompositionDefinition,
   type InstanceOverride,
+  type NumericScale,
   type PositionScale,
   type UnitElement,
   type ValueScale,
@@ -11,17 +12,18 @@ import {
 import type {
   CircleNode,
   CompositionScene,
+  PathNode,
   RectNode,
   ResolvedAnchor,
 } from "./resolveComposition";
-import type { GlyphDatum, ResolvedInstance } from "./resolveUnit";
+import type { GlyphDatum, PathDatum, ResolvedInstance } from "./resolveUnit";
 
 /** Which template, subset, and override drew an object. */
 export interface CompositionTrace {
   kind: "composition";
   id: string;
   revision: string;
-  role: "glyph" | "repeat" | "guide" | "annotation";
+  role: "glyph" | "path" | "repeat" | "guide" | "annotation";
   elementName: string;
   /** The rows behind the object. */
   rowIds: number[];
@@ -43,6 +45,18 @@ export interface CompositionTrace {
     fill: string;
     position?: PositionScale;
     value?: ValueScale;
+    /** The numeric scales of a point mark. */
+    x?: NumericScale;
+    y?: NumericScale;
+  };
+  path?: {
+    datum: PathDatum;
+    markName: string;
+    stroke: string;
+    x?: NumericScale;
+    y?: NumericScale;
+    /** Each vertex in path order, with its coordinates. */
+    vertices: { rowId: number; x: number; y: number }[];
   };
   labelValue?: CalcResult & { description: string };
   guide?: {
@@ -64,9 +78,12 @@ export function makeCompositionTraceSource(
   revision: string
 ): TraceSource {
   const glyphs = new Map<string, Glyph>();
-  for (const node of scene.nodes)
+  const paths = new Map<string, PathNode>();
+  for (const node of scene.nodes) {
     if ((node.type === "rect" || node.type === "circle") && node.glyph)
       glyphs.set(node.key, node);
+    if (node.type === "path") paths.set(node.key, node);
+  }
   const units = new Map(
     definition.elements
       .filter((element): element is UnitElement => element.kind === "unit")
@@ -85,15 +102,24 @@ export function makeCompositionTraceSource(
     liveCount: instance.liveCount,
     override: findOverride(definition, unit.id, instance.key),
   });
+  const scale = (scaleId?: string) =>
+    definition.scales.find((item) => item.id === scaleId);
   const fieldsOf = (unit: UnitElement) => {
     const fields = new Set<string>();
     if (unit.repeat.field) fields.add(unit.repeat.field);
     for (const mark of unit.marks) {
-      const scale = definition.scales.find(
-        (item) => item.id === mark.positionScaleId
-      );
-      if (scale?.kind === "position") fields.add(scale.field);
-      if (mark.measureField) fields.add(mark.measureField);
+      if (mark.type === "strip") {
+        const position = scale(mark.positionScaleId);
+        if (position?.kind === "position") fields.add(position.field);
+        if (mark.measureField) fields.add(mark.measureField);
+        continue;
+      }
+      if (mark.orderField) fields.add(mark.orderField);
+      for (const id of [mark.xScaleId, mark.yScaleId]) {
+        const axis = scale(id);
+        if (axis?.kind === "numeric") fields.add(axis.field);
+      }
+      if (mark.type === "point" && mark.labelField) fields.add(mark.labelField);
     }
     return [...fields];
   };
@@ -107,11 +133,12 @@ export function makeCompositionTraceSource(
       if (role === "glyph") {
         const node = glyphs.get(rest.join(":"));
         const unit = node && units.get(node.elementId);
-        const instance = node && unit && instanceOf(unit.id, node.glyph!.instanceKey);
+        const instance =
+          node && unit && instanceOf(unit.id, node.glyph!.instanceKey);
         if (!node || !unit || !instance) return undefined;
         const mark = unit.marks.find((item) => item.id === node.glyph!.markId);
-        const scale = (scaleId?: string) =>
-          definition.scales.find((item) => item.id === scaleId);
+        const strip = mark?.type === "strip" ? mark : undefined;
+        const point = mark?.type === "point" ? mark : undefined;
         return {
           kind,
           id,
@@ -124,11 +151,52 @@ export function makeCompositionTraceSource(
           glyph: {
             datum: node.glyph!,
             markName: mark?.name ?? "Mark",
-            aggregation: mark?.aggregation ?? "count",
-            measureField: mark?.measureField,
+            aggregation: strip?.aggregation ?? (point ? "row" : "count"),
+            measureField: strip?.measureField,
             fill: node.fill,
-            position: scale(mark?.positionScaleId) as PositionScale | undefined,
-            value: scale(mark?.valueScaleId) as ValueScale | undefined,
+            position: scale(strip?.positionScaleId) as
+              | PositionScale
+              | undefined,
+            value: scale(strip?.valueScaleId) as ValueScale | undefined,
+            x: scale(point?.xScaleId) as NumericScale | undefined,
+            y: scale(point?.yScaleId) as NumericScale | undefined,
+          },
+        };
+      }
+      if (role === "path") {
+        const node = paths.get(rest.join(":"));
+        const unit = node && units.get(node.elementId);
+        const instance =
+          node && unit && instanceOf(unit.id, node.path.instanceKey);
+        if (!node || !unit || !instance) return undefined;
+        const mark = unit.marks.find((item) => item.id === node.path.markId);
+        const xy = mark?.type === "path" ? mark : undefined;
+        const x = scale(xy?.xScaleId) as NumericScale | undefined;
+        const y = scale(xy?.yScaleId) as NumericScale | undefined;
+        // Coordinates come from the glyphs when a point mark shares the scales;
+        // otherwise the path's own vertices, which lose their raw values.
+        return {
+          kind,
+          id,
+          revision,
+          role: "path",
+          elementName: unit.name,
+          rowIds: node.path.rowIds,
+          fields: fieldsOf(unit),
+          unit: unitPart(unit, instance),
+          path: {
+            datum: node.path,
+            markName: mark?.name ?? "Path",
+            stroke: node.stroke,
+            x,
+            y,
+            vertices: node.segments.flatMap((run) =>
+              run.map((vertex) => ({
+                rowId: vertex.rowId,
+                x: vertex.x,
+                y: vertex.y,
+              }))
+            ),
           },
         };
       }
@@ -159,9 +227,7 @@ export function makeCompositionTraceSource(
         const element = definition.elements.find(
           (item) => item.id === rest.join(":")
         );
-        const resolved = scene.elements.find(
-          (item) => item.id === element?.id
-        );
+        const resolved = scene.elements.find((item) => item.id === element?.id);
         if (!element || !resolved) return undefined;
         if (element.kind === "guide") {
           const calc =
@@ -218,6 +284,9 @@ export function makeCompositionTraceSource(
       for (const [key, node] of glyphs)
         if (node.glyph!.rowIds.includes(sourceId))
           return { kind: "composition", id: `glyph:${key}` };
+      for (const [key, node] of paths)
+        if (node.path.rowIds.includes(sourceId))
+          return { kind: "composition", id: `path:${key}` };
       return undefined;
     },
     targets(): TraceTarget[] {

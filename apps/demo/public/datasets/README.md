@@ -137,3 +137,18 @@ Twelve fictional correspondents exchange messages with one mailbox from 2019 thr
 ```sh
 node --experimental-strip-types apps/data-samples/message_log.ts apps/demo/public/datasets/message-log.csv
 ```
+
+## Driving shifts into reverse
+
+- File: `driving.csv`
+- Size: 55 rows and 4 fields
+- Demo: `?example=driving-shifts`
+- Use: a composition with numeric x and y scales, a path through the years, points, a calculated guide, and callouts anchored to chosen years
+- Source: [vega-datasets](https://github.com/vega/vega-datasets) `driving.json`, which recreates Hannah Fairfield's "Driving Shifts Into Reverse" (The New York Times, 2010). Miles are driven per person each year; gas is the inflation-adjusted price of a gallon.
+- License: BSD-3-Clause (vega-datasets). The graphic's design belongs to The New York Times; only the figures are reused.
+
+Rows are written in a shuffled order on purpose: the composition orders its path by `Year`, not by file order. `Label side` is the recreation's hint for where each year's label sits; the demo does not use it.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/driving.ts
+```

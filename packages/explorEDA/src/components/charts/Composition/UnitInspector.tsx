@@ -5,14 +5,22 @@ import { Label } from "@/components/ui/label";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { Plus, Trash2 } from "lucide-react";
 import { useId } from "react";
-import type {
-  InstanceOverride,
-  CompositionCalculation,
-  CompositionScale,
-  MarkDefinition,
-  RepeatRule,
-  UnitElement,
+import {
+  newMarkId,
+  type InstanceOverride,
+  type CompositionCalculation,
+  type CompositionDefinition,
+  type CompositionScale,
+  type FieldChoice,
+  type MarkDefinition,
+  type MarkType,
+  type PathMark,
+  type PointMark,
+  type RepeatRule,
+  type StripMark,
+  type UnitElement,
 } from "./compositionTypes";
+import { convertMark, updateElement } from "./compositionEdits";
 import {
   ColorSetting,
   NumberSetting,
@@ -57,8 +65,36 @@ const SHOWN = [
 ] as const;
 
 const SHAPES = [
-  { value: "rect" as const, label: "Square", tooltip: "Draw a rectangle per bin" },
-  { value: "circle" as const, label: "Circle", tooltip: "Draw a circle per bin" },
+  {
+    value: "rect" as const,
+    label: "Square",
+    tooltip: "Draw a rectangle per bin",
+  },
+  {
+    value: "circle" as const,
+    label: "Circle",
+    tooltip: "Draw a circle per bin",
+  },
+];
+
+const MARK_TYPES = [
+  {
+    value: "strip" as const,
+    label: "Strip",
+    tooltip:
+      "One glyph per bin along a position scale, colored or sized by an aggregate",
+  },
+  {
+    value: "point" as const,
+    label: "Points",
+    tooltip: "One circle per row at numeric x and y",
+  },
+  {
+    value: "path" as const,
+    label: "Path",
+    tooltip:
+      "One line through the rows in the order of a field, such as year, at numeric x and y",
+  },
 ];
 
 const ENCODINGS = [
@@ -82,25 +118,27 @@ const ENCODINGS = [
 
 export function UnitProperties({
   unit,
-  scales,
+  definition,
   repeatCount,
   calculations,
   onChange,
+  onChangeDefinition,
   onEditScale,
 }: {
   unit: UnitElement;
-  scales: CompositionScale[];
+  definition: CompositionDefinition;
   calculations: CompositionCalculation[];
   /** Repeats drawn now, so the template note can name them. */
   repeatCount: number;
   onChange: (patch: Partial<UnitElement>) => void;
+  /** For edits that also add scales, such as changing a mark's type. */
+  onChangeDefinition: (definition: CompositionDefinition) => void;
   onEditScale: (scaleId: string) => void;
 }) {
   const profiles = useDataLayer((state) => state.fieldProfiles);
   const repeatFields = profiles
     .filter(
-      (profile) =>
-        profile.dataType !== "numeric" || profile.uniqueCount <= 60
+      (profile) => profile.dataType !== "numeric" || profile.uniqueCount <= 60
     )
     .filter((profile) => profile.uniqueCount <= 200)
     .map((profile) => profile.name);
@@ -181,7 +219,9 @@ export function UnitProperties({
             names={["W", "H"]}
             min={4}
             values={[unit.frame.width, unit.frame.height]}
-            onChange={([width, height]) => onChange({ frame: { width, height } })}
+            onChange={([width, height]) =>
+              onChange({ frame: { width, height } })
+            }
           />
           <span className="eda-setting-label">Labels</span>
           <Segmented
@@ -221,7 +261,9 @@ export function UnitProperties({
               min={0}
               max={600}
               value={unit.label.width}
-              onChange={(width) => onChange({ label: { ...unit.label, width } })}
+              onChange={(width) =>
+                onChange({ label: { ...unit.label, width } })
+              }
             />
           )}
           <span className="eda-setting-label">Axis</span>
@@ -241,8 +283,10 @@ export function UnitProperties({
       </section>
       <MarksSection
         unit={unit}
-        scales={scales}
+        definition={definition}
+        fields={profiles}
         onChange={(marks) => onChange({ marks })}
+        onChangeDefinition={onChangeDefinition}
         onEditScale={onEditScale}
       />
     </>
@@ -251,36 +295,52 @@ export function UnitProperties({
 
 function MarksSection({
   unit,
-  scales,
+  definition,
+  fields,
   onChange,
+  onChangeDefinition,
   onEditScale,
 }: {
   unit: UnitElement;
-  scales: CompositionScale[];
+  definition: CompositionDefinition;
+  fields: FieldChoice[];
   onChange: (marks: MarkDefinition[]) => void;
+  onChangeDefinition: (definition: CompositionDefinition) => void;
   onEditScale: (scaleId: string) => void;
 }) {
   const update = (id: string, patch: Partial<MarkDefinition>) =>
     onChange(
-      unit.marks.map((mark) => (mark.id === id ? { ...mark, ...patch } : mark))
+      unit.marks.map((mark) =>
+        mark.id === id ? ({ ...mark, ...patch } as MarkDefinition) : mark
+      )
     );
+  // A new mark layers over the first one's frame and scales.
   const addMark = () => {
     const first = unit.marks[0];
     if (!first) return;
-    const ids = new Set(unit.marks.map((mark) => mark.id));
-    let index = 1;
-    while (ids.has(`mark-${index}`)) index += 1;
-    onChange([
-      ...unit.marks,
-      {
-        ...first,
-        id: `mark-${index}`,
-        name: "Dots",
-        shape: "circle",
-        encoding: "size",
-        fill: "#1f2328",
-      },
-    ]);
+    const id = newMarkId(unit);
+    const added: MarkDefinition =
+      first.type === "strip"
+        ? {
+            ...first,
+            id,
+            name: "Dots",
+            shape: "circle",
+            encoding: "size",
+            fill: "#1f2328",
+          }
+        : {
+            type: "point",
+            id,
+            name: "Points",
+            xScaleId: first.xScaleId,
+            yScaleId: first.yScaleId,
+            orderField: first.orderField,
+            radius: 3.5,
+            fill: first.type === "path" ? first.stroke : first.fill,
+            labelEvery: 0,
+          };
+    onChange([...unit.marks, added]);
   };
   return (
     <section className="eda-setting-section" aria-label="Marks">
@@ -290,7 +350,7 @@ function MarksSection({
           variant="ghost"
           size="sm"
           className="h-6 px-2"
-          tooltip="Layer another mark over this unit's frame, drawn from the same rows"
+          tooltip="Layer another mark over this unit's frame, drawn from the same rows. Change its type below."
           onClick={addMark}
         >
           <Plus className="h-3.5 w-3.5" aria-hidden="true" />
@@ -301,11 +361,20 @@ function MarksSection({
         <MarkProperties
           key={mark.id}
           mark={mark}
-          scales={scales}
+          scales={definition.scales}
           canRemove={unit.marks.length > 1}
           onChange={(patch) => update(mark.id, patch)}
+          onChangeType={(type) =>
+            onChangeDefinition(
+              convertMark(definition, unit, mark.id, type, fields)
+            )
+          }
           onRemove={() =>
-            onChange(unit.marks.filter((item) => item.id !== mark.id))
+            onChangeDefinition(
+              updateElement<UnitElement>(definition, unit.id, {
+                marks: unit.marks.filter((item) => item.id !== mark.id),
+              })
+            )
           }
           onEditScale={onEditScale}
         />
@@ -319,6 +388,7 @@ function MarkProperties({
   scales,
   canRemove,
   onChange,
+  onChangeType,
   onRemove,
   onEditScale,
 }: {
@@ -326,6 +396,7 @@ function MarkProperties({
   scales: CompositionScale[];
   canRemove: boolean;
   onChange: (patch: Partial<MarkDefinition>) => void;
+  onChangeType: (type: MarkType) => void;
   onRemove: () => void;
   onEditScale: (scaleId: string) => void;
 }) {
@@ -333,9 +404,7 @@ function MarkProperties({
   const numericFields = profiles
     .filter((profile) => profile.dataType === "numeric")
     .map((profile) => profile.name);
-  const id = useId();
-  const positions = scales.filter((scale) => scale.kind === "position");
-  const values = scales.filter((scale) => scale.kind === "value");
+  const hasNumeric = numericFields.length >= 1;
   return (
     <div className="eda-composition-mark">
       <div className="eda-composition-section-head">
@@ -354,89 +423,261 @@ function MarkProperties({
         )}
       </div>
       <div className="eda-setting-grid">
-        <span className="eda-setting-label">Shape</span>
+        <span className="eda-setting-label">Type</span>
         <Segmented
-          label={`${mark.name} shape`}
-          value={mark.shape}
-          options={SHAPES}
-          onChange={(shape) => onChange({ shape })}
-        />
-        <Label htmlFor={`${id}-position`}>Position</Label>
-        <ScaleSelect
-          id={`${id}-position`}
-          value={mark.positionScaleId}
-          scales={positions}
-          onChange={(positionScaleId) => onChange({ positionScaleId })}
-          onEdit={onEditScale}
-        />
-        <Label htmlFor={`${id}-aggregation`}>Value</Label>
-        <select
-          id={`${id}-aggregation`}
-          className="eda-composition-select"
-          value={mark.aggregation}
-          onChange={(event) => {
-            const aggregation = event.target
-              .value as MarkDefinition["aggregation"];
-            onChange({
-              aggregation,
-              measureField:
-                aggregation === "count"
-                  ? undefined
-                  : (mark.measureField ?? numericFields[0]),
-            });
+          label={`${mark.name} type`}
+          value={mark.type}
+          options={
+            hasNumeric
+              ? MARK_TYPES
+              : MARK_TYPES.map((option) =>
+                  option.value === "strip"
+                    ? option
+                    : {
+                        ...option,
+                        tooltip: `${option.tooltip}. Needs a numeric field.`,
+                      }
+                )
+          }
+          onChange={(type) => {
+            if (type === "strip" || hasNumeric) onChangeType(type);
           }}
-        >
-          <option value="count">Count rows</option>
-          <option value="sum" disabled={!numericFields.length}>
-            Sum
-          </option>
-          <option value="average" disabled={!numericFields.length}>
-            Average
-          </option>
-        </select>
-        {mark.aggregation !== "count" && (
-          <>
-            <Label>Of</Label>
-            <FieldSelector
-              label=""
-              placeholder="Measure"
-              value={mark.measureField ?? ""}
-              fields={numericFields}
-              onChange={(measureField) => onChange({ measureField })}
-            />
-          </>
+        />
+        {mark.type === "strip" ? (
+          <StripFields
+            mark={mark}
+            scales={scales}
+            numericFields={numericFields}
+            onChange={onChange}
+            onEditScale={onEditScale}
+          />
+        ) : (
+          <XyFields
+            mark={mark}
+            scales={scales}
+            onChange={onChange}
+            onEditScale={onEditScale}
+          />
         )}
-        <span className="eda-setting-label">Encode as</span>
-        <Segmented
-          label={`${mark.name} encoding`}
-          value={mark.encoding}
-          options={ENCODINGS}
-          onChange={(encoding) => onChange({ encoding })}
+      </div>
+    </div>
+  );
+}
+
+function StripFields({
+  mark,
+  scales,
+  numericFields,
+  onChange,
+  onEditScale,
+}: {
+  mark: StripMark;
+  scales: CompositionScale[];
+  numericFields: string[];
+  onChange: (patch: Partial<StripMark>) => void;
+  onEditScale: (scaleId: string) => void;
+}) {
+  const id = useId();
+  const positions = scales.filter((scale) => scale.kind === "position");
+  const values = scales.filter((scale) => scale.kind === "value");
+  return (
+    <>
+      <span className="eda-setting-label">Shape</span>
+      <Segmented
+        label={`${mark.name} shape`}
+        value={mark.shape}
+        options={SHAPES}
+        onChange={(shape) => onChange({ shape })}
+      />
+      <Label htmlFor={`${id}-position`}>Position</Label>
+      <ScaleSelect
+        id={`${id}-position`}
+        value={mark.positionScaleId}
+        scales={positions}
+        onChange={(positionScaleId) => onChange({ positionScaleId })}
+        onEdit={onEditScale}
+      />
+      <Label htmlFor={`${id}-aggregation`}>Value</Label>
+      <select
+        id={`${id}-aggregation`}
+        className="eda-composition-select"
+        value={mark.aggregation}
+        onChange={(event) => {
+          const aggregation = event.target.value as StripMark["aggregation"];
+          onChange({
+            aggregation,
+            measureField:
+              aggregation === "count"
+                ? undefined
+                : (mark.measureField ?? numericFields[0]),
+          });
+        }}
+      >
+        <option value="count">Count rows</option>
+        <option value="sum" disabled={!numericFields.length}>
+          Sum
+        </option>
+        <option value="average" disabled={!numericFields.length}>
+          Average
+        </option>
+      </select>
+      {mark.aggregation !== "count" && (
+        <>
+          <Label>Of</Label>
+          <FieldSelector
+            label=""
+            placeholder="Measure"
+            value={mark.measureField ?? ""}
+            fields={numericFields}
+            onChange={(measureField) => onChange({ measureField })}
+          />
+        </>
+      )}
+      <span className="eda-setting-label">Encode as</span>
+      <Segmented
+        label={`${mark.name} encoding`}
+        value={mark.encoding}
+        options={ENCODINGS}
+        onChange={(encoding) => onChange({ encoding })}
+      />
+      <Label htmlFor={`${id}-value`}>Value scale</Label>
+      <ScaleSelect
+        id={`${id}-value`}
+        value={mark.valueScaleId}
+        scales={values}
+        onChange={(valueScaleId) => onChange({ valueScaleId })}
+        onEdit={onEditScale}
+      />
+      {mark.encoding !== "color" && (
+        <ColorSetting
+          label="Fill"
+          value={mark.fill}
+          onChange={(fill) => onChange({ fill })}
         />
-        <Label htmlFor={`${id}-value`}>Value scale</Label>
-        <ScaleSelect
-          id={`${id}-value`}
-          value={mark.valueScaleId}
-          scales={values}
-          onChange={(valueScaleId) => onChange({ valueScaleId })}
-          onEdit={onEditScale}
-        />
-        {mark.encoding !== "color" && (
+      )}
+      <NumberSetting
+        label="Spacing"
+        min={0}
+        max={20}
+        value={mark.inset}
+        onChange={(inset) => onChange({ inset })}
+      />
+    </>
+  );
+}
+
+/** Fields shared by point and path marks: the scales and the order. */
+function XyFields({
+  mark,
+  scales,
+  onChange,
+  onEditScale,
+}: {
+  mark: PointMark | PathMark;
+  scales: CompositionScale[];
+  onChange: (patch: Partial<PointMark> | Partial<PathMark>) => void;
+  onEditScale: (scaleId: string) => void;
+}) {
+  const id = useId();
+  const profiles = useDataLayer((state) => state.fieldProfiles);
+  const orderFields = profiles
+    .filter(
+      (profile) =>
+        profile.dataType === "numeric" || profile.dataType === "datetime"
+    )
+    .map((profile) => profile.name);
+  const numeric = scales.filter((scale) => scale.kind === "numeric");
+  const change = onChange as (
+    patch: Partial<Omit<PointMark, "type"> & Omit<PathMark, "type">>
+  ) => void;
+  return (
+    <>
+      <Label htmlFor={`${id}-x`}>X scale</Label>
+      <ScaleSelect
+        id={`${id}-x`}
+        value={mark.xScaleId}
+        scales={numeric}
+        onChange={(xScaleId) => change({ xScaleId })}
+        onEdit={onEditScale}
+      />
+      <Label htmlFor={`${id}-y`}>Y scale</Label>
+      <ScaleSelect
+        id={`${id}-y`}
+        value={mark.yScaleId}
+        scales={numeric}
+        onChange={(yScaleId) => change({ yScaleId })}
+        onEdit={onEditScale}
+      />
+      <Label>Order by</Label>
+      <FieldSelector
+        label=""
+        placeholder={mark.type === "path" ? "Order field" : "Row order"}
+        value={mark.orderField ?? ""}
+        allowClear={mark.type === "point"}
+        fields={orderFields}
+        onChange={(orderField) =>
+          change(
+            mark.type === "path"
+              ? { orderField }
+              : { orderField: orderField || undefined }
+          )
+        }
+      />
+      {mark.type === "path" ? (
+        <>
+          <ColorSetting
+            label="Stroke"
+            value={mark.stroke}
+            onChange={(stroke) => change({ stroke })}
+          />
+          <NumberSetting
+            label="Width"
+            min={0.25}
+            max={20}
+            value={mark.strokeWidth}
+            onChange={(strokeWidth) => change({ strokeWidth })}
+          />
+        </>
+      ) : (
+        <>
           <ColorSetting
             label="Fill"
             value={mark.fill}
-            onChange={(fill) => onChange({ fill })}
+            onChange={(fill) => change({ fill })}
           />
-        )}
-        <NumberSetting
-          label="Spacing"
-          min={0}
-          max={20}
-          value={mark.inset}
-          onChange={(inset) => onChange({ inset })}
-        />
-      </div>
-    </div>
+          <NumberSetting
+            label="Radius"
+            min={0.5}
+            max={40}
+            value={mark.radius}
+            onChange={(radius) => change({ radius })}
+          />
+          <Label>Label with</Label>
+          <FieldSelector
+            label=""
+            placeholder="No labels"
+            value={mark.labelField ?? ""}
+            allowClear
+            onChange={(labelField) =>
+              change({
+                labelField: labelField || undefined,
+                labelEvery:
+                  labelField && !mark.labelEvery ? 1 : mark.labelEvery,
+              })
+            }
+          />
+          {mark.labelField && (
+            <NumberSetting
+              label="Label every"
+              min={0}
+              max={200}
+              value={mark.labelEvery}
+              onChange={(labelEvery) => change({ labelEvery })}
+            />
+          )}
+        </>
+      )}
+    </>
   );
 }
 
@@ -558,8 +799,16 @@ export function OverrideProperties({
           label={`${label} label weight`}
           value={Boolean(override?.emphasize)}
           options={[
-            { value: false, label: "Template", tooltip: "Use the template's label weight" },
-            { value: true, label: "Bold", tooltip: "Make this repeat's label bold, to call it out" },
+            {
+              value: false,
+              label: "Template",
+              tooltip: "Use the template's label weight",
+            },
+            {
+              value: true,
+              label: "Bold",
+              tooltip: "Make this repeat's label bold, to call it out",
+            },
           ]}
           onChange={(emphasize) => onChange({ emphasize })}
         />

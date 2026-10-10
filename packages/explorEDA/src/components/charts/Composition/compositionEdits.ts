@@ -1,8 +1,19 @@
 import {
+  ensureNumericScale,
   isEmptyOverride,
+  newScaleId,
   type CompositionDefinition,
   type CompositionElement,
+  type FieldChoice,
   type InstanceOverride,
+  type MarkDefinition,
+  type MarkType,
+  type NumericScale,
+  type PathMark,
+  type PointMark,
+  type PositionScale,
+  type UnitElement,
+  type ValueScale,
 } from "./compositionTypes";
 
 export function updateElement<T extends CompositionElement>(
@@ -89,4 +100,131 @@ export function resetOverride(
       (item) => !(item.unitId === unitId && item.instanceKey === instanceKey)
     ),
   };
+}
+
+/**
+ * Changes a mark to another type, keeping its name and ID. The new type
+ * needs scales of its own kind, so missing ones are added: numeric scales for
+ * the first two numeric fields, or a position and value scale for strips.
+ */
+export function convertMark(
+  definition: CompositionDefinition,
+  unit: UnitElement,
+  markId: string,
+  type: MarkType,
+  fields: FieldChoice[]
+): CompositionDefinition {
+  const mark = unit.marks.find((item) => item.id === markId);
+  if (!mark || mark.type === type) return definition;
+  let next = definition;
+  let replacement: MarkDefinition;
+  if (type === "strip") {
+    let position = next.scales.find(
+      (scale): scale is PositionScale => scale.kind === "position"
+    );
+    if (!position) {
+      const field =
+        fields.find((item) => item.dataType === "datetime") ??
+        fields.find((item) => item.uniqueCount <= 60) ??
+        fields[0];
+      if (!field) return definition;
+      position = {
+        id: newScaleId(next, "x"),
+        kind: "position",
+        name: field.name,
+        field: field.name,
+        interval: field.dataType === "datetime" ? "month" : undefined,
+        domain: "shared",
+      };
+      next = { ...next, scales: [...next.scales, position] };
+    }
+    let value = next.scales.find(
+      (scale): scale is ValueScale => scale.kind === "value"
+    );
+    if (!value) {
+      value = {
+        id: newScaleId(next, "value"),
+        kind: "value",
+        name: "Rows",
+        domain: "shared",
+        transform: "linear",
+        colors: ["#e8eef6", "#1f4e8c"],
+      };
+      next = { ...next, scales: [...next.scales, value] };
+    }
+    replacement = {
+      type: "strip",
+      id: mark.id,
+      name: mark.name,
+      shape: "rect",
+      positionScaleId: position.id,
+      valueScaleId: value.id,
+      aggregation: "count",
+      encoding: "color",
+      fill: mark.type === "path" ? mark.stroke : mark.fill,
+      inset: 1,
+    };
+  } else {
+    // A sibling x–y mark already names the scales; otherwise take the data's.
+    const sibling = unit.marks.find(
+      (item): item is PointMark | PathMark =>
+        item.type !== "strip" && item.id !== markId
+    );
+    let xScaleId = sibling?.xScaleId;
+    let yScaleId = sibling?.yScaleId;
+    let orderField = sibling?.orderField;
+    if (!xScaleId || !yScaleId) {
+      const numeric = fields.filter((item) => item.dataType === "numeric");
+      const existing = next.scales.filter(
+        (scale): scale is NumericScale => scale.kind === "numeric"
+      );
+      const xField = existing[0]?.field ?? numeric[0]?.name;
+      const yField =
+        existing[1]?.field ??
+        numeric.find((item) => item.name !== xField)?.name ??
+        xField;
+      if (!xField || !yField) return definition;
+      const withX = ensureNumericScale(next, xField);
+      const withY = ensureNumericScale(withX.definition, yField);
+      next = withY.definition;
+      xScaleId = withX.scale.id;
+      yScaleId = withY.scale.id;
+    }
+    orderField ??=
+      fields.find(
+        (item) =>
+          item.dataType === "numeric" &&
+          /year|date|time|index|order|seq/i.test(item.name)
+      )?.name ??
+      fields.find((item) => item.dataType === "datetime")?.name ??
+      fields.find((item) => item.dataType === "numeric")?.name ??
+      "";
+    const color = mark.type === "path" ? mark.stroke : mark.fill;
+    replacement =
+      type === "path"
+        ? {
+            type: "path",
+            id: mark.id,
+            name: mark.name,
+            xScaleId,
+            yScaleId,
+            orderField,
+            stroke: color,
+            strokeWidth: 1.5,
+          }
+        : {
+            type: "point",
+            id: mark.id,
+            name: mark.name,
+            xScaleId,
+            yScaleId,
+            orderField: orderField || undefined,
+            radius: 3.5,
+            fill: color,
+            labelEvery: 0,
+          };
+  }
+  return updateElement<UnitElement>(next, unit.id, {
+    marks: unit.marks.map((item) => (item.id === markId ? replacement : item)),
+  });
 }
