@@ -40,6 +40,7 @@ import {
 } from "@/lib/schema/schemaLayout";
 import { SchemaInspector, type SchemaChartLinks } from "./SchemaInspector";
 import { traceField } from "@/lib/schema/schemaTrace";
+import { compactViews } from "@/lib/schema/schemaCompact";
 import type { SchemaEditing, SchemaSelection } from "./schemaEditing";
 
 const MIN_SCALE = 0.35;
@@ -130,7 +131,7 @@ type Press = {
  * scroll to pan; pinch, Control-scroll, or the zoom buttons zoom.
  */
 export function SchemaDiagram({
-  graph,
+  graph: fullGraph,
   width,
   height,
   toolbarTarget,
@@ -147,6 +148,23 @@ export function SchemaDiagram({
   /** Lets a field's uses jump to this workspace's charts. */
   charts?: SchemaChartLinks;
 }) {
+  // Other views fold to their charts until the user opens one.
+  const [expandedViews, setExpandedViews] = useState<ReadonlySet<string>>(
+    () => new Set()
+  );
+  const graph = useMemo(
+    () => compactViews(fullGraph, expandedViews),
+    [fullGraph, expandedViews]
+  );
+  const toggleView = useCallback((nodeId: string) => {
+    setExpandedViews((current) => {
+      const next = new Set(current);
+      if (next.has(nodeId)) next.delete(nodeId);
+      else next.add(nodeId);
+      return next;
+    });
+  }, []);
+
   // Lay out for the drawer's shape, in coarse steps so a resize that barely
   // changes the shape keeps the arrangement.
   const shapeWidth = Math.round(width / 40) * 40;
@@ -722,6 +740,7 @@ export function SchemaDiagram({
             selection={selection}
             editing={editing}
             charts={charts}
+            onToggleView={toggleView}
             style={inspectorStyle}
             onSelect={setSelection}
             onClose={() => setSelection(undefined)}

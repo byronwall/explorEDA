@@ -38,6 +38,7 @@ function renderDiagram(readOnly = false) {
           name: "Orders view",
           queryId: "orders-by-customer",
           settings,
+          current: true,
         },
       ])}
       charts={{ nodeId: "view:v", onShowChart }}

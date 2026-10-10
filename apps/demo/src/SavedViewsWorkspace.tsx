@@ -355,6 +355,11 @@ export function SavedViewsWorkspace({
   const settingsForDisplay = showingPreview
     ? view.settings
     : currentView.settings;
+  // Every tab, so the Schema diagram can show what each view reads.
+  const projectViews = useMemo(
+    () => shownTabs.map((tab) => ({ ...tab, queryId: tab.queryId ?? "" })),
+    [shownTabs]
+  );
   const { sourceAnalysis } = session;
   const sourceRows = useMemo(
     () => getSavedViewsRows({ sourceAnalysis }),
@@ -1180,6 +1185,7 @@ export function SavedViewsWorkspace({
               queryId: view.queryId ?? "",
               settings: settingsForDisplay,
             }}
+            views={projectViews}
             onProjectChange={captureProject}
             onStateChange={capture}
             onOpenView={openProjectView}

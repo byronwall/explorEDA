@@ -114,6 +114,7 @@ export function SchemaInspector({
   editing,
   style,
   charts,
+  onToggleView,
   onSelect,
   onClose,
 }: {
@@ -123,6 +124,8 @@ export function SchemaInspector({
   style?: CSSProperties;
   /** This workspace's charts: the card that draws them, and how to show one. */
   charts?: SchemaChartLinks;
+  /** Fold or unfold another view's card. */
+  onToggleView?: (nodeId: string) => void;
   onSelect: (selection: SchemaSelection | undefined) => void;
   onClose: () => void;
 }) {
@@ -139,7 +142,14 @@ export function SchemaInspector({
   let body: React.ReactNode = null;
   if (selection.kind === "table" && node) {
     title = node.title;
-    body = <TableBody node={node} editing={editing} onSelect={onSelect} />;
+    body = (
+      <TableBody
+        node={node}
+        editing={editing}
+        onSelect={onSelect}
+        onToggleView={onToggleView}
+      />
+    );
   } else if (selection.kind === "field" && node && row) {
     title = row.label;
     body = (
@@ -210,10 +220,12 @@ function TableBody({
   node,
   editing,
   onSelect,
+  onToggleView,
 }: {
   node: SchemaNode;
   editing?: SchemaEditing;
   onSelect: (selection: SchemaSelection) => void;
+  onToggleView?: (nodeId: string) => void;
 }) {
   const project = editing?.project;
   const source = project?.project.sources.find(
@@ -233,7 +245,9 @@ function TableBody({
           node.detail,
           node.kind === "query" ? count("step", "step", "steps") : undefined,
           node.kind === "view"
-            ? count("use", "field read", "fields read")
+            ? node.folded
+              ? count("use", "chart", "charts")
+              : count("use", "field read", "fields read")
             : count("field", "field", "fields"),
           calculated ? `${calculated} calculated` : undefined,
         ]
@@ -275,6 +289,21 @@ function TableBody({
                 ? "Select a field to change its label, unit, or type."
                 : "Select a field to see its details."}
       </p>
+      {node.kind === "view" && !node.current && onToggleView && (
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          tooltip={
+            node.folded
+              ? "List every field this view reads, with a line to each"
+              : "Fold this view to one row per chart"
+          }
+          onClick={() => onToggleView(node.id)}
+        >
+          {node.folded ? "Show every field" : "Show charts only"}
+        </Button>
+      )}
       {project && node.kind === "query" && node.queryId && (
         <AddStep editing={project} queryId={node.queryId} />
       )}
@@ -1047,9 +1076,11 @@ function Lineage({
                 charts?.nodeId === item.node.id ? item.row.chartId : undefined;
               const text =
                 item.row.kind === "use"
-                  ? [item.node.title, heading, item.row.detail]
-                      .filter(Boolean)
-                      .join(" · ")
+                  ? item.node.folded
+                    ? [item.node.title, item.row.label]
+                    : [item.node.title, heading, item.row.detail]
+                        .filter(Boolean)
+                        .join(" · ")
                   : `${item.row.mark} ${item.row.label} in ${item.node.title}`;
               return (
                 <li

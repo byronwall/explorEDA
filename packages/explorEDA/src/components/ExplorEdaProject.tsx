@@ -45,6 +45,11 @@ export interface ExplorEdaProjectProps {
   /** Source rows by source ID. Pass a new array when a table changes. */
   tables: Record<string, readonly AnalysisSourceRow[]>;
   view: AnalysisView;
+  /**
+   * Every saved view of the project, so the Schema diagram can show what
+   * each one reads. Without it, the diagram shows only the current view.
+   */
+  views?: AnalysisView[];
   sidePanels?: ExplorEdaSidePanel[];
   /** Starting charts for a view of a query that has no settings yet. */
   queryPresets?: Record<string, SavedDataStructure>;
@@ -91,6 +96,7 @@ export const ExplorEdaProject = forwardRef<
     project,
     tables,
     view,
+    views,
     sidePanels = [],
     queryPresets,
     onProjectChange,
@@ -151,9 +157,27 @@ export const ExplorEdaProject = forwardRef<
         name: shownView.name,
         queryId: shownView.queryId,
         settings,
+        current: true,
+        othersHidden: !views,
       },
+      // Other views, with the starting charts a view without settings gets.
+      ...(views ?? [])
+        .filter((item) => item.id !== shownView.id)
+        .map((item) => ({
+          id: item.id,
+          name: item.name,
+          queryId: item.queryId,
+          settings: item.settings ?? queryPresets?.[item.queryId],
+        })),
     ],
-    [shownView.id, shownView.name, shownView.queryId, settings]
+    [
+      shownView.id,
+      shownView.name,
+      shownView.queryId,
+      settings,
+      views,
+      queryPresets,
+    ]
   );
   const schemaGraph = useMemo(
     () => projectSchemaGraph(project, tables, schemaViews),

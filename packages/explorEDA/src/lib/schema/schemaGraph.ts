@@ -52,6 +52,10 @@ export interface SchemaNode {
   queryId?: string;
   /** The saved view a view card draws. */
   viewId?: string;
+  /** The view the workspace shows now. */
+  current?: boolean;
+  /** A view card folded to one row per chart. */
+  folded?: boolean;
   rows: SchemaRow[];
 }
 
@@ -143,6 +147,10 @@ export interface SchemaViewInput {
   name: string;
   queryId: string;
   settings?: SavedDataStructure;
+  /** The view the workspace shows now. */
+  current?: boolean;
+  /** The host did not pass its other views, so the diagram cannot show them. */
+  othersHidden?: boolean;
 }
 
 /**
@@ -218,13 +226,20 @@ export function projectSchemaGraph(
       id: `view:${view.id}`,
       title: view.name.trim() || query?.name || "View",
       glyph: query?.glyph,
-      detail: query ? undefined : "Missing query",
+      detail: !query
+        ? "Missing query"
+        : view.current && view.othersHidden
+          ? "Other views not shown"
+          : view.current && views.length > 1
+            ? "This view"
+            : undefined,
       usage: settingsFieldUsage(view.settings),
       label: (field) => lineage?.labels.get(field) ?? undefined,
       origin: (field) => lineage?.outputs.get(field),
     });
     viewNode.node.queryId = view.queryId;
     viewNode.node.viewId = view.id;
+    viewNode.node.current = view.current;
     nodes.push(viewNode.node);
     edges.push(...viewNode.edges);
   }

@@ -399,11 +399,16 @@
       {
         "id": "m6",
         "title": "Usage across every view in the host",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Optional views prop; demo passes its tabs; uses span all saved views.",
         "proof": "Field used only by a second tab lists that tab; relationship removal warns about it; omitting views still works.",
         "valid_intermediate_state": "Feature complete for multi-table projects.",
-        "rollback": "Hosts omit the views prop."
+        "rollback": "Hosts omit the views prop.",
+        "evidence": [
+          "Vitest: schemaCompact.test.ts (other views fold to one row per chart, lineage reaches a folded view, unfold on request); diagram, lineage, and step suites pass (46)",
+          "Playwright: flights shows all 5 tabs at 68% with no panning; Visibility lists its uses across three tabs; Show every field unfolds Routes and aircraft from 6 to 19 rows; 390 px works"
+        ],
+        "notes": "Five full view cards overflowed the viewport, so views other than the current one fold to one row per chart with a field count, and unfold on request. Uses in other views select their rows; only the current view's charts offer Show, since hosts own tab switching."
       },
       {
         "id": "m7",
@@ -492,6 +497,12 @@
       "date": "2026-10-10",
       "event": "milestone-completed",
       "summary": "Milestone 5 built: field focus traces lineage both ways with a uses list and chart jump.",
+      "status": "active"
+    },
+    {
+      "date": "2026-10-10",
+      "event": "milestone-completed",
+      "summary": "Milestone 6 built: ExplorEdaProject views prop, demo passes every tab, other views fold to their charts.",
       "status": "active"
     }
   ],
