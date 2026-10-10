@@ -17,8 +17,8 @@ export interface CalcSubset {
 export interface CalcResult {
   calcId: string;
   value?: number;
-  /** Dates come back as timestamps and format as dates; a change formats as a signed percent. */
-  kind: "number" | "date" | "percent";
+  /** Dates come back as timestamps and format as dates; a change formats as a signed percent; a difference keeps its sign. */
+  kind: "number" | "date" | "percent" | "signed";
   text: string;
   /** The rows the value was computed from. */
   rowIds: number[];
@@ -49,6 +49,7 @@ export function formatCalcValue(
   if (value === undefined) return "–";
   if (kind === "date") return dateFormat.format(new Date(value));
   if (kind === "percent") return percentFormat.format(value);
+  if (kind === "signed") return signedFormat.format(value);
   return numberFormat.format(value);
 }
 
@@ -56,7 +57,13 @@ const ORDERED = new Set<CompositionCalculation["aggregation"]>([
   "first",
   "last",
   "change",
+  "difference",
 ]);
+
+const signedFormat = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 1,
+  signDisplay: "exceptZero",
+});
 
 /** The rows a calculation reads: its population, then its filter policy. */
 export function calcRows(
@@ -106,7 +113,10 @@ export function evaluateCalc(
     if (ends) {
       if (calc.aggregation === "first") value = ends.first;
       else if (calc.aggregation === "last") value = ends.last;
-      else {
+      else if (calc.aggregation === "difference") {
+        value = ends.last - ends.first;
+        kind = "signed";
+      } else {
         // The change from the first value to the last, as a share of the first.
         value =
           ends.first === 0 ? undefined : (ends.last - ends.first) / ends.first;
@@ -232,6 +242,7 @@ const ORDERED_TEXT = {
   first: "First value of",
   last: "Last value of",
   change: "Change from first to last value of",
+  difference: "Last minus first value of",
 };
 
 /** A short sentence that says which rows a calculation reads. */

@@ -1071,6 +1071,16 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "pew-meaning",
+    intent:
+      "Draw each topic as a dumbbell row with colored party dots, a connector, a legend, and the signed gap.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

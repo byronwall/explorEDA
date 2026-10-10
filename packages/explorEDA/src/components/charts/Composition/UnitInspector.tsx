@@ -1024,13 +1024,44 @@ function XyFields({
         onEdit={onEditScale}
       />
       <Label htmlFor={`${id}-y`}>Y scale</Label>
-      <ScaleSelect
-        id={`${id}-y`}
-        value={mark.yScaleId}
-        scales={numeric}
-        onChange={(yScaleId) => change({ yScaleId })}
-        onEdit={onEditScale}
-      />
+      {mark.type === "band" ? (
+        <ScaleSelect
+          id={`${id}-y`}
+          value={mark.yScaleId}
+          scales={numeric}
+          onChange={(yScaleId) => change({ yScaleId })}
+          onEdit={onEditScale}
+        />
+      ) : (
+        <div className="eda-composition-scale-select">
+          <select
+            id={`${id}-y`}
+            className="eda-composition-select"
+            value={mark.yScaleId ?? ""}
+            onChange={(event) =>
+              change({ yScaleId: event.target.value || undefined })
+            }
+          >
+            <option value="">Middle line (dot row)</option>
+            {numeric.map((scale) => (
+              <option key={scale.id} value={scale.id}>
+                {scale.name}
+              </option>
+            ))}
+          </select>
+          {mark.yScaleId && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2"
+              tooltip="Open this scale's settings below. Every mark that uses it changes."
+              onClick={() => onEditScale(mark.yScaleId!)}
+            >
+              Edit
+            </Button>
+          )}
+        </div>
+      )}
       <Label>Order by</Label>
       <FieldSelector
         label=""
@@ -1213,6 +1244,17 @@ function XyFields({
             options={SHOW_OPTIONS}
             onChange={(show) =>
               change({ show: show === "all" ? undefined : show })
+            }
+          />
+          <Label>Color by</Label>
+          <FieldSelector
+            label=""
+            placeholder="One fill"
+            value={mark.colorField ?? ""}
+            allowClear
+            fields={seriesFields}
+            onChange={(colorField) =>
+              change({ colorField: colorField || undefined })
             }
           />
           <Label>Label with</Label>

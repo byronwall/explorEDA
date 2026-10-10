@@ -254,3 +254,18 @@ Written long from the gallery's wide table: one row per country and month, dropp
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/consumer-confidence.ts
 ```
+
+## What makes life meaningful, by party
+
+- File: `pew-meaning.csv`
+- Size: 14 rows and 4 fields
+- Demo: `?example=pew-meaning`
+- Use: a dumbbell composition, one topic per row, with the two parties' shares as colored dots on a shared scale, a connector, and the signed gap beside each row
+- Source: Pew Research Center, "What makes life meaningful? Views from 17 advanced economies" (November 2021), chart "Republicans and Democrats in the U.S. differ over some factors that make life meaningful", as transcribed in the R Graph Gallery's dumbbell recreation. Shares of each party's respondents who mentioned the topic.
+- License: Pew Research Center data is free to use with attribution.
+
+`Order` is the published chart's row order.
+
+```sh
+node --experimental-strip-types apps/data-samples/pew_meaning.ts apps/demo/public/datasets/pew-meaning.csv
+```

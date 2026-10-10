@@ -66,7 +66,22 @@ export type CompositionElement =
   | TextElement
   | UnitElement
   | GuideElement
-  | AnnotationElement;
+  | AnnotationElement
+  | LegendElement;
+
+/**
+ * A key for a mark's categories: the colors of a point mark's color field,
+ * a stack's categories, or a summary's change ramp ends. Entries sit in a
+ * row or a column from the element's position.
+ */
+export interface LegendElement extends ElementBase {
+  kind: "legend";
+  unitId: string;
+  markId: string;
+  direction: "row" | "column";
+  fontSize: number;
+  color: string;
+}
 
 export type CompositionElementKind = CompositionElement["kind"];
 
@@ -193,7 +208,8 @@ export interface PointMark {
   id: string;
   name: string;
   xScaleId: string;
-  yScaleId: string;
+  /** Without a y scale, points sit on the frame's middle line: a dot row. */
+  yScaleId?: string;
   /** Orders the rows for `first`/`last` picks and every-nth labels; row order otherwise. */
   orderField?: string;
   radius: number;
@@ -211,6 +227,10 @@ export interface PointMark {
   mutedFill?: string;
   /** The rows the mark draws from: the repeat's own, or every row in the graphic. */
   population?: MarkPopulation;
+  /** Fill each point by this field's value, through `colors` in label order across the graphic. */
+  colorField?: string;
+  /** One color per category of `colorField`, cycling when there are more. */
+  colors?: string[];
 }
 
 export type PointShow = "all" | "first" | "last" | "min" | "max";
@@ -224,7 +244,8 @@ export interface PathMark {
   id: string;
   name: string;
   xScaleId: string;
-  yScaleId: string;
+  /** Without a y scale, the path runs along the frame's middle line. */
+  yScaleId?: string;
   orderField: string;
   stroke: string;
   strokeWidth: number;
@@ -378,6 +399,8 @@ export function markScaleIds(mark: MarkDefinition): string[] {
       ? [mark.yScaleId, mark.valueScaleId]
       : [mark.yScaleId];
   if (mark.type === "stack") return mark.xScaleId ? [mark.xScaleId] : [];
+  if (mark.type === "point" || mark.type === "path")
+    return mark.yScaleId ? [mark.xScaleId, mark.yScaleId] : [mark.xScaleId];
   return [mark.xScaleId, mark.yScaleId];
 }
 
@@ -387,9 +410,12 @@ export function markFields(mark: MarkDefinition): string[] {
     case "strip":
       return mark.measureField ? [mark.measureField] : [];
     case "point":
-      return [mark.orderField, mark.labelField].filter(
-        (field): field is string => Boolean(field)
-      );
+      return [
+        mark.orderField,
+        mark.labelField,
+        mark.colorField,
+        mark.seriesField,
+      ].filter((field): field is string => Boolean(field));
     case "path":
       return [mark.orderField];
     case "band":
@@ -451,7 +477,8 @@ export type CalcAggregation =
   | "max"
   | "first"
   | "last"
-  | "change";
+  | "change"
+  | "difference";
 
 /**
  * One value from the data. Population and filter policy are separate
@@ -464,9 +491,10 @@ export interface CompositionCalculation {
   aggregation: CalcAggregation;
   field?: string;
   /**
-   * Orders the rows for first, last, and change: the field's value in the
-   * first row, in the last row, or the change from first to last as a share
-   * of the first. Row order when unset.
+   * Orders the rows for first, last, change, and difference: the field's
+   * value in the first row, in the last row, the change from first to last
+   * as a share of the first, or the plain difference last minus first. Row
+   * order when unset.
    */
   orderField?: string;
   /** Each repeat's own rows, or every row in the composition. */
@@ -915,6 +943,29 @@ export function createGuideElement(
     value: { kind: "constant", value: "" },
     label: "",
     color: "#1f2328",
+  };
+}
+
+export function createLegendElement(
+  definition: CompositionDefinition,
+  unit: UnitElement
+): LegendElement {
+  const mark =
+    unit.marks.find(
+      (item) =>
+        item.type === "stack" || (item.type === "point" && item.colorField)
+    ) ?? unit.marks[0];
+  return {
+    id: newElementId(definition, "legend"),
+    kind: "legend",
+    name: uniqueName(definition, "Legend"),
+    x: unit.x,
+    y: Math.max(8, unit.y - 28),
+    unitId: unit.id,
+    markId: mark?.id ?? "",
+    direction: "row",
+    fontSize: 11,
+    color: INK,
   };
 }
 
