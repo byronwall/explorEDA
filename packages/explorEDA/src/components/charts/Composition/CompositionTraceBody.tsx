@@ -36,7 +36,8 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
           <TraceReadout label="Calculation">
             {AGGREGATION_TEXT[bar.aggregation] ?? bar.aggregation}
             {bar.measureField ? ` of ${bar.measureField}` : ""} over{" "}
-            {glyph.datum.rowIds.length.toLocaleString()} rows in this repeat
+            {glyph.datum.rowIds.length.toLocaleString()}{" "}
+            {glyph.datum.rowIds.length === 1 ? "row" : "rows"} in this repeat
             {bar.category !== undefined
               ? ` where ${bar.categoryField} = ${bar.category}`
               : ""}
@@ -246,6 +247,11 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
           )}
           {path.y && (
             <TraceReadout label="Y scale">
+              {path.rank
+                ? `Rank among the rows at each x by ${
+                    path.rank === "asc" ? "smallest" : "largest"
+                  } ${path.y.name}, from the live rows; `
+                : ""}
               {describeNumericScale(path.y)}
             </TraceReadout>
           )}

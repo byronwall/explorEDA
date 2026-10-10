@@ -10,6 +10,7 @@ import {
   type UnitElement,
   type ValueScale,
   isXyMark,
+  type RankOrder,
 } from "./compositionTypes";
 import type {
   AreaNode,
@@ -64,6 +65,8 @@ export interface CompositionTrace {
     stroke: string;
     x?: NumericScale;
     y?: NumericScale;
+    /** Set when the path plots ranks by the y scale's field instead of values. */
+    rank?: RankOrder;
     /** Each vertex in path order, with its coordinates. */
     vertices: { rowId: number; x: number; y: number }[];
   };
@@ -213,6 +216,7 @@ export function makeCompositionTraceSource(
             stroke: node.stroke,
             x,
             y,
+            rank: mark?.type === "path" ? mark.rank : undefined,
             vertices: node.segments.flatMap((run) =>
               run.map((vertex) => ({
                 rowId: vertex.rowId,

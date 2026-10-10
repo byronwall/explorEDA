@@ -24,6 +24,7 @@ import {
   type WaffleMark,
   type BarMark,
   type MarkAggregation,
+  type RankOrder,
   type StripMark,
   type SummaryMark,
   type TimeInterval,
@@ -52,6 +53,9 @@ export interface CompositionData {
   selection?: { field: string; keys: Set<string> };
   /** The largest repeat total per stack mark, set while a unit resolves. */
   stackMaxTotal?: Map<string, number>;
+  /** Each ranked mark's ranks per repeat, keyed `markId|repeatKey`, and the deepest rank per mark. */
+  ranks?: Map<string, Record<number, number>>;
+  rankMax?: Map<string, number>;
 }
 
 export interface PositionBin {
@@ -251,6 +255,9 @@ type ResolvedXy = {
   mark: PointMark | PathMark | BandMark;
   x: NumericScale;
   y: NumericScale;
+
+  /** The scale whose field the rows rank by, when the mark plots ranks. */
+  rankBy?: NumericScale;
 };
 type ResolvedSummary = {
   type: "summary";
@@ -320,12 +327,22 @@ export function resolveUnit(
     } else {
       const x = scale(mark.xScaleId);
       // A point or path without a y scale sits on the frame's middle line.
-      const y =
-        mark.type !== "band" && mark.yScaleId === undefined
+      const named = scale(mark.yScaleId ?? "");
+      const ranked =
+        mark.type !== "band" && mark.rank && named?.kind === "numeric";
+      const y = ranked
+        ? rankScale(mark.id, named as NumericScale)
+        : mark.type !== "band" && mark.yScaleId === undefined
           ? MIDDLE_SCALE
-          : scale(mark.yScaleId ?? "");
+          : named;
       if (x?.kind === "numeric" && y?.kind === "numeric")
-        marks.push({ type: "xy", mark, x, y });
+        marks.push({
+          type: "xy",
+          mark,
+          x,
+          y,
+          rankBy: ranked ? (named as NumericScale) : undefined,
+        });
     }
   }
   const strips = marks.filter(
@@ -429,6 +446,29 @@ export function resolveUnit(
     data = { ...data, stackMaxTotal: maxTotals };
   }
 
+  // Ranked marks: each row's place among the rows at its x, per repeat.
+  const rankedMarks = xys.filter((item) => item.rankBy);
+  if (rankedMarks.length) {
+    const ranks = new Map<string, Record<number, number>>();
+    const rankMax = new Map<string, number>();
+    for (const { mark, x, rankBy } of rankedMarks) {
+      const xColumn = data.column(x.field);
+      const yColumn = data.column(rankBy!.field);
+      const order = (mark as PointMark | PathMark).rank ?? "desc";
+      for (const subset of subsets) {
+        const ids =
+          (mark as PointMark | PathMark).population === "composition"
+            ? data.liveIds
+            : subset.liveIds;
+        const record = rankRows(ids, xColumn, yColumn, order);
+        ranks.set(`${mark.id}|${subset.key}`, record);
+        const deepest = Math.max(0, ...Object.values(record));
+        rankMax.set(mark.id, Math.max(rankMax.get(mark.id) ?? 1, deepest));
+      }
+    }
+    data = { ...data, ranks, rankMax };
+  }
+
   // Summaries first: their quartiles set the y domain and the change colors.
   const summarized = subsets.map((subset) =>
     summaries.map(({ mark }) => summarizeGroups(mark, subset, data))
@@ -518,6 +558,12 @@ export function resolveUnit(
     window?: FrameWindow
   ): [number, number] => {
     if (scale.id === MIDDLE_SCALE.id) return [0, 1] as [number, number];
+    // Ranks run from one at the top to the deepest rank at the bottom.
+    if (isRankScale(scale))
+      return [(data.rankMax?.get(rankedMarkId(scale)) ?? 1) + 0.5, 0.5] as [
+        number,
+        number,
+      ];
     if (window) {
       // A windowed frame spans its window on the window's field, and the
       // rows inside the window on every other field.
@@ -2294,6 +2340,64 @@ function readY(axis: NumericAxis, column: Record<number, datum>, id: number) {
   return axis.scale.id === MIDDLE_SCALE.id ? 0.5 : readNumber(column[id]);
 }
 
+/** The y values a mark reads: its ranks when it plots ranks, else the field. */
+function yColumn(
+  axis: NumericAxis,
+  mark: PointMark | PathMark,
+  subset: Subset,
+  data: CompositionData
+): Record<number, datum> {
+  if (isRankScale(axis.scale))
+    return data.ranks?.get(`${mark.id}|${subset.key}`) ?? {};
+  return data.column(axis.scale.field);
+}
+
+/** A mark's stand-in y scale for ranks; the mark's id rides in the scale's. */
+function rankScale(markId: string, by: NumericScale): NumericScale {
+  return {
+    ...MIDDLE_SCALE,
+    id: `rank:${markId}`,
+    name: by.name,
+    field: by.field,
+  };
+}
+function isRankScale(scale: NumericScale) {
+  return scale.id.startsWith("rank:");
+}
+function rankedMarkId(scale: NumericScale) {
+  return scale.id.slice("rank:".length);
+}
+
+/**
+ * Ranks rows among those sharing an x value by a y field: one for the
+ * largest (or smallest) value, ties broken by row order. Rows without a
+ * readable x or y get no rank.
+ */
+export function rankRows(
+  ids: number[],
+  xColumn: Record<number, datum>,
+  yColumn: Record<number, datum>,
+  order: RankOrder
+): Record<number, number> {
+  const byX = new Map<number, { id: number; y: number }[]>();
+  for (const id of ids) {
+    const x = readNumber(xColumn[id]);
+    const y = finiteNumber(yColumn[id]);
+    if (x === undefined || y === undefined) continue;
+    const list = byX.get(x);
+    if (list) list.push({ id, y });
+    else byX.set(x, [{ id, y }]);
+  }
+  const ranks: Record<number, number> = {};
+  for (const list of byX.values()) {
+    list.sort((a, b) => (order === "asc" ? a.y - b.y : b.y - a.y));
+    list.forEach((item, index) => {
+      ranks[item.id] = index + 1;
+    });
+  }
+  return ranks;
+}
+
 /** Stand-in scales for a stacked area's y axis: shares, or totals. */
 const SHARE_SCALE: NumericScale = {
   id: "stack-share",
@@ -2654,7 +2758,7 @@ function pathNodes(
   data: CompositionData
 ): SceneNode[] {
   const xs = data.column(axes.x.scale.field);
-  const ys = data.column(axes.y.scale.field);
+  const ys = yColumn(axes.y, mark, subset, data);
   const order = data.column(mark.orderField);
   const clip = fixedLimits(axes.x) || fixedLimits(axes.y) ? frame : undefined;
   const groups = seriesGroups(
@@ -2890,7 +2994,7 @@ function pointNodes(
   data: CompositionData
 ): SceneNode[] {
   const xs = data.column(axes.x.scale.field);
-  const ys = data.column(axes.y.scale.field);
+  const ys = yColumn(axes.y, mark, subset, data);
   const labels = mark.labelField ? data.column(mark.labelField) : undefined;
   const order = mark.orderField ? data.column(mark.orderField) : undefined;
   const colorColumn = mark.colorField
@@ -2961,7 +3065,11 @@ function pointNodes(
         x,
         y: middle ? x : y,
         xField: axes.x.scale.field,
-        yField: middle ? axes.x.scale.field : axes.y.scale.field,
+        yField: middle
+          ? axes.x.scale.field
+          : isRankScale(axes.y.scale)
+            ? `rank by ${mark.rank === "asc" ? "smallest" : "largest"} ${axes.y.scale.name}`
+            : axes.y.scale.field,
         series,
         category,
       },
@@ -3072,6 +3180,17 @@ function numericGridNodes(
 /** Tick values along a numeric axis, about one per `spacing` pixels. */
 function tickValues(axis: NumericAxis, length: number, spacing: number) {
   if (axis.scale.ticks === "none") return [];
+  // Ranks tick at whole numbers, thinned to about one per `spacing`.
+  if (isRankScale(axis.scale)) {
+    const deepest = Math.round(Math.max(...axis.domain) - 0.5);
+    const step = Math.max(
+      1,
+      Math.ceil(deepest / Math.max(1, length / spacing))
+    );
+    const ticks: number[] = [];
+    for (let rank = 1; rank <= deepest; rank += step) ticks.push(rank);
+    return ticks;
+  }
   if (axis.scale.ticks === "ends")
     return axis.domain[0] === axis.domain[1]
       ? [axis.domain[0]]

@@ -98,6 +98,7 @@ describe("example coverage manifest", () => {
       "titanic-waffle",
       "unemployment-stream",
       "population-pyramid",
+      "gdp-bump",
       "product-activity",
       "scatter-trace",
       "calculated-orders",

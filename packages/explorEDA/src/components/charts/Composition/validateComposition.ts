@@ -68,6 +68,7 @@ function isMark(value: unknown) {
       (value.seriesField === undefined || isString(value.seriesField)) &&
       isFocus(value.focus) &&
       (value.mutedFill === undefined || isString(value.mutedFill)) &&
+      (value.rank === undefined || oneOf(value.rank, ["desc", "asc"])) &&
       (value.population === undefined ||
         oneOf(value.population, ["repeat", "composition"]))
     );
@@ -177,7 +178,8 @@ function isMark(value: unknown) {
       (value.colorField === undefined || isString(value.colorField)) &&
       (value.colors === undefined ||
         (Array.isArray(value.colors) && value.colors.every(isString))) &&
-      (value.curve === undefined || oneOf(value.curve, ["linear", "smooth"]))
+      (value.curve === undefined || oneOf(value.curve, ["linear", "smooth"])) &&
+      (value.rank === undefined || oneOf(value.rank, ["desc", "asc"]))
     );
   // Marks saved before mark types existed have none; they are strips.
   return (

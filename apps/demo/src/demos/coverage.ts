@@ -1179,6 +1179,16 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "gdp-bump",
+    intent:
+      "Rank the largest economies at every year and join each one's ranks into a smooth path named at the end.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

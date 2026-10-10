@@ -247,7 +247,15 @@ export interface PointMark {
   colorField?: string;
   /** One color per category of `colorField`, cycling when there are more. */
   colors?: string[];
+  /**
+   * Plot each row's rank among the rows at the same x, by the y field,
+   * instead of its value: largest first or smallest first. Rank 1 sits at
+   * the top of the frame.
+   */
+  rank?: RankOrder;
 }
+
+export type RankOrder = "desc" | "asc";
 
 export type PointShow = "all" | "first" | "last" | "min" | "max";
 
@@ -291,6 +299,8 @@ export interface PathMark {
   colors?: string[];
   /** Join the points with a smooth curve rather than straight runs. */
   curve?: MarkCurve;
+  /** Plot ranks at each x by the y field instead of values, as a bump chart. */
+  rank?: RankOrder;
 }
 
 export type PathLabels = "none" | "start" | "end" | "both";
