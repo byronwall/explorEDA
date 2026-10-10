@@ -6,88 +6,50 @@ status: current
 last_updated: "2026-10-10"
 ---
 
-# Composed analytical graphics — what we are adding
+# Composed analytical graphics — what remains
 
-**Outcome:** Authors finish one polished, traceable graphic for a report or presentation.
+**Outcome:** A composition's colors and lengths mean the same thing before and after a filter, unless the author opts into rescaling.
 
-**Primary flow:** Start blank → define a unit → repeat it → refine it → inspect, save, and copy PNG.
+**Primary flow:** Open a composition → filter → colors and lengths hold → optionally opt a scale into rescaling → inspect a mark.
 
 ## Feature scope
 
 ```text
-Composition editor
-├── EXISTING FIRST SLICE
-│   ├── Fixed artboard; title, subtitle, notes, guides, and annotations
-│   ├── Rectangle or circle strips in date or category bins
-│   ├── Repeated rows, columns, or grids with shared or local domains
-│   ├── Scoped calculations; template edits and saved visual overrides
-│   └── Edit/view modes, source tracing, save/restore, and PNG copying
+Composition editor (delivered; see docs/composition-mode.md)
 ├── PLANNED ADDITIONS
-│   ├── Ordered paths in numeric frames
-│   │   └── Points and paths use the same coordinates and data anchors
-│   ├── Supplied lower/upper bands with explicit gaps and layer order
-│   ├── Paired cohort medians and quartiles with inspectable populations
-│   ├── Normalized stacks with stable category order and denominators
-│   └── Two coordinated frames within one repeated unit
+│   └── Stable extents under filters (default)
+│       ├── Strip color, size, and height scales read every row
+│       ├── Bar lengths, stack heights, horizon bands, density peaks too
+│       ├── Per-scale or per-mark opt-in to rescale to filtered rows
+│       └── Trace and legend state which extent is used
 ├── EVALUATE BEFORE COMMITTING
-│   ├── Fixed comparison domains, source order, palettes, and missing cells
-│   ├── Repeats positioned by explicit row and column fields
-│   └── Horizontal bars, variable repeat height, and path/area gradients
+│   ├── Hide one repeat; override one repeat's label text
+│   ├── Point labels placed on a side read from a field
+│   └── Bank of England percentiles in the forecast-fan example
 └── LATER POSSIBILITIES
-    └── Further output formats and automatic label placement
+    ├── Gradients along paths and areas
+    └── Further research references as authoring checks
 ```
 
 ## Behavior
 
-| Situation | Expected result |
-| --- | --- |
-| Edit a template | Every repeat changes; saved visual exceptions remain attached to subset identities. |
-| Move a group | Its text, frames, guides, and annotations move together. |
-| Change data or filters | Data anchors follow their marks; frame and page anchors keep their declared scope. |
-| Inspect a calculation | Show its population, filter policy, inputs, and formula. |
-| Compare repeated panels | Use common scales by default; show and save any local-domain choice. |
-| Highlight a stacked category | Preserve its denominator unless the author explicitly changes the population. |
-| Restore or copy output | Preserve placements, scope, and overrides; omit editing controls from PNG. |
-
-## Examples
-
-The email-style graphic remains the first authoring proof. Use about 10,000 rows, 10–15 units, and 1,000–2,000 glyphs.
-These are representative sizes, not capacity limits or latency targets.
-
-The new measles reference tests a strip's missing cells, shared colors, ordering, and fixed vaccination guide.
-A small local fixture can expose those issues before a full 51-row reconstruction.
-Pro's “Today” label is a hypothesis from the prompt, not a passed editor test.
-
-Driving remains the next geometry proof. Add numeric point placement with the ordered path because both share one frame.
-The technology sparkline table adds a useful follow-up check: observation order differs from calendar alignment.
-The banana table needs separate annual and decade frames; the technology table does not.
+| Situation                          | Expected result                                                                                      |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Filter any composition             | Colors, bar lengths, column heights, and peaks keep their scale; emptied bins draw blank or missing. |
+| Author opts a scale into rescaling | That scale fits the filtered rows; its legend and trace say so.                                      |
+| Open a saved composition           | It uses stable extents, including compositions saved before this change.                             |
+| Inspect a colored or sized mark    | The trace states which extent set it.                                                                |
 
 ## Decisions and boundaries
 
-**Appetite:** Finish the first usable authoring flow, then extend it one capability at a time.
-The 23 new references are a test collection, not a commitment to build 23 graphics.
+**Appetite:** One change across the resolver's extent calculations. No new mark type.
 
-**Key decision:** Reuse the current composition definition, resolver, inspector, save path, and PNG action.
-Keep data preparation outside the renderer when a prepared table proves the required geometry.
-Record packing, estimation, ranking, and weighting explicitly. Prepared data does not prove native calculation support.
+**Key decision:** Stable is the default everywhere; rescaling is an opt-in beside each scale's or mark's existing shared or per-repeat choice. Existing saved compositions switch to stable too. Position and numeric domains already read every row.
 
-The composition remains the source of truth for visual definitions and overrides.
-Population, filter policy, and frame display window remain separate choices.
-Start with visual instance overrides; do not add per-instance calculation or binding changes.
+**Pushback:** Stable extents do not freeze data. Stack shares, ranks, summaries, and calculations still recompute from the filtered rows; only the scale they draw on holds.
 
-**Boundary:** Keep exact publication replicas, a general compiler, recursive layout, forecast generation, and survey weighting outside this work.
-Recurring reports remain a separate initiative. Each new element or calculation can be omitted to retain the previous working composition.
+**Boundary:** Overrides stay visual. Recurring reports, a general compiler, forecast generation, and survey weighting stay outside.
 
-**First proof:** **Try:** Finish the blank email-style composition, including one override, a scoped guide, and three annotation anchor types.
-**Observe:** Save/reload, inspect the correct records, and paste its copied PNG into a real report or slide.
-Also check one comparison or grid arrangement. Earlier code and clipboard readback evidence exist; real-target paste remains unproved.
-**Decide:** Advance when the saved composition, inspection, and pasted output agree. Repair only observed failures before widening geometry.
-
-**Next proof:** Audit a small measles fixture. Preserve zero, explicit null, and absent observations as different input states.
-Record any palette or ordering limitation. Then build Driving from blank with shared numeric points and paths.
-
-**Open choice:** Should shared value domains remain fixed under filters by default? Common scales across repeats are already agreed.
-The current implementation rescales values from filtered glyphs; research does not settle the desired filter behavior.
-
-Follow the [intent brief](intent-brief.md) and [implementation plan](implementation-plan.md).
-See the [reference study](reference-study.md) for the new collection's limits.
+**First proof:** **Try:** Filter `measles` to one decade and `population-pyramid` to one year.
+**Observe:** Rates keep their colors and bars keep their length scale; an opted-in scale rescales and says so.
+**Decide:** If both read correctly, extend to stacks, horizons, and densities; if the opt-in confuses, fix its wording first.

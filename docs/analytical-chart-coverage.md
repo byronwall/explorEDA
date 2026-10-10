@@ -6,7 +6,7 @@ The [initiative history](initiative-history.json) records closure; no follow-up 
 
 ## Chart families
 
-The [registry](../packages/explorEDA/src/charts/registerAllCharts.ts) registers 19 view types.
+The [registry](../packages/explorEDA/src/charts/registerAllCharts.ts) registers 20 view types.
 Histogram and Distribution use existing saved types. Line, bar, scatter, and map modes do not create separate registry entries.
 
 | Family | Delivered behavior | Selection and source inspection |
@@ -26,6 +26,7 @@ Histogram and Distribution use existing saved types. Line, bar, scatter, and map
 | ECDF | At-or-below and at-or-above curves, optional color groups, quantiles, and an overall curve. | Threshold or range on source values. Traces name valid denominators, ties, exclusions, and IDs. |
 
 Pivot, source table, Summary, Color Legend, Markdown, and 3D Scatter complete the registry.
+The `composition` view builds one report graphic from repeated units; see [Composition mode](composition-mode.md).
 See the [feature inventory](application-feature-inventory.md#chart-and-view-catalogue) for their existing behavior.
 
 ## Shared analytical rules

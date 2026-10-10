@@ -107,7 +107,7 @@ Seven initiatives retired on 2026-10-09 after their stacked PRs merged. Each shi
 | Multiple sources, relationships, joins, lookups, and source inspection                      | Delivered as related tables; see the package README's [Related tables](../packages/explorEDA/README.md#related-tables). `ExplorEda` alone still takes one in-memory table.                         |
 | Named analysis views, durable saves, and application navigation                             | Saved tabs and history are delivered in the demo. Overview-to-detail navigation is the [parameterized navigation seed](intent/parameterized-task-navigation/intent-brief.md); server storage remains host scope. |
 | Inspectable source-to-mark transformations and contributors                                 | [Traceability](#traceability-and-reproducibility). Additional chart families now have trace paths; see the [chart guide](analytical-chart-coverage.md). Source-data filter flow remains future scope. |
-| Composable visualization definitions, derived layers, and advanced chart construction       | [Composed analytical graphics](intent/composed-analytical-graphics/intent-brief.md). Its first milestone shipped the `composition` view; the other chart types keep per-chart settings.             |
+| Composable visualization definitions, derived layers, and advanced chart construction       | Delivered as the `composition` view; see [Composition mode](composition-mode.md). The other chart types keep per-chart settings. Remaining composition work is in [Composed analytical graphics](intent/composed-analytical-graphics/intent-brief.md). |
 | Agent-created deterministic analysis views                                                  | [In-app analysis agent](intent/in-app-analysis-agent/intent-brief.md). This remains separate from the delivered inspection slice.                                                                     |
 | Adaptive table controls, rich cells, grouping, selection, chart defaults, and facet quality | [Transcript gap analysis](transcript-gap-analysis.md). Column order and virtual rows now exist; do not reuse the old missing-feature list.                                                            |
 | Large-source profile cost and desktop capacity                                              | [Performance evidence](#performance-and-resource-use). Measure representative sources before changing the full-source profile path.                                                                   |
@@ -404,6 +404,7 @@ The [analytical chart guide](analytical-chart-coverage.md) documents current mod
 | `parallel-coordinates` | Fields → one line per complete row.                                            | Intersected axis filters.                                 |
 | `scatter-matrix`       | Two to ten fields of any type → every pair, distributions on the diagonal.     | Two-field brush or mark; replaces the previous selection. |
 | `ecdf`                 | Numeric values → cumulative shares.                                            | Threshold or numeric span.                                |
+| `composition`          | Blank artboard → text, repeated chart units, scales, calculations, annotations. See [Composition mode](composition-mode.md). | Repeat selection in viewing; Alt-click traces marks.      |
 
 ### Row chart
 
@@ -610,7 +611,7 @@ The demo saves each analysis as named tabs over one source (`apps/demo/src/Saved
 
 The package itself stays storage-neutral. There is no shareable live-state URL, server storage, or data-version binding. Draft calculations remain session-local. Markdown editor undo is local to its content editor.
 
-A `composition` view can copy itself to the clipboard as a PNG. Other charts have no image, SVG, PDF, or dashboard export; clipboard configuration and CSV downloads are their export paths.
+A `composition` view can copy itself to the clipboard as a PNG; see [Composition mode](composition-mode.md#output). Other charts have no image, SVG, PDF, or dashboard export; clipboard configuration and CSV downloads are their export paths.
 
 Sources: [data provider][provider], [saved schema](../packages/explorEDA/src/types/SavedDataStructure.ts), [serialization types](../packages/explorEDA/src/types/SavedDataTypes.ts), [save utilities][save], [demo landing page][landing], [workspace menu][manager].
 
