@@ -1,4 +1,4 @@
-import { finiteNumbers, isMissingValue } from "@/lib/numeric";
+import { finiteNumber, isMissingValue } from "@/lib/numeric";
 import { datum } from "@/types/ChartTypes";
 import { DataType } from "./dataTypeDetection";
 
@@ -15,7 +15,7 @@ export interface NumericStatistics {
 export const DISTRIBUTION_BINS = 24;
 
 export function binValues(
-  sorted: number[],
+  sorted: number[] | Float64Array,
   min: number,
   max: number,
   binCount = DISTRIBUTION_BINS
@@ -61,47 +61,70 @@ export function calculateColumnStatistics(
   columnData: { [key: number]: datum },
   dataType: DataType
 ): ColumnStatistics {
-  const values = Object.values(columnData);
+  return calculateValueStatistics(Object.values(columnData), dataType);
+}
+
+/**
+ * Statistics for a list of values. Filtered profiles call this on every
+ * filter change, so it reads the values in one pass and sorts a typed array.
+ */
+export function calculateValueStatistics(
+  values: readonly datum[],
+  dataType: DataType
+): ColumnStatistics {
   const totalCount = values.length;
-  const nullCount = values.filter((v) => v == null).length;
-  const nonNullValues = values.filter((v) => v != null);
-  const uniqueValues = new Set(nonNullValues);
-  const uniqueCount = uniqueValues.size;
 
   if (dataType === "numeric") {
     // Numeric fields share the eligibility rule used by charts and aggregates.
-    const missingCount = values.filter(isMissingValue).length;
-    const numericValues = finiteNumbers(values);
+    const uniqueValues = new Set<datum>();
+    const numbers = new Float64Array(totalCount);
+    let numberCount = 0;
+    let missingCount = 0;
+    let sum = 0;
+    for (const value of values) {
+      if (value != null) uniqueValues.add(value);
+      if (typeof value === "number") {
+        // Most numeric values are already numbers; skip the general checks.
+        if (!Number.isFinite(value)) continue;
+        numbers[numberCount] = value;
+        numberCount += 1;
+        sum += value;
+        continue;
+      }
+      if (isMissingValue(value)) {
+        missingCount += 1;
+        continue;
+      }
+      const number = finiteNumber(value);
+      if (number === undefined) continue;
+      numbers[numberCount] = number;
+      numberCount += 1;
+      sum += number;
+    }
     const numericBase = {
       dataType,
       totalCount,
-      uniqueCount,
+      uniqueCount: uniqueValues.size,
       nullCount: missingCount,
-      excludedCount: totalCount - missingCount - numericValues.length,
+      excludedCount: totalCount - missingCount - numberCount,
     };
 
-    if (numericValues.length === 0) {
+    if (numberCount === 0) {
       return numericBase;
     }
 
-    const sorted = [...numericValues].sort((a, b) => a - b);
-    const min = sorted.at(0);
-    const max = sorted.at(-1);
-    if (min === undefined || max === undefined) {
-      return numericBase;
-    }
-    const sum = numericValues.reduce((a, b) => a + b, 0);
-    const mean = sum / numericValues.length;
-    const lower = sorted[Math.floor((sorted.length - 1) / 2)];
-    const upper = sorted[Math.floor(sorted.length / 2)];
-    if (lower === undefined || upper === undefined) {
-      return numericBase;
-    }
-    const median = (lower + upper) / 2;
-    const squaredDiffs = numericValues.map((v) => Math.pow(v - mean, 2));
-    const variance =
-      squaredDiffs.reduce((a, b) => a + b, 0) / numericValues.length;
-    const stdDev = Math.sqrt(variance);
+    const measured = numbers.subarray(0, numberCount);
+    const mean = sum / numberCount;
+    let squaredDiffs = 0;
+    for (const value of measured) squaredDiffs += Math.pow(value - mean, 2);
+    const stdDev = Math.sqrt(squaredDiffs / numberCount);
+    // The mean and spread are read, so sort in place. A typed array sorts
+    // numerically without a comparator.
+    const sorted = measured.sort();
+    const min = sorted[0]!;
+    const max = sorted[numberCount - 1]!;
+    const lower = sorted[Math.floor((numberCount - 1) / 2)]!;
+    const upper = sorted[Math.floor(numberCount / 2)]!;
 
     return {
       ...numericBase,
@@ -109,34 +132,39 @@ export function calculateColumnStatistics(
         min,
         max,
         mean,
-        median,
+        median: (lower + upper) / 2,
         stdDev,
         bins: binValues(sorted, min, max),
       },
     };
-  } else {
-    // For non-numeric types, calculate category statistics
-    const counts = new Map<datum, number>();
-    nonNullValues.forEach((value) =>
-      counts.set(value, (counts.get(value) ?? 0) + 1)
-    );
-    const distribution = [...counts].map(([value, count]) => ({
-      value,
-      count,
-    }));
-    const topValues = [...distribution]
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
-
-    return {
-      dataType,
-      totalCount,
-      uniqueCount,
-      nullCount,
-      categories: {
-        topValues,
-        distribution,
-      },
-    };
   }
+
+  // For non-numeric types, calculate category statistics
+  let nullCount = 0;
+  const counts = new Map<datum, number>();
+  for (const value of values) {
+    if (value == null) {
+      nullCount += 1;
+      continue;
+    }
+    counts.set(value, (counts.get(value) ?? 0) + 1);
+  }
+  const distribution = [...counts].map(([value, count]) => ({
+    value,
+    count,
+  }));
+  const topValues = [...distribution]
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+
+  return {
+    dataType,
+    totalCount,
+    uniqueCount: counts.size,
+    nullCount,
+    categories: {
+      topValues,
+      distribution,
+    },
+  };
 }

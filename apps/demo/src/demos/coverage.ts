@@ -219,6 +219,15 @@ export const coverageFeatures = [
     chartType: "parallel-coordinates",
   },
   {
+    id: "chart:scatter-matrix",
+    label: "Scatter matrix",
+    family: "Chart types",
+    description: "Compare every pair of several fields, with each field's distribution on the diagonal.",
+    required: true,
+    status: "supported",
+    chartType: "scatter-matrix",
+  },
+  {
     id: "chart:calendar",
     label: "Calendar heatmap",
     family: "Chart types",
@@ -244,6 +253,15 @@ export const coverageFeatures = [
     required: true,
     status: "supported",
     chartType: "ecdf",
+  },
+  {
+    id: "chart:composition",
+    label: "Composition",
+    family: "Chart types",
+    description: "Build a report graphic on a blank artboard from text, repeated chart units, and guides.",
+    required: true,
+    status: "supported",
+    chartType: "composition",
   },
   {
     id: "labels:meaningful-title",
@@ -532,6 +550,17 @@ export const exampleCoverage = [
       "chart:row": "shown",
       "chart:data-table": "shown",
       "color:categorical": "shown",
+      "interaction:brushing": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "scatter-matrix",
+    intent: "Compare every pair of measurements, species, and sex, then brush one cell to follow the same penguins everywhere.",
+    features: {
+      "chart:scatter-matrix": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
       "interaction:brushing": "shown",
       "interaction:cross-filter": "shown",
     },
@@ -857,6 +886,17 @@ export const exampleCoverage = [
       "color:numerical": "shown",
       "color:legend": "shown",
       "interaction:brushing": "shown",
+    },
+  },
+  {
+    exampleId: "message-log",
+    intent: "Author a report graphic from a blank artboard beside linked views of its data.",
+    features: {
+      "chart:composition": "shown",
+      "chart:line": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
     },
   },
   {

@@ -1,4 +1,9 @@
+import type { ThemeColors } from "@/lib/themePalettes";
 import { applyFilter } from "@/hooks/applyFilter";
+import {
+  DEFAULT_AXIS_TYPOGRAPHY,
+  type AxisTypography,
+} from "../Axis/axisPlan";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import { defaultCategoricalColors, makeColorScale } from "@/lib/colorScaleMath";
 import {
@@ -12,6 +17,7 @@ import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import type { Filter } from "@/types/FilterTypes";
 import { scaleLinear } from "d3-scale";
 import { area, curveLinear, curveStepAfter, line } from "d3-shape";
+import { boundedDomain, hasAxisBounds } from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import type { LineChartSettings } from "./definition";
 
@@ -26,6 +32,8 @@ export interface TimeSeriesSnapshot {
   rawInputs: Record<number, datum>;
   exclusionReasons: Record<number, string>;
   colorScale?: ColorScaleType;
+  /** Fallback colors from the workspace theme. */
+  themeColors?: ThemeColors;
   facetData?: Record<string, Record<number, datum>>;
 }
 
@@ -90,7 +98,8 @@ export function planTimeSeries(
   width: number,
   height: number,
   getLabel: (field: string) => string,
-  format: (field: string, value: datum) => string
+  format: (field: string, value: datum) => string,
+  typography: AxisTypography = DEFAULT_AXIS_TYPOGRAPHY
 ) {
   const time = settings.time!;
   const filled = time.display === "area" || time.display === "stacked-area";
@@ -164,9 +173,10 @@ export function planTimeSeries(
   const series = [...groupMap]
     .map(([key, value], index) => {
       const label = time.splitField ? categoryLabel(value) : metricLabel;
+      const fallback =
+        snapshot.themeColors?.categorical ?? defaultCategoricalColors;
       const seriesColor =
-        color?.(value) ??
-        defaultCategoricalColors[index % defaultCategoricalColors.length]!;
+        color?.(value) ?? fallback[index % fallback.length]!;
       const ids = snapshot.allIds.filter(
         (id) =>
           liveSet.has(id) &&
@@ -297,9 +307,16 @@ export function planTimeSeries(
   );
   const yLow = Math.min(0, ...values);
   const yHigh = Math.max(0, ...values);
-  const maxYLabel = Math.max(
-    formatValue(yLow).length,
-    formatValue(yHigh).length
+  // Y labels claim their measured width, never less than the old estimate.
+  const yTickSize = settings.yAxis.tickFontSize ?? typography.tickSize;
+  const yLabelWidth = Math.max(
+    ...[yLow, yHigh].map((value) => {
+      const text = formatValue(value);
+      return Math.max(
+        text.length * yTickSize * 0.6,
+        typography.measure(text, yTickSize)
+      );
+    })
   );
   const margin = {
     ...settings.margin,
@@ -312,7 +329,11 @@ export function planTimeSeries(
     bottom: Math.max(64, settings.margin.bottom),
     left: Math.min(
       width * 0.32,
-      Math.max(58, settings.margin.left, maxYLabel * 6 + 22)
+      Math.max(
+        58,
+        settings.margin.left,
+        yLabelWidth + 22 + Math.max(0, typography.labelSize - 11)
+      )
     ),
     right: Math.max(16, Math.min(settings.margin.right, width * 0.12)),
   };
@@ -323,9 +344,15 @@ export function planTimeSeries(
     .range([0, plotWidth]);
   const yScaleType = filled ? "linear" : settings.yAxis.scaleType;
   const yScale = numericScale({ ...settings.yAxis, scaleType: yScaleType })
-    .domain(yHigh === yLow ? [yLow, yLow + 1] : [yLow, yHigh])
-    .range([plotHeight, 0])
-    .nice();
+    .domain(
+      boundedDomain(
+        yHigh === yLow ? [yLow, yLow + 1] : [yLow, yHigh],
+        settings.yAxis
+      )
+    )
+    .range([plotHeight, 0]);
+  // Bounds draw exactly as entered.
+  if (!hasAxisBounds(settings.yAxis)) yScale.nice();
   for (const point of points) {
     point.x = xScale((point.start + point.end) / 2);
     point.y = yScale(

@@ -51,6 +51,8 @@ function GuideShape({ guide, active }: { guide: AxisGuide; active: boolean }) {
       )}
       {label && (
         <text
+          className="eda-axis-text"
+          data-role={guide.role}
           x={label.x}
           y={label.y}
           dy={label.dy}
@@ -110,6 +112,71 @@ export function PlannedGrid({
   );
 }
 
+/** Height of the band under the X axis, and least width beside the Y axis, that edits its range. */
+const STRIP_SIZE = 24;
+
+/**
+ * An invisible band along a numeric axis, over its tick labels. Double-click
+ * or the context menu there edits the axis range. It carries the drawn
+ * domain so an editor can show and invert it.
+ */
+function AxisEditStrip({
+  plan,
+  axis,
+}: {
+  plan: ChartAxesPlan;
+  axis: "x" | "y";
+}) {
+  const scale = plan[axis].scale;
+  if (scale.type === "band") return null;
+  const { plotWidth, plotHeight, margin } = plan;
+  const width = Math.max(STRIP_SIZE, margin.left - 18);
+  const box =
+    axis === "x"
+      ? { x: 0, y: plotHeight, width: plotWidth, height: STRIP_SIZE }
+      : { x: -width, y: 0, width, height: plotHeight };
+  // Grips mark each end, which a drag stretches.
+  const ends =
+    axis === "x"
+      ? [0, plotWidth].map((at) => ({
+          x: at - 1.5,
+          y: plotHeight + 4,
+          width: 3,
+          height: 14,
+        }))
+      : [plotHeight, 0].map((at) => ({
+          x: -width + 2,
+          y: at - 1.5,
+          width: 14,
+          height: 3,
+        }));
+  return (
+    <g
+      className="eda-axis-edit"
+      data-axis-edit={axis}
+      data-scale-type={scale.type}
+      data-domain={scale.domain.join(",")}
+      data-range={scale.range.join(",")}
+    >
+      <rect
+        {...box}
+        className="eda-axis-strip"
+        fill="transparent"
+        pointerEvents="all"
+      />
+      {ends.map((end, index) => (
+        <rect
+          key={index}
+          {...end}
+          rx={1.5}
+          className="eda-axis-grip"
+          pointerEvents="none"
+        />
+      ))}
+    </g>
+  );
+}
+
 /** Draws planned axis rules, ticks, labels and the zero line. */
 export function PlannedAxes({
   plan,
@@ -125,6 +192,8 @@ export function PlannedAxes({
       className="fill-muted-foreground"
       pointerEvents={interactive ? "auto" : "none"}
     >
+      <AxisEditStrip plan={plan} axis="x" />
+      <AxisEditStrip plan={plan} axis="y" />
       {[...plan.x.guides, ...plan.y.guides].map((guide) => (
         <g
           key={guide.id}

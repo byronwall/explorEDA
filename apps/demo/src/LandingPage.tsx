@@ -54,6 +54,7 @@ import { PageFileDrop } from "./landing/PageFileDrop";
 import { SectionHeading } from "./landing/SectionHeading";
 import {
   readSavedViewsSessionResult,
+  removeSavedSession,
   PROJECT_STORAGE_KEY,
   projectSession,
   STORAGE_KEY,
@@ -130,7 +131,7 @@ function hasStoredSession() {
 
 function clearStoredSession(key = STORAGE_KEY) {
   try {
-    localStorage.removeItem(key);
+    removeSavedSession(key);
   } catch {
     // An unavailable storage area has no session to retain.
   }

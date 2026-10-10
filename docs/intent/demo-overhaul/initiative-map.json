@@ -1234,8 +1234,7 @@
       "evidence": [
         "apps/demo/src/demos/examples.ts",
         "apps/demo/src/ExampleSelector.tsx",
-        ".tickets/exp-dv01.md",
-        ".tickets/exp-dv02.md"
+        "docs/intent/demo-overhaul/implementation-plan.md"
       ],
       "changes": [
         "Seven listed entries: Flights, Beijing, World Bank, Earthquakes, Wine, Shop, Lorenz",

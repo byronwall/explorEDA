@@ -78,5 +78,6 @@ Combine the Shop examples into one analysis, refine Wine, keep Lorenz, and remov
 ## Below the cut line
 
 - Report blocks, saved-state manifests, and sharing.
-- Reusing one analysis worker across tab switches; each switch currently re-evaluates in about 1 s (`.tickets/exp-dv01.md`).
+- Reusing one analysis worker across tab switches. Each switch in the January flights analysis (27,004 rows, three lookups) re-sends the source tables and re-evaluates in about 1.1 s, because `SavedViewsWorkspace` remounts `ExplorEdaProject` per view and `useAnalysisEvaluation` creates a worker on each mount. Keep one worker and its tables while the project is unchanged, and cache the last evaluation per query and bindings. Proof: switching every tab of `/examples/january-flights` sends no new `sources` message, a definition change still re-evaluates, and stale results are still dropped.
+- The `LandingPage routing` test that returns to the selector when browser history clears passes alone but timed out once in a full demo run. Await the rendered state instead of a timing-dependent wait, and confirm ten consecutive suite runs pass.
 - Custom category orders beyond A to Z.

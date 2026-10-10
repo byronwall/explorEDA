@@ -11,10 +11,12 @@ import {
   bubbleDashboard,
   densityDashboard,
   scatterRegressionDashboard,
+  scatterMatrixDashboard,
   scatterSurfaceDashboard,
   pointMapDashboard,
   regionMapDashboard,
   distributionDashboard,
+  messageDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -35,6 +37,8 @@ import {
   CloudFog,
   Globe,
   Activity,
+  LayoutGrid,
+  LayoutTemplate,
   LineChart,
   LucideIcon,
   Orbit,
@@ -127,6 +131,7 @@ const viewNames: Record<string, string> = {
   calendar: "calendar",
   boxplot: "box plot",
   "color-legend": "legend",
+  composition: "composition",
   "data-table": "table",
   heatmap: "heatmap",
   ecdf: "ECDF",
@@ -135,6 +140,7 @@ const viewNames: Record<string, string> = {
   "metric-card": "metric card",
   map: "map",
   "parallel-coordinates": "parallel coordinates",
+  "scatter-matrix": "scatter matrix",
   pivot: "pivot",
   row: "row",
   sankey: "sankey",
@@ -456,6 +462,17 @@ export const examples: ExampleData[] = [
     savedData: scatterRegressionDashboard,
   },
   {
+    id: "scatter-matrix",
+    title: "Every pair of penguin measurements",
+    description:
+      "A scatter matrix puts every pair of fields side by side, with each field's distribution on the diagonal. Numbers, species, and sex share one grid, and a brush in any cell highlights the same penguins everywhere.",
+    dataset: { rows: "344 penguins", fields: 8, source: "Real" },
+    shows: ["Scatter matrix", "Linked brushing", "Mixed field types"],
+    icon: LayoutGrid,
+    data: "/datasets/palmer-penguins.csv",
+    savedData: scatterMatrixDashboard,
+  },
+  {
     id: "scatter-surfaces",
     title: "Ten thousand days, two ways to see density",
     description:
@@ -636,6 +653,17 @@ export const examples: ExampleData[] = [
     icon: ShoppingCart,
     data: "/datasets/shop-10000.csv",
     savedData: largeShopDashboard,
+  },
+  {
+    id: "message-log",
+    title: "Compose a report graphic",
+    description:
+      "Six years of messages with 12 correspondents. Start from a blank artboard: add a title, build one strip of monthly squares, and repeat it for each correspondent.",
+    dataset: { rows: "10,376 messages", fields: 5, source: "Synthetic" },
+    shows: ["Blank composition", "Repeated chart units", "Copy as PNG"],
+    icon: LayoutTemplate,
+    data: "/datasets/message-log.csv",
+    savedData: messageDashboard,
   },
 ];
 

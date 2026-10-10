@@ -371,6 +371,54 @@ describe("saveDataUtils", () => {
     expect(finite.notNumber).toBe(4);
   });
 
+  it("accepts an optional theme and chart text, and rejects malformed ones", () => {
+    expect(
+      validateSavedData({ ...mockValidData, theme: { id: "newsprint" } })
+    ).toBe(true);
+    // A theme from a later version still loads; it draws as Compact.
+    expect(
+      validateSavedData({ ...mockValidData, theme: { id: "future" } } as never)
+    ).toBe(true);
+    expect(
+      validateSavedData({ ...mockValidData, theme: "newsprint" } as never)
+    ).toBe(false);
+
+    const chart = boxPlotDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 4, h: 4 },
+      "value"
+    );
+    expect(
+      validateSavedData({
+        ...mockValidData,
+        charts: [{ ...chart, subtitle: "Why", note: "Source: lab" }],
+      })
+    ).toBe(true);
+    expect(
+      validateSavedData({
+        ...mockValidData,
+        charts: [{ ...chart, subtitle: 4 } as never],
+      })
+    ).toBe(false);
+    expect(
+      validateSavedData({
+        ...mockValidData,
+        charts: [{ ...chart, style: { titleSize: 26, titleWeight: 700 } }],
+      })
+    ).toBe(true);
+    expect(
+      validateSavedData({
+        ...mockValidData,
+        charts: [{ ...chart, style: { titleSize: -2 } }],
+      })
+    ).toBe(false);
+    expect(
+      validateSavedData({
+        ...mockValidData,
+        charts: [{ ...chart, style: { color: "red" } } as never],
+      })
+    ).toBe(false);
+  });
+
   it("validates saved formulas with the calculation runtime", () => {
     expect(
       validateSavedAnalysisForData({

@@ -3,7 +3,7 @@ title: "Composed analytical graphics — implementation plan"
 slug: "composed-analytical-graphics"
 phase: plan
 status: draft
-last_updated: "2026-09-29"
+last_updated: "2026-10-08"
 ---
 
 # Composed analytical graphics — implementation plan
@@ -108,6 +108,39 @@ The author creates the graphic through visible controls, reloads it, inspects a 
 Common scales and a filter-independent guide remain clear. Saved nudges follow their subsets after reordering.
 Record redraw and selection timing at representative size; no latency target has been agreed.
 This is the first release boundary. Reverting this slice removes only the new composition entry and its files.
+
+### Status: vertical slice built (2026-10-08)
+
+A stack of five PRs builds Milestone 1 as a vertical slice in `packages/explorEDA/src/components/charts/Composition/`.
+The demo's **Compose a report graphic** example (`?example=message-log`) opens a blank composition beside linked views of a synthetic 10,376-row message log.
+
+| PR | Adds |
+| --- | --- |
+| 1 | The `composition` chart type, artboard, text elements, edit and view modes, layer list, drag and arrow-key placement |
+| 2 | Chart units: a frame of rect or circle marks, named position and value scales (shared by default, per unit optional), and a repeat rule as rows, columns, or a grid |
+| 3 | Calculations with separate population (each repeat or whole graphic) and filter policy (follow or ignore); repeat label values, `{Name}` text tokens, guide rules, and annotations anchored to the page, a frame, or a data glyph |
+| 4 | Repeat overrides keyed by subset value (nudge, accent, opacity, bold label) with reset; view-mode click to select a repeat across the workspace; Alt-click and Alt-Enter tracing with source rows |
+| 5 | Copy PNG to the clipboard at twice the artboard size, drawn from the viewed artboard without editing overlays |
+
+How the slice answers the plan's open choices:
+
+- **Frames and scales.** Scales are named composition-level objects that hold domain policy. A chart unit's frame supplies the pixel range. Marks reference one position scale and one value scale.
+- **Editing and viewing.** The chart's details view is the editor: the artboard on the left and the inspector on the right. Opening the inspector starts edit mode; the grid tile shows the view.
+- **Template and instance.** Clicking a selected unit's repeat selects that repeat. The inspector then shows an override panel above the template and states which one an edit changes.
+- **Data scope.** Repeats and position domains come from every row in the population, so filtering keeps the layout and empties marks instead of removing repeats.
+
+Measured on 2026-10-08 (Apple silicon, Chromium headless, production package build):
+
+- Resolving the email graphic from 10,376 rows takes about 7 ms for 536 monthly glyphs and 8 ms for 2,136 weekly glyphs.
+- A template edit takes about 170 ms from input to the second animation frame. The resolver is a small part of that; the rest is the workspace update path that every chart setting edit takes.
+- Copy PNG writes a 1920 × 1200 image that reads back from the Chromium clipboard. Pasting into a report or slide has not been checked by hand yet.
+
+Open questions for the next round:
+
+- Value domains are computed from the glyphs that pass the filters, so colors rescale while filtering. Position domains stay fixed. Decide whether value domains should also stay fixed by default.
+- Overrides cover placement and look. Hiding a repeat, or overriding its label text, would be the next requests to confirm.
+- Guides take one value from a fixed entry or a calculation. Bands between two values, and guides on value scales, are not built.
+- The example graphic is authored by hand in the demo. A saved reference composition could become a regression fixture once the model settles.
 
 ## Milestone 2: Connect observations in an explicit order
 
