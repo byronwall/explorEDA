@@ -122,6 +122,20 @@ function isMark(value: unknown) {
       value.colors.length > 0 &&
       value.colors.every(isString)
     );
+  if (value.type === "horizon")
+    return (
+      isString(value.xScaleId) &&
+      isString(value.field) &&
+      isString(value.orderField) &&
+      oneOf(value.baseline, ["zero", "first", "mean"]) &&
+      typeof value.relative === "boolean" &&
+      isNumber(value.bands) &&
+      value.bands >= 1 &&
+      value.bands <= 10 &&
+      oneOf(value.domain, ["shared", "instance"]) &&
+      isString(value.positive) &&
+      isString(value.negative)
+    );
   if (value.type === "density")
     return (
       isString(value.xScaleId) &&
@@ -469,7 +483,7 @@ export function isCompositionDefinition(
         element.marks.every(
           (mark) =>
             isRecord(mark) &&
-            (mark.type === "density"
+            (mark.type === "density" || mark.type === "horizon"
               ? kinds.get(mark.xScaleId) === "numeric"
               : mark.type === "waffle" || mark.type === "bar"
                 ? true

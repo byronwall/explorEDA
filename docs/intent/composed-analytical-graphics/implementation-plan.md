@@ -364,6 +364,8 @@ Horizontal bar lengths, named below the cut line until a proof needed them, are 
 
 Timelines are built as span marks: the Supreme Court seats at `?example=scotus-timeline` (`apps/data-samples/prepare/scotus.ts`) draw one bar per row from a start field to an end field along a date scale whose domain covers both ends, with open ends for rows that have none, labels inside the wider spans, and colors from a field.
 
+Horizon charts are built as horizon marks: the tech stocks at `?example=stocks-horizon` (`apps/data-samples/prepare/tech-stocks.ts`) read a measure from zero, the repeat's first value, or its mean, as a difference or a share, and cut it into bands that stack at the frame's full height, with drops mirrored upward in a second color and a shared or per-repeat range.
+
 ## Milestone 6: Combine detail and overview frames in one unit
 
 Create a state-style comparison with an inset, then repeat that unit for several illustrative regions.

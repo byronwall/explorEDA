@@ -37,6 +37,7 @@ import {
   populationPyramidDashboard,
   gdpBumpDashboard,
   scotusTimelineDashboard,
+  stocksHorizonDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -73,6 +74,7 @@ import {
   Users,
   ListOrdered,
   GanttChart,
+  AlignStartVertical,
   CloudFog,
   Globe,
   Activity,
@@ -963,6 +965,17 @@ export const examples: ExampleData[] = [
     icon: GanttChart,
     data: "/datasets/scotus.csv",
     savedData: scotusTimelineDashboard,
+  },
+  {
+    id: "stocks-horizon",
+    title: "Five tech stocks, 2000 to 2010, as horizon bands",
+    description:
+      "A horizon chart: each stock's growth since 2000 folded into three stacked bands per row, gains in blue and losses mirrored upward in red, so five decades-long swings fit in a few rows.",
+    dataset: { rows: "560 months", fields: 4, source: "Real" },
+    shows: ["Horizon marks", "Baselines from a first value", "Mirrored losses"],
+    icon: AlignStartVertical,
+    data: "/datasets/tech-stocks.csv",
+    savedData: stocksHorizonDashboard,
   },
 ];
 

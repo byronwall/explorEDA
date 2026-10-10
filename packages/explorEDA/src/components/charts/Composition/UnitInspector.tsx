@@ -16,6 +16,7 @@ import {
   type WaffleMark,
   type BarMark,
   type SpanMark,
+  type HorizonMark,
   type FrameWindow,
   type InsetFrame,
   type InstanceOverride,
@@ -232,6 +233,12 @@ const MARK_TYPES = [
     label: "Waffle",
     tooltip:
       "A grid of cells per repeat, one per row or per a set number of rows, grouped and colored by a category. Filtering the rows redraws the cells.",
+  },
+  {
+    value: "horizon" as const,
+    label: "Horizon",
+    tooltip:
+      "A measure across x read from a baseline and cut into bands that stack over one another, so a short row holds a wide range; drops mirror upward in a second color.",
   },
   {
     value: "density" as const,
@@ -709,20 +716,22 @@ function MarksSection({
               ? { ...first, id, name: "Waffle 2" }
               : first.type === "bar"
                 ? { ...first, id, name: "Bars 2" }
-                : first.type === "density"
-                  ? { ...first, id, name: "Density 2" }
-                  : {
-                      type: "point",
-                      id,
-                      name: "Points",
-                      xScaleId: first.xScaleId,
-                      yScaleId: first.yScaleId,
-                      orderField:
-                        "orderField" in first ? first.orderField : undefined,
-                      radius: 3.5,
-                      fill: first.type === "path" ? first.stroke : first.fill,
-                      labelEvery: 0,
-                    };
+                : first.type === "horizon"
+                  ? { ...first, id, name: "Horizon 2" }
+                  : first.type === "density"
+                    ? { ...first, id, name: "Density 2" }
+                    : {
+                        type: "point",
+                        id,
+                        name: "Points",
+                        xScaleId: first.xScaleId,
+                        yScaleId: first.yScaleId,
+                        orderField:
+                          "orderField" in first ? first.orderField : undefined,
+                        radius: 3.5,
+                        fill: first.type === "path" ? first.stroke : first.fill,
+                        labelEvery: 0,
+                      };
     onChange([...unit.marks, added]);
   };
   return (
@@ -857,6 +866,14 @@ function MarkProperties({
         />
         {mark.type === "strip" ? (
           <StripFields
+            mark={mark}
+            scales={scales}
+            numericFields={numericFields}
+            onChange={onChange}
+            onEditScale={onEditScale}
+          />
+        ) : mark.type === "horizon" ? (
+          <HorizonFields
             mark={mark}
             scales={scales}
             numericFields={numericFields}
@@ -1050,6 +1067,138 @@ const FOCUS_OPTIONS = [
     tooltip: "Only the series you list draw in color; the rest fade",
   },
 ];
+
+function HorizonFields({
+  mark,
+  scales,
+  numericFields,
+  onChange,
+  onEditScale,
+}: {
+  mark: HorizonMark;
+  scales: CompositionScale[];
+  numericFields: string[];
+  onChange: (patch: Partial<HorizonMark>) => void;
+  onEditScale: (scaleId: string) => void;
+}) {
+  const id = useId();
+  const profiles = useDataLayer((state) => state.fieldProfiles);
+  const orderFields = profiles
+    .filter(
+      (profile) =>
+        profile.dataType === "numeric" || profile.dataType === "datetime"
+    )
+    .map((profile) => profile.name);
+  const numeric = scales.filter((scale) => scale.kind === "numeric");
+  return (
+    <>
+      <Label htmlFor={`${id}-x`}>X scale</Label>
+      <ScaleSelect
+        id={`${id}-x`}
+        value={mark.xScaleId}
+        scales={numeric}
+        onChange={(xScaleId) => onChange({ xScaleId })}
+        onEdit={onEditScale}
+      />
+      <Label>Measure</Label>
+      <FieldSelector
+        label=""
+        placeholder="Numeric field"
+        value={mark.field}
+        fields={numericFields}
+        onChange={(field) => onChange({ field })}
+      />
+      <Label>Order by</Label>
+      <FieldSelector
+        label=""
+        placeholder="Order field"
+        value={mark.orderField}
+        fields={orderFields}
+        onChange={(orderField) => onChange({ orderField })}
+      />
+      <span className="eda-setting-label">Read from</span>
+      <Segmented
+        label={`${mark.name} baseline`}
+        value={mark.baseline}
+        options={[
+          {
+            value: "zero" as const,
+            label: "Zero",
+            tooltip: "The measure as it is",
+          },
+          {
+            value: "first" as const,
+            label: "First value",
+            tooltip:
+              "The change from each repeat's first value in order, such as growth since the start",
+          },
+          {
+            value: "mean" as const,
+            label: "Mean",
+            tooltip: "The difference from each repeat's mean",
+          },
+        ]}
+        onChange={(baseline) => onChange({ baseline })}
+      />
+      <span className="eda-setting-label">As</span>
+      <Segmented
+        label={`${mark.name} units`}
+        value={mark.relative}
+        options={[
+          {
+            value: false,
+            label: "Difference",
+            tooltip: "In the measure's own units",
+          },
+          {
+            value: true,
+            label: "Share",
+            tooltip:
+              "As a share of the baseline, so repeats of different size compare; needs a nonzero baseline",
+          },
+        ]}
+        onChange={(relative) => onChange({ relative })}
+      />
+      <NumberSetting
+        label="Bands"
+        min={1}
+        max={10}
+        value={mark.bands}
+        onChange={(bands) => onChange({ bands })}
+      />
+      <span className="eda-setting-label">Range</span>
+      <Segmented
+        label={`${mark.name} range`}
+        value={mark.domain}
+        options={[
+          {
+            value: "shared" as const,
+            label: "Shared",
+            tooltip:
+              "Every repeat's bands span the same amount, the largest swing in the graphic, so tints compare",
+          },
+          {
+            value: "instance" as const,
+            label: "Per unit",
+            tooltip:
+              "Each repeat's bands span its own largest swing, so every row uses its full height",
+          },
+        ]}
+        onChange={(domain) => onChange({ domain })}
+      />
+      <ColorSetting
+        label="Above"
+        value={mark.positive}
+        onChange={(positive) => onChange({ positive })}
+      />
+      <ColorSetting
+        label="Below"
+        value={mark.negative}
+        onChange={(negative) => onChange({ negative })}
+      />
+    </>
+  );
+}
 
 function DensityFields({
   mark,

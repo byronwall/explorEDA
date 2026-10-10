@@ -502,6 +502,34 @@ export interface WaffleMark {
 }
 
 /**
+ * A horizon chart layer: a measure across x in each repeat, read from a
+ * baseline and cut into bands of equal height that stack over one another,
+ * so a short frame holds a wide range. Values below the baseline mirror
+ * upward in a second color, deeper bands in deeper tints.
+ */
+export interface HorizonMark {
+  type: "horizon";
+  id: string;
+  name: string;
+  xScaleId: string;
+  /** The measure drawn across x. */
+  field: string;
+  /** Orders the rows along x; usually the x scale's own field. */
+  orderField: string;
+  /** What the measure is read from: zero, the repeat's first value, or its mean. */
+  baseline: "zero" | "first" | "mean";
+  /** Draw the change from the baseline as a share of it, such as a price's growth. */
+  relative: boolean;
+  /** Bands stacked over one another; each takes the frame's full height. */
+  bands: number;
+  /** The band height follows the largest magnitude across every repeat, or each repeat's own. */
+  domain: ScaleDomain;
+  /** The deepest tint above the baseline, and below it. */
+  positive: string;
+  negative: string;
+}
+
+/**
  * The distribution of a numeric field in each repeat, as a smoothed density
  * curve along x filled down to the frame's baseline. Densities share one
  * height so repeats compare, or each fills its own frame. Rows that overlap
@@ -532,6 +560,7 @@ export type MarkDefinition =
   | StackMark
   | WaffleMark
   | BarMark
+  | HorizonMark
   | DensityMark;
 
 /** A categorical palette for stacks, distinct and readable on paper. */
@@ -562,7 +591,8 @@ export function markScaleIds(mark: MarkDefinition): string[] {
       ? [mark.yScaleId, mark.valueScaleId]
       : [mark.yScaleId];
   if (mark.type === "stack") return mark.xScaleId ? [mark.xScaleId] : [];
-  if (mark.type === "density") return [mark.xScaleId];
+  if (mark.type === "density" || mark.type === "horizon")
+    return [mark.xScaleId];
   if (mark.type === "waffle" || mark.type === "bar") return [];
   if (mark.type === "band") return [mark.xScaleId, mark.yScaleId];
   return mark.yScaleId ? [mark.xScaleId, mark.yScaleId] : [mark.xScaleId];
@@ -639,6 +669,8 @@ export function markFields(mark: MarkDefinition): string[] {
       return [mark.measureField, mark.categoryField].filter(
         (field): field is string => Boolean(field)
       );
+    case "horizon":
+      return [mark.field, mark.orderField];
     case "density":
       return [];
   }

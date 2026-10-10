@@ -433,3 +433,18 @@ One row per term: the justice, surname, position, home state, seat and seat name
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/scotus.ts
 ```
+
+## Tech stock prices, 2000 to 2010
+
+- File: `tech-stocks.csv`
+- Size: 560 rows and 4 fields
+- Demo: `?example=stocks-horizon`
+- Use: a horizon chart composition, each company's growth since 2000 in stacked bands
+- Source: monthly closing prices for AAPL, AMZN, GOOG, IBM, and MSFT as packaged in [vega-datasets](https://github.com/vega/vega-datasets) (`stocks.csv`).
+- License: vega-datasets is BSD-3-Clause.
+
+One row per company and month from January 2000 to March 2010 (Google from August 2004), with the symbol, company name, and closing price.
+
+```sh
+node --experimental-strip-types apps/data-samples/prepare/tech-stocks.ts
+```

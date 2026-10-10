@@ -24,6 +24,7 @@ import {
   type WaffleMark,
   type BarMark,
   type SpanMark,
+  type HorizonMark,
   type MarkAggregation,
   type RankOrder,
   type StripMark,
@@ -279,6 +280,7 @@ type ResolvedSummary = {
 type ResolvedStack = { type: "stack"; mark: StackMark; x?: NumericScale };
 type ResolvedWaffle = { type: "waffle"; mark: WaffleMark };
 type ResolvedBar = { type: "bar"; mark: BarMark };
+type ResolvedHorizon = { type: "horizon"; mark: HorizonMark; x: NumericScale };
 type ResolvedDensity = { type: "density"; mark: DensityMark; x: NumericScale };
 type ResolvedMark =
   | ResolvedStrip
@@ -287,6 +289,7 @@ type ResolvedMark =
   | ResolvedStack
   | ResolvedWaffle
   | ResolvedBar
+  | ResolvedHorizon
   | ResolvedDensity;
 
 /** One group of a summary mark in one repeat. */
@@ -322,6 +325,9 @@ export function resolveUnit(
       marks.push({ type: "waffle", mark });
     } else if (mark.type === "bar") {
       marks.push({ type: "bar", mark });
+    } else if (mark.type === "horizon") {
+      const x = scale(mark.xScaleId);
+      if (x?.kind === "numeric") marks.push({ type: "horizon", mark, x });
     } else if (mark.type === "density") {
       const x = scale(mark.xScaleId);
       if (x?.kind === "numeric") marks.push({ type: "density", mark, x });
@@ -372,6 +378,20 @@ export function resolveUnit(
     (item): item is ResolvedWaffle => item.type === "waffle"
   );
   const bars = marks.filter((item): item is ResolvedBar => item.type === "bar");
+  const horizons = marks.filter(
+    (item): item is ResolvedHorizon => item.type === "horizon"
+  );
+  // Horizon series per repeat, and the largest magnitude per mark.
+  const horizonSeries = subsets.map((subset) =>
+    horizons.map(({ mark, x }) => horizonValues(mark, x, subset, data))
+  );
+  const horizonMax = new Map<string, number>();
+  horizonSeries.forEach((perMark) =>
+    perMark.forEach((series, markIndex) => {
+      const id = horizons[markIndex]!.mark.id;
+      horizonMax.set(id, Math.max(horizonMax.get(id) ?? 0, series.peak));
+    })
+  );
   // Bars share one category order and one length axis across every repeat.
   const barred = bars.map(({ mark }) =>
     mark.categoryField
@@ -817,10 +837,10 @@ export function resolveUnit(
             unit.window
           ),
         }
-      : densities[0]
+      : densities[0] || horizons[0]
         ? {
             x: axisFor(
-              densities[0].x,
+              (densities[0] ?? horizons[0])!.x,
               subset,
               [frame.x, frame.x + frame.width],
               unit.window
@@ -1031,6 +1051,26 @@ export function resolveUnit(
           ]),
           frame,
           data
+        )
+      );
+    });
+    horizonSeries[index]!.forEach((series, markIndex) => {
+      const { mark, x } = horizons[markIndex]!;
+      const peak =
+        mark.domain === "instance"
+          ? series.peak
+          : (horizonMax.get(mark.id) ?? series.peak);
+      nodes.push(
+        ...horizonNodes(
+          unit,
+          override?.accent
+            ? { ...mark, positive: override.accent, negative: override.accent }
+            : mark,
+          subset,
+          series,
+          axisFor(x, subset, [frame.x, frame.x + frame.width], unit.window),
+          frame,
+          peak
         )
       );
     });
@@ -2241,6 +2281,129 @@ function barNodes(
     stroke: INK,
     strokeWidth: 1,
   });
+  return nodes;
+}
+
+interface HorizonSeries {
+  /** Points in x order with the measure read from the baseline. */
+  points: { x: number; value: number; rowId: number }[];
+  base: number;
+  peak: number;
+  rowIds: number[];
+  skipped: number[];
+}
+
+/**
+ * A repeat's measure along x, read from the chosen baseline: as a
+ * difference, or as a share of the baseline when relative.
+ */
+function horizonValues(
+  mark: HorizonMark,
+  x: NumericScale,
+  subset: Subset,
+  data: CompositionData
+): HorizonSeries {
+  const xs = data.column(x.field);
+  const values = data.column(mark.field);
+  const rows = orderedRows(subset.liveIds, data.column(mark.orderField));
+  const raw: { x: number; value: number; rowId: number }[] = [];
+  const skipped: number[] = [];
+  for (const row of rows) {
+    const px = readNumber(xs[row.id]);
+    const value = finiteNumber(values[row.id]);
+    if (row.order === undefined || px === undefined || value === undefined) {
+      skipped.push(row.id);
+      continue;
+    }
+    raw.push({ x: px, value, rowId: row.id });
+  }
+  const base =
+    mark.baseline === "first"
+      ? (raw[0]?.value ?? 0)
+      : mark.baseline === "mean" && raw.length
+        ? raw.reduce((sum, item) => sum + item.value, 0) / raw.length
+        : 0;
+  const points = raw.map((item) => ({
+    ...item,
+    value:
+      mark.relative && base !== 0
+        ? (item.value - base) / Math.abs(base)
+        : item.value - base,
+  }));
+  const peak = Math.max(0, ...points.map((item) => Math.abs(item.value)));
+  return {
+    points,
+    base,
+    peak,
+    rowIds: rows.map((row) => row.id),
+    skipped,
+  };
+}
+
+/** Deeper bands take deeper tints of the mark's color, from a third of it up. */
+function horizonTint(color: string, band: number, bands: number) {
+  return scaleLinear<string>().domain([0, 1]).range(["#ffffff", color])(
+    0.35 + (0.65 * (band + 1)) / bands
+  );
+}
+
+/**
+ * One repeat's horizon: `bands` layers, each the part of the measure that
+ * falls in its slice of the range, drawn from the frame's bottom at the
+ * frame's full height. Values below the baseline draw the same way in the
+ * negative color.
+ */
+function horizonNodes(
+  unit: UnitElement,
+  mark: HorizonMark,
+  subset: Subset,
+  series: HorizonSeries,
+  axis: NumericAxis,
+  frame: Bounds,
+  peak: number
+): SceneNode[] {
+  if (series.points.length < 2 || peak <= 0) return [];
+  const bands = Math.max(1, Math.round(mark.bands));
+  const step = peak / bands;
+  const bottom = frame.y + frame.height;
+  const nodes: SceneNode[] = [];
+  for (const sign of [1, -1] as const) {
+    for (let band = 0; band < bands; band += 1) {
+      const low = band * step;
+      const run = series.points.map((point) => {
+        const magnitude = sign * point.value;
+        const within = Math.min(step, Math.max(0, magnitude - low));
+        return {
+          x: numericPixel(axis, point.x),
+          y0: bottom,
+          y1: bottom - (within / step) * frame.height,
+          rowId: point.rowId,
+        };
+      });
+      if (!run.some((vertex) => vertex.y1 < bottom)) continue;
+      const color = sign > 0 ? mark.positive : mark.negative;
+      nodes.push({
+        type: "area",
+        key: `${unit.id}:${subset.key}:${mark.id}:${sign > 0 ? "up" : "down"}:${band}`,
+        elementId: unit.id,
+        instanceKey: subset.key,
+        segments: [run],
+        fill: horizonTint(color, band, bands),
+        fillOpacity: 1,
+        clip: frame,
+        band: {
+          instanceKey: subset.key,
+          markId: mark.id,
+          orderField: mark.orderField,
+          lowerField: `baseline (${mark.baseline}${mark.relative ? ", as a share" : ""})`,
+          upperField: `${mark.field} ${sign > 0 ? "above" : "below"} the baseline, band ${band + 1} of ${bands} (${formatOrder(low)} to ${formatOrder(low + step)})`,
+          rowIds: series.rowIds,
+          skipped: series.skipped,
+          segments: 1,
+        },
+      });
+    }
+  }
   return nodes;
 }
 

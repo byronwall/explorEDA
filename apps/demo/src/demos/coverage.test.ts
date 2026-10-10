@@ -100,6 +100,7 @@ describe("example coverage manifest", () => {
       "population-pyramid",
       "gdp-bump",
       "scotus-timeline",
+      "stocks-horizon",
       "product-activity",
       "scatter-trace",
       "calculated-orders",

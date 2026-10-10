@@ -15,6 +15,7 @@ const TYPE_NAMES: Record<MarkDefinition["type"], string> = {
   bar: "Bars",
   density: "Density",
   span: "Spans",
+  horizon: "Horizon",
 };
 
 /**
@@ -88,6 +89,11 @@ export function describeMark(
           : `${mark.aggregation} of ${mark.measureField ?? "?"}`
       );
       if (mark.categoryField) parts.push(`split by ${mark.categoryField}`);
+      break;
+    case "horizon":
+      parts.push(
+        `${scaleName(mark.xScaleId) ?? "?"} · ${mark.field} from ${mark.baseline}${mark.relative ? " as a share" : ""} · ${mark.bands} bands`
+      );
       break;
     case "density":
       parts.push(`${scaleName(mark.xScaleId) ?? "?"} · ${mark.height} height`);

@@ -1200,6 +1200,17 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "stocks-horizon",
+    intent:
+      "Fold each stock's growth since 2000 into stacked bands per row, losses mirrored upward in red.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "product-activity",
     intent:
       "Explore linked product traffic, conversion, and response-time views.",

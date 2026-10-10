@@ -19,6 +19,7 @@ import {
   type WaffleMark,
   type BarMark,
   type SpanMark,
+  type HorizonMark,
   type SummaryMark,
   STACK_COLORS,
   type UnitElement,
@@ -117,6 +118,7 @@ function markColor(mark: MarkDefinition) {
   if (mark.type === "stack" || mark.type === "waffle" || mark.type === "bar")
     return mark.colors[0] ?? "#1f2328";
   if (mark.type === "density") return mark.fill;
+  if (mark.type === "horizon") return mark.positive;
   return mark.fill;
 }
 
@@ -185,6 +187,35 @@ export function convertMark(
     };
     return updateElement<UnitElement>(definition, unit.id, {
       marks: unit.marks.map((item) => (item.id === markId ? stack : item)),
+    });
+  }
+  if (type === "horizon") {
+    const numeric = fields.filter((item) => item.dataType === "numeric");
+    const dates = fields.filter((item) => item.dataType === "datetime");
+    const xField =
+      dates[0]?.name ??
+      numeric.find((item) => /year|date|time|day|month/i.test(item.name))
+        ?.name ??
+      numeric[0]?.name;
+    const field = numeric.find((item) => item.name !== xField)?.name;
+    if (!xField || !field) return definition;
+    const withX = ensureNumericScale(definition, xField);
+    const horizon: HorizonMark = {
+      type: "horizon",
+      id: mark.id,
+      name: mark.name,
+      xScaleId: withX.scale.id,
+      field,
+      orderField: xField,
+      baseline: "first",
+      relative: true,
+      bands: 3,
+      domain: "shared",
+      positive: "#08519c",
+      negative: "#a50f15",
+    };
+    return updateElement<UnitElement>(withX.definition, unit.id, {
+      marks: unit.marks.map((item) => (item.id === markId ? horizon : item)),
     });
   }
   if (type === "bar") {
