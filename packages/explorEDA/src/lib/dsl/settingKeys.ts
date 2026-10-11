@@ -330,7 +330,6 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "levels",
     "localFilters",
     "margin",
-    "maxChildren",
     "measureField",
     "missingLevels",
     "note",

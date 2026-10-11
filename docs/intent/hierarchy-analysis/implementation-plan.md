@@ -90,6 +90,7 @@ This turns a correct chart into a readable one at the stated scale: 2–3 levels
 
 - **Change — Small categories**
   - `maxChildren` (default 8) folds the rest of a parent's children into "Other". Its members are an exact value list under that parent, so selecting it is exact.
+  - *Reversed after review:* the gray Other boxes crowded the chart, so a follow-up PR removed `maxChildren` and Other. Every child is drawn, and small ones stay unlabeled.
   - Nodes below a minimum pixel area are drawn unlabeled but stay hoverable. Nodes below a smaller threshold are not drawn, and the status line counts them.
   - Missing levels show as `(missing)` when `missingLevels: "show"`.
 - **Change — Color and tracing**
@@ -128,6 +129,18 @@ This turns a correct chart into a readable one at the stated scale: 2–3 levels
 ### Desired end state
 
 - Sunburst is available as a third arrangement. If labels or selection feel worse than icicle on real data, stop here and record the cut.
+
+## Milestone 6: Small boxes without a catch-all group
+
+Review of the catalog treemap found the gray Other boxes crowded every branch. This follow-up removes them; it is a separate PR on top of the stack rather than a rewrite of Milestone 3.
+
+- **Change — Draw every child**
+  - Remove `maxChildren` and the Other node from the model, settings, trace, validation, and dashboard text.
+  - Small boxes stay as unlabeled colored marks, and sub-pixel slivers are counted in the status line.
+
+### Desired end state
+
+- The catalog treemap shows every material in its branch color with no gray boxes, at all three widths.
 
 ## Open decisions and spikes
 

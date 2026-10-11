@@ -32,17 +32,17 @@ export interface HierarchyNode {
   /** The level field this node splits on; empty for the whole. */
   field: string;
   label: string;
-  kind: "root" | "value" | "missing" | "other";
-  /** This node's value on its level; null for Other. */
+  kind: "root" | "value" | "missing";
+  /** This node's value on its level. */
   value: datum;
-  /** Values on its level this node stands for. Other lists every member. */
+  /** Values on its level this node stands for. */
   members: datum[];
   /** Values along the levels from the first down to this node. */
   path: datum[];
   parentId?: string;
   /** Every child, for zoom and totals. */
   children: HierarchyNode[];
-  /** The children drawn: the largest few, then one Other for the rest. */
+  /** The children drawn: every child with a size, missing last. */
   shown: HierarchyNode[];
   /** Metric over the node's rows. */
   weight: number;
@@ -82,42 +82,12 @@ export interface HierarchyPlanInput {
 
 const ONE_COLOR = "#3479a8";
 const MISSING_COLOR = "#8a94a3";
-export const DEFAULT_MAX_CHILDREN = 8;
-
 /**
- * Folds all but the largest `limit` children into one Other node. Missing
- * stays its own node. Folding a single child hides it without saving room,
- * so Other always holds at least two.
+ * Every child with a size is drawn, however small: a box too small for a
+ * label stays an unlabeled mark rather than joining a catch-all group.
  */
-function foldChildren(node: HierarchyNode, limit: number) {
-  const values = node.children.filter(
-    (child) => child.kind !== "missing" && child.weight > 0
-  );
-  const missing = node.children.filter(
-    (child) => child.kind === "missing" && child.weight > 0
-  );
-  if (values.length <= limit + 1) {
-    node.shown = [...values, ...missing];
-    return;
-  }
-  const rest = values.slice(limit);
-  const other: HierarchyNode = {
-    ...newNode(
-      node,
-      rest[0]!.field,
-      "other",
-      `Other (${rest.length})`,
-      "other",
-      null
-    ),
-    members: rest.map((child) => child.value),
-    weight: rest.reduce((sum, child) => sum + child.weight, 0),
-    selectedWeight: rest.reduce((sum, child) => sum + child.selectedWeight, 0),
-    rowCount: rest.reduce((sum, child) => sum + child.rowCount, 0),
-    contributors: rest.flatMap((child) => child.contributors),
-    color: MISSING_COLOR,
-  };
-  node.shown = [...values.slice(0, limit), other, ...missing];
+function drawnChildren(node: HierarchyNode) {
+  node.shown = node.children.filter((child) => child.weight > 0);
 }
 
 function measureReason(value: datum) {
@@ -248,10 +218,7 @@ export function planHierarchy({
         b.weight - a.weight ||
         a.label.localeCompare(b.label, undefined, { numeric: true })
     );
-    foldChildren(
-      node,
-      Math.max(1, settings.maxChildren ?? DEFAULT_MAX_CHILDREN)
-    );
+    drawnChildren(node);
     node.children.forEach(order);
   };
   order(root);
@@ -279,23 +246,19 @@ export function planHierarchy({
     }
     const paint = (node: HierarchyNode) => {
       node.color =
-        node.kind === "missing" || node.kind === "other"
+        node.kind === "missing"
           ? MISSING_COLOR
           : colorBy === "level"
             ? palette[(node.depth - 1) % palette.length]!
             : color;
       node.children.forEach(paint);
-      node.shown.forEach((child) => {
-        if (child.kind === "other") paint(child);
-      });
     };
     paint(branch);
   });
 
   const nodes: HierarchyNode[] = [];
   const visit = (node: HierarchyNode) => {
-    const others = node.shown.filter((child) => child.kind === "other");
-    for (const child of [...node.children, ...others]) {
+    for (const child of node.children) {
       child.selected = isNodeSelected(settings.filters, child, levels);
       nodes.push(child);
     }

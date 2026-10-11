@@ -27,7 +27,7 @@ Excel-style pivot subtotals and collapse are not the goal. The Pivot Table remai
 
 Choose two or three category fields and a size. See the hierarchy as a treemap, then switch to an icicle or sunburst without setting it up again. Zoom into a parent so it fills the chart, and step back through breadcrumbs. The zoomed view is saved with the chart and returns the same way after a reload. Hover a node to read its path, value, and share of parent and whole. Click a branch to filter the rest of the workspace, and trace the rows behind it.
 
-Typical data has 2–3 levels with 2–8 categories each. Beyond that, people narrow the data with filters. Small categories may join an "Other" node, appear as unlabeled marks, or not be drawn below a minimum size.
+Typical data has 2–3 levels with 2–8 categories each. Beyond that, people narrow the data with filters. Small categories appear as unlabeled marks, and slivers below a pixel are not drawn. A catch-all "Other" group was tried and rejected: it filled the chart with gray.
 
 ## Boundaries
 

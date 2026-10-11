@@ -570,7 +570,6 @@ function isChart(value: unknown): boolean {
         ["treemap", "icicle", "sunburst"].includes(
           value.arrangement as string
         ) &&
-        (value.maxChildren === undefined || isFiniteNumber(value.maxChildren)) &&
         (value.colorBy === undefined ||
           ["branch", "level", "none"].includes(value.colorBy as string)) &&
         (value.focus === undefined ||

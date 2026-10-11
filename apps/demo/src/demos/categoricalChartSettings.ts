@@ -132,7 +132,6 @@ export const categoricalChartSettings: SavedDataStructure = {
       levels: ["Category", "Subcategory", "Material"],
       aggregation: "count",
       missingLevels: "omit",
-      maxChildren: 4,
       colorBy: "branch",
       arrangement: "treemap",
       filters: [],

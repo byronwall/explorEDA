@@ -137,6 +137,13 @@
       "location": "conversation 2026-10-10",
       "anchor": "Reply on plan cut line: zoom into a branch",
       "authority": "explicit user direction"
+    },
+    {
+      "id": "feedback-2026-10-10-other",
+      "type": "direct-user-input",
+      "location": "conversation 2026-10-10",
+      "anchor": "Reaction to the catalog treemap screenshot",
+      "authority": "explicit user direction"
     }
   ],
   "intent": {
@@ -358,8 +365,8 @@
       {
         "id": "small-nodes",
         "type": "desired experience",
-        "statement": "Handle small categories with an Other node, unlabeled glyphs, or no mark below a minimum size.",
-        "commitment": "tentative",
+        "statement": "Render small categories as unlabeled boxes; no catch-all Other group.",
+        "commitment": "explicit",
         "importance": "supporting",
         "status": "active",
         "time_horizon": "now",
@@ -367,10 +374,14 @@
           {
             "source_id": "feedback-2026-10-10",
             "anchor": "Q2 answer: options floated, none chosen"
+          },
+          {
+            "source_id": "feedback-2026-10-10-other",
+            "anchor": "not a fan of the other category; render small boxes without labels"
           }
         ],
-        "confidence": "medium",
-        "notes": ""
+        "confidence": "high",
+        "notes": "2026-10-10: Other tried in Milestone 3 and rejected after seeing it — too much gray."
       },
       {
         "id": "no-pivot-subtotals",
@@ -671,6 +682,18 @@
           "37 Hierarchy tests incl. sunburst ring geometry, full-ring path, center zoom-out",
           "Browser: catalog sunburst at 1400/900/390 and zoomed into Food at 900; kept rather than cut — readable wide and zoomed; at 390 only arcs that fit whole or with 6+ characters are labeled"
         ]
+      },
+      {
+        "id": "m6",
+        "title": "Remove the Other group",
+        "status": "completed",
+        "outcome": "Every child with a size is drawn; small boxes stay unlabeled",
+        "proof": "Tests updated; browser screenshots of the catalog treemap at three widths",
+        "valid_intermediate_state": "All arrangements work without maxChildren",
+        "rollback": "Revert the PR",
+        "evidence": [
+          "Follow-up PR on top of the stack, per user direction not to rebase"
+        ]
       }
     ],
     "cut_line": [
@@ -770,6 +793,12 @@
       "action": "Implemented Milestone 5: sunburst arrangement; not cut.",
       "reason": "Stacked PR plan.",
       "evidence": "See milestone m5 evidence."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Removed the Other group and maxChildren setting in a follow-up PR.",
+      "reason": "User feedback: Other adds a lot of gray; render small boxes without labels instead.",
+      "evidence": "See milestone m6."
     }
   ],
   "closure": null,

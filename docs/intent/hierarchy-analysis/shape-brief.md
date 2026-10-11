@@ -34,7 +34,7 @@ Hierarchy chart (one chart type, several layouts)
 │   │   ├── Readout: full path, value, % of parent, % of the zoomed branch, % of all
 │   │   └── The current root's total is always shown
 │   ├── Small categories
-│   │   ├── Up to N per parent (default 8); the rest join a named "Other" node
+│   │   ├── Every child is drawn; no catch-all "Other" box
 │   │   └── Small marks unlabeled but hoverable; tiny slivers not drawn
 │   └── Selection
 │       ├── Click a node: filter to that branch; empty space: clear
@@ -58,7 +58,6 @@ Hierarchy chart (one chart type, several layouts)
 | Zoom into North | View only: other charts are not filtered. The breadcrumb ends in North with its total. |
 | Zoomed branch has no rows after another chart's filter | The chart shows the deepest ancestor that still has rows. The missing crumb stays, marked "no rows", and the view returns when rows come back. |
 | Levels are reordered or replaced | The focus keeps only the part of its path whose levels are unchanged. |
-| Double-click "Other" | No zoom. Its readout lists its members; raise the cap or filter to see them. |
 | Double-click a leaf | No zoom; a leaf has nothing inside it. |
 
 ## Examples
@@ -86,11 +85,11 @@ It is the same kind of value a filter stores, so it is deterministic, readable i
 
 ## Decisions and boundaries
 
-**Appetite:** Medium. One new chart type with three layouts and zoom over one shared hierarchy model. Sized for 2–3 levels with 2–8 categories each. Larger data is narrowed by filtering, Other, and zoom.
+**Appetite:** Medium. One new chart type with three layouts and zoom over one shared hierarchy model. Sized for 2–3 levels with 2–8 categories each. Larger data is narrowed by filtering and zoom.
 
-**Key decision:** One Hierarchy chart with a layout control, not separate Treemap, Icicle, and Sunburst types. Changing a chart's type resets its settings today, so separate types would drop the levels and focus on every switch. Path identity, Other, missing values, zoom, filters, and tracing are shared; each layout is mostly geometry. Category-path settings follow Sankey's conventions.
+**Key decision:** One Hierarchy chart with a layout control, not separate Treemap, Icicle, and Sunburst types. Changing a chart's type resets its settings today, so separate types would drop the levels and focus on every switch. Path identity, missing values, zoom, filters, and tracing are shared; each layout is mostly geometry. Category-path settings follow Sankey's conventions.
 
-**Key decision:** Zoom is a view and a filter is a selection. Keeping them separate lets an analyst zoom into North and still compare its categories in other charts by clicking them. Focus resolves against raw values before Other grouping, so a filter that changes the Other ranking never moves the view.
+**Key decision:** Zoom is a view and a filter is a selection. Keeping them separate lets an analyst zoom into North and still compare its categories in other charts by clicking them.
 
 **Boundary:** Levels come only from the chosen field order; no inferred parent links or tree editing. Selection stays within one parent until [precise composite selection](../precise-composite-selection/intent-brief.md) exists. Pivot subtotals stay out.
 

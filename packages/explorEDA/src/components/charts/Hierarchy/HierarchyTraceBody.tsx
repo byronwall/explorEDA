@@ -27,14 +27,9 @@ export function HierarchyTraceBody({ trace }: { trace: HierarchyTrace }) {
           {node.depth} of {trace.levelLabels.length} · field {node.field}
         </TraceReadout>
         <TraceReadout label="Values">
-          {node.kind === "other"
-            ? `Other groups ${node.members.length}: ${node.members
-                .slice(0, 12)
-                .map(showTraceValue)
-                .join(", ")}${node.members.length > 12 ? ", …" : ""}`
-            : node.kind === "missing"
-              ? "Rows with no value for this level"
-              : showTraceValue(node.value)}
+          {node.kind === "missing"
+            ? "Rows with no value for this level"
+            : showTraceValue(node.value)}
         </TraceReadout>
         <TraceReadout label={trace.metricLabel}>
           {round(node.weight)} {trace.unit}
@@ -62,11 +57,7 @@ export function HierarchyTraceBody({ trace }: { trace: HierarchyTrace }) {
               : `Children sum to ${round(childSum)}`}
           </TraceReadout>
         ) : (
-          <TraceReadout label="Check">
-            {node.kind === "other"
-              ? "Sum of the values it groups"
-              : "Last level: sum of its rows"}
-          </TraceReadout>
+          <TraceReadout label="Check">Last level: sum of its rows</TraceReadout>
         )}
         <TraceReadout label="Fill">
           <TraceSwatch color={node.color} /> {node.color}

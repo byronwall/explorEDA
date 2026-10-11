@@ -1,5 +1,4 @@
 import { FieldSelector } from "@/components/FieldSelector";
-import { NumericInputEnter } from "@/components/NumericInputEnter";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -10,7 +9,7 @@ import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import { ArrowDown, ArrowUp, X } from "lucide-react";
 import { useMemo } from "react";
 import { ARRANGEMENTS } from "./arrangements";
-import { DEFAULT_MAX_CHILDREN, keepForLevels } from "./hierarchyPlan";
+import { keepForLevels } from "./hierarchyPlan";
 import {
   MAX_HIERARCHY_LEVELS,
   MIN_HIERARCHY_LEVELS,
@@ -257,24 +256,6 @@ export function HierarchySettingsPanel({
             </ActionTooltip>
           ))}
         </ToggleGroup>
-
-        <ActionTooltip content="Each parent shows at most this many boxes, its largest. The rest join one gray Other box that lists its members.">
-          <Label htmlFor="hierarchy-limit">Boxes per parent</Label>
-        </ActionTooltip>
-        <NumericInputEnter
-          id="hierarchy-limit"
-          value={settings.maxChildren ?? DEFAULT_MAX_CHILDREN}
-          onChange={(value) =>
-            change({
-              maxChildren: Math.max(2, Math.min(30, Math.round(value))),
-            })
-          }
-          min={2}
-          max={30}
-          stepSmall={1}
-          stepMedium={5}
-          stepLarge={10}
-        />
 
         <Label>Color</Label>
         <ToggleGroup
