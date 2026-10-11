@@ -1,0 +1,117 @@
+{
+  "id": "forecast",
+  "title": "What’s different? Analyzing Time-Series Forecast Performance",
+  "url": "https://observablehq.com/@observablehq/whats-different-timeseries-forecast-performance",
+  "platform": "Observable",
+  "authors": "Zan Armstrong, Mike Freeman and Ian Johnson",
+  "pattern": "Actual versus forecast → signed difference → event-window investigation",
+  "screenshots": [
+    {
+      "file": "forecast-03-definition.jpg",
+      "caption": "The analytical turning point: prose defines the signed difference between actuals and forecast, the chart plots that calculated quantity against a zero baseline, and the next paragraph interprets the result."
+    },
+    {
+      "file": "forecast-02-zoom.jpg",
+      "caption": "Later in the same reading sequence, the residual calculation is reused in an event-window zoom; the prose interprets two pre-blackout dips."
+    }
+  ],
+  "story": "The notebook investigates hourly Texas demand around the February 2021 power crisis. Subtracting the forecast from actual demand makes two dips before the rolling blackouts noticeable. This is a particularly clear example of an analytical argument produced by changing what is calculated and displayed. It does not establish why those early dips occurred; price is offered as a follow-up hypothesis.",
+  "prose_role": "The prose introduces an apparent comparison problem, asks whether demand was above or below forecast, explains the signed difference, interprets the pre-event pattern, and motivates a closer date window. The later diagrams explain why comparing two sloping lines can obscure that difference.",
+  "data": {
+    "origin": "U.S. Energy Information Administration Open Data, an ERCOT/Texas hourly demand and day-ahead-forecast snapshot downloaded in August 2021 and attached in September 2021.",
+    "links": [
+      {
+        "label": "Exact attached Texas demand/forecast CSV",
+        "url": "https://observablehq.com/d/299ab108f7431b47/file/e7bd279ea752556d54fc85f73a0e5ed4d1652b56b05fa3704ea4902302d386d26bae990f134980c3cdfe35016daa260c5ce6b4c05ba6b89a28bf5e7816441462?name=TexasEnergyDemandForecast%401.csv"
+      },
+      {
+        "label": "EIA original provider",
+        "url": "https://www.eia.gov/opendata/"
+      },
+      {
+        "label": "Author’s EIA download notebook",
+        "url": "https://observablehq.com/@observablehq/eia-opendata-electricity-grid-operation"
+      }
+    ],
+    "grain": "One hourly observation in Texas/ERCOT, January–February 2021; the live raw and renamed arrays contain 1,417 rows. The fixed event-window subset contains 216 rows.",
+    "fields": "date (UTC timestamp), demand renamed actuals, and forecast. The chart labels demand in MWh, but some explanatory text uses kW; retain raw values and reconcile this source labeling inconsistency rather than applying an invented conversion.",
+    "calculations": [
+      "Parse the attached CSV with typed fields; rename demand to actuals.",
+      "Compute signed difference actuals − forecast; positive and negative values receive consistent orange and purple encodings.",
+      "Represent rolling blackouts at 2021-02-15T07:25:00Z (1:25 a.m. CST). Filter the zoom from 2021-02-07T07:25:00Z through 2021-02-16T07:25:00Z inclusively.",
+      "The source derives daily/weekly ticks from UTC intervals shifted six hours to show Central time, and derives maxima for chart/annotation placement (maxDelta 10,436 and maxValue 76,783 in the inspected state)."
+    ],
+    "dependencies": "Typed data → renamed relation → actual/forecast line charts and residual charts. The zoom predicate produces a smaller relation reused by later line and residual comparisons. Shared event and semantic-color definitions feed multiple graphics and explanatory annotations.",
+    "reproducibility": "The live loaded rows, downloadable attachment link, visible transformation definitions and stated subtraction are enough for the analytical core. The attachment bytes were not independently downloaded. A failed browser download did not prevent the notebook itself from loading and displaying the data.",
+    "caveats": "Unit labels are inconsistent; do not preserve them uncritically. The event window is a fixed authored filter, not a reader-operated brush. The early demand decline is an observed temporal relationship, not a demonstrated cause. Missing-value and duplicate-hour handling were not independently audited; an exact match should make those policies explicit."
+  },
+  "sequence": [
+    "Introduce the forecast question → inspect hourly actual/forecast values → show two lines and blackout annotation.",
+    "Explain the desired comparison → derive actuals minus forecast → show signed differences around zero.",
+    "Interpret the unexpected pre-blackout dips → filter to the nine-day event window → show the enlarged residual pattern → propose a follow-up question."
+  ],
+  "elements": [
+    [
+      "Essential: question and interpretation text",
+      "Forecast question and chart evidence",
+      "Explain signed error and connect each result to the next question",
+      "Prose before and after each output",
+      "None observed",
+      "Interpretations refer to residual and zoom results"
+    ],
+    [
+      "Essential: source and residual calculation",
+      "date, demand, forecast",
+      "Typed load; rename demand; difference=actuals−forecast",
+      "Inspectable original/derived records",
+      "Table inspection if reproduced",
+      "Shared relation feeds all views"
+    ],
+    [
+      "Essential: original comparison",
+      "Hourly date, actuals, forecast; event",
+      "x=time; y=demand; two labeled colored lines; vertical event rule",
+      "Full-column time series",
+      "No reader control observed",
+      "Shared data, event and colors"
+    ],
+    [
+      "Essential: signed-difference plot",
+      "Date and signed difference",
+      "x=time; y=difference; zero baseline; orange above, purple below",
+      "Above/below-forecast pattern",
+      "No reader control observed",
+      "Depends on residual calculation"
+    ],
+    [
+      "Essential: event-window result",
+      "Shared relation and start/end timestamps",
+      "Inclusive date filter; same difference encoding; callouts for pre-event dips",
+      "Magnified nine-day comparison",
+      "Fixed authored window; an editable date control would be an addition",
+      "Derived subset feeds later residual and line comparisons"
+    ],
+    [
+      "Optional: perception diagrams and filled bands",
+      "Original series and difference concept",
+      "Fill between lines; authored explanatory illustrations",
+      "Why a common baseline helps",
+      "None",
+      "Can be omitted without losing the investigation"
+    ]
+  ],
+  "fit": {
+    "minimum": "Keep the introduction, original two-line chart, explicit residual calculation, signed-error plot and nine-day zoom with interpretation. The conceptual cartoons and repeated return to the original chart are optional.",
+    "compatible": "Calculated fields, filters, interactive chart definitions, tables and saved analysis state appear to cover the core, based only on the product description.",
+    "investigate": "Shared named calculations across blocks; positive/negative rule or bar encodings; event and text annotations; a clear distinction between display-domain edits and upstream date filtering; consistent units and semantic colors.",
+    "roundtrip": "Graphical changes to mark type, axis fields and limits, color assignments, event position/label, annotation text and window bounds should update the relevant block text. Changing a residual chart’s visual style should preserve the subtraction it depends on.",
+    "scope": "There are no main reader controls in the inspected notebook. The authored event filter affects the zoomed branch, while the complete series remains available above.",
+    "lesson": "A small calculation can be the analytical turning point. This tests whether two-way editing preserves a named derived field, reuses it in a later block, and records local view changes without accidentally changing the evidence above."
+  },
+  "comparison": {
+    "data_availability": "Exact attachment; live 1,417 rows",
+    "calculation_transparency": "High; explicit subtraction and fixed date filter",
+    "interaction_complexity": "Low; authored views, no main reader controls",
+    "reproduction_effort": "Low"
+  }
+}

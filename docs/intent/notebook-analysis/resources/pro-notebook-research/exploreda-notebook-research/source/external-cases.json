@@ -1,0 +1,616 @@
+[
+  {
+    "id": "seattle-cycling",
+    "title": "Is Seattle Really Seeing an Uptick In Cycling?",
+    "url": "https://jakevdp.github.io/blog/2014/06/10/is-seattle-really-seeing-an-uptick-in-cycling/",
+    "platform": "Python notebook / author blog",
+    "authors": "Jake VanderPlas",
+    "pattern": "Time series → confounder adjustment → residual trend",
+    "screenshots": [
+      {
+        "file": "seattle-01.jpg",
+        "caption": "The opening data examination: explanatory prose, Python aggregation cells, weekly directional totals and a 30-day rolling calculation in one reading column."
+      },
+      {
+        "file": "seattle-02.jpg",
+        "caption": "A later dependent calculation: weather-adjusted traffic, residual variability, a second rolling result and interpretation."
+      }
+    ],
+    "story": "The investigation asks whether apparent growth in Fremont Bridge bicycle traffic survives adjustment for daylight, weekday, and weather. It develops an author-reported historical estimate of roughly 10% annual growth in **bridge crossings**, not distinct cyclists or citywide ridership. Each paragraph explains why the preceding view is insufficient and introduces the next covariate or calculation. Visible Python cells make the progression from raw counts to adjustments unusually clear. The two captured regions demonstrate full reading-column blocks rather than a dashboard.",
+    "prose_role": "Each paragraph explains a limitation of the preceding view, introduces the next confounder or calculation, and interprets the resulting correction. Code cells remain visible between these decisions and their plots.",
+    "data": {
+      "origin": "Original data: Seattle's Fremont Bridge counter dataset and NOAA daily observations for SeaTac Airport station USW00024233. The article links NOAA's daily data search; that old service endpoint was not independently verified. The author's exact CSV snapshots were fetched and inspected.",
+      "links": [
+        {
+          "label": "Hourly crossing CSV",
+          "url": "https://raw.githubusercontent.com/jakevdp/SeattleBike/master/FremontHourly.csv"
+        },
+        {
+          "label": "weather CSV",
+          "url": "https://raw.githubusercontent.com/jakevdp/SeattleBike/master/SeaTacWeather.csv"
+        },
+        {
+          "label": "source repository",
+          "url": "https://github.com/jakevdp/SeattleBike"
+        },
+        {
+          "label": "downloadable notebook",
+          "url": "https://jakevdp.github.io/downloads/notebooks/SeattleCycling.ipynb"
+        },
+        {
+          "label": "Fremont Bridge counter dataset",
+          "url": "https://data.seattle.gov/Transportation/Fremont-Bridge-Hourly-Bicycle-Counts-by-Month-Octo/65db-xm6k"
+        },
+        {
+          "label": "NOAA's daily data search",
+          "url": "https://www.ncdc.noaa.gov/cdo-web/search?datasetid=GHCND"
+        }
+      ],
+      "grain": "Crossing grain: one hour at one bridge, Date plus northbound and southbound count. Snapshot: 14,568 rows, October 2, 2012 through May 31, 2014. Counts are passages. Some directional counter cells are blank; the article has no explicit imputation block. Weather grain: station-day, 609 rows October 1, 2012 through June 1, 2014. Relevant fields DATE, TMIN and TMAX (tenths of °C), PRCP (tenths of mm). Other weather fields are unused. Code converts temperature to °F with 0.18*T+32 and rain to inches with PRCP/254, then joins by date.",
+      "fields": "Crossing data: Date and Fremont Bridge NB/SB, hourly crossing counts; calculated total, day/week and weekday. Weather: DATE, TMIN/TMAX in tenths of °C, PRCP in tenths of mm, converted to °F/inches. Calculated daylight hours and elapsed-day count enter successive models.",
+      "calculations": [
+        "Verified calculations: total = northbound + southbound; daily and weekly sums; 30-observation rolling mean; mean traffic by weekday; daylight-hours calculation from date, latitude 47.61° and axial tilt 23.44°; successive ordinary least squares models; predicted traffic; corrected series actual - prediction + mean(prediction). Later models add weekday indicators, daylight, minimum/maximum temperature, precipitation, then elapsed day count. The time coefficient is annualized relative to mean daily traffic."
+      ],
+      "dependencies": "Dependency chain: hourly → daily → weekly/weekday summaries; date → daylight; daily + weather + weekday/daylight → fitted model → predictions → corrected traffic → 30-day rolling summary and final trend.",
+      "reproducibility": "The data and visible methods are sufficient to reconstruct the exploratory sequence, with explicit decisions about missing counter values, window alignment, legacy pandas behavior, and statistical uncertainty.",
+      "caveats": "Method caveats: prose describes a centered 30-day mean, but the code does not request centering; reproduce the code's right-aligned/trailing setting explicitly, or label a deliberate centered variant. Old pandas documentation indexing confirms center=False default; the exact archived HTML/PDF page could not be reopened, so avoid claiming an archived-document inspection. Current official rolling documentation likewise defines right-aligned default. The source's explicit coefficient covariance inversion includes all seven weekday dummy columns plus an intercept, making the design singular/unstable; a temperature-error calculation also omits covariance. Do not present the printed ±2% as independently validated. Fit/prediction views remain a strong workflow reference; uncertainty estimation requires review."
+    },
+    "sequence": [
+      "question",
+      "load/inspect counts",
+      "total and temporal aggregation",
+      "weekly lines",
+      "seasonal interpretation",
+      "daylight/weekday calculations",
+      "comparison and fitted line",
+      "weather join and unit conversion",
+      "adjusted predictions",
+      "residual/rolling result",
+      "qualified growth interpretation"
+    ],
+    "elements": [
+      [
+        "Question and caveats",
+        "Research question, source scope",
+        "Explain counts versus people and possible confounders",
+        "Reading-column prose",
+        "None observed",
+        "None"
+      ],
+      [
+        "Count preparation",
+        "Hourly directional CSV",
+        "Parse date; NB+SB; sum per day/week",
+        "Small table and reusable daily/weekly results",
+        "Proposed date filter",
+        "Source"
+      ],
+      [
+        "Weekly lines",
+        "Weekly NB, SB, total",
+        "x=week, y=crossings, color=direction/total; legend",
+        "Three-line time series",
+        "Proposed series/axis edits",
+        "Aggregated counts"
+      ],
+      [
+        "Rolling summary",
+        "Daily total",
+        "Mean over 30 consecutive daily observations; alignment explicit",
+        "Smoothed time series",
+        "Proposed window control",
+        "Daily total"
+      ],
+      [
+        "Weekday/daylight summaries",
+        "Dates and daily/weekly counts",
+        "Weekday means; calculated daylight; regression",
+        "Weekday comparison, daylight scatter and fitted line",
+        "Proposed grouping/predictor controls",
+        "Dates, daily/weekly"
+      ],
+      [
+        "Weather preparation",
+        "Weather CSV, daily totals",
+        "Unit conversion and date join",
+        "Weather lines and model input table",
+        "Proposed date scope",
+        "Sources"
+      ],
+      [
+        "Fitted and corrected series",
+        "Joined inputs, predictors",
+        "Fit; predict; actual−predicted+mean(predicted)",
+        "Actual/expected and corrected time series",
+        "Proposed model specification control",
+        "Model inputs"
+      ],
+      [
+        "Final interpretation",
+        "Corrected series, time coefficient",
+        "30-day summary; annualized trend; qualified uncertainty",
+        "Curve plus explanatory conclusion",
+        "No original widgets observed",
+        "Fit and corrected data"
+      ],
+      [
+        "Essential versus optional",
+        "Reference scope",
+        "interleaved explanations, one transparent temporal aggregate, a visible correction model, predictions/corrected values, clear dependency names. Optional polish/full article: every successive model, solar formula as an editable block (a documented daylight input can substitute), exact Matplotlib styling, confidence intervals.",
+        "Faithful reduced version versus polish",
+        "As described above",
+        "Do not require omitted custom features for the core"
+      ]
+    ],
+    "fit": {
+      "minimum": "Weekly directional and total trends → a daily smoother and weekday summary → one weather-adjusted model and corrected trend, with explicit source scope and qualified interpretation. The model is needed to preserve the adjustment argument; stopping at the first time series would lose it.",
+      "compatible": "Existing charts, tables, filters, calculated fields and saved state appear useful, based only on the product description.",
+      "investigate": "Date joins, ordered-window calculations, named intermediate datasets, fitted-model outputs and coefficient/result tables. Daylight can be supplied as a documented derived input for a smaller version. Statistical uncertainty requires methodological review because of the source covariance problems.",
+      "roundtrip": "Selected series, x/y encodings, temporal aggregation, window length and alignment, colors, legends, labels and axis limits should update the corresponding defining text. A chart appearance edit should not refit its model.",
+      "scope": "A source date filter affects every dependent summary/model/output. A smoother window affects only its smoother and explicitly dependent statements. Any proposed predictor control must name the model it changes; the original article has static outputs rather than analytical widgets.",
+      "lesson": "Named intermediate results and selective re-execution must preserve a long dependency chain while keeping prose attached to the result it interprets. No arbitrary-JavaScript requirement follows from this example."
+    },
+    "comparison": {
+      "data_availability": "Exact author CSVs and notebook accessible; blank counter cells need a declared policy",
+      "calculation_transparency": "High: full code; covariance errors and window prose/code mismatch require review",
+      "interaction_complexity": "Low in source: static outputs; model/date/window controls would be proposed",
+      "reproduction_effort": "High for adjustment chain; medium for summaries alone"
+    }
+  },
+  {
+    "id": "silge-penguins",
+    "title": "Get started with tidymodels and #TidyTuesday Palmer penguins",
+    "url": "https://juliasilge.com/blog/palmer-penguins/",
+    "platform": "R analytical walkthrough",
+    "authors": "Julia Silge",
+    "pattern": "Explore → fit and validate → revise the visual encoding",
+    "screenshots": [
+      {
+        "file": "penguins-01.jpg",
+        "caption": "The first exploration: known-sex filtering and scatterplot code, a species-faceted result and interpretation before modeling."
+      },
+      {
+        "file": "penguins-02.jpg",
+        "caption": "The later model result: coefficient table and interpretation motivate changing the scatterplot x-axis from flipper length to bill depth while retaining the other encodings."
+      }
+    ],
+    "story": "Can body measurements and species predict a penguin's recorded sex? The article begins with an exploratory plot, compares two classification models, checks the selected model on held-out data, then uses its coefficients to revisit the visualization. Its argument has a useful return to an earlier analytical choice: bill depth separates recorded sexes better than the original x variable, after the model highlights that measurement. The prose gives each modeling step a purpose and distinguishes apparent separation from validation. It is a full code-and-result walkthrough, despite the introductory title.",
+    "prose_role": "Prose gives each modeling step a purpose, interprets held-out results and coefficients, then explains why an earlier axis choice should change. This distinguishes a visually plausible separation from a validated prediction and makes a concrete editing decision part of the argument.",
+    "data": {
+      "origin": "Original collectors: Kristen Gorman and Palmer Station LTER. Original species files: Adelie, Gentoo, Chinstrap. These links were obtained from the authors' data documentation; the tidy CSV itself was fetched and parsed.",
+      "links": [
+        {
+          "label": "Tidy CSV",
+          "url": "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/main/inst/extdata/penguins.csv"
+        },
+        {
+          "label": "repository file",
+          "url": "https://github.com/allisonhorst/palmerpenguins/blob/main/inst/extdata/penguins.csv"
+        },
+        {
+          "label": "data documentation",
+          "url": "https://allisonhorst.github.io/palmerpenguins/"
+        },
+        {
+          "label": "original data download documentation",
+          "url": "https://allisonhorst.github.io/palmerpenguins/articles/download.html"
+        },
+        {
+          "label": "Adelie",
+          "url": "https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.219.3&entityid=002f3893385f710df69eeebe893144ff"
+        },
+        {
+          "label": "Gentoo",
+          "url": "https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.220.3&entityid=e03b43c924f226486f2f0ab6709d2381"
+        },
+        {
+          "label": "Chinstrap",
+          "url": "https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.221.2&entityid=fe853aa8f7a59aa84cdd3197619ef462"
+        }
+      ],
+      "grain": "Row = one measured penguin, 344 records, three species, Biscoe/Dream/Torgersen islands in Antarctica's Palmer Archipelago, 2007–2009. Fields species, island, bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g, sex, year. Lengths in mm; body mass in grams.",
+      "fields": "species, island, bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g, sex, year. Four numeric body measurements enter the model with species; island and year are dropped.",
+      "calculations": [
+        "Filter missing sex: 333 usable records (168 male, 165 female), all complete on the four numeric features. The model drops island and year. The initial plot maps x=flipper length, y=bill length, color=sex, size=body mass, alpha=0.5, facet=species.",
+        "Seed 123; stratified train/test split by sex, visible output 250 training and 83 testing records. Twenty-five bootstrap resamples of training data compare a logistic GLM and ranger random forest, predicting sex from species plus four measurements. Resampling results are similar; the author selects the simpler logistic model.",
+        "Held-out model result reported by article: accuracy 0.940, ROC AUC 0.991. These are reproduced article outputs, not our newly validated estimates. Exponentiating coefficients gives odds ratios; the article interprets bill depth as particularly informative while flipper length has little additional evidence conditional on the other predictors.",
+        "The concluding plot changes x to bill depth and keeps the other encodings. Source code for all calculations and data is visible/available. Exact old-package random samples/results can vary with software versions."
+      ],
+      "dependencies": "Source → known-sex rows → first and revised plots. Known-sex rows → seeded stratified split → training resamples → model comparison/selection → held-out predictions/metrics and coefficients. The coefficient interpretation motivates a visual revision, rather than mechanically changing the data.",
+      "reproducibility": "The tidy CSV was fetched and parsed, with all 333 known-sex rows complete on the four numeric measurements. Inline R exposes all preparation, modeling and plotting steps; original species data links are documented.",
+      "caveats": "The target is recorded sex, not species. Article model scores are reported outputs, not new validation by this research. Exact old-package resamples/results may differ with software versions. The optional video is not needed to recover the visible analysis."
+    },
+    "sequence": [
+      "question/data context",
+      "known-sex filter",
+      "first scatter and interpretation",
+      "split/resampling definitions",
+      "two model results",
+      "choose and test model",
+      "coefficient table and interpretation",
+      "revised scatter"
+    ],
+    "elements": [
+      [
+        "Context and data preparation",
+        "Penguin records",
+        "Explain measured variables; exclude unknown sex",
+        "Prose, counts, data table",
+        "Proposed species filter",
+        "Source"
+      ],
+      [
+        "Exploratory scatter",
+        "Known-sex rows",
+        "x=flipper length; y=bill length; sex color; mass size; species facet",
+        "Three-facet scatter",
+        "No original analytical widget; proposed encoding edits",
+        "Filtered rows"
+      ],
+      [
+        "Essential: training/held-out partition",
+        "Filtered rows, seed",
+        "Drop year/island; stratified 250/83 split",
+        "Partition summary",
+        "Proposed seed/split control",
+        "Data scope"
+      ],
+      [
+        "Optional: model comparison",
+        "Training partition",
+        "25 bootstraps; logistic and forest metrics",
+        "Accuracy/AUC table; confusion summary",
+        "Proposed model selection",
+        "Training data"
+      ],
+      [
+        "Essential: held-out validation",
+        "Selected fitted model, held-out rows",
+        "Apply the trained model to held-out rows; compute accuracy and confusion counts",
+        "Small performance/confusion table; ROC curve is optional",
+        "None required; threshold control is optional and not observed",
+        "Fit and held-out partition"
+      ],
+      [
+        "Coefficients",
+        "Logistic fit",
+        "Exponentiate estimates; interpret effects",
+        "Odds-ratio table plus prose",
+        "Optional displayed-coefficient selection",
+        "Fit"
+      ],
+      [
+        "Revised scatter",
+        "Same filtered records",
+        "x=bill depth; other encodings retained",
+        "Stronger visible separation",
+        "Proposed x-axis edit",
+        "Filtered data, editorial motivation from coefficients"
+      ],
+      [
+        "Essential versus optional",
+        "Reference scope",
+        "Essential: first plot, transparent filtered sample, one training/held-out partition, logistic fit, held-out accuracy/confusion table, interpreted coefficient output and revised plot. Optional: random-forest comparison, 25 bootstraps, ROC traces, video and exact theme. Facets can be three vertically consecutive species charts.",
+        "Faithful reduced version versus polish",
+        "As described above",
+        "Do not require omitted custom features for the core"
+      ]
+    ],
+    "fit": {
+      "minimum": "Known-sex filter → first scatterplot → one stratified training/held-out split → one logistic fit → a small held-out accuracy/confusion table → coefficient table with interpretation → revised scatterplot. This preserves a genuine prediction check; the random-forest comparison and 25-bootstrap exercise are optional.",
+      "compatible": "Filtering, interactive scatterplots, size/color controls, tables and calculated fields appear compatible with the stated capabilities. Facets could be three vertically consecutive species charts if needed.",
+      "investigate": "Faceting, logistic model fitting, predicted-class/probability outputs, held-out partitions, seeded resampling and model-result tables. The app description does not establish these capabilities.",
+      "roundtrip": "Graphical edits to x/y fields, color, size, opacity, facets and labels should update the block text. Changing a chart x-axis should not silently redefine the model predictor set.",
+      "scope": "Data-scope changes affect both visualizations and all model/validation descendants. A visual encoding change affects only that output. The original analytical walkthrough has no live model or chart controls; these editing controls are proposed.",
+      "lesson": "A model result can motivate revising an earlier chart without creating an execution cycle: both charts still depend on the filtered records, while the model provides editorial motivation. Keep analytical model definitions distinct from chart encodings."
+    },
+    "comparison": {
+      "data_availability": "Tidy CSV fetched; original species data links documented",
+      "calculation_transparency": "High: inline R code, partitions, model outputs and coefficients",
+      "interaction_complexity": "Low in source: static analytical walkthrough",
+      "reproduction_effort": "Medium with one fit; high with two models and resampling"
+    }
+  },
+  {
+    "id": "owid-decoupling",
+    "title": "Many countries have decoupled economic growth from CO₂ emissions, even if we take offshored production into account",
+    "url": "https://ourworldindata.org/co2-gdp-decoupling",
+    "platform": "Data journalism / OWID",
+    "authors": "Hannah Ritchie",
+    "pattern": "Normalize time series → compare definitions → compare countries",
+    "screenshots": [
+      {
+        "file": "owid-01.jpg",
+        "caption": "The UK comparison: explanatory text, a three-series percentage-change chart with source notes and controls, followed by the next-country question."
+      },
+      {
+        "file": "owid-02.jpg",
+        "caption": "An interaction actually performed: switch the same block to Table and search for United Kingdom. The table exposes raw units and percentage changes while retaining the narrative context."
+      }
+    ],
+    "story": "The article tests whether GDP can increase while carbon emissions fall, then considers the objection that a country may simply have moved emissions abroad. The UK comparison puts economic output, territorial emissions and consumption-based emissions on a common relative-change scale. The narrative then asks readers to inspect other countries before distinguishing national progress from inadequate global progress. Prose defines the metrics, anticipates an objection, interprets the result, and guides the next comparison. The main two figures are full-width sequential blocks; the later country-facet image is optional, not a dashboard requirement.",
+    "prose_role": "Prose defines production and consumption emissions, anticipates the objection that emissions have moved abroad, interprets the UK result, asks readers to inspect other countries, and separates national progress from the global conclusion.",
+    "data": {
+      "origin": "Original sources: World Bank GDP per capita PPP indicator, sourced to Eurostat/OECD/IMF/World Bank (2026); Global Carbon Budget (2025); OWID population sources (2024). Download metadata explicitly documents per-capita calculation and carbon-to-CO₂ conversion.",
+      "links": [
+        {
+          "label": "chart/data page",
+          "url": "https://ourworldindata.org/grapher/co2-emissions-and-gdp-per-capita"
+        },
+        {
+          "label": "Full chart CSV",
+          "url": "https://ourworldindata.org/grapher/co2-emissions-and-gdp-per-capita.csv?v=1&csvType=full&useColumnShortNames=false"
+        },
+        {
+          "label": "metadata JSON",
+          "url": "https://ourworldindata.org/grapher/co2-emissions-and-gdp-per-capita.metadata.json?v=1&csvType=full&useColumnShortNames=false"
+        },
+        {
+          "label": "World Bank GDP per capita PPP indicator",
+          "url": "https://data.worldbank.org/indicator/NY.GDP.PCAP.PP.KD"
+        },
+        {
+          "label": "Global Carbon Budget",
+          "url": "https://globalcarbonbudget.org/"
+        },
+        {
+          "label": "OWID population sources",
+          "url": "https://ourworldindata.org/population-sources"
+        }
+      ],
+      "grain": "Row = entity-year; current download has 8,622 rows, 242 countries/regions, years 1990–2025. Fields Entity, Code, Year, GDP per capita, CO₂ emissions per capita, Consumption-based CO₂ emissions per capita. Nulls and series endpoints differ.",
+      "fields": "GDP unit is international dollars at 2021 prices (inflation and purchasing-power adjusted). Emissions are tonnes CO₂/person, fossil fuels and industry; land-use change is excluded. Consumption emissions = production emissions − embedded exports + embedded imports, then divide by population.",
+      "calculations": [
+        "GDP unit is international dollars at 2021 prices (inflation and purchasing-power adjusted). Emissions are tonnes CO₂/person, fossil fuels and industry; land-use change is excluded. Consumption emissions = production emissions − embedded exports + embedded imports, then divide by population.",
+        "Displayed normalization: relative change from 1990. Our explicit check 100*(value_t/value_1990−1) on downloaded values agrees with the displayed UK endpoints: GDP +61.02% (2025), territorial emissions −56.87% (2024), consumption emissions −38.91% (2023). Those endpoints are different years; do not describe all three as a 2025 comparison. Exact Grapher behavior for missing baseline data was not inspected."
+      ],
+      "dependencies": "Entity-year prepared metrics → country selection → per-series 1990 baseline lookup → normalized series → line comparison/table. Repeat for other countries using the same source/definitions. Preserve the raw levels separately from percentage-change outputs.",
+      "reproducibility": "The actual full-data download, metadata and README were inspected, and the relative-change calculation was checked against the displayed UK endpoints. The exact prepared dataset and documented definitions suffice for the article-level investigation. Reconstructing the underlying trade-embedded emissions estimates from raw trade data is outside this reference.",
+      "caveats": "Displayed normalization: relative change from 1990. Our explicit check 100*(value_t/value_1990−1) on downloaded values agrees with the displayed UK endpoints: GDP +61.02% (2025), territorial emissions −56.87% (2024), consumption emissions −38.91% (2023). Those endpoints are different years; do not describe all three as a 2025 comparison. Exact Grapher behavior for missing baseline data was not inspected. The newer article charts should be reproduced from this exact download, not automatically from the convenient owid/co2-data repository: its GDP series/units can differ."
+    },
+    "sequence": [
+      "decoupling question",
+      "definitions and UK selection",
+      "baseline calculation",
+      "three-series line chart",
+      "interpretation and offshoring objection",
+      "consumption-based comparison",
+      "other-country selection/comparison",
+      "limits/global context"
+    ],
+    "elements": [
+      [
+        "Metric definitions",
+        "Source metadata",
+        "Explain production/consumption, per capita, PPP and exclusions",
+        "Prose and source notes",
+        "Links observed",
+        "None"
+      ],
+      [
+        "Prepared annual data",
+        "Chart CSV",
+        "Preserve nulls and entity-year keys",
+        "Inspectable raw table",
+        "Table tab/search observed",
+        "Source"
+      ],
+      [
+        "Baseline transform",
+        "Selected entity, 1990 values",
+        "Percentage change from baseline; source values retained",
+        "Three normalized series",
+        "Time range control observed; baseline edit proposed",
+        "Entity data"
+      ],
+      [
+        "UK line chart",
+        "Normalized GDP and both CO₂ series",
+        "x=year; y=% change; color=metric; zero rule; line-end labels",
+        "Decoupling evidence",
+        "Table/Line/Bar, country edit, timeline, downloads observed",
+        "Baseline transform"
+      ],
+      [
+        "Interpretation",
+        "Result and definitions",
+        "Explain divergence and trade-adjusted comparison",
+        "Prose",
+        "None",
+        "Analytical result"
+      ],
+      [
+        "Broader comparison",
+        "Other selected countries",
+        "Same definitions and normalization",
+        "Next country comparison",
+        "Country editing observed",
+        "Shared source and transform"
+      ],
+      [
+        "Caveats",
+        "Coverage and national/global distinction",
+        "Show actual series endpoints and excluded emissions",
+        "Prose/notes",
+        "Optional source details",
+        "Metadata/results"
+      ],
+      [
+        "Essential versus optional",
+        "Reference scope",
+        "three measures, explicit baseline and units, country selection, separate interpretation blocks, source/coverage note. Optional polish: playback, country facet grid, download dialog styling, sparkline table cells.",
+        "Faithful reduced version versus polish",
+        "As described above",
+        "Do not require omitted custom features for the core"
+      ]
+    ],
+    "fit": {
+      "minimum": "UK raw-data table → three baseline-normalized lines → interpretation → repeat for a second country. Preserve both territorial and consumption emissions to keep the offshoring question intact.",
+      "compatible": "Calculated fields, charts, tables, filters and saved analysis state appear sufficient for much of the prepared-data workflow.",
+      "investigate": "Group-relative lookup of baseline values, preserving nulls and different series endpoints, explicit denominator/baseline scope, and chart/table controls that consistently name their affected data.",
+      "roundtrip": "Selected measures and countries, baseline year, date range, colors, percentage-axis formatting, annotations and line-end labels should update the corresponding text definition.",
+      "scope": "Country/date selections must state whether they apply to one output or a shared group of blocks. In the inspected source, switching the UK chart to Table initially exposed all 242 entities; a table search was needed to isolate the UK. That observed scope mismatch is informative.",
+      "lesson": "Baseline transforms and alternate metric definitions should be inspectable beside the chart. A country change can invalidate a country-specific prose conclusion, so execution/state needs to distinguish fixed editorial examples from reader-selected results. The central calculation does not require a general statistical runtime."
+    },
+    "comparison": {
+      "data_availability": "Exact chart CSV, metadata and README downloaded; 8,622 entity-years",
+      "calculation_transparency": "Medium/high: prepared metrics documented and normalization checked; missing-baseline behavior unresolved",
+      "interaction_complexity": "Moderate: country, timeline, chart/table and download controls",
+      "reproduction_effort": "Low/medium"
+    }
+  },
+  {
+    "id": "film-dialogue",
+    "title": "Film Dialogue from 2,000 screenplays, Broken Down by Gender and Age",
+    "url": "https://pudding.cool/2017/03/film-dialogue/",
+    "platform": "Data journalism / The Pudding",
+    "authors": "Hanah Anderson and Matt Daniels",
+    "pattern": "Grouped shares → within-film ranks → age comparison → drilldown",
+    "screenshots": [
+      {
+        "file": "pudding-01.jpg",
+        "caption": "The Disney comparison and its methodological qualification: gender word-share bars followed by interpretation and the extraction/matching limits."
+      },
+      {
+        "file": "pudding-02.jpg",
+        "caption": "A later analytical step: age at film release is explained before a word-weighted age comparison and its interpretation."
+      },
+      {
+        "file": "pudding-03-explorer.jpg",
+        "caption": "Optional interaction evidence: selecting Reservoir Dogs changes the adjacent character-word breakdown. The explorer is more dashboard-like than the main essay and need not define the notebook layout."
+      }
+    ],
+    "story": "The essay moves from a familiar subset (Disney) to all films, asks whether having a female lead changes total dialogue balance, then examines how words are distributed across actors' ages. The distinction between a lead character and all supporting dialogue is the analytical turn: a story can center a woman while most words still go to male characters. Prose also exposes the measurement limits before asking readers to explore individual films. This is a visual essay with calculations described in prose rather than visible code cells. The first graphic has three groups and the age graphic two facets, but each is one sequential analytical block; the optional final explorer is more dashboard-like.",
+    "prose_role": "Prose starts with a familiar subset, introduces measurement limits immediately after the first result, distinguishes lead roles from the contribution of the whole cast, motivates the age question, and then invites individual-film inspection.",
+    "data": {
+      "origin": "Original material is screenplays found online, character matching to IMDb actor/actress entries, and actor age at film release. The public source-matching spreadsheet is linked by the article but not inspected. Original copyrighted screenplay texts are not provided as a complete downloadable corpus.",
+      "links": [
+        {
+          "label": "Author repository",
+          "url": "https://github.com/matthewfdaniels/scripts/tree/graphs"
+        },
+        {
+          "label": "character CSV",
+          "url": "https://raw.githubusercontent.com/matthewfdaniels/scripts/graphs/character_list5.csv"
+        },
+        {
+          "label": "film metadata CSV",
+          "url": "https://raw.githubusercontent.com/matthewfdaniels/scripts/graphs/meta_data7.csv"
+        },
+        {
+          "label": "source-matching spreadsheet",
+          "url": "https://docs.google.com/spreadsheets/d/1fbcldxxyRvHjDaaY0EeQnQzvSP7Ub8QYVM2bIs-tKH8/edit?usp=sharing"
+        }
+      ],
+      "grain": "Character grain: one matched screenplay character; 23,048 rows, fields script_id, imdb_character_name, words, gender, age. Age is the actor's age, not the character's. Words, not lines, is the central count despite the HTML page title mentioning lines. Film grain: one screenplay/film, 2,000 rows, script_id, imdb_id, title, year, gross, lines_data. Actual CSV film years span 1929–2015. Join on script_id. The public core CSV does not include genre or a Disney flag. Domestic gross is described as inflation-adjusted, but unit/base year was not verified.",
+      "fields": "Character data: script_id, imdb_character_name, words, gender, age (actor age at release). Film data: script_id, imdb_id, title, year, gross, lines_data. Gender is a binary coding with five unknown rows. Join on script_id; genre and Disney membership are absent from these core files.",
+      "calculations": [
+        "Published filtering: characters with at least 100 words are matched; the article says at least 90% of a script's lines are assigned by gender. Minimum word count in released character CSV is 101. Small roles and script-to-screen changes affect individual-film results.",
+        "Necessary transformations are transparent conceptually: sum words by film and gender, divide by film total for share; rank characters by words within film; count female lead/second/top-three roles; group actor ages and sum words. Our independent check of released rows gives 436 female leading-word characters out of 2,000 films (21.8%), consistent with the article's rounded 22%."
+      ],
+      "dependencies": "Character rows + film metadata → joined table → grouped word totals/share denominator and within-film ranks. Those feed film summaries. Cleaned actor ages feed a separate word-weighted age view. Selected script_id filters the character detail.",
+      "reproducibility": "The data suffice for film shares, character ranks and a documented exploratory age variant. They do not reproduce the initial extraction, exact genre filters, or the original age calculation without further source work. Suitable substitute: use the released aggregate CSVs, select Disney films by an explicitly listed title set, omit genre/gross filters, report cleaned-age coverage.",
+      "caveats": "Exact original chart code, tie policy, unknown-gender denominator and age-cleaning rules were not verified. Released data has five “?” gender rows, 4,785 NULL ages and 16 implausible ages above 110 (some values resemble release years). These need an explicit cleaning rule; do not silently reproduce the age percentages as exact. Displayed age bins are “Under 21,” “22 to 31,” “32 to 41,” “42 to 65,” “65+”; exact inclusive endpoints are ambiguous without code."
+    },
+    "sequence": [
+      "question and measurement definition",
+      "selected-film gender word sums",
+      "normalized bars",
+      "caveat/interpretation",
+      "all-film shares",
+      "lead-versus-total ranking",
+      "age-at-release grouping",
+      "age comparison",
+      "qualified conclusion",
+      "optional individual-film inspection"
+    ],
+    "elements": [
+      [
+        "Measurement explanation",
+        "Methods/source coverage",
+        "Define word count, threshold and script limitations",
+        "Prose",
+        "Source links observed",
+        "None"
+      ],
+      [
+        "Film shares",
+        "Character CSV + film titles",
+        "Sum words by film/gender; normalized share; sort",
+        "100% horizontal bars; color=gender; 50% reference",
+        "Subset tabs observed; exact Disney membership needs definition",
+        "Join and group totals"
+      ],
+      [
+        "Interpretation",
+        "Selected films and totals",
+        "Contrast lead character with total cast dialogue",
+        "Prose and highlighted examples",
+        "None",
+        "Film shares"
+      ],
+      [
+        "Lead/rank summary",
+        "Character words",
+        "Descending rank within film; counts by rank/gender",
+        "Percentages and comparison",
+        "Proposed rank selection",
+        "Character rows"
+      ],
+      [
+        "Age comparison",
+        "Valid actor ages, words, gender",
+        "Explicit age bins; word-weighted sum and within-gender denominator",
+        "Grouped/faceted bars, percent labels",
+        "Static observed",
+        "Cleaned age rows"
+      ],
+      [
+        "Explorer controls",
+        "Film shares and metadata",
+        "Gender-share band, decade, genre, title",
+        "Matching film list with bars",
+        "Share checkboxes, years/genres, search observed",
+        "Film-level table"
+      ],
+      [
+        "Selected-film detail",
+        "Selected script_id",
+        "Filter characters; sort words descending",
+        "Character counts and bars",
+        "Reservoir Dogs selection tested successfully",
+        "Explorer selection"
+      ],
+      [
+        "Scope/caveats",
+        "Missingness and methods",
+        "State exclusions and limits",
+        "Prose/coverage table",
+        "Optional table inspection",
+        "Preparation"
+      ],
+      [
+        "Essential versus optional",
+        "Reference scope",
+        "documented aggregation/denominator, film share comparison, rank contrast, method caveats. Optional: age section until cleaning is settled; custom Disney typography; all-film animated transitions; narrow tooltip layout; exact genre/gross filters; approximate dialogue timeline.",
+        "Faithful reduced version versus polish",
+        "As described above",
+        "Do not require omitted custom features for the core"
+      ]
+    ],
+    "fit": {
+      "minimum": "A named film subset with normalized gender shares → all-film share summary → lead/rank comparison → film selection with character contributions. Conventional stacked bars and tables preserve the argument.",
+      "compatible": "Tables, interactive charts, filters and calculated fields appear suitable for the aggregate-data core. Custom Disney styling and film graphics are unnecessary.",
+      "investigate": "Joining character and film records, ranking/top-k inside groups, linking film selection to its character rows, and keeping percentage denominators explicit when filters change. Age reproduction also requires an explicit cleaning/coverage policy.",
+      "roundtrip": "Grouping fields, normalization, sort order, gender colors, the 50% reference, selected films, filter predicates and labels should update defining text.",
+      "scope": "A selected film drives its character detail. A broader subset changes shares/rank summaries only in explicitly connected blocks. In the source, narrative summaries stay fixed while the optional explorer changes. Genre controls are observed, but the released core CSV lacks genre.",
+      "lesson": "A visual filter can accidentally alter the denominator of a percentage. This reference tests aggregate-to-detail lineage, within-group ranking and the difference between fixed narrative examples and scoped exploratory selections."
+    },
+    "comparison": {
+      "data_availability": "Character and film aggregate CSVs fetched; scripts/genre metadata and age-cleaning rules incomplete",
+      "calculation_transparency": "Medium: methods described, core aggregates available, edge rules hidden",
+      "interaction_complexity": "Moderate: subset/filter/search and linked film selection, tested",
+      "reproduction_effort": "Medium for share/rank core; high for exact full replica"
+    }
+  }
+]

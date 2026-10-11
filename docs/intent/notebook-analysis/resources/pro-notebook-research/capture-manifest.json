@@ -1,0 +1,346 @@
+{
+  "captured_at": "2026-10-10",
+  "source_thread": {
+    "title": "Research notebook examples",
+    "url": "https://chatgpt.com/c/6ac9c94f-51a8-83ea-8b65-e9ebc41e22ea"
+  },
+  "method": "Downloaded the complete ZIP through its Chrome download button; retained the original archive and extracted every member.",
+  "download_source": "/Users/byronwall/Downloads/exploreda-notebook-research.zip",
+  "archive_crc_check": "passed",
+  "authority": "External research and recommendations. These are not approved product requirements.",
+  "files": [
+    {
+      "path": "exploreda-notebook-research/README.txt",
+      "bytes": 1326,
+      "sha256": "428cd185ba03b5345838b8da49f128c39bfd1a690a3eab63da859140c923f79d"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/adventure-01-context.jpg",
+      "bytes": 99788,
+      "sha256": "6dd24893a0fee7160176773bcac1be32536f9b83fd535e90279bef5d969cefe9"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/adventure-02-facets.jpg",
+      "bytes": 102471,
+      "sha256": "c114944c1118e4d242558099839dabd6e75ef3f51f57b8fd97fa59c4a0ef9a69"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/bratenahl-neighborhoods.jpg",
+      "bytes": 82685,
+      "sha256": "ee58fe087ffafb8c395d83f625f655561d0acb63f47356456cc8c8c982ec753e"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/bratenahl-officers.jpg",
+      "bytes": 102852,
+      "sha256": "c9b87bd8756878fe87eaff7070e93b69999ce41f781abf6c0fd55d24d988b99e"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/correlation-01-context.jpg",
+      "bytes": 117114,
+      "sha256": "f0393258af411a4767fa5948662469bb371be0aa5726ed948d20ccbd31df884e"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/correlation-02-hourly.jpg",
+      "bytes": 134367,
+      "sha256": "34335456fffa9946f8fe19c4422e9a264d2dc790cee72b639ae392ab883a1c86"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/correlation-03-hourly-control.jpg",
+      "bytes": 141616,
+      "sha256": "366152c415ce6e62360fdc799b4e0370cc48fe518c75414466381e9d5d83250c"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/date-patterns-01.jpg",
+      "bytes": 105261,
+      "sha256": "7e7c4cde4ebf2b9b652a045c8391b36b569d54387b96e81cc16bcb4d8d90bd47"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/date-patterns-06-quarter-day.jpg",
+      "bytes": 128683,
+      "sha256": "1fb14b27cf393cea113d06f4d1418f77bf68f4a567aa599aa7ce5b17a64e826e"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/forecast-02-zoom.jpg",
+      "bytes": 98215,
+      "sha256": "9443d078d5b59a79cc257e918af2588bcef1651aea6f67256bdcc1643b1bf4a2"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/forecast-03-definition.jpg",
+      "bytes": 99745,
+      "sha256": "53af56de78e9ae7106cef1a82ab8e29ffc9a68b2c39e4ca4e2c95f5424b7a921"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/obs-penguins-sex.jpg",
+      "bytes": 70059,
+      "sha256": "6ecd8b2f927f8e2261b42a57e5fa854a65b4d3c3d5d137cad1c9a9714ac0b62f"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/obs-penguins-species.jpg",
+      "bytes": 68275,
+      "sha256": "8cecc03f88dfe6bb5ddd2e9a97aa9e6e4202026c9c087681eb5519689c450e84"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/owid-01.jpg",
+      "bytes": 110699,
+      "sha256": "ee0240ddc2ee5778edb9bf940b85bda53698a912feaa29e7c8f18baf7cc820f7"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/owid-02.jpg",
+      "bytes": 102635,
+      "sha256": "2b8675931bfdf15db1381882644b39e29ee1a82cbfaa1813afb8a76bb6d6e817"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/penguins-01.jpg",
+      "bytes": 77361,
+      "sha256": "ec3de6184bc99898b1729a3bad26cebe675e1bfdb6e269456abe8d770e02f2e0"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/penguins-02.jpg",
+      "bytes": 103712,
+      "sha256": "7074b6eb0a7c90a5c3246b5803a14923dc16747fd7b9032e3ce00c5e59be6bd9"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/pudding-01.jpg",
+      "bytes": 200727,
+      "sha256": "16660fb00d4ef46ee85c8e11d8d974cfc54c7cb6f8640f6d22d719f2ad29650d"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/pudding-02.jpg",
+      "bytes": 108123,
+      "sha256": "8d4ef04583f328f7b906b073248f98a5402301a03eacb57333d25dd6847ec89a"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/pudding-03-explorer.jpg",
+      "bytes": 85794,
+      "sha256": "7fcb01c47a6a35b20cbbafef8122532f46b7d83ac54d2533909e91293eb5721d"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/seattle-01.jpg",
+      "bytes": 190544,
+      "sha256": "7af883b314b283ef77c33ed6cd10b68d45aabbe244c7de859e0e3ebc9b862c89"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/seattle-02.jpg",
+      "bytes": 193642,
+      "sha256": "fe2beb385721193e09f9320a6c08d547b9fc3bed11c2468a51fe2e0b17454066"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/spatial-01-weights.jpg",
+      "bytes": 143806,
+      "sha256": "e6c30bafc302ed743de48e802f4019171864f9c8fe077c9aff231977b7c5e7da"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/spatial-03-permutation-rerun.jpg",
+      "bytes": 84263,
+      "sha256": "2c645805acfd3d9df40ea66c49bd817603cb9aaa37104684e6f3a93cd2ea2afa"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/originals/spatial-05-selected.jpg",
+      "bytes": 78007,
+      "sha256": "4f06da476e2a220982dac8899966e630738171d82d0e700f1108e84632b818bc"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/adventure-01-context.jpg",
+      "bytes": 122924,
+      "sha256": "bc81eefca4437e8326d0a21d700f712e0b3814b3dab6d6e7c9052d0badfa9086"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/adventure-02-facets.jpg",
+      "bytes": 130617,
+      "sha256": "0dbc4464bfb07eafb2ddf77b9268b6489d6911cff8807d4a693b285b924d88aa"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/bratenahl-neighborhoods.jpg",
+      "bytes": 102635,
+      "sha256": "67026aa0cd148660306612b92601b1ce7ee7c173091a7853812e51047a454551"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/bratenahl-officers.jpg",
+      "bytes": 129905,
+      "sha256": "a680b970f10a5ed2d383152556808debde2b47962504d6f680d322aec186dc25"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/correlation-01-context.jpg",
+      "bytes": 151101,
+      "sha256": "a7883f3791e76f0abce46c6fd4b9bc4c2ab3e9a550d58d184e1244032f6527a1"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/correlation-02-hourly.jpg",
+      "bytes": 172322,
+      "sha256": "d63a11c9a4a55d4aadd182f50d513af5ad5d0bc4bbbc4b41146bda7c3b54fe38"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/correlation-03-hourly-control.jpg",
+      "bytes": 182351,
+      "sha256": "7e24aec30b8164a2fa9a69ae438c5ca3c4c077e4b1e41a5d8b888b33a86231d9"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/date-patterns-01.jpg",
+      "bytes": 131253,
+      "sha256": "944bf748a559fbd1429bbb39ec64418cc84921fa9304dbbff12c6d40ef91035c"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/date-patterns-06-quarter-day.jpg",
+      "bytes": 165227,
+      "sha256": "caee9ccec61e37452144ca52379f772ca6a63d3172b6f65d8596ed209f5c2547"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/forecast-02-zoom.jpg",
+      "bytes": 125863,
+      "sha256": "057e0c7bfc8a91472ca78ed8e71e6a6a95caa5bf7ac8a371ee5ff5a03e57dcfc"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/forecast-03-definition.jpg",
+      "bytes": 128042,
+      "sha256": "a095de8bde2b12748fa6a8b6e99a5932dda2b218724e9cf4027fbeb426da9784"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/obs-penguins-sex.jpg",
+      "bytes": 88256,
+      "sha256": "b9af83baf95d2532f681535822fe42fc9f11791047251413b6bf8327cb48e148"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/obs-penguins-species.jpg",
+      "bytes": 87554,
+      "sha256": "dfc31680252696e8e6213d217c6cad26614290f3dacafbb2a3063ef679bf5825"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/owid-01.jpg",
+      "bytes": 154952,
+      "sha256": "60bcad0f3ce2511e2eb359614d3535ce49aebc228569ccc032a9838becf1e46a"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/owid-02.jpg",
+      "bytes": 140899,
+      "sha256": "e5a5b5bb1cca2bc23ac038634fc47cae996729d232011714342557979d14d22f"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/penguins-01.jpg",
+      "bytes": 104359,
+      "sha256": "fffdf1ed5c98c744965a97253fc8cdf94e8dad12378831771b87c34ca8668b66"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/penguins-02.jpg",
+      "bytes": 140738,
+      "sha256": "ba5bc34501a75f0ed4f0c10e1ae460126ada17cccd895679778ebbb1d16906c2"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/pudding-01.jpg",
+      "bytes": 160248,
+      "sha256": "09b18054825ddcffe23ad33c72e084a8ade20f30b220c3fb0d1e1fdc2cc64dea"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/pudding-02.jpg",
+      "bytes": 145711,
+      "sha256": "a42ac9ae8ecc259fbf416721fbbed1c4c32d4e8e24f24a8bdc974217f4e91476"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/pudding-03-explorer.jpg",
+      "bytes": 111575,
+      "sha256": "2b2f2926e375fda5c5192aa557fff31191b2eec41257edec2c98f8e12f34432e"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/seattle-01.jpg",
+      "bytes": 139917,
+      "sha256": "09a0fb2e60ad7c5da3c97be65c1dc174668cdf17495c5ebc4e62ff74779a934a"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/seattle-02.jpg",
+      "bytes": 118052,
+      "sha256": "5afa0c2d216e79d0458a07a4957d75f1ba3a67d394fb95d91c83d01b30a3f960"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/spatial-01-weights.jpg",
+      "bytes": 187977,
+      "sha256": "6d734ba497457cb77c6fb9c310d7598da86849d80563107f04f2af61e47bf01b"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/spatial-03-permutation-rerun.jpg",
+      "bytes": 104138,
+      "sha256": "8cb4e275aa526d8a1670b5993e0d8d988020ab155a28b98102d5ea7ccc8b9b6b"
+    },
+    {
+      "path": "exploreda-notebook-research/assets/screenshots/spatial-05-selected.jpg",
+      "bytes": 99181,
+      "sha256": "b193652112d56cd5fd1d6afe5239d15550b9f31b9cad3d541e045eece185a850"
+    },
+    {
+      "path": "exploreda-notebook-research/exploreda-notebook-examples.html",
+      "bytes": 4580511,
+      "sha256": "a139a4505956be7427d79713c785c938b0681cd90e4917c26e13f2963315896e"
+    },
+    {
+      "path": "exploreda-notebook-research/exploreda-notebook-examples.pdf",
+      "bytes": 4270892,
+      "sha256": "dde0d79bf569bde72cd2f1ccee03f614d4bd55b59aaceeb0d5f4cfcebc9541bf"
+    },
+    {
+      "path": "exploreda-notebook-research/exploreda-source-index.json",
+      "bytes": 128764,
+      "sha256": "a7fc75b790efc63bd968c5e2b6db4436285c75aea09aa7de9efe589e042626da"
+    },
+    {
+      "path": "exploreda-notebook-research/source/adventure.json",
+      "bytes": 8260,
+      "sha256": "df381e7dcfa3b3aa43d2d5ea1f582c7dc1ec943657a25e7137e3f99296c869bf"
+    },
+    {
+      "path": "exploreda-notebook-research/source/bratenahl.json",
+      "bytes": 14597,
+      "sha256": "4760f8b4be3ffed1864cbe77b708588dd741794c72ab7ec3391eb59d29724c8d"
+    },
+    {
+      "path": "exploreda-notebook-research/source/build_report.py",
+      "bytes": 23222,
+      "sha256": "cf7f5d05cabd3a4e5a14b32a92e1f4844d35560bab24856b91a0f6155a668830"
+    },
+    {
+      "path": "exploreda-notebook-research/source/correlation.json",
+      "bytes": 10119,
+      "sha256": "116bcd6c90cca8911af72970a64e25ffd3ab4e0bc6c64dfcc594a4e3d7c9c0c1"
+    },
+    {
+      "path": "exploreda-notebook-research/source/date-patterns.json",
+      "bytes": 9219,
+      "sha256": "c00ff410b1e0dc548f8f07617fe2546b573c486972534e4c2090a7ce33bf7b7b"
+    },
+    {
+      "path": "exploreda-notebook-research/source/external-cases.json",
+      "bytes": 41658,
+      "sha256": "bea677991052edce9dc614afed2c2dd02ead09ff55f8f901dc5b7c26dc1f552e"
+    },
+    {
+      "path": "exploreda-notebook-research/source/forecast.json",
+      "bytes": 8409,
+      "sha256": "e0570ded36fb830c04c93e8e78bc28d8c8d8b79d883ef2dc649b1a902ff2b8f1"
+    },
+    {
+      "path": "exploreda-notebook-research/source/penguins.json",
+      "bytes": 11779,
+      "sha256": "1161758090f30f5977d2b756a4403c0fccfa0003a60a680e759063b337a98f66"
+    },
+    {
+      "path": "exploreda-notebook-research/source/spatial.json",
+      "bytes": 10527,
+      "sha256": "2140350926b654493218aa18bbfdc8a6ee74b5c62c161bb19cfe84b298eb380c"
+    },
+    {
+      "path": "exploreda-notebook-research/source/synthesis.json",
+      "bytes": 10115,
+      "sha256": "f6a76107651938de4a36d5e8b59180001aac44a7835397d87efc36722eb58c54"
+    },
+    {
+      "path": "exploreda-notebook-research.zip",
+      "bytes": 12100313,
+      "sha256": "0314ab3e5bb48218f49c6edaa04b16a0faf43ea3d84da075e01a64261ef9e90b"
+    }
+  ],
+  "supporting_files": [
+    {
+      "path": "research-prompt.txt",
+      "bytes": 5250,
+      "sha256": "49b81c5f5e5986cff28a5c7962ece50d896518dd060ee9e79ac8b0707fa35887",
+      "method": "Retrieved the complete user prompt with the read_thread tool."
+    }
+  ]
+}

@@ -1,0 +1,726 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Notebook analysis with synchronized definitions",
+    "slug": "notebook-analysis",
+    "scale": "capability",
+    "current_phase": "intent",
+    "last_updated": "2026-10-10",
+    "summary": "Interleave prose, dashboard-language blocks, and editable graphics in one reading column. Preserve both edit directions. Eleven researched examples inform the next scope decisions.",
+    "status": "planned",
+    "next_action": "Choose the first reproduction (forecast performance is recommended) and its relationship to saved dashboard views, then shape the edit-and-reopen proof."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-10"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "research_synthesis": {
+      "path": "research-synthesis.md",
+      "status": "current",
+      "updated_at": "2026-10-10"
+    }
+  },
+  "sources": [
+    {
+      "id": "user-request-2026-10-10",
+      "type": "direct-user-input",
+      "location": "Codex chat 01a12432-ded5-72b0-8ac2-9d6fb0dea869, notebook intent request, 2026-10-10",
+      "anchor": "Okay, let's go ahead and create a new intent document around the desire to produce an output that looks more like a notebook-style execution where we've got text and graphics interleaved. In particular, the goal is to go after something that feels a little bit more like observable rather than the These things which are straight dashboard. And what I'd really like to uncover is ways to define the queries and basically the visuals that result using our dashboarding language and to have it be kind of two-way synced so that the user can edit the graphs after they're made and then that persists back into the like text that defines the calculation block. And basically to just have the notebook style thing be just another coherent view into the rest of the features of the application. So go ahead and capture that as an intent. And then in the intent document, include 10 questions that would be good to answer to dial in the scope",
+      "authority": "Current explicit user request"
+    },
+    {
+      "id": "dashboard-text",
+      "type": "repository-documentation",
+      "location": "packages/explorEDA/README.md#dashboard-text",
+      "anchor": "Complete-dashboard declarations; calculations; chart-local where filters; compileDocument/exportDocument; compileViews/exportViews.",
+      "authority": "Current repository reality, not product intent"
+    },
+    {
+      "id": "saved-view-text-panel",
+      "type": "repository-code",
+      "location": "apps/demo/src/SavedViewsWorkspace.tsx:978",
+      "anchor": "DashboardTextPanel receives draft text, onApply, onExport, and onExportViews; export reads current saved settings.",
+      "authority": "Observed wiring, not proof of notebook synchronization"
+    },
+    {
+      "id": "rich-text-panel",
+      "type": "repository-documentation",
+      "location": "docs/application-feature-inventory.md#markdown--explanation-panel",
+      "anchor": "Markdown is a Tiptap editor storing HTML in chart settings; it is not a Markdown source editor or notebook execution system.",
+      "authority": "Current documented behavior"
+    },
+    {
+      "id": "related-intents",
+      "type": "repository-planning",
+      "location": "docs/intent/data-bound-narrative/intent-brief.md; docs/intent/reusable-analysis-outputs/intent-brief.md",
+      "anchor": "Live metric bindings in explanations and named downstream analytical results are separate future seeds.",
+      "authority": "Related scope context; does not add requirements to this initiative"
+    },
+    {
+      "id": "research-request-2026-10-10",
+      "type": "direct-user-input",
+      "location": "This chat, research-prompt request, 2026-10-10",
+      "anchor": "notebook style investigations ... text interleaved with graphics and calcs where each are full width rather than a dashboard; emphasize an image and then the analysis and commentary about the source data",
+      "authority": "Direct user clarification of experience and research scope"
+    },
+    {
+      "id": "synthesis-authorization-2026-10-10",
+      "type": "direct-user-input",
+      "location": "This chat, completed Pro thread download request, 2026-10-10",
+      "anchor": "The Pro thread is done. Doownload all its stuff into the intent folder. then synthesize all of the results using software-design-sleuth. You ahve my approval to download and synthesize",
+      "authority": "Explicit authorization to download and synthesize; no implementation scope approval"
+    },
+    {
+      "id": "pro-notebook-research",
+      "type": "external-agent-research",
+      "location": "docs/intent/notebook-analysis/resources/pro-notebook-research/exploreda-notebook-research/exploreda-source-index.json",
+      "anchor": "Eleven examples: seven Observable notebooks and four external investigations. All example records include data, sequence, elements, fit, and qualifications. Recommendations: forecast, date-patterns, seattle.",
+      "authority": "Research evidence and agent recommendations; compatibility was not checked against explorEDA"
+    },
+    {
+      "id": "pro-original-synthesis",
+      "type": "external-agent-research",
+      "location": "docs/intent/notebook-analysis/resources/pro-notebook-research/exploreda-notebook-research/source/synthesis.json",
+      "anchor": "Selection rationale, exclusions, three reproduction candidates, recurring patterns, and example-specific features.",
+      "authority": "Pro research synthesis, not accepted product scope"
+    },
+    {
+      "id": "capture-integrity",
+      "type": "local-artifact-verification",
+      "location": "docs/intent/notebook-analysis/resources/pro-notebook-research/capture-manifest.json",
+      "anchor": "Original ZIP plus all 64 members preserved, with sizes and SHA-256 checksums. Upstream datasets are linked, not repackaged.",
+      "authority": "Verified local capture and archive integrity"
+    },
+    {
+      "id": "related-table-foundation",
+      "type": "repository-documentation",
+      "location": "packages/explorEDA/README.md#related-tables",
+      "anchor": "exploreda/analysis evaluates source, lookup, expand, calculate, filter, and group steps; ExplorEdaProject displays one query result per view.",
+      "authority": "Current repository capability; joins need reuse assessment rather than an assumed new engine"
+    },
+    {
+      "id": "utc-date-functions",
+      "type": "repository-code",
+      "location": "packages/explorEDA/src/lib/calculations/functions/registry.ts",
+      "anchor": "formatDate uses utcFormat; extractDateComponent uses UTC year/month/day/quarter/ISO week.",
+      "authority": "Observed current implementation; does not prove local calendar or rolling-window support"
+    },
+    {
+      "id": "settings-text-export",
+      "type": "repository-code",
+      "location": "packages/explorEDA/src/lib/dsl/export.ts:137",
+      "anchor": "exportDocument obtains generated exportParts from settings and joins blocks as text.",
+      "authority": "Observed exporter, not proof of authored-text preservation"
+    },
+    {
+      "id": "existing-calculation-scope",
+      "type": "repository-documentation",
+      "location": "docs/application-feature-inventory.md#named-grouped-summaries",
+      "anchor": "Named grouped summaries provide bounded bar/table reuse. Current chart-local fits and transformations do not establish arbitrary reusable notebook outputs.",
+      "authority": "Documented boundary, read alongside the separately delivered related-table query path"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "readable-analysis",
+        "type": "outcome",
+        "statement": "Read explanation, calculation blocks, and graphics as one ordered notebook analysis.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "observable-reference",
+        "type": "example",
+        "statement": "Use Observable as an experience reference for interleaved analysis.",
+        "commitment": "illustrative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "No syntax, runtime, hosting, or collaboration requirement is inferred."
+      },
+      {
+        "id": "dashboard-language",
+        "type": "required behavior",
+        "statement": "Use the dashboard language to define queries, calculations, and resulting visuals.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "Required query breadth is unresolved; current declarations may not cover it."
+      },
+      {
+        "id": "two-way-editing",
+        "type": "required behavior",
+        "statement": "Text edits update results, and graphical edits persist into the text defining the corresponding block.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "Supported edit types, update timing, and treatment of invalid drafts remain open."
+      },
+      {
+        "id": "coherent-view",
+        "type": "desired experience",
+        "statement": "The notebook is another coherent view into existing explorEDA capabilities.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "Whether notebook and dashboard share saved-view identity remains open."
+      },
+      {
+        "id": "durable-meaning",
+        "type": "derived implication",
+        "statement": "Saved work retains the meaning of definitions and graphs when reopened.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": "Derived from edits persisting back into block text. Export and sharing are not settled."
+      },
+      {
+        "id": "initial-author",
+        "type": "audience",
+        "statement": "The likely author investigates data and explains the reasoning to a reader.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "medium",
+        "notes": "The user did not select a first audience or task."
+      },
+      {
+        "id": "existing-language",
+        "type": "current repository reality",
+        "statement": "Dashboard text already compiles and exports saved settings, including calculations and multiple views.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "dashboard-text"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "These APIs do not prove preservation of authored notebook blocks, comments, or formatting."
+      },
+      {
+        "id": "existing-prose",
+        "type": "current repository reality",
+        "statement": "The current Markdown panel stores rich text without notebook execution.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "rich-text-panel"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "scope-capture",
+        "type": "decision",
+        "statement": "Create an intent document with ten scope questions; do not start shaping or implementation in this request.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "The explicit ten-question request overrides the skill default of three."
+      },
+      {
+        "id": "full-width-reading",
+        "type": "desired experience",
+        "statement": "Interleave text, calculations, and graphics in one reading column; each main block spans that column.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "eventual",
+        "source_anchors": [
+          "research-request-2026-10-10"
+        ],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "Individual graphics may contain facets. The reading sequence is not a grid of unrelated dashboard panels."
+      }
+    ],
+    "themes": [
+      "Interleaved explanation and results",
+      "Two-way definition editing",
+      "One coherent analysis model",
+      "Initial notebook scope"
+    ],
+    "conflicts": [],
+    "human_questions": [
+      {
+        "id": "q1",
+        "topic": "First task",
+        "question": "Who will author and read the first notebook, and what real analysis should they complete?",
+        "status": "open",
+        "decision_impact": "Sets the primary workflow and reader needs.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "research_context": "The collection offers investigative, teaching, and published narrative examples. It does not choose the first author or reader.",
+        "research_anchors": [
+          "pro-notebook-research"
+        ]
+      },
+      {
+        "id": "q2",
+        "topic": "First release",
+        "question": "What is the smallest useful version: prose, definition blocks, and one chart, or tables and summary values too?",
+        "status": "open",
+        "decision_impact": "Sets the first release boundary and appetite.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "research_context": "Forecast performance is the recommended small candidate. This is not a user-approved first release.",
+        "research_anchors": [
+          "pro-notebook-research"
+        ]
+      },
+      {
+        "id": "q3",
+        "topic": "Query scope",
+        "question": "Are current dashboard declarations enough initially, or must blocks produce named results that later blocks can use?",
+        "status": "open",
+        "decision_impact": "Determines whether reusable intermediate outputs are needed.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "research_context": "Forecast uses a small derived field. Date Patterns and Seattle need broader intermediate computations; related-table queries already exist.",
+        "research_anchors": [
+          "pro-notebook-research"
+        ]
+      },
+      {
+        "id": "q4",
+        "topic": "Execution",
+        "question": "Should changes run automatically, require running one block, or require running the whole notebook?",
+        "status": "open",
+        "decision_impact": "Sets when results refresh and what execution controls users need.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "research_context": "Source examples include reactive controls, static authored outputs, and explicit randomized runs. There is no single implied execution policy.",
+        "research_anchors": [
+          "pro-notebook-research"
+        ]
+      },
+      {
+        "id": "q5",
+        "topic": "Shared state",
+        "question": "Should calculations and interactive filters affect the whole notebook, only later blocks, or explicitly linked blocks?",
+        "status": "open",
+        "decision_impact": "Sets population and dependency expectations across blocks.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "research_context": "Date Patterns demonstrates a local brush independent of later grouping. Correlation mixes local controls with shared styling.",
+        "research_anchors": [
+          "pro-notebook-research"
+        ]
+      },
+      {
+        "id": "q6",
+        "topic": "Graphical edits",
+        "question": "Which edits must write back first: fields, chart type, aggregation, filters, axis settings, or visual styling?",
+        "status": "open",
+        "decision_impact": "Sets the first supported graphical write-back contract.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "research_context": "The report proposes many graphical edits; observed source controls are distinguished. The first write-back coverage is still open.",
+        "research_anchors": [
+          "pro-notebook-research"
+        ]
+      },
+      {
+        "id": "q7",
+        "topic": "Text preservation",
+        "question": "Must graph edits preserve comments, formatting, and declaration order, or is regenerated equivalent text acceptable?",
+        "status": "open",
+        "decision_impact": "Sets whether equivalent generated text is sufficient.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "research_context": "The current exporter regenerates text from settings. Research does not resolve comment and formatting preservation expectations.",
+        "research_anchors": [
+          "pro-notebook-research"
+        ]
+      },
+      {
+        "id": "q8",
+        "topic": "View relationship",
+        "question": "Is the notebook another presentation of the same saved dashboard, or a separate document that reuses its analysis objects?",
+        "status": "open",
+        "decision_impact": "Sets saved-view identity and cross-view edit expectations.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "research_context": "Shared data does not establish whether notebook and dashboard share one saved view.",
+        "research_anchors": [
+          "pro-notebook-research"
+        ]
+      },
+      {
+        "id": "q9",
+        "topic": "Invalid drafts",
+        "question": "While block text is invalid, should the last valid graph remain editable, and how should users reconcile those edits?",
+        "status": "open",
+        "decision_impact": "Sets visible behavior when draft text and valid graphical state differ.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "research_context": "Broken source branches demonstrate scoped failures. They do not settle how invalid drafts and graph edits should coexist.",
+        "research_anchors": [
+          "pro-notebook-research"
+        ]
+      },
+      {
+        "id": "q10",
+        "topic": "Saved output",
+        "question": "Is reopening an editable notebook enough initially, or must users also share or export a readable, self-contained result?",
+        "status": "open",
+        "decision_impact": "Sets persistence, sharing, and export expectations.",
+        "source_anchors": [
+          "user-request-2026-10-10"
+        ],
+        "research_context": "The offline research report is a delivery format, not evidence that notebook export is required in the first release.",
+        "research_anchors": [
+          "pro-notebook-research"
+        ]
+      }
+    ],
+    "shape_readiness": {
+      "status": "needs-scope-decisions",
+      "reason": "Research identifies concrete reproduction candidates. Audience, first-release appetite, execution, text preservation, and saved-view identity remain open."
+    }
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/0345/explorEDA",
+      "revision": "29b402349f7ee1214cb5f71dc17bc8c5cac84458",
+      "worktree_status": "Clean detached HEAD before creating the intent files.",
+      "subsystems": [
+        "Dashboard text compiler and exporter",
+        "Saved view workspace",
+        "Rich-text explanation panel",
+        "Chart settings and save/restore"
+      ],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-10",
+      "event": "intent-created",
+      "status": "planned",
+      "reason": "Captured the requested notebook direction and ten scope questions. No implementation or shape was selected.",
+      "source_anchors": [
+        "user-request-2026-10-10"
+      ]
+    },
+    {
+      "date": "2026-10-10",
+      "event": "research-captured-and-synthesized",
+      "status": "planned",
+      "reason": "Saved the full Pro archive and all members. Added a synthesis covering all eleven examples and updated intent with research implications. Kept all ten scope questions open.",
+      "source_anchors": [
+        "synthesis-authorization-2026-10-10",
+        "pro-notebook-research",
+        "capture-integrity"
+      ],
+      "artifact_effects": {
+        "intent_brief": "updated",
+        "research_synthesis": "created",
+        "shape_brief": "not-created",
+        "implementation_plan": "not-created"
+      },
+      "downstream_invalidation": "No shape or implementation plan exists to invalidate. Research recommendations did not become approved requirements."
+    }
+  ],
+  "closure": null,
+  "quality_overrides": [
+    {
+      "rule": "intent.human_questions maximum of three",
+      "requested_count": 10,
+      "reason": "The user explicitly requested ten questions in the intent document.",
+      "source_anchors": [
+        "user-request-2026-10-10"
+      ]
+    }
+  ],
+  "research": {
+    "status": "synthesized",
+    "captured_at": "2026-10-10",
+    "packet": "resources/pro-notebook-research/README.md",
+    "source_thread": "https://chatgpt.com/c/6ac9c94f-51a8-83ea-8b65-e9ebc41e22ea",
+    "examples": [
+      {
+        "id": "obs-penguins",
+        "title": "Plot Exploration: Penguins",
+        "url": "https://observablehq.com/@observablehq/plot-exploration-penguins",
+        "role": "small visual-editing alternative",
+        "scope_status": "candidate-not-approved",
+        "source_anchor": "pro-notebook-research:examples[id=obs-penguins]"
+      },
+      {
+        "id": "forecast",
+        "title": "What’s different? Analyzing Time-Series Forecast Performance",
+        "url": "https://observablehq.com/@observablehq/whats-different-timeseries-forecast-performance",
+        "role": "recommended first proof candidate",
+        "scope_status": "candidate-not-approved",
+        "source_anchor": "pro-notebook-research:examples[id=forecast]"
+      },
+      {
+        "id": "adventure",
+        "title": "What caused this? An analysis adventure",
+        "url": "https://observablehq.com/@observablehq/what-caused-this-an-analysis-adventure",
+        "role": "aggregation and shared-scale reference",
+        "scope_status": "candidate-not-approved",
+        "source_anchor": "pro-notebook-research:examples[id=adventure]"
+      },
+      {
+        "id": "date-patterns",
+        "title": "Discovering Date Patterns",
+        "url": "https://observablehq.com/@observablehq/discovering-date-patterns",
+        "role": "recommended broader workflow candidate",
+        "scope_status": "candidate-not-approved",
+        "source_anchor": "pro-notebook-research:examples[id=date-patterns]"
+      },
+      {
+        "id": "correlation",
+        "title": "Correlation over time",
+        "url": "https://observablehq.com/@observablehq/correlation-over-time",
+        "role": "shared-input and independent-control reference",
+        "scope_status": "candidate-not-approved",
+        "source_anchor": "pro-notebook-research:examples[id=correlation]"
+      },
+      {
+        "id": "bratenahl",
+        "title": "How Bratenahl, Ohio, Disproportionately Targets Black Drivers",
+        "url": "https://observablehq.com/@themarshallproject/bratenahl-stops-tickets",
+        "role": "denominator and partial-failure reference",
+        "scope_status": "candidate-not-approved",
+        "source_anchor": "pro-notebook-research:examples[id=bratenahl]"
+      },
+      {
+        "id": "spatial",
+        "title": "Local Spatial Autocorrelation Interactive Tutorial",
+        "url": "https://observablehq.com/@michelleeesi/local-spatial-autocorrelation-interactive-tutorial",
+        "role": "later specialized execution reference",
+        "scope_status": "candidate-not-approved",
+        "source_anchor": "pro-notebook-research:examples[id=spatial]"
+      },
+      {
+        "id": "seattle",
+        "title": "Is Seattle Really Seeing an Uptick In Cycling?",
+        "url": "https://jakevdp.github.io/blog/2014/06/10/is-seattle-really-seeing-an-uptick-in-cycling/",
+        "role": "recommended stretch candidate",
+        "scope_status": "candidate-not-approved",
+        "source_anchor": "pro-notebook-research:examples[id=seattle]"
+      },
+      {
+        "id": "silge-penguins",
+        "title": "Get started with tidymodels and #TidyTuesday Palmer penguins",
+        "url": "https://juliasilge.com/blog/palmer-penguins/",
+        "role": "editorial versus computational dependency reference",
+        "scope_status": "candidate-not-approved",
+        "source_anchor": "pro-notebook-research:examples[id=silge-penguins]"
+      },
+      {
+        "id": "owid-decoupling",
+        "title": "Many countries have decoupled economic growth from CO₂ emissions, even if we take offshored production into account",
+        "url": "https://ourworldindata.org/co2-gdp-decoupling",
+        "role": "baseline and chart/table scope reference",
+        "scope_status": "candidate-not-approved",
+        "source_anchor": "pro-notebook-research:examples[id=owid-decoupling]"
+      },
+      {
+        "id": "pudding",
+        "title": "Film Dialogue from 2,000 screenplays, Broken Down by Gender and Age",
+        "url": "https://pudding.cool/2017/03/film-dialogue/",
+        "role": "aggregate/detail and selection-scope reference",
+        "scope_status": "candidate-not-approved",
+        "source_anchor": "pro-notebook-research:examples[id=pudding]"
+      }
+    ],
+    "recommendation": {
+      "first_proof": "forecast",
+      "later_workflow": "date-patterns",
+      "stretch": "seattle",
+      "selected_by_user": false,
+      "simpler_alternative": "Arrange existing rich-text and chart panels in one column to test reading flow. This alone cannot prove definition write-back.",
+      "proof": "One prepared source, a named delta calculation, full-series and local-window outputs. Edit text and graphical settings, then save and reopen.",
+      "observation": "The same calculation and output survive both edit directions; local changes leave the earlier full-series result intact.",
+      "decision_rule": "Expand only when definitions and outputs agree after both edit paths and reopening. Revisit the design if authored blocks or calculation meaning drift.",
+      "prerequisite": "Obtain and audit the forecast CSV; reconcile units, timestamps, missing rows, and duplicate hours before fixing expected outputs.",
+      "defer": [
+        "general statistical/model runtime",
+        "spatial statistics",
+        "stochastic execution",
+        "automatic narrative generation",
+        "complete recreation of every reference"
+      ]
+    },
+    "implications": [
+      {
+        "statement": "Separate reading order from execution dependencies.",
+        "examples": [
+          "date-patterns",
+          "silge-penguins"
+        ],
+        "status": "candidate"
+      },
+      {
+        "statement": "Distinguish local domains, shared filters, grouping inputs, and shared style.",
+        "examples": [
+          "forecast",
+          "date-patterns",
+          "correlation",
+          "owid-decoupling",
+          "pudding"
+        ],
+        "status": "candidate"
+      },
+      {
+        "statement": "Preserve formulas and population meaning during graphical editing.",
+        "examples": [
+          "forecast",
+          "bratenahl",
+          "pudding"
+        ],
+        "status": "candidate"
+      },
+      {
+        "statement": "Separate computed narrative values from authored conclusions.",
+        "examples": [
+          "bratenahl",
+          "owid-decoupling"
+        ],
+        "status": "candidate"
+      },
+      {
+        "statement": "Keep errors and stale results scoped to affected outputs.",
+        "examples": [
+          "bratenahl",
+          "spatial"
+        ],
+        "status": "candidate"
+      },
+      {
+        "statement": "Make raw rows, transformed rows, and chart values distinguishable.",
+        "examples": [
+          "date-patterns",
+          "seattle",
+          "owid-decoupling"
+        ],
+        "status": "candidate"
+      }
+    ],
+    "verification_limits": [
+      "The source index and original synthesis were reviewed for all eleven examples. Three representative screenshots were visually inspected locally.",
+      "Upstream pages, datasets, controls, and calculations were not independently rerun during this synthesis.",
+      "The package contains no upstream datasets. The Pro report marks several attached-data claims as loaded rows rather than independently downloaded bytes.",
+      "Repository documentation and selected code were read. No application reproduction or browser feature test was performed.",
+      "Original report-generation code was preserved without execution."
+    ]
+  }
+}
