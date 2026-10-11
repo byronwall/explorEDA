@@ -38,3 +38,5 @@ export function chartSettingsReference(type: string): SettingReference[] {
 export function chartTypes(): string[] {
   return Object.keys(CHART_SETTING_KEYS);
 }
+
+export { ChartSettingsSurface } from "./ChartSettingsSurface";

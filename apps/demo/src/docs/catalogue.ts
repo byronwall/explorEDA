@@ -1,5 +1,6 @@
 import {
   BarChart3,
+  Settings2,
   ScatterChart,
   Workflow,
   type LucideIcon,
@@ -9,10 +10,11 @@ import barImage from "./assets/bar-example.jpg";
 import scatterImage from "./assets/scatter-trace.jpg";
 import type { DocsTarget } from "./targets";
 
-export type DocsGroup = "plots" | "guides";
+export type DocsGroup = "plots" | "surfaces" | "guides";
 
 export const GROUP_LABELS: Record<DocsGroup, string> = {
   plots: "Plots",
+  surfaces: "Workspace",
   guides: "Shared guides",
 };
 
@@ -98,6 +100,27 @@ export const catalogue: readonly DocsPage[] = [
       },
     ],
     related: ["scatter", "rendering"],
+  },
+  {
+    topic: "chart-settings",
+    title: "Chart settings",
+    group: "surfaces",
+    icon: Settings2,
+    eyebrow: "Workspace",
+    lede: "Change what a chart shows, how it is scaled, and how it reads, with the chart still in view.",
+    summary:
+      "Open a chart's settings, find the right tab, and undo a session of edits at once.",
+    highlights: ["Tabs", "Live edits", "Reset"],
+    covers: ["surface:settings-popover"],
+    examples: [
+      {
+        id: "shop-operations",
+        heading: "Inside the order book",
+        meta: "500 orders · 7 linked views",
+        label: "Open the order-book example",
+      },
+    ],
+    related: ["bar"],
   },
   {
     topic: "rendering",

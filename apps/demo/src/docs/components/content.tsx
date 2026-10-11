@@ -227,6 +227,11 @@ export const mdxComponents: MDXComponents = {
       {children}
     </code>
   ),
+  kbd: ({ children }) => (
+    <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[0.85em] text-foreground">
+      {children}
+    </kbd>
+  ),
   strong: ({ children }) => (
     <strong className="font-medium text-foreground">{children}</strong>
   ),

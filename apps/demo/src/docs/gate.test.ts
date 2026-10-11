@@ -64,9 +64,12 @@ function currentInput(): DocsGateInput {
             exampleId: spec.exampleId,
             data: spec.data,
             charts: spec.savedData.charts.map((chart) => chart.id),
-            stepCharts: spec.steps.flatMap((step) =>
-              "brush" in step ? [step.brush.chart] : []
-            ),
+            stepCharts: [
+              ...spec.steps.flatMap((step) =>
+                "brush" in step ? [step.brush.chart] : []
+              ),
+              ...(spec.surface ? [spec.surface.chart] : []),
+            ],
           },
         ]
       )

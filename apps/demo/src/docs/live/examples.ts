@@ -12,7 +12,11 @@ export type LiveStep =
   /** The workspace row count after the steps so far. */
   | { expectRows: number }
   /** A filter chip whose text contains this, after the steps so far. */
-  | { expectChip: string };
+  | { expectChip: string }
+  /** Pick an option in the select with this accessible label. */
+  | { select: { label: string; option: string } }
+  /** A mark whose accessible name is exactly this, after the steps so far. */
+  | { expectMark: string };
 
 export type LiveExampleSpec = {
   /** The workspace region's accessible name. */
@@ -25,6 +29,11 @@ export type LiveExampleSpec = {
   /** Alt text for the screenshot shown on narrow screens. */
   shotAlt: string;
   steps: readonly LiveStep[];
+  /**
+   * Shows one chart beside a real workspace surface instead of the whole
+   * workspace. `chart` names the chart in `savedData`.
+   */
+  surface?: { kind: "settings"; chart: string };
 };
 
 type Placement = readonly [x: number, y: number, w: number, h: number];
@@ -75,10 +84,26 @@ export const liveExamples = {
       { expectRows: 265 },
     ],
   },
+  "settings-bar": {
+    label: "Live chart settings for the delivery-time histogram",
+    data: "/datasets/shop-operations.csv",
+    savedData: focus(shopDashboard, { "shop-delivery": [0, 0, 6, 5] }),
+    exampleId: "shop-operations",
+    shotAlt:
+      "The delivery-time histogram beside its settings panel, open on the Data tab.",
+    surface: { kind: "settings", chart: "shop-delivery" },
+    steps: [
+      { select: { label: "Data mode", option: "Category count" } },
+      { expectMark: "(missing): 9 records" },
+    ],
+  },
 } satisfies Record<string, LiveExampleSpec>;
 
 /** Height that fits a layout's grid rows plus the workspace toolbar and count. */
 export function liveExampleHeight(spec: LiveExampleSpec) {
+  if (spec.surface) {
+    return 400;
+  }
   const rows = Math.max(
     ...spec.savedData.charts.map(({ layout }) => layout.y + layout.h)
   );
@@ -93,6 +118,12 @@ export function describeStep(spec: LiveExampleSpec, step: LiveStep): string {
       ({ id }) => id === step.brush.chart
     );
     return `Drag across “${chart?.title ?? step.brush.chart}” from ${step.brush.from} to ${step.brush.to}.`;
+  }
+  if ("select" in step) {
+    return `Set “${step.select.label}” to “${step.select.option}”.`;
+  }
+  if ("expectMark" in step) {
+    return `A bar now reads “${step.expectMark}”.`;
   }
   if ("expectChip" in step) {
     return `The filter reads “${step.expectChip}”.`;

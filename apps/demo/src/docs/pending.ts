@@ -70,7 +70,6 @@ export const pendingTargets: readonly string[] = [
   "surface:field-list",
   "surface:filter-chips",
   "surface:rows-drawer",
-  "surface:settings-popover",
   "surface:side-panels",
   "surface:toolbar",
   "table:filtering",
@@ -80,4 +79,4 @@ export const pendingTargets: readonly string[] = [
 ];
 
 /** Raising this is the only way to add a gap, and shows up in review. */
-export const PENDING_LIMIT = 72;
+export const PENDING_LIMIT = 71;

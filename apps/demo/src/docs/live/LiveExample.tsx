@@ -20,6 +20,12 @@ const ExplorEda = lazy(() =>
   }))
 );
 
+const ChartSettingsSurface = lazy(() =>
+  import("exploreda/docs-kit").then(({ ChartSettingsSurface: Surface }) => ({
+    default: Surface,
+  }))
+);
+
 /** Below this viewport width a live example shows its screenshot. */
 export const LIVE_MIN_WIDTH = 1024;
 
@@ -158,7 +164,7 @@ export function LiveExample({
                 }}
               >
                 <RotateCcw aria-hidden="true" />
-                Reset
+                Start over
               </Button>
             )}
             <Button asChild variant="ghost" size="sm">
@@ -181,12 +187,27 @@ export function LiveExample({
               <Status>Could not load the example data.</Status>
             ) : rows ? (
               <Suspense fallback={<Status>Loading workspace…</Status>}>
-                <ExplorEda
-                  key={mount}
-                  data={rows}
-                  savedData={spec.savedData}
-                  onStateChange={() => setEdited(true)}
-                />
+                {spec.surface ? (
+                  <div
+                    key={mount}
+                    className="h-full overflow-auto"
+                    onInput={() => setEdited(true)}
+                    onChange={() => setEdited(true)}
+                  >
+                    <ChartSettingsSurface
+                      data={rows}
+                      savedData={spec.savedData}
+                      chartId={spec.surface.chart}
+                    />
+                  </div>
+                ) : (
+                  <ExplorEda
+                    key={mount}
+                    data={rows}
+                    savedData={spec.savedData}
+                    onStateChange={() => setEdited(true)}
+                  />
+                )}
               </Suspense>
             ) : (
               <Status>Loading example…</Status>

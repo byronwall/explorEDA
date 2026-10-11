@@ -473,12 +473,19 @@
       {
         "id": "m4",
         "title": "Pieces smaller than a workspace",
-        "status": "planned",
+        "status": "completed",
         "proof": "Unpublished docsKit mounts the settings popover with a step; no duplicate store; package API unchanged",
         "end_state": "Surface pages can show real components in focus",
         "outcome": "Settings popover documented with the real component in focus",
         "valid_intermediate_state": "Package API unchanged; kit unpublished",
-        "rollback": "Remove docsKit alias and page; surface pages fall back to focused whole workspaces"
+        "rollback": "Remove docsKit alias and page; surface pages fall back to focused whole workspaces",
+        "evidence": [
+          "docs-kit ChartSettingsSurface: one chart (ChartRenderer) beside the real ChartSettingsContent in one DataLayerProvider",
+          "/docs/chart-settings live example: select Data mode = Category count, expect mark '(missing): 9 records' (500 rows, 491 with a delivery time)",
+          "The check caught a wrong first guess ('(missing)' text is truncated in narrow plots), leading to the accessible-name step expectMark",
+          "Spike resolved: built demo bundle has each library string exactly as often as library source (no duplicate DataLayerProvider/registry); docs-kit shares tsup chunks with the main entry",
+          "docs:verify passes: 4 pages, 2 live examples"
+        ]
       },
       {
         "id": "m5",
@@ -510,8 +517,7 @@
       "AGENTS.md/ui-defaults tooltip reconciliation"
     ],
     "open_decisions": [
-      "steps vocabulary reach on Canvas marks (M3)",
-      "single library copy for docs kit (M4)"
+      "steps vocabulary reach on Canvas marks (M3)"
     ],
     "test_commands": [
       "pnpm --filter demo exec vitest run src/docs",
@@ -556,6 +562,12 @@
       "event": "milestone-completed",
       "milestone": "m3",
       "note": "Live example, steps, generated reference, and browser gate on /docs/bar."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "milestone-completed",
+      "milestone": "m4",
+      "note": "Docs kit settings surface; single library copy confirmed."
     }
   ],
   "closure": null

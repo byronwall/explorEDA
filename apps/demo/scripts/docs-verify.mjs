@@ -53,9 +53,13 @@ async function openPage(width, height) {
   return { page, errors };
 }
 
+/** Waits for a live workspace, or a live surface, to finish loading. */
 async function waitForWorkspace(page, id) {
   await page
-    .locator(`[data-docs-live="${id}"] .eda-row-count`)
+    .locator(
+      `[data-docs-live="${id}"] .eda-row-count, [data-docs-live="${id}"] [data-docs-surface]`
+    )
+    .first()
     .waitFor({ timeout: 30_000 });
 }
 
@@ -121,6 +125,17 @@ async function runSteps(page, where, id, steps) {
             `expected ${step.expectRows} rows, saw ${await rowCount(page, id)}`
           );
         }
+      } else if ("select" in step) {
+        await page
+          .locator(`[data-docs-live="${id}"]`)
+          .getByLabel(step.select.label, { exact: true })
+          .selectOption({ label: step.select.option });
+      } else if ("expectMark" in step) {
+        const mark = page
+          .locator(`[data-docs-live="${id}"]`)
+          .getByLabel(step.expectMark, { exact: true });
+        const ok = await settle(async () => (await mark.count()) > 0);
+        if (ok !== true) fail(at, `no mark named "${step.expectMark}"`);
       } else if ("expectChip" in step) {
         const chips = page.locator(
           `[data-docs-live="${id}"] .eda-filter-chips`
