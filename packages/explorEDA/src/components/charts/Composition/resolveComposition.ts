@@ -1,23 +1,40 @@
-import { dateTimestamp } from "@/lib/dateTime";
+import { timestampOf } from "@/lib/valueParsing";
 import {
   evaluateCalc,
   fillCalcTokens,
   formatCalcValue,
   type CalcResult,
 } from "./calculations";
-import type {
-  AnnotationElement,
-  CompositionDefinition,
-  CompositionElement,
-  GuideElement,
-  TextElement,
+import {
+  guideRepeats,
+  type AnnotationElement,
+  type CompositionDefinition,
+  type CompositionElement,
+  type GuideElement,
+  type LegendElement,
+  type LegendPart,
+  type MarkDefinition,
+  type TextElement,
+  type UnitElement,
+  type ValueScale,
+  INK,
+  MUTED_MARK,
 } from "./compositionTypes";
 import {
+  markCategories,
+  numericPixel,
+  readNumber,
   periodKey,
+  shadeColor,
+  valueColor,
+  valueColorSigned,
+  valueShare,
   periodStart,
   resolveUnit,
+  type BandDatum,
   type CompositionData,
   type GlyphDatum,
+  type PathDatum,
   type ResolvedInstance,
   type ResolvedUnit,
 } from "./resolveUnit";
@@ -44,6 +61,10 @@ interface NodeBase {
   /** The repeat that drew this node, for chart units. */
   instanceKey?: string;
   opacity?: number;
+  /** Clip the node to this box, such as a frame with fixed scale limits. */
+  clip?: Bounds;
+  /** Draw beneath every other node, such as a guide's shaded region. */
+  under?: boolean;
 }
 
 export interface TextNode extends NodeBase {
@@ -57,6 +78,8 @@ export interface TextNode extends NodeBase {
   anchor: "start" | "middle" | "end";
   /** A paper-colored outline that keeps text legible over marks. */
   halo?: string;
+  /** Degrees to turn the text about its first line's anchor, such as -90 for a y-axis title. */
+  rotate?: number;
 }
 
 export interface RectNode extends NodeBase {
@@ -66,6 +89,10 @@ export interface RectNode extends NodeBase {
   width: number;
   height: number;
   fill: string;
+  /** An outline, such as an inset's border. */
+  stroke?: string;
+  /** A hand-colored look: uneven edges and grain. */
+  texture?: "hand";
   glyph?: GlyphDatum;
 }
 
@@ -89,9 +116,48 @@ export interface LineNode extends NodeBase {
   stroke: string;
   strokeWidth: number;
   dash?: string;
+  /** A wider, solid line beneath in this color, so the line reads over dense marks. */
+  casing?: string;
 }
 
-export type SceneNode = TextNode | RectNode | CircleNode | LineNode;
+/** One path through ordered points, drawn as connected runs. */
+export interface PathNode extends NodeBase {
+  type: "path";
+  /** Connected runs of vertices; a gap in the data starts a new run. */
+  segments: { x: number; y: number; rowId: number }[][];
+  stroke: string;
+  strokeWidth: number;
+  /** Smooth curves through the vertices instead of straight runs. */
+  curve?: "smooth";
+  path: PathDatum;
+}
+
+/** The area between two bounds along ordered points, drawn as connected runs. */
+export interface AreaNode extends NodeBase {
+  type: "area";
+  segments: { x: number; y0: number; y1: number; rowId: number }[][];
+  fill: string;
+  fillOpacity: number;
+  /** An outline along the upper edge, such as a ridge's crest. */
+  stroke?: string;
+  /** Smooth curves along both edges instead of straight runs. */
+  curve?: "smooth";
+  /** A horizontal gradient that replaces the fill, from x1 to x2 in artboard pixels. */
+  gradient?: {
+    x1: number;
+    x2: number;
+    stops: { offset: number; color: string }[];
+  };
+  band: BandDatum;
+}
+
+export type SceneNode =
+  | TextNode
+  | RectNode
+  | CircleNode
+  | LineNode
+  | PathNode
+  | AreaNode;
 
 /** Why a guide or annotation sits where it does. */
 export interface ResolvedAnchor {
@@ -191,12 +257,30 @@ export function resolveComposition(
         });
         break;
       }
+      case "legend": {
+        const legend = resolveLegend(
+          element,
+          definition,
+          data,
+          measureText,
+          units
+        );
+        nodes.push(...legend.nodes);
+        elements.push({
+          id: element.id,
+          kind: element.kind,
+          name: element.name,
+          bounds: legend.bounds,
+        });
+        break;
+      }
       case "annotation": {
         const note = resolveAnnotation(
           element,
           units,
           measureText,
-          definition.artboard.background
+          definition,
+          data
         );
         nodes.push(...note.nodes);
         elements.push({
@@ -214,7 +298,12 @@ export function resolveComposition(
     width: definition.artboard.width,
     height: definition.artboard.height,
     background: definition.artboard.background,
-    nodes,
+    // Shaded regions go beneath the marks they sit behind, whatever the
+    // element order, so a projection tint never covers a band or a click.
+    nodes: [
+      ...nodes.filter((node) => node.under),
+      ...nodes.filter((node) => !node.under),
+    ],
     elements,
   };
 }
@@ -288,19 +377,29 @@ export function wrapText(
   return lines;
 }
 
-/** The x of a value on a repeat's position scale, at the middle of its bin. */
+/**
+ * The x of a value on a repeat's position scale, at the middle of its bin, or
+ * along its numeric x scale.
+ */
 export function positionX(
   instance: ResolvedInstance,
   value: { number?: number; text?: string }
 ): number | undefined {
   const position = instance.position;
+  if (!position && instance.xy) {
+    const number =
+      value.number ??
+      (value.text?.trim() ? readNumber(value.text.trim()) : undefined);
+    if (number === undefined || !Number.isFinite(number)) return undefined;
+    const [min, max] = instance.xy.x.domain;
+    if (number < min || number > max) return undefined;
+    return numericPixel(instance.xy.x, number);
+  }
   if (!position || !position.bins.length) return undefined;
   let key: string | undefined;
   if (position.scale.interval) {
-    const time =
-      value.number ??
-      (value.text?.trim() ? dateTimestamp(value.text.trim()) : undefined);
-    if (time === undefined || !Number.isFinite(time)) return undefined;
+    const time = timestampOf(value.number) ?? timestampOf(value.text);
+    if (time === undefined) return undefined;
     key = periodKey(periodStart(time, position.scale.interval));
   } else {
     key =
@@ -311,6 +410,597 @@ export function positionX(
   if (index < 0) return undefined;
   const band = instance.frame.width / position.bins.length;
   return instance.frame.x + (index + 0.5) * band;
+}
+
+/**
+ * A key for a mark's categories: a swatch and a label per category, in a
+ * row or a column from the element's position. It reads the same category
+ * order and colors the mark draws with.
+ */
+function resolveLegend(
+  legend: LegendElement,
+  definition: CompositionDefinition,
+  data: CompositionData,
+  measureText: MeasureText,
+  units: Map<string, ResolvedUnit>
+) {
+  const unit = definition.elements.find(
+    (element): element is UnitElement =>
+      element.kind === "unit" && element.id === legend.unitId
+  );
+  const scale = legend.scaleId
+    ? definition.scales.find(
+        (item): item is ValueScale =>
+          item.kind === "value" && item.id === legend.scaleId
+      )
+    : undefined;
+  if (scale)
+    return resolveRampLegend(
+      legend,
+      scale,
+      definition,
+      units,
+      measureText,
+      data
+    );
+  if (legend.items?.length)
+    return resolveKeyLegend(legend, unit, definition, measureText);
+  const mark = unit?.marks.find((item) => item.id === legend.markId);
+  const entries = mark ? markCategories(mark, data) : [];
+  const nodes: SceneNode[] = [];
+  const swatch = Math.round(legend.fontSize * 0.9);
+  const gap = 6;
+  const step = Math.round(legend.fontSize * 1.5);
+  let x = legend.x;
+  let y = legend.y;
+  let width = 0;
+  // A row wraps before it runs off the artboard, or past the set width.
+  const maxWidth =
+    legend.width ?? Math.max(80, definition.artboard.width - legend.x - 16);
+  entries.forEach((entry, index) => {
+    const entryWidth =
+      swatch + 4 + measureText(entry.key, legend.fontSize, 400) + gap * 2;
+    if (
+      legend.direction === "row" &&
+      x > legend.x &&
+      x + entryWidth - gap * 2 > legend.x + maxWidth
+    ) {
+      x = legend.x;
+      y += step;
+    }
+    nodes.push({
+      type: "rect",
+      key: `${legend.id}:${index}:swatch`,
+      elementId: legend.id,
+      x,
+      y: y + (step - swatch) / 2,
+      width: swatch,
+      height: swatch,
+      fill: entry.color,
+    });
+    nodes.push({
+      type: "text",
+      key: `${legend.id}:${index}:label`,
+      elementId: legend.id,
+      x: x + swatch + 4,
+      lines: [{ text: entry.key, y: y + step / 2 + legend.fontSize * 0.35 }],
+      fontSize: legend.fontSize,
+      fontWeight: 400,
+      fill: legend.color,
+      anchor: "start",
+    });
+    if (legend.direction === "row") {
+      x += entryWidth;
+      width = Math.max(width, x - legend.x);
+    } else {
+      y += step;
+      width = Math.max(width, entryWidth);
+    }
+  });
+  if (!entries.length)
+    return {
+      nodes,
+      bounds: { x: legend.x, y: legend.y, width: 80, height: step },
+    };
+  return {
+    nodes,
+    bounds: {
+      x: legend.x,
+      y: legend.y,
+      width,
+      height:
+        legend.direction === "row"
+          ? y - legend.y + step
+          : entries.length * step,
+    },
+  };
+}
+
+/**
+ * A key of chosen marks: each entry draws the mark's own glyph, such as a
+ * band's fill, a path's stroke, a muted series, or a summary's median, with
+ * its label. A band reads as it is drawn: over the bands before it.
+ */
+function resolveKeyLegend(
+  legend: LegendElement,
+  unit: UnitElement | undefined,
+  definition: CompositionDefinition,
+  measureText: MeasureText
+) {
+  const nodes: SceneNode[] = [];
+  const swatch = Math.round(legend.fontSize * 0.9);
+  const glyphWidth = Math.round(legend.fontSize * 1.8);
+  const gap = 8;
+  const step = Math.round(legend.fontSize * 1.5);
+  const maxWidth =
+    legend.width ?? Math.max(80, definition.artboard.width - legend.x - 16);
+  let x = legend.x;
+  let y = legend.y;
+  let width = 0;
+  (legend.items ?? []).forEach((item, index) => {
+    const mark = unit?.marks.find((entry) => entry.id === item.markId);
+    const entryWidth =
+      glyphWidth + 5 + measureText(item.label, legend.fontSize, 400) + gap * 2;
+    if (
+      legend.direction === "row" &&
+      x > legend.x &&
+      x + entryWidth - gap * 2 > legend.x + maxWidth
+    ) {
+      x = legend.x;
+      y += step;
+    }
+    const middle = y + step / 2;
+    const key = `${legend.id}:${index}`;
+    if (mark)
+      nodes.push(
+        ...keyGlyph(mark, item.part, unit!, {
+          key,
+          elementId: legend.id,
+          x,
+          middle,
+          width: glyphWidth,
+          swatch,
+        })
+      );
+    nodes.push({
+      type: "text",
+      key: `${key}:label`,
+      elementId: legend.id,
+      x: x + glyphWidth + 5,
+      lines: [{ text: item.label, y: middle + legend.fontSize * 0.35 }],
+      fontSize: legend.fontSize,
+      fontWeight: 400,
+      fill: legend.color,
+      anchor: "start",
+    });
+    if (legend.direction === "row") {
+      x += entryWidth;
+      width = Math.max(width, x - legend.x);
+    } else {
+      y += step;
+      width = Math.max(width, entryWidth);
+    }
+  });
+  const rows =
+    legend.direction === "row"
+      ? (y - legend.y) / step + 1
+      : (legend.items?.length ?? 1);
+  return {
+    nodes,
+    bounds: {
+      x: legend.x,
+      y: legend.y,
+      width: Math.max(width, 40),
+      height: Math.max(1, rows) * step,
+    },
+  };
+}
+
+/** The glyph a key legend draws for one part of a mark. */
+function keyGlyph(
+  mark: MarkDefinition,
+  part: LegendPart | undefined,
+  unit: UnitElement,
+  slot: {
+    key: string;
+    elementId: string;
+    x: number;
+    middle: number;
+    width: number;
+    swatch: number;
+  }
+): SceneNode[] {
+  const base = { key: `${slot.key}:glyph`, elementId: slot.elementId };
+  const rect = (fill: string, opacity?: number): RectNode => ({
+    ...base,
+    type: "rect",
+    x: slot.x,
+    y: slot.middle - slot.swatch / 2,
+    width: slot.width,
+    height: slot.swatch,
+    fill,
+    opacity,
+  });
+  const line = (stroke: string, strokeWidth: number): LineNode => ({
+    ...base,
+    type: "line",
+    x1: slot.x,
+    x2: slot.x + slot.width,
+    y1: slot.middle,
+    y2: slot.middle,
+    stroke,
+    strokeWidth,
+  });
+  const dot = (fill: string, r: number): CircleNode => ({
+    ...base,
+    key: `${slot.key}:dot`,
+    type: "circle",
+    cx: slot.x + slot.width / 2,
+    cy: slot.middle,
+    r: Math.min(r, slot.swatch / 2 + 1),
+    fill,
+  });
+  switch (mark.type) {
+    case "band": {
+      // Nested bands draw widest first, so a band shows through the ones
+      // under it in the same fill.
+      let clear = 1;
+      for (const other of unit.marks) {
+        if (other.type === "band" && other.fill === mark.fill)
+          clear *= 1 - other.opacity;
+        if (other.id === mark.id) break;
+      }
+      return [rect(mark.fill, 1 - clear)];
+    }
+    case "path":
+      return [
+        part === "muted"
+          ? line(mark.mutedStroke ?? MUTED_MARK, mark.strokeWidth)
+          : line(mark.stroke, Math.max(1.5, mark.strokeWidth)),
+      ];
+    case "point":
+      return [
+        dot(
+          part === "muted" ? (mark.mutedFill ?? MUTED_MARK) : mark.fill,
+          mark.radius
+        ),
+      ];
+    case "summary":
+      return part === "median"
+        ? [line(INK, 1.5), dot(INK, 4)]
+        : [rect(mark.fill, mark.opacity)];
+    case "strip":
+      return [
+        rect(part === "missing" ? (mark.missing ?? MUTED_MARK) : mark.fill),
+      ];
+    case "density":
+      return [rect(mark.fill, mark.opacity)];
+    case "span":
+      return [rect(mark.fill)];
+    case "horizon":
+      return [rect(part === "muted" ? mark.negative : mark.positive)];
+    case "stack":
+    case "waffle":
+    case "bar":
+      return [rect(mark.colors[0] ?? INK)];
+  }
+}
+
+/**
+ * A key for a value scale: swatches along its ramp from the lowest drawn
+ * value to the highest, labeled at the ends. A diverging scale runs from
+ * minus the largest magnitude through its center to plus, labeled at zero.
+ */
+function resolveRampLegend(
+  legend: LegendElement,
+  scale: ValueScale,
+  definition: CompositionDefinition,
+  units: Map<string, ResolvedUnit>,
+  measureText: MeasureText,
+  data: CompositionData
+) {
+  // The drawn extent: every strip glyph of a mark on this scale, or every
+  // change in median that colors a summary's markers.
+  let max = 0;
+  let min = Infinity;
+  let changes = false;
+  // A density shaded by this scale keys its x axis's extent.
+  let shaded: [number, number] | undefined;
+  for (const element of definition.elements) {
+    if (element.kind !== "unit") continue;
+    // A path or point shaded by a field keys that field's extent.
+    for (const mark of element.marks) {
+      if (
+        (mark.type !== "path" && mark.type !== "point") ||
+        mark.valueScaleId !== scale.id ||
+        !mark.valueField
+      )
+        continue;
+      const column = data.column(mark.valueField);
+      let low = Infinity;
+      let high = -Infinity;
+      for (const id of data.allIds) {
+        const value = readNumber(column[id]);
+        if (value === undefined) continue;
+        low = Math.min(low, value);
+        high = Math.max(high, value);
+      }
+      if (Number.isFinite(low)) shaded = [low, high];
+    }
+    if (
+      element.marks.some(
+        (mark) => mark.type === "density" && mark.colorScaleId === scale.id
+      )
+    ) {
+      const domain = units.get(element.id)?.instances[0]?.xy?.x.domain;
+      if (domain) shaded = domain;
+    }
+    const markIds = new Set(
+      element.marks
+        .filter(
+          (mark) =>
+            (mark.type === "strip" || mark.type === "summary") &&
+            mark.valueScaleId === scale.id
+        )
+        .map((mark) => mark.id)
+    );
+    if (!markIds.size) continue;
+    for (const node of units.get(element.id)?.nodes ?? []) {
+      if ((node.type !== "rect" && node.type !== "circle") || !node.glyph)
+        continue;
+      if (!markIds.has(node.glyph.markId) || node.glyph.missing) continue;
+      const summary = node.glyph.summary;
+      if (summary) {
+        if (summary.change === undefined) continue;
+        changes = true;
+      }
+      const value = summary ? summary.change! : node.glyph.value;
+      max = Math.max(max, Math.abs(value));
+      min = Math.min(min, value);
+    }
+  }
+  if (min === Infinity) min = 0;
+  // A fixed end keys the ramp to it; values past it share the end color.
+  if (scale.max !== undefined) {
+    max = scale.max;
+    min = Math.max(min, scale.center !== undefined ? -scale.max : min);
+  }
+  if (shaded && max === 0) {
+    min = shaded[0];
+    max =
+      scale.center !== undefined
+        ? Math.max(Math.abs(shaded[0]), Math.abs(shaded[1]))
+        : shaded[1];
+  }
+  const format = (value: number) =>
+    changes ? `${Math.round(value * 100)}%` : formatCalcValue(value, "number");
+  const diverging = scale.center !== undefined;
+  if (scale.stops && !diverging && legend.direction === "row")
+    return resolveStopsLegend(legend, scale, max, format, measureText);
+  const steps = diverging ? 9 : 7;
+  const swatch = Math.round(legend.fontSize * 0.9);
+  const step = Math.round(legend.fontSize * 1.5);
+  const nodes: SceneNode[] = [];
+  const row = legend.direction === "row";
+  for (let index = 0; index < steps; index += 1) {
+    const share = steps > 1 ? index / (steps - 1) : 0;
+    const value = diverging
+      ? -max + share * 2 * max
+      : min + share * (max - min);
+    const fill = shaded
+      ? shadeColor(scale, value, shaded)
+      : diverging
+        ? valueColorSigned(scale, value, max)
+        : valueColor(scale, valueShare(scale, value, max));
+    nodes.push({
+      type: "rect",
+      key: `${legend.id}:${index}:swatch`,
+      elementId: legend.id,
+      x: row ? legend.x + index * (swatch + 1) : legend.x,
+      y: row ? legend.y + (step - swatch) / 2 : legend.y + index * (swatch + 1),
+      width: swatch,
+      height: swatch,
+      fill,
+    });
+  }
+  const rampLength = steps * (swatch + 1) - 1;
+  const low = diverging ? `−${format(max)}` : format(min);
+  const high = diverging ? `+${format(max)}` : format(max);
+  type Label = {
+    text: string;
+    x: number;
+    y: number;
+    anchor: "start" | "middle" | "end";
+  };
+  const labels: Label[] = row
+    ? [
+        {
+          text: low,
+          x: legend.x,
+          y: legend.y + step + legend.fontSize,
+          anchor: "start",
+        },
+        {
+          text: high,
+          x: legend.x + rampLength,
+          y: legend.y + step + legend.fontSize,
+          anchor: "end",
+        },
+      ]
+    : [
+        {
+          text: low,
+          x: legend.x + swatch + 4,
+          y: legend.y + legend.fontSize * 0.9,
+          anchor: "start",
+        },
+        {
+          text: high,
+          x: legend.x + swatch + 4,
+          y: legend.y + rampLength,
+          anchor: "start",
+        },
+      ];
+  if (diverging)
+    labels.push(
+      row
+        ? {
+            text: "0",
+            x: legend.x + rampLength / 2,
+            y: legend.y + step + legend.fontSize,
+            anchor: "middle",
+          }
+        : {
+            text: "0",
+            x: legend.x + swatch + 4,
+            y: legend.y + rampLength / 2 + legend.fontSize * 0.35,
+            anchor: "start",
+          }
+    );
+  nodes.push({
+    type: "text",
+    key: `${legend.id}:title`,
+    elementId: legend.id,
+    x: legend.x,
+    lines: [{ text: scale.name, y: legend.y - 4 }],
+    fontSize: legend.fontSize,
+    fontWeight: 600,
+    fill: legend.color,
+    anchor: "start",
+  });
+  labels.forEach((label, index) =>
+    nodes.push({
+      type: "text",
+      key: `${legend.id}:${index}:label`,
+      elementId: legend.id,
+      x: label.x,
+      lines: [{ text: label.text, y: label.y }],
+      fontSize: legend.fontSize,
+      fontWeight: 400,
+      fill: legend.color,
+      anchor: label.anchor,
+    })
+  );
+  const labelWidth = Math.max(
+    ...labels.map((label) => measureText(label.text, legend.fontSize, 400))
+  );
+  return {
+    nodes,
+    bounds: row
+      ? {
+          x: legend.x,
+          y: legend.y - legend.fontSize - 4,
+          width: Math.max(rampLength, labelWidth * 2),
+          height: step + legend.fontSize * 2 + 8,
+        }
+      : {
+          x: legend.x,
+          y: legend.y - legend.fontSize - 4,
+          width: swatch + 8 + labelWidth,
+          height: rampLength + legend.fontSize + 8,
+        },
+  };
+}
+
+/** A stop's value to two significant digits, so the key reads 30, not 29.7. */
+function roundStop(value: number) {
+  if (value === 0) return 0;
+  const magnitude = 10 ** (Math.floor(Math.log10(Math.abs(value))) - 1);
+  return Math.round(value / magnitude) * magnitude;
+}
+
+/**
+ * A key for a ramp with placed stops: one swatch per color band, each as
+ * wide as the share of the ramp it covers, labeled with the value where it
+ * starts. Labels that would collide are left out.
+ */
+function resolveStopsLegend(
+  legend: LegendElement,
+  scale: ValueScale,
+  max: number,
+  format: (value: number) => string,
+  measureText: MeasureText
+) {
+  const stops = scale.stops!;
+  const height = Math.round(legend.fontSize * 0.9);
+  // Narrow bands still get a readable swatch.
+  const unit = Math.max(6, Math.round(legend.fontSize * 1.6));
+  const nodes: SceneNode[] = [];
+  const inverse = (share: number) =>
+    scale.transform === "sqrt"
+      ? (share * Math.sqrt(max)) ** 2
+      : scale.transform === "log"
+        ? Math.expm1(share * Math.log1p(max))
+        : share * max;
+  let x = legend.x;
+  let labelRight = -Infinity;
+  const top = legend.y + 4;
+  stops.forEach((stop, index) => {
+    const color = scale.colors[index]!;
+    if (index > 0 && scale.colors[index - 1] === color) return;
+    nodes.push({
+      type: "rect",
+      key: `${legend.id}:${index}:swatch`,
+      elementId: legend.id,
+      x,
+      y: top,
+      width: unit,
+      height,
+      fill: color,
+    });
+    const text = format(roundStop(inverse(stop)));
+    const width = measureText(text, legend.fontSize, 400);
+    if (x >= labelRight + 4) {
+      nodes.push({
+        type: "text",
+        key: `${legend.id}:${index}:label`,
+        elementId: legend.id,
+        x,
+        lines: [{ text, y: top + height + legend.fontSize + 2 }],
+        fontSize: legend.fontSize,
+        fontWeight: 400,
+        fill: legend.color,
+        anchor: "start",
+      });
+      labelRight = x + width;
+    }
+    x += unit + 1;
+  });
+  nodes.push({
+    type: "text",
+    key: `${legend.id}:title`,
+    elementId: legend.id,
+    x: legend.x,
+    lines: [{ text: scale.name, y: legend.y - 4 }],
+    fontSize: legend.fontSize,
+    fontWeight: 600,
+    fill: legend.color,
+    anchor: "start",
+  });
+  return {
+    nodes,
+    bounds: {
+      x: legend.x,
+      y: legend.y - legend.fontSize - 4,
+      width: Math.max(x - legend.x, labelRight - legend.x),
+      height: height + legend.fontSize * 2 + 10,
+    },
+  };
+}
+
+/** The y of a numeric value on a repeat's y scale, for horizontal guides. */
+export function positionY(
+  instance: ResolvedInstance,
+  value: { number?: number; text?: string }
+): number | undefined {
+  if (!instance.xy) return undefined;
+  const number =
+    value.number ??
+    (value.text?.trim() ? Number(value.text.trim()) : undefined);
+  if (number === undefined || !Number.isFinite(number)) return undefined;
+  const [min, max] = instance.xy.y.domain;
+  if (number < min || number > max) return undefined;
+  return numericPixel(instance.xy.y, number);
 }
 
 const emptyBounds = (x: number, y: number): Bounds => ({
@@ -334,42 +1024,129 @@ function resolveGuide(
     value.kind === "calc"
       ? definition.calculations.find((item) => item.id === value.calcId)
       : undefined;
-  if (!unit || !unit.instances.length)
+  const instances = unit ? guideRepeats(guide, unit.instances) : [];
+  if (!unit || !instances.length)
     return {
       nodes,
       bounds: emptyBounds(guide.x, guide.y),
       anchor: {
         kind: "guide" as const,
         point: { x: guide.x, y: guide.y },
-        missing: "The guide's chart unit is not on the page.",
+        missing: !unit
+          ? "The guide's chart unit is not on the page."
+          : "None of the guide's repeats is drawn.",
       },
     };
+  const paper = definition.artboard.background;
+  // A paper-colored casing under the rule keeps it legible over dense marks.
+  const rule = (
+    key: string,
+    instanceKey: string | undefined,
+    ends: { x1: number; y1: number; x2: number; y2: number }
+  ) => {
+    nodes.push({
+      type: "line",
+      key,
+      elementId: guide.id,
+      instanceKey,
+      ...ends,
+      stroke: guide.color,
+      strokeWidth: 1.5,
+      dash: "5 3",
+      casing: paper,
+    });
+  };
   const perRepeat = calc?.population === "repeat";
   const values: CalcResult[] = [];
   // A rule per repeat when each repeat has its own value; otherwise one rule.
   const groups = perRepeat
-    ? unit.instances.map((instance) => [instance])
-    : [unit.instances];
+    ? instances.map((instance) => [instance])
+    : [instances];
   let label: { x: number; y: number; text: string } | undefined;
+  const horizontal = guide.axis === "y";
   groups.forEach((group, index) => {
     const first = group[0]!;
-    let x: number | undefined;
+    let input: { number?: number; text?: string } | undefined;
     let text = guide.label;
     if (value.kind === "constant") {
-      x = positionX(first, { text: value.value });
+      input = { text: value.value };
     } else if (calc) {
       const result = evaluateCalc(calc, data, perRepeat ? first : undefined);
       values.push(result);
       if (result.value !== undefined)
-        x = positionX(
-          first,
+        input =
           result.kind === "date"
             ? { number: result.value }
-            : { text: String(result.value) }
-        );
+            : { text: String(result.value) };
       text = text.replace(/\{value\}/g, result.text);
     }
+    if (!input) return;
+    if (horizontal) {
+      // A horizontal rule per frame, at the value on that frame's own y
+      // scale, with the shade above or below it.
+      group.forEach((item, part) => {
+        const y = positionY(item, input);
+        if (y === undefined) return;
+        if (guide.shade && guide.shade !== "none") {
+          const above = guide.shade === "after";
+          nodes.push({
+            type: "rect",
+            key: `${guide.id}:${index}:${part}:shade`,
+            elementId: guide.id,
+            instanceKey: perRepeat ? first.key : undefined,
+            x: item.frame.x,
+            y: above ? item.frame.y : y,
+            width: item.frame.width,
+            height: above
+              ? y - item.frame.y
+              : item.frame.y + item.frame.height - y,
+            fill: guide.color,
+            opacity: 0.08,
+            under: true,
+          });
+        }
+        rule(
+          `${guide.id}:${index}:${part}`,
+          perRepeat ? first.key : undefined,
+          {
+            x1: item.frame.x - 3,
+            x2: item.frame.x + item.frame.width + 3,
+            y1: y,
+            y2: y,
+          }
+        );
+        if (text && !label)
+          label = {
+            x: item.frame.x + 4 + guide.x,
+            y: y - 5 + guide.y,
+            text,
+          };
+      });
+      return;
+    }
+    const x = positionX(first, input);
     if (x === undefined) return;
+    if (guide.shade && guide.shade !== "none")
+      group.forEach((item, part) => {
+        const after = guide.shade === "after";
+        nodes.push({
+          type: "rect",
+          key: `${guide.id}:${index}:${part}:shade`,
+          elementId: guide.id,
+          instanceKey: perRepeat ? first.key : undefined,
+          x: after ? x + (item.frame.x - first.frame.x) : item.frame.x,
+          y: item.frame.y,
+          width: after
+            ? item.frame.x +
+              item.frame.width -
+              (x + (item.frame.x - first.frame.x))
+            : x + (item.frame.x - first.frame.x) - item.frame.x,
+          height: item.frame.height,
+          fill: guide.color,
+          opacity: 0.08,
+          under: true,
+        });
+      });
     // Repeats stacked in one column share a rule that runs through the gaps.
     const segments = group.every((item) => item.frame.x === first.frame.x)
       ? [
@@ -387,18 +1164,11 @@ function resolveGuide(
           offset: item.frame.x - first.frame.x,
         }));
     segments.forEach((segment, part) => {
-      nodes.push({
-        type: "line",
-        key: `${guide.id}:${index}:${part}`,
-        elementId: guide.id,
-        instanceKey: perRepeat ? first.key : undefined,
+      rule(`${guide.id}:${index}:${part}`, perRepeat ? first.key : undefined, {
         x1: x + segment.offset,
         x2: x + segment.offset,
         y1: segment.top - 3,
         y2: segment.bottom + 3,
-        stroke: guide.color,
-        strokeWidth: 1.25,
-        dash: "4 3",
       });
     });
     // The label sits under the rule, below any position labels.
@@ -420,6 +1190,7 @@ function resolveGuide(
       fontWeight: 600,
       fill: guide.color,
       anchor: "start",
+      halo: paper,
     });
   const lines = nodes.filter((node): node is LineNode => node.type === "line");
   if (!lines.length)
@@ -430,20 +1201,25 @@ function resolveGuide(
         kind: "guide" as const,
         point: { x: unit.bounds.x, y: unit.bounds.y },
         values,
-        missing: "The guide's value falls outside the unit's position scale.",
+        missing: horizontal
+          ? "The guide's value falls outside the unit's y scale."
+          : "The guide's value falls outside the unit's position scale.",
       },
     };
-  const left = Math.min(...lines.map((line) => line.x1), label?.x ?? Infinity);
+  const left = Math.min(
+    ...lines.flatMap((line) => [line.x1, line.x2]),
+    label?.x ?? Infinity
+  );
   const right = Math.max(
-    ...lines.map((line) => line.x1),
+    ...lines.flatMap((line) => [line.x1, line.x2]),
     label ? label.x + measureText(label.text, 11, 600) : -Infinity
   );
   const top = Math.min(
-    ...lines.map((line) => line.y1),
+    ...lines.flatMap((line) => [line.y1, line.y2]),
     label ? label.y - 11 : Infinity
   );
   const bottom = Math.max(
-    ...lines.map((line) => line.y2),
+    ...lines.flatMap((line) => [line.y1, line.y2]),
     label ? label.y + 3 : -Infinity
   );
   return {
@@ -462,6 +1238,31 @@ function resolveGuide(
   };
 }
 
+/** True when a glyph's label, or its order value, equals the `at` text. */
+function matchesAt(glyph: GlyphDatum, at: string | undefined) {
+  const wanted = at?.trim().toLowerCase();
+  if (!wanted) return false;
+  return (
+    glyph.bin.label.trim().toLowerCase() === wanted ||
+    glyph.bin.key.trim().toLowerCase() === wanted
+  );
+}
+
+/** Replaces `{label}`, `{value}`, `{x}`, and `{y}` with a glyph's values. */
+export function fillGlyphTokens(text: string, glyph: GlyphDatum) {
+  return text
+    .replace(/\{value\}/g, formatCalcValue(glyph.value, "number"))
+    .replace(/\{label\}/g, glyph.bin.label)
+    .replace(
+      /\{x\}/g,
+      glyph.point ? formatCalcValue(glyph.point.x, "number") : "{x}"
+    )
+    .replace(
+      /\{y\}/g,
+      glyph.point ? formatCalcValue(glyph.point.y, "number") : "{y}"
+    );
+}
+
 function glyphCenter(node: RectNode | CircleNode) {
   return node.type === "rect"
     ? { x: node.x + node.width / 2, y: node.y + node.height / 2 }
@@ -472,14 +1273,17 @@ function resolveAnnotation(
   note: AnnotationElement,
   units: Map<string, ResolvedUnit>,
   measureText: MeasureText,
-  paper: string
+  definition: CompositionDefinition,
+  data: CompositionData
 ) {
+  const paper = definition.artboard.background;
   const nodes: SceneNode[] = [];
   const anchor = note.anchor;
   let point: { x: number; y: number } | undefined;
   let glyph: GlyphDatum | undefined;
   let missing: string | undefined;
-  let text = note.text;
+  // Calculation tokens such as {Total} fill as they do in page text.
+  let text = fillCalcTokens(note.text, definition, data);
   if (anchor.kind === "page") {
     point = { x: note.x, y: note.y };
   } else {
@@ -504,6 +1308,10 @@ function resolveAnnotation(
         )
           continue;
         const value = node.glyph.value;
+        if (anchor.pick === "at") {
+          if (matchesAt(node.glyph, anchor.at)) picked = node;
+          continue;
+        }
         if (
           !picked ||
           (anchor.pick === "max" && value > picked.glyph!.value) ||
@@ -512,13 +1320,15 @@ function resolveAnnotation(
         )
           picked = node;
       }
-      if (!picked) missing = "No glyph in this repeat passes the filters.";
+      if (!picked)
+        missing =
+          anchor.pick === "at"
+            ? `No glyph in this repeat is labeled ${anchor.at ?? "(empty)"}.`
+            : "No glyph in this repeat passes the filters.";
       else {
         point = glyphCenter(picked);
         glyph = picked.glyph!;
-        text = text
-          .replace(/\{value\}/g, formatCalcValue(glyph.value, "number"))
-          .replace(/\{label\}/g, glyph.bin.label);
+        text = fillGlyphTokens(text, glyph);
       }
     }
   }

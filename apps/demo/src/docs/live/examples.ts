@@ -185,6 +185,17 @@ export const liveExamples = {
       { expectRows: 1967 },
     ],
   },
+  hierarchy: {
+    label: "Live hierarchy treemap",
+    data: "/categorical_medium.csv",
+    savedData: focus(categoricalChartSettings, {
+      "5b0d2c8e-3f41-4a8b-9c3e-6e2a1f7d4c19": [0, 0, 12],
+    }),
+    exampleId: "categorical-charts",
+    shotAlt:
+      "A treemap of the catalog nested by category, subcategory, and material.",
+    steps: [{ expectRows: 10000 }],
+  },
   "data-table": {
     label: "Live data table",
     data: SHOP,

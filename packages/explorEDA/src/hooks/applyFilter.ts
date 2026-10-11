@@ -1,6 +1,10 @@
-import { dateTimestamp } from "@/lib/dateTime";
+import {
+  dateBound,
+  finiteNumber,
+  isMissingValue,
+  timestampOf,
+} from "@/lib/valueParsing";
 import { categoryIncludes } from "@/lib/categories";
-import { isMissingValue } from "@/lib/numeric";
 import { datum, Filter } from "@/types/FilterTypes";
 
 export function applyFilter(value: datum, filter: Filter): boolean {
@@ -16,8 +20,8 @@ export function applyFilter(value: datum, filter: Filter): boolean {
         typeof value === "number" ||
         (typeof value === "string" && value.trim() !== "")
       ) {
-        const number = Number(value);
-        if (!Number.isFinite(number)) {
+        const number = finiteNumber(value);
+        if (number === undefined) {
           return false;
         }
         return (
@@ -44,23 +48,14 @@ export function applyFilter(value: datum, filter: Filter): boolean {
       }
       break;
     case "date-range": {
-      if (typeof value !== "string") {
+      const timestamp = timestampOf(value);
+      if (timestamp === undefined) {
         return false;
       }
 
-      const timestamp = dateTimestamp(value);
-      if (Number.isNaN(timestamp)) {
-        return false;
-      }
-
-      const min =
-        filter.min === undefined ? undefined : dateTimestamp(filter.min);
+      const min = filter.min === undefined ? undefined : dateBound(filter.min);
       const max =
-        filter.max === undefined
-          ? undefined
-          : filter.max.length === 10
-            ? dateTimestamp(`${filter.max}T23:59:59.999Z`)
-            : dateTimestamp(filter.max);
+        filter.max === undefined ? undefined : dateBound(filter.max, true);
 
       return (
         (min === undefined || (!Number.isNaN(min) && timestamp >= min)) &&

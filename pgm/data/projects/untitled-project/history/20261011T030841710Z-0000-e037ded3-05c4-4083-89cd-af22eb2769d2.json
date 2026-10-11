@@ -1,0 +1,14 @@
+{
+  "id": "e037ded3-05c4-4083-89cd-af22eb2769d2",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:ff6dc2",
+    "label": "Agent token ...ff6dc2"
+  },
+  "createdAt": "2026-10-11T03:08:41.710Z",
+  "summary": "Updated metadata for \"Banana yield is good\".",
+  "nodeIds": [
+    "page-banana-yield-is-good"
+  ]
+}

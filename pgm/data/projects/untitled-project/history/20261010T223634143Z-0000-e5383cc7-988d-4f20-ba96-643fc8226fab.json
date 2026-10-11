@@ -1,0 +1,17 @@
+{
+  "id": "e5383cc7-988d-4f20-ba96-643fc8226fab",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:a42d05",
+    "label": "Agent token ...a42d05"
+  },
+  "createdAt": "2026-10-10T22:36:34.143Z",
+  "summary": "Added 1 images to \"Composition repeat labels show inconsistent decimals\".",
+  "nodeIds": [
+    "page-composition-repeat-labels-show-inconsistent-decimals"
+  ],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

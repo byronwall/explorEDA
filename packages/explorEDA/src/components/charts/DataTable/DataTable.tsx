@@ -18,7 +18,7 @@ import { DataTableToolbar } from "./DataTableToolbar";
 import { DataTableSettings } from "./definition";
 import { getFilteredRows, DataTableRow } from "./filteredRows";
 import { getChartSummary } from "../chartAccessibility";
-import { isMissingValue } from "@/lib/numeric";
+import { isMissingValue } from "@/lib/valueParsing";
 import { fitColumnWidth, WIDTH_SAMPLE_ROWS } from "./columnWidths";
 
 interface DataTableProps extends BaseChartProps<DataTableSettings> {
@@ -63,7 +63,7 @@ export function DataTable({
   // The Rows view always shows distributions; a table chart opts in.
   const showDistributions =
     rows !== undefined || settings.showDistributions !== false;
-  // Rows passes every chart filter. A table chart ignores its own filters,
+  // Rows passes every linked filter. A table chart ignores its own filters,
   // so a filtered column keeps its shape with the kept range highlighted.
   // Only the table's columns are profiled.
   const distributionProfiles = useFilteredFieldProfiles(

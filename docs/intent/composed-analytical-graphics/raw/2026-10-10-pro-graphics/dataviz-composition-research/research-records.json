@@ -1,0 +1,1430 @@
+[
+  {
+    "key": "a1",
+    "title": "Measles — Battling Infectious Diseases in the 20th Century: The Impact of Vaccines",
+    "family": "Strips, heat strips, and timeline grids",
+    "creator_publisher": "Tynan DeBold and Dov Friedman, The Wall Street Journal, February 11, 2015. The saved visual is an original WSJ screenshot reproduced in Xan Gregg's JMP article dated March 5, 2015.",
+    "page_url": "https://graphics.wsj.com/infectious-diseases-and-vaccines/",
+    "image_url": "https://community.jmp.com/t5/image/serverpage/image-id/1253iDBAECD788ECD2BBD/image-size/large?px=999&v=v2",
+    "what_it_shows": "Annual measles incidence forms a colored row for each state. A vertical rule at 1963 makes the broad change after vaccine introduction immediately visible, while individual cells retain state-level variation and missing observations.",
+    "why_it_fits": "A large historical comparison emerges entirely from repeated strips, a shared color scale, restrained labeling, and one reference annotation. The editorial work is in alignment and context rather than unusual geometry.",
+    "composition": {
+      "artboard": "Approximately 840×560 pixels for the saved chart; white landscape canvas. Add the panel title and source note in a surrounding composition.",
+      "text_elements": "Measles title; state labels; decade labels; vaccine-introduction callout; color-key values; source and CDC coverage note.",
+      "scales": "Year maps to shared x position; annual cases per 100,000 map to one shared multistop color scale. White or neutral cells distinguish nulls. A small colored strip plus free text can author the static key.",
+      "unit_template": "One state strip containing one fixed rectangle per year, with color encoding the supplied rate and narrow white gutters.",
+      "repeat_rule": "51 vertical rows, including Washington DC, ordered by the publisher's state-index lookup rather than spelled-out state names.",
+      "calculations": "No aggregation is needed for the supplied annual table. If adding a summary, per-state mean covers that repeat's non-null selected years and follows filters; a historical baseline, if added, covers all states and the fixed original period and ignores filters. Never sum state incidence rates to obtain a national rate.",
+      "guides_annotations_highlights": "The 1963 rule spans the full grid and remains fixed under filtering. Its label attaches to the guide. State names attach to their row frames. Preserve missingness as data, not zeros."
+    },
+    "tier": "Today",
+    "milestones": [],
+    "new_capabilities": [],
+    "minimum_data_table": "state, state_index, year, rate_per_100k, is_missing; one row per state-year. The verified measles JSON supplies 4,334 triples for 1928–2012 and 51 state/DC rows, including 493 null rates. Complete the 4,335-cell grid with an explicit null for the absent Alaska 2003 record.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://graphics.wsj.com/infectious-diseases-and-vaccines/data/datum.json",
+      "https://graphics.wsj.com/infectious-diseases-and-vaccines/js/script.min.js?v=49884a29ff"
+    ],
+    "source_data": "Both publisher endpoints returned HTTP 200 and their full bodies were inspected. Select the object with id=measles: data.values.data contains 4,334 [year, state_index, rate] triples; data.chart_options.vaccine_year is 1963. Resolve state_index with the 51-item state array in the accompanying script. Preserve 493 explicit null rates and fill the absent Alaska 2003 record with null. The JSON note states that 2003–2012 uses CDC annual confirmed-case data rather than the earlier weekly provisional series. No separate data reuse license was stated in these files; the publication carries Dow Jones copyright. The independently opened JMP article documents complications from missing weekly values.",
+    "difficulty": "low",
+    "difficulty_reason": "The main care is preserving the original state order and missing-data distinctions while aligning the guide across 51 rows.",
+    "verification": {
+      "image": "The 83,362-byte PNG was downloaded and visually inspected; the full grid, axes, color key, and vaccination rule are visible at 839 × 556 pixels.",
+      "data": "Publisher JSON and JavaScript parsed; 4,334 measles triples, 493 null rates, 51 state indices, and one missing Alaska 2003 grid cell were verified."
+    },
+    "id": "01",
+    "image_width": 839,
+    "image_height": 556,
+    "image_file": "images/01-measles-battling-infectious-diseases-in-the-20th-century-the-impact-of-vacc.png",
+    "image_sha256": "752087371f4377e31173d5cbc94a178f91cf5f81de118e513c46c9bd44a5de12",
+    "supporting_source_urls": [
+      "https://graphics.wsj.com/infectious-diseases-and-vaccines/",
+      "https://community.jmp.com/t5/JMPer-Cable-Blog/Graph-makeover-Measles-heat-map/ba-p/30550",
+      "https://community.jmp.com/t5/image/serverpage/image-id/1253iDBAECD788ECD2BBD/image-size/large?px=999&v=v2"
+    ]
+  },
+  {
+    "key": "a2",
+    "title": "States won by Democrats and Republicans in the U.S. presidential election",
+    "family": "Strips, heat strips, and timeline grids",
+    "creator_publisher": "Simon Jockers, Datawrapper Blog, November 5, 2020. The downloaded graphic separately identifies its 2020 projection as updated November 17, 2020; the notebook is dated November 8, 2020.",
+    "page_url": "https://www.datawrapper.de/blog/weekly-chart-presidential-elections",
+    "image_url": "https://datawrapper.dwcdn.net/eqkqt/full.png",
+    "what_it_shows": "Each election occupies a horizontal band, with states running roughly west to east. Color communicates the winning party and vote share; stripe widths carry electoral weight, making political continuity and regional changes visible across elections.",
+    "why_it_fits": "The composition combines an unusually compact repeated comparison with candidate labels and a clearly explained encoding. It is a practical strip target when weighted stripes are prepared as contiguous equal-width slots.",
+    "composition": {
+      "artboard": "Approximately 1220 × 1880 pixels, white portrait canvas, with labels occupying the left third and a contiguous colored matrix on the right.",
+      "text_elements": "Title with colored party words; width-encoding explanation; election year and two candidate names per row; bold winner; east/west direction labels; key and projection/source notes.",
+      "scales": "Use one shared categorical slot x scale, preserving the author’s approximate west-to-east state order. Color maps signed winning-candidate vote share to a fixed red/blue diverging palette. The source width weights sum to 533, with Maine and Nebraska assigned two each; these are published display weights, not a complete 538-vote Electoral College allocation.",
+      "unit_template": "One election-year strip contains a run of equal-width rectangle slots for each state, all slots in that run sharing the state’s color. Expanding each source width_weight into slots reproduces proportional stripe widths using the current categorical strip model. Add two candidate names, party swatches, and a bold winner in the left text rail.",
+      "repeat_rule": "Repeat 12 election years vertically, 2020 down to 1976, with the same state order and width weights in every row. The underlying Observable preparation provides 11 elections; the saved graphic includes an additional 2020 projection row.",
+      "calculations": "For each state-year, retain Democratic and Republican candidates, identify the larger candidatevotes/totalvotes share, and sign it positive for Democratic or negative for Republican. This is winning vote share, not the Democratic-minus-Republican margin. Population and vote denominator remain fixed under display filters. Width weights, slot expansion, and source state order also ignore filters; excluding states leaves slots vacant. Candidate names and election-winner labels come from the supplied lookup.",
+      "guides_annotations_highlights": "Horizontal row separators attach to frames. Winner emphasis is an instance override. The 2020 asterisk attaches to that row; the provenance note attaches to the artboard. A static strip key and text suffice."
+    },
+    "tier": "Today",
+    "milestones": [],
+    "new_capabilities": [],
+    "minimum_data_table": "year, state, state_order, width_weight, slot, signed_winning_share, winning_party, democratic_candidate, republican_candidate, election_winner; 612 state-year values for 12 elections, expanded to 6,396 cell records if the published 533 total width weights are retained. The verified numeric source supplies only 1976–2016 (561 state-years before slot expansion); the 2020 projection remains to be recovered.",
+    "data_status": "Obtainable",
+    "data_urls": [
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ4O_Vc5K1zcGRZ0Fw4ihMDB3LCvShxlDmRGyLskzX-9YFYWT1G7u4oBu1UJGlpb3-Yce0Ra0u-aF61/pub?gid=0&single=true&output=csv",
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ4O_Vc5K1zcGRZ0Fw4ihMDB3LCvShxlDmRGyLskzX-9YFYWT1G7u4oBu1UJGlpb3-Yce0Ra0u-aF61/pub?gid=536124004&single=true&output=csv",
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ4O_Vc5K1zcGRZ0Fw4ihMDB3LCvShxlDmRGyLskzX-9YFYWT1G7u4oBu1UJGlpb3-Yce0Ra0u-aF61/pub?gid=1236465032&single=true&output=csv"
+    ],
+    "source_data": "The author’s public Google Sheets CSVs were retrieved through the URLs in the linked Observable notebook. Verified files contain 3,740 candidate rows for 1976–2016 (year, state, party, candidatevotes, totalvotes and other identifiers); 51 state rows (state, latitude, longitude, votes); and 12 candidate-name rows through 2020. The state width weights total 533 because Maine and Nebraska have two each. The saved graphic explicitly uses CNN projections updated November 17, 2020, but those 2020 numeric values are absent from the verified vote CSV. Recover that projection snapshot, or use separately verified final 2020 results and label the replacement vintage; do not call it an exact reproduction. No separate data license was stated on the inspected Sheet exports.",
+    "difficulty": "medium",
+    "difficulty_reason": "Pre-expanding weighted stripes is straightforward, but exact projection provenance and frozen slot alignment need care.",
+    "verification": {
+      "image": "The 233,886-byte PNG was downloaded and visually inspected; all 12 rows, weighted state stripes, candidate text, key, and November 17 projection note are visible.",
+      "data": "Three CSV bodies returned HTTP 200 and parsed successfully. Historical votes, state weights, and candidate columns were checked; the exact 2020 projection is absent from the verified numeric table."
+    },
+    "capability_notes": "The geometry fits Today after explicit categorical-slot expansion. The incomplete 2020 numeric source makes the full displayed table Obtainable. Native variable-width bins or live repacking are not assumed.",
+    "id": "02",
+    "image_width": 1220,
+    "image_height": 1878,
+    "image_file": "images/02-states-won-by-democrats-and-republicans-in-the-u-s-presidential-election.png",
+    "image_sha256": "9e820fa65b9114cc19a40076c1062e316b20166d37daf2d73e1147c6506d35da",
+    "supporting_source_urls": [
+      "https://www.datawrapper.de/blog/weekly-chart-presidential-elections",
+      "https://observablehq.com/@sjockers/presidential-elections-by-state-1976-2016",
+      "https://datawrapper.dwcdn.net/eqkqt/full.png"
+    ]
+  },
+  {
+    "key": "a6",
+    "title": "The Yield Gap",
+    "family": "Waffles and unit grids",
+    "creator_publisher": "Benjamin Nowak, published with the author's reproducible walkthrough at the R Graph Gallery. Publication date is not stated on the inspected page and remains unverified.",
+    "page_url": "https://r-graph-gallery.com/web-waffle-chart-for-distribution.html",
+    "image_url": "https://r-graph-gallery.com/img/graph/web-waffle-chart-for-distribution.png",
+    "what_it_shows": "Two rows of unit histograms compare average national wheat and maize yields. Every square represents a country, while continent colors reveal where countries sit along the yield distribution; many African countries cluster toward its lower end.",
+    "why_it_fits": "One-country units preserve the individuals behind a histogram while the two aligned crop panels support comparison. Colored words in the subtitle provide the key without a separate legend widget.",
+    "composition": {
+      "artboard": "Approximately 2048 × 820 pixels, white landscape canvas, with two crop bands beneath a large title and colored subtitle.",
+      "text_elements": "Title; one-square-per-country explanation; colored continent names; crop labels; yield-bin labels 0–13. Add units and 2010–2020 coverage in a reconstruction note because the compact reference omits them.",
+      "scales": "Prepared categorical cell_slot to x, with gaps between yield bins; continent to shared categorical color. Identical square dimensions and three-square row packing apply to both crops. Vertical positions are repeat rows, not numeric point coordinates.",
+      "unit_template": "A thin strip representing one physical row of packed squares. Prepared columns identify crop, packing_row, yield_bin, and slot; each occupied slot draws one square. Empty slots remain blank.",
+      "repeat_rule": "Repeat a composite crop×packing_row key vertically, with padding between the two crop groups. Upstream packing gives each bin three columns and a consistent bottom baseline. The semantic two-crop layout is preserved using many simple strip rows.",
+      "calculations": "Upstream per-country/crop mean covers nonmissing 2010–2020 yield observations, divided by 10,000 to convert hg/ha to tonnes/ha; floor assigns an integer yield bin. These calculations follow selected years and countries when the prepared table is rebuilt. Counts cover one crop × bin × continent. The publisher excludes bins at or above 14; disclose that fixed exclusion. Global continent colors ignore filters.",
+      "guides_annotations_highlights": "Crop captions attach to their groups; x-bin labels attach to aligned category positions. Horizontal crop names can replace the source's rotated labels as a typography variation. Repacking after data filters is a preparation step, not a claimed native editor feature."
+    },
+    "tier": "Today",
+    "milestones": [],
+    "new_capabilities": [],
+    "minimum_data_table": "country_code, country, crop, year, yield; 3,176 raw country-crop-year records. Join continent, average 2010–2020, bin, then prepare one cell per retained country-crop with packing_row and categorical cell_slot. The verified current Natural Earth join and bin exclusion retain 270 cells: 149 maize and 121 wheat.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/BjnNowak/book/main/data/wheat_maize_2010_2020.csv",
+      "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson"
+    ],
+    "source_data": "The creator’s FAOSTAT-derived CSV returned HTTP 200 and parsed into 3,176 rows with 14 columns: Domain Code, Domain, Area Code (M49), Area, Element Code, Element, Item Code (CPC), Item, Year Code, Year, Unit, Value, Flag, Flag Description. Read as UTF-8 with BOM; Unit is hg/ha. The Natural Earth GeoJSON also returned HTTP 200, with 177 features and the required UN_A3, CONTINENT, and NAME attributes; geometry is discarded. Of 178 FAO country codes, 162 match this lookup. The 293 country-crop means reduce to 270 after excluding 19 unmatched country-crop groups and four bins at or above 14. Preserve leading zeros in M49. The gallery does not pin its Natural Earth version, so the current join is verified but an exact publication-vintage match is unconfirmed. Natural Earth explicitly places its data in the public domain; no separate license was stated for the FAOSTAT-derived CSV on the inspected gallery page.",
+    "difficulty": "medium",
+    "difficulty_reason": "Rendering uses only existing square strips; reproducing country joins, bin exclusions, and deterministic cell packing is the harder preparation work.",
+    "verification": {
+      "image": "The 80,818-byte PNG was downloaded and visually inspected; both crop panels, all yield-bin labels, continent colors, and square packing are visible at 3000 × 1199 pixels.",
+      "data": "CSV: 3,176 rows and 14 columns. GeoJSON: 177 features with UN_A3 and CONTINENT. The current attribute join, country-crop means, and bin exclusions were independently computed: 270 retained cells, with a maximum of 11 three-square packing rows per crop. The original lookup version is not pinned."
+    },
+    "id": "03",
+    "image_width": 3000,
+    "image_height": 1199,
+    "image_file": "images/03-the-yield-gap.png",
+    "image_sha256": "d9c3f7c17a062111dca7580575c5b55df48106cb800816871104112c34a4b4d2",
+    "supporting_source_urls": [
+      "https://r-graph-gallery.com/web-waffle-chart-for-distribution.html",
+      "https://r-graph-gallery.com/img/graph/web-waffle-chart-for-distribution.png",
+      "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson",
+      "https://www.naturalearthdata.com/about/terms-of-use/"
+    ]
+  },
+  {
+    "key": "a7",
+    "title": "Long-Term Top Yielding Banana-Producing Countries",
+    "family": "Sparkline tables",
+    "creator_publisher": "Joel Soroos, Posit Community Table Contest, October 28, 2020. The linked source R Markdown document is dated October 25, 2020.",
+    "page_url": "https://forum.posit.co/t/banana-crop-yields-over-time-table-contest-submission/86137",
+    "image_url": "https://raw.githubusercontent.com/soroosj/TidyTuesday/master/2020-09-01/output/crops.png",
+    "what_it_shows": "Fifteen countries combine banana-yield rankings, annual trajectories, and six decade summaries. Missing decades remain visible.",
+    "why_it_fits": "Each row coordinates an annual path frame with a categorical heat strip, surrounded by aligned numerical text.",
+    "composition": {
+      "artboard": "1209 × 1693 pixels; a portrait table with grouped headers, fifteen rows, and source notes.",
+      "text_elements": "Title; Country, Rank, Avg, Trend, and decade headings; fixed row fields for country, rank, average, and six decade values; footnote and credit.",
+      "scales": "Year and yield use local numeric domains in each embedded ggplot. Decades occupy six fixed categorical positions; each numerical column uses its own green color domain over the selected table.",
+      "unit_template": "One country row contains an annual path frame and a six-cell decade strip, plus summary text. Six fixed per-repeat text fields provide cell values without general mark-label binding.",
+      "repeat_rule": "Repeat fifteen rows in descending prepared Avg order. Keep both frames aligned within each row: this is an M6 compound unit.",
+      "calculations": "Per country-decade, average available annual yields and round to one decimal. Avg is the mean of those available rounded decade means, rounded again—not the mean of all annual records. Global ranking selects fifteen countries. For this archival reconstruction, selection filters hide rows; recomputation after observation filters requires rebuilding summaries, domains, and ranks upstream.",
+      "guides_annotations_highlights": "Gray rules align rows; black rules enclose Avg. Neutral cells show missing values. The fixed footnote identifies the 2010–2018 partial decade."
+    },
+    "tier": "Planned M2–M6",
+    "milestones": [
+      "paths",
+      "compound frames"
+    ],
+    "new_capabilities": [],
+    "minimum_data_table": "country, year, yield_tonnes_per_hectare: 767 available annual records for the selected fifteen countries. Join a fifteen-row summary containing rank, Avg, and six decade means.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv",
+      "https://raw.githubusercontent.com/soroosj/TidyTuesday/master/2020-09-01/markdown/crops.Rmd"
+    ],
+    "source_data": "The saved CSV contains 13,075 rows with Entity, Code, Year, and Bananas (tonnes per hectare), among eleven crop columns. Select nonmissing banana observations and follow the original Rmd transformations; independently reproduced all fifteen displayed averages. Source credit is Our World in Data. No dataset-specific license was present in the inspected CSV or Rmd.",
+    "difficulty": "medium",
+    "difficulty_reason": "The hardest part is coordinating the two frames while preserving the source's unusual averaging and local sparkline scales.",
+    "verification": {
+      "verified_at": "2026-10-10",
+      "image_pixels": [
+        1209,
+        1693
+      ],
+      "data_rows": 13075,
+      "data_columns": [
+        "Entity",
+        "Code",
+        "Year",
+        "Bananas (tonnes per hectare)"
+      ],
+      "checks_and_limits": "The original source heading says “Calculate medians”, but its executable code uses mean(). All fifteen displayed averages were reproduced from rounded decade means, including South Korea’s 40.5 from two available decades. The selected annual table has 767 rows. The Posit Community publication is dated October 28, 2020; the linked R Markdown document is dated October 25."
+    },
+    "id": "04",
+    "image_width": 1209,
+    "image_height": 1693,
+    "image_file": "images/04-long-term-top-yielding-banana-producing-countries.png",
+    "image_sha256": "af6201ce3e7355321d378cf6c2686923737a6cf8c3b428cf8660c5e7af7f08f9",
+    "supporting_source_urls": [
+      "https://forum.posit.co/t/banana-crop-yields-over-time-table-contest-submission/86137",
+      "https://raw.githubusercontent.com/soroosj/TidyTuesday/master/2020-09-01/markdown/crops.Rmd",
+      "https://raw.githubusercontent.com/soroosj/TidyTuesday/master/2020-09-01/output/crops.png",
+      "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv"
+    ]
+  },
+  {
+    "key": "b5",
+    "title": "Fan chart for current budget and PSNFL — Chart 7.4",
+    "family": "Fans, bands, and uncertainty",
+    "creator_publisher": "Office for Budget Responsibility, Economic and fiscal outlook; 26 March 2025.",
+    "page_url": "https://obr.uk/efo/economic-and-fiscal-outlook-march-2025/",
+    "image_url": "https://obr.uk/docs/publications/efo2503/chart-7-4.png",
+    "what_it_shows": "Two panels show the historical and forecast current budget deficit and public sector net financial liabilities. Expanding shaded distributions surround the March 2025 central forecast, while red markers identify the fiscal targets.",
+    "why_it_fits": "This fiscal publication supplies a downloadable workbook for the selected figure. Repeated fan panels exercise ordered interval layers, shared time, independent numeric y domains, and a small number of meaningful annotations.",
+    "composition": {
+      "artboard": "Landscape 1200 × 529 pixels. Two equal panels, each with its own heading and y scale; explanatory note and institutional source run below both.",
+      "text_elements": "Chart caption; metric heading per repeat; financial-year ticks; percent-of-GDP labels; footer explaining uncertainty and fiscal targets.",
+      "scales": "Shared financial-year x from 2010–11 to 2029–30. Current deficit y is roughly −6% to 12% of GDP; liabilities y roughly 50% to 110%. Dark-to-pale blue encodes nested probability intervals.",
+      "unit_template": "One metric panel has a historical/central path, four nested bands spanning p10–p90, p20–p80, p30–p70, and p40–p60, plus a fiscal-target annotation.",
+      "repeat_rule": "Repeat by metric in two columns. The same fan template suffices, with explicit y-domain overrides; this does not require multiple frames inside each repeat.",
+      "calculations": "Proposed reconstruction: use published quantiles for the fixed March 2025 forecasting population; do not estimate them from the displayed time series. Metric/year filters follow visible records, while quantile values, target rules, and source probability statements ignore filters. Draw widest interval first, and never interpolate across missing historical bounds.",
+      "guides_annotations_highlights": "Black central line, light horizontal grid, and one red diamond target per panel. Each diamond can be a fixed anchored text annotation; exact glyph appearance is a minor fidelity choice."
+    },
+    "tier": "Planned M2–M6",
+    "milestones": [
+      "paths",
+      "bands"
+    ],
+    "new_capabilities": [],
+    "minimum_data_table": "metric, financial_year, forecast_or_history, p10…p90, unit; 40 wide rows. Equivalent long representation: 108 forecast-quantile records plus 28 historical central-line records.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://obr.uk/download/march-2025-economic-and-fiscal-outlook-charts-and-tables-chapter-7/"
+    ],
+    "source_data": {
+      "schema": "Downloaded 572,901-byte XLSX; worksheet C7.4 contains both metric blocks, March 2025 forecast, and nine named percentile columns for each.",
+      "license": "Official public download; no separate license stated inside the inspected worksheet. Credit OBR and retain the March 2025 vintage.",
+      "cleaning": "Read the two blocks, normalize metric/year names, and retain null historical bounds. Units are percent of GDP for both metrics; one expresses a deficit flow and one a liability stock.",
+      "evidence": "All 12 forecast rows have nondecreasing p10…p90; p50 equals the forecast column exactly. Historical bounds are null. Workbook, original figure and report date were checked."
+    },
+    "difficulty": "medium",
+    "difficulty_reason": "Requires M2 numerical paths and M3 bands. Correct nesting and fixed y domains matter more than decorative details. The two ordinary metric facets do not by themselves invoke M6 compound frames.",
+    "verification": {
+      "dimensions": [
+        1200,
+        529
+      ],
+      "image": "Downloaded original OBR PNG; visually inspected",
+      "data_checks": {
+        "sheet": "C7.4",
+        "wide_rows": 40,
+        "quantile_records": 108,
+        "history_records": 28,
+        "bound_nesting": "All 12 forecast rows have nondecreasing p10..p90; p50 equals March 2025 forecast column",
+        "units": "percent of GDP",
+        "years": [
+          "2010-11",
+          "2029-30"
+        ],
+        "vintage": "March 2025 Economic and fiscal outlook"
+      },
+      "checked_on": "2026-10-10"
+    },
+    "prose_word_count": 423,
+    "id": "05",
+    "image_width": 1200,
+    "image_height": 529,
+    "image_file": "images/05-fan-chart-for-current-budget-and-psnfl-chart-7-4.png",
+    "image_sha256": "c4bdab47ce59c18e9067d321f3b85b83e11e99e3560050cf0a354f84deb47b46",
+    "supporting_source_urls": [
+      "https://obr.uk/efo/economic-and-fiscal-outlook-march-2025/",
+      "https://obr.uk/download/march-2025-economic-and-fiscal-outlook-charts-and-tables-chapter-7/"
+    ]
+  },
+  {
+    "key": "c1",
+    "title": "Temperatures in Lincoln NE",
+    "family": "Ridgelines, horizons, and stacked strips",
+    "creator_publisher": "Austin Wehrwein (@awhstin), personal data-visualization blog, June 15, 2017; the ggridges project subsequently preserved the weather table.",
+    "page_url": "https://austinwehrwein.com/data-visualization/it-brings-me-ggjoy/",
+    "image_url": "https://austinwehrwein.com/data-visualization/it-brings-me-ggjoy_files/figure-html/unnamed-chunk-3-1.png",
+    "what_it_shows": "Twelve overlapping distributions trace the movement from winter temperatures to summer and back through 2016. The common temperature axis makes shifts and differences in spread visible; unusually wide and narrow months read as changes in shape, not just changes in a monthly average.",
+    "why_it_fits": "The compact annual weather story combines repeated area silhouettes with a shared temperature scale, fixed month labels, and restrained typography. Prepared baseline offsets let M2/M3 render the entire design in one frame without a special ridgeline mark.",
+    "composition": {
+      "artboard": "1920 × 1536 pixels in the downloaded original, approximately 5:4; white paper with generous upper and right margins.",
+      "text_elements": "Title, two-line explanatory/source text, twelve month labels, shared temperature ticks and axis caption. The printed subtitle says median, but the published code actually uses daily mean temperatures; a rebuild should label that correctly.",
+      "scales": "Shared temperature x in degrees Fahrenheit. Density uses one common vertical multiplier before being added to a fixed month baseline; the resulting numeric y is a constructed layout coordinate, not a second temperature measurement. All month bands share a uniform gray fill with black outlines. Keep baseline spacing and density scaling explicit.",
+      "unit_template": "One XY frame contains 12 filled lower/upper band series and their ordered top outlines. Each series is a month’s density translated to its baseline. The bands overlap as marks inside the frame; repeat-frame overflow is not required.",
+      "repeat_rule": "None; one frame contains one band series per month, January through December from top to bottom. Fixed series draw order reproduces the intended occlusion, while month names are placed as frame-anchored annotations.",
+      "calculations": "Compute each month’s temperature density upstream from that month’s daily mean observations using an explicit bandwidth and fixed x sample grid. Observation filters require a fresh density calculation. Month visibility filters retain the original baselines, common density multiplier, and draw order, leaving hidden months’ positions vacant. The original subtitle says median, but the published code uses Mean Temperature [F]; use the actual field meaning in a rebuild.",
+      "guides_annotations_highlights": "Month labels attach to their fixed baselines; temperature ticks attach to the common frame. The title, explanatory subtitle, and source credit are page anchored. No row receives an independent x or density scale."
+    },
+    "tier": "Planned M2–M6",
+    "milestones": [
+      "paths",
+      "bands"
+    ],
+    "new_capabilities": [],
+    "minimum_data_table": "month, temperature_x, density, baseline_y, lower_y, upper_y, draw_order; 12 × 512 = 6,144 prepared curve records from 366 daily temperatures. lower_y equals the fixed month baseline; upper_y adds density times one common height scale.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/wilkelab/ggridges/master/data-raw/lincoln-weather.csv",
+      "https://raw.githubusercontent.com/wilkelab/ggridges/master/data-raw/lincoln-weather.R"
+    ],
+    "source_data": "The downloaded CSV has 366 rows and 23 columns, including CST, Mean Temperature [F], Max Temperature [F], and Min Temperature [F]. Parse CST, derive calendar month, and estimate densities of Mean Temperature [F]. The accompanying R file explicitly derives Month from CST. The original article's Drive link no longer worked, but this project-maintained copy does. ggridges declares GPL-2 or its accompanying license; no separate underlying weather-data license was identified. Density estimation can remain upstream; it is not counted as an editor capability gap.",
+    "difficulty": "medium",
+    "difficulty_reason": "Density preparation and fixed overlap order need care, but the resulting shapes are ordinary ordered bands and outlines in one frame.",
+    "verification": {
+      "verified_at": "2026-10-10",
+      "image_pixels": [
+        1920,
+        1536
+      ],
+      "data_rows": 366,
+      "data_columns": [
+        "CST",
+        "Max Temperature [F]",
+        "Mean Temperature [F]",
+        "Min Temperature [F]"
+      ],
+      "checks_and_limits": "Original PNG visually inspected. Source subtitle/code mismatch explicitly documented. Exact historical ggjoy bandwidth was not recovered; the reconstruction must declare its upstream estimator."
+    },
+    "capability_notes": "Prepared translated bounds make overlapping repeated frames unnecessary. A native density or ridgeline transform is not assumed.",
+    "id": "06",
+    "image_width": 1920,
+    "image_height": 1536,
+    "image_file": "images/06-temperatures-in-lincoln-ne.png",
+    "image_sha256": "4c649fe5c0a06145a2d896b0bca31796293f598ec1bc170dfcbda7c3cdae2f60",
+    "supporting_source_urls": [
+      "https://austinwehrwein.com/data-visualization/it-brings-me-ggjoy/",
+      "https://raw.githubusercontent.com/wilkelab/ggridges/master/data-raw/lincoln-weather.csv",
+      "https://raw.githubusercontent.com/wilkelab/ggridges/master/data-raw/lincoln-weather.R",
+      "https://raw.githubusercontent.com/wilkelab/ggridges/master/DESCRIPTION"
+    ]
+  },
+  {
+    "key": "c3",
+    "title": "What Americans die from and the causes of death the US media reports on",
+    "family": "Normalized stacks and share charts",
+    "creator_publisher": "Hannah Ritchie, Tuna Acisu, and Edouard Mathieu, Our World in Data, October 6, 2025; corrected October 9, 2025.",
+    "page_url": "https://ourworldindata.org/does-the-news-reflect-what-we-die-from",
+    "image_url": "https://ourworldindata.org/cdn-cgi/imagedelivery/qLq-8BTgXU8yG0N6HnOy8g/ae881f37-dd2f-4089-6ab8-cb88ca6b6000/w=3600",
+    "what_it_shows": "Four normalized columns contrast deaths from fifteen selected causes with mentions of those causes by three US news outlets in 2023. Common diseases dominate the death column, whereas homicide and terrorism occupy much larger shares of coverage.",
+    "why_it_fits": "The editorial force comes from repeated stacks, aligned denominators, direct labels, and a headline that separates two different measurement populations. It is an especially useful test of whether normalization remains explainable.",
+    "composition": {
+      "artboard": "3600 × 2541 pixels, approximately 1.42:1, white, with a large heading area and substantial methodology footer.",
+      "text_elements": "Two-color headline, source/metric column headings, percentage labels, source credit, and denominator/methodology notes. Label instances are authored mark-anchored annotations for this frozen publication; automatic label generation is optional.",
+      "scales": "A shared 0–100% vertical scale; cause maps to the same categorical color in every column. Column position is categorical, with extra space separating mortality from the three media repeats.",
+      "unit_template": "One vertical normalized stack containing up to fifteen rectangles in a fixed cause order. Segment endpoints come from cumulative shares of the metric-specific count field.",
+      "repeat_rule": "Four column units ordered Deaths, New York Times, Washington Post, Fox News. Apply an instance offset before the media group, while preserving equal column width and height.",
+      "calculations": "For each source repeat, sum counts across the locked fifteen-cause universe; divide each cause count by that source total. These denominators ignore cause highlighting filters; selecting a cause fades other segments rather than dropping their rows. A source filter may remove entire columns. The mortality denominator is selected-cause deaths, not all US deaths; media denominators are selected-cause mentions, not all published articles. Percentages update from each repeat's counts.",
+      "guides_annotations_highlights": "Headline arrows attach to the mortality and media groups. Small segment labels may sit outside their rectangle with local offsets. Keep the source correction and multiple-mention definition in the footer."
+    },
+    "tier": "Planned M2–M6",
+    "milestones": [
+      "normalized stacks"
+    ],
+    "new_capabilities": [],
+    "minimum_data_table": "source, cause, year, count, denominator (60 rows: 4 sources × 15 causes). Melt deaths, nyt_mentions, wapo_mentions, fox_mentions; preserve count provenance and fixed cause order.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://catalog.owid.io/analyses/media-deaths-analysis-data.zip"
+    ],
+    "source_data": "The methodology's ZIP downloaded and opened successfully. data/media_deaths_results.csv has 15 rows and fields cause, year, deaths, deaths_share, fox_mentions, nyt_mentions, wapo_mentions, and corresponding shares; the companion mentions CSV has 60 rows with year, source, cause, mentions, single_mentions. Use multiple mentions and corrected accident counts so overdose deaths are not counted twice. The publication and graphic state CC BY. The downloaded package includes methodology and analysis code; underlying sources are CDC, Global Terrorism Index, and Media Cloud.",
+    "difficulty": "medium",
+    "difficulty_reason": "The key challenge is retaining distinct, inspectable denominators while placing labels in very small segments.",
+    "verification": {
+      "verified_at": "2026-10-10",
+      "image_pixels": [
+        3600,
+        2541
+      ],
+      "data_rows": 15,
+      "data_columns": [
+        "cause",
+        "year",
+        "deaths",
+        "deaths_share",
+        "fox_mentions",
+        "nyt_mentions",
+        "wapo_mentions",
+        "us_mentions",
+        "fox_share",
+        "nyt_share",
+        "wapo_share",
+        "us_share",
+        "fox_single_mentions",
+        "nyt_single_mentions",
+        "wapo_single_mentions",
+        "us_single_mentions",
+        "fox_single_share",
+        "nyt_single_share",
+        "wapo_single_share",
+        "us_single_share"
+      ],
+      "checks_and_limits": "Original PNG inspected. Separate straight columns have no Sankey/alluvial ribbon. Data correction and the difference between selected-cause shares and all-cause shares are preserved."
+    },
+    "id": "07",
+    "image_width": 3600,
+    "image_height": 2541,
+    "image_file": "images/07-what-americans-die-from-and-the-causes-of-death-the-us-media-reports-on.png",
+    "image_sha256": "55ffdb9a1df73cdcbbac99932063e4864ba871434ffaa7c314fe5ecfda015328",
+    "supporting_source_urls": [
+      "https://ourworldindata.org/does-the-news-reflect-what-we-die-from",
+      "https://docs.owid.io/projects/etl/analyses/media_deaths/methodology/",
+      "https://catalog.owid.io/analyses/media-deaths-analysis-data.zip"
+    ]
+  },
+  {
+    "key": "c5",
+    "title": "More than 1 natural disaster occurs every day since the 21st century",
+    "family": "Annotated single-frame editorial charts",
+    "creator_publisher": "Joseph Barbier, published in the Python Graph Gallery; publication date is not stated on the inspected page. Its source caption credits EM-DAT/CRED/UCLouvain (2024).",
+    "page_url": "https://python-graph-gallery.com/web-stacked-area-with-inflexion-arrows/",
+    "image_url": "https://raw.githubusercontent.com/holtzy/The-Python-Graph-Gallery/master/static/graph/web-stacked-area-with-inflexion-arrows.png",
+    "what_it_shows": "A cumulative area silhouette combines eight types of recorded natural disasters from 1960 to 2023. A tall annotation rail identifies the final values, using bent leader lines to keep even the smallest layers legible outside the data frame.",
+    "why_it_fits": "The nontrivial work is shared layout: the headline occupies unused plot space, the eight labels form a readable column, and connector endpoints stay attached to narrow bands. This exercises bands and annotation placement with very simple geometry.",
+    "composition": {
+      "artboard": "4542 × 1953 pixels in the original export, approximately 2.33:1; white with extra right margin for an annotation rail.",
+      "text_elements": "Two-line headline with selective bold type, minimal year/count ticks, eight color-matched type-and-count labels, and a small design/data footer. Endpoint text includes the final year and count.",
+      "scales": "Year maps to shared numeric x, cumulative recorded-event count to numeric y, and disaster type to fixed fill color. All layers occupy one frame with no per-type rescaling.",
+      "unit_template": "Eight filled interval bands, each defined by year, cumulative lower, and cumulative upper. This uses absolute counts; it is not a 100% stack. Precomputed bounds make M3 band geometry sufficient without a new native stacking transform.",
+      "repeat_rule": "None; one frame with eight ordered band series and a coordinated annotation rail.",
+      "calculations": "For each year in the single frame, sum counts in fixed type order to obtain cumulative edges; included-type filters recompute those edges upstream. Stack order uses global type totals across the full source period and ignores display filters. Final labels select each type's count at the maximum displayed year and follow the date filter. If an annual-average headline is computed, divide the relevant year's recorded total by days in that year; this does not establish an event on every day.",
+      "guides_annotations_highlights": "Faint horizontal rules belong to the numeric frame. Each right-side label/leader attaches to its band's terminal position, with manually ordered offsets that prevent collisions. The headline and footer are page anchored."
+    },
+    "tier": "Planned M2–M6",
+    "milestones": [
+      "bands"
+    ],
+    "new_capabilities": [],
+    "minimum_data_table": "year, disaster_type, recorded_events, lower, upper (up to 64 × 8 = 512 rows for 1960–2023). Derive cumulative bounds upstream and preserve the original event-count meaning.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/holtzy/The-Python-Graph-Gallery/master/static/data/disaster-events.csv"
+    ],
+    "source_data": "The working CSV contains 1,144 rows and exact fields Entity, Year, Disasters. Filter out aggregate All disasters series before reshaping. The published tutorial also renames Dry mass movement to Drought and interpolates across columns; those choices should be reviewed and documented rather than copied silently. Reusing its exact pipeline reproduces its prepared values, while a scientifically revised table should preserve category identity and justified missing-value treatment. No dataset-specific license is stated on this CSV; the repository software license is 0BSD. Record-count growth alone does not establish a causal trend in hazards.",
+    "difficulty": "medium",
+    "difficulty_reason": "Leader placement is the main graphical task; validating the tutorial's preprocessing is the main data task.",
+    "verification": {
+      "verified_at": "2026-10-10",
+      "image_pixels": [
+        4542,
+        1953
+      ],
+      "data_rows": 1144,
+      "data_columns": [
+        "Entity",
+        "Year",
+        "Disasters"
+      ],
+      "checks_and_limits": "Final original PNG visually inspected, not a tutorial intermediate. Original data-cleaning choices are disclosed; date and data license remain unverified. Bands are absolute and require no normalized-stack milestone."
+    },
+    "id": "08",
+    "image_width": 4542,
+    "image_height": 1953,
+    "image_file": "images/08-more-than-1-natural-disaster-occurs-every-day-since-the-21st-century.png",
+    "image_sha256": "52a30ac76b97ce8c0757f4990912a76210d6213bb357c4ffc7e8ce413e47b348",
+    "supporting_source_urls": [
+      "https://python-graph-gallery.com/web-stacked-area-with-inflexion-arrows/",
+      "https://raw.githubusercontent.com/holtzy/The-Python-Graph-Gallery/master/static/data/disaster-events.csv",
+      "https://raw.githubusercontent.com/holtzy/The-Python-Graph-Gallery/master/LICENSE"
+    ]
+  },
+  {
+    "key": "c8",
+    "title": "Income and expenditure of 150 Negro families in Atlanta, Ga., U.S.A.",
+    "family": "Historical composed graphics",
+    "creator_publisher": "W. E. B. Du Bois, prepared for the 1900 Paris Exposition; Library of Congress dates the original circa 1900. Plate 31; CSV transcription/recreation by Anthony Starks.",
+    "page_url": "https://www.loc.gov/pictures/item/2013650354/",
+    "image_url": "https://tile.loc.gov/storage-services/service/pnp/ppmsca/33800/33893v.jpg",
+    "what_it_shows": "Seven income brackets align household expenditure shares beside actual average income. Spending on necessities occupies less of the richer groups' budgets, leaving a greater portion for the broad other-expenses-and-savings category.",
+    "why_it_fits": "This is a composed page whose substance is a repeated normalized stack integrated with a numeric label rail, a detailed category header, and group annotations. The photographs decorate the header; the main argument is carried by rectangles, text, and rules.",
+    "composition": {
+      "artboard": "1024 × 814 pixels in the downloaded scan, approximately 1.26:1; warm paper, broad header and a seven-row chart/table beneath.",
+      "text_elements": "Historical title; income class and actual-average columns; five expenditure headings; percentage labels; four right-side standard-of-living group labels; source/context note. Header photographs and the coin image are optional non-data decoration in a structural rebuild.",
+      "scales": "Within each row, cumulative expenditure share maps to horizontal position on the same 0–100% scale. Category maps consistently to black, purple, pink, gray, and paper color. Row order is income class, not measured average income spacing.",
+      "unit_template": "One five-segment horizontal normalized bar with fixed category order, plus an income-class label and numeric average in an aligned left rail. Display zero-rent groups without inventing a positive rent segment.",
+      "repeat_rule": "Seven evenly spaced rows ordered from $100–200 through over$1,000. Left text columns and segment start/end positions line up as one artboard composition.",
+      "calculations": "Each row's published percentage values use a fixed 100% expenditure denominator and ignore category-highlight filters. Compute cumulative endpoints within that row; preserve the first row's 99.9% rounding total with an explicit 0.1-point residual rather than silently normalizing by 99.9. Actual Average is a supplied group aggregate, not an average of category percentages. The title's 150 families is a fixed global source fact and ignores filters; group sample sizes are unavailable.",
+      "guides_annotations_highlights": "Right-side brackets classify ranges of income rows; thin connector guides between selected boundaries are authored page-level annotations for the frozen composition. Category selection fades segments without moving rows or changing these guides. An automatically relinking version would require an additional cross-frame connector feature."
+    },
+    "tier": "Planned M2–M6",
+    "milestones": [
+      "normalized stacks"
+    ],
+    "new_capabilities": [],
+    "minimum_data_table": "income_class, actual_average_income, expense_category, share_percent (35 rows after unpivoting 7 income groups × 5 categories). Preserve the supplied averages and rounding residual; do not invent household microdata.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/ajstarks/dubois-data-portraits/master/plate31/data.csv"
+    ],
+    "source_data": "The verified CSV has seven rows and columns Class, Actual Average, Rent, Food, Clothes, Tax, Other. Values were checked against the original scan; the first row contains 19, 43, 28, 9.9, 0. Reshape the five expense columns into categories, retaining income metadata. This is a transcription of published aggregates, not the original 150 household records. Starks's repository states CC BY-NC 4.0; the original Library of Congress scan carries no known publication restrictions. The small table is an intentional preaggregation exception to the requested approximate 50-row lower bound.",
+    "difficulty": "medium",
+    "difficulty_reason": "The hardest part is coordinating text rails, rounded denominators, and authored guides without implying unavailable household detail.",
+    "verification": {
+      "verified_at": "2026-10-10",
+      "image_pixels": [
+        1024,
+        814
+      ],
+      "data_rows": 7,
+      "data_columns": [
+        "Class",
+        "Actual Average",
+        "Rent",
+        "Food",
+        "Clothes",
+        "Tax",
+        "Other"
+      ],
+      "checks_and_limits": "Official scan visually inspected. Percentages are exact transcribed published aggregates, with first-row rounding recorded. Tier assumes fixed page-anchored connector annotations; automatic links across repeated frames are not claimed."
+    },
+    "id": "09",
+    "image_width": 1024,
+    "image_height": 814,
+    "image_file": "images/09-income-and-expenditure-of-150-negro-families-in-atlanta-ga-u-s-a.jpg",
+    "image_sha256": "63b7d97b05afdee62605a838bfdb087e383d49244d2f73a1733d1904305c1725",
+    "supporting_source_urls": [
+      "https://www.loc.gov/pictures/item/2013650354/",
+      "https://www.loc.gov/pictures/item/2013650354/marc/",
+      "https://raw.githubusercontent.com/ajstarks/dubois-data-portraits/master/plate31/data.csv",
+      "https://raw.githubusercontent.com/ajstarks/dubois-data-portraits/master/LICENSE.md"
+    ]
+  },
+  {
+    "key": "b6",
+    "title": "History of global temperature change and causes of recent warming — IPCC AR6 WGI SPM Figure 1",
+    "family": "Fans, bands, and uncertainty",
+    "creator_publisher": "IPCC Working Group I, 2021. Archived figure data credited to Nathan P. Gillett, Elizaveta Malinina, Darrell Kaufman and Raphael Neukom; archive version v20221116.",
+    "page_url": "https://www.ipcc.ch/report/ar6/wg1/figures/summary-for-policymakers/figure-spm-1/",
+    "image_url": "https://www.ipcc.ch/report/ar6/wg1/downloads/figures/IPCC_AR6_WGI_SPM_Figure_1.png",
+    "what_it_shows": "A historical temperature reconstruction appears alongside an attribution comparison of observed warming, simulations with human and natural forcing, and simulations with natural forcing alone. Uncertainty is integral to both panels.",
+    "why_it_fits": "This scientific publication provides a detailed data archive for the selected figure. Its historical and attribution views test shared units across different time domains, interval layers, and substantial editorial annotations.",
+    "composition": {
+      "artboard": "Landscape 2032 × 1242 pixels, large statement above two lettered panels, explanatory callouts, and a footer caption outside the plotted frames.",
+      "text_elements": "Page-level statement; panel titles; temperature-unit and year labels; named series at right; reconstruction and early-Holocene reference annotations.",
+      "scales": "Both panels show °C relative to 1850–1900, approximately −1 to 2. Left x spans two millennia; right x spans 1850–2020. Gray reconstruction, black observations, brown human-plus-natural and teal natural-only models.",
+      "unit_template": "A numeric frame binds ordered central/lower/upper series selected by panel and series keys. The historical panel contains the reconstruction and smoothed observations; the recent panel contains observations and two modeled forcing scenarios. The ancient-period range is a fixed reference annotation.",
+      "repeat_rule": "Repeat by panel in two columns, with explicit independent x-domain overrides and a shared temperature y scale. Each panel has its own series population. These two ordinary panel instances do not require M6: there are not two frames inside each repeated unit.",
+      "calculations": "Proposed reconstruction: published smoothed reconstruction/observation values and ensemble means/5th–95th percentile limits remain fixed to their source populations and ignore display filters. Year filters follow visible vertices only; they do not rebase the 1850–1900 anomaly or recompute uncertainty. Fixed ancient-period references ignore filters.",
+      "guides_annotations_highlights": "Direct series labels and leaders explain the contrast. Preserve shared y references. The original hatch texture may become a translucent gray band without changing the interval meaning; texture is an optional fidelity limitation."
+    },
+    "tier": "Planned M2–M6",
+    "milestones": [
+      "paths",
+      "bands"
+    ],
+    "new_capabilities": [],
+    "minimum_data_table": "panel, series, year, center, low, high; 2,666 prepared records plus one ancient-range record. Keep smoothed left-panel and annual right-panel observations distinct.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://dap.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_01/v20221116/panel_a/SPM1_1-2000_recon.csv",
+      "https://dap.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_01/v20221116/panel_a/SPM1_1850-2020_obs.csv",
+      "https://dap.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_01/v20221116/panel_a/spm1_6500_recon.csv",
+      "https://dap.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_01/v20221116/panel_b/gmst_changes_model_and_obs.csv"
+    ],
+    "source_data": {
+      "schema": "Four BADC-CSV bodies verified: 1,991 reconstruction rows, 162 smoothed observations, one ancient range, and 171 annual rows with black/brown/green lines and model bounds.",
+      "license": "CEDA metadata explicitly states CC BY 4.0, requiring data and report citations. Do not assume that this automatically licenses every report image.",
+      "cleaning": "Parse metadata before numeric column IDs; decode panel-a files as cp1252; replace 1e20 with null. Left observations are decadal-smoothed, centered on 1855–2016 from 1850–2020 source years.",
+      "evidence": "CSV comments identify means and 5%/95% model bounds; all model bounds contain their means. Exact archive version and original PNG were inspected."
+    },
+    "difficulty": "high",
+    "difficulty_reason": "Prepared data simplify the mathematics; careful coordination of different time domains, smoothing conventions, reference periods, and layered uncertainty makes the composition demanding.",
+    "verification": {
+      "dimensions": [
+        2032,
+        1242
+      ],
+      "image": "Downloaded original IPCC PNG; visually inspected",
+      "data_checks": "2,666 prepared time-series rows, 1 ancient reference; metadata-defined smoothing and 1e20 sentinel handled",
+      "checked_on": "2026-10-10"
+    },
+    "prose_word_count": 444,
+    "id": "10",
+    "image_width": 2032,
+    "image_height": 1242,
+    "image_file": "images/10-history-of-global-temperature-change-and-causes-of-recent-warming-ipcc-ar6.png",
+    "image_sha256": "40cb6b22651bb17205d7732ab9437be11f4d4596c74e44ec32a8b36a43fe3217",
+    "supporting_source_urls": [
+      "https://www.ipcc.ch/report/ar6/wg1/figures/summary-for-policymakers/figure-spm-1/",
+      "https://catalogue.ceda.ac.uk/uuid/0b2759059ad6474098e40dad73e0a8ec/",
+      "https://data.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_01/v20221116"
+    ]
+  },
+  {
+    "key": "c7",
+    "title": "Age distribution of Georgia Negroes compared with France",
+    "family": "Historical composed graphics",
+    "creator_publisher": "W. E. B. Du Bois, prepared for the 1900 Paris Exposition; Library of Congress catalog dates the original circa 1900. Plate 9; CSV transcription/recreation by Anthony Starks.",
+    "page_url": "https://www.loc.gov/pictures/item/2013650428/",
+    "image_url": "https://cdn.loc.gov/service/pnp/ppmsca/33800/33871v.jpg",
+    "what_it_shows": "Eight paired age-group comparisons show a much younger age profile among African Americans in Georgia than among the French population. A constant start line and matched black/yellow bars make each contrast readable without an axis grid.",
+    "why_it_fits": "This historically significant page consists of an unusually disciplined repeated pair, small brackets, percentage labels, and substantial negative space. It is a compact test for a horizontal orientation of the existing simple bar-strip model.",
+    "composition": {
+      "artboard": "810 × 1024 pixels in the downloaded scan, approximately 4:5; warm paper. The physical original is cataloged as a 710 × 560 mm board.",
+      "text_elements": "Two-line title retaining its historical wording, a two-swatch population key, eight age labels and sixteen percentage annotations. A contemporary adaptation can explain the historical terminology in its source note without changing the original reference image.",
+      "scales": "Within each unit, population identity maps to one of two vertical slots and black/yellow fill. Percentage maps to horizontal bar length on one shared zero-based domain, approximately 0–32%, across every age group.",
+      "unit_template": "Two adjacent horizontal rectangles, one for each population, with a common left origin. Percentages are manually authored mark-anchored labels at this fixed snapshot; a small left-side grouping bracket holds the two bars together.",
+      "repeat_rule": "Repeat by age band in eight evenly spaced rows: under 10, then decades through 60–70, then 70+. Population order remains Georgia above France in every repeat.",
+      "calculations": "The percentages are source aggregates, not calculated from eight records as if those records were people. Preserve each population's original whole-population denominator and ignore age selection for normalization. Active age filters may hide or fade rows but never recompute the source percentages. Global validation totals sum each population separately, never both populations together. Keep the shared length domain fixed under filters; no fitted or distribution statistic is needed.",
+      "guides_annotations_highlights": "All bar origins align; the two-color key is page anchored. Age brackets attach to their repeat frames. No category is singled out by an accent; the balance of the paired units is the organizing device."
+    },
+    "tier": "New capability",
+    "milestones": [],
+    "new_capabilities": [
+      "horizontal bar length encoding"
+    ],
+    "minimum_data_table": "age_band, population, percent (16 rows after unpivoting the 8-row source table). These are already aggregated population shares; individual census records are unnecessary.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/ajstarks/dubois-data-portraits/master/plate09/data.csv"
+    ],
+    "source_data": "The exact downloaded CSV header is Category,Negroes,France, with eight age rows; values match visible labels such as 30.1/17.5 for under 10. Unpivot the population columns, retain age order, and carry percentages without renormalizing. Anthony Starks's repository declares CC BY-NC 4.0 for its works. The Library of Congress says the original scan has no known publication restrictions; those are separate rights statements. The table is below the requested approximate 50-row scale but represents a legitimate preaggregated target.",
+    "difficulty": "low",
+    "difficulty_reason": "Once horizontal numeric length is available, the work is straightforward repetition, typography, and consistent padding.",
+    "verification": {
+      "verified_at": "2026-10-10",
+      "image_pixels": [
+        810,
+        1024
+      ],
+      "data_rows": 8,
+      "data_columns": [
+        "Category",
+        "Negroes",
+        "France"
+      ],
+      "checks_and_limits": "Official full-size scan opened visually. Title uses historical wording. Country/population denominator counts are not supplied, so the reconstruction retains published percentages rather than fabricating counts."
+    },
+    "id": "11",
+    "image_width": 810,
+    "image_height": 1024,
+    "image_file": "images/11-age-distribution-of-georgia-negroes-compared-with-france.jpg",
+    "image_sha256": "e833e3725c69476f7f2b1ccf8fc83eeb95050feb112d1657bcaee8759a4a0cee",
+    "supporting_source_urls": [
+      "https://www.loc.gov/pictures/item/2013650428/",
+      "https://raw.githubusercontent.com/ajstarks/dubois-data-portraits/master/plate09/data.csv",
+      "https://raw.githubusercontent.com/ajstarks/dubois-data-portraits/master/LICENSE.md"
+    ]
+  },
+  {
+    "key": "a3",
+    "title": "Consumer Confidence Around the World",
+    "family": "Small-multiple lines and areas",
+    "creator_publisher": "Gilbert Fontana; originally published by Visual Capitalist, 12 February 2023. Selected image is the R Graph Gallery reproduction; its separate publication date is not stated.",
+    "page_url": "https://r-graph-gallery.com/web-line-chart-small-multiple-all-group-greyed-out.html",
+    "image_url": "https://r-graph-gallery.com/img/fromTheWeb/we-line-chart-consumer-confidence.png",
+    "what_it_shows": "Nine panels compare consumer-confidence trajectories across major economies, with one country colored in each panel and eight gray comparison lines. The shared reference at 100 makes the broad decline during 2022 visible.",
+    "why_it_fits": "Editorial typography, local emphasis, shared context, and endpoint annotations turn ordinary lines into a coherent comparison.",
+    "composition": {
+      "artboard": "1200 × 1920 portrait; two-column headline/explanation above a 3 × 3 panel grid and credits.",
+      "text_elements": "Page title/deck/source; country heading per panel; rounded latest-value annotation; sparse year labels.",
+      "scales": "A shared monthly date x runs July 2018–October 2022; a shared numeric y shows the consumer-confidence index around 100. Verified values span 91.57454–104.9675. Focus-country colors distinguish panels, while all comparison paths and endpoints are gray. China’s last valid observation is September 2022.",
+      "unit_template": "One XY frame contains nine country paths and nine endpoint circles, with one country emphasized and its latest value annotated. Prepare a panel_country × series_country × date table so every comparison series is already local to the repeat; no global-context-layer capability is required.",
+      "repeat_rule": "Repeat panel_country as nine panels in a 3×3 grid: USA, China, Japan / Germany, UK, France / Italy, South Korea, Australia. Group paths by series_country within each panel and order vertices by date.",
+      "calculations": "CCI is supplied as an index; do not recalculate it from the displayed countries. The context population is all nine source countries and remains fixed when panel filters hide countries. Per-series latest values select the maximum valid date within the displayed date window and follow date filters. Shared x/y domains and the reference at 100 ignore panel filters. The 4,203-row expansion is an explicit upstream preparation.",
+      "guides_annotations_highlights": "100 guide per frame; muted grid; focus path drawn after context; anchored endpoint label. No special global-context layer is needed."
+    },
+    "tier": "New capability",
+    "milestones": [
+      "paths"
+    ],
+    "new_capabilities": [
+      "numeric positions for circle marks"
+    ],
+    "minimum_data_table": "panel_country, series_country, date, cci, is_focus; 467 valid country-month records expanded across nine focus panels = 4,203 prepared rows and 81 ordered paths. China has no October 2022 value; preserve that missing endpoint.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/holtzy/R-graph-gallery/master/DATA/dataConsumerConfidence.csv"
+    ],
+    "source_data": {
+      "schema": "Checked CSV: Time plus nine country columns; 52 months and 467 nonmissing country-month values. China ends September 2022.",
+      "license": "OECD credited; no separate data license stated in inspected gallery material.",
+      "cleaning": "Parse month; melt; drop one missing China value; cross with nine panel countries. Prepared expansion avoids cross-repeat data access.",
+      "evidence": "Preserved successful download logs and original-page metadata; independent CSV count and visual inspection completed."
+    },
+    "difficulty": "medium",
+    "difficulty_reason": "M2 supplies paths. The selected visual also uses 81 numeric endpoint circles, requiring circle positioning; compound frames are unnecessary.",
+    "verification": {
+      "dimensions": [
+        1200,
+        1920
+      ],
+      "data_checks": {
+        "wide_rows": 52,
+        "long_rows": 467,
+        "expanded_rows": 4203,
+        "total_paths": 81,
+        "endpoint_circles": 81,
+        "value_min": 91.57454,
+        "value_max": 104.9675
+      },
+      "image": "The complete publisher/recreator PNG was downloaded and visually inspected; its direct URL is listed with the entry.",
+      "checked_on": "2026-10-10"
+    },
+    "capability_notes": "M2 draws the 81 prepared paths. Numeric circle placement is additionally needed for the 81 visible endpoint markers; simple table expansion removes the proposed need for cross-repeat context data.",
+    "id": "12",
+    "image_width": 1200,
+    "image_height": 1920,
+    "image_file": "images/12-consumer-confidence-around-the-world.png",
+    "image_sha256": "743d40680a92a7b26a0d7791626d7289222577e4cc22bd1d36dc85616b2177fa",
+    "supporting_source_urls": [
+      "https://r-graph-gallery.com/web-line-chart-small-multiple-all-group-greyed-out.html",
+      "https://raw.githubusercontent.com/holtzy/R-graph-gallery/master/DATA/dataConsumerConfidence.csv",
+      "https://www.visualcapitalist.com/cp/charting-the-global-decline-in-consumer-confidence/"
+    ]
+  },
+  {
+    "key": "a5",
+    "title": "Recycling rates by London borough",
+    "family": "Waffles and unit grids",
+    "creator_publisher": "Lisa Hornung; published with an open recreation in the Python Graph Gallery. Publication date not stated; chart describes 2022/23.",
+    "page_url": "https://python-graph-gallery.com/web-waffle-with-small-multiples/",
+    "image_url": "https://github.com/holtzy/The-Python-Graph-Gallery/blob/master/static/graph/web-waffle-with-small-multiples.png?raw=true",
+    "what_it_shows": "The graphic compares household waste sent for dry and green recycling across 33 London boroughs. Equal percentage-point squares and bold totals show borough recycling rates from 17% to 48%.",
+    "why_it_fits": "A compact geographic arrangement combines simple unit marks, composition labels, and page typography; it needs no boundary shapes or map projection.",
+    "composition": {
+      "artboard": "4320 × 3780 landscape; headline/subtitle, an approximate borough arrangement, and Defra source note.",
+      "text_elements": "Page title; color-key subtitle; borough abbreviation and total recycling percentage per borough; footer.",
+      "scales": "One square equals one percentage point. Fixed ten-cell row positions; teal dry recycling, green organic recycling, background-colored unrecycled remainder.",
+      "unit_template": "A ten-category horizontal strip draws one rectangle per cell. Prepare ten strip rows per borough; show the borough label/total only once.",
+      "repeat_rule": "Flatten borough×waffle_row into 330 strip units, each ten cells. Derived row/column layout fields place strips inside the published 7 × 8 borough arrangement, retaining empty geographic cells.",
+      "calculations": "Proposed reconstruction: dry+green within each borough yields its displayed total. Expand the supplied integer percentages into 100 category-assigned cells; allocations and denominator 100 ignore display filters. Borough filters hide complete units without changing their layout or recalculating shares.",
+      "guides_annotations_highlights": "The colored words in the subtitle explain both classes. Repeated bold totals attach to boroughs; identical square sizes and spacing enable comparison."
+    },
+    "tier": "New capability",
+    "milestones": [],
+    "new_capabilities": [
+      "tile-grid arrangement driven by row and column fields"
+    ],
+    "minimum_data_table": "borough, dry_pct, green_pct, unrecycled_pct, cell_index, waffle_row, cell_column, class, layout_row, layout_column: 3,300 prepared cells from 33 aggregates.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/holtzy/the-python-graph-gallery/master/static/data/london_recycling.csv"
+    ],
+    "source_data": {
+      "schema": "Verified 33-row CSV: Display_name, household_waste_recycled_dry_perc, household_waste_recycled_green_perc, household_waste_not_recycled_perc_est. Every row sums to 100; 1,075 cells are recycled.",
+      "license": "Defra credited; separate reuse license is not stated in the inspected gallery evidence.",
+      "cleaning": "Expand percentages into cells, preserve source class order, join the explicit borough layout. Render unrecycled cells in background color.",
+      "evidence": "The full CSV returned HTTP 200; all 33 borough rows and integer shares were checked. The gallery credits Lisa Hornung, and the complete published image was visually inspected."
+    },
+    "difficulty": "medium",
+    "difficulty_reason": "Prepared horizontal strips use current rectangles. Geographic field-driven placement is new; flattening strip rows avoids a separate nested-repeat capability.",
+    "verification": {
+      "dimensions": [
+        4320,
+        3780
+      ],
+      "data_checks": {
+        "aggregate_rows": 33,
+        "prepared_cells": 3300,
+        "strip_units": 330,
+        "cells_per_strip": 10,
+        "recycled_cells": 1075,
+        "share_min": 17,
+        "share_max": 48,
+        "all_rows_sum_to": 100
+      },
+      "image": "Full published reconstruction PNG inspected",
+      "checked_on": "2026-10-10"
+    },
+    "id": "13",
+    "image_width": 4320,
+    "image_height": 3780,
+    "image_file": "images/13-recycling-rates-by-london-borough.png",
+    "image_sha256": "be05ae4a197574184af12598999041226fa3744a10240081653095244916f1af",
+    "supporting_source_urls": [
+      "https://python-graph-gallery.com/web-waffle-with-small-multiples/",
+      "https://raw.githubusercontent.com/holtzy/the-python-graph-gallery/master/static/data/london_recycling.csv"
+    ]
+  },
+  {
+    "key": "a8",
+    "title": "Big-tech opening prices in a sparkline table",
+    "family": "Sparkline tables",
+    "creator_publisher": "Albert Rapp, R for the Rest of Us, “How to add sparklines to a {gt} table,” February 14, 2024.",
+    "page_url": "https://rfortherestofus.com/2024/02/sparklines-gt",
+    "image_url": "https://rfortherestofus.com/img/containers/images/blog/006-sparklines-gt/final_sparklines.png/94c2d8880fd1fa5837ac3e0dd14a7300/final_sparklines.png",
+    "what_it_shows": "Fourteen technology companies pair their opening-price histories with percentage changes. Small lines make large increases and subsequent declines visible together, while marked extrema and latest values help locate each company’s current position in its displayed history.",
+    "why_it_fits": "A compact row combines precise text, an ordered line, and highlighted extrema. The authored table demonstrates composition beyond an isolated trend chart.",
+    "composition": {
+      "artboard": "Tall white table; saved image is 1024 × 2249 pixels. Fourteen spacious rows sit beneath three column headers.",
+      "text_elements": "Company names, percentage changes, open_prices heading, and latest-price values. Latest values can be fixed per-row annotations in the archival composition.",
+      "scales": "The source passes a date-sorted list of opening prices to each sparkline. Its x coordinate is observation index scaled to the row’s width, so companies with shorter histories do not share calendar-date alignment. Use one shared numeric opening-price y domain across all companies, matching the published default same_limit=TRUE and the inspected image. Black shows prices; purple/green indicate minima/maxima.",
+      "unit_template": "Each company row combines a name column, a precomputed percentage-change column, and one numeric sparkline frame with an ordered black path, numeric circles at extrema and the last observation, and a latest-price annotation. These are one chart frame plus text columns; M6 is unnecessary.",
+      "repeat_rule": "Repeat once per company, fourteen rows sorted by ascending prepared percentage change; preserve source ordering under row selection.",
+      "calculations": "Prepare one summary per company over its full available source history: first and last opening price, percentage change = (last/first−1)×100, and minimum/maximum with their observation indices. Sorting uses that fixed percentage change. These archival summaries and the shared y domain ignore company/date display filters; filters hide rows or path vertices without silently changing the published benchmark. A moving-window version must recompute the summaries and order upstream.",
+      "guides_annotations_highlights": "Thin horizontal rules separate rows. Colored extrema attach to numeric points; the last value sits beside its row's endpoint."
+    },
+    "tier": "New capability",
+    "milestones": [
+      "paths"
+    ],
+    "new_capabilities": [
+      "numeric positions for circle marks"
+    ],
+    "minimum_data_table": "stock_symbol, company, date, observation_index, open; 45,088 company-trading-day rows. A 14-row company summary holds first_open, last_open, pct_change, min/max values and their observation indices. Sort by date before assigning observation_index; keep real dates even though the published sparkline spaces observations equally.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-02-07/big_tech_stock_prices.csv",
+      "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-02-07/big_tech_companies.csv"
+    ],
+    "source_data": "Both CSV bodies were parsed: prices have stock_symbol, date, open, high, low, close, adj_close, volume; the fourteen-row lookup has stock_symbol and company. Join by symbol, sort dates, and assign indices within company. Records span January 4, 2010–January 24, 2023, with unequal company histories. No dataset-specific license was established from the inspected page or CSVs.",
+    "difficulty": "medium",
+    "difficulty_reason": "Accurate extrema placement and shared price scaling matter more than drawing the small lines.",
+    "verification": {
+      "verified_at": "2026-10-10",
+      "image_pixels": [
+        1024,
+        2249
+      ],
+      "data_rows": 45088,
+      "data_columns": [
+        "stock_symbol",
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "adj_close",
+        "volume"
+      ],
+      "checks_and_limits": "Published final table visually inspected. The saved PNG is a complete 1024-pixel-wide copy; original HTML also supplies a 1270 × 2790 PNG URL. Source code sorts dates before constructing price lists and sorts companies by relative change. The article does not pin a gtExtras version; the documented shared-y default and inspected package implementation agree with the image."
+    },
+    "capability_notes": "A faithful version retains the visible extrema and final-point markers, requiring numeric circle coordinates in addition to M2 paths. The source call does not pin a gtExtras version; the documented shared-y default and inspected implementation are consistent with the original image.",
+    "id": "14",
+    "image_width": 1024,
+    "image_height": 2249,
+    "image_file": "images/14-big-tech-opening-prices-in-a-sparkline-table.png",
+    "image_sha256": "a6b8eba82167e247886685cb8fc282d9928f1a73118d4ccf742496ad1801ee64",
+    "supporting_source_urls": [
+      "https://rfortherestofus.com/2024/02/sparklines-gt",
+      "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-02-07/big_tech_stock_prices.csv",
+      "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-02-07/big_tech_companies.csv",
+      "https://jthomasmock.github.io/gtExtras/reference/gt_plt_sparkline.html",
+      "https://github.com/jthomasmock/gtExtras/blob/master/R/gt_plt_sparkline.R"
+    ]
+  },
+  {
+    "key": "b1",
+    "title": "Republicans and Democrats in the U.S. differ over some factors that make life meaningful",
+    "family": "Dots, dumbbells, and intervals",
+    "creator_publisher": "Laura Silver and Patrick van Kessel, Pew Research Center; 22 November 2021. Open recreation by Fred Duong; recreation publication date not stated.",
+    "page_url": "https://www.pewresearch.org/short-reads/2021/11/22/both-republicans-and-democrats-prioritize-family-but-they-differ-over-other-sources-of-meaning-in-life/",
+    "image_url": "https://www.pewresearch.org/wp-content/uploads/sites/20/2021/11/ft_2021.11.22_partisanmeaning_02a.png",
+    "what_it_shows": "Seven rows compare the sources of meaning mentioned by Republican or Republican-leaning respondents and Democratic or Democratic-leaning respondents. Religion and freedom lean Republican; several leisure, health, and nature topics lean Democratic.",
+    "why_it_fits": "The editorial comparison establishes a clear reading sequence through topics, paired endpoints, and signed differences. It exercises reusable row composition, numeric position, computed text, and a tightly aligned secondary text column.",
+    "composition": {
+      "artboard": "Portrait white page, 840 × 784 source pixels; headline and explanatory subtitle above seven rows, with survey note and publisher below.",
+      "text_elements": "Page headline/subtitle; party labels above the first pair; topic label per repeat; two value callouts; a right-aligned difference number; footer.",
+      "scales": "One shared linear percentage x scale, approximately 0–25%; categorical topic rows with an explicit editorial order. Party controls red/blue color.",
+      "unit_template": "A topic row contains a two-vertex gray connector, two colored circles, endpoint annotations, and computed difference text in a pale right-hand column.",
+      "repeat_rule": "Repeat vertically by topic, maintaining common x coordinates and text-column alignment; no per-row rescaling.",
+      "calculations": "Proposed reconstruction: within each topic, Republican percentage minus Democratic percentage follows party filters only when both values remain; otherwise suppress it. Published weighted percentages are stored aggregates, so topic filters do not reweight respondents. Shared x limits and editorial row order ignore filters.",
+      "guides_annotations_highlights": "The connector gives pair membership without a grid. Endpoint labels can use anchored annotations; the seven differences use repeat-level computed text. Party words explain the color mapping."
+    },
+    "tier": "New capability",
+    "milestones": [
+      "paths"
+    ],
+    "new_capabilities": [
+      "numeric positions for circle marks"
+    ],
+    "minimum_data_table": "topic, party, percent, rep_minus_dem; 14 long records (seven paired rows). Below the preferred 50-row floor, retained for its unusually clear compound row design.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/holtzy/R-graph-gallery/master/web-dumbbell-chart-with-a-gap-column.Rmd"
+    ],
+    "source_data": {
+      "schema": "Downloaded R Markdown includes an explicit tibble: labels, Dem, Rep. All seven topic values were checked against the original PNG; a 14-row CSV is saved.",
+      "license": "Public access verified; no separate data-reuse license stated in the inspected recreation. Attribute Pew and distinguish survey aggregates from microdata.",
+      "cleaning": "Melt Dem/Rep, preserve source labels/order, calculate signed percentage-point differences. No raw survey access is needed for the depicted aggregates.",
+      "evidence": "HTTP body was R Markdown containing the full table, not an HTML error. Original byline/date and actual PNG were inspected."
+    },
+    "difficulty": "medium",
+    "difficulty_reason": "The path milestone supplies connectors, but current circles are positioned in date/category bins, not on a numeric x scale. This is not a quartile/median paired-summary example.",
+    "verification": {
+      "dimensions": [
+        840,
+        784
+      ],
+      "image": "Downloaded original PNG; visually inspected",
+      "data_checks": "14 aggregate records; explicit labels/Dem/Rep table; all values matched",
+      "checked_on": "2026-10-10"
+    },
+    "prose_word_count": 410,
+    "id": "15",
+    "image_width": 840,
+    "image_height": 784,
+    "image_file": "images/15-republicans-and-democrats-in-the-u-s-differ-over-some-factors-that-make-lif.png",
+    "image_sha256": "5f335342f039dadfb93c4e9240a1ca65e549131cdc6a54358195879dc034b838",
+    "supporting_source_urls": [
+      "https://www.pewresearch.org/short-reads/2021/11/22/both-republicans-and-democrats-prioritize-family-but-they-differ-over-other-sources-of-meaning-in-life/",
+      "https://fuhred.com/posts/dumbbell-with-gap/dumbbell.html",
+      "https://r-graph-gallery.com/web-dumbbell-chart-with-a-gap-column.html"
+    ]
+  },
+  {
+    "key": "b2",
+    "title": "Enrollment Trends at Historically Black Colleges and Universities",
+    "family": "Dots, dumbbells, and intervals",
+    "creator_publisher": "Tobias Stalder, published with Yan Holtz in the R Graph Gallery; 2021 stated in suggested citation; exact publication day not stated.",
+    "page_url": "https://r-graph-gallery.com/web-extended-dumbbell-plot-ggplot2.html",
+    "image_url": "https://r-graph-gallery.com/img/fromTheWeb/HBCU_trends_gender.png",
+    "what_it_shows": "Each yearly row compares male and female HBCU enrollment from 1990 to 2015. The paired endpoints show the enrollment gap, while continuous vertical references summarize each sex across all 26 years.",
+    "why_it_fits": "The published practitioner graphic combines local paired comparisons with global reference statistics. The relationship between per-row calculations and whole-graphic calculations is especially useful for testing filter behavior.",
+    "composition": {
+      "artboard": "Tall portrait, 2362 × 3425 pixels; spacious title and color-key subtitle, 26 compact yearly rows, bottom numeric axis, and credits.",
+      "text_elements": "Page title/subtitle/footer; year label per row; centered enrollment-difference text; global mean/standard-deviation labels.",
+      "scales": "Shared numeric enrollment x coordinates, roughly 100,000–200,000; a fixed sequence of yearly rows; purple male and teal female endpoints.",
+      "unit_template": "One year has two circles, a broad pale connector, year text, and a computed gap label positioned at the connector midpoint.",
+      "repeat_rule": "Repeat by year vertically, 1990–2015. Mean lines and translucent mean±SD reference intervals align across the entire repeat stack.",
+      "calculations": "Proposed reconstruction: female-minus-male enrollment is calculated within each year and follows year selection. Across the fixed 26-year reference population, sex-specific mean and sample SD ignore row filters; precompute their endpoints. Male mean≈115,789/SD≈6,065 and female mean≈177,866/SD≈13,908 were independently reproduced. These are descriptive time-series SDs, not confidence intervals.",
+      "guides_annotations_highlights": "Two global mean guides and translucent vertical reference spans sit behind rows. Existing annotations can explain these spans horizontally; the original rotated words are an optional typography difference."
+    },
+    "tier": "New capability",
+    "milestones": [
+      "paths",
+      "bands"
+    ],
+    "new_capabilities": [
+      "numeric positions for circle marks"
+    ],
+    "minimum_data_table": "year, sex, enrollment, female_minus_male; 52 long records. A separate two-row reference table holds mean, SD, low, high by sex.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-02/hbcu_all.csv"
+    ],
+    "source_data": {
+      "schema": "The working CSV has 32 rows and 12 columns, including Year, Males, Females, Total enrollment, and public/private and two-/four-year breakdowns.",
+      "license": "Source is NCES through Data.World/TidyTuesday. Public access is verified; separate reuse terms are not stated in the inspected weekly documentation.",
+      "cleaning": "Filter Year≥1990; melt Males/Females; calculate yearly difference. Compute mean and sample SD over those 26 yearly totals, not over students.",
+      "evidence": "CSV downloaded and parsed; 52 chart records and source-code summary values agree. The complete final PNG and cited 2021 attribution were inspected."
+    },
+    "difficulty": "medium",
+    "difficulty_reason": "Requires numeric circle placement in addition to planned paths/bands. Precomputed mean±SD spans do not qualify as the planned quartile/median/IQR paired-summary milestone.",
+    "verification": {
+      "dimensions": [
+        2362,
+        3425
+      ],
+      "image": "Downloaded final practitioner PNG; visually inspected",
+      "data_checks": {
+        "raw_rows": 32,
+        "raw_columns": [
+          "Year",
+          "Total enrollment",
+          "Males",
+          "Females",
+          "4-year",
+          "2-year",
+          "Total - Public",
+          "4-year - Public",
+          "2-year - Public",
+          "Total - Private",
+          "4-year - Private",
+          "2-year - Private"
+        ],
+        "chart_rows": 52,
+        "global_summaries": {
+          "Males": {
+            "mean": 115788.88461538461,
+            "sample_sd": 6064.846308535266
+          },
+          "Females": {
+            "mean": 177866.23076923078,
+            "sample_sd": 13907.969733380045
+          }
+        }
+      },
+      "checked_on": "2026-10-10"
+    },
+    "prose_word_count": 392,
+    "id": "16",
+    "image_width": 2362,
+    "image_height": 3425,
+    "image_file": "images/16-enrollment-trends-at-historically-black-colleges-and-universities.png",
+    "image_sha256": "9b990a7381047151f2425c8bc214aba680fb40f4e22ea50269c4784df72458b1",
+    "supporting_source_urls": [
+      "https://r-graph-gallery.com/web-extended-dumbbell-plot-ggplot2.html",
+      "https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-02-02/readme.md"
+    ]
+  },
+  {
+    "key": "b4",
+    "title": "Investitionstätigkeit in der EU",
+    "family": "Slopes and bumps",
+    "creator_publisher": "Matthias Schnetzer, published in the R Graph Gallery; publication date not stated.",
+    "page_url": "https://r-graph-gallery.com/web-bump-plot-with-highlights.html",
+    "image_url": "https://r-graph-gallery.com/img/graph/web-bump-plot-with-highlights.png",
+    "what_it_shows": "The chart ranks European countries by private-sector gross fixed capital formation as a share of GDP in 2000, 2010, and 2020. Austria, Germany, Ireland, and France are highlighted against a muted comparison population.",
+    "why_it_fits": "This practitioner graphic combines dense ordered paths, selective emphasis, endpoint labels, and generous label space. Its preparatory ranking operation provides a clear test of fixed-population comparisons under filtering.",
+    "composition": {
+      "artboard": "Narrow 1280 × 2560 portrait, with centered German headline/subtitle, three time positions, a right label gutter, and a bottom source note.",
+      "text_elements": "Page title and description; three year labels; selected rank ticks; one country name at the final rank; footer identifying private investment and AMECO.",
+      "scales": "Numeric x at 2000, 2010, 2020; reversed rank y with rank 1 at the top. Four accent colors identify highlighted countries; other trajectories and text are gray.",
+      "unit_template": "One XY frame contains one ordered three-point trajectory per country, white knockout circles beneath colored/gray dots, and a final anchored country label.",
+      "repeat_rule": "None; country groups identify separate series within one shared XY frame. This is not a separate small-multiple panel per country.",
+      "calculations": "Proposed reconstruction: per country-year, private GFCF/GDP×100. Rank each year over the fixed eligible comparison population, highest first, with deterministic tie handling; precompute rank before binding. Country/highlight filters hide or emphasize paths but ignore the rank calculation population. Year filtering follows displayed vertices and never invents observations between dates.",
+      "guides_annotations_highlights": "Sparse rank/year labels, no interior grid, final country labels colored by emphasis. The original S-shaped transitions can be supplied as ordered interpolated vertices; their shape is a visual connector, not estimated annual ranks."
+    },
+    "tier": "New capability",
+    "milestones": [
+      "paths"
+    ],
+    "new_capabilities": [
+      "numeric positions for circle marks"
+    ],
+    "minimum_data_table": "country, year, private_gfcf, gdp, investment_share_pct, rank; 81 checked records, 27 countries × three years. Optional precomputed smoothing vertices remain comfortably below 50,000.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://api.db.nomics.world/v22/series/AMECO/UIGP?limit=1000&observations=1",
+      "https://api.db.nomics.world/v22/series/AMECO/UVGD?limit=1000&observations=1"
+    ],
+    "source_data": {
+      "schema": "Both JSON bodies include series_code, dimensions, period[], value[]. Verified annual Mrd ECU/EUR UIGP (private GFCF) and UVGD (GDP), not their differently scaled alternatives.",
+      "license": "Public AMECO series via DBnomics; no dataset-specific redistribution license stated in the inspected API response.",
+      "cleaning": "Join equal country/year/unit keys, exclude NA, compute ratio and rank. The published EU28 ISO3 join omits Romania because rou differs from AMECO rom; reproduce this 27-country selection explicitly.",
+      "evidence": "Working bodies contain 94 UIGP and 438 UVGD series. The current 22 May 2026 retrieval produces 81 complete chart rows; the original chart’s historical data vintage is not pinned."
+    },
+    "difficulty": "medium",
+    "difficulty_reason": "M2 can handle prepared paths and numeric frames. Exact point markers require numeric circle placement; a line-only approximation would omit a visible layer. Rankings must retain a stable population.",
+    "verification": {
+      "dimensions": [
+        1280,
+        2560
+      ],
+      "image": "Downloaded final practitioner PNG; visually inspected",
+      "data_checks": {
+        "rows": 81,
+        "countries": 27,
+        "year_counts": {
+          "2000": 27,
+          "2010": 27,
+          "2020": 27
+        },
+        "missing_iso3": [
+          "rou"
+        ],
+        "vintage": "DBnomics retrieval 2026-05-22; original visual vintage not stated"
+      },
+      "checked_on": "2026-10-10"
+    },
+    "prose_word_count": 433,
+    "id": "17",
+    "image_width": 1280,
+    "image_height": 2560,
+    "image_file": "images/17-investitionst-tigkeit-in-der-eu.png",
+    "image_sha256": "2e1d91abea7cbd4322b2485bfec29c950c16ae5047cda586551ab6c965f70679",
+    "supporting_source_urls": [
+      "https://r-graph-gallery.com/web-bump-plot-with-highlights.html",
+      "https://db.nomics.world/AMECO/UIGP",
+      "https://db.nomics.world/AMECO/UVGD"
+    ]
+  },
+  {
+    "key": "b7",
+    "title": "What to Make of Those Soaring Covid Counts — published SAS recreation",
+    "family": "Tile-grid maps with mini charts",
+    "creator_publisher": "tc, SAS Support Communities; 19 January 2022. The displayed PNG is this practitioner’s recreation of a New York Times print graphic from 12 January 2022, not an original NYT export.",
+    "page_url": "https://communities.sas.com/t5/Graphics-Programming/Creating-A-New-York-Times-Like-Tile-Grid-U-S-Map-With-SAS-ODS/td-p/790814",
+    "image_url": "https://communities.sas.com/t5/image/serverpage/image-id/67491i351F091A4E7CD1D7?v=v2",
+    "what_it_shows": "State mini charts show seven-day average daily COVID-19 cases per 100,000 people through 10 January 2022 for the 50 states and District of Columbia. Red identifies states where the January window sets a record against earlier periods.",
+    "why_it_fits": "The published reconstruction supplies complete code and source data for a geographic arrangement of square mini charts. Headlines, a color key, and source text occupy unused geographic space, making the arrangement part of the composition.",
+    "composition": {
+      "artboard": "Landscape 2200 × 1700 pixels. A United States tile grid leaves a large upper-left narrative area and a lower-right source-note area; state charts occupy equal cells.",
+      "text_elements": "Page headline and explanation; metric heading and two-color legend; state abbreviation and ending value per cell; one panel’s year guides; footer.",
+      "scales": "Shared date x and common cases-per-100,000 y across states. Per-state record classification controls gray/red; it does not alter the y domain.",
+      "unit_template": "Each state cell contains an ordered case-rate path, endpoint circle, short state label, and latest-value annotation. Only Washington carries the explicit 2020/2021/2022 guides.",
+      "repeat_rule": "Repeat by state using the published 8-row, 11-column row/column lookup, preserving intentional empty cells. This is a tile arrangement, not a geographic projection.",
+      "calculations": "Proposed reconstruction: use the published seven-day rates. Within each state, compare maximum rate during 1–10 January 2022 with the maximum before January; precompute the red/gray flag. Both windows and the archival cutoff ignore display filters. State filters hide units without reflowing them; dates follow displayed path records. Endpoint text refers to the fixed cutoff.",
+      "guides_annotations_highlights": "Red makes record-setting trajectories prominent. Existing per-repeat computed text and anchored endpoint annotations can handle state/value copy; fixed page notes occupy empty cells."
+    },
+    "tier": "New capability",
+    "milestones": [
+      "paths"
+    ],
+    "new_capabilities": [
+      "tile-grid arrangement driven by row and column fields",
+      "numeric positions for circle marks"
+    ],
+    "minimum_data_table": "state, geoid, date, cases_avg_per_100k, record_flag, row, column; 34,701 checked state-date records through the cutoff, plus a 51-row tile lookup.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/nytimes/covid-19-data/master/rolling-averages/us-states.csv"
+    ],
+    "source_data": {
+      "schema": "Downloaded 61,942-row CSV with date, geoid, state, cases, cases_avg, cases_avg_per_100k, deaths, deaths_avg, deaths_avg_per_100k. Relevant filter yields 51 geographies.",
+      "license": "NYT’s explicit license permits noncommercial copying, derivatives and display with attribution; other uses require permission. This is not public-domain data.",
+      "cleaning": "Exclude territories; cut at 2022-01-10; sort state/date; preserve publisher rate corrections. Derive record status and join the literal SAS tile-coordinate table.",
+      "evidence": "Full CSV schema/counts and source-code cutoff verified. The SAS author/date and original-reference link were opened. Original NYT print date is reported by the recreation author."
+    },
+    "difficulty": "medium",
+    "difficulty_reason": "M2 supplies mini-chart paths; geographic row/column placement is the essential new capability. A normal wrapping grid would destroy the geographic composition.",
+    "verification": {
+      "dimensions": [
+        2200,
+        1700
+      ],
+      "image": "Downloaded SAS recreation, explicitly distinguished from NYT original; visually inspected",
+      "data_checks": {
+        "raw_rows": 61942,
+        "selected_rows": 34701,
+        "states_and_dc": 51,
+        "cutoff": "2022-01-10"
+      },
+      "checked_on": "2026-10-10"
+    },
+    "prose_word_count": 440,
+    "id": "18",
+    "image_width": 2200,
+    "image_height": 1700,
+    "image_file": "images/18-what-to-make-of-those-soaring-covid-counts-published-sas-recreation.png",
+    "image_sha256": "bff6d7aa5b4509e5787e93b8fbef0a50c2b359f8ad4780e6e96608fb50e38f4c",
+    "supporting_source_urls": [
+      "https://communities.sas.com/t5/Graphics-Programming/Creating-A-New-York-Times-Like-Tile-Grid-U-S-Map-With-SAS-ODS/td-p/790814",
+      "https://github.com/nytimes/covid-19-data/blob/master/README.md",
+      "https://raw.githubusercontent.com/nytimes/covid-19-data/master/LICENSE",
+      "https://twitter.com/AlbertoCairo/status/1481289889421398026"
+    ]
+  },
+  {
+    "key": "b8",
+    "title": "Housing Expensiveness by US State (Jan. 2000–Sept. 2025)",
+    "family": "Tile-grid maps with mini charts",
+    "creator_publisher": "Aaron Becker; 30 October 2025.",
+    "page_url": "https://aaronjbecker.com/posts/housing-expensiveness-by-state-2000-2025/",
+    "image_url": "https://aaronjbecker.com/_astro/home-value-vs-income-by-state-2000-2025_image_0.2TV0Zlwp_1faC1v.webp",
+    "what_it_shows": "Each state and DC has a mini chart of monthly ratios of typical home value to median annual household income, with a national inset for comparison. Higher and darker monthly bars indicate a larger home-value-to-income multiple.",
+    "why_it_fits": "The practitioner publication places a mini chart inside every square state cell. It combines a geographic tile layout, continuous color mapping, a shared scale, method notes, and a larger national comparison.",
+    "composition": {
+      "artboard": "Landscape 3434 × 2498 pixels; 51 equal state/DC cells in a geographic grid, central-top title/legend, and an enlarged national inset at lower right.",
+      "text_elements": "Headline/subtitle; note about approximate geography; state names; sparse date/value labels; continuous color key; source and income-estimation notes.",
+      "scales": "Shared monthly date x from January 2000 through September 2025 and ratio y, approximately 1.5–9.5. Yellow/orange/red bar color redundantly encodes the same ratio.",
+      "unit_template": "A state cell uses one narrow rectangle per month, height/color bound to ratio, plus state label and minimal guides. National comparison uses its own supplied series.",
+      "repeat_rule": "Repeat by state using fixed row/column fields and empty cells. Place the national view as a separate larger frame; an automatically spanning repeat cell is unnecessary for this reconstruction.",
+      "calculations": "Proposed reconstruction: prepare home value/annual household income per state-month before binding. Following the author, anchor annual income in March and interpolate monthly. To match the original method, freeze income at March 2024 and extrapolate later months using historical mean monthly growth. Ratios and estimation flags ignore display filters; state/date filters only hide records. Shared height/color domains ignore filters. National ratio uses national data, not an average of state ratios.",
+      "guides_annotations_highlights": "Sparse boundary axes reduce clutter. A static color key explains the continuous scale; explanatory copy records the income extrapolation. Preserve identical per-state scales and exact missing-cell layout."
+    },
+    "tier": "New capability",
+    "milestones": [],
+    "new_capabilities": [
+      "tile-grid arrangement driven by row and column fields"
+    ],
+    "minimum_data_table": "state, month, zhvi, household_income, income_is_estimated, ratio, row, column; 16,068 state/national-month records (52 × 309), including 228 missing source home values.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://files.zillowstatic.com/research/public_csvs/zhvi/State_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv",
+      "https://files.zillowstatic.com/research/public_csvs/zhvi/Metro_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv",
+      "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MEHOINUSALA646N,MEHOINUSAKA646N,MEHOINUSAZA646N,MEHOINUSARA646N,MEHOINUSCAA646N,MEHOINUSCOA646N,MEHOINUSCTA646N,MEHOINUSDEA646N,MEHOINUSFLA646N,MEHOINUSGAA646N,MEHOINUSHIA646N,MEHOINUSIDA646N",
+      "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MEHOINUSILA646N,MEHOINUSINA646N,MEHOINUSIAA646N,MEHOINUSKSA646N,MEHOINUSKYA646N,MEHOINUSLAA646N,MEHOINUSMEA646N,MEHOINUSMDA646N,MEHOINUSMAA646N,MEHOINUSMIA646N,MEHOINUSMNA646N,MEHOINUSMSA646N",
+      "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MEHOINUSMOA646N,MEHOINUSMTA646N,MEHOINUSNEA646N,MEHOINUSNVA646N,MEHOINUSNHA646N,MEHOINUSNJA646N,MEHOINUSNMA646N,MEHOINUSNYA646N,MEHOINUSNCA646N,MEHOINUSNDA646N,MEHOINUSOHA646N,MEHOINUSOKA646N",
+      "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MEHOINUSORA646N,MEHOINUSPAA646N,MEHOINUSRIA646N,MEHOINUSSCA646N,MEHOINUSSDA646N,MEHOINUSTNA646N,MEHOINUSTXA646N,MEHOINUSUTA646N,MEHOINUSVTA646N,MEHOINUSVAA646N,MEHOINUSWAA646N,MEHOINUSWVA646N",
+      "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MEHOINUSWIA646N,MEHOINUSWYA646N,MEHOINUSDCA646N,MEHOINUSA646N"
+    ],
+    "source_data": {
+      "schema": "Zillow CSVs verified: RegionID, SizeRank, RegionName, RegionType, StateName, monthly columns; 51 states/DC plus one national row. Five FRED batches verified all 52 nominal-income tickers and annual observation_date.",
+      "license": "Public downloads verified; Zillow and Census/FRED source terms apply. No blanket open license for the complete graphic is asserted.",
+      "cleaning": "Melt Zillow; join income by state; retain 1999–2024 income for the original method; reproduce interpolation/extrapolation and flag estimated values. Freeze the September 2025 display window. Live provider revisions may differ from Becker’s unpublished historical snapshot.",
+      "evidence": "All 52 income series contain numeric annual values, 1984–2025. FRED silently limited a large request, so ≤12-series batches were checked individually. Original WebP was faithfully converted to PNG."
+    },
+    "difficulty": "medium",
+    "difficulty_reason": "The individual date-strip bars fit today’s mark model. Geographic row/column placement is new; national inset and fixed page annotations can be explicitly placed. Method reproducibility is the main data burden.",
+    "verification": {
+      "dimensions": [
+        3434,
+        2498
+      ],
+      "image": "Original author WebP converted losslessly to PNG; visually inspected",
+      "data_checks": {
+        "geographies": 52,
+        "months": 309,
+        "monthly_records": 16068,
+        "nonmissing_zhvi": 15840,
+        "income_series": 52,
+        "vintage": "Live downloads 2026-10-10; original snapshot not pinned"
+      },
+      "checked_on": "2026-10-10"
+    },
+    "prose_word_count": 451,
+    "id": "19",
+    "image_width": 3434,
+    "image_height": 2498,
+    "image_file": "images/19-housing-expensiveness-by-us-state-jan-2000-sept-2025.png",
+    "image_sha256": "c0776b562aba93cd4b6c18f22e0520aa9e72535a30982b9128fc1433d7f4dbde",
+    "supporting_source_urls": [
+      "https://aaronjbecker.com/posts/housing-expensiveness-by-state-2000-2025/",
+      "https://www.zillow.com/research/data/"
+    ]
+  },
+  {
+    "key": "c4",
+    "title": "Who lives in the capitals? — population-weighted Marimekko explanation",
+    "family": "Normalized stacks and share charts",
+    "creator_publisher": "Lisa Charlotte Muth, Datawrapper Blog, March 29, 2018.",
+    "page_url": "https://www.datawrapper.de/blog/weekly-chart-capitals",
+    "image_url": "https://kirby.datawrapper.de/media/pages/blog/weekly-chart-capitals/28e899ec5b-1740123106/full-180329_marimekko1.png",
+    "what_it_shows": "Four countries occupy rows whose heights represent population; each row splits horizontally into capital residents and everyone else. Japan's smaller capital share can therefore occupy more area than Argentina's larger share, connecting relative percentages to absolute population.",
+    "why_it_fits": "This transposed Marimekko uses only rectangles, labels, and a dimension annotation. It is a precise probe of a small but consequential gap: allowing the data to control the size of repeated units.",
+    "composition": {
+      "artboard": "1500 × 1150 pixels, approximately 1.30:1; pale gray paper with a consistent narrow country-label rail.",
+      "text_elements": "Country labels; four sentences stating capital, nationality, and share; a Russia population annotation. Large capital segments carry white text, while short ones use red text in the remaining space. The parent article supplies the wider explanatory context.",
+      "scales": "Capital share maps to horizontal red width on a common 0–100% scale. Total national population maps to row height using one shared linear scale; cumulative preceding population determines row top. Country-label rail width is fixed and not data area.",
+      "unit_template": "One normalized horizontal pair of red/gray rectangles inside a population-sized row, plus a country label and a mark-anchored sentence with a per-instance placement override.",
+      "repeat_rule": "Four rows ordered Australia, Argentina, Japan, Russia, smallest to largest population. Rows touch; separators clarify the boundaries. Repeated row heights differ substantially.",
+      "calculations": "Per country, capital share is capital population divided by national population; the complementary share is one minus that share. These source-year denominators ignore highlight filters. Global cumulative population positions rows and follows country inclusion filters; keep the pixels-per-person scale fixed to the original full comparison so removing a country does not enlarge the others. Text populations and shares refer to each repeat.",
+      "guides_annotations_highlights": "A vertical dimension arrow is anchored to the Russia row's full height. Text placement changes for Australia's tiny capital segment and the two large segments; this is an instance override, not a new chart type."
+    },
+    "tier": "New capability",
+    "milestones": [
+      "normalized stacks"
+    ],
+    "new_capabilities": [
+      "data-driven repeat height"
+    ],
+    "minimum_data_table": "country, capital, year, total_population, capital_share (4 country rows for 2014; optionally expand to 8 country/residence-category rows). National population is required in addition to the available share table.",
+    "data_status": "Obtainable",
+    "data_urls": [
+      "https://datawrapper.dwcdn.net/ev8d7/10/data.csv",
+      "https://esa.un.org/unpd/wup/CD-ROM/"
+    ],
+    "source_data": "The source article's related share chart exposes a working CSV: 18 rows with country, share of people in capital, urban and not capital, rural areas. Remove embedded HTML/flag codes, extract capital names, and select the four countries. These shares alone do not supply Marimekko heights. Recover 2014 national totals from the UN Population Division's World Urbanization Prospects vintage used by the author, then join on country; the original UN download route currently redirects to maintenance. Original total-population precision remains unverified. No separate data license was stated on the inspected share export.",
+    "difficulty": "medium",
+    "difficulty_reason": "Data-controlled row height changes layout, label containment, and annotation anchors together.",
+    "verification": {
+      "verified_at": "2026-10-10",
+      "image_pixels": [
+        1500,
+        1150
+      ],
+      "data_rows": 18,
+      "data_columns": [
+        "country",
+        "share of people in capital",
+        "urban and not capital",
+        "rural areas"
+      ],
+      "checks_and_limits": "Both the four-country Marimekko and the related original share chart were visually inspected. Share data is available, but total_population needed for a faithful Marimekko is not verified; status deliberately remains Obtainable."
+    },
+    "id": "20",
+    "image_width": 1500,
+    "image_height": 1150,
+    "image_file": "images/20-who-lives-in-the-capitals-population-weighted-marimekko-explanation.png",
+    "image_sha256": "557fec145d40d09389b8ee5772dddac17768cba0a9187255262151af48f98b24",
+    "supporting_source_urls": [
+      "https://www.datawrapper.de/blog/weekly-chart-capitals",
+      "https://datawrapper.dwcdn.net/ev8d7/10/",
+      "https://datawrapper.dwcdn.net/ev8d7/10/data.csv",
+      "https://esa.un.org/unpd/wup/CD-ROM/"
+    ]
+  },
+  {
+    "key": "c6",
+    "title": "Corruption and human development",
+    "family": "Annotated single-frame editorial charts",
+    "creator_publisher": "The Economist, 2011 (individual designer and exact original publication day unverified); the open reconstruction is by Ting-You Wang, March 3, 2017. The Economist article is commonly titled Corrosive corruption.",
+    "page_url": "https://databeauty.com/blog/tutorial/2017/03/03/recreate-economist-graph-by-ggplot2.html",
+    "image_url": "https://databeauty.com/figures/2017-03-03-recreate-economist-graph-by-ggplot2/Economist1.png",
+    "what_it_shows": "Countries with less perceived public-sector corruption generally have higher human development scores, with a broad range of exceptions. Outlined circles preserve overlap, selected country labels identify informative cases, and a fitted curve gives the overall relationship context.",
+    "why_it_fits": "This is a compact layering challenge: points, an independently calculated path, a statistical note, a color key, carefully displaced names, and source text share one finished frame. It tests the reusable extension from numeric paths to numeric point placement.",
+    "composition": {
+      "artboard": "595 × 404 pixels in the preserved original, approximately 1.47:1; light background, dense top key, and a narrow footer.",
+      "text_elements": "Title, two index definitions, six color-key labels, selected country names, a fit-statistic label, and source line. Rebuild the small key from manually arranged circles and text; country labels are authored annotations pinned to stable country IDs.",
+      "scales": "Corruption Perceptions Index maps to numeric x on roughly 1–10; Human Development Index maps to numeric y on 0.2–1.0. Region/group maps to outline color; circle size is constant. All marks share one coordinate frame.",
+      "unit_template": "One outlined circle per country, a precomputed ordered fitted path beneath the points, horizontal reference rules, and selected mark-anchored labels. No density, force layout, or exotic mark is needed.",
+      "repeat_rule": "None; one frame. Country is a record identifier, not a repeat field.",
+      "calculations": "The reconstruction estimates HDI = a + b × log(CPI) upstream over all complete country rows, and calculates R² over that same global population. Keep the benchmark fit and its statistic fixed when filtering highlighted countries; a refit requires a separately declared upstream calculation. The source table's inferred fit gives R²≈52.13%, not the original printed 56%, so do not carry over the original statistic onto the reconstructed curve.",
+      "guides_annotations_highlights": "Horizontal HDI rules attach to the numeric y scale. Manually displaced country labels attach to their point IDs; preserve readable offsets at crowded extremes. The fit key and source line are page anchored."
+    },
+    "tier": "New capability",
+    "milestones": [
+      "paths"
+    ],
+    "new_capabilities": [
+      "numeric positions for circle marks"
+    ],
+    "minimum_data_table": "Country, CPI, HDI, Region (173 country rows), plus a separately prepared ordered CPI, fitted_HDI curve and a one-row fit summary. Filter incomplete pairs before fitting.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://databeauty.com/data/EconomistData.csv"
+    ],
+    "source_data": "The CSV downloaded successfully with 173 records and columns Country, HDI.Rank, HDI, CPI, Region, plus an index column. Drop the index, retain numeric CPI/HDI, and review region-to-legend mapping rather than simply renaming geographic regions OECD. The tutorial explicitly treats the model as inferred and admits differences from the original. It is available reconstruction data, not a verified original Economist analytic extract. No data-specific license is stated. The original Economist URL was opened but returned a payment wall; its image remains viewable on the cited reconstruction page.",
+    "difficulty": "medium",
+    "difficulty_reason": "Label crowding is manageable, but the curve and statistical annotation must be tied to the same verified population.",
+    "verification": {
+      "verified_at": "2026-10-10",
+      "image_pixels": [
+        595,
+        404
+      ],
+      "data_rows": 173,
+      "data_columns": [
+        "",
+        "Country",
+        "HDI.Rank",
+        "HDI",
+        "CPI",
+        "Region"
+      ],
+      "checks_and_limits": "Preserved original PNG visually inspected. Reconstruction fit coefficients a=0.3167103963, b=0.2665771866, R²=0.5212859043; original image prints 56%. This discrepancy and the unverified original date are explicit."
+    },
+    "id": "21",
+    "image_width": 595,
+    "image_height": 404,
+    "image_file": "images/21-corruption-and-human-development.png",
+    "image_sha256": "9f7715a4ac12ec63276377c83d20586908cc07b00dcba22faff7a7a7fc6c4cf8",
+    "supporting_source_urls": [
+      "https://databeauty.com/blog/tutorial/2017/03/03/recreate-economist-graph-by-ggplot2.html",
+      "https://www.economist.com/graphic-detail/2011/12/02/corrosive-corruption",
+      "https://databeauty.com/data/EconomistData.csv"
+    ]
+  },
+  {
+    "key": "b3",
+    "title": "The Changing Nature of Middle-Class Jobs",
+    "family": "Slopes and bumps",
+    "creator_publisher": "Gregor Aisch and Robert Gebeloff, The New York Times. Online graphic is dated 22 February 2015; Aisch’s portfolio states print publication on 23 February 2015.",
+    "page_url": "https://driven-by-data.net/2015/02/23/middle-class/",
+    "image_url": "https://driven-by-data.net/_app/immutable/assets/middleclass-1.CTCmdPfM.jpeg",
+    "what_it_shows": "The graphic compares occupation shares of jobs paying $40,000–$80,000 in 2014 dollars in 1980 and 2012. Ten broad occupation groups reveal movement away from production and toward professional work; stroke color conveys each occupation’s gender composition.",
+    "why_it_fits": "The editorial composition combines aligned slopes, computed group summaries, a carefully placed central headline, and selected narrative callouts. It exposes a reusable styling gap: color interpolation along a path.",
+    "composition": {
+      "artboard": "Wide 2462 × 1456 standalone chart from the author’s portfolio. Ten narrow frames share a baseline; headline, explanation, and legend occupy open space above the middle frames.",
+      "text_elements": "Page title/deck/byline/date; five occupation callouts; repeated category labels and signed group changes below; sparse year and y-axis labels.",
+      "scales": "Within each panel, x has 1980 and 2012 endpoints. All panels share the same jobs-per-1,000 numeric y scale. Blue–gray–pink color represents male/female composition.",
+      "unit_template": "Each broad-group frame contains several occupation paths with endpoint circles, a group label, and the net change in that group’s share.",
+      "repeat_rule": "Repeat ten broad groups horizontally in the published order, with identical y scale and panel widths. Layout uses whitespace deliberately rather than shrinking to each group’s extent.",
+      "calculations": "Proposed reconstruction: weighted occupation counts divided by all eligible middle-class jobs in that year, times 1,000. This denominator ignores occupation/group filters. Within a repeated group, sum the occupation shares and subtract 1980 from 2012; this follows the chosen occupation set. Gender shares retain their source occupation-year population and ignore display/highlight filters.",
+      "guides_annotations_highlights": "Sparse horizontal guides preserve comparisons; selected occupations receive anchored callouts. Path endpoint colors interpolate between the two observed gender shares, rather than implying intermediate-year observations."
+    },
+    "tier": "New capability",
+    "milestones": [
+      "paths"
+    ],
+    "new_capabilities": [
+      "continuous color gradients along paths",
+      "numeric positions for circle marks"
+    ],
+    "minimum_data_table": "occupation, broad_group, year, weighted_jobs, jobs_per_1000, male_share; two rows per occupation, likely hundreds after aggregation. Exact full-series count is unverified.",
+    "data_status": "Obtainable",
+    "data_urls": [
+      "https://usa.ipums.org/usa/",
+      "https://driven-by-data.net/_app/immutable/assets/middleclass-2.mjyi8TV1.jpeg"
+    ],
+    "source_data": {
+      "schema": "The author provides a companion image with rounded values for 20 growing and 20 shrinking occupations, but no verified complete numeric table or gender-share download.",
+      "license": "IPUMS data require registration and compliance with its terms/citation requirements. The NYT graphic remains a credited published reference.",
+      "cleaning": "Obtain harmonized 1980 Census/2012 ACS employment, occupation, sex, income and person weights; verify the original eligibility definition, inflation conversion, and occupation crosswalk before claiming replication.",
+      "evidence": "Author page and standalone graphic opened; dates/bylines visually checked. IPUMS confirms harmonized Census/ACS availability. NYT interactive access was unavailable, so exact underlying data are not labeled Available."
+    },
+    "difficulty": "high",
+    "difficulty_reason": "Composition is tractable after aggregation, but matching the original population and taxonomy requires research. Gradient strokes and numeric endpoint circles exceed M2 paths alone.",
+    "verification": {
+      "dimensions": [
+        2462,
+        1456
+      ],
+      "image": "Author-hosted standalone online graphic, not the full newspaper spread; visually inspected",
+      "data_checks": "Companion rounded 40-occupation table inspected; full microdata-to-graphic schema not recovered",
+      "checked_on": "2026-10-10"
+    },
+    "prose_word_count": 443,
+    "id": "22",
+    "image_width": 2462,
+    "image_height": 1456,
+    "image_file": "images/22-the-changing-nature-of-middle-class-jobs.jpg",
+    "image_sha256": "e9ae7368d856288ea23de10519dac7798815adff349158fa5243b161c5bde44d",
+    "supporting_source_urls": [
+      "https://driven-by-data.net/2015/02/23/middle-class/",
+      "https://usa.ipums.org/usa/"
+    ]
+  },
+  {
+    "key": "c2",
+    "title": "More days at the highest temperatures in 2023",
+    "family": "Ridgelines, horizons, and stacked strips",
+    "creator_publisher": "Erwan Rivault, BBC News; article by Mark Poynting and Erwan Rivault, January 9, 2024. The creator's Information is Beautiful Awards submission verifies the graphic credit.",
+    "page_url": "https://www.bbc.co.uk/news/science-environment-67861954",
+    "image_url": "https://ichef.bbci.co.uk/ace/standard/1280/cpsprodpb/1216F/production/_132259047_global_temp_delta_1991_2020avg_multiple_ridges_v2-2x-nc.png",
+    "what_it_shows": "Daily global temperature anomalies form one distribution for every year from 1940 through 2023. The ridge positions move toward the warm side of a fixed historical baseline, while annotations distinguish the exceptional 2023 distribution from earlier record years.",
+    "why_it_fits": "One simple repeated silhouette supports a full editorial composition: shared scales, selected annotations, gradient color, and an explanatory miniature. The static image carries the argument without interaction.",
+    "composition": {
+      "artboard": "1280 × 2530 pixels, approximately 1:2, white; main chart above a short how-to-read footer.",
+      "text_elements": "Headline, baseline definition, selected year labels, temperature ticks at top and bottom, three year callouts, reading instructions and source credit. The footer explains height as the frequency of days.",
+      "scales": "A shared horizontal temperature-anomaly scale uses the 1991–2020 daily baseline. One common vertical density/count multiplier is added to each year’s fixed baseline. Color varies continuously with anomaly from cooler to warmer values; years keep fixed positions from 1940 at the top to 2023 at the bottom.",
+      "unit_template": "One XY frame draws 84 translated lower/upper band series and their ordered outlines. Gradient fill is keyed to the shared anomaly x coordinate. Inter-band occlusion happens inside this frame, so no overlapping-repeat-frame capability is needed.",
+      "repeat_rule": "None; one band series per year within a single frame, drawn in a fixed order. Year labels and selected callouts are fixed annotations. The small how-to-read example is an independently authored, one-time explanatory element.",
+      "calculations": "For each year, anomaly distributions use that year’s daily observations against the fixed 1991–2020 reference. The available recreation supplies 25 bins with a 365-count total per year; the original BBC smoothing kernel is unverified. Upstream density preparation must state its bandwidth and treatment of those bins. Year visibility filters preserve baselines, shared height scale, and draw order; observation filters require recomputation upstream. Never rebase anomalies to the visible years.",
+      "guides_annotations_highlights": "Zero is a shared reference; selected 1998, 2016, and 2023 labels attach to their fixed year baselines and curves within the shared frame. The instructional mini-ridge and its labels are a separately authored one-time explanation, not a second frame inside every repeat."
+    },
+    "tier": "New capability",
+    "milestones": [
+      "paths",
+      "bands"
+    ],
+    "new_capabilities": [
+      "gradient fills in areas"
+    ],
+    "minimum_data_table": "year, anomaly_x, density_or_bin_count, baseline_y, lower_y, upper_y, draw_order; the checked reconstruction has 84 × 25 = 2,100 year-bin records. Convert bins to declared density curves upstream; fixed baseline offsets place all bands in one frame.",
+    "data_status": "Available",
+    "data_urls": [
+      "https://raw.githubusercontent.com/open-innovations/oi-lume-viz/main/example-site/_data/test/data/era5_world_t2_year.csv"
+    ],
+    "source_data": "The open recreation's CSV body was downloaded: its first column is Temperature difference from 1991-2020 avg (°C), followed by year columns 1940 through 2023. Its source template documents daily ERA5 temperatures, subtraction of the 1991–2020 daily reference, and 0.1°C bins. Unpivot those columns; do not mistake the counts for daily records. This supplies a defensible reconstruction, but the original BBC density bandwidth is unverified. No dataset-specific license was found on the inspected recreation page or CSV; retain C3S/ECMWF attribution.",
+    "difficulty": "high",
+    "difficulty_reason": "Eighty-four overlapping gradients need stable draw order, legible year callouts, and honest upstream smoothing.",
+    "verification": {
+      "verified_at": "2026-10-10",
+      "image_pixels": [
+        1280,
+        2530
+      ],
+      "data_rows": 25,
+      "data_columns": [
+        "Temperature difference from 1991-2020 avg (°C)",
+        "1940 … 2023"
+      ],
+      "checks_and_limits": "Static BBC image visually inspected; no animation dependency. Web reader blocked BBC, but direct HTML retrieval succeeded. Binned reconstruction is available; exact original kernel/rounding is not."
+    },
+    "capability_notes": "M2/M3 can draw translated band coordinates in one frame. The remaining geometric styling gap is continuous fill color across an area; density estimation is explicitly upstream.",
+    "id": "23",
+    "image_width": 1280,
+    "image_height": 2530,
+    "image_file": "images/23-more-days-at-the-highest-temperatures-in-2023.png",
+    "image_sha256": "c2bf9a1402b0ca7334d7ad41c6c5f9363dcd30a50002d52ea239b9cbc7ffe6d1",
+    "supporting_source_urls": [
+      "https://www.bbc.co.uk/news/science-environment-67861954",
+      "https://www.informationisbeautifulawards.com/showcase/7169-joy-division-climate-chart",
+      "https://open-innovations.github.io/oi-lume-viz/samples/chart/ridgeline/",
+      "https://raw.githubusercontent.com/open-innovations/oi-lume-viz/main/example-site/_data/test/data/era5_world_t2_year.csv",
+      "https://raw.githubusercontent.com/open-innovations/oi-lume-viz/main/example-site/samples/chart/ridgeline/index.vto"
+    ]
+  }
+]

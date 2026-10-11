@@ -2,7 +2,7 @@ import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldB
 import { useMemo } from "react";
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import { isMissingValue } from "@/lib/numeric";
+import { isMissingValue } from "@/lib/valueParsing";
 import { NullValue } from "@/components/NullValue";
 import { highlightMatches } from "./highlightMatches";
 import { HEADER_HEIGHT } from "./DataTableHeader";

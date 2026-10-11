@@ -1,0 +1,16 @@
+{
+  "id": "51fb4eca-bb42-4e44-98b3-9e7a28da60ce",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:21:35.617Z",
+  "summary": "Created \"The retirement line is hard to read\" under \"Composition examples\".",
+  "nodeIds": [
+    "page-the-retirement-line-is-hard-to-read",
+    "page-composition-examples"
+  ],
+  "metadata": {
+    "clientMutationId": "eaa558e7-3e99-47f2-8937-a982efbcafde"
+  }
+}

@@ -84,6 +84,17 @@ export function useCreateCharts() {
       const start = stages.includes(selectedField) ? [selectedField] : [];
       settings.stages = [...new Set([...start, ...stages])].slice(0, 3);
     }
+    if (settings.type === "hierarchy") {
+      // Nest few-valued categories, the selected one outermost.
+      const levels = profiles
+        .filter(
+          (profile) =>
+            profile.dataType !== "numeric" && profile.uniqueCount <= 12
+        )
+        .map((profile) => profile.name);
+      const start = levels.includes(selectedField) ? [selectedField] : [];
+      settings.levels = [...new Set([...start, ...levels])].slice(0, 2);
+    }
     if (settings.type === "scatter-matrix") {
       // Numbers first, then a few low-cardinality categories.
       const groups = profiles

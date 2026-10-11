@@ -19,6 +19,7 @@ import {
   ScaleSwatch,
   paletteLabel,
 } from "./colorScales/ColorScaleEditor";
+import { CompositionScales } from "./colorScales/CompositionScales";
 import { VisionProvider } from "./colorScales/vision";
 
 /** How many charts color by each scale. */
@@ -215,6 +216,7 @@ export function ColorScalePanel() {
             )}
           </div>
         )}
+        <CompositionScales />
       </div>
     </VisionProvider>
   );

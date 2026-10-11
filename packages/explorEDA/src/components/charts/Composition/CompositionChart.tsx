@@ -2,7 +2,7 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
-import { PencilRuler } from "lucide-react";
+import { Maximize, PencilRuler, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useChartDetailsStore } from "../../chartDetailsStore";
 import { ChartMessage } from "../ChartMessage";
@@ -12,17 +12,28 @@ import {
   useTraceRevision,
   useTraceSource,
 } from "../trace/ChartTraceScope";
-import { moveElement, updateOverride } from "./compositionEdits";
+import { moveElement, removeElement, updateOverride } from "./compositionEdits";
+import { CompositionQuickMenu } from "./CompositionQuickMenu";
+import {
+  elementOfNode,
+  markOfNode,
+  quickActions,
+  traceIdOf,
+  type QuickAction,
+  type QuickActionApi,
+} from "./quickActions";
 import {
   useCompositionEditor,
   useCompositionEditorStore,
 } from "./compositionEditorStore";
+import { useArtboardZoom } from "./artboardZoom";
 import { CompositionSvg } from "./CompositionSvg";
 import { registerArtboard } from "./compositionOutput";
 import { makeCompositionTraceSource } from "./compositionTrace";
 import {
   findOverride,
   normalizeComposition,
+  type CompositionDefinition,
   type UnitElement,
 } from "./compositionTypes";
 import type { CompositionSettings } from "./definition";
@@ -50,6 +61,15 @@ type ValueFilter = Extract<Filter, { type: "value" }>;
 /** The repeat value a filter stores: missing values filter as null. */
 const filterValue = (key: string) => (key === "Missing" ? null : key);
 
+/** True when an element's position is an offset from an anchor it follows. */
+function isAnchored(definition: CompositionDefinition, id: string) {
+  const element = definition.elements.find((item) => item.id === id);
+  return (
+    element?.kind === "guide" ||
+    (element?.kind === "annotation" && element.anchor.kind !== "page")
+  );
+}
+
 export function CompositionChart({
   settings,
   width,
@@ -65,8 +85,15 @@ export function CompositionChart({
   const openDetails = useChartDetailsStore((state) => state.open);
   const { mode, selection } = useCompositionEditor(settings.id);
   const select = useCompositionEditorStore((state) => state.select);
+  const reveal = useCompositionEditorStore((state) => state.reveal);
+  const setMode = useCompositionEditorStore((state) => state.setMode);
   const editing = mode === "edit";
   const [drag, setDrag] = useState<Drag>();
+  const [menu, setMenu] = useState<{
+    x: number;
+    y: number;
+    node?: SceneNode;
+  }>();
   const [hovered, setHovered] = useState<SceneNode>();
   const svgRef = useRef<SVGSVGElement>(null);
   const traceApi = useChartTraceApi();
@@ -106,9 +133,30 @@ export function CompositionChart({
         }
       : rows;
   }, [rows, settings.filters, repeatFields]);
+  // An annotation attached to a frame or a glyph, and a guide's label, sit
+  // at an offset from their anchor; dragging one re-resolves with the moved
+  // offset, so the ring and leader stay on the anchor instead of floating.
+  const anchoredDrag =
+    drag &&
+    drag.instanceKey === undefined &&
+    isAnchored(definition, drag.elementId)
+      ? drag
+      : undefined;
+  const drawn = useMemo(
+    () =>
+      anchoredDrag
+        ? moveElement(
+            definition,
+            anchoredDrag.elementId,
+            anchoredDrag.dx,
+            anchoredDrag.dy
+          )
+        : definition,
+    [definition, anchoredDrag]
+  );
   const scene = useMemo(
-    () => resolveComposition(definition, measureCompositionText, data),
-    [definition, data]
+    () => resolveComposition(drawn, measureCompositionText, data),
+    [drawn, data]
   );
   // Output copies the drawn artboard, so it matches what is on screen.
   useEffect(
@@ -116,8 +164,8 @@ export function CompositionChart({
     [settings.id, scene]
   );
   const source = useMemo(
-    () => makeCompositionTraceSource(definition, scene, revision),
-    [definition, scene, revision]
+    () => makeCompositionTraceSource(definition, scene, revision, data),
+    [definition, scene, revision, data]
   );
   useTraceSource(owner, source);
 
@@ -136,6 +184,10 @@ export function CompositionChart({
       2
     )
   );
+  const zoomer = useArtboardZoom(svgRef, scene.width, scene.height, scale);
+  const zoomed = zoomer.view.k !== 1;
+  /** Screen pixels per artboard unit, after any zoom. */
+  const unitSize = scale * zoomer.view.k;
 
   if (!editing && definition.elements.length === 0) {
     return (
@@ -159,8 +211,8 @@ export function CompositionChart({
   }
 
   const toArtboard = (event: React.PointerEvent) => ({
-    x: event.clientX / scale,
-    y: event.clientY / scale,
+    x: event.clientX / unitSize,
+    y: event.clientY / unitSize,
   });
 
   const startDrag = (
@@ -189,7 +241,7 @@ export function CompositionChart({
   };
 
   const dragged = (value: Drag | undefined) =>
-    value !== undefined && Math.hypot(value.dx, value.dy) * scale > 2;
+    value !== undefined && Math.hypot(value.dx, value.dy) * unitSize > 2;
 
   const endDrag = () => {
     if (!drag) return;
@@ -212,15 +264,32 @@ export function CompositionChart({
   };
 
   const onKeyDown = (event: React.KeyboardEvent) => {
+    // + and - zoom about the middle; 0 shows the whole artboard.
+    if (!event.metaKey && !event.ctrlKey && !event.altKey) {
+      if (event.key === "+" || event.key === "=") {
+        event.preventDefault();
+        zoomer.zoom(1.5);
+        return;
+      }
+      if (event.key === "-") {
+        event.preventDefault();
+        zoomer.zoom(1 / 1.5);
+        return;
+      }
+      if (event.key === "0" && zoomed) {
+        event.preventDefault();
+        zoomer.reset();
+        return;
+      }
+    }
     if (!editing) {
       // Alt-Enter traces the first selected repeat, or the first repeat.
       if (event.altKey && event.key === "Enter") {
         event.preventDefault();
         const unit = scene.elements.find((element) => element.kind === "unit");
         const instance =
-          unit?.instances?.find((item) =>
-            data.selection?.keys.has(item.key)
-          ) ?? unit?.instances?.[0];
+          unit?.instances?.find((item) => data.selection?.keys.has(item.key)) ??
+          unit?.instances?.[0];
         if (unit && instance)
           traceApi?.inspect(
             owner,
@@ -270,31 +339,31 @@ export function CompositionChart({
 
   // Viewing: a click on a repeat selects it everywhere; Alt-click traces.
   const onViewClick = (event: React.MouseEvent) => {
+    if (zoomer.didPan()) return;
     const node = nodeAt(event);
     const element = definition.elements.find(
       (item) => item.id === node?.elementId
     );
     if (event.altKey) {
-      if (!node) return;
-      const id =
-        (node.type === "rect" || node.type === "circle") && node.glyph
-          ? `glyph:${node.key}`
-          : element?.kind === "unit" && node.instanceKey !== undefined
-            ? `repeat:${element.id}:${node.instanceKey}`
-            : element?.kind === "guide" || element?.kind === "annotation"
-              ? `element:${element.id}`
-              : undefined;
+      const id = traceIdOf(node, element);
       if (id) traceApi?.inspect(owner, "composition", id);
       return;
     }
     const field =
-      element?.kind === "unit" ? (element as UnitElement).repeat.field : undefined;
+      element?.kind === "unit"
+        ? (element as UnitElement).repeat.field
+        : undefined;
     if (!node || node.instanceKey === undefined || !field) {
       // Empty space clears this composition's filters.
       if (settings.filters.length) updateChart(settings.id, { filters: [] });
       return;
     }
-    const value = filterValue(node.instanceKey);
+    toggleRepeatFilter(field, node.instanceKey);
+  };
+
+  /** Adds a repeat to this composition's value filter, or takes it out. */
+  const toggleRepeatFilter = (field: string, key: string) => {
+    const value = filterValue(key);
     const current = settings.filters.find(
       (item): item is ValueFilter =>
         item.type === "value" && item.field === field
@@ -313,9 +382,73 @@ export function CompositionChart({
     });
   };
 
+  // Right-click: a menu of what is under the pointer and where to edit it.
+  // The keyboard's menu key lands at (0, 0), so it opens by the selection.
+  const onContextMenu = (event: React.MouseEvent) => {
+    if (onSettingsChange) return;
+    event.preventDefault();
+    const node = nodeAt(event);
+    const rect = svgRef.current?.getBoundingClientRect();
+    const fromKeyboard = event.clientX === 0 && event.clientY === 0;
+    setMenu({
+      x: fromKeyboard
+        ? (rect?.left ?? 0) + (rect?.width ?? 0) / 2
+        : event.clientX,
+      y: fromKeyboard
+        ? (rect?.top ?? 0) + (rect?.height ?? 0) / 2
+        : event.clientY,
+      node:
+        node ??
+        (fromKeyboard && selection
+          ? scene.nodes.find((item) => item.elementId === selection.elementId)
+          : undefined),
+    });
+  };
+  // Opens the editor beside the artboard when none is showing.
+  const ensureEditor = () => {
+    const state = useCompositionEditorStore.getState().editors[settings.id];
+    if (!state?.attached) openDetails(settings.id);
+    else if (state.mode !== "edit") setMode(settings.id, "edit");
+  };
+  const quickApi: QuickActionApi = {
+    edit: (elementId, instanceKey) => {
+      ensureEditor();
+      select(settings.id, { elementId, instanceKey });
+    },
+    editMark: (elementId, markId) => {
+      ensureEditor();
+      select(settings.id, { elementId });
+      reveal(settings.id, { markId });
+    },
+    editScale: (scaleId) => {
+      ensureEditor();
+      reveal(settings.id, { scaleId });
+    },
+    trace: (id) => traceApi?.inspect(owner, "composition", id),
+    filterRepeat: toggleRepeatFilter,
+    clearFilters: () => updateChart(settings.id, { filters: [] }),
+    remove: (elementId) => {
+      select(settings.id, undefined);
+      commit(removeElement(definition, elementId));
+    },
+  };
+  const menuElement = menu && elementOfNode(definition, menu.node);
+  const menuMark = menu && markOfNode(menuElement, menu.node);
+  const menuHeading = menu
+    ? [
+        menuElement?.name ?? "Artboard",
+        menuMark?.name,
+        menu.node?.instanceKey !== undefined && menu.node.instanceKey !== "all"
+          ? menu.node.instanceKey
+          : undefined,
+      ]
+        .filter(Boolean)
+        .join(" · ")
+    : "";
+
   // While dragging, offset the drawing; the move saves on release.
   const offsets =
-    drag && drag.instanceKey === undefined
+    drag && drag.instanceKey === undefined && !anchoredDrag
       ? { [drag.elementId]: { dx: drag.dx, dy: drag.dy } }
       : undefined;
   const instanceOffset =
@@ -424,19 +557,44 @@ export function CompositionChart({
       className="eda-composition"
       data-mode={mode}
       style={{ width, height }}
-      onPointerDown={() => editing && select(settings.id, undefined)}
+      onPointerDown={(event) =>
+        editing && event.button === 0 && select(settings.id, undefined)
+      }
+      onContextMenu={onContextMenu}
     >
+      {menu && (
+        <CompositionQuickMenu
+          x={menu.x}
+          y={menu.y}
+          heading={menuHeading}
+          actions={quickActions({
+            definition,
+            mode,
+            node: menu.node,
+            hasFilters: settings.filters.length > 0,
+          })}
+          container={svgRef.current?.closest<HTMLElement>("[role='dialog']")}
+          onRun={(action: QuickAction) => action.run(quickApi)}
+          onClose={() => setMenu(undefined)}
+        />
+      )}
       {!editing && glyph && (
         <ChartReadout fallbackClassName="eda-chart-readout-inline">
           {[
-            [hoveredField ?? "Repeat", glyph.instanceKey],
-            ["Bin", glyph.bin.label],
-            [
-              "Value",
-              glyph.value.toLocaleString("en-US", {
-                maximumFractionDigits: 1,
-              }),
-            ],
+            ...(hoveredField ? [[hoveredField, glyph.instanceKey]] : []),
+            ...(glyph.point
+              ? [
+                  [glyph.point.xField, readoutNumber(glyph.point.x)],
+                  [glyph.point.yField, readoutNumber(glyph.point.y)],
+                  ["Order", glyph.bin.label],
+                ]
+              : [
+                  ["Bin", glyph.bin.label],
+                  [
+                    "Value",
+                    glyph.missing ? "none" : readoutNumber(glyph.value),
+                  ],
+                ]),
             ["Rows", glyph.rowIds.length.toLocaleString()],
           ].map(([name, value]) => (
             <span key={name} className="eda-readout-item">
@@ -452,6 +610,8 @@ export function CompositionChart({
         offsets={offsets}
         instanceOffset={instanceOffset}
         scale={scale}
+        view={zoomer.view}
+        data-zoomed={zoomed || undefined}
         label={settings.title || "Composition"}
         className="eda-composition-artboard"
         tabIndex={0}
@@ -461,13 +621,24 @@ export function CompositionChart({
             : "Click a repeat to filter by it, or empty space to clear. Alt-click a mark, or press Alt-Enter, to trace it."
         }
         onKeyDown={onKeyDown}
+        onPointerDown={(event) => {
+          // Viewing a zoomed artboard, a drag pans it.
+          if (!editing) zoomer.startPan(event);
+        }}
         onPointerMove={(event) => {
+          if (!editing && zoomer.movePan(event)) return;
           onPointerMove(event);
           if (!editing) setHovered(nodeAt(event));
         }}
         onPointerLeave={() => setHovered(undefined)}
-        onPointerUp={endDrag}
-        onPointerCancel={() => setDrag(undefined)}
+        onPointerUp={() => {
+          endDrag();
+          zoomer.endPan();
+        }}
+        onPointerCancel={() => {
+          setDrag(undefined);
+          zoomer.endPan();
+        }}
         onClick={editing ? undefined : onViewClick}
       >
         {editing && scene.elements.map(hit)}
@@ -484,13 +655,76 @@ export function CompositionChart({
               selected.id,
               selectedInstance?.key
             )}
-            scale={scale}
+            scale={unitSize}
           />
         )}
       </CompositionSvg>
+      <ZoomControls
+        zoomed={zoomed}
+        onZoomIn={() => zoomer.zoom(1.5)}
+        onZoomOut={() => zoomer.zoom(1 / 1.5)}
+        onReset={zoomer.reset}
+      />
     </div>
   );
 }
+
+/** Zoom buttons over the artboard's corner; they show on hover and while zoomed. */
+function ZoomControls({
+  zoomed,
+  onZoomIn,
+  onZoomOut,
+  onReset,
+}: {
+  zoomed: boolean;
+  onZoomIn: () => void;
+  onZoomOut: () => void;
+  onReset: () => void;
+}) {
+  return (
+    <div
+      className="eda-composition-zoom"
+      data-zoomed={zoomed || undefined}
+      role="group"
+      aria-label="Zoom"
+      onPointerDown={(event) => event.stopPropagation()}
+    >
+      <Button
+        variant="ghost"
+        size="icon"
+        aria-label="Zoom in"
+        tooltip="Zoom in on the graphic (+). Ctrl- or Command-scroll zooms at the pointer."
+        onClick={onZoomIn}
+      >
+        <ZoomIn />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        aria-label="Zoom out"
+        tooltip="Zoom out (-)"
+        disabled={!zoomed}
+        onClick={onZoomOut}
+      >
+        <ZoomOut />
+      </Button>
+      {zoomed && (
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Show the whole graphic"
+          tooltip="Show the whole graphic (0). While zoomed, scroll or drag to pan."
+          onClick={onReset}
+        >
+          <Maximize />
+        </Button>
+      )}
+    </div>
+  );
+}
+
+const readoutNumber = (value: number) =>
+  value.toLocaleString("en-US", { maximumFractionDigits: 2 });
 
 /** Names the selection above its box, at a constant screen size. */
 function SelectionTag({

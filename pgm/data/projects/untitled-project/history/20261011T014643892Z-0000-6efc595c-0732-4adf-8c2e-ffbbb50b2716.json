@@ -1,0 +1,15 @@
+{
+  "id": "6efc595c-0732-4adf-8c2e-ffbbb50b2716",
+  "kind": "node.context.updated",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:46:43.892Z",
+  "summary": "Updated context for \"Honestly, other example is better\".",
+  "nodeIds": [
+    "page-honestly-other-example-is-better"
+  ],
+  "metadata": {
+    "clientMutationId": "1fe02728-53b6-4202-bd21-d9ab73b40aa4"
+  }
+}

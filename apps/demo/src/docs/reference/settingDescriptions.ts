@@ -126,6 +126,21 @@ export const CHART_SETTINGS: Readonly<
     field: "Not read by this chart type.",
     content: "The text, written in Markdown.",
   },
+  hierarchy: {
+    field: "Not read by this chart type.",
+    levels:
+      "Category fields from outermost in, one to three. Each row is one path through them.",
+    aggregation: "Node size: a count of rows, or a sum of the measure.",
+    measureField:
+      "Field summed for node size. Negative and missing values are left out.",
+    missingLevels:
+      "Leaves out rows with a missing level, or shows missing as its own node.",
+    colorBy:
+      "Colors nodes by their first-level branch, by level, or in one color.",
+    arrangement: "Draws the hierarchy as a treemap, an icicle, or a sunburst.",
+    focus:
+      "The zoomed branch, as values along the levels. Empty shows the whole.",
+  },
   sankey: {
     field: "Not read by this chart type.",
     stages: "Category fields in order. Each row is one path through them.",

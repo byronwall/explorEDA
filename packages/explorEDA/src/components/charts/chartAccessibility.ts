@@ -15,6 +15,7 @@ const chartNames: Record<string, string> = {
   "color-legend": "Color legend",
   markdown: "Markdown note",
   sankey: "Sankey diagram",
+  hierarchy: "Hierarchy",
   "parallel-coordinates": "Parallel coordinates",
   "scatter-matrix": "Scatter matrix",
   calendar: "Calendar heatmap",
@@ -65,6 +66,12 @@ export function getChartTitle(
     const labels = settings.stages.filter(Boolean).map(getFieldLabel);
     return labels.length > 1
       ? `${labels.join(" → ")}`
+      : getChartDefinition(settings.type).name;
+  }
+  if (settings.type === "hierarchy") {
+    const labels = settings.levels.filter(Boolean).map(getFieldLabel);
+    return labels.length
+      ? labels.join(" › ")
       : getChartDefinition(settings.type).name;
   }
   if (settings.type === "scatter-matrix") {
@@ -166,6 +173,8 @@ export function getChartFields(settings: ChartSettings): string[] {
         return settings.fields;
       case "sankey":
         return [...settings.stages, settings.measureField];
+      case "hierarchy":
+        return [...settings.levels, settings.measureField];
       case "parallel-coordinates":
         return [
           ...settings.axes.map((axis) => axis.field),
@@ -250,8 +259,8 @@ export function getChartSummary(
   }
   if (settings.type === "metric-card") {
     return settings.aggregation === "count" && !settings.entityField
-      ? "Metric card showing the count of rows that match the chart filters."
-      : `${getChartTitle({ ...settings, title: "" }, getFieldLabel)} for rows that match the chart filters.`;
+      ? "Metric card showing the count of rows that match the active filters."
+      : `${getChartTitle({ ...settings, title: "" }, getFieldLabel)} for rows that match the active filters.`;
   }
   const fields = getChartFields(settings);
   return fields.length

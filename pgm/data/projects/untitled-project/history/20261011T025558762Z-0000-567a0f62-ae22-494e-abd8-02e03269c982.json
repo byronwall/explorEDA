@@ -1,0 +1,14 @@
+{
+  "id": "567a0f62-ae22-494e-abd8-02e03269c982",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:c86165",
+    "label": "Agent token ...c86165"
+  },
+  "createdAt": "2026-10-11T02:55:58.762Z",
+  "summary": "Updated metadata for \"How each state voted is weak and hard to read\".",
+  "nodeIds": [
+    "page-how-each-state-voted-is-weak-and-hard-to-read"
+  ]
+}

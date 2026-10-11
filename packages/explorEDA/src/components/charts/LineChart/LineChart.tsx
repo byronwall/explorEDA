@@ -1,8 +1,15 @@
 import { useColorContext } from "@/hooks/useDisplayColorScales";
 import { defaultCategoricalColors } from "@/lib/colorScaleMath";
 import { THEME_PALETTE, resolvePaletteColor } from "@/lib/themePalettes";
-import { finiteNumber } from "@/lib/numeric";
-import { boundedDomain, hasAxisBounds } from "../Axis/axisBounds";
+import { finiteNumber, finiteNumbers } from "@/lib/valueParsing";
+import {
+  boundedDomain,
+  hasAxisBounds,
+  countNonpositive,
+  hiddenByBounds,
+  logDomain,
+  withNonpositive,
+} from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import { ChartMessage } from "../ChartMessage";
 import { reduceDataPoints } from "@/lib/chartUtils";
@@ -321,9 +328,29 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
     .domain(boundedDomain(xExtent, settings.xAxis))
     .range([0, innerWidth]);
   if (!hasAxisBounds(settings.xAxis)) xScale.nice();
-  const leftYScale = numericScale(settings.yAxis)
-    .domain(boundedDomain(leftYExtent, settings.yAxis))
+  // The left axis can use a true log scale. It has no place for values at
+  // or below zero, so their points are not drawn and the axis counts them.
+  const leftLog = settings.yAxis.scaleType === "log";
+  const leftYScale = numericScale(settings.yAxis, true)
+    .domain(
+      leftLog
+        ? logDomain(yValuesByAxis.left, settings.yAxis)
+        : boundedDomain(leftYExtent, settings.yAxis)
+    )
     .range([innerHeight, 0]);
+  const offScale = (field: string, y: number) =>
+    leftLog && !settings.seriesSettings[field]?.useRightAxis && y <= 0;
+  // Left-axis values a drawn point needs both coordinates for.
+  const leftPoints = settings.seriesField
+    .filter((field) => !settings.seriesSettings[field]?.useRightAxis)
+    .flatMap((field) =>
+      (liveSeriesData[field] ?? []).flatMap((value, index) => {
+        const y = finiteNumber(value);
+        return y === undefined || finiteNumber(liveXData[index]) === undefined
+          ? []
+          : [y];
+      })
+    );
   if (!hasAxisBounds(settings.yAxis)) leftYScale.nice();
   const rightYScale = numericScale(settings.yAxis)
     .domain(rightYExtent)
@@ -333,7 +360,9 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
   // Create line generator with dynamic y-accessor
   const createLineGenerator = (yField: string) =>
     line<(typeof processedLiveSeriesData)[0]["data"][0]>()
-      .defined((d) => d.y != null && Number.isFinite(d.x))
+      .defined(
+        (d) => d.y != null && Number.isFinite(d.x) && !offScale(yField, d.y)
+      )
       .x((d) => xScale(d.x))
       .y((d) =>
         settings.seriesSettings[yField]?.useRightAxis
@@ -416,6 +445,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
             if (!point) return [];
             const right = settings.seriesSettings[series.name]?.useRightAxis;
             const y = point.y!;
+            if (offScale(series.name, y)) return [];
             return [
               {
                 name: series.name,
@@ -519,6 +549,24 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
         height={height}
         xScale={xScale}
         yScale={leftYScale}
+        hidden={{
+          x: hiddenByBounds(
+            settings.xAxis,
+            xScale.domain() as [number, number],
+            finiteNumbers(liveXData)
+          ),
+          y: withNonpositive(
+            hiddenByBounds(
+              settings.yAxis,
+              leftYScale.domain() as [number, number],
+              leftLog ? leftPoints.filter((y) => y > 0) : leftPoints,
+              ["point", "points"],
+              true
+            ),
+            leftLog ? countNonpositive(leftPoints) : 0,
+            ["point", "points"]
+          ),
+        }}
         settings={{
           ...settings,
           margin,
@@ -665,7 +713,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
                 />
                 {seriesSettings.showPoints &&
                   series.data.map((d, j) =>
-                    d.y == null ? null : (
+                    d.y == null || offScale(series.name, d.y) ? null : (
                       <circle
                         key={j}
                         cx={xScale(d.x)}

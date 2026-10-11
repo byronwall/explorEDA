@@ -1,0 +1,14 @@
+{
+  "id": "bc330669-c355-49fd-af50-d05f44461c9c",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:f71adc",
+    "label": "Agent token ...f71adc"
+  },
+  "createdAt": "2026-10-11T02:06:05.805Z",
+  "summary": "Updated metadata for \"Consumer confidence has an average that only appears in first row\".",
+  "nodeIds": [
+    "page-consumer-confidence-has-an-average-that-only-appears-in-first-row"
+  ]
+}

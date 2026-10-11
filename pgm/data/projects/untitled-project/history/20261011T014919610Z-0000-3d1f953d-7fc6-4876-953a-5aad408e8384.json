@@ -1,0 +1,16 @@
+{
+  "id": "3d1f953d-7fc6-4876-953a-5aad408e8384",
+  "kind": "node.moved",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:49:19.610Z",
+  "summary": "Moved \"Honestly, other example is better\" under \"Examples to add\".",
+  "nodeIds": [
+    "page-honestly-other-example-is-better",
+    "page-examples-to-add"
+  ],
+  "metadata": {
+    "clientMutationId": "84d7be23-ae2e-463c-99a5-573f370caa80"
+  }
+}

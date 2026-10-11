@@ -52,6 +52,10 @@ const PROPS: Record<keyof ExplorEdaProps, string> = {
     "Shows the charts without accepting edits. Host panels stay usable.",
   toolbarStart: "Host content that leads the toolbar line, such as view tabs.",
   toolbarEnd: "Host actions that end the toolbar line, such as undo or export.",
+  schema:
+    "What the Schema diagram shows: a project's schema, whether it can be edited, and which view it opens on. Without it, the diagram shows this workspace's table and its calculated fields.",
+  onAddSource:
+    "Shows Add source in the Schema diagram. The host picks a file, then can turn the workspace into a project with singleTableProject and addSourceFromRows from exploreda/analysis.",
 };
 
 export function PropsReference() {

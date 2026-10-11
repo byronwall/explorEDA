@@ -1,0 +1,15 @@
+{
+  "id": "3c799a65-6af2-4422-8990-c14f44478e42",
+  "kind": "node.context.updated",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:52:21.841Z",
+  "summary": "Updated context for \"Income and expenditure\".",
+  "nodeIds": [
+    "page-income-and-expenditure"
+  ],
+  "metadata": {
+    "clientMutationId": "a45b244a-3b9a-4eb1-9309-64ea391e09c5"
+  }
+}

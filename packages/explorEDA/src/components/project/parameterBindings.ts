@@ -1,3 +1,4 @@
+import { isDateText } from "@/lib/valueParsing";
 import type {
   AnalysisParameter,
   AnalysisQuery,
@@ -37,7 +38,7 @@ export function bindingProblem(
       parameter.type === "number"
         ? typeof value === "number" && Number.isFinite(value)
         : parameter.type === "date"
-          ? typeof value === "string" && Number.isFinite(Date.parse(value))
+          ? typeof value === "string" && isDateText(value)
           : typeof value === parameter.type;
     if (!valid) return `${parameter.name} is not a valid ${parameter.type}.`;
   }

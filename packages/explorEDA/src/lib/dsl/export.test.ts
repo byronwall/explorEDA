@@ -56,6 +56,76 @@ function roundTrip(settings: SavedDataStructure) {
 beforeAll(() => registerAllCharts());
 
 describe("exportDocument", () => {
+  it("writes each workspace filter as its own filter line and rebuilds it", () => {
+    const start = compileDocument(
+      `filter Channel=Web,null
+filter "Order Date"=2024-01-01..2024-02-28
+filter Units=2..
+filter Channel.contains=mall
+bar Channel`,
+      { rows }
+    );
+    expect(
+      start.diagnostics.map((item) => [item.severity, item.message])
+    ).toEqual([
+      [
+        "warning",
+        "Channel already has a filter, so this one replaces it. A field has one workspace filter.",
+      ],
+    ]);
+    expect(start.settings.workspaceFilters).toEqual([
+      { type: "text", field: "Channel", operator: "contains", value: "mall" },
+      {
+        type: "date-range",
+        field: "Order Date",
+        min: "2024-01-01",
+        max: "2024-02-28",
+      },
+      { type: "range", field: "Units", min: 2 },
+    ]);
+
+    const { text, omitted, rebuilt } = roundTrip(start.settings);
+    expect(omitted).toEqual([]);
+    expect(text).toContain('filter Channel.contains="mall"');
+    expect(text).toContain('filter "Order Date"=2024-01-01..2024-02-28');
+    expect(text).toContain("filter Units=2..");
+    expect(rebuilt.diagnostics).toEqual([]);
+    expect(rebuilt.settings.workspaceFilters).toEqual(
+      start.settings.workspaceFilters
+    );
+  });
+
+  it("writes value filters and leaves out workspace filters it cannot say", () => {
+    const settings = compileDocument("bar Channel", { rows }).settings;
+    const { text, rebuilt } = roundTrip({
+      ...settings,
+      workspaceFilters: [
+        { type: "value", field: "Channel", values: ["Store, Mall", null] },
+      ],
+    });
+    expect(text).toContain('filter Channel="Store, Mall",null');
+    expect(rebuilt.settings.workspaceFilters).toEqual([
+      { type: "value", field: "Channel", values: ["Store, Mall", null] },
+    ]);
+    const blank = exportDocument(
+      {
+        ...settings,
+        workspaceFilters: [{ type: "value", field: "Channel", values: [""] }],
+      },
+      { rows }
+    );
+    expect(blank.text).not.toContain("filter ");
+    expect(blank.omitted).toEqual([
+      "filter Channel: its values have no text form, such as a blank value",
+    ]);
+  });
+
+  it("drops workspace filters when the text has no filter line", () => {
+    expect(
+      compileDocument("bar Channel", { rows }).settings
+    ).not.toHaveProperty("workspaceFilters");
+  });
+
   it("rebuilds a dashboard after edits in the normal controls", () => {
     const start = compileDocument(
       `dashboard name="Orders"

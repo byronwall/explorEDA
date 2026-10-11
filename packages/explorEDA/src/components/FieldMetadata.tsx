@@ -1,3 +1,4 @@
+import { timestampOf } from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import { buildFieldProfile, type FieldProfile } from "@/lib/fieldProfiles";
 import {
@@ -58,8 +59,8 @@ function dateRange(profile: FieldProfile, format: ValueFormat) {
   let firstTime = Infinity;
   let lastTime = -Infinity;
   for (const { value } of profile.categories?.distribution ?? []) {
-    const time = Date.parse(String(value));
-    if (!Number.isFinite(time)) continue;
+    const time = timestampOf(value);
+    if (time === undefined) continue;
     if (time < firstTime) {
       first = value;
       firstTime = time;
@@ -149,10 +150,14 @@ export function FieldMetadata({
         label: `${source.name} · ${sourceField?.name ?? sourceField?.id ?? "source field"}`,
       }
     : step?.kind === "calculate"
-      ? { glyph: "ƒx", display: "Query", label: `query calculation ${step.label}` }
+      ? {
+          glyph: "ƒx",
+          display: "Query",
+          label: `query calculation ${step.label}`,
+        }
       : step?.kind === "aggregate"
         ? { glyph: "Σ", display: "Query", label: "a query summary" }
-      : undefined;
+        : undefined;
   if (!profile && !origin) return <span className={className}>{label}</span>;
   const metadata = profile
     ? fieldMetadata(profile, (value) =>

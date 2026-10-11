@@ -1,0 +1,14 @@
+{
+  "id": "eb6e6078-9a1c-4c5a-b80f-38e7c032f42c",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:2e41c4",
+    "label": "Agent token ...2e41c4"
+  },
+  "createdAt": "2026-10-11T02:03:04.383Z",
+  "summary": "Updated metadata for \"I want to see the real chart!\".",
+  "nodeIds": [
+    "page-i-want-to-see-the-real-chart"
+  ]
+}

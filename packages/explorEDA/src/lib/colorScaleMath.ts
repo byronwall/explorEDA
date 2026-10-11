@@ -1,5 +1,5 @@
 import { categoryLabel } from "./categories";
-import { finiteNumber } from "./numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import {
   DEFAULT_CATEGORICAL_PALETTE,
   DEFAULT_SEQUENTIAL_PALETTE,

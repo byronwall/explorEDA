@@ -1,3 +1,4 @@
+import { parseNumber } from "@/lib/valueParsing";
 import { bisectRight } from "d3-array";
 import { categoryKey } from "@/lib/categories";
 import type { IdType } from "@/providers/DataLayerProvider";
@@ -90,8 +91,13 @@ export function planMarginals(
     }
     const scale = buildScale(descriptor) as (value: number) => number;
     const [low, high] = descriptor.domain as [number, number];
+    // A log axis bins in equal ratios, so bins keep an even width on screen.
     const edges = Array.from({ length: binCount + 1 }, (_, i) =>
-      i === binCount ? high : low + ((high - low) * i) / binCount
+      i === binCount
+        ? high
+        : descriptor.type === "log"
+          ? low * (high / low) ** (i / binCount)
+          : low + ((high - low) * i) / binCount
     );
     const members = Array.from({ length: binCount }, () => ({
       ids: [] as IdType[],
@@ -99,7 +105,7 @@ export function planMarginals(
       groups: new Map<string, { color: string; count: number }>(),
     }));
     for (const point of plan.points) {
-      const value = Number(axis === "x" ? point.xValue : point.yValue);
+      const value = parseNumber(axis === "x" ? point.xValue : point.yValue);
       // Interior edges belong to the bin on their right; the last edge closes.
       const index = Math.max(
         0,
