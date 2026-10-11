@@ -239,6 +239,16 @@ export const coverageFeatures = [
     chartType: "parallel-coordinates",
   },
   {
+    id: "chart:hierarchy",
+    label: "Hierarchy",
+    family: "Chart types",
+    description:
+      "See how a total divides through nested categories as a treemap, and select a branch.",
+    required: true,
+    status: "supported",
+    chartType: "hierarchy",
+  },
+  {
     id: "chart:scatter-matrix",
     label: "Scatter matrix",
     family: "Chart types",
@@ -826,6 +836,7 @@ export const exampleCoverage = [
       "chart:data-table": "shown",
       "chart:sankey": "shown",
       "chart:heatmap": "shown",
+      "chart:hierarchy": "shown",
       "labels:meaningful-title": "reviewed",
       "labels:axes": "reviewed",
       "guides:ticks": "reviewed",
@@ -925,6 +936,7 @@ export const exampleCoverage = [
     features: {
       "chart:row": "shown",
       "chart:pivot": "shown",
+      "chart:hierarchy": "shown",
       "chart:data-table": "shown",
       "labels:meaningful-title": "shown",
       "labels:axes": "shown",

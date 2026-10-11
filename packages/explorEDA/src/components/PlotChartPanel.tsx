@@ -140,6 +140,12 @@ const TRACE_COPY = {
       "Alt-click a node or link to trace it. Normal clicks keep selecting. You can also find a source row below.",
     ariaLabel: "Sankey trace inspector",
   },
+  hierarchy: {
+    heading: "Hierarchy trace",
+    emptyText:
+      "Alt-click a box to see its total, its share, and its source rows. Normal clicks keep selecting. You can also find a source row below.",
+    ariaLabel: "Hierarchy trace inspector",
+  },
   "scatter-matrix": {
     heading: "Matrix trace",
     emptyText:
