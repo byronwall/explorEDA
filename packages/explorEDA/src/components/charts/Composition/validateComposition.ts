@@ -283,6 +283,10 @@ function isUnitElement(value: Value) {
     isNumber(label.fontSize) &&
     (label.valueCalcId === undefined || isString(label.valueCalcId)) &&
     typeof value.axis === "boolean" &&
+    (value.axisTitles === undefined ||
+      (isRecord(value.axisTitles) &&
+        (value.axisTitles.x === undefined || isString(value.axisTitles.x)) &&
+        (value.axisTitles.y === undefined || isString(value.axisTitles.y)))) &&
     Array.isArray(marks) &&
     marks.every(isMark) &&
     isRecord(repeat) &&

@@ -535,6 +535,32 @@ export function UnitProperties({
             options={SHOWN}
             onChange={(axis) => onChange({ axis })}
           />
+          {unit.axis && (
+            <>
+              <Label htmlFor={`${nameId}-x-title`}>X title</Label>
+              <Input
+                id={`${nameId}-x-title`}
+                placeholder="What x measures, such as Age"
+                value={unit.axisTitles?.x ?? ""}
+                onChange={(event) =>
+                  onChange({
+                    axisTitles: axisTitles(unit, { x: event.target.value }),
+                  })
+                }
+              />
+              <Label htmlFor={`${nameId}-y-title`}>Y title</Label>
+              <Input
+                id={`${nameId}-y-title`}
+                placeholder="What y measures"
+                value={unit.axisTitles?.y ?? ""}
+                onChange={(event) =>
+                  onChange({
+                    axisTitles: axisTitles(unit, { y: event.target.value }),
+                  })
+                }
+              />
+            </>
+          )}
           <PairSetting
             label="Position"
             names={["X", "Y"]}
@@ -555,6 +581,17 @@ export function UnitProperties({
       />
     </>
   );
+}
+
+/** Axis titles with one side changed; an empty set clears the setting. */
+function axisTitles(
+  unit: UnitElement,
+  patch: { x?: string; y?: string }
+): UnitElement["axisTitles"] {
+  const next = { ...unit.axisTitles, ...patch };
+  const x = next.x || undefined;
+  const y = next.y || undefined;
+  return x || y ? { x, y } : undefined;
 }
 
 function WindowFields({

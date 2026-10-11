@@ -14,6 +14,7 @@ import {
   type AreaNode,
   type LineNode,
   type RectNode,
+  type TextNode,
 } from "./resolveComposition";
 import type { CompositionData } from "./resolveUnit";
 import { isCompositionDefinition } from "./validateComposition";
@@ -271,6 +272,32 @@ describe("guides on x–y units", () => {
       (item) => item.id === "guide-1"
     )!;
     expect(element.anchor?.missing).toContain("y scale");
+  });
+});
+
+describe("axis titles", () => {
+  it("names the x axis under its ticks and turns the y title beside them", () => {
+    const definition = fan({
+      axis: true,
+      axisTitles: { x: "Year", y: "Percent" },
+    });
+    expect(isCompositionDefinition(definition)).toBe(true);
+    const resolved = scene(definition);
+    const frame = resolved.elements[0]!.instances![0]!.frame;
+    const title = (axis: string) =>
+      resolved.nodes.find(
+        (node): node is TextNode =>
+          node.type === "text" && node.key.endsWith(`axis:title:${axis}`)
+      )!;
+    expect(title("x").lines[0]!.text).toBe("Year");
+    expect(title("x").lines[0]!.y).toBeGreaterThan(frame.y + frame.height + 14);
+    expect(title("y").rotate).toBe(-90);
+    expect(title("y").x).toBeLessThan(frame.x - 6);
+    expect(
+      isCompositionDefinition(
+        fan({ axisTitles: { x: 4 as unknown as string } })
+      )
+    ).toBe(false);
   });
 });
 

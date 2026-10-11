@@ -768,6 +768,8 @@ export interface UnitElement extends ElementBase {
   };
   /** Draw position labels under the units. */
   axis: boolean;
+  /** Titles naming what each numeric axis measures, under x and beside y. */
+  axisTitles?: { x?: string; y?: string };
   marks: MarkDefinition[];
   repeat: RepeatRule;
 }

@@ -126,6 +126,11 @@ function SceneNodeView({ node }: { node: SceneNode }) {
           strokeWidth={node.halo ? 3 : undefined}
           strokeLinejoin={node.halo ? "round" : undefined}
           paintOrder={node.halo ? "stroke" : undefined}
+          transform={
+            node.rotate
+              ? `rotate(${node.rotate} ${node.x} ${node.lines[0]?.y ?? 0})`
+              : undefined
+          }
         >
           {node.lines.map((line, index) => (
             <tspan key={index} x={node.x} y={line.y}>

@@ -1856,6 +1856,10 @@ export const drivingDashboard = dashboard("Driving", [
           frame: { width: 824, height: 400 },
           label: { show: false, width: 0, fontSize: 12 },
           axis: true,
+          axisTitles: {
+            x: "Miles driven per person each year",
+            y: "Gas price, dollars a gallon",
+          },
           marks: [
             {
               type: "path",
@@ -2885,6 +2889,7 @@ export const causesByAgeDashboard = dashboard("Causes by age", [
           frame: { width: 848, height: 400 },
           label: { show: false, width: 0, fontSize: 12 },
           axis: true,
+          axisTitles: { x: "Age", y: "Share of deaths" },
           marks: [
             {
               type: "stack",

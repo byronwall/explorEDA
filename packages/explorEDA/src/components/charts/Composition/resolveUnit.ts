@@ -725,7 +725,7 @@ export function resolveUnit(
   const labelTop = unit.repeat.arrangement !== "rows" && unit.label.show;
   const labelWidth = labelLeft ? unit.label.width : 0;
   const labelHeight = labelTop ? Math.round(labelSize * 1.6) : 0;
-  const axisHeight = unit.axis ? 16 : 0;
+  const axisHeight = unit.axis ? (unit.axisTitles?.x ? 34 : 16) : 0;
   // Rows share one axis under the last row; columns and grids label each frame.
   const axisPerUnit = unit.repeat.arrangement !== "rows";
   const cellWidth = labelWidth + unit.frame.width;
@@ -3642,7 +3642,7 @@ function numericAxisNodes(
     y: number,
     anchor: "start" | "middle" | "end",
     key: string
-  ): SceneNode => ({
+  ): TextNode => ({
     type: "text",
     key: `${unit.id}:${instanceKey}:axis:${key}`,
     elementId: unit.id,
@@ -3662,19 +3662,51 @@ function numericAxisNodes(
       `x:${value}`
     )
   );
+  const titles = unit.axisTitles;
+  if (titles?.x?.trim())
+    nodes.push({
+      ...label(
+        titles.x.trim(),
+        frame.x + frame.width / 2,
+        frame.y + frame.height + 32,
+        "middle",
+        "title:x"
+      ),
+      fontSize: fontSize + 1,
+      fontWeight: 600,
+    });
   // A dot row has no y to label, and a density's height is relative.
   if (xy.y.scale.id === MIDDLE_SCALE.id || xy.y.scale.id === DENSITY_SCALE.id)
     return nodes;
-  for (const value of tickValues(xy.y, frame.height, 36))
+  let widest = 0;
+  for (const value of tickValues(xy.y, frame.height, 36)) {
+    const text = formatTick(xy.y, value);
+    widest = Math.max(widest, text.length);
     nodes.push(
       label(
-        formatTick(xy.y, value),
+        text,
         frame.x - 6,
         numericPixel(xy.y, value) + 3.5,
         "end",
         `y:${value}`
       )
     );
+  }
+  if (titles?.y?.trim()) {
+    // Clear of the widest tick label, turned to read bottom to top.
+    nodes.push({
+      ...label(
+        titles.y.trim(),
+        frame.x - 14 - widest * fontSize * 0.6,
+        frame.y + frame.height / 2,
+        "middle",
+        "title:y"
+      ),
+      fontSize: fontSize + 1,
+      fontWeight: 600,
+      rotate: -90,
+    });
+  }
   return nodes;
 }
 

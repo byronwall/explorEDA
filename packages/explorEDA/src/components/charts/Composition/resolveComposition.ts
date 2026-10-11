@@ -73,6 +73,8 @@ export interface TextNode extends NodeBase {
   anchor: "start" | "middle" | "end";
   /** A paper-colored outline that keeps text legible over marks. */
   halo?: string;
+  /** Degrees to turn the text about its first line's anchor, such as -90 for a y-axis title. */
+  rotate?: number;
 }
 
 export interface RectNode extends NodeBase {

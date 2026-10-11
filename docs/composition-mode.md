@@ -52,7 +52,7 @@ Mark types declare their capabilities through `isXyMark` and `markHasCategories`
 | `span`    | One bar per row from a start field to an end field on a date scale, with open ends and inside labels.                                                                                                                           | `scotus-timeline`                                                |
 | `horizon` | A measure from a baseline cut into stacked bands, with drops mirrored in a second color.                                                                                                                                        | `stocks-horizon`                                                 |
 
-Numeric scales accept dates, log spacing, a zero baseline, tidy ends, fixed limits that clip to the frame, and tick labels at steps, at the ends, or not at all. A numeric scale spans every field drawn on it, so a band's widest interval sets the frame.
+Numeric scales accept dates, log spacing, a zero baseline, tidy ends, fixed limits that clip to the frame, and tick labels at steps, at the ends, or not at all. A unit can title its numeric axes: the x title sits under the tick labels and the y title turns beside them. A numeric scale spans every field drawn on it, so a band's widest interval sets the frame.
 
 Every example opens in the demo at `?example=<id>`. `message-log` draws one strip of monthly squares per correspondent from a 10,376-row message log. `covid-compare` exercises insets and display windows; `covid-tiles` exercises tile addresses; `titanic-mosaic` exercises weighted repeats.
 
