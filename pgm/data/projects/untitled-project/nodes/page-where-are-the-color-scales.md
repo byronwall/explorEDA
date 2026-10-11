@@ -2,8 +2,10 @@
 id: page-where-are-the-color-scales
 label: Where are the color scales?
 type: page
-status: planned
+status: implemented
 parent: page-media-deaths
+metadata:
+  implementation: The Colors panel now has an 'In compositions' section listing each composition's value ramps and category palettes, editable in place.
 images:
   - id: 2b7c4b3e-1fad-4b14-a6dc-764c458620ce
     src: /api/projects/untitled-project/images/page-where-are-the-color-scales/2b7c4b3e-1fad-4b14-a6dc-764c458620ce.png

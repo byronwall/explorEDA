@@ -7461,3 +7461,47 @@ td[data-null] {
 .eda-composition-copy-status[data-state="failed"] {
   color: var(--destructive);
 }
+
+/* Colors defined inside compositions, listed under the workspace scales. */
+.eda-composition-scales {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.eda-composition-scales h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.eda-composition-swatch {
+  display: flex;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 3px;
+}
+.eda-composition-swatch > span {
+  flex: 1 1 0;
+}
+.eda-composition-scale-colors {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.eda-composition-color-row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+}
+.eda-composition-color-row input[type="color"] {
+  width: 28px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--input);
+  border-radius: 4px;
+  background: none;
+}

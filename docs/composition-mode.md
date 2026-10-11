@@ -68,6 +68,8 @@ Guides draw a vertical rule at an x value or a horizontal rule at a numeric y va
 Annotations attach to the page, to a point in one repeat's frame, or to a data glyph chosen by max, min, first, last, or a typed value. A data anchor follows its glyph when data or filters move it. For frame and data anchors, the element's x and y are an offset from the anchor, so a nudge keeps the attachment.
 Legends list a mark's categories with their colors, or key a value scale's ramp with the drawn extent; a ramp with placed stops draws one swatch per color band, labeled where each starts. A key legend lists chosen marks instead: each entry draws the mark's glyph, such as a band's fill as it reads over the bands under it, a muted series, a summary's quartile band or median, or a strip's missing cell, beside a label.
 
+The workspace **Colors** panel lists each composition's value ramps and category palettes under **In compositions**. A change there writes back into the composition; a category palette shorter than its categories is spelled out so one category changes alone.
+
 ### Overrides
 
 An override changes one repeat's look: a nudge, an accent color, an opacity, or a bold label. It is keyed by the subset value, so it stays with its repeat through reordering and filtering. Data bindings, calculations, and scales always come from the template. Reset returns a repeat to its template.
