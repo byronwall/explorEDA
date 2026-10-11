@@ -1,7 +1,11 @@
 import type { ThemeColors } from "@/lib/themePalettes";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import { defaultCategoricalColors, makeColorScale } from "@/lib/colorScaleMath";
-import { finiteNumber, numericExclusionReason } from "@/lib/numeric";
+import {
+  finiteNumber,
+  numericExclusionReason,
+  parseNumber,
+} from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import type { RangeFilter } from "@/types/FilterTypes";
@@ -12,7 +16,7 @@ export interface EcdfSnapshot {
   revision: string;
   /** Every source row. The x range uses them so it holds still while filtering. */
   allIds: number[];
-  /** Rows after other charts' filters. */
+  /** Rows after other filters. */
   liveIds: number[];
   values: Record<number, datum>;
   groupData?: Record<number, datum>;
@@ -261,7 +265,7 @@ export function planEcdf({
       excludedReasons.set(reason, (excludedReasons.get(reason) ?? 0) + 1);
       continue;
     }
-    const entry = { id, value: Number(raw) };
+    const entry = { id, value: parseNumber(raw) };
     all.push(entry);
     if (!settings.colorField) {
       continue;
@@ -469,7 +473,7 @@ export function planEcdf({
         }
       : undefined,
     scopeNote:
-      "Rows after other chart filters. Each curve's shares use its own rows with a valid value, so curves of different sizes compare fairly.",
+      "Rows after other filters. Each curve's shares use its own rows with a valid value, so curves of different sizes compare fairly.",
     px,
     py,
   };

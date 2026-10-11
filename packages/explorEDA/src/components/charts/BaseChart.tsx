@@ -2,7 +2,12 @@ import { useAxisTypography } from "./chartTypography";
 import { ReactNode, useId, useMemo, useRef, useState } from "react";
 import { ScaleBand, ScaleLinear, scaleLinear } from "d3-scale";
 import { formatTick } from "./Axis/Axis";
-import { findAxisGuide, planAxes, type ChartAxesPlan } from "./Axis/axisPlan";
+import {
+  findAxisGuide,
+  planAxes,
+  type AxisHiddenEnds,
+  type ChartAxesPlan,
+} from "./Axis/axisPlan";
 import { PlannedAxes, PlannedGrid } from "./Axis/AxisLayer";
 import { useBrush } from "@/hooks/useBrush";
 import { cn } from "@/lib/utils";
@@ -52,6 +57,8 @@ interface BaseChartProps {
   activeGuideId?: string | null;
   /** Bottom margin kept below the X axis title, such as for a status line. */
   footer?: number;
+  /** Marks past each end of a bounded axis, which that axis marks. */
+  hidden?: { x?: AxisHiddenEnds; y?: AxisHiddenEnds };
 }
 
 function planIdFromTarget(target: EventTarget | null) {
@@ -85,6 +92,7 @@ export function BaseChart({
   onClearPlot,
   activeGuideId,
   footer = 0,
+  hidden,
 }: BaseChartProps) {
   const margin = plannedAxes?.margin ?? settings.margin;
   const typography = useAxisTypography();
@@ -110,12 +118,14 @@ export function BaseChart({
   const xLabel = [
     getChartAxisLabel(axisFields.x, settings.xAxisLabel, getFieldLabel),
     settings.xAxis.scaleType === "symlog" && "symlog",
+    "base" in xScale && "log",
   ]
     .filter(Boolean)
     .join(" · ");
   const yLabel = [
     getChartAxisLabel(axisFields.y, settings.yAxisLabel, getFieldLabel),
     settings.yAxis.scaleType === "symlog" && "symlog",
+    "base" in yScale && "log",
   ]
     .filter(Boolean)
     .join(" · ");
@@ -140,6 +150,7 @@ export function BaseChart({
           format: formatAxisValue(axisFields.x, xTickFormatter),
           label: xLabel,
           labelSource: settings.xAxisLabel ? "chart-setting" : "field-label",
+          hidden: hidden?.x,
         },
         y: {
           typography,
@@ -153,6 +164,7 @@ export function BaseChart({
           format: formatAxisValue(axisFields.y, yTickFormatter),
           label: yLabel,
           labelSource: settings.yAxisLabel ? "chart-setting" : "field-label",
+          hidden: hidden?.y,
         },
       }),
     // Formatters read field settings, so they rerun when those change.
@@ -179,6 +191,7 @@ export function BaseChart({
       yTickFormatter,
       fieldSettings,
       footer,
+      hidden,
     ]
   );
   const descriptionId = `${chartId}-description`;
@@ -351,6 +364,8 @@ export function BaseChart({
       onClick={(event) => {
         const press = pressAt.current;
         pressAt.current = null;
+        // The axis marker opens its own details; it never clears or selects.
+        if ((event.target as Element).closest("[data-axis-hidden]")) return;
         if (inspectedByBrush.current) inspectedByBrush.current = false;
         else if (!inspectTarget(event) && !inspectPlot(event)) {
           if (

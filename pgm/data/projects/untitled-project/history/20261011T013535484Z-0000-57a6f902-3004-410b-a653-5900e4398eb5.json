@@ -1,0 +1,16 @@
+{
+  "id": "57a6f902-3004-410b-a653-5900e4398eb5",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:35:35.484Z",
+  "summary": "Added 1 images to \"I don't really understand this one\".",
+  "nodeIds": [
+    "page-i-don-t-really-understand-this-one"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "c3be225f-9eb3-4975-b91d-f5663ab47f2f"
+  }
+}

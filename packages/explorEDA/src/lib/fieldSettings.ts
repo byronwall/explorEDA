@@ -1,8 +1,14 @@
-import { dateTimestamp } from "@/lib/dateTime";
+import {
+  type DatePreset,
+  parseBoolean,
+  parseDateText,
+  parseNumber,
+  timestampOf,
+} from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import type { DataType } from "@/components/SummaryTable/utils/dataTypeDetection";
 
-export type DatePreset = "iso" | "month-day-year" | "day-month-year";
+export type { DatePreset };
 export type FieldFormat =
   | "auto"
   | "number"
@@ -97,48 +103,6 @@ export function getFieldSettingsError(
   return undefined;
 }
 
-function validCalendarDate(year: number, month: number, day: number) {
-  const timestamp = Date.UTC(year, month - 1, day);
-  const date = new Date(timestamp);
-  return (
-    Number.isFinite(timestamp) &&
-    date.getUTCFullYear() === year &&
-    date.getUTCMonth() === month - 1 &&
-    date.getUTCDate() === day
-  );
-}
-
-function parseDate(value: string, preset: DatePreset = "iso") {
-  const text = value.trim();
-  if (preset === "month-day-year" || preset === "day-month-year") {
-    const match = text.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
-    if (match) {
-      const [, first, second, yearText] = match;
-      const year = Number(yearText);
-      const month =
-        preset === "month-day-year" ? Number(first) : Number(second);
-      const day = preset === "month-day-year" ? Number(second) : Number(first);
-      const parsed = Date.UTC(year, month - 1, day);
-      if (validCalendarDate(year, month, day)) {
-        return parsed;
-      }
-    }
-    return NaN;
-  }
-
-  const isoMatch = text.match(
-    /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d+))?)?(Z|[+-]\d{2}:\d{2})?)?$/
-  );
-  if (!isoMatch) return NaN;
-  const [, yearText, monthText, dayText] = isoMatch;
-  if (
-    !validCalendarDate(Number(yearText), Number(monthText), Number(dayText))
-  ) {
-    return NaN;
-  }
-  return dateTimestamp(text);
-}
-
 export function convertFieldValue(
   raw: datum,
   type: DataType,
@@ -159,24 +123,19 @@ export function convertFieldValue(
     case "categorical":
       return { value: raw };
     case "numeric": {
-      const value = typeof raw === "number" ? raw : Number(text);
+      const value = parseNumber(raw);
       return Number.isFinite(value)
         ? { value }
         : { value: undefined, error: "Not a finite number" };
     }
-    case "boolean":
-      if (raw === true || raw === false) {
-        return { value: raw };
-      }
-      if (text.toLowerCase() === "true") {
-        return { value: true };
-      }
-      if (text.toLowerCase() === "false") {
-        return { value: false };
-      }
-      return { value: undefined, error: "Expected true or false" };
+    case "boolean": {
+      const value = parseBoolean(raw);
+      return value === undefined
+        ? { value: undefined, error: "Expected true or false" }
+        : { value };
+    }
     case "datetime": {
-      const timestamp = parseDate(text, settings.datePreset);
+      const timestamp = parseDateText(text, settings.datePreset ?? "iso");
       return Number.isFinite(timestamp)
         ? { value: new Date(timestamp).toISOString() }
         : { value: undefined, error: "Invalid date" };
@@ -267,9 +226,9 @@ export function formatFieldValue(
 
   const format = settings.format ?? "auto";
   if (format === "date" || format === "datetime") {
-    const date =
-      typeof value === "number" ? new Date(value) : new Date(String(value));
-    if (Number.isFinite(date.getTime())) {
+    const time = timestampOf(value);
+    if (time !== undefined) {
+      const date = new Date(time);
       const options: Intl.DateTimeFormatOptions = {
         timeZone: "UTC",
         dateStyle: "medium",
@@ -286,7 +245,7 @@ export function formatFieldValue(
     format === "currency" ||
     format === "percent" ||
     (typeof value === "number" && format === "auto")
-      ? Number(value)
+      ? parseNumber(value)
       : NaN;
   if (Number.isFinite(numberValue)) {
     const precision =

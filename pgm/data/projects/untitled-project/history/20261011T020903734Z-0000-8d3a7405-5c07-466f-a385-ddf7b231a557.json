@@ -1,0 +1,14 @@
+{
+  "id": "8d3a7405-5c07-466f-a385-ddf7b231a557",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:c1e3e4",
+    "label": "Agent token ...c1e3e4"
+  },
+  "createdAt": "2026-10-11T02:09:03.734Z",
+  "summary": "Updated metadata for \"Where are the axis labels?\".",
+  "nodeIds": [
+    "page-where-are-the-axis-labels"
+  ]
+}

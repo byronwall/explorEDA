@@ -3,7 +3,7 @@ import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { utcDay } from "@/lib/dailyRollup";
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useColorScales } from "@/hooks/useColorScales";
 import type { ChartSettingsPanelProps } from "@/types/ChartTypes";

@@ -1,0 +1,16 @@
+{
+  "id": "5e29a3c3-4349-4d86-9275-9b22ac34eae5",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:33:51.085Z",
+  "summary": "Created \"A color legend would help show the P20/P80 etc designations\" under \"Forecast Fan\".",
+  "nodeIds": [
+    "page-a-color-legend-would-help-show-the-p20-p80-etc-designations",
+    "page-forecast-fan"
+  ],
+  "metadata": {
+    "clientMutationId": "e0486ea0-2cf6-458d-9761-7e2de125381f"
+  }
+}

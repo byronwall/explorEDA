@@ -1,0 +1,16 @@
+{
+  "id": "09c25eb3-d628-41be-9876-c125ed58c3c9",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:28:39.790Z",
+  "summary": "Created \"It'd be really nice to get a legend example showing how the bands are determined\" under \"Time Use\".",
+  "nodeIds": [
+    "page-it-d-be-really-nice-to-get-a-legend-example-showing-how-the-bands-qhdqf4",
+    "page-time-use"
+  ],
+  "metadata": {
+    "clientMutationId": "6fb78f51-4017-4eb5-8918-26519c0a4dc7"
+  }
+}

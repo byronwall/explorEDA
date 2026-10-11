@@ -1,0 +1,16 @@
+{
+  "id": "f61a1c27-66f3-49b0-88b3-6e67cdafc467",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:23:58.789Z",
+  "summary": "Created \"Hard to read \"vaccine\" line\" under \"Measles\".",
+  "nodeIds": [
+    "page-hard-to-read-vaccine-line",
+    "page-measles"
+  ],
+  "metadata": {
+    "clientMutationId": "3aa08a44-5369-4bdb-ab53-7fa21a189da7"
+  }
+}

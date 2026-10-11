@@ -4,6 +4,7 @@ import {
   createEmptyComposition,
   createUnitElement,
   type CompositionDefinition,
+  type StripMark,
   type UnitElement,
 } from "./compositionTypes";
 import { estimateTextWidth } from "./measureText";
@@ -120,7 +121,9 @@ describe("chart unit", () => {
     const perUnit = {
       ...definition,
       scales: definition.scales.map((scale) =>
-        scale.kind === "value" ? { ...scale, domain: "instance" as const } : scale
+        scale.kind === "value"
+          ? { ...scale, domain: "instance" as const }
+          : scale
       ),
     };
     const drawn = glyphs(resolveUnit(perUnit, unit, dataFor()).nodes);
@@ -132,7 +135,9 @@ describe("chart unit", () => {
     const { definition, unit } = build("Who");
     // Only Ana's January message passes the filters.
     const resolved = resolveUnit(definition, unit, dataFor([0]));
-    expect(resolved.instances.map((item) => [item.key, item.liveCount])).toEqual([
+    expect(
+      resolved.instances.map((item) => [item.key, item.liveCount])
+    ).toEqual([
       ["Bo", 0],
       ["Ana", 1],
     ]);
@@ -146,10 +151,17 @@ describe("chart unit", () => {
     const { definition, unit } = build();
     const summed: UnitElement = {
       ...unit,
-      marks: [{ ...unit.marks[0]!, aggregation: "sum", measureField: "Words" }],
+      marks: [
+        {
+          ...(unit.marks[0] as StripMark),
+          aggregation: "sum",
+          measureField: "Words",
+        },
+      ],
     };
     const drawn = glyphs(
-      resolveUnit({ ...definition, elements: [summed] }, summed, dataFor()).nodes
+      resolveUnit({ ...definition, elements: [summed] }, summed, dataFor())
+        .nodes
     );
     expect(drawn.map((node) => node.glyph!.value)).toEqual([10, 21, 30]);
   });
@@ -176,9 +188,9 @@ describe("value scales", () => {
       colors: ["#fff", "#000"] as [string, string],
     };
     expect(valueShare({ ...scale, transform: "linear" }, 10, 100)).toBe(0.1);
-    expect(
-      valueShare({ ...scale, transform: "log" }, 10, 100)
-    ).toBeGreaterThan(0.4);
+    expect(valueShare({ ...scale, transform: "log" }, 10, 100)).toBeGreaterThan(
+      0.4
+    );
     expect(valueShare({ ...scale, transform: "sqrt" }, 0, 100)).toBe(0);
   });
 });

@@ -1,0 +1,16 @@
+{
+  "id": "37482480-1174-4795-8f74-16d13455f086",
+  "kind": "node.image.deleted",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:41:02.071Z",
+  "summary": "Deleted image \"image.png\" from \"Pew Meaning\".",
+  "nodeIds": [
+    "page-pew-meaning"
+  ],
+  "metadata": {
+    "imageId": "bc3cdd3d-3d7b-4100-a31d-5d5739df00d6",
+    "clientMutationId": "c2057370-0c29-487f-b450-0085acc411f1"
+  }
+}

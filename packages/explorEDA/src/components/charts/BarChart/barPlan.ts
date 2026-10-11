@@ -11,7 +11,7 @@ import {
   finiteNumbers,
   isMissingValue,
   isNumberLike,
-} from "@/lib/numeric";
+} from "@/lib/valueParsing";
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { datum } from "@/types/ChartTypes";
 import type { Filter, ValueFilter } from "@/types/FilterTypes";
@@ -26,7 +26,12 @@ import {
   describeScale,
   type AxisTypography,
 } from "../Axis/axisPlan";
-import { boundedDomain, hasAxisBounds } from "../Axis/axisBounds";
+import {
+  boundedDomain,
+  hasAxisBounds,
+  hiddenByBounds,
+  labelHidden,
+} from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import { getChartAxisLabel } from "../chartAccessibility";
 import { binInRange, numericBins } from "./bins";
@@ -45,12 +50,17 @@ export interface BarSnapshot {
   revision: string;
   /** Every source value of the field. Count and bin domains use it. */
   allValues: datum[];
-  /** Rows after other charts' filters and the current facet. */
+  /** Rows after other filters and the current facet. */
   liveIds: IdType[];
   fieldData: Record<IdType, datum>;
   fieldType?: string;
   /** The grouped aggregate result for an aggregate bar chart. */
   aggregate?: AggregateResult;
+  /**
+   * The same aggregate over every row the chart can draw, before other
+   * filters. It sets the Y domain, so filtering elsewhere never rescales it.
+   */
+  domainAggregate?: AggregateResult;
 }
 
 export interface BarPlanInput {
@@ -113,7 +123,7 @@ export interface BarMark {
   /** The value as the readout and accessible name show it. */
   valueText: string;
   /**
-   * The count over every source row, when other charts' filters lower the bar.
+   * The count over every source row, when other filters lower the bar.
    * The chart draws it as a faint bar behind, so the share left reads at once.
    */
   total?: { value: number; y: number; height: number };
@@ -124,7 +134,10 @@ export interface BarMark {
 }
 
 export interface BarDomain {
-  population: "current result" | "all source rows";
+  population:
+    | "current result"
+    | "all source rows"
+    | "all source rows and the current result";
   values: { id: string; label: string; value: number }[];
   lower: { source: "zero" | "bar"; id?: string; label?: string; value: number };
   upper: { source: "zero" | "bar"; id?: string; label?: string; value: number };
@@ -306,7 +319,7 @@ export function planBarChart({
   formatAxisValue,
   footer = 0,
   showTotals = false,
-  aggregateScope = "Rows after other chart filters; this chart's selected groups are shown in color",
+  aggregateScope = "Rows after other filters; this chart's selected groups are shown in color",
   typography,
 }: BarPlanInput): BarChartPlan {
   const numeric = isNumericBarField(settings, snapshot);
@@ -329,15 +342,27 @@ export function planBarChart({
         ? sortByLabel(result?.rows ?? [], (row) => row.groupValue)
         : (result?.rows ?? []);
 
-  // Y domain: an aggregate uses its current values; counts use every source row
-  // so bars keep their scale while other charts filter.
+  // Y domain: every source row, so bars keep their scale while other charts
+  // filter. An aggregate also takes its current values, so a filtered value
+  // past the all-row domain, such as a higher average, grows it to fit.
   let domainValues: BarDomain["values"];
   if (mode === "aggregate") {
-    domainValues = rows.flatMap((row) =>
-      typeof row.value === "number" && Number.isFinite(row.value)
-        ? [{ id: row.id, label: row.groupLabel, value: row.value }]
-        : []
-    );
+    const values = (items: AggregateResultRow[], prefix = "") =>
+      items.flatMap((row) =>
+        typeof row.value === "number" && Number.isFinite(row.value)
+          ? [
+              {
+                id: `${prefix}${row.id}`,
+                label: row.groupLabel,
+                value: row.value,
+              },
+            ]
+          : []
+      );
+    domainValues = [
+      ...values(snapshot.domainAggregate?.rows ?? [], "all:"),
+      ...values(rows),
+    ];
   } else if (mode === "bin") {
     const all = finiteNumbers(snapshot.allValues);
     domainValues = numericBins(all, all, settings.binCount || 20).map(
@@ -461,6 +486,30 @@ export function planBarChart({
       : format(field);
   const symlog = (label: string, type?: string) =>
     [label, type === "symlog" && "symlog"].filter(Boolean).join(" · ");
+  // Bars past a bound are cut off at the edge; the axis says how many.
+  const yHidden = hiddenByBounds(
+    settings.yAxis,
+    yDomain,
+    rows.flatMap((row) =>
+      typeof row.value === "number" && Number.isFinite(row.value)
+        ? [row.value]
+        : []
+    ),
+    ["bar", "bars"],
+    true
+  );
+  // A histogram's bound hides the rows whose values fall past it.
+  const xHidden =
+    mode === "bin"
+      ? hiddenByBounds(
+          settings.xAxis,
+          xScale.domain() as [number, number],
+          snapshot.liveIds.flatMap((id) => {
+            const value = finiteNumber(snapshot.fieldData[id]);
+            return value === undefined ? [] : [value];
+          })
+        )
+      : undefined;
   const axes = planAxes({
     plotWidth,
     plotHeight,
@@ -481,6 +530,7 @@ export function planBarChart({
       label: symlog(xLabel, settings.xAxis.scaleType),
       labelSource: settings.xAxisLabel ? "chart-setting" : "field-label",
       domainSource: xDomainSource,
+      hidden: labelHidden(xHidden, format(xField)),
     },
     y: {
       typography,
@@ -496,10 +546,13 @@ export function planBarChart({
       label: symlog(yLabel, settings.yAxis.scaleType),
       labelSource: settings.yAxisLabel ? "chart-setting" : "field-label",
       zero: true,
+      hidden: labelHidden(yHidden, formatAxis(yField)),
       domainSource: {
         population:
           mode === "aggregate"
-            ? "the current aggregate result"
+            ? snapshot.domainAggregate
+              ? "all source rows and the current aggregate result"
+              : "the current aggregate result"
             : "all source rows",
         rows: domainValues.length,
         bounds: [lower.value, upper.value],
@@ -642,7 +695,12 @@ export function planBarChart({
     groupOrder: rows.map((row) => row.groupLabel),
     unplotted,
     domain: {
-      population: mode === "aggregate" ? "current result" : "all source rows",
+      population:
+        mode !== "aggregate"
+          ? "all source rows"
+          : snapshot.domainAggregate
+            ? "all source rows and the current result"
+            : "current result",
       values: domainValues,
       lower,
       upper,
@@ -654,8 +712,8 @@ export function planBarChart({
       mode === "aggregate"
         ? aggregateScope
         : mode === "count"
-          ? "Rows after other chart filters; this chart's selected categories are shown in color"
-          : "Rows after other chart filters; this chart's range is shown in color",
+          ? "Rows after other filters; this chart's selected categories are shown in color"
+          : "Rows after other filters; this chart's range is shown in color",
   };
 }
 

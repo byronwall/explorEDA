@@ -70,6 +70,9 @@ describe("field settings", () => {
     expect(
       formatFieldValue("date", 0, { format: "date" })
     ).toMatch(/1970/);
+    expect(
+      formatFieldValue("at", "2025-01-10T23:30", { format: "datetime" })
+    ).toMatch(/Jan 10, 2025.*11:30/);
   });
 
   it("does not preview inferred conversion without an explicit conversion setting", () => {

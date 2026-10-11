@@ -132,10 +132,10 @@ function ContourBody({ trace }: { trace: ContourTrace }) {
         <TraceReadout label="Bandwidth scale">×{contour.scale}</TraceReadout>
         <p className="text-muted-foreground">
           A Gaussian kernel estimate from the plotted rows: those that pass the
-          other charts' filters and have numeric X and Y. Each axis uses Scott's
-          rule, standard deviation × n^(−1/6), times the bandwidth scale. Rows
-          are spread onto a grid over the axis ranges before smoothing. Density
-          is in data units, so a symmetric log axis bends the regions without
+          other filters and have numeric X and Y. Each axis uses Scott's rule,
+          standard deviation × n^(−1/6), times the bandwidth scale. Rows are
+          spread onto a grid over the axis ranges before smoothing. Density is
+          in data units, so a symmetric log axis bends the regions without
           changing their values.
         </p>
       </TraceSection>

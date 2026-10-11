@@ -86,9 +86,9 @@ export function DistributionTraceBody({ trace }: { trace: DistributionTrace }) {
         />
       </TraceSection>
       <TraceSection muted>
-        Statistics use every valid value after other chart filters. Observations
-        show the first 300 valid source rows per group. Horizontal position
-        separates points; it does not encode a value.
+        Statistics use every valid value after other filters. Observations show
+        the first 300 valid source rows per group. Horizontal position separates
+        points; it does not encode a value.
       </TraceSection>
     </div>
   );

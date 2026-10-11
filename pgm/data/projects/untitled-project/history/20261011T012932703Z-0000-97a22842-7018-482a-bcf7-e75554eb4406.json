@@ -1,0 +1,16 @@
+{
+  "id": "97a22842-7018-482a-bcf7-e75554eb4406",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:29:32.703Z",
+  "summary": "Created \"I really want to be able to do a zoom/pan on some of these charts that have lots of small detail\" under \"Composition examples\".",
+  "nodeIds": [
+    "page-i-really-want-to-be-able-to-do-a-zoom-pan-on-some-of-these-charts-5jjqtd",
+    "page-composition-examples"
+  ],
+  "metadata": {
+    "clientMutationId": "9b3d004e-bb56-4dbb-af21-656eeb5ef249"
+  }
+}

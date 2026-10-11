@@ -1,0 +1,16 @@
+{
+  "id": "509a9b39-5edf-4339-b395-520e5be0dc99",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:27:29.341Z",
+  "summary": "Added 1 images to \"Where are the color scales?\".",
+  "nodeIds": [
+    "page-where-are-the-color-scales"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "f983f901-c316-499c-8ac4-54185f5fa419"
+  }
+}

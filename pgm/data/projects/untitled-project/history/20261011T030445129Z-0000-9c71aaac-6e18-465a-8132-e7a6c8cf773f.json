@@ -1,0 +1,14 @@
+{
+  "id": "9c71aaac-6e18-465a-8132-e7a6c8cf773f",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:d50456",
+    "label": "Agent token ...d50456"
+  },
+  "createdAt": "2026-10-11T03:04:45.129Z",
+  "summary": "Updated metadata for \"Income and expenditure\".",
+  "nodeIds": [
+    "page-income-and-expenditure"
+  ]
+}
