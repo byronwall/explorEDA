@@ -46,4 +46,4 @@ The screenshot of the submitted run is local evidence at `tmp/map-location-hando
 
 Pro's [verification record](../resources/pro-map-location-research/verification.json) covers research-package checks. Its eight proposed proofs were not run. Our five passing baseline tests do not satisfy those future proofs. No browser flow, rendering benchmark, live-provider request, or image-export acceptance is claimed.
 
-The documentation PR is the review boundary. No package changeset or UI screenshot is required because application code and UI are unchanged. After opening and verifying the PR, disable `collect-pro-map-research` and stop for Byron's review. The initiative remains planned after this research goal completes.
+[PR #321](https://github.com/byronwall/explorEDA/pull/321) is open for review. Its saved body and documentation-only file scope were verified. The collection heartbeat, `collect-pro-map-research`, is disabled. No package changeset or UI screenshot is required because application code and UI are unchanged. The initiative remains planned. Implementation and merging wait for Byron's review.
