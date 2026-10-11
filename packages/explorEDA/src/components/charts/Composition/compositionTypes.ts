@@ -230,6 +230,10 @@ export interface StripMark {
    * "not reported" and "no record" read differently.
    */
   missing?: string;
+  /** Write each cell's value inside it, in ink that reads on its color, as in a heat table. */
+  valueLabels?: boolean;
+  /** Text for a missing cell when values are written, such as NA. */
+  missingLabel?: string;
 }
 
 /**
@@ -796,6 +800,8 @@ export interface InsetFrame {
   axis: boolean;
   /** Paper behind the inset, so it reads over the main frame's marks. */
   background?: string;
+  /** Draw a thin border around the inset; on unless set to false. */
+  outline?: boolean;
 }
 
 /** A chart template: a frame, its marks, and the rule that repeats it. */

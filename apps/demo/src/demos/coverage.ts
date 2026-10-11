@@ -1121,6 +1121,16 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "banana-yields",
+    intent:
+      "Lay out a sparkline table: ordered rows, a trend inset, decade heat cells with values written in, and an average column.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+    },
+  },
+  {
     exampleId: "du-bois-income",
     intent:
       "Stack each income class's spending across a bar as shares, joined class to class at each share's edge, after Du Bois.",

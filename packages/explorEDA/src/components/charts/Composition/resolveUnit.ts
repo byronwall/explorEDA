@@ -1231,7 +1231,7 @@ export function resolveUnit(
         width: bounds.width,
         height: bounds.height,
         fill: inset.background ?? "#ffffff",
-        stroke: "#d4d7dc",
+        stroke: inset.outline === false ? undefined : "#d4d7dc",
       });
       const insetXy = xys.filter((item) => item.mark.frameId === inset.id);
       if (inset.axis && insetXy[0]) {
@@ -3881,14 +3881,21 @@ function numericAxisNodes(
   return nodes;
 }
 
-/** The relative luminance of a hex color, from 0 for black to 1 for white. */
+/** The relative luminance of a hex or rgb() color, from 0 for black to 1 for white. */
 function luminance(color: string): number | undefined {
-  const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(color.trim())?.[1];
-  if (!hex) return undefined;
-  const full =
-    hex.length === 3 ? [...hex].map((digit) => digit + digit).join("") : hex;
-  const [r, g, b] = [0, 2, 4].map((at) => {
-    const channel = parseInt(full.slice(at, at + 2), 16) / 255;
+  const text = color.trim();
+  const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(text)?.[1];
+  const rgb = /^rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/i.exec(text);
+  let channels: number[];
+  if (hex) {
+    const full =
+      hex.length === 3 ? [...hex].map((digit) => digit + digit).join("") : hex;
+    channels = [0, 2, 4].map((at) => parseInt(full.slice(at, at + 2), 16));
+  } else if (rgb) {
+    channels = [rgb[1], rgb[2], rgb[3]].map(Number);
+  } else return undefined;
+  const [r, g, b] = channels.map((value) => {
+    const channel = value / 255;
     return channel <= 0.03928
       ? channel / 12.92
       : ((channel + 0.055) / 1.055) ** 2.4;
@@ -4002,14 +4009,34 @@ function glyphNodes(
           },
         ];
       }
+      const cell: RectNode = {
+        ...base,
+        type: "rect",
+        x: left + inset / 2,
+        y: frame.y,
+        width,
+        height: frame.height,
+      };
+      const text = !mark.valueLabels
+        ? undefined
+        : glyph.missing
+          ? mark.missingLabel
+          : cellFormat.format(glyph.value);
+      if (!text) return [cell];
+      const size = Math.max(8, Math.min(14, Math.round(frame.height * 0.45)));
       return [
+        cell,
         {
-          ...base,
-          type: "rect",
-          x: left + inset / 2,
-          y: frame.y,
-          width,
-          height: frame.height,
+          type: "text",
+          key: `${key}:value`,
+          elementId: unit.id,
+          instanceKey: glyph.instanceKey,
+          x: left + band / 2,
+          lines: [{ text, y: frame.y + frame.height / 2 + size * 0.35 }],
+          fontSize: size,
+          fontWeight: 500,
+          ...inkOn(fill),
+          anchor: "middle",
         },
       ];
     }
@@ -4038,6 +4065,11 @@ function glyphNodes(
     ];
   });
 }
+
+const cellFormat = new Intl.NumberFormat("en-US", {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+});
 
 /** Labels along a frame's bottom, thinned so they do not collide. */
 function axisNodes(

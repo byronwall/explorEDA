@@ -313,6 +313,7 @@ describe("label ink", () => {
     expect(inkOn("#edc948")).toEqual({ fill: "#1f2328" });
     expect(inkOn("#4e79a7")).toEqual({ fill: "#ffffff" });
     expect(inkOn("#fff")).toEqual({ fill: "#1f2328" });
+    expect(inkOn("rgb(20, 40, 60)")).toEqual({ fill: "#ffffff" });
     // A named color keeps ink on a white halo.
     expect(inkOn("teal")).toEqual({ fill: "#1f2328", halo: "#ffffff" });
   });

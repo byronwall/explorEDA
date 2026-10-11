@@ -33,6 +33,7 @@ import {
   lincolnRidgelineDashboard,
   climateRidgelineDashboard,
   duBoisIncomeDashboard,
+  bananaYieldsDashboard,
   taxSlopeDashboard,
   titanicWaffleDashboard,
   unemploymentStreamDashboard,
@@ -916,6 +917,17 @@ export const examples: ExampleData[] = [
     icon: Thermometer,
     data: "/datasets/daily-global-temperature.csv",
     savedData: climateRidgelineDashboard,
+  },
+  {
+    id: "banana-yields",
+    title: "Long-term top yielding banana-producing countries",
+    description:
+      "A sparkline table: fifteen countries in order of their long-term banana yield, each with a trend line, a heat cell per decade with its value written in, NA where a decade has no figure, and the overall average in a tinted column.",
+    dataset: { rows: "806 country-years", fields: 4, source: "Real" },
+    shows: ["Values in heat cells", "Sparkline insets", "Missing as NA"],
+    icon: TableProperties,
+    data: "/datasets/banana-yields.csv",
+    savedData: bananaYieldsDashboard,
   },
   {
     id: "du-bois-income",

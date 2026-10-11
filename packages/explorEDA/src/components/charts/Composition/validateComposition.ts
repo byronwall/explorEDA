@@ -239,7 +239,10 @@ function isMark(value: unknown) {
     oneOf(value.encoding, ["color", "size", "height"]) &&
     isString(value.fill) &&
     isNumber(value.inset) &&
-    (value.missing === undefined || isString(value.missing))
+    (value.missing === undefined || isString(value.missing)) &&
+    (value.valueLabels === undefined ||
+      typeof value.valueLabels === "boolean") &&
+    (value.missingLabel === undefined || isString(value.missingLabel))
   );
 }
 
@@ -266,7 +269,8 @@ function isInset(value: unknown) {
     value.height > 0 &&
     isWindow(value.window) &&
     typeof value.axis === "boolean" &&
-    (value.background === undefined || isString(value.background))
+    (value.background === undefined || isString(value.background)) &&
+    (value.outline === undefined || typeof value.outline === "boolean")
   );
 }
 
