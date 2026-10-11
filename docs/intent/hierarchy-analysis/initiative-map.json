@@ -4,17 +4,17 @@
     "title": "Explore nested categories and their totals",
     "slug": "hierarchy-analysis",
     "scale": "feature",
-    "current_phase": "intent",
-    "last_updated": "2026-10-09",
-    "summary": "Analysts may need to understand how a total divides through several category levels.",
+    "current_phase": "plan",
+    "last_updated": "2026-10-10",
+    "summary": "Add hierarchical reporting charts (treemap, sunburst, icicle) so analysts see which subcategories exist, how large each is, and how parts compare to the whole.",
     "status": "planned",
-    "next_action": "Use two category levels and a hand-checkable sum. Show a simple hierarchy table with drill and source inspection. Decide whether spatial area encoding adds value before choosing treemap or sunburst."
+    "next_action": "Implement Milestone 1 (two-level treemap with hierarchyPlan.ts and tests) on a feature branch; Milestone 2 adds zoom."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-06"
+      "updated_at": "2026-10-10"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -23,13 +23,13 @@
     },
     "shape_brief": {
       "path": "shape-brief.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-10"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-10"
     }
   },
   "sources": [
@@ -81,6 +81,62 @@
       "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
       "anchor": "Annotation 3: end users determine product choices",
       "authority": "Explicit human feedback; tentative answers remain tentative"
+    },
+    {
+      "id": "repository-4",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/PivotTable/PivotTable.tsx",
+      "anchor": "5cf144d: inspected source; no fresh runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "repository-5",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/PivotTable/utils/calculations.ts",
+      "anchor": "5cf144d: inspected source; no fresh runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "repository-6",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/lib/categories.ts",
+      "anchor": "5cf144d: inspected source; no fresh runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "dataset-shop",
+      "type": "repository",
+      "location": "../../../apps/demo/public/datasets/shop-10000.csv",
+      "anchor": "5cf144d: inspected source; no fresh runtime proof",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "feedback-2026-10-10",
+      "type": "direct-user-input",
+      "location": "conversation 2026-10-10",
+      "anchor": "Response to first shape and product questions",
+      "authority": "explicit user direction; supersedes earlier derived framing"
+    },
+    {
+      "id": "repository-7",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/Sankey/definition.ts",
+      "anchor": "5cf144d: stages, aggregation, missingStages, maxNodesPerStage, Other",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "repository-8",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/settings/MainSettingsTab.tsx",
+      "anchor": "5cf144d: chart type change calls createDefaultSettings(layout, field)",
+      "authority": "current repository reality"
+    },
+    {
+      "id": "feedback-2026-10-10-zoom",
+      "type": "direct-user-input",
+      "location": "conversation 2026-10-10",
+      "anchor": "Reply on plan cut line: zoom into a branch",
+      "authority": "explicit user direction"
     }
   ],
   "intent": {
@@ -88,12 +144,16 @@
       {
         "id": "claim-1",
         "type": "outcome",
-        "statement": "Analysts may need to understand how a total divides through several category levels.",
-        "commitment": "derived",
+        "statement": "Add hierarchical reporting charts so analysts see which subcategories exist, how large each is, and how parts compare to the whole.",
+        "commitment": "explicit",
         "importance": "core",
         "status": "active",
-        "time_horizon": "later",
+        "time_horizon": "now",
         "source_anchors": [
+          {
+            "source_id": "feedback-2026-10-10",
+            "anchor": "main interest: treemap, sunburst, other hierarchical charts; Q1 answer"
+          },
           {
             "source_id": "current-request",
             "anchor": "current feature set and future seeds"
@@ -103,8 +163,8 @@
             "anchor": "comparison-led recommendations"
           }
         ],
-        "confidence": "medium",
-        "notes": "Candidate interpretation; no feature implementation has been selected."
+        "confidence": "high",
+        "notes": "Restated from user feedback; replaces the earlier renderer-neutral reading."
       },
       {
         "id": "claim-2",
@@ -133,7 +193,7 @@
         "statement": "Expand when a dataset has several meaningful category levels and flat rankings make the parent-child relationship hard to inspect.",
         "commitment": "tentative",
         "importance": "supporting",
-        "status": "active",
+        "status": "superseded",
         "time_horizon": "later",
         "source_anchors": [
           {
@@ -146,12 +206,12 @@
           }
         ],
         "confidence": "medium",
-        "notes": "Candidate interpretation; no feature implementation has been selected."
+        "notes": "Superseded 2026-10-10: user wants the charts now; expansion trigger now governs extra layouts."
       },
       {
         "id": "priority-1",
         "type": "desired experience",
-        "statement": "Explain hierarchy construction and totals.",
+        "statement": "Make parts and the whole readable at a glance and on inspection; keep totals additive and checkable.",
         "commitment": "derived",
         "importance": "supporting",
         "status": "active",
@@ -219,7 +279,7 @@
       {
         "id": "current-foundation",
         "type": "current repository reality",
-        "statement": "The registry has no hierarchy view. Pivot accepts multiple row fields; facets support one- or two-field repetition. Those are reusable entry points for a small hierarchy proof, not evidence of complete hierarchy totals and navigation.",
+        "statement": "No hierarchy view exists. Sankey already provides ordered category fields, count/sum, missing handling, a per-stage cap, and Other. Pivot groups by full paths and lists source rows. Changing chart type resets settings except field.",
         "commitment": "derived",
         "importance": "supporting",
         "status": "active",
@@ -236,18 +296,182 @@
           {
             "source_id": "repository-3",
             "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof"
+          },
+          {
+            "source_id": "repository-4",
+            "anchor": "5cf144d: inspected source"
+          },
+          {
+            "source_id": "repository-5",
+            "anchor": "5cf144d: inspected source"
+          },
+          {
+            "source_id": "repository-6",
+            "anchor": "5cf144d: inspected source"
+          },
+          {
+            "source_id": "repository-7",
+            "anchor": "5cf144d"
+          },
+          {
+            "source_id": "repository-8",
+            "anchor": "5cf144d"
           }
         ],
         "confidence": "high",
         "notes": "Does not establish runtime or browser acceptance."
+      },
+      {
+        "id": "hierarchical-charts",
+        "type": "desired experience",
+        "statement": "Treemap and sunburst are named targets; other hierarchical layouts are welcome.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "feedback-2026-10-10",
+            "anchor": "main interest"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "scale",
+        "type": "constraint",
+        "statement": "Typical data: 2–3 levels with 2–8 categories each; beyond that, users filter.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "feedback-2026-10-10",
+            "anchor": "Q2 answer"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "small-nodes",
+        "type": "desired experience",
+        "statement": "Handle small categories with an Other node, unlabeled glyphs, or no mark below a minimum size.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "feedback-2026-10-10",
+            "anchor": "Q2 answer: options floated, none chosen"
+          }
+        ],
+        "confidence": "medium",
+        "notes": ""
+      },
+      {
+        "id": "no-pivot-subtotals",
+        "type": "constraint",
+        "statement": "Do not reproduce Excel pivot subtotals and collapse now.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "feedback-2026-10-10",
+            "anchor": "pivot subtotal focus rejected"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "state-not-priority",
+        "type": "constraint",
+        "statement": "Drill-state persistence and filter-conflict behavior are not product priorities; reasonable defaults suffice.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "superseded",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "feedback-2026-10-10",
+            "anchor": "Q3/Q4 answered idk / not my main concern"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Superseded 2026-10-10: zoom focus must be stored deterministically in settings; filter-conflict behavior remains a default."
+      },
+      {
+        "id": "single-menu-entry",
+        "type": "decision",
+        "statement": "The Add Chart menu lists one \"Hierarchy\" entry; revisit if layouts are hard to find.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "feedback-2026-10-10",
+            "anchor": "answers to open choices"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "prefer-rectangular",
+        "type": "constraint",
+        "statement": "Prefer rectangular layouts over circular or radial ones; circle packing is out; sunburst comes last and is cuttable.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "feedback-2026-10-10",
+            "anchor": "answers to open choices"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "zoom-first-wave",
+        "type": "desired experience",
+        "statement": "Zoom into a parent so it fills the view, with breadcrumbs back; the focus node is stored deterministically in chart settings. Ships in the first wave.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "feedback-2026-10-10-zoom",
+            "anchor": "We need to support this in the first wave"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Agent design: focus is a value path along levels; view only, not a filter."
       }
     ],
     "themes": [
-      "Explain hierarchy construction and totals.",
-      "Keep drill context and source membership visible.",
-      "Distinguish missing levels from real named nodes."
+      "Make parts and the whole readable.",
+      "Keep totals additive and traceable.",
+      "Handle many small categories without clutter.",
+      "Distinguish missing levels from real named nodes.",
+      "Zoom into a branch and step back without losing the context."
     ],
-    "conflicts": [],
+    "conflicts": [
+      {
+        "id": "renderer-neutral-vs-charts",
+        "summary": "2026-10-06 brief treated treemap/sunburst as optional examples; 2026-10-10 feedback makes them the goal.",
+        "resolution": "Later explicit feedback wins; first shape (pivot subtotals) discarded."
+      }
+    ],
     "human_questions": []
   },
   "brainstorm": {
@@ -257,34 +481,186 @@
     "selected_option": null
   },
   "shape": {
-    "status": "not-started",
-    "appetite": null,
-    "problem": null,
-    "recommended_shape": null,
-    "success_moves": [],
-    "first_proof": null,
-    "rabbit_holes": [],
-    "open_decisions": []
+    "status": "current",
+    "appetite": "Medium: one new chart type with three layouts over a shared hierarchy model; 2–3 levels × 2–8 categories.",
+    "problem": "There is no way to see nested category sizes and part-to-whole relationships as a chart.",
+    "recommended_shape": "One Hierarchy chart type with an arrangement setting (treemap, then icicle, then sunburst) and zoom with breadcrumbs, over a shared builder for path identity, sizes, Other, missing values, focus, filters, and tracing. Focus is stored as focus?: datum[] values along levels.",
+    "counterproposal": {
+      "statement": "Register separate Treemap, Sunburst, and Icicle chart types.",
+      "rejected_because": "Changing chart type resets settings except field, so users lose levels on every switch; all the hard logic is shared anyway. Separate Add Chart entries can still preset the layout."
+    },
+    "superseded_shape": {
+      "date": "2026-10-10",
+      "summary": "Pivot Table subtotals, collapse, and share of parent.",
+      "reason": "User wants hierarchical charts, not Excel-style pivot complexity."
+    },
+    "success_moves": [
+      "One chart type with a layout setting — reduces: Losing setup when switching layouts; three copies of selection and trace logic; benefit: Each later layout is mostly geometry",
+      "Pure hierarchy builder (rows → path nodes with value, share of parent, share of whole, Other, missing) tested without the browser — reduces: Wrong totals or merged repeated labels hidden behind visuals; benefit: Fast vitest loop; pivot of same fields is the oracle",
+      "Reuse Sankey category-path conventions and its field-value filter model — reduces: Inconsistent missing/Other behavior across path charts; benefit: Familiar settings; no new filter type",
+      "Limit multi-select to whole branches and same-parent siblings — reduces: Cross-combination selections from independent field filters; benefit: Exact selection without waiting on precise-composite-selection",
+      "Ship treemap first; add sunburst and icicle only after the proof — reduces: Three renderers built before labels and small-node handling are proven; benefit: Valid intermediate state after one layout",
+      "Store focus as a raw value path along levels, resolved before Other grouping — reduces: nondeterministic or layout-dependent zoom state; benefit: same view after reload, readable in dashboard text, survives filters"
+    ],
+    "first_proof": {
+      "question": "Does the shared hierarchy model produce correct totals and exact branch selection?",
+      "artifact": "Two-level treemap on shop-10000 (Region → Category, sum of Revenue) with readouts and click-to-filter",
+      "observation": "Branch % of whole matches a pivot of the same fields; North › Home filters a rows table to exactly those orders",
+      "decision_rule": "Both hold → proceed to three levels/small categories, then icicle, then sunburst. Either fails → fix the shared model before adding layouts."
+    },
+    "rabbit_holes": [
+      "Label fitting and truncation in small or curved marks",
+      "Color assignment stability across filters and layouts",
+      "Sunburst angular labels",
+      "Exact multi-branch selection across parents",
+      "Double-click colliding with the first click selection and undo history"
+    ],
+    "open_decisions": [
+      "Default arrangement for three levels: treemap or icicle (decided in Milestone 2)"
+    ],
+    "resolved_decisions": [
+      {
+        "date": "2026-10-10",
+        "decision": "One \"Hierarchy\" Add Chart entry",
+        "source": "feedback-2026-10-10"
+      },
+      {
+        "date": "2026-10-10",
+        "decision": "No circle packing; rectangular first; sunburst last and cuttable",
+        "source": "feedback-2026-10-10"
+      },
+      {
+        "date": "2026-10-10",
+        "decision": "Zoom with breadcrumbs ships in the first wave; focus stored as a value path",
+        "source": "feedback-2026-10-10-zoom"
+      }
+    ],
+    "zoom_rules": [
+      "View only; does not filter other charts",
+      "Double-click a parent or Shift+Enter; Other and leaves are not zoomable",
+      "Unresolvable focus shows the deepest ancestor with rows and keeps the stored path",
+      "Changing levels keeps only the unchanged prefix",
+      "One undo step per zoom"
+    ]
   },
   "implementation": {
-    "status": "not-started",
+    "status": "draft",
     "repository_snapshot": {
-      "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
-      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
-      "worktree_status": "clean before intent capture; detached HEAD",
+      "root": "/Users/byronwall/Projects/explorEDA/.claude/worktrees/nested-categories-totals-96a2a0",
+      "revision": "5cf144d",
+      "worktree_status": "clean before shaping",
       "subsystems": [
-        "packages/explorEDA/src/components/charts/PivotTable/definition.ts",
+        "packages/explorEDA/src/components/charts/Sankey/definition.ts",
+        "packages/explorEDA/src/components/charts/Sankey/sankeyPlan.ts",
+        "packages/explorEDA/src/charts/registerAllCharts.ts",
+        "packages/explorEDA/src/components/settings/MainSettingsTab.tsx",
+        "packages/explorEDA/src/components/charts/trace/",
+        "packages/explorEDA/src/lib/categories.ts",
         "packages/explorEDA/src/types/ChartTypes.ts",
-        "packages/explorEDA/src/charts/registerAllCharts.ts"
+        "packages/explorEDA/src/utils/saveDataUtils.ts",
+        "packages/explorEDA/src/lib/dsl/settingKeys.ts",
+        "packages/explorEDA/src/components/charts/chartAccessibility.ts",
+        "packages/explorEDA/src/components/plot/AddChartDialog.tsx",
+        "packages/explorEDA/src/hooks/useCreateCharts.ts",
+        "packages/explorEDA/src/components/charts/emptyPlotClick.ts",
+        "apps/demo/src/demos/examples.ts",
+        "apps/demo/src/demos/coverage.ts"
       ],
-      "test_commands": [],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/components/charts/Hierarchy",
+        "pnpm --filter exploreda check-types",
+        "pnpm --filter demo exec vitest run src/demos/coverage.test.ts src/dashboardText.test.ts",
+        "pnpm check"
+      ],
       "deployment_surfaces": []
     },
-    "dependencies": [],
-    "fast_local_loop": null,
-    "milestones": [],
-    "cut_line": [],
-    "open_decisions": []
+    "dependencies": [
+      {
+        "name": "d3-hierarchy",
+        "kind": "library",
+        "first_proof_role": "real",
+        "reason": "Squarified treemap and partition layout math; local, deterministic, no provider risk",
+        "fallback": "Hand-write squarify and partition",
+        "material": false
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda exec vitest run src/components/charts/Hierarchy",
+      "browser": "pnpm --filter demo dev --port 5291 --strictPort",
+      "network_required": false,
+      "shared_infrastructure_required": false,
+      "failure_injection": [
+        "Fixtures with repeated labels across parents",
+        "Negative and missing measures",
+        "Blank level values",
+        "More than maxChildren children under one parent"
+      ]
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "A two-level treemap with trustworthy totals",
+        "status": "planned",
+        "proof": "Builder tests; share matches pivot; North › Home filter exact; save/restore and dashboard text round trip; browser at three widths",
+        "end_state": "Hierarchy chart with treemap arrangement usable on two levels; changeset (minor) added",
+        "outcome": "A user builds a two-level treemap and filters the workspace by branch with exact totals",
+        "valid_intermediate_state": "Registered chart with one arrangement; unaffected charts unchanged",
+        "rollback": "Remove the hierarchy registration; no existing chart or saved layout changes."
+      },
+      {
+        "id": "m2",
+        "title": "Zoom into a branch and step back with breadcrumbs",
+        "status": "planned",
+        "outcome": "A user zooms into a parent, reloads to the same view, and steps back through breadcrumbs",
+        "proof": "Focus-resolution tests; save validation and dashboard-text round trip; one undo step per zoom; browser at three widths",
+        "valid_intermediate_state": "Two-level treemap with zoom; absent focus means the whole, so older saves are unaffected",
+        "end_state": "Deterministic, persisted zoom",
+        "rollback": "Revert the milestone PR; focus is optional, so charts without it are unaffected."
+      },
+      {
+        "id": "m3",
+        "title": "Three levels and many small categories stay readable",
+        "status": "planned",
+        "proof": "Per-parent Other, small-mark thresholds, missing levels, color modes, Alt-click trace; screenshots at three widths",
+        "end_state": "Three-level default arrangement decided and recorded",
+        "outcome": "Three-level data with many small categories stays readable; nodes are traceable",
+        "valid_intermediate_state": "Treemap usable at the stated scale; Other and thresholds behind settings with defaults",
+        "rollback": "Revert the milestone PR; earlier arrangements keep working."
+      },
+      {
+        "id": "m4",
+        "title": "Icicle arrangement and switching",
+        "status": "planned",
+        "proof": "Switching keeps setup through undo and saved views",
+        "end_state": "Treemap and icicle on one chart",
+        "outcome": "One chart switches between treemap and icicle without losing setup",
+        "valid_intermediate_state": "Two arrangements; arrangement defaults to treemap for older saves",
+        "rollback": "Revert the milestone PR; earlier arrangements keep working."
+      },
+      {
+        "id": "m5",
+        "title": "Sunburst (cuttable)",
+        "status": "planned",
+        "proof": "Readability compared with icicle on shop data",
+        "end_state": "Third arrangement, or a recorded cut",
+        "outcome": "Sunburst available as a third arrangement, or a recorded cut",
+        "valid_intermediate_state": "Two or three arrangements; removing sunburst leaves saves falling back to treemap",
+        "rollback": "Revert the milestone PR; earlier arrangements keep working."
+      }
+    ],
+    "cut_line": [
+      "Circle packing and other radial layouts",
+      "Mekko",
+      "Cross-parent selection (precise-composite-selection)",
+      "Parent-ID hierarchies, deeper trees, pivot subtotals/collapse",
+      "Named Add Chart entries per layout",
+      "Animated zoom transitions",
+      "Zoom that also filters other charts"
+    ],
+    "open_decisions": [
+      "Three-level default arrangement (M3 spike; fallback icicle)"
+    ],
+    "notes": "Setting for the layout choice is named arrangement because layout is the grid-placement key on every chart. Own-chart selection highlights rather than removes rows, as in Sankey (selectedWeight)."
   },
   "history": [
     {
@@ -315,6 +691,30 @@
       "evidence": [
         "No implementation of this scope found at 91b627d"
       ]
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Shaped the initiative: nested subtotals and collapse in the Pivot Table; spatial view deferred to evaluation.",
+      "reason": "User asked to shape the initiative and review scope with product questions.",
+      "evidence": "Source inspection of Pivot Table, categories, and demo datasets at 5cf144d. No runtime checks or implementation."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Reshaped around hierarchical charts; one Hierarchy chart with treemap, sunburst, and icicle layouts. Pivot subtotals moved below the line.",
+      "reason": "User feedback: main interest is treemap, sunburst, and other hierarchical charts; not Excel pivot complexity. Answers on job and scale recorded.",
+      "evidence": "Source inspection of Sankey definition and chart-type switching at 5cf144d. No runtime checks or implementation."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Recorded answers (single Hierarchy menu entry; no circle packing; rectangular first) and wrote the implementation plan.",
+      "reason": "User answered the two open shape choices.",
+      "evidence": "Source inspection of Sankey registration touchpoints at 5cf144d. No implementation."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Moved zoom into a branch into the first wave as Milestone 2; designed focus as a value path stored in settings with breadcrumbs.",
+      "reason": "User feedback on the cut line.",
+      "evidence": "Checked keyboard and click conventions in SankeyChart and BarChart, and useTitleEditing double-press handling, at 5cf144d. No implementation."
     }
   ],
   "closure": null,
