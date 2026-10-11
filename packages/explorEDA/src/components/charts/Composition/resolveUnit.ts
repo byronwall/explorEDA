@@ -1828,7 +1828,8 @@ function summaryNodes(
     });
   });
   const rowIds = groups.flatMap((group) => group.rowIds);
-  if (area.length)
+  const parts = mark.parts ?? { band: true, line: true, points: true };
+  if (area.length && parts.band)
     nodes.push({
       type: "area",
       key: `${unit.id}:${subset.key}:${mark.id}:band`,
@@ -1848,7 +1849,7 @@ function summaryNodes(
         segments: 1,
       },
     });
-  if (path.length > 1)
+  if (path.length > 1 && parts.line)
     nodes.push({
       type: "path",
       key: `${unit.id}:${subset.key}:${mark.id}:median`,
@@ -1867,7 +1868,7 @@ function summaryNodes(
       },
     });
   groups.forEach((group, index) => {
-    if (!group.stats) return;
+    if (!group.stats || !parts.points) return;
     nodes.push({
       type: "circle",
       key: `${unit.id}:${subset.key}:${mark.id}:${group.key}`,

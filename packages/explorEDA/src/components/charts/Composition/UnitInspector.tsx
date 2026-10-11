@@ -1,11 +1,27 @@
 import { FieldSelector } from "@/components/FieldSelector";
 import { NumericInputEnter } from "@/components/NumericInputEnter";
 import { Button } from "@/components/ui/button";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { describeMark } from "./markSummary";
-import { Plus, Trash2 } from "lucide-react";
+import {
+  AreaChart,
+  BarChartHorizontal,
+  CandlestickChart,
+  GanttChart,
+  Grid3x3,
+  Layers,
+  LayoutGrid,
+  Mountain,
+  Plus,
+  ScatterChart,
+  Spline,
+  Trash2,
+  Waves,
+  type LucideIcon,
+} from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import {
   createInset,
@@ -32,6 +48,7 @@ import {
   type StackMark,
   type StripMark,
   type SummaryMark,
+  type SummaryParts,
   type UnitElement,
   isXyMark,
 } from "./compositionTypes";
@@ -199,71 +216,81 @@ const SHAPES = [
   },
 ];
 
+/** A mark type's name beside an icon of what it draws. */
+function TypeLabel({ icon: Icon, text }: { icon: LucideIcon; text: string }) {
+  return (
+    <span className="inline-flex items-center gap-1">
+      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+      {text}
+    </span>
+  );
+}
+
 const MARK_TYPES = [
   {
     value: "strip" as const,
-    label: "Strip",
+    label: <TypeLabel icon={LayoutGrid} text="Strip" />,
     tooltip:
       "One glyph per bin along a position scale, colored or sized by an aggregate",
   },
   {
     value: "point" as const,
-    label: "Points",
+    label: <TypeLabel icon={ScatterChart} text="Points" />,
     tooltip: "One circle per row at numeric x and y",
   },
   {
     value: "path" as const,
-    label: "Path",
+    label: <TypeLabel icon={Spline} text="Path" />,
     tooltip:
       "One line through the rows in the order of a field, such as year, at numeric x and y",
   },
   {
     value: "span" as const,
-    label: "Span",
+    label: <TypeLabel icon={GanttChart} text="Span" />,
     tooltip:
       "One bar per row from a start field to an end field along x, filling the frame's height: a timeline when the unit repeats as rows.",
   },
   {
     value: "band" as const,
-    label: "Band",
+    label: <TypeLabel icon={AreaChart} text="Band" />,
     tooltip:
       "A filled area between two fields along x, such as a forecast's 10th to 90th percentile. Layer several, widest first.",
   },
   {
     value: "stack" as const,
-    label: "Stack",
+    label: <TypeLabel icon={Layers} text="Stack" />,
     tooltip:
       "One column per repeat, its categories stacked from the bottom as shares of the repeat's total. Filtering the rows recomputes the total.",
   },
   {
     value: "bar" as const,
-    label: "Bar",
+    label: <TypeLabel icon={BarChartHorizontal} text="Bar" />,
     tooltip:
       "One bar per repeat, or per category, whose length is a count, sum, or average of the repeat's rows. One category can mirror leftward, as a population pyramid.",
   },
   {
     value: "waffle" as const,
-    label: "Waffle",
+    label: <TypeLabel icon={Grid3x3} text="Waffle" />,
     tooltip:
       "A grid of cells per repeat, one per row or per a set number of rows, grouped and colored by a category. Filtering the rows redraws the cells.",
   },
   {
     value: "horizon" as const,
-    label: "Horizon",
+    label: <TypeLabel icon={Waves} text="Horizon" />,
     tooltip:
       "A measure across x read from a baseline and cut into bands that stack over one another, so a short row holds a wide range; drops mirror upward in a second color.",
   },
   {
     value: "density" as const,
-    label: "Density",
+    label: <TypeLabel icon={Mountain} text="Density" />,
     tooltip:
       "The distribution of a numeric field in each repeat as a smoothed curve filled to the baseline. Overlap rows with a negative gap for a ridgeline.",
   },
   {
     value: "summary" as const,
-    label: "Summary",
+    label: <TypeLabel icon={CandlestickChart} text="Summary" />,
     tooltip:
-      "Quartiles and the median of a measure for each group in the repeat, such as two years side by side. Markers color by the change in median.",
+      "Splits each repeat's rows into groups, such as years, and computes a measure's quartiles in each. Draws the middle half as a band, the medians as dots, and a line joining them; each part can be turned off. A value scale can color the medians by their change from the first group to the last.",
   },
 ];
 
@@ -1784,6 +1811,30 @@ function WaffleFields({
   );
 }
 
+const ALL_SUMMARY_PARTS: SummaryParts = {
+  band: true,
+  line: true,
+  points: true,
+};
+const SUMMARY_PARTS = [
+  {
+    key: "band" as const,
+    label: "Band",
+    tooltip:
+      "Fill between each group's 25th and 75th percentiles: the middle half of its rows",
+  },
+  {
+    key: "line" as const,
+    label: "Line",
+    tooltip: "Join the groups' medians with a line",
+  },
+  {
+    key: "points" as const,
+    label: "Dots",
+    tooltip: "Mark each group's median with a dot",
+  },
+];
+
 function SummaryFields({
   mark,
   scales,
@@ -1858,6 +1909,30 @@ function SummaryFields({
             Edit
           </Button>
         )}
+      </div>
+      <span className="eda-setting-label">Draw</span>
+      <div className="eda-segmented" role="group" aria-label="Summary parts">
+        {SUMMARY_PARTS.map((part) => {
+          const parts = mark.parts ?? ALL_SUMMARY_PARTS;
+          return (
+            <ActionTooltip key={part.key} content={part.tooltip}>
+              <button
+                type="button"
+                aria-pressed={parts[part.key]}
+                className="eda-segmented-item"
+                onClick={() => {
+                  const next = { ...parts, [part.key]: !parts[part.key] };
+                  onChange({
+                    parts:
+                      next.band && next.line && next.points ? undefined : next,
+                  });
+                }}
+              >
+                {part.label}
+              </button>
+            </ActionTooltip>
+          );
+        })}
       </div>
       <ColorSetting
         label="Band fill"

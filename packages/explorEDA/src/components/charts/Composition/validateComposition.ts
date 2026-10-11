@@ -177,7 +177,12 @@ function isMark(value: unknown) {
       isString(value.fill) &&
       isNumber(value.opacity) &&
       value.opacity > 0 &&
-      value.opacity <= 1
+      value.opacity <= 1 &&
+      (value.parts === undefined ||
+        (isRecord(value.parts) &&
+          typeof value.parts.band === "boolean" &&
+          typeof value.parts.line === "boolean" &&
+          typeof value.parts.points === "boolean"))
     );
   if (value.type === "band")
     return (

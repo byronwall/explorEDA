@@ -426,6 +426,14 @@ export interface SummaryMark {
   /** The quartile band's fill. */
   fill: string;
   opacity: number;
+  /** Which parts draw: the quartile band, the line joining the medians, the median dots. All unless set. */
+  parts?: SummaryParts;
+}
+
+export interface SummaryParts {
+  band: boolean;
+  line: boolean;
+  points: boolean;
 }
 
 /**

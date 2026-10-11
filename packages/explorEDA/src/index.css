@@ -6523,7 +6523,8 @@ td[data-null] {
   color: var(--foreground);
 }
 .eda-segmented-item[aria-selected="true"],
-.eda-segmented-item[aria-checked="true"] {
+.eda-segmented-item[aria-checked="true"],
+.eda-segmented-item[aria-pressed="true"] {
   background: var(--background);
   color: var(--foreground);
   box-shadow:
