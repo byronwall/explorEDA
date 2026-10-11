@@ -4,17 +4,17 @@
     "title": "Rank a measure in horizontal bars",
     "slug": "horizontal-metric-bars",
     "scale": "feature",
-    "current_phase": "intent",
-    "last_updated": "2026-10-09",
-    "summary": "Users should rank a meaningful measure by category without changing analytical contracts when they choose a horizontal layout.",
+    "current_phase": "plan",
+    "last_updated": "2026-10-10",
+    "summary": "The row chart should rank categories by a named grouped summary (count, sum, or average) with the same numbers as vertical bars, a held order, explicit Top N, and signed values.",
     "status": "planned",
-    "next_action": "Compare a four-category horizontal sum against the existing vertical sum and a hand total. Select a category, inspect contributors, resize, and restore. Decide whether one shared measure path can support both presentations."
+    "next_action": "Start Milestone 1: add aggregateId to RowChartSettings, poolAggregateRows, and the ranking planner; prove the shop ranking matches its vertical twin."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-06"
+      "updated_at": "2026-10-10"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -23,13 +23,13 @@
     },
     "shape_brief": {
       "path": "shape-brief.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-10"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "draft",
+      "updated_at": "2026-10-10"
     }
   },
   "sources": [
@@ -88,6 +88,20 @@
       "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
       "anchor": "Annotation 3: end users determine product choices",
       "authority": "Explicit human feedback; tentative answers remain tentative"
+    },
+    {
+      "id": "product-answers-2026-10-10",
+      "type": "direct-user-input",
+      "location": "conversation 2026-10-10",
+      "anchor": "Five product questions: entry point, measure, order under filtering, Other membership, first-release cut",
+      "authority": "explicit user direction"
+    },
+    {
+      "id": "repository-2026-10-10",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/RowChart/rowChartPlan.ts; BarChart/barPlan.ts; lib/aggregates.ts; providers/DataLayerProvider.tsx; utils/saveDataUtils.ts; lib/dsl/settingKeys.ts",
+      "anchor": "7b0998a: inspected source; no runtime proof",
+      "authority": "current repository reality"
     }
   ],
   "intent": {
@@ -95,8 +109,8 @@
       {
         "id": "claim-1",
         "type": "outcome",
-        "statement": "Users should rank a meaningful measure by category without changing analytical contracts when they choose a horizontal layout.",
-        "commitment": "derived",
+        "statement": "Users should rank a meaningful measure by category in the row chart with the same values, membership, colors, filters, and trace as the vertical bar built from the same grouped summary.",
+        "commitment": "explicit",
         "importance": "core",
         "status": "active",
         "time_horizon": "first release",
@@ -108,10 +122,14 @@
           {
             "source_id": "pro-chart-review",
             "anchor": "C06"
+          },
+          {
+            "source_id": "product-answers-2026-10-10",
+            "anchor": "2026-10-10 answers"
           }
         ],
-        "confidence": "medium",
-        "notes": "Candidate interpretation; no feature implementation has been selected."
+        "confidence": "high",
+        "notes": "Entry point confirmed: row chart, not a bar orientation toggle."
       },
       {
         "id": "claim-2",
@@ -158,8 +176,8 @@
       {
         "id": "priority-1",
         "type": "desired experience",
-        "statement": "Show count, sum, or average in a horizontal ranking.",
-        "commitment": "derived",
+        "statement": "Rank count, sum, or average from a named grouped summary in the row chart.",
+        "commitment": "explicit",
         "importance": "supporting",
         "status": "active",
         "time_horizon": "first release",
@@ -167,16 +185,20 @@
           {
             "source_id": "current-request",
             "anchor": "Worthwhile gaps against current features; seeds may expand later"
+          },
+          {
+            "source_id": "product-answers-2026-10-10",
+            "anchor": "2026-10-10 answers"
           }
         ],
         "confidence": "medium",
-        "notes": "Recovered candidate priority; no implementation approval."
+        "notes": ""
       },
       {
         "id": "priority-2",
         "type": "desired experience",
         "statement": "Preserve category filters and exact contributor inspection.",
-        "commitment": "derived",
+        "commitment": "explicit",
         "importance": "supporting",
         "status": "active",
         "time_horizon": "first release",
@@ -184,16 +206,20 @@
           {
             "source_id": "current-request",
             "anchor": "Worthwhile gaps against current features; seeds may expand later"
+          },
+          {
+            "source_id": "product-answers-2026-10-10",
+            "anchor": "2026-10-10 answers"
           }
         ],
         "confidence": "medium",
-        "notes": "Recovered candidate priority; no implementation approval."
+        "notes": ""
       },
       {
         "id": "priority-3",
         "type": "desired experience",
-        "statement": "Keep ordering and Other membership understandable.",
-        "commitment": "derived",
+        "statement": "Hold ranking order from the unfiltered measure, and keep Other membership fixed with an explicit Top N.",
+        "commitment": "explicit",
         "importance": "supporting",
         "status": "active",
         "time_horizon": "first release",
@@ -201,10 +227,14 @@
           {
             "source_id": "current-request",
             "anchor": "Worthwhile gaps against current features; seeds may expand later"
+          },
+          {
+            "source_id": "product-answers-2026-10-10",
+            "anchor": "2026-10-10 answers"
           }
         ],
         "confidence": "medium",
-        "notes": "Recovered candidate priority; no implementation approval."
+        "notes": ""
       },
       {
         "id": "keep-resources-local",
@@ -226,7 +256,7 @@
       {
         "id": "current-foundation",
         "type": "current repository reality",
-        "statement": "RowChartSettings has a category field and row-height settings. RowChart draws member counts. BarChartSettings supports aggregateId and series layouts. Shared named reductions already provide count, sum, and average.",
+        "statement": "The row chart counts rows, orders by count across all rows, and sizes Other from chart height. Vertical bars read a grouped summary through aggregateId, order by data or label only, and have no Other. Saved-data validation accepts aggregateId on any chart type. summarizeGroup can pool any set of rows under a summary spec.",
         "commitment": "derived",
         "importance": "supporting",
         "status": "active",
@@ -247,16 +277,140 @@
           {
             "source_id": "repository-4",
             "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof"
+          },
+          {
+            "source_id": "repository-2026-10-10",
+            "anchor": "7b0998a"
           }
         ],
         "confidence": "high",
         "notes": "Does not establish runtime or browser acceptance."
+      },
+      {
+        "id": "decision-entry-row",
+        "type": "constraint",
+        "statement": "The row chart is the horizontal home; vertical bars gain no orientation switch.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers-2026-10-10",
+            "anchor": "2026-10-10 answers"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "decision-named-summary",
+        "type": "constraint",
+        "statement": "The measure is a named grouped summary reusable by other charts, not a private per-chart setting.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers-2026-10-10",
+            "anchor": "2026-10-10 answers"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "decision-held-order",
+        "type": "desired experience",
+        "statement": "When other charts filter, order and Other membership hold; filtered values draw over unfiltered context.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers-2026-10-10",
+            "anchor": "2026-10-10 answers"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "decision-top-n",
+        "type": "desired experience",
+        "statement": "An explicit saved Top N fixes Other membership across resizes; unset keeps today's fit-to-height.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers-2026-10-10",
+            "anchor": "2026-10-10 answers"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "decision-signed",
+        "type": "desired experience",
+        "statement": "Signed measures draw on both sides of a zero line in the first release.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers-2026-10-10",
+            "anchor": "2026-10-10 answers"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "decision-dsl",
+        "type": "desired experience",
+        "statement": "The ranking is writable and round-trips in dashboard text in the first release.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers-2026-10-10",
+            "anchor": "2026-10-10 answers"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "later-composition-and-switch",
+        "type": "future possibility",
+        "statement": "Composition-mode horizontal measure rows and a 'show as rows' switch from a vertical bar are later.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "product-answers-2026-10-10",
+            "anchor": "2026-10-10 answers"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Not selected for the first release on 2026-10-10."
       }
     ],
     "themes": [
-      "Show count, sum, or average in a horizontal ranking.",
+      "Rank count, sum, or average from a named grouped summary in the row chart.",
       "Preserve category filters and exact contributor inspection.",
-      "Keep ordering and Other membership understandable."
+      "Hold ranking order from the unfiltered measure, and keep Other membership fixed with an explicit Top N.",
+      "Show signed measures honestly on both sides of zero."
     ],
     "conflicts": [],
     "human_questions": []
@@ -268,35 +422,162 @@
     "selected_option": null
   },
   "shape": {
-    "status": "not-started",
-    "appetite": null,
-    "problem": null,
-    "recommended_shape": null,
-    "success_moves": [],
-    "first_proof": null,
-    "rabbit_holes": [],
-    "open_decisions": []
+    "status": "current",
+    "appetite": "One row-chart renderer extension plus settings, dashboard-text keys, and tests. No new chart type and no shared bar framework.",
+    "problem": "The row chart can only count, so a horizontal ranking of revenue silently becomes a ranking of records, and its Other membership shifts on resize.",
+    "recommended_shape": "Row chart gains an optional aggregateId and topN. It reads the same getAggregateResult output as vertical bars for live rows and for all rows; order comes from all rows, filtered values draw over unfiltered context, Other is pooled with summarizeGroup over its members' rows, and the x domain spans zero for signed values. Count mode (no aggregateId) keeps today's behavior: per-row counts, order by all-row count, fit-to-height Other. Only an explicit topN changes it.",
+    "simpler_counterproposal": "Add aggregateId and draw live values only, keeping height-driven Other and re-ranking on every filter. Rejected: the user chose a held order and fixed membership, and averaging bar values for Other would drift from vertical bars.",
+    "success_moves": [
+      "Consume the existing AggregateResult instead of a second aggregation path, so both orientations agree by construction.",
+      "Pool Other through summarizeGroup over member rows, so averages and once-per IDs stay correct.",
+      "Make topN optional with unset meaning today's fit-to-height, so saved row charts render unchanged.",
+      "Prove on two existing demo summaries (shop sum, Beijing signed average) with vertical twins as oracles.",
+      "Keep removal trivial: unsetting aggregateId returns the chart to counting."
+    ],
+    "first_proof": {
+      "question": "Can the row chart render a grouped summary, pooled Other, and held order from the existing summary result plus one pooling call, matching vertical bars?",
+      "artifact": "Shop revenue-by-region and Beijing above-reference row rankings beside their vertical bars in the demo, plus planner fixture tests.",
+      "try": "Shop row ranking on revenue-by-region beside its vertical bar, filter by Category; Beijing row ranking on above-reference with topN=5.",
+      "observe": "Values match vertical bars and a hand total; negatives left of zero; Other's average equals pooled average; order and membership hold through filtering and resize; Alt-click lists correct contributors.",
+      "decide": "If the existing summary result plus one pooling call suffices, build the rest on it; otherwise extract a shared ranking plan first.",
+      "decision_rule": "If the existing summary result plus one pooling call suffices, build the rest on it; otherwise extract a shared ranking plan first."
+    },
+    "rabbit_holes": [
+      "Merging RowChart and BarChart renderers.",
+      "Average context drawn as a faint bar can sit shorter than the filtered value; evaluate a tick.",
+      "Top N at very small heights: rows compress rather than change membership; label thinning may be needed."
+    ],
+    "open_decisions": [
+      "Whether unfiltered context for averages uses a tick instead of a faint bar (decided in first proof)."
+    ]
   },
   "implementation": {
-    "status": "not-started",
+    "status": "planned",
     "repository_snapshot": {
-      "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
-      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
-      "worktree_status": "clean before intent capture; detached HEAD",
+      "root": "/Users/byronwall/Projects/explorEDA/.claude/worktrees/horizontal-bars-rank-measure-87fbf8",
+      "revision": "7b0998a",
+      "worktree_status": "clean before shaping",
       "subsystems": [
-        "packages/explorEDA/src/types/ChartTypes.ts",
-        "packages/explorEDA/src/components/charts/RowChart/RowChart.tsx",
-        "packages/explorEDA/src/components/charts/BarChart/definition.ts",
-        "packages/explorEDA/src/lib/aggregates.ts"
+        "packages/explorEDA/src/components/charts/RowChart/ (RowChart.tsx, rowChartPlan.ts, RowChartSettingsPanel.tsx, RowTraceBody.tsx, definition.ts)",
+        "packages/explorEDA/src/components/charts/BarChart/ (barPlan.ts, GroupedAggregateInspector.tsx, BarChartSettingsPanel.tsx)",
+        "packages/explorEDA/src/lib/aggregates.ts",
+        "packages/explorEDA/src/providers/DataLayerProvider.tsx (getAggregateResult, validateAggregateState)",
+        "packages/explorEDA/src/utils/saveDataUtils.ts",
+        "packages/explorEDA/src/lib/dsl/settingKeys.ts, compile.ts",
+        "apps/demo/src/demos/analyses/shop.ts, beijing.ts"
       ],
-      "test_commands": [],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/components/charts/RowChart",
+        "pnpm --filter exploreda check-types"
+      ],
       "deployment_surfaces": []
     },
     "dependencies": [],
-    "fast_local_loop": null,
-    "milestones": [],
-    "cut_line": [],
-    "open_decisions": []
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda exec vitest run src/components/charts/RowChart src/lib/aggregates",
+      "workflow": "Pure planner tests with hand-total fixtures, then the demo dev server (port 5291) with the dashboard text panel.",
+      "network_required": false,
+      "shared_infrastructure_required": false,
+      "failure_injection": [
+        "Fixtures with negative, unavailable (conflicting ID), and excluded measure values",
+        "Resize harness at 160px and 800px"
+      ]
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Shop revenue ranking matches its vertical twin",
+        "changes": [
+          "aggregateId on RowChartSettings, isChart row validation, settingKeys",
+          "poolAggregateRows in lib/aggregates.ts",
+          "ranking planner in rowChartPlan.ts (count and aggregate inputs)",
+          "RowChart draws live values over all-row context, held order"
+        ],
+        "proof": "Fixture equals hand totals and planBarChart; filtering elsewhere changes values not order; count output unchanged; shop demo matches vertical bar.",
+        "status": "planned",
+        "outcome": "The shop ranking shows the same region revenues as its vertical twin, ordered by all-row revenue, with filtered values over context.",
+        "valid_intermediate_state": "Row charts without aggregateId render as before; the ranking exists only through dashboard text.",
+        "rollback": "Unset aggregateId; count path is untouched.",
+        "dependencies_introduced": []
+      },
+      {
+        "id": "m2",
+        "title": "Fixed membership and signed averages",
+        "changes": [
+          "topN setting for count and measure rows",
+          "signed domain with zero rule; unavailable rows",
+          "spike: average context tick vs faint bar"
+        ],
+        "proof": "Resize harness keeps Other members fixed with topN; Beijing topN=5 pooled Other average equals hand value; negatives left of zero.",
+        "status": "planned",
+        "outcome": "Top N fixes Other membership and signed averages draw on both sides of zero with a pooled Other.",
+        "valid_intermediate_state": "Without topN, row charts keep fit-to-height Other.",
+        "rollback": "Unset topN; signed domain reduces to [0, max] for non-negative data.",
+        "dependencies_introduced": []
+      },
+      {
+        "id": "m3",
+        "title": "Ranked values explain themselves",
+        "changes": [
+          "readout with summary name, current and unfiltered values",
+          "RowTraceBody renders AggregateContributorTable",
+          "summary-aware ChartSettingsContent and FiltersSettingsTab for row"
+        ],
+        "proof": "Alt-click on a region and Other lists correct contributors and exclusions; selection unchanged.",
+        "status": "planned",
+        "outcome": "Hover and Alt-click explain each ranked value with contributors and exclusions.",
+        "valid_intermediate_state": "Count-mode readout and trace unchanged.",
+        "rollback": "Revert trace and readout changes; rankings still render.",
+        "dependencies_introduced": []
+      },
+      {
+        "id": "m4",
+        "title": "Create from settings and text, then ship",
+        "changes": [
+          "Measure select, create Sum/Average, Top N input with tooltips",
+          "field change clears aggregateId",
+          "DSL groupField mismatch warning and round-trip tests",
+          "shop demo view and chart docs",
+          "minor changeset; pnpm check; browser at three widths"
+        ],
+        "proof": "User creates the ranking from settings; text round-trips; demo tests and pnpm check pass; PR screenshots.",
+        "status": "planned",
+        "outcome": "Users create a ranking from settings or text, and it ships with a minor changeset.",
+        "valid_intermediate_state": "Complete feature; demo tests and pnpm check pass.",
+        "rollback": "Revert the settings-panel commit; text-authored rankings keep working.",
+        "dependencies_introduced": []
+      }
+    ],
+    "cut_line": [
+      "Composition-mode horizontal measure rows",
+      "Show as rows from a vertical bar",
+      "Series or stacked rows",
+      "Merging row and bar renderers",
+      "Value sorting for vertical bars",
+      "group=@ dashboard-text alias"
+    ],
+    "open_decisions": [
+      {
+        "id": "average-context",
+        "decision": "Faint bar or tick for an average's unfiltered context",
+        "evidence": "Beijing filtered by season, compared both ways",
+        "fallback": "Tick for averages; faint bars for counts and sums",
+        "milestone": "m2"
+      },
+      {
+        "id": "topn-height-floor",
+        "decision": "How far rows compress before labels thin",
+        "evidence": "Beijing topN=12 in a short chart",
+        "fallback": "Fixed row floor plus a status-line note; membership never changes",
+        "milestone": "m2"
+      }
+    ],
+    "test_commands": [
+      "pnpm --filter exploreda exec vitest run src/components/charts/RowChart src/lib/aggregates src/lib/dsl",
+      "pnpm --filter exploreda check-types",
+      "pnpm --filter demo exec vitest run src/demos/coverage.test.ts src/dashboardText.test.ts",
+      "pnpm check"
+    ]
   },
   "history": [
     {
@@ -327,6 +608,18 @@
       "evidence": [
         "No implementation of this scope found at 91b627d"
       ]
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Reconciled five product answers, updated the intent brief, and drafted the shape brief.",
+      "reason": "User asked to shape the work with product questions.",
+      "evidence": "Source inspection at 7b0998a and demo dataset checks (shop has no negative margins; Beijing above-reference is signed). No implementation or runtime checks."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Clarified that count rows keep today's behavior; wrote the implementation plan.",
+      "reason": "User confirmed count default should not change, then asked to plan.",
+      "evidence": "Source inspection at 7b0998a (getAggregateResult, removeAggregate guard, isChart row case, RowChart resize harness). No implementation."
     }
   ],
   "closure": null,
