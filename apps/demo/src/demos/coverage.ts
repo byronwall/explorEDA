@@ -1131,6 +1131,16 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "yield-gap",
+    intent:
+      "Stack one square per country into a small waffle over each whole value along x, a unit histogram per crop colored by continent.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+    },
+  },
+  {
     exampleId: "du-bois-income",
     intent:
       "Stack each income class's spending across a bar as shares, joined class to class at each share's edge, after Du Bois.",

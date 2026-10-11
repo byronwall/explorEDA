@@ -34,6 +34,7 @@ import {
   climateRidgelineDashboard,
   duBoisIncomeDashboard,
   bananaYieldsDashboard,
+  yieldGapDashboard,
   taxSlopeDashboard,
   titanicWaffleDashboard,
   unemploymentStreamDashboard,
@@ -928,6 +929,17 @@ export const examples: ExampleData[] = [
     icon: TableProperties,
     data: "/datasets/banana-yields.csv",
     savedData: bananaYieldsDashboard,
+  },
+  {
+    id: "yield-gap",
+    title: "The yield gap",
+    description:
+      "A waffle histogram: for wheat and maize, one square per country stacked over its yield gap in whole tonnes per hectare and colored by continent, so the spread and the regional mix read together.",
+    dataset: { rows: "197 crop-countries", fields: 4, source: "Synthetic" },
+    shows: ["Waffles binned along x", "One square per row", "Category legend"],
+    icon: Grid3x3,
+    data: "/datasets/yield-gap.csv",
+    savedData: yieldGapDashboard,
   },
   {
     id: "du-bois-income",

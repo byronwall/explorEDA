@@ -1160,7 +1160,12 @@ function MarkProperties({
             onEditScale={onEditScale}
           />
         ) : mark.type === "waffle" ? (
-          <WaffleFields mark={mark} onChange={onChange} />
+          <WaffleFields
+            mark={mark}
+            scales={scales}
+            onChange={onChange}
+            onEditScale={onEditScale}
+          />
         ) : mark.type === "bar" ? (
           <BarFields
             mark={mark}
@@ -2017,15 +2022,21 @@ function BarFields({
 
 function WaffleFields({
   mark,
+  scales,
   onChange,
+  onEditScale,
 }: {
   mark: WaffleMark;
+  scales: CompositionScale[];
   onChange: (patch: Partial<WaffleMark>) => void;
+  onEditScale: (scaleId: string) => void;
 }) {
+  const id = useId();
   const profiles = useDataLayer((state) => state.fieldProfiles);
   const categoryFields = profiles
     .filter((profile) => profile.uniqueCount <= 60)
     .map((profile) => profile.name);
+  const numeric = scales.filter((scale) => scale.kind === "numeric");
   return (
     <>
       <Label>Categories</Label>
@@ -2036,6 +2047,35 @@ function WaffleFields({
         fields={categoryFields}
         onChange={(categoryField) => onChange({ categoryField })}
       />
+      <Label htmlFor={`${id}-x`}>Bin along</Label>
+      <div className="eda-composition-scale-select">
+        <select
+          id={`${id}-x`}
+          className="eda-composition-select"
+          value={mark.xScaleId ?? ""}
+          onChange={(event) =>
+            onChange({ xScaleId: event.target.value || undefined })
+          }
+        >
+          <option value="">One waffle per repeat</option>
+          {numeric.map((scale) => (
+            <option key={scale.id} value={scale.id}>
+              {scale.name}, by whole value
+            </option>
+          ))}
+        </select>
+        {mark.xScaleId && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2"
+            tooltip="Open this scale's settings below. Its limits set the first and last bin."
+            onClick={() => onEditScale(mark.xScaleId!)}
+          >
+            Edit
+          </Button>
+        )}
+      </div>
       <span className="eda-setting-label">Cells</span>
       <Segmented
         label={`${mark.name} cells`}

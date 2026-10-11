@@ -549,6 +549,12 @@ export interface WaffleMark {
   order: "label" | "total";
   /** One color per category in that order, cycling when there are more. */
   colors: string[];
+  /**
+   * A numeric scale that bins the rows by their whole value along x, with
+   * one small waffle per bin standing on the baseline: a unit histogram,
+   * such as countries counted by yield gap.
+   */
+  xScaleId?: string;
 }
 
 /**
@@ -652,7 +658,8 @@ export function markScaleIds(mark: MarkDefinition): string[] {
       ? [mark.xScaleId, mark.colorScaleId]
       : [mark.xScaleId];
   if (mark.type === "horizon") return [mark.xScaleId];
-  if (mark.type === "waffle" || mark.type === "bar") return [];
+  if (mark.type === "waffle") return mark.xScaleId ? [mark.xScaleId] : [];
+  if (mark.type === "bar") return [];
   if (mark.type === "band") return [mark.xScaleId, mark.yScaleId];
   return mark.yScaleId ? [mark.xScaleId, mark.yScaleId] : [mark.xScaleId];
 }

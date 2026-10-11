@@ -4566,6 +4566,142 @@ export const bananaYieldsDashboard = dashboard("Banana yields", [
   row("banana-countries", "Rows by country", "Country", layout(0, 10, 6, 5)),
   histogram("banana-yields", "Yearly yields", "Yield", layout(6, 10, 6, 5)),
 ]);
+
+/**
+ * The yield gap as a waffle histogram: for wheat and maize, one square per
+ * country stacked in a small waffle over its gap, in whole tonnes per
+ * hectare, colored by continent.
+ */
+export const yieldGapDashboard = dashboard("Yield gap", [
+  {
+    ...base,
+    id: "yield-gap-composition",
+    type: "composition",
+    title: "The yield gap",
+    layout: layout(0, 0, 12, 8),
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    composition: {
+      artboard: { width: 960, height: 590, background: "#ffffff" },
+      scales: [
+        {
+          id: "n-1",
+          kind: "numeric",
+          name: "Yield gap, tonnes per hectare",
+          field: "Yield gap",
+          domain: "shared",
+          zero: true,
+          nice: false,
+          min: 0,
+          max: 13,
+        },
+      ],
+      calculations: [],
+      overrides: [],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "The Yield Gap",
+          x: 32,
+          y: 26,
+          width: 896,
+          fontSize: 26,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "Each square is a country, colored by its continent and stacked over its yield gap: the tonnes per hectare between what its farms harvest and what they could.",
+          x: 32,
+          y: 62,
+          width: 896,
+          fontSize: 14,
+          fontWeight: 400,
+          color: "#3c4043",
+        },
+        {
+          id: "legend-1",
+          kind: "legend",
+          name: "Continent key",
+          x: 142,
+          y: 108,
+          unitId: "unit-1",
+          markId: "mark-1",
+          direction: "row",
+          fontSize: 12,
+          color: "#1f2328",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Crops",
+          x: 32,
+          y: 150,
+          frame: { width: 800, height: 176 },
+          label: { show: true, width: 110, fontSize: 14 },
+          axis: true,
+          axisTitles: { x: "Yield gap, tonnes per hectare" },
+          marks: [
+            {
+              type: "waffle",
+              id: "mark-1",
+              name: "Countries",
+              categoryField: "Continent",
+              each: 1,
+              normalize: false,
+              columns: 3,
+              gap: 1.5,
+              from: "bottom",
+              order: "label",
+              colors: [
+                "#f8b931",
+                "#e9406a",
+                "#07a07a",
+                "#5a4fcf",
+                "#f58fa3",
+                "#18c9a0",
+              ],
+              xScaleId: "n-1",
+            },
+          ],
+          repeat: {
+            field: "Crop",
+            arrangement: "rows",
+            columns: 1,
+            gap: 24,
+            order: "count",
+            limit: 4,
+          },
+        },
+        {
+          id: "note-1",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: "Illustrative countries and gaps generated for this demo, shaped after the published Yield Gap graphic; not a survey of real yields.",
+          x: 32,
+          y: 560,
+          width: 896,
+          fontSize: 10,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
+    },
+  },
+  row(
+    "yield-gap-continents",
+    "Countries by continent",
+    "Continent",
+    layout(0, 8, 6, 5)
+  ),
+  histogram("yield-gap-values", "Yield gaps", "Yield gap", layout(6, 8, 6, 5)),
+]);
 /**
  * Warmer days, year by year: a ridgeline of 84 years. Each ridge is the
  * density of one year's daily global temperatures against a 1991–2020

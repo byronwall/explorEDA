@@ -427,6 +427,27 @@ export function resolveUnit(
       1;
     return { mark, domain: [mark.mirror ? -max : 0, max] as [number, number] };
   });
+  // A binned waffle's whole values along x, shared across repeats.
+  const wafflesBinned = waffles.map(({ mark }) => {
+    const x = mark.xScaleId ? scale(mark.xScaleId) : undefined;
+    if (x?.kind !== "numeric") return undefined;
+    const column = data.column(x.field);
+    let min = Infinity;
+    let max = -Infinity;
+    for (const id of data.allIds) {
+      const value = readNumber(column[id]);
+      if (value === undefined) continue;
+      min = Math.min(min, Math.round(value));
+      max = Math.max(max, Math.round(value));
+    }
+    if (x.min !== undefined) min = Math.round(x.min);
+    if (x.max !== undefined) max = Math.round(x.max);
+    if (!Number.isFinite(min) || max < min) return undefined;
+    return {
+      field: x.field,
+      bins: Array.from({ length: max - min + 1 }, (_, index) => min + index),
+    };
+  });
   // Stacks and waffles share one category order and color across every repeat.
   const stacked = stacks.map(({ mark }) => stackCategories(mark, data));
   const waffled = waffles.map(({ mark }) =>
@@ -1118,16 +1139,77 @@ export function resolveUnit(
       );
     });
     waffles.forEach(({ mark }, markIndex) => {
-      nodes.push(
-        ...waffleNodes(
-          unit,
-          override?.accent ? { ...mark, colors: [override.accent] } : mark,
-          windowed(subset, unit.window, data),
-          waffled[markIndex]!,
-          frame,
-          data
-        )
-      );
+      const drawn = override?.accent
+        ? { ...mark, colors: [override.accent] }
+        : mark;
+      const rows = windowed(subset, unit.window, data);
+      const binned = wafflesBinned[markIndex];
+      if (!binned) {
+        nodes.push(
+          ...waffleNodes(unit, drawn, rows, waffled[markIndex]!, frame, data)
+        );
+        return;
+      }
+      // One small waffle per whole value along x, standing on the baseline.
+      const column = data.column(binned.field);
+      const byBin = new Map<number, number[]>();
+      for (const id of rows.liveIds) {
+        const value = readNumber(column[id]);
+        if (value === undefined) continue;
+        const bin = Math.round(value);
+        const list = byBin.get(bin);
+        if (list) list.push(id);
+        else byBin.set(bin, [id]);
+      }
+      const band = frame.width / binned.bins.length;
+      binned.bins.forEach((bin, position) => {
+        const ids = byBin.get(bin);
+        if (!ids) return;
+        nodes.push(
+          ...waffleNodes(
+            unit,
+            drawn,
+            { ...rows, liveIds: ids },
+            waffled[markIndex]!,
+            {
+              x: frame.x + position * band + band * 0.1,
+              y: frame.y,
+              width: band * 0.8,
+              height: frame.height,
+            },
+            data,
+            `:${bin}`
+          )
+        );
+      });
+      if (drawAxis && unit.axisTitles?.x?.trim())
+        nodes.push({
+          type: "text",
+          key: `${unit.id}:${subset.key}:axis:title:x`,
+          elementId: unit.id,
+          x: frame.x + frame.width / 2,
+          lines: [
+            { text: unit.axisTitles.x.trim(), y: frame.y + frame.height + 32 },
+          ],
+          fontSize: 11,
+          fontWeight: 600,
+          fill: MUTED_INK,
+          anchor: "middle",
+        });
+      if (drawAxis)
+        binned.bins.forEach((bin, position) =>
+          nodes.push({
+            type: "text",
+            key: `${unit.id}:${subset.key}:axis:${mark.id}:${bin}`,
+            elementId: unit.id,
+            x: frame.x + (position + 0.5) * band,
+            lines: [{ text: String(bin), y: frame.y + frame.height + 14 }],
+            fontSize: 10,
+            fontWeight: 400,
+            fill: MUTED_INK,
+            anchor: "middle",
+          })
+        );
     });
     bars.forEach(({ mark }, markIndex) => {
       nodes.push(
@@ -2231,7 +2313,8 @@ function waffleNodes(
   subset: Subset,
   categories: StackCategory[],
   frame: Bounds,
-  data: CompositionData
+  data: CompositionData,
+  keySuffix = ""
 ): SceneNode[] {
   const groups = groupByCategory(
     data.column(mark.categoryField),
@@ -2290,7 +2373,7 @@ function waffleNodes(
       );
       nodes.push({
         type: "rect",
-        key: `${unit.id}:${subset.key}:${mark.id}:${item.category.key}:${cell}`,
+        key: `${unit.id}:${subset.key}:${mark.id}:${item.category.key}:${cell}${keySuffix}`,
         elementId: unit.id,
         instanceKey: subset.key,
         x: frame.x + column * step,

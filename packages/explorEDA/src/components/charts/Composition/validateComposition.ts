@@ -123,7 +123,8 @@ function isMark(value: unknown) {
       oneOf(value.order, ["label", "total"]) &&
       Array.isArray(value.colors) &&
       value.colors.length > 0 &&
-      value.colors.every(isString)
+      value.colors.every(isString) &&
+      (value.xScaleId === undefined || isString(value.xScaleId))
     );
   if (value.type === "horizon")
     return (
