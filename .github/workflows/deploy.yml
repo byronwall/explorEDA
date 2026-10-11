@@ -41,6 +41,12 @@ jobs:
         run: pnpm --recursive --if-present run build
         env:
           VITE_EXPLOREDA_LICENSE_KEY: ${{ vars.EXPLOREDA_SITE_LICENSE_KEY }}
+          VITE_LICENSE_SERVICE_URL: ${{ vars.LICENSE_SERVICE_URL }}
+          VITE_PADDLE_ENV: ${{ vars.PADDLE_ENV }}
+          VITE_PADDLE_CLIENT_TOKEN: ${{ vars.PADDLE_CLIENT_TOKEN }}
+          VITE_PADDLE_PRICE_COMMERCIAL: ${{ vars.PADDLE_PRICE_COMMERCIAL }}
+          VITE_PADDLE_PRICE_OEM: ${{ vars.PADDLE_PRICE_OEM }}
+          VITE_TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
 
       # A failing demo test stops the deploy before anything is uploaded.
       - name: Test demo

@@ -1,8 +1,6 @@
-import { copyFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "path";
 import { defineConfig, type Plugin } from "vite";
-import mdx from "@mdx-js/rollup";
-import remarkGfm from "remark-gfm";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import {
@@ -11,6 +9,8 @@ import {
   sourceAlias,
   useLibrarySource,
 } from "./exploredaSource";
+import { COMMERCE_PAGES } from "./src/commerce/paths";
+import { docsMdx } from "./docsMdx";
 
 /**
  * GitHub Pages serves 404.html for paths it has no file for. A copy of the
@@ -29,6 +29,17 @@ function spaFallback(): Plugin {
         path.join(outDir, "index.html"),
         path.join(outDir, "404.html")
       );
+      // Pricing, license, and legal pages load with a 200 and their own
+      // title, which payment-provider reviews and search engines expect.
+      const html = await readFile(path.join(outDir, "index.html"), "utf8");
+      for (const [page, title] of Object.entries(COMMERCE_PAGES)) {
+        const dir = path.join(outDir, page);
+        await mkdir(dir, { recursive: true });
+        await writeFile(
+          path.join(dir, "index.html"),
+          html.replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
+        );
+      }
     },
   };
 }
@@ -38,7 +49,7 @@ export default defineConfig(({ command }) => ({
   plugins: [
     ...(command === "serve" && useLibrarySource ? [exploredaSource()] : []),
     // Docs pages are MDX; compile them before the React plugin sees them.
-    { enforce: "pre", ...mdx({ remarkPlugins: [remarkGfm] }) },
+    { enforce: "pre", ...docsMdx() },
     react({ include: /\.(mdx|js|jsx|ts|tsx)$/ }),
     tailwindcss(),
     spaFallback(),
