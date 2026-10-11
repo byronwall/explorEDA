@@ -102,6 +102,8 @@ Extend ordinary Cartesian chart coverage only where the attachment can be define
 - Keep artboard positioning in composition. Keep ordinary chart annotations in their chart settings. Share behavior without requiring a new universal document store.
 - Verify facet reorder/removal, chart field changes, and restoration of an existing saved composition. State unsupported combinations in the editor's available choices.
 
+**Delivered (M4):** Bar, series bar, row, and box charts draw annotations through `BaseChart`, built with `scaleFrame`. A new `category` attachment places a callout on an aggregate bar or row by its category text; series bars and box plots take value-axis lines and bands only. Facet panels pass `facetKey` (the semantic `JSON.stringify([rowKey, columnKey])` id) down `ChartRenderer`; an annotation's optional `facet` binds it to one panel, and other panels report "Other panel". Calculations already read each panel's rows. Composition keeps its own `AnnotationAnchor`: its glyph picks are not stable record identity, so only the offset rule is shared, recorded in `docs/composition-mode.md`. No composition code changed. Box plot category callouts and series-bar subjects stay below the line.
+
 ### Desired end state
 
 - Annotation meaning and editing behavior match across supported chart families.

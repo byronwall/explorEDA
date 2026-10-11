@@ -32,6 +32,11 @@ import { barTraceTargets, findBarTraceRow, resolveBarTrace } from "./barTrace";
 import { BarChartSettings } from "./definition";
 import { SeriesBarChart } from "./SeriesBarChart";
 import {
+  annotationSlot,
+  categoryText,
+  scaleFrame,
+} from "../annotations/ChartAnnotations";
+import {
   useChartTrace,
   useChartTraceApi,
   useTraceRevision,
@@ -103,6 +108,7 @@ function SingleBarChart({
   width,
   height,
   facetIds,
+  facetKey,
   aggregateResult,
   aggregateScope,
 }: BarChartProps) {
@@ -425,6 +431,23 @@ function SingleBarChart({
         xScale={xScale}
         yScale={yScale}
         axes={plan.axes}
+        annotations={annotationSlot(settings, {
+          ...scaleFrame(xScale, yScale, { y: settings.yAxis.scaleType }),
+          facetKey,
+          // A bar sums its rows, so a note attaches to its category.
+          category: ({ value }) => {
+            const bar = plan.bars.find(
+              (item) => categoryText(item.groupValue) === value
+            );
+            return (
+              bar && {
+                x: bar.x + bar.width / 2,
+                y: bar.y,
+                selected: bar.opacity === 1,
+              }
+            );
+          },
+        })}
         brushingMode={plan.mode === "bin" ? "horizontal" : "none"}
         onBrushChange={handleBrushChange}
         settings={settings}

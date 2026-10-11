@@ -334,6 +334,7 @@ export function FacetContainer({
               width={width}
               height={Math.max(1, height - FACET_HEADER_HEIGHT)}
               facetIds={focused.ids}
+              facetKey={focused.id}
             />
           </div>
         </div>

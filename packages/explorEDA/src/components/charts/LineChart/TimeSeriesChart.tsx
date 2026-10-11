@@ -36,6 +36,7 @@ export function TimeSeriesChart({
   width,
   height,
   facetIds,
+  facetKey,
 }: BaseChartProps<LineChartSettings>) {
   const time = settings.time!;
   const owner = useId();
@@ -272,6 +273,7 @@ export function TimeSeriesChart({
                   yScale: describeScale(plan.yScale, plan.yScaleType),
                   plotWidth: plan.xScale.range()[1]!,
                   plotHeight: plan.yScale.range()[0]!,
+                  facetKey,
                 }
               : undefined
           )}

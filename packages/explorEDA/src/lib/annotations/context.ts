@@ -14,47 +14,67 @@ export interface AnnotationContext {
   /** Rows can carry supplied lower and upper bounds. */
   intervals: boolean;
   rightAxis: boolean;
+  /** Both axes are numeric, so a region has a place. */
+  plane: boolean;
+  /** The axis that carries values; the other names categories. */
+  valueAxis: "x" | "y";
+  /** Aggregate marks a callout can attach to, by this field's values. */
+  categoryField?: string;
 }
 
+const BASE = {
+  measureFields: [],
+  xDate: false,
+  records: false,
+  intervals: false,
+  rightAxis: false,
+  plane: false,
+  valueAxis: "y" as const,
+};
+
 export function annotationContext(settings: ChartSettings): AnnotationContext {
-  if (settings.type === "line") {
-    if (settings.time)
+  switch (settings.type) {
+    case "line":
+      if (settings.time)
+        return {
+          ...BASE,
+          xField: settings.xField,
+          yField: settings.time.measureField,
+          xDate: true,
+          plane: true,
+        };
       return {
+        ...BASE,
         xField: settings.xField,
-        yField: settings.time.measureField,
-        measureFields: [],
-        xDate: true,
-        records: false,
-        intervals: false,
-        rightAxis: false,
+        yField: settings.seriesField[0],
+        measureFields: settings.seriesField,
+        records: true,
+        intervals: true,
+        plane: true,
+        rightAxis: settings.seriesField.some(
+          (field) => settings.seriesSettings[field]?.useRightAxis
+        ),
       };
-    return {
-      xField: settings.xField,
-      yField: settings.seriesField[0],
-      measureFields: settings.seriesField,
-      xDate: false,
-      records: true,
-      intervals: true,
-      rightAxis: settings.seriesField.some(
-        (field) => settings.seriesSettings[field]?.useRightAxis
-      ),
-    };
+    case "scatter":
+      return {
+        ...BASE,
+        xField: settings.xField,
+        yField: settings.yField,
+        measureFields: [settings.yField],
+        records: true,
+        plane: true,
+      };
+    case "bar":
+      return {
+        ...BASE,
+        // Series bars group their marks, so a note can't name one bar.
+        categoryField: settings.seriesField ? undefined : settings.field,
+      };
+    case "row":
+      return { ...BASE, valueAxis: "x", categoryField: settings.field };
+    case "boxplot":
+      return { ...BASE, yField: settings.field };
+    default:
+      return BASE;
   }
-  if (settings.type === "scatter")
-    return {
-      xField: settings.xField,
-      yField: settings.yField,
-      measureFields: [settings.yField],
-      xDate: false,
-      records: true,
-      intervals: false,
-      rightAxis: false,
-    };
-  return {
-    measureFields: [],
-    xDate: false,
-    records: false,
-    intervals: false,
-    rightAxis: false,
-  };
 }

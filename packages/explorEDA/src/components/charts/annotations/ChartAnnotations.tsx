@@ -4,6 +4,7 @@ import {
   type AnnotationFrame,
 } from "@/lib/annotations/resolve";
 import type { ChartAnnotation } from "@/lib/annotations/types";
+import { describeScale, type ChartScale } from "../Axis/axisPlan";
 import { AnnotationLayer } from "./AnnotationLayer";
 import { useAnnotationRows } from "./useAnnotationRows";
 
@@ -62,4 +63,20 @@ export function annotationSlot(
       clipPath={clipPath}
     />
   );
+}
+
+export { categoryText } from "@/lib/annotations/categoryText";
+
+/** The scale part of a frame, from the D3 scales a chart already draws. */
+export function scaleFrame(
+  xScale: ChartScale,
+  yScale: ChartScale,
+  types: { x?: string; y?: string } = {}
+) {
+  return {
+    xScale: describeScale(xScale, types.x),
+    yScale: describeScale(yScale, types.y),
+    plotWidth: Math.max(...(xScale.range() as number[])),
+    plotHeight: Math.max(...(yScale.range() as number[])),
+  };
 }

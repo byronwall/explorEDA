@@ -26,6 +26,7 @@ function isAttachment(value: unknown) {
   if (!isRecord(value)) return false;
   if (value.kind === "coordinate")
     return isFiniteNumber(value.x) && isFiniteNumber(value.y);
+  if (value.kind === "category") return typeof value.value === "string";
   if (value.kind === "query")
     return (
       (value.pick === "max" || value.pick === "min") &&
@@ -56,6 +57,7 @@ export function isChartAnnotation(value: unknown): value is ChartAnnotation {
     typeof value.id !== "string" ||
     !optionalString(value.name) ||
     !optionalString(value.color) ||
+    !optionalString(value.facet) ||
     (value.hidden !== undefined && typeof value.hidden !== "boolean") ||
     (value.yAxis !== undefined &&
       value.yAxis !== "left" &&

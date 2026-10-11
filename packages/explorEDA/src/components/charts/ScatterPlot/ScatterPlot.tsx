@@ -76,6 +76,7 @@ function ScatterPoints({
   width,
   height,
   facetIds,
+  facetKey,
 }: ScatterPlotProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const trace = useChartTrace();
@@ -120,6 +121,7 @@ function ScatterPoints({
       yScale: plan.yScale,
       xField: settings.xField,
       yField: settings.yField,
+      facetKey,
       population: {
         all: inFacet(snapshot.allIds),
         filtered: inFacet(snapshot.filteredIds),
@@ -133,7 +135,14 @@ function ScatterPoints({
         );
       },
     };
-  }, [settings.annotations, settings.xField, settings.yField, plan, snapshot]);
+  }, [
+    settings.annotations,
+    settings.xField,
+    settings.yField,
+    plan,
+    snapshot,
+    facetKey,
+  ]);
   const marginals = useMemo(
     () => planMarginals(settings, plan),
     [settings, plan]

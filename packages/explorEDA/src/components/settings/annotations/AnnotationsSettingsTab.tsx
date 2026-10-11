@@ -6,6 +6,14 @@ import { useAnnotationRows } from "../../charts/annotations/useAnnotationRows";
 import { useAnnotationStatuses } from "../../charts/annotations/annotationStatus";
 import { Button } from "../../ui/button";
 import { Label } from "../../ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../ui/select";
+import { groupFacetData } from "../../charts/FacetRelated/FacetContainer";
 import { ActionTooltip } from "../../ui/tooltip";
 import {
   annotationContext,
@@ -41,6 +49,8 @@ import {
   ReferenceFields,
   RegionFields,
 } from "./AnnotationFields";
+
+const EVERY_PANEL = "__every";
 
 /** More saved records than this would bloat every saved analysis. */
 const MAX_SAVED_RECORDS = 500;
@@ -97,6 +107,22 @@ export function AnnotationsSettingsTab({
     [fields.join("\u0000"), getColumn, ids]
   );
   const source = { fields, ids, getColumn, ...context };
+  // Facet panels by the same ids the panels draw with, so a binding
+  // follows its facet values rather than panel order.
+  const facetOptions = useMemo(() => {
+    const facet = settings.facet;
+    if (!facet.enabled || !facet.rowVariable) return [];
+    return groupFacetData(
+      ids,
+      getColumn(facet.rowVariable),
+      facet.type === "grid" && facet.columnVariable
+        ? getColumn(facet.columnVariable)
+        : null
+    ).map((group) => ({
+      id: group.id,
+      label: [group.rowValue, group.columnValue].filter(Boolean).join(" · "),
+    }));
+  }, [settings.facet, ids, getColumn]);
 
   const write = (next: ChartAnnotation[]) =>
     onSettingChange("annotations", next.length ? next : undefined);
@@ -136,7 +162,9 @@ export function AnnotationsSettingsTab({
           tooltip={
             context.records
               ? "Add a label attached to the record with the largest value. Change the record or text below."
-              : "Add a label at a fixed point. Change its position and text below."
+              : context.categoryField
+                ? "Add a label on the category with the most rows. Change the category or text below."
+                : "Add a label at a fixed point. Change its position and text below."
           }
           onClick={() => add(createCallout(source))}
         >
@@ -148,7 +176,7 @@ export function AnnotationsSettingsTab({
           tooltip={
             context.xDate
               ? "Add a vertical line at a date, such as a release. Change its date below."
-              : "Add a fixed target line at the median value. Change its axis and value below."
+              : "Add a fixed target line at a typical value. Change its axis and value below."
           }
           onClick={() => add(createReferenceLine(source))}
         >
@@ -166,23 +194,27 @@ export function AnnotationsSettingsTab({
         >
           Band
         </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          tooltip="Add a rectangle or ellipse in data units, which marks an area of the plot. Change its bounds below."
-          onClick={() => add(createRegion(source))}
-        >
-          Region
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={!canSave}
-          tooltip={saveHelp}
-          onClick={() => add(selectedRecords())}
-        >
-          Saved records
-        </Button>
+        {context.plane && (
+          <Button
+            size="sm"
+            variant="outline"
+            tooltip="Add a rectangle or ellipse in data units, which marks an area of the plot. Change its bounds below."
+            onClick={() => add(createRegion(source))}
+          >
+            Region
+          </Button>
+        )}
+        {context.records && (
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={!canSave}
+            tooltip={saveHelp}
+            onClick={() => add(selectedRecords())}
+          >
+            Saved records
+          </Button>
+        )}
         {context.intervals && (
           <Button
             size="sm"
@@ -209,6 +241,7 @@ export function AnnotationsSettingsTab({
                     listStatus(annotation, ids, getColumn, visible))
               }
               context={context}
+              facetOptions={facetOptions}
               keyFields={keyFields}
               getColumn={getColumn}
               ids={ids}
@@ -257,6 +290,7 @@ function AnnotationCard({
   annotation,
   status,
   context,
+  facetOptions,
   keyFields,
   getColumn,
   ids,
@@ -269,6 +303,7 @@ function AnnotationCard({
   annotation: ChartAnnotation;
   status: AnnotationStatus;
   context: AnnotationContext;
+  facetOptions: { id: string; label: string }[];
   keyFields: string[];
   getColumn: ColumnGetter;
   ids: IdType[];
@@ -365,6 +400,42 @@ function AnnotationCard({
             onChange({ ...annotation, name: name || undefined })
           }
         />
+        {facetOptions.length > 0 && (
+          <>
+            <span className="eda-setting-label">Panel</span>
+            <Select
+              value={annotation.facet ?? EVERY_PANEL}
+              onValueChange={(facet) =>
+                onChange({
+                  ...annotation,
+                  facet: facet === EVERY_PANEL ? undefined : facet,
+                })
+              }
+            >
+              <ActionTooltip content="Draw it in every facet panel, or only in the panel for one set of facet values.">
+                <SelectTrigger aria-label="Facet panel" className="h-8 w-full">
+                  <SelectValue />
+                </SelectTrigger>
+              </ActionTooltip>
+              <SelectContent>
+                <SelectItem value={EVERY_PANEL}>Every panel</SelectItem>
+                {facetOptions.map((option) => (
+                  <SelectItem key={option.id} value={option.id}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+                {annotation.facet &&
+                  !facetOptions.some(
+                    (option) => option.id === annotation.facet
+                  ) && (
+                    <SelectItem value={annotation.facet}>
+                      A panel with no rows now
+                    </SelectItem>
+                  )}
+              </SelectContent>
+            </Select>
+          </>
+        )}
       </div>
       {annotation.type === "callout" ? (
         <CalloutFields

@@ -8,6 +8,8 @@ interface ChartRendererProps {
   width: number;
   height: number;
   facetIds?: IdType[];
+  /** The facet panel being drawn, by its facet values. */
+  facetKey?: string;
   toolbarTarget?: HTMLElement | null;
   onSettingsChange?: (settings: Partial<ChartSettings>) => void;
 }
@@ -17,6 +19,7 @@ export function ChartRenderer({
   width,
   height,
   facetIds,
+  facetKey,
   toolbarTarget,
   onSettingsChange,
 }: ChartRendererProps) {
@@ -57,6 +60,7 @@ export function ChartRenderer({
       width={width}
       height={height}
       facetIds={facetIds}
+      facetKey={facetKey}
       toolbarTarget={toolbarTarget}
       onSettingsChange={onSettingsChange}
     />

@@ -177,6 +177,8 @@ export interface BaseChartProps<
   width: number;
   height: number;
   facetIds?: IdType[];
+  /** The facet panel being drawn, by its facet values, as annotations bind. */
+  facetKey?: string;
   toolbarTarget?: HTMLElement | null;
   /** Draft previews can edit settings without changing a saved chart. */
   onSettingsChange?: (settings: Partial<TSettings>) => void;

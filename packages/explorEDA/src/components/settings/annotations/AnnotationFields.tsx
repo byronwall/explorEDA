@@ -144,6 +144,36 @@ export function CalloutFields({
     });
   };
   const canAttachRecord = context.records && keyFields.length > 0;
+  // Offer only attachments this chart can draw, plus the current one.
+  const attachOptions = (
+    [
+      context.records && {
+        value: "record" as const,
+        label: "Record",
+        help: keyFields.length
+          ? "Follow one record, found by a key field, through filters and data updates."
+          : "No field identifies every row once, so a record can't be attached.",
+        disabled: !canAttachRecord && attach.kind !== "record",
+      },
+      context.categoryField && {
+        value: "category" as const,
+        label: "Category",
+        help: "Attach to one bar by its category. A bar sums many rows, so it is never one record.",
+      },
+      context.plane && {
+        value: "coordinate" as const,
+        label: "Fixed point",
+        help: "Stay at fixed X and Y values, whatever the rows do.",
+      },
+      context.records && {
+        value: "query" as const,
+        label: "Extreme",
+        help: "Follow whichever row has the largest or smallest value. The row can change as data or filters change.",
+      },
+    ] as const
+  ).filter((option): option is Exclude<typeof option, false | undefined | ""> =>
+    Boolean(option)
+  );
   return (
     <div className="eda-setting-grid">
       <Label htmlFor={`${callout.id}-text`}>Text</Label>
@@ -153,51 +183,54 @@ export function CalloutFields({
         placeholder="What this point shows"
         onChange={(text) => onChange({ ...callout, text })}
       />
-      <span className="eda-setting-label">Attach to</span>
-      <Choice
-        label="Attach to"
-        value={attach.kind}
-        onChange={(kind) => {
-          if (kind === "record" && attach.kind !== "record") {
-            if (keyFields[0]) toRecord(keyFields[0]);
-          } else if (kind === "coordinate" && attach.kind !== "coordinate")
-            onChange({
-              ...callout,
-              attach: { kind: "coordinate", x: 0, y: 0 },
-            });
-          else if (kind === "query" && attach.kind !== "query")
-            onChange({
-              ...callout,
-              attach: { kind: "query", pick: "max", population: "filtered" },
-            });
-        }}
-        options={[
-          {
-            value: "record",
-            label: "Record",
-            help: !context.records
-              ? "This chart draws grouped values, not single records."
-              : keyFields.length
-                ? "Follow one record, found by a key field, through filters and data updates."
-                : "No field identifies every row once, so a record can't be attached.",
-            disabled: !canAttachRecord && attach.kind !== "record",
-          },
-          {
-            value: "coordinate",
-            label: "Fixed point",
-            help: "Stay at fixed X and Y values, whatever the rows do.",
-          },
-          {
-            value: "query",
-            label: "Extreme",
-            help: context.records
-              ? "Follow whichever row has the largest or smallest value. The row can change as data or filters change."
-              : "This chart draws grouped values, not single records.",
-            disabled: !context.records && attach.kind !== "query",
-          },
-        ]}
-      />
-      {attach.kind === "query" ? (
+      {attachOptions.length > 1 && (
+        <>
+          <span className="eda-setting-label">Attach to</span>
+          <Choice
+            label="Attach to"
+            value={attach.kind}
+            onChange={(kind) => {
+              if (kind === attach.kind) return;
+              if (kind === "record") {
+                if (keyFields[0]) toRecord(keyFields[0]);
+              } else if (kind === "coordinate")
+                onChange({
+                  ...callout,
+                  attach: { kind: "coordinate", x: 0, y: 0 },
+                });
+              else if (kind === "query")
+                onChange({
+                  ...callout,
+                  attach: {
+                    kind: "query",
+                    pick: "max",
+                    population: "filtered",
+                  },
+                });
+              else
+                onChange({
+                  ...callout,
+                  attach: { kind: "category", value: callout.text },
+                });
+            }}
+            options={attachOptions}
+          />
+        </>
+      )}
+      {attach.kind === "category" ? (
+        <>
+          <Label htmlFor={`${callout.id}-category`}>Category</Label>
+          <HeldInput
+            id={`${callout.id}-category`}
+            value={attach.value}
+            placeholder="The bar's category, as labeled"
+            onChange={(value) =>
+              onChange({ ...callout, attach: { kind: "category", value } })
+            }
+          />
+        </>
+      ) : null}
+      {attach.kind === "category" ? null : attach.kind === "query" ? (
         <>
           <span className="eda-setting-label">Pick</span>
           <Choice
@@ -353,13 +386,18 @@ export function ReferenceFields({
   const date = context.xDate && reference.axis === "x";
   return (
     <div className="eda-setting-grid">
-      <span className="eda-setting-label">Axis</span>
-      <Choice
-        label="Reference axis"
-        value={reference.axis}
-        onChange={(axis) => onChange({ ...reference, axis })}
-        options={AXIS_OPTIONS(context)}
-      />
+      {/* Charts of grouped values have one value axis. */}
+      {context.plane && (
+        <>
+          <span className="eda-setting-label">Axis</span>
+          <Choice
+            label="Reference axis"
+            value={reference.axis}
+            onChange={(axis) => onChange({ ...reference, axis })}
+            options={AXIS_OPTIONS(context)}
+          />
+        </>
+      )}
       {context.records && (
         <>
           <span className="eda-setting-label">Value from</span>
@@ -483,26 +521,31 @@ export function BandFields({
   const date = context.xDate && band.axis === "x";
   return (
     <div className="eda-setting-grid">
-      <span className="eda-setting-label">Axis</span>
-      <Choice
-        label="Band axis"
-        value={band.axis}
-        onChange={(axis) => onChange({ ...band, axis })}
-        options={[
-          {
-            value: "y",
-            label: "Y range",
-            help: "A span of Y values, such as a tolerance or normal range.",
-          },
-          {
-            value: "x",
-            label: context.xDate ? "Period" : "X range",
-            help: context.xDate
-              ? "A span of dates, such as a campaign or an outage."
-              : "A span of X values.",
-          },
-        ]}
-      />
+      {/* Charts of grouped values have one value axis. */}
+      {context.plane && (
+        <>
+          <span className="eda-setting-label">Axis</span>
+          <Choice
+            label="Band axis"
+            value={band.axis}
+            onChange={(axis) => onChange({ ...band, axis })}
+            options={[
+              {
+                value: "y",
+                label: "Y range",
+                help: "A span of Y values, such as a tolerance or normal range.",
+              },
+              {
+                value: "x",
+                label: context.xDate ? "Period" : "X range",
+                help: context.xDate
+                  ? "A span of dates, such as a campaign or an outage."
+                  : "A span of X values.",
+              },
+            ]}
+          />
+        </>
+      )}
       <span className="eda-setting-label">From, to</span>
       <div className="grid grid-cols-2 gap-2">
         <ValueInput

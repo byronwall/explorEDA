@@ -12,6 +12,7 @@ import type {
   AnnotationYAxis,
   BandAnnotation,
   CalloutAnnotation,
+  CategoryAttachment,
   ChartAnnotation,
   IntervalAnnotation,
   RecordAttachment,
@@ -42,7 +43,8 @@ export type AnnotationStatus =
   | "invalid"
   | "offscreen"
   | "unsupported"
-  | "empty";
+  | "empty"
+  | "elsewhere";
 
 export const ANNOTATION_STATUS_TEXT: Record<
   Exclude<AnnotationStatus, "shown">,
@@ -71,6 +73,10 @@ export const ANNOTATION_STATUS_TEXT: Record<
   offscreen: {
     label: "Outside the view",
     help: "Its position is outside the axis range. Widen the axis limits to see it.",
+  },
+  elsewhere: {
+    label: "Other panel",
+    help: "It draws only in one facet panel, which isn't shown here or no longer has rows.",
   },
   empty: {
     label: "No rows",
@@ -224,6 +230,10 @@ export interface AnnotationFrame {
    * pass the current filters. Charts of grouped values leave it out.
    */
   population?: Record<AnnotationPopulation, IdType[]>;
+  /** Where an aggregate mark, such as a bar, is drawn for a category. */
+  category?: (attach: CategoryAttachment) => PlottedRecord | undefined;
+  /** The facet panel this frame draws, by its facet values. */
+  facetKey?: string;
 }
 
 /** A statistic of a field over some rows, or undefined without values. */
@@ -340,6 +350,12 @@ function projectOne(
   frame: AnnotationFrame
 ): ProjectedAnnotation {
   if (annotation.hidden) return { annotation, status: "hidden" };
+  if (
+    annotation.facet !== undefined &&
+    frame.facetKey !== undefined &&
+    annotation.facet !== frame.facetKey
+  )
+    return { annotation, status: "elsewhere" };
   const yScale = yScaleFor(
     frame,
     "yAxis" in annotation ? annotation.yAxis : undefined
@@ -487,6 +503,15 @@ function projectOne(
     )
       return { annotation, status: "offscreen" };
     return { annotation, status: "shown", x, y };
+  }
+  if (attach.kind === "category") {
+    if (!frame.category) return { annotation, status: "unsupported" };
+    const point = frame.category(attach);
+    if (!point) return { annotation, status: "missing" };
+    if (!inside(point.x, frame.plotWidth) || !inside(point.y, frame.plotHeight))
+      return { annotation, status: "offscreen" };
+    // An aggregate mark stays drawn when filters dim it, so its note does too.
+    return { annotation, status: "shown", x: point.x, y: point.y };
   }
   if (!frame.plotted) return { annotation, status: "unsupported" };
   if (attach.kind === "query") {

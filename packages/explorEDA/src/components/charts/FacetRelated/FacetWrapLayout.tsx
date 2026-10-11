@@ -128,6 +128,7 @@ export function FacetWrapLayout({
               width={Math.max(1, facetWidth - FACET_CARD_WIDTH_CHROME)}
               height={Math.max(1, facetHeight - FACET_CARD_HEIGHT_CHROME)}
               facetIds={facet.ids}
+              facetKey={facet.id}
             />
           </div>
         ))}

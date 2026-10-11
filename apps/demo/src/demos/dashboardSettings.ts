@@ -1412,6 +1412,25 @@ export const scatterRegressionDashboard = dashboard(
         rowVariable: "sex",
         columnCount: 1,
       },
+      annotations: [
+        {
+          // Each panel reads its own rows, so each draws its own median.
+          id: "fit-sex-median",
+          type: "reference-line",
+          axis: "y",
+          value: 0,
+          calculated: { statistic: "median", population: "all" },
+          label: "Median depth",
+        },
+        {
+          id: "fit-sex-gentoo",
+          type: "callout",
+          text: "Gentoo males",
+          attach: { kind: "coordinate", x: 50, y: 15.7 },
+          offset: { dx: 18, dy: 22 },
+          facet: JSON.stringify(['["string","male"]', null]),
+        },
+      ],
     },
     row("fit-island", "Filter by island", "island", layout(0, 6, 3, 5)),
     {

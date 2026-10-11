@@ -30,6 +30,9 @@ const RANK: AnnotationStatus[] = [
   "missing",
   "ambiguous",
   "invalid",
+  "empty",
+  // Another panel's own status wins over "not my panel".
+  "elsewhere",
 ];
 
 function merged(chartId: string) {

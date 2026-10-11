@@ -53,10 +53,20 @@ export interface QueryAttachment {
   population: AnnotationPopulation;
 }
 
+/**
+ * One aggregate mark, such as a bar, found by its category value. A bar sums
+ * many rows, so it is never treated as one record.
+ */
+export interface CategoryAttachment {
+  kind: "category";
+  value: string;
+}
+
 export type CalloutAttachment =
   | RecordAttachment
   | CoordinateAttachment
-  | QueryAttachment;
+  | QueryAttachment
+  | CategoryAttachment;
 
 export type AnnotationStatistic = "mean" | "median" | "min" | "max";
 
@@ -76,6 +86,11 @@ interface AnnotationBase {
   hidden?: boolean;
   /** A CSS color; the theme's foreground when unset. */
   color?: string;
+  /**
+   * On a faceted chart, the one panel it draws in, by the panel's facet
+   * values. Every panel when unset. Panel order never matters.
+   */
+  facet?: string;
 }
 
 /**
@@ -186,7 +201,13 @@ export const ANNOTATION_TYPE_NAMES: Record<ChartAnnotationType, string> = {
 };
 
 /** Charts that can draw saved annotations. */
-export const ANNOTATION_CHART_TYPES = ["scatter", "line"] as const;
+export const ANNOTATION_CHART_TYPES = [
+  "scatter",
+  "line",
+  "bar",
+  "row",
+  "boxplot",
+] as const;
 
 /** Whether this chart, as configured, draws saved annotations. */
 export function chartDrawsAnnotations(settings: {

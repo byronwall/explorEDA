@@ -69,6 +69,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
   width,
   height,
   facetIds,
+  facetKey,
 }) => {
   // The x value under the pointer; every series reads its value there.
   const [hoverX, setHoverX] = useState<number | null>(null);
@@ -391,6 +392,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
       ),
       visibleIds: selectedIds,
       population: { all: panelIds, filtered: selectedIds },
+      facetKey,
       plotted: (id, attach) => {
         const field =
           attach.yField && settings.seriesField.includes(attach.yField)

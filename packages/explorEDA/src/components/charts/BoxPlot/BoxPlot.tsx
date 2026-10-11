@@ -1,3 +1,4 @@
+import { annotationSlot, scaleFrame } from "../annotations/ChartAnnotations";
 import {
   finiteNumber,
   finiteNumbers,
@@ -58,6 +59,7 @@ export function BoxPlot({
   width,
   height,
   facetIds,
+  facetKey,
 }: BaseChartProps<BoxPlotSettings>) {
   const owner = useId();
   const api = useChartTraceApi();
@@ -479,6 +481,11 @@ export function BoxPlot({
         height={chartHeight}
         xScale={xScale}
         yScale={yScale}
+        annotations={annotationSlot(settings, {
+          // Grouped marks have no single record or category subject.
+          ...scaleFrame(xScale, yScale, { y: settings.yAxis.scaleType }),
+          facetKey,
+        })}
         hidden={{
           y: withNonpositive(
             hiddenByBounds(

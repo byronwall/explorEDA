@@ -1,6 +1,7 @@
 import { finiteNumber, timestampOf } from "@/lib/valueParsing";
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { AnnotationContext } from "./context";
+import { categoryText } from "./categoryText";
 import { recordKey, uniqueKeyFields, type ColumnGetter } from "./resolve";
 import type {
   BandAnnotation,
@@ -55,6 +56,27 @@ function largestRecord(source: AnnotationSource) {
 const newId = () => crypto.randomUUID();
 
 /**
+ * Rows per category of an aggregate chart's field: the counts its bars draw
+ * when they count rows, which set reasonable starting values.
+ */
+function categoryCounts(source: AnnotationSource) {
+  const counts = new Map<string, number>();
+  if (!source.categoryField) return counts;
+  const column = source.getColumn(source.categoryField);
+  for (const id of source.ids) {
+    const text = categoryText(column[id]);
+    counts.set(text, (counts.get(text) ?? 0) + 1);
+  }
+  return counts;
+}
+
+/** Values new lines and bands start from on an aggregate chart. */
+function aggregateValues(source: AnnotationSource) {
+  if (!source.categoryField) return sortedValues(source, source.yField);
+  return [...categoryCounts(source).values()].sort((a, b) => a - b);
+}
+
+/**
  * A new callout on the record with the chart's largest value, keyed by the
  * first field that identifies every row. Without such a field, or on a chart
  * of grouped values, it starts at a fixed point the user can move.
@@ -65,6 +87,16 @@ export function createCallout(source: AnnotationSource): CalloutAnnotation {
     type: "callout" as const,
     offset: { dx: 24, dy: -24 },
   };
+  if (source.categoryField) {
+    // A bar sums many rows: attach to the largest category, not a row.
+    const [largest] = [...categoryCounts(source)].sort((a, b) => b[1] - a[1]);
+    if (largest)
+      return {
+        ...base,
+        text: largest[0],
+        attach: { kind: "category", value: largest[0] },
+      };
+  }
   const [keyField] =
     source.records === false
       ? []
@@ -98,6 +130,14 @@ export function createCallout(source: AnnotationSource): CalloutAnnotation {
 export function createReferenceLine(
   source: AnnotationSource
 ): ReferenceLineAnnotation {
+  if (source.plane === false)
+    return {
+      id: newId(),
+      type: "reference-line",
+      axis: source.valueAxis ?? "y",
+      value: quantile(aggregateValues(source), 0.5),
+      label: "Target",
+    };
   if (source.xDate || !source.yField)
     return {
       id: newId(),
@@ -120,6 +160,17 @@ export function createReferenceLine(
  * otherwise a range of the measure.
  */
 export function createBand(source: AnnotationSource): BandAnnotation {
+  if (source.plane === false) {
+    const values = aggregateValues(source);
+    return {
+      id: newId(),
+      type: "band",
+      axis: source.valueAxis ?? "y",
+      from: quantile(values, 0.25),
+      to: quantile(values, 0.75),
+      label: "Range",
+    };
+  }
   const onX = source.xDate || !source.yField;
   const values = onX
     ? sortedValues(source, source.xField, source.xDate)
