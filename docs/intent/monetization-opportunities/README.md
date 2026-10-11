@@ -4,6 +4,7 @@ Two routes are under comparison: a recurring SaaS product built around the compo
 
 - [Recurring SaaS shortlist](recurring-saas-shortlist.md): ranked directions, with the October 2026 market checks that reordered them. Start here for the SaaS route.
 - [Selling the component](component-licensing/report.md): research on the Handsontable and AG Grid model, with a recommendation, comparables, a license-model evaluation, a free/paid split, a price sheet, a 90-day plan, and [research notes](component-licensing/notes/).
+- [Commercial license initiative](../commercial-license/intent-brief.md): Byron's decision to sell the component now, with every gap (license, keys, payments, server, buyer trust) shaped and planned.
 - [Likely next steps](likely-next-steps.md): the small path from reading to a useful test.
 - [Original research summary](summary.md): Pro's findings and the assumptions behind its service-focused ranking.
 - [Intent brief](intent-brief.md): what Byron wants to learn and what remains undecided.

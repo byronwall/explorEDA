@@ -1,0 +1,430 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Sell explorEDA commercial licenses",
+    "slug": "commercial-license",
+    "scale": "program",
+    "current_phase": "plan",
+    "last_updated": "2026-10-11",
+    "status": "planned",
+    "summary": "Close every gap between today (unlicensed package, static site, no payments) and a self-serve paid commercial license with offline signed keys, a merchant of record, a small license service, and buyer-trust material.",
+    "next_action": "Byron confirms the single source-available package model and names the selling entity and lawyer; then build M1 (key codec and package license states) locally."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-11"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-11"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-10-11"
+    },
+    "prior_research": {
+      "path": "../monetization-opportunities/component-licensing/report.md",
+      "status": "current",
+      "updated_at": "2026-10-10"
+    }
+  },
+  "sources": [
+    {
+      "id": "SRC-1",
+      "type": "direct-user-input",
+      "location": "2026-10-11 conversation",
+      "anchor": "paid component for enterprise uses, like Handsontable; need server, need payments; close it all in one go; easy to get their money; certain they are licensed correctly",
+      "authority": "direct intent"
+    },
+    {
+      "id": "SRC-2",
+      "type": "research",
+      "location": "../monetization-opportunities/component-licensing/report.md",
+      "anchor": "open core recommendation, comparables, price sheet, legal checklist, ranked readiness gaps",
+      "authority": "research; recommendation to wait is superseded by SRC-1"
+    },
+    {
+      "id": "SRC-3",
+      "type": "research",
+      "location": "../monetization-opportunities/component-licensing/notes/exploreda_readiness_and_feature_split.md",
+      "anchor": "readiness audit at 29b4023",
+      "authority": "repository evidence (dated)"
+    },
+    {
+      "id": "SRC-4",
+      "type": "repository",
+      "location": "codex/monetization-saas-research @ 420d9bc (main 7b0998a merged)",
+      "anchor": "no LICENSE, npm 0.1.0, Version Packages PR #41 open, GitHub Pages deploy, registerAllCharts at import, no fetch calls, 164 --worktree commits",
+      "authority": "repository evidence"
+    },
+    {
+      "id": "SRC-5",
+      "type": "web",
+      "location": "https://developer.paddle.com/concepts/sell/sales-assisted-invoice",
+      "anchor": "Paddle sales-assisted invoices: drafts, bank transfer, auto-created subscription",
+      "authority": "provider docs, checked 2026-10-11"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "C1",
+        "importance": "core",
+        "status": "accepted",
+        "text": "Companies using explorEDA commercially pay for a license, Handsontable/AG Grid style.",
+        "sources": ["SRC-1"]
+      },
+      {
+        "id": "C2",
+        "importance": "core",
+        "status": "accepted",
+        "text": "Self-serve purchase by card with an invoice/PO path; no manual step for Byron on ordinary orders.",
+        "sources": ["SRC-1"]
+      },
+      {
+        "id": "C3",
+        "importance": "core",
+        "status": "accepted",
+        "text": "Purchaser can verify they are licensed: key names licensee, in-app status, CLI check, certificate.",
+        "sources": ["SRC-1"]
+      },
+      {
+        "id": "C4",
+        "importance": "core",
+        "status": "accepted",
+        "text": "Close all gaps in one initiative rather than a staged adoption experiment.",
+        "sources": ["SRC-1"],
+        "supersedes": "SRC-2 90-day wait-before-charging plan"
+      },
+      {
+        "id": "C5",
+        "importance": "supporting",
+        "status": "accepted",
+        "text": "Offline enforcement; a key problem never breaks production.",
+        "sources": ["SRC-2"]
+      },
+      {
+        "id": "C6",
+        "importance": "supporting",
+        "status": "proposed",
+        "text": "Single source-available package rather than MIT core plus paid superset.",
+        "sources": ["SRC-1"]
+      }
+    ],
+    "themes": [
+      "purchaser certainty",
+      "zero-touch fulfilment",
+      "procurement readiness"
+    ],
+    "conflicts": [
+      {
+        "id": "X1",
+        "between": ["SRC-1", "SRC-2"],
+        "text": "Research says wait ~90 days and grow an MIT core; Byron wants to charge now. Resolved in favor of SRC-1; research kept for prices and mechanics."
+      }
+    ],
+    "human_questions": [
+      {
+        "id": "Q1",
+        "status": "open",
+        "text": "Confirm single source-available package (Handsontable) over MIT core plus paid package (AG Grid)."
+      },
+      {
+        "id": "Q2",
+        "status": "open",
+        "text": "Selling entity (individual or LLC) and lawyer for license, commercial terms, CLA."
+      }
+    ]
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "One initiative ending in a live paid purchase; engineering is a key module, a small serverless service, and static pages.",
+    "problem": "No license, no checkout, no key, no server, no buyer-facing trust material.",
+    "recommended_shape": "Single source-available package with offline Ed25519 keys and a watermark; MoR handles checkout, tax, invoices; Cloudflare Worker + D1 issues keys, certificates, trials, and a portal; static pricing and legal pages on exploreda.dev.",
+    "success_moves": [
+      {
+        "id": "S1",
+        "move": "Single package under a source-available license instead of splitting code into a paid package",
+        "benefit": "Removes the largest code move; restrictive-first is the reversible direction"
+      },
+      {
+        "id": "S2",
+        "move": "Shared license codec package with test vectors used by package, CLI, and service",
+        "benefit": "Signer and verifier cannot drift"
+      },
+      {
+        "id": "S3",
+        "move": "Build the service against a fake MoR and file mailer before opening any account",
+        "benefit": "Account review never blocks engineering; failure cases are replayable"
+      },
+      {
+        "id": "S4",
+        "move": "Merchant of record owns payment, tax, invoices, billing portal",
+        "benefit": "No card data or tax logic in Byron code"
+      },
+      {
+        "id": "S5",
+        "move": "Fail-open enforcement with notice only",
+        "benefit": "No customer outage from a key bug; simpler security review"
+      },
+      {
+        "id": "S6",
+        "move": "Start legal and repo-hygiene drafts in M2 in parallel",
+        "benefit": "Lawyer and MoR review overlap engineering"
+      }
+    ],
+    "first_proof": {
+      "question": "Do the four license states read clearly and agree across app, console, and CLI with no network call?",
+      "artifact": "Local demo with dev-keypair keys at three widths plus CLI exit codes",
+      "decision_rule": "Clear and consistent: build the service on the codec. Intrusive or ambiguous: fix notice UX before payment work."
+    },
+    "rabbit_holes": [
+      "Online activation or domain locking",
+      "Building checkout, tax, or invoicing in-house",
+      "Moving features into a second package",
+      "Custom license text written from scratch"
+    ],
+    "open_decisions": ["Q1 license model", "Q2 selling entity and lawyer"]
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/05b2/explorEDA",
+      "revision": "420d9bc",
+      "worktree_status": "clean before initiative files",
+      "subsystems": [
+        "packages/explorEDA/src/components/ExplorEda.tsx",
+        "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+        "packages/explorEDA/src/components/WorkspaceSettingsDrawer.tsx",
+        "packages/explorEDA/src/cli/exploredaDsl.ts",
+        "packages/explorEDA/tsup.config.ts",
+        "apps/demo/vite.config.ts (spaFallback)",
+        ".github/workflows/release.yml",
+        ".github/workflows/deploy.yml"
+      ],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/license",
+        "pnpm --filter exploreda check-types",
+        "pnpm check"
+      ],
+      "deployment_surfaces": [
+        "npm exploreda (release.yml, trusted publishing)",
+        "exploreda.dev GitHub Pages (deploy.yml)",
+        "new: Cloudflare Worker license-service",
+        "new: MoR account",
+        "new: transactional email domain"
+      ]
+    },
+    "dependencies": [
+      {
+        "id": "D1",
+        "name": "Merchant of record (Paddle Billing, Polar fallback)",
+        "material": true,
+        "application_seam": "PaymentEvents adapter mapping webhooks to licensePurchased/seatsChanged/renewed/refunded",
+        "first_proof_role": {
+          "mode": "absent",
+          "rationale": "M1 needs no payment; M3 uses FakeMor"
+        },
+        "failure_modes": [
+          "duplicate webhook",
+          "out-of-order events",
+          "signature mismatch",
+          "account review rejection",
+          "refund after key issued"
+        ],
+        "proof_rungs": [
+          "FakeMor fixtures (M3)",
+          "sandbox to staging Worker (M4)",
+          "live discounted purchase (M6)"
+        ],
+        "local_proof": "Replay fixtures, later recorded sandbox payloads, against wrangler dev",
+        "live_proof": "Sandbox card and invoice purchases, then one live 100%-discount order",
+        "rollout": "Checkout shown only when live MoR settings exist; adapter swap is local"
+      },
+      {
+        "id": "D2",
+        "name": "Transactional email (Resend or Postmark)",
+        "material": true,
+        "application_seam": "Mailer port",
+        "first_proof_role": {
+          "mode": "locally-substituted",
+          "rationale": "FileMailer writes .eml to tmp/mail"
+        },
+        "failure_modes": ["send failure", "spam folder", "DNS not verified"],
+        "proof_rungs": [
+          "FileMailer (M3)",
+          "staging subdomain (M4)",
+          "production DNS with SPF/DKIM/DMARC (M6)"
+        ],
+        "local_proof": "FileMailer output asserted in tests",
+        "live_proof": "Sandbox purchase email received",
+        "rollout": "Portal and certificate URL remain available if an email fails; admin resend"
+      },
+      {
+        "id": "D3",
+        "name": "Hosted function and database (Cloudflare Worker + D1)",
+        "material": true,
+        "application_seam": "Hono app with storage behind a repository module",
+        "first_proof_role": {
+          "mode": "locally-substituted",
+          "rationale": "wrangler dev with local D1"
+        },
+        "failure_modes": ["downtime", "migration error", "secret missing"],
+        "proof_rungs": [
+          "local D1 (M3)",
+          "staging Worker (M4)",
+          "production Worker (M6)"
+        ],
+        "local_proof": "Vitest against local D1",
+        "live_proof": "Staging and production webhook deliveries",
+        "rollout": "Customers unaffected by downtime because keys verify offline; MoR retries webhooks"
+      },
+      {
+        "id": "D4",
+        "name": "Signing keypair",
+        "material": true,
+        "application_seam": "packages/license signLicense/verifyLicense with kid",
+        "first_proof_role": {
+          "mode": "locally-substituted",
+          "rationale": "Dev keypair fixture"
+        },
+        "failure_modes": ["private key leak", "verifier/signature drift"],
+        "proof_rungs": [
+          "shared test vectors (M1)",
+          "bundle check excludes signer (M1)",
+          "production key (M6)"
+        ],
+        "local_proof": "Test vectors in all three consumers",
+        "live_proof": "Production-signed key accepted by released package",
+        "rollout": "Rotate by adding kid in a patch release"
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter @exploreda/license test && pnpm --filter license-service test",
+      "notes": "Then wrangler dev and fixture replay"
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Licensed and unlicensed states in the package",
+        "outcome": "Four license states in the app, console, settings, and CLI",
+        "dependencies_introduced": [],
+        "proof": "Browser at three widths; unit tests; no fetch",
+        "valid_intermediate_state": "Package works identically to today plus a notice",
+        "rollback": "Revert the notice; key prop is additive",
+        "status": "planned"
+      },
+      {
+        "id": "m2",
+        "title": "Terms, ownership, and a repository a buyer can read",
+        "outcome": "Licensed repo and package; terms with a lawyer; clean public tree; PR CI",
+        "dependencies_introduced": ["lawyer review"],
+        "proof": "License scanner result; CI run",
+        "valid_intermediate_state": "Free use is legally possible",
+        "rollback": "Text-only changes",
+        "status": "planned"
+      },
+      {
+        "id": "m3",
+        "title": "License service, proven locally",
+        "outcome": "Purchase, trial, renewal, refund paths work against fakes",
+        "dependencies_introduced": ["D3 local"],
+        "proof": "Fixture replay tests and local certificate page",
+        "valid_intermediate_state": "Service runnable locally, not deployed",
+        "rollback": "Not deployed",
+        "status": "planned"
+      },
+      {
+        "id": "m4",
+        "title": "Buy in the sandbox",
+        "outcome": "Sandbox card and invoice purchases deliver keys",
+        "dependencies_introduced": ["D1 sandbox", "D2 staging", "D3 staging"],
+        "proof": "Deployed staging purchase, email, key accepted by demo",
+        "valid_intermediate_state": "Pricing pages live without a buy button",
+        "rollback": "Hide checkout",
+        "status": "planned"
+      },
+      {
+        "id": "m5",
+        "title": "Seats, renewals, and the invoice path",
+        "outcome": "Second-year lifecycle works in sandbox",
+        "dependencies_introduced": [],
+        "proof": "Sandbox lifecycle script and admin report",
+        "valid_intermediate_state": "Sandbox complete",
+        "rollback": "Disable lifecycle handlers",
+        "status": "planned"
+      },
+      {
+        "id": "m6",
+        "title": "Go live",
+        "outcome": "Live sales and an npm release with licensing",
+        "dependencies_introduced": [
+          "D1 live",
+          "D2 production",
+          "D4 production"
+        ],
+        "proof": "One real discounted order end to end; npm release verified",
+        "valid_intermediate_state": "Selling",
+        "rollback": "Hide checkout; patch release; refunds via MoR",
+        "status": "planned"
+      }
+    ],
+    "cut_line": [
+      "VPAT",
+      "performance envelope",
+      "online validation or domain locks",
+      "reseller listings",
+      "volume and education pricing",
+      "SOC 2",
+      "i18n of notice"
+    ],
+    "open_decisions": [
+      {
+        "id": "P1",
+        "text": "MoR: Paddle vs Polar",
+        "output": "provider choice",
+        "evidence": "approval, sandbox invoice, PO field",
+        "fallback": "Polar card + manual invoices"
+      },
+      {
+        "id": "P2",
+        "text": "License model (Q1)",
+        "output": "single package or open core",
+        "evidence": "Byron",
+        "fallback": "Insert package-split milestone after M1"
+      },
+      {
+        "id": "P3",
+        "text": "Entity and lawyer (Q2)",
+        "output": "seller of record name",
+        "evidence": "Byron",
+        "fallback": "Blocks M6 only"
+      }
+    ]
+  },
+  "history": [
+    {
+      "date": "2026-10-11",
+      "event": "created",
+      "phase": "plan",
+      "status": "planned",
+      "note": "Intent, shape, and plan written in one pass from Byron request and prior component-licensing research."
+    }
+  ],
+  "closure": null
+}
