@@ -4,7 +4,12 @@ import { compileDocument } from "@/lib/dsl/compile";
 import { exportDocument } from "@/lib/dsl/export";
 import { validateSavedData } from "@/utils/saveDataUtils";
 import { planScatterAxis } from "../ScatterPlot/scatterAxis";
-import { boundedDomain, boundsInverted, hasAxisBounds } from "./axisBounds";
+import {
+  boundedDomain,
+  boundsInverted,
+  hasAxisBounds,
+  hiddenByBounds,
+} from "./axisBounds";
 
 beforeAll(() => registerAllCharts());
 
@@ -92,5 +97,55 @@ describe("saving and text", () => {
       min: "1",
     };
     expect(validateSavedData(broken)).toBe(false);
+  });
+});
+
+describe("hiddenByBounds", () => {
+  const values = [1, 2, 5, 8, 12, 15];
+
+  it("reports nothing without a bound", () => {
+    expect(hiddenByBounds(undefined, [3, 10], values)).toBeUndefined();
+    expect(
+      hiddenByBounds({ min: 0, max: 100 }, [3, 10], values)
+    ).toBeUndefined();
+  });
+
+  it("counts values past each end of a bounded axis", () => {
+    const hidden = hiddenByBounds(
+      { limits: { min: 3, max: 10 } },
+      [3, 10],
+      values
+    );
+    expect(hidden?.low).toEqual({
+      count: 2,
+      unit: ["row", "rows"],
+      reason: "bound",
+      at: 3,
+    });
+    expect(hidden?.high).toEqual({
+      count: 2,
+      unit: ["row", "rows"],
+      reason: "bound",
+      at: 10,
+    });
+  });
+
+  it("counts a value on the bound as shown", () => {
+    expect(
+      hiddenByBounds({ limits: { max: 15 } }, [1, 15], values)
+    ).toBeUndefined();
+  });
+
+  it("names its unit and reads a reversed domain", () => {
+    const hidden = hiddenByBounds({ limits: { max: 10 } }, [10, 0], values, [
+      "bar",
+      "bars",
+    ]);
+    expect(hidden?.low).toBeUndefined();
+    expect(hidden?.high).toMatchObject({
+      count: 2,
+      unit: ["bar", "bars"],
+      at: 10,
+    });
   });
 });

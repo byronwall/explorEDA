@@ -22,6 +22,7 @@ import { numericAxes } from "../Axis/axisBounds";
 import { AxisLimitFields } from "./AxisLimitFields";
 import { InlineTextEditor } from "./InlineTextEditor";
 import { useChartEdit } from "./useChartEdit";
+import { useHiddenNotice } from "./useHiddenNotice";
 import { axisDragMode, dragDomain, type AxisDragMode } from "./axisDrag";
 
 /** Pixels a press must travel before it drags the axis, so a double-click never does. */
@@ -129,6 +130,7 @@ export function useAxisEditing(
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const edit = useChartEdit(settings.id);
+  const hiddenNotice = useHiddenNotice(settings, panelRef);
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
   const [hint, setHint] = useState<string>();
@@ -278,6 +280,10 @@ export function useAxisEditing(
 
   const handlers = {
     ...dragHandlers,
+    onPointerOver: hiddenNotice.handlers.onPointerOver,
+    onPointerOut: hiddenNotice.handlers.onPointerOut,
+    onFocus: hiddenNotice.handlers.onFocus,
+    onBlur: hiddenNotice.handlers.onBlur,
     onDoubleClick: (event: MouseEvent) => {
       if (event.altKey || event.metaKey || event.ctrlKey) return;
       const target = axisEditTarget(event.target);
@@ -287,6 +293,8 @@ export function useAxisEditing(
       open(target);
     },
     onKeyDown: (event: KeyboardEvent) => {
+      hiddenNotice.handlers.onKeyDown(event);
+      if (event.defaultPrevented) return;
       if (event.altKey || event.metaKey || event.ctrlKey || event.shiftKey)
         return;
       if (event.key !== "Enter" && event.key !== "F2") return;
@@ -356,6 +364,7 @@ export function useAxisEditing(
   const domain = range && stripDomain(range.element);
   const overlay = (
     <>
+      {hiddenNotice.overlay}
       {range && (
         <Popover
           open

@@ -172,3 +172,58 @@ describe("empty scatter", () => {
     expect(planFor([1, 2], [3, 4]).emptyMessage).toBeUndefined();
   });
 });
+
+describe("points past an axis bound", () => {
+  function bounded(
+    limits: { min?: number; max?: number },
+    filtered?: number[]
+  ) {
+    const settings = scatterPlotDefinition.createDefaultSettings({
+      x: 0,
+      y: 0,
+      w: 4,
+      h: 4,
+    });
+    settings.xField = "x";
+    settings.yField = "y";
+    settings.xAxis = { ...settings.xAxis, limits };
+    const x = [1, 2, 3, 4, 5, 6, 7, 8];
+    const ids = x.map((_, index) => index);
+    return planScatter(
+      settings,
+      {
+        revision: "test",
+        allIds: ids,
+        chartIds: filtered ?? ids,
+        filteredIds: filtered ?? ids,
+        xData: Object.fromEntries(x.map((value, index) => [index, value])),
+        yData: Object.fromEntries(x.map((value, index) => [index, value])),
+        colorData: {},
+        fieldSettings: {},
+      },
+      400,
+      300
+    );
+  }
+
+  it("counts drawn points past each bound on the axis plan", () => {
+    const plan = bounded({ min: 2.5, max: 6 });
+    expect(plan.axes.x.hidden?.low).toMatchObject({ count: 2, at: 2.5 });
+    expect(plan.axes.x.hidden?.high).toMatchObject({ count: 2, at: 6 });
+    expect(plan.axes.y.hidden).toBeUndefined();
+    // Bounds only change the view: every point is still planned.
+    expect(plan.points).toHaveLength(8);
+  });
+
+  it("reports nothing when a bound hides no point", () => {
+    expect(bounded({ max: 20 }).axes.x.hidden).toBeUndefined();
+    expect(bounded({}).axes.x.hidden).toBeUndefined();
+  });
+
+  it("counts only the rows other charts leave in, on a domain that stays put", () => {
+    const all = bounded({ max: 6 });
+    const some = bounded({ max: 6 }, [0, 1, 6]);
+    expect(some.axes.x.hidden?.high?.count).toBe(1);
+    expect(some.axes.x.scale.domain).toEqual(all.axes.x.scale.domain);
+  });
+});

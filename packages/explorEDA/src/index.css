@@ -293,6 +293,35 @@
 .eda-axis-edit[data-dragging] .eda-axis-grip {
   opacity: 0.55;
 }
+/* A marker inside the plot at an axis end that hides marks past a bound. */
+.eda-axis-hidden {
+  cursor: pointer;
+  outline: none;
+}
+.eda-axis-hidden rect {
+  fill: var(--card);
+  stroke: var(--border);
+  transition: stroke 120ms ease;
+}
+.eda-axis-hidden path {
+  fill: none;
+  stroke: var(--muted-foreground);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.eda-axis-hidden:hover rect,
+.eda-axis-hidden[data-open] rect {
+  stroke: var(--primary);
+}
+.eda-axis-hidden:hover path,
+.eda-axis-hidden[data-open] path {
+  stroke: var(--primary);
+}
+.eda-axis-hidden:focus-visible rect {
+  stroke: var(--ring);
+  stroke-width: 2;
+}
 .chart-guide[data-inplace-editing] text {
   opacity: 0;
 }

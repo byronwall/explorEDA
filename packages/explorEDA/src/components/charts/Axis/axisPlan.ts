@@ -100,6 +100,25 @@ export interface AxisDomainSource {
   upper?: { label: string; value: number };
 }
 
+/** Marks a chart draws past one end of an axis, so the axis hides them. */
+export interface AxisHidden {
+  count: number;
+  /** What the count counts, singular then plural, such as ["row", "rows"]. */
+  unit: [string, string];
+  /** Why they are hidden: a bound the user set. */
+  reason: "bound";
+  /** The axis end they pass, in data units. */
+  at: number;
+  /** That end as the axis writes it, such as "$1,000.00". */
+  atLabel?: string;
+}
+
+/** Hidden marks past the low and high end of an axis. */
+export interface AxisHiddenEnds {
+  low?: AxisHidden;
+  high?: AxisHidden;
+}
+
 export interface AxisPlan {
   axis: AxisName;
   field?: string;
@@ -118,6 +137,7 @@ export interface AxisPlan {
   };
   grid?: { requested: number; values: number[] };
   domainSource?: AxisDomainSource;
+  hidden?: AxisHiddenEnds;
   guides: AxisGuide[];
   gridGuides: AxisGuide[];
 }
@@ -212,6 +232,8 @@ export interface AxisInput {
   /** Keeps the title on a band Y axis, where tick labels alone do not name the field. */
   bandTitle?: boolean;
   domainSource?: AxisDomainSource;
+  /** Marks past either end of the axis, which it marks at that end. */
+  hidden?: AxisHiddenEnds;
 }
 
 const MIN_LABEL_GAP = 8;
@@ -445,6 +467,7 @@ function planAxis(
         ? { requested: gridRequested, values: gridValues }
         : undefined,
     domainSource: input.domainSource,
+    hidden: input.hidden,
     guides,
     gridGuides,
   };

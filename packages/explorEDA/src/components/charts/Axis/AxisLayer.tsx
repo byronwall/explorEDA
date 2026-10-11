@@ -1,4 +1,4 @@
-import type { AxisGuide, ChartAxesPlan } from "./axisPlan";
+import type { AxisGuide, AxisHidden, ChartAxesPlan } from "./axisPlan";
 
 const GUIDE_DESCRIPTION = "Alt+Enter to inspect";
 const FIELD_DESCRIPTION =
@@ -177,6 +177,85 @@ function AxisEditStrip({
   );
 }
 
+/** Distance, in pixels, from the plot edge to a hidden-marks marker's center. */
+const MARKER_INSET = 10;
+
+/** Chevrons pointing past each end of an axis, toward the hidden marks. */
+const CHEVRONS = {
+  "x:low": "M2 -4 L-2 0 L2 4",
+  "x:high": "M-2 -4 L2 0 L-2 4",
+  "y:low": "M-4 -2 L0 2 L4 -2",
+  "y:high": "M-4 2 L0 -2 L4 2",
+} as const;
+
+/** Words for an axis end, used in labels: "above the X maximum". */
+export function hiddenPhrase(
+  hidden: AxisHidden,
+  axis: "x" | "y",
+  side: "low" | "high"
+) {
+  const unit = hidden.count === 1 ? hidden.unit[0] : hidden.unit[1];
+  const name = axis.toUpperCase();
+  return `${hidden.count.toLocaleString()} ${unit} ${
+    side === "high" ? `above the ${name} maximum` : `below the ${name} minimum`
+  }`;
+}
+
+/**
+ * A small marker inside the plot at each end of an axis that hides marks
+ * past a bound. It points toward them. Hover or focus opens its count and a
+ * reset; the panel's axis editing reads the data attributes to do that.
+ */
+function HiddenMarkers({ plan }: { plan: ChartAxesPlan }) {
+  const { plotWidth, plotHeight } = plan;
+  const xLow = plan.x.hidden?.low;
+  const at = {
+    "x:low": [MARKER_INSET, plotHeight - MARKER_INSET],
+    "x:high": [plotWidth - MARKER_INSET, plotHeight - MARKER_INSET],
+    "y:high": [MARKER_INSET, MARKER_INSET],
+    // Beside an X minimum marker in the same corner, step up one marker.
+    "y:low": [
+      MARKER_INSET,
+      plotHeight - MARKER_INSET - (xLow ? 2 * MARKER_INSET : 0),
+    ],
+  } as const;
+  const markers = (["x", "y"] as const).flatMap((axis) =>
+    (["low", "high"] as const).flatMap((side) => {
+      const hidden = plan[axis].hidden?.[side];
+      return hidden ? [{ axis, side, hidden }] : [];
+    })
+  );
+  if (!markers.length) return null;
+  return (
+    <g className="eda-axis-hidden-layer">
+      {markers.map(({ axis, side, hidden }) => {
+        const key = `${axis}:${side}` as const;
+        const [x, y] = at[key];
+        return (
+          <g
+            key={key}
+            className="eda-axis-hidden"
+            data-axis-hidden={key}
+            data-hidden-count={hidden.count}
+            data-hidden-at={hidden.at}
+            data-hidden-at-label={hidden.atLabel}
+            data-hidden-unit={hidden.unit.join("|")}
+            transform={`translate(${x},${y})`}
+            pointerEvents="auto"
+            tabIndex={0}
+            role="button"
+            aria-haspopup="dialog"
+            aria-label={`${hiddenPhrase(hidden, axis, side)}. Show details`}
+          >
+            <rect x={-7} y={-7} width={14} height={14} rx={3.5} />
+            <path d={CHEVRONS[key]} />
+          </g>
+        );
+      })}
+    </g>
+  );
+}
+
 /** Draws planned axis rules, ticks, labels and the zero line. */
 export function PlannedAxes({
   plan,
@@ -194,6 +273,7 @@ export function PlannedAxes({
     >
       <AxisEditStrip plan={plan} axis="x" />
       <AxisEditStrip plan={plan} axis="y" />
+      <HiddenMarkers plan={plan} />
       {[...plan.x.guides, ...plan.y.guides].map((guide) => (
         <g
           key={guide.id}

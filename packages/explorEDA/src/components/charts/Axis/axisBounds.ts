@@ -1,4 +1,5 @@
 import type { AxisSettings, ChartSettings } from "@/types/ChartTypes";
+import type { AxisHiddenEnds } from "./axisPlan";
 
 const finite = (value: unknown): value is number =>
   typeof value === "number" && Number.isFinite(value);
@@ -36,6 +37,33 @@ export function boundedDomain(
   const high =
     max ?? (min !== undefined && min >= auto[1] ? min + span : auto[1]);
   return [low, high];
+}
+
+/**
+ * How many drawn values fall past each end of a bounded axis. Only a set
+ * bound hides anything, so an axis without limits reports nothing. The
+ * values are what the chart draws, such as one per row or per bar.
+ */
+export function hiddenByBounds(
+  axis: AxisSettings | undefined,
+  domain: [number, number],
+  values: Iterable<number>,
+  unit: [string, string] = ["row", "rows"]
+): AxisHiddenEnds | undefined {
+  if (!hasAxisBounds(axis) || boundsInverted(axis)) return undefined;
+  const low = Math.min(domain[0], domain[1]);
+  const high = Math.max(domain[0], domain[1]);
+  let below = 0;
+  let above = 0;
+  for (const value of values) {
+    if (value < low) below++;
+    else if (value > high) above++;
+  }
+  if (!below && !above) return undefined;
+  return {
+    low: below ? { count: below, unit, reason: "bound", at: low } : undefined,
+    high: above ? { count: above, unit, reason: "bound", at: high } : undefined,
+  };
 }
 
 /**

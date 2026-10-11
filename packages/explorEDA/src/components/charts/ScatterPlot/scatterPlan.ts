@@ -15,7 +15,8 @@ import {
   categoryValue,
 } from "@/lib/categories";
 import type { IdType } from "@/providers/DataLayerProvider";
-import type { datum, MarginSettings } from "@/types/ChartTypes";
+import type { AxisSettings, datum, MarginSettings } from "@/types/ChartTypes";
+import { hiddenByBounds } from "../Axis/axisBounds";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import type { Filter, ValueFilter } from "@/types/FilterTypes";
 import type { DataType } from "@/components/SummaryTable/utils/dataTypeDetection";
@@ -457,6 +458,24 @@ export function planScatter(
           padding: "10% on each side",
         }
       : undefined;
+  // Points past a bound are drawn and clipped; the axis says how many.
+  const hidden = (
+    axis: ScatterAxisScale,
+    settingsAxis: AxisSettings,
+    field: string,
+    value: (point: (typeof points)[number]) => datum
+  ) => {
+    if (axis.kind !== "numeric") return undefined;
+    const ends = hiddenByBounds(
+      settingsAxis,
+      axis.domain,
+      points.map((point) => value(point) as number)
+    );
+    const label = format(field, axis);
+    for (const end of [ends?.low, ends?.high])
+      if (end) end.atLabel = label(end.at);
+    return ends;
+  };
   const axisLabel = (label: string, axis: ScatterAxisScale) =>
     [label, axis.type === "symlog" && "symlog"].filter(Boolean).join(" · ");
   const labelSource = (local: string) =>
@@ -489,6 +508,12 @@ export function planScatter(
       label: axisLabel(xLabel, xAxis),
       labelSource: labelSource(settings.xAxisLabel),
       domainSource: domainSource(xAxis),
+      hidden: hidden(
+        xAxis,
+        settings.xAxis,
+        settings.xField,
+        (point) => point.xValue
+      ),
     },
     y: {
       typography,
@@ -506,6 +531,12 @@ export function planScatter(
       rule: false,
       bandTitle: true,
       domainSource: domainSource(yAxis),
+      hidden: hidden(
+        yAxis,
+        settings.yAxis,
+        settings.yField,
+        (point) => point.yValue
+      ),
     },
   });
 
