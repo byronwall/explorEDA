@@ -5,15 +5,16 @@ import {
   formatCalcValue,
   type CalcResult,
 } from "./calculations";
-import type {
-  AnnotationElement,
-  CompositionDefinition,
-  CompositionElement,
-  GuideElement,
-  LegendElement,
-  TextElement,
-  UnitElement,
-  ValueScale,
+import {
+  guideRepeats,
+  type AnnotationElement,
+  type CompositionDefinition,
+  type CompositionElement,
+  type GuideElement,
+  type LegendElement,
+  type TextElement,
+  type UnitElement,
+  type ValueScale,
 } from "./compositionTypes";
 import {
   markCategories,
@@ -106,6 +107,8 @@ export interface LineNode extends NodeBase {
   stroke: string;
   strokeWidth: number;
   dash?: string;
+  /** A wider, solid line beneath in this color, so the line reads over dense marks. */
+  casing?: string;
 }
 
 /** One path through ordered points, drawn as connected runs. */
@@ -687,47 +690,69 @@ function resolveGuide(
     value.kind === "calc"
       ? definition.calculations.find((item) => item.id === value.calcId)
       : undefined;
-  if (!unit || !unit.instances.length)
+  const instances = unit ? guideRepeats(guide, unit.instances) : [];
+  if (!unit || !instances.length)
     return {
       nodes,
       bounds: emptyBounds(guide.x, guide.y),
       anchor: {
         kind: "guide" as const,
         point: { x: guide.x, y: guide.y },
-        missing: "The guide's chart unit is not on the page.",
+        missing: !unit
+          ? "The guide's chart unit is not on the page."
+          : "None of the guide's repeats is drawn.",
       },
     };
+  const paper = definition.artboard.background;
+  // A paper-colored casing under the rule keeps it legible over dense marks.
+  const rule = (
+    key: string,
+    instanceKey: string | undefined,
+    ends: { x1: number; y1: number; x2: number; y2: number }
+  ) => {
+    nodes.push({
+      type: "line",
+      key,
+      elementId: guide.id,
+      instanceKey,
+      ...ends,
+      stroke: guide.color,
+      strokeWidth: 1.5,
+      dash: "5 3",
+      casing: paper,
+    });
+  };
   const perRepeat = calc?.population === "repeat";
   const values: CalcResult[] = [];
   // A rule per repeat when each repeat has its own value; otherwise one rule.
   const groups = perRepeat
-    ? unit.instances.map((instance) => [instance])
-    : [unit.instances];
+    ? instances.map((instance) => [instance])
+    : [instances];
   let label: { x: number; y: number; text: string } | undefined;
   const horizontal = guide.axis === "y";
   groups.forEach((group, index) => {
     const first = group[0]!;
-    let x: number | undefined;
+    let input: { number?: number; text?: string } | undefined;
     let text = guide.label;
-    const place = (input: { number?: number; text?: string }) =>
-      horizontal ? positionY(first, input) : positionX(first, input);
     if (value.kind === "constant") {
-      x = place({ text: value.value });
+      input = { text: value.value };
     } else if (calc) {
       const result = evaluateCalc(calc, data, perRepeat ? first : undefined);
       values.push(result);
       if (result.value !== undefined)
-        x = place(
+        input =
           result.kind === "date"
             ? { number: result.value }
-            : { text: String(result.value) }
-        );
+            : { text: String(result.value) };
       text = text.replace(/\{value\}/g, result.text);
     }
-    if (x === undefined) return;
+    if (!input) return;
     if (horizontal) {
-      // A horizontal rule per frame, with the shade above or below it.
+      // A horizontal rule per frame, at the value on that frame's own y
+      // scale, with the shade above or below it.
       group.forEach((item, part) => {
+        const y = positionY(item, input);
+        if (y === undefined) return;
         if (guide.shade && guide.shade !== "none") {
           const above = guide.shade === "after";
           nodes.push({
@@ -736,38 +761,37 @@ function resolveGuide(
             elementId: guide.id,
             instanceKey: perRepeat ? first.key : undefined,
             x: item.frame.x,
-            y: above ? item.frame.y : x,
+            y: above ? item.frame.y : y,
             width: item.frame.width,
             height: above
-              ? x - item.frame.y
-              : item.frame.y + item.frame.height - x,
+              ? y - item.frame.y
+              : item.frame.y + item.frame.height - y,
             fill: guide.color,
             opacity: 0.08,
             under: true,
           });
         }
-        nodes.push({
-          type: "line",
-          key: `${guide.id}:${index}:${part}`,
-          elementId: guide.id,
-          instanceKey: perRepeat ? first.key : undefined,
-          x1: item.frame.x - 3,
-          x2: item.frame.x + item.frame.width + 3,
-          y1: x,
-          y2: x,
-          stroke: guide.color,
-          strokeWidth: 1.25,
-          dash: "4 3",
-        });
+        rule(
+          `${guide.id}:${index}:${part}`,
+          perRepeat ? first.key : undefined,
+          {
+            x1: item.frame.x - 3,
+            x2: item.frame.x + item.frame.width + 3,
+            y1: y,
+            y2: y,
+          }
+        );
+        if (text && !label)
+          label = {
+            x: item.frame.x + 4 + guide.x,
+            y: y - 5 + guide.y,
+            text,
+          };
       });
-      if (text && !label)
-        label = {
-          x: first.frame.x + 4 + guide.x,
-          y: x - 5 + guide.y,
-          text,
-        };
       return;
     }
+    const x = positionX(first, input);
+    if (x === undefined) return;
     if (guide.shade && guide.shade !== "none")
       group.forEach((item, part) => {
         const after = guide.shade === "after";
@@ -806,18 +830,11 @@ function resolveGuide(
           offset: item.frame.x - first.frame.x,
         }));
     segments.forEach((segment, part) => {
-      nodes.push({
-        type: "line",
-        key: `${guide.id}:${index}:${part}`,
-        elementId: guide.id,
-        instanceKey: perRepeat ? first.key : undefined,
+      rule(`${guide.id}:${index}:${part}`, perRepeat ? first.key : undefined, {
         x1: x + segment.offset,
         x2: x + segment.offset,
         y1: segment.top - 3,
         y2: segment.bottom + 3,
-        stroke: guide.color,
-        strokeWidth: 1.25,
-        dash: "4 3",
       });
     });
     // The label sits under the rule, below any position labels.
@@ -839,6 +856,7 @@ function resolveGuide(
       fontWeight: 600,
       fill: guide.color,
       anchor: "start",
+      halo: paper,
     });
   const lines = nodes.filter((node): node is LineNode => node.type === "line");
   if (!lines.length)

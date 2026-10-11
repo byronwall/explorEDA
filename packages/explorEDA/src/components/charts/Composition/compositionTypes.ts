@@ -823,6 +823,23 @@ export interface GuideElement extends ElementBase {
   axis?: "x" | "y";
   /** Tint the frame on one side of the rule, such as a projection period. */
   shade?: "none" | "after" | "before";
+  /** Comma-separated repeat values the rule draws in; every repeat unless set. */
+  repeats?: string;
+}
+
+/** The repeats a guide draws in: those its `repeats` list names, or all. */
+export function guideRepeats<T extends { key: string }>(
+  guide: Pick<GuideElement, "repeats">,
+  instances: T[]
+): T[] {
+  const wanted = (guide.repeats ?? "")
+    .split(",")
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
+  if (!wanted.length) return instances;
+  return instances.filter((instance) =>
+    wanted.includes(instance.key.trim().toLowerCase())
+  );
 }
 
 /** Where an annotation attaches. */

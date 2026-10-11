@@ -241,7 +241,30 @@ function SceneNodeView({ node }: { node: SceneNode }) {
         />
       );
     case "line":
-      return (
+      return node.casing ? (
+        <g opacity={node.opacity}>
+          <line
+            x1={node.x1}
+            y1={node.y1}
+            x2={node.x2}
+            y2={node.y2}
+            stroke={node.casing}
+            strokeWidth={node.strokeWidth + 3}
+            strokeOpacity={0.85}
+            pointerEvents="none"
+          />
+          <line
+            data-node={node.key}
+            x1={node.x1}
+            y1={node.y1}
+            x2={node.x2}
+            y2={node.y2}
+            stroke={node.stroke}
+            strokeWidth={node.strokeWidth}
+            strokeDasharray={node.dash}
+          />
+        </g>
+      ) : (
         <line
           data-node={node.key}
           x1={node.x1}

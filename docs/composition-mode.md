@@ -61,7 +61,7 @@ Every example opens in the demo at `?example=<id>`. `message-log` draws one stri
 A calculation's **population** (each repeat or the whole graphic) and its **filter policy** (follow or ignore the active filters) are separate choices. A value shared across panels does not automatically ignore filters.
 Aggregations are count, sum, average, min, max, first, last, change (a share of the first value), and difference (last minus first). The ordered aggregations read an order field.
 
-Guides draw a vertical rule at an x value or a horizontal rule at a numeric y value, from a constant or a calculation, and can shade one side. A guide from a constant holds under filtering.
+Guides draw a vertical rule at an x value or a horizontal rule at a numeric y value, from a constant or a calculation, and can shade one side. A horizontal rule sits at its value on each repeat's own y scale, and a guide can be limited to listed repeats. Rules draw over a paper-colored casing so they stay legible over dense marks. A guide from a constant holds under filtering.
 
 ### Annotations and legends
 

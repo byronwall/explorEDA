@@ -389,6 +389,7 @@ function isGuideElement(value: Value) {
     (value.axis === undefined || oneOf(value.axis, ["x", "y"])) &&
     (value.shade === undefined ||
       oneOf(value.shade, ["none", "after", "before"])) &&
+    (value.repeats === undefined || isString(value.repeats)) &&
     isRecord(guide) &&
     ((guide.kind === "constant" && isString(guide.value)) ||
       (guide.kind === "calc" && isString(guide.calcId)))

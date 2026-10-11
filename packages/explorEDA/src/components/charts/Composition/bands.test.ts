@@ -21,12 +21,12 @@ import { isCompositionDefinition } from "./validateComposition";
 // Five quarters out of order: two of history with no bounds, three projected.
 // The 2026 row has its bounds swapped; the 2025.5 row has no upper bound.
 const rows: Record<string, datum>[] = [
-  { Year: 2025.5, Central: 2.1, Low: 1.5, High: null },
-  { Year: 2024.75, Central: 1.9, Low: null, High: null },
-  { Year: 2026, Central: 2.4, Low: 3.4, High: 1.4 },
-  { Year: 2025.25, Central: 2.0, Low: 1.6, High: 2.4 },
-  { Year: 2024.5, Central: 2.3, Low: null, High: null },
-  { Year: 2025, Central: 2.2, Low: 1.9, High: 2.5 },
+  { Year: 2025.5, Central: 2.1, Low: 1.5, High: null, Side: "A" },
+  { Year: 2024.75, Central: 1.9, Low: null, High: null, Side: "B" },
+  { Year: 2026, Central: 2.4, Low: 3.4, High: 1.4, Side: "A" },
+  { Year: 2025.25, Central: 2.0, Low: 1.6, High: 2.4, Side: "B" },
+  { Year: 2024.5, Central: 2.3, Low: null, High: null, Side: "A" },
+  { Year: 2025, Central: 2.2, Low: 1.9, High: 2.5, Side: "B" },
 ];
 const all = rows.map((_, id) => id);
 const data = (liveIds = all): CompositionData => ({
@@ -211,6 +211,55 @@ describe("guides on x–y units", () => {
     expect(shade.x).toBeCloseTo(rule.x1);
     expect(shade.x + shade.width).toBeCloseTo(frame.x + frame.width);
     expect(shade.height).toBe(frame.height);
+  });
+
+  it("places a horizontal rule in every repeat's own frame and scale, or only in listed repeats", () => {
+    const base = fan(
+      {
+        repeat: {
+          field: "Side",
+          arrangement: "grid",
+          columns: 1,
+          gap: 20,
+          order: "label",
+          limit: 24,
+        },
+      },
+      [scale("x", "Year"), scale("y", "Central", { domain: "instance" })]
+    );
+    const rules = (patch: Partial<GuideElement>) => {
+      const resolved = scene({
+        ...base,
+        elements: [...base.elements, guide({ axis: "y", ...patch })],
+      });
+      const frames = resolved.elements[0]!.instances!.map(
+        (instance) => instance.frame
+      );
+      const lines = resolved.nodes.filter(
+        (node): node is LineNode =>
+          node.type === "line" && node.elementId === "guide-1"
+      );
+      return { frames, lines };
+    };
+    const every = rules({ value: { kind: "constant", value: "2.2" } });
+    expect(every.lines).toHaveLength(2);
+    every.lines.forEach((line, index) => {
+      const frame = every.frames[index]!;
+      expect(line.y1).toBeGreaterThan(frame.y);
+      expect(line.y1).toBeLessThan(frame.y + frame.height);
+      expect(line.casing).toBe("#ffffff");
+    });
+    const only = rules({
+      value: { kind: "constant", value: "2.2" },
+      repeats: " b ",
+    });
+    expect(only.lines).toHaveLength(1);
+    expect(only.lines[0]!.y1).toBeGreaterThan(only.frames[1]!.y);
+    const none = scene({
+      ...base,
+      elements: [...base.elements, guide({ axis: "y", repeats: "C" })],
+    }).elements.find((item) => item.id === "guide-1")!;
+    expect(none.anchor?.missing).toContain("repeats");
   });
 
   it("reports a y value outside the scale instead of drawing it", () => {
