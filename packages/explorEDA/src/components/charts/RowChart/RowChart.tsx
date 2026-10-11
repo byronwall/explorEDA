@@ -449,7 +449,9 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
           x: hiddenByBounds(
             settings.xAxis,
             xScale.domain() as [number, number],
-            displayCounts.map((item) => item.count),
+            displayCounts.flatMap((item) =>
+              item.count === undefined ? [] : [item.count]
+            ),
             ["bar", "bars"],
             true
           ),
