@@ -1,6 +1,7 @@
 import { copyFile } from "node:fs/promises";
 import path from "path";
 import { defineConfig, type Plugin } from "vite";
+import mdx from "@mdx-js/rollup";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import {
@@ -34,7 +35,9 @@ function spaFallback(): Plugin {
 export default defineConfig(({ command }) => ({
   plugins: [
     ...(command === "serve" && useLibrarySource ? [exploredaSource()] : []),
-    react(),
+    // Docs pages are MDX; compile them before the React plugin sees them.
+    { enforce: "pre", ...mdx() },
+    react({ include: /\.(mdx|js|jsx|ts|tsx)$/ }),
     tailwindcss(),
     spaFallback(),
   ],

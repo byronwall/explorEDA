@@ -1,0 +1,34 @@
+import barExample from "../assets/bar-example.jpg";
+
+<Figure
+  src={barExample}
+  alt="The order-book workspace filtered to web orders, with a histogram of delivery days and a bar chart of regional order counts."
+  caption="The order-book example filtered to web orders: delivery days in numeric bins, and order counts by region."
+/>
+
+## Fields and computation
+
+Choose a field to group. The selected operation determines what each bar means.
+
+<Terms
+  items={[
+    ["Category counts", "A categorical field counts rows in each category. Click a bar to filter."],
+    ["Numeric bins", "A numeric field is binned by default. Drag across bins to filter a snapped range."],
+    ["Grouped summary", "Count rows, or sum or average a measure field, for each group."],
+  ]}
+/>
+
+## Selection and row scope
+
+Category-count bars use rows that remain after other chart filters and the current facet. Clicking a category filters linked views. Numeric bins use that same live row set; dragging across bins filters to their snapped numeric range. The count and bin domains use all source rows, which keeps categories and scale positions stable.
+
+<Callout title="Grouped summaries read a different scope.">
+  A named grouped summary calculates from globally filtered rows. When chart filters or facets are active, its row scope can differ from category counts.
+</Callout>
+
+## Settings and limits
+
+Set the grouping field, choose category counts or numeric bins, and adjust the bin count. For a grouped summary, choose a group field, an operation, and—when needed—a numeric measure.
+
+- Missing or non-finite measurements do not enter numeric bins.
+- Alt-click a bar or use the chart trace action to inspect how it was computed.

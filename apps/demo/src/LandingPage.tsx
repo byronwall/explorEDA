@@ -41,7 +41,6 @@ import {
 } from "react-router-dom";
 import { toast } from "sonner";
 import { CsvUpload } from "./CsvUpload";
-import { ChartDocs } from "./ChartDocs";
 import { ExampleSelector } from "./ExampleSelector";
 import { FeaturedExample } from "./landing/FeaturedExample";
 import { IntegrationGuide } from "./landing/IntegrationGuide";
@@ -60,6 +59,7 @@ import {
   STORAGE_KEY,
   type SavedViewsSession,
 } from "./savedViewsSession";
+import { docsTopic } from "./docs/paths";
 import { examplePath, PROJECT_VIEWER_PATH, VIEWER_PATH } from "./routes";
 
 // The hero's live order book opens the full order book.
@@ -78,6 +78,10 @@ const CoverageMatrix = import.meta.env.DEV
       }))
     )
   : null;
+
+const DocsSite = lazy(() =>
+  import("./docs/DocsSite").then(({ DocsSite: Site }) => ({ default: Site }))
+);
 
 const SavedViewsWorkspace = lazy(() =>
   import("./SavedViewsWorkspace").then(
@@ -175,7 +179,7 @@ export function LandingPage() {
   const isHome = !isViewer && routeExampleId === null;
   const showCoverage =
     CoverageMatrix !== null && searchParams.get("view") === "coverage";
-  const showDocs = searchParams.get("view") === "docs";
+  const showDocs = docsTopic(location.pathname) !== null;
   // A capability link opens an example at the tab that shows it.
   const initialTab = searchParams.get("tab") ?? undefined;
 
@@ -505,7 +509,9 @@ export function LandingPage() {
               }
             >
               {showDocs ? (
-                <ChartDocs />
+                <Suspense fallback={null}>
+                  <DocsSite />
+                </Suspense>
               ) : showCoverage && CoverageMatrix ? (
                 <Suspense fallback={null}>
                   <CoverageMatrix />

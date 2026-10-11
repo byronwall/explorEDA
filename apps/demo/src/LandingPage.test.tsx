@@ -186,10 +186,10 @@ describe("LandingPage routing", () => {
 
     expect(
       within(section).getByRole("link", { name: "Browse chart guides" })
-    ).toHaveAttribute("href", "/?view=docs");
+    ).toHaveAttribute("href", "/docs");
     expect(
       within(section).getByRole("link", { name: "How rendering works" })
-    ).toHaveAttribute("href", "/?view=docs&topic=rendering");
+    ).toHaveAttribute("href", "/docs/rendering");
     expect(items()).toHaveLength(catalogue.length);
     expect(screen.queryByText(/feature coverage/i)).toBeNull();
     const wine = items().find(

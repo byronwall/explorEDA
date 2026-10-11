@@ -1,0 +1,39 @@
+## From rows to marks
+
+<Steps
+  label="Data and rendering flow"
+  steps={[
+    { title: "Host app", detail: "Loads the rows and the saved workspace settings." },
+    { title: "Data layer", detail: "Keeps source rows, effective fields, and calculations." },
+    { title: "Crossfilter", detail: "Tracks full, peer-filtered, and globally filtered row sets." },
+    { title: "Chart registry", detail: "Selects the scatter or bar definition from saved settings." },
+    { title: "Plan and render", detail: "Builds marks and draws them with Canvas or SVG." },
+    { title: "Saved settings", detail: "Sends settings changes back to the host callback." },
+  ]}
+/>
+
+## A worked order
+
+In `scatter-trace`, the raw row T-001 has Units 2, Unit Price 40, Discount 5, Cost 45, and Channel Online. The data layer applies the saved numeric field settings and formulas, and the resulting effective fields become the scatter point.
+
+<WorkedOrder />
+
+## Row scope and chart definitions
+
+<Terms
+  items={[
+    ["Full", "Every loaded source row."],
+    ["Peer-filtered", "Every other chart's filter, without the chart's own. A facet can narrow it further."],
+    ["Globally filtered", "Every active chart filter."],
+  ]}
+/>
+
+Bar category counts and bins use peer-filtered rows, so a chart never hides its own unselected bars. Named grouped summaries use globally filtered rows.
+
+Saved settings carry each chart type. The registry maps `scatter` to the scatter definition and `bar` to the bar definition. Each definition supplies its settings and renderer. The scatter plan maps effective X and Y values into points and axis geometry; Canvas draws the points and SVG draws the axes and brush. The bar plan computes category counts, bins, or grouped values; SVG draws its bars and axes.
+
+## Interaction and saved state
+
+A brush or bar selection updates that chart’s filter. Crossfilter then updates linked views using their peer-filtered rows. Scatter and bar charts expose their plans to mark-level trace inspectors.
+
+The package sends changed workspace settings through `onStateChange`. That saved structure includes chart and calculation settings, but not the source rows. The host owns durable storage and supplies the rows again when it restores the workspace.

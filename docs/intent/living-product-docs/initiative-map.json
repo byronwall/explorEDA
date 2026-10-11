@@ -436,12 +436,20 @@
       {
         "id": "m2",
         "title": "Shipped guides run on MDX behind the static gate",
-        "status": "planned",
+        "status": "completed",
         "proof": "Three guides at /docs/<topic>, ?view=docs removed; gate.test.ts in demo build fails on uncovered target, bad example id, missing image",
         "end_state": "New chart type without a page fails the build (via shrinking pendingTargets)",
         "outcome": "The three guides read from MDX at /docs/<topic>, and the demo build fails on docs gaps",
         "valid_intermediate_state": "Examples and viewer untouched; ?view=docs gone; other targets pending",
-        "rollback": "Revert to ChartDocs.tsx; remove MDX plugin and build-script test step"
+        "rollback": "Revert to ChartDocs.tsx; remove MDX plugin and build-script test step",
+        "evidence": [
+          "Three guides served from apps/demo/src/docs/pages/*.mdx at /docs/<topic>; ?view=docs removed; ChartDocs.tsx deleted",
+          "Page content is 108 MDX lines (was ~940 TSX lines for three pages)",
+          "gate.test.ts proves: unregistered chart type, renamed example, example not showing the page's chart, broken DocsLink/markdown link/image import, orphan MDX, pending list growth each fail",
+          "demo build runs vitest run src/docs first; deleting an imported image exits 1",
+          "Browser (vite preview + dev): direct load, hash fragment, contents nav, no overflow at 1280/783/390",
+          "Tests: 29 passed (docs + LandingPage); check-types and check:ui pass"
+        ]
       },
       {
         "id": "m3",
@@ -527,6 +535,12 @@
       "status": "active",
       "previous_status": "planned",
       "note": "Byron approved commit and start; clean break for docs URLs (no ?view=docs redirect). M1 started."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "milestone-completed",
+      "milestone": "m2",
+      "note": "MDX docs at /docs/<topic> behind the static gate."
     }
   ],
   "closure": null

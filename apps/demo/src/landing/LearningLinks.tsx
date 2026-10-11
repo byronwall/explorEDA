@@ -8,13 +8,13 @@ const links: {
   icon: LucideIcon;
 }[] = [
   {
-    to: "?view=docs",
+    to: "/docs",
     title: "Browse chart guides",
     body: "Scatter and bar: fields, row scope, selection, and settings.",
     icon: BookOpen,
   },
   {
-    to: "?view=docs&topic=rendering",
+    to: "/docs/rendering",
     title: "How rendering works",
     body: "Follow one order from its raw row to a drawn point.",
     icon: Workflow,
