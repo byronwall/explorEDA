@@ -4,6 +4,9 @@ import {
 } from "@/hooks/useDisplayColorScales";
 import { formatFieldValue as formatWithSettings } from "@/lib/fieldSettings";
 import { Button } from "@/components/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { ActionTooltip } from "@/components/ui/tooltip";
+import { Columns3, LayoutDashboard } from "lucide-react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps, datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
@@ -51,7 +54,14 @@ import {
   hierarchyTraceTargets,
   resolveHierarchyTrace,
 } from "./hierarchyTrace";
+import { ARRANGEMENTS, type Arrangement } from "./arrangements";
+import { layoutIcicle } from "./partitionLayout";
 import { layoutTreemap, type TreemapRect } from "./treemapLayout";
+
+const ARRANGEMENT_ICONS: Record<Arrangement, typeof LayoutDashboard> = {
+  treemap: LayoutDashboard,
+  icicle: Columns3,
+};
 
 const LABEL_CHAR = 6.4;
 const HEADER_HEIGHT = 18;
@@ -269,7 +279,8 @@ export function HierarchyChart({
   );
   const focusNode = resolution.node;
   // Zooming needs a level below the first; one level has no breadcrumbs.
-  const crumbHeight = levels.length > 1 ? CRUMB_HEIGHT : 0;
+  const crumbHeight = CRUMB_HEIGHT;
+  const arrangement = settings.arrangement ?? "treemap";
   const margin = settings.margin;
   const plotTop = margin.top + crumbHeight;
   const plotWidth = Math.max(0, width - margin.left - margin.right);
@@ -278,18 +289,18 @@ export function HierarchyChart({
     height - plotTop - margin.bottom - STATUS_LINE_HEIGHT
   );
   const { rects, tiny } = useMemo(() => {
-    const all = layoutTreemap(focusNode, {
-      width: plotWidth,
-      height: plotHeight,
-      headerHeight: HEADER_HEIGHT,
-    });
+    const size = { width: plotWidth, height: plotHeight };
+    const all =
+      arrangement === "icicle"
+        ? layoutIcicle(focusNode, size)
+        : layoutTreemap(focusNode, { ...size, headerHeight: HEADER_HEIGHT });
     // A box under a pixel on either side cannot be seen or pointed at; its
     // parent still holds its size, and the status line counts it.
     const drawn = all.filter(
       (rect) => rect.x1 - rect.x0 >= 1 && rect.y1 - rect.y0 >= 1
     );
     return { rects: drawn, tiny: all.length - drawn.length };
-  }, [focusNode, plotWidth, plotHeight]);
+  }, [arrangement, focusNode, plotWidth, plotHeight]);
 
   if (!levels.length) {
     return (
@@ -473,6 +484,13 @@ export function HierarchyChart({
     const name = fit(node.label, w - 8);
     const value = formatShort(node.weight);
     const detail = firstFit([`${value} · ${share}`, share], w - 8);
+    const inlineDetail =
+      name === node.label
+        ? firstFit(
+            [`${value} · ${share}`, share],
+            w - 16 - node.label.length * LABEL_CHAR
+          )
+        : "";
     const headerText = isParent
       ? firstFit(
           [
@@ -530,26 +548,36 @@ export function HierarchyChart({
             {headerText}
           </text>
         )}
-        {!isParent && node.shown.length === 0 && h >= 16 && name && (
-          <text
-            x={rect.x0 + 4}
-            y={rect.y0 + 4}
-            fontSize={11}
-            fill={dimmed ? "var(--foreground)" : ink}
-            opacity={dimmed ? 0.6 : 1}
-            pointerEvents="none"
-            aria-hidden="true"
-          >
-            <tspan x={rect.x0 + 4} dy="0.9em" fontWeight={600}>
-              {name}
-            </tspan>
-            {h >= 30 && detail && (
-              <tspan x={rect.x0 + 4} dy="1.3em" opacity={0.85}>
-                {detail}
+        {!isParent &&
+          (arrangement === "icicle" || node.shown.length === 0) &&
+          h >= 16 &&
+          name && (
+            <text
+              x={rect.x0 + 4}
+              y={rect.y0 + 4}
+              fontSize={11}
+              fill={dimmed ? "var(--foreground)" : ink}
+              opacity={dimmed ? 0.6 : 1}
+              pointerEvents="none"
+              aria-hidden="true"
+            >
+              <tspan x={rect.x0 + 4} dy="0.9em" fontWeight={600}>
+                {name}
               </tspan>
-            )}
-          </text>
-        )}
+              {h >= 34 && detail ? (
+                <tspan x={rect.x0 + 4} dy="1.3em" opacity={0.85}>
+                  {detail}
+                </tspan>
+              ) : (
+                // A short but wide box keeps its numbers on the name's line.
+                inlineDetail && (
+                  <tspan dx={8} opacity={0.85}>
+                    {inlineDetail}
+                  </tspan>
+                )
+              )}
+            </text>
+          )}
       </g>
     );
   };
@@ -582,21 +610,23 @@ export function HierarchyChart({
         <g
           transform={`translate(${margin.left},${plotTop})`}
           role="group"
-          aria-label={`${plan.levelLabels.join(" › ")} as a treemap`}
+          aria-label={`${plan.levelLabels.join(" › ")} as ${arrangement === "icicle" ? "an icicle" : "a treemap"}`}
         >
           {rects.map(renderRect)}
         </g>
       </svg>
-      {crumbHeight > 0 && (
+      <div
+        className="absolute flex items-center gap-2"
+        style={{
+          left: margin.left,
+          right: margin.right,
+          top: margin.top,
+          height: crumbHeight,
+        }}
+      >
         <nav
           aria-label="Zoom path"
-          className="absolute flex min-w-0 items-center gap-0.5 overflow-hidden whitespace-nowrap text-xs"
-          style={{
-            left: margin.left,
-            right: margin.right,
-            top: margin.top,
-            height: crumbHeight,
-          }}
+          className="flex min-w-0 flex-1 items-center gap-0.5 overflow-hidden whitespace-nowrap text-xs"
         >
           {[plan.root, ...resolution.trail].map((node, index, all) => {
             const current = index === all.length - 1;
@@ -642,7 +672,37 @@ export function HierarchyChart({
               ` · ${percent(focusNode.weight, plan.root.weight)} of all`}
           </span>
         </nav>
-      )}
+        <ToggleGroup
+          type="single"
+          size="sm"
+          variant="outline"
+          value={arrangement}
+          onValueChange={(next) =>
+            next &&
+            next !== arrangement &&
+            updateChart(settings.id, { arrangement: next as Arrangement })
+          }
+          aria-label="Arrangement"
+          className="shrink-0"
+        >
+          {ARRANGEMENTS.map(({ value, label, help }) => {
+            const Icon = ARRANGEMENT_ICONS[value];
+            return (
+              <ActionTooltip key={value} content={`${label}. ${help}`}>
+                <span className="inline-flex">
+                  <ToggleGroupItem
+                    value={value}
+                    aria-label={label}
+                    className="h-6 min-w-6 px-1"
+                  >
+                    <Icon className="size-3.5" />
+                  </ToggleGroupItem>
+                </span>
+              </ActionTooltip>
+            );
+          })}
+        </ToggleGroup>
+      </div>
       <ChartStatusLine
         parts={statusParts}
         hint={statusHint}

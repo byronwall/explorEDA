@@ -9,6 +9,7 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import { ArrowDown, ArrowUp, X } from "lucide-react";
 import { useMemo } from "react";
+import { ARRANGEMENTS } from "./arrangements";
 import { DEFAULT_MAX_CHILDREN, keepForLevels } from "./hierarchyPlan";
 import {
   MAX_HIERARCHY_LEVELS,
@@ -159,6 +160,30 @@ export function HierarchySettingsPanel({
       </section>
 
       <div className="eda-setting-grid">
+        <Label>Arrangement</Label>
+        <ToggleGroup
+          type="single"
+          size="sm"
+          variant="outline"
+          value={settings.arrangement ?? "treemap"}
+          onValueChange={(next) =>
+            next &&
+            change({ arrangement: next as HierarchySettings["arrangement"] })
+          }
+          aria-label="Arrangement"
+          className="justify-start"
+        >
+          {ARRANGEMENTS.map(({ value, label, help }) => (
+            <ActionTooltip key={value} content={help}>
+              <span className="inline-flex">
+                <ToggleGroupItem value={value} className="px-2">
+                  {label}
+                </ToggleGroupItem>
+              </span>
+            </ActionTooltip>
+          ))}
+        </ToggleGroup>
+
         <Label htmlFor="hierarchy-metric">Size</Label>
         <select
           id="hierarchy-metric"

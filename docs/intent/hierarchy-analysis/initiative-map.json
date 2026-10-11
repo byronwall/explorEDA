@@ -8,7 +8,7 @@
     "last_updated": "2026-10-10",
     "summary": "Add hierarchical reporting charts (treemap, sunburst, icicle) so analysts see which subcategories exist, how large each is, and how parts compare to the whole.",
     "status": "active",
-    "next_action": "Milestone 4: icicle arrangement and a switch between arrangements."
+    "next_action": "Milestone 5: sunburst arrangement (cuttable)."
   },
   "artifacts": {
     "intent_brief": {
@@ -647,12 +647,16 @@
       {
         "id": "m4",
         "title": "Icicle arrangement and switching",
-        "status": "planned",
+        "status": "completed",
         "proof": "Switching keeps setup through undo and saved views",
         "end_state": "Treemap and icicle on one chart",
         "outcome": "One chart switches between treemap and icicle without losing setup",
         "valid_intermediate_state": "Two arrangements; arrangement defaults to treemap for older saves",
-        "rollback": "Revert the milestone PR; earlier arrangements keep working."
+        "rollback": "Revert the milestone PR; earlier arrangements keep working.",
+        "evidence": [
+          "34 Hierarchy tests incl. icicle partition geometry and a switch that keeps levels, zoom, and selection as one onStateChange",
+          "Browser: catalog icicle at 1400/900/390 and zoomed into Electronics at 1400"
+        ]
       },
       {
         "id": "m5",
@@ -750,6 +754,12 @@
       "action": "Implemented Milestone 3 and resolved the three-level default (treemap).",
       "reason": "Stacked PR plan.",
       "evidence": "See milestone m3 evidence."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Implemented Milestone 4: icicle arrangement and switch.",
+      "reason": "Stacked PR plan.",
+      "evidence": "See milestone m4 evidence."
     }
   ],
   "closure": null,

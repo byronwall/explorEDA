@@ -20,7 +20,7 @@ export interface HierarchySettings extends BaseChartSettings {
   /** Color by first-level branch (default), by level, or one color. */
   colorBy?: "branch" | "level" | "none";
   /** How the hierarchy is drawn. */
-  arrangement: "treemap";
+  arrangement: "treemap" | "icicle";
   /**
    * The zoomed branch: values along `levels`, outermost first. Absent or
    * empty shows the whole. Stored like a filter's values, so it survives a
