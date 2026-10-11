@@ -14,6 +14,11 @@ const SYMLOG: Transform = {
   from: (v) => Math.sign(v) * Math.expm1(Math.abs(v)),
 };
 
+const LOG: Transform = {
+  to: Math.log10,
+  from: (v) => 10 ** v,
+};
+
 export interface AxisDragInput {
   /** The domain drawn when the drag began. */
   domain: [number, number];
@@ -53,7 +58,8 @@ export function dragDomain({
   start,
   current,
 }: AxisDragInput): [number, number] | undefined {
-  const { to, from } = scaleType === "symlog" ? SYMLOG : LINEAR;
+  const { to, from } =
+    scaleType === "symlog" ? SYMLOG : scaleType === "log" ? LOG : LINEAR;
   const [t0, t1] = [to(domain[0]), to(domain[1])];
   const [r0, r1] = range;
   if (t1 === t0 || r1 === r0) return undefined;
@@ -100,8 +106,8 @@ function round(
   range: [number, number],
   scaleType: string
 ): [number, number] {
-  // A symlog pixel spans very different values near zero and far from it.
-  if (scaleType === "symlog")
+  // A symlog or log pixel spans very different values across the axis.
+  if (scaleType === "symlog" || scaleType === "log")
     return [low, high].map((value) => Number(value.toPrecision(3))) as [
       number,
       number,

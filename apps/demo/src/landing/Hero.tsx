@@ -38,7 +38,7 @@ export function Hero({
           <a className={navLinkClass} href="#examples-heading">
             Examples
           </a>
-          <Link className={`${navLinkClass} hidden sm:block`} to="?view=docs">
+          <Link className={`${navLinkClass} hidden sm:block`} to="/docs">
             Guides
           </Link>
           <a className={navLinkClass} href={REPO_URL}>

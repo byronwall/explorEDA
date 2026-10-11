@@ -1,0 +1,16 @@
+{
+  "id": "cf56c5a8-9dd2-4fb5-bed8-ab712a7c1b6b",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:25:55.379Z",
+  "summary": "Created \"Hard to read the text with the white stroke around it\" under \"Media deaths\".",
+  "nodeIds": [
+    "page-hard-to-read-the-text-with-the-white-stroke-around-it",
+    "page-media-deaths"
+  ],
+  "metadata": {
+    "clientMutationId": "1d2478c8-6e2d-4fcf-80a7-d272a7f19b48"
+  }
+}

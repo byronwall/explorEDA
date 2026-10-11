@@ -1,0 +1,69 @@
+## Fields and computation
+
+Choose a field to group. The selected operation determines what each bar means.
+
+<Terms
+  items={[
+    [
+      "Category counts",
+      "A categorical field counts rows in each category. Click a bar to filter.",
+    ],
+    [
+      "Numeric bins",
+      "A numeric field is binned by default. Drag across bins to filter a snapped range.",
+    ],
+    [
+      "Grouped summary",
+      "Count rows, or sum or average a measure field, for each group.",
+    ],
+  ]}
+/>
+
+## Try it
+
+Drag across the delivery-time bins to filter the channel bars, or click a channel to see which delivery times it covers.
+
+<LiveExample
+  id="bar-histogram"
+  caption="Delivery days in numeric bins beside orders by sales channel, from the order-book example."
+/>
+
+## Selection and row scope
+
+Category-count bars use rows that remain after other filters and the current facet. Clicking a category filters linked views. Numeric bins use that same live row set; dragging across bins filters to their snapped numeric range. The count and bin domains use all source rows, which keeps categories and scale positions stable.
+
+<Callout title="Grouped summaries read a different scope.">
+  A named grouped summary calculates from globally filtered rows. When chart
+  filters or facets are active, its row scope can differ from category counts.
+</Callout>
+
+## Settings and limits
+
+Set the grouping field, choose category counts or numeric bins, and adjust the bin count. For a grouped summary, choose a group field, an operation, and—when needed—a numeric measure.
+
+- Missing or non-finite measurements do not enter numeric bins.
+- Alt-click a bar or use the chart trace action to inspect how it was computed.
+
+## Series
+
+**Split by** a second field to divide each bar into series.
+
+- **Grouped** places series side by side to compare separate values.
+
+<LiveExample
+  id="bar-grouped"
+  caption="Revenue by region with one bar per channel, from the grouped bars example."
+/>
+
+- **Stacked** adds series into one bar. **100%** shows each series as a share of its category total.
+
+<LiveExample
+  id="bar-stacked"
+  caption="Orders by category split into channel shares, from the stacked bars example."
+/>
+
+## Saved settings
+
+Every setting a bar chart saves. In Dashboard text, write any of them as a path, such as `binCount=20` or `xAxis.scaleType=symlog`.
+
+<SettingsReference type="bar" />

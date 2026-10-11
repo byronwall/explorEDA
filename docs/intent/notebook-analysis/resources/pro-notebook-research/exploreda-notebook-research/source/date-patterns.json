@@ -1,0 +1,122 @@
+{
+  "id": "date-patterns",
+  "title": "Discovering Date Patterns",
+  "url": "https://observablehq.com/@observablehq/discovering-date-patterns",
+  "platform": "Observable",
+  "authors": "Mike Freeman, Zan Armstrong and Ian Johnson",
+  "pattern": "Time series → calendar features → grouped distributions",
+  "screenshots": [
+    {
+      "file": "date-patterns-01.jpg",
+      "caption": "The initial investigation: explanatory prose, a rolling-average selector, a date brush and a full-width demand chart. Captured with hourly data selected."
+    },
+    {
+      "file": "date-patterns-06-quarter-day.jpg",
+      "caption": "A later dependent step, captured after changing the vertical grouping to Day. The horizontal grouping remains Quarter; prose, controls, the result and a derived-record inspection stay in one reading sequence."
+    }
+  ],
+  "story": "The question is how much structure can be discovered from only a timestamp and a measured value. The notebook first smooths California electricity demand, then derives local calendar categories and compares distributions within them. Its reported patterns vary by hour and season; the inspected quarter-by-day view also makes weekday/weekend differences visible. This is an analytical walkthrough with interpretation, rather than a set of unrelated charts.",
+  "prose_role": "The prose introduces the restricted starting information, explains why smoothing helps, motivates additional date fields, and uses the first results to choose the next comparison. It also distinguishes UTC display time from local calendar time and closes by explaining how the same reasoning transfers to other timestamp/value data.",
+  "data": {
+    "origin": "U.S. Energy Information Administration Open Data; an attached California-region hourly-demand snapshot used by the notebook.",
+    "links": [
+      {
+        "label": "Exact attached california.csv",
+        "url": "https://observablehq.com/d/af591412a9582f6a/file/459facd602c61caa398fee8016ddb564c1874ee9413c6ae3357fe1e3c05edf20e1d766ba2c8465403e0fb7c29a43d8728a1ce88e5ff36d49d122f2fdad33d04a?name=california.csv"
+      },
+      {
+        "label": "EIA original provider",
+        "url": "https://www.eia.gov/opendata/"
+      },
+      {
+        "label": "Author's EIA download notebook",
+        "url": "https://observablehq.com/@observablehq/eia-opendata-electricity-grid-operation?collection=@observablehq/analyzing-time-series-data"
+      },
+      {
+        "label": "Archived authored source, revision 1760",
+        "url": "https://github.com/endpointservices/observable-notebooks/blob/main/@tomlarkworthy/adapting-dataviz/af591412a9582f6a@1760.js"
+      }
+    ],
+    "grain": "One California-region hourly demand observation; 8,784 rows for the local 2020 leap year. The final local-hour record is stored as 2021-01-01T07:00Z.",
+    "fields": "date (UTC timestamp) and value (electricity demand, chart-labelled MWh). Derived fields are local hour, day of month, weekday, weekend/weekday, ISO week, month and quarter, using America/Los_Angeles.",
+    "calculations": [
+      "Parse the timestamp and derive calendar features in America/Los_Angeles, preserving the original instant for the time axis.",
+      "The rolling transform uses k = 1, 24, 168 or 672 hourly observations. The source delegates alignment and edge handling to its Observable Plot version; those defaults were not independently resolved.",
+      "The date brush supplies the line's x-domain and masks points outside the interval. It does not filter the data used by the later grouped output.",
+      "The later chart groups raw observations by the two selected calendar categories. Each group displays demand values as ticks and its mean as the colored background; group means also feed tooltips. Weekday and month orders are explicit."
+    ],
+    "dependencies": "raw_data → enriched data → inspected table and grouped distributions. enriched data + smoothing choice + brush limits → line chart. Grouping selectors affect the faceted result and tooltip summaries, while the earlier smoothing and brush controls remain local to the line.",
+    "reproducibility": "The live table, attached CSV link and visible/archived authored transformations are sufficient for the core reproduction. The attachment link was inspected and the notebook loaded its rows; the CSV bytes were not independently downloaded. The archive is a preserved revision and was checked against live behavior, not assumed to be the current page wholesale.",
+    "caveats": "Resolve window alignment, edge behavior and sort order explicitly for an exact match. The source uses a PST tooltip label throughout the year despite deriving daylight-saving-aware local fields; a faithful analytical reproduction should label the timezone clearly. This is a labeling issue, not evidence of incorrect local feature derivation. Missing-value and duplicate-hour handling were not independently audited; an exact match should make those policies explicit."
+  },
+  "sequence": [
+    "Explain the timestamp-only question → load and inspect date/value rows.",
+    "Define a rolling window and visible date extent → show the time series → interpret daily and seasonal structure.",
+    "Explain local calendar features → derive them → display the enriched table.",
+    "Choose two grouping dimensions → show demand distributions and group means → compare seasonal and weekday patterns."
+  ],
+  "elements": [
+    [
+      "Essential: question and method text",
+      "Analysis question; field definitions",
+      "Explain UTC versus local time and the purpose of each comparison",
+      "Narrative above and below outputs",
+      "None observed",
+      "Interpretation refers to the relevant result"
+    ],
+    [
+      "Essential: source and feature calculation",
+      "Hourly date, value",
+      "Parse date; derive America/Los_Angeles calendar fields",
+      "Inspectable table with original and derived fields",
+      "Table inspection",
+      "Feeds line and grouped output"
+    ],
+    [
+      "Essential: rolling line and controls",
+      "Enriched rows; k; date limits",
+      "x=UTC time; y=demand MWh; k-row rolling mean; stable y extent",
+      "Full-width line plus axis note",
+      "Hourly/daily/weekly/28-day radios; date brush",
+      "Controls affect this output only"
+    ],
+    [
+      "Essential: grouped distribution",
+      "Enriched rows; horizontal and vertical categories",
+      "x=demand; fx/fy=chosen calendar groups; ticks=rows; fill=group mean",
+      "Calendar comparison with ordered facets and mean tooltip",
+      "Two grouping selectors; hover",
+      "Recomputes grouping and means, independent of line controls"
+    ],
+    [
+      "Essential: interpretation and next question",
+      "Observed distributions",
+      "Explain how the chosen categories expose another pattern",
+      "Reading transition and conclusion",
+      "None observed",
+      "Must remain associated with its comparison"
+    ],
+    [
+      "Optional: annotated example images",
+      "Selected chart states",
+      "Callouts illustrating hour and quarter differences",
+      "Worked interpretations between major steps",
+      "None",
+      "Can be replaced by ordinary text and annotations"
+    ]
+  ],
+  "fit": {
+    "minimum": "Use the two-column snapshot, a raw-data table, one rolling line and one quarter-by-weekday grouped chart. Keep the text that motivates the move from time to calendar categories. A mean-by-group chart can be an initial simplification, but it should be labeled as losing the distribution information.",
+    "compatible": "Tables, calculated calendar fields, filters, interactive charts and saved state appear to cover much of this workflow, based only on the supplied product description.",
+    "investigate": "Timezone-aware date extraction, rolling windows with explicit defaults, two-dimensional facets, per-group distribution marks, and control bindings to a specific result. These are capability questions rather than requirements for arbitrary JavaScript execution.",
+    "roundtrip": "Changing the smoothing window, axis domain, facet fields, category order, tick opacity, mean color scale, labels or tooltip content should update the corresponding block definition. A facet change that changes aggregation should update both grouping and result configuration, rather than only its visual layout.",
+    "scope": "Observed controls have different scopes: smoothing and brush are local to the line; the later selectors recompute only grouped comparisons. A future global date filter would be a different, explicitly declared behavior.",
+    "lesson": "The reading sequence and calculation dependencies are related but not identical. An enriched table can feed separate branches, each with local control state. Two-way editing should preserve those branches and expose defaults such as window size and calendar timezone in text."
+  },
+  "comparison": {
+    "data_availability": "Exact attachment; live rows verified",
+    "calculation_transparency": "High; explicit derivation and grouping; window defaults unresolved",
+    "interaction_complexity": "Moderate: brush, rolling and facet selectors",
+    "reproduction_effort": "Medium"
+  }
+}

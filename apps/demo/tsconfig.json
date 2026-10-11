@@ -4,11 +4,20 @@
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "exploreda/docs-kit": [
+        "../../packages/explorEDA/dist/docs-kit.d.ts"
+      ]
     },
     "jsx": "react-jsx",
     "incremental": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

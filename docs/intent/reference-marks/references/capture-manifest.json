@@ -1,0 +1,224 @@
+{
+  "captured_at": "2026-10-10",
+  "timezone": "America/Indiana/Indianapolis",
+  "thread_url": "https://chatgpt.com/c/6abf228d-8214-83ea-908d-0cae11ac43bb",
+  "thread_title": "Annotation Library Comparison",
+  "research_date": "2026-10-01",
+  "repository_revision": "7b0998a1ff4313e91e5055a96d0f0618feed8596",
+  "files": [
+    {
+      "path": "raw/annotation-library-comparison-2026-10-01/annotation-model-reference.zip",
+      "bytes": 9058,
+      "sha256": "2c73d5f9e89ce52fd03295c3d8f0d0a339b26121caffd04773ae240a1d861753",
+      "origin": "https://chatgpt.com/c/6abf228d-8214-83ea-908d-0cae11ac43bb"
+    },
+    {
+      "path": "raw/annotation-library-comparison-2026-10-01/bundle/README.md",
+      "bytes": 5176,
+      "sha256": "a69d93eb78acca3035817960f501ab1868803ea59cf552172526228578739aa1",
+      "origin": "https://chatgpt.com/c/6abf228d-8214-83ea-908d-0cae11ac43bb"
+    },
+    {
+      "path": "raw/annotation-library-comparison-2026-10-01/bundle/annotation-model.ts",
+      "bytes": 8795,
+      "sha256": "0185b83ab8d66145c60d7bf970bf5d9e165b53205de31dafc5ecf30c2af9482f",
+      "origin": "https://chatgpt.com/c/6abf228d-8214-83ea-908d-0cae11ac43bb"
+    },
+    {
+      "path": "raw/annotation-library-comparison-2026-10-01/bundle/examples.json",
+      "bytes": 6997,
+      "sha256": "6bad45ecf08fc8af49a299e73a988d86da74e025ff24b4745b7c6c05388f420a",
+      "origin": "https://chatgpt.com/c/6abf228d-8214-83ea-908d-0cae11ac43bb"
+    },
+    {
+      "path": "raw/annotation-library-comparison-2026-10-01/bundle/examples.ts",
+      "bytes": 3990,
+      "sha256": "cd9bc31ea3961bb58f317d9b19fa7ae5fb93a33037c87fa8b96692e74c4b0891",
+      "origin": "https://chatgpt.com/c/6abf228d-8214-83ea-908d-0cae11ac43bb"
+    },
+    {
+      "path": "raw/annotation-library-comparison-2026-10-01/chat-metadata.json",
+      "bytes": 255,
+      "sha256": "fcf5809259c64275ddec7e3c02ef5a1b3614e6b81bd4fde352652008b604468e",
+      "origin": "https://chatgpt.com/c/6abf228d-8214-83ea-908d-0cae11ac43bb"
+    },
+    {
+      "path": "raw/annotation-library-comparison-2026-10-01/citation-links.json",
+      "bytes": 26575,
+      "sha256": "dd89f69c208c5b9e19f7955b3a24685110a72e7f4d20d50a94abd44270856e8f",
+      "origin": "https://chatgpt.com/c/6abf228d-8214-83ea-908d-0cae11ac43bb"
+    },
+    {
+      "path": "raw/annotation-library-comparison-2026-10-01/conversation.html",
+      "bytes": 200049,
+      "sha256": "fb1c0a53a61304dca947257a893692f080222ebff894c00fca051e50c989bfe7",
+      "origin": "https://chatgpt.com/c/6abf228d-8214-83ea-908d-0cae11ac43bb"
+    },
+    {
+      "path": "raw/annotation-library-comparison-2026-10-01/conversation.txt",
+      "bytes": 51114,
+      "sha256": "1de84b0235ceb954787c4462f19d616f89d12973e81e03d7c0bda2f39c8d4693",
+      "origin": "https://chatgpt.com/c/6abf228d-8214-83ea-908d-0cae11ac43bb"
+    },
+    {
+      "path": "raw/annotation-library-comparison-2026-10-01/research-prompt.md",
+      "bytes": 1610,
+      "sha256": "eefe1c616a113cbc6d064bd6af5ab35fdfd285c37558f376193db12dbc1eb074",
+      "origin": "https://chatgpt.com/c/6abf228d-8214-83ea-908d-0cae11ac43bb"
+    },
+    {
+      "path": "raw/annotation-library-comparison-2026-10-01/research-report.md",
+      "bytes": 58179,
+      "sha256": "fe1d13101b5fd6004e4e84bdc6552578f7cb8b5700f02c58c86c19ddfaec0f4a",
+      "origin": "https://chatgpt.com/c/6abf228d-8214-83ea-908d-0cae11ac43bb"
+    },
+    {
+      "path": "raw/annotation-library-comparison-2026-10-01/sources-panel.json",
+      "bytes": 102609,
+      "sha256": "22dcc0638af0a8e0ac05cd808fed58b7d6d10c5621e3375a22867f7a058b4a71",
+      "origin": "https://chatgpt.com/c/6abf228d-8214-83ea-908d-0cae11ac43bb"
+    },
+    {
+      "path": "raw/prior-comparison-sources/chart-interaction-review.md",
+      "bytes": 34971,
+      "sha256": "f68fd6d9f6c4d47df77e2f2a074cc706b545ddc46ea3f624f03fdbe90c19948f",
+      "origin": "docs/intent/comparison-opportunities/resources/pro-chart-review/exploreda-chart-interaction-review/review.md"
+    },
+    {
+      "path": "raw/prior-comparison-sources/gap-executive-report.md",
+      "bytes": 16212,
+      "sha256": "1fde9004079209c9a830633ef9e19cc176ec2c0a2038372ce2c45159ada0ef88",
+      "origin": "docs/intent/comparison-opportunities/resources/pro-gap-analysis/explorEDA-gap-analysis-2026-10-05/reports/00-executive-report.md"
+    },
+    {
+      "path": "raw/prior-comparison-sources/gap-register.md",
+      "bytes": 71021,
+      "sha256": "14fb13ea1346c68887402844ce6c46681194b0c60dadd37735c6a8da11224d80",
+      "origin": "docs/intent/comparison-opportunities/resources/pro-gap-analysis/explorEDA-gap-analysis-2026-10-05/reports/02-comprehensive-gap-register.md"
+    },
+    {
+      "path": "raw/prior-comparison-sources/product-feedback-2026-10-06.json",
+      "bytes": 9000,
+      "sha256": "972725a94a61d076abd52dc7cd3884f827f545b12a1577e92be7a6e1b31f0b76",
+      "origin": "docs/intent/comparison-opportunities/resources/product-feedback-2026-10-06.json"
+    },
+    {
+      "path": "raw/prior-comparison-sources/product-feedback-2026-10-06.md",
+      "bytes": 1793,
+      "sha256": "13c4c8298809ee73cb1b03898e15e17197567a964591f670544c2dfa3a50877c",
+      "origin": "docs/intent/comparison-opportunities/resources/product-feedback-2026-10-06.md"
+    },
+    {
+      "path": "raw/prior-comparison-sources/requirements-ledger.json",
+      "bytes": 87259,
+      "sha256": "98e633254ae2ad4fa6fa011f8fcacb729935c205de72180480f5d1f8dd355da2",
+      "origin": "docs/intent/comparison-opportunities/resources/pro-gap-analysis/explorEDA-gap-analysis-2026-10-05/data/requirements-ledger.json"
+    },
+    {
+      "path": "raw/prior-comparison-sources/user-request-2026-10-06.md",
+      "bytes": 525,
+      "sha256": "4f563862e9f3bbd8678cf5e2208e685dbe46c63ca3831c423e0156edd64d1cc9",
+      "origin": "docs/intent/comparison-opportunities/resources/user-request.md"
+    },
+    {
+      "path": "raw/prior-initiative-2026-10-10/initiative-map.json",
+      "bytes": 12171,
+      "sha256": "e50f153729f15dfb02b75dc61f5f80262a5946cb86ce9ed94dc78d57990899b7",
+      "origin": "docs/intent/reference-marks/initiative-map.json before this update"
+    },
+    {
+      "path": "raw/prior-initiative-2026-10-10/intent-brief.md",
+      "bytes": 2883,
+      "sha256": "8c15afbc3f8d01d31060eeec5d2c1207efb23454fba2a2183625cf8993fc10be",
+      "origin": "docs/intent/reference-marks/intent-brief.md before this update"
+    },
+    {
+      "path": "raw/repository-context-2026-10-10/BaseChart.tsx",
+      "bytes": 13386,
+      "sha256": "ac8be67be4de088dd4b0343ade0ba0685f92f7c96bb32fcdf5f7a2a6986e6dac",
+      "origin": "packages/explorEDA/src/components/charts/BaseChart.tsx"
+    },
+    {
+      "path": "raw/repository-context-2026-10-10/ChartTypes.ts",
+      "bytes": 6160,
+      "sha256": "491006836ea845091f9f2d64b0c86a525bbea6b524de9cb5e2a2e0095c911a73",
+      "origin": "packages/explorEDA/src/types/ChartTypes.ts"
+    },
+    {
+      "path": "raw/repository-context-2026-10-10/LineChart.tsx",
+      "bytes": 24295,
+      "sha256": "d2db281f3b1482d6faeb166c1190170ccd1af97d14f931bdf6ba408820d2a55b",
+      "origin": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx"
+    },
+    {
+      "path": "raw/repository-context-2026-10-10/SavedDataStructure.ts",
+      "bytes": 1926,
+      "sha256": "d06d902c2e9ba967adb39f25502405153b2b582bfd2bf7305ad51bec9b9dfebb",
+      "origin": "packages/explorEDA/src/types/SavedDataStructure.ts"
+    },
+    {
+      "path": "raw/repository-context-2026-10-10/ScatterSvg.tsx",
+      "bytes": 22825,
+      "sha256": "023de5cf9d313812fd841582fa19f46f3cbdf12c4f1a39dc92ae1123c22a05f4",
+      "origin": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.tsx"
+    },
+    {
+      "path": "raw/repository-context-2026-10-10/analysis-export-intent.md",
+      "bytes": 4679,
+      "sha256": "04e7b93b446850a8bfb20841379ea00b092bb2a0022ca1afb6ac51f98e2aadf9",
+      "origin": "docs/intent/analysis-export/intent-brief.md"
+    },
+    {
+      "path": "raw/repository-context-2026-10-10/composition-intent.md",
+      "bytes": 3520,
+      "sha256": "7c60227541989a0da59204087521925d831914d746de4b4ee7c53cc811dd7a85",
+      "origin": "docs/intent/composed-analytical-graphics/intent-brief.md"
+    },
+    {
+      "path": "raw/repository-context-2026-10-10/composition-mode.md",
+      "bytes": 14506,
+      "sha256": "2f15b10657f13ff1883a76ec5ecacb31541ff63917988ba6b83f0ed6c71192f2",
+      "origin": "docs/composition-mode.md"
+    },
+    {
+      "path": "raw/repository-context-2026-10-10/compositionTypes.ts",
+      "bytes": 41593,
+      "sha256": "64aec45409dd3e3b0d8142f7a16ac38dfa90e2f8f374e37f41b52b279b1e262b",
+      "origin": "packages/explorEDA/src/components/charts/Composition/compositionTypes.ts"
+    },
+    {
+      "path": "raw/repository-context-2026-10-10/dataLayerState.ts",
+      "bytes": 804,
+      "sha256": "2469556f6e39537ff394ff4b242cd0da5aee866907568f0f2685e87525ec1569",
+      "origin": "packages/explorEDA/src/providers/lib/dataLayerState.ts"
+    },
+    {
+      "path": "raw/repository-context-2026-10-10/resolveComposition.ts",
+      "bytes": 29888,
+      "sha256": "5f9ddc28457b79a1e002322af46364bb2eeb64a347c47fddcc0886cc3673d94e",
+      "origin": "packages/explorEDA/src/components/charts/Composition/resolveComposition.ts"
+    },
+    {
+      "path": "raw/repository-context-2026-10-10/useChartEdit.ts",
+      "bytes": 2190,
+      "sha256": "a7ac4f2276c48897792e06b88b3462b25a9245afb0dd4dbb287ef496d2f114d9",
+      "origin": "packages/explorEDA/src/components/charts/InPlace/useChartEdit.ts"
+    },
+    {
+      "path": "raw/user-direction-2026-10-10.md",
+      "bytes": 1263,
+      "sha256": "af1f0564877ed76b1291b23ab8cbbdb8f7d39bac37ab33d6739eeaf143dab85f",
+      "origin": "Current user conversation"
+    }
+  ],
+  "completeness": {
+    "chat_file_entries": 3,
+    "archive_files": 4,
+    "all_archive_files_verified": true,
+    "report_sections": 11,
+    "inline_citation_links": 92,
+    "bibliography_entries": 361,
+    "external_pages_archived": false,
+    "note": "All three chat file entries are represented by the original ZIP and its exact extracted TypeScript/JSON members. The ZIP also contains typed examples and notes. External cited web pages are catalogued, not downloaded. Report Markdown was derived from the visible response DOM; conversation.html and conversation.txt preserve the captured source."
+  }
+}

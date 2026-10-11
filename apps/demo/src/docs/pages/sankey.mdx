@@ -1,0 +1,22 @@
+## When to use it
+
+Use a sankey chart to follow rows through a sequence of categories, such as channel, then category, then region. The width of each flow shows how many rows, or how much of a measure, take that path.
+
+## Try it
+
+<LiveExample
+  id="sankey"
+  caption="Orders flowing through their categories, from the order-book example."
+/>
+
+## How it reads
+
+- Stages are category fields in order. Each row is one path through them.
+- Click a flow to filter every other chart to the rows on that link.
+- Flow width is a count of rows, or a sum of a measure. Negative and missing measure values are left out.
+- Each stage shows at most a set number of values, the ones with the most rows. The rest join one Other node that lists its members.
+- Rows with a missing stage are left out, or shown as their own node.
+
+## Saved settings
+
+<SettingsReference type="sankey" />

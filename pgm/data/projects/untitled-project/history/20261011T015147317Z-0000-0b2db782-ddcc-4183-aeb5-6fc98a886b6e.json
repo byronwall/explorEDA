@@ -1,0 +1,16 @@
+{
+  "id": "0b2db782-ddcc-4183-aeb5-6fc98a886b6e",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:51:47.317Z",
+  "summary": "Added 1 images to \"Income and expenditure\".",
+  "nodeIds": [
+    "page-income-and-expenditure"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "6a768166-24ce-44b8-b09c-03919648d960"
+  }
+}

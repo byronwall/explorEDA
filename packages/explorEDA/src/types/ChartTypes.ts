@@ -12,6 +12,7 @@ import { ThreeDScatterSettings } from "@/components/charts/ThreeDScatter/types";
 import { BoxPlotSettings } from "@/components/charts/BoxPlot/definition";
 import { LineChartSettings } from "@/components/charts/LineChart/definition";
 import type { SankeySettings } from "@/components/charts/Sankey/definition";
+import type { HierarchySettings } from "@/components/charts/Hierarchy/definition";
 import type { ParallelCoordinatesSettings } from "@/components/charts/ParallelCoordinates/definition";
 import type { ScatterMatrixSettings } from "@/components/charts/ScatterMatrix/definition";
 import type { CalendarSettings } from "@/components/charts/Calendar/definition";
@@ -127,6 +128,10 @@ export interface RowChartSettings extends BaseChartSettings {
   type: "row";
   minRowHeight: number;
   maxRowHeight: number;
+  /** Rank a grouped summary of `field` instead of counting rows. */
+  aggregateId?: string;
+  /** Show this many categories and gather the rest in Other; unset fits the height. */
+  topN?: number;
 }
 
 export type ChartSettings =
@@ -141,6 +146,7 @@ export type ChartSettings =
   | BoxPlotSettings
   | LineChartSettings
   | SankeySettings
+  | HierarchySettings
   | ParallelCoordinatesSettings
   | ScatterMatrixSettings
   | CalendarSettings

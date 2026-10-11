@@ -1,6 +1,6 @@
 import { useThemeColors } from "@/hooks/useDisplayColorScales";
 import { useAxisTypography } from "../chartTypography";
-import { useId, useMemo, useRef, useState } from "react";
+import { useCallback, useId, useMemo, useRef, useState } from "react";
 import { useColorScales } from "@/hooks/useColorScales";
 import { calculateGroupedAggregate } from "@/lib/aggregates";
 import { categoryKey, categoryValue } from "@/lib/categories";
@@ -53,39 +53,73 @@ export function SeriesBarChart({
   const refs = useRef(new Map<string, SVGRectElement>());
   const typography = useAxisTypography();
   const themeColors = useThemeColors();
+  // One aggregate per series over the given rows, in source series order.
+  const summarize = useCallback(
+    (ids: number[]) => {
+      const values = new Map(
+        allIds.map((id) => [
+          categoryKey(seriesData[id]),
+          categoryValue(seriesData[id]),
+        ])
+      );
+      const bySeries = new Map<string, number[]>();
+      ids.forEach((id) => {
+        const key = categoryKey(seriesData[id]);
+        const group = bySeries.get(key);
+        if (group) group.push(id);
+        else bySeries.set(key, [id]);
+      });
+      const spec = aggregate ?? {
+        id: `${settings.id}:count`,
+        name: "Row count",
+        groupField: settings.field,
+        aggregation: "count" as const,
+      };
+      return [...values].flatMap(([key, value]) => {
+        const group = bySeries.get(key);
+        if (!group) return [];
+        const result = aggregate
+          ? getAggregate(aggregate.id, group)
+          : calculateGroupedAggregate(
+              group.map((id) => ({
+                __ID: id,
+                [settings.field]: groupData[id],
+              })),
+              spec
+            );
+        return result ? [{ value, result }] : [];
+      });
+    },
+    // Aggregates read field settings, so they rerun when those change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      allIds,
+      seriesData,
+      groupData,
+      aggregate,
+      getAggregate,
+      settings.id,
+      settings.field,
+      fieldSettings,
+    ]
+  );
+  // Every row the chart can draw sets the Y domain, so filtering elsewhere
+  // never rescales it.
+  const domainSummaries = useMemo(() => {
+    const facets = facetIds ? new Set(facetIds) : undefined;
+    return summarize(allIds.filter((id) => !facets || facets.has(id)));
+  }, [summarize, allIds, facetIds]);
   const plan = useMemo(() => {
     const facets = facetIds ? new Set(facetIds) : undefined;
-    const ids = liveIds.filter((id) => !facets || facets.has(id));
+    const summaries = summarize(
+      liveIds.filter((id) => !facets || facets.has(id))
+    );
     const values = new Map(
       allIds.map((id) => [
         categoryKey(seriesData[id]),
         categoryValue(seriesData[id]),
       ])
     );
-    const liveSeries = new Map<string, number[]>();
-    ids.forEach((id) => {
-      const key = categoryKey(seriesData[id]);
-      const group = liveSeries.get(key);
-      if (group) group.push(id);
-      else liveSeries.set(key, [id]);
-    });
-    const spec = aggregate ?? {
-      id: `${settings.id}:count`,
-      name: "Row count",
-      groupField: settings.field,
-      aggregation: "count" as const,
-    };
-    const summaries = [...values].flatMap(([key, value]) => {
-      const group = liveSeries.get(key);
-      if (!group) return [];
-      const result = aggregate
-        ? getAggregate(aggregate.id, group)
-        : calculateGroupedAggregate(
-            group.map((id) => ({ __ID: id, [settings.field]: groupData[id] })),
-            spec
-          );
-      return result ? [{ value, result }] : [];
-    });
     const facetFilters: Filter[] = [];
     if (facetIds) {
       const fields = [
@@ -123,6 +157,7 @@ export function SeriesBarChart({
       settings,
       typography,
       summaries,
+      domainSummaries,
       width,
       height: Math.max(1, height - 28),
       revision: `${revision}:${JSON.stringify(aggregate)}:${JSON.stringify(fieldSettings)}`,
@@ -163,6 +198,8 @@ export function SeriesBarChart({
     facetRows,
     facetColumns,
     getColorForValue,
+    summarize,
+    domainSummaries,
   ]);
   const source = useMemo(
     () => ({

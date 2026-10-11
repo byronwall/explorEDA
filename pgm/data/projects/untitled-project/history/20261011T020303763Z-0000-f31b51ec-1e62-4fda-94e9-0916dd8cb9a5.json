@@ -1,0 +1,14 @@
+{
+  "id": "f31b51ec-1e62-4fda-94e9-0916dd8cb9a5",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:2e41c4",
+    "label": "Agent token ...2e41c4"
+  },
+  "createdAt": "2026-10-11T02:03:03.763Z",
+  "summary": "Changed \"I want to see the real chart!\" status to implemented.",
+  "nodeIds": [
+    "page-i-want-to-see-the-real-chart"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "ba6dbd43-9868-4bd1-80fe-8d925a2d25ca",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:46:17.702Z",
+  "summary": "Created \"Honestly, other example is better\" under \"Lincoln ridgeline\".",
+  "nodeIds": [
+    "page-honestly-other-example-is-better",
+    "page-lincoln-ridgeline"
+  ],
+  "metadata": {
+    "clientMutationId": "c69428ad-84e3-4ce1-a044-9e46d0aa19f8"
+  }
+}

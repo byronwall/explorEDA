@@ -1258,6 +1258,22 @@ export function compileDocument(
         : DSL_CHART_KEYWORDS[declaration.keyword]!;
     const summary = { line: declaration.span.line, subject, type };
     const chart = buildChart(declaration, type, subject);
+    if (chart?.type === "row" && chart.aggregateId) {
+      // A row chart ranks its own field, so its summary must group by it.
+      const spec = aggregates.find((item) => item.id === chart.aggregateId);
+      if (spec && spec.groupField !== chart.field) {
+        report(
+          "warning",
+          "setting-ignored",
+          declaration.span,
+          `${spec.name} groups by ${spec.groupField}, not ${chart.field}, so ${subject} shows a message instead of bars.`,
+          {
+            subject,
+            suggestion: `Write it as row ${/^[A-Za-z_][\w.]*$/.test(spec.groupField) ? spec.groupField : JSON.stringify(spec.groupField)} aggregateId=${spec.id}.`,
+          }
+        );
+      }
+    }
     if (chart) {
       charts.push(chart);
       built.push({ ...summary, id: chart.id });

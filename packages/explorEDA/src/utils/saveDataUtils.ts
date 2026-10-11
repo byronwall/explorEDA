@@ -390,7 +390,12 @@ function isChart(value: unknown): boolean {
   switch (value.type) {
     case "row":
       return (
-        isFiniteNumber(value.minRowHeight) && isFiniteNumber(value.maxRowHeight)
+        isFiniteNumber(value.minRowHeight) &&
+        isFiniteNumber(value.maxRowHeight) &&
+        (value.aggregateId === undefined ||
+          typeof value.aggregateId === "string") &&
+        (value.topN === undefined ||
+          (Number.isInteger(value.topN) && (value.topN as number) > 0))
       );
     case "bar":
       return (
@@ -559,6 +564,21 @@ function isChart(value: unknown): boolean {
         isFiniteNumber(value.maxNodesPerStage) &&
         ["value", "label"].includes(value.nodeOrder as string) &&
         ["first", "source", "none"].includes(value.flowColor as string)
+      );
+    case "hierarchy":
+      return (
+        isStringArray(value.levels) &&
+        ["count", "sum"].includes(value.aggregation as string) &&
+        (value.measureField === undefined ||
+          typeof value.measureField === "string") &&
+        ["omit", "show"].includes(value.missingLevels as string) &&
+        ["treemap", "icicle", "sunburst"].includes(
+          value.arrangement as string
+        ) &&
+        (value.colorBy === undefined ||
+          ["branch", "level", "none"].includes(value.colorBy as string)) &&
+        (value.focus === undefined ||
+          (Array.isArray(value.focus) && value.focus.every(isDatum)))
       );
     case "parallel-coordinates":
       return (

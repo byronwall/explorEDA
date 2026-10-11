@@ -408,6 +408,7 @@ The [analytical chart guide](analytical-chart-coverage.md) documents current mod
 | `metric-card`          | Active population → count, sum, or average.                                    | Receives filters; source inspection.                      |
 | `map`                  | Coordinates or typed GeoJSON region join.                                      | Point rows or region keys.                                |
 | `sankey`               | Ordered stage columns → row paths and flow weights.                            | Stage values or adjacent stage pair.                      |
+| `hierarchy`            | Nested category fields → treemap, icicle, or sunburst.                         | Branch path, or siblings under one parent.                |
 | `parallel-coordinates` | Fields → one line per complete row.                                            | Intersected axis filters.                                 |
 | `scatter-matrix`       | Two to ten fields of any type → every pair, distributions on the diagonal.     | Two-field brush or mark; replaces the previous selection. |
 | `ecdf`                 | Numeric values → cumulative shares.                                            | Threshold or numeric span.                                |
@@ -415,11 +416,11 @@ The [analytical chart guide](analytical-chart-coverage.md) documents current mod
 
 ### Row chart
 
-The row chart counts source records by category. It is not a horizontal bar renderer for arbitrary supplied measures.
+The row chart ranks categories by record count, or by a grouped summary of its field (count, sum, or average, optionally once per ID) set with `aggregateId`. The vertical bar chart reads the same summaries, so the two show the same numbers.
 
-Categories are ordered by their full-source frequency across all facets. Filtering other charts changes counts without using those new counts to reorder the categories. Row heights adapt within configured limits. Categories that do not fit collapse into an **Other categories** row. The remainder opens a member list for exact category selection and source inspection.
+Categories are ordered by their all-row value across all facets. Filtering other charts changes the drawn values without reordering the categories. Each bar's all-row value stays visible: a faint bar behind counts and sums, and a tick for averages, or wherever a faint bar would be hidden. Signed summaries draw left of a zero line and rank last. Row heights adapt within configured limits. Categories that do not fit collapse into an **Other categories** row. With `topN`, Other keeps the same members at every size where rows fit 12px. A summary's Other value is computed from all its members' rows together, so an average weighs every row. The remainder opens a member list for exact category selection and source inspection.
 
-Counts appear as labels. Clicking or using the keyboard toggles categories. Unselected values remain visible with subdued styling. The collapsed remainder supports search, paging, and member inspection. Real categories named Others remain selectable.
+Values appear as labels. Clicking or using the keyboard toggles categories. Unselected values remain visible with subdued styling. The collapsed remainder supports search, paging, and member inspection. Real categories named Others remain selectable.
 
 Missing categories use the common null filter behavior. Typed values retain separate labels and selections. Row Chart remains a count view; hidden categories are available through the member list.
 

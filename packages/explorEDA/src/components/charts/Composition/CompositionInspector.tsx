@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
+  fitArtboard,
   removeElement,
   reorderElement,
   resetOverride,
@@ -57,6 +58,9 @@ import {
   type CompositionElement,
   type GuideElement,
   type LegendElement,
+  type LegendItem,
+  type LegendPart,
+  type MarkDefinition,
   type TextElement,
   type TextRole,
   type UnitElement,
@@ -565,6 +569,23 @@ export function CompositionInspector({
               })
             }
           />
+          <span className="eda-setting-label">Fit</span>
+          <Button
+            variant="outline"
+            size="sm"
+            tooltip="Move the source notes under everything else and set the height to end just below them"
+            onClick={() =>
+              change(
+                fitArtboard(
+                  definition,
+                  resolveComposition(definition, measureCompositionText, data)
+                    .elements
+                )
+              )
+            }
+          >
+            Fit height to content
+          </Button>
           <ColorSetting
             label="Paper"
             value={definition.artboard.background}
@@ -624,12 +645,19 @@ function LegendProperties({
         <select
           id={`${legend.id}-scale`}
           className="eda-composition-select"
-          value={legend.scaleId ?? ""}
-          onChange={(event) =>
-            onChange({ scaleId: event.target.value || undefined })
-          }
+          value={legend.scaleId ?? (legend.items ? KEY_MARKS : "")}
+          onChange={(event) => {
+            const value = event.target.value;
+            if (value === KEY_MARKS)
+              onChange({
+                scaleId: undefined,
+                items: legend.items ?? defaultKeyItems(unit),
+              });
+            else onChange({ scaleId: value || undefined, items: undefined });
+          }}
         >
           <option value="">A mark's categories</option>
+          <option value={KEY_MARKS}>Chosen marks</option>
           {definition.scales
             .filter((scale) => scale.kind === "value")
             .map((scale) => (
@@ -643,7 +671,7 @@ function LegendProperties({
           id={`${legend.id}-mark`}
           className="eda-composition-select"
           value={legend.markId}
-          disabled={Boolean(legend.scaleId)}
+          disabled={Boolean(legend.scaleId || legend.items)}
           onChange={(event) => onChange({ markId: event.target.value })}
         >
           {(unit?.marks ?? []).map((mark) => (
@@ -653,6 +681,14 @@ function LegendProperties({
             </option>
           ))}
         </select>
+        {legend.items && unit && (
+          <KeyItems
+            legendId={legend.id}
+            unit={unit}
+            items={legend.items}
+            onChange={(items) => onChange({ items })}
+          />
+        )}
         <span className="eda-setting-label">Layout</span>
         <Segmented
           label="Legend direction"
@@ -700,6 +736,128 @@ function LegendProperties({
         />
       </div>
     </section>
+  );
+}
+
+const KEY_MARKS = "__marks";
+
+/** The parts of a mark a key entry can show, beyond its own color. */
+const KEY_PARTS: Partial<
+  Record<MarkDefinition["type"], { value: LegendPart; label: string }[]>
+> = {
+  path: [
+    { value: "main", label: "Line" },
+    { value: "muted", label: "Muted line" },
+  ],
+  point: [
+    { value: "main", label: "Point" },
+    { value: "muted", label: "Muted point" },
+  ],
+  summary: [
+    { value: "band", label: "Quartile band" },
+    { value: "median", label: "Median" },
+  ],
+  strip: [
+    { value: "main", label: "Cell" },
+    { value: "missing", label: "Missing cell" },
+  ],
+};
+
+/** A first key: one entry per mark, named as the mark is. */
+function defaultKeyItems(unit: UnitElement | undefined): LegendItem[] {
+  return (unit?.marks ?? []).map((mark) => ({
+    markId: mark.id,
+    label: mark.name,
+  }));
+}
+
+/** The entries of a key legend: a mark, the part it shows, and a label. */
+function KeyItems({
+  legendId,
+  unit,
+  items,
+  onChange,
+}: {
+  legendId: string;
+  unit: UnitElement;
+  items: LegendItem[];
+  onChange: (items: LegendItem[]) => void;
+}) {
+  const update = (index: number, patch: Partial<LegendItem>) =>
+    onChange(
+      items.map((item, at) => (at === index ? { ...item, ...patch } : item))
+    );
+  return (
+    <div className="eda-composition-key-items col-span-2 flex flex-col gap-2">
+      {items.map((item, index) => {
+        const mark = unit.marks.find((entry) => entry.id === item.markId);
+        const parts = mark ? KEY_PARTS[mark.type] : undefined;
+        return (
+          <div key={index} className="flex items-center gap-1">
+            <select
+              aria-label={`Entry ${index + 1} mark`}
+              className="eda-composition-select min-w-0 flex-1"
+              value={item.markId}
+              onChange={(event) =>
+                update(index, { markId: event.target.value, part: undefined })
+              }
+            >
+              {unit.marks.map((entry) => (
+                <option key={entry.id} value={entry.id}>
+                  {entry.name}
+                </option>
+              ))}
+            </select>
+            {parts && (
+              <select
+                aria-label={`Entry ${index + 1} part`}
+                className="eda-composition-select min-w-0 flex-1"
+                value={item.part ?? parts[0]!.value}
+                onChange={(event) =>
+                  update(index, { part: event.target.value as LegendPart })
+                }
+              >
+                {parts.map((part) => (
+                  <option key={part.value} value={part.value}>
+                    {part.label}
+                  </option>
+                ))}
+              </select>
+            )}
+            <Input
+              aria-label={`Entry ${index + 1} label`}
+              className="min-w-0 flex-[2]"
+              value={item.label}
+              onChange={(event) => update(index, { label: event.target.value })}
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={`Remove entry ${index + 1}`}
+              tooltip="Remove this entry from the key"
+              onClick={() => onChange(items.filter((_, at) => at !== index))}
+            >
+              <Trash2 />
+            </Button>
+          </div>
+        );
+      })}
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() =>
+          onChange([
+            ...items,
+            {
+              markId: unit.marks[0]?.id ?? "",
+              label: unit.marks[0]?.name ?? "Entry",
+            },
+          ])
+        }
+      >
+        Add entry
+      </Button>
+    </div>
   );
 }
 

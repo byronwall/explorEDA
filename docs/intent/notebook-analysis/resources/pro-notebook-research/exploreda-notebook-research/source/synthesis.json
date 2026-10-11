@@ -1,0 +1,95 @@
+{
+  "title": "Notebook investigations for explorEDA",
+  "subtitle": "11 inspected examples • 7 Observable notebooks • 4 computational essays and investigations",
+  "date": "10 October 2026",
+  "lead": "The best references build an argument one result at a time: a question leads to a calculation, its output changes the next question, and the reader can inspect the steps. The selected examples cover simple summaries, grouped comparisons, time series, missing-data sensitivity, model evaluation and spatial statistics. Each example begins with captured evidence of the actual page.",
+  "selection": [
+    "Seven of the eleven selections are Observable notebooks. Eleven is deliberate: quality and inspectability took priority over adding a twelfth marginal example.",
+    "Four Observable selections share an electricity-analysis collection but exercise different patterns: subtraction, decomposition, calendar features and joins/conditional comparisons. The two penguin examples likewise show a progression from grouped exploration to model-informed revision.",
+    "The main reading sequence matters in every selection. Some individual outputs contain facets, adjacent maps or a chart/table switch. Reproducing the essay does not require arranging unrelated charts in a dashboard grid.",
+    "No example requires elaborate animation for its analytical core. Maps, resampling and model fitting remain meaningful capability questions, not assumed features of explorEDA."
+  ],
+  "evidence": [
+    "Actual analysis pages were opened and inspected in their rendered state. Screenshots are captures of those pages, not gallery thumbnails or generated mockups. Some captures show a revealed solution, changed control, or later analytical step; captions identify those states.",
+    "Observable source was inspected through visible cells and, where useful, archived exports of the author's notebook source checked against the live page. An archived revision is identified when used. Search snippets alone were not treated as evidence.",
+    "Observable's visible JavaScript was inspected as evidence of source methods. Equivalent expressions, queries and chart configurations may reproduce those methods; these references do not imply that explorEDA needs a general JavaScript runtime.",
+    "Data availability distinguishes a working live attachment/table, an inspected downloadable snapshot, and an upstream source that was linked but not independently retrieved. Exact formulas are described only when supported by visible source or documented methods.",
+    "Observed controls are labeled separately from proposed explorEDA controls. Every compatibility statement is a hypothesis based on the supplied capabilities; explorEDA itself was not inspected. Effort ratings are relative scope judgments, not schedules.",
+    "Two retained notebooks have localized execution failures: Bratenahl's sensitivity output and two spatial-tutorial cells. Their functioning analytical sequences and visible methods remain useful; the failures and reproduction limits are specified in their entries."
+  ],
+  "excluded": [
+    "The Olympics age-by-sport companion notebook currently displayed errors instead of its plots, so it was excluded.",
+    "An AWS EC2 pricing investigation had a missing CSV attachment and failed chart outputs. It was excluded despite a promising narrative.",
+    "A Taylor Swift Plot workshop had working visual controls but limited investigative argument and failing SQL outputs. It was screened out of the main set.",
+    "Data releases, single-chart examples and generic platform demos were not added merely to fill the target count."
+  ],
+  "recommendations": [
+    {
+      "role": "Small first proof",
+      "id": "forecast",
+      "title": "What's different? Timeseries forecast performance",
+      "scope": "Keep a source table, actual-versus-forecast line chart, a named delta = actuals − forecast calculation, a signed difference chart, one event annotation and the interpretation connecting them.",
+      "test": "This isolates the central promise: a small textual calculation feeds multiple full-width outputs, while graphical changes to encodings, the zero line, colors and annotation persist to the appropriate block's text.",
+      "reason": "The dataset is already prepared and the arithmetic is transparent. A useful first proof can be small without losing the argument. Resolve the source's inconsistent power/energy labels before presenting a polished reproduction."
+    },
+    {
+      "role": "Broader representative workflow",
+      "id": "date-patterns",
+      "title": "Discovering Date Patterns",
+      "scope": "Preserve raw-data inspection, a rolling time series, local calendar-field derivation, a derived table and a selectable grouped comparison.",
+      "test": "This exercises reusable intermediate data, ordered windows, timezone semantics and multiple control scopes. A facet edit changes the grouping configuration and dependent group means; a local brush should retain its declared scope.",
+      "reason": "It combines the kinds of tables, calculations, filters and graphical editing already described for explorEDA. The two local calculation branches make it a stronger workflow test than simply placing several charts beneath paragraphs."
+    },
+    {
+      "role": "Stretch case",
+      "id": "seattle",
+      "title": "Is Seattle Really Seeing an Uptick In Cycling?",
+      "scope": "Preserve the count summaries, weather/date join, one explicitly specified adjustment model, predictions and corrected series, with a qualified interpretation.",
+      "test": "This tests joins, model-result tables, dependent calculations and selective re-execution. Cosmetic chart edits must remain distinct from changing a predictor, a training/data scope or a derived quantity.",
+      "reason": "The analytical argument depends on each preceding calculation, while the graphics remain conventional. Reproduce the reasoning structure first; review the legacy model specification and uncertainty calculation before treating its historical numerical estimate as validated."
+    }
+  ],
+  "recurring": [
+    {
+      "pattern": "A full-width sequence of distinct block types",
+      "meaning": "Narrative, named calculation/query, inspectable table, chart and interpretation should coexist in one reading column. A block needs a stable identity beyond its current position."
+    },
+    {
+      "pattern": "Reusable intermediate results",
+      "meaning": "Derived columns, grouped tables, joined datasets and model outputs feed later blocks. Reordering the essay should not silently redefine calculation dependencies."
+    },
+    {
+      "pattern": "Explicit control scope",
+      "meaning": "A date brush can change only a view, a filter can change several downstream results, and a selector can redefine grouping. Those different effects should be visible in the defining text and saved state."
+    },
+    {
+      "pattern": "Semantic graphical edits",
+      "meaning": "Round-trip field choices, aggregation, bins/windows, facets, category order, scales, colors, legends, tooltips and annotations. Preserve unrelated calculation text and stable references while doing so."
+    },
+    {
+      "pattern": "Inspectable data contracts",
+      "meaning": "Expose row grain, units, geography, date range, null policy, join keys and normalization baseline. Counts, shares, per-capita measures and indexes should not become interchangeable because their charts look similar."
+    },
+    {
+      "pattern": "Narrative validity after edits",
+      "meaning": "A data-dependent numerical statement can refer to a result; a human interpretation may require review after an upstream change. Graphical editing should not leave the notebook appearing internally consistent when the prose describes an earlier state."
+    },
+    {
+      "pattern": "Execution state and reproducibility",
+      "meaning": "Distinguish cheap reactive calculations from explicit Run operations. Preserve inputs and available random seed/state, show which blocks failed or are stale, and keep unaffected branches readable."
+    },
+    {
+      "pattern": "A chart and its supporting table",
+      "meaning": "Switching between visual and tabular inspection helps explain filters, transformed values and missing endpoints. The views should retain shared data provenance even when presentation differs."
+    }
+  ],
+  "unusual": [
+    "Penguin exploration: pedagogical Hint/Solution reveal controls are specific to a guided exercise; ordinary explanatory text and visible calculation blocks can carry the same analytic progression.",
+    "Calendar and energy stories: hand-annotated screenshots and hand-drawn story illustrations are optional editorial polish. Their findings can be expressed with ordinary chart annotations and prose.",
+    "Spatial tutorial: polygon contiguity, spatial lags, conditional permutation tests and coordinated maps are specialized analytical capabilities. The linked side-by-side map arrangement is not a general notebook-layout requirement.",
+    "Seattle: a solar-daylight formula and a sequence of increasingly elaborate regressions are specific modeling details. One documented daylight input and one sound adjustment model retain the central reasoning.",
+    "Film dialogue: custom shapes, film search and a screenplay-matching pipeline are particular to this story. Film shares, within-film ranks and a selected-film character table form the core. Age comparisons are an optional extension until their cleaning rules are resolved.",
+    "Modeling essays: exact historical random samples and package versions matter for byte-for-byte result matching, but do not imply that a notebook view must support arbitrary language execution."
+  ],
+  "effort_note": "Low means prepared data with standard summaries or row calculations. Medium adds joins, windows, facets, normalization or scoped controls. High adds model fitting, resampling, spatial operations or reconstruction of partly hidden preparation. These ratings assume the smallest faithful version, with optional polish omitted."
+}

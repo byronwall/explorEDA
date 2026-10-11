@@ -1,0 +1,28 @@
+## When to use it
+
+Use a line chart to follow a measure over dates or along a numeric field. Each series is its own line, so you can compare their shape and level.
+
+## Try it
+
+<LiveExample
+  id="line"
+  caption="Monthly revenue by sales channel, from the calendar series example."
+/>
+
+## How it reads
+
+- With a date on the X axis, the chart summarizes rows into periods. Choose the interval, the week start, and the metric: a count, or a summary of a measure.
+- **Display** draws a line between period values, an area filled to zero, or stacked areas that add nonnegative counts or sums across series.
+- **Missing periods** either leave a gap, or draw an empty count or sum at zero. An average needs observations, so an empty period has no average to draw.
+- Each series can use the right axis, its own line style, and points.
+
+## Areas
+
+<LiveExample
+  id="line-area"
+  caption="Weekly order counts as filled areas, from the area charts example."
+/>
+
+## Saved settings
+
+<SettingsReference type="line" />

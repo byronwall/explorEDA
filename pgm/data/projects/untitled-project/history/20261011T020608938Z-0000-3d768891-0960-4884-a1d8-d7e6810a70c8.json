@@ -1,0 +1,14 @@
+{
+  "id": "3d768891-0960-4884-a1d8-d7e6810a70c8",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9e3fbf",
+    "label": "Agent token ...9e3fbf"
+  },
+  "createdAt": "2026-10-11T02:06:08.938Z",
+  "summary": "Updated metadata for \"The retirement line is hard to read\".",
+  "nodeIds": [
+    "page-the-retirement-line-is-hard-to-read"
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "id": "spatial",
+  "title": "Local Spatial Autocorrelation Interactive Tutorial",
+  "url": "https://observablehq.com/@michelleeesi/local-spatial-autocorrelation-interactive-tutorial",
+  "platform": "Observable",
+  "authors": "michelleeesi (Michelle Si)",
+  "pattern": "Neighbor definition → standardization → spatial lag → global/local inference",
+  "screenshots": [
+    {
+      "file": "spatial-01-weights.jpg",
+      "caption": "The narrative explains contiguity, a Queen/Rook control changes the neighbor definition, and an explicit connectivity calculation precedes the maps."
+    },
+    {
+      "file": "spatial-05-selected.jpg",
+      "caption": "Later linked investigation after selecting department 22, Côtes-du-Nord: the scatter, selected region and its neighbors connect the classification to its geographic context."
+    },
+    {
+      "file": "spatial-03-permutation-rerun.jpg",
+      "caption": "The explicit permutation rerun: explanation and the pseudo-p formula precede the Run control and reference-distribution result. This screenshot includes only the upper portion of the tall histogram."
+    }
+  ],
+  "story": "Using Guerry’s charitable-donation data, the walkthrough asks which apparent concentrations in nineteenth-century France are statistically supported. It develops a global Moran statistic, then asks where the clusters occur. The illustrated low-low pattern lies in the south/southeast; a low-high example shows how one large neighbor can pull a neighborhood average upward. This is a worked statistical investigation, although its teaching purpose is prominent.",
+  "prose_role": "The prose defines each prerequisite, explains formulas and null-reference distributions, interprets quadrants and local classifications, then guides a linked selection back to its neighboring observations.",
+  "data": {
+    "origin": "The GeoDa Center’s Guerry collection, based on André-Michel Guerry’s 1833 study and additional historical sources; an 85-department WGS84 GeoJSON is attached.",
+    "links": [
+      {
+        "label": "Exact attached Guerry GeoJSON",
+        "url": "https://observablehq.com/d/07adcce179451a46/file/602dde7c42338e81f502e2dc7d76e911439faf63cc6e6b83a67a4d82e46c154a1f729feeabe2e981b92e1286af2e7036e51f22aed9d1bf7bf3c8cc17dd4e19f9?name=guerry_wgs84.geojson"
+      },
+      {
+        "label": "Original dataset documentation",
+        "url": "https://geodacenter.github.io/data-and-lab/Guerry/"
+      },
+      {
+        "label": "Original downloadable Guerry ZIP",
+        "url": "https://geodacenter.github.io/data-and-lab/data/guerry.zip"
+      },
+      {
+        "label": "Original researcher’s codebook and CSV links",
+        "url": "https://datavis.ca/gallery/guerry/guerrydat.html"
+      },
+      {
+        "label": "Authored Local Moran methodology",
+        "url": "https://geodacenter.github.io/workbook/6a_local_auto/lab6a.html"
+      },
+      {
+        "label": "Authored global Moran methodology",
+        "url": "https://geodacenter.github.io/workbook/5a_global_auto/lab5a.html"
+      }
+    ],
+    "grain": "One of 85 historical French departments, with polygon geometry and 23 attributes. The collection spans 1815–1834; individual variables describe different periods rather than a common time series.",
+    "fields": "dept (stable identifier), Dprtmnt (name), geometry and Donatns (default variable). The tutorial calls Donatns charitable donations per capita; the original codebook specifies donations to the poor but does not resolve the monetary unit/denominator. Derived z scores and spatial lags are dimensionless.",
+    "calculations": [
+      "Choose Queen (shared vertex/border) or Rook (shared border) adjacency; row-standardize neighbor weights for weighted averages.",
+      "Visible standardize function uses ss.mean, ss.standardDeviation and ss.zScore; calculate spatial_lags with geoda.spatialLag(weights,std_vals).",
+      "Fit the spatial lag on standardized values; the source takes bestFit.slope as global Moran I. The observed default is approximately 0.353.",
+      "Generate permutation reference distributions and pseudo-p=(R+1)/(M+1). Local conditional permutations fix the selected location and shuffle other values. The live Local Moran call supplies weights, selected column, permutation count, lookup method and significance cutoff.",
+      "Local Moran values, pseudo-p values and quadrants feed class colors, counts, maps and selection details. Six natural-break classes provide the original-value map."
+    ],
+    "dependencies": "Geometry → weights/connectivity; chosen variable → z scores → neighbor lags → scatter/global I. Weights + variable + permutations + threshold → local statistics → class counts/maps. Department selection links detail statistics, scatter and geographic neighbors.",
+    "reproducibility": "Core methods and data are exposed, with substantive primary methodological documentation. No random-seed control was observed, so exact permutation outcomes should not be promised. Clicking Run changed the null-distribution mean from −0.013 to −0.010 while I remained 0.353 and pseudo-p 0.001.",
+    "caveats": "Two live standalone cells display SyntaxError (the initial distribution/histogram cell and a standalone LISA-map cell), while the main neighbor map, permutation histograms, Moran scatter and later linked views render. The final linked scatter labels its x-axis standardized but displays raw-scale ticks; use the earlier correct standardized scatter for the analytical reproduction. The source workbook discusses multiple-comparison limitations; local classes are exploratory and depend on threshold/permutations."
+  },
+  "sequence": [
+    "Define the hotspot question → load departmental data → choose and inspect neighbor weights.",
+    "Choose the donation field → standardize → compute neighbor lag → explain the Moran scatter and global statistic.",
+    "Construct a permutation reference → compare observed I with randomized results → ask where clustering occurs.",
+    "Compute local statistics and classes → inspect a cluster map/table → select a department and examine its neighbors → interpret the relationship."
+  ],
+  "elements": [
+    [
+      "Essential: explanatory text and formulas",
+      "Question; definitions; selected field",
+      "Explain weights, z scores, lag, global/local statistics and pseudo-p",
+      "Formula and interpretation blocks",
+      "None",
+      "Each prerequisite supports the next calculation"
+    ],
+    [
+      "Essential: source and neighbors",
+      "Department geometry/id",
+      "Queen or Rook adjacency; normalized neighbor weights",
+      "Inspectable neighbor relation; optional contiguity map",
+      "Weight-type selector",
+      "Feeds all spatial calculations"
+    ],
+    [
+      "Essential: standardized comparison",
+      "Donatns; mean/sd; neighbors",
+      "z=(x−mean)/sd; lag=weighted neighbor average; x=z; y=lag; zero rules; fitted slope",
+      "Moran scatter and I summary",
+      "Variable selector",
+      "Upstream field/weights affect multiple later blocks"
+    ],
+    [
+      "Essential: inference result",
+      "Observed statistic; permutation count",
+      "Generate reference statistics; histogram and observed-value rule; pseudo-p formula",
+      "Null distribution and significance summary",
+      "Permutation count; explicit Run",
+      "Randomized result should retain execution state"
+    ],
+    [
+      "Essential: local results",
+      "Weights, field, permutations, cutoff",
+      "Local Moran; conditional pseudo-p; quadrant plus significance classification",
+      "Department result table and class map/legend",
+      "Significance and permutation controls",
+      "Feeds counts, scatter colors and maps"
+    ],
+    [
+      "Optional: linked geographic explanation",
+      "Selected department and neighbors; local results",
+      "Highlight core and neighbors; show field, class, local statistic and p-value",
+      "Linked map/scatter and detail panel",
+      "Click/hover; department-ID selector",
+      "Observed selection of dept22 exposed its High-High classification and 3 neighbors"
+    ],
+    [
+      "Optional: natural-break comparison",
+      "Original donation values",
+      "Six-class map beside local classification map",
+      "Original intensity versus spatial class",
+      "Linked selection",
+      "Can be presented as separate full-column blocks"
+    ]
+  ],
+  "fit": {
+    "minimum": "Fix the Guerry field and Queen neighbors, retain the calculation chain and formulas, show the correct standardized scatter/I, a permutation histogram, and a local-results table plus one map. The bespoke linked two-map apparatus can be omitted. Precomputed statistics would reproduce a static story but would not test recalculation.",
+    "compatible": "Text, tables, calculated columns, controls, saved state and ordinary charts plausibly cover the presentation and inspection pieces. Spatial/statistical computation is a capability to investigate, not assumed.",
+    "investigate": "Neighbor relations or geometry support, grouped weighted calculations, global/local spatial statistics, randomized execution with repeatable state, explicit rerun controls, linked selection across blocks, and error propagation without obscuring functioning results.",
+    "roundtrip": "Axes and field mappings, thresholds, permutation count, binning, reference lines, class colors, map classification and selection keys should persist to text. A graphical change to a significance cutoff changes the derived classification, not merely its styling.",
+    "scope": "Weights and variable affect many downstream blocks; local significance/permutation settings affect local results and colors. A selected department changes the linked explanation and local simulator. The global Run refreshes its randomized reference result.",
+    "lesson": "This tests a deep dependency chain, the difference between changing a parameter and rerunning a stochastic calculation, and saving enough state to review a result. It also exposes the need to keep formulas, units, labels and dependent graphics synchronized."
+  },
+  "comparison": {
+    "data_availability": "Exact GeoJSON and original ZIP/codebook; live 85 records",
+    "calculation_transparency": "High-level formulas and source calls visible; library internals and random seed not fully resolved",
+    "interaction_complexity": "High; linked selection and stochastic controls; reducible",
+    "reproduction_effort": "High"
+  }
+}

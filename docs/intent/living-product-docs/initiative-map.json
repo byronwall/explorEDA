@@ -1,0 +1,604 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Living product documentation",
+    "slug": "living-product-docs",
+    "scale": "program",
+    "current_phase": "execution",
+    "last_updated": "2026-10-10",
+    "summary": "Document every chart type, major flow, and major surface with live examples from real components, generated screenshots and reference, and a build gate that fails on docs errors or gaps.",
+    "status": "active",
+    "next_action": "Merge the stack (#274, #280, #289, #292, #302, M6), then confirm the Pages deploy runs both gates and that /docs and three deep links load on the live site (M1 and M6 deploy proof)."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-10"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-10"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-10-10"
+    }
+  },
+  "sources": [
+    {
+      "id": "request",
+      "type": "direct-user-input",
+      "location": "2026-10-10 chat request",
+      "anchor": "All chart types, major flows, major UI/UX places; interactive over screenshots; auto-updating; docs errors and gaps fail the main site build; docs always correct; 2026-10-10 follow-up: yes to superseding chart-and-rendering-docs, docs-only kit, Playwright in deploy",
+      "authority": "direct intent"
+    },
+    {
+      "id": "prior-initiative",
+      "type": "repository-document",
+      "location": "../chart-and-rendering-docs/initiative-map.json",
+      "anchor": "M1 accepted (scatter, bar, rendering at ?view=docs); M2-M3 not started; excluded generated tables and a docs framework",
+      "authority": "prior intent, partly superseded by request"
+    },
+    {
+      "id": "research-prompt",
+      "type": "repository-document",
+      "location": "../../chatgpt-pro-documentation-system-research-prompt.md",
+      "anchor": "Docs-system research prompt; no saved recommendation",
+      "authority": "open research question"
+    },
+    {
+      "id": "registry",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/charts/registerAllCharts.ts",
+      "anchor": "20 registered chart definitions",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "coverage",
+      "type": "repository",
+      "location": "../../../apps/demo/src/demos/coverage.ts",
+      "anchor": "58 coverage features with families and statuses",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "chart-docs",
+      "type": "repository",
+      "location": "../../../apps/demo/src/ChartDocs.tsx",
+      "anchor": "~940-line hand-written TSX, three topics, two committed JPEGs",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "public-api",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/ExplorEda.tsx",
+      "anchor": "ExplorEda workspace with readOnly/sidePanels/toolbar slots; no single-chart embed",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "deploy",
+      "type": "repository",
+      "location": "../../../.github/workflows/deploy.yml",
+      "anchor": "Builds all packages, uploads apps/demo/dist; no tests; Node 20, pnpm 8",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "pro-research",
+      "type": "external-research",
+      "location": "../../research/documentation-system-recommendation.md",
+      "anchor": "Vite + build-time MDX preferred, Starlight fallback, on-demand iframe of example routes, deploy toolchain alignment; inspected 3cc4117 (pre-ChartDocs)",
+      "authority": "tooling evidence, not intent"
+    },
+    {
+      "id": "prior-revision",
+      "type": "repository-document",
+      "location": "../chart-and-rendering-docs/shape-brief.md",
+      "anchor": "2026-10-10 revision (commit 0a4dd34): MDX port of three guides as first proof, 20 types, toolchain milestone, coverage.ts example membership, /explorEDA/ subpath cut",
+      "authority": "prior plan, partly superseded"
+    },
+    {
+      "id": "example-session",
+      "type": "repository",
+      "location": "../../../apps/demo/src/LandingPage.tsx",
+      "anchor": "/examples/<id> reopens the session saved from that example; SavedViewsWorkspace writes STORAGE_KEY shared with /viewer",
+      "authority": "current implementation reality"
+    },
+    {
+      "id": "live-order-book",
+      "type": "repository",
+      "location": "../../../apps/demo/src/landing/LiveOrderBook.tsx",
+      "anchor": "Direct in-page ExplorEda mount with fixture, reset by remount, no persistence",
+      "authority": "current implementation reality"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "c1",
+        "type": "outcome",
+        "statement": "Document all chart types, major flows, and major UI/UX surfaces",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "program",
+        "source_anchors": [
+          "request"
+        ]
+      },
+      {
+        "id": "c2",
+        "type": "preference",
+        "statement": "Use interactive examples built from real components or component chunks wherever possible; screenshots only where interaction cannot show the point",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "program",
+        "source_anchors": [
+          "request"
+        ]
+      },
+      {
+        "id": "c3",
+        "type": "outcome",
+        "statement": "Docs update automatically from current code",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "program",
+        "source_anchors": [
+          "request"
+        ]
+      },
+      {
+        "id": "c4",
+        "type": "constraint",
+        "statement": "Docs errors and coverage gaps prevent the main site from building/deploying",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "request"
+        ]
+      },
+      {
+        "id": "c5",
+        "type": "outcome",
+        "statement": "Docs are always correct",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "program",
+        "source_anchors": [
+          "request"
+        ]
+      },
+      {
+        "id": "c6",
+        "type": "constraint",
+        "statement": "Keep existing demo URLs, saved layouts, and landing page working; no behavior changes made only for docs",
+        "commitment": "inferred",
+        "importance": "high",
+        "status": "active",
+        "time_horizon": "program",
+        "source_anchors": [
+          "prior-initiative"
+        ]
+      },
+      {
+        "id": "c7",
+        "type": "decision",
+        "statement": "Docs may mount pieces smaller than a workspace through an unpublished docs kit",
+        "commitment": "explicit",
+        "importance": "high",
+        "status": "active",
+        "time_horizon": "program",
+        "source_anchors": [
+          "request"
+        ]
+      },
+      {
+        "id": "c8",
+        "type": "decision",
+        "statement": "Playwright and Chromium run in the Pages deploy job for generated screenshots and step checks",
+        "commitment": "explicit",
+        "importance": "high",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "request"
+        ]
+      },
+      {
+        "id": "c9",
+        "type": "decision",
+        "statement": "Docs URLs move to /docs/<topic> as a clean break; no redirect or fallback for ?view=docs",
+        "commitment": "explicit",
+        "importance": "medium",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          "request"
+        ]
+      }
+    ],
+    "themes": [
+      "coverage from code",
+      "live over static",
+      "derive don't review",
+      "fail closed"
+    ],
+    "conflicts": [
+      {
+        "id": "x1",
+        "statement": "Prior initiative excluded generated reference tables and a docs framework; new request requires auto-updating content",
+        "resolution": "New request supersedes; generated reference is in scope, a separate docs framework is still not recommended",
+        "source_anchors": [
+          "prior-initiative",
+          "request"
+        ]
+      },
+      {
+        "id": "x2",
+        "statement": "Prior revision keeps hand-captured images with a capture manifest and cuts generated settings tables",
+        "resolution": "Superseded by auto-updating requirement: screenshots generated in the deploy job; settings and DSL reference generated",
+        "source_anchors": [
+          "prior-revision",
+          "request"
+        ]
+      },
+      {
+        "id": "x3",
+        "statement": "Research and prior revision embed live examples as iframes of /examples/<id>",
+        "resolution": "Rejected as default: that route restores and overwrites the reader's saved session and shows the full demo shell. Default is an in-page public ExplorEda mount (LiveOrderBook pattern); an embed-mode frame is the fallback",
+        "source_anchors": [
+          "pro-research",
+          "example-session",
+          "live-order-book"
+        ]
+      },
+      {
+        "id": "x4",
+        "statement": "Two active initiatives plan the same docs pages",
+        "resolution": "Resolved 2026-10-10: Byron approved superseding chart-and-rendering-docs; its toolchain and MDX-port milestones are M1-M2 here.",
+        "source_anchors": [
+          "prior-revision"
+        ]
+      }
+    ],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "Program-scale catalogue delivered page by page behind a gate; prove gate and one fully live page before scaling.",
+    "problem": "Hand-written docs cover 3 of 20 chart types and none of the flows or surfaces, and nothing detects drift.",
+    "recommended_shape": "MDX docs inside the demo (research recommendation; Starlight fallback on triggers). Coverage targets derived from the chart registry, demos/coverage.ts, and a typed flows/surfaces list; pages declare covered targets. LiveExample mounts public ExplorEda in-page with a fixture and focused layout and no session persistence; scripted steps double as tests. Screenshots generated by Playwright in the deploy job, including each live example's state as the narrow-screen fallback. Settings and DSL references generated. Two-stage gate: static check in the demo build, browser check in the deploy job before upload. Docs move to /docs/<topic> as a clean break; ?view=docs is removed with no redirect.",
+    "success_moves": [
+      {
+        "id": "s1",
+        "move": "Derive coverage targets from code (registry, coverage.ts) rather than a hand list",
+        "benefit": "New chart types and required features fail the build automatically"
+      },
+      {
+        "id": "s2",
+        "move": "Split gate into a fast static stage (no browser, runs in demo build and locally) and a browser stage (deploy job)",
+        "benefit": "Most drift is caught in seconds locally; browser cost only paid in CI"
+      },
+      {
+        "id": "s3",
+        "move": "Make scripted example steps double as tests",
+        "benefit": "One artifact both demonstrates and proves the claim; drift fails deploy"
+      },
+      {
+        "id": "s7",
+        "move": "Fix the deploy toolchain (Node 24, pnpm 11.9.0, frozen lockfile) before adding build plugins or gates",
+        "benefit": "Gate and MDX failures are attributable"
+      },
+      {
+        "id": "s8",
+        "move": "Mount live examples in-page with no persistence rather than framing /examples/<id>",
+        "benefit": "Readers' saved analyses are never touched; focused layouts; parent DOM is scriptable for step checks"
+      },
+      {
+        "id": "s9",
+        "move": "Use each live example's generated screenshot as its narrow-screen fallback",
+        "benefit": "One declaration yields the interactive and static views; nothing hand-captured"
+      }
+    ],
+    "first_proof": {
+      "question": "Can the shipped guides run on MDX behind a two-stage gate, with a live, scripted, screenshot-backed example, without touching reader sessions?",
+      "artifact": "After the toolchain fix, port scatter/bar/rendering to MDX; bar gets a live example with one scripted step, a generated narrow screenshot, a generated settings table; both gate stages run in deploy",
+      "observation": "Fake registration, renamed example, broken step, and deleted image each fail the right stage with a named message; pages read the same at 1280/783/390; saved sessions untouched",
+      "decision_rule": "Scale to catalogue; switch to embed-mode frame if in-page mounts leak; keep static stage blocking if the browser stage is flaky until fixed"
+    },
+    "rabbit_holes": [
+      "Line-by-line prose claim verification",
+      "Adopting a separate docs framework before MDX-in-Vite is tried",
+      "General property playground",
+      "Visual-diff screenshot approval workflows",
+      "Supporting a /explorEDA/ subpath base",
+      "Framing /examples/<id> without an embed mode"
+    ],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "active",
+    "repository_snapshot": {
+      "root": ".",
+      "revision": "0a4dd34",
+      "worktree_status": "clean",
+      "subsystems": [
+        "apps/demo/src/ChartDocs.tsx",
+        "apps/demo/src/demos/coverage.ts",
+        "apps/demo/src/demos/examples.ts",
+        "packages/explorEDA/src/charts/registerAllCharts.ts",
+        "packages/explorEDA/src/lib/dsl/settingKeys.ts",
+        "apps/demo/vite.config.ts",
+        ".github/workflows/deploy.yml",
+        "apps/demo/src/LandingPage.tsx",
+        "apps/demo/src/landing/LiveOrderBook.tsx",
+        "apps/demo/src/savedViewsSession.ts"
+      ],
+      "test_commands": [
+        "pnpm --filter demo exec vitest run src/docs",
+        "pnpm --filter demo test",
+        "pnpm --filter demo check-types",
+        "pnpm --filter demo build",
+        "pnpm --filter demo docs:verify",
+        "pnpm check"
+      ],
+      "deployment_surfaces": [
+        "GitHub Pages via deploy.yml uploading apps/demo/dist"
+      ]
+    },
+    "dependencies": [
+      {
+        "id": "d0",
+        "name": "Deploy toolchain (Node 24, pnpm 11.9.0)",
+        "first_proof_role": "real",
+        "seam": ".github/workflows/deploy.yml",
+        "proof_strategy": [
+          "local install/build on Node 24 with --frozen-lockfile",
+          "Pages run succeeds and existing URLs load"
+        ]
+      },
+      {
+        "id": "d1",
+        "name": "Playwright + Chromium in CI",
+        "first_proof_role": "real",
+        "seam": "docs:verify script run after demo build against vite preview",
+        "proof_strategy": [
+          "local run against vite preview",
+          "deploy job run before upload-pages-artifact"
+        ]
+      },
+      {
+        "id": "d2",
+        "name": "WebGL for 3D scatter examples in headless CI",
+        "first_proof_role": "absent",
+        "seam": "per-example capability flag",
+        "proof_strategy": [
+          "defer until the 3D page; fall back to screenshot captured with GPU flags if headless WebGL fails"
+        ]
+      },
+      {
+        "id": "d3",
+        "name": "@mdx-js/rollup in the demo Vite build",
+        "first_proof_role": "real",
+        "seam": "apps/demo/vite.config.ts plugin order (MDX before React)",
+        "proof_strategy": [
+          "port three guides",
+          "Starlight fallback on triggers"
+        ]
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter demo exec vitest run src/docs",
+      "description": "Static gate in seconds; pnpm --filter demo dev for pages; pnpm --filter demo build && pnpm --filter demo docs:verify for the browser gate against vite preview",
+      "failure_injection": [
+        "register a fake chart type",
+        "rename an example id",
+        "delete an imported image",
+        "break a scripted step's expected count",
+        "rename a step selector"
+      ],
+      "shared_infrastructure_required": false,
+      "network_required": false
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Deploys build on the pinned toolchain",
+        "status": "active",
+        "proof": "Pages run on Node 24/pnpm 11.9.0 with frozen lockfile; demo tests gate upload; existing URLs load",
+        "end_state": "Attributable deploy failures",
+        "outcome": "The live site deploys on the toolchain developers use, and demo tests gate the upload",
+        "valid_intermediate_state": "Demo and docs unchanged; only CI differs",
+        "rollback": "Revert deploy.yml",
+        "evidence": [
+          "Local Node 24.21.0 + pnpm 11.9.0: install --frozen-lockfile, recursive build, and demo tests (12 files, 94 tests) pass",
+          "Not yet observed: Pages run on main and live URL checks"
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Shipped guides run on MDX behind the static gate",
+        "status": "completed",
+        "proof": "Three guides at /docs/<topic>, ?view=docs removed; gate.test.ts in demo build fails on uncovered target, bad example id, missing image",
+        "end_state": "New chart type without a page fails the build (via shrinking pendingTargets)",
+        "outcome": "The three guides read from MDX at /docs/<topic>, and the demo build fails on docs gaps",
+        "valid_intermediate_state": "Examples and viewer untouched; ?view=docs gone; other targets pending",
+        "rollback": "Revert to ChartDocs.tsx; remove MDX plugin and build-script test step",
+        "evidence": [
+          "Three guides served from apps/demo/src/docs/pages/*.mdx at /docs/<topic>; ?view=docs removed; ChartDocs.tsx deleted",
+          "Page content is 108 MDX lines (was ~940 TSX lines for three pages)",
+          "gate.test.ts proves: unregistered chart type, renamed example, example not showing the page's chart, broken DocsLink/markdown link/image import, orphan MDX, pending list growth each fail",
+          "demo build runs vitest run src/docs first; deleting an imported image exits 1",
+          "Browser (vite preview + dev): direct load, hash fragment, contents nav, no overflow at 1280/783/390",
+          "Tests: 29 passed (docs + LandingPage); check-types and check:ui pass"
+        ]
+      },
+      {
+        "id": "m3",
+        "title": "One page fully live and verified in deploy",
+        "status": "completed",
+        "proof": "Bar LiveExample with brush step, generated narrow screenshot, generated settings/DSL reference, docs-verify.mjs in deploy job; localStorage untouched",
+        "end_state": "Stale claims and screenshots stop the deploy",
+        "outcome": "Bar page has a live, scripted, screenshot-backed example and generated reference, verified in deploy",
+        "valid_intermediate_state": "Other pages static; browser gate covers only declared examples",
+        "rollback": "DOCS_VERIFY=warn in the deploy job; revert LiveExample and the deploy step",
+        "evidence": [
+          "LiveExample mounts public ExplorEda in-page with a focused layout from shopDashboard; no onStateChange persistence; library has no localStorage use",
+          "Scripted steps on /docs/bar: brush Delivery Days 2-4 snaps to 1.5-4.5 and leaves 265 of 500 rows; 265 confirmed independently from the CSV",
+          "Steps render as visible 'Try this' text from the same data the check runs",
+          "SettingsReference for bar and scatter from an unpublished docs-kit entry (CHART_SETTING_KEYS + createDefaultSettings); gate fails on undescribed or stale settings and on chart pages without a reference",
+          "docs-verify.mjs (Playwright + vite preview): 3 pages, 1 live example pass; wrong expected count and wrong chip each fail with page/example/step named; writes dist/docs-shots/example-*.png; checks overflow and screenshot load at 783/390",
+          "deploy.yml installs Chromium and runs docs:verify before upload",
+          "Gate tests 15 pass; full demo suite passes except load-bound timeouts (load average 39) that pass when run alone"
+        ]
+      },
+      {
+        "id": "m4",
+        "title": "Pieces smaller than a workspace",
+        "status": "completed",
+        "proof": "Unpublished docsKit mounts the settings popover with a step; no duplicate store; package API unchanged",
+        "end_state": "Surface pages can show real components in focus",
+        "outcome": "Settings popover documented with the real component in focus",
+        "valid_intermediate_state": "Package API unchanged; kit unpublished",
+        "rollback": "Remove docsKit alias and page; surface pages fall back to focused whole workspaces",
+        "evidence": [
+          "docs-kit ChartSettingsSurface: one chart (ChartRenderer) beside the real ChartSettingsContent in one DataLayerProvider",
+          "/docs/chart-settings live example: select Data mode = Category count, expect mark '(missing): 9 records' (500 rows, 491 with a delivery time)",
+          "The check caught a wrong first guess ('(missing)' text is truncated in narrow plots), leading to the accessible-name step expectMark",
+          "Spike resolved: built demo bundle has each library string exactly as often as library source (no duplicate DataLayerProvider/registry); docs-kit shares tsup chunks with the main entry",
+          "docs:verify passes: 4 pages, 2 live examples"
+        ]
+      },
+      {
+        "id": "m5",
+        "title": "Every chart type documented",
+        "status": "completed",
+        "proof": "Remaining 18 types removed from pendingTargets; WebGL check for 3D",
+        "end_state": "No chart type pending",
+        "outcome": "Every chart type has a gated page",
+        "valid_intermediate_state": "Flows and surfaces still pending",
+        "rollback": "Revert individual pages; their types return to pendingTargets",
+        "evidence": [
+          "18 new chart pages; every registered type has a page, live example, and generated settings reference; pendingTargets 72 -> 53",
+          "Live example layouts reuse existing dashboard charts via focus(); 3D scatter renders in headless Chromium",
+          "Verified interactions with fixture-derived counts: row Home 168, heatmap Home/East 42 ($10,307.62), sankey Web->Home 84, pivot Rating 1 = 1,967, scatter Online 6, metric revenue $184,249.66",
+          "Descriptions for every saved setting of every type; shared lines worded to hold for any chart; unused base fields marked 'Not read by this chart type'",
+          "Hand-captured JPEGs removed; index thumbnails and narrow fallbacks are generated screenshots; check verifies thumbnails load",
+          "Message-log composition given real content (was an empty artboard) so its example and docs match",
+          "docs:verify: 22 pages, 21 live examples pass"
+        ]
+      },
+      {
+        "id": "m6",
+        "title": "Flows, surfaces, developer guide; gate strict",
+        "status": "completed",
+        "proof": "All flows/surfaces covered; pendingTargets deleted; pnpm check and both gates pass; deployed smoke",
+        "end_state": "Wrong or missing docs cannot deploy",
+        "outcome": "Every target documented; gate strict",
+        "valid_intermediate_state": "Full catalogue",
+        "rollback": "Restore pendingTargets for a reverted page",
+        "evidence": [
+          "37 pages cover all 76 targets; pending.ts deleted, so any new chart type, required feature, flow, or surface without a page fails the demo build",
+          "Flows and surfaces verified by steps where possible: workspace tour (click Home -> Category chip, 168 rows; Rows shows 'Showing 168 of 500 rows'; Fields shows '15 fields'), field list add Row chart of Region -> 'North: 125 rows', saved Lorenz brush opens with Time chip and 164 rows, Calculations shows 'Net sales'",
+          "Generated: Dashboard text reference from DSL_REFERENCE, the order-book example's own text, ExplorEdaProps table typed Record<keyof ExplorEdaProps,string>, the package README imported as MDX",
+          "Every page renders in a smoke test; chart pages' quoted Dashboard text paths must be real setting keys",
+          "Verification caught and fixed wrong claims: 'xAxis.scaleType=log' (axes only render linear/symlog), 'Mark trace is available for scatter and bar charts' (15 types support trace), field 'Add a chart' opens a type menu, data-table columns are not resizable, pivot-only missing-field alert, box plots no longer show legends",
+          "pnpm check passes (library 823 tests, demo 144 tests, gate 52); docs:verify passes 37 pages, 34 live examples",
+          "Not yet observed: Pages deploy of the stack and live-site smoke"
+        ]
+      }
+    ],
+    "cut_line": [
+      "site search",
+      "prose claim verification",
+      "versioned docs",
+      "separate docs framework unless Starlight triggers",
+      "/explorEDA/ subpath base",
+      "AGENTS.md/ui-defaults tooltip reconciliation"
+    ],
+    "open_decisions": [
+      "Live examples: the workspace's Rows and side panels are fixed to the viewport, so they cover the docs page while open. Containing them in the frame (CSS containment) misplaced anchored menus by the page scroll offset, which the docs check caught, so containment was reverted. A library option to scope drawers to the workspace would fix both."
+    ],
+    "test_commands": [
+      "pnpm --filter demo exec vitest run src/docs",
+      "pnpm --filter demo test",
+      "pnpm --filter demo check-types",
+      "pnpm --filter demo build",
+      "pnpm --filter demo docs:verify",
+      "pnpm check"
+    ]
+  },
+  "history": [
+    {
+      "date": "2026-10-10",
+      "event": "created",
+      "note": "Intent and draft shape from chat request; prior chart-and-rendering-docs initiative and unanswered docs-system research prompt reviewed."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "final-review",
+      "note": "Integrated ChatGPT Pro docs-system research and the chart-and-rendering-docs 2026-10-10 revision (patch commit 0a4dd34). Adopted MDX-in-demo, Starlight triggers, toolchain-first, three-guide port as proof, coverage.ts example membership, /explorEDA/ cut. Rejected iframe of /examples/<id> as default embed (restores and overwrites reader sessions). Replaced capture manifest with generated screenshots; generated reference stays in scope. Proposed closing chart-and-rendering-docs as superseded."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "decisions-and-plan",
+      "note": "Byron approved all three questions: supersede chart-and-rendering-docs, unpublished docs kit, Playwright in deploy. Implementation plan written (M1-M6) with a shrink-only pendingTargets allowlist as the transition to a strict gate."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "status-changed",
+      "status": "active",
+      "previous_status": "planned",
+      "note": "Byron approved commit and start; clean break for docs URLs (no ?view=docs redirect). M1 started."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "milestone-completed",
+      "milestone": "m2",
+      "note": "MDX docs at /docs/<topic> behind the static gate."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "milestone-completed",
+      "milestone": "m3",
+      "note": "Live example, steps, generated reference, and browser gate on /docs/bar."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "milestone-completed",
+      "milestone": "m4",
+      "note": "Docs kit settings surface; single library copy confirmed."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "milestone-completed",
+      "milestone": "m5",
+      "note": "Every chart type documented and gated."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "milestone-completed",
+      "milestone": "m6",
+      "note": "All targets documented; gate strict. Deploy proof pending merge."
+    }
+  ],
+  "closure": null
+}

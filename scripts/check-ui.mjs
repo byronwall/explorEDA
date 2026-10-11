@@ -56,10 +56,21 @@ for (const path of [
       "Use semantic border tokens, including status borders."
     );
 }
+// Raw values are parsed only in valueParsing.ts; V8's Date.parse reads text
+// such as "Depot 2" as a date.
+for (const path of files("packages/explorEDA/src")) {
+  if (!/\.tsx?$/.test(path) || /\.test\.tsx?$/.test(path)) continue;
+  if (path.endsWith("lib/valueParsing.ts")) continue;
+  const text = readFileSync(path, "utf8");
+  for (const match of text.matchAll(/\bDate\.parse\(/g))
+    failures.push(
+      `${path}:${text.slice(0, match.index).split("\n").length}: Parse dates with parseDateText or timestampOf from @/lib/valueParsing, not Date.parse.`
+    );
+}
 if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else
   console.log(
-    "UI conventions pass: semantic borders and no native title tooltips."
+    "UI conventions pass: semantic borders, no native title tooltips, and no Date.parse outside valueParsing."
   );

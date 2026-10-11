@@ -1,4 +1,5 @@
 import type { AxisSettings, ChartSettings } from "@/types/ChartTypes";
+import type { AxisHiddenEnds } from "./axisPlan";
 
 const finite = (value: unknown): value is number =>
   typeof value === "number" && Number.isFinite(value);
@@ -36,6 +37,131 @@ export function boundedDomain(
   const high =
     max ?? (min !== undefined && min >= auto[1] ? min + span : auto[1]);
   return [low, high];
+}
+
+/**
+ * How many drawn values fall past each end of a bounded axis. Only a set
+ * bound hides anything, so an axis without limits reports nothing. The
+ * values are what the chart draws, such as one per row or per bar.
+ */
+export function hiddenByBounds(
+  axis: AxisSettings | undefined,
+  domain: [number, number],
+  values: Iterable<number>,
+  unit: [string, string] = ["row", "rows"],
+  /** The marks run past the end and are cut off there, as bars and lines are. */
+  cut = false
+): AxisHiddenEnds | undefined {
+  if (!hasAxisBounds(axis) || boundsInverted(axis)) return undefined;
+  const low = Math.min(domain[0], domain[1]);
+  const high = Math.max(domain[0], domain[1]);
+  let below = 0;
+  let above = 0;
+  for (const value of values) {
+    if (value < low) below++;
+    else if (value > high) above++;
+  }
+  if (!below && !above) return undefined;
+  const end = (count: number, at: number) =>
+    count
+      ? { count, unit, reason: "bound" as const, at, ...(cut && { cut }) }
+      : undefined;
+  return { low: end(below, low), high: end(above, high) };
+}
+
+/** Writes each hidden end as its axis does, such as "$1,000.00". */
+export function labelHidden(
+  ends: AxisHiddenEnds | undefined,
+  label: (value: number) => string
+) {
+  for (const end of [ends?.low, ends?.high])
+    if (end) end.atLabel = label(end.at);
+  return ends;
+}
+
+/**
+ * The domain a log axis draws: values above zero, padded by a share of their
+ * span in log space, under any bounds above zero. Without a positive value
+ * it shows one decade.
+ */
+export function logDomain(
+  values: Iterable<number>,
+  axis?: AxisSettings,
+  pad = 0.1
+): [number, number] {
+  let min = Infinity;
+  let max = -Infinity;
+  for (const value of values) {
+    if (!(value > 0) || !Number.isFinite(value)) continue;
+    if (value < min) min = value;
+    if (value > max) max = value;
+  }
+  const auto: [number, number] =
+    min === Infinity
+      ? [1, 10]
+      : (() => {
+          const span = Math.log10(max) - Math.log10(min);
+          const step = span ? span * pad : 0.5;
+          return [
+            10 ** (Math.log10(min) - step),
+            10 ** (Math.log10(max) + step),
+          ];
+        })();
+  const limits = axis?.limits;
+  const above = (value?: number) =>
+    value !== undefined && value > 0 ? value : undefined;
+  const domain = boundedDomain(
+    auto,
+    limits
+      ? { ...axis, limits: { min: above(limits.min), max: above(limits.max) } }
+      : axis
+  );
+  // A bound below the data can push the far end past zero; keep a decade.
+  if (domain[0] <= 0) domain[0] = domain[1] / 10;
+  return domain;
+}
+
+/** Adds a log axis's count of values at or below zero to its hidden ends. */
+export function withNonpositive(
+  ends: AxisHiddenEnds | undefined,
+  count: number,
+  unit: [string, string] = ["row", "rows"]
+): AxisHiddenEnds | undefined {
+  return count ? { ...ends, nonpositive: { count, unit } } : ends;
+}
+
+/** How many values a log axis cannot place, because they are zero or negative. */
+export function countNonpositive(values: Iterable<number>) {
+  let count = 0;
+  for (const value of values) if (value <= 0) count++;
+  return count;
+}
+
+/**
+ * Which of a chart's axes can use a true log scale: numeric axes where
+ * distances, not bar lengths from zero, carry the values.
+ */
+export function logAxes(
+  settings: ChartSettings,
+  isNumericField: (field: string) => boolean
+): { x: boolean; y: boolean } {
+  const numeric = numericAxes(settings, isNumericField);
+  switch (settings.type) {
+    case "scatter":
+      return numeric;
+    // Lines, not filled areas, whose heights must stay proportional.
+    case "line":
+      return {
+        x: false,
+        y:
+          numeric.y &&
+          !["area", "stacked-area"].includes(settings.time?.display ?? ""),
+      };
+    case "boxplot":
+      return { x: false, y: numeric.y };
+    default:
+      return { x: false, y: false };
+  }
 }
 
 /**

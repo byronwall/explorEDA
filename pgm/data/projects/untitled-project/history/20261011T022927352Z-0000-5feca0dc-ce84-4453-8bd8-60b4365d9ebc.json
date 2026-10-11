@@ -1,0 +1,14 @@
+{
+  "id": "5feca0dc-ce84-4453-8bd8-60b4365d9ebc",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:2d4bcb",
+    "label": "Agent token ...2d4bcb"
+  },
+  "createdAt": "2026-10-11T02:29:27.352Z",
+  "summary": "Updated metadata for \"Where are the color scales?\".",
+  "nodeIds": [
+    "page-where-are-the-color-scales"
+  ]
+}

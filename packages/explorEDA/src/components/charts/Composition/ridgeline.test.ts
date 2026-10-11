@@ -131,11 +131,26 @@ describe("density marks", () => {
     const instances = resolved.elements[0]!.instances!;
     expect(instances.map((item) => item.key)).toEqual(["January", "July"]);
     expect(instances[1]!.layoutOrigin.y).toBe(60 - 20);
-    // The lower ridge draws first, so the upper one sits in front.
+    // The upper ridge draws first, so the lower one sits in front of it.
     const drawnOrder = resolved.nodes
       .filter((node): node is AreaNode => node.type === "area")
       .map((node) => node.instanceKey);
-    expect(drawnOrder).toEqual(["July", "January"]);
+    expect(drawnOrder).toEqual(["January", "July"]);
+    // Names sit on each ridge's baseline and draw over every ridge.
+    const lastArea = resolved.nodes.reduce(
+      (last, node, index) => (node.type === "area" ? index : last),
+      -1
+    );
+    const names = resolved.nodes.flatMap((node, index) =>
+      node.type === "text" && node.key.endsWith(":label")
+        ? [{ node, index }]
+        : []
+    );
+    expect(names.every(({ index }) => index > lastArea)).toBe(true);
+    const january = names.find(({ node }) => node.instanceKey === "January")!;
+    expect(january.node.type === "text" && january.node.lines[0]!.y).toBe(
+      instances[0]!.frame.y + instances[0]!.frame.height - 3
+    );
     // No y ticks for a density, only the shared temperature axis under the last row.
     const yTicks = resolved.nodes.filter(
       (node) => node.type === "text" && node.key.includes(":axis:y:")
@@ -145,6 +160,28 @@ describe("density marks", () => {
       (node) => node.type === "text" && node.key.includes(":axis:x:")
     );
     expect(xTicks.length).toBeGreaterThan(0);
+  });
+
+  it("shades the fill along x through a value scale", () => {
+    const definition = ridges({ colorScaleId: "value-1" });
+    definition.scales.push({
+      id: "value-1",
+      kind: "value",
+      name: "Warmth",
+      domain: "shared",
+      transform: "linear",
+      colors: ["#0000ff", "#ff0000"],
+    });
+    expect(isCompositionDefinition(definition)).toBe(true);
+    const [january] = areas(definition);
+    const frame = resolveComposition(definition, estimateTextWidth, data())
+      .elements[0]!.instances![0]!.frame;
+    expect(january!.gradient!.x1).toBe(frame.x);
+    expect(january!.gradient!.x2).toBe(frame.x + frame.width);
+    const stops = january!.gradient!.stops;
+    expect(stops[0]!.color).not.toBe(stops[stops.length - 1]!.color);
+    // Without a scale the plain fill stays.
+    expect(areas(ridges())[0]!.gradient).toBeUndefined();
   });
 
   it("takes an explicit bandwidth and recomputes from filtered rows", () => {
