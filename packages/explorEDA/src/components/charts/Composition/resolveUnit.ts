@@ -2074,9 +2074,8 @@ function stackNodes(
         ],
         fontSize: 10,
         fontWeight: 600,
-        fill: INK,
+        ...inkOn(fill),
         anchor: "start",
-        halo: "#ffffff",
       });
     lower = upper;
   }
@@ -2854,7 +2853,7 @@ function stackAreaNodes(
         lines: [{ text: category.key, y: best.y + 3.5 }],
         fontSize: 10,
         fontWeight: 600,
-        fill: INK,
+        ...inkOn(fill),
         // Labels near an edge hang inward so they stay inside the frame.
         anchor:
           best.x > frame.x + frame.width * 0.8
@@ -2862,7 +2861,6 @@ function stackAreaNodes(
             : best.x < frame.x + frame.width * 0.2
               ? "start"
               : "middle",
-        halo: "#ffffff",
       });
   }
   // Labels that hang from the same edge spread apart so none overlap.
@@ -3708,6 +3706,34 @@ function numericAxisNodes(
     });
   }
   return nodes;
+}
+
+/** The relative luminance of a hex color, from 0 for black to 1 for white. */
+function luminance(color: string): number | undefined {
+  const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(color.trim())?.[1];
+  if (!hex) return undefined;
+  const full =
+    hex.length === 3 ? [...hex].map((digit) => digit + digit).join("") : hex;
+  const [r, g, b] = [0, 2, 4].map((at) => {
+    const channel = parseInt(full.slice(at, at + 2), 16) / 255;
+    return channel <= 0.03928
+      ? channel / 12.92
+      : ((channel + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
+}
+
+/**
+ * Text color for a label drawn on a fill: dark ink or white, whichever
+ * contrasts more. A fill that is not a hex color keeps ink on a white halo.
+ */
+export function inkOn(fill: string): { fill: string; halo?: string } {
+  const light = luminance(fill);
+  if (light === undefined) return { fill: INK, halo: "#ffffff" };
+  const ink = luminance(INK)!;
+  const onInk = (light + 0.05) / (ink + 0.05);
+  const onWhite = 1.05 / (light + 0.05);
+  return { fill: onInk >= onWhite ? INK : "#ffffff" };
 }
 
 /** Maps a value to 0–1 along a value scale with this maximum. */

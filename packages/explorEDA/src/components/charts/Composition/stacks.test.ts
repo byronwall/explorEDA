@@ -11,7 +11,7 @@ import {
 } from "./compositionTypes";
 import { estimateTextWidth } from "./measureText";
 import { resolveComposition, type RectNode } from "./resolveComposition";
-import type { CompositionData } from "./resolveUnit";
+import { inkOn, type CompositionData } from "./resolveUnit";
 import { isCompositionDefinition } from "./validateComposition";
 
 // Two sources. Deaths: cancer 3, heart 2 (so 60% and 40%). Press: heart 1,
@@ -194,5 +194,15 @@ describe("stack marks", () => {
     });
     expect(mark.colors).toBe(STACK_COLORS);
     expect(isCompositionDefinition(converted)).toBe(true);
+  });
+});
+
+describe("label ink", () => {
+  it("writes dark ink on light fills and white on dark ones, without a halo", () => {
+    expect(inkOn("#edc948")).toEqual({ fill: "#1f2328" });
+    expect(inkOn("#4e79a7")).toEqual({ fill: "#ffffff" });
+    expect(inkOn("#fff")).toEqual({ fill: "#1f2328" });
+    // A named color keeps ink on a white halo.
+    expect(inkOn("teal")).toEqual({ fill: "#1f2328", halo: "#ffffff" });
   });
 });
