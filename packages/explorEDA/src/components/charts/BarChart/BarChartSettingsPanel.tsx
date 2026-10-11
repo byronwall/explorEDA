@@ -1,4 +1,3 @@
-import { finiteNumber } from "@/lib/valueParsing";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -9,20 +8,9 @@ import { BarChartSettings } from "./definition";
 import { ONCE_PER_HELP, type AggregateAggregation } from "@/lib/aggregates";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { getAggregateName, useMeasureFields } from "../aggregateFields";
 import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
-
-function getAggregateName(
-  aggregation: AggregateAggregation,
-  groupField: string,
-  measureField?: string,
-  entityField?: string
-) {
-  if (aggregation === "count") {
-    return `Count${entityField ? ` distinct ${entityField}` : ""} by ${groupField}`;
-  }
-  return `${aggregation === "sum" ? "Sum" : "Average"} of ${measureField ?? ""}${entityField ? ` once per ${entityField}` : ""} by ${groupField}`;
-}
 
 export function BarChartSettingsPanel({
   settings,
@@ -34,37 +22,9 @@ export function BarChartSettingsPanel({
   );
   const addAggregate = useDataLayer((state) => state.addAggregate);
   const updateAggregate = useDataLayer((state) => state.updateAggregate);
-  const getColumnNames = useDataLayer((state) => state.getColumnNames);
-  const getColumnData = useDataLayer((state) => state.getColumnData);
-  const calculations = useDataLayer((state) => state.calculations);
-  const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
-  const fieldNames = useMemo(() => {
-    void calculations;
-    return getColumnNames();
-  }, [getColumnNames, calculations]);
-  const measureFields = useMemo(() => {
-    const numeric = fieldNames.filter((field) =>
-      fieldProfiles.some(
-        (profile) => profile.name === field && profile.dataType === "numeric"
-      )
-    );
-    calculations.forEach((calculation) => {
-      const values = Object.values(getColumnData(calculation.resultColumnName));
-      if (values.some((value) => finiteNumber(value) !== undefined)) {
-        numeric.push(calculation.resultColumnName);
-      }
-    });
-    if (aggregate?.measureField && !numeric.includes(aggregate.measureField)) {
-      numeric.unshift(aggregate.measureField);
-    }
-    return numeric;
-  }, [
-    aggregate?.measureField,
-    calculations,
-    fieldNames,
-    fieldProfiles,
-    getColumnData,
-  ]);
+  const { fieldNames, measureFields } = useMeasureFields(
+    aggregate?.measureField
+  );
   const [error, setError] = useState<string>();
   const stacked = Boolean(
     settings.seriesField &&

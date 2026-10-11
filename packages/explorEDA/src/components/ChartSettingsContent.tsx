@@ -26,7 +26,7 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
   const resetValues = useRef<Partial<ChartSettings>>({});
   const updateChart = useDataLayer((s) => s.updateChart);
   const aggregate = useDataLayer((state) =>
-    settings.type === "bar" && settings.aggregateId
+    (settings.type === "bar" || settings.type === "row") && settings.aggregateId
       ? state.getAggregate(settings.aggregateId)
       : undefined
   );

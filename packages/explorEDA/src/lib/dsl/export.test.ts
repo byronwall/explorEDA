@@ -291,3 +291,37 @@ metric sum=Revenue entityField=Channel`,
     });
   });
 });
+
+describe("row rankings in dashboard text", () => {
+  it("round-trips a ranked summary with Top N", () => {
+    const { settings, diagnostics } = compileDocument(
+      `group @byChannel groupField=Channel aggregation=sum measureField=Revenue
+row Channel aggregateId=byChannel topN=2`,
+      { rows }
+    );
+    expect(diagnostics).toEqual([]);
+    expect(settings.charts[0]).toMatchObject({
+      type: "row",
+      aggregateId: "byChannel",
+      topN: 2,
+    });
+    const { text, rebuilt } = roundTrip(settings);
+    expect(text).toContain("aggregateId=byChannel");
+    expect(text).toContain("topN=2");
+    expect(rebuilt.settings.charts[0]).toMatchObject({
+      aggregateId: "byChannel",
+      topN: 2,
+    });
+  });
+
+  it("warns when the summary groups a different field", () => {
+    const { diagnostics } = compileDocument(
+      `group @byChannel groupField=Channel aggregation=sum measureField=Revenue
+row Units aggregateId=byChannel`,
+      { rows }
+    );
+    expect(diagnostics.map((item) => item.suggestion)).toEqual([
+      "Write it as row Channel aggregateId=byChannel.",
+    ]);
+  });
+});

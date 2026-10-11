@@ -8,7 +8,7 @@
     "last_updated": "2026-10-10",
     "summary": "The row chart should rank categories by a named grouped summary (count, sum, or average) with the same numbers as vertical bars, a held order, explicit Top N, and signed values.",
     "status": "active",
-    "next_action": "Milestone 4: settings panel Measure and Top N controls, dashboard-text warning, demo and docs."
+    "next_action": "Review and merge the stack: #284, #288, #293, #297 (in order)."
   },
   "artifacts": {
     "intent_brief": {
@@ -556,11 +556,18 @@
           "minor changeset; pnpm check; browser at three widths"
         ],
         "proof": "User creates the ranking from settings; text round-trips; demo tests and pnpm check pass; PR screenshots.",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Users create a ranking from settings or text, and it ships with a minor changeset.",
         "valid_intermediate_state": "Complete feature; demo tests and pnpm check pass.",
         "rollback": "Revert the settings-panel commit; text-authored rankings keep working.",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "evidence": [
+          "PR https://github.com/byronwall/explorEDA/pull/297",
+          "RowChartSettingsPanel.test: creates Sum of Revenue by Region, switches to Average, sets and clears Top N",
+          "export.test: row aggregateId/topN round-trip and group-field mismatch warning",
+          "Demo: shop Sales mix 'Which products bring in the revenue?' Top 4; Other $29.2K = 16,286 + 12,951; Top 2 Other $70.2K; Average $966.64 = 80,231 / 83; Reset restores Top N and summary",
+          "Browser at 1440, 1024, and 375 px"
+        ]
       }
     ],
     "cut_line": [
@@ -656,6 +663,11 @@
       "date": "2026-10-10",
       "action": "Built Milestone 3.",
       "evidence": "PR #293; targeted tests and browser trace check."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Built Milestone 4; all milestones complete pending review and merge.",
+      "evidence": "PR #297; targeted library and demo tests; browser checks."
     }
   ],
   "closure": null,

@@ -31,6 +31,8 @@ scale @channels field=Channel
 ${CHANNELS}
 group @revenue-by-region name="Revenue by region"
 + groupField=Region measureField=Revenue aggregation=sum
+group @revenue-by-product name="Revenue by product"
++ groupField=Product measureField=Revenue aggregation=sum
 
 view "Order book"
 metric count @shop-count at=0,0,4,2 title="Matching orders"
@@ -71,9 +73,11 @@ chart line @mix-layers at=0,6,8,5 xField="Order Date" color=Channel
 + xAxisLabel="Order month" yAxisLabel="Revenue ($)"
 row Category @mix-category at=8,6,4,5 color=Category title="Filter by category"
 + xAxisLabel=Orders minRowHeight=22 maxRowHeight=36
-chart pivot @mix-pivot at=0,11,12,5 title="Revenue by region and channel"
+chart pivot @mix-pivot at=0,11,8,5 title="Revenue by region and channel"
 + rowFields[]=Region columnField=Channel valueFields[]=
 + valueFields.0.field=Revenue valueFields.0.aggregation=sum valueFields.0.label=Revenue
+row Product @mix-products at=8,11,4,5 aggregateId=revenue-by-product topN=4
++ title="Which products bring in the revenue?" xAxisLabel="Revenue ($)"
 
 view "Calendar"
 chart calendar field="Order Date" @cal-daily at=0,0,12,4
