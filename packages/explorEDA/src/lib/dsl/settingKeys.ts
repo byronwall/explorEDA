@@ -55,6 +55,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "style",
     "subtitle",
     "title",
+    "topN",
     "xAxis",
     "xAxisLabel",
     "xGridLines",

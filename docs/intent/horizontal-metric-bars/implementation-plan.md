@@ -119,8 +119,8 @@ This makes each value inspectable to the same standard as vertical bars.
 
 ## Open decisions and spikes
 
-- **Average context** (M2 spike). Decision: faint bar or tick. Fallback: a tick for averages.
-- **Top N below the height floor.** Decision: how small rows may get before labels thin out. Evidence: Beijing at `topN=12` in a short chart. Fallback: keep membership, shrink rows to a fixed floor, and note "Rows compressed to show Top N" in the status line.
+- **Average context** — decided in M2. Averages mark their all-row value with a tick, because a faint bar hides behind any filtered value above it (Beijing in Winter: Wanshouxigong 12.2 against 4.8). Counts and sums keep the faint bar, and switch to a tick only when it would be hidden.
+- **Top N below the height floor** — decided in M2. Rows compress to 12px. A chart too short for that shows as many top categories as fit and says "Top N needs a taller chart" in the status line. Membership never changes at any size where Top N fits.
 
 ## Below the cut line
 

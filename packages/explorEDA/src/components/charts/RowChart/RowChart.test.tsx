@@ -167,3 +167,123 @@ it("ranks a grouped summary and holds its order while other charts filter", () =
   expect(saved.charts[0].aggregateId).toBe("revenue-by-region");
   expect(validateSavedData(saved)).toBe(true);
 });
+
+it("labels an average with no filtered rows instead of drawing zero", () => {
+  const ranking = {
+    ...rowChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "Region"
+    ),
+    id: "ranking",
+    aggregateId: "revenue-by-region",
+  };
+  const channel = {
+    ...rowChartDefinition.createDefaultSettings(
+      { x: 6, y: 0, w: 6, h: 4 },
+      "Channel"
+    ),
+    id: "channel",
+  };
+  function Ranking() {
+    const chart = useDataLayer((state) => state.charts[0]);
+    const updateChart = useDataLayer((state) => state.updateChart);
+    const save = useDataLayer((state) => state.saveToStructure);
+    return (
+      <>
+        <button
+          onClick={() =>
+            updateChart("channel", {
+              filters: [{ type: "value", field: "Channel", values: ["Web"] }],
+            })
+          }
+        >
+          Web only
+        </button>
+        <output aria-label="Saved settings">
+          {stringifySavedData(save())}
+        </output>
+        {chart?.type === "row" && (
+          <RowChart settings={chart} width={600} height={300} />
+        )}
+      </>
+    );
+  }
+  render(
+    <DataLayerProvider
+      data={[
+        { Region: "North", Channel: "Store", Revenue: 30 },
+        { Region: "North", Channel: "Web", Revenue: 10 },
+        { Region: "South", Channel: "Web", Revenue: 12 },
+        { Region: "East", Channel: "Store", Revenue: 50 },
+      ]}
+      savedData={{
+        charts: [ranking, channel],
+        calculations: [],
+        colorScales: [],
+        aggregates: [
+          {
+            id: "revenue-by-region",
+            name: "Average revenue",
+            groupField: "Region",
+            measureField: "Revenue",
+            aggregation: "average",
+          },
+        ],
+        gridSettings: {
+          columnCount: 12,
+          rowHeight: 76,
+          containerPadding: 0,
+          showBackgroundMarkers: false,
+        },
+        metadata: { name: "test", version: 1, createdAt: "", modifiedAt: "" },
+      }}
+    >
+      <Ranking />
+    </DataLayerProvider>
+  );
+  const bars = () =>
+    screen
+      .getAllByRole("button", { name: /Average revenue/ })
+      .map((bar) => bar.getAttribute("aria-label"));
+  fireEvent.click(screen.getByRole("button", { name: "Web only" }));
+  expect(bars()).toEqual([
+    "East, Average revenue: No rows",
+    "North, Average revenue: 10",
+    "South, Average revenue: 12",
+  ]);
+});
+
+it("keeps Top N membership fixed across a resize", () => {
+  function Sized() {
+    const [height, setHeight] = useState(160);
+    const chart = useDataLayer((state) => state.charts[0]);
+    return (
+      <>
+        <button onClick={() => setHeight(800)}>Resize</button>
+        {chart?.type === "row" && (
+          <RowChart settings={chart} width={600} height={height} />
+        )}
+      </>
+    );
+  }
+  const otherOf = () =>
+    screen.getByRole("button", { name: /^Other categories: \d+ rows$/ });
+  render(
+    <DataLayerProvider
+      charts={[{ ...settings, topN: 2 }]}
+      data={["A", "A", "A", "B", "B", "C", "D", "E"].map((category) => ({
+        category,
+      }))}
+    >
+      <Sized />
+    </DataLayerProvider>
+  );
+  expect(otherOf()).toHaveAccessibleName("Other categories: 3 rows");
+  fireEvent.click(screen.getByRole("button", { name: "Resize" }));
+  expect(otherOf()).toHaveAccessibleName("Other categories: 3 rows");
+  expect(
+    screen
+      .getAllByRole("button", { name: /rows$/ })
+      .map((bar) => bar.getAttribute("aria-label"))
+  ).toEqual(["A: 3 rows", "B: 2 rows", "Other categories: 3 rows"]);
+});

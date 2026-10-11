@@ -23,7 +23,7 @@ Row chart
 │   │   └── Create Sum or Average of a field in place, saved as a named summary
 │   ├── Held ranking
 │   │   ├── Order by the measure across all rows, largest first
-│   │   └── Filtered value drawn over its unfiltered value, as count rows do today
+│   │   └── Filtered value over its unfiltered value: a faint bar for counts and sums, a tick for averages
 │   ├── Top N
 │   │   ├── Saved setting; unset keeps today's "as many as fit"
 │   │   └── Once set, Other holds the same members at every size
@@ -36,8 +36,6 @@ Row chart
 │   │   ├── Alt-click traces included and excluded contributors, as vertical bars do
 │   │   └── Click filters the category field, unchanged
 │   └── Dashboard text: `row Region aggregateId=… topN=…` writes and round-trips
-├── EVALUATE BEFORE COMMITTING
-│   └── Showing unfiltered context for averages as a tick instead of a faint bar
 └── LATER POSSIBILITIES
     ├── Composition-mode horizontal measure rows
     ├── "Show as rows" from a vertical grouped-summary bar
@@ -76,7 +74,5 @@ The syntax follows the generic setting keys. A shorter `group=@…` alias is not
 **Boundary:** Vertical bars do not change. Sorting never filters. Existing row charts keep their count behavior and layout. Removing `aggregateId` returns a chart to counting.
 
 **First proof:** **Try:** add the shop ranking above beside its vertical bar, then filter by Category. Add a Beijing ranking on `above-reference` (a signed average over 12 stations) with Top N = 5. **Observe:** values match each vertical bar and a hand total. Negative stations sit left of zero. Other's average equals the pooled average of its rows. Order and membership hold through filtering and a resize. Alt-click lists the right contributors. **Decide:** if the row chart can render everything from the existing summary result plus one pooling call, build the rest on it. If it needs a second aggregation path, stop and extract a shared ranking plan first.
-
-**Open choices:** Whether context for averages needs a tick (decided in the first proof).
 
 See the [intent brief](intent-brief.md).

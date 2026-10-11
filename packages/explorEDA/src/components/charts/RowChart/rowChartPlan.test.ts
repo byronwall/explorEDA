@@ -177,3 +177,24 @@ describe("poolAggregateRows", () => {
     expect(plan.otherSummary?.total).toBe(14);
   });
 });
+
+describe("signed summaries", () => {
+  it("ranks losses last, below every gain", () => {
+    const signed = calculateGroupedAggregate(
+      [
+        { __ID: 0, region: "North", revenue: -5 },
+        { __ID: 1, region: "South", revenue: 3 },
+        { __ID: 2, region: "East", revenue: -12 },
+        { __ID: 3, region: "West", revenue: 0 },
+      ],
+      spec("sum")
+    );
+    const plan = planRowSummary(signed, signed, 10);
+    expect(plan.visible.map((item) => [item.label, item.total])).toEqual([
+      ["South", 3],
+      ["West", 0],
+      ["North", -5],
+      ["East", -12],
+    ]);
+  });
+});

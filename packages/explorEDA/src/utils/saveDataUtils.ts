@@ -393,7 +393,9 @@ function isChart(value: unknown): boolean {
         isFiniteNumber(value.minRowHeight) &&
         isFiniteNumber(value.maxRowHeight) &&
         (value.aggregateId === undefined ||
-          typeof value.aggregateId === "string")
+          typeof value.aggregateId === "string") &&
+        (value.topN === undefined ||
+          (Number.isInteger(value.topN) && (value.topN as number) > 0))
       );
     case "bar":
       return (

@@ -8,7 +8,7 @@
     "last_updated": "2026-10-10",
     "summary": "The row chart should rank categories by a named grouped summary (count, sum, or average) with the same numbers as vertical bars, a held order, explicit Top N, and signed values.",
     "status": "active",
-    "next_action": "Milestone 2: topN, signed domain, and the average-context spike on Beijing above-reference."
+    "next_action": "Milestone 3: readout and Alt-click trace for summary rows."
   },
   "artifacts": {
     "intent_brief": {
@@ -447,9 +447,7 @@
       "Average context drawn as a faint bar can sit shorter than the filtered value; evaluate a tick.",
       "Top N at very small heights: rows compress rather than change membership; label thinning may be needed."
     ],
-    "open_decisions": [
-      "Whether unfiltered context for averages uses a tick instead of a faint bar (decided in first proof)."
-    ]
+    "open_decisions": []
   },
   "implementation": {
     "status": "active",
@@ -514,11 +512,17 @@
           "spike: average context tick vs faint bar"
         ],
         "proof": "Resize harness keeps Other members fixed with topN; Beijing topN=5 pooled Other average equals hand value; negatives left of zero.",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Top N fixes Other membership and signed averages draw on both sides of zero with a pooled Other.",
         "valid_intermediate_state": "Without topN, row charts keep fit-to-height Other.",
         "rollback": "Unset topN; signed domain reduces to [0, max] for non-negative data.",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "evidence": [
+          "PR https://github.com/byronwall/explorEDA/pull/288",
+          "Beijing above-reference topN=5: top five equal the vertical bar (Dongsi 6.3, Wanshouxigong 4.8, Gucheng 3.8, Guanyuan 3.5, Nongzhanguan 2.6); Other -6.2",
+          "RowChart.test: Top N membership identical at 160px and 800px; No rows label for empty averages",
+          "Browser at 1440 and 375 px"
+        ]
       },
       {
         "id": "m3",
@@ -567,14 +571,18 @@
         "decision": "Faint bar or tick for an average's unfiltered context",
         "evidence": "Beijing filtered by season, compared both ways",
         "fallback": "Tick for averages; faint bars for counts and sums",
-        "milestone": "m2"
+        "milestone": "m2",
+        "resolution": "Tick for averages; faint bar for counts and sums unless it would be hidden, then a tick.",
+        "status": "resolved"
       },
       {
         "id": "topn-height-floor",
         "decision": "How far rows compress before labels thin",
         "evidence": "Beijing topN=12 in a short chart",
         "fallback": "Fixed row floor plus a status-line note; membership never changes",
-        "milestone": "m2"
+        "milestone": "m2",
+        "resolution": "12px row floor; below it, show as many as fit and say Top N needs a taller chart.",
+        "status": "resolved"
       }
     ],
     "test_commands": [
@@ -632,6 +640,11 @@
       "status": "active",
       "action": "Built Milestone 1 in a stacked PR.",
       "evidence": "PR #284; targeted vitest and check-types pass; browser check against CSV hand totals."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Built Milestone 2 and resolved both open decisions.",
+      "evidence": "PR #288; Beijing browser checks; targeted tests pass."
     }
   ],
   "closure": null,
