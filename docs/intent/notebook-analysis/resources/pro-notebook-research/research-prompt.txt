@@ -1,0 +1,82 @@
+Research representative examples of notebook-style data analysis that we could reproduce in explorEDA.
+
+We want a readable investigation with text, calculations, and graphics interleaved vertically. Each block should span the main reading column. Focus on a sequence that develops an analytical argument, rather than a dashboard of charts arranged in a grid.
+
+Prioritize Observable notebooks and examples on observablehq.com. Then search other sites for strong examples. These can include computational essays, scientific investigations, data journalism, and analytical walkthroughs. They do not need to be actual notebook files.
+
+Find approximately 12 strong examples, with roughly two-thirds from Observable. Favor quality over filling a quota. Recommend three examples to reproduce first.
+
+Product context:
+
+explorEDA already supports interactive charts, tables, filters, calculated fields, saved analysis state, and a compact dashboard definition language. We are considering a notebook view that uses those capabilities.
+
+The proposed workflow lets users define calculations and visuals in text, then edit the resulting graphs through visual controls. Those graphical edits should persist back into the text defining the block. We want examples that help us determine what this workflow needs.
+
+Research requirements:
+
+- Inspect the actual analysis pages. Search snippets and gallery thumbnails are not sufficient evidence.
+- Find specific investigations, not just notebook platforms or generic product demos.
+- Prefer examples with accessible source data and visible calculation logic.
+- Include a range of difficulty: simple summaries, grouped comparisons, time series, and investigations with dependent calculations.
+- Favor examples where the sequence of explanation and results matters.
+- Include useful interactions, but do not make elaborate animation or custom graphics a requirement.
+- Distinguish observed behavior from your inference. Mark unavailable data, hidden calculations, and inaccessible pages clearly.
+
+For each example, present the following in this order:
+
+1. Image first
+
+Lead with an actual screenshot of the analysis. Show enough of the page to demonstrate text, calculation, and graphic placement. Include a second screenshot when it reveals a useful interaction or later analytical step.
+
+Embed the image in the report. Put the page title and direct source link in its caption. Use captured screenshots or source images, not generated mockups. If image capture is unavailable, say so and provide a direct figure link where possible.
+
+2. What the analysis does
+
+Explain the question it investigates, the conclusion or insight it develops, and why its notebook structure works.
+
+Describe the role of the prose. Does it introduce a question, explain a calculation, interpret a result, or guide the next step?
+
+3. Source data and calculations
+
+Identify:
+- The original data source and direct dataset or download links.
+- What one row represents.
+- The fields, units, dates, and geographic scope needed for the analysis.
+- The relevant cleaning, filtering, grouping, aggregation, or statistical calculations.
+- Which calculations feed later results.
+- Whether the available data and methods are sufficient to reproduce the example.
+
+Do not infer an exact formula from a chart's appearance. Mark uncertain methods explicitly. If the original data is unavailable, describe a suitable substitute and explain what would change.
+
+4. Elements needed to reproduce it
+
+Give an ordered outline of the notebook:
+explanatory text → calculation or query → output → interpretation → next step.
+
+Then provide a compact table with these columns:
+Element | Inputs | Calculation or configuration | Visible result | Interaction | Dependency
+
+Cover the necessary text blocks, calculation blocks, charts, tables, controls, legends, annotations, and linked selections. Identify chart encodings such as axes, grouping, color, size, and facets.
+
+Separate essential elements from optional polish.
+
+5. Fit for explorEDA
+
+Explain:
+- The smallest faithful version we could reproduce.
+- Which parts appear compatible with the app capabilities described above.
+- Which parts require a capability we would need to investigate.
+- Which graphical edits should update the defining text.
+- Whether filters and controls affect one output or several dependent blocks.
+- What this example would teach us about notebook execution and two-way editing.
+
+Treat compatibility as a hypothesis unless you have inspected the app. Do not produce an implementation plan or assume that arbitrary JavaScript execution is required.
+
+Finish with:
+
+- A comparison table covering analytical pattern, data availability, calculation transparency, interaction complexity, and reproduction effort.
+- Three recommended starting examples: a small first proof, a broader representative workflow, and one stretch case.
+- A brief explanation of the distinct capability each would test.
+- Recurring notebook patterns worth supporting, separated from unusual features specific to one example.
+
+Keep screenshots central to the report. We should be able to scan the images, understand the analytical story, inspect the source data, and see exactly what reproduction would require.
