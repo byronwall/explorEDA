@@ -21,7 +21,7 @@ const changed = git(
 const packageChanges = changed.filter(
   (path) =>
     path.startsWith("packages/explorEDA/") &&
-    !/(\.test\.[jt]sx?|__tests__\/|\/test\/)/.test(path)
+    !/(\.test\.[jt]sx?|__tests__\/|\/test\/|\/vitest\.config\.[jt]s)/.test(path)
 );
 const changesets = changed.filter(
   (path) => /^\.changeset\/.+\.md$/.test(path) && !path.endsWith("README.md")
