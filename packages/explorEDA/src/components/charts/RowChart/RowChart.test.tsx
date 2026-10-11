@@ -287,3 +287,79 @@ it("keeps Top N membership fixed across a resize", () => {
       .map((bar) => bar.getAttribute("aria-label"))
   ).toEqual(["A: 3 rows", "B: 2 rows", "Other categories: 3 rows"]);
 });
+
+it("traces a ranked value to its included and excluded rows", () => {
+  const ranking = {
+    ...rowChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "Region"
+    ),
+    id: "ranking",
+    aggregateId: "revenue-by-region",
+    topN: 1,
+  };
+  function Traced() {
+    const chart = useDataLayer((state) => state.charts[0]);
+    return (
+      <ChartTraceScope>
+        {chart?.type === "row" && (
+          <RowChart settings={chart} width={600} height={300} />
+        )}
+        <ChartTracePanel />
+      </ChartTraceScope>
+    );
+  }
+  render(
+    <DataLayerProvider
+      data={[
+        { Region: "North", Revenue: 30 },
+        { Region: "North", Revenue: "n/a" },
+        { Region: "South", Revenue: 4 },
+        { Region: "East", Revenue: 8 },
+      ]}
+      savedData={{
+        charts: [ranking],
+        calculations: [],
+        colorScales: [],
+        aggregates: [
+          {
+            id: "revenue-by-region",
+            name: "Average revenue",
+            groupField: "Region",
+            measureField: "Revenue",
+            aggregation: "average",
+          },
+        ],
+        gridSettings: {
+          columnCount: 12,
+          rowHeight: 76,
+          containerPadding: 0,
+          showBackgroundMarkers: false,
+        },
+        metadata: { name: "test", version: 1, createdAt: "", modifiedAt: "" },
+      }}
+    >
+      <Traced />
+    </DataLayerProvider>
+  );
+  fireEvent.click(
+    screen.getByRole("button", { name: "North, Average revenue: 30" }),
+    { altKey: true }
+  );
+  expect(screen.getByText("Average of Revenue")).toBeInTheDocument();
+  expect(screen.getByText("Not a finite number")).toBeInTheDocument();
+  // South and East pool into one average: (4 + 8) / 2.
+  fireEvent.click(
+    screen.getByRole("button", {
+      name: "Other categories, Average revenue: 6",
+    }),
+    { altKey: true }
+  );
+  // Each member lists its own value, and the source rows are pooled.
+  const member = (name: string) =>
+    screen.getByRole("checkbox", { name: `Select ${name}` }).closest("div")!
+      .textContent;
+  expect(member("South")).toBe("South4Inspect");
+  expect(member("East")).toBe("East8Inspect");
+  expect(screen.getByText("Value").nextSibling?.textContent).toBe("6");
+});

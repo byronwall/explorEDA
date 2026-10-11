@@ -8,7 +8,7 @@
     "last_updated": "2026-10-10",
     "summary": "The row chart should rank categories by a named grouped summary (count, sum, or average) with the same numbers as vertical bars, a held order, explicit Top N, and signed values.",
     "status": "active",
-    "next_action": "Milestone 3: readout and Alt-click trace for summary rows."
+    "next_action": "Milestone 4: settings panel Measure and Top N controls, dashboard-text warning, demo and docs."
   },
   "artifacts": {
     "intent_brief": {
@@ -533,16 +533,22 @@
           "summary-aware ChartSettingsContent and FiltersSettingsTab for row"
         ],
         "proof": "Alt-click on a region and Other lists correct contributors and exclusions; selection unchanged.",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Hover and Alt-click explain each ranked value with contributors and exclusions.",
         "valid_intermediate_state": "Count-mode readout and trace unchanged.",
         "rollback": "Revert trace and readout changes; rankings still render.",
-        "dependencies_introduced": []
+        "dependencies_introduced": [],
+        "evidence": [
+          "PR https://github.com/byronwall/explorEDA/pull/293",
+          "RowChart.test: trace lists 'Not a finite number' exclusion; Other pools South and East to 6 with member values 4 and 8",
+          "Browser: Beijing Changping trace shows value -14.6, all rows -12.1, 91 rows in Winter; readout shows value, all rows, and rows"
+        ]
       },
       {
         "id": "m4",
         "title": "Create from settings and text, then ship",
         "changes": [
+          "ChartSettingsContent Reset covers summary edits for row charts (bar-only today)",
           "Measure select, create Sum/Average, Top N input with tooltips",
           "field change clears aggregateId",
           "DSL groupField mismatch warning and round-trip tests",
@@ -645,6 +651,11 @@
       "date": "2026-10-10",
       "action": "Built Milestone 2 and resolved both open decisions.",
       "evidence": "PR #288; Beijing browser checks; targeted tests pass."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Built Milestone 3.",
+      "evidence": "PR #293; targeted tests and browser trace check."
     }
   ],
   "closure": null,

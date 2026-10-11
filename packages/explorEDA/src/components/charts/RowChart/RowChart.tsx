@@ -36,6 +36,8 @@ import {
   useTraceSource,
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
+import type { RowTrace } from "./RowTraceBody";
+import { poolAggregateRows } from "@/lib/aggregates";
 import { ChartReadout } from "../ChartReadout";
 import {
   ChartStatusLine,
@@ -127,6 +129,19 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
             { compact: true }
           )
         : value.toLocaleString();
+  const valueText = (count: number | undefined, rows: number) =>
+    count === undefined
+      ? rows === 0
+        ? "No rows"
+        : "Unavailable"
+      : formatMeasure(count);
+  const aggregationText = spec
+    ? `${
+        spec.aggregation === "count"
+          ? "Count of rows"
+          : `${spec.aggregation === "sum" ? "Sum" : "Average"} of ${getFieldLabel(spec.measureField ?? "")}`
+      }${spec.entityField ? `, once per ${getFieldLabel(spec.entityField)}` : ""}`
+    : "";
 
   const valueFilter = settings.filters.find(
     (f: Filter): f is ValueFilter =>
@@ -253,6 +268,46 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
             ? plan.other
             : plan.categories.filter((item) => item.key === id);
         if (!categories.length) return;
+        const other = id === "__other";
+        let summary: RowTrace["summary"];
+        if (summarized && spec) {
+          const live = categories.flatMap((item) =>
+            item.live ? [item.live] : []
+          );
+          const rows = categories.reduce(
+            (sum, item) => sum + item.sourceIds.length,
+            0
+          );
+          const pooled = other
+            ? live.length
+              ? poolAggregateRows(live, spec)
+              : undefined
+            : live[0];
+          const current = other
+            ? plan.otherSummary?.current
+            : categories[0]!.current;
+          const total = other ? plan.otherSummary?.total : categories[0]!.total;
+          summary = {
+            name: spec.name,
+            aggregation: aggregationText,
+            value: valueText(current, rows),
+            allRows: valueText(total, 1),
+            row: {
+              id,
+              groupValue: other ? undefined : categories[0]!.value,
+              groupLabel: other ? "Other categories" : categories[0]!.label,
+              value: current,
+              rowCount: pooled?.rowCount ?? 0,
+              contributors: pooled?.contributors ?? [],
+            },
+            memberValues: Object.fromEntries(
+              categories.map((item) => [
+                item.key,
+                valueText(item.current, item.sourceIds.length),
+              ])
+            ),
+          };
+        }
         return {
           kind: "row-category",
           id,
@@ -260,8 +315,9 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
           owner,
           chartId: settings.id,
           field: settings.field,
-          other: id === "__other",
+          other,
           categories,
+          summary,
         };
       },
       findRow: (id) => {
@@ -289,6 +345,8 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
     chartHeight,
     plan,
     owner,
+    summarized,
+    spec,
   ]);
   useTraceSource(owner, source);
   const inspect = (key: string) => api?.inspect(owner, "row-category", key);
@@ -440,12 +498,6 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
       (Math.sign(count) === Math.sign(total) &&
         Math.abs(count) < Math.abs(total))
     );
-  const valueText = (count: number | undefined, rows: number) =>
-    count === undefined
-      ? rows === 0
-        ? "No rows"
-        : "Unavailable"
-      : formatMeasure(count);
   const statusHint =
     !valueFilter &&
     !facetIds &&
@@ -464,11 +516,15 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
             <>
               <span className="eda-readout-item">
                 <span>{spec.name}</span>
-                <b>{formatMeasure(hoveredItem.count)}</b>
+                <b>{valueText(hoveredItem.count, hoveredItem.rows)}</b>
               </span>
               <span className="eda-readout-item">
                 <span>All rows</span>
-                <b>{formatMeasure(hoveredItem.total)}</b>
+                <b>{valueText(hoveredItem.total, 1)}</b>
+              </span>
+              <span className="eda-readout-item">
+                <span>Rows</span>
+                <b>{hoveredItem.rows.toLocaleString()}</b>
               </span>
             </>
           ) : (
