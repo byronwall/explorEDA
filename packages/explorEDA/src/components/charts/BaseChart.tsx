@@ -118,12 +118,14 @@ export function BaseChart({
   const xLabel = [
     getChartAxisLabel(axisFields.x, settings.xAxisLabel, getFieldLabel),
     settings.xAxis.scaleType === "symlog" && "symlog",
+    "base" in xScale && "log",
   ]
     .filter(Boolean)
     .join(" · ");
   const yLabel = [
     getChartAxisLabel(axisFields.y, settings.yAxisLabel, getFieldLabel),
     settings.yAxis.scaleType === "symlog" && "symlog",
+    "base" in yScale && "log",
   ]
     .filter(Boolean)
     .join(" · ");

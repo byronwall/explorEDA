@@ -5,6 +5,11 @@ import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
 import { AxisSettingsTab } from "../../settings/AxisSettingsTab";
 import { barChartDefinition } from "../BarChart/definition";
+import { boxPlotDefinition } from "../BoxPlot/definition";
+import {
+  DEFAULT_TIME_SERIES,
+  lineChartDefinition,
+} from "../LineChart/definition";
 import { scatterPlotDefinition } from "../ScatterPlot/definition";
 import { PlotChartPanel } from "../../PlotChartPanel";
 
@@ -78,4 +83,87 @@ it("offers Log only where a chart can draw it", () => {
   unmount();
   render(<Tab chart={barChartDefinition.createDefaultSettings(layout, "a")} />);
   expect(screen.queryByRole("radio", { name: "Log" })).toBeNull();
+});
+
+function markersFor(chart: ChartSettings, rows = data) {
+  const view = render(
+    <DataLayerProvider data={rows} charts={[chart]}>
+      <Panel />
+    </DataLayerProvider>
+  );
+  return {
+    markers: Object.fromEntries(
+      [...view.container.querySelectorAll("[data-axis-hidden]")].map((el) => [
+        el.getAttribute("data-axis-hidden"),
+        el.getAttribute("aria-label"),
+      ])
+    ),
+    scale: view.container
+      .querySelector('[data-axis-edit="y"]')
+      ?.getAttribute("data-scale-type"),
+  };
+}
+
+it("draws a box plot on a log axis and counts rows at or below zero", () => {
+  const box = boxPlotDefinition.createDefaultSettings(layout, "a");
+  expect(
+    markersFor({ ...box, yAxis: { ...box.yAxis, scaleType: "log" } })
+  ).toEqual({
+    scale: "log",
+    markers: {
+      "y:nonpositive":
+        "2 rows at or below zero are not on the Y log scale. Show details",
+    },
+  });
+});
+
+it("draws a numeric line on a log axis and counts points at or below zero", () => {
+  const line = lineChartDefinition.createDefaultSettings(layout);
+  expect(
+    markersFor({
+      ...line,
+      id: "line",
+      xField: "b",
+      seriesField: ["a"],
+      yAxis: { scaleType: "log" },
+    })
+  ).toEqual({
+    scale: "log",
+    markers: {
+      "y:nonpositive":
+        "2 points at or below zero are not on the Y log scale. Show details",
+    },
+  });
+});
+
+it("draws a time series line on a log axis but keeps areas linear", () => {
+  const rows = [0, 5, 50, 500].map((value, i) => ({
+    value,
+    date: `2024-01-0${i + 1}`,
+  }));
+  const line = {
+    ...lineChartDefinition.createDefaultSettings(layout),
+    id: "time",
+    xField: "date",
+    yAxis: { scaleType: "log" as const },
+    time: {
+      ...DEFAULT_TIME_SERIES,
+      interval: "day" as const,
+      aggregation: "sum" as const,
+      measureField: "value",
+    },
+  };
+  expect(markersFor(line, rows as never)).toEqual({
+    scale: "log",
+    markers: {
+      "y:nonpositive":
+        "1 point at or below zero is not on the Y log scale. Show details",
+    },
+  });
+  expect(
+    markersFor(
+      { ...line, time: { ...line.time, display: "area" } },
+      rows as never
+    ).scale
+  ).toBe("linear");
 });

@@ -17,8 +17,11 @@ import { area, curveLinear, curveStepAfter, line } from "d3-shape";
 import {
   boundedDomain,
   hasAxisBounds,
+  countNonpositive,
   hiddenByBounds,
   labelHidden,
+  logDomain,
+  withNonpositive,
 } from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import type { LineChartSettings } from "./definition";
@@ -52,6 +55,8 @@ export interface TimePoint extends TimeBucket {
   y: number;
   color: string;
   band?: { lower: number; upper: number; complete: boolean };
+  /** A log axis has no place for this point's value, at or below zero. */
+  offScale?: boolean;
 }
 
 export function periodFilter(field: string, start: number, end: number) {
@@ -308,7 +313,7 @@ export function planTimeSeries(
   );
   // Every row the chart can draw sets the value axis, so filtering elsewhere
   // never rescales it. A current value past it grows it to fit.
-  const allValues =
+  const allValues: number[] =
     snapshot.liveIds.length === snapshot.allIds.length
       ? []
       : planTimeSeries(
@@ -362,28 +367,38 @@ export function planTimeSeries(
     .domain(Number.isFinite(start) ? [start, end] : [0, DAY_MS])
     .range([0, plotWidth]);
   const yScaleType = filled ? "linear" : settings.yAxis.scaleType;
-  const yScale = numericScale({ ...settings.yAxis, scaleType: yScaleType })
+  // Lines can use a true log scale; filled areas keep proportional heights.
+  const log = !filled && settings.yAxis.scaleType === "log";
+  const yScale = numericScale(
+    { ...settings.yAxis, scaleType: yScaleType },
+    !filled
+  )
     .domain(
-      boundedDomain(
-        yHigh === yLow ? [yLow, yLow + 1] : [yLow, yHigh],
-        settings.yAxis
-      )
+      log
+        ? logDomain([...allValues, ...values], settings.yAxis)
+        : boundedDomain(
+            yHigh === yLow ? [yLow, yLow + 1] : [yLow, yHigh],
+            settings.yAxis
+          )
     )
     .range([plotHeight, 0]);
   // Bounds draw exactly as entered.
   if (!hasAxisBounds(settings.yAxis)) yScale.nice();
   for (const point of points) {
     point.x = xScale((point.start + point.end) / 2);
-    point.y = yScale(
+    const value =
       point.band?.complete === false
         ? 0
-        : (point.band?.upper ?? point.value ?? 0)
-    );
+        : (point.band?.upper ?? point.value ?? 0);
+    point.offScale = log && point.value !== undefined && value <= 0;
+    point.y = point.offScale ? plotHeight : yScale(value);
   }
   const curve =
     settings.styles.curveType === "step" ? curveStepAfter : curveLinear;
   const defined = (point: TimePoint) =>
-    point.value !== undefined && point.band?.complete !== false;
+    point.value !== undefined &&
+    point.band?.complete !== false &&
+    !point.offScale;
   for (const item of series) {
     item.path =
       line<TimePoint>()
@@ -418,15 +433,19 @@ export function planTimeSeries(
     domainValues: values,
     yScaleType,
     // Points past a bound are cut off at the edge; the axis says how many.
-    yHidden: labelHidden(
-      hiddenByBounds(
-        settings.yAxis,
-        yScale.domain() as [number, number],
-        values,
-        ["point", "points"],
-        true
+    yHidden: withNonpositive(
+      labelHidden(
+        hiddenByBounds(
+          settings.yAxis,
+          yScale.domain() as [number, number],
+          log ? values.filter((value) => value > 0) : values,
+          ["point", "points"],
+          true
+        ),
+        formatValue
       ),
-      formatValue
+      log ? countNonpositive(values) : 0,
+      ["point", "points"]
     ),
     curveType: settings.styles.curveType,
     margin,

@@ -271,7 +271,7 @@ function HiddenMarkers({ plan }: { plan: ChartAxesPlan }) {
               data-hidden-reason="nonpositive"
               data-hidden-count={off.count}
               data-hidden-unit={off.unit.join("|")}
-              aria-label={`${off.count.toLocaleString()} ${unit} at or below zero are not on the ${axis.toUpperCase()} log scale. Show details`}
+              aria-label={`${off.count.toLocaleString()} ${unit} at or below zero ${off.count === 1 ? "is" : "are"} not on the ${axis.toUpperCase()} log scale. Show details`}
             >
               <rect x={-7} y={-7} width={14} height={14} rx={3.5} />
               <path d={WARNING} />

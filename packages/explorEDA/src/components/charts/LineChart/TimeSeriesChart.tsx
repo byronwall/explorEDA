@@ -204,7 +204,8 @@ export function TimeSeriesChart({
   const marks = plan.points.filter(
     (point) =>
       (point.value !== undefined || point.rowCount > 0) &&
-      (!plan.stacked || point.band?.complete)
+      (!plan.stacked || point.band?.complete) &&
+      !point.offScale
   );
   const periodText =
     time.interval === "day"
