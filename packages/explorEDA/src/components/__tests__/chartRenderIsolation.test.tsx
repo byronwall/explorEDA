@@ -135,7 +135,9 @@ async function renderAllTypes() {
   return commits;
 }
 
-describe("chart render isolation", () => {
+// Each test renders every chart type: under a full parallel run that can take
+// several times its ~1 s solo duration, so allow more than the 5 s default.
+describe("chart render isolation", { timeout: 20_000 }, () => {
   it("draws a panel for every registered type", async () => {
     await renderAllTypes();
     const drawn = new Set(store.charts.map((chart) => chart.type));
