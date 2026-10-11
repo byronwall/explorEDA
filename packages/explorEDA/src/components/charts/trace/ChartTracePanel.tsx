@@ -8,6 +8,7 @@ import { MapTraceBody } from "../Map/MapTraceBody";
 import { useState } from "react";
 import { BarTraceBody } from "../BarChart/BarTraceBody";
 import { SankeyTraceBody } from "../Sankey/SankeyTraceBody";
+import { HierarchyTraceBody } from "../Hierarchy/HierarchyTraceBody";
 import { ParallelTraceBody } from "../ParallelCoordinates/ParallelTraceBody";
 import { MatrixTraceBody } from "../ScatterMatrix/MatrixTraceBody";
 import { CalendarTraceBody } from "../Calendar/CalendarTraceBody";
@@ -74,6 +75,8 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
     case "sankey-node":
     case "sankey-link":
       return <SankeyTraceBody trace={trace} />;
+    case "hierarchy-node":
+      return <HierarchyTraceBody trace={trace} />;
     case "polyline":
     case "pc-axis":
       return <ParallelTraceBody trace={trace} />;

@@ -936,6 +936,7 @@ export const exampleCoverage = [
     features: {
       "chart:row": "shown",
       "chart:pivot": "shown",
+      "chart:hierarchy": "shown",
       "chart:data-table": "shown",
       "labels:meaningful-title": "shown",
       "labels:axes": "shown",

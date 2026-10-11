@@ -310,3 +310,88 @@ describe("keepForLevels", () => {
     ]);
   });
 });
+
+describe("Other per parent", () => {
+  // Under A: five categories of falling size; under B: two.
+  const sizes: [string, string, number][] = [
+    ["A", "a1", 5],
+    ["A", "a2", 4],
+    ["A", "a3", 3],
+    ["A", "a4", 2],
+    ["A", "a5", 1],
+    ["B", "b1", 2],
+    ["B", "b2", 1],
+  ];
+  const many = sizes.flatMap(([top, leaf, count]) =>
+    Array.from({ length: count }, () => ({ top, leaf }))
+  );
+  const manyPlan = (overrides: Partial<HierarchySettings> = {}) =>
+    planHierarchy({
+      settings: settings({
+        levels: ["top", "leaf"],
+        maxChildren: 2,
+        ...overrides,
+      }),
+      snapshot: {
+        revision: "r",
+        liveIds: many.map((_, index) => index),
+        levelData: {
+          top: Object.fromEntries(many.map((row, index) => [index, row.top])),
+          leaf: Object.fromEntries(many.map((row, index) => [index, row.leaf])),
+        },
+        measureData: {},
+      },
+      getFieldLabel: (field) => field,
+    });
+
+  it("folds the smallest children of each parent into one Other", () => {
+    const result = manyPlan();
+    const a = result.root.children.find((node) => node.label === "A")!;
+    expect(a.shown.map((node) => node.label)).toEqual([
+      "a1",
+      "a2",
+      "Other (3)",
+    ]);
+    const other = a.shown[2]!;
+    expect(other.kind).toBe("other");
+    expect(other.members).toEqual(["a3", "a4", "a5"]);
+    expect(other.weight).toBe(6);
+    expect(isZoomable(other)).toBe(false);
+    // Never folds a single child, and B has only two.
+    const b = result.root.children.find((node) => node.label === "B")!;
+    expect(b.shown.map((node) => node.label)).toEqual(["b1", "b2"]);
+    // The full tree is kept, so a folded value can still be zoomed into by path.
+    expect(a.children).toHaveLength(5);
+  });
+
+  it("selects exactly Other's members under its parent", () => {
+    const result = manyPlan();
+    const other = result.nodes.find((node) => node.kind === "other")!;
+    const outcome = toggleBranch([], other, ["top", "leaf"]);
+    expect(outcome).toEqual({
+      ok: true,
+      filters: [
+        { type: "value", field: "top", values: ["A"] },
+        { type: "value", field: "leaf", values: ["a3", "a4", "a5"] },
+      ],
+    });
+    const selected = manyPlan({
+      filters: outcome.ok ? outcome.filters : [],
+    }).nodes.find((node) => node.kind === "other")!;
+    expect(selected.selected).toBe(true);
+    expect(selected.selectedWeight).toBe(6);
+  });
+
+  it("colors by branch, by level, or one color", () => {
+    const colors = (colorBy: HierarchySettings["colorBy"]) => {
+      const result = manyPlan({ colorBy, maxChildren: 8 });
+      return result.nodes.map((node) => `${node.depth}:${node.color}`);
+    };
+    const byLevel = new Set(colors("level"));
+    expect([...byLevel].filter((item) => item.startsWith("1:"))).toHaveLength(
+      1
+    );
+    expect(new Set(colors("none").map((item) => item.slice(2))).size).toBe(1);
+    expect(new Set(colors("branch").map((item) => item.slice(2))).size).toBe(2);
+  });
+});

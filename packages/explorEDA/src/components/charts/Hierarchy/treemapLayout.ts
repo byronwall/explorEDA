@@ -123,14 +123,14 @@ export function layoutTreemap(
 ): TreemapRect[] {
   const rects: TreemapRect[] = [];
   const place = (node: HierarchyNode, box: Box) => {
-    const items = node.children
+    const items = node.shown
       .filter((child) => child.weight > 0)
       .map((child) => ({ node: child, value: child.weight }));
     if (!items.length || box.x1 - box.x0 <= 0 || box.y1 - box.y0 <= 0) {
       return;
     }
     for (const [item, rect] of squarify(items, box)) {
-      const hasChildren = item.node.children.some((child) => child.weight > 0);
+      const hasChildren = item.node.shown.some((child) => child.weight > 0);
       const w = rect.x1 - rect.x0;
       const h = rect.y1 - rect.y0;
       // A strip only when the children keep at least as much room as it takes.

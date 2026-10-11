@@ -15,6 +15,10 @@ export interface HierarchySettings extends BaseChartSettings {
   measureField?: string;
   /** Omit rows with a missing level, or show missing as its own node. */
   missingLevels: "omit" | "show";
+  /** Children shown per parent; the rest join one Other node. Default 8. */
+  maxChildren?: number;
+  /** Color by first-level branch (default), by level, or one color. */
+  colorBy?: "branch" | "level" | "none";
   /** How the hierarchy is drawn. */
   arrangement: "treemap";
   /**
@@ -46,6 +50,8 @@ export const hierarchyDefinition: ChartDefinition<HierarchySettings> = {
     levels: field ? [field] : [],
     aggregation: "count",
     missingLevels: "omit",
+    maxChildren: 8,
+    colorBy: "branch",
     arrangement: "treemap",
     layout,
     margin: { top: 4, right: 4, bottom: 4, left: 4 },

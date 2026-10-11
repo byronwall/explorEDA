@@ -32,13 +32,18 @@ export interface HierarchyNode {
   /** The level field this node splits on; empty for the whole. */
   field: string;
   label: string;
-  kind: "root" | "value" | "missing";
-  /** This node's value on its level. */
+  kind: "root" | "value" | "missing" | "other";
+  /** This node's value on its level; null for Other. */
   value: datum;
+  /** Values on its level this node stands for. Other lists every member. */
+  members: datum[];
   /** Values along the levels from the first down to this node. */
   path: datum[];
   parentId?: string;
+  /** Every child, for zoom and totals. */
   children: HierarchyNode[];
+  /** The children drawn: the largest few, then one Other for the rest. */
+  shown: HierarchyNode[];
   /** Metric over the node's rows. */
   weight: number;
   /** The part of `weight` that passes this chart's selection. */
@@ -77,6 +82,43 @@ export interface HierarchyPlanInput {
 
 const ONE_COLOR = "#3479a8";
 const MISSING_COLOR = "#8a94a3";
+export const DEFAULT_MAX_CHILDREN = 8;
+
+/**
+ * Folds all but the largest `limit` children into one Other node. Missing
+ * stays its own node. Folding a single child hides it without saving room,
+ * so Other always holds at least two.
+ */
+function foldChildren(node: HierarchyNode, limit: number) {
+  const values = node.children.filter(
+    (child) => child.kind !== "missing" && child.weight > 0
+  );
+  const missing = node.children.filter(
+    (child) => child.kind === "missing" && child.weight > 0
+  );
+  if (values.length <= limit + 1) {
+    node.shown = [...values, ...missing];
+    return;
+  }
+  const rest = values.slice(limit);
+  const other: HierarchyNode = {
+    ...newNode(
+      node,
+      rest[0]!.field,
+      "other",
+      `Other (${rest.length})`,
+      "other",
+      null
+    ),
+    members: rest.map((child) => child.value),
+    weight: rest.reduce((sum, child) => sum + child.weight, 0),
+    selectedWeight: rest.reduce((sum, child) => sum + child.selectedWeight, 0),
+    rowCount: rest.reduce((sum, child) => sum + child.rowCount, 0),
+    contributors: rest.flatMap((child) => child.contributors),
+    color: MISSING_COLOR,
+  };
+  node.shown = [...values.slice(0, limit), other, ...missing];
+}
 
 function measureReason(value: datum) {
   const reason = numericExclusionReason(value);
@@ -101,9 +143,11 @@ function newNode(
     label,
     kind,
     value,
+    members: [value],
     path: parent ? [...parent.path, value] : [],
     parentId: parent?.id,
     children: [],
+    shown: [],
     weight: 0,
     selectedWeight: 0,
     rowCount: 0,
@@ -204,6 +248,10 @@ export function planHierarchy({
         b.weight - a.weight ||
         a.label.localeCompare(b.label, undefined, { numeric: true })
     );
+    foldChildren(
+      node,
+      Math.max(1, settings.maxChildren ?? DEFAULT_MAX_CHILDREN)
+    );
     node.children.forEach(order);
   };
   order(root);
@@ -214,9 +262,13 @@ export function planHierarchy({
     : null;
   const palette = snapshot.themeColors?.categorical ?? defaultCategoricalColors;
   root.color = snapshot.themeColors?.mark ?? ONE_COLOR;
+  const colorBy = settings.colorBy ?? "branch";
+  const one = snapshot.themeColors?.mark ?? ONE_COLOR;
   root.children.forEach((branch, index) => {
     let color = palette[index % palette.length]!;
-    if (branch.kind === "missing") {
+    if (colorBy === "none") {
+      color = one;
+    } else if (branch.kind === "missing") {
       color = MISSING_COLOR;
     } else if (resolve) {
       try {
@@ -226,15 +278,24 @@ export function planHierarchy({
       }
     }
     const paint = (node: HierarchyNode) => {
-      node.color = node.kind === "missing" ? MISSING_COLOR : color;
+      node.color =
+        node.kind === "missing" || node.kind === "other"
+          ? MISSING_COLOR
+          : colorBy === "level"
+            ? palette[(node.depth - 1) % palette.length]!
+            : color;
       node.children.forEach(paint);
+      node.shown.forEach((child) => {
+        if (child.kind === "other") paint(child);
+      });
     };
     paint(branch);
   });
 
   const nodes: HierarchyNode[] = [];
   const visit = (node: HierarchyNode) => {
-    for (const child of node.children) {
+    const others = node.shown.filter((child) => child.kind === "other");
+    for (const child of [...node.children, ...others]) {
       child.selected = isNodeSelected(settings.filters, child, levels);
       nodes.push(child);
     }
@@ -363,14 +424,24 @@ function isOnly(filter: ValueFilter | undefined, value: datum) {
   );
 }
 
+/** The values a node needs on each level down to its own. */
+function valuesByLevel(node: HierarchyNode): datum[][] {
+  return node.path.map((value, index) =>
+    index === node.path.length - 1 ? node.members : [value]
+  );
+}
+
 function isNodeSelected(
   filters: Filter[],
   node: HierarchyNode,
   levels: string[]
 ) {
-  return node.path.every((value, index) => {
+  return valuesByLevel(node).every((values, index) => {
     const filter = levelFilter(filters, levels[index]!);
-    return filter !== undefined && applyFilter(value, filter);
+    return (
+      filter !== undefined &&
+      values.every((value) => applyFilter(value, filter))
+    );
   });
 }
 
@@ -381,12 +452,16 @@ function withoutLevels(filters: Filter[], levels: string[]) {
 
 /** One value filter per level down to the node: exactly its branch. */
 function branchFilters(node: HierarchyNode, levels: string[]): Filter[] {
-  return node.path.map((value, index) => ({
+  return valuesByLevel(node).map((values, index) => ({
     type: "value",
     field: levels[index]!,
-    values: [value],
+    values: [...values],
   }));
 }
+
+const sameSet = (a: datum[], b: datum[]) =>
+  a.length === b.length &&
+  a.every((value) => b.some((item) => sameKey(item, value)));
 
 /** True when the filters select exactly this node's branch and nothing else. */
 function isExactBranch(
@@ -399,9 +474,10 @@ function isExactBranch(
   );
   return (
     levelFilters.length === node.path.length &&
-    node.path.every((value, index) =>
-      isOnly(levelFilter(filters, levels[index]!), value)
-    )
+    valuesByLevel(node).every((values, index) => {
+      const filter = levelFilter(filters, levels[index]!);
+      return filter !== undefined && sameSet(filter.values, values);
+    })
   );
 }
 
@@ -447,10 +523,17 @@ export function toggleBranch(
       // The parent is selected; start a selection among its children.
       return { ok: true, filters: [...rest, ...branchFilters(node, levels)] };
     }
-    const has = current.values.some((value) => sameKey(value, node.value));
+    const inCurrent = (value: datum) =>
+      current.values.some((item) => sameKey(item, value));
+    const has = node.members.every(inCurrent);
     const values = has
-      ? current.values.filter((value) => !sameKey(value, node.value))
-      : [...current.values, node.value];
+      ? current.values.filter(
+          (value) => !node.members.some((member) => sameKey(member, value))
+        )
+      : [
+          ...current.values,
+          ...node.members.filter((value) => !inCurrent(value)),
+        ];
     if (!values.length) {
       // Removing the last sibling leaves the parent selected.
       return {

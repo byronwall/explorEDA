@@ -1,4 +1,5 @@
 import { FieldSelector } from "@/components/FieldSelector";
+import { NumericInputEnter } from "@/components/NumericInputEnter";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -8,7 +9,7 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import { ArrowDown, ArrowUp, X } from "lucide-react";
 import { useMemo } from "react";
-import { keepForLevels } from "./hierarchyPlan";
+import { DEFAULT_MAX_CHILDREN, keepForLevels } from "./hierarchyPlan";
 import {
   MAX_HIERARCHY_LEVELS,
   MIN_HIERARCHY_LEVELS,
@@ -219,6 +220,65 @@ export function HierarchySettingsPanel({
                 "show",
                 "Show",
                 "Missing values become a (missing) box, so incomplete rows still count.",
+              ],
+            ] as const
+          ).map(([option, text, help]) => (
+            <ActionTooltip key={option} content={help}>
+              <span className="inline-flex">
+                <ToggleGroupItem value={option} className="px-2">
+                  {text}
+                </ToggleGroupItem>
+              </span>
+            </ActionTooltip>
+          ))}
+        </ToggleGroup>
+
+        <ActionTooltip content="Each parent shows at most this many boxes, its largest. The rest join one gray Other box that lists its members.">
+          <Label htmlFor="hierarchy-limit">Boxes per parent</Label>
+        </ActionTooltip>
+        <NumericInputEnter
+          id="hierarchy-limit"
+          value={settings.maxChildren ?? DEFAULT_MAX_CHILDREN}
+          onChange={(value) =>
+            change({
+              maxChildren: Math.max(2, Math.min(30, Math.round(value))),
+            })
+          }
+          min={2}
+          max={30}
+          stepSmall={1}
+          stepMedium={5}
+          stepLarge={10}
+        />
+
+        <Label>Color</Label>
+        <ToggleGroup
+          type="single"
+          size="sm"
+          variant="outline"
+          value={settings.colorBy ?? "branch"}
+          onValueChange={(next) =>
+            next && change({ colorBy: next as HierarchySettings["colorBy"] })
+          }
+          aria-label="Color"
+          className="justify-start"
+        >
+          {(
+            [
+              [
+                "branch",
+                "Branch",
+                "Give each first-level value a color that everything inside it shares.",
+              ],
+              [
+                "level",
+                "Level",
+                "Give each level its own color, so depth reads at a glance.",
+              ],
+              [
+                "none",
+                "One",
+                "Draw every box in one color. Selections still stand out.",
               ],
             ] as const
           ).map(([option, text, help]) => (

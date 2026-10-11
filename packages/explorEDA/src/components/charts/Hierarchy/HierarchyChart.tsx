@@ -8,7 +8,9 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps, datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
 import {
+  useCallback,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -24,7 +26,13 @@ import {
 } from "../ChartStatusLine";
 import { isEmptyPlotTarget } from "../emptyPlotClick";
 import { useChartEdit } from "../InPlace/useChartEdit";
-import { useTraceRevision } from "../trace/ChartTraceScope";
+import {
+  useChartTrace,
+  useChartTraceApi,
+  useTraceRevision,
+  useTraceSource,
+} from "../trace/ChartTraceScope";
+import type { TraceSource } from "../trace/traceTypes";
 import { useGetColumnData } from "../useGetColumnData";
 import { useGetLiveIds } from "../useGetLiveData";
 import type { HierarchySettings } from "./definition";
@@ -38,6 +46,11 @@ import {
   type HierarchyPlan,
   type HierarchySnapshot,
 } from "./hierarchyPlan";
+import {
+  findHierarchyTraceRow,
+  hierarchyTraceTargets,
+  resolveHierarchyTrace,
+} from "./hierarchyTrace";
 import { layoutTreemap, type TreemapRect } from "./treemapLayout";
 
 const LABEL_CHAR = 6.4;
@@ -164,6 +177,9 @@ export function HierarchyChart({
     settings.aggregation === "sum" ? settings.measureField : undefined
   );
   const revision = useTraceRevision(settings);
+  const trace = useChartTrace();
+  const traceApi = useChartTraceApi();
+  const owner = useId();
   const [hovered, setHovered] = useState<string | null>(null);
   const [focused, setFocused] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -229,6 +245,24 @@ export function HierarchyChart({
     [settings, snapshot, fieldSettings]
   );
 
+  const source = useMemo(
+    (): TraceSource => ({
+      role: "chart",
+      revision: plan.revision,
+      resolve: (kind, id) => resolveHierarchyTrace(plan, kind, id),
+      findRow: (id) => findHierarchyTraceRow(plan, id),
+      targets: () => hierarchyTraceTargets(plan),
+    }),
+    [plan]
+  );
+  useTraceSource(owner, source);
+  const inspect = useCallback(
+    (id: string) => traceApi?.inspect(owner, "hierarchy-node", id),
+    [owner, traceApi]
+  );
+  const traced =
+    trace?.selection?.owner === owner ? trace.selection.id : undefined;
+
   const resolution = useMemo(
     () => resolveFocus(plan.root, settings.focus),
     [plan, settings.focus]
@@ -243,15 +277,19 @@ export function HierarchyChart({
     0,
     height - plotTop - margin.bottom - STATUS_LINE_HEIGHT
   );
-  const rects = useMemo(
-    () =>
-      layoutTreemap(focusNode, {
-        width: plotWidth,
-        height: plotHeight,
-        headerHeight: HEADER_HEIGHT,
-      }),
-    [focusNode, plotWidth, plotHeight]
-  );
+  const { rects, tiny } = useMemo(() => {
+    const all = layoutTreemap(focusNode, {
+      width: plotWidth,
+      height: plotHeight,
+      headerHeight: HEADER_HEIGHT,
+    });
+    // A box under a pixel on either side cannot be seen or pointed at; its
+    // parent still holds its size, and the status line counts it.
+    const drawn = all.filter(
+      (rect) => rect.x1 - rect.x0 >= 1 && rect.y1 - rect.y0 >= 1
+    );
+    return { rects: drawn, tiny: all.length - drawn.length };
+  }, [focusNode, plotWidth, plotHeight]);
 
   if (!levels.length) {
     return (
@@ -304,6 +342,11 @@ export function HierarchyChart({
     updateChart(settings.id, { focus: path.length ? path : undefined });
   const onMarkClick = (event: MouseEvent, node: HierarchyNode) => {
     event.stopPropagation();
+    if (event.altKey) {
+      event.preventDefault();
+      inspect(node.id);
+      return;
+    }
     const first = pending.current;
     const repeat = lastClicked.current === node.id;
     lastClicked.current = node.id;
@@ -373,6 +416,9 @@ export function HierarchyChart({
     if (event.key in steps) {
       event.preventDefault();
       moveFocus(node.id, steps[event.key]!);
+    } else if (event.key === "Enter" && event.altKey) {
+      event.preventDefault();
+      inspect(node.id);
     } else if (event.key === "Enter" && event.shiftKey) {
       event.preventDefault();
       if (isZoomable(node)) zoomTo(node.path);
@@ -394,6 +440,8 @@ export function HierarchyChart({
     plan.hasSelection
       ? `${format(plan.root.selectedWeight)} of ${format(plan.root.weight)} ${plan.unit} selected`
       : `${format(plan.root.weight)} ${plan.unit} in all`,
+    tiny > 0 &&
+      `${tiny.toLocaleString()} ${tiny === 1 ? "box" : "boxes"} too small to draw`,
     plan.incompleteCount > 0 &&
       `${plan.incompleteCount.toLocaleString()} rows with a missing level not drawn`,
     ...plan.excluded.map(
@@ -414,12 +462,13 @@ export function HierarchyChart({
     const { node } = rect;
     const w = rect.x1 - rect.x0;
     const h = rect.y1 - rect.y0;
-    const isParent = node.children.length > 0 && rect.header > 0;
+    const isParent = node.shown.length > 0 && rect.header > 0;
+    const isTraced = traced === node.id;
     const dimmed = plan.hasSelection && node.selectedWeight === 0;
     const parent = node.parentId ? nodeById.get(node.parentId) : undefined;
     const share = parent ? percent(node.weight, parent.weight) : "";
     const highlight =
-      node.selected || focused === node.id || hovered === node.id;
+      node.selected || isTraced || focused === node.id || hovered === node.id;
     const ink = isParent ? "var(--foreground)" : textOn(node.color);
     const name = fit(node.label, w - 8);
     const value = formatShort(node.weight);
@@ -448,7 +497,7 @@ export function HierarchyChart({
           fill={node.color}
           fillOpacity={isParent ? (dimmed ? 0.06 : 0.16) : dimmed ? 0.25 : 0.88}
           stroke={highlight ? "var(--foreground)" : "var(--background)"}
-          strokeWidth={node.selected ? 2 : 1}
+          strokeWidth={node.selected || isTraced ? 2 : 1}
           strokeDasharray={
             focused === node.id && !node.selected ? "3 2" : undefined
           }
@@ -481,7 +530,7 @@ export function HierarchyChart({
             {headerText}
           </text>
         )}
-        {!isParent && node.children.length === 0 && h >= 16 && name && (
+        {!isParent && node.shown.length === 0 && h >= 16 && name && (
           <text
             x={rect.x0 + 4}
             y={rect.y0 + 4}

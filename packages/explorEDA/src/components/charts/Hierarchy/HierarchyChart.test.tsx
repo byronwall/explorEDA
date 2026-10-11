@@ -2,6 +2,8 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeAll, expect, it, vi } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
+import { ChartTracePanel } from "../trace/ChartTracePanel";
+import { ChartTraceScope } from "../trace/ChartTraceScope";
 import { HierarchyChart, textOn } from "./HierarchyChart";
 import { hierarchyDefinition, type HierarchySettings } from "./definition";
 
@@ -173,4 +175,39 @@ it("zooms with Shift+Enter and shows a missing branch without losing it", () => 
   expect(
     screen.getByRole("button", { name: "South: 1 row, 25% of all" })
   ).toBeInTheDocument();
+});
+
+it("traces a box on Alt-click", () => {
+  render(
+    <DataLayerProvider
+      data={data}
+      charts={[
+        {
+          ...hierarchyDefinition.createDefaultSettings({
+            x: 0,
+            y: 0,
+            w: 6,
+            h: 4,
+          }),
+          id: "tree",
+          levels: ["Region", "Category"],
+        } as HierarchySettings,
+      ]}
+    >
+      <ChartTraceScope>
+        <Live />
+        <ChartTracePanel />
+      </ChartTraceScope>
+    </DataLayerProvider>
+  );
+  fireEvent.click(
+    screen.getByRole("button", {
+      name: "North › Home: 2 rows, 66.7% of North",
+    }),
+    { altKey: true }
+  );
+  const body = screen.getByLabelText("Hierarchy node trace");
+  expect(body).toHaveTextContent("North › Home");
+  expect(body).toHaveTextContent("Last level: sum of its rows");
+  expect(screen.getByTestId("filters").textContent).toBe("[]");
 });

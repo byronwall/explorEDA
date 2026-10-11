@@ -131,7 +131,7 @@ This turns a correct chart into a readable one at the stated scale: 2–3 levels
 
 ## Open decisions and spikes
 
-- **Three-level default arrangement** (Milestone 3 spike): treemap or icicle. Fallback: icicle.
+- **Three-level default arrangement** (Milestone 3 spike): resolved. Treemap stays the default; at narrow widths leaves go unlabeled but zoom labels every box.
 
 ## Below the cut line
 

@@ -98,6 +98,6 @@ It is the same kind of value a filter stores, so it is deterministic, readable i
 
 **Settled:** One "Hierarchy" entry in Add Chart. Rectangular layouts first; no circle packing. Zoom ships in the first wave.
 
-**Open choice:** Whether three levels default to treemap or icicle. Decided after the three-level step, with zoom available.
+**Resolved:** Three levels default to treemap. At narrow widths the leaves go unlabeled, and zoom labels every box.
 
 See the [intent brief](intent-brief.md) and the [implementation plan](implementation-plan.md).
