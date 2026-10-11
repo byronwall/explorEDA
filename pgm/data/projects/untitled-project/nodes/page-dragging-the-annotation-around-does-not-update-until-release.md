@@ -2,8 +2,10 @@
 id: page-dragging-the-annotation-around-does-not-update-until-release
 label: Dragging the annotation around does not update until release
 type: page
-status: planned
+status: implemented
 parent: page-driving-shifts
+metadata:
+  implementation: Dragging an anchored annotation or a guide label now re-resolves the scene with the moved offset, so the ring stays on 2008 and the leader follows the text live.
 images:
   - id: 096ed67d-7214-460e-982a-7bfede80de0d
     src: /api/projects/untitled-project/images/page-dragging-the-annotation-around-does-not-update-until-release/096ed67d-7214-460e-982a-7bfede80de0d.png

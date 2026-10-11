@@ -32,6 +32,7 @@ import { makeCompositionTraceSource } from "./compositionTrace";
 import {
   findOverride,
   normalizeComposition,
+  type CompositionDefinition,
   type UnitElement,
 } from "./compositionTypes";
 import type { CompositionSettings } from "./definition";
@@ -58,6 +59,15 @@ type ValueFilter = Extract<Filter, { type: "value" }>;
 
 /** The repeat value a filter stores: missing values filter as null. */
 const filterValue = (key: string) => (key === "Missing" ? null : key);
+
+/** True when an element's position is an offset from an anchor it follows. */
+function isAnchored(definition: CompositionDefinition, id: string) {
+  const element = definition.elements.find((item) => item.id === id);
+  return (
+    element?.kind === "guide" ||
+    (element?.kind === "annotation" && element.anchor.kind !== "page")
+  );
+}
 
 export function CompositionChart({
   settings,
@@ -122,9 +132,30 @@ export function CompositionChart({
         }
       : rows;
   }, [rows, settings.filters, repeatFields]);
+  // An annotation attached to a frame or a glyph, and a guide's label, sit
+  // at an offset from their anchor; dragging one re-resolves with the moved
+  // offset, so the ring and leader stay on the anchor instead of floating.
+  const anchoredDrag =
+    drag &&
+    drag.instanceKey === undefined &&
+    isAnchored(definition, drag.elementId)
+      ? drag
+      : undefined;
+  const drawn = useMemo(
+    () =>
+      anchoredDrag
+        ? moveElement(
+            definition,
+            anchoredDrag.elementId,
+            anchoredDrag.dx,
+            anchoredDrag.dy
+          )
+        : definition,
+    [definition, anchoredDrag]
+  );
   const scene = useMemo(
-    () => resolveComposition(definition, measureCompositionText, data),
-    [definition, data]
+    () => resolveComposition(drawn, measureCompositionText, data),
+    [drawn, data]
   );
   // Output copies the drawn artboard, so it matches what is on screen.
   useEffect(
@@ -393,7 +424,7 @@ export function CompositionChart({
 
   // While dragging, offset the drawing; the move saves on release.
   const offsets =
-    drag && drag.instanceKey === undefined
+    drag && drag.instanceKey === undefined && !anchoredDrag
       ? { [drag.elementId]: { dx: drag.dx, dy: drag.dy } }
       : undefined;
   const instanceOffset =
