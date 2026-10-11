@@ -1,0 +1,16 @@
+{
+  "id": "ffa31a2c-70ea-48de-b77a-07e2b9f5f4ec",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:41:23.913Z",
+  "summary": "Added 1 images to \"Original had a computation for the delta\".",
+  "nodeIds": [
+    "page-original-had-a-computation-for-the-delta"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "65c7ae1d-cd31-4265-a090-47a6ecc45cb9"
+  }
+}

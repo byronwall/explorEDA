@@ -29,3 +29,6 @@ dist-ssr
 **/generated_samples/*
 
 **/coverage/*
+
+# Docs screenshots, written by the docs check
+apps/demo/public/docs-shots

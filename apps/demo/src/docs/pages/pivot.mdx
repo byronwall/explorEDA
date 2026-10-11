@@ -1,0 +1,22 @@
+## When to use it
+
+Use a pivot table to group rows by one or more fields and summarize measures in a grid, with totals.
+
+## Try it
+
+<LiveExample
+  id="pivot"
+  caption="A pivot table from the categorical charts example."
+/>
+
+## How it reads
+
+- Row fields group the rows, outermost first. A column field spreads one more grouping across columns.
+- Click a column heading to filter every other chart to that value.
+- Each value field is a field with an aggregation: sum, count, average, minimum, maximum, median, mode, standard deviation, variance, unique count, or single value.
+- **Totals** adds a Total row, and a Total column when a column field is set. Each total recomputes its aggregate over every row it covers.
+- **Shade cells by value** tints each value cell by its size among the cells of the same value column. Totals stay unshaded.
+
+## Saved settings
+
+<SettingsReference type="pivot" />

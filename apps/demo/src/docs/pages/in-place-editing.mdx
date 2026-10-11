@@ -1,0 +1,16 @@
+## Edit where it's drawn
+
+- Double-click a chart title to edit it. Enter, Tab, or leaving the field keeps the change; Escape restores the title it opened with.
+- Double-click a numeric axis to set its range. Leave a side blank to follow the data. Marks outside the range are hidden, not filtered.
+- Drag along a numeric axis to pan its range, or drag an end to stretch it.
+
+## One edit, one step
+
+Each edit is reported once, when it ends: a typed title, an axis drag, or a session in the axis range popover. A host that records each change as an undo step gets one step per edit. An edit cancelled with Escape is not reported.
+
+## Try it
+
+<LiveExample
+  id="bar-histogram"
+  caption="Double-click the histogram's title or its X axis to edit them in place."
+/>

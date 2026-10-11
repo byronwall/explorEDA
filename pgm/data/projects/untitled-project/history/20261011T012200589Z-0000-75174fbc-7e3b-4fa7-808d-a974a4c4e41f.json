@@ -1,0 +1,16 @@
+{
+  "id": "75174fbc-7e3b-4fa7-808d-a974a4c4e41f",
+  "kind": "node.moved",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:22:00.589Z",
+  "summary": "Moved \"The retirement line is hard to read\" under \"Causes by age\".",
+  "nodeIds": [
+    "page-the-retirement-line-is-hard-to-read",
+    "page-causes-by-age"
+  ],
+  "metadata": {
+    "clientMutationId": "bef469ff-e26a-4c68-a976-8682bcbe555d"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "c0e1485c-ac62-457a-91ab-a495a91b1a66",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:844d30",
+    "label": "Agent token ...844d30"
+  },
+  "createdAt": "2026-10-11T02:17:05.577Z",
+  "summary": "Updated metadata for \"It'd be really nice to get a legend example showing how the bands are determined\".",
+  "nodeIds": [
+    "page-it-d-be-really-nice-to-get-a-legend-example-showing-how-the-bands-qhdqf4"
+  ]
+}

@@ -1,7 +1,13 @@
 import { area as shapeArea, curveMonotoneX, line as shapeLine } from "d3-shape";
 import type { ReactNode } from "react";
+import type { ArtboardView } from "./artboardZoom";
 import { COMPOSITION_FONT } from "./compositionTypes";
-import type { Bounds, CompositionScene, SceneNode } from "./resolveComposition";
+import type {
+  AreaNode,
+  Bounds,
+  CompositionScene,
+  SceneNode,
+} from "./resolveComposition";
 
 /** A stable ID for a clip box, shared by every node clipped to it. */
 export function clipId(clip: Bounds) {
@@ -22,6 +28,7 @@ export function CompositionSvg({
   svgRef,
   offsets,
   instanceOffset,
+  view,
   ...props
 }: {
   scene: CompositionScene;
@@ -31,6 +38,8 @@ export function CompositionSvg({
   svgRef?: React.Ref<SVGSVGElement>;
   /** Temporary moves, such as during a drag, by element ID. */
   offsets?: Record<string, { dx: number; dy: number }>;
+  /** The part of the artboard in view, when zoomed in. */
+  view?: ArtboardView;
   /** A temporary move of one repeat of a chart unit. */
   instanceOffset?: {
     elementId: string;
@@ -42,6 +51,12 @@ export function CompositionSvg({
   // Nodes group by element, so moving one element is one transform.
   const groups: { elementId: string; nodes: SceneNode[] }[] = [];
   const clips = new Map<string, Bounds>();
+  const textured = scene.nodes.some(
+    (node) => node.type === "rect" && node.texture === "hand"
+  );
+  const gradients = scene.nodes.filter(
+    (node): node is AreaNode => node.type === "area" && Boolean(node.gradient)
+  );
   for (const node of scene.nodes) {
     const last = groups[groups.length - 1];
     if (last?.elementId === node.elementId) last.nodes.push(node);
@@ -56,12 +71,69 @@ export function CompositionSvg({
       aria-label={label}
       width={Math.round(scene.width * scale)}
       height={Math.round(scene.height * scale)}
-      viewBox={`0 0 ${scene.width} ${scene.height}`}
+      viewBox={
+        view && view.k !== 1
+          ? `${view.x} ${view.y} ${scene.width / view.k} ${scene.height / view.k}`
+          : `0 0 ${scene.width} ${scene.height}`
+      }
       fontFamily={COMPOSITION_FONT}
       {...props}
     >
-      {clips.size > 0 && (
+      {(clips.size > 0 || gradients.length > 0 || textured) && (
         <defs>
+          {textured && (
+            // Uneven edges and grain, as in a hand-colored chart.
+            <filter id="eda-hand" x="-3%" y="-15%" width="106%" height="130%">
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.04"
+                numOctaves={3}
+                seed={7}
+                result="noise"
+              />
+              <feDisplacementMap
+                in="SourceGraphic"
+                in2="noise"
+                scale={3}
+                xChannelSelector="R"
+                yChannelSelector="G"
+                result="rough"
+              />
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.8"
+                numOctaves={2}
+                seed={3}
+                result="grain"
+              />
+              <feColorMatrix
+                in="grain"
+                type="matrix"
+                values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.7 0 0 0 0.5"
+                result="grainAlpha"
+              />
+              <feComposite in="rough" in2="grainAlpha" operator="in" />
+            </filter>
+          )}
+          {gradients.map((node) => (
+            <linearGradient
+              key={node.key}
+              id={gradientId(node.key)}
+              gradientUnits="userSpaceOnUse"
+              x1={node.gradient!.x1}
+              x2={node.gradient!.x2}
+              y1={0}
+              y2={0}
+            >
+              {node.gradient!.stops.map((stop) => (
+                <stop
+                  key={stop.offset}
+                  offset={stop.offset}
+                  stopColor={stop.color}
+                />
+              ))}
+            </linearGradient>
+          ))}
           {[...clips].map(([id, clip]) => (
             <clipPath key={id} id={id}>
               <rect
@@ -126,6 +198,11 @@ function SceneNodeView({ node }: { node: SceneNode }) {
           strokeWidth={node.halo ? 3 : undefined}
           strokeLinejoin={node.halo ? "round" : undefined}
           paintOrder={node.halo ? "stroke" : undefined}
+          transform={
+            node.rotate
+              ? `rotate(${node.rotate} ${node.x} ${node.lines[0]?.y ?? 0})`
+              : undefined
+          }
         >
           {node.lines.map((line, index) => (
             <tspan key={index} x={node.x} y={line.y}>
@@ -143,6 +220,7 @@ function SceneNodeView({ node }: { node: SceneNode }) {
           width={node.width}
           height={node.height}
           fill={node.fill}
+          filter={node.texture === "hand" ? "url(#eda-hand)" : undefined}
           stroke={node.stroke}
           strokeWidth={node.stroke ? 1 : undefined}
           opacity={node.opacity}
@@ -182,7 +260,7 @@ function SceneNodeView({ node }: { node: SceneNode }) {
                 return `${upper.join("")}${lower.join("")}Z`;
               })
               .join("")}
-            fill={node.fill}
+            fill={node.gradient ? `url(#${gradientId(node.key)})` : node.fill}
             fillOpacity={node.fillOpacity}
             stroke="none"
             opacity={node.opacity}
@@ -241,7 +319,30 @@ function SceneNodeView({ node }: { node: SceneNode }) {
         />
       );
     case "line":
-      return (
+      return node.casing ? (
+        <g opacity={node.opacity}>
+          <line
+            x1={node.x1}
+            y1={node.y1}
+            x2={node.x2}
+            y2={node.y2}
+            stroke={node.casing}
+            strokeWidth={node.strokeWidth + 3}
+            strokeOpacity={0.85}
+            pointerEvents="none"
+          />
+          <line
+            data-node={node.key}
+            x1={node.x1}
+            y1={node.y1}
+            x2={node.x2}
+            y2={node.y2}
+            stroke={node.stroke}
+            strokeWidth={node.strokeWidth}
+            strokeDasharray={node.dash}
+          />
+        </g>
+      ) : (
         <line
           data-node={node.key}
           x1={node.x1}
@@ -255,6 +356,11 @@ function SceneNodeView({ node }: { node: SceneNode }) {
         />
       );
   }
+}
+
+/** A stable, URL-safe ID for an area's gradient. */
+function gradientId(key: string) {
+  return `eda-gradient-${key.replace(/[^a-zA-Z0-9_-]/g, "_")}`;
 }
 
 /** A monotone cubic curve through points, which never overshoots them. */

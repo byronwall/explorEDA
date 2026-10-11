@@ -5,6 +5,7 @@ import { calendarDefinition } from "@/components/charts/Calendar/definition";
 import { colorLegendDefinition } from "@/components/charts/ColorLegend/definition";
 import { compositionDefinition } from "@/components/charts/Composition/definition";
 import { dataTableDefinition } from "@/components/charts/DataTable/definition";
+import { hierarchyDefinition } from "@/components/charts/Hierarchy/definition";
 import { heatmapDefinition } from "@/components/charts/Heatmap/definition";
 import { ecdfDefinition } from "@/components/charts/Ecdf/definition";
 import { lineChartDefinition } from "@/components/charts/LineChart/definition";
@@ -33,6 +34,7 @@ export function registerAllCharts() {
   chartRegistry.register(colorLegendDefinition);
   chartRegistry.register(lineChartDefinition);
   chartRegistry.register(sankeyDefinition);
+  chartRegistry.register(hierarchyDefinition);
   chartRegistry.register(parallelCoordinatesDefinition);
   chartRegistry.register(scatterMatrixDefinition);
   chartRegistry.register(calendarDefinition);

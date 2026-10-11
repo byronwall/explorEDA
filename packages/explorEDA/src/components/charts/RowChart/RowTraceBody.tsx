@@ -5,6 +5,7 @@ import { TraceReadout, TraceSection } from "../ChartTraceDetails";
 import { AggregateContributorTable } from "../BarChart/GroupedAggregateInspector";
 import { useChartTraceApi } from "../trace/ChartTraceScope";
 import type { RowCategory } from "./rowChartPlan";
+import type { AggregateResultRow } from "@/lib/aggregates";
 
 export interface RowTrace {
   kind: "row-category";
@@ -15,6 +16,16 @@ export interface RowTrace {
   field: string;
   other: boolean;
   categories: RowCategory[];
+  /** Set when the chart ranks a grouped summary instead of counting rows. */
+  summary?: {
+    name: string;
+    aggregation: string;
+    value: string;
+    allRows: string;
+    /** The filtered rows behind the value; Other's are pooled. */
+    row: AggregateResultRow;
+    memberValues: Record<string, string>;
+  };
 }
 export function RowTraceBody({ trace }: { trace: RowTrace }) {
   const [search, setSearch] = useState("");
@@ -55,12 +66,23 @@ export function RowTraceBody({ trace }: { trace: RowTrace }) {
     update(settings.id, { filters });
   };
   const ids = trace.categories.flatMap((item) => item.sourceIds);
+  const summary = trace.summary;
   return (
     <div className="space-y-2">
       <TraceSection
         heading={trace.other ? "Other categories" : trace.categories[0]?.label}
       >
         <TraceReadout label="Field">{trace.field}</TraceReadout>
+        {summary && (
+          <>
+            <TraceReadout label="Summary">{summary.name}</TraceReadout>
+            <TraceReadout label="Aggregation">
+              {summary.aggregation}
+            </TraceReadout>
+            <TraceReadout label="Value">{summary.value}</TraceReadout>
+            <TraceReadout label="All rows">{summary.allRows}</TraceReadout>
+          </>
+        )}
         <TraceReadout label="Matching rows">
           {ids.length.toLocaleString()}
         </TraceReadout>
@@ -69,8 +91,13 @@ export function RowTraceBody({ trace }: { trace: RowTrace }) {
           {trace.categories.length === 1 ? "category" : "categories"}
         </TraceReadout>
         <p className="text-muted-foreground">
-          Counts follow other filters. Selection stores category values and
-          stays the same when the chart is resized.
+          {summary
+            ? trace.other
+              ? "Values follow other filters. Other's value comes from all of its members' rows together, not from their values. Order uses every row."
+              : "Values follow other filters. Order and the all-row mark use every row."
+            : "Counts follow other filters."}{" "}
+          Selection stores category values and stays the same when the chart is
+          resized.
         </p>
       </TraceSection>
       <TraceSection heading="Category members">
@@ -108,7 +135,9 @@ export function RowTraceBody({ trace }: { trace: RowTrace }) {
                 />
                 {item.label}
               </label>
-              <span className="tabular-nums">{item.sourceIds.length}</span>
+              <span className="tabular-nums">
+                {summary?.memberValues[item.key] ?? item.sourceIds.length}
+              </span>
               {trace.other && (
                 <button
                   className="rounded border border-border px-1.5 py-0.5"
@@ -142,25 +171,31 @@ export function RowTraceBody({ trace }: { trace: RowTrace }) {
           </div>
         )}
       </TraceSection>
-      {!trace.other && (
+      {summary ? (
         <TraceSection heading="Source rows">
-          <AggregateContributorTable
-            showInputs
-            row={{
-              id: trace.id,
-              groupValue: trace.categories[0]?.value,
-              groupLabel: trace.field,
-              value: ids.length,
-              rowCount: ids.length,
-              contributors: ids.map((sourceId) => ({
-                sourceId,
-                input: inputs[sourceId],
-                rawInput: rawData[sourceId]?.[trace.field],
-                included: true,
-              })),
-            }}
-          />
+          <AggregateContributorTable showInputs row={summary.row} />
         </TraceSection>
+      ) : (
+        !trace.other && (
+          <TraceSection heading="Source rows">
+            <AggregateContributorTable
+              showInputs
+              row={{
+                id: trace.id,
+                groupValue: trace.categories[0]?.value,
+                groupLabel: trace.field,
+                value: ids.length,
+                rowCount: ids.length,
+                contributors: ids.map((sourceId) => ({
+                  sourceId,
+                  input: inputs[sourceId],
+                  rawInput: rawData[sourceId]?.[trace.field],
+                  included: true,
+                })),
+              }}
+            />
+          </TraceSection>
+        )
       )}
     </div>
   );

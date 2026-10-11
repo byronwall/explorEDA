@@ -12,6 +12,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { cachedDownload, writeCsv, type Row } from "./lib.ts";
+import { US_TILES } from "./usTiles.ts";
 
 const SOURCE_URL =
   "https://dataverse.harvard.edu/api/access/datafile/:persistentId?persistentId=doi:10.7910/DVN/42MVDX/MFU99O";
@@ -73,6 +74,11 @@ for (const record of records) {
   byStateYear.set(key, entry);
 }
 
+const tileOf = (code: string) => {
+  const tile = Object.values(US_TILES).find((item) => item[2] === code);
+  return tile ? `${tile[0]},${tile[1]}` : null;
+};
+
 const rows: Row[] = [...byStateYear.values()]
   .sort((a, b) => a.code.localeCompare(b.code) || a.year - b.year)
   .map((entry) => {
@@ -81,6 +87,8 @@ const rows: Row[] = [...byStateYear.values()]
     return {
       State: entry.state,
       Code: entry.code,
+      // The state's "row,column" on the tile grid, for tile-map layouts.
+      Tile: tileOf(entry.code),
       Year: entry.year,
       "Democratic share": Math.round(demShare * 10) / 10,
       "Republican share": Math.round(repShare * 10) / 10,
@@ -95,6 +103,7 @@ const written = writeCsv(
   [
     "State",
     "Code",
+    "Tile",
     "Year",
     "Democratic share",
     "Republican share",

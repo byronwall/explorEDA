@@ -1,0 +1,16 @@
+{
+  "id": "41978608-4c1e-4659-9171-580da045e05f",
+  "kind": "node.moved",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:18:38.401Z",
+  "summary": "Moved \"How each state voted is weak and hard to read\" under \"Consumer confidence\".",
+  "nodeIds": [
+    "page-how-each-state-voted-is-weak-and-hard-to-read",
+    "page-consumer-confidewnce"
+  ],
+  "metadata": {
+    "clientMutationId": "102b9c6b-1083-4b5a-a8a4-823b2c9021ac"
+  }
+}

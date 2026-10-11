@@ -1,0 +1,14 @@
+{
+  "id": "ec783f7e-6c06-4cf1-aafa-f3d9ffe1db21",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:c7ea49",
+    "label": "Agent token ...c7ea49"
+  },
+  "createdAt": "2026-10-11T02:17:03.510Z",
+  "summary": "Updated metadata for \"A color legend would help show the P20/P80 etc designations\".",
+  "nodeIds": [
+    "page-a-color-legend-would-help-show-the-p20-p80-etc-designations"
+  ]
+}

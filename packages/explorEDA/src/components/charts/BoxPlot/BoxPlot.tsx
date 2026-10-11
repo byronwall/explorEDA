@@ -12,7 +12,13 @@ import {
   categoryValue,
 } from "@/lib/categories";
 import { formatFieldValue as formatValue } from "@/lib/fieldSettings";
-import { boundedDomain } from "../Axis/axisBounds";
+import {
+  boundedDomain,
+  countNonpositive,
+  hiddenByBounds,
+  logDomain,
+  withNonpositive,
+} from "../Axis/axisBounds";
 import { planChartMargin } from "../Axis/axisPlan";
 import { numericScale } from "../Axis/numericScale";
 import { useColorScales } from "@/hooks/useColorScales";
@@ -118,17 +124,19 @@ export function BoxPlot({
     const min = Math.min(...values);
     const max = Math.max(...values);
     const padding = (max - min) * Y_SCALE_PADDING;
-    return boundedDomain(
-      [
-        settings.yAxis.scaleType === "symlog" ? min : min - padding,
-        max + padding,
-      ],
-      settings.yAxis
-    );
+    return settings.yAxis.scaleType === "log"
+      ? logDomain(values, settings.yAxis)
+      : boundedDomain(
+          [
+            settings.yAxis.scaleType === "symlog" ? min : min - padding,
+            max + padding,
+          ],
+          settings.yAxis
+        );
   }, [allData, settings.yAxis]);
 
   // The left margin fits the tick labels the axis will draw.
-  const yTickLabels = numericScale(settings.yAxis)
+  const yTickLabels = numericScale(settings.yAxis, true)
     .domain(yDomain)
     .ticks(Math.max(2, settings.yGridLines ?? 5))
     .map(formatAxis);
@@ -291,9 +299,19 @@ export function BoxPlot({
 
   // Create y scale with synchronized limits if in a facet
   const yScale = useMemo(
-    () => numericScale(settings.yAxis).domain(yDomain).range([innerHeight, 0]),
+    () =>
+      numericScale(settings.yAxis, true)
+        .domain(yDomain)
+        .range([innerHeight, 0]),
     [yDomain, innerHeight, settings.yAxis]
   ) as ScaleLinear<number, number>;
+  // A log axis has no place for zero or below. Statistics still use every
+  // value; any part at or below zero is drawn at the floor and counted.
+  const yLog = "base" in yScale;
+  const yAt = useCallback(
+    (value: number) => (yLog && value <= 0 ? innerHeight : yScale(value)),
+    [yLog, yScale, innerHeight]
+  );
 
   const traceGroups = useMemo(() => {
     const groups = new Map<
@@ -495,6 +513,18 @@ export function BoxPlot({
         height={chartHeight}
         xScale={xScale}
         yScale={yScale}
+        hidden={{
+          y: withNonpositive(
+            hiddenByBounds(
+              settings.yAxis,
+              yScale.domain() as [number, number],
+              yLog
+                ? finiteNumbers(liveData).filter((value) => value > 0)
+                : finiteNumbers(liveData)
+            ),
+            yLog ? countNonpositive(finiteNumbers(liveData)) : 0
+          ),
+        }}
         brushingMode="none"
         settings={{ ...settings, margin }}
         yTickFormatter={formatAxis}
@@ -569,7 +599,7 @@ export function BoxPlot({
                               997) *
                               0.6)
                       }
-                      cy={yScale(parseNumber(item.input))}
+                      cy={yAt(parseNumber(item.input))}
                       r={3}
                       fill="var(--background)"
                       stroke={color}
@@ -603,7 +633,7 @@ export function BoxPlot({
           const kde = groupKDEs?.find((g) => g.group === group)?.kde;
           const firstKde = kde?.[0];
           const lastKde = kde?.at(-1);
-          const medianY = yScale(stats.median);
+          const medianY = yAt(stats.median);
 
           return (
             <g
@@ -617,10 +647,10 @@ export function BoxPlot({
               {settings.violinOverlay && kde && firstKde && lastKde && (
                 <path
                   d={createPath([
-                    [boxWidth / 2, yScale(firstKde[0])],
+                    [boxWidth / 2, yAt(firstKde[0])],
                     ...kde.map(
                       ([x, y]) =>
-                        [boxWidth / 2 + y * boxWidth * 0.45, yScale(x)] as [
+                        [boxWidth / 2 + y * boxWidth * 0.45, yAt(x)] as [
                           number,
                           number,
                         ]
@@ -629,7 +659,7 @@ export function BoxPlot({
                       .reverse()
                       .map(
                         ([x, y]) =>
-                          [boxWidth / 2 - y * boxWidth * 0.45, yScale(x)] as [
+                          [boxWidth / 2 - y * boxWidth * 0.45, yAt(x)] as [
                             number,
                             number,
                           ]
@@ -644,8 +674,8 @@ export function BoxPlot({
               <line
                 x1={boxWidth / 2}
                 x2={boxWidth / 2}
-                y1={yScale(stats.whiskerHigh)}
-                y2={yScale(stats.whiskerLow)}
+                y1={yAt(stats.whiskerHigh)}
+                y2={yAt(stats.whiskerLow)}
                 stroke={settings.violinOverlay ? boxStroke : boxColor}
                 strokeWidth={settings.styles.whiskerStrokeWidth}
               />
@@ -654,23 +684,23 @@ export function BoxPlot({
                   <line
                     x1={boxWidth / 2 - boxPixels / 4}
                     x2={boxWidth / 2 + boxPixels / 4}
-                    y1={yScale(stats.whiskerHigh)}
-                    y2={yScale(stats.whiskerHigh)}
+                    y1={yAt(stats.whiskerHigh)}
+                    y2={yAt(stats.whiskerHigh)}
                   />
                   <line
                     x1={boxWidth / 2 - boxPixels / 4}
                     x2={boxWidth / 2 + boxPixels / 4}
-                    y1={yScale(stats.whiskerLow)}
-                    y2={yScale(stats.whiskerLow)}
+                    y1={yAt(stats.whiskerLow)}
+                    y2={yAt(stats.whiskerLow)}
                   />
                 </g>
               )}
               <rect
                 rx={2}
                 x={boxX}
-                y={yScale(stats.q3)}
+                y={yAt(stats.q3)}
                 width={boxPixels}
-                height={Math.max(1, yScale(stats.q1) - yScale(stats.q3))}
+                height={Math.max(1, yAt(stats.q1) - yAt(stats.q3))}
                 fill={boxColor}
                 stroke={outlined ? "var(--foreground)" : boxStroke}
                 strokeWidth={outlined ? 2 : settings.styles.boxStrokeWidth}
@@ -697,7 +727,7 @@ export function BoxPlot({
                   <circle
                     key={i}
                     cx={boxWidth / 2}
-                    cy={yScale(value)}
+                    cy={yAt(value)}
                     r={settings.styles.outlierSize}
                     fill={boxColor}
                     fillOpacity={0.5}

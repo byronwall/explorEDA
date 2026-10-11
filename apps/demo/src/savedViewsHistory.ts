@@ -254,6 +254,7 @@ const CHART_TYPE_NAMES: Record<string, string> = {
   "box-plot": "Box plot",
   line: "Line chart",
   sankey: "Sankey",
+  hierarchy: "Hierarchy",
   "parallel-coordinates": "Parallel coordinates",
   calendar: "Calendar",
 };

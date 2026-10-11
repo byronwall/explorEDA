@@ -13,6 +13,9 @@ export default defineConfig({
   },
   test: {
     globals: true,
+    // Data-heavy tests take 1–3 s alone and several times that on CI runners or
+    // under a full parallel run; the timeout only needs to catch hangs.
+    testTimeout: 20_000,
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
     coverage: {

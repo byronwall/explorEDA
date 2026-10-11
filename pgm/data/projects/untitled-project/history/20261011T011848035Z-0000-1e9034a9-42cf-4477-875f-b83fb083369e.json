@@ -1,0 +1,16 @@
+{
+  "id": "1e9034a9-42cf-4477-875f-b83fb083369e",
+  "kind": "node.moved",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:18:48.035Z",
+  "summary": "Moved \"Consumer confidence does better at 900px tall with footer moved down\" under \"Consumer confidence\".",
+  "nodeIds": [
+    "page-consumer-confidence-does-better-at-900px-tall-with-footer-moved-down",
+    "page-consumer-confidewnce"
+  ],
+  "metadata": {
+    "clientMutationId": "427d14f6-2b9a-4149-936e-36b0e0c74d45"
+  }
+}

@@ -1,0 +1,21 @@
+## When to use it
+
+Use an ECDF to read what share of rows fall at or below any value, or at or above it. Unlike a histogram, it needs no bins.
+
+## Try it
+
+<LiveExample
+  id="ecdf"
+  caption="Cumulative shares of page speed, from the product activity example."
+/>
+
+## How it reads
+
+- **Read as** plots the share of values at or below each x, or at or above it, which reads better for questions about how many exceed a value.
+- **Split by** draws one curve per value of a field. Each curve uses its own rows as 100%, so groups of different sizes compare fairly. A dashed curve can show all rows together.
+- Quantile marks show where each curve crosses 50% and 90%.
+- When every value is positive, the X axis can use a log scale.
+
+## Saved settings
+
+<SettingsReference type="ecdf" />

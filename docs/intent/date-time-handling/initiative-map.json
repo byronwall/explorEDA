@@ -1,0 +1,179 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Rework how dates and times work across the app",
+    "slug": "date-time-handling",
+    "scale": "capability",
+    "current_phase": "intent",
+    "last_updated": "2026-10-10",
+    "summary": "One coherent pass over dates and times across import, fields, filters, and charts.",
+    "status": "planned",
+    "next_action": "Collect Byron's date ideas and recover intent from them."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "draft",
+      "updated_at": "2026-10-10"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "split-request",
+      "type": "direct-user-input",
+      "location": "chat 2026-10-10",
+      "anchor": "Spawn a new initiative to do a holistic rework of how dates are handled across the app. I have several ideas. Split out the date/time stuff and seed a new intent doc.",
+      "authority": "explicit user direction"
+    },
+    {
+      "id": "axis-bounds",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/Axis/axisBounds.ts",
+      "anchor": "d743760: numericAxes excludes time-series X",
+      "authority": "current repository reality"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "holistic-rework",
+        "type": "outcome",
+        "statement": "Rework date and time handling across the app as one coherent pass.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "split-request",
+            "anchor": "holistic rework"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Byron's specific ideas are not yet captured."
+      },
+      {
+        "id": "date-axis-bounds",
+        "type": "scope",
+        "statement": "Date-axis bounds, exact date entry, drag, and reset on time-series axes belong here.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "split-request",
+            "anchor": "split out the date/time stuff"
+          },
+          {
+            "source_id": "axis-bounds",
+            "anchor": "numericAxes"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Moved from axis-domain-controls on 2026-10-10."
+      },
+      {
+        "id": "date-range-follows-filters",
+        "type": "current repository reality",
+        "statement": "The time-series date axis sets its range from rows other charts leave in (timeSeriesPlan.ts uses liveIds), which conflicts with the stable-axes rule in docs/ui-defaults.md. The 2,000-period cap tells users to filter dates elsewhere, so a fix must keep that workflow.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "axis-bounds",
+            "anchor": "timeSeriesPlan.ts liveIds"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Moved from axis-domain-controls plan 2026-10-10."
+      }
+    ],
+    "themes": [
+      "Dates as one concern across the app."
+    ],
+    "conflicts": [],
+    "human_questions": [
+      "What are your ideas for dates?"
+    ]
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/Projects/explorEDA/.claude/worktrees/chart-domain-controls-reconcile-fb6532",
+      "revision": "d743760",
+      "worktree_status": "clean",
+      "subsystems": [
+        "packages/explorEDA/src/components/charts/Axis/axisBounds.ts",
+        "packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts"
+      ],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-10",
+      "action": "Seeded from axis-domain-controls.",
+      "reason": "Byron asked to split date and time work into its own holistic initiative.",
+      "status": "planned",
+      "evidence": "Direct user request; no implementation."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Added the date-axis stability conflict.",
+      "reason": "Found while planning axis-domain-controls.",
+      "status": "planned",
+      "evidence": "timeSeriesPlan.ts range from snapshot.liveIds."
+    }
+  ],
+  "closure": null,
+  "intake": {
+    "kind": "rework",
+    "priority_basis": "Byron's request; ideas pending",
+    "related_initiatives": [
+      "axis-domain-controls",
+      "calendar-period-analysis"
+    ],
+    "audience": "End users; developers deliver their experience.",
+    "priority": "Unranked; awaiting ideas"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "14bcad07-d102-4dff-a324-936823e22f58",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:470824",
+    "label": "Agent token ...470824"
+  },
+  "createdAt": "2026-10-11T03:20:48.657Z",
+  "summary": "Updated metadata for \"Media deaths\".",
+  "nodeIds": [
+    "page-media-deaths"
+  ]
+}

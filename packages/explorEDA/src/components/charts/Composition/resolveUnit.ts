@@ -6,6 +6,7 @@ import {
   findOverride,
   isFocused,
   MUTED_INK,
+  PAPER,
   MUTED_MARK,
   INK,
   type CompositionDefinition,
@@ -38,10 +39,11 @@ import type {
   Bounds,
   CircleNode,
   PathNode,
+  RectNode,
   SceneNode,
   TextNode,
 } from "./resolveComposition";
-import { evaluateCalc, type CalcResult } from "./calculations";
+import { evaluateCalc, formatCalcValue, type CalcResult } from "./calculations";
 import { dodgePositions } from "./labelDodge";
 import { swarmOffsets } from "./swarm";
 import { MISSING, orderedRows } from "./ordering";
@@ -425,6 +427,27 @@ export function resolveUnit(
       1;
     return { mark, domain: [mark.mirror ? -max : 0, max] as [number, number] };
   });
+  // A binned waffle's whole values along x, shared across repeats.
+  const wafflesBinned = waffles.map(({ mark }) => {
+    const x = mark.xScaleId ? scale(mark.xScaleId) : undefined;
+    if (x?.kind !== "numeric") return undefined;
+    const column = data.column(x.field);
+    let min = Infinity;
+    let max = -Infinity;
+    for (const id of data.allIds) {
+      const value = readNumber(column[id]);
+      if (value === undefined) continue;
+      min = Math.min(min, Math.round(value));
+      max = Math.max(max, Math.round(value));
+    }
+    if (x.min !== undefined) min = Math.round(x.min);
+    if (x.max !== undefined) max = Math.round(x.max);
+    if (!Number.isFinite(min) || max < min) return undefined;
+    return {
+      field: x.field,
+      bins: Array.from({ length: max - min + 1 }, (_, index) => min + index),
+    };
+  });
   // Stacks and waffles share one category order and color across every repeat.
   const stacked = stacks.map(({ mark }) => stackCategories(mark, data));
   const waffled = waffles.map(({ mark }) =>
@@ -725,7 +748,7 @@ export function resolveUnit(
   const labelTop = unit.repeat.arrangement !== "rows" && unit.label.show;
   const labelWidth = labelLeft ? unit.label.width : 0;
   const labelHeight = labelTop ? Math.round(labelSize * 1.6) : 0;
-  const axisHeight = unit.axis ? 16 : 0;
+  const axisHeight = unit.axis ? (unit.axisTitles?.x ? 34 : 16) : 0;
   // Rows share one axis under the last row; columns and grids label each frame.
   const axisPerUnit = unit.repeat.arrangement !== "rows";
   const cellWidth = labelWidth + unit.frame.width;
@@ -778,9 +801,7 @@ export function resolveUnit(
     });
   }
 
-  const sliceStarts: number[] = [];
   subsets.forEach((subset, index) => {
-    sliceStarts[index] = nodes.length;
     const cell = tiles?.get(subset.key) ?? {
       row: Math.floor(index / columns),
       column: index % columns,
@@ -818,26 +839,71 @@ export function resolveUnit(
       (calc) => calc.id === unit.label.valueCalcId
     );
     const labelValue = labelCalc && evaluateCalc(labelCalc, data, subset);
-    if (unit.label.show && labelValue && labelLeft) {
+    // A ridge rises from its baseline, so its name sits on that line;
+    // other rows center their names.
+    const labelRowY = (bounds: Bounds) =>
+      densities.length
+        ? bounds.y + bounds.height - 3
+        : bounds.y + bounds.height / 2 + labelSize * 0.35;
+    // Rows too dense to name each can name every nth.
+    const named =
+      unit.label.show && index % Math.max(1, unit.label.every ?? 1) === 0;
+    const valueColumn = labelLeft ? unit.label.valueColumn : undefined;
+    if (valueColumn) {
+      // A tint behind the column runs through the gaps, so the rows join.
+      const half = Math.max(0, unit.repeat.gap) / 2;
+      const header = index === 0 && valueColumn.header ? labelSize * 2 : 0;
+      if (valueColumn.fill)
+        nodes.push({
+          type: "rect",
+          key: `${unit.id}:${subset.key}:value-column`,
+          elementId: unit.id,
+          instanceKey: subset.key,
+          x: frame.x + frame.width + 12,
+          y: frame.y - half - header,
+          width: valueColumn.width,
+          // One pixel more, so neighboring rows leave no seam.
+          height: frame.height + half * 2 + header + 1,
+          fill: valueColumn.fill,
+        });
+      if (index === 0 && valueColumn.header)
+        nodes.push({
+          type: "text",
+          key: `${unit.id}:value-header`,
+          elementId: unit.id,
+          x: frame.x + frame.width + 12 + valueColumn.width / 2,
+          lines: [
+            { text: valueColumn.header, y: frame.y - half - labelSize * 0.6 },
+          ],
+          fontSize: labelSize,
+          fontWeight: 700,
+          fill: INK,
+          anchor: "middle",
+        });
+    }
+    if (named && labelValue && labelLeft) {
+      const signed = signedLabel(labelValue, unit.label.valueSigns);
       nodes.push({
         type: "text",
         key: `${unit.id}:${subset.key}:value`,
         elementId: unit.id,
         instanceKey: subset.key,
-        x: x + labelWidth - 10,
+        x: valueColumn
+          ? frame.x + frame.width + 12 + valueColumn.width / 2
+          : x + labelWidth - 10,
         lines: [
           {
-            text: labelValue.text,
-            y: frame.y + frame.height / 2 + labelSize * 0.35,
+            text: signed.text,
+            y: labelRowY(frame),
           },
         ],
         fontSize: labelSize,
-        fontWeight: 400,
-        fill: MUTED_INK,
-        anchor: "end",
+        fontWeight: signed.color ? 700 : 400,
+        fill: signed.color ?? MUTED_INK,
+        anchor: valueColumn ? "middle" : "end",
       });
     }
-    if (unit.label.show && subset.label) {
+    if (named && subset.label) {
       nodes.push({
         type: "text",
         key: `${unit.id}:${subset.key}:label`,
@@ -848,11 +914,9 @@ export function resolveUnit(
           {
             text:
               labelValue && !labelLeft
-                ? `${subset.label} · ${labelValue.text}`
+                ? `${subset.label} · ${signedLabel(labelValue, unit.label.valueSigns).text}`
                 : subset.label,
-            y: labelLeft
-              ? frame.y + frame.height / 2 + labelSize * 0.35
-              : y + labelSize,
+            y: labelLeft ? labelRowY(frame) : y + labelSize,
           },
         ],
         fontSize: labelSize,
@@ -937,14 +1001,15 @@ export function resolveUnit(
     aggregated[index]!.forEach(({ bins, glyphs }, markIndex) => {
       const { mark, value } = strips[markIndex]!;
       const instanceMax =
-        value.domain === "instance"
+        value.max ??
+        (value.domain === "instance"
           ? Math.max(
               0,
               ...glyphs.map((glyph) =>
                 glyph.missing ? 0 : Math.abs(glyph.value)
               )
             )
-          : (sharedMax.get(value.id) ?? 0);
+          : (sharedMax.get(value.id) ?? 0));
       // An accent recolors this repeat's marks, keeping the template's ramp.
       const accented = override?.accent
         ? {
@@ -997,6 +1062,18 @@ export function resolveUnit(
           ),
         };
         const accent = override?.accent;
+        const shadeScale =
+          !accent &&
+          (item.mark.type === "point" || item.mark.type === "path") &&
+          item.mark.valueField
+            ? scale(item.mark.valueScaleId ?? "")
+            : undefined;
+        const shade =
+          shadeScale?.kind === "value" &&
+          (item.mark.type === "point" || item.mark.type === "path") &&
+          item.mark.valueField
+            ? rowShade(shadeScale, item.mark.valueField, data)
+            : undefined;
         const drawn =
           item.mark.type === "band"
             ? bandNodes(
@@ -1023,7 +1100,8 @@ export function resolveUnit(
                     frameSubset,
                     axes,
                     frameBounds,
-                    frameData
+                    frameData,
+                    shade
                   )
                 : pointNodes(
                     unit,
@@ -1031,7 +1109,8 @@ export function resolveUnit(
                     frameSubset,
                     axes,
                     frameBounds,
-                    frameData
+                    frameData,
+                    shade
                   );
         // A windowed frame clips, so a path cut at the window's edge stays inside.
         nodes.push(
@@ -1074,16 +1153,77 @@ export function resolveUnit(
       );
     });
     waffles.forEach(({ mark }, markIndex) => {
-      nodes.push(
-        ...waffleNodes(
-          unit,
-          override?.accent ? { ...mark, colors: [override.accent] } : mark,
-          windowed(subset, unit.window, data),
-          waffled[markIndex]!,
-          frame,
-          data
-        )
-      );
+      const drawn = override?.accent
+        ? { ...mark, colors: [override.accent] }
+        : mark;
+      const rows = windowed(subset, unit.window, data);
+      const binned = wafflesBinned[markIndex];
+      if (!binned) {
+        nodes.push(
+          ...waffleNodes(unit, drawn, rows, waffled[markIndex]!, frame, data)
+        );
+        return;
+      }
+      // One small waffle per whole value along x, standing on the baseline.
+      const column = data.column(binned.field);
+      const byBin = new Map<number, number[]>();
+      for (const id of rows.liveIds) {
+        const value = readNumber(column[id]);
+        if (value === undefined) continue;
+        const bin = Math.round(value);
+        const list = byBin.get(bin);
+        if (list) list.push(id);
+        else byBin.set(bin, [id]);
+      }
+      const band = frame.width / binned.bins.length;
+      binned.bins.forEach((bin, position) => {
+        const ids = byBin.get(bin);
+        if (!ids) return;
+        nodes.push(
+          ...waffleNodes(
+            unit,
+            drawn,
+            { ...rows, liveIds: ids },
+            waffled[markIndex]!,
+            {
+              x: frame.x + position * band + band * 0.1,
+              y: frame.y,
+              width: band * 0.8,
+              height: frame.height,
+            },
+            data,
+            `:${bin}`
+          )
+        );
+      });
+      if (drawAxis && unit.axisTitles?.x?.trim())
+        nodes.push({
+          type: "text",
+          key: `${unit.id}:${subset.key}:axis:title:x`,
+          elementId: unit.id,
+          x: frame.x + frame.width / 2,
+          lines: [
+            { text: unit.axisTitles.x.trim(), y: frame.y + frame.height + 32 },
+          ],
+          fontSize: 11,
+          fontWeight: 600,
+          fill: MUTED_INK,
+          anchor: "middle",
+        });
+      if (drawAxis)
+        binned.bins.forEach((bin, position) =>
+          nodes.push({
+            type: "text",
+            key: `${unit.id}:${subset.key}:axis:${mark.id}:${bin}`,
+            elementId: unit.id,
+            x: frame.x + (position + 0.5) * band,
+            lines: [{ text: String(bin), y: frame.y + frame.height + 14 }],
+            fontSize: 10,
+            fontWeight: 400,
+            fill: MUTED_INK,
+            anchor: "middle",
+          })
+        );
     });
     bars.forEach(({ mark }, markIndex) => {
       nodes.push(
@@ -1133,6 +1273,7 @@ export function resolveUnit(
         mark.height === "instance"
           ? curve.peak
           : (densityMax.get(mark.id) ?? curve.peak);
+      const shade = scale(mark.colorScaleId ?? "");
       nodes.push(
         ...densityNodes(
           unit,
@@ -1141,7 +1282,8 @@ export function resolveUnit(
           curve,
           axis,
           frame,
-          peak
+          peak,
+          shade?.kind === "value" && !override?.accent ? shade : undefined
         )
       );
     });
@@ -1185,7 +1327,7 @@ export function resolveUnit(
         width: bounds.width,
         height: bounds.height,
         fill: inset.background ?? "#ffffff",
-        stroke: "#d4d7dc",
+        stroke: inset.outline === false ? undefined : "#d4d7dc",
       });
       const insetXy = xys.filter((item) => item.mark.frameId === inset.id);
       if (inset.axis && insetXy[0]) {
@@ -1312,21 +1454,45 @@ export function resolveUnit(
     });
   });
 
-  // Rows that overlap through a negative gap draw bottom first, so the
-  // upper ridge sits in front of the one below it.
+  // Connected stacks join each category's edge from one repeat to the next.
+  for (const { mark, x } of stacks) {
+    if (!mark.connect || x) continue;
+    nodes.push(...stackConnectors(unit, mark, instances, nodes));
+  }
+
+  // Rows that overlap through a negative gap draw top first, so each lower
+  // ridge sits in front of the one above it, as a ridgeline reads; their
+  // names go over every ridge.
+  const isRowLabel = (node: SceneNode) =>
+    node.type === "text" &&
+    (node.key.endsWith(":label") || node.key.endsWith(":value"));
   const ordered =
     unit.repeat.gap < 0 && instances.length > 1
-      ? instances
-          .map((_, index) =>
-            nodes.slice(
-              sliceStarts[index],
-              sliceStarts[index + 1] ?? nodes.length
-            )
-          )
-          .reverse()
-          .flat()
+      ? [
+          ...nodes.filter((node) => !isRowLabel(node)),
+          ...nodes.filter(isRowLabel),
+        ]
       : nodes;
   return { nodes: ordered, bounds: unionBounds(instances, unit), instances };
+}
+
+/** A calculation as its sign reads: the magnitude in that sign's text and color. */
+function signedLabel(
+  value: CalcResult,
+  signs: UnitElement["label"]["valueSigns"]
+): { text: string; color?: string } {
+  if (!signs || value.value === undefined || value.kind === "date")
+    return { text: value.text };
+  if (value.value === 0) return { text: "0" };
+  const sign = value.value > 0 ? signs.positive : signs.negative;
+  const magnitude = formatCalcValue(
+    Math.abs(value.value),
+    value.kind === "signed" ? "number" : value.kind
+  );
+  return {
+    text: `${sign.prefix}${magnitude}${sign.suffix}`,
+    color: sign.color,
+  };
 }
 
 /**
@@ -1828,7 +1994,8 @@ function summaryNodes(
     });
   });
   const rowIds = groups.flatMap((group) => group.rowIds);
-  if (area.length)
+  const parts = mark.parts ?? { band: true, line: true, points: true };
+  if (area.length && parts.band)
     nodes.push({
       type: "area",
       key: `${unit.id}:${subset.key}:${mark.id}:band`,
@@ -1848,7 +2015,7 @@ function summaryNodes(
         segments: 1,
       },
     });
-  if (path.length > 1)
+  if (path.length > 1 && parts.line)
     nodes.push({
       type: "path",
       key: `${unit.id}:${subset.key}:${mark.id}:median`,
@@ -1867,7 +2034,7 @@ function summaryNodes(
       },
     });
   groups.forEach((group, index) => {
-    if (!group.stats) return;
+    if (!group.stats || !parts.points) return;
     nodes.push({
       type: "circle",
       key: `${unit.id}:${subset.key}:${mark.id}:${group.key}`,
@@ -1972,11 +2139,13 @@ function stackCategories(
     key,
     total: stackValue(mark, rowIds, measure),
   }));
-  categories.sort((a, b) =>
-    mark.order === "total"
-      ? b.total - a.total || compareLabels(a.key, b.key)
-      : compareLabels(a.key, b.key)
-  );
+  // "first" keeps the order categories first appear in the rows.
+  if (mark.order !== "first")
+    categories.sort((a, b) =>
+      mark.order === "total"
+        ? b.total - a.total || compareLabels(a.key, b.key)
+        : compareLabels(a.key, b.key)
+    );
   return categories.map((category, index) => ({ ...category, index }));
 }
 
@@ -2016,18 +2185,21 @@ function stackNodes(
     category: item.category.key,
     count: item.count,
   }));
-  // Normalized columns fill the frame; otherwise height follows the total
+  // Normalized stacks fill the frame; otherwise length follows the total
   // against the largest total across the repeats.
+  const across = mark.direction === "across";
+  const extent = across ? frame.width : frame.height;
   const columnHeight = mark.normalize
-    ? frame.height
-    : frame.height * (total / (data.stackMaxTotal?.get(mark.id) ?? total));
+    ? extent
+    : extent * (total / (data.stackMaxTotal?.get(mark.id) ?? total));
   const nodes: SceneNode[] = [];
   let lower = 0;
   for (const item of counts) {
     const share = item.count / total;
     const upper = lower + share;
     const top = frame.y + frame.height - upper * columnHeight;
-    const height = Math.max(0, share * columnHeight - mark.inset);
+    const length = Math.max(0, share * columnHeight - mark.inset);
+    const height = length;
     const fill = mark.colors[item.category.index % mark.colors.length]!;
     const key = `${unit.id}:${subset.key}:${mark.id}:${item.category.key}`;
     const glyph: GlyphDatum = {
@@ -2047,40 +2219,100 @@ function stackNodes(
         contributors,
       },
     };
+    // Across, segments run left to right from the frame's left edge.
+    const box = across
+      ? {
+          x: frame.x + lower * columnHeight + mark.inset / 2,
+          y: frame.y,
+          width: length,
+          height: frame.height,
+        }
+      : { x: frame.x, y: top + mark.inset / 2, width: frame.width, height };
     nodes.push({
       type: "rect",
       key,
       elementId: unit.id,
       instanceKey: subset.key,
-      x: frame.x,
-      y: top + mark.inset / 2,
-      width: frame.width,
-      height,
+      ...box,
       fill,
+      texture: mark.texture,
       glyph,
     });
-    if (height >= mark.labelMinHeight)
+    const labelSize = across
+      ? Math.min(13, Math.max(9, Math.round(frame.height * 0.45)))
+      : 10;
+    const text =
+      mark.labelContent === "share"
+        ? shareFormat.format(share)
+        : `${item.category.key} ${shareFormat.format(share)}`;
+    if (length >= mark.labelMinHeight)
       nodes.push({
         type: "text",
         key: `${key}:label`,
         elementId: unit.id,
         instanceKey: subset.key,
-        x: frame.x + 5,
+        x: across ? box.x + box.width / 2 : frame.x + 5,
         lines: [
           {
-            text: `${item.category.key} ${shareFormat.format(share)}`,
-            y: top + mark.inset / 2 + height / 2 + 3.5,
+            text,
+            y: box.y + box.height / 2 + labelSize * 0.35,
           },
         ],
-        fontSize: 10,
+        fontSize: labelSize,
         fontWeight: 600,
-        fill: INK,
-        anchor: "start",
-        halo: "#ffffff",
+        ...inkOn(fill),
+        anchor: across ? "middle" : "start",
       });
     lower = upper;
   }
   return nodes;
+}
+
+/**
+ * Thin lines that join each category's far edge in one repeat to the same
+ * edge in the next, as in a chart that tracks shares from row to row. The
+ * last category's edge is the total, so it is not joined.
+ */
+function stackConnectors(
+  unit: UnitElement,
+  mark: StackMark,
+  instances: ResolvedInstance[],
+  nodes: SceneNode[]
+): SceneNode[] {
+  const across = mark.direction === "across";
+  const edges = new Map<string, Map<string, RectNode>>();
+  for (const node of nodes) {
+    if (node.type !== "rect" || node.glyph?.markId !== mark.id) continue;
+    const stack = node.glyph.stack;
+    if (!stack || stack.upper >= 1 - 1e-9) continue;
+    const perRepeat = edges.get(node.glyph.instanceKey) ?? new Map();
+    perRepeat.set(node.glyph.bin.key, node);
+    edges.set(node.glyph.instanceKey, perRepeat);
+  }
+  const lines: SceneNode[] = [];
+  instances.forEach((instance, index) => {
+    const next = instances[index + 1];
+    if (!next) return;
+    const here = edges.get(instance.key);
+    const there = edges.get(next.key);
+    if (!here || !there) return;
+    for (const [category, from] of here) {
+      const to = there.get(category);
+      if (!to) continue;
+      lines.push({
+        type: "line",
+        key: `${unit.id}:${instance.key}:${mark.id}:${category}:connector`,
+        elementId: unit.id,
+        x1: across ? from.x + from.width : from.x + from.width,
+        y1: across ? from.y + from.height : from.y,
+        x2: across ? to.x + to.width : to.x,
+        y2: across ? to.y : to.y,
+        stroke: INK,
+        strokeWidth: 0.75,
+      });
+    }
+  });
+  return lines;
 }
 
 /**
@@ -2095,7 +2327,8 @@ function waffleNodes(
   subset: Subset,
   categories: StackCategory[],
   frame: Bounds,
-  data: CompositionData
+  data: CompositionData,
+  keySuffix = ""
 ): SceneNode[] {
   const groups = groupByCategory(
     data.column(mark.categoryField),
@@ -2154,7 +2387,7 @@ function waffleNodes(
       );
       nodes.push({
         type: "rect",
-        key: `${unit.id}:${subset.key}:${mark.id}:${item.category.key}:${cell}`,
+        key: `${unit.id}:${subset.key}:${mark.id}:${item.category.key}:${cell}${keySuffix}`,
         elementId: unit.id,
         instanceKey: subset.key,
         x: frame.x + column * step,
@@ -2526,9 +2759,11 @@ function densityNodes(
   curve: DensityCurve,
   axis: NumericAxis,
   frame: Bounds,
-  peak: number
+  peak: number,
+  shade?: ValueScale
 ): SceneNode[] {
   if (!curve.rowIds.length || peak <= 0) return [];
+  const gradient = shade ? densityGradient(shade, axis, frame) : undefined;
   const baseline = frame.y + frame.height;
   const run = curve.xs.map((x, index) => ({
     x: numericPixel(axis, x),
@@ -2546,6 +2781,7 @@ function densityNodes(
       fill: mark.fill,
       fillOpacity: mark.opacity,
       stroke: mark.stroke,
+      gradient,
       band: {
         instanceKey: subset.key,
         markId: mark.id,
@@ -2558,6 +2794,74 @@ function densityNodes(
       },
     },
   ];
+}
+
+/**
+ * The color of an x value on a density's shading scale: its place between
+ * the axis ends, or its signed share of the larger end when the scale
+ * diverges around zero.
+ */
+export function shadeColor(
+  scale: ValueScale,
+  value: number,
+  domain: [number, number]
+) {
+  if (scale.center !== undefined)
+    return valueColorSigned(
+      scale,
+      value,
+      Math.max(Math.abs(domain[0]), Math.abs(domain[1]))
+    );
+  const span = domain[1] - domain[0];
+  return valueColor(scale, span > 0 ? (value - domain[0]) / span : 0);
+}
+
+/** Colors a row by a numeric field through a value scale. */
+interface Shade {
+  color: (rowId: number) => string | undefined;
+}
+
+/**
+ * A row's color from a numeric field on a value scale, across every row in
+ * the graphic so the colors match from repeat to repeat: low to high, or
+ * around zero when the scale diverges, up to its fixed end when it has one.
+ */
+function rowShade(
+  scale: ValueScale,
+  field: string,
+  data: CompositionData
+): Shade {
+  const column = data.column(field);
+  let min = Infinity;
+  let max = -Infinity;
+  for (const id of data.allIds) {
+    const value = readNumber(column[id]);
+    if (value === undefined) continue;
+    min = Math.min(min, value);
+    max = Math.max(max, value);
+  }
+  if (scale.max !== undefined) {
+    max = scale.max;
+    if (scale.center !== undefined) min = -scale.max;
+  }
+  const domain: [number, number] = Number.isFinite(min) ? [min, max] : [0, 1];
+  return {
+    color: (rowId) => {
+      const value = readNumber(column[rowId]);
+      return value === undefined ? undefined : shadeColor(scale, value, domain);
+    },
+  };
+}
+
+/** A gradient across the frame that shades a density by its x values. */
+function densityGradient(scale: ValueScale, axis: NumericAxis, frame: Bounds) {
+  const steps = 16;
+  const stops = Array.from({ length: steps + 1 }, (_, index) => {
+    const offset = index / steps;
+    const value = axis.domain[0] + offset * (axis.domain[1] - axis.domain[0]);
+    return { offset, color: shadeColor(scale, value, axis.domain) };
+  });
+  return { x1: frame.x, x2: frame.x + frame.width, stops };
 }
 
 const orderFormat = new Intl.NumberFormat("en-US", {
@@ -2854,7 +3158,7 @@ function stackAreaNodes(
         lines: [{ text: category.key, y: best.y + 3.5 }],
         fontSize: 10,
         fontWeight: 600,
-        fill: INK,
+        ...inkOn(fill),
         // Labels near an edge hang inward so they stay inside the frame.
         anchor:
           best.x > frame.x + frame.width * 0.8
@@ -2862,7 +3166,6 @@ function stackAreaNodes(
             : best.x < frame.x + frame.width * 0.2
               ? "start"
               : "middle",
-        halo: "#ffffff",
       });
   }
   // Labels that hang from the same edge spread apart so none overlap.
@@ -3001,7 +3304,8 @@ function pathNodes(
   subset: Subset,
   axes: { x: NumericAxis; y: NumericAxis },
   frame: Bounds,
-  data: CompositionData
+  data: CompositionData,
+  shade?: Shade
 ): SceneNode[] {
   const xs = data.column(axes.x.scale.field);
   const ys = yColumn(axes.y, mark, subset, data);
@@ -3046,11 +3350,14 @@ function pathNodes(
     const category = colorColumn
       ? categoryKey(colorColumn[first.rowId])
       : undefined;
+    const shaded = shade?.color(first.rowId);
     const stroke = !focused
       ? (mark.mutedStroke ?? MUTED_MARK)
-      : category !== undefined
-        ? (categoryColors.get(category) ?? mark.stroke)
-        : mark.stroke;
+      : shaded
+        ? shaded
+        : category !== undefined
+          ? (categoryColors.get(category) ?? mark.stroke)
+          : mark.stroke;
     const key =
       group.series === undefined
         ? `${unit.id}:${subset.key}:${mark.id}`
@@ -3325,7 +3632,8 @@ function pointNodes(
   subset: Subset,
   axes: { x: NumericAxis; y: NumericAxis },
   frame: Bounds,
-  data: CompositionData
+  data: CompositionData,
+  shade?: Shade
 ): SceneNode[] {
   const xs = data.column(axes.x.scale.field);
   const ys = yColumn(axes.y, mark, subset, data);
@@ -3411,11 +3719,14 @@ function pointNodes(
         category,
       },
     };
+    const shaded = shade?.color(row.id);
     const fill = !focused
       ? (mark.mutedFill ?? MUTED_MARK)
-      : category !== undefined
-        ? (categoryColors.get(category) ?? mark.fill)
-        : mark.fill;
+      : shaded
+        ? shaded
+        : category !== undefined
+          ? (categoryColors.get(category) ?? mark.fill)
+          : mark.fill;
     nodes.push({
       type: "circle",
       key,
@@ -3450,6 +3761,8 @@ function pointNodes(
           fontWeight: 400,
           fill: MUTED_INK,
           anchor: "start",
+          // A paper outline keeps the label legible where it crosses a path.
+          halo: PAPER,
         });
     }
     drawn += 1;
@@ -3642,7 +3955,7 @@ function numericAxisNodes(
     y: number,
     anchor: "start" | "middle" | "end",
     key: string
-  ): SceneNode => ({
+  ): TextNode => ({
     type: "text",
     key: `${unit.id}:${instanceKey}:axis:${key}`,
     elementId: unit.id,
@@ -3662,20 +3975,87 @@ function numericAxisNodes(
       `x:${value}`
     )
   );
+  const titles = unit.axisTitles;
+  if (titles?.x?.trim())
+    nodes.push({
+      ...label(
+        titles.x.trim(),
+        frame.x + frame.width / 2,
+        frame.y + frame.height + 32,
+        "middle",
+        "title:x"
+      ),
+      fontSize: fontSize + 1,
+      fontWeight: 600,
+    });
   // A dot row has no y to label, and a density's height is relative.
   if (xy.y.scale.id === MIDDLE_SCALE.id || xy.y.scale.id === DENSITY_SCALE.id)
     return nodes;
-  for (const value of tickValues(xy.y, frame.height, 36))
+  let widest = 0;
+  for (const value of tickValues(xy.y, frame.height, 36)) {
+    const text = formatTick(xy.y, value);
+    widest = Math.max(widest, text.length);
     nodes.push(
       label(
-        formatTick(xy.y, value),
+        text,
         frame.x - 6,
         numericPixel(xy.y, value) + 3.5,
         "end",
         `y:${value}`
       )
     );
+  }
+  if (titles?.y?.trim()) {
+    // Clear of the widest tick label, turned to read bottom to top.
+    nodes.push({
+      ...label(
+        titles.y.trim(),
+        frame.x - 14 - widest * fontSize * 0.6,
+        frame.y + frame.height / 2,
+        "middle",
+        "title:y"
+      ),
+      fontSize: fontSize + 1,
+      fontWeight: 600,
+      rotate: -90,
+    });
+  }
   return nodes;
+}
+
+/** The relative luminance of a hex or rgb() color, from 0 for black to 1 for white. */
+function luminance(color: string): number | undefined {
+  const text = color.trim();
+  const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(text)?.[1];
+  const rgb = /^rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/i.exec(text);
+  let channels: number[];
+  if (hex) {
+    const full =
+      hex.length === 3 ? [...hex].map((digit) => digit + digit).join("") : hex;
+    channels = [0, 2, 4].map((at) => parseInt(full.slice(at, at + 2), 16));
+  } else if (rgb) {
+    channels = [rgb[1], rgb[2], rgb[3]].map(Number);
+  } else return undefined;
+  const [r, g, b] = channels.map((value) => {
+    const channel = value / 255;
+    return channel <= 0.03928
+      ? channel / 12.92
+      : ((channel + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
+}
+
+/**
+ * Text color for a label drawn on a fill: dark ink or white, whichever
+ * contrasts more. A fill that is not a hex color keeps ink on a white halo.
+ */
+export function inkOn(fill: string): { fill: string; halo?: string } {
+  const light = luminance(fill);
+  if (light === undefined) return { fill: INK, halo: "#ffffff" };
+  const ink = luminance(INK)!;
+  const onInk = (light + 0.05) / (ink + 0.05);
+  const onWhite = 1.05 / (light + 0.05);
+  return { fill: onInk >= onWhite ? INK : "#ffffff" };
 }
 
 /** Maps a value to 0–1 along a value scale with this maximum. */
@@ -3771,14 +4151,34 @@ function glyphNodes(
           },
         ];
       }
+      const cell: RectNode = {
+        ...base,
+        type: "rect",
+        x: left + inset / 2,
+        y: frame.y,
+        width,
+        height: frame.height,
+      };
+      const text = !mark.valueLabels
+        ? undefined
+        : glyph.missing
+          ? mark.missingLabel
+          : cellFormat.format(glyph.value);
+      if (!text) return [cell];
+      const size = Math.max(8, Math.min(14, Math.round(frame.height * 0.45)));
       return [
+        cell,
         {
-          ...base,
-          type: "rect",
-          x: left + inset / 2,
-          y: frame.y,
-          width,
-          height: frame.height,
+          type: "text",
+          key: `${key}:value`,
+          elementId: unit.id,
+          instanceKey: glyph.instanceKey,
+          x: left + band / 2,
+          lines: [{ text, y: frame.y + frame.height / 2 + size * 0.35 }],
+          fontSize: size,
+          fontWeight: 500,
+          ...inkOn(fill),
+          anchor: "middle",
         },
       ];
     }
@@ -3807,6 +4207,11 @@ function glyphNodes(
     ];
   });
 }
+
+const cellFormat = new Intl.NumberFormat("en-US", {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+});
 
 /** Labels along a frame's bottom, thinned so they do not collide. */
 function axisNodes(
