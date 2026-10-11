@@ -174,9 +174,11 @@ export function LiveExample({
           <div
             role="region"
             aria-label={spec.label}
+            // The workspace's drawers stay fixed to the viewport, as in any
+            // host. Containing them here would misplace anchored menus.
             className="bg-background p-3"
             style={
-              rows ? { minHeight: 200 } : { height: liveExampleHeight(spec) }
+              rows ? { minHeight: 420 } : { height: liveExampleHeight(spec) }
             }
             data-docs-live={id}
           >

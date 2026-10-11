@@ -2,6 +2,13 @@ import { boxPlotSettings } from "@/demos/boxPlotSettings";
 import { categoricalChartSettings } from "@/demos/categoricalChartSettings";
 import {
   activityDashboard,
+  areaDashboard,
+  bubbleDashboard,
+  densityDashboard,
+  groupedBarsDashboard,
+  scatterRegressionDashboard,
+  scatterSurfaceDashboard,
+  stackedBarsDashboard,
   messageDashboard,
   penguinDashboard,
   pointMapDashboard,
@@ -32,7 +39,9 @@ export type LiveStep =
   /** Click the mark whose accessible name is exactly this. */
   | { click: string }
   /** Text that shows in the example, after the steps so far. */
-  | { expectText: string };
+  | { expectText: string }
+  /** Pick the open menu's item with this name. */
+  | { choose: string };
 
 export type LiveExampleSpec = {
   /** The workspace region's accessible name. */
@@ -296,6 +305,131 @@ export const liveExamples = {
     shotAlt: "A composed graphic built from the message log.",
     steps: [{ expectRows: 10376 }],
   },
+  "scatter-density": {
+    label: "Live binned scatter density",
+    data: "/correlated_medium.csv",
+    savedData: focus(densityDashboard, { "density-days": [0, 0, 12] }),
+    exampleId: "scatter-density",
+    shotAlt: "10,000 daily observations counted in rectangular bins.",
+    steps: [{ expectRows: 10000 }],
+  },
+  "scatter-hexbin": {
+    label: "Live hexagon bins",
+    data: "/correlated_medium.csv",
+    savedData: focus(scatterSurfaceDashboard, { "surface-hex": [0, 0, 12] }),
+    exampleId: "scatter-surfaces",
+    shotAlt: "Coordinate pairs counted in hexagons, shaded by count.",
+    steps: [{ expectRows: 10000 }],
+  },
+  "scatter-contour": {
+    label: "Live smoothed density",
+    data: "/correlated_medium.csv",
+    savedData: focus(scatterSurfaceDashboard, { "surface-kde": [0, 0, 12] }),
+    exampleId: "scatter-surfaces",
+    shotAlt: "Filled density regions and contour lines over the points.",
+    steps: [{ expectRows: 10000 }],
+  },
+  "scatter-regression": {
+    label: "Live regression fits",
+    data: "/datasets/palmer-penguins.csv",
+    savedData: focus(scatterRegressionDashboard, { "fit-bill": [0, 0, 12] }),
+    exampleId: "scatter-regression",
+    shotAlt: "Bill depth against bill length with a fit line for each species.",
+    steps: [{ expectRows: 344 }],
+  },
+  "scatter-bubble": {
+    label: "Live bubble scatter",
+    data: "/datasets/product-activity.csv",
+    savedData: focus(bubbleDashboard, { "bubble-trials": [0, 0, 12] }),
+    exampleId: "bubble-scatter",
+    shotAlt: "Points sized by a value, so their areas compare.",
+    steps: [{ expectRows: 90 }],
+  },
+  "bar-grouped": {
+    label: "Live grouped bars",
+    data: SHOP,
+    savedData: focus(groupedBarsDashboard, { "grouped-revenue": [0, 0, 12] }),
+    exampleId: "grouped-bars",
+    shotAlt: "Revenue by region with one bar per channel side by side.",
+    steps: [{ expectRows: 500 }],
+  },
+  "bar-stacked": {
+    label: "Live stacked bars",
+    data: SHOP,
+    savedData: focus(stackedBarsDashboard, { "grouped-count": [0, 0, 12] }),
+    exampleId: "stacked-bars",
+    shotAlt: "Orders by category, each bar split into channel shares.",
+    steps: [{ expectRows: 500 }],
+  },
+  "line-area": {
+    label: "Live area chart",
+    data: SHOP,
+    savedData: focus(areaDashboard, { "time-weekly": [0, 0, 12] }),
+    exampleId: "area-charts",
+    shotAlt: "Weekly order counts as filled areas.",
+    steps: [{ expectRows: 500 }],
+  },
+  facets: {
+    label: "Live faceted scatter plot",
+    data: "/datasets/palmer-penguins.csv",
+    savedData: focus(scatterRegressionDashboard, {
+      "fit-bill-sex": [0, 0, 12, 8],
+    }),
+    exampleId: "scatter-regression",
+    shotAlt: "The same scatter plot repeated for each sex, with shared axes.",
+    steps: [{ expectRows: 344 }],
+  },
+  "saved-filter": {
+    label: "Live chart opened with a saved brush",
+    data: "/lorenz_3d_small.csv",
+    savedData: focus(lorenzSettings, {
+      "5cc180fb-d35e-4249-a46c-cba04f13b6a8": [0, 0, 12, 5],
+    }),
+    exampleId: "lorenz-3d",
+    shotAlt:
+      "A scatter plot that opens with a rectangular brush already drawn.",
+    steps: [{ expectChip: "Time" }, { expectRows: 164 }],
+  },
+  workspace: {
+    label: "Live workspace tour",
+    data: SHOP,
+    savedData: focus(shopDashboard, {
+      "shop-category": [0, 0, 6],
+      "shop-channel": [6, 0, 6],
+    }),
+    exampleId: "shop-operations",
+    shotAlt: "Two row charts with the workspace toolbar and row count.",
+    steps: [
+      { click: "Home: 168 rows" },
+      { expectChip: "Category" },
+      { expectRows: 168 },
+      { click: "Rows" },
+      { expectText: "Showing 168 of 500 rows" },
+      { click: "Fields" },
+      { expectText: "15 fields" },
+    ],
+  },
+  fields: {
+    label: "Live field list",
+    data: SHOP,
+    savedData: focus(shopDashboard, { "shop-channel": [0, 0, 6] }),
+    exampleId: "shop-operations",
+    shotAlt: "A row chart of sales channels beside the workspace toolbar.",
+    steps: [
+      { click: "Fields" },
+      { click: "Add a chart of Region" },
+      { choose: "Row chart" },
+      { expectMark: "North: 125 rows" },
+    ],
+  },
+  calculations: {
+    label: "Live calculated fields",
+    data: "/datasets/scatter-trace.csv",
+    savedData: focus(scatterTraceDashboard, { "trace-scatter": [0, 0, 12, 6] }),
+    exampleId: "scatter-trace",
+    shotAlt: "A scatter plot whose axes are calculated fields.",
+    steps: [{ click: "Calculations" }, { expectText: "Net sales" }],
+  },
 } satisfies Record<string, LiveExampleSpec>;
 
 /** Height that fits a layout's grid rows plus the workspace toolbar and count. */
@@ -323,6 +457,9 @@ export function describeStep(spec: LiveExampleSpec, step: LiveStep): string {
   }
   if ("expectText" in step) {
     return `It reads “${step.expectText}”.`;
+  }
+  if ("choose" in step) {
+    return `Choose “${step.choose}”.`;
   }
   if ("click" in step) {
     return `Click “${step.click}”.`;

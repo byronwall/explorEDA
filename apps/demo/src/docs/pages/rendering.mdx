@@ -55,6 +55,6 @@ Saved settings carry each chart type. The registry maps `scatter` to the scatter
 
 ## Interaction and saved state
 
-A brush or bar selection updates that chart’s filter. Crossfilter then updates linked views using their peer-filtered rows. Scatter and bar charts expose their plans to mark-level trace inspectors.
+A brush or bar selection updates that chart’s filter. Crossfilter then updates linked views using their peer-filtered rows. Charts expose their plans to trace, so a mark can be followed back to its rows; see <DocsLink topic="trace">Trace a mark</DocsLink>.
 
 The package sends changed workspace settings through `onStateChange`. That saved structure includes chart and calculation settings, but not the source rows. The host owns durable storage and supplies the rows again when it restores the workspace.

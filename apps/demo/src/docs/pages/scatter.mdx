@@ -25,8 +25,8 @@ Drag across the plot to brush a rectangular range on both axes. The brush filter
 
 <Callout title="Trace a point.">
   Use the chart trace action or Alt-click a point to inspect its source values,
-  calculations, filters, scales, and position. Mark trace is available for
-  scatter and bar charts.
+  calculations, filters, scales, and position. Trace works on every chart type
+  except 3D scatter plots, data tables, pivot tables, summary tables, and notes.
 </Callout>
 
 ## Settings and limits
@@ -36,6 +36,49 @@ Choose X, Y, and optional color fields. Adjust point size and opacity to make ov
 - On numeric axes, rows with missing or non-finite values have no point. Categorical axes can include a missing-value category.
 - Canvas draws the points; SVG draws the axes and the brush.
 - The rectangular brush selects ranges on both axes.
+
+## Displays for many points
+
+**Display** in the Data tab changes what the plot draws when points overlap.
+
+- **Density** counts coordinate pairs in rectangular bins, shaded by count.
+
+<LiveExample
+  id="scatter-density"
+  caption="10,000 daily observations in rectangular bins, from the scatter density example."
+/>
+
+- **Hexbin** counts pairs in hexagons. Points can show underneath.
+
+<LiveExample
+  id="scatter-hexbin"
+  caption="Hexagon bins, from the scatter surfaces example."
+/>
+
+- **Contour** estimates a smoothed density and draws filled regions and contour lines, with bandwidth and level controls.
+
+<LiveExample
+  id="scatter-contour"
+  caption="Smoothed density, from the scatter surfaces example."
+/>
+
+## Fits
+
+The **Fit** tab draws a regression for each color group in each facet: linear, polynomial, or LOESS, with an optional overall fit through every group.
+
+<LiveExample
+  id="scatter-regression"
+  caption="A linear fit per species, from the scatter regression example."
+/>
+
+## Bubbles
+
+**Size by** a numeric field to draw bubbles. Bubble area stays proportional to value, and the largest radius is set in pixels.
+
+<LiveExample
+  id="scatter-bubble"
+  caption="Points sized by a value, from the bubble scatter example."
+/>
 
 ## Saved settings
 

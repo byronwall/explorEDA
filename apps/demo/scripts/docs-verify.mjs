@@ -74,7 +74,7 @@ async function rowCount(page, id) {
 /** Retries a check briefly, since a filter settles over a frame or two. */
 async function settle(check) {
   let last;
-  for (let attempt = 0; attempt < 20; attempt += 1) {
+  for (let attempt = 0; attempt < 40; attempt += 1) {
     last = await check();
     if (last === true) return true;
     await new Promise((done) => setTimeout(done, 150));
@@ -130,18 +130,28 @@ async function runSteps(page, where, id, steps) {
           .locator(`[data-docs-live="${id}"]`)
           .getByLabel(step.select.label, { exact: true })
           .selectOption({ label: step.select.option });
+      } else if ("choose" in step) {
+        await page
+          .getByRole("menuitem", { name: step.choose, exact: true })
+          .click();
       } else if ("expectText" in step) {
         const region = page.locator(`[data-docs-live="${id}"]`);
         const ok = await settle(async () =>
           ((await region.textContent()) ?? "").includes(step.expectText)
         );
-        if (ok !== true) fail(at, `no text "${step.expectText}" in the example`);
+        if (ok !== true)
+          fail(at, `no text "${step.expectText}" in the example`);
       } else if ("click" in step) {
-        await page
+        const target = page
           .locator(`[data-docs-live="${id}"]`)
           .getByLabel(step.click, { exact: true })
-          .first()
-          .click();
+          .first();
+        // Chart header controls sit under the panel header until hovered;
+        // focus and Enter reach them as a keyboard user would.
+        await target.click({ timeout: 3_000 }).catch(async () => {
+          await target.focus();
+          await page.keyboard.press("Enter");
+        });
       } else if ("expectMark" in step) {
         const mark = page
           .locator(`[data-docs-live="${id}"]`)

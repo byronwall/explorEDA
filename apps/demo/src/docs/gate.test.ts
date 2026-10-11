@@ -8,7 +8,6 @@ import { exampleCoverage } from "@/demos/coverage";
 import { examples } from "@/demos/examples";
 import { catalogue } from "./catalogue";
 import { findDocsErrors, type DocsGateInput } from "./gate";
-import { PENDING_LIMIT, pendingTargets } from "./pending";
 import { allTargets } from "./targets";
 import { CHART_SETTING_KEYS } from "exploreda/docs-kit";
 import { liveExamples, type LiveExampleSpec } from "./live/examples";
@@ -49,8 +48,6 @@ function currentInput(): DocsGateInput {
       ? readdirSync(join(docsDir, "assets"))
       : [],
     targets: allTargets(chartRegistry.getAll().map(({ type }) => type)),
-    pending: pendingTargets,
-    pendingLimit: PENDING_LIMIT,
     exampleIds: examples.map(({ id }) => id),
     exampleFeatures: Object.fromEntries(
       exampleCoverage.map(({ exampleId, features }) => [
@@ -158,20 +155,18 @@ describe("docs gate", () => {
     ]);
   });
 
-  it("only lets the pending list shrink", () => {
+  it("fails for a Dashboard text path a chart doesn't save", () => {
     const input = currentInput();
     expect(
       findDocsErrors({
         ...input,
-        pending: [...input.pending, "chart:scatter"],
-        pendingLimit: input.pendingLimit + 1,
+        sources: {
+          ...input.sources,
+          bar: `${input.sources.bar}\nWrite \`barWidth=3\` or \`xAxis.scaleType=symlog\`.`,
+        },
       })
-    ).toEqual(['"chart:scatter" has a page; remove it from pendingTargets']);
-    expect(
-      findDocsErrors({ ...input, pending: input.pending.slice(1) })
     ).toEqual([
-      `No page covers "${input.pending[0]}"`,
-      `pendingTargets has ${input.pending.length - 1} entries; lower PENDING_LIMIT to ${input.pending.length - 1}`,
+      'pages/bar.mdx quotes "barWidth=", but bar charts have no setting "barWidth"',
     ]);
   });
 

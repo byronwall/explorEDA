@@ -8,7 +8,7 @@
     "last_updated": "2026-10-10",
     "summary": "Document every chart type, major flow, and major surface with live examples from real components, generated screenshots and reference, and a build gate that fails on docs errors or gaps.",
     "status": "active",
-    "next_action": "Execute M1: move deploy.yml to Node 24 / pnpm 11.9.0 with frozen lockfile and run demo tests before upload."
+    "next_action": "Merge the stack (#274, #280, #289, #292, #302, M6), then confirm the Pages deploy runs both gates and that /docs and three deep links load on the live site (M1 and M6 deploy proof)."
   },
   "artifacts": {
     "intent_brief": {
@@ -509,12 +509,21 @@
       {
         "id": "m6",
         "title": "Flows, surfaces, developer guide; gate strict",
-        "status": "planned",
+        "status": "completed",
         "proof": "All flows/surfaces covered; pendingTargets deleted; pnpm check and both gates pass; deployed smoke",
         "end_state": "Wrong or missing docs cannot deploy",
         "outcome": "Every target documented; gate strict",
         "valid_intermediate_state": "Full catalogue",
-        "rollback": "Restore pendingTargets for a reverted page"
+        "rollback": "Restore pendingTargets for a reverted page",
+        "evidence": [
+          "37 pages cover all 76 targets; pending.ts deleted, so any new chart type, required feature, flow, or surface without a page fails the demo build",
+          "Flows and surfaces verified by steps where possible: workspace tour (click Home -> Category chip, 168 rows; Rows shows 'Showing 168 of 500 rows'; Fields shows '15 fields'), field list add Row chart of Region -> 'North: 125 rows', saved Lorenz brush opens with Time chip and 164 rows, Calculations shows 'Net sales'",
+          "Generated: Dashboard text reference from DSL_REFERENCE, the order-book example's own text, ExplorEdaProps table typed Record<keyof ExplorEdaProps,string>, the package README imported as MDX",
+          "Every page renders in a smoke test; chart pages' quoted Dashboard text paths must be real setting keys",
+          "Verification caught and fixed wrong claims: 'xAxis.scaleType=log' (axes only render linear/symlog), 'Mark trace is available for scatter and bar charts' (15 types support trace), field 'Add a chart' opens a type menu, data-table columns are not resizable, pivot-only missing-field alert, box plots no longer show legends",
+          "pnpm check passes (library 823 tests, demo 144 tests, gate 52); docs:verify passes 37 pages, 34 live examples",
+          "Not yet observed: Pages deploy of the stack and live-site smoke"
+        ]
       }
     ],
     "cut_line": [
@@ -526,7 +535,7 @@
       "AGENTS.md/ui-defaults tooltip reconciliation"
     ],
     "open_decisions": [
-      "steps vocabulary reach on Canvas marks (M3)"
+      "Live examples: the workspace's Rows and side panels are fixed to the viewport, so they cover the docs page while open. Containing them in the frame (CSS containment) misplaced anchored menus by the page scroll offset, which the docs check caught, so containment was reverted. A library option to scope drawers to the workspace would fix both."
     ],
     "test_commands": [
       "pnpm --filter demo exec vitest run src/docs",
@@ -583,6 +592,12 @@
       "event": "milestone-completed",
       "milestone": "m5",
       "note": "Every chart type documented and gated."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "milestone-completed",
+      "milestone": "m6",
+      "note": "All targets documented; gate strict. Deploy proof pending merge."
     }
   ],
   "closure": null

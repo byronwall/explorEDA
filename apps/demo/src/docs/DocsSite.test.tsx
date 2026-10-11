@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, vi } from "vitest";
+import { catalogue } from "./catalogue";
 import { DocsSite } from "./DocsSite";
 
 beforeEach(() => {
@@ -41,7 +42,7 @@ describe("docs routes", () => {
     ).toHaveFocus();
     expect(
       await screen.findByText(
-        /Mark trace is available for scatter and bar charts/
+        /Trace works on every chart type except 3D scatter plots/
       )
     ).toBeInTheDocument();
     expect(
@@ -82,4 +83,14 @@ describe("docs routes", () => {
       "/docs"
     );
   });
+
+  it.each(catalogue.map((page) => [page.topic]))(
+    "renders every section of /docs/%s",
+    async (topic) => {
+      const { unmount } = renderAt(`/docs/${topic}`);
+      const sections = await screen.findAllByRole("heading", { level: 2 });
+      expect(sections.length).toBeGreaterThan(0);
+      unmount();
+    }
+  );
 });

@@ -11,8 +11,6 @@ export type DocsGateInput = {
   /** Asset file names in `assets/`. */
   assets: readonly string[];
   targets: readonly string[];
-  pending: readonly string[];
-  pendingLimit: number;
   exampleIds: readonly string[];
   /** The coverage features each example shows or has reviewed. */
   exampleFeatures: Readonly<Record<string, readonly string[]>>;
@@ -151,6 +149,20 @@ export function findDocsErrors(input: DocsGateInput): string[] {
       );
     }
   }
+  // Dashboard text paths quoted on a chart page must be settings it saves.
+  for (const page of input.pages) {
+    const source = input.sources[page.topic];
+    const keys = page.chartType ? input.settingKeys[page.chartType] : undefined;
+    if (!source || !keys) continue;
+    for (const [, path] of source.matchAll(/`([A-Za-z][\w.]*)=[^`]*`/g)) {
+      const key = path?.split(".")[0];
+      if (key && !keys.includes(key)) {
+        errors.push(
+          `pages/${page.topic}.mdx quotes "${path}=", but ${page.chartType} charts have no setting "${key}"`
+        );
+      }
+    }
+  }
   for (const [id, spec] of Object.entries(input.liveExamples)) {
     const where = `Live example "${id}"`;
     if (!examples.has(spec.exampleId)) {
@@ -195,27 +207,10 @@ export function findDocsErrors(input: DocsGateInput): string[] {
     }
   }
 
-  const pending = new Set(input.pending);
   for (const target of input.targets) {
-    if (!covered.has(target) && !pending.has(target)) {
+    if (!covered.has(target)) {
       errors.push(`No page covers "${target}"`);
     }
-  }
-  for (const target of input.pending) {
-    if (!targets.has(target)) {
-      errors.push(`Pending target "${target}" is not a docs target`);
-    } else if (covered.has(target)) {
-      errors.push(`"${target}" has a page; remove it from pendingTargets`);
-    }
-  }
-  if (input.pending.length > input.pendingLimit) {
-    errors.push(
-      `pendingTargets has ${input.pending.length} entries, over its limit of ${input.pendingLimit}; document the new target instead`
-    );
-  } else if (input.pending.length < input.pendingLimit) {
-    errors.push(
-      `pendingTargets has ${input.pending.length} entries; lower PENDING_LIMIT to ${input.pending.length}`
-    );
   }
   return errors;
 }

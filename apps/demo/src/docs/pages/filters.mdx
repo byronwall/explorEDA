@@ -1,0 +1,22 @@
+## How filters work
+
+A chart's selection is its filter. Click a bar, row, cell, or flow, or drag across a range, and every other chart narrows to the matching rows. A bar chart keeps showing its own unselected bars, so you can still see what you left out.
+
+- The filter bar shows the row count and a chip for each filter.
+- **Clear this chart's filters** in a chart's header, or <kbd>C</kbd>, clears one chart.
+- **Clear all filters** in the filter bar clears every chart, table search, and Rows filter.
+- A table's search and a Rows filter limit only their own table.
+- A chart's local filter limits only the rows that chart draws. It never filters other charts.
+
+## Saved filters
+
+Filters save with the chart, so a dashboard can open with a selection already in place.
+
+<LiveExample
+  id="saved-filter"
+  caption="The Lorenz example opens with a brush on Time and Z already drawn."
+/>
+
+## Related
+
+See the <DocsLink topic="bar">bar chart</DocsLink> and <DocsLink topic="scatter">scatter plot</DocsLink> guides for how each chart reads its rows, and <DocsLink topic="rendering">How rendering works</DocsLink> for full, peer-filtered, and globally filtered rows.

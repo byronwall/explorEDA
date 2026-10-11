@@ -4,6 +4,11 @@ import { Link } from "react-router-dom";
 import { docsPath, slugify } from "../paths";
 import { inlineLinkClass, proseClass } from "./chrome";
 import { WorkedOrder } from "./workedOrder";
+import {
+  DashboardTextReference,
+  ExampleText,
+  PropsReference,
+} from "../reference/generated";
 import { LiveExample } from "../live/LiveExample";
 import { SettingsReference } from "../reference/SettingsReference";
 
@@ -166,6 +171,10 @@ export function Steps({
   );
 }
 
+/** Where links relative to the package README point. */
+const README_BASE =
+  "https://github.com/byronwall/explorEDA/blob/main/packages/explorEDA/";
+
 function Anchor({
   href = "",
   children,
@@ -180,8 +189,11 @@ function Anchor({
       </Link>
     );
   }
+  const external = /^(https?:|mailto:|#)/.test(href)
+    ? href
+    : new URL(href, README_BASE).toString();
   return (
-    <a className={inlineLinkClass} href={href}>
+    <a className={inlineLinkClass} href={external}>
       {children}
     </a>
   );
@@ -200,6 +212,33 @@ export const mdxComponents: MDXComponents = {
       </h2>
     );
   },
+  // Imported Markdown, such as the package README, starts with its own h1.
+  h1: ({ children }) => (
+    <h2
+      id={slugify(textOf(children))}
+      className="mt-12 scroll-mt-8 border-t border-border pt-6 text-xl font-semibold tracking-tight first:mt-0 sm:text-2xl"
+    >
+      {children}
+    </h2>
+  ),
+  pre: ({ children }) => (
+    <pre className="mt-4 overflow-x-auto rounded-lg border border-border bg-muted/50 p-4 font-mono text-[0.8rem] leading-6 text-foreground [&_code]:bg-transparent [&_code]:p-0">
+      {children}
+    </pre>
+  ),
+  table: ({ children }) => (
+    <div className="mt-4 overflow-x-auto rounded-lg border border-border">
+      <table className="w-full border-collapse text-sm">{children}</table>
+    </div>
+  ),
+  th: ({ children }) => (
+    <th className="bg-muted/50 px-3 py-2 text-left font-medium">{children}</th>
+  ),
+  td: ({ children }) => (
+    <td className="border-t border-border px-3 py-2 align-top text-muted-foreground">
+      {children}
+    </td>
+  ),
   h3: ({ children }) => (
     <h3 className="mt-8 text-lg font-semibold">{children}</h3>
   ),
@@ -232,8 +271,11 @@ export const mdxComponents: MDXComponents = {
   Callout,
   CalcChain,
   DocsLink,
+  DashboardTextReference,
+  ExampleText,
   Figure,
   LiveExample,
+  PropsReference,
   SettingsReference,
   Steps,
   Terms,
