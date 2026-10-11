@@ -30,6 +30,7 @@ interface Notice {
   unit: [string, string];
   at: number;
   atLabel: string;
+  cut: boolean;
 }
 
 const MARKER = "[data-axis-hidden]";
@@ -52,7 +53,8 @@ function readMarker(element: Element): Notice | undefined {
   if (!Number.isFinite(count) || !Number.isFinite(at)) return undefined;
   const atLabel =
     element.getAttribute("data-hidden-at-label") || formatBound(at);
-  return { element, axis, side, count, unit, at, atLabel };
+  const cut = element.hasAttribute("data-hidden-cut");
+  return { element, axis, side, count, unit, at, atLabel, cut };
 }
 
 /** The marker an event came from, if any. */
@@ -211,8 +213,9 @@ export function useHiddenNotice(
           {notice.count.toLocaleString()}{" "}
           {notice.count === 1 ? notice.unit[0] : notice.unit[1]}{" "}
           {notice.side === "high" ? "above" : "below"} {notice.atLabel}{" "}
-          {notice.count === 1 ? "is" : "are"} off the chart. They still count in
-          totals and filters.
+          {notice.count === 1 ? "is" : "are"}{" "}
+          {notice.cut ? "cut off at the edge" : "off the chart"}. They still
+          count in totals and filters.
         </p>
         <Button
           size="sm"

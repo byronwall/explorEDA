@@ -5,7 +5,7 @@ import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import type { datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
 import { describeScale, planAxes, type AxisTypography } from "../Axis/axisPlan";
-import { boundedDomain } from "../Axis/axisBounds";
+import { boundedDomain, hiddenByBounds, labelHidden } from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import type { BarChartSettings } from "./definition";
 import type { BarChartPlan, BarMark } from "./barPlan";
@@ -321,6 +321,16 @@ export function planSeriesBars({
       grid: settings.yAxis.grid ?? true,
       zero: true,
       format: (value) => formatAxis(Number(value)),
+      hidden: labelHidden(
+        hiddenByBounds(
+          settings.yAxis,
+          y.domain() as [number, number],
+          values.map((item) => item.value),
+          ["bar", "bars"],
+          true
+        ),
+        formatAxis
+      ),
     },
   });
   const plan: BarChartPlan = {

@@ -8,7 +8,7 @@
     "last_updated": "2026-10-10",
     "summary": "Analysts should change the region of a numerical chart they see without unintentionally changing the record population.",
     "status": "active",
-    "next_action": "Finish Milestone 1 (scatter hidden-rows marker) and open its PR."
+    "next_action": "Milestone 3: stable axes on aggregate bars, series bars, row charts, and line values."
   },
   "artifacts": {
     "intent_brief": {
@@ -478,23 +478,28 @@
         "id": "m1",
         "title": "Scatter says when a bound hides rows",
         "proof": "Shop demo scatter with x max: marker, correct count, one-side Reset; browser at 1280/783/390 and dark.",
-        "status": "active",
+        "status": "completed",
         "outcome": "Scatter shows a hidden-rows marker with count and one-side Reset.",
         "valid_intermediate_state": "Other charts unchanged; scatter bounds work as before plus the marker.",
         "rollback": "Revert the PR; AxisPlan.hidden is optional, so charts that omit it draw no marker.",
         "evidence": [
           "vitest: scatterPlan, axisBounds, hiddenNotice panel tests (58 pass)",
-          "Playwright on shop demo at 1280, 783, 390 px and dark: marker, count with field formatting, hover into details, one-side Reset; press and drag on the marker leave 500 of 500 rows while a control drag brushes to 129"
+          "Playwright on shop demo at 1280, 783, 390 px and dark: marker, count with field formatting, hover into details, one-side Reset; press and drag on the marker leave 500 of 500 rows while a control drag brushes to 129",
+          "PR #266"
         ]
       },
       {
         "id": "m2",
         "title": "Every bounded chart shows the marker",
         "proof": "Bar, histogram, row, line, box show counts in their unit only when bounded.",
-        "status": "planned",
+        "status": "completed",
         "outcome": "All six bounded charts report hidden marks in their own unit.",
         "valid_intermediate_state": "Each chart either fills hidden or draws no marker.",
-        "rollback": "Stop filling hidden in a chart's plan."
+        "rollback": "Stop filling hidden in a chart's plan.",
+        "evidence": [
+          "hiddenNoticeCharts.test.tsx: count bars, histogram rows, row bars, box rows, numeric line rows and points, time-series points",
+          "Playwright on shop demo: histogram x bound (1280, 783) and aggregate bar y bound (1280, 390); counts, unchanged row totals after clicking the marker, no tick overlap, reset"
+        ]
       },
       {
         "id": "m3",
@@ -620,6 +625,13 @@
       "reason": "Byron asked to start PR 1.",
       "status": "active",
       "evidence": "Targeted tests and browser checks; PR pending."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Built Milestone 2 (marker on every bounded chart).",
+      "reason": "Continue the plan.",
+      "status": "active",
+      "evidence": "Targeted tests and browser checks."
     }
   ],
   "closure": null,

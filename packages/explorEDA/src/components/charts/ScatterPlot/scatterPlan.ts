@@ -16,7 +16,7 @@ import {
 } from "@/lib/categories";
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { AxisSettings, datum, MarginSettings } from "@/types/ChartTypes";
-import { hiddenByBounds } from "../Axis/axisBounds";
+import { hiddenByBounds, labelHidden } from "../Axis/axisBounds";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import type { Filter, ValueFilter } from "@/types/FilterTypes";
 import type { DataType } from "@/components/SummaryTable/utils/dataTypeDetection";
@@ -466,15 +466,14 @@ export function planScatter(
     value: (point: (typeof points)[number]) => datum
   ) => {
     if (axis.kind !== "numeric") return undefined;
-    const ends = hiddenByBounds(
-      settingsAxis,
-      axis.domain,
-      points.map((point) => value(point) as number)
+    return labelHidden(
+      hiddenByBounds(
+        settingsAxis,
+        axis.domain,
+        points.map((point) => value(point) as number)
+      ),
+      format(field, axis)
     );
-    const label = format(field, axis);
-    for (const end of [ends?.low, ends?.high])
-      if (end) end.atLabel = label(end.at);
-    return ends;
   };
   const axisLabel = (label: string, axis: ScatterAxisScale) =>
     [label, axis.type === "symlog" && "symlog"].filter(Boolean).join(" · ");

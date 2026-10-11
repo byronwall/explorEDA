@@ -111,6 +111,8 @@ export interface AxisHidden {
   at: number;
   /** That end as the axis writes it, such as "$1,000.00". */
   atLabel?: string;
+  /** True when the marks run past the end and are cut off, such as bars. */
+  cut?: boolean;
 }
 
 /** Hidden marks past the low and high end of an axis. */

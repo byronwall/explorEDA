@@ -1,8 +1,12 @@
 import { useColorContext } from "@/hooks/useDisplayColorScales";
 import { defaultCategoricalColors } from "@/lib/colorScaleMath";
 import { THEME_PALETTE, resolvePaletteColor } from "@/lib/themePalettes";
-import { finiteNumber } from "@/lib/valueParsing";
-import { boundedDomain, hasAxisBounds } from "../Axis/axisBounds";
+import { finiteNumber, finiteNumbers } from "@/lib/valueParsing";
+import {
+  boundedDomain,
+  hasAxisBounds,
+  hiddenByBounds,
+} from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import { ChartMessage } from "../ChartMessage";
 import { reduceDataPoints } from "@/lib/chartUtils";
@@ -519,6 +523,31 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
         height={height}
         xScale={xScale}
         yScale={leftYScale}
+        hidden={{
+          x: hiddenByBounds(
+            settings.xAxis,
+            xScale.domain() as [number, number],
+            finiteNumbers(liveXData)
+          ),
+          y: hiddenByBounds(
+            settings.yAxis,
+            leftYScale.domain() as [number, number],
+            settings.seriesField
+              .filter((field) => !settings.seriesSettings[field]?.useRightAxis)
+              // A point needs both values to be drawn.
+              .flatMap((field) =>
+                (liveSeriesData[field] ?? []).flatMap((value, index) => {
+                  const y = finiteNumber(value);
+                  return y === undefined ||
+                    finiteNumber(liveXData[index]) === undefined
+                    ? []
+                    : [y];
+                })
+              ),
+            ["point", "points"],
+            true
+          ),
+        }}
         settings={{
           ...settings,
           margin,

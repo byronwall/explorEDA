@@ -11,7 +11,7 @@ import {
   categoryLabel,
   categoryValue,
 } from "@/lib/categories";
-import { boundedDomain } from "../Axis/axisBounds";
+import { boundedDomain, hiddenByBounds } from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
@@ -464,6 +464,13 @@ export function BoxPlot({
         height={chartHeight}
         xScale={xScale}
         yScale={yScale}
+        hidden={{
+          y: hiddenByBounds(
+            settings.yAxis,
+            yScale.domain() as [number, number],
+            finiteNumbers(liveData)
+          ),
+        }}
         brushingMode="none"
         settings={{ ...settings, margin }}
         onClearPlot={() => updateChart(settings.id, { filters: [] })}

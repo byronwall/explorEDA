@@ -178,6 +178,7 @@ export function TimeSeriesChart({
         grid: settings.yAxis.grid ?? true,
         density: settings.yGridLines,
         format: (value) => plan.formatValue(Number(value)),
+        hidden: plan.yHidden,
       },
     });
   }, [plan, settings, typography]);

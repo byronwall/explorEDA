@@ -239,6 +239,7 @@ function HiddenMarkers({ plan }: { plan: ChartAxesPlan }) {
             data-hidden-count={hidden.count}
             data-hidden-at={hidden.at}
             data-hidden-at-label={hidden.atLabel}
+            data-hidden-cut={hidden.cut || undefined}
             data-hidden-unit={hidden.unit.join("|")}
             transform={`translate(${x},${y})`}
             pointerEvents="auto"

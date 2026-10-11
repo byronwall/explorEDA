@@ -1,9 +1,6 @@
 import type { ThemeColors } from "@/lib/themePalettes";
 import { applyFilter } from "@/hooks/applyFilter";
-import {
-  DEFAULT_AXIS_TYPOGRAPHY,
-  type AxisTypography,
-} from "../Axis/axisPlan";
+import { DEFAULT_AXIS_TYPOGRAPHY, type AxisTypography } from "../Axis/axisPlan";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import { defaultCategoricalColors, makeColorScale } from "@/lib/colorScaleMath";
 import {
@@ -17,7 +14,12 @@ import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import type { Filter } from "@/types/FilterTypes";
 import { scaleLinear } from "d3-scale";
 import { area, curveLinear, curveStepAfter, line } from "d3-shape";
-import { boundedDomain, hasAxisBounds } from "../Axis/axisBounds";
+import {
+  boundedDomain,
+  hasAxisBounds,
+  hiddenByBounds,
+  labelHidden,
+} from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import type { LineChartSettings } from "./definition";
 
@@ -175,8 +177,7 @@ export function planTimeSeries(
       const label = time.splitField ? categoryLabel(value) : metricLabel;
       const fallback =
         snapshot.themeColors?.categorical ?? defaultCategoricalColors;
-      const seriesColor =
-        color?.(value) ?? fallback[index % fallback.length]!;
+      const seriesColor = color?.(value) ?? fallback[index % fallback.length]!;
       const ids = snapshot.allIds.filter(
         (id) =>
           liveSet.has(id) &&
@@ -396,6 +397,17 @@ export function planTimeSeries(
     stacked,
     incompletePeriods,
     yScaleType,
+    // Points past a bound are cut off at the edge; the axis says how many.
+    yHidden: labelHidden(
+      hiddenByBounds(
+        settings.yAxis,
+        yScale.domain() as [number, number],
+        values,
+        ["point", "points"],
+        true
+      ),
+      formatValue
+    ),
     curveType: settings.styles.curveType,
     margin,
     plotWidth,

@@ -48,7 +48,9 @@ export function hiddenByBounds(
   axis: AxisSettings | undefined,
   domain: [number, number],
   values: Iterable<number>,
-  unit: [string, string] = ["row", "rows"]
+  unit: [string, string] = ["row", "rows"],
+  /** The marks run past the end and are cut off there, as bars and lines are. */
+  cut = false
 ): AxisHiddenEnds | undefined {
   if (!hasAxisBounds(axis) || boundsInverted(axis)) return undefined;
   const low = Math.min(domain[0], domain[1]);
@@ -60,10 +62,21 @@ export function hiddenByBounds(
     else if (value > high) above++;
   }
   if (!below && !above) return undefined;
-  return {
-    low: below ? { count: below, unit, reason: "bound", at: low } : undefined,
-    high: above ? { count: above, unit, reason: "bound", at: high } : undefined,
-  };
+  const end = (count: number, at: number) =>
+    count
+      ? { count, unit, reason: "bound" as const, at, ...(cut && { cut }) }
+      : undefined;
+  return { low: end(below, low), high: end(above, high) };
+}
+
+/** Writes each hidden end as its axis does, such as "$1,000.00". */
+export function labelHidden(
+  ends: AxisHiddenEnds | undefined,
+  label: (value: number) => string
+) {
+  for (const end of [ends?.low, ends?.high])
+    if (end) end.atLabel = label(end.at);
+  return ends;
 }
 
 /**

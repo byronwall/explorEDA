@@ -26,7 +26,12 @@ import {
   describeScale,
   type AxisTypography,
 } from "../Axis/axisPlan";
-import { boundedDomain, hasAxisBounds } from "../Axis/axisBounds";
+import {
+  boundedDomain,
+  hasAxisBounds,
+  hiddenByBounds,
+  labelHidden,
+} from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import { getChartAxisLabel } from "../chartAccessibility";
 import { binInRange, numericBins } from "./bins";
@@ -461,6 +466,30 @@ export function planBarChart({
       : format(field);
   const symlog = (label: string, type?: string) =>
     [label, type === "symlog" && "symlog"].filter(Boolean).join(" · ");
+  // Bars past a bound are cut off at the edge; the axis says how many.
+  const yHidden = hiddenByBounds(
+    settings.yAxis,
+    yDomain,
+    rows.flatMap((row) =>
+      typeof row.value === "number" && Number.isFinite(row.value)
+        ? [row.value]
+        : []
+    ),
+    ["bar", "bars"],
+    true
+  );
+  // A histogram's bound hides the rows whose values fall past it.
+  const xHidden =
+    mode === "bin"
+      ? hiddenByBounds(
+          settings.xAxis,
+          xScale.domain() as [number, number],
+          snapshot.liveIds.flatMap((id) => {
+            const value = finiteNumber(snapshot.fieldData[id]);
+            return value === undefined ? [] : [value];
+          })
+        )
+      : undefined;
   const axes = planAxes({
     plotWidth,
     plotHeight,
@@ -481,6 +510,7 @@ export function planBarChart({
       label: symlog(xLabel, settings.xAxis.scaleType),
       labelSource: settings.xAxisLabel ? "chart-setting" : "field-label",
       domainSource: xDomainSource,
+      hidden: labelHidden(xHidden, format(xField)),
     },
     y: {
       typography,
@@ -496,6 +526,7 @@ export function planBarChart({
       label: symlog(yLabel, settings.yAxis.scaleType),
       labelSource: settings.yAxisLabel ? "chart-setting" : "field-label",
       zero: true,
+      hidden: labelHidden(yHidden, formatAxis(yField)),
       domainSource: {
         population:
           mode === "aggregate"
