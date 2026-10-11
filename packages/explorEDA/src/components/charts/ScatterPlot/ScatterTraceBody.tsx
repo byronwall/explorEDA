@@ -207,9 +207,13 @@ export function ScatterTraceBody({ trace }: { trace: ScatterTrace }) {
               ? `${trace.x.field} has no finite value.`
               : trace.reason === "invalid-y"
                 ? `${trace.y.field} has no finite value.`
-                : trace.reason === "invalid-size"
-                  ? `${trace.size?.field} needs a finite, nonnegative value.`
-                  : "The scale has no finite position for this row."}
+                : trace.reason === "nonpositive-x"
+                  ? `${trace.x.field} is zero or negative, which a log scale cannot place.`
+                  : trace.reason === "nonpositive-y"
+                    ? `${trace.y.field} is zero or negative, which a log scale cannot place.`
+                    : trace.reason === "invalid-size"
+                      ? `${trace.size?.field} needs a finite, nonnegative value.`
+                      : "The scale has no finite position for this row."}
           </div>
           <ChartTraceRowSteps
             fields={[trace.x, trace.y, ...(trace.size ? [trace.size] : [])]}

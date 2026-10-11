@@ -1,0 +1,14 @@
+{
+  "id": "436c60c0-ea05-4f6d-81c2-9be9814b1daa",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:30ec4f",
+    "label": "Agent token ...30ec4f"
+  },
+  "createdAt": "2026-10-11T03:20:58.260Z",
+  "summary": "Updated metadata for \"Examples to add\".",
+  "nodeIds": [
+    "page-examples-to-add"
+  ]
+}

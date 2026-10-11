@@ -1,0 +1,16 @@
+{
+  "id": "b600ff68-78d7-4787-8c34-20aaefa7d797",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:49:01.152Z",
+  "summary": "Created \"Examples to add\" under \"Composition examples\".",
+  "nodeIds": [
+    "page-examples-to-add",
+    "page-composition-examples"
+  ],
+  "metadata": {
+    "clientMutationId": "40beb9aa-5407-4a23-ad80-00fc949d947a"
+  }
+}

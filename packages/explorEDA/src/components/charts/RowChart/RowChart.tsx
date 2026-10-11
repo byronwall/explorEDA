@@ -5,7 +5,11 @@ import {
   categoryIncludes,
   categoryLabel,
 } from "@/lib/categories";
-import { boundedDomain, hasAxisBounds } from "../Axis/axisBounds";
+import {
+  boundedDomain,
+  hasAxisBounds,
+  hiddenByBounds,
+} from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import { BaseChartProps, RowChartSettings } from "@/types/ChartTypes";
@@ -553,6 +557,15 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
         width={width}
         height={chartHeight}
         footer={axisRise + STATUS_LINE_HEIGHT}
+        hidden={{
+          x: hiddenByBounds(
+            settings.xAxis,
+            xScale.domain() as [number, number],
+            displayCounts.map((item) => item.count),
+            ["bar", "bars"],
+            true
+          ),
+        }}
         xScale={xScale}
         yScale={yScale}
         settings={chartSettings}

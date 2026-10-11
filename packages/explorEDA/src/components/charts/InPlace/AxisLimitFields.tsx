@@ -28,6 +28,8 @@ interface AxisLimitFieldsProps {
   autoFocus?: boolean;
   /** Called on Enter, so an anchored editor can close. */
   onSubmit?: () => void;
+  /** A log axis takes only bounds above zero. */
+  positive?: boolean;
 }
 
 /**
@@ -43,6 +45,7 @@ export function AxisLimitFields({
   onChange,
   autoFocus,
   onSubmit,
+  positive = false,
 }: AxisLimitFieldsProps) {
   const [drafts, setDrafts] = useState({
     min: text(limits?.min),
@@ -65,13 +68,17 @@ export function AxisLimitFields({
     parsed.min.value !== undefined &&
     parsed.max.value !== undefined &&
     parsed.min.value >= parsed.max.value;
+  const belowZero = (side: Side) =>
+    positive && parsed[side].value !== undefined && parsed[side].value! <= 0;
   const error = !parsed.min.ok
     ? "The minimum must be a number."
     : !parsed.max.ok
       ? "The maximum must be a number."
-      : inverted
-        ? "The minimum must be below the maximum."
-        : undefined;
+      : belowZero("min") || belowZero("max")
+        ? "A log scale needs bounds above zero."
+        : inverted
+          ? "The minimum must be below the maximum."
+          : undefined;
 
   const update = (side: Side, draft: string) => {
     const next = { ...drafts, [side]: draft };
@@ -79,6 +86,11 @@ export function AxisLimitFields({
     const min = parse(next.min);
     const max = parse(next.max);
     if (!min.ok || !max.ok) return;
+    if (
+      positive &&
+      [min.value, max.value].some((v) => v !== undefined && v <= 0)
+    )
+      return;
     if (
       min.value !== undefined &&
       max.value !== undefined &&
@@ -99,7 +111,10 @@ export function AxisLimitFields({
     <Input
       aria-label={`${axisName} ${side === "min" ? "minimum" : "maximum"}`}
       aria-invalid={
-        !parsed[side].ok || (inverted && Boolean(drafts[side])) || undefined
+        !parsed[side].ok ||
+        belowZero(side) ||
+        (inverted && Boolean(drafts[side])) ||
+        undefined
       }
       aria-describedby={error ? errorId : undefined}
       className="h-7 min-w-0 flex-1 px-2 text-xs tabular-nums"

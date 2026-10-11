@@ -3,47 +3,50 @@ title: "Explore nested categories and their totals"
 slug: "hierarchy-analysis"
 phase: intent
 status: current
-last_updated: "2026-10-06"
+last_updated: "2026-10-10"
 ---
 
 # Explore nested categories and their totals
 
 ## My read
 
-Analysts may need to understand how a total divides through several category levels. A treemap, sunburst, or hierarchy table could support that task, but the shape is secondary. The important work is defining parent-child membership, consistent totals, drill paths, and a way back to the current context.
+explorEDA should gain hierarchical reporting charts: treemap, sunburst, and similar views of a total dividing through nested categories. Analysts use them to answer three questions. Which subcategories exist? How large is each? How does each part compare to its parent and to the whole?
 
-This is a future seed with no selected renderer. Current faceting repeats views by fields, while Sankey represents ordered categorical stages. Neither automatically provides hierarchy semantics. A flat table with nested category columns may be enough for a first proof. The desired capability should remain proportionate to the supplied data.
+The charts matter as much as the semantics underneath them. Each node is a full category path with a total that adds up to its parent, and every node can be selected and traced back to its rows.
 
-This remains a future seed. Its expansion trigger is a proposed decision rule, not a release commitment.
+Excel-style pivot subtotals and collapse are not the goal. The Pivot Table remains the place for exact numbers.
 
 ## What matters most
 
-- Explain hierarchy construction and totals.
-- Keep drill context and source membership visible.
-- Distinguish missing levels from real named nodes.
+- Make parts and the whole readable at a glance and on inspection.
+- Keep totals additive and checkable against source rows.
+- Handle many small categories without clutter.
+- Distinguish missing levels from real named categories.
 
 ## The intended experience
 
-Choose category levels, inspect the top-level total, drill into a branch, and return through a visible path. Select a node and inspect the source records counted within it. Compare child totals with the parent under the same metric. Preserve the drill position only when it remains valid after filtering.
+Choose two or three category fields and a size. See the hierarchy as a treemap, then switch to an icicle or sunburst without setting it up again. Zoom into a parent so it fills the chart, and step back through breadcrumbs. The zoomed view is saved with the chart and returns the same way after a reload. Hover a node to read its path, value, and share of parent and whole. Click a branch to filter the rest of the workspace, and trace the rows behind it.
+
+Typical data has 2–3 levels with 2–8 categories each. Beyond that, people narrow the data with filters. Small categories appear as unlabeled marks, and slivers below a pixel are not drawn. A catch-all "Other" group was tried and rejected: it filled the chart with gray.
 
 ## Boundaries
 
-Do not infer arbitrary parent relations from equal labels. Define whether a repeated label at different paths is a different node. Do not sum averages. Avoid graph editing, automatic taxonomy discovery, and large hierarchy layout work before one drill task proves useful.
+Do not infer parent relations from equal labels; the same label under two parents is two nodes. Size only by measures that add up (count or sum), never averages. Avoid automatic taxonomy discovery, tree editing, and deep or parent-ID trees in the first pass. How sizes react to filters beyond simple recomputation is not a product priority; reasonable defaults are fine.
 
 ## What seems settled
 
-Treemap and sunburst are examples rather than requirements. The Pro review conditions them on a real hierarchy need. No existing chart initiative is reopened by capturing this possibility.
+Hierarchical chart types are the desired addition, with treemap and sunburst named directly. Rectangular layouts are preferred over circular or radial ones, so circle packing is out. They appear as one "Hierarchy" entry in the Add Chart menu. Pivot subtotals are out of scope for now. Sankey stays the chart for ordered stages; it does not double as a hierarchy view.
 
 ## Current reality that matters
 
-The registry has no hierarchy view. Pivot accepts multiple row fields; facets support one- or two-field repetition. Those are reusable entry points for a small hierarchy proof, not evidence of complete hierarchy totals and navigation.
+The registry has no hierarchy view. Sankey already takes ordered category fields with count or sum, missing-value handling, a per-stage category cap, and an Other node. Those conventions transfer directly. The Pivot Table groups by full paths and lists each cell's source rows, which makes it a natural check on hierarchy totals. Changing a chart's type resets its settings, which matters if layouts are separate types.
 
 ## Expansion trigger
 
-Expand when a dataset has several meaningful category levels and flat rankings make the parent-child relationship hard to inspect.
+Consider Mekko once treemap and icicle prove readable on real two- and three-level data.
 
 ## Next step after confirmation
 
-Use two category levels and a hand-checkable sum. Show a simple hierarchy table with drill and source inspection. Decide whether spatial area encoding adds value before choosing treemap or sunburst.
+The [shape brief](shape-brief.md) proposes one Hierarchy chart with treemap, icicle, and sunburst layouts over a shared model. The [implementation plan](implementation-plan.md) starts with a two-level treemap proof on the shop dataset.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.

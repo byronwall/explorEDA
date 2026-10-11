@@ -1,0 +1,14 @@
+{
+  "id": "f297af04-856e-470b-b321-394e1a9d71c3",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:b149ae",
+    "label": "Agent token ...b149ae"
+  },
+  "createdAt": "2026-10-11T02:17:06.497Z",
+  "summary": "Updated metadata for \"Missing the color legend - what is color?\".",
+  "nodeIds": [
+    "page-missing-the-color-legend-what-is-color"
+  ]
+}

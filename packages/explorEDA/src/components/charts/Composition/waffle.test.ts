@@ -141,3 +141,80 @@ describe("waffle marks", () => {
     expect(isCompositionDefinition(grid({ columns: 0 }))).toBe(false);
   });
 });
+
+describe("waffles binned along x", () => {
+  it("stacks one small waffle per whole value, on the baseline, with bin labels", () => {
+    const binnedRows: Record<string, datum>[] = [
+      { Gap: 0.9, Region: "A" },
+      { Gap: 1.2, Region: "B" },
+      { Gap: 1, Region: "A" },
+      { Gap: 3, Region: "A" },
+    ];
+    const ids = binnedRows.map((_, id) => id);
+    const definition: CompositionDefinition = {
+      ...createEmptyComposition(),
+      scales: [
+        {
+          id: "n-1",
+          kind: "numeric",
+          name: "Gap",
+          field: "Gap",
+          domain: "shared",
+          zero: false,
+          nice: false,
+        },
+      ],
+      elements: [
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "All",
+          x: 0,
+          y: 0,
+          frame: { width: 300, height: 100 },
+          label: { show: false, width: 0, fontSize: 12 },
+          axis: true,
+          marks: [
+            {
+              ...waffle,
+              categoryField: "Region",
+              columns: 1,
+              gap: 0,
+              xScaleId: "n-1",
+            },
+          ],
+          repeat: {
+            arrangement: "rows",
+            columns: 1,
+            gap: 0,
+            order: "label",
+            limit: 1,
+          },
+        },
+      ],
+    };
+    expect(isCompositionDefinition(definition)).toBe(true);
+    const resolved = resolveComposition(definition, estimateTextWidth, {
+      allIds: ids,
+      liveIds: ids,
+      column: (field) =>
+        Object.fromEntries(binnedRows.map((row, id) => [id, row[field]])),
+    });
+    const cells = resolved.nodes.filter(
+      (node): node is RectNode => node.type === "rect" && Boolean(node.glyph)
+    );
+    // Bins 1, 2, 3 are 100 px wide; three rows round to 1, one to 3.
+    const centers = cells.map((cell) => Math.round(cell.x + cell.width / 2));
+    expect(centers.filter((x) => x === 50)).toHaveLength(3);
+    expect(centers.filter((x) => x === 250)).toHaveLength(1);
+    // The bin's cells stand on the baseline, one above another.
+    const firstBin = cells
+      .filter((cell) => Math.round(cell.x + cell.width / 2) === 50)
+      .map((cell) => cell.y + cell.height);
+    expect(Math.max(...firstBin)).toBeCloseTo(100);
+    const labels = resolved.nodes
+      .filter((node) => node.type === "text" && node.key.includes(":axis:"))
+      .map((node) => (node.type === "text" ? node.lines[0]!.text : ""));
+    expect(labels).toEqual(["1", "2", "3"]);
+  });
+});

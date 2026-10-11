@@ -1,0 +1,14 @@
+{
+  "id": "d2b367d6-3902-4186-ac31-480df8a956a3",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9bc902",
+    "label": "Agent token ...9bc902"
+  },
+  "createdAt": "2026-10-11T02:43:48.232Z",
+  "summary": "Updated metadata for \"Honestly, other example is better\".",
+  "nodeIds": [
+    "page-honestly-other-example-is-better"
+  ]
+}

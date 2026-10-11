@@ -3,7 +3,7 @@ import { Input } from "../ui/input";
 import { Switch } from "../ui/switch";
 import { ActionTooltip } from "../ui/tooltip";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
-import { numericAxes } from "../charts/Axis/axisBounds";
+import { logAxes, numericAxes } from "../charts/Axis/axisBounds";
 import { AxisLimitFields } from "../charts/InPlace/AxisLimitFields";
 import { resolveFieldProfile } from "../FieldMetadata";
 import { useDataLayer } from "@/providers/DataLayerProvider";
@@ -15,12 +15,11 @@ interface Props {
 export function AxisSettingsTab({ settings, onSettingChange }: Props) {
   const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
   const getColumnData = useDataLayer((state) => state.getColumnData);
-  const ranged = numericAxes(
-    settings,
-    (field) =>
-      resolveFieldProfile(field, fieldProfiles ?? [], getColumnData)
-        ?.dataType === "numeric"
-  );
+  const isNumeric = (field: string) =>
+    resolveFieldProfile(field, fieldProfiles ?? [], getColumnData)?.dataType ===
+    "numeric";
+  const ranged = numericAxes(settings, isNumeric);
+  const loggable = logAxes(settings, isNumeric);
   const stacked =
     settings.type === "bar" &&
     settings.seriesField &&
@@ -65,7 +64,10 @@ export function AxisSettingsTab({ settings, onSettingChange }: Props) {
                   <ToggleGroup
                     type="single"
                     value={
-                      axisSettings?.scaleType === "symlog" ? "symlog" : "linear"
+                      axisSettings?.scaleType === "symlog" ||
+                      (loggable[axis] && axisSettings?.scaleType === "log")
+                        ? axisSettings.scaleType
+                        : "linear"
                     }
                     onValueChange={(scaleType) => {
                       if (scaleType) update({ scaleType });
@@ -73,7 +75,7 @@ export function AxisSettingsTab({ settings, onSettingChange }: Props) {
                     aria-label={`${axis.toUpperCase()} numeric scale`}
                     variant="outline"
                     size="sm"
-                    className="grid w-full grid-cols-2"
+                    className={`grid w-full ${loggable[axis] ? "grid-cols-3" : "grid-cols-2"}`}
                   >
                     <ActionTooltip content="Use evenly spaced values. This is the standard scale for most charts.">
                       <ToggleGroupItem
@@ -93,6 +95,17 @@ export function AxisSettingsTab({ settings, onSettingChange }: Props) {
                         Symlog
                       </ToggleGroupItem>
                     </ActionTooltip>
+                    {loggable[axis] && (
+                      <ActionTooltip content="Log: each tenfold step takes the same space. Rows at or below zero cannot be placed; the axis counts them.">
+                        <ToggleGroupItem
+                          value="log"
+                          aria-label="Log"
+                          className={toggleClass}
+                        >
+                          Log
+                        </ToggleGroupItem>
+                      </ActionTooltip>
+                    )}
                   </ToggleGroup>
                 </>
               )}
@@ -103,6 +116,9 @@ export function AxisSettingsTab({ settings, onSettingChange }: Props) {
                   </ActionTooltip>
                   <AxisLimitFields
                     axisName={axis.toUpperCase()}
+                    positive={
+                      loggable[axis] && axisSettings?.scaleType === "log"
+                    }
                     limits={axisSettings?.limits}
                     onChange={(limits) => update({ limits })}
                   />
