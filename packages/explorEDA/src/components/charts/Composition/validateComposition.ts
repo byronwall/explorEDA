@@ -158,12 +158,18 @@ function isMark(value: unknown) {
       oneOf(value.aggregation, ["count", "sum"]) &&
       (value.aggregation === "count" || isString(value.measureField)) &&
       typeof value.normalize === "boolean" &&
-      oneOf(value.order, ["label", "total"]) &&
+      oneOf(value.order, ["label", "total", "first"]) &&
       Array.isArray(value.colors) &&
       value.colors.length > 0 &&
       value.colors.every(isString) &&
       isNumber(value.labelMinHeight) &&
       isNumber(value.inset) &&
+      (value.labelContent === undefined ||
+        oneOf(value.labelContent, ["both", "share"])) &&
+      (value.direction === undefined ||
+        oneOf(value.direction, ["up", "across"])) &&
+      (value.connect === undefined || typeof value.connect === "boolean") &&
+      (value.texture === undefined || oneOf(value.texture, ["hand"])) &&
       (value.xScaleId === undefined || isString(value.xScaleId)) &&
       (value.baseline === undefined ||
         oneOf(value.baseline, ["zero", "center", "wiggle"])) &&

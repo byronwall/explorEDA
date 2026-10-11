@@ -94,6 +94,7 @@ describe("example coverage manifest", () => {
       "covid-tiles",
       "covid-compare",
       "elections",
+      "du-bois-income",
       "tax-slope",
       "titanic-waffle",
       "unemployment-stream",

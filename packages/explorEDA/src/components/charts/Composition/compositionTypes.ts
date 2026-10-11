@@ -456,12 +456,20 @@ export interface StackMark {
   measureField?: string;
   /** Every column spans the frame as 100%; otherwise heights follow each repeat's total against the largest. */
   normalize: boolean;
-  /** Category order from the bottom: by label, or largest total first across the whole graphic. */
-  order: "label" | "total";
+  /** Category order from the bottom: by label, largest total first, or as they first appear in the rows. */
+  order: "label" | "total" | "first";
   /** One color per category in that order, cycling when there are more categories. */
   colors: string[];
-  /** Label segments at least this tall, in artboard pixels, with the category and share. */
+  /** Label segments at least this tall (or wide, across), in artboard pixels. */
   labelMinHeight: number;
+  /** What a segment's label says: its category and share, or the share alone. */
+  labelContent?: "both" | "share";
+  /** Stack upward in a column, or left to right across a bar. */
+  direction?: "up" | "across";
+  /** Join each category's edge from one repeat to the next with a thin line. */
+  connect?: boolean;
+  /** A hand-colored look: uneven edges and grain, as in a painted chart. */
+  texture?: "hand";
   /** Space between segments. */
   inset: number;
   /**

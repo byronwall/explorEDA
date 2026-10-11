@@ -51,6 +51,9 @@ export function CompositionSvg({
   // Nodes group by element, so moving one element is one transform.
   const groups: { elementId: string; nodes: SceneNode[] }[] = [];
   const clips = new Map<string, Bounds>();
+  const textured = scene.nodes.some(
+    (node) => node.type === "rect" && node.texture === "hand"
+  );
   const gradients = scene.nodes.filter(
     (node): node is AreaNode => node.type === "area" && Boolean(node.gradient)
   );
@@ -76,8 +79,42 @@ export function CompositionSvg({
       fontFamily={COMPOSITION_FONT}
       {...props}
     >
-      {(clips.size > 0 || gradients.length > 0) && (
+      {(clips.size > 0 || gradients.length > 0 || textured) && (
         <defs>
+          {textured && (
+            // Uneven edges and grain, as in a hand-colored chart.
+            <filter id="eda-hand" x="-3%" y="-15%" width="106%" height="130%">
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.04"
+                numOctaves={3}
+                seed={7}
+                result="noise"
+              />
+              <feDisplacementMap
+                in="SourceGraphic"
+                in2="noise"
+                scale={3}
+                xChannelSelector="R"
+                yChannelSelector="G"
+                result="rough"
+              />
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.8"
+                numOctaves={2}
+                seed={3}
+                result="grain"
+              />
+              <feColorMatrix
+                in="grain"
+                type="matrix"
+                values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.7 0 0 0 0.5"
+                result="grainAlpha"
+              />
+              <feComposite in="rough" in2="grainAlpha" operator="in" />
+            </filter>
+          )}
           {gradients.map((node) => (
             <linearGradient
               key={node.key}
@@ -183,6 +220,7 @@ function SceneNodeView({ node }: { node: SceneNode }) {
           width={node.width}
           height={node.height}
           fill={node.fill}
+          filter={node.texture === "hand" ? "url(#eda-hand)" : undefined}
           stroke={node.stroke}
           strokeWidth={node.stroke ? 1 : undefined}
           opacity={node.opacity}

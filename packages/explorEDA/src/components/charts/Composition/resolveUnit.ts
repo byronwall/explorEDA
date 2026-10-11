@@ -39,6 +39,7 @@ import type {
   Bounds,
   CircleNode,
   PathNode,
+  RectNode,
   SceneNode,
   TextNode,
 } from "./resolveComposition";
@@ -1357,6 +1358,12 @@ export function resolveUnit(
     });
   });
 
+  // Connected stacks join each category's edge from one repeat to the next.
+  for (const { mark, x } of stacks) {
+    if (!mark.connect || x) continue;
+    nodes.push(...stackConnectors(unit, mark, instances, nodes));
+  }
+
   // Rows that overlap through a negative gap draw top first, so each lower
   // ridge sits in front of the one above it, as a ridgeline reads; their
   // names go over every ridge.
@@ -2036,11 +2043,13 @@ function stackCategories(
     key,
     total: stackValue(mark, rowIds, measure),
   }));
-  categories.sort((a, b) =>
-    mark.order === "total"
-      ? b.total - a.total || compareLabels(a.key, b.key)
-      : compareLabels(a.key, b.key)
-  );
+  // "first" keeps the order categories first appear in the rows.
+  if (mark.order !== "first")
+    categories.sort((a, b) =>
+      mark.order === "total"
+        ? b.total - a.total || compareLabels(a.key, b.key)
+        : compareLabels(a.key, b.key)
+    );
   return categories.map((category, index) => ({ ...category, index }));
 }
 
@@ -2080,18 +2089,21 @@ function stackNodes(
     category: item.category.key,
     count: item.count,
   }));
-  // Normalized columns fill the frame; otherwise height follows the total
+  // Normalized stacks fill the frame; otherwise length follows the total
   // against the largest total across the repeats.
+  const across = mark.direction === "across";
+  const extent = across ? frame.width : frame.height;
   const columnHeight = mark.normalize
-    ? frame.height
-    : frame.height * (total / (data.stackMaxTotal?.get(mark.id) ?? total));
+    ? extent
+    : extent * (total / (data.stackMaxTotal?.get(mark.id) ?? total));
   const nodes: SceneNode[] = [];
   let lower = 0;
   for (const item of counts) {
     const share = item.count / total;
     const upper = lower + share;
     const top = frame.y + frame.height - upper * columnHeight;
-    const height = Math.max(0, share * columnHeight - mark.inset);
+    const length = Math.max(0, share * columnHeight - mark.inset);
+    const height = length;
     const fill = mark.colors[item.category.index % mark.colors.length]!;
     const key = `${unit.id}:${subset.key}:${mark.id}:${item.category.key}`;
     const glyph: GlyphDatum = {
@@ -2111,39 +2123,100 @@ function stackNodes(
         contributors,
       },
     };
+    // Across, segments run left to right from the frame's left edge.
+    const box = across
+      ? {
+          x: frame.x + lower * columnHeight + mark.inset / 2,
+          y: frame.y,
+          width: length,
+          height: frame.height,
+        }
+      : { x: frame.x, y: top + mark.inset / 2, width: frame.width, height };
     nodes.push({
       type: "rect",
       key,
       elementId: unit.id,
       instanceKey: subset.key,
-      x: frame.x,
-      y: top + mark.inset / 2,
-      width: frame.width,
-      height,
+      ...box,
       fill,
+      texture: mark.texture,
       glyph,
     });
-    if (height >= mark.labelMinHeight)
+    const labelSize = across
+      ? Math.min(13, Math.max(9, Math.round(frame.height * 0.45)))
+      : 10;
+    const text =
+      mark.labelContent === "share"
+        ? shareFormat.format(share)
+        : `${item.category.key} ${shareFormat.format(share)}`;
+    if (length >= mark.labelMinHeight)
       nodes.push({
         type: "text",
         key: `${key}:label`,
         elementId: unit.id,
         instanceKey: subset.key,
-        x: frame.x + 5,
+        x: across ? box.x + box.width / 2 : frame.x + 5,
         lines: [
           {
-            text: `${item.category.key} ${shareFormat.format(share)}`,
-            y: top + mark.inset / 2 + height / 2 + 3.5,
+            text,
+            y: box.y + box.height / 2 + labelSize * 0.35,
           },
         ],
-        fontSize: 10,
+        fontSize: labelSize,
         fontWeight: 600,
         ...inkOn(fill),
-        anchor: "start",
+        anchor: across ? "middle" : "start",
       });
     lower = upper;
   }
   return nodes;
+}
+
+/**
+ * Thin lines that join each category's far edge in one repeat to the same
+ * edge in the next, as in a chart that tracks shares from row to row. The
+ * last category's edge is the total, so it is not joined.
+ */
+function stackConnectors(
+  unit: UnitElement,
+  mark: StackMark,
+  instances: ResolvedInstance[],
+  nodes: SceneNode[]
+): SceneNode[] {
+  const across = mark.direction === "across";
+  const edges = new Map<string, Map<string, RectNode>>();
+  for (const node of nodes) {
+    if (node.type !== "rect" || node.glyph?.markId !== mark.id) continue;
+    const stack = node.glyph.stack;
+    if (!stack || stack.upper >= 1 - 1e-9) continue;
+    const perRepeat = edges.get(node.glyph.instanceKey) ?? new Map();
+    perRepeat.set(node.glyph.bin.key, node);
+    edges.set(node.glyph.instanceKey, perRepeat);
+  }
+  const lines: SceneNode[] = [];
+  instances.forEach((instance, index) => {
+    const next = instances[index + 1];
+    if (!next) return;
+    const here = edges.get(instance.key);
+    const there = edges.get(next.key);
+    if (!here || !there) return;
+    for (const [category, from] of here) {
+      const to = there.get(category);
+      if (!to) continue;
+      lines.push({
+        type: "line",
+        key: `${unit.id}:${instance.key}:${mark.id}:${category}:connector`,
+        elementId: unit.id,
+        x1: across ? from.x + from.width : from.x + from.width,
+        y1: across ? from.y + from.height : from.y,
+        x2: across ? to.x + to.width : to.x,
+        y2: across ? to.y : to.y,
+        stroke: INK,
+        strokeWidth: 0.75,
+      });
+    }
+  });
+  return lines;
 }
 
 /**

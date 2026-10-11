@@ -1121,6 +1121,15 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "du-bois-income",
+    intent:
+      "Stack each income class's spending across a bar as shares, joined class to class at each share's edge, after Du Bois.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+    },
+  },
+  {
     exampleId: "climate-ridgeline",
     intent:
       "Overlap 84 yearly densities of daily temperatures, shaded along x through a diverging scale, with every fifth year named.",

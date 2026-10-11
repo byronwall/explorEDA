@@ -32,6 +32,7 @@ import {
   electionsDashboard,
   lincolnRidgelineDashboard,
   climateRidgelineDashboard,
+  duBoisIncomeDashboard,
   taxSlopeDashboard,
   titanicWaffleDashboard,
   unemploymentStreamDashboard,
@@ -915,6 +916,21 @@ export const examples: ExampleData[] = [
     icon: Thermometer,
     data: "/datasets/daily-global-temperature.csv",
     savedData: climateRidgelineDashboard,
+  },
+  {
+    id: "du-bois-income",
+    title: "Income and expenditure of 150 families in Atlanta",
+    description:
+      "W. E. B. Du Bois's 1900 plate rebuilt: one bar per income class, its spending stacked left to right as shares, joined class to class by lines at each share's edge, in a hand-colored texture on paper.",
+    dataset: { rows: "33 class shares", fields: 5, source: "Real" },
+    shows: [
+      "Stacks across a bar",
+      "Connectors between repeats",
+      "Hand-colored texture",
+    ],
+    icon: Columns3,
+    data: "/datasets/du-bois-income.csv",
+    savedData: duBoisIncomeDashboard,
   },
   {
     id: "tax-slope",

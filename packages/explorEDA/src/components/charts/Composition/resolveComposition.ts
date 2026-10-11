@@ -91,6 +91,8 @@ export interface RectNode extends NodeBase {
   fill: string;
   /** An outline, such as an inset's border. */
   stroke?: string;
+  /** A hand-colored look: uneven edges and grain. */
+  texture?: "hand";
   glyph?: GlyphDatum;
 }
 

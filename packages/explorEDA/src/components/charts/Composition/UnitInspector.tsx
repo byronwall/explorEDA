@@ -1787,8 +1787,104 @@ function StackFields({
       <Segmented
         label={`${mark.name} category order`}
         value={mark.order}
-        options={STACK_ORDERS}
+        options={[
+          ...STACK_ORDERS,
+          {
+            value: "first" as const,
+            label: "As listed",
+            tooltip:
+              "Categories stack in the order they first appear in the rows, such as rent, food, then clothes",
+          },
+        ]}
         onChange={(order) => onChange({ order })}
+      />
+      {!mark.xScaleId && (
+        <>
+          <span className="eda-setting-label">Direction</span>
+          <Segmented
+            label={`${mark.name} direction`}
+            value={mark.direction ?? "up"}
+            options={[
+              {
+                value: "up" as const,
+                label: "Up",
+                tooltip: "Stack from the bottom of a column",
+              },
+              {
+                value: "across" as const,
+                label: "Across",
+                tooltip:
+                  "Stack from left to right along a bar, such as one bar per income class",
+              },
+            ]}
+            onChange={(direction) =>
+              onChange({
+                direction: direction === "up" ? undefined : direction,
+              })
+            }
+          />
+          <span className="eda-setting-label">Connect</span>
+          <Segmented
+            label={`${mark.name} connectors`}
+            value={Boolean(mark.connect)}
+            options={[
+              {
+                value: false,
+                label: "Off",
+                tooltip: "Draw each repeat's stack on its own",
+              },
+              {
+                value: true,
+                label: "Join edges",
+                tooltip:
+                  "Draw a thin line from each category's edge in one repeat to the same edge in the next, so shares can be followed",
+              },
+            ]}
+            onChange={(connect) => onChange({ connect: connect || undefined })}
+          />
+          <span className="eda-setting-label">Texture</span>
+          <Segmented
+            label={`${mark.name} texture`}
+            value={mark.texture ?? "flat"}
+            options={[
+              {
+                value: "flat" as const,
+                label: "Flat",
+                tooltip: "Solid fills with clean edges",
+              },
+              {
+                value: "hand" as const,
+                label: "Hand-colored",
+                tooltip: "Uneven edges and grain, like a chart colored by hand",
+              },
+            ]}
+            onChange={(texture) =>
+              onChange({ texture: texture === "hand" ? "hand" : undefined })
+            }
+          />
+        </>
+      )}
+      <span className="eda-setting-label">Labels</span>
+      <Segmented
+        label={`${mark.name} label content`}
+        value={mark.labelContent ?? "both"}
+        options={[
+          {
+            value: "both" as const,
+            label: "Name and share",
+            tooltip: "Label a segment with its category and share",
+          },
+          {
+            value: "share" as const,
+            label: "Share",
+            tooltip: "Label a segment with its share alone",
+          },
+        ]}
+        onChange={(labelContent) =>
+          onChange({
+            labelContent: labelContent === "both" ? undefined : labelContent,
+          })
+        }
       />
       <NumberSetting
         label="Label from"
