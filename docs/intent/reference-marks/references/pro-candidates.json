@@ -51,12 +51,12 @@
       "evidence_scope": "Direct-source where linked; otherwise repository-reported implementation, not independently runtime-confirmed"
     }
   ],
-  "warning": "Unchanged selected historical Pro records. Current assessment is in the intent brief and collection disposition ledger.",
+  "warning": "Original selected historical records remain unchanged. The October 10 scope and current assessment supersede the old narrow seed.",
   "current_assessment": {
-    "date": "2026-10-06",
-    "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
-    "statement": "BaseChart has an overlay seam. The shared chart settings expose axes and filters but no common reference-mark model. Scatter fits are now implemented; a regression curve does not provide saved target and event controls across other charts.",
-    "evidence_scope": "Source inspection only; no fresh application browser proof."
+    "date": "2026-10-10",
+    "revision": "7b0998a1ff4313e91e5055a96d0f0618feed8596",
+    "statement": "The user explicitly expanded this initiative into broad annotation authoring. Composition already supplies selected-glyph, frame, and page annotations plus guides and bands. Ordinary charts still need a shared annotation flow; record attachments require keys beyond current positional row IDs.",
+    "evidence_scope": "Current source inspection plus direct user correction; no new runtime proof."
   },
-  "current_priority": "Unranked candidate or future seed"
+  "current_priority": "Unranked capability proposal"
 }

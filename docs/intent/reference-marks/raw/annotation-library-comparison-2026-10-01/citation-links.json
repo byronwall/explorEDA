@@ -1,0 +1,462 @@
+[
+  {
+    "href": "https://www.ag-grid.com/charts/javascript/annotations/",
+    "label": "AG Grid: https://www.ag-grid.com/charts/javascript/annotations/, https://www.ag-grid.com/charts/javascript/annotations/, 4 additional sources",
+    "text": "AG Grid+4"
+  },
+  {
+    "href": "https://www.microsoft.com/en-us/research/publication/chartaccent-annotation-data-driven-storytelling/",
+    "label": "Microsoft: https://www.microsoft.com/en-us/research/publication/chartaccent-annotation-data-driven-storytelling/, https://www.microsoft.com/en-us/research/publication/chartaccent-annotation-data-driven-storytelling/, 1 additional source",
+    "text": "Microsoft+1"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/rough-stuff/rough-notation/master/README.md",
+    "label": "GitHub: https://raw.githubusercontent.com/rough-stuff/rough-notation/master/README.md, https://raw.githubusercontent.com/rough-stuff/rough-notation/master/README.md",
+    "text": "GitHub"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/d3/d3/main/package.json",
+    "label": "GitHub: https://raw.githubusercontent.com/d3/d3/main/package.json, https://raw.githubusercontent.com/d3/d3/main/package.json",
+    "text": "GitHub"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/susielu/d3-annotation/master/package.json",
+    "label": "GitHub: https://raw.githubusercontent.com/susielu/d3-annotation/master/package.json, https://raw.githubusercontent.com/susielu/d3-annotation/master/package.json, 1 additional source",
+    "text": "GitHub+1"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/vega/vega/main/packages/vega/package.json",
+    "label": "GitHub: https://raw.githubusercontent.com/vega/vega/main/packages/vega/package.json, https://raw.githubusercontent.com/vega/vega/main/packages/vega/package.json, 1 additional source",
+    "text": "GitHub+1"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/observablehq/plot/main/package.json",
+    "label": "GitHub: https://raw.githubusercontent.com/observablehq/plot/main/package.json, https://raw.githubusercontent.com/observablehq/plot/main/package.json",
+    "text": "GitHub"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/plotly/plotly.js/master/package.json",
+    "label": "GitHub: https://raw.githubusercontent.com/plotly/plotly.js/master/package.json, https://raw.githubusercontent.com/plotly/plotly.js/master/package.json",
+    "text": "GitHub"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/apache/echarts/master/package.json",
+    "label": "GitHub: https://raw.githubusercontent.com/apache/echarts/master/package.json, https://raw.githubusercontent.com/apache/echarts/master/package.json",
+    "text": "GitHub"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/highcharts/highcharts/master/package.json",
+    "label": "GitHub: https://raw.githubusercontent.com/highcharts/highcharts/master/package.json, https://raw.githubusercontent.com/highcharts/highcharts/master/package.json, 2 additional sources",
+    "text": "GitHub+2"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/chartjs/Chart.js/master/package.json",
+    "label": "GitHub: https://raw.githubusercontent.com/chartjs/Chart.js/master/package.json, https://raw.githubusercontent.com/chartjs/Chart.js/master/package.json, 1 additional source",
+    "text": "GitHub+1"
+  },
+  {
+    "href": "https://apexcharts.com/blog/releases/",
+    "label": "ApexCharts.js: https://apexcharts.com/blog/releases/, https://apexcharts.com/blog/releases/, 4 additional sources",
+    "text": "ApexCharts.js+4"
+  },
+  {
+    "href": "https://github.com/recharts/recharts/releases",
+    "label": "GitHub: https://github.com/recharts/recharts/releases, https://github.com/recharts/recharts/releases, 1 additional source",
+    "text": "GitHub+1"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/package.json",
+    "label": "GitHub: https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/package.json, https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/package.json",
+    "text": "GitHub"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/plouc/nivo/master/packages/annotations/package.json",
+    "label": "GitHub: https://raw.githubusercontent.com/plouc/nivo/master/packages/annotations/package.json, https://raw.githubusercontent.com/plouc/nivo/master/packages/annotations/package.json",
+    "text": "GitHub"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/amcharts/amcharts5/master/package.json",
+    "label": "GitHub: https://raw.githubusercontent.com/amcharts/amcharts5/master/package.json, https://raw.githubusercontent.com/amcharts/amcharts5/master/package.json, 1 additional source",
+    "text": "GitHub+1"
+  },
+  {
+    "href": "https://www.ag-grid.com/charts/javascript/annotations/",
+    "label": "AG Grid: https://www.ag-grid.com/charts/javascript/annotations/, https://www.ag-grid.com/charts/javascript/annotations/",
+    "text": "AG Grid"
+  },
+  {
+    "href": "https://d3-annotation.susielu.com/",
+    "label": "D3 Annotation: https://d3-annotation.susielu.com/, https://d3-annotation.susielu.com/, 1 additional source",
+    "text": "D3 Annotation+1"
+  },
+  {
+    "href": "https://vega.github.io/vega/docs/marks/",
+    "label": "Vega: https://vega.github.io/vega/docs/marks/, https://vega.github.io/vega/docs/marks/, 2 additional sources",
+    "text": "Vega+2"
+  },
+  {
+    "href": "https://old.observablehq.com/plot/marks/arrow",
+    "label": "Observable: https://old.observablehq.com/plot/marks/arrow, https://old.observablehq.com/plot/marks/arrow, 3 additional sources",
+    "text": "Observable+3"
+  },
+  {
+    "href": "https://plotly.com/javascript/reference/layout/annotations/",
+    "label": "Plotly: https://plotly.com/javascript/reference/layout/annotations/, https://plotly.com/javascript/reference/layout/annotations/, 1 additional source",
+    "text": "Plotly+1"
+  },
+  {
+    "href": "https://echarts.apache.org/en/cheat-sheet.html",
+    "label": "Apache ECharts: https://echarts.apache.org/en/cheat-sheet.html, https://echarts.apache.org/en/cheat-sheet.html, 1 additional source",
+    "text": "Apache ECharts+1"
+  },
+  {
+    "href": "https://www.highcharts.com/docs/advanced-chart-features/annotations-module",
+    "label": "Highcharts: https://www.highcharts.com/docs/advanced-chart-features/annotations-module, https://www.highcharts.com/docs/advanced-chart-features/annotations-module, 2 additional sources",
+    "text": "Highcharts+2"
+  },
+  {
+    "href": "https://www.chartjs.org/chartjs-plugin-annotation/latest/guide/",
+    "label": "Chart.js: https://www.chartjs.org/chartjs-plugin-annotation/latest/guide/, https://www.chartjs.org/chartjs-plugin-annotation/latest/guide/, 2 additional sources",
+    "text": "Chart.js+2"
+  },
+  {
+    "href": "https://apexcharts.com/docs/options/annotations/",
+    "label": "ApexCharts.js: https://apexcharts.com/docs/options/annotations/, https://apexcharts.com/docs/options/annotations/, 1 additional source",
+    "text": "ApexCharts.js+1"
+  },
+  {
+    "href": "https://recharts.github.io/en-US/api/ReferenceLine/",
+    "label": "Recharts: https://recharts.github.io/en-US/api/ReferenceLine/, https://recharts.github.io/en-US/api/ReferenceLine/, 1 additional source",
+    "text": "Recharts+1"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/Readme.md",
+    "label": "GitHub: https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/Readme.md, https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/Readme.md, 1 additional source",
+    "text": "GitHub+1"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/plouc/nivo/master/packages/annotations/src/types.ts",
+    "label": "GitHub: https://raw.githubusercontent.com/plouc/nivo/master/packages/annotations/src/types.ts, https://raw.githubusercontent.com/plouc/nivo/master/packages/annotations/src/types.ts, 1 additional source",
+    "text": "GitHub+1"
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/charts/stock/stock-annotations/",
+    "label": "amCharts: https://www.amcharts.com/docs/v5/charts/stock/stock-annotations/, https://www.amcharts.com/docs/v5/charts/stock/stock-annotations/, 2 additional sources",
+    "text": "amCharts+2"
+  },
+  {
+    "href": "https://d3-annotation.susielu.com/",
+    "label": "D3 Annotation: https://d3-annotation.susielu.com/, https://d3-annotation.susielu.com/, 1 additional source",
+    "text": "D3 Annotation+1"
+  },
+  {
+    "href": "https://vega.github.io/vega/docs/signals/",
+    "label": "Vega: https://vega.github.io/vega/docs/signals/, https://vega.github.io/vega/docs/signals/, 1 additional source",
+    "text": "Vega+1"
+  },
+  {
+    "href": "https://vega.github.io/vega-lite/docs/layer.html",
+    "label": "Vega: https://vega.github.io/vega-lite/docs/layer.html, https://vega.github.io/vega-lite/docs/layer.html, 1 additional source",
+    "text": "Vega+1"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/plotly/plotly.js/master/src/plot_api/plot_config.js",
+    "label": "GitHub: https://raw.githubusercontent.com/plotly/plotly.js/master/src/plot_api/plot_config.js, https://raw.githubusercontent.com/plotly/plotly.js/master/src/plot_api/plot_config.js, 2 additional sources",
+    "text": "GitHub+2"
+  },
+  {
+    "href": "https://echarts.apache.org/handbook/en/how-to/interaction/drag/",
+    "label": "Apache ECharts: https://echarts.apache.org/handbook/en/how-to/interaction/drag/, https://echarts.apache.org/handbook/en/how-to/interaction/drag/",
+    "text": "Apache ECharts"
+  },
+  {
+    "href": "https://www.highcharts.com/docs/advanced-chart-features/annotations-gui",
+    "label": "Highcharts: https://www.highcharts.com/docs/advanced-chart-features/annotations-gui, https://www.highcharts.com/docs/advanced-chart-features/annotations-gui, 3 additional sources",
+    "text": "Highcharts+3"
+  },
+  {
+    "href": "https://www.chartjs.org/chartjs-plugin-annotation/latest/samples/interaction/dragging.html",
+    "label": "Chart.js: https://www.chartjs.org/chartjs-plugin-annotation/latest/samples/interaction/dragging.html, https://www.chartjs.org/chartjs-plugin-annotation/latest/samples/interaction/dragging.html, 1 additional source",
+    "text": "Chart.js+1"
+  },
+  {
+    "href": "https://apexcharts.com/docs/options/chart/ink/",
+    "label": "ApexCharts.js: https://apexcharts.com/docs/options/chart/ink/, https://apexcharts.com/docs/options/chart/ink/, 2 additional sources",
+    "text": "ApexCharts.js+2"
+  },
+  {
+    "href": "https://recharts.github.io/en-US/api/usePlotArea/",
+    "label": "Recharts: https://recharts.github.io/en-US/api/usePlotArea/, https://recharts.github.io/en-US/api/usePlotArea/",
+    "text": "Recharts"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/src/components/EditableAnnotation.tsx",
+    "label": "GitHub: https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/src/components/EditableAnnotation.tsx, https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/src/components/EditableAnnotation.tsx",
+    "text": "GitHub"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/plouc/nivo/master/packages/annotations/src/types.ts",
+    "label": "GitHub: https://raw.githubusercontent.com/plouc/nivo/master/packages/annotations/src/types.ts, https://raw.githubusercontent.com/plouc/nivo/master/packages/annotations/src/types.ts",
+    "text": "GitHub"
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/charts/stock/stock-annotations/",
+    "label": "amCharts: https://www.amcharts.com/docs/v5/charts/stock/stock-annotations/, https://www.amcharts.com/docs/v5/charts/stock/stock-annotations/, 2 additional sources",
+    "text": "amCharts+2"
+  },
+  {
+    "href": "https://www.ag-grid.com/charts/javascript/annotations/",
+    "label": "AG Grid: https://www.ag-grid.com/charts/javascript/annotations/, https://www.ag-grid.com/charts/javascript/annotations/, 1 additional source",
+    "text": "AG Grid+1"
+  },
+  {
+    "href": "https://plotly.com/javascript/reference/layout/annotations/",
+    "label": "Plotly: https://plotly.com/javascript/reference/layout/annotations/, https://plotly.com/javascript/reference/layout/annotations/",
+    "text": "Plotly"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/plotly/plotly.js/master/src/plot_api/plot_config.js",
+    "label": "GitHub: https://raw.githubusercontent.com/plotly/plotly.js/master/src/plot_api/plot_config.js, https://raw.githubusercontent.com/plotly/plotly.js/master/src/plot_api/plot_config.js, 1 additional source",
+    "text": "GitHub+1"
+  },
+  {
+    "href": "https://plotly.com/javascript/plotlyjs-events/",
+    "label": "Plotly: https://plotly.com/javascript/plotlyjs-events/, https://plotly.com/javascript/plotlyjs-events/, 1 additional source",
+    "text": "Plotly+1"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/plotly/plotly.js/master/src/lib/queue.js",
+    "label": "GitHub: https://raw.githubusercontent.com/plotly/plotly.js/master/src/lib/queue.js, https://raw.githubusercontent.com/plotly/plotly.js/master/src/lib/queue.js, 1 additional source",
+    "text": "GitHub+1"
+  },
+  {
+    "href": "https://www.ag-grid.com/charts/javascript/annotations/",
+    "label": "AG Grid: https://www.ag-grid.com/charts/javascript/annotations/, https://www.ag-grid.com/charts/javascript/annotations/",
+    "text": "AG Grid"
+  },
+  {
+    "href": "https://www.ag-grid.com/charts/javascript/events/",
+    "label": "AG Grid: https://www.ag-grid.com/charts/javascript/events/, https://www.ag-grid.com/charts/javascript/events/, 1 additional source",
+    "text": "AG Grid+1"
+  },
+  {
+    "href": "https://apexcharts.com/docs/annotation-authoring/",
+    "label": "ApexCharts.js: https://apexcharts.com/docs/annotation-authoring/, https://apexcharts.com/docs/annotation-authoring/, 1 additional source",
+    "text": "ApexCharts.js+1"
+  },
+  {
+    "href": "https://apexcharts.com/docs/options/chart/events/",
+    "label": "ApexCharts.js: https://apexcharts.com/docs/options/chart/events/, https://apexcharts.com/docs/options/chart/events/",
+    "text": "ApexCharts.js"
+  },
+  {
+    "href": "https://apexcharts.com/docs/history-undo-redo/",
+    "label": "ApexCharts.js: https://apexcharts.com/docs/history-undo-redo/, https://apexcharts.com/docs/history-undo-redo/",
+    "text": "ApexCharts.js"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/apexcharts/apexcharts.js/main/src/features/ink.js",
+    "label": "GitHub: https://raw.githubusercontent.com/apexcharts/apexcharts.js/main/src/features/ink.js, https://raw.githubusercontent.com/apexcharts/apexcharts.js/main/src/features/ink.js, 1 additional source",
+    "text": "GitHub+1"
+  },
+  {
+    "href": "https://api.highcharts.com/highcharts/annotations.labels.point",
+    "label": "Highcharts: https://api.highcharts.com/highcharts/annotations.labels.point, https://api.highcharts.com/highcharts/annotations.labels.point, 1 additional source",
+    "text": "Highcharts+1"
+  },
+  {
+    "href": "https://www.highcharts.com/docs/advanced-chart-features/annotations-module",
+    "label": "Highcharts: https://www.highcharts.com/docs/advanced-chart-features/annotations-module, https://www.highcharts.com/docs/advanced-chart-features/annotations-module, 2 additional sources",
+    "text": "Highcharts+2"
+  },
+  {
+    "href": "https://api.highcharts.com/highcharts/annotations.labelOptions.accessibility.description",
+    "label": "Highcharts: https://api.highcharts.com/highcharts/annotations.labelOptions.accessibility.description, https://api.highcharts.com/highcharts/annotations.labelOptions.accessibility.description",
+    "text": "Highcharts"
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/charts/stock/stock-annotations/",
+    "label": "amCharts: https://www.amcharts.com/docs/v5/charts/stock/stock-annotations/, https://www.amcharts.com/docs/v5/charts/stock/stock-annotations/, 2 additional sources",
+    "text": "amCharts+2"
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/charts/stock/serializing-indicators-annotations/",
+    "label": "amCharts: https://www.amcharts.com/docs/v5/charts/stock/serializing-indicators-annotations/, https://www.amcharts.com/docs/v5/charts/stock/serializing-indicators-annotations/",
+    "text": "amCharts"
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/charts/stock/stock-annotations/",
+    "label": "amCharts: https://www.amcharts.com/docs/v5/charts/stock/stock-annotations/, https://www.amcharts.com/docs/v5/charts/stock/stock-annotations/, 1 additional source",
+    "text": "amCharts+1"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/susielu/d3-annotation/master/src/Adapter-d3.js",
+    "label": "GitHub: https://raw.githubusercontent.com/susielu/d3-annotation/master/src/Adapter-d3.js, https://raw.githubusercontent.com/susielu/d3-annotation/master/src/Adapter-d3.js",
+    "text": "GitHub"
+  },
+  {
+    "href": "https://vega.github.io/vega/docs/signals/",
+    "label": "Vega: https://vega.github.io/vega/docs/signals/, https://vega.github.io/vega/docs/signals/, 1 additional source",
+    "text": "Vega+1"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/src/components/EditableAnnotation.tsx",
+    "label": "GitHub: https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/src/components/EditableAnnotation.tsx, https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/src/components/EditableAnnotation.tsx",
+    "text": "GitHub"
+  },
+  {
+    "href": "https://www.chartjs.org/chartjs-plugin-annotation/latest/samples/interaction/dragging.html",
+    "label": "Chart.js: https://www.chartjs.org/chartjs-plugin-annotation/latest/samples/interaction/dragging.html, https://www.chartjs.org/chartjs-plugin-annotation/latest/samples/interaction/dragging.html, 1 additional source",
+    "text": "Chart.js+1"
+  },
+  {
+    "href": "https://www.chartjs.org/chartjs-plugin-annotation/latest/guide/configuration.html",
+    "label": "Chart.js: https://www.chartjs.org/chartjs-plugin-annotation/latest/guide/configuration.html, https://www.chartjs.org/chartjs-plugin-annotation/latest/guide/configuration.html",
+    "text": "Chart.js"
+  },
+  {
+    "href": "https://www.scichart.com/documentation/js/v5/typedoc/classes/svglineannotation.html",
+    "label": "SciChart: https://www.scichart.com/documentation/js/v5/typedoc/classes/svglineannotation.html, https://www.scichart.com/documentation/js/v5/typedoc/classes/svglineannotation.html, 2 additional sources",
+    "text": "SciChart+2"
+  },
+  {
+    "href": "https://www.tradingview.com/charting-library-docs/latest/releases/release-notes",
+    "label": "TradingView: https://www.tradingview.com/charting-library-docs/latest/releases/release-notes, https://www.tradingview.com/charting-library-docs/latest/releases/release-notes, 3 additional sources",
+    "text": "TradingView+3"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/tradingview/lightweight-charts/master/package.json",
+    "label": "GitHub: https://raw.githubusercontent.com/tradingview/lightweight-charts/master/package.json, https://raw.githubusercontent.com/tradingview/lightweight-charts/master/package.json, 1 additional source",
+    "text": "GitHub+1"
+  },
+  {
+    "href": "https://github.com/deepentropy/lightweight-charts-drawing",
+    "label": "GitHub: https://github.com/deepentropy/lightweight-charts-drawing, https://github.com/deepentropy/lightweight-charts-drawing",
+    "text": "GitHub"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/tldraw/tldraw/main/packages/tldraw/package.json",
+    "label": "GitHub: https://raw.githubusercontent.com/tldraw/tldraw/main/packages/tldraw/package.json, https://raw.githubusercontent.com/tldraw/tldraw/main/packages/tldraw/package.json, 4 additional sources",
+    "text": "GitHub+4"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/excalidraw/excalidraw/master/packages/excalidraw/package.json",
+    "label": "GitHub: https://raw.githubusercontent.com/excalidraw/excalidraw/master/packages/excalidraw/package.json, https://raw.githubusercontent.com/excalidraw/excalidraw/master/packages/excalidraw/package.json, 1 additional source",
+    "text": "GitHub+1"
+  },
+  {
+    "href": "https://www.fabricjs.com/",
+    "label": "Fabric.js: https://www.fabricjs.com/, https://www.fabricjs.com/, 2 additional sources",
+    "text": "Fabric.js+2"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/konvajs/konva/master/package.json",
+    "label": "GitHub: https://raw.githubusercontent.com/konvajs/konva/master/package.json, https://raw.githubusercontent.com/konvajs/konva/master/package.json, 2 additional sources",
+    "text": "GitHub+2"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/rough-stuff/rough-notation/master/package.json",
+    "label": "GitHub: https://raw.githubusercontent.com/rough-stuff/rough-notation/master/package.json, https://raw.githubusercontent.com/rough-stuff/rough-notation/master/package.json, 1 additional source",
+    "text": "GitHub+1"
+  },
+  {
+    "href": "https://plotly.com/javascript/reference/layout/annotations/",
+    "label": "Plotly: https://plotly.com/javascript/reference/layout/annotations/, https://plotly.com/javascript/reference/layout/annotations/, 1 additional source",
+    "text": "Plotly+1"
+  },
+  {
+    "href": "https://www.ag-grid.com/charts/javascript/api-state/",
+    "label": "AG Grid: https://www.ag-grid.com/charts/javascript/api-state/, https://www.ag-grid.com/charts/javascript/api-state/",
+    "text": "AG Grid"
+  },
+  {
+    "href": "https://www.w3.org/TR/annotation-model/",
+    "label": "W3C: https://www.w3.org/TR/annotation-model/, https://www.w3.org/TR/annotation-model/",
+    "text": "W3C"
+  },
+  {
+    "href": "https://plotly.com/javascript/reference/layout/annotations/",
+    "label": "Plotly: https://plotly.com/javascript/reference/layout/annotations/, https://plotly.com/javascript/reference/layout/annotations/",
+    "text": "Plotly"
+  },
+  {
+    "href": "https://docs.yjs.dev/api/undo-manager",
+    "label": "Yjs Documentation: https://docs.yjs.dev/api/undo-manager, https://docs.yjs.dev/api/undo-manager",
+    "text": "Yjs Documentation"
+  },
+  {
+    "href": "https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html",
+    "label": "W3C: https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html, https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html",
+    "text": "W3C"
+  },
+  {
+    "href": "https://tldraw.dev/sdk-features/accessibility",
+    "label": "tldraw: https://tldraw.dev/sdk-features/accessibility, https://tldraw.dev/sdk-features/accessibility, 1 additional source",
+    "text": "tldraw+1"
+  },
+  {
+    "href": "https://apexcharts.com/blog/releases/",
+    "label": "ApexCharts.js: https://apexcharts.com/blog/releases/, https://apexcharts.com/blog/releases/, 5 additional sources",
+    "text": "ApexCharts.js+5"
+  },
+  {
+    "href": "https://recharts.github.io/en-US/api/usePlotArea/",
+    "label": "Recharts: https://recharts.github.io/en-US/api/usePlotArea/, https://recharts.github.io/en-US/api/usePlotArea/, 1 additional source",
+    "text": "Recharts+1"
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/charts/stock/serializing-indicators-annotations/",
+    "label": "amCharts: https://www.amcharts.com/docs/v5/charts/stock/serializing-indicators-annotations/, https://www.amcharts.com/docs/v5/charts/stock/serializing-indicators-annotations/, 1 additional source",
+    "text": "amCharts+1"
+  },
+  {
+    "href": "https://nivo.rocks/scatterplot/",
+    "label": "nivo: https://nivo.rocks/scatterplot/, https://nivo.rocks/scatterplot/, 1 additional source",
+    "text": "nivo+1"
+  },
+  {
+    "href": "https://www.ag-grid.com/charts/javascript/annotations/",
+    "label": "AG Grid: https://www.ag-grid.com/charts/javascript/annotations/, https://www.ag-grid.com/charts/javascript/annotations/, 2 additional sources",
+    "text": "AG Grid+2"
+  },
+  {
+    "href": "https://apexcharts.com/docs/options/chart/ink/",
+    "label": "ApexCharts.js: https://apexcharts.com/docs/options/chart/ink/, https://apexcharts.com/docs/options/chart/ink/, 1 additional source",
+    "text": "ApexCharts.js+1"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/plotly/plotly.js/master/src/plot_api/plot_config.js",
+    "label": "GitHub: https://raw.githubusercontent.com/plotly/plotly.js/master/src/plot_api/plot_config.js, https://raw.githubusercontent.com/plotly/plotly.js/master/src/plot_api/plot_config.js, 1 additional source",
+    "text": "GitHub+1"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/src/components/EditableAnnotation.tsx",
+    "label": "GitHub: https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/src/components/EditableAnnotation.tsx, https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/src/components/EditableAnnotation.tsx",
+    "text": "GitHub"
+  },
+  {
+    "href": "https://vega.github.io/vega/docs/marks/",
+    "label": "Vega: https://vega.github.io/vega/docs/marks/, https://vega.github.io/vega/docs/marks/, 2 additional sources",
+    "text": "Vega+2"
+  },
+  {
+    "href": "https://www.tradingview.com/free-charting-libraries/",
+    "label": "TradingView: https://www.tradingview.com/free-charting-libraries/, https://www.tradingview.com/free-charting-libraries/, 3 additional sources",
+    "text": "TradingView+3"
+  },
+  {
+    "href": "https://www.scichart.com/documentation/js/v5/typedoc/classes/svglineannotation.html",
+    "label": "SciChart: https://www.scichart.com/documentation/js/v5/typedoc/classes/svglineannotation.html, https://www.scichart.com/documentation/js/v5/typedoc/classes/svglineannotation.html, 2 additional sources",
+    "text": "SciChart+2"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/excalidraw/excalidraw/master/packages/excalidraw/package.json",
+    "label": "GitHub: https://raw.githubusercontent.com/excalidraw/excalidraw/master/packages/excalidraw/package.json, https://raw.githubusercontent.com/excalidraw/excalidraw/master/packages/excalidraw/package.json, 3 additional sources",
+    "text": "GitHub+3"
+  },
+  {
+    "href": "https://www.chartjs.org/chartjs-plugin-annotation/latest/samples/interaction/dragging.html",
+    "label": "Chart.js: https://www.chartjs.org/chartjs-plugin-annotation/latest/samples/interaction/dragging.html, https://www.chartjs.org/chartjs-plugin-annotation/latest/samples/interaction/dragging.html, 3 additional sources",
+    "text": "Chart.js+3"
+  }
+]

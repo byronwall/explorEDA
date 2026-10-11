@@ -1,0 +1,944 @@
+Thu, Oct 1 at 11:18 PM
+You said:
+Research annotations in data visualization deeply, then broadly survey front-end visualization libraries. Cover common annotation types, including labels, callouts, arrows, reference lines/bands, ranges, highlighted regions, shapes, event markers, images, and freehand drawing.
+Compare D3/d3-annotation, Vega/Vega-Lite, Observable Plot, Plotly.js, ECharts, Highcharts, Chart.js plugins, ApexCharts, Recharts, visx, Nivo, amCharts, and relevant specialist libraries. Use current official documentation, source code, and demos. Cite sources and identify versions, licensing, and evidence gaps.
+For each, distinguish rendering APIs from actual end-user editing UX: creation, selection, dragging, resizing, text/style editing, toolbars, snapping, keyboard/accessibility, undo/redo, and persistence. Clearly separate built-in, plugin, and custom implementation requirements.
+Examine annotation data structures with concrete configuration and event examples. Cover data-bound anchors versus pixel/normalized coordinates, stable IDs, mixed-coordinate callouts, multiple axes/facets, and behavior under zoom, filtering, resizing, data updates, and export.
+Deliver a comparison matrix, deeper case studies of the strongest approaches, and recommendations for a reusable annotation system. Propose a versioned TypeScript/JSON model with examples, separating semantic anchors, geometry, content, style, and transient editor state. Explain storage, serialization, coordinate transforms, orphaned anchors, edit events, undo/redo, collaboration, and accessibility. Finish with a shortlist by use case and explicit tradeoffs
+…
+Show more
+Worked for 27m 9s
+ChatGPT said:
+Annotations in front-end data visualization
+Library survey, editing capabilities, and a reusable system design
+
+Research date: October 1, 2026
+
+The central finding is that annotation rendering, annotation editing, and durable semantic anchoring are three different capabilities. Most visualization libraries provide the first. Some provide draggable objects or editing handles. A smaller group provides an actual authoring interface. None of those facts, by itself, establishes that an annotation will remain attached to the correct observation after filtering, data replacement, or changes to chart structure.
+
+For a product that needs built-in editing, the strongest approaches inspected here are AG Charts annotations, Highcharts with the appropriate annotation/Stock Tools modules, ApexCharts Ink plus Rewind, and amCharts Stock drawing tools. Their coverage and licensing differ substantially. Plotly.js occupies a useful middle ground: native annotation editing and shape drawing, but not a complete annotation-management product. D3, Vega, visx, and general drawing editors are stronger foundations when application-specific semantics and interaction design matter more than minimizing implementation work. 
+AG Grid
++4
+
+Evidence boundary. This review examined official documentation, source implementations/type declarations, and demo code. I did not exercise the browser demos or run a cross-library compatibility test suite. “Documented” below therefore does not mean “verified in every renderer, chart type, framework wrapper, or accessibility environment.” Version numbers are identified as release, documentation, or source-manifest baselines rather than presented as uniformly verified latest npm releases.
+
+1. What an annotation system actually needs to represent
+
+Research on annotation design treats annotations as more than text placed over a chart. ChartAccent investigated data-driven annotation authoring using a corpus of 106 charts from six newsrooms. More recent qualitative research emphasizes audience, purpose, visual salience, and how annotations survive changes in presentation medium. These are useful design guides, but not evidence that adding more annotations invariably improves comprehension. 
+Microsoft
++1
+
+A useful working taxonomy separates the subject being annotated, the visual form, and the intended meaning:
+
+Type	Typical subject and representation	Important modeling decision
+Label	A datum, series, category, or location; text near its subject	Is the text a live field value, a formatted expression, or authored prose?
+Callout	A subject plus a displaced note and connector	Keep the subject anchor separate from the note’s placement.
+Arrow / connector	A relationship between two positions, or a note pointing to a subject	Distinguish two data-space endpoints from a data anchor plus a pixel offset.
+Reference line	A threshold, target, date, baseline, or statistical result	A constant value and a dynamically computed statistic are different anchors.
+Reference band	An interval along one axis, often spanning the other axis	Distinguish a visual band from an analytical interval with inclusive/exclusive boundaries.
+Range / bracket	An interval, duration, comparison, or measured span	Store endpoint semantics and units, not just a rectangle’s dimensions.
+Highlighted region	Selected records, a geometric region, or an exceptional area	“These records” should not be confused with “whatever lies inside this box.”
+Shape	Rectangle, ellipse, polygon, path, or enclosure	Decide which dimensions are data-scaled and which are fixed visual sizes.
+Event marker	A timestamp/category and an event description	An event may belong to an independent dataset rather than a plotted series.
+Image / icon	A data point, plot region, or view-level location	Separate asset identity, alternative text, intrinsic dimensions, and placement.
+Freehand drawing	A gesture over a view or over data coordinates	Choose explicitly whether the stroke follows data, plot proportions, or screen pixels.
+
+Several distinctions prevent misleading feature comparisons:
+
+A tooltip is not automatically a persistent annotation.
+A brush or lasso selection is not an annotation until its result is promoted into a durable object.
+A click callback is not a selection model.
+A draggable option is not an authoring toolbar, text editor, history system, or persistence layer.
+A hand-drawn appearance is not freehand input. Rough Notation, for example, creates sketch-like emphasis around DOM elements; it is not a drawing editor. 
+GitHub
+2. Version and licensing baselines
+
+These are the versions actually exposed by the inspected official sources. A source manifest on main or master can lead a published release.
+
+Library / package	Observed baseline	License / procurement implications
+D3	7.9.0, source manifest	ISC. 
+GitHub
+
+d3-annotation, installed as d3-svg-annotation	2.5.0, inspected source manifest	Apache-2.0; inspect compatibility and maintenance separately from current D3. 
+GitHub
++1
+
+Vega / Vega-Lite	6.4.0 / 6.4.3, source manifests	BSD-3-Clause. 
+GitHub
++1
+
+Observable Plot	0.6.17, source manifest	ISC. 
+GitHub
+
+Plotly.js	4.1.1, source manifest	MIT. 
+GitHub
+
+Apache ECharts	6.1.0, source manifest	Apache-2.0. 
+GitHub
+
+Highcharts	13.1.1 source; API pages include 13.1.0, with older cached pages	Proprietary licensing; check the required product and deployment entitlement. 
+GitHub
++2
+
+Chart.js / chartjs-plugin-annotation	4.5.1 / 3.1.0, source manifests	MIT; annotation functionality is a separately registered plugin. 
+GitHub
++1
+
+ApexCharts	7.6.1 release page; 7.7.0 source manifest	Restricted Community, Commercial, and OEM terms—not simply MIT. Ink and History source entry points are explicitly marked premium. 
+ApexCharts.js
++4
+
+Recharts	3.10.1 release; 3.11.0-canary.4 source	MIT. Do not assume every current documentation example is available in the stable release. 
+GitHub
++1
+
+@visx/annotation	4.0.0, source manifest	MIT. 
+GitHub
+
+@nivo/annotations	0.99.0, source manifest	MIT. 
+GitHub
+
+amCharts 5	5.20.8, source manifest	Proprietary branded-use/commercial licensing; deployment and redistribution conditions matter. 
+GitHub
++1
+
+AG Charts	14.2.0, annotation documentation	The annotation editor is an Enterprise feature. 
+AG Grid
+
+License labels are an orientation, not a determination that a particular SaaS, embedded, OEM, or redistributed application is covered. In particular, old assumptions about ApexCharts or tldraw being unrestricted permissive dependencies should not drive procurement.
+
+3. Rendering and native annotation structures
+
+This matrix concerns what developers can describe and render, not what an end user can create interactively.
+
+Library	Rendering coverage and representative structure	Anchoring implications
+D3 + d3-annotation	Callout presets, labels, connectors, circle/rectangle subjects, thresholds, badges; arbitrary SVG supplies other shapes, images, and paths. Typical annotation: {data, dx, dy, note, subject, connector, type}.	Accessors project data to positions; dx/dy place the note relative to the subject. Type constructors and accessors are executable objects, not portable JSON. 
+D3 Annotation
++1
+
+Vega / Vega-Lite	Compose annotations from text, rule, rect, symbol, image, and other marks. Vega-Lite layers provide thresholds, ranges, labels, and highlights; more elaborate callouts require composition.	Scale-bound fields, literal visual values, signals, and nested group coordinates coexist. Put annotations in an independent dataset when they should survive filtering of the plotted data. 
+Vega
++2
+
+Observable Plot	Plot.text, Plot.arrow, Plot.ruleX/Y, Plot.rect, Plot.dot, and Plot.image cover most static annotation forms.	Data channels determine positions; visual offsets and dimensions can remain pixel-based. Composite callouts and editor state are application concerns. 
+Observable
++3
+
+Plotly.js	layout.annotations for text/arrows; layout.shapes for lines, rectangles, circles, and paths; separate image objects.	Axis references, plot-normalized paper coordinates, and axis-domain fractions can be mixed. Array position is not a durable business identity. 
+Plotly
++1
+
+ECharts	markPoint, markLine, markArea; graphic for text, shapes, paths, and images.	Mark components express chart-related coordinates; graphic often needs explicit projection. convertToPixel and convertFromPixel are the key bridge for custom editing. 
+Apache ECharts
++1
+
+Highcharts	Annotation objects contain labels and shapes; advanced modules add specialized forms. Image shapes use type: "image" and src.	A label can reference a point ID or a position object. With axes specified, coordinates are axis values; without them, positions can be chart pixels. 
+Highcharts
++2
+
+Chart.js annotation plugin	Line, box, label, point, polygon, and ellipse annotations. Example: annotations: { target: {type:"box", xMin:1, xMax:2, yMin:50, yMax:70} }. Labels can contain images/canvas content and callouts.	IDs/object keys and xScaleID/yScaleID are useful, but runtime image/canvas values and scriptable options are not directly JSON-serializable. 
+Chart.js
++2
+
+ApexCharts	annotations.xaxis, .yaxis, .points, plus text/image options; axis intervals create bands.	Point/axis definitions carry IDs and coordinates; axis/series association must be preserved by the adapter. Ink edits these objects rather than introducing an unrelated drawing scene. 
+ApexCharts.js
++1
+
+Recharts	ReferenceLine, ReferenceArea, ReferenceDot, labels, and custom SVG layers.	Explicit axis IDs and reference values are useful. usePlotArea exposes the plot rectangle in pixels for custom overlays. Overflow policy matters: discard, clip, display, or extend the domain. 
+Recharts
++1
+
+visx	Composable annotation subject, label, and connector components. Other SVG primitives fill out the vocabulary.	x/y identify the projected subject; dx/dy are label offsets. The application owns data-to-pixel projection and inverse mapping. 
+GitHub
++1
+
+Nivo	Annotation matchers produce circle, dot, or rectangle subjects with notes; some charts also expose axis markers and custom layers.	match binds to a datum. noteX/noteY numbers are relative positions; {abs: n} is absolute positioning—not normalized plot coordinates. Support varies by chart/backend. 
+GitHub
++1
+
+amCharts	Stock drawing tools include labels, callouts, lines, arrows, shapes, and doodles. The separate export Annotator is an image-markup workflow.	Stock drawings use chart data coordinates and panel association. Export Annotator should not be treated as an equivalent data-bound annotation model. 
+amCharts
++2
+
+Images and freehand are particularly easy to overstate. Supporting an image mark does not establish an image placement/upload/crop UI. Supporting a path does not establish stroke capture, selection, erasing, pressure handling, or undo. Those must be assessed separately.
+
+4. End-user editing comparison
+
+Legend: B = built into the stated package; M = optional first-party module/product feature; P = separately installed annotation plugin; C = application implementation; ? = insufficient evidence for a complete supported workflow.
+
+“Persistence” below distinguishes an available state/configuration representation from a storage backend. A serialization API does not provide authorization, versioning, collaboration, or durable storage.
+
+Library	Creation and selection	Dragging and resizing	Text/style editing and toolbars	Snapping; keyboard/accessibility	Undo/redo and persistence
+D3 + d3-annotation	Creation/selection workflow C; edit handles P	Subject/note/shape handles P, depending on type	C	C	History C; serialize a normalized application model, not constructors. 
+D3 Annotation
++1
+
+Vega	C, using marks, signals, and event streams	C	C, including bindings or external DOM UI	C	View state APIs B; editor history and durable storage C. 
+Vega
++1
+
+Vega-Lite / Plot	C; selections/pointers are not an annotation authoring UI	C	C	C	Application model/history/storage C. 
+Vega
++1
+
+Plotly.js	Shape-drawing modes B; arbitrary text-creation workflow C	Editable annotation/shape interactions B, type-dependent	Annotation text editing B; comprehensive inspector C; drawing modebar B	General annotation snapping C; complete keyboard editor ?	Internal queue exists; complete supported editor-history UX ?. plotly_relayout integration and storage C. 
+GitHub
++2
+
+ECharts	C	graphic.draggable B; resizing/editor behavior C	C	C	C; persist data-space state after inverse projection. 
+Apache ECharts
+
+Highcharts	Annotation bindings M; packaged Stock Tools UI M; custom GUI also possible	M, type-dependent	Stock Tools/popups M; bespoke dialogs C	Snapping is tool-specific; annotation descriptions exist, but complete keyboard authoring ?	Complete history C/?; update events/configuration available, storage C. 
+Highcharts
++3
+
+Chart.js plugin	Hit callbacks P; selection/creation state C	Official dragging demo is C, not a turnkey editor	C	C	C; demo pixel mutations need semantic write-back. 
+Chart.js
++1
+
+ApexCharts Ink	M creation/selection	M dragging; range resize events documented	M note editor/palette	M grid snapping, constrained axis support; complete authoring accessibility ?	M Rewind history; edit events M, durable storage C. Both add-ons are premium. 
+ApexCharts.js
++2
+
+Recharts	C; current annotation demo is application code	C	C	Custom data/tick snapping shown in demo; complete editor C	C. 
+Recharts
+
+visx	Creation/selection workflow C	Subject/label dragging B in EditableAnnotation; general resizing C	C	C	Drag events B; history/storage C. 
+GitHub
+
+Nivo	C	C	C	C	C; matcher/note configuration is rendering input, not editor state. 
+GitHub
+
+amCharts Stock	Drawing toolbar/control M	M, tool-dependent	M	snapToData available; complete keyboard authoring ?	Serialization M; comprehensive undo workflow ?; storage C. 
+amCharts
++2
+
+AG Charts Enterprise	M	M, type-dependent	M toolbars/settings	Documented keyboard actions and angle constraints M; still audit the full accessibility workflow	Annotation undo/redo M; chart state APIs B/M, storage C. 
+AG Grid
++1
+
+The most important interpretation is that configuration richness should not be scored as editing completeness. A renderer with 50 style properties may provide no end-user style editor at all.
+
+5. Deeper case studies
+
+The examples below illustrate integration boundaries. Helpers such as store.commitPosition, adapter.consumeRelayout, and saveState are application code, not vendor APIs.
+
+5.1 Plotly.js: strong mixed coordinates and useful native editing
+
+Plotly’s structure cleanly separates text annotations from geometric shapes. This supports a common combination: a callout attached to a data value and a highlighted interval spanning the plotting height.
+
+JavaScript
+const layout = {
+  annotations: [{
+    x: 12, y: 80,
+    xref: "x", yref: "y",
+    ax: 48, ay: -36,
+    axref: "pixel", ayref: "pixel",
+    text: "Launch effect",
+    showarrow: true
+  }],
+  shapes: [{
+    type: "rect",
+    xref: "x", yref: "paper",
+    x0: 10, x1: 14,
+    y0: 0, y1: 1,
+    opacity: 0.2
+  }]
+};
+
+const config = {
+  edits: {
+    annotationPosition: true,
+    annotationTail: true,
+    annotationText: true,
+    shapePosition: true
+  },
+  modeBarButtonsToAdd: [
+    "drawline", "drawopenpath", "drawrect", "eraseshape"
+  ]
+};
+
+Here the callout subject follows the axes, while its tail remains offset in pixels. For an absolute axis-coordinate tail, axref must exactly match xref, and likewise for ayref/yref; otherwise the reference falls back to pixel behavior. Plot-normalized paper positioning and axis-domain fractions are different scopes. 
+Plotly
+
+Prefer granular edits flags to indiscriminately enabling editable, which can enable editing beyond annotations. Drawing modes cover geometric creation; they do not constitute a full text/image authoring palette or style inspector. 
+GitHub
++1
+
+JavaScript
+graphDiv.on("plotly_relayout", patch => {
+  adapter.consumeRelayout(patch);
+});
+
+A patch may address an array slot, such as shapes[0].x0, or replace a larger structure. The adapter must reconcile this with application-owned IDs before storing an edit. Do not treat an array index—or a template-related name field—as guaranteed durable application identity. 
+Plotly
++1
+
+History nuance: Plotly has internal undo/redo queue code, and configuration exposes queueLength, defaulting to zero. That is not sufficient evidence of a complete, supported annotation-history toolbar/keyboard workflow. For a reusable product, I would own history at the application transaction boundary rather than depend on private queue internals. 
+GitHub
++1
+
+Best fit: open-source analytical applications needing editable notes and drawn regions without building every pointer interaction.
+
+5.2 AG Charts: the most complete general Cartesian editor inspected
+
+The current Enterprise annotation documentation is not limited to financial charts. It exposes a Cartesian subset of text, comments, callouts, notes, lines, arrows, and certain channels, with toolbar/settings interactions and keyboard operations including deletion, copy/paste, nudging, and undo/redo. Financial chart tooling has a broader vocabulary. 
+AG Grid
+
+After registering the appropriate modules, a state-oriented integration can look like:
+
+JavaScript
+let chart;
+
+chart = AgCharts.create({
+  ...baseOptions,
+  annotations: { enabled: true },
+  initialState: {
+    annotations: [{
+      type: "comment",
+      x: { value: "Jun", groupPercentage: 0.15 },
+      y: 92,
+      text: "Campaign result"
+    }]
+  },
+  listeners: {
+    annotations: () => {
+      if (chart) saveState(chart.getState());
+    }
+  }
+});
+
+The annotation-change listener is listeners.annotations. The state APIs are getState, setState, and initialState; these are preferable to scraping drawn objects. Category positions can include an intra-group fraction, and serialized date state has an explicit representation. Preserve the returned state version rather than pretending it is the same thing as your annotation schema version. 
+AG Grid
++1
+
+Tradeoff: this reduces editor implementation substantially, but creates an Enterprise dependency and a vendor-specific state contract. I would wrap it with semantic IDs and migration logic rather than expose raw chart state as the sole long-term document format.
+
+5.3 ApexCharts: current Ink and Rewind change the comparison
+
+ApexCharts should no longer be described simply as an annotation renderer. Current Ink documentation provides note creation, selection, dragging, inline text editing, and a floating style editor. Its snapping targets the nearest gridline, with documented numeric-x/linear-y constraints—not arbitrary nearest-record snapping. 
+ApexCharts.js
++1
+
+JavaScript
+import ApexCharts from "apexcharts";
+import "apexcharts/features/ink";
+import "apexcharts/features/history";
+
+const options = {
+  chart: {
+    type: "line",
+    ink: { enabled: true, palette: true, snap: true },
+    history: { enabled: true },
+    events: {
+      annotationDragged: (_chart, { id, x, y, x2, y2 }) =>
+        store.commitPosition(id, { x, y, x2, y2 }),
+
+      annotationEdited: (_chart, { id, text }) =>
+        store.commitText(id, text)
+    }
+  }
+};
+
+The documented events distinguish creation, dragging/resizing, text editing, styling, and deletion. Drag events provide data coordinates, including x2/y2 for ranges, which is a much better integration boundary than reading SVG element positions. 
+ApexCharts.js
+
+Rewind adds history with keyboard controls and transaction/coalescing concepts. Its history can encompass chart changes beyond annotations, so choose deliberately whether your product offers chart-wide history or annotation-only history. 
+ApexCharts.js
+
+Important procurement and packaging issue: both Ink and History entry points are explicitly premium and outside the default bundle. The History source also states that Ink gestures become undoable when both features are present. A Community license assumption is not enough. 
+GitHub
++1
+
+Best fit: an existing ApexCharts application that needs an integrated annotation UX and can accept the feature scope and current licensing.
+
+5.4 Highcharts: good semantic attachment, with several levels of UI
+
+Highcharts has a useful native distinction between an annotation attached to an actual point ID and one attached to literal axis/chart coordinates.
+
+JavaScript
+annotations: [{
+  id: "ann:peak",
+  draggable: "xy",
+  labels: [{
+    point: "datum:peak",
+    text: "Peak demand",
+    x: 24,
+    y: -32
+  }],
+  events: {
+    afterUpdate: function () {
+      adapter.commitNativeAnnotation(this.options);
+    }
+  }
+}]
+
+A point-ID reference can express a different intention from {x, y, xAxis, yAxis}. The latter means a coordinate, not necessarily a persistent record. The afterUpdate event is explicitly associated with drag/resize updates. 
+Highcharts
++1
+
+There are three separate layers to assess:
+
+The annotations module supplies annotation objects and controls.
+Navigation bindings connect custom HTML buttons and popup behavior to annotation actions.
+Stock Tools supplies a more packaged toolbar experience. 
+Highcharts
++2
+
+The custom GUI documentation is valuable, but its HTML dialogs and application handlers should not be counted as a fully packaged editor supplied by the basic annotations module.
+
+Highcharts also documents annotation accessibility descriptions. That supports accessible output, but does not establish complete keyboard creation, resizing, or editing. 
+Highcharts
+
+Best fit: applications already invested in Highcharts, especially those needing point attachment, SVG-oriented composition, and configurable tool bindings.
+
+5.5 amCharts: distinguish Stock drawings from export markup
+
+amCharts exposes two materially different systems:
+
+Stock drawing tools are chart-aware and include data-coordinate drawings, shape manipulation, toolbar controls, and snapping options. Export Annotator wraps marker.js2 for markup of the chart image and disables normal chart interactions while annotation mode is open. These should not share an assumed anchor model. 
+amCharts
++2
+
+Stock persistence is supported:
+
+JavaScript
+const serialized =
+  drawingControl.serializeDrawings("string", "  ");
+
+drawingControl.unserializeDrawings(serialized);
+
+stockChart.events.on("drawingsupdated", () => {
+  scheduleSave(drawingControl.serializeDrawings("string"));
+});
+
+The dedicated serialization documentation recommends reacting to drawing updates; freehand updates can be frequent, so writes should be coalesced. 
+amCharts
+
+There are two notable evidence issues:
+
+A general Stock annotation page still says serialization is unsupported, but the dedicated guide and implementation establish that it is supported.
+The implementation serializes fields including __tool, __panelIndex, and __drawing, and defaults the output argument to "string". Passing the format explicitly avoids documentation ambiguity. Panel-index association is also a portability concern if panel order changes. 
+amCharts
++1
+
+Best fit: chart-native financial drawing inside amCharts; use Annotator instead when the intended artifact is a marked-up snapshot.
+
+5.6 Headless approaches: more work, but better control of semantics
+
+D3/d3-annotation. Its accessors, accessorsInverse, updatedAccessors, and drag dispatchers form a useful projection/editing boundary. However, .json() is a clipboard-oriented convenience that strips non-JSON type information; it is not a general-purpose durable serialization return value. Store a declarative type name and your own anchor model instead. 
+GitHub
+
+Vega. Signals and event streams can implement constrained authoring, and the View API exposes signal listeners, data changes, state operations, and image/SVG export. This is an interaction-programming substrate, not a ready-made annotation product. Vega-Lite is usually better treated as the declarative rendering layer, with an external editor or a lower-level Vega integration. 
+Vega
++1
+
+visx. EditableAnnotation is a particularly useful React building block:
+
+TypeScript
+<EditableAnnotation
+  width={plotWidth}
+  height={plotHeight}
+  x={subjectX}
+  y={subjectY}
+  dx={noteDx}
+  dy={noteDy}
+  canEditSubject={false}
+  onDragEnd={({ dx, dy }) =>
+    store.commitLabelOffset(annotationId, { x: dx, y: dy })
+  }
+>
+  <Connector />
+  <CircleSubject />
+  <Label title="Peak demand" />
+</EditableAnnotation>
+
+The required width/height are easy to miss in abbreviated examples. The component supports subject and label dragging; it does not supply a text inspector, creation toolbar, general shape resizing, or history. Disabling subject movement is sensible when the annotation is intentionally attached to a record. 
+GitHub
+
+Chart.js and ECharts. Their official dragging examples are useful starting points, but illustrate custom interaction code. In Chart.js, the annotation demo mutates rendered element coordinates; without inverse-scale write-back, those changes need not survive recomputation. ECharts explicitly demonstrates the conversion between data and pixel positions. 
+Chart.js
++1
+
+An additional Chart.js caveat: disabling clipping can make an annotation visible outside the chart area, but the plugin documentation says events are still caught only over the chart area. Visible and interactable bounds are therefore not necessarily identical. 
+Chart.js
+
+6. Relevant specialist libraries
+Specialist	What it contributes	Tradeoffs and missing work
+SciChart.js, inspected v5 typed API 5.2.69	Editable annotation primitives, selection, drag events, control grips, axis IDs, and data/relative/pixel coordinate modes.	Strong candidate for scientific/multi-axis tooling. A complete creation toolbar, style inspector, history policy, and backend remain separate concerns. Commercial licensing and applicable community/evaluation terms require review. 
+SciChart
++2
+
+TradingView Advanced Charts, observed documentation release 31.1.0	Packaged financial drawing tools, drawing APIs, and chart-layout/drawing save-load integration.	Not the same product as Lightweight Charts. Proprietary access/licensing conditions apply; the public offering is aimed at eligible company/public projects rather than unrestricted personal embedding. Backend save/load must still be integrated. 
+TradingView
++3
+
+TradingView Lightweight Charts, 5.2.1, Apache-2.0	Lightweight chart primitives and a plugin ecosystem.	Do not infer Advanced Charts’ drawing editor from the shared brand. The official plugin catalog includes both packages and copyable examples. 
+GitHub
++1
+
+lightweight-charts-drawing, young 0.x / 0.2 API line, MIT	Third-party selection/manipulation, magnet behavior, drawing tools, events, and JSON import/export.	Its README explicitly leaves toolbar, settings/text editors, storage, and undo ownership to the host. Useful architecture, but the changing 0.x API and differing README/CDN baselines warrant validation. 
+GitHub
+
+tldraw, 5.5.0 source baseline	A full general drawing editor, history, persistence/migration facilities, and documented accessibility features.	Excellent editor foundation, but semantic chart anchors require custom shapes/bindings/adapters. Current production licensing is not MIT-style unrestricted use. 
+GitHub
++4
+
+Excalidraw, 0.18.0 package baseline, MIT	General-purpose drawing UI with an embeddable state boundary. onChange exposes elements, application state, and files.	Strong for screenshot review and diagram-like markup. Host storage and chart semantics are separate; an isCollaborating flag does not itself implement synchronization. 
+GitHub
++1
+
+Fabric.js, 7.4.0, MIT	Object selection/transformation, text editing, free drawing, JSON serialization, and SVG-oriented capabilities.	An object-editing engine, not a finished chart annotation product. Toolbars, semantic anchors, history, snapping policy, and accessibility still require assembly. 
+Fabric.js
++2
+
+Konva, 10.7.0, MIT	Dragging, Transformer-based manipulation, canvas scene construction, and extensive editor examples.	The sample editor’s undo, selection orchestration, and UI are application code. Editable text and accessible controls need deliberate DOM integration. 
+GitHub
++2
+
+Rough Notation, 0.5.1, MIT	DOM-bound underline, circle, box, highlight, bracket, and similar emphasis effects.	Appropriate for presentation emphasis, not data-aware selection or freehand authoring. 
+GitHub
++1
+
+A specialist drawing editor can eliminate enormous amounts of interaction work. The cost is that its native objects usually describe a drawing scene, whereas a visualization annotation often needs to describe a relationship to changing data.
+
+7. Coordinate semantics and lifecycle behavior
+Data-bound is not necessarily record-bound
+
+These three annotations can initially look identical:
+
+“Place a callout at x = September 14, y = 128,000.”
+“Place a callout on record O-1042, using its date and revenue fields.”
+“Place a callout on the maximum revenue record in the current filter.”
+
+They have different update semantics.
+
+The first follows a coordinate. The second follows a stable record. The third follows a versioned query. A reusable system should not convert all three into an {x, y} pair and discard the distinction.
+
+Recommended behavior contract
+
+The following is a proposed product policy, not a claim that every library implements it.
+
+Change	Data-value anchor	Datum/query anchor	Pixel/normalized geometry
+Zoom / pan	Reproject through current scales; preserve the value.	Resolve the subject, then reproject.	View pixels remain fixed; plot fractions follow plot bounds.
+Resize / responsive layout	Reproject using new plot dimensions.	Resolve and reproject; rerun label layout if allowed.	CSS-pixel offsets stay visually fixed; normalized positions scale with the relevant plot.
+Filtering	Usually remains meaningful even if associated series disappear.	Distinguish filtered-out from deleted. Queries must declare whether they use filtered or full data.	A screen box remains a screen box; it must not silently become a selection of new records.
+Data refresh	Value remains constant unless explicitly edited.	Stable row keys follow changed field values; query anchors recompute under declared semantics.	No semantic update unless explicitly bound.
+Axis change	Validate units, scale type, domain, and axis identity.	Re-resolve field-to-axis bindings.	Preserve intended visual placement, but invalidate assumptions tied to the old plot.
+Facet/panel reorder	Resolve semantic facet key to its current panel.	Same; never use panel order as the only identity.	Recompute local-to-view transforms.
+Export	Reproject against the export’s logical viewport.	Resolve against the intended data revision/filter.	Define CSS-pixel-to-export scaling explicitly; do not accidentally apply device-pixel ratio twice.
+
+Several rules follow.
+
+Use semantic axis IDs. An application-level revenue-usd axis should map to the vendor’s current y2, index 1, or scale object. Persisting the vendor’s array index alone is fragile.
+
+Keep coordinate spaces explicit per dimension. A horizontal threshold can use an axis value for y and plot fractions for its horizontal extent. A callout can use a datum subject and CSS-pixel note offset. Plotly supports analogous mixed references natively; Highcharts also distinguishes point/axis/pixel attachment. 
+Plotly
++1
+
+Treat categorical inversion specially. A category and an intra-band position are not the same as a continuous number. AG Charts’ group-percentage representation is a useful example of making this explicit. 
+AG Grid
+
+Dragging a datum-bound subject needs an explicit meaning. It should either reattach to another record, detach into a coordinate anchor, or be prohibited. It should not silently modify the underlying measurement merely because a pointer moved.
+
+Freehand is not always transformable by one matrix. A data-bound stroke over logarithmic or other nonlinear axes must be reprojected sample by sample. A normalized review scribble has different semantics and should remain normalized.
+
+Automatic label layout is derived state. Keep authored offsets and layout constraints separately from the latest collision-avoidance result. Otherwise every resize can look like an authored edit.
+
+8. Proposed versioned TypeScript/JSON model
+
+I created a reference contract and typed examples:
+
+Reference bundle: TypeScript, JSON examples, and implementation notes
+
+Individual files: 
+TypeScript model
+ · 
+JSON examples
+
+The TypeScript files passed strict compilation. The generated JSON was parsed back, and sample ID/cross-reference invariants were checked. This is a proposed contract—not a completed renderer, browser editor, runtime validator, or collaboration backend.
+
+8.1 The separation of concerns
+
+The core record is deliberately divided:
+
+TypeScript
+interface Annotation {
+  id: Id;
+  anchors: Record<Id, Anchor>;
+  geometry: Geometry;
+  content?: Content;
+  style: Style;
+  behavior: Behavior;
+  accessibility: Accessibility;
+  locked?: boolean;
+  provenance: {
+    createdBy: Id;
+    createdAt: string;
+    updatedAt: string;
+  };
+  extensions?: Record<string, Json>;
+}
+
+The document envelope separates schema version from server revision:
+
+TypeScript
+interface AnnotationDocument {
+  schema: "chart-annotations";
+  schemaVersion: "1.0.0";
+  documentId: Id;
+  revision: string;
+
+  views: Record<Id, {
+    axisIds: Id[];
+    description?: string;
+  }>;
+
+  datasets: Record<Id, {
+    sourceId: Id;
+    revision?: string;
+    keyFields: string[];
+  }>;
+
+  annotations: Record<Id, Annotation>;
+  order: Id[];
+  assets: Record<Id, Asset>;
+}
+
+This borrows the useful target/body separation of the W3C Web Annotation model, while adding chart-specific anchors and geometry. It is not a claim that an existing standard already defines interoperable chart-axis semantics. 
+W3C
+
+8.2 Anchor types
+
+The attached model has four principal anchor variants:
+
+Anchor	Meaning	Example
+Coordinate	A literal location with explicit coordinate space per dimension	x is a timestamp on time; y is 0.1 of plot height
+Datum	A stable row key plus field/axis bindings	sales, key {orderId:"O-1042"}, x=completedAt, y=revenueUsd
+Row set	A named collection of stable records	Enclose the selected accounts even after sorting
+Derived	An allowlisted, versioned resolver with parameters and input scope	“Maximum revenue in filter F,” rather than arbitrary JavaScript in JSON
+
+For coordinate anchors, each dimension is an explicit union:
+
+TypeScript
+type Coordinate =
+  | {
+      space: "axis";
+      axisId: Id;
+      value: Scalar;
+      bandPosition?: number;
+    }
+  | { space: "plot-fraction"; value: number }
+  | { space: "view-css-px"; value: number };
+
+The model defines plot fractions and view pixels with a top-left origin, y increasing downward. Vendor adapters must convert different conventions, including Plotly’s bottom-origin normalized y positioning. 
+Plotly
+
+8.3 Concrete mixed-coordinate callout
+
+This annotation follows a record while its label stays offset in CSS pixels:
+
+JSON
+{
+  "id": "ann:launch-callout",
+  "anchors": {
+    "subject": {
+      "kind": "datum",
+      "scope": {
+        "viewId": "revenue",
+        "facet": { "region": "West" }
+      },
+      "datasetId": "sales",
+      "rowKey": { "orderId": "O-1042" },
+      "x": { "field": "completedAt", "axisId": "time" },
+      "y": { "field": "revenueUsd", "axisId": "revenue-usd" }
+    }
+  },
+  "geometry": {
+    "kind": "callout",
+    "anchor": "subject",
+    "placement": {
+      "offsetCssPx": { "x": 48, "y": -36 },
+      "align": "start",
+      "verticalAlign": "bottom",
+      "maxWidthCssPx": 180,
+      "layout": "manual"
+    },
+    "leader": {
+      "route": "elbow",
+      "headAtTarget": "arrow"
+    }
+  },
+  "content": {
+    "kind": "text",
+    "text": "Revenue increased after launch",
+    "language": "en"
+  },
+  "style": {
+    "strokeWidthCssPx": 1.5,
+    "fontSizeCssPx": 14
+  },
+  "behavior": {
+    "onFiltered": "hide",
+    "onMissing": "show-unresolved",
+    "whenOutOfView": "clip",
+    "affectsDomain": false
+  },
+  "accessibility": {
+    "decorative": false,
+    "label": "Launch revenue annotation"
+  },
+  "provenance": {
+    "createdBy": "user:analyst-42",
+    "createdAt": "2026-10-01T14:00:00Z",
+    "updatedAt": "2026-10-01T14:00:00Z"
+  }
+}
+
+The full JSON companion also includes a data-value band, a normalized freehand stroke, and a label-move transaction.
+
+8.4 Geometry, content, and assets
+
+Geometry is a discriminated union for labels, callouts, markers/events, lines/arrows, rules, bands, shapes, polygons, highlights, images, and freehand strokes. It references anchors rather than duplicating data identity.
+
+Content is plain text, a restricted rich-text structure, or an asset reference. Avoid arbitrary HTML, executable formatting functions, DOM elements, canvas objects, and class instances in the persistent document.
+
+Images should reference an application asset-store key, with media type, dimensions, and optionally a content hash. Temporary signed URLs are delivery mechanisms, not durable asset identity.
+
+For freehand, persist the chosen frame—continuous axes, plot fractions, or view pixels—along with samples and optional pressure/timing. Large strokes may need separate assets or bounded/chunked storage.
+
+The proposed v1 is intentionally oriented around Cartesian views. Geographic, polar, and 3D anchoring should receive explicit versioned projection extensions rather than being disguised as ordinary screen coordinates.
+
+9. Recommended reusable architecture
+9.1 Own the semantic document; adapt the renderer
+
+Use this pipeline:
+
+Semantic document → anchor resolution → coordinate projection → label/shape layout → rendering and hit testing
+
+The editor then sends semantic commands back to the document.
+
+An adapter needs, at minimum, the ability to resolve anchors, project coordinates, and invert pointer positions. A production adapter should additionally expose capabilities, hit testing, snapping candidates, view/facet bounds, export behavior, and supported geometry.
+
+The attached interface includes:
+
+TypeScript
+interface ChartAdapter {
+  id: string;
+  version: string;
+
+  resolve(anchor: Anchor): AnchorResolution;
+
+  project(
+    scope: Scope,
+    x: Coordinate,
+    y: Coordinate
+  ): CssPoint;
+
+  unproject(
+    scope: Scope,
+    point: CssPoint,
+    axes: { x: Id; y: Id }
+  ): {
+    x: Scalar;
+    y: Scalar;
+    xBandPosition?: number;
+    yBandPosition?: number;
+  };
+}
+
+Avoid renderer internals as the canonical model. Plotly’s array patches, amCharts’ panel indices, Chart.js rendered elements, React component instances, and drawing-editor scene objects are integration details. Normalize them at the boundary.
+
+9.2 Transient state stays transient
+
+Selection, hover, focus, current tool, pointer capture, drag previews, snap guides, and auto-layout caches should not be serialized into the annotation document.
+
+Keep separate state for:
+
+The authored annotation document.
+The editor session.
+The chart viewport/filter state.
+Collaboration presence.
+
+A collaborator selecting a note should not produce a permanent document revision.
+
+9.3 Edit lifecycle and history
+
+Use four lifecycle phases:
+
+TypeScript
+type EditorEvent =
+  | { phase: "begin"; gestureId: Id; annotationIds: Id[] }
+  | { phase: "preview"; gestureId: Id; annotations: Annotation[] }
+  | { phase: "commit"; gestureId?: Id; transaction: EditTransaction }
+  | { phase: "cancel"; gestureId: Id };
+
+Pointer movement updates a preview. Pointer release commits one transaction. Escape restores the pre-gesture state. Text edits should have a similarly deliberate commit/coalescing policy.
+
+Commands should address stable IDs:
+
+add / remove
+set-anchor
+set-geometry
+set-content
+set-style
+
+Do not expose vendor paths such as annotations[4].x as the durable operation format.
+
+For undo, record inverses or before/after values for the changed components. A label drag should undo its offset change, not restore an old whole-document snapshot that also erases someone else’s text edit.
+
+Choose one history authority. Native history plus an unrelated application history can produce double undo, missing edits, or divergent states. Either delegate and normalize its transactions, or disable/bypass it in favor of application-owned history.
+
+9.4 Snapping
+
+Treat snapping as a policy with distinct candidate classes:
+
+Data-record snapping, tick/grid snapping, geometric alignment, and angle constraints are not interchangeable.
+
+Measure tolerance in CSS pixels so interaction remains usable at different zoom levels, then commit the corresponding semantic result. A snap to a record can create a datum anchor; a snap to a gridline usually creates a coordinate anchor.
+
+Expose both a toggle and a temporary modifier override. Do not promise record snapping merely because a vendor option is named snap.
+
+9.5 Storage, serialization, and migrations
+
+A practical storage design is a canonical snapshot plus an optional operation log. Track separately:
+
+Schema version, document revision, dataset revision, and adapter/library version.
+
+Use optimistic concurrency or another explicit revision protocol, idempotent transaction IDs, and server-side authorization. A client-side locked flag is only a UI affordance.
+
+At the serialization boundary:
+
+Reject non-finite numbers and unsupported object types.
+Canonicalize timestamps and distinguish instants from local calendar dates.
+Validate IDs, anchor references, axis compatibility, and geometry cardinality.
+Allowlist derived resolvers and sanitize content/assets.
+Bound text length, path sizes, nesting, and total payload size.
+Preserve namespaced extensions, but reject unsupported major schema versions.
+
+Migrations should be pure, versioned, and tested against old documents. Do not silently discard unknown annotation kinds during a round trip.
+
+9.6 Orphaned and temporarily unresolved anchors
+
+Distinguish at least:
+
+Filtered out, offscreen, deleted, source unavailable, invalid value, missing axis, and missing facet.
+
+These are not interchangeable failures.
+
+A stored snapshot can support a visibly stale “ghost” annotation or a repair UI. It must not silently become a new authoritative anchor. Never reattach a deleted record to the nearest point without an explicit user action.
+
+A useful repair interface offers “reattach to record,” “convert to fixed coordinate,” and “remove,” while preserving provenance.
+
+9.7 Collaboration
+
+Use a map keyed by annotation ID rather than treating the entire annotation array as one last-writer-wins value.
+
+Merge independent fields where appropriate, but treat a semantic anchor tuple—dataset, row key, field bindings, axis IDs—as an atomic unit unless the product has a well-defined finer-grained conflict model. Text may deserve its own CRDT; geometry usually needs different semantics.
+
+Deletion needs tombstone/conflict handling. Presence, cursor locations, and in-progress gestures belong in an ephemeral channel.
+
+Yjs’ UndoManager supports tracked origins and capture boundaries, which can help implement actor-local undo. It does not decide what a chart anchor means or resolve incompatible simultaneous reattachments for you. 
+Yjs Documentation
+
+9.8 Accessibility
+
+Accessible chart output is not the same as an accessible annotation editor.
+
+Provide a DOM annotation list with meaningful reading order, selectable items, text/coordinate forms, and clear actions. Support keyboard creation, navigation, movement, resizing, deletion, undo/redo, and cancellation. Restore focus after deletion or closing an inspector.
+
+Also provide a non-drag single-pointer alternative where dragging is not essential—for example, selecting a note and entering its position in a form. Keyboard support alone does not satisfy WCAG 2.2’s dragging-movements requirement. 
+W3C
+
+Describe the meaning of a highlight or freehand enclosure, not merely its path coordinates. Do not rely on color alone for selection or annotation meaning. Announce unresolved anchors, completed edits, and validation errors without narrating every pointer movement.
+
+tldraw’s documented accessibility features and AG Charts’ documented keyboard operations are useful starting points, not substitutes for testing the integrated product. 
+tldraw
++1
+
+9.9 Export is a separate rendering target
+
+Rehydrate the semantic document against the export viewport and intended data revision. Exclude handles, selection outlines, snap guides, and editor popups.
+
+An external overlay will not become part of a vendor’s export merely because it visually overlaps the chart. Implement an explicit composition/export path.
+
+Test images, fonts, clipping, rich text, SVG foreign content, canvas layers, and device-pixel ratios. When reproducibility or later editing matters, export the annotation JSON as a sidecar rather than relying only on pixels or SVG paths.
+
+10. Evidence gaps and validation priorities
+
+The most consequential gaps are not minor option differences:
+
+Evidence issue	Practical consequence
+Source versions can lead releases. ApexCharts and Recharts expose concrete discrepancies; Highcharts API pages also show differing generated versions.	Pin actual dependencies and test against those builds, not “latest docs.” 
+ApexCharts.js
++5
+
+Demo application code can look like a built-in feature. Recharts’ annotation demo and Chart.js’ dragging sample are examples.	Budget for the selection model, state updates, editing controls, and persistence that the demo supplies. 
+Recharts
++1
+
+Documentation can contradict implementation. amCharts serialization is the clearest case here.	Prefer dedicated API/source evidence; pass ambiguous defaults explicitly. 
+amCharts
++1
+
+Chart-type and backend coverage is uneven. Nivo annotations are not a universal cross-chart editor; Chart.js’ guide has support constraints despite scale-ID options.	Test the exact chart family, renderer, and multi-axis arrangement. 
+nivo
++1
+
+Keyboard actions are not full accessibility evidence.	Test creation, selection, editing, repair, focus management, and non-drag alternatives—not just chart navigation.
+Serialization is not interoperability.	Test round trips after axis reorder, facet removal, data replacement, framework rerender, and library upgrade.
+
+For an evaluation prototype, I would require the same acceptance sequence in every candidate: create a record-bound callout; move only its label; resize a band; change axes; zoom; filter away its subject; restore it; replace the dataset with reordered rows; export; reload; undo; and repeat with keyboard/non-drag controls.
+
+That sequence exposes far more than a screenshot of a successful annotation.
+
+11. Shortlist by use case
+Use case	Shortlist	Explicit tradeoff
+Ready-made general Cartesian annotation editor	AG Charts Enterprise; Highcharts with suitable modules	Less editor construction, but commercial dependency and vendor state semantics. AG has especially clear documented keyboard/history coverage; Highcharts offers flexible point attachment and UI bindings. 
+AG Grid
++2
+
+Existing ApexCharts dashboard	Ink + Rewind	Integrated current UX; premium modules, constrained snapping, and version-sensitive packaging. 
+ApexCharts.js
++1
+
+Open-source analytical app with editable notes and regions	Plotly.js	Native editing/drawing saves work; IDs, full inspector, semantic persistence, and history policy still need application design. 
+GitHub
++1
+
+Reusable bespoke React annotation product	visx, or a custom SVG overlay over the existing chart	Strong control of anchor semantics and interaction design; substantial toolbar, history, accessibility, and export work. 
+GitHub
+
+Declarative storytelling and programmatically generated annotations	Vega/Vega-Lite, Observable Plot, D3/d3-annotation	Excellent rendering composition; do not select them expecting a packaged end-user editor. 
+Vega
++2
+
+Financial drawing tools	TradingView Advanced Charts, amCharts Stock, Highcharts Stock Tools	Rich domain-specific UX versus licensing, embedding constraints, and vendor-specific drawing persistence. Lightweight Charts is a different, more assembly-heavy option. 
+TradingView
++3
+
+Scientific/multi-axis interaction	SciChart, or a purpose-built D3/visx layer	SciChart offers explicit coordinate modes and editable primitives; a complete domain workflow still requires application logic and commercial review. 
+SciChart
++2
+
+Screenshot review, images, and freehand markup	Excalidraw or tldraw; Fabric/Konva for lower-level control	Much more drawing UX, but no automatic relationship to chart data. Excalidraw is MIT; tldraw’s current production license needs separate evaluation. 
+GitHub
++3
+
+Annotations in an existing Chart.js, ECharts, Recharts, or Nivo app	Retain the renderer and add an application-owned layer	Lowest migration cost for modest requirements; avoid mistaking rendering plugins or demos for a complete editor. 
+Chart.js
++3
+
+My recommendation for a cross-library system: own the semantic document, stable identities, edit transactions, history policy, accessibility layer, and export contract. Use adapters for rendering and native interaction where useful. Buy a vendor’s editor when its workflow matches the product; use a drawing editor when the intended artifact is visual markup. Do not let either choice erase the distinction between “this record,” “this coordinate,” and “this place on the screen.”
+
+annotation-model.ts
+Code
+examples.json
+Code
+ChatGPT can make mistakes. Check important info.
+Latest response
+
+
+
+
+Pro
