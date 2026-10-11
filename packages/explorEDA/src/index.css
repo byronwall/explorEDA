@@ -7114,6 +7114,7 @@ td[data-null] {
 /* Composition: an artboard of report graphics. Editing shows the paper on a
    muted canvas with selectable element boxes; viewing shows the paper only. */
 .eda-composition {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -7504,4 +7505,33 @@ td[data-null] {
   border: 1px solid var(--input);
   border-radius: 4px;
   background: none;
+}
+
+/* Zoom buttons over a composition's corner: on hover, focus, or while zoomed. */
+.eda-composition-zoom {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--background);
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+}
+.eda-composition:hover .eda-composition-zoom,
+.eda-composition-zoom:focus-within,
+.eda-composition-zoom[data-zoomed] {
+  opacity: 1;
+}
+.eda-composition-artboard[data-zoomed] {
+  cursor: grab;
+}
+.eda-composition-artboard[data-zoomed]:active {
+  cursor: grabbing;
+}
+.eda-composition[data-mode="edit"] .eda-composition-artboard[data-zoomed] {
+  cursor: default;
 }

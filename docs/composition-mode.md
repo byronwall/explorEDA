@@ -81,6 +81,8 @@ The chart's details view is the editor: the artboard on the left and the inspect
 - In editing, a click selects an element or a repeat. Selecting a repeat of the selected unit shows its override panel above the template, labeled with which one an edit changes.
 - In viewing, a click on a repeat selects it across the workspace. Alt-click or Alt-Enter on a mark opens its trace.
 - Right-click any drawn object, or press Shift+F10, for what it is made of: the mark, each scale, the unit and repeat, a trace, the workspace filter for that repeat, and removal while editing. See the [agent guide](agent-guide.md#editing-a-composition-quickly).
+- Zoom in on small detail with Ctrl- or Command-scroll at the pointer, the zoom buttons in the artboard's corner, or + and -; 0 shows the whole graphic. While zoomed, scroll pans, and in viewing a drag pans. Zoom only changes the view; Copy PNG still writes the whole artboard.
+- **Fit height to content** in the artboard settings moves the source notes under the lowest element and ends the artboard just below them.
 - Elements move by drag or arrow keys. Groups move together with their text, frames, guides, and annotations.
 
 ## Tracing

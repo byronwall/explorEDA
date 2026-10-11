@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
+  fitArtboard,
   removeElement,
   reorderElement,
   resetOverride,
@@ -568,6 +569,23 @@ export function CompositionInspector({
               })
             }
           />
+          <span className="eda-setting-label">Fit</span>
+          <Button
+            variant="outline"
+            size="sm"
+            tooltip="Move the source notes under everything else and set the height to end just below them"
+            onClick={() =>
+              change(
+                fitArtboard(
+                  definition,
+                  resolveComposition(definition, measureCompositionText, data)
+                    .elements
+                )
+              )
+            }
+          >
+            Fit height to content
+          </Button>
           <ColorSetting
             label="Paper"
             value={definition.artboard.background}

@@ -1,5 +1,6 @@
 import { area as shapeArea, curveMonotoneX, line as shapeLine } from "d3-shape";
 import type { ReactNode } from "react";
+import type { ArtboardView } from "./artboardZoom";
 import { COMPOSITION_FONT } from "./compositionTypes";
 import type { Bounds, CompositionScene, SceneNode } from "./resolveComposition";
 
@@ -22,6 +23,7 @@ export function CompositionSvg({
   svgRef,
   offsets,
   instanceOffset,
+  view,
   ...props
 }: {
   scene: CompositionScene;
@@ -31,6 +33,8 @@ export function CompositionSvg({
   svgRef?: React.Ref<SVGSVGElement>;
   /** Temporary moves, such as during a drag, by element ID. */
   offsets?: Record<string, { dx: number; dy: number }>;
+  /** The part of the artboard in view, when zoomed in. */
+  view?: ArtboardView;
   /** A temporary move of one repeat of a chart unit. */
   instanceOffset?: {
     elementId: string;
@@ -56,7 +60,11 @@ export function CompositionSvg({
       aria-label={label}
       width={Math.round(scene.width * scale)}
       height={Math.round(scene.height * scale)}
-      viewBox={`0 0 ${scene.width} ${scene.height}`}
+      viewBox={
+        view && view.k !== 1
+          ? `${view.x} ${view.y} ${scene.width / view.k} ${scene.height / view.k}`
+          : `0 0 ${scene.width} ${scene.height}`
+      }
       fontFamily={COMPOSITION_FONT}
       {...props}
     >

@@ -2,7 +2,7 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
-import { PencilRuler } from "lucide-react";
+import { Maximize, PencilRuler, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useChartDetailsStore } from "../../chartDetailsStore";
 import { ChartMessage } from "../ChartMessage";
@@ -26,6 +26,7 @@ import {
   useCompositionEditor,
   useCompositionEditorStore,
 } from "./compositionEditorStore";
+import { useArtboardZoom } from "./artboardZoom";
 import { CompositionSvg } from "./CompositionSvg";
 import { registerArtboard } from "./compositionOutput";
 import { makeCompositionTraceSource } from "./compositionTrace";
@@ -183,6 +184,10 @@ export function CompositionChart({
       2
     )
   );
+  const zoomer = useArtboardZoom(svgRef, scene.width, scene.height, scale);
+  const zoomed = zoomer.view.k !== 1;
+  /** Screen pixels per artboard unit, after any zoom. */
+  const unitSize = scale * zoomer.view.k;
 
   if (!editing && definition.elements.length === 0) {
     return (
@@ -206,8 +211,8 @@ export function CompositionChart({
   }
 
   const toArtboard = (event: React.PointerEvent) => ({
-    x: event.clientX / scale,
-    y: event.clientY / scale,
+    x: event.clientX / unitSize,
+    y: event.clientY / unitSize,
   });
 
   const startDrag = (
@@ -236,7 +241,7 @@ export function CompositionChart({
   };
 
   const dragged = (value: Drag | undefined) =>
-    value !== undefined && Math.hypot(value.dx, value.dy) * scale > 2;
+    value !== undefined && Math.hypot(value.dx, value.dy) * unitSize > 2;
 
   const endDrag = () => {
     if (!drag) return;
@@ -259,6 +264,24 @@ export function CompositionChart({
   };
 
   const onKeyDown = (event: React.KeyboardEvent) => {
+    // + and - zoom about the middle; 0 shows the whole artboard.
+    if (!event.metaKey && !event.ctrlKey && !event.altKey) {
+      if (event.key === "+" || event.key === "=") {
+        event.preventDefault();
+        zoomer.zoom(1.5);
+        return;
+      }
+      if (event.key === "-") {
+        event.preventDefault();
+        zoomer.zoom(1 / 1.5);
+        return;
+      }
+      if (event.key === "0" && zoomed) {
+        event.preventDefault();
+        zoomer.reset();
+        return;
+      }
+    }
     if (!editing) {
       // Alt-Enter traces the first selected repeat, or the first repeat.
       if (event.altKey && event.key === "Enter") {
@@ -316,6 +339,7 @@ export function CompositionChart({
 
   // Viewing: a click on a repeat selects it everywhere; Alt-click traces.
   const onViewClick = (event: React.MouseEvent) => {
+    if (zoomer.didPan()) return;
     const node = nodeAt(event);
     const element = definition.elements.find(
       (item) => item.id === node?.elementId
@@ -586,6 +610,8 @@ export function CompositionChart({
         offsets={offsets}
         instanceOffset={instanceOffset}
         scale={scale}
+        view={zoomer.view}
+        data-zoomed={zoomed || undefined}
         label={settings.title || "Composition"}
         className="eda-composition-artboard"
         tabIndex={0}
@@ -595,13 +621,24 @@ export function CompositionChart({
             : "Click a repeat to filter by it, or empty space to clear. Alt-click a mark, or press Alt-Enter, to trace it."
         }
         onKeyDown={onKeyDown}
+        onPointerDown={(event) => {
+          // Viewing a zoomed artboard, a drag pans it.
+          if (!editing) zoomer.startPan(event);
+        }}
         onPointerMove={(event) => {
+          if (!editing && zoomer.movePan(event)) return;
           onPointerMove(event);
           if (!editing) setHovered(nodeAt(event));
         }}
         onPointerLeave={() => setHovered(undefined)}
-        onPointerUp={endDrag}
-        onPointerCancel={() => setDrag(undefined)}
+        onPointerUp={() => {
+          endDrag();
+          zoomer.endPan();
+        }}
+        onPointerCancel={() => {
+          setDrag(undefined);
+          zoomer.endPan();
+        }}
         onClick={editing ? undefined : onViewClick}
       >
         {editing && scene.elements.map(hit)}
@@ -618,10 +655,70 @@ export function CompositionChart({
               selected.id,
               selectedInstance?.key
             )}
-            scale={scale}
+            scale={unitSize}
           />
         )}
       </CompositionSvg>
+      <ZoomControls
+        zoomed={zoomed}
+        onZoomIn={() => zoomer.zoom(1.5)}
+        onZoomOut={() => zoomer.zoom(1 / 1.5)}
+        onReset={zoomer.reset}
+      />
+    </div>
+  );
+}
+
+/** Zoom buttons over the artboard's corner; they show on hover and while zoomed. */
+function ZoomControls({
+  zoomed,
+  onZoomIn,
+  onZoomOut,
+  onReset,
+}: {
+  zoomed: boolean;
+  onZoomIn: () => void;
+  onZoomOut: () => void;
+  onReset: () => void;
+}) {
+  return (
+    <div
+      className="eda-composition-zoom"
+      data-zoomed={zoomed || undefined}
+      role="group"
+      aria-label="Zoom"
+      onPointerDown={(event) => event.stopPropagation()}
+    >
+      <Button
+        variant="ghost"
+        size="icon"
+        aria-label="Zoom in"
+        tooltip="Zoom in on the graphic (+). Ctrl- or Command-scroll zooms at the pointer."
+        onClick={onZoomIn}
+      >
+        <ZoomIn />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        aria-label="Zoom out"
+        tooltip="Zoom out (-)"
+        disabled={!zoomed}
+        onClick={onZoomOut}
+      >
+        <ZoomOut />
+      </Button>
+      {zoomed && (
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Show the whole graphic"
+          tooltip="Show the whole graphic (0). While zoomed, scroll or drag to pan."
+          onClick={onReset}
+        >
+          <Maximize />
+        </Button>
+      )}
     </div>
   );
 }
