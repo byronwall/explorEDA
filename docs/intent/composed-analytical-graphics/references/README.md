@@ -57,4 +57,4 @@ Inspect stored image resolution before using it for visual comparison; previews 
 
 The [2026-10-10 source archive](../raw/2026-10-10-pro-graphics/README.md) preserves 23 additional graphics and the full Pro report.
 Its original images and metadata remain separate from these earlier reference assets.
-See the [reference study](../reference-study.md) for the current integration recommendation.
+See [Composition mode](../../../composition-mode.md) for the examples built from these references.

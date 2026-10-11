@@ -52,6 +52,6 @@ Reopen free facet scales or ECDF bounds when an analysis needs them.
 
 ## Next step after confirmation
 
-The [shape brief](shape-brief.md) and [implementation plan](implementation-plan.md) sequence this as five PRs. The [in-place editing initiative](../in-place-chart-editing/intent-brief.md) still owns gestures and the edit session. This initiative owns what bounds and scales mean.
+The [shape brief](shape-brief.md) and [implementation plan](implementation-plan.md) sequence this as five PRs. Axis editing in place and axis drag are delivered; see [UI defaults](../../ui-defaults.md#popovers-and-dialogs). This initiative owns what bounds and scales mean.
 
 See the [reference packet](references/README.md) for historical context.

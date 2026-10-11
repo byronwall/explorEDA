@@ -483,7 +483,7 @@
       },
       {
         "scope": "Workspace filters in dashboard text",
-        "destination": "docs/intent/filter-and-series-controls/intent-brief.md"
+        "destination": "docs/application-feature-inventory.md#filter-representations"
       }
     ]
   },
@@ -510,7 +510,7 @@
       },
       {
         "scope": "Reusable filter collections",
-        "destination": "docs/intent/filter-and-series-controls/intent-brief.md"
+        "destination": "Product Grid page-named-segments-and-more-ways-to-add-workspace-filters (pgm/data)"
       }
     ]
   },
@@ -556,6 +556,66 @@
       {
         "scope": "Browser capacity with many facets",
         "destination": "Product Grid page-measure-scatter-fits-and-densities-with-many-facets (pgm/data)"
+      }
+    ]
+  },
+  {
+    "title": "One diagram of a project's tables, links, calculations, and views",
+    "slug": "schema-diagram",
+    "outcome": "completed",
+    "retired_at": "2026-10-10",
+    "summary": "Delivered all seven milestones: a wide schema drawer with tables, fields, keys, and relationships; queries, calculations, and views with lineage both ways; in-place editing of fields, keys, relationships, and query steps; usage folded across every saved view; and Add source with single-table promotion. Every intent claim is covered by the package README section. Reconciled against 5cf144d; merged PRs #222, #225–#230. No new browser check ran during retirement; milestone evidence recorded Vitest suites and Playwright screenshots.",
+    "reason": "Byron asked on 2026-10-10 to retire the completed docs/intent initiatives and approved this one by name. Every planned milestone's PR merged into main.",
+    "documentation": [
+      "packages/explorEDA/README.md",
+      "docs/application-feature-inventory.md"
+    ],
+    "revision": "5cf144df0a32976dcbb0a9bbc3a45ed2acda94e0",
+    "follow_ups": []
+  },
+  {
+    "title": "Filter a workspace and control series deliberately",
+    "slug": "filter-and-series-controls",
+    "outcome": "completed",
+    "retired_at": "2026-10-10",
+    "summary": "Delivered workspace filters: a linked filter no chart owns, added from the active filter bar, one per field, saved with the view, and written as filter lines in dashboard text. Legend hide/isolate was split to Product Grid earlier. Reconciled against 5cf144d; merged PRs #221, #223, #224. The open Newsprint and Report theme check passed in the browser on 2026-10-10 (message-log, Direction=Sent: 5,330 of 10,376 rows, chip and edit popover legible).",
+    "reason": "Byron asked on 2026-10-10 to retire the completed docs/intent initiatives and approved this one by name. Every planned milestone's PR merged into main.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "packages/explorEDA/README.md"
+    ],
+    "revision": "5cf144df0a32976dcbb0a9bbc3a45ed2acda94e0",
+    "follow_ups": [
+      {
+        "scope": "Named segments, promotion from chart or Rows filters, more entry points, disable, OR per field",
+        "destination": "Product Grid page-named-segments-and-more-ways-to-add-workspace-filters (pgm/data)"
+      },
+      {
+        "scope": "Hide or isolate a series from the legend",
+        "destination": "Product Grid page-hide-or-isolate-a-series-from-the-legend (pgm/data)"
+      }
+    ]
+  },
+  {
+    "title": "Edit chart features in place",
+    "slug": "in-place-chart-editing",
+    "outcome": "completed",
+    "retired_at": "2026-10-10",
+    "summary": "Delivered titles, axis titles, and numeric axis ranges edited where they are drawn, plus axis pan and stretch by drag, each one undo step through updateChart and useChartEdit. Subtitle editing, a named target, is not built; Byron approved retirement with it moved to the Product Grid rather than gating closure. Reconciled against 5cf144d; merged PRs #203–#206.",
+    "reason": "Byron asked on 2026-10-10 to retire the completed docs/intent initiatives and approved this one by name. Every planned milestone's PR merged into main.",
+    "documentation": [
+      "docs/ui-defaults.md",
+      "docs/application-feature-inventory.md"
+    ],
+    "revision": "5cf144df0a32976dcbb0a9bbc3a45ed2acda94e0",
+    "follow_ups": [
+      {
+        "scope": "Subtitle, source note, and legend name editing; more chart families; input, accessibility, and width/theme checks",
+        "destination": "Product Grid page-in-place-chart-editing (pgm/data)"
+      },
+      {
+        "scope": "Limits on ECDF, time X, map, and calendar axes",
+        "destination": "docs/intent/axis-domain-controls/intent-brief.md"
       }
     ]
   }

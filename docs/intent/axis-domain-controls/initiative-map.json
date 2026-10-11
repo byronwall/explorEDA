@@ -628,7 +628,6 @@
     "priority_basis": "Pro recommendations reconciled with current source; proposed priority, no implementation approval",
     "expand_when": "Expand when an analysis repeatedly needs manual bounds, display-only zoom, or positive data spanning orders of magnitude.",
     "related_initiatives": [
-      "in-place-chart-editing",
       "date-time-handling"
     ],
     "audience": "End users; developers deliver their experience.",
