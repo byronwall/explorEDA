@@ -56,6 +56,8 @@ const PROPS: Record<keyof ExplorEdaProps, string> = {
     "What the Schema diagram shows: a project's schema, whether it can be edited, and which view it opens on. Without it, the diagram shows this workspace's table and its calculated fields.",
   onAddSource:
     "Shows Add source in the Schema diagram. The host picks a file, then can turn the workspace into a project with singleTableProject and addSourceFromRows from exploreda/analysis.",
+  licenseKey:
+    "The license key from your purchase or trial email. Checked offline; without a valid key the workspace works fully and shows an unlicensed notice. setLicenseKey from exploreda/license sets it for every workspace.",
 };
 
 export function PropsReference() {
