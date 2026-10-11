@@ -17,6 +17,12 @@ export interface HierarchySettings extends BaseChartSettings {
   missingLevels: "omit" | "show";
   /** How the hierarchy is drawn. */
   arrangement: "treemap";
+  /**
+   * The zoomed branch: values along `levels`, outermost first. Absent or
+   * empty shows the whole. Stored like a filter's values, so it survives a
+   * reload and stays readable in dashboard text.
+   */
+  focus?: datum[];
 }
 
 export const MIN_HIERARCHY_LEVELS = 1;

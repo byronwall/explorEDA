@@ -8,6 +8,7 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import { ArrowDown, ArrowUp, X } from "lucide-react";
 import { useMemo } from "react";
+import { keepForLevels } from "./hierarchyPlan";
 import {
   MAX_HIERARCHY_LEVELS,
   MIN_HIERARCHY_LEVELS,
@@ -49,18 +50,8 @@ export function HierarchySettingsPanel({
 
   const change = (next: Partial<HierarchySettings>) =>
     onSettingsChange({ ...settings, ...next });
-  const setLevels = (levels: string[]) => {
-    // A selection is a branch path, so it only survives while its levels
-    // keep their places.
-    const changed = levels.findIndex(
-      (field, index) => settings.levels[index] !== field
-    );
-    const kept = new Set(changed === -1 ? levels : levels.slice(0, changed));
-    change({
-      levels,
-      filters: settings.filters.filter((filter) => kept.has(filter.field)),
-    });
-  };
+  const setLevels = (levels: string[]) =>
+    change({ levels, ...keepForLevels(settings, levels) });
   const move = (from: number, to: number) => {
     const next = settings.levels.slice();
     const [item] = next.splice(from, 1);

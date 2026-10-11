@@ -567,7 +567,9 @@ function isChart(value: unknown): boolean {
         (value.measureField === undefined ||
           typeof value.measureField === "string") &&
         ["omit", "show"].includes(value.missingLevels as string) &&
-        ["treemap"].includes(value.arrangement as string)
+        ["treemap"].includes(value.arrangement as string) &&
+        (value.focus === undefined ||
+          (Array.isArray(value.focus) && value.focus.every(isDatum)))
       );
     case "parallel-coordinates":
       return (

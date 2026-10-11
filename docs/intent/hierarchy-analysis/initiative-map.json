@@ -8,7 +8,7 @@
     "last_updated": "2026-10-10",
     "summary": "Add hierarchical reporting charts (treemap, sunburst, icicle) so analysts see which subcategories exist, how large each is, and how parts compare to the whole.",
     "status": "active",
-    "next_action": "Milestone 2: zoom into a branch with breadcrumbs and a stored focus path."
+    "next_action": "Milestone 3: three levels, Other per parent, small-mark thresholds, color modes, Alt-click trace."
   },
   "artifacts": {
     "intent_brief": {
@@ -615,12 +615,16 @@
       {
         "id": "m2",
         "title": "Zoom into a branch and step back with breadcrumbs",
-        "status": "planned",
+        "status": "completed",
         "outcome": "A user zooms into a parent, reloads to the same view, and steps back through breadcrumbs",
         "proof": "Focus-resolution tests; save validation and dashboard-text round trip; one undo step per zoom; browser at three widths",
         "valid_intermediate_state": "Two-level treemap with zoom; absent focus means the whole, so older saves are unaffected",
         "end_state": "Deterministic, persisted zoom",
-        "rollback": "Revert the milestone PR; focus is optional, so charts without it are unaffected."
+        "rollback": "Revert the milestone PR; focus is optional, so charts without it are unaffected.",
+        "evidence": [
+          "27 Hierarchy tests incl. focus resolution by type, fallback with missing crumbs, keepForLevels, double-click = one onStateChange with filters unchanged, Shift+Enter",
+          "Browser: double-click South at 1400/900/390 shows All › South $61,008.41 · 33.1% of all; readout Of South 76.2%, Of all 25.2%"
+        ]
       },
       {
         "id": "m3",
@@ -728,6 +732,12 @@
       "action": "Implemented Milestone 1: Hierarchy chart with treemap arrangement.",
       "reason": "User asked to implement all milestones as stacked PRs.",
       "evidence": "See milestone m1 evidence."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Implemented Milestone 2: zoom with breadcrumbs; focus stored as a value path.",
+      "reason": "Stacked PR plan.",
+      "evidence": "See milestone m2 evidence."
     }
   ],
   "closure": null,

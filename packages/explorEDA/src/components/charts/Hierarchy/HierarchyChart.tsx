@@ -3,8 +3,10 @@ import {
   useThemeColors,
 } from "@/hooks/useDisplayColorScales";
 import { formatFieldValue as formatWithSettings } from "@/lib/fieldSettings";
+import { Button } from "@/components/ui/button";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import type { BaseChartProps } from "@/types/ChartTypes";
+import type { BaseChartProps, datum } from "@/types/ChartTypes";
+import type { Filter } from "@/types/FilterTypes";
 import {
   useEffect,
   useMemo,
@@ -21,12 +23,15 @@ import {
   STATUS_LINE_HEIGHT,
 } from "../ChartStatusLine";
 import { isEmptyPlotTarget } from "../emptyPlotClick";
+import { useChartEdit } from "../InPlace/useChartEdit";
 import { useTraceRevision } from "../trace/ChartTraceScope";
 import { useGetColumnData } from "../useGetColumnData";
 import { useGetLiveIds } from "../useGetLiveData";
 import type { HierarchySettings } from "./definition";
 import {
+  isZoomable,
   planHierarchy,
+  resolveFocus,
   shareOf,
   toggleBranch,
   type HierarchyNode,
@@ -37,6 +42,9 @@ import { layoutTreemap, type TreemapRect } from "./treemapLayout";
 
 const LABEL_CHAR = 6.4;
 const HEADER_HEIGHT = 18;
+const CRUMB_HEIGHT = 24;
+/** How long a first click waits to learn whether it starts a double-click. */
+const DOUBLE_CLICK_MS = 400;
 
 const percent = (part: number, whole: number) =>
   shareOf(part, whole).toLocaleString("en-US", {
@@ -91,11 +99,14 @@ function Readout({
   plan,
   node,
   parent,
+  focus,
   format,
 }: {
   plan: HierarchyPlan;
   node: HierarchyNode;
   parent: HierarchyNode;
+  /** The zoomed branch, when it is not the whole. */
+  focus: HierarchyNode;
   format: (value: number) => string;
 }) {
   const items: [string, string][] = [
@@ -104,6 +115,9 @@ function Readout({
   ];
   if (parent.depth > 0) {
     items.push([`Of ${parent.label}`, percent(node.weight, parent.weight)]);
+  }
+  if (focus.depth > 0 && focus.id !== parent.id) {
+    items.push([`Of ${focus.label}`, percent(node.weight, focus.weight)]);
   }
   items.push(["Of all", percent(node.weight, plan.root.weight)]);
   if (plan.hasSelection) {
@@ -154,6 +168,21 @@ export function HierarchyChart({
   const [focused, setFocused] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const refs = useRef(new Map<string, SVGRectElement>());
+  // A first click on a parent selects at once but holds the host's undo
+  // step briefly; a second click turns it into a zoom with the old filters.
+  const edit = useChartEdit(settings.id);
+  const lastClicked = useRef<string | null>(null);
+  const pending = useRef<{
+    id: string;
+    filters: Filter[];
+    timer: ReturnType<typeof setTimeout>;
+  } | null>(null);
+  useEffect(
+    () => () => {
+      if (pending.current) clearTimeout(pending.current.timer);
+    },
+    []
+  );
 
   useEffect(() => {
     if (!notice) return;
@@ -200,20 +229,28 @@ export function HierarchyChart({
     [settings, snapshot, fieldSettings]
   );
 
+  const resolution = useMemo(
+    () => resolveFocus(plan.root, settings.focus),
+    [plan, settings.focus]
+  );
+  const focusNode = resolution.node;
+  // Zooming needs a level below the first; one level has no breadcrumbs.
+  const crumbHeight = levels.length > 1 ? CRUMB_HEIGHT : 0;
   const margin = settings.margin;
+  const plotTop = margin.top + crumbHeight;
   const plotWidth = Math.max(0, width - margin.left - margin.right);
   const plotHeight = Math.max(
     0,
-    height - margin.top - margin.bottom - STATUS_LINE_HEIGHT
+    height - plotTop - margin.bottom - STATUS_LINE_HEIGHT
   );
   const rects = useMemo(
     () =>
-      layoutTreemap(plan.root, {
+      layoutTreemap(focusNode, {
         width: plotWidth,
         height: plotHeight,
         headerHeight: HEADER_HEIGHT,
       }),
-    [plan, plotWidth, plotHeight]
+    [focusNode, plotWidth, plotHeight]
   );
 
   if (!levels.length) {
@@ -263,9 +300,51 @@ export function HierarchyChart({
       setNotice(result.reason);
     }
   };
+  const zoomTo = (path: datum[]) =>
+    updateChart(settings.id, { focus: path.length ? path : undefined });
   const onMarkClick = (event: MouseEvent, node: HierarchyNode) => {
     event.stopPropagation();
-    select(node, event.shiftKey || event.metaKey || event.ctrlKey);
+    const first = pending.current;
+    const repeat = lastClicked.current === node.id;
+    lastClicked.current = node.id;
+    if (event.detail >= 2 && repeat) {
+      // The second press of a double-click: zoom, and undo the first
+      // press's selection inside the same held step. On a leaf it does
+      // nothing, so the first press's selection stands.
+      if (first?.id === node.id && isZoomable(node)) {
+        clearTimeout(first.timer);
+        pending.current = null;
+        edit.apply({ filters: first.filters, focus: node.path });
+        edit.commit();
+      }
+      return;
+    }
+    if (first) {
+      clearTimeout(first.timer);
+      pending.current = null;
+      edit.commit();
+    }
+    const add = event.shiftKey || event.metaKey || event.ctrlKey;
+    if (!isZoomable(node)) {
+      select(node, add);
+      return;
+    }
+    const result = toggleBranch(settings.filters, node, levels, add);
+    if (!result.ok) {
+      setNotice(result.reason);
+      return;
+    }
+    setNotice(null);
+    const before = settings.filters;
+    edit.apply({ filters: result.filters });
+    pending.current = {
+      id: node.id,
+      filters: before,
+      timer: setTimeout(() => {
+        pending.current = null;
+        edit.commit();
+      }, DOUBLE_CLICK_MS),
+    };
   };
   const moveFocus = (id: string, step: number) => {
     const index = order.indexOf(id);
@@ -294,6 +373,9 @@ export function HierarchyChart({
     if (event.key in steps) {
       event.preventDefault();
       moveFocus(node.id, steps[event.key]!);
+    } else if (event.key === "Enter" && event.shiftKey) {
+      event.preventDefault();
+      if (isZoomable(node)) zoomTo(node.path);
     } else if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       select(node, event.shiftKey);
@@ -324,7 +406,9 @@ export function HierarchyChart({
     (!plan.hasSelection &&
       !facetIds &&
       width >= STATUS_HINT_MIN_WIDTH &&
-      "Click a box to select its branch");
+      (levels.length > 1
+        ? "Click a box to select its branch, double-click to zoom in"
+        : "Click a box to select it"));
 
   const renderRect = (rect: TreemapRect) => {
     const { node } = rect;
@@ -447,13 +531,69 @@ export function HierarchyChart({
           fill="transparent"
         />
         <g
-          transform={`translate(${margin.left},${margin.top})`}
+          transform={`translate(${margin.left},${plotTop})`}
           role="group"
           aria-label={`${plan.levelLabels.join(" › ")} as a treemap`}
         >
           {rects.map(renderRect)}
         </g>
       </svg>
+      {crumbHeight > 0 && (
+        <nav
+          aria-label="Zoom path"
+          className="absolute flex min-w-0 items-center gap-0.5 overflow-hidden whitespace-nowrap text-xs"
+          style={{
+            left: margin.left,
+            right: margin.right,
+            top: margin.top,
+            height: crumbHeight,
+          }}
+        >
+          {[plan.root, ...resolution.trail].map((node, index, all) => {
+            const current = index === all.length - 1;
+            return (
+              <span key={node.id} className="flex min-w-0 items-center gap-0.5">
+                {index > 0 && (
+                  <span aria-hidden="true" className="text-muted-foreground">
+                    ›
+                  </span>
+                )}
+                {current ? (
+                  <span
+                    aria-current="location"
+                    className="truncate px-1.5 font-semibold text-foreground"
+                  >
+                    {node.label}
+                  </span>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 min-w-0 truncate px-1.5 text-xs font-medium"
+                    onClick={() => zoomTo(node.path)}
+                  >
+                    {node.label}
+                  </Button>
+                )}
+              </span>
+            );
+          })}
+          {resolution.missing.map((label, index) => (
+            <span
+              key={`missing-${index}`}
+              className="flex items-center gap-0.5 text-muted-foreground"
+            >
+              <span aria-hidden="true">›</span>
+              <span className="truncate px-1.5 italic">{label} · no rows</span>
+            </span>
+          ))}
+          <span className="ml-1 shrink-0 tabular-nums text-muted-foreground">
+            {format(focusNode.weight)}
+            {focusNode.depth > 0 &&
+              ` · ${percent(focusNode.weight, plan.root.weight)} of all`}
+          </span>
+        </nav>
+      )}
       <ChartStatusLine
         parts={statusParts}
         hint={statusHint}
@@ -466,6 +606,7 @@ export function HierarchyChart({
           plan={plan}
           node={hoveredNode}
           parent={hoveredParent ?? plan.root}
+          focus={focusNode}
           format={format}
         />
       )}

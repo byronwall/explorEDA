@@ -3,7 +3,10 @@ import type { datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
 import { hierarchyDefinition, type HierarchySettings } from "./definition";
 import {
+  isZoomable,
+  keepForLevels,
   planHierarchy,
+  resolveFocus,
   toggleBranch,
   type HierarchyNode,
   type HierarchySnapshot,
@@ -217,6 +220,93 @@ describe("toggleBranch", () => {
     expect(toggle([other], node("South"))).toEqual([
       other,
       { type: "value", field: "region", values: ["South"] },
+    ]);
+  });
+});
+
+describe("resolveFocus", () => {
+  const result = plan();
+  const labels = (nodes: HierarchyNode[]) => nodes.map((node) => node.label);
+
+  it("finds the zoomed branch by its values", () => {
+    const north = resolveFocus(result.root, ["North"]);
+    expect(north.node.path).toEqual(["North"]);
+    expect(labels(north.trail)).toEqual(["North"]);
+    const home = resolveFocus(result.root, ["North", "Home"]);
+    expect(labels(home.trail)).toEqual(["North", "Home"]);
+    expect(home.missing).toEqual([]);
+    expect(resolveFocus(result.root, undefined).node).toBe(result.root);
+  });
+
+  it("keeps values apart by type", () => {
+    const typed = planHierarchy({
+      settings: settings({ levels: ["level", "leaf"] }),
+      snapshot: {
+        revision: "r",
+        liveIds: [0, 1],
+        levelData: { level: { 0: 1, 1: "1" }, leaf: { 0: "a", 1: "b" } },
+        measureData: {},
+      },
+      getFieldLabel: (field) => field,
+    });
+    expect(resolveFocus(typed.root, [1]).node.children[0]!.label).toBe("a");
+    expect(resolveFocus(typed.root, ["1"]).node.children[0]!.label).toBe("b");
+  });
+
+  it("falls back to the deepest ancestor with rows and keeps the rest", () => {
+    // Only South rows are live, so North has no rows.
+    const southOnly = plan({}, [3, 4]);
+    const gone = resolveFocus(southOnly.root, ["North", "Home"]);
+    expect(gone.node).toBe(southOnly.root);
+    expect(gone.missing).toEqual(["North", "Home"]);
+    const partial = resolveFocus(result.root, ["North", "Garden"]);
+    expect(labels(partial.trail)).toEqual(["North"]);
+    expect(partial.missing).toEqual(["Garden"]);
+  });
+
+  it("never zooms into a leaf", () => {
+    const leafPath = ["North", "Home", "Lamp"];
+    const resolved = resolveFocus(result.root, leafPath);
+    expect(labels(resolved.trail)).toEqual(["North", "Home"]);
+    const leaf = result.nodes.find(
+      (node) => JSON.stringify(node.path) === JSON.stringify(leafPath)
+    )!;
+    expect(isZoomable(leaf)).toBe(false);
+    expect(isZoomable(resolved.node)).toBe(true);
+  });
+});
+
+describe("keepForLevels", () => {
+  const current = {
+    levels: ["region", "category", "product"],
+    filters: [
+      { type: "value", field: "region", values: ["North"] },
+      { type: "value", field: "category", values: ["Home"] },
+    ] as Filter[],
+    focus: ["North", "Home"],
+  };
+
+  it("keeps the selection and zoom while levels stay in place", () => {
+    expect(keepForLevels(current, current.levels)).toEqual({
+      filters: current.filters,
+      focus: ["North", "Home"],
+    });
+  });
+
+  it("keeps only the unchanged prefix when a level changes", () => {
+    expect(keepForLevels(current, ["region", "product", "category"])).toEqual({
+      filters: [current.filters[0]],
+      focus: ["North"],
+    });
+    expect(keepForLevels(current, ["category", "region"])).toEqual({
+      filters: [],
+      focus: undefined,
+    });
+  });
+
+  it("stops the zoom above the last level", () => {
+    expect(keepForLevels(current, ["region", "category"]).focus).toEqual([
+      "North",
     ]);
   });
 });

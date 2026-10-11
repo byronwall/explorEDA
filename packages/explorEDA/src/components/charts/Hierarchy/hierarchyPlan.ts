@@ -264,6 +264,81 @@ export function planHierarchy({
   };
 }
 
+export interface FocusResolution {
+  /** The node drawn as the whole: the focus, or its deepest ancestor with rows. */
+  node: HierarchyNode;
+  /** Nodes from the first level down to `node`, for breadcrumbs. */
+  trail: HierarchyNode[];
+  /** Labels of focus values that no longer have rows, below `node`. */
+  missing: string[];
+}
+
+const keyOf = (value: datum) =>
+  value == null ? "missing" : categoryKey(categoryValue(value));
+
+/**
+ * Finds the zoomed branch by its values, level by level. A value without
+ * rows stops the walk; the rest of the path is kept as missing crumbs so the
+ * view returns when the rows do.
+ */
+export function resolveFocus(
+  root: HierarchyNode,
+  focus: datum[] | undefined
+): FocusResolution {
+  const trail: HierarchyNode[] = [];
+  let node = root;
+  const values = focus ?? [];
+  let index = 0;
+  for (; index < values.length; index += 1) {
+    const key = keyOf(values[index]!);
+    const child = node.children.find((item) => item.id === `${node.id}/${key}`);
+    // Only a parent can be zoomed into; a leaf has nothing inside it.
+    if (!child || child.weight <= 0 || !child.children.length) {
+      break;
+    }
+    trail.push(child);
+    node = child;
+  }
+  return {
+    node,
+    trail,
+    missing: values
+      .slice(index)
+      .map((value) => (value == null ? "(missing)" : categoryLabel(value))),
+  };
+}
+
+/**
+ * What survives a change of levels. A selection and a zoom are both paths, so
+ * each keeps only the part whose levels stay in place. The zoom never
+ * reaches the last level, which has nothing inside it.
+ */
+export function keepForLevels(
+  settings: Pick<HierarchySettings, "levels" | "filters" | "focus">,
+  levels: string[]
+): Pick<HierarchySettings, "filters" | "focus"> {
+  const changed = levels.findIndex(
+    (field, index) => settings.levels[index] !== field
+  );
+  const same = changed === -1 ? levels.length : changed;
+  const kept = new Set(levels.slice(0, same));
+  const focus = (settings.focus ?? []).slice(
+    0,
+    Math.min(same, levels.length - 1)
+  );
+  return {
+    filters: settings.filters.filter((filter) => kept.has(filter.field)),
+    focus: focus.length ? focus : undefined,
+  };
+}
+
+/** True when a node can fill the chart: it has children to show. */
+export function isZoomable(node: HierarchyNode) {
+  return (
+    node.kind !== "root" && node.children.some((child) => child.weight > 0)
+  );
+}
+
 /** Each node's share of its parent and of the whole. */
 export function shareOf(part: number, whole: number) {
   return whole > 0 ? part / whole : 0;
