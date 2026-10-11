@@ -24,6 +24,7 @@ import type { SchemaGraph } from "@/lib/schema/schemaGraph";
 import type { SchemaProjectEditing } from "./schema/schemaEditing";
 import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { ActiveFilterStatus } from "./ActiveFilterStatus";
+import { LicenseNotice } from "@/license/LicenseNotice";
 import type { ChartLayout } from "@/types/ChartTypes";
 import {
   parseSavedAnalysis,
@@ -33,6 +34,7 @@ import {
   saveToClipboard,
 } from "@/utils/saveDataUtils";
 import {
+  BadgeCheck,
   Calculator,
   Braces,
   Copy,
@@ -888,6 +890,13 @@ export function PlotManager({
                     </kbd>
                   </DropdownMenuItem>
                   <DropdownMenuItem
+                    onClick={() => toggleSettings("license")}
+                    className="flex items-center gap-2"
+                  >
+                    <BadgeCheck className="h-4 w-4" />
+                    License
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
                     onClick={handleRemoveAllCharts}
                     className="flex items-center gap-2 text-destructive"
                   >
@@ -1090,6 +1099,7 @@ export function PlotManager({
             onHighlightChart={highlightChart}
           />
         )}
+        <LicenseNotice onOpen={() => toggleSettings("license")} />
       </div>
     </div>
   );

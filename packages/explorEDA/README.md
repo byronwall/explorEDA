@@ -160,17 +160,17 @@ it everywhere, or target a theme with `[data-eda-theme="…"]`:
 }
 ```
 
-| Variable | Sets |
-| --- | --- |
-| `--eda-headline-font`, `--eda-headline-size`, `--eda-headline-weight`, `--eda-headline-line` | Chart title type |
-| `--eda-headline-color`, `--eda-headline-accent` | Title color and the short rule above it |
-| `--eda-subtitle-font`, `--eda-subtitle-size`, `--eda-subtitle-color` | Subtitle type |
-| `--eda-note-size`, `--eda-note-color` | Source note type |
-| `--eda-axis-tick-size`, `--eda-axis-label-size` | Axis tick and title sizes, in px |
-| `--eda-axis-tick-color`, `--eda-axis-label-color` | Axis text colors |
-| `--eda-panel-surface`, `--eda-panel-rule` | Chart surface and border |
-| `--eda-header-padding` | Space around an editorial headline |
-| `--eda-heat-low`, `--eda-heat-high`, `--eda-heat-mid`, `--eda-heat-negative` | The ramp heatmaps, region maps, and density use |
+| Variable                                                                                     | Sets                                            |
+| -------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `--eda-headline-font`, `--eda-headline-size`, `--eda-headline-weight`, `--eda-headline-line` | Chart title type                                |
+| `--eda-headline-color`, `--eda-headline-accent`                                              | Title color and the short rule above it         |
+| `--eda-subtitle-font`, `--eda-subtitle-size`, `--eda-subtitle-color`                         | Subtitle type                                   |
+| `--eda-note-size`, `--eda-note-color`                                                        | Source note type                                |
+| `--eda-axis-tick-size`, `--eda-axis-label-size`                                              | Axis tick and title sizes, in px                |
+| `--eda-axis-tick-color`, `--eda-axis-label-color`                                            | Axis text colors                                |
+| `--eda-panel-surface`, `--eda-panel-rule`                                                    | Chart surface and border                        |
+| `--eda-header-padding`                                                                       | Space around an editorial headline              |
+| `--eda-heat-low`, `--eda-heat-high`, `--eda-heat-mid`, `--eda-heat-negative`                 | The ramp heatmaps, region maps, and density use |
 
 The package ships no font files. Point a font variable at a webfont the host
 already loads; axis layout measures text again once fonts finish loading, so
@@ -180,6 +180,45 @@ Categorical color scales on the **Theme** palette take the current theme's
 colors, and each category keeps its place across themes. Palette colors
 lighten in dark mode: add a `dark` class to the page or to an ancestor of the
 workspace. Hand-picked colors and fixed palettes stay as chosen.
+
+## License key
+
+explorEDA is free for evaluation, non-commercial use, and small teams.
+Commercial use needs a license from [exploreda.dev/pricing](https://exploreda.dev/pricing).
+Your purchase or trial email contains a key. Pass it to the workspace:
+
+```tsx
+<ExplorEda
+  data={rows}
+  licenseKey={import.meta.env.VITE_EXPLOREDA_LICENSE_KEY}
+/>
+```
+
+Or set it once for every workspace on the page:
+
+```ts
+import { setLicenseKey } from "exploreda/license";
+
+setLicenseKey(process.env.NEXT_PUBLIC_EXPLOREDA_LICENSE_KEY);
+```
+
+The key is checked in the browser, with no network request. Without a valid
+key, everything still works; the status bar shows a small notice and the
+console says why. The key is meant to sit in your client bundle; it names your
+company and is not a secret.
+
+A license covers every version released before its update date, for good.
+After that date, keep using those versions or renew to install newer ones.
+Check a key in CI against the installed version:
+
+```bash
+npx exploreda license check
+```
+
+It reads `EXPLOREDA_LICENSE_KEY` and exits 0 when licensed, 2 when the key is
+missing or expired or this version is newer than the license covers, and 3
+when the key is not valid. Workspace settings has a License tab with the same
+details.
 
 ## Browser requirements
 
@@ -448,7 +487,12 @@ whose view keeps the same charts, filters, and layout.
 import { addSourceFromRows, singleTableProject } from "exploreda/analysis";
 
 const promoted = singleTableProject({ name: "Deliveries", rows, settings });
-const added = addSourceFromRows(promoted.project, promoted.tables, "Routes", routeRows);
+const added = addSourceFromRows(
+  promoted.project,
+  promoted.tables,
+  "Routes",
+  routeRows
+);
 // Render ExplorEdaProject with added.project, added.tables, and promoted.view;
 // schemaFocus={added.sourceId} opens the diagram on the new table.
 ```

@@ -39,6 +39,8 @@ jobs:
 
       - name: Build
         run: pnpm --recursive --if-present run build
+        env:
+          VITE_EXPLOREDA_LICENSE_KEY: ${{ vars.EXPLOREDA_SITE_LICENSE_KEY }}
 
       # A failing demo test stops the deploy before anything is uploaded.
       - name: Test demo
