@@ -18,4 +18,9 @@ export const ARRANGEMENTS: readonly {
     label: "Icicle",
     help: "One column per level, left to right: each box is as tall as its share, so sizes compare along one edge.",
   },
+  {
+    value: "sunburst",
+    label: "Sunburst",
+    help: "One ring per level around the zoomed branch: each arc is as wide as its share. Click the center to step out.",
+  },
 ];

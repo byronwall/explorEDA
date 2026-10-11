@@ -217,10 +217,14 @@ it("switches arrangement in one step, keeping levels, zoom, and filters", async 
   const changes = vi.fn();
   const filters = setup(changes);
   await vi.runAllTimersAsync();
-  const north = screen.getByRole("button", { name: "North: 3 rows, 75% of all" });
+  const north = screen.getByRole("button", {
+    name: "North: 3 rows, 75% of all",
+  });
   fireEvent.keyDown(north, { key: "Enter", shiftKey: true });
   fireEvent.keyDown(
-    screen.getByRole("button", { name: "North › Home: 2 rows, 66.7% of North" }),
+    screen.getByRole("button", {
+      name: "North › Home: 2 rows, 66.7% of North",
+    }),
     { key: "Enter" }
   );
   await vi.runAllTimersAsync();
@@ -230,11 +234,32 @@ it("switches arrangement in one step, keeping levels, zoom, and filters", async 
   fireEvent.click(screen.getByRole("radio", { name: "Icicle" }));
   await vi.runAllTimersAsync();
   expect(changes).toHaveBeenCalledTimes(1);
-  expect(screen.getByRole("group", { name: /as an icicle$/ })).toBeInTheDocument();
+  expect(
+    screen.getByRole("group", { name: /as an icicle$/ })
+  ).toBeInTheDocument();
   expect(filters()).toEqual(before);
   expect(screen.getByTestId("focus").textContent).toBe('["North"]');
   expect(
     screen.getByRole("button", { name: "North › Home: 2 rows, 66.7% of North" })
   ).toHaveAttribute("aria-pressed", "true");
   vi.useRealTimers();
+});
+
+it("draws a sunburst whose center steps out of the zoom", () => {
+  setup();
+  fireEvent.click(screen.getByRole("radio", { name: "Sunburst" }));
+  expect(
+    screen.getByRole("group", { name: /as a sunburst$/ })
+  ).toBeInTheDocument();
+  const north = screen.getByRole("button", {
+    name: "North: 3 rows, 75% of all",
+  });
+  expect(north.tagName.toLowerCase()).toBe("path");
+  expect(
+    screen.queryByRole("button", { name: /^Zoom out/ })
+  ).not.toBeInTheDocument();
+  fireEvent.keyDown(north, { key: "Enter", shiftKey: true });
+  expect(screen.getByTestId("focus").textContent).toBe('["North"]');
+  fireEvent.click(screen.getByRole("button", { name: "Zoom out to All" }));
+  expect(screen.getByTestId("focus").textContent).toBe("null");
 });

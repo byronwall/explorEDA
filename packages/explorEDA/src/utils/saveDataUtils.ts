@@ -567,7 +567,9 @@ function isChart(value: unknown): boolean {
         (value.measureField === undefined ||
           typeof value.measureField === "string") &&
         ["omit", "show"].includes(value.missingLevels as string) &&
-        ["treemap", "icicle"].includes(value.arrangement as string) &&
+        ["treemap", "icicle", "sunburst"].includes(
+          value.arrangement as string
+        ) &&
         (value.maxChildren === undefined || isFiniteNumber(value.maxChildren)) &&
         (value.colorBy === undefined ||
           ["branch", "level", "none"].includes(value.colorBy as string)) &&

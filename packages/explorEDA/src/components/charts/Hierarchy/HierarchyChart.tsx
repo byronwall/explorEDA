@@ -6,7 +6,7 @@ import { formatFieldValue as formatWithSettings } from "@/lib/fieldSettings";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ActionTooltip } from "@/components/ui/tooltip";
-import { Columns3, LayoutDashboard } from "lucide-react";
+import { Columns3, LayoutDashboard, Sun } from "lucide-react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps, datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
@@ -55,13 +55,26 @@ import {
   resolveHierarchyTrace,
 } from "./hierarchyTrace";
 import { ARRANGEMENTS, type Arrangement } from "./arrangements";
-import { layoutIcicle } from "./partitionLayout";
+import {
+  arcPath,
+  layoutIcicle,
+  layoutSunburst,
+  type ArcRect,
+} from "./partitionLayout";
 import { layoutTreemap, type TreemapRect } from "./treemapLayout";
 
 const ARRANGEMENT_ICONS: Record<Arrangement, typeof LayoutDashboard> = {
   treemap: LayoutDashboard,
   icicle: Columns3,
+  sunburst: Sun,
 };
+const ARTICLES: Record<Arrangement, string> = {
+  treemap: "a treemap",
+  icicle: "an icicle",
+  sunburst: "a sunburst",
+};
+/** The sunburst's empty center, as a share of its radius. */
+const HOLE = 0.3;
 
 const LABEL_CHAR = 6.4;
 const HEADER_HEIGHT = 18;
@@ -193,7 +206,7 @@ export function HierarchyChart({
   const [hovered, setHovered] = useState<string | null>(null);
   const [focused, setFocused] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
-  const refs = useRef(new Map<string, SVGRectElement>());
+  const refs = useRef(new Map<string, SVGGraphicsElement>());
   // A first click on a parent selects at once but holds the host's undo
   // step briefly; a second click turns it into a zoom with the old filters.
   const edit = useChartEdit(settings.id);
@@ -278,6 +291,12 @@ export function HierarchyChart({
     [plan, settings.focus]
   );
   const focusNode = resolution.node;
+  const focusParent =
+    resolution.trail.length > 1
+      ? resolution.trail[resolution.trail.length - 2]
+      : resolution.trail.length === 1
+        ? plan.root
+        : undefined;
   // Zooming needs a level below the first; one level has no breadcrumbs.
   const crumbHeight = CRUMB_HEIGHT;
   const arrangement = settings.arrangement ?? "treemap";
@@ -288,7 +307,16 @@ export function HierarchyChart({
     0,
     height - plotTop - margin.bottom - STATUS_LINE_HEIGHT
   );
-  const { rects, tiny } = useMemo(() => {
+  const radius = Math.max(0, Math.min(plotWidth, plotHeight) / 2);
+  const { rects, arcs, tiny } = useMemo(() => {
+    if (arrangement === "sunburst") {
+      const all = layoutSunburst(focusNode, { radius, hole: radius * HOLE });
+      // An arc under a pixel along its outer edge cannot be seen or pointed at.
+      const drawn = all.filter(
+        (arc) => (arc.a1 - arc.a0) * arc.r1 >= 1 && arc.r1 - arc.r0 >= 1
+      );
+      return { rects: [], arcs: drawn, tiny: all.length - drawn.length };
+    }
     const size = { width: plotWidth, height: plotHeight };
     const all =
       arrangement === "icicle"
@@ -299,8 +327,12 @@ export function HierarchyChart({
     const drawn = all.filter(
       (rect) => rect.x1 - rect.x0 >= 1 && rect.y1 - rect.y0 >= 1
     );
-    return { rects: drawn, tiny: all.length - drawn.length };
-  }, [arrangement, focusNode, plotWidth, plotHeight]);
+    return {
+      rects: drawn,
+      arcs: [] as ArcRect[],
+      tiny: all.length - drawn.length,
+    };
+  }, [arrangement, focusNode, plotWidth, plotHeight, radius]);
 
   if (!levels.length) {
     return (
@@ -323,7 +355,7 @@ export function HierarchyChart({
     [plan.root.id, plan.root],
     ...plan.nodes.map((node) => [node.id, node] as const),
   ]);
-  const order = rects.map((rect) => rect.node.id);
+  const order = [...rects, ...arcs].map((mark) => mark.node.id);
   const measureField =
     settings.aggregation === "sum" ? settings.measureField : undefined;
   const format = (value: number) =>
@@ -469,17 +501,85 @@ export function HierarchyChart({
         ? "Click a box to select its branch, double-click to zoom in"
         : "Click a box to select it"));
 
+  /** Events, name, and outline every mark shares, box or arc. */
+  const markProps = (node: HierarchyNode) => {
+    const parent = node.parentId ? nodeById.get(node.parentId) : undefined;
+    const share = parent ? percent(node.weight, parent.weight) : "";
+    const isTraced = traced === node.id;
+    const highlight =
+      node.selected || isTraced || focused === node.id || hovered === node.id;
+    return {
+      stroke: highlight ? "var(--foreground)" : "var(--background)",
+      strokeWidth: node.selected || isTraced ? 2 : 1,
+      strokeDasharray:
+        focused === node.id && !node.selected ? "3 2" : undefined,
+      className: "cursor-pointer outline-none",
+      role: "button",
+      tabIndex: node.id === tabStop ? 0 : -1,
+      "aria-label": `${pathLabel(plan, node)}: ${format(node.weight)} ${unitFor(plan, node.weight)}${parent ? `, ${share} of ${parent.depth ? parent.label : "all"}` : ""}`,
+      "aria-pressed": node.selected,
+      onPointerEnter: () => setHovered(node.id),
+      onPointerLeave: () => setHovered((id) => (id === node.id ? null : id)),
+      onFocus: () => setFocused(node.id),
+      onBlur: () => setHovered((id) => (id === node.id ? null : id)),
+      onClick: (event: MouseEvent) => onMarkClick(event, node),
+      onKeyDown: (event: KeyboardEvent) => handleKey(event, node),
+    };
+  };
+
+  const renderArc = (arc: ArcRect) => {
+    const { node } = arc;
+    const dimmed = plan.hasSelection && node.selectedWeight === 0;
+    const mid = (arc.a0 + arc.a1) / 2;
+    const r = (arc.r0 + arc.r1) / 2;
+    // Labels run along the radius, so the ring's depth is their room and
+    // the arc's length at mid radius must hold one line of text.
+    const fitted =
+      (arc.a1 - arc.a0) * r >= 13 ? fit(node.label, arc.r1 - arc.r0 - 8) : "";
+    // A stub such as "Ele…" says less than no label; the readout names it.
+    const name = fitted === node.label || fitted.length >= 7 ? fitted : "";
+    const degrees = (mid * 180) / Math.PI;
+    const flip = degrees > 180;
+    return (
+      <g key={node.id} data-plan-id={node.id}>
+        <path
+          ref={(element) => {
+            if (element) refs.current.set(node.id, element);
+            else refs.current.delete(node.id);
+          }}
+          d={arcPath(arc)}
+          fillRule="evenodd"
+          fill={node.color}
+          fillOpacity={dimmed ? 0.25 : 0.88}
+          {...markProps(node)}
+        />
+        {name && (
+          <text
+            transform={`rotate(${degrees - 90}) translate(${r},0) rotate(${flip ? 180 : 0})`}
+            textAnchor="middle"
+            dominantBaseline="central"
+            fontSize={11}
+            fontWeight={600}
+            fill={dimmed ? "var(--foreground)" : textOn(node.color)}
+            opacity={dimmed ? 0.6 : 1}
+            pointerEvents="none"
+            aria-hidden="true"
+          >
+            {name}
+          </text>
+        )}
+      </g>
+    );
+  };
+
   const renderRect = (rect: TreemapRect) => {
     const { node } = rect;
     const w = rect.x1 - rect.x0;
     const h = rect.y1 - rect.y0;
     const isParent = node.shown.length > 0 && rect.header > 0;
-    const isTraced = traced === node.id;
     const dimmed = plan.hasSelection && node.selectedWeight === 0;
     const parent = node.parentId ? nodeById.get(node.parentId) : undefined;
     const share = parent ? percent(node.weight, parent.weight) : "";
-    const highlight =
-      node.selected || isTraced || focused === node.id || hovered === node.id;
     const ink = isParent ? "var(--foreground)" : textOn(node.color);
     const name = fit(node.label, w - 8);
     const value = formatShort(node.weight);
@@ -514,24 +614,7 @@ export function HierarchyChart({
           height={Math.max(0, h)}
           fill={node.color}
           fillOpacity={isParent ? (dimmed ? 0.06 : 0.16) : dimmed ? 0.25 : 0.88}
-          stroke={highlight ? "var(--foreground)" : "var(--background)"}
-          strokeWidth={node.selected || isTraced ? 2 : 1}
-          strokeDasharray={
-            focused === node.id && !node.selected ? "3 2" : undefined
-          }
-          className="cursor-pointer outline-none"
-          role="button"
-          tabIndex={node.id === tabStop ? 0 : -1}
-          aria-label={`${pathLabel(plan, node)}: ${format(node.weight)} ${unitFor(plan, node.weight)}${parent ? `, ${share} of ${parent.depth ? parent.label : "all"}` : ""}`}
-          aria-pressed={node.selected}
-          onPointerEnter={() => setHovered(node.id)}
-          onPointerLeave={() =>
-            setHovered((id) => (id === node.id ? null : id))
-          }
-          onFocus={() => setFocused(node.id)}
-          onBlur={() => setHovered((id) => (id === node.id ? null : id))}
-          onClick={(event) => onMarkClick(event, node)}
-          onKeyDown={(event) => handleKey(event, node)}
+          {...markProps(node)}
         />
         {isParent && headerText && (
           <text
@@ -610,9 +693,53 @@ export function HierarchyChart({
         <g
           transform={`translate(${margin.left},${plotTop})`}
           role="group"
-          aria-label={`${plan.levelLabels.join(" › ")} as ${arrangement === "icicle" ? "an icicle" : "a treemap"}`}
+          aria-label={`${plan.levelLabels.join(" › ")} as ${ARTICLES[arrangement]}`}
         >
           {rects.map(renderRect)}
+          {arrangement === "sunburst" && (
+            <g transform={`translate(${plotWidth / 2},${plotHeight / 2})`}>
+              {arcs.map(renderArc)}
+              <g
+                className={focusParent ? "cursor-pointer" : undefined}
+                {...(focusParent && {
+                  role: "button",
+                  tabIndex: 0,
+                  "aria-label": `Zoom out to ${focusParent.depth ? focusParent.label : "All"}`,
+                  onClick: (event: MouseEvent) => {
+                    event.stopPropagation();
+                    zoomTo(focusParent.path);
+                  },
+                  onKeyDown: (event: KeyboardEvent) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      zoomTo(focusParent.path);
+                    }
+                  },
+                })}
+              >
+                <circle
+                  r={Math.max(0, radius * HOLE - 2)}
+                  fill="var(--background)"
+                />
+                <text
+                  textAnchor="middle"
+                  fontSize={12}
+                  className="fill-foreground"
+                  pointerEvents="none"
+                >
+                  <tspan x={0} dy="-0.2em" fontWeight={600}>
+                    {fit(
+                      focusNode.depth ? focusNode.label : "All",
+                      radius * HOLE * 1.7
+                    )}
+                  </tspan>
+                  <tspan x={0} dy="1.3em" className="fill-muted-foreground">
+                    {formatShort(focusNode.weight)}
+                  </tspan>
+                </text>
+              </g>
+            </g>
+          )}
         </g>
       </svg>
       <div

@@ -401,7 +401,7 @@ The [analytical chart guide](analytical-chart-coverage.md) documents current mod
 | `metric-card`          | Active population → count, sum, or average.                                    | Receives filters; source inspection.                      |
 | `map`                  | Coordinates or typed GeoJSON region join.                                      | Point rows or region keys.                                |
 | `sankey`               | Ordered stage columns → row paths and flow weights.                            | Stage values or adjacent stage pair.                      |
-| `hierarchy`            | Nested category fields → treemap or icicle of totals.                          | Branch path, or siblings under one parent.                |
+| `hierarchy`            | Nested category fields → treemap, icicle, or sunburst.                         | Branch path, or siblings under one parent.                |
 | `parallel-coordinates` | Fields → one line per complete row.                                            | Intersected axis filters.                                 |
 | `scatter-matrix`       | Two to ten fields of any type → every pair, distributions on the diagonal.     | Two-field brush or mark; replaces the previous selection. |
 | `ecdf`                 | Numeric values → cumulative shares.                                            | Threshold or numeric span.                                |
