@@ -700,11 +700,11 @@ export const examples: ExampleData[] = [
   },
   {
     id: "message-log",
-    title: "Compose a report graphic",
+    title: "Six years of correspondence",
     description:
-      "Six years of messages with 12 correspondents. Start from a blank artboard: add a title, build one strip of monthly squares, and repeat it for each correspondent.",
+      "Six years of messages with 12 correspondents: one strip of monthly squares per person, darker for busier months, with a count beside each name and a callout on the busiest month.",
     dataset: { rows: "10,376 messages", fields: 5, source: "Synthetic" },
-    shows: ["Blank composition", "Repeated chart units", "Copy as PNG"],
+    shows: ["Monthly strips", "Repeated chart units", "Copy as PNG"],
     icon: LayoutTemplate,
     data: "/datasets/message-log.csv",
     savedData: messageDashboard,

@@ -2,8 +2,10 @@
 id: page-consumer-confidence-does-better-at-900px-tall-with-footer-moved-down
 label: Consumer confidence does better at 900px tall with footer moved down
 type: page
-status: planned
+status: implemented
 parent: page-consumer-confidewnce
+metadata:
+  implementation: Grew the artboard to 850 px and moved the source note below the third row of panels.
 images:
   - id: 2d85cf02-816a-450c-968c-731054da245b
     src: /api/projects/untitled-project/images/page-consumer-confidence-does-better-at-900px-tall-with-footer-moved-down/2d85cf02-816a-450c-968c-731054da245b.png

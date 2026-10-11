@@ -974,13 +974,12 @@ export const exampleCoverage = [
   {
     exampleId: "message-log",
     intent:
-      "Author a report graphic from a blank artboard beside linked views of its data.",
+      "Repeat a strip of monthly squares per correspondent, beside linked views of the same messages.",
     features: {
       "chart:composition": "shown",
       "chart:line": "shown",
       "chart:row": "shown",
       "chart:bar": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -991,7 +990,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:scatter": "shown",
       "chart:bar": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1002,7 +1000,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:line": "shown",
       "chart:row": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1013,7 +1010,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:line": "shown",
       "chart:row": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1024,7 +1020,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:boxplot": "shown",
       "chart:row": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1034,7 +1029,6 @@ export const exampleCoverage = [
     features: {
       "chart:composition": "shown",
       "chart:row": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1045,7 +1039,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:line": "shown",
       "chart:row": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1056,7 +1049,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:row": "shown",
       "chart:bar": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1067,7 +1059,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:line": "shown",
       "chart:row": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1077,7 +1068,6 @@ export const exampleCoverage = [
     features: {
       "chart:composition": "shown",
       "chart:row": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1088,7 +1078,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:row": "shown",
       "chart:bar": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1099,7 +1088,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:line": "shown",
       "chart:row": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1110,7 +1098,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:line": "shown",
       "chart:row": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1121,7 +1108,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:row": "shown",
       "chart:bar": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1132,7 +1118,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:boxplot": "shown",
       "chart:bar": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1143,7 +1128,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:row": "shown",
       "chart:bar": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1154,7 +1138,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:row": "shown",
       "chart:bar": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1165,7 +1148,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:row": "shown",
       "chart:bar": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1175,7 +1157,6 @@ export const exampleCoverage = [
     features: {
       "chart:composition": "shown",
       "chart:row": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1185,7 +1166,6 @@ export const exampleCoverage = [
     features: {
       "chart:composition": "shown",
       "chart:row": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1196,7 +1176,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:row": "shown",
       "chart:bar": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1207,7 +1186,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:row": "shown",
       "chart:bar": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1218,7 +1196,6 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:row": "shown",
       "chart:bar": "shown",
-      "chart:data-table": "shown",
     },
   },
   {
@@ -1228,7 +1205,6 @@ export const exampleCoverage = [
     features: {
       "chart:composition": "shown",
       "chart:row": "shown",
-      "chart:data-table": "shown",
     },
   },
   {

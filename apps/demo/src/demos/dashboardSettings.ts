@@ -1583,8 +1583,11 @@ export const wineChemistryDashboard: SavedDataStructure = {
   ],
 };
 
-// A blank artboard beside the linked views it can draw from, so the
-// composition is authored from scratch.
+/**
+ * Six years of correspondence: one strip of monthly squares per
+ * correspondent, colored by a log ramp of messages, beside linked views of
+ * the same rows.
+ */
 export const messageDashboard = dashboard("Message log", [
   {
     ...base,
@@ -1594,11 +1597,144 @@ export const messageDashboard = dashboard("Message log", [
     layout: layout(0, 0, 12, 7),
     margin: { top: 0, right: 0, bottom: 0, left: 0 },
     composition: {
-      artboard: { width: 960, height: 600, background: "#ffffff" },
-      elements: [],
-      scales: [],
-      calculations: [],
+      artboard: { width: 960, height: 520, background: "#ffffff" },
+      scales: [
+        {
+          id: "x-1",
+          kind: "position",
+          name: "Date by month",
+          field: "Date",
+          interval: "month",
+          domain: "shared",
+        },
+        {
+          id: "value-1",
+          kind: "value",
+          name: "Messages a month",
+          domain: "shared",
+          transform: "log",
+          colors: ["#f4e9df", "#a3241d"],
+        },
+      ],
+      calculations: [
+        {
+          id: "calc-1",
+          name: "Messages",
+          aggregation: "count",
+          population: "repeat",
+          filters: "follow",
+        },
+      ],
       overrides: [],
+      elements: [
+        {
+          id: "title-1",
+          kind: "text",
+          role: "title",
+          name: "Title",
+          text: "Six years of correspondence",
+          x: 32,
+          y: 28,
+          width: 896,
+          fontSize: 26,
+          fontWeight: 700,
+          color: "#1f2328",
+        },
+        {
+          id: "subtitle-1",
+          kind: "text",
+          role: "subtitle",
+          name: "Subtitle",
+          text: "One square per month for each of twelve correspondents, darker for more messages sent or received. Rows run from the busiest correspondent down.",
+          x: 32,
+          y: 64,
+          width: 896,
+          fontSize: 15,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+        {
+          id: "legend-1",
+          kind: "legend",
+          name: "Messages key",
+          x: 192,
+          y: 132,
+          unitId: "unit-1",
+          markId: "mark-1",
+          scaleId: "value-1",
+          direction: "row",
+          fontSize: 11,
+          color: "#1f2328",
+        },
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Correspondents",
+          x: 32,
+          y: 176,
+          frame: { width: 736, height: 18 },
+          label: {
+            show: true,
+            width: 160,
+            fontSize: 12,
+            valueCalcId: "calc-1",
+          },
+          axis: true,
+          marks: [
+            {
+              type: "strip",
+              id: "mark-1",
+              name: "Months",
+              shape: "rect",
+              positionScaleId: "x-1",
+              valueScaleId: "value-1",
+              aggregation: "count",
+              encoding: "color",
+              fill: "#3b6ea8",
+              inset: 1,
+            },
+          ],
+          repeat: {
+            field: "Correspondent",
+            arrangement: "rows",
+            columns: 3,
+            gap: 6,
+            order: "count",
+            limit: 24,
+          },
+        },
+        {
+          id: "note-1",
+          kind: "annotation",
+          name: "Busiest month",
+          text: "Busiest month: {label}, {value} messages",
+          x: 14,
+          y: -24,
+          anchor: {
+            kind: "data",
+            unitId: "unit-1",
+            instanceKey: "Avery Lin",
+            markId: "mark-1",
+            pick: "max",
+          },
+          fontSize: 12,
+          color: "#a3241d",
+          leader: true,
+        },
+        {
+          id: "note-2",
+          kind: "text",
+          role: "note",
+          name: "Note",
+          text: "Illustrative message log generated for this demo: 10,376 messages, January 2019 to December 2024. The count beside each name follows the active filters.",
+          x: 32,
+          y: 488,
+          width: 896,
+          fontSize: 11,
+          fontWeight: 400,
+          color: "#5f6368",
+        },
+      ],
     },
   },
   {
@@ -1635,12 +1771,6 @@ export const messageDashboard = dashboard("Message log", [
     "Words per message",
     "Words",
     layout(4, 11, 3, 6)
-  ),
-  table(
-    "messages-records",
-    "Messages",
-    ["Date", "Correspondent", "Role", "Direction", "Words"],
-    layout(7, 11, 5, 6)
   ),
 ]);
 
@@ -1832,12 +1962,6 @@ export const drivingDashboard = dashboard("Driving", [
     ["Miles per person", "Gas, $ per gallon"]
   ),
   histogram("driving-years", "Years", "Year", layout(6, 8, 6, 5)),
-  table(
-    "driving-rows",
-    "Years",
-    ["Year", "Miles", "Gas"],
-    layout(0, 13, 12, 5)
-  ),
 ]);
 
 /**
@@ -2043,12 +2167,6 @@ export const sparklinesDashboard = dashboard("Big tech", [
     },
   },
   row("sparklines-companies", "Rows by company", "Company", layout(8, 9, 4, 5)),
-  table(
-    "sparklines-rows",
-    "Prices",
-    ["Company", "Date", "Observation", "Open"],
-    layout(0, 14, 12, 5)
-  ),
 ]);
 
 const fanBand = (
@@ -2242,12 +2360,6 @@ export const fanDashboard = dashboard("Forecast fan", [
     xAxisLabel: "Year",
   },
   row("fan-kind", "History or projection", "Kind", layout(8, 7, 4, 5)),
-  table(
-    "fan-rows",
-    "Quarters",
-    ["Measure", "Period", "Kind", "Central", "P10", "P90"],
-    layout(0, 12, 12, 5)
-  ),
 ]);
 
 /**
@@ -2393,12 +2505,6 @@ export const timeUseDashboard = dashboard("Time use", [
   ),
   row("time-use-age", "Age group", "Age group", layout(6, 8, 3, 5)),
   row("time-use-weekday", "Day", "Weekday", layout(9, 8, 3, 5)),
-  table(
-    "time-use-rows",
-    "Diary entries",
-    ["Year", "Activity", "Respondent", "Age group", "Weekday", "Minutes"],
-    layout(0, 13, 12, 5)
-  ),
 ]);
 
 /**
@@ -2543,12 +2649,6 @@ export const mediaDeathsDashboard = dashboard("Media and deaths", [
   },
   row("media-deaths-causes", "Rows by cause", "Cause", layout(0, 9, 6, 6)),
   row("media-deaths-sources", "Rows by source", "Source", layout(6, 9, 6, 6)),
-  table(
-    "media-deaths-rows",
-    "Counts",
-    ["Source", "Cause", "Measure", "Count"],
-    layout(0, 15, 12, 5)
-  ),
 ]);
 
 /**
@@ -2709,12 +2809,6 @@ export const measlesDashboard = dashboard("Measles", [
     xAxisLabel: "Year",
   },
   row("measles-status", "Cell status", "Status", layout(8, 9, 4, 5)),
-  table(
-    "measles-rows",
-    "Cells",
-    ["State", "Year", "Rate", "Status"],
-    layout(0, 14, 12, 5)
-  ),
 ]);
 
 /**
@@ -2853,12 +2947,6 @@ export const causesByAgeDashboard = dashboard("Causes by age", [
   },
   row("causes-list", "Rows by cause", "Cause", layout(0, 8, 4, 6)),
   histogram("causes-ages", "Ages", "Age", layout(4, 8, 8, 6)),
-  table(
-    "causes-rows",
-    "Counts",
-    ["Age", "Cause", "Count"],
-    layout(0, 14, 12, 5)
-  ),
 ]);
 
 /**
@@ -2872,10 +2960,10 @@ export const consumerConfidenceDashboard = dashboard("Consumer confidence", [
     id: "confidence-composition",
     type: "composition",
     title: "Consumer confidence around the world",
-    layout: layout(0, 0, 12, 9),
+    layout: layout(0, 0, 12, 11),
     margin: { top: 0, right: 0, bottom: 0, left: 0 },
     composition: {
-      artboard: { width: 960, height: 760, background: "#ffffff" },
+      artboard: { width: 960, height: 850, background: "#ffffff" },
       scales: [
         {
           id: "n-1",
@@ -3004,7 +3092,7 @@ export const consumerConfidenceDashboard = dashboard("Consumer confidence", [
           name: "Note",
           text: "Source: OECD consumer confidence indicator, via the R Graph Gallery's data file. Each panel's label shows its latest index after the active filters. After the Economist's small-multiples grid.",
           x: 32,
-          y: 724,
+          y: 812,
           width: 896,
           fontSize: 10,
           fontWeight: 400,
@@ -3018,7 +3106,7 @@ export const consumerConfidenceDashboard = dashboard("Consumer confidence", [
       "confidence-line",
       "Average index by month",
       ["Index"],
-      layout(0, 9, 8, 5),
+      layout(0, 11, 8, 5),
       "Index"
     ),
     xField: "Month",
@@ -3031,12 +3119,11 @@ export const consumerConfidenceDashboard = dashboard("Consumer confidence", [
       missingPeriods: "gap",
     },
   },
-  row("confidence-countries", "Rows by country", "Country", layout(8, 9, 4, 5)),
-  table(
-    "confidence-rows",
-    "Country-months",
-    ["Country", "Month", "Index"],
-    layout(0, 14, 12, 5)
+  row(
+    "confidence-countries",
+    "Rows by country",
+    "Country",
+    layout(8, 11, 4, 5)
   ),
 ]);
 
@@ -3192,12 +3279,6 @@ export const pewMeaningDashboard = dashboard("Life's meaning by party", [
   },
   row("pew-topics", "Rows by topic", "Topic", layout(0, 7, 6, 5)),
   row("pew-parties", "Rows by party", "Party", layout(6, 7, 6, 5)),
-  table(
-    "pew-rows",
-    "Shares",
-    ["Topic", "Party", "Share"],
-    layout(0, 12, 12, 4)
-  ),
 ]);
 
 /**
@@ -3350,19 +3431,6 @@ export const incomeLifeDashboard = dashboard("Income and life", [
     "Life expectancy",
     "Life expectancy",
     layout(5, 8, 7, 5)
-  ),
-  table(
-    "income-life-rows",
-    "Economies",
-    [
-      "Country",
-      "Region",
-      "Income",
-      "Population",
-      "GDP per capita",
-      "Life expectancy",
-    ],
-    layout(0, 13, 12, 5)
   ),
 ]);
 
@@ -3529,12 +3597,6 @@ export const covidTilesDashboard = dashboard("Covid tiles", [
     },
   },
   row("covid-tiles-states", "Rows by state", "State", layout(8, 9, 4, 5)),
-  table(
-    "covid-tiles-rows",
-    "State-weeks",
-    ["State", "Date", "Cases per 100k"],
-    layout(0, 14, 12, 5)
-  ),
 ]);
 
 /**
@@ -3764,12 +3826,6 @@ export const covidCompareDashboard = dashboard("Covid compare", [
     },
   },
   row("covid-compare-states", "Rows by state", "State", layout(8, 9, 4, 5)),
-  table(
-    "covid-compare-rows",
-    "Weekly rates",
-    ["State", "Date", "Cases per 100k"],
-    layout(0, 14, 12, 5)
-  ),
 ]);
 
 /**
@@ -3910,19 +3966,6 @@ export const electionsDashboard = dashboard("Presidential margins", [
   },
   row("elections-winner", "Rows by winner", "Winner", layout(0, 9, 4, 5)),
   histogram("elections-margin", "Margins", "Margin", layout(4, 9, 8, 5)),
-  table(
-    "elections-rows",
-    "State-elections",
-    [
-      "State",
-      "Year",
-      "Democratic share",
-      "Republican share",
-      "Margin",
-      "Winner",
-    ],
-    layout(0, 14, 12, 5)
-  ),
 ]);
 
 /**
@@ -4052,12 +4095,6 @@ export const lincolnRidgelineDashboard = dashboard("Lincoln ridgeline", [
     "Daily means",
     "Mean temperature",
     layout(8, 9, 4, 5)
-  ),
-  table(
-    "lincoln-rows",
-    "Days",
-    ["Date", "Month", "Mean temperature", "Max temperature", "Min temperature"],
-    layout(0, 14, 12, 5)
   ),
 ]);
 
@@ -4208,12 +4245,6 @@ export const taxSlopeDashboard = dashboard("Tax revenue slope", [
     "Change 2000–2023",
     layout(4, 9, 8, 5)
   ),
-  table(
-    "tax-rows",
-    "Readings",
-    ["Country", "Code", "Year", "Tax revenue", "Change 2000–2023", "Direction"],
-    layout(0, 14, 12, 5)
-  ),
 ]);
 
 export const titanicWaffleDashboard = dashboard("Titanic waffle", [
@@ -4325,12 +4356,6 @@ export const titanicWaffleDashboard = dashboard("Titanic waffle", [
     layout(3, 9, 3, 5)
   ),
   histogram("titanic-ages", "Ages", "Age", layout(6, 9, 6, 5)),
-  table(
-    "titanic-rows",
-    "Passengers",
-    ["Name", "Class", "Sex", "Age", "Embarked", "Fare", "Fate"],
-    layout(0, 14, 12, 5)
-  ),
 ]);
 
 export const unemploymentStreamDashboard = dashboard("Unemployment stream", [
@@ -4477,12 +4502,6 @@ export const unemploymentStreamDashboard = dashboard("Unemployment stream", [
     "Monthly unemployment rates",
     "Unemployment rate",
     layout(4, 9, 8, 5)
-  ),
-  table(
-    "unemployment-rows",
-    "Rows",
-    ["Industry", "Month", "Unemployed (thousands)", "Unemployment rate"],
-    layout(0, 14, 12, 5)
   ),
 ]);
 
@@ -4639,12 +4658,6 @@ export const populationPyramidDashboard = dashboard("Population pyramids", [
   row("population-year", "Censuses", "Year", layout(0, 9, 4, 5)),
   row("population-sex", "People by sex", "Sex", layout(4, 9, 4, 5)),
   row("population-age", "People by age group", "Age group", layout(8, 9, 4, 5)),
-  table(
-    "population-rows",
-    "Census rows",
-    ["Year", "Age group", "Sex", "People"],
-    layout(0, 14, 12, 5)
-  ),
 ]);
 
 export const gdpBumpDashboard = dashboard("GDP ranks", [
@@ -4780,12 +4793,6 @@ export const gdpBumpDashboard = dashboard("GDP ranks", [
   },
   row("gdp-region", "Economies by region", "Region", layout(0, 9, 4, 5)),
   row("gdp-country", "Economies", "Country", layout(4, 9, 8, 5)),
-  table(
-    "gdp-rows",
-    "Rows",
-    ["Country", "Region", "Year", "GDP (current US$)"],
-    layout(0, 14, 12, 5)
-  ),
 ]);
 
 export const scotusTimelineDashboard = dashboard("Supreme Court seats", [
@@ -4921,21 +4928,6 @@ export const scotusTimelineDashboard = dashboard("Supreme Court seats", [
   ),
   row("scotus-left", "How justices left", "Left by", layout(4, 9, 4, 5)),
   histogram("scotus-years", "Years served", "Years served", layout(8, 9, 4, 5)),
-  table(
-    "scotus-rows",
-    "Justices",
-    [
-      "Justice",
-      "Seat name",
-      "Start",
-      "End",
-      "Years served",
-      "Left by",
-      "Appointer",
-      "Party",
-    ],
-    layout(0, 14, 12, 5)
-  ),
 ]);
 
 export const stocksHorizonDashboard = dashboard("Stock horizons", [
@@ -5040,12 +5032,6 @@ export const stocksHorizonDashboard = dashboard("Stock horizons", [
   },
   row("stocks-company", "Companies", "Company", layout(0, 9, 4, 5)),
   histogram("stocks-prices", "Monthly prices", "Price", layout(4, 9, 8, 5)),
-  table(
-    "stocks-rows",
-    "Months",
-    ["Company", "Symbol", "Month", "Price"],
-    layout(0, 14, 12, 5)
-  ),
 ]);
 
 export const co2SwarmDashboard = dashboard("Emissions swarm", [
@@ -5184,12 +5170,6 @@ export const co2SwarmDashboard = dashboard("Emissions swarm", [
     "CO2 per person",
     layout(4, 9, 8, 5)
   ),
-  table(
-    "co2-rows",
-    "Economies",
-    ["Economy", "Region", "Income group", "CO2 per person", "Population"],
-    layout(0, 14, 12, 5)
-  ),
 ]);
 
 export const titanicMosaicDashboard = dashboard("Titanic mosaic", [
@@ -5304,10 +5284,4 @@ export const titanicMosaicDashboard = dashboard("Titanic mosaic", [
   row("mosaic-sex", "Passengers by sex", "Sex", layout(0, 9, 4, 5)),
   row("mosaic-age", "Passengers by age group", "Age group", layout(4, 9, 4, 5)),
   row("mosaic-port", "Passengers by port", "Embarked", layout(8, 9, 4, 5)),
-  table(
-    "mosaic-rows",
-    "Passengers",
-    ["Name", "Class", "Sex", "Age", "Embarked", "Fare", "Fate"],
-    layout(0, 14, 12, 5)
-  ),
 ]);

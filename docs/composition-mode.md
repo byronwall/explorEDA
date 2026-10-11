@@ -54,7 +54,7 @@ Mark types declare their capabilities through `isXyMark` and `markHasCategories`
 
 Numeric scales accept dates, log spacing, a zero baseline, tidy ends, fixed limits that clip to the frame, and tick labels at steps, at the ends, or not at all. A numeric scale spans every field drawn on it, so a band's widest interval sets the frame.
 
-Every example opens in the demo at `?example=<id>`. `message-log` opens a blank artboard over a 10,376-row message log for authoring the email-style strip from scratch; the other examples open prebuilt. `covid-compare` exercises insets and display windows; `covid-tiles` exercises tile addresses; `titanic-mosaic` exercises weighted repeats.
+Every example opens in the demo at `?example=<id>`. `message-log` draws one strip of monthly squares per correspondent from a 10,376-row message log. `covid-compare` exercises insets and display windows; `covid-tiles` exercises tile addresses; `titanic-mosaic` exercises weighted repeats.
 
 ### Calculations and scope
 
