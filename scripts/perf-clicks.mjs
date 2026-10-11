@@ -22,7 +22,7 @@ const { values: args } = parseArgs({
 });
 
 if (!args.url || args.click.length === 0) {
-  console.error(`Usage: PLAYWRIGHT_DIR=<dir with playwright installed> node scripts/perf-clicks.mjs \\
+  console.error(`Usage: node scripts/perf-clicks.mjs \\
   --url http://localhost:5291/examples/january-flights --view "When delays happened" \\
   --click '[data-chart-id="flights-days-band"] rect.chart-mark' \\
   --click '[data-chart-id="flights-daily"] circle.cursor-pointer@10' \\

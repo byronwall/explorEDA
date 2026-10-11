@@ -40,8 +40,22 @@ pnpm --filter exploreda check-types
 ```
 
 ```bash
-pnpm --filter demo dev --port 5291 --strictPort
+pnpm dev:agent
 ```
+
+`pnpm dev:agent` starts this checkout's demo server in the background, installs packages first in a fresh worktree, waits until it answers, and prints the URL. Each worktree gets its own port, so parallel sessions don't collide. Run it again to get the URL; `pnpm dev:agent --stop` stops it. The server log is `tmp/dev-server.log`. The browser pane's `preview_start` reads the main checkout's launch config, so in a worktree `navigate` to the printed URL instead.
+
+```bash
+pnpm shot /examples/shop-operations --name orders --selector '.react-grid-item:has-text("Order value by category")'
+```
+
+`pnpm shot` saves 2x screenshots at 1280, 783, and 390 px to `tmp/<name>-<width>.png`. It starts the dev server when needed, clears saved workspaces first, and runs with reduced motion. Add `--click <selector>` steps, such as `--click 'role=button[name="Explore the order book"]'` from `/`. The header of `scripts/shot.mjs` lists every option.
+
+```bash
+pnpm check:pr
+```
+
+`pnpm check:pr` fails when a branch changes the `exploreda` package without a changeset, or has a commit with an invalid author. CI runs it and `pnpm check` on every pull request.
 
 ```bash
 pnpm check
@@ -57,7 +71,7 @@ pnpm -s pgm node list --roots --compact --json 2>/dev/null
 pnpm changeset:add minor "What users can now do."
 ```
 
-Format only the files you changed: `npx prettier --write <files>`. Formatting a whole folder rewrites unrelated files. ESLint's `curly` warnings already exist across the codebase, and `pnpm check` does not run ESLint.
+Format only the files you changed: `git status --short | awk '{print $2}' | xargs npx prettier --write`. Formatting a whole folder rewrites unrelated files. ESLint's `curly` warnings already exist across the codebase, and `pnpm check` does not run ESLint.
 
 ## Traps
 
@@ -66,6 +80,8 @@ Format only the files you changed: `npx prettier --write <files>`. Formatting a 
   - The dev server only ever adds Tailwind classes. After changing `@source` or the files Tailwind scans, restart it before you judge the styles.
   - Editor diagnostics there do not resolve the `@/` alias. Trust `check-types`.
 - **zsh expands unquoted globs.** Write `grep -rn x src --include='*.tsx'`, quoted, or use `rg`.
+- **zsh expands a word that starts with `=`.** `echo ====` fails with `=== not found`; print separators with `echo ---`.
+- **macOS has no `timeout`, and a foreground `sleep` is blocked.** `pnpm dev:agent` already waits for the server. To wait on another background command, use `Monitor` or `run_in_background`.
 - **Skip raw research when searching docs.** `docs/intent/*/raw/` holds large HTML: `rg pattern docs --glob '!**/raw/**'`.
 - **A chart title is the grid's drag handle.** A press there starts a react-grid-layout drag, and the grid's placeholder receives the release. `click` and `dblclick` therefore never reach the title. Act on `mousedown` (`event.detail === 2` for a double press, as `useTitleEditing` does) or `mouseup` capture, as Alt-click title tracing does, and stop the press if it must not drag. Mark inputs inside a handle with `data-inplace-editor`, which the grid's `draggableCancel` skips.
 - **Chart details is a modal Radix dialog.** A popover portaled to `<body>` loses focus to the dialog's focus trap, so pass `container={panel.closest("[role='dialog']")}` to `PopoverContent`, as the axis range popover does. The details Escape handler (`hasNestedLayer` in `PlotChartPanel.tsx`) yields to layers outside the dialog, to `[data-inplace-editor]`, and to popover content inside it.
@@ -88,12 +104,15 @@ Format only the files you changed: `npx prettier --write <files>`. Formatting a 
 - Vitest with Testing Library and jsdom. Call `registerAllCharts()` in `beforeAll` before rendering charts.
 - Stub `ResizeObserver`. For pointer gestures, set `window.PointerEvent = MouseEvent` as `ScatterSvg.test.tsx` does.
 - jsdom has no layout: `getBoundingClientRect()` returns zeros, so pass `clientX` and `clientY` values relative to 0.
+- A new demo example in `apps/demo/src/demos/examples.ts` also needs an entry in `coverage.ts` (and, for `chart:row`, the expected list in `coverage.test.ts`). `dashboardText.test.ts` exports and recompiles every example, so invalid settings fail there. Run `pnpm --filter demo exec vitest run src/demos/coverage.test.ts src/dashboardText.test.ts` right after adding one; targeted library tests don't cover it.
+- The demo's `tsc` resolves `exploreda` types from `packages/explorEDA/dist`. After adding a library type, run `pnpm --filter exploreda build` before `pnpm --filter demo exec tsc`.
 - Render `PlotChartPanel` inside `DataLayerProvider` with `charts={[...]}` and read settings back through `useDataLayer`. See `components/__tests__/PlotChartPanel.test.tsx`.
 
 ## Browser checks and screenshots
 
 - AGENTS.md requires real input at 1280, 783, and 390 px.
-- For PR screenshots, use a standalone Playwright script in your scratch directory (`npm i playwright` there; Chromium is already cached). Use `deviceScaleFactor: 2` and `locator.screenshot()` on the panel, saved under `tmp/`.
+- For PR screenshots, run `pnpm shot` (see [Commands](#commands)). It uses the repo's pinned Playwright, whose Chromium build is already cached; don't install another Playwright in a scratch directory. If the browser is missing, it prints the install command.
+- To trigger a composition's trace or right-click menu headlessly, dispatch `click` with `altKey` or a `contextmenu` event at the box of `[data-node="<key>"]`. Playwright's own click aims at the element's center, which an overlapping path can intercept.
 - The built-in browser pane scales its screenshot frame and can show a frame from before the last action. Read state with `javascript_tool` or `read_page`, not from the image.
 - Before reporting that a click was dropped, a render lags, or an interaction is slow, read [Performance checks](performance-checks.md). Confirm with the DOM and measure; don't judge from screenshots. `scripts/perf-clicks.mjs` times real clicks and profiles them.
 - The pane's page is larger than its screenshot frame (for example, 1024 CSS px shown as 800). Clicks by `ref` and clicks by screenshot coordinate use different frames, so pick one per page. Check where a click lands with `document.elementFromPoint`.
