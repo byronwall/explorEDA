@@ -28,7 +28,8 @@ import {
   TryCard,
 } from "./components/chrome";
 import { DocsLink, mdxComponents } from "./components/content";
-import { docsPath, docsTopic } from "./paths";
+import { LiveExample } from "./live/LiveExample";
+import { captureId, docsPath, docsTopic } from "./paths";
 
 const loaded = new Map<string, ComponentType>();
 
@@ -261,6 +262,15 @@ function MissingPage() {
 /** The docs: an index at `/docs` and one page at each `/docs/<topic>`. */
 export function DocsSite() {
   const { pathname } = useLocation();
+  const capture = captureId(pathname);
+  if (capture) {
+    // The docs check screenshots each live example here, without page chrome.
+    return (
+      <main data-docs-capture={capture} className="w-[1100px] p-4">
+        <LiveExample id={capture} capture />
+      </main>
+    );
+  }
   const topic = docsTopic(pathname);
   const page = topic ? findPage(topic) : undefined;
   return (

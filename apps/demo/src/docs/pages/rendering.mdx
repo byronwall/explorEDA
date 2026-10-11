@@ -3,12 +3,30 @@
 <Steps
   label="Data and rendering flow"
   steps={[
-    { title: "Host app", detail: "Loads the rows and the saved workspace settings." },
-    { title: "Data layer", detail: "Keeps source rows, effective fields, and calculations." },
-    { title: "Crossfilter", detail: "Tracks full, peer-filtered, and globally filtered row sets." },
-    { title: "Chart registry", detail: "Selects the scatter or bar definition from saved settings." },
-    { title: "Plan and render", detail: "Builds marks and draws them with Canvas or SVG." },
-    { title: "Saved settings", detail: "Sends settings changes back to the host callback." },
+    {
+      title: "Host app",
+      detail: "Loads the rows and the saved workspace settings.",
+    },
+    {
+      title: "Data layer",
+      detail: "Keeps source rows, effective fields, and calculations.",
+    },
+    {
+      title: "Crossfilter",
+      detail: "Tracks full, peer-filtered, and globally filtered row sets.",
+    },
+    {
+      title: "Chart registry",
+      detail: "Selects the scatter or bar definition from saved settings.",
+    },
+    {
+      title: "Plan and render",
+      detail: "Builds marks and draws them with Canvas or SVG.",
+    },
+    {
+      title: "Saved settings",
+      detail: "Sends settings changes back to the host callback.",
+    },
   ]}
 />
 
@@ -23,7 +41,10 @@ In `scatter-trace`, the raw row T-001 has Units 2, Unit Price 40, Discount 5, Co
 <Terms
   items={[
     ["Full", "Every loaded source row."],
-    ["Peer-filtered", "Every other chart's filter, without the chart's own. A facet can narrow it further."],
+    [
+      "Peer-filtered",
+      "Every other chart's filter, without the chart's own. A facet can narrow it further.",
+    ],
     ["Globally filtered", "Every active chart filter."],
   ]}
 />

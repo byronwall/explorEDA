@@ -5,6 +5,7 @@ import mdx from "@mdx-js/rollup";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import {
+  docsKitDistAlias,
   exploredaSource,
   sourceAlias,
   useLibrarySource,
@@ -44,7 +45,10 @@ export default defineConfig(({ command }) => ({
   base: "/",
 
   resolve: {
-    alias: sourceAlias,
+    alias:
+      command === "serve" && useLibrarySource
+        ? sourceAlias
+        : [...sourceAlias, docsKitDistAlias],
     dedupe: ["react", "react-dom"],
   },
   build: {

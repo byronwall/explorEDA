@@ -12,10 +12,28 @@ Choose a field to group. The selected operation determines what each bar means.
 
 <Terms
   items={[
-    ["Category counts", "A categorical field counts rows in each category. Click a bar to filter."],
-    ["Numeric bins", "A numeric field is binned by default. Drag across bins to filter a snapped range."],
-    ["Grouped summary", "Count rows, or sum or average a measure field, for each group."],
+    [
+      "Category counts",
+      "A categorical field counts rows in each category. Click a bar to filter.",
+    ],
+    [
+      "Numeric bins",
+      "A numeric field is binned by default. Drag across bins to filter a snapped range.",
+    ],
+    [
+      "Grouped summary",
+      "Count rows, or sum or average a measure field, for each group.",
+    ],
   ]}
+/>
+
+## Try it
+
+Drag across the delivery-time bins to filter the channel bars, or click a channel to see which delivery times it covers.
+
+<LiveExample
+  id="bar-histogram"
+  caption="Delivery days in numeric bins beside orders by sales channel, from the order-book example."
 />
 
 ## Selection and row scope
@@ -23,7 +41,8 @@ Choose a field to group. The selected operation determines what each bar means.
 Category-count bars use rows that remain after other chart filters and the current facet. Clicking a category filters linked views. Numeric bins use that same live row set; dragging across bins filters to their snapped numeric range. The count and bin domains use all source rows, which keeps categories and scale positions stable.
 
 <Callout title="Grouped summaries read a different scope.">
-  A named grouped summary calculates from globally filtered rows. When chart filters or facets are active, its row scope can differ from category counts.
+  A named grouped summary calculates from globally filtered rows. When chart
+  filters or facets are active, its row scope can differ from category counts.
 </Callout>
 
 ## Settings and limits
@@ -32,3 +51,9 @@ Set the grouping field, choose category counts or numeric bins, and adjust the b
 
 - Missing or non-finite measurements do not enter numeric bins.
 - Alt-click a bar or use the chart trace action to inspect how it was computed.
+
+## Saved settings
+
+Every setting a bar chart saves. In Dashboard text, write any of them as a path, such as `binCount=20` or `xAxis.scaleType=log`.
+
+<SettingsReference type="bar" />

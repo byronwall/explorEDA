@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 import path from "path";
-import type { AliasOptions, Plugin } from "vite";
+import type { Alias, Plugin } from "vite";
 
 const demoSrc = path.resolve(__dirname, "./src");
 const libraryDir = path.resolve(__dirname, "../../packages/explorEDA");
@@ -37,7 +37,7 @@ export function exploredaSource(): Plugin {
 }
 
 // Both the demo and the library use "@/" for their own src folder.
-export const sourceAlias: AliasOptions = [
+export const sourceAlias: Alias[] = [
   {
     find: /^@\/(.*)$/,
     replacement: "$1",
@@ -49,3 +49,10 @@ export const sourceAlias: AliasOptions = [
     },
   },
 ];
+
+// The docs kit is a library entry the package does not export, so the
+// built package resolves it by file. From source, exploredaSource() maps it.
+export const docsKitDistAlias: Alias = {
+  find: /^exploreda\/docs-kit$/,
+  replacement: path.join(libraryDir, "dist/docs-kit.js"),
+};

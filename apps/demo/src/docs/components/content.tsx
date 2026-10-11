@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { docsPath } from "../paths";
 import { inlineLinkClass, proseClass } from "./chrome";
 import { WorkedOrder } from "./workedOrder";
+import { LiveExample } from "../live/LiveExample";
+import { SettingsReference } from "../reference/SettingsReference";
 
 /** A heading's anchor id, from its visible text. */
 export function slugify(text: string) {
@@ -234,6 +236,8 @@ export const mdxComponents: MDXComponents = {
   CalcChain,
   DocsLink,
   Figure,
+  LiveExample,
+  SettingsReference,
   Steps,
   Terms,
   WorkedOrder,

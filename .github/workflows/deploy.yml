@@ -44,6 +44,15 @@ jobs:
       - name: Test demo
         run: pnpm --filter demo test
 
+      # The docs browser check runs every live example's steps and writes the
+      # screenshots narrow screens show into dist. Any failure stops the
+      # deploy. Set DOCS_VERIFY=warn here to report without failing.
+      - name: Install Chromium for the docs check
+        run: pnpm --filter demo exec playwright install --with-deps chromium
+
+      - name: Check docs in a browser
+        run: pnpm --filter demo docs:verify
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 

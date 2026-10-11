@@ -454,12 +454,21 @@
       {
         "id": "m3",
         "title": "One page fully live and verified in deploy",
-        "status": "planned",
+        "status": "completed",
         "proof": "Bar LiveExample with brush step, generated narrow screenshot, generated settings/DSL reference, docs-verify.mjs in deploy job; localStorage untouched",
         "end_state": "Stale claims and screenshots stop the deploy",
         "outcome": "Bar page has a live, scripted, screenshot-backed example and generated reference, verified in deploy",
         "valid_intermediate_state": "Other pages static; browser gate covers only declared examples",
-        "rollback": "DOCS_VERIFY=warn in the deploy job; revert LiveExample and the deploy step"
+        "rollback": "DOCS_VERIFY=warn in the deploy job; revert LiveExample and the deploy step",
+        "evidence": [
+          "LiveExample mounts public ExplorEda in-page with a focused layout from shopDashboard; no onStateChange persistence; library has no localStorage use",
+          "Scripted steps on /docs/bar: brush Delivery Days 2-4 snaps to 1.5-4.5 and leaves 265 of 500 rows; 265 confirmed independently from the CSV",
+          "Steps render as visible 'Try this' text from the same data the check runs",
+          "SettingsReference for bar and scatter from an unpublished docs-kit entry (CHART_SETTING_KEYS + createDefaultSettings); gate fails on undescribed or stale settings and on chart pages without a reference",
+          "docs-verify.mjs (Playwright + vite preview): 3 pages, 1 live example pass; wrong expected count and wrong chip each fail with page/example/step named; writes dist/docs-shots/example-*.png; checks overflow and screenshot load at 783/390",
+          "deploy.yml installs Chromium and runs docs:verify before upload",
+          "Gate tests 15 pass; full demo suite passes except load-bound timeouts (load average 39) that pass when run alone"
+        ]
       },
       {
         "id": "m4",
@@ -541,6 +550,12 @@
       "event": "milestone-completed",
       "milestone": "m2",
       "note": "MDX docs at /docs/<topic> behind the static gate."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "milestone-completed",
+      "milestone": "m3",
+      "note": "Live example, steps, generated reference, and browser gate on /docs/bar."
     }
   ],
   "closure": null

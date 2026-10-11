@@ -59,7 +59,7 @@ import {
   STORAGE_KEY,
   type SavedViewsSession,
 } from "./savedViewsSession";
-import { docsTopic } from "./docs/paths";
+import { isDocsPath } from "./docs/paths";
 import { examplePath, PROJECT_VIEWER_PATH, VIEWER_PATH } from "./routes";
 
 // The hero's live order book opens the full order book.
@@ -179,7 +179,7 @@ export function LandingPage() {
   const isHome = !isViewer && routeExampleId === null;
   const showCoverage =
     CoverageMatrix !== null && searchParams.get("view") === "coverage";
-  const showDocs = docsTopic(location.pathname) !== null;
+  const showDocs = isDocsPath(location.pathname);
   // A capability link opens an example at the tab that shows it.
   const initialTab = searchParams.get("tab") ?? undefined;
 

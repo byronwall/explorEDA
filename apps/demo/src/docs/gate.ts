@@ -16,6 +16,26 @@ export type DocsGateInput = {
   exampleIds: readonly string[];
   /** The coverage features each example shows or has reviewed. */
   exampleFeatures: Readonly<Record<string, readonly string[]>>;
+  /** Live examples by id: their example, data file, charts, and step charts. */
+  liveExamples: Readonly<
+    Record<
+      string,
+      {
+        exampleId: string;
+        data: string;
+        charts: readonly string[];
+        stepCharts: readonly string[];
+      }
+    >
+  >;
+  /** Files under `public/`, as URL paths such as `/datasets/x.csv`. */
+  publicFiles: readonly string[];
+  /** Every saved setting of each chart type, from the library. */
+  settingKeys: Readonly<Record<string, readonly string[]>>;
+  /** Setting lines shared by every chart type. */
+  commonDescriptions: Readonly<Record<string, string>>;
+  /** Setting lines for one chart type. */
+  chartDescriptions: Readonly<Record<string, Readonly<Record<string, string>>>>;
 };
 
 /**
@@ -91,6 +111,78 @@ export function findDocsErrors(input: DocsGateInput): string[] {
       if (file && !assets.has(file)) {
         errors.push(`${where} imports missing image "${file}"`);
       }
+    }
+  }
+
+  const live = new Set(Object.keys(input.liveExamples));
+  const publicFiles = new Set(input.publicFiles);
+  const referenced = new Set<string>();
+  for (const [topic, source] of Object.entries(input.sources)) {
+    const where = `pages/${topic}.mdx`;
+    for (const [, id] of source.matchAll(/<LiveExample\s+id="([^"]+)"/g)) {
+      if (id && !live.has(id)) {
+        errors.push(`${where} uses missing live example "${id}"`);
+      }
+    }
+    for (const [, type] of source.matchAll(
+      /<SettingsReference\s+type="([^"]+)"/g
+    )) {
+      if (type) referenced.add(type);
+    }
+  }
+  for (const page of input.pages) {
+    const source = input.sources[page.topic];
+    if (
+      page.chartType &&
+      source !== undefined &&
+      !source.includes(`<SettingsReference type="${page.chartType}"`)
+    ) {
+      errors.push(
+        `Page "${page.topic}" has no <SettingsReference type="${page.chartType}" />`
+      );
+    }
+  }
+  for (const [id, spec] of Object.entries(input.liveExamples)) {
+    const where = `Live example "${id}"`;
+    if (!examples.has(spec.exampleId)) {
+      errors.push(`${where} opens unknown example "${spec.exampleId}"`);
+    }
+    if (!publicFiles.has(spec.data)) {
+      errors.push(`${where} loads missing data "${spec.data}"`);
+    }
+    for (const chart of spec.stepCharts) {
+      if (!spec.charts.includes(chart)) {
+        errors.push(`${where} has a step on missing chart "${chart}"`);
+      }
+    }
+  }
+  for (const type of referenced) {
+    const keys = input.settingKeys[type];
+    if (!keys) {
+      errors.push(`Settings reference for unknown chart type "${type}"`);
+      continue;
+    }
+    for (const key of keys) {
+      if (
+        !input.chartDescriptions[type]?.[key] &&
+        !input.commonDescriptions[key]
+      ) {
+        errors.push(`Setting "${type}.${key}" has no description`);
+      }
+    }
+  }
+  for (const [type, lines] of Object.entries(input.chartDescriptions)) {
+    const keys = new Set(input.settingKeys[type] ?? []);
+    for (const key of Object.keys(lines)) {
+      if (!keys.has(key)) {
+        errors.push(`Description for "${type}.${key}", which is not a setting`);
+      }
+    }
+  }
+  const everyKey = new Set(Object.values(input.settingKeys).flat());
+  for (const key of Object.keys(input.commonDescriptions)) {
+    if (!everyKey.has(key)) {
+      errors.push(`Shared description for "${key}", which no chart saves`);
     }
   }
 
