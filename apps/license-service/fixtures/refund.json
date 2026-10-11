@@ -1,0 +1,5 @@
+{
+  "type": "refunded",
+  "eventId": "refund:adj_local_1",
+  "transactionId": "txn_local_1"
+}

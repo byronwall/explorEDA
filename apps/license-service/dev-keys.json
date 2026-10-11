@@ -1,0 +1,6 @@
+{
+  "note": "Development signing key. Public on purpose: keys it signs only count on localhost. Never use it in production.",
+  "kid": "dev-1",
+  "privateKey": "OQUkqhgAWUY6KYM6jaUiV2yk2SvsO2iARwJN7NiowEo",
+  "publicKey": "cWV6BCov2iw60aQzmCMk-5eS3_PCjZ_N1a5Va5vLNOw"
+}

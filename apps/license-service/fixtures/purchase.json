@@ -1,0 +1,12 @@
+{
+  "type": "purchase",
+  "eventId": "evt_local_purchase",
+  "transactionId": "txn_local_1",
+  "subscriptionId": "sub_local_1",
+  "buyer": {
+    "email": "buyer@example.test",
+    "name": "Local Buyer",
+    "company": "Local Test Co"
+  },
+  "items": [{ "product": "commercial", "quantity": 3 }]
+}

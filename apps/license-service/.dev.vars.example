@@ -1,0 +1,8 @@
+# Copy to .dev.vars for `pnpm dev`. Local values only.
+SIGNING_PRIVATE_KEY=OQUkqhgAWUY6KYM6jaUiV2yk2SvsO2iARwJN7NiowEo
+FAKE_WEBHOOK_SECRET=local-fake-secret
+ADMIN_TOKEN=local-admin-token
+# Leave RESEND_API_KEY empty to print emails to the console instead.
+RESEND_API_KEY=
+# Leave empty to skip the Turnstile check locally.
+TURNSTILE_SECRET=
