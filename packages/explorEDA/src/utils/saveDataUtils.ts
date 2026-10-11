@@ -560,6 +560,15 @@ function isChart(value: unknown): boolean {
         ["value", "label"].includes(value.nodeOrder as string) &&
         ["first", "source", "none"].includes(value.flowColor as string)
       );
+    case "hierarchy":
+      return (
+        isStringArray(value.levels) &&
+        ["count", "sum"].includes(value.aggregation as string) &&
+        (value.measureField === undefined ||
+          typeof value.measureField === "string") &&
+        ["omit", "show"].includes(value.missingLevels as string) &&
+        ["treemap"].includes(value.arrangement as string)
+      );
     case "parallel-coordinates":
       return (
         Array.isArray(value.axes) &&

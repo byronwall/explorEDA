@@ -188,6 +188,7 @@ const viewNames: Record<string, string> = {
   pivot: "pivot",
   row: "row",
   sankey: "sankey",
+  hierarchy: "hierarchy",
   scatter: "scatter",
   summary: "summary",
 };

@@ -4,11 +4,11 @@
     "title": "Explore nested categories and their totals",
     "slug": "hierarchy-analysis",
     "scale": "feature",
-    "current_phase": "plan",
+    "current_phase": "execution",
     "last_updated": "2026-10-10",
     "summary": "Add hierarchical reporting charts (treemap, sunburst, icicle) so analysts see which subcategories exist, how large each is, and how parts compare to the whole.",
-    "status": "planned",
-    "next_action": "Implement Milestone 1 (two-level treemap with hierarchyPlan.ts and tests) on a feature branch; Milestone 2 adds zoom."
+    "status": "active",
+    "next_action": "Milestone 2: zoom into a branch with breadcrumbs and a stored focus path."
   },
   "artifacts": {
     "intent_brief": {
@@ -576,10 +576,10 @@
     },
     "dependencies": [
       {
-        "name": "d3-hierarchy",
-        "kind": "library",
+        "name": "squarify/partition layout",
+        "kind": "in-repo code",
         "first_proof_role": "real",
-        "reason": "Squarified treemap and partition layout math; local, deterministic, no provider risk",
+        "reason": "Hand-written in treemapLayout.ts; no new package dependency",
         "fallback": "Hand-write squarify and partition",
         "material": false
       }
@@ -600,12 +600,17 @@
       {
         "id": "m1",
         "title": "A two-level treemap with trustworthy totals",
-        "status": "planned",
+        "status": "completed",
         "proof": "Builder tests; share matches pivot; North › Home filter exact; save/restore and dashboard text round trip; browser at three widths",
         "end_state": "Hierarchy chart with treemap arrangement usable on two levels; changeset (minor) added",
         "outcome": "A user builds a two-level treemap and filters the workspace by branch with exact totals",
         "valid_intermediate_state": "Registered chart with one arrangement; unaffected charts unchanged",
-        "rollback": "Remove the hierarchy registration; no existing chart or saved layout changes."
+        "rollback": "Remove the hierarchy registration; no existing chart or saved layout changes.",
+        "evidence": [
+          "17 Hierarchy tests (model sums, repeated labels, exclusions, selection rules, squarify areas, component click/keyboard)",
+          "pnpm check passed",
+          "Browser: shop Sales mix treemap at 1400/900/390; South $61,008.41 (33.1%) and North › Home $12,151.05 match a CSV sum; clicking North › Home filtered the linked pivot to $12,151.05"
+        ]
       },
       {
         "id": "m2",
@@ -715,6 +720,14 @@
       "action": "Moved zoom into a branch into the first wave as Milestone 2; designed focus as a value path stored in settings with breadcrumbs.",
       "reason": "User feedback on the cut line.",
       "evidence": "Checked keyboard and click conventions in SankeyChart and BarChart, and useTitleEditing double-press handling, at 5cf144d. No implementation."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "status-changed",
+      "status": "active",
+      "action": "Implemented Milestone 1: Hierarchy chart with treemap arrangement.",
+      "reason": "User asked to implement all milestones as stacked PRs.",
+      "evidence": "See milestone m1 evidence."
     }
   ],
   "closure": null,

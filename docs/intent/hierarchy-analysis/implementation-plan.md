@@ -22,7 +22,7 @@ The chart copies Sankey wherever Sankey already answers a question: ordered cate
 - **Primary seam:** `hierarchyPlan.ts` turns rows, settings, the focus, and the selection into path nodes with value, share of parent, share of whole, members, and contributors. Each layout turns those nodes into rectangles or arcs. Renderers never compute totals.
 - **Fast local loop:** `pnpm --filter exploreda exec vitest run src/components/charts/Hierarchy`, then the demo at `pnpm --filter demo dev --port 5291 --strictPort`.
 - **Local dependencies:** Demo datasets only: `shop-10000.csv` (Region → Category → Product) and `categorical_medium.csv` (Category → Subcategory).
-- **Layout math:** Add `d3-hierarchy` for squarified treemap and partition layouts, next to the existing d3 modules. Fallback: hand-write squarify and partition; both are small.
+- **Layout math:** Squarified treemap and partition layouts are hand-written in `treemapLayout.ts` (about 60 lines each) instead of adding `d3-hierarchy` to the published package.
 - **Rollout and rollback:** A new chart type only. No existing chart or saved layout changes, and removing the registration removes the feature.
 
 ## Milestone 1: A two-level treemap with trustworthy totals
