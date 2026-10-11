@@ -18,7 +18,7 @@ export type ScaleDescriptor =
       padding: number;
     }
   | {
-      type: "linear" | "symlog";
+      type: "linear" | "symlog" | "log";
       domain: [number, number];
       range: [number, number];
     };
@@ -37,7 +37,9 @@ export function describeScale(
     };
   }
   return {
-    type: scaleType === "symlog" ? "symlog" : "linear",
+    // A log scale says so itself; a saved type alone may not have applied.
+    type:
+      "base" in scale ? "log" : scaleType === "symlog" ? "symlog" : "linear",
     domain: scale.domain() as [number, number],
     range: scale.range() as [number, number],
   };
@@ -50,7 +52,7 @@ export function buildScale(descriptor: ScaleDescriptor): ChartScale {
       .range(descriptor.range)
       .padding(descriptor.padding);
   }
-  return numericScale({ scaleType: descriptor.type })
+  return numericScale({ scaleType: descriptor.type }, true)
     .domain(descriptor.domain)
     .range(descriptor.range);
 }
@@ -119,6 +121,8 @@ export interface AxisHidden {
 export interface AxisHiddenEnds {
   low?: AxisHidden;
   high?: AxisHidden;
+  /** Rows a log axis cannot place, because they are zero or negative. */
+  nonpositive?: { count: number; unit: [string, string] };
 }
 
 export interface AxisPlan {
@@ -260,6 +264,15 @@ function spacedTicks<T extends number | string>(
     });
 }
 
+/**
+ * A log axis labels powers of ten, adding 2s and 5s only across a short
+ * span, as D3's own log tick format chooses.
+ */
+function logTicks(scale: ScaleLinear<number, number>, requested: number) {
+  const keep = scale.tickFormat(requested);
+  return scale.ticks(requested).filter((tick) => keep(tick) !== "");
+}
+
 function position(scale: ChartScale, tick: number | string) {
   return "bandwidth" in scale
     ? (scale(String(tick)) ?? 0) + scale.bandwidth() / 2
@@ -285,7 +298,12 @@ function planAxis(
   // Density sets the D3 candidate target. Spacing then drops overlapping labels.
   const requested = Math.max(2, input.density ?? 5);
   const candidates: (number | string)[] =
-    input.tickValues ?? (band ? scale.domain() : scale.ticks(requested));
+    input.tickValues ??
+    (band
+      ? scale.domain()
+      : "base" in scale
+        ? logTicks(scale, requested)
+        : scale.ticks(requested));
   const shown = band
     ? candidates
     : spacedTicks(

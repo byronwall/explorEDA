@@ -3,7 +3,8 @@ import { scatterPlotDefinition } from "./definition";
 import { brushFilters, paddedDomain, planScatter } from "./scatterPlan";
 import type { datum } from "@/types/ChartTypes";
 import type { ScaleBand } from "d3-scale";
-import { buildScale } from "../Axis/axisPlan";
+import { buildScale, describeScale } from "../Axis/axisPlan";
+import { numericScale } from "../Axis/numericScale";
 
 function planFor(
   x: datum[],
@@ -225,5 +226,70 @@ describe("points past an axis bound", () => {
     const some = bounded({ max: 6 }, [0, 1, 6]);
     expect(some.axes.x.hidden?.high?.count).toBe(1);
     expect(some.axes.x.scale.domain).toEqual(all.axes.x.scale.domain);
+  });
+});
+
+describe("log scatter axes", () => {
+  function logPlan(x: datum[]) {
+    const settings = scatterPlotDefinition.createDefaultSettings({
+      x: 0,
+      y: 0,
+      w: 4,
+      h: 4,
+    });
+    settings.xField = "x";
+    settings.yField = "y";
+    settings.xAxis = { ...settings.xAxis, scaleType: "log" };
+    const ids = x.map((_, index) => index);
+    return planScatter(
+      settings,
+      {
+        revision: "test",
+        allIds: ids,
+        chartIds: ids,
+        filteredIds: ids,
+        xData: Object.fromEntries(x.map((value, index) => [index, value])),
+        yData: Object.fromEntries(x.map((_, index) => [index, index + 1])),
+        colorData: {},
+        fieldSettings: {},
+      },
+      400,
+      300
+    );
+  }
+
+  it("spans only values above zero and leaves the rest out, counted", () => {
+    const plan = logPlan([-5, 0, 1, 10, 1000]);
+    expect(plan.xScale.type).toBe("log");
+    expect(plan.xScale.domain[0]).toBeGreaterThan(0);
+    expect(plan.points).toHaveLength(3);
+    expect(plan.exclusions.map((item) => item.reason)).toEqual([
+      "nonpositive-x",
+      "nonpositive-x",
+    ]);
+    expect(plan.axes.x.hidden?.nonpositive).toEqual({
+      count: 2,
+      unit: ["row", "rows"],
+    });
+    expect(plan.axes.x.labelText).toMatch(/ · log$/);
+  });
+
+  it("labels decades rather than every step", () => {
+    const plan = logPlan([1, 10, 100, 1000, 10000, 100000]);
+    expect(plan.axes.x.ticks.candidates.length).toBeLessThanOrEqual(8);
+  });
+
+  it("explains a chart whose values are all at or below zero", () => {
+    expect(logPlan([0, -1]).emptyMessage).toMatch(
+      /log scale needs values above zero/
+    );
+  });
+
+  it("keeps a saved log linear where a chart does not allow it", () => {
+    const scale = numericScale({ scaleType: "log" });
+    expect(describeScale(scale, "log").type).toBe("linear");
+    expect(describeScale(numericScale({ scaleType: "log" }, true)).type).toBe(
+      "log"
+    );
   });
 });

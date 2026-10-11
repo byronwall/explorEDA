@@ -80,6 +80,23 @@ export function labelHidden(
 }
 
 /**
+ * Which of a chart's axes can use a true log scale: numeric axes where
+ * distances, not bar lengths from zero, carry the values.
+ */
+export function logAxes(
+  settings: ChartSettings,
+  isNumericField: (field: string) => boolean
+): { x: boolean; y: boolean } {
+  const numeric = numericAxes(settings, isNumericField);
+  switch (settings.type) {
+    case "scatter":
+      return numeric;
+    default:
+      return { x: false, y: false };
+  }
+}
+
+/**
  * Which of a chart's axes show numbers, and so can take bounds. Category,
  * date, and band axes have no range to set.
  */

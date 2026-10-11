@@ -20,7 +20,7 @@ import { useChartEdit } from "./useChartEdit";
 /** How long a pointer may travel from a marker to its details before they close. */
 const CLOSE_DELAY = 200;
 
-type Side = "low" | "high";
+type Side = "low" | "high" | "nonpositive";
 
 interface Notice {
   element: Element;
@@ -48,9 +48,16 @@ function readMarker(element: Element): Notice | undefined {
   const unit = (element.getAttribute("data-hidden-unit") ?? "row|rows").split(
     "|"
   ) as [string, string];
-  if ((axis !== "x" && axis !== "y") || (side !== "low" && side !== "high"))
+  if (
+    (axis !== "x" && axis !== "y") ||
+    (side !== "low" && side !== "high" && side !== "nonpositive")
+  )
     return undefined;
-  if (!Number.isFinite(count) || !Number.isFinite(at)) return undefined;
+  if (!Number.isFinite(count)) return undefined;
+  // A log warning has no bound to reset.
+  if (side === "nonpositive")
+    return { element, axis, side, count, unit, at: 0, atLabel: "", cut: false };
+  if (!Number.isFinite(at)) return undefined;
   const atLabel =
     element.getAttribute("data-hidden-at-label") || formatBound(at);
   const cut = element.hasAttribute("data-hidden-cut");
@@ -169,6 +176,11 @@ export function useHiddenNotice(
   const panel = panelRef.current;
   const name = notice?.axis.toUpperCase();
   const end = notice?.side === "high" ? "maximum" : "minimum";
+  const unit = notice?.count === 1 ? notice.unit[0] : notice?.unit[1];
+  const offLog = notice?.side === "nonpositive";
+  const title = offLog
+    ? `Not on the ${name} log scale`
+    : `Hidden past the ${name} ${end}`;
   const overlay = notice && (
     <Popover
       open
@@ -180,7 +192,7 @@ export function useHiddenNotice(
       <PopoverAnchor virtualRef={{ current: notice.element }} />
       <PopoverContent
         ref={contentRef}
-        aria-label={`Hidden past the ${name} ${end}`}
+        aria-label={title}
         className="eda-axis-range w-[min(16rem,calc(100vw-1.5rem))] p-2.5 text-xs"
         side={notice.axis === "x" ? "top" : "right"}
         align="center"
@@ -206,26 +218,34 @@ export function useHiddenNotice(
             event.preventDefault();
         }}
       >
-        <div className="eda-axis-range-head">
-          Hidden past the {name} {end}
-        </div>
-        <p className="mb-2 leading-snug">
-          {notice.count.toLocaleString()}{" "}
-          {notice.count === 1 ? notice.unit[0] : notice.unit[1]}{" "}
-          {notice.side === "high" ? "above" : "below"} {notice.atLabel}{" "}
-          {notice.count === 1 ? "is" : "are"}{" "}
-          {notice.cut ? "cut off at the edge" : "off the chart"}. They still
-          count in totals and filters.
-        </p>
-        <Button
-          size="sm"
-          variant="outline"
-          className="h-7 gap-1.5 text-xs"
-          onClick={reset}
-        >
-          <RotateCcw aria-hidden="true" className="h-3.5 w-3.5" />
-          Reset {end}
-        </Button>
+        <div className="eda-axis-range-head">{title}</div>
+        {offLog ? (
+          <p className="leading-snug">
+            {notice.count.toLocaleString()} {unit}{" "}
+            {notice.count === 1 ? "has" : "have"} {name} at or below zero. A log
+            scale cannot place them, so they are not drawn. They still count in
+            totals and filters.
+          </p>
+        ) : (
+          <>
+            <p className="mb-2 leading-snug">
+              {notice.count.toLocaleString()} {unit}{" "}
+              {notice.side === "high" ? "above" : "below"} {notice.atLabel}{" "}
+              {notice.count === 1 ? "is" : "are"}{" "}
+              {notice.cut ? "cut off at the edge" : "off the chart"}. They still
+              count in totals and filters.
+            </p>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 gap-1.5 text-xs"
+              onClick={reset}
+            >
+              <RotateCcw aria-hidden="true" className="h-3.5 w-3.5" />
+              Reset {end}
+            </Button>
+          </>
+        )}
       </PopoverContent>
     </Popover>
   );

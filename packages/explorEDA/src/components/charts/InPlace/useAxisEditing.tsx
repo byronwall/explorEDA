@@ -178,7 +178,7 @@ export function useAxisEditing(
       axis,
       element,
       // The drawn title can carry a scale note, such as " · symlog".
-      initial: settings[key] || shown.replace(/ · symlog$/, ""),
+      initial: settings[key] || shown.replace(/ · (symlog|log)$/, ""),
       inherited,
     });
   };
@@ -390,6 +390,7 @@ export function useAxisEditing(
             </div>
             <AxisLimitFields
               autoFocus
+              positive={range.element.getAttribute("data-scale-type") === "log"}
               axisName={range.axis.toUpperCase()}
               limits={settings[`${range.axis}Axis`]?.limits}
               placeholders={

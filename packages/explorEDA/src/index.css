@@ -318,6 +318,14 @@
 .eda-axis-hidden[data-open] path {
   stroke: var(--primary);
 }
+/* A log axis warns about rows at or below zero. */
+.eda-axis-hidden[data-hidden-reason="nonpositive"] path {
+  stroke: var(--warning);
+  stroke-width: 1.75;
+}
+.eda-axis-hidden[data-hidden-reason="nonpositive"] rect {
+  stroke: color-mix(in oklab, var(--warning) 55%, var(--border));
+}
 .eda-axis-hidden:focus-visible rect {
   stroke: var(--ring);
   stroke-width: 2;

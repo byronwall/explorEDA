@@ -25,6 +25,7 @@ import {
   describeScale,
   planAxes,
   planChartMargin,
+  type AxisHiddenEnds,
   type AxisTypography,
   type ChartAxesPlan,
   type ScaleDescriptor,
@@ -193,7 +194,13 @@ export interface ScatterPlan {
   points: ScatterPoint[];
   exclusions: {
     sourceId: IdType;
-    reason: "invalid-x" | "invalid-y" | "invalid-size" | "nonfinite-position";
+    reason:
+      | "invalid-x"
+      | "invalid-y"
+      | "nonpositive-x"
+      | "nonpositive-y"
+      | "invalid-size"
+      | "nonfinite-position";
   }[];
   /** Why nothing is drawn when rows remain but none has a position. */
   emptyMessage?: string;
@@ -264,6 +271,9 @@ function emptyMessage(
   const y = exclusions.some((item) => item.reason === "invalid-y");
   if (x && !y) return `${xLabel} has no numeric values in these rows.`;
   if (y && !x) return `${yLabel} has no numeric values in these rows.`;
+  const reasons = new Set(exclusions.map((item) => item.reason));
+  if (reasons.has("nonpositive-x") || reasons.has("nonpositive-y"))
+    return "A log scale needs values above zero. Choose a linear or symlog scale to show these rows.";
   return `No row has a plottable value for both ${xLabel} and ${yLabel}.`;
 }
 
@@ -427,6 +437,11 @@ export function planScatter(
   const included = new Set(points.map((point) => point.sourceId));
   const unplotted = (axis: ScatterAxisScale, value: datum) =>
     axis.kind === "numeric" && finiteNumber(value) === undefined;
+  // A log axis has no place for zero or a negative value.
+  const offLog = (axis: ScatterAxisScale, value: datum) =>
+    axis.kind === "numeric" &&
+    axis.type === "log" &&
+    (finiteNumber(value) ?? 1) <= 0;
   const exclusions: ScatterPlan["exclusions"] = ids
     .filter((id) => !included.has(id))
     .map((sourceId) => ({
@@ -435,9 +450,13 @@ export function planScatter(
         ? ("invalid-x" as const)
         : unplotted(yAxis, snapshot.yData[sourceId])
           ? ("invalid-y" as const)
-          : size && (finiteNumber(snapshot.sizeData?.[sourceId]) ?? -1) < 0
-            ? ("invalid-size" as const)
-            : ("nonfinite-position" as const),
+          : offLog(xAxis, snapshot.xData[sourceId])
+            ? ("nonpositive-x" as const)
+            : offLog(yAxis, snapshot.yData[sourceId])
+              ? ("nonpositive-y" as const)
+              : size && (finiteNumber(snapshot.sizeData?.[sourceId]) ?? -1) < 0
+                ? ("invalid-size" as const)
+                : ("nonfinite-position" as const),
     }));
 
   const format =
@@ -463,10 +482,11 @@ export function planScatter(
     axis: ScatterAxisScale,
     settingsAxis: AxisSettings,
     field: string,
+    data: Record<IdType, datum>,
     value: (point: (typeof points)[number]) => datum
-  ) => {
+  ): AxisHiddenEnds | undefined => {
     if (axis.kind !== "numeric") return undefined;
-    return labelHidden(
+    const ends = labelHidden(
       hiddenByBounds(
         settingsAxis,
         axis.domain,
@@ -474,9 +494,19 @@ export function planScatter(
       ),
       format(field, axis)
     );
+    // Rows a log axis cannot place are counted on that axis, each once.
+    const nonpositive =
+      axis.type === "log"
+        ? ids.filter((id) => offLog(axis, data[id])).length
+        : 0;
+    return nonpositive
+      ? { ...ends, nonpositive: { count: nonpositive, unit: ["row", "rows"] } }
+      : ends;
   };
   const axisLabel = (label: string, axis: ScatterAxisScale) =>
-    [label, axis.type === "symlog" && "symlog"].filter(Boolean).join(" · ");
+    [label, axis.kind === "numeric" && axis.type !== "linear" && axis.type]
+      .filter(Boolean)
+      .join(" · ");
   const labelSource = (local: string) =>
     local ? ("chart-setting" as const) : ("field-label" as const);
   const axes = planAxes({
@@ -511,6 +541,7 @@ export function planScatter(
         xAxis,
         settings.xAxis,
         settings.xField,
+        snapshot.xData,
         (point) => point.xValue
       ),
     },
@@ -534,6 +565,7 @@ export function planScatter(
         yAxis,
         settings.yAxis,
         settings.yField,
+        snapshot.yData,
         (point) => point.yValue
       ),
     },

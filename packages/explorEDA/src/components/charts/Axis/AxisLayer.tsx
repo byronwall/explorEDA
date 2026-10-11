@@ -201,55 +201,97 @@ export function hiddenPhrase(
   }`;
 }
 
+/** Gap, in pixels, between markers that share a plot corner. */
+const MARKER_STEP = 2 * MARKER_INSET;
+
+/** A warning sign, for rows a log axis cannot place. */
+const WARNING = "M0 -4 L0 1 M0 3.6 L0 3.7";
+
+type MarkerSide = "low" | "high" | "nonpositive";
+
 /**
- * A small marker inside the plot at each end of an axis that hides marks
- * past a bound. It points toward them. Hover or focus opens its count and a
- * reset; the panel's axis editing reads the data attributes to do that.
+ * Small markers inside the plot where an axis does not show every row: at
+ * each end a bound hides marks past, pointing toward them, and a warning at
+ * the low end of a log axis for rows at or below zero. Markers that share
+ * the lower-left corner step apart. Hover or focus opens the details; the
+ * panel's axis editing reads the data attributes to do that.
  */
 function HiddenMarkers({ plan }: { plan: ChartAxesPlan }) {
   const { plotWidth, plotHeight } = plan;
-  const xLow = plan.x.hidden?.low;
-  const at = {
-    "x:low": [MARKER_INSET, plotHeight - MARKER_INSET],
-    "x:high": [plotWidth - MARKER_INSET, plotHeight - MARKER_INSET],
-    "y:high": [MARKER_INSET, MARKER_INSET],
-    // Beside an X minimum marker in the same corner, step up one marker.
-    "y:low": [
-      MARKER_INSET,
-      plotHeight - MARKER_INSET - (xLow ? 2 * MARKER_INSET : 0),
-    ],
-  } as const;
+  const corner = (["x", "y"] as const).flatMap((axis) =>
+    (["low", "nonpositive"] as const).flatMap((side) =>
+      plan[axis].hidden?.[side] ? [`${axis}:${side}`] : []
+    )
+  );
+  const xInCorner = corner.filter((key) => key.startsWith("x")).length;
+  const place = (axis: "x" | "y", side: MarkerSide): [number, number] => {
+    if (side === "high")
+      return axis === "x"
+        ? [plotWidth - MARKER_INSET, plotHeight - MARKER_INSET]
+        : [MARKER_INSET, MARKER_INSET];
+    const index = corner.indexOf(`${axis}:${side}`);
+    // X markers run right along the axis; Y markers stack up above them.
+    return axis === "x"
+      ? [MARKER_INSET + index * MARKER_STEP, plotHeight - MARKER_INSET]
+      : [
+          MARKER_INSET,
+          plotHeight -
+            MARKER_INSET -
+            (xInCorner ? 1 : 0) * MARKER_STEP -
+            (index - xInCorner) * MARKER_STEP,
+        ];
+  };
   const markers = (["x", "y"] as const).flatMap((axis) =>
-    (["low", "high"] as const).flatMap((side) => {
-      const hidden = plan[axis].hidden?.[side];
-      return hidden ? [{ axis, side, hidden }] : [];
-    })
+    (["low", "high", "nonpositive"] as const).flatMap((side) =>
+      plan[axis].hidden?.[side] ? [{ axis, side }] : []
+    )
   );
   if (!markers.length) return null;
   return (
     <g className="eda-axis-hidden-layer">
-      {markers.map(({ axis, side, hidden }) => {
+      {markers.map(({ axis, side }) => {
         const key = `${axis}:${side}` as const;
-        const [x, y] = at[key];
+        const [x, y] = place(axis, side);
+        const common = {
+          className: "eda-axis-hidden",
+          "data-axis-hidden": key,
+          transform: `translate(${x},${y})`,
+          pointerEvents: "auto" as const,
+          tabIndex: 0,
+          role: "button" as const,
+          "aria-haspopup": "dialog" as const,
+        };
+        if (side === "nonpositive") {
+          const off = plan[axis].hidden!.nonpositive!;
+          const unit = off.count === 1 ? off.unit[0] : off.unit[1];
+          return (
+            <g
+              key={key}
+              {...common}
+              data-hidden-reason="nonpositive"
+              data-hidden-count={off.count}
+              data-hidden-unit={off.unit.join("|")}
+              aria-label={`${off.count.toLocaleString()} ${unit} at or below zero are not on the ${axis.toUpperCase()} log scale. Show details`}
+            >
+              <rect x={-7} y={-7} width={14} height={14} rx={3.5} />
+              <path d={WARNING} />
+            </g>
+          );
+        }
+        const hidden = plan[axis].hidden![side]!;
         return (
           <g
             key={key}
-            className="eda-axis-hidden"
-            data-axis-hidden={key}
+            {...common}
             data-hidden-count={hidden.count}
             data-hidden-at={hidden.at}
             data-hidden-at-label={hidden.atLabel}
             data-hidden-cut={hidden.cut || undefined}
             data-hidden-unit={hidden.unit.join("|")}
-            transform={`translate(${x},${y})`}
-            pointerEvents="auto"
-            tabIndex={0}
-            role="button"
-            aria-haspopup="dialog"
             aria-label={`${hiddenPhrase(hidden, axis, side)}. Show details`}
           >
             <rect x={-7} y={-7} width={14} height={14} rx={3.5} />
-            <path d={CHEVRONS[key]} />
+            <path d={CHEVRONS[key as keyof typeof CHEVRONS]} />
           </g>
         );
       })}
