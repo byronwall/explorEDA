@@ -123,6 +123,32 @@ describe("signed strips", () => {
     expect(fill("Ada", "1984")).toBe(valueColorSigned(margin, -2, 20));
   });
 
+  it("caps the ramp at a fixed end, so larger values share the end color", () => {
+    const base = strips();
+    const definition: CompositionDefinition = {
+      ...base,
+      scales: base.scales.map((scale) =>
+        scale.id === "value-1" ? { ...margin, max: 10 } : scale
+      ),
+    };
+    expect(isCompositionDefinition(definition)).toBe(true);
+    const resolved = scene(definition);
+    const drawn = resolved.nodes.filter(
+      (node): node is RectNode => node.type === "rect" && Boolean(node.glyph)
+    );
+    const fill = (state: string, year: string) =>
+      drawn.find(
+        (node) => node.instanceKey === state && node.glyph!.bin.key === year
+      )!.fill;
+    // Ada's +10 now reaches the full high color; Bo's −12 and −20 share the low end.
+    expect(fill("Ada", "1976")).toBe("rgb(0, 0, 255)");
+    expect(fill("Bo", "1980")).toBe(fill("Bo", "1984"));
+    const labels = resolved.nodes
+      .filter((node) => node.type === "text" && node.elementId === "legend-1")
+      .map((node) => (node.type === "text" ? node.lines[0]!.text : ""));
+    expect(labels).toContain("+10");
+  });
+
   it("keeps magnitude mapping for one-way scales", () => {
     const definition = strips();
     const oneWay = {

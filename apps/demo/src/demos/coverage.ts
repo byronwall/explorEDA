@@ -1103,7 +1103,7 @@ export const exampleCoverage = [
   {
     exampleId: "elections",
     intent:
-      "Color each state-election cell by its signed margin through a diverging ramp with a ramp legend.",
+      "Place a strip of eleven elections at each state's tile on a US map, colored by a capped diverging margin ramp.",
     features: {
       "chart:composition": "shown",
       "chart:row": "shown",

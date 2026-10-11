@@ -370,7 +370,8 @@ function isScale(value: unknown) {
         value.stops.every(
           (stop: unknown) => isNumber(stop) && stop >= 0 && stop <= 1
         ))) &&
-    (value.center === undefined || isString(value.center))
+    (value.center === undefined || isString(value.center)) &&
+    (value.max === undefined || (isNumber(value.max) && value.max > 0))
   );
 }
 

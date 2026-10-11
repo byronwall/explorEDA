@@ -731,6 +731,11 @@ function resolveRampLegend(
     }
   }
   if (min === Infinity) min = 0;
+  // A fixed end keys the ramp to it; values past it share the end color.
+  if (scale.max !== undefined) {
+    max = scale.max;
+    min = Math.max(min, scale.center !== undefined ? -scale.max : min);
+  }
   if (shaded && max === 0) {
     min = shaded[0];
     max =

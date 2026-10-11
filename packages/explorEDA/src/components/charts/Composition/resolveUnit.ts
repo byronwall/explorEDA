@@ -979,14 +979,15 @@ export function resolveUnit(
     aggregated[index]!.forEach(({ bins, glyphs }, markIndex) => {
       const { mark, value } = strips[markIndex]!;
       const instanceMax =
-        value.domain === "instance"
+        value.max ??
+        (value.domain === "instance"
           ? Math.max(
               0,
               ...glyphs.map((glyph) =>
                 glyph.missing ? 0 : Math.abs(glyph.value)
               )
             )
-          : (sharedMax.get(value.id) ?? 0);
+          : (sharedMax.get(value.id) ?? 0));
       // An accent recolors this repeat's marks, keeping the template's ramp.
       const accented = override?.accent
         ? {

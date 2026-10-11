@@ -2,8 +2,10 @@
 id: page-how-each-state-voted-is-weak-and-hard-to-read
 label: How each state voted is weak and hard to read
 type: page
-status: planned
+status: implemented
 parent: page-composition-examples
+metadata:
+  implementation: "Replaced the sorted heatmap with a tile map: each state's eleven elections as a strip at its place on a US tile grid, on a diverging ramp capped at 40 points (new value-scale max) so DC no longer washes out every other state."
 images:
   - id: e8a0129c-5f4c-46ad-b0d9-03212a319931
     src: /api/projects/untitled-project/images/page-how-each-state-voted-is-weak-and-hard-to-read/e8a0129c-5f4c-46ad-b0d9-03212a319931.png

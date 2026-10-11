@@ -165,6 +165,11 @@ export interface ValueScale {
    * end, each by their share of the largest absolute value.
    */
   center?: string;
+  /**
+   * A fixed end for the ramp, in the value's units: magnitudes past it take
+   * the end color, so one extreme value does not wash out the rest.
+   */
+  max?: number;
 }
 
 /**
