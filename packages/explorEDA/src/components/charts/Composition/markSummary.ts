@@ -63,9 +63,17 @@ export function describeMark(
         `${scaleName(mark.xScaleId) ?? "?"} · ${mark.lowerField} to ${mark.upperField}`
       );
       break;
-    case "summary":
-      parts.push(`${mark.measureField} by ${mark.groupField}`);
+    case "summary": {
+      parts.push(`quartiles of ${mark.measureField} by ${mark.groupField}`);
+      const shown = mark.parts ?? { band: true, line: true, points: true };
+      const drawn = [
+        shown.band && "band",
+        shown.line && "median line",
+        shown.points && "median dots",
+      ].filter(Boolean);
+      if (drawn.length < 3) parts.push(drawn.join(", ") || "nothing drawn");
       break;
+    }
     case "stack":
       parts.push(
         `${mark.categoryField} · ${
@@ -99,6 +107,8 @@ export function describeMark(
       break;
     case "density":
       parts.push(`${scaleName(mark.xScaleId) ?? "?"} · ${mark.height} height`);
+      if (mark.colorScaleId)
+        parts.push(`shaded by ${scaleName(mark.colorScaleId) ?? "?"}`);
       break;
   }
   if (isXyMark(mark) && mark.frameId) parts.push("in an inset");

@@ -1,0 +1,14 @@
+{
+  "id": "b500538d-ed54-469a-9eb1-7ad8d077896c",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:ce3032",
+    "label": "Agent token ...ce3032"
+  },
+  "createdAt": "2026-10-11T02:43:49.187Z",
+  "summary": "Updated metadata for \"Lincoln ridgeline\".",
+  "nodeIds": [
+    "page-lincoln-ridgeline"
+  ]
+}

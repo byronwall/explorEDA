@@ -10,7 +10,7 @@ import {
 } from "./compositionTypes";
 import { estimateTextWidth } from "./measureText";
 import { resolveComposition, type RectNode } from "./resolveComposition";
-import { valueColorSigned, type CompositionData } from "./resolveUnit";
+import { inkOn, valueColorSigned, type CompositionData } from "./resolveUnit";
 import { isCompositionDefinition } from "./validateComposition";
 
 // Two states, three elections. Ada leans one way, Bo the other, and Bo's
@@ -121,6 +121,72 @@ describe("signed strips", () => {
     expect(fill("Ada", "1976")).not.toBe(fill("Ada", "1984"));
     // A small negative margin is close to the center color, not the low end.
     expect(fill("Ada", "1984")).toBe(valueColorSigned(margin, -2, 20));
+  });
+
+  it("caps the ramp at a fixed end, so larger values share the end color", () => {
+    const base = strips();
+    const definition: CompositionDefinition = {
+      ...base,
+      scales: base.scales.map((scale) =>
+        scale.id === "value-1" ? { ...margin, max: 10 } : scale
+      ),
+    };
+    expect(isCompositionDefinition(definition)).toBe(true);
+    const resolved = scene(definition);
+    const drawn = resolved.nodes.filter(
+      (node): node is RectNode => node.type === "rect" && Boolean(node.glyph)
+    );
+    const fill = (state: string, year: string) =>
+      drawn.find(
+        (node) => node.instanceKey === state && node.glyph!.bin.key === year
+      )!.fill;
+    // Ada's +10 now reaches the full high color; Bo's −12 and −20 share the low end.
+    expect(fill("Ada", "1976")).toBe("rgb(0, 0, 255)");
+    expect(fill("Bo", "1980")).toBe(fill("Bo", "1984"));
+    const labels = resolved.nodes
+      .filter((node) => node.type === "text" && node.elementId === "legend-1")
+      .map((node) => (node.type === "text" ? node.lines[0]!.text : ""));
+    expect(labels).toContain("+10");
+  });
+
+  it("writes each cell's value in readable ink, and a label in missing cells", () => {
+    const base = strips();
+    const unit = base.elements[0] as UnitElement;
+    const definition: CompositionDefinition = {
+      ...base,
+      elements: [
+        {
+          ...unit,
+          marks: [
+            {
+              ...cells,
+              valueLabels: true,
+              missingLabel: "NA",
+              missing: "#ddd",
+            },
+          ],
+        },
+      ],
+    };
+    expect(isCompositionDefinition(definition)).toBe(true);
+    const texts = scene(definition).nodes.filter(
+      (node) => node.type === "text" && node.key.endsWith(":value")
+    );
+    const ada1976 = texts.find(
+      (node) => node.key === "unit-1:Ada:mark-1:1976:value"
+    );
+    expect(ada1976?.type === "text" && ada1976.lines[0]!.text).toBe("10.0");
+    // Every value is written in the ink that reads on its own cell.
+    const drawn = scene(definition).nodes;
+    for (const text of texts) {
+      const cell = drawn.find(
+        (node) => node.type === "rect" && `${node.key}:value` === text.key
+      );
+      expect(text.type === "text" && text.fill).toBe(
+        inkOn(cell?.type === "rect" ? cell.fill : "").fill
+      );
+      expect(text.type === "text" && text.halo).toBeUndefined();
+    }
   });
 
   it("keeps magnitude mapping for one-way scales", () => {

@@ -1,0 +1,16 @@
+{
+  "id": "0d6adbbe-9d44-4979-8d12-7d1d4dafc058",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:46:18.768Z",
+  "summary": "Added 1 images to \"Honestly, other example is better\".",
+  "nodeIds": [
+    "page-honestly-other-example-is-better"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "2170d8f8-1e0a-44e4-a5eb-a95df65c38aa"
+  }
+}

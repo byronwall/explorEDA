@@ -1,0 +1,16 @@
+{
+  "id": "2e799d98-2a7c-46cb-be48-6ac21470b5e4",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:48:54.023Z",
+  "summary": "Created \"Banana yield is good\" under \"Composition examples\".",
+  "nodeIds": [
+    "page-banana-yield-is-good",
+    "page-composition-examples"
+  ],
+  "metadata": {
+    "clientMutationId": "23516b67-7a65-4e72-bd03-3590c957bab2"
+  }
+}

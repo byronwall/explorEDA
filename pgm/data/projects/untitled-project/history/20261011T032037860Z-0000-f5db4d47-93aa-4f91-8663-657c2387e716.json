@@ -1,0 +1,14 @@
+{
+  "id": "f5db4d47-93aa-4f91-8663-657c2387e716",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:213a46",
+    "label": "Agent token ...213a46"
+  },
+  "createdAt": "2026-10-11T03:20:37.860Z",
+  "summary": "Updated metadata for \"Consumer confidence\".",
+  "nodeIds": [
+    "page-consumer-confidewnce"
+  ]
+}

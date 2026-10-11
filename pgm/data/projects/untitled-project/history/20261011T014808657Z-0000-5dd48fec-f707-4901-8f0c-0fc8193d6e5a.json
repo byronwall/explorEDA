@@ -1,0 +1,16 @@
+{
+  "id": "5dd48fec-f707-4901-8f0c-0fc8193d6e5a",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:48:08.657Z",
+  "summary": "Created \"Yield gap is really nice\" under \"Composition examples\".",
+  "nodeIds": [
+    "page-yield-gap-is-really-nice",
+    "page-composition-examples"
+  ],
+  "metadata": {
+    "clientMutationId": "5ea5098f-6bb4-494c-b210-4d0f78f85b87"
+  }
+}

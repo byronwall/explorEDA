@@ -1,0 +1,16 @@
+{
+  "id": "e977bc4f-509d-4411-8648-6baa546849e7",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:25:35.043Z",
+  "summary": "Added 1 images to \"Media deaths\".",
+  "nodeIds": [
+    "page-media-deaths"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "8df341cb-b930-4a8c-a1da-1607c0c5c842"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "d52dd984-243b-47d3-add8-d3b3b3852b71",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:41:34.394Z",
+  "summary": "Added 1 images to \"Pew Meaning\".",
+  "nodeIds": [
+    "page-pew-meaning"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "6843baa9-acab-4f8f-b241-aa15e9b3f656"
+  }
+}

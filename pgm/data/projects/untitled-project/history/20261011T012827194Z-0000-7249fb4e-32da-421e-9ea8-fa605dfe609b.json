@@ -1,0 +1,16 @@
+{
+  "id": "7249fb4e-32da-421e-9ea8-fa605dfe609b",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:28:27.194Z",
+  "summary": "Created \"Time Use\" under \"Composition examples\".",
+  "nodeIds": [
+    "page-time-use",
+    "page-composition-examples"
+  ],
+  "metadata": {
+    "clientMutationId": "05e27f64-217c-4a19-bffc-f1c9111ee0d3"
+  }
+}

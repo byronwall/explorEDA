@@ -1,0 +1,16 @@
+{
+  "id": "2ad5b4b8-7707-467f-bc7a-2882d100440a",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:48:54.865Z",
+  "summary": "Added 1 images to \"Banana yield is good\".",
+  "nodeIds": [
+    "page-banana-yield-is-good"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "c95b2f8a-9546-4131-96b5-f75ab501961e"
+  }
+}

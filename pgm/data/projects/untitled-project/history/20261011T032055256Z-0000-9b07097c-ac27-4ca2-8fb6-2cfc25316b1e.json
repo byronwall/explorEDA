@@ -1,0 +1,14 @@
+{
+  "id": "9b07097c-ac27-4ca2-8fb6-2cfc25316b1e",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:8430f8",
+    "label": "Agent token ...8430f8"
+  },
+  "createdAt": "2026-10-11T03:20:55.256Z",
+  "summary": "Updated metadata for \"Time Use\".",
+  "nodeIds": [
+    "page-time-use"
+  ]
+}

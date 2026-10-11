@@ -1,0 +1,16 @@
+{
+  "id": "62eac190-1359-4390-93be-312ea7eb84cb",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:32:45.642Z",
+  "summary": "Added 1 images to \"An icon would be nice for types\".",
+  "nodeIds": [
+    "page-an-icon-would-be-nice-for-types"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "44411a8c-d346-4eb5-8141-464205d0ebb5"
+  }
+}
