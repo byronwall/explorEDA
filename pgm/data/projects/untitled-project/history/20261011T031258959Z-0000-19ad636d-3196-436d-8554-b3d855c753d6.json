@@ -1,0 +1,14 @@
+{
+  "id": "19ad636d-3196-436d-8554-b3d855c753d6",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:fcd909",
+    "label": "Agent token ...fcd909"
+  },
+  "createdAt": "2026-10-11T03:12:58.959Z",
+  "summary": "Updated metadata for \"Yield gap is really nice\".",
+  "nodeIds": [
+    "page-yield-gap-is-really-nice"
+  ]
+}

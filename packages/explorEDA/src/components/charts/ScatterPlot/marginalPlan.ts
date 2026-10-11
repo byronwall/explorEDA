@@ -91,8 +91,13 @@ export function planMarginals(
     }
     const scale = buildScale(descriptor) as (value: number) => number;
     const [low, high] = descriptor.domain as [number, number];
+    // A log axis bins in equal ratios, so bins keep an even width on screen.
     const edges = Array.from({ length: binCount + 1 }, (_, i) =>
-      i === binCount ? high : low + ((high - low) * i) / binCount
+      i === binCount
+        ? high
+        : descriptor.type === "log"
+          ? low * (high / low) ** (i / binCount)
+          : low + ((high - low) * i) / binCount
     );
     const members = Array.from({ length: binCount }, () => ({
       ids: [] as IdType[],

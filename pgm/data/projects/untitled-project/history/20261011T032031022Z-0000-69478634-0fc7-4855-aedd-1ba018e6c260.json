@@ -1,0 +1,14 @@
+{
+  "id": "69478634-0fc7-4855-aedd-1ba018e6c260",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:8add76",
+    "label": "Agent token ...8add76"
+  },
+  "createdAt": "2026-10-11T03:20:31.022Z",
+  "summary": "Changed \"Causes by age\" status to implemented.",
+  "nodeIds": [
+    "page-causes-by-age"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "a35410d0-6df1-4b71-9205-ff125aea3e28",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:cf342a",
+    "label": "Agent token ...cf342a"
+  },
+  "createdAt": "2026-10-11T02:50:52.517Z",
+  "summary": "Updated metadata for \"I don't really understand this one\".",
+  "nodeIds": [
+    "page-i-don-t-really-understand-this-one"
+  ]
+}

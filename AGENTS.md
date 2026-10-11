@@ -28,6 +28,8 @@
 
 ## Pull requests
 
+- When carrying out an implementation plan, stack one PR per milestone. Open the first PR as soon as it builds, and keep going through every milestone without stopping to ask.
+- Take screenshots with `pnpm shot`; see the [agent guide](docs/agent-guide.md#commands).
 - Include screenshots in the PR description for every visible fix or UI change.
 - Upload them with `gh pr create --attach` or `gh pr edit --attach`. Repeat the flag for each image and add alt text after `#`, as in `--attach 'tmp/shot.png#Rows drawer at 390px'`.
 - To place an image beside the change it shows, reference the local file in the body, such as `![alt](./shot.png)`, and attach the same path. `gh` rewrites the reference to the uploaded URL.

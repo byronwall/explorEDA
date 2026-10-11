@@ -110,6 +110,30 @@ const markers = (definition: CompositionDefinition, liveIds?: number[]) =>
   );
 
 describe("summary marks", () => {
+  it("draws only the parts it is set to: band, median line, median dots", () => {
+    const base = grid();
+    const unit = base.elements[0] as UnitElement;
+    const only = (parts: SummaryMark["parts"]) => {
+      const definition: CompositionDefinition = {
+        ...base,
+        elements: [{ ...unit, marks: [{ ...summary, parts }] }],
+      };
+      expect(isCompositionDefinition(definition)).toBe(true);
+      const kinds = new Set(
+        scene(definition)
+          .nodes.filter((node) => node.key.includes(":mark-1:"))
+          .map((node) => node.type)
+      );
+      return [...kinds].sort();
+    };
+    expect(only(undefined)).toEqual(["area", "circle", "path"]);
+    expect(only({ band: true, line: false, points: false })).toEqual(["area"]);
+    expect(only({ band: false, line: true, points: true })).toEqual([
+      "circle",
+      "path",
+    ]);
+  });
+
   it("computes unweighted quartiles per group and pairs them by repeat", () => {
     const definition = grid();
     expect(isCompositionDefinition(definition)).toBe(true);

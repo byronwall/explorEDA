@@ -1,0 +1,16 @@
+{
+  "id": "01e77bce-7fa1-418c-8c30-ad802587196b",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:38:33.946Z",
+  "summary": "Added 1 images to \"Dragging the annotation around does not update until release\".",
+  "nodeIds": [
+    "page-dragging-the-annotation-around-does-not-update-until-release"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "a6f42c3f-c404-468d-a3f9-e3700bc3bd02"
+  }
+}

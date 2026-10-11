@@ -1,0 +1,15 @@
+{
+  "id": "9f615d48-c16b-4527-a138-27daeff2c555",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:14:47.570Z",
+  "summary": "Created \"Composition examples\".",
+  "nodeIds": [
+    "page-composition-examples"
+  ],
+  "metadata": {
+    "clientMutationId": "7e74f8e7-6a9b-42ee-a73f-7330eaecc6bd"
+  }
+}

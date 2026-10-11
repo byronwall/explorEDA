@@ -1,0 +1,16 @@
+{
+  "id": "c25191ef-a19c-4088-b6ed-b2b39ea30ff5",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:35:08.657Z",
+  "summary": "Created \"Tech sparklines\" under \"Composition examples\".",
+  "nodeIds": [
+    "page-tech-sparklines",
+    "page-composition-examples"
+  ],
+  "metadata": {
+    "clientMutationId": "b94636b4-2953-4dfd-948d-20f15ea48b3a"
+  }
+}

@@ -115,6 +115,57 @@ function dumbbells(): CompositionDefinition {
 const scene = (definition: CompositionDefinition) =>
   resolveComposition(definition, estimateTextWidth, data());
 
+describe("signed value columns", () => {
+  it("writes each sign's text and color in a tinted column under a header", () => {
+    const base = dumbbells();
+    const unit = base.elements[0] as UnitElement;
+    const definition: CompositionDefinition = {
+      ...base,
+      elements: [
+        {
+          ...unit,
+          label: {
+            ...unit.label,
+            valueSigns: {
+              positive: { prefix: "+", suffix: "R", color: "#bf2f24" },
+              negative: { prefix: "+", suffix: "D", color: "#436685" },
+            },
+            valueColumn: { width: 60, header: "Diff", fill: "#eeeeee" },
+          },
+        },
+      ],
+    };
+    expect(isCompositionDefinition(definition)).toBe(true);
+    const resolved = scene(definition);
+    const value = (key: string) =>
+      resolved.nodes.find(
+        (node) => node.type === "text" && node.key === `unit-1:${key}:value`
+      );
+    const faith = value("Faith");
+    const pets = value("Pets");
+    expect(faith?.type === "text" && faith.lines[0]!.text).toBe("+14R");
+    expect(faith?.type === "text" && faith.fill).toBe("#bf2f24");
+    expect(pets?.type === "text" && pets.lines[0]!.text).toBe("+3D");
+    const frame = resolved.elements[0]!.instances![0]!.frame;
+    expect(faith?.type === "text" && faith.x).toBeGreaterThan(
+      frame.x + frame.width
+    );
+    const tints = resolved.nodes.filter(
+      (node): node is RectNode =>
+        node.type === "rect" && node.key.endsWith(":value-column")
+    );
+    expect(tints).toHaveLength(2);
+    expect(
+      resolved.nodes.some(
+        (node) =>
+          node.type === "text" &&
+          node.key === "unit-1:value-header" &&
+          node.lines[0]!.text === "Diff"
+      )
+    ).toBe(true);
+  });
+});
+
 describe("dot rows", () => {
   it("places points and the connector on the frame's middle line without a y scale", () => {
     const definition = dumbbells();

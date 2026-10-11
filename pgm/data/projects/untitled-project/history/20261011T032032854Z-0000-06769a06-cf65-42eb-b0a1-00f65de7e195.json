@@ -1,0 +1,14 @@
+{
+  "id": "06769a06-cf65-42eb-b0a1-00f65de7e195",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:8add76",
+    "label": "Agent token ...8add76"
+  },
+  "createdAt": "2026-10-11T03:20:32.854Z",
+  "summary": "Updated metadata for \"Causes by age\".",
+  "nodeIds": [
+    "page-causes-by-age"
+  ]
+}

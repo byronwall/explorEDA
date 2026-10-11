@@ -1,0 +1,16 @@
+{
+  "id": "6c1f9791-50ef-410c-8738-b9b3e7084646",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:42:24.803Z",
+  "summary": "Added 1 images to \"Distributions overlap in an odd way\".",
+  "nodeIds": [
+    "page-distributions-overlap-in-an-odd-way"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "0571fd7e-5fd3-43e3-8f78-09f053e0834e"
+  }
+}

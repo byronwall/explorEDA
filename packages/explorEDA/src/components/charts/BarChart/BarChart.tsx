@@ -18,7 +18,7 @@ import {
 } from "../ChartStatusLine";
 import { formatFieldValue as formatValue } from "@/lib/fieldSettings";
 import { useGetColumnData, useGetColumnDataForIds } from "../useGetColumnData";
-import { useGetLiveIds } from "../useGetLiveData";
+import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import type { AggregateResult } from "@/lib/aggregates";
 import {
   barAt,
@@ -145,6 +145,30 @@ function SingleBarChart({
     nonce,
   ]);
 
+  // The same aggregate over every row the chart can draw sets the Y domain,
+  // so another chart's filter never rescales this one.
+  const allIds = useGetAllIds(settings);
+  const domainAggregate = useMemo(() => {
+    void aggregates;
+    void fieldSettings;
+    void nonce;
+    if (!settings.aggregateId || aggregateResult) return undefined;
+    const facets = facetIds?.length ? new Set(facetIds) : undefined;
+    return getAggregateResult(
+      settings.aggregateId,
+      facets ? allIds.filter((id) => facets.has(id)) : allIds
+    );
+  }, [
+    settings.aggregateId,
+    aggregateResult,
+    getAggregateResult,
+    aggregates,
+    fieldSettings,
+    allIds,
+    facetIds,
+    nonce,
+  ]);
+
   const typography = useAxisTypography();
   const themeColors = useThemeColors();
   const plan = useMemo(
@@ -161,6 +185,7 @@ function SingleBarChart({
           fieldData,
           fieldType: fieldSettings[settings.field]?.type,
           aggregate: aggregateResult ?? resolvedAggregate,
+          domainAggregate,
         },
         getColor: (value) =>
           getColorForValue(settings.colorScaleId, value, themeColors.mark),
@@ -193,6 +218,7 @@ function SingleBarChart({
       fieldSettings,
       aggregateResult,
       resolvedAggregate,
+      domainAggregate,
       getColorForValue,
       aggregateScope,
       facetIds,

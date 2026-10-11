@@ -11,7 +11,7 @@ import {
 } from "./compositionTypes";
 import { estimateTextWidth } from "./measureText";
 import { resolveComposition, type RectNode } from "./resolveComposition";
-import type { CompositionData } from "./resolveUnit";
+import { inkOn, type CompositionData } from "./resolveUnit";
 import { isCompositionDefinition } from "./validateComposition";
 
 // Two sources. Deaths: cancer 3, heart 2 (so 60% and 40%). Press: heart 1,
@@ -194,5 +194,127 @@ describe("stack marks", () => {
     });
     expect(mark.colors).toBe(STACK_COLORS);
     expect(isCompositionDefinition(converted)).toBe(true);
+  });
+});
+
+describe("stacks across bars", () => {
+  it("runs segments left to right in first-seen order, joined row to row", () => {
+    const base = columns({
+      order: "first",
+      direction: "across",
+      connect: true,
+      labelContent: "share",
+      texture: "hand",
+    });
+    const unit = base.elements[0] as UnitElement;
+    const definition: CompositionDefinition = {
+      ...base,
+      elements: [
+        {
+          ...unit,
+          frame: { width: 200, height: 20 },
+          repeat: { ...unit.repeat, arrangement: "rows", gap: 30 },
+        },
+      ],
+    };
+    expect(isCompositionDefinition(definition)).toBe(true);
+    const resolved = resolveComposition(definition, estimateTextWidth, data());
+    const deaths = resolved.nodes.filter(
+      (node): node is RectNode =>
+        node.type === "rect" &&
+        node.instanceKey === "Deaths" &&
+        Boolean(node.glyph?.stack)
+    );
+    // Cancer appears first in the rows, so it leads even with a smaller total.
+    expect(deaths.map((node) => node.glyph!.bin.key)).toEqual([
+      "Cancer",
+      "Heart",
+    ]);
+    const frame = resolved.elements[0]!.instances![0]!.frame;
+    expect(deaths[0]!.x).toBe(frame.x);
+    expect(deaths[0]!.width).toBeCloseTo(120);
+    expect(deaths[1]!.x).toBeCloseTo(frame.x + 120);
+    expect(deaths[0]!.height).toBe(20);
+    expect(deaths[0]!.texture).toBe("hand");
+    const label = resolved.nodes.find(
+      (node) =>
+        node.type === "text" && node.key === "unit-1:Deaths:mark-1:Cancer:label"
+    );
+    expect(label?.type === "text" && label.lines[0]!.text).toBe("60%");
+    // No category but the last is shared by neighboring rows here.
+    expect(
+      resolved.nodes.some(
+        (node) => node.type === "line" && node.key.endsWith(":connector")
+      )
+    ).toBe(false);
+  });
+
+  it("joins each shared category's edge from one row to the next", () => {
+    const shares: Record<string, datum>[] = [
+      { Class: "A", Item: "Rent", Share: 20 },
+      { Class: "A", Item: "Food", Share: 80 },
+      { Class: "B", Item: "Rent", Share: 50 },
+      { Class: "B", Item: "Food", Share: 50 },
+    ];
+    const ids = shares.map((_, id) => id);
+    const definition: CompositionDefinition = {
+      ...createEmptyComposition(),
+      elements: [
+        {
+          id: "unit-1",
+          kind: "unit",
+          name: "Classes",
+          x: 0,
+          y: 0,
+          frame: { width: 100, height: 10 },
+          label: { show: false, width: 0, fontSize: 12 },
+          axis: false,
+          marks: [
+            {
+              ...stack,
+              categoryField: "Item",
+              measureField: "Share",
+              order: "first",
+              direction: "across",
+              connect: true,
+            },
+          ],
+          repeat: {
+            field: "Class",
+            arrangement: "rows",
+            columns: 1,
+            gap: 20,
+            order: "label",
+            limit: 24,
+          },
+        },
+      ],
+    };
+    const [connector, ...rest] = resolveComposition(
+      definition,
+      estimateTextWidth,
+      {
+        allIds: ids,
+        liveIds: ids,
+        column: (field) =>
+          Object.fromEntries(shares.map((row, id) => [id, row[field]])),
+      }
+    ).nodes.filter(
+      (node) => node.type === "line" && node.key.endsWith(":connector")
+    );
+    expect(rest).toHaveLength(0);
+    // From the end of A's rent at its bottom to the end of B's rent at its top.
+    expect(connector).toMatchObject({ x1: 20, y1: 10, x2: 50, y2: 30 });
+  });
+});
+
+describe("label ink", () => {
+  it("writes dark ink on light fills and white on dark ones, without a halo", () => {
+    expect(inkOn("#edc948")).toEqual({ fill: "#1f2328" });
+    expect(inkOn("#4e79a7")).toEqual({ fill: "#ffffff" });
+    expect(inkOn("#fff")).toEqual({ fill: "#1f2328" });
+    expect(inkOn("rgb(20, 40, 60)")).toEqual({ fill: "#ffffff" });
+    // A named color keeps ink on a white halo.
+    expect(inkOn("teal")).toEqual({ fill: "#1f2328", halo: "#ffffff" });
   });
 });

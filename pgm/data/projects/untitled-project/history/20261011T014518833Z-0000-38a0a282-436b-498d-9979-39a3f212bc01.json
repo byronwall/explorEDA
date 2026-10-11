@@ -1,0 +1,16 @@
+{
+  "id": "38a0a282-436b-498d-9979-39a3f212bc01",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:45:18.833Z",
+  "summary": "Created \"This is a fairly boring plot\" under \"Lincoln ridgeline\".",
+  "nodeIds": [
+    "page-this-is-a-fairly-boring-plot",
+    "page-lincoln-ridgeline"
+  ],
+  "metadata": {
+    "clientMutationId": "4998e9a6-ffe1-4b4b-88e6-ad70686877e6"
+  }
+}
