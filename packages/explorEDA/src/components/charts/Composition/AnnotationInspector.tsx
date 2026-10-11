@@ -461,6 +461,15 @@ export function GuideProperties({
             onChange({ shade: shade === "none" ? undefined : shade })
           }
         />
+        <Label htmlFor={`${id}-repeats`}>Only in</Label>
+        <Input
+          id={`${id}-repeats`}
+          placeholder="Every repeat; or list values, such as GDP growth"
+          value={guide.repeats ?? ""}
+          onChange={(event) =>
+            onChange({ repeats: event.target.value || undefined })
+          }
+        />
         <Label htmlFor={`${id}-label`}>Label</Label>
         <Input
           id={`${id}-label`}

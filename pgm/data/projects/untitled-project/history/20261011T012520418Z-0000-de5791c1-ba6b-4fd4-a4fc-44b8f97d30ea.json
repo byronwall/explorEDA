@@ -1,0 +1,16 @@
+{
+  "id": "de5791c1-ba6b-4fd4-a4fc-44b8f97d30ea",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:25:20.418Z",
+  "summary": "Created \"Media deaths\" under \"Composition examples\".",
+  "nodeIds": [
+    "page-media-deaths",
+    "page-composition-examples"
+  ],
+  "metadata": {
+    "clientMutationId": "503c31cd-a36b-4070-a2a4-734b9f0cf762"
+  }
+}

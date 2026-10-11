@@ -1,0 +1,16 @@
+{
+  "id": "8ea76440-fcb0-445a-a029-0fb1f6a24e89",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:35:35.173Z",
+  "summary": "Created \"I don't really understand this one\" under \"Tech sparklines\".",
+  "nodeIds": [
+    "page-i-don-t-really-understand-this-one",
+    "page-tech-sparklines"
+  ],
+  "metadata": {
+    "clientMutationId": "86288489-7764-4a45-872c-cb00e7158b0e"
+  }
+}

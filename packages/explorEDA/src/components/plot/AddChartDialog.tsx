@@ -79,7 +79,10 @@ function useElementSize() {
 
 /** Chart types grouped by the question they answer, in display order. */
 const CHART_GROUPS: Array<{ label: string; keys: string[] }> = [
-  { label: "Compare categories", keys: ["row", "bar", "pivot", "heatmap"] },
+  {
+    label: "Compare categories",
+    keys: ["row", "bar", "pivot", "heatmap", "hierarchy"],
+  },
   { label: "Distribution", keys: ["histogram", "boxplot", "ecdf"] },
   {
     label: "Relationships",

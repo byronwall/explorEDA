@@ -1,0 +1,14 @@
+{
+  "id": "cfb5e0cd-4b62-4bae-a262-7c09180ae79b",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:c26bec",
+    "label": "Agent token ...c26bec"
+  },
+  "createdAt": "2026-10-11T03:20:40.449Z",
+  "summary": "Updated metadata for \"Driving shifts\".",
+  "nodeIds": [
+    "page-driving-shifts"
+  ]
+}

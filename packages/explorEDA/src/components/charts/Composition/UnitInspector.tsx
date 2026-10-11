@@ -1,12 +1,28 @@
 import { FieldSelector } from "@/components/FieldSelector";
 import { NumericInputEnter } from "@/components/NumericInputEnter";
 import { Button } from "@/components/ui/button";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { describeMark } from "./markSummary";
-import { Plus, Trash2 } from "lucide-react";
-import { useEffect, useId, useRef, useState } from "react";
+import {
+  AreaChart,
+  BarChartHorizontal,
+  CandlestickChart,
+  GanttChart,
+  Grid3x3,
+  Layers,
+  LayoutGrid,
+  Mountain,
+  Plus,
+  ScatterChart,
+  Spline,
+  Trash2,
+  Waves,
+  type LucideIcon,
+} from "lucide-react";
+import { Fragment, useEffect, useId, useRef, useState } from "react";
 import {
   createInset,
   MUTED_MARK,
@@ -32,6 +48,8 @@ import {
   type StackMark,
   type StripMark,
   type SummaryMark,
+  type SummaryParts,
+  type ValueSign,
   type UnitElement,
   isXyMark,
 } from "./compositionTypes";
@@ -199,71 +217,81 @@ const SHAPES = [
   },
 ];
 
+/** A mark type's name beside an icon of what it draws. */
+function TypeLabel({ icon: Icon, text }: { icon: LucideIcon; text: string }) {
+  return (
+    <span className="inline-flex items-center gap-1">
+      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+      {text}
+    </span>
+  );
+}
+
 const MARK_TYPES = [
   {
     value: "strip" as const,
-    label: "Strip",
+    label: <TypeLabel icon={LayoutGrid} text="Strip" />,
     tooltip:
       "One glyph per bin along a position scale, colored or sized by an aggregate",
   },
   {
     value: "point" as const,
-    label: "Points",
+    label: <TypeLabel icon={ScatterChart} text="Points" />,
     tooltip: "One circle per row at numeric x and y",
   },
   {
     value: "path" as const,
-    label: "Path",
+    label: <TypeLabel icon={Spline} text="Path" />,
     tooltip:
       "One line through the rows in the order of a field, such as year, at numeric x and y",
   },
   {
     value: "span" as const,
-    label: "Span",
+    label: <TypeLabel icon={GanttChart} text="Span" />,
     tooltip:
       "One bar per row from a start field to an end field along x, filling the frame's height: a timeline when the unit repeats as rows.",
   },
   {
     value: "band" as const,
-    label: "Band",
+    label: <TypeLabel icon={AreaChart} text="Band" />,
     tooltip:
       "A filled area between two fields along x, such as a forecast's 10th to 90th percentile. Layer several, widest first.",
   },
   {
     value: "stack" as const,
-    label: "Stack",
+    label: <TypeLabel icon={Layers} text="Stack" />,
     tooltip:
       "One column per repeat, its categories stacked from the bottom as shares of the repeat's total. Filtering the rows recomputes the total.",
   },
   {
     value: "bar" as const,
-    label: "Bar",
+    label: <TypeLabel icon={BarChartHorizontal} text="Bar" />,
     tooltip:
       "One bar per repeat, or per category, whose length is a count, sum, or average of the repeat's rows. One category can mirror leftward, as a population pyramid.",
   },
   {
     value: "waffle" as const,
-    label: "Waffle",
+    label: <TypeLabel icon={Grid3x3} text="Waffle" />,
     tooltip:
       "A grid of cells per repeat, one per row or per a set number of rows, grouped and colored by a category. Filtering the rows redraws the cells.",
   },
   {
     value: "horizon" as const,
-    label: "Horizon",
+    label: <TypeLabel icon={Waves} text="Horizon" />,
     tooltip:
       "A measure across x read from a baseline and cut into bands that stack over one another, so a short row holds a wide range; drops mirror upward in a second color.",
   },
   {
     value: "density" as const,
-    label: "Density",
+    label: <TypeLabel icon={Mountain} text="Density" />,
     tooltip:
       "The distribution of a numeric field in each repeat as a smoothed curve filled to the baseline. Overlap rows with a negative gap for a ridgeline.",
   },
   {
     value: "summary" as const,
-    label: "Summary",
+    label: <TypeLabel icon={CandlestickChart} text="Summary" />,
     tooltip:
-      "Quartiles and the median of a measure for each group in the repeat, such as two years side by side. Markers color by the change in median.",
+      "Splits each repeat's rows into groups, such as years, and computes a measure's quartiles in each. Draws the middle half as a band, the medians as dots, and a line joining them; each part can be turned off. A value scale can color the medians by their change from the first group to the last.",
   },
 ];
 
@@ -517,6 +545,30 @@ export function UnitProperties({
               </select>
             </>
           )}
+          {unit.label.show &&
+            unit.label.valueCalcId &&
+            unit.repeat.arrangement === "rows" && (
+              <LabelValueFields
+                unit={unit}
+                onChange={(label) => onChange({ label })}
+              />
+            )}
+          {unit.label.show && (
+            <NumberSetting
+              label="Name every"
+              min={1}
+              max={100}
+              value={unit.label.every ?? 1}
+              onChange={(every) =>
+                onChange({
+                  label: {
+                    ...unit.label,
+                    every: every > 1 ? every : undefined,
+                  },
+                })
+              }
+            />
+          )}
           {unit.label.show && unit.repeat.arrangement === "rows" && (
             <NumberSetting
               label="Label width"
@@ -535,6 +587,32 @@ export function UnitProperties({
             options={SHOWN}
             onChange={(axis) => onChange({ axis })}
           />
+          {unit.axis && (
+            <>
+              <Label htmlFor={`${nameId}-x-title`}>X title</Label>
+              <Input
+                id={`${nameId}-x-title`}
+                placeholder="What x measures, such as Age"
+                value={unit.axisTitles?.x ?? ""}
+                onChange={(event) =>
+                  onChange({
+                    axisTitles: axisTitles(unit, { x: event.target.value }),
+                  })
+                }
+              />
+              <Label htmlFor={`${nameId}-y-title`}>Y title</Label>
+              <Input
+                id={`${nameId}-y-title`}
+                placeholder="What y measures"
+                value={unit.axisTitles?.y ?? ""}
+                onChange={(event) =>
+                  onChange({
+                    axisTitles: axisTitles(unit, { y: event.target.value }),
+                  })
+                }
+              />
+            </>
+          )}
           <PairSetting
             label="Position"
             names={["X", "Y"]}
@@ -555,6 +633,163 @@ export function UnitProperties({
       />
     </>
   );
+}
+
+const NO_SIGNS = {
+  positive: { prefix: "+", suffix: "", color: "#1f2328" },
+  negative: { prefix: "−", suffix: "", color: "#1f2328" },
+};
+
+/**
+ * Where a row's calculated value shows and how its sign reads: beside the
+ * name or in a tinted column after the frame, with each sign's own text
+ * and color, such as +14R in red and +6D in blue.
+ */
+function LabelValueFields({
+  unit,
+  onChange,
+}: {
+  unit: UnitElement;
+  onChange: (label: UnitElement["label"]) => void;
+}) {
+  const id = useId();
+  const label = unit.label;
+  const column = label.valueColumn;
+  const signs = label.valueSigns;
+  const setSign = (
+    side: "positive" | "negative",
+    patch: Partial<ValueSign>
+  ) => {
+    const current = signs ?? NO_SIGNS;
+    onChange({
+      ...label,
+      valueSigns: { ...current, [side]: { ...current[side], ...patch } },
+    });
+  };
+  return (
+    <>
+      <span className="eda-setting-label">Value at</span>
+      <Segmented
+        label="Label value place"
+        value={column ? "column" : "name"}
+        options={[
+          {
+            value: "name" as const,
+            label: "Name",
+            tooltip: "Right-aligned in the label column, beside each name",
+          },
+          {
+            value: "column" as const,
+            label: "Column",
+            tooltip: "In its own tinted column after the frame, under a header",
+          },
+        ]}
+        onChange={(place) =>
+          onChange({
+            ...label,
+            valueColumn:
+              place === "column"
+                ? { width: 64, header: "", fill: "#f1efe9" }
+                : undefined,
+          })
+        }
+      />
+      {column && (
+        <>
+          <Label htmlFor={`${id}-header`}>Header</Label>
+          <Input
+            id={`${id}-header`}
+            placeholder="Such as Diff"
+            value={column.header ?? ""}
+            onChange={(event) =>
+              onChange({
+                ...label,
+                valueColumn: {
+                  ...column,
+                  header: event.target.value || undefined,
+                },
+              })
+            }
+          />
+          <ColorSetting
+            label="Tint"
+            value={column.fill ?? "#ffffff"}
+            onChange={(fill) =>
+              onChange({ ...label, valueColumn: { ...column, fill } })
+            }
+          />
+        </>
+      )}
+      <span className="eda-setting-label">Signs</span>
+      <Segmented
+        label="Signed value text"
+        value={Boolean(signs)}
+        options={[
+          {
+            value: false as const,
+            label: "Plain",
+            tooltip: "Show the value as calculated",
+          },
+          {
+            value: true as const,
+            label: "By sign",
+            tooltip:
+              "Write the size of the value with each sign's own text and color, such as +14R and +6D",
+          },
+        ]}
+        onChange={(bySign) =>
+          onChange({ ...label, valueSigns: bySign ? NO_SIGNS : undefined })
+        }
+      />
+      {signs &&
+        (["positive", "negative"] as const).map((side) => (
+          <Fragment key={side}>
+            <Label htmlFor={`${id}-${side}`}>
+              {side === "positive" ? "Above zero" : "Below zero"}
+            </Label>
+            <div className="eda-composition-sign">
+              <Input
+                id={`${id}-${side}`}
+                aria-label={`${side === "positive" ? "Above zero" : "Below zero"} prefix`}
+                className="w-12"
+                value={signs[side].prefix}
+                onChange={(event) =>
+                  setSign(side, { prefix: event.target.value })
+                }
+              />
+              <span className="text-muted-foreground">14</span>
+              <Input
+                aria-label={`${side === "positive" ? "Above zero" : "Below zero"} suffix`}
+                className="w-12"
+                value={signs[side].suffix}
+                onChange={(event) =>
+                  setSign(side, { suffix: event.target.value })
+                }
+              />
+              <input
+                type="color"
+                aria-label={`${side === "positive" ? "Above zero" : "Below zero"} color`}
+                value={signs[side].color}
+                onChange={(event) =>
+                  setSign(side, { color: event.target.value })
+                }
+              />
+            </div>
+          </Fragment>
+        ))}
+    </>
+  );
+}
+
+/** Axis titles with one side changed; an empty set clears the setting. */
+function axisTitles(
+  unit: UnitElement,
+  patch: { x?: string; y?: string }
+): UnitElement["axisTitles"] {
+  const next = { ...unit.axisTitles, ...patch };
+  const x = next.x || undefined;
+  const y = next.y || undefined;
+  return x || y ? { x, y } : undefined;
 }
 
 function WindowFields({
@@ -925,7 +1160,12 @@ function MarkProperties({
             onEditScale={onEditScale}
           />
         ) : mark.type === "waffle" ? (
-          <WaffleFields mark={mark} onChange={onChange} />
+          <WaffleFields
+            mark={mark}
+            scales={scales}
+            onChange={onChange}
+            onEditScale={onEditScale}
+          />
         ) : mark.type === "bar" ? (
           <BarFields
             mark={mark}
@@ -1294,6 +1534,37 @@ function DensityFields({
           {mark.bandwidth ? "in field units" : "0 = span over 12"}
         </span>
       </div>
+      <Label htmlFor={`${id}-shade`}>Shade by</Label>
+      <div className="eda-composition-scale-select">
+        <select
+          id={`${id}-shade`}
+          className="eda-composition-select"
+          value={mark.colorScaleId ?? ""}
+          onChange={(event) =>
+            onChange({ colorScaleId: event.target.value || undefined })
+          }
+        >
+          <option value="">One fill</option>
+          {scales
+            .filter((scale) => scale.kind === "value")
+            .map((scale) => (
+              <option key={scale.id} value={scale.id}>
+                {scale.name} along x
+              </option>
+            ))}
+        </select>
+        {mark.colorScaleId && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2"
+            tooltip="Open this scale's settings below. Its colors run low to high across the x axis, or around zero when it has a middle color."
+            onClick={() => onEditScale(mark.colorScaleId!)}
+          >
+            Edit
+          </Button>
+        )}
+      </div>
       <ColorSetting
         label="Fill"
         value={mark.fill}
@@ -1521,8 +1792,104 @@ function StackFields({
       <Segmented
         label={`${mark.name} category order`}
         value={mark.order}
-        options={STACK_ORDERS}
+        options={[
+          ...STACK_ORDERS,
+          {
+            value: "first" as const,
+            label: "As listed",
+            tooltip:
+              "Categories stack in the order they first appear in the rows, such as rent, food, then clothes",
+          },
+        ]}
         onChange={(order) => onChange({ order })}
+      />
+      {!mark.xScaleId && (
+        <>
+          <span className="eda-setting-label">Direction</span>
+          <Segmented
+            label={`${mark.name} direction`}
+            value={mark.direction ?? "up"}
+            options={[
+              {
+                value: "up" as const,
+                label: "Up",
+                tooltip: "Stack from the bottom of a column",
+              },
+              {
+                value: "across" as const,
+                label: "Across",
+                tooltip:
+                  "Stack from left to right along a bar, such as one bar per income class",
+              },
+            ]}
+            onChange={(direction) =>
+              onChange({
+                direction: direction === "up" ? undefined : direction,
+              })
+            }
+          />
+          <span className="eda-setting-label">Connect</span>
+          <Segmented
+            label={`${mark.name} connectors`}
+            value={Boolean(mark.connect)}
+            options={[
+              {
+                value: false,
+                label: "Off",
+                tooltip: "Draw each repeat's stack on its own",
+              },
+              {
+                value: true,
+                label: "Join edges",
+                tooltip:
+                  "Draw a thin line from each category's edge in one repeat to the same edge in the next, so shares can be followed",
+              },
+            ]}
+            onChange={(connect) => onChange({ connect: connect || undefined })}
+          />
+          <span className="eda-setting-label">Texture</span>
+          <Segmented
+            label={`${mark.name} texture`}
+            value={mark.texture ?? "flat"}
+            options={[
+              {
+                value: "flat" as const,
+                label: "Flat",
+                tooltip: "Solid fills with clean edges",
+              },
+              {
+                value: "hand" as const,
+                label: "Hand-colored",
+                tooltip: "Uneven edges and grain, like a chart colored by hand",
+              },
+            ]}
+            onChange={(texture) =>
+              onChange({ texture: texture === "hand" ? "hand" : undefined })
+            }
+          />
+        </>
+      )}
+      <span className="eda-setting-label">Labels</span>
+      <Segmented
+        label={`${mark.name} label content`}
+        value={mark.labelContent ?? "both"}
+        options={[
+          {
+            value: "both" as const,
+            label: "Name and share",
+            tooltip: "Label a segment with its category and share",
+          },
+          {
+            value: "share" as const,
+            label: "Share",
+            tooltip: "Label a segment with its share alone",
+          },
+        ]}
+        onChange={(labelContent) =>
+          onChange({
+            labelContent: labelContent === "both" ? undefined : labelContent,
+          })
+        }
       />
       <NumberSetting
         label="Label from"
@@ -1655,15 +2022,21 @@ function BarFields({
 
 function WaffleFields({
   mark,
+  scales,
   onChange,
+  onEditScale,
 }: {
   mark: WaffleMark;
+  scales: CompositionScale[];
   onChange: (patch: Partial<WaffleMark>) => void;
+  onEditScale: (scaleId: string) => void;
 }) {
+  const id = useId();
   const profiles = useDataLayer((state) => state.fieldProfiles);
   const categoryFields = profiles
     .filter((profile) => profile.uniqueCount <= 60)
     .map((profile) => profile.name);
+  const numeric = scales.filter((scale) => scale.kind === "numeric");
   return (
     <>
       <Label>Categories</Label>
@@ -1674,6 +2047,35 @@ function WaffleFields({
         fields={categoryFields}
         onChange={(categoryField) => onChange({ categoryField })}
       />
+      <Label htmlFor={`${id}-x`}>Bin along</Label>
+      <div className="eda-composition-scale-select">
+        <select
+          id={`${id}-x`}
+          className="eda-composition-select"
+          value={mark.xScaleId ?? ""}
+          onChange={(event) =>
+            onChange({ xScaleId: event.target.value || undefined })
+          }
+        >
+          <option value="">One waffle per repeat</option>
+          {numeric.map((scale) => (
+            <option key={scale.id} value={scale.id}>
+              {scale.name}, by whole value
+            </option>
+          ))}
+        </select>
+        {mark.xScaleId && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2"
+            tooltip="Open this scale's settings below. Its limits set the first and last bin."
+            onClick={() => onEditScale(mark.xScaleId!)}
+          >
+            Edit
+          </Button>
+        )}
+      </div>
       <span className="eda-setting-label">Cells</span>
       <Segmented
         label={`${mark.name} cells`}
@@ -1746,6 +2148,30 @@ function WaffleFields({
     </>
   );
 }
+
+const ALL_SUMMARY_PARTS: SummaryParts = {
+  band: true,
+  line: true,
+  points: true,
+};
+const SUMMARY_PARTS = [
+  {
+    key: "band" as const,
+    label: "Band",
+    tooltip:
+      "Fill between each group's 25th and 75th percentiles: the middle half of its rows",
+  },
+  {
+    key: "line" as const,
+    label: "Line",
+    tooltip: "Join the groups' medians with a line",
+  },
+  {
+    key: "points" as const,
+    label: "Dots",
+    tooltip: "Mark each group's median with a dot",
+  },
+];
 
 function SummaryFields({
   mark,
@@ -1822,6 +2248,30 @@ function SummaryFields({
           </Button>
         )}
       </div>
+      <span className="eda-setting-label">Draw</span>
+      <div className="eda-segmented" role="group" aria-label="Summary parts">
+        {SUMMARY_PARTS.map((part) => {
+          const parts = mark.parts ?? ALL_SUMMARY_PARTS;
+          return (
+            <ActionTooltip key={part.key} content={part.tooltip}>
+              <button
+                type="button"
+                aria-pressed={parts[part.key]}
+                className="eda-segmented-item"
+                onClick={() => {
+                  const next = { ...parts, [part.key]: !parts[part.key] };
+                  onChange({
+                    parts:
+                      next.band && next.line && next.points ? undefined : next,
+                  });
+                }}
+              >
+                {part.label}
+              </button>
+            </ActionTooltip>
+          );
+        })}
+      </div>
       <ColorSetting
         label="Band fill"
         value={mark.fill}
@@ -1839,6 +2289,77 @@ function SummaryFields({
 }
 
 /** Fields shared by point and path marks: the scales and the order. */
+/** A numeric field and the value scale that colors a path or point by it. */
+function ValueShadeSelect({
+  id,
+  field,
+  scaleId,
+  fields,
+  scales,
+  onChange,
+  onEditScale,
+}: {
+  id: string;
+  field?: string;
+  scaleId?: string;
+  fields: string[];
+  scales: CompositionScale[];
+  onChange: (patch: { valueField?: string; valueScaleId?: string }) => void;
+  onEditScale: (scaleId: string) => void;
+}) {
+  const values = scales.filter((scale) => scale.kind === "value");
+  return (
+    <div className="flex min-w-0 flex-col gap-1">
+      <FieldSelector
+        label=""
+        placeholder="No value shading"
+        value={field ?? ""}
+        allowClear
+        fields={fields}
+        onChange={(next) =>
+          onChange({
+            valueField: next || undefined,
+            valueScaleId: next ? (scaleId ?? values[0]?.id) : undefined,
+          })
+        }
+      />
+      {field && (
+        <div className="eda-composition-scale-select">
+          <select
+            id={id}
+            aria-label="Shading scale"
+            className="eda-composition-select"
+            value={scaleId ?? ""}
+            onChange={(event) =>
+              onChange({ valueScaleId: event.target.value || undefined })
+            }
+          >
+            {!values.length && (
+              <option value="">Add a value scale first</option>
+            )}
+            {values.map((scale) => (
+              <option key={scale.id} value={scale.id}>
+                {scale.name}
+              </option>
+            ))}
+          </select>
+          {scaleId && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2"
+              tooltip="Open this scale's settings below. A middle color makes it diverge around zero."
+              onClick={() => onEditScale(scaleId)}
+            >
+              Edit
+            </Button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function XyFields({
   mark,
   scales,
@@ -2220,6 +2741,16 @@ function XyFields({
               change({ colorField: colorField || undefined })
             }
           />
+          <Label htmlFor={`${id}-shade`}>Shade by value</Label>
+          <ValueShadeSelect
+            id={`${id}-shade`}
+            field={mark.valueField}
+            scaleId={mark.valueScaleId}
+            fields={numericFields}
+            scales={scales}
+            onChange={(patch) => change(patch)}
+            onEditScale={onEditScale}
+          />
           <span className="eda-setting-label">Line</span>
           <Segmented
             label={`${mark.name} curve`}
@@ -2285,6 +2816,16 @@ function XyFields({
             onChange={(colorField) =>
               change({ colorField: colorField || undefined })
             }
+          />
+          <Label htmlFor={`${id}-shade`}>Shade by value</Label>
+          <ValueShadeSelect
+            id={`${id}-shade`}
+            field={mark.valueField}
+            scaleId={mark.valueScaleId}
+            fields={numericFields}
+            scales={scales}
+            onChange={(patch) => change(patch)}
+            onEditScale={onEditScale}
           />
           <Label>Label with</Label>
           <FieldSelector

@@ -1,0 +1,14 @@
+{
+  "id": "41d7308b-09ab-4da9-bc2b-a9db04d51a9d",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:38c91f",
+    "label": "Agent token ...38c91f"
+  },
+  "createdAt": "2026-10-11T02:34:42.929Z",
+  "summary": "Updated metadata for \"I really want to be able to do a zoom/pan on some of these charts that have lots of small detail\".",
+  "nodeIds": [
+    "page-i-really-want-to-be-able-to-do-a-zoom-pan-on-some-of-these-charts-5jjqtd"
+  ]
+}

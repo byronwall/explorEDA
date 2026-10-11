@@ -1,0 +1,14 @@
+{
+  "id": "ef5c3edc-8881-4a55-835d-9de92e107451",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:915852",
+    "label": "Agent token ...915852"
+  },
+  "createdAt": "2026-10-11T02:24:59.415Z",
+  "summary": "Updated metadata for \"I do not fully understand what \"summary\" does\".",
+  "nodeIds": [
+    "page-i-do-not-fully-understand-what-summary-does"
+  ]
+}
