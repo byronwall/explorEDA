@@ -8,6 +8,8 @@ import { utcPeriod } from "@/lib/dailyRollup";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps, datum } from "@/types/ChartTypes";
 import { BaseChart } from "../BaseChart";
+import { describeScale } from "../Axis/axisPlan";
+import { annotationSlot } from "../annotations/ChartAnnotations";
 import { ChartReadout } from "../ChartReadout";
 import { planAxes } from "../Axis/axisPlan";
 import {
@@ -260,6 +262,19 @@ export function TimeSeriesChart({
           xScale={plan.xScale}
           yScale={plan.yScale}
           axes={axes}
+          annotations={annotationSlot(
+            settings,
+            settings.annotations?.length
+              ? {
+                  // Marks are summaries of many rows, so there is no
+                  // single record to attach to: no plotted rows here.
+                  xScale: describeScale(plan.xScale),
+                  yScale: describeScale(plan.yScale, plan.yScaleType),
+                  plotWidth: plan.xScale.range()[1]!,
+                  plotHeight: plan.yScale.range()[0]!,
+                }
+              : undefined
+          )}
           brushingMode="horizontal"
           onInspectGuide={(id) => api?.inspect(owner, "guide", id)}
           onInspectPlot={([x, y]) => {

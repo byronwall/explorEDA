@@ -64,6 +64,8 @@ Extend the same authoring flow with fixed coordinate and plot-position labels, a
 - Add supplied lower/upper intervals only with named fields and a stated interpretation. Reuse composition band behavior where applicable.
 - Check negative and symlog values, date conversion, categorical positions, reversed/missing bounds, and dual-axis field changes.
 
+**Delivered (M2):** Line and time-series charts draw annotations through `BaseChart`'s `annotations` slot. New kinds: `band` (shaded or bracketed span on x or y, which covers events' durations, ranges, and tolerance bands) and `interval` (supplied lower/upper fields with a required meaning). Callouts gain an arrowhead and a series choice; values on a date axis are UTC timestamps edited with date inputs; y values can bind to the right axis. Charts report per-annotation statuses (`annotationStatus.ts`), so the list shows Outside the view and Not on this chart. Time series charts summarize rows, so record callouts and intervals report unsupported there. Scatter categorical axes are left unsupported rather than given category attachments; revisit with M4's aggregate identity work.
+
 ### Desired end state
 
 - A chart can combine a callout, a target, an event, and a labeled interval.

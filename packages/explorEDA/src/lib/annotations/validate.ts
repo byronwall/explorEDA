@@ -9,6 +9,9 @@ const isFiniteNumber = (value: unknown): value is number =>
 const optionalString = (value: unknown) =>
   value === undefined || typeof value === "string";
 
+const optionalBoolean = (value: unknown) =>
+  value === undefined || typeof value === "boolean";
+
 function isAttachment(value: unknown) {
   if (!isRecord(value)) return false;
   if (value.kind === "coordinate")
@@ -18,7 +21,10 @@ function isAttachment(value: unknown) {
     Array.isArray(value.keyFields) &&
     value.keyFields.every((field) => typeof field === "string") &&
     Array.isArray(value.key) &&
-    value.key.every((item) => typeof item === "string" || isFiniteNumber(item))
+    value.key.every(
+      (item) => typeof item === "string" || isFiniteNumber(item)
+    ) &&
+    optionalString(value.yField)
   );
 }
 
@@ -29,7 +35,10 @@ export function isChartAnnotation(value: unknown): value is ChartAnnotation {
     typeof value.id !== "string" ||
     !optionalString(value.name) ||
     !optionalString(value.color) ||
-    (value.hidden !== undefined && typeof value.hidden !== "boolean")
+    (value.hidden !== undefined && typeof value.hidden !== "boolean") ||
+    (value.yAxis !== undefined &&
+      value.yAxis !== "left" &&
+      value.yAxis !== "right")
   )
     return false;
   if (value.type === "callout")
@@ -39,7 +48,8 @@ export function isChartAnnotation(value: unknown): value is ChartAnnotation {
       isRecord(value.offset) &&
       isFiniteNumber(value.offset.dx) &&
       isFiniteNumber(value.offset.dy) &&
-      (value.leader === undefined || typeof value.leader === "boolean")
+      optionalBoolean(value.leader) &&
+      optionalBoolean(value.arrow)
     );
   if (value.type === "reference-line")
     return (
@@ -49,6 +59,22 @@ export function isChartAnnotation(value: unknown): value is ChartAnnotation {
       (value.lineStyle === undefined ||
         value.lineStyle === "solid" ||
         value.lineStyle === "dashed")
+    );
+  if (value.type === "band")
+    return (
+      (value.axis === "x" || value.axis === "y") &&
+      isFiniteNumber(value.from) &&
+      isFiniteNumber(value.to) &&
+      optionalString(value.label) &&
+      (value.display === undefined ||
+        value.display === "fill" ||
+        value.display === "bracket")
+    );
+  if (value.type === "interval")
+    return (
+      typeof value.lowerField === "string" &&
+      typeof value.upperField === "string" &&
+      typeof value.meaning === "string"
     );
   return false;
 }

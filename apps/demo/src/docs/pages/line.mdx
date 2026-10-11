@@ -23,6 +23,17 @@ Use a line chart to follow a measure over dates or along a numeric field. Each s
   caption="Weekly order counts as filled areas, from the area charts example."
 />
 
+## Annotations
+
+The **Notes** tab marks what the lines mean:
+
+- A **line** at a Y value marks a target. On a date axis, a line at a date marks an event, such as a release.
+- A **band** shades a span of Y values, such as a tolerance, or a period of dates or X values. **Bracket** marks the span along the top edge instead of shading the plot.
+- A **callout** labels one row of a line chart by its key and the series it sits on. A chart that sums rows into periods has no single rows, so its callouts sit at a fixed date and value.
+- An **interval** shades between lower and upper bounds that each row already holds, such as a supplied forecast range. Its **Meaning** says what the bounds are; the chart computes no interval itself. Rows whose lower bound is above the upper bound are drawn with the bounds swapped.
+
+On a chart with a right axis, choose which axis a value reads on. The product activity example marks the release period and a 4% target; the calendar example brackets a summer sale.
+
 ## Saved settings
 
 <SettingsReference type="line" />

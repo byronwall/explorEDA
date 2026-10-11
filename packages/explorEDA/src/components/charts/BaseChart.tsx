@@ -34,6 +34,8 @@ interface BaseChartProps {
   onBrushChange?: (extent: [[number, number], [number, number]] | null) => void;
   children: ReactNode;
   overlay?: ReactNode;
+  /** Saved annotations, drawn over the marks; given the plot clip path. */
+  annotations?: (clipPath: string) => ReactNode;
   className?: string;
   settings: ChartSettings;
   axisFields?: { x?: string; y?: string };
@@ -80,6 +82,7 @@ export function BaseChart({
   onBrushChange,
   children,
   overlay,
+  annotations,
   className,
   settings,
   axisFields: axisFieldsOverride,
@@ -366,6 +369,9 @@ export function BaseChart({
         pressAt.current = null;
         // The axis marker opens its own details; it never clears or selects.
         if ((event.target as Element).closest("[data-axis-hidden]")) return;
+        // A callout label is dragged, never clicked through to the plot.
+        if ((event.target as Element).closest("[data-annotation-handle]"))
+          return;
         if (inspectedByBrush.current) inspectedByBrush.current = false;
         else if (!inspectTarget(event) && !inspectPlot(event)) {
           if (
@@ -417,6 +423,7 @@ export function BaseChart({
         >
           {brush.renderBrush}
         </g>
+        {annotations?.(`url(#${chartId}-plot)`)}
 
         <PlannedAxes
           plan={axes}

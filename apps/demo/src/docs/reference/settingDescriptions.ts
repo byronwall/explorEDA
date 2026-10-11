@@ -35,7 +35,7 @@ export const COMMON_SETTINGS: Readonly<Record<string, string>> = {
   colorScaleId:
     "The color scale for the color field, shared by name across charts.",
   annotations:
-    "Saved callouts and reference lines, on charts that draw annotations. A callout on a record finds it by key field values, never by row position.",
+    "Saved callouts, lines, bands, and supplied intervals, on charts that draw annotations. A callout on a record finds it by key field values, never by row position. Date values are UTC timestamps in milliseconds.",
 };
 
 /** Settings described for one chart type. */

@@ -388,13 +388,32 @@ export const activityDashboard = dashboard(
       layout(8, 0, 4, 5),
       "phase-colors"
     ),
-    line(
-      "activity-conversion",
-      "Trial conversion over time",
-      ["Conversion (%)"],
-      layout(0, 5, 4),
-      "Conversion (%)"
-    ),
+    {
+      ...line(
+        "activity-conversion",
+        "Trial conversion over time",
+        ["Conversion (%)"],
+        layout(0, 5, 4),
+        "Conversion (%)"
+      ),
+      annotations: [
+        {
+          id: "activity-release",
+          type: "band",
+          axis: "x",
+          from: 31,
+          to: 60,
+          label: "Release",
+        },
+        {
+          id: "activity-target",
+          type: "reference-line",
+          axis: "y",
+          value: 4,
+          label: "Target 4%",
+        },
+      ],
+    },
     scatter(
       "activity-speed",
       "Does speed relate to conversion?",
@@ -939,6 +958,18 @@ export const timeSeriesDashboard = dashboard(
         splitField: "Channel",
         missingPeriods: "gap",
       },
+      annotations: [
+        {
+          id: "time-summer-sale",
+          type: "band",
+          axis: "x",
+          // 2024-06-01 to 2024-08-31, UTC.
+          from: 1717200000000,
+          to: 1725062400000,
+          label: "Summer sale",
+          display: "bracket",
+        },
+      ],
     },
     {
       ...base,

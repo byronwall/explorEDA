@@ -173,8 +173,8 @@ it("adds a callout on the largest value and a target from the Notes tab", async 
   const notes = screen.getByRole("tab", { name: "Notes" });
   fireEvent.mouseDown(notes);
   fireEvent.click(notes);
-  fireEvent.click(await screen.findByRole("button", { name: "Add callout" }));
-  fireEvent.click(screen.getByRole("button", { name: "Add reference line" }));
+  fireEvent.click(await screen.findByRole("button", { name: "Callout" }));
+  fireEvent.click(screen.getByRole("button", { name: "Line" }));
   const saved = onStateChange.mock.calls.at(-1)![0].charts[0]!.annotations!;
   expect(saved).toHaveLength(2);
   expect(saved[0]).toMatchObject({

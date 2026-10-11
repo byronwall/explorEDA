@@ -8,9 +8,14 @@ import {
   uniqueKeyFields,
   type AnnotationFrame,
 } from "./resolve";
-import { createCallout } from "./create";
+import { createCallout, createInterval } from "./create";
 import { isChartAnnotation } from "./validate";
-import type { CalloutAnnotation, ReferenceLineAnnotation } from "./types";
+import type {
+  BandAnnotation,
+  CalloutAnnotation,
+  IntervalAnnotation,
+  ReferenceLineAnnotation,
+} from "./types";
 
 type Row = Record<string, datum>;
 
@@ -242,5 +247,99 @@ describe("creating and saving", () => {
         value: 1,
       })
     ).toBe(false);
+  });
+});
+
+describe("bands, intervals, and axes", () => {
+  it("clamps a band to the plot and accepts reversed ends", () => {
+    const band: BandAnnotation = {
+      id: "b",
+      type: "band",
+      axis: "y",
+      from: 120,
+      to: 40,
+    };
+    expect(projectAnnotations([band], frame(rows))[0]).toMatchObject({
+      status: "shown",
+      start: 0,
+      end: 60,
+    });
+    expect(
+      projectAnnotations([{ ...band, from: 200, to: 300 }], frame(rows))[0]!
+        .status
+    ).toBe("offscreen");
+  });
+
+  it("draws supplied bounds in x order and counts reversed rows", () => {
+    const data: Row[] = [
+      { x: 3, lo: 20, hi: 40 },
+      { x: 1, lo: 10, hi: 30 },
+      { x: 2, lo: 50, hi: 25 },
+      { x: 4, lo: null, hi: 10 },
+    ];
+    const interval: IntervalAnnotation = {
+      id: "i",
+      type: "interval",
+      lowerField: "lo",
+      upperField: "hi",
+      meaning: "Supplied range",
+    };
+    const projected = projectAnnotations([interval], {
+      ...frame(data),
+      xField: "x",
+      visibleIds: [0, 1, 2, 3],
+    })[0]!;
+    expect(projected).toMatchObject({ status: "shown", reversed: 1 });
+    if (projected.status === "shown" && "points" in projected)
+      expect(projected.points).toEqual([
+        { x: 10, lower: 90, upper: 70 },
+        { x: 20, lower: 75, upper: 50 },
+        { x: 30, lower: 80, upper: 60 },
+      ]);
+    // A chart of grouped values has no rows to draw bounds for.
+    expect(projectAnnotations([interval], frame(data))[0]!.status).toBe(
+      "unsupported"
+    );
+  });
+
+  it("reads a right-axis value on the right scale", () => {
+    const target: ReferenceLineAnnotation = {
+      id: "t",
+      type: "reference-line",
+      axis: "y",
+      value: 500,
+      yAxis: "right",
+    };
+    expect(
+      projectAnnotations([target], {
+        ...frame(rows),
+        yRightScale: linear([0, 1000], [100, 0]),
+      })[0]
+    ).toMatchObject({ status: "shown", position: 50 });
+  });
+
+  it("can't place a record callout on a chart without records", () => {
+    expect(
+      projectAnnotations([callout("E-17")], {
+        ...frame(rows),
+        plotted: undefined,
+      })[0]!.status
+    ).toBe("unsupported");
+  });
+
+  it("guesses interval bounds from field names", () => {
+    const { ids, getColumn } = columns([
+      { forecast_lower: 1, forecast_upper: 2, name: "a" },
+    ]);
+    expect(
+      createInterval({
+        fields: ["name", "forecast_lower", "forecast_upper"],
+        ids,
+        getColumn,
+      })
+    ).toMatchObject({
+      lowerField: "forecast_lower",
+      upperField: "forecast_upper",
+    });
   });
 });

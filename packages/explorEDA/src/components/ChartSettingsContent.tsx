@@ -8,7 +8,7 @@ import { AxisSettingsTab } from "./settings/AxisSettingsTab";
 import { FacetSettingsTab } from "./settings/FacetSettingsTab";
 import { LabelsSettingsTab } from "./settings/LabelsSettingsTab";
 import { MainSettingsTab } from "./settings/MainSettingsTab";
-import { AnnotationsSettingsTab } from "./settings/AnnotationsSettingsTab";
+import { AnnotationsSettingsTab } from "./settings/annotations/AnnotationsSettingsTab";
 import { chartDrawsAnnotations } from "@/lib/annotations/types";
 import { TabContainer } from "./settings/TabContainer";
 import { Button } from "./ui/button";

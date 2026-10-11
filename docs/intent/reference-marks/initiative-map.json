@@ -8,7 +8,7 @@
     "last_updated": "2026-10-11",
     "summary": "Users can author and preserve meaningful labels, callouts, targets, intervals, events, regions, and record highlights on live charts.",
     "status": "active",
-    "next_action": "Start m2: line and time-series charts, coordinate labels, arrows, x/y rules, bands, ranges, and supplied intervals."
+    "next_action": "Start m3: coordinate rectangles/ellipses, saved record-set highlights, and declared calculated references."
   },
   "artifacts": {
     "intent_brief": {
@@ -685,13 +685,15 @@
       {
         "id": "m2",
         "title": "Users can explain values, events, and intervals",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Fixed references, callouts, arrows, bands, ranges, category/date attachments, and supplied bounds work on scatter and line charts.",
         "proof": "Check both line paths, dual axes, dates, symlog, missing/reversed bounds, forms, and save/restore.",
         "valid_intermediate_state": "Useful multi-form authoring on two chart families.",
         "rollback": "Remove the new form without changing the chart data or earlier annotation forms.",
         "dependencies_introduced": [],
-        "evidence": []
+        "evidence": [
+          "Line and time-series annotations, bands/brackets, supplied intervals, right axis, date inputs, duplicate/name, chart-reported statuses. Tests: resolve.test.ts (bands, intervals, right axis, unsupported records), lineAnnotations.test.tsx (series callout on right axis, band, interval ribbon, time-series event). Screenshots of product-activity and calendar-series examples at 1280/390. pnpm check passed."
+        ]
       },
       {
         "id": "m3",
