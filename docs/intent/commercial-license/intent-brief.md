@@ -3,7 +3,7 @@ title: "Sell explorEDA commercial licenses"
 slug: "commercial-license"
 phase: plan
 status: current
-last_updated: "2026-10-11"
+last_updated: "2026-10-12"
 ---
 
 # Sell explorEDA commercial licenses
@@ -56,11 +56,11 @@ A larger company asks for a quote, receives an invoice, pays by bank transfer, a
 - Offline signed keys with a watermark and console notice, not online activation.
 - A merchant of record; the research names Paddle and Polar, and Lemon Squeezy is ruled out during its Stripe migration.
 - Public npm for the package.
+- One package under a source-available license, as Handsontable does (Byron, October 11).
+- Paddle as merchant of record, chosen for simplicity, with all provider code behind one adapter so it can change later (provider choice delegated by Byron).
 
 ## Possibilities, not decisions
 
-- One package under a source-available license with a commercial key (Handsontable), rather than an MIT core plus a paid superset (AG Grid). The shape recommends the single package.
-- Paddle over Polar, because Paddle also issues sales-assisted invoices for the quote and purchase-order path.
 - A Cloudflare Worker with a small database as the license service.
 - $499 per developer per year and $1,490 per product per year for redistribution, as provisional prices.
 
@@ -76,9 +76,8 @@ A larger company asks for a quote, receives an invoice, pays by bank transfer, a
 
 ## What still needs your input
 
-1. Confirm the single source-available package (Handsontable) over an MIT core with a paid superset (AG Grid). It decides what code moves and what the license says.
-2. Choose the selling entity (you or an LLC) and a lawyer to review the license, commercial terms, and contributor agreement before launch.
+1. Choose the selling entity (you or an LLC) and a lawyer to review the license, commercial terms, and contributor agreement before launch. [For Byron](for-byron.md) lists every placeholder and the questions for the lawyer.
 
 ## Next step after confirmation
 
-Build milestone 1 of the [implementation plan](implementation-plan.md): the key format and the licensed and unlicensed states in the package, proven locally before any server or payment account exists. The [shape brief](shape-brief.md) lists the full scope.
+The code is built in stacked PRs (see the [implementation plan](implementation-plan.md)). What remains is account setup, legal review, sandbox purchases, and go-live, written step by step in [For Byron](for-byron.md).

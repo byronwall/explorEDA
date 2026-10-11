@@ -4,11 +4,11 @@
     "title": "Sell explorEDA commercial licenses",
     "slug": "commercial-license",
     "scale": "program",
-    "current_phase": "plan",
+    "current_phase": "execution",
     "last_updated": "2026-10-11",
-    "status": "planned",
+    "status": "active",
     "summary": "Close every gap between today (unlicensed package, static site, no payments) and a self-serve paid commercial license with offline signed keys, a merchant of record, a small license service, and buyer-trust material.",
-    "next_action": "Byron confirms the single source-available package model and names the selling entity and lawyer; then build M1 (key codec and package license states) locally."
+    "next_action": "Byron works through for-byron.md: decisions and lawyer (1-2), Cloudflare/Resend/Paddle sandbox (3-6), sandbox tests and recorded webhooks (7). Claude then swaps recorded Paddle fixtures into tests and fills public IDs."
   },
   "artifacts": {
     "intent_brief": {
@@ -35,6 +35,11 @@
       "path": "../monetization-opportunities/component-licensing/report.md",
       "status": "current",
       "updated_at": "2026-10-10"
+    },
+    "for_byron": {
+      "path": "for-byron.md",
+      "status": "current",
+      "updated_at": "2026-10-12"
     }
   },
   "sources": [
@@ -72,6 +77,13 @@
       "location": "https://developer.paddle.com/concepts/sell/sales-assisted-invoice",
       "anchor": "Paddle sales-assisted invoices: drafts, bank transfer, auto-created subscription",
       "authority": "provider docs, checked 2026-10-11"
+    },
+    {
+      "id": "SRC-6",
+      "type": "direct-user-input",
+      "location": "2026-10-11 conversation (second message)",
+      "anchor": "Single package is fine; implement as much as possible; pick Paddle or something else, simplest and easiest to change; detailed For Byron doc for account work; stacked PRs; best-effort legal drafts reviewed before go-live",
+      "authority": "direct intent"
     }
   ],
   "intent": {
@@ -115,9 +127,16 @@
       {
         "id": "C6",
         "importance": "supporting",
-        "status": "proposed",
+        "status": "accepted",
         "text": "Single source-available package rather than MIT core plus paid superset.",
-        "sources": ["SRC-1"]
+        "sources": ["SRC-1", "SRC-6"]
+      },
+      {
+        "id": "C7",
+        "importance": "supporting",
+        "status": "accepted",
+        "text": "Payment provider choice is delegated: simplest now, easy to change later.",
+        "sources": ["SRC-6"]
       }
     ],
     "themes": [
@@ -135,8 +154,9 @@
     "human_questions": [
       {
         "id": "Q1",
-        "status": "open",
-        "text": "Confirm single source-available package (Handsontable) over MIT core plus paid package (AG Grid)."
+        "status": "resolved",
+        "text": "Confirm single source-available package (Handsontable) over MIT core plus paid package (AG Grid).",
+        "resolution": "Single source-available package (Byron, 2026-10-11)."
       },
       {
         "id": "Q2",
@@ -199,7 +219,7 @@
       "Moving features into a second package",
       "Custom license text written from scratch"
     ],
-    "open_decisions": ["Q1 license model", "Q2 selling entity and lawyer"]
+    "open_decisions": ["Q2 selling entity and lawyer"]
   },
   "implementation": {
     "status": "not-started",
@@ -233,9 +253,9 @@
     "dependencies": [
       {
         "id": "D1",
-        "name": "Merchant of record (Paddle Billing, Polar fallback)",
+        "name": "Merchant of record (Paddle Billing)",
         "material": true,
-        "application_seam": "PaymentEvents adapter mapping webhooks to licensePurchased/seatsChanged/renewed/refunded",
+        "application_seam": "PaymentProvider adapter (apps/license-service/src/payments) mapping webhooks to purchase/renewal/seats-changed/canceled/refunded",
         "first_proof_role": {
           "mode": "absent",
           "rationale": "M1 needs no payment; M3 uses FakeMor"
@@ -298,7 +318,7 @@
         "id": "D4",
         "name": "Signing keypair",
         "material": true,
-        "application_seam": "packages/license signLicense/verifyLicense with kid",
+        "application_seam": "packages/explorEDA/src/license token.ts (verify) and sign.ts (service only), with kid",
         "first_proof_role": {
           "mode": "locally-substituted",
           "rationale": "Dev keypair fixture"
@@ -315,7 +335,7 @@
       }
     ],
     "fast_local_loop": {
-      "command": "pnpm --filter @exploreda/license test && pnpm --filter license-service test",
+      "command": "pnpm --filter exploreda exec vitest run src/license && pnpm --filter license-service test",
       "notes": "Then wrangler dev and fixture replay"
     },
     "milestones": [
@@ -327,7 +347,10 @@
         "proof": "Browser at three widths; unit tests; no fetch",
         "valid_intermediate_state": "Package works identically to today plus a notice",
         "rollback": "Revert the notice; key prop is additive",
-        "status": "planned"
+        "status": "active",
+        "evidence": [
+          "PR #311: 10 package tests (signing, tampering, dev-host rule, update period, trial expiry, notice, no fetch); browser check at 1280 and 1024; CLI exit codes 0/2/3 verified"
+        ]
       },
       {
         "id": "m2",
@@ -337,7 +360,10 @@
         "proof": "License scanner result; CI run",
         "valid_intermediate_state": "Free use is legally possible",
         "rollback": "Text-only changes",
-        "status": "planned"
+        "status": "active",
+        "evidence": [
+          "PR #312: LICENSE, docs/legal drafts with placeholders, SECURITY/SUPPORT/CONTRIBUTING; awaiting lawyer review and placeholders (for-byron.md steps 1-2)"
+        ]
       },
       {
         "id": "m3",
@@ -347,7 +373,10 @@
         "proof": "Fixture replay tests and local certificate page",
         "valid_intermediate_state": "Service runnable locally, not deployed",
         "rollback": "Not deployed",
-        "status": "planned"
+        "status": "completed",
+        "evidence": [
+          "PR #313: 19 service tests on real migration via node:sqlite; local Wrangler + D1 smoke: purchase applied, duplicate ignored, certificate rendered, emailed key passes exploreda license check --allow-dev"
+        ]
       },
       {
         "id": "m4",
@@ -357,7 +386,10 @@
         "proof": "Deployed staging purchase, email, key accepted by demo",
         "valid_intermediate_state": "Pricing pages live without a buy button",
         "rollback": "Hide checkout",
-        "status": "planned"
+        "status": "active",
+        "evidence": [
+          "PR #315: pricing/license/legal pages, 5 tests, static 200 copies, browser checks at 1280/768/375; Paddle sandbox purchase pending (for-byron.md steps 4-7)"
+        ]
       },
       {
         "id": "m5",
@@ -367,7 +399,10 @@
         "proof": "Sandbox lifecycle script and admin report",
         "valid_intermediate_state": "Sandbox complete",
         "rollback": "Disable lifecycle handlers",
-        "status": "planned"
+        "status": "active",
+        "evidence": [
+          "PR #313: seat change, renewal, cancel, refund handled and tested against fakes; sandbox lifecycle pending (for-byron.md step 7)"
+        ]
       },
       {
         "id": "m6",
@@ -395,25 +430,48 @@
     ],
     "open_decisions": [
       {
-        "id": "P1",
-        "text": "MoR: Paddle vs Polar",
-        "output": "provider choice",
-        "evidence": "approval, sandbox invoice, PO field",
-        "fallback": "Polar card + manual invoices"
-      },
-      {
-        "id": "P2",
-        "text": "License model (Q1)",
-        "output": "single package or open core",
-        "evidence": "Byron",
-        "fallback": "Insert package-split milestone after M1"
-      },
-      {
         "id": "P3",
         "text": "Entity and lawyer (Q2)",
         "output": "seller of record name",
         "evidence": "Byron",
         "fallback": "Blocks M6 only"
+      }
+    ],
+    "resolved_decisions": [
+      {
+        "id": "P1",
+        "resolution": "Paddle Billing. All provider code sits in apps/license-service/src/payments/paddle.ts and apps/demo/src/commerce/paddle.ts behind PaymentProvider; Polar or Stripe Managed Payments would replace those two files."
+      },
+      {
+        "id": "P2",
+        "resolution": "Single source-available package."
+      }
+    ],
+    "delivery": [
+      {
+        "pr": "https://github.com/byronwall/explorEDA/pull/311",
+        "milestone": "m1",
+        "summary": "Offline keys, notice, License tab, exploreda/license, CLI check"
+      },
+      {
+        "pr": "https://github.com/byronwall/explorEDA/pull/312",
+        "milestone": "m2",
+        "summary": "LICENSE, legal drafts, SECURITY, SUPPORT, CONTRIBUTING/CLA, repo hygiene"
+      },
+      {
+        "pr": "https://github.com/byronwall/explorEDA/pull/313",
+        "milestone": "m3, m5",
+        "summary": "License service: fulfilment, lifecycle, trials, quotes, certificates, portal, admin"
+      },
+      {
+        "pr": "https://github.com/byronwall/explorEDA/pull/315",
+        "milestone": "m4",
+        "summary": "Pricing, license, legal pages; Paddle checkout; static 200 pages"
+      },
+      {
+        "pr": "handoff PR",
+        "milestone": "m4-m6",
+        "summary": "for-byron.md: accounts, secrets, sandbox tests, go-live"
       }
     ]
   },
@@ -424,6 +482,13 @@
       "phase": "plan",
       "status": "planned",
       "note": "Intent, shape, and plan written in one pass from Byron request and prior component-licensing research."
+    },
+    {
+      "date": "2026-10-12",
+      "event": "implementation",
+      "phase": "execution",
+      "status": "active",
+      "note": "Byron confirmed the single package and delegated the provider choice (Paddle). Built M1-M5 code in stacked PRs #311, #312, #313, #315; sandbox, legal review, accounts, and go-live handed off in for-byron.md."
     }
   ],
   "closure": null
