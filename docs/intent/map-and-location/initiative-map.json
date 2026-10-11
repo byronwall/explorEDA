@@ -1,0 +1,265 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Useful, configurable maps for location data",
+    "slug": "map-and-location",
+    "scale": "capability",
+    "current_phase": "intent",
+    "last_updated": "2026-10-11",
+    "summary": "Improve point and region maps, custom and supplied geography, render controls, and detailed local context without building a full GIS.",
+    "status": "planned",
+    "next_action": "Check the submitted Pro conversation after about one hour; collect all artifacts, reconcile intent, and open a PR."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "draft",
+      "updated_at": "2026-10-11"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "user-request",
+      "type": "direct-user-input",
+      "location": "references/user-request.md",
+      "anchor": "October 11 request",
+      "authority": "explicit user direction"
+    },
+    {
+      "id": "repository-baseline",
+      "type": "repository",
+      "location": "references/repository-baseline.md",
+      "anchor": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+      "authority": "source inspection; no browser proof"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "map-1",
+        "type": "outcome",
+        "statement": "Make useful dashboards from location-bearing data.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "Make useful dashboards from location-bearing data."
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "map-2",
+        "type": "required behavior",
+        "statement": "Improve both point and region maps and user control over rendered content.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "Improve both point and region maps and user control over rendered content."
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "map-3",
+        "type": "desired experience",
+        "statement": "Let users bring their own GeoJSON.",
+        "commitment": "tentative",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "Let users bring their own GeoJSON."
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "map-4",
+        "type": "desired experience",
+        "statement": "Provide more ready-made geography.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "Provide more ready-made geography."
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "map-5",
+        "type": "desired experience",
+        "statement": "Support recognizable local context including street names.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "Support recognizable local context including street names."
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "map-6",
+        "type": "implementation hypothesis",
+        "statement": "Use Leaflet or a similar renderer, perhaps with simple and detailed modes.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "Use Leaflet or a similar renderer, perhaps with simple and detailed modes."
+          }
+        ],
+        "confidence": "high",
+        "notes": "A research hypothesis is not an approved implementation choice."
+      },
+      {
+        "id": "map-7",
+        "type": "anti-goal",
+        "statement": "Do not become a full GIS product.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "Do not become a full GIS product."
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "map-8",
+        "type": "sequence",
+        "statement": "Complete Pro research, retain all artifacts, update intent, and open a PR before user review.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "Complete Pro research, retain all artifacts, update intent, and open a PR before user review."
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "map-9",
+        "type": "current repository reality",
+        "statement": "Polygon GeoJSON import, typed joins, shared saved geometry, point styling, and D3 map rendering already exist.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "repository-baseline",
+            "anchor": "Polygon GeoJSON import, typed joins, shared saved geometry, point styling, and D3 map rendering already exist."
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      }
+    ],
+    "themes": [
+      "Useful dashboard maps",
+      "Explicit rendering control",
+      "Custom and supplied geography",
+      "Local context without GIS scope"
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/6446/explorEDA",
+      "revision": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+      "worktree_status": "Clean detached baseline; created codex/map-location-intent for documentation only.",
+      "subsystems": [
+        "Map chart planners and renderers",
+        "Shared geometry assets",
+        "Chart settings and saved analyses",
+        "Linked filters and traces"
+      ],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/components/charts/Map/pointMap.test.tsx src/components/charts/Map/regionMap.test.tsx",
+        "pnpm check"
+      ],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-11",
+      "action": "Created initial intent and Pro handoff prompt.",
+      "reason": "User requested autonomous map research and an intent PR.",
+      "evidence": "Direct request and source inspection at 12bd64d; implementation has not started."
+    }
+  ],
+  "closure": null
+}
