@@ -12,6 +12,7 @@ import {
   type ReactNode,
 } from "react";
 import { Link } from "react-router-dom";
+import { LIVE_MIN_WIDTH, liveShotPath } from "../paths";
 import { describeStep, findLiveExample, liveExampleHeight } from "./examples";
 
 const ExplorEda = lazy(() =>
@@ -25,14 +26,6 @@ const ChartSettingsSurface = lazy(() =>
     default: Surface,
   }))
 );
-
-/** Below this viewport width a live example shows its screenshot. */
-export const LIVE_MIN_WIDTH = 1024;
-
-/** Where the docs check saves each example's screenshot. */
-export function liveShotPath(id: string) {
-  return `/docs-shots/example-${id}.png`;
-}
 
 function useWideViewport() {
   const query = `(min-width: ${LIVE_MIN_WIDTH}px)`;
@@ -57,7 +50,9 @@ function useSeen(ref: React.RefObject<HTMLElement | null>, eager: boolean) {
   const [seen, setSeen] = useState(eager);
   useEffect(() => {
     if (seen || !ref.current || typeof IntersectionObserver === "undefined") {
-      if (typeof IntersectionObserver === "undefined") setSeen(true);
+      if (typeof IntersectionObserver === "undefined") {
+        setSeen(true);
+      }
       return;
     }
     const observer = new IntersectionObserver(
@@ -180,7 +175,9 @@ export function LiveExample({
             role="region"
             aria-label={spec.label}
             className="bg-background p-3"
-            style={{ height: liveExampleHeight(spec) }}
+            style={
+              rows ? { minHeight: 200 } : { height: liveExampleHeight(spec) }
+            }
             data-docs-live={id}
           >
             {failed ? (

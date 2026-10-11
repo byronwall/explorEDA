@@ -4,7 +4,7 @@ import type { DocsPage } from "./catalogue";
 export type DocsGateInput = {
   pages: readonly Pick<
     DocsPage,
-    "topic" | "covers" | "chartType" | "examples" | "related"
+    "topic" | "covers" | "chartType" | "examples" | "related" | "thumbnail"
   >[];
   /** Page source by topic, read from `pages/<topic>.mdx`. */
   sources: Readonly<Record<string, string>>;
@@ -73,7 +73,7 @@ export function findDocsErrors(input: DocsGateInput): string[] {
         errors.push(`${where} links to missing page "${topic}"`);
       }
     }
-    for (const { id } of page.examples) {
+    for (const id of page.examples) {
       if (!examples.has(id)) {
         errors.push(`${where} uses unknown example "${id}"`);
       } else if (
@@ -127,7 +127,9 @@ export function findDocsErrors(input: DocsGateInput): string[] {
     for (const [, type] of source.matchAll(
       /<SettingsReference\s+type="([^"]+)"/g
     )) {
-      if (type) referenced.add(type);
+      if (type) {
+        referenced.add(type);
+      }
     }
   }
   for (const page of input.pages) {
@@ -139,6 +141,13 @@ export function findDocsErrors(input: DocsGateInput): string[] {
     ) {
       errors.push(
         `Page "${page.topic}" has no <SettingsReference type="${page.chartType}" />`
+      );
+    }
+  }
+  for (const page of input.pages) {
+    if (page.thumbnail && !live.has(page.thumbnail)) {
+      errors.push(
+        `Page "${page.topic}" uses missing live example "${page.thumbnail}" as its thumbnail`
       );
     }
   }

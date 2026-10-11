@@ -490,12 +490,21 @@
       {
         "id": "m5",
         "title": "Every chart type documented",
-        "status": "planned",
+        "status": "completed",
         "proof": "Remaining 18 types removed from pendingTargets; WebGL check for 3D",
         "end_state": "No chart type pending",
         "outcome": "Every chart type has a gated page",
         "valid_intermediate_state": "Flows and surfaces still pending",
-        "rollback": "Revert individual pages; their types return to pendingTargets"
+        "rollback": "Revert individual pages; their types return to pendingTargets",
+        "evidence": [
+          "18 new chart pages; every registered type has a page, live example, and generated settings reference; pendingTargets 72 -> 53",
+          "Live example layouts reuse existing dashboard charts via focus(); 3D scatter renders in headless Chromium",
+          "Verified interactions with fixture-derived counts: row Home 168, heatmap Home/East 42 ($10,307.62), sankey Web->Home 84, pivot Rating 1 = 1,967, scatter Online 6, metric revenue $184,249.66",
+          "Descriptions for every saved setting of every type; shared lines worded to hold for any chart; unused base fields marked 'Not read by this chart type'",
+          "Hand-captured JPEGs removed; index thumbnails and narrow fallbacks are generated screenshots; check verifies thumbnails load",
+          "Message-log composition given real content (was an empty artboard) so its example and docs match",
+          "docs:verify: 22 pages, 21 live examples pass"
+        ]
       },
       {
         "id": "m6",
@@ -568,6 +577,12 @@
       "event": "milestone-completed",
       "milestone": "m4",
       "note": "Docs kit settings surface; single library copy confirmed."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "milestone-completed",
+      "milestone": "m5",
+      "note": "Every chart type documented and gated."
     }
   ],
   "closure": null

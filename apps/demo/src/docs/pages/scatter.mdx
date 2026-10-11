@@ -1,11 +1,3 @@
-import scatterTrace from "../assets/scatter-trace.jpg";
-
-<Figure
-  src={scatterTrace}
-  alt="Scatter plot of net sales against contribution, with a row table below."
-  caption="The trace example plots calculated net sales against contribution for 18 orders, with the trace panel open on one point."
-/>
-
 ## Fields and computation
 
 Choose one field for X and one for Y. Each plotted point represents a source row with finite positions. In the `scatter-trace` example, both axes are calculated fields: Net sales is X and Contribution is Y.
@@ -16,6 +8,15 @@ Choose one field for X and one for Y. Each plotted point represents a source row
     { name: "Net sales", expression: "Gross sales − Discount" },
     { name: "Contribution", expression: "Net sales − Cost" },
   ]}
+/>
+
+## Try it
+
+Click a channel to narrow the points to its orders. Drag across the plot to brush a range on both axes.
+
+<LiveExample
+  id="scatter"
+  caption="Calculated net sales against contribution for 18 orders, from the scatter trace example."
 />
 
 ## Selection and row scope

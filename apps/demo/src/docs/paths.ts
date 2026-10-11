@@ -23,3 +23,19 @@ export function captureId(pathname: string): string | null {
   const id = /^\/docs\/_capture\/([^/]+)\/?$/.exec(pathname)?.[1];
   return id ? decodeURIComponent(id) : null;
 }
+
+/** Below this viewport width a live example shows its screenshot. */
+export const LIVE_MIN_WIDTH = 1024;
+
+/** Where the docs check saves each example's screenshot. */
+export function liveShotPath(id: string) {
+  return `/docs-shots/example-${id}.png`;
+}
+
+/** A heading's anchor id, from its visible text. */
+export function slugify(text: string) {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}

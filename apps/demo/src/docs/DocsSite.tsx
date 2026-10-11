@@ -1,3 +1,4 @@
+import { examples } from "@/demos/examples";
 import { examplePath } from "@/routes";
 import { ArrowRight } from "lucide-react";
 import type { MDXContent } from "mdx/types";
@@ -29,7 +30,7 @@ import {
 } from "./components/chrome";
 import { DocsLink, mdxComponents } from "./components/content";
 import { LiveExample } from "./live/LiveExample";
-import { captureId, docsPath, docsTopic } from "./paths";
+import { captureId, docsPath, docsTopic, liveShotPath } from "./paths";
 
 const loaded = new Map<string, ComponentType>();
 
@@ -121,15 +122,18 @@ function GuidePage({ page }: { page: DocsPage }) {
               </ul>
             </nav>
           )}
-          {page.examples.map((example) => (
-            <TryCard
-              key={example.id}
-              heading={example.heading}
-              meta={example.meta}
-              to={examplePath(example.id)}
-              label={example.label}
-            />
-          ))}
+          {page.examples.map((id) => {
+            const example = examples.find((item) => item.id === id);
+            return example ? (
+              <TryCard
+                key={id}
+                heading={example.title}
+                meta={`${example.dataset.rows} · ${example.dataset.source} data`}
+                to={examplePath(id)}
+                label="Open the example"
+              />
+            ) : null;
+          })}
           {page.related.length > 0 && (
             <div className="rounded-xl border border-border p-5">
               <p className={labelClass}>Related</p>
@@ -152,15 +156,16 @@ function GuidePage({ page }: { page: DocsPage }) {
 
 function PageCard({ page }: { page: DocsPage }) {
   const Icon = page.icon;
+  // Screenshots come from the docs check, so a dev server may not have them.
+  const [thumbMissing, setThumbMissing] = useState(false);
   return (
     <article className={`${cardLinkClass} flex flex-col overflow-hidden`}>
-      {page.image && (
+      {page.thumbnail && !thumbMissing && (
         <div className="aspect-[16/8] overflow-hidden border-b border-border bg-muted">
           <img
-            src={page.image.src}
-            alt={page.image.alt}
-            width={1280}
-            height={720}
+            src={liveShotPath(page.thumbnail)}
+            alt=""
+            onError={() => setThumbMissing(true)}
             className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />
         </div>

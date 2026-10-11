@@ -1,20 +1,7 @@
 import { chartSettingsReference } from "exploreda/docs-kit";
 import { labelClass } from "../components/chrome";
+import { formatDefault } from "./formatDefault";
 import { describeSetting } from "./settingDescriptions";
-
-/** A default as short text; settings with structure name their kind. */
-export function formatDefault(value: unknown): string {
-  if (value === undefined || value === "") {
-    return "—";
-  }
-  if (Array.isArray(value)) {
-    return value.length === 0 ? "none" : `${value.length} items`;
-  }
-  if (typeof value === "object" && value !== null) {
-    return "object";
-  }
-  return String(value);
-}
 
 /**
  * Every saved setting of a chart type, its line, and its value in a new chart.

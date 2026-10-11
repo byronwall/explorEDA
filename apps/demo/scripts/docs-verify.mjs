@@ -130,6 +130,18 @@ async function runSteps(page, where, id, steps) {
           .locator(`[data-docs-live="${id}"]`)
           .getByLabel(step.select.label, { exact: true })
           .selectOption({ label: step.select.option });
+      } else if ("expectText" in step) {
+        const region = page.locator(`[data-docs-live="${id}"]`);
+        const ok = await settle(async () =>
+          ((await region.textContent()) ?? "").includes(step.expectText)
+        );
+        if (ok !== true) fail(at, `no text "${step.expectText}" in the example`);
+      } else if ("click" in step) {
+        await page
+          .locator(`[data-docs-live="${id}"]`)
+          .getByLabel(step.click, { exact: true })
+          .first()
+          .click();
       } else if ("expectMark" in step) {
         const mark = page
           .locator(`[data-docs-live="${id}"]`)
@@ -220,6 +232,23 @@ for (const id of exampleIds) {
   }
   for (const error of errors)
     fail(`capture "${id}"`, `console error: ${error}`);
+  await page.close();
+}
+
+// The index shows each page's live example screenshot.
+{
+  const { page } = await openPage(1280, 900);
+  await page.goto(`${base}/docs`);
+  await page.locator("h1").waitFor();
+  const broken = await page.locator("main article img").evaluateAll((images) =>
+    Promise.all(
+      images.map(async (image) => {
+        await image.decode().catch(() => undefined);
+        return image.naturalWidth === 0 ? image.getAttribute("src") : null;
+      })
+    ).then((sources) => sources.filter(Boolean))
+  );
+  for (const src of broken) fail("/docs", `thumbnail ${src} did not load`);
   await page.close();
 }
 

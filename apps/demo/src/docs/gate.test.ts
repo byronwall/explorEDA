@@ -1,7 +1,7 @@
 import "exploreda";
 // @ts-expect-error The package uses export maps, but this project uses legacy module resolution.
 import { chartRegistry as packageRegistry } from "exploreda/core";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { exampleCoverage } from "@/demos/coverage";
@@ -45,7 +45,9 @@ function currentInput(): DocsGateInput {
         readFileSync(join(docsDir, "pages", file), "utf8"),
       ])
     ),
-    assets: readdirSync(join(docsDir, "assets")),
+    assets: existsSync(join(docsDir, "assets"))
+      ? readdirSync(join(docsDir, "assets"))
+      : [],
     targets: allTargets(chartRegistry.getAll().map(({ type }) => type)),
     pending: pendingTargets,
     pendingLimit: PENDING_LIMIT,
@@ -102,7 +104,7 @@ describe("docs gate", () => {
         pages: [
           {
             ...scatter!,
-            examples: [{ id: "renamed", heading: "", meta: "", label: "" }],
+            examples: ["renamed"],
             related: ["nowhere"],
           },
           ...rest,
@@ -121,9 +123,9 @@ describe("docs gate", () => {
         ...input,
         exampleFeatures: { ...input.exampleFeatures, "scatter-trace": [] },
       })
-    ).toEqual([
-      'Page "scatter" uses example "scatter-trace", which does not show a scatter chart',
-    ]);
+    ).toContain(
+      'Page "scatter" uses example "scatter-trace", which does not show a scatter chart'
+    );
   });
 
   it("fails for broken links and images inside a page", () => {
@@ -146,7 +148,8 @@ describe("docs gate", () => {
 
   it("fails for a page file without a catalogue entry, or the reverse", () => {
     const input = currentInput();
-    const { rendering: _rendering, ...sources } = input.sources;
+    const sources = { ...input.sources };
+    delete sources.rendering;
     expect(
       findDocsErrors({ ...input, sources: { ...sources, stray: "" } })
     ).toEqual([

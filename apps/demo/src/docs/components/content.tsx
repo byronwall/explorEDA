@@ -1,19 +1,11 @@
 import type { MDXComponents } from "mdx/types";
 import { isValidElement, type ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { docsPath } from "../paths";
+import { docsPath, slugify } from "../paths";
 import { inlineLinkClass, proseClass } from "./chrome";
 import { WorkedOrder } from "./workedOrder";
 import { LiveExample } from "../live/LiveExample";
 import { SettingsReference } from "../reference/SettingsReference";
-
-/** A heading's anchor id, from its visible text. */
-export function slugify(text: string) {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
 
 function textOf(node: ReactNode): string {
   if (typeof node === "string" || typeof node === "number") {

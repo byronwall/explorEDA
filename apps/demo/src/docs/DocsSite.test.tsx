@@ -45,7 +45,7 @@ describe("docs routes", () => {
       )
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: "Open the scatter trace example" })
+      screen.getByRole("link", { name: "Open the example" })
     ).toHaveAttribute("href", "/examples/scatter-trace");
     expect(
       screen.getByRole("navigation", { name: "On this page" })
@@ -61,7 +61,7 @@ describe("docs routes", () => {
       await screen.findByText(/globally filtered rows/)
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: "Open the order-book example" })
+      screen.getByRole("link", { name: "Open the example" })
     ).toHaveAttribute("href", "/examples/shop-operations");
   });
 

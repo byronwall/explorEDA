@@ -6,24 +6,6 @@
  */
 export const pendingTargets: readonly string[] = [
   "accessibility:naming",
-  "chart:3d-scatter",
-  "chart:boxplot",
-  "chart:calendar",
-  "chart:color-legend",
-  "chart:composition",
-  "chart:data-table",
-  "chart:ecdf",
-  "chart:heatmap",
-  "chart:line",
-  "chart:map",
-  "chart:markdown",
-  "chart:metric-card",
-  "chart:parallel-coordinates",
-  "chart:pivot",
-  "chart:row",
-  "chart:sankey",
-  "chart:scatter-matrix",
-  "chart:summary",
   "color:categorical",
   "color:legend",
   "color:numerical",
@@ -79,4 +61,4 @@ export const pendingTargets: readonly string[] = [
 ];
 
 /** Raising this is the only way to add a gap, and shows up in review. */
-export const PENDING_LIMIT = 71;
+export const PENDING_LIMIT = 53;
