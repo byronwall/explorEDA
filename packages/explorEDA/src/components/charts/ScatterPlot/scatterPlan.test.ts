@@ -3,7 +3,8 @@ import { scatterPlotDefinition } from "./definition";
 import { brushFilters, paddedDomain, planScatter } from "./scatterPlan";
 import type { datum } from "@/types/ChartTypes";
 import type { ScaleBand } from "d3-scale";
-import { buildScale } from "../Axis/axisPlan";
+import { buildScale, describeScale } from "../Axis/axisPlan";
+import { numericScale } from "../Axis/numericScale";
 
 function planFor(
   x: datum[],
@@ -170,5 +171,125 @@ describe("empty scatter", () => {
 
   it("stays quiet when points draw", () => {
     expect(planFor([1, 2], [3, 4]).emptyMessage).toBeUndefined();
+  });
+});
+
+describe("points past an axis bound", () => {
+  function bounded(
+    limits: { min?: number; max?: number },
+    filtered?: number[]
+  ) {
+    const settings = scatterPlotDefinition.createDefaultSettings({
+      x: 0,
+      y: 0,
+      w: 4,
+      h: 4,
+    });
+    settings.xField = "x";
+    settings.yField = "y";
+    settings.xAxis = { ...settings.xAxis, limits };
+    const x = [1, 2, 3, 4, 5, 6, 7, 8];
+    const ids = x.map((_, index) => index);
+    return planScatter(
+      settings,
+      {
+        revision: "test",
+        allIds: ids,
+        chartIds: filtered ?? ids,
+        filteredIds: filtered ?? ids,
+        xData: Object.fromEntries(x.map((value, index) => [index, value])),
+        yData: Object.fromEntries(x.map((value, index) => [index, value])),
+        colorData: {},
+        fieldSettings: {},
+      },
+      400,
+      300
+    );
+  }
+
+  it("counts drawn points past each bound on the axis plan", () => {
+    const plan = bounded({ min: 2.5, max: 6 });
+    expect(plan.axes.x.hidden?.low).toMatchObject({ count: 2, at: 2.5 });
+    expect(plan.axes.x.hidden?.high).toMatchObject({ count: 2, at: 6 });
+    expect(plan.axes.y.hidden).toBeUndefined();
+    // Bounds only change the view: every point is still planned.
+    expect(plan.points).toHaveLength(8);
+  });
+
+  it("reports nothing when a bound hides no point", () => {
+    expect(bounded({ max: 20 }).axes.x.hidden).toBeUndefined();
+    expect(bounded({}).axes.x.hidden).toBeUndefined();
+  });
+
+  it("counts only the rows other charts leave in, on a domain that stays put", () => {
+    const all = bounded({ max: 6 });
+    const some = bounded({ max: 6 }, [0, 1, 6]);
+    expect(some.axes.x.hidden?.high?.count).toBe(1);
+    expect(some.axes.x.scale.domain).toEqual(all.axes.x.scale.domain);
+  });
+});
+
+describe("log scatter axes", () => {
+  function logPlan(x: datum[]) {
+    const settings = scatterPlotDefinition.createDefaultSettings({
+      x: 0,
+      y: 0,
+      w: 4,
+      h: 4,
+    });
+    settings.xField = "x";
+    settings.yField = "y";
+    settings.xAxis = { ...settings.xAxis, scaleType: "log" };
+    const ids = x.map((_, index) => index);
+    return planScatter(
+      settings,
+      {
+        revision: "test",
+        allIds: ids,
+        chartIds: ids,
+        filteredIds: ids,
+        xData: Object.fromEntries(x.map((value, index) => [index, value])),
+        yData: Object.fromEntries(x.map((_, index) => [index, index + 1])),
+        colorData: {},
+        fieldSettings: {},
+      },
+      400,
+      300
+    );
+  }
+
+  it("spans only values above zero and leaves the rest out, counted", () => {
+    const plan = logPlan([-5, 0, 1, 10, 1000]);
+    expect(plan.xScale.type).toBe("log");
+    expect(plan.xScale.domain[0]).toBeGreaterThan(0);
+    expect(plan.points).toHaveLength(3);
+    expect(plan.exclusions.map((item) => item.reason)).toEqual([
+      "nonpositive-x",
+      "nonpositive-x",
+    ]);
+    expect(plan.axes.x.hidden?.nonpositive).toEqual({
+      count: 2,
+      unit: ["row", "rows"],
+    });
+    expect(plan.axes.x.labelText).toMatch(/ · log$/);
+  });
+
+  it("labels decades rather than every step", () => {
+    const plan = logPlan([1, 10, 100, 1000, 10000, 100000]);
+    expect(plan.axes.x.ticks.candidates.length).toBeLessThanOrEqual(8);
+  });
+
+  it("explains a chart whose values are all at or below zero", () => {
+    expect(logPlan([0, -1]).emptyMessage).toMatch(
+      /log scale needs values above zero/
+    );
+  });
+
+  it("keeps a saved log linear where a chart does not allow it", () => {
+    const scale = numericScale({ scaleType: "log" });
+    expect(describeScale(scale, "log").type).toBe("linear");
+    expect(describeScale(numericScale({ scaleType: "log" }, true)).type).toBe(
+      "log"
+    );
   });
 });

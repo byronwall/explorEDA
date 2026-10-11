@@ -1,0 +1,14 @@
+{
+  "id": "72f5cce1-eca0-46d9-afe8-f207090e0859",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:013344",
+    "label": "Agent token ...013344"
+  },
+  "createdAt": "2026-10-11T02:17:04.562Z",
+  "summary": "Updated metadata for \"Hard to tell what the focused line refers to\".",
+  "nodeIds": [
+    "page-hard-to-tell-what-the-focused-line-refers-to"
+  ]
+}

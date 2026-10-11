@@ -1,0 +1,851 @@
+import {
+  useDisplayColorScale,
+  useThemeColors,
+} from "@/hooks/useDisplayColorScales";
+import { formatFieldValue as formatWithSettings } from "@/lib/fieldSettings";
+import { Button } from "@/components/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { ActionTooltip } from "@/components/ui/tooltip";
+import { Columns3, LayoutDashboard, Sun } from "lucide-react";
+import { useDataLayer } from "@/providers/DataLayerProvider";
+import type { BaseChartProps, datum } from "@/types/ChartTypes";
+import type { Filter } from "@/types/FilterTypes";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type MouseEvent,
+} from "react";
+import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
+import { ChartReadout } from "../ChartReadout";
+import {
+  ChartStatusLine,
+  STATUS_HINT_MIN_WIDTH,
+  STATUS_LINE_HEIGHT,
+} from "../ChartStatusLine";
+import { isEmptyPlotTarget } from "../emptyPlotClick";
+import { useChartEdit } from "../InPlace/useChartEdit";
+import {
+  useChartTrace,
+  useChartTraceApi,
+  useTraceRevision,
+  useTraceSource,
+} from "../trace/ChartTraceScope";
+import type { TraceSource } from "../trace/traceTypes";
+import { useGetColumnData } from "../useGetColumnData";
+import { useGetLiveIds } from "../useGetLiveData";
+import type { HierarchySettings } from "./definition";
+import {
+  isZoomable,
+  planHierarchy,
+  resolveFocus,
+  shareOf,
+  toggleBranch,
+  type HierarchyNode,
+  type HierarchyPlan,
+  type HierarchySnapshot,
+} from "./hierarchyPlan";
+import {
+  findHierarchyTraceRow,
+  hierarchyTraceTargets,
+  resolveHierarchyTrace,
+} from "./hierarchyTrace";
+import { ARRANGEMENTS, type Arrangement } from "./arrangements";
+import {
+  arcPath,
+  layoutIcicle,
+  layoutSunburst,
+  type ArcRect,
+} from "./partitionLayout";
+import { layoutTreemap, type TreemapRect } from "./treemapLayout";
+
+const ARRANGEMENT_ICONS: Record<Arrangement, typeof LayoutDashboard> = {
+  treemap: LayoutDashboard,
+  icicle: Columns3,
+  sunburst: Sun,
+};
+const ARTICLES: Record<Arrangement, string> = {
+  treemap: "a treemap",
+  icicle: "an icicle",
+  sunburst: "a sunburst",
+};
+/** The sunburst's empty center, as a share of its radius. */
+const HOLE = 0.3;
+
+const LABEL_CHAR = 6.4;
+const HEADER_HEIGHT = 18;
+const CRUMB_HEIGHT = 24;
+/** How long a first click waits to learn whether it starts a double-click. */
+const DOUBLE_CLICK_MS = 400;
+
+const percent = (part: number, whole: number) =>
+  shareOf(part, whole).toLocaleString("en-US", {
+    style: "percent",
+    maximumFractionDigits: 1,
+  });
+
+/** White or dark text, whichever reads better on a hex fill. */
+export function textOn(fill: string) {
+  const match = /^#([0-9a-f]{6})$/i.exec(fill);
+  if (!match) {
+    return "#fff";
+  }
+  const [r, g, b] = [0, 2, 4].map((at) => {
+    const channel = parseInt(match[1]!.slice(at, at + 2), 16) / 255;
+    return channel <= 0.04045
+      ? channel / 12.92
+      : ((channel + 0.055) / 1.055) ** 2.4;
+  });
+  const luminance = 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
+  // Compare contrast with white (1.05) and near-black (0.05 + 0.012).
+  return 1.05 / (luminance + 0.05) >= (luminance + 0.05) / 0.062
+    ? "#fff"
+    : "#1b1f24";
+}
+
+const unitFor = (plan: HierarchyPlan, value: number) =>
+  plan.unit === "rows" && value === 1 ? "row" : plan.unit;
+
+const fit = (text: string, room: number) => {
+  const chars = Math.floor(room / LABEL_CHAR);
+  if (chars >= text.length) return text;
+  return chars >= 4 ? `${text.slice(0, chars - 1)}…` : "";
+};
+
+/** The first option that fits whole; numbers are never cut short. */
+const firstFit = (options: string[], room: number) =>
+  options.find((text) => text.length * LABEL_CHAR <= room) ?? "";
+
+function pathLabel(plan: HierarchyPlan, node: HierarchyNode) {
+  const labels: string[] = [];
+  const byId = new Map(plan.nodes.map((item) => [item.id, item]));
+  let current: HierarchyNode | undefined = node;
+  while (current && current.depth > 0) {
+    labels.unshift(current.label);
+    current = current.parentId ? byId.get(current.parentId) : undefined;
+  }
+  return labels.join(" › ");
+}
+
+function Readout({
+  plan,
+  node,
+  parent,
+  focus,
+  format,
+}: {
+  plan: HierarchyPlan;
+  node: HierarchyNode;
+  parent: HierarchyNode;
+  /** The zoomed branch, when it is not the whole. */
+  focus: HierarchyNode;
+  format: (value: number) => string;
+}) {
+  const items: [string, string][] = [
+    [plan.levelLabels.slice(0, node.depth).join(" › "), pathLabel(plan, node)],
+    [plan.metricLabel, format(node.weight)],
+  ];
+  if (parent.depth > 0) {
+    items.push([`Of ${parent.label}`, percent(node.weight, parent.weight)]);
+  }
+  if (focus.depth > 0 && focus.id !== parent.id) {
+    items.push([`Of ${focus.label}`, percent(node.weight, focus.weight)]);
+  }
+  items.push(["Of all", percent(node.weight, plan.root.weight)]);
+  if (plan.hasSelection) {
+    items.push([
+      "Selected",
+      `${format(node.selectedWeight)} (${percent(node.selectedWeight, node.weight)})`,
+    ]);
+  }
+  return (
+    <ChartReadout fallbackClassName="eda-chart-readout-inline">
+      {items.map(([name, value]) => (
+        <span key={name} className="eda-readout-item">
+          <span>{name}</span>
+          <b>{value}</b>
+        </span>
+      ))}
+    </ChartReadout>
+  );
+}
+
+export function HierarchyChart({
+  settings,
+  width,
+  height,
+  facetIds,
+}: BaseChartProps<HierarchySettings>) {
+  const getColumnData = useDataLayer((s) => s.getColumnData);
+  const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
+  const formatFieldValue = useDataLayer((s) => s.formatFieldValue);
+  const fieldSettings = useDataLayer((s) => s.fieldSettings);
+  const nonce = useDataLayer((s) => s.nonce);
+  const updateChart = useDataLayer((s) => s.updateChart);
+  const firstLevel = settings.levels[0];
+  const colorScaleId = useDataLayer(
+    (s) =>
+      s.colorScales.find(
+        (scale) => firstLevel && scale.sourceField === firstLevel
+      )?.id
+  );
+  const colorScale = useDisplayColorScale(colorScaleId);
+  const themeColors = useThemeColors();
+  const liveIds = useGetLiveIds(settings, facetIds);
+  const measureData = useGetColumnData(
+    settings.aggregation === "sum" ? settings.measureField : undefined
+  );
+  const revision = useTraceRevision(settings);
+  const trace = useChartTrace();
+  const traceApi = useChartTraceApi();
+  const owner = useId();
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [focused, setFocused] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const refs = useRef(new Map<string, SVGGraphicsElement>());
+  // A first click on a parent selects at once but holds the host's undo
+  // step briefly; a second click turns it into a zoom with the old filters.
+  const edit = useChartEdit(settings.id);
+  const lastClicked = useRef<string | null>(null);
+  const pending = useRef<{
+    id: string;
+    filters: Filter[];
+    timer: ReturnType<typeof setTimeout>;
+  } | null>(null);
+  useEffect(
+    () => () => {
+      if (pending.current) clearTimeout(pending.current.timer);
+    },
+    []
+  );
+
+  useEffect(() => {
+    if (!notice) return;
+    const timer = setTimeout(() => setNotice(null), 4000);
+    return () => clearTimeout(timer);
+  }, [notice]);
+
+  const levels = useMemo(
+    () => settings.levels.filter(Boolean),
+    [settings.levels]
+  );
+  const levelKey = levels.join("\u0000");
+  const snapshot = useMemo((): HierarchySnapshot => {
+    const levelData: HierarchySnapshot["levelData"] = {};
+    for (const field of levelKey.split("\u0000").filter(Boolean)) {
+      levelData[field] = getColumnData(field);
+    }
+    return {
+      revision,
+      liveIds,
+      levelData,
+      measureData,
+      colorScale,
+      themeColors,
+    };
+    // The nonce carries data edits; column maps are replaced when data changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    levelKey,
+    revision,
+    liveIds,
+    measureData,
+    colorScale,
+    themeColors,
+    nonce,
+    getColumnData,
+  ]);
+
+  const plan = useMemo(
+    () =>
+      planHierarchy({ settings, snapshot, getFieldLabel, formatFieldValue }),
+    // Field settings carry label and format changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [settings, snapshot, fieldSettings]
+  );
+
+  const source = useMemo(
+    (): TraceSource => ({
+      role: "chart",
+      revision: plan.revision,
+      resolve: (kind, id) => resolveHierarchyTrace(plan, kind, id),
+      findRow: (id) => findHierarchyTraceRow(plan, id),
+      targets: () => hierarchyTraceTargets(plan),
+    }),
+    [plan]
+  );
+  useTraceSource(owner, source);
+  const inspect = useCallback(
+    (id: string) => traceApi?.inspect(owner, "hierarchy-node", id),
+    [owner, traceApi]
+  );
+  const traced =
+    trace?.selection?.owner === owner ? trace.selection.id : undefined;
+
+  const resolution = useMemo(
+    () => resolveFocus(plan.root, settings.focus),
+    [plan, settings.focus]
+  );
+  const focusNode = resolution.node;
+  const focusParent =
+    resolution.trail.length > 1
+      ? resolution.trail[resolution.trail.length - 2]
+      : resolution.trail.length === 1
+        ? plan.root
+        : undefined;
+  // Zooming needs a level below the first; one level has no breadcrumbs.
+  const crumbHeight = CRUMB_HEIGHT;
+  const arrangement = settings.arrangement ?? "treemap";
+  const margin = settings.margin;
+  const plotTop = margin.top + crumbHeight;
+  const plotWidth = Math.max(0, width - margin.left - margin.right);
+  const plotHeight = Math.max(
+    0,
+    height - plotTop - margin.bottom - STATUS_LINE_HEIGHT
+  );
+  const radius = Math.max(0, Math.min(plotWidth, plotHeight) / 2);
+  const { rects, arcs, tiny } = useMemo(() => {
+    if (arrangement === "sunburst") {
+      const all = layoutSunburst(focusNode, { radius, hole: radius * HOLE });
+      // An arc under a pixel along its outer edge cannot be seen or pointed at.
+      const drawn = all.filter(
+        (arc) => (arc.a1 - arc.a0) * arc.r1 >= 1 && arc.r1 - arc.r0 >= 1
+      );
+      return { rects: [], arcs: drawn, tiny: all.length - drawn.length };
+    }
+    const size = { width: plotWidth, height: plotHeight };
+    const all =
+      arrangement === "icicle"
+        ? layoutIcicle(focusNode, size)
+        : layoutTreemap(focusNode, { ...size, headerHeight: HEADER_HEIGHT });
+    // A box under a pixel on either side cannot be seen or pointed at; its
+    // parent still holds its size, and the status line counts it.
+    const drawn = all.filter(
+      (rect) => rect.x1 - rect.x0 >= 1 && rect.y1 - rect.y0 >= 1
+    );
+    return {
+      rects: drawn,
+      arcs: [] as ArcRect[],
+      tiny: all.length - drawn.length,
+    };
+  }, [arrangement, focusNode, plotWidth, plotHeight, radius]);
+
+  if (!levels.length) {
+    return (
+      <ChartMessage width={width} height={height}>
+        Choose one to three category fields for the levels in chart settings.
+      </ChartMessage>
+    );
+  }
+  if (plan.root.rowCount === 0) {
+    return (
+      <ChartMessage width={width} height={height}>
+        {plan.liveCount > 0
+          ? "Every row is missing at least one level. Show missing values as a node in chart settings."
+          : NO_MATCHING_ROWS}
+      </ChartMessage>
+    );
+  }
+
+  const nodeById = new Map<string, HierarchyNode>([
+    [plan.root.id, plan.root],
+    ...plan.nodes.map((node) => [node.id, node] as const),
+  ]);
+  const order = [...rects, ...arcs].map((mark) => mark.node.id);
+  const measureField =
+    settings.aggregation === "sum" ? settings.measureField : undefined;
+  const format = (value: number) =>
+    measureField
+      ? formatFieldValue(measureField, value)
+      : value.toLocaleString("en-US", { maximumFractionDigits: 2 });
+  // Box labels are tight, so they use short numbers such as $46.5K.
+  const formatShort = (value: number) =>
+    measureField
+      ? formatWithSettings(measureField, value, fieldSettings[measureField], {
+          compact: true,
+        })
+      : value.toLocaleString("en-US", {
+          notation: value >= 10_000 ? "compact" : "standard",
+          maximumFractionDigits: 1,
+        });
+  const select = (node: HierarchyNode, add: boolean) => {
+    const result = toggleBranch(settings.filters, node, levels, add);
+    if (result.ok) {
+      setNotice(null);
+      updateChart(settings.id, { filters: result.filters });
+    } else {
+      setNotice(result.reason);
+    }
+  };
+  const zoomTo = (path: datum[]) =>
+    updateChart(settings.id, { focus: path.length ? path : undefined });
+  const onMarkClick = (event: MouseEvent, node: HierarchyNode) => {
+    event.stopPropagation();
+    if (event.altKey) {
+      event.preventDefault();
+      inspect(node.id);
+      return;
+    }
+    const first = pending.current;
+    const repeat = lastClicked.current === node.id;
+    lastClicked.current = node.id;
+    if (event.detail >= 2 && repeat) {
+      // The second press of a double-click: zoom, and undo the first
+      // press's selection inside the same held step. On a leaf it does
+      // nothing, so the first press's selection stands.
+      if (first?.id === node.id && isZoomable(node)) {
+        clearTimeout(first.timer);
+        pending.current = null;
+        edit.apply({ filters: first.filters, focus: node.path });
+        edit.commit();
+      }
+      return;
+    }
+    if (first) {
+      clearTimeout(first.timer);
+      pending.current = null;
+      edit.commit();
+    }
+    const add = event.shiftKey || event.metaKey || event.ctrlKey;
+    if (!isZoomable(node)) {
+      select(node, add);
+      return;
+    }
+    const result = toggleBranch(settings.filters, node, levels, add);
+    if (!result.ok) {
+      setNotice(result.reason);
+      return;
+    }
+    setNotice(null);
+    const before = settings.filters;
+    edit.apply({ filters: result.filters });
+    pending.current = {
+      id: node.id,
+      filters: before,
+      timer: setTimeout(() => {
+        pending.current = null;
+        edit.commit();
+      }, DOUBLE_CLICK_MS),
+    };
+  };
+  const moveFocus = (id: string, step: number) => {
+    const index = order.indexOf(id);
+    const next =
+      order[
+        step === Infinity
+          ? order.length - 1
+          : step === -Infinity
+            ? 0
+            : Math.max(0, Math.min(order.length - 1, index + step))
+      ];
+    if (!next) return;
+    setFocused(next);
+    setHovered(next);
+    refs.current.get(next)?.focus();
+  };
+  const handleKey = (event: KeyboardEvent, node: HierarchyNode) => {
+    const steps: Record<string, number> = {
+      ArrowRight: 1,
+      ArrowDown: 1,
+      ArrowLeft: -1,
+      ArrowUp: -1,
+      Home: -Infinity,
+      End: Infinity,
+    };
+    if (event.key in steps) {
+      event.preventDefault();
+      moveFocus(node.id, steps[event.key]!);
+    } else if (event.key === "Enter" && event.altKey) {
+      event.preventDefault();
+      inspect(node.id);
+    } else if (event.key === "Enter" && event.shiftKey) {
+      event.preventDefault();
+      if (isZoomable(node)) zoomTo(node.path);
+    } else if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      select(node, event.shiftKey);
+    }
+  };
+  const tabStop =
+    (focused && order.includes(focused) ? focused : undefined) ??
+    plan.nodes.find((node) => node.selected)?.id ??
+    order[0];
+
+  const hoveredNode = hovered ? nodeById.get(hovered) : undefined;
+  const hoveredParent = hoveredNode?.parentId
+    ? nodeById.get(hoveredNode.parentId)
+    : undefined;
+  const statusParts = [
+    plan.hasSelection
+      ? `${format(plan.root.selectedWeight)} of ${format(plan.root.weight)} ${plan.unit} selected`
+      : `${format(plan.root.weight)} ${plan.unit} in all`,
+    tiny > 0 &&
+      `${tiny.toLocaleString()} ${tiny === 1 ? "box" : "boxes"} too small to draw`,
+    plan.incompleteCount > 0 &&
+      `${plan.incompleteCount.toLocaleString()} rows with a missing level not drawn`,
+    ...plan.excluded.map(
+      (item) =>
+        `${item.count.toLocaleString()} rows left out: ${item.reason.toLowerCase()}`
+    ),
+  ];
+  const statusHint =
+    notice ??
+    (!plan.hasSelection &&
+      !facetIds &&
+      width >= STATUS_HINT_MIN_WIDTH &&
+      (levels.length > 1
+        ? "Click a box to select its branch, double-click to zoom in"
+        : "Click a box to select it"));
+
+  /** Events, name, and outline every mark shares, box or arc. */
+  const markProps = (node: HierarchyNode) => {
+    const parent = node.parentId ? nodeById.get(node.parentId) : undefined;
+    const share = parent ? percent(node.weight, parent.weight) : "";
+    const isTraced = traced === node.id;
+    const highlight =
+      node.selected || isTraced || focused === node.id || hovered === node.id;
+    return {
+      stroke: highlight ? "var(--foreground)" : "var(--background)",
+      strokeWidth: node.selected || isTraced ? 2 : 1,
+      strokeDasharray:
+        focused === node.id && !node.selected ? "3 2" : undefined,
+      className: "cursor-pointer outline-none",
+      role: "button",
+      tabIndex: node.id === tabStop ? 0 : -1,
+      "aria-label": `${pathLabel(plan, node)}: ${format(node.weight)} ${unitFor(plan, node.weight)}${parent ? `, ${share} of ${parent.depth ? parent.label : "all"}` : ""}`,
+      "aria-pressed": node.selected,
+      onPointerEnter: () => setHovered(node.id),
+      onPointerLeave: () => setHovered((id) => (id === node.id ? null : id)),
+      onFocus: () => setFocused(node.id),
+      onBlur: () => setHovered((id) => (id === node.id ? null : id)),
+      onClick: (event: MouseEvent) => onMarkClick(event, node),
+      onKeyDown: (event: KeyboardEvent) => handleKey(event, node),
+    };
+  };
+
+  const renderArc = (arc: ArcRect) => {
+    const { node } = arc;
+    const dimmed = plan.hasSelection && node.selectedWeight === 0;
+    const mid = (arc.a0 + arc.a1) / 2;
+    const r = (arc.r0 + arc.r1) / 2;
+    // Labels run along the radius, so the ring's depth is their room and
+    // the arc's length at mid radius must hold one line of text.
+    const fitted =
+      (arc.a1 - arc.a0) * r >= 13 ? fit(node.label, arc.r1 - arc.r0 - 8) : "";
+    // A stub such as "Ele…" says less than no label; the readout names it.
+    const name = fitted === node.label || fitted.length >= 7 ? fitted : "";
+    const degrees = (mid * 180) / Math.PI;
+    const flip = degrees > 180;
+    return (
+      <g key={node.id} data-plan-id={node.id}>
+        <path
+          ref={(element) => {
+            if (element) refs.current.set(node.id, element);
+            else refs.current.delete(node.id);
+          }}
+          d={arcPath(arc)}
+          fillRule="evenodd"
+          fill={node.color}
+          fillOpacity={dimmed ? 0.25 : 0.88}
+          {...markProps(node)}
+        />
+        {name && (
+          <text
+            transform={`rotate(${degrees - 90}) translate(${r},0) rotate(${flip ? 180 : 0})`}
+            textAnchor="middle"
+            dominantBaseline="central"
+            fontSize={11}
+            fontWeight={600}
+            fill={dimmed ? "var(--foreground)" : textOn(node.color)}
+            opacity={dimmed ? 0.6 : 1}
+            pointerEvents="none"
+            aria-hidden="true"
+          >
+            {name}
+          </text>
+        )}
+      </g>
+    );
+  };
+
+  const renderRect = (rect: TreemapRect) => {
+    const { node } = rect;
+    const w = rect.x1 - rect.x0;
+    const h = rect.y1 - rect.y0;
+    const isParent = node.shown.length > 0 && rect.header > 0;
+    const dimmed = plan.hasSelection && node.selectedWeight === 0;
+    const parent = node.parentId ? nodeById.get(node.parentId) : undefined;
+    const share = parent ? percent(node.weight, parent.weight) : "";
+    const ink = isParent ? "var(--foreground)" : textOn(node.color);
+    const name = fit(node.label, w - 8);
+    const value = formatShort(node.weight);
+    const detail = firstFit([`${value} · ${share}`, share], w - 8);
+    const inlineDetail =
+      name === node.label
+        ? firstFit(
+            [`${value} · ${share}`, share],
+            w - 16 - node.label.length * LABEL_CHAR
+          )
+        : "";
+    const headerText = isParent
+      ? firstFit(
+          [
+            `${node.label}  ${value} · ${share}`,
+            `${node.label}  ${share}`,
+            node.label,
+          ],
+          w - 8
+        ) || name
+      : "";
+    return (
+      <g key={node.id} data-plan-id={node.id}>
+        <rect
+          ref={(element) => {
+            if (element) refs.current.set(node.id, element);
+            else refs.current.delete(node.id);
+          }}
+          x={rect.x0}
+          y={rect.y0}
+          width={Math.max(0, w)}
+          height={Math.max(0, h)}
+          fill={node.color}
+          fillOpacity={isParent ? (dimmed ? 0.06 : 0.16) : dimmed ? 0.25 : 0.88}
+          {...markProps(node)}
+        />
+        {isParent && headerText && (
+          <text
+            x={rect.x0 + 4}
+            y={rect.y0 + rect.header / 2 + 0.5}
+            dominantBaseline="central"
+            fontSize={11}
+            fontWeight={600}
+            fill={ink}
+            opacity={dimmed ? 0.55 : 1}
+            pointerEvents="none"
+            aria-hidden="true"
+          >
+            {headerText}
+          </text>
+        )}
+        {!isParent &&
+          (arrangement === "icicle" || node.shown.length === 0) &&
+          h >= 16 &&
+          name && (
+            <text
+              x={rect.x0 + 4}
+              y={rect.y0 + 4}
+              fontSize={11}
+              fill={dimmed ? "var(--foreground)" : ink}
+              opacity={dimmed ? 0.6 : 1}
+              pointerEvents="none"
+              aria-hidden="true"
+            >
+              <tspan x={rect.x0 + 4} dy="0.9em" fontWeight={600}>
+                {name}
+              </tspan>
+              {h >= 34 && detail ? (
+                <tspan x={rect.x0 + 4} dy="1.3em" opacity={0.85}>
+                  {detail}
+                </tspan>
+              ) : (
+                // A short but wide box keeps its numbers on the name's line.
+                inlineDetail && (
+                  <tspan dx={8} opacity={0.85}>
+                    {inlineDetail}
+                  </tspan>
+                )
+              )}
+            </text>
+          )}
+      </g>
+    );
+  };
+
+  return (
+    <div
+      className="relative select-none"
+      style={{ width, height }}
+      onPointerLeave={() => setHovered(null)}
+    >
+      <svg
+        width={width}
+        height={height - STATUS_LINE_HEIGHT}
+        className="block"
+        onClick={(event) => {
+          // A click outside every box clears the selection.
+          if (
+            !event.altKey &&
+            settings.filters.length > 0 &&
+            isEmptyPlotTarget(event.target)
+          )
+            updateChart(settings.id, { filters: [] });
+        }}
+      >
+        <rect
+          width={width}
+          height={Math.max(0, height - STATUS_LINE_HEIGHT)}
+          fill="transparent"
+        />
+        <g
+          transform={`translate(${margin.left},${plotTop})`}
+          role="group"
+          aria-label={`${plan.levelLabels.join(" › ")} as ${ARTICLES[arrangement]}`}
+        >
+          {rects.map(renderRect)}
+          {arrangement === "sunburst" && (
+            <g transform={`translate(${plotWidth / 2},${plotHeight / 2})`}>
+              {arcs.map(renderArc)}
+              <g
+                className={focusParent ? "cursor-pointer" : undefined}
+                {...(focusParent && {
+                  role: "button",
+                  tabIndex: 0,
+                  "aria-label": `Zoom out to ${focusParent.depth ? focusParent.label : "All"}`,
+                  onClick: (event: MouseEvent) => {
+                    event.stopPropagation();
+                    zoomTo(focusParent.path);
+                  },
+                  onKeyDown: (event: KeyboardEvent) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      zoomTo(focusParent.path);
+                    }
+                  },
+                })}
+              >
+                <circle
+                  r={Math.max(0, radius * HOLE - 2)}
+                  fill="var(--background)"
+                />
+                <text
+                  textAnchor="middle"
+                  fontSize={12}
+                  className="fill-foreground"
+                  pointerEvents="none"
+                >
+                  <tspan x={0} dy="-0.2em" fontWeight={600}>
+                    {fit(
+                      focusNode.depth ? focusNode.label : "All",
+                      radius * HOLE * 1.7
+                    )}
+                  </tspan>
+                  <tspan x={0} dy="1.3em" className="fill-muted-foreground">
+                    {formatShort(focusNode.weight)}
+                  </tspan>
+                </text>
+              </g>
+            </g>
+          )}
+        </g>
+      </svg>
+      <div
+        className="absolute flex items-center gap-2"
+        style={{
+          left: margin.left,
+          right: margin.right,
+          top: margin.top,
+          height: crumbHeight,
+        }}
+      >
+        <nav
+          aria-label="Zoom path"
+          className="flex min-w-0 flex-1 items-center gap-0.5 overflow-hidden whitespace-nowrap text-xs"
+        >
+          {[plan.root, ...resolution.trail].map((node, index, all) => {
+            const current = index === all.length - 1;
+            return (
+              <span key={node.id} className="flex min-w-0 items-center gap-0.5">
+                {index > 0 && (
+                  <span aria-hidden="true" className="text-muted-foreground">
+                    ›
+                  </span>
+                )}
+                {current ? (
+                  <span
+                    aria-current="location"
+                    className="truncate px-1.5 font-semibold text-foreground"
+                  >
+                    {node.label}
+                  </span>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 min-w-0 truncate px-1.5 text-xs font-medium"
+                    onClick={() => zoomTo(node.path)}
+                  >
+                    {node.label}
+                  </Button>
+                )}
+              </span>
+            );
+          })}
+          {resolution.missing.map((label, index) => (
+            <span
+              key={`missing-${index}`}
+              className="flex items-center gap-0.5 text-muted-foreground"
+            >
+              <span aria-hidden="true">›</span>
+              <span className="truncate px-1.5 italic">{label} · no rows</span>
+            </span>
+          ))}
+          <span className="ml-1 shrink-0 tabular-nums text-muted-foreground">
+            {format(focusNode.weight)}
+            {focusNode.depth > 0 &&
+              ` · ${percent(focusNode.weight, plan.root.weight)} of all`}
+          </span>
+        </nav>
+        <ToggleGroup
+          type="single"
+          size="sm"
+          variant="outline"
+          value={arrangement}
+          onValueChange={(next) =>
+            next &&
+            next !== arrangement &&
+            updateChart(settings.id, { arrangement: next as Arrangement })
+          }
+          aria-label="Arrangement"
+          className="shrink-0"
+        >
+          {ARRANGEMENTS.map(({ value, label, help }) => {
+            const Icon = ARRANGEMENT_ICONS[value];
+            return (
+              <ActionTooltip key={value} content={`${label}. ${help}`}>
+                <span className="inline-flex">
+                  <ToggleGroupItem
+                    value={value}
+                    aria-label={label}
+                    className="h-6 min-w-6 px-1"
+                  >
+                    <Icon className="size-3.5" />
+                  </ToggleGroupItem>
+                </span>
+              </ActionTooltip>
+            );
+          })}
+        </ToggleGroup>
+      </div>
+      <ChartStatusLine
+        parts={statusParts}
+        hint={statusHint}
+        left={margin.left}
+        right={margin.right}
+        bottom={2}
+      />
+      {hoveredNode && hoveredNode.depth > 0 && (
+        <Readout
+          plan={plan}
+          node={hoveredNode}
+          parent={hoveredParent ?? plan.root}
+          focus={focusNode}
+          format={format}
+        />
+      )}
+    </div>
+  );
+}

@@ -1,3 +1,4 @@
+import { parseNumber } from "@/lib/valueParsing";
 import { LiveItem } from "@/hooks/CrossfilterWrapper";
 import { IdType } from "@/providers/DataLayerProvider";
 import { applyFilter } from "@/hooks/applyFilter";
@@ -45,17 +46,6 @@ export function getFilteredRows(
   return filtered;
 }
 
-// Helper function to check if a value is numeric
-function isNumeric(value: datum): boolean {
-  if (typeof value === "number") {
-    return true;
-  }
-  if (typeof value !== "string") {
-    return false;
-  }
-  return !isNaN(Number(value)) && !isNaN(parseFloat(value));
-}
-
 // Helper function to compare values with natural sort
 function compareValues(a: datum, b: datum): number {
   if (a == null && b == null) return 0;
@@ -75,8 +65,10 @@ function compareValues(a: datum, b: datum): number {
   const bStr = String(b);
 
   // If both values are numeric, compare as numbers
-  if (isNumeric(a) && isNumeric(b)) {
-    return Number(a) - Number(b);
+  const aNumber = parseNumber(a);
+  const bNumber = parseNumber(b);
+  if (!Number.isNaN(aNumber) && !Number.isNaN(bNumber)) {
+    return aNumber - bNumber;
   }
 
   // For strings, use localeCompare for natural sort

@@ -1,0 +1,16 @@
+{
+  "id": "745b84bc-a960-4b37-bd1a-d5e9643e8060",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:36:13.898Z",
+  "summary": "Created \"A grid of sparklines might work, but the wide lines are goofy\" under \"Tech sparklines\".",
+  "nodeIds": [
+    "page-a-grid-of-sparklines-might-work-but-the-wide-lines-are-goofy",
+    "page-tech-sparklines"
+  ],
+  "metadata": {
+    "clientMutationId": "1d9e866b-1fb1-44c0-a54b-a243934e91cd"
+  }
+}

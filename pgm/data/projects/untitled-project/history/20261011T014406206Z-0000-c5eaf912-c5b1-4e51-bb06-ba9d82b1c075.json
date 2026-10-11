@@ -1,0 +1,16 @@
+{
+  "id": "c5eaf912-c5b1-4e51-bb06-ba9d82b1c075",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:44:06.206Z",
+  "summary": "Added 1 images to \"Changing nature of jobs\".",
+  "nodeIds": [
+    "page-changing-nature-of-jobs"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "ed148aa4-8f2a-469b-ba5d-d146f9eeca20"
+  }
+}

@@ -643,7 +643,7 @@ function BarPage() {
       body: (
         <>
           <p className={proseClass}>
-            Category-count bars use rows that remain after other chart filters
+            Category-count bars use rows that remain after other filters
             and the current facet. Clicking a category filters linked views.
             Numeric bins use that same live row set; dragging across bins
             filters to their snapped numeric range. The count and bin domains

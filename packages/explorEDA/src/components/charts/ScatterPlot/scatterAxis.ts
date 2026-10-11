@@ -6,12 +6,12 @@ import {
   categoryLabel,
   categoryValue,
 } from "@/lib/categories";
-import { finiteNumber, isMissingValue } from "@/lib/numeric";
+import { finiteNumber, isMissingValue } from "@/lib/valueParsing";
 import { applyFilter } from "@/hooks/applyFilter";
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { AxisSettings, datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
-import { numericScale } from "../Axis/numericScale";
+import { numericScale, numericScaleType } from "../Axis/numericScale";
 import { boundedDomain } from "../Axis/axisBounds";
 
 /** Space between bands, as a share of each band's step. */
@@ -30,7 +30,7 @@ export interface ScatterCategory {
 export type ScatterAxisScale =
   | {
       kind: "numeric";
-      type: "linear" | "symlog";
+      type: "linear" | "symlog" | "log";
       scale: ScaleLinear<number, number>;
       bounds: [number, number];
       domain: [number, number];
@@ -55,26 +55,51 @@ const symexp = (value: number) =>
  */
 export function paddedDomain(
   [min, max]: [number, number],
-  scaleType: "linear" | "symlog"
+  scaleType: "linear" | "symlog" | "log"
 ): [number, number] {
-  const to = scaleType === "symlog" ? symlog : (value: number) => value;
-  const from = scaleType === "symlog" ? symexp : (value: number) => value;
+  const to =
+    scaleType === "symlog"
+      ? symlog
+      : scaleType === "log"
+        ? Math.log10
+        : (value: number) => value;
+  const from =
+    scaleType === "symlog"
+      ? symexp
+      : scaleType === "log"
+        ? (value: number) => 10 ** value
+        : (value: number) => value;
   const low = to(min);
   const high = to(max);
   const pad = high > low ? (high - low) * DOMAIN_PADDING : 0.5;
   return [from(low - pad), from(high + pad)];
 }
 
-function bounds(ids: IdType[], data: Record<IdType, datum>): [number, number] {
+/** The data extent. A log axis reads only values above zero. */
+function bounds(
+  ids: IdType[],
+  data: Record<IdType, datum>,
+  positive = false
+): [number, number] {
   let min = Infinity;
   let max = -Infinity;
   for (const id of ids) {
     const value = finiteNumber(data[id]);
-    if (value === undefined) continue;
+    if (value === undefined || (positive && value <= 0)) continue;
     min = Math.min(min, value);
     max = Math.max(max, value);
   }
-  return min === Infinity ? [0, 1] : [min, max];
+  if (min === Infinity) return positive ? [1, 10] : [0, 1];
+  return [min, max];
+}
+
+/** Bounds a log axis can apply: a side at or below zero follows the data. */
+function positiveLimits(axis: AxisSettings): AxisSettings {
+  const limits = axis.limits;
+  if (!limits) return axis;
+  const keep = (value?: number) =>
+    value !== undefined && value > 0 ? value : undefined;
+  return { ...axis, limits: { min: keep(limits.min), max: keep(limits.max) } };
 }
 
 /**
@@ -138,15 +163,21 @@ export function planScatterAxis({
         .padding(BAND_PADDING),
     };
   }
-  const type = axis.scaleType === "symlog" ? "symlog" : "linear";
-  const extent = bounds(ids, data);
-  const domain = boundedDomain(paddedDomain(extent, type), axis);
+  const type = numericScaleType(axis, true);
+  const log = type === "log";
+  const extent = bounds(ids, data, log);
+  const domain = boundedDomain(
+    paddedDomain(extent, type),
+    log ? positiveLimits(axis) : axis
+  );
+  // A bound below the data can push the far end past zero; keep a decade.
+  if (log && domain[0] <= 0) domain[0] = domain[1] / 10;
   return {
     kind: "numeric",
     type,
     bounds: extent,
     domain,
-    scale: numericScale(axis).domain(domain).range(range),
+    scale: numericScale(axis, true).domain(domain).range(range),
   };
 }
 
@@ -167,7 +198,9 @@ export function scatterPosition(
 ): { value: datum; pixel: number } | undefined {
   if (axis.kind === "numeric") {
     const value = finiteNumber(raw);
-    if (value === undefined) return undefined;
+    // A log axis has no place for zero or a negative value.
+    if (value === undefined || (axis.type === "log" && value <= 0))
+      return undefined;
     const pixel = axis.scale(value);
     return Number.isFinite(pixel) ? { value, pixel } : undefined;
   }

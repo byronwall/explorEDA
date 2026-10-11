@@ -1,0 +1,16 @@
+{
+  "id": "f983d42e-6abd-458a-9199-a9dc456a46b4",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:16:20.501Z",
+  "summary": "Added 1 images to \"How each state voted is weak and hard to read\".",
+  "nodeIds": [
+    "page-how-each-state-voted-is-weak-and-hard-to-read"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "07b3cb29-1140-4d1f-b125-2b367dcd206f"
+  }
+}

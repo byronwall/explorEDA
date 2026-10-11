@@ -26,6 +26,31 @@ hist margin`;
 beforeAll(() => registerAllCharts());
 
 describe("compileViews", () => {
+  it("keeps a filter line with the view it sits in", () => {
+    const text = `view Overview
+metric count
+
+view Web
+filter Channel=Web
+metric count`;
+    const result = compileViews(text, { rows });
+    expect(result.diagnostics).toEqual([]);
+    const [overview, web] = result.views;
+    expect(overview!.settings).not.toHaveProperty("workspaceFilters");
+    expect(web!.settings.workspaceFilters).toEqual([
+      { type: "value", field: "Channel", values: ["Web"] },
+    ]);
+    const exported = exportViews(
+      result.views.map((view) => ({
+        name: view.name,
+        settings: view.settings,
+      })),
+      { rows }
+    );
+    expect(exported.text.split("view Web")[1]).toContain("filter Channel=Web");
+    expect(exported.text.split("view Web")[0]).not.toContain("filter ");
+  });
+
   it("builds each view with the shared definitions", () => {
     const result = compileViews(TEXT, { rows });
     expect(result.diagnostics).toEqual([]);

@@ -15,7 +15,7 @@ export interface HeatmapSnapshot {
   revision: string;
   /** Every source row ID. Category ranking uses them so order holds while filtering. */
   allIds: number[];
-  /** Rows after other charts' filters. */
+  /** Rows after other filters. */
   liveIds: number[];
   rowData: Record<number, datum>;
   columnData: Record<number, datum>;
@@ -350,7 +350,7 @@ export function planHeatmap({
     scale: {
       kind: scale.kind,
       domain: scale.domain,
-      population: "shown cells after other chart filters",
+      population: "shown cells after other filters",
     },
     hasEmpty: cells.some((cell) => cell.state === "empty"),
     hasInvalid: cells.some((cell) => cell.state === "invalid"),
@@ -369,7 +369,7 @@ export function planHeatmap({
         : undefined,
     },
     scopeNote:
-      "Rows after other chart filters; this chart's selected cell is outlined",
+      "Rows after other filters; this chart's selected cell is outlined",
   };
 }
 

@@ -612,6 +612,8 @@ export function ScatterSvg({
       onPointerCancel={brush.cancel}
       onLostPointerCapture={brush.cancel}
       onClick={(event) => {
+        // The axis marker opens its own details; it never clears or selects.
+        if ((event.target as Element).closest("[data-axis-hidden]")) return;
         const marginalId = (event.target as Element)
           .closest("[data-marginal-id]")
           ?.getAttribute("data-marginal-id");

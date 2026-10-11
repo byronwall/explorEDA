@@ -1,0 +1,16 @@
+{
+  "id": "2016ce98-bfc6-4d88-8e30-0b4088fc4269",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:39:19.465Z",
+  "summary": "Created \"I want to see the real chart!\" under \"Message log\".",
+  "nodeIds": [
+    "page-i-want-to-see-the-real-chart",
+    "page-message-log"
+  ],
+  "metadata": {
+    "clientMutationId": "c3c933a9-2435-48be-a992-c284753f1b4a"
+  }
+}

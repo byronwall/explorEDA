@@ -1,22 +1,24 @@
-import { dateTimestamp } from "@/lib/dateTime";
+import { finiteNumber, parseDateText } from "@/lib/valueParsing";
 import { utcFormat } from "d3-time-format";
 import type { CalculationValue } from "../types";
 
 export function numericValue(value: CalculationValue): number {
   if (value == null || value === "") throw new Error("Missing numeric value");
-  if (
-    (typeof value !== "number" && typeof value !== "string") ||
-    (typeof value === "string" && !value.trim()) ||
-    !Number.isFinite(Number(value))
-  ) {
+  const number =
+    typeof value === "number" || typeof value === "string"
+      ? finiteNumber(value)
+      : undefined;
+  if (number === undefined) {
     throw new Error(`Invalid numeric value: ${String(value)}`);
   }
-  return Number(value);
+  return number;
 }
 
 function dateValue(value: CalculationValue): Date {
   const date =
-    value instanceof Date ? value : new Date(dateTimestamp(String(value)));
+    value instanceof Date
+      ? value
+      : new Date(typeof value === "string" ? parseDateText(value) : NaN);
   if (!Number.isFinite(date.getTime())) {
     throw new Error(`Invalid date: ${String(value)}`);
   }

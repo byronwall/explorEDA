@@ -57,3 +57,17 @@ it("follows outside changes and resets both limits", () => {
   fireEvent.click(screen.getByRole("button", { name: "Reset the X range" }));
   expect(onChange).toHaveBeenLastCalledWith(undefined);
 });
+
+it("takes only bounds above zero on a log axis", () => {
+  const onChange = vi.fn();
+  render(<AxisLimitFields axisName="X" positive onChange={onChange} />);
+  const min = screen.getByRole("textbox", { name: "X minimum" });
+  fireEvent.change(min, { target: { value: "0" } });
+  expect(onChange).not.toHaveBeenCalled();
+  expect(min).toHaveAttribute("aria-invalid", "true");
+  expect(screen.getByRole("alert")).toHaveTextContent(
+    "A log scale needs bounds above zero."
+  );
+  fireEvent.change(min, { target: { value: "0.5" } });
+  expect(onChange).toHaveBeenLastCalledWith({ min: 0.5 });
+});

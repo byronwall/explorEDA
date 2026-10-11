@@ -1,0 +1,16 @@
+{
+  "id": "8e224537-7ac8-4db7-abfb-8607323882bf",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:36:43.123Z",
+  "summary": "Created \"Driving shifts\" under \"Composition examples\".",
+  "nodeIds": [
+    "page-driving-shifts",
+    "page-composition-examples"
+  ],
+  "metadata": {
+    "clientMutationId": "8fda4974-85f2-48f9-88c2-dc3d98790784"
+  }
+}
