@@ -2,7 +2,7 @@
 
 Imported on 2026-10-10 from [Research Data Viz Graphics](https://chatgpt.com/c/6ac9c668-4fcc-83ea-835d-6eb65c5afa84).
 This folder preserves the complete response and delivered files for the composed-graphics initiative.
-Read the [reference study](../../reference-study.md) and [implementation plan](../../implementation-plan.md) for the current interpretation.
+Read [Composition mode](../../../../composition-mode.md) for what was built and the [implementation plan](../../implementation-plan.md) for what remains.
 
 ## Open the research
 

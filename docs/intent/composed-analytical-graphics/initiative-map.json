@@ -6,9 +6,9 @@
     "scale": "capability",
     "current_phase": "execution",
     "last_updated": "2026-10-10",
-    "summary": "Author polished report graphics from a blank page using primitives, repeated templates, scoped calculations, group placement, and instance overrides.",
+    "summary": "Composition mode shipped through PR #258 and is documented in docs/composition-mode.md; Copy PNG passed its paste check. Remaining scope: stable scales through filtering by default, with rescaling as an opt-in.",
     "status": "active",
-    "next_action": "Claude: close the remaining report/slide PNG paste proof, audit a small measles strip, then continue M2 with shared numeric point/path coordinates. Read the archived Pro records before selecting fixtures."
+    "next_action": "Build milestone 2: stable scale extents by default with a rescale opt-in. Label-precision fix is tracked separately in Product Grid page-composition-repeat-labels-show-inconsistent-decimals."
   },
   "artifacts": {
     "intent_brief": {
@@ -33,8 +33,9 @@
     },
     "reference_study": {
       "path": "reference-study.md",
-      "status": "current",
-      "updated_at": "2026-10-10"
+      "status": "removed",
+      "updated_at": "2026-10-10",
+      "note": "Removed 2026-10-10 after its proofs shipped; delivered examples are listed in docs/composition-mode.md and remaining references in implementation-plan.md. Git history keeps the study."
     },
     "reference_assets": {
       "path": "references/README.md",
@@ -43,6 +44,11 @@
     },
     "pro_sources": {
       "path": "raw/2026-10-10-pro-graphics/README.md",
+      "status": "current",
+      "updated_at": "2026-10-10"
+    },
+    "durable_docs": {
+      "path": "../../composition-mode.md",
       "status": "current",
       "updated_at": "2026-10-10"
     }
@@ -114,7 +120,7 @@
     {
       "id": "reference-research",
       "type": "external-reference",
-      "location": "reference-study.md",
+      "location": "reference-study.md (removed 2026-10-10; in git history at 5cf144d)",
       "anchor": "Five charts, shared composition elements, and distinct capability proofs",
       "authority": "Agent research and proposed implementation order"
     },
@@ -592,6 +598,18 @@
           "composition-branch-audit:implementation-plan.md M1 status"
         ],
         "notes": "Corrects the milestone acceptance status; initiative remains active."
+      },
+      {
+        "id": "c-stable-scales",
+        "type": "constraint",
+        "statement": "Scales and colors stay stable through filtering by default; rescaling to filtered rows is an explicit author opt-in.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "current",
+        "source_anchors": [
+          "chat 2026-10-10: scales and colors should generally be constant through filtering; user opts into change"
+        ]
       }
     ],
     "themes": [
@@ -631,22 +649,21 @@
   },
   "shape": {
     "status": "current",
-    "appetite": "One complete authoring and output flow plus a small layout check; five staged capability extensions",
-    "problem": "Authors need to finish and extend the existing strip composition editor while preserving meaningful data, saved refinements, and report output.",
-    "recommended_shape": "Blank composition editor with repeated templates, common scales, visual instance overrides, group placement, three annotation anchor types, editing/viewing modes, and PNG clipboard output",
+    "appetite": "One change across the resolver's extent calculations; no new mark type",
+    "problem": "Several composition extents rescale under filters, which is jarring; stable should be the default.",
+    "recommended_shape": "Stable extents by default for every scale and mark extent, with a per-scale/per-mark opt-in to rescale and trace/legend wording",
     "success_moves": [
-      "Retain the existing first slice and close the real report/slide paste proof before marking M1 complete.",
-      "Audit a small measles fixture to expose palette, order, and missing-cell limits before a full recreation.",
-      "Use one named numeric frame for both points and ordered paths in the Driving proof.",
-      "Keep preparation explicit and local; packed cells and precomputed densities do not imply native transforms.",
-      "Keep raw Pro files unchanged and separate source classifications from repository evidence.",
-      "Defer tile addresses and gradients until a selected proof needs them."
+      "Read every extent from allIds by default",
+      "Keep marks and data calculations on filtered rows",
+      "Opt-in sits beside the existing shared/per-repeat choice",
+      "Saved compositions get stable extents without migration",
+      "Traces state the extent used"
     ],
     "first_proof": {
-      "question": "Can the author build and finish a repeated graphic from blank while keeping its inputs and exceptions understandable?",
-      "artifact": "A graphic authored from blank, saved and reloaded, with shared scales, visual overrides, scoped calculations, tracing, annotation anchors, and PNG clipboard output",
-      "decision_rule": "Proceed when blank authoring, save/reload, correct tracing, visual override retention, anchor behavior, and pasted PNG appearance work; check a second repeat arrangement before widening mark coverage",
-      "observed_status": "Code exists and prior documentation reports PNG clipboard readback; real report/slide paste remains unproved. No new browser proof ran during the import."
+      "question": "Do stable extents keep colors and lengths meaningful under filters without confusing the opt-in?",
+      "artifact": "measles filtered to one decade; population-pyramid filtered to one year",
+      "decision_rule": "Both read correctly: extend to stacks, horizons, densities. Opt-in confuses: fix wording first.",
+      "observed_status": "Not started."
     },
     "rabbit_holes": [
       "Preset-only authoring proof",
@@ -656,23 +673,16 @@
       "Editable PPTX export",
       "Recurring reports and parameterized dashboards"
     ],
-    "open_decisions": [
-      {
-        "id": "value-domain-filter-policy",
-        "question": "Should shared value domains stay fixed under filtering by default?",
-        "current_behavior": "resolveUnit calculates maxima from filtered glyphs",
-        "recommendation": "Choose and save the policy explicitly before claiming a faithful archival comparison; source examples alone do not settle this product choice."
-      }
-    ]
+    "open_decisions": []
   },
   "implementation": {
     "status": "active",
     "repository_snapshot": {
-      "root": "/Users/byronwall/Projects/explorEDA/.claude/worktrees/composed-chart-audit-9fdc4a",
-      "revision": "29b402349f7ee1214cb5f71dc17bc8c5cac84458",
-      "branch": "claude/composed-chart-audit-62bcc8",
+      "root": ".claude/worktrees/composed-graphics-initiative-review-eab930",
+      "revision": "5cf144d",
+      "branch": "main (via claude/composed-graphics-initiative-review-eab930)",
       "inspected_at": "2026-10-10",
-      "worktree_status": "Before import: one untracked user file, example-research-prompt.md. Preserve it unchanged and outside the import commits.",
+      "worktree_status": "Clean before this update.",
       "subsystems": [
         "Composition definition and validation",
         "resolveUnit and resolveComposition",
@@ -713,7 +723,7 @@
           "Real browser clipboard and report/slide paste"
         ],
         "local_proof": "Known local fixture; compare raster dimensions and SVG appearance",
-        "live_proof": "Copy on user gesture in supported browser; paste into report or slide",
+        "live_proof": "Copy on user gesture in supported browser; paste into report or slide; observed 2026-10-10 in Apple Notes from covid-compare",
         "rollout": "Ship with first composition type; preserve edits and show retryable failure"
       }
     ],
@@ -724,23 +734,48 @@
     "milestones": [
       {
         "id": "m1",
-        "title": "Finish an email-style graphic from blank",
-        "outcome": "Finish an email-style graphic from blank",
+        "title": "Paste a copied composition into a real report",
+        "outcome": "Copy PNG pastes into a real slide and document with matching text, size, colors, and clipping",
         "depends_on": [],
-        "proof": "Blank authoring, inspection, save/reload, retained override identities, three anchors, and pasted PNG",
-        "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
-        "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
+        "proof": "Byron pastes PNGs from measles and covid-compare into a slide app and a document and compares them with the artboard",
+        "valid_intermediate_state": "Delivered composition editor unchanged unless a paste failure needs a fix",
+        "rollback": "Keep the current copy action; fixes are limited to observed failures",
         "dependencies_introduced": [],
-        "status": "active",
+        "status": "completed",
         "evidence": [
           "PRs #210-#214 merged; implementation-plan.md 'Status: vertical slice built'",
           "Not yet checked: pasting the PNG into a report or slide by hand",
           "2026-10-10: checked current composition source and PR #215 merge ancestry; first-slice implementation is present.",
-          "2026-10-10: corrected completed to active because the recorded report/slide paste proof is still missing. This is an evidence correction, not a new requirement."
-        ],
-        "remaining_proof": "Paste copied PNG into a real report or slide and compare text, dimensions, colors, and clipping.",
-        "research_follow_up": "Audit entry 01 on a small local fixture before a full 51-state strip; do not silently treat null or absent cells as zero."
+          "2026-10-10: corrected completed to active because the recorded report/slide paste proof is still missing. This is an evidence correction, not a new requirement.",
+          "2026-10-10: reconciled against PR #258; still no real-target paste observation.",
+          "2026-10-10: Byron copied PNG from covid-compare (exploreda.dev) and pasted into Apple Notes; reported it looks correct. Screenshot showed title, subtitle, six panels with insets, axes, note, and source; no editing overlays. Slide-app paste and measles not separately checked."
+        ]
       },
+      {
+        "id": "m2-color-domain",
+        "title": "Keep scales stable through filtering",
+        "outcome": "Every composition extent reads all rows by default; rescaling to filtered rows is an opt-in",
+        "depends_on": [
+          "m1"
+        ],
+        "proof": "measles filtered to one decade and population-pyramid to one year keep colors and lengths; an opted-in scale rescales; traces name the extent; definitions round-trip; media-deaths, stocks-horizon, lincoln-ridgeline rechecked",
+        "valid_intermediate_state": "All examples render as before when unfiltered",
+        "rollback": "Revert extents to liveIds and drop the opt-in field",
+        "dependencies_introduced": [],
+        "status": "planned",
+        "code_anchor": "resolveUnit.ts sharedMax, barAxes, maxTotals, horizonMax, densityMax read liveIds"
+      }
+    ],
+    "cut_line": [
+      "Path and area gradients",
+      "Weighted summaries and survey weighting",
+      "Automatic annotation collision resolution beyond path-end dodge",
+      "General compiler, expressions, recursive repeats, layout solver",
+      "SVG, PDF, PPTX, recurring reports, replacement data",
+      "Exact replicas or live reference data in tests"
+    ],
+    "open_decisions": [],
+    "delivered_milestones": [
       {
         "id": "m2",
         "title": "Connect observations in declared order",
@@ -752,11 +787,15 @@
         "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
         "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
         "dependencies_introduced": [],
-        "status": "planned",
+        "status": "completed",
         "reference_entries": [
           "14",
           "12",
           "15"
+        ],
+        "evidence": [
+          "PR #235 numeric scales with point and path marks; ?example=driving-shifts; paths.test.ts",
+          "Follow-ups shipped: tech-sparklines (#236), consumer-confidence (#242), pew-meaning (#243), income-life (#244), tax-slope (#249), gdp-bump (#253), co2-swarm (#257)"
         ]
       },
       {
@@ -770,11 +809,15 @@
         "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
         "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
         "dependencies_introduced": [],
-        "status": "planned",
+        "status": "completed",
         "reference_entries": [
           "05",
           "10",
           "06"
+        ],
+        "evidence": [
+          "PR #237 interval bands and shaded guides; ?example=forecast-fan with illustrative intervals; bands.test.ts",
+          "OBR workbook not retrieved; data swap kept as a candidate"
         ]
       },
       {
@@ -788,8 +831,12 @@
         "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
         "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
         "dependencies_introduced": [],
-        "status": "planned",
-        "research_qualification": "No direct new M4 benchmark. Entry 16 uses mean and sample SD, not median and IQR."
+        "status": "completed",
+        "research_qualification": "No direct new M4 benchmark. Entry 16 uses mean and sample SD, not median and IQR.",
+        "evidence": [
+          "PR #238 cohort quartile summaries; ?example=time-use; summaries.test.ts",
+          "Densities shipped as lincoln-ridgeline (#248)"
+        ]
       },
       {
         "id": "m5",
@@ -802,10 +849,14 @@
         "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
         "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
         "dependencies_introduced": [],
-        "status": "planned",
+        "status": "completed",
         "reference_entries": [
           "07",
           "09"
+        ],
+        "evidence": [
+          "PR #239 stacked shares with denominators; ?example=media-deaths; stacks.test.ts",
+          "PR #241 areas (causes-by-age); waffles #250, streams #251, bars #252, spans #255, horizons #256, weighted repeats #258"
         ]
       },
       {
@@ -819,39 +870,38 @@
         "valid_intermediate_state": "Usable composition editor retaining all previous composition capabilities",
         "rollback": "Remove or bypass the new element/calculation/frame option; no migration of existing chart types",
         "dependencies_introduced": [],
-        "status": "planned",
+        "status": "completed",
         "reference_entries": [
           "04"
+        ],
+        "evidence": [
+          "PR #246 inset frames and display windows; ?example=covid-compare; insets.test.ts; group movement and filters checked in browser per the plan record",
+          "Tiles shipped in PR #245 (covid-tiles)"
         ]
       }
     ],
-    "cut_line": [
-      "General compiler and recursive repeats",
-      "Exact source-data parity",
-      "Forecast generation and survey weighting",
-      "Automatic label solver",
-      "Additional export formats and recurring reports",
-      "Tile-addressed repeats, horizontal bar lengths, data-driven repeat heights, and path/area gradients until selected proof requires them"
-    ],
-    "open_decisions": [
-      {
-        "id": "value-domain-filter-policy",
-        "decision": "Choose fixed versus filtered shared value domains.",
-        "evidence": "Small filtered measles/strip comparison; resolveUnit computes sharedMax from live glyphs.",
-        "fallback": "Keep current behavior explicit; do not claim fixed archival colors."
-      },
+    "resolved_decisions": [
       {
         "id": "today-tier-audit",
-        "decision": "Choose the minimum faithful strip proof and list exact unsupported details.",
-        "evidence": "Local fixture with zero, null, absent cell, source row order, and color meaning.",
-        "fallback": "Use a labeled approximation or defer the example; do not encode categories as a continuous value scale."
+        "resolution": "Measles shipped with multistop ramps, missing-cell color, and prepared rank order (PR #240); no rate replaced with zero."
       },
       {
         "id": "source-fixture",
-        "decision": "Pin only the dataset and upstream transformation needed by the selected proof.",
-        "evidence": "Source URLs, terms, grain, nulls, calculation and vintage in archived records.",
-        "fallback": "Use a clearly labeled deterministic illustrative fixture; do not claim source-data parity."
+        "resolution": "Each example pins its source and preparation in apps/data-samples/prepare/; illustrative data is labeled."
+      },
+      {
+        "id": "value-domain-filter-policy",
+        "status": "resolved",
+        "date": "2026-10-10",
+        "resolution": "Byron: scales and colors should generally stay constant through filtering; changing them requires an author opt-in. Constant change is jarring.",
+        "scope_note": "Applies to strip value scales, bar length axes, stack column totals, horizon peaks, and density peaks; position/numeric domains and point sizes already stable."
       }
+    ],
+    "candidates": [
+      "Hide one repeat; override repeat label text",
+      "Point labels placed on a side from a field",
+      "Bank of England percentiles in forecast-fan",
+      "Unbuilt research references as authoring checks (entry 04 first)"
     ]
   },
   "history": [
@@ -916,6 +966,23 @@
     {
       "date": "2026-10-10",
       "event": "Corrected M1 status from completed to active because the existing acceptance evidence explicitly lacks real report/slide paste. Initiative remains active in execution; no retirement or scope removal."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "Reconciled against PRs #235–#258. M2–M6 completed and moved to implementation.delivered_milestones; delivered behavior documented in docs/composition-mode.md, with links from the feature inventory, chart guide, and agent guide. Removed reference-study.md. Trimmed intent, shape, and plan to the paste proof and color-domain policy. Initiative stays active; no retirement.",
+      "invalidation": {
+        "intent": "Rewritten to remaining scope; durable intent unchanged.",
+        "shape": "Rewritten for remaining two changes.",
+        "plan": "Regenerated with two milestones."
+      }
+    },
+    {
+      "date": "2026-10-10",
+      "event": "M1 completed: Byron pasted the covid-compare PNG into Apple Notes and it matched the artboard. Shape and plan now cover only the color-domain policy. Corrected the paste-test example from message-log (blank by design) to prebuilt graphics."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "Byron decided scales and colors stay stable through filtering by default, with rescaling as an opt-in. Broadened M2 from strip color to all five live-row extents. Captured the repeat-label decimal inconsistency as Product Grid node page-composition-repeat-labels-show-inconsistent-decimals."
     }
   ],
   "research_import": {
@@ -1025,7 +1092,8 @@
         "source_new_capabilities": [],
         "source_data_status": "Available",
         "integration_note": "First strip audit. Verify missing cells, source order, color stops, and fixed vaccine guide; Today is not confirmed in the current editor.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "built as ?example=measles"
       },
       {
         "id": "02",
@@ -1037,7 +1105,8 @@
         "source_new_capabilities": [],
         "source_data_status": "Obtainable",
         "integration_note": "Prepared slots are possible in principle. Current value mapping lacks signed diverging colors; source order and the 2020 projection are unresolved. Preserve 533 display slots.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "built as ?example=elections"
       },
       {
         "id": "03",
@@ -1049,7 +1118,8 @@
         "source_new_capabilities": [],
         "source_data_status": "Available",
         "integration_note": "Keep joins, means, bins, and square packing upstream. Current model lacks categorical continent colors and explicit prepared ordering; Today is not verified.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "not built; candidate authoring check"
       },
       {
         "id": "04",
@@ -1064,7 +1134,8 @@
         "source_new_capabilities": [],
         "source_data_status": "Available",
         "integration_note": "M2 plus M6 candidate. Local annual path domains, per-column decade colors, and mean of rounded decade means require explicit scope.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "not built; candidate authoring check"
       },
       {
         "id": "05",
@@ -1079,7 +1150,8 @@
         "source_new_capabilities": [],
         "source_data_status": "Available",
         "integration_note": "Priority M3 proof with supplied percentile bands. Two ordinary panels, separate y domains, shared time, null historical bounds, and original vintage.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "built as ?example=forecast-fan (illustrative intervals)"
       },
       {
         "id": "06",
@@ -1094,7 +1166,8 @@
         "source_new_capabilities": [],
         "source_data_status": "Available",
         "integration_note": "Density curves and baseline offsets are prepared upstream. Their availability does not add a native density estimator.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "built as ?example=lincoln-ridgeline"
       },
       {
         "id": "07",
@@ -1108,7 +1181,8 @@
         "source_new_capabilities": [],
         "source_data_status": "Available",
         "integration_note": "Priority M5 proof. Four normalized columns; preserve selected-cause denominators, multiple mentions, and accident/overdose correction. Needs stacked rectangle output.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "built as ?example=media-deaths"
       },
       {
         "id": "08",
@@ -1122,7 +1196,8 @@
         "source_new_capabilities": [],
         "source_data_status": "Available",
         "integration_note": "Supplied cumulative bounds can use M3. Review the tutorial category rename and interpolation before reproducing its conclusions.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "not built; candidate authoring check"
       },
       {
         "id": "09",
@@ -1136,7 +1211,8 @@
         "source_new_capabilities": [],
         "source_data_status": "Available",
         "integration_note": "M5 candidate with supplied aggregate shares. Keep rounding residual and source terms; do not invent household microdata.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "not built; candidate authoring check"
       },
       {
         "id": "10",
@@ -1151,7 +1227,8 @@
         "source_new_capabilities": [],
         "source_data_status": "Available",
         "integration_note": "M2/M3 candidate. Separate annual and smoothed series, retain metadata, decode cp1252, and convert the 1e20 missing sentinel.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "not built; candidate authoring check"
       },
       {
         "id": "11",
@@ -1165,7 +1242,8 @@
         ],
         "source_data_status": "Available",
         "integration_note": "Deferred horizontal length encoding. Preserve age order and already-aggregated percentages without renormalizing.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "built as ?example=population-pyramid (US data)"
       },
       {
         "id": "12",
@@ -1181,7 +1259,8 @@
         ],
         "source_data_status": "Available",
         "integration_note": "M2 with numeric endpoint circles. Prepared panel expansion supplies context paths; keep the missing China endpoint.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "built as ?example=consumer-confidence"
       },
       {
         "id": "13",
@@ -1195,7 +1274,8 @@
         ],
         "source_data_status": "Available",
         "integration_note": "Deferred addressed tile layout plus prepared waffle cells. Categorical color and geographic gaps also need explicit verification.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "not built; candidate authoring check"
       },
       {
         "id": "14",
@@ -1211,7 +1291,8 @@
         ],
         "source_data_status": "Available",
         "integration_note": "Priority M2 follow-up. Numeric circle/path coordinates; per-company observation-index x, shared price y, prepared percent-change order; no M6 needed.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "built as ?example=tech-sparklines"
       },
       {
         "id": "15",
@@ -1227,7 +1308,8 @@
         ],
         "source_data_status": "Available",
         "integration_note": "M2 with numeric endpoint circles and a text rail. Preserve supplied survey aggregates and signed percentage-point gaps.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "built as ?example=pew-meaning"
       },
       {
         "id": "16",
@@ -1244,7 +1326,8 @@
         ],
         "source_data_status": "Available",
         "integration_note": "M2/M3 with numeric circles. Mean and sample SD across annual totals are not M4 quartiles, student-level variation, or confidence intervals.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "not built; candidate authoring check"
       },
       {
         "id": "17",
@@ -1260,7 +1343,8 @@
         ],
         "source_data_status": "Available",
         "integration_note": "M2 with numeric rank circles. Prepare ratio/rank, preserve the source country selection, and disclose data-vintage differences.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "not built; candidate authoring check"
       },
       {
         "id": "18",
@@ -1277,7 +1361,8 @@
         ],
         "source_data_status": "Available",
         "integration_note": "Deferred tile addresses plus M2 numeric points. Preserve cutoff, corrections, literal tile positions, and noncommercial source terms.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "built as ?example=covid-tiles"
       },
       {
         "id": "19",
@@ -1291,7 +1376,8 @@
         ],
         "source_data_status": "Available",
         "integration_note": "Deferred tile addresses. Preserve missing home values and estimated income flags; live sources can differ from the original vintage.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "not built; candidate authoring check"
       },
       {
         "id": "20",
@@ -1307,7 +1393,8 @@
         ],
         "source_data_status": "Obtainable",
         "integration_note": "Deferred variable repeat height plus M5. Available shares do not establish exact national population totals or original heights.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "built as ?example=titanic-mosaic (Titanic data)"
       },
       {
         "id": "21",
@@ -1323,7 +1410,8 @@
         ],
         "source_data_status": "Available",
         "integration_note": "M2 numeric points and prepared fit curve. The available reconstruction does not verify the original Economist model or analytical extract.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "built as ?example=income-life (World Bank data)"
       },
       {
         "id": "22",
@@ -1340,7 +1428,8 @@
         ],
         "source_data_status": "Obtainable",
         "integration_note": "Deferred stroke gradients plus M2 numeric circles. Exact occupation-level table, weights, crosswalk and gender shares remain unverified.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "not built; candidate authoring check"
       },
       {
         "id": "23",
@@ -1357,7 +1446,8 @@
         ],
         "source_data_status": "Available",
         "integration_note": "Deferred area gradients plus M2/M3. Source values are year-bin counts, not daily records; original density bandwidth remains unverified.",
-        "browser_verified": false
+        "browser_verified": false,
+        "local_status": "not built; candidate authoring check"
       }
     ],
     "preserved_user_file": "example-research-prompt.md remains unchanged and untracked in the target checkout."

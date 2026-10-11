@@ -10,7 +10,7 @@ These outcomes come from Byron’s direct follow-up. Editorial styling and the s
 | New intent | Intended outcome |
 | --- | --- |
 | Durable editorial chart styling (completed) | Delivered as workspace themes; see the package README's [Themes and styling](../../../packages/explorEDA/README.md#themes-and-styling). |
-| [Edit chart features in place](../in-place-chart-editing/intent-brief.md) | Edit visible text and axis limits near the result. Compare double-click, context-menu, and optional drag interactions. |
+| Edit chart features in place (completed) | Delivered for titles, axis titles, and axis ranges; see [UI defaults](../../ui-defaults.md#popovers-and-dialogs). Remaining editors are Product Grid tasks. |
 | Scatter plot matrix (completed) | Delivered as the `scatter-matrix` view; see the [feature inventory](../../application-feature-inventory.md#scatter-matrix). |
 | [Image export and possible document outputs](../analysis-export/intent-brief.md) | Export authored charts; evaluate slides and PDF reports separately. |
 
@@ -23,7 +23,7 @@ End users drive the platform. Engineering and scientific experiment analysis is 
 The first pass had four priorities. Editorial styling and the scatter matrix are delivered; editing in place and table usability are under way:
 
 - Editorial styling (delivered): Compact, Newsprint, and Report themes with global theme links and findable overrides.
-- [Editing in place](../in-place-chart-editing/intent-brief.md): direct text and axis edits, immediate updates, and existing undo.
+- Editing in place (delivered): direct text and axis edits, immediate updates, and existing undo.
 - Scatter matrix (delivered): a starting view for unfamiliar multivariate data, with two-field brushing and dimmed context.
 - [Table usability](../table-content-fit/intent-brief.md): improve numerical inspection; content-aware fitting is one candidate, not the whole scope.
 
@@ -44,7 +44,7 @@ The [annotated product feedback](resources/product-feedback-2026-10-06.md) recor
 | [Discover field relationships, then open scatter](../relationship-discovery/intent-brief.md) | Expand when repeated analyses involve choosing among many numeric pairs. Add rank correlation only when monotonic nonlinear relationships make Pearson misleading for the task. |
 | [Set and reset chart domains without filtering rows](../axis-domain-controls/intent-brief.md) | Expand when an analysis repeatedly needs manual bounds, display-only zoom, or positive data spanning orders of magnitude. |
 | [Select exact category pairs and facet-local regions](../precise-composite-selection/intent-brief.md) | Expand when a real comparison requires separated cell pairs or selecting one facet without matching the same coordinates elsewhere. |
-| [Filter a workspace without a chart](../filter-and-series-controls/intent-brief.md) | Expand to named segments, filters across saved views, or promotion from Rows once analysts keep workspace filters across sessions. Legend hide/isolate moved to a Product Grid task. |
+| Filter a workspace without a chart (completed) | Delivered as workspace filters; see the [feature inventory](../../application-feature-inventory.md#filter-representations). Named segments, filters across saved views, and promotion from Rows are a Product Grid task, as is legend hide/isolate. |
 | [Step through periods and inspect rolling measures](../calendar-period-analysis/intent-brief.md) | Expand when a real analysis repeatedly compares adjacent periods or needs smoothing while retaining exact source inspection. |
 | [Fit columns to readable cell content](../table-content-fit/intent-brief.md) | Expand to wrapping or persistent record details when width fitting alone cannot support a concrete long-text task. Add rich cell types only with a real dataset. |
 
