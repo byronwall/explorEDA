@@ -1,0 +1,22 @@
+## When to use it
+
+Use a box plot to compare how a numeric field spreads across groups: where the middle half sits, how far the whiskers reach, and which values stand apart.
+
+## Try it
+
+<LiveExample
+  id="boxplot"
+  caption="Order value by product category, from the order-book example."
+/>
+
+## How it reads
+
+- Each box spans the middle half of a group's values, with a line at the median.
+- **Whisker type** sets how far whiskers reach: 1.5 times the interquartile range, the minimum and maximum, or standard deviations.
+- **Show Outliers** draws values beyond the whiskers as separate points.
+- **Display** can add a violin: a density shape around each box. Smoothing is automatic from each group's spread and row count, or set by hand.
+- **Observations** shows individual values over each box, up to the first 300 valid rows per group.
+
+## Saved settings
+
+<SettingsReference type="boxplot" />

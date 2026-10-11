@@ -1,5 +1,7 @@
 # Chart documentation research — 2026-09-23
 
+This compares documentation *content* patterns. The docs tooling decision (build-time MDX in the demo, Starlight fallback) is in the [documentation-system research](../../research/documentation-system-recommendation.md) and the [shape brief](shape-brief.md).
+
 | System | Useful documentation pattern | Decision for explorEDA |
 | --- | --- | --- |
 | [Nivo bar page](https://nivo.rocks/bar/) | One chart page combines a live chart, code/data view, property search, grouped controls, action logs, recipes, and rendering variants. | Start each page with an example and concise field, interaction, and setting guidance. Link deeper recipes later. Do not build a general property playground first. |

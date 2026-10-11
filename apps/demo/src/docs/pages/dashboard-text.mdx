@@ -1,0 +1,19 @@
+## Write a dashboard as text
+
+Dashboard text builds a whole dashboard from compact lines: each line declares a field alias, a calculation, or a chart. In the demo, open **Dashboard text** (<kbd>T</kbd>) beside any view to read and edit the text that builds it.
+
+Workspace filters are `filter` lines, one per field, such as `filter Region=West,East`.
+
+The text describes the whole dashboard. Omitted charts are removed, and omitted settings use the app's defaults. A line that can't be built is skipped with a diagnostic that gives its line, column, and a suggested fix; the other lines still build.
+
+## The order book, as text
+
+This is the text that builds the demo's order-book example.
+
+<ExampleText id="shop-operations" />
+
+## Reference
+
+The same reference the `exploreda-dsl reference` command prints:
+
+<DashboardTextReference />

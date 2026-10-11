@@ -24,35 +24,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # pnpm reads its version from packageManager in package.json.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-          run_install: false
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          node-version: 24
+          cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Build
         run: pnpm --recursive --if-present run build
+
+      # A failing demo test stops the deploy before anything is uploaded.
+      - name: Test demo
+        run: pnpm --filter demo test
+
+      # The docs browser check runs every live example's steps and writes the
+      # screenshots narrow screens show into dist. Any failure stops the
+      # deploy. Set DOCS_VERIFY=warn here to report without failing.
+      - name: Install Chromium for the docs check
+        run: pnpm --filter demo exec playwright install --with-deps chromium
+
+      - name: Check docs in a browser
+        run: pnpm --filter demo docs:verify
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
