@@ -96,6 +96,7 @@ describe("example coverage manifest", () => {
       "elections",
       "banana-yields",
       "yield-gap",
+      "middle-class-jobs",
       "du-bois-income",
       "tax-slope",
       "titanic-waffle",

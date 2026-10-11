@@ -2289,6 +2289,77 @@ function SummaryFields({
 }
 
 /** Fields shared by point and path marks: the scales and the order. */
+/** A numeric field and the value scale that colors a path or point by it. */
+function ValueShadeSelect({
+  id,
+  field,
+  scaleId,
+  fields,
+  scales,
+  onChange,
+  onEditScale,
+}: {
+  id: string;
+  field?: string;
+  scaleId?: string;
+  fields: string[];
+  scales: CompositionScale[];
+  onChange: (patch: { valueField?: string; valueScaleId?: string }) => void;
+  onEditScale: (scaleId: string) => void;
+}) {
+  const values = scales.filter((scale) => scale.kind === "value");
+  return (
+    <div className="flex min-w-0 flex-col gap-1">
+      <FieldSelector
+        label=""
+        placeholder="No value shading"
+        value={field ?? ""}
+        allowClear
+        fields={fields}
+        onChange={(next) =>
+          onChange({
+            valueField: next || undefined,
+            valueScaleId: next ? (scaleId ?? values[0]?.id) : undefined,
+          })
+        }
+      />
+      {field && (
+        <div className="eda-composition-scale-select">
+          <select
+            id={id}
+            aria-label="Shading scale"
+            className="eda-composition-select"
+            value={scaleId ?? ""}
+            onChange={(event) =>
+              onChange({ valueScaleId: event.target.value || undefined })
+            }
+          >
+            {!values.length && (
+              <option value="">Add a value scale first</option>
+            )}
+            {values.map((scale) => (
+              <option key={scale.id} value={scale.id}>
+                {scale.name}
+              </option>
+            ))}
+          </select>
+          {scaleId && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2"
+              tooltip="Open this scale's settings below. A middle color makes it diverge around zero."
+              onClick={() => onEditScale(scaleId)}
+            >
+              Edit
+            </Button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function XyFields({
   mark,
   scales,
@@ -2670,6 +2741,16 @@ function XyFields({
               change({ colorField: colorField || undefined })
             }
           />
+          <Label htmlFor={`${id}-shade`}>Shade by value</Label>
+          <ValueShadeSelect
+            id={`${id}-shade`}
+            field={mark.valueField}
+            scaleId={mark.valueScaleId}
+            fields={numericFields}
+            scales={scales}
+            onChange={(patch) => change(patch)}
+            onEditScale={onEditScale}
+          />
           <span className="eda-setting-label">Line</span>
           <Segmented
             label={`${mark.name} curve`}
@@ -2735,6 +2816,16 @@ function XyFields({
             onChange={(colorField) =>
               change({ colorField: colorField || undefined })
             }
+          />
+          <Label htmlFor={`${id}-shade`}>Shade by value</Label>
+          <ValueShadeSelect
+            id={`${id}-shade`}
+            field={mark.valueField}
+            scaleId={mark.valueScaleId}
+            fields={numericFields}
+            scales={scales}
+            onChange={(patch) => change(patch)}
+            onEditScale={onEditScale}
           />
           <Label>Label with</Label>
           <FieldSelector

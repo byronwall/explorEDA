@@ -914,7 +914,7 @@ export function resolveUnit(
           {
             text:
               labelValue && !labelLeft
-                ? `${subset.label} · ${labelValue.text}`
+                ? `${subset.label} · ${signedLabel(labelValue, unit.label.valueSigns).text}`
                 : subset.label,
             y: labelLeft ? labelRowY(frame) : y + labelSize,
           },
@@ -1062,6 +1062,18 @@ export function resolveUnit(
           ),
         };
         const accent = override?.accent;
+        const shadeScale =
+          !accent &&
+          (item.mark.type === "point" || item.mark.type === "path") &&
+          item.mark.valueField
+            ? scale(item.mark.valueScaleId ?? "")
+            : undefined;
+        const shade =
+          shadeScale?.kind === "value" &&
+          (item.mark.type === "point" || item.mark.type === "path") &&
+          item.mark.valueField
+            ? rowShade(shadeScale, item.mark.valueField, data)
+            : undefined;
         const drawn =
           item.mark.type === "band"
             ? bandNodes(
@@ -1088,7 +1100,8 @@ export function resolveUnit(
                     frameSubset,
                     axes,
                     frameBounds,
-                    frameData
+                    frameData,
+                    shade
                   )
                 : pointNodes(
                     unit,
@@ -1096,7 +1109,8 @@ export function resolveUnit(
                     frameSubset,
                     axes,
                     frameBounds,
-                    frameData
+                    frameData,
+                    shade
                   );
         // A windowed frame clips, so a path cut at the window's edge stays inside.
         nodes.push(
@@ -2802,6 +2816,43 @@ export function shadeColor(
   return valueColor(scale, span > 0 ? (value - domain[0]) / span : 0);
 }
 
+/** Colors a row by a numeric field through a value scale. */
+interface Shade {
+  color: (rowId: number) => string | undefined;
+}
+
+/**
+ * A row's color from a numeric field on a value scale, across every row in
+ * the graphic so the colors match from repeat to repeat: low to high, or
+ * around zero when the scale diverges, up to its fixed end when it has one.
+ */
+function rowShade(
+  scale: ValueScale,
+  field: string,
+  data: CompositionData
+): Shade {
+  const column = data.column(field);
+  let min = Infinity;
+  let max = -Infinity;
+  for (const id of data.allIds) {
+    const value = readNumber(column[id]);
+    if (value === undefined) continue;
+    min = Math.min(min, value);
+    max = Math.max(max, value);
+  }
+  if (scale.max !== undefined) {
+    max = scale.max;
+    if (scale.center !== undefined) min = -scale.max;
+  }
+  const domain: [number, number] = Number.isFinite(min) ? [min, max] : [0, 1];
+  return {
+    color: (rowId) => {
+      const value = readNumber(column[rowId]);
+      return value === undefined ? undefined : shadeColor(scale, value, domain);
+    },
+  };
+}
+
 /** A gradient across the frame that shades a density by its x values. */
 function densityGradient(scale: ValueScale, axis: NumericAxis, frame: Bounds) {
   const steps = 16;
@@ -3253,7 +3304,8 @@ function pathNodes(
   subset: Subset,
   axes: { x: NumericAxis; y: NumericAxis },
   frame: Bounds,
-  data: CompositionData
+  data: CompositionData,
+  shade?: Shade
 ): SceneNode[] {
   const xs = data.column(axes.x.scale.field);
   const ys = yColumn(axes.y, mark, subset, data);
@@ -3298,11 +3350,14 @@ function pathNodes(
     const category = colorColumn
       ? categoryKey(colorColumn[first.rowId])
       : undefined;
+    const shaded = shade?.color(first.rowId);
     const stroke = !focused
       ? (mark.mutedStroke ?? MUTED_MARK)
-      : category !== undefined
-        ? (categoryColors.get(category) ?? mark.stroke)
-        : mark.stroke;
+      : shaded
+        ? shaded
+        : category !== undefined
+          ? (categoryColors.get(category) ?? mark.stroke)
+          : mark.stroke;
     const key =
       group.series === undefined
         ? `${unit.id}:${subset.key}:${mark.id}`
@@ -3577,7 +3632,8 @@ function pointNodes(
   subset: Subset,
   axes: { x: NumericAxis; y: NumericAxis },
   frame: Bounds,
-  data: CompositionData
+  data: CompositionData,
+  shade?: Shade
 ): SceneNode[] {
   const xs = data.column(axes.x.scale.field);
   const ys = yColumn(axes.y, mark, subset, data);
@@ -3663,11 +3719,14 @@ function pointNodes(
         category,
       },
     };
+    const shaded = shade?.color(row.id);
     const fill = !focused
       ? (mark.mutedFill ?? MUTED_MARK)
-      : category !== undefined
-        ? (categoryColors.get(category) ?? mark.fill)
-        : mark.fill;
+      : shaded
+        ? shaded
+        : category !== undefined
+          ? (categoryColors.get(category) ?? mark.fill)
+          : mark.fill;
     nodes.push({
       type: "circle",
       key,

@@ -435,7 +435,14 @@ function resolveLegend(
       )
     : undefined;
   if (scale)
-    return resolveRampLegend(legend, scale, definition, units, measureText);
+    return resolveRampLegend(
+      legend,
+      scale,
+      definition,
+      units,
+      measureText,
+      data
+    );
   if (legend.items?.length)
     return resolveKeyLegend(legend, unit, definition, measureText);
   const mark = unit?.marks.find((item) => item.id === legend.markId);
@@ -689,7 +696,8 @@ function resolveRampLegend(
   scale: ValueScale,
   definition: CompositionDefinition,
   units: Map<string, ResolvedUnit>,
-  measureText: MeasureText
+  measureText: MeasureText,
+  data: CompositionData
 ) {
   // The drawn extent: every strip glyph of a mark on this scale, or every
   // change in median that colors a summary's markers.
@@ -700,6 +708,25 @@ function resolveRampLegend(
   let shaded: [number, number] | undefined;
   for (const element of definition.elements) {
     if (element.kind !== "unit") continue;
+    // A path or point shaded by a field keys that field's extent.
+    for (const mark of element.marks) {
+      if (
+        (mark.type !== "path" && mark.type !== "point") ||
+        mark.valueScaleId !== scale.id ||
+        !mark.valueField
+      )
+        continue;
+      const column = data.column(mark.valueField);
+      let low = Infinity;
+      let high = -Infinity;
+      for (const id of data.allIds) {
+        const value = readNumber(column[id]);
+        if (value === undefined) continue;
+        low = Math.min(low, value);
+        high = Math.max(high, value);
+      }
+      if (Number.isFinite(low)) shaded = [low, high];
+    }
     if (
       element.marks.some(
         (mark) => mark.type === "density" && mark.colorScaleId === scale.id

@@ -1141,6 +1141,16 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "middle-class-jobs",
+    intent:
+      "Color each slope-chart line by a numeric field through a diverging value scale across a grid of occupation groups.",
+    features: {
+      "chart:composition": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+    },
+  },
+  {
     exampleId: "du-bois-income",
     intent:
       "Stack each income class's spending across a bar as shares, joined class to class at each share's edge, after Du Bois.",

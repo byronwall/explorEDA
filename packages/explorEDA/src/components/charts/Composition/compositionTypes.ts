@@ -276,6 +276,9 @@ export interface PointMark {
   colorField?: string;
   /** One color per category of `colorField`, cycling when there are more. */
   colors?: string[];
+  /** Fill each point by this numeric field's value, through `valueScaleId`. */
+  valueField?: string;
+  valueScaleId?: string;
   /**
    * Plot each row's rank among the rows at the same x, by the y field,
    * instead of its value: largest first or smallest first. Rank 1 sits at
@@ -331,6 +334,12 @@ export interface PathMark {
   colorField?: string;
   /** One color per category of `colorField`, cycling when there are more. */
   colors?: string[];
+  /**
+   * Stroke each path by a numeric field's value on its first row, through a
+   * value scale, such as a job's share of women from mostly men to mostly women.
+   */
+  valueField?: string;
+  valueScaleId?: string;
   /** Join the points with a smooth curve rather than straight runs. */
   curve?: MarkCurve;
   /** Plot ranks at each x by the y field instead of values, as a bump chart. */
@@ -661,7 +670,13 @@ export function markScaleIds(mark: MarkDefinition): string[] {
   if (mark.type === "waffle") return mark.xScaleId ? [mark.xScaleId] : [];
   if (mark.type === "bar") return [];
   if (mark.type === "band") return [mark.xScaleId, mark.yScaleId];
-  return mark.yScaleId ? [mark.xScaleId, mark.yScaleId] : [mark.xScaleId];
+  const shade =
+    (mark.type === "point" || mark.type === "path") && mark.valueScaleId
+      ? [mark.valueScaleId]
+      : [];
+  return mark.yScaleId
+    ? [mark.xScaleId, mark.yScaleId, ...shade]
+    : [mark.xScaleId, ...shade];
 }
 
 /**
@@ -709,9 +724,10 @@ export function markFields(mark: MarkDefinition): string[] {
         mark.colorField,
         mark.seriesField,
         mark.sizeField,
+        mark.valueField,
       ].filter((field): field is string => Boolean(field));
     case "path":
-      return [mark.orderField, mark.colorField].filter(
+      return [mark.orderField, mark.colorField, mark.valueField].filter(
         (field): field is string => Boolean(field)
       );
     case "band":

@@ -48,6 +48,8 @@ function isMark(value: unknown) {
     return false;
   if (value.type === "point")
     return (
+      (value.valueField === undefined || isString(value.valueField)) &&
+      (value.valueScaleId === undefined || isString(value.valueScaleId)) &&
       (value.frameId === undefined || isString(value.frameId)) &&
       isString(value.xScaleId) &&
       (value.yScaleId === undefined || isString(value.yScaleId)) &&
@@ -207,6 +209,8 @@ function isMark(value: unknown) {
     );
   if (value.type === "path")
     return (
+      (value.valueField === undefined || isString(value.valueField)) &&
+      (value.valueScaleId === undefined || isString(value.valueScaleId)) &&
       (value.frameId === undefined || isString(value.frameId)) &&
       isString(value.xScaleId) &&
       (value.yScaleId === undefined || isString(value.yScaleId)) &&

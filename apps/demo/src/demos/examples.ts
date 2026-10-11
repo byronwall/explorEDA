@@ -35,6 +35,7 @@ import {
   duBoisIncomeDashboard,
   bananaYieldsDashboard,
   yieldGapDashboard,
+  middleClassJobsDashboard,
   taxSlopeDashboard,
   titanicWaffleDashboard,
   unemploymentStreamDashboard,
@@ -940,6 +941,17 @@ export const examples: ExampleData[] = [
     icon: Grid3x3,
     data: "/datasets/yield-gap.csv",
     savedData: yieldGapDashboard,
+  },
+  {
+    id: "middle-class-jobs",
+    title: "The changing nature of middle-class jobs",
+    description:
+      "Ten occupation groups as small slope charts from 1980 to 2012, every occupation's line colored through a diverging scale from mostly men to mostly women, with the group's change in each label.",
+    dataset: { rows: "134 occupation-years", fields: 8, source: "Synthetic" },
+    shows: ["Paths colored by a value", "Slope-chart grid", "Signed labels"],
+    icon: TrendingUp,
+    data: "/datasets/middle-class-jobs.csv",
+    savedData: middleClassJobsDashboard,
   },
   {
     id: "du-bois-income",
