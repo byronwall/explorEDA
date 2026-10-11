@@ -480,6 +480,22 @@ export const bubbleDashboard: SavedDataStructure = {
       sizeField: "Trials",
       maxBubbleRadius: 20,
       pointOpacity: 0.5,
+      annotations: [
+        {
+          id: "bubble-slow-day",
+          type: "callout",
+          text: "Day 31: slowest response",
+          attach: { kind: "record", keyFields: ["Day"], key: [31] },
+          offset: { dx: -24, dy: -28 },
+        },
+        {
+          id: "bubble-target",
+          type: "reference-line",
+          axis: "y",
+          value: 4,
+          label: "Conversion target 4%",
+        },
+      ],
     },
     {
       ...base,

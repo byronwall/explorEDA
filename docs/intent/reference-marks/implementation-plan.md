@@ -16,7 +16,7 @@ Keep the existing React renderers, state store, saved workspace, and host histor
 
 The main risk is identity. Internal row IDs are assigned from array positions. Persist a source key and field bindings for record attachments. Resolve keys before projecting positions. Missing or duplicate keys must produce a visible repair state. A fixed coordinate must remain a fixed coordinate.
 
-This is a proposed delivery sequence. The current request authorizes source capture and planning, not feature implementation.
+Implementation started on 2026-10-11. Each milestone ships as its own stacked pull request.
 
 ## Implementation strategy
 
@@ -44,6 +44,8 @@ Add a plain label/callout and fixed numeric target to an ordinary scatter chart.
 - Wire scatter rendering and saved settings through the existing store and edit transaction. Save and restore the content in the same slice.
 - Test save/reload after row reordering, changed record values, duplicate keys, and deleted records. Test the fixed target under linear and symlog scales.
 - In the browser, move and cancel a label, commit and undo an edit, filter and restore its subject, then resize. Verify selection, brushing, and Alt-click tracing still work.
+
+**Delivered (M1):** `src/lib/annotations/` owns the saved types, key resolution, projection, and validation. Scatter draws them through `AnnotationLayer`; the chart settings **Notes** tab lists, adds, edits, hides, and removes them. A new callout attaches to the record with the largest Y value, keyed by the first field that identifies every row; without one it starts at a fixed point. Key choice is a single field in the form; composite keys resolve but have no editor yet. The bubble scatter demo carries a callout and a target.
 
 ### Desired end state
 

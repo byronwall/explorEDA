@@ -34,6 +34,8 @@ export const COMMON_SETTINGS: Readonly<Record<string, string>> = {
     "Field that colors the marks, on charts that color by a field. Charts that color by the same field share its colors.",
   colorScaleId:
     "The color scale for the color field, shared by name across charts.",
+  annotations:
+    "Saved callouts and reference lines, on charts that draw annotations. A callout on a record finds it by key field values, never by row position.",
 };
 
 /** Settings described for one chart type. */
@@ -45,6 +47,9 @@ export const CHART_SETTINGS: Readonly<
     minRowHeight:
       "Smallest row height in pixels. When rows would be shorter, the chart shows fewer categories.",
     maxRowHeight: "Largest row height in pixels, so a few rows stay compact.",
+    aggregateId:
+      "A named grouped summary to rank, which counts, sums, or averages a measure per category.",
+    topN: "Shows this many categories and gathers the rest in Other. Unset fits the chart's height.",
   },
   line: {
     field: "Not read by this chart type.",

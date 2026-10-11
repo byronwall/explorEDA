@@ -4,11 +4,11 @@
     "title": "Chart annotations and reference marks",
     "slug": "reference-marks",
     "scale": "capability",
-    "current_phase": "plan",
-    "last_updated": "2026-10-10",
+    "current_phase": "execution",
+    "last_updated": "2026-10-11",
     "summary": "Users can author and preserve meaningful labels, callouts, targets, intervals, events, regions, and record highlights on live charts.",
-    "status": "planned",
-    "next_action": "Use the expanded shape as the scope proposal. When implementation is requested, prove a record callout and fixed target on a scatter chart before adding the remaining annotation forms."
+    "status": "active",
+    "next_action": "Start m2: line and time-series charts, coordinate labels, arrows, x/y rules, bands, ranges, and supplied intervals."
   },
   "artifacts": {
     "intent_brief": {
@@ -29,7 +29,7 @@
     "implementation_plan": {
       "path": "implementation-plan.md",
       "status": "current",
-      "updated_at": "2026-10-10"
+      "updated_at": "2026-10-11"
     }
   },
   "sources": [
@@ -100,7 +100,7 @@
       "id": "annotation-research",
       "type": "agent-authored-analysis",
       "location": "raw/annotation-library-comparison-2026-10-01/research-report.md",
-      "anchor": "Sections 1, 3\u20134, 7\u201311",
+      "anchor": "Sections 1, 3–4, 7–11",
       "authority": "Historical Pro research dated October 1; library versions and licenses are not freshly verified"
     },
     {
@@ -567,7 +567,7 @@
     "open_decisions": []
   },
   "implementation": {
-    "status": "planned",
+    "status": "active",
     "repository_snapshot": {
       "root": "/Users/byronwall/Projects/explorEDA/.claude/worktrees/composed-chart-audit-9fdc4a",
       "revision": "7b0998a1ff4313e91e5055a96d0f0618feed8596",
@@ -672,13 +672,15 @@
       {
         "id": "m1",
         "title": "A note stays attached to the same observation",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Keyed record callouts and fixed targets save, restore, and edit correctly.",
         "proof": "Reorder/change/delete/duplicate keys; filter; resize; reload; cancel and undo in local scatter.",
         "valid_intermediate_state": "A usable ordinary scatter annotation flow.",
         "rollback": "Remove or hide the optional annotation; underlying scatter stays unchanged.",
         "dependencies_introduced": [],
-        "evidence": []
+        "evidence": [
+          "Scatter callouts and reference lines: src/lib/annotations/resolve.test.ts (key reorder, missing, duplicate, symlog, filtered), components/charts/annotations/annotations.test.tsx (drag = one host change, Escape cancels, keyboard nudge, Notes tab add). Browser check on /examples/bubble-scatter: one drag = one undo step, typed label = one undo step, Baseline filter hides the Day 31 callout and lists it as Filtered out. pnpm check passed."
+        ]
       },
       {
         "id": "m2",
@@ -802,6 +804,15 @@
       "previous_title": "Targets, events, and supplied intervals",
       "new_title": "Chart annotations and reference marks",
       "validation": "Sleuth validator passed with zero warnings. Heuristic audit completed with no recommended fixes. Reviewed source integrity, local source links, scope fidelity, retained history, and output dependency. No application tests or browser acceptance were run."
+    },
+    {
+      "date": "2026-10-11",
+      "action": "Started implementation; delivered milestone 1 (scatter callouts and reference lines).",
+      "reason": "User asked to implement the initiative with stacked PRs and updated docs.",
+      "evidence": [
+        "New src/lib/annotations module, AnnotationLayer, and Notes settings tab.",
+        "Targeted tests and pnpm check passed; browser check on the bubble scatter example."
+      ]
     }
   ],
   "closure": null,

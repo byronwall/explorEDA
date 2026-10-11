@@ -1,6 +1,7 @@
 import type { MapSettings } from "@/components/charts/Map/definition";
 import { IdType } from "@/providers/DataLayerProvider";
 import { Filter } from "./FilterTypes";
+import type { ChartAnnotation } from "@/lib/annotations/types";
 
 import { BarChartSettings } from "@/components/charts/BarChart/definition";
 import { DataTableSettings } from "@/components/charts/DataTable/definition";
@@ -116,6 +117,8 @@ export interface BaseChartSettings {
    * other charts, and other charts never clear them.
    */
   localFilters?: Filter[];
+  /** Saved callouts and reference lines, on charts that draw them. */
+  annotations?: ChartAnnotation[];
 
   // Label settings
   xAxisLabel: string;

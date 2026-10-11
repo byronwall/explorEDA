@@ -13,6 +13,9 @@ import {
 import type { ScatterPlotSettings } from "./definition";
 import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
 import { ScatterSvg } from "./ScatterSvg";
+import { AnnotationLayer } from "../annotations/AnnotationLayer";
+import { useAnnotationRows } from "../annotations/useAnnotationRows";
+import { projectAnnotations } from "@/lib/annotations/resolve";
 import { BubbleLegend } from "./BubbleLegend";
 import { DensityScatter } from "./DensityScatter";
 import { FitLabels } from "./FitLabels";
@@ -103,6 +106,25 @@ function ScatterPoints({
     [settings, snapshot, width, height, typography]
   );
   const fits = useScatterFits(settings, snapshot, plan);
+  const annotationRows = useAnnotationRows();
+  const projectedAnnotations = useMemo(() => {
+    if (!settings.annotations?.length) return [];
+    const points = new Map(plan.points.map((point) => [point.sourceId, point]));
+    return projectAnnotations(settings.annotations, {
+      xScale: plan.xScale,
+      yScale: plan.yScale,
+      plotWidth: plan.plotWidth,
+      plotHeight: plan.plotHeight,
+      ids: annotationRows.ids,
+      getColumn: annotationRows.getColumn,
+      plotted: (id) => {
+        const point = points.get(id);
+        return (
+          point && { x: point.x, y: point.y, selected: point.passesAllFilters }
+        );
+      },
+    });
+  }, [settings.annotations, plan, annotationRows]);
   const marginals = useMemo(
     () => planMarginals(settings, plan),
     [settings, plan]
@@ -431,6 +453,20 @@ function ScatterPoints({
               if (!point) return false;
               return Boolean(choose("point", point.id));
             }}
+            annotations={
+              projectedAnnotations.length
+                ? (clipPath) => (
+                    <AnnotationLayer
+                      chartId={settings.id}
+                      annotations={settings.annotations ?? []}
+                      projected={projectedAnnotations}
+                      plotWidth={plan.plotWidth}
+                      plotHeight={plan.plotHeight}
+                      clipPath={clipPath}
+                    />
+                  )
+                : undefined
+            }
             fitMarks={fits.marks}
             bubblePoints={plan.size ? plan.points : undefined}
             surface={
