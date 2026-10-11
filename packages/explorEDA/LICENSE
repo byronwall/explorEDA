@@ -1,0 +1,84 @@
+explorEDA License 1.0
+
+Copyright (c) 2024-2026 {{SELLER_LEGAL_NAME}}. All rights reserved except as
+granted below.
+
+This license covers the explorEDA software in this repository and in the
+`exploreda` npm package (the "Software"). Third-party components included in
+the Software are covered by their own licenses, listed in
+THIRD_PARTY_NOTICES.md.
+
+1. Free use
+
+   You may use, copy, and modify the Software, and run it in your own
+   products, at no charge, for any of these purposes ("Free Use"):
+
+   a. Evaluation. Trying the Software to decide whether to buy a commercial
+      license, for up to 90 days per organization, including in a test or
+      staging deployment that end users outside your organization cannot
+      reach.
+
+   b. Non-commercial use. Personal projects, teaching, academic research,
+      and work by registered non-profit and charitable organizations, as long
+      as nobody pays to access the product the Software is part of.
+
+   c. Small organizations. Any use by an organization, together with its
+      affiliates, that had less than US$1,000,000 in total revenue and
+      funding in its last fiscal year and has fewer than 10 people working
+      for it, including contractors.
+
+   Free Use may display an unlicensed notice in the Software's interface.
+   You may request a free community license key, which removes the notice,
+   at https://exploreda.dev/license.
+
+2. Commercial use
+
+   Every other use requires a commercial license bought from the licensor
+   ("Commercial Use"). That includes production use by an organization that
+   does not qualify under section 1, and any product that charges for access
+   and does not qualify under section 1.
+
+   A commercial license is governed by the explorEDA Commercial License
+   Agreement at https://exploreda.dev/legal/commercial-license, which
+   replaces this license for the licensee while it is in effect.
+
+3. Conditions for every use
+
+   a. Keep this license and the copyright notice with every copy of the
+      Software or a substantial part of it.
+   b. Do not remove, disable, or hide the license check or the unlicensed
+      notice except by supplying a license key issued by the licensor.
+   c. Do not offer the Software, or a product whose main value is the
+      Software, as a component library, toolkit, or development platform for
+      other developers, except under a commercial license with redistribution
+      rights.
+   d. Do not use the licensor's trademarks except to describe that your
+      product uses the Software.
+
+4. Contributions
+
+   Contributions to the Software are accepted only under the contributor
+   license agreement in CONTRIBUTING.md.
+
+5. No warranty
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
+
+6. Termination
+
+   If you break this license, your rights under it end automatically. They
+   are restored if you stop the violation within 30 days of the licensor's
+   notice and have not received a notice for a violation before.
+
+7. Versions
+
+   This license applies to the versions of the Software that include it.
+   Versions published before it carried no license grant.
+
+Questions: sales@exploreda.dev

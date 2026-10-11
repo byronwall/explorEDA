@@ -2,6 +2,8 @@
   "name": "exploreda",
   "private": false,
   "version": "0.1.0",
+  "license": "SEE LICENSE IN LICENSE",
+  "homepage": "https://exploreda.dev",
   "type": "module",
   "repository": {
     "type": "git",
@@ -25,6 +27,7 @@
     "dist/**",
     "!dist/docs-kit.*",
     "README.md",
+    "LICENSE",
     "THIRD_PARTY_NOTICES.md"
   ],
   "exports": {
