@@ -1,8 +1,9 @@
-import { StrictMode } from "react";
+import { lazy, StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router";
+import { BrowserRouter, useLocation } from "react-router";
 import { setLicenseKey } from "exploreda/license";
 import { LandingPage } from "./LandingPage";
+import { commercePath } from "./commerce/paths";
 
 import "exploreda/dist/ExplorEda.css";
 import "./index.css";
@@ -11,10 +12,28 @@ import "./index.css";
 // docs/intent/commercial-license/for-byron.md.
 setLicenseKey(import.meta.env.VITE_EXPLOREDA_LICENSE_KEY);
 
+const CommerceSite = lazy(() =>
+  import("./commerce/CommerceSite").then(({ CommerceSite: Site }) => ({
+    default: Site,
+  }))
+);
+
+/** Pricing and license pages have their own layout; everything else is the demo. */
+function App() {
+  const path = commercePath(useLocation().pathname);
+  return path ? (
+    <Suspense fallback={null}>
+      <CommerceSite path={path} />
+    </Suspense>
+  ) : (
+    <LandingPage />
+  );
+}
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <LandingPage />
+      <App />
     </BrowserRouter>
   </StrictMode>
 );

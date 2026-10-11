@@ -1,6 +1,10 @@
 import { PACKAGE_README_URL, REPO_URL } from "./links";
 
 const links = [
+  { label: "Pricing", href: "/pricing" },
+  { label: "License", href: "/license" },
+  { label: "Terms", href: "/legal/terms" },
+  { label: "Privacy", href: "/legal/privacy" },
   { label: "GitHub", href: REPO_URL },
   { label: "npm", href: "https://www.npmjs.com/package/exploreda" },
   { label: "Package README", href: PACKAGE_README_URL },
@@ -10,10 +14,17 @@ export function LandingFooter() {
   return (
     <footer className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-border py-8 text-sm text-muted-foreground">
       <p>
-        <img src="/brand/wordmark.svg" alt="explorEDA" className="inline h-4 w-auto align-[-2px]" /> · A
-        React workspace for exploratory data analysis
+        <img
+          src="/brand/wordmark.svg"
+          alt="explorEDA"
+          className="inline h-4 w-auto align-[-2px]"
+        />{" "}
+        · A React workspace for exploratory data analysis
       </p>
-      <nav aria-label="Project links" className="flex gap-5">
+      <nav
+        aria-label="Project links"
+        className="flex flex-wrap gap-x-5 gap-y-2"
+      >
         {links.map((link) => (
           <a
             key={link.label}
