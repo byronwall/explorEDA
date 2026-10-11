@@ -24,7 +24,9 @@ describe("CoverageMatrix", () => {
     expect(within(summary).getByText("Implemented")).toBeInTheDocument();
     expect(within(summary).getByText("Reviewed")).toBeInTheDocument();
     expect(
-      screen.getByText(/A feature counts as reviewed once any example checks it\./)
+      screen.getByText(
+        /A feature counts as reviewed once any example checks it\./
+      )
     ).toBeInTheDocument();
     expect(screen.getAllByText("Review pending").length).toBeGreaterThan(0);
     expect(screen.queryByRole("table")).not.toBeInTheDocument();
@@ -34,7 +36,9 @@ describe("CoverageMatrix", () => {
     fireEvent.click(featureSummary);
     expect(featureSummary.closest("details")).toHaveAttribute("open");
     expect(
-      screen.getByText("Compare category counts in horizontal rows.")
+      screen.getByText(
+        "Rank category counts or a grouped summary, such as revenue, in horizontal rows."
+      )
     ).toBeInTheDocument();
 
     const views = screen.getByRole("navigation", { name: "Coverage views" });
